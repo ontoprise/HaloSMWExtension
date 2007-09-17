@@ -26,7 +26,7 @@ var wgLanguageStrings = {
 	'CREATE_SUPER_PROPERTY'   : 'This article has been created as super-property. Please enter meaningful content.',
 	'ERROR_CREATING_ARTICLE'  : "Error while creating article.",
 	'UNMATCHED_BRACKETS'      : 'Warning! The article contains syntax errors ("]]" missing)',
-	
+
 	// Relation toolbar
 	'ANNOTATE_PROPERTY'       : 'Annotate a property.',
 	'PAGE'                    : 'Page:',
@@ -89,15 +89,15 @@ var wgLanguageStrings = {
 	'CREATE_NEW_CATEGORY'     : 'Create a new category.',
 	'CHANGE_ANNO_OF_CAT'      : 'Change the annotation of a category.',
 	'CATEGORIES'              : 'Categories',
-	
+
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Click here to drag',
-	
+
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Additional Combined Search results.',
 	'COMBINED_SEARCH'         : 'Combined Search',
-	
+
 	'INVALID_GARDENING_ACCESS' : 'You are not allowed to cancel bots. Only sysops and gardeners can do so.',
 	// Ontology browser
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
@@ -109,5 +109,25 @@ var wgLanguageStrings = {
 	'HIDE_INSTANCES'          : 'Hide instances',
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
 	'MARK_A_WORD'             : 'Mark a word...',
-	'OPEN_IN_OB'              : 'Open in Ontology Browser'
+	'OPEN_IN_OB'              : 'Open in Ontology Browser',
+
+	// Query Interface
+	'QUERY_INTERFACE'         : 'Query Interface',
+	'QI_MAIN_QUERY_NAME'	  : 'Main',
+	'QI_ARTICLE_TITLE'        : 'Article title',
+	'QI_EMPTY_QUERY'       	  : 'Your Query is empty.',
+	'QI_INSTANCE'       	  : 'Instance:',
+	'QI_PROPERTYNAME'         : 'Property name:',
+	'QI_SHOW_PROPERTY'        : 'Show in results:',
+	'QI_USE_SUBQUERY'         : 'Use subquery',
+	'QI_PAGE'				  : 'Page',
+	'QI_OR'        			  : 'or',
+	'QI_ENTER_CATEGORY'       : 'Please enter a category',
+	'QI_ENTER_INSTANCE'       : 'Please enter an instance',
+	'QI_ENTER_PROPERTY_NAME'  : 'Please enter a property name',
+	'QI_CLIPBOARD_SUCCESS'    : 'The query text was successfully copied to your clipboard',
+	'QI_CLIPBOARD_FAIL'    	  : "Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.",
+	'QI_SUBQUERY'    	  	  : "Subquery",
+	'QI_CATEGORIES'    	  	  : " Categories:",
+	'QI_INSTANCES'    	  	  : " Instances:"
 };

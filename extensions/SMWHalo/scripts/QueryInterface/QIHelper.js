@@ -18,7 +18,7 @@ initialize:function(){
 	this.propIsEnum = false;
 	this.enumValues = null;
 	this.loadedFromId = null;
-	this.addQuery(null, "Main");
+	this.addQuery(null, gLanguage.getMessage('QI_MAIN_QUERY_NAME'));
 	this.setActiveQuery(0);
 	this.updateColumnPreview();
 },
@@ -70,7 +70,7 @@ previewQuery:function(){
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
 		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
-		params += $('layout_sort').value=="Article title"?",":$('layout_sort').value + ',';
+		params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
 		params += $('layout_limit').value==""?"50,":$('layout_limit').value + ',';
 		params += $('layout_label').value==""?",":$('layout_label').value + ',';
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
@@ -80,7 +80,7 @@ previewQuery:function(){
 	}
 	else {
 		var request = Array();
-		request.responseText = "Your Query is empty.";
+		request.responseText = gLanguage.getMessage('QI_EMPTY_QUERY');
 		this.openPreview(request);
 	}
 },
@@ -110,7 +110,7 @@ updateBreadcrumbs:function(id){
 
 updateColumnPreview:function(){
 	var columns = new Array();
-	columns.push("Article title");
+	columns.push(gLanguage.getMessage('QI_ARTICLE_TITLE'));
 	var tmparr = this.queries[0].getAllProperties();
 	for(var i=0; i<tmparr.length; i++){
 		if(tmparr[i].isShown()){ //show
@@ -134,7 +134,7 @@ getFullAsk:function(){
 	starttag += 'format="' + $('layout_format').value + '" ';
 	starttag += $('layout_link').value=="subject"?"":('link="' + $('layout_link').value + '" ');
 	starttag += $('layout_intro').value==""?"":('intro="' + $('layout_intro').value + '" ');
-	starttag += $('layout_sort').value=="Article title"?"":('sort="' + $('layout_sort').value + '" ');
+	starttag += $('layout_sort').value==gLanguage.getMessage('QI_ARTICLE_TITLE')?"":('sort="' + $('layout_sort').value + '" ');
 	starttag += $('layout_limit').value==""?'limit="20"':('limit="' + $('layout_limit').value + '" ');
 	starttag += $('layout_label').value==""?"":('label="' + $('layout_label').value + '" ');
 	starttag += $('layout_order').value=="ascending"?'order="ascending" ':'order="descending" ';
@@ -169,7 +169,7 @@ newCategoryDialogue:function(reset){
 		$('dialoguecontent').deleteRow(0);
 	var newrow = $('dialoguecontent').insertRow(-1);
 	var cell = newrow.insertCell(0);
-	cell.innerHTML = "Category:";
+	cell.innerHTML = gLanguage.getMessage('CATEGORY');
 	cell = newrow.insertCell(1);
 	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="14" autocomplete="OFF"/>';
 	cell = newrow.insertCell(2);
@@ -189,7 +189,7 @@ newInstanceDialogue:function(reset){
 		$('dialoguecontent').deleteRow(0);
 	var newrow = $('dialoguecontent').insertRow(-1);
 	var cell = newrow.insertCell(0);
-	cell.innerHTML = "Instance:";
+	cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
 	cell = newrow.insertCell(1);
 	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="0" autocomplete="OFF"/>';
 	cell = newrow.insertCell(2);
@@ -210,14 +210,14 @@ newPropertyDialogue:function(reset){
 		$('dialoguecontent').deleteRow(0);
 	var newrow = $('dialoguecontent').insertRow(-1);
 	var cell = newrow.insertCell(0);
-	cell.innerHTML = "Property name:";
+	cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
 	cell = newrow.insertCell(1);
 	cell = newrow.insertCell(2);
 	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
 	newrow = $('dialoguecontent').insertRow(-1);
 	cell = newrow.insertCell(0);
-	cell.innerHTML = 'Show in results:';
+	cell.innerHTML = gLanguage.getMessage('QI_SHOW_PROPERTY');
 	cell = newrow.insertCell(1);
 	cell = newrow.insertCell(2);
 	if(this.activeQueryId == 0)
@@ -228,7 +228,7 @@ newPropertyDialogue:function(reset){
 	newrow = $('dialoguecontent').insertRow(-1);
 	cell = newrow.insertCell(0);
 	cell.id = "mainlabel";
-	cell.innerHTML = 'Page';
+	cell.innerHTML = gLanguage.getMessage('QI_PAGE');
 	cell = newrow.insertCell(1);
 	cell.id = "restricionSelector";
 	cell.innerHTML = this.createRestrictionSelector("=", true);
@@ -239,7 +239,7 @@ newPropertyDialogue:function(reset){
 	cell = newrow.insertCell(4);
 	cell.className = "subquerycell";
 	cell.id = "subquerycell";
-	cell.innerHTML = '&nbsp;Use subquery<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
+	cell.innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
 	this.activeInputs = 3;
 	$('dialoguebuttons').style.display="";
 	this.proparity = 2;
@@ -267,7 +267,7 @@ addDialogueInput:function(){
 	var newrow = $('dialoguecontent').insertRow(-1);
 	newrow.id = "row" + newrow.rowIndex;
 	var cell = newrow.insertCell(0);
-	cell.innerHTML = "or";
+	cell.innerHTML = gLanguage.getMessage('QI_OR');
 	cell = newrow.insertCell(1);
 	var param = $('mainlabel')?$('mainlabel').innerHTML:"";
 
@@ -275,7 +275,7 @@ addDialogueInput:function(){
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="14" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 	else if(this.activeDialogue == "instance")
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-	else if(param == "Page:"){
+	else if(param == gLanguage.getMessage('QI_PAGE')){
 		cell.innerHTML = this.createRestrictionSelector("=", true);
 		cell = newrow.insertCell(2);
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
@@ -327,7 +327,7 @@ if (this.activeDialogue != null){
 
 	var arity = 2;
 	this.proparity = 2;
-	var parameterNames = ["Page"];
+	var parameterNames = [gLanguage.getMessage('QI_PAGE')];
 	var parameterIsNumeric = [false];
 	var possibleValues = new Array();
 
@@ -358,15 +358,15 @@ if (this.activeDialogue != null){
 		}
 		else
 			$('restricionSelector').innerHTML = this.createRestrictionSelector("=", true);
-		if (parameterNames[0] == "Page"){
+		if (parameterNames[0] == gLanguage.getMessage('QI_PAGE')){
 			autoCompleter.deregisterAllInputs();
 			$('dialoguecontent').rows[2].cells[2].firstChild.className = "wickEnabled";
 			autoCompleter.registerAllInputs();
 		}
 		$('dialoguecontent').rows[2].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 
-		if(parameterNames[0] == "Page"){ //if type is page, we need a subquery checkbox
-			$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;Use subquery<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
+		if(parameterNames[0] == gLanguage.getMessage('QI_OR')){ //if type is page, we need a subquery checkbox
+			$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_OR') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
 			$('dialoguecontent').rows[2].cells[4].className = "subquerycell";
 			$('usesub').checked = oldcheck;
 			this.activeInputs = 3;
@@ -417,7 +417,7 @@ if (this.activeDialogue != null){
 				cell.innerHTML = this.createRestrictionSelector("=", true);
 
 			cell = newrow.insertCell(2);
-			if(parameterNames[i] == "Page")
+			if(parameterNames[i] == gLanguage.getMessage('QI_PAGE'))
 				cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 			else
 				cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
@@ -460,7 +460,7 @@ loadPropertyDialogue:function(id){
 	$('input0').value = prop.getName();
 
 	$('input1').checked = prop.isShown();
-	$('mainlabel').innerHTML = (vals[0][0] == "subquery"?"Page":vals[0][0]);
+	$('mainlabel').innerHTML = (vals[0][0] == "subquery"?gLanguage.getMessage('PAGE'):vals[0][0]);
 	var disabled = true;
 	if(this.numTypes[vals[0][0].toLowerCase()]){
 		disabled = false;
@@ -521,7 +521,7 @@ loadPropertyDialogue:function(id){
 			else
 				cell.innerHTML = this.createRestrictionSelector(vals[i][1], true);
 			cell = row.insertCell(2);
-			if(vals[i][0] == "Page")
+			if(vals[i][0] == gLanguage.getMessage('QI_PAGE'))
 				cell.innerHTML = '<input type="text" class="wickEnabled general-forms" typehint="0" autocomplete="OFF" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
 			else
 				cell.innerHTML = '<input type="text" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
@@ -599,7 +599,7 @@ addCategoryGroup:function(){
 			allinputs = false;
 	}
 	if(!allinputs)
-		$('qistatus').innerHTML = "Please enter a category";
+		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_CATEGORY');
 	else {
 		this.activeQuery.addCategoryGroup(tmpcat, this.loadedFromId);
 		this.emptyDialogue();
@@ -616,7 +616,7 @@ addInstanceGroup:function(){
 			allinputs = false;
 	}
 	if(!allinputs)
-		$('qistatus').innerHTML = "Please enter an instance";
+		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_INSTANCE');
 	else {
 		this.activeQuery.addInstanceGroup(tmpins, this.loadedFromId);
 		this.emptyDialogue();
@@ -627,7 +627,7 @@ addPropertyGroup:function(){
 	var pname = $('input0').value;
 	var subqueryIds = Array();
 	if (pname == ""){
-		$('qistatus').innerHTML = "Please enter a property name";
+		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_PROPERTY_NAME');
 	} else {
 		var pshow = $('input1').checked;
 		var arity = this.proparity;
@@ -636,7 +636,7 @@ addPropertyGroup:function(){
 			var paramvalue = $('input' + i).value;
 			paramvalue = paramvalue==""?"*":paramvalue;
 			var paramname = $('dialoguecontent').rows[i].cells[0].innerHTML;
-			if(paramname == "Page" && arity == 2 && $('usesub').checked){
+			if(paramname == gLanguage.getMessage('PAGE') && arity == 2 && $('usesub').checked){
 				paramname = "subquery";
 				paramvalue = this.nextQueryId;
 				subqueryIds.push(this.nextQueryId);
@@ -655,18 +655,18 @@ copyToClipboard:function(){
 	var text = this.getFullAsk();
  	if (window.clipboardData){
 		window.clipboardData.setData("Text", text);
-		alert("The query text was successfully copied to your clipboard");
+		alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 	}
   	else if (window.netscape) {
 		netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
 		var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
 		if (!clip){
-			alert("Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.");
+			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 			return;
 		}
 		var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
 		if (!trans){
-			alert("Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.");
+			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 			return;
 		}
 		trans.addDataFlavor('text/unicode');
@@ -677,14 +677,14 @@ copyToClipboard:function(){
 		trans.setTransferData("text/unicode",str,text.length*2);
 		var clipid=Components.interfaces.nsIClipboard;
 		if (!clip){
-			alert("Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.");
+			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 			return;
 		}
 		clip.setData(trans,null,clipid.kGlobalClipboard);
-		alert("The query text was successfully copied to your clipboard");
+		alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 	}
 	else{
-		alert("Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.");
+		alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 	}
 }
 
@@ -693,42 +693,42 @@ copyToClipboard:function(){
 var PropertyGroup = Class.create();
 PropertyGroup.prototype = {
 
-initialize:function(name, arity, show, isEnum, enumValues){
-	this.name = name;
-	this.arity = arity;
-	this.show = show;
-	this.isEnum = isEnum;
-	this.enumValues = enumValues;
-	this.values = Array(); // paramName, retriction, paramValue
-},
+	initialize:function(name, arity, show, isEnum, enumValues){
+		this.name = name;
+		this.arity = arity;
+		this.show = show;
+		this.isEnum = isEnum;
+		this.enumValues = enumValues;
+		this.values = Array(); // paramName, retriction, paramValue
+	},
 
-addValue:function(name, restriction, value){
-	this.values[this.values.length] = new Array(name, restriction, value);
-},
+	addValue:function(name, restriction, value){
+		this.values[this.values.length] = new Array(name, restriction, value);
+	},
 
-getName:function(){
-	return this.name;
-},
+	getName:function(){
+		return this.name;
+	},
 
-getArity:function(){
-	return this.arity;
-},
+	getArity:function(){
+		return this.arity;
+	},
 
-isShown:function(){
-	return this.show;
-},
+	isShown:function(){
+		return this.show;
+	},
 
-getValues:function(){
-	return this.values;
-},
+	getValues:function(){
+		return this.values;
+	},
 
-isEnumeration:function(){
-	return this.isEnum;
-},
+	isEnumeration:function(){
+		return this.isEnum;
+	},
 
-getEnumValues:function(){
-	return this.enumValues;
-}
+	getEnumValues:function(){
+		return this.enumValues;
+	}
 }
 
 

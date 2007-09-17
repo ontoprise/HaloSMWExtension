@@ -6,8 +6,6 @@
 
 global $IP, $wgHooks;
 require_once( $IP . "/includes/SpecialPage.php" );
-require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
-
 require_once( "SMW_QIAjaxAccess.php" );
 $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 
@@ -57,57 +55,45 @@ class SMWQueryInterface{
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>' .
 				'<div id="qimenubar">' .
-					'<span class="qibutton" onclick="qihelper.previewQuery()">Preview Results</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-					'<span class="qibutton" onclick="qihelper.copyToClipboard()">Copy to clipboard</span>' .
-					'<span style="padding-left:320px"><span class="qibutton" onclick="qihelper.resetQuery()">Reset Query</span></span>' .
-					//'<span class="qibutton" onclick="export(\'xls\')">Export to Excel</span>' .
-				//	'<span class="qibutton" onclick="export(\'ods\')">Export to ODS</span>' .
+					'<span class="qibutton" onclick="qihelper.previewQuery()">' . wfMsg('smw_qi_preview') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+					'<span class="qibutton" onclick="qihelper.copyToClipboard()">' . wfMsg('smw_qi_clipboard') . '</span>' .
+					'<span style="position:absolute; right:10px;"><span class="qibutton" onclick="qihelper.resetQuery()">' . wfMsg('smw_qi_reset') . '</span></span>' .
 				'</div>';
 
 		$html .= '<div id="treeview">' .
 				'<div id="treeviewheader" class="qiboxheader">' .
-				'&nbsp;Query Tree' .
+				'&nbsp;' . wfMsg('smw_qi_querytree_heading') .
 				'</div>' .
 				'<div id="treeviewbreadcrumbs"></div>' .
 				'<div id="treeanchor"><div id="qitreedummy"></div></div>' .
 				'</div>';
 
 		$html .= '<div id="qiaddbuttons" class="qiaddbuttons">' .
-					'<span id="cat" class="qibutton" onclick="qihelper.newCategoryDialogue(true)"><img src="' . $imagepath . 'category.gif" alt="category" />Add Category</span>' .
-					'<span id="ins" class="qibutton" onclick="qihelper.newInstanceDialogue(true)"><img src="' . $imagepath . 'instance.gif" alt="instance" />Add Instance</span>' .
-					'<span id="prop" class="qibutton" onclick="qihelper.newPropertyDialogue(true)"><img src="' . $imagepath . 'property.gif" alt="property"/>Add Property</span>' .
+					'<span id="cat" class="qibutton" onclick="qihelper.newCategoryDialogue(true)"><img src="' . $imagepath . 'category.gif" alt="category" />' . wfMsg('smw_qi_add_category') . '</span>' .
+					'<span id="ins" class="qibutton" onclick="qihelper.newInstanceDialogue(true)"><img src="' . $imagepath . 'instance.gif" alt="instance" />' . wfMsg('smw_qi_add_instance') . '</span>' .
+					'<span id="prop" class="qibutton" onclick="qihelper.newPropertyDialogue(true)"><img src="' . $imagepath . 'property.gif" alt="property"/>' . wfMsg('smw_qi_add_property') . '</span>' .
 				'</div>';
 
 		$html .= '<div id="dragbox" class="dragbox">' .
 					'<div id="boxcontent" class="boxcontent">' .
 						'<table><tbody id="dialoguecontent"></tbody></table>' .
 						'<div id="dialoguebuttons" style="display:none">' .
-							'<span class="qibutton" onclick="qihelper.add()">OK</span>&nbsp;<span class="qibutton" onclick="qihelper.emptyDialogue()">Cancel</span>&nbsp;<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">Delete</span>' .
+							'<span class="qibutton" onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</span>&nbsp;<span class="qibutton" onclick="qihelper.emptyDialogue()">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
 						'</div>' .
 						'<div id="qistatus"></div>' .
 					'</div>' .
 					'<div id="tablecolumnpreview">' .
-						'<div class="tcp_boxheader" onclick="switchtcp()"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>Table Column Preview</div>' .
+						'<div class="tcp_boxheader" onclick="switchtcp()"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
 						'<div id="tcp_boxcontent" class="tcp_boxcontent" style="visibility:hidden">' .
 							'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
-								'<tr><td>No preview available yet</td></tr>' .
+								'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
 							'</table></div>' .
 						'</div>' .
 					'</div>' .
 				'</div>';
 
-		$html .= '<div id="selectbox" class="selectbox" style="display:none">
-					<div class="selectboxheader">Available Completions</div>
-					<div class="selectboxcontent">
-						Filter:&nbsp;<input type="text" id="qifilter" onkeyup="filter(this, \'selecttable\', 0)"/>
-						&nbsp;<a href="javascript:update()"><img src="' . $smwgScriptPath . '/skins/redcross.gif" style="vertical-align: text-top;"/></a><hr>
-						<div><table id="selecttable"><tr><td>No completions available yet</td></tr></table></div>
-					</div>
-				</div>';
-
-
 		$html .= '<div id="querylayout">
-					<div id="layouttitle" onclick="switchlayout()"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>Query Layout Manager</div>
+					<div id="layouttitle" onclick="switchlayout()"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</div>
 					<div id="layoutcontent" style="display:none">
 					<table summary="Layout Manager for query" style="width:100%">
 					<tr>
@@ -183,12 +169,12 @@ class SMWQueryInterface{
 
 		$html .= '<div id="fullpreviewbox" style="display:none">';
 		$html .= '<div id="fullpreview"></div>';
-		$html .= '<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\')"><img src="'. $imagepath. 'delete.png"/>Close Preview</span></div>';
+		$html .= '<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\')"><img src="'. $imagepath. 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>';
 		$html.=	'</div>';
 
 		$html .= '<div id="resetdialogue" style="display:none">' .
 				'Do you really want to reset your query?<br/>' .
-				'<span class="qibutton" onclick="qihelper.doReset()">Yes, reset</span>&nbsp;<span class="qibutton" onclick="$(\'resetdialogue\', \'shade\').invoke(\'toggle\')">No, cancel</span>' .
+				'<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'resetdialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
 				'</div>';
 
 		$wgOut->addHTML($html);

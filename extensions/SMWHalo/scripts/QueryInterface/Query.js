@@ -48,14 +48,14 @@ Query.prototype = {
 		var treexml = '<?xml version="1.0" encoding="UTF-8"?>';
 		treexml += '<treeview title=" Query"><folder title=" ' + this.name + '" code="root" expanded="true" img="question.gif">';
 		for(var i=0; i<this.categories.length; i++){
-			treexml += '<folder title=" Categories:" code="categories' + i +'" expanded="true" img="category.gif">';
+			treexml += '<folder title="' + gLanguage.getMessage('QI_CATEGORIES') + '" code="categories' + i +'" expanded="true" img="category.gif">';
 			for(var j=0; j<this.categories[i].length; j++){
 					treexml += '<leaf title=" ' + this.categories[i][j] + '" code="category' + i + '-' + j + '" img="blue_ball.gif"/>';
 			}
 			treexml += '</folder>';
 		}
 		for(var i=0; i<this.instances.length; i++){
-			treexml += '<folder title=" Instances:" code="instances' + i +'" expanded="true" img="instance.gif">';
+			treexml += '<folder title="' + gLanguage.getMessage('QI_INSTANCES') + '" code="instances' + i +'" expanded="true" img="instance.gif">';
 			for(var j=0; j<this.instances[i].length; j++){
 				treexml += '<leaf title=" ' + this.instances[i][j] + '" code="instance' + i + '-' + j + '" img="red_ball.gif"/>';
 			}
@@ -66,7 +66,7 @@ Query.prototype = {
 			propvalues = this.properties[i].getValues();
 			for(var j=0; j<propvalues.length; j++){
 				if(propvalues[j][0] == "subquery")
-					treexml += '<leaf title=" Page = Subquery ' + propvalues[j][2] + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
+					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_PAGE') + ' = ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
 				else {
 					var res = "";
 					switch(propvalues[j][1]){
