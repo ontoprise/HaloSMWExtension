@@ -69,6 +69,7 @@ function smwfInitHaloDatatypes() {
 	SMWDataValueFactory::registerDataValueClass('_chf','ChemFormula','SMWChemicalFormulaTypeHandler');
 	SMWDataValueFactory::registerDataValueClass('_che','ChemEquation','SMWChemicalEquationTypeHandler');
 	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
+	return true;
 }
 
 /**
