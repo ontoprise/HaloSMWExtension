@@ -1,0 +1,642 @@
+#clearfloat {
+	clear:both;
+}
+
+#tabcontainer {
+	width: 200px;
+	margin-bottom: 10px;
+}
+
+#activetabcontainer {
+	width: 208px;
+}
+
+#expandable {
+	float: left;
+	margin-left: 5px;
+	margin-top: 4px;
+	margin-right: 5px;
+}
+a.minusplus{
+	background-image:url(minus.gif);
+	float:left;
+	height:12px;
+	margin-right:4px;
+	margin-top:3px;
+	overflow:hidden;
+	width:12px;
+}
+a.minusplus:hover{
+	background-image:url(minus-act.gif);
+}
+
+a.plusminus{
+	float:left;
+	height:12px;
+	margin-right:4px;
+	margin-top:3px;
+	overflow:hidden;
+	width:12px;
+}
+.plusminus{
+	background-image:url(plus.gif);
+}
+a.plusminus:hover{
+	background-image:url(plus-act.gif);
+}
+
+#tab_0{
+	background-color: #C0C0C0;
+	border: 1px solid #C0C0C0;
+	font-weight: bold;
+}
+
+#tab_1{
+	background-color: #C0C0C0;
+	border: 1px solid #C0C0C0;
+	font-weight: bold;
+}
+
+#tab_2{
+	background-color: #C0C0C0;
+	border: 1px solid #C0C0C0;
+	font-weight: bold;
+}
+
+#curtab{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	font-weight: bold;
+}
+
+#ontomenuanchor{
+	float: right;
+	margin: 10px;
+	max-height: 80%;
+	/*overflow: auto;*/
+	position: absolute;
+}
+
+#innercontent {
+	float: left;
+	overflow: auto;
+	width: 100%;
+}
+
+#content {
+/*	float: right; */
+}
+
+#semtoolbar{
+	width: 200px;
+	padding-top: 1px;
+	padding-bottom: 3px;
+	padding-left: 3px;
+	padding-right: 3px;
+	border: 1px solid #C0C0C0;
+	background-color: #DDDDDD;
+}
+
+.input{
+	width: 70px;
+	border: 1px solid #666666;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333333;
+}
+
+#articlecontainer{
+	position: absolute;
+	top: 45px;
+	left: 165px;
+	width: auto;
+	border: 1px solid #CDCDCD;
+	font-size: 12px;
+}
+#article{
+	margin-right: 12px;
+	margin-left: 10px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+
+#annotation-toolbox{
+	width: 200px;
+	color: #666666;
+	border: 1px solid #666666;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #333333;
+}
+
+#anno{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: 11px;
+}
+
+#stb_cont9-content{
+	background-color: #FFFFCC;
+	border: 1px solid #E6E600;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	line-height:13px;
+	font-size: 11px;
+	overflow: auto;
+}
+#help a{
+	cursor:pointer;
+}
+#morehelp{
+	text-align: right;
+	font-size: 10px;
+}
+#stb_cont7-headline{
+	background-color: #74DD82;
+	border: 1px solid #74DD82;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	margin-top: 3px;
+}
+#stb_cont7-content{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	padding-left:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+	overflow: auto;
+	font-size: 11px;
+	/*border-bottom: 1px solid #74DD82;*/
+}
+
+#stb_cont8-content{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	line-height:13px;
+	font-size: 11px;
+	overflow: auto;
+}
+
+#csFoundEntities{
+	line-height:15px;
+}
+
+
+.cbsrch-table {
+	background-color: #B5EDBC;
+	width: 100%;
+}
+.cbsrch-table td{
+	border-bottom: 1px dashed #74DD82;
+}
+#queryPlaceholder .cbsrch-table {
+	background-color: #DDDDDD;
+	width:90%;
+	border: 1px solid #C0C0C0;
+	font-weight: normal;
+}
+#queryPlaceholder .cbsrch-table td{
+	border-bottom: 1px dashed #C0C0C0;
+}
+
+#stb_cont99-content{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	overflow: auto;
+}
+
+#stb_cont1-content{
+	overflow:auto;
+	font-size: 11px;
+}
+#typecont{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	max-height:600px;
+	overflow:auto;
+	font-size: 11px;
+}
+#freshfacts{
+	background-color: #B5EDBC;
+	border: 1px solid #74DD82;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: 11px;
+}
+#anno-headline{
+	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFF;
+	padding-top: 1px;
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+}
+#stb_cont8-headline{
+	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+	margin-top: 3px;
+}
+#stb_cont99-headline{
+	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFF;
+	padding-top: 1px;
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+	margin-top: 3px;
+}
+#stb_cont1-headline{
+/*	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFF;
+	padding-top: 1px;
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+	margin-top: 3px; */
+}
+#typecont-headline{
+	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFF;
+	padding-top: 1px;
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+	margin-top: 3px;
+}
+#stb_cont9-headline{
+	background-color: #E6E600;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #E6E600;
+	margin-top: 3px;
+}
+#freshfacts-headline{
+	background-color: #74DD82;
+	font-weight: bold;
+	color: #FFFFFF;
+/*	margin-top: 10px; */
+	padding-top: 1px;
+	padding-left: 3px;
+	border: 1px solid #74DD82;
+	margin-top: 3px;
+}
+
+#factsAttributes-headline{
+	background-color: #ffff91;
+	padding-left:5px;
+}
+
+#factsAttributes-body {
+	background-color: #ffffd1;
+}
+
+#factsAttributes-bodycontent {
+	margin-left:10px;
+	margin-right:0px;
+}
+
+
+#factsRelations-headline{
+	margin-top: 10px;
+	background-color: #ff91ff;
+	padding-left:5px;
+}
+
+#factsRelations-body {
+	background-color: #ffd1ff;
+}
+
+#factsRelations-bodycontent {
+	margin-left:10px;
+	margin-right:0px;
+}
+
+
+#factsCategories-headline{
+	margin-top: 10px;
+	background-color: #9193ff;
+	padding-left:5px;
+}
+
+#factsCategories-body {
+	background-color: #d1d2ff;
+}
+
+#factsCategories-bodycontent {
+	margin-left:10px;
+	margin-right:0px;
+}
+
+/* Highlights in the edit box */
+.hlattribute{
+	width: 70px;
+	border: 1px solid #666666;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333333;
+}
+
+.linktable{
+	background: #DDD;
+	font-size:11px;
+	font-family: monospace;
+	width:100%;
+	line-height: 1.4em;
+}
+
+table.linktable tr.linktable-row td{
+		border-bottom: 1px dashed #C0C0C0;
+}
+
+/* General Settings for Cat/Atr/Rel-Container */
+a.menulink{
+	border-right: 1px solid #999;
+	padding: 0px 3px 0px 3px;
+}
+/* consistent length for all attribute inputboxes and textareas */
+.general-forms{
+	width: 125px;
+}
+
+.general-forms-slim{
+	width: 105px;
+}
+
+/* Category Container */
+#stb_cont3-headline{
+	background-color: #064df3;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #064df3;
+	margin-top: 3px;
+}
+
+#stb_cont3-content{
+	border: 1px solid #064df3;
+	background-color: #94b0f3;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#category-table{
+	background-color: #94b0f3;
+	width: 100%;
+}
+
+#category-tools{
+	border-bottom: 1px solid #888888;
+}
+
+.category-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.category-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+}
+
+/* Attribute Container */
+#stb_cont4-headline{
+	background-color: #ff9602;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #ff9602;
+	margin-top: 3px;
+}
+
+#stb_cont4-content{
+	background-color: #ffcd87;
+	border: 1px solid #ff9602;
+	overflow: auto;
+	font-size: 11px;
+}
+
+
+
+
+#attribute-table{
+	background-color: #ffcd87;
+	width: 100%;
+}
+#attribute-itemlist{
+	width: 100%;
+}
+
+#attribute-tools{
+	border-bottom: thin solid #888888;
+}
+.attribute-col1{
+	border-bottom: 1px dotted #888888;
+	border-right: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.attribute-col2{
+	border-bottom: 1px dotted #888888;
+	vertical-align: top;
+}
+
+.attribute-col3{
+	border-bottom: 1px dotted #888888;
+	text-align: right;
+	vertical-align: top;
+}
+
+/* Relation Container */
+#stb_cont5-headline{
+	background-color: #ff9602;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #ff9602;
+	margin-top: 3px;
+}
+#stb_cont5-content{
+	background-color: #ffcd87;
+	border: 1px solid #ff9602;
+	overflow: auto;
+	font-size: 11px;
+}
+#relation-table{
+	background-color: #ffcd87;
+	width: 100%;
+}
+
+#relation-tools{
+	border-bottom: 1px solid #888888;
+}
+
+.relation-col1{
+	border-bottom: 1px dotted #888888;
+	border-right: 1px dashed #888888;
+	vertical-align: top;
+	width:60%;
+}
+
+.relation-col2{
+	border-bottom: 1px dotted #888888;
+	vertical-align: top;
+}
+
+.relation-col3{
+	border-bottom: 1px dotted #888888;
+	text-align: right;
+	vertical-align: top;
+}
+
+/* Properties Container */
+#stb_cont6-headline{
+	background-color: #BB4DBB;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #BB4DBB;
+	margin-top: 3px;
+}
+
+#stb_cont6-content{
+	border: 1px solid #554d55;
+	background-color: #BB4DBB;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#properties-table{
+	background-color: #ddbddd;
+	width: 100%;
+}
+
+#properties-tools{
+	border-bottom: 1px solid #888888;
+}
+
+.properties-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.properties-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+}
+
+/* css for Containerframework
+ *
+ * if an element has different classes defining the same style
+ * the last class defined in this css-file will dominate
+ *
+ */
+/* input */
+.stb-table{
+	width: 100%;
+}
+
+
+/* input */
+.stb-input{
+	width: 125px;
+}
+.stb-delinput{
+	width: 105px;
+	margin-right: 5px;
+}
+
+.stb-input-col1{
+}
+
+.stb-input-col2{
+	text-align: right;
+}
+
+/*dropdown*/
+.stb-select
+{
+	width: 125px;
+}
+.stb-delselect
+{
+	width: 105px;
+	margin-right: 5px;
+}
+.stb-select-col1{
+}
+
+.stb-select-col2{
+	text-align: right;
+}
+
+/* link-table*/
+.ln-tr-0{
+	width: 100%;
+}
+.ln-td-0-0{
+	width: 100%;
+}
+.ln-tr-1{
+	width: 100%;
+}
+.ln-td-1-0{
+	width: 50%;
+}
+.ln-td-1-1{
+	width: 50%;
+}
+.ln-tr-2{
+	width: 100%;
+}
+.ln-td-2-0{
+	width: 33%;
+}
+.ln-td-2-1{
+	width: 33%;
+}
+.ln-td-2-2{
+	width: 34%;
+}
+
+/* background-colors*/
+.category-content-table{
+	background-color: #94b0f3;
+}
+.relation-content-table{
+	background-color: #ffcd87;
+}
+
+.properties-content-table{
+	background-color: #ddbddd;
+}

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+	<title>EditArea documentation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="doc_style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class='header'>
+		<h1>Javascript Functions</h1>
+	</div>
+	<div class='content'>
+		<p>This is for advanced users. The object editAreaLoader has some public functions that can be called from the page in order to manage the EditArea editors.</p>
+		
+		
+		<h3>editAreaLoader.getValue(editor_id)</h3>
+		<blockquote>
+			<p>This method return the content text of the editor. Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: the content text of the editor. <code>String</code></p>
+	    </blockquote>
+
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.setValue(editor_id, new_text)</h3>
+		<blockquote>
+			<p>This method allow to update the content text of an editor. Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			<tr>
+				<td>new_text</td>
+				<td>The new text that will replace the Editor content.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p>
+		</blockquote>
+
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.insertTags(editor_id, open_tag, close_tag)</h3>
+		<blockquote>
+			<p>This method allow to insert tags at the current position. If no text was selected, the cursor is then 
+			displayed between the open and the close tags. Otherwise, the cursor is positionned after the close tag. 
+				Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			<tr>
+				<td>open_tag</td>
+				<td>The open tag string.</td>
+			</tr>
+			<tr>
+				<td>close_tag</td>
+				<td>The close tag string.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p>
+		</blockquote>
+		
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.getSelectedText(editor_id)</h3>
+		<blockquote>
+			<p>This method return the text contained in the the selection range. 
+				Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: The text contained in the the selection range. <code>String</code></p>
+		</blockquote>
+
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.setSelectedText(editor_id, new_text)</h3>
+		<blockquote>
+			<p>This method allow to replace the text contained in the selection range with a given string. 
+				The selection range will then contain the new string. 
+				Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			<tr>
+				<td>new_text</td>
+				<td>The string that will replace the current selected text.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p>
+		</blockquote>
+
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.getSelectionRange(editor_id)</h3>
+		<blockquote>
+			<p>This method return the position start and position end of the selection range in the editor. 
+				Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: An array containing the index of the selection start and end. 
+				<code>Array("start", "end")</code> </p>
+		</blockquote>
+
+		<div class='separator'></div>
+
+		<h3>editAreaLoader.setSelectionRange(editor_id, new_start, new_end)</h3>
+		<blockquote>
+			<p>This method allow to set the selection range with the given start and end positions. 
+				Works on normal textarea if the EditArea is toggled off.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea</td>
+			</tr>
+			<tr>
+				<td>new_start</td>
+				<td>The character position determining the start of the selection range.</td>
+			</tr>
+			<tr>
+				<td>new_end</td>
+				<td>The character position determining the end of the selection range.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p>
+		</blockquote>
+
+		<div class='separator'></div>
+	
+		<h3>editAreaLoader.execCommand(editor_id, command)</h3>
+		<blockquote>
+			<p>Allow to access to EditArea functions and datas (for advanced users only).</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea on witch the command should be executed.</td>
+			</tr>
+			<tr>
+				<td>command</td>
+				<td>The function or the parameter of the EditArea object that will be returned.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: the value of the executed command or data. <code>unknown</code></p> 
+	    </blockquote>
+
+		<div class='separator'></div>
+	
+		<h3>editAreaLoader.delete_instance(editor_id)</h3>
+		<blockquote>
+			<p>Delete an instance of EditArea and restore simple textarea.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea on witch the command should be executed.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p> 
+	    </blockquote>
+
+		<div class='separator'></div>
+	
+		<h3>editAreaLoader.hide(editor_id)</h3>
+		<blockquote>
+			<p>Hide a textarea and it's related EditArea.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea on witch the command should be executed.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p> 
+	    </blockquote>
+
+		<div class='separator'></div>
+	
+		<h3>editAreaLoader.show(editor_id)</h3>
+		<blockquote>
+			<p>Restore a textarea and it's related EditArea hidden with the hide() function.</p>        
+			<table>
+			<thead>
+			<tr>
+				<td colspan="2">Parameters</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>editor_id</td>
+				<td>The id of the converted textarea on witch the command should be executed.</td>
+			</tr>
+			</tbody>
+			</table>
+	        <p><strong>Returns</strong>: Nothing.</p> 
+	    </blockquote>
+ 
+
+	
+	</div>
+	<div class='footer'>
+		<div class="indexlink"><a href="index.html">Index</a></div>	
+		<div class='copyright'>EditArea - &copy; Christophe Dolivet - 2007</div>
+		<br style="clear: both" />
+	</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+Installation instructions for MySQL SMW UDFs:
+SMW will also run *without* this enhancement, but with less functionality.
+
+Files:
+
+=========
+Windows =
+=========
+halowiki.dll for MySQL 4.x
+halowiki-5_x.dll for MySQL 5.x 
+
+=======
+Linux =
+=======
+halowiki.so for MySQL 5.x
+
+TODOs:
+
+1.) Copy the correct version of the library to your mysql/bin folder (or to some folder where your system searches for DLLs/shared object libs).
+
+2.) Connect to your mysql database using the GUI-tool (e.g. the query browser) or the command line interface 
+    and execute the following command: (replace the DLL's/shared object lib's name if necessary)
+
+    CREATE FUNCTION editdistance RETURNS INTEGER SONAME 'halowiki.dll';
+
+3.) Done.

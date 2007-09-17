@@ -1,0 +1,136 @@
+
+/*
+<!--
+**
+**   Description : STYLESHEET FOR GENERATION OF THE HTML Treeview
+**
+**   Date : 26/10/2002 - version : 1.0
+**   Author : Jean-Michel Garnier, http://rollerjm.free.fr
+**   Source is free but feel free (!) to send any comment / suggestion 
+to garnierjm@ifrance.com
+**   One of the best tool to customize a css is TopStyle (www.bradsoft.com)
+-->
+*/
+
+/*
+<!-- Customize link styles here -->
+*/
+a:link {text-decoration:none;}
+a:visited {text-decoration:none; }
+a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
+a.concept, a.instance, a.leaf{  
+	padding:0px;
+	cursor: hand;
+	background-color: white;
+	white-space:nowrap;
+}
+
+a.selectedItem {
+	padding:0px;
+	cursor: hand;
+	background-color: #EEEEEE;
+}
+
+a.inherited {
+	font-style: italic;
+}
+
+a.navigationLink {
+	color: #666666;
+}
+#ontologybrowser{
+	width:1030px;
+}
+
+#OBHelp {
+ 	background-color:#FFFFFF;
+}
+
+#categoryTree, #relattributes, #propertyTree {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border: 1px solid #AAAAAA;
+	float: left;
+	overflow: auto;
+	width: 300px;
+	height: 430px;
+	
+}
+
+#treeContainer, #relattributesContainer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	float: left;
+	width: 300px;
+	height: 465px;
+}
+
+#instanceContainer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	float: left;
+	width: 250px;
+	height: 465px;
+}
+
+#instanceList
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border: 1px solid #AAAAAA;
+	float: left;
+	overflow: auto;
+	width: 250px;
+	height: 430px;
+}
+
+a.selectedSwitch {
+	background-color: #FFFF00;
+}
+
+#relattributes table{
+	width: 100%;
+}
+
+#relattributes td{
+	border-bottom: 1px dashed #AAAAAA;
+	vertical-align: top;
+}
+
+#relattributes td.right{
+	border-left: 1px dashed #AAAAAA;
+	width: 80px;
+}
+
+.pfeil{
+	float: left;
+	margin-left: 3px;
+	margin-right: 3px;
+	margin-top: 22px;
+	visibility: visible;
+}
+
+.OB-header{
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #747474;
+	width: 100%;
+}
+
+.OB-filters{
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #747474;
+	margin-top:5px;
+}
+
+#OB-footer{
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #747474;
+}
+
