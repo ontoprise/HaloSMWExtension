@@ -113,6 +113,9 @@ function smwfShowListPage (&$title, &$article){
 		smwfInitUserMessages();
 		include_once($smwgIP . '/includes/articlepages/SMW_PropertyPage.php');
 		$article = new SMWPropertyPage($title);
+	} elseif ( $title->getNamespace() == NS_CATEGORY ) {
+		require_once($smwgIP . '/includes/articlepages/SMW_CategoryPage.php');
+		$article = new SMWCategoryPage($title);
 	}
 	return true;
 }
