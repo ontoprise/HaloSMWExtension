@@ -209,7 +209,14 @@ class SMWFactbox {
 
 		include_once($smwgIP . '/includes/SMW_Infolink.php');
 		$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . str_replace('%2F', '/', urlencode(SMWFactbox::$semdata->getSubject()->getPrefixedText())), 'rdflink');
-
+		
+		// get factbox links from SMW extensions
+		$factBoxLinks = "";
+		wfRunHooks('SMW_FactBoxLinks', array(&$links));
+		foreach($links as $l) {
+			list($classname, $smwlink) = $l;
+			$factBoxLinks .= '<span class="'.$classname.'">' . $smwlink->getWikiText(true) . '</span>';
+		}
 		$browselink = SMWInfolink::newBrowsingLink(SMWFactbox::$semdata->getSubject()->getText(), SMWFactbox::$semdata->getSubject()->getPrefixedText(), 'swmfactboxheadbrowse');
 		// The "\n" is to ensure that lists on the end of articles are terminated
 		// before the div starts. It would of course be much cleaner to print the
@@ -218,6 +225,7 @@ class SMWFactbox {
 		$text .= "\n" . '<div class="smwfact">' .
 		         '<span class="smwfactboxhead">' . wfMsgForContent('smw_factbox_head', $browselink->getWikiText() ) . '</span>' .
 		         '<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' .
+		         $factBoxLinks.
 		         '<table class="smwfacttable">' . "\n";
 		SMWFactbox::printProperties($text);
 		SMWFactbox::printSpecialProperties($text);

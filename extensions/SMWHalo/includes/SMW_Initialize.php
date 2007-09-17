@@ -29,6 +29,7 @@ function enableSMWHalo() {
 	$wgHooks['SMWExtension'][] = 'smwgHaloSetupExtension';	
 	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
+	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 }
 
 /**
@@ -41,7 +42,6 @@ function smwgHaloSetupExtension() {
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
 	smwfInitGeneralStore();
-
 	
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
@@ -53,6 +53,8 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php');
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+	
 	global $smw_enableLogging;
 	if($smw_enableLogging === true){
 		require_once($smwgHaloIP . '/includes/SMW_Logger.php');	
@@ -73,6 +75,13 @@ function smwfInitHaloDatatypes() {
 	return true;
 }
 
+function smwfHaloFactBoxLinks(&$links) {
+	global $wgContLang;
+	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&title='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
+	$links[] = array('smwoblink', $oblink);
+	return true;
+}
+
 /**
  * Creates or updates additional tables needed by HALO.
  * Called from SMW when admin re-initializes tables 
@@ -89,6 +98,7 @@ function smwfHaloInitializeTables($verbose) {
 	if ($haloSQLStore != NULL) { 	
 		$haloSQLStore->createOrUpdateTables($verbose);
 	}
+	return true;
 }
 /**
  * Registers SMW Halo Content messages.
@@ -207,19 +217,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 			}
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
 			
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "edit");
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
 			
-			$lng = '/scripts/Language/SMW_Language';
-			if (!empty($wgLanguageCode)) {
-				$lng .= ucfirst($wgLanguageCode).'.js';
-				if (file_exists($smwgHaloIP . $lng)) {
-					$jsm->addScriptIf($smwgHaloScriptPath . $lng);
-				} else {
-					$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js');
-				}
-			} else {
-				$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js');
-			}
+			smwfHaloAddJSLanguageScripts(&$jsm);
 
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/STB_Framework.js', "edit");
 
@@ -256,17 +256,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 
 		} else {
-			$lng = '/scripts/Language/SMW_Language';
-			if (!empty($wgLanguageCode)) {
-				$lng .= ucfirst($wgLanguageCode).'.js';
-				if (file_exists($smwgHaloIP . $lng)) {
-					$jsm->addScriptIf($smwgHaloScriptPath . $lng);
-				} else {
-					$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js');
-				}
-			} else {
-				$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js');
-			}
+			smwfHaloAddJSLanguageScripts(&$jsm);
 			
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployScripts.js');
 
@@ -280,5 +270,21 @@ function smwfHaloAddHTMLHeader(&$out) {
 		return true; // always return true, in order not to stop MW's hook processing!
 }
 
-
+/**
+ * Add appropriate JS language script
+ */
+function smwfHaloAddJSLanguageScripts(&$jsm, $mode = "all", $namespace = -1, $pages = array()) {
+	global $smwgHaloIP, $wgLanguageCode, $smwgHaloScriptPath;
+	$lng = '/scripts/Language/SMW_Language';
+	if (!empty($wgLanguageCode)) {
+		$lng .= ucfirst($wgLanguageCode).'.js';
+		if (file_exists($smwgHaloIP . $lng)) {
+			$jsm->addScriptIf($smwgHaloScriptPath . $lng, $mode, $namespace, $pages);
+		} else {
+			$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
+		}
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
+	}
+}
 ?>

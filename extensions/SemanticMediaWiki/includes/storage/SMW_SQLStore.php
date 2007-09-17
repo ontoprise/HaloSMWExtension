@@ -1103,8 +1103,6 @@ class SMWSQLStore extends SMWStore {
 		                    'object_title'      => 'VARCHAR(255) NOT NULL'), $db, $verbose);
 		$this->setupIndex($smw_subprops, array('subject_title', 'object_title'), $db);
 	
-		wfRunHooks('SMW_InitializeTables', array($verbose));
-		
 		$this->reportProgress("Database initialised successfully.\n",$verbose);
 		return true;
 	}
