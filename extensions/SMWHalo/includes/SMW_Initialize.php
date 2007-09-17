@@ -4,6 +4,7 @@
  *
  * Author: kai
  */
+ 
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_HINT', 1);
 define('SMW_SSP_HAS_RANGE_HINT', 2);
@@ -19,29 +20,27 @@ define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 
- // position of php interpreter
-$semanticAC = false;
-$phpInterpreter="D:/xampp152/xampp/php/php";
-// gardening bot delay which is taken periodically
-$wgGardeningBotDelay = 100;
-$smwgAllowNewHelpQuestions = true;
-$wgShowExceptionDetails = true;
-$smtpServerIP = "87.106.5.57";
-$smwgIQEnabled = true;
-$smwgDeployVersion = false;
-
+/**
+ * Configures SMW Halo Extension for initialization. 
+ * Must be called *BEFORE* SMW is intialized.
+ */
 function enableSMWHalo() {
-	
 	global $wgHooks;
 	$wgHooks['SMWExtension'][] = 'smwgHaloSetupExtension';	
+	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
 }
 
+/**
+ * Intializes SMW Halo Extension.
+ * Called from SMW during initialization.
+ */
 function smwgHaloSetupExtension() {
 	global $smwgHaloIP, $wgHooks;
 	
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
 	smwfInitGeneralStore();
+
 	
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
@@ -63,6 +62,18 @@ function smwgHaloSetupExtension() {
 	return true;
 }
 
+/**
+ * Registeres SMW Halo Datatypes. Called from SMW.
+ */
+function smwfInitHaloDatatypes() { 
+	SMWDataValueFactory::registerDataValueClass('_chf','ChemFormula','SMWChemicalFormulaTypeHandler');
+	SMWDataValueFactory::registerDataValueClass('_che','ChemEquation','SMWChemicalEquationTypeHandler');
+	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
+}
+
+/**
+ * Registers SMW Halo Content messages.
+ */
 function smwfHaloInitContentLanguage($langcode) {
 		global $smwgHaloIP, $smwgHaloContLang;
 		if (!empty($smwgHaloContLang)) { return; }
@@ -83,6 +94,9 @@ function smwfHaloInitContentLanguage($langcode) {
 	
 }
 
+/**
+ * Registers SMW Halo User messages.
+ */
 function smwfHaloInitUserMessages() {
 		global $smwgHaloIP, $smwgHaloLang;
 		if (!empty($smwgHaloLang)) { return; }
@@ -118,17 +132,26 @@ function smwfHaloInitContentMessages() {
 		
 }
 
+/**
+ * Initializes GeneralStore (additional methods to access semantic model)
+ */
 function smwfInitGeneralStore() {
 		global $smwgMasterGeneralStore, $smwgHaloIP;
 		require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserSQLAccess.php');
 		$smwgMasterGeneralStore = new SMWOntologyBrowserSQLAccess();
 }
 
+/**
+ * Returns GeneralStore
+ */
 function &smwfGetOntologyBrowserAccess() {
 		global $smwgMasterGeneralStore;
 		return $smwgMasterGeneralStore;
 }
 
+/**
+ * Checks if a database function is available (considers only UDF functions).
+ */
 function smwfDBSupportsFunction($functionname) {
 		$dbr =& wfGetDB( DB_SLAVE );
 		$res = $dbr->query('SELECT * FROM mysql.func WHERE name = '.$dbr->addQuotes($functionname).' AND type='.$dbr->addQuotes('function'));
@@ -137,6 +160,9 @@ function smwfDBSupportsFunction($functionname) {
 		return $hasSupport;
 	}
 
+/**
+ * Called from MW to fill HTML Header before page is displayed.
+ */
 function smwfHaloAddHTMLHeader(&$out) {
 		global $wgStylePath;
 		global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;

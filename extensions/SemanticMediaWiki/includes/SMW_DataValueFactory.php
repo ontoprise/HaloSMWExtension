@@ -276,3 +276,4 @@ SMWDataValueFactory::registerDataValueClass('_wpg','WikiPage','SMWWikiPageValue'
 SMWDataValueFactory::registerDataValueClass('__typ','Types','SMWTypesValue');
 SMWDataValueFactory::registerDataValueClass('__nry','NAry','SMWNAryValue');
 SMWDataValueFactory::registerDataValueClass('__err','Error','SMWErrorValue');
+wfRunHooks('SMW_Datatypes');
