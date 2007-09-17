@@ -1143,14 +1143,14 @@ AutoCompleter.prototype = {
             Element.addClassName(mwContentHeader, "MWFloaterContentHeader");
 
             var textinHeader = document.createElement("span");
-             //textinHeader.setAttribute("src", wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/Autocompletion/clicktodrag.gif");
+             //textinHeader.setAttribute("src", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/Autocompletion/clicktodrag.gif");
             textinHeader.setAttribute("style", "margin-left:5px;");
             textinHeader.innerHTML = gLanguage.getMessage('AC_CLICK_TO_DRAG');
 
             var cross = document.createElement("img");
             Element.addClassName(cross, "closeFloater");
             cross.setAttribute("src",
-                wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/Autocompletion/close.gif");
+                wgServer + wgScriptPath + "/extensions/SMWHalo/skins/Autocompletion/close.gif");
             cross.setAttribute("onclick", "javascript:autoCompleter.hideSmartInputFloater()");
             cross.setAttribute("style", "margin-left:4px;margin-bottom:3px;");
 
@@ -1203,7 +1203,7 @@ AutoCompleter.prototype = {
         var pending = document.createElement("img");
         Element.addClassName(pending, "pendingElement");
         pending.setAttribute("src",
-            wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/Autocompletion/pending.gif");
+            wgServer + wgScriptPath + "/extensions/SMWHalo/skins/Autocompletion/pending.gif");
         pending.setAttribute("id", "pendingAjaxIndicator");
         return pending;
     },
@@ -1253,19 +1253,19 @@ function SmartInputMatch(cleanValue, value, type) {
     this.getImageTag = function() {
         if (_type == SMW_INSTANCE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SemanticMediaWiki/skins/Autocompletion/instance.gif\">";
+                + "/extensions/SMWHalo/skins/instance.gif\">";
         } else if (_type == SMW_CATEGORY_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SemanticMediaWiki/skins/Autocompletion/concept.gif\">";
+                + "/extensions/SMWHalo/skins/concept.gif\">";
         } else if (_type == SMW_PROPERTY_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SemanticMediaWiki/skins/Autocompletion/property.gif\">";
+                + "/extensions/SMWHalo/skins/property.gif\">";
         } else if (_type == SMW_TEMPLATE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SemanticMediaWiki/skins/Autocompletion/template.gif\">";
+                + "/extensions/SMWHalo/skins/template.gif\">";
         } else if (_type == SMW_TYPE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SemanticMediaWiki/skins/Autocompletion/template.gif\">"; // FIXME: separate icon for TYPE namespace
+                + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
         }
 
         return "";  // do not return a tag, if type is unknown.

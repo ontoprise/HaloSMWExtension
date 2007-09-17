@@ -1061,10 +1061,10 @@ OBGlobalActionListener.prototype = {
 		var img = Event.element(event);
 		if (OB_LEFT_ARROW == 0) {
 			OB_LEFT_ARROW = 1;
-			img.setAttribute("src",wgScriptPath+"/extensions/SemanticMediaWiki/skins/OntologyBrowser/images/bigarrow_left.gif");
+			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow_left.gif");
 		} else {
 			OB_LEFT_ARROW = 0;
-			img.setAttribute("src",wgScriptPath+"/extensions/SemanticMediaWiki/skins/OntologyBrowser/images/bigarrow.gif");
+			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif");
 		}
 	},
 	
@@ -1072,10 +1072,10 @@ OBGlobalActionListener.prototype = {
 		var img = Event.element(event);
 		if (OB_RIGHT_ARROW == 0) {
 			OB_RIGHT_ARROW = 1;
-			img.setAttribute("src",wgScriptPath+"/extensions/SemanticMediaWiki/skins/OntologyBrowser/images/bigarrow_left.gif");
+			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow_left.gif");
 		} else {
 			OB_RIGHT_ARROW = 0;
-			img.setAttribute("src",wgScriptPath+"/extensions/SemanticMediaWiki/skins/OntologyBrowser/images/bigarrow.gif");
+			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif");
 		}
 	}
 }
