@@ -28,6 +28,7 @@ function enableSMWHalo() {
 	global $wgHooks;
 	$wgHooks['SMWExtension'][] = 'smwgHaloSetupExtension';	
 	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
+	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 }
 
 /**
@@ -72,6 +73,23 @@ function smwfInitHaloDatatypes() {
 	return true;
 }
 
+/**
+ * Creates or updates additional tables needed by HALO.
+ * Called from SMW when admin re-initializes tables 
+ */
+function smwfHaloInitializeTables($verbose) {
+	$haloSQLStore = NULL;
+	global $smwgDefaultStore, $smwgHaloIP;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_MWDB): default:
+					require_once($smwgHaloIP . '/includes/SMW_InitializeSQLDB.php');
+					$haloSQLStore = new HaloSQLTableFactory();
+				break;
+			}
+	if ($haloSQLStore != NULL) { 	
+		$haloSQLStore->createOrUpdateTables($verbose);
+	}
+}
 /**
  * Registers SMW Halo Content messages.
  */
@@ -170,7 +188,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		
 		$jsm = SMWResourceManager::SINGLETON();
 
-		$jsm->addCSSIf($smwgHaloScriptPath . '/scripts/Autocompletion/wick.css');
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
 		$jsm->addCSSIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
 
 		// serialize the css
@@ -261,4 +279,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->serializeScripts($out);
 		return true; // always return true, in order not to stop MW's hook processing!
 }
+
+
 ?>
