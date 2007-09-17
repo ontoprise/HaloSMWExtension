@@ -67,7 +67,7 @@ editAreaLoader.load_syntax["wiki"] = {
 			'relation': 'color: #ff9602; font-weight: bold;'
 			,'attribute': 'color: #ff9602; font-weight: bold;'
 			,'category': 'color: #064df3; font-weight: bold;'
-			,'template': 'color: #990000;'
+			,'template': 'color: #990000; font-weight: bold;'
 			,'link': 'color: #0000ff; text-decoration: underline;'
 		}
 	}

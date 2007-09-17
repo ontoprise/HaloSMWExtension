@@ -17,21 +17,22 @@ function doSMWQueryInterface()  {
 SpecialPage::addPage( new SpecialPage('QueryInterface','',true,'doSMWQueryInterface',false)) ;
 
 function smwfQIAddHTMLHeader(&$out){
-	global $smwgScriptPath;
+	global $smwgHaloScriptPath;
 
 
 	$jsm = SMWResourceManager::SINGLETON();
 
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/QueryInterface/treeviewQI.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/QueryInterface/queryTree.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addScriptIf($smwgScriptPath .  '/skins/QueryInterface/qi.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/treeviewQI.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/queryTree.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/qi.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, NS_SPECIAL.":QueryInterface");
 
-	$jsm->addCSSIf($smwgScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addCSSIf($smwgScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
 
 	return true;
 }
@@ -46,11 +47,11 @@ class SMWQueryInterface{
  */
 	static function execute() {
 
-		global $wgRequest, $wgOut, $smwgScriptPath;
+		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 
 		$wgOut->setPageTitle("Query Interface");
 
-		$imagepath = $smwgScriptPath . '/skins/QueryInterface/images/';
+		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>' .

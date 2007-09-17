@@ -13,13 +13,13 @@ function updateQueryTree(xmltext){
 		var QI_xsltProcessor_gecko = new XSLTProcessor();
 
 	  	var myXMLHTTPRequest = new XMLHttpRequest();
-	  	myXMLHTTPRequest.open("GET", wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/QueryInterface/treeview.xslt", false);
+	  	myXMLHTTPRequest.open("GET", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/QueryInterface/treeview.xslt", false);
 	 	myXMLHTTPRequest.send(null);
 	  	var xslRef = myXMLHTTPRequest.responseXML;
 
 	  	// Finally import the .xsl
 	  	QI_xsltProcessor_gecko.importStylesheet(xslRef);
-	  	QI_xsltProcessor_gecko.setParameter(null, "param-img-directory", wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/QueryInterface/images/");
+	  	QI_xsltProcessor_gecko.setParameter(null, "param-img-directory", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/QueryInterface/images/");
 
 		var fragment = QI_xsltProcessor_gecko.transformToFragment(xmldoc, document);
 
@@ -34,12 +34,12 @@ function updateQueryTree(xmltext){
 		xsl.async = false;
 
 		// load stylesheet
-		xsl.load(wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/QueryInterface/treeview.xslt");
+		xsl.load(wgServer + wgScriptPath + "/extensions/SMWHalo/skins/QueryInterface/treeview.xslt");
 		// create XSLT Processor
 		var template = new ActiveXObject("Msxml2.XSLTemplate");
 		template.stylesheet = xsl;
 		var QI_xsltProcessor_ie = template.createProcessor();
-		QI_xsltProcessor_ie.addParameter("param-img-directory", wgServer + wgScriptPath + "/extensions/SemanticMediaWiki/skins/QueryInterface/images/");
+		QI_xsltProcessor_ie.addParameter("param-img-directory", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/QueryInterface/images/");
 
 		//QI_xsltProcessor_ie.addParameter("startDepth", 0);
 		QI_xsltProcessor_ie.input = xmldoc;

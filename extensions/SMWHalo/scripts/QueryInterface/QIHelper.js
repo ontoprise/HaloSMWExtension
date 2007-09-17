@@ -4,7 +4,7 @@ var QIHelper = Class.create();
 QIHelper.prototype = {
 
 initialize:function(){
-	this.imgpath = wgScriptPath  + '/extensions/SemanticMediaWiki/skins/QueryInterface/images/';
+	this.imgpath = wgScriptPath  + '/extensions/SMWHalo/skins/QueryInterface/images/';
 	this.numTypes = new Array();
 	this.getNumericDatatypes();
 	this.queries = Array();

@@ -32,7 +32,7 @@ $wgAjaxExportList[] = 'smwgNewAttributeWithType';
  * @return $html html-string containing help
  */
 function smwfGetHelp($namespace, $action){
-	global $wgScriptPath, $smwgAllowNewHelpQuestions;
+	global $wgScriptPath, $smwgHaloScriptPath, $smwgAllowNewHelpQuestions;
 	$html = '';
 	$helppages = array();
 	$results = false;
@@ -89,7 +89,7 @@ function smwfGetHelp($namespace, $action){
 	if ($smwgAllowNewHelpQuestions){
 		$html .= '<a onclick="$(\'askHelp\').show()">Ask your own question</a><br/>';
 		$html .= '<div id="askHelp" style="display:none"><input id="question" name="question" type="text" size="20" onKeyPress="return submitenter(this,event)"/>';
-		$html .= '<img id="questionLoaderIcon" style="display:none; margin-bottom:3px; margin-left:3px;" src="' . $wgScriptPath . '/extensions/SemanticMediaWiki/skins/ajax-loader.gif"/><br/>';
+		$html .= '<img id="questionLoaderIcon" style="display:none; margin-bottom:3px; margin-left:3px;" src="' . $smwgHaloScriptPath . '/skins/ajax-loader.gif"/><br/>';
 		$html .= '<a onclick="askQuestion()">Send</a>&nbsp;&nbsp;&nbsp;<a onclick="$(\'askHelp\').hide()">Cancel</a></div>';
 	}
 	return $html;
@@ -147,11 +147,11 @@ function smwfAskQuestion($namespace, $action, $question){
  * @return $html htmlstring containing all links
  */
 function getLinks($articleId){
-	global $wgArticlePath, $smwgScriptPath;
+	global $wgArticlePath, $smwgHaloScriptPath;
 	$linksExist = false;
 	$html = '<div id="edit">' .
 			'Filter:&nbsp;<input name="filter" size="15" id="linkfilter" onkeyup="filter(this, \'linktable\', 0)" type="text">' .
-			'&nbsp;<a href="javascript:update()"><img src="' . $smwgScriptPath . '/skins/redcross.gif"/></a>' .
+			'&nbsp;<a href="javascript:update()"><img src="' . $smwgHaloScriptPath . '/skins/redcross.gif"/></a>' .
 			'<hr/><table class="linktable" id="linktable">';
 	$dbr =& wfGetDB( DB_SLAVE );
 	$url = str_replace('$1','',$wgArticlePath);
@@ -182,7 +182,6 @@ function getLinks($articleId){
 }
 
 function getCategoryToolbar(){
-	global $smwgScriptPath;
 	$html = '<div class="cattoolbar"><SELECT class="catList" NAME = "CategoryList"  size = 10 onclick="catToolBar.getselectedItem()">
           	  </SELECT></div>';
     /* Space */
@@ -194,7 +193,6 @@ function getCategoryToolbar(){
 }
 
 function getAttributeToolbar(){
-	global $smwgScriptPath;
 	$html = '<div class="atrtoolbar"><SELECT class="atrList" NAME = "AttributeList"  size = 10 onclick="atrToolBar.getselectedItem()">
           	  </SELECT></div>';
     /* Space */
@@ -207,7 +205,6 @@ function getAttributeToolbar(){
 }
 
 function getRelationToolbar(){
-	global $smwgScriptPath;
 	$html = '<div class="reltoolbar"><SELECT class="relList" NAME = "RelationList"  size = 10 onclick="relToolBar.getselectedItem()">
           	  </SELECT></div>';
     /* Space */
@@ -309,7 +306,7 @@ function checkSelection($articleId, $markedText){
  * @param $articleId ID of current article
  */
 function smwgGetDatatypeSelector($articleId){
-	global $wgScriptPath;
+	global $smwgHaloScriptPath;
 	$curType = '';
 
 	//check if the page already has a type
@@ -332,7 +329,7 @@ function smwgGetDatatypeSelector($articleId){
 			$html .= '<option value="' . $type . '">' . $type . '</option>';
 		}
 	}
-	$html .= '</select><img id="typeloader" style="display:none; margin-top:3px; margin-left:3px" src="' . $wgScriptPath . '/extensions/SemanticMediaWiki/skins/ajax-loader.gif"/>';
+	$html .= '</select><img id="typeloader" style="display:none; margin-top:3px; margin-left:3px" src="' . $smwgHaloScriptPath . '/skins/ajax-loader.gif"/>';
 	return $html;
 }
 
@@ -345,7 +342,7 @@ function smwfGetBuiltinDatatypes(){
 	global $smwgIP;
 	include_once($smwgIP . '/includes/SMW_Datatype.php');
 	$result = "Builtin types:";
-	
+
 	$types = SMWTypeHandlerFactory::getTypeLabels();
 	asort($types);
 	foreach($types as $key => $type){
@@ -362,27 +359,27 @@ function smwfGetUserDatatypes(){
 	global $smwgIP;
 	include_once($smwgIP . '/includes/SMW_Datatype.php');
 	$result = "User defined types:";
-	
+
 	$db =& wfGetDB( DB_MASTER );
 
 	$NStype = SMW_NS_TYPE;
 	$page = $db->tableName( 'page' );
-	$sql = "SELECT 'Types' as type, 
+	$sql = "SELECT 'Types' as type,
 				{$NStype} as namespace,
 				page_title as title,
 				page_title as value,
 				1 as count
 				FROM $page
 				WHERE page_namespace = $NStype";
-	 
+
 	$res = $db->query($sql);
-	
-	// Builtin types may appear in the list of user types (if there is an 
+
+	// Builtin types may appear in the list of user types (if there is an
 	// article for them). They have to be removed from the user types
 	$builtinTypes = SMWTypeHandlerFactory::getTypeLabels();
-	
+
 	$userTypes = array();
-	
+
 	if ($db->numRows($res) > 0) {
 		while($row = $db->fetchObject($res)) {
 			$userTypes[] = str_replace("_", " ", $row->title);
@@ -391,8 +388,8 @@ function smwfGetUserDatatypes(){
 	$db->freeResult($res);
 
 	$userTypes = array_diff($userTypes, $builtinTypes);
-	
-	foreach($userTypes as $key => $type) { 
+
+	foreach($userTypes as $key => $type) {
 		$result .= ",".$type;
 	}
 

@@ -9,14 +9,14 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 
 protected $smwContentMessages = array(
-	
+
 	'smw_viewinOB' => 'Open in OntologyBrowser',
-	
+
 	'smw_att_head' => 'Attribute values',
 	'smw_rel_head' => 'Relations to other pages',
 	'smw_predefined_props' => 'This is the predefined property "$1"',
 	'smw_predefined_cats' => 'This is the predefined category "$1"',
-	
+
 	'smw_noattribspecial' => 'Special property "$1" is not an attribute (use "::" instead of ":=").',
 	'smw_notype' => 'No type defined for attribute.',
 	/*Messages for Autocompletion*/
@@ -53,7 +53,7 @@ protected $smwContentMessages = array(
 protected $smwUserMessages = array(
 	'smw_devel_warning' => 'This feature is currently under development, and might not be fully functional. Backup your data before using it.',
 	// Messages for pages of types, relations, and attributes
-	
+
 	'smw_relation_header' => 'Pages using the property "$1"',
 	'smw_relationarticlecount' => '<p>Showing $1 pages using this property.</p>',
 	'smw_subproperty_header' => 'Sub-properties of "$1"',
@@ -73,7 +73,7 @@ protected $smwUserMessages = array(
 	'smw_category_nrna_range' => 'Pages with wrongly assigned range "$1".',
 	'smw_category_nrna_range_expl' => 'These page have a range hint but they are not a property.',
 
-	
+
 	'smw_exportrdf_all' => 'Export all semantic data',
 
 	// Messages for Search Triple Special
@@ -88,7 +88,7 @@ protected $smwUserMessages = array(
 	'smw_searchtriple_searchatt' => 'Search Attributes',
 	'smw_searchtriple_resultrel' => 'Search results (relations)',
 	'smw_searchtriple_resultatt' => 'Search results (attributes)',
-	
+
 	// Messages for Relations Special
 	'relations' => 'Relations',
 	'smw_relations_docu' => 'The following relations exist in the wiki.',
@@ -102,7 +102,7 @@ protected $smwUserMessages = array(
 	'smw_properties_sortalpha' => 'Sort alphabetically',
 	'smw_properties_sortmoddate' => 'Sort by modification date',
 	'smw_properties_sorttyperange' => 'Sort by type/range',
-	
+
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
 	'smw_properties_sortnary' => 'N-ary properties',
@@ -112,14 +112,14 @@ protected $smwUserMessages = array(
 	// Messages for Unused Attributes Special
 	'unusedattributes' => 'Unused attributes',
 	'smw_unusedattributes_docu' => 'The following attribute pages exist although no other page makes use of them.',
-	
-	
+
+
 /*Messages for OntologyBrowser*/
 	'ontologybrowser' => 'OntologyBrowser',
 	'smw_ac_hint' => 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Category Tree',
 	'smw_ob_attributeTree' => 'Property Tree',
-	
+
 	'smw_ob_instanceList' => 'Instances',
 	'smw_ob_rel' => 'Relations',
 	'smw_ob_att' => 'Attributes',
@@ -199,7 +199,7 @@ clicking the big arrows between the columns.',
 
 	'smw_gard_errortype_categorygraph_contains_cycles' => 'The category graph contains cycles',
 	'smw_gard_errortype_propertygraph_contains_cycles' => 'The property graph contains cycles',
-	
+
 	'smw_gard_errortype_relation_problems' => 'Property schema problems',
 	'smw_gard_errortype_attribute_problems' => 'Property schema problems',
 	'smw_gard_errortype_inconsistent_relation_annotations' => 'Inconsistent property annotations',
@@ -222,7 +222,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_similarityterm' => 'Search for entities similar to the following term (may be empty)',
 	'smw_gard_similaritybothelp' => 'This is the bot to identify entities in the knowledgebase that could potentially be unified. If you enter a term, the system will try to find entities which are similar to that. If you do not enter a term, the system will find possibly redundant entities.',
 	'smw_gard_similarannotation' => '$1 of article $2 may be intended as annotation of $3',
-	
+
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category.',
 	'smw_gard_property_undefined' => '[[$2:$1]] used on : $3',
@@ -239,7 +239,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_missingannot_docu' => 'This bot identifies pages in the Wiki that are not annotated.',
 	'smw_gard_missingannot_titlecontaining' => '(Optional) Only Pages with a title containing',
 	'smw_gard_missingannot_restricttocategory' => 'Restrict to categories',
-	
+
 	/* Anomalies */
 	'smw_gard_anomaly_checknumbersubcat' => 'Check number of sub categories',
 	'smw_gard_anomaly_checkcatleaves' => 'Check for category leafs',
@@ -270,17 +270,17 @@ clicking the big arrows between the columns.',
 	'smw_cs_openpage_in_ob' => 'Open in Ontology Browser',
 	'smw_cs_openpage_in_editmode' => 'Edit page',
 	'smw_cs_no_triples_found' => 'No triples found!',
-	
+
 	'smw_autogen_mail' => 'This is an automatically generated email. Do not reply!',
-	
+
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
 	'smw_gard_import_locationowl' => 'Location of OWL file',
-	
+
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
-	
+
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Context Sensitive Help',
 	'smw_contextsensitivehelp' => 'Context Sensitive Help',
@@ -288,7 +288,25 @@ clicking the big arrows between the columns.',
 
 	/*Messages for Query Interface*/
 	'queryinterface' => 'Query Interface',
-	'smw_queryinterface' => 'Query Interface'
+	'smw_queryinterface' => 'Query Interface',
+	'smw_qi_add_category' => 'Add Category',
+	'smw_qi_add_instance' => 'Add Instance',
+	'smw_qi_add_property' => 'Add Property',
+	'smw_qi_add' => 'Add',
+	'smw_qi_confirm' => 'OK',
+	'smw_qi_cancel' => 'Cancel',
+	'smw_qi_delete' => 'Delete',
+	'smw_qi_preview' => 'Preview Results',
+	'smw_qi_no_preview' => 'No preview available yet',
+	'smw_qi_clipboard' => 'Copy to clipboard',
+	'smw_qi_reset' => 'Reset Query',
+	'smw_qi_reset_confirm' => 'Do you really want to reset your query?',
+	'smw_qi_querytree_heading' => 'Query Tree',
+	'smw_qi_main_query_name' => 'Main',
+	'smw_qi_layout_manager' => 'Query Layout Manager',
+	'smw_qi_table_column_preview' => 'Table Column Preview',
+	'smw_qi_article_title' => 'Article title',
+	'smw_qi_close_preview' => 'Close Preview'
 );
 
 protected $smwDatatypeLabels = array(
@@ -315,7 +333,7 @@ protected $smwDatatypeLabels = array(
 	'smw_chemicalformula' => 'Chemical formula', // name of the type for chemical formulas
 	'smw_chemicalequation' => 'Chemical equation', // name of the type for chemical equations
 	'smw_mathematicalequation' => 'Mathematical equation' // name of the type for mathematical equations
-	
+
 );
 
 protected $smwSpecialProperties = array(
