@@ -439,7 +439,7 @@
  	
  	public static function getImageReference($page) {
  		global $wgServer, $wgScriptPath;
- 		$imagePath = "$wgServer$wgScriptPath/extensions/SemanticMediaWiki/skins/Autocompletion/";
+ 		$imagePath = "$wgServer$wgScriptPath/extensions/SMWHalo/skins/";
  		switch($page->getNamespace()) {
  			case NS_MAIN: { $imagePath .= "instance.gif"; break; }
  			case NS_CATEGORY: { $imagePath .= "concept.gif"; break; }

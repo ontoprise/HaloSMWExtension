@@ -31,7 +31,7 @@ var SMW_PRP_HINT_CATEGORY =
 	'typeHint = "14" ';
 
 var SMW_PRP_HINT_PROPERTY =
-	'typeHint="100" ';
+	'typeHint="102" ';
 	
 var SMW_PRP_CHECK_EMPTY = 
 	'smwCheckEmpty="empty' +

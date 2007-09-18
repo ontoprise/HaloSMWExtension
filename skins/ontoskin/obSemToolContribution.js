@@ -62,7 +62,7 @@ OBSemanticToolbarContributor.prototype = {
 		} else {
 			// selected
 			Field.enable("openEntityInOB");
-			$("openEntityInOB").innerHTML = "" + "Open in OntologyBrowser";
+			$("openEntityInOB").innerHTML = "" + "Open in OB";
 			this.textArea.focus();
 		}
 	},

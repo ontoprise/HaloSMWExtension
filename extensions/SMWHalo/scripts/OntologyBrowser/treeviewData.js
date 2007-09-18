@@ -297,7 +297,7 @@ filterBrowseInstances: function(title) {
    	
 },
 
-filterBrowserProperties: function(title) {
+filterBrowseProperties: function(title) {
 		// initialize with given attribute
    	 function filterBrowsingAttributeCallback(request) {
 		OB_tree_pendingIndicator.hide();
