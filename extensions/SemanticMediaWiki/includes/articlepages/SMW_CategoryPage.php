@@ -12,8 +12,9 @@
 if( !defined( 'MEDIAWIKI' ) )
 	die( 1 );
 
-global $IP, $wgHooks;
+global $IP, $wgHooks, $smwgIP;
 require_once( "$IP/includes/CategoryPage.php");
+require_once($smwgIP. "/includes/SMW_Infolink.php");
 
 $wgHooks['CategoryPageView'][] = 'smwfSemanticCategoryPage';
 
@@ -156,14 +157,14 @@ class SMWCategoryViewer extends CategoryViewer {
 	 */
 	private function getShortRelationList($options, $domain) {
 		global $wgContLang;
-		global $smwgContLang;
+		global $smwgHaloContLang;
 		
 		$ti = htmlspecialchars( $this->title->getText() );
 		$store = smwfGetStore();
 				
 		// retrieve all properties of this category
 	
-		$sspa = $smwgContLang->getSpecialSchemaPropertyArray();
+		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$relationName = $sspa[$domain ? SMW_SSP_HAS_DOMAIN_HINT 
 		                              : SMW_SSP_HAS_RANGE_HINT];
 		$relationTitle = Title::newFromText($relationName);
@@ -193,11 +194,11 @@ class SMWCategoryViewer extends CategoryViewer {
 	 */
 	private function getPropertyList($ns, $properties, $domain) {
 		global $wgContLang;
-		global $smwgContLang;
+		global $smwgHaloContLang;
 		
 		$props = array();
 		$store = smwfGetStore();
-		$sspa = $smwgContLang->getSpecialSchemaPropertyArray();
+		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$relationTitle = Title::newFromText($sspa[SMW_SSP_HAS_RANGE_HINT]);
 		                                         
 		foreach ($properties as $prop) {
