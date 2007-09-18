@@ -55,8 +55,8 @@ function smwfCancelGardeningBot($taskid) {
 	$processID = GardeningBot::getProcessID($taskid);
 	if ($processID != NULL) {
 		GardeningBot::killProcess($processID);
-		GardeningLog::removeGardeningTask($taskid);
 	} 
+	GardeningLog::removeGardeningTask($taskid);
 	return SMW_Gardening::getGardeningLogTable();
 }
 
