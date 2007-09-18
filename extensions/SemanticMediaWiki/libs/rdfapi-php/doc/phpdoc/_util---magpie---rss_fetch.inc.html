@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs for page rss_fetch.inc</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="file-name">/util/magpie/rss_fetch.inc</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+									<a href="#sec-includes">Includes</a>
+			|							<a href="#sec-constants">Constants</a>
+			|									<a href="#sec-functions">Functions</a>
+			</div>
+	<div class="info-box-body">	
+		<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">filesource:</span> <a href="../__filesource/fsource___utilmagpierss_fetch.inc.html">Source Code for this file</a></li>
+			</ul>
+		
+			</div>
+</div>
+		
+
+	<a name="sec-includes"></a>	
+	<div class="info-box">
+		<div class="info-box-title">Includes</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Includes</span>
+			|							<a href="#sec-constants">Constants</a>
+				|													<a href="#sec-functions">Functions</a>
+					</div>
+		<div class="info-box-body">	
+			<a name="_MAGPIE_DIR_rss_parse_inc"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="include-title">
+			<span class="include-type">require_once</span>
+			(<span class="include-name"><a href="..//_util---magpie---rss_parse.inc.html">MAGPIE_DIR.'rss_parse.inc'</a></span>)
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a30">30</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+</div>
+<a name="_MAGPIE_DIR_rss_cache_inc"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="include-title">
+			<span class="include-type">require_once</span>
+			(<span class="include-name"><a href="..//_util---magpie---rss_cache.inc.html">MAGPIE_DIR.'rss_cache.inc'</a></span>)
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a31">31</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+</div>
+<a name="_MAGPIE_EXTLIB_Snoopy_class_inc"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="include-title">
+			<span class="include-type">require_once</span>
+			(<span class="include-name"><a href="..//_util---magpie---extlib---Snoopy.class.inc.html">Snoopy.class.inc</a></span>)
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a35">35</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+</div>
+		</div>
+	</div>
+	
+	<a name="sec-constants"></a>	
+	<div class="info-box">
+		<div class="info-box-title">Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-includes">Includes</a>
+				|						<span class="disabled">Constants</span>
+			|										<a href="#sec-functions">Functions</a>
+					</div>
+		<div class="info-box-body">	
+			<a name="defineDIR_SEP"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="const-title">
+			<span class="const-name">DIR_SEP</span> = DIRECTORY_SEPARATOR
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a23">23</a></span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+		
+</div>
+<a name="defineMAGPIE_DIR"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="const-title">
+			<span class="const-name">MAGPIE_DIR</span> = dirname(__FILE__).DIR_SEP
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a27">27</a></span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+		
+</div>
+<a name="defineMAGPIE_EXTLIB"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="const-title">
+			<span class="const-name">MAGPIE_EXTLIB</span> = MAGPIE_DIR.'extlib'.DIR_SEP
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a34">34</a></span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+		
+</div>
+<a name="defineMAGPIE_VERSION"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="const-title">
+			<span class="const-name">MAGPIE_VERSION</span> = '0.72'
+			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a84">84</a></span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+		
+</div>
+		</div>
+	</div>
+	
+	
+	<a name="sec-functions"></a>	
+	<div class="info-box">
+		<div class="info-box-title">Functions</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-includes">Includes</a>
+				|										<a href="#sec-constants">Constants</a>
+				|									<span class="disabled">Functions</span>
+		</div>
+		<div class="info-box-body">	
+			<a name="functiondebug" id="functiondebug"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">debug</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a242">242</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			debug
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$debugmsg</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$lvl</span> = <span class="var-default">E_USER_NOTICE</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$debugmsg</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$lvl</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionerror" id="functionerror"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a228">228</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			error
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$errormsg</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$lvl</span> = <span class="var-default">E_USER_WARNING</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$errormsg</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$lvl</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionfetch_rss" id="functionfetch_rss"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">fetch_rss</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a88">88</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			fetch_rss
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$url</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$url</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functioninit" id="functioninit"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">init</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a333">333</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			init
+		</span>
+				()
+			</div>
+
+		
+	
+</div>
+<a name="functionis_client_error" id="functionis_client_error"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">is_client_error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a446">446</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_client_error
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionis_error" id="functionis_error"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">is_error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a438">438</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_error
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionis_info" id="functionis_info"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">is_info</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a414">414</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_info
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionis_redirect" id="functionis_redirect"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">is_redirect</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a430">430</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_redirect
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionis_server_error" id="functionis_server_error"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">is_server_error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a454">454</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_server_error
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionis_success" id="functionis_success"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">is_success</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a422">422</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_success
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sc</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sc</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionmagpie_error" id="functionmagpie_error"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">magpie_error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a250">250</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			magpie_error
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$errormsg</span> = <span class="var-default">&amp;quot;&amp;quot;</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$errormsg</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="function_fetch_remote_file" id="function_fetch_remote_file"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<span class="method-title">_fetch_remote_file</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a267">267</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_fetch_remote_file
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$url</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$headers</span> = <span class="var-default">&amp;quot;&amp;quot;</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$url</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$headers</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="function_response_to_rss" id="function_response_to_rss"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<span class="method-title">_response_to_rss</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_fetch.inc.html#a288">288</a></span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_response_to_rss
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$resp</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$resp</span>			</li>
+				</ul>
+		
+	
+</div>
+		</div>
+	</div>
+	
+	<p class="notes" id="credit">
+		Documentation generated on Fri,  1 Jun 2007 16:51:45 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+	</p>
+	</div></body>
+</html>

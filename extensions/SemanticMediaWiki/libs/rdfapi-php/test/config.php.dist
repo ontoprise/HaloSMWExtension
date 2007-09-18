@@ -1,0 +1,22 @@
+<?php
+//sample config.
+//make a copy, change it to your paths and save it as config.php
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
+$base = dirname(__FILE__) . '/../';
+define('SIMPLETEST_INCLUDE_DIR' , $base . '../simpletest/');
+define('RDFAPI_INCLUDE_DIR'     , $base . '/api/');
+define('RDFAPI_TEST_INCLUDE_DIR', $base);
+define('SPARQL_TESTFILES'       , RDFAPI_TEST_INCLUDE_DIR . 'test/unit/Sparql/');
+$GLOBALS['testDebug'] = false;
+
+$GLOBALS['dbConf'] = array(
+    'type'      => 'MySQL',
+    'host'      => 'localhost',
+    'database'  => '',
+    'user'      => '',
+    'password'  => ''
+);
+
+define('LOG', false);
+?>

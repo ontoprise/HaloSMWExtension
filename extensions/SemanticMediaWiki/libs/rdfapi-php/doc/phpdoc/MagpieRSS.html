@@ -1,0 +1,1079 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class MagpieRSS</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class MagpieRSS</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Hybrid parser, and object, takes RSS as a string and returns a simple object.</p>
+<p class="description"><p>see: rss_fetch.inc for a simpler interface with integrated caching support</p></p>
+		<p class="notes">
+			Located in <a class="field" href="_util---magpie---rss_parse.inc.html">/util/magpie/rss_parse.inc</a> (line <span class="field"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a34">34</a></span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																																																																																								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$channel" title="details" class="var-name">$channel</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$current_item" title="details" class="var-name">$current_item</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$current_namespace" title="details" class="var-name">$current_namespace</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$encoding" title="details" class="var-name">$encoding</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$ERROR" title="details" class="var-name">$ERROR</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$feed_type" title="details" class="var-name">$feed_type</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$feed_version" title="details" class="var-name">$feed_version</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$image" title="details" class="var-name">$image</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$inchannel" title="details" class="var-name">$inchannel</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$incontent" title="details" class="var-name">$incontent</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$inimage" title="details" class="var-name">$inimage</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$initem" title="details" class="var-name">$initem</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$intextinput" title="details" class="var-name">$intextinput</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$items" title="details" class="var-name">$items</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$parser" title="details" class="var-name">$parser</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$stack" title="details" class="var-name">$stack</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$textinput" title="details" class="var-name">$textinput</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$WARNING" title="details" class="var-name">$WARNING</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_CONTENT_CONSTRUCTS" title="details" class="var-name">$_CONTENT_CONSTRUCTS</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_KNOWN_ENCODINGS" title="details" class="var-name">$_KNOWN_ENCODINGS</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_source_encoding" title="details" class="var-name">$_source_encoding</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																						
+				<div class="method-definition">
+											<span class="method-result">MagpieRSS</span>
+										<a href="#MagpieRSS" title="details" class="method-name">MagpieRSS</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$source</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$output_encoding</span> = <span class="var-default">'ISO-8859-1'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$input_encoding</span> = <span class="var-default">null</span>], [<span class="var-type">bool</span>&nbsp;<span class="var-name">$detect_encoding</span> = <span class="var-default">true</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#append" title="details" class="method-name">append</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$el</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#append_content" title="details" class="method-name">append_content</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#concat" title="details" class="method-name">concat</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$str1</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$str2</span> = <span class="var-default">&quot;&quot;</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#create_parser" title="details" class="method-name">create_parser</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$source</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$out_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#error" title="details" class="method-name">error</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$errormsg</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$lvl</span> = <span class="var-default">E_USER_WARNING</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#feed_cdata" title="details" class="method-name">feed_cdata</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#feed_end_element" title="details" class="method-name">feed_end_element</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$el</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#feed_start_element" title="details" class="method-name">feed_start_element</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$element</span>, <span class="var-type"></span>&nbsp;<span class="var-name">&$attrs</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#is_atom" title="details" class="method-name">is_atom</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#is_rss" title="details" class="method-name">is_rss</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#known_encoding" title="details" class="method-name">known_encoding</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$enc</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#normalize" title="details" class="method-name">normalize</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#php4_create_parser" title="details" class="method-name">php4_create_parser</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$source</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#php5_create_parser" title="details" class="method-name">php5_create_parser</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$channel" id="$channel"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$channel</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a39">39</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$current_item" id="$current_item"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$current_item</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a37">37</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$current_namespace" id="$current_namespace"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$current_namespace</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a63">63</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$encoding" id="$encoding"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$encoding</span>
+			 = <span class="var-default"> ''</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a44">44</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$ERROR" id="$ERROR"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$ERROR</span>
+			 = <span class="var-default"> &quot;&quot;</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a48">48</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$feed_type" id="$feed_type"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$feed_type</span>
+						(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a42">42</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$feed_version" id="$feed_version"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$feed_version</span>
+						(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a43">43</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$image" id="$image"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$image</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a41">41</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$inchannel" id="$inchannel"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$inchannel</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a58">58</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$incontent" id="$incontent"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$incontent</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a60">60</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$inimage" id="$inimage"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$inimage</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a62">62</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$initem" id="$initem"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$initem</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a59">59</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$intextinput" id="$intextinput"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$intextinput</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a61">61</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$items" id="$items"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$items</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a38">38</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$parser" id="$parser"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$parser</span>
+						(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a35">35</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$stack" id="$stack"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$stack</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a57">57</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$textinput" id="$textinput"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$textinput</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a40">40</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$WARNING" id="$WARNING"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$WARNING</span>
+			 = <span class="var-default"> &quot;&quot;</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a49">49</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$_CONTENT_CONSTRUCTS" id="$_CONTENT_CONSTRUCTS"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_CONTENT_CONSTRUCTS</span>
+			 = <span class="var-default">array('content', 'summary', 'info', 'title', 'tagline', 'copyright')</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a53">53</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$_KNOWN_ENCODINGS" id="$_KNOWN_ENCODINGS"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_KNOWN_ENCODINGS</span>
+			 = <span class="var-default">array('UTF-8', 'US-ASCII', 'ISO-8859-1')</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a54">54</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$_source_encoding" id="$_source_encoding"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_source_encoding</span>
+			 = <span class="var-default"> ''</span>			(line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a46">46</a></span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodMagpieRSS" id="MagpieRSS"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor MagpieRSS</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a94">94</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set up XML parser, parse source, and return populated RSS object..</p>
+	
+	<div class="method-signature">
+		<span class="method-result">MagpieRSS</span>
+		<span class="method-name">
+			MagpieRSS
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$source</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$output_encoding</span> = <span class="var-default">'ISO-8859-1'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$input_encoding</span> = <span class="var-default">null</span>], [<span class="var-type">bool</span>&nbsp;<span class="var-name">$detect_encoding</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$source</span><span class="var-description">: <p>string containing the RSS to be parsed</p><p>NOTE:  Probably a good idea to leave the encoding options alone unless          you know what you're doing as PHP's character set support is          a little weird.</p><p>NOTE:  A lot of this is unnecessary but harmless with PHP5</p></span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$output_encoding</span><span class="var-description">: <p>output the parsed RSS in this character                                   set defaults to ISO-8859-1 as this is PHP's                                   default.</p><p>NOTE: might be changed to UTF-8 in future                                   versions.</p></span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$input_encoding</span><span class="var-description">: the character set of the incoming RSS source.                                   Leave blank and Magpie will try to figure it                                   out.</span>			</li>
+					<li>
+				<span class="var-type">bool</span>
+				<span class="var-name">$detect_encoding</span><span class="var-description">: if false Magpie won't attempt to detect                                   source encoding. (caveat emptor)</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodappend" id="append"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">append</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a335">335</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			append
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$el</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$el</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$text</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodappend_content" id="append_content"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">append_content</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a325">325</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			append_content
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$text</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodconcat" id="concat"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">concat</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a316">316</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			concat
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$str1</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$str2</span> = <span class="var-default">&quot;&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$str1</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$str2</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcreate_parser" id="create_parser"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">create_parser</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a451">451</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">return XML parser, and possibly re-encoded source</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			create_parser
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$source</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$out_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$source</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$out_enc</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$in_enc</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$detect</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoderror" id="error"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">error</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a559">559</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			error
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$errormsg</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$lvl</span> = <span class="var-default">E_USER_WARNING</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$errormsg</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$lvl</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfeed_cdata" id="feed_cdata"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">feed_cdata</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a260">260</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			feed_cdata
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$text</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$p</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$text</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfeed_end_element" id="feed_end_element"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">feed_end_element</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a271">271</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			feed_end_element
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$el</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$p</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$el</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfeed_start_element" id="feed_start_element"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">feed_start_element</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a146">146</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			feed_start_element
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$p</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$element</span>, <span class="var-type"></span>&nbsp;<span class="var-name">&$attrs</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$p</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$element</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$attrs</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodis_atom" id="is_atom"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">is_atom</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a438">438</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_atom
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodis_rss" id="is_rss"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">is_rss</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a429">429</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			is_rss
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodknown_encoding" id="known_encoding"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">known_encoding</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a549">549</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			known_encoding
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$enc</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$enc</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodnormalize" id="normalize"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">normalize</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a379">379</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			normalize
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodphp4_create_parser" id="php4_create_parser"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">php4_create_parser</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a500">500</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Instaniate an XML parser under PHP4</p>
+<p class="description"><p>Unfortunately PHP4's support for character encodings  and especially XML and character encodings sucks.  As  long as the documents you parse only contain characters  from the ISO-8859-1 character set (a superset of ASCII,  and a subset of UTF-8) you're fine.  However once you  step out of that comfy little world things get mad, bad,  and dangerous to know.</p><p>The following code is based on SJM's work with FoF</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="http://minutillo.com/steve/weblog/2004/6/17/php-xml-and-character-encodings-a-tale-of-sadness-rage-and-data-loss">http://minutillo.com/steve/weblog/2004/6/17/php-xml-and-character-encodings-a-tale-of-sadness-rage-and-data-loss</a></li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			php4_create_parser
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$source</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$source</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$in_enc</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$detect</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodphp5_create_parser" id="php5_create_parser"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">php5_create_parser</span> (line <span class="line-number"><a href="../__filesource/fsource___utilmagpierss_parse.inc.html#a475">475</a></span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Instantiate an XML parser under PHP5</p>
+<p class="description"><p>PHP5 will do a fine job of detecting input encoding  if passed an empty string as the encoding.</p><p>All hail libxml2!</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			php5_create_parser
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$in_enc</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$detect</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$in_enc</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$detect</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri,  1 Jun 2007 16:51:51 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+	</p>
+	</div></body>
+</html>
