@@ -60,7 +60,7 @@ height:280px;
 }
 
 #treeviewbreadcrumbs{
-overflow:scroll;
+overflow:auto;
 }
 
 .dragbox{
