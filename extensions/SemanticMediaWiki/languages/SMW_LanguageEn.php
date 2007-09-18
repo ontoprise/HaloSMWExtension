@@ -187,13 +187,23 @@ protected $smwDatatypeLabels = array(
 	'smw_bool' => 'Boolean',  // name of the boolean type
 	'smw_int' => 'Integer',  // name of the int type
 	'smw_float' => 'Float',  // name of the floating point type
+	'smw_length' => 'Length',  // name of the length type
+	'smw_area' => 'Area',  // name of the area type
+	'smw_geolength' => 'Geographic length',  // OBSOLETE name of the geolength type
+	'smw_geoarea' => 'Geographic area',  // OBSOLETE name of the geoarea type
 	'smw_geocoordinate' => 'Geographic coordinate', // name of the geocoord type
+	'smw_mass' => 'Mass',  // name of the mass type
+	'smw_time' => 'Time',  // name of the time (duration) type
 	'smw_temperature' => 'Temperature',  // name of the temperature type
 	'smw_datetime' => 'Date',  // name of the datetime (calendar) type
 	'smw_email' => 'Email',  // name of the email (URI) type
 	'smw_url' => 'URL',  // name of the URL type (string datatype property)
 	'smw_uri' => 'URI',  // name of the URI type (object property)
-	'smw_annouri' => 'Annotation URI'  // name of the annotation URI type (annotation property)
+	'smw_annouri' => 'Annotation URI',  // name of the annotation URI type (annotation property)
+	'smw_chemicalformula' => 'Chemical formula', // name of the type for chemical formulas
+	'smw_chemicalequation' => 'Chemical equation', // name of the type for chemical equations
+	'smw_mathematicalequation' => 'Mathematical equation' // name of the type for mathematical equations
+
 );
 
 protected $smwSpecialProperties = array(
