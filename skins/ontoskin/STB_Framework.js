@@ -21,37 +21,46 @@ ToolbarFramework.prototype = {
 	 */
 
 	stbconstructor : function() {
-		// get existing cookies
-		this.getCookieTab();
+		if (this.isToolbarAvailable()) {
 
-		// get initial tab from cookie!
-		if (this.cookiePrefTab != null) {
-			for (var i=0; i<this.cookiePrefTab.length; i++) {
-				if (this.cookiePrefTab[i] == 1) {
-					this.curtabShown = i;
+			// get existing cookies
+			this.getCookieTab();
+
+			// get initial tab from cookie!
+			if (this.cookiePrefTab != null) {
+				for (var i=0; i<this.cookiePrefTab.length; i++) {
+					if (this.cookiePrefTab[i] == 1) {
+						this.curtabShown = i;
+					}
+				}
+			} else {
+				this.curtabShown = 0;
+			}
+
+			this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
+			this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
+			this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
+
+			// create empty container (to preserve order of containers)
+
+			this.var_stb = $("semtoolbar");
+			if (this.var_stb) {
+				for(var i=0;i<=10;i++) {
+					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\"></div>";
+					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\"></div>";
+					$("stb_cont"+i+"-headline").hide();
+					$("stb_cont"+i+"-content").hide();
 				}
 			}
-		} else {
-			this.curtabShown = 0;
 		}
+	},
 
-
-		this.var_onto = $("ontomenuanchor");
-		this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
-		this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
-		this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
-
-		// create empty container (to preserve order of containers)
-
-		this.var_stb = $("semtoolbar");
-		if (this.var_stb) {
-			for(var i=0;i<=10;i++) {
-				this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\"></div>";
-				this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\"></div>";
-				$("stb_cont"+i+"-headline").hide();
-				$("stb_cont"+i+"-content").hide();
-			}
+	isToolbarAvailable: function () {
+		if ($("ontomenuanchor") != null) {
+			this.var_onto = $("ontomenuanchor");
+			return true;
 		}
+		return false;
 	},
 
 	initialize: function() {
