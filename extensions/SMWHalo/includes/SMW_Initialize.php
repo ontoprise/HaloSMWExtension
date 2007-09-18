@@ -22,14 +22,11 @@ $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 
 /**
  * Configures SMW Halo Extension for initialization. 
- * Must be called *BEFORE* SMW is intialized.
+ * Must be called *AFTER* SMW is intialized.
  */
 function enableSMWHalo() {
-	global $wgHooks;
-	$wgHooks['SMWExtension'][] = 'smwgHaloSetupExtension';	
-	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
-	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
-	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
+	global $wgExtensionFunctions;
+	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 }
 
 /**
@@ -38,6 +35,10 @@ function enableSMWHalo() {
  */
 function smwgHaloSetupExtension() {
 	global $smwgHaloIP, $wgHooks;
+	
+	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
+	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
+	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 	
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
@@ -75,6 +76,9 @@ function smwfInitHaloDatatypes() {
 	return true;
 }
 
+/**
+ * Registers additional factbox links.
+ */
 function smwfHaloFactBoxLinks(&$links) {
 	global $wgContLang;
 	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&title='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
@@ -175,6 +179,9 @@ function smwfInitGeneralStore() {
  */
 function &smwfGetOntologyBrowserAccess() {
 		global $smwgMasterGeneralStore;
+		if ($smwgMasterGeneralStore == NULL) {
+			$smwgMasterGeneralStore = new SMWOntologyBrowserSQLAccess();
+		}
 		return $smwgMasterGeneralStore;
 }
 
@@ -273,7 +280,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 /**
  * Add appropriate JS language script
  */
-function smwfHaloAddJSLanguageScripts(&$jsm, $mode = "all", $namespace = -1, $pages = array()) {
+function smwfHaloAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
 	global $smwgHaloIP, $wgLanguageCode, $smwgHaloScriptPath;
 	$lng = '/scripts/Language/SMW_Language';
 	if (!empty($wgLanguageCode)) {
