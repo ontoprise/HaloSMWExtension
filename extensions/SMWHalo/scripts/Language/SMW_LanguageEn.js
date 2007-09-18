@@ -10,6 +10,9 @@ var wgLanguageStrings = {
 	'INVALID_VALUES'          : 'Invalid values.',
 	'CANCEL'                  : 'Cancel',
 	'CREATE'                  : 'Create',
+	'ANNOTATE'                : 'Annotate',
+	'SUB_SUPER'               : 'Sub/Super',
+	'MHAS_PART'               : 'Has part',
 	'INVALID_NAME'            : 'Invalid name.',
 	'CHANGE'                  : 'Change',
 	'DELETE'                  : 'Delete',
@@ -70,7 +73,7 @@ var wgLanguageStrings = {
 	'PROPERTY_PROPERTIES'     : "Property Properties",
 	'CATEGORY'                : "Category:",	//also used as namespace identifier with colon
 	'PROPERTY'                : "Property:",	//also used as namespace identifier with colon
-	'TEMPLATE'                : "TEMPLATE:",	//also used as namespace identifier with colon
+	'TEMPLATE'                : "Template:",	//also used as namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
 	'PAGE_TYPE'               : "page",		// name of the page data type
 	'NARY_TYPE'               : "n-ary",       // name of the n-ary data type
@@ -109,25 +112,5 @@ var wgLanguageStrings = {
 	'HIDE_INSTANCES'          : 'Hide instances',
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
 	'MARK_A_WORD'             : 'Mark a word...',
-	'OPEN_IN_OB'              : 'Open in Ontology Browser',
-
-	// Query Interface
-	'QUERY_INTERFACE'         : 'Query Interface',
-	'QI_MAIN_QUERY_NAME'	  : 'Main',
-	'QI_ARTICLE_TITLE'        : 'Article title',
-	'QI_EMPTY_QUERY'       	  : 'Your Query is empty.',
-	'QI_INSTANCE'       	  : 'Instance:',
-	'QI_PROPERTYNAME'         : 'Property name:',
-	'QI_SHOW_PROPERTY'        : 'Show in results:',
-	'QI_USE_SUBQUERY'         : 'Use subquery',
-	'QI_PAGE'				  : 'Page',
-	'QI_OR'        			  : 'or',
-	'QI_ENTER_CATEGORY'       : 'Please enter a category',
-	'QI_ENTER_INSTANCE'       : 'Please enter an instance',
-	'QI_ENTER_PROPERTY_NAME'  : 'Please enter a property name',
-	'QI_CLIPBOARD_SUCCESS'    : 'The query text was successfully copied to your clipboard',
-	'QI_CLIPBOARD_FAIL'    	  : "Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.",
-	'QI_SUBQUERY'    	  	  : "Subquery",
-	'QI_CATEGORIES'    	  	  : " Categories:",
-	'QI_INSTANCES'    	  	  : " Instances:"
+	'OPEN_IN_OB'              : 'Open in Ontology Browser'
 };

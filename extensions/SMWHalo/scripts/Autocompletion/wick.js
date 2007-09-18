@@ -980,10 +980,10 @@ AutoCompleter.prototype = {
         	if (pasteNS != null) {
         		switch(type) {
         			
-        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY')+":"+theString; break;
-        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('Category')+":"+theString; break;
-        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE')+":"+theString; break;
-        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE')+":"+theString; break;
+        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY')+theString; break;
+        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY')+theString; break;
+        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE')+theString; break;
+        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE')+theString; break;
         		}
         	}
             this.siw.inputBox.value = theString;

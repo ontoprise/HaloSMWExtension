@@ -123,7 +123,7 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
 			'<a href="javascript:' + deleteCallback + '">' +
 			'<img src="' + 
 			wgScriptPath + 
-			'/extensions/SemanticMediaWiki/skins/redcross.gif"/>';				 	
+			'/extensions/SMWHalo/skins/redcross.gif"/>';				 	
 	} else {
 		containercontent += 
 			'<input class="wickEnabled stb-input ' + this.id + '-input" ' +
@@ -195,7 +195,7 @@ createDropDown: function(id, description, options, deleteCallback, selecteditem,
 	containercontent += '</select>';
 	//if deletable add button
 	if(deleteCallback){
-		containercontent += '<a href="javascript:' + deleteCallback + '"><img src="' + wgScriptPath  + '/extensions/SemanticMediaWiki/skins/redcross.gif"/>';				 	
+		containercontent += '<a href="javascript:' + deleteCallback + '"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/redcross.gif"/>';				 	
 	}
 	//Select footer
 	containercontent += '</td>' +
@@ -365,15 +365,15 @@ createText: function(id, description, attributes ,visibility){
 			{
 				case (image = '(i)'):
 		  			//Info Icon
-					imgtag = '<img src="' + wgScriptPath  + '/extensions/SemanticMediaWiki/skins/info.gif"/>';
+					imgtag = '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/info.gif"/>';
 		  			break
 				case (image = '(w)'):
 					//TODO: Error Icon should be replaced by a prober one
-		  			imgtag = '<img src="' + wgScriptPath  + '/extensions/SemanticMediaWiki/skins/warning.png"/>';
+		  			imgtag = '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/warning.png"/>';
 		  			break
 				case (image = '(e)'):
 					//TODO: Error Icon should be replaced by a prober one
-		  			imgtag = '<img src="' + wgScriptPath  + '/extensions/SemanticMediaWiki/skins/delete_icon.png"/>';
+		  			imgtag = '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/delete_icon.png"/>';
 		  			break
 				default:
 					imgtag = '';

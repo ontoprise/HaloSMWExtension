@@ -339,11 +339,11 @@ function smwgGetDatatypeSelector($articleId){
  * This function returns a comma separated list of all builtin data types
  */
 function smwfGetBuiltinDatatypes(){
-	global $smwgIP;
+	global $smwgIP, $smwgHaloContLang;
 	include_once($smwgIP . '/includes/SMW_Datatype.php');
 	$result = "Builtin types:";
 
-	$types = SMWTypeHandlerFactory::getTypeLabels();
+	$types = $smwgHaloContLang->getAllDatatypeLabels();	
 	asort($types);
 	foreach($types as $key => $type){
 		$result .= ",".$type;

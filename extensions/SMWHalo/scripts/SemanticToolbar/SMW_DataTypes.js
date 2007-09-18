@@ -112,6 +112,24 @@ DataTypes.prototype = {
 			}
 		}
 		if (this.userUpdated && this.builtinUpdated) {
+			// If there are articles for builtin types, these types appear as
+			// builtin and as user defined types => remove them from the list
+			// of user defined types.
+			var userTypes = new Array();
+			for (var u = 0; u < this.userTypes.length; u++) {
+				var found = false;
+				for (var b = 0; b < this.builtinTypes.length; b++) {
+					if (this.userTypes[u] == this.builtinTypes[b]) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					userTypes.push(this.userTypes[u]);
+				}
+			}
+			this.userTypes = userTypes;
+			
 			for (var i = 0; i < this.callback.length; ++i) {
 				this.callback[i]();
 			}
