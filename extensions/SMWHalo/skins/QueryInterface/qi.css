@@ -52,12 +52,15 @@ margin-top: 10px;
 margin-right: 10px;
 width: 25%;
 height:300px;
-
 }
 
 #treeanchor{
 overflow:auto;
 height:280px;
+}
+
+#treeviewbreadcrumbs{
+overflow:scroll;
 }
 
 .dragbox{

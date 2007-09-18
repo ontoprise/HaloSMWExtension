@@ -238,7 +238,6 @@ newPropertyDialogue:function(reset){
 	cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 	cell = newrow.insertCell(4);
 	cell.className = "subquerycell";
-	cell.id = "subquerycell";
 	cell.innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
 	this.activeInputs = 3;
 	$('dialoguebuttons').style.display="";
@@ -365,8 +364,8 @@ if (this.activeDialogue != null){
 		}
 		$('dialoguecontent').rows[2].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 
-		if(parameterNames[0] == gLanguage.getMessage('QI_OR')){ //if type is page, we need a subquery checkbox
-			$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_OR') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
+		if(parameterNames[0] == gLanguage.getMessage('QI_PAGE')){ //if type is page, we need a subquery checkbox
+			$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
 			$('dialoguecontent').rows[2].cells[4].className = "subquerycell";
 			$('usesub').checked = oldcheck;
 			this.activeInputs = 3;
@@ -540,11 +539,25 @@ deleteActivePart:function(){
 			this.activeQuery.removeInstanceGroup(this.loadedFromId);
 			break;
 		case "property":
+			var pgroup = this.activeQuery.getPropertyGroup(this.loadedFromId);
+			if(pgroup.getValues()[0][0] == "subquery"){
+				//recursively delete all subqueries of this one. It's id is values[0][2]
+				this.deleteSubqueries(pgroup.getValues()[0][2])
+			}
 			this.activeQuery.removePropertyGroup(this.loadedFromId);
 			break;
 	}
 	this.activeQuery.updateTreeXML();
 	this.emptyDialogue();
+},
+
+deleteSubqueries:function(id){
+	if(this.queries[id].hasSubqueries()){
+		for(var i = 0; i < this.queries[id].getSubqueryIds().length; i++){
+			this.deleteSubqueries(this.queries[id].getSubqueryIds()[i]);
+		}
+	}
+	this.queries[id] = null;
 },
 
 createRestrictionSelector:function(option, disabled){
@@ -636,7 +649,7 @@ addPropertyGroup:function(){
 			var paramvalue = $('input' + i).value;
 			paramvalue = paramvalue==""?"*":paramvalue;
 			var paramname = $('dialoguecontent').rows[i].cells[0].innerHTML;
-			if(paramname == gLanguage.getMessage('PAGE') && arity == 2 && $('usesub').checked){
+			if(paramname == gLanguage.getMessage('QI_PAGE') && arity == 2 && $('usesub').checked){
 				paramname = "subquery";
 				paramvalue = this.nextQueryId;
 				subqueryIds.push(this.nextQueryId);

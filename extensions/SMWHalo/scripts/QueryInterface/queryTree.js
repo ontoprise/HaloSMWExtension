@@ -55,10 +55,10 @@ function updateQueryTree(xmltext){
 }
 
 function selectLeaf(title, code) {
-	if(title.indexOf(" Page = Subquery ") == 0){
-		id=title.substring(17,title.length);
+	var subquerystring = " " + gLanguage.getMessage("QI_PAGE") + " = " + gLanguage.getMessage("QI_SUBQUERY") + " ";
+	if(title.indexOf(subquerystring) == 0){
+		id=title.substring(subquerystring.length, title.length);
 		qihelper.setActiveQuery(id);
-
 	}
 	else{
 		var id = code.substring(8, code.indexOf('-'));
