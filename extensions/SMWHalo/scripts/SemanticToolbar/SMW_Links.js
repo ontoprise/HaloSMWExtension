@@ -5,7 +5,8 @@ var createLinkList = function() {
 }
 
 function smw_links_callme(){
-	if(wgAction == "edit"){
+	if(wgAction == "edit"
+	   && stb_control.isToolbarAvailable()){
 		editcontainer = stb_control.createDivContainer(EDITCONTAINER, 1);
 		createLinkList();
 	}

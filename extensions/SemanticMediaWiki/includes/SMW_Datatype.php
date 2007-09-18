@@ -256,6 +256,7 @@ SMWTypeHandlerFactory::announceTypeHandler($smwgContLang->getDatatypeLabel('smw_
 // Bools
 // Booleans can (and more problematic: will) be modelled by two-valued enums; too much choice yields confusion (note that Categories are also addressing a simliar modelling problem already -- let's not introduce three ways of encoding this)
 //SMWTypeHandlerFactory::announceTypeHandler($smwgContLang->getDatatypeLabel('smw_bool'),'bool','Boolean','SMWBooleanTypeHandler');
+SMWTypeHandlerFactory::announceTypeHandler($smwgContLang->getDatatypeLabel('smw_mathematicalequation'),'mathematicalequation','MathEquation','SMWMathematicalEquationTypeHandler');
 
 /*********************************************************************/
 /* Basic typehandler classes                                         */

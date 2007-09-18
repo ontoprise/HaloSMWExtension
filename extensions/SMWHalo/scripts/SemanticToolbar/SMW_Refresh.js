@@ -12,7 +12,8 @@ RefreshSemanticToolBar.prototype = {
 	
 	//Registers event 
 	register: function(event){
-		if(wgAction == "edit"){
+		if(wgAction == "edit"
+		   && stb_control.isToolbarAvailable()){
 			Event.observe('wpTextbox1', 'change' ,this.changed.bind(this));
 			Event.observe('wpTextbox1', 'keypress' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();

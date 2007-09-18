@@ -21,10 +21,16 @@ OBSemanticToolbarContributor.prototype = {
 	 * Register the contributor and puts a button in the semantic toolbar.
 	 */
 	registerContributor: function() {
+		if (!stb_control.isToolbarAvailable() || wgAction != 'edit') return;
 		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
-		this.comsrchontainer.setHeadline("OntologyBrowser");
+		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
 
-		this.comsrchontainer.setContent('<button type="button" disabled="true" id="openEntityInOB" name="navigateToOB" onclick="obContributor.navigateToOB(event)">Mark a word...</button>');
+		this.comsrchontainer.setContent(
+			'<button type="button" disabled="true" ' +
+			'id="openEntityInOB" name="navigateToOB" ' +
+			'onclick="obContributor.navigateToOB(event)">' +
+			gLanguage.getMessage('MARK_A_WORD') +
+			'</button>');
 		this.comsrchontainer.contentChanged();
 
 		// register standard wiki edit textarea (advanced editor registers by itself)
@@ -57,12 +63,12 @@ OBSemanticToolbarContributor.prototype = {
 		if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
 			// unselected
 			Field.disable("openEntityInOB");
-			$("openEntityInOB").innerHTML = "" + "Mark a word...";
+			$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
 			this.textArea.focus();
 		} else {
 			// selected
 			Field.enable("openEntityInOB");
-			$("openEntityInOB").innerHTML = "" + "Open in OB";
+			$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('OPEN_IN_OB');
 			this.textArea.focus();
 		}
 	},

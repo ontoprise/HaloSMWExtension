@@ -88,7 +88,9 @@ showToolbar: function(request){
 
 callme: function(event){
 	
-	if(wgAction == "edit" && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102)){
+	if(wgAction == "edit" 
+	   && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102)
+	   && stb_control.isToolbarAvailable()){
 		this.propertiescontainer = stb_control.createDivContainer(PROPERTIESCONTAINER, 0);
 
 		// Events can not be registered in onLoad => make a timeout

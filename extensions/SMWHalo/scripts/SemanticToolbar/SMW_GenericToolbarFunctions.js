@@ -12,24 +12,24 @@ createList: function(list,id) {
 	switch (id) {
 		case "category":
 			divlist ="<div id=\"" + id +"-tools\">" +
-					"<a href=\"javascript:catToolBar.newItem()\" class=\"menulink\">Annotate</a>" +
-					"<a href=\"javascript:catToolBar.newCategory()\" class=\"menulink\">Create</a>";
+					"<a href=\"javascript:catToolBar.newItem()\" class=\"menulink\">"+gLanguage.getMessage('ANNOTATE')+"</a>" +
+					"<a href=\"javascript:catToolBar.newCategory()\" class=\"menulink\">"+gLanguage.getMessage('CREATE')+"</a>";
 			if (wgNamespaceNumber == 14) {
-				divlist += "<a href=\"javascript:catToolBar.CreateSubSup()\" class=\"menulink\">Sub/Super</a>";
+				divlist += "<a href=\"javascript:catToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
 			}
 			divlist += "</div>";
 	 		break;
 		case "relation":
 	  			divlist ="<div id=\"" + id +"-tools\">" +
-	  					 "<a href=\"javascript:relToolBar.newItem()\" class=\"menulink\">Annotate</a>" +
-					 "<a href=\"javascript:relToolBar.newRelation()\" class=\"menulink\">Create</a>";
+	  					 "<a href=\"javascript:relToolBar.newItem()\" class=\"menulink\">"+gLanguage.getMessage('ANNOTATE')+"</a>" +
+					 "<a href=\"javascript:relToolBar.newRelation()\" class=\"menulink\">"+gLanguage.getMessage('CREATE')+"</a>";
 				//regex for checking attribute namespace. 
 				//since there's no special namespace number anymore since atr and rel are united 
 				var attrregex =	new RegExp("Attribute:.*");
 				if (wgNamespaceNumber == 100 || wgNamespaceNumber == 102  || attrregex.exec(wgPageName) != null) {
-					divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">Sub/Super</a>";
+					divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
 				}
-	  			divlist += "<a href=\"javascript:relToolBar.newPart()\" class=\"menulink\">Has part</a>";
+	  			divlist += "<a href=\"javascript:relToolBar.newPart()\" class=\"menulink\">"+gLanguage.getMessage('MHAS_PART')+"</a>";
 	  			divlist += "</div>";
 	  		break;
 	}
@@ -52,11 +52,11 @@ createList: function(list,id) {
 			case "category":
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
 	  			firstValue = list[i].getValue ? this.cutdowntosize(list[i].getValue(),7,3) : "";
-	  			prefix = "Category:";
+	  			prefix = gLanguage.getMessage('CATEGORY');
 	 			 break
 			case "relation":
 	  			fn = "relToolBar.getselectedItem(" + i + ")";
-	  			prefix = "Property:";
+	  			prefix = gLanguage.getMessage('PROPERTY');
 	  		
 	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
@@ -650,10 +650,10 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		var checkName;
 		switch (type) {
 			case 'category':
-				checkName = "Category:"+value;
+				checkName = gLanguage.getMessage('CATEGORY')+value;
 				break;
 			case 'property':
-				checkName = "Property:"+value;
+				checkName = gLanguage.getMessage('PROPERTY')+value;
 				break;
 		}
 		if (checkName) {

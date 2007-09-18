@@ -52,7 +52,7 @@ showToolbar: function(request){
 },
 
 callme: function(event){
-	if(wgAction == "edit"){
+	if(wgAction == "edit" && stb_control.isToolbarAvailable()){
 		this.categorycontainer = stb_control.createDivContainer(CATEGORYCONTAINER,0);
 		this.showToolbar();
 	}
@@ -195,7 +195,7 @@ createSubSuperLinks: function(elementID) {
 	superContent = superContent.replace(/\$-title/g, title);			                          
 	if($('cat-make-sub').innerHTML != sub){
 		var lnk = tb.createLink('cat-make-sub-link', 
-								[['catToolBar.createSuperItem()', sub, 'cat-make-sub']],
+								[['catToolBar.createSuperItem('+(exists?'false':'true')+')', sub, 'cat-make-sub']],
 								'', true);
 		tb.replace('cat-make-sub-link', lnk);
 		lnk = tb.createLink('cat-make-super-link', 
@@ -216,14 +216,17 @@ createSubItem: function() {
  	this.fillList(true);
 },
 
-createSuperItem: function() {
+createSuperItem: function(openTargetArticle) {
+	if (openTargetArticle == undefined) {
+		openTargetArticle = true;
+	}
 	var name = $("cat-subsuper").value;
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
 		return;
 	}
- 	this.om.createSuperCategory(name, "");
+ 	this.om.createSuperCategory(name, "", openTargetArticle);
  	this.fillList(true);
 },
 

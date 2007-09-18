@@ -82,7 +82,8 @@ showToolbar: function(){
 },
 
 callme: function(event){
-	if(wgAction == "edit"){
+	if(wgAction == "edit"
+	    && stb_control.isToolbarAvailable()){
 		this.relationcontainer = stb_control.createDivContainer(RELATIONCONTAINER, 0);
 		this.showToolbar();		
 	}
@@ -323,28 +324,35 @@ createSubSuperLinks: function(elementID) {
 	superContent = superContent.replace(/\$-title/g, title);			                          
 	if($('rel-make-sub').innerHTML != sub){
 		var lnk = tb.createLink('rel-make-sub-link', 
-								[['relToolBar.createSubItem()', sub, 'rel-make-sub']],
+								[['relToolBar.createSuperItem('+ (exists ? 'false' : 'true') + ')', sub, 'rel-make-sub']],
 								'', true);
 		tb.replace('rel-make-sub-link', lnk);
 		lnk = tb.createLink('rel-make-super-link', 
-							[['relToolBar.createSuperItem()', superContent, 'rel-make-super']],
+							[['relToolBar.createSubItem()', superContent, 'rel-make-super']],
 							'', true);
 		tb.replace('rel-make-super-link', lnk);
 	}
 },
 	
-createSubItem: function() {
+createSubItem: function(openTargetArticle) {
+	
+	if (openTargetArticle == undefined) {
+		openTargetArticle = true;
+	}
 	var name = $("rel-subsuper").value;
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
 		return;
 	}
- 	this.om.createSubProperty(name, "");
+ 	this.om.createSubProperty(name, "", openTargetArticle);
  	this.fillList(true);
 },
 
-createSuperItem: function() {
+createSuperItem: function(openTargetArticle) {
+	if (openTargetArticle == undefined) {
+		openTargetArticle = true;
+	}
 	var name = $("rel-subsuper").value;
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
@@ -352,7 +360,7 @@ createSuperItem: function() {
 		return;
 	}
 
- 	this.om.createSuperProperty(name, "");
+ 	this.om.createSuperProperty(name, "", openTargetArticle);
  	this.fillList(true);
 },
 

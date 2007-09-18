@@ -118,12 +118,12 @@ OntologyModifier.prototype = {
 	createAttribute : function(title, initialContent, domain, type) {
 		var schema = "";
 		if (domain != null && domain != "") {
-			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::Category:"+domain+"]]";
+			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY')+domain+"]]";
 		}
 		if (type != null && type != "") {
-			schema += "\n[[SMW_SP_HAS_TYPE::Type:"+type+"]]";
+			schema += "\n[[SMW_SP_HAS_TYPE::"+gLanguage.getMessage('TYPE')+type+"]]";
 		}
-		this.createArticle("Property:"+title, 
+		this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
 						   initialContent, schema,
 						   "Create a property for category " + domain, true);
 	},
@@ -145,11 +145,11 @@ OntologyModifier.prototype = {
 	createRelation : function(title, initialContent, domain, ranges) {
 		var schema = "";
 		if (domain != null && domain != "") {
-			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::Category:"+domain+"]]";
+			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY')+domain+"]]";
 		}
 		if (ranges != null) {
 			if (ranges.length == 1) { // normal binary relation
-					if (ranges[0].indexOf("Type:") == 0) {
+					if (ranges[0].indexOf(gLanguage.getMessage('TYPE')) == 0) {
 						schema += "\n[[SMW_SP_HAS_TYPE::"+ranges[0]+"]]";
 					} else {
 						schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[0]+"]]";
@@ -158,10 +158,14 @@ OntologyModifier.prototype = {
 			} else if (ranges.length > 1) { // n-ary relation
 				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
 				for(var i = 0, n = ranges.length; i < n; i++) {
-					if (ranges[i].indexOf("Type:") == 0) {
+					if (ranges[i].indexOf(gLanguage.getMessage('TYPE')) == 0) {
 						if (i < n-1) rangeStr += ranges[i]+";"; else rangeStr += ranges[i];
 					} else {
-						if (i < n-1) rangeStr += "Type:Page;"; else rangeStr += "Type:Page";
+						if (i < n-1) {
+							 rangeStr += gLanguage.getMessage('TYPE_PAGE')+";"; 
+						} else {
+							rangeStr += gLanguage.getMessage('TYPE_PAGE');
+						}
 						schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
 					}
 			 	}
@@ -169,7 +173,7 @@ OntologyModifier.prototype = {
 			} 
 		}
 		
-		this.createArticle("Property:"+title, 
+		this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
 						   initialContent, schema,
 						   gLanguage.getMessage('CREATE_PROP_FOR_CAT').replace(/\$cat/g, domain),
 						   true);
@@ -186,7 +190,7 @@ OntologyModifier.prototype = {
 	 * 			Initial content of the article.
 	 */
 	createCategory : function(title, initialContent) {
-		this.createArticle("Category:"+title, 
+		this.createArticle(gLanguage.getMessage('CATEGORY')+title, 
 						   initialContent, "",
 						   gLanguage.getMessage('CREATE_CATEGORY'), true);
 	},
@@ -201,16 +205,23 @@ OntologyModifier.prototype = {
 	 * 			Name of the new article (sub-property) without the namespace.
 	 * @param string initialContent
 	 * 			Initial content of the article for the sub-property.
+	 * @param boolean openNewArticle
+	 * 			If <true> or not specified, the newly created article is opened
+	 *          in a new tab.
 	 */
-	createSubProperty : function(title, initialContent) {
+	createSubProperty : function(title, initialContent, openNewArticle) {
+		if (openNewArticle == undefined) {
+			openNewArticle = true;
+		}
 		var schemaProp = this.getSchemaProperties();
 		if (   wgNamespaceNumber == 102    // SMW_NS_PROPERTY
 		    || wgNamespaceNumber == 100) { // SMW_NS_RELATION
-			this.createArticle("Property:"+title, 
+			this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
 							 initialContent, 
 							 schemaProp + 
 							 "\n[[SMW_SP_SUBPROPERTY_OF::"+wgPageName+"]]",
-							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), true);
+							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), 
+							 openNewArticle);
 			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_PROPERTY'))
@@ -229,19 +240,26 @@ OntologyModifier.prototype = {
 	 * 			Name of the new article (super-property) without the namespace.
 	 * @param string initialContent
 	 * 			Initial content of the article for the super-property.
+	 * @param boolean openNewArticle
+	 * 			If <true> or not specified, the newly created article is opened
+	 *          in a new tab.
 	 */
-	createSuperProperty : function(title, initialContent) {
+	createSuperProperty : function(title, initialContent, openNewArticle) {
+		if (openNewArticle == undefined) {
+			openNewArticle = true;
+		}
 		var schemaProp = this.getSchemaProperties();
 		var wtp = new WikiTextParser();
 		if (   wgNamespaceNumber == 102 // SMW_NS_PROPERTY
 		    || wgNamespaceNumber == 100) {  // SMW_NS_RELATION
-			this.createArticle("Property:"+title, 
+			this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
 							 initialContent, 
 							 schemaProp,
-							 gLanguage.getMessage('CREATE_SUPER_PROPERTY'), true);
+							 gLanguage.getMessage('CREATE_SUPER_PROPERTY'), 
+							 openNewArticle);
 							 
 			// append the sub-property annotation to the current article
-			wtp.addRelation("subproperty of", "Property:"+title, "", true);
+			wtp.addRelation("subproperty of", gLanguage.getMessage('PROPERTY')+title, "", true);
 			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_PROPERTY'));
@@ -260,12 +278,19 @@ OntologyModifier.prototype = {
 	 * 			Name of the new article (super-category) without the namespace.
 	 * @param string initialContent
 	 * 			Initial content of the article for the super-category.
+	 * @param boolean openNewArticle
+	 * 			If <true> or not specified, the newly created article is opened
+	 *          in a new tab.
 	 */
-	createSuperCategory : function(title, initialContent) {
+	createSuperCategory : function(title, initialContent, openNewArticle) {
+		if (openNewArticle == undefined) {
+			openNewArticle = true;
+		}
 		var wtp = new WikiTextParser();
 		if (wgNamespaceNumber == 14) {
-			this.createArticle("Category:"+title, initialContent, "",
-							   gLanguage.getMessage('CREATE_SUPER_CATEGORY'), true);
+			this.createArticle(gLanguage.getMessage('CATEGORY')+title, initialContent, "",
+							   gLanguage.getMessage('CREATE_SUPER_CATEGORY'), 
+							   openNewArticle);
 							 
 			// append the sub-category annotation to the current article
 			wtp.addCategory(title, "", true);
@@ -289,10 +314,9 @@ OntologyModifier.prototype = {
 	 * 			Initial content of the article for the sub-category.
 	 */
 	createSubCategory : function(title, initialContent) {
-		var wtp = new WikiTextParser();
 		if (wgNamespaceNumber == 14) {
-			this.createArticle("Category:"+title, initialContent, 
-			                   "[[Category:"+wgTitle+"]]",
+			this.createArticle(gLanguage.getMessage('CATEGORY')+title, initialContent, 
+			                   "[["+gLanguage.getMessage('CATEGORY')+wgTitle+"]]",
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), true);			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_CATEGORY'))
@@ -315,8 +339,8 @@ OntologyModifier.prototype = {
 		props.push(wtp.getRelation("has type"));
 		props.push(wtp.getRelation("Has domain hint"));
 		props.push(wtp.getRelation("Has range hint"));
-		props.push(wtp.getAttribute("Has max cardinality"));
-		props.push(wtp.getAttribute("Has min cardinality"));
+		props.push(wtp.getRelation("Has max cardinality"));
+		props.push(wtp.getRelation("Has min cardinality"));
 		
 		var schemaAnnotations = "";
 		for (var typeIdx = 0, nt = props.length; typeIdx < nt; ++typeIdx) {
