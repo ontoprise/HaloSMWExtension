@@ -56,7 +56,6 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 // include bots
 require_once("ConsistencyBot/SMW_ConsistencyBot.php");
-require_once("RenamingBot/SMW_RenamingBot.php");
 require_once("SMW_SimilarityBot.php");
 require_once("SMW_TemplateMaterializerBot.php");
 require_once("SMW_UndefinedEntitiesBot.php");

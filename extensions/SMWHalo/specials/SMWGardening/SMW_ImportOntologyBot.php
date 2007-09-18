@@ -60,7 +60,7 @@
  		
  		// initialize RAP
  		echo "\nTry to include RAP RDF-API...";
- 		$smwgRAPPath = dirname(__FILE__) . "/../../libs/rdfapi-php";
+ 		$smwgRAPPath = dirname(__FILE__) . "/../../../SemanticMediaWiki/libs/rdfapi-php";
 		$Rdfapi_includes= $smwgRAPPath . '/api/';
 		define("RDFAPI_INCLUDE_DIR", $Rdfapi_includes); // not sure if the constant is needed within RAP
 		include(RDFAPI_INCLUDE_DIR . "RdfAPI.php");
