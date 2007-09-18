@@ -4,7 +4,7 @@
  *
  * Author: kai
  */
- 
+
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_HINT', 1);
 define('SMW_SSP_HAS_RANGE_HINT', 2);
@@ -34,16 +34,17 @@ function enableSMWHalo() {
  * Called from SMW during initialization.
  */
 function smwgHaloSetupExtension() {
-	global $smwgHaloIP, $wgHooks;
+	global $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
 	
-	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
+	$smwgMasterGeneralStore = NULL;
+	
+	$wgHooks['SMW_Datatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
-	smwfInitGeneralStore();
 	
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
@@ -70,7 +71,7 @@ function smwgHaloSetupExtension() {
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
-function smwfInitHaloDatatypes() { 
+function smwfHaloInitDatatypes() { 
 	SMWDataValueFactory::registerDataValueClass('_chf','ChemFormula','SMWChemicalFormulaTypeHandler');
 	SMWDataValueFactory::registerDataValueClass('_che','ChemEquation','SMWChemicalEquationTypeHandler');
 	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
@@ -87,6 +88,9 @@ function smwfHaloFactBoxLinks(&$links) {
 	return true;
 }
 
+/**
+ * Registers special pages for some namespaces
+ */
 function smwfHaloShowListPage(&$title, &$article){
 	global $smwgHaloIP;
 	if ( $title->getNamespace() == NS_CATEGORY ) {
@@ -176,20 +180,12 @@ function smwfHaloInitContentMessages() {
 }
 
 /**
- * Initializes GeneralStore (additional methods to access semantic model)
- */
-function smwfInitGeneralStore() {
-		global $smwgMasterGeneralStore, $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserSQLAccess.php');
-		$smwgMasterGeneralStore = new SMWOntologyBrowserSQLAccess();
-}
-
-/**
  * Returns GeneralStore
  */
 function &smwfGetOntologyBrowserAccess() {
-		global $smwgMasterGeneralStore;
+		global $smwgMasterGeneralStore, $smwgHaloIP;
 		if ($smwgMasterGeneralStore == NULL) {
+			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserSQLAccess.php');
 			$smwgMasterGeneralStore = new SMWOntologyBrowserSQLAccess();
 		}
 		return $smwgMasterGeneralStore;
