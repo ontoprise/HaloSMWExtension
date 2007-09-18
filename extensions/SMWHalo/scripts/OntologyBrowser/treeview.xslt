@@ -345,7 +345,7 @@
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<xsl:variable name="icon" select="@img"/>
-				<img src="{$param-img-directory}{$icon}"/>
+				<img src="{$param-img-directory}../../{$icon}"/>
 				<xsl:variable name="title" select="@title"/>
 				<a title="{$title}" class="attribute">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.selectAttribute(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
