@@ -219,7 +219,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
 			
-			smwfHaloAddJSLanguageScripts(&$jsm);
+			smwfHaloAddJSLanguageScripts($jsm);
 
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/STB_Framework.js', "edit");
 
@@ -256,7 +256,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 
 		} else {
-			smwfHaloAddJSLanguageScripts(&$jsm);
+			smwfHaloAddJSLanguageScripts($jsm);
 			
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployScripts.js');
 
