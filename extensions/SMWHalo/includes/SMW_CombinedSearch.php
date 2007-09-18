@@ -184,14 +184,14 @@
  					// show OB link
  					if ($page->getNamespace() != NS_TEMPLATE && $page->getNamespace() != SMW_NS_TYPE) { 
  						$ontoQueryStr = "title=".$page->getText(). ($ns != "" ? "&ns=".$ns : "");
- 						$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$wgContLang->getNsText(NS_SPECIAL).":OntologyBrowser?$ontoQueryStr\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SemanticMediaWiki/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
+ 						$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$wgContLang->getNsText(NS_SPECIAL).":OntologyBrowser?$ontoQueryStr\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
  					} else {
  						// do NOT show OB link for templates, because it makes no sense.
  						$resultHTML .= "<td></td>";
  					}
  					
  					// show edit link
- 					$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$nsWithColon.$page->getText()."?action=edit\"><img src=\"$wgServer$wgScriptPath/extensions/SemanticMediaWiki/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
+ 					$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$nsWithColon.$page->getText()."?action=edit\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
  				$resultHTML .= "</tr>";
  				
  			}

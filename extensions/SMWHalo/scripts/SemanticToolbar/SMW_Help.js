@@ -11,7 +11,7 @@ var initHelp = function(){
 function smw_help_callme(){
 	if(wgAction == "edit" || wgCanonicalSpecialPageName == "Search"){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
-		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/HaloSMW/skins/Editarea/images/help.gif"/> Help');
+		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> Help');
 		initHelp();
 	}
 }
