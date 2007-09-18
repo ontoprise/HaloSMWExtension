@@ -112,6 +112,9 @@ Query.prototype = {
 			asktext += "]]";
 		}
 		for(var i=0; i<this.properties.length; i++){
+			if(this.properties[i].isShown()){
+				asktext += "[[" + this.properties[i].getName() + ":=*]]";
+			}
 			asktext += "[[" + this.properties[i].getName() + ":=";
 			if(this.properties[i].getArity() > 2){
 				var vals = this.properties[i].getValues();
