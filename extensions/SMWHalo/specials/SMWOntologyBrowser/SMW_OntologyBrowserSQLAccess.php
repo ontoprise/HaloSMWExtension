@@ -12,6 +12,8 @@
  
  require_once( "$smwgHaloIP/specials/SMWOntologyBrowser/SMW_OntologyBrowserFilter.php" );
  
+ define('MAX_RECURSION_DEPTH', 10);
+ 
  class SMWOntologyBrowserSQLAccess {
  	
  	/**
@@ -424,9 +426,11 @@
 	}
 
 	
- 	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, & $allInstances) {
+ 	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, & $allInstances, $depth = 0) {
 		// Warning: Category graph MUST NOT contain cycles.
 		// Otherwise system crashes in an endless loop.		
+		$depth++;
+		if ($depth >= MAX_RECURSION_DEPTH) return;
 		
 		$directInstances = $this->getDirectInstances($categoryTitle, $requestoptions);
 		foreach($directInstances as $inst) {
@@ -434,13 +438,16 @@
 		}
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getInstances($cat, $requestoptions, $allInstances);
+			$this->_getInstances($cat, $requestoptions, $allInstances, $depth);
 		}
 	}
 	
-	private function _getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL, & $allProperties) {
+	private function _getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL, & $allProperties, $depth = 0) {
 		// Warning: Category graph MUST NOT contain cycles.
 		// Otherwise system crashes in an endless loop.		
+		
+		$depth++;
+		if ($depth >= MAX_RECURSION_DEPTH) return;
 		
 		$directProperties = $this->getDirectPropertiesOfCategory($categoryTitle, $requestoptions);
 		foreach($directProperties as $inst) {
@@ -448,7 +455,7 @@
 		}
 		$subCategories = $this->getDirectSuperCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties);
+			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $depth);
 		}
 	}
  }
