@@ -39,6 +39,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['SMW_Datatypes'][] = 'smwfInitHaloDatatypes';
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
+	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
@@ -83,6 +84,15 @@ function smwfHaloFactBoxLinks(&$links) {
 	global $wgContLang;
 	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&title='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
 	$links[] = array('smwoblink', $oblink);
+	return true;
+}
+
+function smwfHaloShowListPage(&$title, &$article){
+	global $smwgHaloIP;
+	if ( $title->getNamespace() == NS_CATEGORY ) {
+		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
+		$article = new SMWCategoryPage($title);
+	}
 	return true;
 }
 
