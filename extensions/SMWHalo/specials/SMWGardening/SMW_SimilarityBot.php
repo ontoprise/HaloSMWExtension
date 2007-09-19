@@ -247,7 +247,10 @@
  		$cond[] = 'FALSE'; // end last OR condition
  		
  		// Calculate similar terms
- 		$res = $dbr->query('SELECT p1.page_title AS page1, p2.page_title AS page2, p1.page_namespace AS pagenamespace1, p2.page_namespace AS pagenamespace2 FROM page p1, page p2 WHERE p1.page_title != p2.page_title AND (EDITDISTANCE(UPPER(p1.page_title), UPPER(p2.page_title)) <= '.$similarityDegree.' OR '.implode("",$cond).') LIMIT '.$limitOfResults);
+ 		// make sure that pages starting with 'Smw' are ignored because they are internal (such as logs).
+ 		$res = $dbr->query('SELECT p1.page_title AS page1, p2.page_title AS page2, p1.page_namespace AS pagenamespace1, p2.page_namespace AS pagenamespace2 FROM page p1, page p2 ' .
+ 							 'WHERE p1.page_title != p2.page_title  AND p1.page_title NOT LIKE \'Smw%\' AND (EDITDISTANCE(UPPER(p1.page_title), UPPER(p2.page_title)) <= '.$similarityDegree.' ' .
+ 							 		'OR '.implode("",$cond).') LIMIT '.$limitOfResults);
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 					$title1 = Title::newFromText($row->page1, $row->pagenamespace1);
