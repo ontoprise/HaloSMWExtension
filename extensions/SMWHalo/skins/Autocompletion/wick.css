@@ -107,7 +107,7 @@ background-color:#B3B31A;
 
 .obpendingElement {
 position:fixed;
-z-index:2;
+z-index:200;
 top:0px;
 left:0px;
 display:none;
