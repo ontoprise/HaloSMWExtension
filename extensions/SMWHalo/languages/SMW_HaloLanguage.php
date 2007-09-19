@@ -45,13 +45,6 @@ abstract class SMW_HaloLanguage {
 	function findDatatypeMsgID($label) {
 		return array_search($label, $this->smwDatatypeLabels);
 	}
-
-	/**
-	 * Function that returns the labels for the special relations and attributes.
-	 */
-	function getSpecialPropertiesArray() {
-		return $this->smwSpecialProperties;
-	}
 	
 	function getSpecialSchemaPropertyArray() {
 		return $this->smwSpecialSchemaProperties;

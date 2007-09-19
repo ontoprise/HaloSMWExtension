@@ -134,9 +134,9 @@ class AutoCompletionRequester {
 	public static function getPropertyTargetProposals($userContext, $match) {
 		// special handling for special relations
 		
- 	    	global $smwgContLang, $semanticAC, $wgLang;
+ 	    	global $smwgContLang, $smwgHaloContLang, $semanticAC, $wgLang;
  	    	$specialProperties = $smwgContLang->getSpecialPropertiesArray();
- 	    	$specialSchemaProperties = $smwgContLang->getSpecialSchemaPropertyArray();
+ 	    	$specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  	    		
  	    	// special properties
  	    	if (stripos(strtolower($userContext), strtolower($specialProperties[SMW_SP_SUBPROPERTY_OF])) > 0) {

@@ -52,15 +52,6 @@ abstract class SMW_Language {
 		return $this->smwSpecialProperties;
 	}
 	
-	function getSpecialSchemaPropertyArray() {
-		return $this->smwSpecialSchemaProperties;
-	}
-
-	function getSpecialCategoryArray() {
-		return $this->smwSpecialCategories;
-	}
-	
-
 	/**
 	 * Function that returns all content messages (those that are stored
 	 * in some article, and can thus not be translated to individual users).

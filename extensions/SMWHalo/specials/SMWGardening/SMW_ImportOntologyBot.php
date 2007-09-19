@@ -425,8 +425,8 @@
 	}
 	
 	private function createPropertiesFromCategory($st, $superClass, & $statements) {
-		global $smwgContLang, $wgContLang;
- 		$ssp = $smwgContLang->getSpecialSchemaPropertyArray();
+		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+ 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sp = $smwgContLang->getSpecialPropertiesArray();
  		
 		$it2 = $this->model->findAsIterator($superClass, OWL::ON_PROPERTY(), NULL);
@@ -498,9 +498,9 @@
 	 */
 	private function createRelationStatements($entity) {
 		$statements = array();
- 		global $smwgContLang, $wgContLang;
- 		$ssp = $smwgContLang->getSpecialSchemaPropertyArray();
- 		$sc = $smwgContLang->getSpecialCategoryArray();
+ 		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+ 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+ 		$sc = $smwgHaloContLang->getSpecialCategoryArray();
 		$smwNSArray = $smwgContLang->getNamespaceArray();
  		
 		$slabel = $this->getLabelForEntity($entity, $this->model);
@@ -562,8 +562,8 @@
 	 */
 	private function createAttributeStatements($entity) {
 		$statements = array();
-		global $smwgContLang, $wgContLang;
- 		$ssp = $smwgContLang->getSpecialSchemaPropertyArray();
+		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+ 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sp = $smwgContLang->getSpecialPropertiesArray();
  		
 		$slabel = $this->getLabelForEntity($entity);

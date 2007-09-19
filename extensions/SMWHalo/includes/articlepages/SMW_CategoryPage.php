@@ -156,7 +156,6 @@ class SMWCategoryViewer extends CategoryViewer {
 	 * 
 	 */
 	private function getShortRelationList($options, $domain) {
-		global $wgContLang;
 		global $smwgHaloContLang;
 		
 		$ti = htmlspecialchars( $this->title->getText() );

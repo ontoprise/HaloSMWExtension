@@ -41,7 +41,7 @@ $wgAjaxExportList[] = 'smwfRelationSchemaData';
  */
 function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
 
-	global $smwgContLang;
+	global $smwgContLang, $smwgHaloContLang;
 
 	$success = false;
 	$created = true;
@@ -72,7 +72,7 @@ function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
 
 		// Some optional text is given
 		$sp = $smwgContLang->getSpecialPropertiesArray();
-		$ssp = $smwgContLang->getSpecialSchemaPropertyArray();
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
 		$num = count($supportedConstants);
 		for ($i = 0; $i < $num; $i++) {
@@ -143,7 +143,26 @@ function smwfExistsArticle($title) {
 		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
 		$article = new Article($titleObj);
 
-		return ($article->exists()) ? "true" : "false";
+		if ($article->exists()) {
+			return "true";
+		}
+	}
+	
+	// Is the article a special property?
+	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);
+	global $smwgContLang, $smwgHaloContLang;
+	$specialProps = $smwgContLang->getSpecialPropertiesArray();
+	foreach ($specialProps as $prop) {
+		if ($title == $prop) {
+			return "true";
+		}
+	}
+	// Is the article a special schema property?
+	$specialProps = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	foreach ($specialProps as $prop) {
+		if ($title == $prop) {
+			return "true";
+		}
 	}
 
 	return "false";
@@ -168,8 +187,8 @@ function smwfExistsArticle($title) {
  * @return xml string
  */
 function smwfRelationSchemaData($relationName) {
-	global $smwgContLang;
-	$smwSpecialSchemaProperties = $smwgContLang->getSpecialSchemaPropertyArray();
+	global $smwgHaloContLang;
+	$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
 	// get type definition (if it exists)
 	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);

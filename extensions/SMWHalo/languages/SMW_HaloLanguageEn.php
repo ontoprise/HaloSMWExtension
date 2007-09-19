@@ -336,21 +336,6 @@ protected $smwDatatypeLabels = array(
 
 );
 
-protected $smwSpecialProperties = array(
-	//always start upper-case
-	SMW_SP_HAS_TYPE  => 'Has type',
-	SMW_SP_HAS_URI   => 'Equivalent URI',
-	SMW_SP_SUBPROPERTY_OF => 'Subproperty of',
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Main display unit',
-	SMW_SP_DISPLAY_UNIT => 'Display unit',
-	SMW_SP_IMPORTED_FROM => 'Imported from',
-	SMW_SP_CONVERSION_FACTOR => 'Corresponds to',
-	SMW_SP_CONVERSION_FACTOR_SI => 'Corresponds to SI',
-	SMW_SP_SERVICE_LINK => 'Provides service',
-	SMW_SP_POSSIBLE_VALUE => 'Allows value'
-);
-
-
 var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_HINT => 'Has domain hint',
 	SMW_SSP_HAS_RANGE_HINT  => 'Has range hint',

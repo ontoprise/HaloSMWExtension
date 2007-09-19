@@ -296,21 +296,6 @@ protected $smwDatatypeLabels = array(
 	
 );
 
-protected $smwSpecialProperties = array(
-	//always start upper-case
-	SMW_SP_HAS_TYPE  => 'Hat Datentyp',
-	SMW_SP_HAS_URI   => 'Gleichwertige URI',
-	SMW_SP_SUBPROPERTY_OF => 'Untereigenschaft von',
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Erste Ausgabeeinheit',
-	// SMW_SP_MAIN_DISPLAY_UNIT => 'Primärmaßeinheit für Schirmanzeige', // Great! We really should keep this wonderful translation here! Still, I am not fully certain about my versions either. -- mak
-	SMW_SP_DISPLAY_UNIT => 'Ausgabeeinheit',
-	SMW_SP_IMPORTED_FROM => 'Importiert aus',
-	SMW_SP_CONVERSION_FACTOR => 'Entspricht',
-	SMW_SP_CONVERSION_FACTOR_SI => 'Entspricht SI',
-	SMW_SP_SERVICE_LINK => 'Bietet Service',
-	SMW_SP_POSSIBLE_VALUE => 'Erlaubt Wert'
-);
-
 var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_HINT => 'Has domain hint',
 	SMW_SSP_HAS_RANGE_HINT  => 'Has range hint',

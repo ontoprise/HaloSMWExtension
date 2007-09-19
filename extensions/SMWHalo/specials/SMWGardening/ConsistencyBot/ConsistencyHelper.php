@@ -20,9 +20,9 @@
 	
 	public function ConsistencyHelper() {
 		// intialize schemaproperties
- 		global $smwgContLang;
-		$smwSpecialSchemaProperties = $smwgContLang->getSpecialSchemaPropertyArray();
-		$smwSpecialCategories = $smwgContLang->getSpecialCategoryArray();
+ 		global $smwgContLang, $smwgHaloContLang;
+		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
 		$this->domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
 		$this->rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
 		$this->inverseOf = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_IS_INVERSE_OF], SMW_NS_PROPERTY);
