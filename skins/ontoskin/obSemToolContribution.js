@@ -60,7 +60,8 @@ OBSemanticToolbarContributor.prototype = {
 	 */
 	selectionListener: function(event) {
 		if ($("openEntityInOB") == null) return;
-		if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
+		//if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
+		if (gEditInterface.getSelectedText().length == 0){
 			// unselected
 			Field.disable("openEntityInOB");
 			$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
@@ -77,7 +78,8 @@ OBSemanticToolbarContributor.prototype = {
 	 * Navigates to the OntologyBrowser with ns and title
 	 */
 	navigateToOB: function(event) {
-		var selectedText = GeneralBrowserTools.getSelectedText(this.textArea);
+		//var selectedText = GeneralBrowserTools.getSelectedText(this.textArea);
+		var selectedText = gEditInterface.getSelectedText();
 		if (selectedText == '') {
 			return;
 		}

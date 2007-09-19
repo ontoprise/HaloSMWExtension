@@ -461,8 +461,18 @@
 		// switch registration of OntologyBrowser SemToolBar Contribution
 		if (toggle_to == 'on') {
 			var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-			if (iFrameOfAdvEditor != null && iFrameOfAdvEditor.contentDocument && iFrameOfAdvEditor.contentDocument != null) {
-				obContributor.activateTextArea(iFrameOfAdvEditor.contentDocument.getElementById('textarea'));
+			if(this.nav['isFirefox']){
+				var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+				if (iFrameOfAdvEditor != null && iFrameOfAdvEditor.contentDocument && iFrameOfAdvEditor.contentDocument != null) {
+					obContributor.activateTextArea(iFrameOfAdvEditor.contentDocument.getElementById('textarea'));
+				}
+			} else if(this.nav['isIE'] && document.frames["frame_wpTextbox1"]){
+				var doc = document.frames["frame_wpTextbox1"].document;
+				if (doc.getElementById('textarea')){
+					var y=doc.getElementById('textarea');
+					obContributor.activateTextArea(doc.getElementById('textarea'));
+					var x=1;
+				}
 			}
 		} else {
 			obContributor.activateTextArea($('wpTextbox1'))
@@ -624,9 +634,16 @@
 		parent.autoCompleter.registerTextArea("textarea", window.frames["frame_"+id]);
 
 		// register OntologyBrowser SemToolBar Contribution
-		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-		if (iFrameOfAdvEditor != null && iFrameOfAdvEditor.contentDocument && iFrameOfAdvEditor.contentDocument != null) {
-			obContributor.activateTextArea(iFrameOfAdvEditor.contentDocument.getElementById('textarea'));
+		if(this.nav['isFirefox']){
+			var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+			if (iFrameOfAdvEditor != null && iFrameOfAdvEditor.contentDocument && iFrameOfAdvEditor.contentDocument != null) {
+				obContributor.activateTextArea(iFrameOfAdvEditor.contentDocument.getElementById('textarea'));
+			}
+		} else if(this.nav['isIE'] && document.frames["frame_wpTextbox1"]){
+			var doc = document.frames["frame_wpTextbox1"].document;
+			if (doc){
+				obContributor.activateTextArea(doc.getElementById('textarea'));
+			}
 		}
 	};
 
