@@ -425,7 +425,7 @@
 	}
 	
 	private function createPropertiesFromCategory($st, $superClass, & $statements) {
-		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+		global $smwgContLang,$smwgHaloContLang, $wgContLang;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sp = $smwgContLang->getSpecialPropertiesArray();
  		

@@ -20,7 +20,7 @@
 	
 	public function ConsistencyHelper() {
 		// intialize schemaproperties
- 		global $smwgContLang, $smwgHaloContLang;
+ 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
 		$this->domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);

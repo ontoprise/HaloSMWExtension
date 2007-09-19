@@ -567,7 +567,7 @@
  	}
  	
  	private function getSharedDomainCategories() {
- 		global $smwgContLang, $smwgHaloContLang;
+ 		global $smwgHaloContLang;
  		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
 		$domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
@@ -590,7 +590,7 @@
  	}
  	
  	private function getSharedRangeCategories() {
- 		global $smwgContLang, $smwgHaloContLang;
+ 		global $smwgHaloContLang;
  		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
 		$rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
@@ -613,7 +613,7 @@
  	
  	private function getSharedTypes() {
  		$db =& wfGetDB( DB_MASTER );
-		global $smwgContLang, $smwgHaloContLang;
+		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 			
 		$res = $db->query('SELECT s1.value_string AS type FROM smw_specialprops s1, smw_specialprops s2 ' .
