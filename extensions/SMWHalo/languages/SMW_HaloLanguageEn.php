@@ -306,7 +306,11 @@ clicking the big arrows between the columns.',
 	'smw_qi_layout_manager' => 'Query Layout Manager',
 	'smw_qi_table_column_preview' => 'Table Column Preview',
 	'smw_qi_article_title' => 'Article title',
-	'smw_qi_close_preview' => 'Close Preview'
+	'smw_qi_load' => 'Load Query',
+	'smw_qi_save' => 'Save Query',
+	'smw_qi_close_preview' => 'Close Preview',
+	'smw_qi_querySaved' => 'New query saved by QueryInterface',
+	'smw_qi_exportXLS' => 'Export results to Excel'
 );
 
 protected $smwDatatypeLabels = array(

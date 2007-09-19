@@ -112,5 +112,28 @@ var wgLanguageStrings = {
 	'HIDE_INSTANCES'          : 'Hide instances',
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
 	'MARK_A_WORD'             : 'Mark a word...',
-	'OPEN_IN_OB'              : 'Open in Ontology Browser'
+	'OPEN_IN_OB'              : 'Open in Ontology Browser',
+
+	// Query Interface
+	'QUERY_INTERFACE'         : 'Query Interface',
+	'QI_MAIN_QUERY_NAME'	  : 'Main',
+	'QI_ARTICLE_TITLE'        : 'Article title',
+	'QI_EMPTY_QUERY'       	  : 'Your Query is empty.',
+	'QI_INSTANCE'       	  : 'Instance:',
+	'QI_PROPERTYNAME'         : 'Property name:',
+	'QI_SHOW_PROPERTY'        : 'Show in results:',
+	'QI_USE_SUBQUERY'         : 'Use subquery',
+	'QI_PAGE'				  : 'Page',
+	'QI_OR'        			  : 'or',
+	'QI_ENTER_CATEGORY'       : 'Please enter a category',
+	'QI_ENTER_INSTANCE'       : 'Please enter an instance',
+	'QI_ENTER_PROPERTY_NAME'  : 'Please enter a property name',
+	'QI_CLIPBOARD_SUCCESS'    : 'The query text was successfully copied to your clipboard',
+	'QI_CLIPBOARD_FAIL'    	  : "Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.",
+	'QI_SUBQUERY'    	  	  : "Subquery",
+	'QI_CATEGORIES'    	  	  : " Categories:",
+	'QI_INSTANCES'    	  	  : " Instances:",
+	'QI_QUERY_EXISTS'		  : "A query with this name already exists. Please choose another name.",
+	'QI_QUERY_SAVED'		  : "Your query has been successfully saved.",
+	'QI_SAVE_ERROR'		  	  : "An unknown error occured. Your query could not be saved."
 };
