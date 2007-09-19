@@ -169,7 +169,7 @@ function smwfHaloInitUserMessages() {
 
 function smwfHaloInitContentMessages() {
 		global $smwgHaloContMessagesInPlace;
-		//if ($smwgHaloContMessagesInPlace) { return; }
+		if ($smwgHaloContMessagesInPlace) { return; }
 		
 		global $wgMessageCache, $smwgHaloContLang, $wgLanguageCode;
 		smwfHaloInitContentLanguage($wgLanguageCode);
@@ -182,11 +182,20 @@ function smwfHaloInitContentMessages() {
 /**
  * Returns GeneralStore
  */
-function &smwfGetOntologyBrowserAccess() {
+function &smwfGetSemanticStore() {
 		global $smwgMasterGeneralStore, $smwgHaloIP;
 		if ($smwgMasterGeneralStore == NULL) {
-			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserSQLAccess.php');
-			$smwgMasterGeneralStore = new SMWOntologyBrowserSQLAccess();
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$smwgMasterGeneralStore = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL.php');
+					$smwgMasterGeneralStore = new SMWSemanticStoreSQL();
+				break;
+			}
 		}
 		return $smwgMasterGeneralStore;
 }

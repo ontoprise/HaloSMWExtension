@@ -10,6 +10,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfOntologyBrowserAccess';
 
 require_once("SMW_OntologyBrowserXMLGenerator.php");
+ require_once("SMW_OntologyBrowserFilter.php" );
  
 function smwfOntologyBrowserAccess($method, $params) {
  	$p_array = explode(",", $params);
@@ -21,7 +22,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[0] + 0;
  		$reqfilter->sort = true;
  		$reqfilter->offset = ($p_array[1] + 0)*$reqfilter->limit;
-		$rootcats = smwfGetOntologyBrowserAccess()->getRootCategories($reqfilter);
+		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $p_array[0] + 0, $p_array[1] + 0, true);
  		
  	} else if ($method == 'getSubCategory') {
@@ -33,7 +34,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$directsubcats = smwfGetOntologyBrowserAccess()->getDirectSubCategories($supercat, $reqfilter);
+ 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $p_array[1] + 0, $p_array[2] + 0);
  		
  	}  else if ($method == 'getInstance') {
@@ -45,7 +46,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[1] + 0;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$instances = smwfGetOntologyBrowserAccess()->getInstances($cat,  $reqfilter);
+ 		$instances = smwfGetSemanticStore()->getInstances($cat,  $reqfilter);
  		$directInstances = $instances[0];
  		smwfSortTitleArray($instances[1]);
  		$inheritedInstances = smwfEliminateDoubles($instances[1]);
@@ -69,13 +70,13 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$properties = smwfGetOntologyBrowserAccess()->getDirectPropertiesOfCategory($cat, $reqfilter);
+ 		$properties = smwfGetSemanticStore()->getDirectPropertiesOfCategory($cat, $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
  	} else if ($method == 'getProperties') {
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$properties = smwfGetOntologyBrowserAccess()->getPropertiesOfCategory($cat, $reqfilter);
+ 		$properties = smwfGetSemanticStore()->getPropertiesOfCategory($cat, $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties[0], $properties[1]);
  		
  	} else if ($method == 'getRootProperties') {
@@ -85,7 +86,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$reqfilter->limit =  $p_array[0] + 0;
  		$reqfilter->offset = ($p_array[1] + 0)*$reqfilter->limit;
- 		$rootatts = smwfGetOntologyBrowserAccess()->getRootProperties($reqfilter);
+ 		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $p_array[0] + 0, $p_array[1] + 0, true);
  	} else if ($method == 'getSubProperties') {
 		// param0 : attribute
@@ -96,7 +97,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[1] + 0;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$superatt = Title::newFromText($p_array[0], SMW_NS_ATTRIBUTE);
- 		$directsubatts = smwfGetOntologyBrowserAccess()->getDirectSubAttributes($superatt, $reqfilter);
+ 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $p_array[1] + 0, $p_array[2] + 0);
  		
  	} else if ($method == 'getInstancesUsingProperty') {
@@ -111,27 +112,29 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$attinstances = smwfGetStore()->getAllPropertySubjects($prop,  $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, array(), $p_array[1] + 0, $p_array[2] + 0);
  	} else if ($method == 'getCategoryForInstance') {
+ 		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$instanceTitle = Title::newFromText($p_array[0]);
-		return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForCategoriesWithInstance($instanceTitle, $reqfilter);
+		return $browserFilter->filterForCategoriesWithInstance($instanceTitle, $reqfilter);
  	} else if ($method == 'getCategoryForProperty') {
+ 		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$propertyTitle = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-		return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForCategoriesWithProperty($propertyTitle, $reqfilter);
+		return $browserFilter->filterForCategoriesWithProperty($propertyTitle, $reqfilter);
  	}  else if ($method == 'filterBrowse') {
- 		
+ 		$browserFilter = new SMWOntologyBrowserFilter();
  		$type = $p_array[0];
  		$hint = explode(" ", $p_array[1]);
  		if ($type == 'category') {
- 			return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForCategories($hint);
+ 			return $browserFilter->filterForCategories($hint);
  		} else if ($type == 'instance') {
- 			return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForInstances($hint);
+ 			return $browserFilter->filterForInstances($hint);
  		} else if ($type == 'propertyTree') {
- 			return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForPropertyTree($hint);
+ 			return $browserFilter->filterForPropertyTree($hint);
  		} else if ($type == 'property') {
- 			return smwfGetOntologyBrowserAccess()->getBrowserFilter()->filterForProperties($hint);
+ 			return $browserFilter->filterForProperties($hint);
  		} 
  		
  	}

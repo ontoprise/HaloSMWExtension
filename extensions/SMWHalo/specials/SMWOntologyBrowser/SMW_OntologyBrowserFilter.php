@@ -35,7 +35,7 @@
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundCategories = smwfGetOntologyBrowserAccess()->getPages(array(NS_CATEGORY), $reqfilter);
+ 	 	$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter);
  	 	
  	 	return $this->getCategoryTree($foundCategories);	 	
  	 }
@@ -47,7 +47,7 @@
  	  * @return xml string (category tree)
  	  */
  	 function filterForCategoriesWithInstance(Title $articleTitle, $reqfilter) {
- 	 	$categories = smwfGetOntologyBrowserAccess()->getCategoriesForInstance($articleTitle, $reqfilter);
+ 	 	$categories = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle, $reqfilter);
  	 	return $this->getCategoryTree($categories);	
  	 }
  	 
@@ -77,7 +77,7 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundInstances = smwfGetOntologyBrowserAccess()->getPages(array(NS_MAIN), $reqfilter);
+ 	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter);
  	 	$result = "";
  	 	foreach($foundInstances as $instance) {
  	 		$result .= "<instance title=\"".$instance->getDBkey()."\" img=\"$type.gif\" id=\"ID_$id$count\"/>";
@@ -109,7 +109,7 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundAttributes = smwfGetOntologyBrowserAccess()->getPages(array(SMW_NS_ATTRIBUTE), $reqfilter);
+ 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_ATTRIBUTE), $reqfilter);
  	 	
  	 	// create root object
  	 	$root = new TreeObject(null);
@@ -161,7 +161,7 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundProperties = smwfGetOntologyBrowserAccess()->getPages(array(SMW_NS_ATTRIBUTE, SMW_NS_RELATION), $reqfilter);
+ 	 	$foundProperties = smwfGetSemanticStore()->getPages(array(SMW_NS_ATTRIBUTE, SMW_NS_RELATION), $reqfilter);
  	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties, array());
  	 }
  	 
@@ -205,7 +205,7 @@
  	  * Returns all domain categories for a given property.
  	  */
  	 private function getDomainCategories($propertyTitle, $reqfilter) {
- 	 	$domainRelation = smwfGetOntologyBrowserAccess()->domainHintRelation;
+ 	 	$domainRelation = smwfGetSemanticStore()->domainHintRelation;
  	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRelation, $reqfilter);
  	    $result = array();
  	    foreach($categories as $value) {
@@ -223,7 +223,7 @@
  	  */
  	 private function getAllCategoryPaths($cat, & $path, & $allPaths) {
     	 $path[] = $cat;
- 	 	 $superCats = smwfGetOntologyBrowserAccess()->getDirectSuperCategories($cat);
+ 	 	 $superCats = smwfGetSemanticStore()->getDirectSuperCategories($cat);
  	 	 foreach($superCats as $superCat) {
  	 	 	$cloneOfPath = array_clone($path);
  	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths);
@@ -241,7 +241,7 @@
  	  */
  	 private function getAllPropertyPaths($att, & $path, & $allPaths) {
     	 $path[] = $att;
- 	 	 $superCats = smwfGetOntologyBrowserAccess()->getDirectSuperAttributes($att);
+ 	 	 $superCats = smwfGetSemanticStore()->getDirectSuperProperties($att);
  	 	 foreach($superCats as $superCat) {
  	 	 	$cloneOfPath = array_clone($path);
  	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths);

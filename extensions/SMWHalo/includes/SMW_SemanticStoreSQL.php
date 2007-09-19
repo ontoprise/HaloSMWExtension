@@ -9,75 +9,26 @@
  require_once( "$smwgIP/includes/storage/SMW_Store.php" );
  require_once( "$smwgIP/includes/SMW_DV_WikiPage.php" );
  require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
- 
- require_once( "$smwgHaloIP/specials/SMWOntologyBrowser/SMW_OntologyBrowserFilter.php" );
+ require_once("SMW_SemanticStore.php");
+
  
  define('MAX_RECURSION_DEPTH', 10);
  
- class SMWOntologyBrowserSQLAccess {
- 	
- 	/**
- 	 * Domain hint relation. 
- 	 * Determines the domain of an attribute or relation. 
- 	 */
- 	public $domainHintRelation;
- 	
- 	/**
- 	 * Range hint relation. 
- 	 * Determines the range of a relation. 
- 	 */
-	public $rangeHintRelation;
-	
-	/**
-	 * Minimum cardinality. 
-	 * Determines how often an attribute or relations must be instantiated per instance at least.
-	 * Allowed values: 0..n, default is 0.
-	 */
-	public $minCard;
-	
-	/**
-	 * Maximum cardinality. 
-	 * Determines how often an attribute or relations may instantiated per instance at most.
-	 * Allowed values: 1..*, default is *, which means unlimited.
-	 */
-	public $maxCard;
-	
-	/**
-	 * Transitive category
-	 * All relations of this category are transitive.
-	 */
-	public $transitiveCat;
-	
-	/**
-	 * All relations of this category are symetrical.
-	 */
-	public $symetricalCat;
-	
-	private $filterBrowsing;
-	
-	public function SMWOntologyBrowserSQLAccess() {
+ class SMWSemanticStoreSQL extends SMWSemanticStore {
+ 		
+	public function SMWSemanticStoreSQL() {
 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
-		$this->domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
-		$this->rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
-		$this->minCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
-		$this->maxCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
-		$this->transitiveCat = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
-		$this->symetricalCat = Title::newFromText($smwSpecialCategories[SMW_SC_SYMMETRICAL_RELATIONS], NS_CATEGORY);
-		
-		// instantiate the used BrowserFilter
-		$this->filterBrowsing = new SMWOntologyBrowserFilter();
+		$domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
+		$rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
+		$minCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
+		$maxCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
+		$transitiveCat = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
+		$symetricalCat = Title::newFromText($smwSpecialCategories[SMW_SC_SYMMETRICAL_RELATIONS], NS_CATEGORY);
+		parent::SMWSemanticStore($domainHintRelation, $rangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat);
 	}
-	
-	/**
-	 * Returns the used Browser filter.
-	 */
-	function getBrowserFilter() {
-		return $this->filterBrowsing;
-	}
-	
- 	
+	 	
 	public function getPages($namespaces = NULL, $requestoptions = NULL) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
@@ -154,26 +105,6 @@
 		return $result;
 	}
 
-	/*function getRootRelations($requestoptions = NULL) {
-		
-		$result = "";
-		$db =& wfGetDB( DB_MASTER );
-		$sql = 'page_namespace=' . SMW_NS_RELATION .
-			   ' AND NOT EXISTS (SELECT subject_id FROM smw_specialprops WHERE subject_id = page_id AND property_id = '.SMW_SP_IS_SUBRELATION_OF.')'.
-		       $this->getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select( $db->tableName('page'), 
-		                    'page_title',
-		                    $sql, 'SMW::getRootRelations', $this->getSQLOptions($requestoptions,'page_title') );
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, SMW_NS_RELATION);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}*/
 	
 	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
 		$result = "";
@@ -295,7 +226,7 @@
 		return smwfGetStore()->getPropertySubjects($this->domainHintRelation, $value);
 	}
 	
-	function getDirectSubAttributes(Title $attribute, $requestoptions = NULL) {
+	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 	 	
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
@@ -303,7 +234,7 @@
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
 		                    'subject_title',
-		                    $sql, 'SMW::getDirectSubAttributes', $this->getSQLOptions($requestoptions,'subject_title') );
+		                    $sql, 'SMW::getDirectSubProperties', $this->getSQLOptions($requestoptions,'subject_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -314,7 +245,7 @@
 		return $result;
 	}
 	
-	function getDirectSuperAttributes(Title $attribute, $requestoptions = NULL) {
+	function getDirectSuperProperties(Title $attribute, $requestoptions = NULL) {
 	 	
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
@@ -322,7 +253,7 @@
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
 		                    'object_title',
-		                    $sql, 'SMW::getDirectSuperAttributes', $this->getSQLOptions($requestoptions,'object_title') );
+		                    $sql, 'SMW::getDirectSuperProperties', $this->getSQLOptions($requestoptions,'object_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {

@@ -164,11 +164,11 @@ class AutoCompletionRequester {
  	    	
  	    			$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
  	    		
- 	    			$rangeRelation = smwfGetOntologyBrowserAccess()->rangeHintRelation;
+ 	    			$rangeRelation = smwfGetSemanticStore()->rangeHintRelation;
  	    			$categories = smwfGetStore()->getPropertyValues($property, $rangeRelation);
  	    			$pages = array();
  	    			foreach ($categories as $c) {
- 	    				$instances = smwfGetOntologyBrowserAccess()->getDirectInstances($c->getTitle());
+ 	    				$instances = smwfGetSemanticStore()->getDirectInstances($c->getTitle());
  	    				$pages = array_merge($pages, $instances);
  	    			}
  	    			return AutoCompletionRequester::encapsulateAsXML($pages);
@@ -210,9 +210,9 @@ class AutoCompletionRequester {
 		if ($semanticAC) { 
  	    		// get all categories of the article
  	    		$articleTitle = Title::newFromText($articleName);
- 	    		$categoriesOfArticle = smwfGetOntologyBrowserAccess()->getCategoriesForInstance($articleTitle);
+ 	    		$categoriesOfArticle = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle);
  	    		
- 	    		$domainRelation = smwfGetOntologyBrowserAccess()->domainHintRelation;
+ 	    		$domainRelation = smwfGetSemanticStore()->domainHintRelation;
  	    		$pages = array();
  	    		foreach($categoriesOfArticle as $category) {
  	    			$value = SMWDataValueFactory::newTypeIDValue('_wpg');

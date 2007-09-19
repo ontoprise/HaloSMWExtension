@@ -132,7 +132,7 @@ private static function encapsulateAsProperty($t, $count) {
 		$typesOfAttribute = smwfGetStore()->getSpecialValues($t, SMW_SP_HAS_TYPE);
 		if (count($typesOfAttribute) == 0) {
 			// no 'has type' annotation -> it's a binary relation by default
-			$relationTarget = smwfGetStore()->getPropertyValues($t, smwfGetOntologyBrowserAccess()->rangeHintRelation);
+			$relationTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->rangeHintRelation);
 			$img = "relation.gif";
 			if (count($relationTarget) == 0) {
 				$content = "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
@@ -155,28 +155,28 @@ private static function encapsulateAsProperty($t, $count) {
 			$img = (count($typeLabels) == 1 && $typeLabels[0] == 'Page') ? "relation.gif" : "attribute.gif";
 		}
 		
-		$numberofUsage = smwfGetOntologyBrowserAccess()->getNumberOfUsage($t);
+		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($t);
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';	
 		// read min/max cardinality
 		// TODO: check value if it is valid.
-		$minCard = smwfGetStore()->getPropertyValues($t, smwfGetOntologyBrowserAccess()->minCard);
+		$minCard = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->minCard);
 		$minCardText = 'minCard="0"'; // default min cardinality
 		if (count($minCard) > 0) {
 			$minCardText = "minCard=\"".$minCard[0]->getXSDValue()."\"";
 		}
-		$maxCard = smwfGetStore()->getPropertyValues($t, smwfGetOntologyBrowserAccess()->maxCard);
+		$maxCard = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->maxCard);
 		$maxCardText = 'maxCard="*"';// default max cardinality
 		if (count($maxCard) > 0) {
 			$maxCardText = "maxCard=\"".$maxCard[0]->getXSDValue()."\"";
 		}
 		
-		$catsOfRelation = smwfGetOntologyBrowserAccess()->getCategoriesForInstance($t);
+		$catsOfRelation = smwfGetSemanticStore()->getCategoriesForInstance($t);
 		$isSymetricalText = '';
 		$isTransitiveText = '';
 		foreach($catsOfRelation as $c) {
-			if ($c->getDBkey() == smwfGetOntologyBrowserAccess()->symetricalCat->getDBkey()) {
+			if ($c->getDBkey() == smwfGetSemanticStore()->symetricalCat->getDBkey()) {
 				$isSymetricalText = "isSymetrical=\"true\"";
-			} else 	if ($c->getDBkey() == smwfGetOntologyBrowserAccess()->transitiveCat->getDBkey()) {
+			} else 	if ($c->getDBkey() == smwfGetSemanticStore()->transitiveCat->getDBkey()) {
 				$isTransitiveText = "isTransitive=\"true\"";
 			}
 		}
@@ -269,12 +269,12 @@ private static function getChemicalFormulaOrEquationAsHTML($text, &$chemistryPar
  * returns true, if the property is a pre-defined schema property
  */
 private static function isPredefinedProperty($prop) {
-	return ($prop->getDBkey()== smwfGetOntologyBrowserAccess()->domainHintRelation->getDBkey()) 
-		||  ($prop->getDBkey()== smwfGetOntologyBrowserAccess()->rangeHintRelation->getDBkey())
-		||  ($prop->getDBkey()== smwfGetOntologyBrowserAccess()->minCard->getDBkey()) 
-		|| 	($prop->getDBkey()== smwfGetOntologyBrowserAccess()->maxCard->getDBkey())
-		|| ($prop->getDBkey()== smwfGetOntologyBrowserAccess()->transitiveCat->getDBkey()) 
-		|| ($prop->getDBkey()== smwfGetOntologyBrowserAccess()->symetricalCat->getDBkey()); 
+	return ($prop->getDBkey()== smwfGetSemanticStore()->domainHintRelation->getDBkey()) 
+		||  ($prop->getDBkey()== smwfGetSemanticStore()->rangeHintRelation->getDBkey())
+		||  ($prop->getDBkey()== smwfGetSemanticStore()->minCard->getDBkey()) 
+		|| 	($prop->getDBkey()== smwfGetSemanticStore()->maxCard->getDBkey())
+		|| ($prop->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey()) 
+		|| ($prop->getDBkey()== smwfGetSemanticStore()->symetricalCat->getDBkey()); 
 } 	
 }
 ?>
