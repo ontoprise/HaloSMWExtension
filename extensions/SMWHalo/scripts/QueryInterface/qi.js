@@ -17,13 +17,13 @@ function plusminus(){
 }
 
 function switchtcp(){
-	if($("tcp_boxcontent").style.visibility == "hidden"){
-		$("tcp_boxcontent").style.visibility = "visible";
+	if($("tcp_boxcontent").style.display == "none"){
+		$("tcp_boxcontent").style.display = "";
 		$("tcptitle-link").removeClassName("plusminus");
 		$("tcptitle-link").addClassName("minusplus");
 	}
 	else {
-		$("tcp_boxcontent").style.visibility = "hidden";
+		$("tcp_boxcontent").style.display = "none";
 		$("tcptitle-link").removeClassName("minusplus");
 		$("tcptitle-link").addClassName("plusminus");
 	}

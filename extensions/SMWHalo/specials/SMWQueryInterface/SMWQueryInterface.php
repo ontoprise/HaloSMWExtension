@@ -56,8 +56,11 @@ class SMWQueryInterface{
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>' .
 				'<div id="qimenubar">' .
+					//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+					//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 					'<span class="qibutton" onclick="qihelper.previewQuery()">' . wfMsg('smw_qi_preview') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 					'<span class="qibutton" onclick="qihelper.copyToClipboard()">' . wfMsg('smw_qi_clipboard') . '</span>' .
+					//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 					'<span style="position:absolute; right:10px;"><span class="qibutton" onclick="qihelper.resetQuery()">' . wfMsg('smw_qi_reset') . '</span></span>' .
 				'</div>';
 
@@ -85,7 +88,7 @@ class SMWQueryInterface{
 					'</div>' .
 					'<div id="tablecolumnpreview">' .
 						'<div class="tcp_boxheader" onclick="switchtcp()"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
-						'<div id="tcp_boxcontent" class="tcp_boxcontent" style="visibility:hidden">' .
+						'<div id="tcp_boxcontent" class="tcp_boxcontent" style="display:none">' .
 							'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
 								'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
 							'</table></div>' .
@@ -139,7 +142,7 @@ class SMWQueryInterface{
 						<td>
 							Limit:
 						</td><td>
-							<input type="text" size="18" id="layout_limit" value="50"/>
+							<input type="text" id="layout_limit" value="50"/>
 						</td>
 						<td>
 							Headers:
@@ -151,17 +154,17 @@ class SMWQueryInterface{
 						<td>
 							Intro:
 						</td><td>
-							<input type="text" size="18" id="layout_intro"/>
+							<input type="text" id="layout_intro"/>
 						</td>
 						<td>
 							Mainlabel:
 						</td><td>
-							<input type="text" size="18" id="layout_label" value="Article title"/>
+							<input type="text" id="layout_label" value="Article title"/>
 						</td>
 						<td>
 							Default:
 						</td><td>
-							<input type="text" size="18" id="layout_default"/>
+							<input type="text" id="layout_default"/>
 						</td>
 					</tr>
 				</table>
@@ -171,11 +174,17 @@ class SMWQueryInterface{
 		$html .= '<div id="fullpreviewbox" style="display:none">';
 		$html .= '<div id="fullpreview"></div>';
 		$html .= '<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\')"><img src="'. $imagepath. 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>';
-		$html.=	'</div>';
+		$html .= '</div>';
 
 		$html .= '<div id="resetdialogue" style="display:none">' .
 				'Do you really want to reset your query?<br/>' .
 				'<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'resetdialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
+				'</div>';
+
+		$html .= '<div id="savedialogue" style="display:none">' .
+				'Please enter a query name:<br/>' .
+				'<input type="text" id="saveName"/><br/>' .
+				'<span class="qibutton" onclick="qihelper.doSave()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'savedialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
 				'</div>';
 
 		$wgOut->addHTML($html);

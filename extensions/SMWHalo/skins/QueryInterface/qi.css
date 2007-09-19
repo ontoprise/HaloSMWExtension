@@ -178,7 +178,11 @@ background: #FFFFFF;
 }
 
 #layoutcontent select{
-width:95%;
+/*width:95%;*/
+}
+
+.qlm_input{
+/*width:94%;*/
 }
 
 .selectbox{
@@ -249,7 +253,17 @@ border-color: #AAAAAA;
 position:absolute;
 z-index:51;
 top:25%;
-left:25%;
+left:30%;
+background:#FFF;
+border: 1px solid #AAAAAA;
+padding:5px;
+}
+
+#savedialogue{
+position:absolute;
+z-index:51;
+top:25%;
+left:30%;
 background:#FFF;
 border: 1px solid #AAAAAA;
 padding:5px;

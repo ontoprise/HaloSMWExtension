@@ -21,6 +21,7 @@ initialize:function(){
 	this.addQuery(null, gLanguage.getMessage('QI_MAIN_QUERY_NAME'));
 	this.setActiveQuery(0);
 	this.updateColumnPreview();
+	this.pendingElement = null;
 },
 
 getNumericDatatypes:function(){
@@ -64,6 +65,10 @@ doReset:function(){
 
 previewQuery:function(){
 	$('shade').toggle();
+	if(this.pendingElement)
+		this.pendingElement.hide();
+	this.pendingElement = new OBPendingIndicator($('shade'));
+	this.pendingElement.show();
 	var ask = this.recurseQuery(0);
 	if (ask != ""){
 		var params = ask + ",";
@@ -86,6 +91,7 @@ previewQuery:function(){
 },
 
 openPreview:function(request){
+	this.pendingElement.hide();
 	$('fullpreviewbox').toggle();
 	$('fullpreview').innerHTML = request.responseText;
 },
@@ -117,14 +123,14 @@ updateColumnPreview:function(){
 			columns.push(tmparr[i].getName());
 		}
 	}
-	var html = '<table id="tcp" summary="Preview of table columns"><tr>';
+	var tcp_html = '<table id="tcp" summary="Preview of table columns"><tr>';
 	$('layout_sort').innerHTML = "";
 	for(var i=0; i<columns.length; i++){
-		html += "<td>" + columns[i] + "</td>";
-		$('layout_sort').innerHTML += "<option>" + columns[i] + "</option>";
+		tcp_html += "<td>" + columns[i] + "</td>";
+		$('layout_sort').options[$('layout_sort').length] = new Option(columns[i], columns[i]);
 	}
-	html += "</tr></table>";
-	$('tcpcontent').innerHTML = html;
+	tcp_html += "</tr></table>";
+	$('tcpcontent').innerHTML = tcp_html;
 },
 
 getFullAsk:function(){
@@ -136,7 +142,7 @@ getFullAsk:function(){
 	starttag += $('layout_intro').value==""?"":('intro="' + $('layout_intro').value + '" ');
 	starttag += $('layout_sort').value==gLanguage.getMessage('QI_ARTICLE_TITLE')?"":('sort="' + $('layout_sort').value + '" ');
 	starttag += $('layout_limit').value==""?'limit="20"':('limit="' + $('layout_limit').value + '" ');
-	starttag += $('layout_label').value==""?"":('label="' + $('layout_label').value + '" ');
+	starttag += $('layout_label').value==""?"":('mainlabel="' + $('layout_label').value + '" ');
 	starttag += $('layout_order').value=="ascending"?'order="ascending" ':'order="descending" ';
 	starttag += $('layout_headers').checked?'':'headers="hide" ';
 	starttag += $('layout_default').value==""?'':'default="' + $('layout_default').value +'" ';
@@ -177,6 +183,7 @@ newCategoryDialogue:function(reset){
 	this.activeInputs = 1;
 	$('dialoguebuttons').style.display="";
 	autoCompleter.registerAllInputs();
+	$('input0').focus();
 },
 
 newInstanceDialogue:function(reset){
@@ -197,6 +204,7 @@ newInstanceDialogue:function(reset){
 	this.activeInputs = 1;
 	$('dialoguebuttons').style.display="";
 	autoCompleter.registerAllInputs();
+	$('input0').focus();
 },
 
 newPropertyDialogue:function(reset){
@@ -243,6 +251,7 @@ newPropertyDialogue:function(reset){
 	$('dialoguebuttons').style.display="";
 	this.proparity = 2;
 	autoCompleter.registerAllInputs();
+	$('input0').focus();
 },
 
 emptyDialogue:function(){
@@ -298,6 +307,7 @@ addDialogueInput:function(){
 	}
 	cell = newrow.insertCell(-1);
 	cell.innerHTML = '<img src="' + this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removeInput(' + newrow.rowIndex + ')"/>';
+	$('input' + this.activeInputs).focus();
 	this.activeInputs++;
 	autoCompleter.registerAllInputs();
 },
@@ -311,119 +321,124 @@ getPropertyInformation:function(){
 	var propname = $('input0').value;
 	if (propname != "" && propname != this.propname){
 		this.propname = propname;
+		if(this.pendingElement)
+			this.pendingElement.hide();
+		this.pendingElement = new OBPendingIndicator($('input2'));
+		this.pendingElement.show();
 		sajax_do_call('smwfQIAccess', ["getPropertyInformation", propname], this.adaptDialogueToProperty.bind(this));
 	}
 },
 
 adaptDialogueToProperty:function(request){
-this.propIsEnum = false;
-if (this.activeDialogue != null){
-	var oldval = $('input2').value;
-	var oldcheck = $('usesub')?$('usesub').checked:false;
-	for(var i=3, n = $('dialoguecontent').rows.length; i<n; i++){
-		$('dialoguecontent').deleteRow(3);
-	}
+	this.propIsEnum = false;
+	if (this.activeDialogue != null){
+		var oldval = $('input2').value;
+		var oldcheck = $('usesub')?$('usesub').checked:false;
+		for(var i=3, n = $('dialoguecontent').rows.length; i<n; i++){
+			$('dialoguecontent').deleteRow(3);
+		}
 
-	var arity = 2;
-	this.proparity = 2;
-	var parameterNames = [gLanguage.getMessage('QI_PAGE')];
-	var parameterIsNumeric = [false];
-	var possibleValues = new Array();
+		var arity = 2;
+		this.proparity = 2;
+		var parameterNames = [gLanguage.getMessage('QI_PAGE')];
+		var parameterIsNumeric = [false];
+		var possibleValues = new Array();
 
-	if (request.status == 200) {
-		var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
+		if (request.status == 200) {
+			var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
 
-		// read arity and parameter names
-		arity = parseInt(schemaData.documentElement.getAttribute("arity"));
-		this.proparity = arity;
-		parameterNames = [];
-		parameterIsNumeric = [];
-		for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
-			parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
-			parameterIsNumeric.push(schemaData.documentElement.childNodes[i].getAttribute("isNumeric")=="true"?true:false);
-			for (var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j<m; j++){
-				possibleValues.push(schemaData.documentElement.childNodes[i].childNodes[j].getAttribute("value"));
+			// read arity and parameter names
+			arity = parseInt(schemaData.documentElement.getAttribute("arity"));
+			this.proparity = arity;
+			parameterNames = [];
+			parameterIsNumeric = [];
+			for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
+				parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+				parameterIsNumeric.push(schemaData.documentElement.childNodes[i].getAttribute("isNumeric")=="true"?true:false);
+				for (var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j<m; j++){
+					possibleValues.push(schemaData.documentElement.childNodes[i].childNodes[j].getAttribute("value"));
+				}
 			}
 		}
-	}
-	if (arity == 2){
-	// Speical treatment: binary properties support conjunction, therefore we need an "add" button
-		$('mainlabel').innerHTML = parameterNames[0];
-		if (parameterIsNumeric[0]){
-			$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
-			autoCompleter.deregisterAllInputs();
-			$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
-			autoCompleter.registerAllInputs();
-		}
-		else
-			$('restricionSelector').innerHTML = this.createRestrictionSelector("=", true);
-		if (parameterNames[0] == gLanguage.getMessage('QI_PAGE')){
-			autoCompleter.deregisterAllInputs();
-			$('dialoguecontent').rows[2].cells[2].firstChild.className = "wickEnabled";
-			autoCompleter.registerAllInputs();
-		}
-		$('dialoguecontent').rows[2].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
+		if (arity == 2){
+		// Speical treatment: binary properties support conjunction, therefore we need an "add" button
+			$('mainlabel').innerHTML = parameterNames[0];
+			if (parameterIsNumeric[0]){
+				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
+				autoCompleter.deregisterAllInputs();
+				$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
+				autoCompleter.registerAllInputs();
+			}
+			else
+				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", true);
+			if (parameterNames[0] == gLanguage.getMessage('QI_PAGE')){
+				autoCompleter.deregisterAllInputs();
+				$('dialoguecontent').rows[2].cells[2].firstChild.className = "wickEnabled";
+				autoCompleter.registerAllInputs();
+			}
+			$('dialoguecontent').rows[2].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 
-		if(parameterNames[0] == gLanguage.getMessage('QI_PAGE')){ //if type is page, we need a subquery checkbox
-			$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
-			$('dialoguecontent').rows[2].cells[4].className = "subquerycell";
-			$('usesub').checked = oldcheck;
-			this.activeInputs = 3;
+			if(parameterNames[0] == gLanguage.getMessage('QI_PAGE')){ //if type is page, we need a subquery checkbox
+				$('dialoguecontent').rows[2].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
+				$('dialoguecontent').rows[2].cells[4].className = "subquerycell";
+				$('usesub').checked = oldcheck;
+				this.activeInputs = 3;
+			}
+			else { //no checkbox for other types
+				$('dialoguecontent').rows[2].cells[4].innerHTML = ""
+				$('dialoguecontent').rows[2].cells[4].className = "";
+				this.activeInputs = 3;
+			}
+			if(possibleValues.length > 0){
+				this.propIsEnum = true;
+				this.enumValues = new Array();
+				autoCompleter.deregisterAllInputs();
+				var option = '<select id="input2" style="width:100%">';
+				for(var i = 0; i < possibleValues.length; i++){
+					this.enumValues.push(possibleValues[i]);
+					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
+				}
+				option += "</select>";
+				$('dialoguecontent').rows[2].cells[2].innerHTML = option;
+				autoCompleter.registerAllInputs();
+			}
 		}
-		else { //no checkbox for other types
-			$('dialoguecontent').rows[2].cells[4].innerHTML = ""
+		else {
+		// properties with arity >2: no conjunction, no subqueries
+			this.activeInputs = 3;
+			$('dialoguecontent').rows[2].cells[3].innerHTML = "";
+			$('dialoguecontent').rows[2].cells[4].innerHTML = "";
 			$('dialoguecontent').rows[2].cells[4].className = "";
-			this.activeInputs = 3;
-		}
-		if(possibleValues.length > 0){
-			this.propIsEnum = true;
-			this.enumValues = new Array();
-			autoCompleter.deregisterAllInputs();
-			var option = '<select id="input2" style="width:100%">';
-			for(var i = 0; i < possibleValues.length; i++){
-				this.enumValues.push(possibleValues[i]);
-				option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
+			$('mainlabel').innerHTML = parameterNames[0];
+			if (parameterIsNumeric[0]){
+				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
+				autoCompleter.deregisterAllInputs();
+				$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
+				autoCompleter.registerAllInputs();
 			}
-			option += "</select>";
-			$('dialoguecontent').rows[2].cells[2].innerHTML = option;
-			autoCompleter.registerAllInputs();
+			else
+				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", true);
+
+			for (var i=1; i<parameterNames.length; i++){
+				var newrow = $('dialoguecontent').insertRow(-1);
+				var cell = newrow.insertCell(0);
+				cell.innerHTML = parameterNames[i];
+				cell = newrow.insertCell(1);
+				if (parameterIsNumeric[i])
+					cell.innerHTML = this.createRestrictionSelector("=", false);
+				else
+					cell.innerHTML = this.createRestrictionSelector("=", true);
+
+				cell = newrow.insertCell(2);
+				if(parameterNames[i] == gLanguage.getMessage('QI_PAGE'))
+					cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+				else
+					cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
+				this.activeInputs++;
+			}
 		}
 	}
-	else {
-	// properties with arity >2: no conjunction, no subqueries
-		this.activeInputs = 3;
-		$('dialoguecontent').rows[2].cells[3].innerHTML = "";
-		$('dialoguecontent').rows[2].cells[4].innerHTML = "";
-		$('dialoguecontent').rows[2].cells[4].className = "";
-		$('mainlabel').innerHTML = parameterNames[0];
-		if (parameterIsNumeric[0]){
-			$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
-			autoCompleter.deregisterAllInputs();
-			$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
-			autoCompleter.registerAllInputs();
-		}
-		else
-			$('restricionSelector').innerHTML = this.createRestrictionSelector("=", true);
-
-		for (var i=1; i<parameterNames.length; i++){
-			var newrow = $('dialoguecontent').insertRow(-1);
-			var cell = newrow.insertCell(0);
-			cell.innerHTML = parameterNames[i];
-			cell = newrow.insertCell(1);
-			if (parameterIsNumeric[i])
-				cell.innerHTML = this.createRestrictionSelector("=", false);
-			else
-				cell.innerHTML = this.createRestrictionSelector("=", true);
-
-			cell = newrow.insertCell(2);
-			if(parameterNames[i] == gLanguage.getMessage('QI_PAGE'))
-				cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-			else
-				cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
-			this.activeInputs++;
-		}
-	}
-}
+	this.pendingElement.hide();
 },
 
 loadCategoryDialogue:function(id){
@@ -547,8 +562,9 @@ deleteActivePart:function(){
 			this.activeQuery.removePropertyGroup(this.loadedFromId);
 			break;
 	}
-	this.activeQuery.updateTreeXML();
 	this.emptyDialogue();
+	this.activeQuery.updateTreeXML();
+	this.updateColumnPreview();
 },
 
 deleteSubqueries:function(id){
@@ -699,6 +715,104 @@ copyToClipboard:function(){
 	else{
 		alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 	}
+},
+
+showLoadDialogue:function(){
+	//List of saved queries with filter
+	//load
+	sajax_do_call('smwfQIAccess', ["loadQuery", "Query:SaveTestQ"], this.loadQuery.bind(this));
+
+},
+
+loadQuery:function(request){
+	/* if(request.responseText == "false"){
+		//error handling
+	} else {
+		var query = request.responseText.substring(request.responseText.indexOf(">"), request.responseText.indexOf("</ask>"));
+		var elements = query.split("[[");
+	} */
+	alert(request.responseText);
+},
+
+showSaveDialogue:function(){
+	$('shade').toggle();
+	$('savedialogue').toggle();
+},
+
+doSave:function(){
+	var ask = this.recurseQuery(0);
+	if (ask != ""){
+		if(this.pendingElement)
+			this.pendingElement.hide();
+		this.pendingElement = new OBPendingIndicator($('savedialogue'));
+		this.pendingElement.show();
+		var params = $('saveName').value + ",";
+		params += this.getFullAsk();
+		sajax_do_call('smwfQIAccess', ["saveQuery", params], this.saveDone.bind(this));
+	}
+	else {
+		var request = Array();
+		request.responseText = "empty";
+		this.saveDone(request);
+	}
+},
+
+saveDone:function(request){
+	this.pendingElement.hide();
+	if(request.responseText == "empty"){
+		alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
+		$('shade').toggle();
+		$('savedialogue').toggle();
+		$('saveName').value = "";
+	}
+	else if(request.responseText == "exists"){
+		alert(gLanguage.getMessage('QI_QUERY_EXISTS'));
+		$('saveName').value = "";
+	}
+	else if(request.responseText == "true"){
+		alert(gLanguage.getMessage('QI_QUERY_SAVED'));
+		$('shade').toggle();
+		$('savedialogue').toggle();
+		$('saveName').value = "";
+	}
+	else { // Unknown error
+		alert(gLanguage.getMessage('QI_SAVE_ERROR'));
+		$('shade').toggle();
+		$('savedialogue').toggle();
+	}
+},
+
+exportToXLS:function(){
+	var ask = this.recurseQuery(0);
+	if (ask != ""){
+		var params = ask + ",";
+		params += $('layout_format').value + ',';
+		params += $('layout_link').value + ',';
+		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
+		params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
+		params += $('layout_limit').value==""?"50,":$('layout_limit').value + ',';
+		params += $('layout_label').value==""?",":$('layout_label').value + ',';
+		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
+		params += $('layout_default').value==""?',':$('layout_default').value;
+		params += $('layout_headers').checked?'show':'hide';
+		sajax_do_call('smwfQIAccess', ["getQueryResult", params], this.initializeDownload.bind(this));
+	}
+	else {
+		var request = Array();
+		request.responseText = gLanguage.getMessage('QI_EMPTY_QUERY');
+		this.openPreview(request);
+	}
+},
+
+initializeDownload:function(request){
+	encodedHtml = escape(request.responseText);
+	encodedHtml = encodedHtml.replace(/\//g,"%2F");
+	encodedHtml = encodedHtml.replace(/\?/g,"%3F");
+	encodedHtml = encodedHtml.replace(/=/g,"%3D");
+	encodedHtml = encodedHtml.replace(/&/g,"%26");
+	encodedHtml = encodedHtml.replace(/@/g,"%40");
+	var url = wgServer + wgScriptPath + "/extensions/SMWHalo/specials/SMWQueryInterface/SMW_QIExport.php?q=" + encodedHtml;
+	window.open(url, "Download", 'height=1,width=1');
 }
 
 } //end class qiHelper

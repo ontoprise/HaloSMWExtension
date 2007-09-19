@@ -73,6 +73,37 @@ function smwfQIAccess($method, $params) {
 		}
 		return $result;
 	}
+	else if($method == "saveQuery"){
+		$title = "Query:" . $p_array[0];
+		$query = $p_array[1];
+		$wikiTitle = Title::newFromText($title, NS_TEMPLATE);
+
+		if($wikiTitle->exists()){
+			return "exists";
+		} else {
+			$article = new Article($wikiTitle);
+			$success = $article->doEdit($query, wfMsg('smw_qi_querySaved'), EDIT_NEW);
+			return $success ? "true" : "false";
+		}
+	}
+	else if ($method == "loadQuery"){
+		$title =  Title::newFromText($p_array[0], NS_TEMPLATE);
+		if($title->exists()){
+			$revision = Revision::newFromTitle($title);
+			$fullQuery = $revision->getRawText();
+
+			//extract display settings and actual query
+			$pattern = '/<ask ([^>]+)>(.*?)<\/ask>/';
+			$matches = array();
+			if(!preg_match($pattern, $fullQuery, $matches)){
+				return "false";
+			}
+			$display = $matches[1];
+			$query = $matches[2];
+		} else {
+			return "false";
+		}
+	}
 	else {
 		return "false";
 	}
