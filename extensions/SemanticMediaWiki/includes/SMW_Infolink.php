@@ -92,7 +92,7 @@ class SMWInfolink {
 	/**
 	 * Return hyperlink for this infolink in wiki format.
 	 */
-	public function getWikiText($absolute = false) {
+	public function getWikiText() {
 		if ($this->style !== false) {
 			$start = "<span class=\"$this->style\">";
 			$end = '</span>';
@@ -107,12 +107,7 @@ class SMWInfolink {
 			}
 			return $start . "[[$this->target|$this->caption]]" . $end;
 		} else {
-			if ($absolute) {
-				global $wgServer, $wgScriptPath;
-				return $start . "[".$wgServer.$wgScriptPath."/index.php/".$this->target." ".$this->caption."]" . $end;
-			} else { 
-				return $start . "[$this->target $this->caption]" . $end;
-			}
+			return $start . "[$this->target $this->caption]" . $end;
 		}
 	}
 

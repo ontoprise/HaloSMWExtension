@@ -215,7 +215,7 @@ class SMWFactbox {
 		wfRunHooks('SMW_FactBoxLinks', array(&$links));
 		foreach($links as $l) {
 			list($classname, $smwlink) = $l;
-			$factBoxLinks .= '<span class="'.$classname.'">' . $smwlink->getWikiText(true) . '</span>';
+			$factBoxLinks .= '<span class="'.$classname.'">' . $smwlink->getWikiText() . '</span>';
 		}
 		$browselink = SMWInfolink::newBrowsingLink(SMWFactbox::$semdata->getSubject()->getText(), SMWFactbox::$semdata->getSubject()->getPrefixedText(), 'swmfactboxheadbrowse');
 		// The "\n" is to ensure that lists on the end of articles are terminated
