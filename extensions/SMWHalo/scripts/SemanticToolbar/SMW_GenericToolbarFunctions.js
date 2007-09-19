@@ -99,7 +99,7 @@ createList: function(list,id) {
 				"<td class=\"" + id + "-col2\">" + firstValue + " </td>" + // first value row
 		           	"<td "+rowSpan+" class=\"" + id + "-col3\">" +
 		           	'<a href=\"javascript:' + fn + '">' +
-		           	'<img src="' + wgScriptPath  + '/extensions/SemanticMediaWiki/skins/edit.gif"/></a>' +
+		           	'<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/edit.gif"/></a>' +
 		           
 		           	'</tr>' + multiValue; // all other value rows
   	}
