@@ -37,13 +37,13 @@ editAreaLoader.load_syntax["wiki"] = {
 			,'execute' : 'before'
 		}
 		,'template' : {
-			'search' : '()(\\{\\{[^\\}]*?\\}\\})()'
+			'search' : '()(\\{\\{.*?\\}\\})()'
 			,'class' : 'template'
 			,'modifiers' : 'g'
 			,'execute' : 'before'
 		}
 		,'wikilink' : {
-			'search' : '()(\\[\\[[^:]*?\\]\\])()'
+			'search' : '()(\\[\\[[^=]*?\\]\\])()'
 			,'class' : 'link'
 			,'modifiers' : 'g'
 			,'execute' : 'before'
