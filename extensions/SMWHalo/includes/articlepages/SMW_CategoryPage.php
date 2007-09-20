@@ -16,7 +16,7 @@ global $IP, $wgHooks, $smwgIP;
 require_once( "$IP/includes/CategoryPage.php");
 require_once($smwgIP. "/includes/SMW_Infolink.php");
 
-$wgHooks['CategoryPageView'][] = 'smwfSemanticCategoryPage';
+//$wgHooks['CategoryPageView'][] = 'smwfSemanticCategoryPage';
 
 /**
  * Hook for category page
