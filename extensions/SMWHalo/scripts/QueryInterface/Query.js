@@ -158,6 +158,7 @@ Query.prototype = {
 		for(var i=0; i<this.properties.length; i++){
 			if(this.properties[i].isShown()){ // "Show in results" checked?
 				asktext += "[[" + this.properties[i].getName() + ":=*]]"; // Display statement
+				asktext += "[[" + this.properties[i].getName() + ":=+]]"; //Currently there is no option for this in the QI, but it makes sense
 			}
 			asktext += "[[" + this.properties[i].getName() + ":=";
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2

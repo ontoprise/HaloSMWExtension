@@ -776,11 +776,16 @@
 	};
 
 	EditAreaLoader.prototype.get_word_translation= function(val, lang){
-		for(var i in editAreaLoader.lang[lang]){
+	/*	for(var i in editAreaLoader.lang[lang]){
 			if(i == val)
 				return editAreaLoader.lang[lang][i];
-		}
-		return "_"+val;
+		}*/
+		if(gLanguage)
+			return gLanguage.getMessage("SHE_" + val);
+		else if(parent.gLanguage)
+			return parent.gLanguage.getMessage("SHE_" + val);
+		else
+			return "_"+val;
 	};
 
 	EditAreaLoader.prototype.load_script= function(url){
