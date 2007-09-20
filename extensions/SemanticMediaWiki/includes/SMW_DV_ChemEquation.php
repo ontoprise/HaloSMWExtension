@@ -5,7 +5,8 @@
  * @author Thomas Schweitzer
  */
 
-require_once( "SMW_ChemistryParser.php");
+global $smwgHaloIP;
+require_once( "$smwgHaloIP/includes/SMW_ChemistryParser.php");
 
 /**
  * Class for managing chemical equations.

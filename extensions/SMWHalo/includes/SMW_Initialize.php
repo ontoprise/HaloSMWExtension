@@ -73,8 +73,14 @@ function smwgHaloSetupExtension() {
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
 function smwfHaloInitDatatypes() { 
-	SMWDataValueFactory::registerDataValueClass('_chf','ChemFormula','SMWChemicalFormulaTypeHandler');
-	SMWDataValueFactory::registerDataValueClass('_che','ChemEquation','SMWChemicalEquationTypeHandler');
+	global $smwgHaloContLang;
+	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
+	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
+	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalequation');
+	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemEquation','SMWChemicalEquationTypeHandler');
+	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_mathematicalequation');
+	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'MathEquation','SMWMathematicalEquationTypeHandler');
+	
 	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
 	return true;
 }
