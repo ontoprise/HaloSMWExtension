@@ -103,9 +103,9 @@ function smwfAutoCompletionToggles(&$extraToggles) {
 }
 
 function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure) {
-	global $wgUser;
+	global $wgUser,$wgScriptPath;
 	$triggerMode = $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
-	setcookie("AC_mode", $triggerMode);
+	setcookie("AC_mode", $triggerMode, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
 	return true;
 }
 
