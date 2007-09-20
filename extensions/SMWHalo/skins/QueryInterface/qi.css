@@ -24,7 +24,9 @@ z-index: 50;
 #qimenubar{
 border: 1px solid #C0C0C0;
 background: #DDDDDD;
-width:100%
+width:100%;
+float:left;
+margin-top:10px;
 }
 
 .qibutton{
@@ -56,7 +58,7 @@ height:300px;
 
 #treeanchor{
 overflow:auto;
-height:280px;
+height:260px;
 }
 
 #treeviewbreadcrumbs{
@@ -275,4 +277,24 @@ text-align:right;
 
 #dialoguecontent tr td td{
 text-align:left;
+}
+
+button.btn{
+color:#000;
+font-family:'trebuchet ms',helvetica,sans-serif;
+font-size:84%;
+font-weight:bold;
+background-color:#eee;
+border:1px solid;
+border-top-color:#c0c0c0;
+border-left-color:#c0c0c0;
+border-right-color:#606060;
+border-bottom-color:#606060;
+margin:2px;
+}
+button.btnhov{
+border-top-color:#00f;
+border-left-color:#00f;
+border-right-color:#00f;
+border-bottom-color:#00f;
 }

@@ -1,8 +1,15 @@
-
+/**
+* QIHelper.js
+* Manages major functionalities and GUI of the Query Interface
+* @author Markus Nitsche [fitsch@gmail.com]
+*/
 
 var QIHelper = Class.create();
 QIHelper.prototype = {
 
+/**
+* Initialize the QIHelper object and all variables
+*/
 initialize:function(){
 	this.imgpath = wgScriptPath  + '/extensions/SMWHalo/skins/QueryInterface/images/';
 	this.numTypes = new Array();
@@ -24,10 +31,18 @@ initialize:function(){
 	this.pendingElement = null;
 },
 
+/**
+* Performs ajax call on startup to get a list of all numeric datatypes.
+* Needed to find out if users can use operators (< and >)
+*/
 getNumericDatatypes:function(){
 	sajax_do_call('smwfQIAccess', ["getNumericTypes", "dummy"], this.setNumericDatatypes.bind(this));
 },
 
+/**
+* Save all numeric datatypes into an associative array
+* @param request Request of AJAX call
+*/
 setNumericDatatypes:function(request){
 	var types = request.responseText.split(",");
 	for(var i=0; i<types.length; i++){
@@ -37,25 +52,40 @@ setNumericDatatypes:function(request){
 	}
 },
 
+/**
+* Add a new query. This happens everytime a user adds a property with a subquery
+* @param parent ID of parent query
+* @param name name of the property which is referencing this query
+*/
 addQuery:function(parent, name){
 	this.queries.push(new Query(this.nextQueryId, parent, name));
 	this.nextQueryId++;
 },
 
+/**
+* Set a certain query as active query.
+* @param id IS of the query to switch to
+*/
 setActiveQuery:function(id){
 	this.activeQuery = this.queries[id];
-	this.activeQuery.updateTreeXML();
+	this.activeQuery.updateTreeXML(); //update treeview
 	this.activeQueryId = id;
-	this.emptyDialogue();
-	this.updateBreadcrumbs(id);
+	this.emptyDialogue(); //empty open dialogue
+	this.updateBreadcrumbs(id); // update breadcrumb navigation of treeview
 	//update everything
 },
 
+/**
+* Shows a confirmation dialogue
+*/
 resetQuery:function(){
 	$('shade').style.display="";
 	$('resetdialogue').style.display="";
 },
 
+/**
+* Executes a reset. Initializes Query Interface so everything is in its initial state
+*/
 doReset:function(){
 	this.emptyDialogue();
 	this.initialize();
@@ -63,14 +93,19 @@ doReset:function(){
 	$('resetdialogue').style.display="none";
 },
 
+/**
+* Gets all display parameters and the full ask syntax to perform an ajax call
+* which will create the preview
+*/
 previewQuery:function(){
 	$('shade').toggle();
 	if(this.pendingElement)
 		this.pendingElement.hide();
 	this.pendingElement = new OBPendingIndicator($('shade'));
 	this.pendingElement.show();
-	var ask = this.recurseQuery(0);
-	if (ask != ""){
+
+	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
+		var ask = this.recurseQuery(0); // Get full ask syntax
 		var params = ask + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
@@ -83,28 +118,38 @@ previewQuery:function(){
 		params += $('layout_headers').checked?'show':'hide';
 		sajax_do_call('smwfQIAccess', ["getQueryResult", params], this.openPreview.bind(this));
 	}
-	else {
+	else { // query is empty
 		var request = Array();
 		request.responseText = gLanguage.getMessage('QI_EMPTY_QUERY');
 		this.openPreview(request);
 	}
 },
 
+/**
+* Displays the preview created by the server
+* @param request Request of AJAX call
+*/
 openPreview:function(request){
 	this.pendingElement.hide();
 	$('fullpreviewbox').toggle();
 	$('fullpreview').innerHTML = request.responseText;
 },
 
+/**
+* Update breadcrumb navigation on top of the query tree. The BN
+* will show the active query and all its parents as a mean to
+* navigate
+* @param id ID of the active query
+*/
 updateBreadcrumbs:function(id){
 	var nav = Array();
-	while(this.queries[id].getParent() != null){
+	while(this.queries[id].getParent() != null){ //null = root query
 		nav.unshift(id);
 		id = this.queries[id].getParent();
 	}
 	nav.unshift(id);
 	var html = "";
-	for(var i=0; i<nav.length; i++){
+	for(var i=0; i<nav.length; i++){ //create html for BN
 		if (i>0)
 			html += "&gt;";
 		html += '<span class="qibutton" onclick="qihelper.setActiveQuery(' + nav[i] + ')">';
@@ -114,78 +159,101 @@ updateBreadcrumbs:function(id){
 	$('treeviewbreadcrumbs').innerHTML = html;
 },
 
+/**
+* Updates the table column preview as well as the option box "Sort by".
+* Both contain ONLY the properties of the root query that are shown in
+* the result table
+*/
 updateColumnPreview:function(){
 	var columns = new Array();
-	columns.push(gLanguage.getMessage('QI_ARTICLE_TITLE'));
-	var tmparr = this.queries[0].getAllProperties();
+	columns.push(gLanguage.getMessage('QI_ARTICLE_TITLE')); // First column has no name in SMW, therefore we introduce our own one
+	var tmparr = this.queries[0].getAllProperties(); //only root query, subquery results can not be shown in results
 	for(var i=0; i<tmparr.length; i++){
 		if(tmparr[i].isShown()){ //show
 			columns.push(tmparr[i].getName());
 		}
 	}
-	var tcp_html = '<table id="tcp" summary="Preview of table columns"><tr>';
+	var tcp_html = '<table id="tcp" summary="Preview of table columns"><tr>'; //html for table column preview
 	$('layout_sort').innerHTML = "";
 	for(var i=0; i<columns.length; i++){
 		tcp_html += "<td>" + columns[i] + "</td>";
-		$('layout_sort').options[$('layout_sort').length] = new Option(columns[i], columns[i]);
+		$('layout_sort').options[$('layout_sort').length] = new Option(columns[i], columns[i]); // add options to optionbox
 	}
 	tcp_html += "</tr></table>";
 	$('tcpcontent').innerHTML = tcp_html;
 },
 
+/**
+* Get the full ask syntax and the layout parameters of the whole query
+* @return string containing full ask
+*/
 getFullAsk:function(){
 	var asktext = this.recurseQuery(0);
 	//get Layout parameters
-	var starttag = "<ask ";
+	var starttag = "<ask "; //create ask tags and display params
 	starttag += 'format="' + $('layout_format').value + '" ';
-	starttag += $('layout_link').value=="subject"?"":('link="' + $('layout_link').value + '" ');
-	starttag += $('layout_intro').value==""?"":('intro="' + $('layout_intro').value + '" ');
-	starttag += $('layout_sort').value==gLanguage.getMessage('QI_ARTICLE_TITLE')?"":('sort="' + $('layout_sort').value + '" ');
-	starttag += $('layout_limit').value==""?'limit="20"':('limit="' + $('layout_limit').value + '" ');
-	starttag += $('layout_label').value==""?"":('mainlabel="' + $('layout_label').value + '" ');
-	starttag += $('layout_order').value=="ascending"?'order="ascending" ':'order="descending" ';
-	starttag += $('layout_headers').checked?'':'headers="hide" ';
-	starttag += $('layout_default').value==""?'':'default="' + $('layout_default').value +'" ';
+	starttag += $('layout_link').value == "subject" ? "" : ('link="' + $('layout_link').value + '" ');
+	starttag += $('layout_intro').value == "" ? "" : ('intro="' + $('layout_intro').value + '" ');
+	starttag += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE') ? "" : ('sort="' + $('layout_sort').value + '" ');
+	starttag += $('layout_limit').value == "" ? 'limit="20"' : ('limit="' + $('layout_limit').value + '" ');
+	starttag += $('layout_label').value == "" ? "" : ('mainlabel="' + $('layout_label').value + '" ');
+	starttag += $('layout_order').value == "ascending" ? 'order="ascending" ' : 'order="descending" ';
+	starttag += $('layout_headers').checked ? '' : 'headers="hide" ';
+	starttag += $('layout_default').value == "" ? '' : 'default="' + $('layout_default').value +'" ';
 	starttag += ">";
 	return starttag + asktext + "</ask>";
 },
 
+/**
+* Recursive function that creates the ask syntax for the query with the ID provided
+* and all its subqueries
+* @param id ID of query to start
+*/
 recurseQuery:function(id){
 	var sq = this.queries[id].getSubqueryIds();
 	if(sq.length == 0)
-		return this.queries[id].getAskText();
+		return this.queries[id].getAskText(); // no subqueries, get the asktext
 	else {
 		var tmptext = this.queries[id].getAskText();
 		for(var i=0; i<sq.length; i++){
 			var regex = null;
-			eval('regex = /Subquery:' + sq[i] + ':/g');
-			tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>');
+			eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
+			tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
 		}
 		return tmptext;
 	}
 },
 
+/**
+* Creates a new dialogue for adding categories to the query
+* @param reset indicates if this is a new dialogue or if it is loaded from the tree
+*/
 newCategoryDialogue:function(reset){
-	$('qidelete').style.display = "none";
+	$('qidelete').style.display = "none"; // New dialogue, no delete button
 	autoCompleter.deregisterAllInputs();
 	if(reset)
 		this.loadedFromId = null;
 	this.activeDialogue = "category";
-	for (var i=0, n=$('dialoguecontent').rows.length; i<n; i++)
+	for (var i=0, n=$('dialoguecontent').rows.length; i<n; i++) //empty dialogue table
 		$('dialoguecontent').deleteRow(0);
-	var newrow = $('dialoguecontent').insertRow(-1);
+	var newrow = $('dialoguecontent').insertRow(-1); //create the dialogue
 	var cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('CATEGORY');
 	cell = newrow.insertCell(1);
-	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="14" autocomplete="OFF"/>';
+	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="14" autocomplete="OFF"/>'; // input field with autocompletion enabled
 	cell = newrow.insertCell(2);
-	cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addCategoryInput" onclick="qihelper.addDialogueInput()"/>';
+	cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addCategoryInput" onclick="qihelper.addDialogueInput()"/>'; // button to add another input for or-ed values
 	this.activeInputs = 1;
 	$('dialoguebuttons').style.display="";
 	autoCompleter.registerAllInputs();
-	$('input0').focus();
+	if(reset)
+		$('input0').focus();
 },
 
+/**
+* Creates a new dialogue for adding instances to the query
+* @param reset indicates if this is a new dialogue or if it is loaded from the tree
+*/
 newInstanceDialogue:function(reset){
 	$('qidelete').style.display = "none";
 	autoCompleter.deregisterAllInputs();
@@ -204,9 +272,14 @@ newInstanceDialogue:function(reset){
 	this.activeInputs = 1;
 	$('dialoguebuttons').style.display="";
 	autoCompleter.registerAllInputs();
-	$('input0').focus();
+	if(reset)
+		$('input0').focus();
 },
 
+/**
+* Creates a new dialogue for adding properties to the query
+* @param reset indicates if this is a new dialogue or if it is loaded from the tree
+*/
 newPropertyDialogue:function(reset){
 	$('qidelete').style.display = "none";
 	autoCompleter.deregisterAllInputs();
@@ -216,14 +289,14 @@ newPropertyDialogue:function(reset){
 	this.propname = "";
 	for (var i=0, n=$('dialoguecontent').rows.length; i<n; i++)
 		$('dialoguecontent').deleteRow(0);
-	var newrow = $('dialoguecontent').insertRow(-1);
+	var newrow = $('dialoguecontent').insertRow(-1); // First row: input for property name
 	var cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
 	cell = newrow.insertCell(1);
 	cell = newrow.insertCell(2);
 	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
-	newrow = $('dialoguecontent').insertRow(-1);
+	newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox for display option
 	cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('QI_SHOW_PROPERTY');
 	cell = newrow.insertCell(1);
@@ -233,10 +306,10 @@ newPropertyDialogue:function(reset){
 	else
 		cell.innerHTML = '<input type="checkbox" disabled="disabled" id="input1">';
 
-	newrow = $('dialoguecontent').insertRow(-1);
+	newrow = $('dialoguecontent').insertRow(-1); // third row: input for property value and subquery
 	cell = newrow.insertCell(0);
 	cell.id = "mainlabel";
-	cell.innerHTML = gLanguage.getMessage('QI_PAGE');
+	cell.innerHTML = gLanguage.getMessage('QI_PAGE'); // we assume Page as type since this is standard
 	cell = newrow.insertCell(1);
 	cell.id = "restricionSelector";
 	cell.innerHTML = this.createRestrictionSelector("=", true);
@@ -251,9 +324,13 @@ newPropertyDialogue:function(reset){
 	$('dialoguebuttons').style.display="";
 	this.proparity = 2;
 	autoCompleter.registerAllInputs();
-	$('input0').focus();
+	if(reset)
+		$('input0').focus();
 },
 
+/**
+* Empties the current dialogue and resets all relevant variables. Called on "cancel" button
+*/
 emptyDialogue:function(){
 	this.activeDialogue = null;
 	this.loadedFromId = null;
@@ -269,57 +346,69 @@ emptyDialogue:function(){
 	this.activeInputs = 0;
 },
 
+/**
+* Add another input to the current dialogue
+*/
 addDialogueInput:function(){
 	autoCompleter.deregisterAllInputs();
 	var delimg = wgScriptPath  + '/extensions/SemanticMediaWiki/skins/QueryInterface/images/delete.png';
 	var newrow = $('dialoguecontent').insertRow(-1);
-	newrow.id = "row" + newrow.rowIndex;
+	newrow.id = "row" + newrow.rowIndex; //id needed for delete button later on
 	var cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('QI_OR');
 	cell = newrow.insertCell(1);
 	var param = $('mainlabel')?$('mainlabel').innerHTML:"";
 
-	if(this.activeDialogue == "category")
+	if(this.activeDialogue == "category") //add input fields according to dialogue
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="14" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 	else if(this.activeDialogue == "instance")
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-	else if(param == gLanguage.getMessage('QI_PAGE')){
+	else if(param == gLanguage.getMessage('QI_PAGE')){ //property dialogue & type = page
 		cell.innerHTML = this.createRestrictionSelector("=", true);
 		cell = newrow.insertCell(2);
 		cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 	}
-	else{
-		if(this.numTypes[param.toLowerCase()])
+	else{ // property, no page type
+		if(this.numTypes[param.toLowerCase()]) // numeric type? operators possible
 			cell.innerHTML = this.createRestrictionSelector("=", false);
 		else
 			cell.innerHTML = this.createRestrictionSelector("=", true);
+
 		cell = newrow.insertCell(2);
-		if(this.propIsEnum){
+		if(this.propIsEnum){ // if enumeration, a select box is used instead of a text input field
 			var tmphtml = '<select id="input' + this.activeInputs + '" style="width:100%">';
 			for(var i = 0; i < this.enumValues.length; i++){
 				tmphtml += '<option value="' + this.enumValues[i] + '">' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			cell.innerHTML = tmphtml;
-		} else {
+		} else { // no enumeration, no page type, simple input field
 			cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
 		}
 	}
 	cell = newrow.insertCell(-1);
 	cell.innerHTML = '<img src="' + this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removeInput(' + newrow.rowIndex + ')"/>';
-	$('input' + this.activeInputs).focus();
+	$('input' + this.activeInputs).focus(); // focus created input
 	this.activeInputs++;
 	autoCompleter.registerAllInputs();
 },
 
+/**
+* Removes an input if the remove icon is clicked
+* @param index index of the table row to delete
+*/
 removeInput:function(index){
 	$('dialoguecontent').removeChild($('row'+index));
 	this.activeInputs--;
 },
 
+/**
+* Is called everytime a user entered a property name and leaves the input field.
+* Executes an ajax call which will get information about the property (if available)
+*/
 getPropertyInformation:function(){
 	var propname = $('input0').value;
-	if (propname != "" && propname != this.propname){
+	if (propname != "" && propname != this.propname){ //only if not empty and name changed
 		this.propname = propname;
 		if(this.pendingElement)
 			this.pendingElement.hide();
@@ -329,15 +418,21 @@ getPropertyInformation:function(){
 	}
 },
 
+/**
+* Receives an XML string containing schema information of a property. Depending on this
+* information, the dialogue has to be adapted. You need to consider: arity, enumeration
+* and type of property.
+* @param request Request of the ajax call
+*/
 adaptDialogueToProperty:function(request){
 	this.propIsEnum = false;
-	if (this.activeDialogue != null){
+	if (this.activeDialogue != null){ //check if user cancelled the dialogue whilst ajax call
 		var oldval = $('input2').value;
 		var oldcheck = $('usesub')?$('usesub').checked:false;
 		for(var i=3, n = $('dialoguecontent').rows.length; i<n; i++){
-			$('dialoguecontent').deleteRow(3);
+			$('dialoguecontent').deleteRow(3); //delete all rows for value inputs
 		}
-
+		//create standard values in case request fails
 		var arity = 2;
 		this.proparity = 2;
 		var parameterNames = [gLanguage.getMessage('QI_PAGE')];
@@ -347,16 +442,17 @@ adaptDialogueToProperty:function(request){
 		if (request.status == 200) {
 			var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
 
-			// read arity and parameter names
+			// read arity
 			arity = parseInt(schemaData.documentElement.getAttribute("arity"));
 			this.proparity = arity;
 			parameterNames = [];
 			parameterIsNumeric = [];
+			//parse all parameter names
 			for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
 				parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
 				parameterIsNumeric.push(schemaData.documentElement.childNodes[i].getAttribute("isNumeric")=="true"?true:false);
 				for (var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j<m; j++){
-					possibleValues.push(schemaData.documentElement.childNodes[i].childNodes[j].getAttribute("value"));
+					possibleValues.push(schemaData.documentElement.childNodes[i].childNodes[j].getAttribute("value")); //contains allowed values for enumerations if applicable
 				}
 			}
 		}
@@ -389,13 +485,13 @@ adaptDialogueToProperty:function(request){
 				$('dialoguecontent').rows[2].cells[4].className = "";
 				this.activeInputs = 3;
 			}
-			if(possibleValues.length > 0){
+			if(possibleValues.length > 0){ //enumeration
 				this.propIsEnum = true;
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
-				var option = '<select id="input2" style="width:100%">';
+				var option = '<select id="input2" style="width:100%">'; //create html for option box
 				for(var i = 0; i < possibleValues.length; i++){
-					this.enumValues.push(possibleValues[i]);
+					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
 					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
 				}
 				option += "</select>";
@@ -422,7 +518,7 @@ adaptDialogueToProperty:function(request){
 			for (var i=1; i<parameterNames.length; i++){
 				var newrow = $('dialoguecontent').insertRow(-1);
 				var cell = newrow.insertCell(0);
-				cell.innerHTML = parameterNames[i];
+				cell.innerHTML = parameterNames[i]; // Label of cell is parameter name (ex.: Integer, Date,...)
 				cell = newrow.insertCell(1);
 				if (parameterIsNumeric[i])
 					cell.innerHTML = this.createRestrictionSelector("=", false);
@@ -430,7 +526,7 @@ adaptDialogueToProperty:function(request){
 					cell.innerHTML = this.createRestrictionSelector("=", true);
 
 				cell = newrow.insertCell(2);
-				if(parameterNames[i] == gLanguage.getMessage('QI_PAGE'))
+				if(parameterNames[i] == gLanguage.getMessage('QI_PAGE')) //Page means autocompletion enabled
 					cell.innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 				else
 					cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
@@ -441,18 +537,28 @@ adaptDialogueToProperty:function(request){
 	this.pendingElement.hide();
 },
 
+/**
+* Loads values of an existing category group. This happens if a users clicks on a category
+* folder in the query tree.
+* @param id id of the category group (saved with the query tree)
+*/
 loadCategoryDialogue:function(id){
 	this.newCategoryDialogue(false);
 	this.loadedFromId = id;
-	var cats = this.activeQuery.getCategoryGroup(id);
+	var cats = this.activeQuery.getCategoryGroup(id); //get the category group
 	$('input0').value = cats[0];
 	for (var i=1; i<cats.length; i++){
 		this.addDialogueInput();
 		$('input' + i).value = cats[i];
 	}
-	$('qidelete').style.display = "";
+	$('qidelete').style.display = ""; // show delete button
 },
 
+/**
+* Loads values of an existing instance group. This happens if a users clicks on an instance
+* folder in the query tree.
+* @param id id of the instace group (saved with the query tree)
+*/
 loadInstanceDialogue:function(id){
 	this.newInstanceDialogue(false);
 	this.loadedFromId = id;
@@ -465,77 +571,94 @@ loadInstanceDialogue:function(id){
 	$('qidelete').style.display = "";
 },
 
+/**
+* Loads values of an existing property group. This happens if a users clicks on a property
+* folder in the query tree.
+* WARNING: This is a MESS! Don't change anything unless you really know what you are doing.
+* @param id id of the property group (saved with the query tree)
+* @todo find a better way to do this
+*/
 loadPropertyDialogue:function(id){
 	this.newPropertyDialogue(false);
 	this.loadedFromId = id;
 	var prop = this.activeQuery.getPropertyGroup(id);
 	var vals = prop.getValues();
 	this.proparity = prop.getArity();
-	$('input0').value = prop.getName();
 
-	$('input1').checked = prop.isShown();
-	$('mainlabel').innerHTML = (vals[0][0] == "subquery"?gLanguage.getMessage('PAGE'):vals[0][0]);
+	$('input0').value = prop.getName(); //fill input filed with name
+	$('input1').checked = prop.isShown(); //check box if appropriate
+
+	$('mainlabel').innerHTML = (vals[0][0] == "subquery"?gLanguage.getMessage('QI_PAGE'):vals[0][0]); //subquery means type is page
+
+	if($('mainlabel').innerHTML != gLanguage.getMessage('QI_PAGE')){ //remove subquery box
+		$('dialoguecontent').rows[2].cells[4].innerHTML = ""; //remove subquery checkbox since no subqueries are possible
+		$('dialoguecontent').rows[2].cells[4].className = ""; //remove the seperator
+	}
+
 	var disabled = true;
-	if(this.numTypes[vals[0][0].toLowerCase()]){
+	if(this.numTypes[vals[0][0].toLowerCase()]){ //is it a numeric type?
 		disabled = false;
 
 		$('dialoguecontent').rows[2].cells[1].innerHTML = this.createRestrictionSelector(vals[0][1], disabled);
 		autoCompleter.deregisterAllInputs();
-		$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
+		$('dialoguecontent').rows[2].cells[2].firstChild.className = ""; //deactivate autocompletion
 		autoCompleter.registerAllInputs();
 	}
-	if(vals[0][0] == "subquery"){
+	if(vals[0][0] == "subquery"){ //grey out input field and check checkbox
 		this.useSub(true);
 		$('usesub').checked = true;
 	} else {
 		if(!prop.isEnumeration())
-			$('input2').value = vals[0][2];
-		else {
+			$('input2').value = vals[0][2]; //enter the value into the input box
+		else { //create option box for enumeration
 			var tmphtml = '<select id="input2" style="width:100%">';
-			var tempvals = prop.getEnumValues();
-			for(var i = 0; i < tempvals.length; i++){
-				tmphtml += '<option value="' + tempvals[i] + '" ' + (tempvals[i]==vals[0][2]?'selected="selected"':'') + '>' + tempvals[i] + '</option>';
+			this.enumValues = prop.getEnumValues();
+			for(var i = 0; i < this.enumValues.length; i++){
+				tmphtml += '<option value="' + this.enumValues[i] + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[2].cells[2].innerHTML = tmphtml;
 		}
 	}
-	if(prop.getArity() == 2){
+	if(prop.getArity() == 2){ // simply add further inputs if there are any
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
 				$('input' + (i+2)).value = vals[i][2];
 				$('dialoguecontent').rows[i+2].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
-		} else {
-			var tempvals = prop.getEnumValues();
+		} else { //enumeration
+			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
 				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
-				for(var j = 0; j < tempvals.length; j++){
-					tmphtml += '<option value="' + tempvals[j] + '" ' + (tempvals[j]==vals[i][2]?'selected="selected"':'') + '>' + tempvals[j] + '</option>';
+				//create the options; check which one was selected and add the 'selected' param then
+				for(var j = 0; j < this.enumValues.length; j++){
+					tmphtml += '<option value="' + this.enumValues[j] + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + this.enumValues[j] + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+2].cells[2].innerHTML = tmphtml;
 				$('dialoguecontent').rows[i+2].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		}
-	} else {
+	} else { // property with arity > 2
 		autoCompleter.deregisterAllInputs();
-		$('dialoguecontent').rows[2].cells[3].innerHTML = "";
-		$('dialoguecontent').rows[2].cells[4].innerHTML = "";
-		$('dialoguecontent').rows[2].cells[4].className = "";
+		$('dialoguecontent').rows[2].cells[3].innerHTML = ""; //remove plus icon since no conjunction is possible
+		$('dialoguecontent').rows[2].cells[4].innerHTML = ""; //remove subquery checkbox since no subqueries are possible
+		$('dialoguecontent').rows[2].cells[4].className = ""; //remove the seperator
 		for(var i=1; i<vals.length; i++){
 			var row = $('dialoguecontent').insertRow(-1);
 			var cell = row.insertCell(0);
-			cell.innerHTML = vals[i][0];
-			cell = row.insertCell(1);
+			cell.innerHTML = vals[i][0]; // parameter name
+
+			cell = row.insertCell(1); // restriction selector
 			if(this.numTypes[vals[i][0].toLowerCase()])
 				cell.innerHTML = this.createRestrictionSelector(vals[i][1], false);
 			else
 				cell.innerHTML = this.createRestrictionSelector(vals[i][1], true);
-			cell = row.insertCell(2);
-			if(vals[i][0] == gLanguage.getMessage('QI_PAGE'))
+
+			cell = row.insertCell(2); // input field
+			if(vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion needed?
 				cell.innerHTML = '<input type="text" class="wickEnabled general-forms" typehint="0" autocomplete="OFF" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
 			else
 				cell.innerHTML = '<input type="text" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
@@ -545,6 +668,9 @@ loadPropertyDialogue:function(id){
 	$('qidelete').style.display = "";
 },
 
+/**
+* Deletes the currently shown dialogue from the query
+*/
 deleteActivePart:function(){
 	switch(this.activeDialogue){
 		case "category":
@@ -567,6 +693,10 @@ deleteActivePart:function(){
 	this.updateColumnPreview();
 },
 
+/**
+* Recursively deletes all subqueries of a given query
+* @param id ID of the query to start with
+*/
 deleteSubqueries:function(id){
 	if(this.queries[id].hasSubqueries()){
 		for(var i = 0; i < this.queries[id].getSubqueryIds().length; i++){
@@ -576,6 +706,10 @@ deleteSubqueries:function(id){
 	this.queries[id] = null;
 },
 
+/**
+* Creates an HTML option with the different possible restrictions
+* @param disabled enabled only for numeric datatypes
+*/
 createRestrictionSelector:function(option, disabled){
 	var html = disabled?'<select disabled="disabled">':'<select>';
 	switch (option){
@@ -595,6 +729,10 @@ createRestrictionSelector:function(option, disabled){
 	return html;
 },
 
+/**
+* Activate or deactivate input if subquery checkbox is checked
+* @param checked did user check or uncheck?
+*/
 useSub:function(checked){
 	if(checked){
 		$('input2').value="";
@@ -606,6 +744,9 @@ useSub:function(checked){
 	}
 },
 
+/**
+* Adds a new Category/Instance/Property Group to the query
+*/
 add:function(){
 	if(this.activeDialogue == "category"){
 		this.addCategoryGroup();
@@ -618,9 +759,12 @@ add:function(){
 	this.loadedFromID = null;
 },
 
+/**
+* Reads the input fields of a category dialogue and adds them to the query
+*/
 addCategoryGroup:function(){
 	var tmpcat = Array();
-	var allinputs = true;
+	var allinputs = true; // checks if all inputs are set for error message
 	for(var i=0; i<this.activeInputs; i++){
 		var tmpid = "input" + i;
 		tmpcat.push($(tmpid).value);
@@ -628,13 +772,16 @@ addCategoryGroup:function(){
 			allinputs = false;
 	}
 	if(!allinputs)
-		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_CATEGORY');
+		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_CATEGORY'); //show error
 	else {
-		this.activeQuery.addCategoryGroup(tmpcat, this.loadedFromId);
+		this.activeQuery.addCategoryGroup(tmpcat, this.loadedFromId); //add to query
 		this.emptyDialogue();
 	}
 },
 
+/**
+* Reads the input fields of an instance dialogue and adds them to the query
+*/
 addInstanceGroup:function(){
 	var tmpins = Array();
 	var allinputs = true;
@@ -652,68 +799,80 @@ addInstanceGroup:function(){
 	}
 },
 
+/**
+* Reads the input fields of a property dialogue and adds them to the query
+*/
 addPropertyGroup:function(){
 	var pname = $('input0').value;
 	var subqueryIds = Array();
-	if (pname == ""){
+	if (pname == ""){ //no name entered?
 		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_PROPERTY_NAME');
 	} else {
-		var pshow = $('input1').checked;
+		var pshow = $('input1').checked; // show in results?
 		var arity = this.proparity;
-		var pgroup = new PropertyGroup(pname, arity, pshow, this.propIsEnum, this.enumValues);
+		var pgroup = new PropertyGroup(pname, arity, pshow, this.propIsEnum, this.enumValues); //create propertyGroup
 		for(var i = 2; i<$('dialoguecontent').rows.length; i++){
 			var paramvalue = $('input' + i).value;
-			paramvalue = paramvalue==""?"*":paramvalue;
+			paramvalue = paramvalue==""?"*":paramvalue; //no value is replaced by "*" which means all values
 			var paramname = $('dialoguecontent').rows[i].cells[0].innerHTML;
-			if(paramname == gLanguage.getMessage('QI_PAGE') && arity == 2 && $('usesub').checked){
+			if(paramname == gLanguage.getMessage('QI_PAGE') && arity == 2 && $('usesub').checked){ //Subquery?
 				paramname = "subquery";
 				paramvalue = this.nextQueryId;
 				subqueryIds.push(this.nextQueryId);
 				this.addQuery(this.activeQueryId, pname);
 			}
 			var restriction = $('dialoguecontent').rows[i].cells[1].firstChild.value;
-			pgroup.addValue(paramname, restriction, paramvalue);
+			pgroup.addValue(paramname, restriction, paramvalue); // add a value group to the property group
 		}
-		this.activeQuery.addPropertyGroup(pgroup, subqueryIds, this.loadedFromId);
+		this.activeQuery.addPropertyGroup(pgroup, subqueryIds, this.loadedFromId); //add the property group to the query
 		this.emptyDialogue();
 		this.updateColumnPreview();
 	}
 },
 
+/**
+* copies the full query text to the clients clipboard. Works on IE and FF depending on the users
+* security settings.
+*/
 copyToClipboard:function(){
-	var text = this.getFullAsk();
- 	if (window.clipboardData){
-		window.clipboardData.setData("Text", text);
-		alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-	}
-  	else if (window.netscape) {
-		netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-		var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
-		if (!clip){
-			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-			return;
+
+	if(this.queries[0].isEmpty() ){
+		alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
+	} else {
+		var text = this.getFullAsk();
+	 	if (window.clipboardData){ //IE
+			window.clipboardData.setData("Text", text);
+			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 		}
-		var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
-		if (!trans){
-			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-			return;
+	  	else if (window.netscape) {
+			netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
+			var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
+			if (!clip){
+				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+				return;
+			}
+			var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+			if (!trans){
+				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+				return;
+			}
+			trans.addDataFlavor('text/unicode');
+			var str = new Object();
+			var len = new Object();
+			var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+			str.data=text;
+			trans.setTransferData("text/unicode",str,text.length*2);
+			var clipid=Components.interfaces.nsIClipboard;
+			if (!clip){
+				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+				return;
+			}
+			clip.setData(trans,null,clipid.kGlobalClipboard);
+			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 		}
-		trans.addDataFlavor('text/unicode');
-		var str = new Object();
-		var len = new Object();
-		var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
-		str.data=text;
-		trans.setTransferData("text/unicode",str,text.length*2);
-		var clipid=Components.interfaces.nsIClipboard;
-		if (!clip){
+		else{
 			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-			return;
 		}
-		clip.setData(trans,null,clipid.kGlobalClipboard);
-		alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
-	}
-	else{
-		alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
 	}
 },
 
@@ -740,8 +899,7 @@ showSaveDialogue:function(){
 },
 
 doSave:function(){
-	var ask = this.recurseQuery(0);
-	if (ask != ""){
+	if (!this.queries[0].isEmpty()){
 		if(this.pendingElement)
 			this.pendingElement.hide();
 		this.pendingElement = new OBPendingIndicator($('savedialogue'));
@@ -783,8 +941,8 @@ saveDone:function(request){
 },
 
 exportToXLS:function(){
-	var ask = this.recurseQuery(0);
-	if (ask != ""){
+	if (!this.queries[0].isEmpty()){
+		var ask = this.recurseQuery(0);
 		var params = ask + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';

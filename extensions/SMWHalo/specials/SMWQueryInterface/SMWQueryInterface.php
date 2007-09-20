@@ -55,14 +55,6 @@ class SMWQueryInterface{
 
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>' .
-				'<div id="qimenubar">' .
-					//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-					//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-					'<span class="qibutton" onclick="qihelper.previewQuery()">' . wfMsg('smw_qi_preview') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-					'<span class="qibutton" onclick="qihelper.copyToClipboard()">' . wfMsg('smw_qi_clipboard') . '</span>' .
-					//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
-					'<span style="position:absolute; right:10px;"><span class="qibutton" onclick="qihelper.resetQuery()">' . wfMsg('smw_qi_reset') . '</span></span>' .
-				'</div>';
 
 		$html .= '<div id="treeview">' .
 				'<div id="treeviewheader" class="qiboxheader">' .
@@ -73,9 +65,14 @@ class SMWQueryInterface{
 				'</div>';
 
 		$html .= '<div id="qiaddbuttons" class="qiaddbuttons">' .
-					'<span id="cat" class="qibutton" onclick="qihelper.newCategoryDialogue(true)"><img src="' . $imagepath . 'category.gif" alt="category" />' . wfMsg('smw_qi_add_category') . '</span>' .
-					'<span id="ins" class="qibutton" onclick="qihelper.newInstanceDialogue(true)"><img src="' . $imagepath . 'instance.gif" alt="instance" />' . wfMsg('smw_qi_add_instance') . '</span>' .
-					'<span id="prop" class="qibutton" onclick="qihelper.newPropertyDialogue(true)"><img src="' . $imagepath . 'property.gif" alt="property"/>' . wfMsg('smw_qi_add_property') . '</span>' .
+					'<button class="btn" onclick="qihelper.newCategoryDialogue(true)" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'category.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_category') . '</button>'.
+					'<button class="btn" onclick="qihelper.newInstanceDialogue(true)" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'instance.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_instance') . '</button>'.
+					'<button class="btn" onclick="qihelper.newPropertyDialogue(true)" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'property.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_property') . '</button>'.
+					//'<input type="button" value="' . wfMsg('smw_qi_add_instance') . '" class="btn" onclick="qihelper.newInstanceDialogue(true)" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>'.
+					//'<input type="button" value="' . wfMsg('smw_qi_add_property') . '" class="btn" onclick="qihelper.newPropertyDialogue(true)" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>'.
+					//'<span id="cat" class="qibutton" onclick="qihelper.newCategoryDialogue(true)"><img src="' . $imagepath . 'category.gif" alt="category" />' . wfMsg('smw_qi_add_category') . '</span>' .
+					//'<span id="ins" class="qibutton" onclick="qihelper.newInstanceDialogue(true)"><img src="' . $imagepath . 'instance.gif" alt="instance" />' . wfMsg('smw_qi_add_instance') . '</span>' .
+					//'<span id="prop" class="qibutton" onclick="qihelper.newPropertyDialogue(true)"><img src="' . $imagepath . 'property.gif" alt="property"/>' . wfMsg('smw_qi_add_property') . '</span>' .
 				'</div>';
 
 		$html .= '<div id="dragbox" class="dragbox">' .
@@ -170,6 +167,18 @@ class SMWQueryInterface{
 				</table>
 			</div>
 		</div>';
+		$html .= 	'<div id="qimenubar">' .
+						//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+						//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+						'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
+						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
+						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
+
+						//'<input type="button" value="' . wfMsg('smw_qi_preview') . '" class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>'.
+						//'<input type="button" value="' . wfMsg('smw_qi_clipboard') . '" class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/>'.
+						//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
+						//'<span style="position:absolute; right:13px;"><input type="button" value="' . wfMsg('smw_qi_reset') . '" class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'" onmouseout="this.className=\'btn\'"/></span>'.
+					'</div>';
 
 		$html .= '<div id="fullpreviewbox" style="display:none">';
 		$html .= '<div id="fullpreview"></div>';

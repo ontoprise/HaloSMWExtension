@@ -1,32 +1,67 @@
+/*
+* Query.js
+* Query object representing a single query. Subqueries are
+* seperate objects which are referenced by an ID.
+* @author Markus Nitsche [fitsch@gmail.com]
+*/
+
 var Query = Class.create();
 Query.prototype = {
 
+/**
+* Initialize a new query
+* @param id ID
+* @param parent parentID
+* @param name QueryName
+*/
 	initialize:function(id, parent, name){
-		//create basic query xml structure
-		this.id = id;
-		this.parent = parent;
-		this.name = name;
-		this.hasSubquery = false;
-		this.categories = Array();
-		this.instances = Array();
-		this.properties = Array();
-		this.subqueryIds = Array();
+		this.id = id; //id of this query
+		this.parent = parent; //parent of this query, null if root
+		this.name = name; //name of the property referencing on this query
+		this.hasSubquery = false; //has it subqueries?
+		this.categories = Array(); //All categories
+		this.instances = Array(); //All Instances
+		this.properties = Array(); //All properties
+		this.subqueryIds = Array(); //IDs of subqueries
 	},
 
+/**
+* Add a category or a gourp of or-ed
+* categories to the query
+* @param cat CategoryGroup
+* @param oldid null if new, otherwise ID of an existing
+* category group which will be overwritten
+*/
 	addCategoryGroup:function(cat, oldid){
 		if(oldid==null)
-			this.categories[this.categories.length] = cat;
+			this.categories.push(cat);
 		else
 			this.categories[oldid] = cat;
 	},
 
+/**
+* Add a instance or a gourp of or-ed
+* instances to the query
+* @param ins InstanceGroup
+* @param oldid null if new, otherwise ID of an existing
+* instance group which will be overwritten
+*/
 	addInstanceGroup:function(ins, oldid){
 		if(oldid==null)
-			this.instances[this.instances.length] = ins;
+			this.instances.push(ins);
 		else
 			this.instances[oldid] = ins;
 	},
 
+/**
+* Add a property or a gourp of or-ed
+* properties to the query
+* @param pgroup PropertyGroup
+* @param subIds IDs of subqueries that are referenced within
+* this property group
+* @param oldid null if new, otherwise ID of an existing
+* property group which will be overwritten
+*/
 	addPropertyGroup:function(pgroup, subIds, oldid){
 		if(oldid == null)
 			this.properties.push(pgroup);
@@ -43,7 +78,10 @@ Query.prototype = {
 	hasSubqueries:function(){
 		return this.hasSubquery;
 	},
-
+/**
+* Creates XML string for the query tree representation. The tree representation is
+* laid out like a file browser with folders and leafs.
+*/
 	updateTreeXML:function(){
 		var treexml = '<?xml version="1.0" encoding="UTF-8"?>';
 		treexml += '<treeview title=" Query"><folder title=" ' + this.name + '" code="root" expanded="true" img="question.gif">';
@@ -68,7 +106,7 @@ Query.prototype = {
 				if(propvalues[j][0] == "subquery")
 					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_PAGE') + ' = ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
 				else {
-					var res = "";
+					var res = ""; //restriction for numeric values. Encode for HTML display
 					switch(propvalues[j][1]){
 						case "<=":
 							res = "&lt;=";
@@ -89,13 +127,19 @@ Query.prototype = {
 		updateQueryTree(treexml);
 	},
 
+/**
+* Create the syntax for the ask query of this object. Subqueries are not resolved
+* but marked with "Subquery:[ID]:". Recursive resolving of all subqueries is done
+* within QIHelper.js
+* @return asktext string containing the ask syntax
+*/
 	getAskText:function(){
 		var asktext = "";
 		for(var i=0; i<this.categories.length; i++){
 			asktext += "[[Category:";
 			for(var j=0; j<this.categories[i].length; j++){
 				asktext += this.categories[i][j];
-				if(j<this.categories[i].length-1){
+				if(j<this.categories[i].length-1){ //add disjunction operator
 					asktext += "||";
 				}
 			}
@@ -105,34 +149,34 @@ Query.prototype = {
 			asktext += "[[";
 			for(var j=0; j<this.instances[i].length; j++){
 				asktext += this.instances[i][j];
-				if(j<this.instances[i].length-1){
+				if(j<this.instances[i].length-1){ //add disjunction operator
 					asktext += "||";
 				}
 			}
 			asktext += "]]";
 		}
 		for(var i=0; i<this.properties.length; i++){
-			if(this.properties[i].isShown()){
-				asktext += "[[" + this.properties[i].getName() + ":=*]]";
+			if(this.properties[i].isShown()){ // "Show in results" checked?
+				asktext += "[[" + this.properties[i].getName() + ":=*]]"; // Display statement
 			}
 			asktext += "[[" + this.properties[i].getName() + ":=";
-			if(this.properties[i].getArity() > 2){
+			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
-						asktext += ";";
+						asktext += ";"; // connect values with semicolon
 					if(vals[j][1]!="=")
-						asktext += vals[j][1].substring(0,1);
+						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
 					asktext += vals[j][2];
 				}
-			} else {
+			} else { //binary property
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
-					if(j!=0)
+					if(j!=0) //add disjunction operator
 						asktext += "||";
 					if(vals[j][1]!= "=")
 						asktext += vals[j][1].substring(0,1);
-					if(vals[j][0] == "subquery")
+					if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
 						asktext += "Subquery:" + vals[j][2] + ":";
 					else
 						asktext += vals[j][2];
@@ -141,6 +185,14 @@ Query.prototype = {
 			asktext += "]]";
 		}
 		return asktext;
+	},
+
+	isEmpty:function(){
+		if(this.categories.length == 0 && this.instances.length == 0 && this.properties.length == 0){
+			return true;
+		} else {
+			return false;
+		}
 	},
 
 	getName:function(){

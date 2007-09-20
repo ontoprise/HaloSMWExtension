@@ -40,7 +40,12 @@ function smwfQIAccess($method, $params) {
 		   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
 		   			$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
 		   			$isNum = $th->isNumeric()?"true":"false";
-					$relSchema .= '<param name="'.$typeLabels[$i].'" isNumeric="' . $isNum . '"/>';
+		   			$pvalues = SMWTypeHandlerFactory::getPossibleValues($relationName);
+		   			$relSchema .= '<param name="'.$typeLabels[$i].'" isNumeric="' . $isNum . '">';
+		   			for($j = 0; $j < sizeof($pvalues); $j++){
+		   				$relSchema .= '<allowedValue value="' . $pvalues[$j] . '"/>';
+		   			}
+					$relSchema .= '</param>';
 				}
 				$relSchema .= '</relationSchema>';
 
