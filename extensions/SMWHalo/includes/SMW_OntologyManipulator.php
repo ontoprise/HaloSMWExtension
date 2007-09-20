@@ -150,9 +150,12 @@ function smwfExistsArticle($title) {
 	
 	// Is the article a special property?
 	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);
+	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
+	
 	global $smwgContLang, $smwgHaloContLang;
 	$specialProps = $smwgContLang->getSpecialPropertiesArray();
 	foreach ($specialProps as $prop) {
+		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
 		if ($title == $prop) {
 			return "true";
 		}
@@ -160,6 +163,7 @@ function smwfExistsArticle($title) {
 	// Is the article a special schema property?
 	$specialProps = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 	foreach ($specialProps as $prop) {
+		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
 		if ($title == $prop) {
 			return "true";
 		}
