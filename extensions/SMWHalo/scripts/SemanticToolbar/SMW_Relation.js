@@ -163,7 +163,7 @@ newItem: function() {
 	
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help_msg', gLanguage.getMessage('ANNOTATE_PROPERTY'), '' , true));
-	tb.append(tb.createInput('rel-name', gLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
 	                         SMW_REL_CHECK_EMPTY +
 	                         SMW_REL_HINT_PROPERTY,
@@ -275,7 +275,7 @@ CreateSubSup: function() {
 	this.showList = false;
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_PROPERTY'), '' , true));
-	tb.append(tb.createInput('rel-subsuper', gLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createInput('rel-subsuper', gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY+SMW_REL_CHECK_EMPTY,
 	                         true));
 	tb.append(tb.createText('rel-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -374,7 +374,7 @@ newRelation: function() {
 					: "";
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
-	tb.append(tb.createInput('rel-name', gLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_IIE+SMW_REL_CHECK_EMPTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -724,7 +724,7 @@ getselectedItem: function(selindex) {
 			obj = tb.createText('rel-value-'+i+'-msg', '', '', true);
 			valueInputs.push(obj);
 		}
-		tb.append(tb.createInput('rel-name', gLanguage.getMessage('NAME'), relation.getName(), '', 
+		tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), relation.getName(), '', 
 								 SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
 		 						 SMW_REL_CHECK_EMPTY,
 		 						 true));
