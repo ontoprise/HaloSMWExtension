@@ -56,6 +56,7 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php');
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php');
 	require_once($smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
+	require_once($smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 	
