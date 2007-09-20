@@ -101,8 +101,8 @@ class SMWDataValueFactory {
 				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
 				break;
 			case SMW_SP_CONVERSION_FACTOR_SI:
-				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
-				break; // TODO: change this into an appropriate handler
+				$result = SMWDataValueFactory::newTypeIDValue('_siu', $value, $caption);
+				break;
 			case SMW_SP_SUBPROPERTY_OF:
 				$result = SMWDataValueFactory::newTypeIDValue('_wpg', $value, $caption);
 				break;
@@ -159,6 +159,7 @@ class SMWDataValueFactory {
 	 * @param $propertyname text name of according property, or false (may be relevant for getting further parameters)
 	 */
 	static public function newTypeIDValue($typeid, $value=false, $caption=false, $propertyname=false) {
+
 		if (array_key_exists($typeid, SMWDataValueFactory::$m_valueclasses)) {
 			$vc = SMWDataValueFactory::$m_valueclasses[$typeid];
 			// check if class file was already included for this class
@@ -276,4 +277,5 @@ SMWDataValueFactory::registerDataValueClass('_wpg','WikiPage','SMWWikiPageValue'
 SMWDataValueFactory::registerDataValueClass('__typ','Types','SMWTypesValue');
 SMWDataValueFactory::registerDataValueClass('__nry','NAry','SMWNAryValue');
 SMWDataValueFactory::registerDataValueClass('__err','Error','SMWErrorValue');
+
 wfRunHooks('SMW_Datatypes');
