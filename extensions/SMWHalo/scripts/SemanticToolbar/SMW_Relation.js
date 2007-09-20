@@ -62,7 +62,7 @@ var SMW_REL_HINT_CATEGORY =
 	'typeHint = "14" ';
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="100" ';
+	'typeHint="102" ';
 	
 
 RelationToolBar.prototype = {
