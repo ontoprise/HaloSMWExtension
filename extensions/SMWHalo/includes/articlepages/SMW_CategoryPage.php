@@ -21,20 +21,20 @@ require_once($smwgIP. "/includes/SMW_Infolink.php");
 /**
  * Hook for category page
  */
-function smwfSemanticCategoryPage(& $categoryPage) {
-	$newCategoryPage = new SMWCategoryPage($categoryPage->getTitle());
-	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
-			$newCategoryPage->openShowCategory();
-	}
-
-	# If the article we've just shown is in the "Image" namespace,
-	# follow it with the history list and link list for the image
-	# it describes.
-	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
-			$newCategoryPage->closeShowCategory();
-	}
-	return false;
-}
+//function smwfSemanticCategoryPage(& $categoryPage) {
+//	$newCategoryPage = new SMWCategoryPage($categoryPage->getTitle());
+//	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
+//			$newCategoryPage->openShowCategory();
+//	}
+//
+//	# If the article we've just shown is in the "Image" namespace,
+//	# follow it with the history list and link list for the image
+//	# it describes.
+//	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
+//			$newCategoryPage->closeShowCategory();
+//	}
+//	return false;
+//}
 /**
  * Extends the original CategoryPage. 
  */
