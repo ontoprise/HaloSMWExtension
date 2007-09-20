@@ -49,9 +49,6 @@ class SMWQueryProcessor {
 		$qp = new SMWQueryParser();
 		$qp->setDefaultNamespaces($smwgQDefaultNamespaces);
 		$desc = $qp->getQueryDescription($querystring);
-		if ($desc === NULL) { //abort with failure
-			return $qp->getErrorString();
-		}
 
 		if (array_key_exists('mainlabel', $params)) {
 			$mainlabel = $params['mainlabel'] . $qp->getLabel();
@@ -208,8 +205,9 @@ class SMWQueryParser {
 	}
 
 	/**
-	 * Compute an SMWDescription from a query string. Return this description or
-	 * false if there were errors.
+	 * Compute an SMWDescription from a query string. Returns whatever descriptions could be
+	 * wrestled from the given string (the most general result being SMWThingDescription if
+	 * no meaningful condition was extracted).
 	 */
 	public function getQueryDescription($querystring) {
 		wfProfileIn('SMWQueryParser::getQueryDescription (SMW)');
@@ -221,6 +219,9 @@ class SMWQueryParser {
 		$result = $this->getSubqueryDescription($setNS, $this->m_label);
 		if (!$setNS) { // add default namespaces if applicable
 			$result = $this->addDescription($this->m_defaultns, $result);
+		}
+		if ($result === NULL) { // parsing went wrong, no default namespaces
+			$result = new SMWThingDescription();
 		}
 		wfProfileOut('SMWQueryParser::getQueryDescription (SMW)');
 		return $result;
@@ -332,7 +333,7 @@ class SMWQueryParser {
 				break;
 				default: // error: unexpected $chunk
 					$this->m_errors[] = wfMsgForContent('smw_unexpectedpart', $chunk);
-					return NULL;
+					//return NULL; // Try to go on, it can only get better ...
 			}
 			if ($setsubNS) { // namespace restrictions encountered in current conjunct
 				$hasNamespaces = true;
@@ -793,7 +794,9 @@ class SMWQueryParser {
 	 * also be changed (if it was non-NULL).
 	 */
 	protected function addDescription($curdesc, $newdesc, $conjunction = true) {
-		if ($curdesc === NULL) {
+		if ($newdesc === NULL) {
+			return $curdesc;
+		} elseif ($curdesc === NULL) {
 			return $newdesc;
 		} else { // we already found descriptions
 			if ( (($conjunction)  && ($curdesc instanceof SMWConjunction)) ||
