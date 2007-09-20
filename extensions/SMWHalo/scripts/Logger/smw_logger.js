@@ -30,11 +30,11 @@ Logger.prototype = {
 			var time = new Date();
 			var timestamp = time.toGMTString();
 		var userid = (wgUserName == null) ? "" : wgUserName; 
-		var location = (wgPageName == null) ? "" : wgPageName; 
+		var locationURL = (wgPageName == null) ? "" : wgPageName; 
 		var func= (func == null) ? "" : func;
 		
 		sajax_do_call('smwLog', 
-		              [logmsg,type,timestamp,userid,location,func], 
+		              [logmsg,type,userid,locationURL,func,timestamp], 
 		              this.logcallback.bind(this));	
 	},
 	

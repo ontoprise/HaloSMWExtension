@@ -11,7 +11,7 @@
  * This function is exported to the ajax interface and will log msg
  * to the database
  */
-function smwLog($logmsg, $type = "" , $timestamp = "",$userid = "",$location="", $function=""){
+function smwLog($logmsg, $type = "" , $userid = "", $location="", $function="", $timestamp = ""){
 	
 		$db = wfGetDB( DB_MASTER );
 		$fname = 'SMW::smwLog';
