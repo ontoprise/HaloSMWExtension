@@ -42,7 +42,7 @@ function smwOBAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/deployOB.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 	}
 	
-	$jsm->addCSSIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
 	
 	return true;
 }

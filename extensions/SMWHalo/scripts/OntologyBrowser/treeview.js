@@ -61,7 +61,7 @@ TreeTransformer.prototype = {
 
   	// Load the xsl file using synchronous (third param is set to false) XMLHttpRequest
   	var myXMLHTTPRequest = new XMLHttpRequest();
-  	myXMLHTTPRequest.open("GET", wgServer + wgScriptPath + "/extensions/SMWHalo/scripts/OntologyBrowser/treeview.xslt", false);
+  	myXMLHTTPRequest.open("GET", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt", false);
  		myXMLHTTPRequest.send(null);
 
 
@@ -77,7 +77,7 @@ TreeTransformer.prototype = {
 		xsl.async = false;
 		
 		// load stylesheet
-		xsl.load(wgServer + wgScriptPath + "/extensions/SMWHalo/scripts/OntologyBrowser/treeview.xslt");
+		xsl.load(wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
 		
 		// create XSLT Processor
 		var template = new ActiveXObject("MSXML2.XSLTemplate");
