@@ -114,18 +114,21 @@ public static function encapsulateAsPropertyList($directProperties, $inheritedPr
 	$propertiesXML = "";
 
 	foreach($directProperties as $t) {
-		$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
-		$count++;
+		if ($t instanceof Title) { 
+			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
+			$count++;
+		}
 	}
 	foreach($inheritedProperties as $t) {
-		
-		$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
-		$count++;
+		if ($t instanceof Title) { 
+			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
+			$count++;
+		}
 	}
 	return $propertiesXML == '' ? "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>" : "<propertyList>".$propertiesXML."</propertyList>";
 }
 
-private static function encapsulateAsProperty($t, $count) {
+private static function encapsulateAsProperty(Title $t, $count) {
 		$content = "";
 		$img = "";
 		// read type of property
