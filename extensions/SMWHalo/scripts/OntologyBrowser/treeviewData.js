@@ -53,7 +53,7 @@ OBDataAccess.prototype = {
 	
 initializeTree: function (param) {
 	// ----- initialize with appropriate data -------
-	var title = GeneralBrowserTools.getURLParameter("title");
+	var title = GeneralBrowserTools.getURLParameter("entitytitle");
 	var ns = GeneralBrowserTools.getURLParameter("ns");
 	var searchTerm = GeneralBrowserTools.getURLParameter("searchTerm");
 	

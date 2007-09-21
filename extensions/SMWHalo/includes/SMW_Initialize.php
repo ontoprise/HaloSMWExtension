@@ -89,7 +89,7 @@ function smwfHaloInitDatatypes() {
  */
 function smwfHaloFactBoxLinks(&$links) {
 	global $wgContLang, $wgServer, $wgScriptPath;
-	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgServer.$wgScriptPath."/index.php/".$wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&title='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
+	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgServer.$wgScriptPath."/index.php/".$wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&entitytitle='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
 	$links[] = array('smwoblink', $oblink);
 	return true;
 }
