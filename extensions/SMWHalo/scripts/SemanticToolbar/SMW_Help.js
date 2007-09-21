@@ -34,7 +34,7 @@ function askQuestion(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value, wgUserName, wgTitle  ], hideQuestionForm);
+	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm);
 }
 
 function hideQuestionForm(request){

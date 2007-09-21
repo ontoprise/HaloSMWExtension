@@ -112,7 +112,7 @@ function smwfGetHelp($namespace, $action){
  * @param $action current action of the user
  * @param $question question entered by the user
  */
-function smwfAskQuestion($namespace, $action, $question, $uname, $location){
+function smwfAskQuestion($namespace, $action, $question){
 	if($question == ""){
 		return "Sorry, you have not entered a question.";
 	}
@@ -130,7 +130,7 @@ function smwfAskQuestion($namespace, $action, $question, $uname, $location){
 
 	/*STARTLOG*/
 	$logmsg = "Added question '$question'";
-    smwLog($logmsg, "info" , $uname, $location, "help_addednew", wfTimestampNow());
+    smwLog($logmsg, "info", "help_addednew", wfTimestampNow());
 	/*ENDLOG*/
 
 
