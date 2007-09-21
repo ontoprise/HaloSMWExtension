@@ -3,7 +3,7 @@
 * Manages major functionalities and GUI of the Query Interface
 * @author Markus Nitsche [fitsch@gmail.com]
 */
-
+var smwhgLogger = false;
 var QIHelper = Class.create();
 QIHelper.prototype = {
 
@@ -87,6 +87,11 @@ resetQuery:function(){
 * Executes a reset. Initializes Query Interface so everything is in its initial state
 */
 doReset:function(){
+	/*STARTLOG*/
+	if(smwhgLogger){
+	    smwhgLogger.log("Reset Query","info","query_reset");
+	}
+	/*ENDLOG*/
 	this.emptyDialogue();
 	this.initialize();
 	$('shade').style.display="none";
@@ -98,6 +103,11 @@ doReset:function(){
 * which will create the preview
 */
 previewQuery:function(){
+	/*STARTLOG*/
+	if(smwhgLogger){
+	    smwhgLogger.log("Preview Query","info","query_preview");
+	}
+	/*ENDLOG*/
 	$('shade').toggle();
 	if(this.pendingElement)
 		this.pendingElement.hide();
@@ -674,14 +684,38 @@ loadPropertyDialogue:function(id){
 deleteActivePart:function(){
 	switch(this.activeDialogue){
 		case "category":
+			/*STARTLOG*/
+			if(smwhgLogger){
+				var logstr = "Remove category " + this.activeQuery.getCategoryGroup(this.loadedFromId).join(",") + " from query";
+			    smwhgLogger.log(logstr,"info","query_category_removed");
+			}
+			/*ENDLOG*/
 			this.activeQuery.removeCategoryGroup(this.loadedFromId);
 			break;
 		case "instance":
+			/*STARTLOG*/
+			if(smwhgLogger){
+				var logstr = "Remove instance " + this.activeQuery.getInstanceGroup(this.loadedFromId).join(",") + " from query";
+			    smwhgLogger.log(logstr,"info","query_instance_removed");
+			}
+			/*ENDLOG*/
 			this.activeQuery.removeInstanceGroup(this.loadedFromId);
 			break;
 		case "property":
 			var pgroup = this.activeQuery.getPropertyGroup(this.loadedFromId);
+			/*STARTLOG*/
+			if(smwhgLogger){
+				var logstr = "Remove property " + pgroup.getName() + " from query";
+			    smwhgLogger.log(logstr,"info","query_property_removed");
+			}
+			/*ENDLOG*/
 			if(pgroup.getValues()[0][0] == "subquery"){
+				/*STARTLOG*/
+				if(smwhgLogger){
+					var logstr = "Remove subquery (property: " + pgroup.getName() + ") from query";
+				    smwhgLogger.log(logstr,"info","query_subquery_removed");
+				}
+				/*ENDLOG*/
 				//recursively delete all subqueries of this one. It's id is values[0][2]
 				this.deleteSubqueries(pgroup.getValues()[0][2])
 			}
@@ -774,6 +808,12 @@ addCategoryGroup:function(){
 	if(!allinputs)
 		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_CATEGORY'); //show error
 	else {
+		/*STARTLOG*/
+		if(smwhgLogger){
+			var logstr = "Add category " + tmpcat.join(",") + " to query";
+		    smwhgLogger.log(logstr,"info","query_category_added");
+		}
+		/*ENDLOG*/
 		this.activeQuery.addCategoryGroup(tmpcat, this.loadedFromId); //add to query
 		this.emptyDialogue();
 	}
@@ -794,6 +834,12 @@ addInstanceGroup:function(){
 	if(!allinputs)
 		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_INSTANCE');
 	else {
+		/*STARTLOG*/
+		if(smwhgLogger){
+			var logstr = "Add instance " + tmpins.join(",") + " to query";
+		    smwhgLogger.log(logstr,"info","query_instance_added");
+		}
+		/*ENDLOG*/
 		this.activeQuery.addInstanceGroup(tmpins, this.loadedFromId);
 		this.emptyDialogue();
 	}
@@ -820,10 +866,22 @@ addPropertyGroup:function(){
 				paramvalue = this.nextQueryId;
 				subqueryIds.push(this.nextQueryId);
 				this.addQuery(this.activeQueryId, pname);
+				/*STARTLOG*/
+				if(smwhgLogger){
+					var logstr = "Add subquery to query, property '" + pname + "'";
+				    smwhgLogger.log(logstr,"info","query_subquery_added");
+				}
+				/*ENDLOG*/
 			}
 			var restriction = $('dialoguecontent').rows[i].cells[1].firstChild.value;
 			pgroup.addValue(paramname, restriction, paramvalue); // add a value group to the property group
 		}
+		/*STARTLOG*/
+		if(smwhgLogger){
+			var logstr = "Add property " + pname + " to query";
+		    smwhgLogger.log(logstr,"info","query_property_added");
+		}
+		/*ENDLOG*/
 		this.activeQuery.addPropertyGroup(pgroup, subqueryIds, this.loadedFromId); //add the property group to the query
 		this.emptyDialogue();
 		this.updateColumnPreview();
@@ -839,6 +897,11 @@ copyToClipboard:function(){
 	if(this.queries[0].isEmpty() ){
 		alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
 	} else {
+		/*STARTLOG*/
+		if(smwhgLogger){
+		    smwhgLogger.log("Copy query to clipboard","info","query_copied");
+		}
+		/*ENDLOG*/
 		var text = this.getFullAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);

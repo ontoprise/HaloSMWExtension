@@ -55,22 +55,19 @@ function updateQueryTree(xmltext){
 }
 
 function selectLeaf(title, code) {
-	var subquerystring = " " + gLanguage.getMessage("QI_PAGE") + " = " + gLanguage.getMessage("QI_SUBQUERY") + " ";
-	if(title.indexOf(subquerystring) == 0){
-		id=title.substring(subquerystring.length, title.length);
-		qihelper.setActiveQuery(id);
+	var id = code.substring(8, code.indexOf('-'));
+	if (code.indexOf("category") == 0){
+		selectFolder("categories" + id);
 	}
-	else{
-		var id = code.substring(8, code.indexOf('-'));
-		if (code.indexOf("category") == 0){
-			selectFolder("categories" + id);
-		}
-		else if (code.indexOf("instance") == 0){
-			selectFolder("instances" + id);
-		}
-		else if (code.indexOf("property") == 0){
-			selectFolder("properties" + id);
-		}
+	else if (code.indexOf("instance") == 0){
+		selectFolder("instances" + id);
+	}
+	else if (code.indexOf("property") == 0){
+		selectFolder("properties" + id);
+	}
+	else if (code.indexOf("subquery") == 0){
+		id = code.substring(8, code.length);
+		qihelper.setActiveQuery(id);
 	}
 }
 

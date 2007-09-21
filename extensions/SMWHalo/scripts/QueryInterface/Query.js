@@ -104,7 +104,7 @@ Query.prototype = {
 			propvalues = this.properties[i].getValues();
 			for(var j=0; j<propvalues.length; j++){
 				if(propvalues[j][0] == "subquery")
-					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_PAGE') + ' = ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
+					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="subquery' + propvalues[j][2] + '" img="subquery.png" class="treesub"/>';
 				else {
 					var res = ""; //restriction for numeric values. Encode for HTML display
 					switch(propvalues[j][1]){
