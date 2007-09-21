@@ -58,7 +58,7 @@ OntologyModifier.prototype = {
 			if (parts == null) {
 				var errMsg = gLanguage.getMessage('ERR_QUERY_EXISTS_ARTICLE');
 				errMsg = errMsg.replace(/\$-page/g, pageName);
-				alert(errMag);
+				alert(errMsg);
 				return;
 			}
 			callback(pageName, parts[1] == 'true' ? true : false, title, optparam, domElementID);
