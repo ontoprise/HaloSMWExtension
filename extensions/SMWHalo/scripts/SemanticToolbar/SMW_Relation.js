@@ -71,6 +71,7 @@ initialize: function() {
 	this.genTB = new GenericToolBar();
 	this.toolbarContainer = null;
 	this.showList = true;
+	this.currentAction = "";
 },
 
 showToolbar: function(){
@@ -103,6 +104,14 @@ fillList: function(forceShowList) {
 },
 
 cancel: function(){
+	
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log("","",this.currentAction+"_canceled");
+	}
+	/*ENDLOG*/
+	this.currentAction = "";
+	
 	this.toolbarContainer.hideSandglass();
 	this.toolbarContainer.release();
 	this.toolbarContainer = null;
@@ -135,6 +144,11 @@ addItem: function() {
 	var name = $("rel-name").value;
 	var value = this.getRelationValue();
 	var text = $("rel-show").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(name+':'+value,"","annotate_added");
+	}
+	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if (name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
@@ -159,7 +173,14 @@ newItem: function() {
     var html;
     this.wtp.initialize();
 	this.showList = false;
+	this.currentAction = "annotate";
+
 	var selection = this.wtp.getSelection();
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","annotate_clicked");
+	}
+	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help_msg', gLanguage.getMessage('ANNOTATE_PROPERTY'), '' , true));
@@ -273,9 +294,19 @@ CreateSubSup: function() {
     var html;
 
 	this.showList = false;
+	this.currentAction = "sub/super-category";
+
+	this.wtp.initialize();
+	var selection = this.wtp.getSelection();
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","sub/super-property_clicked");
+	}
+	/*ENDLOG*/
+
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_PROPERTY'), '' , true));
-	tb.append(tb.createInput('rel-subsuper', gLanguage.getMessage('PROPERTY'), '', '',
+	tb.append(tb.createInput('rel-subsuper', gLanguage.getMessage('PROPERTY'), selection, '',
 	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY+SMW_REL_CHECK_EMPTY,
 	                         true));
 	tb.append(tb.createText('rel-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -340,6 +371,11 @@ createSubItem: function(openTargetArticle) {
 		openTargetArticle = true;
 	}
 	var name = $("rel-subsuper").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(wgTitle+":"+name,"","sub-property_created");
+	}
+	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
@@ -354,6 +390,11 @@ createSuperItem: function(openTargetArticle) {
 		openTargetArticle = true;
 	}
 	var name = $("rel-subsuper").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(name+":"+wgTitle,"","super-property_created");
+	}
+	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
@@ -369,12 +410,23 @@ newRelation: function() {
     gDataTypes.refresh();
     
 	this.showList = false;
+	this.currentAction = "create";
+	
+    this.wtp.initialize();
+	var selection = this.wtp.getSelection();
+   
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","create_clicked");
+	}
+	/*ENDLOG*/
+
 	var domain = (wgNamespaceNumber == 14)
 					? wgTitle  // current page is a category
 					: "";
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
-	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
+	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), selection, '',
 	                         SMW_REL_CHECK_PROPERTY_IIE+SMW_REL_CHECK_EMPTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -523,6 +575,18 @@ createNewRelation: function() {
 		}
 		i++;
 	}
+	/*STARTLOG*/
+	var signature = "";
+	for (i = 0; i < rangesAndTypes.length; i++) {
+		signature += rangesAndTypes[i];
+		if (i < rangesAndTypes.length-1) {
+			signature += ', ';
+		}
+	}
+	if (smwhgLogger) {
+	    smwhgLogger.log(relName+":"+signature,"","create_added");
+	}
+	/*ENDLOG*/
 
 	this.om.createRelation(relName,
 					       gLanguage.getMessage('CREATE_PROPERTY'),
@@ -550,6 +614,13 @@ changeItem: function(selindex) {
 
 	if ((selindex!=null) && ( selindex >=0) && (selindex <= annotatedElements.length)  ){
 		var relation = annotatedElements[selindex];
+		/*STARTLOG*/
+		var oldName = relation.getName();
+		var oldValues = relation.getValue();
+		if (smwhgLogger) {
+		    smwhgLogger.log(oldName+":"+oldValues+"->"+relName+":"+value,"","edit_annotation_change");
+		}
+		/*ENDLOG*/
 		if ($("rel-replace-all") && $("rel-replace-all").down('input').checked == true) {
 			// rename all occurrences of the relation
 			var relations = this.wtp.getRelation(relation.getName());
@@ -562,6 +633,7 @@ changeItem: function(selindex) {
 		relation.rename(relName);
 		relation.changeValue(value);
 		relation.changeRepresentation(text);
+		
    }
 
 	//show list
@@ -583,6 +655,11 @@ deleteItem: function(selindex) {
 		               : (anno.getValue() != ""
 		                  ? anno.getValue()
 		                  : "");
+		/*STARTLOG*/
+		if (smwhgLogger) {
+		    smwhgLogger.log(anno.getName()+":"+anno.getValue(),"","edit_annotation_delete");
+		}
+		/*ENDLOG*/
 		anno.remove(replText);
 	}
 	//show list
@@ -594,7 +671,14 @@ newPart: function() {
     this.wtp.initialize();
     var selection = this.wtp.getSelection();
 
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","haspart_clicked");
+	}
+	/*ENDLOG*/
+
 	this.showList = false;
+	this.currentAction = "haspart";
 
 	var path = wgArticlePath;
 	var dollarPos = path.indexOf('$1');
@@ -648,6 +732,11 @@ addPartOfRelation: function() {
 	}
 
 	var obj = $("rel-name").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(poType+":"+obj,"","haspart_added");
+	}
+	/*ENDLOG*/
 	if (obj == "") {
 		alert(gLanguage.getMessage('NO_OBJECT_FOR_POR'));
 	}
@@ -656,7 +745,6 @@ addPartOfRelation: function() {
 	this.wtp.initialize();
 	this.wtp.addRelation(poType, obj, show, false);
 	this.fillList(true);
-
 },
 
 getselectedItem: function(selindex) {
@@ -672,8 +760,16 @@ getselectedItem: function(selindex) {
 		return;
 	}
 	this.showList = false;
+	this.currentAction = "editannotation";
 	
 	var relation = annotatedElements[selindex];
+	
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(relation.getName()+":"+relation.getValue(),"","editannotation_clicked");
+	}
+	/*ENDLOG*/
+	
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);
 
 	var relations = this.wtp.getRelation(relation.getName());

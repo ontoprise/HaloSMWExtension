@@ -41,6 +41,7 @@ initialize: function() {
     this.genTB = new GenericToolBar();
 	this.toolbarContainer = null;
 	this.showList = true;
+	this.currentAction = "";
 
 },
 
@@ -71,7 +72,15 @@ fillList: function(forceShowList) {
 },
 
 cancel: function(){
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log("","",this.currentAction+"_canceled");
+	}
+	/*ENDLOG*/
+	this.currentAction = "";
 	this.toolbarContainer.hideSandglass();
+	this.toolbarContainer.release();
+	this.toolbarContainer = null;
 	this.fillList(true);
 },
 
@@ -98,26 +107,38 @@ createToolbar: function(attributes) {
 
 
 addItem: function() {
-   this.wtp.initialize();
-   var name = $("cat-name").value;
-   this.wtp.addCategory(name, true);
-   this.fillList(true);
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log($("cat-name").value,"","annotate_added");
+	}
+	/*ENDLOG*/
+	this.wtp.initialize();
+	var name = $("cat-name").value;
+	this.wtp.addCategory(name, true);
+	this.fillList(true);
 },
 
 newItem: function() {
 	var html;
 	
 	this.showList = false;
+	this.currentAction = "annotate";
 	
     this.wtp.initialize();
 	var selection = this.wtp.getSelection();
+	
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","annotate_clicked");
+	}
+	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', 
 	                        gLanguage.getMessage('ANNOTATE_CATEGORY'),
 	                        '' , true));
 	tb.append(tb.createInput('cat-name', 
-							 gLanguage.getMessage('CATEGORY'), '', '',
+							 gLanguage.getMessage('CATEGORY'), selection, '',
 	                         SMW_CAT_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_HINT_CATEGORY,
@@ -140,11 +161,22 @@ newItem: function() {
 CreateSubSup: function() {
     var html;
 
+	this.currentAction = "sub/super-category";
 	this.showList = false;
+	
+    this.wtp.initialize();
+	var selection = this.wtp.getSelection();
+	
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","sub/super-category_clicked");
+	}
+	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_CAT_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_CAT'), '' , true));
-	tb.append(tb.createInput('cat-subsuper', gLanguage.getMessage('CATEGORY'), '', '',
+	tb.append(tb.createInput('cat-subsuper', gLanguage.getMessage('CATEGORY'),
+	                         selection, '',
 	                         SMW_CAT_SUB_SUPER_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_HINT_CATEGORY,
@@ -207,6 +239,11 @@ createSubSuperLinks: function(elementID) {
 
 createSubItem: function() {
 	var name = $("cat-subsuper").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(wgTitle+":"+name,"","sub-category_created");
+	}
+	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
@@ -221,6 +258,11 @@ createSuperItem: function(openTargetArticle) {
 		openTargetArticle = true;
 	}
 	var name = $("cat-subsuper").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(name+":"+wgTitle,"","super-category_created");
+	}
+	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
@@ -237,10 +279,16 @@ changeItem: function(selindex) {
 	var name = $("cat-name").value;
 	//Get category
 	var annotatedElements = this.wtp.getCategories();
-	//change relation
+	//change category
 	if(   (selindex!=null) 
 	   && ( selindex >=0) 
 	   && (selindex <= annotatedElements.length)  ){
+		/*STARTLOG*/
+		var oldName = annotatedElements[selindex].getName();
+		if (smwhgLogger) {
+		    smwhgLogger.log(oldName+"->"+name,"","edit_category_change");
+		}
+		/*ENDLOG*/
 		annotatedElements[selindex].changeCategory(name);
 	}
 	
@@ -258,6 +306,11 @@ deleteItem: function(selindex) {
 	    && (selindex >=0)
 	    && (selindex <= annotatedElements.length)  ){
 		var anno = annotatedElements[selindex];
+		/*STARTLOG*/
+		if (smwhgLogger) {
+		    smwhgLogger.log(anno.getName(),"","edit_category_delete");
+		}
+		/*ENDLOG*/
 		anno.remove("");
 	}
 	//show list
@@ -269,11 +322,22 @@ newCategory: function() {
 
     var html;
     
+	this.currentAction = "create";
 	this.showList = false;
+ 
+    this.wtp.initialize();
+	var selection = this.wtp.getSelection();
+   
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(selection,"","create_clicked");
+	}
+	/*ENDLOG*/
     
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CREATE_NEW_CATEGORY'), '' , true));
-	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), '', '',
+	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), 
+							 selection, '',
 	                         SMW_CAT_CHECK_CATEGORY_IIE+SMW_CAT_CHECK_EMPTY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -292,6 +356,11 @@ newCategory: function() {
 
 createNewCategory: function() {
 	var catName = $("cat-name").value;
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(catName,"","create_added");
+	}
+	/*ENDLOG*/
 	// Create an ontology modifier instance
 	this.om.createCategory(catName, "");
 
@@ -314,7 +383,14 @@ getselectedItem: function(selindex) {
 		return;
 	}
 
+	this.currentAction = "edit_category";
 	this.showList = false;
+
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(annotatedElements[selindex].getName(),"","edit_category_clicked");
+	}
+	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CHANGE_ANNO_OF_CAT'), '' , true));

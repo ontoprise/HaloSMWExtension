@@ -678,6 +678,13 @@ apply: function() {
 	
 	this.createContent();
 	this.refreshOtherTabs();
+	
+	/*STARTLOG*/
+	if (smwhgLogger) {
+	    smwhgLogger.log(wgTitle,"","property_properties_changed");
+	}
+	/*ENDLOG*/
+	
 },
 
 refreshOtherTabs: function () {
