@@ -21,7 +21,7 @@ $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 
 /**
- * Configures SMW Halo Extension for initialization. 
+ * Configures SMW Halo Extension for initialization.
  * Must be called *AFTER* SMW is intialized.
  */
 function enableSMWHalo() {
@@ -35,17 +35,17 @@ function enableSMWHalo() {
  */
 function smwgHaloSetupExtension() {
 	global $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
-	
+
 	$smwgMasterGeneralStore = NULL;
-	
+
 	$wgHooks['SMW_Datatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
-	
+
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
-	
+
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
 	require_once('SMW_ContentProviderForAura.php');
@@ -59,19 +59,19 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-	
-	require_once($smwgHaloIP . '/includes/SMW_Logger.php');	
 
-	
+	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
+
+
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-	
+
 	return true;
 }
 
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
-function smwfHaloInitDatatypes() { 
+function smwfHaloInitDatatypes() {
 	global $smwgHaloContLang;
 	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
 	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
@@ -79,7 +79,7 @@ function smwfHaloInitDatatypes() {
 	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemEquation','SMWChemicalEquationTypeHandler');
 	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_mathematicalequation');
 	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'MathEquation','SMWMathematicalEquationTypeHandler');
-	
+
 	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
 	return true;
 }
@@ -108,7 +108,7 @@ function smwfHaloShowListPage(&$title, &$article){
 
 /**
  * Creates or updates additional tables needed by HALO.
- * Called from SMW when admin re-initializes tables 
+ * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables($verbose) {
 	$haloSQLStore = NULL;
@@ -119,7 +119,7 @@ function smwfHaloInitializeTables($verbose) {
 					$haloSQLStore = new HaloSQLTableFactory();
 				break;
 			}
-	if ($haloSQLStore != NULL) { 	
+	if ($haloSQLStore != NULL) {
 		$haloSQLStore->createOrUpdateTables($verbose);
 	}
 	return true;
@@ -144,7 +144,7 @@ function smwfHaloInitContentLanguage($langcode) {
 		}
 		$smwgHaloContLang = new $smwContLangClass();
 
-	
+
 }
 
 /**
@@ -153,7 +153,7 @@ function smwfHaloInitContentLanguage($langcode) {
 function smwfHaloInitUserMessages() {
 		global $smwgHaloIP, $smwgHaloLang;
 		if (!empty($smwgHaloLang)) { return; }
-	
+
 		global $wgMessageCache, $wgLang;
 
 		$smwLangClass = 'SMW_HaloLanguage' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
@@ -170,19 +170,19 @@ function smwfHaloInitUserMessages() {
 		}
 
 		$wgMessageCache->addMessages($smwgHaloLang->getUserMsgArray(), $wgLang->getCode());
-	
+
 	}
 
 function smwfHaloInitContentMessages() {
 		global $smwgHaloContMessagesInPlace;
 		if ($smwgHaloContMessagesInPlace) { return; }
-		
+
 		global $wgMessageCache, $smwgHaloContLang, $wgLanguageCode;
 		smwfHaloInitContentLanguage($wgLanguageCode);
 
 		$wgMessageCache->addMessages($smwgHaloContLang->getContentMsgArray(), $wgLanguageCode);
 		$smwgHaloContMessagesInPlace = true;
-		
+
 }
 
 /**
@@ -223,7 +223,7 @@ function smwfDBSupportsFunction($functionname) {
 function smwfHaloAddHTMLHeader(&$out) {
 		global $wgStylePath;
 		global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
-		
+
 		$jsm = SMWResourceManager::SINGLETON();
 
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
@@ -238,15 +238,15 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
-			
+
 			global $smwhgEnableLogging;
 			if($smwhgEnableLogging  === true){
-				$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "edit");
+				$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "all");
 			}
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
-			
+
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
-			
+
 			smwfHaloAddJSLanguageScripts($jsm);
 
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/STB_Framework.js', "edit");
@@ -285,7 +285,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		} else {
 			smwfHaloAddJSLanguageScripts($jsm);
-			
+
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployScripts.js');
 
 			//FIXME: these scripts must be exchanged by a full editor script
