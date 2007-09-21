@@ -66,7 +66,7 @@ function submitenter(myfield,e) {
 
 function helplog(question, action){
 	/*STARTLOG*/
-	if(smwhgLogger){
+	if(window.smwhgLogger){
 		var logmsg = "Opened Help Page " + question + " with action " + action;
 	    smwhgLogger.log(logmsg,"info","help_clickedtopic");
 	}

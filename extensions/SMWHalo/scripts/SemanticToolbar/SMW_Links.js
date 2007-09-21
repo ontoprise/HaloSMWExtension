@@ -38,7 +38,7 @@ function update(){
 
 function linklog(link, action){
 	/*STARTLOG*/
-	if(smwhgLogger){
+	if(window.smwhgLogger){
 		var logmsg = "Opened Page " + link + " with action " + action;
 	    smwhgLogger.log(logmsg,"info","link_opened");
 	}

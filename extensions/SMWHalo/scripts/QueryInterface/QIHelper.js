@@ -3,7 +3,7 @@
 * Manages major functionalities and GUI of the Query Interface
 * @author Markus Nitsche [fitsch@gmail.com]
 */
-var smwhgLogger = false;
+
 var QIHelper = Class.create();
 QIHelper.prototype = {
 
@@ -88,7 +88,7 @@ resetQuery:function(){
 */
 doReset:function(){
 	/*STARTLOG*/
-	if(smwhgLogger){
+	if(window.smwhgLogger){
 	    smwhgLogger.log("Reset Query","info","query_reset");
 	}
 	/*ENDLOG*/
@@ -104,7 +104,7 @@ doReset:function(){
 */
 previewQuery:function(){
 	/*STARTLOG*/
-	if(smwhgLogger){
+	if(window.smwhgLogger){
 	    smwhgLogger.log("Preview Query","info","query_preview");
 	}
 	/*ENDLOG*/
@@ -685,7 +685,7 @@ deleteActivePart:function(){
 	switch(this.activeDialogue){
 		case "category":
 			/*STARTLOG*/
-			if(smwhgLogger){
+			if(window.smwhgLogger){
 				var logstr = "Remove category " + this.activeQuery.getCategoryGroup(this.loadedFromId).join(",") + " from query";
 			    smwhgLogger.log(logstr,"info","query_category_removed");
 			}
@@ -694,7 +694,7 @@ deleteActivePart:function(){
 			break;
 		case "instance":
 			/*STARTLOG*/
-			if(smwhgLogger){
+			if(window.smwhgLogger){
 				var logstr = "Remove instance " + this.activeQuery.getInstanceGroup(this.loadedFromId).join(",") + " from query";
 			    smwhgLogger.log(logstr,"info","query_instance_removed");
 			}
@@ -704,14 +704,14 @@ deleteActivePart:function(){
 		case "property":
 			var pgroup = this.activeQuery.getPropertyGroup(this.loadedFromId);
 			/*STARTLOG*/
-			if(smwhgLogger){
+			if(window.smwhgLogger){
 				var logstr = "Remove property " + pgroup.getName() + " from query";
 			    smwhgLogger.log(logstr,"info","query_property_removed");
 			}
 			/*ENDLOG*/
 			if(pgroup.getValues()[0][0] == "subquery"){
 				/*STARTLOG*/
-				if(smwhgLogger){
+				if(window.smwhgLogger){
 					var logstr = "Remove subquery (property: " + pgroup.getName() + ") from query";
 				    smwhgLogger.log(logstr,"info","query_subquery_removed");
 				}
@@ -809,7 +809,7 @@ addCategoryGroup:function(){
 		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_CATEGORY'); //show error
 	else {
 		/*STARTLOG*/
-		if(smwhgLogger){
+		if(window.smwhgLogger){
 			var logstr = "Add category " + tmpcat.join(",") + " to query";
 		    smwhgLogger.log(logstr,"info","query_category_added");
 		}
@@ -835,7 +835,7 @@ addInstanceGroup:function(){
 		$('qistatus').innerHTML = gLanguage.getMessage('QI_ENTER_INSTANCE');
 	else {
 		/*STARTLOG*/
-		if(smwhgLogger){
+		if(window.smwhgLogger){
 			var logstr = "Add instance " + tmpins.join(",") + " to query";
 		    smwhgLogger.log(logstr,"info","query_instance_added");
 		}
@@ -867,7 +867,7 @@ addPropertyGroup:function(){
 				subqueryIds.push(this.nextQueryId);
 				this.addQuery(this.activeQueryId, pname);
 				/*STARTLOG*/
-				if(smwhgLogger){
+				if(window.smwhgLogger){
 					var logstr = "Add subquery to query, property '" + pname + "'";
 				    smwhgLogger.log(logstr,"info","query_subquery_added");
 				}
@@ -877,7 +877,7 @@ addPropertyGroup:function(){
 			pgroup.addValue(paramname, restriction, paramvalue); // add a value group to the property group
 		}
 		/*STARTLOG*/
-		if(smwhgLogger){
+		if(window.smwhgLogger){
 			var logstr = "Add property " + pname + " to query";
 		    smwhgLogger.log(logstr,"info","query_property_added");
 		}
@@ -898,7 +898,7 @@ copyToClipboard:function(){
 		alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
 	} else {
 		/*STARTLOG*/
-		if(smwhgLogger){
+		if(window.smwhgLogger){
 		    smwhgLogger.log("Copy query to clipboard","info","query_copied");
 		}
 		/*ENDLOG*/
