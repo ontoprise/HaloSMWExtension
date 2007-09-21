@@ -29,7 +29,10 @@ var SMW_AC_AUTO_TRIGGERING_TIME = 800;
 
 var SMW_AJAX_AC = 1;
 
-function autoCompletionsOptions(request) { autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; document.cookie = "AC_mode="+request.responseText; }
+function autoCompletionsOptions(request) { 
+	autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
+	document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
+}
 
 var AutoCompleter = Class.create();
 AutoCompleter.prototype = {
@@ -84,6 +87,14 @@ AutoCompleter.prototype = {
         
         // indicates if the mouse has been moved since last AC request
         this.notMoved = false;
+        
+         // Get preference options
+		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
+		if (AC_mode == null) {
+			sajax_do_call('smwfAutoCompletionOptions', [], autoCompletionsOptions);
+		} else {
+			this.autoTriggering = (AC_mode == 'auto');
+		}
     },
 
      /* Cancels event propagation */
@@ -568,6 +579,12 @@ AutoCompleter.prototype = {
                 	pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
             	}
             }
+        }
+        
+        // set pending indicator for input field
+        if (inputBox.tagName != 'TEXTAREA') {
+        	pending.style.left = (this.findElementPosX(inputBox)) + "px";
+            pending.style.top = (this.findElementPosY(inputBox)) + "px";
         }
 
         pending.style.display = "block";
@@ -1348,10 +1365,3 @@ autoCompleter = new AutoCompleter();
  // Initialize after complete document has been loaded
 Event.observe(window, 'load', autoCompleter.registerSmartInputListeners.bind(autoCompleter));
 
- // Get preference options
-var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
-if (AC_mode == null) {
-	sajax_do_call('smwfAutoCompletionOptions', [], autoCompletionsOptions);
-} else {
-	autoCompleter.autoTriggering = (AC_mode == 'auto');
-}
