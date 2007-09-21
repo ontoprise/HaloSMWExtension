@@ -88,6 +88,7 @@ AutoCompleter.prototype = {
         // indicates if the mouse has been moved since last AC request
         this.notMoved = false;
         
+        this.currentIESelection = null;
          // Get preference options
 		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
 		if (AC_mode == null) {
@@ -162,6 +163,8 @@ AutoCompleter.prototype = {
         var kc = e["keyCode"];
 		var isFloaterVisible = (this.siw && this.siw.floater.style.visibility == 'visible');
 		
+		// remember old cursor position (only IE)
+		if (OB_bd.isIE) this.currentIESelection = document.selection.createRange();
         if (isFloaterVisible && this.siw && ((kc == 13) || (kc == 9))) {
             this.siw.selectingSomething = true;
 
@@ -336,7 +339,7 @@ AutoCompleter.prototype = {
         var eL = this.getEventElement(e);
 		
         if (this.siw && (kc = e["keyCode"])) {
-        	
+
             if (kc == 40 && this.siw.floater.style.visibility == 'visible') {
                 this.siw.selectingSomething = true;
                 this.freezeEvent(e);
@@ -385,7 +388,7 @@ AutoCompleter.prototype = {
         var eL2 = this.getEventElement(e2);
         this.mousePressed = false;
 
-        if (this.siw && this.siw.selectingSomething) {
+ 		if (this.siw && this.siw.selectingSomething) {
             this.selectFromMouseClick();
 			
         }
@@ -705,13 +708,22 @@ AutoCompleter.prototype = {
     */
     getTextBeforeCursor: function() {
         if (OB_bd.isIE) {
-            var selection_range = document.selection.createRange();
+        //	debugger;
+        /*	var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
+        	if (advancedEditor) {
+        		var textbeforeCursor = editAreaLoader.getValue("wpTextbox1").substring(0, editAreaLoader.getSelectionRange("wpTextbox1")["start"]);
+        		return textbeforeCursor;
+        	} else {*/
 
+        	this.siw.inputBox.focus();
+            var selection_range = document.selection.createRange();
             var selection_rangeWhole = document.selection.createRange();
             selection_rangeWhole.moveToElementText(this.siw.inputBox);
 
             selection_range.setEndPoint("StartToStart", selection_rangeWhole);
+            
             return selection_range.text;
+        //	}
         } else if (OB_bd.isGecko) {
             var start = this.siw.inputBox.selectionStart;
             return this.siw.inputBox.value.substring(0, start);
@@ -958,6 +970,10 @@ AutoCompleter.prototype = {
 
         if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
             this.siw.inputBox.focus();
+            
+            // set old cursor position
+            this.currentIESelection.collapse(false);
+			this.currentIESelection.select();
             var userInput = this.getUserInputToMatch();
 
              // get TextRanges with text before and after user input
@@ -965,7 +981,7 @@ AutoCompleter.prototype = {
              // e.g. [[category:De]] would return:
              // range1 = [[category:
              // range2 = ]]      
-
+			
             var selection_range = document.selection.createRange();
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = addedValue;
