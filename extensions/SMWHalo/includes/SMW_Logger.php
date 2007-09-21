@@ -12,7 +12,10 @@
  * to the database
  */
 function smwLog($logmsg, $type = "" , $userid = "", $location="", $function="", $timestamp = ""){
-	
+		global $smwhgEnableLogging;
+		if($smwhgEnableLogging !== true){
+			return;
+		}
 		$db = wfGetDB( DB_MASTER );
 		$fname = 'SMW::smwLog';
 		$now = wfTimestampNow();

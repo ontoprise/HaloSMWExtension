@@ -60,10 +60,8 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 	
-	global $smw_enableLogging;
-	if($smw_enableLogging === true){
-		require_once($smwgHaloIP . '/includes/SMW_Logger.php');	
-	}
+	require_once($smwgHaloIP . '/includes/SMW_Logger.php');	
+
 	
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	
@@ -241,8 +239,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
 			
-			global $smw_enableLogging;
-			if($smw_enableLogging === true){
+			global $smwhgEnableLogging ;
+			if($$smwhgEnableLogging  === true){
 				$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "edit");
 			}
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');

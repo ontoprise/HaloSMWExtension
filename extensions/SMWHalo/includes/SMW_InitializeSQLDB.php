@@ -111,9 +111,9 @@
 	 * Initializes the logging component
 	 */
 	protected function setupLogging($verbose) {
-			global $smw_enableLogging;
+			global $smwhgEnableLogging; 
 			$this->reportProgress("Setting up logging ...\n",$verbose);
-			if($smw_enableLogging !== true){
+			if($smwhgEnableLogging  !== true){
 				$this->reportProgress("   ... logging not enabled. Doing nothing.  \n",$verbose);
 				return;
 			}

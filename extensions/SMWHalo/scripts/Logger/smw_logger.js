@@ -2,8 +2,8 @@
  *  Logger - logs msgs to the database 
  */
 
-var Logger = Class.create();
-Logger.prototype = {
+var SmwhgLogger = Class.create();
+SmwhgLogger.prototype = {
 	
 	/**
 	* default constructor
@@ -50,4 +50,4 @@ Logger.prototype = {
 	
 }
 
-var logger = new Logger();
+var smwhgLogger = new SmwhgLogger();
