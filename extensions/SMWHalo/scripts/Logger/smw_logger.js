@@ -34,7 +34,7 @@ SmwhgLogger.prototype = {
 		var func= (func == null) ? "" : func;
 		
 		sajax_do_call('smwLog', 
-		              [logmsg,type,userid,locationURL,func,timestamp], 
+		              [logmsg,type,func,locationURL,timestamp], 
 		              this.logcallback.bind(this));	
 	},
 	
