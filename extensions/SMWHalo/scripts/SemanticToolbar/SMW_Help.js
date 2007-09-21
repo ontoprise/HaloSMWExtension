@@ -9,7 +9,7 @@ var initHelp = function(){
 }
 
 function smw_help_callme(){
-	if((wgAction == "edit" 
+	if((wgAction == "edit"
 	    || wgCanonicalSpecialPageName == "Search")
 	   && stb_control.isToolbarAvailable()){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
@@ -34,7 +34,7 @@ function askQuestion(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm);
+	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value, wgUserName, wgTitle  ], hideQuestionForm);
 }
 
 function hideQuestionForm(request){
@@ -62,4 +62,14 @@ function submitenter(myfield,e) {
 	else {
 	   return true;
 	}
+}
+
+function helplog(question, action){
+	/*STARTLOG*/
+	if(smwhgLogger){
+		var logmsg = "Opened Help Page " + question + " with action " + action;
+	    smwhgLogger.log(logmsg,"info","help_clickedtopic");
+	}
+	/*ENDLOG*/
+	return true;
 }

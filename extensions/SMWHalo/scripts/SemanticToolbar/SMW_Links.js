@@ -35,3 +35,13 @@ function update(){
 	$("linkfilter").value = "";
 	filter($("linkfilter"), "linktable", 0);
 }
+
+function linklog(link, action){
+	/*STARTLOG*/
+	if(smwhgLogger){
+		var logmsg = "Opened Page " + link + " with action " + action;
+	    smwhgLogger.log(logmsg,"info","link_opened");
+	}
+	/*ENDLOG*/
+	return true;
+}

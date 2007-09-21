@@ -74,13 +74,20 @@ function smwfGetHelp($namespace, $action){
 <img src="/HaloSMWOntoprise/extensions/SemanticMediaWiki/skins/info.gif"/>
 </span>
 		 */
-		$html .= '<a href="' . $wikiTitle->getFullURL();
+
 		if($description == wfMsg(smw_csh_newquestion)){
+			$html .= '<a href="' . $wikiTitle->getFullURL();
 			$html .= '?action=edit" class="new';
+			$html .= '" ';
+			$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'edit\')">' . $question . '?</a>';
+			$html .= '<br />';
 		}
-		$html .= '" ';
-		$html .= 'title="' . $description . '" target="_new">' . $question . '?</a>';
-		$html .= '<br />';
+		else {
+			$html .= '<a href="' . $wikiTitle->getFullURL();
+			$html .= '" ';
+			$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'view\')">' . $question . '?</a>';
+			$html .= '<br />';
+		}
 	}
 	if($results){
 		$specialTitle = Title::newFromText('ContextSensitiveHelp', NS_SPECIAL);
@@ -105,7 +112,7 @@ function smwfGetHelp($namespace, $action){
  * @param $action current action of the user
  * @param $question question entered by the user
  */
-function smwfAskQuestion($namespace, $action, $question){
+function smwfAskQuestion($namespace, $action, $question, $uname, $location){
 	if($question == ""){
 		return "Sorry, you have not entered a question.";
 	}
@@ -120,6 +127,12 @@ function smwfAskQuestion($namespace, $action, $question){
 	//Replace '?' at the end and leading or ending whitespaces
 	$question = str_replace('?', '', $question);
 	$question = preg_replace('/^\s*(.*?)\s*$/', '$1', $question);
+
+	/*STARTLOG*/
+	$logmsg = "Added question '$question'";
+    smwLog($logmsg, "info" , $uname, $location, "help_addednew", wfTimestampNow());
+	/*ENDLOG*/
+
 
 	$discourseState = "$namespace:$action";
 
@@ -167,12 +180,12 @@ function getLinks($articleId){
 			$linktitle = str_replace("_", " ", $row->pl_title);
 			$linktitle = implode("-<br/>", str_split($linktitle, 17));
 			if ($title->exists()){
-				$html .= '<tr class="linktable-row"><td><a href="' . $url . '/' . $row->pl_title . '" target="_new">' . $linktitle . '</a></td>';
+				$html .= '<tr class="linktable-row"><td><a href="' . $url . '/' . $row->pl_title . '" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
 			}
 			else {
-				$html .= '<tr class="linktable-row"><td><a class="new" href="' . $url . '/' . $row->pl_title . '" target="_new">' . $linktitle . '</a></td>';
+				$html .= '<tr class="linktable-row"><td><a class="new" href="' . $url . '/' . $row->pl_title . '" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
 			}
-			$html .= '<td align="right" valign="bottom">(<a href="' . $url . '?title=' . $row->pl_title . '&action=edit" target="_new">edit</a>)</td></tr>';
+			$html .= '<td align="right" valign="bottom">(<a href="' . $url . '?title=' . $row->pl_title . '&action=edit" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'edit\')">edit</a>)</td></tr>';
 		}
 		$dbr->freeResult( $res );
 	}
@@ -343,7 +356,7 @@ function smwfGetBuiltinDatatypes(){
 	include_once($smwgIP . '/includes/SMW_Datatype.php');
 	$result = "Builtin types:";
 
-	$types = $smwgHaloContLang->getAllDatatypeLabels();	
+	$types = $smwgHaloContLang->getAllDatatypeLabels();
 	asort($types);
 	foreach($types as $key => $type){
 		$result .= ",".$type;
