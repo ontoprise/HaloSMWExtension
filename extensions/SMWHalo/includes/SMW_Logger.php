@@ -11,14 +11,15 @@
  * This function is exported to the ajax interface and will log msg
  * to the database
  */
-function smwLog($logmsg, $type = "" , $userid = "", $location="", $function="", $timestamp = ""){
-		global $smwhgEnableLogging;
+function smwLog($logmsg, $type = "" , $function="", $timestamp = ""){
+		global $smwhgEnableLogging, $wgUser, $wgTitle;
 		if($smwhgEnableLogging !== true){
 			return;
 		}
 		$db = wfGetDB( DB_MASTER );
 		$fname = 'SMW::smwLog';
-		$now = wfTimestampNow();
+		$userid = $wgUser->getID() != null ? $wgUser->getID() : "";
+		$location = $wgTitle->getText() != null ? $wgTitle->getText() : "";
 		$db->insert( 'smw_logging',
 			array(
 				  'user'      		=>  $userid,
