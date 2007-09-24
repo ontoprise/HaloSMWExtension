@@ -106,8 +106,8 @@ fillList: function(forceShowList) {
 cancel: function(){
 	
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log("","",this.currentAction+"_canceled");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log("","STB-Properties",this.currentAction+"_canceled");
 	}
 	/*ENDLOG*/
 	this.currentAction = "";
@@ -145,8 +145,8 @@ addItem: function() {
 	var value = this.getRelationValue();
 	var text = $("rel-show").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(name+':'+value,"","annotate_added");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(name+':'+value,"STB-Properties","annotate_added");
 	}
 	/*ENDLOG*/
 	//Check if Inputbox is empty
@@ -177,8 +177,8 @@ newItem: function() {
 
 	var selection = this.wtp.getSelection();
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","annotate_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Properties","annotate_clicked");
 	}
 	/*ENDLOG*/
 	
@@ -299,8 +299,8 @@ CreateSubSup: function() {
 	this.wtp.initialize();
 	var selection = this.wtp.getSelection();
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","sub/super-property_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Properties","sub/super-property_clicked");
 	}
 	/*ENDLOG*/
 
@@ -372,8 +372,8 @@ createSubItem: function(openTargetArticle) {
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(wgTitle+":"+name,"","sub-property_created");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(wgTitle+":"+name,"STB-Properties","sub-property_created");
 	}
 	/*ENDLOG*/
 	//Check if Inputbox is empty
@@ -391,8 +391,8 @@ createSuperItem: function(openTargetArticle) {
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(name+":"+wgTitle,"","super-property_created");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(name+":"+wgTitle,"STB-Properties","super-property_created");
 	}
 	/*ENDLOG*/
 	//Check if Inputbox is empty
@@ -416,8 +416,8 @@ newRelation: function() {
 	var selection = this.wtp.getSelection();
    
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","create_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Properties","create_clicked");
 	}
 	/*ENDLOG*/
 
@@ -583,8 +583,8 @@ createNewRelation: function() {
 			signature += ', ';
 		}
 	}
-	if (smwhgLogger) {
-	    smwhgLogger.log(relName+":"+signature,"","create_added");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(relName+":"+signature,"STB-Properties","create_added");
 	}
 	/*ENDLOG*/
 
@@ -617,8 +617,8 @@ changeItem: function(selindex) {
 		/*STARTLOG*/
 		var oldName = relation.getName();
 		var oldValues = relation.getValue();
-		if (smwhgLogger) {
-		    smwhgLogger.log(oldName+":"+oldValues+"->"+relName+":"+value,"","edit_annotation_change");
+		if (window.smwhgLogger) {
+		    smwhgLogger.log(oldName+":"+oldValues+"->"+relName+":"+value,"STB-Properties","edit_annotation_change");
 		}
 		/*ENDLOG*/
 		if ($("rel-replace-all") && $("rel-replace-all").down('input').checked == true) {
@@ -656,8 +656,8 @@ deleteItem: function(selindex) {
 		                  ? anno.getValue()
 		                  : "");
 		/*STARTLOG*/
-		if (smwhgLogger) {
-		    smwhgLogger.log(anno.getName()+":"+anno.getValue(),"","edit_annotation_delete");
+		if (window.smwhgLogger) {
+		    smwhgLogger.log(anno.getName()+":"+anno.getValue(),"STB-Properties","edit_annotation_delete");
 		}
 		/*ENDLOG*/
 		anno.remove(replText);
@@ -672,8 +672,8 @@ newPart: function() {
     var selection = this.wtp.getSelection();
 
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","haspart_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Properties","haspart_clicked");
 	}
 	/*ENDLOG*/
 
@@ -733,8 +733,8 @@ addPartOfRelation: function() {
 
 	var obj = $("rel-name").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(poType+":"+obj,"","haspart_added");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(poType+":"+obj,"STB-Properties","haspart_added");
 	}
 	/*ENDLOG*/
 	if (obj == "") {
@@ -765,8 +765,8 @@ getselectedItem: function(selindex) {
 	var relation = annotatedElements[selindex];
 	
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(relation.getName()+":"+relation.getValue(),"","editannotation_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(relation.getName()+":"+relation.getValue(),"STB-Properties","editannotation_clicked");
 	}
 	/*ENDLOG*/
 	

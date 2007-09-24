@@ -680,8 +680,8 @@ apply: function() {
 	this.refreshOtherTabs();
 	
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(wgTitle,"","property_properties_changed");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(wgTitle,"STB-PropertyProperties","property_properties_changed");
 	}
 	/*ENDLOG*/
 	

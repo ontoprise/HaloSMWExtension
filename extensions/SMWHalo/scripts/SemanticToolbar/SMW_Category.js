@@ -73,8 +73,8 @@ fillList: function(forceShowList) {
 
 cancel: function(){
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log("","",this.currentAction+"_canceled");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log("","STB-Categories",this.currentAction+"_canceled");
 	}
 	/*ENDLOG*/
 	this.currentAction = "";
@@ -108,8 +108,8 @@ createToolbar: function(attributes) {
 
 addItem: function() {
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log($("cat-name").value,"","annotate_added");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log($("cat-name").value,"STB-Categories","annotate_added");
 	}
 	/*ENDLOG*/
 	this.wtp.initialize();
@@ -128,8 +128,8 @@ newItem: function() {
 	var selection = this.wtp.getSelection();
 	
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","annotate_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
 	}
 	/*ENDLOG*/
 
@@ -168,8 +168,8 @@ CreateSubSup: function() {
 	var selection = this.wtp.getSelection();
 	
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","sub/super-category_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Categories","sub/super-category_clicked");
 	}
 	/*ENDLOG*/
 
@@ -240,8 +240,8 @@ createSubSuperLinks: function(elementID) {
 createSubItem: function() {
 	var name = $("cat-subsuper").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(wgTitle+":"+name,"","sub-category_created");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(wgTitle+":"+name,"STB-Categories","sub-category_created");
 	}
 	/*ENDLOG*/
 	//Check if Inputbox is empty
@@ -259,8 +259,8 @@ createSuperItem: function(openTargetArticle) {
 	}
 	var name = $("cat-subsuper").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(name+":"+wgTitle,"","super-category_created");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(name+":"+wgTitle,"STB-Categories","super-category_created");
 	}
 	/*ENDLOG*/
 	//Check if Inputbox is empty
@@ -285,8 +285,8 @@ changeItem: function(selindex) {
 	   && (selindex <= annotatedElements.length)  ){
 		/*STARTLOG*/
 		var oldName = annotatedElements[selindex].getName();
-		if (smwhgLogger) {
-		    smwhgLogger.log(oldName+"->"+name,"","edit_category_change");
+		if (window.smwhgLogger) {
+		    smwhgLogger.log(oldName+"->"+name,"STB-Categories","edit_category_change");
 		}
 		/*ENDLOG*/
 		annotatedElements[selindex].changeCategory(name);
@@ -307,8 +307,8 @@ deleteItem: function(selindex) {
 	    && (selindex <= annotatedElements.length)  ){
 		var anno = annotatedElements[selindex];
 		/*STARTLOG*/
-		if (smwhgLogger) {
-		    smwhgLogger.log(anno.getName(),"","edit_category_delete");
+		if (window.smwhgLogger) {
+		    smwhgLogger.log(anno.getName(),"STB-Categories","edit_category_delete");
 		}
 		/*ENDLOG*/
 		anno.remove("");
@@ -329,8 +329,8 @@ newCategory: function() {
 	var selection = this.wtp.getSelection();
    
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(selection,"","create_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(selection,"STB-Categories","create_clicked");
 	}
 	/*ENDLOG*/
     
@@ -357,8 +357,8 @@ newCategory: function() {
 createNewCategory: function() {
 	var catName = $("cat-name").value;
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(catName,"","create_added");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(catName,"STB-Categories","create_added");
 	}
 	/*ENDLOG*/
 	// Create an ontology modifier instance
@@ -387,8 +387,8 @@ getselectedItem: function(selindex) {
 	this.showList = false;
 
 	/*STARTLOG*/
-	if (smwhgLogger) {
-	    smwhgLogger.log(annotatedElements[selindex].getName(),"","edit_category_clicked");
+	if (window.smwhgLogger) {
+	    smwhgLogger.log(annotatedElements[selindex].getName(),"STB-Categories","edit_category_clicked");
 	}
 	/*ENDLOG*/
 	
