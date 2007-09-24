@@ -790,10 +790,11 @@ var smw_ctbHandler = new CTBHandler();
 
 //Test in CatContainer
 
-
+/*
 setTimeout(function() { 
 	//categorycontainer = new divContainer(CATEGORYCONTAINER);
 	var conToolbar = new ContainerToolBar('category',900,catToolBar.categorycontainer);
 	Event.observe(window, 'load', conToolbar.createContainerBody.bindAsEventListener(conToolbar));
 	setTimeout(conToolbar.foo.bind(conToolbar),1000);
 },3000);
+*/
