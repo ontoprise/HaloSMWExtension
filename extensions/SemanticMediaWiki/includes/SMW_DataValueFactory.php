@@ -100,14 +100,14 @@ class SMWDataValueFactory {
 			case SMW_SP_CONVERSION_FACTOR: case SMW_SP_POSSIBLE_VALUE:
 				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
 				break;
-			case SMW_SP_CONVERSION_FACTOR_SI:
-				$result = SMWDataValueFactory::newTypeIDValue('_siu', $value, $caption);
-				break;
 			case SMW_SP_SUBPROPERTY_OF:
 				$result = SMWDataValueFactory::newTypeIDValue('_wpg', $value, $caption);
 				break;
 			default: // special property was created but not added here; this is bad but we still are nice
-				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
+				wfRunHooks('SMW_SpecialValue', array($specialprop, $value, $caption, &$result));
+				if (!isset($result)) {
+					$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
+				}
 		}
 
 		if ($value !== false) {

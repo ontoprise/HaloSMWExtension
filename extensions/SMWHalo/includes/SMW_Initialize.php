@@ -42,6 +42,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
+	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
 
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
@@ -314,5 +315,16 @@ function smwfHaloAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $p
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
 	}
+}
+
+/**
+ * Callback function for hook 'SMW_SpecialValue'. It returns a data value for
+ * the special type "_siu" (SI-Units), if requested.
+ */
+function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
+	if ($typeID == SMW_SP_CONVERSION_FACTOR_SI) {
+		$result = SMWDataValueFactory::newTypeIDValue('_siu', $value, $caption);
+	}
+	return true;
 }
 ?>
