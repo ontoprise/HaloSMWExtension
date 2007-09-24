@@ -28,7 +28,7 @@ OBSemanticToolbarContributor.prototype = {
 		this.comsrchontainer.setContent(
 			'<button type="button" disabled="true" ' +
 			'id="openEntityInOB" name="navigateToOB" ' +
-			'onclick="obContributor.navigateToOB(event)">' +
+			'onclick="obContributor.navigateToOB(event, \''+gLanguage.getMessage('NS_SPECIAL')+":"+gLanguage.getMessage('OB_ID')+'\')">' +
 			gLanguage.getMessage('MARK_A_WORD') +
 			'</button>');
 		this.comsrchontainer.contentChanged();
@@ -77,7 +77,7 @@ OBSemanticToolbarContributor.prototype = {
 	/**
 	 * Navigates to the OntologyBrowser with ns and title
 	 */
-	navigateToOB: function(event) {
+	navigateToOB: function(event, path) {
 		//var selectedText = GeneralBrowserTools.getSelectedText(this.textArea);
 		var selectedText = gEditInterface.getSelectedText();
 		if (selectedText == '') {
@@ -90,7 +90,9 @@ OBSemanticToolbarContributor.prototype = {
 		} else {
 			var queryString = 'ns='+localURL[0]+'&title='+localURL[1];
 		}
-		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, 'Special:OntologyBrowser?'+queryString);
+		
+		smwhgLogger.log(selectedText, "STB-OB", "clicked");
+		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
 		window.open(wgServer + ontoBrowserSpecialPage, "");
 	}
 

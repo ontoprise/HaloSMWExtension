@@ -20,7 +20,9 @@
   */
  function smwfCSDispatcher($searchString) {
  	$cs = new CombinedSearch();
- 	
+ 	/*STARTLOG*/
+	  smwLog("","CS","opened");
+	/*ENDLOG*/
  	$parts = $cs->explodeSearchTerm($searchString);
  
  	// searches entities for all parts of the search term and render the result
@@ -112,6 +114,9 @@
 					$values = smwfGetStore()->getPropertyValues($e, $a);
 					if (count($values) > 0) {
 						$tripleFound = true;
+						/*STARTLOG*/
+	  						smwLog($e->getText().";".$a->getText().";".$values[0]->getXSDValue()." ".$values[0]->getUnit(),"CS","found_fact");
+						/*ENDLOG*/
 						$tripleTableData .= "<tr>";
 						$tripleTableData .= "<td rowspan=\"".count($values)."\">".$e->getText()."</td>";
 						$tripleTableData .= "<td rowspan=\"".count($values)."\">".$a->getText()."</td>";
@@ -135,6 +140,9 @@
 				$subjects = smwfGetStore()->getPropertySubjects($a, $value);
 				if (count($subjects) > 0) {
 					$tripleFound = true;
+					/*STARTLOG*/
+	  					smwLog($subjects[0]->getText().";".$a->getText().";".$term,"CS","found_fact");
+					/*ENDLOG*/
 					$tripleTableData .= "<tr>";
 					$tripleTableData .= "<td>".$subjects[0]->getText()."</td>";
 					$tripleTableData .= "<td rowspan=\"".count($subjects)."\">".$a->getText()."</td>";
@@ -179,19 +187,19 @@
  					// show page link
  					$pageTitleText = urlencode($page->getText()); 
  					$resultHTML .= "<td><img src=\"".CombinedSearchHelper::getImageReference($page)."\"></td>";
- 					$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$nsWithColon.$pageTitleText."\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEntity('".$page->getText()."', '$ns')\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
  					
  					// show OB link
  					if ($page->getNamespace() != NS_TEMPLATE && $page->getNamespace() != SMW_NS_TYPE) { 
- 						$ontoQueryStr = "title=".$page->getText(). ($ns != "" ? "&ns=".$ns : "");
- 						$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$wgContLang->getNsText(NS_SPECIAL).":OntologyBrowser?$ontoQueryStr\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
+ 						
+ 						$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToOB('".$page->getText()."', '$ns', '".$wgContLang->getNsText(NS_SPECIAL).":OntologyBrowser')\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
  					} else {
  						// do NOT show OB link for templates, because it makes no sense.
  						$resultHTML .= "<td></td>";
  					}
  					
  					// show edit link
- 					$resultHTML .= "<td><a href=\"$wgServer$wgScriptPath/index.php/".$nsWithColon.$page->getText()."?action=edit\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEdit('".$page->getText()."', '$ns')\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
  				$resultHTML .= "</tr>";
  				
  			}
@@ -244,6 +252,9 @@
  						$htmlResult .= "<tr>";
  						$htmlResult .= "<td>".wfMsg('smw_cs_aksfor_allinstances_with_annotation',$e->getText(), $c->getText())."</td>";
  						$askQuery = "[[".$wgContLang->getNsText(NS_CATEGORY).":".$e->getText()."]][[".$c->getText().":=*]]";
+ 						/*STARTLOG*/
+	  						smwLog($askQuery,"CS","produced_factlist");
+						/*ENDLOG*/
  						$htmlResult .= "<td><a class=\"askButton\" href=\"$wgServer$wgScriptPath/index.php/".$wgContLang->getNsText(NS_SPECIAL).":Ask?title=".urlencode("".$wgContLang->getNsText(NS_SPECIAL).":Ask")."&query=".urlencode($askQuery)."&order=ASC\">".wfMsg('smw_cs_ask')."</a></td>";
  						$htmlResult .= "</tr>";
  					} 

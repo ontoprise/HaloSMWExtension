@@ -36,7 +36,7 @@ define('SMW_AC_MAX_RESULTS', 15);
  function smwfAutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint) {
  	global $semanticAC, $wgLang;
  	
-
+	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
   	// remove common namespaces from user input
  	$userInputToMatch = AutoCompletionRequester::removeCommonNamespaces($userInputToMatch); 
  	// remove whitespaces from user input and replace with underscores
@@ -49,10 +49,14 @@ define('SMW_AC_MAX_RESULTS', 15);
  			if ($typeHint != null && is_numeric($typeHint)) {
  				$typeHintNum = $typeHint + 0;
  				$pages = AutoCompletionRequester::getPages($userInputToMatch, array($typeHintNum));
- 	    		return AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		AutoCompletionRequester::logResult($result, $articleName);
+ 	    		return $result;
  			} else { 
  	    		$pages = AutoCompletionRequester::getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
- 	    		return AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		AutoCompletionRequester::logResult($result, $articleName);
+ 	    		return $result;
  			}
  	    	
  	} else if (stripos($userContext, "[[") === 0){  
@@ -63,7 +67,9 @@ define('SMW_AC_MAX_RESULTS', 15);
  	    // 1. category case
  	    // ------------------------	
  	    if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) { 
- 	    	return AutoCompletionRequester::getCategoryProposals($userInputToMatch);
+ 	    	$result = AutoCompletionRequester::getCategoryProposals($userInputToMatch);
+ 	    	AutoCompletionRequester::logResult($result, $articleName);
+ 	    	return $result;
  	    }
  	     
  	    // ------------------------------------------------
@@ -76,20 +82,26 @@ define('SMW_AC_MAX_RESULTS', 15);
  	    	$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext);
  	    	
  	    	// if there is a unit or possible values, show them. Otherwise show instances.
- 	    	return $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
+ 	    	$result = $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
+ 	    	AutoCompletionRequester::logResult($result, $articleName);
+ 	    	return $result;
  	 	    
  	     	    	
  	    // --------------------------------
  	    // 4.property name case
  	    // --------------------------------	
  	    } else {
- 	    	return AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
+ 	    	$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
+ 	    	AutoCompletionRequester::logResult($result, $articleName);
+ 	    	return $result;
  	    	
  	    }
  
  	} else if (stripos($userContext, "{{") === 0) {  
  		// template context
- 		return AutoCompletionRequester::getTemplateProposals($userContext, $userInputToMatch);
+ 		$result = AutoCompletionRequester::getTemplateProposals($userContext, $userInputToMatch);
+ 		AutoCompletionRequester::logResult($result, $articleName);
+ 	    return $result;
  		
  	}
   	
@@ -509,6 +521,14 @@ class AutoCompletionRequester {
  			$ns = $page->getNamespace() != NS_MAIN ? $nsArray[$page->getNamespace()] : "";
  		}
  		return $ns;
+ 	}
+ 	
+ 	public function logResult(& $result, $articleName) {
+ 		if ($result == SMW_AC_NORESULT) {
+ 	    			smwLog("","AC","no result", $articleName);
+ 	    } else {
+ 	    			smwLog("","AC","opened", $articleName);
+ 	    }
  	}
 }
 

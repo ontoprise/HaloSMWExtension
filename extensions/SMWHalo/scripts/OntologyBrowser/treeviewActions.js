@@ -22,7 +22,8 @@ var OB_oldSelectedRelationNode = null;
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
 
-
+// Logging on close does not work, because window shuts down. What to do?
+//window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
 /**
  * 'Abstract' base class for OntologyBrowser trees
  * 
@@ -363,6 +364,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 
 
 	navigateToEntity: function(event, node, categoryName) {
+		smwhgLogger.log(categoryName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('CATEGORY_NS_WOC'), categoryName);
 	},
 // ---- Selection methods. Called when the entity is selected ---------------------
@@ -397,7 +399,7 @@ select: function (event, node, categoryID, categoryName) {
 		$("relattValues").hide();
 	}
 	
-	
+	smwhgLogger.log(categoryName, "OB","clicked");
 	
 	function callbackOnCategorySelect(request) {
 		OB_instance_pendingIndicator.hide();
@@ -466,6 +468,7 @@ OBInstanceActionListener.prototype = {
 	},
 	
 	navigateToInstance: function(event, node, instanceName) {
+		smwhgLogger.log(instanceName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(null, instanceName);
 		
 	},
@@ -503,6 +506,8 @@ OBInstanceActionListener.prototype = {
 		var categoryDIV = $('categoryTree');
 		OB_oldSelectedInstanceNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedInstanceNode, node);
 		
+		smwhgLogger.log(instanceName, "OB","clicked");
+		
 		function callbackOnInstanceSelectToRight(request) {
 		OB_relatt_pendingIndicator.hide();
 	  	if (relattDIV.firstChild) {
@@ -528,6 +533,9 @@ OBInstanceActionListener.prototype = {
 			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
 	  	}
+	  	
+	  	
+	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
 		 	sajax_do_call('smwfOntologyBrowserAccess', ['getAnnotations',instanceName], callbackOnInstanceSelectToRight);
@@ -604,6 +612,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 	
 	navigateToEntity: function(event, node, attributeName) {
+		smwhgLogger.log(attributeName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName);
 	},
 	
@@ -630,7 +639,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
 	
-	
+		smwhgLogger.log(attributeName, "OB","clicked");	
 	
 		function callbackOnPropertySelect(request) {
 			OB_instance_pendingIndicator.hide();
@@ -706,10 +715,12 @@ OBSchemaPropertyActionListener.prototype = {
 	},
 	
 	navigateToAttribute: function(event, node, attributeName) {
+		smwhgLogger.log(attributeName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName);
 	},
 	
 	navigateToRelation: function(event, node, relationName) {
+		smwhgLogger.log(relationName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), relationName);
 	},
 	
@@ -718,6 +729,8 @@ OBSchemaPropertyActionListener.prototype = {
 		var instanceDIV = $("instanceList");
 		
 		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
+		
+		smwhgLogger.log(attributeName, "OB","clicked");	
 		
 		function callbackOnPropertySelectForCategory (request) {
 			OB_tree_pendingIndicator.hide();
@@ -761,6 +774,9 @@ OBSchemaPropertyActionListener.prototype = {
 		var instanceDIV = $("instanceList");
 		
 		OB_oldSelectedRelationNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedRelationNode, node);
+		
+		smwhgLogger.log(relationName, "OB","clicked");	
+		
 		function callbackOnPropertySelectForCategory (request) {
 			OB_tree_pendingIndicator.hide();
 	  		if (categoryDIV.firstChild) {
@@ -1059,6 +1075,7 @@ OBGlobalActionListener.prototype = {
 	
 	toogleCatInstArrow: function(event) {
 		var img = Event.element(event);
+		smwhgLogger.log("", "OB","flipflow_left");
 		if (OB_LEFT_ARROW == 0) {
 			OB_LEFT_ARROW = 1;
 			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow_left.gif");
@@ -1070,6 +1087,7 @@ OBGlobalActionListener.prototype = {
 	
 	toogleInstPropArrow: function(event) {
 		var img = Event.element(event);
+		smwhgLogger.log("", "OB","flipflow_right");
 		if (OB_RIGHT_ARROW == 0) {
 			OB_RIGHT_ARROW = 1;
 			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow_left.gif");

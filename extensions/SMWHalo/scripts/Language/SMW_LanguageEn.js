@@ -29,6 +29,9 @@ var wgLanguageStrings = {
 	'CREATE_SUPER_PROPERTY'   : 'This article has been created as super-property. Please enter meaningful content.',
 	'ERROR_CREATING_ARTICLE'  : "Error while creating article.",
 	'UNMATCHED_BRACKETS'      : 'Warning! The article contains syntax errors ("]]" missing)',
+	
+	// Namespaces
+	'NS_SPECIAL' 			  : 'Special',				
 
 	// Relation toolbar
 	'ANNOTATE_PROPERTY'       : 'Annotate a property.',
@@ -103,6 +106,7 @@ var wgLanguageStrings = {
 
 	'INVALID_GARDENING_ACCESS' : 'You are not allowed to cancel bots. Only sysops and gardeners can do so.',
 	// Ontology browser
+	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
 	'PROPERTY_NS_WOC'         : 'Property', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon

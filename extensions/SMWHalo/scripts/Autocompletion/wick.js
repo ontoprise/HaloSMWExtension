@@ -361,8 +361,10 @@ AutoCompleter.prototype = {
                 this.freezeEvent(e);
             } else if (kc == 27) {
             	ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
+            	smwhgLogger.log("", "AC", "close_without_selection");
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
+                
             } else {
                 this.siw.selectingSomething = false;
             }
@@ -949,6 +951,8 @@ AutoCompleter.prototype = {
             addedValue = this.siw.matchCollection[selIndex].cleanValue;
             this.insertTerm(addedValue, baseValue, this.siw.matchCollection[selIndex].getType());
             this.ignorePending = true;
+        } else {
+        	smwhgLogger.log("", "AC", "close_without_selection");
         }
     },  //this.activateCurrentSmartInputMatch
     insertTerm: function(addedValue, baseValue, type) {
@@ -967,7 +971,8 @@ AutoCompleter.prototype = {
                 addedValue += ":";
             }
         }
-
+		
+		
         if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
             this.siw.inputBox.focus();
             
@@ -986,6 +991,9 @@ AutoCompleter.prototype = {
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = addedValue;
             selection_range.collapse(false);
+            
+            // log
+            smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
             var userInput = this.getUserInputToMatch();
 
@@ -998,7 +1006,7 @@ AutoCompleter.prototype = {
             var suf = this.siw.inputBox.value.substring(start);
 
              // insert text
-            theString = pre + addedValue + suf;
+            var theString = pre + addedValue + suf;
             this.siw.inputBox.value = theString;
 
              // set the cursor behind the inserted text
@@ -1007,9 +1015,12 @@ AutoCompleter.prototype = {
 
              // set old scroll position
             this.siw.inputBox.scrollTop = scrollTop;
+            
+            // log
+            smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
         	var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
-            theString = (baseValue ? baseValue : "") + addedValue;
+            var theString = (baseValue ? baseValue : "") + addedValue;
         	if (pasteNS != null) {
         		switch(type) {
         			
@@ -1020,6 +1031,7 @@ AutoCompleter.prototype = {
         		}
         	}
             this.siw.inputBox.value = theString;
+            smwhgLogger.log(theString, "AC", "close_with_selection");
         }
     },
 

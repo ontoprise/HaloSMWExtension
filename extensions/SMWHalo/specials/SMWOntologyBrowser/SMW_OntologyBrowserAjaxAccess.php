@@ -127,13 +127,26 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$type = $p_array[0];
  		$hint = explode(" ", $p_array[1]);
+ 		
  		if ($type == 'category') {
+ 			/*STARTLOG*/
+ 				smwLog($p_array[1],"OB","searched categories", "Special:OntologyBrowser");
+			/*ENDLOG*/
  			return $browserFilter->filterForCategories($hint);
  		} else if ($type == 'instance') {
+ 			/*STARTLOG*/
+ 				smwLog($p_array[1],"OB","searched instances", "Special:OntologyBrowser");
+			/*ENDLOG*/
  			return $browserFilter->filterForInstances($hint);
  		} else if ($type == 'propertyTree') {
+ 			/*STARTLOG*/
+ 				smwLog($p_array[1],"OB","searched property tree", "Special:OntologyBrowser");
+			/*ENDLOG*/
  			return $browserFilter->filterForPropertyTree($hint);
  		} else if ($type == 'property') {
+ 			/*STARTLOG*/
+ 				smwLog($p_array[1],"OB","searched properties", "Special:OntologyBrowser");
+			/*ENDLOG*/
  			return $browserFilter->filterForProperties($hint);
  		} 
  		

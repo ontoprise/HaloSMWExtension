@@ -50,10 +50,19 @@ function smwOBAddHTMLHeader(&$out) {
 class SMW_OntologyBrowser {
 
 	static function execute() {
-		global $wgRequest, $wgOut, $smwgIQEnabled, $smwgIQMaxLimit, $wgUser, $smwgIQSortingEnabled, $wgScriptPath;
+		global $wgRequest, $wgOut, $smwgIQEnabled, $smwgIQMaxLimit, $wgUser, $smwgIQSortingEnabled, $wgScriptPath, $smwhgLogger;
 		$skin = $wgUser->getSkin();
 
-		
+		/*STARTLOG*/
+		if ($wgRequest->getVal('src') == 'toolbar') { 
+    			smwLog("","OB","opened_from_menu");
+		} else if ($wgRequest->getVal('entitytitle') != '') { 
+			    $ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
+    			smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
+		} else {
+				smwLog("","OB","opened");
+		}
+		/*ENDLOG*/
 		// display query browser
 		$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );		
 	

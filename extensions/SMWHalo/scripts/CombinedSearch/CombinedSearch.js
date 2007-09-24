@@ -59,6 +59,26 @@ CombinedSearchContributor.prototype = {
 	searchForAttributeValues: function(parts) {
 		this.pendingElement.show($('cbsrch'));
 		sajax_do_call('smwfCSAskForAttributeValues', [parts], this.smwfCombinedSearchCallback.bind(this, "queryPlaceholder"));
+	},
+	
+	navigateToOB: function(entityName, ns, ontoBrowserPath) {
+		queryStr = "?title="+entityName+(ns != "" ? "&ns="+ns : "");
+		var path = wgArticlePath.replace(/\$1/, ontoBrowserPath);
+		smwhgLogger.log(entityName, "CS", "entity_opened_in_ob")
+		window.open(wgServer + path + queryStr, "");
+	},
+	
+	navigateToEntity: function(entityName, ns) {
+		var path = wgArticlePath.replace(/\$1/, ns+":"+entityName);
+		smwhgLogger.log(entityName, "CS", "entity_opened")
+		window.open(wgServer + path, "");
+	},
+	
+	navigateToEdit: function(entityName, ns) {
+		queryStr = "?action=edit";
+		var path = wgArticlePath.replace(/\$1/, ns+":"+entityName);
+		smwhgLogger.log(entityName, "CS", "entity_opened_to_edit");
+		window.open(wgServer + path + queryStr, "");
 	}
 
 }
