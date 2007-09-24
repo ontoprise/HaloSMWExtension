@@ -73,9 +73,7 @@ fillList: function(forceShowList) {
 
 cancel: function(){
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log("","STB-Categories",this.currentAction+"_canceled");
-	}
+    smwhgLogger.log("","STB-Categories",this.currentAction+"_canceled");
 	/*ENDLOG*/
 	this.currentAction = "";
 	this.toolbarContainer.hideSandglass();
@@ -108,9 +106,7 @@ createToolbar: function(attributes) {
 
 addItem: function() {
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log($("cat-name").value,"STB-Categories","annotate_added");
-	}
+    smwhgLogger.log($("cat-name").value,"STB-Categories","annotate_added");
 	/*ENDLOG*/
 	this.wtp.initialize();
 	var name = $("cat-name").value;
@@ -128,9 +124,7 @@ newItem: function() {
 	var selection = this.wtp.getSelection();
 	
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
 	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
@@ -168,9 +162,7 @@ CreateSubSup: function() {
 	var selection = this.wtp.getSelection();
 	
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Categories","sub/super-category_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Categories","sub/super-category_clicked");
 	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_CAT_SUB_SUPER_ALL_VALID);	
@@ -240,9 +232,7 @@ createSubSuperLinks: function(elementID) {
 createSubItem: function() {
 	var name = $("cat-subsuper").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(wgTitle+":"+name,"STB-Categories","sub-category_created");
-	}
+    smwhgLogger.log(wgTitle+":"+name,"STB-Categories","sub-category_created");
 	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
@@ -259,9 +249,7 @@ createSuperItem: function(openTargetArticle) {
 	}
 	var name = $("cat-subsuper").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(name+":"+wgTitle,"STB-Categories","super-category_created");
-	}
+    smwhgLogger.log(name+":"+wgTitle,"STB-Categories","super-category_created");
 	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
@@ -285,9 +273,7 @@ changeItem: function(selindex) {
 	   && (selindex <= annotatedElements.length)  ){
 		/*STARTLOG*/
 		var oldName = annotatedElements[selindex].getName();
-		if (window.smwhgLogger) {
-		    smwhgLogger.log(oldName+"->"+name,"STB-Categories","edit_category_change");
-		}
+	    smwhgLogger.log(oldName+"->"+name,"STB-Categories","edit_category_change");
 		/*ENDLOG*/
 		annotatedElements[selindex].changeCategory(name);
 	}
@@ -307,9 +293,7 @@ deleteItem: function(selindex) {
 	    && (selindex <= annotatedElements.length)  ){
 		var anno = annotatedElements[selindex];
 		/*STARTLOG*/
-		if (window.smwhgLogger) {
-		    smwhgLogger.log(anno.getName(),"STB-Categories","edit_category_delete");
-		}
+	    smwhgLogger.log(anno.getName(),"STB-Categories","edit_category_delete");
 		/*ENDLOG*/
 		anno.remove("");
 	}
@@ -329,9 +313,7 @@ newCategory: function() {
 	var selection = this.wtp.getSelection();
    
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Categories","create_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Categories","create_clicked");
 	/*ENDLOG*/
     
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
@@ -357,9 +339,7 @@ newCategory: function() {
 createNewCategory: function() {
 	var catName = $("cat-name").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(catName,"STB-Categories","create_added");
-	}
+    smwhgLogger.log(catName,"STB-Categories","create_added");
 	/*ENDLOG*/
 	// Create an ontology modifier instance
 	this.om.createCategory(catName, "");
@@ -387,9 +367,7 @@ getselectedItem: function(selindex) {
 	this.showList = false;
 
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(annotatedElements[selindex].getName(),"STB-Categories","edit_category_clicked");
-	}
+    smwhgLogger.log(annotatedElements[selindex].getName(),"STB-Categories","edit_category_clicked");
 	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	

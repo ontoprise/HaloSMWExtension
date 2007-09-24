@@ -106,9 +106,7 @@ fillList: function(forceShowList) {
 cancel: function(){
 	
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log("","STB-Properties",this.currentAction+"_canceled");
-	}
+    smwhgLogger.log("","STB-Properties",this.currentAction+"_canceled");
 	/*ENDLOG*/
 	this.currentAction = "";
 	
@@ -145,9 +143,7 @@ addItem: function() {
 	var value = this.getRelationValue();
 	var text = $("rel-show").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(name+':'+value,"STB-Properties","annotate_added");
-	}
+    smwhgLogger.log(name+':'+value,"STB-Properties","annotate_added");
 	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if (name=="" || name == null ){
@@ -177,9 +173,7 @@ newItem: function() {
 
 	var selection = this.wtp.getSelection();
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Properties","annotate_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Properties","annotate_clicked");
 	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
@@ -299,9 +293,7 @@ CreateSubSup: function() {
 	this.wtp.initialize();
 	var selection = this.wtp.getSelection();
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Properties","sub/super-property_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Properties","sub/super-property_clicked");
 	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
@@ -372,9 +364,7 @@ createSubItem: function(openTargetArticle) {
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(wgTitle+":"+name,"STB-Properties","sub-property_created");
-	}
+    smwhgLogger.log(wgTitle+":"+name,"STB-Properties","sub-property_created");
 	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
@@ -391,9 +381,7 @@ createSuperItem: function(openTargetArticle) {
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(name+":"+wgTitle,"STB-Properties","super-property_created");
-	}
+    smwhgLogger.log(name+":"+wgTitle,"STB-Properties","super-property_created");
 	/*ENDLOG*/
 	//Check if Inputbox is empty
 	if(name=="" || name == null ){
@@ -416,9 +404,7 @@ newRelation: function() {
 	var selection = this.wtp.getSelection();
    
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Properties","create_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Properties","create_clicked");
 	/*ENDLOG*/
 
 	var domain = (wgNamespaceNumber == 14)
@@ -583,9 +569,7 @@ createNewRelation: function() {
 			signature += ', ';
 		}
 	}
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(relName+":"+signature,"STB-Properties","create_added");
-	}
+    smwhgLogger.log(relName+":"+signature,"STB-Properties","create_added");
 	/*ENDLOG*/
 
 	this.om.createRelation(relName,
@@ -617,9 +601,7 @@ changeItem: function(selindex) {
 		/*STARTLOG*/
 		var oldName = relation.getName();
 		var oldValues = relation.getValue();
-		if (window.smwhgLogger) {
-		    smwhgLogger.log(oldName+":"+oldValues+"->"+relName+":"+value,"STB-Properties","edit_annotation_change");
-		}
+	    smwhgLogger.log(oldName+":"+oldValues+"->"+relName+":"+value,"STB-Properties","edit_annotation_change");
 		/*ENDLOG*/
 		if ($("rel-replace-all") && $("rel-replace-all").down('input').checked == true) {
 			// rename all occurrences of the relation
@@ -656,9 +638,7 @@ deleteItem: function(selindex) {
 		                  ? anno.getValue()
 		                  : "");
 		/*STARTLOG*/
-		if (window.smwhgLogger) {
-		    smwhgLogger.log(anno.getName()+":"+anno.getValue(),"STB-Properties","edit_annotation_delete");
-		}
+	    smwhgLogger.log(anno.getName()+":"+anno.getValue(),"STB-Properties","edit_annotation_delete");
 		/*ENDLOG*/
 		anno.remove(replText);
 	}
@@ -672,9 +652,7 @@ newPart: function() {
     var selection = this.wtp.getSelection();
 
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(selection,"STB-Properties","haspart_clicked");
-	}
+    smwhgLogger.log(selection,"STB-Properties","haspart_clicked");
 	/*ENDLOG*/
 
 	this.showList = false;
@@ -733,9 +711,7 @@ addPartOfRelation: function() {
 
 	var obj = $("rel-name").value;
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(poType+":"+obj,"STB-Properties","haspart_added");
-	}
+    smwhgLogger.log(poType+":"+obj,"STB-Properties","haspart_added");
 	/*ENDLOG*/
 	if (obj == "") {
 		alert(gLanguage.getMessage('NO_OBJECT_FOR_POR'));
@@ -765,9 +741,7 @@ getselectedItem: function(selindex) {
 	var relation = annotatedElements[selindex];
 	
 	/*STARTLOG*/
-	if (window.smwhgLogger) {
-	    smwhgLogger.log(relation.getName()+":"+relation.getValue(),"STB-Properties","editannotation_clicked");
-	}
+    smwhgLogger.log(relation.getName()+":"+relation.getValue(),"STB-Properties","editannotation_clicked");
 	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);
