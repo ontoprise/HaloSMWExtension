@@ -292,7 +292,7 @@ createCheckBox: function(id, description, options, selecteditems, attributes, vi
 			'</tr><tr>'+
  				//checkboxes
  				'<td class="stb-checkbox-col2 ' + this.id + '-checkbox-col2">' +
-					'<form class="stb-checkbox ' + this.id + '-checkbox" id="' + id +'"  ' + attributes + '">';
+					'<form class="stb-checkbox ' + this.id + '-checkbox" id="' + id +'"  ' + attributes + '>';
 	
 	//Generate Options from the aray				
 	for( var i = 0; i < options.length; i++ ){
@@ -686,7 +686,7 @@ foo: function(){
 	this.append(this.createDropDown(702,'Test',['Opt1','Opt2','Opt3'],'alert(\'loeschmich\')',2,'',true));
 	this.insert('702',this.createRadio(703,'Test',['val1','val2','val3'],2,'',true));
 	this.append(this.createCheckBox(704,'Test',['val1','val2','val3','val4'],[1,3],'',true));
-	this.append(this.createLink(705,[['logger.log(\'Testlog\',\'error\',\'log\');','Log']],'',true));
+	this.append(this.createLink(705,[['smwhgLogger.log(\'Testlog\',\'error\',\'log\');','Log']],'',true));
 	this.append(this.createLink(706,[['alert(\'f1\')','function1'],['alert(\'f2\')','function2','fid2']],'',true));
 	this.append(this.createLink(707,[['alert(\'f1\')','function1'],['alert(\'f2\')','function2','fid2'],['alert(\'f3\')','function3','fid3','alt-f3','faltid3']],'',true));
 	this.append(this.createLink(708,[['alert(\'f1\')','function1'],['alert(\'f2\')','function2','fid2'],['alert(\'f3\')','function3','fid3','alt-f3','faltid3'],['alert(\'f4\')','function4']],'',true));
@@ -701,7 +701,8 @@ foo: function(){
 	ctbHandler.addContainer('category',this);
 	var obj = smw_ctbHandler.findContainer('703');
 	obj.replace('701',obj.createText(701,'(e) Testreplace','',true))
-	this.hideSandglass();	
+	this.hideSandglass();
+
 }
 
 
@@ -789,11 +790,10 @@ var smw_ctbHandler = new CTBHandler();
 
 //Test in CatContainer
 
-/*
+
 setTimeout(function() { 
 	//categorycontainer = new divContainer(CATEGORYCONTAINER);
 	var conToolbar = new ContainerToolBar('category',900,catToolBar.categorycontainer);
 	Event.observe(window, 'load', conToolbar.createContainerBody.bindAsEventListener(conToolbar));
 	setTimeout(conToolbar.foo.bind(conToolbar),1000);
 },3000);
-*/
