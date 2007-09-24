@@ -2,6 +2,8 @@
  *  Logger - logs msgs to the database 
  */
 
+var smwghLoggerEnabled = true;
+
 var SmwhgLogger = Class.create();
 SmwhgLogger.prototype = {
 	
@@ -22,7 +24,9 @@ SmwhgLogger.prototype = {
 	 * 
 	 */
 	log: function(logmsg, type, func){
-		
+		if (!smwghLoggerEnabled) {
+			return;
+		}
 		//Default values
 		var logmsg = (logmsg == null) ? "" : logmsg; 
 		var type = (type == null) ? "" : type; 

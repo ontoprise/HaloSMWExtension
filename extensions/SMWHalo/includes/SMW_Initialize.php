@@ -239,10 +239,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
 
-			global $smwhgEnableLogging;
-			if($smwhgEnableLogging  === true){
-				$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "all");
-			}
+			//global $smwhgEnableLogging;
+			//if($smwhgEnableLogging  === true){
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "all");
+			//}
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
 
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');

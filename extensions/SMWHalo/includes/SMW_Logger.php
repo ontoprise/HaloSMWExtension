@@ -19,7 +19,7 @@ function smwLog($logmsg, $type = "" , $function="", $locationForce = "" , $times
 		$db = wfGetDB( DB_MASTER );
 		$fname = 'SMW::smwLog';
 		$userid = $wgUser->getID() != null ? $wgUser->getID() : "";
-		$location = $wgTitle->getText() != null && $locationForce == '' ? $wgTitle->getText() : $locationForce;
+		$location = $wgTitle != null && $locationForce == '' ? $wgTitle->getNsText().":".$wgTitle->getText() : $locationForce;
 		$db->insert( 'smw_logging',
 			array(
 				  'user'      		=>  $userid,
