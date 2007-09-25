@@ -234,6 +234,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!

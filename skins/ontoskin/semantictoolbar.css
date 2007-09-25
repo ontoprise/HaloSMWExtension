@@ -2,13 +2,30 @@
 	clear:both;
 }
 
+#content {
+	float: right;
+}
+
+#slider {
+	width: 100%;
+	position: absolute;
+	top: 50px;
+}
+
+#sliderHandle {
+}
+
+.generic_content{
+ 	width:100%;
+ }
+
 #tabcontainer {
-	width: 200px;
+	width: auto;
 	margin-bottom: 10px;
 }
 
 #activetabcontainer {
-	width: 208px;
+	width: auto;
 }
 
 #expandable {
@@ -73,14 +90,15 @@ a.plusminus:hover{
 	float: right;
 	margin: 10px;
 	max-height: 80%;
+	width: 25%;
 	/*overflow: auto;*/
-	position: absolute;
+	position: relative;
 }
 
 #innercontent {
 	float: left;
 	overflow: auto;
-	width: 100%;
+	width: 70%;
 }
 
 #content {
@@ -88,7 +106,6 @@ a.plusminus:hover{
 }
 
 #semtoolbar{
-	width: 200px;
 	padding-top: 1px;
 	padding-bottom: 3px;
 	padding-left: 3px;
@@ -170,9 +187,6 @@ a.plusminus:hover{
 #stb_cont7-content{
 	background-color: #B5EDBC;
 	border: 1px solid #74DD82;
-	padding-left:5px;
-	padding-right:5px;
-	padding-bottom:5px;
 	overflow: auto;
 	font-size: 11px;
 	/*border-bottom: 1px solid #74DD82;*/
@@ -419,10 +433,14 @@ a.menulink{
 	vertical-align: top;
 }
 
+.category-col2{
+}
+
 .category-col3{
 	border-bottom: 1px dashed #888888;
 	text-align: right;
 	vertical-align: top;
+	width: 20%;
 }
 
 /* Attribute Container */
@@ -489,14 +507,19 @@ a.menulink{
 	border: 1px solid #ff9602;
 	overflow: auto;
 	font-size: 11px;
+	width:100%;
 }
 #relation-table{
 	background-color: #ffcd87;
-	width: 100%;
+	table-layout:fixed;
+	width:100%;
+	overflow:hidden;
+	word-wrap:break-word;
 }
 
 #relation-tools{
 	border-bottom: 1px solid #888888;
+	width: Inherit;
 }
 
 .relation-col1{
@@ -504,17 +527,21 @@ a.menulink{
 	border-right: 1px dashed #888888;
 	vertical-align: top;
 	width:60%;
+	overflow: hidden;
 }
 
 .relation-col2{
 	border-bottom: 1px dotted #888888;
 	vertical-align: top;
+	overflow: hidden;
+	width:30%;
 }
 
 .relation-col3{
 	border-bottom: 1px dotted #888888;
 	text-align: right;
 	vertical-align: top;
+	width:10%;
 }
 
 /* Properties Container */
@@ -569,34 +596,45 @@ a.menulink{
 
 /* input */
 .stb-input{
-	width: 125px;
+	width: 100%;
 }
 .stb-delinput{
-	width: 105px;
 	margin-right: 5px;
+	width: 100%;
 }
 
 .stb-input-col1{
+	width: 30%;
 }
 
 .stb-input-col2{
 	text-align: right;
 }
 
+.stb-input-col3{
+	width: 20px;
+	text-align: right;
+}
+
 /*dropdown*/
-.stb-select
-{
-	width: 125px;
+.stb-select{
+	width: 100%;
 }
 .stb-delselect
 {
-	width: 105px;
+	width: 100%;
 	margin-right: 5px;
 }
 .stb-select-col1{
+	width: 30%;
 }
 
 .stb-select-col2{
+	text-align: right;
+}
+
+.stb-select-col3{
+	width: 20px;
 	text-align: right;
 }
 

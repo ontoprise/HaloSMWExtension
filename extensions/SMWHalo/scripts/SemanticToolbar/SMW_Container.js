@@ -119,7 +119,9 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
             ' type="text" ' +
             ' alignfloater="right" ' +
             'value="' + initialContent + '" '+
-            'tabindex="'+ this.lastindex++ +'" />'+ 
+            'tabindex="'+ this.lastindex++ +'" />'+
+            '</td>'+ 
+            '<td class="stb-input-col3 ' + this.id + '-input-col3">' +
 			'<a href="javascript:' + deleteCallback + '">' +
 			'<img src="' + 
 			wgScriptPath + 
@@ -195,6 +197,8 @@ createDropDown: function(id, description, options, deleteCallback, selecteditem,
 	containercontent += '</select>';
 	//if deletable add button
 	if(deleteCallback){
+		containercontent += '</td>';
+		containercontent += '<td class="stb-select-col3 ' + this.id + '-select-col3">';;
 		containercontent += '<a href="javascript:' + deleteCallback + '"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/redcross.gif"/>';				 	
 	}
 	//Select footer
