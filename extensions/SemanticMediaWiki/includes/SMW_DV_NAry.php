@@ -375,7 +375,8 @@ class SMWNAryValue extends SMWDataValue {
 			if ($value === NULL) {
 				continue;
 			}
-			$element = "nary" . $count;
+			$element = "nary" . $count; 
+
 //			$element = "nary" . $count . $value->getTypeID();
 			/// TODO make the element name dependent on the type of the value
 			$rdf .= "\t" . $value->exportToRDF( "smw:$element", $exporter );
@@ -390,3 +391,4 @@ class SMWNAryValue extends SMWDataValue {
 	}
 
 }
+
