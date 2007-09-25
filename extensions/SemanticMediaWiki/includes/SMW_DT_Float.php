@@ -285,12 +285,15 @@ class SMWFloatTypeHandler implements SMWTypeHandler{
 		$decseparator = wfMsgForContent('smw_decseparator');
 		$kiloseparator = wfMsgForContent('smw_kiloseparator');
 
+		// replace soft hyphens by the normal minus character
+		$v = str_replace('­','-',$v);
+		
 		// First, split off number from the rest.
 		// Number is, e.g. -12,347,421.55e6
 		// Note the separators might be a magic regexp value like '.', so have to escape them with backslash.
 		// This rejects .1 , it needs a leading 0.
 		// This rejects - 3, there can't be spaces in the number.
-		$arr = preg_split('/([-+]?\d+(?:\\' . $kiloseparator . '\d+)*\\' . $decseparator . '?[\d]*(?:\s*[eE][-+]?\d+)?)[ ]*/', trim($v), 2, PREG_SPLIT_DELIM_CAPTURE);
+		$arr = preg_split('/([-+]?\s*\d+(?:\\' . $kiloseparator . '\d+)*\\' . $decseparator . '?[\d]*(?:\s*[eE][-+]?\d+)?)[ ]*/', trim($v), 2, PREG_SPLIT_DELIM_CAPTURE);
 
 		$arrSiz = count($arr);
 		if ($arrSiz >= 1) $preNum = $arr[0];
@@ -303,6 +306,10 @@ class SMWFloatTypeHandler implements SMWTypeHandler{
 			if ($decseparator != '.') {
 				$num = str_replace($decseparator, '.', $num);
 			}
+			// sscanf doesn't like space between sign and number.
+			// TODO: couldn't we just delete all ' '? -- mak
+			$num = preg_replace('/([+-])\s*(.*)/', '$1'.'$2', $num, 1);
+
 			// sscanf doesn't like space between number and exponent.
 			// TODO: couldn't we just delete all ' '? -- mak
 			$num = preg_replace('/\s*([eE][-+]?\d+)/', '$1', $num, 1);
