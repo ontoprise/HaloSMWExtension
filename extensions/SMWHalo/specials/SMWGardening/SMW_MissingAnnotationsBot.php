@@ -121,14 +121,14 @@
 			$subCats[] = $categoryTitle; // add super category title too
 			foreach($subCats as $subCat) {
 				if ($term == NULL) {
-					$sql = 'SELECT page_title, page_namespace FROM page p,categorylinks c LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
+					$sql = 'SELECT page_title, page_namespace FROM categorylinks c, page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
 																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
 																	
 						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' LIMIT '.MAX_LOG_LENGTH;
 				 	
 				} else {
-						$sql = 'SELECT page_title, page_namespace FROM page p,categorylinks c LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
+						$sql = 'SELECT page_title, page_namespace FROM categorylinks c, page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
 																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
 																	 
