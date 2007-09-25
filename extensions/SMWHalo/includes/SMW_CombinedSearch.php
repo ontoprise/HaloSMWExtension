@@ -101,7 +101,7 @@
  					
  	}
  	
- 	$htmlResult .= "<table class=\"cbsrch-table\">";
+ 	$htmlResult = "<table class=\"cbsrch-table\">";
  		$tripleTableHeader = "<tr><th align=\"left\">".wfMsg('smw_cs_instances')."</th><th align=\"left\">".wfMsg('smw_cs_properties')."</th>" .
 										   "<th align=\"left\">".wfMsg('smw_cs_values')."</th></tr>";
 		$tripleFound = false;
