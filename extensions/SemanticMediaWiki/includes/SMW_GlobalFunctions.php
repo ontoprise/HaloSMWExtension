@@ -72,7 +72,9 @@ function smwfSetupExtension() {
 
 	$smwgMasterStore = NULL;
 	smwfInitContentMessages();
-	//smwfInitUserMessages();
+	if (!isset($smwgDefaultCollation)) {
+		$smwgDefaultCollation = "latin1_bin"; // default collation
+	}
 
 	///// register specials /////
 	$wgAutoloadClasses['SMWAskPage'] = $smwgIP . '/specials/AskSpecial/SMW_SpecialAsk.php';

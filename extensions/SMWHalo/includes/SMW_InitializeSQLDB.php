@@ -47,7 +47,7 @@
 	 * Initializes the gardening component
 	 */
 	protected function setupGardening($verbose) {
-			global $wgDBname;
+			global $wgDBname, $smwgDefaultCollation;
 			$db =& wfGetDB( DB_MASTER );
 
 			// create gardening table
@@ -57,14 +57,14 @@
 			// create relation table
 			$this->setupTable($smw_gardening, array(
 				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
-				  'user'      		=>  'VARCHAR(255) COLLATE latin1_bin NOT NULL' ,
-				  'gardeningbot'	=>	'VARCHAR(255) COLLATE latin1_bin NOT NULL' ,
+				  'user'      		=>  'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL' ,
+				  'gardeningbot'	=>	'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL' ,
 				  'starttime'  		=> 	'DATETIME NOT NULL',
 				  'endtime'     	=> 	'DATETIME',
-				  'timestamp_start'	=>	'VARCHAR(14) COLLATE latin1_bin NOT NULL',
-				  'timestamp_end' 	=>	'VARCHAR(14) COLLATE latin1_bin',
-				  'useremail'   	=>  'VARCHAR(255) COLLATE latin1_bin',
-				  'log'				=>	'VARCHAR(255) COLLATE latin1_bin',
+				  'timestamp_start'	=>	'VARCHAR(14) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+				  'timestamp_end' 	=>	'VARCHAR(14) COLLATE '.$smwgDefaultCollation.'',
+				  'useremail'   	=>  'VARCHAR(255) COLLATE '.$smwgDefaultCollation.'',
+				  'log'				=>	'VARCHAR(255) COLLATE '.$smwgDefaultCollation.'',
 				  'progress'		=>	'DOUBLE'), $db, $verbose);
 
 

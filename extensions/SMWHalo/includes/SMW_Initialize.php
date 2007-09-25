@@ -38,9 +38,8 @@ function smwgHaloSetupExtension() {
 
 	$smwgMasterGeneralStore = NULL;
 
-	$wgHooks['SMW_Datatypes'][] = 'smwfHaloInitDatatypes';
+	
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
-	$wgHooks['SMW_FactBoxLinks'][] = 'smwfHaloFactBoxLinks';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
 
@@ -65,7 +64,8 @@ function smwgHaloSetupExtension() {
 
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-
+	
+	smwfHaloInitDatatypes();
 	return true;
 }
 
@@ -73,7 +73,8 @@ function smwgHaloSetupExtension() {
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
 function smwfHaloInitDatatypes() {
-	global $smwgHaloContLang;
+	global $smwgHaloContLang, $smwgIP;
+	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
 	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
 	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalequation');
@@ -85,15 +86,6 @@ function smwfHaloInitDatatypes() {
 	return true;
 }
 
-/**
- * Registers additional factbox links.
- */
-function smwfHaloFactBoxLinks(&$links) {
-	global $wgContLang, $wgServer, $wgScriptPath;
-	$oblink = SMWInfolink::newExternalLink(wfMsgForContent('smw_viewinOB'), $wgServer.$wgScriptPath."/index.php/".$wgContLang->getNsText(NS_SPECIAL) . ':OntologyBrowser'.'?ns='.SMWFactbox::$semdata->getSubject()->getNsText().'&entitytitle='.SMWFactbox::$semdata->getSubject()->getDBkey(), 'oblink');
-	$links[] = array('smwoblink', $oblink);
-	return true;
-}
 
 /**
  * Registers special pages for some namespaces

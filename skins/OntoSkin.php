@@ -267,11 +267,14 @@ class OntoSkinTemplate extends QuickTemplate {
 					echo htmlspecialchars($feed['href']) ?>"<?php echo $skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
 					<?php } ?></li><?php
 		}
-
+		global $wgTitle;
 		$this->data['nav_urls']['ontologybrowser'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'src=toolbar' ) );
+		if ($wgTitle != null && $wgTitle->getNamespace() != NS_SPECIAL && $wgTitle->getNamespace() != NS_TEMPLATE) { 
+			$this->data['nav_urls']['smw_viewinOB'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'entitytitle='.$wgTitle->getText().'&ns='.$wgTitle->getNsText()) );
+		}
 		$this->data['nav_urls']['gardening'] = array( 'href' => Skin::makeSpecialUrl( 'Gardening' ) );
 		$this->data['nav_urls']['queryinterface'] = array( 'href' => Skin::makeSpecialUrl( 'QueryInterface' ) );
-		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'gardening', 'queryinterface') as $special ) {
+		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'gardening', 'queryinterface') as $special ) {
 
 			if($this->data['nav_urls'][$special]) {
 				?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])

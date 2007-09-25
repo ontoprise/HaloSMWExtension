@@ -989,20 +989,20 @@ class SMWSQLStore extends SMWStore {
 ///// Setup store /////
 
 	function setup($verbose = true) {
-		global $wgDBname;
+		global $wgDBname, $smwgDefaultCollation;
 		$this->reportProgress("Setting up standard database configuration for SMW ...\n\n",$verbose);
 		$db =& wfGetDB( DB_MASTER );
-
+	
 		extract( $db->tableNames('smw_relations', 'smw_attributes', 'smw_longstrings', 'smw_specialprops', 'smw_subprops', 'smw_nary', 'smw_nary_attributes', 'smw_nary_longstrings', 'smw_nary_relations') );
 
 		// create relation table
 		$this->setupTable($smw_relations,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'subject_namespace' => 'INT(11) NOT NULL',
-		                    'subject_title'     => 'VARCHAR(255) NOT NULL',
-		                    'relation_title'    => 'VARCHAR(255) NOT NULL',
+		                    'subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'relation_title'    => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'object_namespace'  => 'INT(11) NOT NULL',
-		                    'object_title'      => 'VARCHAR(255) NOT NULL',
+		                    'object_title'      => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'object_id'        => 'INT(8) UNSIGNED'), $db, $verbose);
 		$this->setupIndex($smw_relations, array('subject_id','relation_title','object_title,object_namespace','object_id'), $db);
 
@@ -1010,11 +1010,11 @@ class SMWSQLStore extends SMWStore {
 		$this->setupTable($smw_attributes,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'subject_namespace' => 'INT(11) NOT NULL',
-		                    'subject_title'     => 'VARCHAR(255) NOT NULL',
-		                    'attribute_title'   => 'VARCHAR(255) NOT NULL',
-		                    'value_unit'        => 'VARCHAR(63)',
-		                    'value_datatype'    => 'VARCHAR(31) NOT NULL', /// TODO: remove value_datatype column
-		                    'value_xsd'         => 'VARCHAR(255) NOT NULL',
+		                    'subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'attribute_title'   => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'value_unit'        => 'VARCHAR(63) COLLATE '.$smwgDefaultCollation.'',
+		                    'value_datatype'    => 'VARCHAR(31) COLLATE '.$smwgDefaultCollation.' NOT NULL', /// TODO: remove value_datatype column
+		                    'value_xsd'         => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'value_num'         => 'DOUBLE'), $db, $verbose);
 		$this->setupIndex($smw_attributes, array('subject_id','attribute_title','value_num','value_xsd'), $db);
 
@@ -1022,8 +1022,8 @@ class SMWSQLStore extends SMWStore {
 		$this->setupTable($smw_longstrings,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'subject_namespace' => 'INT(11) NOT NULL',
-		                    'subject_title'     => 'VARCHAR(255) NOT NULL',
-		                    'attribute_title'   => 'VARCHAR(255) NOT NULL',
+		                    'subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'attribute_title'   => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'value_blob'        => 'MEDIUMBLOB'), $db, $verbose);
 		$this->setupIndex($smw_longstrings, array('subject_id','attribute_title'), $db);
 
@@ -1031,8 +1031,8 @@ class SMWSQLStore extends SMWStore {
 		$this->setupTable($smw_nary,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'subject_namespace' => 'INT(11) NOT NULL',
-		                    'subject_title'     => 'VARCHAR(255) NOT NULL',
-		                    'attribute_title'   => 'VARCHAR(255) NOT NULL',
+		                    'subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'attribute_title'   => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'nary_key'          => 'INT(8) UNSIGNED NOT NULL'), $db, $verbose);
 		$this->setupIndex($smw_nary, array('subject_id','attribute_title','subject_id,nary_key'), $db);
 		$this->setupTable($smw_nary_relations,
@@ -1040,15 +1040,15 @@ class SMWSQLStore extends SMWStore {
 		                    'nary_key'          => 'INT(8) UNSIGNED NOT NULL',
 		                    'nary_pos'          => 'INT(8) UNSIGNED NOT NULL',
 		                    'object_namespace'  => 'INT(11) NOT NULL',
-		                    'object_title'      => 'VARCHAR(255) NOT NULL',
+		                    'object_title'      => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'object_id'         => 'INT(8) UNSIGNED'), $db, $verbose);
 		$this->setupIndex($smw_nary_relations, array('subject_id,nary_key','object_title,object_namespace','object_id'), $db);
 		$this->setupTable($smw_nary_attributes,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'nary_key'          => 'INT(8) UNSIGNED NOT NULL',
 		                    'nary_pos'          => 'INT(8) UNSIGNED NOT NULL',
-		                    'value_unit'        => 'VARCHAR(63)',
-		                    'value_xsd'         => 'VARCHAR(255) NOT NULL',
+		                    'value_unit'        => 'VARCHAR(63) COLLATE '.$smwgDefaultCollation.'',
+		                    'value_xsd'         => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'value_num'         => 'DOUBLE'), $db, $verbose);
 		$this->setupIndex($smw_nary_attributes, array('subject_id,nary_key','value_num','value_xsd'), $db);
 		$this->setupTable($smw_nary_longstrings,
@@ -1062,15 +1062,15 @@ class SMWSQLStore extends SMWStore {
 		$this->setupTable($smw_specialprops,
 		              array('subject_id'        => 'INT(8) UNSIGNED NOT NULL',
 		                    'subject_namespace' => 'INT(11) NOT NULL',
-		                    'subject_title'     => 'VARCHAR(255) NOT NULL',
+		                    'subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
 		                    'property_id'       => 'SMALLINT(6) NOT NULL',
-		                    'value_string'      => 'VARCHAR(255) NOT NULL'), $db, $verbose);
+		                    'value_string'      => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL'), $db, $verbose);
 		$this->setupIndex($smw_specialprops, array('subject_id', 'property_id'), $db);
 
 		// create table for subproperty relationships
 		$this->setupTable($smw_subprops,
-		              array('subject_title'     => 'VARCHAR(255) NOT NULL',
-		                    'object_title'      => 'VARCHAR(255) NOT NULL'), $db, $verbose);
+		              array('subject_title'     => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL',
+		                    'object_title'      => 'VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL'), $db, $verbose);
 		$this->setupIndex($smw_subprops, array('subject_title', 'object_title'), $db);
 
 		$this->reportProgress("Database initialised successfully.\n",$verbose);
@@ -1232,7 +1232,7 @@ class SMWSQLStore extends SMWStore {
 	 */
 	protected function getCategoryTable($cats, &$db) {
 		wfProfileIn("SMWSQLStore::getCategoryTable (SMW)");
-		global $wgDBname, $smwgQSubcategoryDepth;
+		global $wgDBname, $smwgQSubcategoryDepth, $smwgDefaultCollation;
 
 		$sqlvalues = '';
 		$hashkey = '';
@@ -1247,7 +1247,7 @@ class SMWSQLStore extends SMWStore {
 		$tablename = 'cats' . SMWSQLStore::$m_tablenum++;
 		$this->m_usedtables[] = $tablename;
 		$db->query( 'CREATE TEMPORARY TABLE ' . $tablename .
-		            '( title VARCHAR(255) NOT NULL )
+		            '( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getCategoryTable' );
 		$db->query( 'ALTER TABLE ' . $tablename . ' ADD PRIMARY KEY ( title )' );
 		if (array_key_exists($hashkey, SMWSQLStore::$m_categorytables)) { // just copy known result
@@ -1261,10 +1261,10 @@ class SMWSQLStore extends SMWStore {
 
 		// Create multiple temporary tables for recursive computation
 		$db->query( 'CREATE TEMPORARY TABLE smw_newcats
-		             ( title VARCHAR(255) NOT NULL )
+		             ( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getCategoryTable' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_rescats
-		             ( title VARCHAR(255) NOT NULL )
+		             ( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getCategoryTable' );
 		$tmpnew = 'smw_newcats';
 		$tmpres = 'smw_rescats';
@@ -1305,12 +1305,12 @@ class SMWSQLStore extends SMWStore {
 	 */
 	protected function getPropertyTable($propname, &$db) {
 		wfProfileIn("SMWSQLStore::getPropertyTable (SMW)");
-		global $wgDBname, $smwgQSubpropertyDepth;
+		global $wgDBname, $smwgQSubpropertyDepth, $smwgDefaultCollation;
 
 		$tablename = 'prop' . SMWSQLStore::$m_tablenum++;
 		$this->m_usedtables[] = $tablename;
 		$db->query( 'CREATE TEMPORARY TABLE ' . $tablename .
-		            '( title VARCHAR(255) NOT NULL )
+		            '( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getPropertyTable' );
 		$db->query( 'ALTER TABLE ' . $tablename . ' ADD PRIMARY KEY ( title )' );
 		if (array_key_exists($propname, SMWSQLStore::$m_propertytables)) { // just copy known result
@@ -1324,10 +1324,10 @@ class SMWSQLStore extends SMWStore {
 
 		// Create multiple temporary tables for recursive computation
 		$db->query( 'CREATE TEMPORARY TABLE smw_new
-		             ( title VARCHAR(255) NOT NULL )
+		             ( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getPropertyTable' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_res
-		             ( title VARCHAR(255) NOT NULL )
+		             ( title VARCHAR(255) COLLATE '.$smwgDefaultCollation.' NOT NULL )
 		             TYPE=MEMORY', 'SMW::getPropertyTable' );
 		$tmpnew = 'smw_new';
 		$tmpres = 'smw_res';

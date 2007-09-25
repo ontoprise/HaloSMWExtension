@@ -109,7 +109,7 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_ATTRIBUTE), $reqfilter);
+ 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter);
  	 	
  	 	// create root object
  	 	$root = new TreeObject(null);
