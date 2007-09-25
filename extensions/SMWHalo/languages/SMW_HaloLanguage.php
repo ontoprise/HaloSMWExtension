@@ -13,6 +13,7 @@ abstract class SMW_HaloLanguage {
 	protected $smwUserMessages;
 	protected $smwDatatypeLabels;
 	protected $smwSpecialProperties;
+	protected $smwSpecialSchemaProperties;
 
 	/**
 	 * Function that returns an array of namespace identifiers.
@@ -44,6 +45,20 @@ abstract class SMW_HaloLanguage {
 	 */
 	function findDatatypeMsgID($label) {
 		return array_search($label, $this->smwDatatypeLabels);
+	}
+	
+	/**
+	 * Registers all special properties of this extension in Semantic Media Wiki.
+	 * 
+	 * The language files of the Halo extension contain a mapping from special 
+	 * property constants to their string representation. These mappings are
+	 * added to the mapping defined by Semantic Media Wiki.
+	 */
+	function registerSpecialProperties() {
+		global $smwgContLang;
+		foreach ($this->smwSpecialProperties as $key => $prop) {
+			$smwgContLang->addSpecialProperty($key, $prop);
+		}
 	}
 	
 	function getSpecialSchemaPropertyArray() {

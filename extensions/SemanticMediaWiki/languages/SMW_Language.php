@@ -53,6 +53,19 @@ abstract class SMW_Language {
 	}
 	
 	/**
+	 * Extends the array of special properties with a mapping from a $key to a
+	 * language dependent string representation.
+	 */
+	function addSpecialProperty($key, $propertyRepresentation) {
+		
+		if (array_key_exists($key, $this->smwSpecialProperties)) {
+			trigger_error('The key "'.$key.'" already exists in smwSpecialProperties: '.$key.' -> '.$this->smwSpecialProperties[$key], E_USER_ERROR);
+		} else {
+			$this->smwSpecialProperties[$key] = $propertyRepresentation;
+		}
+	}
+	
+	/**
 	 * Function that returns all content messages (those that are stored
 	 * in some article, and can thus not be translated to individual users).
 	 */

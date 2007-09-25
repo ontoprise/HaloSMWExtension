@@ -296,6 +296,12 @@ protected $smwDatatypeLabels = array(
 	
 );
 
+protected $smwSpecialProperties = array(
+	//always start upper-case
+	SMW_SP_CONVERSION_FACTOR_SI => 'Entspricht SI'
+);
+
+
 var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_HINT => 'Has domain hint',
 	SMW_SSP_HAS_RANGE_HINT  => 'Has range hint',

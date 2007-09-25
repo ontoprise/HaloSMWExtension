@@ -21,7 +21,7 @@ define('SMW_SP_CONVERSION_FACTOR', 12);
 define('SMW_SP_SERVICE_LINK', 13);
 define('SMW_SP_POSSIBLE_VALUE', 14);
 define('SMW_SP_REDIRECTS_TO', 15);
-define('SMW_SP_CONVERSION_FACTOR_SI', 16);
+// moved to SMW_Initialize.php: define('SMW_SP_CONVERSION_FACTOR_SI', 16);
 define('SMW_SP_SUBPROPERTY_OF',17);
 
 // constants for displaying the factbox

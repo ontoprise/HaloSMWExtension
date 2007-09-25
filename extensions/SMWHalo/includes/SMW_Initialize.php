@@ -17,6 +17,9 @@ define('SMW_SSP_IS_EQUAL_TO', 6);
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
 define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 
+// constants for special properties, used for datatype assignment and storage
+define('SMW_SP_CONVERSION_FACTOR_SI', 16);
+
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 
@@ -35,6 +38,7 @@ function enableSMWHalo() {
  */
 function smwgHaloSetupExtension() {
 	global $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
+	global $smwgHaloContLang;
 
 	$smwgMasterGeneralStore = NULL;
 
@@ -45,6 +49,8 @@ function smwgHaloSetupExtension() {
 
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages();
+	
+	$smwgHaloContLang->registerSpecialProperties();
 
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
