@@ -14,7 +14,7 @@
 function smwLog($logmsg, $type = "" , $function="", $locationForce = "" , $timestamp = ""){
 		global $smwhgEnableLogging, $wgUser, $wgTitle;
 		if($smwhgEnableLogging !== true){
-			return;
+			return "";
 		}
 		$db = wfGetDB( DB_MASTER );
 		$fname = 'SMW::smwLog';
