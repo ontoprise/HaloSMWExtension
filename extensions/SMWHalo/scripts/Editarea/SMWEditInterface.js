@@ -179,8 +179,11 @@ SMWEditInterface.prototype ={
 			SMWEditArea = $(editAreaName);
 			if (document.selection  && !is_gecko) {
 				// IE - store the current range
-				this.currentRange = document.selection.createRange();
-				var theSelection = this.currentRange.text;
+				var range = document.selection.createRange();
+				var theSelection = range.text;
+				if (theSelection != "") {
+					this.currentRange = range;
+				}
 				return theSelection;
 			} else if(SMWEditArea.selectionStart || SMWEditArea.selectionStart == '0') {
 				// Mozilla
