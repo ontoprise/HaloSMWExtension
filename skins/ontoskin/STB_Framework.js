@@ -47,7 +47,7 @@ ToolbarFramework.prototype = {
 			if (this.var_stb) {
 				for(var i=0;i<=10;i++) {
 					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\"></div>";
-					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\"></div>";
+					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\" class=\"generic_content\"></div>";
 					$("stb_cont"+i+"-headline").hide();
 					$("stb_cont"+i+"-content").hide();
 				}
