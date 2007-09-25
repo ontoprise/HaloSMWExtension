@@ -61,23 +61,43 @@ CombinedSearchContributor.prototype = {
 		sajax_do_call('smwfCSAskForAttributeValues', [parts], this.smwfCombinedSearchCallback.bind(this, "queryPlaceholder"));
 	},
 	
-	navigateToOB: function(entityName, ns, ontoBrowserPath) {
-		queryStr = "?title="+entityName+(ns != "" ? "&ns="+ns : "");
+	/**
+	 * Navigates to OntologyBrowser
+	 * 
+	 * @param pageName name of page (URI encoded)
+	 * @param pageNS namespace
+	 * @param last part of path to OntologyBrowser (name of special page)
+	 */
+	navigateToOB: function(pageName, pageNS, ontoBrowserPath) {
+		queryStr = "?entitytitle="+pageName+(pageNS != "" ? "&ns="+pageNS : "");
 		var path = wgArticlePath.replace(/\$1/, ontoBrowserPath);
-		smwhgLogger.log(entityName, "CS", "entity_opened_in_ob")
+		smwhgLogger.log(pageName, "CS", "entity_opened_in_ob")
 		window.open(wgServer + path + queryStr, "");
 	},
 	
-	navigateToEntity: function(entityName, ns) {
-		var path = wgArticlePath.replace(/\$1/, ns+":"+entityName);
-		smwhgLogger.log(entityName, "CS", "entity_opened")
+	/**
+	 * Navigates to Page
+	 * 
+	 * @param pageName name of page (URI encoded)
+	 * @param pageNS namespace
+	
+	 */
+	navigateToEntity: function(pageName, pageNS) {
+		var path = wgArticlePath.replace(/\$1/, pageNS+":"+pageName);
+		smwhgLogger.log(pageName, "CS", "entity_opened")
 		window.open(wgServer + path, "");
 	},
 	
-	navigateToEdit: function(entityName, ns) {
+	/**
+	 * Navigates to Page in edit mode
+	 * 
+	 * @param pageName name of page (URI encoded)
+	 * @param pageNS namespace
+	 */
+	navigateToEdit: function(pageName, pageNS) {
 		queryStr = "?action=edit";
-		var path = wgArticlePath.replace(/\$1/, ns+":"+entityName);
-		smwhgLogger.log(entityName, "CS", "entity_opened_to_edit");
+		var path = wgArticlePath.replace(/\$1/, pageNS+":"+pageName);
+		smwhgLogger.log(pageName, "CS", "entity_opened_to_edit");
 		window.open(wgServer + path + queryStr, "");
 	}
 

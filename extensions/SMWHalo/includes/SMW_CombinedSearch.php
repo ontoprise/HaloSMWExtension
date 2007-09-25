@@ -5,7 +5,8 @@
  * Author: kai
  */
  global $smwgIP;
- require_once($smwgIP ."/includes/SMW_QueryProcessor.php");
+ //require_once($smwgIP ."/includes/SMW_QueryProcessor.php");
+ require_once($smwgIP ."/includes/SMW_DataValueFactory.php");
 
  
  global $wgAjaxExportList;
@@ -185,21 +186,21 @@
  				$resultHTML .= "<tr>";
  				
  					// show page link
- 					$pageTitleText = urlencode($page->getText()); 
+ 					$pageTitleEscaped = urlencode($page->getText()); 
  					$resultHTML .= "<td><img src=\"".CombinedSearchHelper::getImageReference($page)."\"></td>";
- 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEntity('".$page->getText()."', '$ns')\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEntity('".$pageTitleEscaped."', '$ns')\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
  					
  					// show OB link
  					if ($page->getNamespace() != NS_TEMPLATE && $page->getNamespace() != SMW_NS_TYPE) { 
  						
- 						$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToOB('".$page->getText()."', '$ns', '".$wgContLang->getNsText(NS_SPECIAL).":OntologyBrowser')\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
+ 						$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToOB('".$pageTitleEscaped."', '$ns', '".$wgContLang->getNsText(NS_SPECIAL).":".wfMsg('ontologybrowser')."')\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
  					} else {
  						// do NOT show OB link for templates, because it makes no sense.
  						$resultHTML .= "<td></td>";
  					}
  					
  					// show edit link
- 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEdit('".$page->getText()."', '$ns')\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEdit('".$pageTitleEscaped."', '$ns')\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
  				$resultHTML .= "</tr>";
  				
  			}
@@ -221,9 +222,6 @@
  	public function getFurtherQueriesAsHTML($entities, $searchTerms) {
  		global $wgServer, $wgScriptPath, $wgContLang;
  		$htmlResult = "<div class=\"cbsrch-content\">";
- 		
- 		
- 			
  			
  		// combination category/instance <-> attribute/relation
  		$htmlResult .= "<table class=\"cbsrch-table\">";
