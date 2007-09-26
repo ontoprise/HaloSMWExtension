@@ -51,7 +51,7 @@ createList: function(list,id) {
 		switch (id)	{
 			case "category":
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
-	  			firstValue = list[i].getValue ? this.cutdowntosize(list[i].getValue(),7,3) : "";
+	  			firstValue = list[i].getValue ? list[i].getValue(): "";
 	  			prefix = gLanguage.getMessage('CATEGORY');
 	 			 break
 			case "relation":
@@ -60,20 +60,20 @@ createList: function(list,id) {
 	  		
 	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
-	  			firstValue = this.cutdowntosize(values[0],7,3);
+	  			firstValue = values[0];
 	  			var valueLink;
-/* No links for values at the moment
-				valueLink = '<a href="' + wgServer + path + values[0] +
-				            '" target="blank">' + firstValue + '</a>';
+
+				valueLink = '<a href="' + wgServer+path+prefix+list[i].getName() +
+				            '" target="blank" title="' + firstValue + '">' + firstValue + '</a>';
 				firstValue = valueLink;
-*/	  			
+
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
 					valueLink = 
-//No links for values at the moment						'<a href="' + wgServer + path + values[j] +
-//					    '" target="blank">' + this.cutdowntosize(values[j],10,3) +
-//					    '</a>';
-						this.cutdowntosize(values[j],8,3);
+					'<a href="' + wgServer+path+prefix+list[i].getName() +
+				    '" target="blank" title="' + values[j] + '">' + values[j] +
+				    '</a>';
+//						values[j];
 					multiValue += 
 						"<tr>" +
 							"<td class=\"" + id + "-col2\">" + 
@@ -85,13 +85,11 @@ createList: function(list,id) {
 		}
 		
 		//Checks if getValue exists if no it's an Category what allows longer text
-		var shortName = (list[i].getValue 
-					 ? this.cutdowntosize(list[i].getName(),7) 
-					 : this.cutdowntosize(list[i].getName(),16));
+		var shortName = list[i].getValue ? list[i].getName() : list[i].getName();
 		var elemName;
 		//Construct the link
 		elemName = '<a href="'+wgServer+path+prefix+list[i].getName();
-		elemName += '" target="blank">' + shortName + '</a>';
+		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
 		divlist += 	"<tr>" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\">" + 
 					elemName + 
