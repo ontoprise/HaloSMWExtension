@@ -223,7 +223,8 @@ class SMWWikiPageValue extends SMWDataValue {
 	 * Seems to be required in the Export, TODO check that
 	 */
 	 public function getPrefixedURL(){
-	 	return $this->m_title->getPrefixedURL();
+	 	if ($this->m_title != NULL)
+		 	return $this->m_title->getPrefixedURL();
 	 }
 
 ///// Legacy methods for compatibility
