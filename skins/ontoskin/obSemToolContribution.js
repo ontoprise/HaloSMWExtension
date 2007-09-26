@@ -25,12 +25,7 @@ OBSemanticToolbarContributor.prototype = {
 		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
 		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
 
-		this.comsrchontainer.setContent(
-			'<button type="button" disabled="true" ' +
-			'id="openEntityInOB" name="navigateToOB" ' +
-			'onclick="obContributor.navigateToOB(event, \''+gLanguage.getMessage('NS_SPECIAL')+":"+gLanguage.getMessage('OB_ID')+'\')">' +
-			gLanguage.getMessage('MARK_A_WORD') +
-			'</button>');
+		this.comsrchontainer.setContent(this.getOBLink(false));
 		this.comsrchontainer.contentChanged();
 
 		// register standard wiki edit textarea (advanced editor registers by itself)
@@ -51,7 +46,9 @@ OBSemanticToolbarContributor.prototype = {
 			Event.observe(this.textArea, 'mouseup', this.l2);
 			Event.observe(this.textArea, 'keyup', this.l3);
 			// intially disabled
-			if ($("openEntityInOB") != null) Field.disable("openEntityInOB");
+			//if ($("openEntityInOB") != null) Field.disable("openEntityInOB");
+			this.comsrchontainer.setContent(this.getOBLink(false));
+			this.comsrchontainer.contentChanged();
 		}
 	},
 
@@ -63,13 +60,17 @@ OBSemanticToolbarContributor.prototype = {
 		//if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
 		if (gEditInterface.getSelectedText().length == 0){
 			// unselected
-			Field.disable("openEntityInOB");
-			$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
+			this.comsrchontainer.setContent(this.getOBLink(false));
+			this.comsrchontainer.contentChanged();
+			//Field.disable("openEntityInOB");
+			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
 			this.textArea.focus();
 		} else {
 			// selected
-			Field.enable("openEntityInOB");
-			$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('OPEN_IN_OB');
+			this.comsrchontainer.setContent(this.getOBLink(true));
+			this.comsrchontainer.contentChanged();
+			//Field.enable("openEntityInOB");
+			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('OPEN_IN_OB');
 			this.textArea.focus();
 		}
 	},
@@ -94,6 +95,21 @@ OBSemanticToolbarContributor.prototype = {
 		smwhgLogger.log(selectedText, "STB-OB", "clicked");
 		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
 		window.open(wgServer + ontoBrowserSpecialPage, "");
+	},
+	
+	getOBLink: function(active) {
+		if (active) {
+			return '<a ' +
+				'id="openEntityInOB" class="menulink"' +
+				'href="javascript::obContributor.navigateToOB(event, \''+gLanguage.getMessage('NS_SPECIAL')+":"+gLanguage.getMessage('OB_ID')+'\')">' +
+				gLanguage.getMessage('OPEN_IN_OB') +
+				'</a>';
+		} else {
+			return '<span ' +
+				'id="openEntityInOB">' +
+				gLanguage.getMessage('MARK_A_WORD') +
+				'</span>';
+		}
 	}
 
 
