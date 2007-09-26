@@ -16,7 +16,6 @@
 }
 
 .generic_content{
- 	width:100%;
  }
 
 #tabcontainer {
@@ -507,7 +506,6 @@ a.menulink{
 	border: 1px solid #ff9602;
 	overflow: auto;
 	font-size: 11px;
-	width:100%;
 }
 #relation-table{
 	background-color: #ffcd87;
