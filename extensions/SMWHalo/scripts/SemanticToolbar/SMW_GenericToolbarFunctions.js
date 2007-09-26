@@ -40,7 +40,9 @@ createList: function(list,id) {
 	if (dollarPos > 0) {
 		path = path.substring(0, dollarPos);
 	}
-
+	
+	var maxlen1 = 0;
+	var maxlen2 = 0;
   	for (var i = 0; i < len; i++) {
   		var rowSpan = "";
   		var firstValue = "";
@@ -63,11 +65,14 @@ createList: function(list,id) {
 	  			firstValue = values[0];
 	  			var valueLink;
 
+				firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
+
 				valueLink = '<span title="' + firstValue + '">' + firstValue + '<span>';
 				firstValue = valueLink;
-
+				
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
+	  				values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 					valueLink = 
 					'<span title="' + values[j] + '">' + values[j] +
 				    '</span>';
@@ -85,6 +90,7 @@ createList: function(list,id) {
 		//Checks if getValue exists if no it's an Category what allows longer text
 		var shortName = list[i].getValue ? list[i].getName() : list[i].getName();
 		var elemName;
+		shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
 		elemName = '<a href="'+wgServer+path+prefix+list[i].getName();
 		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
@@ -100,6 +106,18 @@ createList: function(list,id) {
 		           	'</tr>' + multiValue; // all other value rows
   	}
   	divlist += "</table></div>";
+  	if( id == "relation" && maxlen2 != 0){
+  		setTimeout(function(){
+		  		$$('.relation-col2').each( function(n) {
+		  			var len = 20 + 100*(0.55*(maxlen1/(maxlen2+maxlen1)));
+		  			n.style.width = len + "%";
+		  			});
+	  			$$('.relation-col1').each( function(n) {
+	  				var len = 20 + 100*(0.55 - 0.55*(maxlen1/(maxlen2+maxlen1)));
+	  				n.style.width = len + "%";
+	  				});
+  			}, 100);
+  	}
   	return divlist;
 },
 
