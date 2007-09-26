@@ -73,6 +73,7 @@
  	// scripts which will be packed in one JS file (in this order!)
  	$scripts = array('prototype.js'  => MIT_LICENSE,
  				     'effects.js' => MIT_LICENSE,
+ 				     'smw_logger.js' => GPL_LICENSE,
 					 'generalTools.js' => GPL_LICENSE, 
 					 'SMW_Language.js' => GPL_LICENSE, 
 					 'treeview.js' => GPL_LICENSE, 
@@ -87,6 +88,7 @@
  	// scripts which will be packed in one JS file (in this order!)
  	$scripts = array('prototype.js' => MIT_LICENSE,
  					 'effects.js' => MIT_LICENSE, 
+ 					 'smw_logger.js' => GPL_LICENSE,
 					 'generalTools.js' => GPL_LICENSE, 
 					 'SMW_Language.js' => GPL_LICENSE, 
 					 'gardening.js' => GPL_LICENSE);
