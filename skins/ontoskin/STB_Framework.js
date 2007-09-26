@@ -46,7 +46,7 @@ ToolbarFramework.prototype = {
 			this.var_stb = $("semtoolbar");
 			if (this.var_stb) {
 				for(var i=0;i<=10;i++) {
-					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\"></div>";
+					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\" class=\"generic_headline\"></div>";
 					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\" class=\"generic_content\"></div>";
 					$("stb_cont"+i+"-headline").hide();
 					$("stb_cont"+i+"-content").hide();
@@ -350,6 +350,8 @@ Slider.prototype = {
 	},
 	
 	activateResizing: function() {
+	//Check if semtoolbar is available
+	if(!stb_control.isToolbarAvailable()) return;
 	//Load image to the slider div
 	$('slider').innerHTML = '<img id="sliderHandle" src="' + 
 			wgScriptPath + 
@@ -389,6 +391,11 @@ Slider.prototype = {
 	         
 	         $('innercontent').style.width = currLeftDiv + "%";
 	         $('ontomenuanchor').style.width = currRightDiv + "%";
+	         
+	         if(window.editArea){
+	         	editArea.update_size();
+	         }
+	         
 	         
 	 }
 }
