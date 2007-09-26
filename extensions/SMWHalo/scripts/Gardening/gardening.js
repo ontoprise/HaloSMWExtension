@@ -45,7 +45,7 @@ GardeningPage.prototype = {
 			}
 			// paste error message and highlight it.
 			errorSpan.innerHTML = "\t" + splitText[2];
-			Effect.Pulsate(errorSpan);
+			//Effect.Pulsate(errorSpan);
 			return;
 		}
 		$('gardening-runningbots').innerHTML = request.responseText;

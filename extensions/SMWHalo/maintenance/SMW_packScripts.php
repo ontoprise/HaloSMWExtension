@@ -33,16 +33,13 @@
  
  $buildAll = count($argv) == 1; // build all if no parameter is set
  
- if ($argv[1] == 'smw' || $buildAll) {  // standard scripts which are loaded always
+ if ($argv[1] == 'smw' || $buildAll) {  // standard scripts which are loaded always (except special pages)
  	 // name of output file
- 	 $outputFile = $mediaWikiLocation.'/scripts/deployScripts.js';
+ 	 $outputFile = $mediaWikiLocation.'/scripts/deployGeneralScripts.js';
  
  	 // scripts which will be packed in one JS file (in this order!)
-	 $scripts = array('prototype.js' => MIT_LICENSE,
+	 $scripts = array(
 	 				  'slider.js' => MIT_LICENSE,
-	 				  'smw_logger.js' => GPL_LICENSE,
-	 				  'generalTools.js' => GPL_LICENSE,
-	 				  'SMW_Language.js' => GPL_LICENSE,
 	 				  'STB_Framework.js' => GPL_LICENSE,
 	 				  'STB_Divcontainer.js' => GPL_LICENSE,
 	 				  'wick.js' => WICK_LICENSE,
@@ -68,14 +65,11 @@
  } 
  
  if ($argv[1] == 'OntologyBrowser' || $buildAll) { // scripts which are only loaded on OntologyBrowser Special page
- 	$outputFile = $mediaWikiLocation.'/scripts/OntologyBrowser/deployOB.js';
+ 	$outputFile = $mediaWikiLocation.'/scripts/OntologyBrowser/deployOntologyBrowser.js';
    	 
  	// scripts which will be packed in one JS file (in this order!)
- 	$scripts = array('prototype.js'  => MIT_LICENSE,
+ 	$scripts = array(
  				     'effects.js' => MIT_LICENSE,
- 				     'smw_logger.js' => GPL_LICENSE,
-					 'generalTools.js' => GPL_LICENSE, 
-					 'SMW_Language.js' => GPL_LICENSE, 
 					 'treeview.js' => GPL_LICENSE, 
 					 'treeviewActions.js' => GPL_LICENSE, 
 					 'treeviewData.js' => GPL_LICENSE);
@@ -86,12 +80,35 @@
  	$outputFile = $mediaWikiLocation.'/scripts/Gardening/deployGardening.js';
    	 
  	// scripts which will be packed in one JS file (in this order!)
- 	$scripts = array('prototype.js' => MIT_LICENSE,
+ 	$scripts = array(
  					 'effects.js' => MIT_LICENSE, 
- 					 'smw_logger.js' => GPL_LICENSE,
-					 'generalTools.js' => GPL_LICENSE, 
-					 'SMW_Language.js' => GPL_LICENSE, 
 					 'gardening.js' => GPL_LICENSE);
+ 	buildScripts($outputFile, $scripts);
+ } 
+ 
+ if ($argv[1] == 'QueryInterface' || $buildAll) { // scripts which are only loaded on OntologyBrowser Special page
+ 	$outputFile = $mediaWikiLocation.'/scripts/QueryInterface/deployQueryInterface.js';
+   	 
+ 	// scripts which will be packed in one JS file (in this order!)
+ 	$scripts = array(
+ 					 
+ 					 'treeviewQI.js' => GPL_LICENSE,
+					 'queryTree.js' => GPL_LICENSE, 
+					 'Query.js' => GPL_LICENSE, 
+					 'QIHelper.js' => GPL_LICENSE,
+					 'qi.js' => GPL_LICENSE);
+ 	buildScripts($outputFile, $scripts);
+ } 
+ 
+ if ($argv[1] == 'General' || $buildAll) { // scripts which are loaded always
+ 	$outputFile = $mediaWikiLocation.'/scripts/deployGeneralTools.js';
+   	 
+ 	// scripts which will be packed in one JS file (in this order!)
+ 	$scripts = array(
+ 					 'generalTools.js' => GPL_LICENSE, 
+ 					 'smw_logger.js' => GPL_LICENSE,
+ 					 'SMW_Language.js' => GPL_LICENSE);
+ 					 
  	buildScripts($outputFile, $scripts);
  } 
  

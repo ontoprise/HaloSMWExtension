@@ -100,6 +100,10 @@ function smwGAAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, NS_SPECIAL.":Gardening");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/gardening.js', "all", -1, NS_SPECIAL.":Gardening");
 	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Gardening");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":Gardening");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":Gardening");
+		
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/deployGardening.js', "all", -1, NS_SPECIAL.":Gardening");
 	}
 	

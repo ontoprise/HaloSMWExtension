@@ -234,8 +234,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
+			
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
+		
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
 
@@ -284,9 +286,11 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 
 		} else {
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
 			smwfHaloAddJSLanguageScripts($jsm);
-
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployScripts.js');
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralScripts.js');
 
 			//FIXME: these scripts must be exchanged by a full editor script
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");
