@@ -7,6 +7,22 @@
  * Used to pack javascript files to one big file.
  */
  
+ // license constants
+ define('MIT_LICENSE', 1);
+ define('BSD_LICENSE', 2);
+ define('GPL_LICENSE', 3);
+ define('APACHE_LICENSE', 4);
+ define('LGPL_LICENSE', 5);
+ define('WICK_LICENSE', 6);
+ 
+ // license hints
+ $licenses = array( MIT_LICENSE => 'MIT-License',
+ 					BSD_LICENSE => 'BSD-License',
+ 					GPL_LICENSE => 'GPL-License',
+ 					APACHE_LICENSE => 'Apache-License',
+ 					LGPL_LICENSE => 'LGPL-License',
+ 					WICK_LICENSE => 'WICK-License');
+ 
  // add script name as hint or not?
  $addScriptName = true;
  
@@ -22,28 +38,29 @@
  	 $outputFile = $mediaWikiLocation.'/scripts/deployScripts.js';
  
  	 // scripts which will be packed in one JS file (in this order!)
-	 $scripts = array('prototype.js',
-	 				  'smw_logger.js',
-	 				  'generalTools.js',
-	 				  'SMW_Language.js',
-	 				  'STB_Framework.js',
-	 				  'STB_Divcontainer.js',
-	 				  'wick.js',
-	 				  'SMW_Help.js',
-	 				  'SMW_Links.js',
-	 				  'Annotation.js',
-	 				  'WikiTextParser.js',
-	 				  'SMW_Ontology.js',
-	 				  'SMW_DataTypes.js',
-	 				  'SMW_GenericToolbarFunctions.js',
-	 				  'SMW_Container.js',
-	 				  'SMW_Category.js',
-	 				  'SMW_Relation.js',
-	 				  'SMW_Properties.js',
-	 				  'SMW_Refresh.js',
-	 				  'SMW_FactboxType.js',
-	 				  'CombinedSearch.js',
-	 				  'obSemToolContribution.js' /*,
+	 $scripts = array('prototype.js' => MIT_LICENSE,
+	 				  'slider.js' => MIT_LICENSE,
+	 				  'smw_logger.js' => GPL_LICENSE,
+	 				  'generalTools.js' => GPL_LICENSE,
+	 				  'SMW_Language.js' => GPL_LICENSE,
+	 				  'STB_Framework.js' => GPL_LICENSE,
+	 				  'STB_Divcontainer.js' => GPL_LICENSE,
+	 				  'wick.js' => WICK_LICENSE,
+	 				  'SMW_Help.js' => GPL_LICENSE,
+	 				  'SMW_Links.js' => GPL_LICENSE,
+	 				  'Annotation.js' => GPL_LICENSE,
+	 				  'WikiTextParser.js' => GPL_LICENSE,
+	 				  'SMW_Ontology.js' => GPL_LICENSE,
+	 				  'SMW_DataTypes.js' => GPL_LICENSE,
+	 				  'SMW_GenericToolbarFunctions.js' => GPL_LICENSE,
+	 				  'SMW_Container.js' => GPL_LICENSE,
+	 				  'SMW_Category.js' => GPL_LICENSE,
+	 				  'SMW_Relation.js' => GPL_LICENSE,
+	 				  'SMW_Properties.js' => GPL_LICENSE,
+	 				  'SMW_Refresh.js' => GPL_LICENSE,
+	 				  'SMW_FactboxType.js' => GPL_LICENSE,
+	 				  'CombinedSearch.js' => GPL_LICENSE,
+	 				  'obSemToolContribution.js' => GPL_LICENSE /*,
 	 				  'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
 	 				  );
@@ -54,7 +71,13 @@
  	$outputFile = $mediaWikiLocation.'/scripts/OntologyBrowser/deployOB.js';
    	 
  	// scripts which will be packed in one JS file (in this order!)
- 	$scripts = array('prototype.js', 'effects.js', 'generalTools.js', 'SMW_Language.js', 'treeview.js', 'treeviewActions.js', 'treeviewData.js');
+ 	$scripts = array('prototype.js'  => MIT_LICENSE,
+ 				     'effects.js' => MIT_LICENSE,
+					 'generalTools.js' => GPL_LICENSE, 
+					 'SMW_Language.js' => GPL_LICENSE, 
+					 'treeview.js' => GPL_LICENSE, 
+					 'treeviewActions.js' => GPL_LICENSE, 
+					 'treeviewData.js' => GPL_LICENSE);
  	buildScripts($outputFile, $scripts);
  } 
  
@@ -62,7 +85,11 @@
  	$outputFile = $mediaWikiLocation.'/scripts/Gardening/deployGardening.js';
    	 
  	// scripts which will be packed in one JS file (in this order!)
- 	$scripts = array('prototype.js', 'effects.js', 'generalTools.js', 'SMW_Language.js', 'gardening.js');
+ 	$scripts = array('prototype.js' => MIT_LICENSE,
+ 					 'effects.js' => MIT_LICENSE, 
+					 'generalTools.js' => GPL_LICENSE, 
+					 'SMW_Language.js' => GPL_LICENSE, 
+					 'gardening.js' => GPL_LICENSE);
  	buildScripts($outputFile, $scripts);
  } 
  
@@ -70,10 +97,10 @@
   * Build one script file consisting of all scripts given in $scripts array.
   */
  function buildScripts($outputFile, $scripts) { 
- 	 global $sourcePath, $addScriptName;
-	 $result = "";
+ 	 global $sourcePath, $addScriptName, $licenses;
+	 $result = readLicenseFile()."\n";
 	 echo "\n\nBilding scripts: $outputFile\n";
-	 foreach($scripts as $s) {
+	 foreach($scripts as $s => $licenseNum) {
 	 	$filename = $sourcePath.$s;
 	 	$handle = fopen($filename, "rb");
 	 	$contents = fread ($handle, filesize ($filename));
@@ -81,10 +108,12 @@
 	 	//$contents = preg_replace("/\/\*([^\*]|\*[^\/])*\*\/\r\n/", "", $contents);
 	 	echo 'Add '.$filename."...\n";
 	 	if ($addScriptName) {
-	 		$result .= '// '.basename($filename)."\n".$contents."\n\n";	
+	 		$result .= '// '.basename($filename)."\n";
 	 	} else {
 	 		$result .= $contents."\n\n";
 	 	}
+	 	$result .= "// under ".$licenses[$licenseNum]."\n";
+	 	$result .= $contents."\n\n";	
 	 	fclose($handle);
 	 }
 	 
@@ -93,6 +122,19 @@
 	 fwrite($handle, $result);
 	 fclose($handle);
 	 echo "Done!\n";
+ }
+ 
+ /**
+  * Returns text of license file.
+  */
+ function readLicenseFile() {
+ 	global $mediaWikiLocation;
+ 	print "\nRead license file...";
+ 	$filename = $mediaWikiLocation."/maintenance/licenses.txt";
+ 	$handle = fopen($filename, "rb");
+ 	$contents = fread ($handle, filesize ($filename));
+ 	print "done!\n";
+ 	return $contents;	
  }
  
 ?>
