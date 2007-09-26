@@ -341,3 +341,56 @@ var stb_control = new ToolbarFramework();
 
 Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
 Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
+
+/* Resizing SemToolBar  using scriptacolus slider */
+var Slider = Class.create();
+Slider.prototype = {
+
+	initialize: function() {
+	},
+	
+	activateResizing: function() {
+	//Load image to the slider div
+	$('slider').innerHTML = '<img id="sliderHandle" src="' + 
+			wgScriptPath + 
+			'/extensions/SMWHalo/skins/slider.gif"/>';
+	   //create slider		 	 
+	   this.sliderObj = new Control.Slider('sliderHandle','slider',{
+	   	  //axis:'vertical',
+	      sliderValue:0.7,
+	      minimum:0.5,
+	      maximum:0.75,
+	      //range: $R(0.5,0.75),
+	      onSlide: this.slide,
+	      onChange: this.slide
+	   });
+	},
+	
+	//Checks for min max and sets the content and the semtoolbar to the correct width
+	slide: function(v)
+	      {
+	      	var leftmin = 0.25; // range 0 - 1
+	   		var rightmin = 0.20; // range 0 - 1
+	   		
+	      	 if( v < leftmin){
+	      	 	smwhg_slider.sliderObj.setValue(leftmin);
+	      	 	return;
+	      	 }
+	      	 
+	      	 if( v > 1- rightmin){
+	      	 	smwhg_slider.sliderObj.setValue(1 - rightmin);
+	      	 	return;
+	      	 }
+	      	 
+	  
+	 		//the 5% missing are for the slider itself
+	         var currLeftDiv = 100*v;
+	         var currRightDiv = 95 - currLeftDiv;
+	         
+	         $('innercontent').style.width = currLeftDiv + "%";
+	         $('ontomenuanchor').style.width = currRightDiv + "%";
+	         
+	 }
+}
+var smwhg_slider = new Slider();
+Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
