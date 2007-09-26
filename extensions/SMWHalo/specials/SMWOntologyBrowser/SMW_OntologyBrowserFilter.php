@@ -80,7 +80,8 @@
  	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter);
  	 	$result = "";
  	 	foreach($foundInstances as $instance) {
- 	 		$result .= "<instance title=\"".$instance->getDBkey()."\" img=\"$type.gif\" id=\"ID_$id$count\"/>";
+ 	 		$title_esc = preg_replace("/\"/", "&quot;", $instance->getDBkey());
+ 	 		$result .= "<instance title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\"/>";
  	 	}
 	 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';
  	 }
@@ -299,7 +300,8 @@
  		$result = "";
  		foreach($this->children as $title => $treeObject) {
  			$isExpanded = count($treeObject->children) == 0 ? "false" : "true";
-			$result .= "<$type title=\"".$treeObject->getTitle()->getDBkey()."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
+ 			$title_esc = preg_replace("/\"/", "&quot;", $treeObject->getTitle()->getDBkey());
+			$result .= "<$type title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
  			$result .= $treeObject->serializeAsXML($type);
  			$result .= "</$type>";
 			$count++;

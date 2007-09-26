@@ -185,8 +185,8 @@ private static function encapsulateAsProperty(Title $t, $count) {
 				$isTransitiveText = "isTransitive=\"true\"";
 			}
 		}
-			
-		return "<property title=\"".$t->getText()."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
+		$title_esc = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		return "<property title=\"".$title_esc."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
 	
 }
 
