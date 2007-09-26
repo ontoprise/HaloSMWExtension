@@ -227,7 +227,7 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 		} else if ($smwValue instanceof SMWWikiPageValue) { // relation
 		
 			$title = preg_replace("/\"/", "&quot;", $annotationTitle->getDBkey());
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\" $markChemicalForEq><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
+			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
 			
 		} else { // normal attribute
 			if ($smwValue->getTypeID() == 'chemicalequation' || $smwValue->getTypeID() == 'chemicalformula') {
