@@ -21,14 +21,14 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 a.concept, a.instance, a.leaf{  
 	padding:0px;
 	cursor: hand;
-	background-color: white;
+	
 	white-space:nowrap;
 }
 
 a.selectedItem {
 	padding:0px;
 	cursor: hand;
-	background-color: #EEEEEE;
+	background-color: #F1F02E;
 }
 
 a.inherited {
@@ -55,7 +55,18 @@ a.navigationLink {
 	overflow: auto;
 	width: 300px;
 	height: 430px;
-	
+}
+
+.categoryTreeColors {
+	background-color: #94B0F3;
+}
+
+.instanceListColors {
+	background-color: #E5ADAD;
+}
+
+.propertyTreeListColors {
+	background-color: #F2C475;
 }
 
 #treeContainer, #relattributesContainer {
@@ -64,6 +75,7 @@ a.navigationLink {
 	float: left;
 	width: 300px;
 	height: 465px;
+	
 }
 
 #instanceContainer {

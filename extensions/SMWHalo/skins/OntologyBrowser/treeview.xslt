@@ -80,7 +80,7 @@
 		<xsl:param name="rek_depth" select="1"/>
 		
 						
-		<table border="0" cellspacing="0" cellpadding="0">
+		<table class="categoryTreeColors" border="0" cellspacing="0" cellpadding="0">
 		 	<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
 			</xsl:if> 
@@ -129,7 +129,7 @@
 		<xsl:param name="rek_depth" select="1"/>
 		
 						
-		<table border="0" cellspacing="0" cellpadding="0">
+		<table class="propertyTreeListColors" border="0" cellspacing="0" cellpadding="0">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
 			</xsl:if> 
@@ -198,7 +198,7 @@
 	<xsl:template match="instanceList">
 	<xsl:choose>
 	 <xsl:when test="not (@isEmpty)">
-		<table border="0" cellspacing="0" cellpadding="0">
+		<table class="instanceListColors" border="0" cellspacing="0" cellpadding="0">
 			<xsl:apply-templates select="instancePartition"/>
 			<xsl:apply-templates select="instance"/>
 		</table>
@@ -245,7 +245,7 @@
 	<xsl:template match="annotationsList">
 	<xsl:choose>
 	<xsl:when test="not (@isEmpty)">
-		<table border="0" cellspacing="0" cellpadding="0">
+		<table class="propertyTreeListColors" border="0" cellspacing="0" cellpadding="0">
 			<xsl:apply-templates select="annotation"/>
 			
 		</table>
@@ -329,7 +329,7 @@
 	<xsl:template match="propertyList">
 	<xsl:choose>
 	<xsl:when test="not (@isEmpty)">
-		<table border="0" cellspacing="0" cellpadding="0">
+		<table class="propertyTreeListColors" border="0" cellspacing="0" cellpadding="0">
 			<xsl:apply-templates select="property"/>
 		
 		</table>

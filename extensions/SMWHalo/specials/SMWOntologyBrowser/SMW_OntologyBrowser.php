@@ -81,9 +81,9 @@ class SMW_OntologyBrowser {
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/concept.gif\"></img><a class=\"selectedSwitch\" id=\"categoryTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'categoryTree')\" style=\"margin-left:2px;\">".wfMsg('smw_ob_categoryTree')."|</a>
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img><a id=\"propertyTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'propertyTree')\" style=\"margin-left:2px;\">".wfMsg('smw_ob_attributeTree')."</a>
 			</span>
-		   <div id=\"categoryTree\">
+		   <div id=\"categoryTree\" class=\"categoryTreeColors\">
 		   </div>		
-		   <div id=\"propertyTree\" style=\"display:none\">
+		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors\">
 		   </div>
 		   <span class=\"OB-filters\" style=\"margin-left:5px;margin-top:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"22\" name=\"categoryFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
@@ -96,7 +96,7 @@ class SMW_OntologyBrowser {
 		<!-- Instance List hook -->	
 		<div id=\"instanceContainer\">
 		  <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img>".wfMsg('smw_ob_instanceList')."</span>		
-		  <div id=\"instanceList\">
+		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\" style=\"margin-left:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"15\" name=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
@@ -108,7 +108,7 @@ class SMW_OntologyBrowser {
 		<!-- Relation/Attribute Annotation level hook -->
 		<div id=\"relattributesContainer\"><span class=\"OB-header\">
 			<span><img src=\"$wgScriptPath/extensions/SMWHalo/skins/attribute.gif\"></img>".wfMsg('smw_ob_att')."/<img src=\"$wgScriptPath/extensions/SMWHalo/skins/relation.gif\"></img>".wfMsg('smw_ob_rel')."</span><span id=\"relattValues\" style=\"margin-left:100px;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"margin-left:85px;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
-			<div id=\"relattributes\"></div>
+			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
 			<span class=\"OB-filters\" style=\"margin-left:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"22\" name=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button></span>		
 		</div>		
 		<div id=\"OB-filters\">
