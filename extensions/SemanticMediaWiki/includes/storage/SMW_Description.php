@@ -11,7 +11,6 @@ define('SMW_CMP_EQ',1); // matches only datavalues that are equal to the given v
 define('SMW_CMP_LEQ',2); // matches only datavalues that are less or equal than the given value
 define('SMW_CMP_GEQ',3); // matches only datavalues that are greater or equal to the given value
 define('SMW_CMP_NEQ',4); // matches only datavalues that are unequal to the given value
-define('SMW_CMP_CLS',5); // unsharp matches.
 
 // print request
 define('SMW_PRINT_CATS', 0);  // print all direct cateories of the current element
@@ -43,7 +42,7 @@ class SMWPrintRequest {
 		$this->m_title = $title;
 		$this->m_outputformat = $outputformat;
 	}
-
+	
 	public function getMode() {
 		return $this->m_mode;
 	}
@@ -66,7 +65,7 @@ class SMWPrintRequest {
 			case SMW_PRINT_PROP: return $linker->makeLinkObj($this->m_title, htmlspecialchars($this->m_label));
 			case SMW_PRINT_THIS: default: return htmlspecialchars($this->m_label);
 		}
-
+		
 	}
 
 	/**
@@ -83,7 +82,7 @@ class SMWPrintRequest {
 				case SMW_PRINT_THIS: default: return $this->m_label;
 			}
 		}
-
+		
 	}
 
 	public function getTitle() {
@@ -207,8 +206,8 @@ abstract class SMWDescription {
 /**
  * A dummy description that describes any object. Corresponds to
  * owl:thing, the class of all abstract objects. Note that it is
- * not used for datavalues of attributes in order to support type
- * hinting in the API: descriptions of data are always
+ * not used for datavalues of attributes in order to support type 
+ * hinting in the API: descriptions of data are always 
  * SMWValueDescription objects.
  */
 class SMWThingDescription extends SMWDescription {
@@ -230,68 +229,40 @@ class SMWThingDescription extends SMWDescription {
 }
 
 /**
- * Description of a single class, i.e. a wiki category.
- * Corresponds to atomic concepts in OWL and to classes in RDF.
+ * Description of a single class, i.e. a wiki category, or of a disjunction
+ * of such classes. Corresponds to (disjunctions of) atomic concepts in OWL and 
+ * to (unions of) classes in RDF.
  */
 class SMWClassDescription extends SMWDescription {
-	protected $m_title;
+	protected $m_titles;
 
-	public function SMWClassDescription(Title $category) {
-		$this->m_title = $category;
-	}
-
-	public function getCategory() {
-		return $this->m_title;
-	}
-
-	public function getQueryString() {
-		if ($this->m_title !== NULL) {
-			return '[[' . $this->m_title->getPrefixedText() . ']]';
-		} else {
-			return '';
+	public function SMWClassDescription($content) {
+		if ($content instanceof Title) {
+			$this->m_titles = array($content);
+		} elseif (is_array($content)) {
+			$this->m_titles = $content;
 		}
 	}
 
-	public function isSingleton() {
-		return false;
+	public function addDescription(SMWClassDescription $description) {
+		$this->m_titles = array_merge($this->m_titles, $description->getCategories());
 	}
 
-}
-
-/**
- * class representing unsharp matches ov datavalues. The amount of "unsharpness" is held in the
- * $m_tolerance variable and is set when calling the constructor.
- */
-
-class SMWNearValueDescription extends SMWDescription {
-	protected $m_datavalue;
-	protected $m_comparator;
-	protected $m_tolerance;
-
-	public function SMWNearValueDescription(SMWDataValue $datavalue, $tolerance) {
-		$this->m_datavalue = $datavalue;
-		$this->m_tolerance = $tolerance;
-		$this->m_comparator = SMW_CMP_CLS;		// fixed comparator
-	}
-
-	public function getDataValue() {
-		return $this->m_datavalue;
-	}
-
-	public function getTolerance() {
-		return $this->m_tolerance;
-	}
-
-	public function getComparator() {
-		return $this->m_comparator;
+	public function getCategories() {
+		return $this->m_titles;
 	}
 
 	public function getQueryString() {
-		if ($this->m_datavalue !== NULL) {
-			return '~' . $this->m_datavalue->getWikiValue();
-		} else {
-			return '+';
+		$first = true;
+		foreach ($this->m_titles as $cat) {
+			if ($first) {
+				$result = '[[' . $cat->getPrefixedText();
+				$first = false;
+			} else {
+				$result .= '||' . $cat->getText();
+			}
 		}
+		return $result . ']]';
 	}
 
 	public function isSingleton() {
@@ -299,10 +270,32 @@ class SMWNearValueDescription extends SMWDescription {
 	}
 
 	public function getSize() {
-		return 1;
+		global $smwgQSubcategoryDepth;
+		if ($smwgQSubcategoryDepth > 0) {
+			return 1; // disj. of cats should not cause much effort if we compute cat-hierarchies anyway!
+		} else {
+			return count($this->m_titles);
+		}
 	}
-}
 
+	public function prune(&$maxsize, &$maxdepth, &$log) {
+		if ($maxsize >= $this->getSize()) {
+			$maxsize = $maxsize - $this->getSize();
+			return $this;
+		} elseif ( $maxsize <= 0 ) {
+			$log[] = $this->getQueryString();
+			$result = new SMWThingDescription();
+		} else {
+			$result = new SMWClassDescription(array_slice($this->m_titles, 0, $maxsize));
+			$rest = new SMWClassDescription(array_slice($this->m_titles, $maxsize));
+			$log[] = $rest->getQueryString();
+			$maxsize = 0;
+		}
+		$result->setPrintRequests($this->getPrintRequests());
+		return $result;
+	}
+
+}
 
 /**
  * Description of all pages within a given wiki namespace,
@@ -336,10 +329,10 @@ class SMWNamespaceDescription extends SMWDescription {
 /**
  * Description of one data value, or of a range of data values.
  *
- * Technically this usually corresponds to nominal predicates or to unary
- * concrete domain predicates in OWL which are parametrised by one constant
+ * Technically this usually corresponds to nominal predicates or to unary 
+ * concrete domain predicates in OWL which are parametrised by one constant 
  * from the concrete domain.
- * In RDF, concrete domain predicates that define ranges (like "greater or
+ * In RDF, concrete domain predicates that define ranges (like "greater or 
  * equal to") are not directly available.
  */
 class SMWValueDescription extends SMWDescription {
@@ -368,13 +361,10 @@ class SMWValueDescription extends SMWDescription {
 				case SMW_CMP_GEQ:
 					$comparator = '>';
 				break;
-				case SMW_CMP_NEQ:
+				case SMW_CMP_NEQ: 
 					$comparator = '!'; // not supported yet?
 				break;
-				case SMW_CMP_CLS:
-					$comparator = 'cls'; //TODO (save actual tolerance in variabel!)
-				break;
-				default: case SMW_CMP_EQ:
+				default: case SMW_CMP_EQ: 
 					$comparator = '';
 				break;
 			}
@@ -391,7 +381,7 @@ class SMWValueDescription extends SMWDescription {
 			return false;
 		}
 	}
-
+	
 	public function getSize() {
 		return 1;
 	}
@@ -401,9 +391,9 @@ class SMWValueDescription extends SMWDescription {
 
 /**
  * Description of an ordered list of SMWDescription objects, used as
- * values for some n-ary property. NULL values are to be used for
- * Corresponds to the built-in support for n-ary properties, i.e.
- * can be viewed as a macro in OWL and RDF.
+ * values for some n-ary property. NULL values are to be used for 
+ * unspecifed values. Corresponds to the built-in support for n-ary 
+ * properties, i.e. can be viewed as a macro in OWL and RDF.
  */
 class SMWValueList extends SMWDescription {
 	protected $m_descriptions;
@@ -531,6 +521,10 @@ class SMWConjunction extends SMWDescription {
 	public function addDescription(SMWDescription $description) {
 		if (! ($description instanceof SMWThingDescription) ) {
 			$this->m_descriptions[] = $description;
+			// move print descriptions downwards
+			///TODO: This may not be a good solution, since it does modify $description and since it does not react to future cahges
+			$this->m_printreqs = array_merge($this->m_printreqs, $description->getPrintRequests());
+			$description->setPrintRequests(array());
 		}
 	}
 
@@ -606,6 +600,8 @@ class SMWConjunction extends SMWDescription {
  */
 class SMWDisjunction extends SMWDescription {
 	protected $m_descriptions;
+	protected $m_classdesc = NULL; // contains a single class description if any such disjunct was given;
+	                               // disjunctive classes are aggregated therein
 	protected $m_true = false; // used if disjunction is trivially true already
 
 	public function SMWDisjunction($descriptions = array()) {
@@ -622,10 +618,24 @@ class SMWDisjunction extends SMWDescription {
 		if ($description instanceof SMWThingDescription) {
 			$this->m_true = true;
 			$this->m_descriptions = array(); // no conditions any more
+			$this->m_catdesc = NULL;
 		}
 		if (!$this->m_true) {
-			$this->m_descriptions[] = $description;
+			if ($description instanceof SMWClassDescription) {
+				if ($this->m_classdesc === NULL) { // first class description
+					$this->m_classdesc = $description;
+					$this->m_descriptions[] = $description;
+				} else {
+					$this->m_classdesc->addDescription($description);
+				}
+			} else {
+				$this->m_descriptions[] = $description;
+			}
 		}
+		// move print descriptions downwards
+		///TODO: This may not be a good solution, since it does modify $description and since it does not react to future cahges
+		$this->m_printreqs = array_merge($this->m_printreqs, $description->getPrintRequests());
+		$description->setPrintRequests(array());
 	}
 
 	public function getQueryString() {
@@ -704,7 +714,7 @@ class SMWDisjunction extends SMWDescription {
  * fits another (sub)description.
  *
  * Corresponds to existential quatification ("some" restriction) on concrete properties
- * in OWL. In conjunctive queries (OWL) and SPARQL (RDF), it is represented by using
+ * in OWL. In conjunctive queries (OWL) and SPARQL (RDF), it is represented by using 
  * variables in the object part of such properties.
  */
 class SMWSomeProperty extends SMWDescription {
@@ -725,7 +735,7 @@ class SMWSomeProperty extends SMWDescription {
 	}
 
 	public function getQueryString() {
-		return '[[' . $this->m_property->getText() . ':=' . $this->m_description->getQueryString() . ']]';
+		return '[[' . $this->m_property->getText() . '::' . $this->m_description->getQueryString() . ']]';
 	}
 
 	public function isSingleton() {
