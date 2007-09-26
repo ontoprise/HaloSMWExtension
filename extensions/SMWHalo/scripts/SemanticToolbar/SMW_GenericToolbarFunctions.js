@@ -63,16 +63,14 @@ createList: function(list,id) {
 	  			firstValue = values[0];
 	  			var valueLink;
 
-				valueLink = '<a href="' + wgServer+path+prefix+list[i].getName() +
-				            '" target="blank" title="' + firstValue + '">' + firstValue + '</a>';
+				valueLink = '<span title="' + firstValue + '">' + firstValue + '<span>';
 				firstValue = valueLink;
 
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
 					valueLink = 
-					'<a href="' + wgServer+path+prefix+list[i].getName() +
-				    '" target="blank" title="' + values[j] + '">' + values[j] +
-				    '</a>';
+					'<span title="' + values[j] + '">' + values[j] +
+				    '</span>';
 //						values[j];
 					multiValue += 
 						"<tr>" +
