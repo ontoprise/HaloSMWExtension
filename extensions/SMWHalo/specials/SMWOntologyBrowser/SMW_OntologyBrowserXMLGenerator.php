@@ -27,7 +27,8 @@ class SMWOntologyBrowserXMLGenerator {
 		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
 			continue;
 		}
-		$result = $result."<conceptTreeElement title=\"".$t->getDBkey()."\" img=\"concept.gif\" id=\"ID_$id$count\"></conceptTreeElement>";
+		$title_esc = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		$result = $result."<conceptTreeElement title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\"></conceptTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) {
@@ -109,7 +110,7 @@ public static function encapsulateAsAnnotationList($attributeAnnotations) {
 
 
 public static function encapsulateAsPropertyList($directProperties, $inheritedProperties) {
-	$id = uniqid (rand());
+	
 	$count = 0;
 	$propertiesXML = "";
 
@@ -129,6 +130,7 @@ public static function encapsulateAsPropertyList($directProperties, $inheritedPr
 }
 
 private static function encapsulateAsProperty(Title $t, $count) {
+		$id = uniqid (rand());
 		$content = "";
 		$img = "";
 		// read type of property
@@ -184,7 +186,7 @@ private static function encapsulateAsProperty(Title $t, $count) {
 			}
 		}
 			
-		return "<property title=\"".$t->getText()."\" img=\"$img\" id=\"ID_$id$count\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
+		return "<property title=\"".$t->getText()."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
 	
 }
 
@@ -240,7 +242,7 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
 		
 			$title = preg_replace("/\"/", "&quot;", $annotationTitle->getDBkey());
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker><param>".$value."</param></annotation>";
+			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param></annotation>";
 		}
 		$count++;
 	}
