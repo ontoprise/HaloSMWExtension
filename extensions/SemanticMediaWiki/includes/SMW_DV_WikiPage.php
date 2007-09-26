@@ -219,6 +219,13 @@ class SMWWikiPageValue extends SMWDataValue {
 		$this->m_id = $id ? $id : false;
 	}
 
+	/**
+	 * Seems to be required in the Export, TODO check that
+	 */
+	 public function getPrefixedURL(){
+	 	return $this->m_title->getPrefixedURL();
+	 }
+
 ///// Legacy methods for compatibility
 
 	/**
