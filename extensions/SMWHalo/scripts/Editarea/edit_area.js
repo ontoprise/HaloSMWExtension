@@ -75,10 +75,11 @@
 			editArea.result.style.height= height +"px";
 
 			var width = 0;
+			var toolbarwidth = parent.document.getElementById('ontomenuanchor').getWidth();
 			if(parent.OB_bd.isIE != null && parent.OB_bd.isIE)
-				width = parent.document.body.scrollWidth - 400;
+				width = parent.document.body.scrollWidth - toolbarwidth - 250;
 			else
-				width = parent.document.body.scrollWidth - 420;
+				width = parent.document.body.scrollWidth - toolbarwidth - 370;
 
 			document.getElementById("editor").style.width = width+"px";
 			parent.document.getElementById("frame_wpTextbox1").style.width = (width+2)+"px";

@@ -16,7 +16,14 @@
 }
 
 .generic_content{
+	margin-left: 3px;
+	margin-right: 3px;
  }
+ 
+.generic_headline{
+	margin-left: 3px;
+	margin-right: 3px;
+}
 
 #tabcontainer {
 	width: auto;
@@ -107,8 +114,6 @@ a.plusminus:hover{
 #semtoolbar{
 	padding-top: 1px;
 	padding-bottom: 3px;
-	padding-left: 3px;
-	padding-right: 3px;
 	border: 1px solid #C0C0C0;
 	background-color: #DDDDDD;
 }
@@ -594,11 +599,12 @@ a.menulink{
 
 /* input */
 .stb-input{
-	width: 100%;
+	margin-right: 5%;
+	width: 95%;
 }
 .stb-delinput{
-	margin-right: 5px;
-	width: 100%;
+	margin-right: 5%;
+	width: 95%;
 }
 
 .stb-input-col1{
@@ -616,12 +622,13 @@ a.menulink{
 
 /*dropdown*/
 .stb-select{
-	width: 100%;
+	width: 95%;
+	margin-right: 5%;
 }
 .stb-delselect
 {
-	width: 100%;
-	margin-right: 5px;
+	width: 95%;
+	margin-right: 5%;
 }
 .stb-select-col1{
 	width: 30%;

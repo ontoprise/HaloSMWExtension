@@ -392,9 +392,7 @@ Slider.prototype = {
 	         $('innercontent').style.width = currLeftDiv + "%";
 	         $('ontomenuanchor').style.width = currRightDiv + "%";
 	         
-	         if(window.editArea){
-	         	editArea.update_size();
-	         }
+	         editAreaLoader.execCommand("wpTextbox1", "update_size();");
 	         
 	         
 	 }
