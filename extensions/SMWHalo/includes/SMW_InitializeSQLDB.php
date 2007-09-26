@@ -113,11 +113,6 @@
 	protected function setupLogging($verbose) {
 			global $smwhgEnableLogging; 
 			$this->reportProgress("Setting up logging ...\n",$verbose);
-			if($smwhgEnableLogging  !== true){
-				$this->reportProgress("   ... logging not enabled. Doing nothing.  \n",$verbose);
-				return;
-			}
-			
 			$this->reportProgress("   ... Creating logging database \n",$verbose);
 			global $wgDBname;
 			$db =& wfGetDB( DB_MASTER );
