@@ -370,21 +370,38 @@ OBPendingIndicator.prototype = {
 	 * Shows pending indicator relative to given container or relative to initial container
 	 * if container is not specified.
 	 */
-	show: function(container) {
+	show: function(container, alignment) {
 		//check if the content element is there
 		if($("content") == null){
 			return;
 		}
+		
+		var alignOffset = 0;
+		if (alignment != undefined) {
+			switch(alignment) {
+				case "right": { 
+					if (!container) { 
+						alignOffset = $(this.container).offsetWidth - 16;
+					} else {
+						alignOffset = $(container).offsetWidth - 16;
+					}
+					
+					break;
+				}
+				case "left": break;
+			}
+		}
+			
 		//if not already done, append the indicator to the content element so it can become visible
 		if(this.contentElement == null) {
 				this.contentElement = $("content");
 				this.contentElement.appendChild(this.pendingIndicator);
 		}
 		if (!container) {
-			this.pendingIndicator.style.left = (Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
 			this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1]+this.container.scrollTop)+"px";
 		} else {
-			this.pendingIndicator.style.left = (Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";
 			this.pendingIndicator.style.top = (Position.cumulativeOffset($(container))[1]-Position.realOffset($(container))[1]+$(container).scrollTop)+"px";
 		}
 		// hmm, why does Element.show(...) not work here?
