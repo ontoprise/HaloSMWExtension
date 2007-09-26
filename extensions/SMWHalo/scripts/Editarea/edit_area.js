@@ -79,7 +79,7 @@
 			if(parent.OB_bd.isIE != null && parent.OB_bd.isIE)
 				width = parent.document.body.scrollWidth - toolbarwidth - 250;
 			else
-				width = parent.document.body.scrollWidth - toolbarwidth - 370;
+				width = parent.document.body.scrollWidth - toolbarwidth - 270;
 
 			document.getElementById("editor").style.width = width+"px";
 			parent.document.getElementById("frame_wpTextbox1").style.width = (width+2)+"px";
