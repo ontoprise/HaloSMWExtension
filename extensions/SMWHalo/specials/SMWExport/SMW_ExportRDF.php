@@ -4,9 +4,9 @@
  *
  * Author: kai
  */
- 
+
  if (!defined('MEDIAWIKI')) die();
- 
+
 global $IP, $smwgIP;
 require_once( "$IP/includes/SpecialPage.php" );
 require_once( "$smwgIP/specials/ExportRDF/SMW_SpecialExportRDF.php");
@@ -468,7 +468,7 @@ class ExportRDFHalo extends ExportRDF {
 					if ( NS_CATEGORY === $et->title_namespace ) { // also print elements of categories
 						$instances = $this->store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $et->title );
 						foreach($instances as $instance) {
-							$st = $this->getExportTitleFromTitle( $instance );
+							$st = $this->getExportTitleFromTitle( $instance->getTitle() );
 							if (!array_key_exists($st->hashkey, $this->element_done)) {
 								$cur_queue[] = $st;
 							}
@@ -542,7 +542,7 @@ class ExportRDFHalo extends ExportRDF {
 					if ( NS_CATEGORY === $et->title_namespace ) { // also print elements of categories
 						$instances = $this->store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $et->title );
 						foreach($instances as $instance) {
-							$st = $this->getExportTitleFromTitle( $instance );
+							$st = $this->getExportTitleFromTitle( $instance->getTitle() );
 							if (!array_key_exists($st->hashkey, $this->element_done)) {
 								$cur_queue[] = $st;
 							}
@@ -837,7 +837,7 @@ class ExportRDFHalo extends ExportRDF {
 			if ($category_rel) {
 				$cats = $this->store->getSpecialValues( $et->title, SMW_SP_HAS_CATEGORY );
 				foreach ($cats as $cat) {
-					$ct = $this->getExportTitleFromTitle( $cat );
+					$ct = $this->getExportTitleFromTitle( $cat->getTitle() );
 					$this->post_ns_buffer .= "\t\t<" . $category_rel . ' rdf:resource="' . $ct->long_uri .  "\"/>\n";
 				}
 			}
@@ -891,24 +891,24 @@ class ExportRDFHalo extends ExportRDF {
 						$this-> post_ns_buffer .= $value->exportToRDF( $pt->short_uri, $this );
 
 						// Export the SI unit as well, if existing
-						$xsdtype = SMWTypeHandlerFactory::getXSDTypeByID( $value->getTypeID() );
-						$xsdvalue = $value->getXSDValue();
-						if ( $xsdtype === 'http://www.w3.org/2001/XMLSchema#float' ) {
-							$dtid = &smwfGetStore()->getSpecialValues($pt->title, SMW_SP_HAS_TYPE);
-							$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
-							$conv = array();
-							if ($dttitle !== NULL) $conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
-							if ( !empty($conv) ) {
-								$dv = SMWDataValueFactory::newPropertyValue($pt->title->getPrefixedText(), $xsdvalue . " " . $value->getUnit());
-								list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
-								$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
-								$ptsi = $this->getExportTitleFromTitle($prop, $siunit);
-								if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-									$this->post_ns_buffer .= "\t\t<" . $ptsi->short_uri . ' rdf:datatype="' . $xsdtype .  '">' . $dv->getXSDValue() . '</' . $ptsi->short_uri . ">\n";
-								}
-
-							}
-						}
+//						$xsdtype = SMWTypeHandlerFactory::getXSDTypeByID( $value->getTypeID() );
+//						$xsdvalue = $value->getXSDValue();
+//						if ( $xsdtype === 'http://www.w3.org/2001/XMLSchema#float' ) {
+//							$dtid = &smwfGetStore()->getSpecialValues($pt->title, SMW_SP_HAS_TYPE);
+//							$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
+//							$conv = array();
+//							if ($dttitle !== NULL) $conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
+//							if ( !empty($conv) ) {
+//								$dv = SMWDataValueFactory::newPropertyValue($pt->title->getPrefixedText(), $xsdvalue . " " . $value->getUnit());
+//								list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
+//								$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
+//								$ptsi = $this->getExportTitleFromTitle($prop, $siunit);
+//								if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
+//									$this->post_ns_buffer .= "\t\t<" . $ptsi->short_uri . ' rdf:datatype="' . $xsdtype .  '">' . $dv->getXSDValue() . '</' . $ptsi->short_uri . ">\n";
+//								}
+//
+//							}
+//						}
 						// End of SI export
 
 						// TODO check OWL Fullness in Wikipage
