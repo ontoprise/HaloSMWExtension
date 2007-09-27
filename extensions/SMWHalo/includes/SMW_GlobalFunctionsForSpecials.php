@@ -13,6 +13,7 @@
  $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
  
  // register ajax calls
+
  $wgAjaxExportList[] = 'smwfLaunchGardeningBot';
  $wgAjaxExportList[] = 'smwfCancelGardeningBot';
  $wgAjaxExportList[] = 'smwfGetGardeningLog';
@@ -50,6 +51,10 @@
 }
 
 // Gardening ajax calls
+
+global $smwgHaloIP;
+require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningBot.php");
+require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningLog.php");
 
 /**
  * Runs a gardening bot.

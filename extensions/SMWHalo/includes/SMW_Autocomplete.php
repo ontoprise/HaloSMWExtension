@@ -18,6 +18,10 @@ $wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
 
 define('SMW_AC_NORESULT', "noResult");
 define('SMW_AC_MAX_RESULTS', 15);
+
+global $smwgIP;
+require_once( $smwgIP . "/includes/SMW_Datatype.php");
+require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  /*
   * Dispatches an auto-completion request.
   * 

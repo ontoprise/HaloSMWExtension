@@ -12,13 +12,8 @@ global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
 require_once("SMW_GardeningBot.php");
 
-// standard functions for creating a new special
-/*function doSMW_Gardening() {
-	SMW_Gardening::execute();
-}
-	
-SpecialPage::addPage( new SpecialPage('Gardening','',true,'doSMW_Gardening',false) );
-*/
+
+
 
 /*
  * Called when gardening request in sent in wiki
