@@ -16,6 +16,7 @@ mkdir %OUTPUT_DIR%\skins\ontoskin
 mkdir %OUTPUT_DIR%\includes
 
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes
+mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
 
@@ -23,6 +24,7 @@ REM copy files
 
 xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeFiles.dat /Y
 xcopy ..\..\SemanticMediaWiki\includes\SMW_QueryProcessor.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
+xcopy ..\..\SemanticMediaWiki\includes\articlepages\SMW_PropertyPage.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages /Y
 xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
