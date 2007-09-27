@@ -11,6 +11,10 @@ global $IP, $smwgIP;
 require_once( "$IP/includes/SpecialPage.php" );
 require_once( "$smwgIP/specials/ExportRDF/SMW_SpecialExportRDF.php");
 
+// replace SMW RDF-Export SpecialPage with advanced HALO RDF-Export SpecialPage.
+SpecialPage::removePage('ExportRDF');
+SpecialPage::addPage(new SpecialPage('ExportRDF','',true,'doSpecialExportRDF',false));
+smwfInitUserMessages();
 
 function getPageAsRDF($page = '') {
 	global $wgOut, $wgRequest, $wgUser, $smwgAllowRecursiveExport, $smwgExportBacklinks, $smwgExportAll;
