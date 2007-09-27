@@ -43,46 +43,52 @@ function smwgHaloSetupExtension() {
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList;
 
 	$smwgMasterGeneralStore = NULL;
-	
+
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
-	
+
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
-	
+
 	$smwgHaloContLang->registerSpecialProperties();
 
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
 	require_once('SMW_ContentProviderForAura.php');
-	
-	
+
+
 	// register special pages
 	$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
 	$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 
 	$wgAutoloadClasses['SMW_Gardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
-	$wgSpecialPages['Gardening'] = array('SMW_Gardening');	
-		
+	$wgSpecialPages['Gardening'] = array('SMW_Gardening');
+
 	$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
-	$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');	
-		
+	$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
+
 	$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
-	$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');	
-	
+	$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
+
 	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
-	
+
 	// Global functions and AJAX calls
 	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
 	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
+
+
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-	
+
 	smwfHaloInitDatatypes();
 	return true;
 }
@@ -247,9 +253,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
-			
+
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
-		
+
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
 
