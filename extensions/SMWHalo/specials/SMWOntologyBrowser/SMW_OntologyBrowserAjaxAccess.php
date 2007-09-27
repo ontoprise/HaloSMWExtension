@@ -6,11 +6,12 @@
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side. 
  */
-global $wgAjaxExportList;
+global $smwgIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfOntologyBrowserAccess';
 
+require_once($smwgIP . "/includes/storage/SMW_Store.php");
 require_once("SMW_OntologyBrowserXMLGenerator.php");
- require_once("SMW_OntologyBrowserFilter.php" );
+require_once("SMW_OntologyBrowserFilter.php" );
  
 function smwfOntologyBrowserAccess($method, $params) {
  	$p_array = explode(",", $params);

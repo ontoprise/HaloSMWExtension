@@ -4,11 +4,11 @@
 
 
 
-global $IP, $wgHooks;
+global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 require_once( "SMW_QIAjaxAccess.php" );
-$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 
+/*
 // standard functions for creating a new special page
 function doSMWQueryInterface()  {
 		SMWQueryInterface::execute();
@@ -16,47 +16,19 @@ function doSMWQueryInterface()  {
 
 SpecialPage::addPage( new SpecialPage('QueryInterface','',true,'doSMWQueryInterface',false)) ;
 
-function smwfQIAddHTMLHeader(&$out){
-	global $smwgHaloScriptPath, $smwgDeployVersion;
-
-
-	$jsm = SMWResourceManager::SINGLETON();
-	
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) { 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Logger/smw_logger.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/treeviewQI.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/queryTree.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/qi.js', "all", -1, NS_SPECIAL.":QueryInterface");
-	} else {
-				
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
-			
-	}
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
-		
-	return true; // do not load other scripts or CSS
-}
+*/
 
 /*
  * Standard class that is resopnsible for the creation of the Special Page
  */
-class SMWQueryInterface{
-
+class SMWQueryInterface extends SpecialPage {
+	public function __construct() {
+		parent::__construct('QueryInterface');
+	}
 /*
  * Overloaded function that is resopnsible for the creation of the Special Page
  */
-	static function execute() {
+	public function execute() {
 
 		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 

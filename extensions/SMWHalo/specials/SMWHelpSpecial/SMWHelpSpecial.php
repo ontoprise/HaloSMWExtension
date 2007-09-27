@@ -22,22 +22,25 @@
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 
-// standard functions for creating a new special page
+/*// standard functions for creating a new special page
 function doSMWHelpSpecial()  {
 		SMWHelpSpecial::execute();
 }
 
 SpecialPage::addPage( new SpecialPage('ContextSensitiveHelp','',true,'doSMWHelpSpecial',false)) ;
+*/
 
 /*
  * Standard class that is resopnsible for the creation of the Special Page
  */
-class SMWHelpSpecial{
-
+class SMWHelpSpecial extends SpecialPage {
+	public function __construct() {
+		parent::__construct('ContextSensitiveHelp');
+	}
 /*
  * Overloaded function that is resopnsible for the creation of the Special Page
  */
-	static function execute() {
+	public function execute() {
 
 		global $wgRequest, $wgOut;
 

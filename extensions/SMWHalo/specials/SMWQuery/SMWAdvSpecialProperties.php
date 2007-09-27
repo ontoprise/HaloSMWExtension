@@ -11,8 +11,8 @@ global $smwgIP;
 include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
 
 // replace SMW Properties SpecialPage with advanced HALO Properties SpecialPage.
-SpecialPage::removePage(wfMsg('properties'));
-SpecialPage::addPage(new SpecialPage(wfMsg('properties'),'',true,'smwfDoSpecialProperties',false));
+//SpecialPage::removePage(wfMsg('properties'));
+//SpecialPage::addPage(new SpecialPage(wfMsg('properties'),'',true,'smwfDoSpecialProperties',false));
 
 function smwfDoSpecialProperties() {
 	wfProfileIn('smwfDoSpecialProperties (SMW)');

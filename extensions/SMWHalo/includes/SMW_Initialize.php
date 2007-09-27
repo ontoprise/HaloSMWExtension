@@ -23,6 +23,8 @@ define('SMW_SP_CONVERSION_FACTOR_SI', 16);
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 
+
+require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
  * Configures SMW Halo Extension for initialization.
  * Must be called *AFTER* SMW is intialized.
@@ -37,37 +39,47 @@ function enableSMWHalo() {
  * Called from SMW during initialization.
  */
 function smwgHaloSetupExtension() {
-	global $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
-	global $smwgHaloContLang;
+	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
+	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList;
 
 	$smwgMasterGeneralStore = NULL;
-
 	
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
-
+	
 	smwfHaloInitContentMessages();
-	smwfHaloInitUserMessages();
+	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
 	
 	$smwgHaloContLang->registerSpecialProperties();
 
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
 	require_once('SMW_ContentProviderForAura.php');
-	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+	
+	
+	// register special pages
+	$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
+	$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 
-	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php');
-	require_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php');
-	require_once($smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php');
-	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php');
-	require_once($smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
-	require_once($smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
+	$wgAutoloadClasses['SMW_Gardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
+	$wgSpecialPages['Gardening'] = array('SMW_Gardening');	
+		
+	$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
+	$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');	
+		
+	$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
+	$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');	
+	
+	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
+	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
+	
+	// Global functions and AJAX calls
+	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
+	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
-
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	

@@ -9,49 +9,21 @@
 
 global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
-require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
-
-global $wgHooks;
-$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 
 // standard functions for creating a new special
-function doSMW_OntologyBrowser() {
-		SMW_OntologyBrowser::execute();
-}
+//function doSMW_OntologyBrowser() {
+//		SMW_OntologyBrowser::execute();
+//}
 	
-SpecialPage::addPage( new SpecialPage(wfMsg('ontologybrowser'),'',true,'doSMW_OntologyBrowser',false) );
+//SpecialPage::addPage( new SpecialPage(wfMsg('ontologybrowser'),'',true,'doSMW_OntologyBrowser',false) );
 
 
-function smwOBAddHTMLHeader(&$out) {
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode;
+class SMW_OntologyBrowser extends SpecialPage {
 	
-	$jsm = SMWResourceManager::SINGLETON();
-	
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) { 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeview.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewActions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewData.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-	} else { 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/deployOntologyBrowser.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	public function __construct() {
+		parent::__construct('OntologyBrowser');
 	}
-	
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
-	
-	return true;
-}
-
-class SMW_OntologyBrowser {
-
-	static function execute() {
+	public function execute() {
 		global $wgRequest, $wgOut, $smwgIQEnabled, $smwgIQMaxLimit, $wgUser, $smwgIQSortingEnabled, $wgScriptPath, $smwhgLogger;
 		$skin = $wgUser->getSkin();
 
