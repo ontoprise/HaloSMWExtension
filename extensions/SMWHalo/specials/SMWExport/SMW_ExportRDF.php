@@ -887,24 +887,23 @@ class ExportRDFHalo extends ExportRDF {
 						$this-> post_ns_buffer .= $value->exportToRDF( $pt->short_uri, $this );
 
 						// Export the SI unit as well, if existing
-//						$xsdtype = SMWTypeHandlerFactory::getXSDTypeByID( $value->getTypeID() );
-//						$xsdvalue = $value->getXSDValue();
-//						if ( $xsdtype === 'http://www.w3.org/2001/XMLSchema#float' ) {
-//							$dtid = &smwfGetStore()->getSpecialValues($pt->title, SMW_SP_HAS_TYPE);
-//							$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
-//							$conv = array();
-//							if ($dttitle !== NULL) $conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
-//							if ( !empty($conv) ) {
-//								$dv = SMWDataValueFactory::newPropertyValue($pt->title->getPrefixedText(), $xsdvalue . " " . $value->getUnit());
-//								list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
-//								$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
-//								$ptsi = $this->getExportTitleFromTitle($prop, $siunit);
-//								if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-//									$this->post_ns_buffer .= "\t\t<" . $ptsi->short_uri . ' rdf:datatype="' . $xsdtype .  '">' . $dv->getXSDValue() . '</' . $ptsi->short_uri . ">\n";
-//								}
-//
-//							}
-//						}
+						if ( $value->isNumeric() ) {
+							$dtid = &smwfGetStore()->getSpecialValues($pt->title, SMW_SP_HAS_TYPE);
+							$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
+							$conv = array();
+							if ($dttitle !== NULL)
+								$conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
+							if ( !empty($conv) ) {
+								$dv = SMWDataValueFactory::newPropertyValue($pt->title->getPrefixedText(), $value->getXSDValue() . " " . $value->getUnit());
+								list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
+								$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
+								$ptsi = $this->getExportTitleFromTitle($prop, $siunit);
+								if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
+									$this->post_ns_buffer .= "\t\t<" . $ptsi->short_uri . ' rdf:datatype="http://www.w3.org/2001/XMLSchema#float">' . $dv->getXSDValue() . '</' . $ptsi->short_uri . ">\n";
+								}
+
+							}
+						}
 						// End of SI export
 
 						// TODO check OWL Fullness in Wikipage
