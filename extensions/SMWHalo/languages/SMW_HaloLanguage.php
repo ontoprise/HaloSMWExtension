@@ -57,7 +57,7 @@ abstract class SMW_HaloLanguage {
 	function registerSpecialProperties() {
 		global $smwgContLang;
 		foreach ($this->smwSpecialProperties as $key => $prop) {
-			$smwgContLang->addSpecialProperty($key, $prop);
+//			$smwgContLang->addSpecialProperty($key, $prop);
 		}
 	}
 	

@@ -97,16 +97,16 @@ function smwgHaloSetupExtension() {
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
 function smwfHaloInitDatatypes() {
-	global $smwgHaloContLang, $smwgIP;
-	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
-	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
-	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalequation');
-	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemEquation','SMWChemicalEquationTypeHandler');
-	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_mathematicalequation');
-	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'MathEquation','SMWMathematicalEquationTypeHandler');
-
-	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
+//	global $smwgHaloContLang, $smwgIP;
+//	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
+//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
+//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
+//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalequation');
+//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemEquation','SMWChemicalEquationTypeHandler');
+//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_mathematicalequation');
+//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'MathEquation','SMWMathematicalEquationTypeHandler');
+//
+//	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
 	return true;
 }
 
