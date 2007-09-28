@@ -851,14 +851,6 @@ class SMWSQLStore extends SMWStore {
 		return $result;
 	}
 
-	function supportsFunction($functionname) {
-		$dbr =& wfGetDB( DB_SLAVE );
-		$res = $dbr->query('SELECT * FROM mysql.func WHERE name = '.$dbr->addQuotes($functionname).' AND type='.$dbr->addQuotes('function'));
-		$hasSupport = ($dbr->numRows($res) > 0);
-		$dbr->freeResult( $res );
-		return $hasSupport;
-	}
-
 ///// Special page functions /////
 
 	function getPropertiesSpecial($requestoptions = NULL) {
