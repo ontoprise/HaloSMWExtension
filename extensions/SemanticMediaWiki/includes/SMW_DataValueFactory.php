@@ -172,7 +172,8 @@ class SMWDataValueFactory {
 	static public function newTypeIDValue($typeid, $value=false, $caption=false, $propertyname=false) {
 		SMWDataValueFactory::initDatatypes();
 		if (array_key_exists($typeid, SMWDataValueFactory::$m_typeclasses)) {
-			$result = new SMWDataValueFactory::$m_typeclasses[$typeid]($typeid);
+			$className = SMWDataValueFactory::$m_typeclasses[$typeid];
+			$result = new $className($typeid);
 		} else {
 			$typevalue = SMWDataValueFactory::newTypeIDValue('__typ');
 			$typevalue->setXSDValue($typeid);
