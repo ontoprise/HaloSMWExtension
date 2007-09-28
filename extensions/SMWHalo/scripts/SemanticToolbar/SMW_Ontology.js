@@ -148,14 +148,7 @@ OntologyModifier.prototype = {
 			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY')+domain+"]]";
 		}
 		if (ranges != null) {
-			if (ranges.length == 1) { // normal binary relation
-					if (ranges[0].indexOf(gLanguage.getMessage('TYPE')) == 0) {
-						schema += "\n[[SMW_SP_HAS_TYPE::"+ranges[0]+"]]";
-					} else {
-						schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[0]+"]]";
-					}
-			 	
-			} else if (ranges.length > 1) { // n-ary relation
+			if (ranges.length >= 1) {
 				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
 				for(var i = 0, n = ranges.length; i < n; i++) {
 					if (ranges[i].indexOf(gLanguage.getMessage('TYPE')) == 0) {
