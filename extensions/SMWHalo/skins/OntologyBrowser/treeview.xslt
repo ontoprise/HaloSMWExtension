@@ -180,6 +180,7 @@
 		<xsl:call-template name="partitionNode">
 			<xsl:with-param name="actionListener" select="'categoryActionListener'"/>  
 			<xsl:with-param name="rek_depth" select="$rek_depth"/>
+			<xsl:with-param name="classname" select="'categoryTreeColors'"/>
 		</xsl:call-template>
 	</xsl:template>
 	
@@ -188,6 +189,7 @@
 		<xsl:call-template name="partitionNode">
 			<xsl:with-param name="actionListener" select="'propertyActionListener'"/>  
 			<xsl:with-param name="rek_depth" select="$rek_depth"/>
+			<xsl:with-param name="classname" select="'propertyTreeListColors'"/>
 		</xsl:call-template>
 	</xsl:template>
 	
@@ -211,7 +213,8 @@
 	
 	<xsl:template match="instancePartition">
 		<xsl:call-template name="partitionNode">
-			<xsl:with-param name="actionListener" select="'instanceActionListener'"/>  
+			<xsl:with-param name="actionListener" select="'instanceActionListener'"/>
+			<xsl:with-param name="classname" select="'instanceListColors'"/>  
 		</xsl:call-template>
 	</xsl:template>
 	
@@ -558,7 +561,8 @@
 	<xsl:template name="partitionNode">
 	<xsl:param name="rek_depth"/>
 	<xsl:param name="actionListener"/>
-	<table border="0" cellspacing="0" cellpadding="0">
+	<xsl:param name="classname"/>
+	<table border="0" cellspacing="0" cellpadding="0" class="{$classname}">
 			<tr>
 				<xsl:if test="$startDepth>1 and not ($rek_depth>1)">
 					<td width="{$param-shift-width}"/>
