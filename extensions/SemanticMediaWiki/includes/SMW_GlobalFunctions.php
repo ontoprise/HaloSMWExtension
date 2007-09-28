@@ -3,14 +3,12 @@
  * Global functions and constants for Semantic MediaWiki.
  */
 
-define('SMW_VERSION','1.0prealpha-3');
+define('SMW_VERSION','1.0prealpha-4');
 
 // constants for special properties, used for datatype assignment and storage
 define('SMW_SP_HAS_TYPE',1);
 define('SMW_SP_HAS_URI',2);
 define('SMW_SP_HAS_CATEGORY',4);
-//define('SMW_SP_IS_SUBRELATION_OF',3); // no longer used
-//define('SMW_SP_IS_SUBATTRIBUTE_OF',5); // no longer used
 define('SMW_SP_MAIN_DISPLAY_UNIT', 6);
 define('SMW_SP_DISPLAY_UNIT', 7);
 define('SMW_SP_IMPORTED_FROM',8);
@@ -21,7 +19,6 @@ define('SMW_SP_CONVERSION_FACTOR', 12);
 define('SMW_SP_SERVICE_LINK', 13);
 define('SMW_SP_POSSIBLE_VALUE', 14);
 define('SMW_SP_REDIRECTS_TO', 15);
-// moved to SMW_Initialize.php: define('SMW_SP_CONVERSION_FACTOR_SI', 16);
 define('SMW_SP_SUBPROPERTY_OF',17);
 
 // constants for displaying the factbox
@@ -55,8 +52,8 @@ function enableSemantics($namespace = "", $complete = false) {
 function smwfSetupExtension() {
 	wfProfileIn('smwfSetupExtension (SMW)');
 	global $smwgIP, $smwgStoreActive, $wgHooks, $wgExtensionCredits, 
-	       $smwgEnableTemplateSupport, $smwgMasterStore, $wgSpecialPages, 
-	       $wgAutoloadClasses, $smwgDefaultCollation;
+			$smwgEnableTemplateSupport, $smwgMasterStore, $wgSpecialPages, 
+			$wgAutoloadClasses, $smwgDefaultCollation;
 
 	/**
 	* Setting this to false prevents any new data from being stored in
@@ -122,12 +119,8 @@ function smwfSetupExtension() {
 
 	///// credits (see "Special:Version") /////
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, Markus&nbsp;Kr&ouml;tzsch, Denny&nbsp;Vrandecic, S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://ontoworld.org/wiki/Semantic_MediaWiki', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://ontoworld.org/wiki/Help:Semantics View online documentation.]');
-	
-	// Register additional extensions for SMW
-	//wfRunHooks('SMWExtension');
-	
+
 	wfProfileOut('smwfSetupExtension (SMW)');
-	
 	return true;
 }
 

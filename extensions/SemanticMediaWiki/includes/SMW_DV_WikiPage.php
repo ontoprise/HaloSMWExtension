@@ -33,7 +33,7 @@ class SMWWikiPageValue extends SMWDataValue {
 				$this->m_namespace = $this->m_title->getNamespace();
 				$this->m_id = false; // unset id
 				if ($this->m_caption === false) {
-					$this->m_caption = $this->m_prefixedtext;
+					$this->m_caption = $value;
 				}
 			} else {
 				$this->addError('Invalid title string'); // TODO: internationalise
@@ -218,14 +218,6 @@ class SMWWikiPageValue extends SMWDataValue {
 		$this->setXSDValue($dbkey);
 		$this->m_id = $id ? $id : false;
 	}
-
-	/**
-	 * Seems to be required in the Export, TODO check that
-	 */
-	 public function getPrefixedURL(){
-	 	if ($this->m_title != NULL)
-		 	return $this->m_title->getPrefixedURL();
-	 }
 
 ///// Legacy methods for compatibility
 

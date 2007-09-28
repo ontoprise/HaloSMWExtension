@@ -113,7 +113,7 @@ function smwfShowListPage (&$title, &$article){
 		smwfInitUserMessages();
 		include_once($smwgIP . '/includes/articlepages/SMW_PropertyPage.php');
 		$article = new SMWPropertyPage($title);
-	} 
+	}
 	return true;
 }
 

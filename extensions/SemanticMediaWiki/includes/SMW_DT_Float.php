@@ -28,7 +28,7 @@ class SMWFloatTypeHandler implements SMWTypeHandler{
 	 * ID string for the datatype object
 	 * @access protected
 	 */
-	protected $typeid = 'float';
+	protected $typeid = '_flt';
 	/**
 	 * Primary unit for this type, false if none.
 	 * @see getPrimaryUnit()
@@ -358,7 +358,7 @@ class SMWFloatTypeHandler implements SMWTypeHandler{
 
 } // End SMWFloatTypeHandler}
 
-SMWTypeHandlerFactory::registerTypeHandler($smwgContLang->getDatatypeLabel('smw_float'),
+SMWTypeHandlerFactory::registerTypeHandler('_flt',
                         new SMWFloatTypeHandler());
 
 
@@ -541,7 +541,7 @@ class SMWTemperatureTypeHandler extends SMWFloatTypeHandler {
 	/**#@+
 	 * @access private
 	 */
-	var $typeid = 'temperature';
+	var $typeid = '_tem';
 	var $primaryUnit = 'K';
 	var $otherDisplayUnits = array('°C', '°F');
 
@@ -602,7 +602,7 @@ class SMWTemperatureTypeHandler extends SMWFloatTypeHandler {
 	}
 } // End class SMWTemperatureTypeHandler
 
-SMWTypeHandlerFactory::registerTypeHandler($smwgContLang->getDatatypeLabel('smw_temperature'),
+SMWTypeHandlerFactory::registerTypeHandler('_tem',
                        new SMWTemperatureTypeHandler());
 
 

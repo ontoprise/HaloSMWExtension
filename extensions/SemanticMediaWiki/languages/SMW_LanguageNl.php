@@ -79,7 +79,6 @@ protected $smwContentMessages = array(
 	'smw_querytoolarge' => 'De volgende zoekopdrachtcondities zijn niet in acht genomen vanwege beperkingen in de grootte of diepte van zoekopdrachten in deze wiki: $1.'
 );
 
-
 protected $smwUserMessages = array(
 	'smw_devel_warning' => 'Deze functie wordt op het moment ontwikkeld en is wellicht niet volledig functioneel. Maak een back-up voordat u deze functie gebruikt.',
 	// Messages for pages of types and properties
@@ -100,7 +99,7 @@ protected $smwUserMessages = array(
 	'smw_propertylackspage' => 'Alle eigenschappen moeten op een pagina beschreven worden!',
 	'smw_propertylackstype' => 'Er is geen type opgegeven voor deze eigenschap (type $1 wordt verondersteld).',
 	'smw_propertyhardlyused' => 'Deze eigenschap wordt vrijwel niet gebruikt in de wiki!',
-	'smw_propertyspecial' => 'This is a special property with a reserved meaning in the wiki.', // TODO: translate
+	'smw_propertyspecial' => 'Dit is een speciale eigenschap met een gereserveerde betekenis in de wiki.',
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Ongebruikte eigenschappen',
 	'smw_unusedproperties_docu' => 'De volgende eigenschappen bestaan, hoewel ze niet gebruikt worden.',
@@ -174,21 +173,61 @@ protected $smwUserMessages = array(
 	'smw_result_noresults' => 'Sorry, geen resultaten.'
 );
 
-protected $smwDatatypeLabels = array(
-	'smw_wikipage' => 'Pagina', // name of page datatype
-	'smw_string' => 'String',  // name of the string type
-	'smw_text' => 'Tekst',  // name of the text type
-	'smw_enum' => 'Opsomming',  // name of the enum type
-	'smw_bool' => 'Booleans',  // name of the boolean type
-	'smw_int' => 'Integer',  // name of the int type
-	'smw_float' => 'Float',  // name of the floating point type
-	'smw_geocoordinate' => 'Geographische coordinaat', // name of the geocoord type
-	'smw_temperature' => 'Temperatuur',  // name of the temperature type
-	'smw_datetime' => 'Datum',  // name of the datetime (calendar) type
-	'smw_email' => 'E-mail',  // name of the email (URI) type
-	'smw_url' => 'URL',  // name of the URL type (string datatype property)
-	'smw_uri' => 'URI',  // name of the URI type (object property)
-	'smw_annouri' => 'Annotatie URI'  // name of the annotation URI type (annotation property)
+protected $m_DatatypeLabels = array(
+	'_wpg' => 'Pagina', // name of page datatype
+	'_str' => 'String',  // name of the string type
+	'_txt' => 'Tekst',  // name of the text type
+	'_enu' => 'Opsomming',  // name of the enum type
+	'_boo' => 'Booleans',  // name of the boolean type
+	'_int' => 'Integer',  // name of the int type
+	'_flt' => 'Float',  // name of the floating point type
+	'_geo' => 'Geographische coordinaat', // name of the geocoord type
+	'_tem' => 'Temperatuur',  // name of the temperature type
+	'_dat' => 'Datum',  // name of the datetime (calendar) type
+	'_ema' => 'E-mail',  // name of the email (URI) type
+	'_url' => 'URL',  // name of the URL type (string datatype property)
+	'_uri' => 'URI',  // name of the URI type (object property)
+	'_anu' => 'Annotatie URI'  // name of the annotation URI type (annotation property)
 );
 
+protected $m_DatatypeAliases = array(
+	// support English aliases:
+	'Page'                  => '_wpg',
+	'String'                => '_str',
+	'Text'                  => '_txt',
+	'Integer'               => '_int',
+	'Float'                 => '_flt',
+	'Geographic coordinate' => '_geo',
+	'Temperature'           => '_tem',
+	'Date'                  => '_dat',
+	'Email'                 => '_ema',
+	'Annotation URI'        => '_anu'
+);
+
+protected $smwSpecialProperties = array(
+	//always start upper-case
+	SMW_SP_HAS_TYPE  => 'Heeft type',
+	SMW_SP_HAS_URI   => 'Equivalent URI',
+	SMW_SP_SUBPROPERTY_OF => 'Subeigenschap van',
+	SMW_SP_MAIN_DISPLAY_UNIT => 'Main display unit',
+	SMW_SP_DISPLAY_UNIT => 'Display unit',
+	SMW_SP_IMPORTED_FROM => 'Geïmporteerd van',
+	SMW_SP_CONVERSION_FACTOR => 'Komt overeen met',
+	SMW_SP_SERVICE_LINK => 'Verleent dienst',
+	SMW_SP_POSSIBLE_VALUE => 'Geldige waarde'
+);
+
+	/**
+	 * Function that returns the namespace identifiers.
+	 */
+	public function getNamespaceArray() {
+		return array(
+			SMW_NS_RELATION       => 'Relatie',
+			SMW_NS_RELATION_TALK  => 'Overleg_relatie',
+			SMW_NS_PROPERTY       => 'Eigenschap',
+			SMW_NS_PROPERTY_TALK  => 'Overleg_eigenschap',
+			SMW_NS_TYPE           => 'Type',
+			SMW_NS_TYPE_TALK      => 'Overleg_type'
+		);
+	}
 }
