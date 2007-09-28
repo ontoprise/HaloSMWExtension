@@ -39,7 +39,7 @@ function enableSMWHalo() {
  * Called from SMW during initialization.
  */
 function smwgHaloSetupExtension() {
-	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore;
+	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList;
 
 	$smwgMasterGeneralStore = NULL;
@@ -48,7 +48,9 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes'; 
-
+	
+	$wgFileExtensions[] = 'owl';
+	
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
 

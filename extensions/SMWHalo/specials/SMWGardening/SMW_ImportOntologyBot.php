@@ -41,7 +41,7 @@
  	 * Returns an array mapping parameter IDs to parameter objects
  	 */
  	public function createParameters() {
- 		$param1 = new GardeningParamFile('GARD_IO_FILENAME', wfMsg('smw_gard_import_locationowl'), SMW_GARD_PARAM_REQUIRED);
+ 		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', wfMsg('smw_gard_import_locationowl'), SMW_GARD_PARAM_REQUIRED);
  		return array($param1);
  	}
  	
@@ -55,8 +55,8 @@
  		if (!$isAsync) {
  			return 'Import ontology bot should not be started synchronously!';
  		}
- 		
- 		$fileLocation = urldecode($paramArray['GARD_IO_FILENAME']);
+ 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
+ 		$fileLocation = wfImageDir($fileName)."/".$fileName;
  		
  		// initialize RAP
  		echo "\nTry to include RAP RDF-API...";

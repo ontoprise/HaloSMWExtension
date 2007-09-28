@@ -182,6 +182,60 @@
  		return $html;
  	}
  }
+ 
+ 
+ class GardeningParamFileList extends GardeningParameterObject {
+ 	protected $selection;
+ 	
+ 	
+ 	public function GardeningParamFileList($ID, $label, $options, $defaultSelection = -1) {
+ 		parent::GardeningParameterObject($ID, $label, $options);
+ 		$this->selection = $defaultSelection; // no selection by default
+ 	}
+ 	 	
+ 	public function validate($value) {
+ 		
+ 		$file = wfImageDir($value);
+ 		$valid = file_exists($file) || ($this->options & SMW_GARD_PARAM_REQUIRED) == 0;
+ 		if (!$valid) {
+ 			return wfMsg('smw_gard_missing_parameter');
+ 		} 
+ 		return true;
+ 	}
+ 	
+ 	public function serializeAsHTML() {
+ 		$html = "<span id=\"parentOf_".$this->ID."\">".$this->getUploadedOWLFilesAsHTML()."</span>";
+ 		$html .= "<span id=\"errorOf_".$this->ID."\" class=\"errorText\"></span>";
+ 		return $html;
+ 	}
+ 	
+ 	private function getUploadedOWLFilesAsHTML() {
+ 		$db =& wfGetDB( DB_MASTER );
+		$fname = 'getUploadedOWLFiles';
+		$res = $db->select( $db->tableName('image'),
+		             array('img_name'), array('img_name LIKE '. $db->addQuotes('%.owl') ),
+		             $fname, null );
+		$result = array();
+		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{
+				$result[]= $row->img_name;
+				$row = $db->fetchObject($res);
+			}
+		}
+		$htmlResult = '<table border="0" cellspacing="0" cellpadding="0">';
+		for($i = 0, $n = count($result); $i < $n; $i++) {
+			$htmlResult .= '<tr><td><input type="radio" name="'.$this->ID.'" value="'.$result[$i].'" '.($this->selection == $i ? "checked=\"checked\"" : "").'/></td>';
+			$htmlResult .= '<td>'.$result[$i].'</td>';
+			$htmlResult .= '</tr>';
+		}
+		$db->freeResult($res);
+		$htmlResult .= '</table>';
+		return $htmlResult;
+ 	}
+ }
   
  class GardeningParamBoolean extends GardeningParameterObject {
  	protected $defaultChecked;
