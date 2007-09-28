@@ -186,7 +186,7 @@
  				$resultHTML .= "<tr>";
  				
  					// show page link
- 					$pageTitleEscaped = urlencode($page->getText()); 
+ 					$pageTitleEscaped = urlencode($page->getDBkey()); 
  					$resultHTML .= "<td><img src=\"".CombinedSearchHelper::getImageReference($page)."\"></td>";
  					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEntity('".$pageTitleEscaped."', '$ns')\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
  					
