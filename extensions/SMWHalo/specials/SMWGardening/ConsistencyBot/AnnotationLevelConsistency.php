@@ -77,6 +77,9 @@ require_once("ConsistencyHelper.php");
  			// iterate over all property subjects
  			foreach($allRelationSubjects as $subject) { 
  				
+ 				if ($subject == null) {
+ 					continue;
+ 				}
  				// get property value for a given instance
  				$relationTargets = smwfGetStore()->getPropertyValues($subject, $r);
  				foreach($relationTargets as $target) {
@@ -209,6 +212,11 @@ require_once("ConsistencyHelper.php");
  			
  			$allAttributeSubjects = smwfGetStore()->getAllPropertySubjects($a);
  			foreach($allAttributeSubjects as $subject) {
+ 				
+ 				if ($subject == null) {
+ 					continue;
+ 				}
+ 				
  				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
  				$num = count($allAttributeForSubject);
  				
