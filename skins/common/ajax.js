@@ -15,7 +15,7 @@ AjaxRequestManager.prototype = {
 	 * DO NOT CALL MANUALLY
 	 */
 	addCall: function(xmlHttp, type) {
-		var i = type == undefined ? SMW_AJAX_GENERAL : type;
+		var i = type == undefined ? 0 : type;
 		if (this.calls[i] == undefined) {
 			this.calls[i] = new Array();
 		}
@@ -27,7 +27,7 @@ AjaxRequestManager.prototype = {
 	 * DO NOT CALL MANUALLY
 	 */
 	removeCall: function(xmlHttp, type) {
-		var i = type == undefined ? SMW_AJAX_GENERAL : type;
+		var i = type == undefined ? 0 : type;
 		if (this.calls[i] == undefined) return;
 		for(var j = 0, n=this.calls[i].length; j < n; j++) {
 			var index = this.calls[i].indexOf(xmlHttp);
@@ -43,7 +43,7 @@ AjaxRequestManager.prototype = {
 	 * @param callback function (optional)
 	 */
 	stopCalls: function(type, callback) {
-		var i = type == undefined ? SMW_AJAX_GENERAL : type;
+		var i = type == undefined ? 0 : type;
 		if (this.calls[i] == undefined) return;
 		for(var j = 0, n=this.calls[i].length; j < n; j++) {
 				if (this.calls[i][j]) { 
@@ -135,7 +135,7 @@ function sajax_do_call(func_name, args, target, type) {
 	var i, x, n;
 	var uri;
 	var post_data;
-	type == undefined ? SMW_AJAX_GENERAL : type // undefined is GENERAL call
+	type == undefined ? 0 : type // undefined is GENERAL call
 	uri = wgServer + wgScriptPath + "/index.php?action=ajax";
 	if (sajax_request_type == "GET") {
 		if (uri.indexOf("?") == -1)
@@ -174,7 +174,7 @@ function sajax_do_call(func_name, args, target, type) {
 	x.onreadystatechange = function() {
 		
 		//KK: remove call from manager. do not remove if GENERAL call.
-		if (type != SMW_AJAX_GENERAL) ajaxRequestManager.removeCall(x, type); 
+		if (type != 0) ajaxRequestManager.removeCall(x, type); 
 		if (x.readyState != 4)
 			return;
 		
@@ -216,7 +216,7 @@ function sajax_do_call(func_name, args, target, type) {
 	sajax_debug(func_name + " uri = " + uri + " / post = " + post_data);
 	x.send(post_data);
 	//KK: add call from manager. do not add if GENERAL call.
-	if (type != SMW_AJAX_GENERAL) ajaxRequestManager.addCall(x, type); 
+	if (type != 0) ajaxRequestManager.addCall(x, type); 
 	sajax_debug(func_name + " waiting..");
 	delete x; // KK: why? x can not be removed here, isn't it?
 
