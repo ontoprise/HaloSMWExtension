@@ -47,6 +47,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
+	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes'; 
 
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
@@ -88,8 +89,7 @@ function smwgHaloSetupExtension() {
 
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-
-	smwfHaloInitDatatypes();
+	
 	return true;
 }
 
@@ -97,6 +97,14 @@ function smwgHaloSetupExtension() {
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
 function smwfHaloInitDatatypes() {
+	global $wgAutoloadClasses, $smwgHaloIP;
+	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
+	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler', 'Chemical formula');
+	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
+	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler', 'Chemical equation');
+	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
+	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler', 'Mathematical equation');
+	
 //	global $smwgHaloContLang, $smwgIP;
 //	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 //	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');

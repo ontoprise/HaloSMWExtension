@@ -313,26 +313,6 @@ clicking the big arrows between the columns.',
 	'smw_qi_exportXLS' => 'Export results to Excel'
 );
 
-protected $smwDatatypeLabels = array(
-	'smw_wikipage' => 'Page', // name of page datatype
-	'smw_string' => 'String',  // name of the string type
-	'smw_text' => 'Text',  // name of the text type
-	'smw_enum' => 'Enumeration',  // name of the enum type
-	'smw_bool' => 'Boolean',  // name of the boolean type
-	'smw_int' => 'Integer',  // name of the int type
-	'smw_float' => 'Float',  // name of the floating point type
-	'smw_geocoordinate' => 'Geographic coordinate', // name of the geocoord type
-	'smw_temperature' => 'Temperature',  // name of the temperature type
-	'smw_datetime' => 'Date',  // name of the datetime (calendar) type
-	'smw_email' => 'Email',  // name of the email (URI) type
-	'smw_url' => 'URL',  // name of the URL type (string datatype property)
-	'smw_uri' => 'URI',  // name of the URI type (object property)
-	'smw_annouri' => 'Annotation URI',  // name of the annotation URI type (annotation property)
-	'smw_chemicalformula' => 'Chemical formula', // name of the type for chemical formulas
-	'smw_chemicalequation' => 'Chemical equation', // name of the type for chemical equations
-	'smw_mathematicalequation' => 'Mathematical equation' // name of the type for mathematical equations
-
-);
 
 protected $smwSpecialProperties = array(
 	//always start upper-case

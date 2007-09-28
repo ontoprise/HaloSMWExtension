@@ -269,27 +269,6 @@ protected $smwUserMessages = array(
 
 );
 
-protected $smwDatatypeLabels = array(
-	'smw_wikipage' => 'Seite', // name of page datatype
-	'smw_string' => 'Zeichenkette',  // name of the string type
-	'smw_text' => 'Text',  // name of the text type
-	'smw_enum' => 'Aufzählung',  // name of the enum type
-	'smw_bool' => 'Wahrheitswert',  // name of the boolean type
-	'smw_int' => 'Ganze Zahl',  // name of the int type
-	'smw_float' => 'Dezimalzahl',  // name of the floating point type
-	'smw_geocoordinate' => 'Geografische Koordinaten', // name of the geocoord type
-	'smw_temperature' => 'Temperatur',  // name of the temperature type
-	'smw_datetime' => 'Datum',  // name of the datetime (calendar) type
-	'smw_email' => 'Email',  // name of the email (URI) type
-	'smw_url' => 'URL',  // name of the URL type (string datatype property)
-	'smw_uri' => 'URI',  // name of the URI type (object property)
-	'smw_annouri' => 'URI-Annotation',  // name of the annotation URI type (annotation property)
-	'smw_chemicalformula' => 'Chemical formula', // name of the type for chemical formulas
-	'smw_chemicalequation' => 'Chemical equation', // name of the type for chemical equations
-	'smw_mathematicalequation' => 'Mathematical equation' // name of the type for mathematical equations
-	
-);
-
 protected $smwSpecialProperties = array(
 	//always start upper-case
 	SMW_SP_CONVERSION_FACTOR_SI => 'Entspricht SI'

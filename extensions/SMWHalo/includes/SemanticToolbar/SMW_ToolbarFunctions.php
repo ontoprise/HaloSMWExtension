@@ -352,11 +352,11 @@ function smwgGetDatatypeSelector($articleId){
  * This function returns a comma separated list of all builtin data types
  */
 function smwfGetBuiltinDatatypes(){
-	global $smwgIP, $smwgHaloContLang;
-	include_once($smwgIP . '/includes/SMW_Datatype.php');
+	global $smwgIP;
+	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$result = "Builtin types:";
 
-	$types = $smwgHaloContLang->getAllDatatypeLabels();
+	$types = SMWDataValueFactory::getKnownTypeLabels();
 	asort($types);
 	foreach($types as $key => $type){
 		$result .= ",".$type;
@@ -370,7 +370,8 @@ function smwfGetBuiltinDatatypes(){
  */
 function smwfGetUserDatatypes(){
 	global $smwgIP;
-	include_once($smwgIP . '/includes/SMW_Datatype.php');
+//	include_once($smwgIP . '/includes/SMW_Datatype.php');
+	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$result = "User defined types:";
 
 	$db =& wfGetDB( DB_MASTER );
@@ -389,7 +390,7 @@ function smwfGetUserDatatypes(){
 
 	// Builtin types may appear in the list of user types (if there is an
 	// article for them). They have to be removed from the user types
-	$builtinTypes = SMWTypeHandlerFactory::getTypeLabels();
+	$builtinTypes = SMWDataValueFactory::getKnownTypeLabels();
 
 	$userTypes = array();
 
