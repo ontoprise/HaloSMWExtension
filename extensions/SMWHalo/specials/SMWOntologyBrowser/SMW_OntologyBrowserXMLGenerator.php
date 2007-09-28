@@ -204,7 +204,7 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$parameters = "";
 			foreach($smwValue->getDVs() as $params) {
 				
-				if ($params->getTypeID() == 'chemicalequation' || $params->getTypeID() == 'chemicalformula') {
+				if ($params->getTypeID() == 'Chemical_equation' || $params->getTypeID() == 'Chemical_formula') {
 					$isFormula = true;
 					$formulaAsHTML = SMWOntologyBrowserXMLGenerator::getChemicalFormulaOrEquationAsHTML($params->getXSDValue(), $chemistryParser);
 					$value = "<![CDATA[".($formulaAsHTML)."]]>";
@@ -230,7 +230,7 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
 			
 		} else { // normal attribute
-			if ($smwValue->getTypeID() == 'chemicalequation' || $smwValue->getTypeID() == 'chemicalformula') {
+			if ($smwValue->getTypeID() == 'Chemical_equation' || $smwValue->getTypeID() == 'Chemical_formula') {
 				$isFormula = true;
 				$formulaAsHTML = SMWOntologyBrowserXMLGenerator::getChemicalFormulaOrEquationAsHTML($smwValue->getXSDValue(), $chemistryParser);
 				$value = "<![CDATA[".($formulaAsHTML)."]]>";
