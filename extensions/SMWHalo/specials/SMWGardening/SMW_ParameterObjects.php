@@ -177,7 +177,7 @@
  	public function serializeAsHTML() {
  		$html = "<span id=\"parentOf_".$this->ID."\"><br>".$this->label;
  		$html .= ($this->options & SMW_GARD_PARAM_REQUIRED != 0) ? "*" : "";
- 		$html .= ": <input type=\"file\" name=\"".$this->ID."\" $cssClass size=\"50\"/></span>";
+ 		$html .= ": <input type=\"file\" name=\"".$this->ID."\" size=\"50\"/></span>";
  		$html .= "<span id=\"errorOf_".$this->ID."\" class=\"errorText\"></span>";
  		return $html;
  	}
