@@ -24,9 +24,9 @@ class SMW_OntologyBrowser extends SpecialPage {
 		parent::__construct('OntologyBrowser');
 	}
 	public function execute() {
-		global $wgRequest, $wgOut, $smwgIQEnabled, $smwgIQMaxLimit, $wgUser, $smwgIQSortingEnabled, $wgScriptPath, $smwhgLogger;
-		$skin = $wgUser->getSkin();
-
+		global $wgRequest, $wgOut, $wgScriptPath;
+		//$skin = $wgUser->getSkin();
+		$wgOut->setPageTitle(wfMsg('ontologybrowser'));
 		/*STARTLOG*/
 		if ($wgRequest->getVal('src') == 'toolbar') { 
     			smwLog("","OB","opened_from_menu");

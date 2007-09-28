@@ -26,8 +26,8 @@ class SMW_Gardening extends SpecialPage {
 	}
 	
 	public function execute() {
-		global $wgRequest, $wgOut, $smwgIQEnabled, $smwgIQMaxLimit, $wgUser, $smwgIQSortingEnabled;
-		$skin = $wgUser->getSkin();
+		global $wgRequest, $wgOut;
+		$wgOut->setPageTitle(wfMsg('gardening'));
 		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('smw_gard_welcome')."</div>";
 		$html .= "<div id=\"gardening-container\">" .
 					"<div id=\"gardening-tools\">" . smwfGetRegisteredBots() .
