@@ -395,6 +395,8 @@ class SMWQueryParser {
 				return $this->getPropertyDescription($chunk, $setNS, $label);
 			} elseif ($sep == ':=') { // attribute statement
 				return $this->getPropertyDescription($chunk, $setNS, $label);
+			} elseif (preg_match('/(:~+)/', $sep) ) { // close string matches...
+				return $this->getPropertyDescription($chunk, $setNS, $label);
 			} else { // Fixed article/namespace restriction. $sep should be ]] or ||
 				return $this->getArticleDescription($chunk, $setNS, $label);
 			}
@@ -458,7 +460,11 @@ class SMWQueryParser {
 	protected function getPropertyDescription($propertyname, &$setNS, &$label) {
 		global $smwgIP;
 		include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-		$this->readChunk(); // consume seperator ":="
+		$sep = $this->readChunk(); // consume seperator ":="
+    	if (preg_match('/(:~+)/', $sep)) {
+			$tolerance = strlen($sep)-1;
+			$comparator = SMW_CMP_CLS;
+    	}
 		$property = Title::newFromText($propertyname, SMW_NS_PROPERTY);
 		if ($property === NULL) {
 			$this->m_errors[] .= wfMsgForContent('smw_badtitle', htmlspecialchars($propertyname));
@@ -573,6 +579,14 @@ class SMWQueryParser {
 							if (!$dv->isValid()) {
 								$this->m_errors = $this->m_errors + $dv->getErrors();
 								$vd = new SMWThingDescription();
+							} elseif (isset($tolerance) && $tolerance > 0) {
+								if (smwfGetStore()->supportsFunction('editdistance')) {
+									$comparator = SMW_CMP_CLS;
+									$vd = new SMWNearValueDescription($dv, $tolerance);
+								} else {
+									$this->m_errors[] = 'database does not support function: EDITDISTANCE'; //TODO: internationalise
+									return NULL;
+								}
 							} else {
 								$vd = new SMWValueDescription($dv, $comparator);
 							}

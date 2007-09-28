@@ -11,6 +11,7 @@ define('SMW_CMP_EQ',1); // matches only datavalues that are equal to the given v
 define('SMW_CMP_LEQ',2); // matches only datavalues that are less or equal than the given value
 define('SMW_CMP_GEQ',3); // matches only datavalues that are greater or equal to the given value
 define('SMW_CMP_NEQ',4); // matches only datavalues that are unequal to the given value
+define('SMW_CMP_CLS',5); // unsharp matches.
 
 // print request
 define('SMW_PRINT_CATS', 0);  // print all direct cateories of the current element
@@ -42,7 +43,7 @@ class SMWPrintRequest {
 		$this->m_title = $title;
 		$this->m_outputformat = $outputformat;
 	}
-	
+
 	public function getMode() {
 		return $this->m_mode;
 	}
@@ -65,7 +66,7 @@ class SMWPrintRequest {
 			case SMW_PRINT_PROP: return $linker->makeLinkObj($this->m_title, htmlspecialchars($this->m_label));
 			case SMW_PRINT_THIS: default: return htmlspecialchars($this->m_label);
 		}
-		
+
 	}
 
 	/**
@@ -82,7 +83,7 @@ class SMWPrintRequest {
 				case SMW_PRINT_THIS: default: return $this->m_label;
 			}
 		}
-		
+
 	}
 
 	public function getTitle() {
@@ -206,8 +207,8 @@ abstract class SMWDescription {
 /**
  * A dummy description that describes any object. Corresponds to
  * owl:thing, the class of all abstract objects. Note that it is
- * not used for datavalues of attributes in order to support type 
- * hinting in the API: descriptions of data are always 
+ * not used for datavalues of attributes in order to support type
+ * hinting in the API: descriptions of data are always
  * SMWValueDescription objects.
  */
 class SMWThingDescription extends SMWDescription {
@@ -230,7 +231,7 @@ class SMWThingDescription extends SMWDescription {
 
 /**
  * Description of a single class, i.e. a wiki category, or of a disjunction
- * of such classes. Corresponds to (disjunctions of) atomic concepts in OWL and 
+ * of such classes. Corresponds to (disjunctions of) atomic concepts in OWL and
  * to (unions of) classes in RDF.
  */
 class SMWClassDescription extends SMWDescription {
@@ -298,6 +299,51 @@ class SMWClassDescription extends SMWDescription {
 }
 
 /**
+ * class representing unsharp matches ov datavalues. The amount of "unsharpness" is held in the
+ * $m_tolerance variable and is set when calling the constructor.
+ */
+
+class SMWNearValueDescription extends SMWDescription {
+	protected $m_datavalue;
+	protected $m_comparator;
+	protected $m_tolerance;
+
+	public function SMWNearValueDescription(SMWDataValue $datavalue, $tolerance) {
+		$this->m_datavalue = $datavalue;
+		$this->m_tolerance = $tolerance;
+		$this->m_comparator = SMW_CMP_CLS;		// fixed comparator
+	}
+
+	public function getDataValue() {
+		return $this->m_datavalue;
+	}
+
+	public function getTolerance() {
+		return $this->m_tolerance;
+	}
+
+	public function getComparator() {
+		return $this->m_comparator;
+	}
+
+	public function getQueryString() {
+		if ($this->m_datavalue !== NULL) {
+			return '~' . $this->m_datavalue->getWikiValue();
+		} else {
+			return '+';
+		}
+	}
+
+	public function isSingleton() {
+		return false;
+	}
+
+	public function getSize() {
+		return 1;
+	}
+}
+
+/**
  * Description of all pages within a given wiki namespace,
  * given by a numerical constant.
  * Corresponds to a class restriction with a special class
@@ -329,10 +375,10 @@ class SMWNamespaceDescription extends SMWDescription {
 /**
  * Description of one data value, or of a range of data values.
  *
- * Technically this usually corresponds to nominal predicates or to unary 
- * concrete domain predicates in OWL which are parametrised by one constant 
+ * Technically this usually corresponds to nominal predicates or to unary
+ * concrete domain predicates in OWL which are parametrised by one constant
  * from the concrete domain.
- * In RDF, concrete domain predicates that define ranges (like "greater or 
+ * In RDF, concrete domain predicates that define ranges (like "greater or
  * equal to") are not directly available.
  */
 class SMWValueDescription extends SMWDescription {
@@ -361,10 +407,13 @@ class SMWValueDescription extends SMWDescription {
 				case SMW_CMP_GEQ:
 					$comparator = '>';
 				break;
-				case SMW_CMP_NEQ: 
+				case SMW_CMP_NEQ:
 					$comparator = '!'; // not supported yet?
 				break;
-				default: case SMW_CMP_EQ: 
+				case SMW_CMP_CLS:
+					$comparator = 'cls'; //TODO (save actual tolerance in variabel!)
+				break;
+				default: case SMW_CMP_EQ:
 					$comparator = '';
 				break;
 			}
@@ -381,7 +430,7 @@ class SMWValueDescription extends SMWDescription {
 			return false;
 		}
 	}
-	
+
 	public function getSize() {
 		return 1;
 	}
@@ -391,8 +440,8 @@ class SMWValueDescription extends SMWDescription {
 
 /**
  * Description of an ordered list of SMWDescription objects, used as
- * values for some n-ary property. NULL values are to be used for 
- * unspecifed values. Corresponds to the built-in support for n-ary 
+ * values for some n-ary property. NULL values are to be used for
+ * unspecifed values. Corresponds to the built-in support for n-ary
  * properties, i.e. can be viewed as a macro in OWL and RDF.
  */
 class SMWValueList extends SMWDescription {
@@ -714,7 +763,7 @@ class SMWDisjunction extends SMWDescription {
  * fits another (sub)description.
  *
  * Corresponds to existential quatification ("some" restriction) on concrete properties
- * in OWL. In conjunctive queries (OWL) and SPARQL (RDF), it is represented by using 
+ * in OWL. In conjunctive queries (OWL) and SPARQL (RDF), it is represented by using
  * variables in the object part of such properties.
  */
 class SMWSomeProperty extends SMWDescription {

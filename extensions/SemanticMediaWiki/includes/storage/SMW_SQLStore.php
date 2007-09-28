@@ -1575,6 +1575,23 @@ class SMWSQLStore extends SMWStore {
 			} elseif ($table = $this->addJoin('PAGE', $from, $db, $curtables, $nary_pos)) {
 				$where .=  $table . '.page_namespace=' . $db->addQuotes($description->getNamespace());
 			}
+		} elseif ($description instanceof SMWNearValueDescription) {
+			// handle near matches appropriately!
+			if ($table = $this->addJoin('pATTS', $from, $db, $curtables, $nary_pos)) {
+				if ($description->getDatavalue()->isNumeric()) {
+					$valuefield = 'value_num';
+					$value = $description->getDatavalue()->getNumericValue();
+					$tolerance = ceil(($value)*$description->getTolerance()*5/100);
+					$where = $table . '.' . $valuefield . '>=' .  ($value-$tolerance) . " AND " . $table . '.' . $valuefield . '<=' . ($value+$tolerance);
+				} else {
+					$valuefield = 'value_xsd';
+					$value = $description->getDatavalue()->getXSDValue();
+					$where = "EDITDISTANCE(UPPER(". $table . '.' .  $valuefield ."),UPPER('" . $value . "'))<=" . $description->getTolerance();
+				}
+//				if ($sort != '') {
+//					$this->m_sortfield = $table . '.' . $valuefield;
+//				}
+			}
 		} elseif ($description instanceof SMWValueDescription) {
 			switch ($description->getDatavalue()->getTypeID()) {
 				case '_txt': // possibly pull in longstring table (for naries)
