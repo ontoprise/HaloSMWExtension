@@ -59,6 +59,14 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		}
 		if ($this->special_prop === false) {
 			$this->articles = $store->getAllPropertySubjects($this->mTitle, $options);
+			// The array may contain <null>-values => remove them
+			foreach ($this->articles as $key => $title) {
+				if (!$title) {
+					unset($this->articles[$key]); 
+				}
+			}
+			$this->articles = array_values($this->articles);
+			
 		} else {
 			// For now, do not attempt listings for special properties:
 			// they behave differently, have dedicated search UIs, and
