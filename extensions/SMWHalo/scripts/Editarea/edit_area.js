@@ -72,6 +72,8 @@
 			//HALO VERSION
 
 			var height= document.body.offsetHeight - editArea.get_all_toolbar_height() - 4;
+			if(height < 0)
+				height = 10;
 			editArea.result.style.height= height +"px";
 
 			var width = 0;
@@ -80,7 +82,8 @@
 				width = parent.document.body.scrollWidth - toolbarwidth - 250;
 			else
 				width = parent.document.body.scrollWidth - toolbarwidth - 270;
-
+			if(width < 0)
+				width = 10;
 			document.getElementById("editor").style.width = width+"px";
 			parent.document.getElementById("frame_wpTextbox1").style.width = (width+2)+"px";
 
@@ -90,7 +93,11 @@
 			for(var i=0; i<editArea.inlinePopup.length; i++){
 				var popup= document.getElementById(editArea.inlinePopup[i]["popup_id"]);
 				var max_left= document.body.offsetWidth- popup.offsetWidth;
+				if(max_left < 0)
+					max_left = 0;
 				var max_top= document.body.offsetHeight- popup.offsetHeight;
+				if(max_top < 0)
+					max_top = 0;
 				if(popup.offsetTop>max_top)
 					popup.style.top= max_top+"px";
 				if(popup.offsetLeft>max_left)
