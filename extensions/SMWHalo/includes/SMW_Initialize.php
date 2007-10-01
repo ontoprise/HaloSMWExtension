@@ -47,10 +47,10 @@ function smwgHaloSetupExtension() {
 	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
-	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes'; 
-	
+	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
+
 	$wgFileExtensions[] = 'owl';
-	
+
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
 
@@ -78,6 +78,7 @@ function smwgHaloSetupExtension() {
 	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
 	// Global functions and AJAX calls
+	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
 	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
@@ -91,7 +92,7 @@ function smwgHaloSetupExtension() {
 
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-	
+
 	return true;
 }
 
@@ -109,7 +110,7 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
-	
+
 //	global $smwgHaloContLang, $smwgIP;
 //	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 //	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
