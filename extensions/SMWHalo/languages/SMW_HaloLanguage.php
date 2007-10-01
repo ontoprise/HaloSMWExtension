@@ -14,6 +14,7 @@ abstract class SMW_HaloLanguage {
 	protected $smwDatatypeLabels;
 	protected $smwSpecialProperties;
 	protected $smwSpecialSchemaProperties;
+	protected $smwHaloDatatypes;
 
 	/**
 	 * Function that returns an array of namespace identifiers.
@@ -52,6 +53,9 @@ abstract class SMW_HaloLanguage {
 		return $this->smwSpecialCategories;
 	}
 	
+	function getHaloDatatype($datatypeID) {
+		return $this->smwHaloDatatypes[$datatypeID];
+	}
 
 	/**
 	 * Function that returns all content messages (those that are stored

@@ -285,8 +285,15 @@ var $smwSpecialSchemaProperties = array (
 	);
 
 var $smwSpecialCategories = array (
-		SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
-		SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
+	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+);
+
+
+var $smwHaloDatatypes = array(
+	'smw_hdt_chemical_formula' => 'Chemische Formel',
+	'smw_hdt_chemical_equation' => 'Chemische Gleichung',
+	'smw_hdt_mathematical_equation' => 'Mathematische Gleichung',
 );
 
 	/**

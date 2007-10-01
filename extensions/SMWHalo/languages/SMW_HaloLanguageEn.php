@@ -328,10 +328,16 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
 	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
 	);
-
+	
 var $smwSpecialCategories = array (
-		SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
-		SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
+	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+);
+
+var $smwHaloDatatypes = array(
+	'smw_hdt_chemical_formula' => 'Chemical formula',
+	'smw_hdt_chemical_equation' => 'Chemical equation',
+	'smw_hdt_mathematical_equation' => 'Mathematical equation',
 );
 
 	/**
