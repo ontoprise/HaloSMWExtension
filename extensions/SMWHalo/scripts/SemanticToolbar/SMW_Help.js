@@ -5,7 +5,7 @@ var initHelp = function(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	sajax_do_call('smwfGetHelp', [ns , wgAction], displayHelp);
+	sajax_do_call('smwfGetHelp', [ns , wgAction], displayHelp.bind(this));
 }
 
 function smw_help_callme(){
@@ -34,10 +34,11 @@ function askQuestion(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm);
+	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
 }
 
 function hideQuestionForm(request){
+	initHelp();
 	$('questionLoaderIcon').hide();
 	$('askHelp').hide();
 	alert(request.responseText);
