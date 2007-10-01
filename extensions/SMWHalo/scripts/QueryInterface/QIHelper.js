@@ -469,6 +469,7 @@ adaptDialogueToProperty:function(request){
 		if (arity == 2){
 		// Speical treatment: binary properties support conjunction, therefore we need an "add" button
 			$('mainlabel').innerHTML = parameterNames[0];
+			$('dialoguecontent').rows[2].cells[2].innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input2"/>';
 			if (parameterIsNumeric[0]){
 				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
 				autoCompleter.deregisterAllInputs();
