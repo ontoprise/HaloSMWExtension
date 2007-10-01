@@ -26,7 +26,7 @@ function smwfQIAccess($method, $params) {
 		if (count($type) == 0) {
 			// return binary schema (arity = 2)
 			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-							'<param name="Page" isNumeric="false"/>'.
+							'<param name="Page"/>'.
 	           	  		 '</relationSchema>';
 		} else {
 			$typeLabels = $type[0]->getTypeLabels();
@@ -41,7 +41,7 @@ function smwfQIAccess($method, $params) {
 		   			$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
 		   			$isNum = $th->isNumeric()?"true":"false";
 		   			$pvalues = SMWTypeHandlerFactory::getPossibleValues($relationName);
-		   			$relSchema .= '<param name="'.$typeLabels[$i].'" isNumeric="' . $isNum . '">';
+		   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
 		   			for($j = 0; $j < sizeof($pvalues); $j++){
 		   				$relSchema .= '<allowedValue value="' . $pvalues[$j] . '"/>';
 		   			}
@@ -51,7 +51,7 @@ function smwfQIAccess($method, $params) {
 
 			} else { // this should never happen, huh?
 			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-							'<param name="Page" isNumeric="false"/>'.
+							'<param name="Page"/>'.
 	           	  		 '</relationSchema>';
 			}
 		}
@@ -59,13 +59,13 @@ function smwfQIAccess($method, $params) {
 	}
 
 	else if($method == "getNumericTypes"){
-		$types = SMWTypeHandlerFactory::getTypeLabels();
 		$numtypes = array();
-		foreach($types as $name){
-			$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($name);
-			if ($th->isNumeric()){
-				array_push($numtypes, strtolower($name));
-			}
+
+		$types = SMWDataValueFactory::getKnownTypeLabels();
+		foreach($types as $v){
+			$id = SMWDataValueFactory::findTypeID($v);
+			if(SMWDataValueFactory::newTypeIDValue($id)->isNumeric())
+				array_push($numtypes, strtolower($v));
 		}
 		return implode(",", $numtypes);
 	}

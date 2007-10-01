@@ -97,12 +97,21 @@ doReset:function(){
 	$('shade').style.display="none";
 	$('resetdialogue').style.display="none";
 },
+/*
+previewQuery:function(){
+	sajax_do_call('smwfQIAccess', ["debug", "Testint"], this.doDebug.bind(this));
+},
+
+doDebug:function(request){
+	alert(request.responseText);
+},*/
 
 /**
 * Gets all display parameters and the full ask syntax to perform an ajax call
 * which will create the preview
 */
 previewQuery:function(){
+
 	/*STARTLOG*/
 	if(window.smwhgLogger){
 	    smwhgLogger.log("Preview Query","info","query_preview");
@@ -446,7 +455,6 @@ adaptDialogueToProperty:function(request){
 		var arity = 2;
 		this.proparity = 2;
 		var parameterNames = [gLanguage.getMessage('QI_PAGE')];
-		var parameterIsNumeric = [false];
 		var possibleValues = new Array();
 
 		if (request.status == 200) {
@@ -456,11 +464,9 @@ adaptDialogueToProperty:function(request){
 			arity = parseInt(schemaData.documentElement.getAttribute("arity"));
 			this.proparity = arity;
 			parameterNames = [];
-			parameterIsNumeric = [];
 			//parse all parameter names
 			for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
 				parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
-				parameterIsNumeric.push(schemaData.documentElement.childNodes[i].getAttribute("isNumeric")=="true"?true:false);
 				for (var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j<m; j++){
 					possibleValues.push(schemaData.documentElement.childNodes[i].childNodes[j].getAttribute("value")); //contains allowed values for enumerations if applicable
 				}
@@ -470,7 +476,7 @@ adaptDialogueToProperty:function(request){
 		// Speical treatment: binary properties support conjunction, therefore we need an "add" button
 			$('mainlabel').innerHTML = parameterNames[0];
 			$('dialoguecontent').rows[2].cells[2].innerHTML = '<input class="wickEnabled general-forms" typehint="0" autocomplete="OFF" type="text" id="input2"/>';
-			if (parameterIsNumeric[0]){
+			if(this.numTypes[parameterNames[0].toLowerCase()]){
 				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
 				autoCompleter.deregisterAllInputs();
 				$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
@@ -517,7 +523,7 @@ adaptDialogueToProperty:function(request){
 			$('dialoguecontent').rows[2].cells[4].innerHTML = "";
 			$('dialoguecontent').rows[2].cells[4].className = "";
 			$('mainlabel').innerHTML = parameterNames[0];
-			if (parameterIsNumeric[0]){
+			if(this.numTypes[parameterNames[0].toLowerCase()]){
 				$('restricionSelector').innerHTML = this.createRestrictionSelector("=", false);
 				autoCompleter.deregisterAllInputs();
 				$('dialoguecontent').rows[2].cells[2].firstChild.className = "";
@@ -531,7 +537,7 @@ adaptDialogueToProperty:function(request){
 				var cell = newrow.insertCell(0);
 				cell.innerHTML = parameterNames[i]; // Label of cell is parameter name (ex.: Integer, Date,...)
 				cell = newrow.insertCell(1);
-				if (parameterIsNumeric[i])
+				if(this.numTypes[parameterNames[i].toLowerCase()])
 					cell.innerHTML = this.createRestrictionSelector("=", false);
 				else
 					cell.innerHTML = this.createRestrictionSelector("=", true);
