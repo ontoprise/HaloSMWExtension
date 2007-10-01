@@ -41,7 +41,7 @@
  	 * Returns an array mapping parameter IDs to parameter objects
  	 */
  	public function createParameters() {
- 		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', wfMsg('smw_gard_import_locationowl'), SMW_GARD_PARAM_REQUIRED, "owl");
+ 		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, "owl");
  		return array($param1);
  	}
  	

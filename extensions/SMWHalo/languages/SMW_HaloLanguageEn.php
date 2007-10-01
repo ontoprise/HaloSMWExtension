@@ -170,6 +170,10 @@ clicking the big arrows between the columns.',
 	'smw_anomaliesbot' => 'Find anomalies',
 	'smw_renamingbot' => 'Rename page',
 	'smw_importontologybot' => 'Import an ontology',
+	
+	'smw_gard_import_choosefile' => 'The following $1 files are available.',
+	'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
+	'smw_gard_import_nofiles' => 'No files of type $1 are available',
 
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors.',
@@ -276,10 +280,7 @@ clicking the big arrows between the columns.',
 
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
-	'smw_gard_import_locationowl' => 'Location of OWL file',
-	'smw_gard_import_choosefile' => 'The following OWL files are available. Choose one and press "Run Bot".',
-	'smw_gard_import_addfiles' => 'Add OWL files by using $1.',
-
+	
 	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',

@@ -147,6 +147,10 @@ protected $smwUserMessages = array(
 	'smw_anomaliesbot' => 'Finde Anomalien',
 	'smw_renamingbot' => 'Benenne Seiten um',
 	'smw_importontologybot' => 'Importiere eine Ontologie',
+	
+	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verfügbar.',
+	'smw_gard_import_addfiles' => 'Weitere $2-Dateien können über $1 hinzugefügt werden.',
+	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verfügbar.',
 
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prÃ¼ft auf Zyklen in der Taxonomie und finden Properties ohne DomÃ¤ne und Wertebereich. Er prÃ¼ft auÃŸerdem die korrekte Verwendung eines Properties auf der Instanz-Ebene.',
@@ -253,10 +257,8 @@ protected $smwUserMessages = array(
 	
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
-	'smw_gard_import_locationowl' => 'Ort der OWL-Datei',
-	'smw_gard_import_choosefile' => 'Die folgenden OWL-Dateien sind auf dem Server verfügbar. Wählen Sie eine und drücken Sie "Run Bot".',
-	'smw_gard_import_addfiles' => 'Weitere OWL-Dateien können über $1 hinzugefügt werden.',
-	
+
+		
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geÃ¤ndert wurden. Dies ist notwendig damit ASK-Queries in allen FÃ¤llen korrekte Ergebnisse liefern.',
 	'smw_gard_templatemat_applytotouched' => 'Nur geÃ¤nderte Tempates berÃ¼cksichtigen',
