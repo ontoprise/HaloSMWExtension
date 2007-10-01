@@ -95,7 +95,10 @@
  	public function serializeScripts(& $out) {
  		$alreadyRegistered = array();
  		foreach($this->scripts as $script) {
- 			if ($this->matchesAction($script) && $this->matchesNamespace($script) && $this->matchesPage($script) && !array_key_exists($script->path, $alreadyRegistered)) {
+ 			if ($this->matchesAction($script) 
+ 					&& $this->matchesNamespace($script) 
+ 					&& $this->matchesPage($script) 
+ 					&& !array_key_exists($script->path, $alreadyRegistered)) {
  				$id = $script->id != NULL ? "id=\"".$script->id."\"" : "";
  				$out->addScript('<script type="text/javascript" '.$id.' src="'.$script->path.'"></script>');
  				$alreadyRegistered[$script->path] = 1;
