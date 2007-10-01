@@ -18,6 +18,7 @@ require_once("ConsistencyHelper.php");
  	// delegate for basic helper methods
  	private $consistencyHelper;
  	private $bot;
+ 	private $delay;
  	// inheritance graphs.
  	private $categoryGraph;
  	private $propertyGraph;
@@ -26,8 +27,9 @@ require_once("ConsistencyHelper.php");
 	/**
 	 * Creates a PropertyCoVarianceDetector
 	 */
- 	public function PropertyCoVarianceDetector(& $bot) {
+ 	public function PropertyCoVarianceDetector(& $bot, $delay) {
  		$this->bot = $bot;
+ 		$this->delay = $delay;
  		$this->consistencyHelper = new ConsistencyHelper();
  		$this->categoryGraph = $this->consistencyHelper->getCategoryInheritanceGraph();
  		$this->propertyGraph = $this->consistencyHelper->getPropertyInheritanceGraph();
@@ -50,6 +52,9 @@ require_once("ConsistencyHelper.php");
  		print "\n";
  		$this->bot->addSubTask(count($attributes));
  		foreach($attributes as $a) {
+ 			if ($this->delay > 0) {
+ 				usleep($this->delay);
+ 			}
  			$this->bot->worked(1);
  			$log = ""; 
  			$cnt++;

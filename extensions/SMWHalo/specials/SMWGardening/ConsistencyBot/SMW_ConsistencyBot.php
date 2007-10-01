@@ -69,7 +69,7 @@
  		}
 		
 		echo "Checking property co-variance...";
-        $log = $this->checkPropertyCovariance();
+        $log = $this->checkPropertyCovariance($delay);
         echo "done!\n\n";
         if ($log != '') {
         	$errors = true;
@@ -87,7 +87,7 @@
  	
  		// Annotation level checks
  		 echo "Checking annotation level...";
-         $log = $this->checkAnnotationLevel();
+         $log = $this->checkAnnotationLevel($delay);
  		 echo "done!\n\n";
           if ($log != '') {
         	$errors = true;
@@ -118,9 +118,9 @@
  	}
  	
  	 	
- 	private function checkPropertyCovariance() {
+ 	private function checkPropertyCovariance($delay) {
  		$log = "";
- 		$pcd = new PropertyCoVarianceDetector($this);
+ 		$pcd = new PropertyCoVarianceDetector($this, $delay);
  		/*$rgc .= $pcd->checkRelationGraphForCovariance();
  		if ($rgc != '') {
  			$log .= "== ".wfMsg('smw_gard_errortype_relation_problems')." ==\n".$rgc."----\n";
@@ -132,9 +132,9 @@
  		return $log;
  	}
  	
- 	private function checkAnnotationLevel() {
+ 	private function checkAnnotationLevel($delay) {
  		$log = "";
- 		$alc = new AnnotationLevelConsistency($this);
+ 		$alc = new AnnotationLevelConsistency($this, $delay);
  		
  		$aac .= $alc->checkPropertyAnnotations();
  		if ($aac != '') {

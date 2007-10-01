@@ -13,6 +13,7 @@ require_once("ConsistencyHelper.php");
  	// delegate for basic helper methods
  	private $consistencyHelper;
  	private $bot;
+ 	private $delay; 
  	// Category Graph. It is cached for the whole consistency checks.
  	private $categoryGraph;
  	private $propertyGraph;
@@ -22,8 +23,9 @@ require_once("ConsistencyHelper.php");
  	// correct when they are in the database. So only relations
  	// will be checked.
  	
- 	public function AnnotationLevelConsistency(& $bot) {
+ 	public function AnnotationLevelConsistency(& $bot, $delay) {
  		$this->bot = $bot;
+ 		$this->delay = $delay;
  		$this->consistencyHelper = new ConsistencyHelper();
  		$this->categoryGraph = $this->consistencyHelper->getCategoryInheritanceGraph();
  		$this->propertyGraph = $this->consistencyHelper->getPropertyInheritanceGraph();
@@ -43,6 +45,9 @@ require_once("ConsistencyHelper.php");
  		print "\n";
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $r) {
+ 			if ($this->delay > 0) {
+ 				usleep($this->delay);
+ 			}
  			$this->bot->worked(1);
  			$cnt++;
  			if ($cnt % 10 == 1 || $cnt == $work) { 
@@ -176,6 +181,9 @@ require_once("ConsistencyHelper.php");
  		$properties = $this->consistencyHelper->getPages(array(SMW_NS_PROPERTY));
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
+ 			if ($this->delay > 0) {
+ 				usleep($this->delay);
+ 			}
  			$this->bot->worked(1);
  			if ($numLog > MAX_LOG_LENGTH) { return $log; }
  			if ($this->consistencyHelper->minCard->equals($a) 
