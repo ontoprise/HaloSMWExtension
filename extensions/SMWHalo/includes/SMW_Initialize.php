@@ -257,7 +257,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm = SMWResourceManager::SINGLETON();
 
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
-		$jsm->addCSSIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
 
 		// serialize the css
 		$jsm->serializeCSS($out);

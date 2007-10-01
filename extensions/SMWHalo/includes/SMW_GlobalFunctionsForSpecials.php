@@ -155,7 +155,7 @@ function smwGAAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/deployGardening.js', "all", -1, NS_SPECIAL.":Gardening");
 	}
 	
-	$jsm->addCSSIf($smwgHaloScriptPath . '/scripts/Gardening/gardening.css', "all", -1, NS_SPECIAL.":Gardening");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Gardening/gardening.css', "all", -1, NS_SPECIAL.":Gardening");
 
 	return true;
 }
