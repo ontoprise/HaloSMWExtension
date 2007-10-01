@@ -16,8 +16,8 @@ $dbr =& wfGetDB( DB_MASTER );
 
 print "\nUpdate the database now...";
 
-$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('Chemical_formula').' WHERE value_datatype = '.$dbr->addQuotes('_chf'));
-$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('Chemical_equation').' WHERE value_datatype = '.$dbr->addQuotes('_che'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_chf').' WHERE value_datatype = '.$dbr->addQuotes('Chemical_formula'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_che').' WHERE value_datatype = '.$dbr->addQuotes('Chemical_equation'));
 
 print "done!\n";
  
