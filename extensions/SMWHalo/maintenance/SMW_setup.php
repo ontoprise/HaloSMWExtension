@@ -44,7 +44,7 @@
 
         } else{
            
-            if (strpos($SourceDirectory.$entry, ".hlp") !== false) {
+            if (strpos($SourceDirectory.$entry, ".whp") !== false) {
             	echo "\nImport help page: ".$SourceDirectory.$entry."...";
             	smwfImportHelppage($SourceDirectory.$entry);
             	echo "done!";
