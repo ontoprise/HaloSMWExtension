@@ -157,6 +157,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_unknown_bot' => 'Unknown Bot',
 	'smw_gard_no_permission' => 'You do not have the permission to use this bot.',
 	'smw_gard_missing_parameter' => 'Missing parameter',
+	'smw_gard_missing_selection' => 'Missing selection',
 	'smw_unknown_value' => 'Unknown value',
 	'smw_out_of_range' => 'Out of range',
 	'smw_gard_value_not_numeric' => 'Value must be a number',
@@ -276,8 +277,10 @@ clicking the big arrows between the columns.',
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
 	'smw_gard_import_locationowl' => 'Location of OWL file',
+	'smw_gard_import_choosefile' => 'The following OWL files are available. Choose one and press "Run Bot".',
+	'smw_gard_import_addfiles' => 'Add OWL files by using $1.',
 
-	/*Message for TemplateMaterializerBot*/
+	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
 

@@ -133,7 +133,8 @@ protected $smwUserMessages = array(
 	'smw_gard_abortbot' => 'Bot beenden',
 	'smw_gard_unknown_bot' => 'Unbekannter Gardening-Bot',
 	'smw_gard_no_permission' => 'Sie haben nicht das Recht diesen Bot zu benutzen.',
-	'smw_gard_missing_parameter' => 'Fehelender Parameter',
+	'smw_gard_missing_parameter' => 'Fehlender Parameter',
+	'smw_gard_missing_selection' => 'Bitte etwas ausw‰hlen',
 	'smw_unknown_value' => 'Unbekannter Wert',
 	'smw_out_of_range' => 'Au√üerhalb des Wertebereichs',
 	'smw_gard_value_not_numeric' => 'Wert muss eine Zahl sein',
@@ -253,6 +254,8 @@ protected $smwUserMessages = array(
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
 	'smw_gard_import_locationowl' => 'Ort der OWL-Datei',
+	'smw_gard_import_choosefile' => 'Die folgenden OWL-Dateien sind auf dem Server verf¸gbar. W‰hlen Sie eine und dr¸cken Sie "Run Bot".',
+	'smw_gard_import_addfiles' => 'Weitere OWL-Dateien kˆnnen ¸ber $1 hinzugef¸gt werden.',
 	
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung ge√§ndert wurden. Dies ist notwendig damit ASK-Queries in allen F√§llen korrekte Ergebnisse liefern.',

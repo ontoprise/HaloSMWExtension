@@ -186,11 +186,12 @@
  
  class GardeningParamFileList extends GardeningParameterObject {
  	protected $selection;
+ 	protected $fileExtension;
  	
- 	
- 	public function GardeningParamFileList($ID, $label, $options, $defaultSelection = -1) {
+ 	public function GardeningParamFileList($ID, $label, $options, $fileExtension, $defaultSelection = -1) {
  		parent::GardeningParameterObject($ID, $label, $options);
  		$this->selection = $defaultSelection; // no selection by default
+ 		$this->fileExtension = $fileExtension;
  	}
  	 	
  	public function validate($value) {
@@ -198,22 +199,23 @@
  		$file = wfImageDir($value);
  		$valid = file_exists($file) || ($this->options & SMW_GARD_PARAM_REQUIRED) == 0;
  		if (!$valid) {
- 			return wfMsg('smw_gard_missing_parameter');
+ 			return wfMsg('smw_gard_missing_selection');
  		} 
  		return true;
  	}
  	
  	public function serializeAsHTML() {
- 		$html = "<span id=\"parentOf_".$this->ID."\">".$this->getUploadedOWLFilesAsHTML()."</span>";
+ 		$html = "<br><span id=\"parentOf_".$this->ID."\">".$this->getUploadedFilesAsHTML()."</span>";
  		$html .= "<span id=\"errorOf_".$this->ID."\" class=\"errorText\"></span>";
  		return $html;
  	}
  	
- 	private function getUploadedOWLFilesAsHTML() {
+ 	private function getUploadedFilesAsHTML() {
+ 		$htmlResult = "";
  		$db =& wfGetDB( DB_MASTER );
-		$fname = 'getUploadedOWLFiles';
+		$fname = 'getUploadedFiles';
 		$res = $db->select( $db->tableName('image'),
-		             array('img_name'), array('img_name LIKE '. $db->addQuotes('%.owl') ),
+		             array('img_name'), array('img_name LIKE '. $db->addQuotes('%.'.$this->fileExtension) ),
 		             $fname, null );
 		$result = array();
 		if($db->numRows( $res ) > 0)
@@ -225,14 +227,23 @@
 				$row = $db->fetchObject($res);
 			}
 		}
-		$htmlResult = '<table border="0" cellspacing="0" cellpadding="0">';
-		for($i = 0, $n = count($result); $i < $n; $i++) {
-			$htmlResult .= '<tr><td><input type="radio" name="'.$this->ID.'" value="'.$result[$i].'" '.($this->selection == $i ? "checked=\"checked\"" : "").'/></td>';
-			$htmlResult .= '<td>'.$result[$i].'</td>';
-			$htmlResult .= '</tr>';
+		global $wgUser, $wgLang;
+		$skin = $wgUser->getSkin();
+		$specialPageAliases = $wgLang->getSpecialPageAliases();
+		$uploadLink = $skin->makeKnownLinkObj(Title::newFromText($specialPageAliases['Upload'][0], NS_SPECIAL), $specialPageAliases['Upload'][0]);
+		if (count($result) == 0) {
+			$htmlResult .= '- No files are available - <br>'.wfMsg('smw_gard_import_addfiles', $uploadLink);
+		} else {
+			$htmlResult .= wfMsg('smw_gard_import_choosefile')." ".wfMsg('smw_gard_import_addfiles', $uploadLink).'<div id="gardening-import"><table border="0" cellspacing="0" cellpadding="0">';
+			for($i = 0, $n = count($result); $i < $n; $i++) {
+				$htmlResult .= '<tr><td width="100px"><input type="radio" name="'.$this->ID.'" value="'.$result[$i].'" '.($this->selection == $i ? "checked=\"checked\"" : "").'/></td>';
+				$htmlResult .= '<td width="200px">'.$result[$i].'</td>';
+				//$htmlResult .= '<td><button name="remove" type="button">Remove</button></td>';
+				$htmlResult .= '</tr>';
+			}
+			$htmlResult .= '</table></div>';
 		}
 		$db->freeResult($res);
-		$htmlResult .= '</table>';
 		return $htmlResult;
  	}
  }
