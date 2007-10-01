@@ -344,10 +344,6 @@ createNewCategory: function() {
 	// Create an ontology modifier instance
 	this.om.createCategory(catName, "");
 
-	//Adds annotation of the newly created Category to the actual editbox
-	this.wtp.initialize();
-	this.wtp.addCategory(catName, true);
-
 	//show list
 	this.fillList(true);
 
