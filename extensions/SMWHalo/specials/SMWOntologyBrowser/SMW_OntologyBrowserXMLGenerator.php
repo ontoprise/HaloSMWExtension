@@ -204,9 +204,15 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$parameters = "";
 			foreach($smwValue->getDVs() as $params) {
 				
-				if ($params->getTypeID() == 'Chemical_equation' || $params->getTypeID() == 'Chemical_formula') {
+				if ($params->getTypeID() == '_che') {
 					$isFormula = true;
-					$formulaAsHTML = SMWOntologyBrowserXMLGenerator::getChemicalFormulaOrEquationAsHTML($params->getXSDValue(), $chemistryParser);
+					$chemistryParser->checkEquation($params->getXSDValue());
+					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
+					$value = "<![CDATA[".($formulaAsHTML)."]]>";
+				} else if ( $params->getTypeID() == '_chf') {
+					$isFormula = true;
+					$chemistryParser->checkFormula($params->getXSDValue());
+					$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 					$value = "<![CDATA[".($formulaAsHTML)."]]>";
 				} else { 
 					// escape potential HTML in a CDATA section
@@ -230,9 +236,15 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
 			
 		} else { // normal attribute
-			if ($smwValue->getTypeID() == 'Chemical_equation' || $smwValue->getTypeID() == 'Chemical_formula') {
+			if ($smwValue->getTypeID() == '_che' || $smwValue->getTypeID() == '_chf') {
 				$isFormula = true;
-				$formulaAsHTML = SMWOntologyBrowserXMLGenerator::getChemicalFormulaOrEquationAsHTML($smwValue->getXSDValue(), $chemistryParser);
+				$chemistryParser->checkEquation($smwValue->getXSDValue());
+				$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
+				$value = "<![CDATA[".($formulaAsHTML)."]]>";
+			} else if ( $params->getTypeID() == '_chf') {
+				$isFormula = true;
+				$chemistryParser->checkFormula($smwValue->getXSDValue());
+				$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 				$value = "<![CDATA[".($formulaAsHTML)."]]>";
 			} else { 
 				// escape potential HTML in a CDATA section
@@ -248,24 +260,6 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 	}
 	return $singleProperties.$multiProperties;
 }
-
-
-
-private static function getChemicalFormulaOrEquationAsHTML($text, &$chemistryParser) {
-	$value = $text;
-	$chemistryParser->checkEquation($text);
-	if ($chemistryParser->getError() == '') {
-		// value is equation
-		$value = $chemistryParser->getHtmlFormat();
-	}
-	$chemistryParser->checkFormula($text);
-	if ($chemistryParser->getError() == '') {
-		// value is formula
-		$value = $chemistryParser->getHtmlFormat();
-	}
-	return $value;
-}
-
 
 
 
