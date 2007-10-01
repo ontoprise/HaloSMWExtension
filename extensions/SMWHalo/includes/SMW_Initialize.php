@@ -99,13 +99,16 @@ function smwgHaloSetupExtension() {
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
 function smwfHaloInitDatatypes() {
-	global $wgAutoloadClasses, $smwgHaloIP;
+	global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
 	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
-	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler', 'Chemical formula');
+	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler',
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_formula'));
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
-	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler', 'Chemical equation');
+	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler',
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
-	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler', 'Mathematical equation');
+	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
 	
 //	global $smwgHaloContLang, $smwgIP;
 //	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
