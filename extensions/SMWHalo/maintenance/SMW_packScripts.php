@@ -16,6 +16,7 @@
  define('APACHE_LICENSE', 6);
  define('LGPL_LICENSE', 7);
  define('BSD_LICENSE', 8);
+ define('LGPL_LICENSE_TOOLTIPS', 9);
 
  // license hints
  $licenses = array( MIT_LICENSE_PROTOTYPE => 'MIT-License; Copyright (c) 2005-2007 Sam Stephenson',
@@ -23,10 +24,10 @@
  					GPL_LICENSE_ONTOPRISE => 'GPL-License; Copyright (c) 2007 Ontoprise GmbH',
  					GPL_LICENSE_XTREEVIEW => 'GPL-License; (c) 2003-2004 Jean-Michel Garnier (garnierjm@yahoo.fr)',
  					WICK_LICENSE => 'WICK-License; Copyright (c) 2004, Christopher T. Holland',
- 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn. All rights reserved. Web: http://www.walterzorn.com',
- 					LGPL_LICENSE => 'LGPL-License',
  					APACHE_LICENSE => 'Apache-License',
- 					BSD_LICENSE => 'BSD-License');
+ 					LGPL_LICENSE => 'LGPL-License',
+ 					BSD_LICENSE => 'BSD-License',
+ 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)');
 
  // add script name as hint or not?
  $addScriptName = true;
