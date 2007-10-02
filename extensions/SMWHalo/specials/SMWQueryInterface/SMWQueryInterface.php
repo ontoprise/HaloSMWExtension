@@ -1,4 +1,24 @@
 <?php
+/******************************************************************************
+*  Query Interface for Semantic MediaWiki
+*  Developed by Markus Nitsche <fitsch@gmail.com>
+*
+*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
  if (!defined('MEDIAWIKI')) die();
 
@@ -67,7 +87,7 @@ class SMWQueryInterface extends SpecialPage {
 						'<div id="qistatus"></div>' .
 					'</div>' .
 					'<div id="tablecolumnpreview">' .
-						'<div class="tcp_boxheader" onclick="switchtcp()"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
+						'<div class="tcp_boxheader" onclick="qihelper.switchtcp()"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
 						'<div id="tcp_boxcontent" class="tcp_boxcontent" style="display:none">' .
 							'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
 								'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
@@ -77,7 +97,7 @@ class SMWQueryInterface extends SpecialPage {
 				'</div>';
 
 		$html .= '<div id="querylayout">
-					<div id="layouttitle" onclick="switchlayout()"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</div>
+					<div id="layouttitle" onclick="qihelper.switchlayout()"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</div>
 					<div id="layoutcontent" style="display:none">
 					<table summary="Layout Manager for query" style="width:100%">
 					<tr>

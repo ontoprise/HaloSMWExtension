@@ -1,8 +1,31 @@
+/* *****************************************************************************
+*  Query Interface for Semantic MediaWiki
+*  Developed by Markus Nitsche <fitsch@gmail.com>
+*
+*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
 * QIHelper.js
 * Manages major functionalities and GUI of the Query Interface
 * @author Markus Nitsche [fitsch@gmail.com]
 */
+
+var qihelper = null;
 
 var QIHelper = Class.create();
 QIHelper.prototype = {
@@ -29,6 +52,38 @@ initialize:function(){
 	this.setActiveQuery(0);
 	this.updateColumnPreview();
 	this.pendingElement = null;
+},
+
+/**
+* Called whenever table column preview is minimized or maximized
+*/
+switchtcp:function(){
+	if($("tcp_boxcontent").style.display == "none"){
+		$("tcp_boxcontent").style.display = "";
+		$("tcptitle-link").removeClassName("plusminus");
+		$("tcptitle-link").addClassName("minusplus");
+	}
+	else {
+		$("tcp_boxcontent").style.display = "none";
+		$("tcptitle-link").removeClassName("minusplus");
+		$("tcptitle-link").addClassName("plusminus");
+	}
+},
+
+/**
+* Called whenever query layout manager is minimized or maximized
+*/
+switchlayout:function(){
+	if($("layoutcontent").style.display == "none"){
+		$("layoutcontent").style.display = "";
+		$("layouttitle-link").removeClassName("plusminus");
+		$("layouttitle-link").addClassName("minusplus");
+	}
+	else {
+		$("layoutcontent").style.display = "none";
+		$("layouttitle-link").removeClassName("minusplus");
+		$("layouttitle-link").addClassName("plusminus");
+	}
 },
 
 /**
@@ -97,14 +152,6 @@ doReset:function(){
 	$('shade').style.display="none";
 	$('resetdialogue').style.display="none";
 },
-/*
-previewQuery:function(){
-	sajax_do_call('smwfQIAccess', ["debug", "Testint"], this.doDebug.bind(this));
-},
-
-doDebug:function(request){
-	alert(request.responseText);
-},*/
 
 /**
 * Gets all display parameters and the full ask syntax to perform an ajax call
@@ -1084,6 +1131,12 @@ PropertyGroup.prototype = {
 	getEnumValues:function(){
 		return this.enumValues;
 	}
+}
+
+Event.observe(window, 'load', initialize_qi);
+
+function initialize_qi(){
+	qihelper = new QIHelper();
 }
 
 
