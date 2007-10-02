@@ -347,6 +347,7 @@ var Slider = Class.create();
 Slider.prototype = {
 
 	initialize: function() {
+		this.sliderObj = null;
 	},
 	
 	activateResizing: function() {
@@ -358,7 +359,12 @@ Slider.prototype = {
 			wgScriptPath + 
 			'/extensions/SMWHalo/skins/slider.gif"/>';
 		var initialvalue = 0.65;
-	   //create slider		 	 
+		this.slide(initialvalue);
+	   //create slider after old one is removed
+	   if(this.sliderObj != null){
+	   		this.sliderObj.setDisabled();
+	   		this.sliderObj= null;
+	   }		 	 
 	   this.sliderObj = new Control.Slider('sliderHandle','slider',{
 	   	  //axis:'vertical',
 	      sliderValue:initialvalue,
@@ -400,3 +406,5 @@ Slider.prototype = {
 }
 var smwhg_slider = new Slider();
 Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
+//Resizes the slide if window size is changed, doesn't work for ie right now and this there disabled until i will have looked into it
+//Event.observe(window, 'resize', smwhg_slider.activateResizing.bind(smwhg_slider));

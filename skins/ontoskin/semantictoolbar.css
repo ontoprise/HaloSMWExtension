@@ -2,7 +2,8 @@
 triggered by the nested floats. Since the nested floats are necessary for the semtoolbar 
 to be displayed correctly, it should not be removed*/
 #contenttab {
-	width: 100%;
+	width: 98%;
+	margin: 1%
 }
 
 #contentcol1 {
