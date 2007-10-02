@@ -121,7 +121,7 @@ newItem: function() {
 	this.currentAction = "annotate";
 	
     this.wtp.initialize();
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
 	
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
@@ -159,7 +159,7 @@ CreateSubSup: function() {
 	this.showList = false;
 	
     this.wtp.initialize();
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
 	
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Categories","sub/super-category_clicked");
@@ -310,7 +310,7 @@ newCategory: function() {
 	this.showList = false;
  
     this.wtp.initialize();
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
    
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Categories","create_clicked");

@@ -174,6 +174,81 @@ SMWEditInterface.prototype ={
 		}
 	},
 
+	/*
+	 * If the current selection is within an annotation (i.e. within [[...]])
+	 * and only spaces are between the selection an the brackets,
+	 * the selection is enlarged to comprise the brackets.
+	 */
+	selectCompleteAnnotation: function(){
+		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
+			SMWEditArea = $(editAreaName);
+			var found = false;
+			if (document.selection  && !is_gecko) {
+				var rng = document.selection.createRange();
+				var moved = 1;
+				rng.moveStart('character',-1);
+				while (rng.text.charAt(0) == ' ' 
+				       && rng.moveStart('character',-1) != 0) {
+					moved++;
+				}
+				while (rng.text.charAt(0) == '['
+				       && rng.moveStart('character',-1) != 0) {
+					moved++;
+					found = true;
+				}
+				rng.moveStart('character',found ? 1 : moved);
+				
+				found = false;
+				moved = 1;
+				rng.moveEnd('character',1);
+				while (rng.text.charAt(rng.text.length-1) == ' '
+				       && rng.moveEnd('character',1) != 0) {
+					moved++;
+				}
+				while (rng.text.charAt(rng.text.length-1) == ']'
+				       && rng.moveEnd('character',1) != 0) {
+					moved++;
+					found = true;
+				}
+				rng.moveEnd('character',found ? -1 : -moved);
+				this.currentRange = rng.duplicate();
+				rng.select();
+			} else  {
+				// Search for opening brackets at the beginning of the selection
+				var start = SMWEditArea.selectionStart-1;
+				while (start >= 0 && SMWEditArea.value.charAt(start) == ' ') {
+					--start;
+				}
+				while (start >= 0 && SMWEditArea.value.charAt(start) == '[') {
+					--start;
+					found = true;
+				}
+				start++;
+				if (!found) {
+					start = SMWEditArea.selectionStart;
+				}
+				found = false;
+				// Search for closing brackets at the end of the selection
+				var end = SMWEditArea.selectionEnd;
+				while (end < SMWEditArea.value.length 
+				       && SMWEditArea.value.charAt(end) == ' ') {
+					++end;
+				}
+				while (end < SMWEditArea.value.length 
+				       && SMWEditArea.value.charAt(end) == ']') {
+					++end;
+					found = true;
+				}
+				if (!found) {
+					end = SMWEditArea.selectionEnd;
+				}
+				setSelectionRange(SMWEditArea,start,end);
+			}
+		} else {
+			editAreaLoader.setSelectionRange(editAreaName, start, end);
+		}
+	},
+
 	getSelectedText: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
 			SMWEditArea = $(editAreaName);

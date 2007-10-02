@@ -277,10 +277,23 @@ WikiTextParser.prototype = {
 	/**
 	 * Returns the text that is currently selected in the wiki text editor.
 	 *
+	 * @param boolean trim
+	 * 			If <true>, spaces the surround the selection are skipped and
+	 * 			the complete annotation including brackets is selected.
 	 * @return string Currently selected text.
 	 */
-	getSelection: function() {
-		return this.editInterface.getSelectedText();
+	getSelection: function(trim) {
+		trim = true;
+		var text = this.editInterface.getSelectedText();
+		if (trim == true && text && text.length > 0) {
+			var regex = /^(\s*(\[\[)?)\s*(.*?)\s*((\]\])?\s*)$/;
+			var parts = text.match(regex);
+			if (parts) {
+				var rng = this.editInterface.selectCompleteAnnotation();
+				return parts[3];
+			}
+		}
+		return text;
 	},
 
 	/**

@@ -174,7 +174,7 @@ newItem: function() {
 	this.showList = false;
 	this.currentAction = "annotate";
 
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Properties","annotate_clicked");
 	/*ENDLOG*/
@@ -235,7 +235,7 @@ updateNewItem: function(request) {
 		}
 	}
 	// build new INPUT tags
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
 	var tb = this.toolbarContainer;
 	
 	// remove old input fields	
@@ -295,7 +295,7 @@ CreateSubSup: function() {
 	this.currentAction = "sub/super-category";
 
 	this.wtp.initialize();
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Properties","sub/super-property_clicked");
 	/*ENDLOG*/
@@ -406,7 +406,7 @@ newRelation: function() {
 	this.currentAction = "create";
 	
     this.wtp.initialize();
-	var selection = this.wtp.getSelection();
+	var selection = this.wtp.getSelection(true);
    
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Properties","create_clicked");
@@ -658,7 +658,7 @@ deleteItem: function(selindex) {
 newPart: function() {
     var html;
     this.wtp.initialize();
-    var selection = this.wtp.getSelection();
+    var selection = this.wtp.getSelection(true);
 
 	/*STARTLOG*/
     smwhgLogger.log(selection,"STB-Properties","haspart_clicked");
