@@ -22,7 +22,14 @@
  smwfInstallHelppages(dirname(__FILE__).'/../libs/helppages');
  print "\n\nAll help pages imported!\n";
  
+ 
+ 
  function smwfInstallHelppages($SourceDirectory) {
+ 	global $mediaWikiLocation;
+ 	
+ 	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
+ 		return;
+ 	}
  	 // add trailing slashes
     if (substr($SourceDirectory,-1)!='/'){
         $SourceDirectory .= '/';
@@ -48,6 +55,13 @@
             	echo "\nImport help page: ".$SourceDirectory.$entry."...";
             	smwfImportHelppage($SourceDirectory.$entry);
             	echo "done!";
+            } else  { // assume that it is an image
+            	$im_dir_abs = dirname($SourceDirectory.$entry);
+            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/helppages'));
+            	$dest_dir = $mediaWikiLocation.$img_dir_rel;
+            	mkpath($dest_dir);
+            	print "\n - Copy image: ".basename($SourceDirectory.$entry);
+            	copy($SourceDirectory.$entry, $dest_dir.'/'.basename($SourceDirectory.$entry));
             }
         }
     }
@@ -71,5 +85,11 @@
 	}
 	fclose($handle);
  }
+ 
+ function mkpath($path) {
+    if(@mkdir($path) || file_exists($path)) return true;
+    return (mkpath(dirname($path)) && mkdir($path));
+ }
+  
 ?>
 
