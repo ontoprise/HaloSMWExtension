@@ -114,10 +114,7 @@ class SMWDataValueFactory {
 				$result = SMWDataValueFactory::newTypeIDValue('_wpg', $value, $caption);
 				break;
 			default: // special property was created but not added here; this is bad but we still are nice
-				wfRunHooks('SMW_SpecialValue', array($specialprop, $value, $caption, &$result));
-				if (!isset($result)) {
-					$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
-				}
+				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
 		}
 
 		if ($value !== false) {
@@ -292,7 +289,7 @@ class SMWDataValueFactory {
 		$id = array_search($label, SMWDataValueFactory::$m_typelabels);
 		if ($id !== false) {
 			return $id;
-		} elseif (array_key_exists($label, SMWDataValueFactory::$m_typealiases)) {
+		} elseif ( ($useAlias) && (array_key_exists($label, SMWDataValueFactory::$m_typealiases)) ) {
 			return SMWDataValueFactory::$m_typealiases[$label];
 		} else {
 			return str_replace(' ', '_', $label);

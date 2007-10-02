@@ -21,15 +21,16 @@ class SMWTypesValue extends SMWDataValue {
 	protected function parseUserValue($value) {
 		// no use for being lazy here: plain user values are never useful
 		$this->m_typelabels = array();
+		$this->m_typecaptions = array();
 		$types = explode(';', $value);
 		foreach ($types as $type) {
 			$type = ltrim($type, ' [');
 			$type = rtrim($type, ' ]');
 			$ttype = Title::newFromText($type,SMW_NS_TYPE);
-			if ($ttype->getNamespace() == SMW_NS_TYPE) {
+			if ( ($ttype !== NULL) && ($ttype->getNamespace() == SMW_NS_TYPE) ) {
 				$this->m_typecaptions[] = $type;
 				$this->m_typelabels[] = SMWDataValueFactory::findTypeLabel(SMWDataValueFactory::findTypeID($ttype->getText()));
-			} // else: wrong namespace given -- what now? TODO
+			} // else: wrong namespace or invalid title given -- what now? TODO
 		}
 	}
 
@@ -63,13 +64,14 @@ class SMWTypesValue extends SMWDataValue {
 			$captions = $this->getTypeCaptions();
 			reset($captions);
 			foreach ($this->getTypeLabels() as $type) {
-				$caption = next($captions);
+				$caption = current($captions);
 				if ($first) {
 					$first = false;
 				} else {
 					$result .= ', ';
 				}
 				$result .= '[[' . $typenamespace . ':' . $type . '|' . $caption . ']]';
+				next($captions);
 			}
 			return $result;
 		}
@@ -93,14 +95,17 @@ class SMWTypesValue extends SMWDataValue {
 			}
 			$result = '';
 			$first = true;
+			reset($captions);
 			foreach ($this->getTypeLabels() as $type) {
+				$caption = current($captions);
 				if ($first) {
 					$first = false;
 				} else {
 					$result .= ', ';
 				}
 				$title = Title::newFromText($type, SMW_NS_TYPE);
-				$result .= $linker->makeLinkObj( $title, $type);
+				$result .= $linker->makeLinkObj( $title, $caption);
+				next($captions);
 			}
 			return $result;
 		}
