@@ -352,14 +352,16 @@ Slider.prototype = {
 	activateResizing: function() {
 	//Check if semtoolbar is available
 	if(!stb_control.isToolbarAvailable()) return;
+	if(!$('slider')) return;
 	//Load image to the slider div
 	$('slider').innerHTML = '<img id="sliderHandle" src="' + 
 			wgScriptPath + 
 			'/extensions/SMWHalo/skins/slider.gif"/>';
+		var initialvalue = 0.65;
 	   //create slider		 	 
 	   this.sliderObj = new Control.Slider('sliderHandle','slider',{
 	   	  //axis:'vertical',
-	      sliderValue:0.7,
+	      sliderValue:initialvalue,
 	      minimum:0.5,
 	      maximum:0.75,
 	      //range: $R(0.5,0.75),
@@ -389,12 +391,11 @@ Slider.prototype = {
 	         var currLeftDiv = 100*v;
 	         var currRightDiv = 95 - currLeftDiv;
 	         
-	         $('innercontent').style.width = currLeftDiv + "%";
-	         $('ontomenuanchor').style.width = currRightDiv + "%";
-	         
-	         editAreaLoader.execCommand("wpTextbox1", "update_size();");
-	         
-	         
+	         $('contentcol1').style.width = currLeftDiv + "%";
+	         $('contentcol2').style.width = currRightDiv + "%";
+	         if(window.editAreaLoader){
+	         	editAreaLoader.execCommand("wpTextbox1", "update_size();");
+	         }
 	 }
 }
 var smwhg_slider = new Slider();

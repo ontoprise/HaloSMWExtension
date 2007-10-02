@@ -1,11 +1,18 @@
-#clearfloat {
-	clear:both;
+/*This css and the table it is belonging to is just a workaround for a nasty bug
+triggered by the nested floats. Since the nested floats are necessary for the semtoolbar 
+to be displayed correctly, it should not be removed*/
+#contenttab {
+	width: 100%;
 }
 
-#content {
-	float: right;
+#contentcol1 {
+	width: 70%;
+	vertical-align: top;
 }
-
+#contentcol2 {
+	width: 30%;
+	vertical-align: top;
+}
 
 
 #slider {
@@ -16,9 +23,6 @@
 
 #sliderHandle {
 }
-#toolbar{
-}
-
 
 .generic_content{
 	margin-left: 3px;
@@ -98,18 +102,17 @@ a.plusminus:hover{
 }
 
 #ontomenuanchor{
-	float: right;
-	margin: 10px;
+	margin-top: 10px;
 	max-height: 80%;
-	width: 25%;
+	width: 100%;
 	/*overflow: auto;*/
 	position: relative;
 }
 
 #innercontent {
-	float: left;
+
 	overflow: auto;
-	width: 70%;
+	width: 100%;
 }
 
 

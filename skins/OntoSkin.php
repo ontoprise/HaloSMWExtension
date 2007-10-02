@@ -122,9 +122,12 @@ class OntoSkinTemplate extends QuickTemplate {
 
 			if ($wgRequest->getText('action') == "edit" || ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')))
 			{ ?>
+			<table id="contenttab">
 				<div id="slider">	
 				</div>
-				<div id="clearfloat">
+				<td id="contentcol1">
+
+				<!--<div id="clearfloat">-->
 			    <div id="innercontent">
 					<a name="top" id="top"></a>
 					<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
@@ -140,12 +143,17 @@ class OntoSkinTemplate extends QuickTemplate {
 						<?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
 						<!-- end content -->
 						<div class="visualClear"></div>
-					</div>
+					</div>	
 				</div>
+				</td>
+				<td id="contentcol2">
 				<div id="ontomenuanchor">
 					<!-- This is the location, where the ontoskin.js will insert the toolbar. -->
 	            </div>
-	            </div>
+	            <!--</div>-->
+	            </td>
+	        </table>
+				
 			<?php
 			}
 			else
