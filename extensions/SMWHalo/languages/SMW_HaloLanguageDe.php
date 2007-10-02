@@ -1,4 +1,20 @@
 <?php
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /**
  * @author Markus Kr√∂tzsch
  */
@@ -134,7 +150,7 @@ protected $smwUserMessages = array(
 	'smw_gard_unknown_bot' => 'Unbekannter Gardening-Bot',
 	'smw_gard_no_permission' => 'Sie haben nicht das Recht diesen Bot zu benutzen.',
 	'smw_gard_missing_parameter' => 'Fehlender Parameter',
-	'smw_gard_missing_selection' => 'Bitte etwas ausw‰hlen',
+	'smw_gard_missing_selection' => 'Bitte etwas auswÔøΩhlen',
 	'smw_unknown_value' => 'Unbekannter Wert',
 	'smw_out_of_range' => 'Au√üerhalb des Wertebereichs',
 	'smw_gard_value_not_numeric' => 'Wert muss eine Zahl sein',
@@ -148,9 +164,9 @@ protected $smwUserMessages = array(
 	'smw_renamingbot' => 'Benenne Seiten um',
 	'smw_importontologybot' => 'Importiere eine Ontologie',
 	
-	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf¸gbar.',
-	'smw_gard_import_addfiles' => 'Weitere $2-Dateien kˆnnen ¸ber $1 hinzugef¸gt werden.',
-	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf¸gbar.',
+	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verfÔøΩgbar.',
+	'smw_gard_import_addfiles' => 'Weitere $2-Dateien kÔøΩnnen ÔøΩber $1 hinzugefÔøΩgt werden.',
+	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verfÔøΩgbar.',
 
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot pr√ºft auf Zyklen in der Taxonomie und finden Properties ohne Dom√§ne und Wertebereich. Er pr√ºft au√üerdem die korrekte Verwendung eines Properties auf der Instanz-Ebene.',
