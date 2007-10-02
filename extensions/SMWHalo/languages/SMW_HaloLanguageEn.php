@@ -186,7 +186,7 @@ clicking the big arrows between the columns.',
 	'smw_anomaliesbot' => 'Find anomalies',
 	'smw_renamingbot' => 'Rename page',
 	'smw_importontologybot' => 'Import an ontology',
-	
+
 	'smw_gard_import_choosefile' => 'The following $1 files are available.',
 	'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
 	'smw_gard_import_nofiles' => 'No files of type $1 are available',
@@ -296,7 +296,7 @@ clicking the big arrows between the columns.',
 
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
-	
+
 	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
@@ -330,7 +330,26 @@ clicking the big arrows between the columns.',
 	'smw_qi_save' => 'Save Query',
 	'smw_qi_close_preview' => 'Close Preview',
 	'smw_qi_querySaved' => 'New query saved by QueryInterface',
-	'smw_qi_exportXLS' => 'Export results to Excel'
+	'smw_qi_exportXLS' => 'Export results to Excel',
+
+	/*Tooltips for Query Interface*/
+	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
+	'smw_qi_tt_addInstance' => 'By adding an instance, only a single article is included',
+	'smw_qi_tt_addProperty' => 'By adding a property, you can either list all results or search for specific values',
+	'smw_qi_tt_tcp' => 'The Table Column Preview gives you a preview of the columns which will appear in the result table',
+	'smw_qi_tt_qlm' => 'The Query Layout Manager enables you to define the layout of the query results',
+	'smw_qi_tt_preview' => 'Shows a full preview of your query results including the layout settings',
+	'smw_qi_tt_clipboard' => 'Copies your query text to the clipboard so it can easily be inserted into an article',
+	'smw_qi_tt_reset' => 'Resets the entire query',
+	'smw_qi_tt_format' => 'Output format of your query',
+	'smw_qi_tt_link' => 'W',
+	'smw_qi_tt_intro' => 'Text that is prepended to the query results',
+	'smw_qi_tt_sort' => 'Column which will be used for sorting',
+	'smw_qi_tt_limit' => 'Maximum number of results shown',
+	'smw_qi_tt_mainlabel' => 'Name of the first column',
+	'smw_qi_tt_order' => 'Ascending or descending order',
+	'smw_qi_tt_headers' => 'Show the headers of the table or not',
+	'smw_qi_tt_default' => 'Text that will be shown if there are no results'
 );
 
 
@@ -348,7 +367,7 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
 	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
 	);
-	
+
 var $smwSpecialCategories = array (
 	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
 	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
