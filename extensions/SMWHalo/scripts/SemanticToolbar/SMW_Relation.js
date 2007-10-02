@@ -59,10 +59,13 @@ var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
 var SMW_REL_HINT_CATEGORY =
-	'typeHint = "14" ';
+	'typeHint = "' + SMW_CATEGORY_NS + '" ';
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="102" ';
+	'typeHint="'+ SMW_PROPERTY_NS + '" ';
+
+var SMW_REL_HINT_INSTANCE =
+	'typeHint="'+ SMW_INSTANCE_NS + '" ';
 	
 
 RelationToolBar.prototype = {
@@ -185,7 +188,7 @@ newItem: function() {
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), selection, '', 
-							 SMW_REL_CHECK_EMPTY_NEV,
+							 SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
 	                         true));
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
@@ -273,7 +276,8 @@ updateNewItem: function(request) {
 				: '');
 		tb.insert(insertAfter,
 				  tb.createInput('rel-value-'+ i, parameterNames[i], value, '', 
-								 SMW_REL_CHECK_EMPTY_NEV,
+								 SMW_REL_CHECK_EMPTY_NEV + 
+								 (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : ""),
 		                         true));
 		tb.insert('rel-value-'+ i,
 				  tb.createText('rel-value-'+i+'-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
@@ -299,7 +303,8 @@ CreateSubSup: function() {
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-subsuper', gLanguage.getMessage('PROPERTY'), selection, '',
-	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY+SMW_REL_CHECK_EMPTY,
+	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY+SMW_REL_CHECK_EMPTY+
+	                         SMW_REL_HINT_PROPERTY,
 	                         true));
 	tb.append(tb.createText('rel-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
@@ -413,18 +418,21 @@ newRelation: function() {
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), selection, '',
-	                         SMW_REL_CHECK_PROPERTY_IIE+SMW_REL_CHECK_EMPTY,
+	                         SMW_REL_CHECK_PROPERTY_IIE+SMW_REL_CHECK_EMPTY+
+	                         SMW_REL_HINT_PROPERTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), '', '', 
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE,
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
 	
 	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', 
 							 "relToolBar.removeRangeOrType('rel-range-0')", 
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE,
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
 	
@@ -461,7 +469,8 @@ addRangeInput:function() {
 	tb.insert(insertAfter,
 			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', 
                              "relToolBar.removeRangeOrType('rel-range-"+i+"')",
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE,
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.insert('rel-range-'+i,
 	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
@@ -675,7 +684,7 @@ newPart: function() {
 							 SMW_REL_CHECK_PART_OF_RADIO, true));
 	
 	tb.append(tb.createInput('rel-name', gLanguage.getMessage('OBJECT'), selection, '',
-	                         SMW_REL_CHECK_EMPTY_NEV,
+	                         SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', '', '' , true));
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
@@ -789,14 +798,15 @@ getselectedItem: function(selindex) {
 
 			var obj = tb.createInput('rel-value-'+i, parName, 
 									 relation.getSplitValues()[i], '', 
-									 typeCheck ,true);
+									 typeCheck +
+									 (parName == "Page" ? SMW_REL_HINT_INSTANCE : "") ,true);
 			valueInputs.push(obj);
 			obj = tb.createText('rel-value-'+i+'-msg', '', '', true);
 			valueInputs.push(obj);
 		}
 		tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), relation.getName(), '', 
 								 SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
-		 						 SMW_REL_CHECK_EMPTY,
+		 						 SMW_REL_CHECK_EMPTY +SMW_REL_HINT_PROPERTY,
 		 						 true));
 		tb.append(tb.createText('rel-name-msg', '', '' , true));
 		if (renameAll !='') {

@@ -19,7 +19,7 @@ var SMW_CAT_ALL_VALID =
  		': (show:cat-invalid, hide:cat-confirm)"';
 
 var SMW_CAT_HINT_CATEGORY =
-	'typeHint = "14" ';
+	'typeHint = "' + SMW_CATEGORY_NS + '" ';
 
 var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
@@ -320,7 +320,8 @@ newCategory: function() {
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CREATE_NEW_CATEGORY'), '' , true));
 	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), 
 							 selection, '',
-	                         SMW_CAT_CHECK_CATEGORY_IIE+SMW_CAT_CHECK_EMPTY,
+	                         SMW_CAT_CHECK_CATEGORY_IIE+SMW_CAT_CHECK_EMPTY+
+	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 		

@@ -28,10 +28,10 @@ var SMW_PRP_CHECK_INTEGER =
 	 	': (color: red, showMessage:INVALID_FORMAT_OF_VALUE, valid:false)" ';
 
 var SMW_PRP_HINT_CATEGORY =
-	'typeHint = "14" ';
+	'typeHint = "' + SMW_CATEGORY_NS + '" ';
 
 var SMW_PRP_HINT_PROPERTY =
-	'typeHint="102" ';
+	'typeHint="'+ SMW_PROPERTY_NS + '" ';
 	
 var SMW_PRP_CHECK_EMPTY = 
 	'smwCheckEmpty="empty' +
