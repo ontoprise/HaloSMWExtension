@@ -2,8 +2,11 @@
 /*
  * Created on 01.10.2007
  *
- * Extracts help pages as wiki markup (pages from 'Help namespace) to a directory
- * given in $helpDirectory
+ * Extracts help pages as wiki markup (pages from 'Help' namespace) and their linked
+ * images to a directory given in $helpDirectory.
+ * 
+ * Options: --d=<path>
+ * Example: --d=c:\temp\helppages
  * 
  * Author: kai
  */
@@ -33,7 +36,7 @@
  	print "\nExtract: ".$hp->getText()."...";
  	$rev = Revision::loadFromTitle($dbr, $hp);
  	$wikitext = $rev->getText();
- 	$fname = str_replace("?", "", $hp->getDBKey());
+ 	$fname = rawurlencode($hp->getDBKey());
  	$handle = fopen($helpDirectory."/".$fname.".whp", "w");
  	fwrite($handle, $wikitext);
  	fclose($handle);
@@ -43,6 +46,11 @@
  
  print "\n\nAll help pages extracted!\n";
  
+ /**
+  * Extracts linked images from an article.
+  * 
+  * @param $hp article.
+  */
  function extractImages($hp) {
  	global $dbr, $wgUploadDirectory, $helpDirectory;
  	$images = $dbr->query('SELECT il_to FROM imagelinks i WHERE il_from = '.$hp->getArticleID());
@@ -60,8 +68,15 @@
 	}
  }
  
+ /**
+  * Creates the given directory and creates all
+  * dependant directories if necessary.
+  * 
+  * @param $path path of directory.
+  */
  function mkpath($path) {
     if(@mkdir($path) || file_exists($path)) return true;
     return (mkpath(dirname($path)) && mkdir($path));
  }
+ 
 ?>
