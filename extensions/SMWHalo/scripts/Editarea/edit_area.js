@@ -72,7 +72,7 @@
 			//HALO VERSION
 
 			var height= document.body.offsetHeight - editArea.get_all_toolbar_height() - 4;
-			if(height < 0)
+			if(height < 1)
 				height = 10;
 			editArea.result.style.height= height +"px";
 
@@ -82,7 +82,7 @@
 				width = parent.document.body.scrollWidth - toolbarwidth - 250;
 			else
 				width = parent.document.body.scrollWidth - toolbarwidth - 270;
-			if(width < 0)
+			if(width < 1)
 				width = 10;
 			document.getElementById("editor").style.width = width+"px";
 			parent.document.getElementById("frame_wpTextbox1").style.width = (width+2)+"px";
