@@ -6,14 +6,19 @@
 	float: right;
 }
 
+
+
 #slider {
 	width: 100%;
 	position: absolute;
-	top: 50px;
+	top: 10px;
 }
 
 #sliderHandle {
 }
+#toolbar{
+}
+
 
 .generic_content{
 	margin-left: 3px;
@@ -107,9 +112,6 @@ a.plusminus:hover{
 	width: 70%;
 }
 
-#content {
-/*	float: right; */
-}
 
 #semtoolbar{
 	padding-top: 1px;
