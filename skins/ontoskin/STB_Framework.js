@@ -193,47 +193,49 @@ ToolbarFramework.prototype = {
 	resizeToolbar : function() {
 		// max. usable height for toolbar
 		var maxUsableHeight = this.getWindowHeight() - 150;
-		if ($('activetabcontainer')) {
-			maxUsableHeight -= ($('tabcontainer').scrollHeight + 10 + $('activetabcontainer').scrollHeight);
-		}
-		// calculate height of containers:
-		this.countNumOfDisplayedContainers();
-		var neededHeight = this.calculateNeededHeightOfContainers();
-		if (this.contarray[HELPCONTAINER] != null && this.contarray[HELPCONTAINER].isVisible()) {
-			maxUsableHeight -= this.contarray[HELPCONTAINER].getNeededHeight();
-		}
+		if (maxUsableHeight > 150) {
+			if ($('activetabcontainer')) {
+				maxUsableHeight -= ($('tabcontainer').scrollHeight + 10 + $('activetabcontainer').scrollHeight);
+			}
+			// calculate height of containers:
+			this.countNumOfDisplayedContainers();
+			var neededHeight = this.calculateNeededHeightOfContainers();
+			if (this.contarray[HELPCONTAINER] != null && this.contarray[HELPCONTAINER].isVisible()) {
+				maxUsableHeight -= this.contarray[HELPCONTAINER].getNeededHeight();
+			}
 
-		if (neededHeight >= maxUsableHeight) {
-			var j = this.numOfVisibleContainers;
-			maxUsableHeight -= j*22;	// substract headers
+			if (neededHeight >= maxUsableHeight) {
+				var j = this.numOfVisibleContainers;
+				maxUsableHeight -= j*22;	// substract headers
 
-			// only one container is there -> set to maxUsableHeight!
-			if ((this.numOfContainers-1) == 0) {
-				if (neededHeight > maxUsableHeight) {
+				// only one container is there -> set to maxUsableHeight!
+				if ((this.numOfContainers-1) == 0) {
+					if (neededHeight > maxUsableHeight) {
+						for(var i=0;i<this.contarray.length;i++) {
+							if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
+								this.contarray[i].setContentStyle({maxHeight: maxUsableHeight + 'px'});
+							}
+						}
+					}
+				// more containers are there!
+				} else {
 					for(var i=0;i<this.contarray.length;i++) {
-						if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
-							this.contarray[i].setContentStyle({maxHeight: maxUsableHeight + 'px'});
+						if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER && this.contarray[i].isVisible()) {
+							if (this.contarray[i].getNeededHeight() < maxUsableHeight/this.numOfVisibleContainers) {
+								this.contarray[i].setContentStyle({maxHeight: this.contarray[i].getNeededHeight() + 'px'});
+								maxUsableHeight -= this.contarray[i].getNeededHeight();
+							} else {
+								this.contarray[i].setContentStyle({maxHeight: maxUsableHeight/(this.numOfVisibleContainers) + 'px'});
+							}
 						}
 					}
 				}
-			// more containers are there!
+			// stb fits into available free space
 			} else {
 				for(var i=0;i<this.contarray.length;i++) {
-					if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER && this.contarray[i].isVisible()) {
-						if (this.contarray[i].getNeededHeight() < maxUsableHeight/this.numOfVisibleContainers) {
-							this.contarray[i].setContentStyle({maxHeight: this.contarray[i].getNeededHeight() + 'px'});
-							maxUsableHeight -= this.contarray[i].getNeededHeight();
-						} else {
-							this.contarray[i].setContentStyle({maxHeight: maxUsableHeight/(this.numOfVisibleContainers) + 'px'});
-						}
+					if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
+						this.contarray[i].setContentStyle({maxHeight: ''});
 					}
-				}
-			}
-		// stb fits into available free space
-		} else {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
-					this.contarray[i].setContentStyle({maxHeight: ''});
 				}
 			}
 		}
@@ -272,11 +274,11 @@ ToolbarFramework.prototype = {
 	    } else {
 			//Common for IE
 	        if (window.document.documentElement && window.document.documentElement.clientHeight) {
-	            return window.document.documentElement.clientHeight;
+	            return typeof(window) == 'undefined' ? 0 : window.document.documentElement.clientHeight;
 	        } else {
 				//Fallback solution for IE, does not always return usable values
 				if (document.body && document.body.offsetHeight) {
-		       		return win.document.body.offsetHeight;
+					return typeof(win) == 'undefined' ? 0 : document.body.offsetHeight;
 		        }
 			return 0;
 			}
@@ -349,14 +351,14 @@ Slider.prototype = {
 	initialize: function() {
 		this.sliderObj = null;
 	},
-	
+
 	activateResizing: function() {
 	//Check if semtoolbar is available
 	if(!stb_control.isToolbarAvailable()) return;
 	if(!$('slider')) return;
 	//Load image to the slider div
-	$('slider').innerHTML = '<img id="sliderHandle" src="' + 
-			wgScriptPath + 
+	$('slider').innerHTML = '<img id="sliderHandle" src="' +
+			wgScriptPath +
 			'/extensions/SMWHalo/skins/slider.gif"/>';
 		var initialvalue = 0.65;
 		this.slide(initialvalue);
@@ -364,7 +366,7 @@ Slider.prototype = {
 	   if(this.sliderObj != null){
 	   		this.sliderObj.setDisabled();
 	   		this.sliderObj= null;
-	   }		 	 
+	   }
 	   this.sliderObj = new Control.Slider('sliderHandle','slider',{
 	   	  //axis:'vertical',
 	      sliderValue:initialvalue,
@@ -375,28 +377,28 @@ Slider.prototype = {
 	      onChange: this.slide
 	   });
 	},
-	
+
 	//Checks for min max and sets the content and the semtoolbar to the correct width
 	slide: function(v)
 	      {
 	      	var leftmin = 0.25; // range 0 - 1
 	   		var rightmin = 0.20; // range 0 - 1
-	   		
+
 	      	 if( v < leftmin){
 	      	 	smwhg_slider.sliderObj.setValue(leftmin);
 	      	 	return;
 	      	 }
-	      	 
+
 	      	 if( v > 1- rightmin){
 	      	 	smwhg_slider.sliderObj.setValue(1 - rightmin);
 	      	 	return;
 	      	 }
-	      	 
-	  
+
+
 	 		//the 5% missing are for the slider itself
 	         var currLeftDiv = 100*v;
 	         var currRightDiv = 95 - currLeftDiv;
-	         
+
 	         $('contentcol1').style.width = currLeftDiv + "%";
 	         $('contentcol2').style.width = currRightDiv + "%";
 	         if(window.editAreaLoader){
