@@ -439,7 +439,7 @@ newRelation: function() {
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
-	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), '', '', 
+	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), domain, '', 
 						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_HINT_CATEGORY,
 	                         true));
