@@ -212,7 +212,7 @@ class SMWExportTitleHalo {
 		$this->exists = $title->exists();
 
 		if ($this->exists) {
-			if ($title->getNamespace() == SMW_NS_ATTRIBUTE) {
+			if ($title->getNamespace() == SMW_NS_PROPERTY) {
 				$a = $export->store->getSpecialValues( $title, SMW_SP_HAS_TYPE );
 				if (count($a)>0) $this->has_type = $a[0];
 			}
