@@ -159,8 +159,18 @@ class AutoCompletionRequester {
  	    		$pages = AutoCompletionRequester::getPages($match, array(SMW_NS_PROPERTY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext),strtolower($specialProperties[SMW_SP_HAS_TYPE])) > 0) { 
- 	    		// has type relation 
+ 	    		// has type relation. First check for user types
  	    		$pages = AutoCompletionRequester::getPages($match, array(SMW_NS_TYPE));
+ 	    		// then check builtin types 
+ 	    		$typeLabels = array_values(SMWDataValueFactory::getKnownTypeLabels());
+ 	    		$lower_match = strtolower($match);
+ 	    		foreach($typeLabels as $l) {
+	 	    		if (strpos(strtolower($l), $lower_match) !== false) {
+	 	    			$pages[] = Title::newFromText($l, SMW_NS_TYPE);
+	 	    		}
+ 	    				
+ 	    		}
+ 	    		
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT])) > 0) { 
  	    		// has domain hint relation 
