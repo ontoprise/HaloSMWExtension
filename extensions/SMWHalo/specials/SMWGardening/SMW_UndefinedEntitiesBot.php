@@ -101,7 +101,7 @@
  	
  	public function checkForUndefinedProperties() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$log = "";
  		$undefindProperties = $this->getUndefinedProperties();
  		foreach($undefindProperties as $p) {
@@ -354,7 +354,7 @@
  	
  	private function getNamespaceText($page) {
  		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaceArray();
+ 		$nsArray = $smwgContLang->getNamespaces();
  		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
  			$ns = $wgLang->getNsText($page->getNamespace());
  				} else { 

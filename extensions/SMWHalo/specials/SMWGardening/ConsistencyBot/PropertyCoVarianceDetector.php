@@ -44,7 +44,7 @@ require_once("ConsistencyHelper.php");
  	public function checkPropertyGraphForCovariance() {
  		global $smwgContLang;
  		$numLog = 0;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$completeLog =  "";
  		$attributes = $this->consistencyHelper->getPages(array(SMW_NS_PROPERTY));
  		$cnt = 0;
@@ -93,7 +93,7 @@ require_once("ConsistencyHelper.php");
  	private function checkMinCardinality($a, & $log, & $numLog) {
  		
   			global $smwgContLang;
-  			$namespaces = $smwgContLang->getNamespaceArray();
+  			$namespaces = $smwgContLang->getNamespaces();
  			$minCard = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->minCard);
  		
  			if (!empty($minCard)) {
@@ -138,7 +138,7 @@ require_once("ConsistencyHelper.php");
  	private function checkMaxCardinality($a, & $log, & $numLog) {
  		
  			global $smwgContLang;
-  			$namespaces = $smwgContLang->getNamespaceArray();
+  			$namespaces = $smwgContLang->getNamespaces();
  			$maxCard = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->maxCard);
  			
  			if (!empty($maxCard)) {
@@ -179,7 +179,7 @@ require_once("ConsistencyHelper.php");
   	 */
  	private function checkDomainCovariance($a, & $log, & $numLog) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
   		
  			$domainCategories = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->domainHintRelation);
  			if (empty($domainCategories)) {
@@ -211,7 +211,7 @@ require_once("ConsistencyHelper.php");
   	 */
  	private function checkTypeEquality($a, & $log, & $numLog) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
   		
  			$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
  			if (empty($types)) {
@@ -247,7 +247,7 @@ require_once("ConsistencyHelper.php");
   	 */
  	private function checkRangeCovariance($a, & $log, & $numLog) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
   		
  			$rangeCategories = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->rangeHintRelation);
  			if (empty($rangeCategories)) {
@@ -290,7 +290,7 @@ require_once("ConsistencyHelper.php");
   	 */
  	private function checkSymTransCovariance($a, & $log, & $numLog) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
   		
  			$categoriesOfRelation = $this->consistencyHelper->getCategoriesForInstance($a);
  			$categoriesOfSuperRelation = $this->consistencyHelper->getCategoriesOfSuperProperty($this->categoryGraph, $a);

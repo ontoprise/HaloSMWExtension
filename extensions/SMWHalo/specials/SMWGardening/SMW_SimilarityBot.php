@@ -147,7 +147,7 @@
  	
  	private function formatSchemaResults($similarityTerm = NULL, $similarities, $simlimit) {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$markup = $similarityTerm != NULL ? "'''$similarityTerm''' is similar to the following entities: \n" : "";
  		foreach($similarities as $t) {
 			$t->calcSimilarityFactor($this->commonPrefixes, $this->commonSuffixes); 			
@@ -358,7 +358,7 @@
  	
  	private static function getWikiLink($title) {
  		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaceArray();
+ 		$nsArray = $smwgContLang->getNamespaces();
  		switch($title->getNamespace()) {
  				case NS_CATEGORY: {
  					$markup = "[[:".$wgLang->getNsText(NS_CATEGORY).":".$title->getText()."]]";

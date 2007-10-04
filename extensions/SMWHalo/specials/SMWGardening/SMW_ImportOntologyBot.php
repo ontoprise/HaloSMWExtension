@@ -501,7 +501,7 @@
  		global $smwgContLang, $smwgHaloContLang, $wgContLang;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sc = $smwgHaloContLang->getSpecialCategoryArray();
-		$smwNSArray = $smwgContLang->getNamespaceArray();
+		$smwNSArray = $smwgContLang->getNamespaces();
  		
 		$slabel = $this->getLabelForEntity($entity, $this->model);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
@@ -735,7 +735,7 @@
 	
 	private static function getNamespaceText($ns) {
  		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaceArray();
+ 		$nsArray = $smwgContLang->getNamespaces();
  		if ($ns == NS_TEMPLATE || $ns == NS_CATEGORY) {
  			$ns = $wgLang->getNsText($ns);
  				} else { 

@@ -39,7 +39,7 @@ class GraphCycleDetector {
  	public function getAllPropertyCycles($header) {
  		global $smwgContLang;
  		print "\nProperty cycle\n";
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
  		$attributeGraph = $this->consistencyHelper->getPropertyInheritanceGraph();
  		$cycles = $this->returnCycles($attributeGraph);
  		return $this->formatCycles($cycles, $header, $namespaces[SMW_NS_PROPERTY]);

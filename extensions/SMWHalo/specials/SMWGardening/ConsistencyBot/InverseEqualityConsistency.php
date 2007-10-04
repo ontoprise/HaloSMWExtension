@@ -18,7 +18,7 @@
  	
  	public function checkInverseRelations() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$inverseRelations = $this->getInverseRelations();
  		$log = "";
  		$numLog = 0;
@@ -75,7 +75,7 @@
  	
  	public function checkEqualToRelations() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$equalToRelations = $this->getEqualToRelations();
  		$log = "";
  		$this->bot->addSubTask(count($equalToRelations));

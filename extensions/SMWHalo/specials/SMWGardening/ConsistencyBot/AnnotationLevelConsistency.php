@@ -36,7 +36,7 @@ require_once("ConsistencyHelper.php");
  	 */
  	public function checkPropertyAnnotations() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$log = "";
  		$properties = $this->consistencyHelper->getPages(array(SMW_NS_PROPERTY));
  		$numLog = 0;
@@ -174,7 +174,7 @@ require_once("ConsistencyHelper.php");
  	 */
  	public function checkAnnotationCardinalities() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaceArray();
+ 		$namespaces = $smwgContLang->getNamespaces();
  		$log = "";
  		$numLog = 0;
  		// check attribute annotation cardinalities

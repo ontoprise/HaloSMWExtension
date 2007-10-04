@@ -70,7 +70,7 @@
  	 */
  	public function getPropertyInheritanceGraph() {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaceArray();
+  		$namespaces = $smwgContLang->getNamespaces();
  		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		
