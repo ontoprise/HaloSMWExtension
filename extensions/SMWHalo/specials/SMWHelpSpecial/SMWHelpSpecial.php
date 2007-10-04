@@ -80,6 +80,7 @@ class SMWHelpSpecial extends SpecialPage {
 			switch($restriction){
 				case "none":
 					$html .= "<h2>Here you can see all help questions that are currently in the system</h2>";
+					break;
 				case "all":
 					$html .= "<h2>Here you can see all help questions that belong to action " . $values[1] . " and the namespace " . $values[0] . "</h2>";
 					break;
