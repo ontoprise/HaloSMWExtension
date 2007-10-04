@@ -55,7 +55,7 @@ RefreshSemanticToolBar.prototype = {
 
 	//registers automatic refresh
 	registerTimer: function(){
-		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), 3);		
+		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), 1);		
 	},
 	
 	//deregisters automatic refresh
