@@ -8,7 +8,7 @@ include_once($smwgIP . '/languages/SMW_Language.php');
 
 class SMW_LanguageEn extends SMW_Language {
 
-protected $smwContentMessages = array(
+protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Editing help on properties',
 	'smw_helppage' => 'Relation',
 	'smw_viewasrdf' => 'RDF feed',
@@ -83,7 +83,7 @@ protected $smwContentMessages = array(
 );
 
 
-protected $smwUserMessages = array(
+protected $m_UserMessages = array(
 	'smw_devel_warning' => 'This feature is currently under development, and might not be fully functional. Backup your data before using it.',
 	// Messages for pages of types and properties
 	'smw_type_header' => 'Properties of type “$1”',
@@ -190,13 +190,16 @@ protected $m_DatatypeLabels = array(
 	'_geo' => 'Geographic coordinate', // name of the geocoord type
 	'_tem' => 'Temperature',  // name of the temperature type
 	'_dat' => 'Date',  // name of the datetime (calendar) type
-	'_ema' => 'Email',  // name of the email (URI) type
-	'_url' => 'URL',  // name of the URL type (string datatype property)
-	'_uri' => 'URI',  // name of the URI type (object property)
-	'_anu' => 'Annotation URI'  // name of the annotation URI type (annotation property)
+	'_ema' => 'Email',  // name of the email type
+	'_uri' => 'URL',  // name of the URL type
+	'_anu' => 'Annotation URI'  // name of the annotation URI type (OWL annotation property)
 );
 
-protected $smwSpecialProperties = array(
+protected $m_DatatypeAliases = array(
+	'URI'  => '_uri'
+);
+
+protected $m_SpecialProperties = array(
 	//always start upper-case
 	SMW_SP_HAS_TYPE  => 'Has type',
 	SMW_SP_HAS_URI   => 'Equivalent URI',
@@ -209,19 +212,15 @@ protected $smwSpecialProperties = array(
 	SMW_SP_POSSIBLE_VALUE => 'Allows value'
 );
 
-	/**
-	 * Function that returns the namespace identifiers.
-	 */
-	public function getNamespaceArray() {
-		return array(
-			SMW_NS_RELATION       => 'Relation',
-			SMW_NS_RELATION_TALK  => 'Relation_talk',
-			SMW_NS_PROPERTY       => 'Property',
-			SMW_NS_PROPERTY_TALK  => 'Property_talk',
-			SMW_NS_TYPE           => 'Type',
-			SMW_NS_TYPE_TALK      => 'Type_talk'
-		);
-	}
+protected $m_Namespaces = array(
+	SMW_NS_RELATION       => 'Relation',
+	SMW_NS_RELATION_TALK  => 'Relation_talk',
+	SMW_NS_PROPERTY       => 'Property',
+	SMW_NS_PROPERTY_TALK  => 'Property_talk',
+	SMW_NS_TYPE           => 'Type',
+	SMW_NS_TYPE_TALK      => 'Type_talk'
+);
+
 }
 
 

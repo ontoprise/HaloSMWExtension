@@ -58,8 +58,7 @@ class SMWFactbox {
 		include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 		// See if this attribute is a special one like e.g. "Has unit"
 		$propertyname = smwfNormalTitleText($propertyname); //slightly normalize label
-		$specprops = $smwgContLang->getSpecialPropertiesArray();
-		$special = array_search($propertyname, $specprops);
+		$special = $smwgContLang->findSpecialPropertyID($propertyname);
 
 		switch ($special) {
 			case false: // normal attribute
@@ -193,20 +192,36 @@ class SMWFactbox {
 	 * This method prints semantic data at the bottom of an article.
 	 */
 	static function printFactbox(&$text) {
-		global $wgContLang, $wgServer, $smwgShowFactbox, $smwgStoreActive, $smwgIP;
+		global $wgContLang, $wgServer, $smwgShowFactbox, $smwgShowFactboxEdit, $smwgStoreActive, $smwgIP, $wgRequest;
 		if (!$smwgStoreActive) return;
+
+		if ( $wgRequest->getCheck('wpPreview') ) {
+			$showfactbox = $smwgShowFactboxEdit;
+		} else {
+			$showfactbox = $smwgShowFactbox;
+		}
+
 		wfProfileIn("SMWFactbox::printFactbox (SMW)");
-		switch ($smwgShowFactbox) {
-		case SMW_FACTBOX_HIDDEN:
+		switch ($showfactbox) {
+		case SMW_FACTBOX_HIDDEN: // never
 			wfProfileOut("SMWFactbox::printFactbox (SMW)");
 			return;
-		case SMW_FACTBOX_NONEMPTY:
+		case SMW_FACTBOX_SPECIAL: // only when there are special properties
+			if ( !SMWFactbox::$semdata->hasSpecialProperties() ) {
+				wfProfileOut("SMWFactbox::printFactbox (SMW)");
+				return;
+			}
+			break;
+		case SMW_FACTBOX_NONEMPTY: // only when non-empty
 			if ( (!SMWFactbox::$semdata->hasProperties()) && (!SMWFactbox::$semdata->hasSpecialProperties()) ) {
 				wfProfileOut("SMWFactbox::printFactbox (SMW)");
 				return;
 			}
+			break;
+		// case SMW_FACTBOX_SHOWN: display
 		}
 
+		smwfRequireHeadItem(SMW_HEADER_STYLE);
 		include_once($smwgIP . '/includes/SMW_Infolink.php');
 		$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . str_replace('%2F', '/', urlencode(SMWFactbox::$semdata->getSubject()->getPrefixedText())), 'rdflink');
 
@@ -276,11 +291,10 @@ class SMWFactbox {
 		}
 
 		global $smwgContLang, $wgContLang;
-		$specprops = $smwgContLang->getSpecialPropertiesArray();
 		foreach(SMWFactbox::$semdata->getSpecialProperties() as $specialProperty) {
 			$valueArray = SMWFactbox::$semdata->getSpecialValues($specialProperty);
-			if (array_key_exists($specialProperty,$specprops)) { // only print specprops with an official name
-				$specialPropertyName = $specprops[$specialProperty];
+			$specialPropertyName = $smwgContLang->findSpecialPropertyLabel($specialProperty);
+			if ($specialPropertyName !== false) { // only print specprops with an official name
 				foreach ($valueArray as $value) {
 // 					if ($value instanceof SMWDataValue) {
 // 						$vt = $value->getLongWikiText(true);

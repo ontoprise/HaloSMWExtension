@@ -8,7 +8,7 @@ include_once($smwgIP . '/languages/SMW_Language.php');
 
 class SMW_LanguageRu extends SMW_Language {
 
-protected $smwContentMessages = array(
+protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Редактирование справки по отношениям и атрибутам',
 	'smw_helppage' => 'Отношение',
 	'smw_viewasrdf' => 'RDF источник',
@@ -83,7 +83,7 @@ protected $smwContentMessages = array(
 );
 
 
-protected $smwUserMessages = array(
+protected $m_UserMessages = array(
 	'smw_devel_warning' => 'Эта функция в настоящее время находится в разработке. Сделайте резервную копию прежде чем продолжать.',
 	// Messages for article pages of types, relations, and attributes
 	'smw_type_header' => 'Атрибуты типа “$1”',
@@ -206,13 +206,13 @@ protected $m_DatatypeLabels = array(
 	'_geo' => 'Географическая координата', // name of the geocoord type
 	'_tem' => 'Температура',  // name of the temperature type
 	'_dat' => 'Дата',  // name of the datetime (calendar) type
-	'_ema' => 'Почта',  // name of the email (URI) type
-	'_url' => 'URL',  // name of the URL type (string datatype property)
-	'_uri' => 'URI',  // name of the URI type (object property)
-	'_anu' => 'URI аннотации'  // name of the annotation URI type (annotation property)
+	'_ema' => 'Почта',  // name of the email type
+	'_uri' => 'URL',  // name of the URL type
+	'_anu' => 'URI аннотации'  // name of the annotation URI type (OWL annotation property)
 );
 
 protected $m_DatatypeAliases = array(
+	'URI'                   => '_uri',
 	// support English aliases:
 	'Page'                  => '_wpg',
 	'String'                => '_str',
@@ -226,7 +226,7 @@ protected $m_DatatypeAliases = array(
 	'Annotation URI'        => '_anu'
 );
 
-protected $smwSpecialProperties = array(
+protected $m_SpecialProperties = array(
 	//always start upper-case
 	SMW_SP_HAS_TYPE  => 'Имеет тип',
 	SMW_SP_HAS_URI   => 'Эквивалентный URI',
@@ -239,18 +239,37 @@ protected $smwSpecialProperties = array(
 	SMW_SP_POSSIBLE_VALUE => 'Возможные значения' // TODO: check translation, should be "Allowed value" (singular)
 );
 
+protected $m_SpecialPropertyAliases = array(
+	// support English aliases for special properties
+	'Has type'          => SMW_SP_HAS_TYPE,
+	'Equivalent URI'    => SMW_SP_HAS_URI,
+	'Subproperty of'    => SMW_SP_SUBPROPERTY_OF,
+	'Main display unit' => SMW_SP_MAIN_DISPLAY_UNIT,
+	'Display unit'      => SMW_SP_DISPLAY_UNIT,
+	'Imported from'     => SMW_SP_IMPORTED_FROM,
+	'Corresponds to'    => SMW_SP_CONVERSION_FACTOR,
+	'Provides service'  => SMW_SP_SERVICE_LINK,
+	'Allows value'      => SMW_SP_POSSIBLE_VALUE
+);
 
-	/**
-	 * Function that returns the namespace identifiers.
-	 */
-	public function getNamespaceArray() {
-		return array(
-			SMW_NS_RELATION       => 'Отношение',
-			SMW_NS_RELATION_TALK  => 'Отношение_дискуссия',
-			SMW_NS_PROPERTY       => 'Атрибут',
-			SMW_NS_PROPERTY_TALK  => 'Атрибут_дискуссия',
-			SMW_NS_TYPE           => 'Тип',
-			SMW_NS_TYPE_TALK      => 'Тип_дискуссия'
-		);
-	}
+
+protected $m_Namespaces = array(
+	SMW_NS_RELATION       => 'Отношение',
+	SMW_NS_RELATION_TALK  => 'Отношение_дискуссия',
+	SMW_NS_PROPERTY       => 'Атрибут',
+	SMW_NS_PROPERTY_TALK  => 'Атрибут_дискуссия',
+	SMW_NS_TYPE           => 'Тип',
+	SMW_NS_TYPE_TALK      => 'Тип_дискуссия'
+);
+
+protected $m_NamespaceAliases = array(
+	// support English aliases for namespaces
+	'Relation'      => SMW_NS_RELATION,
+	'Relation_talk' => SMW_NS_RELATION_TALK,
+	'Property'      => SMW_NS_PROPERTY,
+	'Property_talk' => SMW_NS_PROPERTY_TALK,
+	'Type'          => SMW_NS_TYPE,
+	'Type_talk'     => SMW_NS_TYPE_TALK
+);
+
 }

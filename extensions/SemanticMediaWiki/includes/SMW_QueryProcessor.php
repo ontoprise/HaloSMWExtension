@@ -8,11 +8,9 @@
 
 global $smwgIP;
 require_once($smwgIP . '/includes/storage/SMW_Store.php');
-require_once($smwgIP . '/includes/SMW_QueryPrinters.php');
-
 
 /**
- * Static class for accessing functions to generate and execute semantic queries
+ * Static class for accessing functions to generate and execute semantic queries 
  * and to serialise their results.
  */
 class SMWQueryProcessor {
@@ -30,11 +28,11 @@ class SMWQueryProcessor {
 	 * given array. The parameter $inline defines whether the query
 	 * is "inline" as opposed to being part of some special search page.
 	 *
-	 * If an error occurs during parsing, an error-message is returned
+	 * If an error occurs during parsing, an error-message is returned 
 	 * as a string. Otherwise an object of type SMWQuery is returned.
 	 *
 	 * The format string is used to specify the output format if already
-	 * known. Otherwise it will be determined from the parameters when
+	 * known. Otherwise it will be determined from the parameters when 
 	 * needed. This parameter is just for optimisation in a common case.
 	 */
 	static public function createQuery($querystring, $params, $inline = true, $format = '') {
@@ -172,7 +170,7 @@ class SMWQueryProcessor {
 
 /**
  * Objects of this class are in charge of parsing a query string in order
- * to create an SMWDescription. The class and methods are not static in order
+ * to create an SMWDescription. The class and methods are not static in order 
  * to more cleanly store the intermediate state and progress of the parser.
  */
 class SMWQueryParser {
@@ -182,9 +180,9 @@ class SMWQueryParser {
 	protected $m_errors; // empty array if all went right, array of strings otherwise
 	protected $m_label; //label of the main query result
 	protected $m_defaultns; //description of the default namespace restriction, or NULL if not used
-
+	
 	protected $m_categoryprefix; // cache label of category namespace . ':'
-
+	
 	public function SMWQueryParser() {
 		global $wgContLang;
 		$this->m_categoryprefix = $wgContLang->getNsText(NS_CATEGORY) . ':';
@@ -254,21 +252,21 @@ class SMWQueryParser {
 	 * Compute an SMWDescription for current part of a query, which should
 	 * be a standalone query (the main query or a subquery enclosed within
 	 * "<q>...</q>". Recursively calls similar methods and returns NULL upon error.
-	 *
+	 * 
 	 * The call-by-ref parameter $setNS is a boolean. Its input specifies whether
 	 * the query should set the current default namespace if no namespace restrictions
-	 * were given. If false, the calling super-query is happy to set the required
+	 * were given. If false, the calling super-query is happy to set the required 
 	 * NS-restrictions by itself if needed. Otherwise the subquery has to impose the defaults.
 	 * This is so, since outermost queries and subqueries of disjunctions will have to set
 	 * their own default restrictions.
-	 *
+	 * 
 	 * The return value of $setNS specifies whether or not the subquery has a namespace
 	 * specification in place. This might happen automatically if the query string imposes
 	 * such restrictions. The return value is important for those callers that otherwise
 	 * set up their own restrictions.
-	 *
+	 * 
 	 * Note that $setNS is no means to switch on or off default namespaces in general,
-	 * but just controls query generation. For general effect, the default namespaces
+	 * but just controls query generation. For general effect, the default namespaces 
 	 * should be set to NULL.
 	 *
 	 * The call-by-ref parameter $label is used to append any label strings found.
@@ -308,7 +306,7 @@ class SMWQueryParser {
 								$newdisjuncts[] = $this->addDescription($conj, $this->m_defaultns);
 							}
 							$disjuncts = $newdisjuncts;
-						} elseif ( !$hasNamespaces && $mustSetNS) {
+						} elseif ( !$hasNamespaces && $mustSetNS) { 
 							// add ns restriction to current result
 							$conjunction = $this->addDescription($conjunction, $this->m_defaultns);
 						}
@@ -384,7 +382,7 @@ class SMWQueryParser {
 	 */
 	protected function getLinkDescription(&$setNS, &$label) {
 		// This method is called when we encountered an opening '[['. The following
-		// block could be a Category-statement, fixed object, property statements,
+		// block could be a Category-statement, fixed object, property statements, 
 		// or according print statements.
 		$chunk = $this->readChunk();
 		if ($chunk == $this->m_categoryprefix) { // category statement
@@ -696,7 +694,7 @@ class SMWQueryParser {
 
 		return $this->finishLinkDescription($chunk, true, $result, $setNS, $label);
 	}
-
+	
 	protected function finishLinkDescription($chunk, $hasNamespaces, $result, &$setNS, &$label) {
 		if ($result === NULL) { // no useful information or concrete error found
 			$this->m_errors[] = wfMsgForContent('smw_badqueryatom');
@@ -718,7 +716,7 @@ class SMWQueryParser {
 		}
 		if ($chunk != ']]') {
 			// What happended? We found some chunk that could not be processed as
-			// link content (as in [[Category:Test<q>]]) and there was no label to
+			// link content (as in [[Category:Test<q>]]) and there was no label to 
 			// eat it. Or the closing ]] are just missing entirely.
 			if ($chunk != '') {
 				$this->m_errors[] = wfMsgForContent('smw_misplacedsymbol', htmlspecialchars($chunk));
@@ -734,21 +732,21 @@ class SMWQueryParser {
 		}
 		return $result;
 	}
-
+	
 	/**
 	 * Get the next unstructured string chunk from the query string.
 	 * Chunks are delimited by any of the special strings used in inline queries
 	 * (such as [[, ]], <q>, ...). If the string starts with such a delimiter,
-	 * this delimiter is returned. Otherwise the first string in front of such a
+	 * this delimiter is returned. Otherwise the first string in front of such a 
 	 * delimiter is returned.
 	 * Trailing and initial spaces are always ignored and chunks
 	 * consisting only of spaces are not returned.
 	 * If there is no more qurey string left to process, the empty string is
 	 * returned (and in no other case).
-	 *
-	 * The stoppattern can be used to customise the matching, especially in order to
+	 * 
+	 * The stoppattern can be used to customise the matching, especially in order to 
 	 * overread certain special symbols.
-	 *
+	 * 
 	 * $consume specifies whether the returned chunk should be removed from the
 	 * query string.
 	 */

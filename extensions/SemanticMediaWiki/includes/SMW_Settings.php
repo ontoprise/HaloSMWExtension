@@ -39,8 +39,23 @@ if (!isset($smwgNamespaceIndex)) {
 # which shows only those factboxes that have some content. Other options:
 ##
 $smwgShowFactbox = SMW_FACTBOX_NONEMPTY;
+//$smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
 //$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
 //$smwgShowFactbox = SMW_FACTBOX_SHOWN; # show always, buggy and not recommended
+##
+
+###
+# Same as $smwgShowFactbox but for edit mode and same possible values.
+##
+$smwgShowFactboxEdit = SMW_FACTBOX_NONEMPTY;
+##
+
+###
+# Should warnings be displayed in wikitexts right after the problematic
+# input? This currently affects only semantic annotations, not warnings
+# that are displayed by inline queries.
+##
+$smwgInlineErrors = true;
 ##
 
 ###
