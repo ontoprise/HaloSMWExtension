@@ -110,7 +110,11 @@ function smwfAskQuestion($namespace, $action, $question){
 	if($question == ""){
 		return "Sorry, you have not entered a question.";
 	}
-	$wgTitle = Title::newFromText( $question, NS_HELP );
+	//Replace '?' at the end and leading or ending whitespaces
+	$question = str_replace('?', '', $question);
+	$question = preg_replace('/^\s*(.*?)\s*$/', '$1', $question);
+
+	$wgTitle = Title::newFromText( $question . "?", NS_HELP );
 	if ( !$wgTitle ) {
 		return wfMsg('smw_help_error');
 	}
@@ -118,9 +122,6 @@ function smwfAskQuestion($namespace, $action, $question){
 		return wfMsg('smw_help_pageexists');
 	}
 	smwfCheckHelpAttributes();
-	//Replace '?' at the end and leading or ending whitespaces
-	$question = str_replace('?', '', $question);
-	$question = preg_replace('/^\s*(.*?)\s*$/', '$1', $question);
 
 	/*STARTLOG*/
 	$logmsg = "Added question '$question'";

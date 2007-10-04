@@ -62,13 +62,17 @@ class SMWQueryInterface extends SpecialPage {
 						'</div>' .
 						'<div id="qistatus"></div>' .
 					'</div>' .
-					'<div id="tablecolumnpreview">' .
-						'<div class="tcp_boxheader" onclick="qihelper.switchtcp()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_tcp') . '\')"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
-						'<div id="tcp_boxcontent" class="tcp_boxcontent" style="display:none">' .
-							'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
-								'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
-							'</table></div>' .
-						'</div>' .
+					'<div id="helpcontent" class="helpcontent">' .
+					'<div id="qi-help-headline"><img src="' . $smwgHaloScriptPath . '/skins/help.gif"/>Help</div>' .
+					'<div id="qi-help-content"></div>' .
+					'</div>' .
+				'</div>' .
+				'<div id="tablecolumnpreview">' .
+					'<div class="tcp_boxheader" onclick="qihelper.switchtcp()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_tcp') . '\')"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
+					'<div id="tcp_boxcontent" class="tcp_boxcontent" style="display:none">' .
+						'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
+							'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
+						'</table></div>' .
 					'</div>' .
 				'</div>';
 

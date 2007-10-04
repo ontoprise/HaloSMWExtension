@@ -21,6 +21,9 @@ var initHelp = function(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
+	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
+		ns = "QueryInterface";
+	}
 	sajax_do_call('smwfGetHelp', [ns , wgAction], displayHelp.bind(this));
 }
 
@@ -32,16 +35,27 @@ function smw_help_callme(){
 		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> Help');
 		initHelp();
 	}
+	else if(wgCanonicalSpecialPageName == "QueryInterface"){
+		initHelp();
+	}
 }
 
 function displayHelp(request){
-	if (request.responseText!=''){
-		helpcontainer.setContent(request.responseText);
+	//No SemTB in QI, therefore special treatment
+	if(wgCanonicalSpecialPageName == "QueryInterface"){
+		if ( request.responseText != '' ){
+			$('qi-help-content').innerHTML = request.responseText;
+		}
 	}
-	else {
-		helpcontainer.setHeadline = ' ';
+	else { //SemTB available
+		if (request.responseText!=''){
+			helpcontainer.setContent(request.responseText);
+		}
+		else {
+			helpcontainer.setHeadline = ' ';
+		}
+		helpcontainer.contentChanged();
 	}
-	helpcontainer.contentChanged();
 }
 
 function askQuestion(){
@@ -49,6 +63,9 @@ function askQuestion(){
 	var ns = wgNamespaceNumber==0?"Main":wgCanonicalNamespace ;
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
+	}
+	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
+		ns = "QueryInterface";
 	}
 	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
 }
