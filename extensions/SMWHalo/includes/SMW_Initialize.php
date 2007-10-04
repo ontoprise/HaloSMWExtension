@@ -44,7 +44,7 @@ function smwgHaloSetupExtension() {
 
 	$smwgMasterGeneralStore = NULL;
 
-	$wgHooks['SMW_InitializeTables'][] = 'smwfHaloInitializeTables';
+	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
@@ -92,6 +92,7 @@ function smwgHaloSetupExtension() {
 
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
+	$wgHooks['SpecialMovepageAfterMove'][] = 'smwfGenerateUpdateAfterMoveJob';
 
 	return true;
 }
@@ -141,7 +142,7 @@ function smwfHaloShowListPage(&$title, &$article){
  * Creates or updates additional tables needed by HALO.
  * Called from SMW when admin re-initializes tables
  */
-function smwfHaloInitializeTables($verbose) {
+function smwfHaloInitializeTables() {
 	$haloSQLStore = NULL;
 	global $smwgDefaultStore, $smwgHaloIP;
 			switch ($smwgDefaultStore) {
@@ -151,7 +152,7 @@ function smwfHaloInitializeTables($verbose) {
 				break;
 			}
 	if ($haloSQLStore != NULL) {
-		$haloSQLStore->createOrUpdateTables($verbose);
+		$haloSQLStore->createOrUpdateTables(true);
 	}
 	return true;
 }
@@ -362,4 +363,33 @@ function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
 	}
 	return true;
 }
+
+/**
+ * Called when an article has been moved.
+ */
+function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
+		$store = smwfGetStore();
+
+		$titlesToUpdate = $oldtitle->getLinksTo();
+		$params[] = $oldtitle->getText();
+		$params[] = $newtitle->getText();
+		
+		foreach ($titlesToUpdate as $uptitle) {
+			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $params);
+		}
+
+		if ($oldtitle->getNamespace()===SMW_NS_PROPERTY) {
+			$titlesToUpdate = $store->getAllPropertySubjects( $oldtitle );
+			foreach ($titlesToUpdate as $uptitle)
+				$jobs[] = new SMW_UpdatePropertiesAfterMoveJob($uptitle, $params);
+		}
+
+		if ($oldtitle->getNamespace()===NS_CATEGORY) {
+			$titlesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $oldtitle );
+			foreach ($titlesToUpdate as $uptitle)
+				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($uptitle, $params);
+		}
+	
+		Job :: batchInsert($jobs);
+	}
 ?>
