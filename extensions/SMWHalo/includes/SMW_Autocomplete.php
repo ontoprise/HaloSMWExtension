@@ -330,7 +330,7 @@ class AutoCompletionRequester {
 		}
 		$result = '<result>';
 		global $smwgContLang;
-		$ns = $smwgContLang->getNamespaceArray();
+		$ns = $smwgContLang->getNamespaces();
 		for($i = 0, $n = count($titles); $i < $n; $i++) {
 			// special handling for non-SMW namespace Category
 			$namespace = AutoCompletionRequester::getNamespaceText($titles[$i]);
@@ -399,7 +399,7 @@ class AutoCompletionRequester {
 	 */
 	public static function removeCommonNamespaces($titleText) {
 		global $smwgContLang;
-		$namespaces = array_values($smwgContLang->getNamespaceArray());
+		$namespaces = array_values($smwgContLang->getNamespaces());
 		$regex = "";
 		for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
 			if ($i < $n-1) {
@@ -518,7 +518,7 @@ class AutoCompletionRequester {
 		
 	private static function getNamespaceText($page) {
  		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaceArray();
+ 		$nsArray = $smwgContLang->getNamespaces();
  		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
  			$ns = $wgLang->getNsText($page->getNamespace());
  				} else { 

@@ -437,7 +437,7 @@
  	
  	public static function getNamespaceText($page) {
  		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaceArray();
+ 		$nsArray = $smwgContLang->getNamespaces();
  		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
  			$ns = $wgLang->getNsText($page->getNamespace());
  				} else { 
