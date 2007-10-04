@@ -5,7 +5,7 @@
  * the respective types of properties.
  *
  * @author: Nikolas Iwan
- * @author: Markus Krötzsch
+ * @author: Markus Krï¿½tzsch
  */
 
 define('SMW_URI_MODE_EMAIL',1);
@@ -52,7 +52,7 @@ class SMWURIValue extends SMWDataValue {
 					}
 					// simple check for invalid characters: '?', ' ', '{', '}'
 					$check1 = "@(\?|\}|\{| )+@";
-					if (preg_match($check1, $value, &$matches)) {
+					if (preg_match($check1, $value, $matches)) {
 						$this->addError(wfMsgForContent('smw_baduri', $value));
 						break;
 					}

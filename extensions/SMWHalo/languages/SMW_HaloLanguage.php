@@ -57,8 +57,18 @@ abstract class SMW_HaloLanguage {
 	function registerSpecialProperties() {
 		global $smwgContLang;
 		foreach ($this->smwSpecialProperties as $key => $prop) {
-//			$smwgContLang->addSpecialProperty($key, $prop);
+			$smwgContLang->addSpecialProperty($key, $prop);
 		}
+	}
+	
+	/**
+	 * Returns the label of the special property with the ID $propID.
+	 * @param int propID
+	 * 			ID of the special property
+	 * @return String Label of the special property
+	 */
+	function getSpecialPropertyLabel($propID) {
+		return $this->smwSpecialProperties[$propID];
 	}
 	
 	function getSpecialSchemaPropertyArray() {

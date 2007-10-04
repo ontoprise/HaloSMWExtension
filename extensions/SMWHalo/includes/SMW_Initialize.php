@@ -18,7 +18,7 @@ define('SMW_SC_TRANSITIVE_RELATIONS', 0);
 define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 
 // constants for special properties, used for datatype assignment and storage
-define('SMW_SP_CONVERSION_FACTOR_SI', 16);
+define('SMW_SP_CONVERSION_FACTOR_SI', 1000);
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
@@ -46,7 +46,7 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
-	$wgHooks['SMW_SpecialValue'][] = 'smwfHaloSpecialValues';
+	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
 	$wgFileExtensions[] = 'owl';
@@ -111,6 +111,9 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
+	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
+	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
+	                                      $smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
 
 //	global $smwgHaloContLang, $smwgIP;
 //	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
