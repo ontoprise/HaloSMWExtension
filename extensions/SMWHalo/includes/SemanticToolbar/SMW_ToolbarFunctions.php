@@ -38,7 +38,7 @@ function smwfGetHelp($namespace, $action){
 	$results = false;
 	$discourseState = "$namespace:$action";
 	$dbr =& wfGetDB( DB_SLAVE );
-	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" ORDER BY RAND() LIMIT 5');
+	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
 
 	while ($row = $dbr->fetchObject( $res )) {
 		$helppages[] = $row->subject_id;
@@ -68,12 +68,6 @@ function smwfGetHelp($namespace, $action){
 		}
 
 		$wikiTitle = Title::newFromText($title, NS_HELP);
-		/*
-		 * <div id="SMW_46692a1d752d5" class="smwtt" name="SMW_46692a1d752d5">Description: This is some text</div>
-<span class="smwatr" onmouseout="hideToolTip()" onmouseover="showToolTip('SMW_46692a1d752d5')">
-<img src="/HaloSMWOntoprise/extensions/SemanticMediaWiki/skins/info.gif"/>
-</span>
-		 */
 
 		if($description == wfMsg(smw_csh_newquestion)){
 			$html .= '<a href="' . $wikiTitle->getFullURL();

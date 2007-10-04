@@ -121,9 +121,7 @@ function getHelpByRestriction($restriction, $param){
 	$help = array();
 
 	$dbr =& wfGetDB( DB_SLAVE );
-	$res = $dbr->select( $dbr->tableName('smw_attributes'),
-		'*',
-		'attribute_title = "DiscourseState"');
+	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND subject_namespace = "' . NS_HELP . '"');
 
 	//First, find all pages that are relevant and save their id
 	if ($dbr->numRows($res) > 0){
