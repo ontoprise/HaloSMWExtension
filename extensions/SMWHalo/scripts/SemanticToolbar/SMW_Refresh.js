@@ -106,6 +106,9 @@ RefreshSemanticToolBar.prototype = {
 								 gLanguage.getMessage('UNMATCHED_BRACKETS')+'</div>');
 				}
 			}
+			if ($('wpTextbox1')) {
+				$('wpTextbox1').focus();
+			}
 		}
 		
 	}
