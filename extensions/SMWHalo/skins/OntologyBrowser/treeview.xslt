@@ -238,7 +238,8 @@
 		 <a style="margin-left:5px;">
 		 	<xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@superCat"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 		 	<xsl:if test="@superCat">
-			 &lt;<xsl:value-of select="@superCat"></xsl:value-of>&gt;
+		 	 <xsl:variable name="superCategory" select="@superCat"/>
+			 &lt;<xsl:value-of select="translate($superCategory, '_', ' ')"></xsl:value-of>&gt;
 			</xsl:if>
 		 </a>
 		</td>
@@ -289,7 +290,8 @@
 					<xsl:when test="child::param[1][@isLink]">
 						<a class="annotation" style="margin-left:5px;">
 							<xsl:attribute name="onclick">annotationActionListener.navigateToTarget(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="child::param[1]"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute> 
-							<xsl:value-of select="child::param[1]"/>
+							<xsl:variable name="target" select="child::param[1]"/>
+							<xsl:value-of select="translate($target, '_', ' ')"/>
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
@@ -311,7 +313,8 @@
 							<xsl:when test="@isLink">
 								<a class="annotation" style="margin-left:5px;">
 									<xsl:attribute name="onclick">annotationActionListener.navigateToTarget(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-									<xsl:value-of select="."/>
+									<xsl:variable name="target" select="."/>
+									<xsl:value-of select="translate($target, '_', ' ')"/>
 								</a>
 							</xsl:when>
 							<xsl:otherwise>
