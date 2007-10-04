@@ -41,7 +41,7 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 
 		$linkCache = & LinkCache :: singleton();
 		$linkCache->clear();
-
+		
 		$article = new Article($this->updatetitle);
 		$latestrevision = Revision :: newFromTitle($this->updatetitle);
 
@@ -50,7 +50,7 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 			wfDebug($this->error);
 			return false;
 		}
-
+		
 		$oldtext = $latestrevision->getRawText();
 
 		//Category X moved to Y
@@ -63,13 +63,14 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 		$replace[0] = '[[${1}' . $cat . '${2}:${3}' . $this->newtitle . '${4}]]';
 
 		// [[Category:X|m]]  -> [[Category:Y|m]]
-		$search[1] = '(\[\[(\s*)' . $cat . '(\s*):(\s*)' . $this->oldtitle . '(\s*)|([^]]*)\]\])';
+		$search[1] = '(\[\[(\s*)' . $cat . '(\s*):(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)\]\])';
 		$replace[1] = '[[${1}' . $cat . '${2}:${3}' . $this->newtitle . '${4}|${5}]]';
 
 		$newtext = preg_replace($search, $replace, $oldtext);
+			
 		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateCategoriesAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
 		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
-
+		
 		$options = new ParserOptions;
 		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
 

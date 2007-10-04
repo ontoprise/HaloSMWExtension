@@ -261,8 +261,8 @@ function smwfAddHTMLHeadersOutput(&$out) {
 		// Register namespace identifiers
 		if (!is_array($wgExtraNamespaces)) { $wgExtraNamespaces=array(); }
 		if (!is_array($wgNamespaceAliases)) { $wgNamespaceAliases=array(); }
-		$wgExtraNamespaces = array_merge($wgExtraNamespaces, $smwgContLang->getNamespaces());
-		$wgNamespaceAliases = array_merge($wgNamespaceAliases, $smwgContLang->getNamespaceAliases());
+		$wgExtraNamespaces = $wgExtraNamespaces + $smwgContLang->getNamespaces();
+		$wgNamespaceAliases = $wgNamespaceAliases + $smwgContLang->getNamespaceAliases();
 		
 
 		// Support subpages only for talk pages by default
