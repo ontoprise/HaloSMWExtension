@@ -5,13 +5,14 @@
  * the respective types of properties.
  *
  * @author: Nikolas Iwan
- * @author: Markus Kr�tzsch
+ * @author: Markus Krötzsch
  */
 
 define('SMW_URI_MODE_EMAIL',1);
 define('SMW_URI_MODE_URI',3);
 define('SMW_URI_MODE_ANNOURI',4);
 
+require_once('SMW_DataValue.php');
 /**
  * FIXME: correctly create safe HTML and Wiki text.
  */
@@ -71,7 +72,7 @@ class SMWURIValue extends SMWDataValue {
 // // 					$check3 = "@^([a-zA-Z]{0,6}:)[a-zA-Z0-9\.\/%]+$@";  //simple regexp for protocol+domain part of URI
 // 					$check3 = "@^([a-zA-Z]:)[a-zA-Z0-9\.\/%]+$@";  //simple regexp for protocol+domain part of URI
 // 					/// FIXME: why {0,6}?
-// 					if (!preg_match($check3, $uri_ex[0],&$matches)){
+// 					if (!preg_match($check3, $uri_ex[0],$matches)){
 // 						$this->addError(wfMsgForContent('smw_baduri', $value) . 'Debug5');
 // 						break;
 // 					}
