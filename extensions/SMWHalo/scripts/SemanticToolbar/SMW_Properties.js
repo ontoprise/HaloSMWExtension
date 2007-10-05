@@ -73,7 +73,9 @@ var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_
 				 			 ['propToolBar.addRange()', gLanguage.getMessage('ADD_RANGE'), 'prp-add-range-lnk']];
 		
 var PRP_APPLY_LINK =
-	[['propToolBar.apply()', 'Apply', 'prop-confirm', gLanguage.getMessage('INVALID_VALUES'), 'prop-invalid']];
+	[['propToolBar.apply()', 'Apply', 'prop-confirm', gLanguage.getMessage('INVALID_VALUES'), 'prop-invalid'],
+	 ['propToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+	];
 
 var PropertiesToolBar = Class.create();
 
@@ -543,6 +545,8 @@ enableWidgets: function() {
 
 cancel: function(){
 	this.toolbarContainer.hideSandglass();
+	this.relValues = null;
+	this.catValues = null;
 	this.createContent();
 },
 
