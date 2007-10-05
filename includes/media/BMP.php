@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Handler for Microsoft bitmap format (bmp). It inherits most of the methods
- * from ImageHandler, some of them had to be overriden cause gd does not
- * support this format.
+ * Handler for Microsoft's bitmap format; getimagesize() doesn't
+ * support these files
+ *
+ * @addtogroup Media
  */
 class BmpHandler extends BitmapHandler {
 
@@ -25,5 +27,3 @@ class BmpHandler extends BitmapHandler {
 		return array( $w[1], $h[1] );
 	}
 }
-
-?>

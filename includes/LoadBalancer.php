@@ -95,7 +95,9 @@ class LoadBalancer {
 		# Unset excessively lagged servers
 		$lags = $this->getLagTimes();
 		foreach ( $lags as $i => $lag ) {
-			if ( isset( $this->mServers[$i]['max lag'] ) && $lag > $this->mServers[$i]['max lag'] ) {
+			if ( $i != 0 && isset( $this->mServers[$i]['max lag'] ) && 
+				( $lag === false || $lag > $this->mServers[$i]['max lag'] ) ) 
+			{
 				unset( $loads[$i] );
 			}
 		}
@@ -322,13 +324,13 @@ class LoadBalancer {
 
 		# Query groups
 		if ( !is_array( $groups ) ) {
-			$groupIndex = $this->getGroupIndex( $groups, $i );
+			$groupIndex = $this->getGroupIndex( $groups );
 			if ( $groupIndex !== false ) {
 				$i = $groupIndex;
 			}
 		} else {
 			foreach ( $groups as $group ) {
-				$groupIndex = $this->getGroupIndex( $group, $i );
+				$groupIndex = $this->getGroupIndex( $group );
 				if ( $groupIndex !== false ) {
 					$i = $groupIndex;
 					break;
@@ -644,4 +646,4 @@ class LoadBalancer {
 	}
 }
 
-?>
+

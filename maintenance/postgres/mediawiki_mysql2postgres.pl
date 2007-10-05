@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 ## Convert data from a MySQL mediawiki database into a Postgres mediawiki database
-## svn: $Id: mediawiki_mysql2postgres.pl,v 1.2 2007/04/23 09:47:44 joerg Exp $
+## svn: $Id: mediawiki_mysql2postgres.pl 21254 2007-04-14 02:10:03Z greg $
 
 use strict;
 use warnings;

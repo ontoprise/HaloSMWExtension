@@ -220,8 +220,6 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 		}
 
 		// And now for the content
-		$wgOut->setSyndicated( true );
-
 		$list = ChangesList::newFromUser( $wgUser );
 		
 		if ( $wgAllowCategorizedRecentChanges ) {
@@ -269,8 +267,6 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 }
 
 function rcFilterByCategories ( &$rows , $categories , $any ) {
-	require_once ( 'Categoryfinder.php' ) ;
-	
 	# Filter categories
 	$cats = array () ;
 	foreach ( $categories AS $cat ) {
@@ -333,6 +329,14 @@ function rcOutputFeed( $rows, $feedFormat, $limit, $hideminor, $lastmod ) {
 		$feedTitle,
 		htmlspecialchars( wfMsgForContent( 'recentchanges-feed-description' ) ),
 		$wgTitle->getFullUrl() );
+
+	//purge cache if requested
+	global $wgRequest, $wgUser;
+	$purge = $wgRequest->getVal( 'action' ) == 'purge';
+	if ( $purge && $wgUser->isAllowed('purge') ) {
+		$messageMemc->delete( $timekey );
+		$messageMemc->delete( $key );
+	}
 
 	/**
 	 * Bumping around loading up diffs can be pretty slow, so where
@@ -624,7 +628,13 @@ function rcFormatDiffRow( $title, $oldid, $newid, $timestamp, $comment ) {
 	$skin = $wgUser->getSkin();
 	$completeText = '<p>' . $skin->formatComment( $comment ) . "</p>\n";
 
-	if( $title->getNamespace() >= 0 && $title->userCan( 'read' ) ) {
+	//NOTE: Check permissions for anonymous users, not current user.
+	//      No "privileged" version should end up in the cache.
+	//      Most feed readers will not log in anway.
+	$anon = new User();
+	$accErrors = $title->getUserPermissionsErrors( 'read', $anon, true );
+
+	if( $title->getNamespace() >= 0 && !$accErrors ) {
 		if( $oldid ) {
 			wfProfileIn( "$fname-dodiff" );
 
@@ -685,12 +695,12 @@ function rcFormatDiffRow( $title, $oldid, $newid, $timestamp, $comment ) {
  */
 function rcApplyDiffStyle( $text ) {
 	$styles = array(
-		'diff'             => 'background-color: white;',
-		'diff-otitle'      => 'background-color: white;',
-		'diff-ntitle'      => 'background-color: white;',
-		'diff-addedline'   => 'background: #cfc; font-size: smaller;',
-		'diff-deletedline' => 'background: #ffa; font-size: smaller;',
-		'diff-context'     => 'background: #eee; font-size: smaller;',
+		'diff'             => 'background-color: white; color:black;',
+		'diff-otitle'      => 'background-color: white; color:black;',
+		'diff-ntitle'      => 'background-color: white; color:black;',
+		'diff-addedline'   => 'background: #cfc; color:black; font-size: smaller;',
+		'diff-deletedline' => 'background: #ffa; color:black; font-size: smaller;',
+		'diff-context'     => 'background: #eee; color:black; font-size: smaller;',
 		'diffchange'       => 'color: red; font-weight: bold; text-decoration: none;',
 	);
 	
@@ -702,4 +712,4 @@ function rcApplyDiffStyle( $text ) {
 	return $text;
 }
 
-?>
+

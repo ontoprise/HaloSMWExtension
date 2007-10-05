@@ -16,7 +16,13 @@ class PostgresField {
 	global $wgDBmwschema;
 
 		$q = <<<END
-SELECT typname, attnotnull, attlen
+SELECT 
+CASE WHEN typname = 'int2' THEN 'smallint'
+WHEN typname = 'int4' THEN 'integer'
+WHEN typname = 'int8' THEN 'bigint'
+WHEN typname = 'bpchar' THEN 'char'
+ELSE typname END AS typname,
+attnotnull, attlen
 FROM pg_class, pg_namespace, pg_attribute, pg_type
 WHERE relnamespace=pg_namespace.oid
 AND relkind='r'
@@ -102,8 +108,19 @@ class DatabasePostgres extends Database {
 	function implicitGroupby() {
 		return false;
 	}
+	function implicitOrderby() {
+		return false;
+	}
 	function searchableIPs() {
 		return true;
+	}
+	function functionalIndexes() {
+		return true;
+	}
+
+	function hasConstraint( $name ) {
+		$SQL = "SELECT 1 FROM pg_catalog.pg_constraint WHERE conname = '" . pg_escape_string( $name ) . "'";
+		return $this->numRows($res = $this->doQuery($SQL));
 	}
 
 	static function newFromParams( $server, $user, $password, $dbName, $failFunction = false, $flags = 0)
@@ -155,6 +172,7 @@ class DatabasePostgres extends Database {
 
 		$this->mOpened = true;
 		## If this is the initial connection, setup the schema stuff and possibly create the user
+		## TODO: Move this out of open()
 		if (defined('MEDIAWIKI_INSTALL')) {
 			global $wgDBname, $wgDBuser, $wgDBpassword, $wgDBsuperuser, $wgDBmwschema,
 				$wgDBts2schema;
@@ -378,7 +396,10 @@ class DatabasePostgres extends Database {
 					"WHERE relname = 'pg_pltemplate' AND nspname='pg_catalog'";
 				$rows = $this->numRows($this->doQuery($SQL));
 				if ($rows >= 1) {
+					$olde = error_reporting(0);
+					error_reporting($olde - E_WARNING);
 					$result = $this->doQuery("CREATE LANGUAGE plpgsql");
+					error_reporting($olde);
 					if (!$result) {
 						print "<b>FAILED</b>. You need to install the language plpgsql in the database <tt>$wgDBname</tt></li>";
 						dieout("</ul>");
@@ -476,6 +497,15 @@ class DatabasePostgres extends Database {
 			$this->doQuery("SET client_min_messages = 'ERROR'");
 		}
 
+		global $wgDBmwschema, $wgDBts2schema;
+		if (isset( $wgDBmwschema ) && isset( $wgDBts2schema )
+			&& $wgDBmwschema !== 'mediawiki'
+			&& preg_match( '/^\w+$/', $wgDBmwschema )
+			&& preg_match( '/^\w+$/', $wgDBts2schema )
+		) {
+			$this->doQuery("SET search_path = $wgDBmwschema, $wgDBts2schema, public");
+		}
+
 		return $this->mConn;
 	}
 
@@ -501,18 +531,24 @@ class DatabasePostgres extends Database {
 	}
 
 	function freeResult( $res ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
 		if ( !@pg_free_result( $res ) ) {
 			throw new DBUnexpectedError($this,  "Unable to free Postgres result\n" );
 		}
 	}
 
 	function fetchObject( $res ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
 		@$row = pg_fetch_object( $res );
 		# FIXME: HACK HACK HACK HACK debug
 
 		# TODO:
 		# hashar : not sure if the following test really trigger if the object
-		#          fetching failled.
+		#          fetching failed.
 		if( pg_last_error($this->mConn) ) {
 			throw new DBUnexpectedError($this,  'SQL error: ' . htmlspecialchars( pg_last_error($this->mConn) ) );
 		}
@@ -520,6 +556,9 @@ class DatabasePostgres extends Database {
 	}
 
 	function fetchRow( $res ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
 		@$row = pg_fetch_array( $res );
 		if( pg_last_error($this->mConn) ) {
 			throw new DBUnexpectedError($this,  'SQL error: ' . htmlspecialchars( pg_last_error($this->mConn) ) );
@@ -528,14 +567,27 @@ class DatabasePostgres extends Database {
 	}
 
 	function numRows( $res ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
 		@$n = pg_num_rows( $res );
 		if( pg_last_error($this->mConn) ) {
 			throw new DBUnexpectedError($this,  'SQL error: ' . htmlspecialchars( pg_last_error($this->mConn) ) );
 		}
 		return $n;
 	}
-	function numFields( $res ) { return pg_num_fields( $res ); }
-	function fieldName( $res, $n ) { return pg_field_name( $res, $n ); }
+	function numFields( $res ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
+		return pg_num_fields( $res );
+	}
+	function fieldName( $res, $n ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
+		return pg_field_name( $res, $n );
+	}
 
 	/**
 	 * This must be called after nextSequenceVal
@@ -544,7 +596,13 @@ class DatabasePostgres extends Database {
 		return $this->mInsertId;
 	}
 
-	function dataSeek( $res, $row ) { return pg_result_seek( $res, $row ); }
+	function dataSeek( $res, $row ) {
+		if ( $res instanceof ResultWrapper ) {
+			$res = $res->result;
+		}
+		return pg_result_seek( $res, $row );
+	}
+
 	function lastError() {
 		if ( $this->mConn ) {
 			return pg_last_error();
@@ -558,6 +616,9 @@ class DatabasePostgres extends Database {
 	}
 
 	function affectedRows() {
+		if( !isset( $this->mLastResult ) or ! $this->mLastResult )
+			return 0;
+
 		return pg_affected_rows( $this->mLastResult );
 	}
 
@@ -595,13 +656,9 @@ class DatabasePostgres extends Database {
 		if ( !$res ) {
 			return NULL;
 		}
-
 		while ( $row = $this->fetchObject( $res ) ) {
 			if ( $row->indexname == $index ) {
 				return $row;
-				
-				// BUG: !!!! This code needs to be synced up with database.php
-				
 			}
 		}
 		return false;
@@ -619,33 +676,83 @@ class DatabasePostgres extends Database {
 
 	}
 
-	function insert( $table, $a, $fname = 'Database::insert', $options = array() ) {
-		# Postgres doesn't support options
-		# We have a go at faking one of them
-		# TODO: DELAYED, LOW_PRIORITY
+	/**
+	 * INSERT wrapper, inserts an array into a table
+	 *
+	 * $args may be a single associative array, or an array of these with numeric keys, 
+	 * for multi-row insert (Postgres version 8.2 and above only).
+	 *
+	 * @param array $table   String: Name of the table to insert to.
+	 * @param array $args    Array: Items to insert into the table.
+	 * @param array $fname   String: Name of the function, for profiling
+	 * @param mixed $options String or Array. Valid options: IGNORE
+	 *
+	 * @return bool Success of insert operation. IGNORE always returns true.
+	 */
+	function insert( $table, $args, $fname = 'DatabasePostgres::insert', $options = array() ) {
+		global $wgDBversion;
 
-		if ( !is_array($options))
-			$options = array($options);
-
-		if ( in_array( 'IGNORE', $options ) )
-			$oldIgnore = $this->ignoreErrors( true );
-
-		# IGNORE is performed using single-row inserts, ignoring errors in each
-		# FIXME: need some way to distiguish between key collision and other types of error
-		$oldIgnore = $this->ignoreErrors( true );
-		if ( !is_array( reset( $a ) ) ) {
-			$a = array( $a );
+		$table = $this->tableName( $table );
+		if (! isset( $wgDBversion ) ) {
+			$this->getServerVersion();
+			$wgDBversion = $this->numeric_version;
 		}
-		foreach ( $a as $row ) {
-			parent::insert( $table, $row, $fname, array() );
+
+		if ( !is_array( $options ) )
+			$options = array( $options );
+
+		if ( isset( $args[0] ) && is_array( $args[0] ) ) {
+			$multi = true;
+			$keys = array_keys( $args[0] );
 		}
-		$this->ignoreErrors( $oldIgnore );
-		$retVal = true;
+		else {
+			$multi = false;
+			$keys = array_keys( $args );
+		}
 
-		if ( in_array( 'IGNORE', $options ) )
-			$this->ignoreErrors( $oldIgnore );
+		$ignore = in_array( 'IGNORE', $options ) ? 1 : 0;
+		if ( $ignore )
+			$olde = error_reporting( 0 );
 
-		return $retVal;
+		$sql = "INSERT INTO $table (" . implode( ',', $keys ) . ') VALUES ';
+
+		if ( $multi ) {
+			if ( $wgDBversion >= 8.2 ) {
+				$first = true;
+				foreach ( $args as $row ) {
+					if ( $first ) {
+						$first = false;
+					} else {
+						$sql .= ',';
+					}
+					$sql .= '(' . $this->makeList( $row ) . ')';
+				}
+				$res = (bool)$this->query( $sql, $fname, $ignore );
+			}
+			else {
+				$res = true;
+				$origsql = $sql;
+				foreach ( $args as $row ) {
+					$tempsql = $origsql;
+					$tempsql .= '(' . $this->makeList( $row ) . ')';
+					$tempres = (bool)$this->query( $tempsql, $fname, $ignore );
+					if (! $tempres)
+						$res = false;
+				}
+			}
+		}
+		else {
+			$sql .= '(' . $this->makeList( $args ) . ')';
+			$res = (bool)$this->query( $sql, $fname, $ignore );
+		}
+
+		if ( $ignore ) {
+			$olde = error_reporting( $olde );
+			return true;
+		}
+
+		return $res;
+
 	}
 
 	function tableName( $name ) {
@@ -864,10 +971,10 @@ class DatabasePostgres extends Database {
 			. "WHERE c.relnamespace = n.oid AND c.relname = $etable AND n.nspname = $eschema "
 			. "AND c.relkind IN ('" . implode("','", $types) . "')";
 		$res = $this->query( $SQL );
-		$count = $res ? pg_num_rows($res) : 0;
+		$count = $res ? $res->numRows() : 0;
 		if ($res)
 			$this->freeResult( $res );
-		return $count;
+		return $count ? true : false;
 	}
 
 	/*
@@ -897,7 +1004,7 @@ END;
 				$this->addQuotes($trigger)));
 		if (!$res)
 			return NULL;
-		$rows = pg_num_rows($res);
+		$rows = $res->numRows();
 		$this->freeResult($res);
 		return $rows;
 	}
@@ -921,7 +1028,7 @@ END;
 		$res = $this->query($SQL);
 		if (!$res)
 			return NULL;
-		$rows = pg_num_rows($res);
+		$rows = $res->numRows();
 		$this->freeResult($res);
 		return $rows;
 	}
@@ -934,7 +1041,12 @@ END;
 		$SQL = "SELECT rolname FROM pg_catalog.pg_namespace n, pg_catalog.pg_roles r "
 				."WHERE n.nspowner=r.oid AND n.nspname = '$eschema'";
 		$res = $this->query( $SQL );
-		$owner = $res ? pg_num_rows($res) ? pg_fetch_result($res, 0, 0) : false : false;
+		if ( $res && $res->numRows() ) {
+			$row = $res->fetchObject();
+			$owner = $row->rolname;
+		} else {
+			$owner = false;
+		}
 		if ($res)
 			$this->freeResult($res);
 		return $owner;
@@ -952,7 +1064,7 @@ END;
 			. "WHERE c.relnamespace = n.oid AND c.relname = '$etable' AND n.nspname = '$eschema' "
 			. "AND a.attrelid = c.oid AND a.attname = '$ecol'";
 		$res = $this->query( $SQL, $fname );
-		$count = $res ? pg_num_rows($res) : 0;
+		$count = $res ? $res->numRows() : 0;
 		if ($res)
 			$this->freeResult( $res );
 		return $count;
@@ -989,9 +1101,9 @@ END;
 			$this->doQuery("DROP TABLE $wgDBmwschema.$ctest");
 		}
 		$SQL = "CREATE TABLE $wgDBmwschema.$ctest(a int)";
-		error_reporting( 0 );
+		$olde = error_reporting( 0 );
 		$res = $this->doQuery($SQL);
-		error_reporting( E_ALL );
+		error_reporting( $olde );
 		if (!$res) {
 			print "<b>FAILED</b>. Make sure that the user \"$wgDBuser\" can write to the schema \"$wgDBmwschema\"</li>\n";
 			dieout("</ul>");
@@ -1046,10 +1158,14 @@ END;
 		$this->doQuery("COMMIT");
 	}
 
-	function encodeBlob($b) {
-		return array('bytea',pg_escape_bytea($b));
+	function encodeBlob( $b ) {
+		return new Blob ( pg_escape_bytea( $b ) ) ;
 	}
-	function decodeBlob($b) {
+
+	function decodeBlob( $b ) {
+		if ($b instanceof Blob) {
+			$b = $b->fetch();
+		}
 		return pg_unescape_bytea( $b );
 	}
 
@@ -1060,11 +1176,10 @@ END;
 	function addQuotes( $s ) {
 		if ( is_null( $s ) ) {
 			return 'NULL';
-		} else if (is_array( $s )) { ## Assume it is bytea data
-			return "E'$s[1]'";
+		} else if ($s instanceof Blob) {
+			return "'".$s->fetch($s)."'";
 		}
 		return "'" . pg_escape_string($s) . "'";
-		// Unreachable: return "E'" . pg_escape_string($s) . "'";
 	}
 
 	function quote_ident( $s ) {
@@ -1077,8 +1192,7 @@ END;
 	}
 
 	/**
-	 * Returns an optional USE INDEX clause to go after the table, and a
-	 * string to go at the end of the query
+	 * Various select options
 	 *
 	 * @private
 	 *
@@ -1088,7 +1202,7 @@ END;
 	 */
 	function makeSelectOptions( $options ) {
 		$preLimitTail = $postLimitTail = '';
-		$startOpts = '';
+		$startOpts = $useIndex = '';
 
 		$noKeyOptions = array();
 		foreach ( $options as $key => $option ) {
@@ -1098,6 +1212,7 @@ END;
 		}
 
 		if ( isset( $options['GROUP BY'] ) ) $preLimitTail .= " GROUP BY " . $options['GROUP BY'];
+		if ( isset( $options['HAVING'] ) ) $preLimitTail .= " HAVING {$options['HAVING']}";
 		if ( isset( $options['ORDER BY'] ) ) $preLimitTail .= " ORDER BY " . $options['ORDER BY'];
 		
 		//if (isset($options['LIMIT'])) {
@@ -1108,13 +1223,7 @@ END;
 
 		if ( isset( $noKeyOptions['FOR UPDATE'] ) ) $postLimitTail .= ' FOR UPDATE';
 		if ( isset( $noKeyOptions['LOCK IN SHARE MODE'] ) ) $postLimitTail .= ' LOCK IN SHARE MODE';
-		if ( isset( $noKeyOptions['DISTINCT'] ) && isset( $noKeyOptions['DISTINCTROW'] ) ) $startOpts .= 'DISTINCT';
-
-		if ( isset( $options['USE INDEX'] ) && ! is_array( $options['USE INDEX'] ) ) {
-			$useIndex = $this->useIndexClause( $options['USE INDEX'] );
-		} else {
-			$useIndex = '';
-		}
+		if ( isset( $noKeyOptions['DISTINCT'] ) || isset( $noKeyOptions['DISTINCTROW'] ) ) $startOpts .= 'DISTINCT';
 		
 		return array( $startOpts, $useIndex, $preLimitTail, $postLimitTail );
 	}
@@ -1127,8 +1236,20 @@ END;
 		wfDebug( "Function ping() not written for DatabasePostgres.php yet");
 		return true;
 	}
+	
+	/**
+	 * How lagged is this slave?
+	 *
+	 */
+	public function getLag() {
+		# Not implemented for PostgreSQL
+		return false;
+	}
 
+	function buildConcat( $stringList ) {
+		return implode( ' || ', $stringList );
+	}
 
 } // end DatabasePostgres class
 
-?>
+

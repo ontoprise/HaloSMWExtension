@@ -96,6 +96,7 @@ class SpecialVersion {
 			'specialpage' => 'Special pages',
 			'parserhook' => 'Parser hooks',
 			'variable' => 'Variables',
+			'media' => 'Media handlers',
 			'other' => 'Other',
 		);
 		wfRunHooks( 'SpecialVersionExtensionTypes', array( &$this, &$extensionTypes ) );
@@ -148,10 +149,14 @@ class SpecialVersion {
 
 	/** Callback to sort extensions by type */
 	function compare( $a, $b ) {
-		if ( $a['name'] === $b['name'] )
+		global $wgLang;
+		if( $a['name'] === $b['name'] ) {
 			return 0;
-		else
-			return Language::lc( $a['name'] ) > Language::lc( $b['name'] ) ? 1 : -1;
+		} else {
+			return $wgLang->lc( $a['name'] ) > $wgLang->lc( $b['name'] )
+				? 1
+				: -1;
+		}
 	}
 
 	function formatCredits( $name, $version = null, $author = null, $url = null, $description = null) {
@@ -250,7 +255,10 @@ class SpecialVersion {
 	 * @return mixed
 	 */
 	function arrayToString( $list ) {
-		if ( ! is_array( $list ) ) {
+		if( is_object( $list ) ) {
+			$class = get_class( $list );
+			return "($class)";
+		} elseif ( ! is_array( $list ) ) {
 			return $list;
 		} else {
 			$class = get_class( $list[0] );
@@ -282,7 +290,10 @@ class SpecialVersion {
 				return false;
 			}
 
-			$xml = simplexml_load_file( $entries, "SimpleXMLElement", LIBXML_NOWARNING );
+			// SimpleXml whines about the xmlns...
+			wfSuppressWarnings();
+			$xml = simplexml_load_file( $entries );
+			wfRestoreWarnings();
 
 			if( $xml ) {
 				foreach( $xml->entry as $entry ) {
@@ -305,4 +316,4 @@ class SpecialVersion {
 }
 
 /**#@-*/
-?>
+

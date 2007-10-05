@@ -63,9 +63,8 @@ class SearchPostgres extends SearchEngine {
 		## Treat colons as word separators:
 		$term = preg_replace('/:/', ' ', $term);
 
-		$this->searchTerms = array();
-		$m = array();
 		$searchstring = '';
+		$m = array();
 		if( preg_match_all('/([-!]?)(\S+)\s*/', $term, $m, PREG_SET_ORDER ) ) {
 			foreach( $m as $terms ) {
 				if (strlen($terms[1])) {
@@ -82,8 +81,6 @@ class SearchPostgres extends SearchEngine {
 				}
 				else {
 					$searchstring .= " & $terms[2]";
-					$safeterm = preg_replace('/\W+/', '', $terms[2]);
-					$this->searchTerms[$safeterm] = $safeterm;
 				}
 			}
 		}
@@ -119,6 +116,12 @@ class SearchPostgres extends SearchEngine {
 	 * @private
 	 */
 	function searchQuery( $term, $fulltext, $colname ) {
+		global $wgDBversion;
+
+		if ( !isset( $wgDBversion ) ) {
+			$this->db->getServerVersion();
+			$wgDBversion = $this->db->numeric_version;
+		}
 
 		$searchstring = $this->parseQuery( $term );
 
@@ -137,8 +140,16 @@ class SearchPostgres extends SearchEngine {
 				"AND r.rev_text_id = c.old_id AND 1=0";
 		}
 		else {
+			$m = array();
+			if( preg_match_all("/'([^']+)'/", $top, $m, PREG_SET_ORDER ) ) {
+				foreach( $m as $terms ) {
+					$this->searchTerms[$terms[1]] = $terms[1];
+				}
+			}
+
+			$rankscore = $wgDBversion > 8.2 ? 5 : 1;
 			$query = "SELECT page_id, page_namespace, page_title, ".
-			"rank($fulltext, to_tsquery('default',$searchstring),5) AS score ".
+			"rank($fulltext, to_tsquery('default',$searchstring), $rankscore) AS score ".
 			"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
 			"AND r.rev_text_id = c.old_id AND $fulltext @@ to_tsquery('default',$searchstring)";
 		}
@@ -222,4 +233,4 @@ class PostgresSearchResultSet extends SearchResultSet {
 }
 
 
-?>
+

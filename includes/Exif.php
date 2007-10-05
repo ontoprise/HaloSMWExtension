@@ -1,6 +1,6 @@
 <?php
 /**
- * @addtogroup Metadata
+ * @addtogroup Media
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
@@ -26,7 +26,7 @@
 
 /**
  * @todo document (e.g. one-sentence class-overview description)
- * @addtogroup Metadata
+ * @addtogroup Media
  */
 class Exif {
 	//@{
@@ -405,7 +405,7 @@ class Exif {
 	 *
 	 * @return int
 	 */
-	function version() {
+	public static function version() {
 		return 1; // We don't need no bloddy constants!
 	}
 
@@ -604,7 +604,7 @@ class Exif {
 
 /**
  * @todo document (e.g. one-sentence class-overview description)
- * @addtogroup Metadata
+ * @addtogroup Media
  */
 class FormatExif {
 	/**
@@ -1131,4 +1131,4 @@ define( 'MW_EXIF_UNDEFINED', Exif::UNDEFINED );
 define( 'MW_EXIF_SLONG', Exif::SLONG );
 define( 'MW_EXIF_SRATIONAL', Exif::SRATIONAL );
 
-?>
+

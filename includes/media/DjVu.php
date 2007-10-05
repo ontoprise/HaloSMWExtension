@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @addtogroup Media
+ */
 class DjVuHandler extends ImageHandler {
 	function isEnabled() {
 		global $wgDjvuRenderer, $wgDjvuDump, $wgDjvuToXML;
@@ -13,6 +16,13 @@ class DjVuHandler extends ImageHandler {
 
 	function mustRender() { return true; }
 	function isMultiPage() { return true; }
+
+	function getParamMap() {
+		return array(
+			'img_width' => 'width',
+			'img_page' => 'page',
+		);
+	}
 
 	function validateParam( $name, $value ) {
 		if ( in_array( $name, array( 'width', 'height', 'page' ) ) ) {
@@ -31,13 +41,13 @@ class DjVuHandler extends ImageHandler {
 		if ( !isset( $params['width'] ) ) {
 			return false;
 		}
-		return "{$params['width']}px-page{$page}";
+		return "page{$page}-{$params['width']}px";
 	}
 
 	function parseParamString( $str ) {
 		$m = false;
-		if ( preg_match( '/^(\d+)px-page(\d+)$/', $str, $m ) ) {
-			return array( 'width' => $m[1], 'page' => $m[2] );
+		if ( preg_match( '/^page(\d+)-(\d+)px$/', $str, $m ) ) {
+			return array( 'width' => $m[2], 'page' => $m[1] );
 		} else {
 			return false;
 		}
@@ -66,15 +76,14 @@ class DjVuHandler extends ImageHandler {
 		}
 		$width = $params['width'];
 		$height = $params['height'];
-		$srcPath = $image->getImagePath();
+		$srcPath = $image->getPath();
 		$page = $params['page'];
-		$pageCount = $this->pageCount( $image );
 		if ( $page > $this->pageCount( $image ) ) {
 			return new MediaTransformError( 'thumbnail_error', $width, $height, wfMsg( 'djvu_page_error' ) );
 		}
 		
 		if ( $flags & self::TRANSFORM_LATER ) {
-			return new ThumbnailImage( $dstUrl, $width, $height, $dstPath );
+			return new ThumbnailImage( $image, $dstUrl, $width, $height, $dstPath, $page );
 		}
 
 		if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
@@ -101,7 +110,7 @@ class DjVuHandler extends ImageHandler {
 					wfHostname(), $retval, trim($err), $cmd ) );
 			return new MediaTransformError( 'thumbnail_error', $width, $height, $err );
 		} else {
-			return new ThumbnailImage( $dstUrl, $width, $height, $dstPath );
+			return new ThumbnailImage( $image, $dstUrl, $width, $height, $dstPath, $page );
 		}
 	}
 
@@ -200,4 +209,4 @@ class DjVuHandler extends ImageHandler {
 	}
 }
 
-?>
+

@@ -3,11 +3,11 @@
   * @addtogroup Language
   */
 require_once( dirname(__FILE__).'/../LanguageConverter.php' );
-require_once( dirname(__FILE__).'/LanguageZh_cn.php' );
+require_once( dirname(__FILE__).'/LanguageZh_hans.php' );
 
 class ZhConverter extends LanguageConverter {
 	function loadDefaultTables() {
-		require( "includes/ZhConversion.php" );
+		require( dirname(__FILE__)."/../../includes/ZhConversion.php" );
 		$this->mTables = array(
 			'zh-cn' => new ReplacementArray( $zh2CN ),
 			'zh-tw' => new ReplacementArray( $zh2TW ),
@@ -39,7 +39,7 @@ class ZhConverter extends LanguageConverter {
 /* class that handles both Traditional and Simplified Chinese
    right now it only distinguish zh_cn, zh_tw, zh_sg and zh_hk.
 */
-class LanguageZh extends LanguageZh_cn {
+class LanguageZh extends LanguageZh_hans {
 
 	function __construct() {
 		global $wgHooks;
@@ -99,4 +99,3 @@ class LanguageZh extends LanguageZh_cn {
 	}
 
 }
-?>

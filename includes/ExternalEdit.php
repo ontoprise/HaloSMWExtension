@@ -46,13 +46,8 @@ class ExternalEdit {
 			$extension="wiki";
 		} elseif($this->mMode=="file") {
 			$type="Edit file";
-			$image = new Image( $this->mTitle );
-			$img_url = $image->getURL();
-			if(strpos($img_url,"://")) {
-				$url = $img_url;
-			} else {
-				$url = $wgServer . $img_url;
-			}
+			$image = wfLocalFile( $this->mTitle );
+			$url = $image->getFullURL();
 			$extension=substr($name, $pos);
 		}
 		$special=$wgLang->getNsText(NS_SPECIAL);
@@ -72,4 +67,4 @@ CONTROL;
 		echo $control;
 	}
 }
-?>
+

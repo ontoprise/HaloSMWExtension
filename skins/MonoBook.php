@@ -12,9 +12,6 @@
 if( !defined( 'MEDIAWIKI' ) )
 	die( -1 );
 
-/** */
-require_once('includes/SkinTemplate.php');
-
 /**
  * Inherit main code from SkinTemplate, set the CSS and template filter.
  * @todo document
@@ -27,7 +24,6 @@ class SkinMonoBook extends SkinTemplate {
 		$this->skinname  = 'monobook';
 		$this->stylename = 'monobook';
 		$this->template  = 'MonoBookTemplate';
-		
 	}
 }
 
@@ -60,9 +56,11 @@ class MonoBookTemplate extends QuickTemplate {
 		<meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
 		<?php $this->html('headlinks') ?>
 		<title><?php $this->text('pagetitle') ?></title>
-		<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; /*]]>*/</style>
+		<style type="text/css" media="screen, projection">/*<![CDATA[*/
+			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+			@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+		/*]]>*/</style>
 		<link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('stylepath') ?>/common/commonPrint.css?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
-		<link rel="stylesheet" type="text/css" media="handheld" href="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/handheld.css?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
 		<!--[if lt IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE50Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
 		<!--[if IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE55Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
 		<!--[if IE 6]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE60Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
@@ -204,16 +202,13 @@ class MonoBookTemplate extends QuickTemplate {
 					<?php } ?></li><?php
 		}
 
-		$this->data['nav_urls']['ontologybrowser'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser' ) );
-		$this->data['nav_urls']['gardening'] = array( 'href' => Skin::makeSpecialUrl( 'Gardening' ) );
-		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'gardening') as $special ) {
+		foreach( array('contributions', 'log', 'blockip', 'emailuser', 'upload', 'specialpages') as $special ) {
 
 			if($this->data['nav_urls'][$special]) {
 				?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
 				?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?></a></li>
 <?php		}
 		}
-		
 
 		if(!empty($this->data['nav_urls']['print']['href'])) { ?>
 				<li id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])

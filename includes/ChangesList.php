@@ -9,7 +9,7 @@ class RCCacheEntry extends RecentChange
 	var $curlink , $difflink, $lastlink , $usertalklink , $versionlink ;
 	var $userlink, $timestamp, $watched;
 
-	function newFromParent( $rc ) {
+	static function newFromParent( $rc ) {
 		$rc2 = new RCCacheEntry;
 		$rc2->mAttribs = $rc->mAttribs;
 		$rc2->mExtra = $rc->mExtra;
@@ -171,7 +171,8 @@ class ChangesList {
 			? 'rcid='.$rc->mAttribs['rc_id']
 			: '';
 		$articlelink = ' '. $this->skin->makeKnownLinkObj( $rc->getTitle(), '', $params );
-		if($watched) $articlelink = '<strong>'.$articlelink.'</strong>';
+		if( $watched )
+			$articlelink = "<strong class=\"mw-watched\">{$articlelink}</strong>";
 		global $wgContLang;
 		$articlelink .= $wgContLang->getDirMark();
 
@@ -204,7 +205,7 @@ class ChangesList {
 	 */
 	function usePatrol() {
 		global $wgUseRCPatrol, $wgUser;
-		return( $wgUseRCPatrol && $wgUser->isAllowed( 'patrol' ) );
+		return( $wgUseRCPatrol && ($wgUser->isAllowed('patrol') || $wgUser->isAllowed('patrolmarks')) );
 	}
 
 	/**
@@ -497,18 +498,19 @@ class EnhancedChangesList extends ChangesList {
 
 			$r .= ') . . ';
 
-			# Character difference
-			$chardiff = $rcObj->getCharacterDifference( $block[ count( $block ) - 1 ]->mAttribs['rc_old_len'],
-					$block[0]->mAttribs['rc_new_len'] );
-			if( $chardiff == '' ) {
-				$r .= ' (';
-			} else {
-				$r .= ' ' . $chardiff. ' . . (';
-			}
-			
+			if( $wgRCShowChangedSize ) {
+				# Character difference
+				$chardiff = $rcObj->getCharacterDifference( $block[ count( $block ) - 1 ]->mAttribs['rc_old_len'],
+						$block[0]->mAttribs['rc_new_len'] );
+				if( $chardiff == '' ) {
+					$r .= ' (';
+				} else {
+					$r .= ' ' . $chardiff. ' . . ';
+				}
+			}	
 
 			# History
-			$r .= $this->skin->makeKnownLinkObj( $block[0]->getTitle(),
+			$r .= '(' . $this->skin->makeKnownLinkObj( $block[0]->getTitle(),
 				$this->message['history'], $curIdEq.'&action=history' );
 			$r .= ')';
 		}
@@ -567,7 +569,7 @@ class EnhancedChangesList extends ChangesList {
 	function maybeWatchedLink( $link, $watched=false ) {
 		if( $watched ) {
 			// FIXME: css style might be more appropriate
-			return '<strong>' . $link . '</strong>';
+			return '<strong class="mw-watched">' . $link . '</strong>';
 		} else {
 			return $link;
 		}
@@ -702,4 +704,4 @@ class EnhancedChangesList extends ChangesList {
 	}
 
 }
-?>
+

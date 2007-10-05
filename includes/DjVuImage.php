@@ -28,6 +28,8 @@
  *
  * File format docs are available in source package for DjVuLibre:
  * http://djvulibre.djvuzone.org/
+ *
+ * @addtogroup Media
  */
 class DjVuImage {
 	function __construct( $filename ) {
@@ -102,7 +104,9 @@ class DjVuImage {
 	}
 	
 	function getInfo() {
+		wfSuppressWarnings();
 		$file = fopen( $this->mFilename, 'rb' );
+		wfRestoreWarnings();
 		if( $file === false ) {
 			wfDebug( __METHOD__ . ": missing or failed file read\n" );
 			return false;

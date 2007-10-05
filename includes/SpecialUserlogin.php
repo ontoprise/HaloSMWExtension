@@ -8,7 +8,6 @@
  * constructor
  */
 function wfSpecialUserlogin() {
-	global $wgCommandLineMode;
 	global $wgRequest;
 	if( session_id() == '' ) {
 		wfSetupSession();
@@ -32,6 +31,7 @@ class LoginForm {
 	const WRONG_PASS = 5;
 	const EMPTY_PASS = 6;
 	const RESET_PASS = 7;
+	const ABORTED = 8;
 
 	var $mName, $mPassword, $mRetype, $mReturnTo, $mCookieCheck, $mPosted;
 	var $mAction, $mCreateaccount, $mCreateaccountMail, $mMailmypassword;
@@ -189,7 +189,7 @@ class LoginForm {
 			$wgOut->setArticleRelated( false );
 			$wgOut->setRobotPolicy( 'noindex,nofollow' );
 			$wgOut->addHtml( wfMsgWikiHtml( 'accountcreatedtext', $u->getName() ) );
-			$wgOut->returnToMain( $self->getPrefixedText() );
+			$wgOut->returnToMain( false, $self );
 			wfRunHooks( 'AddNewAccount', array( $u ) );
 			return true;
 		}
@@ -228,8 +228,12 @@ class LoginForm {
 			return false;
 		}
 
-		if (!$wgUser->isAllowedToCreateAccount()) {
+		# Check permissions
+		if ( !$wgUser->isAllowed( 'createaccount' ) ) {
 			$this->userNotPrivilegedMessage();
+			return false;
+		} elseif ( $wgUser->isBlockedFromCreateAccount() ) {
+			$this->userBlockedMessage();
 			return false;
 		}
 
@@ -241,6 +245,7 @@ class LoginForm {
 			return;
 		}
 
+		# Now create a dummy user ($u) and check if it is valid
 		$name = trim( $this->mName );
 		$u = User::newFromName( $name, 'creatable' );
 		if ( is_null( $u ) ) {
@@ -258,10 +263,15 @@ class LoginForm {
 			return false;
 		}
 
-		if ( !$wgUser->isValidPassword( $this->mPassword ) ) {
+		if ( !$u->isValidPassword( $this->mPassword ) ) {
 			$this->mainLoginForm( wfMsg( 'passwordtooshort', $wgMinimalPasswordLength ) );
 			return false;
 		}
+		
+		# Set some additional data so the AbortNewAccount hook can be
+		# used for more than just username validation
+		$u->setEmail( $this->mEmail );
+		$u->setRealName( $this->mRealName );
 
 		$abortError = '';
 		if( !wfRunHooks( 'AbortNewAccount', array( $u, &$abortError ) ) ) {
@@ -288,7 +298,7 @@ class LoginForm {
 			return false;
 		}
 
-		return $this->initUser( $u );
+		return $this->initUser( $u, false );
 	}
 
 	/**
@@ -296,10 +306,11 @@ class LoginForm {
 	 * Give it a User object that has been initialised with a name.
 	 *
 	 * @param $u User object.
+	 * @param $autocreate boolean -- true if this is an autocreation via auth plugin
 	 * @return User object.
 	 * @private
 	 */
-	function initUser( $u ) {
+	function initUser( $u, $autocreate ) {
 		global $wgAuth;
 
 		$u->addToDatabase();
@@ -312,7 +323,7 @@ class LoginForm {
 		$u->setRealName( $this->mRealName );
 		$u->setToken();
 
-		$wgAuth->initUser( $u );
+		$wgAuth->initUser( $u, $autocreate );
 
 		$u->setOption( 'rememberpassword', $this->mRemember ? 1 : 0 );
 		$u->saveSettings();
@@ -351,7 +362,7 @@ class LoginForm {
 			 */
 			if ( $wgAuth->autoCreate() && $wgAuth->userExists( $u->getName() ) ) {
 				if ( $wgAuth->authenticate( $u->getName(), $this->mPassword ) ) {
-					$u = $this->initUser( $u );
+					$u = $this->initUser( $u, true );
 				} else {
 					return self::WRONG_PLUGIN_PASS;
 				}
@@ -362,6 +373,12 @@ class LoginForm {
 			$u->load();
 		}
 
+		// Give general extensions, such as a captcha, a chance to abort logins
+		$abort = self::ABORTED;
+		if( !wfRunHooks( 'AbortLogin', array( $u, $this->mPassword, &$abort ) ) ) {
+			return $abort;
+		}
+		
 		if (!$u->checkPassword( $this->mPassword )) {
 			if( $u->checkTemporaryPassword( $this->mPassword ) ) {
 				// The e-mailed temporary password should not be used
@@ -391,16 +408,18 @@ class LoginForm {
 				// reset form; bot interfaces etc will probably just
 				// fail cleanly here.
 				//
-				return self::RESET_PASS;
+				$retval = self::RESET_PASS;
 			} else {
-				return '' == $this->mPassword ? self::EMPTY_PASS : self::WRONG_PASS;
+				$retval = '' == $this->mPassword ? self::EMPTY_PASS : self::WRONG_PASS;
 			}
 		} else {
 			$wgAuth->updateUser( $u );
 			$wgUser = $u;
 
-			return self::SUCCESS;
+			$retval = self::SUCCESS;
 		}
+		wfRunHooks( 'LoginAuthenticateAudit', array( $u, $this->mPassword, $retval ) );
+		return $retval;
 	}
 
 	function processLogin() {
@@ -580,7 +599,7 @@ class LoginForm {
 
 	/** */
 	function userBlockedMessage() {
-		global $wgOut;
+		global $wgOut, $wgUser;
 
 		# Let's be nice about this, it's likely that this feature will be used
 		# for blocking large numbers of innocent people, e.g. range blocks on 
@@ -595,7 +614,10 @@ class LoginForm {
 		$wgOut->setArticleRelated( false );
 
 		$ip = wfGetIP();
-		$wgOut->addWikiText( wfMsg( 'cantcreateaccounttext', $ip ) );
+		$blocker = User::whoIs( $wgUser->mBlock->mBy );
+		$block_reason = $wgUser->mBlock->mReason;
+
+		$wgOut->addWikiText( wfMsg( 'cantcreateaccount-text', $ip, $block_reason, $blocker ) );
 		$wgOut->returnToMain( false );
 	}
 
@@ -694,6 +716,7 @@ class LoginForm {
 		$wgOut->setPageTitle( wfMsg( 'userlogin' ) );
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
 		$wgOut->setArticleRelated( false );
+		$wgOut->disallowUserJs();  // just in case...
 		$wgOut->addTemplate( $template );
 	}
 
@@ -806,4 +829,4 @@ class LoginForm {
 		return $skin->makeKnownLinkObj( $self, htmlspecialchars( $text ), implode( '&', $attr ) );
 	}
 }
-?>
+
