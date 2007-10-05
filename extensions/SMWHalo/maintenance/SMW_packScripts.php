@@ -17,6 +17,7 @@
  define('LGPL_LICENSE', 7);
  define('BSD_LICENSE', 8);
  define('LGPL_LICENSE_TOOLTIPS', 9);
+  define('LGPL_LICENSE_EDITAREA', 10);
 
  // license hints
  $licenses = array( MIT_LICENSE_PROTOTYPE => 'MIT-License; Copyright (c) 2005-2007 Sam Stephenson',
@@ -27,7 +28,8 @@
  					APACHE_LICENSE => 'Apache-License',
  					LGPL_LICENSE => 'LGPL-License',
  					BSD_LICENSE => 'BSD-License',
- 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)');
+ 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)',
+ 					LGPL_LICENSE_EDITAREA => 'LGPL-License; (c) 2007 Christophe Dolivet');
 
  // add script name as hint or not?
  $addScriptName = true;
@@ -82,7 +84,7 @@
  	buildScripts($outputFile, $scripts);
  }
 
- if ($argv[1] == 'Gardening' || $buildAll) { // scripts which are only loaded on OntologyBrowser Special page
+ if ($argv[1] == 'Gardening' || $buildAll) { // scripts which are only loaded on Gardening Special page
  	$outputFile = $mediaWikiLocation.'/scripts/Gardening/deployGardening.js';
 
  	// scripts which will be packed in one JS file (in this order!)
@@ -92,7 +94,7 @@
  	buildScripts($outputFile, $scripts);
  }
 
- if ($argv[1] == 'QueryInterface' || $buildAll) { // scripts which are only loaded on OntologyBrowser Special page
+ if ($argv[1] == 'QueryInterface' || $buildAll) { // scripts which are only loaded on QueryInterface Special page
  	$outputFile = $mediaWikiLocation.'/scripts/QueryInterface/deployQueryInterface.js';
 
  	// scripts which will be packed in one JS file (in this order!)

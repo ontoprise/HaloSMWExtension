@@ -52,7 +52,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
-/* Query Interface Tooltip License
+
+/* Wlater Zorn Tooltip License
 
 This notice must be untouched at all times.
 
@@ -92,4 +93,59 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 For more details on the GNU Lesser General Public License,
 see http://www.gnu.org/copyleft/lesser.html
+*/
+
+
+/*
+SMWHalo/skins/QueryInterface/Images/add.png and
+SMWHalo/skins/QueryInterface/Images/delete.png
+
+are taken from the Silk Icon Set 1.3
+
+Silk icon set 1.3
+_________________________________________
+Mark James
+http://www.famfamfam.com/lab/icons/silk/
+_________________________________________
+
+This work is licensed under a
+Creative Commons Attribution 2.5 License.
+[ http://creativecommons.org/licenses/by/2.5/ ]
+
+This means you may use it for any purpose,
+and make any changes you like.
+All I ask is that you include a link back
+to this page in your credits.
+
+Are you using this icon set? Send me an email
+(including a link or picture if available) to
+mjames@gmail.com
+
+Any other questions about this icon set please
+contact mjames@gmail.com
+
+*/
+
+/*
+SMWHalo/skins/QueryInterface/Images/subquery.png
+
+is part of the Nuvola Icon Set available on
+[ http://www.icon-king.com/v2/goodies.php ]
+and released under a LGPL License
+
+TITLE:	NUVOLA ICON THEME for KDE 3.x
+AUTHOR:	David Vignoni | ICON KING
+SITE:	http://www.icon-king.com
+MAILING LIST: http://mail.icon-king.com/mailman/listinfo/nuvola_icon-king.com
+
+Copyright (c)  2003-2004  David Vignoni.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation,
+version 2.1 of the License.
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
 */
