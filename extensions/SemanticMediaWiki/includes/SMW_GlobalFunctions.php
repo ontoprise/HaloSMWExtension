@@ -260,7 +260,7 @@ function smwfAddHTMLHeadersOutput(&$out) {
 
 		// Register namespace identifiers
 		if (!is_array($wgExtraNamespaces)) { $wgExtraNamespaces=array(); }
-		if (!is_array($wgNamespaceAliases)) { $wgNamespaceAliases=array(); }
+		//if (!is_array($wgNamespaceAliases)) { $wgNamespaceAliases=array(); }
 		$wgExtraNamespaces = $wgExtraNamespaces + $smwgContLang->getNamespaces();
 		$wgNamespaceAliases = $wgNamespaceAliases + $smwgContLang->getNamespaceAliases();
 		
