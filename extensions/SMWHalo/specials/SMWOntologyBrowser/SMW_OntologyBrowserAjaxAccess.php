@@ -97,7 +97,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$reqfilter->limit =  $p_array[1] + 0;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
- 		$superatt = Title::newFromText($p_array[0], SMW_NS_ATTRIBUTE);
+ 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $p_array[1] + 0, $p_array[2] + 0);
  		
