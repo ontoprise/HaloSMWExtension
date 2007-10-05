@@ -169,8 +169,8 @@ border-collapse:collapse;
 
 #tcp td{
 border:1px solid #AAAAAA;
-padding-left:2px;
-padding-right:2px;
+padding-left:4px;
+padding-right:4px;
 }
 
 .tcp_boxheader{
