@@ -116,6 +116,7 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  */
 function smwfAutoCompletionToggles(&$extraToggles) {
 	$extraToggles[] = "autotriggering";
+	return true;
 }
 
 function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure) {
