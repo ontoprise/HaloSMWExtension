@@ -7,6 +7,9 @@
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+ global $smwgIP;
+ require_once($smwgIP . '/includes/SMW_GlobalFunctions.php');
+
  global $smwgHaloIP;
  require_once($smwgHaloIP . '/includes/SMW_Initialize.php');
  
@@ -18,9 +21,10 @@
  smwfHaloInitializeTables(false);
  print "done!\n";
  
- print "\nInstall help pages...";
- smwfInstallHelppages(dirname(__FILE__).'/../libs/helppages');
- print "\n\nAll help pages imported!\n";
+ print "\nInstall predefined pages...";
+ smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 12, 'hel' );
+ smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 104, 'typ' );
+ print "\n\nAll predefined pages imported!\n";
  
  
  /**
@@ -31,7 +35,7 @@
   * 
   * @param $SourceDirectory directory which contains .whp files.
   */
- function smwfInstallHelppages($SourceDirectory) {
+ function smwfInstallHelppages($SourceDirectory, $ns, $ext) {
  	global $mediaWikiLocation;
  	
  	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
@@ -58,12 +62,13 @@
 
         } else{
            
-            if (strpos($SourceDirectory.$entry, ".whp") !== false) {
-               	smwfImportHelppage($SourceDirectory.$entry);
+            if (strpos($SourceDirectory.$entry, ".".$ext) !== false) {
+               	smwfImportHelppage($SourceDirectory.$entry, $ns, $ext);
             	
-            } else  { // assume that it is an image
+            } else if (strpos($SourceDirectory.$entry, ".gif") !== false
+           				 || strpos($SourceDirectory.$entry, ".png") !== false) { // assume that it is an image
             	$im_dir_abs = dirname($SourceDirectory.$entry);
-            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/helppages'));
+            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/predef_pages'));
             	$dest_dir = $mediaWikiLocation.$img_dir_rel;
             	mkpath($dest_dir);
             	print "\n - Copy image: ".basename($SourceDirectory.$entry)."...";
@@ -80,12 +85,12 @@
   * 
   * @param path to a file containing wiki markup
   */
- function smwfImportHelppage($filepath) {
+ function smwfImportHelppage($filepath, $ns, $ext) {
  	$handle = fopen($filepath, "rb");
 	$contents = fread ($handle, filesize ($filepath));
-	$filename = basename($filepath, ".hlp");
+	$filename = basename($filepath, ".".$ext);
 	$filename = str_replace("_", " ", rawurldecode($filename));
-	$helpPageTitle = Title::newFromText($filename, NS_HELP);
+	$helpPageTitle = Title::newFromText($filename, $ns);
 	$helpPageArticle = new Article($helpPageTitle);
 	if (!$helpPageArticle->exists()) {
 		print "\nImport help page: ".$filename."...";
