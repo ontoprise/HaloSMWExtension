@@ -394,5 +394,6 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		}
 	
 		Job :: batchInsert($jobs);
+		return true;
 	}
 ?>
