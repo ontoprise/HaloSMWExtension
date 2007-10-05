@@ -236,12 +236,12 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
 			
 		} else { // normal attribute
-			if ($smwValue->getTypeID() == '_che' || $smwValue->getTypeID() == '_chf') {
+			if ($smwValue->getTypeID() == '_che') {
 				$isFormula = true;
 				$chemistryParser->checkEquation($smwValue->getXSDValue());
 				$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
 				$value = "<![CDATA[".($formulaAsHTML)."]]>";
-			} else if ( $params->getTypeID() == '_chf') {
+			} else if ( $smwValue->getTypeID() == '_chf') {
 				$isFormula = true;
 				$chemistryParser->checkFormula($smwValue->getXSDValue());
 				$formulaAsHTML = html_entity_decode($chemistryParser->getHtmlFormat());
