@@ -139,9 +139,10 @@ class SMWFloatTypeHandler implements SMWTypeHandler{
 			// TODO: Perhaps class SMWDataValue should have setWarning() to achieve the following output
 			$datavalue->setProcessedValues($v, $numIn, $numIn, $unitIn);
 			if ($errStr !== '') {
-				$errStr = ' <span class="smwwarning">(' . $errStr . ')</span>';
+				//$errStr = ' <span class="smwwarning">(' . $errStr . ')</span>';
+				$datavalue->setError($errStr);
 			}
-			$datavalue->setPrintoutString($this->appendUnit(smwfNumberFormat($numIn), $unitIn) . $errStr);
+			$datavalue->setPrintoutString($this->appendUnit(smwfNumberFormat($numIn), $unitIn));
 			$datavalue->addQuicksearchLink();
 			$datavalue->addServiceLinks($numIn);
 			return;
