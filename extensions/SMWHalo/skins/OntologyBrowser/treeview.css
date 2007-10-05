@@ -58,15 +58,15 @@ a.navigationLink {
 }
 
 .categoryTreeColors {
-	background-color: #94B0F3;
+	background-color: #DDEEFF;
 }
 
 .instanceListColors {
-	background-color: #E5ADAD;
+	background-color: #FFDDDD;
 }
 
 .propertyTreeListColors {
-	background-color: #F2C475;
+	background-color: #FFDDAA;
 }
 
 #treeContainer, #relattributesContainer {
