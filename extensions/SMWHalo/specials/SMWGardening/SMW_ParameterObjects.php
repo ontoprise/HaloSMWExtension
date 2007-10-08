@@ -203,7 +203,12 @@
  	 	
  	public function validate($value) {
  		
- 		$file = wfImageDir($value);
+ 		//$file = wfImageDir($value); old MW 1.10 code
+ 		
+ 		// new MW 1.12 code
+ 		$fileTitle = Title::newFromText($value);
+ 		$file = wfFindFile($fileTitle)->getPath();
+ 	 		
  		$valid = file_exists($file) || ($this->options & SMW_GARD_PARAM_REQUIRED) == 0;
  		if (!$valid) {
  			return wfMsg('smw_gard_missing_selection');

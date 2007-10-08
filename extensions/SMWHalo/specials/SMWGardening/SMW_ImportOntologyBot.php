@@ -56,7 +56,10 @@
  			return 'Import ontology bot should not be started synchronously!';
  		}
  		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
- 		$fileLocation = wfImageDir($fileName)."/".$fileName;
+ 		
+ 		$fileTitle = Title::newFromText($fileName);
+ 		$fileLocation = wfFindFile($fileTitle)->getPath();
+ 		//$fileLocation = wfImageDir($fileName)."/".$fileName; old MW 1.10
  		
  		// initialize RAP
  		echo "\nTry to include RAP RDF-API...";
