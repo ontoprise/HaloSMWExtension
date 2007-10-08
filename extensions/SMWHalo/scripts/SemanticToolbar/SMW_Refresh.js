@@ -14,6 +14,8 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+var REFRESH_DELAY = 0.5; // Refresh delay is 500 ms
 var RefreshSemanticToolBar = Class.create();
 
 RefreshSemanticToolBar.prototype = {
@@ -21,6 +23,8 @@ RefreshSemanticToolBar.prototype = {
 	//Constructor
 	initialize: function() {
 		this.userIsTyping = false;
+		this.lastKeypress = 0;	// Timestamp of last keypress event
+		this.timeOffset = 0;
 		this.contentChanged = false;
 		this.wtp = null;
 		
@@ -31,7 +35,7 @@ RefreshSemanticToolBar.prototype = {
 		if(wgAction == "edit"
 		   && stb_control.isToolbarAvailable()){
 			Event.observe('wpTextbox1', 'change' ,this.changed.bind(this));
-			Event.observe('wpTextbox1', 'keypress' ,this.setUserIsTyping.bind(this));
+			Event.observe('wpTextbox1', 'keyup' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();
 			this.editboxtext = "";
 			
@@ -48,22 +52,27 @@ RefreshSemanticToolBar.prototype = {
 			this.contentChanged = true;
 			this.userIsTyping = false;
 		} else if (this.contentChanged) {
-			this.contentChanged = false;
-			this.refreshToolBar();
+			var t = new Date().getTime() - this.timeOffset;
+			var dt = (this.lastKeypress != 0) 
+						? t - this.lastKeypress
+						: 0;
+			if (dt > REFRESH_DELAY*1000) {
+				this.contentChanged = false;
+				this.refreshToolBar();
+			}
 		}
 	},
 
 	//registers automatic refresh
 	registerTimer: function(){
-		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), 1);		
+		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), REFRESH_DELAY);		
 	},
 	
-	//deregisters automatic refresh
-	deregisterTimer: function(){
-		this.periodicalTime ? this.periodicalTimer.stop() : "";
-	},
-	
-	setUserIsTyping: function(){
+	setUserIsTyping: function(event){
+		this.lastKeypress = event.timeStamp;
+		if (this.timeOffset == 0) {
+			this.timeOffset = new Date().getTime() - this.lastKeypress;
+		}
 		this.userIsTyping = true;
 	},
 	
