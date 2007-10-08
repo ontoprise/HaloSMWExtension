@@ -86,7 +86,8 @@
  				$this->globalLog .= "== ".wfMsg('smw_gard_category_leafs')." ==\n";
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
- 					$categoryLeaves = $this->getCategoryLeafs($categoryDB);
+ 					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
+ 					$categoryLeaves = $this->getCategoryLeafs($categoryTitle);
  					$this->globalLog .= '=== '.$catNS.': '.$c." ===\n";
  					foreach($categoryLeaves as $cl) {
        					$this->globalLog .= "*[[:$catNS:".$cl->getText()."]]\n";
@@ -119,7 +120,8 @@
  				$this->globalLog .= "== ".wfMsg('smw_gard_subcategory_number_anomalies')." ==\n";
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
- 					$subCatAnomalies = $this->getCategoryAnomalies($categoryDB);
+ 					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
+ 					$subCatAnomalies = $this->getCategoryAnomalies($categoryTitle);
  					foreach($subCatAnomalies as $a) {
        					list($title, $subCatNum) = $a;
        					$this->globalLog .= "*[[:$catNS:".$title->getText()."]] has $subCatNum ".($subCatNum == 1 ? wfMsg('smw_gard_subcategory') : wfMsg('smw_gard_subcategories')).".\n";
@@ -139,7 +141,8 @@
        			$categories = explode(";", urldecode($paramArray['CATEGORY_RESTRICTION']));
        			foreach($categories as $c) {
        				$categoryDB = str_replace(" ", "_", trim($c));
-       				$this->removeCategoryLeaves($categoryDB);
+       				$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
+       				$this->removeCategoryLeaves($categoryTitle);
        			}
        			$this->globalLog .= "\n".wfMsg('smw_gard_category_leaves_deleted', $catNS, $c);
        		}
@@ -173,22 +176,23 @@
 			$db->freeResult($res);
 		} else {
 			
-				$categoryTitle = Title::newFromText($category, NS_CATEGORY);
-				$subCats = $this->getSubCategories($categoryTitle);
-				$subCats[] = $categoryTitle; // add super category title too
-			
-				foreach($subCats as $subCat) { 
-					$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($subCat->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+				
+				$subCats = $this->getSubCategories($category);
+								
+				$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
 	                
-					$res = $db->query($sql);
+				$res = $db->query($sql);
 		
-					$result = array();
-					if($db->numRows( $res ) > 0) {
-						while($row = $db->fetchObject($res)) {
-							$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
-						}
+				$result = array();
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+						$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
 					}
-					$db->freeResult($res);
+				}
+				$db->freeResult($res);
+				
+				foreach($subCats as $subCat) { 
+					$result = array_merge($this->getCategoryLeafs($subCat), $result);
 				}
 			
 		}
@@ -219,23 +223,27 @@
 			$db->freeResult($res);
 		} else {
 			
-				$categoryTitle = Title::newFromText($category, NS_CATEGORY);
-				$subCats = $this->getSubCategories($categoryTitle);
-				$subCats[] = $categoryTitle; // add super category title too
-				foreach($subCats as $subCat) { 
-					$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM page p, categorylinks c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND page_title = '.$db->addQuotes($subCat->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
-		               
-					$res = $db->query($sql);
-		
-					if($db->numRows( $res ) > 0) {
-						while($row = $db->fetchObject($res)) {
 				
-							$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
-						
-						}
-					}
+				$subCats = $this->getSubCategories($category);
+				
+				// select all subcategories which have the subcategory-anomaly
+				$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM page p, categorylinks c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND cl_to = '.$db->addQuotes($category->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
+		               
+				$res = $db->query($sql);
 		
-					$db->freeResult($res);
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+			
+						$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
+						
+					}
+				}
+		
+				$db->freeResult($res);
+				
+				// check for anomaly in all subcategories
+				foreach($subCats as $subCat) { 
+					$result = array_merge($this->getCategoryAnomalies($subCat), $result);
 				}
 			
 		}
@@ -264,24 +272,25 @@
 		
 		$db->freeResult($res);
  		} else {
- 				$categoryTitle = Title::newFromText($category, NS_CATEGORY);
-				$subCats = $this->getSubCategories($categoryTitle);
-				$subCats[] = $categoryTitle; // add super category title too
-				foreach($subCats as $subCat) { 
-					$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($subCat->getDBkey()).' AND page_namespace = '.NS_CATEGORY;
-	               
-					$res = $db->query($sql);
+ 								
+				$subCats = $this->getSubCategories($category);
+								
+				$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+	                
+				$res = $db->query($sql);
 		
-		
-					if($db->numRows( $res ) > 0) {
-						while($row = $db->fetchObject($res)) {
-							$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
-							$categoryArticle = new Article($categoryTitle);
-							$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $row->page_title));
-						}
+				$result = array();
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+						$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
+						$categoryArticle = new Article($categoryTitle);
+						$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $categoryTitle->getText()));
 					}
-		
-					$db->freeResult($res);
+				}
+				$db->freeResult($res);
+				
+				foreach($subCats as $subCat) { 
+					$this->removeCategoryLeaves($subCat);
 				}
  		}
 		
