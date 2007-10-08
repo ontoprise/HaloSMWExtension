@@ -530,7 +530,7 @@
  		if (count($this->sharedTypes) > 0) {
  			$markup .= "** ".wfMsg('smw_gard_sharetypes').": \n";
  				foreach($this->sharedTypes as $type) {
- 					$markup .= "***".$type;
+ 					$markup .= "***[[".$wgLang->getNsText(SMW_NS_TYPE).":".$type."]]";
  				}
  				$markup .= "\n";
  		}
@@ -626,7 +626,7 @@
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = $row->type;
+				$result[] = SMWDataValueFactory::findTypeLabel($row->type);
 			}
 		}
 		$db->freeResult($res);
