@@ -39,8 +39,8 @@ function enableSMWHalo() {
  * Called from SMW during initialization.
  */
 function smwgHaloSetupExtension() {
-	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions;
-	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList;
+	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses;
+	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 
 	$smwgMasterGeneralStore = NULL;
 
@@ -49,7 +49,14 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
-	$wgFileExtensions[] = 'owl';
+	// file extensions for upload
+	$wgFileExtensions[] = 'owl'; // for ontology import
+	
+	// Registered jobs
+	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
+	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
+	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+	
 
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
