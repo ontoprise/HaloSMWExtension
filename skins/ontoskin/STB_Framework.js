@@ -350,8 +350,10 @@ Slider.prototype = {
 
 	initialize: function() {
 		this.sliderObj = null;
+		this.oldHeight = 0;
+		this.oldWidth  = 0;
 	},
-
+	//if()
 	activateResizing: function() {
 	//Check if semtoolbar is available
 	if(!stb_control.isToolbarAvailable()) return;
@@ -404,9 +406,33 @@ Slider.prototype = {
 	         if(window.editAreaLoader){
 	         	editAreaLoader.execCommand("wpTextbox1", "update_size();");
 	         }
+	        
+	 },
+	 /**
+	  * Resizes the slide if window size is changed
+	  * since IE fires the resize event in much more cases than the desired 
+	  * we have to do some additional checks
+	  */
+	 resizeTextbox: function(){
+	 	if( OB_bd.isIE == true){
+		 	if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
+		 		this.activateResizing();
+		 		this.oldHeight = document.documentElement.clientHeight;
+				this.oldWidth  = document.documentElement.clientWidth; 
+		 	} else{ 
+		 		if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
+		 			alert('resize');
+		 			this.activateResizing();
+		 			this.oldHeight = window.innerHeight;
+					this.oldWidth  = window.innerWidth; 		
+		 		} 
+		 	} 
+	   }else {
+	 		this.activateResizing();
+	 	}
 	 }
 }
 var smwhg_slider = new Slider();
 Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
-//Resizes the slide if window size is changed, doesn't work for ie right now and this there disabled until i will have looked into it
-//Event.observe(window, 'resize', smwhg_slider.activateResizing.bind(smwhg_slider));
+//Resizes the slider if window size is changed
+Event.observe(window, 'resize', smwhg_slider.resizeTextbox.bind(smwhg_slider));

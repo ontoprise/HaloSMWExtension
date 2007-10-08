@@ -1,28 +1,53 @@
-/*This css and the table it is belonging to is just a workaround for a nasty bug
-triggered by the nested floats. Since the nested floats are necessary for the semtoolbar 
-to be displayed correctly, it should not be removed*/
-#contenttab {
-	width: 98%;
-	margin: 1%
-}
-
-#contentcol1 {
-	width: 70%;
-	vertical-align: top;
-}
-#contentcol2 {
-	width: 30%;
-	vertical-align: top;
-}
+/* CSS for SemanticToolbar */
 
 
+/*The following css and the table it is belonging to is just a workaround for a nasty bug
+triggered by the nested floats. It should not be removed
+	contenttab has only 97%+1%+1%=99% because firefox will show a non scrollable scrollbar width 100%*/
+	#contenttab {
+		width: 97%; 
+		margin: 1%
+	}
+	
+	#contentcol1 {
+		width: 70%;
+		vertical-align: top;
+	}
+	#contentcol2 {
+		width: 30%;
+		vertical-align: top;
+	}
+
+/* overwrites some design flaws in the original main.css */ 
+
+	#content {
+		margin: 2.8em 0 0 12.2em;
+		padding: 0px;
+		position: relative;
+		z-index: 2;
+	}
+	
+	#wpTextbox1{
+		word-break: break-all;
+	}
+
+/*  Slider 
+	Problem: Slider should be behind content but slider handle should be in front of
+	Solution: 	set positiv z-index for innercontent
+				set greater positiv z-index for sliderhandle
+				and leave z-index for slider blank!
+			    */
 #slider {
 	width: 100%;
 	position: absolute;
 	top: 10px;
+	/*for Debug: background-color: #00FF00; */
 }
 
 #sliderHandle {
+	cursor: move;
+	position: relative;
+	z-index: 5;
 }
 
 .generic_content{
@@ -111,7 +136,8 @@ a.plusminus:hover{
 }
 
 #innercontent {
-
+	position: relative;
+	z-index: 2;
 	overflow: auto;
 	width: 100%;
 }

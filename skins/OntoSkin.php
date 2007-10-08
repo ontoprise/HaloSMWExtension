@@ -122,9 +122,12 @@ class OntoSkinTemplate extends QuickTemplate {
 
 			if ($wgRequest->getText('action') == "edit" || ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')))
 			{ ?>
+			<div id="slider">	
+			</div>
+			<!--This contenttabposdiv div is just a workaround for a position bug in ie and has no further function-->
+			<div id="contenttabposdiv">
 			<table id="contenttab">
-				<div id="slider">	
-				</div>
+
 				<td id="contentcol1">
 
 				<!--<div id="clearfloat">-->
@@ -153,7 +156,7 @@ class OntoSkinTemplate extends QuickTemplate {
 	            <!--</div>-->
 	            </td>
 	        </table>
-				
+			</div>	
 			<?php
 			}
 			else
