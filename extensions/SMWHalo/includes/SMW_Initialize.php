@@ -31,7 +31,9 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  */
 function enableSMWHalo() {
 	global $wgExtensionFunctions;
+	global $smwgOWLFullExport;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
+	$smwgOWLFullExport = TRUE;
 }
 
 /**
@@ -383,7 +385,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		$titlesToUpdate = $oldtitle->getLinksTo();
 		$params[] = $oldtitle->getText();
 		$params[] = $newtitle->getText();
-		
+
 		foreach ($titlesToUpdate as $uptitle) {
 			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $params);
 		}
@@ -399,7 +401,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 			foreach ($titlesToUpdate as $uptitle)
 				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($uptitle, $params);
 		}
-	
+
 		Job :: batchInsert($jobs);
 		return true;
 	}
