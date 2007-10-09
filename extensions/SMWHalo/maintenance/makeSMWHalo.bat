@@ -22,7 +22,7 @@ mkdir %OUTPUT_DIR%\extensions\SMWHalo
 
 REM copy files
 
-xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeFiles.dat /Y
+xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeForHalo.dat /Y
 
 REM Patches for SMW
 xcopy ..\..\SemanticMediaWiki\includes\SMW_QueryProcessor.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
@@ -38,7 +38,8 @@ xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFil
 REM Pack SMWHalo Extension
 
 cd bin
-7z.exe a halosmw.zip %OUTPUT_DIR%\*
+IF EXIST smwhalo.zip rm smwhalo.zip
+7z.exe a smwhalo.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
