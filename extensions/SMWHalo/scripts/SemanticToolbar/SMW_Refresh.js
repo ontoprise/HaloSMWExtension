@@ -19,7 +19,7 @@ var REFRESH_DELAY = 0.5; // Refresh delay is 500 ms
 var RefreshSemanticToolBar = Class.create();
 
 RefreshSemanticToolBar.prototype = {
-	
+
 	//Constructor
 	initialize: function() {
 		this.userIsTyping = false;
@@ -27,10 +27,10 @@ RefreshSemanticToolBar.prototype = {
 		this.timeOffset = 0;
 		this.contentChanged = false;
 		this.wtp = null;
-		
+
 	},
-	
-	//Registers event 
+
+	//Registers event
 	register: function(event){
 		if(wgAction == "edit"
 		   && stb_control.isToolbarAvailable()){
@@ -38,14 +38,14 @@ RefreshSemanticToolBar.prototype = {
 			Event.observe('wpTextbox1', 'keyup' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();
 			this.editboxtext = "";
-			
+
 		}
 	},
-	
+
 	changed: function() {
 		this.contentChanged = true;
 	},
-	
+
 	//Checks if user is typing, content has changed and refreshes the toolbar
 	refresh: function(){
 		if (this.userIsTyping){
@@ -53,7 +53,7 @@ RefreshSemanticToolBar.prototype = {
 			this.userIsTyping = false;
 		} else if (this.contentChanged) {
 			var t = new Date().getTime() - this.timeOffset;
-			var dt = (this.lastKeypress != 0) 
+			var dt = (this.lastKeypress != 0)
 						? t - this.lastKeypress
 						: 0;
 			if (dt > REFRESH_DELAY*1000) {
@@ -65,11 +65,11 @@ RefreshSemanticToolBar.prototype = {
 
 	//registers automatic refresh
 	registerTimer: function(){
-		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), REFRESH_DELAY);		
+		this.periodicalTimer = new PeriodicalExecuter(this.refresh.bind(this), REFRESH_DELAY);
 	},
-	
+
 	setUserIsTyping: function(event){
-		if (!event.timeStamp) {
+		if (typeof(event) == "undefined"  || !event.timeStamp) {
 			this.lastKeypress = new Date().getTime();
 		} else {
 			this.lastKeypress = event.timeStamp;
@@ -79,7 +79,7 @@ RefreshSemanticToolBar.prototype = {
 		}
 		this.userIsTyping = true;
 	},
-	
+
 	//Refresh the Toolbar
 	refreshToolBar: function() {
 		if(window.catToolBar){
@@ -88,13 +88,13 @@ RefreshSemanticToolBar.prototype = {
 		if(window.relToolBar){
 			relToolBar.fillList()
 		}
-		   
+
 		if(window.propToolBar){
 			propToolBar.createContent();
 		}
-		
+
 		// Check for syntax errors in the wiki text
-		var saveButton = $('wpSave');	
+		var saveButton = $('wpSave');
 		if (saveButton) {
 			if (!this.wtp) {
 				this.wtp = new WikiTextParser();
@@ -110,7 +110,7 @@ RefreshSemanticToolBar.prototype = {
 			} else {
 				if (!$('wpSaveWarning')){
 					saveButton.disable();
-					new Insertion.Before(saveButton, 
+					new Insertion.Before(saveButton,
 						'<div id="wpSaveWarning" ' +
 						  'style="background-color:#ee0000;' +
 								 'color:white;' +
@@ -123,7 +123,7 @@ RefreshSemanticToolBar.prototype = {
 				$('wpTextbox1').focus();
 			}
 		}
-		
+
 	}
 }
 
