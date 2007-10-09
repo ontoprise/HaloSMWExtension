@@ -65,6 +65,7 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	
 
 	smwfHaloInitContentMessages();
@@ -498,7 +499,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		 */
 		if ($updatejobflag == 1) {
 			if ($article->getTitle()->getNamespace() == SMW_NS_PROPERTY) {
-				smwfGenerateSMWUpdateJobs($title);
+				$jobs[] = new SMW_UpdateJob($article->getTitle());
 			} else {
 				if ($article->getTitle()->getNamespace() == SMW_NS_TYPE) {
 					$store = smwfGetStore();
@@ -511,11 +512,12 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 						$subjectsOfAttribpages = $store->getAllPropertySubjects($titlesofattributepagestoupdate);
 
 						foreach ($subjectsOfAttribpages as $titleb) {
-							smwfGenerateSMWUpdateJobs($titleb);
+							$jobs[] = new SMW_UpdateJob($article->getTitle());
 						}
 					}
 				}
 			}
+			Job :: batchInsert($jobs);
 	 	}
 
 		return true; // always return true, in order not to stop MW's hook processing!
