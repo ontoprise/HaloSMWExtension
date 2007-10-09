@@ -475,7 +475,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 				} else {
 					if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
 						foreach ($oldvalues as $olddata) {
-							if ($olddata instanceof DataValue)
+							if ($olddata instanceof SMWDataValue)
 								$oldstrings[] = $olddata->getWikiValue();
 						}
 					}

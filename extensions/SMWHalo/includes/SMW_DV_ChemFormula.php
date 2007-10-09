@@ -134,7 +134,7 @@ class SMWChemicalFormulaTypeHandler extends SMWDataValue {
 	 * @return the line to be exported
 	 */
 	public function exportToRDF($QName, ExportRDF $exporter) {
-		$content = $this->m_xsdvalue;
+		$content = $this->getXSDValue();
 		$content = mb_ereg_replace ( "", "", $content);
 		return "\t\t<$QName rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">$content</$QName>\n";
 	}
