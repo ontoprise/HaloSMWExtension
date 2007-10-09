@@ -75,7 +75,7 @@
 
         if (is_dir($SourceDirectory.$entry)) {
             // Unterverzeichnis
-            $success = smwfInstallHelppages($SourceDirectory.$entry);
+            $success = smwfInstallHelppages($SourceDirectory.$entry, $ns, $ext);
 
         } else{
            
