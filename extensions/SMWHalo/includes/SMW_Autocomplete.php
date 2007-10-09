@@ -357,7 +357,7 @@ class AutoCompletionRequester {
 	public static function encapsulateEnumsOrUnitsAsXML($arrayofEnumsOrUnits) {
 		$result = '<result>';
 		foreach($arrayofEnumsOrUnits as $eou) {
-			$result .= "<match type=\"-1\">".$eou."</match>";
+			$result .= "<match type=\"200\">".$eou."</match>";
 		}
 		return empty($arrayofEnumsOrUnits) ? SMW_AC_NORESULT : $result.'</result>';
 	}

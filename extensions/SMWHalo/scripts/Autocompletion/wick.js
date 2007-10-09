@@ -23,6 +23,8 @@ var SMW_INSTANCE_NS = 0;
 var SMW_TEMPLATE_NS = 10;
 var SMW_TYPE_NS = 104;
 
+var SMW_ENUM_POSSIBLE_VALUE = 200;
+
 // time intervals for triggering
 var SMW_AC_MANUAL_TRIGGERING_TIME = 500;
 var SMW_AC_AUTO_TRIGGERING_TIME = 800;
@@ -1311,6 +1313,9 @@ function SmartInputMatch(cleanValue, value, type) {
         } else if (_type == SMW_TYPE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
+        } else if (_type == SMW_ENUM_POSSIBLE_VALUE) {
+        	return "<img src=\"" + wgServer + wgScriptPath
+                + "/extensions/SMWHalo/skins/enum.gif\">";
         }
 
         return "";  // do not return a tag, if type is unknown.
