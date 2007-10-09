@@ -71,6 +71,14 @@ abstract class SMW_HaloLanguage {
 		return $this->smwSpecialProperties[$propID];
 	}
 	
+	/**
+	 * Returns all labels of the special properties.
+	 * @return array<String> Labels of the special properties
+	 */
+	function getSpecialPropertyLabels() {
+		return $this->smwSpecialProperties;
+	}
+	
 	function getSpecialSchemaPropertyArray() {
 		return $this->smwSpecialSchemaProperties;
 	}
