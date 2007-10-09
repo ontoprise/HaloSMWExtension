@@ -104,20 +104,20 @@
  	if ($dbr->numRows($images) == 0) return;
  	while( $image = $dbr->fetchObject($images) ) {
 		$im_name = $image->il_to;
-		//$im_path_abs = wfImageDir($im_name);
+		
 		$im_file = wfFindFile(Title::newFromText($im_name));
 		if ($im_file == NULL) {
 			print "\n !! Warning: ".$im_name." is missing."; 
 			continue;
 		}
 		$im_path_abs = $im_file->getPath();
-		$im_path = substr($im_path_abs, strlen($wgUploadDirectory));
+		$im_path_rel = substr($im_path_abs, strlen($wgUploadDirectory));
 	
-		if (!file_exists($helpDirectory.'/images'.dirname($im_path))) { 
-			mkpath($helpDirectory.'/images'.dirname($im_path));
+		if (!file_exists($helpDirectory.'/images'.dirname($im_path_rel))) { 
+			mkpath($helpDirectory.'/images'.dirname($im_path_rel));
 		}
 		
-		copy($im_path_abs, $helpDirectory.'/images'.$im_path);
+		copy($im_path_abs, $helpDirectory.'/images'.$im_path_rel);
 	}
  }
  

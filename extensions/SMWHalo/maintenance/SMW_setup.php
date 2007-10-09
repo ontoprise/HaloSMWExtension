@@ -39,9 +39,9 @@
  print "done!\n";
  
  print "\nInstall predefined pages...";
- smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 12, 'Help' );
- smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 104, 'Type' );
- smwfInstallImages(dirname(__FILE__).'/../libs/predef_pages/images');
+ smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
+ smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
+ smwfInstallImages($smwgHaloIP.'/libs/predef_pages/images');
  print "\n\nAll predefined pages imported!\n";
  
  
@@ -92,7 +92,7 @@
   * Copies images 
   */
  function smwfInstallImages($SourceDirectory) {
- 	global $mediaWikiLocation;
+ 	global $mediaWikiLocation, $smwgHaloIP, $wgIP;
  	
  	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
  		return;
@@ -120,13 +120,19 @@
            
           
             	$im_dir_abs = dirname($SourceDirectory.$entry);
-            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/predef_pages/images'));
+            	$img_dir_rel = substr($im_dir_abs, strlen($smwgHaloIP.'/lib/predef_pages/'));
             	$dest_dir = $mediaWikiLocation.$img_dir_rel;
             	if (!file_exists($dest_dir)) {
             		mkpath($dest_dir);
             	}
-            	print "\n - Copy image: ".basename($SourceDirectory.$entry)."...";
-            	copy($SourceDirectory.$entry, $dest_dir.'/'.basename($SourceDirectory.$entry));
+            	
+            	// copy image into filesystem.
+            	print "\n - Copy image: ".basename($SourceDirectory.$entry)." to ".$dest_dir."/".basename($SourceDirectory.$entry)."  ";
+            	copy($SourceDirectory.$entry, $dest_dir."/".basename($SourceDirectory.$entry));
+            	
+            	// simulate an upload
+            	$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry)));
+            	$im_file->recordUpload2("", "auto-inserted image", "noText");
             	print "done!";
             }
         
