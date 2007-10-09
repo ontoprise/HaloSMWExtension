@@ -39,8 +39,8 @@
  print "done!\n";
  
  print "\nInstall predefined pages...";
- smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 12, 'hel' );
- smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 104, 'typ' );
+ smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 12, 'Help' );
+ smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 104, 'Type' );
  print "\n\nAll predefined pages imported!\n";
  
  
