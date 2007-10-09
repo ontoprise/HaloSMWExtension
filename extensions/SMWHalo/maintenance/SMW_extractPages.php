@@ -113,8 +113,8 @@
 		$im_path_abs = $im_file->getPath();
 		$im_path = substr($im_path_abs, strlen($wgUploadDirectory));
 	
-		if (!file_exists($helpDirectory.'/images'.$im_path)) { 
-			mkpath($helpDirectory.'/images'.$im_path);
+		if (!file_exists($helpDirectory.'/images'.dirname($im_path))) { 
+			mkpath($helpDirectory.'/images'.dirname($im_path));
 		}
 		
 		copy($im_path_abs, $helpDirectory.'/images'.$im_path);
