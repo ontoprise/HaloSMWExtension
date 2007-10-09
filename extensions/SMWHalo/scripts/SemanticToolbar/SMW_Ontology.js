@@ -175,7 +175,16 @@ OntologyModifier.prototype = {
 						} else {
 							rangeStr += gLanguage.getMessage('TYPE_PAGE');
 						}
-						schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
+						if (ranges[i]) {
+							// Range hint is not empty
+							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
+						} else {
+							// no range hint. Anyway a hint must be given.
+							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::" +
+							          gLanguage.getMessage('CATEGORY') +
+							          gLanguage.getMessage('UNDEFINED_RANGE') +
+							          "]]";
+						}
 					}
 			 	}
 			 	schema += rangeStr+"]]";

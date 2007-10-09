@@ -27,6 +27,9 @@ var SMW_PRP_ALL_VALID =
 	'smwAllValid="allValid ' +
  		'? (show:prop-confirm, hide:prop-invalid) ' +
  		': (show:prop-invalid, hide:prop-confirm)"';
+ 		
+var SMW_PRP_CHECK_MAX_CARD =
+	'smwValid="propToolBar.checkMaxCard"';
 
 var SMW_PRP_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
@@ -38,10 +41,6 @@ var SMW_PRP_CHECK_PROPERTY =
 		'? (color: lightgreen, hideMessage, valid:true) ' +
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
 
-var SMW_PRP_CHECK_INTEGER =
-	'smwCheckType="integer: valid ' +
-		'? (color: lightgreen, hideMessage, valid:true) ' +
-	 	': (color: red, showMessage:INVALID_FORMAT_OF_VALUE, valid:false)" ';
 
 var SMW_PRP_HINT_CATEGORY =
 	'typeHint = "' + SMW_CATEGORY_NS + '" ';
@@ -225,15 +224,11 @@ createContent: function() {
 									  type, '', 
 									  'smwChanged="(call:propToolBar.attrTypeChanged,call:propToolBar.enableWidgets)"' +
 									  SMW_PRP_NO_EMPTY_SELECTION));
-	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), minCard, '',
-	                         SMW_PRP_CHECK_INTEGER + 
-	                         SMW_PRP_CHECK_EMPTY_VIE,
-	                         true));
+	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), minCard, '', 
+	                         SMW_PRP_CHECK_MAX_CARD, true));
 	tb.append(tb.createText('prp-min-card-msg', '', '' , true));
-	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), maxCard, '',
-	                         SMW_PRP_CHECK_INTEGER +
-	                         SMW_PRP_CHECK_EMPTY_VIE,
-	                         true));
+	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), maxCard, '', 
+	                         SMW_PRP_CHECK_MAX_CARD, true));
 	tb.append(tb.createText('prp-max-card-msg', '', '' , true));
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
@@ -296,6 +291,83 @@ createContent: function() {
 	//Sets Focus on first Element
 	setTimeout("$('prp-domain').focus();",50);
     
+},
+
+checkMaxCard: function(domID) {
+	var maco = $(domID);
+	var maxCard = maco.value;
+	var mico =  $('prp-min-card');
+	var minCard = mico.value;
+		
+	gSTBEventActions.performSingleAction('color', 'white', mico);
+	gSTBEventActions.performSingleAction('hidemessage', null, mico);
+	gSTBEventActions.performSingleAction('color', 'white', maco);
+	gSTBEventActions.performSingleAction('hidemessage', null, maco);
+
+	if (!maxCard && ! minCard) {
+		// neither max. nor min. card. are given
+		return true;
+	}
+
+	var result = true;
+	if (minCard) {
+		minCard = minCard * 1;
+		if (!minCard || minCard < 0) {
+			gSTBEventActions.performSingleAction('color', 'red', mico);
+			gSTBEventActions.performSingleAction('showmessage', 'INVALID_FORMAT_OF_VALUE', mico);
+			result = false;
+		} else {
+			gSTBEventActions.performSingleAction('color', 'lightgreen', mico);
+			gSTBEventActions.performSingleAction('hidemessage', '', mico);
+		}
+	}
+	if (maxCard) {
+		maxCard = maxCard * 1;
+		if (!maxCard || maxCard < 0) {
+			gSTBEventActions.performSingleAction('color', 'red', maco);
+			gSTBEventActions.performSingleAction('showmessage', 'INVALID_FORMAT_OF_VALUE', maco);
+			result = false;
+		} else {
+			gSTBEventActions.performSingleAction('color', 'lightgreen', maco);
+			gSTBEventActions.performSingleAction('hidemessage', '', maco);
+		}
+		// maxCard must not be 0
+		if (maxCard == 0) {
+			gSTBEventActions.performSingleAction('color', 'red', maco);
+			gSTBEventActions.performSingleAction('showmessage', 'MAX_CARD_MUST_NOT_BE_0', maco);
+			result = false;
+		}
+	}
+	if (!result) {
+		return false;
+	}
+	
+	if (maxCard && !minCard) {
+		//maxCard given, minCard not
+		gSTBEventActions.performSingleAction('color', 'red', mico);
+		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', mico);
+		result = false;
+	}
+	if (!maxCard && minCard) {
+		//minCard given, maxCard not
+		gSTBEventActions.performSingleAction('color', 'red', maco);
+		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', maco);
+		result = false;
+	}
+
+	if (!result) {
+		return false;
+	}	
+	
+	// maxCard and minCard given => min must be smaller than max
+	if (minCard > maxCard) {
+		gSTBEventActions.performSingleAction('color', 'red', mico);
+		gSTBEventActions.performSingleAction('showmessage', 'MIN_CARD_INVALID', mico);
+		return false;
+	}
+		
+	return true;
+	
 },
 
 hasAnnotationChanged: function(relations, categories) {

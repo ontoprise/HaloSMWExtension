@@ -623,13 +623,24 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				if (valid) {
 					if (valid == "false") {
 						allValid = false;
-						break;
+//						break;
 					} else if (valid != "true") {
+						// is the term a conditional?
+						var qPos = valid.indexOf('?');
+						var func = valid;
+						var cond = null;
+						if (qPos > -1) {
+							func = valid.substring(0, qPos);
+							cond = this.parseConditional(func, valid);
+						}
 						// call a function
-						valid = eval(valid+'("'+elem.id+'")');
+						valid = eval(func+'("'+elem.id+'")');
+						if (cond) {
+							this.performActions(valid ? cond[0] : cond[1], elem);
+						}
 						if (!valid) {
 							allValid = false;
-							break;
+//							break;
 						}
 					}
 				}

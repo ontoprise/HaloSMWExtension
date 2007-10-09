@@ -582,14 +582,16 @@ createNewRelation: function() {
 		if ($('rel-range-'+i).getAttribute("isAttributeType") == "true") {
 			rangesAndTypes.push(gLanguage.getMessage('TYPE')+$('rel-range-'+i).value); // add as type
 		} else {
-			rangesAndTypes.push(gLanguage.getMessage('CATEGORY')+$('rel-range-'+i).value);	// add as category
+			var range = $('rel-range-'+i).value;
+			rangesAndTypes.push(range ? gLanguage.getMessage('CATEGORY')+range 	// add as category
+			                          : "");
 		}
 		i++;
 	}
 	/*STARTLOG*/
 	var signature = "";
 	for (i = 0; i < rangesAndTypes.length; i++) {
-		signature += rangesAndTypes[i];
+		signature += (rangesAndTypes[i]) ? rangesAndTypes[i] : "Type:Page";
 		if (i < rangesAndTypes.length-1) {
 			signature += ', ';
 		}
