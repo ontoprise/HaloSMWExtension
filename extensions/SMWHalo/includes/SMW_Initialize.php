@@ -51,6 +51,13 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
+	// Remove the existing smwfSaveHook and replace it with the
+	// new and functionally enhanced smwfHaloSaveHook
+	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
+	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
+	
+
+
 	// file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 	
@@ -405,4 +412,114 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		Job :: batchInsert($jobs);
 		return true;
 	}
+	
+	/**
+	*  This method will be called after an article is saved
+	*  and stores the semantic properties in the database. One
+	*  could consider creating an object for deferred saving
+	*  as used in other places of MediaWiki.
+	*  This hook extends SMW's smwfSaveHook insofar that it
+	*  updates dependent properties or individuals when a type
+	*  or propeerty gets changed. 
+	*/
+	function smwfHaloSaveHook(&$article, &$user, &$text) {
+		global $smwgIP;
+		include_once($smwgIP . '/includes/SMW_Factbox.php'); // Normally this must have happende, but you never know ...
+
+		$title=$article->getTitle();
+		$updatejobflag = 0;
+
+	 	/**
+		 * Checks if the semantic data has been changed.
+		 * Sets the updateflag is so.
+		 */
+		if ($namespace = $article->getTitle()->getNamespace() == SMW_NS_PROPERTY || SMW_NS_TYPE) {
+			$specsTocheck = array (
+				SMW_SP_HAS_TYPE,
+				SMW_SP_POSSIBLE_VALUE,
+				SMW_SP_CONVERSION_FACTOR
+			);
+
+			$oldstore = smwfGetStore();
+
+			foreach ($specsTocheck as $type) {
+				$oldvalues = $oldstore->getSpecialValues($title, $type); //old values , array containing strings
+				$currentvalues = SMWFactbox :: $semdata->getSpecialValues($type); //current values, array containing title objects for attributes or data value objects for the rest
+
+				/**
+				 * TODO This seems kind of wrong, still. I guess there is an easier to way to check
+				 * if currentvalues and oldvalues have indeed a diff.
+				 */
+				$currentstrings = array ();
+				if ($type == SMW_SP_HAS_TYPE) {
+					foreach ($currentvalues as $currentdata) {
+						if ($currentdata instanceof Title) {
+							$currentstrings[] = $currentdata->getText();
+						} else {
+							$currentstrings[] = $currentdata->getWikiValue();
+						}
+					}
+				} else {
+					if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
+						foreach ($currentvalues as $currentdata) {
+							$currentstrings[] = $currentdata->getWikiValue();
+						}
+					}
+				}
+				$oldstrings = array ();
+				if ($type == SMW_SP_HAS_TYPE) {
+					foreach ($oldvalues as $olddata) {
+						$oldstrings[] = $olddata->getWikiValue();
+					}
+				} else {
+					if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
+						foreach ($oldvalues as $olddata) {
+							$oldstrings[] = $olddata->getWikiValue();
+						}
+					}
+				}
+
+				// double side diff
+				$diff = array_merge(array_diff($currentstrings, $oldstrings), array_diff($oldstrings, $currentstrings));
+
+				if (!empty ($diff)) {
+					$updatejobflag = 1;
+					break;
+				}
+
+			}
+
+	 	}
+
+		SMWFactbox::storeData($title, smwfIsSemanticsProcessed($title->getNamespace()));
+
+		/*
+		 * Triggers the relevant Updatejobs if necessary
+		 */
+		if ($updatejobflag == 1) {
+			if ($article->getTitle()->getNamespace() == SMW_NS_PROPERTY) {
+				smwfGenerateSMWUpdateJobs($title);
+			} else {
+				if ($article->getTitle()->getNamespace() == SMW_NS_TYPE) {
+					$store = smwfGetStore();
+
+					$subjects = array ();
+					$subjects = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $title);
+
+					foreach ($subjects as $titlesofattributepagestoupdate) {
+						$subjectsOfAttribpages = array ();
+						$subjectsOfAttribpages = $store->getAllPropertySubjects($titlesofattributepagestoupdate);
+
+						foreach ($subjectsOfAttribpages as $titleb) {
+							smwfGenerateSMWUpdateJobs($titleb);
+						}
+					}
+				}
+			}
+	 	}
+
+		return true; // always return true, in order not to stop MW's hook processing!
+	}
+
+
 ?>
