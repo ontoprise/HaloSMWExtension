@@ -30,6 +30,7 @@
 			if (!$t->exists()) {
 				$article = new Article($t);
 				$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
+				$this->reportProgress(" Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
 		
@@ -39,10 +40,39 @@
 			if (!$t->exists()) {
 				$article = new Article($t);
 				$article->insertNewArticle(wfMsg('smw_predefined_cats', $t->getText()), "", false, false);
+				$this->reportProgress(" Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
+		
+		$this->createHelpAttributes($verbose);
+		
 		$this->reportProgress("Predefined pages created successfully.\n",$verbose);
 	}
+	
+	private function createHelpAttributes($verbose){
+		$title = Title::newFromText("Question", SMW_NS_PROPERTY);
+		if (!($title->exists())){
+			$articleContent = "[[has type::Type:String]]";
+			$wgArticle = new Article( $title );
+			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+			$this->reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+		}
+		$title = Title::newFromText("Description", SMW_NS_PROPERTY);
+		if (!($title->exists())){
+			$articleContent = "[[has type::Type:String]]";
+			$wgArticle = new Article( $title );
+			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+			$this->reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+		}
+		$title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
+		if (!($title->exists())){
+			$articleContent = "[[has type::Type:String]]";
+			$wgArticle = new Article( $title );
+			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+			$this->reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+		}
+	}
+	
 	/**
 	 * Initializes the gardening component
 	 */

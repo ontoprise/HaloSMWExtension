@@ -121,7 +121,7 @@ function smwfAskQuestion($namespace, $action, $question){
 	if($wgTitle->exists()){
 		return wfMsg('smw_help_pageexists');
 	}
-	smwfCheckHelpAttributes();
+	
 
 	/*STARTLOG*/
 	$logmsg = "Added question '$question'";
@@ -437,25 +437,6 @@ function smwgNewAttributeWithType($title, $type){
 	}
 }
 
-function smwfCheckHelpAttributes(){
-	$title = Title::newFromText("Question", SMW_NS_PROPERTY);
-	if (!($title->exists())){
-		$articleContent = "[[has type::Type:String]]";
-		$wgArticle = new Article( $title );
-		$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-	}
-	$title = Title::newFromText("Description", SMW_NS_PROPERTY);
-	if (!($title->exists())){
-		$articleContent = "[[has type::Type:String]]";
-		$wgArticle = new Article( $title );
-		$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-	}
-	$title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
-	if (!($title->exists())){
-		$articleContent = "[[has type::Type:String]]";
-		$wgArticle = new Article( $title );
-		$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-	}
-}
+
 
 ?>
