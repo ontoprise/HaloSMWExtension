@@ -69,7 +69,7 @@
 		die("\nDirectory '$SourceDirectory' could not be opened.\n");
     }
 
-    while ($entry = readdir($handle) ){
+    while ( ($entry = readdir($handle)) !== false ){
         if ($entry[0] == '.'){
             continue;
         }
@@ -92,8 +92,9 @@
   * Copies images 
   */
  function smwfInstallImages($SourceDirectory) {
- 	global $mediaWikiLocation, $smwgHaloIP, $wgIP;
- 	
+ 	global $mediaWikiLocation, $smwgHaloIP;
+ 	print "\nCopying images...\n";
+ 	print $SourceDirectory;
  	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
  		return;
  	}
@@ -106,12 +107,13 @@
     if (!$handle) {
 		die("\nDirectory '$SourceDirectory' could not be opened.\n");
     }
-
-    while ($entry = readdir($handle) ){
+    while ( ($entry = readdir($handle)) !== false ){
+	
         if ($entry[0] == '.'){
             continue;
         }
-
+		
+		print "\nProcessing ".$SourceDirectory.$entry;
         if (is_dir($SourceDirectory.$entry)) {
             // Unterverzeichnis
             $success = smwfInstallImages($SourceDirectory.$entry);
