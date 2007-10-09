@@ -57,8 +57,31 @@ createList: function(list,id) {
 		path = path.substring(0, dollarPos);
 	}
 	
+	//Calculate the size of the property columns depending on the length of the content
 	var maxlen1 = 0;
 	var maxlen2 = 0;
+	if(id=="relation"){
+		for (var i = 0; i < len; i++) {
+				list[i].getName().length > maxlen2 ? maxlen2 = list[i].getName().length : "";
+				// HTML of parameter rows (except first)
+				var propertyvalues = list[i].getSplitValues();
+	  			for (var j = 0, n = list[i].getArity()-1; j < n; j++) {
+	  				propertyvalues[j].length > maxlen1 ? maxlen1 = propertyvalues[j].length : "";
+	  			}
+		}	
+	}
+	
+	var len1="";
+	var len2="";
+	if( id == "relation" && maxlen2 != 0){
+  		len2 = 20 + 100*(0.55*(maxlen1/(maxlen2+maxlen1)));
+  		len2 = 'style="width:'+ len2 + '%;"';
+  		len1 = 20 + 100*(0.55 - 0.55*(maxlen1/(maxlen2+maxlen1)));
+  		len1 = 'style="width:'+ len1 + '%;"';
+	}
+	//End calculating size
+	
+	
   	for (var i = 0; i < len; i++) {
   		var rowSpan = "";
   		var firstValue = "";
@@ -81,14 +104,14 @@ createList: function(list,id) {
 	  			firstValue = values[0];
 	  			var valueLink;
 
-				firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
+				//firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
 
 				valueLink = '<span title="' + firstValue + '">' + firstValue + '<span>';
 				firstValue = valueLink;
 				
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
-	  				values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
+	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 					valueLink = 
 					'<span title="' + values[j] + '">' + values[j] +
 				    '</span>';
@@ -104,17 +127,17 @@ createList: function(list,id) {
 		}
 		
 		//Checks if getValue exists if no it's an Category what allows longer text
-		var shortName = list[i].getValue ? list[i].getName() : list[i].getName();
+		var shortName = list[i].getName();
 		var elemName;
-		shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
+		//shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
 		elemName = '<a href="'+wgServer+path+prefix+list[i].getName();
 		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
 		divlist += 	"<tr>" +
-				"<td "+rowSpan+" class=\"" + id + "-col1\">" + 
+				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
 					elemName + 
 				" </td>" +
-				"<td class=\"" + id + "-col2\">" + firstValue + " </td>" + // first value row
+				"<td class=\"" + id + "-col2\"  " + len2 + ">" + firstValue + " </td>" + // first value row
 		           	"<td "+rowSpan+" class=\"" + id + "-col3\">" +
 		           	'<a href=\"javascript:' + fn + '">' +
 		           	'<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/edit.gif"/></a>' +
@@ -122,21 +145,11 @@ createList: function(list,id) {
 		           	'</tr>' + multiValue; // all other value rows
   	}
   	divlist += "</table></div>";
-  	if( id == "relation" && maxlen2 != 0){
-  		setTimeout(function(){
-		  		$$('.relation-col2').each( function(n) {
-		  			var len = 20 + 100*(0.55*(maxlen1/(maxlen2+maxlen1)));
-		  			n.style.width = len + "%";
-		  			});
-	  			$$('.relation-col1').each( function(n) {
-	  				var len = 20 + 100*(0.55 - 0.55*(maxlen1/(maxlen2+maxlen1)));
-	  				n.style.width = len + "%";
-	  				});
-  			}, 100);
-  	}
   	return divlist;
 },
 
+
+/*deprecated*/
 cutdowntosize: function(word, size /*, Optional: maxrows */ ){
 	return word;
 	var result;
