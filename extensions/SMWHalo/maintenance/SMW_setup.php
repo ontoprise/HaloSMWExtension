@@ -41,6 +41,7 @@
  print "\nInstall predefined pages...";
  smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 12, 'Help' );
  smwfInstallHelppages(dirname(__FILE__).'/../libs/predef_pages', 104, 'Type' );
+ smwfInstallImages(dirname(__FILE__).'/../libs/predef_pages/images');
  print "\n\nAll predefined pages imported!\n";
  
  
@@ -82,17 +83,53 @@
             if (strpos($SourceDirectory.$entry, ".".$ext) !== false) {
                	smwfImportHelppage($SourceDirectory.$entry, $ns, $ext);
             	
-            } else if (strpos($SourceDirectory.$entry, ".gif") !== false
-           				 || strpos($SourceDirectory.$entry, ".png") !== false) { // assume that it is an image
+            } 
+        }
+    }
+ }
+ 
+ /**
+  * Copies images 
+  */
+ function smwfInstallImages($SourceDirectory) {
+ 	global $mediaWikiLocation;
+ 	
+ 	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
+ 		return;
+ 	}
+ 	 // add trailing slashes
+    if (substr($SourceDirectory,-1)!='/'){
+        $SourceDirectory .= '/';
+    }
+   
+    $handle = @opendir($SourceDirectory);
+    if (!$handle) {
+		die("\nDirectory '$SourceDirectory' could not be opened.\n");
+    }
+
+    while ($entry = readdir($handle) ){
+        if ($entry[0] == '.'){
+            continue;
+        }
+
+        if (is_dir($SourceDirectory.$entry)) {
+            // Unterverzeichnis
+            $success = smwfInstallImages($SourceDirectory.$entry);
+
+        } else{
+           
+          
             	$im_dir_abs = dirname($SourceDirectory.$entry);
-            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/predef_pages'));
+            	$img_dir_rel = substr($im_dir_abs, strlen(dirname(__FILE__).'/../libs/predef_pages/images'));
             	$dest_dir = $mediaWikiLocation.$img_dir_rel;
-            	mkpath($dest_dir);
+            	if (!file_exists($dest_dir)) {
+            		mkpath($dest_dir);
+            	}
             	print "\n - Copy image: ".basename($SourceDirectory.$entry)."...";
             	copy($SourceDirectory.$entry, $dest_dir.'/'.basename($SourceDirectory.$entry));
             	print "done!";
             }
-        }
+        
     }
  }
  
