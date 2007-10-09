@@ -69,7 +69,11 @@ RefreshSemanticToolBar.prototype = {
 	},
 	
 	setUserIsTyping: function(event){
-		this.lastKeypress = event.timeStamp;
+		if (!event.timeStamp) {
+			this.lastKeypress = new Date().getTime();
+		} else {
+			this.lastKeypress = event.timeStamp;
+		}
 		if (this.timeOffset == 0) {
 			this.timeOffset = new Date().getTime() - this.lastKeypress;
 		}
