@@ -772,19 +772,6 @@ class ExportRDFHalo extends ExportRDF {
 		// Set parameters for export
 		switch ($et->title_namespace) {
 			case SMW_NS_PROPERTY:
-				if ( $et->has_type ) {
-					if ( ('annouri' == $et->has_type->getTypeID()) || ('annostring' == $et->has_type->getTypeID()) ) {
-						$type = 'owl:AnnotationProperty';
-						//$subprop_rel = "smw:subPropertyOf";
-						//TODO  can it be equivalent? cannot be a subproperty
-					} elseif ('_wpg' == $et->has_type->getTypeID()) {
-						$type = 'owl:ObjectProperty';
-					} else {
-						$type = 'owl:DatatypeProperty';
-					}
-				} else {
- 					$type = 'owl:ObjectProperty';
-				}
 				$equality_rel = "owl:equivalentProperty";
 				global $smwgExportSemanticRelationHierarchy;
 				if ($smwgExportSemanticRelationHierarchy) {
@@ -792,7 +779,23 @@ class ExportRDFHalo extends ExportRDF {
 				} else {
 					$subprop_rel = "smw:subPropertyOf";
 				}
+
+				switch ($et->has_type) {
+					case '': case '_wpg': case '_uri': case '_ema': case '__nry':
+						$type = 'owl:ObjectProperty';
+					break;
+					case '_anu':
+						$type = 'owl:AnnotationProperty';
+						$equality_rel = false; // disabled for annotations
+						$subprop_rel = false; // disabled for annotations
+					break;
+					default:
+						$type = 'owl:DatatypeProperty';
+					break;
+				}
+				if ($this->owlfull) $category_rel = "rdf:type";
 				break;
+
 			case NS_CATEGORY:
 				$type = 'owl:Class';
 				$category_rel = "rdfs:subClassOf";
