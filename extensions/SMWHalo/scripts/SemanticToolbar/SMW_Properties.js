@@ -665,6 +665,12 @@ apply: function() {
 		} else {
 			rangeAnno[0].changeValue(range);
 		}
+		if (!this.isNAry) {
+			// not an n-ary => remove all further range hints
+			for (var i = 1, num = rangeAnno.length; i < num; i++) {
+				rangeAnno[i].remove("");
+			}
+		}
 	} 
 	if (attrTypeAnno != null) {
 		if (attrType == null) {
