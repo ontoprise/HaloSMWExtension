@@ -13,9 +13,9 @@ var editAreaName = "wpTextbox1";
 
 if((wgAction == "edit" || wgAction == "submit") && skin == "ontoskin"){
 	if(getEditorCookie() == "on")
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "both", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff"});
+		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff"});
 	else //display:later
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "both", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff", display: "later"});
+		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff", display: "later"});
 }
 
 function trim(string) {
@@ -187,7 +187,7 @@ SMWEditInterface.prototype ={
 				var rng = document.selection.createRange();
 				var moved = 1;
 				rng.moveStart('character',-1);
-				while (rng.text.charAt(0) == ' ' 
+				while (rng.text.charAt(0) == ' '
 				       && rng.moveStart('character',-1) != 0) {
 					moved++;
 				}
@@ -197,7 +197,7 @@ SMWEditInterface.prototype ={
 					found = true;
 				}
 				rng.moveStart('character',found ? 1 : moved);
-				
+
 				found = false;
 				moved = 1;
 				rng.moveEnd('character',1);
@@ -230,11 +230,11 @@ SMWEditInterface.prototype ={
 				found = false;
 				// Search for closing brackets at the end of the selection
 				var end = SMWEditArea.selectionEnd;
-				while (end < SMWEditArea.value.length 
+				while (end < SMWEditArea.value.length
 				       && SMWEditArea.value.charAt(end) == ' ') {
 					++end;
 				}
-				while (end < SMWEditArea.value.length 
+				while (end < SMWEditArea.value.length
 				       && SMWEditArea.value.charAt(end) == ']') {
 					++end;
 					found = true;
