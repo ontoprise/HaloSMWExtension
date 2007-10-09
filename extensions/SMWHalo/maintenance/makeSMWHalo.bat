@@ -39,7 +39,7 @@ REM Pack SMWHalo Extension
 
 cd bin
 IF EXIST smwhalo.zip rm smwhalo.zip
-7z.exe a smwhalo.zip %OUTPUT_DIR%\*
+7z.exe a -tzip smwhalo.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

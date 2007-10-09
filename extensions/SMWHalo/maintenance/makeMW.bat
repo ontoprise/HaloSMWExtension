@@ -20,7 +20,7 @@ REM Pack MW
 
 cd bin
 IF EXIST mw.zip rm mw.zip
-7z.exe a mw.zip %OUTPUT_DIR%\*
+7z.exe a -tzip mw.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

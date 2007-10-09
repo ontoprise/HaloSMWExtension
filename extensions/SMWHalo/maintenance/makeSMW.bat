@@ -20,7 +20,7 @@ REM Pack SMW
 
 cd bin
 IF EXIST smw.zip rm smw.zip
-7z.exe a smw.zip %OUTPUT_DIR%\*
+7z.exe a -tzip smw.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
