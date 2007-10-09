@@ -281,17 +281,7 @@ border-left:1px solid;
 border-color: #AAAAAA;
 }
 
-#resetdialogue{
-position:absolute;
-z-index:51;
-top:25%;
-left:30%;
-background:#FFF;
-border: 1px solid #AAAAAA;
-padding:5px;
-}
-
-#savedialogue{
+.topDialogue{
 position:absolute;
 z-index:51;
 top:25%;

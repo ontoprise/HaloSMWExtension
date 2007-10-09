@@ -975,6 +975,19 @@ copyToClipboard:function(){
 	}
 },
 
+showFullAsk:function(){
+var ask = this.getFullAsk();
+ask = ask.replace(/</g, "&lt;");
+ask = ask.replace(/>/g, "&gt;");
+ask = ask.replace(/\]\]\[\[/g, "]]<br/>[[");
+ask = ask.replace(/&gt;\[\[/g, "&gt;<br/>[[");
+ask = ask.replace(/\]\]&lt;/g, "]]<br/>&lt;");
+
+$('fullAskText').innerHTML = ask;
+$('shade').toggle();
+$('showAsk').toggle();
+},
+
 showLoadDialogue:function(){
 	//List of saved queries with filter
 	//load
