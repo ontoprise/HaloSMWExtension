@@ -21,8 +21,14 @@ var initHelp = function(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
 		ns = "QueryInterface";
+	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
+		ns = "Gardening";
+	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
+		ns = "OntologyBrowser";
 	}
 	sajax_do_call('smwfGetHelp', [ns , wgAction], displayHelp.bind(this));
 }
@@ -64,8 +70,14 @@ function askQuestion(){
 	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
 		ns = "Search";
 	}
-	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
 		ns = "QueryInterface";
+	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
+		ns = "Gardening";
+	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
+		ns = "OntologyBrowser";
 	}
 	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
 }
