@@ -1,8 +1,0 @@
-Das ist eine Beispiel-Hilfeseite. Hier ist beliebiger '''Wiki Markup''' zulässig! 
-
-Alle Hilfeseiten müssen in lib/helppages als .whp Datei (Wiki Help Page) liegen. Dabei spielt es keine Rolle 
-wie die Verzeichnisstruktur unterhalb von lib/helppages aussieht. Die Seiten können beliebig einge-
-ordnet werden.
-
-Zum Einrichten eines neuen oder besteheden Wikis genügt es dass Skript 'SMW_setup.php' auszuführen. Es 
-installiert unter anderem alle Hilfeseiten im Wiki.
