@@ -170,9 +170,9 @@ ToolbarFramework.prototype = {
 			for (var i = 0; i < (this.tabarray.length); i++)
 			{
 				if (this.curtabShown != i) {
-					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin/plus.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/plus-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/plus.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
+					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
 				} else {
-					$("activetabcontainer").update("<div id=\"expandable\"><img src=\"" + wgScriptPath + "/skins/ontoskin/minus.gif\"></div><div id=\"tab_"+i+"\">"+this.tabnames[i]+"</div>");
+					$("activetabcontainer").update("<div id=\"expandable\"><img src=\"" + wgScriptPath + "/skins/ontoskin/expanded.gif\"></div><div id=\"tab_"+i+"\">"+this.tabnames[i]+"</div>");
 				}
 			}
 		}

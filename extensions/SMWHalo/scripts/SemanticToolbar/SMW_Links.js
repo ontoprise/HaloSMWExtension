@@ -32,6 +32,9 @@ function addLinks(request){
 	if (request.responseText!=''){
 		editcontainer.setContent(request.responseText);
 		editcontainer.contentChanged();
+	} else {
+		editcontainer.setContent("<p>There are no links on this page.</p>");
+		editcontainer.contentChanged();
 	}
 }
 
