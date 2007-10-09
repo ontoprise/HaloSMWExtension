@@ -48,7 +48,7 @@ var wgLanguageStrings = {
 	'MAX_CARD_MUST_NOT_BE_0'  : "(e)Max. cardinality must not be 0 or less!",
 	'SPECIFY_CARDINALITY'     : "(e)Please specify this cardinality!",
 	'MIN_CARD_INVALID'        : "(e)Min. cardinality must be smaller than max. cardinality!",
-	'UNDEFINED_RANGE'		  : "Undefined range",
+	'DEFAULT_ROOT_CONCEPT'	  : "Default Root Concept",
 	
 	// Namespaces
 	'NS_SPECIAL' 			  : 'Special',				

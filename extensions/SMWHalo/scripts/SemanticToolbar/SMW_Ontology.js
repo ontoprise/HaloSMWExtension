@@ -182,7 +182,7 @@ OntologyModifier.prototype = {
 							// no range hint. Anyway a hint must be given.
 							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::" +
 							          gLanguage.getMessage('CATEGORY') +
-							          gLanguage.getMessage('UNDEFINED_RANGE') +
+							          gLanguage.getMessage('DEFAULT_ROOT_CONCEPT') +
 							          "]]";
 						}
 					}
