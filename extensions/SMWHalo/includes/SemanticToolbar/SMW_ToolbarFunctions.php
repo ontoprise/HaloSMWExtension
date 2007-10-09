@@ -125,7 +125,7 @@ function smwfAskQuestion($namespace, $action, $question){
 
 	/*STARTLOG*/
 	$logmsg = "Added question '$question'";
-    smwLog($logmsg, "info", "help_addednew", wfTimestampNow());
+    smwLog($logmsg, "CSH", "help_addednew", wfTimestampNow());
 	/*ENDLOG*/
 
 

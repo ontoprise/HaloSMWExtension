@@ -126,7 +126,7 @@ resetQuery:function(){
 doReset:function(){
 	/*STARTLOG*/
 	if(window.smwhgLogger){
-	    smwhgLogger.log("Reset Query","info","query_reset");
+	    smwhgLogger.log("Reset Query","QI","query_reset");
 	}
 	/*ENDLOG*/
 	this.emptyDialogue();
@@ -143,7 +143,7 @@ previewQuery:function(){
 
 	/*STARTLOG*/
 	if(window.smwhgLogger){
-	    smwhgLogger.log("Preview Query","info","query_preview");
+	    smwhgLogger.log("Preview Query","QI","query_preview");
 	}
 	/*ENDLOG*/
 	$('shade').toggle();
@@ -723,7 +723,7 @@ deleteActivePart:function(){
 			/*STARTLOG*/
 			if(window.smwhgLogger){
 				var logstr = "Remove category " + this.activeQuery.getCategoryGroup(this.loadedFromId).join(",") + " from query";
-			    smwhgLogger.log(logstr,"info","query_category_removed");
+			    smwhgLogger.log(logstr,"QI","query_category_removed");
 			}
 			/*ENDLOG*/
 			this.activeQuery.removeCategoryGroup(this.loadedFromId);
@@ -732,7 +732,7 @@ deleteActivePart:function(){
 			/*STARTLOG*/
 			if(window.smwhgLogger){
 				var logstr = "Remove instance " + this.activeQuery.getInstanceGroup(this.loadedFromId).join(",") + " from query";
-			    smwhgLogger.log(logstr,"info","query_instance_removed");
+			    smwhgLogger.log(logstr,"QI","query_instance_removed");
 			}
 			/*ENDLOG*/
 			this.activeQuery.removeInstanceGroup(this.loadedFromId);
@@ -742,14 +742,14 @@ deleteActivePart:function(){
 			/*STARTLOG*/
 			if(window.smwhgLogger){
 				var logstr = "Remove property " + pgroup.getName() + " from query";
-			    smwhgLogger.log(logstr,"info","query_property_removed");
+			    smwhgLogger.log(logstr,"QI","query_property_removed");
 			}
 			/*ENDLOG*/
 			if(pgroup.getValues()[0][0] == "subquery"){
 				/*STARTLOG*/
 				if(window.smwhgLogger){
 					var logstr = "Remove subquery (property: " + pgroup.getName() + ") from query";
-				    smwhgLogger.log(logstr,"info","query_subquery_removed");
+				    smwhgLogger.log(logstr,"QI","query_subquery_removed");
 				}
 				/*ENDLOG*/
 				//recursively delete all subqueries of this one. It's id is values[0][2]
@@ -847,7 +847,7 @@ addCategoryGroup:function(){
 		/*STARTLOG*/
 		if(window.smwhgLogger){
 			var logstr = "Add category " + tmpcat.join(",") + " to query";
-		    smwhgLogger.log(logstr,"info","query_category_added");
+		    smwhgLogger.log(logstr,"QI","query_category_added");
 		}
 		/*ENDLOG*/
 		this.activeQuery.addCategoryGroup(tmpcat, this.loadedFromId); //add to query
@@ -873,7 +873,7 @@ addInstanceGroup:function(){
 		/*STARTLOG*/
 		if(window.smwhgLogger){
 			var logstr = "Add instance " + tmpins.join(",") + " to query";
-		    smwhgLogger.log(logstr,"info","query_instance_added");
+		    smwhgLogger.log(logstr,"QI","query_instance_added");
 		}
 		/*ENDLOG*/
 		this.activeQuery.addInstanceGroup(tmpins, this.loadedFromId);
@@ -905,7 +905,7 @@ addPropertyGroup:function(){
 				/*STARTLOG*/
 				if(window.smwhgLogger){
 					var logstr = "Add subquery to query, property '" + pname + "'";
-				    smwhgLogger.log(logstr,"info","query_subquery_added");
+				    smwhgLogger.log(logstr,"QI","query_subquery_added");
 				}
 				/*ENDLOG*/
 			}
@@ -915,7 +915,7 @@ addPropertyGroup:function(){
 		/*STARTLOG*/
 		if(window.smwhgLogger){
 			var logstr = "Add property " + pname + " to query";
-		    smwhgLogger.log(logstr,"info","query_property_added");
+		    smwhgLogger.log(logstr,"QI","query_property_added");
 		}
 		/*ENDLOG*/
 		this.activeQuery.addPropertyGroup(pgroup, subqueryIds, this.loadedFromId); //add the property group to the query
@@ -935,7 +935,7 @@ copyToClipboard:function(){
 	} else {
 		/*STARTLOG*/
 		if(window.smwhgLogger){
-		    smwhgLogger.log("Copy query to clipboard","info","query_copied");
+		    smwhgLogger.log("Copy query to clipboard","QI","query_copied");
 		}
 		/*ENDLOG*/
 		var text = this.getFullAsk();

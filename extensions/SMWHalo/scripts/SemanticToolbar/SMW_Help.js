@@ -102,7 +102,7 @@ function helplog(question, action){
 	/*STARTLOG*/
 	if(window.smwhgLogger){
 		var logmsg = "Opened Help Page " + question + " with action " + action;
-	    smwhgLogger.log(logmsg,"info","help_clickedtopic");
+	    smwhgLogger.log(logmsg,"CSH","help_clickedtopic");
 	}
 	/*ENDLOG*/
 	return true;
