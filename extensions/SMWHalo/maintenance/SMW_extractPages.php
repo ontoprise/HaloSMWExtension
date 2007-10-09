@@ -117,7 +117,7 @@
 			mkpath($helpDirectory.'/images'.$im_path);
 		}
 		
-		copy($im_path_abs.'/'.$im_name, $helpDirectory.'/images'.$im_path.'/'.$im_name);
+		copy($im_path_abs, $helpDirectory.'/images'.$im_path);
 	}
  }
  
