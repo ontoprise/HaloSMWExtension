@@ -33,7 +33,7 @@ REM Patches for MW
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
-xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFiles.dat /Y
+xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
 
 REM Pack SMWHalo Extension
 
