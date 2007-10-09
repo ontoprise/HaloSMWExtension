@@ -88,7 +88,13 @@
  	if ($dbr->numRows($images) == 0) return;
  	while( $image = $dbr->fetchObject($images) ) {
 		$im_name = $image->il_to;
-		$im_path_abs = wfImageDir($im_name);
+		//$im_path_abs = wfImageDir($im_name);
+		$im_file = wfFindFile(Title::newFromText($im_name));
+		if ($im_file == NULL) {
+			print "\n !! Warning: ".$im_name." is missing."; 
+			continue;
+		}
+		$im_path_abs = $im_file->getPath();
 		$im_path = substr($im_path_abs, strlen($wgUploadDirectory));
 	
 		if (!file_exists($helpDirectory.'/images'.$im_path)) { 
