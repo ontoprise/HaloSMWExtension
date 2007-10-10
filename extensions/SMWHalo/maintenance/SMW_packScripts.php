@@ -82,6 +82,7 @@
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_FactboxType.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'CombinedSearch.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMWEditInterface.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'obSemToolContribution.js' => GPL_LICENSE_ONTOPRISE /*,
 	 				  'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
