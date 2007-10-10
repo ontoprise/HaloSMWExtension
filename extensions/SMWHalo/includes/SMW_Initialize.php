@@ -485,6 +485,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 				$diff = array_merge(array_diff($currentstrings, $oldstrings), array_diff($oldstrings, $currentstrings));
 
 				if (!empty ($diff)) {
+					
 					$updatejobflag = 1;
 					break;
 				}
@@ -499,12 +500,22 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		 * Triggers the relevant Updatejobs if necessary
 		 */
 		if ($updatejobflag == 1) {
+			$store = smwfGetStore();
 			if ($article->getTitle()->getNamespace() == SMW_NS_PROPERTY) {
-				$jobs[] = new SMW_UpdateJob($article->getTitle());
+				smwLog("Property type of '".$article->getTitle()->getText()."' changed.", "RF", "smwfHaloSaveHook");
+				
+				$subjectsOfAttribpages = $store->getAllPropertySubjects($article->getTitle());
+
+				foreach ($subjectsOfAttribpages as $titleb) {
+					$jobs[] = new SMW_UpdateJob($titleb);
+				}
+					
+				
 			} else {
 				if ($article->getTitle()->getNamespace() == SMW_NS_TYPE) {
-					$store = smwfGetStore();
-
+					
+					smwLog("Type '".$article->getTitle()->getText()."' changed.", "RF", "smwfHaloSaveHook");
+					
 					$subjects = array ();
 					$subjects = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $title);
 
@@ -513,7 +524,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 						$subjectsOfAttribpages = $store->getAllPropertySubjects($titlesofattributepagestoupdate);
 
 						foreach ($subjectsOfAttribpages as $titleb) {
-							$jobs[] = new SMW_UpdateJob($article->getTitle());
+							$jobs[] = new SMW_UpdateJob($titleb);
 						}
 					}
 				}
