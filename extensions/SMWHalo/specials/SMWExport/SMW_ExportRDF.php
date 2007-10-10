@@ -682,8 +682,8 @@ class ExportRDFHalo extends ExportRDF {
 			// A note on "wiki": this namespace is crucial as a fallback when it would be illegal to start e.g. with a number. In this case, one can always use wiki:... followed by "_" and possibly some namespace, since _ is legal as a first character.
 			"\t<!ENTITY wiki '" . $this->wiki_xmlns_xml .  "/'>\n" .
 			"\t<!ENTITY wikiurl '" . $this->wiki_xmlns_url .  "'>\n" .
-			"\t<!ENTITY property '" . $this->wiki_xmlns_xml .
-			$this->makeXMLExportId(urlencode(str_replace(' ', '_', $wgContLang->getNsText(SMW_NS_PROPERTY) . ':'))) .  "'>\n" .
+			"\t<!ENTITY property '" . $this->wiki_xmlns_xml . "/" .
+			$this->makeXMLExportId(urlencode(str_replace(' ', '_', $wgContLang->getNsText(SMW_NS_PROPERTY) . ':'))) .  "/'>\n" .
 			"]>\n\n" .
 			"<rdf:RDF\n" .
 			"\txmlns:rdf=\"&rdf;\"\n" .
