@@ -38,7 +38,7 @@ xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFor
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwhalo.zip rm smwhalo.zip
+IF EXIST smwhalo.zip del smwhalo.zip
 7z.exe a -tzip smwhalo.zip %OUTPUT_DIR%\*
 cd..
 
