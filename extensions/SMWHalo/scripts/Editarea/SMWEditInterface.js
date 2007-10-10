@@ -11,7 +11,7 @@
 
 var editAreaName = "wpTextbox1";
 
-if((wgAction == "edit" || wgAction == "submit") && skin == "ontoskin"){
+if((wgAction == "edit") && skin == "ontoskin"){
 	if(getEditorCookie() == "on")
 		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff"});
 	else //display:later
