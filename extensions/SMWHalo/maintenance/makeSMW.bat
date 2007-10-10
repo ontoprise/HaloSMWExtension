@@ -5,7 +5,7 @@ REM Windows batch file for creating SMW deploy version
 set OUTPUT_DIR=c:\temp\smw
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
 
-rm -r -f %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%
 
 REM Create directories
 
@@ -25,4 +25,4 @@ cd..
 
 REM Remove temp files
 
-rm -r -f %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%

@@ -5,7 +5,7 @@ REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 set OUTPUT_DIR=c:\temp\halosmw
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
 
-rm -r -f %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%
 
 REM Create directories
 
@@ -44,4 +44,4 @@ cd..
 
 REM Remove temp files
 
-rm -r -f %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%
