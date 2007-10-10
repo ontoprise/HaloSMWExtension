@@ -4,6 +4,7 @@
  *
  * Author: kai
  */
+define('SMW_HALO_VERSION', '1.0alpha-1');
 
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_HINT', 1);
@@ -41,7 +42,7 @@ function enableSMWHalo() {
  * Called from SMW during initialization.
  */
 function smwgHaloSetupExtension() {
-	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses;
+	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 
 	$smwgMasterGeneralStore = NULL;
@@ -110,7 +111,11 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'smwfGenerateUpdateAfterMoveJob';
-
+	
+	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION, 
+			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and others. Maintained by [http://www.ontoprise.de Ontoprise].", 
+			'url'=>'https://sourceforge.net/projects/halo-extension', 
+			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://ontoworld.org/wiki/Halo_Extension View feature description.]');
 	return true;
 }
 
