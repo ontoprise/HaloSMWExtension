@@ -249,6 +249,7 @@
 		{
 			var resized= false;
 			area_width= this.textarea.scrollWidth;
+
 			area_height= this.textarea.scrollHeight;
 			if(this.nav['isOpera']){
 				area_height= this.last_selection['nb_line']*this.lineHeight;
@@ -261,7 +262,7 @@
 			}
 
 			if(this.nav['isIE']==7)
-				area_width-=45;
+				//area_width-=45;
 
 			if(this.nav['isGecko'] && this.smooth_selection && this.last_selection["nb_line"])
 				area_height= this.last_selection["nb_line"]*this.lineHeight;
@@ -282,19 +283,20 @@
 				document.getElementById("line_number").appendChild(span);
 			}*/
 			//alert(area_height);
-
-			if(this.textarea.previous_scrollWidth!=area_width)
+			//debugger
+			if(this.textarea.previous_scrollWidth!=area_width && this.textarea.previous_scrollWidth != area_width-1 )
 			{	// need width resizing
 				if(this.nav['isOpera']){
 					/*if(this.textarea.style.width.replace("px","")-0+50 < area_width)
 						area_width+=50;*/
 				}else{
 					if(this.textarea.style.width && (this.textarea.style.width.replace("px","") < area_width)){
-						area_width+=50;
+						//area_width+=50;
 					}
 				}
 				//window.status= "width: "+this.textarea.offsetWidth+" scroll-width: "+this.textarea.scrollWidth+" area_width: "+area_width+" container: "+this.container.offsetWidth+" result: "+this.result.offsetWidth;
-
+				if(area_width < 0)
+					area_width = 0;
 				if(this.nav['isGecko'] || this.nav['isOpera'])
 					this.container.style.width= (area_width+45)+"px";
 				else

@@ -41,7 +41,7 @@ function toggleEAOff(id){
 * characters are shown. Ugly but it works.
 */
 function addSpacesForDisplay(){
-	if (navigator.appName == "Microsoft Internet Explorer"){
+	if (navigator.appName == "Microsoft Internet Explorer" && editAreaLoader.getValue(editAreaName) != ""){
 		var lines = editAreaLoader.getValue(editAreaName).split("\n");
 		var max = 0;
 		var theLine = 0;
@@ -65,47 +65,6 @@ function addSpacesForDisplay(){
 	}
 }
 
-function doLinebreaks(){
-	var text = "";
-	var sel = editAreaLoader.getSelectionRange(editAreaName);
-	var lines = editAreaLoader.getValue(editAreaName).split("\n");
-	for(var i=0; i<lines.length; i++){
-		if(lines[i].length <= 80){
-			text = text + lines[i] + "\n";
-		}
-		else {
-			var words = lines[i].split(" ");
-			var count = 0;
-			var inTags = false;
-			var openTags = 0;
-			for(var j=0; j<words.length; j++){
-				if (count>80 && inTags == false){
-					text = text + "\n";
-					count = 0;
-				}
-				if(words[j].indexOf("[") == 0 || words[j].indexOf("<") == 0 ){
-					inTags = true;
-					openTags++;
-				}
-				if(words[j].indexOf("]") != -1 || words[j].indexOf("</") != -1){
-					inTags = false;
-					openTags--;
-				}
-				text = text + words[j];
-				count += words[j].length;
-				if (count>80 && inTags == false){
-					text = text + "\n";
-					count = 0;
-				}
-				else {
-					text = text + " ";
-				}
-			}
-		}
-	}
-	editAreaLoader.setValue(editAreaName, text)
-	editAreaLoader.setSelectionRange(editAreaName, sel["start"], sel["end"]);
-}
 /*
 * Get the cookie that saves the state of the advanced editor, which
 * is "on" or "off". If the cookie is not set, "on" is standard.
@@ -145,6 +104,13 @@ SMWEditInterface.prototype ={
 
 	},
 
+	focus: function(){
+		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
+			$(editAreaName).focus();
+		} else if (OB_bd.isGecko){
+			editAreaLoader.execCommand(this.editAreaName, "focus();");
+		}
+	},
 
 	setSelectionRange: function(start, end){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){

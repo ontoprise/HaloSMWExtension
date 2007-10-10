@@ -106,7 +106,7 @@ pre{
 	z-index:6;
 	background-color: #FFFFFF;
 	top: -100px;
-	margin: 1px 0 0 0px;
+	/*margin: 1px 0 0 0px;*/
 }
 
 #result .edit_area_selection_field .overline{

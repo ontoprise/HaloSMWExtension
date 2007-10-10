@@ -32,6 +32,9 @@ OBSemanticToolbarContributor.prototype = {
 		this.l1 = this.selectionListener.bindAsEventListener(this);
 		this.l2 = this.selectionListener.bindAsEventListener(this);
 		this.l3 = this.selectionListener.bindAsEventListener(this);
+		this.editInterface = null;
+		if(!document.gEditInterface)
+			gEditInterface = new SMWEditInterface();
 	},
 
 	/**
@@ -81,14 +84,14 @@ OBSemanticToolbarContributor.prototype = {
 			this.comsrchontainer.contentChanged();
 			//Field.disable("openEntityInOB");
 			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
-			this.textArea.focus();
+			gEditInterface.focus();
 		} else {
 			// selected
 			this.comsrchontainer.setContent(this.getOBLink(true));
 			this.comsrchontainer.contentChanged();
 			//Field.enable("openEntityInOB");
 			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('OPEN_IN_OB');
-			this.textArea.focus();
+			gEditInterface.focus();
 		}
 	},
 
@@ -108,12 +111,12 @@ OBSemanticToolbarContributor.prototype = {
 		} else {
 			var queryString = 'ns='+localURL[0]+'&title='+encodeURI(localURL[1]);
 		}
-		
+
 		smwhgLogger.log(selectedText, "STB-OB", "clicked");
 		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
 		window.open(wgServer + ontoBrowserSpecialPage, "");
 	},
-	
+
 	getOBLink: function(active) {
 		if (active) {
 			return '<a ' +
