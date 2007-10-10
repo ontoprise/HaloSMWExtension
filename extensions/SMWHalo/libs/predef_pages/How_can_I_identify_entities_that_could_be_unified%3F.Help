@@ -1,0 +1,28 @@
+;Question
+:[[Question:=How can I find entities that could be unified]]?
+
+;Answer
+:[[Description:=Employ the similarities bot.]]
+[[DiscourseState:=Gardening:view| ]]
+
+The similarity bot is used to find redundant entities in the wiki. It's available via the Gardening interface.
+
+[[Image:similarityBot.png]]
+
+== Parameters ==
+
+There are 4 parameters (all are optional):
+
+#Similarity term: Search for entities similar to the given term. If empty, all entities are compared to each other to find possibly redundant ones.
+#Lexical similarity: A factor which indicates the degree of lexical similarity. 1 means nearly identical, 3 is roughly similar. Default is 1.
+#Limit of results: Maximum number of results. Default is 100.
+#Filtering of results: Shows only results which have at least a given rating. 0 means hardly similar, 3 extremly similar. Default is 0.
+
+== Results ==
+The log contains all possibly redudant entities found. The list is sorted and begins with the most similar ones (highest rated). The system also explains why it assumes that two entities are redundant. This can be due to the follwing reasons:
+
+*The spelling is very similar. (Plural/Singular, Whitespaces, spelling mistakes, common prefixes or suffixes)
+*Category: Two categories have the same super category(ies).
+*Attribute: Two attributes have the same domain(s) and/or type(s)
+*Relation: Two relations have the same domain(s) and/or range(s)
+*Instance: Two instances are member of the same category(ies)

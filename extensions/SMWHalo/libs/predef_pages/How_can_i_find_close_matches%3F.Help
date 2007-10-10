@@ -1,0 +1,32 @@
+;Question:
+:[[Question:=How can i find close matches]]?
+
+;Answer:
+:[[Description:=Use the tilde symbol in front of a property value.]]
+
+;Example query showing a use case for near matches in ASK-queries
+A good example for a near match in ask queries is to overcome the language problem introduced by british english vocabulary vs. american english vocubalary such as color vs. colour!
+Therefore, the following ASK syntax can be used:
+ <nowiki><ask>[[hasThing:~color]]</ask></nowiki>
+The number of '~' signs in the syntax denotes the number of 'typos' that are allowed and taken into account. Regarding the given example, all attribute values with distance of "1" to colour are considered as correct matching, positive results!
+That means, 'colour', 'Color', 'culor' and so on would deliver results.
+
+The near matches are not only limited to mistyped string attributes but also useful regarding float numbers.
+
+;Inofficial support of units
+Inofficially and not fully tested is the support for near matches using these units:
+:date
+:integer
+
+Regarding the 'date' unit, the number of '~' signs denotes the deviation in days That means a query such as
+ <nowiki><ask>[[Category:Person]] [[*:=*]] [[wasBorn:~~~2007-05-11]]</ask></nowiki>
+would result in a list showing all attributes of all persons that were born between 2007-05-08 and 2007-05-14 (3 days deviation due to 3 '~' signs.
+
+Regarding integer units, the number of '~' signs denotes the factor of a fixed tolerance of 5%.
+ <nowiki><ask>[[hasPopulation:~~100000]]</ask></nowiki>
+This query would match all pages that contain the hasPopulation attribute with a value of at least 90000 or at most 110000 (10% deviation due to 2 '~' signs).
+
+;Admins please note (Installation instruction)
+A new function calculating the editdistance needs to be added to the existing MySQL server. Therefore, a detailed installation instruction and the necessary file containing the needed method is available in the CVS: extensions/SemanticMediaWiki/libs/INSTALL.TXT
+
+[[discourseState:=QueryInterface:view]]

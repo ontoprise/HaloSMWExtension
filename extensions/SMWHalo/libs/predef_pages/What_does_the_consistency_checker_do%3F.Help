@@ -1,0 +1,65 @@
+;Question
+:[[Question:=What does the consistency bot do]]?
+
+;Answer
+:[[Description:=The consistency bot checks for several inconsistencies in the knowledgebase.]]
+[[DiscourseState:=Gardening:view| ]]
+
+The Consistency bot checks the schema consistency and the annotation consistency depending on the schema. It has no parameters. Only gardeners should  be able to access it, because it causes heavy database load.
+
+== Schema annotations ==
+We have the following schema level annotations right now:
+
+*<nowiki>[[Has domain hint::<some category>]]</nowiki>
+*<nowiki>[[Has range hint::<some category>]]</nowiki>
+*<nowiki>[[Has type::<some type>]]</nowiki>
+*<nowiki>[[Is subattribute of::<some relation>]]</nowiki>
+*<nowiki>[[Has min cardinality:=<a value >= 0>]]</nowiki>
+*<nowiki>[[Has max cardinality:=<a value > 0 or *>]]</nowiki>
+*<nowiki>[[Is subrelation of::<some relation>]]</nowiki>
+*<nowiki>[[Is subattribute of::<some relation>]]</nowiki>
+*<nowiki>[[Is inverse of::<some relation>]]</nowiki>
+*<nowiki>[[Is equal to::<some article>]]</nowiki>
+*<nowiki>[[Category:Symmetrical relations]]</nowiki>
+*<nowiki>[[Category:Transitive relations]]</nowiki>
+
+All this relations or categories have to be created first!
+
+== Schema level consistency ==
+
+The bot identifies the following problems:
+
+=== Cycles in inheritance graphs ===
+There '''must not''' be any cycles in one of the inheritance graphs. This may cause endless loops during reasoning and in the OntologyBrowser. This is the first consistency check which is done. If it finds any cycles the whole process stops, because it can not be assured that the further consistency checking algorithms terminate. Cycles may appear in the category, the attribute or the relation inheritance graph. The categories, attributes or relations which cause the cycle will be displayed in the log. The user has to decide where to interrupt the cycle. This consistency problem should have high priority.
+
+Examples:
+
+*The following pages causes a cycle over categories: <nowiki>Page C contains [[category:B]], page B contains [[category:A]] and page A contains [[category:C]] </nowiki>
+
+*A cycle of attributes: <nowiki>Page C contains [[Is subattribute of:B]], page B contains [[Is subattribute of:A]] and page A contains [[Is subattribute of:C]] </nowiki>
+
+=== Property co-variance ===
+Property inheritance must be co-variant. That means the following conditions must hold:
+
+*domain and range categories of a subproperty must be equal to those of the super property or they must be subcategories of those.
+*types of attributes must be equal. 
+*the cardinality of a subproperty must be a subset of the cardinality of the super property. The min cardinality must a integer value >= 0. The max cardinality must be an integer value > 0 or *. 
+*if the super relation is symmetrical the sub relation must also be symmetrical. The same holds for transitivity.
+
+Properties do not inherit schema properties from their parent. It must be explicitly defined for each property. Otherwise you'll get a warning. Note that if the cardinality is not explictly defined, a default value (0..n) will be assumed.
+
+
+
+=== Inconsistent inverse relations ===
+Checks if inverse relations have switched domain/range.
+
+=== Inconsistent equalitites ===
+Checks if equal articles have same namespace.
+
+== Annotation level consistency ==
+
+=== Wrong domain/range instances for properties ===
+Detects schema inconsistent annotations: Attributes or relations which are used on pages which are not member of at least one domain category. Relations which refer to pages which are not member of at least one category of the range categories.
+
+=== Wrong number of appearances of properties === 
+Detects schema inconsistent annotations: Attributes or relations which are used too less or too much on a page in contradiction to their cardinality.

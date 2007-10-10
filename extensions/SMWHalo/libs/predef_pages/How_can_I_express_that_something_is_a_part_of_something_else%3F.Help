@@ -1,0 +1,26 @@
+;Question:
+:[[question:=How can I express that something is a part of something else]]?
+;Answer:
+:[[description:=Click "Has part" in the "Properties" tool box.]]
+
+[[discourseState:=Main:edit| ]]
+
+The wiki provides two types of part-of relations. These are ''has part'' and ''has basic structural unit''.
+
+'''Prerequisites'''
+
+You are editing and arbitrary article.
+
+'''Goal'''
+
+You want to express that the instance or category you are describing in the article is a part of something else.
+
+'''Workflow'''
+
+Mark the object that is part of the current object (article). For instance, if you are editing the article about a ''car'', mark the word ''engine''.
+
+In the semantic toolbar click "Has part" in the section "Properties". The form states that a ''car'' can contain an ''engine''. 
+
+[[Image:SEMWIKI24_HasPart.png|center|thumb|200px|An engine is part of a car.]]
+
+Select "has part" as the type of part. Optionally you can enter a different representation for ''engine'' in the rendered text. Click the link "Add" and the selected car in the wiki text is replaced by the annotation <code><nowiki>[[has part::engine]]</nowiki></code>. The new property appears in the list of properties in the semantic toolbar as well.

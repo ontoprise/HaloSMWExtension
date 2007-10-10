@@ -1,0 +1,30 @@
+;Question
+:[[question:=What are sub- and super properties]]?
+[[discourseState:=Property:edit| ]]
+
+;Answer
+:[[description:=e.g. has relative is a superproperty of has parent, while has father is a subproperty of has parent.]]
+
+
+Properties can be sub-classed. Consider the following relations with their domains and ranges:
+* <Person> is father of <Person>
+* <Person> is parent of <Person>
+
+It is very reasonable that ''is father of'' is a sub-property of ''is parent of''. So, while annotating a text, you can use the ''is father of'' property. In a query, or in the reasoning system, another user could ask for parents and would automatically get all fathers.
+
+Steps for setting up an example:
+<ul>
+<li>Create the article ''Property:is parent of''. Write some descriptive text and save it.</li>
+<li>Create the article ''Property:is father of''. Write some descriptive text and add the annotation:
+<pre>
+<nowiki>
+[[subproperty of::Property:is parent of]]
+</nowiki>
+</pre>
+</li>
+<li>Save the article.</li>
+<li> Reopen the article ''Property:is parent of''. Now it should show its sub-relation ''is father of''.
+</ul>
+
+
+Sub-properties are also considered in the [[Special:Ontology Browser]].

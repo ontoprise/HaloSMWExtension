@@ -1,0 +1,74 @@
+;Question
+:[[Question:=How can i relate my type to the correct SI unit?]]
+
+;Answer
+:[[Description:=Use the "corresponds to SI" property.]]
+[[DiscourseState:=Type:edit| ]]
+
+Units of measurement can be specified for data types. For instance, the <code>Type:Velocity</code> can be could have the unit km/h. SMW provides a special attribute for this task. The article for <code>Type:Velocity</code> should contain the following line:
+<nowiki>
+ [[corresponds to:=1 km/h]]
+</nowiki>
+For now, "km/h" is only an arbitrary string without a meaning. A reasoning system like Aura has to understand these units, so the unit has to be specified as SI unit:
+
+<nowiki>
+ [[corresponds to SI := 0.27777778 m/s]]
+</nowiki>
+
+Such a definition must appear at most once on a page.
+
+An SI definition consists of a conversion factor (with respect to the primary unit - the one with <code>corresponds to = 1...</code>) and the unit expression.
+
+The unit expression is a division of products of SI base units with an optional exponent. There must be at least the enumerator and an optional denominator. Products are written with * or blank. Exponents are introduced by ^, followed by a positive or negative integer.
+
+The SI base units are:
+* <code>m</code> - Meter
+* <code>kg</code> - kilograms
+* <code>s</code> - Second
+* <code>A</code> - Ampere
+* <code>K</code> - Kelvin
+* <code>mol</code> - Mole
+* <code>cd</code> - Candela
+
+Examples:
+* <code>m</code> - Meter
+* <code>m^2 = m*m = m m</code> - Square meter
+* <code>m/s</code> - meters per second
+* <code>m/s^2 = m*s^-2 = m s^-2</code> - Acceleration
+* <code>kg*m/s^2 = kg m /s^2 = kg m s^-2</code> - Newton
+* <code>1/s = s^-1</code> - Hertz
+
+To test the parser, create a page for a new type e.g. <nowiki><code>Type:Velocity</code></nowiki>. The following text is semantical nonsense but contains several test cases for the parser:
+<pre>
+<nowiki>
+
+[[corresponds to:=1 m/s]]
+
+[[corresponds to:=3.6 km/h]]
+
+[[corresponds to SI:=1 m]]
+[[corresponds to SI:=1 m/s]]
+[[corresponds to SI:=1 1/s]]
+[[corresponds to SI:=1 m*m*m/s*s*s]]
+[[corresponds to SI:=1 m*m*m^-1/s*s*s^-1]]
+[[corresponds to SI:=1 s^-1]]
+[[corresponds to SI:=1 s^-1/m^-1]]
+[[corresponds to SI:=1 m^2/s^2]]
+[[corresponds to SI:=1 m*kg/s^2]]
+[[corresponds to SI:=1 m kg/s^2 A]]
+[[corresponds to SI:=1 m*kg/s^2*A*cd]]
+
+
+[[corresponds to SI:=1 m^0]]
+[[corresponds to SI:=1 s/1]]
+[[corresponds to SI:=1]]
+[[corresponds to SI:=1meter/sec]]
+[[corresponds to SI:= m/s]]
+[[corresponds to SI:=1 M/S]]
+[[corresponds to SI:=1 m//s]]
+[[corresponds to SI:=1 m/m/s]]
+[[corresponds to SI:=1 m**m/s**s]]
+[[corresponds to SI:=1 m*m*m/m*m*m]]
+
+</nowiki>
+</pre>

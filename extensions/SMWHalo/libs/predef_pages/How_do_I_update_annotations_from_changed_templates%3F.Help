@@ -1,0 +1,31 @@
+;Question:
+:[[Question:=How do I update annotations from changed templates]]?
+
+;Answer:
+:[[Description:=Use the Template Materializer bot.]]
+[[DiscourseState:=Gardening:view| ]]
+
+
+Template Materialization is necessary when templates contain semantic annotations. Every time when they are changed, a template materialization has to be done in order to update the semantic database content. Otherwise textual content and semantic content are not consistent. 
+
+Template Materialization is part of the Gardening Toolbox. You can get there by selecting the Gardening page on SpecialPages or you can use the shortcut  in the navigation toolbox on the left.
+
+*Select 'Materialize template content' in the left (Please note: Gardening rights are necessary to be able to use this bot!)
+*After a short while you'll see the possible parametrization on the right. 
+
+You will get this page:
+
+[[Image:GardeningToolBox.png]]
+
+'Apply only to touched templates' means that the update is incremental. Only those pages which use templates which are changed since the last update are processed. One exception is the first template materialization. This is always done completely to make sure the wiki content is consistent.
+
+*Press 'Run' button.
+*A new row indicating the running process will be shown in the bot activity table.
+*You will get an email notification when the process has finished. (If you supplied an email adress in your user profile)
+
+== Administrator's note ==
+The Gardening feature needs a new environment variable in LocalSettings.php to work properly:
+*$phpInterpreter: Points to the php-Interpreter installed on the system, e.g. $phpInterpreter="D:/xampp152/xampp/php/php";
+
+Additionally, the SMTP server entry should be set in php.ini
+*php.ini should contain a valid SMTP server, e.g. SMTP = 87.106.5.57 for Ontoprise SMTP server. Otherwise email notification will not work.

@@ -1,0 +1,139 @@
+;Question:
+:[[question:=What can I do with the semantic toolbar]]?
+[[discourseState:=Main:edit| ]]
+;Answer:
+:[[description:=The STB consists of several containers that guide you in the process of using the Semantic Wiki.]]
+
+The semantic toolbar contains tools for the semantic annotation of wiki text and the definition of the wiki's ontology in form of properties and categories. It shows the current annotations in the wiki text and is updated regularly when the text changes.
+
+Annotations may be contributed to an article by templates. These annotations are ignored by the semantic toolbar. However, the content of templates can be edited with the semantic toolbar.
+
+Figure 1 shows the content of the semantic toolbar for "hydrogen".
+
+[[Image:SEMWIKI6_SemanticToolbar.png|thumb|200px|center|The semantic toolbar for hydrogen.]]
+
+With the semantic toolbar you can annotate, modify annotations, create new categories and properties and establish part-of relation. Sub- and super categories and properties can be created as well. All references to other articles are displayed as links that you can follow. We will give a short overview of this functionality. Further information can be found in the corresponding requirements.
+
+===Annotation===
+Typically annotating starts with the selection of the text in the editor. Depending on the type of annotation, the link ''Annotate'' has to be clicked in the sections ''Categories'', ''Attributes'' or ''Relations''. In the form that opens, the selected text will appear as value or as category, respectively. If a property is annotated, its name has to be specified. Auto-completion supports you in your tasks. At last an alternative representation for the value can be entered in the field ''Show''. Figure 2 shows an example for an annotated property.
+
+[[Image:SEMWIKI6_Annotate.png|thumb|center|202px|Annotation of a property in the semantic toolbar.]]
+
+===Edit Annotations===
+
+The annotations of the current wiki text are listed in the corresponding sections of the semantic toolbar. Their name and value is displayed along with an edit icon. Clicking it opens a form that contains the settings of the annotation. The annotation is selected in the wiki text. (Unfortunately, Firefox can not scroll to the corresponding location.) The annotation's settings can be changed and confirmed. The wiki text will be updated appropriately. Figure 3 shows an example.
+
+[[Image:SEMWIKI6_EditAttr.png|thumb|center|201px|The edit form of a property]]
+
+===Edit n-ary Annotations===
+
+N-ary properties are annotated in the same way as normal ones. When the properties name has been entered, the system retrieves its arity and provides the corresponding input fields. The following figure shows an example for the density of water.
+
+[[Image:SEMWIKI6_EditNary.png|thumb|center|201px|The densitiy of a substance is an n-ary property.]]
+
+===Creation===
+
+The ontology can be extended i.e. new categories and properties can be created. When the link ''Create'' is selected, an input form asks for further specification. For instance, a new property requires a name, a domain and a type. 
+
+The system takes care, that an existing entity is not created anew. After the name has been entered and the input field has been left with Enter or Tab, the system checks, if the name is valid. The background of the input field is marked orange if the entity already exists and green if it is safe to create it. Figures 4 to 6 show some states of the creation process.
+
+[[Image:SEMWIKI6_CreateAttr1.png|thumb|center|201px|The empty input form for the creation of a new property.]]
+[[Image:SEMWIKI6_CreateAttr2.png|thumb|center|201px|A valid name for a property has been entered.]]
+[[Image:SEMWIKI6_CreateAttr3.png|thumb|center|201px|The property with the given name already exists.]]
+
+The link ''Create'' will only appear, if the specification is correct. Clicking it will create a new article with the given schema information. It will be opened in a new tab of the browser, however, pop-up blockers might prevent this. Figure 7 shows the content of the created article.
+
+[[Image:SEMWIKI6_CreateAttr4.png|thumb|482px|center|The new article in edit mode.]]
+
+===Part-of relation===
+
+The GUI supports several meanings of a part-of relation. One can state, that the subject of the current article is a part of another. The section ''Properties'' has the link ''Has Part'' that leads to the form shown in Figure 8.
+
+[[Image:SEMWIKI6_PartOf.png|thumb|206px|center|A basic structural unit of water is hydrogen.]]
+
+===Hierarchies===
+Categories and properties can build hierarchies. When the definition of such an entity is edited, the corresponding section in the semantic toolbar contains the link ''Sub/Super''. The form that follows asks for the name of the sub/super entity. The content of the input field is validated when ''Enter'' is pressed. If the entity exists, the field is dyed green, otherwise orange. Anyway, if the input field is not empty, two links provide the possibility to make a sub or super entity for the current article. If a new article has to be created, it will be opened in a new tab (beware of pop-up blockers). New entities inherit the schema properties of their master entity. Figure 9 and 10 show some examples.
+
+[[Image:SEMWIKI6_SubSuper1.png|thumb|196px|center|The input form for a sub/super property.]]
+[[Image:SEMWIKI6_SubSuper2.png|thumb|196px|center|A non existing property]]
+[[Image:SEMWIKI6_SubSuper3.png|thumb|196px|center|An existing property.]]
+
+===Property properties in the semantic toolbar===
+
+The semantic toolbar contains additional tools when the definition of a property is edited. These features are hosted in the toolbox labeled ''Property Properties''.
+
+[[Image:REQ_SEMWIKI_18_PropertyProperties.png|thumb|823px|center|The wiki text for the definition 
+of a property and the corresponding Property Properties in the semantic toolbar.]]
+
+The properties of a property are:
+* '''Domain''' - Articles of this category can have values for this property.
+: Wiki text: <code><nowiki>[[Has domain hint::Category:<domain>]]</nowiki></code>
+* '''Range''' - Articles of this category are object of the property. This field is only enabled, if the property's type is ''Page''.
+: Wiki text: <code><nowiki>[[Has range hint::Category:<range>]]</nowiki></code>
+* '''Inverse of''' - The name of the property that is the inverse of the current property.
+: Wiki text: <code><nowiki>[[Is inverse of::Property:<inverse property>]]</nowiki></code>
+* '''Type''' - One of the predefined types. Two of them require additional explanations. The type ''Page'' indicates that the property's values are wiki articles. Their ''Range'' defines the category of articles. The type ''N-ary'' states that the property can have several ranges and types.
+: Wiki text: <code><nowiki>[[has type::Type:<data type>]]</nowiki></code>
+* '''Minimal cardinality''' - The minimal number of values of the property. (This field is not enabled when the properties type is ''N-ary''.)
+: Wiki text:<code><nowiki>[[Has min cardinality:=<number>]]</nowiki></code>
+* '''Maximum cardinality''' - The maximal number of values of the property. (This field is not enabled when the properties type is ''N-ary''.)
+: Wiki text: <code><nowiki>[[Has max cardinality:=<number>]]</nowiki></code>
+* '''Transitivity''' - Defines that the property is transitive. This field is only enabled, if the property's type is ''Page''.
+: Wiki text: <code><nowiki>[[Category:Transitive relations]]</nowiki></code>
+* '''Symmetry'''- Defines that the property is symmetric. This field is only enabled, if the property's type is ''Page''.
+: Wiki text: <code><nowiki>[[Category:Symmetrical relations]]</nowiki></code>
+
+
+When the article for a property definition is opened for editing, the ''Property Properties'' are initialized according to the wiki text. When schema relevant properties are changed in the wiki text, they are updated in the semantic toolbar after a short delay.
+
+Some fields are disabled or enabled when the property's type is changed. Disabled field are not hidden and do not lose their values lest you might get confused by a changing GUI and do not have to reenter values if you accidently selected the wrong type.
+
+The fields ''Domain'', ''Range'' and ''Inverse of'' are supported by auto completion. When they lose the input focus, the system checks if the categories or properties really exist. Valid entries are marked in green, invalid ones in orange. However, the system does not enforce valid values as you might create the missing category or property later.
+
+The fields for the cardinality are syntax checked. They must contain valid numbers. Wrong values are marked in red and can not be applied.
+
+[[Image:REQ_SEMWIKI_18_InvalidValues.png|thumb|200px|center|Invalid values are highlighted in the Property Properties.
+Wrong values are marked red and can not be applied.]]
+
+The lower left corner of the ''Property Properties'' shows usability hints:
+* Nothing changed. - As long as no property has been changed, the properties can not be applied.
+* Error messages for invalid cardinalities.
+* Apply - Changed values can be applied i.e. the wiki text is updated accordingly.
+
+New values are only applied when the ''Apply'' link is clicked. Clicking the link ''Cancel'' restores the current values of the wiki text in the ''Property Properties''
+
+If property fields are empty their corresponding wiki text will be deleted. If a property is newly introduced, its wiki text will be appended at the very end of the article. If the same kind of property definition appears several times in the wiki text, only its first value will be shown in the semantic toolbar.
+
+'''Editing n-ary properties'''
+
+N-ary properties can have several values at a time. For instance, the density of a substance is defined for a certain temperature and pressure. 
+
+[[Image:REQ_SEMWIKI_18_NaryProperties.png|thumb|200px|center|The definition of the n-ary property "density" of a chemical substance.]]
+
+
+To edit an n-ary property, its type has to be switched to ''N-ary''. Most of the input fields will be disabled. Two additional links appear at the bottom of the Property Properties toolbox: ''Add type'' and ''Add range''.
+
+''Add type'' adds a type selector to the toolbox. All built-in types can be selected. User-defined types that are defined in a wiki article are not yet supported in the selector. However, they can be entered in the wiki text with support of auto-completion. Thus specified they will be displayed in the type selector as well.
+
+''Add range'' adds a range input field to the toolbox. Entering a category is supported by auto-completion. 
+
+To the right of each input field there is a red cross that can be clicked to delete the property. When the last range or type has been removed, the type selector switches to ''Page''.
+
+The generated wiki text that defines an n-ary property has the following format:
+ <nowiki>
+ [[Has type:=<List of types separated by semi-colon>]]
+  e.g.
+ [[Has type:=Type:Temperature;Type:Pressure;Type:Density]]
+ </nowiki>
+
+The type for references to wiki articles is called <code>Type:Page</code>.
+
+===Automatic update===
+When you change the wiki text, the content of the semantic toolbar (i.e. lists of properties and their values) is updated automatically with some delay. 
+
+'''ATTENTION!'''
+
+When opening brackets are inserted in the wiki text (<nowiki>"[["</nowiki>), all annotations that follow will disappear from the semantic toolbar until the appropriate closing braces are entered. This is because annotations can contain anything, even other annotations. As long as an annotation is not "closed", everything that follows belongs to it. Articles can not be saved until the closing brackets have been entered. The system shows a warning above the ''Save page'' button.
+
+== Settings being saved ==
+The position of "help container" (collapsed or expanded) as well as the tab position of the semantic toolbar are saved using ordinary browser cookies. That is, whenever a user collapses the help container or switches the tab position from "tools" to "links to other pages" these settings are saved when the semantic toolbar is displayed the next time. There is no need for a user to explicitly click on a "save settings" button since the cookies are refreshed automatically whenever switching tabs or collapsing/expanding the help container. All other containers are not affected from this feature and are display expanded when editing another wiki page.

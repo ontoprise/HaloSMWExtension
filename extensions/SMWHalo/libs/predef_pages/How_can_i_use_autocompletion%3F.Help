@@ -1,0 +1,41 @@
+;Question
+:[[Question:=How can I use autocompletion in the wiki]]?
+
+;Answer
+:[[Description:=Use Ctrl+Alt+Space in any inputfield of the wiki.]]
+[[DiscourseState:=Main:edit| ]]
+
+== Triggering ==
+
+AC can be triggered manually by pressing Ctrl+Alt+Space (Ctrl+Space on IE) or it can be triggered automatically when the system recognizes a context.
+You can activate auto-triggering by choosing Preferences->Misc->Auto-triggering in his settings. Manual triggering is always possible, too.
+
+== Autocompletion in the wiki search field ==
+The left main search box supports Auto-completion. 
+[[Image:AdvancedSearchBox.png]]
+
+== How to use Auto-completion ==
+Auto-completion can be triggered inside a bracket context <nowiki>[[...]]</nowiki> in edit mode by pressing Ctrl+Alt+Space (Ctrl+Space in IE) or in most of the input forms that are present in the wiki. The text left from the cursor which can belong to an article's name is considered as user input. It is used as a string for pattern matching. Thus, at least one character must be entered to use AC. If no context could be detected, only the page titles are used for pattern matching. 
+
+The following contexts are detected automatically: The set of possible matching is semantically reduced, e.g. in the first case only categories are shown, because only these make sense here.
+
+'''<match>'''is at least one character.
+
+*Category annotation context.
+**U types <nowiki>[[category:<match></nowiki>
+*Attribute annotation context.
+**U types <nowiki>[[<a property>:=<match></nowiki>: The property must be an enum or must have a unit.
+*Relation annotation context. This context has two special subcontexts:
+**U types <nowiki>[[Is subproperty of::<match></nowiki>:  Only properties appear
+**U types <nowiki>[[<a property>::<match></nowiki>: Only instances will appear
+*Template annotation context.
+**U types <nowiki>{{<match> </nowiki> : All templates appear
+*Untyped link
+**U types <nowiki>[[<match></nowiki>: All instances appear
+
+
+==Administrator's note==
+There are two stages of auto-completion:
+
+#Standard: $semanticAC = false; Using only namespaces depending on context to filter results. For example: A relation target instance annotation context is detected, then '''all''' instances are requested which match lexically to the user input. This is fully implemented and can be tested.
+#Advanced: $semanticAC = false; All semantic information from schema is used to filter results. For example: A relation has a range category of 'Car'. That means only instances of 'Car' matching lexically to the user input are requested when annotating this relation. This is not completly implemented, two aspects are missing: Inheritance and Template Schema Data.

@@ -1,0 +1,42 @@
+;Question
+:[[question:=How can I define a set of allowed values]]?
+
+;Answer
+:[[description:=Add as many "allowed value" annotations to the property as needed.]]
+[[discourseState:=Property:edit| ]]
+
+'''Goal'''
+
+You want to define and use a property that can assume only certain, predefined values (also known as enumeration). For instance, the chemical state of matter of a substance can be ''gaseous'', ''aqueous'', ''liquid'' and ''solid''. These constants will be the possible values of an enumeration.
+
+'''Workflow'''
+
+''Defining the attribute''
+
+At first, you have to define the attribute. You can do this in several ways and chooses to use the semantic toolbar. In the ''Properties'' section (only visible when editing an article) you click the ''Create'' link. Enter the name of the attribute (e.g. state of matter), the domain (e.g. Substance) and add a type, which must be ''Enumeration''. After clicking ''Create'' the system asks, if the new property shall be edited. Pressing ''OK'' leads to the edit view of the attribute.
+
+Now, the allowed values for the attribute have to be defined. The new article contains the following line
+ <nowiki>
+ [[Allows value:=replace this by allowed value]]
+ </nowiki>
+
+The possible values of an enumeration are defined with the property <code>Allows value</code>. You can change the value of the template above in the ''Properties'' section of the semantic toolbar. Click the edit icon to the right of the property, changes the value (e.g. to liquid) and click ''Change''. Each further possible value requires its own annotation with the property <code>Allows value</code>. Using the semantic toolbar or entering the annotations manually, the final definition for ''state of matter'' should look like this.
+
+ <nowiki>
+ [[Allows value:=liquid]]
+ [[Allows value:=gaseous]]
+ [[Allows value:=aqueous]]
+ [[Allows value:=solid]]
+ </nowiki>
+
+Finally, the property's definition has to be saved.
+
+''Using the property''
+
+The property is used like any other normal property. Of course, only the defined values are allowed. For instance, the article about liquid water would be annotated like this:
+ <nowiki>
+ [[state of matter:=liquid]]
+ </nowiki>
+The normal annotation features of the semantic toolbar can be used to create this annotation. 
+
+The fact box of the saved article shows, if the correct values have been assigned. If not, all possibilities are listed.

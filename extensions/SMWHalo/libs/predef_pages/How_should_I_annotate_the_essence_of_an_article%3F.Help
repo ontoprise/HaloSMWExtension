@@ -1,0 +1,46 @@
+;Question
+:[[question:=How should I annotate the essence of an article]]?
+
+;Answer
+:[[description:=Employ the "description" property.]]
+[[discourseState:=Main:edit| ]]
+
+'''Prerequisites'''
+
+You are editing an arbitrary article.
+
+'''Goal'''
+
+You want to annotate the essence of the current article. 
+
+'''Workflow'''
+
+Marks the text that describes the article's essence.
+
+[[Image:DescrMarkText.png|center|thumb|576px|The marked essence of an article.]]
+
+In the semantic toolbar press "Annotate" in the ''Properties'' section.
+
+[[Image:DescrPressAnnotate.png|center|thumb|200px|Starting the annotation in the Properties section]]
+
+The formerly selected text is set as value ("Page:") of the property. Enter "description" as name of the property. The system retrieves the type of this property  and replaces the label "Page:" by "String". Then press "Add".
+
+[[Image:DescrAddAnno.png|center|thumb|200px|The description's annotation.]]
+
+The new annotation appears in the list of properties.
+
+[[Image:DescrAnnoAdded1.png|center|thumb|200px|The list of properties contains the annotation.]]
+
+The marked text is annotated.
+
+[[Image:DescrAnnoAdded2.png|center|thumb|586px|The annotated wiki text.]]
+
+Saves the article. Looking at the fact box, the property "description" might be undefined. This happens only for the very first time in a wiki, as "description" is a completely normal property.
+
+[[Image:DescriptionOOps.png|center|thumb|588px|Description is an unknown property.]]
+
+If this happens, set the type of "description" to string in the selection box to the right.
+The page will be reloaded with the correct annotation.
+[[Image:DescrFacts.png|center|thumb|720px|The description is displayed in the Fact box.]]
+
+In effect, the article has been annotated with the normal property "description". But some parts of the wiki and the reasoning system can provide further features when they find it.

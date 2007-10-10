@@ -1,0 +1,44 @@
+;Question
+:[[question:=What is the context sensitive help]]?
+
+;Answer
+:[[Description:=The CSH shows help topics that could be useful in your current workflow.]]
+[[DiscourseState:=Main:edit| ]]
+
+==What is Context Sensitive Help?==
+Context Sensitive Help (CSH) is a function that supports you during your work with Semantic MediaWiki (SMW). If you use ''OntoSkin'' as your default skin in this wiki, you can see the "Sematic Toolbar" on some pages. One item of the Semantic Toolbar is titled "Help" and containts the CSH.
+
+CSH offers help contents based on your current action and location in the wiki. Depending on what you do, CSH will show different help questions and provide answers to those questions.
+
+Users can not only read those help contents, but they are also encouraged to ask new questions or edit unanswered questions.
+
+==Accessing Context Sensitive Help==
+CSH is a part of the Semantic Toolbar which can only be seen if the OntoSkin Skin is enabled. At the very bottom, you can see the CSH window.
+
+[[Image:Doc_CSH01.jpg|thumb|CSH container in the semantic toolbar.]]
+
+If there are any help questions available, they will be shown in this area. However, only a maximum of five questions is shown at a time. You can access all relevant help contents by clicking on the "more" link at the bottom.
+
+By clicking on one of the help questions, a new window will appear with the according help page, providing answers and solutions to the problem.
+
+==Finding Help==
+In order to find relevant help contents, you can not only look at the CSH area in the Semantic Toolbar, but you can also access the Special Page [[Special:ContextSensitiveHelp]]. 
+
+[[Image:Special_CSH01.jpg|thumb|CSH page with filter options]]
+
+You can use the two option boxes to select a specific namespace or action. The special page will then show all help contents that are relevant for your choice.
+
+==Adding new questions==
+You can add new questions at the bottom of the help area in the Semantic Toolbar. After clicking "Ask your own question", an input box will appear where you can enter your question. The system will then automatically create the according help page with all necessary annotations. Unanswered questions will appear as red links, while answered questions will appear as blue links.
+
+==Adding answers to questions==
+If you see an unanswered question and know the answer, you can answer it by simply clicking on it. On the page, you can see three annotations. One contains the question and another one the discourse state. Please do not edit those thwo values since they are crucial for CSH to work.
+
+The third annotation is called "description". This should deliver a short answer to the question which will appear as a tooltip whenever a link to this question appears.
+
+If you know the answer to a question, simply add it to the article as if you would edit a standard wiki article. Add a small summary into the "Description" annotation and you are done. Other users can now access this page or use the tooltip as support for their work with SMW.
+
+
+== Administrator's note ==
+
+'''If you want to know how to set up and manage context sensitive help, please see [[Help:Setup_And_Manage_CSH]]'''

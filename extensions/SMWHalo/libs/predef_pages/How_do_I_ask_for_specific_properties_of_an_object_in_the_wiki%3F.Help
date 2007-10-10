@@ -1,0 +1,17 @@
+;Question:
+:[[Question:=How do I ask for specific properties of an object in the wiki]]?
+
+;Answer:
+:[[Description:=Add the instance to the query (restriction).]]
+
+If you want to restrict an ASK-query to only one specific individual object like 'Britney Spears' you can do so by typing:
+  <nowiki><ask>[[Britney Spears]]</ask></nowiki>
+
+In the query interface you can do this by simply clicking "add instance" and add the object for which you want the results.
+
+You can also add further attributes or relations that should be displayed such as:
+  <nowiki><ask>[[Britney Spears]] [[hasTelephoneNo:=*]] [[hasAddress:=*]] </ask></nowiki>
+
+
+
+[[DiscourseState:=QueryInterface:view| ]]

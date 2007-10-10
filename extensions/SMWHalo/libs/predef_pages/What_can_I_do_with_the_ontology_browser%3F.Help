@@ -1,0 +1,78 @@
+;Question
+:[[Question:=What can I do with the ontology browser]]?
+
+;Answer
+:[[Description:=The ontology browser allows easy and intuitive lookup of information from the knowledgebase.]]
+
+[[DiscourseState:=OntologyBrowser:view| ]]
+
+== Overview ==
+
+The OntologyBrowser consists of 3 basic views: 
+
+#CategoryView: Shows category hierarchy, called the taxonomy of the wiki (it can be changed to show the attribute and relation hierarchy with the buttons above it).
+#InstanceView: Shows either instances that belong to a certain category when triggered from category view, or instances that are annotated with a certain category when triggered from property view.
+#PropertyView: Shows either annotated properties when triggered from instance view, or schema properties when triggered from category view.
+
+Below each of the views there is a filter input box. It filters '''currently''' available entities in the view above, i.e. those entities which are in memory at this time. It is filtered dynamically if the filter text changes. The filtering itsself is case-insensitive substring matching. All entities are in alphabetical order with one excpetion: The instance view shows the direct instances of a category first. 
+
+[[Image:OB_overview.png|thumb|400px|The ontology browser special page.]]
+
+== Category Tree ==
+At the beginning the Category tree shows the root categories. You may expand the category tree by clicking the little crosses in front of a category name or by selecting the category itsself. This crosses also appear when there is no subcategory at all. In this case it will simply disappear when you try to expand it, otherwise the subcategories will appear. 
+
+==== selecting a category ====
+You may select a category. Selected categories are highlighted with yellow background. In this case the instanceview shows all instances of this category (first the '''direct''' ones and then the inherited ones in italic). Additionally, it shows the actual category for the inherited instances in angle brackets. The property view shows the schema attributes and relations which have the category as their domain (also only the direct ones, not the inherited properties). Additionally, there is some more information about properties shown: 
+
+For attributes:
+
+*type (e.g. string, integer, boolean). Relation which defines this: has type
+*cardinality (e.g. 1..2, 0..* (last one is default)). Attribute which defines this: has min cardinality, has max cardinality
+
+For relations:
+
+*range category. Relation which defines this: has range hint
+*cardinality (e.g. 1..2, 0..* (last one is default)). Attribute which defines this: has min cardinality, has max cardinality 
+*symetrical / transitive which determine if a relations is symetrical and/or transitive. Categories: transitive relations, symetrical relations.
+
+==== selecting an instance ====
+Select an instance and the property view will switch to the annotations of this instance. It's a two-column table showing attribute/relation name and its value.
+
+== Property Tree==
+You can select the Property tree which shows the attribute hierachy. It begins with the root level. You can expand it, just like the categories. If you select an attribute here, all instances annotating this attribute will be shown. The property view content does not change.
+
+
+== Partitions ==
+If there are more than 20 entities on a tree level or in the instance list (or whatever treshhold is configured), small arrows will appear on top which allows navigating through the 'partitions'. A number tells on which partition you currently are. Only the current partition will stay in memory at a time. This makes the OntologyBrower capable of accessing masses of schema data, because only parts of it are loaded in memory. Mostly, it will occure on category/attribute/relation root level and in the instance list. On deeper levels of one of the trees it will happen more seldom, but in principle this mechanism works on every tree level. Only the PropertyView does not support partitions currently.
+
+== FilterBrowsing ==
+On top of the views there's a input box with a button 'FilterBrowsing' next to it. This is a basic feature of the OntologyBrowser. You may enter a term and press the button (or return). Alternativly, you can press Ctrl+Alt+Space to use auto-completion. The following things will happen.
+
+*Depending on which tree view is selected the filtering is applied on the currently visible tree. In case of the category view, categories matching the filter string as a substring (case-insensitive) are identified and shown in the category hierarchy, i.e. their super categories are shown too. If a category inherits from several categories it will appear multiple times in the view. Same behaviour with the attribute tree and the relation tree.
+*All instances matching the filter string as a substring (case-insensitive) are shown. 
+*All properties matching the filter string as a substring (case-insensitive) are shown. 
+
+''Note'': There are no partitions in the FilterBrowser mode.
+
+== Switching selection flow ==
+You can turn the big gray arrows by clicking on them. That means the selection triggers an operation in the opposite direction. 
+
+'''Example''':
+You switch the left arrow. If you select an instance afterwards you will get all categories of this instance at their position in the category hierarchy. Accordingly, a selection of an annotation or schema property will open the domain category. 
+ 
+[[Image:OB_screenshot2.png|thumb|300px|left|Ontology browser with flipped directions.]]
+
+This is especially useful after FilterBrowsing, because in this case the views are not related to each other. All type of entities were searched independently only by substring matching. 
+
+The right arrow can also be turned. A selection in the annotation/schema property view will show all instances defining annotations of this property.
+
+== Inheritance ==
+Inherited entities are displayed in italic font style. Inheritance comes up when you select an item in the tree view.
+*select a category: All instances (also those of subcategories) are displayed. All properties (also those of supercategories) are displayed.
+*select an attribute/relation. All instances using this or one of its subproperties are displayed.
+
+== Navigation ==
+You can navigate to an entity's page by clicking the magnifier next to the entity's name. This works for all entities, even for the range categories in the PropertyView.
+
+== Misc ==
+The 'reset' button resets the tree view (i.e. show the root entities) depending on which one is currently visible.

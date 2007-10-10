@@ -1,0 +1,23 @@
+;Question:
+:[[Question:=What does the undefined entities bot do]]?
+
+;Answer:
+:[[Description:=It finds entities which are used but which are not specified.]]
+[[DiscourseState:=Gardening:view| ]]
+
+
+This bot is used to find undefined entities, i.e. entities which were used one or more times, but do not exist as pages. Formerly, the functionality was part of the ConsistencyBot. It has been transfered to a bot of its own. The bot is very simple to use: It has no parameters. You can use the botlog to increase the quality of the wiki's knowledgebase by solving the problems that were found.
+
+The bot recognizes the following problems:
+
+=== Undefined categories ===
+All categories which are implicitly defined by a category link but which do not exist as an article.
+
+=== Undefined properties ===
+All properties which are implicitly defined by an annotation but which do not exist as an article.
+
+=== Undefined relation targets === 
+Instances which are target of a relation annotation but which do not exist as an article.
+
+=== Instances without category === 
+Instances which are not member of any category.
