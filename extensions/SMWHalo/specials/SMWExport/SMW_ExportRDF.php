@@ -683,7 +683,7 @@ class ExportRDFHalo extends ExportRDF {
 			"\t<!ENTITY wiki '" . $this->wiki_xmlns_xml .  "/'>\n" .
 			"\t<!ENTITY wikiurl '" . $this->wiki_xmlns_url .  "'>\n" .
 			"\t<!ENTITY property '" . $this->wiki_xmlns_xml .
-			$this->makeXMLExportId(urlencode(str_replace(' ', '_', $wgContLang->getNsText(SMW_NS_PROPERTY) . ':'))) .  "/'>\n" .
+			$this->makeXMLExportId(urlencode(str_replace(' ', '_', $wgContLang->getNsText(SMW_NS_PROPERTY) . ':'))) .  "'>\n" .
 			"]>\n\n" .
 			"<rdf:RDF\n" .
 			"\txmlns:rdf=\"&rdf;\"\n" .
