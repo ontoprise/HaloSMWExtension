@@ -85,16 +85,16 @@ DataTypes.prototype = {
 		if (callback) {
 			this.callback.push(callback);
 		}
-		this.userUpdated    = false;
-		this.builtinUpdated = false;
 		if (!this.refreshPending) {
 			this.refreshPending = true;
 			sajax_do_call('smwfGetUserDatatypes', 
 			              [], 
 			              this.ajaxResponseGetDatatypes.bind(this));
-			sajax_do_call('smwfGetBuiltinDatatypes', 
-			              [], 
-			              this.ajaxResponseGetDatatypes.bind(this));
+			if (!this.builtinTypes) {
+				sajax_do_call('smwfGetBuiltinDatatypes', 
+				              [], 
+				              this.ajaxResponseGetDatatypes.bind(this));
+			}
 		}
 
 	},
@@ -113,7 +113,6 @@ DataTypes.prototype = {
 		var types = request.responseText.split(",");
 
 		if (types[0].indexOf("User defined types") >= 0) {
-			this.userUpdated = true;
 			// received user defined types
 			this.userTypes = new Array(types.length-1);
 			for (var i = 1, len = types.length; i < len; ++i) {
@@ -121,30 +120,12 @@ DataTypes.prototype = {
 			}
 		} else {
 			// received builtin types
-			this.builtinUpdated = true;
 			this.builtinTypes = new Array(types.length-1);
 			for (var i = 1, len = types.length; i < len; ++i) {
 				this.builtinTypes[i-1] = types[i];
 			}
 		}
-		if (this.userUpdated && this.builtinUpdated) {
-			// If there are articles for builtin types, these types appear as
-			// builtin and as user defined types => remove them from the list
-			// of user defined types.
-			var userTypes = new Array();
-			for (var u = 0; u < this.userTypes.length; u++) {
-				var found = false;
-				for (var b = 0; b < this.builtinTypes.length; b++) {
-					if (this.userTypes[u] == this.builtinTypes[b]) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					userTypes.push(this.userTypes[u]);
-				}
-			}
-			this.userTypes = userTypes;
+		if (this.userTypes && this.builtinTypes) {
 			
 			for (var i = 0; i < this.callback.length; ++i) {
 				this.callback[i]();
