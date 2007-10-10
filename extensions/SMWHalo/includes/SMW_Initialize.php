@@ -515,7 +515,9 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 				$subjectsOfAttribpages = $store->getAllPropertySubjects($article->getTitle());
 
 				foreach ($subjectsOfAttribpages as $titleb) {
-					$jobs[] = new SMW_UpdateJob($titleb);
+					if ($titleb != NULL) { 
+						$jobs[] = new SMW_UpdateJob($titleb);
+					}
 				}
 					
 				
@@ -532,7 +534,9 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 						$subjectsOfAttribpages = $store->getAllPropertySubjects($titlesofattributepagestoupdate);
 
 						foreach ($subjectsOfAttribpages as $titleb) {
-							$jobs[] = new SMW_UpdateJob($titleb);
+							if ($titleb != NULL) { 
+								$jobs[] = new SMW_UpdateJob($titleb);
+							}
 						}
 					}
 				}
