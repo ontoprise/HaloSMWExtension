@@ -96,9 +96,9 @@ pre{
 }
 
 .hidden{
-	opacity: 0.4;
-	-moz-opacity: 0.4;
-	filter:alpha(opacity=40);
+	opacity: 0.3;
+	-moz-opacity: 0.3;
+	filter:alpha(opacity=30);
 }
 
 #result .edit_area_cursor{

@@ -55,6 +55,7 @@ editAreaLoader.load_syntax["wiki"] = {
 			,'execute' : 'before'
 		}
 
+
 	}
 	,'STYLES' : {
 		'COMMENTS': 'color: #AAAAAA;'
@@ -64,10 +65,10 @@ editAreaLoader.load_syntax["wiki"] = {
 		,'OPERATORS' : 'color: #AAAAAA;'
 		,'DELIMITERS' : 'color: #AAAAAA;'
 		,'REGEXPS' : {
-			'relation': 'color: #ff9602; font-weight: bold;'
-			,'attribute': 'color: #ff9602; font-weight: bold;'
-			,'category': 'color: #064df3; font-weight: bold;'
-			,'template': 'color: #990000; font-weight: bold;'
+			'relation': 'color: #ff4600; '
+			,'category': 'color: #064df3;  text-decoration: none;'
+			,'attribute': 'color: #ff4600;'
+			,'template': 'color: #990000; '
 			,'link': 'color: #0000ff; text-decoration: underline;'
 		}
 	}
