@@ -294,7 +294,7 @@ createContent: function() {
 },
 
 checkMaxCard: function(domID) {
-	var maco = $(domID);
+	var maco = $('prp-max-card');
 	var maxCard = maco.value;
 	var mico =  $('prp-min-card');
 	var minCard = mico.value;
@@ -308,47 +308,49 @@ checkMaxCard: function(domID) {
 		// neither max. nor min. card. are given
 		return true;
 	}
-
 	var result = true;
-	if (minCard) {
-		minCard = minCard * 1;
-		if (!minCard || minCard < 0) {
+	if (minCard != '') {
+		minCard = minCard.match(/^\d+$/);
+		if (!minCard) {
 			gSTBEventActions.performSingleAction('color', 'red', mico);
 			gSTBEventActions.performSingleAction('showmessage', 'INVALID_FORMAT_OF_VALUE', mico);
 			result = false;
 		} else {
+			minCard = minCard * 1;
 			gSTBEventActions.performSingleAction('color', 'lightgreen', mico);
 			gSTBEventActions.performSingleAction('hidemessage', '', mico);
 		}
 	}
-	if (maxCard) {
-		maxCard = maxCard * 1;
-		if (!maxCard || maxCard < 0) {
+	if (maxCard != '') {
+		maxCard = maxCard.match(/^\d+$/);
+		if (!maxCard) {
 			gSTBEventActions.performSingleAction('color', 'red', maco);
 			gSTBEventActions.performSingleAction('showmessage', 'INVALID_FORMAT_OF_VALUE', maco);
 			result = false;
 		} else {
-			gSTBEventActions.performSingleAction('color', 'lightgreen', maco);
-			gSTBEventActions.performSingleAction('hidemessage', '', maco);
-		}
-		// maxCard must not be 0
-		if (maxCard == 0) {
-			gSTBEventActions.performSingleAction('color', 'red', maco);
-			gSTBEventActions.performSingleAction('showmessage', 'MAX_CARD_MUST_NOT_BE_0', maco);
-			result = false;
+			maxCard = maxCard * 1;
+			// maxCard must not be 0
+			if (maxCard == 0) {
+				gSTBEventActions.performSingleAction('color', 'red', maco);
+				gSTBEventActions.performSingleAction('showmessage', 'MAX_CARD_MUST_NOT_BE_0', maco);
+				result = false;
+			} else {
+				gSTBEventActions.performSingleAction('color', 'lightgreen', maco);
+				gSTBEventActions.performSingleAction('hidemessage', '', maco);
+			}
 		}
 	}
 	if (!result) {
 		return false;
 	}
 	
-	if (maxCard && !minCard) {
+	if (typeof(maxCard) == 'number' && typeof(minCard) == 'string') {
 		//maxCard given, minCard not
 		gSTBEventActions.performSingleAction('color', 'red', mico);
 		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', mico);
 		result = false;
 	}
-	if (!maxCard && minCard) {
+	if (typeof(maxCard) == 'string' && typeof(minCard) == 'number') {
 		//minCard given, maxCard not
 		gSTBEventActions.performSingleAction('color', 'red', maco);
 		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', maco);
