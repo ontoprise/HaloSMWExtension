@@ -20,7 +20,7 @@ xcopy ..\..\..\* %OUTPUT_DIR% /S /EXCLUDE:excludeForMW.dat /Y
 REM Pack MW
 
 cd bin
-IF EXIST mw-1.12beta.zip rm mw-1.12beta.zip
+IF EXIST mw-1.12beta.zip del mw-1.12beta.zip
 7z.exe a -tzip mw-1.12beta.zip %OUTPUT_DIR%\*
 cd..
 
