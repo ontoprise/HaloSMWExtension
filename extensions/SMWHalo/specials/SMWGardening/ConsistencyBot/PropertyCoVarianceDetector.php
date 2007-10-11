@@ -291,23 +291,36 @@ require_once("ConsistencyHelper.php");
  	private function checkSymTransCovariance($a, & $log, & $numLog) {
  		global $smwgContLang;
   		$namespaces = $smwgContLang->getNamespaces();
-  		
- 			$categoriesOfRelation = $this->consistencyHelper->getCategoriesForInstance($a);
- 			$categoriesOfSuperRelation = $this->consistencyHelper->getCategoriesOfSuperProperty($this->categoryGraph, $a);
+  			
+  			
+  			if (count(smwfGetSemanticStore()->getDirectSuperProperties($a)) == 0) {
+ 				return; // $a has no superproperty
+ 			}
  			
+ 			$categoriesOfRelation = $this->consistencyHelper->getCategoriesForInstance($a);
+ 			$categoriesOfSuperRelation = $this->consistencyHelper->getCategoriesOfSuperProperty($this->propertyGraph, $a);
+ 			 			
  			$transOfRelation = $this->isTitleInArray($this->consistencyHelper->transitiveCat, $categoriesOfRelation);
  			$transOfSuperRelation = $this->isTitleInArray($this->consistencyHelper->transitiveCat, $categoriesOfSuperRelation);
  			
- 			if (($transOfRelation && !$transOfSuperRelation) || (!$transOfRelation && $transOfSuperRelation)) {  
- 				$log .= wfMsg('smw_gard_trans_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
+ 			 			
+ 			if (($transOfRelation && !$transOfSuperRelation)) {  
+ 				$log .= wfMsg('smw_gard_trans_not_covariant1', $a->getText(), $a->getNsText())."\n\n";
+ 				$numLog++;
+ 			} else if ((!$transOfRelation && $transOfSuperRelation)) {
+ 				
+ 				$log .= wfMsg('smw_gard_trans_not_covariant2', $a->getText(), $a->getNsText())."\n\n";
  				$numLog++;
  			}
  			
  			$symOfRelation = $this->isTitleInArray($this->consistencyHelper->symetricalCat, $categoriesOfRelation);
  			$symOfSuperRelation = $this->isTitleInArray($this->consistencyHelper->symetricalCat, $categoriesOfSuperRelation);
  			
- 			if (($symOfRelation && !$symOfSuperRelation) || (!$symOfRelation && $symOfSuperRelation)) {
- 				$log .= wfMsg('smw_gard_symetry_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
+ 			if (($symOfRelation && !$symOfSuperRelation)) {
+ 				$log .= wfMsg('smw_gard_symetry_not_covariant1', $a->getText(), $a->getNsText())."\n\n";
+ 				$numLog++;
+ 			} else if ((!$symOfRelation && $symOfSuperRelation)) {
+ 				$log .= wfMsg('smw_gard_symetry_not_covariant2', $a->getText(), $a->getNsText())."\n\n";
  				$numLog++;
  			}
  	}
