@@ -5,7 +5,8 @@ REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 set OUTPUT_DIR=c:\temp\halosmw
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
 
-del /S /Q %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%\*
+rmdir /S /Q %OUTPUT_DIR%
 
 REM Create directories
 
@@ -38,10 +39,11 @@ xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFor
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwhalo.zip del smwhalo.zip
-7z.exe a -tzip smwhalo.zip %OUTPUT_DIR%\*
+IF EXIST smwhalo-1.0beta.zip del smwhalo-1.0beta.zip
+7z.exe a -tzip smwhalo-1.0beta.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
 
-del /S /Q %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%\*
+rmdir /S /Q %OUTPUT_DIR%

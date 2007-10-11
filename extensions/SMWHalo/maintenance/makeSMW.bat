@@ -5,7 +5,8 @@ REM Windows batch file for creating SMW deploy version
 set OUTPUT_DIR=c:\temp\smw
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
 
-del /S /Q %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%\*
+rmdir /S /Q %OUTPUT_DIR%
 
 REM Create directories
 
@@ -19,10 +20,11 @@ xcopy ..\..\SemanticMediaWiki\* %OUTPUT_DIR%\extensions\SemanticMediaWiki /S /EX
 REM Pack SMW
 
 cd bin
-IF EXIST smw.zip rm smw.zip
-7z.exe a -tzip smw.zip %OUTPUT_DIR%\*
+IF EXIST smw-1.0beta.zip rm smw-1.0beta.zip
+7z.exe a -tzip smw-1.0beta.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
 
-del /S /Q %OUTPUT_DIR%
+del /S /Q %OUTPUT_DIR%\*
+rmdir /S /Q %OUTPUT_DIR%
