@@ -181,7 +181,7 @@ function getHelpByRestriction($restriction, $param){
 		$wikiTitle = Title::newFromText($title, NS_HELP);
 
 		$link = '<a id="' . $question . '"href="' . $wikiTitle->getFullURL();
-		if($description == wfMsg(smw_csh_newquestion)){
+		if($description == wfMsg('smw_csh_newquestion')){
 			$link .= '?action=edit" class="new';
 		}
 		$link .= '" ';
@@ -207,24 +207,23 @@ function getHelpByRestriction($restriction, $param){
  * @return $html html of selector
  */
 function createHelpSelector(){
-	global $wgCanonicalNamespaceNames;
+	global $wgCanonicalNamespaceNames, $smwgContLang;
 	$actualNamespaces = $wgCanonicalNamespaceNames;
 	$specialTitle = Title::newFromText('ContextSensitiveHelp', NS_SPECIAL);
 
 	// Add 'ALL' and NS_MAIN. All is only used for this special page. NS_MAIN does not have a canonical name
-	array_push($actualNamespaces, 'Regular Wiki Page'); // =NS_MAIN
-	array_push($actualNamespaces, 'Search'); // =NS_MAIN
-	array_push($actualNamespaces, 'ALL');
+	array_push($actualNamespaces, wfmsg('smw_csh_ns_main')); // =NS_MAIN
+	array_push($actualNamespaces, wfmsg('smw_csh_all'));
 	asort($actualNamespaces);
 
 	//all relevant actions
-	$actions = array('ALL', 'delete', 'edit', 'history', 'move', 'view');
+	$actions = array('ALL', 'view', 'edit', 'move', 'delete', 'history');
 
-	$html = '<form action="' . $specialTitle->getFullURL() . '" method="get">You can refine your search according to the page type and/or the action you would like to know more about:<br/><br/>';
-	$html .= 'Page Type:&nbsp;';
-	$html .= '<select name="helpns" size="1">';
+	$html = '<form action="' . $specialTitle->getFullURL() . '" method="get">' . wfmsg('smw_csh_refine_search_info');
+	$html .= '<blockquote>' . wfmsg('smw_csh_page_type') . '&nbsp;';
+	$html .= '<select name="helpns" size="1" style="vertical-align:middle;">';
 	foreach($actualNamespaces as $id => $name){
-		if($name == 'Regular Wiki Page'){
+		if($name == wfmsg('smw_csh_ns_main')){
 			$html.= '<option value="Main">' . $name . '</option>'; //discourseState is encoded with 'Main', not with 'Regular wiki page'
 		}
 		else {
@@ -232,14 +231,32 @@ function createHelpSelector(){
 		}
 	}
 	$html .= '</select>';
-	$html .= '&nbsp;&nbsp;&nbsp;Action:&nbsp;';
-	$html .= '<select name="helpaction" size="1">';
+	$html .= '&nbsp;&nbsp;&nbsp;' . wfmsg('smw_csh_action') . ':&nbsp;';
+	$html .= '<select name="helpaction" size="1" style="vertical-align:middle;">';
 
 	foreach($actions as $action){
 		$html.= '<option>' . $action . '</option>';
 	}
-	$html .= '</select><br/>';
-	$html .= '<input type="submit" value=" Go "></form><br/>';
+	$html .= '</select>&nbsp;&nbsp;&nbsp;';
+	$html .= '<input type="submit" value=" Go "></blockquote></form><br/>';
+
+//------------------------------------------------------------
+
+	$smwns = $smwgContLang->getNamespaces();
+	$specials = array( $wgCanonicalNamespaceNames[NS_CATEGORY], $smwns[SMW_NS_PROPERTY], wfmsg('smw_contextsensitivehelp'), wfmsg('smw_queryinterface'), wfmsg('ontologybrowser'), wfmsg('smw_combined_search'), );
+
+	$html .= '<form action="' . $specialTitle->getFullURL() . '" method="get">' . wfmsg('smw_csh_search_special_help');
+	$html .= '<blockquote>' . wfmsg('smw_csh_show_special_help') . '&nbsp;';
+	$html .= '<select name="helpns" size="1" style="vertical-align:middle;">';
+	$html .= '<option value="' . $wgCanonicalNamespaceNames[NS_CATEGORY] . '">' . wfmsg('smw_csh_categories') . '</option>';
+	$html .= '<option value="' . $smwns[SMW_NS_PROPERTY] . '">' . wfmsg('smw_csh_properties') . '</option>';
+	$html .= '<option value="' . wfmsg('smw_csh_ds_queryinterface') . '">' . wfmsg('smw_queryinterface') . '</option>';
+	$html .= '<option value="' . wfmsg('smw_csh_ds_ontologybrowser') . '">' . wfmsg('ontologybrowser') . '</option>';
+	$html .= '<option value="' . wfmsg('smw_csh_ds_combinedsearch') . '">' . wfmsg('smw_combined_search') . '</option>';
+	$html .= '</select>';
+	$html .= '<input type="hidden" name="helpaction" value="ALL"/>';
+	$html .= '&nbsp;&nbsp;&nbsp;<input type="submit" value=" Go "></blockquote></form><br/>';
+
 	return $html;
 }
 

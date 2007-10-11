@@ -280,6 +280,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
 
 	/* Combined Search*/
+	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'The following entities were found in the wiki ontology:',
 	'smw_cs_attributevalues_found' => 'The following instances contain property values matching your search:',
 	'smw_cs_aksfor_allinstances_with_annotation' => 'Ask for all instances of \'$1\' which have an annotation of \'$2\'',
@@ -308,6 +309,21 @@ clicking the big arrows between the columns.',
 	'contextsensitivehelp' => 'Context Sensitive Help',
 	'smw_contextsensitivehelp' => 'Context Sensitive Help',
 	'smw_csh_newquestion' => 'This is a new help question. Click to answer it!',
+	'smw_csh_refine_search_info' => 'You can refine your search according to the page type and/or the action you would like to know more about:',
+	'smw_csh_page_type' => 'Page type',
+	'smw_csh_action' => 'Action',
+	'smw_csh_ns_main' => 'Main (Regular Wiki Page)',
+	'smw_csh_all' => 'ALL',
+	'smw_csh_search_special_help' => 'You can also search for help on the special features of this wiki:',
+	'smw_csh_show_special_help' => 'Search for help on:',
+	'smw_csh_categories' => 'Categories',
+	'smw_csh_properties' => 'Properties',
+	/* Messages for the CSH discourse state. Do NOT edit or translate these
+	 * otherwise CSH will NOT work correctly anymore
+	 */
+	'smw_csh_ds_ontologybrowser' => 'OntologyBrowser',
+	'smw_csh_ds_queryinterface' => 'QueryInterface',
+	'smw_csh_ds_combinedsearch' => 'Search',
 
 	/*Messages for Query Interface*/
 	'queryinterface' => 'Query Interface',
