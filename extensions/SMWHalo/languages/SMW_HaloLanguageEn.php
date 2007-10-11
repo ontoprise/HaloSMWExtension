@@ -211,7 +211,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_wrongcardvalue' => 'Warning: Cardinality for [[$2:$1]] has wrong value. Must be a positive integer or *. Will be interpreted as 0.',
 	'smw_gard_missing_param' => 'Warning: Missing parameter $4 in n-ary property [[$3:$2]] in article [[$1]].',
 
-	'smw_gard_domain_is_not_range' => 'Domain of [[$2:$1]] does not match range of inverse property [[$2:$2]].',
+	'smw_gard_domain_is_not_range' => 'Domain of [[$2:$1]] does not match range of inverse property [[$4:$3]].',
 	'smw_gard_wrong_target' => 'Target [[$1]] is member of wrong range category when using the property [[$3:$2]].',
 	'smw_gard_wrong_domain' => 'Article [[$1]] has wrong domain category when using the property [[$3:$2]].',
 	'smw_gard_incorrect_cardinality' => 'Article [[$1]] uses property [[$3:$2]] too often or too less.',

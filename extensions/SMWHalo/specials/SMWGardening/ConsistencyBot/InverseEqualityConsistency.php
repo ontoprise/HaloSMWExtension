@@ -61,11 +61,10 @@
  			}
  			
  			if (!$domainOfSource[0]->getTitle()->equals($rangeOfTarget[0]->getTitle())) {
- 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $t->getText())."\n\n";
+ 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
  				$numLog++;
- 			}
- 			if (!$domainOfTagert[0]->getTitle()->equals($rangeOfSource[0]->getTitle())) {
- 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $t->getText())."\n\n";
+ 			} else if (!$domainOfTagert[0]->getTitle()->equals($rangeOfSource[0]->getTitle())) {
+ 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
  				$numLog++;
  				
  			}
