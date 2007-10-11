@@ -154,11 +154,11 @@
  		$ier = new InverseEqualityConsistency($this);
  		$cir = $ier->checkInverseRelations();
  		if ($cir != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_inverse_relations')." ==\n".$cir."----\n";
+ 			$log .= "== ".wfMsg('smw_gard_errortype_inverse_relations')." ==\n".$cir."\n----\n";
  		}
  		$cer = $ier->checkEqualToRelations();
  		if ($cer != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_equality')." ==\n".$cer."----\n";
+ 			$log .= "== ".wfMsg('smw_gard_errortype_equality')." ==\n".$cer."\n----\n";
  		}
  		return $log;
  	}

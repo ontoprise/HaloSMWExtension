@@ -181,8 +181,10 @@ protected $smwUserMessages = array(
 	'smw_gard_maxcard_not_covariant' => 'Maximale Kardinalität von [[$2:$1]] ist höher als im Super-Property definiert.',
 	'smw_gard_maxcard_not_null' => 'Maximale Kardinalität von [[$2:$1]] darf nicht 0 sein.',
 	'smw_gard_mincard_not_below_null' => 'Mininamle Kardinalität von [[$2:$1]] darf nicht kleiner 0 sein.',
-	'smw_gard_symetry_not_covariant' => 'Property [[$2:$1]] muss auch symmetrisch sein.',
-	'smw_gard_trans_not_covariant' => 'Property [[$2:$1]] muss auch transitiv sein.',
+	'smw_gard_symetry_not_covariant1' => 'Super-Property von [[$2:$1]] muss auch symmetrisch sein.',
+	'smw_gard_symetry_not_covariant2' => 'Property [[$2:$1]] muss auch symmetrisch sein.',
+	'smw_gard_trans_not_covariant1' => 'Super-Property von [[$2:$1]] muss auch transitiv sein.',
+	'smw_gard_trans_not_covariant2' => 'Property [[$2:$1]] muss auch transitiv sein.',
 	'smw_gard_doublemaxcard' => 'Warnung: Mehr als ein Property "maximale Kardinaltät" [[$3:$1]] gefunden. Benutze nur ersten Wert, nämlich $2.',
 	'smw_gard_doublemincard' => 'Warnung: Mehr als ein Property "minimale Kardinaltät" [[$3:$1]] gefunden. Benutze nur ersten Wert, nämlich $2.',
 	'smw_gard_wrongcardvalue' => 'Warnung: Kardinaltät of [[$2:$1]] hat falschen Wert. Muss eine positive Ganzzahl or * sein (unendlich). Wird interpretiert als 0.',
@@ -194,7 +196,8 @@ protected $smwUserMessages = array(
 	'smw_gard_incorrect_cardinality' => 'Artikel [[$1]] benutzt Property [[$3:$2]] zu häufig oder zu wenig.',
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_incomp_entities_equal' => 'Der Artikel [[$2:$1]] ist inkompatibel zu [[$4:$3]].',
-
+	'smw_gard_incomp_entities_equal2' => 'Das Property [[$2:$1]] hat einen inkompatiblen Typ zum Property [[$4:$3]].',
+	
 	'smw_gard_errortype_categorygraph_contains_cycles' => 'Der Kategorie-Graph enthält Zyklen.',
 	'smw_gard_errortype_propertygraph_contains_cycles' => 'Der Property-Graph enthält Zyklen.',
 	

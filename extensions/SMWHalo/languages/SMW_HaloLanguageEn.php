@@ -219,6 +219,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_incorrect_cardinality' => 'Article [[$1]] uses property [[$3:$2]] too often or too less.',
 	'smw_gard_no_errors' => 'Congratulations! The wiki is consistent.',
 	'smw_gard_incomp_entities_equal' => 'The entity [[$2:$1]] is incompatible to [[$4:$3]]',
+	'smw_gard_incomp_entities_equal2' => 'The property [[$2:$1]] has an incompatible type to [[$4:$3]]',
 
 	'smw_gard_errortype_categorygraph_contains_cycles' => 'The category graph contains cycles',
 	'smw_gard_errortype_propertygraph_contains_cycles' => 'The property graph contains cycles',

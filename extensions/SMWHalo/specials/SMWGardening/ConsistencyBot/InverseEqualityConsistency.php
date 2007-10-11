@@ -73,8 +73,6 @@
  	}
  	
  	public function checkEqualToRelations() {
- 		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
  		$equalToRelations = $this->getEqualToRelations();
  		$log = "";
  		$this->bot->addSubTask(count($equalToRelations));
@@ -83,12 +81,23 @@
  			list($s, $t) = $r;
  			if ($s->getNamespace() != $t->getNamespace()) {
  				// equality of incompatible entities
- 				$log .= wfMsg('smw_gard_incomp_entities_equal', $s->getText(), $namespaces[$s->getNamespace()], $t->getText(), $namespaces[$t->getNamespace()]);
+ 				$log .= wfMsg('smw_gard_incomp_entities_equal', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
  				continue;
- 			}
- 			if ($s->getNamespace() == SMW_NS_PROPERTY) {
+ 			} else if ($s->getNamespace() == SMW_NS_PROPERTY) {
+ 				$s_type = smwfGetStore()->getSpecialValues($s, SMW_SP_HAS_TYPE);
+ 				$t_type = smwfGetStore()->getSpecialValues($t, SMW_SP_HAS_TYPE);
+ 				if (count($s_type) == 0 && count($t_type) == 0) {
+ 					// both have wiki page type. this is ok.
+ 					continue;
+ 				}
+ 				if (count($s_type) > 0 && count($t_type) > 0) {
+ 					if ($s_type[0]->getXSDValue() != $t_type[0]->getXSDValue()) {
+ 						$log .= wfMsg('smw_gard_incomp_entities_equal2', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
+ 					}
+ 				}
  				//TODO: check compatibility of domains/ranges/cardinality
  			} 
+ 			
  			
  		}
  		return $log;
