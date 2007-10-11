@@ -4,7 +4,7 @@
  *
  * Author: kai
  */
-define('SMW_HALO_VERSION', '1.0alpha-1');
+define('SMW_HALO_VERSION', '1.0beta');
 
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_HINT', 1);
