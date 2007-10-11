@@ -25,18 +25,18 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 class SMW_HaloLanguageDe extends SMW_HaloLanguage {
 
 protected $smwContentMessages = array(
-	
+
 	'smw_viewinOB' => 'Im Ontology-Browser öffnen',
-	
+
 	'smw_att_head' => 'Attribute',
 	'smw_rel_head' => 'Relationen zu anderen Seiten',
 	'smw_spec_head' => 'Spezielle Eigenschaften',
 	'smw_predefined_props' => 'Das ist das vordefinierte Property "$1"',
 	'smw_predefined_cats' => 'Das ist die vordefinierte Kategorie "$1"',
-	
+
 	'smw_noattribspecial' => 'Die spezielle Eigenschaft „$1“ ist kein Attribut (bitte „::“ anstelle von „:=“ verwenden).',
 	'smw_notype' => 'Dem Attribut wurde kein Datentyp zugewiesen.',
-	
+
 	/*Messages for Autocompletion*/
 	'tog-autotriggering' => 'Automatische auto-completion',
 
@@ -63,15 +63,15 @@ protected $smwContentMessages = array(
 	'smw_help_pageexists' => "This question is already in our helpsystem.\nClick 'more' to see all questions.",
 	'smw_help_error' => "Oops. An error seems to have occured.\nYour question could not be added to the system. Sorry.",
 	'smw_help_question_added' => "Your question has been added to our help system\nand can now be answered by other wiki users."
-	
+
 );
 
 protected $smwUserMessages = array(
 	'smw_devel_warning' => 'Diese Funktion befindet sich zur Zeit in Entwicklung und ist eventuell noch nicht voll einsatzfähig. Eventuell ist es ratsam, den Inhalt des Wikis vor der Benutzung dieser Funktion zu sichern.',
-	
+
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',
 	'smw_relationarticlecount' => '<p>Es werden $1 Seiten angezeigt, die diese Relation verwenden.</p>',
-	
+
 	/*Messages for Search Triple Special*/
 	'searchtriple' => 'Einfache semantische Suche', //name of this special
 	'smw_searchtriple_header' => '<h1>Suche nach Relationen und Attributen</h1>',
@@ -98,7 +98,7 @@ protected $smwUserMessages = array(
 	'smw_properties_sortalpha' => 'Sort alphabetically',
 	'smw_properties_sortmoddate' => 'Sort by modification date',
 	'smw_properties_sorttyperange' => 'Sort by type/range',
-	
+
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
 	'smw_properties_sortnary' => 'N-ary properties',
@@ -108,13 +108,13 @@ protected $smwUserMessages = array(
 	/*Messages for Unused Attributes Special*/
 	'unusedattributes' => 'Verwaiste Attribute',
 	'smw_unusedattributes_docu' => 'Die folgenden Attributseiten existieren, obwohl sie nicht verwendet werden.',
-	
+
 	/*Messages for OntologyBrowser*/
 	'ontologybrowser' => 'OntologyBrowser',
 	'smw_ac_hint' => 'Drücken Sie Ctrl+Alt+Space für die Auto-Vervollständigung. (Ctrl+Space im IE)',
 	'smw_ob_categoryTree' => 'Kategorie-Baum',
 	'smw_ob_attributeTree' => 'Property-Baum',
-	
+
 	'smw_ob_instanceList' => 'Instanzen',
 	'smw_ob_rel' => 'Relationen',
 	'smw_ob_att' => 'Attribute',
@@ -135,7 +135,7 @@ protected $smwUserMessages = array(
 	'smw_ob_help' => 'Der Ontology-Browser hilft ihnen sich im Wiki zurechtzufinden, das Schema zu untersuchen und ganz allgemein Seiten zu finden.
 			Benutzen Sie den Filter-Mechanismus oben links um bestimmte Elemente der Ontologie zu finden und schränken sie das Ergebnis mit Hilfe der
 			Filter unter jeder Spalte ein. Der Selektionsfluss ist anfangs von rechts nach links. Sie können die Pfeile durch Anklicken aber umdrehen.',
-	
+
 	'smw_ob_undefined_type' => '*undefinierter Typ*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
 	/* Messages for Gardening */
@@ -163,7 +163,7 @@ protected $smwUserMessages = array(
 	'smw_anomaliesbot' => 'Finde Anomalien',
 	'smw_renamingbot' => 'Benenne Seiten um',
 	'smw_importontologybot' => 'Importiere eine Ontologie',
-	
+
 	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf�gbar.',
 	'smw_gard_import_addfiles' => 'Weitere $2-Dateien k�nnen �ber $1 hinzugef�gt werden.',
 	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf�gbar.',
@@ -197,10 +197,10 @@ protected $smwUserMessages = array(
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_incomp_entities_equal' => 'Der Artikel [[$2:$1]] ist inkompatibel zu [[$4:$3]].',
 	'smw_gard_incomp_entities_equal2' => 'Das Property [[$2:$1]] hat einen inkompatiblen Typ zum Property [[$4:$3]].',
-	
+
 	'smw_gard_errortype_categorygraph_contains_cycles' => 'Der Kategorie-Graph enthält Zyklen.',
 	'smw_gard_errortype_propertygraph_contains_cycles' => 'Der Property-Graph enthält Zyklen.',
-	
+
 	'smw_gard_errortype_relation_problems' => 'Property-Schema-Probleme',
 	'smw_gard_errortype_attribute_problems' => 'Property-Schema-Probleme',
 	'smw_gard_errortype_inconsistent_relation_annotations' => 'Inkonsistente Anotationen',
@@ -223,7 +223,7 @@ protected $smwUserMessages = array(
 	'smw_gard_similarityterm' => 'Suche nur nach Element die ähnlich zu diesem Term sind (kann weggelassen werden)',
 	'smw_gard_similaritybothelp' => 'Diese Bot findet Elemente der Knowledgebase, die möglicherweise redundant sein und vereinigt werden können. Wenn Sie einen Term eingeben wird das System Elemente suchen, die ihm ähnlich sind. Wenn Sie keinen Term eingeben versucht das System alle potentiellen Redundanzen zu finden.',
 	'smw_gard_similarannotation' => '$1 von Artikel $2 könnte fälschlicherweise als Annotation von $3 gemeint sein.',
-	
+
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Properties im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
 	'smw_gard_property_undefined' => '[[$2:$1]] wird benutzt auf: $3',
@@ -240,7 +240,7 @@ protected $smwUserMessages = array(
 	'smw_gard_missingannot_docu' => 'Dieser Bot identifiziert Seiten im Wiki, die noch nicht annotiert wurden.',
 	'smw_gard_missingannot_titlecontaining' => '(Optional) Nur Seiten deren Titel folgendes enthält',
 	'smw_gard_missingannot_restricttocategory' => 'Nur unterhalb folgender Kategorien suchen',
-	
+
 	/* Anomalies */
 	'smw_gard_anomaly_checknumbersubcat' => 'Überprüfe Anzahl der Subkategorien',
 	'smw_gard_anomaly_checkcatleaves' => 'Prüfe auf Kategorie-Blätter',
@@ -257,6 +257,7 @@ protected $smwUserMessages = array(
 	'smw_gard_category_leaf_deleted' => '$1 war ein Kategorie-Blatt. Entfernt vom Anomalie-Bot.',
 
 	/* Combined Search*/
+	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',
 	'smw_cs_attributevalues_found' => 'Die folgenden Instanzen enthalten Property-Werte die ihrer Suche entsprechen.',
 	'smw_cs_aksfor_allinstances_with_annotation' => 'Frage nach allen Instanzen von \'$1\' die einen Annoatation von \'$2\' haben.',
@@ -273,23 +274,82 @@ protected $smwUserMessages = array(
 	'smw_cs_no_triples_found' => 'Keine Tripel gefunden!',
 
 	'smw_autogen_mail' => 'Das ist eine automatisch generierte E-Mail. Nicht antworten!',
-	
+
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
 
-		
+
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
 	'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',
-	
+
 	/*Messages for ContextSensitiveHelp*/
-	'contextsensitivehelp' => 'Context Sensitive Help',
-	'smw_contextsensitivehelp' => 'Context Sensitive Help',
-	'smw_csh_newquestion' => 'Das ist eine neue Hilfe-Frage. Anklicken um sie zu beantworten!',
+	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
+	'smw_contextsensitivehelp' => 'Kontext Sensitive Hilfe',
+	'smw_csh_newquestion' => 'Dies ist eine neue Hilfeseite. Klicken Sie, um sie zu beantworten!',
+	'smw_csh_refine_search_info' => 'Sie können Ihre Suche nach Hilfe durch die Angabe eines Seitentyps und/oder einer Aktion weiter verfeinern:',
+	'smw_csh_page_type' => 'Typ der Seite',
+	'smw_csh_action' => 'Aktion',
+	'smw_csh_ns_main' => 'Main (Standard Wikiartikel)',
+	'smw_csh_all' => 'ALLE',
+	'smw_csh_search_special_help' => 'Sie können auch nach Hilfe zu bestimmten Funktionen des Wikis suchen:',
+	'smw_csh_show_special_help' => 'Suche nach Hilfe über:',
+	'smw_csh_categories' => 'Kategorien',
+	'smw_csh_properties' => 'Properties',
+	/* Messages for the CSH discourse state. Do NOT edit or translate these
+	 * otherwise CSH will NOT work correctly anymore
+	 */
+	'smw_csh_ds_ontologybrowser' => 'OntologyBrowser',
+	'smw_csh_ds_queryinterface' => 'QueryInterface',
+	'smw_csh_ds_combinedsearch' => 'Search',
 
 	/*Messages for Query Interface*/
 	'queryinterface' => 'Query Interface',
-	'smw_queryinterface' => 'Query Interface'
+	'smw_queryinterface' => 'Query Interface',
+	'smw_qi_add_category' => 'Kategorie hinzufügen',
+	'smw_qi_add_instance' => 'Instanz hinzufügen',
+	'smw_qi_add_property' => 'Property hinzufügen',
+	'smw_qi_add' => 'Hinzufügen',
+	'smw_qi_confirm' => 'OK',
+	'smw_qi_cancel' => 'Abbrechen',
+	'smw_qi_delete' => 'Löschen',
+	'smw_qi_close' => 'Schließen',
+	'smw_qi_preview' => 'Vorschau',
+	'smw_qi_no_preview' => 'Noch keine Vorschau verfügbar',
+	'smw_qi_clipboard' => 'In die Zwischenablage kopieren',
+	'smw_qi_reset' => 'Query zurücksetzen',
+	'smw_qi_reset_confirm' => 'Möchten Sie Ihren Query wirklich zurück setzen?',
+	'smw_qi_querytree_heading' => 'Query Tree',
+	'smw_qi_main_query_name' => 'Hauptquery',
+	'smw_qi_layout_manager' => 'Query Layout Manager',
+	'smw_qi_table_column_preview' => 'Vorschau der Tabellenspalten',
+	'smw_qi_article_title' => 'Artikel',
+	'smw_qi_load' => 'Query laden',
+	'smw_qi_save' => 'Query speichern',
+	'smw_qi_close_preview' => 'Vorschau schließen',
+	'smw_qi_querySaved' => 'Der Query wurde erfolgreich gespeichert',
+	'smw_qi_exportXLS' => 'Ergebnisse nach Excel exportieren',
+	'smw_qi_showAsk' => 'Kompletten Query anzeigen',
+
+	/*Tooltips for Query Interface*/
+	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzufügt, werden nur Artikel aus dieser Kategorie berücksichtigt',
+	'smw_qi_tt_addInstance' => 'Indem man ein Instanz hinzufügt, wird nur der ensprechende Artikel berücksichtigt',
+	'smw_qi_tt_addProperty' => 'Indem man ein Property hinzufügt, kann man sich die Werte dieses Properties anzeigen lassen oder erlaubte Werte vorgeben',
+	'smw_qi_tt_tcp' => 'Die Vorschau der Tabellenspalten zeigt, aus welchen Spalten die Ergebnistabelle bestehen wird',
+	'smw_qi_tt_qlm' => 'Der Query Layout Manager erlaubt es, das Ausgabeformat Ihres Queries anzupassen',
+	'smw_qi_tt_preview' => 'Anzeigen einer vollständigen Vorschau der Ergebnisse, einschließlich der Layouteinstellungen',
+	'smw_qi_tt_clipboard' => 'Kopiert den Query in die Zwischenablage, so dass dieser einfach in einen Artikel eingefügt werden kann',
+	'smw_qi_tt_showAsk' => 'Anzeigen des kompletten Ask-Queries',
+	'smw_qi_tt_reset' => 'Zurücksetzen des gesamten Queries',
+	'smw_qi_tt_format' => 'Ausgabeformat des Queries',
+	'smw_qi_tt_link' => 'Bestimmt, welche Teile der Ergebnistabelle als Link dargestellt werden',
+	'smw_qi_tt_intro' => 'Text, der vor den Queryergebnissen ausgegeben wird',
+	'smw_qi_tt_sort' => 'Spalte, nach welcher die Sortierung erfolgt',
+	'smw_qi_tt_limit' => 'Maximale Anzahl der angezeigten Ergebnisse',
+	'smw_qi_tt_mainlabel' => 'Überschrift der ersten Spalte',
+	'smw_qi_tt_order' => 'Auf- oder absteigende Sortierung',
+	'smw_qi_tt_headers' => 'Tabellenüberschriften anzeigen oder nicht',
+	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren'
 
 );
 
