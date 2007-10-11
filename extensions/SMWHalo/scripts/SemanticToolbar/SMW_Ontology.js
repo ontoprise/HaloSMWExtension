@@ -168,13 +168,9 @@ OntologyModifier.prototype = {
 				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
 				for(var i = 0, n = ranges.length; i < n; i++) {
 					if (ranges[i].indexOf(gLanguage.getMessage('TYPE')) == 0) {
-						if (i < n-1) rangeStr += ranges[i]+";"; else rangeStr += ranges[i];
+						rangeStr += ranges[i];
 					} else {
-						if (i < n-1) {
-							 rangeStr += gLanguage.getMessage('TYPE_PAGE')+";"; 
-						} else {
-							rangeStr += gLanguage.getMessage('TYPE_PAGE');
-						}
+						rangeStr += gLanguage.getMessage('TYPE_PAGE');
 						if (ranges[i]) {
 							// Range hint is not empty
 							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
@@ -185,6 +181,9 @@ OntologyModifier.prototype = {
 							          gLanguage.getMessage('DEFAULT_ROOT_CONCEPT') +
 							          "]]";
 						}
+					}
+					if (i < n-1) {
+						rangeStr += ';';
 					}
 			 	}
 			 	schema += rangeStr+"]]";
