@@ -195,7 +195,7 @@ getCategorySubTree: function (categoryID, categoryName, callBackOnAjax, callBack
 },
 
 getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBackOnCache) {
-	var nodeToExpand = GeneralXMLTools.getNodeById(this.OB_cachedCategoryTree, attributeID);
+	var nodeToExpand = GeneralXMLTools.getNodeById(this.OB_cachedPropertyTree, attributeID);
 	if (nodeToExpand != null && nodeToExpand.hasChildNodes()) {
 		// copy it from cache to displayed tree.
 		var nodeInDisplayedTree = GeneralXMLTools.getNodeById(this.OB_currentlyDisplayedTree, attributeID);
