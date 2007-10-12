@@ -146,7 +146,7 @@ var wgLanguageStrings = {
 	'QI_INSTANCE'       	  : 'Instanz:',
 	'QI_PROPERTYNAME'         : 'Propertyname:',
 	'QI_SHOW_PROPERTY'        : 'In Ergebnissen zeigen:',
-	'QI_USE_SUBQUERY'         : 'Subquery einfügen',
+	'QI_USE_SUBQUERY'         : 'Subquery einf&uuml;gen',
 	'QI_PAGE'				  : 'Page', // has to be the same as the Type:Page in your language
 	'QI_OR'        			  : 'oder',
 	'QI_ENTER_CATEGORY'       : 'Bitte geben Sie eine Kategorie ein',
@@ -157,7 +157,7 @@ var wgLanguageStrings = {
 	'QI_SUBQUERY'    	  	  : "Subquery",
 	'QI_CATEGORIES'    	  	  : " Kategorien:",
 	'QI_INSTANCES'    	  	  : " Instanzen:",
-	'QI_QUERY_EXISTS'		  : "Ein Query mit diesem Namen existiert bereits. Bitte wählen sie einen neuen Namen.",
+	'QI_QUERY_EXISTS'		  : "Ein Query mit diesem Namen existiert bereits. Bitte w&auml;hlen sie einen neuen Namen.",
 	'QI_QUERY_SAVED'		  : "Ihr Query wurde erfolgreich gespeichert",
 	'QI_SAVE_ERROR'		  	  : "Ein unbekannter Fehler ist aufgetreten. Ihr Query konnte nicht gespeichert werden.",
 
