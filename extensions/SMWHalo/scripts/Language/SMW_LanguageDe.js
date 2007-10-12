@@ -117,26 +117,26 @@ var wgLanguageStrings = {
 	'CATEGORIES'              : 'Categories',
 
 	// Autocompletion
-	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
-	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Click here to drag',
+	'AUTOCOMPLETION_HINT'     : 'Dr&uuml;cken Sie Ctrl+Alt+Space um die Auto-completion zu benutzen. (Ctrl+Space im IE)',
+	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Hier zum Verschieben klicken',
 
 	// Combined search
-	'ADD_COMB_SEARCH_RES'     : 'Additional Combined Search results.',
-	'COMBINED_SEARCH'         : 'Combined Search',
+	'ADD_COMB_SEARCH_RES'     : 'Zus&auml;tzliche Ergebnisse der Combined-Search.',
+	'COMBINED_SEARCH'         : 'Combined-Search',
 
-	'INVALID_GARDENING_ACCESS' : 'You are not allowed to cancel bots. Only sysops and gardeners can do so.',
+	'INVALID_GARDENING_ACCESS' : 'Sie d&uuml;rfen Gardening Bots nicht abbrechen. Das d&uuml;rfen nur Sysops und Gardener.',
 	// Ontology browser
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
 	'PROPERTY_NS_WOC'         : 'Property', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
-	'CATEGORY_NS_WOC'         : 'Category', // Category namespace without colon
-	'KS_NOT_SUPPORTED'        : 'Konqueror/Safari are not supported currently!',
-	'SHOW_INSTANCES'          : 'Show instances',
-	'HIDE_INSTANCES'          : 'Hide instances',
-	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
-	'MARK_A_WORD'             : 'Mark a word...',
-	'OPEN_IN_OB'              : 'Open in Ontology Browser',
+	'CATEGORY_NS_WOC'         : 'Kategorie', // Category namespace without colon
+	'KS_NOT_SUPPORTED'        : 'Konqueror/Safari werden momentan nicht unterst&uuml;tzt.',
+	'SHOW_INSTANCES'          : 'Zeige Instanzen',
+	'HIDE_INSTANCES'          : 'Verstecke Instanzen',
+	'ENTER_MORE_LETTERS'      : "Bitte geben Sie mindestens zwei Buchstaben ein. Sonst erhalten Sie wahrscheinlich zu viele Ergebnisse.",
+	'MARK_A_WORD'             : 'Selektieren Sie etwas...',
+	'OPEN_IN_OB'              : 'Im Ontology Browser &ouml;ffnen',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',
