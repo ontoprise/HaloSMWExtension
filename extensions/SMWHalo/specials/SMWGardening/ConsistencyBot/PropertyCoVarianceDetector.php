@@ -17,8 +17,13 @@ require_once("ConsistencyHelper.php");
  	
  	// delegate for basic helper methods
  	private $consistencyHelper;
+ 	
+ 	// reference to bot
  	private $bot;
+ 	
+ 	// delay
  	private $delay;
+ 	
  	// inheritance graphs.
  	private $categoryGraph;
  	private $propertyGraph;
@@ -148,13 +153,13 @@ require_once("ConsistencyHelper.php");
  					$numLog++;
  				}
  				// check for correct value
- 				if ($this->consistencyHelper->isCardinalityValue($maxCard[0]->getXSDValue()) !== true) {
+ 				if ($this->consistencyHelper->isCardinalityValue($maxCard[0]->getXSDValue()) !== true && $maxCard[0]->getXSDValue() != '*') {
  					$log .= wfMsg('smw_gard_wrongcardvalue', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
  					$numLog++;
  				}
  				// check for co-variance with parent
  				
- 				$maxCardValue = $maxCard[0]->getXSDValue() + 0;
+ 				$maxCardValue = $maxCard[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCard[0]->getXSDValue() + 0;
  				$maxCardValueOfParent = $this->consistencyHelper->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
@@ -340,7 +345,7 @@ require_once("ConsistencyHelper.php");
  		}
  		
  			
- 		if ($superattr_max != UNLIMITED) {
+ 		if ($superattr_max != CARDINALITY_UNLIMITED) {
  			if ($attr_max > $superattr_max) {
  				return ('smw_gard_maxcard_not_covariant');
  			}

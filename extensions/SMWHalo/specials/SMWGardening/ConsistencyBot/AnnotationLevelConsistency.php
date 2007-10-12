@@ -213,7 +213,7 @@ require_once("ConsistencyHelper.php");
  				$maxCards = $this->consistencyHelper->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  			} else {
- 				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
+ 				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
  				
  			}
  			

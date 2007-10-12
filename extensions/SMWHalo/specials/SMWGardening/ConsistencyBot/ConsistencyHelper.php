@@ -197,6 +197,10 @@
 		return $result;
 	}
 	
+	// Note: all methods get...OfSuperProperty consider only the first super property.
+	// So if there is mutiple property inheritance, the ConsistencyChecker is not able to 
+	// find all potential inconsistencies.
+	
 	public function getTypeOfSuperProperty(& $inheritanceGraph, $a) {
  		$attributeID = $a->getArticleID();
  		$superAttributes = $this->searchInSortedGraph($inheritanceGraph, $attributeID);
@@ -306,7 +310,7 @@
  	
  	public function isCardinalityValue($s) {
  		// card must be either an integer >= 0 or *
-		return preg_match("/\\d+/", trim($s)) > 0;
+		return preg_match('/^\d+$/', trim($s)) > 0;
  	}
  	
  	/**
