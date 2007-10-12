@@ -17,8 +17,10 @@ REM copy files
 
 xcopy ..\..\..\* %OUTPUT_DIR% /S /EXCLUDE:excludeForMW.dat /Y
 
-REM remove LocalSettings.php
+REM remove LocalSettings.php and AdminSettings.php
 del %OUTPUT_DIR%\LocalSettings.php
+del %OUTPUT_DIR%\AdminSettings.php
+
 
 REM Pack MW
 
