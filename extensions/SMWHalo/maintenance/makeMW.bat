@@ -17,6 +17,9 @@ REM copy files
 
 xcopy ..\..\..\* %OUTPUT_DIR% /S /EXCLUDE:excludeForMW.dat /Y
 
+REM remove LocalSettings.php
+del %OUTPUT_DIR%\LocalSettings.php
+
 REM Pack MW
 
 cd bin
