@@ -35,6 +35,8 @@ xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
 xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
+xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
+xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 
 REM Pack SMWHalo Extension
 
