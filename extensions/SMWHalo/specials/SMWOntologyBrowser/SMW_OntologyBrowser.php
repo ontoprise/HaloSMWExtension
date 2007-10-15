@@ -59,7 +59,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		   </div>		
 		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors\">
 		   </div>
-		   <span class=\"OB-filters\" style=\"margin-left:5px;margin-top:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"22\" name=\"categoryFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
+		   <span class=\"OB-filters\" style=\"margin-left:5px;margin-top:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" name=\"categoryFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
 		<!-- Attribute Tree hook -->
 				
@@ -72,7 +72,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		  <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img>".wfMsg('smw_ob_instanceList')."</span>		
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
-		  <span class=\"OB-filters\" style=\"margin-left:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"15\" name=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button></span>
+		  <span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" name=\"instanceFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">
@@ -81,9 +81,9 @@ class SMW_OntologyBrowser extends SpecialPage {
 				
 		<!-- Relation/Attribute Annotation level hook -->
 		<div id=\"relattributesContainer\"><span class=\"OB-header\">
-			<span><img src=\"$wgScriptPath/extensions/SMWHalo/skins/attribute.gif\"></img>".wfMsg('smw_ob_att')."/<img src=\"$wgScriptPath/extensions/SMWHalo/skins/relation.gif\"></img>".wfMsg('smw_ob_rel')."</span><span id=\"relattValues\" style=\"margin-left:100px;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"margin-left:85px;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
+			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/attribute.gif\"></img>".wfMsg('smw_ob_att')."/<img src=\"$wgScriptPath/extensions/SMWHalo/skins/relation.gif\"></img>".wfMsg('smw_ob_rel')."</span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
-			<span class=\"OB-filters\" style=\"margin-left:5px;\">".wfMsg('smw_ob_filter').": <input type=\"text\" size=\"22\" name=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button></span>		
+			<span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" name=\"propertyFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>		
 		</div>		
 		<div id=\"OB-filters\">
 			" .

@@ -58,14 +58,19 @@ OBTreeActionListener.prototype = {
 	},
 	
 	/**
-	 * Togges a tree node expansion.
-	 * event:
-	 * node:
-	 * folderCode:
-	 * tree: cached tree to update
-	 * accessFunc: Function which returns children needed for expansion.
+	 * @protected
+	 * 
+	 * Toggles a tree node expansion.
+	 * 
+	 * @param event Event which triggered expansion (normally onClick).
+	 * @param node Node on which event was triggered.
+	 * @param tree Cached tree to update.
+	 * @param accessFunc Function which returns children needed for expansion. It has the following signature:
+	 * 						accessFunc(xmlNodeID, xmlNodeName, callbackOnExpandForAjax, callBackForCache);
+	 * 
+	 * @return
 	 */
-	_toggleExpand: function (event, node, folderCode, tree, accessFunc) {
+	_toggleExpand: function (event, node, tree, accessFunc) {
 	
 	// stop event propagation in Gecko and IE
 	Event.stop(event);
@@ -152,7 +157,19 @@ OBTreeActionListener.prototype = {
 	}
  	},
  	
-  _selectNextPartition: function (e, htmlNode, tree, accessFunc, treeName, calledOnFinish) {
+ 	/**
+ 	 * @protected
+ 	 * 
+ 	 * Requests the next partition of a tree level.
+ 	 * 
+ 	 * @param e Event which triggered selection
+ 	 * @param partitionNodeHTML Selected partition node in DOM.
+ 	 * @param tree XML Tree associated with selection
+ 	 * @param accessFunc Function to obtain next partition
+ 	 * @param treeName Tree ID to update (categoryTree/propertyTree)
+ 	 * @param calledOnFinish Function which is called when tree has been updated.
+ 	 */
+  _selectNextPartition: function (e, partitionNodeHTML, tree, accessFunc, treeName, calledOnFinish) {
 	
 	function selectNextPartitionCallback (request) {
 		//TODO: check if empty and do nothing in this case.
@@ -187,8 +204,8 @@ OBTreeActionListener.prototype = {
 		calledOnFinish(tree);
 	}		
 	// Identify partition node in XML
-	var id = htmlNode.getAttribute("id");
-	var partition = htmlNode.getAttribute("partitionnum");
+	var id = partitionNodeHTML.getAttribute("id");
+	var partition = partitionNodeHTML.getAttribute("partitionnum");
 	var partitionNodeInCache = GeneralXMLTools.getNodeById(tree, id);
 	var partitionNode = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, id);
 	
@@ -209,7 +226,19 @@ OBTreeActionListener.prototype = {
 	
 	},
 	
-	_selectPreviousPartition: function (e, htmlNode, tree, accessFunc, treeName, calledOnFinish) {
+	/**
+	 * @protected
+	 * 
+ 	 * Requests the previous partition of a tree level.
+ 	 * 
+ 	 * @param e Event which triggered selection
+ 	 * @param partitionNodeHTML Selected partition node in DOM.
+ 	 * @param tree XML Tree associated with selection
+ 	 * @param accessFunc Function to obtain next partition
+ 	 * @param treeName Tree ID to update (categoryTree/propertyTree)
+ 	 * @param calledOnFinish Function which is called when tree has been updated.
+ 	 */
+	_selectPreviousPartition: function (e, partitionNodeHTML, tree, accessFunc, treeName, calledOnFinish) {
 	
 	function selectPreviousPartitionCallback (request) {
 		//TODO: check if empty and do nothing in this case.
@@ -244,8 +273,8 @@ OBTreeActionListener.prototype = {
 		calledOnFinish(tree);
 	}	
 	// Identify partition node in XML
-	var id = htmlNode.getAttribute("id");
-	var partition = htmlNode.getAttribute("partitionnum");
+	var id = partitionNodeHTML.getAttribute("id");
+	var partition = partitionNodeHTML.getAttribute("partitionnum");
 	var partitionNodeInCache = GeneralXMLTools.getNodeById(tree, id);
 	var partitionNode = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, id);
 	
@@ -265,17 +294,24 @@ OBTreeActionListener.prototype = {
 	
   },
   
-  /*
- 	* Filter categories which matches a given term
+   /**
+    * @protected
+    * 
+ 	* Filter tree to match given term(s)
+ 	* 
+ 	* @param e Event
+ 	* @param tree XML Tree to filter
+ 	* @param treeName Tree ID
+ 	* @param filterStr Whitespace separated filter string.
  	*/
-  _filterTree: function (e, tree, treeName, catFilter) {
+  _filterTree: function (e, tree, treeName, filterStr) {
     var xmlDoc = GeneralXMLTools.createTreeViewDocument();
    
    	var nodesFound = new Array();
    	
    	// generate filters
    	var regex = new Array();
-    var filterTerms = GeneralTools.splitSearchTerm(catFilter);
+    var filterTerms = GeneralTools.splitSearchTerm(filterStr);
     for(var i = 0, n = filterTerms.length; i < n; i++) {
     	try {
 	   	 	regex[i] = new RegExp(filterTerms[i],"i");
@@ -296,7 +332,16 @@ OBTreeActionListener.prototype = {
    	dataAccess.OB_currentlyDisplayedTree = xmlDoc;
 },
 
-  
+  /**
+   * @private
+   * 
+   * Selects all nodes whose title attribute match the given regex.
+   * 
+   * @param nodesFound Empty array which takes the returned nodes
+   * @param node Node to start with.
+   * @param count internal index for node array (starts with 0)
+   * @param regex The regular expression 
+   */
   _filterTree_: function (nodesFound, node, count, regex) {
 
 	var children = node.childNodes;
@@ -375,7 +420,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 	
 	toggleExpand: function (event, node, folderCode) {
-		this._toggleExpand(event, node, folderCode, dataAccess.OB_cachedCategoryTree, dataAccess.getCategorySubTree.bind(dataAccess));
+		this._toggleExpand(event, node, dataAccess.OB_cachedCategoryTree, dataAccess.getCategorySubTree.bind(dataAccess));
 	},
 
 
@@ -385,6 +430,17 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 // ---- Selection methods. Called when the entity is selected ---------------------
 
+/**
+ * @public
+ * 
+ * Called when a category has been selected. Do also expand the 
+ * category tree if necessary.
+ * 
+ * @param event Event
+ * @param node selected HTML node
+ * @param categoryID unique ID of category
+ * @param categoryName Title of category
+ */
 select: function (event, node, categoryID, categoryName) {
 	var e = GeneralTools.getEvent(event);
 	
@@ -417,6 +473,7 @@ select: function (event, node, categoryID, categoryName) {
 	
 	smwhgLogger.log(categoryName, "OB","clicked");
 	
+	// callback for instances of a category
 	function callbackOnCategorySelect(request) {
 		OB_instance_pendingIndicator.hide();
 	  	if (instanceDIV.firstChild) {
@@ -428,6 +485,8 @@ select: function (event, node, categoryID, categoryName) {
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
 	 }
+	 
+	 // callback for properties of a category
 	 function callbackOnCategorySelect2(request) {
 	 	OB_relatt_pendingIndicator.hide();
 	  	if (relattDIV.firstChild) {
@@ -489,6 +548,9 @@ OBInstanceActionListener.prototype = {
 		
 	},
 	
+	/**
+	 * Called when a supercategory of an instance is selected.
+	 */
 	showSuperCategory: function(event, node, categoryName) {
 		function filterBrowsingCategoryCallback(request) {
 	 	var categoryDIV = $("categoryTree");
@@ -674,7 +736,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 	
   toggleExpand: function (event, node, folderCode) {
-  	this._toggleExpand(event, node, folderCode, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertySubTree.bind(dataAccess));
+  	this._toggleExpand(event, node, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertySubTree.bind(dataAccess));
   },
   selectNextPartition: function (e, htmlNode) {
 	function calledOnFinish(tree) {
@@ -890,14 +952,21 @@ OBGlobalActionListener.prototype = {
 	},
 	
 	/**
-	 * Global filter event listener
+	 * Global filter event listener. 
+	 * Filters the currently visible tree. 
+	 * 
+	 * @param event
 	 */
 	filterTree: function(event) {
 		
+		// reads filter string
 		var inputs = document.getElementsByTagName("input");
 		var filter = inputs[1].value;
 		var tree;
 		var actionListener;
+		
+		// decide which tree is active and
+		// set actionListener for that tree
 		if (this.activeTreeName == 'categoryTree') {
 			actionListener = categoryActionListener;
 			tree = dataAccess.OB_cachedCategoryTree;
@@ -915,12 +984,15 @@ OBGlobalActionListener.prototype = {
 				return;
 			}
 		}  
-		
+		// filter tree
 		actionListener._filterTree(event, tree, this.activeTreeName, filter);
 		
 		
 	},
 	
+	/**
+	 * Filters instances currently visible. 
+	 */
 	filterInstances: function(event) {
 		if (dataAccess.OB_cachedInstances == null) {
 			return;
@@ -953,6 +1025,9 @@ OBGlobalActionListener.prototype = {
 		transformer.transformXMLToHTML(nodesFound, $("instanceList"), true); 
 	},
 	
+	/**
+	 * Filters properties currently visible.
+	 */
 	filterProperties: function(event) {
 		if (dataAccess.OB_cachedProperties == null) {
 			return;
@@ -988,7 +1063,8 @@ OBGlobalActionListener.prototype = {
 	},
 	
 	/**
-	 * Global filter event listener
+	 * @deprecated
+	 * not used any more
 	 */
 	filterRoot: function(event) {
 		var actionListener;
@@ -1003,6 +1079,12 @@ OBGlobalActionListener.prototype = {
 		actionListener._filterRootLevel(event, tree, this.activeTreeName);
 	},
 	
+	/**
+	 * Filters database wide. Categories, instances, properties
+	 * 
+	 * @param event
+	 * @param force Filters in any case, otherwise only if enter is pressed in given event.
+	 */
 	filterBrowsing: function(event, force) {
 		
 	 function filterBrowsingCategoryCallback(request) {
@@ -1077,6 +1159,9 @@ OBGlobalActionListener.prototype = {
 	 
 	},
 	
+	/**
+	 * Sets back tree view and clear search field.
+	 */
 	reset: function(event) {
 		if (this.activeTreeName == 'categoryTree') {
 			dataAccess.initializeRootCategories(0, true);
@@ -1089,6 +1174,9 @@ OBGlobalActionListener.prototype = {
 		inputs[0].value = "";
 	},
 	
+	/**
+	 * Toggles left arrow
+	 */
 	toogleCatInstArrow: function(event) {
 		var img = Event.element(event);
 		smwhgLogger.log("", "OB","flipflow_left");
@@ -1101,6 +1189,9 @@ OBGlobalActionListener.prototype = {
 		}
 	},
 	
+	/**
+	 * Toggles right arrow
+	 */
 	toogleInstPropArrow: function(event) {
 		var img = Event.element(event);
 		smwhgLogger.log("", "OB","flipflow_right");
