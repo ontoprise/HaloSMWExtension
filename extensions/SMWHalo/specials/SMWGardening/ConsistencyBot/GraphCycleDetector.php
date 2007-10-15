@@ -8,17 +8,17 @@
  * inheritance graphs of the semantic model.
  */
 require_once("GraphEdge.php"); 
-require_once("ConsistencyHelper.php"); 
+global $smwgHaloIP;
+require_once("$smwgHaloIP/includes/SMW_GraphHelper.php"); 
 
 class GraphCycleDetector {
  	
  	private $bot;
- 	// delegate for basic helper methods
- 	private $consistencyHelper;
+ 	
  	
  	
  	public function GraphCycleDetector(& $bot) {
- 		$this->consistencyHelper = new ConsistencyHelper();
+ 		
  		$this->bot = $bot;
  	}
  	
@@ -31,7 +31,7 @@ class GraphCycleDetector {
  	public function getAllCategoryCycles($header) {
  		global $wgLang;
  		print "\nCategory cycle\n";
- 		$categoryGraph = $this->consistencyHelper->getCategoryInheritanceGraph();
+ 		$categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
  		$cycles = $this->returnCycles($categoryGraph);
  		return $this->formatCycles($cycles, $header, ":".$wgLang->getNsText(NS_CATEGORY));
  	}
@@ -40,7 +40,7 @@ class GraphCycleDetector {
  		global $smwgContLang;
  		print "\nProperty cycle\n";
   		$namespaces = $smwgContLang->getNamespaces();
- 		$attributeGraph = $this->consistencyHelper->getPropertyInheritanceGraph();
+ 		$attributeGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
  		$cycles = $this->returnCycles($attributeGraph);
  		return $this->formatCycles($cycles, $header, $namespaces[SMW_NS_PROPERTY]);
  	}
@@ -90,7 +90,7 @@ class GraphCycleDetector {
  				} else {
  					$visitedNodes[] = $ce->from;
  				}
- 				$nextEdges = $this->consistencyHelper->searchBoundInSortedGraph($graph, $ce->to);
+ 				$nextEdges = GraphHelper::searchBoundInSortedGraph($graph, $ce->to);
  				if ($nextEdges != null) {
  					$cycle = $this->_returnCycles($graph, $nextEdges, $visitedNodes, $results);
  					if ($cycle != null && $ce->from != $cycle[0]) {

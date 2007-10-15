@@ -46,9 +46,9 @@ function smwgHaloSetupExtension() {
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 
 	$smwgMasterGeneralStore = NULL;
-
+	
+	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
-	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
@@ -57,29 +57,29 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	
-
-
-	// file extensions for upload
+	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 	
-	// Registered jobs
+	// Register job classes
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
 	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	
-
+	// register message system
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
 
+	// add additional special properties to SMW
 	$smwgHaloContLang->registerSpecialProperties();
-
+	
+	// add some AJAX calls
 	require_once('SMW_Autocomplete.php');
 	require_once('SMW_CombinedSearch.php');
 	require_once('SMW_ContentProviderForAura.php');
 
 
-	// register special pages
+	// Register new or overwrite existing special pages
 	$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
 	$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 
@@ -95,23 +95,26 @@ function smwgHaloSetupExtension() {
 	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
-	// Global functions and AJAX calls
+	// import global functions and remaining AJAX calls
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
 	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
+	
+	// import available job classes (for refactoring)
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
 
-
-
+	// Register MW hooks
+	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'smwfGenerateUpdateAfterMoveJob';
 	
+	// Register Credits
 	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION, 
 			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and others. Maintained by [http://www.ontoprise.de Ontoprise].", 
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
@@ -137,16 +140,6 @@ function smwfHaloInitDatatypes() {
 	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
 	                                      $smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
 
-//	global $smwgHaloContLang, $smwgIP;
-//	require_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalformula');
-//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemFormula','SMWChemicalFormulaTypeHandler');
-//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_chemicalequation');
-//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'ChemEquation','SMWChemicalEquationTypeHandler');
-//	$typeID = $smwgHaloContLang->getDatatypeLabel('smw_mathematicalequation');
-//	SMWDataValueFactory::registerDataValueClass(str_replace(' ', '_', $typeID),'MathEquation','SMWMathematicalEquationTypeHandler');
-//
-//	SMWDataValueFactory::registerDataValueClass('_siu','SI','SMWSIUnitTypeHandler');
 	return true;
 }
 
@@ -349,8 +342,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			
 			//FIXME: these scripts must be exchanged by a full editor script
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");
-			//$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/SMWEditInterface.js', "edit");
-			
+						
 			smwfHaloAddJSLanguageScripts($jsm);
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralScripts.js');

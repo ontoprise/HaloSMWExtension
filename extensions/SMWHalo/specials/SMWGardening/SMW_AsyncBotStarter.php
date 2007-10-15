@@ -103,7 +103,7 @@ require_once("SMW_GardeningLog.php");
  if ($smtpServerIP && $userEmail != null && $userEmail != '') { 
  	// send email when finished.
  	echo "Sending email to: ".$userEmail;
- 	//sendmail($userEmail, $bot);
+ 	sendmail($userEmail, $bot);
  }
  
  /**

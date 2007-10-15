@@ -7,12 +7,12 @@
  
  class InverseEqualityConsistency {
  	
- 	private $consistencyHelper;
+ 	
  	private $bot;
  	
  	public function InverseEqualityConsistency(& $bot) {
  		$this->bot = $bot;
- 		$this->consistencyHelper = new ConsistencyHelper();
+ 		
  	}
  	
  	
@@ -34,10 +34,10 @@
  			}
  			if ($numLog > MAX_LOG_LENGTH) { print (" limit of consistency issues reached. Break. "); return $log; }
  			list($s, $t) = $r;
- 			$domainOfSource = smwfGetStore()->getPropertyValues($s, $this->consistencyHelper->domainHintRelation);
- 			$domainOfTagert = smwfGetStore()->getPropertyValues($t, $this->consistencyHelper->domainHintRelation);
- 			$rangeOfSource = smwfGetStore()->getPropertyValues($s, $this->consistencyHelper->rangeHintRelation);
- 			$rangeOfTarget = smwfGetStore()->getPropertyValues($t, $this->consistencyHelper->rangeHintRelation);
+ 			$domainOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainHintRelation);
+ 			$domainOfTagert = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainHintRelation);
+ 			$rangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->rangeHintRelation);
+ 			$rangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->rangeHintRelation);
  			
  			if (count($domainOfSource) != 1) {
  				$log .= wfMsg('smw_gard_domain_not_defined', $s->getText(), $namespaces[SMW_NS_PROPERTY])."\n\n";
@@ -105,7 +105,7 @@
  	
  	private function getInverseRelations() {
  		$db =& wfGetDB( DB_MASTER );
-		$sql = 'relation_title = '.$db->addQuotes($this->consistencyHelper->inverseOf->getDBkey()); 
+		$sql = 'relation_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()); 
 		
 		$res = $db->select(  array($db->tableName('smw_relations')), 
 		                    array('subject_title', 'object_title'),

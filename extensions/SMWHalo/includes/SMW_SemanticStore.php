@@ -44,18 +44,20 @@
 	 */
 	public $symetricalCat;
 	
+	public $inverseOf;
 	/**
 	 * Must be called from derived class to initialize the member variables.
 	 */
 	protected function SMWSemanticStore(Title $domainHintRelation, Title $rangeHintRelation, 
 									 Title $minCard, Title $maxCard, 
-									 Title $transitiveCat, Title $symetricalCat) {
+									 Title $transitiveCat, Title $symetricalCat, Title $inverseOf) {
 		$this->domainHintRelation = $domainHintRelation;
 		$this->rangeHintRelation = $rangeHintRelation;
 		$this->maxCard = $maxCard;
 		$this->minCard = $minCard;
 		$this->transitiveCat = $transitiveCat;
 		$this->symetricalCat = $symetricalCat;
+		$this->inverseOf = $inverseOf;
 	}
  	
  	/**
@@ -129,5 +131,84 @@
 	 */
 	public abstract function getNumberOfUsage(Title $property);
  	
+ 	/* 
+ 	 * Note: 
+ 	 * 		
+ 	 *   All methods get...OfSuperProperty consider only the first super property.
+	 *	 So if there is mutiple property inheritance, these methods will not provide a complete 
+	 *	 result set. That means, for instance, the ConsistencyChecker is not able to 
+	 *	 find all potential inconsistencies.
+	 *	 All those methods require a reference to a complete inheritance graph in memory. 
+	 *	 They are supposed to be used thousands of times in a row, since it is a complex
+	 *	 task to load and sort a complete inheritance graph. So if you just need for instance
+	 *	 a domain of _one_ super property, do this manually. 
+	 * 
+	 */
+	
+ 	/**
+ 	 * Returns the domains of the first super property which has defined some
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getDomainsOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns the ranges of the first super property which has defined some.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */ 	
+ 	public abstract function getRangesOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Determines minimum cardinality of an attribute,
+ 	 * which may be inherited.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Determines minimum cardinality of an attribute,
+ 	 * which may be inherited.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns type of superproperty
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getTypeOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns categories of super property
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getCategoriesOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns a sorted array of (category,supercategory) page_id tuples
+ 	 * representing an category inheritance graph. 
+ 	 * 
+ 	 * @return array of GraphEdge objects;
+ 	 */
+ 	public abstract function getCategoryInheritanceGraph();
+ 	
+ 	/**
+ 	 * Returns a sorted array of (attribute,superattribute) page_id tuples
+ 	 * representing an attribute inheritance graph. 
+ 	 * 
+ 	 *  @return array of GraphEdge objects;
+ 	 */
+ 	public abstract function getPropertyInheritanceGraph();
  }
 ?>

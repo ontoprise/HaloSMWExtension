@@ -4,16 +4,15 @@
  *
  * Author: kai
  */
- 
+global $smwgHaloIP;
 require_once("GraphEdge.php"); 
-require_once("ConsistencyHelper.php"); 
+require_once("$smwgHaloIP/includes/SMW_GraphHelper.php"); 
 
  class AnnotationLevelConsistency {
- 	
- 	// delegate for basic helper methods
- 	private $consistencyHelper;
+ 	 	
  	private $bot;
  	private $delay; 
+ 	
  	// Category Graph. It is cached for the whole consistency checks.
  	private $categoryGraph;
  	private $propertyGraph;
@@ -26,9 +25,9 @@ require_once("ConsistencyHelper.php");
  	public function AnnotationLevelConsistency(& $bot, $delay) {
  		$this->bot = $bot;
  		$this->delay = $delay;
- 		$this->consistencyHelper = new ConsistencyHelper();
- 		$this->categoryGraph = $this->consistencyHelper->getCategoryInheritanceGraph();
- 		$this->propertyGraph = $this->consistencyHelper->getPropertyInheritanceGraph();
+ 		
+ 		$this->categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
+ 		$this->propertyGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
  		
  	}
  	/**
@@ -38,7 +37,7 @@ require_once("ConsistencyHelper.php");
  		global $smwgContLang;
  		$namespaces = $smwgContLang->getNamespaces();
  		$log = "";
- 		$properties = $this->consistencyHelper->getPages(array(SMW_NS_PROPERTY));
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$numLog = 0;
  		$work = count($properties);
  		$cnt = 0;
@@ -54,27 +53,26 @@ require_once("ConsistencyHelper.php");
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
  			if ($numLog > MAX_LOG_LENGTH) { print (" limit of consistency issues reached. Break. "); return $log; }
- 			if ($this->consistencyHelper->domainHintRelation->equals($r) 
- 					|| $this->consistencyHelper->rangeHintRelation->equals($r)
- 					|| $this->consistencyHelper->minCard->equals($r) 
- 					|| $this->consistencyHelper->maxCard->equals($r)
- 					|| $this->consistencyHelper->inverseOf->equals($r) 
- 					|| $this->consistencyHelper->equalTo->equals($r)  ) {
+ 			if (smwfGetSemanticStore()->domainHintRelation->equals($r) 
+ 					|| smwfGetSemanticStore()->rangeHintRelation->equals($r)
+ 					|| smwfGetSemanticStore()->minCard->equals($r) 
+ 					|| smwfGetSemanticStore()->maxCard->equals($r)
+ 					|| smwfGetSemanticStore()->inverseOf->equals($r)) {
  						// ignore builtin properties
  						continue;
  			}
  			
  			// get domain and range categories of property
- 			$rangeCategories = smwfGetStore()->getPropertyValues($r, $this->consistencyHelper->rangeHintRelation);
- 			$domainCategories = smwfGetStore()->getPropertyValues($r, $this->consistencyHelper->domainHintRelation);
+ 			$rangeCategories = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->rangeHintRelation);
+ 			$domainCategories = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->domainHintRelation);
  			
  			if (empty($rangeCategories)) {
  				// if there are no range categories defined, try to find a super relation with defined range categories
- 				$rangeCategories = $this->consistencyHelper->getRangesOfSuperProperty($this->propertyGraph, $r);
+ 				$rangeCategories = smwfGetSemanticStore()->getRangesOfSuperProperty($this->propertyGraph, $r);
  			}
  			if (empty($domainCategories)) {
  				// if there are no domain categories defined, try to find a super relation with defined range categories
- 				$domainCategories = $this->consistencyHelper->getDomainsOfSuperProperty($this->propertyGraph, $r);
+ 				$domainCategories = smwfGetSemanticStore()->getDomainsOfSuperProperty($this->propertyGraph, $r);
  			}
  			// get annotation subjects for the property.
  			$allRelationSubjects = smwfGetStore()->getAllPropertySubjects($r);
@@ -91,12 +89,12 @@ require_once("ConsistencyHelper.php");
  					
  					// decide which type and do consistency checks
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
- 						$categoriesOfInstance = $this->consistencyHelper->getCategoriesForInstance($target->getTitle());
+ 						$categoriesOfInstance = smwfGetSemanticStore()->getCategoriesForInstance($target->getTitle());
  						$isValid = false;
  						foreach($rangeCategories as $ranCts) { 
  							foreach($categoriesOfInstance as $artCats) { 
  								
- 								if ($this->consistencyHelper->checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCts->getArticleID())) {
+ 								if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCts->getArticleID())) {
  									$isValid = true;
  								}
  							}
@@ -123,12 +121,12 @@ require_once("ConsistencyHelper.php");
  										
  										if ($explodedTypes[$i] == 'Page') { //TODO: externalize or use constant
  											
- 											$categoriesOfInstance = $this->consistencyHelper->getCategoriesForInstance($explodedValues[$i]->getTitle());
+ 											$categoriesOfInstance = smwfGetSemanticStore()->getCategoriesForInstance($explodedValues[$i]->getTitle());
  											
  											$isValid = false;
  											foreach($rangeCategories as $ranCats) { 
  												foreach($categoriesOfInstance as $artCats) { 
- 						   							if ($this->consistencyHelper->checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCats->getArticleID())) {
+ 						   							if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCats->getArticleID())) {
  														$isValid = true;
  													}
  												}
@@ -146,12 +144,12 @@ require_once("ConsistencyHelper.php");
  					// Otherwise the annotation would not appear in the database.
  					
  					// check if each subject is member of at least one domain category.
- 					$domainCategoryIDs = $this->consistencyHelper->getCategoriesForInstance($subject);
+ 					$domainCategoryIDs = smwfGetSemanticStore()->getCategoriesForInstance($subject);
  					$isValid = false;
  					foreach($domainCategories as $domCats) { 
  						foreach($domainCategoryIDs as $artCats) { 
  								
- 							if ($this->consistencyHelper->checkForPath($this->categoryGraph, $artCats->getArticleID(), $domCats->getArticleID())) {
+ 							if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $domCats->getArticleID())) {
  								$isValid = true;
  							}
  						}
@@ -178,7 +176,7 @@ require_once("ConsistencyHelper.php");
  		$log = "";
  		$numLog = 0;
  		// check attribute annotation cardinalities
- 		$properties = $this->consistencyHelper->getPages(array(SMW_NS_PROPERTY));
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
  			if ($this->delay > 0) {
@@ -186,31 +184,30 @@ require_once("ConsistencyHelper.php");
  			}
  			$this->bot->worked(1);
  			if ($numLog > MAX_LOG_LENGTH) { return $log; }
- 			if ($this->consistencyHelper->minCard->equals($a) 
- 					|| $this->consistencyHelper->maxCard->equals($a)
- 					|| $this->consistencyHelper->domainHintRelation->equals($a) 
- 					|| $this->consistencyHelper->rangeHintRelation->equals($a)
- 					|| $this->consistencyHelper->inverseOf->equals($a) 
- 					|| $this->consistencyHelper->equalTo->equals($a) ) {
+ 			if (smwfGetSemanticStore()->minCard->equals($a) 
+ 					|| smwfGetSemanticStore()->maxCard->equals($a)
+ 					|| smwfGetSemanticStore()->domainHintRelation->equals($a) 
+ 					|| smwfGetSemanticStore()->rangeHintRelation->equals($a)
+ 					|| smwfGetSemanticStore()->inverseOf->equals($a)) {
  						// ignore 'min cardinality' and 'max cardinality'
  						continue;
  			}
  			
- 			$minCardArray = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->minCard);
+ 			$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
  			
  			if (empty($minCardArray)) {
  			
- 				$minCards = $this->consistencyHelper->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$minCards = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  			} else {
  				$minCards = $minCardArray[0]->getXSDValue() + 0;
  				
  			}
  			
- 			$maxCardsArray = smwfGetStore()->getPropertyValues($a, $this->consistencyHelper->maxCard);
+ 			$maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
  			
  			if (empty($maxCardsArray)) {
  				
- 				$maxCards = $this->consistencyHelper->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$maxCards = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  			} else {
  				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
