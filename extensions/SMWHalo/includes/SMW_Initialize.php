@@ -259,13 +259,13 @@ function &smwfGetSemanticStore() {
 /**
  * Checks if a database function is available (considers only UDF functions).
  */
-function smwfDBSupportsFunction($functionname) {
+function smwfDBSupportsFunction($lib) {
 		$dbr =& wfGetDB( DB_SLAVE );
-		$res = $dbr->query('SELECT * FROM mysql.func WHERE name = '.$dbr->addQuotes($functionname).' AND type='.$dbr->addQuotes('function'));
+		$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
 		$hasSupport = ($dbr->numRows($res) > 0);
 		$dbr->freeResult( $res );
 		return $hasSupport;
-	}
+}
 
 /**
  * Called from MW to fill HTML Header before page is displayed.

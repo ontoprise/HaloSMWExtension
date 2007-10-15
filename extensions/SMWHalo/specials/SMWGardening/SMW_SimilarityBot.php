@@ -660,7 +660,7 @@
  	}
  }
  // instantiate once (if editdistance function is supported).
- if (smwfDBSupportsFunction('editdistance')) {
+ if (smwfDBSupportsFunction('halowiki')) {
  	new SimilarityBot();
  }
 ?>

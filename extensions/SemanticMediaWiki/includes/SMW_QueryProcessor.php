@@ -578,7 +578,7 @@ class SMWQueryParser {
 								$this->m_errors = $this->m_errors + $dv->getErrors();
 								$vd = new SMWThingDescription();
 							} elseif (isset($tolerance) && $tolerance > 0) {
-								if (smwfDBSupportsFunction('editdistance')) {
+								if (smwfDBSupportsFunction('halowiki')) {
 									$comparator = SMW_CMP_CLS;
 									$vd = new SMWNearValueDescription($dv, $tolerance);
 								} else {

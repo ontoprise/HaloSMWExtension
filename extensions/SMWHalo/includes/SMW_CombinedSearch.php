@@ -296,7 +296,7 @@
 				$sql .= '(value_xsd >= '.($values[$i]-(0.01*$values[$i])). ' AND value_xsd <= '.($values[$i]+(0.01*$values[$i])). ') OR ';
 			} else { 
 				$sql .= 'UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$values[$i].'%').') OR ';
-				if (smwfDBSupportsFunction('editdistance')) {
+				if (smwfDBSupportsFunction('halowiki')) {
 					$sql .= 'EDITDISTANCE(UPPER(value_xsd), UPPER('.$db->addQuotes($values[$i]).')) <= 1 OR ';
 				}
 			}
@@ -360,7 +360,7 @@
 			while($row = $db->fetchObject($res2)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
 			}
-		} else if (smwfDBSupportsFunction('editdistance')) { 
+		} else if (smwfDBSupportsFunction('halowiki')) { 
 			// if not found, try edit distance match 
 			$sql = 'EDITDISTANCE(UPPER(page_title), UPPER('.$db->addQuotes($entityTitle).')) <= 1 AND UPPER(page_title) != UPPER('.$db->addQuotes($entityTitle).')'.$allowedNamespaces;
 			$res3 = $db->select( $db->tableName('page'), 
