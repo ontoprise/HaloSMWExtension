@@ -63,7 +63,7 @@ TreeTransformer.prototype = {
  		myXMLHTTPRequest.send(null);
 
 
-  	var xslRef = myXMLHTTPRequest.responseXML;
+  	var xslRef = GeneralXMLTools.createDocumentFromString(myXMLHTTPRequest.responseText);
  
   	// Finally import the .xsl
   	this.OB_xsltProcessor_gecko.importStylesheet(xslRef);

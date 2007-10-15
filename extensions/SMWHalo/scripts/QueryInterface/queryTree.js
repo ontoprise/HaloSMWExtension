@@ -15,7 +15,7 @@ function updateQueryTree(xmltext){
 	  	var myXMLHTTPRequest = new XMLHttpRequest();
 	  	myXMLHTTPRequest.open("GET", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/QueryInterface/treeview.xslt", false);
 	 	myXMLHTTPRequest.send(null);
-	  	var xslRef = myXMLHTTPRequest.responseXML;
+	  	var xslRef = GeneralXMLTools.createDocumentFromString(myXMLHTTPRequest.responseText);
 
 	  	// Finally import the .xsl
 	  	QI_xsltProcessor_gecko.importStylesheet(xslRef);
