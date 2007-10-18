@@ -206,6 +206,7 @@
  		//$file = wfImageDir($value); old MW 1.10 code
  		
  		// new MW 1.12 code
+ 		if ($value == NULL || $value = '') return wfMsg('smw_gard_missing_selection');
  		$fileTitle = Title::newFromText($value);
  		$file = wfFindFile($fileTitle)->getPath();
  	 		

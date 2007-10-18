@@ -61,12 +61,13 @@
  		echo "Checking for cycles in inheritance graphs...";
  		$log = $this->checkInheritanceCycles();
  		echo "done!\n\n";
- 		if ($log != '') {
+ 		$this->globalLog .= $log;
+ 		/*if ($log != '') {
  			
  			$this->globalLog .= $log;
  			echo "Abort here, because cycles were detected.\n";
  			return $this->globalLog; // end here
- 		}
+ 		}*/
 		
 		echo "Checking property co-variance...";
         $log = $this->checkPropertyCovariance($delay);

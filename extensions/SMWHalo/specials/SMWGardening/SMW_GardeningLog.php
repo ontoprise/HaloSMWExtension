@@ -2,34 +2,16 @@
 /*
  * Created on 16.03.2007
  *
+ * Abstract GardeningLog interface.
+ * 
  * Author: kai
  */
- class GardeningLog {
+ abstract class GardeningLog {
  	
  	/**
  	 * Returns the complete gardening log as a 2-dimensional array.
  	 */
- 	static function getGardeningLog() {
- 		GardeningLog::updateGardeningLog();
-		$fname = 'SMW::getGardeningLog';
-		$db =& wfGetDB( DB_MASTER );
-		
-		$res = $db->select( $db->tableName('smw_gardening'),
-		             array('user','gardeningbot', 'starttime','endtime','log', 'progress', 'id'), array(),
-		             $fname, array('ORDER BY' => 'id DESC') );
-		             
-		if($db->numRows( $res ) > 0)
-		{
-			$row = $db->fetchObject($res);
-			while($row)
-			{
-				$result[]=array($row->user,$row->gardeningbot,$row->starttime,$row->endtime,$row->log, $row->progress, $row->id);
-				$row = $db->fetchObject($res);
-			}
-		}
-		$db->freeResult($res);
-		return count($result) === 0 ? wfMsg('smw_no_gard_log') : $result;
- 	}
+ 	public abstract function getGardeningLog();
  	
  	/**
  	 * Adds a gardening task. One must specify the $botID.
@@ -38,39 +20,14 @@
  	 * @param $botID botID
  	 * @return taskID
  	 */
- 	static function addGardeningTask($botID) {
-		global $wgUser;
-		
-		$fname = 'SMW::addGardeningTask';
-		$db =& wfGetDB( DB_MASTER );
-		$date = getDate();
-		
-		$db->insert( $db->tableName('smw_gardening'),
-		             array('user' => $wgUser->getName(),
-		                   'gardeningbot' => $botID,
-		                   'starttime' => GardeningLog::getDBDate($date),
-		                   'endtime' => null,
-		                   'timestamp_start' => $db->timestamp(),
-		                   'timestamp_end' => null,
-		                   'log' => null,
-		                   'progress' => 0,
-		                   'useremail' => $wgUser->getEmail()), 
-		             $fname );
-		 return $db->insertId(); 
-	}
+ 	public abstract function addGardeningTask($botID);
 	
 	/**
 	 * Removes a gardening task
 	 * 
 	 * @param $id taskID
 	 */
-	static function removeGardeningTask($id) {
-		$fname = 'SMW::removeGardeningTask';
-		$db =& wfGetDB( DB_MASTER );
-		$db->delete( $db->tableName('smw_gardening'),
-		             array("id = $id"), 
-		             $fname );
-	}
+	public abstract function removeGardeningTask($taskID);
 	
 	/**
 	 * Marks a Gardening task as finished.
@@ -78,98 +35,27 @@
 	 * @param $taskID taskID
 	 * @param $logContent content of log as wiki markup
 	 */
-	static function markGardeningTaskAsFinished($taskID, $logContent) {
-		
-		$fname = 'SMW::markGardeningTaskAsFinished';
-		$db =& wfGetDB( DB_MASTER );
-		$date = getDate();
-				
-	    // get botID
-		$res = $db->select( $db->tableName('smw_gardening'),
-		             array('gardeningbot'),
-		             array('id='.$taskID),
-		             $fname,array());
-		if($db->numRows( $res ) == 0) {
-			throw new Exception("There is no task with the id: $taskID");
-		}
-		$row = $db->fetchObject($res);
-		$botID = $row->gardeningbot;
-		        
-		$title = GardeningLog::createGardeningLogFile($botID, $date, $logContent);
-		$db->update( $db->tableName('smw_gardening'),
-		             array('endtime' => GardeningLog::getDBDate($date),
-		             	   'timestamp_end' => $db->timestamp(),
-		             	   'log' => $title->getLocalURL(),
-		             	   'progress' => 1),
-		             array( 'id' => $taskID), 
-		             $fname );
-		return $title;
-	}
+	public abstract function markGardeningTaskAsFinished($taskID, $logContent);
 	
-	static function updateProgress($taskID, $value) {
-		$fname = 'SMW::updateProgress';
-		$db =& wfGetDB( DB_MASTER );
-		$db->update( $db->tableName('smw_gardening'),
-		             array('progress' => $value),
-		             array( 'id' => $taskID), 
-		             $fname );
-	}
+	/**
+	 * Update progress information. Allows database updates every 15s at max. 
+	 * 
+	 * @param $taskID task to update
+	 * @param $value incremental update
+	 */
+	public abstract function updateProgress($taskID, $value);
 	
 	/**
 	 * Returns last finished Gardening task of the given type
 	 * 
 	 * @param botID type of Gardening task
 	 */
-	static function getLastFinishedGardeningTask($botID = NULL) {
-		
-		$fname = 'SMW::getLastFinishedGardeningTask';
-		$db =& wfGetDB( DB_MASTER );
-			         
-		$res = $db->select( $db->tableName('smw_gardening'),
-		             array('MAX(timestamp_end)'),
-		             $botID != NULL ? array('gardeningbot='.$db->addQuotes($botID)) : array(),
-		             $fname,array());
-		if($db->numRows( $res ) > 0)
-		{
-			$row = $db->fetchObject($res);
-			if ($row) {
-				$c_dummy = 'MAX(timestamp_end)';
-				return $row->$c_dummy;
-			}
-		}
-		$db->freeResult($res);
-		return NULL; // minimum
-	}
+	public abstract function getLastFinishedGardeningTask($botID = NULL);
 	
 	/**
-	 * Initializes Gardening table.
+	 * Cleanup Gardening log.
 	 */
-	static function updateGardeningLog() {
-		$dbr =& wfGetDB( DB_SLAVE );
-		$tblName = $dbr->tableName('smw_gardening');
-		
-		// Remove very old (2 days) and still running tasks. They are probably crashed. 
-		// If not, they are still available via GardeningLog category.
-		$twoDaysAgo  = mktime(0, 0, 0, date("m"), date("d")-2,   date("Y"));
-		$date = getDate($twoDaysAgo);
-		$dbr->query('DELETE FROM '.$tblName.' WHERE endtime IS NULL AND starttime < '.$dbr->addQuotes(GardeningLog::getDBDate($date)));
-	}
+	public abstract function cleanupGardeningLog();
 	
-	/**
-	 * Creates a log article.
-	 * Returns: Title of log article.
-	 */
-	private static function createGardeningLogFile($botID, $date, $logContent) {
-		$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
-		$title = Title::newFromText($botID."_at_".$timeInTitle);
-		
- 		$article = new Article($title);
- 		$article->insertNewArticle($logContent, "Logging of $botID at ".GardeningLog::getDBDate($date), false, false);
- 		return $title;
-	}
-	
-	private static function getDBDate($date) {
-		return $date["year"]."-".$date["mon"]."-".$date["mday"]." ".$date["hours"].":".$date["minutes"].":".$date["seconds"];
-	}
  }
 ?>

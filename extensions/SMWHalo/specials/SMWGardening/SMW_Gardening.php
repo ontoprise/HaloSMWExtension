@@ -20,7 +20,10 @@ require_once("SMW_GardeningBot.php");
  */
 
 class SMW_Gardening extends SpecialPage {
-
+	
+	static $g_interface;
+	static $gi_interface;
+	
 	public function __construct() {
 		parent::__construct('Gardening');
 	}
@@ -42,7 +45,7 @@ class SMW_Gardening extends SpecialPage {
 	
 	static function getGardeningLogTable() {
 		$html = "<table width=\"100%\" class=\"smwtable\"><tr><th>User</th><th>Action</th><th>Start-Time</th><th>End-Time</th><th>Log</th><th>Progress</th><th>State</th></tr>";
-		$gardeningLog = GardeningLog::getGardeningLog();
+		$gardeningLog = SMW_Gardening::getGardeningLog()->getGardeningLogAsTable();
 		if ($gardeningLog == null || !is_array($gardeningLog)) {
 			return $gardeningLog;
 		}
@@ -87,5 +90,40 @@ class SMW_Gardening extends SpecialPage {
  		return $htmlResult;
 	}
 	
+	static function getGardeningIssues() {
+		global $smwgHaloIP;
+		if (SMW_Gardening::$gi_interface == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					SMW_Gardening::$gi_interface = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
+					SMW_Gardening::$gi_interface = new SMWGardeningIssuesSQL();
+				break;
+			}
+		}
+		return SMW_Gardening::$gi_interface;
+	}
+	
+	static function getGardeningLog() {
+		global $smwgHaloIP;
+		if (SMW_Gardening::$g_interface == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					SMW_Gardening::$g_interface = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningLogSQL.php');
+					SMW_Gardening::$g_interface = new SMWGardeningSQL();
+				break;
+			}
+		}
+		return SMW_Gardening::$g_interface;
+	}
 }
 ?>

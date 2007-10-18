@@ -8,12 +8,12 @@
  
  // include them for synchronous run
  require_once("ConsistencyBot/SMW_ConsistencyBot.php");
- require_once("SMW_SimilarityBot.php");
- require_once("SMW_TemplateMaterializerBot.php");
- require_once("SMW_UndefinedEntitiesBot.php");
- require_once("SMW_MissingAnnotationsBot.php");
- require_once("SMW_AnomaliesBot.php");
- require_once("SMW_ImportOntologyBot.php");
+ require_once("Bots/SMW_SimilarityBot.php");
+ require_once("Bots/SMW_TemplateMaterializerBot.php");
+ require_once("Bots/SMW_UndefinedEntitiesBot.php");
+ require_once("Bots/SMW_MissingAnnotationsBot.php");
+ require_once("Bots/SMW_AnomaliesBot.php");
+ require_once("Bots/SMW_ImportOntologyBot.php");
  
  require_once("SMW_GardeningLog.php");
  
@@ -134,7 +134,7 @@
  		$currentTime = time();
  		if ($currentTime-$this->lastUpdate > 15) { // allow updates only after 15 seconds
  			$this->lastUpdate = $currentTime;
- 			if ($this->taskId != -1) GardeningLog::updateProgress($this->taskId, $this->getCurrentWork());
+ 			if ($this->taskId != -1) SMW_Gardening::getGardeningLog()->updateProgress($this->taskId, $this->getCurrentWork());
  		}
  	}
  	
@@ -203,7 +203,7 @@
  	 	}
  	 	
  	 	// ok everything is fine, so add a gardening task
- 	 	$taskid = GardeningLog::addGardeningTask($botID);
+ 	 	$taskid = SMW_Gardening::getGardeningLog()->addGardeningTask($botID);
  		$IP = realpath( dirname( __FILE__ ) . '/..' );
  		
  		
@@ -232,7 +232,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 					GardeningLog::markGardeningTaskAsFinished($taskid, $log);
+ 					SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
  				}
  			}
   		}
@@ -258,7 +258,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 				GardeningLog::markGardeningTaskAsFinished($taskid, $log);
+ 				SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
  				}
  			}
   		}

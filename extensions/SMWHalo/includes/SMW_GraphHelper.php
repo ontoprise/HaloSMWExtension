@@ -16,7 +16,8 @@
 	// various helper functions
 	
  	/**
- 	 * Checks if there is a path from $c_id1 to $c_id2
+ 	 * Checks if there is a path from $c_id1 to $c_id2. Method can handle
+ 	 * cycles and does not run into an endless loop.
  	 * 
  	 * @param $graph
  	 * @param $c_id1 ID of page
@@ -28,6 +29,15 @@
  		if ($c_id1 == $c_id2) {
  			return true;
  		}
+ 		$visitedNodes = array(); // after _checkForPath: contains path between $c_id1 and $c_id2 if it exists
+ 		return GraphHelper::_checkForPath($graph, $c_id1, $c_id2, $visitedNodes);
+ 	}
+ 	
+ 	/**
+ 	 * Find path between $c_id1 and $c_id2. Finds only one even if more exist.
+ 	 * $visitedNodes should be an empty array. It returns a path if one exists.
+ 	 */
+ 	private static function _checkForPath(& $graph, $c_id1, $c_id2, & $visitedNodes) {
  		$nextEdges = GraphHelper::searchInSortedGraph($graph, $c_id1);
  		if ($nextEdges == null) {
  			return false;
@@ -36,11 +46,18 @@
  			if ($e->to == $c_id2) {
  				return true;
  			}
- 			$finished = GraphHelper::checkForPath($graph, $e->to, $c_id2);
- 			if ($finished) {
- 				return true;
- 			}
+ 			if (!in_array($visitedNodes, $e->to)) {
+ 				$visitedNodes[] = $e->from; // put visited node on stack
+ 				$finished = GraphHelper::_checkForPath($graph, $e->to, $c_id2, $visitedNodes);
+ 				if ($finished) {
+ 					// do not remove nodes from stack, 
+ 					// because the complete path remains in $visitedNodes this way 
+ 					return true;
+ 				}
+ 			} 
+ 			
  		}
+ 		array_pop($visitedNodes); // remove current node from stack
  		return false;
  	}
  	

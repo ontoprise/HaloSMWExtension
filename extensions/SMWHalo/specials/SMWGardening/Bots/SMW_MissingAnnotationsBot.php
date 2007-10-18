@@ -4,7 +4,9 @@
  *
  * Author: kai
  */
- require_once("SMW_GardeningBot.php");
+ global $smwgHaloIP;
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
  
  
 

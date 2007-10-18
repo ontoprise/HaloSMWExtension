@@ -56,12 +56,12 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 // include bots
 require_once("ConsistencyBot/SMW_ConsistencyBot.php");
-require_once("SMW_SimilarityBot.php");
-require_once("SMW_TemplateMaterializerBot.php");
-require_once("SMW_UndefinedEntitiesBot.php");
-require_once("SMW_MissingAnnotationsBot.php");
-require_once("SMW_AnomaliesBot.php");
-require_once("SMW_ImportOntologyBot.php");
+require_once("Bots/SMW_SimilarityBot.php");
+require_once("Bots/SMW_TemplateMaterializerBot.php");
+require_once("Bots/SMW_UndefinedEntitiesBot.php");
+require_once("Bots/SMW_MissingAnnotationsBot.php");
+require_once("Bots/SMW_AnomaliesBot.php");
+require_once("Bots/SMW_ImportOntologyBot.php");
 
 require_once("SMW_GardeningLog.php");
 
@@ -85,13 +85,13 @@ require_once("SMW_GardeningLog.php");
  		$log .= "\n[[category:GardeningLog]]";
  
  		// mark as finished
- 		$title = GardeningLog::markGardeningTaskAsFinished($taskid, $log);
+ 		$title = SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
  		echo "Log saved at: ".$title->getLocalURL()."\n";
  		
  	} catch(Exception $e) {
  		$log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
  		$log .= "\n[[category:GardeningLog]]";
- 		$title = GardeningLog::markGardeningTaskAsFinished($taskid, $log);
+ 		$title = SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
  		echo $log;
  		echo "\nLog saved at: ".$title->getLocalURL();
  	} 

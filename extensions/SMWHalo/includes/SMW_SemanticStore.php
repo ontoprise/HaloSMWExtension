@@ -61,6 +61,11 @@
 	}
  	
  	/**
+ 	 * Initializes all tables and predefined pages.
+ 	 */
+ 	public abstract function setup($verbose);
+ 	
+ 	/**
  	 * Returns pages of the given namespace
  	 */
  	public abstract function getPages($namespaces = NULL, $requestoptions = NULL);

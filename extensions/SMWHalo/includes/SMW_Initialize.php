@@ -161,17 +161,7 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
-	$haloSQLStore = NULL;
-	global $smwgDefaultStore, $smwgHaloIP;
-			switch ($smwgDefaultStore) {
-				case (SMW_STORE_MWDB): default:
-					require_once($smwgHaloIP . '/includes/SMW_InitializeSQLDB.php');
-					$haloSQLStore = new HaloSQLTableFactory();
-				break;
-			}
-	if ($haloSQLStore != NULL) {
-		$haloSQLStore->createOrUpdateTables(true);
-	}
+	smwfGetSemanticStore()->setup(true);
 	return true;
 }
 /**

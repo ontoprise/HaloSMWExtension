@@ -133,7 +133,7 @@
             	copy($SourceDirectory.$entry, $dest_dir."/".basename($SourceDirectory.$entry));
             	
             	// simulate an upload
-            	$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry)));
+            	$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
             	$im_file->recordUpload2("", "auto-inserted image", "noText");
             	print "done!";
             }
@@ -152,6 +152,7 @@
 	$contents = fread ($handle, filesize ($filepath));
 	$filename = basename($filepath, ".".$ext);
 	$filename = str_replace("_", " ", rawurldecode($filename));
+	print "\nProcessing ".$filename;
 	$helpPageTitle = Title::newFromText($filename, $ns);
 	$helpPageArticle = new Article($helpPageTitle);
 	if (!$helpPageArticle->exists()) {

@@ -4,8 +4,9 @@
  *
  * Author: KK
  */
- require_once("SMW_GardeningBot.php");
- require_once("SMW_ParameterObjects.php");
+ global $smwgHaloIP;
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
  
  // Parameters of bot
  
@@ -53,7 +54,7 @@
  		}
  		
  		// get timestamp of last template materialization operation
- 		$lastTemplateMaterialization = GardeningLog::getLastFinishedGardeningTask($this->id);
+ 		$lastTemplateMaterialization = SMW_Gardening::getGardeningLog()->getLastFinishedGardeningTask($this->id);
  		
  		// if not null, incremental update is possible to be configured by user
  		if ($lastTemplateMaterialization != NULL) {

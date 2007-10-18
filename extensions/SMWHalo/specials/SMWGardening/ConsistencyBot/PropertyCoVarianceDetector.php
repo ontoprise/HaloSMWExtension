@@ -194,13 +194,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategoriesOfSuperProperty = smwfGetSemanticStore()->getDomainsOfSuperProperty($this->propertyGraph, $a);
  				$covariant = true;
  				foreach($domainCategoriesOfSuperProperty as $domainSuperCat) {
- 					$valid = false;
+ 					$pathExists = false;
  					foreach($domainCategories as $domainCat) { 
  						if (GraphHelper::checkForPath($this->categoryGraph, $domainCat->getTitle()->getArticleID(), $domainSuperCat->getTitle()->getArticleID())) {
- 							$valid = true;
+ 							$pathExists = true;
  						}
  					}
- 					$covariant = $covariant && $valid;
+ 					$covariant = $covariant && $pathExists;
  				}
  				if (!$covariant && count($domainCategoriesOfSuperProperty) > 0) {
  					$log .= wfMsg('smw_gard_domains_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
@@ -227,15 +227,15 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					$numLog++;
  				}
  				$typesOfSuperAttribute = smwfGetSemanticStore()->getTypeOfSuperProperty($this->propertyGraph, $a);
- 				$valid = false;
+ 				$pathExists = false;
  				// only check first 'has type' value, because if more exist, it will be indicated anyway. 
  				$smwFirstTypeValue = count($typesOfSuperAttribute) > 0 ? $typesOfSuperAttribute[0] : null;
  				if ($smwFirstTypeValue != null && $smwFirstTypeValue instanceof SMWTypesValue) { 
  						if ($smwFirstTypeValue->getXSDValue() == $types[0]->getXSDValue()) {
- 							$valid = true;
+ 							$pathExists = true;
  						}
  				}
- 				if (!$valid && $smwFirstTypeValue != null) {
+ 				if (!$pathExists && $smwFirstTypeValue != null) {
  					$log .= wfMsg('smw_gard_types_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
  					$numLog++;
  				}
@@ -255,16 +255,21 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   		
  			$rangeCategories = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->rangeHintRelation);
  			if (empty($rangeCategories)) {
+ 				$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
  				// range categories may be empty if types contain no wikipage
  				if (!empty($types)) {
- 					// check for wikipage should be more "nice"
+ 					
  					foreach($types as $type) { 
- 						if ($type instanceof SMWTypesValue && in_array("Page", $type->getTypeLabels())) {
+ 						if ($type instanceof SMWTypesValue && $type->getTypeID() == '_wpg') {
  							$log .= wfMsg('smw_gard_range_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
  							$numLog++;
  							break;
  						}
  					}
+ 				} else { // types empty -> default is Page
+ 					$log .= wfMsg('smw_gard_range_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
+ 					$numLog++;
+ 					
  				}
  			} else { 
  				// get ranges of parent
@@ -273,13 +278,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$covariant = true;
  				// check if range categories are sub categories of the range of the super properties 
  				foreach($rangeCategoriesOfSuperProperty as $rangeSuperCat) {
- 					$valid = false;
+ 					$pathExists = false;
  					foreach($rangeCategories as $rangeCat) { 
  						if (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeSuperCat->getArticleID())) {
- 							$valid = true;
+ 							$pathExists = true;
  						}
  					}
- 					$covariant = $covariant && $valid;
+ 					$covariant = $covariant && $pathExists;
  				}
  				if (!$covariant) {
  					$log .= wfMsg('smw_gard_ranges_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
