@@ -14,48 +14,7 @@
  * 
  */
  
- // covariance issues
- define('SMW_GARDISSUE_DOMAINS_NOT_COVARIANT', 101);
- define('SMW_GARDISSUE_RANGES_NOT_COVARIANT', 102);
- define('SMW_GARDISSUE_TYPES_NOT_COVARIANT', 103);
- define('SMW_GARDISSUE_MINCARD_NOT_COVARIANT', 104);
- define('SMW_GARDISSUE_MAXCARD_NOT_COVARIANT', 105);
- define('SMW_GARDISSUE_SYMETRY_NOT_COVARIANT', 106);
- define('SMW_GARDISSUE_TRANSITIVITY_NOT_COVARIANT', 107);
- // ...
- // not defined issues
- define('SMW_GARDISSUE_DOMAINS_NOT_DEFINED', 201);
- define('SMW_GARDISSUE_DOMAINS_NOT_DEFINED', 202);
- define('SMW_GARDISSUE_TYPES_NOT_DEFINED', 203);
- 
- define('SMW_GARDISSUE_CATEGORY_NOT_DEFINED', 204);
- define('SMW_GARDISSUE_PROPERTY_NOT_DEFINED', 205);
- define('SMW_GARDISSUE_TARGET_NOT_DEFINED', 206);
- 
- // missing / doubles issues
- define('SMW_GARDISSUE_DOUBLE_TYPE', 301);
- define('SMW_GARDISSUE_DOUBLE_MAX_CARD', 302);
- define('SMW_GARDISSUE_DOUBLE_MIN_CARD', 303);
- define('SMW_GARD_ISSUE_MISSING_PARAM', 304);
- define('SMW_GARDISSUE_INSTANCE_WITHOUT_CAT', 305);
- 
- // wrong value / entity issues
- define('SMW_GARDISSUE_MAXCARD_NOT_NULL', 401);
- define('SMW_GARDISSUE_MINCARD_BELOW_NULL', 402);
- define('SMW_GARDISSUE_WRONG_CARD_VALUE', 403);
- define('SMW_GARDISSUE_WRONG_TARGET_VALUE', 404);
- define('SMW_GARDISSUE_WRONG_DOMAIN_VALUE', 405);
- define('SMW_GARDISSUE_WRONG_CARD', 406);
- 
- // incompatible entity issues
- define('SMW_GARD_ISSUE_DOMAIN_NOT_RANGE', 501);
- define('SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY', 502);
- define('SMW_GARD_ISSUE_INCOMPATIBLE_TYPE', 503);
- 
- // others
-define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
- 
- abstract class SMWGardeningIssues {
+ abstract class SMWGardeningIssuesAccess {
  	
  	
  	/**
@@ -89,6 +48,14 @@ define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
  	public abstract function addGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL);
  	
  	/**
+ 	 * Add Gardening issue about an article.
+ 	 * 
+ 	 * @param $gi_type type of issue.
+ 	 * @param $t1 Title issue is about.
+ 	 */
+ 	public abstract function addGardeningIssueAboutArticle($bot_id, $gi_type, Title $t1);
+ 	
+ 	/**
  	 * Add Gardening issue about values.
  	 * 
  	 * @param $gi_type type of issue.
@@ -103,41 +70,69 @@ define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
  * 
  * @author kai
  */
-class GardeningIssue {
+abstract class GardeningIssue {
 	
-	private $gi_type;
-	private $t1;
-	private $t2;
-	private $value;
+	protected $bot_id;
+	protected $gi_type;
+	protected $t1;
+	protected $t2;
+	protected $value;
 	
-	public function __construct($gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+	protected function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+		$this->bot_id = $bot_id;
 		$this->gi_type = $gi_type;
-		if ($t1_ns != NULL && $t1 != NULL && $t1 != '') {
-			$this->t1 = Title::newFromText($t1_ns, $t1);
+		if ($t1_ns != -1 && $t1 != NULL && $t1 != '') {
+			$this->t1 = Title::newFromText($t1, $t1_ns);
 		}
-		if ($t2_ns != NULL && $t2 != NULL && $t2 != '') {
-			$this->t1 = Title::newFromText($t2_ns, $t2);
-		}
-		$this->value = $value;
-	}
-	public static function createIssueAboutArticles($gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
-		$this->gi_type = $gi_type;
-		if ($t1_ns != NULL && $t1 != NULL && $t1 != '') {
-			$this->t1 = Title::newFromText($t1_ns, $t1);
-		}
-		if ($t2_ns != NULL && $t2 != NULL && $t2 != '') {
-			$this->t1 = Title::newFromText($t2_ns, $t2);
+		if ($t2_ns != -1 && $t2 != NULL && $t2 != '') {
+			$this->t2 = Title::newFromText($t2, $t2_ns);
 		}
 		$this->value = $value;
 	}
 	
-	public static function createIssueAboutValue($gi_type, $t1_ns, $t1, $value) {
-		$this->gi_type = $gi_type;
-		if ($t1_ns != NULL && $t1 != NULL && $t1 != '') {
-			$this->t1 = Title::newFromText($t1_ns, $t1);
-		}
-		
-		$this->value = $value;
+	public static function createIssueAboutArticles($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+		global $registeredBots;
+		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
+		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
 	}
+	
+	public static function createIssueAboutValue($bot_id, $gi_type, $t1_ns, $t1, $value) {
+		global $registeredBots;
+		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
+		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, -1, NULL, $value);
+	}
+	
+	public static function createIssueAboutArticle($bot_id, $gi_type, $t1_ns, $t1) {
+		global $registeredBots;
+		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
+		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, -1, NULL, NULL);
+	}
+	
+	public function getBotID() {
+		return $this->bot_id;
+	}
+	
+	public function getType() {
+		return $this->gi_type;
+	}
+	
+	public function getTitle1() {
+		return $this->t1;
+	}
+	
+	public function getTitle2() {
+		return $this->t2;
+	}
+	
+	public function getValue() {
+		return $this->value;
+	}
+	
+	/**
+	 * Returns textual representation of Gardening issue.
+	 * 
+	 * @param & $skin reference to skin object to create links. 
+	 */
+	public abstract function getTextualRepresenation(& $skin);
 }
 ?>

@@ -5,8 +5,8 @@
  * Author: kai
  */
  
-require_once("GraphEdge.php"); 
 global $smwgHaloIP;
+require_once("GraphEdge.php"); 
 require_once("$smwgHaloIP/includes/SMW_GraphHelper.php"); 
  
  // default cardinalities 
@@ -15,9 +15,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  
   
  class PropertyCoVarianceDetector {
- 	
- 	
- 	
+ 	 	
  	// reference to bot
  	private $bot;
  	
@@ -27,6 +25,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	// inheritance graphs.
  	private $categoryGraph;
  	private $propertyGraph;
+ 	
+ 	// GardeningIssue store
+ 	private $gi_store;
  	
 	
 	/**
@@ -38,7 +39,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	
  		$this->categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
  		$this->propertyGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
- 		
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
  	/**
@@ -48,9 +49,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 */
  	public function checkPropertyGraphForCovariance() {
  		global $smwgContLang;
- 		$numLog = 0;
- 		$namespaces = $smwgContLang->getNamespaces();
- 		$completeLog =  "";
+ 		 		
  		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$cnt = 0;
  		$work = count($attributes);
@@ -61,15 +60,12 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				usleep($this->delay);
  			}
  			$this->bot->worked(1);
- 			$log = ""; 
+ 			
  			$cnt++;
  			if ($cnt % 10 == 1 || $cnt == $work) { 
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
- 			if ($numLog > MAX_LOG_LENGTH) {
- 				print (" limit of consistency issues reached. Break. ");
- 				return $completeLog;
- 			}
+ 			
  			if (smwfGetSemanticStore()->domainHintRelation->equals($a) 
  					|| smwfGetSemanticStore()->rangeHintRelation->equals($a)
  					|| smwfGetSemanticStore()->minCard->equals($a) 
@@ -79,25 +75,25 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  						continue;
  			}
   			
- 			$this->checkMinCardinality($a, $log, $numLog);
- 			$this->checkMaxCardinality($a, $log, $numLog);
- 			$this->checkDomainCovariance($a, $log, $numLog);
- 			$this->checkTypeEquality($a, $log, $numLog);
- 			$this->checkRangeCovariance($a, $log, $numLog);
- 			$this->checkSymTransCovariance($a, $log, $numLog);
+ 			$this->checkMinCardinality($a);
+ 			$this->checkMaxCardinality($a);
+ 			$this->checkDomainCovariance($a);
+ 			$this->checkTypeEquality($a);
+ 			$this->checkRangeCovariance($a);
+ 			$this->checkSymTransCovariance($a);
  			
- 			$completeLog .= $log;
+ 			
  		}
- 		return $completeLog;
+ 		return '';
  	}
  	
  	/** 		
  	 * Check min cardinality for co-variance
   	 */
- 	private function checkMinCardinality($a, & $log, & $numLog) {
+ 	private function checkMinCardinality($a) {
  		
   			global $smwgContLang;
-  			$namespaces = $smwgContLang->getNamespaces();
+  			
  			$minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
  		
  			if (!empty($minCard)) {
@@ -105,14 +101,16 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				// check for doubles
  				if (count($minCard) > 1) {
- 					$log .= wfMsg('smw_gard_doublemincard', $a->getText(), $minCard[0]->getXSDValue(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_MIN_CARD, $a, count($minCard));
+ 					
  				}
  				
  				// check for correct value
  				if ($this->isCardinalityValue($minCard[0]->getXSDValue()) !== true) {
- 					$log .= wfMsg('smw_gard_wrongcardvalue', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD_VALUE, $a, $minCard[0]->getXSDValue());
+ 					
  				}
  				// read min cards
  				
@@ -121,7 +119,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				$minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
  				if ($minCardCOVTest !== true) {
- 					$log .= wfMsg($minCardCOVTest, $a->getText(), $namespaces[$a->getNamespace()])."\n\n"; 
+ 					 
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), constant($minCardCOVTest), $a);
  				}	
  			} else {
  				// check with default min card (CARDINALITY_MIN)
@@ -131,7 +130,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  				$minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
  				if ($minCardCOVTest !== true) {
- 					$log .= wfMsg($minCardCOVTest, $a->getText(), $namespaces[$a->getNamespace()])."\n\n"; 
+ 					 
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), constant($minCardCOVTest), $a);
  				}	
  			}
  	}
@@ -139,22 +139,24 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/** 		
  	 * Check max cardinality for co-variance
   	 */
- 	private function checkMaxCardinality($a, & $log, & $numLog) {
+ 	private function checkMaxCardinality($a) {
  		
  			global $smwgContLang;
-  			$namespaces = $smwgContLang->getNamespaces();
+  			
  			$maxCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
  			
  			if (!empty($maxCard)) {
  				// check for doubles
  				if (count($maxCard) > 1) {
- 					$log .= wfMsg('smw_gard_doublemincard', $a->getText(), $maxCard[0]->getXSDValue(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 				
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_MAX_CARD, $a, count($maxCard));
+ 					
  				}
  				// check for correct value
  				if ($this->isCardinalityValue($maxCard[0]->getXSDValue()) !== true && $maxCard[0]->getXSDValue() != '*') {
- 					$log .= wfMsg('smw_gard_wrongcardvalue', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD_VALUE, $a, $maxCard[0]->getXSDValue());
+ 					
+ 					
  				}
  				// check for co-variance with parent
  				
@@ -163,7 +165,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
  				if ($maxCardCOVTest !== true) {
- 					$log .= wfMsg($maxCardCOVTest, $a->getText(), $namespaces[$a->getNamespace()])."\n\n"; 
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), constant($maxCardCOVTest), $a);
+ 					 
  				}	
  			} else {
  				// check with default max card (CARDINALITY_UNLIMITED)
@@ -173,7 +176,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
  				if ($maxCardCOVTest !== true) {
- 					$log .= wfMsg($maxCardCOVTest, $a->getText(), $namespaces[$a->getNamespace()])."\n\n"; 
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), constant($maxCardCOVTest), $a);
+ 					 
  				}	
  			}	
  	}
@@ -181,14 +185,14 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/** 		
  	 * Check domain co-variance
   	 */
- 	private function checkDomainCovariance($a, & $log, & $numLog) {
+ 	private function checkDomainCovariance($a) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaces();
-  		
+  		  		
  			$domainCategories = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainHintRelation);
  			if (empty($domainCategories)) {
- 				$log .= wfMsg('smw_gard_domain_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $a);
+ 				
  			} else {
  				// get domain of parent
  				$domainCategoriesOfSuperProperty = smwfGetSemanticStore()->getDomainsOfSuperProperty($this->propertyGraph, $a);
@@ -203,8 +207,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					$covariant = $covariant && $pathExists;
  				}
  				if (!$covariant && count($domainCategoriesOfSuperProperty) > 0) {
- 					$log .= wfMsg('smw_gard_domains_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $a);
+ 					
  				}
  				
  			}
@@ -213,18 +218,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/** 		
  	 *  Check type equality
   	 */
- 	private function checkTypeEquality($a, & $log, & $numLog) {
+ 	private function checkTypeEquality($a) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaces();
+  		
   		
  			$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
  			if (empty($types)) {
  				//$log .= wfMsg('smw_gard_types_is_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 				//$numLog++;
+ 				//
  			} else {
  				if (count($types) > 1) {
- 					$log .= wfMsg('smw_gard_more_than_one_type', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_TYPE, $a, count($types));
+ 					
  				}
  				$typesOfSuperAttribute = smwfGetSemanticStore()->getTypeOfSuperProperty($this->propertyGraph, $a);
  				$pathExists = false;
@@ -236,8 +242,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  						}
  				}
  				if (!$pathExists && $smwFirstTypeValue != null) {
- 					$log .= wfMsg('smw_gard_types_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 					
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_COVARIANT, $a);
+ 					
  				}
  			}
  	}
@@ -249,10 +256,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 *	simply checks if all ranges a co-variant.
  	 *	If no range is defined, then the type must not contain a wikipage. 
   	 */
- 	private function checkRangeCovariance($a, & $log, & $numLog) {
+ 	private function checkRangeCovariance($a) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaces();
-  		
+  		  		
  			$rangeCategories = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->rangeHintRelation);
  			if (empty($rangeCategories)) {
  				$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
@@ -261,14 +267,16 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					
  					foreach($types as $type) { 
  						if ($type instanceof SMWTypesValue && $type->getTypeID() == '_wpg') {
- 							$log .= wfMsg('smw_gard_range_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 							$numLog++;
+ 							
+ 							$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $a);
+ 							
  							break;
  						}
  					}
  				} else { // types empty -> default is Page
- 					$log .= wfMsg('smw_gard_range_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 				
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $a);
+ 					
  					
  				}
  			} else { 
@@ -287,8 +295,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					$covariant = $covariant && $pathExists;
  				}
  				if (!$covariant) {
- 					$log .= wfMsg('smw_gard_ranges_not_covariant', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 					$numLog++;
+ 				
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $a);
+ 					
  				}
  			}
  			
@@ -297,9 +306,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/** 		
  	 * Check symetry and transitivity co-variance
   	 */
- 	private function checkSymTransCovariance($a, & $log, & $numLog) {
+ 	private function checkSymTransCovariance($a) {
  		global $smwgContLang;
-  		$namespaces = $smwgContLang->getNamespaces();
+  		
   			
   			
   			if (count(smwfGetSemanticStore()->getDirectSuperProperties($a)) == 0) {
@@ -314,23 +323,27 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			 			
  			if (($transOfRelation && !$transOfSuperRelation)) {  
- 				$log .= wfMsg('smw_gard_trans_not_covariant1', $a->getText(), $a->getNsText())."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TRANSITIVITY_NOT_COVARIANT1, $a);
+ 				
  			} else if ((!$transOfRelation && $transOfSuperRelation)) {
  				
- 				$log .= wfMsg('smw_gard_trans_not_covariant2', $a->getText(), $a->getNsText())."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TRANSITIVITY_NOT_COVARIANT2, $a);
+ 				
  			}
  			
  			$symOfRelation = $this->isTitleInArray(smwfGetSemanticStore()->symetricalCat, $categoriesOfRelation);
  			$symOfSuperRelation = $this->isTitleInArray(smwfGetSemanticStore()->symetricalCat, $categoriesOfSuperRelation);
  			
  			if (($symOfRelation && !$symOfSuperRelation)) {
- 				$log .= wfMsg('smw_gard_symetry_not_covariant1', $a->getText(), $a->getNsText())."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_SYMETRY_NOT_COVARIANT1, $a);
+ 				
  			} else if ((!$symOfRelation && $symOfSuperRelation)) {
- 				$log .= wfMsg('smw_gard_symetry_not_covariant2', $a->getText(), $a->getNsText())."\n\n";
- 				$numLog++;
+ 			
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_SYMETRY_NOT_COVARIANT2, $a);
+ 				
  			}
  	}
  	
@@ -345,13 +358,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	private function checkMaxCardinalityForCovariance($attr_max, $superattr_max) {
  		 		
  		if ($attr_max == 0) {
- 			return ('smw_gard_maxcard_not_null');
+ 			return ('SMW_GARDISSUE_MAXCARD_NOT_NULL');
  		}
  		
  			
  		if ($superattr_max != CARDINALITY_UNLIMITED) {
  			if ($attr_max > $superattr_max) {
- 				return ('smw_gard_maxcard_not_covariant');
+ 				return ('SMW_GARDISSUE_MAXCARD_NOT_COVARIANT');
  			}
  		}
  		return true;
@@ -368,11 +381,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	private function checkMinCardinalityForCovariance($attr_min, $superattr_min) {
  			
  		if ($attr_min < 0) {
- 			return ('smw_gard_mincard_not_below_null');
+ 			return ('SMW_GARDISSUE_MINCARD_BELOW_NULL');
  		} 
  		
  		if ($attr_min < $superattr_min) {
- 			return ('smw_gard_mincard_not_covariant');
+ 			return ('SMW_GARDISSUE_MINCARD_NOT_COVARIANT');
  		}
  		
  		return true;

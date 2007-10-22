@@ -59,6 +59,8 @@
  	final public function getParameters() {
  		return $this->parameters;
  	}
+ 	
+ 	
  	/**
  	 * Validates the Parameters. 
  	 * $paramArray: array of params sent by user

@@ -35,10 +35,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 */
  	public function checkPropertyAnnotations() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
- 		$log = "";
+ 	 		
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
- 		$numLog = 0;
+ 		
  		$work = count($properties);
  		$cnt = 0;
  		print "\n";
@@ -52,7 +51,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			if ($cnt % 10 == 1 || $cnt == $work) { 
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
- 			if ($numLog > MAX_LOG_LENGTH) { print (" limit of consistency issues reached. Break. "); return $log; }
+ 			
  			if (smwfGetSemanticStore()->domainHintRelation->equals($r) 
  					|| smwfGetSemanticStore()->rangeHintRelation->equals($r)
  					|| smwfGetSemanticStore()->minCard->equals($r) 
@@ -100,13 +99,10 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  							}
  						}
  						if (!$isValid && !empty($categoriesOfInstance) && !empty($rangeCategories)) {
- 							$log.=wfMsg('smw_gard_wrong_target', $target->getText(), $r->getText(), $namespaces[$r->getNamespace()])."\n\n";
- 							$numLog++;
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target, $r);
+ 						 							
  						} 
- 						/*if (!$target->getTitle()->exists()) {
- 							$log.=wfMsg('smw_gard_relationtarget_undefined', $target->getText(), "[[".$namespaces[$r->getNamespace()].":".$r->getText()."]]")."\n\n";
- 							$numLog++;
- 						}*/
+ 						
  					} else if ($target instanceof SMWNAryValue) { // n-ary relation
  						
  								$explodedValues = $target->getDVs();
@@ -115,11 +111,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  								//get all range instances and check if their categories are subcategories of the range categories.
  								for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
  									if ($explodedValues[$i] == NULL) {
- 										$log.=wfMsg('smw_gard_missing_param', $subject->getText(), $r->getText(), $namespaces[$r->getNamespace()], $i)."\n\n";
- 										$numLog++;
+ 										$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $r, $i);
+ 										
  									} else {
  										
- 										if ($explodedTypes[$i] == 'Page') { //TODO: externalize or use constant
+ 										if ($explodedValues[$i]->getTypeID() == '_wpg') { //TODO: TEST THIS!!!
  											
  											$categoriesOfInstance = smwfGetSemanticStore()->getCategoriesForInstance($explodedValues[$i]->getTitle());
  											
@@ -132,8 +128,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  												}
  											}
  											if (!$isValid && !empty($rangeCategories) && !empty($categoriesOfInstance)) {
- 												$log.=wfMsg('smw_gard_wrong_range', $subject->getText(), $a->getText(), $namespaces[$r->getNamespace()])."\n\n";
- 												$numLog++;
+ 												$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r);
+												
  											}
  										}
  									}
@@ -155,15 +151,14 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  						}
  					}
  					if (!$isValid && !empty($domainCategoryIDs) && !empty($domainCategories)) {
+ 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
  						
- 						$log.=wfMsg('smw_gard_wrong_domain', $subject->getText(), $r->getText(),$namespaces[$r->getNamespace()])."\n\n";
- 						$numLog++;
  					}
  					
  				} 
  			}
  		}
- 		return $log;
+ 		return ;
  	}
  	
  	
@@ -172,9 +167,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 */
  	public function checkAnnotationCardinalities() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
- 		$log = "";
- 		$numLog = 0;
+ 		
  		// check attribute annotation cardinalities
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$this->bot->addSubTask(count($properties));
@@ -183,7 +176,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				usleep($this->delay);
  			}
  			$this->bot->worked(1);
- 			if ($numLog > MAX_LOG_LENGTH) { return $log; }
+ 			
  			if (smwfGetSemanticStore()->minCard->equals($a) 
  					|| smwfGetSemanticStore()->maxCard->equals($a)
  					|| smwfGetSemanticStore()->domainHintRelation->equals($a) 
@@ -226,16 +219,15 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$num = count($allAttributeForSubject);
  				
  				if ($num < $minCards || $num > $maxCards) {
- 						$log.=wfMsg('smw_gard_incorrect_cardinality', $subject->getText(), $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 						$numLog++;
- 				}
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD, $subject, $a);
+				}
  			
  			}
  			
  			
  		}
  		
- 		return $log;
+ 		return '';
  	}
  	
  	

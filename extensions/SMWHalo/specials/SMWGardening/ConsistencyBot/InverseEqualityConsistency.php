@@ -18,10 +18,9 @@
  	
  	public function checkInverseRelations() {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
+ 		
  		$inverseRelations = $this->getInverseRelations();
- 		$log = "";
- 		$numLog = 0;
+ 	
  		$work = count($inverseRelations);
  		$cnt = 0;
  		print "\n";
@@ -32,7 +31,7 @@
  			if ($cnt % 10 == 1 || $cnt == $work) { 
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
- 			if ($numLog > MAX_LOG_LENGTH) { print (" limit of consistency issues reached. Break. "); return $log; }
+ 			
  			list($s, $t) = $r;
  			$domainOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainHintRelation);
  			$domainOfTagert = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainHintRelation);
@@ -40,48 +39,53 @@
  			$rangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->rangeHintRelation);
  			
  			if (count($domainOfSource) != 1) {
- 				$log .= wfMsg('smw_gard_domain_not_defined', $s->getText(), $namespaces[SMW_NS_PROPERTY])."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $s);
+ 				
  				continue;
  			}
  			if (count($domainOfTagert) != 1) {
- 				$log .= wfMsg('smw_gard_domain_not_defined', $t->getText(), $namespaces[SMW_NS_PROPERTY])."\n\n";
- 				$numLog++;
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $t);
+ 				
  				continue;
  			}
  			if (count($rangeOfSource) != 1) {
- 				$log .= wfMsg('smw_gard_range_not_defined', $s->getText(), $namespaces[SMW_NS_PROPERTY])."\n\n";
- 				$numLog++;
+ 			
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $s);
+ 			
  				continue;
  			}
  			if (count($rangeOfTarget) != 1) {
- 				$log .= wfMsg('smw_gard_range_not_defined', $t->getText(), $namespaces[SMW_NS_PROPERTY])."\n\n";
- 				$numLog++;
+ 			
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $t);
+ 			
  				continue;
  			}
  			
  			if (!$domainOfSource[0]->getTitle()->equals($rangeOfTarget[0]->getTitle())) {
- 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
- 				$numLog++;
- 			} else if (!$domainOfTagert[0]->getTitle()->equals($rangeOfSource[0]->getTitle())) {
- 				$log .= wfMsg('smw_gard_domain_is_not_range', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
- 				$numLog++;
+ 			
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  				
+ 			} else if (!$domainOfTagert[0]->getTitle()->equals($rangeOfSource[0]->getTitle())) {
+ 				
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  			}
  		}
- 		return $log;
+ 		return ;
  	}
  	
  	public function checkEqualToRelations() {
  		$equalToRelations = $this->getEqualToRelations();
- 		$log = "";
+ 		
  		$this->bot->addSubTask(count($equalToRelations));
  		foreach($equalToRelations as $r) {
  			$this->bot->worked(1);
  			list($s, $t) = $r;
  			if ($s->getNamespace() != $t->getNamespace()) {
  				// equality of incompatible entities
- 				$log .= wfMsg('smw_gard_incomp_entities_equal', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY, $s, $t);
+ 				
  				continue;
  			} else if ($s->getNamespace() == SMW_NS_PROPERTY) {
  				$s_type = smwfGetStore()->getSpecialValues($s, SMW_SP_HAS_TYPE);
@@ -92,7 +96,8 @@
  				}
  				if (count($s_type) > 0 && count($t_type) > 0) {
  					if ($s_type[0]->getXSDValue() != $t_type[0]->getXSDValue()) {
- 						$log .= wfMsg('smw_gard_incomp_entities_equal2', $s->getText(), $s->getNsText(), $t->getText(), $t->getNsText())."\n\n";
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_TYPE, $s, $t);
+ 						
  					}
  				}
  				//TODO: check compatibility of domains/ranges/cardinality
@@ -100,7 +105,7 @@
  			
  			
  		}
- 		return $log;
+ 		return '';
  	}
  	
  	private function getInverseRelations() {

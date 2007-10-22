@@ -101,7 +101,7 @@ class SMWGardening extends SpecialPage {
 				break;
 				case (SMW_STORE_MWDB): default:
 					require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
-					SMWGardening::$gi_interface = new SMWGardeningIssuesSQL();
+					SMWGardening::$gi_interface = new SMWGardeningIssuesAccessSQL();
 				break;
 			}
 		}

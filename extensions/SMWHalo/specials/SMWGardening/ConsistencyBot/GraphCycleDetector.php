@@ -33,7 +33,7 @@ class GraphCycleDetector {
  		print "\nCategory cycle\n";
  		$categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
  		$cycles = $this->returnCycles($categoryGraph);
- 		return $this->formatCycles($cycles, $header, ":".$wgLang->getNsText(NS_CATEGORY));
+ 		return $this->storeCycles($cycles);
  	}
  	
  	public function getAllPropertyCycles($header) {
@@ -42,7 +42,7 @@ class GraphCycleDetector {
   		$namespaces = $smwgContLang->getNamespaces();
  		$attributeGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
  		$cycles = $this->returnCycles($attributeGraph);
- 		return $this->formatCycles($cycles, $header, $namespaces[SMW_NS_PROPERTY]);
+ 		return $this->storeCycles($cycles);
  	}
  	
  		
@@ -118,23 +118,17 @@ class GraphCycleDetector {
 		return false;
 	}
 	
-	private function formatCycles($cycles, $header, $ns) {
-		$result = "";
+	private function storeCycles($cycles) {
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
  		foreach($cycles as $c) {
+			$cycleID = uniqid (rand()); // generate cycle group ID
  			$titles = $c->translateToTitle();
- 			$titleText = "";
- 			for($i = 0, $n = count($titles); $i < $n; $i++) {
-				$titleText .= "[[$ns:".$titles[$i]->getText()."]] -> ";
+ 			foreach($titles as $t) {
+ 				// $value parameter is used to store a group ID to which the entity belongs.
+ 				$gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_PART_OF_CYCLE, $t, $cycleID);
  			}
- 			// re-paste first one to show the cycle 
- 			$titleText .= "[[$ns:".$titles[0]->getText()."]]";
- 			$result .= $titleText."\n\n";
  		}
- 		if ($result != '') {
- 			$result = $header.$result;
- 		}
- 		return $result;
-	}
+ 	}
 }
 
 /**

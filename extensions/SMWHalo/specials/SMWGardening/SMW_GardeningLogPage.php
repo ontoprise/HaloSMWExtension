@@ -51,7 +51,14 @@ class SMWLogPage extends SMWQueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-	
+		if ($result instanceof GardeningIssue) {
+			$text = $result->getTextualRepresenation($skin);
+			if ($text != NULL) {
+				return $text;
+			} else {
+				return "unknown issue!";	
+			} 
+		}
 	}
 
 	function getResults($options) {

@@ -11,13 +11,12 @@
 
  
  class UndefinedEntitiesBot extends GardeningBot {
- 	
- 	// global log which contains wiki-markup
- 	private $globalLog;
+ 	 	
+ 	private $gi_store;
  	
  	function UndefinedEntitiesBot() {
  		parent::GardeningBot("smw_undefinedentitiesbot");
- 		$this->globalLog = "== The following entities are used in the wiki but not defined: ==\n\n";
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
  	public function getHelpText() {
@@ -52,42 +51,18 @@
  		echo $this->getBotID()." started!\n";
  		
  	   	echo "Checking for undefined entities...";
-        $log = $this->checkForUndefinedEntities();
+        $ued = new UndefinedEntitiesDetector();
+ 		
+ 		$ued->checkForUndefinedCategories();
+ 		$ued->checkForUndefinedProperties();
+ 		$ued->checkForUndefinedRelationTargets();
+ 		$ued->checkForInstancesWithoutCategory();
         echo "done!\n\n";
-         if ($log != '') {
-        	$errors = true;
-        	$this->globalLog .=  $log;
-        }
-        
+          
  		
- 		return $this->globalLog;
+ 		return '';
  		
  	}
- 	
- 	 	
- 	private function checkForUndefinedEntities() {
- 		$log = "";
- 		$ued = new UndefinedEntitiesDetector();
- 		$unc .= $ued->checkForUndefinedCategories();
- 		if ($unc != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_undefined_categories')." ==\n".$unc."----\n";
- 		}
- 		$unp .= $ued->checkForUndefinedProperties();
- 		if ($unp != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_undefined_properties')." ==\n".$unp."----\n";
- 		}
- 		$unrt .= $ued->checkForUndefinedRelationTargets();
- 		if ($unrt != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_undefined_relationtargets')." ==\n".$unrt."----\n";
- 		}
- 		$iwc .= $ued->checkForInstancesWithoutCategory();
- 		if ($iwc != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_instances_without_category')." ==\n".$iwc."----\n";
- 		}
- 		return $log;
- 	}
- 	
- 	
  	
  	
  }
@@ -96,79 +71,83 @@
   // instantiate it once.
  new UndefinedEntitiesBot();
  
+ define('SMW_GARDISSUE_INSTANCE_WITHOUT_CAT', 701);
+ define('SMW_GARDISSUE_PROPERTY_UNDEFINED', 702);
+ define('SMW_GARDISSUE_CATEGORY_UNDEFINED', 703);
+ define('SMW_GARDISSUE_RELATIONTARGET_UNDEFINED', 704);
+  
+ class UndefinedEntitiesBotIssue extends GardeningIssue {
+ 	
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	}
+ 	
+ 	public function getTextualRepresenation(& $skin) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT:
+				return wfMsg('smw_gardissue_instance_without_cat', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_PROPERTY_UNDEFINED:
+				return wfMsg('smw_gardissue_property_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_CATEGORY_UNDEFINED:
+				return wfMsg('smw_gardissue_category_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_RELATIONTARGET_UNDEFINED:
+				return wfMsg('smw_gardissue_relationtarget_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+		}
+ 	}
+ }
+ 
  class UndefinedEntitiesDetector {
  	
  	
  	
  	public function checkForUndefinedProperties() {
- 		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
- 		$log = "";
+ 		
+ 	
  		$undefindProperties = $this->getUndefinedProperties();
  		foreach($undefindProperties as $p) {
  			$articles = $this->getArticlesUsingProperty($p);
- 			$usedIn = "(";
- 			for($i = 0, $n = count($articles); $i < $n; $i++) { 
- 				$ns = $this->getNamespaceText($articles[$i]) != '' ? $this->getNamespaceText($articles[$i]).":" : "";
- 				if ($i < $n-1) { 
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]],";
- 				} else {
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]]";
- 				}
+ 			foreach($articles as $a) { 
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
  			}
- 			$usedIn .= ")";
- 			$log .= wfMsg('smw_gard_property_undefined', $p->getText(), $namespaces[$p->getNamespace()], $usedIn)."\n\n";
  		}
- 		return $log;
+ 		
  	}
  	
  	public function checkForUndefinedCategories() {
- 		$log = "";
+ 		
  		$undefindCategories = $this->getUndefinedCategories();
  		foreach($undefindCategories as $c) {
  			$articles = $this->getArticlesUsingCategory($c);
- 			$usedIn = "(";
- 			for($i = 0, $n = count($articles); $i < $n; $i++) { 
- 				$ns = $this->getNamespaceText($articles[$i]) != '' ? $this->getNamespaceText($articles[$i]).":" : "";
- 				if ($i < $n-1) { 
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]],";
- 				} else {
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]]";
- 				}
+ 			foreach($articles as $a) { 
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
  			}
- 			$usedIn .= ")";
- 			$log .= wfMsg('smw_gard_category_undefined', $c->getText(), $usedIn)."\n\n";
  		}
- 		return $log;
+ 		
  	}
  	
  	public function checkForUndefinedRelationTargets() {
- 		$log = "";
+ 		
  		$undefindRelationTargets = $this->getUndefinedRelationTargets();
  		foreach($undefindRelationTargets as $t) {
  			$articles = $this->getRelationsUsingTarget($t);
- 			$usedIn = "(";
- 			for($i = 0, $n = count($articles); $i < $n; $i++) { 
- 				$ns = $this->getNamespaceText($articles[$i]) != '' ? $this->getNamespaceText($articles[$i]).":" : "";
- 				if ($i < $n-1) { 
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]],";
- 				} else {
- 					$usedIn .= "[[$ns".$articles[$i]->getText()."]]";
- 				}
+ 		
+ 			foreach($articles as $a) { 
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
  			}
- 			$usedIn .= ")";
- 			$log .= wfMsg('smw_gard_relationtarget_undefined', $t->getText(), $usedIn)."\n\n";
+ 			
+ 			
  		}
- 		return $log;
+ 		
  	}
  	
  	public function checkForInstancesWithoutCategory() {
- 		$log = "";
+ 		
  		$instancesWithoutCategory = $this->getInstancesWithoutCategory();
  		foreach($instancesWithoutCategory as $i) {
- 			$log .= wfMsg('smw_gard_instances_without_category', $i->getText())."\n\n";
+ 			$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_INSTANCE_WITHOUT_CAT, $i);
+ 			
  		}
- 		return $log;
+ 		
  	}
  	
  	private function getUndefinedProperties() {
@@ -353,15 +332,6 @@
 		return $result;
  	}
  	
- 	private function getNamespaceText($page) {
- 		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaces();
- 		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
- 			$ns = $wgLang->getNsText($page->getNamespace());
- 				} else { 
- 			$ns = $page->getNamespace() != NS_MAIN ? $nsArray[$page->getNamespace()] : "";
- 		}
- 		return $ns;
- 	}
+ 	
  }
 ?>
