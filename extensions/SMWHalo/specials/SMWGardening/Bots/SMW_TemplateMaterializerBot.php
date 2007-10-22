@@ -54,7 +54,7 @@
  		}
  		
  		// get timestamp of last template materialization operation
- 		$lastTemplateMaterialization = SMW_Gardening::getGardeningLog()->getLastFinishedGardeningTask($this->id);
+ 		$lastTemplateMaterialization = SMWGardening::getGardeningLogAccess()->getLastFinishedGardeningTask($this->id);
  		
  		// if not null, incremental update is possible to be configured by user
  		if ($lastTemplateMaterialization != NULL) {

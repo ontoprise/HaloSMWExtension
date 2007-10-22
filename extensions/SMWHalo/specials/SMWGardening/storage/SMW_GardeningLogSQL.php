@@ -6,8 +6,82 @@
  * 
  * Author: kai
  */
- class SMWGardeningSQL extends SMW_Gardening {
+ 
+ global $smwgHaloIP;
+ require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
+ 
+ class SMWGardeningLogSQL extends SMWGardeningLog {
  	
+ 	
+ 	/**
+	 * Initializes the gardening component
+	 */
+	public function setup($verbose) {
+			global $wgDBname, $smwgDefaultCollation;
+			$db =& wfGetDB( DB_MASTER );
+
+			// create gardening table
+			$smw_gardening = $db->tableName('smw_gardening');
+			$fname = 'SMW::initGardeningLog';
+			
+			if (!isset($smwgDefaultCollation)) {
+				$collation = '';
+			} else {
+				$collation = 'COLLATE '.$smwgDefaultCollation;
+			}
+		
+			// create relation table
+			DBHelper::setupTable($smw_gardening, array(
+				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
+				  'user'      		=>  'VARCHAR(255) '.$collation.' NOT NULL' ,
+				  'gardeningbot'	=>	'VARCHAR(255) '.$collation.' NOT NULL' ,
+				  'starttime'  		=> 	'DATETIME NOT NULL',
+				  'endtime'     	=> 	'DATETIME',
+				  'timestamp_start'	=>	'VARCHAR(14) '.$collation.' NOT NULL',
+				  'timestamp_end' 	=>	'VARCHAR(14) '.$collation.'',
+				  'useremail'   	=>  'VARCHAR(255) '.$collation.'',
+				  'log'				=>	'VARCHAR(255) '.$collation.'',
+				  'progress'		=>	'DOUBLE'), $db, $verbose);
+
+
+			// create GardeningLog category
+			DBHelper::reportProgress("Setting up GardeningLog category ...\n",$verbose);
+			$gardeningLogCategoryTitle = Title::newFromText(wfMsg('smw_gardening_log'), NS_CATEGORY);
+ 			$gardeningLogCategory = new Article($gardeningLogCategoryTitle);
+ 			if (!$gardeningLogCategory->exists()) {
+ 				$gardeningLogCategory->insertNewArticle(wfMsg('smw_gardening_log_exp'), wfMsg('smw_gardening_log_exp'), false, false);
+ 			}
+ 			DBHelper::reportProgress("   ... GardeningLog category created.\n",$verbose);
+
+
+ 			// fetch all user IDs and add group SMW_GARD_ALL_USERS
+ 			DBHelper::reportProgress("Add exsiting users to gardening groups ...\n",$verbose);
+			$res = $db->select( $db->tableName('user'),
+		             array('user_id'),
+		             array(),
+		             "SMW::initGardeningLog",array());
+		    if($db->numRows( $res ) > 0) {
+				while ($row = $db->fetchObject($res)) {
+					$user = User::newFromId($row->user_id);
+					$user->addGroup(SMW_GARD_ALL_USERS);
+				}
+			}
+			$db->freeResult($res);
+
+			// fetch all sysop IDs and add group SMW_GARD_GARDENERS
+			$res = $db->select( $db->tableName('user_groups'),
+		             array('ug_user'),
+		             array('ug_group' => 'sysop'),
+		             "SMW::initGardeningLog",array());
+		    if($db->numRows( $res ) > 0) {
+				while ($row = $db->fetchObject($res)) {
+					$user = User::newFromId($row->ug_user);
+					$user->addGroup(SMW_GARD_GARDENERS);
+				}
+			}
+			$db->freeResult($res);
+			DBHelper::reportProgress("   ... done!\n",$verbose);
+	}
  	/**
  	 * Returns the complete gardening log as a 2-dimensional array.
  	 */
@@ -146,7 +220,7 @@
 	/**
 	 * Initializes Gardening table.
 	 */
-	private function cleanupGardeningLog() {
+	public function cleanupGardeningLog() {
 		$dbr =& wfGetDB( DB_SLAVE );
 		$tblName = $dbr->tableName('smw_gardening');
 		
@@ -173,5 +247,8 @@
 	private  function getDBDate($date) {
 		return $date["year"]."-".$date["mon"]."-".$date["mday"]." ".$date["hours"].":".$date["minutes"].":".$date["seconds"];
 	}
+	
+	
+ 	
  }
 ?>

@@ -2,16 +2,20 @@
 /*
  * Created on 16.03.2007
  *
- * Abstract GardeningLog interface.
+ * Abstract SMWGardeningLog interface.
  * 
  * Author: kai
  */
- abstract class GardeningLog {
+ abstract class SMWGardeningLog {
  	
+ 	/**
+ 	 * Setups GardeningLog table
+ 	 */
+ 	public abstract function setup($verbose);
  	/**
  	 * Returns the complete gardening log as a 2-dimensional array.
  	 */
- 	public abstract function getGardeningLog();
+ 	public abstract function getGardeningLogAsTable();
  	
  	/**
  	 * Adds a gardening task. One must specify the $botID.

@@ -256,6 +256,8 @@ protected $smwUserMessages = array(
 	'smw_gard_category_leaves_deleted' => 'Kategorie-Blätter unterhalb von [[$1:$2]] wurden gelöscht.',
 	'smw_gard_category_leaf_deleted' => '$1 war ein Kategorie-Blatt. Entfernt vom Anomalie-Bot.',
 
+	'smw_gardeninglogs_docu' => 'Gardening Logs',
+	'smw_logpage' => 'Gardening Logs',
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',

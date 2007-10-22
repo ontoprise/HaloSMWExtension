@@ -134,7 +134,7 @@
  		$currentTime = time();
  		if ($currentTime-$this->lastUpdate > 15) { // allow updates only after 15 seconds
  			$this->lastUpdate = $currentTime;
- 			if ($this->taskId != -1) SMW_Gardening::getGardeningLog()->updateProgress($this->taskId, $this->getCurrentWork());
+ 			if ($this->taskId != -1) SMWGardening::getGardeningLogAccess()->updateProgress($this->taskId, $this->getCurrentWork());
  		}
  	}
  	
@@ -203,7 +203,7 @@
  	 	}
  	 	
  	 	// ok everything is fine, so add a gardening task
- 	 	$taskid = SMW_Gardening::getGardeningLog()->addGardeningTask($botID);
+ 	 	$taskid = SMWGardening::getGardeningLogAccess()->addGardeningTask($botID);
  		$IP = realpath( dirname( __FILE__ ) . '/..' );
  		
  		
@@ -232,7 +232,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 					SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
+ 					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
  			}
   		}
@@ -258,7 +258,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 				SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
+ 				SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
  			}
   		}

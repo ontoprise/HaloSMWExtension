@@ -70,7 +70,7 @@ function smwfLaunchGardeningBot($botID, $params) {
 	if (gettype($taskid) == 'integer') { // task id, no error code
 
 		if ($taskid >= 0) {
-			return SMW_Gardening::getGardeningLogTable();
+			return SMWGardening::getGardeningLogTable();
 		}
 
 	} else {
@@ -91,15 +91,15 @@ function smwfCancelGardeningBot($taskid) {
 	if ($processID != NULL) {
 		GardeningBot::killProcess($processID);
 	}
-	SMW_Gardening::getGardeningLog()->removeGardeningTask($taskid);
-	return SMW_Gardening::getGardeningLogTable();
+	SMWGardening::getGardeningLogAccess()->removeGardeningTask($taskid);
+	return SMWGardening::getGardeningLogTable();
 }
 
 /**
  * Returns gardening log as HTML
  */
 function smwfGetGardeningLog() {
-	return SMW_Gardening::getGardeningLogTable();
+	return SMWGardening::getGardeningLogTable();
 }
 
 /**
@@ -108,7 +108,7 @@ function smwfGetGardeningLog() {
  * @param $botID
  */
 function smwfGetBotParameters($botID) {
-	return SMW_Gardening::getParameterFormularForBot($botID);
+	return SMWGardening::getParameterFormularForBot($botID);
 }
 
 

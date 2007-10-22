@@ -7,10 +7,14 @@
  * Author: kai
  */
  
+ global $smwgHaloIP;
+ require_once $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php';
+ require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
+ 
  class SMWGardeningIssuesSQL extends SMWGardeningIssues {
  	
  	public function setup($verbose) {
- 		global $wgDBname, $smwgDefaultCollation;
+ 		global $smwgDefaultCollation;
 			$db =& wfGetDB( DB_MASTER );
 
 			// create GardeningIssues table
@@ -23,129 +27,66 @@
 			}
 		
 			// create relation table
-			$this->setupTable($smw_gardening_issues, array(
+			DBHelper::setupTable($smw_gardening_issues, array(
 				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
+				  'bot_id'			=>  'VARCHAR(32) NOT NULL '.$collation,
 				  'gi_type'      	=>  'INT(8) UNSIGNED NOT NULL' ,
+				  'p1_id'			=>  'INT(8) UNSIGNED',
 				  'p1_namespace'	=>	'INTEGER' ,
-				  'p1_title'  		=> 	'VARCHAR(255) '.$smwgDefaultCollation,
+				  'p1_title'  		=> 	'VARCHAR(255) '.$collation,
+				  'p2_id'			=>  'INT(8) UNSIGNED',
 				  'p2_namespace'	=>	'INTEGER' ,
-				  'p2_title'  		=> 	'VARCHAR(255) '.$smwgDefaultCollation,
-				  'value'			=>	'VARCHAR(255) '.$smwgDefaultCollation), $db, $verbose);
+				  'p2_title'  		=> 	'VARCHAR(255) '.$collation,
+				  'value'			=>	'VARCHAR(255) '.$collation), $db, $verbose);
 
-			$this->reportProgress("   ... done!\n",$verbose);
+			DBHelper::reportProgress("   ... done!\n",$verbose);
  	}
  	
- 	protected function setupTable($table, $fields, $db, $verbose) {
-		global $wgDBname;
-		$this->reportProgress("Setting up table $table ...\n",$verbose);
-		if ($db->tableExists($table) === false) { // create new table
-			$sql = 'CREATE TABLE ' . $wgDBname . '.' . $table . ' (';
-			$first = true;
-			foreach ($fields as $name => $type) {
-				if ($first) {
-					$first = false;
-				} else {
-					$sql .= ',';
-				}
-				$sql .= $name . '  ' . $type;
-			}
-			$sql .= ') TYPE=innodb';
-			$db->query( $sql, 'SMWSQLStore::setupTable' );
-			$this->reportProgress("   ... new table created\n",$verbose);
-			return array();
-		} else { // check table signature
-			$this->reportProgress("   ... table exists already, checking structure ...\n",$verbose);
-			$res = $db->query( 'DESCRIBE ' . $table, 'SMWSQLStore::setupTable' );
-			$curfields = array();
-			$result = array();
-			while ($row = $db->fetchObject($res)) {
-				$type = strtoupper($row->Type);
-				if ($row->Null != 'YES') {
-					$type .= ' NOT NULL';
-				}
-				$curfields[$row->Field] = $type;
-			}
-			$position = 'FIRST';
-			foreach ($fields as $name => $type) {
-				if ( !array_key_exists($name,$curfields) ) {
-					$this->reportProgress("   ... creating column $name ... ",$verbose);
-					$db->query("ALTER TABLE $table ADD `$name` $type $position", 'SMWSQLStore::setupTable');
-					$result[$name] = 'new';
-					$this->reportProgress("done \n",$verbose);
-				} elseif ($curfields[$name] != $type) {
-					$this->reportProgress("   ... changing type of column $name from '$curfields[$name]' to '$type' ... ",$verbose);
-					$db->query("ALTER TABLE $table CHANGE `$name` `$name` $type $position", 'SMWSQLStore::setupTable');
-					$result[$name] = 'up';
-					$curfields[$name] = false;
-					$this->reportProgress("done.\n",$verbose);
-				} else {
-					$this->reportProgress("   ... column $name is fine\n",$verbose);
-					$curfields[$name] = false;
-				}
-				$position = "AFTER $name";
-			}
-			foreach ($curfields as $name => $value) {
-				if ($value !== false) { // not encountered yet --> delete
-					$this->reportProgress("   ... deleting obsolete column $name ... ",$verbose);
-					$db->query("ALTER TABLE $table DROP COLUMN `$name`", 'SMWSQLStore::setupTable');
-					$result[$name] = 'del';
-					$this->reportProgress("done.\n",$verbose);
-				}
-			}
-			$this->reportProgress("   ... table $table set up successfully.\n",$verbose);
-			return $result;
-		}
-	}
-
-	/**
-	 * Make sure that each of the column descriptions in the given array is indexed by *one* index
-	 * in the given DB table.
-	 */
-	protected function setupIndex($table, $columns, $db) {
-		$table = $db->tableName($table);
-		$res = $db->query( 'SHOW INDEX FROM ' . $table , 'SMW::SetupIndex');
-		if ( !$res ) {
-			return false;
-		}
-		$indexes = array();
-		while ( $row = $db->fetchObject( $res ) ) {
-			if (!array_key_exists($row->Key_name, $indexes)) {
-				$indexes[$row->Key_name] = array();
-			}
-			$indexes[$row->Key_name][$row->Seq_in_index] = $row->Column_name;
-		}
-		foreach ($indexes as $key => $index) { // clean up existing indexes
-			$id = array_search(implode(',', $index), $columns );
-			if ( $id !== false ) {
-				$columns[$id] = false;
-			} else { // duplicate or unrequired index
-				$db->query( 'DROP INDEX ' . $key . ' ON ' . $table, 'SMW::SetupIndex');
+ 	public function clearGardeningIssues($bot_id = NULL, Title $t = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$sqlCond = ' WHERE TRUE ';
+ 		if ($t != NULL) {
+ 			$sqlCond = ' AND p1_id = '.$t->getArticleID();
+ 		}
+ 		if ($bot_id != NULL) {
+ 			$sqlCond .= ' AND bot_id = '.$bot_id;
+ 		}
+ 		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
+ 	}
+ 	
+ 	public function getGardeningIssues($bot_id, Title $t1 = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		if ($t1 != NULL) {
+ 			$sqlCond = array('bot_id = '.$db->addQuotes($bot_id), 'p1_namespace = '.$t1->getNamespace(), 'p1_title = '.$db->addQuotes($t1->getDBkey()));
+ 		} else {
+ 			$sqlCond = array('bot_id = '.$db->addQuotes($bot_id));
+ 		}
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues' );
+ 		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{
+				$result[] = new GardeningIssue($row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value);
+				$row = $db->fetchObject($res);
 			}
 		}
-
-		foreach ($columns as $column) { // add remaining indexes
-			if ($column != false) {
-				$db->query( "ALTER TABLE $table ADD INDEX ( $column )", 'SMW::SetupIndex');
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Print some output to indicate progress. The output message is given by
-	 * $msg, while $verbose indicates whether or not output is desired at all.
-	 */
-	protected function reportProgress($msg, $verbose) {
-		if (!$verbose) {
-			return;
-		}
-		if (ob_get_level() == 0) { // be sure to have some buffer, otherwise some PHPs complain
-			ob_start();
-		}
-		print $msg;
-		ob_flush();
-		flush();
-	}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function addGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 			'p2_namespace' => $t1->getNamespace(), 'p2_title' => $t1->getDBkey(), 'value' => $value));
+ 						
+ 	}
+ 	
+ 	public function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value) {
+ 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 			NULL, NULL, 'value' => $value));
+ 	}
+ 	
  	
  }
 ?>

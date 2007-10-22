@@ -19,7 +19,7 @@ require_once("SMW_GardeningBot.php");
  * Called when gardening request in sent in wiki
  */
 
-class SMW_Gardening extends SpecialPage {
+class SMWGardening extends SpecialPage {
 	
 	static $g_interface;
 	static $gi_interface;
@@ -38,14 +38,14 @@ class SMW_Gardening extends SpecialPage {
 					"<div id=\"gardening-tooldetails\"><div id=\"gardening-tooldetails-content\">".wfMsg('smw_gard_choose_bot')."</div></div>
 		
 					<div id=\"gardening-runningbots-head\">&nbsp;Current / Recent bot activities:</div>
-					<div id=\"gardening-runningbots\">".SMW_Gardening::getGardeningLogTable()."</div>
+					<div id=\"gardening-runningbots\">".SMWGardening::getGardeningLogTable()."</div>
 				 </div>";
 		$wgOut->addHTML($html);
 	}
 	
 	static function getGardeningLogTable() {
 		$html = "<table width=\"100%\" class=\"smwtable\"><tr><th>User</th><th>Action</th><th>Start-Time</th><th>End-Time</th><th>Log</th><th>Progress</th><th>State</th></tr>";
-		$gardeningLog = SMW_Gardening::getGardeningLog()->getGardeningLogAsTable();
+		$gardeningLog = SMWGardening::getGardeningLogAccess()->getGardeningLogAsTable();
 		if ($gardeningLog == null || !is_array($gardeningLog)) {
 			return $gardeningLog;
 		}
@@ -90,40 +90,40 @@ class SMW_Gardening extends SpecialPage {
  		return $htmlResult;
 	}
 	
-	static function getGardeningIssues() {
+	static function getGardeningIssuesAccess() {
 		global $smwgHaloIP;
-		if (SMW_Gardening::$gi_interface == NULL) {
+		if (SMWGardening::$gi_interface == NULL) {
 			global $smwgDefaultStore;
 			switch ($smwgDefaultStore) {
 				case (SMW_STORE_TESTING):
-					SMW_Gardening::$gi_interface = null; // not implemented yet
+					SMWGardening::$gi_interface = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');
 				break;
 				case (SMW_STORE_MWDB): default:
 					require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
-					SMW_Gardening::$gi_interface = new SMWGardeningIssuesSQL();
+					SMWGardening::$gi_interface = new SMWGardeningIssuesSQL();
 				break;
 			}
 		}
-		return SMW_Gardening::$gi_interface;
+		return SMWGardening::$gi_interface;
 	}
 	
-	static function getGardeningLog() {
+	static function getGardeningLogAccess() {
 		global $smwgHaloIP;
-		if (SMW_Gardening::$g_interface == NULL) {
+		if (SMWGardening::$g_interface == NULL) {
 			global $smwgDefaultStore;
 			switch ($smwgDefaultStore) {
 				case (SMW_STORE_TESTING):
-					SMW_Gardening::$g_interface = null; // not implemented yet
+					SMWGardening::$g_interface = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');
 				break;
 				case (SMW_STORE_MWDB): default:
 					require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningLogSQL.php');
-					SMW_Gardening::$g_interface = new SMWGardeningSQL();
+					SMWGardening::$g_interface = new SMWGardeningLogSQL();
 				break;
 			}
 		}
-		return SMW_Gardening::$g_interface;
+		return SMWGardening::$g_interface;
 	}
 }
 ?>

@@ -85,13 +85,13 @@ require_once("SMW_GardeningLog.php");
  		$log .= "\n[[category:GardeningLog]]";
  
  		// mark as finished
- 		$title = SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
+ 		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		echo "Log saved at: ".$title->getLocalURL()."\n";
  		
  	} catch(Exception $e) {
  		$log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
  		$log .= "\n[[category:GardeningLog]]";
- 		$title = SMW_Gardening::getGardeningLog()->markGardeningTaskAsFinished($taskid, $log);
+ 		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		echo $log;
  		echo "\nLog saved at: ".$title->getLocalURL();
  	} 

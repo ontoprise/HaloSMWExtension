@@ -278,7 +278,9 @@ clicking the big arrows between the columns.',
 	'smw_gard_all_category_leaves_deleted' => 'All Category leaves were removed.',
 	'smw_gard_category_leaves_deleted' => 'Category leaves below [[$1:$2]] were removed.',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
-
+	
+	'smw_gardeninglogs_docu' => 'Gardening Logs',
+	'smw_logpage' => 'Gardening Logs',
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'The following entities were found in the wiki ontology:',

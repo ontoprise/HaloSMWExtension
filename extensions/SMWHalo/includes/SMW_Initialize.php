@@ -83,8 +83,8 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
 	$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 
-	$wgAutoloadClasses['SMW_Gardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
-	$wgSpecialPages['Gardening'] = array('SMW_Gardening');
+	$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
+	$wgSpecialPages['Gardening'] = array('SMWGardening');
 
 	$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
 	$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
@@ -95,6 +95,7 @@ function smwgHaloSetupExtension() {
 	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
+	//$wgSpecialPages['SMWLogPage'] = array('SMWSpecialPage','SMW_LogPage', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
 	// import global functions and remaining AJAX calls
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
@@ -161,6 +162,8 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
+	SMWGardening::getGardeningLogAccess()->setup(true);
+	SMWGardening::getGardeningIssuesAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
 	return true;
 }
