@@ -170,12 +170,16 @@
 		}
 		$row = $db->fetchObject($res);
 		$botID = $row->gardeningbot;
-		        
-		$title = $this->createGardeningLogFile($botID, $date, $logContent);
+		
+		$title = NULL;
+		if ($logContent != NULL && $logContent != '') {      
+			$title = $this->createGardeningLogFile($botID, $date, $logContent);
+		}
+		$gardeningLogPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 		$db->update( $db->tableName('smw_gardening'),
 		             array('endtime' => $this->getDBDate($date),
 		             	   'timestamp_end' => $db->timestamp(),
-		             	   'log' => $title->getLocalURL(),
+		             	   'log' => $title != NULL ? $title->getLocalURL() : $gardeningLogPage->getLocalURL(),
 		             	   'progress' => 1),
 		             array( 'id' => $taskID), 
 		             $fname );

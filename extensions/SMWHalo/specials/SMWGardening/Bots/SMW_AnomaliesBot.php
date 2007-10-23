@@ -64,6 +64,7 @@
  	 */
  	public function run($paramArray, $isAsync, $delay) {
  		global $wgLang;
+ 		$gi_store = SMWGardening::getGardeningIssuesAccess();
  		if (!$isAsync) {
  			echo 'Missing annotations bot should not be run synchronously! Abort bot.'; // do not externalize
  			return;
@@ -77,22 +78,24 @@
  			if ($paramArray['CATEGORY_RESTRICTION'] == '') {
        			$categoryLeaves = $this->getCategoryLeafs();
        	
-       			$this->globalLog .= "== ".wfMsg('smw_gard_category_leafs')." ==\n";
+       			
        			foreach($categoryLeaves as $cl) {
-       				$this->globalLog .= "*[[:$catNS:".$cl->getText()."]]\n";
+       				$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CATEGORY_LEAF, $cl);
+       			
        				echo $catNS.":".$cl->getText()."\n";
        			} 
  			} else {
  				$categories = explode(";", urldecode($paramArray['CATEGORY_RESTRICTION']));
  				$categoryLeaves = array();
- 				$this->globalLog .= "== ".wfMsg('smw_gard_category_leafs')." ==\n";
+ 				
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
  					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
  					$categoryLeaves = $this->getCategoryLeafs($categoryTitle);
- 					$this->globalLog .= '=== '.$catNS.': '.$c." ===\n";
+ 				
  					foreach($categoryLeaves as $cl) {
-       					$this->globalLog .= "*[[:$catNS:".$cl->getText()."]]\n";
+ 						$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CATEGORY_LEAF, $cl);
+       				
        					echo $catNS.":".$cl->getText()."\n";
        				} 
  				}
@@ -112,7 +115,8 @@
        			$this->globalLog .= "== ".wfMsg('smw_gard_subcategory_number_anomalies')." ==\n";
        			foreach($subCatAnomalies as $a) {
        				list($title, $subCatNum) = $a;
-       				$this->globalLog .= "*[[:$catNS:".$title->getText()."]] has $subCatNum ".($subCatNum == 1 ? wfMsg('smw_gard_subcategory') : wfMsg('smw_gard_subcategories')).".\n";
+       				$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
+       				
        				echo $catNS.":".$title->getText()." has $subCatNum ".($subCatNum == 1 ? "subcategory" : "subcategories").".\n";
        			} 
        		} else {
@@ -126,7 +130,8 @@
  					$subCatAnomalies = $this->getCategoryAnomalies($categoryTitle);
  					foreach($subCatAnomalies as $a) {
        					list($title, $subCatNum) = $a;
-       					$this->globalLog .= "*[[:$catNS:".$title->getText()."]] has $subCatNum ".($subCatNum == 1 ? wfMsg('smw_gard_subcategory') : wfMsg('smw_gard_subcategories')).".\n";
+       					$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
+       				
        					echo $catNS.":".$title->getText()." has $subCatNum ".($subCatNum == 1 ? "subcategory" : "subcategories").".\n";
        				} 
  				}
@@ -145,8 +150,8 @@
        				$categoryDB = str_replace(" ", "_", trim($c));
        				$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
        				$this->removeCategoryLeaves($categoryTitle);
+           			$this->globalLog .= "\n".wfMsg('smw_gard_category_leaves_deleted', $catNS, $c);
        			}
-       			$this->globalLog .= "\n".wfMsg('smw_gard_category_leaves_deleted', $catNS, $c);
        		}
        		echo "done!\n";
        	}
@@ -339,4 +344,26 @@
  }
  
  new AnomaliesBot();
+ 
+ define('SMW_GARDISSUE_CATEGORY_LEAF', 1001);
+ define('SMW_GARDISSUE_SUBCATEGORY_ANOMALY', 1002);
+
+ 
+ class AnomaliesBotIssue extends GardeningIssue {
+ 	
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	}
+ 	
+ 	public function getTextualRepresenation(& $skin) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_CATEGORY_LEAF:
+				return wfMsg('smw_gardissue_category_leaf', $skin->makeLinkObj($this->t1));
+			case SMW_GARDISSUE_SUBCATEGORY_ANOMALY:
+				return wfMsg('smw_gardissue_subcategory_anomaly', $skin->makeLinkObj($this->t1), $this->value);
+			default: return NULL;
+			
+		}
+ 	}
+ }
 ?>

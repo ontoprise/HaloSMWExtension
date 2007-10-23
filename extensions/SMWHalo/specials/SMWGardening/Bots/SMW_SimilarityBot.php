@@ -18,12 +18,14 @@
  	private $commonSuffixes;
  	private $commonPrefixes;
  	
+ 	private $gi_store;
+ 	
  	function SimilarityBot() {
  		parent::GardeningBot("smw_similaritybot");
  		
  		$this->commonSuffixes = array('of');
  		$this->commonPrefixes = array('has');
-		
+		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
  	public function getHelpText() {
@@ -148,39 +150,42 @@
  	
  	private function formatSchemaResults($similarityTerm = NULL, $similarities, $simlimit) {
  		global $smwgContLang;
- 		$namespaces = $smwgContLang->getNamespaces();
- 		$markup = $similarityTerm != NULL ? "'''$similarityTerm''' is similar to the following entities: \n" : "";
+ 		
  		foreach($similarities as $t) {
 			$t->calcSimilarityFactor($this->commonPrefixes, $this->commonSuffixes); 			
  		} 
  		SimilarityBot::sortSimilarityArray($similarities);
  		foreach($similarities as $t) {
  			if ($t->getSimilarityFactor() > $simlimit) { 
- 				$markup .= "* ".SimilarityBot::getWikiLink($t->getTitle1())." ".wfMsg('smw_gard_issimilarto')." ".SimilarityBot::getWikiLink($t->getTitle2())."\n";
- 				$markup .= "**".wfMsg('smw_gard_similarityscore').": ".$t->getSimilarityFactor()."\n";
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY, $t->getTitle1(), $t->getTitle2(), $t->getSimilarityFactor());
+ 				
+ 				
  				if ($t->isDistinctByCommonPrefixOrSuffix()) {
- 					$markup .= "**".wfMsg('smw_gard_disticntbycommonfix')."\n";
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_DISTINCTBY_PREFIX, $t->getTitle1(), $t->getTitle2());
+ 					
  				}
- 				$markup .= $t->formatSharedEntities();
+ 				$t->formatSharedEntities();
  			}
  		}
- 		return $markup;
+ 		return '';
  	}
  	
  	private function formatTermMatchingResults($similarityTerm, $similarities, $limitOfSim) {
- 		$markup = "\n== Similar entities to $similarityTerm ==\n";
+ 		
  		foreach($similarities as $t) {
- 			$markup .= "* ".SimilarityBot::getWikiLink($t);
+ 			$this->gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SIMILAR_TERM, $t->getTitle1(), $similarityTerm);
+ 			
  		}
- 		return $markup;
+ 		return '';
  	}
  	
  	private function formatAnnotationLevelResults($similarities) {
- 		$markup = "\n== Annotation similarities ==\n";
+ 		
  		foreach($similarities as $t) {
- 			$markup .= "* ".wfMsg('smw_gard_similarannotation',SimilarityBot::getWikiLink($t->getTitle1()), SimilarityBot::getWikiLink($t->getArticle()), SimilarityBot::getWikiLink($t->getTitle2()));
+ 			$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SIMILAR_ANNOTATION, $t->getTitle1(), $t->getTitle2(), $t->getArticle()->getNsText().':'.$t->getArticle()->getText());
+ 			
  		}
- 		return $markup;
+ 		return '';
  	}
  	
  	
@@ -506,36 +511,43 @@
  	
  	public function formatSharedEntities() {
  		global $wgLang;
- 		$markup = "";
+ 		
  		if (count($this->sharedCategories) > 0) {
- 				$markup .= "** ".wfMsg('smw_gard_sharecategories').": \n";
+ 				
+ 				$value = "";
  				foreach($this->sharedCategories as $cat) {
- 					$markup .= "***[[:".$wgLang->getNsText(NS_CATEGORY).":".$cat->getText()."]]";
+ 					$value .= $wgLang->getNsText(NS_CATEGORY).":".$cat->getText().";";
  				}
- 				$markup .= "\n";
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_CATEGORIES, $t->getTitle1(), $t->getTitle2(), $value);
+ 				
  		}
  		if (count($this->sharedDomainCategories) > 0) {
- 				$markup .= "** ".wfMsg('smw_gard_sharedomains').": \n";
+ 				$value = "";
  				foreach($this->sharedDomainCategories as $cat) {
- 					$markup .= "***[[:".$wgLang->getNsText(NS_CATEGORY).":".$cat->getText()."]]";
+ 					$value .= $wgLang->getNsText(NS_CATEGORY).":".$cat->getText().";";
+ 					
  				}
- 				$markup .= "\n";
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_DOMAINS, $t->getTitle1(), $t->getTitle2(), $value);
+ 			
  		}
  		if (count($this->sharedRangeCategories) > 0) {
- 				$markup .= "** ".wfMsg('smw_gard_shareranges').": \n";
+ 				$value = "";
  				foreach($this->sharedRangeCategories as $cat) {
- 					$markup .= "***[[:".$wgLang->getNsText(NS_CATEGORY).":".$cat->getText()."]]";
+ 					$value .= $wgLang->getNsText(NS_CATEGORY).":".$cat->getText().";";
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_RANGES, $t->getTitle1(), $t->getTitle2(), $wgLang->getNsText(NS_CATEGORY).":".$cat->getText());
  				}
- 				$markup .= "\n";
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_RANGES, $t->getTitle1(), $t->getTitle2(), $value);
+ 				
  		}
  		if (count($this->sharedTypes) > 0) {
- 			$markup .= "** ".wfMsg('smw_gard_sharetypes').": \n";
+ 				$value = "";
  				foreach($this->sharedTypes as $type) {
- 					$markup .= "***[[".$wgLang->getNsText(SMW_NS_TYPE).":".$type."]]";
+ 						$value .= $wgLang->getNsText(SMW_NS_TYPE).":".$type.";";
  				}
- 				$markup .= "\n";
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_TYPES, $t->getTitle1(), $t->getTitle2(), $value);
+ 			
  		}
- 		return $markup;
+ 		return '';
  	}
  	
  	private function distinctByCommonPrefixOrSuffix(array & $commonPrefixes, array & $commonSuffixes) {
@@ -663,5 +675,59 @@
  // instantiate once (if editdistance function is supported).
  if (smwfDBSupportsFunction('halowiki')) {
  	new SimilarityBot();
+ }
+ 
+ define('SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY', 1101);
+ define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1102);
+ define('SMW_GARDISSUE_SIMILAR_TERM', 1103);
+ define('SMW_GARDISSUE_SHARE_CATEGORIES', 1104);
+ define('SMW_GARDISSUE_SHARE_DOMAINS', 1105);
+ define('SMW_GARDISSUE_SHARE_RANGES', 1106);
+ define('SMW_GARDISSUE_SHARE_TYPES', 1107);
+ define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1108);
+        
+ 
+ class SimilarityBotIssue extends GardeningIssue {
+ 	
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	}
+ 	
+ 	public function getTextualRepresenation(& $skin) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY:
+				return wfMsg('smw_gardissue_similar_schema_entity', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_SIMILAR_ANNOTATION:
+				$article = Title::newFromText($this->value);
+				return wfMsg('smw_gardissue_similar_annotation', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $article != NULL ? $skin->makeLinkObj($article) : '');
+			case SMW_GARDISSUE_SIMILAR_TERM:
+				return wfMsg('smw_gardissue_similar_term', $skin->makeLinkObj($this->t1), $this->value);
+			case SMW_GARDISSUE_SHARE_CATEGORIES:
+				
+				return wfMsg('smw_gardissue_share_categories', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+			case SMW_GARDISSUE_SHARE_DOMAINS:
+				
+				return wfMsg('smw_gardissue_share_domains', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+			case SMW_GARDISSUE_SHARE_RANGES:
+				
+				return wfMsg('smw_gardissue_share_ranges', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+			case SMW_GARDISSUE_SHARE_TYPES:
+				
+				return wfMsg('smw_gardissue_share_types', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+			case SMW_GARDISSUE_DISTINCTBY_PREFIX:
+				return wfMsg('smw_gardissue_distinctby_prefix', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+			default: return NULL;
+		}
+ 	}
+ 	
+ 	private function explodeTitlesToLinkObjs(& $skin, $value) {
+ 		$titleNames = explode(';', $value);
+ 		$result = "";
+ 		foreach($titleNames as $tn) {
+ 			$title = Title::newFromText($tn);
+ 			if ($title != NULL) $result .= $skin->makeLinkObj($title).", ";
+ 		}
+ 		return substr($result, 0, strlen($result)-2);
+ 	}
  }
 ?>

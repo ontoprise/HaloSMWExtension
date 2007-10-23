@@ -287,4 +287,43 @@ define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
 		}
 	}
  }
+ 
+ class ConsistencyBotFilter extends GardeningIssueFilter {
+ 	
+ 	private $type_options;
+ 	
+ 	public function __construct() {
+ 		$this->type_options = array('All', 'Cycles', 'Covariance');
+ 	}
+ 	
+ 	protected function getUserFilterControls($specialAttPage, $request) {
+		
+		// type of property
+		$type = $request->getVal('type');
+ 		$html = "<select name=\"type\">";
+		$i = 0;
+		foreach($this->type_options as $option) {
+			if ($i == $type) {
+		 		$html .= "<option value=\"$i\" selected=\"selected\">$option</option>";
+			} else {
+				$html .= "<option value=\"$i\">$option</option>";
+			}
+			$i++;		
+		}
+ 		$html .= 	"</select>";
+ 		 		
+ 		return $html;
+	}
+	
+	
+	public function getData($options, $request) {
+		$bot = $request->getVal('bot');
+		if ($bot == NULL) return array(); 
+		
+		$type = $request->getVal('type');
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		return $gi_store->getGardeningIssues($bot, $type == 0 ? NULL : $type);
+	}
+ }
 ?>

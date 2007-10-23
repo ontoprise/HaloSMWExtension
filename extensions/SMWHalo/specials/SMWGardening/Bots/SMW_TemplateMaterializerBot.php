@@ -46,7 +46,7 @@
  	 * Do not use echo when it is NOT running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		
+ 		$gi_store = SMWGardening::getGardeningIssuesAccess();
  		if ($isAsync) { 
  			echo "...started!\n";
  			echo array_key_exists('APPLY_TO_TOUCHED_TEMPLATES', $paramArray) ? "Incremental update\n" : "Full materialization\n";
@@ -63,7 +63,7 @@
  		
  		// get all pages using 'dirty' templates 
  		$pageTitles = $this->getPagesUsingTemplates(NULL, $lastTemplateMaterialization);
- 		$log = "";
+ 		//$log = "";
  		$this->setNumberOfTasks(1);
  		$this->addSubTask(count($pageTitles));
  		// update them and write log
@@ -73,13 +73,14 @@
  			$article = new Article($pt);
  			$article->doEdit($article->getContent(), $article->getComment(), EDIT_UPDATE);
  			if ($isAsync) echo " done!\n";
- 			$log .= "*Updating ".$pt->getDBkey()."... done!\n";
+ 			$gi_store->addGardeningIssueAboutArticle('smw_templatematerializerbot', SMW_GARDISSUE_UPDATEARTICLE, $pt);
+ 			//$log .= "*Updating ".$pt->getDBkey()."... done!\n";
  			if ($delay > 0) {
  				usleep($delay);
  			}
  		}	
  		
-		return $log;
+		return '';
  	}
  	
  	/**
@@ -119,4 +120,21 @@
  
  // instantiate once.
  new TemplateMaterializerBot();
+ 
+ define('SMW_GARDISSUE_UPDATEARTICLE', 801);
+ 
+ class TemplateMaterializerBotIssue extends GardeningIssue {
+ 	
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	}
+ 	
+ 	public function getTextualRepresenation(& $skin) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_UPDATEARTICLE:
+				return wfMsg('smw_gardissue_updatearticle', $skin->makeLinkObj($this->t1));
+			default: return NULL;
+		}
+ 	}
+ }
 ?>

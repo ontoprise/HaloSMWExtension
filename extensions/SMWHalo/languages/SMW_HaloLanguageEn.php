@@ -163,8 +163,8 @@ clicking the big arrows between the columns.',
 	'smw_ob_hideinstances' => 'Hide Instances',
 	/* Messages for Gardening */
 	'gardening' => 'Gardening',
+	'gardeninglog' => 'GardeningLog',
 	'smw_gardening' => 'Gardening',
-	'smw_gardening_log' => 'GardeningLog',
 	'smw_gardening_log_exp' => 'This is the Gardening log category',
 	'smw_gard_welcome' => 'This is the Gardening toolbox.It provides some tools which helps to keep the wiki content clean and consistent.',
 	'smw_gard_notools' => 'If you do not see any tools here, you might not be logged in or you do not have any rights to use gardening tools.',
@@ -233,19 +233,22 @@ clicking the big arrows between the columns.',
 	'smw_gard_errortype_equality' => 'Inconsistent equalities',
 
 	/* SimilarityBot*/
-	'smw_gard_sharecategories' => 'They share the following categories',
-	'smw_gard_sharedomains' => 'They share the following domain categories',
-	'smw_gard_shareranges' => 'They share the following range categories',
-	'smw_gard_disticntbycommonfix' => 'Distinct by common prefix or suffix',
-	'smw_gard_sharetypes' => 'They share the following types',
-	'smw_gard_issimilarto' => 'is similar to',
 	'smw_gard_degreeofsimilarity' => 'Edit distance limit',
 	'smw_gard_similarityscore' => 'Similarity Score (No. of similarities)',
 	'smw_gard_limitofresults' => 'Number of results',
 	'smw_gard_limitofsim' => 'Show only entities which appear to be',
 	'smw_gard_similarityterm' => 'Search for entities similar to the following term (may be empty)',
 	'smw_gard_similaritybothelp' => 'This is the bot to identify entities in the knowledgebase that could potentially be unified. If you enter a term, the system will try to find entities which are similar to that. If you do not enter a term, the system will find possibly redundant entities.',
-	'smw_gard_similarannotation' => '$1 of article $2 may be intended as annotation of $3',
+	
+	'smw_gardissue_similar_schema_entity' => '$1 and $2 seems to be similar pages.',
+	'smw_gardissue_similar_annotation' => '$3 contain two very similar annotations: $1 and $2',
+	'smw_gardissue_similar_term' => '$1 is similar to term $2',
+	'smw_gardissue_share_categories' => '$1 and $2 share the following categories: $3',
+	'smw_gardissue_share_domains' => '$1 and $2 share the following domains: $3',
+	'smw_gardissue_share_ranges' =>  '$1 and $2 share the following ranges: $3',
+	'smw_gardissue_share_types' => '$1 and $2 share the following types: $3',
+	'smw_gardissue_distinctby_prefix' => '$1 and $2 are distinct by common prefix or suffix',
+	
 
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category.',
@@ -263,6 +266,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_missingannot_docu' => 'This bot identifies pages in the Wiki that are not annotated.',
 	'smw_gard_missingannot_titlecontaining' => '(Optional) Only Pages with a title containing',
 	'smw_gard_missingannot_restricttocategory' => 'Restrict to categories',
+	'smw_gardissue_notannotated_page' => 'Article $1 has no annotations',
 
 	/* Anomalies */
 	'smw_gard_anomaly_checknumbersubcat' => 'Check number of sub categories',
@@ -306,6 +310,7 @@ clicking the big arrows between the columns.',
 	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
+	'smw_gardissue_updatearticle' => 'Article $1 was newly parsed.',
 
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Context Sensitive Help',

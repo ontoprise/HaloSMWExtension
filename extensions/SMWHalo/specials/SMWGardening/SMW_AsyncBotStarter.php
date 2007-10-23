@@ -80,20 +80,21 @@ require_once("SMW_GardeningLog.php");
  	global $wgGardeningBotDelay;
  	try { 
  		$bot->setTaskID($taskid);
+ 		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
  		$log = $bot->run(GardeningBot::convertParamStringToArray(implode($params,"")), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  		
- 		$log .= "\n[[category:GardeningLog]]";
+ 		if ($log != NULL && $log != '') $log .= "\n[[category:GardeningLog]]";
  
  		// mark as finished
  		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
- 		echo "Log saved at: ".$title->getLocalURL()."\n";
+ 		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
  		
  	} catch(Exception $e) {
  		$log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
  		$log .= "\n[[category:GardeningLog]]";
  		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		echo $log;
- 		echo "\nLog saved at: ".$title->getLocalURL();
+ 		if ($title != NULL) echo "\nLog saved at: ".$title->getLocalURL();
  	} 
  }
  

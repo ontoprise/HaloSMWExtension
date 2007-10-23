@@ -49,18 +49,24 @@
  			$sqlCond = ' AND p1_id = '.$t->getArticleID();
  		}
  		if ($bot_id != NULL) {
- 			$sqlCond .= ' AND bot_id = '.$bot_id;
+ 			$sqlCond .= ' AND bot_id = '.$db->addQuotes($bot_id);
  		}
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
- 	public function getGardeningIssues($bot_id, Title $t1 = NULL) {
+ 	public function getGardeningIssues($bot_id, $gi_type = NULL, Title $t1 = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
+ 		$sqlCond = array();
+ 		$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
  		if ($t1 != NULL) {
- 			$sqlCond = array('bot_id = '.$db->addQuotes($bot_id), 'p1_namespace = '.$t1->getNamespace(), 'p1_title = '.$db->addQuotes($t1->getDBkey()));
+ 			$sqlCond[] = 'p1_namespace = '.$t1->getNamespace();
+ 			$sqlCond[] = 'p1_title = '.$db->addQuotes($t1->getDBkey());
  		} else {
- 			$sqlCond = array('bot_id = '.$db->addQuotes($bot_id));
+ 			$sqlCond[] = ('bot_id = '.$db->addQuotes($bot_id));
+ 		}
+ 		if ($gi_type != NULL) {
+ 			$sqlCond[] = 'MOD(gi_type, 100) = '.$gi_type;
  		}
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues' );
  		if($db->numRows( $res ) > 0)
@@ -80,7 +86,7 @@
  	public function addGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL) {
  		$db =& wfGetDB( DB_MASTER );
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
- 			'p2_id' => $t1->getArticleID(), 'p2_namespace' => $t1->getNamespace(), 'p2_title' => $t1->getDBkey(), 'value' => $value));
+ 			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $value));
  						
  	}
  	
@@ -97,6 +103,18 @@
  			'p1_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $value));
  	}
  	
+ 	public function updateGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $value), array('p1_title' => $t1->getDBkey(), 'p2_title' => $t2->getDBkey()));
+ 		if (!$success) $this->addGardeningIssueAboutArticles($bot_id, $gi_type, $t1, $t2, $value);			
+ 	}
  	
+ 	public function updateGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 			'p1_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $value), array('p1_title' => $t1->getDBkey()));
+ 		if (!$success) $this->addGardeningIssueAboutValue($bot_id, $gi_type, $t1, $value);		
+ 	}
  }
 ?>

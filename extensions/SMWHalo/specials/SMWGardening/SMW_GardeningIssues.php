@@ -14,6 +14,9 @@
  * 
  */
  
+ /**
+  * Abstract class to access GardeningIssue store.
+  */
  abstract class SMWGardeningIssuesAccess {
  	
  	
@@ -35,7 +38,7 @@
  	 * @param $t1 Title issue is about.
  	 * @param $gi_type type of issue.
  	 */
- 	public abstract function getGardeningIssues($bot_id, Title $t1 = NULL);
+ 	public abstract function getGardeningIssues($bot_id, $gi_type = NULL, Title $t1 = NULL);
  	
  	/**
  	 * Add Gardening issue about articles.
@@ -63,6 +66,26 @@
  	 * @param $value Depends on $gi_type
  	 */
  	public abstract function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value);
+ 	
+ 	/**
+ 	 * Updates Gardening issue about 2 articles. If no issue exists, it will be created.
+ 	 * 
+ 	 * @param $gi_type type of issue.
+ 	 * @param $t1 Title issue is about.
+ 	 * @param $t2 Title 
+ 	 * @param $value new value.
+ 	 */
+ 	public abstract function updateGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL); 
+ 	
+  	
+ 	/**
+ 	 * Updates Gardening issue about an article with a value.  If no issue exists, it will be created.
+ 	 * 
+ 	 * @param $gi_type type of issue.
+ 	 * @param $t1 Title issue is about.
+ 	 * @param $value new value
+ 	 */
+ 	public abstract function updateGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value); 
  }
 
 /**
@@ -134,5 +157,63 @@ abstract class GardeningIssue {
 	 * @param & $skin reference to skin object to create links. 
 	 */
 	public abstract function getTextualRepresenation(& $skin);
+}
+
+/**
+ * Abstract class which defines an interface for a GardeningIssue Filter.
+ */
+abstract class GardeningIssueFilter {
+	
+	/**
+	 * Returns filtering FORM.
+	 * 
+	 * @param $specialAttPage special page title object
+	 * @param $request Request object for accessing URL parameters
+	 * 
+	 * @return HTML string of form.
+	 */
+	public function getFilterControls($specialAttPage, $request) {
+		global $registeredBots;
+		$html = "<form action=\"".$specialAttPage->getFullURL()."\">";
+		
+		$html .= "<select name=\"bot\">";
+		
+		$sent_bot_id = $request->getVal('bot');
+		foreach($registeredBots as $bot_id => $bot) {
+			if ($sent_bot_id == $bot_id) {
+		 		$html .= "<option value=\"".$bot->getBotID()."\" selected=\"selected\">".$bot->getLabel()."</option>";
+			} else {
+				$html .= "<option value=\"".$bot->getBotID()."\">".$bot->getLabel()."</option>";
+			}
+				
+		}
+ 		$html .= 	"</select>";
+ 		
+		$html .= $this->getUserFilterControls($specialAttPage, $request);
+ 						
+ 		$html .= 	"<input type=\"submit\" value=\" Go \">";
+ 		$html .= "</form>";	
+ 		return $html;
+	}
+	
+	/**
+	 * Returns user-defined filtering elements.
+	 * 
+	 * @param $specialAttPage special page title object
+	 * @param $request Request object for accessing URL parameters
+	 * 
+	 * @return HTML string of form elements
+	 */
+	protected abstract function getUserFilterControls($specialAttPage, $request);
+	
+	/**
+	 * Returns GardeningIssue objects.
+	 * 
+	 * @param $options SMWRequestOptions object.
+	 * @param $request Request object for accessing URL parameters.
+	 * 
+	 * @return array of GardeningIssue objects.
+	 */
+	public abstract function getData($options, $request);
 }
 ?>

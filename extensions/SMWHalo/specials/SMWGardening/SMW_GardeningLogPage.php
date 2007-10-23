@@ -12,16 +12,16 @@ include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
 function smwfDoSpecialLogPage() {
 	wfProfileIn('smwfDoSpecialLogPage (SMW Halo)');
 	list( $limit, $offset ) = wfCheckLimits();
-	$rep = new SMWLogPage();
+	$rep = new SMWGardeningLogPage();
 	$result = $rep->doQuery( $offset, $limit );
 	wfProfileOut('smwfDoSpecialLogPage (SMW Halo)');
 	return $result;
 }
 
-class SMWLogPage extends SMWQueryPage {
+class SMWGardeningLogPage extends SMWQueryPage {
 
 	function getName() {
-		return "SMWLogPage";
+		return "GardeningLog";
 	}
 
 	function isExpensive() {
@@ -32,18 +32,25 @@ class SMWLogPage extends SMWQueryPage {
 
 	function getPageHeader() {
 		$html = '<p>' . wfMsg('smw_gardeninglogs_docu') . "</p><br />\n";
-		$specialAttPage = Title::newFromText("GardeningLogs", NS_SPECIAL);
-		global $wgRequest;
+		$specialAttPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
+		global $wgRequest, $registeredBots;
 		$bot_id = $wgRequest->getVal("bot");
-	
+		if ($bot_id == NULL) {
+			return 'Choose a bot.'; // TODO: display bot selector.
+		} else {
+			$className = get_class($registeredBots[$bot_id]).'Filter';
+			$filter = new $className();
+			return $filter->getFilterControls($specialAttPage, $wgRequest);
+		}
 		
- 		return $html;
+ 		
 	}
 	
 	function linkParameters() {
 		global $wgRequest;
 		$bot_id = $wgRequest->getVal("bot") == NULL ? '' : $wgRequest->getVal("bot");
-		return array('bot' => $bot_id);
+		$type = $wgRequest->getVal("type") == NULL ? '' : $wgRequest->getVal("type");
+		return array('bot' => $bot_id, 'type' => $type);
 	}
 	
 	function sortDescending() {
@@ -62,10 +69,15 @@ class SMWLogPage extends SMWQueryPage {
 	}
 
 	function getResults($options) {
-		global $wgRequest;
+		global $wgRequest, $registeredBots;
 		$bot_id = $wgRequest->getVal("bot");
-		$g_issues = SMWGardening::getGardeningIssuesAccess()->getGardeningIssues($bot_id);
-		return $g_issues;
+		if ($bot_id == NULL) {
+			return array();
+		} else {
+			$className = get_class($registeredBots[$bot_id]).'Filter';
+			$filter = new $className();
+			return $filter->getData($options, $wgRequest);
+		}
 	}
 }
 ?>

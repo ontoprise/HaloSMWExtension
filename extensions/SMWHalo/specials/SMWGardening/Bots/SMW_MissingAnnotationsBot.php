@@ -13,12 +13,10 @@
  
  class MissingAnnotationsBot extends GardeningBot {
  	
- 	// global log which contains wiki-markup
- 	private $globalLog;
  	
  	function MissingAnnotationsBot() {
  		parent::GardeningBot("smw_missingannotationsbot");
- 		$this->globalLog = "== The following pages are not annotated: == \n\n";
+ 		
  	}
  	
  	public function getHelpText() {
@@ -49,7 +47,7 @@
  	 * Do not use echo when it is not running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		
+ 		$gi_store = SMWGardening::getGardeningIssuesAccess();
  		if (!$isAsync) {
  			echo 'Missing annotations bot should not be run synchronously! Abort bot.'; // do not externalize
  			return;
@@ -71,16 +69,12 @@
  		}
        	
        	foreach($notAnnotatedPages as $page) {
-       		$nsWithColon = $this->getNamespaceText($page) == '' ? '' : $this->getNamespaceText($page).":";
-       		$nsWithColon = $page->getNamespace() == NS_CATEGORY ? ":".$nsWithColon : $nsWithColon;
-       		$this->globalLog .= "*[[".$nsWithColon.$page->getText()."]]\n";
+       		$gi_store->addGardeningIssueAboutArticle('smw_missingannotationsbot', SMW_GARDISSUE_NOTANNOTATED_PAGE, $page);
        		echo $page->getText()."\n";
        	}
-        if (count($notAnnotatedPages) == MAX_LOG_LENGTH) {
-        	$this->globalLog .= "...to be continued."."\n";
-        }
+        
         echo "done!\n\n";
- 		return $this->globalLog;
+ 		return '';
  		
  	}
  	
@@ -192,4 +186,21 @@
  }
  
  new MissingAnnotationsBot();
+ 
+ define('SMW_GARDISSUE_NOTANNOTATED_PAGE', 901);
+ 
+ class MissingAnnotationsBotIssue extends GardeningIssue {
+ 	
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	}
+ 	
+ 	public function getTextualRepresenation(& $skin) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_NOTANNOTATED_PAGE:
+				return wfMsg('smw_gardissue_notannotated_page', $skin->makeLinkObj($this->t1));
+			default: return NULL;
+		}
+ 	}
+ }
 ?>
