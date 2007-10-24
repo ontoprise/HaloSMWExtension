@@ -46,7 +46,7 @@
 
 			// create GardeningLog category
 			DBHelper::reportProgress("Setting up GardeningLog category ...\n",$verbose);
-			$gardeningLogCategoryTitle = Title::newFromText(wfMsg('smw_gardening_log'), NS_CATEGORY);
+			$gardeningLogCategoryTitle = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
  			$gardeningLogCategory = new Article($gardeningLogCategoryTitle);
  			if (!$gardeningLogCategory->exists()) {
  				$gardeningLogCategory->insertNewArticle(wfMsg('smw_gardening_log_exp'), wfMsg('smw_gardening_log_exp'), false, false);

@@ -334,4 +334,21 @@
  	
  	
  }
+ 
+ class UndefinedEntitiesBotFilter extends GardeningIssueFilter {
+ 	 	
+ 	
+ 	public function __construct() {
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+ 	}
+ 	
+ 	public function getUserFilterControls($specialAttPage, $request) {
+		return '';
+	}
+	
+	
+	public function getData($options, $request) {
+		return parent::getData($options, $request);
+	}
+ }
 ?>

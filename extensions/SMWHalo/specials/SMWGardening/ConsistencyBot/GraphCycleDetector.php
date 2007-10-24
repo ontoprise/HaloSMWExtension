@@ -121,12 +121,13 @@ class GraphCycleDetector {
 	private function storeCycles($cycles) {
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
  		foreach($cycles as $c) {
-			$cycleID = uniqid (rand()); // generate cycle group ID
+			
  			$titles = $c->translateToTitle();
+ 			$cycle = "";
  			foreach($titles as $t) {
- 				// $value parameter is used to store a group ID to which the entity belongs.
- 				$gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_PART_OF_CYCLE, $t, $cycleID);
+ 				$cycle .= $t->getNsText().':'.$t->getText().';';
  			}
+ 			$gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_CYCLE, $t, $cycle);
  		}
  	}
 }

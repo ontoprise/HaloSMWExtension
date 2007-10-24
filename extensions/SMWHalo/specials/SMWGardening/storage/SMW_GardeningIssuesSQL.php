@@ -31,6 +31,7 @@
 				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
 				  'bot_id'			=>  'VARCHAR(32) NOT NULL '.$collation,
 				  'gi_type'      	=>  'INT(8) UNSIGNED NOT NULL' ,
+				  'gi_class'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'p1_id'			=>  'INT(8) UNSIGNED',
 				  'p1_namespace'	=>	'INTEGER' ,
 				  'p1_title'  		=> 	'VARCHAR(255) '.$collation,
@@ -54,9 +55,11 @@
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
- 	public function getGardeningIssues($bot_id, $gi_type = NULL, Title $t1 = NULL) {
+ 	public function getGardeningIssues($bot_id, $options, $gi_class = NULL, Title $t1 = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
+ 		
+		$sqlOptions = array('LIMIT' => $options->limit, 'OFFSET' => $options->offset );
  		$sqlCond = array();
  		$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
  		if ($t1 != NULL) {
@@ -65,10 +68,10 @@
  		} else {
  			$sqlCond[] = ('bot_id = '.$db->addQuotes($bot_id));
  		}
- 		if ($gi_type != NULL) {
- 			$sqlCond[] = 'MOD(gi_type, 100) = '.$gi_type;
+ 		if ($gi_class != NULL) {
+ 			$sqlCond[] = 'gi_class = '.$gi_class;
  		}
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues' );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
@@ -85,34 +88,34 @@
  	
  	public function addGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL) {
  		$db =& wfGetDB( DB_MASTER );
- 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $value));
  						
  	}
  	
  	public function addGardeningIssueAboutArticle($bot_id, $gi_type, Title $t1) {
  		$db =& wfGetDB( DB_MASTER );
- 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p2_id' => -1 ,'p2_namespace' => -1, 'p2_title' => NULL, 'value' => NULL));
  		
  	}
  	
  	public function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value) {
  		$db =& wfGetDB( DB_MASTER );
- 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p1_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $value));
  	}
  	
  	public function updateGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL) {
  		$db =& wfGetDB( DB_MASTER );
- 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $value), array('p1_title' => $t1->getDBkey(), 'p2_title' => $t2->getDBkey()));
  		if (!$success) $this->addGardeningIssueAboutArticles($bot_id, $gi_type, $t1, $t2, $value);			
  	}
  	
  	public function updateGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value) {
  		$db =& wfGetDB( DB_MASTER );
- 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
+ 		$success = $db->update($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p1_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $value), array('p1_title' => $t1->getDBkey()));
  		if (!$success) $this->addGardeningIssueAboutValue($bot_id, $gi_type, $t1, $value);		
  	}

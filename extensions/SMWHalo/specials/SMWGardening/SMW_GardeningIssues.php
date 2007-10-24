@@ -38,7 +38,7 @@
  	 * @param $t1 Title issue is about.
  	 * @param $gi_type type of issue.
  	 */
- 	public abstract function getGardeningIssues($bot_id, $gi_type = NULL, Title $t1 = NULL);
+ 	public abstract function getGardeningIssues($bot_id, $options, $gi_type = NULL, Title $t1 = NULL);
  	
  	/**
  	 * Add Gardening issue about articles.
@@ -152,6 +152,25 @@ abstract class GardeningIssue {
 	}
 	
 	/**
+	 * Converts a semicolon separated list of Title strings
+	 * to a comma separated list of displayable links.
+	 * 
+	 * @param & $skin Current skin object.
+	 * @param $value List of semicolon separated titles.
+	 * 
+	 * @return comma separated list of displayable links (HTML string)
+	 */
+	protected function explodeTitlesToLinkObjs(& $skin, $value) {
+ 		$titleNames = explode(';', $value);
+ 		$result = "";
+ 		foreach($titleNames as $tn) {
+ 			$title = Title::newFromText($tn);
+ 			if ($title != NULL) $result .= $skin->makeLinkObj($title).", ";
+ 		}
+ 		return substr($result, 0, strlen($result)-2);
+ 	}
+	
+	/**
 	 * Returns textual representation of Gardening issue.
 	 * 
 	 * @param & $skin reference to skin object to create links. 
@@ -164,6 +183,18 @@ abstract class GardeningIssue {
  */
 abstract class GardeningIssueFilter {
 	
+	protected $gi_issue_classes;
+	
+	/**
+	 * Returns array of strings representing the gardening issue classes.
+	 * The index is used to access the issue class.
+	 * 
+	 * @return array of strings
+	 */
+	public function getIssueClasses() {
+ 		return $this->gi_issue_classes;
+ 	}
+ 	
 	/**
 	 * Returns filtering FORM.
 	 * 
@@ -181,30 +212,47 @@ abstract class GardeningIssueFilter {
 		$sent_bot_id = $request->getVal('bot');
 		foreach($registeredBots as $bot_id => $bot) {
 			if ($sent_bot_id == $bot_id) {
-		 		$html .= "<option value=\"".$bot->getBotID()."\" selected=\"selected\">".$bot->getLabel()."</option>";
+		 		$html .= "<option value=\"".$bot->getBotID()."\" selected=\"selected\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
 			} else {
-				$html .= "<option value=\"".$bot->getBotID()."\">".$bot->getLabel()."</option>";
+				$html .= "<option value=\"".$bot->getBotID()."\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
 			}
 				
 		}
  		$html .= 	"</select>";
  		
+ 		// type of Gardening issue
+		$type = $request->getVal('type');
+ 		$html .= "<span id=\"issueClasses\"><select name=\"type\">";
+		$i = 0;
+		foreach($this->getIssueClasses() as $class) {
+			if ($i == $type) {
+		 		$html .= "<option value=\"$i\" selected=\"selected\">$class</option>";
+			} else {
+				$html .= "<option value=\"$i\">$class</option>";
+			}
+			$i++;		
+		}
+ 		$html .= 	"</select>";
+ 		
 		$html .= $this->getUserFilterControls($specialAttPage, $request);
- 						
- 		$html .= 	"<input type=\"submit\" value=\" Go \">";
+ 		$html .= "</span>";	
+ 		$html .= "<input type=\"submit\" value=\" Go \">";
  		$html .= "</form>";	
  		return $html;
 	}
 	
+	
+	
+	
 	/**
 	 * Returns user-defined filtering elements.
 	 * 
-	 * @param $specialAttPage special page title object
-	 * @param $request Request object for accessing URL parameters
+	 * @param $specialAttPage special page title object. May be NULL (ajax)
+	 * @param $request Request object for accessing URL parameters. May be NULL (ajax)
 	 * 
 	 * @return HTML string of form elements
 	 */
-	protected abstract function getUserFilterControls($specialAttPage, $request);
+	public abstract function getUserFilterControls($specialAttPage, $request);
 	
 	/**
 	 * Returns GardeningIssue objects.
@@ -214,6 +262,14 @@ abstract class GardeningIssueFilter {
 	 * 
 	 * @return array of GardeningIssue objects.
 	 */
-	public abstract function getData($options, $request);
+	public function getData($options, $request) {
+		$bot = $request->getVal('bot');
+		if ($bot == NULL) return array(); 
+		
+		$type = $request->getVal('type');
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		return $gi_store->getGardeningIssues($bot, $options, $type == 0 ? NULL : $type);
+	}
 }
 ?>

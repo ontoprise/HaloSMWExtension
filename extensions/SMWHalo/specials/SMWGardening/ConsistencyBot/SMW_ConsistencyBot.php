@@ -210,7 +210,7 @@
  define('SMW_GARD_ISSUE_INCOMPATIBLE_TYPE', 503);
  
  // others
-define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
+define('SMW_GARD_ISSUE_CYCLE', 601);
 
  class ConsistencyBotIssue extends GardeningIssue {
  	
@@ -282,48 +282,34 @@ define('SMW_GARD_ISSUE_PART_OF_CYCLE', 601);
 				return wfMsg('smw_gard_issue_incompatible_entity', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
 			case SMW_GARD_ISSUE_INCOMPATIBLE_TYPE: 
 				return wfMsg('smw_gard_issue_incompatible_type', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
-			//TODO: complete it	
+						
+			case SMW_GARD_ISSUE_CYCLE:
+				return wfMsg('smw_gard_issue_cycle',  $this->explodeTitlesToLinkObjs($skin, $this->value));
 			default: NULL;	
 		}
 	}
  }
  
  class ConsistencyBotFilter extends GardeningIssueFilter {
- 	
- 	private $type_options;
+ 	 	
  	
  	public function __construct() {
- 		$this->type_options = array('All', 'Cycles', 'Covariance');
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
+ 				 wfMsg('smw_gardissue_class_covariance'),
+ 				 wfMsg('smw_gardissue_class_undefined'),
+ 				 wfMsg('smw_gardissue_class_missdouble'),
+ 				 wfMsg('smw_gardissue_class_wrongvalue'),
+ 				 wfMsg('smw_gardissue_class_incomp'),
+ 				 wfMsg('smw_gardissue_class_cycles'));
  	}
  	
- 	protected function getUserFilterControls($specialAttPage, $request) {
-		
-		// type of property
-		$type = $request->getVal('type');
- 		$html = "<select name=\"type\">";
-		$i = 0;
-		foreach($this->type_options as $option) {
-			if ($i == $type) {
-		 		$html .= "<option value=\"$i\" selected=\"selected\">$option</option>";
-			} else {
-				$html .= "<option value=\"$i\">$option</option>";
-			}
-			$i++;		
-		}
- 		$html .= 	"</select>";
- 		 		
- 		return $html;
+ 	public function getUserFilterControls($specialAttPage, $request) {
+		return '<input name="title" type="text" class="wickEnabled"/>';
 	}
 	
 	
 	public function getData($options, $request) {
-		$bot = $request->getVal('bot');
-		if ($bot == NULL) return array(); 
-		
-		$type = $request->getVal('type');
-		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		return $gi_store->getGardeningIssues($bot, $type == 0 ? NULL : $type);
+		return parent::getData($options, $request);
 	}
  }
 ?>

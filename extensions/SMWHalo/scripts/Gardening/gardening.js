@@ -22,7 +22,10 @@ var GardeningPage = Class.create();
 GardeningPage.prototype = {
 	initialize: function() {
 		this.currentSelectedBot = null;
-		Event.observe(window, 'load', function() {this.currentSelectedBot = $('gardening-tools').firstChild; });
+		if (wgCanonicalSpecialPageName != 'Gardening') return;
+		Event.observe(window, 'load', function() {
+			this.currentSelectedBot = $('gardening-tools').firstChild; 
+		});
 		// refresh Gardening log table every 40 seconds.
 		new PeriodicalExecuter(this.getGardeningLog.bind(this), 40);
 		this.pendeningIndicator = null;
@@ -132,3 +135,27 @@ GardeningPage.prototype = {
 } 
 
 var gardeningPage = new GardeningPage();
+
+
+// Gardening Log special page
+
+var GardeningLogPage = Class.create();
+GardeningLogPage.prototype = {
+	initialize: function() {
+		if (wgCanonicalSpecialPageName != 'GardeningLog') return;
+		this.pendingIndicator = new OBPendingIndicator();
+	},
+	
+	selectBot: function(bot_id) {
+		this.pendingIndicator.show($('issueClasses'));
+		sajax_do_call('smwfGetGardeningIssueClasses', [bot_id], this.changeIssueClassesContent.bind(this));
+	},
+	
+	changeIssueClassesContent: function(request) {
+		var selectElement = $('issueClasses');
+		this.pendingIndicator.hide();
+		if (selectElement != null) selectElement.replace(request.responseText);
+	}
+}
+
+var gardeningLogPage = new GardeningLogPage();

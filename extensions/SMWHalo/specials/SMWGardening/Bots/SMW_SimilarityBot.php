@@ -704,30 +704,39 @@
 				return wfMsg('smw_gardissue_similar_term', $skin->makeLinkObj($this->t1), $this->value);
 			case SMW_GARDISSUE_SHARE_CATEGORIES:
 				
-				return wfMsg('smw_gardissue_share_categories', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+				return wfMsg('smw_gardissue_share_categories', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
 			case SMW_GARDISSUE_SHARE_DOMAINS:
 				
-				return wfMsg('smw_gardissue_share_domains', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+				return wfMsg('smw_gardissue_share_domains', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
 			case SMW_GARDISSUE_SHARE_RANGES:
 				
-				return wfMsg('smw_gardissue_share_ranges', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+				return wfMsg('smw_gardissue_share_ranges', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
 			case SMW_GARDISSUE_SHARE_TYPES:
 				
-				return wfMsg('smw_gardissue_share_types', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), explodeTitlesToLinkObjs($skin, $this->value));
+				return wfMsg('smw_gardissue_share_types', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
 			case SMW_GARDISSUE_DISTINCTBY_PREFIX:
 				return wfMsg('smw_gardissue_distinctby_prefix', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
 			default: return NULL;
 		}
  	}
  	
- 	private function explodeTitlesToLinkObjs(& $skin, $value) {
- 		$titleNames = explode(';', $value);
- 		$result = "";
- 		foreach($titleNames as $tn) {
- 			$title = Title::newFromText($tn);
- 			if ($title != NULL) $result .= $skin->makeLinkObj($title).", ";
- 		}
- 		return substr($result, 0, strlen($result)-2);
+ 	
+ }
+ 
+ class SimilarityBotFilter extends GardeningIssueFilter {
+ 	 	
+ 	
+ 	public function __construct() {
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
  	}
+ 	
+ 	public function getUserFilterControls($specialAttPage, $request) {
+		return '';
+	}
+	
+	
+	public function getData($options, $request) {
+		return parent::getData($options, $request);
+	}
  }
 ?>

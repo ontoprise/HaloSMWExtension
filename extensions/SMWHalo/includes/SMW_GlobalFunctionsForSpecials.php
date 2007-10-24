@@ -19,6 +19,7 @@
  $wgAjaxExportList[] = 'smwfGetGardeningLog';
  $wgAjaxExportList[] = 'smwfGetBotParameters';
  $wgAjaxExportList[] = 'smwfGetRegisteredBots';
+ $wgAjaxExportList[] = 'smwfGetGardeningIssueClasses';
 
  // global functions
 
@@ -142,17 +143,19 @@ function smwGAAddHTMLHeader(&$out) {
 	$jsm = SMWResourceManager::SINGLETON();
 
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Gardening");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/scriptaculous.js', "all", -1, NS_SPECIAL.":Gardening");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":Gardening");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, NS_SPECIAL.":Gardening");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/gardening.js', "all", -1, NS_SPECIAL.":Gardening");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/scriptaculous.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/gardening.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		
 	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Gardening");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":Gardening");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":Gardening");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/deployGardening.js', "all", -1, NS_SPECIAL.":Gardening");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/deployGardening.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		
 	}
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Gardening/gardening.css', "all", -1, NS_SPECIAL.":Gardening");
@@ -191,5 +194,28 @@ function smwfQIAddHTMLHeader(&$out){
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
 
 	return true; // do not load other scripts or CSS
+}
+
+function smwfGetGardeningIssueClasses($bot_id) {
+	global $registeredBots;
+		
+		if ($bot_id == NULL) {
+			return "<span id=\"issueClasses\">unknown bot</span>";
+		} else {
+			$className = get_class($registeredBots[$bot_id]).'Filter';
+			$filter = new $className();
+			
+	 		$html = "<span id=\"issueClasses\"><select name=\"type\" id=\"issueClasses\">";
+			$i = 0;
+			foreach($filter->getIssueClasses() as $class) {
+				$html .= "<option value=\"$i\">$class</option>";
+				$i++;		
+			}
+	 		$html .= 	"</select>";
+	 		
+			$html .= $filter->getUserFilterControls(NULL, NULL);
+			$html .= "</span>";
+			return $html;
+		}
 }
 ?>

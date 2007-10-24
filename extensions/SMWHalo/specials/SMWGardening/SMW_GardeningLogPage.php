@@ -36,11 +36,21 @@ class SMWGardeningLogPage extends SMWQueryPage {
 		global $wgRequest, $registeredBots;
 		$bot_id = $wgRequest->getVal("bot");
 		if ($bot_id == NULL) {
-			return 'Choose a bot.'; // TODO: display bot selector.
+			$html .= "<form action=\"".$specialAttPage->getFullURL()."\">";
+			$html .= "<select name=\"bot\">";
+					
+			foreach($registeredBots as $bot_id => $bot) {
+				$html .= "<option value=\"".$bot->getBotID()."\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
+			}
+	 		$html .= "</select>";
+	 		$html .= "<span id=\"issueClasses\"></span>";
+	 		$html .= "<input type=\"submit\" value=\" Go \">";
+	 		$html .= "</form>";
+	 		return $html;
 		} else {
 			$className = get_class($registeredBots[$bot_id]).'Filter';
 			$filter = new $className();
-			return $filter->getFilterControls($specialAttPage, $wgRequest);
+			return $html.$filter->getFilterControls($specialAttPage, $wgRequest);
 		}
 		
  		
