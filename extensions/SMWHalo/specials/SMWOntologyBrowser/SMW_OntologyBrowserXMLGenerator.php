@@ -27,7 +27,7 @@ class SMWOntologyBrowserXMLGenerator {
 		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
 			continue;
 		}
-		$title_esc = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		$title_esc = htmlspecialchars($t->getDBkey()); 
 		$result = $result."<conceptTreeElement title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\"></conceptTreeElement>";
 		$count++;
 	}
@@ -54,13 +54,13 @@ public static function encapsulateAsInstancePartition($directInstances, $inherit
 	}
 	$count++;
 	foreach($directInstances as $t) { 
-		$title = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		$title = htmlspecialchars($t->getDBkey()); 
 		$result = $result."<instance title=\"".$title."\" img=\"instance.gif\" id=\"ID_$id$count\"></instance>";
 		$count++;
 	}
 	foreach($inheritedInstances as $t) { 
-		$instanceTitle = preg_replace("/\"/", "&quot;", $t[0]->getDBkey());
-		$categoryTitle = preg_replace("/\"/", "&quot;", $t[1]->getDBkey());
+		$instanceTitle = htmlspecialchars($t[0]->getDBkey()); 
+		$categoryTitle = htmlspecialchars($t[1]->getDBkey());
 		$result = $result."<instance title=\"".$instanceTitle."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\"></instance>";
 		$count++;
 	}
@@ -86,7 +86,7 @@ public static function encapsulateAsPropertyPartition($titles, $limit, $partitio
 		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
 			continue;
 		}
-		$title = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		$title = htmlspecialchars($t->getDBkey());
 		$result = $result."<propertyTreeElement title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\"></propertyTreeElement>";
 		$count++;
 	}
@@ -143,7 +143,7 @@ private static function encapsulateAsProperty(Title $t, $count) {
 				$content = "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
 			} else { 
 				foreach($relationTarget as $rt) {
-					$title = preg_replace("/\"/", "&quot;", $rt->getXSDValue());
+					$title = htmlspecialchars($rt->getXSDValue()); 
 					$content .= "<rangeType isLink=\"true\">".$title."</rangeType>";
 				}
 				
@@ -185,7 +185,7 @@ private static function encapsulateAsProperty(Title $t, $count) {
 				$isTransitiveText = "isTransitive=\"true\"";
 			}
 		}
-		$title_esc = preg_replace("/\"/", "&quot;", $t->getDBkey());
+		$title_esc = htmlspecialchars($t->getDBkey());
 		return "<property title=\"".$title_esc."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
 	
 }
@@ -227,12 +227,12 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 				$parameters .= "<param $isLink>$value</param>";
 			}
 			$repasteMarker = $isFormula || $needRepaste ? "chemFoEq=\"true\"" : "";
-			$title = preg_replace("/\"/", "&quot;", $annotationTitle->getDBkey());
+			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$multiProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker>".$parameters."</annotation>";
 	
 		} else if ($smwValue instanceof SMWWikiPageValue) { // relation
 		
-			$title = preg_replace("/\"/", "&quot;", $annotationTitle->getDBkey());
+			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
 			
 		} else { // normal attribute
@@ -253,7 +253,7 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			//special attribute mark for all things needed to get re-pasted in FF.
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
 		
-			$title = preg_replace("/\"/", "&quot;", $annotationTitle->getDBkey());
+			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param></annotation>";
 		}
 		$count++;
