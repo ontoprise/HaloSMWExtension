@@ -82,9 +82,12 @@ require_once("SMW_GardeningLog.php");
  		$bot->setTaskID($taskid);
  		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
  		$log = $bot->run(GardeningBot::convertParamStringToArray(implode($params,"")), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
- 		
- 		if ($log != NULL && $log != '') $log .= "\n[[category:GardeningLog]]";
- 
+ 		echo $log;
+ 		if ($log != NULL && $log != '') {
+ 			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
+ 			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[[".$glp->getNsText().":".$glp->getText()."|".$glp->getText()."]]");
+ 			$log .= "\n[[category:GardeningLog]]";
+ 		}
  		// mark as finished
  		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";

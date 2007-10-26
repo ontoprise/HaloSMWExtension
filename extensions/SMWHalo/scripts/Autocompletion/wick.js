@@ -963,12 +963,15 @@ AutoCompleter.prototype = {
         var userContext = this.getUserContext();
 
         if (this.siw.customFloater) {
-            if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) && !this.getTextAfterCursor().match(/^\s*\]\]|^\s*\||^\s*;/)) {
+            if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) 
+            	&& !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
                 addedValue += "]]";
             } else if (type == SMW_PROPERTY_NS) {
                 addedValue += ":=";
             } else if (type == SMW_INSTANCE_NS) {
-            	addedValue += "]]";
+            	if (!userContext.match(/|(\s|\r|\n)*$/)) { 
+            		addedValue += "]]"; // add only if instance is no template parameter
+            	}
              }else if (addedValue.match(/category/i)) {
                 addedValue += ":";
             }

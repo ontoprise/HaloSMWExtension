@@ -162,13 +162,13 @@ clicking the big arrows between the columns.',
 	'smw_ob_undefined_type' => '*undefined type*',
 	'smw_ob_hideinstances' => 'Hide Instances',
 	/* Messages for Gardening */
-	'gardening' => 'Gardening',
-	'gardeninglog' => 'GardeningLog',
+	'gardening' => 'Gardening', // name of special page 'Gardening'
+	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
+	
 	'smw_gardening_log_cat' => 'GardeningLog',
 	'smw_gardeninglogs_docu' => 'This page provides access to logs created by the Gardening Bots. You can filter them in various ways.',
-	
-	'smw_gardening' => 'Gardening',
 	'smw_gardening_log_exp' => 'This is the Gardening log category',
+	'smw_gardeninglog_link' => 'Also take a look at $1 special page for further logs.',
 	'smw_gard_welcome' => 'This is the Gardening toolbox.It provides some tools which helps to keep the wiki content clean and consistent.',
 	'smw_gard_notools' => 'If you do not see any tools here, you might not be logged in or you do not have any rights to use gardening tools.',
 	'smw_no_gard_log' => 'No Gardening log',
@@ -227,8 +227,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2',
 	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible type to $2',
 
-	/*'smw_gard_errortype_categorygraph_contains_cycles' => 'The category graph contains cycles',
-	'smw_gard_errortype_propertygraph_contains_cycles' => 'The property graph contains cycles',*/
+	
 	'smw_gard_issue_cycle' => 'Cycle at: $1',
 	
 	'smw_gardissue_class_covariance' => 'Covariance problems',
@@ -237,14 +236,6 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_class_wrongvalue' => 'Wrong value / frequency',
 	'smw_gardissue_class_incomp' => 'Incompatible entities',
 	'smw_gardissue_class_cycles' => 'Cycles',
-
-	/*'smw_gard_errortype_relation_problems' => 'Property schema problems',
-	'smw_gard_errortype_attribute_problems' => 'Property schema problems',
-	'smw_gard_errortype_inconsistent_relation_annotations' => 'Inconsistent property annotations',
-	'smw_gard_errortype_inconsistent_attribute_annotations' => 'Inconsistent property annotations',
-	'smw_gard_errortype_inconsistent_cardinalities' => 'Inconsistent number of annotations',
-	'smw_gard_errortype_inverse_relations' => 'Inconsistent inverse properties',
-	'smw_gard_errortype_equality' => 'Inconsistent equalities',*/
 
 	/* SimilarityBot*/
 	'smw_gard_degreeofsimilarity' => 'Edit distance limit',
@@ -271,10 +262,6 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_relationtarget_undefined' => '$1 undefined when used with: $2',
 	'smw_gardissue_instance_without_cat' => '$1 is not member of a category',
 
-	/*'smw_gard_errortype_undefined_categories' => 'Undefined categories (remove annotation or define)',
-	'smw_gard_errortype_undefined_properties' => 'Undefined properties (remove annotation or define)',
-	'smw_gard_errortype_undefined_relationtargets' => 'Undefined property targets',
-	'smw_gard_errortype_instances_without_category' => 'Instances without category (add them to a category)',*/
 
 	/* Missing annotations */
 	'smw_gard_missingannot_docu' => 'This bot identifies pages in the Wiki that are not annotated.',

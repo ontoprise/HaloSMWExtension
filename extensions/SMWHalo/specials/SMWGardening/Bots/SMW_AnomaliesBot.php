@@ -355,7 +355,7 @@
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
  	}
  	
- 	public function getTextualRepresenation(& $skin) {
+ 	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_CATEGORY_LEAF:
 				return wfMsg('smw_gardissue_category_leaf', $skin->makeLinkObj($this->t1));

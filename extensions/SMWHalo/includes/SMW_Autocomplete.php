@@ -346,7 +346,7 @@ class AutoCompletionRequester {
 			// special handling for non-SMW namespace Category
 			$namespace = AutoCompletionRequester::getNamespaceText($titles[$i]);
 			$extra = $extraData != NULL ? $extraData[$i] : ""; 
-			$result .= "<match type=\"".$titles[$i]->getNamespace()."\">".($putNameSpaceInName ? $namespace.":" : "").$titles[$i]->getDBkey().$extra."</match>";
+			$result .= "<match type=\"".$titles[$i]->getNamespace()."\">".($putNameSpaceInName ? $namespace.":" : "").htmlspecialchars($titles[$i]->getDBkey().$extra)."</match>";
 		}
 		return empty($titles) ? SMW_AC_NORESULT : $result.'</result>';
 	}
@@ -357,7 +357,7 @@ class AutoCompletionRequester {
 	public static function encapsulateEnumsOrUnitsAsXML($arrayofEnumsOrUnits) {
 		$result = '<result>';
 		foreach($arrayofEnumsOrUnits as $eou) {
-			$result .= "<match type=\"200\">".$eou."</match>";
+			$result .= "<match type=\"200\">".htmlspecialchars($eou)."</match>";
 		}
 		return empty($arrayofEnumsOrUnits) ? SMW_AC_NORESULT : $result.'</result>';
 	}

@@ -14,6 +14,9 @@
  * 
  */
  
+ define('SMW_GARDENINGLOG_SORTFORTITLE', 0);
+ define('SMW_GARDENINGLOG_SORTFORVALUE', 1);
+ 
  /**
   * Abstract class to access GardeningIssue store.
   */
@@ -33,12 +36,17 @@
  	public abstract function clearGardeningIssues($bot_id = NULL, Title $t1 = NULL);
  	
  	/**
- 	 * Get Gardening issues for a given Title.
+ 	 * Get Gardening issues. Every parameter may be NULL.
  	 * 
+ 	 * @param $bot_id Bot-ID
+ 	 * @param $options instance of SMWRequestOptions
+ 	 * @param $gi_type type of issue. (Can be an array!)
+ 	 * @param $gi_class type of class of issue.
  	 * @param $t1 Title issue is about.
- 	 * @param $gi_type type of issue.
+ 	 * @param $sortfor column to sort for. Default by title.
+ 	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
  	 */
- 	public abstract function getGardeningIssues($bot_id, $options, $gi_type = NULL, Title $t1 = NULL);
+ 	public abstract function getGardeningIssues($bot_id = NULL, $options = NULL, $gi_type = NULL, $gi_class = NULL, Title $t1 = NULL,  $sortfor = NULL);
  	
  	/**
  	 * Add Gardening issue about articles.
@@ -67,25 +75,7 @@
  	 */
  	public abstract function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value);
  	
- 	/**
- 	 * Updates Gardening issue about 2 articles. If no issue exists, it will be created.
- 	 * 
- 	 * @param $gi_type type of issue.
- 	 * @param $t1 Title issue is about.
- 	 * @param $t2 Title 
- 	 * @param $value new value.
- 	 */
- 	public abstract function updateGardeningIssueAboutArticles($bot_id, $gi_type, Title $t1, Title $t2, $value = NULL); 
- 	
-  	
- 	/**
- 	 * Updates Gardening issue about an article with a value.  If no issue exists, it will be created.
- 	 * 
- 	 * @param $gi_type type of issue.
- 	 * @param $t1 Title issue is about.
- 	 * @param $value new value
- 	 */
- 	public abstract function updateGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value); 
+ 	 
  }
 
 /**
@@ -101,6 +91,8 @@ abstract class GardeningIssue {
 	protected $t2;
 	protected $value;
 	
+	protected $subIssues = NULL;
+	
 	protected function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
 		$this->bot_id = $bot_id;
 		$this->gi_type = $gi_type;
@@ -113,23 +105,17 @@ abstract class GardeningIssue {
 		$this->value = $value;
 	}
 	
-	public static function createIssueAboutArticles($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+	/**
+	 * Creates an issue depending of the $bot_id
+	 * 
+	 * @return instance of subclass of GardeningIssue.
+	 */ 
+	public static function createIssue($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
 		global $registeredBots;
 		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
 		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
 	}
 	
-	public static function createIssueAboutValue($bot_id, $gi_type, $t1_ns, $t1, $value) {
-		global $registeredBots;
-		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
-		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, -1, NULL, $value);
-	}
-	
-	public static function createIssueAboutArticle($bot_id, $gi_type, $t1_ns, $t1) {
-		global $registeredBots;
-		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
-		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, -1, NULL, NULL);
-	}
 	
 	public function getBotID() {
 		return $this->bot_id;
@@ -170,12 +156,39 @@ abstract class GardeningIssue {
  		return substr($result, 0, strlen($result)-2);
  	}
 	
+	
+	public function getRepresentation(& $skin) {
+		if ($this->subIssues == NULL) {
+			return $this->getTextualRepresenation($skin);
+		} else {
+			return $this->getTextualRepresentationForSubIssues($skin);
+		}
+	}
+	
+	/**
+	 * Add group of subIssues. Informal contract is that all members 
+	 * of the group should have the same title1 ID.
+	 */
+	public function addSubIssues(array & $subIssues) {
+		$this->subIssues = $subIssues;
+	}
+	
 	/**
 	 * Returns textual representation of Gardening issue.
 	 * 
 	 * @param & $skin reference to skin object to create links. 
 	 */
-	public abstract function getTextualRepresenation(& $skin);
+	protected abstract function getTextualRepresenation(& $skin);
+	
+	/**
+	 * Returns textual representation of a group of Gardening issues.
+	 * 
+	 * 
+	 * @param & $skin reference to skin object to create links. 
+	 */
+	protected function getTextualRepresentationForSubIssues(& $skin) {
+		return NULL;
+	}
 }
 
 /**
@@ -221,8 +234,8 @@ abstract class GardeningIssueFilter {
  		$html .= 	"</select>";
  		
  		// type of Gardening issue
-		$type = $request->getVal('type');
- 		$html .= "<span id=\"issueClasses\"><select name=\"type\">";
+		$type = $request->getVal('class');
+ 		$html .= "<span id=\"issueClasses\"><select name=\"class\">";
 		$i = 0;
 		foreach($this->getIssueClasses() as $class) {
 			if ($i == $type) {
@@ -241,7 +254,14 @@ abstract class GardeningIssueFilter {
  		return $html;
 	}
 	
-	
+	/**
+	 * Returns associative array of additional parameters to link.
+	 * 
+	 * @param array(parameter => value)
+	 */
+	public function linkUserParameters(& $wgRequest) {
+		return array();
+	}
 	
 	
 	/**
@@ -266,10 +286,10 @@ abstract class GardeningIssueFilter {
 		$bot = $request->getVal('bot');
 		if ($bot == NULL) return array(); 
 		
-		$type = $request->getVal('type');
+		$type = $request->getVal('class');
 		
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		return $gi_store->getGardeningIssues($bot, $options, $type == 0 ? NULL : $type);
+		return $gi_store->getGardeningIssues($bot, $options, NULL, $type == 0 ? NULL : $type);
 	}
 }
 ?>

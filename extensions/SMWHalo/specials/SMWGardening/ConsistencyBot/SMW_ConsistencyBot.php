@@ -16,12 +16,11 @@
  
  class ConsistencyBot extends GardeningBot {
  	
- 	// global log which contains wiki-markup
- 	private $globalLog;
+ 	
  	
  	function ConsistencyBot() {
  		parent::GardeningBot("smw_consistencybot");
- 		$this->globalLog = "== This is the consistency log! ==\n\n";
+ 		
  	}
  	
  	public function getHelpText() {
@@ -56,113 +55,66 @@
  		echo $this->getBotID()." started!\n";
  				
  		$this->setNumberOfTasks(7); // 7 single tasks
- 		$errors = false;
+ 		
  		// Schema level checks
  		// first, check if there are cycles in the inheritance graphs
  		echo "Checking for cycles in inheritance graphs...";
- 		$log = $this->checkInheritanceCycles();
+ 		$this->checkInheritanceCycles();
  		echo "done!\n\n";
- 		$this->globalLog .= $log;
- 		/*if ($log != '') {
- 			
- 			$this->globalLog .= $log;
- 			echo "Abort here, because cycles were detected.\n";
- 			return $this->globalLog; // end here
- 		}*/
+ 		
 		
 		echo "Checking property co-variance...";
-        $log = $this->checkPropertyCovariance($delay);
+        $this->checkPropertyCovariance($delay);
         echo "done!\n\n";
-        if ($log != '') {
-        	$errors = true;
-        	$this->globalLog .=  $log;
-        }
-        
-               
- 		 echo "Checking for consistency of inverse and equality relations...";
- 		 $log = $this->checkInverseEqualityRelations();
- 		 echo "done!\n\n";
- 		  if ($log != '') {
-        	$errors = true;
-        	$this->globalLog .=  $log;
-        }
+                    
+ 		echo "Checking for consistency of inverse and equality relations...";
+ 		$this->checkInverseEqualityRelations();
+ 		echo "done!\n\n";
+ 		
  	
  		// Annotation level checks
- 		 echo "Checking annotation level...";
-         $log = $this->checkAnnotationLevel($delay);
- 		 echo "done!\n\n";
-          if ($log != '') {
-        	$errors = true;
-        	$this->globalLog .=  $log;
-        }
-        
-        if (!$errors) {
-        	return wfMsg('smw_gard_no_errors');
-        }
-        
- 		// print the log for debugging
- 		// echo $this->globalLog;
- 		return $this->globalLog;
+ 		echo "Checking annotation level...";
+        $this->checkAnnotationLevel($delay);
+ 	    echo "done!\n\n";
+         
+ 		return NULL;
  		
  	}
  	
  	private function checkInheritanceCycles() {
- 		$log = "";
- 		$gcd = new GraphCycleDetector($this);
  		
- 		$log .=  $gcd->getAllCategoryCycles("== ".wfMsg('smw_gard_errortype_categorygraph_contains_cycles')." ==\n\n");
- 		$log .= $gcd->getAllPropertyCycles("== ".wfMsg('smw_gard_errortype_propertygraph_contains_cycles')." ==\n\n");
- 		 		
- 		if ($log != '') {
- 			$log .= "----\n";
- 		}
- 		return $log;
+ 		$gcd = new GraphCycleDetector($this);
+ 		$gcd->getAllCategoryCycles("== ".wfMsg('smw_gard_errortype_categorygraph_contains_cycles')." ==\n\n");
+ 		$gcd->getAllPropertyCycles("== ".wfMsg('smw_gard_errortype_propertygraph_contains_cycles')." ==\n\n");
+ 			
  	}
  	
  	 	
  	private function checkPropertyCovariance($delay) {
- 		$log = "";
+ 		
  		$pcd = new PropertyCoVarianceDetector($this, $delay);
- 		/*$rgc .= $pcd->checkRelationGraphForCovariance();
- 		if ($rgc != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_relation_problems')." ==\n".$rgc."----\n";
- 		}*/
  		$agc .= $pcd->checkPropertyGraphForCovariance();
- 		if ($agc != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_attribute_problems')." ==\n".$agc."----\n";
- 		}
- 		return $log;
+ 		
+ 		
  	}
  	
  	private function checkAnnotationLevel($delay) {
- 		$log = "";
- 		$alc = new AnnotationLevelConsistency($this, $delay);
  		
+ 		$alc = new AnnotationLevelConsistency($this, $delay);
  		$aac .= $alc->checkPropertyAnnotations();
- 		if ($aac != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_inconsistent_attribute_annotations')." ==\n".$aac."----\n";
- 		}
  		$acc .= $alc->checkAnnotationCardinalities();
- 		if ($acc != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_inconsistent_cardinalities')." ==\n".$acc."----\n";
- 		}
- 		return $log;
+ 		
+ 		
  	}
  	
  	
  	
  	private function checkInverseEqualityRelations() {
- 		$log = "";
+ 		
  		$ier = new InverseEqualityConsistency($this);
  		$cir = $ier->checkInverseRelations();
- 		if ($cir != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_inverse_relations')." ==\n".$cir."\n----\n";
- 		}
  		$cer = $ier->checkEqualToRelations();
- 		if ($cer != '') {
- 			$log .= "== ".wfMsg('smw_gard_errortype_equality')." ==\n".$cer."\n----\n";
- 		}
- 		return $log;
+ 		
  	}
  	
  	
@@ -218,7 +170,7 @@ define('SMW_GARD_ISSUE_CYCLE', 601);
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
  	}
  	
- 	public function getTextualRepresenation(& $skin) {
+ 	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_DOMAINS_NOT_COVARIANT: 
 				return wfMsg('smw_gardissue_domains_not_covariant', $skin->makeLinkObj($this->t1));
@@ -304,12 +256,21 @@ define('SMW_GARD_ISSUE_CYCLE', 601);
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {
-		return '<input name="title" type="text" class="wickEnabled"/>';
+		return ' Match:<input name="matchString" type="text" class="wickEnabled"/>';
 	}
 	
+	public function linkUserParameters(& $wgRequest) {
+		return array('matchString' => $wgRequest->getVal('matchString'));
+	}
 	
 	public function getData($options, $request) {
-		return parent::getData($options, $request);
+		$matchString = $request->getVal('matchString');
+		if ($matchString == NULL || $matchString == '') {
+			return parent::getData($options, $request);
+		} else {
+			$options->addStringCondition($matchString, SMW_STRCOND_MID);
+			return parent::getData($options, $request);
+		}
 	}
  }
 ?>

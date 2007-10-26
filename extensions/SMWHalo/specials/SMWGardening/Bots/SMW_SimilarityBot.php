@@ -678,13 +678,13 @@
  }
  
  define('SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY', 1101);
- define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1102);
- define('SMW_GARDISSUE_SIMILAR_TERM', 1103);
- define('SMW_GARDISSUE_SHARE_CATEGORIES', 1104);
- define('SMW_GARDISSUE_SHARE_DOMAINS', 1105);
- define('SMW_GARDISSUE_SHARE_RANGES', 1106);
- define('SMW_GARDISSUE_SHARE_TYPES', 1107);
- define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1108);
+ define('SMW_GARDISSUE_SIMILAR_TERM', 1102);
+ define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1201);
+ define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1301);
+ define('SMW_GARDISSUE_SHARE_CATEGORIES', 1401);
+ define('SMW_GARDISSUE_SHARE_DOMAINS', 1402);
+ define('SMW_GARDISSUE_SHARE_RANGES', 1403);
+ define('SMW_GARDISSUE_SHARE_TYPES', 1404);
         
  
  class SimilarityBotIssue extends GardeningIssue {
@@ -693,31 +693,41 @@
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
  	}
  	
- 	public function getTextualRepresenation(& $skin) {
-		switch($this->gi_type) {
-			case SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY:
-				return wfMsg('smw_gardissue_similar_schema_entity', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
-			case SMW_GARDISSUE_SIMILAR_ANNOTATION:
-				$article = Title::newFromText($this->value);
-				return wfMsg('smw_gardissue_similar_annotation', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $article != NULL ? $skin->makeLinkObj($article) : '');
-			case SMW_GARDISSUE_SIMILAR_TERM:
-				return wfMsg('smw_gardissue_similar_term', $skin->makeLinkObj($this->t1), $this->value);
-			case SMW_GARDISSUE_SHARE_CATEGORIES:
-				
-				return wfMsg('smw_gardissue_share_categories', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
-			case SMW_GARDISSUE_SHARE_DOMAINS:
-				
-				return wfMsg('smw_gardissue_share_domains', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
-			case SMW_GARDISSUE_SHARE_RANGES:
-				
-				return wfMsg('smw_gardissue_share_ranges', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
-			case SMW_GARDISSUE_SHARE_TYPES:
-				
-				return wfMsg('smw_gardissue_share_types', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
-			case SMW_GARDISSUE_DISTINCTBY_PREFIX:
-				return wfMsg('smw_gardissue_distinctby_prefix', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
-			default: return NULL;
-		}
+ 	protected function getTextualRepresenation(& $skin) {
+ 	
+			switch($this->gi_type) {
+				case SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY:
+					return wfMsg('smw_gardissue_similar_schema_entity', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				case SMW_GARDISSUE_SIMILAR_ANNOTATION:
+					$article = Title::newFromText($this->value);
+					return wfMsg('smw_gardissue_similar_annotation', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $article != NULL ? $skin->makeLinkObj($article) : '');
+				case SMW_GARDISSUE_SIMILAR_TERM:
+					return wfMsg('smw_gardissue_similar_term', $skin->makeLinkObj($this->t1), $this->value);
+				case SMW_GARDISSUE_SHARE_CATEGORIES:
+					
+					return wfMsg('smw_gardissue_share_categories', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
+				case SMW_GARDISSUE_SHARE_DOMAINS:
+					
+					return wfMsg('smw_gardissue_share_domains', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
+				case SMW_GARDISSUE_SHARE_RANGES:
+					
+					return wfMsg('smw_gardissue_share_ranges', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
+				case SMW_GARDISSUE_SHARE_TYPES:
+					
+					return wfMsg('smw_gardissue_share_types', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2), $this->explodeTitlesToLinkObjs($skin, $this->value));
+				case SMW_GARDISSUE_DISTINCTBY_PREFIX:
+					return wfMsg('smw_gardissue_distinctby_prefix', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				default: return NULL;
+			}
+ 		
+ 	}
+ 	
+ 	protected function getTextualRepresentationForSubIssues(& $skin) {
+ 		$tooltip = "";
+ 		foreach($this->subIssues as $issue) {
+ 			$tooltip .= $issue->getTextualRepresenation($skin)."<br>";
+ 		}
+ 		return '<span class="smwttinline">' . $skin->makeLinkObj($this->t1) . '<span class="smwttcontent">' . $tooltip . '</span></span>';
  	}
  	
  	
@@ -725,13 +735,32 @@
  
  class SimilarityBotFilter extends GardeningIssueFilter {
  	 	
+ 	private $sortfor;
  	
  	public function __construct() {
- 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 
+							'Similar schema elements',
+							'Distinct by prefix/suffix',
+							'Similar annotations',
+							'Sharing categories/types');
+							
+		$this->sortfor = array('Alphabetically', 'Similarity score');
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {
-		return '';
+ 		$sortfor = $request != NULL ? $request->getVal('sortfor') : 0;
+		$html = " Sort by: <select name=\"sortfor\">";
+		$i = 0;
+		foreach($this->sortfor as $sortOption) {
+			if ($i == $sortfor) {
+		 		$html .= "<option value=\"$i\" selected=\"selected\">$sortOption</option>";
+			} else {
+				$html .= "<option value=\"$i\">$sortOption</option>";
+			}
+			$i++;		
+		}
+ 		$html .= 	"</select>";
+ 		return $html;
 	}
 	
 	

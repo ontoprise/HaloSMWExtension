@@ -19,7 +19,19 @@ function smwfDoSpecialLogPage() {
 }
 
 class SMWGardeningLogPage extends SMWQueryPage {
-
+	
+	private $filter;
+	
+	function __construct() {
+		global $wgRequest, $registeredBots;
+		$bot_id = $wgRequest->getVal("bot");
+		if ($bot_id == NULL) {
+			$this->filter = NULL;
+		} else {
+			$className = get_class($registeredBots[$bot_id]).'Filter';
+			$this->filter = new $className();
+		}
+	}
 	function getName() {
 		return "GardeningLog";
 	}
@@ -48,9 +60,8 @@ class SMWGardeningLogPage extends SMWQueryPage {
 	 		$html .= "</form>";
 	 		return $html;
 		} else {
-			$className = get_class($registeredBots[$bot_id]).'Filter';
-			$filter = new $className();
-			return $html.$filter->getFilterControls($specialAttPage, $wgRequest);
+			// filter must be != NULL, because $bot_id != NULL
+			return $html.$this->filter->getFilterControls($specialAttPage, $wgRequest);
 		}
 		
  		
@@ -59,8 +70,9 @@ class SMWGardeningLogPage extends SMWQueryPage {
 	function linkParameters() {
 		global $wgRequest;
 		$bot_id = $wgRequest->getVal("bot") == NULL ? '' : $wgRequest->getVal("bot");
-		$type = $wgRequest->getVal("type") == NULL ? '' : $wgRequest->getVal("type");
-		return array('bot' => $bot_id, 'type' => $type);
+		$type = $wgRequest->getVal("class") == NULL ? '' : $wgRequest->getVal("class");
+		$params = array('bot' => $bot_id, 'class' => $type);
+		return array_merge($params, $this->filter->linkUserParameters($wgRequest));
 	}
 	
 	function sortDescending() {
@@ -69,7 +81,7 @@ class SMWGardeningLogPage extends SMWQueryPage {
 
 	function formatResult( $skin, $result ) {
 		if ($result instanceof GardeningIssue) {
-			$text = $result->getTextualRepresenation($skin);
+			$text = $result->getRepresentation($skin);
 			if ($text != NULL) {
 				return $text;
 			} else {
@@ -79,15 +91,8 @@ class SMWGardeningLogPage extends SMWQueryPage {
 	}
 
 	function getResults($options) {
-		global $wgRequest, $registeredBots;
-		$bot_id = $wgRequest->getVal("bot");
-		if ($bot_id == NULL) {
-			return array();
-		} else {
-			$className = get_class($registeredBots[$bot_id]).'Filter';
-			$filter = new $className();
-			return $filter->getData($options, $wgRequest);
-		}
+		global $wgRequest;
+		return $this->filter != NULL ? $this->filter->getData($options, $wgRequest) : array();
 	}
 }
 ?>

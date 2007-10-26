@@ -129,7 +129,7 @@
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
  	}
  	
- 	public function getTextualRepresenation(& $skin) {
+ 	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_UPDATEARTICLE:
 				return wfMsg('smw_gardissue_updatearticle', $skin->makeLinkObj($this->t1));
