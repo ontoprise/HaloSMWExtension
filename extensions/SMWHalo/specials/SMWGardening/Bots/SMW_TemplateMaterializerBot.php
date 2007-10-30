@@ -137,4 +137,27 @@
 		}
  	}
  }
+ 
+ class TemplateMaterializerBotFilter extends GardeningIssueFilter {
+ 	 	
+ 	
+ 	
+ 	public function __construct() {
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+							
+		//$this->sortfor = array('Alphabetically', 'Similarity score');
+ 	}
+ 	
+ 	public function getUserFilterControls($specialAttPage, $request) {
+ 		return '';
+	}
+	
+	public function linkUserParameters(& $wgRequest) {
+		
+	}
+	
+	public function getData($options, $request) {
+		parent::getData($options, $request);
+	}
+ }
 ?>

@@ -21,12 +21,13 @@ function smwfDoSpecialLogPage() {
 class SMWGardeningLogPage extends SMWQueryPage {
 	
 	private $filter;
+	private $gardeningIssues;
 	
 	function __construct() {
 		global $wgRequest, $registeredBots;
 		$bot_id = $wgRequest->getVal("bot");
 		if ($bot_id == NULL) {
-			$this->filter = NULL;
+			$this->filter = new ConsistencyBotFilter();
 		} else {
 			$className = get_class($registeredBots[$bot_id]).'Filter';
 			$this->filter = new $className();
@@ -43,35 +44,24 @@ class SMWGardeningLogPage extends SMWQueryPage {
 	function isSyndicated() { return false; }
 
 	function getPageHeader() {
+		global $wgRequest;
 		$html = '<p>' . wfMsg('smw_gardeninglogs_docu') . "</p><br />\n";
 		$specialAttPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
-		global $wgRequest, $registeredBots;
-		$bot_id = $wgRequest->getVal("bot");
-		if ($bot_id == NULL) {
-			$html .= "<form action=\"".$specialAttPage->getFullURL()."\">";
-			$html .= "<select name=\"bot\">";
-					
-			foreach($registeredBots as $bot_id => $bot) {
-				$html .= "<option value=\"".$bot->getBotID()."\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
-			}
-	 		$html .= "</select>";
-	 		$html .= "<span id=\"issueClasses\"></span>";
-	 		$html .= "<input type=\"submit\" value=\" Go \">";
-	 		$html .= "</form>";
-	 		return $html;
-		} else {
-			// filter must be != NULL, because $bot_id != NULL
-			return $html.$this->filter->getFilterControls($specialAttPage, $wgRequest);
-		}
-		
- 		
+		return $html.$this->filter->getFilterControls($specialAttPage, $wgRequest);
+	}
+	
+	function doQuery( $offset, $limit, $shownavigation=true ) {
+		global $wgRequest, $wgOut;
+		if ($wgRequest->getVal('limit') == NULL) $limit = 20;
+		parent::doQuery($offset, $limit, $shownavigation);
+		$wgOut->addHTML("<button type=\"button\" id=\"showall\" onclick=\"gardeningLogPage.toggleAll()\">Expand All</button>");
 	}
 	
 	function linkParameters() {
 		global $wgRequest;
 		$bot_id = $wgRequest->getVal("bot") == NULL ? '' : $wgRequest->getVal("bot");
-		$type = $wgRequest->getVal("class") == NULL ? '' : $wgRequest->getVal("class");
-		$params = array('bot' => $bot_id, 'class' => $type);
+		$gi_class = $wgRequest->getVal("class") == NULL ? '' : $wgRequest->getVal("class");
+		$params = array('bot' => $bot_id, 'class' => $gi_class);
 		return array_merge($params, $this->filter->linkUserParameters($wgRequest));
 	}
 	
@@ -80,19 +70,51 @@ class SMWGardeningLogPage extends SMWQueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
+		global $wgServer, $wgScriptPath;
 		if ($result instanceof GardeningIssue) {
 			$text = $result->getRepresentation($skin);
 			if ($text != NULL) {
 				return $text;
 			} else {
-				return "unknown issue!";	
+				return 'unknown issue of type: '.$result->getType();	
 			} 
+		} else if ($result instanceof Title) {
+			$escapedDBkey = htmlspecialchars($result->getDBkey(), ENT_QUOTES);
+			$text = $skin->makeLinkObj($result).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
+			$gis = $this->gardeningIssues->getGardeningIssues(); 
+			foreach($gis[$result->getDBkey()] as $gi) {
+				$text .= $gi->getRepresentation($skin).'<br>';
+			}
+			return $text.'</div>';
+		} else if (is_array($result) && count($result) == 2 && 
+				$result[0] instanceof Title && $result[1] instanceof Title){
+			// $result is tuple of titles ($t1, $t2)
+			
+			$escapedDBkey = htmlspecialchars($result[0]->getDBkey(), ENT_QUOTES);
+			
+			$text = $skin->makeLinkObj($result[0]).' <-> '.$skin->makeLinkObj($result[1]).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
+			$gis = $this->gardeningIssues->getGardeningIssues(); 
+			foreach($gis[$result[0]->getDBkey()] as $gi) {
+				$text .= $gi->getRepresentation($skin).'<br>';
+			}
+			return $text.'</div>';
+			
+		} else {
+			return 'unknown data of type: '.get_class($result);
 		}
 	}
 
 	function getResults($options) {
 		global $wgRequest;
-		return $this->filter != NULL ? $this->filter->getData($options, $wgRequest) : array();
+		$this->gardeningIssues = $this->filter != NULL ? $this->filter->getData($options, $wgRequest) : NULL;
+		if ($this->gardeningIssues instanceof GardeningIssueContainer) {
+			return $this->gardeningIssues->getTitles();
+		} else if (is_array($this->gardeningIssues)) {
+			return $this->gardeningIssues;
+		}
+		return array();
 	}
 }
 ?>

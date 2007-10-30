@@ -127,7 +127,10 @@ class GraphCycleDetector {
  			foreach($titles as $t) {
  				$cycle .= $t->getNsText().':'.$t->getText().';';
  			}
- 			$gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_CYCLE, $t, $cycle);
+ 			if (count($titles) > 0) {
+ 				// attach Gardening issue for this cycle to first title
+ 				$gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_CYCLE, $titles[0], $cycle);
+ 			}
  		}
  	}
 }

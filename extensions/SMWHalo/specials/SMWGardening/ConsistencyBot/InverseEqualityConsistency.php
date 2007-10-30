@@ -9,10 +9,11 @@
  	
  	
  	private $bot;
+ 	private $gi_store;
  	
  	public function InverseEqualityConsistency(& $bot) {
  		$this->bot = $bot;
- 		
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
  	
@@ -84,7 +85,7 @@
  			list($s, $t) = $r;
  			if ($s->getNamespace() != $t->getNamespace()) {
  				// equality of incompatible entities
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY, $s, $t);
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY, $s, $t);
  				
  				continue;
  			} else if ($s->getNamespace() == SMW_NS_PROPERTY) {
@@ -96,7 +97,7 @@
  				}
  				if (count($s_type) > 0 && count($t_type) > 0) {
  					if ($s_type[0]->getXSDValue() != $t_type[0]->getXSDValue()) {
- 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_TYPE, $s, $t);
+ 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_TYPE, $s, $t);
  						
  					}
  				}

@@ -33,8 +33,13 @@ $dbr =& wfGetDB( DB_MASTER );
 
 print "\nUpdate the database now...";
 
-$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_chf').' WHERE value_datatype = '.$dbr->addQuotes('Chemical_formula'));
-$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_che').' WHERE value_datatype = '.$dbr->addQuotes('Chemical_equation'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_chf').' WHERE value_datatype = '.$dbr->addQuotes('chemicalformula'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_che').' WHERE value_datatype = '.$dbr->addQuotes('ehemicalequation'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_dat').' WHERE value_datatype = '.$dbr->addQuotes('datetime'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_int').' WHERE value_datatype = '.$dbr->addQuotes('int'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_flt').' WHERE value_datatype = '.$dbr->addQuotes('float'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_enu').' WHERE value_datatype = '.$dbr->addQuotes('enum'));
+$dbr->query('UPDATE smw_attributes SET value_datatype = '.$dbr->addQuotes('_txt').' WHERE value_datatype = '.$dbr->addQuotes('text'));
 
 print "done!\n";
  

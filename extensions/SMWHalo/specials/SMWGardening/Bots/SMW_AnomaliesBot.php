@@ -367,7 +367,7 @@
  	}
  }
  
- class AnomalyBotFilter extends GardeningIssueFilter {
+ class AnomaliesBotFilter extends GardeningIssueFilter {
  	 	
  	
  	public function __construct() {

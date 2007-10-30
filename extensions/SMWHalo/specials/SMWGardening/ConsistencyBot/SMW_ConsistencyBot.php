@@ -222,21 +222,22 @@ define('SMW_GARD_ISSUE_CYCLE', 601);
 			case SMW_GARDISSUE_WRONG_CARD_VALUE: 
 				return wfMsg('smw_gardissue_wrong_card_value', $skin->makeLinkObj($this->t1));
 			case SMW_GARDISSUE_WRONG_TARGET_VALUE: 
-				return wfMsg('smw_gardissue_wrong_target_value', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_wrong_target_value', $this->t1->getText()/*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: 
-				return wfMsg('smw_gardissue_wrong_domain_value', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_wrong_domain_value', $this->t1->getText()/*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_WRONG_CARD: 
-				return wfMsg('smw_gardissue_wrong_card', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_wrong_card', $this->t1->getText()/*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 				
 			case SMW_GARD_ISSUE_DOMAIN_NOT_RANGE: 
-				return wfMsg('smw_gard_issue_domain_not_range', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gard_issue_domain_not_range',$this->t1->getText() /*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 			case SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY: 
-				return wfMsg('smw_gard_issue_incompatible_entity', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gard_issue_incompatible_entity', $this->t1->getText()/*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 			case SMW_GARD_ISSUE_INCOMPATIBLE_TYPE: 
-				return wfMsg('smw_gard_issue_incompatible_type', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gard_issue_incompatible_type',$this->t1->getText() /*$skin->makeLinkObj($this->t1)*/, $skin->makeLinkObj($this->t2));
 						
 			case SMW_GARD_ISSUE_CYCLE:
 				return wfMsg('smw_gard_issue_cycle',  $this->explodeTitlesToLinkObjs($skin, $this->value));
+				
 			default: NULL;	
 		}
 	}

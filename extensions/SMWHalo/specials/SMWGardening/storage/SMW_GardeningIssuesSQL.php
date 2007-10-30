@@ -28,7 +28,6 @@
 		
 			// create relation table
 			DBHelper::setupTable($smw_gardening_issues, array(
-				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
 				  'bot_id'			=>  'VARCHAR(32) NOT NULL '.$collation,
 				  'gi_type'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'gi_class'      	=>  'INT(8) UNSIGNED NOT NULL' ,
@@ -56,7 +55,7 @@
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
- 	public function getGardeningIssues($bot_id = NULL, $options = NULL, $gi_type = NULL, $gi_class = NULL, Title $t1 = NULL, $sortfor = NULL) {
+ 	public function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
  		
@@ -65,6 +64,7 @@
  			$sqlOptions['LIMIT'] = $options->limit;
  			$sqlOptions['OFFSET'] = $options->offset;
  		}
+ 		
  		if ($sortfor != NULL) {
  			switch($sortfor) {
  				case SMW_GARDENINGLOG_SORTFORTITLE: 
@@ -82,9 +82,20 @@
  		if ($bot_id != NULL) { 
  			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
  		}
- 		if ($t1 != NULL) {
- 			$sqlCond[] = 'p1_namespace = '.$t1->getNamespace();
- 			$sqlCond[] = 'p1_title = '.$db->addQuotes($t1->getDBkey());
+ 		if ($titles != NULL) {
+ 			if (is_array($titles)) {
+ 				$cond = "";
+ 				foreach($titles as $t) {
+ 					if (is_array($t)) { 
+ 						$cond .= 'p1_id = '.$t[0]->getArticleID().' OR ';
+ 					} else {
+ 						$cond .= 'p1_id = '.$t->getArticleID().' OR ';
+ 					}
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else { 
+ 				$sqlCond[] = 'p1_id = '.$titles->getArticleID();
+ 			}
  		} 
  		if ($gi_class != NULL) {
  			$sqlCond[] = 'gi_class = '.$gi_class;
@@ -93,7 +104,7 @@
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
- 					$cond = 'gi_type = '.$t.' OR ';
+ 					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else { 
@@ -103,6 +114,7 @@
  		if ($options != NULL) { 
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
+ 		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
@@ -114,6 +126,132 @@
 			}
 		}
 		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function getDistinctTitles($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
+ 		global $registeredBots;
+ 		$db =& wfGetDB( DB_MASTER );
+ 		
+ 		$sqlOptions = array();
+ 		if ($options != NULL) {
+ 			$sqlOptions['LIMIT'] = $options->limit;
+ 			$sqlOptions['OFFSET'] = $options->offset;
+ 		}
+ 		
+ 		if ($sortfor != NULL) {
+ 			switch($sortfor) {
+ 				case SMW_GARDENINGLOG_SORTFORTITLE: 
+ 					$sqlOptions['ORDER BY'] = 'p1_title';
+ 					break;
+ 				case SMW_GARDENINGLOG_SORTFORVALUE:
+ 					$sqlOptions['ORDER BY'] = 'valueint';
+ 					break;
+ 			}
+ 		} else { // sort by title by default
+ 			$sqlOptions['ORDER BY'] = 'p1_title';
+ 		}
+ 		
+		
+ 		$sqlCond = array();
+ 		if ($bot_id != NULL) { 
+ 			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
+ 		}
+ 		
+ 		if ($gi_class != NULL) {
+ 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 		}
+ 		if ($gi_type != NULL) {
+ 			if (is_array($gi_type)) {
+ 				$cond = "";
+ 				foreach($gi_type as $t) {
+ 					$cond .= 'gi_type = '.$t.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else { 
+ 				$sqlCond[] = 'gi_type = '.$gi_type;
+ 			}
+ 		}
+ 		if ($options != NULL) { 
+ 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 		}
+ 		$result = array();
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('DISTINCT p1_title', 'p1_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
+ 		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{	
+				$result[] = Title::newFromText($row->p1_title, $row->p1_namespace);
+				$row = $db->fetchObject($res);
+			}
+		}
+		$db->freeResult($res);
+		
+		return $result;
+ 	}
+ 	
+ 	public function getDistinctTitlePair($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
+ 		global $registeredBots;
+ 		$db =& wfGetDB( DB_MASTER );
+ 		
+ 		$sqlOptions = array('GROUP BY' => 'p1_id, p2_id');
+ 		if ($options != NULL) {
+ 			$sqlOptions['LIMIT'] = $options->limit;
+ 			$sqlOptions['OFFSET'] = $options->offset;
+ 		}
+ 		
+ 		if ($sortfor != NULL) {
+ 			switch($sortfor) {
+ 				case SMW_GARDENINGLOG_SORTFORTITLE: 
+ 					$sqlOptions['ORDER BY'] = 'p1_title';
+ 					break;
+ 				case SMW_GARDENINGLOG_SORTFORVALUE:
+ 					$sqlOptions['ORDER BY'] = 'valueint';
+ 					break;
+ 			}
+ 		} else { // sort by title by default
+ 			$sqlOptions['ORDER BY'] = 'p1_title';
+ 		}
+ 		
+		
+ 		$sqlCond = array();
+ 		if ($bot_id != NULL) { 
+ 			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
+ 		}
+ 		
+ 		if ($gi_class != NULL) {
+ 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 		}
+ 		if ($gi_type != NULL) {
+ 			if (is_array($gi_type)) {
+ 				$cond = "";
+ 				foreach($gi_type as $t) {
+ 					$cond .= 'gi_type = '.$t.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else { 
+ 				$sqlCond[] = 'gi_type = '.$gi_type;
+ 			}
+ 		}
+ 		if ($options != NULL) { 
+ 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 		}
+ 		$result = array();
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace', 'p2_title', 'p2_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
+ 		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{	
+				$t1 = Title::newFromText($row->p1_title, $row->p1_namespace);
+				$t2 = Title::newFromText($row->p2_title, $row->p2_namespace);
+				$result[] = array($t1, $t2);
+				$row = $db->fetchObject($res);
+			}
+		}
+		$db->freeResult($res);
+		
 		return $result;
  	}
  	
@@ -137,7 +275,7 @@
  		$db =& wfGetDB( DB_MASTER );
  		$numeric_value = is_numeric($value);
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
- 			'p1_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL));
+ 			'p2_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL));
  	}
  	
  	

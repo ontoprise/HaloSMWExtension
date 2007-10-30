@@ -155,6 +155,7 @@
 	}
 	
 	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
+		
 		$db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
 
 		$sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from'.//AND page_namespace = '.NS_MAIN.  

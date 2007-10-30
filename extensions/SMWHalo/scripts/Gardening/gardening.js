@@ -141,9 +141,11 @@ var gardeningPage = new GardeningPage();
 
 var GardeningLogPage = Class.create();
 GardeningLogPage.prototype = {
+	
 	initialize: function() {
 		if (wgCanonicalSpecialPageName != 'GardeningLog') return;
 		this.pendingIndicator = new OBPendingIndicator();
+		this.showAll = false;
 	},
 	
 	selectBot: function(bot_id) {
@@ -155,6 +157,19 @@ GardeningLogPage.prototype = {
 		var selectElement = $('issueClasses');
 		this.pendingIndicator.hide();
 		if (selectElement != null) selectElement.replace(request.responseText);
+	},
+	
+	toggle: function(id) {
+		var div = $(id);
+		if (div.visible()) div.hide(); else div.show();
+	},
+	
+	toggleAll: function() {
+		this.showAll = !this.showAll;
+		var showAll = this.showAll;
+		var divs = $$('.gardeningLogPageBox');
+		divs.each(function(d) { if (showAll) d.show(); else d.hide(); });
+		$('showall').innerHTML = showAll ? 'Collapse All' : 'Expand All'; // TODO: externalize
 	}
 }
 

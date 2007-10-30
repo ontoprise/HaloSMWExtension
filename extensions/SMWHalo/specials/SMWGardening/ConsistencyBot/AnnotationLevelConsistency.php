@@ -16,7 +16,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	// Category Graph. It is cached for the whole consistency checks.
  	private $categoryGraph;
  	private $propertyGraph;
- 	
+ 	private $gi_store;
  	
  	// Important: Attribute values (primitives) are always syntactically 
  	// correct when they are in the database. So only relations
@@ -28,7 +28,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		
  		$this->categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
  		$this->propertyGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
- 		
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	/**
  	 * Checks if property annotations uses schema consistent values
@@ -88,7 +88,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					
  					// decide which type and do consistency checks
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
- 						$categoriesOfInstance = smwfGetSemanticStore()->getCategoriesForInstance($target->getTitle());
+ 						$categoriesOfInstance = $target->getTitle() != NULL ? smwfGetSemanticStore()->getCategoriesForInstance($target->getTitle()) : array();
  						$isValid = false;
  						foreach($rangeCategories as $ranCts) { 
  							foreach($categoriesOfInstance as $artCats) { 
@@ -99,8 +99,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  							}
  						}
  						if (!$isValid && !empty($categoriesOfInstance) && !empty($rangeCategories)) {
- 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target, $r);
- 						 							
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
+ 						 	break;						
  						} 
  						
  					} else if ($target instanceof SMWNAryValue) { // n-ary relation
@@ -129,7 +129,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  											}
  											if (!$isValid && !empty($rangeCategories) && !empty($categoriesOfInstance)) {
  												$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r);
-												
+												break;
  											}
  										}
  									}
@@ -152,7 +152,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					}
  					if (!$isValid && !empty($domainCategoryIDs) && !empty($domainCategories)) {
  						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
- 						
+ 						break;
  					}
  					
  				} 

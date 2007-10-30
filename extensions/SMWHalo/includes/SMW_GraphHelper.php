@@ -46,7 +46,7 @@
  			if ($e->to == $c_id2) {
  				return true;
  			}
- 			if (!in_array($visitedNodes, $e->to)) {
+ 			if (!in_array($e->to, $visitedNodes)) {
  				$visitedNodes[] = $e->from; // put visited node on stack
  				$finished = GraphHelper::_checkForPath($graph, $e->to, $c_id2, $visitedNodes);
  				if ($finished) {

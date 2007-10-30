@@ -31,23 +31,56 @@
  	/**
  	 * Clear all Gardening issues
  	 * 
- 	 * @param if not NULL, clear only this type of issue. Otherwise all.
+ 	 * @param $bot_id if not NULL, clear only GardeningIssues of this bot. Otherwise all.
+ 	 * @param $t1 Clear only Gardening issues of this title.
  	 */
  	public abstract function clearGardeningIssues($bot_id = NULL, Title $t1 = NULL);
  	
  	/**
- 	 * Get Gardening issues. Every parameter may be NULL.
+ 	 * Get Gardening issues. Every parameter may be NULL!
  	 * 
  	 * @param $bot_id Bot-ID
- 	 * @param $options instance of SMWRequestOptions
  	 * @param $gi_type type of issue. (Can be an array!)
  	 * @param $gi_class type of class of issue.
- 	 * @param $t1 Title issue is about.
+ 	 * @param $titles Title issue is about. (Can be an array)
  	 * @param $sortfor column to sort for. Default by title.
  	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ 	 * @param $options instance of SMWRequestOptions
+ 	 * 
+ 	 * @return array of GardeningIssue objects
  	 */
- 	public abstract function getGardeningIssues($bot_id = NULL, $options = NULL, $gi_type = NULL, $gi_class = NULL, Title $t1 = NULL,  $sortfor = NULL);
+ 	public abstract function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL,  $sortfor = NULL, $options = NULL);
  	
+ 	/**
+ 	 * Get array of distinct titles having at least one Gardening issue.
+ 	 * Every parameter may be NULL!
+ 	 * 
+ 	 * @param $bot_id Bot-ID
+ 	 * @param $gi_type type of issue. (Can be an array!)
+ 	 * @param $gi_class type of class of issue.
+ 	 * @param $sortfor column to sort for. Default by title.
+ 	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ 	 * @param $options instance of SMWRequestOptions
+ 	 * 
+ 	 * @return array of titles
+ 	 */
+ 	public abstract function getDistinctTitles($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL);
+ 	
+ 	/**
+ 	 * Get array of distinct title pairs having at least one Gardening issue.
+ 	 * Every parameter may be NULL!
+ 	 * 
+ 	 * @param $bot_id Bot-ID
+ 	 * @param $gi_type type of issue. (Can be an array!)
+ 	 * @param $gi_class type of class of issue.
+ 	 * @param $sortfor column to sort for. Default by title.
+ 	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ 	 * @param $options instance of SMWRequestOptions
+ 	 * 
+ 	 * @return array of tuples (t1, t2)
+ 	 */
+ 	public abstract function getDistinctTitlePair($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL);
+ 		
  	/**
  	 * Add Gardening issue about articles.
  	 * 
@@ -158,20 +191,9 @@ abstract class GardeningIssue {
 	
 	
 	public function getRepresentation(& $skin) {
-		if ($this->subIssues == NULL) {
-			return $this->getTextualRepresenation($skin);
-		} else {
-			return $this->getTextualRepresentationForSubIssues($skin);
-		}
+		return $this->getTextualRepresenation($skin);
 	}
 	
-	/**
-	 * Add group of subIssues. Informal contract is that all members 
-	 * of the group should have the same title1 ID.
-	 */
-	public function addSubIssues(array & $subIssues) {
-		$this->subIssues = $subIssues;
-	}
 	
 	/**
 	 * Returns textual representation of Gardening issue.
@@ -180,17 +202,26 @@ abstract class GardeningIssue {
 	 */
 	protected abstract function getTextualRepresenation(& $skin);
 	
-	/**
-	 * Returns textual representation of a group of Gardening issues.
-	 * 
-	 * 
-	 * @param & $skin reference to skin object to create links. 
-	 */
-	protected function getTextualRepresentationForSubIssues(& $skin) {
-		return NULL;
-	}
+	
 }
 
+class GardeningIssueContainer {
+	private $titles;
+	private $gi;
+	
+	public function GardeningIssueContainer(array $titles, array $gi) {
+		$this->titles = $titles;
+		$this->gi = $gi;
+	}
+	
+	public function getTitles() {
+		return $this->titles;
+	}
+	
+	public function getGardeningIssues() {
+		return $this->gi;
+	}
+}
 /**
  * Abstract class which defines an interface for a GardeningIssue Filter.
  */
@@ -284,12 +315,32 @@ abstract class GardeningIssueFilter {
 	 */
 	public function getData($options, $request) {
 		$bot = $request->getVal('bot');
-		if ($bot == NULL) return array(); 
+		if ($bot == NULL) $bot = 'smw_consistencybot'; // set ConsistencyBot as default 
 		
-		$type = $request->getVal('class');
+		$gi_class = $request->getVal('class');
+		
 		
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		return $gi_store->getGardeningIssues($bot, $options, NULL, $type == 0 ? NULL : $type);
+		
+		$titles = $gi_store->getDistinctTitles($bot, NULL, $gi_class == 0 ? NULL : $gi_class, SMW_GARDENINGLOG_SORTFORTITLE, $options);
+		$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class == 0 ? NULL : $gi_class, $titles, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		
+		return new GardeningIssueContainer($titles, $this->makeHashArray($gis));
+	}
+	
+	private function makeHashArray(array & $issues) {
+		$result = array();
+		foreach($issues as $i) {
+			if ($i->getTitle1() != NULL) {
+			  if (array_key_exists($i->getTitle1()->getDBkey(), $result)) {
+			  	$temp = & $result[$i->getTitle1()->getDBkey()];
+			  	$temp[] = $i;
+			  }	else {
+			  	$result[$i->getTitle1()->getDBkey()] = array($i);
+			  }
+			}
+		}
+		return $result;
 	}
 }
 ?>

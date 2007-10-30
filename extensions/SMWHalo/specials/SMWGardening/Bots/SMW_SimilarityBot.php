@@ -79,13 +79,21 @@
  			$similarities = $this->getAllSimilarTitles(NULL, $similarityDegree, $limitOfResults);
  			echo "done!\n";
  			echo "Further investigations of found entities...";
-			$result = $this->formatSchemaResults($similarityTerm, $similarities, $limitOfSim);
+ 			foreach($similarities as $s) {
+				$s->calcSimilarityFactor($this->commonPrefixes, $this->commonSuffixes); 			
+ 			} 
+ 			SimilarityBot::sortSimilarityArray($similarities);
+ 			foreach($similarities as $s) {
+				$s->storeSchemaResults($this->gi_store, $this->id, $limitOfSim);
+ 			}
 			echo "done!.\n";
 			
 			if ($includeAnnotations) {
 				echo "\nSearching for similarities on annotation level...";
 				$annotationSimilarities = $this->getAllSimilarAnnotations(NULL, $similarityDegree, $limitOfResults);
-				$result .= $this->formatAnnotationLevelResults($annotationSimilarities);
+				foreach($annotationSimilarities as $as) {
+					$as->storeAnnotationLevelResults($this->gi_store, $this->id);
+				}
 				echo "done!";
 			}
 			
@@ -94,13 +102,16 @@
  			// local search
  			echo "\nSearch for similar entities of '".$similarityTerm."'...";
  			$similarities = $this->getSimilarTitlesForTerm($similarityTerm, $similarityDegree);
- 			echo "done!\n"; 			
- 			$result .= $this->formatTermMatchingResults($similarityTerm, $similarities, $limitOfSim);
- 			
+ 			echo "done!\n"; 
+ 			foreach($similarities as $s) {		
+ 				$s->storeTermMatchingResults($this->gi_store, $this->id, $similarityTerm);
+ 			}
  			if ($includeAnnotations) {
 				echo "\nSearching for similarities on annotation level...";
 				$annotationSimilarities = $this->getAllSimilarAnnotations($similarityTerm, $similarityDegree, $limitOfResults);
-				$result .= $this->formatAnnotationLevelResults($annotationSimilarities);
+				foreach($annotationSimilarities as $as) {
+					$as->storeAnnotationLevelResults($this->gi_store, $this->id);
+				}
 				echo "done!";
 			}
 			return $result;
@@ -143,49 +154,6 @@
  		}
  		
  		return $uniqueTitles;
- 	}
- 	
- 	
- 	
- 	
- 	private function formatSchemaResults($similarityTerm = NULL, $similarities, $simlimit) {
- 		global $smwgContLang;
- 		
- 		foreach($similarities as $t) {
-			$t->calcSimilarityFactor($this->commonPrefixes, $this->commonSuffixes); 			
- 		} 
- 		SimilarityBot::sortSimilarityArray($similarities);
- 		foreach($similarities as $t) {
- 			if ($t->getSimilarityFactor() > $simlimit) { 
- 				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY, $t->getTitle1(), $t->getTitle2(), $t->getSimilarityFactor());
- 				
- 				
- 				if ($t->isDistinctByCommonPrefixOrSuffix()) {
- 					$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_DISTINCTBY_PREFIX, $t->getTitle1(), $t->getTitle2());
- 					
- 				}
- 				$t->formatSharedEntities();
- 			}
- 		}
- 		return '';
- 	}
- 	
- 	private function formatTermMatchingResults($similarityTerm, $similarities, $limitOfSim) {
- 		
- 		foreach($similarities as $t) {
- 			$this->gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SIMILAR_TERM, $t->getTitle1(), $similarityTerm);
- 			
- 		}
- 		return '';
- 	}
- 	
- 	private function formatAnnotationLevelResults($similarities) {
- 		
- 		foreach($similarities as $t) {
- 			$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SIMILAR_ANNOTATION, $t->getTitle1(), $t->getTitle2(), $t->getArticle()->getNsText().':'.$t->getArticle()->getText());
- 			
- 		}
- 		return '';
  	}
  	
  	
@@ -289,7 +257,7 @@
 	 		$nameRestriction = "AND sa.relation_title LIKE '%$similarityTerm%'";
 	 	}
  		// Get similar attribute annotations which have no attribute page defined.
- 		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.attribute_title AS att2 FROM smw_attributes sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_attributes sa2 ' .
+ 		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM smw_attributes sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_attributes sa2 ' .
  				'WHERE sa.attribute_title != sa2.attribute_title '.$nameRestriction.' AND p.page_title IS NULL ' .
  				'AND EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -297,13 +265,14 @@
 					$title1 = Title::newFromText($row->att1, SMW_NS_PROPERTY);
 					$title2 = Title::newFromText($row->att2, SMW_NS_PROPERTY);
 					$article = Title::newFromText($row->subject, $row->namespace);
+					$editdistance = $row->distance; 
 					// do not add doubles
-					$result[] = new AnnotationSimilarity($title1, $title2, $article);
+					$result[] = new AnnotationSimilarity($title1, $title2, $article, $editdistance);
 					
 			}
 			$dbr->freeResult( $res );
 		}
-		$res = $dbr->query('SELECT DISTINCT sa.relation_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.relation_title AS att2 FROM smw_relations sa LEFT JOIN page p ON p.page_title = sa.relation_title INNER JOIN smw_relations sa2 ' .
+		$res = $dbr->query('SELECT DISTINCT sa.relation_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.relation_title AS att2, EDITDISTANCE(UPPER(sa.relation_title), UPPER(sa2.relation_title)) AS distance FROM smw_relations sa LEFT JOIN page p ON p.page_title = sa.relation_title INNER JOIN smw_relations sa2 ' .
 				'WHERE sa.relation_title != sa2.relation_title '.$nameRestriction.' AND p.page_title IS NULL ' .
 				'AND EDITDISTANCE(UPPER(sa.relation_title), UPPER(sa2.relation_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -311,14 +280,15 @@
 					$title1 = Title::newFromText($row->att1, SMW_NS_PROPERTY);
 					$title2 = Title::newFromText($row->att2, SMW_NS_PROPERTY);
 					$article = Title::newFromText($row->subject, $row->namespace);
+					$editdistance = $row->distance; 
 					// do not add doubles
 					 
-					$result[] = new AnnotationSimilarity($title1, $title2, $article);
+					$result[] = new AnnotationSimilarity($title1, $title2, $article, $editdistance);
 					
 			}
 			$dbr->freeResult( $res );
 		}
-		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace , sa2.attribute_title AS att2 FROM smw_nary sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_nary sa2 ' .
+		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace , sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM smw_nary sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_nary sa2 ' .
  				'WHERE sa.attribute_title != sa2.attribute_title '.$nameRestriction.' AND p.page_title IS NULL ' .
  				'AND EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -326,9 +296,10 @@
 					$title1 = Title::newFromText($row->att1, SMW_NS_PROPERTY);
 					$title2 = Title::newFromText($row->att2, SMW_NS_PROPERTY);
 					$article = Title::newFromText($row->subject, $row->namespace);
+					$editdistance = $row->distance; 
 					// do not add doubles
 				 
-					$result[] = new AnnotationSimilarity($title1, $title2, $article);
+					$result[] = new AnnotationSimilarity($title1, $title2, $article, $editdistance);
 				
 			}
 			$dbr->freeResult( $res );
@@ -457,14 +428,14 @@
  		return $this->similarityFactor;
  	}
  	
- 	public function isDistinctByCommonPrefixOrSuffix() {
- 		return $this->distinctByCommonPrefixOrSuffix;
- 	}
+ 	
  	
  	public function equals(SchemaSimilarity $s) {
  		return ($this->title1->equals($s->getTitle1()) && $this->title2->equals($s->getTitle2()));
  	}
- 	 	
+ 	 
+ 	
+ 	
  	public function calcSimilarityFactor(array & $commonPrefixes, array & $commonSuffixes) {
  		
  		if ($this->title1->getNamespace() == $this->title2->getNamespace()) {
@@ -509,7 +480,29 @@
  		
  	}
  	
- 	public function formatSharedEntities() {
+ 	public function storeSchemaResults(& $gi_store, $bot_id, $simlimit) {
+ 		if ($this->getSimilarityFactor() > $simlimit) { 
+ 				$gi_store->addGardeningIssueAboutArticles($bot_id, SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY, $this->getTitle1(), $this->getTitle2(), $this->getSimilarityFactor());
+ 				
+ 				
+ 				if ($this->isDistinctByCommonPrefixOrSuffix()) {
+ 					$$gi_store->addGardeningIssueAboutArticles($bot_id, SMW_GARDISSUE_DISTINCTBY_PREFIX, $this->getTitle1(), $this->getTitle2());
+ 					
+ 				}
+ 				$this->storeSharedEntities();
+ 			}
+ 		
+ 	}
+ 	
+ 	public function storeTermMatchingResults(& $gi_store, $bot_id, $similarityTerm) {
+ 		$gi_store->addGardeningIssueAboutValue($bot_id, SMW_GARDISSUE_SIMILAR_TERM, $t->getTitle1(), $similarityTerm);
+ 	}
+ 	
+ 	private function isDistinctByCommonPrefixOrSuffix() {
+ 		return $this->distinctByCommonPrefixOrSuffix;
+ 	}
+ 	
+ 	private function storeSharedEntities() {
  		global $wgLang;
  		
  		if (count($this->sharedCategories) > 0) {
@@ -547,7 +540,7 @@
  				$this->gi_store->addGardeningIssueAboutArticles($this->id, SMW_GARDISSUE_SHARE_TYPES, $t->getTitle1(), $t->getTitle2(), $value);
  			
  		}
- 		return '';
+ 		
  	}
  	
  	private function distinctByCommonPrefixOrSuffix(array & $commonPrefixes, array & $commonSuffixes) {
@@ -653,6 +646,7 @@
  	private $title2;
  	
  	private $article;
+ 	private $editdistance;
  	
  	public function AnnotationSimilarity(Title $t1, Title $t2, Title $article) {
  		$this->title1 = $t1;
@@ -671,20 +665,30 @@
  	public function getArticle() {
  		return $this->article;
  	}
+ 	
+ 	public function getSimilarityFactor() {
+ 		return 3 - $this->editdistance;
+ 	}
+ 	
+ 	public function storeAnnotationLevelResults(& $gi_store, $bot_id) {
+ 		$gi_store->addGardeningIssueAboutArticles($bot_id, SMW_GARDISSUE_SIMILAR_ANNOTATION, $this->getTitle1(), $this->getTitle2(), $this->getArticle()->getNsText().':'.$this->getArticle()->getText(), $this->getSimilarityFactor());
+ 	}
  }
  // instantiate once (if editdistance function is supported).
  if (smwfDBSupportsFunction('halowiki')) {
  	new SimilarityBot();
  }
  
- define('SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY', 1101);
+ define('SMW_SIMILARITY_BOT_BASE', 11);
+ define('SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY', SMW_SIMILARITY_BOT_BASE * 100 + 1);
  define('SMW_GARDISSUE_SIMILAR_TERM', 1102);
- define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1201);
- define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1301);
- define('SMW_GARDISSUE_SHARE_CATEGORIES', 1401);
- define('SMW_GARDISSUE_SHARE_DOMAINS', 1402);
- define('SMW_GARDISSUE_SHARE_RANGES', 1403);
- define('SMW_GARDISSUE_SHARE_TYPES', 1404);
+ define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1103);
+ define('SMW_GARDISSUE_SHARE_CATEGORIES', 1104);
+ define('SMW_GARDISSUE_SHARE_DOMAINS', 1105);
+ define('SMW_GARDISSUE_SHARE_RANGES', 1106);
+ define('SMW_GARDISSUE_SHARE_TYPES', 1107);
+ 
+ define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1201);
         
  
  class SimilarityBotIssue extends GardeningIssue {
@@ -722,13 +726,7 @@
  		
  	}
  	
- 	protected function getTextualRepresentationForSubIssues(& $skin) {
- 		$tooltip = "";
- 		foreach($this->subIssues as $issue) {
- 			$tooltip .= $issue->getTextualRepresenation($skin)."<br>";
- 		}
- 		return '<span class="smwttinline">' . $skin->makeLinkObj($this->t1) . '<span class="smwttcontent">' . $tooltip . '</span></span>';
- 	}
+ 	
  	
  	
  }
@@ -740,9 +738,7 @@
  	public function __construct() {
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 
 							'Similar schema elements',
-							'Distinct by prefix/suffix',
-							'Similar annotations',
-							'Sharing categories/types');
+							'Similar annotations');
 							
 		$this->sortfor = array('Alphabetically', 'Similarity score');
  	}
@@ -750,7 +746,7 @@
  	public function getUserFilterControls($specialAttPage, $request) {
  		$sortfor = $request != NULL ? $request->getVal('sortfor') : 0;
 		$html = " Sort by: <select name=\"sortfor\">";
-		$i = 0;
+		$i = 11;
 		foreach($this->sortfor as $sortOption) {
 			if ($i == $sortfor) {
 		 		$html .= "<option value=\"$i\" selected=\"selected\">$sortOption</option>";
@@ -760,12 +756,40 @@
 			$i++;		
 		}
  		$html .= 	"</select>";
- 		return $html;
+ 		return $html.' Match:<input name="matchString" type="text" class="wickEnabled"/>';
 	}
 	
+	public function linkUserParameters(& $wgRequest) {
+		return array('matchString' => $wgRequest->getVal('matchString'));
+	}
 	
 	public function getData($options, $request) {
-		return parent::getData($options, $request);
+		$matchString = $request->getVal('matchString');
+		$sortfor = $request->getVal('sortfor');
+		if ($matchString == NULL || $matchString == '') {
+			return $this->getSortedData($options, $request, $sortfor == 0 ? SMW_GARDENINGLOG_SORTFORTITLE : SMW_GARDENINGLOG_SORTFORVALUE);
+		} else {
+			$options->addStringCondition($matchString, SMW_STRCOND_MID);
+			return $this->getSortedData($options, $request, $sortfor == 0 ? SMW_GARDENINGLOG_SORTFORTITLE : SMW_GARDENINGLOG_SORTFORVALUE);
+		}
+	}
+	
+	private function getSortedData($options, $request, $sortfor) {
+		$bot = $request->getVal('bot');
+		if ($bot == NULL) return array(); 
+		
+		$gi_class = $request->getVal('class');
+		
+		if ($gi_class = 11) {
+			$gi_type = SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY;
+		} else if ($gi_class = 12){
+			$gi_type = SMW_GARDISSUE_SIMILAR_ANNOTATION;
+		}
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$titles = $gi_store->getDistinctTitlePair($bot, $gi_type, NULL, $sortfor, $options);
+		$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class == 0 ? NULL : $gi_class, $titles, SMW_GARDENINGLOG_SORTFORTITLE, $options);
+		
+		return new GardeningIssueContainer($titles, $gis);
 	}
  }
 ?>
