@@ -114,6 +114,9 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'smwfGenerateUpdateAfterMoveJob';
+
+	// Register Annotate-Tab
+	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
 	
 	// Register Credits
 	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION, 
@@ -319,6 +322,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "edit");
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
@@ -528,8 +532,18 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 			}
 			Job :: batchInsert($jobs);
 	 	}
-
 		return true; // always return true, in order not to stop MW's hook processing!
+	}
+	
+ 	function smwfAnnotateTab ($content_actions) {
+		global $wgTitle;  
+     	$main_action['main'] = array(
+        	'class' => false,    //if the tab should be highlighted
+        	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
+        	'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
+      	);
+      	$content_actions = array_merge( $content_actions, $main_action);   //add a new action
+      	return true;
 	}
 
 

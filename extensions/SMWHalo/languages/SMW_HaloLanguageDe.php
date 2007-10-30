@@ -349,8 +349,11 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_mainlabel' => '&uuml;berschrift der ersten Spalte',
 	'smw_qi_tt_order' => 'Auf- oder absteigende Sortierung',
 	'smw_qi_tt_headers' => 'Tabellen&uuml;berschriften anzeigen oder nicht',
-	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren'
-
+	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren',
+	
+	/* Annotationtab */
+ 	'smw_annotation_tab' => 'Seite annotieren'
+	
 );
 
 protected $smwSpecialProperties = array(

@@ -379,7 +379,10 @@ clicking the big arrows between the columns.',
 	'smw_qi_tt_mainlabel' => 'Name of the first column',
 	'smw_qi_tt_order' => 'Ascending or descending order',
 	'smw_qi_tt_headers' => 'Show the headers of the table or not',
-	'smw_qi_tt_default' => 'Text that will be shown if there are no results'
+	'smw_qi_tt_default' => 'Text that will be shown if there are no results',
+	
+	/* Annotationtab */
+ 	'smw_annotation_tab' => 'annotate'
 );
 
 
