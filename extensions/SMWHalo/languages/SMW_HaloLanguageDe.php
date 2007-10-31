@@ -253,6 +253,8 @@ protected $smwUserMessages = array(
 	'smw_gard_all_category_leaves_deleted' => 'Alle Kategorie-Blätter wurden gelöscht.',
 	'smw_gard_category_leaves_deleted' => 'Kategorie-Blätter unterhalb von [[$1:$2]] wurden gelöscht.',
 	'smw_gard_category_leaf_deleted' => '$1 war ein Kategorie-Blatt. Entfernt vom Anomalie-Bot.',
+	'smw_gardissue_category_leaf' => '$1 ist ein Kategorie-Blatt.',
+	'smw_gardissue_subcategory_anomaly' => '$1 hat $2 Subkategorien.',
 
 	'smw_gardeninglogs_docu' => 'Gardening Logs',
 	'smw_logpage' => 'Gardening Logs',

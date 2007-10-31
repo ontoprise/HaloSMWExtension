@@ -12,11 +12,11 @@
  
  class UndefinedEntitiesBot extends GardeningBot {
  	 	
- 	private $gi_store;
+ 	
  	
  	function UndefinedEntitiesBot() {
  		parent::GardeningBot("smw_undefinedentitiesbot");
- 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		
  	}
  	
  	public function getHelpText() {
@@ -51,7 +51,7 @@
  		echo $this->getBotID()." started!\n";
  		
  	   	echo "Checking for undefined entities...";
-        $ued = new UndefinedEntitiesDetector();
+        $ued = new UndefinedEntitiesDetector($this->id);
  		
  		$ued->checkForUndefinedCategories();
  		$ued->checkForUndefinedProperties();
@@ -85,20 +85,26 @@
  	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT:
-				return wfMsg('smw_gardissue_instance_without_cat', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_instance_without_cat', $this->t1->getText(), $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_PROPERTY_UNDEFINED:
-				return wfMsg('smw_gardissue_property_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_property_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_CATEGORY_UNDEFINED:
-				return wfMsg('smw_gardissue_category_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_category_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_RELATIONTARGET_UNDEFINED:
-				return wfMsg('smw_gardissue_relationtarget_undefined', $skin->makeLinkObj($this->t1), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_relationtarget_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
 		}
  	}
  }
  
  class UndefinedEntitiesDetector {
  	
+ 	private $gi_store;
+ 	private $bot_id;
  	
+ 	public function __construct($bot_id) {
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->bot_id = $bot_id;
+ 	}
  	
  	public function checkForUndefinedProperties() {
  		
@@ -107,7 +113,7 @@
  		foreach($undefindProperties as $p) {
  			$articles = $this->getArticlesUsingProperty($p);
  			foreach($articles as $a) { 
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
  			}
  		}
  		
@@ -119,7 +125,7 @@
  		foreach($undefindCategories as $c) {
  			$articles = $this->getArticlesUsingCategory($c);
  			foreach($articles as $a) { 
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
  			}
  		}
  		
@@ -132,7 +138,7 @@
  			$articles = $this->getRelationsUsingTarget($t);
  		
  			foreach($articles as $a) { 
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
+ 				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
  			}
  			
  			
@@ -144,7 +150,7 @@
  		
  		$instancesWithoutCategory = $this->getInstancesWithoutCategory();
  		foreach($instancesWithoutCategory as $i) {
- 			$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_INSTANCE_WITHOUT_CAT, $i);
+ 			$this->gi_store->addGardeningIssueAboutArticle($this->bot_id, SMW_GARDISSUE_INSTANCE_WITHOUT_CAT, $i);
  			
  		}
  		

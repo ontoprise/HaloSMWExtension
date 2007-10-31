@@ -198,7 +198,7 @@
  	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_NOTANNOTATED_PAGE:
-				return wfMsg('smw_gardissue_notannotated_page', $skin->makeLinkObj($this->t1));
+				return wfMsg('smw_gardissue_notannotated_page', $this->t1->getText());
 			default: return NULL;
 		}
  	}

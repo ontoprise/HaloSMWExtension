@@ -321,23 +321,36 @@ abstract class GardeningIssueFilter {
 		
 		
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		
+		smwLog("gardeningLogSTart");
 		$titles = $gi_store->getDistinctTitles($bot, NULL, $gi_class == 0 ? NULL : $gi_class, SMW_GARDENINGLOG_SORTFORTITLE, $options);
 		$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class == 0 ? NULL : $gi_class, $titles, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
-		
+		smwLog("gardeningLogEnd");
 		return new GardeningIssueContainer($titles, $this->makeHashArray($gis));
 	}
 	
-	private function makeHashArray(array & $issues) {
+	protected function makeHashArray(array & $issues, $considerOnlyFirstTitle = true) {
 		$result = array();
-		foreach($issues as $i) {
-			if ($i->getTitle1() != NULL) {
-			  if (array_key_exists($i->getTitle1()->getDBkey(), $result)) {
-			  	$temp = & $result[$i->getTitle1()->getDBkey()];
-			  	$temp[] = $i;
-			  }	else {
-			  	$result[$i->getTitle1()->getDBkey()] = array($i);
-			  }
+		if ($considerOnlyFirstTitle) {
+			foreach($issues as $i) {
+				if ($i->getTitle1() != NULL) {
+				  if (array_key_exists($i->getTitle1()->getDBkey(), $result)) {
+				  	$temp = & $result[$i->getTitle1()->getDBkey()];
+				  	$temp[] = $i;
+				  }	else {
+				  	$result[$i->getTitle1()->getDBkey()] = array($i);
+				  }
+				}
+			}
+		} else {
+			foreach($issues as $i) {
+				if ($i->getTitle1() != NULL && $i->getTitle2() != NULL) {
+				  if (array_key_exists($i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey(), $result)) {
+				  	$temp = & $result[$i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey()];
+				  	$temp[] = $i;
+				  }	else {
+				  	$result[$i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey()] = array($i);
+				  }
+				}
 			}
 		}
 		return $result;

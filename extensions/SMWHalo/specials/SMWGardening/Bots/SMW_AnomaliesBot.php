@@ -358,9 +358,9 @@
  	protected function getTextualRepresenation(& $skin) {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_CATEGORY_LEAF:
-				return wfMsg('smw_gardissue_category_leaf', $skin->makeLinkObj($this->t1));
+				return wfMsg('smw_gardissue_category_leaf', $this->t1->getText());
 			case SMW_GARDISSUE_SUBCATEGORY_ANOMALY:
-				return wfMsg('smw_gardissue_subcategory_anomaly', $skin->makeLinkObj($this->t1), $this->value);
+				return wfMsg('smw_gardissue_subcategory_anomaly', $this->t1->getText(), $this->value);
 			default: return NULL;
 			
 		}

@@ -245,7 +245,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_similarityterm' => 'Search for entities similar to the following term (may be empty)',
 	'smw_gard_similaritybothelp' => 'This is the bot to identify entities in the knowledgebase that could potentially be unified. If you enter a term, the system will try to find entities which are similar to that. If you do not enter a term, the system will find possibly redundant entities.',
 	
-	'smw_gardissue_similar_schema_entity' => '$1 and $2 seems to be similar pages.',
+	'smw_gardissue_similar_schema_entity' => '$1 and $2 are lexically similar.',
 	'smw_gardissue_similar_annotation' => '$3 contain two very similar annotations: $1 and $2',
 	'smw_gardissue_similar_term' => '$1 is similar to term $2',
 	'smw_gardissue_share_categories' => '$1 and $2 share the following categories: $3',
@@ -283,7 +283,8 @@ clicking the big arrows between the columns.',
 	'smw_gard_all_category_leaves_deleted' => 'All Category leaves were removed.',
 	'smw_gard_category_leaves_deleted' => 'Category leaves below [[$1:$2]] were removed.',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
-	
+	'smw_gardissue_category_leaf' => '$1 is a category leaf.',
+	'smw_gardissue_subcategory_anomaly' => '$1 has $2 subcategories.',
 	
 	
 	/* Combined Search*/

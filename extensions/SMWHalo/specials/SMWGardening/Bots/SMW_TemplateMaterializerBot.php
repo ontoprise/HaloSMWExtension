@@ -73,7 +73,7 @@
  			$article = new Article($pt);
  			$article->doEdit($article->getContent(), $article->getComment(), EDIT_UPDATE);
  			if ($isAsync) echo " done!\n";
- 			$gi_store->addGardeningIssueAboutArticle('smw_templatematerializerbot', SMW_GARDISSUE_UPDATEARTICLE, $pt);
+ 			$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_UPDATEARTICLE, $pt);
  			//$log .= "*Updating ".$pt->getDBkey()."... done!\n";
  			if ($delay > 0) {
  				usleep($delay);

@@ -87,14 +87,14 @@
  				$cond = "";
  				foreach($titles as $t) {
  					if (is_array($t)) { 
- 						$cond .= 'p1_id = '.$t[0]->getArticleID().' OR ';
+ 						$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).') OR ';
  					} else {
- 						$cond .= 'p1_id = '.$t->getArticleID().' OR ';
+ 						$cond .= 'p1_title = '.$db->addQuotes($t->getDBkey()).' OR ';
  					}
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else { 
- 				$sqlCond[] = 'p1_id = '.$titles->getArticleID();
+ 				$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey());
  			}
  		} 
  		if ($gi_class != NULL) {
@@ -183,6 +183,7 @@
 			while($row)
 			{	
 				$result[] = Title::newFromText($row->p1_title, $row->p1_namespace);
+				
 				$row = $db->fetchObject($res);
 			}
 		}
@@ -246,6 +247,8 @@
 			{	
 				$t1 = Title::newFromText($row->p1_title, $row->p1_namespace);
 				$t2 = Title::newFromText($row->p2_title, $row->p2_namespace);
+				
+				
 				$result[] = array($t1, $t2);
 				$row = $db->fetchObject($res);
 			}
