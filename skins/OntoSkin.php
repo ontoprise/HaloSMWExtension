@@ -100,6 +100,10 @@ class OntoSkinTemplate extends QuickTemplate {
 				<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
 <?php
 				break;
+			case "annotate": ?>
+				<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
+<?php
+				break;
 			case "":
 				if ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')) { ?>
 					<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
@@ -136,7 +140,7 @@ class OntoSkinTemplate extends QuickTemplate {
 	<div id="content">
 	<?php 	global $wgRequest,$wgTitle;
 
-			if ($wgRequest->getText('action') == "edit" || ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')))
+			if ($wgRequest->getText('action') == "edit" || $wgRequest->getText('action') == "annotate" || ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')))
 			{ ?>
 			<div id="slider">	
 			</div>

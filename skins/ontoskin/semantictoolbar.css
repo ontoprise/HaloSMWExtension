@@ -68,6 +68,21 @@ triggered by the nested floats. It should not be removed
 	z-index: 5;
 }
 
+.div-marker{
+ 		background-color: #5555FF;
+ 		border-style: solid;
+ 		border-width: 3px;
+ 		border-color: #0000AA;
+ 		position: absolute;
+  		opacity: 0.7;
+ 		filter: alpha(opacity=70);
+ }
+
+.span-marker{
+		z-index: 10;
+ 		position: absolute;
+ }
+
 .generic_content{
 	margin-left: 3px;
 	margin-right: 3px;
