@@ -2,7 +2,8 @@
 var Marker = Class.create();
 Marker.prototype = {
 	
-	initialize: function() {		
+	initialize: function(rootnode) {
+		this.rootnode = rootnode;		
 	},
 	markTemplate: function(divtomark) {
 		if(divtomark == null || divtomark == "") return;
@@ -49,7 +50,9 @@ Marker.prototype = {
  	* 
  	* @param
  	*/
-	checkForTemplates: function(rootnode){
+	checkForTemplates: function(){
+			rootnode = $(this.rootnode);
+			this.removeMarkers(rootnode);
 			//Check
 			if(rootnode == null) return;
 			//Get childs
@@ -77,6 +80,30 @@ Marker.prototype = {
 		}	
 	},
 	
+	/**
+ 	* @public 
+ 	* 
+ 	* @param
+ 	*/
+	removeMarkers: function(rootnode){
+			//Check
+			if(rootnode == null) return;
+			//Get childs
+			var elements = rootnode.descendants();
+			//update each child
+			elements.each(this.removeMarker.bind(this));
+			
+	},
+	
+	removeMarker: function(element){
+		//Check if tabindex is set, if yes update it
+		if(element.readAttribute('class')!= null && (element.readAttribute('class')== "span-marker" || element.readAttribute('class')== "div-marker")){
+			element.remove();
+		}	
+	},
+	
+	
+	
 	samplePage: function(){
 		$("innercontent").replace('<div id="innercontent">' +
 				'normal text<br>' +
@@ -86,15 +113,15 @@ Marker.prototype = {
 				'normal text<br>' +
 				'normal text<br>' +
 				'</div>');
-		this.checkForTemplates($("innercontent"));
+		this.checkForTemplates();
 	}
 }
 
+var smwhg_marker = new Marker('innercontent');
+Event.observe(window, 'resize', smwhg_marker.checkForTemplates.bind(smwhg_marker));
+Event.observe(window, 'load', smwhg_marker.checkForTemplates.bind(smwhg_marker));
+
 /*
 setTimeout(function() { 
-	//categorycontainer = new divContainer(CATEGORYCONTAINER);
-	var marker = new Marker();
-	//Event.observe(window, 'load', marker.createContainerBody.bindAsEventListener(conToolbar));
-	setTimeout(marker.samplePage.bind(marker),1000);
-},3000);
-*/
+	setTimeout(smwhg_marker.samplePage.bind(smwhg_marker),1000);
+},3000);*/

@@ -422,6 +422,9 @@ Slider.prototype = {
 	         if(window.editAreaLoader){
 	         	editAreaLoader.execCommand("wpTextbox1", "update_size();");
 	         }
+	         if( typeof smwhg_marker != 'undefined' ){
+	         	smwhg_marker.checkForTemplates();
+	         }
 	        
 	 },
 	 /**
