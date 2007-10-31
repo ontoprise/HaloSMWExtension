@@ -344,9 +344,9 @@
  }
  
  new AnomaliesBot();
- 
- define('SMW_GARDISSUE_CATEGORY_LEAF', 1001);
- define('SMW_GARDISSUE_SUBCATEGORY_ANOMALY', 1002);
+ define('SMW_ANOMALY_BOT_BASE', 600);
+ define('SMW_GARDISSUE_CATEGORY_LEAF', SMW_ANOMALY_BOT_BASE * 100 + 1);
+ define('SMW_GARDISSUE_SUBCATEGORY_ANOMALY', SMW_ANOMALY_BOT_BASE * 100 + 2);
 
  
  class AnomaliesBotIssue extends GardeningIssue {
@@ -356,11 +356,12 @@
  	}
  	
  	protected function getTextualRepresenation(& $skin) {
+ 		if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_CATEGORY_LEAF:
-				return wfMsg('smw_gardissue_category_leaf', $this->t1->getText());
+				return wfMsg('smw_gardissue_category_leaf', $text1);
 			case SMW_GARDISSUE_SUBCATEGORY_ANOMALY:
-				return wfMsg('smw_gardissue_subcategory_anomaly', $this->t1->getText(), $this->value);
+				return wfMsg('smw_gardissue_subcategory_anomaly', $text1, $this->value);
 			default: return NULL;
 			
 		}
@@ -371,7 +372,8 @@
  	 	
  	
  	public function __construct() {
- 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+ 		parent::__construct(SMW_ANOMALY_BOT_BASE);
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 'Category leafs', 'Subcategory anomaly');
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {

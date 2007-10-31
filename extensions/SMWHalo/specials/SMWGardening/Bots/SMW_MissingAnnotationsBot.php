@@ -187,7 +187,8 @@
  
  new MissingAnnotationsBot();
  
- define('SMW_GARDISSUE_NOTANNOTATED_PAGE', 901);
+ define('SMW_NOTANNOTATED_BOT_BASE', 500);
+ define('SMW_GARDISSUE_NOTANNOTATED_PAGE', SMW_NOTANNOTATED_BOT_BASE * 100 + 1);
  
  class MissingAnnotationsBotIssue extends GardeningIssue {
  	
@@ -196,9 +197,10 @@
  	}
  	
  	protected function getTextualRepresenation(& $skin) {
+ 		if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_NOTANNOTATED_PAGE:
-				return wfMsg('smw_gardissue_notannotated_page', $this->t1->getText());
+				return wfMsg('smw_gardissue_notannotated_page', $text1);
 			default: return NULL;
 		}
  	}
@@ -208,6 +210,7 @@
  	 	
  	
  	public function __construct() {
+ 		parent::__construct(SMW_NOTANNOTATED_BOT_BASE);
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
  	}
  	
@@ -217,6 +220,7 @@
 	
 	
 	public function getData($options, $request) {
+		
 		return parent::getData($options, $request);
 	}
  }

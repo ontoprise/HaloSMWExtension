@@ -759,9 +759,9 @@
  	
  	
  	public function __construct() {
+ 		parent::__construct(700); //TODO: define base
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
-							
-		//$this->sortfor = array('Alphabetically', 'Similarity score');
+	
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {
@@ -773,7 +773,7 @@
 	}
 	
 	public function getData($options, $request) {
-		parent::getData($options, $request);
+		parent::getData($options, $request, 0);
 	}
  }
 ?>

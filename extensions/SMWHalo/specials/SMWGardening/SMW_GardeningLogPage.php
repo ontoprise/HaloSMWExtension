@@ -21,7 +21,7 @@ function smwfDoSpecialLogPage() {
 class SMWGardeningLogPage extends SMWQueryPage {
 	
 	private $filter;
-	private $gardeningIssues;
+	
 	
 	function __construct() {
 		global $wgRequest, $registeredBots;
@@ -71,32 +71,21 @@ class SMWGardeningLogPage extends SMWQueryPage {
 
 	function formatResult( $skin, $result ) {
 		global $wgServer, $wgScriptPath;
-		if ($result instanceof GardeningIssue) {
-			$text = $result->getRepresentation($skin);
-			if ($text != NULL) {
-				return $text;
+	    if ($result instanceof GardeningIssueContainer){
+			
+			$bound = $result->getBound();
+			$gis = $result->getGardeningIssues();
+			if (is_array($bound)) {
+				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound[0]->getDBkey())).preg_replace("/'/", "&quot;", htmlspecialchars($bound[1]->getDBkey()));
+				$text = $skin->makeLinkObj($bound[0]).' <-> '.$skin->makeLinkObj($bound[1]).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
 			} else {
-				return 'unknown issue of type: '.$result->getType();	
-			} 
-		} else if ($result instanceof Title) {
-			$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($result->getDBkey()));
-			$text = $skin->makeLinkObj($result).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound->getDBkey()));
+				$text = $skin->makeLinkObj($bound).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
 					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
-			$gis = $this->gardeningIssues->getGardeningIssues(); 
-			foreach($gis[$result->getDBkey()] as $gi) {
-				$text .= $gi->getRepresentation($skin).'<br>';
 			}
-			return $text.'</div>';
-		} else if (is_array($result) && count($result) == 2 && 
-				$result[0] instanceof Title && $result[1] instanceof Title){
-			// $result is tuple of titles ($t1, $t2)
-			
-			$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($result[0]->getDBkey())).preg_replace("/'/", "&quot;", htmlspecialchars($result[1]->getDBkey()));
-			
-			$text = $skin->makeLinkObj($result[0]).' <-> '.$skin->makeLinkObj($result[1]).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
-					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
-			$gis = $this->gardeningIssues->getGardeningIssues(); 
-			foreach($gis[$result[0]->getDBkey().$result[1]->getDBkey()] as $gi) {
+						
+			foreach($gis as $gi) {
 				$text .= $gi->getRepresentation($skin).'<br>';
 			}
 			return $text.'</div>';
@@ -108,13 +97,7 @@ class SMWGardeningLogPage extends SMWQueryPage {
 
 	function getResults($options) {
 		global $wgRequest;
-		$this->gardeningIssues = $this->filter != NULL ? $this->filter->getData($options, $wgRequest) : NULL;
-		if ($this->gardeningIssues instanceof GardeningIssueContainer) {
-			return $this->gardeningIssues->getTitles();
-		} else if (is_array($this->gardeningIssues)) {
-			return $this->gardeningIssues;
-		}
-		return array();
+		return $this->filter->getData($options, $wgRequest);
 	}
 }
 ?>

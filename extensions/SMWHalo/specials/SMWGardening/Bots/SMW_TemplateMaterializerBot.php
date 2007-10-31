@@ -120,8 +120,8 @@
  
  // instantiate once.
  new TemplateMaterializerBot();
- 
- define('SMW_GARDISSUE_UPDATEARTICLE', 801);
+ define('SMW_TEMPLATEMATERIALIZER_BOT_BASE', 400);
+ define('SMW_GARDISSUE_UPDATEARTICLE', SMW_TEMPLATEMATERIALIZER_BOT_BASE * 100 + 1);
  
  class TemplateMaterializerBotIssue extends GardeningIssue {
  	
@@ -130,9 +130,10 @@
  	}
  	
  	protected function getTextualRepresenation(& $skin) {
+ 		if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_UPDATEARTICLE:
-				return wfMsg('smw_gardissue_updatearticle', $skin->makeLinkObj($this->t1));
+				return wfMsg('smw_gardissue_updatearticle', $text1);
 			default: return NULL;
 		}
  	}
@@ -143,6 +144,7 @@
  	
  	
  	public function __construct() {
+ 		parent::__construct(SMW_TEMPLATEMATERIALIZER_BOT_BASE);
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
 							
 		//$this->sortfor = array('Alphabetically', 'Similarity score');

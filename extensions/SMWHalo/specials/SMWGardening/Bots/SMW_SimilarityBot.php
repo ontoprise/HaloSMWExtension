@@ -679,16 +679,16 @@
  	new SimilarityBot();
  }
  
- define('SMW_SIMILARITY_BOT_BASE', 11);
+ define('SMW_SIMILARITY_BOT_BASE', 200);
  define('SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY', SMW_SIMILARITY_BOT_BASE * 100 + 1);
- define('SMW_GARDISSUE_SIMILAR_TERM', 1102);
- define('SMW_GARDISSUE_DISTINCTBY_PREFIX', 1103);
- define('SMW_GARDISSUE_SHARE_CATEGORIES', 1104);
- define('SMW_GARDISSUE_SHARE_DOMAINS', 1105);
- define('SMW_GARDISSUE_SHARE_RANGES', 1106);
- define('SMW_GARDISSUE_SHARE_TYPES', 1107);
+ define('SMW_GARDISSUE_SIMILAR_TERM', SMW_SIMILARITY_BOT_BASE * 100 + 2);
+ define('SMW_GARDISSUE_DISTINCTBY_PREFIX', SMW_SIMILARITY_BOT_BASE * 100 + 3);
+ define('SMW_GARDISSUE_SHARE_CATEGORIES', SMW_SIMILARITY_BOT_BASE * 100 + 4);
+ define('SMW_GARDISSUE_SHARE_DOMAINS', SMW_SIMILARITY_BOT_BASE * 100 + 5);
+ define('SMW_GARDISSUE_SHARE_RANGES', SMW_SIMILARITY_BOT_BASE * 100 + 6);
+ define('SMW_GARDISSUE_SHARE_TYPES', SMW_SIMILARITY_BOT_BASE * 100 + 7);
  
- define('SMW_GARDISSUE_SIMILAR_ANNOTATION', 1201);
+ define('SMW_GARDISSUE_SIMILAR_ANNOTATION', (SMW_SIMILARITY_BOT_BASE+1) * 100 + 1);
         
  
  class SimilarityBotIssue extends GardeningIssue {
@@ -698,29 +698,29 @@
  	}
  	
  	protected function getTextualRepresenation(& $skin) {
- 	
+ 			if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
 			switch($this->gi_type) {
 				case SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY:
-					return wfMsg('smw_gardissue_similar_schema_entity', $this->t1->getText(),  $this->t2->getText());
+					return wfMsg('smw_gardissue_similar_schema_entity', $text1,  $this->t2->getText());
 				case SMW_GARDISSUE_SIMILAR_ANNOTATION:
 					$article = Title::newFromText($this->value);
-					return wfMsg('smw_gardissue_similar_annotation',  $this->t1->getText(), $this->t2->getText(), $article != NULL ? $skin->makeLinkObj($article) : '');
+					return wfMsg('smw_gardissue_similar_annotation',  $text1, $this->t2->getText(), $article != NULL ? $skin->makeLinkObj($article) : '');
 				case SMW_GARDISSUE_SIMILAR_TERM:
-					return wfMsg('smw_gardissue_similar_term',  $this->t1->getText(), $this->value);
+					return wfMsg('smw_gardissue_similar_term',  $text1, $this->value);
 				case SMW_GARDISSUE_SHARE_CATEGORIES:
 					
-					return wfMsg('smw_gardissue_share_categories',  $this->t1->getText(), $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
+					return wfMsg('smw_gardissue_share_categories',  $text1, $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
 				case SMW_GARDISSUE_SHARE_DOMAINS:
 					
-					return wfMsg('smw_gardissue_share_domains',  $this->t1->getText(), $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
+					return wfMsg('smw_gardissue_share_domains',  $text1, $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
 				case SMW_GARDISSUE_SHARE_RANGES:
 					
-					return wfMsg('smw_gardissue_share_ranges',  $this->t1->getText(), $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
+					return wfMsg('smw_gardissue_share_ranges',  $text1, $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
 				case SMW_GARDISSUE_SHARE_TYPES:
 					
-					return wfMsg('smw_gardissue_share_types',  $this->t1->getText(), $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
+					return wfMsg('smw_gardissue_share_types',  $text1, $this->t2->getText(), $this->explodeTitlesToLinkObjs($skin, $this->value));
 				case SMW_GARDISSUE_DISTINCTBY_PREFIX:
-					return wfMsg('smw_gardissue_distinctby_prefix', $this->t1->getText(), $this->t2->getText());
+					return wfMsg('smw_gardissue_distinctby_prefix', $text1, $this->t2->getText());
 				default: return NULL;
 			}
  		
@@ -736,6 +736,7 @@
  	private $sortfor;
  	
  	public function __construct() {
+ 		parent::__construct(SMW_SIMILARITY_BOT_BASE);
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 
 							'Similar schema elements',
 							'Similar annotations');
@@ -746,7 +747,7 @@
  	public function getUserFilterControls($specialAttPage, $request) {
  		$sortfor = $request != NULL ? $request->getVal('sortfor') : 0;
 		$html = " Sort by: <select name=\"sortfor\">";
-		$i = 11;
+		$i = 0;
 		foreach($this->sortfor as $sortOption) {
 			if ($i == $sortfor) {
 		 		$html .= "<option value=\"$i\" selected=\"selected\">$sortOption</option>";
@@ -756,11 +757,12 @@
 			$i++;		
 		}
  		$html .= 	"</select>";
- 		return $html.' Match:<input name="matchString" type="text" class="wickEnabled"/>';
+ 		$matchString = $request != NULL && $request->getVal('matchString') != NULL ? $request->getVal('matchString') : "";
+		return $html.' Match:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
 	}
 	
 	public function linkUserParameters(& $wgRequest) {
-		return array('matchString' => $wgRequest->getVal('matchString'));
+		return array('matchString' => $wgRequest->getVal('matchString'), 'sortfor' => $wgRequest->getVal('sortfor'));
 	}
 	
 	public function getData($options, $request) {
@@ -778,18 +780,16 @@
 		$bot = $request->getVal('bot');
 		if ($bot == NULL) return array(); 
 		
-		$gi_class = $request->getVal('class');
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + SMW_SIMILARITY_BOT_BASE - 1;
 		
-		if ($gi_class = 11) {
-			$gi_type = SMW_GARDISSUE_SIMILAR_SCHEMA_ENTITY;
-		} else if ($gi_class = 12){
-			$gi_type = SMW_GARDISSUE_SIMILAR_ANNOTATION;
-		}
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		$titles = $gi_store->getDistinctTitlePair($bot, $gi_type, NULL, $sortfor, $options);
-		$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class == 0 ? NULL : $gi_class, $titles, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
-		
-		return new GardeningIssueContainer($titles, $this->makeHashArray($gis, false));
+		$gic = array();
+		$titles = $gi_store->getDistinctTitlePair($bot, NULL, $gi_class, $sortfor, $options);
+		foreach($titles as $t) {
+			$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class, array($t), SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+			$gic[] = new GardeningIssueContainer($t, $gis);
+		}
+		return $gic;
 	}
  }
 ?>

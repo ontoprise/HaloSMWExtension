@@ -182,7 +182,8 @@
 			$row = $db->fetchObject($res);
 			while($row)
 			{	
-				$result[] = Title::newFromText($row->p1_title, $row->p1_namespace);
+				$t = Title::newFromText($row->p1_title, $row->p1_namespace);
+				if ($t != NULL) $result[] = $t;
 				
 				$row = $db->fetchObject($res);
 			}
@@ -247,9 +248,10 @@
 			{	
 				$t1 = Title::newFromText($row->p1_title, $row->p1_namespace);
 				$t2 = Title::newFromText($row->p2_title, $row->p2_namespace);
+				if ($t1 != NULL && $t2 != NULL) { 
+					$result[] = array($t1, $t2);
+				}
 				
-				
-				$result[] = array($t1, $t2);
 				$row = $db->fetchObject($res);
 			}
 		}

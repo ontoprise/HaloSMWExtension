@@ -70,11 +70,11 @@
  
   // instantiate it once.
  new UndefinedEntitiesBot();
- 
- define('SMW_GARDISSUE_INSTANCE_WITHOUT_CAT', 701);
- define('SMW_GARDISSUE_PROPERTY_UNDEFINED', 702);
- define('SMW_GARDISSUE_CATEGORY_UNDEFINED', 703);
- define('SMW_GARDISSUE_RELATIONTARGET_UNDEFINED', 704);
+ define('SMW_UNDEFINED_ENTITIES_BOT_BASE', 300);
+ define('SMW_GARDISSUE_INSTANCE_WITHOUT_CAT', SMW_UNDEFINED_ENTITIES_BOT_BASE * 100 + 1);
+ define('SMW_GARDISSUE_PROPERTY_UNDEFINED', (SMW_UNDEFINED_ENTITIES_BOT_BASE+1) * 100 + 2);
+ define('SMW_GARDISSUE_CATEGORY_UNDEFINED', (SMW_UNDEFINED_ENTITIES_BOT_BASE+2) * 100 + 3);
+ define('SMW_GARDISSUE_RELATIONTARGET_UNDEFINED', (SMW_UNDEFINED_ENTITIES_BOT_BASE+3) * 100 + 4);
   
  class UndefinedEntitiesBotIssue extends GardeningIssue {
  	
@@ -83,15 +83,16 @@
  	}
  	
  	protected function getTextualRepresenation(& $skin) {
+ 		if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT:
-				return wfMsg('smw_gardissue_instance_without_cat', $this->t1->getText(), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_instance_without_cat', $text1, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_PROPERTY_UNDEFINED:
-				return wfMsg('smw_gardissue_property_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_property_undefined', $text1, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_CATEGORY_UNDEFINED:
-				return wfMsg('smw_gardissue_category_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_category_undefined', $text1, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_RELATIONTARGET_UNDEFINED:
-				return wfMsg('smw_gardissue_relationtarget_undefined', $this->t1->getText(), $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_relationtarget_undefined', $text1, $skin->makeLinkObj($this->t2));
 		}
  	}
  }
@@ -107,8 +108,7 @@
  	}
  	
  	public function checkForUndefinedProperties() {
- 		
- 	
+ 		 	
  		$undefindProperties = $this->getUndefinedProperties();
  		foreach($undefindProperties as $p) {
  			$articles = $this->getArticlesUsingProperty($p);
@@ -345,7 +345,12 @@
  	 	
  	
  	public function __construct() {
- 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+ 		parent::__construct(SMW_UNDEFINED_ENTITIES_BOT_BASE);
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
+						'Instances without category', 
+						'Undefined properties', 
+						'Undefined categories', 
+						'Undefined relation targets');
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {
@@ -354,6 +359,7 @@
 	
 	
 	public function getData($options, $request) {
+		
 		return parent::getData($options, $request);
 	}
  }

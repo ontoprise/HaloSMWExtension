@@ -206,7 +206,7 @@ function smwfGetGardeningIssueClasses($bot_id) {
 			$className = get_class($registeredBots[$bot_id]).'Filter';
 			$filter = new $className();
 			
-	 		$html = "<span id=\"issueClasses\"><select name=\"type\" id=\"issueClasses\">";
+	 		$html = "<span id=\"issueClasses\"><select name=\"class\">";
 			$i = 0;
 			foreach($filter->getIssueClasses() as $class) {
 				$html .= "<option value=\"$i\">$class</option>";

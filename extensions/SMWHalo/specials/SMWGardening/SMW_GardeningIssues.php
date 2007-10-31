@@ -131,9 +131,13 @@ abstract class GardeningIssue {
 		$this->gi_type = $gi_type;
 		if ($t1_ns != -1 && $t1 != NULL && $t1 != '') {
 			$this->t1 = Title::newFromText($t1, $t1_ns);
+		} else {
+			$this->t1 = "__error__";
 		}
 		if ($t2_ns != -1 && $t2 != NULL && $t2 != '') {
 			$this->t2 = Title::newFromText($t2, $t2_ns);
+		} else {
+			$this->t2 = "__error__";
 		}
 		$this->value = $value;
 	}
@@ -205,17 +209,25 @@ abstract class GardeningIssue {
 	
 }
 
+/**
+ * Holds a set of Gardening issues and associate it with an 
+ * article or a pair of articles.
+ */
 class GardeningIssueContainer {
-	private $titles;
+	
+	// article or array of 2 articles
+	private $bound;
+	
+	// array of Gardening issues
 	private $gi;
 	
-	public function GardeningIssueContainer(array $titles, array $gi) {
-		$this->titles = $titles;
+	public function GardeningIssueContainer($bound, array $gi) {
+		$this->bound = $bound;
 		$this->gi = $gi;
 	}
 	
-	public function getTitles() {
-		return $this->titles;
+	public function getBound() {
+		return $this->bound;
 	}
 	
 	public function getGardeningIssues() {
@@ -227,8 +239,13 @@ class GardeningIssueContainer {
  */
 abstract class GardeningIssueFilter {
 	
+	protected $base;
 	protected $gi_issue_classes;
 	
+	
+	protected function __construct($base) {
+		$this->base = $base;
+	}
 	/**
 	 * Returns array of strings representing the gardening issue classes.
 	 * The index is used to access the issue class.
@@ -317,43 +334,22 @@ abstract class GardeningIssueFilter {
 		$bot = $request->getVal('bot');
 		if ($bot == NULL) $bot = 'smw_consistencybot'; // set ConsistencyBot as default 
 		
-		$gi_class = $request->getVal('class');
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		smwLog("gardeningLogSTart");
-		$titles = $gi_store->getDistinctTitles($bot, NULL, $gi_class == 0 ? NULL : $gi_class, SMW_GARDENINGLOG_SORTFORTITLE, $options);
-		$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class == 0 ? NULL : $gi_class, $titles, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
-		smwLog("gardeningLogEnd");
-		return new GardeningIssueContainer($titles, $this->makeHashArray($gis));
+		
+		$gic = array();
+		smwLog('start');
+		$titles = $gi_store->getDistinctTitles($bot, NULL, $gi_class, SMW_GARDENINGLOG_SORTFORTITLE, $options);
+		foreach($titles as $t) {
+			$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class, $t, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+			$gic[] = new GardeningIssueContainer($t, $gis);
+		}
+		smwLog('end');
+		return $gic;
 	}
 	
-	protected function makeHashArray(array & $issues, $considerOnlyFirstTitle = true) {
-		$result = array();
-		if ($considerOnlyFirstTitle) {
-			foreach($issues as $i) {
-				if ($i->getTitle1() != NULL) {
-				  if (array_key_exists($i->getTitle1()->getDBkey(), $result)) {
-				  	$temp = & $result[$i->getTitle1()->getDBkey()];
-				  	$temp[] = $i;
-				  }	else {
-				  	$result[$i->getTitle1()->getDBkey()] = array($i);
-				  }
-				}
-			}
-		} else {
-			foreach($issues as $i) {
-				if ($i->getTitle1() != NULL && $i->getTitle2() != NULL) {
-				  if (array_key_exists($i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey(), $result)) {
-				  	$temp = & $result[$i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey()];
-				  	$temp[] = $i;
-				  }	else {
-				  	$result[$i->getTitle1()->getDBkey().$i->getTitle2()->getDBkey()] = array($i);
-				  }
-				}
-			}
-		}
-		return $result;
-	}
+	
 }
 ?>
