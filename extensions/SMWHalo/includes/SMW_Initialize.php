@@ -536,13 +536,24 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	}
 	
  	function smwfAnnotateTab ($content_actions) {
-		global $wgTitle;  
-     	$main_action['main'] = array(
+ 		//Check if edit tab is present, if not don't at annote tab
+		if(!array_search($content_actions['edit'],$content_actions) ) return true;
+ 		//Build annotate tab
+ 		global $wgTitle;  
+		$main_action['main'] = array(
         	'class' => false,    //if the tab should be highlighted
         	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
         	'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
       	);
-      	$content_actions = array_merge( $content_actions, $main_action);   //add a new action
+      	
+      	//Find position of edit button
+      	$editpos = count(range(0,$content_actions['edit']))+1;
+      	//Split array
+      	$beforeedit = array_slice($content_actions,0,$editpos-1);
+      	$afteredit = array_slice($content_actions,$editpos-1,count($content_actions));
+      	//Merge array with new action
+      	$content_actions = array_merge( $beforeedit, $main_action);   //add a new action
+      	$content_actions = array_merge( $content_actions, $afteredit); 
       	return true;
 	}
 
