@@ -74,6 +74,9 @@ Marker.prototype = {
 			if(firstchild != null && firstchild.tagName.toLowerCase() == 'div'){
 				this.markTemplate(firstchild.readAttribute('id'));
 				this.markTextTemplate(firstchild.readAttribute('id'));	
+			} else if(firstchild != null && firstchild.tagName.toLowerCase() == 'table'){
+				this.markTemplate(firstchild.readAttribute('id'));
+				this.markTextTemplate(firstchild.readAttribute('id'));	
 			} else {
 				this.markTextTemplate(element.readAttribute('id'));
 			}
@@ -108,6 +111,7 @@ Marker.prototype = {
 		$("innercontent").replace('<div id="innercontent">' +
 				'normal text<br>' +
 				'normal text<br>' +
+				'<span id="sp1" type="template"><table id="foo"><tr><td>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy byyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyydfgdg</td></tr></table></span>' +
 				'<span id="sp1" type="template"><div id="testdiv1">yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy byyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyydfgdg</div></span>' +
 				'<span id="sp2" style="background-color: #00AA00;" type="template">yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy byyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyydfgdg</span>' +
 				'normal text<br>' +
@@ -121,7 +125,7 @@ var smwhg_marker = new Marker('innercontent');
 Event.observe(window, 'resize', smwhg_marker.checkForTemplates.bind(smwhg_marker));
 Event.observe(window, 'load', smwhg_marker.checkForTemplates.bind(smwhg_marker));
 
-/*
+
 setTimeout(function() { 
 	setTimeout(smwhg_marker.samplePage.bind(smwhg_marker),1000);
-},3000);*/
+},3000);
