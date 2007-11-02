@@ -125,7 +125,8 @@ var smwhg_marker = new Marker('innercontent');
 Event.observe(window, 'resize', smwhg_marker.checkForTemplates.bind(smwhg_marker));
 Event.observe(window, 'load', smwhg_marker.checkForTemplates.bind(smwhg_marker));
 
-
+/*
 setTimeout(function() { 
 	setTimeout(smwhg_marker.samplePage.bind(smwhg_marker),1000);
 },3000);
+*/
