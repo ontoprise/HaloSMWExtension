@@ -54,7 +54,11 @@ class SMWH_AAMParser {
 	 * @return string Marked wiki text.
 	 */
 	public function addWikiTextOffsets(&$wikiText)	{
-		$parts = preg_split('/(\{\{\{.*?\}\}\})|(\{\{.*?\}\})|^(====.*?====)|^(===.*?===)|^(==.*?==)|^(=.*?=)/sm', $wikiText, -1, 
+		// Treat HTML comments and the like. They may contain dangerous material.
+		$text = $this->maskHTML($wikiText);
+		
+		// Search for templates, template parameters and headings
+		$parts = preg_split('/(\{\{\{.*?\}\}\})|(\{\{.*?\}\})|^(====.*?====)|^(===.*?===)|^(==.*?==)|^(=.*?=)/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_OFFSET_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
@@ -62,16 +66,17 @@ class SMWH_AAMParser {
 
 		$id = 1;
 		foreach ($parts as $part) {
+			$part0 = substr($wikiText, $part[1], strlen($part[0]));
 			// Is the part a template?
-			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part[0])) {
-				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part[0], $name);
+			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
+				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part0, $name);
 				$markedText .=  "\n".'{wikiTextOffset='.$part[1]
 				               .' template="'.$name[1].'"'
-			                   .' id="tmplt'.$id.'"}'."\n".$part[0]
+			                   .' id="tmplt'.$id.'"}'."\n".$part0
 				               ."\n".'{templateend}'."\n";
 				$id++;
 			} else {
-				$markedText .= "\n{wikiTextOffset=".$part[1]."}\n".$part[0];
+				$markedText .= "\n{wikiTextOffset=".$part[1]."}\n".$part0;
 			}
 		}
 
@@ -85,7 +90,7 @@ class SMWH_AAMParser {
 	 * @param unknown_type $wikiText
 	 * @return unknown
 	 */
-	function wikiTextOffset2HTML(&$wikiText)
+	public function wikiTextOffset2HTML(&$wikiText)
 	{
 
 		// replace intermediate format for templates
@@ -113,7 +118,7 @@ class SMWH_AAMParser {
 	 *
 	 * @param unknown_type $wikiText
 	 */
-	function highlightAnnotations(&$wikiText)
+	public function highlightAnnotations(&$wikiText)
 	{
 		// add intermediate tags to annotations
 		$text = preg_replace('/(\[\[.*?\]\])/','{annostart}$1{annoend}', $wikiText);
@@ -127,15 +132,58 @@ class SMWH_AAMParser {
 	 *
 	 * @param unknown_type $wikiText
 	 */
-	function highlightAnnotations2HTML(&$wikiText)
+	public function highlightAnnotations2HTML(&$wikiText)
 	{
 		// add intermediate tags to annotations
-		$text = preg_replace('/{annostart}(.*?){annoend}/','<span class="aam_prop_highlight">$1</span>', $wikiText);
+		$text = preg_replace('/{annostart}(.*?){annoend}/',
+		                     '<span class="aam_prop_highlight">$1</span>',
+		                     $wikiText);
 		return $text;
 	}
 		
 	//--- Private methods ---
 
+	/**
+	 * The wiki text <$wikiText> may contain dangerous HTML code, that will
+	 * confuse the parser that generates wiki text offsets 
+	 * (see addWikiTextOffsets). All dangerous text is replaced by * to
+	 * keep the number of characters the same.
+	 *
+	 * @param string $wikiText
+	 * @return string masked wiki text
+	 */
+	private function maskHTML(&$wikiText)
+	{
+		if (!preg_match_all("/<!--|-->|<nowiki>|<\/nowiki>/",
+		                    $wikiText,$matches,PREG_OFFSET_CAPTURE)) {
+			return $wikiText;
+		}
+		
+		$matches = $matches[0];
+		$text = "";
+		$openingTag = null;
+		$startPos = 0;
+		$endPos = 0;
+		foreach ($matches as $match) {
+			if (!$openingTag) {
+				$openingTag = $match[0];
+				$startPos = $match[1];
+				$text .= substr($wikiText, $endPos, $startPos-$endPos);
+				$endPos = $startPos + strlen($match[0]);
+			} else {
+				if (($openingTag == '<!--' && $match[0] == '-->') ||
+				    ($openingTag == '<nowiki>' && $match[0] == '</nowiki>')) {
+					//The opening tag matches the closing tag
+				    $endPos = $match[1] + strlen($match[0]);
+				    $text .= str_repeat("*", $endPos-$startPos);
+				    $openingTag = null;
+				}
+			}
+		}
+		$text .= substr($wikiText, $endPos, strlen($wikiText)-$endPos);
+		return $text;
+	}
+	
 }
 
 ?>
