@@ -23,6 +23,7 @@ define('SMW_SP_CONVERSION_FACTOR_SI', 1000);
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
+$smwgHaloAAMParser = null;
 
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
@@ -44,7 +45,8 @@ function enableSMWHalo() {
 function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
-
+	global $mediaWiki;
+	
 	$smwgMasterGeneralStore = NULL;
 	
 	// register SMW hooks
@@ -57,6 +59,16 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	
+	// Register parser hooks
+	$wgHooks['ParserBeforeStrip'][] = 'smwfAAMBeforeStrip';
+	$wgHooks['ParserAfterStrip'][] = 'smwfAAMAfterStrip';
+	$wgHooks['InternalParseBeforeLinks'][] = 'smwfAAMBeforeLinks';
+	$wgHooks['ParserBeforeTidy'][] = 'smwfAAMBeforeTidy';
+	$wgHooks['ParserAfterTidy'][] = 'smwfAAMAfterTidy';
+	$wgHooks['OutputPageBeforeHTML'][] = 'smwfAAMBeforeHTML';
+
+	$wgHooks['UnknownAction'][] = 'smwfAnnotateAction';
+		
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 	
@@ -274,7 +286,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
-
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css');
+		
 		// serialize the css
 		$jsm->serializeCSS($out);
 
@@ -553,11 +566,14 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	
  	function smwfAnnotateTab ($content_actions) {
  		//Check if edit tab is present, if not don't at annote tab
-		if(!array_search($content_actions['edit'],$content_actions) ) return true;
- 		//Build annotate tab
+		if (!array_key_exists('edit',$content_actions) )
+			return true;
+		global $wgUser, $wgRequest;
+		$action = $wgRequest->getText( 'action' );
+			//Build annotate tab
  		global $wgTitle;  
 		$main_action['main'] = array(
-        	'class' => false,    //if the tab should be highlighted
+        	'class' => ($action == 'annotate') ? 'selected' : false,
         	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
         	'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
       	);
@@ -573,5 +589,107 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
       	return true;
 	}
 
+	/**
+	 * This function is called from the parser, before <nowiki> parts have been 
+	 * removed and before templates etc are expanded.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 * @param unknown_type $strip_stat
+	 */
+	function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
+		global $wgRequest, $smwgHaloIP, $smwgHaloAAMParser;
+		$action = $wgRequest->getVal('action');
+		if ($action != 'annotate') {
+			return true;
+		}
+		require_once( "$smwgHaloIP/includes/SMW_AAMParser.php");
 
+		
+		if ($smwgHaloAAMParser == null) {
+			$smwgHaloAAMParser = new SMWH_AAMParser($text);
+		}
+		$text = $smwgHaloAAMParser->addWikiTextOffsets($text);
+		return true;
+	}
+
+	
+ 
+	/**
+	 * This function is called from the parser, after <nowiki> parts have been 
+	 * removed, but before templates etc are expanded.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 * @param unknown_type $strip_stat
+	 */
+	function smwfAAMAfterStrip(&$parser, &$text, &$strip_stat) {
+		global $smwgHaloAAMParser;
+		if ($smwgHaloAAMParser == null) {
+			return true;
+		}
+		$text = $smwgHaloAAMParser->highlightAnnotations($text);
+		return true;
+	}
+
+	/**
+	 * This function is called from the parser, after templates etc. are 
+	 * expanded.
+	 * Annotations i.e. text enclosed in [[]] is highlighted.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 */
+	function smwfAAMBeforeLinks(&$parser, &$text) { 
+		return true;
+	}
+
+	/**
+	 * This function is called from the parser, when the HTML is nearly completely
+	 * generated.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 */
+	function smwfAAMBeforeTidy(&$parser, &$text) { 
+		return true;
+	}
+
+	/**
+	 * This function is called from the parser, when the HTML is nearly completely
+	 * generated.
+	 * The wiki text offsets that have been introduced in a previous parsing stage
+	 * are replaced by their corresponding HTML.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 */
+	function smwfAAMAfterTidy(&$parser, &$text) {
+		global $smwgHaloAAMParser;
+		if ($smwgHaloAAMParser == null) {
+			return true;
+		}
+		$text = $smwgHaloAAMParser->wikiTextOffset2HTML($text);
+		$text = $smwgHaloAAMParser->highlightAnnotations2HTML($text);
+		return true;
+	}
+
+	/**
+	 * This function is called from the parser, when the HTML is nearly completely
+	 * generated.
+	 *
+	 * @param unknown_type $parser
+	 * @param unknown_type $text
+	 */
+	function smwfAAMBeforeHTML(&$out, &$text) { 
+		return true;
+	}
+	
+	function smwfAnnotateAction($action, $article) {
+		
+		$article->getTitle()->invalidateCache();
+		$article->view();
+		$article->getTitle()->invalidateCache();
+		return false;
+	}
 ?>
