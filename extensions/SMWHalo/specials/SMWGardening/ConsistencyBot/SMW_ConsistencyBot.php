@@ -138,7 +138,7 @@
  // ...
  // not defined issues
  define('SMW_GARDISSUE_DOMAINS_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 1);
- define('SMW_GARDISSUE_RANGES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 2);
+ define('SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 2);
  define('SMW_GARDISSUE_TYPES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 3);
  
  
@@ -195,8 +195,8 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 				
 			case SMW_GARDISSUE_DOMAINS_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_domains_not_defined', $text1);
-			case SMW_GARDISSUE_RANGES_NOT_DEFINED: 
-				return wfMsg('smw_gardissue_ranges_not_defined', $text1);
+			case SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED: 
+				return wfMsg('smw_gardissue_domains_and_ranges_not_defined', $text1);
 			case SMW_GARDISSUE_TYPES_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_types_not_defined', $text1);
 			case SMW_GARDISSUE_CATEGORY_NOT_DEFINED: 

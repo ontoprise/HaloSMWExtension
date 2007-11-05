@@ -7,8 +7,8 @@
 define('SMW_HALO_VERSION', '1.0beta');
 
  // constant for special schema properties
-define('SMW_SSP_HAS_DOMAIN_HINT', 1);
-define('SMW_SSP_HAS_RANGE_HINT', 2);
+define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
+define('SMW_SSP_HAS_RANGE_HINT', 2); //deprecated
 define('SMW_SSP_HAS_MAX_CARD', 3);
 define('SMW_SSP_HAS_MIN_CARD', 4);
 define('SMW_SSP_IS_INVERSE_OF', 5);

@@ -11,13 +11,9 @@
  	 * Domain hint relation. 
  	 * Determines the domain of an attribute or relation. 
  	 */
- 	public $domainHintRelation;
+ 	public $domainRangeHintRelation;
  	
- 	/**
- 	 * Range hint relation. 
- 	 * Determines the range of a relation. 
- 	 */
-	public $rangeHintRelation;
+ 	
 	
 	/**
 	 * Minimum cardinality. 
@@ -48,11 +44,11 @@
 	/**
 	 * Must be called from derived class to initialize the member variables.
 	 */
-	protected function SMWSemanticStore(Title $domainHintRelation, Title $rangeHintRelation, 
+	protected function SMWSemanticStore(Title $domainRangeHintRelation,
 									 Title $minCard, Title $maxCard, 
 									 Title $transitiveCat, Title $symetricalCat, Title $inverseOf) {
-		$this->domainHintRelation = $domainHintRelation;
-		$this->rangeHintRelation = $rangeHintRelation;
+		$this->domainRangeHintRelation = $domainRangeHintRelation;
+	
 		$this->maxCard = $maxCard;
 		$this->minCard = $minCard;
 		$this->transitiveCat = $transitiveCat;
@@ -150,21 +146,15 @@
 	 * 
 	 */
 	
- 	/**
- 	 * Returns the domains of the first super property which has defined some
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */
- 	public abstract function getDomainsOfSuperProperty(& $inheritanceGraph, $a);
+ 	
  	
  	/**
- 	 * Returns the ranges of the first super property which has defined some.
+ 	 * Returns the domain and ranges of the first super property which has defined some.
  	 * 
  	 * @param & $inheritance graph Reference to array of GraphEdge objects.
  	 * @param $a Property
  	 */ 	
- 	public abstract function getRangesOfSuperProperty(& $inheritanceGraph, $a);
+ 	public abstract function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p);
  	
  	/**
  	 * Determines minimum cardinality of an attribute,

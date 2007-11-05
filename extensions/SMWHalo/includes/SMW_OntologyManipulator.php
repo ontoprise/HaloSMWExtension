@@ -238,10 +238,15 @@ function smwfRelationSchemaData($relationName) {
 	   			// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
 	   			if ($typeValues[$i] instanceof SMWWikiPageValue) {
 
-	   				$rangeHintRelation = $this->rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
-	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $rangeHintRelation);
+	   				$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
+	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeHintRelation);
 	   				if (count($rangeHints) > 0) {
-	   					$labelToPaste = $rangeHints[0]->getXSDValue();
+	   					$dvs = $rangeHints->getDVs();
+	   					if ($dvs[1] !== NULL) {
+	   						$labelToPaste = htmlspecialchars($dvs[1]->getTitle()->getText());
+	   					} else {
+	   						$labelToPaste = 'Page';
+	   					}
 		   			} else {
 		   				$labelToPaste = 'Page';
 		   			}

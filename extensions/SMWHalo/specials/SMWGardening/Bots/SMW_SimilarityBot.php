@@ -404,9 +404,7 @@
  	// lexical similarity (=edit distance) between the two titles
  	private $similarityDegree;
  	
- 	private $domainHintRelation;
- 	private $rangeHintRelation;
- 	
+  	
  	public function SchemaSimilarity(Title $t1, Title $t2, $similarityDegree) {
  		$this->title1 = $t1;
  		$this->title2 = $t2;
@@ -579,15 +577,15 @@
  		global $smwgHaloContLang;
  		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
-		$domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
+		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		
 		
  		$db =& wfGetDB( DB_MASTER );
 			
-		$res = $db->query('SELECT r1.object_title AS cat FROM smw_relations r1, smw_relations r2 ' .
-				'WHERE r1.subject_id = '.$this->title1->getArticleID(). ' AND r2.subject_id = '.$this->title2->getArticleID().
-				' AND r1.relation_title = '.$db->addQuotes($domainHintRelation->getDBkey()).' AND r2.relation_title = '.$db->addQuotes($domainHintRelation->getDBkey()).
-				' AND r1.object_title = r2.object_title');
+		$res = $db->query('SELECT r1.object_title AS cat FROM smw_nary n1, smw_nary_n2, smw_nary_relations r1, smw_nary_relations r2 ' .
+				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().
+				' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
+				' AND r1.object_title = r2.object_title AND r1.nary_pos=0 AND r2.nary_pos=0');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -602,14 +600,14 @@
  		global $smwgHaloContLang;
  		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
-		$rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
+		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		
  		$db =& wfGetDB( DB_MASTER );
 			
-		$res = $db->query('SELECT r1.object_title AS cat FROM smw_relations r1, smw_relations r2 ' .
-				'WHERE r1.subject_id = '.$this->title1->getArticleID(). ' AND r2.subject_id = '.$this->title2->getArticleID().
-				' AND r1.relation_title = '.$db->addQuotes($rangeHintRelation->getDBkey()).' AND r2.relation_title = '.$db->addQuotes($rangeHintRelation->getDBkey()).
-				' AND r1.object_title = r2.object_title');
+		$res = $db->query('SELECT r1.object_title AS cat FROM smw_nary n1, smw_nary_n2, smw_nary_relations r1, smw_nary_relations r2 ' .
+				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().
+				' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
+				' AND r1.object_title = r2.object_title AND r1.nary_pos=1 AND r2.nary_pos=1');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {

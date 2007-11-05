@@ -140,7 +140,7 @@ abstract class SMWStore {
 	 * Get an array of all subjects that have the given value for the given property. The
 	 * result is an array of Title objects.
 	 */
-	abstract function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL);
+	abstract function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL, $nary_pos = NULL);
 
 	/**
 	 * Get an array of all subjects that have some value for the given property. The

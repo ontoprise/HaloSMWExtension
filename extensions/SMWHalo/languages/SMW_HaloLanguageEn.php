@@ -203,7 +203,7 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_domains_not_covariant' => 'Domain of $1 must be a subcategory of the domains of its super property.',
 	'smw_gardissue_domains_not_defined' => 'Domain of $1 is not defined.',
 	'smw_gardissue_ranges_not_covariant' => 'Range of $1 must be a subcategory of the ranges of its super property.',
-	'smw_gardissue_ranges_not_defined' => 'Range of $1 is not defined.',
+	'smw_gardissue_domains_and_ranges_not_defined' => 'Domain and Range of $1 is not defined.',
 	'smw_gardissue_types_not_covariant' => 'Type of $1 must be equal to type of its superproperty.',
 	'smw_gardissue_types_not_defined' => 'Type of $1 is not defined.',
 	'smw_gardissue_double_type' => '$1 has more than one type defined: $2 "has type" annotations.',
@@ -394,8 +394,7 @@ protected $smwSpecialProperties = array(
 
 
 var $smwSpecialSchemaProperties = array (
-	SMW_SSP_HAS_DOMAIN_HINT => 'Has domain hint',
-	SMW_SSP_HAS_RANGE_HINT  => 'Has range hint',
+	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Has domain and range',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',

@@ -135,22 +135,27 @@ private static function encapsulateAsProperty(Title $t, $count) {
 		$img = "";
 		// read type of property
 		$typesOfAttribute = smwfGetStore()->getSpecialValues($t, SMW_SP_HAS_TYPE);
-		if (count($typesOfAttribute) == 0) {
+		if (count($typesOfAttribute) == 0 || $typesOfAttribute[0]->getXSDValue() == '_wpg' ) {
 			// no 'has type' annotation -> it's a binary relation by default
-			$relationTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->rangeHintRelation);
+			$relationTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintRelation);
 			$img = "relation.gif";
 			if (count($relationTarget) == 0) {
 				$content = "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
 			} else { 
 				foreach($relationTarget as $rt) {
-					$title = htmlspecialchars($rt->getXSDValue()); 
-					$content .= "<rangeType isLink=\"true\">".$title."</rangeType>";
+					$dvs = $rt->getDVs();
+					if (count($dvs) == 2 && $dvs[1] !== NULL) {
+						$title = htmlspecialchars( $dvs[1]->getTitle()->getText()); 
+						$content .= "<rangeType isLink=\"true\">".$title."</rangeType>";
+					} else {
+						$content .= "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
+					}
 				}
 				
 			}
 					
 		} else { 
-			// may be a binary relation if 'has type:=Type:Page', an attribute or n-ary relation otherwise.
+			// it may be an attribute or n-ary relation otherwise.
 			// n-ary relations use the attribute icon too.
 			$typesOfAttributeAsString = $typesOfAttribute[0]->getTypeLabels();
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {
@@ -268,8 +273,8 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
  * returns true, if the property is a pre-defined schema property
  */
 private static function isPredefinedProperty($prop) {
-	return ($prop->getDBkey()== smwfGetSemanticStore()->domainHintRelation->getDBkey()) 
-		||  ($prop->getDBkey()== smwfGetSemanticStore()->rangeHintRelation->getDBkey())
+	return ($prop->getDBkey()== smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) 
+		
 		||  ($prop->getDBkey()== smwfGetSemanticStore()->minCard->getDBkey()) 
 		|| 	($prop->getDBkey()== smwfGetSemanticStore()->maxCard->getDBkey())
 		|| ($prop->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey()) 

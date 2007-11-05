@@ -314,7 +314,7 @@ class SMWSQLStore extends SMWStore {
 		return $result;
 	}
 
-	function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL) {
+	function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL, $nary_pos = NULL) {
 		wfProfileIn("SMWSQLStore::getPropertySubjects (SMW)");
 		if ( !$value->isValid() ) {
 			wfProfileOut("SMWSQLStore::getPropertySubjects (SMW)");
@@ -345,7 +345,7 @@ class SMWSQLStore extends SMWStore {
 			$from = $narytable;
 			$count = 0;
 			foreach ($values as $dv) {
-				if ( ($dv === NULL) || (!$dv->isValid()) ) {
+				if ( ($dv === NULL) || (!$dv->isValid())) {
 					$count++;
 					continue;
 				}
@@ -357,12 +357,14 @@ class SMWSQLStore extends SMWStore {
 					         " ON ($narytable.subject_id=nary$count.subject_id AND $narytable.nary_key=nary$count.nary_key)";
 					$where .= " AND nary$count.object_title=" . $db->addQuotes($dv->getDBKey()) .
 					          " AND nary$count.object_namespace=" . $db->addQuotes($dv->getNamespace());
+					$where .= $nary_pos !== NULL ? " AND nary$count.nary_pos=".$nary_pos : "";
 				break;
 				default:
 					$from .= ' INNER JOIN ' . $db->tableName('smw_nary_attributes') . ' AS nary' . $count .
 					         " ON ($narytable.subject_id=nary$count.subject_id AND $narytable.nary_key=nary$count.nary_key)";
 					$where .= " AND nary$count.value_xsd=" . $db->addQuotes($dv->getXSDValue()) .
 					          " AND nary$count.value_unit=" . $db->addQuotes($dv->getUnit());
+					$where .= $nary_pos !== NULL ? " AND nary$count.nary_pos=".$nary_pos : "";
 				}
 				$count++;
 			}

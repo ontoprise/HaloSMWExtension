@@ -206,11 +206,14 @@
  	  * Returns all domain categories for a given property.
  	  */
  	 private function getDomainCategories($propertyTitle, $reqfilter) {
- 	 	$domainRelation = smwfGetSemanticStore()->domainHintRelation;
- 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRelation, $reqfilter);
+ 	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+ 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeRelation, $reqfilter);
  	    $result = array();
  	    foreach($categories as $value) {
- 	    	if ($value instanceof SMWWikiPageValue) $result[] = $value->getTitle();
+ 	    	$dvs = $value->getDVs();
+ 	    	if ($dvs[0] instanceof SMWWikiPageValue) {
+ 	    		$result[] = $dvs[0]->getTitle();
+ 	    	}
  	    }
  	    return $result;
  	 }

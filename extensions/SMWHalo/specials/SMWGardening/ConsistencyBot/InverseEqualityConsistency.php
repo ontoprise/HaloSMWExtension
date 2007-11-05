@@ -34,41 +34,27 @@
  			}
  			
  			list($s, $t) = $r;
- 			$domainOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainHintRelation);
- 			$domainOfTagert = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainHintRelation);
- 			$rangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->rangeHintRelation);
- 			$rangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->rangeHintRelation);
+ 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintRelation);
+ 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintRelation);
  			
- 			if (count($domainOfSource) != 1) {
+ 			if (count($domainAndRangeOfSource) != 1) {
  				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $s);
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $s);
  				
  				continue;
  			}
- 			if (count($domainOfTagert) != 1) {
+ 			if (count($domainAndRangeOfTarget) != 1) {
  				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $t);
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $t);
  				
  				continue;
  			}
- 			if (count($rangeOfSource) != 1) {
- 			
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $s);
- 			
- 				continue;
- 			}
- 			if (count($rangeOfTarget) != 1) {
- 			
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $t);
- 			
- 				continue;
- 			}
- 			
- 			if (!$domainOfSource[0]->getTitle()->equals($rangeOfTarget[0]->getTitle())) {
+ 		 			
+ 			if (!$domainAndRangeOfSource->getDVs[0]->getTitle()->equals($domainAndRangeOfTarget->getDVs[1]->getTitle())) {
  			
  				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  				
- 			} else if (!$domainOfTagert[0]->getTitle()->equals($rangeOfSource[0]->getTitle())) {
+ 			} else if (!$domainAndRangeOfSource->getDVs[1]->getTitle()->equals($domainAndRangeOfTarget->getDVs[0]->getTitle())) {
  				
  				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  			}

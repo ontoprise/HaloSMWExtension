@@ -173,12 +173,8 @@ class AutoCompletionRequester {
  	    		}
  	    		
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
- 	    	} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT])) > 0) { 
+ 	    	} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT])) > 0) { 
  	    		// has domain hint relation 
- 	    		$pages = AutoCompletionRequester::getPages($match, array(NS_CATEGORY));
- 	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
- 	    	} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_RANGE_HINT])) > 0) { 
- 	    		// has range hint relation 
  	    		$pages = AutoCompletionRequester::getPages($match, array(NS_CATEGORY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else {
@@ -191,12 +187,15 @@ class AutoCompletionRequester {
  	    	
  	    			$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
  	    		
- 	    			$rangeRelation = smwfGetSemanticStore()->rangeHintRelation;
- 	    			$categories = smwfGetStore()->getPropertyValues($property, $rangeRelation);
+ 	    			$rangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+ 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $rangeRelation);
  	    			$pages = array();
- 	    			foreach ($categories as $c) {
- 	    				$instances = smwfGetSemanticStore()->getDirectInstances($c->getTitle());
- 	    				$pages = array_merge($pages, $instances);
+ 	    			foreach ($domainRangeAnnotations as $dra) {
+ 	    				$dv = $dra->getDVs();
+ 	    				if ($dv[1] !== NULL && $dv[1]->isValid()) {
+ 	    					$instances = smwfGetSemanticStore()->getDirectInstances($dv[1]->getTitle());
+ 	    					$pages = array_merge($pages, $instances);
+ 	    				}
  	    			}
  	    			return AutoCompletionRequester::encapsulateAsXML($pages);
  	    		} else {  	
@@ -239,12 +238,14 @@ class AutoCompletionRequester {
  	    		$articleTitle = Title::newFromText($articleName);
  	    		$categoriesOfArticle = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle);
  	    		
- 	    		$domainRelation = smwfGetSemanticStore()->domainHintRelation;
+ 	    		$domainRelation = smwfGetSemanticStore()->domainRangeHintRelation;
  	    		$pages = array();
  	    		foreach($categoriesOfArticle as $category) {
+ 	    			$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
  	    			$value = SMWDataValueFactory::newTypeIDValue('_wpg');
   					$value->setValues($category->getDBKey(), $category->getNamespace());
- 	    			$properties = smwfGetStore()->getPropertySubjects($domainRelation, $value);
+  					$dv_container->setDVs(array($value, NULL));
+ 	    			$properties = smwfGetStore()->getPropertySubjects($domainRelation, $value, NULL, 0);
  	    			$pages = array_merge($pages, $properties);
  	    		}
 			

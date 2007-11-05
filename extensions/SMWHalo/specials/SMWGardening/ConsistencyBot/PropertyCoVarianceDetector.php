@@ -66,8 +66,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
  			
- 			if (smwfGetSemanticStore()->domainHintRelation->equals($a) 
- 					|| smwfGetSemanticStore()->rangeHintRelation->equals($a)
+ 			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
+ 					
  					|| smwfGetSemanticStore()->minCard->equals($a) 
  					|| smwfGetSemanticStore()->maxCard->equals($a)
  					|| smwfGetSemanticStore()->inverseOf->equals($a) ) {
@@ -77,9 +77,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   			
  			$this->checkMinCardinality($a);
  			$this->checkMaxCardinality($a);
- 			$this->checkDomainCovariance($a);
+ 			$this->checkDomainAndRangeCovariance($a);
  			$this->checkTypeEquality($a);
- 			$this->checkRangeCovariance($a);
+ 			//$this->checkRangeCovariance($a);
  			$this->checkSymTransCovariance($a);
  			
  			
@@ -185,35 +185,110 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/** 		
  	 * Check domain co-variance
   	 */
- 	private function checkDomainCovariance($a) {
- 		global $smwgContLang;
-  		  		
- 			$domainCategories = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainHintRelation);
- 			if (empty($domainCategories)) {
- 				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $a);
- 				
- 			} else {
- 				// get domain of parent
- 				$domainCategoriesOfSuperProperty = smwfGetSemanticStore()->getDomainsOfSuperProperty($this->propertyGraph, $a);
- 				$covariant = true;
- 				foreach($domainCategoriesOfSuperProperty as $domainSuperCat) {
- 					$pathExists = false;
- 					foreach($domainCategories as $domainCat) { 
- 						if (GraphHelper::checkForPath($this->categoryGraph, $domainCat->getTitle()->getArticleID(), $domainSuperCat->getTitle()->getArticleID())) {
- 							$pathExists = true;
- 						}
+ 	private function checkDomainAndRangeCovariance($p) {
+ 		$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
+ 		
+ 		if (count($type) > 0) {
+ 			if (count($type) == 0 || $type[0]->getXSDValue() == '_wpg' || $type[0]->getXSDValue() == '__nry') {
+ 				// default property (type wikipage), explicitly defined wikipage or nary property
+ 				$res = $this->isDomainRangeCovariant($p);
+ 				if ($res === true) return;
+ 				foreach($res as $cov) {
+ 					if (!$cov[0]) {
+ 						// log domain cov error for annot
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p);
  					}
- 					$covariant = $covariant && $pathExists;
+ 					if (!$cov[1]) {
+ 						// log range cov error for annot
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p);
+ 					}
  				}
- 				if (!$covariant && count($domainCategoriesOfSuperProperty) > 0) {
- 					
- 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $a);
+ 			} else {
+ 				// attribute
+ 				$res = $this->isDomainRangeCovariant($p, true);
+ 				if ($res === true) return;
+ 				foreach($res as $cov) {
+ 					if (!$cov[0]) {
+ 						// log domain cov error for annot
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p);
+ 					}
  					
  				}
- 				
  			}
+ 		} 
+	
  	}
+ 	
+ 	private function isDomainRangeCovariant($p, $isAttribute = false) {
+ 		
+ 		$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
+ 		
+ 			if (empty($domainRangeAnnotations)) {
+ 				
+ 				if ($isAttribute) {
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
+ 				} else {
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
+ 				}
+ 				return true;
+ 			} else {
+ 				$domainRangeAnnotationsOfSuperProperty = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
+ 				
+ 				if (empty($domainRangeAnnotationsOfSuperProperty)) {
+ 					return true;
+ 				}
+ 				$results = array();
+ 				foreach($domainRangeAnnotations as $dra) {
+ 					$current = array(false, false, $dra);
+ 					$domRanVal = $dra->getDVs();
+		 			$domainCat = $domRanVal[0] != NULL ? $domRanVal[0]->getTitle() : NULL;	
+		 			$rangeCat  = $domRanVal[1] != NULL ? $domRanVal[1]->getTitle() : NULL;
+ 					 
+	 				foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
+	 					$domRanValOfSuperProperty = $drosp->getDVs();
+	 					$domainCatOfSuperProperty = $domRanValOfSuperProperty[0] != NULL ? $domRanValOfSuperProperty[0]->getTitle() : NULL;	
+	 					$rangeCatOfSuperProperty  = $domRanValOfSuperProperty[1] != NULL ? $domRanValOfSuperProperty[1]->getTitle() : NULL;
+	 					if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
+ 				 
+		 					$domainCovariant = $rangeCovariant = false;
+	 						
+	 						$domainCovariant = GraphHelper::checkForPath($this->categoryGraph, $domainCat->getArticleID(), $domainCatOfSuperProperty->getArticleID()); 
+	 						
+		 					if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
+			 					$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
+			 				
+		 					}
+		 					
+		 					// add new co-variance tuple if it is better matching domain and range.
+		 					$current_score = ($current[0] ? 1 : 0) + ($current[1] ? 1 : 0);
+		 					$new_score = ($domainCovariant ? 1 : 0) + ($rangeCovariant ? 1 : 0);
+		 					$current = ($new_score > $current_score) ? array($domainCovariant, $rangeCovariant, $current[2]) : $current;
+		 					if ($domainCovariant && $rangeCovariant) {
+		 						break; // stop if both are covariant
+		 					}
+		 					
+	 					} else if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)){
+ 						
+ 							$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
+	 						if ($rangeCovariant) {
+	 							$current = array(true, true, $dra);
+	 							break; // stop if both are covariant
+	 						}
+		 					
+ 						
+ 						
+ 						} else {
+ 							$current = array(true, true, $dra);
+ 							break; // stop if both are covariant
+ 						}
+ 				}
+ 				$results[] = $current;
+ 			}
+ 			return $results;
+ 		}
+ 	}
+ 	
+ 	
  	
  	/** 		
  	 *  Check type equality
@@ -249,59 +324,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  	}
  	
- 	/** 		
- 	 *  Check range co-variance 
- 	 *	n-ary attributes may defines ranges which hold for the
- 	 *	first wikipage parameter of the attributes. This algorithm
- 	 *	simply checks if all ranges a co-variant.
- 	 *	If no range is defined, then the type must not contain a wikipage. 
-  	 */
- 	private function checkRangeCovariance($a) {
- 		global $smwgContLang;
-  		  		
- 			$rangeCategories = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->rangeHintRelation);
- 			if (empty($rangeCategories)) {
- 				$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
- 				// range categories may be empty if types contain no wikipage
- 				if (!empty($types)) {
- 					
- 					foreach($types as $type) { 
- 						if ($type instanceof SMWTypesValue && $type->getTypeID() == '_wpg') {
- 							
- 							$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $a);
- 							
- 							break;
- 						}
- 					}
- 				} else { // types empty -> default is Page
- 				
- 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $a);
- 					
- 					
- 				}
- 			} else { 
- 				// get ranges of parent
- 				$rangeCategoriesOfSuperProperty = smwfGetSemanticStore()->getRangesOfSuperProperty($this->propertyGraph, $a);
- 				
- 				$covariant = true;
- 				// check if range categories are sub categories of the range of the super properties 
- 				foreach($rangeCategoriesOfSuperProperty as $rangeSuperCat) {
- 					$pathExists = false;
- 					foreach($rangeCategories as $rangeCat) { 
- 						if (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeSuperCat->getArticleID())) {
- 							$pathExists = true;
- 						}
- 					}
- 					$covariant = $covariant && $pathExists;
- 				}
- 				if (!$covariant) {
- 				
- 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $a);
- 					
- 				}
- 			}
- 			
- 	}
+ 	
  	
  	/** 		
  	 * Check symetry and transitivity co-variance

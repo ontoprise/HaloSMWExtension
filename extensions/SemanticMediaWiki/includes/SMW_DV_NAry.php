@@ -283,7 +283,8 @@ class SMWNAryValue extends SMWDataValue {
 		$this->m_infolinks = array(); // clear links
 		$this->m_hasssearchlink = false;
 		$this->m_caption = false;
-		$typelabels = $this->m_type->getTypeLabels();
+		$typelabels = $this->m_type != NULL ? $this->m_type->getTypeLabels() : NULL;
+		if ($this->m_count == 0) $this->m_count = count($datavalues);
 		for ($i = 0; $i < $this->m_count; $i++) {
 			if ( ($i < count($datavalues) ) && ($datavalues[$i] !== NULL) ) {
 			    //&& ($datavalues[$i]->getTypeID() == SMWDataValueFactory::findTypeID($typelabels[$i])) ) {

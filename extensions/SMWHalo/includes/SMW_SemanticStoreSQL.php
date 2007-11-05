@@ -22,14 +22,14 @@
 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
-		$domainHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_HINT], SMW_NS_PROPERTY);
-		$rangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE_HINT], SMW_NS_PROPERTY);
+		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
+	
 		$minCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
 		$maxCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
 		$transitiveCat = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
 		$symetricalCat = Title::newFromText($smwSpecialCategories[SMW_SC_SYMMETRICAL_RELATIONS], NS_CATEGORY);
 		$inverseOf = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_IS_INVERSE_OF], SMW_NS_PROPERTY);
-		parent::SMWSemanticStore($domainHintRelation, $rangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat, $inverseOf);
+		parent::SMWSemanticStore($domainRangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat, $inverseOf);
 	}
 	
 	function setup($verbose) {
@@ -230,9 +230,11 @@
 	
 			
 	function getDirectPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
-		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-  		$value->setValues($categoryTitle->getDBKey(), $categoryTitle->getNamespace());
-		return smwfGetStore()->getPropertySubjects($this->domainHintRelation, $value);
+		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
+		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+  		$dv->setValues($categoryTitle->getDBKey(), $categoryTitle->getNamespace());
+  		$dv_container->setDVs(array($dv, NULL));
+		return smwfGetStore()->getPropertySubjects($this->domainRangeHintRelation, $dv_container, NULL, 0);
 	}
 	
 	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
@@ -290,35 +292,18 @@
 	}
 	
 	
- 	public function getDomainsOfSuperProperty(& $inheritanceGraph, $a) {
- 		$attributeID = $a->getArticleID();
- 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$domainCategories = smwfGetStore()->getPropertyValues($superAttribute, $this->domainHintRelation);
- 			if (count($domainCategories) > 0) {
- 				return $domainCategories;
- 			} else {
- 				return $this->getDomainsOfSuperProperty($inheritanceGraph, $superAttribute);
- 			}
- 			
- 		} else {
- 			return array();
- 		}
- 		
- 	}
  	
- 		
- 	public function getRangesOfSuperProperty(& $inheritanceGraph, $a) {
- 		$attributeID = $a->getArticleID();
- 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$rangeCategories = smwfGetStore()->getPropertyValues($superAttribute, $this->rangeHintRelation);
- 			if (count($rangeCategories) > 0) {
- 				return $rangeCategories;
+ 	
+ 	public function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p) {
+ 		$propertyID = $p->getArticleID();
+ 		$superProperties = GraphHelper::searchInSortedGraph($inheritanceGraph, $propertyID);
+ 		if (count($superProperties) > 0) {
+ 			$superProperty = Title::newFromID($superProperties[0]->to);
+ 			$domainRangeCategories = smwfGetStore()->getPropertyValues($superProperty, $this->domainRangeHintRelation);
+ 			if (count($domainRangeCategories) > 0) {
+ 				return $domainRangeCategories;
  			} else {
- 				return $this->getRangesOfSuperProperty($inheritanceGraph, $superAttribute);
+ 				return $this->getDomainsAndRangesOfSuperProperty($inheritanceGraph, $superProperty);
  			}
  			
  		} else {

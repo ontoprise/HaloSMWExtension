@@ -52,8 +52,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
  			
- 			if (smwfGetSemanticStore()->domainHintRelation->equals($r) 
- 					|| smwfGetSemanticStore()->rangeHintRelation->equals($r)
+ 			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($r) 
  					|| smwfGetSemanticStore()->minCard->equals($r) 
  					|| smwfGetSemanticStore()->maxCard->equals($r)
  					|| smwfGetSemanticStore()->inverseOf->equals($r)) {
@@ -62,19 +61,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  			
  			// get domain and range categories of property
- 			$rangeCategories = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->rangeHintRelation);
- 			$domainCategories = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->domainHintRelation);
+ 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->domainRangeHintRelation);
  			
- 			if (empty($rangeCategories)) {
+ 			
+ 			if (empty($domainRangeAnnotations)) {
  				// if there are no range categories defined, try to find a super relation with defined range categories
- 				$rangeCategories = smwfGetSemanticStore()->getRangesOfSuperProperty($this->propertyGraph, $r);
+ 				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $r);
  			}
- 			if (empty($domainCategories)) {
- 				// if there are no domain categories defined, try to find a super relation with defined range categories
- 				$domainCategories = smwfGetSemanticStore()->getDomainsOfSuperProperty($this->propertyGraph, $r);
- 			}
+ 			
  			// get annotation subjects for the property.
  			$allRelationSubjects = smwfGetStore()->getAllPropertySubjects($r);
+ 			
+ 			// check domain only once.
+ 			$domainChecked = false;
  			
  			// iterate over all property subjects
  			foreach($allRelationSubjects as $subject) { 
@@ -84,24 +83,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				}
  				// get property value for a given instance
  				$relationTargets = smwfGetStore()->getPropertyValues($subject, $r);
+ 				
  				foreach($relationTargets as $target) {
  					
  					// decide which type and do consistency checks
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
- 						$categoriesOfInstance = $target->getTitle() != NULL ? smwfGetSemanticStore()->getCategoriesForInstance($target->getTitle()) : array();
- 						$isValid = false;
- 						foreach($rangeCategories as $ranCts) { 
- 							foreach($categoriesOfInstance as $artCats) { 
- 								
- 								if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCts->getArticleID())) {
- 									$isValid = true;
- 								}
- 							}
- 						}
- 						if (!$isValid && !empty($categoriesOfInstance) && !empty($rangeCategories)) {
- 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
- 						 	break;						
+ 						list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $target->getTitle(), $domainRangeAnnotations, $domainChecked);
+ 						$domainChecked = true;
+ 						if (!$domainCorrect) {
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
  						} 
+ 						if (!$rangeCorrect){
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
+ 						}
  						
  					} else if ($target instanceof SMWNAryValue) { // n-ary relation
  						
@@ -116,49 +110,78 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  									} else {
  										
  										if ($explodedValues[$i]->getTypeID() == '_wpg') { //TODO: TEST THIS!!!
- 											
- 											$categoriesOfInstance = smwfGetSemanticStore()->getCategoriesForInstance($explodedValues[$i]->getTitle());
- 											
- 											$isValid = false;
- 											foreach($rangeCategories as $ranCats) { 
- 												foreach($categoriesOfInstance as $artCats) { 
- 						   							if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $ranCats->getArticleID())) {
- 														$isValid = true;
- 													}
- 												}
- 											}
- 											if (!$isValid && !empty($rangeCategories) && !empty($categoriesOfInstance)) {
- 												$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r);
-												break;
- 											}
+ 											list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $explodedValues[$i]->getTitle(), $domainRangeAnnotations, $domainChecked);
+ 											$domainChecked = true; 											
+ 											if (!$domainCorrect) {
+					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
+					 						 					
+					 						} 
+					 						if (!$rangeCorrect){
+					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
+					 						}
  										}
  									}
  								}
- 							}
+ 						} else {
+ 							// Normally, one would check attribute values here, but they are always correctly validated during SAVE.
+ 							// Otherwise the annotation would not appear in the database.
  					
- 					// Normally, one would check attribute values here, but they are always correctly validated during SAVE.
- 					// Otherwise the annotation would not appear in the database.
- 					
- 					// check if each subject is member of at least one domain category.
- 					$domainCategoryIDs = smwfGetSemanticStore()->getCategoriesForInstance($subject);
- 					$isValid = false;
- 					foreach($domainCategories as $domCats) { 
- 						foreach($domainCategoryIDs as $artCats) { 
- 								
- 							if (GraphHelper::checkForPath($this->categoryGraph, $artCats->getArticleID(), $domCats->getArticleID())) {
- 								$isValid = true;
+ 							// check if each subject is member of at least one domain category.
+ 							if ($domainChecked) break;
+ 							list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, NULL, $domainRangeAnnotations);
+ 							$domainChecked = true;
+ 							
+ 							if (!$domainCorrect) {
+ 								$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
+ 								break;
  							}
  						}
- 					}
- 					if (!$isValid && !empty($domainCategoryIDs) && !empty($domainCategories)) {
- 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
- 						break;
- 					}
  					
+ 									
  				} 
  			}
  		}
- 		return ;
+ 		
+ 	}
+ 	
+ 	private function checkDomainAndRange($subject, $object, $domainRange, $domainChecked = false) {
+ 		$categoriesOfObject = $object != NULL ? smwfGetSemanticStore()->getCategoriesForInstance($object) : array();
+ 		if ($domainChecked) $categoriesOfSubject = smwfGetSemanticStore()->getCategoriesForInstance($subject);
+ 		
+ 		$rangeCorrect = false;
+ 		$domainCorrect = false;
+ 		foreach($domainRange as $domRanVal) { 
+ 			$dvs = $domRanVal->getDVs();
+ 			$domainCat = $dvs[0] != NULL ? $dvs[0]->getTitle() : NULL;	
+ 			$rangeCat  = $dvs[1] != NULL ? $dvs[1]->getTitle() : NULL;
+ 			if ($domainChecked) $domainCat = NULL;
+ 			if ($domainCat != NULL && $rangeCat != NULL) {
+	 			foreach($categoriesOfObject as $coo) { 
+	 					// check domain and range
+	 					if (GraphHelper::checkForPath($this->categoryGraph, $coo->getArticleID(), $rangeCat->getArticleID())) {
+	 						$rangeCorrect = true;
+	 						foreach($categoriesOfSubject as $cos) {
+	 							$domainCorrect |= (GraphHelper::checkForPath($this->categoryGraph, $cos->getArticleID(), $domainCat->getArticleID()));
+	 							if ($domainCorrect) break;
+		 					}
+	 					}
+	 			}	
+ 			} else if ($domainCat != NULL){
+ 					//check domain
+ 					foreach($categoriesOfSubject as $coi) {
+ 						$domainCorrect |= (GraphHelper::checkForPath($this->categoryGraph, $coi->getArticleID(), $domainCat->getArticleID()));
+ 						if ($domainCorrect) break;
+ 					}
+ 				} else if ($rangeCat != NULL) {
+ 					// check range
+ 						foreach($categoriesOfObject as $coo) {
+ 							$rangeCorrect |= (GraphHelper::checkForPath($this->categoryGraph, $coo->getArticleID(), $rangeCat->getArticleID()));
+ 							if ($rangeCorrect) break;
+ 						}
+ 				}
+ 				
+ 			}
+ 		return array($domainCorrect, $rangeCorrect);
  	}
  	
  	
@@ -179,8 +202,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (smwfGetSemanticStore()->minCard->equals($a) 
  					|| smwfGetSemanticStore()->maxCard->equals($a)
- 					|| smwfGetSemanticStore()->domainHintRelation->equals($a) 
- 					|| smwfGetSemanticStore()->rangeHintRelation->equals($a)
+ 					|| smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
  					|| smwfGetSemanticStore()->inverseOf->equals($a)) {
  						// ignore 'min cardinality' and 'max cardinality'
  						continue;

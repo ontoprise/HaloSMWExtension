@@ -124,7 +124,7 @@ abstract class GardeningIssue {
 	protected $t2;
 	protected $value;
 	
-	protected $subIssues = NULL;
+	
 	
 	protected function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
 		$this->bot_id = $bot_id;
