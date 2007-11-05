@@ -34,7 +34,7 @@ var initHelp = function(){
 }
 
 function smw_help_callme(){
-	if((wgAction == "edit"
+	if((wgAction == "edit" || wgAction == "annotate"
 	    || wgCanonicalSpecialPageName == "Search")
 	   && stb_control.isToolbarAvailable()){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
