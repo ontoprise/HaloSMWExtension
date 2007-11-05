@@ -454,7 +454,7 @@
 		if(editAreas[id]["displayed"]==true  && toggle_to=="off"){
 			/*STARTLOG*/
 			if(smwhgLogger){
-			    smwhgLogger.log("Advanced editor deactivated","info","she_deactivated");
+			    smwhgLogger.log("Advanced editor deactivated","SHE","she_deactivated");
 			}
 			/*ENDLOG*/
 			this.toggle_off(id);
@@ -462,7 +462,7 @@
 		} else if(editAreas[id]["displayed"]==false  && toggle_to=="on"){
 			/*STARTLOG*/
 			if(smwhgLogger){
-			    smwhgLogger.log("Advanced editor activated","info","she_activated");
+			    smwhgLogger.log("Advanced editor activated","SHE","she_activated");
 			}
 			/*ENDLOG*/
 			this.toggle_on(id);
