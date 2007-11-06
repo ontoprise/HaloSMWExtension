@@ -128,22 +128,37 @@ class SMWPropertiesPage extends SMWQueryPage {
 	function getWikiPageProperties($sort) {
 		$NSrel = SMW_NS_PROPERTY;
 		$dbr =& wfGetDB( DB_SLAVE );
+		global $smwgHaloContLang;
+		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$nary_relations = $dbr->tableName( 'smw_nary_relations' );
+		$nary = $dbr->tableName( 'smw_nary' );
 		$relations = $dbr->tableName( 'smw_relations' );
 		$pages = $dbr->tableName( 'page' );
 		switch($sort) {
 			
-			case 0: //fall through
+			case 0:	// fall through
 					
 			case 1: //fall through
 					
-			case 2: return "SELECT 'Relations' as type,
-					{$NSrel} as namespace,
-					r1.relation_title as title,
-					r2.object_title as value,
-					r2.object_namespace as obns,		
-					COUNT(*) as count
-					FROM $relations r1,$relations r2,$pages WHERE r1.relation_title = page_title AND r1.relation_title = r2.subject_title and r2.relation_title = 'Has_range_hint'
-					GROUP BY r1.relation_title";
+			case 2: return "(SELECT 'Relations' as type,
+								{$NSrel} as namespace,
+					 			n.subject_title as title,
+								r.object_title as value,
+								r.object_namespace as obns,		
+								COUNT(*) as count,
+								p.page_touched as touch
+							FROM $pages p JOIN $relations rel ON p.page_title = rel.relation_title JOIN $nary n ON rel.relation_title = n.subject_title JOIN $nary_relations r ON r.subject_id = n.subject_id 
+							WHERE  r.nary_pos = 1 AND n.attribute_title = ".$dbr->addQuotes(str_replace(" ","_",$sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]))."
+							GROUP BY title) 
+						UNION
+							(SELECT 'Relations' as type,
+								{$NSrel} as namespace,
+								relation_title as title,
+								NULL as value, 
+								'-1' as obns, 
+								COUNT(*) as count ,
+								p.page_touched as touch
+							FROM $pages p JOIN $relations r ON p.page_title = r.relation_title LEFT JOIN $nary n ON r.relation_title = n.subject_title WHERE n.subject_title IS NULL GROUP BY title) ";
 		}
 	}
 	
@@ -189,8 +204,8 @@ class SMWPropertiesPage extends SMWQueryPage {
 			case 1: { switch($sort) {
 							
 							case 0: return '';
-							case 1: return ' ORDER BY page_touched';
-							case 2: return ' ORDER BY r2.object_title';
+							case 1: return ' ORDER BY touch';
+							case 2: return ' ORDER BY value DESC';
 					  } 
 					  break;
 					 }
@@ -253,8 +268,12 @@ class SMWPropertiesPage extends SMWQueryPage {
 				$errors[] = wfMsg('smw_propertylackspage');
 			}
 			$attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
-			$objecttitle = Title::newFromText($result[3]); 
-			$objectlink = $skin->makeLinkObj( $objecttitle);
+			if ($result[3] != NULL) {
+				$objecttitle = Title::newFromText($result[3]); 
+				$objectlink = $skin->makeLinkObj( $objecttitle);
+			} else {
+				$objectlink = '*range not defined*';
+			}
 			return "$attrlink (".$result[5].")" . wfMsg('smw_attr_type_join', $objectlink). ' ' . smwfEncodeMessages($errors);
 		}else {
 			$attrtitle = Title::makeTitle( SMW_NS_PROPERTY, $result[2] );
