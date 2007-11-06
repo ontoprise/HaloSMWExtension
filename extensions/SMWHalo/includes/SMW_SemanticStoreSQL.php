@@ -75,8 +75,9 @@
 	function getRootCategories($requestoptions = NULL) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
+		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND NOT EXISTS (SELECT cl_from FROM categorylinks WHERE cl_from = page_id)'.
+			   ' AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id)'.
 		       $this->getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( $db->tableName('page'), 
@@ -96,8 +97,9 @@
 		
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
+		$smw_subprops = $db->tableName('smw_subprops');
 		$sql = 'page_namespace=' . SMW_NS_PROPERTY .
-			   ' AND NOT EXISTS (SELECT subject_title FROM smw_subprops WHERE subject_title = page_title)'.
+			   ' AND NOT EXISTS (SELECT subject_title FROM '.$smw_subprops.' WHERE subject_title = page_title)'.
 		       $this->getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( $db->tableName('page'), 
@@ -137,8 +139,9 @@
 	function getDirectSuperCategories(Title $categoryTitle, $requestoptions = NULL) {
 		
 		$db =& wfGetDB( DB_MASTER );
+		$mw_page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM page WHERE page_title=cl_to)'.
+			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$mw_page.' WHERE page_title=cl_to)'.
 		       $this->getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
@@ -278,10 +281,12 @@
 	function getNumberOfUsage(Title $property) {
 		$num = 0;
 		$db =& wfGetDB( DB_MASTER );
-		
-		$res = $db->query('SELECT COUNT(subject_title) AS numOfSubjects FROM smw_attributes s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title ' .
-						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM smw_nary s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title' .
-						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM smw_relations s WHERE relation_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY relation_title;');
+		$smw_attributes = $db->tableName('smw_attributes');
+	 	$smw_relations = $db->tableName('smw_relations');
+	 	$smw_nary = $db->tableName('smw_nary');	
+		$res = $db->query('SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_attributes.' s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title ' .
+						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_nary.' s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title' .
+						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_relations.' s WHERE relation_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY relation_title;');
 		
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
@@ -417,8 +422,8 @@
   		$namespaces = $smwgContLang->getNamespaces();
  		$result = "";
 		$db =& wfGetDB( DB_MASTER );
-		
-		 $res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup FROM smw_subprops, page p1, page p2 WHERE p1.page_namespace = '.SMW_NS_PROPERTY.
+		$smw_subprops = $db->tableName('smw_subprops');
+		 $res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup FROM '.$smw_subprops.', page p1, page p2 WHERE p1.page_namespace = '.SMW_NS_PROPERTY.
 							' AND p2.page_namespace = '.SMW_NS_PROPERTY.' AND p1.page_title = subject_title AND p2.page_title = object_title ORDER BY p1.page_id');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -552,7 +557,11 @@
 			$t = Title::newFromText($value, SMW_NS_PROPERTY);
 			if (!$t->exists()) {
 				$article = new Article($t);
-				$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
+				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT. TODO: introduce general mechanism
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Page; Type:Page]]", "", false, false);
+				} else {
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
+				}
 				DBHelper::reportProgress(" Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
