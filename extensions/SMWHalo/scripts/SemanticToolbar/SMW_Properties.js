@@ -14,8 +14,8 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var DOMAIN_HINT = "Has domain hint";
-var RANGE_HINT = "Has range hint";
+var DOMAIN_HINT = "has domain and range";
+var RANGE_HINT  = "has domain and range";
 var HAS_TYPE = "has type";
 var MAX_CARDINALITY = "Has max cardinality";
 var MIN_CARDINALITY = "Has min cardinality";
@@ -163,7 +163,9 @@ createContent: function() {
 	if (domain == null) {
 		domain = "";
 	} else {
-		domain = domain[0].getValue();
+		domain = domain[0].getSplitValues()[0];
+		// trim
+		domain = domain.replace(/^\s*(.*?)\s*$/,"$1");
 		if (domain.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
 			// Strip the category-keyword
 			domain = domain.substring(9);
@@ -172,7 +174,13 @@ createContent: function() {
 	if (range == null) {
 		range = "";
 	} else {
-		range = range[0].getValue();
+		if (range[0].getSplitValues()[1]) {
+			range = range[0].getSplitValues()[1];
+		} else {
+			range = range[0].getValue();
+		}
+		// trim
+		range = range.replace(/^\s*(.*?)\s*$/,"$1");
 		if (range.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
 			range = range.substring(9);
 		}
@@ -252,8 +260,11 @@ createContent: function() {
 			if (types[i] == gLanguage.getMessage('TYPE_PAGE')) {
 				var r = "";
 				if (ranges && rc < ranges.length) {
-					r = ranges[rc++].getValue();
+					r = ranges[rc++].getSplitValues()[1];
 				}
+				// trim
+				r = r.replace(/^\s*(.*?)\s*$/,"$1");
+				
 				if (r.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
 					r = r.substring(9);
 				}
@@ -642,8 +653,10 @@ apply: function() {
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
-	var domainAnno = this.wtp.getRelation(DOMAIN_HINT);
-	var rangeAnno = this.wtp.getRelation(RANGE_HINT);
+	var domainRange = ((domain == null) ? "" : domain) + 
+	                  ((range == null)  ? "" : "; "+range)
+
+	var domainRangeAnno = this.wtp.getRelation(DOMAIN_HINT);
 	var attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
 	var maxCardAnno = this.wtp.getRelation(MAX_CARDINALITY);
 	var minCardAnno = this.wtp.getRelation(MIN_CARDINALITY);
@@ -654,23 +667,16 @@ apply: function() {
 	
 	
 	// change existing annotations
-	if (domainAnno != null) {
-		if (domain == null) {
-			domainAnno[0].remove("");
+	if (domainRangeAnno != null) {
+		if (domain == null && range == null) {
+			domainRangeAnno[0].remove("");
 		} else {
-			domainAnno[0].changeValue(domain);
-		}
-	}
-	if (rangeAnno != null) {
-		if (range == null) {
-			rangeAnno[0].remove("");
-		} else {
-			rangeAnno[0].changeValue(range);
+			domainRangeAnno[0].changeValue(domainRange);
 		}
 		if (!this.isNAry) {
 			// not an n-ary => remove all further range hints
-			for (var i = 1, num = rangeAnno.length; i < num; i++) {
-				rangeAnno[i].remove("");
+			for (var i = 1, num = domainRangeAnno.length; i < num; i++) {
+				domainRangeAnno[i].remove("");
 			}
 		}
 	} 
@@ -710,12 +716,9 @@ apply: function() {
 	}
 	
 	// append new annotations
-	if (domainAnno == null && domain != null) {
-		this.wtp.addRelation(DOMAIN_HINT, domain, null, true);
+	if (domainRangeAnno == null && domainRange != null) {
+		this.wtp.addRelation(DOMAIN_HINT, domainRange, null, true);
 	} 
-	if (rangeAnno == null && range != null) {
-		this.wtp.addRelation(RANGE_HINT, range, null, true);
-	}
 	if (attrTypeAnno == null && attrType != null) {
 		this.wtp.addRelation(HAS_TYPE, attrType, null, true);
 	}
@@ -756,6 +759,7 @@ apply: function() {
 				} else {
 					// Page found
 					var r = gLanguage.getMessage('CATEGORY')+obj.value;
+					r = ((domain == null) ? "" : domain) + "; " + r;
 					typeString += gLanguage.getMessage('TYPE_PAGE')+';';
 					this.wtp.addRelation(RANGE_HINT, r, null, true);
 				}
