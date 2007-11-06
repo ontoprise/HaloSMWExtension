@@ -470,11 +470,10 @@
 		
 			if ((ImportOntologyBot::isXMLSchemaType($range->getURI()))) { 
 				 $s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=".$rangeCategoryTitle->getPrefixedText()."]]\n";
-				 $s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_HINT].":=".$st->getPrefixedText()."]]\n";
+				 $s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."]]\n";
 			} else {
 				$s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=Type:Page]]\n";
-				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_RANGE_HINT].":=".$rangeCategoryTitle->getPrefixedText()."]]\n";
-				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_HINT].":=".$st->getPrefixedText()."]]\n";
+				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."; ".$rangeCategoryTitle->getPrefixedText()."]]\n";
 			}
 		}
 		
@@ -519,21 +518,41 @@
 		
 		
 		// read domain (if available)
+		$domainLabels = array();
 		$it  = $this->model->findAsIterator($entity, RDFS::DOMAIN(), NULL);
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object);
-			$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_HINT].":=" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
+			$domainLabels[] = $label;
+			
 		}
 
 		// read range (if available)
+		$rangeLabels = array();
 		$it  = $this->model->findAsIterator($entity, RDFS::RANGE(), NULL);
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object);
-			$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_RANGE_HINT].":=" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
+			$rangeLabels[] = $label;
+			
+		}
+		
+		if (empty($domainLabels)) {
+			foreach($rangeLabels as $label) {
+				$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].":: ;" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
+			}
+		} else if (empty($rangeLabels)) {
+			foreach($domainLabels as $label) {
+				$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
+			}
+		} else {
+			foreach($domainLabels as $domLabel) {
+				foreach($rangeLabels as $ranLabel) {
+					$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $domLabel . "; " . $wgContLang->getNsText(NS_CATEGORY) . ":" . $ranLabel . "]]" . "\n";
+				}
+			}
 		}
 		
 		// read inverse statement (if available) 
@@ -587,7 +606,7 @@
 			$statement = $it->next();
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object);
-			$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_HINT].":=" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
+			$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
 			
 		}
 		

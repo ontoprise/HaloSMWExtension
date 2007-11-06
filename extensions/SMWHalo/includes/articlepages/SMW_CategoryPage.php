@@ -180,15 +180,17 @@ class SMWCategoryViewer extends CategoryViewer {
 		// retrieve all properties of this category
 	
 		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-		$relationName = $sspa[$domain ? SMW_SSP_HAS_DOMAIN_HINT 
-		                              : SMW_SSP_HAS_RANGE_HINT];
-		$relationTitle = Title::newFromText($relationName);
+		$relationName = $sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
+		$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
 		
+		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
 		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
   		$value->setValues($this->title->getDBKey(), $this->title->getNamespace());
-		$properties = $store->getPropertySubjects($relationTitle, $value,
-		                                          $options);
-		                          
+  		$dv_container->setDVs($domain ? array($value, NULL) : array(NULL, $value));
+  		
+		$properties = $store->getPropertySubjects($relationTitle, $dv_container,
+		                                          $options, $domain ? 0 : 1);
+		                      
 		$r = $this->getPropertyList(SMW_NS_PROPERTY, $properties, $domain);   
 		//$r .= $this->getPropertyList(SMW_NS_ATTRIBUTE, $properties, $domain);
 		$r .= $this->getPropertyList(-1, $properties, $domain);                
@@ -214,7 +216,7 @@ class SMWCategoryViewer extends CategoryViewer {
 		$props = array();
 		$store = smwfGetStore();
 		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-		$relationTitle = Title::newFromText($sspa[SMW_SSP_HAS_RANGE_HINT]);
+		$relationTitle = Title::newFromText($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		                                         
 		foreach ($properties as $prop) {
 			$propFound = false;
@@ -252,7 +254,15 @@ class SMWCategoryViewer extends CategoryViewer {
 				$range = $store->getPropertyValues($prop, $relationTitle);
 				if (count($range) == 0) {
 					$range = $store->getSpecialValues($prop, SMW_SP_HAS_TYPE);
-				} 
+				} else {
+					$rangePageContainers = array();
+					foreach($range as $c) {
+						$h = $c->getDVs();
+						if ($h[1] != NULL) $rangePageContainers[] = $h[1];
+					}
+					$range = $rangePageContainers;
+				}
+				 
 				$props[] = $range;
 			}
 			

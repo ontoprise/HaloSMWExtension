@@ -80,8 +80,7 @@ function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
 
 	if (!empty($optionalText)) {
 		$supportedConstants = array("SMW_SP_SUBPROPERTY_OF",
-                                    "SMW_SSP_HAS_DOMAIN_HINT",
-                                    "SMW_SSP_HAS_RANGE_HINT",
+                                    "SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT",
                                     "SMW_SSP_HAS_MAX_CARD",
                                     "SMW_SSP_HAS_MIN_CARD",
                                     "SMW_SP_HAS_TYPE");
