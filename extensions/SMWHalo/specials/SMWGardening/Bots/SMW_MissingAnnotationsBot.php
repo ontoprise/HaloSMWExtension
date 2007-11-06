@@ -84,19 +84,24 @@
  	 */
  	private function getPagesWithoutAnnotations($term = NULL, $category = NULL) {
  		$db =& wfGetDB( DB_MASTER );
- 		
+ 		$smw_attributes = $db->tableName('smw_attributes');
+	 	$smw_relations = $db->tableName('smw_relations');
+	 	$smw_nary = $db->tableName('smw_nary');	
+	 	$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
+	 		
 		$result = array();
 		if ($category == NULL) { 
 			if ($term == NULL) {
-				$sql = 'SELECT page_title, page_namespace FROM page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
+				$sql = 'SELECT page_title, page_namespace FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
 						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL LIMIT '.MAX_LOG_LENGTH; 
 			} else {
-				$sql = 'SELECT page_title, page_namespace FROM page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
+				$sql = 'SELECT page_title, page_namespace FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
 						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\' LIMIT '.MAX_LOG_LENGTH;
 			}                 
@@ -117,16 +122,16 @@
 			$subCats[] = $categoryTitle; // add super category title too
 			foreach($subCats as $subCat) {
 				if ($term == NULL) {
-					$sql = 'SELECT page_title, page_namespace FROM categorylinks c, page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
+					$sql = 'SELECT page_title, page_namespace FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
 						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' LIMIT '.MAX_LOG_LENGTH;
 				 	
 				} else {
-						$sql = 'SELECT page_title, page_namespace FROM categorylinks c, page p LEFT JOIN smw_attributes a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_relations r ON r.subject_title=p.page_title ' .
-																	 'LEFT JOIN smw_nary na ON na.subject_id=p.page_id ' .
+						$sql = 'SELECT page_title, page_namespace FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	 
 						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\' LIMIT '.MAX_LOG_LENGTH;
 						

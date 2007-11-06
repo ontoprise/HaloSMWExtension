@@ -87,14 +87,14 @@
  				$cond = "";
  				foreach($titles as $t) {
  					if (is_array($t)) { 
- 						$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).') OR ';
+ 						$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p1_namespace = '.$t[0]->getNamespace().' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).' AND p2_namespace = '.$t[1]->getNamespace().') OR ';
  					} else {
- 						$cond .= 'p1_title = '.$db->addQuotes($t->getDBkey()).' OR ';
+ 						$cond .= '(p1_title = '.$db->addQuotes($t->getDBkey()).' AND p1_namespace = '.$t->getNamespace().') OR ';
  					}
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else { 
- 				$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey());
+ 				$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey().' AND p1_namespace = '.$titles->getNamespace());
  			}
  		} 
  		if ($gi_class != NULL) {

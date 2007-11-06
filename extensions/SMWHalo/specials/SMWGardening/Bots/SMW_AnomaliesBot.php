@@ -166,9 +166,11 @@
  	 */
  	private function getCategoryLeafs($category = NULL) {
  		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
  		$result = array();
 		if ($category == NULL) { 
-			$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+			$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
 	               
 			$res = $db->query($sql);
 		
@@ -186,7 +188,7 @@
 				
 				$subCats = $this->getSubCategories($category);
 								
-				$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
 	                
 				$res = $db->query($sql);
 		
@@ -212,10 +214,12 @@
  	 */
  	private function getCategoryAnomalies($category = NULL) {
  		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
 		$result = array();
 
 		if ($category == NULL) {  		
-			$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM page p, categorylinks c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
+			$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
 		               
 			$res = $db->query($sql);
 		
@@ -234,7 +238,7 @@
 				$subCats = $this->getSubCategories($category);
 				
 				// select all subcategories which have the subcategory-anomaly
-				$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM page p, categorylinks c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND cl_to = '.$db->addQuotes($category->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
+				$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND cl_to = '.$db->addQuotes($category->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
 		               
 				$res = $db->query($sql);
 		
@@ -262,9 +266,11 @@
  	 */
  	private function removeCategoryLeaves($category = NULL) {
  		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
  		if ($category == NULL) {  		
  				
-		$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY;
+		$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY;
 	               
 		$res = $db->query($sql);
 		
@@ -282,7 +288,7 @@
  								
 				$subCats = $this->getSubCategories($category);
 								
-				$sql = 'SELECT page_title FROM page p LEFT JOIN categorylinks c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
 	                
 				$res = $db->query($sql);
 		

@@ -166,8 +166,9 @@
  	private function getSimilarTitles($similarityTerm, $similarityDegree) {
  		$dbr =& wfGetDB( DB_MASTER );
  		$result = array();
+ 		$mw_page = $dbr->tableName('page');
  		// Calculate terms similar to $similarityTerm
- 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM page p WHERE page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.$similarityTerm.'\')) <= '.$similarityDegree.";");
+ 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.$similarityTerm.'\')) <= '.$similarityDegree.";");
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
@@ -180,6 +181,7 @@
  	private function getSimilarTitlesWithCommonMods($similarityTerm, $similarityDegree) {
  		$dbr =& wfGetDB( DB_SLAVE );
  		$cond = array();
+ 		$mw_page = $dbr->tableName('page');
  		foreach($this->commonPrefixes as $prefix) {
  			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.$prefix.$similarityTerm.'\')) <= '.$similarityDegree.' OR ';
  		}
@@ -190,7 +192,7 @@
  		
  		$result = array();
  			// Calculate terms similar to $similarityTerm
- 			$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM page WHERE ('.implode("",$cond).') AND page_namespace != '.NS_IMAGE);
+ 			$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' WHERE ('.implode("",$cond).') AND page_namespace != '.NS_IMAGE);
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
@@ -210,7 +212,7 @@
  	private function getAllSimilarTitles($similarityTerm, $similarityDegree, $limitOfResults) {
  		$dbr =& wfGetDB( DB_SLAVE );
  		$result = array();
- 		
+ 		$mw_page = $dbr->tableName('page');
 		$cond = array();
  		foreach($this->commonPrefixes as $prefix) {
  			$cond[] = 'EDITDISTANCE(UPPER(p1.page_title),UPPER(CONCAT(\''.$prefix.'\',p2.page_title))) <= '.$similarityDegree.' OR ';
@@ -222,7 +224,7 @@
  		
  		// Calculate similar terms
  		// make sure that pages starting with 'Smw' are ignored because they are internal (such as logs).
- 		$res = $dbr->query('SELECT p1.page_title AS page1, p2.page_title AS page2, p1.page_namespace AS pagenamespace1, p2.page_namespace AS pagenamespace2 FROM page p1, page p2 ' .
+ 		$res = $dbr->query('SELECT p1.page_title AS page1, p2.page_title AS page2, p1.page_namespace AS pagenamespace1, p2.page_namespace AS pagenamespace2 FROM '.$mw_page.' p1, '.$mw_page.' p2 ' .
  							 'WHERE p1.page_title != p2.page_title  AND p1.page_namespace != '.NS_IMAGE.' AND p1.page_title NOT LIKE \'Smw%\' AND (EDITDISTANCE(UPPER(p1.page_title), UPPER(p2.page_title)) <= '.$similarityDegree.' ' .
  							 		'OR '.implode("",$cond).') LIMIT '.$limitOfResults);
 		if($dbr->numRows( $res ) > 0) {
@@ -250,14 +252,17 @@
  	private function getAllSimilarAnnotations($similarityTerm, $similarityDegree, $limitOfResults = NULL) {
  		$dbr =& wfGetDB( DB_SLAVE );
  		$result = array();
-	 	
+	 	$smw_attributes = $dbr->tableName('smw_attributes');
+	 	$smw_relations = $dbr->tableName('smw_relations');
+	 	$smw_nary = $dbr->tableName('smw_nary');		
+	 	$mw_page = $dbr->tableName('page');
 	 	$nameRestriction = "";
 	 	if ($similarityTerm != NULL) {
 	 		$similarityTerm = str_replace(" ", "_", $similarityTerm);
 	 		$nameRestriction = "AND sa.relation_title LIKE '%$similarityTerm%'";
 	 	}
  		// Get similar attribute annotations which have no attribute page defined.
- 		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM smw_attributes sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_attributes sa2 ' .
+ 		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM '.$smw_attributes.' sa LEFT JOIN '.$mw_page.' p ON p.page_title = sa.attribute_title INNER JOIN '.$smw_attributes.' sa2 ' .
  				'WHERE sa.attribute_title != sa2.attribute_title '.$nameRestriction.' AND p.page_title IS NULL ' .
  				'AND EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -272,7 +277,7 @@
 			}
 			$dbr->freeResult( $res );
 		}
-		$res = $dbr->query('SELECT DISTINCT sa.relation_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.relation_title AS att2, EDITDISTANCE(UPPER(sa.relation_title), UPPER(sa2.relation_title)) AS distance FROM smw_relations sa LEFT JOIN page p ON p.page_title = sa.relation_title INNER JOIN smw_relations sa2 ' .
+		$res = $dbr->query('SELECT DISTINCT sa.relation_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.relation_title AS att2, EDITDISTANCE(UPPER(sa.relation_title), UPPER(sa2.relation_title)) AS distance FROM '.$smw_relations.' sa LEFT JOIN '.$mw_page.' p ON p.page_title = sa.relation_title INNER JOIN '.$smw_relations.' sa2 ' .
 				'WHERE sa.relation_title != sa2.relation_title '.$nameRestriction.' AND p.page_title IS NULL ' .
 				'AND EDITDISTANCE(UPPER(sa.relation_title), UPPER(sa2.relation_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -288,7 +293,7 @@
 			}
 			$dbr->freeResult( $res );
 		}
-		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace , sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM smw_nary sa LEFT JOIN page p ON p.page_title = sa.attribute_title INNER JOIN smw_nary sa2 ' .
+		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace , sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM '.$smw_nary.' sa LEFT JOIN '.$mw_page.' p ON p.page_title = sa.attribute_title INNER JOIN '.$smw_nary.' sa2 ' .
  				'WHERE sa.attribute_title != sa2.attribute_title '.$nameRestriction.' AND p.page_title IS NULL ' .
  				'AND EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) <= '.$similarityDegree.(($limitOfResults != NULL) ? ' LIMIT '.$limitOfResults : ""));
 		if($dbr->numRows( $res ) > 0) {
@@ -560,8 +565,8 @@
  	private function getSharedMemberCategories() {
 		
 		$db =& wfGetDB( DB_MASTER );
-			
-		$res = $db->query('SELECT c1.cl_to FROM categorylinks c1, categorylinks c2 ' .
+		$smw_categorylinks = $db->tableName('categorylinks');			
+		$res = $db->query('SELECT c1.cl_to FROM '.$smw_categorylinks.' c1, '.$smw_categorylinks.' c2 ' .
 				'WHERE c1.cl_from = '.$this->title1->getArticleID(). ' AND c2.cl_from = '.$this->title2->getArticleID().' AND c1.cl_to = c2.cl_to');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -581,10 +586,11 @@
 		
 		
  		$db =& wfGetDB( DB_MASTER );
-			
-		$res = $db->query('SELECT r1.object_title AS cat FROM smw_nary n1, smw_nary_n2, smw_nary_relations r1, smw_nary_relations r2 ' .
-				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().
-				' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
+		$res = $db->query('SELECT DISTINCT r1.object_title AS cat FROM '.$smw_nary.' n1, '.$smw_nary.' n2, '.$smw_nary_relations.' r1, '.$smw_nary_relations.' r2 ' .
+				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().' AND n1.subject_id = r1.subject_id AND n2.subject_id = r2.subject_id'.
+				' AND n1.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
 				' AND r1.object_title = r2.object_title AND r1.nary_pos=0 AND r2.nary_pos=0');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -603,10 +609,11 @@
 		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		
  		$db =& wfGetDB( DB_MASTER );
-			
-		$res = $db->query('SELECT r1.object_title AS cat FROM smw_nary n1, smw_nary_n2, smw_nary_relations r1, smw_nary_relations r2 ' .
-				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().
-				' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');	
+		$res = $db->query('SELECT DISTINCT r1.object_title AS cat FROM '.$smw_nary.' n1, '.$smw_nary.' n2, '.$smw_nary_relations.' r1, '.$smw_nary_relations.' r2 ' .
+				'WHERE n1.subject_id = '.$this->title1->getArticleID(). ' AND n2.subject_id = '.$this->title2->getArticleID().' AND n1.subject_id = r1.subject_id AND n2.subject_id = r2.subject_id'.
+				' AND n1.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).' AND n2.attribute_title = '.$db->addQuotes($domainRangeHintRelation->getDBkey()).
 				' AND r1.object_title = r2.object_title AND r1.nary_pos=1 AND r2.nary_pos=1');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -622,8 +629,8 @@
  		$db =& wfGetDB( DB_MASTER );
 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-			
-		$res = $db->query('SELECT s1.value_string AS type FROM smw_specialprops s1, smw_specialprops s2 ' .
+		$smw_specialprops = $db->tableName('smw_specialprops');		
+		$res = $db->query('SELECT s1.value_string AS type FROM '.$smw_specialprops.' s1, '.$smw_specialprops.' s2 ' .
 				'WHERE s1.subject_id = '.$this->title1->getArticleID(). ' AND s2.subject_id = '.$this->title2->getArticleID().
 				' AND s1.property_id = '.SMW_SP_HAS_TYPE.' AND s2.property_id = '.SMW_SP_HAS_TYPE.
 				' AND s1.value_string = s2.value_string');
