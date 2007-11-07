@@ -44,32 +44,43 @@ WikiTextParser.prototype = {
 	/**
 	 * @public
 	 *
-	 * Constructor. Stores the textarea from the edit page and initializes the
-	 * lists of annotations.
+	 * Constructor. If no wiki text is given, the text from the textarea of the 
+	 * edit page is stored. The text is parsed and the list of of annotations is 
+	 * initialized.
+	 * 
+	 * @param string wikiText 
+	 *		If not <null>, this wiki text is parsed and used for further 
+	 * 		operations. Otherwise the text from the edit area is retrieved.
+	 *               
 	 */
-	initialize: function() {
-		var txtarea;
-		if (document.editform) {
-			txtarea = document.editform.wpTextbox1;
+	initialize: function(wikiText) {
+		if (!wikiText) {
+			// no wiki text => retrieve from text area.
+			var txtarea;
+			if (document.editform) {
+				txtarea = document.editform.wpTextbox1;
+			} else {
+				// some alternate form? take the first one we can find
+				var areas = document.getElementsByTagName('textarea');
+				txtarea = areas[0];
+			}
+	
+			if (gEditInterface == null) {
+				gEditInterface = new SMWEditInterface();
+			}
+			this.editInterface = gEditInterface;
+			this.text = this.editInterface.getValue();
 		} else {
-			// some alternate form? take the first one we can find
-			var areas = document.getElementsByTagName('textarea');
-			txtarea = areas[0];
+			this.editInterface = null;
+			this.text = wikiText;
 		}
-
-		this.textarea = txtarea;
-		//this.text = this.textarea.value;
-		if (gEditInterface == null) {
-			gEditInterface = new SMWEditInterface();
-		}
-		this.editInterface = gEditInterface;
-//		this.editInterface.initialize();
-		this.text = this.editInterface.getValue();
 
 		this.relations  = null;
 		this.categories  = null;
 		this.links  = null;
 		this.error = WTP_NO_ERROR;
+		this.wtsStart = -1; // start of internal wiki text selection
+		this.wtsEnd   = -1  // end of internal wiki text selection
 	},
 	
 	/**
@@ -93,7 +104,6 @@ WikiTextParser.prototype = {
 	 * @return string Text from the edit box.
 	 */
 	getWikiText: function() {
-		//return this.editInterface.getValue();
 		return this.text;
 	},
 
@@ -276,21 +286,23 @@ WikiTextParser.prototype = {
 	 * @param string newAnnotation New text of the annotation.
 	 */
 	replaceAnnotation: function(annoObj, newAnnotation) {
-		//this.text = this.editInterface.getValue();
 		var startText = this.text.substring(0,annoObj.getStart());
 		var endText = this.text.substr(annoObj.getEnd());
 		var diffLen = newAnnotation.length - annoObj.getAnnotation().length;
 
 		// construct the new wiki text
 		this.text = startText + newAnnotation + endText;
-		//this.textarea.value = this.text;
-		this.editInterface.setValue(this.text);
+		if (this.editInterface) {
+			this.editInterface.setValue(this.text);
+		}
 
 		// all following annotations have moved => update their location
 		this.updateAnnotationPositions(annoObj.getStart(), diffLen);
 	},
 
 	/**
+	 * @public
+	 * 
 	 * Returns the text that is currently selected in the wiki text editor.
 	 *
 	 * @param boolean trim
@@ -299,6 +311,9 @@ WikiTextParser.prototype = {
 	 * @return string Currently selected text.
 	 */
 	getSelection: function(trim) {
+		if (!this.editInterface) {
+			return "";
+		}
 		trim = true;
 		var text = this.editInterface.getSelectedText();
 		if (trim == true && text && text.length > 0) {
@@ -313,6 +328,8 @@ WikiTextParser.prototype = {
 	},
 
 	/**
+	 * @public
+	 * 
 	 * Selects the text in the wiki text editor between the positions <start>
 	 * and <end>.
 	 *
@@ -323,9 +340,50 @@ WikiTextParser.prototype = {
 	 *
 	 */
 	setSelection: function(start, end) {
-		this.editInterface.setSelectionRange(start, end);
+		if (this.editInterface) {
+			this.editInterface.setSelectionRange(start, end);
+		}
 	},
 
+	/**
+	 * @public
+	 * 
+	 * Searches in the given range of the wiki text for the given text. If it is
+	 * found, the corresponding section is internally marked as selected and <true>
+	 * is returned. Otherwise a reason for the failed search is returned.
+	 * 
+	 * This function is applied to the wiki text only i.e. it does not use the 
+	 * edit area and its content in the edit mode.
+	 * 
+	 * @param string text
+	 * 		This text will be searched in the wiki text
+	 * @param int start
+	 * 		0-based start index of the range where the search happens
+	 * @param int end
+	 * 		0-based end index of the range where the search happens. If end==-1,
+	 * 		the search runs till the end of the text
+	 * @return
+	 * 		boolean <true>, if the text was found
+	 * 		string reason why the search failed otherwise
+	 */
+	findText: function(text, start, end) {
+		
+		if (end == -1) {
+			end = this.text.length;
+		}
+		pos = this.text.indexOf(text, start);
+		if (!pos || pos > end) {
+			msg = gLanguage.getMessage('WTP_TEXT_NOT_FOUND');
+			return msg.replace(/\$1/g, text);
+		}
+		
+		this.wtsStart = pos;
+		this.wtsEnd = pos + text.length;
+		
+		return true;
+		
+	},
+	 
 	/**
 	 * @private
 	 *
@@ -556,13 +614,16 @@ WikiTextParser.prototype = {
 	 */
 	addAnnotation : function(annotation, append) {
 		if (append) {
-			//this.textarea.value = this.textarea.value + annotation;
-			this.editInterface.setValue(this.editInterface.getValue() + annotation);
+			if (this.editInterface) {
+				this.editInterface.setValue(this.editInterface.getValue() + annotation);
+			} else {
+				this.text += annotation;
+			}
 		} else {
 			this.replaceText(annotation);
 		}
 		// invalidate all parsed data
-		this.initialize();
+		this.initialize(this.text);
 	},
 
 	/**
@@ -736,7 +797,9 @@ WikiTextParser.prototype = {
 	 *
 	 */
 	replaceText : function(text)  {
-		this.editInterface.setSelectedText(text);
+		if (this.editInterface) {
+			this.editInterface.setSelectedText(text);
+		}
 	},
 
 	/**
