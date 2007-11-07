@@ -236,7 +236,10 @@ SMWEditInterface.prototype ={
 				return "";
 			}
 		} else {
-			return editAreaLoader.getSelectedText(editAreaName)
+			if(editAreaLoader.getSelectedText(editAreaName) != ""){
+				this.currentRange = editAreaLoader.getSelectionRange(editAreaName);
+			}
+			return editAreaLoader.getSelectedText(editAreaName);
 		}
 	},
 
@@ -295,6 +298,9 @@ SMWEditInterface.prototype ={
 				SMWEditArea.caretPos = document.selection.createRange().duplicate();
 			}
 		} else {
+			if(editAreaLoader.getSelectedText(editAreaName) == "" && this.currentRange){
+				editAreaLoader.setSelectionRange(editAreaName, this.currentRange["start"], this.currentRange["end"]);
+			}
 			editAreaLoader.setSelectedText(editAreaName, text);
 		}
 	},
