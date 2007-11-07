@@ -296,7 +296,65 @@
 		return $num;
 	}
 	
+	public function getDistinctUnits(Title $type) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_attributes = $db->tableName('smw_nary_attributes');
+		$smw_specialprops = $db->tableName('smw_specialprops');
+	 	
+		$res = $db->query(	'(SELECT DISTINCT value_unit FROM '.$smw_attributes.' WHERE value_datatype = '.$db->addQuotes($type->getDBkey()).') '.
+						 ' UNION ' .
+					 		'(SELECT DISTINCT value_unit FROM '.$smw_specialprops.' s ' .
+					 				'JOIN '.$smw_nary.' n ON CONTAINS(s.value_string, '.$db->addQuotes($type->getDBkey()).') AND s.subject_title=n.attribute_title ' .
+					 				'JOIN '.$smw_nary_attributes.' a ON n.nary_key=a.nary_key)');
+		
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = $row->value_unit;
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 	
+	public function getAnnotationsWithUnit(Title $type, $unit) {
+		
+		$db =& wfGetDB( DB_MASTER );
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_nary = $db->tableName('smw_nary');
+	 	$smw_nary_attributes = $db->tableName('smw_nary_attributes');
+	 	$smw_specialprops = $db->tableName('smw_specialprops');
+	 	
+		$result = array();
+		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace, attribute_title FROM '.$smw_attributes.
+							' WHERE value_datatype = '.$db->addQuotes($type->getDBkey()).' AND value_unit = '.$db->addQuotes($unit));
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY));
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		$res2 = $db->query('SELECT DISTINCT n.subject_title, n.subject_namespace, attribute_title FROM '.$smw_specialprops.' s ' .
+					 				'JOIN '.$smw_nary.' n ON CONTAINS(s.value_string, '.$db->addQuotes($type->getDBkey()).') AND s.subject_title=n.attribute_title ' .
+					 				'JOIN '.$smw_nary_attributes.' a ON n.nary_key=a.nary_key ' .
+					 	  'WHERE value_unit = '.$db->addQuotes($unit));
+		
+		
+		if($db->numRows( $res2 ) > 0) {
+			while($row = $db->fetchObject($res2)) {
+				$result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY));
+			}
+		}
+		
+		$db->freeResult($res2);
+		
+		return $result;
+	}
  	
  	
  	public function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p) {

@@ -84,7 +84,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			
  		}
- 		return '';
+ 		
  	}
  	
  	/** 		

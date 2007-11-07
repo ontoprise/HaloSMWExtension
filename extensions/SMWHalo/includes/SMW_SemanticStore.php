@@ -132,6 +132,24 @@
 	 */
 	public abstract function getNumberOfUsage(Title $property);
  	
+ 	/**
+ 	 * Returns all different units of annotations of a given type.
+ 	 * 
+ 	 * @param Title $type
+ 	 * 
+ 	 * @return array of strings
+ 	 */
+ 	public abstract function getDistinctUnits(Title $type);
+ 	
+ 	/**
+ 	 * Returns all annotations of the given user-defined type with the given unit.
+ 	 * 
+ 	 * @param Title $type
+ 	 * @param unit string
+ 	 * 
+ 	 * @return array of (Title subject, Title property)
+ 	 */
+ 	public abstract function getAnnotationsWithUnit(Title $type, $unit);
  	/* 
  	 * Note: 
  	 * 		

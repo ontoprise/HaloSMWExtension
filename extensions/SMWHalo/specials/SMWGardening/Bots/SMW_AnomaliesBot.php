@@ -112,7 +112,7 @@
         		$subCatAnomalies = $this->getCategoryAnomalies();
        			
        	
-       			$this->globalLog .= "== ".wfMsg('smw_gard_subcategory_number_anomalies')." ==\n";
+       			
        			foreach($subCatAnomalies as $a) {
        				list($title, $subCatNum) = $a;
        				$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
@@ -123,7 +123,7 @@
        			
        			$categories = explode(";", urldecode($paramArray['CATEGORY_RESTRICTION']));
  				$categoryLeaves = array();
- 				$this->globalLog .= "== ".wfMsg('smw_gard_subcategory_number_anomalies')." ==\n";
+ 			
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
  					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
@@ -379,7 +379,7 @@
  	
  	public function __construct() {
  		parent::__construct(SMW_ANOMALY_BOT_BASE);
- 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 'Category leafs', 'Subcategory anomaly');
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), wfMsg('smw_gardissue_class_category_leaves'), wfMsg('smw_gardissue_class_number_anomalies'));
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {

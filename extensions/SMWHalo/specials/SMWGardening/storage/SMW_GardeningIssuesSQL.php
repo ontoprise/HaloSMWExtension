@@ -94,7 +94,7 @@
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else { 
- 				$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey().' AND p1_namespace = '.$titles->getNamespace());
+ 				$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey()).' AND p1_namespace = '.$titles->getNamespace();
  			}
  		} 
  		if ($gi_class != NULL) {
@@ -134,6 +134,7 @@
  		$db =& wfGetDB( DB_MASTER );
  		
  		$sqlOptions = array();
+ 		$sqlOptions = array('GROUP BY' => 'p1_title, p1_namespace');
  		if ($options != NULL) {
  			$sqlOptions['LIMIT'] = $options->limit;
  			$sqlOptions['OFFSET'] = $options->offset;
@@ -176,7 +177,7 @@
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
  		$result = array();
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('DISTINCT p1_title', 'p1_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);

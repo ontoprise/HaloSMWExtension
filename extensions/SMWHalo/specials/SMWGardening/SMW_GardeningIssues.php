@@ -340,13 +340,13 @@ abstract class GardeningIssueFilter {
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
 		
 		$gic = array();
-		smwLog('start');
+		
 		$titles = $gi_store->getDistinctTitles($bot, NULL, $gi_class, SMW_GARDENINGLOG_SORTFORTITLE, $options);
 		foreach($titles as $t) {
 			$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class, $t, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
 			$gic[] = new GardeningIssueContainer($t, $gis);
 		}
-		smwLog('end');
+		
 		return $gic;
 	}
 	

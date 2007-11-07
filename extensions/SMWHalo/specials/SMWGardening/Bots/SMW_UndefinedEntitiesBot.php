@@ -347,10 +347,10 @@
  	public function __construct() {
  		parent::__construct(SMW_UNDEFINED_ENTITIES_BOT_BASE);
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
-						'Instances without category', 
-						'Undefined properties', 
-						'Undefined categories', 
-						'Undefined relation targets');
+						wfMsg('smw_gardissue_class_instances_without_cat'), 
+						wfMsg('smw_gardissue_class_undef_properties'), 
+						wfMsg('smw_gardissue_class_undef_categories'), 
+						wfMsg('smw_gardissue_class_undef_relationtargets'));
  	}
  	
  	public function getUserFilterControls($specialAttPage, $request) {

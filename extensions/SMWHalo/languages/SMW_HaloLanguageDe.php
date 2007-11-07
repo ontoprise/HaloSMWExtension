@@ -142,8 +142,8 @@ protected $smwUserMessages = array(
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
 	
-	'smw_gardeninglogs_docu' => 'Diese Seite ermöglicht den Zugriff auf die Gardening Logs.',
 	'smw_gardening_log_cat' => 'GardeningLog',
+	'smw_gardeninglogs_docu' => 'Diese Seite ermöglicht den Zugriff auf die Gardening Logs.',
 	'smw_gardening_log_exp' => 'Das ist die Gardening Log Kategorie.',
 	'smw_gardeninglog_link' => 'Suchen Sie auch auf $1 für weitere Logging-Einträge.',
 	'smw_gard_welcome' => 'Das ist der Gardening-Werkzeugkasten. Er enthält einige Werkzeuge, mit deren Hilfe Sie das Wiki sauber und konsistent halten können.',
@@ -197,7 +197,9 @@ protected $smwUserMessages = array(
 	'smw_gard_issue_domain_not_range' => 'Domäne von $1 passt nicht zur Wertbereichskategorie von $2.',
 	'smw_gardissue_wrong_target_value' => 'Ziel-Artikel $1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
 	'smw_gardissue_wrong_domain_value' => 'Artikel $1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
-	'smw_gardissue_wrong_card' => 'Artikel $1 benutzt Property $2 zu häufig oder zu wenig.',
+	'smw_gardissue_too_low_card' => 'Artikel $1 benutzt Property $2 zu wenig.',
+	'smw_gardissue_too_high_card' => 'Artikel $1 benutzt Property $2 zu häufig.',
+	'smw_gardissue_wrong_unit' => 'Artikel $1 benutzt Property $2 mit falches Einheit $3.',
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_issue_incompatible_entity' => 'Der Artikel $1 ist inkompatibel zu $2.',
 	'smw_gard_issue_incompatible_type' => 'Das Property $1 hat einen inkompatiblen Typ zum Property $2.',
@@ -227,12 +229,19 @@ protected $smwUserMessages = array(
 	'smw_gardissue_share_types' => '$1 und $2 haben den gleichen Typ: $3',
 	'smw_gardissue_distinctby_prefix' => '$1 und $2 unterscheiden sich durch ein gemeinsames Präfix/Suffix.',
 
+	'smw_gardissue_class_similarschema' => 'Ähnliche Schema Elemente',
+	'smw_gardissue_class_similarannotations' => 'Ähnliche Annotationen',
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Properties im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
 	'smw_gard_property_undefined' => '$1 wird benutzt auf: $2',
 	'smw_gard_category_undefined' => '$1 wird benutzt auf: $2',
 	'smw_gard_relationtarget_undefined' => '$1 undefiniert und benutzt mit: $2',
 	'smw_gard_instances_without_category' => '$1',
+	
+	'smw_gardissue_class_undef_categories' => 'Undefinierte Kategorien',
+	'smw_gardissue_class_undef_properties' => 'Undefinierte Properties',
+	'smw_gardissue_class_undef_relationtargets' => 'Undefinierte Relationsziele',
+	'smw_gardissue_class_instances_without_cat' => 'Instanzen ohne Kategorie',
 
 	/* Missing annotations */
 	'smw_gard_missingannot_docu' => 'Dieser Bot identifiziert Seiten im Wiki, die noch nicht annotiert wurden.',
@@ -246,18 +255,17 @@ protected $smwUserMessages = array(
 	'smw_gard_anomaly_deletecatleaves' => 'Lösche Kategorie-Blätter',
 	'smw_gard_anomaly_docu' => 'Dieser Bot identifiziert Anomalien im semantischen Modell. Anomalien sind derzeit: Kategorien-Blätter (Kategorien, die weder Subkategorien noch Instanzen enthalten), sowie ungewühnliche Anzahlen von Subkategorien (Kateogorien mit nur einer oder mehr als 8 Subkategorien).',
 	'smw_gard_anomalylog' => 'Folgende Anomalien konnten im Wiki gefunden werden.',
-	'smw_gard_category_leafs' => 'Kategorie-Blätter (Kategorien, die weder Subkategorien noch Instanzen enthalten)',
-	'smw_gard_subcategory_number_anomalies' => 'Anzahl der Subkategorien ungewöhnlich (Kateogorien mit nur einer oder mehr als 8 Subkategorien)',
-	'smw_gard_subcategory' => 'Subkategorie',
-	'smw_gard_subcategories' => 'Subkategorien',
+	
 	'smw_gard_all_category_leaves_deleted' => 'Alle Kategorie-Blätter wurden gelöscht.',
 	'smw_gard_category_leaves_deleted' => 'Kategorie-Blätter unterhalb von [[$1:$2]] wurden gelöscht.',
 	'smw_gard_category_leaf_deleted' => '$1 war ein Kategorie-Blatt. Entfernt vom Anomalie-Bot.',
 	'smw_gardissue_category_leaf' => '$1 ist ein Kategorie-Blatt.',
 	'smw_gardissue_subcategory_anomaly' => '$1 hat $2 Subkategorien.',
-
-	'smw_gardeninglogs_docu' => 'Gardening Logs',
-	'smw_logpage' => 'Gardening Logs',
+	
+	'smw_gardissue_class_category_leaves' => 'Kategorie-Blätter',
+	'smw_gardissue_class_number_anomalies' => 'Subkategorie Anomalien',
+	
+	
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',

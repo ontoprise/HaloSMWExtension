@@ -223,7 +223,9 @@ clicking the big arrows between the columns.',
 	'smw_gard_issue_domain_not_range' => 'Domain of $1 does not match range of inverse property $2.',
 	'smw_gardissue_wrong_target_value' => 'Target $1 is member of wrong range category when using the property $2.',
 	'smw_gardissue_wrong_domain_value' => 'Article $1 has wrong domain category when using the property $2.',
-	'smw_gardissue_wrong_card' => 'Article $1 uses property $2 too often or too less.',
+	'smw_gardissue_too_low_card' => 'Article $1 uses property $2 too less.',
+	'smw_gardissue_too_high_card' => 'Article $1 uses property $2 too often.',
+	'smw_gardissue_wrong_unit' => 'Article $1 uses property $2 with wrong unit $3.',
 	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2',
 	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible type to $2',
 
@@ -254,6 +256,8 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_share_types' => '$1 and $2 share the following types: $3',
 	'smw_gardissue_distinctby_prefix' => '$1 and $2 are distinct by common prefix or suffix',
 	
+	'smw_gardissue_class_similarschema' => 'Similar schema elements',
+	'smw_gardissue_class_similarannotations' => 'Similar annotations',
 
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category.',
@@ -261,6 +265,11 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_category_undefined' => '$1 used on: $2',
 	'smw_gardissue_relationtarget_undefined' => '$1 undefined when used with: $2',
 	'smw_gardissue_instance_without_cat' => '$1 is not member of a category',
+	
+	'smw_gardissue_class_undef_categories' => 'Undefined categories',
+	'smw_gardissue_class_undef_properties' => 'Undefined properties',
+	'smw_gardissue_class_undef_relationtargets' => 'Undefined relation targets',
+	'smw_gardissue_class_instances_without_cat' => 'Instances without category',
 
 
 	/* Missing annotations */
@@ -276,15 +285,16 @@ clicking the big arrows between the columns.',
 	'smw_gard_anomaly_deletecatleaves' => 'Delete category leaves',
 	'smw_gard_anomaly_docu' => 'This bot identifies  Category leafs (Categories that contain neither subcategories nor instances) and Subcategory number anomalies (Categories with only one or more than eight subcategories).',
 	'smw_gard_anomalylog' => 'The following is a list of current anomalies in the wiki:',
-	'smw_gard_category_leafs' => 'Category leafs (Categories that contain neither subcategories nor instances)',
-	'smw_gard_subcategory_number_anomalies' => 'Subcategory number anomalies (Categories with only one or more than eight subcategories)',
-	'smw_gard_subcategory' => 'subcategory',
-	'smw_gard_subcategories' => 'subcategories',
+
+	
 	'smw_gard_all_category_leaves_deleted' => 'All Category leaves were removed.',
 	'smw_gard_category_leaves_deleted' => 'Category leaves below [[$1:$2]] were removed.',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
 	'smw_gardissue_category_leaf' => '$1 is a category leaf.',
 	'smw_gardissue_subcategory_anomaly' => '$1 has $2 subcategories.',
+	
+	'smw_gardissue_class_category_leaves' => 'Category leaves',
+	'smw_gardissue_class_number_anomalies' => 'Subcategory anomaly',
 	
 	
 	/* Combined Search*/

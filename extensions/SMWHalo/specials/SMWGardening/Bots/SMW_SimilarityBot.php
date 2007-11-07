@@ -743,8 +743,8 @@
  	public function __construct() {
  		parent::__construct(SMW_SIMILARITY_BOT_BASE);
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 
-							'Similar schema elements',
-							'Similar annotations');
+							wfMsg('smw_gardissue_class_similarschema'),
+							wfMsg('smw_gardissue_class_similarannotations'));
 							
 		$this->sortfor = array('Alphabetically', 'Similarity score');
  	}

@@ -146,7 +146,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	
  	private function checkDomainAndRange($subject, $object, $domainRange, $domainChecked = false) {
  		$categoriesOfObject = $object != NULL ? smwfGetSemanticStore()->getCategoriesForInstance($object) : array();
- 		if ($domainChecked) $categoriesOfSubject = smwfGetSemanticStore()->getCategoriesForInstance($subject);
+ 		if (!$domainChecked) $categoriesOfSubject = smwfGetSemanticStore()->getCategoriesForInstance($subject);
  		
  		$rangeCorrect = false;
  		$domainCorrect = false;
@@ -200,36 +200,36 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  			$this->bot->worked(1);
  			
+ 			// ignore builtin properties
  			if (smwfGetSemanticStore()->minCard->equals($a) 
  					|| smwfGetSemanticStore()->maxCard->equals($a)
  					|| smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
  					|| smwfGetSemanticStore()->inverseOf->equals($a)) {
- 						// ignore 'min cardinality' and 'max cardinality'
  						continue;
  			}
  			
+ 			// get minimum cardinality
  			$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
  			
  			if (empty($minCardArray)) {
- 			
+ 				// if it does not exist, get minimum cardinality from superproperty
  				$minCards = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  			} else {
  				$minCards = $minCardArray[0]->getXSDValue() + 0;
- 				
  			}
  			
+ 			// get maximum cardinality
  			$maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
  			
  			if (empty($maxCardsArray)) {
- 				
+ 				// if it does not exist, get maximum cardinality from superproperty
  				$maxCards = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  			} else {
  				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
- 				
  			}
  			
- 			
+ 			// get all property subjects
  			$allAttributeSubjects = smwfGetStore()->getAllPropertySubjects($a);
  			foreach($allAttributeSubjects as $subject) {
  				
@@ -237,22 +237,63 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					continue;
  				}
  				
+ 				// get all annoations for a subject and a property
  				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
  				$num = count($allAttributeForSubject);
  				
- 				if ($num < $minCards || $num > $maxCards) {
- 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD, $subject, $a);
+ 				// check cardinality
+ 				if ($num < $minCards) {
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a);
+				} 
+				if ($num > $maxCards) {
+					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a);
 				}
  			
  			}
  			
  			
  		}
- 		
- 		return '';
+  		
  	}
  	
+ 	public function checkUnits() {
+ 		// check attribute annotation cardinalities
+ 		$types = smwfGetSemanticStore()->getPages(array(SMW_NS_TYPE));
+ 		$this->bot->addSubTask(count($types));
+ 		foreach($types as $type) {
+ 			if ($this->delay > 0) {
+ 				usleep($this->delay);
+ 			}
+ 			$this->bot->worked(1);
+ 		
+ 			$units = smwfGetSemanticStore()->getDistinctUnits($type);
+ 			$conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
+ 			$si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
+ 			
+ 			$correct_unit = false;
+ 			foreach($units as $u) {
+ 				if ($u == NULL) continue;
+ 				foreach($conversion_factors as $c) {
+ 					$correct_unit |= $this->unitMatches($u, $c);
+ 				}
+ 				foreach($si_conversion_factors as $c) {
+ 					$correct_unit |= $this->unitMatches($u, $c);
+ 				}
+ 			}
+ 			if (!$correct_unit) {
+ 				$annotations = smwfGetSemanticStore()->getAnnotationsWithUnit($type, $u);
+ 			
+ 				foreach($annotations as $a) {
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $a[0], $a[1], $u);
+ 				}
+ 			}
+ 		}
+ 	}
  	
-	
+ 	private function unitMatches($unit, $con_fac) {
+ 		$matches = array();
+ 		preg_match("/(\d*\.?\d+)(.*)/", $con_fac, $matches);
+ 		return (strtolower(trim($matches[2][0])) == strtolower($unit));
+ 	}
  }
 ?>

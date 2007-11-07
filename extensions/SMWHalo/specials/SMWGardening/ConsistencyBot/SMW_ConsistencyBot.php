@@ -54,7 +54,7 @@
  		}
  		echo $this->getBotID()." started!\n";
  				
- 		$this->setNumberOfTasks(7); // 7 single tasks
+ 		$this->setNumberOfTasks(8); // 8 single tasks
  		
  		// Schema level checks
  		// first, check if there are cycles in the inheritance graphs
@@ -67,7 +67,7 @@
         $this->checkPropertyCovariance($delay);
         echo "done!\n\n";
                     
- 		echo "Checking for consistency of inverse and equality relations...";
+ 		echo "Checking inverse and equality relations...";
  		$this->checkInverseEqualityRelations();
  		echo "done!\n\n";
  		
@@ -93,7 +93,7 @@
  	private function checkPropertyCovariance($delay) {
  		
  		$pcd = new PropertyCoVarianceDetector($this, $delay);
- 		$agc .= $pcd->checkPropertyGraphForCovariance();
+ 		$pcd->checkPropertyGraphForCovariance();
  		
  		
  	}
@@ -101,9 +101,9 @@
  	private function checkAnnotationLevel($delay) {
  		
  		$alc = new AnnotationLevelConsistency($this, $delay);
- 		$aac .= $alc->checkPropertyAnnotations();
- 		$acc .= $alc->checkAnnotationCardinalities();
- 		
+ 		$alc->checkPropertyAnnotations();
+ 		$alc->checkAnnotationCardinalities();
+ 		$alc->checkUnits();
  		
  	}
  	
@@ -155,7 +155,9 @@
  define('SMW_GARDISSUE_WRONG_CARD_VALUE', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 3);
  define('SMW_GARDISSUE_WRONG_TARGET_VALUE', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 4);
  define('SMW_GARDISSUE_WRONG_DOMAIN_VALUE', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 5);
- define('SMW_GARDISSUE_WRONG_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 6);
+ define('SMW_GARDISSUE_TOO_LOW_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 6);
+ define('SMW_GARDISSUE_TOO_HIGH_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 7);
+ define('SMW_GARDISSUE_WRONG_UNIT', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 8);
  
  // incompatible entity issues
  define('SMW_GARD_ISSUE_DOMAIN_NOT_RANGE', (SMW_CONSISTENCY_BOT_BASE+4) * 100 + 1);
@@ -227,8 +229,12 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 				return wfMsg('smw_gardissue_wrong_target_value', $text1, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: 
 				return wfMsg('smw_gardissue_wrong_domain_value', $text1, $skin->makeLinkObj($this->t2));
-			case SMW_GARDISSUE_WRONG_CARD: 
-				return wfMsg('smw_gardissue_wrong_card', $text1, $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_TOO_LOW_CARD: 
+				return wfMsg('smw_gardissue_too_low_card', $text1, $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_TOO_HIGH_CARD: 
+				return wfMsg('smw_gardissue_too_high_card', $text1, $skin->makeLinkObj($this->t2));
+			case SMW_GARDISSUE_WRONG_UNIT: 
+				return wfMsg('smw_gardissue_wrong_unit', $text1, $skin->makeLinkObj($this->t2), $this->value);
 				
 			case SMW_GARD_ISSUE_DOMAIN_NOT_RANGE: 
 				return wfMsg('smw_gard_issue_domain_not_range', $text1, $skin->makeLinkObj($this->t2));
