@@ -16,6 +16,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 /**
  * Parser for advanced annotation mode.
  * This parser augments the generated HTML in order to create mapping
@@ -23,18 +24,10 @@
  * 
  * @author Thomas Schweitzer
  */
-
-
-/**
- * 
- */
 class SMWH_AAMParser {
 
 //--- Fields ---
 
-	/** Contains error messages if the parsed expression is not correct. */
-	private $mError = "";
-	
 
 //--- Public methods ---
 
@@ -43,7 +36,7 @@ class SMWH_AAMParser {
 	 * With these offsets it is possible to map from the rendered HTML to the
 	 * corresponding location in the wiki text.
 	 * These elements are indexed:
-	 * 1. Headings of levels 1,2 and 3 e.g. ==Heading 2==
+	 * 1. Headings of levels 1,2,3 and 4 e.g. ==Heading 2==
 	 * 2. Templates e.g. {{MyTemplate}}
 	 * 3. Template parameters e.g. {{{tparam}}} 
 	 * 
@@ -73,7 +66,7 @@ class SMWH_AAMParser {
 				$markedText .=  "\n".'{wikiTextOffset='.$part[1]
 				               .' template="'.$name[1].'"'
 			                   .' id="tmplt'.$id.'"}'."\n".$part0
-				               ."\n".'{templateend}'."\n";
+				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
 				$id++;
 			} else {
 				$markedText .= "\n{wikiTextOffset=".$part[1]."}\n".$part0;
@@ -85,7 +78,7 @@ class SMWH_AAMParser {
 	
 	/**
 	 * Replaces the intermediate format of the wiki text offset by the correct
-	 * HTML representation: <a name="offset"></a> 
+	 * HTML representation: <a name="offset" type="wikiTextOffset"></a> 
 	 *
 	 * @param unknown_type $wikiText
 	 * @return unknown
@@ -96,17 +89,20 @@ class SMWH_AAMParser {
 		// replace intermediate format for templates
 		$text = preg_replace(
 			'/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{wikiTextOffset=(\d*) template=\"(.*?)\" id=\"(.*?)\"\}\s*(<\/p>)?/',
-			'<span type="template" tmplname="$5" id="$6" class="aam_template_highlight"><a name="$4"></a>',
+			'<a name="$4" type="wikiTextOffset"></a>'.
+			'<a type="template" tmplname="$5" id="$6"></a>',
 			$wikiText);
-		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend\}\s*(<\/p>)?/', '</span>', $text);
+		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend:(.*?)\}\s*(<\/p>)?/',
+		                     '<a type="templateend" id="$4"></a>', 
+		                     $text);
 			
 		// replace intermediate format within paragraphs
 		$text = preg_replace('/<p>(<br \/>)?\s*\{wikiTextOffset=(\d*)}\s*<\/p>/m',
-		                     '$1<a name="$2"></a>',
+		                     '$1<a name="$2" type="wikiTextOffset"></a>',
 							 $text);
 		// replace standalone occurrences of intermediate format
 		$text = preg_replace('/\{wikiTextOffset=(\d*)}/',
-		                     '<a name="$1"></a>',
+		                     '<a name="$1" type="wikiTextOffset"></a>',
 		                     $text);
         return $text;
 	}
@@ -154,6 +150,7 @@ class SMWH_AAMParser {
 	 */
 	private function maskHTML(&$wikiText)
 	{
+		// Find HTML comments and nowiki-sections
 		if (!preg_match_all("/<!--|-->|<nowiki>|<\/nowiki>/",
 		                    $wikiText,$matches,PREG_OFFSET_CAPTURE)) {
 			return $wikiText;
