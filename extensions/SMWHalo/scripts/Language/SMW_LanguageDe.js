@@ -125,6 +125,9 @@ var wgLanguageStrings = {
 	'COMBINED_SEARCH'         : 'Combined-Search',
 
 	'INVALID_GARDENING_ACCESS' : 'Sie d&uuml;rfen Gardening Bots nicht abbrechen. Das d&uuml;rfen nur Sysops und Gardener.',
+	'GARDENING_LOG_COLLAPSE_ALL' : 'Alles einklappen',
+	'GARDENING_LOG_EXPAND_ALL'   : 'Alles ausklappen',
+	
 	// Ontology browser
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',

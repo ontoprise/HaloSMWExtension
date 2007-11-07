@@ -55,6 +55,76 @@
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
+ 	public function getGardeningIssuesForPairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
+ 		global $registeredBots;
+ 		$db =& wfGetDB( DB_MASTER );
+ 		
+ 		$sqlOptions = array();
+ 		if ($options != NULL) {
+ 			$sqlOptions['LIMIT'] = $options->limit;
+ 			$sqlOptions['OFFSET'] = $options->offset;
+ 		}
+ 		
+ 		if ($sortfor != NULL) {
+ 			switch($sortfor) {
+ 				case SMW_GARDENINGLOG_SORTFORTITLE: 
+ 					$sqlOptions['ORDER BY'] = 'p1_title';
+ 					break;
+ 				case SMW_GARDENINGLOG_SORTFORVALUE:
+ 					$sqlOptions['ORDER BY'] = 'valueint';
+ 					break;
+ 			}
+ 		} else { // sort by title by default
+ 			$sqlOptions['ORDER BY'] = 'p1_title';
+ 		}
+		
+ 		$sqlCond = array();
+ 		if ($bot_id != NULL) { 
+ 			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
+ 		}
+ 		if ($titles != NULL && is_array($titles)) {
+ 			
+ 			$cond = "";
+ 			foreach($titles as $t) {
+ 				if (is_array($t)) { 
+ 					$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p1_namespace = '.$t[0]->getNamespace().' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).' AND p2_namespace = '.$t[1]->getNamespace().') OR ';
+ 				}
+ 			}
+ 			$sqlCond[] = '('.$cond.' FALSE)';
+ 			
+ 		} 
+ 		if ($gi_class != NULL) {
+ 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 		}
+ 		if ($gi_type != NULL) {
+ 			if (is_array($gi_type)) {
+ 				$cond = "";
+ 				foreach($gi_type as $t) {
+ 					$cond .= 'gi_type = '.$t.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else { 
+ 				$sqlCond[] = 'gi_type = '.$gi_type;
+ 			}
+ 		}
+ 		if ($options != NULL) { 
+ 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 		}
+ 		$result = array();
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
+ 		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{	
+				$result[] = GardeningIssue::createIssue($bot_id, $row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value != NULL ? $row->value : $row->valueint);
+				$row = $db->fetchObject($res);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
  	public function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
@@ -86,11 +156,7 @@
  			if (is_array($titles)) {
  				$cond = "";
  				foreach($titles as $t) {
- 					if (is_array($t)) { 
- 						$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p1_namespace = '.$t[0]->getNamespace().' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).' AND p2_namespace = '.$t[1]->getNamespace().') OR ';
- 					} else {
- 						$cond .= '(p1_title = '.$db->addQuotes($t->getDBkey()).' AND p1_namespace = '.$t->getNamespace().') OR ';
- 					}
+ 					$cond .= '(p1_title = '.$db->addQuotes($t->getDBkey()).' AND p1_namespace = '.$t->getNamespace().') OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else { 
@@ -146,7 +212,7 @@
  					$sqlOptions['ORDER BY'] = 'p1_title';
  					break;
  				case SMW_GARDENINGLOG_SORTFORVALUE:
- 					$sqlOptions['ORDER BY'] = 'valueint';
+ 					$sqlOptions['ORDER BY'] = 'valueint DESC';
  					break;
  			}
  		} else { // sort by title by default
@@ -194,7 +260,7 @@
 		return $result;
  	}
  	
- 	public function getDistinctTitlePair($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
+ 	public function getDistinctTitlePairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
  		
@@ -210,7 +276,7 @@
  					$sqlOptions['ORDER BY'] = 'p1_title';
  					break;
  				case SMW_GARDENINGLOG_SORTFORVALUE:
- 					$sqlOptions['ORDER BY'] = 'valueint';
+ 					$sqlOptions['ORDER BY'] = 'valueint DESC';
  					break;
  			}
  		} else { // sort by title by default

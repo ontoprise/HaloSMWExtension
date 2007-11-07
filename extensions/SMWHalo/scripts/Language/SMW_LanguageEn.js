@@ -125,6 +125,9 @@ var wgLanguageStrings = {
 	'COMBINED_SEARCH'         : 'Combined Search',
 
 	'INVALID_GARDENING_ACCESS' : 'You are not allowed to cancel bots. Only sysops and gardeners can do so.',
+	'GARDENING_LOG_COLLAPSE_ALL' : 'Collapse All',
+	'GARDENING_LOG_EXPAND_ALL'   : 'Expand All',
+	
 	// Ontology browser
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',

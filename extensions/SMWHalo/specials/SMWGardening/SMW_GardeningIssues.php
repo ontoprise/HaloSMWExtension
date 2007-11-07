@@ -52,6 +52,21 @@
  	public abstract function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL,  $sortfor = NULL, $options = NULL);
  	
  	/**
+ 	 * Get Gardening issues for a pair of titles. Every parameter may be NULL!
+ 	 * 
+ 	 * @param $bot_id Bot-ID
+ 	 * @param $gi_type type of issue. (Can be an array!)
+ 	 * @param $gi_class type of class of issue.
+ 	 * @param $titles Pair (2-tuple) of Title objects the issue is about. (Must be an array of tuples)
+ 	 * @param $sortfor column to sort for. Default by title.
+ 	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ 	 * @param $options instance of SMWRequestOptions
+ 	 * 
+ 	 * @return array of GardeningIssue objects
+ 	 */
+ 	public abstract function getGardeningIssuesForPairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL,  $sortfor = NULL, $options = NULL);
+ 	
+ 	/**
  	 * Get array of distinct titles having at least one Gardening issue.
  	 * Every parameter may be NULL!
  	 * 
@@ -79,7 +94,7 @@
  	 * 
  	 * @return array of tuples (t1, t2)
  	 */
- 	public abstract function getDistinctTitlePair($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL);
+ 	public abstract function getDistinctTitlePairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL);
  		
  	/**
  	 * Add Gardening issue about articles.

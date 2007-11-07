@@ -267,7 +267,7 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
  	
  	public function getUserFilterControls($specialAttPage, $request) {
  		$matchString = $request != NULL && $request->getVal('matchString') != NULL ? $request->getVal('matchString') : "";
-		return ' Match:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
+		return ' Contains:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
 	}
 	
 	public function linkUserParameters(& $wgRequest) {

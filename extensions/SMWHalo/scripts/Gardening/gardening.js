@@ -169,7 +169,7 @@ GardeningLogPage.prototype = {
 		var showAll = this.showAll;
 		var divs = $$('.gardeningLogPageBox');
 		divs.each(function(d) { if (showAll) d.show(); else d.hide(); });
-		$('showall').innerHTML = showAll ? 'Collapse All' : 'Expand All'; // TODO: externalize
+		$('showall').innerHTML = showAll ? gLanguage.getMessage('GARDENING_LOG_COLLAPSE_ALL') : gLanguage.getMessage('GARDENING_LOG_EXPAND_ALL'); 
 	}
 }
 

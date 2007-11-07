@@ -763,7 +763,7 @@
 		}
  		$html .= 	"</select>";
  		$matchString = $request != NULL && $request->getVal('matchString') != NULL ? $request->getVal('matchString') : "";
-		return $html.' Match:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
+		return $html.' Contains:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
 	}
 	
 	public function linkUserParameters(& $wgRequest) {
@@ -784,14 +784,14 @@
 	private function getSortedData($options, $request, $sortfor) {
 		$bot = $request->getVal('bot');
 		if ($bot == NULL) return array(); 
+		$gic = array();
 		
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + SMW_SIMILARITY_BOT_BASE - 1;
 		
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		$gic = array();
-		$titles = $gi_store->getDistinctTitlePair($bot, NULL, $gi_class, $sortfor, $options);
+		$titles = $gi_store->getDistinctTitlePairs($bot, NULL, $gi_class, $sortfor, $options);
 		foreach($titles as $t) {
-			$gis = $gi_store->getGardeningIssues($bot, NULL, $gi_class, array($t), SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+			$gis = $gi_store->getGardeningIssuesForPairs($bot, NULL, $gi_class, array($t), SMW_GARDENINGLOG_SORTFORTITLE, NULL);
 			$gic[] = new GardeningIssueContainer($t, $gis);
 		}
 		return $gic;
