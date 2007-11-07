@@ -58,14 +58,17 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	
-	// Register parser hooks
-	$wgHooks['ParserBeforeStrip'][] = 'smwfAAMBeforeStrip';
-	$wgHooks['ParserAfterStrip'][] = 'smwfAAMAfterStrip';
-	$wgHooks['InternalParseBeforeLinks'][] = 'smwfAAMBeforeLinks';
-	$wgHooks['ParserBeforeTidy'][] = 'smwfAAMBeforeTidy';
-	$wgHooks['ParserAfterTidy'][] = 'smwfAAMAfterTidy';
-	$wgHooks['OutputPageBeforeHTML'][] = 'smwfAAMBeforeHTML';
-
+	// Register parser hooks for advanced annotation mode
+	global $wgRequest; 
+	$action = $wgRequest->getVal('action');
+	if ($action == 'annotate') {
+		$wgHooks['ParserBeforeStrip'][] = 'smwfAAMBeforeStrip';
+		$wgHooks['ParserAfterStrip'][] = 'smwfAAMAfterStrip';
+		$wgHooks['InternalParseBeforeLinks'][] = 'smwfAAMBeforeLinks';
+		$wgHooks['ParserBeforeTidy'][] = 'smwfAAMBeforeTidy';
+		$wgHooks['ParserAfterTidy'][] = 'smwfAAMAfterTidy';
+		$wgHooks['OutputPageBeforeHTML'][] = 'smwfAAMBeforeHTML';
+	}
 	$wgHooks['UnknownAction'][] = 'smwfAnnotateAction';
 		
 	// register file extensions for upload
@@ -360,7 +363,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/SMWEditInterface.js', "edit");
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
-
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
+			
 		} else {
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -597,11 +601,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	 * @param unknown_type $strip_stat
 	 */
 	function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
-		global $wgRequest, $smwgHaloIP, $smwgHaloAAMParser;
-		$action = $wgRequest->getVal('action');
-		if ($action != 'annotate') {
-			return true;
-		}
+		global $smwgHaloIP, $smwgHaloAAMParser;
 		require_once( "$smwgHaloIP/includes/SMW_AAMParser.php");
 
 		
@@ -684,6 +684,14 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		return true;
 	}
 	
+	/**
+	 * This function is called when the annotation mode is activated. It renders
+	 * the article with highlighted annotations.
+	 *
+	 * @param string $action The action i.e. "annotate"
+	 * @param Article $article The article that will be displayed.
+	 * @return false => processing should continue
+	 */
 	function smwfAnnotateAction($action, $article) {
 		
 		$article->getTitle()->invalidateCache();
