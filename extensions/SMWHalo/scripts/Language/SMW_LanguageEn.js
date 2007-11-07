@@ -204,5 +204,8 @@ var wgLanguageStrings = {
 	'SHE_ctrl'					  : "Ctrl",
 	'SHE_esc'					  : "Esc",
 	'SHE_processing'			  : "Processing...",
-	'SHE_fullscreen'			  : "fullscreen"
+	'SHE_fullscreen'			  : "fullscreen",
+	
+	// Wiki text parser
+	'WTP_TEXT_NOT_FOUND'		  : "Could not find '$1' in the wiki text."
 };
