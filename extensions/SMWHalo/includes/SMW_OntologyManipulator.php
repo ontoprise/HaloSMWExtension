@@ -28,6 +28,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfCreateArticle';
 $wgAjaxExportList[] = 'smwfExistsArticle';
 $wgAjaxExportList[] = 'smwfRelationSchemaData';
+$wgAjaxExportList[] = 'smwfGetWikiText';
 
 /**
  * Creates a new article or appends some text if it already
@@ -263,6 +264,26 @@ function smwfRelationSchemaData($relationName) {
 	}
 	}
 	return $relSchema;
+}
+
+
+/**
+ * Returns the wiki text of an article. This function is invoked by an ajax call.
+ *
+ * @param string $pagename
+ * 			The name of the article
+ * @return string The wiki text or an empty string.
+ *
+ */
+function smwfGetWikiText($pagename) {
+	$titleObj = Title::newFromText($pagename);
+	$article = new Article($titleObj);
+
+	if ($article->exists()) {
+		return $article->getContent();
+	} else {
+		return "";
+	}
 }
 
 ?>
