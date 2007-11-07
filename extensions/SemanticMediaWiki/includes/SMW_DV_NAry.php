@@ -11,7 +11,7 @@ include_once($smwgIP . '/includes/SMW_DataValue.php');
 
 class SMWNAryValue extends SMWDataValue {
 
-	private $m_scount = 0;
+	private $m_count = 0;
 
 	/**
 	 * The array of the data values within this container value
