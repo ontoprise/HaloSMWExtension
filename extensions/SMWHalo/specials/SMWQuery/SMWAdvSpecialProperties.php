@@ -103,7 +103,8 @@ class SMWPropertiesPage extends SMWQueryPage {
 					{$NSatt} as namespace,
 					value_datatype as value,
 					attribute_title as title,
-					COUNT(*) as count
+					COUNT(*) as count,
+					'-1' as obns		
 					FROM $attributes
 					GROUP BY attribute_title, value_datatype";
 					
@@ -111,7 +112,8 @@ class SMWPropertiesPage extends SMWQueryPage {
 					{$NSatt} as namespace,
 					value_datatype as value,
 					attribute_title as title,
-					COUNT(*) as count
+					COUNT(*) as count,
+					'-1' as obns			
 					FROM $attributes,$pages WHERE attribute_title = page_title
 					GROUP BY attribute_title, value_datatype";
 					
@@ -119,7 +121,8 @@ class SMWPropertiesPage extends SMWQueryPage {
 					{$NSatt} as namespace,
 					value_datatype as value,
 					attribute_title as title,
-					COUNT(*) as count
+					COUNT(*) as count,
+					'-1' as obns			
 					FROM $attributes
 					GROUP BY attribute_title, value_datatype";
 		}
@@ -173,7 +176,9 @@ class SMWPropertiesPage extends SMWQueryPage {
 					{$NSrel} as namespace,
 					attribute_title as title,
 					
-					COUNT(*) as count
+					COUNT(*) as count,
+					'-1' as obns,
+					'' as value					
 					FROM $nary
 					GROUP BY attribute_title";
 					
@@ -181,7 +186,9 @@ class SMWPropertiesPage extends SMWQueryPage {
 					{$NSrel} as namespace,
 					attribute_title as title,
 					
-					COUNT(*) as count
+					COUNT(*) as count,
+					'-1' as obns,
+					'' as value	
 					FROM $nary,$pages WHERE attribute_title = page_title
 					GROUP BY attribute_title";
 					
