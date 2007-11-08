@@ -147,12 +147,12 @@ abstract class GardeningIssue {
 		if ($t1_ns != -1 && $t1 != NULL && $t1 != '') {
 			$this->t1 = Title::newFromText($t1, $t1_ns);
 		} else {
-			$this->t1 = "__error__";
+			$this->t1 = NULL;
 		}
 		if ($t2_ns != -1 && $t2 != NULL && $t2 != '') {
 			$this->t2 = Title::newFromText($t2, $t2_ns);
 		} else {
-			$this->t2 = "__error__";
+			$this->t2 = NULL;
 		}
 		$this->value = $value;
 	}
@@ -209,8 +209,20 @@ abstract class GardeningIssue {
  	}
 	
 	
-	public function getRepresentation(& $skin) {
-		return $this->getTextualRepresenation($skin);
+	public function getRepresentation(& $skin = NULL) {
+		// convert title1 to string and replace if it does not exist
+		if ($this->t1 != NULL) {
+ 			$text1 = "'".$this->t1->getText()."'";
+ 		} else { 
+ 			$text1 = "__empty_title__"; // this is an error, if it is visible to the user.
+ 		} 
+ 		// convert title2 to string and replace if it does not exist
+ 		if ($this->t2 != NULL) {
+ 			$text2 =  "'".$this->t2->getText()."'";
+ 		} else {
+ 			$text2 = "__empty_title__"; // this is an error, if it is visible to the user.
+ 		}
+		return $this->getTextualRepresenation($skin, $text1, $text2);
 	}
 	
 	
@@ -218,8 +230,10 @@ abstract class GardeningIssue {
 	 * Returns textual representation of Gardening issue.
 	 * 
 	 * @param & $skin reference to skin object to create links. 
+	 * @param $text1 textual representation of title1 or constant if title1 is invalid
+	 * @param $text2 textual representation of title2 or constant if title2 is invalid
 	 */
-	protected abstract function getTextualRepresenation(& $skin);
+	protected abstract function getTextualRepresenation(& $skin, $text1, $text2);
 	
 	
 }

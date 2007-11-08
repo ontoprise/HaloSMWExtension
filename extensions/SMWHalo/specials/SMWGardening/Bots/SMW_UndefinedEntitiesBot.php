@@ -82,8 +82,8 @@
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
  	}
  	
- 	protected function getTextualRepresenation(& $skin) {
- 		if ($this->t1 == "__error__") $text1 = $this->t1; else $text1 = "'".$this->t1->getText()."'";
+ 	protected function getTextualRepresenation(& $skin, $text1, $text2) {
+ 	
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT:
 				return wfMsg('smw_gardissue_instance_without_cat', $text1, $skin->makeLinkObj($this->t2));

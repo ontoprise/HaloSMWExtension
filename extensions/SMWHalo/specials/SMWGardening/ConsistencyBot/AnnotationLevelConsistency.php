@@ -243,10 +243,10 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				// check cardinality
  				if ($num < $minCards) {
- 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a);
+ 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
 				} 
 				if ($num > $maxCards) {
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a);
+					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $num);
 				}
  			
  			}
