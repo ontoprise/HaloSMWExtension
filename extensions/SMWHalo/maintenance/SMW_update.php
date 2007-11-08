@@ -96,6 +96,7 @@ if($dbr->numRows( $res ) > 0) {
 			
 			// load latest revision
 			$t = Title::newFromText($row->title, SMW_NS_PROPERTY);
+			if ($t == NULL) continue; // Title may be invalid!
 			$revision = Revision::newFromTitle( $t );
 			$a = new Article($t);
 			if ( $revision === NULL ) continue;
