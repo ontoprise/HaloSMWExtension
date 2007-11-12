@@ -114,7 +114,7 @@ initializeRootCategoriesCallback: function (request) {
   	//transformer.transformXMLToHTML(this.OB_cachedCategoryTree, rootElement, true);
   	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
- 
+ 	selectionProvider.fireRefresh();
   	
 },
 
@@ -136,7 +136,7 @@ initializeRootPropertyCallback: function (request) {
   	//transformer.transformXMLToHTML(this.OB_cachedPropertyTree, rootElement, true);
   	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
- 
+ 	selectionProvider.fireRefresh();
   	
 },
 
@@ -177,7 +177,7 @@ initializeRootProperties: function(partition, force) {
  */
 getCategorySubTree: function (categoryID, categoryName, callBackOnAjax, callBackOnCache) {
 	var nodeToExpand = GeneralXMLTools.getNodeById(this.OB_cachedCategoryTree, categoryID);
-	if (nodeToExpand != null && nodeToExpand.hasChildNodes()) {
+	if (nodeToExpand != null && nodeToExpand.getElementsByTagName('conceptTreeElement').length > 0) {
 		// copy it from cache to displayed tree.
 		var nodeInDisplayedTree = GeneralXMLTools.getNodeById(this.OB_currentlyDisplayedTree, categoryID);
 		GeneralXMLTools.importSubtree(nodeInDisplayedTree, nodeToExpand);
@@ -196,7 +196,7 @@ getCategorySubTree: function (categoryID, categoryName, callBackOnAjax, callBack
 
 getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBackOnCache) {
 	var nodeToExpand = GeneralXMLTools.getNodeById(this.OB_cachedPropertyTree, attributeID);
-	if (nodeToExpand != null && nodeToExpand.hasChildNodes()) {
+	if (nodeToExpand != null && nodeToExpand.getElementsByTagName('propertyTreeElement').length > 0) {
 		// copy it from cache to displayed tree.
 		var nodeInDisplayedTree = GeneralXMLTools.getNodeById(this.OB_currentlyDisplayedTree, attributeID);
 		GeneralXMLTools.importSubtree(nodeInDisplayedTree, nodeToExpand);

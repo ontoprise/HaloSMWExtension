@@ -136,9 +136,9 @@ GeneralBrowserTools.getURLParameter = function (paramName) {
  * ns: namespace, e.g. Category. May be null.
  * name: name of article
  */
-GeneralBrowserTools.navigateToPage = function (ns, name) {
+GeneralBrowserTools.navigateToPage = function (ns, name, editmode) {
 	var articlePath = wgArticlePath.replace(/\$1/, ns != null ? ns+":"+name : name);
-	window.open(wgServer + articlePath, "");
+	window.open(wgServer + articlePath + (editmode ? "?action=edit" : ""), "");
 }
 
 GeneralBrowserTools.toggleHighlighting = function  (oldNode, newNode) {
@@ -226,8 +226,8 @@ GeneralXMLTools.addBranch = function (xmlDoc, branch) {
 
 /*
  * Add the node if a child with same title does not exist.
- * nodeToAdd:
- * parentNode:
+ * nodeToAdd: node to add
+ * parentNode: node to add it to
  */
 GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
 	var a1 = nodeToAdd.getAttribute("title");
@@ -238,6 +238,13 @@ GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
 	}
 	
 	var appendedChild = GeneralXMLTools.importNode(parentNode, nodeToAdd, false);
+	
+	/// XXX: hack to include gardening issues. They must be firstchild of treeelement
+	if (nodeToAdd.firstChild != null && nodeToAdd.firstChild.tagName == 'gissues') {
+		GeneralXMLTools.importNode(appendedChild, nodeToAdd.firstChild, true);
+		
+	}
+	
 	return appendedChild;
 }
 

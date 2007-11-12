@@ -98,7 +98,8 @@
  				     'effects.js' => MIT_LICENSE_SCRIPTACULOUS,
 					 'treeview.js' => GPL_LICENSE_XTREEVIEW,
 					 'treeviewActions.js' => GPL_LICENSE_ONTOPRISE,
-					 'treeviewData.js' => GPL_LICENSE_ONTOPRISE);
+					 'treeviewData.js' => GPL_LICENSE_ONTOPRISE,
+					 'SMW_tooltip.js' => GPL_LICENSE_ONTOPRISE);
  	buildScripts($outputFile, $scripts);
  }
 

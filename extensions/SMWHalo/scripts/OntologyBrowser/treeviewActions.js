@@ -38,6 +38,45 @@ var OB_oldSelectedRelationNode = null;
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
 
+var OB_SELECTIONLISTENER = 'selectionChanged';
+var OB_REFRESHLISTENER = 'refresh';
+
+var OBEventProvider = Class.create();
+OBEventProvider.prototype = {
+	initialize: function() {
+		this.listeners = new Array();
+	},
+	
+	addListener: function(listener, type) {
+		if (this.listeners[type] == null) {
+			this.listeners[type] = new Array();
+		} 
+		if (typeof(listener[type] == 'function')) { 
+			this.listeners[type].push(listener);
+		}
+	},
+	
+	removeListener: function(listener, type) {
+		if (this.listeners[type] == null) return;
+		this.listeners[type] = this.listeners[type].without(listener);
+	},
+	
+	fireSelectionChanged: function(id, title, ns, node) {
+		this.listeners[OB_SELECTIONLISTENER].each(function (l) { 
+			l.selectionChanged(id, title, ns, node);
+		});
+	},
+	
+	fireRefresh: function() {
+		this.listeners[OB_REFRESHLISTENER].each(function (l) { 
+			l.refresh();
+		});
+	}
+}	
+
+
+var selectionProvider = new OBEventProvider();	
+
 // Logging on close does not work, because window shuts down. What to do?
 //window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
 /**
@@ -55,8 +94,12 @@ var OBTreeActionListener = Class.create();
 OBTreeActionListener.prototype = {
 	initialize: function() {
 		this.OB_currentFilter = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
+	selectionChanged: function(id, title, ns, node) {
+		
+	},
 	/**
 	 * @protected
 	 * 
@@ -96,6 +139,7 @@ OBTreeActionListener.prototype = {
 		var xmlNodeName = node.getAttribute("title");
 		var xmlNodeID = node.getAttribute("id");
 		
+		
  		function callbackOnExpandForAjax(request) {
  			OB_tree_pendingIndicator.hide();
 	  		var parentNode = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree.firstChild, xmlNodeID);
@@ -109,6 +153,7 @@ OBTreeActionListener.prototype = {
 	    		return;
 	    	}
 	  		var subTree = transformer.transformResultToHTML(request,nextDIV);
+	  		selectionProvider.fireRefresh();
 	  		GeneralXMLTools.importSubtree(parentNode, subTree.firstChild);
 	  		GeneralXMLTools.importSubtree(parentNodeInCache, subTree.firstChild);
 	  	}
@@ -147,6 +192,7 @@ OBTreeActionListener.prototype = {
 			}
 			var xmlNodeName = node.getAttribute("title");
 			var xmlNodeID = node.getAttribute("id");
+			
 			var parentNode = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree.firstChild, xmlNodeID);
 			parentNode.setAttribute("expanded","false");
 			
@@ -201,6 +247,7 @@ OBTreeActionListener.prototype = {
 		}
 		// transform structure to HTML
 		transformer.transformXMLToHTML(xmlFragmentForDisplayTree, htmlNodeToReplace, isRootLevel);
+		selectionProvider.fireRefresh();
 		calledOnFinish(tree);
 	}		
 	// Identify partition node in XML
@@ -270,6 +317,7 @@ OBTreeActionListener.prototype = {
 		}
 		// transform structure to HTML
 		transformer.transformXMLToHTML(xmlFragmentForDisplayTree, htmlNodeToReplace, isRootLevel);
+		selectionProvider.fireRefresh();
 		calledOnFinish(tree);
 	}	
 	// Identify partition node in XML
@@ -329,6 +377,7 @@ OBTreeActionListener.prototype = {
    	// transform xml and add to category tree DIV 
    	var rootElement = document.getElementById(treeName);
    	transformer.transformXMLToHTML(xmlDoc, rootElement, true);
+   	selectionProvider.fireRefresh();
    	dataAccess.OB_currentlyDisplayedTree = xmlDoc;
 },
 
@@ -348,6 +397,7 @@ OBTreeActionListener.prototype = {
 	
 	if (children) {
    	  for (var i = 0; i < children.length; i++) {
+   	  		if (children[i].tagName == 'gissues') continue;
    	    	count = this._filterTree_(nodesFound, children[i], count, regex);
     	
       }
@@ -417,6 +467,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	initialize: function() {
 		
 		this.OB_currentlySelectedCategory = null;
+		
 	},
 	
 	toggleExpand: function (event, node, folderCode) {
@@ -424,9 +475,9 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 
 
-	navigateToEntity: function(event, node, categoryName) {
+	navigateToEntity: function(event, node, categoryName, editmode) {
 		smwhgLogger.log(categoryName, "OB","inspect_entity");
-		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('CATEGORY_NS_WOC'), categoryName);
+		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('CATEGORY_NS_WOC'), categoryName, editmode);
 	},
 // ---- Selection methods. Called when the entity is selected ---------------------
 
@@ -456,6 +507,10 @@ select: function (event, node, categoryID, categoryName) {
 	while(nextDIV.nodeName != "DIV") {
 		nextDIV = nextDIV.nextSibling;
 	}
+	
+	// fire selection event
+	selectionProvider.fireSelectionChanged(categoryID, categoryName, SMW_CATEGORY_NS, nextDIV);
+	
 	// check if node is already expanded and expand it if not
 	if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
 		this.toggleExpand(event, node, categoryID);
@@ -484,6 +539,7 @@ select: function (event, node, categoryID, categoryName) {
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
+	  	selectionProvider.fireRefresh();
 	 }
 	 
 	 // callback for properties of a category
@@ -496,6 +552,7 @@ select: function (event, node, categoryID, categoryName) {
 		var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
 	  	transformer.transformResultToHTML(request,relattDIV);
+	  	selectionProvider.fireRefresh();
 	 }
 	 this.OB_currentlySelectedCategory = categoryName;
 	 
@@ -539,12 +596,16 @@ var OBInstanceActionListener = Class.create();
 OBInstanceActionListener.prototype = {
 	initialize: function() {
 		//empty
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+	},
+	
+	navigateToEntity: function(event, node, instanceName, editmode) {
+		smwhgLogger.log(instanceName, "OB","inspect_entity");
+		GeneralBrowserTools.navigateToPage(null, instanceName, editmode);
 		
 	},
 	
-	navigateToInstance: function(event, node, instanceName) {
-		smwhgLogger.log(instanceName, "OB","inspect_entity");
-		GeneralBrowserTools.navigateToPage(null, instanceName);
+	selectionChanged: function(id, title, ns, node) {
 		
 	},
 	
@@ -584,6 +645,7 @@ OBInstanceActionListener.prototype = {
 		var categoryDIV = $('categoryTree');
 		OB_oldSelectedInstanceNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedInstanceNode, node);
 		
+		selectionProvider.fireSelectionChanged(null, instanceName, SMW_INSTANCE_NS, node);
 		smwhgLogger.log(instanceName, "OB","clicked");
 		
 		function callbackOnInstanceSelectToRight(request) {
@@ -600,6 +662,8 @@ OBInstanceActionListener.prototype = {
 	  			// thus, repaste markup on all elements marked with a 'chemFoEq' attribute
 	  			GeneralBrowserTools.repasteMarkup("chemFoEq");
 	  		}
+	  		selectionProvider.fireRefresh();
+	  		
 	  	}
 	  	
 	  	function callbackOnInstanceSelectToLeft (request) {
@@ -610,6 +674,7 @@ OBInstanceActionListener.prototype = {
 			}
 			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
+			selectionProvider.fireRefresh();
 	  	}
 	  	
 	  	
@@ -687,19 +752,20 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
   initialize: function() {
 		
 		this.OB_currentlySelectedAttribute = null;
+		
 	},
 	
-	navigateToEntity: function(event, node, attributeName) {
-		smwhgLogger.log(attributeName, "OB","inspect_entity");
-		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName);
+	navigateToEntity: function(event, node, propertyName, editmode) {
+		smwhgLogger.log(propertyName, "OB","inspect_entity");
+		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), propertyName, editmode);
 	},
 	
-  select: function (event, node, attributeID, attributeName) {
+  select: function (event, node, propertyID, propertyName) {
   			var e = GeneralTools.getEvent(event);
 	
 		// if Ctrl is pressed: navigation mode
 		if (e["ctrlKey"]) {
-			GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName);
+			GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), propertyName);
 		} else {
 		
 		var nextDIV = node.nextSibling;
@@ -710,14 +776,14 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		}
 		// check if node is already expanded and expand it if not
 		if (!nextDIV.hasChildNodes()  || nextDIV.style.display == 'none') {
-			this.toggleExpand(event, node, attributeID);
+			this.toggleExpand(event, node, propertyID);
 		}
 		
 		var instanceDIV = document.getElementById("instanceList");
 		
 		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
 	
-		smwhgLogger.log(attributeName, "OB","clicked");	
+		smwhgLogger.log(propertyName, "OB","clicked");	
 	
 		function callbackOnPropertySelect(request) {
 			OB_instance_pendingIndicator.hide();
@@ -728,10 +794,11 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	 	 	transformer.transformResultToHTML(request,instanceDIV, true);
+	 	 	
 		}
 	     OB_instance_pendingIndicator.show();
-	 	 this.OB_currentlySelectedAttribute = attributeName;
-	 	 dataAccess.getInstancesUsingProperty(attributeName, 0, callbackOnPropertySelect);
+	 	 this.OB_currentlySelectedAttribute = propertyName;
+	 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
 		}
 	},
 	
@@ -771,14 +838,11 @@ OBAnnotationActionListener.prototype = {
 		GeneralBrowserTools.navigateToPage(null, targetInstance);
 	},
 	
-	selectAttribute: function(event, node, attributeName) {
+	selectProperty: function(event, node, propertyName) {
 		// delegate to schemaPropertyListener
-		schemaActionPropertyListener.selectAttribute(event, node, attributeName);
+		schemaActionPropertyListener.selectProperty(event, node, propertyName);
 	},
-	selectRelation: function(event, node, relationName) {
-		// delegate to schemaPropertyListener
-		schemaActionPropertyListener.selectRelation(event, node, relationName);
-	}
+	
 }
 
 /**
@@ -788,21 +852,24 @@ OBAnnotationActionListener.prototype = {
 var OBSchemaPropertyActionListener = Class.create();
 OBSchemaPropertyActionListener.prototype = {
 	initialize: function() {
-		//empty
-		
+		this.selectedCategory = null; // initially none is selected
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
-	navigateToAttribute: function(event, node, attributeName) {
+	selectionChanged: function(id, title, ns, node) {
+		if (ns == SMW_CATEGORY_NS) {
+			this.selectedCategory = title;
+			$('currentSelectedCategory').innerHTML = "'"+title+"'";
+		}
+	},
+	
+	navigateToEntity: function(event, node, attributeName, editmode) {
 		smwhgLogger.log(attributeName, "OB","inspect_entity");
-		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName);
+		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
 	},
 	
-	navigateToRelation: function(event, node, relationName) {
-		smwhgLogger.log(relationName, "OB","inspect_entity");
-		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), relationName);
-	},
-	
-	selectAttribute: function(event, node, attributeName) {
+		
+	selectProperty: function(event, node, attributeName) {
 		var categoryDIV = $("categoryTree");
 		var instanceDIV = $("instanceList");
 		
@@ -846,51 +913,7 @@ OBSchemaPropertyActionListener.prototype = {
 			}
 		}
 	},
-	selectRelation: function(event, node, relationName) {
 	
-		var categoryDIV = $("categoryTree");
-		var instanceDIV = $("instanceList");
-		
-		OB_oldSelectedRelationNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedRelationNode, node);
-		
-		smwhgLogger.log(relationName, "OB","clicked");	
-		
-		function callbackOnPropertySelectForCategory (request) {
-			OB_tree_pendingIndicator.hide();
-	  		if (categoryDIV.firstChild) {
-	  		  	GeneralBrowserTools.purge(categoryDIV.firstChild);
-				categoryDIV.removeChild(categoryDIV.firstChild);
-			}
-			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
-			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
-	  	}
-	  	
-	  	function callbackOnPropertySelectForInstance (request) {
-	  		OB_instance_pendingIndicator.hide();
-	  		if (instanceDIV.firstChild) {
-	  			GeneralBrowserTools.purge(instanceDIV.firstChild);
-				instanceDIV.removeChild(instanceDIV.firstChild);
-			}
-		
-			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
-			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
-	  		transformer.transformResultToHTML(request,instanceDIV, true);
-	  	}
-		// if Ctrl is pressed: navigation mode
-		if (event["ctrlKey"]) {
-			GeneralBrowserTools.navigateToPage(gLanguage.getMessage('RELATION_NS_WOC'), relationName);
-		} else {
-			if (OB_LEFT_ARROW == 1) {
-				OB_tree_pendingIndicator.show();
-				sajax_do_call('smwfOntologyBrowserAccess', ['getCategoryForProperty',relationName, gLanguage.getMessage('RELATION_NS_WOC')], callbackOnPropertySelectForCategory);
-			}
-			if (OB_RIGHT_ARROW == 1) {
-				OB_instance_pendingIndicator.show();
-				this.OB_currentlySelectedRelation = relationName;
-			 	dataAccess.getInstancesUsingProperty(relationName, 0, callbackOnPropertySelectForInstance);
-			}
-		}
-	},
 	
 	selectRangeInstance: function(event, node, categoryName) {
 		if (event["ctrlKey"]) {
@@ -917,7 +940,15 @@ OBGlobalActionListener.prototype = {
 			if (event.target.parentNode != document && $(event.target.parentNode).hasClassName('OB-filters')) return;
 			$('FilterBrowserInput').focus() 
 		});
+		
+		selectionProvider.addListener(this, OB_REFRESHLISTENER);
 	},
+	
+	refresh: function() {
+		// re-initialize tooltips when content has changed.
+		smw_tooltipInit();
+	},
+	
 	
 	/*
 	 * Switches to the given tree.
@@ -929,11 +960,17 @@ OBGlobalActionListener.prototype = {
 			$(showWhichTree+"Switch").addClassName("selectedSwitch");
 			$("categoryTreeSwitch").removeClassName("selectedSwitch");
 			
+			$("menuBarConceptTree").hide();
+			$("menuBarPropertyTree").show();
+			
 		} else if ($("propertyTree").visible() && showWhichTree != 'propertyTree') {
 			$("propertyTree").hide();
 			$(showWhichTree).show();
 			$(showWhichTree+"Switch").addClassName("selectedSwitch");
 			$("propertyTreeSwitch").removeClassName("selectedSwitch");
+			
+			$("menuBarPropertyTree").hide();
+			$("menuBarConceptTree").show();
 		}
 		
 		this.activeTreeName = showWhichTree;
@@ -973,6 +1010,7 @@ OBGlobalActionListener.prototype = {
 			if (filter == "") { //special case empty filter, just copy
 				dataAccess.initializeRootCategories(0);
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
+				selectionProvider.fireRefresh();
 				return;
 			}	
 		} else if (this.activeTreeName == 'propertyTree') {
@@ -981,6 +1019,7 @@ OBGlobalActionListener.prototype = {
 			if (filter == "") {
 				dataAccess.initializeRootProperties(0);
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
+				selectionProvider.fireRefresh();
 				return;
 			}
 		}  
@@ -1023,6 +1062,7 @@ OBGlobalActionListener.prototype = {
 			}
 		}
 		transformer.transformXMLToHTML(nodesFound, $("instanceList"), true); 
+		selectionProvider.fireRefresh();
 	},
 	
 	/**
@@ -1059,6 +1099,7 @@ OBGlobalActionListener.prototype = {
 			}
 		}
 		transformer.transformXMLToHTML(nodesFound, $("relattributes"), true); 
+		selectionProvider.fireRefresh();
 		GeneralBrowserTools.repasteMarkup("chemFoEq");
 	},
 	
@@ -1203,10 +1244,11 @@ OBGlobalActionListener.prototype = {
 			img.setAttribute("src",wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif");
 		}
 	}
+
 }
 
-
 	
+
 
 
 

@@ -132,6 +132,38 @@ a.selectedSwitch {
 	width: 100%;
 }
 
+
+.menuBar {
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+
+	color: #747474;
+	width: 100%;
+	border: 1px solid #AAAAAA;
+}
+
+#menuBarConceptTree {
+	background-color: #BBCCDD;
+}
+
+#menuBarInstance {
+	background-color: #DDBBBB;
+}
+
+#menuBarProperties {
+	background-color: #DDBB88;
+}
+
+#menuBarPropertyTree{
+	background-color: #DDBB88;
+}
+
+.gardeningissue {
+	color: #FF0000;
+	font-weight: bold;
+}
+
 .OB-filters{
 
 	font-family: Arial, Helvetica, sans-serif;

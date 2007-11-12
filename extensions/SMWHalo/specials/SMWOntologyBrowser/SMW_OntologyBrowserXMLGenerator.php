@@ -6,9 +6,10 @@
  */
 
 require_once($smwgHaloIP . '/includes/SMW_ChemistryParser.php');
+require_once("SMW_OntologyBrowserErrorHighlighting.php");
 
 class SMWOntologyBrowserXMLGenerator {
- public static function encapsulateAsConceptPartition($titles, $limit, $partitionNum, $rootLevel = false) {
+ public static function encapsulateAsConceptPartition(array & $titles, $limit, $partitionNum, $rootLevel = false) {
 	$id = uniqid (rand());
 	$count = 0;
 	$result = "";
@@ -23,12 +24,15 @@ class SMWOntologyBrowserXMLGenerator {
 		$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
 		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
 			continue;
 		}
 		$title_esc = htmlspecialchars($t->getDBkey()); 
-		$result = $result."<conceptTreeElement title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\"></conceptTreeElement>";
+		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
+		$result = $result."<conceptTreeElement title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues</conceptTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) {
@@ -38,7 +42,7 @@ class SMWOntologyBrowserXMLGenerator {
  	}
 }
 
-public static function encapsulateAsInstancePartition($directInstances, $inheritedInstances, $limit, $partitionNum) {
+public static function encapsulateAsInstancePartition(array & $directInstances, array & $inheritedInstances, $limit, $partitionNum) {
 	$id = uniqid (rand());
 	$count = 0;
 	$result = "";
@@ -53,21 +57,26 @@ public static function encapsulateAsInstancePartition($directInstances, $inherit
 		$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($directInstances as $t) { 
 		$title = htmlspecialchars($t->getDBkey()); 
-		$result = $result."<instance title=\"".$title."\" img=\"instance.gif\" id=\"ID_$id$count\"></instance>";
+		$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+ 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($directIssues);
+		$result = $result."<instance title=\"".$title."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
 		$count++;
 	}
 	foreach($inheritedInstances as $t) { 
 		$instanceTitle = htmlspecialchars($t[0]->getDBkey()); 
 		$categoryTitle = htmlspecialchars($t[1]->getDBkey());
-		$result = $result."<instance title=\"".$instanceTitle."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\"></instance>";
+		$indirectIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($indirectIssues);
+		$result = $result."<instance title=\"".$instanceTitle."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
 		$count++;
 	}
 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>" : "<instanceList>$result</instanceList>";
 }
 
-public static function encapsulateAsPropertyPartition($titles, $limit, $partitionNum, $rootLevel = false) {
+public static function encapsulateAsPropertyPartition(array & $titles, $limit, $partitionNum, $rootLevel = false) {
 	$id = uniqid (rand());
 	$count = 0;
 	$result = "";
@@ -82,12 +91,15 @@ public static function encapsulateAsPropertyPartition($titles, $limit, $partitio
 		$result .= "<propertyPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
 		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
 			continue;
 		}
 		$title = htmlspecialchars($t->getDBkey());
-		$result = $result."<propertyTreeElement title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\"></propertyTreeElement>";
+		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
+		$result = $result."<propertyTreeElement title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues</propertyTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) { 
@@ -97,39 +109,44 @@ public static function encapsulateAsPropertyPartition($titles, $limit, $partitio
 	}
 }
 
-public static function encapsulateAsAnnotationList($attributeAnnotations) {
+public static function encapsulateAsAnnotationList(array & $attributeAnnotations, $instance) {
 	$result = "";
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($attributeAnnotations as $a) {
 		list($attribute, $values) = $a;
-		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($attribute, $values);
+		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $attribute, $values);
 	}
-		
+	// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
+	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD, NULL, $instance);
+	$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);	
 	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\"/>" : "<annotationsList>".$result."</annotationsList>";
 }
 
 
 
-public static function encapsulateAsPropertyList($directProperties, $inheritedProperties) {
+public static function encapsulateAsPropertyList(array & $directProperties, array & $inheritedProperties) {
 	
 	$count = 0;
 	$propertiesXML = "";
-
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($directProperties as $t) {
 		if ($t instanceof Title) { 
-			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
+			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+ 			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
 			$count++;
 		}
 	}
 	foreach($inheritedProperties as $t) {
-		if ($t instanceof Title) { 
-			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count);
+		if ($t instanceof Title) {
+			$indirectIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t); 
+			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $indirectIssues);
 			$count++;
 		}
 	}
 	return $propertiesXML == '' ? "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>" : "<propertyList>".$propertiesXML."</propertyList>";
 }
 
-private static function encapsulateAsProperty(Title $t, $count) {
+private static function encapsulateAsProperty(Title $t, $count, array & $issues) {
 		$id = uniqid (rand());
 		$content = "";
 		$img = "";
@@ -191,24 +208,29 @@ private static function encapsulateAsProperty(Title $t, $count) {
 			}
 		}
 		$title_esc = htmlspecialchars($t->getDBkey());
-		return "<property title=\"".$title_esc."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>$content</property>";
+		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
+		return "<property title=\"".$title_esc."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>".$content.$gi_issues."</property>";
 	
 }
 
-private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValues) {
+private static function encapsulateAsAnnotation(Title $instance, Title $annotationTitle, $smwValues) {
 	$id = uniqid (rand());
 	$count = 0;
 	$singleProperties = "";
 	$multiProperties = "";
 	$isFormula = false;
 	$chemistryParser = new ChemEqParser();
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($smwValues as $smwValue) {
 		if ($smwValue instanceof SMWNAryValue) { // n-ary property
 		
 			$needRepaste = false;
 			$parameters = "";
 			foreach($smwValue->getDVs() as $params) {
-				
+				if ($params == NULL) {
+					$parameters .= "<param></param>";
+					continue;
+				}
 				if ($params->getTypeID() == '_che') {
 					$isFormula = true;
 					$chemistryParser->checkEquation($params->getXSDValue());
@@ -233,12 +255,20 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			}
 			$repasteMarker = $isFormula || $needRepaste ? "chemFoEq=\"true\"" : "";
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
-			$multiProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker>".$parameters."</annotation>";
+			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
+ 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		
+			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+			$multiProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 	
 		} else if ($smwValue instanceof SMWWikiPageValue) { // relation
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param></annotation>";
+			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
+ 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		
+			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
 			
 		} else { // normal attribute
 			if ($smwValue->getTypeID() == '_che') {
@@ -259,7 +289,11 @@ private static function encapsulateAsAnnotation(Title $annotationTitle, $smwValu
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param></annotation>";
+			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
+ 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		
+			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
 		}
 		$count++;
 	}

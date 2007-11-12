@@ -195,7 +195,7 @@ protected $smwUserMessages = array(
 	'smw_gard_issue_missing_param' => 'Warnung: Fehlender Parameter $3 in n-ärem Property $2 in Artikel $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domäne von $1 passt nicht zur Wertbereichskategorie von $2.',
-	'smw_gardissue_wrong_target_value' => 'Ziel-Artikel $1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
+	'smw_gardissue_wrong_target_value' => 'Artikel $1 benutzt Property $2 mit einer Instanz der falschen Kategorie: $3.',
 	'smw_gardissue_wrong_domain_value' => 'Artikel $1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
 	'smw_gardissue_too_low_card' => 'Artikel $1 benutzt Property $2 zu wenig.',
 	'smw_gardissue_too_high_card' => 'Artikel $1 benutzt Property $2 zu häufig.',
@@ -207,8 +207,8 @@ protected $smwUserMessages = array(
 	
 	'smw_gardissue_class_covariance' => 'Covariance Probleme',
 	'smw_gardissue_class_undefined' => 'Invollständiges Schema',
-	'smw_gardissue_class_missdouble' => 'Fehlende / Doubletten',
-	'smw_gardissue_class_wrongvalue' => 'Falsche Werte / Kardinalitäten',
+	'smw_gardissue_class_missdouble' => 'Doubletten',
+	'smw_gardissue_class_wrongvalue' => 'Falsche/Fehlende Werte',
 	'smw_gardissue_class_incomp' => 'Inkompatible Entities',
 	'smw_gardissue_class_cycles' => 'Zyklen',
 	

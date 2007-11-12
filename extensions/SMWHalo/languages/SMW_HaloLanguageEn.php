@@ -137,8 +137,8 @@ protected $smwUserMessages = array(
 	'smw_ob_attributeTree' => 'Property Tree',
 
 	'smw_ob_instanceList' => 'Instances',
-	'smw_ob_rel' => 'Relations',
-	'smw_ob_att' => 'Attributes',
+	
+	'smw_ob_att' => 'Properties',
 	'smw_ob_relattValues' => 'Values',
 	'smw_ob_relattRangeType' => 'Type/Range',
 	'smw_ob_filter' => 'Filter',
@@ -221,11 +221,11 @@ clicking the big arrows between the columns.',
 	'smw_gard_issue_missing_param' => 'Warning: Missing parameter $3 in n-ary property $2 in article $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domain of $1 does not match range of inverse property $2.',
-	'smw_gardissue_wrong_target_value' => 'Target $1 is member of wrong range category when using the property $2.',
+	'smw_gardissue_wrong_target_value' => 'Article $1 uses property $2 with an instance which is member of wrong category: $3.',
 	'smw_gardissue_wrong_domain_value' => 'Article $1 has wrong domain category when using the property $2.',
 	'smw_gardissue_too_low_card' => 'Article $1 uses property $2 too less.',
 	'smw_gardissue_too_high_card' => 'Article $1 uses property $2 too often.',
-	'smw_gardissue_wrong_unit' => 'Article $1 uses property $2 with wrong unit $3.',
+	'smw_gardissue_wrong_unit' => 'Article $1 uses property $2 with wrong unit: "$3".',
 	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2',
 	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible type to $2',
 
@@ -234,8 +234,8 @@ clicking the big arrows between the columns.',
 	
 	'smw_gardissue_class_covariance' => 'Covariance problems',
 	'smw_gardissue_class_undefined' => 'Incomplete schema',
-	'smw_gardissue_class_missdouble' => 'Missing / Doubles',
-	'smw_gardissue_class_wrongvalue' => 'Wrong value / frequency',
+	'smw_gardissue_class_missdouble' => 'Doubles',
+	'smw_gardissue_class_wrongvalue' => 'Wrong/missing values',
 	'smw_gardissue_class_incomp' => 'Incompatible entities',
 	'smw_gardissue_class_cycles' => 'Cycles',
 

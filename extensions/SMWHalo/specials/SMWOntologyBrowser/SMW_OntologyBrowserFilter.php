@@ -163,7 +163,8 @@
  		
  		$reqfilter->isCaseSensitive = false;
  	 	$foundProperties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter);
- 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties, array());
+ 	 	$dummy = array();
+ 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties, $dummy);
  	 }
  	 
  	 /**

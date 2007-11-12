@@ -53,21 +53,34 @@
         }else{
             //$target = $TargetDirectory.$entry;
             if (strpos($SourceDirectory.$entry, ".js") !== false) {
-            	echo "Copy ".$SourceDirectory.$entry."...\n";
+            	echo "Copy ".$entry."...";
             	copy($SourceDirectory.$entry, $TargetDirectory.$entry);
-            	
+            	echo "done!\n";
             }
         }
     }
     return true;
 }
 
-echo "\nCopy Scripts...\n";
 $source = dirname(__FILE__) . '/../../..';
 $target = 'c:/temp/halo_js_scripts';
 if (!is_dir($target)) {
-    mkdir($target);
+	echo "\nCreating directory: ".$target."\n";
+    mkpath($target);
     chmod($target, 0777); 
 }
+echo "\nCopy Scripts...\n";
 copyJSScripts($source, $target);
+
+
+/**
+  * Creates the given directory and creates all
+  * dependant directories if necessary.
+  * 
+  * @param $path path of directory.
+  */
+ function mkpath($path) {
+    if(@mkdir($path) || file_exists($path)) return true;
+    return (mkpath(dirname($path)) && mkdir($path));
+ }
 ?>

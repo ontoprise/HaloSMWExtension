@@ -6,14 +6,16 @@
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side. 
  */
-global $smwgIP, $wgAjaxExportList;
+global $smwgIP, $smwgHaloIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfOntologyBrowserAccess';
 
 require_once($smwgIP . "/includes/storage/SMW_Store.php");
+require_once($smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 require_once("SMW_OntologyBrowserFilter.php" );
  
 function smwfOntologyBrowserAccess($method, $params) {
+	
  	$p_array = explode(",", $params);
  	
  	if ($method == 'getRootCategories') {
@@ -36,7 +38,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $p_array[1] + 0, $p_array[2] + 0);
+ 		 		
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $p_array[1] + 0, $p_array[2] + 0, false);
  		
  	}  else if ($method == 'getInstance') {
  		// param0 : category
@@ -50,8 +53,10 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$instances = smwfGetSemanticStore()->getInstances($cat,  $reqfilter);
  		$directInstances = $instances[0];
  		smwfSortTitleArray($instances[1]);
- 		$inheritedInstances = smwfEliminateDoubles($instances[1]);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($directInstances, $inheritedInstances, $p_array[1] + 0, $p_array[2] + 0);
+ 		$inheritedInstances = array();
+ 		$inheritedInstancesWithCategories = smwfEliminateDoubles($instances[1], $inheritedInstances);
+ 		 		 		
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($directInstances, $inheritedInstancesWithCategories, $p_array[1] + 0, $p_array[2] + 0);
  		
  	} else if ($method == 'getAnnotations') {
  		$reqfilter = new SMWRequestOptions();
@@ -64,8 +69,9 @@ function smwfOntologyBrowserAccess($method, $params) {
  			$values = smwfGetStore()->getPropertyValues($instance, $a);
  			$propertyAnnotations[] = array($a, $values); 
  		}
- 		
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations);
+ 	 	
+ 	 	
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, $instance);
  		
  	} else if ($method == 'getDirectProperties') {
  		$reqfilter = new SMWRequestOptions();
@@ -78,7 +84,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$properties = smwfGetSemanticStore()->getPropertiesOfCategory($cat, $reqfilter);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties[0], $properties[1]);
+ 		
+ 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties[0], $properties[1]);
  		
  	} else if ($method == 'getRootProperties') {
  		// param0 : limit
@@ -88,6 +95,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[0] + 0;
  		$reqfilter->offset = ($p_array[1] + 0)*$reqfilter->limit;
  		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
+ 		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $p_array[0] + 0, $p_array[1] + 0, true);
  	} else if ($method == 'getSubProperties') {
 		// param0 : attribute
@@ -99,7 +107,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $p_array[1] + 0, $p_array[2] + 0);
+ 		 		 		
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $p_array[1] + 0, $p_array[2] + 0, false);
  		
  	} else if ($method == 'getInstancesUsingProperty') {
  		// param0 : property
@@ -176,12 +185,13 @@ function smwfSortTitleArray(& $titleArray) {
  * 
  * @param $titleArray array(Title, Title) 
  */
-function smwfEliminateDoubles(& $titleArray) {
+function smwfEliminateDoubles(& $titleArray, & $onlyInstances) {
 	$result = array();
 	$current = null;
 	for($i = 0, $n = count($titleArray); $i < $n; $i++) {
 		if ($current == null || !$titleArray[$i][0]->equals($current)) {
 			$result[] = $titleArray[$i];
+			$onlyInstances[] = $titleArray[$i][0];
 		}
 		$current = $titleArray[$i][0];
 	}

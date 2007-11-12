@@ -55,6 +55,8 @@ class SMW_OntologyBrowser extends SpecialPage {
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/concept.gif\"></img><a class=\"selectedSwitch\" id=\"categoryTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'categoryTree')\" style=\"margin-left:2px;\">".wfMsg('smw_ob_categoryTree')."|</a>
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img><a id=\"propertyTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'propertyTree')\" style=\"margin-left:2px;\">".wfMsg('smw_ob_attributeTree')."</a>
 			</span>
+			<span class=\"menuBar\" id=\"menuBarConceptTree\"><a style=\"margin-left:5px;\" onclick=\"alert('Not implemented yet.')\">Create subcategory</a> | <a onclick=\"alert('Not implemented yet.')\">Create category on same level</a> | <a onclick=\"alert('Not implemented yet.')\">Rename</a></span>
+			<span style=\"display:none;\" class=\"menuBar\" id=\"menuBarPropertyTree\"><a style=\"margin-left:5px;\" onclick=\"alert('Not implemented yet.')\">Create subproperty</a> | <a onclick=\"alert('Not implemented yet.')\">Create property on same level</a> | <a onclick=\"alert('Not implemented yet.')\">Rename</a></span>		
 		   <div id=\"categoryTree\" class=\"categoryTreeColors\">
 		   </div>		
 		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors\">
@@ -69,7 +71,8 @@ class SMW_OntologyBrowser extends SpecialPage {
 				
 		<!-- Instance List hook -->	
 		<div id=\"instanceContainer\">
-		  <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img>".wfMsg('smw_ob_instanceList')."</span>		
+		  <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
+		  <span class=\"menuBar\" id=\"menuBarInstance\"><a style=\"margin-left:5px;\" onclick=\"alert('Not implemented yet.')\">Rename instance</a> | <a onclick=\"alert('Not implemented yet.')\">Delete instance</a></span>			
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" name=\"instanceFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
@@ -81,7 +84,8 @@ class SMW_OntologyBrowser extends SpecialPage {
 				
 		<!-- Relation/Attribute Annotation level hook -->
 		<div id=\"relattributesContainer\"><span class=\"OB-header\">
-			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/attribute.gif\"></img>".wfMsg('smw_ob_att')."/<img src=\"$wgScriptPath/extensions/SMWHalo/skins/relation.gif\"></img>".wfMsg('smw_ob_rel')."</span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
+			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
+			<span class=\"menuBar\" id=\"menuBarProperties\"><a style=\"margin-left:5px;\" onclick=\"alert('Not implemented yet.')\">Add property to domain <span id=\"currentSelectedCategory\">...</span></a></span>	
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
 			<span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" name=\"propertyFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>		
 		</div>		
