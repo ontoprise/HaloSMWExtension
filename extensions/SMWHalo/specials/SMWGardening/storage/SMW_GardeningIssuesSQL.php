@@ -85,16 +85,26 @@
  		if ($titles != NULL && is_array($titles)) {
  			
  			$cond = "";
- 			foreach($titles as $t) {
- 				if (is_array($t)) { 
- 					$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p1_namespace = '.$t[0]->getNamespace().' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).' AND p2_namespace = '.$t[1]->getNamespace().') OR ';
- 				}
+ 			if (count($titles) > 0 && is_array($titles[0])) {
+	 			foreach($titles as $t) {
+	 				$cond .= '(p1_title = '.$db->addQuotes($t[0]->getDBkey()).' AND p1_namespace = '.$t[0]->getNamespace().' AND p2_title = '.$db->addQuotes($t[1]->getDBkey()).' AND p2_namespace = '.$t[1]->getNamespace().') OR ';
+	 			}
+	 			$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else {
+ 				$sqlCond[] = $cond .= '(p1_title = '.$db->addQuotes($titles[0]->getDBkey()).' AND p1_namespace = '.$titles[0]->getNamespace().' AND p2_title = '.$db->addQuotes($titles[1]->getDBkey()).' AND p2_namespace = '.$titles[1]->getNamespace().')';
  			}
- 			$sqlCond[] = '('.$cond.' FALSE)';
  			
  		} 
  		if ($gi_class != NULL) {
- 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 			if (is_array($gi_class)) {
+ 				$cond = "";
+ 				foreach($gi_class as $c) {
+ 					$cond .= 'gi_class = '.$c.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else {
+ 				$sqlCond[] = 'gi_class = '.$gi_class;
+ 			}
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {
@@ -164,7 +174,15 @@
  			}
  		} 
  		if ($gi_class != NULL) {
- 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 			if (is_array($gi_class)) {
+ 				$cond = "";
+ 				foreach($gi_class as $c) {
+ 					$cond .= 'gi_class = '.$c.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else {
+ 				$sqlCond[] = 'gi_class = '.$gi_class;
+ 			}
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {
@@ -180,6 +198,7 @@
  		if ($options != NULL) { 
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
+ 	   
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
  		if($db->numRows( $res ) > 0)
@@ -194,6 +213,8 @@
 		$db->freeResult($res);
 		return $result;
  	}
+ 	
+ 	
  	
  	public function getDistinctTitles($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
