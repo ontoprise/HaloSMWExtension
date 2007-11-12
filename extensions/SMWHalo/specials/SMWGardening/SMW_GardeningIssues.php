@@ -4,13 +4,10 @@
  *
  * Author: kai
  * 
- * Provide access to Gardening issue table. Gardening issues can be categorized:
+ * Provide access to Gardening issue table. Gardening issues can be categorized
+ * by bot, type and class. A GardeningIssue is can be about one or two titles and an optional 
+ * numeric or string value.  
  * 
- * 	- covariance
- * 	- not defined
- * 	- missing / doubles
- * 	- wrong value / entity
- * 	- incompatible entity
  * 
  */
  
@@ -37,12 +34,12 @@
  	public abstract function clearGardeningIssues($bot_id = NULL, Title $t1 = NULL);
  	
  	/**
- 	 * Get Gardening issues. Every parameter may be NULL!
+ 	 * Get Gardening issues. Every parameter (except $bot_id) may be NULL!
  	 * 
  	 * @param $bot_id Bot-ID
  	 * @param $gi_type type of issue. (Can be an array!)
- 	 * @param $gi_class type of class of issue.
- 	 * @param $titles Title issue is about. (Can be an array)
+ 	 * @param $gi_class type of class of issue. (Can be an array!)
+ 	 * @param $titles Title1 issue is about. (Can be an array)
  	 * @param $sortfor column to sort for. Default by title.
  	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
  	 * @param $options instance of SMWRequestOptions
@@ -51,12 +48,13 @@
  	 */
  	public abstract function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL,  $sortfor = NULL, $options = NULL);
  	
+ 	
  	/**
- 	 * Get Gardening issues for a pair of titles. Every parameter may be NULL!
+ 	 * Get Gardening issues for a pair of titles. Every parameter (except $bot_id) may be NULL!
  	 * 
  	 * @param $bot_id Bot-ID
  	 * @param $gi_type type of issue. (Can be an array!)
- 	 * @param $gi_class type of class of issue.
+ 	 * @param $gi_class type of class of issue.  (Can be an array!)
  	 * @param $titles Pair (2-tuple) of Title objects the issue is about. (Must be an array of tuples)
  	 * @param $sortfor column to sort for. Default by title.
  	 * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 

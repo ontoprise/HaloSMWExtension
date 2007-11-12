@@ -142,14 +142,13 @@
  define('SMW_GARDISSUE_TYPES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 3);
  
  
- // missing / doubles issues
+ // doubles issues
  define('SMW_GARDISSUE_DOUBLE_TYPE', (SMW_CONSISTENCY_BOT_BASE+2) * 100 + 1);
  define('SMW_GARDISSUE_DOUBLE_MAX_CARD', (SMW_CONSISTENCY_BOT_BASE+2) * 100 + 2);
  define('SMW_GARDISSUE_DOUBLE_MIN_CARD', (SMW_CONSISTENCY_BOT_BASE+2) * 100 + 3);
- define('SMW_GARD_ISSUE_MISSING_PARAM', (SMW_CONSISTENCY_BOT_BASE+2) * 100 + 4);
 
  
- // wrong value / entity issues
+ // wrong/missing values / entity issues
  define('SMW_GARDISSUE_MAXCARD_NOT_NULL', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 1);
  define('SMW_GARDISSUE_MINCARD_BELOW_NULL', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 2);
  define('SMW_GARDISSUE_WRONG_CARD_VALUE', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 3);
@@ -158,6 +157,7 @@
  define('SMW_GARDISSUE_TOO_LOW_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 6);
  define('SMW_GARDISSUE_TOO_HIGH_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 7);
  define('SMW_GARDISSUE_WRONG_UNIT', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 8);
+ define('SMW_GARD_ISSUE_MISSING_PARAM', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 9);
  
  // incompatible entity issues
  define('SMW_GARD_ISSUE_DOMAIN_NOT_RANGE', (SMW_CONSISTENCY_BOT_BASE+4) * 100 + 1);
@@ -174,9 +174,9 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
  	}
  	
  	protected function getTextualRepresenation(& $skin, $text1, $text2) {
- 		// show title2 as link
+ 		// show title2 as link if $skin is defined
  		$text2 = $skin != NULL ? $skin->makeLinkObj($this->t2) : $text2;
-		switch($this->gi_type) {
+ 		switch($this->gi_type) {
 			case SMW_GARDISSUE_DOMAINS_NOT_COVARIANT: 
 				return wfMsg('smw_gardissue_domains_not_covariant', $text1);
 			case SMW_GARDISSUE_RANGES_NOT_COVARIANT: 
@@ -227,7 +227,7 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 			case SMW_GARDISSUE_WRONG_CARD_VALUE: 
 				return wfMsg('smw_gardissue_wrong_card_value', $text1);
 			case SMW_GARDISSUE_WRONG_TARGET_VALUE: 
-				return wfMsg('smw_gardissue_wrong_target_value', $text1, $text2);
+				return wfMsg('smw_gardissue_wrong_target_value', $text1, $text2,  $skin != NULL ? $skin->makeLinkObj($this->value) : $this->value);
 			case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: 
 				return wfMsg('smw_gardissue_wrong_domain_value', $text1, $text2);
 			case SMW_GARDISSUE_TOO_LOW_CARD: 
@@ -245,7 +245,7 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 				return wfMsg('smw_gard_issue_incompatible_type',$text1, $text2);
 						
 			case SMW_GARD_ISSUE_CYCLE:
-				return wfMsg('smw_gard_issue_cycle',  $this->explodeTitlesToLinkObjs($skin, $this->value));
+				return wfMsg('smw_gard_issue_cycle',  $skin != NULL ? $this->explodeTitlesToLinkObjs($skin, $this->value) : $this->value);
 				
 			default: NULL;	
 		}

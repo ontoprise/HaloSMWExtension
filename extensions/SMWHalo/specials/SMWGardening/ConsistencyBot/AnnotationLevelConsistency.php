@@ -94,7 +94,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
  						} 
  						if (!$rangeCorrect){
- 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $target->getTitle()->getDBkey());
  						}
  						
  					} else if ($target instanceof SMWNAryValue) { // n-ary relation
@@ -117,7 +117,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 					 						 					
 					 						} 
 					 						if (!$rangeCorrect){
-					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $target->getTitle(), $r);
+					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $target->getTitle()->getDBkey());
 					 						}
  										}
  									}
