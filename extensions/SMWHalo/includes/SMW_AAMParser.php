@@ -39,6 +39,7 @@ class SMWH_AAMParser {
 	 * 1. Headings of levels 1,2,3 and 4 e.g. ==Heading 2==
 	 * 2. Templates e.g. {{MyTemplate}}
 	 * 3. Template parameters e.g. {{{tparam}}} 
+	 * 4. Line breaks
 	 * 
 	 * Offsets have the following format: {wikiTextOffset=offset}
 	 * The correct HTML is created in a later parsing stage. See wikiTextOffset2HTML.
@@ -51,7 +52,7 @@ class SMWH_AAMParser {
 		$text = $this->maskHTML($wikiText);
 		
 		// Search for templates, template parameters and headings
-		$parts = preg_split('/(\{\{\{.*?\}\}\})|(\{\{.*?\}\})|^(====.*?====)|^(===.*?===)|^(==.*?==)|^(=.*?=)/sm', $text, -1, 
+		$parts = preg_split('/(\{\{\{.*?\}\}\})|(\{\{.*?\}\})|^(====.*?====)|^(===.*?===)|^(==.*?==)|^(=.*?=)|^$/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_OFFSET_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
@@ -85,15 +86,17 @@ class SMWH_AAMParser {
 	 */
 	public function wikiTextOffset2HTML(&$wikiText)
 	{
-
+		global $wgContLang;
+		
+		$templateNS = $wgContLang->getNsText(10);
 		// replace intermediate format for templates
 		$text = preg_replace(
 			'/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{wikiTextOffset=(\d*) template=\"(.*?)\" id=\"(.*?)\"\}\s*(<\/p>)?/',
 			'<a name="$4" type="wikiTextOffset"></a>'.
-			'<a type="template" tmplname="$5" id="$6"></a>',
+			'<a type="template" tmplname="'.$templateNS.':$5" id="$6"></a>',
 			$wikiText);
 		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend:(.*?)\}\s*(<\/p>)?/',
-		                     '<a type="templateend" id="$4"></a>', 
+		                     '<a type="templateend" id="$4_end"></a>', 
 		                     $text);
 			
 		// replace intermediate format within paragraphs
@@ -112,7 +115,7 @@ class SMWH_AAMParser {
 	 * 
 	 * In this first stage annotations are surrounded by intermediate tags.
 	 *
-	 * @param unknown_type $wikiText
+	 * @param string $wikiText
 	 */
 	public function highlightAnnotations(&$wikiText)
 	{
@@ -124,9 +127,9 @@ class SMWH_AAMParser {
 	/**
 	 * Creates a highlighted background for annotations. 
 	 * 
-	 * In this second stage the intermediate tags are replaces by HTML spans.
+	 * In this second stage the intermediate tags are replaced by HTML spans.
 	 *
-	 * @param unknown_type $wikiText
+	 * @param string $wikiText
 	 */
 	public function highlightAnnotations2HTML(&$wikiText)
 	{
