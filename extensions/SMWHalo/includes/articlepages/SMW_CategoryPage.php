@@ -219,6 +219,10 @@ class SMWCategoryViewer extends CategoryViewer {
 		$relationTitle = Title::newFromText($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		                                         
 		foreach ($properties as $prop) {
+			if (!$prop) {
+				// $prop may be undefined
+				continue;
+			}
 			$propFound = false;
 			if ($prop->getNamespace() == $ns) {
 				// Property with namespace of interest found
