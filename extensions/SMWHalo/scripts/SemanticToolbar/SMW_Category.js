@@ -63,13 +63,18 @@ initialize: function() {
 
 showToolbar: function(request){
 	this.categorycontainer.setHeadline(gLanguage.getMessage('CATEGORIES'));
-	this.wtp = new WikiTextParser();
+	if (wgAction == 'edit') {
+		// Create a wiki text parser for the edit mode. In annotation mode,
+		// the mode's own parser is used.
+		this.wtp = new WikiTextParser();
+	}
 	this.om = new OntologyModifier();
 	this.fillList(true);
 },
 
 callme: function(event){
-	if(wgAction == "edit" && stb_control.isToolbarAvailable()){
+	if ((wgAction == "edit" || wgAction == "annotate")
+	    && stb_control.isToolbarAvailable()){
 		this.categorycontainer = stb_control.createDivContainer(CATEGORYCONTAINER,0);
 		this.showToolbar();
 	}
@@ -82,9 +87,23 @@ fillList: function(forceShowList) {
 	if (!this.showList) {
 		return;
 	}
-	this.wtp.initialize();
-	this.categorycontainer.setContent(this.genTB.createList(this.wtp.getCategories(),"category"));
-	this.categorycontainer.contentChanged();
+	if (this.wtp) {
+		this.wtp.initialize();
+		this.categorycontainer.setContent(this.genTB.createList(this.wtp.getCategories(),"category"));
+		this.categorycontainer.contentChanged();
+	}
+},
+
+/**
+ * @public 
+ * 
+ * Sets the wiki text parser <wtp>.
+ * @param WikiTextParser wtp 
+ * 		The parser that is used for this toolbar container.	
+ * 
+ */
+setWikiTextParser: function(wtp) {
+	this.wtp = wtp;
 },
 
 cancel: function(){

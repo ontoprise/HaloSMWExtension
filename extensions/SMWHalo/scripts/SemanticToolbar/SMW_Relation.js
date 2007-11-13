@@ -95,14 +95,18 @@ initialize: function() {
 
 showToolbar: function(){
 	this.relationcontainer.setHeadline(gLanguage.getMessage('PROPERTIES'));
-	this.wtp = new WikiTextParser();
+	if (wgAction == 'edit') {
+		// Create a wiki text parser for the edit mode. In annotation mode,
+		// the mode's own parser is used.
+		this.wtp = new WikiTextParser();
+	}
 	this.om = new OntologyModifier();
 	this.fillList(true);
 
 },
 
 callme: function(event){
-	if(wgAction == "edit"
+	if((wgAction == "edit" || wgAction == "annotate")
 	    && stb_control.isToolbarAvailable()){
 		this.relationcontainer = stb_control.createDivContainer(RELATIONCONTAINER, 0);
 		this.showToolbar();		
@@ -117,9 +121,23 @@ fillList: function(forceShowList) {
 	if (!this.showList) {
 		return;
 	}
-	this.wtp.initialize();
-	this.relationcontainer.setContent(this.genTB.createList(this.wtp.getRelations(),"relation"));
-	this.relationcontainer.contentChanged();
+	if (this.wtp) {
+		this.wtp.initialize();
+		this.relationcontainer.setContent(this.genTB.createList(this.wtp.getRelations(),"relation"));
+		this.relationcontainer.contentChanged();
+	}
+},
+
+/**
+ * @public 
+ * 
+ * Sets the wiki text parser <wtp>.
+ * @param WikiTextParser wtp 
+ * 		The parser that is used for this toolbar container.	
+ * 
+ */
+setWikiTextParser: function(wtp) {
+	this.wtp = wtp;
 },
 
 cancel: function(){
