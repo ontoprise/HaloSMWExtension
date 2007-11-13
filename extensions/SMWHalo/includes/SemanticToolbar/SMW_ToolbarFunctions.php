@@ -69,7 +69,7 @@ function smwfGetHelp($namespace, $action){
 
 		$wikiTitle = Title::newFromText($title, NS_HELP);
 
-		if($description == wfMsg(smw_csh_newquestion)){
+		if($description == wfMsg('smw_csh_newquestion')){
 			$html .= '<a href="' . $wikiTitle->getFullURL();
 			$html .= '?action=edit" class="new';
 			$html .= '" ';
@@ -133,7 +133,7 @@ function smwfAskQuestion($namespace, $action, $question){
 
 	$articleContent = "[[question:=$question]]?\n\n";
 	$articleContent .= "[[discourseState:=$discourseState]]\n\n";
-	$articleContent .= "[[description:=" . wfMsg(smw_csh_newquestion) . "]]";
+	$articleContent .= "[[description:=" . wfMsg('smw_csh_newquestion') . "]]";
 
 	//Create a new wikipage in the Help namespace
 
