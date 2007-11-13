@@ -210,5 +210,8 @@ var wgLanguageStrings = {
 	'SHE_fullscreen'			  : "fullscreen",
 	
 	// Wiki text parser
-	'WTP_TEXT_NOT_FOUND'		  : "Could not find '$1' in the wiki text."
+	'WTP_TEXT_NOT_FOUND'		  : "Could not find '$1' in the wiki text.",
+	'WTP_NOT_IN_NOWIKI'			  : "'$1' is part of a <nowiki>-section.\nIt can not be annotated.",
+	'WTP_NOT_IN_TEMPLATE'		  : "'$1' is part of a template.\nIt can not be annotated.",
+	'WTP_NOT_IN_ANNOTATION'		  : "'$1' is part of an annotation.\nIt can not be annotated."
 };
