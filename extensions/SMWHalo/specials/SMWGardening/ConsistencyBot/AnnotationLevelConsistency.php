@@ -229,29 +229,56 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
  			}
  			
- 			// get all property subjects
- 			$allAttributeSubjects = smwfGetStore()->getAllPropertySubjects($a);
- 			foreach($allAttributeSubjects as $subject) {
- 				
- 				if ($subject == null) {
- 					continue;
- 				}
- 				
- 				// get all annoations for a subject and a property
- 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
- 				$num = count($allAttributeForSubject);
- 				
- 				// check cardinality
- 				if ($num < $minCards) {
- 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
-				} 
-				if ($num > $maxCards) {
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $num);
-				}
- 			
+ 			// get domains
+ 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainRangeHintRelation);
+ 			 			
+ 			if (empty($domainRangeAnnotations)) {
+ 				// if there are no domain categories defined, try to find a super property with defined domain categories
+ 				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
  			}
  			
- 			
+ 			foreach($domainRangeAnnotations as $domRan) {
+ 				$dvs = $domRan->getDVs();
+ 				if ($dvs[0] == NULL) continue; // ignore annotations with missing domain
+ 				$domainCategory = $dvs[0]->getTitle();
+ 				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
+ 				foreach($instances[0] as $subject) { // check direct instances
+ 					if ($subject == null) {
+ 					continue;
+	 				}
+	 				
+	 				// get all annoations for a subject and a property
+	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
+	 				$num = count($allAttributeForSubject);
+	 				
+	 				// check cardinality
+	 				if ($num < $minCards) {
+	 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
+					} 
+					if ($num > $maxCards) {
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $num);
+					}
+ 				}
+ 				
+ 				foreach($instances[1] as $subject) { // check indirect instances
+ 					if ($subject == null) {
+ 					continue;
+	 				}
+	 				
+	 				// get all annoations for a subject and a property
+	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
+	 				$num = count($allAttributeForSubject);
+	 				
+	 				// check cardinality
+	 				if ($num < $minCards) {
+	 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
+					} 
+					if ($num > $maxCards) {
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $num);
+					}
+ 				}
+ 			}
+ 						
  		}
   		
  	}
