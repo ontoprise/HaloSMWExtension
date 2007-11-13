@@ -25,6 +25,9 @@
 var WTP_NO_ERROR = 0;
 var WTP_UNMATCHED_BRACKETS = 1;
 
+var WTP_WIKITEXT_MODE = 1;
+var WTP_EDITAREA_MODE = 2;
+
 /**
  * Class for parsing WikiText. It extracts annotations in double brackets [[...]]
  * and recognizes relations, categories and links.
@@ -47,6 +50,10 @@ WikiTextParser.prototype = {
 	 * Constructor. If no wiki text is given, the text from the textarea of the 
 	 * edit page is stored. The text is parsed and the list of of annotations is 
 	 * initialized.
+	 * This function may be called several times. The first invocation defines
+	 * the source on which the parser operates (the parser's mode): given wiki #
+	 * text or content of the edit area. The mode does not change, even if this
+	 * function is called without wikiText parameter. 
 	 * 
 	 * @param string wikiText 
 	 *		If not <null>, this wiki text is parsed and used for further 
@@ -54,7 +61,13 @@ WikiTextParser.prototype = {
 	 *               
 	 */
 	initialize: function(wikiText) {
-		if (!wikiText) {
+		if (this.parserMode == WTP_WIKITEXT_MODE) {
+			// Parser mode is 'wiki text' => do not release the current text
+			if (!wikiText) {
+				wikiText = this.text;
+			}
+		}
+		if (!wikiText && this.parserMode != WTP_WIKITEXT_MODE) {
 			// no wiki text => retrieve from text area.
 			var txtarea;
 			if (document.editform) {
@@ -70,9 +83,11 @@ WikiTextParser.prototype = {
 			}
 			this.editInterface = gEditInterface;
 			this.text = this.editInterface.getValue();
+			this.parserMode = WTP_EDITAREA_MODE;
 		} else {
 			this.editInterface = null;
 			this.text = wikiText;
+			this.parserMode = WTP_WIKITEXT_MODE;
 		}
 
 		this.relations  = null;
@@ -367,13 +382,81 @@ WikiTextParser.prototype = {
 	 * 		string reason why the search failed otherwise
 	 */
 	findText: function(text, start, end) {
+
+		this.wtsStart = -1;
+		this.wtsEnd   = -1;
 		
 		if (end == -1) {
 			end = this.text.length;
 		}
-		pos = this.text.indexOf(text, start);
-		if (!pos || pos > end) {
-			msg = gLanguage.getMessage('WTP_TEXT_NOT_FOUND');
+		
+		// The annotation must not be within templates, nowiki-sections and
+		// annotations
+		var searchState = 3; // 0 - find closing </nowiki>
+							 // 1 - find closing }}
+							 // 2 - find closing ]]
+							 // 3 - find text or <nowiki>,{{,[[
+							 // 4 - text found
+		pos = -1;
+		var startSearches = [text, '<nowiki>', '{{', '[['];
+		var endSearches = [['</nowiki>', text], ['}}', text], [']]', text]];
+		var textFoundWithinTags = -1;
+		while (true) {
+			var res = this.findFirstOf(start, 
+			                           searchState == 3 
+			                           	? startSearches
+			                            : endSearches[searchState]);
+			if (searchState == 3) {
+				// tried to find text or <nowiki>,{{,[[
+				if (res[1] == null || res[0] > end) {
+					// nothing found => stop search
+					break;
+				}
+				if (res[1] == text) {
+					// search text found => stop search
+					pos = res[0];
+					searchState = 4;
+					break;
+				} else if (res[1] == '<nowiki>') {
+					searchState = 0;
+				} else if (res[1] == '{{') {
+					// are the more than 2 opening braces ?
+					var i = 0;
+					while (this.text.charAt(res[0]+i) == '{') {
+						i++;
+					}
+					if (i > 2) {
+						// more than 2 braces => ignore them.
+						res[0] += i-1;
+					} else {
+						searchState = 1;
+					}
+				} else if (res[1] == '[[') {
+					searchState = 2;
+				}
+			} else {
+				// tried to find some closing tag
+				if (res[1] == null) {
+					// closing tag not found => stop search
+					break;
+				} else if (res[1] == text) {
+					// text found within a tagged area
+					textFoundWithinTags = searchState;
+				} else {
+					searchState = 3;
+				}
+			}
+			start = res[0]+1;
+		}
+		
+		if (searchState != 4 || pos < 0 || pos > end) {
+			var msgId = 'WTP_TEXT_NOT_FOUND';
+			switch (textFoundWithinTags) {
+				case 0: msgId = 'WTP_NOT_IN_NOWIKI'; break;
+				case 1: msgId = 'WTP_NOT_IN_TEMPLATE'; break;
+				case 2: msgId = 'WTP_NOT_IN_ANNOTATION'; break;
+			}
+			msg = gLanguage.getMessage(msgId);
 			return msg.replace(/\$1/g, text);
 		}
 		
@@ -611,8 +694,17 @@ WikiTextParser.prototype = {
 	 *
 	 * @param string annotation Annotation that is added to the wiki text.
 	 * @param bool append If <true>, the annotation is appended at the very end.
+	 * 
+	 * @return 
+	 * 		boolean false, if the text has been replaced in the edit area
+	 * 		array<int>[3], if text was replaced in the wiki text
+	 * 			[0]: start index of replacement in original text
+	 * 			[1]: end index of replacement in original text
+	 * 			[2]: length of inserted text 
+	 * 
 	 */
 	addAnnotation : function(annotation, append) {
+		var result = false;
 		if (append) {
 			if (this.editInterface) {
 				this.editInterface.setValue(this.editInterface.getValue() + annotation);
@@ -620,10 +712,11 @@ WikiTextParser.prototype = {
 				this.text += annotation;
 			}
 		} else {
-			this.replaceText(annotation);
+			result = this.replaceText(annotation);
 		}
 		// invalidate all parsed data
 		this.initialize(this.text);
+		return result;
 	},
 
 	/**
@@ -791,15 +884,31 @@ WikiTextParser.prototype = {
 
 
 	/**
-	 * Inserts a text at the cursor or replaces the current selection.
+	 * Inserts a text at the cursor or replaces the current selection. This applies
+	 * also, if only the wiki text if given without an edit area.
 	 *
 	 * @param string text The text that is inserted.
+	 * @return 
+	 * 		boolean false, if the text has been replaced in the edit area
+	 * 		array<int>[3], if text was replaced in the wiki text
+	 * 			[0]: start index of replacement in original text
+	 * 			[1]: end index of replacement in original text
+	 * 			[2]: length of inserted text 
 	 *
 	 */
 	replaceText : function(text)  {
 		if (this.editInterface) {
 			this.editInterface.setSelectedText(text);
+		} else if (this.wtsStart >= 0) {
+			this.text = this.text.substring(0, this.wtsStart)
+			            + text
+			            + this.text.substring(this.wtsEnd);
+			var result = [this.wtsStart, this.wtsEnd, text.length];
+			this.wtsStart = -1;			 
+			this.wtsEnd   = -1;
+			return result;
 		}
+		return false;
 	},
 
 	/**
