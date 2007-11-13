@@ -1,5 +1,10 @@
 .aam_prop_highlight{
-	background-color: #ff9999;
+	background-color: #ff9602;
+}
+
+.aam_new_anno_prop_highlight{
+	background-color: #ff9602;
+	border: 1px solid #000000;
 }
 
 .aam_template_highlight{
