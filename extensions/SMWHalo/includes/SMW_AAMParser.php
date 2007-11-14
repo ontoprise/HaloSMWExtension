@@ -57,21 +57,24 @@ class SMWH_AAMParser {
 		                    PREG_SPLIT_OFFSET_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
 		$markedText = "";
-
+		
 		$id = 1;
+		$pos = 0;
 		foreach ($parts as $part) {
-			$part0 = substr($wikiText, $part[1], strlen($part[0]));
+			$len = mb_strlen($part[0]);
+			$part0 = mb_substr($wikiText, $pos, $len);
 			// Is the part a template?
 			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
 				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part0, $name);
-				$markedText .=  "\n".'{wikiTextOffset='.$part[1]
+				$markedText .=  "\n".'{wikiTextOffset='.$pos
 				               .' template="'.$name[1].'"'
 			                   .' id="tmplt'.$id.'"}'."\n".$part0
 				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
 				$id++;
 			} else {
-				$markedText .= "\n{wikiTextOffset=".$part[1]."}\n".$part0;
+				$markedText .= "\n{wikiTextOffset=".$pos."}\n".$part0;
 			}
+			$pos += $len;
 		}
 
 		return $markedText;

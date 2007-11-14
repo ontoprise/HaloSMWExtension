@@ -33,7 +33,7 @@ class SMWIntegerTypeHandler implements SMWTypeHandler {
 		// TODO: this regexp is also in FloatTypeHandler, should move to common.
 		$arr= preg_split('/([-+]?[\d]+)/', str_replace(wfMsgForContent('smw_kiloseparator'), '', $v), 2, PREG_SPLIT_DELIM_CAPTURE);
 
-		if (($arr[0]=='') and ($arr[1]!='') and ($arr[2]=='')) { //no junk
+		if ((count($arr) == 3) and ($arr[0]=='') and ($arr[1]!='') and ($arr[2]=='')) { //no junk
 			if (mb_substr($arr[1],0,1)=='+') {
 				$arr[1]=substr($arr[1],1);  //strip leading + (relevant for LIKE search)
 			}
