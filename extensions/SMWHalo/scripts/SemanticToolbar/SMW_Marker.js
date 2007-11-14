@@ -1,4 +1,4 @@
-//First implementation of marking Templates in Mediawiki
+//Second implementation of marking Templates in Mediawiki
 var Marker = Class.create();
 Marker.prototype = {
 	
@@ -10,6 +10,8 @@ Marker.prototype = {
  	*/
 	initialize: function(rootnode) {
 		//root node from which all descendants will be checked for marking 
+		//storing the object directly would cause errors, since in most cases the object 
+		//is still not present when the constructor is called
 		this.rootnode = rootnode;
 		//
 		this.markerindex = 0;		
@@ -53,15 +55,18 @@ Marker.prototype = {
 		if(divtomark == null) return;
 		//Create and insert markerdiv
 		var marker = '<div id="' + this.markerindex + '-marker" class="span-marker">';
+			//Check if multiple links has been passed and generate one clickable picture for each
 			if( links  instanceof Array){ 
 				links.each(function(link){
 					marker += '<a href="'+ link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
 				});
+			// Check if only one link has been passe	
 			} else if ( links  instanceof String || typeof(links) == "string"){
 				marker += '<a href="'+ links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
-			} else {
-				marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
-			}
+			//If nothing has been paased, only mark it with a non clickable picture
+				} else {
+					marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
+				}
 		marker += '</div>';
 		new Insertion.After(divtomark, marker );
 		//Set position of the marker		
@@ -84,12 +89,9 @@ Marker.prototype = {
 				var idattr = document.createAttribute("id");
 					idattr.nodeValue = this.markerindex+"-textmarker";
 					span.setAttributeNode(idattr);
+				//create Classes for marking and colorizing the span so it can be removed later
 				var classattr = document.createAttribute("class");
-					classattr.nodeValue = "aam_template_highlight";
-					span.setAttributeNode(classattr);
-					
-					classattr = document.createAttribute("class");
-					classattr.nodeValue = "text-marker";
+					classattr.nodeValue = "aam_template_highlight text-marker";
 					span.setAttributeNode(classattr);
 				//Create textcontent for span attribute
 				var textdata = document.createTextNode(node.nodeValue);
@@ -109,7 +111,9 @@ Marker.prototype = {
  	*/
 	getBorderWidth: function(el, borderposition)
 	{
+		//retrieve css value
 		var borderwidth = $(el).getStyle("border-"+borderposition+"-width");
+		//parse for px unit
 		var borderregex = /(\d*)(px)/;
 		var regexresult;
 		if(regexresult = borderregex.exec(borderwidth)) {
@@ -121,7 +125,7 @@ Marker.prototype = {
 	}, 
 	
 	/**
-	* DEPRECATED! 
+	* DEPRECATED! Should not be working anymore with the new tags 
  	* @public Gets all descendants (from this.rootnode) and checks if there are elements to mark  
  	* 
  	* @param
@@ -141,7 +145,7 @@ Marker.prototype = {
 	},
 	
 	/**
-	 * DEPRECATED!
+	 * DEPRECATED! Should not be working anymore with the new tags
 	 * @private Checks if the element belongs to the template indicators and if yes marks it  
 	 * 
 	 * @param  element object 
@@ -196,6 +200,7 @@ Marker.prototype = {
 		if(element.readAttribute('class')!= null && (element.readAttribute('class')== "span-marker" || element.readAttribute('class')== "div-marker")){
 			element.remove();
 		}
+		//Check for textmarkers and remove only the span not the text 
 		if(element.readAttribute('class')!= null && element.readAttribute('class')== "text-marker"){
 			element.replace(element.innerHTML);
 		}	
@@ -207,61 +212,82 @@ Marker.prototype = {
  	* @param 
  	*/	
 	markNodes: function(){
+		//get rootnode 
 		var rootnode = $(this.rootnode);
+		//Stores the templatename and the id of the current open but not closed template
 		var currentTmpl = null;
 		var currentTmplid = null;		
+		//Get first Child
 		var element = rootnode.firstChild;
+		//Walk over every next sibling
+		//this uses plain javascript functions, since prototype doesn't support textnodes
 		while( element != null){
+			//Get current node and set element to the next sibling so it won't be effected by changes of the current node
 			var node = element;
 			element = element.nextSibling;
-			//If nodetyp is textnode
+			//If nodetyp is textnode and template tag is open but not closed
 			if(node.nodeType == 3 && currentTmpl != null ){
+				//mark text
 				this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
 			//If nodetype is elementnode
 			} else if(node.nodeType == 1 ){
-				switch(node.tagName.toLowerCase()){
+				//right now only tables and anchors are treated.
+				//but should be easy to extend it to other elements representing boxes
+				switch(node.tagName.toLowerCase()){	
 				case 'table':
+					//Get template tags from the sub node
 					var anchors = this.getTemplateAnchors(node);
+					//Array to store the templatenames in
 					var links = new Array();
+					//Add templatename of the current open template
 					if (currentTmpl != null ) links.push(wgServer + wgScript+ "/" +currentTmpl);
+					//Add all templatenames of all opening anchors which can be found in the table's descendants
+					//Templatenames are stored in the third field of the returned array
 					for (var index = 0, len = anchors[2].length; index < len; ++index) {
   						var subTmpl = anchors[2][index];
-  						//["javascript:alert(\'templatelink1\')","javascript:alert(\'templatelink2\')"]
-  						//links.push("javascript:alert(\'"+ subtemplate +"\')");
   						links.push(wgServer + wgScript+ "/" + subTmpl);
 					}
+					//Check if the opened anchor is closed within the table
+					//and if yes remove it from the buffer
 					if(anchors[1].indexOf(currentTmplid)!=-1){
 						currentTmpl = null;
   						currentTmplid = null;
 					} 
+					//Remove all anchors from the opening list, which are closed within the table
+					//if the list empty afterwards, then all anchors were close
+					//otherwise there is an anchor which will be close further on in the dom tree and there
+					//needs to be buffered for marking elements following after the table
 					var openanchor = anchors[0].without(anchors[1])[0];
 					if(openanchor!=null){
 						currentTmplid = openanchor;
 						currentTmpl = anchors[2][anchors[0].indexOf(openanchor)]
 					}
-					
+					//Mark table with an tranparent overlay and icons 
 					this.transparencyMarker(node);
 					this.iconMarker(node,links);
 					this.markerindex++;
 					break;
 				case 'a':
-					if(node.readAttribute('type')=='template'){
+					//Check if this is an opening anchor, indicating that a template starts 
+					if($(node).readAttribute('type')=='template'){
   						currentTmplid = node.readAttribute('id');
   						currentTmpl = node.readAttribute('tmplname');			
   						break;
   					}
-  					if(node.readAttribute('type')=='templateend'){
+  					//Check if this is an closing anchor, indicating that a template ends
+  					if($(node).readAttribute('type')=='templateend'){
   						currentTmpl = null;
   						currentTmplid = null;
   						break;
   					}
 				default:
-					//
+					//TODO: Treat other elements like paragraph etc.
 				}	
 			}
 		}	
 	},
-		/**
+	
+	/**
  	* @public looks for opening/closing anchors and returns an 2-dimensonal array
  	* 	array[0]: array id's of the openening anchors
  	* 	array[1]: array element id's of the closing anchors without '_end' for further matching of both lists 
@@ -272,7 +298,7 @@ Marker.prototype = {
  	*/
 	getTemplateAnchors: function(node){
 		//Get all descendants of the node
-		var elements = node.descendants();
+		var elements = $(node).descendants();
 		//Arrays storing the anchors and being returned 
 		var starttags = new Array();
 		var endtags = new Array();
@@ -323,7 +349,7 @@ Marker.prototype = {
 				'</div>');
 		//this.checkForTemplates();
 		this.markNodes();
-		this.removeMarkers();
+		//this.removeMarkers();
 	}
 
 }
