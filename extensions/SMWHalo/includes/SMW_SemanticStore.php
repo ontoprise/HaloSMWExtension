@@ -150,21 +150,17 @@
  	 * @return array of (Title subject, Title property)
  	 */
  	public abstract function getAnnotationsWithUnit(Title $type, $unit);
+ 	
  	/* 
  	 * Note: 
  	 * 		
- 	 *   All methods get...OfSuperProperty consider only the first super property.
-	 *	 So if there is mutiple property inheritance, these methods will not provide a complete 
-	 *	 result set. That means, for instance, the ConsistencyChecker is not able to 
-	 *	 find all potential inconsistencies.
-	 *	 All those methods require a reference to a complete inheritance graph in memory. 
-	 *	 They are supposed to be used thousands of times in a row, since it is a complex
-	 *	 task to load and sort a complete inheritance graph. So if you just need for instance
-	 *	 a domain of _one_ super property, do this manually. 
+ 	 *   All following methods require a reference to a complete inheritance graph in memory. 
+	 *	 They are intended to be used thousands of times in a row, since it is a complex
+	 *	 task to load and prepare a complete inheritance graph for pathfinding at maximum speed. 
+	 *	 So if you just need for instance a domain of _one_ super property, do this manually. 
 	 * 
 	 */
-	
- 	
+	 	
  	
  	/**
  	 * Returns the domain and ranges of the first super property which has defined some.

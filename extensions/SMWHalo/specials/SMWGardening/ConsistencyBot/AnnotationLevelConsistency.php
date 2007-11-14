@@ -13,9 +13,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	private $bot;
  	private $delay; 
  	
- 	// Category Graph. It is cached for the whole consistency checks.
+ 	// Category/Property Graph. It is cached for the whole consistency checks.
  	private $categoryGraph;
  	private $propertyGraph;
+ 	
+ 	// GardeningIssue store
  	private $gi_store;
  	
  	// Important: Attribute values (primitives) are always syntactically 
@@ -144,6 +146,14 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		
  	}
  	
+ 	/**
+ 	 * Checks weather subject and object matches a domain/range pair.
+ 	 * 
+ 	 * @param subject Title
+ 	 * @param object Title
+ 	 * @param $domainRange SMWNaryValue
+ 	 * @param $domainChecked If true, domain checks are omitted.
+ 	 */
  	private function checkDomainAndRange($subject, $object, $domainRange, $domainChecked = false) {
  		$categoriesOfObject = $object != NULL ? smwfGetSemanticStore()->getCategoriesForInstance($object) : array();
  		if (!$domainChecked) $categoriesOfSubject = smwfGetSemanticStore()->getCategoriesForInstance($subject);
@@ -186,12 +196,12 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	
  	
  	/**
- 	 * Checks if property annotation cardinalities are schema-consistent.
+ 	 * Checks if number of property appearances in articles are schema-consistent.
  	 */
  	public function checkAnnotationCardinalities() {
  		global $smwgContLang;
  		
- 		// check attribute annotation cardinalities
+ 		// get all properties
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
@@ -242,6 +252,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				if ($dvs[0] == NULL) continue; // ignore annotations with missing domain
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
+ 				
  				foreach($instances[0] as $subject) { // check direct instances
  					if ($subject == null) {
  					continue;
@@ -251,7 +262,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
 	 				$num = count($allAttributeForSubject);
 	 				
-	 				// check cardinality
+	 				// compare number of appearance with defined cardinality
 	 				if ($num < $minCards) {
 	 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
 					} 
@@ -261,15 +272,15 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				}
  				
  				foreach($instances[1] as $subject) { // check indirect instances
- 					if ($subject == null) {
- 					continue;
+ 					if ($subject[0] == null) {
+ 						continue;
 	 				}
 	 				
 	 				// get all annoations for a subject and a property
-	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
+	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject[0], $a);
 	 				$num = count($allAttributeForSubject);
 	 				
-	 				// check cardinality
+	 				// compare number of appearance with defined cardinality
 	 				if ($num < $minCards) {
 	 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
 					} 
@@ -283,6 +294,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   		
  	}
  	
+ 	/**
+ 	 * Checks if all annotations with units have proper units (such defined by 'corresponds to' relations).
+ 	 */
  	public function checkUnits() {
  		// check attribute annotation cardinalities
  		$types = smwfGetSemanticStore()->getPages(array(SMW_NS_TYPE));

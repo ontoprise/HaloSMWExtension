@@ -109,7 +109,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// check for correct value
  				if ($this->isCardinalityValue($minCard[0]->getXSDValue()) !== true) {
  					
- 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD_VALUE, $a, $minCard[0]->getXSDValue());
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MINCARD_VALUE, $a, $minCard[0]->getXSDValue());
  					
  				}
  				// read min cards
@@ -152,15 +152,14 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_MAX_CARD, $a, count($maxCard));
  					
  				}
- 				// check for correct value
- 				if ($this->isCardinalityValue($maxCard[0]->getXSDValue()) !== true && $maxCard[0]->getXSDValue() != '*') {
- 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_CARD_VALUE, $a, $maxCard[0]->getXSDValue());
- 					
+ 				// check for correct value format
+ 				if ($this->isCardinalityValue($maxCard[0]->getXSDValue()) !== true) {
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MAXCARD_VALUE, $a, $maxCard[0]->getXSDValue());
  					
  				}
  				// check for co-variance with parent
  				
- 				$maxCardValue = $maxCard[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCard[0]->getXSDValue() + 0;
+ 				$maxCardValue = $maxCard[0]->getXSDValue() + 0;
  				$maxCardValueOfParent = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
@@ -191,26 +190,41 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		if (count($type) > 0) {
  			if (count($type) == 0 || $type[0]->getXSDValue() == '_wpg' || $type[0]->getXSDValue() == '__nry') {
  				// default property (type wikipage), explicitly defined wikipage or nary property
- 				$res = $this->isDomainRangeCovariant($p);
+ 				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
+ 		
+	 			if (empty($domainRangeAnnotations)) {
+	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
+	 				return;
+	 			}
+	 			
+ 				$res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations);
  				if ($res === true) return;
  				foreach($res as $cov) {
+ 					$domRanAnnot = $cov[2]->getDVs();
  					if (!$cov[0]) {
  						// log domain cov error for annot
- 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p);
+ 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domRanAnnot[0]->getTitle());
  					}
  					if (!$cov[1]) {
  						// log range cov error for annot
- 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p);
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p, $domRanAnnot[1]->getTitle());
  					}
  				}
  			} else {
  				// attribute
- 				$res = $this->isDomainRangeCovariant($p, true);
+ 				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
+ 		
+	 			if (empty($domainRangeAnnotations)) {
+	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
+	 				return;
+	 			}
+ 				$res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations, true);
  				if ($res === true) return;
  				foreach($res as $cov) {
+ 					$domRanAnnot = $cov[2]->getDVs();
  					if (!$cov[0]) {
  						// log domain cov error for annot
- 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p);
+ 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domRanAnnot[0]->getTitle());
  					}
  					
  				}
@@ -219,73 +233,62 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	
  	}
  	
- 	private function isDomainRangeCovariant($p, $isAttribute = false) {
+ 	private function isDomainRangeCovariant($p, $domainRangeAnnotations, $isAttribute = false) {
  		
- 		$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
  		
- 			if (empty($domainRangeAnnotations)) {
- 				
- 				if ($isAttribute) {
- 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
- 				} else {
- 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
- 				}
- 				return true;
- 			} else {
- 				$domainRangeAnnotationsOfSuperProperty = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
- 				
- 				if (empty($domainRangeAnnotationsOfSuperProperty)) {
- 					return true;
- 				}
- 				$results = array();
- 				foreach($domainRangeAnnotations as $dra) {
- 					$current = array(false, false, $dra);
- 					$domRanVal = $dra->getDVs();
-		 			$domainCat = $domRanVal[0] != NULL ? $domRanVal[0]->getTitle() : NULL;	
-		 			$rangeCat  = $domRanVal[1] != NULL ? $domRanVal[1]->getTitle() : NULL;
- 					 
-	 				foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
-	 					$domRanValOfSuperProperty = $drosp->getDVs();
-	 					$domainCatOfSuperProperty = $domRanValOfSuperProperty[0] != NULL ? $domRanValOfSuperProperty[0]->getTitle() : NULL;	
-	 					$rangeCatOfSuperProperty  = $domRanValOfSuperProperty[1] != NULL ? $domRanValOfSuperProperty[1]->getTitle() : NULL;
-	 					if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
- 				 
-		 					$domainCovariant = $rangeCovariant = false;
-	 						
-	 						$domainCovariant = GraphHelper::checkForPath($this->categoryGraph, $domainCat->getArticleID(), $domainCatOfSuperProperty->getArticleID()); 
-	 						
-		 					if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
-			 					$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
-			 				
-		 					}
-		 					
-		 					// add new co-variance tuple if it is better matching domain and range.
-		 					$current_score = ($current[0] ? 1 : 0) + ($current[1] ? 1 : 0);
-		 					$new_score = ($domainCovariant ? 1 : 0) + ($rangeCovariant ? 1 : 0);
-		 					$current = ($new_score > $current_score) ? array($domainCovariant, $rangeCovariant, $current[2]) : $current;
-		 					if ($domainCovariant && $rangeCovariant) {
-		 						break; // stop if both are covariant
-		 					}
-		 					
-	 					} else if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)){
- 						
- 							$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
-	 						if ($rangeCovariant) {
-	 							$current = array(true, true, $dra);
-	 							break; // stop if both are covariant
-	 						}
-		 					
- 						
- 						
- 						} else {
- 							$current = array(true, true, $dra);
- 							break; // stop if both are covariant
- 						}
- 				}
- 				$results[] = $current;
- 			}
- 			return $results;
+ 		$domainRangeAnnotationsOfSuperProperty = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
+ 		
+ 		if (empty($domainRangeAnnotationsOfSuperProperty)) {
+ 			return true;
  		}
+ 		$results = array();
+ 		foreach($domainRangeAnnotations as $dra) {
+ 			$current = array(false, false, $dra);
+ 			$domRanVal = $dra->getDVs();
+			$domainCat = $domRanVal[0] != NULL ? $domRanVal[0]->getTitle() : NULL;	
+			$rangeCat  = $domRanVal[1] != NULL ? $domRanVal[1]->getTitle() : NULL;
+ 					 
+			foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
+				$domRanValOfSuperProperty = $drosp->getDVs();
+				$domainCatOfSuperProperty = $domRanValOfSuperProperty[0] != NULL ? $domRanValOfSuperProperty[0]->getTitle() : NULL;	
+				$rangeCatOfSuperProperty  = $domRanValOfSuperProperty[1] != NULL ? $domRanValOfSuperProperty[1]->getTitle() : NULL;
+				if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
+ 				 
+					$domainCovariant = $rangeCovariant = false;
+							
+					$domainCovariant = GraphHelper::checkForPath($this->categoryGraph, $domainCat->getArticleID(), $domainCatOfSuperProperty->getArticleID()); 
+						
+					if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
+						$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
+		 				
+					}
+		 					
+					// add new co-variance tuple if it is better matching domain and range.
+					$current_score = ($current[0] ? 1 : 0) + ($current[1] ? 1 : 0);
+					$new_score = ($domainCovariant ? 1 : 0) + ($rangeCovariant ? 1 : 0);
+					$current = ($new_score > $current_score) ? array($domainCovariant, $rangeCovariant, $current[2]) : $current;
+					if ($domainCovariant && $rangeCovariant) {
+						break; // stop if both are covariant
+					}
+	 					
+				} else if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)){
+ 						
+ 					$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
+	 				if ($rangeCovariant) {
+	 					$current = array(true, true, $dra);
+	 					break; // stop if both are covariant
+	 				}
+		 					
+ 						
+ 						
+ 				} else {
+ 					$current = array(true, true, $dra);
+ 					break; // stop if both are covariant
+ 				}
+ 			}
+ 			$results[] = $current;
+ 		}
+ 		return $results;
  	}
  	
  	
@@ -299,27 +302,32 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   		
  			$types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
  			if (empty($types)) {
- 				//$log .= wfMsg('smw_gard_types_is_not_defined', $a->getText(), $namespaces[$a->getNamespace()])."\n\n";
- 				//
+ 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_DEFINED, $a, count($types));
  			} else {
  				if (count($types) > 1) {
- 					
  					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_TYPE, $a, count($types));
- 					
+ 					return;
  				}
  				$typesOfSuperAttribute = smwfGetSemanticStore()->getTypeOfSuperProperty($this->propertyGraph, $a);
- 				$pathExists = false;
+ 				$typesAsString = array();
+ 				foreach($typesOfSuperAttribute as $t) {
+ 					$typesAsString[] = $t->getXSDValue();
+ 				}
+ 				$typesAsString = array_unique($typesAsString);
+ 				if (count($typesAsString) > 1) {
+ 					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_SUPERTYPES, $a, count($typesAsString));
+ 					return;
+ 				}
+ 				$covariant = false;
  				// only check first 'has type' value, because if more exist, it will be indicated anyway. 
- 				$smwFirstTypeValue = count($typesOfSuperAttribute) > 0 ? $typesOfSuperAttribute[0] : null;
- 				if ($smwFirstTypeValue != null && $smwFirstTypeValue instanceof SMWTypesValue) { 
- 						if ($smwFirstTypeValue->getXSDValue() == $types[0]->getXSDValue()) {
- 							$pathExists = true;
+ 				$firstType = count($typesOfSuperAttribute) > 0 ? $typesOfSuperAttribute[0] : null;
+ 				if ($firstType != null && $firstType instanceof SMWTypesValue) { 
+ 						if ($firstType->getXSDValue() == $types[0]->getXSDValue()) {
+ 							$covariant = true;
  						}
  				}
- 				if (!$pathExists && $smwFirstTypeValue != null) {
- 					
+ 				if (!$covariant && $firstType != null) {
  					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_COVARIANT, $a);
- 					
  				}
  			}
  	}

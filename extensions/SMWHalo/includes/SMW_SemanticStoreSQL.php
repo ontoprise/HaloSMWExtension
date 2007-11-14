@@ -14,8 +14,7 @@
  require_once( "SMW_SemanticStore.php");
 
  
- define('MAX_RECURSION_DEPTH', 10);
- 
+  
  class SMWSemanticStoreSQL extends SMWSemanticStore {
  		
 	public function SMWSemanticStoreSQL() {
@@ -181,13 +180,13 @@
 	}
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL) {
-		
+		$visitedNodes = array();
 		$allInstances = array();
 		$directInstances = $this->getDirectInstances($categoryTitle, $requestoptions);
 		
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getInstances($cat, $requestoptions, $allInstances);
+			$this->_getInstances($cat, $requestoptions, $allInstances, $visitedNodes);
 		}
 		return array($directInstances, $allInstances);
 	}
@@ -219,13 +218,13 @@
 	
 	
 	function getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
-		// Warning: Category graph MUST NOT contain cycles. Otherwise system crashes in an endless loop.
+		$visitedNodes = array();
 		$allProperties = array();
 		$directProperties = $this->getDirectPropertiesOfCategory($categoryTitle, $requestoptions);
 		
 		$subCategories = $this->getDirectSuperCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties);
+			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $visitedNodes);
 		}
 		return array($directProperties, $allProperties);
 	}
@@ -358,99 +357,149 @@
  	
  	
  	public function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p) {
+ 		$visitedNodes = array();
+ 		return $this->_getDomainsAndRangesOfSuperProperty($inheritanceGraph, $p, $visitedNodes);
+ 		
+ 	}
+ 	
+ 	private function _getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p, & $visitedNodes) {
+ 		$results = array();
  		$propertyID = $p->getArticleID();
+ 		array_push($visitedNodes, $propertyID);
  		$superProperties = GraphHelper::searchInSortedGraph($inheritanceGraph, $propertyID);
- 		if (count($superProperties) > 0) {
- 			$superProperty = Title::newFromID($superProperties[0]->to);
- 			$domainRangeCategories = smwfGetStore()->getPropertyValues($superProperty, $this->domainRangeHintRelation);
+ 		if ($superProperties == null) return $results;
+ 		foreach($superProperties as $sp) {
+ 			$spTitle = Title::newFromID($sp->to);
+ 			$domainRangeCategories = smwfGetStore()->getPropertyValues($spTitle, $this->domainRangeHintRelation);
  			if (count($domainRangeCategories) > 0) {
  				return $domainRangeCategories;
  			} else {
- 				return $this->getDomainsAndRangesOfSuperProperty($inheritanceGraph, $superProperty);
+ 				if (!in_array($sp->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getDomainsAndRangesOfSuperProperty($inheritanceGraph, $spTitle, $visitedNodes));
+ 				} 
  			}
  			
- 		} else {
- 			return array();
- 		}
- 		
+ 		} 
+ 		array_pop($visitedNodes);
+ 		return $results;
  	}
  	
  
 	public function getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		$minCards = $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		return max($minCards); // return highest min cardinality
+ 	}
+ 	
+ 	private function _getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array(CARDINALITY_MIN);
  		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
  		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$minCards = smwfGetStore()->getPropertyValues($superAttribute, $this->minCard);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$minCards = smwfGetStore()->getPropertyValues($saTitle, $this->minCard);
  			if (count($minCards) > 0) {
  				
  				return $minCards[0]->getXSDValue() + 0;
  			} else {
- 				return $this->getMinCardinalityOfSuperProperty($inheritanceGraph, $superAttribute);
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
  			}
  			
- 		} else {
- 			return CARDINALITY_MIN;
- 		}
+ 		} 
+		array_pop($visitedNodes);
+ 		return $results;
  	}
  	
  	
  	public function getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		$maxCards = $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		return min($maxCards); // return smallest max cardinality
+ 	}
+ 	
+ 	private function _getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array(CARDINALITY_UNLIMITED);
  		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
  		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$maxCards = smwfGetStore()->getPropertyValues($superAttribute, $this->maxCard);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$maxCards = smwfGetStore()->getPropertyValues($saTitle, $this->maxCard);
  			if (count($maxCards) > 0) {
  				
- 				return trim($maxCards[0]->getXSDValue()) == '*' ? CARDINALITY_UNLIMITED : $maxCards[0]->getXSDValue() + 0;
+ 				return $maxCards[0]->getXSDValue() + 0;
  			} else {
- 				
- 				return $this->getMaxCardinalityOfSuperProperty($inheritanceGraph, $superAttribute);
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
  			}
  			
- 		} else {
- 			
- 			return CARDINALITY_UNLIMITED;
  		}
+ 		array_pop($visitedNodes);
+ 		return $results;
  	}
  	
  	
 	
 	public function getTypeOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		return $this->_getTypeOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		
+ 	}
+ 	
+ 	private function _getTypeOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array();
  		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
  		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$types = smwfGetStore()->getSpecialValues($superAttribute, SMW_SP_HAS_TYPE);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$types = smwfGetStore()->getSpecialValues($saTitle, SMW_SP_HAS_TYPE);
  			if (count($types) > 0) {
  				return $types;
  			} else {
- 				return $this->getTypeOfSuperProperty($inheritanceGraph, $superAttribute);
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getTypeOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
  			}
  			
- 		} else {
- 			return array();
  		}
- 		
+ 		array_pop($visitedNodes);
+ 		return $results;
  	}
  	
  	
  	public function getCategoriesOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		return $this->_getCategoriesOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 	}
+ 	
+ 	private function _getCategoriesOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array();
  		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
  		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
- 		if (count($superAttributes) > 0) {
- 			$superAttribute = Title::newFromID($superAttributes[0]->to);
- 			$categories = $this->getCategoriesForInstance($superAttribute);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$categories = $this->getCategoriesForInstance($saTitle);
  			if (count($categories) > 0) {
  				return $categories;
  			} else {
- 				return $this->getCategoriesOfSuperProperty($inheritanceGraph, $superAttribute);
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getCategoriesOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
  			}
  			
- 		} else {
- 			return array();
- 		}
+ 		} 
+ 		array_pop($visitedNodes);
+ 		return $results;
  	}
  	
  	
@@ -570,37 +619,36 @@
 	}
 
 	
- 	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, & $allInstances, $depth = 0) {
-		// Warning: Category graph MUST NOT contain cycles.
-		// Otherwise system crashes in an endless loop.		
-		$depth++;
-		if ($depth >= MAX_RECURSION_DEPTH) return;
-		
+ 	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, & $allInstances, & $visitedNodes) {
+				
+		array_push($visitedNodes, $categoryTitle->getArticleID());		
 		$directInstances = $this->getDirectInstances($categoryTitle, $requestoptions);
 		foreach($directInstances as $inst) {
 			$allInstances[] = array($inst, $categoryTitle);
 		}
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getInstances($cat, $requestoptions, $allInstances, $depth);
+			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
+				$this->_getInstances($cat, $requestoptions, $allInstances, $visitedNodes);
+			}
 		}
+		array_pop($visitedNodes);
 	}
 	
-	private function _getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL, & $allProperties, $depth = 0) {
-		// Warning: Category graph MUST NOT contain cycles.
-		// Otherwise system crashes in an endless loop.		
-		
-		$depth++;
-		if ($depth >= MAX_RECURSION_DEPTH) return;
-		
+	private function _getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL, & $allProperties, & $visitedNodes) {
+		array_push($visitedNodes, $categoryTitle->getArticleID());
+				
 		$directProperties = $this->getDirectPropertiesOfCategory($categoryTitle, $requestoptions);
 		foreach($directProperties as $inst) {
 			$allProperties[] = $inst;
 		}
 		$subCategories = $this->getDirectSuperCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $depth);
+			if (!in_array($cat->getArticleID(), $visitedNodes)) {
+				$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $visitedNodes);
+			}
 		}
+		array_pop($visitedNodes);
 	}
 	
 	
