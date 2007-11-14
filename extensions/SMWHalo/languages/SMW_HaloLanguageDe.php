@@ -138,6 +138,19 @@ protected $smwUserMessages = array(
 
 	'smw_ob_undefined_type' => '*undefinierter Typ*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
+	
+	/* Commands for ontology browser */
+	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Subkategorie auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_renamecategory' => 'Umbenennen',
+	'smw_ob_cmd_createsubproperty' => 'Subproperty hinzufügen',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Subproperty auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_renameproperty' => 'Umbenennen',
+	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
+	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
+	'smw_ob_cmd_addpropertytodomain' => 'Property hinzufügen zur Kategorie: ',
+	
+	
 	/* Messages for Gardening */
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
@@ -174,12 +187,12 @@ protected $smwUserMessages = array(
 
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prüft auf Zyklen in der Taxonomie und finden Properties ohne Domäne und Wertebereich. Er prüft außerdem die korrekte Verwendung eines Properties auf der Instanz-Ebene.',
-	'smw_gardissue_domains_not_covariant' => 'Domäne von $1 muss eine Subkategorie der Domäne des Super-Properties sein.',
+	'smw_gardissue_domains_not_covariant' => 'Domäne $2 von $1 muss eine Subkategorie der Domäne des Super-Properties sein.',
 	'smw_gardissue_domains_not_defined' => 'Domäne von $1 ist nicht definiert.',
-	'smw_gardissue_ranges_not_covariant' => 'Wertebereichskategorie von $1 muss eine Subkategorie der Wertebereichskategorie des Super-Properties sein.',
+	'smw_gardissue_ranges_not_covariant' => 'Wertebereichskategorie $2 von $1 muss eine Subkategorie der Wertebereichskategorie des Super-Properties sein.',
 	'smw_gardissue_ranges_not_defined' => 'Wertebereichskategorie von $1 ist nicht definiert.',
 	'smw_gardissue_types_not_covariant' => 'Typ von $1 muss gleich dem Typ des Super-Properties sein.',
-	'smw_gardissue_types_not_defined' => 'Typ von $1 ist nicht definiert.',
+	'smw_gardissue_types_not_defined' => 'Typ von $1 ist nicht definiert. Typ Wikipage intendiert? Bitte explizit machen.',
 	'smw_gardissue_double_type' => 'Mehr als ein Typ definiert.',
 	'smw_gardissue_mincard_not_covariant' => 'Mininamle Kardinalität von $1 ist geringer als im Super-Property definiert.',
 	'smw_gardissue_maxcard_not_covariant' => 'Maximale Kardinalität von $1 ist höher als im Super-Property definiert.',
@@ -191,7 +204,8 @@ protected $smwUserMessages = array(
 	'smw_gardissue_transitivity_not_covariant2' => 'Property $1 muss auch transitiv sein.',
 	'smw_gardissue_double_max_card' => 'Warnung: Mehr als ein Property "maximale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
 	'smw_gardissue_double_min_card' => 'Warnung: Mehr als ein Property "minimale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
-	'smw_gardissue_wrong_card_value' => 'Warnung: Kardinaltät of $1 hat falschen Wert. Muss eine positive Ganzzahl or * sein (unendlich). Wird interpretiert als 0.',
+	'smw_gardissue_wrong_mincard_value' => 'Warnung: Min-Kardinaltät of $1 hat falschen Wert. Wird interpretiert als 0.',
+	'smw_gardissue_wrong_maxcard_value' => 'Warnung: Max-Kardinaltät of $1 hat falschen Wert. Muss eine positive Ganzzahl or * sein (unendlich). Wird interpretiert als 0.',
 	'smw_gard_issue_missing_param' => 'Warnung: Fehlender Parameter $3 in n-ärem Property $2 in Artikel $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domäne von $1 passt nicht zur Wertbereichskategorie von $2.',
@@ -203,6 +217,8 @@ protected $smwUserMessages = array(
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_issue_incompatible_entity' => 'Der Artikel $1 ist inkompatibel zu $2.',
 	'smw_gard_issue_incompatible_type' => 'Das Property $1 hat einen inkompatiblen Typ zum Property $2.',
+	'smw_gard_issue_incompatible_supertypes' => 'Das Property $1 hat Superproperties mit inkomptiblen Typen.',
+	
 	'smw_gard_issue_cycle' => 'Zyklus bei: $1',
 	
 	'smw_gardissue_class_covariance' => 'Covariance Probleme',

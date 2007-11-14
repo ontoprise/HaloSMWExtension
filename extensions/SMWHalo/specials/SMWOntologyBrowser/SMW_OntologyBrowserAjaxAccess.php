@@ -120,7 +120,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$attinstances = smwfGetStore()->getAllPropertySubjects($prop,  $reqfilter);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, array(), $p_array[1] + 0, $p_array[2] + 0);
+ 		$dummy = array();
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $dummy, $p_array[1] + 0, $p_array[2] + 0);
  	} else if ($method == 'getCategoryForInstance') {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();

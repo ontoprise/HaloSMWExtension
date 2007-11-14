@@ -18,7 +18,7 @@
 /**
  *  Logger - logs msgs to the database 
  */
-var smwghLoggerEnabled = true;
+var smwghLoggerEnabled = false;
 
 var SmwhgLogger = Class.create();
 SmwhgLogger.prototype = {

@@ -144,6 +144,7 @@ initializeRootPropertyCallback: function (request) {
 updateTree: function(xmlText, rootElement) {
 	var tree = GeneralXMLTools.createDocumentFromString(xmlText);
   	transformer.transformXMLToHTML(tree, rootElement, true);
+  	selectionProvider.fireRefresh();
   	return tree;
 },
 

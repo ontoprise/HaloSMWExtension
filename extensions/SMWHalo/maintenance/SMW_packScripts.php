@@ -58,6 +58,8 @@
 
  $buildAll = count($argv) == 1; // build all if no parameter is set
 
+/* 'smw' section*/
+
  if ($argv[1] == 'smw' || $buildAll) {  // standard scripts which are loaded always (except special pages)
  	 // name of output file
  	 $outputFile = $mediaWikiLocation.'/scripts/deployGeneralScripts.js';
@@ -76,6 +78,7 @@
 	 				  'SMW_DataTypes.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_GenericToolbarFunctions.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Container.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_Marker.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Category.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Relation.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Properties.js' => GPL_LICENSE_ONTOPRISE,
@@ -83,7 +86,8 @@
 	 				  'SMW_FactboxType.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'CombinedSearch.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMWEditInterface.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'obSemToolContribution.js' => GPL_LICENSE_ONTOPRISE /*,
+	 				  'obSemToolContribution.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  /*,
 	 				  'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
 	 				  );
@@ -96,6 +100,8 @@
  	// scripts which will be packed in one JS file (in this order!)
  	$scripts = array(
  				     'effects.js' => MIT_LICENSE_SCRIPTACULOUS,
+ 				     'SMW_Ontology.js' => GPL_LICENSE_ONTOPRISE,
+					 'ontologytools.js' => GPL_LICENSE_ONTOPRISE,
 					 'treeview.js' => GPL_LICENSE_XTREEVIEW,
 					 'treeviewActions.js' => GPL_LICENSE_ONTOPRISE,
 					 'treeviewData.js' => GPL_LICENSE_ONTOPRISE,

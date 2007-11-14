@@ -161,6 +161,19 @@ Initially the flow of browsing is left to right. You can flip the flow by
 clicking the big arrows between the columns.',
 	'smw_ob_undefined_type' => '*undefined type*',
 	'smw_ob_hideinstances' => 'Hide Instances',
+	
+	/* Commands for ontology browser */
+	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Add subcategory on same level',
+	'smw_ob_cmd_renamecategory' => 'Rename',
+	'smw_ob_cmd_createsubproperty' => 'Add subproperty',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Add subproperty on same level',
+	'smw_ob_cmd_renameproperty' => 'Rename',
+	'smw_ob_cmd_renameinstance' => 'Rename instance',
+	'smw_ob_cmd_deleteinstance' => 'Delete instance',
+	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
+	
+	
 	/* Messages for Gardening */
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
@@ -200,12 +213,12 @@ clicking the big arrows between the columns.',
 	'smw_gard_consistency_docu'  => 'The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors.',
 	'smw_gard_no_errors' => 'Congratulations! The wiki is consistent.',
 	
-	'smw_gardissue_domains_not_covariant' => 'Domain of $1 must be a subcategory of the domains of its super property.',
+	'smw_gardissue_domains_not_covariant' => 'Domain $2 of $1 must be a subcategory of the domains of its super property.',
 	'smw_gardissue_domains_not_defined' => 'Domain of $1 is not defined.',
-	'smw_gardissue_ranges_not_covariant' => 'Range of $1 must be a subcategory of the ranges of its super property.',
+	'smw_gardissue_ranges_not_covariant' => 'Range $2 of $1 must be a subcategory of the ranges of its super property.',
 	'smw_gardissue_domains_and_ranges_not_defined' => 'Domain and Range of $1 is not defined.',
 	'smw_gardissue_types_not_covariant' => 'Type of $1 must be equal to type of its superproperty.',
-	'smw_gardissue_types_not_defined' => 'Type of $1 is not defined.',
+	'smw_gardissue_types_not_defined' => 'Warning: Type of $1 is not defined. Is Type:Page intended? Please specify explicitly.',
 	'smw_gardissue_double_type' => '$1 has more than one type defined: $2 "has type" annotations.',
 	'smw_gardissue_mincard_not_covariant' => 'Minimum cardinality of $1 is lower than at super property of it.',
 	'smw_gardissue_maxcard_not_covariant' => 'Maximum cardinality of $1 is higher than at super property of it.',
@@ -217,7 +230,8 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_transitivity_not_covariant2' => '$1 must also be transitive',
 	'smw_gardissue_double_max_card' => 'Warning: More than one max cardinality at property $1 detected. Taking first value, which is $2.',
 	'smw_gardissue_double_min_card' => 'Warning: More than one min cardinality at property $1 detected. Taking first value, which is $2.',
-	'smw_gardissue_wrong_card_value' => 'Warning: Cardinality for $1 has wrong value. Must be a positive integer or *. Will be interpreted as 0.',
+	'smw_gardissue_wrong_mincard_value' => 'Warning: Min Cardinality for $1 has wrong value. Will be interpreted as 0.',
+	'smw_gardissue_wrong_maxcard_value' => 'Warning: Max Cardinality for $1 has wrong value. Must be a positive integer or *. Will be interpreted as 0.',
 	'smw_gard_issue_missing_param' => 'Warning: Missing parameter $3 in n-ary property $2 in article $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domain of $1 does not match range of inverse property $2.',
@@ -228,7 +242,7 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_wrong_unit' => 'Article $1 uses property $2 with wrong unit: "$3".',
 	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2',
 	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible type to $2',
-
+	'smw_gard_issue_incompatible_supertypes' => 'The property $1 has superproperties with incompatible types.',
 	
 	'smw_gard_issue_cycle' => 'Cycle at: $1',
 	

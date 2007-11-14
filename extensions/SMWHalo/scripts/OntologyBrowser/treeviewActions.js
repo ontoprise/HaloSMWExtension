@@ -38,44 +38,9 @@ var OB_oldSelectedRelationNode = null;
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
 
-var OB_SELECTIONLISTENER = 'selectionChanged';
-var OB_REFRESHLISTENER = 'refresh';
-
-var OBEventProvider = Class.create();
-OBEventProvider.prototype = {
-	initialize: function() {
-		this.listeners = new Array();
-	},
-	
-	addListener: function(listener, type) {
-		if (this.listeners[type] == null) {
-			this.listeners[type] = new Array();
-		} 
-		if (typeof(listener[type] == 'function')) { 
-			this.listeners[type].push(listener);
-		}
-	},
-	
-	removeListener: function(listener, type) {
-		if (this.listeners[type] == null) return;
-		this.listeners[type] = this.listeners[type].without(listener);
-	},
-	
-	fireSelectionChanged: function(id, title, ns, node) {
-		this.listeners[OB_SELECTIONLISTENER].each(function (l) { 
-			l.selectionChanged(id, title, ns, node);
-		});
-	},
-	
-	fireRefresh: function() {
-		this.listeners[OB_REFRESHLISTENER].each(function (l) { 
-			l.refresh();
-		});
-	}
-}	
 
 
-var selectionProvider = new OBEventProvider();	
+
 
 // Logging on close does not work, because window shuts down. What to do?
 //window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
@@ -94,9 +59,14 @@ var OBTreeActionListener = Class.create();
 OBTreeActionListener.prototype = {
 	initialize: function() {
 		this.OB_currentFilter = null;
-		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+		
 	},
 	
+	/**
+	 * @abstract
+	 * 
+	 * Will be implemented in subclasses.
+	 */
 	selectionChanged: function(id, title, ns, node) {
 		
 	},
@@ -466,7 +436,9 @@ var OBCategoryTreeActionListener = Class.create();
 OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(), {
 	initialize: function() {
 		
-		this.OB_currentlySelectedCategory = null;
+		this.selectedCategory = null;
+		this.selectedCategoryID = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 		
 	},
 	
@@ -479,6 +451,23 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		smwhgLogger.log(categoryName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('CATEGORY_NS_WOC'), categoryName, editmode);
 	},
+	
+	selectionChanged: function(id, title, ns, node) {
+		if (ns == SMW_CATEGORY_NS) {
+			this.selectedCategory = title;
+			this.selectedCategoryID = id;
+		}
+	},
+	
+	showSubMenu: function(commandID) {
+		if (this.selectedCategory == null) {
+			alert('Select a parent category first!');
+			return;
+		}
+		obCategoryMenuProvider.showTitleInput(commandID, this.selectedCategory);
+	},
+	
+	
 // ---- Selection methods. Called when the entity is selected ---------------------
 
 /**
@@ -554,7 +543,7 @@ select: function (event, node, categoryID, categoryName) {
 	  	transformer.transformResultToHTML(request,relattDIV);
 	  	selectionProvider.fireRefresh();
 	 }
-	 this.OB_currentlySelectedCategory = categoryName;
+	 
 	 
 	 if (OB_LEFT_ARROW == 0) {
 	 	OB_instance_pendingIndicator.show();
@@ -697,7 +686,7 @@ OBInstanceActionListener.prototype = {
 		partition++;
 		OB_instance_pendingIndicator.show();
 		if (globalActionListener.activeTreeName == 'categoryTree') {
-			dataAccess.getInstances(categoryActionListener.OB_currentlySelectedCategory, partition, this.selectPartitionCallback.bind(this));
+			dataAccess.getInstances(categoryActionListener.selectedCategory, partition, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
 			dataAccess.getInstancesUsingProperty(propertyActionListener.OB_currentlySelectedAttribute, partition, this.selectPartitionCallback.bind(this));
 		} else { // relation tree
@@ -711,7 +700,7 @@ OBInstanceActionListener.prototype = {
 		partition--;
 		OB_instance_pendingIndicator.show();
 		if (globalActionListener.activeTreeName == 'categoryTree') {
-			dataAccess.getInstances(categoryActionListener.OB_currentlySelectedCategory, partition, this.selectPartitionCallback.bind(this));
+			dataAccess.getInstances(categoryActionListener.selectedCategory, partition, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
 			dataAccess.getInstancesUsingProperty(propertyActionListener.OB_currentlySelectedAttribute, partition, this.selectPartitionCallback.bind(this));
 		} else { // relation tree
@@ -752,12 +741,29 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
   initialize: function() {
 		
 		this.OB_currentlySelectedAttribute = null;
-		
+		this.selectedProperty = null;
+		this.selectedProperty = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
 	navigateToEntity: function(event, node, propertyName, editmode) {
 		smwhgLogger.log(propertyName, "OB","inspect_entity");
 		GeneralBrowserTools.navigateToPage(gLanguage.getMessage('PROPERTY_NS_WOC'), propertyName, editmode);
+	},
+	
+	selectionChanged: function(id, title, ns, node) {
+		if (ns == SMW_PROPERTY_NS) {
+			this.selectedProperty = title;
+			this.selectedProperty = id;
+		}
+	},
+	
+	showSubMenu: function(commandID) {
+		if (this.selectedProperty == null) {
+			alert('Select a parent property first!');
+			return;
+		}
+		obPropertyMenuProvider.showTitleInput(commandID, this.selectedProperty);
 	},
 	
   select: function (event, node, propertyID, propertyName) {
@@ -782,7 +788,10 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		var instanceDIV = document.getElementById("instanceList");
 		
 		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
-	
+		
+		// fire selection event
+		selectionProvider.fireSelectionChanged(propertyID, propertyName, SMW_PROPERTY_NS, nextDIV);
+		
 		smwhgLogger.log(propertyName, "OB","clicked");	
 	
 		function callbackOnPropertySelect(request) {
@@ -794,7 +803,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	 	 	transformer.transformResultToHTML(request,instanceDIV, true);
-	 	 	
+	 	 	selectionProvider.fireRefresh();
 		}
 	     OB_instance_pendingIndicator.show();
 	 	 this.OB_currentlySelectedAttribute = propertyName;
@@ -841,7 +850,7 @@ OBAnnotationActionListener.prototype = {
 	selectProperty: function(event, node, propertyName) {
 		// delegate to schemaPropertyListener
 		schemaActionPropertyListener.selectProperty(event, node, propertyName);
-	},
+	}
 	
 }
 
@@ -936,7 +945,7 @@ OBGlobalActionListener.prototype = {
 		
 		// make sure that OntologyBrowser Filter search gets focus if a key is pressed
 		Event.observe(document, 'keydown', function(event) { 
-			if (event.target.id == 'searchInput') return;
+			if (event.target.id == 'searchInput' || event.target.id.indexOf('ontologytools') != -1) return;
 			if (event.target.parentNode != document && $(event.target.parentNode).hasClassName('OB-filters')) return;
 			$('FilterBrowserInput').focus() 
 		});
@@ -1162,6 +1171,7 @@ OBGlobalActionListener.prototype = {
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
+	  	selectionProvider.fireRefresh();
 	 }
 	 
 	 function filterBrowsingPropertyCallback(request) {
@@ -1174,6 +1184,7 @@ OBGlobalActionListener.prototype = {
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedProperties = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,propertyDIV, true);
+	  	selectionProvider.fireRefresh();
 	 }
 	 
 	 if (!force && event["keyCode"] != 13 ) {

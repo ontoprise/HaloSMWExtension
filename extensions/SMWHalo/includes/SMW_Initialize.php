@@ -292,7 +292,15 @@ function smwfHaloAddHTMLHeader(&$out) {
 		
 		// serialize the css
 		$jsm->serializeCSS($out);
-
+		
+		/* 
+		 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 * 
+		 * Note: If you add new scripts to this section you have to update SMW_packscripts.php scripts too.
+		 * Just add the script's name (not whole path) in the 'smw' section.
+		 * 
+		 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 * */
 		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
@@ -375,7 +383,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			smwfHaloAddJSLanguageScripts($jsm);
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralScripts.js');
-
+			
 			
 		}
 

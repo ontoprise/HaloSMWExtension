@@ -29,6 +29,7 @@ a.selectedItem {
 	padding:0px;
 	cursor: hand;
 	background-color: #F1F02E;
+	border: 1px solid #000000;
 }
 
 a.inherited {
@@ -99,6 +100,7 @@ a.navigationLink {
 
 a.selectedSwitch {
 	background-color: #FFFF00;
+	border: 1px solid #000000;
 }
 
 #relattributes table{
@@ -143,6 +145,10 @@ a.selectedSwitch {
 	border: 1px solid #AAAAAA;
 }
 
+#menuBarConceptTree a:hover {
+	background-color: #99AABB;
+}
+
 #menuBarConceptTree {
 	background-color: #BBCCDD;
 }
@@ -151,12 +157,24 @@ a.selectedSwitch {
 	background-color: #DDBBBB;
 }
 
+#menuBarInstance a:hover {
+	background-color: #BB9999;
+}
+
 #menuBarProperties {
 	background-color: #DDBB88;
 }
 
+#menuBarProperties a:hover {
+	background-color: #BB9966;
+}
+
 #menuBarPropertyTree{
 	background-color: #DDBB88;
+}
+
+#menuBarPropertyTree a:hover {
+	background-color: #BB9966;
 }
 
 .gardeningissue {

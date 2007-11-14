@@ -140,6 +140,11 @@ var wgLanguageStrings = {
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
 	'MARK_A_WORD'             : 'Mark a word...',
 	'OPEN_IN_OB'              : 'Open in Ontology Browser',
+	'OB_CREATE'	  			  : 'Create',
+	'OB_RENAME'	  			  : 'Rename',
+	'OB_DELETE'	  			  : 'Delete',
+	'OB_TITLE_EXISTS'		  : 'Title exists!',
+	'OB_ENTER_TITLE'		  : 'Enter title',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',
