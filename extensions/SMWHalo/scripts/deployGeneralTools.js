@@ -155,7 +155,7 @@ function BrowserDetectLite(){var ua=navigator.userAgent.toLowerCase();this.isGec
 
 // smw_logger.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var smwghLoggerEnabled=true;var SmwhgLogger=Class.create();SmwhgLogger.prototype={initialize:function(){},log:function(logmsg,type,func){if(!smwghLoggerEnabled){return;}var logmsg=(logmsg==null)?"":logmsg;var type=(type==null)?"":type;var time=new Date();var timestamp=time.toGMTString();var userid=(wgUserName==null)?"":wgUserName;var locationURL=(wgPageName==null)?"":wgPageName;var func=(func==null)?"":func;sajax_do_call('smwLog',[logmsg,type,func,locationURL,timestamp],this.logcallback.bind(this));},logcallback:function(param){if(param.status!=200){alert('logging failed: '+param.statusText);}}};var smwhgLogger=new SmwhgLogger();
+var smwghLoggerEnabled=false;var SmwhgLogger=Class.create();SmwhgLogger.prototype={initialize:function(){},log:function(logmsg,type,func){if(!smwghLoggerEnabled){return;}var logmsg=(logmsg==null)?"":logmsg;var type=(type==null)?"":type;var time=new Date();var timestamp=time.toGMTString();var userid=(wgUserName==null)?"":wgUserName;var locationURL=(wgPageName==null)?"":wgPageName;var func=(func==null)?"":func;sajax_do_call('smwLog',[logmsg,type,func,locationURL,timestamp],this.logcallback.bind(this));},logcallback:function(param){if(param.status!=200){alert('logging failed: '+param.statusText);}}};var smwhgLogger=new SmwhgLogger();
 
 // SMW_Language.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
