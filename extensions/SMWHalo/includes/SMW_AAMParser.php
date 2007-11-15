@@ -61,8 +61,8 @@ class SMWH_AAMParser {
 		$id = 1;
 		$pos = 0;
 		foreach ($parts as $part) {
-			$len = mb_strlen($part[0]);
-			$part0 = mb_substr($wikiText, $pos, $len);
+			$len = mb_strlen($part[0], "UTF-8");
+			$part0 = mb_substr($wikiText, $pos, $len, "UTF-8");
 			// Is the part a template?
  			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
 				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part0, $name);
@@ -77,8 +77,8 @@ class SMWH_AAMParser {
 			$pos += $len;
 		}
 		$part0 = mb_substr($wikiText, $pos, 1);
-		$markedText .= $part0;
-		
+		$markedText .= $part0."\n{wikiTextOffset=".$pos."}\n";
+				
 		return $markedText;
 	}
 	
@@ -168,35 +168,41 @@ class SMWH_AAMParser {
 	 */
 	private function maskHTML(&$wikiText)
 	{
-		// Find HTML comments and nowiki-sections
-		if (!preg_match_all("/<!--|-->|<nowiki>|<\/nowiki>|<ask>|<\/ask>/",
-		                    $wikiText,$matches,PREG_OFFSET_CAPTURE)) {
-			return $wikiText;
-		}
-		
-		$matches = $matches[0];
+		$parts = preg_split('/(<!--)|(-->)|(<nowiki>)|(<\/nowiki>)|(<ask.*?>)|(<\/ask>)/sm', 
+		                    $wikiText, -1, 
+		                    PREG_SPLIT_DELIM_CAPTURE |
+		                    PREG_SPLIT_NO_EMPTY);
+
 		$text = "";
 		$openingTag = null;
-		$startPos = 0;
-		$endPos = 0;
-		foreach ($matches as $match) {
-			if (!$openingTag) {
-				$openingTag = $match[0];
-				$startPos = $match[1];
-				$text .= substr($wikiText, $endPos, $startPos-$endPos);
-				$endPos = $startPos + strlen($match[0]);
-			} else {
-				if (($openingTag == '<!--' && $match[0] == '-->') ||
-				    ($openingTag == '<nowiki>' && $match[0] == '</nowiki>') ||
-				    ($openingTag == '<ask>' && $match[0] == '</ask>')) {
-					//The opening tag matches the closing tag
-				    $endPos = $match[1] + strlen($match[0]);
-				    $text .= str_repeat("*", $endPos-$startPos);
-				    $openingTag = null;
+		$maskLen = 0;
+		foreach ($parts as $part) {
+			$isTag = ($part == "<!--") ||
+			         ($part == "-->") ||
+			         ($part == "<nowiki>") ||
+			         ($part == "</nowiki>") ||
+			         (strpos($part, '<ask') === 0) ||
+			         ($part == "</ask>");
+			$maskLen += mb_strlen($part);
+			if ($isTag) {
+				if (!$openingTag) {
+					$openingTag = $part;
+					$maskLen = mb_strlen($part);
+				} else {
+					$comment = ($openingTag == '<!--') && ($part == '-->');
+					$nowiki = ($openingTag == '<nowiki>') && ($part == '</nowiki>');
+					$ask = (strpos($openingTag, '<ask') === 0) && ($part == '</ask>');
+					if ($comment || $nowiki || $ask) {
+						//The opening tag matches the closing tag
+					    $text .= str_repeat("*", $maskLen);
+					    $openingTag = null;
+					}
 				}
+			} else if (!$openingTag) {
+				// concatenate normal text
+				$text .= $part;
 			}
 		}
-		$text .= substr($wikiText, $endPos, strlen($wikiText)-$endPos);
 		return $text;
 	}
 	
