@@ -78,7 +78,7 @@ $smwgQSubpropertyDepth = 10;  // Restrict level of sub-property inclusion (steps
                               // (Use 0 to disable hierarchy-inferencing in queries)
 $smwgQEqualitySupport = true; // Should #redirects be evaluated as equality between page names?
 $smwgQSortingSupport  = true; // (De)activate sorting of results.
-$smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE); // Which namespaces should be searched by default?
+$smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE, NS_USER, SMW_NS_PROPERTY); // Which namespaces should be searched by default?
                               // (value NULL switches off default restrictions on searching -- this is faster)
 $smwgQMaxLimit = 10000;       // Max number of results ever retrieved, even when using special query pages.
 $smwgQDisjunctionSupport = true; // Support disjunctions in queries (||)?
