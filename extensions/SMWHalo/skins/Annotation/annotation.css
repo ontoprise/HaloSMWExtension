@@ -2,6 +2,10 @@
 	background-color: #ff9602;
 }
 
+.aam_existing_prop_highlight{
+	border: 1px solid #00aa00;
+}
+
 .aam_new_anno_prop_highlight{
 	background-color: #ff9602;
 	border: 1px solid #000000;
