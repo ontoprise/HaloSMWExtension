@@ -313,4 +313,4 @@ AdvancedAnnotation.create = function() {
 };
 
 var smwhgAdvancedAnnotation = null;
-Event.observe(window, 'load', AdvancedAnnotation.create());
+Event.observe(window, 'load', AdvancedAnnotation.create);
