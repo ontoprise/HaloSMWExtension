@@ -27,7 +27,7 @@
  		foreach($issues as $i) {
  			 			
  			if ($i->getTitle1() !== NULL) {
- 				$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 				$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
  				$htmlRepresentation = $i->getRepresentation();
  				$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
  			}
@@ -53,7 +53,7 @@
  			switch($i->getType()) {
  				case SMW_GARDISSUE_WRONG_UNIT: { // highlight if unit matches the GI
  					if (stripos($value->getUnit(), $i->getValue()) !== false) {
- 						$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
  						$htmlRepresentation = $i->getRepresentation();
  						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
  					} 
@@ -62,7 +62,7 @@
  				case SMW_GARD_ISSUE_MISSING_PARAM: {
  					$dvs = $value->getDVs(); // highlight if missing container matches the GI 
  					if ($dvs[$i->getValue()] == NULL) {
- 						$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
  						$htmlRepresentation = $i->getRepresentation();
  						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
  					}
@@ -70,7 +70,7 @@
  				}
  				case SMW_GARDISSUE_WRONG_TARGET_VALUE: { // highlight if wrong target matches the GI
  					if ($value->getTitle()->getDBkey() == $i->getValue()) {
- 						$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
  						$htmlRepresentation = $i->getRepresentation();
  						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
  					}
@@ -111,7 +111,7 @@
  				
 		 		$errorTags = "";
 		 		
-		 		$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+		 		$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
 		 		$htmlRepresentation = $i->getRepresentation();
 		 		$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
 		 				 		
