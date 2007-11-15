@@ -119,7 +119,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 					 						 					
 					 						} 
 					 						if (!$rangeCorrect){
-					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $target->getTitle()->getDBkey());
+					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $explodedValues[$i]->getTitle()->getDBkey());
 					 						}
  										}
  									}
