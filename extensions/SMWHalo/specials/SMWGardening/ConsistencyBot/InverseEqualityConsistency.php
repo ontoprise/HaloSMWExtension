@@ -47,7 +47,7 @@
  		 	$dv_source = $domainAndRangeOfSource[0]->getDVs();
  		 	$dv_target = $domainAndRangeOfTarget[0]->getDVs();
  		 	
- 		 	if (count($dv_source) > 0 && count($dv_target) > 1 && $dv_source[0] != NULL || $dv_target[1] != NULL) {
+ 		 	if (count($dv_source) > 0 && count($dv_target) > 1 && $dv_source[0] != NULL && $dv_target[1] != NULL) {
  		 		if (!$dv_source[0]->getTitle()->equals($dv_target[1]->getTitle())) {
  			
  					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
@@ -55,7 +55,7 @@
  				} 
  		 	}
  		 	
- 		 	if (count($dv_source) > 1 && count($dv_target) > 0 && $dv_source[1] != NULL || $dv_target[0] != NULL) {
+ 		 	if (count($dv_source) > 1 && count($dv_target) > 0 && $dv_source[1] != NULL && $dv_target[0] != NULL) {
  		 		 if (!$dv_source[1]->getTitle()->equals($dv_target[0]->getTitle())) {
  				
  					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
