@@ -37,29 +37,37 @@
  			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintRelation);
  			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintRelation);
  			
- 			if (count($domainAndRangeOfSource) != 1) {
- 				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $s);
- 				
+ 			if (count($domainAndRangeOfSource) == 0) {
  				continue;
  			}
- 			if (count($domainAndRangeOfTarget) != 1) {
- 				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $t);
- 				
+ 			if (count($domainAndRangeOfTarget) == 0) {
  				continue;
  			}
- 		 			
- 			if (!$domainAndRangeOfSource->getDVs[0]->getTitle()->equals($domainAndRangeOfTarget->getDVs[1]->getTitle())) {
+ 		 	
+ 		 	$dv_source = $domainAndRangeOfSource[0]->getDVs();
+ 		 	$dv_target = $domainAndRangeOfTarget[0]->getDVs();
+ 		 	
+ 		 	if (count($dv_source) > 0 && count($dv_target) > 1 && $dv_source[0] != NULL || $dv_target[1] != NULL) {
+ 		 		if (!$dv_source[0]->getTitle()->equals($dv_target[1]->getTitle())) {
  			
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  				
- 			} else if (!$domainAndRangeOfSource->getDVs[1]->getTitle()->equals($domainAndRangeOfTarget->getDVs[0]->getTitle())) {
+ 				} 
+ 		 	}
+ 		 	
+ 		 	if (count($dv_source) > 1 && count($dv_target) > 0 && $dv_source[1] != NULL || $dv_target[0] != NULL) {
+ 		 		 if (!$dv_source[1]->getTitle()->equals($dv_target[0]->getTitle())) {
  				
- 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
- 			}
+ 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
+ 					
+ 				}
+ 		 	}  
+ 		 	
+ 			
+ 			
+ 			
  		}
- 		return ;
+ 		
  	}
  	
  	public function checkEqualToRelations() {

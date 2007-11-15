@@ -402,7 +402,7 @@
  			$minCards = smwfGetStore()->getPropertyValues($saTitle, $this->minCard);
  			if (count($minCards) > 0) {
  				
- 				return $minCards[0]->getXSDValue() + 0;
+ 				return array($minCards[0]->getXSDValue() + 0);
  			} else {
  				if (!in_array($sa->to, $visitedNodes)) {
 	 				$results = array_merge($results, $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
@@ -432,7 +432,7 @@
  			$maxCards = smwfGetStore()->getPropertyValues($saTitle, $this->maxCard);
  			if (count($maxCards) > 0) {
  				
- 				return $maxCards[0]->getXSDValue() + 0;
+ 				return array($maxCards[0]->getXSDValue() + 0);
  			} else {
  				if (!in_array($sa->to, $visitedNodes)) {
 	 				$results = array_merge($results, $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
