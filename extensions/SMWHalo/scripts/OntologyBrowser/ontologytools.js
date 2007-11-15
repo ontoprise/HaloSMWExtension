@@ -66,7 +66,7 @@ var selectionProvider = new OBEventProvider();
 var OBOntologyTools = Class.create();
 OBOntologyTools.prototype = { 
 	initialize: function() {
-		this.ontologyModifier = new OntologyModifier();
+		
 	},
 	
 	addSubcategory: function(subCategoryTitle, superCategoryNode) {

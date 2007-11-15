@@ -100,8 +100,7 @@
  	// scripts which will be packed in one JS file (in this order!)
  	$scripts = array(
  				     'effects.js' => MIT_LICENSE_SCRIPTACULOUS,
- 				     'SMW_Ontology.js' => GPL_LICENSE_ONTOPRISE,
-					 'ontologytools.js' => GPL_LICENSE_ONTOPRISE,
+ 				   	 'ontologytools.js' => GPL_LICENSE_ONTOPRISE,
 					 'treeview.js' => GPL_LICENSE_XTREEVIEW,
 					 'treeviewActions.js' => GPL_LICENSE_ONTOPRISE,
 					 'treeviewData.js' => GPL_LICENSE_ONTOPRISE,
