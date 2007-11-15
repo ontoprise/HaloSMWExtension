@@ -64,7 +64,7 @@ class SMWH_AAMParser {
 			$len = mb_strlen($part[0]);
 			$part0 = mb_substr($wikiText, $pos, $len);
 			// Is the part a template?
-			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
+ 			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
 				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part0, $name);
 				$markedText .=  "\n".'{wikiTextOffset='.$pos
 				               .' template="'.$name[1].'"'
@@ -76,7 +76,9 @@ class SMWH_AAMParser {
 			}
 			$pos += $len;
 		}
-
+		$part0 = mb_substr($wikiText, $pos, 1);
+		$markedText .= $part0;
+		
 		return $markedText;
 	}
 	
@@ -123,7 +125,9 @@ class SMWH_AAMParser {
 	public function highlightAnnotations(&$wikiText)
 	{
 		// add intermediate tags to annotations
-		$text = preg_replace('/(\[\[.*?\]\])/','{annostart}$1{annoend}', $wikiText);
+		$text = preg_replace('/(\[\[.*?\]\])/','{linkstart}$1{linkend}', $wikiText);
+		$text = preg_replace('/{linkstart}(\[\[.*?(::|:=).*?\]\]){linkend}/',
+		                     '{annostart}$1{annoend}', $text);
 		return $text;
 	}
 		
@@ -136,10 +140,18 @@ class SMWH_AAMParser {
 	 */
 	public function highlightAnnotations2HTML(&$wikiText)
 	{
+		global $smwgHaloScriptPath;
 		// add intermediate tags to annotations
 		$text = preg_replace('/{annostart}(.*?){annoend}/',
-		                     '<span class="aam_prop_highlight">$1</span>',
+							 '<a href="javascript:smwhfEditAnno()">'.
+		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
+							 '<span class="aam_prop_highlight">$1</span>',
 		                     $wikiText);
+		$text = preg_replace('/{linkstart}(.*?){linkend}/',
+							 '<a href="javascript:smwhfEditLink()">'.
+		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
+		                     '<span class="aam_existing_prop_highlight">$1</span>',
+		                     $text);
 		return $text;
 	}
 		
@@ -157,7 +169,7 @@ class SMWH_AAMParser {
 	private function maskHTML(&$wikiText)
 	{
 		// Find HTML comments and nowiki-sections
-		if (!preg_match_all("/<!--|-->|<nowiki>|<\/nowiki>/",
+		if (!preg_match_all("/<!--|-->|<nowiki>|<\/nowiki>|<ask>|<\/ask>/",
 		                    $wikiText,$matches,PREG_OFFSET_CAPTURE)) {
 			return $wikiText;
 		}
@@ -175,7 +187,8 @@ class SMWH_AAMParser {
 				$endPos = $startPos + strlen($match[0]);
 			} else {
 				if (($openingTag == '<!--' && $match[0] == '-->') ||
-				    ($openingTag == '<nowiki>' && $match[0] == '</nowiki>')) {
+				    ($openingTag == '<nowiki>' && $match[0] == '</nowiki>') ||
+				    ($openingTag == '<ask>' && $match[0] == '</ask>')) {
 					//The opening tag matches the closing tag
 				    $endPos = $match[1] + strlen($match[0]);
 				    $text .= str_repeat("*", $endPos-$startPos);
