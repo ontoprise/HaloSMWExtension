@@ -461,10 +461,11 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	
 	showSubMenu: function(commandID) {
 		if (this.selectedCategory == null) {
-			alert('Select a parent category first!');
+			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}
-		obCategoryMenuProvider.showTitleInput(commandID, this.selectedCategory);
+		
+		obCategoryMenuProvider.showContent(commandID, this.selectedCategory, 'categoryTree');
 	},
 	
 	
@@ -584,7 +585,8 @@ selectPreviousPartition: function (e, htmlNode) {
 var OBInstanceActionListener = Class.create();
 OBInstanceActionListener.prototype = {
 	initialize: function() {
-		//empty
+		
+		this.selectedInstance = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
@@ -595,9 +597,23 @@ OBInstanceActionListener.prototype = {
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
-		
+		if (ns == SMW_INSTANCE_NS) {
+			this.selectedInstance = title;
+
+		}
 	},
 	
+	showSubMenu: function(commandID) {
+		if (this.selectedInstance == null) {
+			alert(gLanguage.getMessage('OB_SELECT_INSTANCE'));
+			return;
+		}
+		if (commandID == SMW_OB_COMMAND_INSTANCE_DELETE) {
+			alert('Delete command');
+			return;
+		}
+		obInstanceMenuProvider.showContent(commandID, this.selectedInstance, 'instanceList');
+	},
 	/**
 	 * Called when a supercategory of an instance is selected.
 	 */
@@ -742,7 +758,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		this.OB_currentlySelectedAttribute = null;
 		this.selectedProperty = null;
-		this.selectedProperty = null;
+		this.selectedPropertyID = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
@@ -754,16 +770,16 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_PROPERTY_NS) {
 			this.selectedProperty = title;
-			this.selectedProperty = id;
+			this.selectedPropertyID = id;
 		}
 	},
 	
 	showSubMenu: function(commandID) {
 		if (this.selectedProperty == null) {
-			alert('Select a parent property first!');
+			alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
 			return;
 		}
-		obPropertyMenuProvider.showTitleInput(commandID, this.selectedProperty);
+		obPropertyMenuProvider.showContent(commandID, this.selectedProperty, 'propertyTree');
 	},
 	
   select: function (event, node, propertyID, propertyName) {
@@ -868,8 +884,18 @@ OBSchemaPropertyActionListener.prototype = {
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedCategory = title;
-			if ($('currentSelectedCategory') != null) $('currentSelectedCategory').innerHTML = "'"+title+"'";
+			if ($('currentSelectedCategory') != null) {
+				$('currentSelectedCategory').innerHTML = "'"+title+"'";
+			}
 		}
+	},
+	
+	showSubMenu: function(commandID) {
+		if (this.selectedCategory == null) {
+			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+			return;
+		}
+		obSchemaPropertiesMenuProvider.showContent(commandID, this.selectedCategory, 'relattributes');
 	},
 	
 	navigateToEntity: function(event, node, attributeName, editmode) {

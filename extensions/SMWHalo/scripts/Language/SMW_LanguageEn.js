@@ -145,6 +145,11 @@ var wgLanguageStrings = {
 	'OB_DELETE'	  			  : 'Delete',
 	'OB_TITLE_EXISTS'		  : 'Title exists!',
 	'OB_ENTER_TITLE'		  : 'Enter title',
+	'OB_SELECT_CATEGORY'	  : 'Select category first',
+	'OB_SELECT_PROPERTY'	  : 'Select property first',
+	'OB_SELECT_INSTANCE'	  : 'Select instance first',
+	'OB_WRONG_MAXCARD'		  : 'Wrong max cardinality',
+	'OB_WRONG_MINCARD'		  : 'Wrong max cardinality',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

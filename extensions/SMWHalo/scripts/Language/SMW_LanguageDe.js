@@ -145,6 +145,9 @@ var wgLanguageStrings = {
 	'OB_DELETE'	  			  : 'L&oumlschen',
 	'OB_TITLE_EXISTS'		  : 'Seite existiert bereits',
 	'OB_ENTER_TITLE'		  : 'Seitennamen eingeben',
+	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie auswählen',
+	'OB_SELECT_PROPERTY'	  : 'Erst Property auswählen',
+	'OB_SELECT_INSTANCE'	  : 'Erst Instanz auswählen',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',
