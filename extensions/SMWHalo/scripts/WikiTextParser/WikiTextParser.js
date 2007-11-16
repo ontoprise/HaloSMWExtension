@@ -392,22 +392,31 @@ WikiTextParser.prototype = {
 		
 		// The annotation must not be within templates, nowiki-sections and
 		// annotations
-		var searchState = 3; // 0 - find closing </nowiki>
+		var SEARCH_TEXT_OR_TAG = 5;
+		var TEXT_FOUND = 6;
+		var searchState = SEARCH_TEXT_OR_TAG; 
+							 // 0 - find closing </nowiki>
 							 // 1 - find closing }}
 							 // 2 - find closing ]]
-							 // 3 - find text or <nowiki>,{{,[[
-							 // 4 - text found
+							 // 3 - find closing </ask>
+							 // 4 - find closing </pre>
+							 // 5 - find text or <nowiki>,{{,[[,<ask, <pre>
+							 // 6 - text found
 		pos = -1;
-		var startSearches = [text, '<nowiki>', '{{', '[['];
-		var endSearches = [['</nowiki>', text], ['}}', text], [']]', text]];
+		var startSearches = [text, '<nowiki>', '{{', '[[', '<ask', '<pre>'];
+		var endSearches = [['</nowiki>', text], 
+		                   ['}}', text], 
+		                   [']]', text], 
+		                   ['</ask>', text], 
+		                   ['</pre>', text]];
 		var textFoundWithinTags = -1;
 		while (true) {
 			var res = this.findFirstOf(start, 
-			                           searchState == 3 
+			                           searchState == SEARCH_TEXT_OR_TAG 
 			                           	? startSearches
 			                            : endSearches[searchState]);
-			if (searchState == 3) {
-				// tried to find text or <nowiki>,{{,[[
+			if (searchState == SEARCH_TEXT_OR_TAG) {
+				// tried to find text or <nowiki>,{{,[[,<ask
 				if (res[1] == null || res[0] > end) {
 					// nothing found => stop search
 					break;
@@ -415,7 +424,7 @@ WikiTextParser.prototype = {
 				if (res[1] == text) {
 					// search text found => stop search
 					pos = res[0];
-					searchState = 4;
+					searchState = TEXT_FOUND;
 					break;
 				} else if (res[1] == '<nowiki>') {
 					searchState = 0;
@@ -433,6 +442,10 @@ WikiTextParser.prototype = {
 					}
 				} else if (res[1] == '[[') {
 					searchState = 2;
+				} else if (res[1] == '<ask') {
+					searchState = 3;
+				} else if (res[1] == '<pre>') {
+					searchState = 4;
 				}
 			} else {
 				// tried to find some closing tag
@@ -443,18 +456,22 @@ WikiTextParser.prototype = {
 					// text found within a tagged area
 					textFoundWithinTags = searchState;
 				} else {
-					searchState = 3;
+					// closing tag found -> tried to find text again
+					textFoundWithinTags = searchState;
+					searchState = SEARCH_TEXT_OR_TAG;
 				}
 			}
 			start = res[0]+1;
 		}
 		
-		if (searchState != 4 || pos < 0 || pos > end) {
+		if (searchState != TEXT_FOUND || pos < 0 || pos > end) {
 			var msgId = 'WTP_TEXT_NOT_FOUND';
 			switch (textFoundWithinTags) {
 				case 0: msgId = 'WTP_NOT_IN_NOWIKI'; break;
 				case 1: msgId = 'WTP_NOT_IN_TEMPLATE'; break;
 				case 2: msgId = 'WTP_NOT_IN_ANNOTATION'; break;
+				case 3: msgId = 'WTP_NOT_IN_QUERY'; break;
+				case 4: msgId = 'WTP_NOT_IN_PREFORMATTED'; break;
 			}
 			msg = gLanguage.getMessage(msgId);
 			return msg.replace(/\$1/g, text);

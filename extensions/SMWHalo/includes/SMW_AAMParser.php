@@ -158,17 +158,24 @@ class SMWH_AAMParser {
 	//--- Private methods ---
 
 	/**
-	 * The wiki text <$wikiText> may contain dangerous HTML code, that will
+	 * The wiki text <$wikiText> may contain dangerous HTML code, 
+	 * <nowiki>-sections etc.that will
 	 * confuse the parser that generates wiki text offsets 
 	 * (see addWikiTextOffsets). All dangerous text is replaced by * to
 	 * keep the number of characters the same.
+	 * 
+	 * The following sections are handled:
+	 * - HTML-comments (<!--  -->)
+	 * - <nowiki>-sections
+	 * - <ask>-sections
+	 * - <pre>-sections
 	 *
 	 * @param string $wikiText
 	 * @return string masked wiki text
 	 */
 	private function maskHTML(&$wikiText)
 	{
-		$parts = preg_split('/(<!--)|(-->)|(<nowiki>)|(<\/nowiki>)|(<ask.*?>)|(<\/ask>)/sm', 
+		$parts = preg_split('/(<!--)|(-->)|(<nowiki>)|(<\/nowiki>)|(<ask.*?>)|(<\/ask>)|(<pre>)|(<\/pre>)/sm', 
 		                    $wikiText, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
@@ -181,6 +188,8 @@ class SMWH_AAMParser {
 			         ($part == "-->") ||
 			         ($part == "<nowiki>") ||
 			         ($part == "</nowiki>") ||
+			         ($part == "<pre>") ||
+			         ($part == "</pre>") ||
 			         (strpos($part, '<ask') === 0) ||
 			         ($part == "</ask>");
 			$maskLen += mb_strlen($part);
@@ -191,8 +200,9 @@ class SMWH_AAMParser {
 				} else {
 					$comment = ($openingTag == '<!--') && ($part == '-->');
 					$nowiki = ($openingTag == '<nowiki>') && ($part == '</nowiki>');
+					$pre = ($openingTag == '<pre>') && ($part == '</pre>');
 					$ask = (strpos($openingTag, '<ask') === 0) && ($part == '</ask>');
-					if ($comment || $nowiki || $ask) {
+					if ($comment || $nowiki || $ask || $pre) {
 						//The opening tag matches the closing tag
 					    $text .= str_repeat("*", $maskLen);
 					    $openingTag = null;
