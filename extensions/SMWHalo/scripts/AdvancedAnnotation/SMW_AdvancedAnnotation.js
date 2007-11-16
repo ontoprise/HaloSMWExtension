@@ -43,9 +43,6 @@ AdvancedAnnotation.prototype = {
 		// Load the wiki text for the current page and store it in the parser.
 		this.loadWikiText();
 		
-		// Array of wiki text offset anchors. 
-		this.wtoAnchors = 0;
-		
 	},
 	
 	/**
@@ -304,9 +301,6 @@ AdvancedAnnotation.create = function() {
 				Event.observe(content, 'mouseup', 
 				              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
 				pe.stop();
-				
-				// retrieve all anchors of type "wikiTextOffset"
-				smwhgAdvancedAnnotation.wtoAnchors = $$('#content a[type="wikiTextOffset"]');
 		}, 2);
 	}
 	
