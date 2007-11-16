@@ -143,14 +143,18 @@ class SMWH_AAMParser {
 		global $smwgHaloScriptPath;
 		// add intermediate tags to annotations
 		$text = preg_replace('/{annostart}(.*?){annoend}/',
+							 '<span style="white-space:nowrap">'.
 							 '<a href="javascript:smwhfEditAnno()">'.
 		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
-							 '<span class="aam_prop_highlight">$1</span>',
-		                     $wikiText);
+							 '<span class="aam_prop_highlight">$1</span>'.
+							 '</span>',
+							 $wikiText);
 		$text = preg_replace('/{linkstart}(.*?){linkend}/',
+							 '<span style="white-space:nowrap">'.
 							 '<a href="javascript:smwhfEditLink()">'.
-		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
-		                     '<span class="aam_existing_prop_highlight">$1</span>',
+		           			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
+		                     '<span class="aam_page_link_highlight">$1</span>'.
+							 '</span>',
 		                     $text);
 		return $text;
 	}
