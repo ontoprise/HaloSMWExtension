@@ -868,7 +868,7 @@ OBSchemaPropertyActionListener.prototype = {
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedCategory = title;
-			$('currentSelectedCategory').innerHTML = "'"+title+"'";
+			if ($('currentSelectedCategory') != null) $('currentSelectedCategory').innerHTML = "'"+title+"'";
 		}
 	},
 	
