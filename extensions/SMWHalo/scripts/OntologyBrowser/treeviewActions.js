@@ -995,8 +995,11 @@ OBGlobalActionListener.prototype = {
 			$(showWhichTree+"Switch").addClassName("selectedSwitch");
 			$("categoryTreeSwitch").removeClassName("selectedSwitch");
 			
-			$("menuBarConceptTree").hide();
-			$("menuBarPropertyTree").show();
+			if ($("menuBarConceptTree") != null && $("menuBarPropertyTree")) {
+				// MenuBar may not be visible
+				$("menuBarConceptTree").hide();
+				$("menuBarPropertyTree").show();
+			}
 			
 		} else if ($("propertyTree").visible() && showWhichTree != 'propertyTree') {
 			$("propertyTree").hide();
@@ -1004,8 +1007,11 @@ OBGlobalActionListener.prototype = {
 			$(showWhichTree+"Switch").addClassName("selectedSwitch");
 			$("propertyTreeSwitch").removeClassName("selectedSwitch");
 			
-			$("menuBarPropertyTree").hide();
-			$("menuBarConceptTree").show();
+			if ($("menuBarConceptTree") != null && $("menuBarPropertyTree")) {
+				// MenuBar may not be visible
+				$("menuBarPropertyTree").hide();
+				$("menuBarConceptTree").show();
+			}
 		}
 		
 		this.activeTreeName = showWhichTree;

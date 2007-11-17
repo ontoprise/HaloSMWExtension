@@ -85,12 +85,10 @@ OBOntologyTools.prototype = {
 
 var OBInputFieldValidator = Class.create();
 OBInputFieldValidator.prototype = {
-	initialize: function(id, isValid, enable_fnc, validate_fnc, reset_fnc, cancel_fnc) {
+	initialize: function(id, isValid, control, validate_fnc) {
 		this.id = id;
 		this.validate_fnc = validate_fnc;
-		this.enable_fnc = enable_fnc;
-		this.reset_fnc = reset_fnc;
-		this.cancel_fnc = cancel_fnc;
+		this.control = control;
 		
 		this.keyListener = null;
 		this.istyping = false;
@@ -101,12 +99,10 @@ OBInputFieldValidator.prototype = {
 		if ($(this.id) != null) this.registerListeners();
 	},
 	
-	OBInputFieldValidator: function(id, isValid, enable_fnc, validate_fnc, reset_fnc, cancel_fnc) {
+	OBInputFieldValidator: function(id, isValid, control, validate_fnc) {
 		this.id = id;
-		this.enable_fnc = enable_fnc;
 		this.validate_fnc = validate_fnc;
-		this.reset_fnc = reset_fnc;
-		this.cancel_fnc = cancel_fnc;
+		this.control = control;
 		
 		this.keyListener = null;
 		this.istyping = false;
@@ -135,11 +131,18 @@ OBInputFieldValidator.prototype = {
 		this.istyping = true;
 		
 		if (event.keyCode == 27) {
-			this.cancel_fnc(); // close when ESCAPE is pressed.
+			// ESCAPE was pressed, so close submenu.
+			this.control.cancel(); 
 			return;
 		}
+		
+		if (event.keyCode == 9) {
+			// TAB was pressed, do nothing
+			return;
+		}
+		
 		if (this.timerdisabled) {
-			this.reset_fnc(this.id);
+			this.control.reset(this.id);
 			this.timedCallback(this.validate.bind(this));
 			this.timerdisabled = false;
 		}
@@ -164,7 +167,7 @@ OBInputFieldValidator.prototype = {
 	validate: function() {
 		this.isValid = this.validate_fnc(this.id);
 		if (this.isValid !== null) {
-			this.enable_fnc(this.isValid, this.id);
+			this.control.enable(this.isValid, this.id);
 		}
 	}
 	
@@ -172,8 +175,8 @@ OBInputFieldValidator.prototype = {
 
 var OBInputTitleValidator = Class.create();
 OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
-	initialize: function(id, enable_fnc, reset_fnc, cancel_fnc) {
-		this.OBInputFieldValidator(id, false, enable_fnc, this._checkIfArticleExists.bind(this), reset_fnc, cancel_fnc);
+	initialize: function(id, control) {
+		this.OBInputFieldValidator(id, false, control, this._checkIfArticleExists.bind(this));
 		
 	},
 	
@@ -192,23 +195,23 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 			if (parts == null) {
 				// call fails for some reason. Do nothing!
 				this.isValid = false;
-				this.enable_fnc( false, id);
+				this.control.enable( false, id);
 				return;
 			} else if (parts[0] == 'true') {
 				// article exists -> MUST NOT exist
 				this.isValid = false;
-				this.enable_fnc(false, id);
+				this.control.enable(false, id);
 				return;
 			} else {
 				this.isValid=true;
-				this.enable_fnc(true, id);
+				this.control.enable(true, id);
 				
 			}
 		};
 		var pendingElement = new OBPendingIndicator();
 		var pageName = $F(this.id);
 		if (pageName == '') {
-			this.enable_fnc(false, this.id);
+			this.control.enable(false, this.id);
 			return;
 		}
 		pendingElement.show(this.id)
@@ -216,7 +219,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		              [pageName], 
 		              ajaxResponseExistsArticle.bind(this, this.id));
 		return null;
-	},
+	}
 	
 });
 
@@ -379,7 +382,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this.enable.bind(this), this.reset.bind(this), this.cancel.bind(this));
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
 			
 	},
 	
@@ -440,7 +443,7 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this.enable.bind(this),  this.reset.bind(this), this.cancel.bind(this));
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
 			
 	},
 	
@@ -495,7 +498,7 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this.enable.bind(this),  this.reset.bind(this), this.cancel.bind(this));
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
 			
 	},
 	
@@ -520,6 +523,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		
 		this.builtinTypes = null;
 		this.count = 0;
+		this.requestTypes();
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
@@ -532,7 +536,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		switch(this.commandID) {
 			
 			case SMW_OB_COMMAND_ADD_SCHEMAPROPERTY: {
-				this.ontologyTools.addSchemaProperty($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				this.ontologyTools.addSchemaProperty($F(this.id+'_propertytitle_ontologytools'), this.selectedTitle);
 				break;
 			}
 			
@@ -554,15 +558,15 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	getUserDefinedControls: function() {
 		return '<table style="background-color: inherit"><tr>' +
 						'<td width="50px;">Title</td>' +
-						'<td><input id="'+this.id+'_input_ontologytools" type="text"/></td>' +
+						'<td><input id="'+this.id+'_propertytitle_ontologytools" type="text" tabIndex="101"/></td>' +
 					'</tr>' +
 					'<tr>' +
 						'<td width="50px;">Min Card</td>' +
-						'<td><input id="'+this.id+'_minCard_ontologytools" type="text" size="5"/></td>' +
+						'<td><input id="'+this.id+'_minCard_ontologytools" type="text" size="5" tabIndex="102"/></td>' +
 					'</tr>' +
 					'<tr>' +
 						'<td width="50px;">Max Card</td>' +
-						'<td><input id="'+this.id+'_maxCard_ontologytools" type="text" size="5"/></td>' +
+						'<td><input id="'+this.id+'_maxCard_ontologytools" type="text" size="5" tabIndex="103"/></td>' +
 					'</tr>' +
 				'</table>' +
 				'<table id="typesAndRanges" style="background-color: inherit"></table>' +
@@ -575,13 +579,9 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		var enable_fnc = this.enable.bind(this);
-		var reset_fnc = this.reset.bind(this);
-		var cancel_fnc = this.cancel.bind(this);
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', enable_fnc, reset_fnc, cancel_fnc);
-		this.maxCardValidator = new OBInputFieldValidator(this.id+'_maxCard_ontologytools', true,  enable_fnc, this.checkMaxCard.bind(this), reset_fnc, cancel_fnc);
-		this.minCardValidator = new OBInputFieldValidator(this.id+'_minCard_ontologytools', true,  enable_fnc, this.checkMinCard.bind(this), reset_fnc, cancel_fnc);
-		this.requestTypes();
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_propertytitle_ontologytools', this);
+		this.maxCardValidator = new OBInputFieldValidator(this.id+'_maxCard_ontologytools', true, this, this.checkMaxCard.bind(this));
+		this.minCardValidator = new OBInputFieldValidator(this.id+'_minCard_ontologytools', true, this, this.checkMinCard.bind(this));
 		this.rangeValidators = [];
 	},
 	
@@ -600,18 +600,19 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	
 	setFocus: function() {
-		$(this.id+'_input_ontologytools').focus();	
+		$(this.id+'_propertytitle_ontologytools').focus();	
 	},
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
 		this.maxCardValidator.deregisterListeners();
 		this.minCardValidator.deregisterListeners();
+		this.rangeValidators.each(function(e) { if (e!=null) e.deregisterListeners() });
 		this._cancel();
 	},
 	
 	enable: function(b, id) {
-		var bg_color = b ? '#0F0' : '#F00';
+		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
 	
 		$(id).setStyle({
 			backgroundColor: bg_color
@@ -635,14 +636,10 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	requestTypes: function() {
-		if (this.builtinTypes != null) {
-			this.addType();
-			return;
-		}
-		
+				
 		function fillTypesCallback(request) {
 			this.builtinTypes = request.responseText.split(",");
-			this.addType();
+			
 		}
 		
 		sajax_do_call('smwfGetBuiltinDatatypes', 
@@ -687,10 +684,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		var toReplace = $(addTo.appendChild(document.createElement("tr")));
 		toReplace.replace('<tr><td width="50px;">Range </td><td>'+this.newRangeInputBox()+'</td></tr>');
 		
-		var enable_fnc = this.enable.bind(this);
-		var reset_fnc = this.reset.bind(this);
-		var cancel_fnc = this.cancel.bind(this);
-		this.rangeValidators[this.count] = (new OBInputTitleValidator('typeRange'+this.count+'_ontologytools', enable_fnc, reset_fnc, cancel_fnc));
+		this.rangeValidators[this.count] = (new OBInputTitleValidator('typeRange'+this.count+'_ontologytools', this));
 		this.enable(false, 'typeRange'+this.count+'_ontologytools');
 		
 		this.count++;
