@@ -124,16 +124,18 @@ function smw_hideTooltip(){
 BubbleTT.getElementCoordinates = function(elmt) {
 	var left = 0;
 	var top = 0;
-
+		
 	if (elmt.nodeType != 1) {
 		elmt = elmt.parentNode;
 	}
 
 	while (elmt != null) {
 		left += elmt.offsetLeft;
-		top += elmt.offsetTop;
+		top += elmt.offsetTop - (elmt.scrollTop ? elmt.scrollTop : 0);
 		elmt = elmt.offsetParent;
 	}
+	// consider document scroll position too
+	top += document.documentElement.scrollTop;
 	return { left: left, top: top };
 };
 
