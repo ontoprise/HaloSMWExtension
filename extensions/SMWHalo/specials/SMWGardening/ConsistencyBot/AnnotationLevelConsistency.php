@@ -71,6 +71,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $r);
  			}
  			
+ 			if (empty($domainRangeAnnotations)) {
+ 				// if it's still empty, there's no domain or range defined at all. In this case, simply skip it in order not to pollute the consistency log.
+ 				continue;
+ 			}
+ 			
  			// get annotation subjects for the property.
  			$allRelationSubjects = smwfGetStore()->getAllPropertySubjects($r);
  			
@@ -228,6 +233,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// if it does not exist, get minimum cardinality from superproperty
  				$minCards = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  			} else {
+ 				// assume there's only one defined. If not it will be found in co-variance checker anyway
  				$minCards = $minCardArray[0]->getXSDValue() + 0;
  			}
  			
@@ -239,7 +245,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$maxCards = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  			} else {
- 				$maxCards = $maxCardsArray[0]->getXSDValue() == '*' ? CARDINALITY_UNLIMITED : $maxCardsArray[0]->getXSDValue() + 0;
+ 				// assume there's only one defined. If not it will be found in co-variance checker anyway
+ 				$maxCards = $maxCardsArray[0]->getXSDValue() + 0;
+ 			}
+ 			
+ 			if ($minCards == CARDINALITY_MIN && $maxCards == CARDINALITY_UNLIMITED) {
+ 				// default case: no check needed, so skip it.
+ 				continue;
  			}
  			
  			// get domains
