@@ -164,7 +164,10 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			$dvs = $domRanVal->getDVs();
  			$domainCat = $dvs[0] != NULL ? $dvs[0]->getTitle() : NULL;	
  			$rangeCat  = $dvs[1] != NULL ? $dvs[1]->getTitle() : NULL;
- 			if ($domainChecked) $domainCat = NULL;
+ 			if ($domainChecked) { 
+ 				$domainCat = NULL;
+ 				$domainCorrect = true;
+ 			}
  			if ($domainCat != NULL && $rangeCat != NULL) {
 	 			foreach($categoriesOfObject as $coo) { 
 	 					// check domain and range

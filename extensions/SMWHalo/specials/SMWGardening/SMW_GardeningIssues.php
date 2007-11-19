@@ -248,7 +248,7 @@ class GardeningIssueContainer {
 	// array of Gardening issues
 	private $gi;
 	
-	public function GardeningIssueContainer($bound, array $gi) {
+	public function GardeningIssueContainer($bound, array & $gi) {
 		$this->bound = $bound;
 		$this->gi = $gi;
 	}
