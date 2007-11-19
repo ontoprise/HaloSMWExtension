@@ -67,7 +67,7 @@ WikiTextParser.prototype = {
 				wikiText = this.text;
 			}
 		}
-		if (!wikiText && this.parserMode != WTP_WIKITEXT_MODE) {
+		if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
 			// no wiki text => retrieve from text area.
 			var txtarea;
 			if (document.editform) {
