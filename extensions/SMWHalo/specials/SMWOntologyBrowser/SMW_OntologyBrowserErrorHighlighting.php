@@ -14,8 +14,7 @@
  	 * Converts Gardening Issue objects to XML.
  	 * XML output contains:
  	 * 	- type of gardening issue (attribute)
- 	 *  - value of gardening issue (attribute)
- 	 *  - textual representation as HTML (node content)
+  	 *  - textual representation as HTML (node content)
  	 * 
  	 * @param array & issues GardeningIssues (GI)
  	 * 
@@ -27,9 +26,9 @@
  		foreach($issues as $i) {
  			 			
  			if ($i->getTitle1() !== NULL) {
- 				$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 				
  				$htmlRepresentation = $i->getRepresentation();
- 				$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+ 				$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
  			}
  		}
  		
@@ -53,35 +52,35 @@
  			switch($i->getType()) {
  				case SMW_GARDISSUE_WRONG_UNIT: { // highlight if unit matches the GI
  					if (stripos($value->getUnit(), $i->getValue()) !== false) {
- 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 						
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
  					} 
  					break;
  				}
  				case SMW_GARD_ISSUE_MISSING_PARAM: {
  					$dvs = $value->getDVs(); // highlight if missing container matches the GI 
  					if ($dvs[$i->getValue()] == NULL) {
- 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 						
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
  					}
  					break;
  				}
  				case SMW_GARDISSUE_WRONG_TARGET_VALUE: { // highlight if wrong target matches the GI
  					if ($value->getTitle()->getDBkey() == $i->getValue()) {
- 						$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 					
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
  					}
  					break;
  				}
  				
  				case SMW_GARDISSUE_TOO_HIGH_CARD: // fall through
  				case SMW_GARDISSUE_TOO_LOW_CARD: { // highlight always
- 					$value = $i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+ 				
  					$htmlRepresentation = $i->getRepresentation();
- 					$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+ 					$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
  				}
  				break;
  			} 			
@@ -110,10 +109,9 @@
  				$title = htmlspecialchars($i->getTitle2()->getDBkey()); 
  				
 		 		$errorTags = "";
-		 		
-		 		$value = ""; //$i->getValue() != NULL ? "value=\"".$i->getValue()."\"" : "";
+		 				 		
 		 		$htmlRepresentation = $i->getRepresentation();
-		 		$errorTags .= "<gi type=\"".$i->getType()."\" $value><![CDATA[$htmlRepresentation]]></gi>";
+		 		$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
 		 				 		
 		 		$missingAnnotations .= "<annotation title=\"".$title."\" img=\"property.gif\" id=\"ID_".$id.$count."\"><param>Missing</param><gissues>$errorTags</gissues></annotation>";
  				$count++;

@@ -256,7 +256,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 			$repasteMarker = $isFormula || $needRepaste ? "chemFoEq=\"true\"" : "";
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
- 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 			$multiProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
@@ -265,12 +265,12 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
- 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
 			
-		} else { // normal attribute
+		} else if ($smwValue != NULL){ // normal attribute
 			if ($smwValue->getTypeID() == '_che') {
 				$isFormula = true;
 				$chemistryParser->checkEquation($smwValue->getXSDValue());
@@ -290,7 +290,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
- 	 		SMW_GARDISSUE_WRONG_UNIT, SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
+ 	 		SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";

@@ -79,9 +79,12 @@
  		$reqfilter->isCaseSensitive = false;
  	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter);
  	 	$result = "";
+ 	 	$id = uniqid (rand());
+ 	 	$count = 0;
  	 	foreach($foundInstances as $instance) {
  	 		$title_esc = htmlspecialchars($instance->getDBkey()); 
  	 		$result .= "<instance title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\"/>";
+ 	 		$count++;
  	 	}
 	 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';
  	 }
