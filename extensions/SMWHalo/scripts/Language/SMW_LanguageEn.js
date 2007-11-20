@@ -149,7 +149,8 @@ var wgLanguageStrings = {
 	'OB_SELECT_PROPERTY'	  : 'Select property first',
 	'OB_SELECT_INSTANCE'	  : 'Select instance first',
 	'OB_WRONG_MAXCARD'		  : 'Wrong max cardinality',
-	'OB_WRONG_MINCARD'		  : 'Wrong max cardinality',
+	'OB_WRONG_MINCARD'		  : 'Wrong min cardinality',
+	'OB_CONFIRM_INSTANCE_DELETION' : 'Do you really want to remove this article?',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

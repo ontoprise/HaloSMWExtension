@@ -94,9 +94,9 @@
 					<td width="{$param-shift-width}"/>
 				</xsl:if>
 				<!-- Shift if it is a leaf, because the plus/minus image is missing-->
-				<xsl:if test="@isLeaf">
+				<!--  <xsl:if test="@isLeaf">
 					<td width="16"/>
-				</xsl:if>
+				</xsl:if>-->
 				<td>
 			
 					<xsl:call-template name="createTreeNode">
@@ -143,9 +143,9 @@
 					<td width="{$param-shift-width}"/>
 				</xsl:if>
 				<!-- Shift if it is a leaf, because the plus/minus image is missing-->
-				<xsl:if test="@isLeaf">
+				<!--  <xsl:if test="@isLeaf">
 					<td width="16"/>
-				</xsl:if>
+				</xsl:if>-->
 								
 				<td>
 			
@@ -228,7 +228,8 @@
 			<xsl:if test="@inherited">
 				<xsl:attribute name="class">inherited</xsl:attribute>
 			</xsl:if>
-			<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this, '<xsl:value-of select="@id"/>', '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 			<xsl:variable name="title" select="@title"/>
 			<xsl:value-of select="translate($title, '_', ' ')"/>
 		</a></td>
@@ -528,26 +529,51 @@
 						</xsl:if>		
 						<!-- If the treeview is unfold, the image minus (-) is displayed-->
 						
-						<xsl:if test="@expanded">
-							<xsl:if test="@expanded='true' and not (@isLeaf)">
-								<img src="{$param-img-directory}minus.gif">
-									<xsl:if test="@id">
-										<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
-									</xsl:if>
-									
-								</img>
-							</xsl:if>
-							<!-- plus (+) otherwise-->
-							<xsl:if test="@expanded='false' and not (@isLeaf)" >
-								<img src="{$param-img-directory}plus.gif">
-									<xsl:if test="@id">
-										<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
-									</xsl:if>
-									
-								</img>
-							</xsl:if>
+						<xsl:if test="@expanded='true'">
+							<xsl:choose>
+								<xsl:when test="not (@isLeaf)">
+									<img src="{$param-img-directory}minus.gif">
+										<xsl:if test="@id">
+											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
+										</xsl:if>
+										
+									</img>
+								</xsl:when>
+								<xsl:otherwise>
+									<img src="{$param-img-directory}minus.gif">
+										<xsl:if test="@id">
+											<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
+											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
+										</xsl:if>
+										
+									</img>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:if>
-						<xsl:if test="not(@expanded)">
+						<xsl:if test="@expanded='false' or not(@expanded)">
+							<!-- plus (+) otherwise-->
+							<xsl:choose>
+								<xsl:when test="not (@isLeaf)">
+									<img src="{$param-img-directory}plus.gif">
+										<xsl:if test="@id">
+											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
+										</xsl:if>
+										
+									</img>
+								</xsl:when>
+								<xsl:otherwise>
+									<img src="{$param-img-directory}plus.gif">
+										<xsl:if test="@id">
+											<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
+											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
+										</xsl:if>
+										
+									</img>
+								</xsl:otherwise>
+							</xsl:choose>
+							
+						</xsl:if>
+						<!-- <xsl:if test="not(@expanded)">
 							<xsl:if test="$param-deploy-treeview = 'true'">
 								<img src="{$param-img-directory}minus.gif">
 									<xsl:if test="@id">
@@ -565,7 +591,7 @@
 								</img>
 							</xsl:if>
 						</xsl:if>
-						
+						 -->
 						<xsl:if test="$rek_depth>1">
 							<xsl:choose>
 								<xsl:when test="position()=last()">

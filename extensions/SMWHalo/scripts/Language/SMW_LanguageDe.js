@@ -148,6 +148,9 @@ var wgLanguageStrings = {
 	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie auswählen',
 	'OB_SELECT_PROPERTY'	  : 'Erst Property auswählen',
 	'OB_SELECT_INSTANCE'	  : 'Erst Instanz auswählen',
+	'OB_WRONG_MAXCARD'		  : 'Falsche Max-Kardinalität',
+	'OB_WRONG_MINCARD'		  : 'Falsche Min-Kardinalität',
+	'OB_CONFIRM_INSTANCE_DELETION' : 'Wollen Sie den Artikel wirklich l&oumlschen?',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

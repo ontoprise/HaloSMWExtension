@@ -71,17 +71,177 @@ var selectionProvider = new OBEventProvider();
 var OBOntologyTools = Class.create();
 OBOntologyTools.prototype = { 
 	initialize: function() {
+		this.date = new Date();
+		this.count = 0;
+	},
+	
+	addSubcategory: function(subCategoryTitle, superCategoryTitle, superCategoryID) {
+		var subCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(subCategoryTitle));
+		this.insertCategoryNode(superCategoryID, subCategoryXML);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+		
+		selectionProvider.fireSelectionChanged(superCategoryID, superCategoryTitle, SMW_CATEGORY_NS, $(superCategoryID))
+		selectionProvider.fireRefresh();
+	
+	},
+	
+	addSubcategoryOnSameLevel: function(newCategoryTitle, siblingCategoryTitle, sibligCategoryID) {
+		var newCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(newCategoryTitle));
+		var superCategoryID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('id');
+		this.insertCategoryNode(superCategoryID, newCategoryXML);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+		
+		selectionProvider.fireSelectionChanged(sibligCategoryID, siblingCategoryTitle, SMW_CATEGORY_NS, $(sibligCategoryID))
+		selectionProvider.fireRefresh();
+	},
+	
+	renameCategory: function(newCategoryTitle, categoryTitle, categoryID) {
+		this.renameCategoryNode(categoryID, newCategoryTitle);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+		
+		selectionProvider.fireSelectionChanged(categoryID, categoryTitle, SMW_CATEGORY_NS, $(categoryID))
+		selectionProvider.fireRefresh();
+	},
+	
+	addSubproperty: function(subPropertyTitle, superPropertyTitle, superPropertyID) {
+		var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(subPropertyTitle));
+		this.insertPropertyNode(superPropertyID, subPropertyXML);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+		
+		selectionProvider.fireSelectionChanged(superPropertyID, superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
+		selectionProvider.fireRefresh();
+	},
+	
+	addSubpropertyOnSameLevel: function(newPropertyTitle, siblingPropertyTitle, sibligPropertyID) {
+		var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(newPropertyTitle));
+		var superPropertyID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('id');
+		this.insertPropertyNode(superPropertyID, subPropertyXML);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+		
+		selectionProvider.fireSelectionChanged(sibligPropertyID, siblingPropertyTitle, SMW_PROPERTY_NS, $(sibligPropertyID))
+		selectionProvider.fireRefresh();
+	},
+	
+	renameProperty: function(newPropertyTitle, oldPropertyTitle, propertyID) {
+		this.renamePropertyNode(propertyID, newPropertyTitle);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+		
+		selectionProvider.fireSelectionChanged(propertyID, newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
+		selectionProvider.fireRefresh();
+	},
+	
+	addSchemaProperty: function(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID) {
+		var newPropertyXML = GeneralXMLTools.createDocumentFromString(this.createSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID));
+		GeneralXMLTools.importNode(dataAccess.OB_cachedProperties.documentElement, newPropertyXML.documentElement, true);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedProperties, $('relattributes'), true);
+				
+		selectionProvider.fireRefresh();
 		
 	},
 	
-	addSubcategory: function(subCategoryTitle, superCategoryNode) {
-		alert(subCategoryTitle+":"+superCategoryNode);
+	renameInstance: function(newInstanceTitle, oldInstanceTitle, instanceID) {
+		this.renameInstanceNode(newInstanceTitle, instanceID);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
+		
+		selectionProvider.fireSelectionChanged(instanceID, newInstanceTitle, SMW_INSTANCE_NS, $(instanceID))
+		selectionProvider.fireRefresh();
 	},
 	
-	renameInstance: function(selectedTitle, newTitle) {
+	deleteInstance: function(instanceID) {
+		this.deleteInstanceNode(instanceID);
+		transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
 		
+		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null)
+		selectionProvider.fireRefresh();
+	},
+	
+	createCategoryNode: function(subCategoryTitle) {
+		this.count++;
+		return '<conceptTreeElement title="'+subCategoryTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
+	},
+	
+	createPropertyNode: function(subPropertyTitle) {
+		this.count++;
+		return '<propertyTreeElement title="'+subPropertyTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
+	},
+	
+	createSchemaProperty: function(propertyTitle, minCard, maxCard, typeRanges, builtinTypes, selectedTitle, selectedID) {
+		this.count++;
+		rangeTypes = "";
+		for(var i = 0, n = typeRanges.length; i < n; i++) {
+			if (builtinTypes.indexOf(typeRanges[i]) != -1) {
+				// is type
+				rangeTypes += '<rangeType>'+typeRanges[i]+(i == n-1 ? "" : ";")+'</rangeType>';
+			} else {
+				rangeTypes += '<rangeType>Type:Page'+(i == n-1 ? "" : ";")+'</rangeType>';
+			}
+		}
+		return '<property title="'+propertyTitle+'" minCard="'+minCard+'" maxCard="'+maxCard+'">'+rangeTypes+'</property>';
+	},
+	
+	renameInstanceNode: function(newInstanceTitle, instanceID) {
+		var instanceNode = GeneralXMLTools.getNodeById(dataAccess.OB_cachedInstances, instanceID);
+		instanceNode.removeAttribute("title");
+		instanceNode.setAttribute("title", newInstanceTitle);
+	},
+	
+	deleteInstanceNode: function(instanceID) {
+		var instanceNode = GeneralXMLTools.getNodeById(dataAccess.OB_cachedInstances, instanceID);
+		instanceNode.parentNode.removeChild(instanceNode);
+	},
+	
+	insertCategoryNode: function(superCategoryID, subCategoryXML) {
+		var superCategoryNodeCached = superCategoryID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, superCategoryID) : dataAccess.OB_cachedCategoryTree.documentElement;
+		var superCategoryNodeDisplayed = superCategoryID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, superCategoryID) : dataAccess.OB_currentlyDisplayedTree.documentElement;
+		
+		// make sure that supercategory is no leaf anymore and set it to expanded now.
+		superCategoryNodeCached.removeAttribute("isLeaf");
+		superCategoryNodeCached.setAttribute("expanded", "true");
+		superCategoryNodeDisplayed.removeAttribute("isLeaf");
+		superCategoryNodeDisplayed.setAttribute("expanded", "true");
+		
+		// insert in cache and displayed tree
+		GeneralXMLTools.importNode(superCategoryNodeCached, subCategoryXML.documentElement, true);
+		GeneralXMLTools.importNode(superCategoryNodeDisplayed, subCategoryXML.documentElement, true);
+	},
+	
+	insertPropertyNode: function(superpropertyID, subpropertyXML) {
+		var superpropertyNodeCached = superpropertyID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, superpropertyID) : dataAccess.OB_cachedPropertyTree.documentElement;
+		var superpropertyNodeDisplayed = superpropertyID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, superpropertyID) : dataAccess.OB_currentlyDisplayedTree.documentElement;
+		
+		// make sure that superproperty is no leaf anymore and set it to expanded now.
+		superpropertyNodeCached.removeAttribute("isLeaf");
+		superpropertyNodeCached.setAttribute("expanded", "true");
+		superpropertyNodeDisplayed.removeAttribute("isLeaf");
+		superpropertyNodeDisplayed.setAttribute("expanded", "true");
+		
+		// insert in cache and displayed tree
+		GeneralXMLTools.importNode(superpropertyNodeCached, subpropertyXML.documentElement, true);
+		GeneralXMLTools.importNode(superpropertyNodeDisplayed, subpropertyXML.documentElement, true);
+	},
+	
+	renameCategoryNode: function(categoryID, newCategoryTitle) {
+		var categoryNodeCached = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, categoryID);
+		var categoryNodeDisplayed = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, categoryID);
+		categoryNodeCached.removeAttribute("title");
+		categoryNodeDisplayed.removeAttribute("title");
+		categoryNodeCached.setAttribute("title", newCategoryTitle); //TODO: escape
+		categoryNodeDisplayed.setAttribute("title", newCategoryTitle);
+	
+	},
+	
+	renamePropertyNode: function(propertyID, newPropertyTitle) {
+		var propertyNodeCached = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, propertyID);
+		var propertyNodeDisplayed = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, propertyID);
+		propertyNodeCached.removeAttribute("title");
+		propertyNodeDisplayed.removeAttribute("title");
+		propertyNodeCached.setAttribute("title", newPropertyTitle); //TODO: escape
+		propertyNodeDisplayed.setAttribute("title", newPropertyTitle);
 	}
 }
+
+// global object for ontology modification
+var ontologyTools = new OBOntologyTools();
 
 var OBInputFieldValidator = Class.create();
 OBInputFieldValidator.prototype = {
@@ -91,6 +251,7 @@ OBInputFieldValidator.prototype = {
 		this.control = control;
 		
 		this.keyListener = null;
+		this.blurListener = null;
 		this.istyping = false;
 		this.timerdisabled = true;
 		
@@ -109,35 +270,49 @@ OBInputFieldValidator.prototype = {
 		this.timerdisabled = true;
 		
 		this.isValid = isValid;
+		this.lastValidation = null;
 		
 		if ($(this.id) != null) this.registerListeners();
 	},
 	
 	registerListeners: function() {
 		var e = $(this.id);
-		this.keyListener = this.onKey.bindAsEventListener(this);
+		this.keyListener = this.onKeyEvent.bindAsEventListener(this);
+		this.blurListener = this.onBlurEvent.bindAsEventListener(this);
 		Event.observe(e, "keyup",  this.keyListener);
 		Event.observe(e, "keydown",  this.keyListener);
+		Event.observe(e, "blur",  this.blurListener);
 	},
 	
 	deregisterListeners: function() {
 		var e = $(this.id);
 		Event.stopObserving(e, "keyup", this.keyListener);
 		Event.stopObserving(e, "keydown", this.keyListener);
+		Event.stopObserving(e, "blur", this.blurListener);
 	},
 	
-	onKey: function(event) {
+	onKeyEvent: function(event) {
 			
 		this.istyping = true;
 		
-		if (event.keyCode == 27) {
+		/*if (event.keyCode == 27) {
 			// ESCAPE was pressed, so close submenu.
 			this.control.cancel(); 
 			return;
+		}*/
+		
+		if (event.keyCode == 9 || event.ctrlKey || event.altKey || event.keyCode == 18 || event.keyCode == 17 ) {
+			// TAB, CONTROL OR ALT was pressed, do nothing
+			return;
 		}
 		
-		if (event.keyCode == 9) {
-			// TAB was pressed, do nothing
+		if ((event.ctrlKey || event.altKey) && event.keyCode == 32) {
+			// autoCompletion request, do nothing
+			return;
+		}
+		
+		if (event.keyCode >= 37 && event.keyCode <= 40) {
+			// cursor keys, do nothing
 			return;
 		}
 		
@@ -149,6 +324,14 @@ OBInputFieldValidator.prototype = {
 		
 	},
 	
+	/**
+	 * Validate on blur if content has changed since last validation
+	 */
+	onBlurEvent: function(event) {
+		if (this.lastValidation != $F(this.id)) {
+			this.validate();
+		}
+	},
 	/**
 	 * @private
 	 */
@@ -165,6 +348,7 @@ OBInputFieldValidator.prototype = {
 	},
 	
 	validate: function() {
+		this.lastValidation = $F(this.id);
 		this.isValid = this.validate_fnc(this.id);
 		if (this.isValid !== null) {
 			this.control.enable(this.isValid, this.id);
@@ -175,9 +359,10 @@ OBInputFieldValidator.prototype = {
 
 var OBInputTitleValidator = Class.create();
 OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
-	initialize: function(id, control) {
+	initialize: function(id, ns, mustExist, control) {
 		this.OBInputFieldValidator(id, false, control, this._checkIfArticleExists.bind(this));
-		
+		this.ns = ns;
+		this.mustExist = mustExist;
 	},
 	
 	/**
@@ -199,12 +384,12 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 				return;
 			} else if (parts[0] == 'true') {
 				// article exists -> MUST NOT exist
-				this.isValid = false;
-				this.control.enable(false, id);
+				this.isValid = this.mustExist;
+				this.control.enable(this.mustExist, id);
 				return;
 			} else {
-				this.isValid=true;
-				this.control.enable(true, id);
+				this.isValid=!this.mustExist;
+				this.control.enable(!this.mustExist, id);
 				
 			}
 		};
@@ -215,12 +400,14 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 			return;
 		}
 		pendingElement.show(this.id)
+		var pageNameWithNS = this.ns == '' ? pageName : this.ns+":"+pageName;
 		sajax_do_call('smwfExistsArticle', 
-		              [pageName], 
+		              [pageNameWithNS], 
 		              ajaxResponseExistsArticle.bind(this, this.id));
 		return null;
 	}
 	
+		
 });
 
 var OBOntologyGUITools = Class.create();
@@ -240,6 +427,8 @@ OBOntologyGUITools.prototype = {
 		this.oldHeight = 0;
 		
 		this.menuOpened = false;
+		
+		
 	},
 	/**
 	 * @public
@@ -266,7 +455,7 @@ OBOntologyGUITools.prototype = {
 		this.adjustSize();
 		this.setValidators();
 		this.setFocus();
-		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+		
 		this.menuOpened = true;		
 	},
 	
@@ -292,7 +481,7 @@ OBOntologyGUITools.prototype = {
 		
 		// deregister listeners
 		
-		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
+		
 		
 		// reset height
 		var newHeight = (this.oldHeight-2)+"px";
@@ -338,28 +527,33 @@ var OBCatgeoryGUITools = Class.create();
 OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	initialize: function(id, objectname) {
 		this.OBOntologyGUITools(id, objectname);
-		this.ontologyTools = new OBOntologyTools();
+	
 		this.titleInputValidator = null;
+		this.selectedID = null;
+	
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedTitle = title;
+			this.selectedID = id;
+			
 		}
 	},
 	
 	doCommand: function() {
 		switch(this.commandID) {
 			case SMW_OB_COMMAND_ADDSUBCATEGORY: {
-				this.ontologyTools.addSubcategory($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.addSubcategory($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: {
-				this.ontologyTools.addSubcategorySameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.addSubcategoryOnSameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_RENAME: {
-				this.ontologyTools.addRenameCategory($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.renameCategory($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			default: alert('Unknown command!');
@@ -382,7 +576,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', gLanguage.getMessage('CATEGORY_NS_WOC'), false, this);
 			
 	},
 	
@@ -392,6 +586,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
+		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
 		this._cancel();
 	}
 });
@@ -400,27 +595,30 @@ var OBPropertyGUITools = Class.create();
 OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	initialize: function(id, objectname) {
 		this.OBOntologyGUITools(id, objectname);
-		this.ontologyTools = new OBOntologyTools();
+		this.selectedTitle = null;
+		this.selectedID = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_PROPERTY_NS) {
 			this.selectedTitle = title;
+			this.selectedID = id;
 		}
 	},
 	
 	doCommand: function() {
 		switch(this.commandID) {
 			case SMW_OB_COMMAND_ADDSUBPROPERTY: {
-				this.ontologyTools.addSubproperty($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.addSubproperty($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL: {
-				this.ontologyTools.addSubpropertySameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.addSubpropertyOnSameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			case SMW_OB_COMMAND_SUBPROPERTY_RENAME: {
-				this.ontologyTools.addRenameProperty($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.renameProperty($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
 			default: alert('Unknown command!');
@@ -443,7 +641,7 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', gLanguage.getMessage('PROPERTY_NS_WOC'), false, this);
 			
 	},
 	
@@ -453,6 +651,7 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
+		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
 		this._cancel();
 	}
 });
@@ -461,23 +660,31 @@ var OBInstanceGUITools = Class.create();
 OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	initialize: function(id, objectname) {
 		this.OBOntologyGUITools(id, objectname);
-		this.ontologyTools = new OBOntologyTools();
+			
+		this.selectedTitle = null;
+		this.selectedID = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_INSTANCE_NS) {
 			this.selectedTitle = title;
+			this.selectedID = id;
 		}
 	},
 	
-	doCommand: function() {
-		switch(this.commandID) {
+	doCommand: function(directCommandID) {
+		var commandID = directCommandID ? directCommandID : this.commandID
+		switch(commandID) {
 			
 			case SMW_OB_COMMAND_INSTANCE_RENAME: {
-				this.ontologyTools.renameInstance($F(this.id+'_input_ontologytools'), this.selectedTitle);
+				ontologyTools.renameInstance($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				break;
 			}
-			
+			case SMW_OB_COMMAND_INSTANCE_DELETE: {
+				ontologyTools.deleteInstance(this.selectedID);
+				break;
+			}
 			default: alert('Unknown command!');
 		}
 	},
@@ -486,8 +693,6 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		switch(this.commandID) {
 			
 			case SMW_OB_COMMAND_INSTANCE_RENAME: return 'OB_RENAME';
-			
-			
 			default: return 'Unknown command';
 		}
 		
@@ -498,7 +703,7 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', this);
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_input_ontologytools', '', false, this);
 			
 	},
 	
@@ -508,6 +713,7 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
+		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
 		this._cancel();
 	}
 });
@@ -516,19 +722,26 @@ var OBSchemaPropertyGUITools = Class.create();
 OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	initialize: function(id, objectname) {
 		this.OBOntologyGUITools(id, objectname);
-		this.ontologyTools = new OBOntologyTools();
+	
+		
+		this.selectedTitle = null;
+		this.selectedID = null;
+		
 		this.maxCardValidator = null;
 		this.minCardValidator = null;
 		this.rangeValidators = [];
 		
 		this.builtinTypes = null;
 		this.count = 0;
+		
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 		this.requestTypes();
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedTitle = title;
+			this.selectedID = id;
 		}
 	},
 	
@@ -536,7 +749,16 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		switch(this.commandID) {
 			
 			case SMW_OB_COMMAND_ADD_SCHEMAPROPERTY: {
-				this.ontologyTools.addSchemaProperty($F(this.id+'_propertytitle_ontologytools'), this.selectedTitle);
+				var propertyTitle = $F(this.id+'_propertytitle_ontologytools');
+				var minCard = $F(this.id+'_minCard_ontologytools');
+				var maxCard = $F(this.id+'_maxCard_ontologytools');
+				var rangeOrTypes = [];
+				for (var i = 0; i < this.count; i++) {
+					if ($('typeRange'+i+'_ontologytools') != null) {
+						rangeOrTypes.push($F('typeRange'+i+'_ontologytools'));
+					}
+				}
+				ontologyTools.addSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, this.builtinTypes, this.selectedTitle, this.selectedID);
 				break;
 			}
 			
@@ -579,7 +801,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	setValidators: function() {
-		this.titleInputValidator = new OBInputTitleValidator(this.id+'_propertytitle_ontologytools', this);
+		this.titleInputValidator = new OBInputTitleValidator(this.id+'_propertytitle_ontologytools', gLanguage.getMessage('PROPERTY_NS_WOC'), false, this);
 		this.maxCardValidator = new OBInputFieldValidator(this.id+'_maxCard_ontologytools', true, this, this.checkMaxCard.bind(this));
 		this.minCardValidator = new OBInputFieldValidator(this.id+'_minCard_ontologytools', true, this, this.checkMinCard.bind(this));
 		this.rangeValidators = [];
@@ -608,6 +830,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.maxCardValidator.deregisterListeners();
 		this.minCardValidator.deregisterListeners();
 		this.rangeValidators.each(function(e) { if (e!=null) e.deregisterListeners() });
+		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
 		this._cancel();
 	},
 	
@@ -652,14 +875,14 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		for(var i = 1; i < this.builtinTypes.length; i++) {
 			toReplace += '<option>'+this.builtinTypes[i]+'</option>';
 		}
-		toReplace += '</select><a onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', false)"> Remove</a>';
+		toReplace += '</select><img src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', false)"/>';
 	
 		return toReplace;
 	},
 	
 	newRangeInputBox: function() {
-		var toReplace = '<input type="text" id="typeRange'+this.count+'_ontologytools"/>';
-		toReplace += '<a onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', true)"> Remove</a>';
+		var toReplace = '<input class="wickEnabled" typeHint="14" type="text" id="typeRange'+this.count+'_ontologytools" tabIndex="'+(this.count+104)+'"/>';
+		toReplace += '<img src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', true)"/>';
 		return toReplace;
 	},
 	
@@ -680,11 +903,13 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		// tbody already in DOM?
 		var addTo = $('typesAndRanges').firstChild == null ? $('typesAndRanges') : $('typesAndRanges').firstChild;
 		
+		autoCompleter.deregisterAllInputs();
 		// create dummy element and replace afterwards
 		var toReplace = $(addTo.appendChild(document.createElement("tr")));
 		toReplace.replace('<tr><td width="50px;">Range </td><td>'+this.newRangeInputBox()+'</td></tr>');
+		autoCompleter.registerAllInputs();
 		
-		this.rangeValidators[this.count] = (new OBInputTitleValidator('typeRange'+this.count+'_ontologytools', this));
+		this.rangeValidators[this.count] = (new OBInputTitleValidator('typeRange'+this.count+'_ontologytools', gLanguage.getMessage('CATEGORY_NS_WOC'), true, this));
 		this.enable(false, 'typeRange'+this.count+'_ontologytools');
 		
 		this.count++;
@@ -706,6 +931,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		// row is tbody element
 		row.removeChild($(id).parentNode.parentNode);
 		
+		this.enableCommand(this.allIsValid(), this.getCommandText());
 		this.adjustSize();
 	}
 });

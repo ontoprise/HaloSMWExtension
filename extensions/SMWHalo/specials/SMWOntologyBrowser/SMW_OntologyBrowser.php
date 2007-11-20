@@ -76,7 +76,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		   </div>		
 		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors\">
 		   </div>
-		   <span class=\"OB-filters\" style=\"margin-left:5px;margin-top:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" name=\"categoryFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
+		   <span class=\"OB-filters\" style=\"margin-left:5px;margin-top:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"treeFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
 		<!-- Attribute Tree hook -->
 				
@@ -90,7 +90,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		  ".($showMenuBar ? "<span class=\"menuBar\" id=\"menuBarInstance\"><a style=\"margin-left:5px;\" onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
-		  <span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" name=\"instanceFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
+		  <span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">
@@ -102,7 +102,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
 			".($showMenuBar ? "<span class=\"menuBar\" id=\"menuBarProperties\"><a style=\"margin-left:5px;\" onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span></a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
-			<span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" name=\"propertyFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>		
+			<span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>		
 		</div>		
 		<div id=\"OB-filters\">
 			" .

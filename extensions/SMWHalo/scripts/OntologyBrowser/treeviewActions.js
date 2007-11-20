@@ -22,13 +22,6 @@
  * One listener object for each type entity in each container.
  */
 
-/**
- * Global selection (node)
- */
-var OB_oldSelectedCategoryNode = null;
-var OB_oldSelectedInstanceNode = null;
-var OB_oldSelectedAttributeNode = null;
-var OB_oldSelectedRelationNode = null;
 
 /** 
  * Global selection flow arrow states
@@ -348,6 +341,11 @@ OBTreeActionListener.prototype = {
    	var rootElement = document.getElementById(treeName);
    	transformer.transformXMLToHTML(xmlDoc, rootElement, true);
    	selectionProvider.fireRefresh();
+   	if (treeName == 'categoryTree') { 
+   		selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
+   	} else if (treeName == 'propertyTree') {
+   		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
+   	}
    	dataAccess.OB_currentlyDisplayedTree = xmlDoc;
 },
 
@@ -438,6 +436,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		this.selectedCategory = null;
 		this.selectedCategoryID = null;
+		this.oldSelectedNode = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 		
 	},
@@ -456,6 +455,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedCategory = title;
 			this.selectedCategoryID = id;
+			this.oldSelectedNode = GeneralBrowserTools.toggleHighlighting(this.oldSelectedNode, node);
 		}
 	},
 	
@@ -499,7 +499,7 @@ select: function (event, node, categoryID, categoryName) {
 	}
 	
 	// fire selection event
-	selectionProvider.fireSelectionChanged(categoryID, categoryName, SMW_CATEGORY_NS, nextDIV);
+	selectionProvider.fireSelectionChanged(categoryID, categoryName, SMW_CATEGORY_NS, node);
 	
 	// check if node is already expanded and expand it if not
 	if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
@@ -508,7 +508,7 @@ select: function (event, node, categoryID, categoryName) {
 		
 	var instanceDIV = document.getElementById("instanceList");
 	var relattDIV = document.getElementById("relattributes");
-	OB_oldSelectedCategoryNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedCategoryNode, node);
+	
 	
 	// adjust relatt table headings
 	if (!$("relattRangeType").visible()) {
@@ -530,6 +530,8 @@ select: function (event, node, categoryID, categoryName) {
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
 	  	selectionProvider.fireRefresh();
+	  	// de-select instance list
+	  	selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	 }
 	 
 	 // callback for properties of a category
@@ -543,6 +545,7 @@ select: function (event, node, categoryID, categoryName) {
 		dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
 	  	transformer.transformResultToHTML(request,relattDIV);
 	  	selectionProvider.fireRefresh();
+	  	selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 	 }
 	 
 	 
@@ -587,6 +590,7 @@ OBInstanceActionListener.prototype = {
 	initialize: function() {
 		
 		this.selectedInstance = null;
+		this.oldSelectedInstance = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
@@ -599,6 +603,7 @@ OBInstanceActionListener.prototype = {
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_INSTANCE_NS) {
 			this.selectedInstance = title;
+			this.oldSelectedInstance = GeneralBrowserTools.toggleHighlighting(this.oldSelectedInstance, node);
 
 		}
 	},
@@ -609,7 +614,8 @@ OBInstanceActionListener.prototype = {
 			return;
 		}
 		if (commandID == SMW_OB_COMMAND_INSTANCE_DELETE) {
-			alert('Delete command');
+			var doDelete = confirm(gLanguage.getMessage('OB_CONFIRM_INSTANCE_DELETION'));
+			if (doDelete) obInstanceMenuProvider.doCommand(commandID);
 			return;
 		}
 		obInstanceMenuProvider.showContent(commandID, this.selectedInstance, 'instanceList');
@@ -632,7 +638,7 @@ OBInstanceActionListener.prototype = {
    	
 	},
 	
-	selectInstance: function (event, node, instanceName) {
+	selectInstance: function (event, node, id, instanceName) {
 	
 	var e = GeneralTools.getEvent(event);
 	
@@ -648,9 +654,9 @@ OBInstanceActionListener.prototype = {
 		
 		var relattDIV = $("relattributes");
 		var categoryDIV = $('categoryTree');
-		OB_oldSelectedInstanceNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedInstanceNode, node);
 		
-		selectionProvider.fireSelectionChanged(null, instanceName, SMW_INSTANCE_NS, node);
+		
+		selectionProvider.fireSelectionChanged(id, instanceName, SMW_INSTANCE_NS, node);
 		smwhgLogger.log(instanceName, "OB","clicked");
 		
 		function callbackOnInstanceSelectToRight(request) {
@@ -668,7 +674,7 @@ OBInstanceActionListener.prototype = {
 	  			GeneralBrowserTools.repasteMarkup("chemFoEq");
 	  		}
 	  		selectionProvider.fireRefresh();
-	  		
+	  		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 	  	}
 	  	
 	  	function callbackOnInstanceSelectToLeft (request) {
@@ -680,6 +686,7 @@ OBInstanceActionListener.prototype = {
 			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
 			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 	  	}
 	  	
 	  	
@@ -759,6 +766,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		this.OB_currentlySelectedAttribute = null;
 		this.selectedProperty = null;
 		this.selectedPropertyID = null;
+		this.oldSelectedProperty = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
@@ -771,6 +779,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		if (ns == SMW_PROPERTY_NS) {
 			this.selectedProperty = title;
 			this.selectedPropertyID = id;
+			this.oldSelectedProperty = GeneralBrowserTools.toggleHighlighting(this.oldSelectedProperty, node);
 		}
 	},
 	
@@ -803,10 +812,10 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		var instanceDIV = document.getElementById("instanceList");
 		
-		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
+		
 		
 		// fire selection event
-		selectionProvider.fireSelectionChanged(propertyID, propertyName, SMW_PROPERTY_NS, nextDIV);
+		selectionProvider.fireSelectionChanged(propertyID, propertyName, SMW_PROPERTY_NS, node);
 		
 		smwhgLogger.log(propertyName, "OB","clicked");	
 	
@@ -824,6 +833,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	     OB_instance_pendingIndicator.show();
 	 	 this.OB_currentlySelectedAttribute = propertyName;
 	 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
+	 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 		}
 	},
 	
@@ -878,15 +888,23 @@ var OBSchemaPropertyActionListener = Class.create();
 OBSchemaPropertyActionListener.prototype = {
 	initialize: function() {
 		this.selectedCategory = null; // initially none is selected
+		this.oldSelectedProperty = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedCategory = title;
-			if ($('currentSelectedCategory') != null) {
-				$('currentSelectedCategory').innerHTML = "'"+title+"'";
+			var anchor = $('currentSelectedCategory');
+			if (anchor != null) {
+				if (title == null) { 
+					anchor.innerHTML = '...';
+				} else {
+					anchor.innerHTML = "'"+title+"'";
+				}
 			}
+		} else if (ns == SMW_PROPERTY_NS){
+			this.oldSelectedProperty = GeneralBrowserTools.toggleHighlighting(this.oldSelectedProperty, node);
 		}
 	},
 	
@@ -908,8 +926,8 @@ OBSchemaPropertyActionListener.prototype = {
 		var categoryDIV = $("categoryTree");
 		var instanceDIV = $("instanceList");
 		
-		OB_oldSelectedAttributeNode = GeneralBrowserTools.toggleHighlighting(OB_oldSelectedAttributeNode, node);
 		
+		selectionProvider.fireSelectionChanged(null, attributeName, SMW_PROPERTY_NS, node);
 		smwhgLogger.log(attributeName, "OB","clicked");	
 		
 		function callbackOnPropertySelectForCategory (request) {
@@ -920,6 +938,7 @@ OBSchemaPropertyActionListener.prototype = {
 			}
 			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 	  	}
 	  	
 	  	function callbackOnPropertySelectForInstance (request) {
@@ -932,6 +951,8 @@ OBSchemaPropertyActionListener.prototype = {
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  		transformer.transformResultToHTML(request,instanceDIV, true);
+	  		selectionProvider.fireRefresh();
+	  		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	  	}
 		// if Ctrl is pressed: navigation mode
 		if (event["ctrlKey"]) {
@@ -1038,8 +1059,8 @@ OBGlobalActionListener.prototype = {
 	filterTree: function(event) {
 		
 		// reads filter string
-		var inputs = document.getElementsByTagName("input");
-		var filter = inputs[1].value;
+		
+		var filter = $F('treeFilter');
 		var tree;
 		var actionListener;
 		
@@ -1052,6 +1073,7 @@ OBGlobalActionListener.prototype = {
 				dataAccess.initializeRootCategories(0);
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
 				selectionProvider.fireRefresh();
+				selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 				return;
 			}	
 		} else if (this.activeTreeName == 'propertyTree') {
@@ -1061,6 +1083,7 @@ OBGlobalActionListener.prototype = {
 				dataAccess.initializeRootProperties(0);
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
 				selectionProvider.fireRefresh();
+				selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 				return;
 			}
 		}  
@@ -1077,8 +1100,8 @@ OBGlobalActionListener.prototype = {
 		if (dataAccess.OB_cachedInstances == null) {
 			return;
 		}
-		var inputs = document.getElementsByTagName("input");
-		var filter = inputs[2].value;
+		
+		var filter = $F('instanceFilter');
 		
 		var regex = new Array();
     	var filterTerms = GeneralTools.splitSearchTerm(filter);
@@ -1104,6 +1127,7 @@ OBGlobalActionListener.prototype = {
 		}
 		transformer.transformXMLToHTML(nodesFound, $("instanceList"), true); 
 		selectionProvider.fireRefresh();
+		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	},
 	
 	/**
@@ -1113,8 +1137,8 @@ OBGlobalActionListener.prototype = {
 		if (dataAccess.OB_cachedProperties == null) {
 			return;
 		}
-		var inputs = document.getElementsByTagName("input");
-		var filter = inputs[3].value;
+		
+		var filter = $F('propertyFilter');
 		
 		var regex = new Array();
     	var filterTerms = GeneralTools.splitSearchTerm(filter);
@@ -1141,6 +1165,7 @@ OBGlobalActionListener.prototype = {
 		}
 		transformer.transformXMLToHTML(nodesFound, $("relattributes"), true); 
 		selectionProvider.fireRefresh();
+		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 		GeneralBrowserTools.repasteMarkup("chemFoEq");
 	},
 	
@@ -1178,6 +1203,7 @@ OBGlobalActionListener.prototype = {
 		}
 	  	dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   		dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
+  		selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 	 }
 	 
 	  function filterBrowsingAttributeCallback(request) {
@@ -1189,6 +1215,7 @@ OBGlobalActionListener.prototype = {
 		}
 	  	dataAccess.OB_cachedPropertyTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   		dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, attributeDIV);
+  		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 	 }
 	 
 	 
@@ -1204,6 +1231,7 @@ OBGlobalActionListener.prototype = {
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
 	  	selectionProvider.fireRefresh();
+	  	selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 	 }
 	 
 	 function filterBrowsingPropertyCallback(request) {
@@ -1217,6 +1245,7 @@ OBGlobalActionListener.prototype = {
 		dataAccess.OB_cachedProperties = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,propertyDIV, true);
 	  	selectionProvider.fireRefresh();
+	  	selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 	 }
 	 
 	 if (!force && event["keyCode"] != 13 ) {
