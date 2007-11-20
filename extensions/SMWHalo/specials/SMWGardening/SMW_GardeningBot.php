@@ -184,7 +184,10 @@
     * $runAsnyc: 
     * $keepConsoleAfterTermination: 
     */	
- 	 public static function runBot($botID, $params = "", $runAsync = true, $keepConsoleAfterTermination = true) {
+ 	 public static function runBot($botID, $params = "", $runAsync = true) {
+ 	 	global $keepGardeningConsole;
+ 	 	$keepConsoleAfterTermination = isset($keepGardeningConsole) ? $keepGardeningConsole : false;
+ 	 	
  	 	// check if bot is registered
  	 	if (!GardeningBot::isBotKnown($botID)) {
  	 		return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_unknown_bot');  

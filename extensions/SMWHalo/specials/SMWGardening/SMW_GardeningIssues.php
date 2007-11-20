@@ -39,11 +39,12 @@
  	 * @param $bot_id
  	 * @param $gi_type
  	 * @param $gi_class
- 	 * @param $title
+ 	 * @param $title1
+ 	 * @param $title2
  	 * 
  	 * @return True, if at least one Gardening Issue of the article exists, otherwise false.
  	 */
- 	public abstract function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title = NULL);
+ 	public abstract function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title1 = NULL, $title2 = NULL);
  	
  	/**
  	 * Get Gardening issues. Every parameter (except $bot_id) may be NULL!

@@ -55,7 +55,7 @@
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
- 	public function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title = NULL) {
+ 	public function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title1 = NULL, $title2 = NULL) {
  		$db =& wfGetDB( DB_MASTER );
  		$sqlCond = array();
  		if ($bot_id != NULL) { 
@@ -83,8 +83,11 @@
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
- 		if ($title != NULL) {
- 			$sqlCond[] = 'p1_title = '.$db->addQuotes($title->getDBkey()).' AND p1_namespace = '.$title->getNamespace();
+ 		if ($title1 != NULL) {
+ 			$sqlCond[] = 'p1_title = '.$db->addQuotes($title1->getDBkey()).' AND p1_namespace = '.$title1->getNamespace();
+ 		}
+ 		if ($title2 != NULL) {
+ 			$sqlCond[] = 'p2_title = '.$db->addQuotes($title2->getDBkey()).' AND p2_namespace = '.$title2->getNamespace();
  		}
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_id'), $sqlCond , 'SMWGardeningIssue::existsGardeningIssue');
  		$rowsExist = $db->numRows( $res ) > 0;
