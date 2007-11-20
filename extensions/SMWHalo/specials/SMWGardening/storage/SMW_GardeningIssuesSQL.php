@@ -55,6 +55,41 @@
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
+ 	public function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$sqlCond = array();
+ 		if ($bot_id != NULL) { 
+ 			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
+ 		}
+ 		if ($gi_class != NULL) {
+ 			if (is_array($gi_class)) {
+ 				$cond = "";
+ 				foreach($gi_class as $c) {
+ 					$cond .= 'gi_class = '.$c.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else {
+ 				$sqlCond[] = 'gi_class = '.$gi_class;
+ 			}
+ 		}
+ 		if ($gi_type != NULL) {
+ 			if (is_array($gi_type)) {
+ 				$cond = "";
+ 				foreach($gi_type as $t) {
+ 					$cond .= 'gi_type = '.$t.' OR ';
+ 				}
+ 				$sqlCond[] = '('.$cond.' FALSE)';
+ 			} else { 
+ 				$sqlCond[] = 'gi_type = '.$gi_type;
+ 			}
+ 		}
+ 		if ($title != NULL) {
+ 			$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey()).' AND p1_namespace = '.$titles->getNamespace();
+ 		}
+ 		$row = $db->selectRow($db->tableName('smw_gardeningissues'), array('p1_id'), $sqlCond , 'SMWGardeningIssue::existsGardeningIssue');
+ 		return $row !== false;
+ 	}
+ 	
  	public function getGardeningIssuesForPairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
  		$db =& wfGetDB( DB_MASTER );
@@ -121,7 +156,7 @@
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
  		$result = array();
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssuesForPairs', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
@@ -328,7 +363,7 @@
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
  		$result = array();
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace', 'p2_title', 'p2_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace', 'p2_title', 'p2_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitlePairs', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);

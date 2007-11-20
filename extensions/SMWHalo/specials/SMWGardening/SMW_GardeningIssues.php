@@ -34,6 +34,18 @@
  	public abstract function clearGardeningIssues($bot_id = NULL, Title $t1 = NULL);
  	
  	/**
+ 	 * Detects if a GardeningIssue about an article does already exist.
+ 	 * 
+ 	 * @param $bot_id
+ 	 * @param $gi_type
+ 	 * @param $gi_class
+ 	 * @param $title
+ 	 * 
+ 	 * @return True, if at least one Gardening Issue of the article exists, otherwise false.
+ 	 */
+ 	public abstract function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title = NULL);
+ 	
+ 	/**
  	 * Get Gardening issues. Every parameter (except $bot_id) may be NULL!
  	 * 
  	 * @param $bot_id Bot-ID
