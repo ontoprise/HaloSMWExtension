@@ -84,7 +84,7 @@
  			}
  		}
  		if ($title != NULL) {
- 			$sqlCond[] = 'p1_title = '.$db->addQuotes($titles->getDBkey()).' AND p1_namespace = '.$titles->getNamespace();
+ 			$sqlCond[] = 'p1_title = '.$db->addQuotes($title->getDBkey()).' AND p1_namespace = '.$title->getNamespace();
  		}
  		$row = $db->selectRow($db->tableName('smw_gardeningissues'), array('p1_id'), $sqlCond , 'SMWGardeningIssue::existsGardeningIssue');
  		return $row !== false;
