@@ -125,9 +125,63 @@ class SMWH_AAMParser {
 	public function highlightAnnotations(&$wikiText)
 	{
 		// add intermediate tags to annotations
-		$text = preg_replace('/(\[\[.*?\]\])/','{linkstart}$1{linkend}', $wikiText);
-		$text = preg_replace('/{linkstart}(\[\[.*?(::|:=).*?\]\]){linkend}/',
-		                     '{annostart}$1{annoend}', $text);
+		$parts = preg_split('/(\[\[)|(::)|(:=)|(\]\])/sm', $wikiText, -1, 
+		                    PREG_SPLIT_DELIM_CAPTURE |
+		                    PREG_SPLIT_NO_EMPTY);
+		
+		$braceCount = 0;
+		$isLink = true;
+		$braceContent = "";
+		$text = "";		                    
+        foreach ($parts as $part) {
+        	switch ($part) {
+        		case '[[':
+        			$braceCount++;
+        			$braceContent .= $part;
+        			$isLink = true;
+        			break;
+        		case ':=':
+        		case '::':
+        			if ($braceCount == 0) {
+        				$text .= $part;
+        			} else {
+        				if ($braceCount == 1) {
+        					$isLink = false;
+	        			}
+        				$braceContent .= $part;
+        			}
+        			break;
+        		case ']]':
+        			--$braceCount;
+       				$braceContent .= $part;
+       				$short = strlen($braceContent) < 41;
+        			if ($braceCount == 0) {
+        				if ($isLink) {
+        					$text .= ($short) 
+        								? '{shortlinkstart}'.$braceContent.'{shortlinkend}'
+        								: '{linkstart}'.$braceContent.'{linkend}';
+        				} else {
+        					$text .= ($short) 
+        								? '{shortannostart}'.$braceContent.'{shortannoend}'
+        								: '{annostart}'.$braceContent.'{annoend}';
+        				}
+	        			$braceContent = "";
+        			}
+        			if ($braceCount < 0) {
+        				// this should never occur (malformed wiki text)
+        				$braceCount = 0;
+        				$text .= $braceContent;
+	        			$braceContent = "";
+        			}
+        			break;
+        		default:
+        			if ($braceCount == 0) {
+        				$text .= $part;
+        			} else {
+        				$braceContent .= $part;
+        			}
+        	}
+        }
 		return $text;
 	}
 		
@@ -142,19 +196,29 @@ class SMWH_AAMParser {
 	{
 		global $smwgHaloScriptPath;
 		// add intermediate tags to annotations
-		$text = preg_replace('/{annostart}(.*?){annoend}/',
+		$text = preg_replace('/{annostart}(.*?){annoend}/sm',
+							 '<a href="javascript:smwhfEditAnno()">'.
+		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
+							 '<span class="aam_prop_highlight">$1</span>',
+							 $wikiText);
+		$text = preg_replace('/{shortannostart}(.*?){shortannoend}/sm',
 							 '<span style="white-space:nowrap">'.
 							 '<a href="javascript:smwhfEditAnno()">'.
 		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
 							 '<span class="aam_prop_highlight">$1</span>'.
 							 '</span>',
-							 $wikiText);
-		$text = preg_replace('/{linkstart}(.*?){linkend}/',
+							 $text);
+		$text = preg_replace('/{shortlinkstart}(.*?){shortlinkend}/sm',
 							 '<span style="white-space:nowrap">'.
 							 '<a href="javascript:smwhfEditLink()">'.
 		           			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
 		                     '<span class="aam_page_link_highlight">$1</span>'.
 							 '</span>',
+		                     $text);
+		$text = preg_replace('/{linkstart}(.*?){linkend}/sm',
+							 '<a href="javascript:smwhfEditLink()">'.
+		           			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
+		                     '<span class="aam_page_link_highlight">$1</span>',
 		                     $text);
 		return $text;
 	}
