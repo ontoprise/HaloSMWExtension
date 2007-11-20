@@ -35,7 +35,7 @@ Marker.prototype = {
 		if(isNaN(Number(borderwidthy))) return;
 		//Set width for the marker minus borderwidth so it fits the original element which should be marked
 		var width = divtomark.offsetWidth - borderwidthx;
-		$(this.markerindex+"-marker").style.width =  + width + "px";
+		$(this.markerindex+"-marker").style.width = width + "px";
 		var height = divtomark.offsetHeight - borderwidthy;
 		$(this.markerindex+"-marker").style.height = height + "px";
 		//Set position of the marker
@@ -58,7 +58,7 @@ Marker.prototype = {
 			//Check if multiple links has been passed and generate one clickable picture for each
 			if( links  instanceof Array){ 
 				links.each(function(link){
-					marker += '<a href="'+ link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
+					marker += '<a href="'+ wgServer + wgScript+ "/" +link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
 				});
 			// Check if only one link has been passe	
 			} else if ( links  instanceof String || typeof(links) == "string"){
@@ -94,17 +94,17 @@ Marker.prototype = {
 					classattr.nodeValue = "aam_template_highlight text-marker";
 					span.setAttributeNode(classattr);
 				//Create textcontent for span attribute
-				if(node.nodeValue != null){
+				//if(node.nodeValue != null){
 					//Don't mark blank strings (e.g. "\n")
 					if(node.nodeValue.blank()==true) return;
 					//If node is an normal text node use the nodeValue
 					var textdata = document.createTextNode(node.nodeValue);
 						span.appendChild(textdata);
-				} else if(node.innerHTML !=null) {
+				//} else if(node.innerHTML !=null) {
 					//If node is not an normal text node (e.g. span) use innerhtml
 					//var textdata = document.createTextNode(node.innerHTML);
-						span.innerHTML = node.innerHTML;
-				}
+				//		span.innerHTML = node.innerHTML;
+				//}
 				//var replacement 
 				node.parentNode.replaceChild(span, node);
 				this.iconMarker($(this.markerindex+"-textmarker"),links);
@@ -139,7 +139,7 @@ Marker.prototype = {
  	* 
  	* @param
  	*/
-	checkForTemplates: function(){
+	/*checkForTemplates: function(){
 			rootnode = $(this.rootnode);
 			this.removeMarkers(rootnode);
 			//Check
@@ -151,7 +151,7 @@ Marker.prototype = {
 			//check each child
 			elements.each(this.checkElement.bind(this));
 			
-	},
+	},*/
 	
 	/**
 	 * DEPRECATED! Should not be working anymore with the new tags
@@ -160,7 +160,7 @@ Marker.prototype = {
 	 * @param  element object 
 	 * 				element to check
 	 */
-	checkElement: function(element){
+	/*checkElement: function(element){
 		//Check if element has a type="template" attribute
 		if(element.readAttribute('type')!= null && element.readAttribute('type')== "template"){
 			//get first child
@@ -175,7 +175,7 @@ Marker.prototype = {
 				this.iconMarker(element);
 			}
 		}	
-	},
+	},*/
 	
 	/**
  	* @public Gets all descendants and removes markers 
@@ -184,7 +184,17 @@ Marker.prototype = {
  	* 				Element which descendants will be checked for removing
  	*/
 	removeMarkers: function(){
-			var rootnode = $(this.rootnode);
+			$$('.icon-marker').each(function(node) {
+  				node.remove();
+			});
+			$$('.div-marker').each(function(node) {
+  				node.remove();
+			});
+			$$('.text-marker').each(function(node) {
+  				node.replace(node.innerHTML);
+			});
+			return;
+			/*var rootnode = $(this.rootnode);
 			//Check rootnode
 			if(rootnode == null) return;
 			//Get childs
@@ -192,7 +202,7 @@ Marker.prototype = {
 			//remove marker
 			elements.each(this.removeMarker.bind(this));
 			//reset marker index
-			this.markerindex = 0; 
+			this.markerindex = 0;*/
 	},
 	
 	/**
@@ -201,7 +211,7 @@ Marker.prototype = {
  	* @param element object 
  	* 				element to check
  	*/	
-	removeMarker: function(element){
+	/*removeMarker: function(element){
 		//firstchild.tagName.toLowerCase() == 'span'
 		//debugger;
 		if(element == null) return;
@@ -213,6 +223,16 @@ Marker.prototype = {
 		if(element.readAttribute('class')!= null && element.readAttribute('class')== "text-marker"){
 			element.replace(element.innerHTML);
 		}	
+	},*/
+	
+	markNodes: function(){
+		this.removeMarkers();
+		var time = new Date();
+		var timestamp1 = time.toGMTString();		
+		this.mark($(this.rootnode), true);
+		time = new Date();
+		var timestamp2 = time.toGMTString();
+		//alert(timestamp1 + " " + timestamp2 );
 	},
 	
 	/**
@@ -220,7 +240,99 @@ Marker.prototype = {
  	* 
  	* @param 
  	*/	
-	markNodes: function(){
+	mark: function(rootnode, mark){
+
+		
+		var templates = Array();
+		templates.push(0);
+		
+		//Stores the templatename and the id of the current open but not closed template
+		var currentTmpl = null;
+		//Get first Child
+		var element = rootnode.firstChild;
+		//Walk over every next sibling
+		//this uses plain javascript functions, since prototype doesn't support textnodes
+		while( element != null){
+			//Get current node and set element to the next sibling so it won't be effected by changes of the current node
+			var node = element;
+			element = element.nextSibling;			
+			//If nodetyp is textnode and template tag is open but not closed
+			if(node.nodeType == 3 && currentTmpl != null ){
+				//mark text
+				if(mark == true) this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
+			//If nodetype is elementnode
+			} else if(node.nodeType == 1 ){
+				//Treating different types of elements
+				var tag = node.tagName.toLowerCase()	
+					//Treat template anchors
+					if(tag == 'a'){
+						//Find opening and closing tags
+							//Check if this is an opening anchor, indicating that a template starts 
+							if($(node).readAttribute('type')=='template'){
+			  					currentTmpl = node.readAttribute('tmplname');
+			  					templates.push(currentTmpl); 			
+			  					continue;
+			  				}
+			  				//Check if this is an closing anchor, indicating that a template ends
+			  				if($(node).readAttribute('type')=='templateend'){
+			  					currentTmpl = null;
+			  					templates[0] = -1;
+			  				 	continue;
+			  				}
+		  			}
+					var result;
+					if(currentTmpl != null ){
+  						result = this.mark(node,false);
+  						var links = currentTmpl;
+  						if(result[0] != 0 && result[0] != -1 ) links = Array(currentTmpl).push(result[0]);
+  						if(result.length > 1){
+  							result.shift()
+  							links = Array(links).concat(result);
+  						}						
+  						if(mark == true && node.visible()){
+  							this.transparencyMarker(node);
+  							this.iconMarker(node,links);
+  						} 
+  					} else {
+  						(mark == true) ? result = this.mark(node,true) : result = this.mark(node,false);
+  					}
+  					
+  					switch(result[0]){
+  						//template close
+  						case -1: 
+  							currentTmpl = null;
+  							break
+  						//nothing found
+  						case 0:
+  							break
+  						//Opened template	
+  						default:
+  							templates.push( result[0] );
+  							currentTmpl = result[0];
+  						}
+					if(result.length > 1){
+						result.shift()
+						templates = templates.concat( result );
+					};
+				
+
+			}
+		}
+		//return current opened Template
+		if(currentTmpl != null ){
+			templates[0] = currentTmpl; 
+		}
+		return templates;	
+	},
+	
+
+	/**
+ 	* @public Checks all child nodes for templates and marks the proper Elements
+ 	* 
+ 	* @param 
+ 	*/	
+	
+	/*markNodesdepr: function(){
 		//if no argument passed get rootnode 
 		if(arguments.length == 0) {
 			//remove old markers
@@ -320,7 +432,7 @@ Marker.prototype = {
 				}	
 			}
 		}	
-	},
+	},*/
 	
 	/**
  	* @public looks for opening/closing anchors and returns an 2-dimensonal array
@@ -331,7 +443,7 @@ Marker.prototype = {
  	* @param element object
  	* 			element which should be checked for matching anchors in its descendants
  	*/
-	getTemplateAnchors: function(node){
+	/*getTemplateAnchors: function(node){
 		//Get all descendants of the node
 		var elements = $(node).descendants();
 		//Arrays storing the anchors and being returned 
@@ -363,7 +475,7 @@ Marker.prototype = {
   			
 		}
 		return [starttags,endtags,templates];
-	},
+	},*/
 	
 	
 	
