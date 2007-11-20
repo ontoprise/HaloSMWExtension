@@ -68,31 +68,122 @@ OBEventProvider.prototype = {
 // create instance of event provider
 var selectionProvider = new OBEventProvider();	
 
-var OBOntologyTools = Class.create();
-OBOntologyTools.prototype = { 
+var OBArticleCreator = Class.create();
+OBArticleCreator.prototype = { 
+	initialize: function() {
+		this.pendingIndicator = new OBPendingIndicator();
+	},
+	
+	createArticle : function(title, content, optionalText, creationComment,
+	                         callback, node) {
+		
+		function ajaxResponseCreateArticle(request) {
+			this.pendingIndicator.hide();
+			if (request.status != 200) {
+				alert(gLanguage.getMessage('ERROR_CREATING_ARTICLE'));
+				return;
+			}
+			
+			var answer = request.responseText;
+			var regex = /(true|false),(true|false),(.*)/;
+			var parts = answer.match(regex);
+			
+			if (parts == null) {
+				alert(gLanguage.getMessage('ERROR_CREATING_ARTICLE'));
+				return;
+			}
+			
+			var success = parts[1];
+			var created = parts[2];
+			var title = parts[3];
+			
+			if (success == "true") {
+				callback(success, created, title);
+			} 
+		}
+		this.pendingIndicator.show(node);
+		sajax_do_call('smwfCreateArticle', 
+		              [title, content, optionalText, creationComment], 
+		              ajaxResponseCreateArticle.bind(this));
+		              
+	},
+	
+	deleteArticle: function(title, reason, callback, node) {
+		
+		function ajaxResponseDeleteArticle(request) {
+			this.pendingIndicator.hide();
+			if (request.status != 200) {
+				alert(gLanguage.getMessage('ERROR_DELETING_ARTICLE'));
+				return;
+			}
+					
+			callback();
+			
+		}
+		
+		this.pendingIndicator.show(node);
+		sajax_do_call('smwfDeleteArticle', 
+		              [title, reason], 
+		              ajaxResponseDeleteArticle.bind(this));
+	},
+	
+	renameArticle: function(oldTitle, newTitle, reason, callback, node) {
+		
+		function ajaxResponseRenameArticle(request) {
+			this.pendingIndicator.hide();
+			if (request.status != 200) {
+				alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
+				return;
+			}
+					
+			callback();
+			
+		}
+		
+		this.pendingIndicator.show(node);
+		sajax_do_call('smwfRenameArticle', 
+		              [oldTitle, newTitle, reason], 
+		              ajaxResponseRenameArticle.bind(this));
+	}
+	
+}
+var articleCreator = new OBArticleCreator();
+
+var OBOntologyModifier = Class.create();
+OBOntologyModifier.prototype = { 
 	initialize: function() {
 		this.date = new Date();
 		this.count = 0;
 	},
 	
 	addSubcategory: function(subCategoryTitle, superCategoryTitle, superCategoryID) {
-		var subCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(subCategoryTitle));
-		this.insertCategoryNode(superCategoryID, subCategoryXML);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
-		
-		selectionProvider.fireSelectionChanged(superCategoryID, superCategoryTitle, SMW_CATEGORY_NS, $(superCategoryID))
-		selectionProvider.fireRefresh();
-	
+		function callback() {
+			var subCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(subCategoryTitle));
+			this.insertCategoryNode(superCategoryID, subCategoryXML);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+			
+			selectionProvider.fireSelectionChanged(superCategoryID, superCategoryTitle, SMW_CATEGORY_NS, $(superCategoryID))
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+subCategoryTitle,  
+			                   "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]", '',
+							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
 	},
 	
 	addSubcategoryOnSameLevel: function(newCategoryTitle, siblingCategoryTitle, sibligCategoryID) {
-		var newCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(newCategoryTitle));
-		var superCategoryID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('id');
-		this.insertCategoryNode(superCategoryID, newCategoryXML);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
-		
-		selectionProvider.fireSelectionChanged(sibligCategoryID, siblingCategoryTitle, SMW_CATEGORY_NS, $(sibligCategoryID))
-		selectionProvider.fireRefresh();
+		function callback() {
+			var newCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(newCategoryTitle));
+			var superCategoryID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('id');
+			this.insertCategoryNode(superCategoryID, newCategoryXML);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+			
+			selectionProvider.fireSelectionChanged(sibligCategoryID, siblingCategoryTitle, SMW_CATEGORY_NS, $(sibligCategoryID))
+			selectionProvider.fireRefresh();
+		}
+		var superCategoryTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('title');
+		var content = superCategoryTitle != null ? "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]" : "";
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+subCategoryTitle, content, '',
+							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
 	},
 	
 	renameCategory: function(newCategoryTitle, categoryTitle, categoryID) {
@@ -104,22 +195,35 @@ OBOntologyTools.prototype = {
 	},
 	
 	addSubproperty: function(subPropertyTitle, superPropertyTitle, superPropertyID) {
-		var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(subPropertyTitle));
-		this.insertPropertyNode(superPropertyID, subPropertyXML);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
-		
-		selectionProvider.fireSelectionChanged(superPropertyID, superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
-		selectionProvider.fireRefresh();
+		function callback() {
+			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(subPropertyTitle));
+			this.insertPropertyNode(superPropertyID, subPropertyXML);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+			
+			selectionProvider.fireSelectionChanged(superPropertyID, superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+subPropertyTitle, '',   
+			                    "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]",
+							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
 	},
 	
 	addSubpropertyOnSameLevel: function(newPropertyTitle, siblingPropertyTitle, sibligPropertyID) {
-		var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(newPropertyTitle));
-		var superPropertyID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('id');
-		this.insertPropertyNode(superPropertyID, subPropertyXML);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+		function callback() {
+			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(newPropertyTitle));
+			var superPropertyID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('id');
+			this.insertPropertyNode(superPropertyID, subPropertyXML);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
 		
-		selectionProvider.fireSelectionChanged(sibligPropertyID, siblingPropertyTitle, SMW_PROPERTY_NS, $(sibligPropertyID))
-		selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(sibligPropertyID, siblingPropertyTitle, SMW_PROPERTY_NS, $(sibligPropertyID))
+			selectionProvider.fireRefresh();
+		}
+		
+		var superPropertyTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('title');
+		var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]" : "";
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+subPropertyTitle, '',   
+			                   content,
+							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
 	},
 	
 	renameProperty: function(newPropertyTitle, oldPropertyTitle, propertyID) {
@@ -140,19 +244,25 @@ OBOntologyTools.prototype = {
 	},
 	
 	renameInstance: function(newInstanceTitle, oldInstanceTitle, instanceID) {
-		this.renameInstanceNode(newInstanceTitle, instanceID);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
-		
-		selectionProvider.fireSelectionChanged(instanceID, newInstanceTitle, SMW_INSTANCE_NS, $(instanceID))
-		selectionProvider.fireRefresh();
+		function callback() {
+			this.renameInstanceNode(newInstanceTitle, instanceID);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
+			
+			selectionProvider.fireSelectionChanged(instanceID, newInstanceTitle, SMW_INSTANCE_NS, $(instanceID))
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.renameArticle(oldInstanceTitle, newInstanceTitle, "OB", callback.bind(this), $(instanceID));
 	},
 	
-	deleteInstance: function(instanceID) {
-		this.deleteInstanceNode(instanceID);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
-		
-		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null)
-		selectionProvider.fireRefresh();
+	deleteInstance: function(instanceTitle, instanceID) {
+		function callback() {
+			this.deleteInstanceNode(instanceID);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
+			
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null)
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.deleteArticle(instanceTitle, "OB", callback.bind(this), $(instanceID));
 	},
 	
 	createCategoryNode: function(subCategoryTitle) {
@@ -241,7 +351,7 @@ OBOntologyTools.prototype = {
 }
 
 // global object for ontology modification
-var ontologyTools = new OBOntologyTools();
+var ontologyTools = new OBOntologyModifier();
 
 var OBInputFieldValidator = Class.create();
 OBInputFieldValidator.prototype = {
@@ -505,7 +615,7 @@ OBOntologyGUITools.prototype = {
 	},
 	
 	enable: function(b, id) {
-		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#FFF';
+		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
 	
 		this.enableCommand(b, b ?  this.getCommandText() : $F(id) == '' ? 'OB_ENTER_TITLE': 'OB_TITLE_EXISTS');
 		$(id).setStyle({
@@ -546,6 +656,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		switch(this.commandID) {
 			case SMW_OB_COMMAND_ADDSUBCATEGORY: {
 				ontologyTools.addSubcategory($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: {
@@ -586,7 +697,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
-		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
+		
 		this._cancel();
 	}
 });
@@ -651,7 +762,7 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
-		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
+		
 		this._cancel();
 	}
 });
@@ -682,7 +793,7 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 				break;
 			}
 			case SMW_OB_COMMAND_INSTANCE_DELETE: {
-				ontologyTools.deleteInstance(this.selectedID);
+				ontologyTools.deleteInstance(this.selectedTitle, this.selectedID);
 				break;
 			}
 			default: alert('Unknown command!');
@@ -713,7 +824,7 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
-		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
+		
 		this._cancel();
 	}
 });
@@ -830,7 +941,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.maxCardValidator.deregisterListeners();
 		this.minCardValidator.deregisterListeners();
 		this.rangeValidators.each(function(e) { if (e!=null) e.deregisterListeners() });
-		selectionProvider.removeListener(this, OB_SELECTIONLISTENER);
+		
 		this._cancel();
 	},
 	

@@ -29,6 +29,8 @@ $wgAjaxExportList[] = 'smwfCreateArticle';
 $wgAjaxExportList[] = 'smwfExistsArticle';
 $wgAjaxExportList[] = 'smwfRelationSchemaData';
 $wgAjaxExportList[] = 'smwfGetWikiText';
+$wgAjaxExportList[] = 'smwfDeleteArticle';
+$wgAjaxExportList[] = 'smwfRenameArticle';
 
 /**
  * Creates a new article or appends some text if it already
@@ -286,4 +288,36 @@ function smwfGetWikiText($pagename) {
 	}
 }
 
+/**
+ * Deletes an article. This function is invoked by an ajax call.
+ * 
+ * @param string $pagename The name of the article.
+ * @param string $reason A reason why it was deleted.
+ */
+function smwfDeleteArticle($pagename, $reason) {
+	$titleObj = Title::newFromText($pagename);
+	$article = new Article($titleObj);
+
+	if ($article->exists()) {
+		$article->doDelete($reason);
+	} 
+	return "true"; 
+}
+
+/**
+ * Rename an article. This function is invoked by an ajax call.
+ * 
+ * @param string $pagename The name of the article.
+ * @param string $newpagename The new name of the article.
+ * @param string $reason A reason why it was renamed.
+ */
+function smwfRenameArticle($pagename, $newpagename, $reason) {
+	$titleObj = Title::newFromText($pagename);
+	$newTitleObj = Title::newFromText($newpagename);
+	$success = false;
+	if ($titleObj->exists() && !$newTitleObj->exists()) {
+		$success = $titleObj->moveTo($newTitleObj, true, $reason);
+	} 
+	return $success === true ? "true" : "false"; 
+}
 ?>
