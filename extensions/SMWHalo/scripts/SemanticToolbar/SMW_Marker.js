@@ -54,7 +54,7 @@ Marker.prototype = {
 	iconMarker: function(divtomark,links) {
 		if(divtomark == null) return;
 		//Create and insert markerdiv
-		var marker = '<div id="' + this.markerindex + '-marker" class="span-marker">';
+		var marker = '<div id="' + this.markerindex + '-marker" class="icon-marker">';
 			//Check if multiple links has been passed and generate one clickable picture for each
 			if( links  instanceof Array){ 
 				links.each(function(link){
@@ -77,7 +77,7 @@ Marker.prototype = {
 	},
 
 	/**
- 	* @public marks an text node with an proper span and image laying above the upper left corner
+ 	* @public marks an text node and spans with an proper span and image laying above the upper left corner
  	* 
  	* @param node object
  	* 			text node to mark
@@ -94,8 +94,17 @@ Marker.prototype = {
 					classattr.nodeValue = "aam_template_highlight text-marker";
 					span.setAttributeNode(classattr);
 				//Create textcontent for span attribute
-				var textdata = document.createTextNode(node.nodeValue);
-					span.appendChild(textdata);
+				if(node.nodeValue != null){
+					//Don't mark blank strings (e.g. "\n")
+					if(node.nodeValue.blank()==true) return;
+					//If node is an normal text node use the nodeValue
+					var textdata = document.createTextNode(node.nodeValue);
+						span.appendChild(textdata);
+				} else if(node.innerHTML !=null) {
+					//If node is not an normal text node (e.g. span) use innerhtml
+					//var textdata = document.createTextNode(node.innerHTML);
+						span.innerHTML = node.innerHTML;
+				}
 				//var replacement 
 				node.parentNode.replaceChild(span, node);
 				this.iconMarker($(this.markerindex+"-textmarker"),links);
@@ -197,7 +206,7 @@ Marker.prototype = {
 		//debugger;
 		if(element == null) return;
 		//Check if tabindex is set, if yes update it
-		if(element.readAttribute('class')!= null && (element.readAttribute('class')== "span-marker" || element.readAttribute('class')== "div-marker")){
+		if(element.readAttribute('class')!= null && (element.readAttribute('class')== "icon-marker" || element.readAttribute('class')== "div-marker")){
 			element.remove();
 		}
 		//Check for textmarkers and remove only the span not the text 
@@ -212,8 +221,15 @@ Marker.prototype = {
  	* @param 
  	*/	
 	markNodes: function(){
-		//get rootnode 
-		var rootnode = $(this.rootnode);
+		//if no argument passed get rootnode 
+		if(arguments.length == 0) {
+			//remove old markers
+			this.removeMarkers();
+			var rootnode = $(this.rootnode);
+		} else {
+			var rootnode = arguments[0];
+		}
+
 		//Stores the templatename and the id of the current open but not closed template
 		var currentTmpl = null;
 		var currentTmplid = null;		
@@ -231,57 +247,76 @@ Marker.prototype = {
 				this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
 			//If nodetype is elementnode
 			} else if(node.nodeType == 1 ){
-				//right now only tables and anchors are treated.
-				//but should be easy to extend it to other elements representing boxes
-				switch(node.tagName.toLowerCase()){	
-				case 'table':
-					//Get template tags from the sub node
-					var anchors = this.getTemplateAnchors(node);
-					//Array to store the templatenames in
-					var links = new Array();
-					//Add templatename of the current open template
-					if (currentTmpl != null ) links.push(wgServer + wgScript+ "/" +currentTmpl);
-					//Add all templatenames of all opening anchors which can be found in the table's descendants
-					//Templatenames are stored in the third field of the returned array
-					for (var index = 0, len = anchors[2].length; index < len; ++index) {
-  						var subTmpl = anchors[2][index];
-  						links.push(wgServer + wgScript+ "/" + subTmpl);
-					}
-					//Check if the opened anchor is closed within the table
-					//and if yes remove it from the buffer
-					if(anchors[1].indexOf(currentTmplid)!=-1){
-						currentTmpl = null;
-  						currentTmplid = null;
-					} 
-					//Remove all anchors from the opening list, which are closed within the table
-					//if the list empty afterwards, then all anchors were close
-					//otherwise there is an anchor which will be close further on in the dom tree and there
-					//needs to be buffered for marking elements following after the table
-					var openanchor = anchors[0].without(anchors[1])[0];
-					if(openanchor!=null){
-						currentTmplid = openanchor;
-						currentTmpl = anchors[2][anchors[0].indexOf(openanchor)]
-					}
-					//Mark table with an tranparent overlay and icons 
-					this.transparencyMarker(node);
-					this.iconMarker(node,links);
-					this.markerindex++;
-					break;
-				case 'a':
+				
+				//Treating different types of elements
+				var tag = node.tagName.toLowerCase()	
+				//Treat template anchors
+				if(tag == 'a'){
 					//Check if this is an opening anchor, indicating that a template starts 
 					if($(node).readAttribute('type')=='template'){
   						currentTmplid = node.readAttribute('id');
   						currentTmpl = node.readAttribute('tmplname');			
-  						break;
+  						continue;
   					}
   					//Check if this is an closing anchor, indicating that a template ends
   					if($(node).readAttribute('type')=='templateend'){
   						currentTmpl = null;
   						currentTmplid = null;
-  						break;
+  					 	continue;
   					}
+				}
+				
+				//If not element is not visible don't mark it
+				if(!$(node).visible()) continue;	
+				
+				//Get template tags from the sub node
+				var anchors = this.getTemplateAnchors(node);
+				//Array to store the templatenames in
+				var links = new Array();
+				//If no anchor is opened and no templates start within the element, mark nothing
+				if(currentTmpl == null && anchors[0].length == 0){
+					continue;
+				}				
+				//Add templatename of the current open template
+				if (currentTmpl != null ) links.push(wgServer + wgScript+ "/" +currentTmpl);
+				//Add all templatenames of all opening anchors which can be found in the table's descendants
+				//Templatenames are stored in the third field of the returned array
+				for (var index = 0, len = anchors[2].length; index < len; ++index) {
+  					var subTmpl = anchors[2][index];
+  					links.push(wgServer + wgScript+ "/" + subTmpl);
+				}
+				//Check if the opened anchor is closed within the table
+				//and if yes remove it from the buffer
+				if(anchors[1].indexOf(currentTmplid)!=-1){
+					currentTmpl = null;
+  					currentTmplid = null;
+				} 
+				//Remove all anchors from the opening list, which are closed within the table
+				//if the list empty afterwards, then all anchors were close
+				//otherwise there is an anchor which will be close further on in the dom tree and there
+				//needs to be buffered for marking elements following after the table
+				var openanchor = anchors[0].without.apply(anchors[0],anchors[1])[0];
+				if(openanchor!=null ){
+					currentTmplid = openanchor;
+					currentTmpl = anchors[2][anchors[0].indexOf(openanchor)]
+				}
+				//If no anchor is opened but templates start within the element, dive into
+				if(currentTmpl == null && anchors[0].length != 0){
+					this.markNodes(node);
+					continue;
+				}
+				//Treating different types of elements
+				switch(tag){
+				//case 'a':
+  				case 'span':
+					//since spans are more text like than box like, they will be treated as text
+					this.textMarker(node,links);
+					break;
 				default:
-					//TODO: Treat other elements like paragraph etc.
+					//Mark table with an tranparent overlay and icons 
+					this.transparencyMarker(node);
+					this.iconMarker(node,links);
+					break;
 				}	
 			}
 		}	
