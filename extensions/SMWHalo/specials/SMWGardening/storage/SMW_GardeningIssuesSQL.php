@@ -86,8 +86,10 @@
  		if ($title != NULL) {
  			$sqlCond[] = 'p1_title = '.$db->addQuotes($title->getDBkey()).' AND p1_namespace = '.$title->getNamespace();
  		}
- 		$row = $db->selectRow($db->tableName('smw_gardeningissues'), array('p1_id'), $sqlCond , 'SMWGardeningIssue::existsGardeningIssue');
- 		return $row !== false;
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_id'), $sqlCond , 'SMWGardeningIssue::existsGardeningIssue');
+ 		$rowsExist = $db->numRows( $res ) > 0;
+ 		$db->freeResult($res);
+ 		return $rowsExist;
  	}
  	
  	public function getGardeningIssuesForPairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
