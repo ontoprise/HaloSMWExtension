@@ -741,7 +741,7 @@ OBInstanceActionListener.prototype = {
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 			transformer.transformXMLToHTML(xmlFragmentInstanceList, instanceListNode, true);
 			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
-			selectionProvider.refresh();
+			selectionProvider.fireRefresh();
 	},
 	/*
  	* Hides/Shows instance box
