@@ -229,47 +229,17 @@ function smwRegisterQueryResultEditor(&$parser, &$text, &$stripstate){
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
+global $smwgHaloIP;
+require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
+
 /**
  * The <ask> parser hook processing part.
  */
 function smwAddQueryResultEditor($text, $param, &$parser) {
-/*
-	$dayArray = array("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" ,"Samstag", "Sonntag");
-	$dayType = array("Wochentag", "Wochentag", "Wochentag", "Wochentag", "Wochentag" ,"Samstag", "Sonntag");
-*/
-	global $smwgQEnabled, $smwgIP;
+	global $smwgQEnabled;
 	
 	if ($smwgQEnabled) {
-		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
-/*		
- 		$parser->getVariableValue("currentmonth")
-		w - weekday, h - hour, d - daytype: weekday, saturday, sunday
-		$ts = time();
-		$text = preg_replace('/<#time:w>/', $dayArray[date( 'N', $ts )-1], $text);
-		$text = preg_replace('/<#time:d>/', $dayType[date( 'N', $ts )-1], $text);
-		$text = preg_replace('/<#time:h>/', date( 'G', $ts ), $text);
-*/
-		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		$html = SMWQueryProcessor::getResultHTML($text,$param);
-		$regex = '|<a.*?title="(.*?)".*?</a>|i';
-		$titles = array();
-		
-		preg_match_all($regex, $html, $titles);
-		for($i = 0; $i<sizeof($titles[1]); $i++){
-			$title = Title::newFromText($titles[1][$i]);
-			$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, NULL, $title, NULL, NULL);
-			$messages = array();
-			for($j = 0; $j<sizeof($gIssues); $j++){
-				array_push($messages, $gIssues[$j]->getRepresentation());
-			}
-			$tt = smwfEncodeMessages($messages);
-			$regex = '|<a.*?title="' . $titles[1][$i] . '".*?</a>|i';
-			$replacement = "$0$tt";
-			$html = preg_replace($regex, $replacement, $html);
-			
-		}
-		return $html;
+		return applyQueryHighlighting($text, $param);
 	} else {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
 	}

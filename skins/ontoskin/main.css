@@ -1619,3 +1619,15 @@ p.mw-ipb-conveniencelinks {
 .texvc { direction: ltr; unicode-bidi: embed; }
 /* Stop floats from intruding into edit area in previews */
 #toolbar, #wpTextbox1 { clear: both; }
+
+/**
+* Here is OntoSkin specific stuff
+*/
+.gardeningissue {
+	color:#FF0000;
+	font-size:90%;
+}
+.gardeningissue_notify {
+	color:#FF9602;
+	font-size:90%;
+}

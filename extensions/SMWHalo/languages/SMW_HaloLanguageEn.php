@@ -407,7 +407,11 @@ clicking the big arrows between the columns.',
 	'smw_qi_tt_default' => 'Text that will be shown if there are no results',
 	
 	/* Annotationtab */
- 	'smw_annotation_tab' => 'annotate'
+ 	'smw_annotation_tab' => 'annotate',
+ 	
+ 	/* Gardening Issue Highlighting in Inline Queries */
+	'smw_iqgi_missing' => 'missing',
+	'smw_iqgi_wrongunit' => 'wrong unit'
 );
 
 
