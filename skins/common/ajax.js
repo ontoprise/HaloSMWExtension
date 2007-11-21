@@ -135,7 +135,7 @@ function sajax_do_call(func_name, args, target, type) {
 	var i, x, n;
 	var uri;
 	var post_data;
-	type == undefined ? 0 : type // undefined is GENERAL call
+	type = type ? type : 0; // undefined is GENERAL call
 	uri = wgServer + wgScriptPath + "/index.php?action=ajax";
 	if (sajax_request_type == "GET") {
 		if (uri.indexOf("?") == -1)
