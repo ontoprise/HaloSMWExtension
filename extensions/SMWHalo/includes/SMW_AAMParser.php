@@ -36,7 +36,7 @@ class SMWH_AAMParser {
 	 * With these offsets it is possible to map from the rendered HTML to the
 	 * corresponding location in the wiki text.
 	 * These elements are indexed:
-	 * 1. Headings of levels 1,2,3 and 4 e.g. ==Heading 2==
+	 * 1. Headings of levels 1,2,3,4 and 5 e.g. ==Heading 2==
 	 * 2. Templates e.g. {{MyTemplate}}
 	 * 3. Template parameters e.g. {{{tparam}}} 
 	 * 4. Line breaks
@@ -52,7 +52,15 @@ class SMWH_AAMParser {
 		$text = $this->maskHTML($wikiText);
 		
 		// Search for templates, template parameters and headings
-		$parts = preg_split('/(\{\{\{.*?\}\}\})|(\{\{.*?\}\})|^(====.*?====)|^(===.*?===)|^(==.*?==)|^(=.*?=)|^$/sm', $text, -1, 
+		$parts = preg_split('/(\{\{\{.*?\}\}\})|'.
+		                    '(\{\{.*?\}\})|'.
+		                    '^(======.*?======)|'.
+							'^(=====.*?=====)|'.
+		                    '^(====.*?====)|'.
+		                    '^(===.*?===)|'.
+		                    '^(==.*?==)|'.
+		                    '^(=.*?=)|'.
+		                    '^$/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_OFFSET_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
@@ -195,7 +203,6 @@ class SMWH_AAMParser {
 	public function highlightAnnotations2HTML(&$wikiText)
 	{
 		global $smwgHaloScriptPath;
-		// add intermediate tags to annotations
 		$text = preg_replace('/{annostart}(.*?){annoend}/sm',
 							 '<a href="javascript:smwhfEditAnno()">'.
 		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
@@ -208,6 +215,8 @@ class SMWH_AAMParser {
 							 '<span class="aam_prop_highlight">$1</span>'.
 							 '</span>',
 							 $text);
+		$text = preg_replace('/{shortlinkstart}(\s*){shortlinkend}/sm','', $text);
+		$text = preg_replace('/{linkstart}(\s*){linkend}/sm','', $text);
 		$text = preg_replace('/{shortlinkstart}(.*?){shortlinkend}/sm',
 							 '<span style="white-space:nowrap">'.
 							 '<a href="javascript:smwhfEditLink()">'.
