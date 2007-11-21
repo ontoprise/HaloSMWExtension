@@ -133,49 +133,6 @@ Marker.prototype = {
 
 	}, 
 	
-	/**
-	* DEPRECATED! Should not be working anymore with the new tags 
- 	* @public Gets all descendants (from this.rootnode) and checks if there are elements to mark  
- 	* 
- 	* @param
- 	*/
-	/*checkForTemplates: function(){
-			rootnode = $(this.rootnode);
-			this.removeMarkers(rootnode);
-			//Check
-			if(rootnode == null) return;
-			
-			//Get childs
-			var elements = rootnode.descendants();
-			
-			//check each child
-			elements.each(this.checkElement.bind(this));
-			
-	},*/
-	
-	/**
-	 * DEPRECATED! Should not be working anymore with the new tags
-	 * @private Checks if the element belongs to the template indicators and if yes marks it  
-	 * 
-	 * @param  element object 
-	 * 				element to check
-	 */
-	/*checkElement: function(element){
-		//Check if element has a type="template" attribute
-		if(element.readAttribute('type')!= null && element.readAttribute('type')== "template"){
-			//get first child
-			firstchild = element.firstDescendant();
-			//Mark Div or table with image and overlay
-			if(firstchild != null && (firstchild.tagName.toLowerCase() == 'div' || firstchild.tagName.toLowerCase() == 'table')){
-				this.transparencyMarker(firstchild);
-				this.iconMarker(firstchild);		
-			} 
-			//Mark text with image
-			else {
-				this.iconMarker(element);
-			}
-		}	
-	},*/
 	
 	/**
  	* @public Gets all descendants and removes markers 
@@ -225,6 +182,10 @@ Marker.prototype = {
 		}	
 	},*/
 	
+	/**
+ 	* @public Marks all templates
+ 	* 
+ 	*/	
 	markNodes: function(){
 		this.removeMarkers();
 		var time = new Date();
@@ -324,161 +285,7 @@ Marker.prototype = {
 		}
 		return templates;	
 	},
-	
 
-	/**
- 	* @public Checks all child nodes for templates and marks the proper Elements
- 	* 
- 	* @param 
- 	*/	
-	
-	/*markNodesdepr: function(){
-		//if no argument passed get rootnode 
-		if(arguments.length == 0) {
-			//remove old markers
-			this.removeMarkers();
-			var rootnode = $(this.rootnode);
-		} else {
-			var rootnode = arguments[0];
-		}
-
-		//Stores the templatename and the id of the current open but not closed template
-		var currentTmpl = null;
-		var currentTmplid = null;		
-		//Get first Child
-		var element = rootnode.firstChild;
-		//Walk over every next sibling
-		//this uses plain javascript functions, since prototype doesn't support textnodes
-		while( element != null){
-			//Get current node and set element to the next sibling so it won't be effected by changes of the current node
-			var node = element;
-			element = element.nextSibling;
-			//If nodetyp is textnode and template tag is open but not closed
-			if(node.nodeType == 3 && currentTmpl != null ){
-				//mark text
-				this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
-			//If nodetype is elementnode
-			} else if(node.nodeType == 1 ){
-				
-				//Treating different types of elements
-				var tag = node.tagName.toLowerCase()	
-				//Treat template anchors
-				if(tag == 'a'){
-					//Check if this is an opening anchor, indicating that a template starts 
-					if($(node).readAttribute('type')=='template'){
-  						currentTmplid = node.readAttribute('id');
-  						currentTmpl = node.readAttribute('tmplname');			
-  						continue;
-  					}
-  					//Check if this is an closing anchor, indicating that a template ends
-  					if($(node).readAttribute('type')=='templateend'){
-  						currentTmpl = null;
-  						currentTmplid = null;
-  					 	continue;
-  					}
-				}
-				
-				//If not element is not visible don't mark it
-				if(!$(node).visible()) continue;	
-				
-				//Get template tags from the sub node
-				var anchors = this.getTemplateAnchors(node);
-				//Array to store the templatenames in
-				var links = new Array();
-				//If no anchor is opened and no templates start within the element, mark nothing
-				if(currentTmpl == null && anchors[0].length == 0){
-					continue;
-				}				
-				//Add templatename of the current open template
-				if (currentTmpl != null ) links.push(wgServer + wgScript+ "/" +currentTmpl);
-				//Add all templatenames of all opening anchors which can be found in the table's descendants
-				//Templatenames are stored in the third field of the returned array
-				for (var index = 0, len = anchors[2].length; index < len; ++index) {
-  					var subTmpl = anchors[2][index];
-  					links.push(wgServer + wgScript+ "/" + subTmpl);
-				}
-				//Check if the opened anchor is closed within the table
-				//and if yes remove it from the buffer
-				if(anchors[1].indexOf(currentTmplid)!=-1){
-					currentTmpl = null;
-  					currentTmplid = null;
-				} 
-				//Remove all anchors from the opening list, which are closed within the table
-				//if the list empty afterwards, then all anchors were close
-				//otherwise there is an anchor which will be close further on in the dom tree and there
-				//needs to be buffered for marking elements following after the table
-				var openanchor = anchors[0].without.apply(anchors[0],anchors[1])[0];
-				if(openanchor!=null ){
-					currentTmplid = openanchor;
-					currentTmpl = anchors[2][anchors[0].indexOf(openanchor)]
-				}
-				//If no anchor is opened but templates start within the element, dive into
-				if(currentTmpl == null && anchors[0].length != 0){
-					this.markNodes(node);
-					continue;
-				}
-				//Treating different types of elements
-				switch(tag){
-				//case 'a':
-  				case 'span':
-					//since spans are more text like than box like, they will be treated as text
-					this.textMarker(node,links);
-					break;
-				default:
-					//Mark table with an tranparent overlay and icons 
-					this.transparencyMarker(node);
-					this.iconMarker(node,links);
-					break;
-				}	
-			}
-		}	
-	},*/
-	
-	/**
- 	* @public looks for opening/closing anchors and returns an 2-dimensonal array
- 	* 	array[0]: array id's of the openening anchors
- 	* 	array[1]: array element id's of the closing anchors without '_end' for further matching of both lists 
- 	*   array[2]: array templatenames of the openening anchors
- 	* 
- 	* @param element object
- 	* 			element which should be checked for matching anchors in its descendants
- 	*/
-	/*getTemplateAnchors: function(node){
-		//Get all descendants of the node
-		var elements = $(node).descendants();
-		//Arrays storing the anchors and being returned 
-		var starttags = new Array();
-		var endtags = new Array();
-		var templates = new Array();
-		//return empty lists if no descendants are found
-		if(elements == null) return [starttags,endtags,templates];
-		//Check all descendants
-		for (var index = 0, len = elements.length; index < len; ++index) {
-  			//Get current element
-  			var element = elements[index];
-  			//Check if it is an opening anchor 
-  			if(element.readAttribute('type')=='template'){
-  				//Push into result into return list
-  				//id
-  				starttags.push(element.readAttribute('id'));
-  				//templatename (should include namespace)
-  				templates.push(element.readAttribute('tmplname'));
-  				continue;
-  			}
-  			//Check if it is an opening anchor 
-  			if(element.readAttribute('type')=='templateend'){
-  				//Push into result into return list
-  				//id
-  				endtags.push(element.readAttribute('id').sub('_end',''));
-  				continue;
-  			}
-  			
-		}
-		return [starttags,endtags,templates];
-	},*/
-	
-	
-	
 	//Samplepage for develepoment
 	//TODO: Remove if not needed anymore
 	samplePage: function(){
