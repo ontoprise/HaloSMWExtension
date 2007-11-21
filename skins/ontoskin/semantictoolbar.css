@@ -651,6 +651,49 @@ a.menulink{
 	vertical-align: top;
 }
 
+
+/* Annotation hint Container */
+#stb_cont10-headline{
+	background-color: #ee2222;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #ee2222;
+	margin-top: 3px;
+}
+
+#stb_cont10-content{
+	border: 1px solid #ee2222;
+	background-color: #ee8888;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#annotationhint-table{
+	background-color: #ee8888;
+	width: 100%;
+}
+
+#annotationhint-tools{
+	border-bottom: 1px solid #888888;
+}
+
+.annotationhint-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.annotationhint-col2{
+}
+
+.annotationhint-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 20%;
+}
+
 /* css for Containerframework
  *
  * if an element has different classes defining the same style
@@ -748,4 +791,8 @@ a.menulink{
 
 .properties-content-table{
 	background-color: #ddbddd;
+}
+
+.annotationhint-content-table{
+	background-color: #ee8888;
 }

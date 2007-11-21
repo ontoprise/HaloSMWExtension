@@ -16,7 +16,6 @@
 */
 var ToolbarFramework = Class.create();
 
-var HELPCONTAINER = 9; // contains help
 var FACTCONTAINER = 0; // contains already annotated facts
 var EDITCONTAINER = 1; // contains Linklist
 var TYPECONTAINER = 2; // contains datatype selector on attribute pages
@@ -26,7 +25,9 @@ var RELATIONCONTAINER = 5; // contains relations
 var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relations
 var CBSRCHCONTAINER = 7; // contains combined search functions
 var COMBINEDSEARCHCONTAINER = 8;
-var DBGCONTAINER = 10; // contains debug information
+var HELPCONTAINER = 9; // contains help
+var ANNOTATIONHINTCONTAINER = 10; // contains categories
+var DBGCONTAINER = 11; // contains debug information
 
 ToolbarFramework.prototype = {
 

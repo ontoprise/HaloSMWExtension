@@ -88,6 +88,7 @@
 	 				  'SMWEditInterface.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'obSemToolContribution.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  /*,
+	 				  'SMW_AnnotationHints.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
 	 				  );

@@ -221,6 +221,10 @@ function updtContainer(tmpcontainer) {
 				var tmpdiv = document.getElementById("cbsrch-headline");
 				tmpdiv.innerHTML = stResult;
 			break;
+		case ANNOTATIONHINTCONTAINER:
+				var tmpdiv = document.getElementById("annotationhint-headline");
+				tmpdiv.innerHTML = stResult;
+			break;
 		}
 }
 
@@ -340,6 +344,23 @@ function stFillContainers(tmpcontainer)
 						}
 						stResult += ">" + tmpcontainer.content + "</div>";
 					break;
+				case ANNOTATIONHINTCONTAINER:
+						stResult += "<div id=\"annotationhint-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + ANNOTATIONHINTCONTAINER + ", \'annotationhint-content\', \'annotationhint-headline-link\')\"><a id=\"annotationhint-headline-link\" class=\"";
+						if (tmpcontainer.ishidden) {
+							stResult +="plusminus";
+						} else {
+							stResult +="minusplus";
+						}
+						stResult += "\" href=\"javascript:void(0)\">&nbsp;</a>" + tmpcontainer.headline + "</div>";
+
+						stResult += "<div id=\"annotationhint-content\""
+						if (tmpcontainer.ishidden) {
+							stResult += " style=\"display:none\"";
+						}
+						stResult += ">" + tmpcontainer.content + "</div>";
+
+						stDivCount++;
+					break;
 				default:
 					break;
 			}
@@ -407,7 +428,8 @@ function stFillTabs()
 			     || tmpcontainer.container == RELATIONCONTAINER
 			     || tmpcontainer.container == PROPERTIESCONTAINER
 			     || tmpcontainer.container == CBSRCHCONTAINER
-			     || tmpcontainer.container == TYPECONTAINER))
+			     || tmpcontainer.container == TYPECONTAINER
+			     || tmpcontainer.container == ANNOTATIONHINTCONTAINER))
 			{
 				tabadd[0] = 1;
 			}
