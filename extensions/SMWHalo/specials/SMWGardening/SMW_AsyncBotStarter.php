@@ -102,13 +102,13 @@ require_once("SMW_GardeningLog.php");
  }
  
  // get user email to send a message to him.
- $userEmail = getEmailFromUserId($userId);
+ /*$userEmail = getEmailFromUserId($userId);
  
  if ($smtpServerIP && $userEmail != null && $userEmail != '') { 
  	// send email when finished.
  	echo "Sending email to: ".$userEmail;
  	sendmail($userEmail, $bot);
- }
+ }*/
  
  /**
   * Sends a mail to $to using server $smtpServerIP as SMTP server
