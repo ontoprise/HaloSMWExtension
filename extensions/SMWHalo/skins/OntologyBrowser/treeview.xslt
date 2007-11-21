@@ -50,10 +50,7 @@
 		<!--<script src="treeview.js" language="javascript" type="text/javascript"/>-->
 		
 					<!-- Apply the template folder starting with a startDepth in the tree of 1-->
-					<xsl:apply-templates select="categoryPartition"/>
-					<xsl:apply-templates select="propertyPartition"/>
-				
-					
+										
 					<xsl:apply-templates select="conceptTreeElement">
 						<xsl:with-param name="rek_depth" select="1"/>
 					</xsl:apply-templates>
@@ -62,7 +59,8 @@
 						<xsl:with-param name="rek_depth" select="1"/>
 					</xsl:apply-templates>
 					
-					
+					<xsl:apply-templates select="categoryPartition"/>
+					<xsl:apply-templates select="propertyPartition"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:value-of select="@textToDisplay"></xsl:value-of>
@@ -202,8 +200,8 @@
 	<xsl:choose>
 	 <xsl:when test="not (@isEmpty)">
 		<table class="instanceListColors" border="0" cellspacing="0" cellpadding="0">
-			<xsl:apply-templates select="instancePartition"/>
 			<xsl:apply-templates select="instance"/>
+			<xsl:apply-templates select="instancePartition"/>
 		</table>
 	 </xsl:when>
 	 <xsl:otherwise>
