@@ -222,35 +222,40 @@
 	<xsl:template match="instance">
 		<tr><td><!-- <img src="{$param-img-directory}instance.gif"/> -->
 		<a class="instance">
-			<xsl:if test="gissues">
-						<xsl:attribute name="class">gardeningissue</xsl:attribute>
-			</xsl:if>
-			<xsl:if test="@inherited">
-				<xsl:attribute name="class">inherited</xsl:attribute>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="gissues and @inherited">
+					<xsl:attribute name="class">instance gardeningissue inherited</xsl:attribute>
+				</xsl:when>
+				<xsl:when test="gissues">
+					<xsl:attribute name="class">instance gardeningissue</xsl:attribute>
+				</xsl:when>
+				<xsl:when test="@inherited">
+					<xsl:attribute name="class">instance inherited</xsl:attribute>
+				</xsl:when>
+			</xsl:choose>
 			<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this, '<xsl:value-of select="@id"/>', '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 			<xsl:variable name="title" select="@title"/>
 			<xsl:value-of select="translate($title, '_', ' ')"/>
 		</a></td>
-		<td>
-		<xsl:call-template name="gissues">
-			<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
-			<xsl:with-param name="actionListener">instanceActionListener</xsl:with-param> 
-		</xsl:call-template>
+		<td width="100%">
 		<a class="navigationLink" style="margin-left:5px;">
 			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 			<img src="{$param-img-directory}view.gif"/>
 		</a>
+		<xsl:call-template name="gissues">
+			<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
+			<xsl:with-param name="actionListener">instanceActionListener</xsl:with-param> 
+		</xsl:call-template>
 		</td>
 		<td>
-		 <a style="margin-left:5px;">
-		 	<xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@superCat"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-		 	<xsl:if test="@superCat">
-		 	 <xsl:variable name="superCategory" select="@superCat"/>
-			 &lt;<xsl:value-of select="translate($superCategory, '_', ' ')"></xsl:value-of>&gt;
-			</xsl:if>
-		 </a>
+		 <xsl:if test="@superCat">
+			 <a style="margin-left:5px;">
+			 	<xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@superCat"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			 	 <xsl:variable name="superCategory" select="@superCat"/>
+				 &lt;<xsl:value-of select="translate($superCategory, '_', ' ')"></xsl:value-of>&gt;
+			 </a>
+		</xsl:if>
 		</td>
 		</tr>
 	</xsl:template>
@@ -363,18 +368,18 @@
 	
 	<xsl:template match="property">
 		<tr>
+			<xsl:variable name="title" select="@title"/>
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<xsl:variable name="icon" select="@img"/>
 				<!-- <img src="{$param-img-directory}../../{$icon}"/> -->
-				<xsl:variable name="title" select="@title"/>
 				<a title="{$title}" class="attribute">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.selectProperty(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 					<xsl:if test="gissues">
-						<xsl:attribute name="class">gardeningissue</xsl:attribute>
+						<xsl:attribute name="class">attribute gardeningissue</xsl:attribute>
 					</xsl:if>
 					<xsl:if test="@inherited">
-						<xsl:attribute name="class">inherited</xsl:attribute>
+						<xsl:attribute name="class">attribute inherited</xsl:attribute>
 					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="string-length($title) > $maximumEntityLength">
@@ -384,15 +389,18 @@
 							<xsl:value-of select="translate($title, '_', ' ')"/>
 						</xsl:otherwise>
 					</xsl:choose>
+				</a>	
+			</td>
+			<td width="25%">
+				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
+				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
+					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+					<img src="{$param-img-directory}view.gif"/>
 				</a>
 				<xsl:call-template name="gissues">
 					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 					<xsl:with-param name="actionListener">propertyActionListener</xsl:with-param> 
 				</xsl:call-template>
-				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-					<img src="{$param-img-directory}view.gif"/>
-				</a>
 				
 			</td>
 			<td>
@@ -467,14 +475,15 @@
 			<span class="smwttpersist">
 				<span class="smwtticon">warning.png</span>
 				<span class="smwttcontent">
-				<table border="0" cellspacing="0" cellpadding="0">
+				
+				<ul>
 					<xsl:for-each select="gissues/gi">
-					<tr><td>
+					<li>
 						<xsl:value-of select="."/>
-					</td></tr>
+					</li>
 					</xsl:for-each>
-					
-				</table>
+				</ul>
+			
 				</span> 
 			</span>
 			<a class="navigationLink" title="Edit {$title}" style="margin-left:5px;">
@@ -513,7 +522,7 @@
 		<xsl:param name="rek_depth"/>
 		<a class="{$typeOfEntity}">
 							<xsl:if test="gissues">
-								<xsl:attribute name="class">gardeningissue</xsl:attribute>
+								<xsl:attribute name="class"><xsl:value-of select="$typeOfEntity"/> gardeningissue</xsl:attribute>
 							</xsl:if>
 							<xsl:if test="@id">
 										<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.select(event, this,'<xsl:value-of select="@id"/>','<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
