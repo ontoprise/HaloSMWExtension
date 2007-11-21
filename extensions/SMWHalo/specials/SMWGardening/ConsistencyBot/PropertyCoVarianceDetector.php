@@ -50,7 +50,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	public function checkPropertyGraphForCovariance() {
  		global $smwgContLang;
  		 		
- 		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
+ 		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), NULL, true);
  		$cnt = 0;
  		$work = count($attributes);
  		print "\n";

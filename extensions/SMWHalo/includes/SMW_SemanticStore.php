@@ -62,9 +62,13 @@
  	public abstract function setup($verbose);
  	
  	/**
- 	 * Returns pages of the given namespace
+ 	 * Returns pages of the given namespace.
+ 	 * 
+ 	 * @param $namespaces Array of ns constants.
+ 	 * @param $requestoptions SMWRequestOptions object.
+ 	 * @param $ignoreRedirects False, if no redirects should be returned.
  	 */
- 	public abstract function getPages($namespaces = NULL, $requestoptions = NULL);
+ 	public abstract function getPages($namespaces = NULL, $requestoptions = NULL, $ignoreRedirects = false);
 	
 	/**
 	 * Returns root categories (categories which have no super-category).

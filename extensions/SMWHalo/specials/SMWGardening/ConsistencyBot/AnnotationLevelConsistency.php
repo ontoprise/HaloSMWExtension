@@ -38,7 +38,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	public function checkPropertyAnnotations() {
  		global $smwgContLang;
  	 		
- 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), NULL, true);
  		
  		$work = count($properties);
  		$cnt = 0;
@@ -210,7 +210,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		global $smwgContLang;
  		
  		// get all properties
- 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), NULL, true);
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
  			if ($this->delay > 0) {

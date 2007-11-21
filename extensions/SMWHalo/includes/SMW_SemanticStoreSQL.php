@@ -36,7 +36,7 @@
 		$this->createPreDefinedPages($verbose);
  	}
 	 	
-	public function getPages($namespaces = NULL, $requestoptions = NULL) {
+	public function getPages($namespaces = NULL, $requestoptions = NULL, $ignoreRedirects = false) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		
@@ -56,11 +56,17 @@
 		
 		$result = array();
 		
-	
-		$res = $db->select( $db->tableName('page'), 
-		                    array('page_title','page_namespace'),
-		                    $sql, 'SMW::getPages', $this->getSQLOptions($requestoptions,'page_namespace') );
-		
+		if (!$ignoreRedirects) {
+			$res = $db->select( $db->tableName('page'), 
+		               array('page_title','page_namespace'),
+		               $sql, 'SMW::getPages', $this->getSQLOptions($requestoptions,'page_namespace') );
+		} else {
+			$sql_options = $this->getSQLOptions($requestoptions,'page_namespace');
+			$limit = $sql_options['LIMIT'] != NULL ? $sql_options['LIMIT'] : "";
+			$offset = $sql_options['OFFSET'] != NULL ? $sql_options['OFFSET'] : "";
+			$orderby = $sql_options['ORDER BY'] != NULL ? $sql_options['ORDER BY'] : "";
+			$res = $db->query('SELECT page_title, page_namespace FROM '.$db->tableName('page').' LEFT JOIN '.$db->tableName('redirect').' ON page_id=rd_from WHERE '.$sql.' AND rd_title IS NULL '.$limit.' '.$offset.' '.$orderby);
+		}
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
