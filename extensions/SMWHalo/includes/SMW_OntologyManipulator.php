@@ -317,6 +317,8 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
 	$success = false;
 	if ($titleObj->exists() && !$newTitleObj->exists()) {
 		$success = $titleObj->moveTo($newTitleObj, true, $reason);
+		$dummyForm = "";
+		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
 	} 
 	return $success === true ? "true" : "false"; 
 }

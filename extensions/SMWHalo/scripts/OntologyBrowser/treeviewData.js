@@ -40,7 +40,7 @@ OBDataAccess.prototype = {
 		this.OB_cachedPropertyTree = null;
 	
 		this.OB_cachedInstances = null;
-		this.OB_cachedProperties = null;
+		this.OB_cachedProperties = GeneralXMLTools.createDocumentFromString("<propertyList/>");
 		
 		// displayed tree
 		this.OB_currentlyDisplayedTree = null;

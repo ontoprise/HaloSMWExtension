@@ -187,11 +187,14 @@ OBOntologyModifier.prototype = {
 	},
 	
 	renameCategory: function(newCategoryTitle, categoryTitle, categoryID) {
-		this.renameCategoryNode(categoryID, newCategoryTitle);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
-		
-		selectionProvider.fireSelectionChanged(categoryID, categoryTitle, SMW_CATEGORY_NS, $(categoryID))
-		selectionProvider.fireRefresh();
+		function callback() {
+			this.renameCategoryNode(categoryID, newCategoryTitle);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+			
+			selectionProvider.fireSelectionChanged(categoryID, categoryTitle, SMW_CATEGORY_NS, $(categoryID))
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
 	
 	addSubproperty: function(subPropertyTitle, superPropertyTitle, superPropertyID) {
@@ -227,20 +230,49 @@ OBOntologyModifier.prototype = {
 	},
 	
 	renameProperty: function(newPropertyTitle, oldPropertyTitle, propertyID) {
-		this.renamePropertyNode(propertyID, newPropertyTitle);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
-		
-		selectionProvider.fireSelectionChanged(propertyID, newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
-		selectionProvider.fireRefresh();
+		function callback() {
+			this.renamePropertyNode(propertyID, newPropertyTitle);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+			
+			selectionProvider.fireSelectionChanged(propertyID, newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY')+oldPropertyTitle, gLanguage.getMessage('PROPERTY')+newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
 	
 	addSchemaProperty: function(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID) {
-		var newPropertyXML = GeneralXMLTools.createDocumentFromString(this.createSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID));
-		GeneralXMLTools.importNode(dataAccess.OB_cachedProperties.documentElement, newPropertyXML.documentElement, true);
-		transformer.transformXMLToHTML(dataAccess.OB_cachedProperties, $('relattributes'), true);
-				
-		selectionProvider.fireRefresh();
+		function callback() {
+			var newPropertyXML = GeneralXMLTools.createDocumentFromString(this.createSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID));
+			dataAccess.OB_cachedProperties.documentElement.removeAttribute('isEmpty');
+			dataAccess.OB_cachedProperties.documentElement.removeAttribute('textToDisplay');
+			GeneralXMLTools.importNode(dataAccess.OB_cachedProperties.documentElement, newPropertyXML.documentElement, true);
+			transformer.transformXMLToHTML(dataAccess.OB_cachedProperties, $('relattributes'), true);
+					
+			selectionProvider.fireRefresh();
+		}
 		
+		var content = maxCard != '' ? "\n[[SMW_SSP_HAS_MAX_CARD::"+maxCard+"]]" : "";
+		content += minCard != '' ? "\n[[SMW_SSP_HAS_MIN_CARD::"+minCard+"]]" : "";
+		
+		var rangeTypeStr = "";
+		var rangeCategories = new Array();
+		for(var i = 0, n = rangeOrTypes.length; i < n; i++) {
+			if (builtinTypes.indexOf(rangeOrTypes[i]) != -1) {
+				// is type
+				rangeTypeStr += gLanguage.getMessage('TYPE')+rangeOrTypes[i]+(i == n-1 ? "" : ";");
+			} else {
+				rangeTypeStr += gLanguage.getMessage('TYPE_PAGE')+(i == n-1 ? "" : ";");
+				rangeCategories.push(rangeOrTypes[i]);
+			}
+		}
+		content += "\n[[SMW_SP_HAS_TYPE::"+rangeTypeStr+"]]";
+		rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+selectedTitle+"; "+gLanguage.getMessage('CATEGORY')+c+"]]" });
+		if (rangeCategories.length == 0) {
+			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+selectedTitle+"]]";
+		}
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+propertyTitle, '',   
+			                   content,
+							 gLanguage.getMessage('CREATE_PROPERTY'), callback.bind(this), $(selectedID));
 	},
 	
 	renameInstance: function(newInstanceTitle, oldInstanceTitle, instanceID) {
@@ -281,11 +313,13 @@ OBOntologyModifier.prototype = {
 		for(var i = 0, n = typeRanges.length; i < n; i++) {
 			if (builtinTypes.indexOf(typeRanges[i]) != -1) {
 				// is type
-				rangeTypes += '<rangeType>'+typeRanges[i]+(i == n-1 ? "" : ";")+'</rangeType>';
+				rangeTypes += '<rangeType>'+typeRanges[i]+'</rangeType>';
 			} else {
-				rangeTypes += '<rangeType>Type:Page'+(i == n-1 ? "" : ";")+'</rangeType>';
+				rangeTypes += '<rangeType>'+gLanguage.getMessage('TYPE_PAGE')+'</rangeType>';
 			}
 		}
+		minCard = minCard == '' ? '0' : minCard;
+		maxCard = maxCard == '' ? '*' : maxCard;
 		return '<property title="'+propertyTitle+'" minCard="'+minCard+'" maxCard="'+maxCard+'">'+rangeTypes+'</property>';
 	},
 	
@@ -661,10 +695,12 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 			}
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: {
 				ontologyTools.addSubcategoryOnSameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_RENAME: {
 				ontologyTools.renameCategory($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			default: alert('Unknown command!');
@@ -722,14 +758,17 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		switch(this.commandID) {
 			case SMW_OB_COMMAND_ADDSUBPROPERTY: {
 				ontologyTools.addSubproperty($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			case SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL: {
 				ontologyTools.addSubpropertyOnSameLevel($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			case SMW_OB_COMMAND_SUBPROPERTY_RENAME: {
 				ontologyTools.renameProperty($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			default: alert('Unknown command!');
@@ -790,10 +829,12 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 			
 			case SMW_OB_COMMAND_INSTANCE_RENAME: {
 				ontologyTools.renameInstance($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			case SMW_OB_COMMAND_INSTANCE_DELETE: {
 				ontologyTools.deleteInstance(this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			default: alert('Unknown command!');
@@ -870,6 +911,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 					}
 				}
 				ontologyTools.addSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, this.builtinTypes, this.selectedTitle, this.selectedID);
+				this.cancel();
 				break;
 			}
 			
@@ -890,23 +932,23 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	getUserDefinedControls: function() {
 		return '<table style="background-color: inherit"><tr>' +
-						'<td width="50px;">Title</td>' +
+						'<td width="60px;">'+gLanguage.getMessage('NAME')+'</td>' +
 						'<td><input id="'+this.id+'_propertytitle_ontologytools" type="text" tabIndex="101"/></td>' +
 					'</tr>' +
 					'<tr>' +
-						'<td width="50px;">Min Card</td>' +
+						'<td width="60px;">'+gLanguage.getMessage('MIN_CARD')+'</td>' +
 						'<td><input id="'+this.id+'_minCard_ontologytools" type="text" size="5" tabIndex="102"/></td>' +
 					'</tr>' +
 					'<tr>' +
-						'<td width="50px;">Max Card</td>' +
+						'<td width="60px;">'+gLanguage.getMessage('MAX_CARD')+'</td>' +
 						'<td><input id="'+this.id+'_maxCard_ontologytools" type="text" size="5" tabIndex="103"/></td>' +
 					'</tr>' +
 				'</table>' +
 				'<table id="typesAndRanges" style="background-color: inherit"></table>' +
 				'<table style="background-color: inherit">' +
 					'<tr>' +
-						'<td><a onclick="'+this.objectname+'.addType()">Add type</a></td>' +
-						'<td><a onclick="'+this.objectname+'.addRange()">Add range</a></td>' +
+						'<td><a onclick="'+this.objectname+'.addType()">'+gLanguage.getMessage('ADD_TYPE')+'</a></td>' +
+						'<td><a onclick="'+this.objectname+'.addRange()">'+gLanguage.getMessage('ADD_RANGE')+'</a></td>' +
 					'</tr>' +
 				'</table>';
 	},
@@ -1004,7 +1046,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		// tbody already in DOM?
 		var addTo = $('typesAndRanges').firstChild == null ? $('typesAndRanges') : $('typesAndRanges').firstChild;
 		var toReplace = $(addTo.appendChild(document.createElement("tr")));
-		toReplace.replace('<tr><td width="50px;">Type </td><td>'+this.newTypeInputBox()+'</td></tr>');
+		toReplace.replace('<tr><td width="60px;">Type </td><td>'+this.newTypeInputBox()+'</td></tr>');
 		
 		this.count++;
 		this.adjustSize();
@@ -1017,7 +1059,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		autoCompleter.deregisterAllInputs();
 		// create dummy element and replace afterwards
 		var toReplace = $(addTo.appendChild(document.createElement("tr")));
-		toReplace.replace('<tr><td width="50px;">Range </td><td>'+this.newRangeInputBox()+'</td></tr>');
+		toReplace.replace('<tr><td width="60px;">Range </td><td>'+this.newRangeInputBox()+'</td></tr>');
 		autoCompleter.registerAllInputs();
 		
 		this.rangeValidators[this.count] = (new OBInputTitleValidator('typeRange'+this.count+'_ontologytools', gLanguage.getMessage('CATEGORY_NS_WOC'), true, this));

@@ -566,6 +566,7 @@ selectNextPartition: function (e, htmlNode) {
 	
 	function calledOnFinish(tree) {
 		dataAccess.OB_cachedCategoryTree = tree;
+		selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 	}
 	this._selectNextPartition(e, htmlNode, dataAccess.OB_cachedCategoryTree, dataAccess.getCategoryPartition.bind(dataAccess), "categoryTree", calledOnFinish);
 	
@@ -575,6 +576,7 @@ selectPreviousPartition: function (e, htmlNode) {
 	
 	function calledOnFinish(tree) {
 		dataAccess.OB_cachedCategoryTree = tree;
+		selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 	}
 	this._selectPreviousPartition(e, htmlNode, dataAccess.OB_cachedCategoryTree, dataAccess.getCategoryPartition.bind(dataAccess), "categoryTree", calledOnFinish);
 
@@ -738,6 +740,8 @@ OBInstanceActionListener.prototype = {
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 			transformer.transformXMLToHTML(xmlFragmentInstanceList, instanceListNode, true);
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
+			selectionProvider.refresh();
 	},
 	/*
  	* Hides/Shows instance box
@@ -843,6 +847,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
   selectNextPartition: function (e, htmlNode) {
 	function calledOnFinish(tree) {
 			dataAccess.OB_cachedPropertyTree = tree;
+			selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 		}
 		this._selectNextPartition(e, htmlNode, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertyPartition.bind(dataAccess), "propertyTree", calledOnFinish);
 
@@ -851,6 +856,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	selectPreviousPartition: function (e, htmlNode) {
 	 function calledOnFinish(tree) {
 			dataAccess.OB_cachedPropertyTree = tree;
+			selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 		}
 		this._selectPreviousPartition(e, htmlNode, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertyPartition.bind(dataAccess), "propertyTree", calledOnFinish);
 	
