@@ -31,10 +31,8 @@ AdvancedAnnotation.prototype = {
 	 */
 	initialize: function() {
 		// Selection information
-		this.anchorNode = null;
 		this.annotatedNode = null;
 		this.annoOffset = null;
-		this.annoSelection = null;
 		this.selectedText = '';
 		
 		// The wiki text parser manages the wiki text and adds annotations 
@@ -47,18 +45,27 @@ AdvancedAnnotation.prototype = {
 	
 	/**
 	 * This method is called, when the mouse button is released. The current
-	 * selection is retrieved and used as annotation.
+	 * selection is retrieved and used as annotation. Only events in div#bodyContent 
+	 * are processed
 	 */
-	onMouseUp: function() {
+	onMouseUp: function(event) {
+		var target = event.target;
+		while (target) {
+			if (target.id && target.id == 'bodyContent') {
+				break;
+			}
+			target = target.up('div');
+		}
+		if (!target) {
+			return;
+		}
 		var annoSelection = this.getSel();
 		if (annoSelection != '') {
 			// store details of the selection
 			this.selectedText = annoSelection.toString();
 			//trim selection
-			this.selectedText = this.selectedText.replace(/^\s*(.*)\s*$/,'$1');
-			this.anchorNode = annoSelection.anchorNode;
-//			this.annotatedNode = this.anchorNode.parentNode;
-			this.annotatedNode = this.anchorNode;
+			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
+			this.annotatedNode = annoSelection.anchorNode;
 			this.annoOffset = annoSelection.anchorOffset;
 			
 			this.performAnnotation();
@@ -91,34 +98,19 @@ AdvancedAnnotation.prototype = {
 			var end = (secondAnchor != null)
 						? secondAnchor.getAttribute('name')*1
 						: -1;
-		alert("Searching between:"+start+","+end+":\n"+this.wikiTextParser.text.substring(start,end));
 			var res = this.wikiTextParser.findText(this.selectedText, start, end);
 			if (res != true) {
-				alert(res+"\n"+this.wikiTextParser.text.substring(start,end));
+				smwhgAnnotationHints.showMessageAndWikiText("(e)"+res,
+															this.wikiTextParser.text.substring(start,end));
 			} else {
-
-				var result = this.wikiTextParser.addAnnotation('[[annotation::'+this.selectedText+']]');
-				alert("Added at: "+result.toString());
-				if (result) {
-					// update anchors
-					var offset = result[2] - (result[1]-result[0]);
-					this.newWikiTextOffset = offset;
-					this.searchForward(firstAnchor, this.updateAnchors.bind(this));
-
-					// mark selection as annotated
-					var node = this.annotatedNode.parentNode;
-					var origText = node.innerHTML;
-					var newText = origText.replace(this.selectedText, '<span class="aam_new_anno_prop_highlight">'+this.selectedText+"</span>");
-					node.innerHTML = newText;
-					
-					catToolBar.fillList(true);
-					relToolBar.fillList(true);
-				}
-				
+				smwhgAnnotationHints.showMessageAndWikiText(
+					"(i)Wikitext found for selection:<br><b>"+this.selectedText+"</b>",
+					this.wikiTextParser.text.substring(start,end));
 			}
-
 		} else {
-			alert("No corresponding wiki text found.");
+			smwhgAnnotationHints.showMessageAndWikiText("(e)No wiki text found for selection:",
+			                                            "<b>"+this.selectedText+"</b>");
+
 		}
 	
 	},
@@ -135,14 +127,7 @@ AdvancedAnnotation.prototype = {
 			return node;
 		} 
 	},
-	
-	updateAnchors: function(node) {
-		if (node.tagName == 'A' && node.type == "wikiTextOffset") {
-			var val = node.getAttribute('name')*1;
-			node.setAttribute('name', val+this.newWikiTextOffset);
-		} 
-	},
-	
+		
 	/**
 	 * Searches recursively backwards from the given node <startNode> to the top
 	 * of the document. The document order is traversed in reverse order, visiting
@@ -248,6 +233,7 @@ AdvancedAnnotation.prototype = {
 		return null;
 		
 	},
+	
 	/**
 	 * Gets the current selection from the browser.
 	 */
@@ -275,6 +261,9 @@ AdvancedAnnotation.prototype = {
 			if (request.status == 200) {
 				// success => store wikitext
 				this.wikiTextParser = new WikiTextParser(request.responseText);
+				this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
+				this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
+				this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
 				catToolBar.setWikiTextParser(this.wikiTextParser);
 				relToolBar.setWikiTextParser(this.wikiTextParser);
 				catToolBar.fillList(true);
@@ -290,6 +279,102 @@ AdvancedAnnotation.prototype = {
 		              
 		              
 	},
+	
+	/**
+	 * This function is a hook for the wiki text parser. It is called after a
+	 * category has been added to the wiki text.
+	 * The currently selected text is highlighted with a background specific for
+	 * categories. The selection is reset.
+	 * 
+	 * @param string name
+	 * 		Name of the new category.
+	 */
+	categoryAdded: function(name) {
+		this.markSelection('aam_new_category_highlight');
+		catToolBar.fillList();
+	},
+	
+	/**
+	 * This function is a hook for the wiki text parser. It is called after a
+	 * relation has been added to the wiki text.
+	 * The currently selected text is highlighted with a background specific for
+	 * relations. The selection is reset.
+	 * 
+	 * @param string name
+	 * 		Name of the new relation.
+	 */
+	relationAdded: function(name) {
+		this.markSelection('aam_new_anno_prop_highlight');
+		relToolBar.fillList();
+	},
+
+	/**
+	 * Embraces the currently selected text with a <span> tag with the css style
+	 * <cssClass>.
+	 * @param string cssClass
+	 * 		Name of the css style that is added as class to the <span> tag.
+	 */
+	markSelection: function(cssClass) {
+		var parentNode = this.annotatedNode.parentNode;
+		var node = this.annotatedNode;
+		var origText = node.textContent;
+		if (origText.indexOf(this.selectedText) < 0) {
+			node = parentNode;
+			origText = node.innerHTML;
+			var newText = origText.replace(this.selectedText, 
+		                               '<span class="'+cssClass+'">' +
+										this.selectedText +
+										"</span>");
+			node.innerHTML = newText;
+		} else {
+			var newText = origText.substring(0, this.annoOffset);
+			newText += origText.substring(this.annoOffset).replace(this.selectedText, 
+			                               '<span class="'+cssClass+'">' +
+											this.selectedText +
+											"</span>");		
+			newText = Object.toHTML(newText);
+			var range = parentNode.ownerDocument.createRange();
+			range.selectNode(parentNode);
+			newText.evalScripts.bind(newText).defer();
+			newText = range.createContextualFragment(newText.stripScripts());
+			parentNode.replaceChild(newText, node);
+		}
+		// reset selection information
+		this.annotatedNode = null;
+		this.annoOffset = 0;
+		
+	},
+	
+	/**
+	 * This function is a hook for changed text in the wiki text parser. 
+	 * It updates the anchors with the wiki text offsets in the DOM after text
+	 * has been added or removed.
+	 * 
+	 * @param array<int>[3] textModifications
+	 * 			[0]: start index of replacement in original text
+	 * 			[1]: end index of replacement in original text
+	 * 			[2]: length of inserted text 
+	 */
+	updateAnchors: function(textModifications) {
+								
+//		alert("Added at: "+textModifications.toString());
+		if (textModifications) {
+			// update anchors
+			var start = textModifications[0];
+			var end = textModifications[1];
+			var len = textModifications[2];
+			
+			var offset = len - (end-start);
+			// get all anchors of type "wikiTextOffset"			
+			var anchors = $('bodyContent').getElementsBySelector('a[type="wikiTextOffset"]')
+			for (var i = 0; i < anchors.size(); ++i) {
+				var val = anchors[i].getAttribute('name')*1;
+				if (val > start) {
+					anchors[i].setAttribute('name', val+offset);
+				}
+			}
+		}
+	}
 
 };// End of Class
 
