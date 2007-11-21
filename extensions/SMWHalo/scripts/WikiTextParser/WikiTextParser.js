@@ -84,18 +84,24 @@ WikiTextParser.prototype = {
 			this.editInterface = gEditInterface;
 			this.text = this.editInterface.getValue();
 			this.parserMode = WTP_EDITAREA_MODE;
-		} else {
+		} else if (!this.parserMode) {
 			this.editInterface = null;
 			this.text = wikiText;
 			this.parserMode = WTP_WIKITEXT_MODE;
+			this.wtsStart = -1; // start of internal wiki text selection
+			this.wtsEnd   = -1  // end of internal wiki text selection
+			// Array of hooks that are called when the wiki text has been changed
+			this.textChangedHooks = new Array(); 
+			// Array of hooks that are called when a category has been added
+			this.categoryAddedHooks = new Array()
+			// Array of hooks that are called when a relation has been added
+			this.relationAddedHooks = new Array()
 		}
 
 		this.relations  = null;
 		this.categories  = null;
 		this.links  = null;
 		this.error = WTP_NO_ERROR;
-		this.wtsStart = -1; // start of internal wiki text selection
-		this.wtsEnd   = -1  // end of internal wiki text selection
 	},
 	
 	/**
@@ -112,7 +118,7 @@ WikiTextParser.prototype = {
 	},
 
 	/**
-	 * @puplic
+	 * @public
 	 *
 	 * Returns the wiki text from the edit box of the edit page.
 	 *
@@ -216,6 +222,18 @@ WikiTextParser.prototype = {
 		return this.links;
 	},
 
+	addTextChangedHook: function(hookFnc) {
+		this.textChangedHooks.push(hookFnc);
+	},
+	
+	addCategoryAddedHook: function(hookFnc) {
+		this.categoryAddedHooks.push(hookFnc);
+	},
+	
+	addRelationAddedHook: function(hookFnc) {
+		this.relationAddedHooks.push(hookFnc);
+	},
+	
 	/**
 	 * @public
 	 *
@@ -241,6 +259,9 @@ WikiTextParser.prototype = {
 	 	}
 	 	anno += "]]";
 	 	this.addAnnotation(anno, append);
+	 	for (var i = 0; i < this.relationAddedHooks.size(); ++i) {
+	 		this.relationAddedHooks[i](name);
+	 	}
 	 },
 
 	/**
@@ -263,6 +284,9 @@ WikiTextParser.prototype = {
 	 	var anno = "[["+gLanguage.getMessage('CATEGORY') + name;
 	 	anno += "]]";
 	 	this.addAnnotation(anno, append);
+	 	for (var i = 0; i < this.categoryAddedHooks.size(); ++i) {
+	 		this.categoryAddedHooks[i](name);
+	 	}
 	 },
 
 	/**
@@ -321,22 +345,27 @@ WikiTextParser.prototype = {
 	 * Returns the text that is currently selected in the wiki text editor.
 	 *
 	 * @param boolean trim
-	 * 			If <true>, spaces the surround the selection are skipped and
+	 * 			If <true>, spaces that surround the selection are skipped and
 	 * 			the complete annotation including brackets is selected.
 	 * @return string Currently selected text.
 	 */
 	getSelection: function(trim) {
-		if (!this.editInterface) {
-			return "";
-		}
-		trim = true;
-		var text = this.editInterface.getSelectedText();
-		if (trim == true && text && text.length > 0) {
-			var regex = /^(\s*(\[\[)?)\s*(.*?)\s*((\]\])?\s*)$/;
-			var parts = text.match(regex);
-			if (parts) {
-				var rng = this.editInterface.selectCompleteAnnotation();
-				return parts[3];
+		var text = "";
+		if (this.editInterface) {
+			trim = true;
+			var text = this.editInterface.getSelectedText();
+			if (trim == true && text && text.length > 0) {
+				var regex = /^(\s*(\[\[)?)\s*(.*?)\s*((\]\])?\s*)$/;
+				var parts = text.match(regex);
+				if (parts) {
+					var rng = this.editInterface.selectCompleteAnnotation();
+					return parts[3];
+				}
+			}
+		} else {
+			// wiki text mode
+			if (this.wtsStart >= 0 && this.wtsEnd >= 0) {
+				text = this.text.substring(this.wtsStart, this.wtsEnd);
 			}
 		}
 		return text;
@@ -357,6 +386,9 @@ WikiTextParser.prototype = {
 	setSelection: function(start, end) {
 		if (this.editInterface) {
 			this.editInterface.setSelectionRange(start, end);
+		} else {
+			this.wtsStart = start;
+			this.wtsEnd = end;
 		}
 	},
 
@@ -921,6 +953,9 @@ WikiTextParser.prototype = {
 			            + text
 			            + this.text.substring(this.wtsEnd);
 			var result = [this.wtsStart, this.wtsEnd, text.length];
+			for (var i = 0; i < this.textChangedHooks.size(); ++i) {
+				this.textChangedHooks[i](result);
+			}
 			this.wtsStart = -1;			 
 			this.wtsEnd   = -1;
 			return result;
