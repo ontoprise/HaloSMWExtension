@@ -360,6 +360,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "annotate");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "annotate");
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "annotate");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
@@ -449,7 +450,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 
 		Job :: batchInsert($jobs);
 		return true;
-	}
+}
 	
 	/**
 	*  This method will be called after an article is saved
@@ -575,136 +576,137 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		return true; // always return true, in order not to stop MW's hook processing!
 	}
 	
- 	function smwfAnnotateTab ($content_actions) {
- 		//Check if edit tab is present, if not don't at annote tab
-		if (!array_key_exists('edit',$content_actions) )
-			return true;
-		global $wgUser, $wgRequest;
-		$action = $wgRequest->getText( 'action' );
-			//Build annotate tab
- 		global $wgTitle;  
-		$main_action['main'] = array(
+function smwfAnnotateTab ($content_actions) {
+	//Check if edit tab is present, if not don't at annote tab
+	if (!array_key_exists('edit',$content_actions) )
+		return true;
+	global $wgUser, $wgRequest;
+	$action = $wgRequest->getText( 'action' );
+	//Build annotate tab
+	global $wgTitle;  
+	$main_action['main'] = array(
         	'class' => ($action == 'annotate') ? 'selected' : false,
         	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
         	'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
-      	);
+	);
       	
-      	//Find position of edit button
-      	$editpos = count(range(0,$content_actions['edit']))+1;
-      	//Split array
-      	$beforeedit = array_slice($content_actions,0,$editpos-1);
-      	$afteredit = array_slice($content_actions,$editpos-1,count($content_actions));
-      	//Merge array with new action
-      	$content_actions = array_merge( $beforeedit, $main_action);   //add a new action
-      	$content_actions = array_merge( $content_actions, $afteredit); 
-      	return true;
-	}
+	//Find position of edit button
+	$editpos = count(range(0,$content_actions['edit']))+1;
+	//Split array
+	$beforeedit = array_slice($content_actions,0,$editpos-1);
+	$afteredit = array_slice($content_actions,$editpos-1,count($content_actions));
+	//Merge array with new action
+	$content_actions = array_merge( $beforeedit, $main_action);   //add a new action
+	$content_actions = array_merge( $content_actions, $afteredit); 
+	return true;
+}
 
-	/**
-	 * This function is called from the parser, before <nowiki> parts have been 
-	 * removed and before templates etc are expanded.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 * @param unknown_type $strip_stat
-	 */
-	function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
-		global $smwgHaloIP, $smwgHaloAAMParser;
-		require_once( "$smwgHaloIP/includes/SMW_AAMParser.php");
-
-		
-		if ($smwgHaloAAMParser == null) {
-			$smwgHaloAAMParser = new SMWH_AAMParser($text);
-		}
-		$text = $smwgHaloAAMParser->addWikiTextOffsets($text);
-		return true;
-	}
+/**
+ * This function is called from the parser, before <nowiki> parts have been 
+ * removed and before templates etc are expanded.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ * @param unknown_type $strip_stat
+ */
+function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
+	global $smwgHaloIP, $smwgHaloAAMParser;
+	require_once( "$smwgHaloIP/includes/SMW_AAMParser.php");
 
 	
+	if ($smwgHaloAAMParser == null) {
+		$smwgHaloAAMParser = new SMWH_AAMParser($text);
+	}
+	$parser->mOptions->setEditSection(false);
+	$text = $smwgHaloAAMParser->addWikiTextOffsets($text);
+	return true;
+}
+
  
-	/**
-	 * This function is called from the parser, after <nowiki> parts have been 
-	 * removed, but before templates etc are expanded.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 * @param unknown_type $strip_stat
-	 */
-	function smwfAAMAfterStrip(&$parser, &$text, &$strip_stat) {
-		global $smwgHaloAAMParser;
-		if ($smwgHaloAAMParser == null) {
-			return true;
-		}
-		$text = $smwgHaloAAMParser->highlightAnnotations($text);
+/**
+ * This function is called from the parser, after <nowiki> parts have been 
+ * removed, but before templates etc are expanded.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ * @param unknown_type $strip_stat
+ */
+function smwfAAMAfterStrip(&$parser, &$text, &$strip_stat) {
+	global $smwgHaloAAMParser;
+	if ($smwgHaloAAMParser == null) {
 		return true;
 	}
+	$text = $smwgHaloAAMParser->highlightAnnotations($text);
+	return true;
+}
 
-	/**
-	 * This function is called from the parser, after templates etc. are 
-	 * expanded.
-	 * Annotations i.e. text enclosed in [[]] is highlighted.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 */
-	function smwfAAMBeforeLinks(&$parser, &$text) { 
-		return true;
-	}
+/**
+ * This function is called from the parser, after templates etc. are 
+ * expanded.
+ * Annotations i.e. text enclosed in [[]] is highlighted.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ */
+function smwfAAMBeforeLinks(&$parser, &$text) { 
+	return true;
+}
 
-	/**
-	 * This function is called from the parser, when the HTML is nearly completely
-	 * generated.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 */
-	function smwfAAMBeforeTidy(&$parser, &$text) { 
-		return true;
-	}
+/**
+ * This function is called from the parser, when the HTML is nearly completely
+ * generated.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ */
+function smwfAAMBeforeTidy(&$parser, &$text) { 
+	return true;
+}
 
-	/**
-	 * This function is called from the parser, when the HTML is nearly completely
-	 * generated.
-	 * The wiki text offsets that have been introduced in a previous parsing stage
-	 * are replaced by their corresponding HTML.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 */
-	function smwfAAMAfterTidy(&$parser, &$text) {
-		global $smwgHaloAAMParser;
-		if ($smwgHaloAAMParser == null) {
-			return true;
-		}
-		$text = $smwgHaloAAMParser->wikiTextOffset2HTML($text);
-		$text = $smwgHaloAAMParser->highlightAnnotations2HTML($text);
+/**
+ * This function is called from the parser, when the HTML is nearly completely
+ * generated.
+ * The wiki text offsets that have been introduced in a previous parsing stage
+ * are replaced by their corresponding HTML.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ */
+function smwfAAMAfterTidy(&$parser, &$text) {
+	global $smwgHaloAAMParser;
+	if ($smwgHaloAAMParser == null) {
 		return true;
 	}
+	$text = $smwgHaloAAMParser->wikiTextOffset2HTML($text);
+	$text = $smwgHaloAAMParser->highlightAnnotations2HTML($text);
+	return true;
+}
 
-	/**
-	 * This function is called from the parser, when the HTML is nearly completely
-	 * generated.
-	 *
-	 * @param unknown_type $parser
-	 * @param unknown_type $text
-	 */
-	function smwfAAMBeforeHTML(&$out, &$text) { 
-		return true;
-	}
+/**
+ * This function is called from the parser, when the HTML is nearly completely
+ * generated.
+ *
+ * @param unknown_type $parser
+ * @param unknown_type $text
+ */
+function smwfAAMBeforeHTML(&$out, &$text) { 
+	return true;
+}
 	
-	/**
-	 * This function is called when the annotation mode is activated. It renders
-	 * the article with highlighted annotations.
-	 *
-	 * @param string $action The action i.e. "annotate"
-	 * @param Article $article The article that will be displayed.
-	 * @return false => processing should continue
-	 */
-	function smwfAnnotateAction($action, $article) {
-		
-		$article->getTitle()->invalidateCache();
-		$article->view();
-		$article->getTitle()->invalidateCache();
-		return false;
-	}
+/**
+ * This function is called when the annotation mode is activated. It renders
+ * the article with highlighted annotations.
+ *
+ * @param string $action The action i.e. "annotate"
+ * @param Article $article The article that will be displayed.
+ * @return false => processing should continue
+ */
+function smwfAnnotateAction($action, $article) {
+	
+	$article->getTitle()->invalidateCache();
+	$article->view();
+	$article->getTitle()->invalidateCache();
+	return false;
+}
+	
 ?>
