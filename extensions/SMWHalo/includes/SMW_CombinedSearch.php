@@ -186,21 +186,23 @@
  				$resultHTML .= "<tr>";
  				
  					// show page link
+ 					$pageTitleUnescaped = $page->getDBkey();
  					$pageTitleEscaped = urlencode($page->getDBkey()); 
+ 					
  					$resultHTML .= "<td><img src=\"".CombinedSearchHelper::getImageReference($page)."\"></td>";
- 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEntity('".$pageTitleEscaped."', '$ns')\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" href=\"$wgServer$wgScriptPath/index.php/$nsWithColon$pageTitleUnescaped\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
  					
  					// show OB link
  					if ($page->getNamespace() != NS_TEMPLATE && $page->getNamespace() != SMW_NS_TYPE) { 
  						
- 						$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToOB('".$pageTitleEscaped."', '$ns', '".$wgContLang->getNsText(NS_SPECIAL).":".wfMsg('ontologybrowser')."')\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
+ 						$resultHTML .= "<td><a class=\"navlink\" href=\"$wgServer$wgScriptPath/index.php/".$wgContLang->getNsText(NS_SPECIAL).":".wfMsg('ontologybrowser')."?ns=".$ns."&entitytitle=".$pageTitleEscaped."\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
  					} else {
  						// do NOT show OB link for templates, because it makes no sense.
  						$resultHTML .= "<td></td>";
  					}
  					
  					// show edit link
- 					$resultHTML .= "<td><a class=\"navlink\" onclick=\"csContributor.navigateToEdit('".$pageTitleEscaped."', '$ns')\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
+ 					$resultHTML .= "<td><a class=\"navlink\" href=\"$wgServer$wgScriptPath/index.php/$nsWithColon$pageTitleUnescaped?action=edit\"><img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
  				$resultHTML .= "</tr>";
  				
  			}
