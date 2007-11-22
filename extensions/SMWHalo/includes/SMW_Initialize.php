@@ -110,6 +110,10 @@ function smwgHaloSetupExtension() {
 	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
 	$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
+	
+	$wgAutoloadClasses['SMWRefactorPreview'] = $smwgHaloIP . '/specials/SMWRefactorPreview/SMW_RefactorPreview.php';
+	$wgSpecialPages['RefactorPreview'] = array('SMWRefactorPreview');
+	
 	// import global functions and remaining AJAX calls
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');

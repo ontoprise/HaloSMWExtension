@@ -11,6 +11,7 @@
  $wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
+ $wgHooks['BeforePageDisplay'][]='smwRPAddHTMLHeader';
  $wgHooks['ParserBeforeStrip'][] = 'smwRegisterQueryResultEditor'; // register the <ask> parser hook
  // register ajax calls
 
@@ -243,5 +244,28 @@ function smwAddQueryResultEditor($text, $param, &$parser) {
 	} else {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
 	}
+}
+
+function smwRPAddHTMLHeader(& $out) {
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorPreview");
+		
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":RefactorPreview");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorPreview");
+		
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorPreview");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorPreview");
+		
+	}
+
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/RefactorPreview/refactorpreview.css', "all", -1, NS_SPECIAL.":RefactorPreview");
+	
+	return true;
 }
 ?>

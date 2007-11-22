@@ -164,10 +164,10 @@ clicking the big arrows between the columns.',
 	
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
-	'smw_ob_cmd_createsubcategorysamelevel' => 'Add subcategory on same level',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category on same level',
 	'smw_ob_cmd_renamecategory' => 'Rename',
 	'smw_ob_cmd_createsubproperty' => 'Add subproperty',
-	'smw_ob_cmd_createsubpropertysamelevel' => 'Add subproperty on same level',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Add property on same level',
 	'smw_ob_cmd_renameproperty' => 'Rename',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
@@ -408,6 +408,9 @@ clicking the big arrows between the columns.',
 	
 	/* Annotationtab */
  	'smw_annotation_tab' => 'annotate',
+ 	
+ 	/* Refactor preview */
+ 	'refactorpreview' => 'Refactor Preview',
  	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',
