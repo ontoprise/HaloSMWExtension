@@ -713,10 +713,8 @@ OBInstanceActionListener.prototype = {
 		if (globalActionListener.activeTreeName == 'categoryTree') {
 			dataAccess.getInstances(categoryActionListener.selectedCategory, partition, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
-			dataAccess.getInstancesUsingProperty(propertyActionListener.OB_currentlySelectedAttribute, partition, this.selectPartitionCallback.bind(this));
-		} else { // relation tree
-			dataAccess.getInstancesUsingProperty(relationActionListener.OB_currentlySelectedRelation, partition, this.selectPartitionCallback.bind(this));
-		}
+			dataAccess.getInstancesUsingProperty(propertyActionListener.selectedProperty, partition, this.selectPartitionCallback.bind(this));
+		} 
 	},
 	
 	selectPreviousPartition: function (e, htmlNode) {
@@ -727,10 +725,8 @@ OBInstanceActionListener.prototype = {
 		if (globalActionListener.activeTreeName == 'categoryTree') {
 			dataAccess.getInstances(categoryActionListener.selectedCategory, partition, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {
-			dataAccess.getInstancesUsingProperty(propertyActionListener.OB_currentlySelectedAttribute, partition, this.selectPartitionCallback.bind(this));
-		} else { // relation tree
-			dataAccess.getInstancesUsingProperty(relationActionListener.OB_currentlySelectedRelation, partition, this.selectPartitionCallback.bind(this));
-		}
+			dataAccess.getInstancesUsingProperty(propertyActionListener.selectedProperty, partition, this.selectPartitionCallback.bind(this));
+		} 
 	},
 	
 	selectPartitionCallback: function (request) {
@@ -766,8 +762,7 @@ OBInstanceActionListener.prototype = {
 var OBPropertyTreeActionListener = Class.create();
 OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener() , {
   initialize: function() {
-		
-		this.OB_currentlySelectedAttribute = null;
+			
 		this.selectedProperty = null;
 		this.selectedPropertyID = null;
 		this.oldSelectedProperty = null;
@@ -834,10 +829,12 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 	transformer.transformResultToHTML(request,instanceDIV, true);
 	 	 	selectionProvider.fireRefresh();
 		}
-	     OB_instance_pendingIndicator.show();
-	 	 this.OB_currentlySelectedAttribute = propertyName;
-	 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
-	 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
+	 	
+	 	 if (OB_LEFT_ARROW == 0) {
+		     OB_instance_pendingIndicator.show();
+		 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
+		 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
+	 	 }
 		}
 	},
 	
@@ -970,7 +967,7 @@ OBSchemaPropertyActionListener.prototype = {
 			}
 			if (OB_RIGHT_ARROW == 1) {
 				 OB_instance_pendingIndicator.show();
-				 this.OB_currentlySelectedAttribute = attributeName;
+				
 				 dataAccess.getInstancesUsingProperty(attributeName, 0, callbackOnPropertySelectForInstance);
 			}
 		}

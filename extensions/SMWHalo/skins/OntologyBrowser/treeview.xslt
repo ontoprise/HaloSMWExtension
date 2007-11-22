@@ -236,7 +236,7 @@
 			<xsl:variable name="title" select="@title"/>
 			<xsl:value-of select="translate($title, '_', ' ')"/>
 		</a></td>
-		<td width="100%">
+		<td width="25%">
 		<a class="navigationLink" style="margin-left:5px;">
 			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 			<img src="{$param-img-directory}view.gif"/>
