@@ -1,7 +1,8 @@
 <?php
 /**
  * Print query results in tables.
- * @author Markus KrÃ¶tzsch
+ * @author Markus Krötzsch
+ * @author Markus Nitsche (Halo modifications)
  */
 
 /**
@@ -13,7 +14,7 @@ class SMWHaloTableResultPrinter extends SMWResultPrinter {
 		global $smwgIQRunningNumber;
 		smwfRequireHeadItem(SMW_HEADER_SORTTABLE);
 		
-		$cols = array();
+		$cols = array(); //Names of columns
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
 		
 		// print header
@@ -26,7 +27,7 @@ class SMWHaloTableResultPrinter extends SMWResultPrinter {
 		if ($this->mShowHeaders) { // building headers
 			$result .= "\n\t\t<tr>";
 		}
-		foreach ($res->getPrintRequests() as $pr) {
+		foreach ($res->getPrintRequests() as $pr) { //get column titles
 			$title = $pr->getTitle();
 			if($title instanceof Title)
 				array_push($cols, $title);
@@ -53,16 +54,16 @@ class SMWHaloTableResultPrinter extends SMWResultPrinter {
 				$tt = '';
 				if(($firstcol && $this->mLinkFirst) || $this->mLinkOthers){
 					$cont = $field->getContent();
-					if($cont[0] instanceof SMWWikiPageValue){
+					if($cont[0] instanceof SMWWikiPageValue){ //for each link, add GI tooltip
 						$tt = $this->addTooltip($cont[0]->getTitle());
-						if($firstcol)
+						if($firstcol) //save gardening issues for the article of the current row
 							$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, SMW_CONSISTENCY_BOT_BASE + 3, $cont[0]->getTitle(), NULL, NULL);
 					}
 				}
 
-				for($j = 0; $j<sizeof($gIssues); $j++){
+				for($j = 0; $j<sizeof($gIssues); $j++){ //check if there's a GI for this property / article combination
 					if($act_column > 0 && ($gIssues[$j]->getTitle2()->getArticleID() == $cols[$act_column]->getArticleID())){
-						if($gIssues[$j]->getType() == SMW_GARDISSUE_TOO_LOW_CARD) //TODO: i18n
+						if($gIssues[$j]->getType() == SMW_GARDISSUE_TOO_LOW_CARD)
 							$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_missing') . '</a>';
 						else if($gIssues[$j]->getType() == SMW_GARDISSUE_WRONG_UNIT)
 							$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue_notify" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_wrongunit') . '</a>';
