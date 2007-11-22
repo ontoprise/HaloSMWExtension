@@ -186,18 +186,63 @@
 	}
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL) {
+		global $smwgDefaultCollation;
 		$visitedNodes = array();
 		$allInstances = array();
-		$directInstances = $this->getDirectInstances($categoryTitle, $requestoptions);
+		$db =& wfGetDB( DB_MASTER ); 
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance VARCHAR(255) '.$collation.' NOT NULL, category VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::getInstances' );
+		$this->_addDirectInstances($categoryTitle, false, $db);
 		
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
 		foreach($subCategories as $cat) {
-			$this->_getInstances($cat, $requestoptions, $allInstances, $visitedNodes);
+			$this->_addInstances($cat, $visitedNodes, $db);
 		}
-		return array($directInstances, $allInstances);
+		
+		$res = $db->select( 'smw_ob_instances', 
+		                    'DISTINCT instance, category',
+		                    array(), 'SMW::getInstances', $this->getSQLOptions($requestoptions,'category'));
+		
+		// rewrite result as array
+		$result = array();
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array(Title::newFromText($row->instance, NS_MAIN), Title::newFromText($row->category, NS_CATEGORY));
+			}
+		}
+		$db->freeResult($res);
+		$db->query('DROP TABLE smw_ob_instances');
+		return $result;
 	}
 	
+	private function _addDirectInstances($categoryTitle, $addCategory, & $db) {
+		$page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
+		$superCategory = $addCategory ? $db->addQuotes($categoryTitle->getDBkey()) : "NULL";
+		$db->query("INSERT INTO smw_ob_instances (instance, category) " .
+				"SELECT page_title AS instance, $superCategory AS category FROM $page, $categorylinks " .
+					"WHERE cl_to = ". $db->addQuotes($categoryTitle->getDBkey()). " AND page_id = cl_from AND page_namespace = ". NS_MAIN, 
+			           'SMW::_addDirectInstances');
+	}
 	
+	private function _addInstances($categoryTitle, & $visitedNodes, & $db) {
+		array_push($visitedNodes, $categoryTitle->getArticleID());		
+		$this->_addDirectInstances($categoryTitle, true, $db);
+	
+		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		foreach($subCategories as $cat) {
+			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
+				$this->_addInstances($cat, $visitedNodes, $db);
+			}
+		}
+		array_pop($visitedNodes);
+	}
 	
 	function getDirectInstances(Title $categoryTitle, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_MASTER ); 
@@ -224,18 +269,62 @@
 	
 	
 	function getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
+		global $smwgDefaultCollation;
 		$visitedNodes = array();
-		$allProperties = array();
-		$directProperties = $this->getDirectPropertiesOfCategory($categoryTitle, $requestoptions);
-		
-		$subCategories = $this->getDirectSuperCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $visitedNodes);
+		$allInstances = array();
+		$db =& wfGetDB( DB_MASTER ); 
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
-		return array($directProperties, $allProperties);
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getPropertiesOfCategory' );
+		$this->_addDirectProperties($categoryTitle, $db);
+		
+		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		foreach($subCategories as $cat) {
+			$this->_addProperties($cat, $visitedNodes, $db);
+		}
+		
+		$res = $db->select( 'smw_ob_properties', 
+		                    'DISTINCT property',
+		                    array(), 'SMW::getPropertiesOfCategory', $this->getSQLOptions($requestoptions,'property'));
+		
+		// rewrite result as array
+		$result = array();
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+			}
+		}
+		$db->freeResult($res);
+		$db->query('DROP TABLE smw_ob_properties');
+		return $result;
 	}
 	
+	private function _addDirectProperties($categoryTitle, & $db) {
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
+		$db->query("INSERT INTO smw_ob_properties (property) " .
+				"SELECT n.subject_title AS property FROM $smw_nary n, $smw_nary_relations r" .
+					" WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = ". $db->addQuotes($this->domainRangeHintRelation->getDBkey()). " AND r.object_title = " .$db->addQuotes($categoryTitle->getDBkey()), 
+			           'SMW::_addDirectProperties');
+	}
 	
+	private function _addProperties($categoryTitle, & $visitedNodes, & $db) {
+		array_push($visitedNodes, $categoryTitle->getArticleID());		
+		$this->_addDirectProperties($categoryTitle, $db);
+	
+		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		foreach($subCategories as $cat) {
+			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
+				$this->_addProperties($cat, $visitedNodes, $db);
+			}
+		}
+		array_pop($visitedNodes);
+	}
 			
 	function getDirectPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
@@ -655,39 +744,7 @@
 	}
 
 	
- 	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, & $allInstances, & $visitedNodes) {
-				
-		array_push($visitedNodes, $categoryTitle->getArticleID());		
-		$directInstances = $this->getDirectInstances($categoryTitle, $requestoptions);
-		foreach($directInstances as $inst) {
-			$allInstances[] = array($inst, $categoryTitle);
-		}
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
-				$this->_getInstances($cat, $requestoptions, $allInstances, $visitedNodes);
-			}
-		}
-		array_pop($visitedNodes);
-	}
-	
-	private function _getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL, & $allProperties, & $visitedNodes) {
-		array_push($visitedNodes, $categoryTitle->getArticleID());
-				
-		$directProperties = $this->getDirectPropertiesOfCategory($categoryTitle, $requestoptions);
-		foreach($directProperties as $inst) {
-			$allProperties[] = $inst;
-		}
-		$subCategories = $this->getDirectSuperCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			if (!in_array($cat->getArticleID(), $visitedNodes)) {
-				$this->_getPropertiesOfCategory($cat, $requestoptions, $allProperties, $visitedNodes);
-			}
-		}
-		array_pop($visitedNodes);
-	}
-	
-	
+ 		
  	/**
 	 * Creates some predefined pages
 	 */

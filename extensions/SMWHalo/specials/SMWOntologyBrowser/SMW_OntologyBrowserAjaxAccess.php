@@ -51,12 +51,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$instances = smwfGetSemanticStore()->getInstances($cat,  $reqfilter);
- 		$directInstances = $instances[0];
- 		smwfSortTitleArray($instances[1]);
- 		$inheritedInstances = array();
- 		$inheritedInstancesWithCategories = smwfEliminateDoubles($instances[1], $inheritedInstances);
- 		 		 		
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($directInstances, $inheritedInstancesWithCategories, $p_array[1] + 0, $p_array[2] + 0);
+ 		 		 		 		
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $p_array[1] + 0, $p_array[2] + 0);
  		
  	} else if ($method == 'getAnnotations') {
  		$reqfilter = new SMWRequestOptions();
@@ -85,7 +81,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$properties = smwfGetSemanticStore()->getPropertiesOfCategory($cat, $reqfilter);
  		
- 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties[0], $properties[1]);
+ 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
  		
  	} else if ($method == 'getRootProperties') {
  		// param0 : limit
@@ -120,8 +116,8 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$attinstances = smwfGetStore()->getAllPropertySubjects($prop,  $reqfilter);
- 		$dummy = array();
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $dummy, $p_array[1] + 0, $p_array[2] + 0);
+ 		
+ 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $p_array[1] + 0, $p_array[2] + 0);
  	} else if ($method == 'getCategoryForInstance') {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();
@@ -162,41 +158,6 @@ function smwfOntologyBrowserAccess($method, $params) {
  		} 
  		
  	}
-}
-
-/**
- * Sort an array of inherited titles according to Title::getText()
- * 
- * @param $titleArray array(Title, Title) 
- */
-function smwfSortTitleArray(& $titleArray) {
-	for($i = 0, $n = count($titleArray); $i < $n; $i++) {
-		for($j = 0; $j < $n-1; $j++) {
-			if ($titleArray[$j][0]->getText() > $titleArray[$j+1][0]->getText()) {
-				$help = $titleArray[$j];
-				$titleArray[$j] = $titleArray[$j+1];
-				$titleArray[$j+1] = $help;
-			}
-		}
-	}
-}
-
-/**
- * Eliminate double titles from an array of inherited titles. Must be sorted!
- * 
- * @param $titleArray array(Title, Title) 
- */
-function smwfEliminateDoubles(& $titleArray, & $onlyInstances) {
-	$result = array();
-	$current = null;
-	for($i = 0, $n = count($titleArray); $i < $n; $i++) {
-		if ($current == null || !$titleArray[$i][0]->equals($current)) {
-			$result[] = $titleArray[$i];
-			$onlyInstances[] = $titleArray[$i][0];
-		}
-		$current = $titleArray[$i][0];
-	}
-	return $result;
 }
 
 

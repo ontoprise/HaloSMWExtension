@@ -42,37 +42,37 @@ class SMWOntologyBrowserXMLGenerator {
  	}
 }
 
-public static function encapsulateAsInstancePartition(array & $directInstances, array & $inheritedInstances, $limit, $partitionNum) {
+public static function encapsulateAsInstancePartition(array & $instances, $limit, $partitionNum) {
 	$id = uniqid (rand());
 	$count = 0;
 	$result = "";
-	if (count($directInstances) == $limit || count($inheritedInstances) >= $limit) { 
+	if (count($instances) == $limit) { 
 		if ($partitionNum == 0) { 
 			$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hidePreviousArrow=\"true\"/>";
 		} else {
 			$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\"/>";
 		}
 	}
-	if (count($directInstances) < $limit && count($inheritedInstances) < $limit && $partitionNum > 0) {
+	if (count($instances) < $limit && $partitionNum > 0) {
 		$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
-	foreach($directInstances as $t) { 
-		$title = htmlspecialchars($t->getDBkey()); 
-		$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
- 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($directIssues);
-		$result = $result."<instance title=\"".$title."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+	foreach($instances as $t) { 
+		$instWithCat = is_array($t);
+		$instanceTitle =  $instWithCat ?  $t[0] : $t;
+		$titleEscaped = htmlspecialchars($instanceTitle->getDBkey()); 
+		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instanceTitle);
+ 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
+ 		if ($instWithCat && $t[1] != NULL) {
+ 			$categoryTitle = htmlspecialchars($t[1]->getDBkey());
+ 			$result = $result."<instance title=\"".$titleEscaped."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
+ 		} else {
+ 			$result = $result."<instance title=\"".$titleEscaped."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+ 		}
 		$count++;
 	}
-	foreach($inheritedInstances as $t) { 
-		$instanceTitle = htmlspecialchars($t[0]->getDBkey()); 
-		$categoryTitle = htmlspecialchars($t[1]->getDBkey());
-		$indirectIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
-		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($indirectIssues);
-		$result = $result."<instance title=\"".$instanceTitle."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
-		$count++;
-	}
+	
 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>" : "<instanceList>$result</instanceList>";
 }
 
@@ -124,25 +124,25 @@ public static function encapsulateAsAnnotationList(array & $attributeAnnotations
 
 
 
-public static function encapsulateAsPropertyList(array & $directProperties, array & $inheritedProperties) {
+public static function encapsulateAsPropertyList(array & $properties) {
 	
 	$count = 0;
 	$propertiesXML = "";
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
-	foreach($directProperties as $t) {
+	foreach($properties as $t) {
 		if ($t instanceof Title) { 
 			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
  			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
 			$count++;
 		}
 	}
-	foreach($inheritedProperties as $t) {
+	/*foreach($inheritedProperties as $t) {
 		if ($t instanceof Title) {
 			$indirectIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t); 
 			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $indirectIssues);
 			$count++;
 		}
-	}
+	}*/
 	return $propertiesXML == '' ? "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>" : "<propertyList>".$propertiesXML."</propertyList>";
 }
 

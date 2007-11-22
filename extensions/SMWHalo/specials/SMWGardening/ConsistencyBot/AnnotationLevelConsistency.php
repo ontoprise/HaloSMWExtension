@@ -273,32 +273,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
  				
- 				foreach($instances[0] as $subject) { // check direct instances
- 					if ($subject == null) {
- 					continue;
-	 				}
-	 				
-	 				// get all annoations for a subject and a property
-	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
-	 				foreach($redirects as $rd) {
-	 					$allAttributeForSubject = array_merge($allAttributeForSubject, smwfGetStore()->getPropertyValues($subject, $rd));
-	 				}
-	 				$num = count($allAttributeForSubject);
-	 				
-	 				// compare number of appearance with defined cardinality
-	 				if ($num < $minCards) {
-	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
-	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $num);
-	 					}
-					} 
-					if ($num > $maxCards) {
-						if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
-							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $num);
-						}
-					}
- 				}
- 				
- 				foreach($instances[1] as $subject) { // check indirect instances
+ 				foreach($instances as $subject) { // check indirect instances
  					if ($subject[0] == null) {
  						continue;
 	 				}
