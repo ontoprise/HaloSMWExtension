@@ -77,11 +77,11 @@ class SMWGardeningLogPage extends SMWQueryPage {
 			$gis = $result->getGardeningIssues();
 			if (is_array($bound)) {
 				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound[0]->getDBkey())).preg_replace("/'/", "&quot;", htmlspecialchars($bound[1]->getDBkey()));
-				$text = $skin->makeLinkObj($bound[0]).' <-> '.$skin->makeLinkObj($bound[1]).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+				$text = $skin->makeLinkObj($bound[0]).' <-> '.$skin->makeLinkObj($bound[1]).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
 					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
 			} else {
 				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound->getDBkey()));
-				$text = $skin->makeLinkObj($bound).': <img src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+				$text = $skin->makeLinkObj($bound).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
 					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
 			}
 						
