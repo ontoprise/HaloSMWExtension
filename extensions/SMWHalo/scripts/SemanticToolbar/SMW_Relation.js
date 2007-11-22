@@ -153,6 +153,16 @@ cancel: function(){
 	this.fillList(true);
 },
 
+enableAnnotation: function(enable) {
+	if (enable) {
+		$('rel-menu-annotate').show();
+		$('rel-menu-has-part').show();
+	} else {
+		$('rel-menu-annotate').hide();
+		$('rel-menu-has-part').hide();
+	}
+},
+
 /**
  * Creates a new toolbar for the relation container with the standard menu.
  * Further elements can be added to the toolbar. Call <finishCreation> after the

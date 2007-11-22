@@ -27,26 +27,26 @@ createList: function(list,id) {
 	var divlist = "";
 	switch (id) {
 		case "category":
-			divlist ="<div id=\"" + id +"-tools\">" +
-					"<a href=\"javascript:catToolBar.newItem()\" class=\"menulink\">"+gLanguage.getMessage('ANNOTATE')+"</a>" +
-					"<a href=\"javascript:catToolBar.newCategory()\" class=\"menulink\">"+gLanguage.getMessage('CREATE')+"</a>";
+			divlist ='<div id="' + id +'-tools">' +
+					'<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>' +
+					'<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			if (wgNamespaceNumber == 14) {
-				divlist += "<a href=\"javascript:catToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
+				divlist += '<a href="javascript:catToolBar.CreateSubSup()" class="menulink">'+gLanguage.getMessage('SUB_SUPER')+'</a>';
 			}
-			divlist += "</div>";
+			divlist += '</div>';
 	 		break;
 		case "relation":
-	  			divlist ="<div id=\"" + id +"-tools\">" +
-	  					 "<a href=\"javascript:relToolBar.newItem()\" class=\"menulink\">"+gLanguage.getMessage('ANNOTATE')+"</a>" +
-					 "<a href=\"javascript:relToolBar.newRelation()\" class=\"menulink\">"+gLanguage.getMessage('CREATE')+"</a>";
+	  			divlist ='<div id="' + id +'-tools">' +
+	  					 '<a id="rel-menu-annotate" href="javascript:relToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>' +
+						 '<a href="javascript:relToolBar.newRelation()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 				//regex for checking attribute namespace. 
 				//since there's no special namespace number anymore since atr and rel are united 
 				var attrregex =	new RegExp("Attribute:.*");
 				if (wgNamespaceNumber == 100 || wgNamespaceNumber == 102  || attrregex.exec(wgPageName) != null) {
 					divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
 				}
-	  			divlist += "<a href=\"javascript:relToolBar.newPart()\" class=\"menulink\">"+gLanguage.getMessage('MHAS_PART')+"</a>";
-	  			divlist += "</div>";
+	  			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
+	  			divlist += '</div>';
 	  		break;
 	}
   	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">";

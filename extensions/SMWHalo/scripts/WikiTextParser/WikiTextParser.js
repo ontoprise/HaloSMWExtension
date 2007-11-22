@@ -258,9 +258,9 @@ WikiTextParser.prototype = {
 	 		anno += "|" + representation;
 	 	}
 	 	anno += "]]";
-	 	this.addAnnotation(anno, append);
+	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.relationAddedHooks.size(); ++i) {
-	 		this.relationAddedHooks[i](name);
+	 		this.relationAddedHooks[i](posInfo[0], posInfo[1], name);
 	 	}
 	 },
 
@@ -283,9 +283,9 @@ WikiTextParser.prototype = {
 	 addCategory : function(name, append) {
 	 	var anno = "[["+gLanguage.getMessage('CATEGORY') + name;
 	 	anno += "]]";
-	 	this.addAnnotation(anno, append);
+	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.categoryAddedHooks.size(); ++i) {
-	 		this.categoryAddedHooks[i](name);
+	 		this.categoryAddedHooks[i](posInfo[0], posInfo[1], name);
 	 	}
 	 },
 
@@ -335,8 +335,15 @@ WikiTextParser.prototype = {
 			this.editInterface.setValue(this.text);
 		}
 
+		var result = [annoObj.getStart(), annoObj.getEnd(), newAnnotation.length];
+		for (var i = 0; i < this.textChangedHooks.size(); ++i) {
+			this.textChangedHooks[i](result);
+		}
+		
 		// all following annotations have moved => update their location
 		this.updateAnnotationPositions(annoObj.getStart(), diffLen);
+		
+		
 	},
 
 	/**
@@ -758,7 +765,8 @@ WikiTextParser.prototype = {
 			if (this.editInterface) {
 				this.editInterface.setValue(this.editInterface.getValue() + annotation);
 			} else {
-				this.text += annotation;
+				result = [this.text.length, this.text.length, annotation.length];
+				this.text += annotation
 			}
 		} else {
 			result = this.replaceText(annotation);

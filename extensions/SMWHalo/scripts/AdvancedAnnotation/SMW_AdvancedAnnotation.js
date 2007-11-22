@@ -16,6 +16,10 @@
 * 
 * @author Thomas Schweitzer
 */
+//Constants
+var AA_RELATION = 0;
+var AA_CATEGORY = 1;
+	
 var AdvancedAnnotation = Class.create();
 
 /**
@@ -25,7 +29,8 @@ var AdvancedAnnotation = Class.create();
  * page.
  */
 AdvancedAnnotation.prototype = {
-
+	
+	
 	/**
 	 * Initializes an instance of this class.
 	 */
@@ -40,7 +45,7 @@ AdvancedAnnotation.prototype = {
 		
 		// Load the wiki text for the current page and store it in the parser.
 		this.loadWikiText();
-		
+		this.annoCount = 10000;
 	},
 	
 	/**
@@ -100,19 +105,34 @@ AdvancedAnnotation.prototype = {
 						: -1;
 			var res = this.wikiTextParser.findText(this.selectedText, start, end);
 			if (res != true) {
+				this.toolbarEnableAnnotation(false);
 				smwhgAnnotationHints.showMessageAndWikiText("(e)"+res,
 															this.wikiTextParser.text.substring(start,end));
 			} else {
+				this.toolbarEnableAnnotation(true);
 				smwhgAnnotationHints.showMessageAndWikiText(
 					"(i)Wikitext found for selection:<br><b>"+this.selectedText+"</b>",
 					this.wikiTextParser.text.substring(start,end));
 			}
 		} else {
+			this.toolbarEnableAnnotation(false);
 			smwhgAnnotationHints.showMessageAndWikiText("(e)No wiki text found for selection:",
 			                                            "<b>"+this.selectedText+"</b>");
 
 		}
 	
+	},
+	
+	/**
+	 * Enables or disables the annotation actions in the semantic toolbar.
+	 * 
+	 * @param boolean enable
+	 * 		true  => enable actions
+	 * 		false => disable actions
+	 */
+	toolbarEnableAnnotation: function(enable) {
+		catToolBar.enableAnnotation(enable);
+		relToolBar.enableAnnotation(enable);
 	},
 	
 	searchTemplate: function(node) {
@@ -123,7 +143,9 @@ AdvancedAnnotation.prototype = {
 	},
 	
 	searchWtoAnchor: function(node) {
-		if (node.tagName == 'A' && node.type == "wikiTextOffset") {
+		if (node.tagName == 'A' 
+		    && node.type == "wikiTextOffset"
+		    && node.getAttribute('annoType') != 'category') {
 			return node;
 		} 
 	},
@@ -268,6 +290,7 @@ AdvancedAnnotation.prototype = {
 				relToolBar.setWikiTextParser(this.wikiTextParser);
 				catToolBar.fillList(true);
 				relToolBar.fillList(true);
+				this.toolbarEnableAnnotation(false);
 			} else {
 				this.wikiTextParser = null;
 			}
@@ -286,11 +309,15 @@ AdvancedAnnotation.prototype = {
 	 * The currently selected text is highlighted with a background specific for
 	 * categories. The selection is reset.
 	 * 
+	 * @param int startPos
+	 * 		Start position of the new annotation
+	 * @param int endPos
+	 * 		End position of the new annotation
 	 * @param string name
 	 * 		Name of the new category.
 	 */
-	categoryAdded: function(name) {
-		this.markSelection('aam_new_category_highlight');
+	categoryAdded: function(startPos, endPos, name) {
+		this.markSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
 		catToolBar.fillList();
 	},
 	
@@ -300,48 +327,90 @@ AdvancedAnnotation.prototype = {
 	 * The currently selected text is highlighted with a background specific for
 	 * relations. The selection is reset.
 	 * 
+	 * @param int startPos
+	 * 		Start position of the new annotation
+	 * @param int endPos
+	 * 		End position of the new annotation
 	 * @param string name
 	 * 		Name of the new relation.
 	 */
-	relationAdded: function(name) {
-		this.markSelection('aam_new_anno_prop_highlight');
+	relationAdded: function(startPos, endPos, name) {
+		this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		relToolBar.fillList();
 	},
 
 	/**
 	 * Embraces the currently selected text with a <span> tag with the css style
 	 * <cssClass>.
+	 * @param int type
+	 * 		The selection is either AA_RELATION or AA_CATEGORY
 	 * @param string cssClass
 	 * 		Name of the css style that is added as class to the <span> tag.
+	 * @param int startPos
+	 * 		Wikitextoffset of the new annotation's start that has been created 
+	 * 		for the	selection.
+	 * @param int endPos
+	 * 		Wikitextoffset of the new annotation's end.
 	 */
-	markSelection: function(cssClass) {
+	markSelection: function(type, cssClass, startPos, endPos) {
+		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
+		var annoDeco =
+			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
+			((type == AA_RELATION) 
+				? '<img src="' + imgPath + 'edit.gif"/>'
+				: "" ) +
+			'</a>' +
+			'<span id="anno'+this.annoCount+'" class="'+cssClass+'">'+this.selectedText+'</span>'+
+			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
+   			'<img src="' + imgPath + 'delete.png"/></a>';
+   		if (this.selectedText.length <= 20) {
+			annoDeco = '<span id="anno'+this.annoCount+'w" style="white-space:nowrap">'+
+						annoDeco +
+						'</span>';
+   		} else {
+			annoDeco = '<span id="anno'+this.annoCount+'w">'+
+						annoDeco +
+						'</span>';   			
+   		}
+   		
+   		var annoType = (type == AA_RELATION) 
+   						? 'annoType="relation"'
+   						: 'annoType="category"';
+   						
+   		annoDeco = '<a type="wikiTextOffset" name="'+startPos+'" '+annoType+'></a>' 
+   		           + annoDeco
+   		           + '<a type="wikiTextOffset" name="'+endPos+'" '+annoType+'></a>';
+   		
 		var parentNode = this.annotatedNode.parentNode;
-		var node = this.annotatedNode;
+		var node = this.annotatedNode; // node is probably a text node 
 		var origText = node.textContent;
 		if (origText.indexOf(this.selectedText) < 0) {
+			// node is not a text node i.e. it does not contain the selected
+			// text => the parent node should contain the selection
 			node = parentNode;
 			origText = node.innerHTML;
-			var newText = origText.replace(this.selectedText, 
-		                               '<span class="'+cssClass+'">' +
-										this.selectedText +
-										"</span>");
+			var newText = origText.replace(this.selectedText, annoDeco);
 			node.innerHTML = newText;
 		} else {
+			// find the selected text in the text node after the position specified
+			// by the selection
 			var newText = origText.substring(0, this.annoOffset);
-			newText += origText.substring(this.annoOffset).replace(this.selectedText, 
-			                               '<span class="'+cssClass+'">' +
-											this.selectedText +
-											"</span>");		
+			newText += origText.substring(this.annoOffset)
+			                   .replace(this.selectedText, annoDeco);
+			// create a DOM structure for the text that is now surrounded by a <span>
 			newText = Object.toHTML(newText);
 			var range = parentNode.ownerDocument.createRange();
 			range.selectNode(parentNode);
 			newText.evalScripts.bind(newText).defer();
 			newText = range.createContextualFragment(newText.stripScripts());
+			// replace the original text node with the highlighted node
 			parentNode.replaceChild(newText, node);
 		}
 		// reset selection information
 		this.annotatedNode = null;
 		this.annoOffset = 0;
+		
+		this.annoCount++;
 		
 	},
 	
@@ -374,8 +443,73 @@ AdvancedAnnotation.prototype = {
 				}
 			}
 		}
-	}
+	},
+	
+	/**
+	 * Deletes an annotation. The <span> that highlights the text and annotation in 
+	 * the wiki text are removed.
+	 * 
+	 * @param int id
+	 * 		Each <span> has a unique id that is composed of "anno" and this counter.
+	 * 
+	 */
+	deleteAnnotation: function(id) {
+		// The highlighted text is embedded in a span with the given id
+		var span = $('anno'+id);
+		if (!span) {
+			return alert("Corresponding annotation not found.");
+		}
+		// There is always a wrapper span around the span.
+		var wrapper = span.up();
+		
+		var htmlContent = "";
+		var content = "";
+		var link = span.down();
+		if (link && link.tagName == 'A') {
+			// the span contains a link => remove the link as well
+			htmlContent = link.innerHTML
+			content = link.textContent;
+		} else {
+			htmlContent = span.innerHTML
+			content = span.textContent;
+		}
+		
+		// There is a wiki text offset anchor before the wrapper span.
+		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
+		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');
+		var annotationStart = wtoAnchor.getAttribute("name")*1;
+		
+		// replace the wrapper by the content i.e. create normal text
+		wrapper.replace(htmlContent);
+		
+		// remove the wiki text offset anchor around the annotation
+		var type = wtoAnchor.getAttribute("annoType");
+		
+		if (wtoAnchor.getAttribute("name") != "0") {
+			// do not remove the very first anchor
+			wtoAnchor.remove();
+		}
+		nextWtoAnchor.remove();
+		
+		// Remove the annotation from the wiki text
+		var annotations = (type && type == 'category')
+							? this.wikiTextParser.getCategories()
+							: this.wikiTextParser.getRelations();
+		for (var i = 0; i < annotations.length; ++i) {
+			var anno = annotations[i];
+			if (anno.getStart() == annotationStart) {
+				anno.remove(content);
+				break;
+			}
+		}
+		
+		if (type && type == 'category') {
+			catToolBar.fillList();
+		} else {
+			relToolBar.fillList();
+		}
 
+	}
 };// End of Class
 
 AdvancedAnnotation.create = function() {
@@ -390,6 +524,28 @@ AdvancedAnnotation.create = function() {
 	}
 	
 };
+
+AdvancedAnnotation.smwhfEditAnno = function(id) {
+	alert(id);
+};
+
+/**
+ * Deletes an annotation. The <span> that highlights the text and annotation in 
+ * the wiki text are removed.
+ * 
+ * @param int id
+ * 		Each <span> has a unique id that is composed of "anno" and this counter.
+ * 
+ */
+AdvancedAnnotation.smwhfDeleteAnno = function(id) {
+	smwhgAdvancedAnnotation.deleteAnnotation(id);
+};
+
+AdvancedAnnotation.smwhfEditLink = function(id) {
+	alert(id);
+	
+};
+
 
 var smwhgAdvancedAnnotation = null;
 Event.observe(window, 'load', AdvancedAnnotation.create);

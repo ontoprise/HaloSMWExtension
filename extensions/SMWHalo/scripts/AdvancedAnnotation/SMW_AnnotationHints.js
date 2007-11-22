@@ -16,39 +16,7 @@
 * 
 * @author Thomas Schweitzer
 */
-var SMW_CAT_CHECK_CATEGORY = 
-	'smwCheckType="category: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true) ' +
-	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true)" ';
 
-var SMW_CAT_CHECK_CATEGORY_IIE = // Invalid if exists
-	'smwCheckType="category:exists ' +
-		'? (color: red, showMessage:CATEGORY_ALREADY_EXISTS, valid:false) ' +
-	 	': (color: lightgreen, hideMessage, valid:true)" ';
-
-var SMW_CAT_CHECK_EMPTY = 
-	'smwCheckEmpty="empty' +
-		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false) ' +
-		': (color:white, hideMessage)"';
-
-var SMW_CAT_ALL_VALID =	
-	'smwAllValid="allValid ' +
- 		'? (show:cat-confirm, hide:cat-invalid) ' +
- 		': (show:cat-invalid, hide:cat-confirm)"';
-
-var SMW_CAT_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" ';
-
-var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
-	'smwCheckType="category: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true) ' +
-	 	': (color: orange, hideMessage, valid:true, attribute:catExists=false)" ';
-
-var SMW_CAT_SUB_SUPER_ALL_VALID =	
-	'smwAllValid="allValid ' +
- 		'? (call:smwhgAnnotationHints.createSubSuperLinks) ' +
- 		': (call:smwhgAnnotationHints.createSubSuperLinks)"';
- 		
 /**
  * @class AnnotationHints
  * This class provides a container for hints and error messages in the semantic
@@ -99,14 +67,8 @@ showMessageAndWikiText: function(message, wikiText) {
 	this.toolbarContainer.replace('ah-wikitext-msg', wt);
 },
 
-cancel: function(){
-	this.toolbarContainer.hideSandglass();
-	this.toolbarContainer.release();
-	this.toolbarContainer = null;
-},
-
 /**
- * Creates a new toolbar for the category container with the standard menu.
+ * Creates a new toolbar for the annotation hint container.
  * Further elements can be added to the toolbar. Call <finishCreation> after the
  * last element has been added.
  * 

@@ -117,6 +117,14 @@ cancel: function(){
 	this.fillList(true);
 },
 
+enableAnnotation: function(enable) {
+	if (enable) {
+		$('cat-menu-annotate').show();
+	} else {
+		$('cat-menu-annotate').hide();
+	}
+},
+
 /**
  * Creates a new toolbar for the category container with the standard menu.
  * Further elements can be added to the toolbar. Call <finishCreation> after the

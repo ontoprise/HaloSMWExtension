@@ -40,6 +40,7 @@ class SMWH_AAMParser {
 	 * 2. Templates e.g. {{MyTemplate}}
 	 * 3. Template parameters e.g. {{{tparam}}} 
 	 * 4. Line breaks
+	 * 5. Links and annotations starting with double brackets
 	 * 
 	 * Offsets have the following format: {wikiTextOffset=offset}
 	 * The correct HTML is created in a later parsing stage. See wikiTextOffset2HTML.
@@ -54,22 +55,24 @@ class SMWH_AAMParser {
 		// Search for templates, template parameters and headings
 		$parts = preg_split('/(\{\{\{.*?\}\}\})|'.
 		                    '(\{\{.*?\}\})|'.
-		                    '^(======.*?======)|'.
-							'^(=====.*?=====)|'.
-		                    '^(====.*?====)|'.
-		                    '^(===.*?===)|'.
-		                    '^(==.*?==)|'.
-		                    '^(=.*?=)|'.
+		                    '(^======.*?======\s*)|'.
+							'(^=====.*?=====\s*)|'.
+		                    '(^====.*?====\s*)|'.
+		                    '(^===.*?===\s*)|'.
+		                    '(^==.*?==\s*)|'.
+		                    '(^=.*?=\s*)|'.
+							'(\[+)|'.
+							'(\]\])|'.
 		                    '^$/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
-		                    PREG_SPLIT_OFFSET_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
 		$markedText = "";
 		
 		$id = 1;
 		$pos = 0;
+		$braceCount = 0;
 		foreach ($parts as $part) {
-			$len = mb_strlen($part[0], "UTF-8");
+			$len = mb_strlen($part, "UTF-8");
 			$part0 = mb_substr($wikiText, $pos, $len, "UTF-8");
 			// Is the part a template?
  			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
@@ -79,8 +82,32 @@ class SMWH_AAMParser {
 			                   .' id="tmplt'.$id.'"}'."\n".$part0
 				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
 				$id++;
+			} else if ($part0 == '[[') {
+				if ($braceCount == 0) {
+					$markedText .= "{wikiTextOffset=".$pos."}".$part0;
+				} else {
+					$markedText .= $part0;
+				}
+				$braceCount++;
+			} else if ($part0 == ']]') {
+				if ($braceCount > 0) {
+					$braceCount--;
+				}
+				$markedText .= $part0;
 			} else {
-				$markedText .= "\n{wikiTextOffset=".$pos."}\n".$part0;
+				if ($braceCount > 0) {
+					$markedText .= $part0;
+				} else {
+					if ($part0[0] == '=' 
+					    || $part0[0] == "\n"
+					    || $part0[0] == "*"
+					    || $part0[0] == "#") {
+						// title, empty line or enumeration found
+						$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
+					} else {
+						$markedText .= "{wikiTextOffset=".$pos."}".$part0;
+					}
+				}
 			}
 			$pos += $len;
 		}
@@ -112,10 +139,6 @@ class SMWH_AAMParser {
 		                     '<a type="templateend" id="$4_end"></a>', 
 		                     $text);
 			
-		// replace intermediate format within paragraphs
-		$text = preg_replace('/<p>(<br \/>)?\s*\{wikiTextOffset=(\d*)}\s*<\/p>/m',
-		                     '$1<a name="$2" type="wikiTextOffset"></a>',
-							 $text);
 		// replace standalone occurrences of intermediate format
 		$text = preg_replace('/\{wikiTextOffset=(\d*)}/',
 		                     '<a name="$1" type="wikiTextOffset"></a>',
@@ -140,13 +163,16 @@ class SMWH_AAMParser {
 		$braceCount = 0;
 		$isLink = true;
 		$braceContent = "";
-		$text = "";		                    
+		$text = "";
+		$count = 0;                    
         foreach ($parts as $part) {
         	switch ($part) {
         		case '[[':
         			$braceCount++;
         			$braceContent .= $part;
-        			$isLink = true;
+        			if ($braceCount == 1) {
+        				$isLink = true;
+        			}
         			break;
         		case ':=':
         		case '::':
@@ -166,12 +192,12 @@ class SMWH_AAMParser {
         			if ($braceCount == 0) {
         				if ($isLink) {
         					$text .= ($short) 
-        								? '{shortlinkstart}'.$braceContent.'{shortlinkend}'
-        								: '{linkstart}'.$braceContent.'{linkend}';
+        								? '{shortlinkstart'.++$count.'}'.$braceContent.'{shortlinkend}'
+        								: '{linkstart'.++$count.'}'.$braceContent.'{linkend}';
         				} else {
         					$text .= ($short) 
-        								? '{shortannostart}'.$braceContent.'{shortannoend}'
-        								: '{annostart}'.$braceContent.'{annoend}';
+        								? '{shortannostart'.++$count.'}'.$braceContent.'{shortannoend}'
+        								: '{annostart'.++$count.'}'.$braceContent.'{annoend}';
         				}
 	        			$braceContent = "";
         			}
@@ -203,32 +229,47 @@ class SMWH_AAMParser {
 	public function highlightAnnotations2HTML(&$wikiText)
 	{
 		global $smwgHaloScriptPath;
-		$text = preg_replace('/{annostart}(.*?){annoend}/sm',
-							 '<a href="javascript:smwhfEditAnno()">'.
-		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
-							 '<span class="aam_prop_highlight">$1</span>',
+		$annoDeco =
+			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno($1)">'.
+			'<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
+			'<span id="anno$1" class="aam_prop_highlight">$2</span>'.
+			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno($1)">'.
+   			'<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/delete.png"/></a>';
+		$shortAnnoDeco = // wrapper span with no line breaks
+			'<span id="anno$1w" style="white-space:nowrap">'.
+			$annoDeco.
+			 '</span>';
+		$annoDeco =  // wrapper span
+			'<span id="anno$1w">'.
+			$annoDeco.
+			 '</span>';
+		$linkDeco =
+			 '<a href="javascript:AdvancedAnnotation.smwhfEditLink($1)">'.
+   			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
+             '<span id="anno$1" class="aam_page_link_highlight">$2</span>';
+		$shortLinkDeco = // wrapper span with no line breaks
+			'<span id="anno$1w" style="white-space:nowrap">'.
+			$linkDeco.
+			'</span>';
+		$linkDeco =  // wrapper span
+			'<span id="anno$1w">'.
+			$linkDeco.
+			'</span>';
+			
+		// decorate annotations
+		$text = preg_replace('/{annostart(\d*)}(.*?){annoend}/sm', $annoDeco,
 							 $wikiText);
-		$text = preg_replace('/{shortannostart}(.*?){shortannoend}/sm',
-							 '<span style="white-space:nowrap">'.
-							 '<a href="javascript:smwhfEditAnno()">'.
-		           			 '<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
-							 '<span class="aam_prop_highlight">$1</span>'.
-							 '</span>',
-							 $text);
-		$text = preg_replace('/{shortlinkstart}(\s*){shortlinkend}/sm','', $text);
-		$text = preg_replace('/{linkstart}(\s*){linkend}/sm','', $text);
-		$text = preg_replace('/{shortlinkstart}(.*?){shortlinkend}/sm',
-							 '<span style="white-space:nowrap">'.
-							 '<a href="javascript:smwhfEditLink()">'.
-		           			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
-		                     '<span class="aam_page_link_highlight">$1</span>'.
-							 '</span>',
-		                     $text);
-		$text = preg_replace('/{linkstart}(.*?){linkend}/sm',
-							 '<a href="javascript:smwhfEditLink()">'.
-		           			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
-		                     '<span class="aam_page_link_highlight">$1</span>',
-		                     $text);
+		$text = preg_replace('/{shortannostart(\d*)}(.*?){shortannoend}/sm',
+							 $shortAnnoDeco, $text);
+		
+		// ignore empty links
+		$text = preg_replace('/{shortlinkstart(\d*)}(\s*){shortlinkend}/sm','', $text);
+		$text = preg_replace('/{linkstart(\d*)}(\s*){linkend}/sm','', $text);
+		
+		// decorate links
+		$text = preg_replace('/{shortlinkstart(\d*)}(.*?){shortlinkend}/sm',
+		                     $shortLinkDeco, $text);
+		$text = preg_replace('/{linkstart(\d*)}(.*?){linkend}/sm', $linkDeco, $text);
 		return $text;
 	}
 		
