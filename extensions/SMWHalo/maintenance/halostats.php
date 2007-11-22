@@ -17,12 +17,8 @@
 */
 
 /*
- * Created on 21.09.2007
- *
- * Update database for HALO extension.
- * 
- * 
- * Author: kai
+ * Create CSV file with gardening issue statistics
+ * @author Markus Nitsche
  */
  
 
