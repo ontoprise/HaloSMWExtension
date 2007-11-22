@@ -132,6 +132,25 @@
 	public abstract function getDirectSuperProperties(Title $property, $requestoptions = NULL); 
 	
 	/**
+	 * Returns all pages which are redirects to the given page.
+	 * 
+	 * @param $title Target of redirects
+	 * 
+	 * @return array of Title objects
+	 */
+	public abstract function getRedirectPages(Title $title);
+	
+	/**
+	 * Returns the redirect target, if $title is a redirect.
+	 * Otherwise $title itsself is returned.
+	 * 
+	 * @param $title possible redirect page
+	 * 
+	 * @return Target of redirect or $title.
+	 */
+	public abstract function getRedirectTarget(Title $title);
+	
+	/**
 	 * Returns total number of usages of $property on arbitrary wiki pages.
 	 */
 	public abstract function getNumberOfUsage(Title $property);

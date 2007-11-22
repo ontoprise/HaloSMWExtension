@@ -283,7 +283,37 @@
 		return $result;
 	}
 	
-	function getNumberOfUsage(Title $property) {
+	public function getRedirectPages(Title $title) {
+		$db =& wfGetDB( DB_MASTER );
+		$page = $db->tableName('page');
+	 	$redirect = $db->tableName('redirect');
+	 	$res = $db->query('SELECT page_title, page_namespace FROM '.$page.', '.$redirect.' WHERE '.$db->addQuotes($title->getDBkey()).' = rd_title AND '.$title->getNamespace().' = rd_namespace AND page_id = rd_from');
+	 	$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+	
+	public function getRedirectTarget(Title $title) {
+		$db =& wfGetDB( DB_MASTER );
+		$redirect = $db->tableName('redirect');
+	 	$res = $db->query('SELECT rd_namespace, rd_title FROM '.$redirect.' WHERE rd_from = '.$title->getArticleID());
+	 	
+	 	if ($db->numRows( $res ) == 0) {
+	 		$db->freeResult($res);
+	 		return $title;
+	 	}
+		$row = $db->fetchObject($res);
+		$result = Title::newFromText($row->rd_title, $row->rd_namespace);
+		$db->freeResult($res);
+		return $result;
+	}
+	
+	public function getNumberOfUsage(Title $property) {
 		$num = 0;
 		$db =& wfGetDB( DB_MASTER );
 		$smw_attributes = $db->tableName('smw_attributes');

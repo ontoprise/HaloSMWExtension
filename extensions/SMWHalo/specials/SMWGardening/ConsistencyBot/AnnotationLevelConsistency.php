@@ -95,7 +95,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					
  					// decide which type and do consistency checks
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
- 						list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $target->getTitle(), $domainRangeAnnotations, $domainChecked);
+ 						$rd_target = smwfGetSemanticStore()->getRedirectTarget($target->getTitle());
+ 						list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $rd_target, $domainRangeAnnotations, $domainChecked);
  						$domainChecked = true;
  						if (!$domainCorrect) {
  							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
@@ -116,8 +117,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  										
  									} else {
  										
- 										if ($explodedValues[$i]->getTypeID() == '_wpg') { //TODO: TEST THIS!!!
- 											list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $explodedValues[$i]->getTitle(), $domainRangeAnnotations, $domainChecked);
+ 										if ($explodedValues[$i]->getTypeID() == '_wpg') { 
+ 											$rd_target = smwfGetSemanticStore()->getRedirectTarget($explodedValues[$i]->getTitle());
+ 											list($domainCorrect, $rangeCorrect) = $this->checkDomainAndRange($subject, $rd_target, $domainRangeAnnotations, $domainChecked);
  											$domainChecked = true; 											
  											if (!$domainCorrect) {
 					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r);
@@ -262,6 +264,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
  			}
  			
+ 			// get redirects of property
+ 			$redirects = smwfGetSemanticStore()->getRedirectPages($a);
+ 			
  			foreach($domainRangeAnnotations as $domRan) {
  				$dvs = $domRan->getDVs();
  				if ($dvs[0] == NULL) continue; // ignore annotations with missing domain
@@ -275,6 +280,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				
 	 				// get all annoations for a subject and a property
 	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject, $a);
+	 				foreach($redirects as $rd) {
+	 					$allAttributeForSubject = array_merge($allAttributeForSubject, smwfGetStore()->getPropertyValues($subject, $rd));
+	 				}
 	 				$num = count($allAttributeForSubject);
 	 				
 	 				// compare number of appearance with defined cardinality
@@ -297,6 +305,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				
 	 				// get all annoations for a subject and a property
 	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject[0], $a);
+	 				foreach($redirects as $rd) {
+	 					$allAttributeForSubject = array_merge($allAttributeForSubject, smwfGetStore()->getPropertyValues($subject[0], $rd));
+	 				}
 	 				$num = count($allAttributeForSubject);
 	 				
 	 				// compare number of appearance with defined cardinality
