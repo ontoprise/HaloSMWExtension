@@ -62,18 +62,15 @@ class SMWHaloTableResultPrinter extends SMWResultPrinter {
 
 				for($j = 0; $j<sizeof($gIssues); $j++){
 					if($act_column > 0 && ($gIssues[$j]->getTitle2()->getArticleID() == $cols[$act_column]->getArticleID())){
-						if($gIssues[$j]->getType() == SMW_GARDISSUE_TOO_LOW_CARD)
-							$tt = '<a class="gardeningissue" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_missing') . '</a>';
+						if($gIssues[$j]->getType() == SMW_GARDISSUE_TOO_LOW_CARD) //TODO: i18n
+							$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_missing') . '</a>';
 						else if($gIssues[$j]->getType() == SMW_GARDISSUE_WRONG_UNIT)
-							$tt = '<a class="gardeningissue_notify" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_wrongunit') . '</a>';
+							$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue_notify" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_wrongunit') . '</a>';
 						else
 							$tt = smwfEncodeMessages(array($gIssues[$j]->getRepresentation()));
 					}
 				}
 				
-				
-				
-				//Title::getArticleID()
 				$result .= "<td>";
 				$first = true;
 				while ( ($text = $field->getNextHTMLText($this->getLinker($firstcol))) !== false ) {
