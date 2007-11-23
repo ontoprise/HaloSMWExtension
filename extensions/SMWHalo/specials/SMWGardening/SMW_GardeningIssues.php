@@ -41,10 +41,11 @@
  	 * @param $gi_class
  	 * @param $title1
  	 * @param $title2
+ 	 * @param $value
  	 * 
  	 * @return True, if at least one Gardening Issue of the article exists, otherwise false.
  	 */
- 	public abstract function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title1 = NULL, $title2 = NULL);
+ 	public abstract function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title1 = NULL, $title2 = NULL, $value = NULL);
  	
  	/**
  	 * Get Gardening issues. Every parameter (except $bot_id) may be NULL!
@@ -210,7 +211,8 @@ abstract class GardeningIssue {
 	 * @return comma separated list of displayable links (HTML string)
 	 */
 	protected function explodeTitlesToLinkObjs(& $skin, $value) {
- 		$titleNames = explode(';', $value);
+		if ($value == NULL || $value == '') return "__undefined__";
+		$titleNames = explode(';', $value);
  		$result = "";
  		foreach($titleNames as $tn) {
  			$title = Title::newFromText($tn);

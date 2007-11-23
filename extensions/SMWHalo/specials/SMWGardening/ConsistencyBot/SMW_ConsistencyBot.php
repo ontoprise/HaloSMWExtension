@@ -231,7 +231,7 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 			case SMW_GARDISSUE_WRONG_MAXCARD_VALUE: 
 				return wfMsg('smw_gardissue_wrong_maxcard_value', $text1);
 			case SMW_GARDISSUE_WRONG_TARGET_VALUE: 
-				return wfMsg('smw_gardissue_wrong_target_value', $text1, $text2,  $skin != NULL ? $skin->makeLinkObj($this->value) : $this->value);
+				return wfMsg('smw_gardissue_wrong_target_value', $text1, $text2,  $skin != NULL ? $this->explodeTitlesToLinkObjs($skin, $this->value) : $this->value);
 			case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: 
 				return wfMsg('smw_gardissue_wrong_domain_value', $text1, $text2);
 			case SMW_GARDISSUE_TOO_LOW_CARD: 
