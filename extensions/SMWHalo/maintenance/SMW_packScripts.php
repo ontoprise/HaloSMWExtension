@@ -129,7 +129,8 @@
 					 'queryTree.js' => GPL_LICENSE_ONTOPRISE,
 					 'Query.js' => GPL_LICENSE_ONTOPRISE,
 					 'QIHelper.js' => GPL_LICENSE_ONTOPRISE,
-					 'qi_tooltip.js' => LGPL_LICENSE_TOOLTIPS);
+					 'qi_tooltip.js' => LGPL_LICENSE_TOOLTIPS,
+ 					 'SMW_tooltip.js' => GPL_LICENSE_ONTOPRISE);
  	buildScripts($outputFile, $scripts);
  }
 

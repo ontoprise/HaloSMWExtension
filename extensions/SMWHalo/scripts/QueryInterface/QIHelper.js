@@ -181,6 +181,7 @@ openPreview:function(request){
 	this.pendingElement.hide();
 	$('fullpreviewbox').toggle();
 	$('fullpreview').innerHTML = request.responseText;
+	smw_tooltipInit();
 },
 
 /**

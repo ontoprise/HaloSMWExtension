@@ -3,7 +3,7 @@
 global $wgAjaxExportList;
 global $smwgIP;
 require_once( "$smwgIP/includes/SMW_Datatype.php" );
-require_once($smwgIP ."/includes/SMW_QueryProcessor.php");
+require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
 $wgAjaxExportList[] = 'smwfQIAccess';
 
 
@@ -74,7 +74,10 @@ function smwfQIAccess($method, $params) {
 		$result="null";
 		if ($smwgQEnabled) {
 			$params = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
-			$result = SMWQueryProcessor::getResultHTML($p_array[0], $params, false);
+			$result = applyQueryHighlighting($p_array[0], $params);
+			// add target="_new" for all links
+			$pattern = "|<a|i";
+			$result = preg_replace($pattern, '<a target="_new"', $result);
 		}
 		return $result;
 	}
