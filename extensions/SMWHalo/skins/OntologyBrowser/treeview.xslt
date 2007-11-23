@@ -389,18 +389,19 @@
 							<xsl:value-of select="translate($title, '_', ' ')"/>
 						</xsl:otherwise>
 					</xsl:choose>
-				</a>	
+				</a>
+				<xsl:call-template name="gissues">
+					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
+					<xsl:with-param name="actionListener">propertyActionListener</xsl:with-param> 
+				</xsl:call-template>	
 			</td>
-			<td width="25%">
+			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
 					(browse)
 				</a>
-				<xsl:call-template name="gissues">
-					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
-					<xsl:with-param name="actionListener">propertyActionListener</xsl:with-param> 
-				</xsl:call-template>
+				
 				
 			</td>
 			<td>

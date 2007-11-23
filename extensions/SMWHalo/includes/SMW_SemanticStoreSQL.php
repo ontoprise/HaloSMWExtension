@@ -473,12 +473,12 @@
 		                    array(), 'SMW::getNumberOfInstances', array() );
 		
 		// rewrite result as array
-		$result = -1;
+		$result = 0;
 		
 		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result = $row->numOfInstances;
-			}
+			$row = $db->fetchObject($res);
+			$result = $row->numOfInstances;
+			
 		}
 		$db->freeResult($res);
 		
@@ -491,18 +491,41 @@
 		$this->createVirtualTableForProperties($category, $db);
 		$res = $db->select( 'smw_ob_properties', 
 		                    'COUNT(DISTINCT property) AS numOfProperties',
-		                    array(), 'SMW::getPropertiesOfCategory', array() );
+		                    array(), 'SMW::getNumberOfProperties', array() );
 		
 		// rewrite result as array
-		$result = -1;
+		$result = 0;
 		
 		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result = $row->numOfProperties;
-			}
+			$row = $db->fetchObject($res);
+			$result = $row->numOfProperties;
+			
 		}
 		$db->freeResult($res);
 		$this->dropVirtualTableForProperties($db);
+		return $result;
+	}
+	
+	public function getNumberOfPropertiesForTarget(Title $target) {
+		$db =& wfGetDB( DB_MASTER ); 
+		$result = 0;
+		$res = $db->select( $db->tableName('smw_relations'), 
+		                    'COUNT(DISTINCT relation_title) AS numOfProperties',
+		                    array('object_title' => $target->getDBkey()), 'SMW::getNumberOfPropertiesForTarget', array() );
+		if($db->numRows( $res ) > 0) {
+			  $row = $db->fetchObject($res);
+			  $result += $row->numOfProperties;
+		}           
+		$db->freeResult($res);
+		
+		$res = $db->select( array($db->tableName('smw_nary_relations r'), $db->tableName('smw_nary n')), 
+		                    'COUNT(DISTINCT relation_title) AS numOfProperties',
+		                    array('r.subject_id' => 'n.subject_id', 'object_title' => $target->getDBkey()), 'SMW::getNumberOfPropertiesForTarget', array() );
+		if($db->numRows( $res ) > 0) {
+			  $row = $db->fetchObject($res);
+			  $result += $row->numOfProperties;
+		}           
+		$db->freeResult($res);
 		return $result;
 	}
 	

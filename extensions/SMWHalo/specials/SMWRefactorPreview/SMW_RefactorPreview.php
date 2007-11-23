@@ -33,13 +33,18 @@
 						'<option>Rename</option>' .
 						'<option>Join</option>' .
 					'</select></td></tr>' .
-					'<tr><td width="120px">Page:</td><td><input type="text" size="45" class="wickEnabled" name="title"/></td></tr>' .
+					'<tr><td width="120px">Page:</td><td><input type="text" size="45" class="wickEnabled" pastens="true" name="entitiytitle"/></td></tr>' .
 					'</table>' .
 					'<input type="submit" value="Show Preview"/>' .
 				'</form>';
 	}
 	private function showResults() {
-		return "";
+		global $wgRequest;
+		$title = $wgRequest->getVal('entitiytitle');
+		if ($title == NULL) return "";
+		$op = new RemoveOperation(Title::newFromText(urldecode($title)));
+		
+		return $op->getStatisticsAsHTML();
 	}
  } 
 
@@ -56,8 +61,35 @@
  
  class RemoveOperation extends RefactorOperation {
  	
+ 	private $numOfInstances;
+ 	private $numOfProperties;
+ 	
+ 	public function __construct($title) {
+ 		parent::__construct($title);
+ 	}
+ 	
+ 	private function getStatistics() {
+ 		
+ 		switch($this->title->getNamespace()) {
+ 			case NS_CATEGORY: {
+		 		$this->numOfInstances = smwfGetSemanticStore()->getNumberOfInstances($this->title);
+		 		$this->numOfProperties = smwfGetSemanticStore()->getNumberOfProperties($this->title);
+ 				break;
+ 			}
+ 			case SMW_NS_PROPERTY: {
+ 				break;
+ 			}
+ 			case NS_MAIN: {
+ 				break;
+ 			}
+ 			case NS_TEMPLATE: {
+ 				break;
+ 			}
+ 		}
+ 	}
  	public function getStatisticsAsHTML() {
- 		return "";
+ 		$this->getStatistics();
+ 		return "Number of instances: ".$this->numOfInstances." Number of Properties: ".$this->numOfProperties;
  	}
  }	
  
