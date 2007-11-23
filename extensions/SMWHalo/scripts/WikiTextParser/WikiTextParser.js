@@ -62,22 +62,22 @@ WikiTextParser.prototype = {
 	 */
 	initialize: function(wikiText) {
 		if (this.parserMode == WTP_WIKITEXT_MODE) {
-			// Parser mode is 'wiki text' => do not release the current text
+		// Parser mode is 'wiki text' => do not release the current text
 			if (!wikiText) {
 				wikiText = this.text;
 			}
 		}
 		if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
-			// no wiki text => retrieve from text area.
+		// no wiki text => retrieve from text area.
 			var txtarea;
 			if (document.editform) {
 				txtarea = document.editform.wpTextbox1;
 			} else {
-				// some alternate form? take the first one we can find
+ 			// some alternate form? take the first one we can find
 				var areas = document.getElementsByTagName('textarea');
 				txtarea = areas[0];
 			}
-	
+
 			if (gEditInterface == null) {
 				gEditInterface = new SMWEditInterface();
 			}
@@ -90,12 +90,17 @@ WikiTextParser.prototype = {
 			this.parserMode = WTP_WIKITEXT_MODE;
 			this.wtsStart = -1; // start of internal wiki text selection
 			this.wtsEnd   = -1  // end of internal wiki text selection
-			// Array of hooks that are called when the wiki text has been changed
+
+		}
+		if (!this.textChangedHooks) {
+  		// Array of hooks that are called when the wiki text has been changed
 			this.textChangedHooks = new Array(); 
-			// Array of hooks that are called when a category has been added
-			this.categoryAddedHooks = new Array()
-			// Array of hooks that are called when a relation has been added
-			this.relationAddedHooks = new Array()
+  		// Array of hooks that are called when a category has been added
+			this.categoryAddedHooks = new Array();
+  		// Array of hooks that are called when a relation has been added
+			this.relationAddedHooks = new Array();
+		// Array of hooks that are called when an annotation has been removed
+			this.annotationRemovedHooks = new Array();
 		}
 
 		this.relations  = null;
