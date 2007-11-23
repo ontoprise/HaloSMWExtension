@@ -18,11 +18,11 @@ function applyQueryHighlighting($text, $params){
 			
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	$query = SMWQueryProcessor::createQuery($text, $params);
-	//TODO:$inline??
+	
 	if ($query instanceof SMWQuery) { // query parsing successful
 		$res = smwfGetStore()->getQueryResult($query);
 		$format = getFormat($params, $res);
-		$printer = getResultPrinter($format, $inline);
+		$printer = getResultPrinter($format, true);
 		$html = $printer->getResultHTML($res, $params);
 
 		if($format == "list" || $format == "ol" || $format == "ul"){
