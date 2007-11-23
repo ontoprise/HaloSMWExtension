@@ -199,7 +199,7 @@
 	<xsl:template match="instanceList">
 	<xsl:choose>
 	 <xsl:when test="not (@isEmpty)">
-		<table class="instanceListColors" border="0" cellspacing="0" cellpadding="0">
+		<table class="instanceListColors" border="0" cellspacing="0" cellpadding="0" style="width:100%;">
 			<xsl:apply-templates select="instance"/>
 			<xsl:apply-templates select="instancePartition"/>
 		</table>
@@ -235,16 +235,18 @@
 			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 			<xsl:variable name="title" select="@title"/>
 			<xsl:value-of select="translate($title, '_', ' ')"/>
-		</a></td>
-		<td width="25%">
-		<a class="navigationLink" style="margin-left:5px;">
-			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-			<img src="{$param-img-directory}view.gif"/>
+			
 		</a>
 		<xsl:call-template name="gissues">
 			<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 			<xsl:with-param name="actionListener">instanceActionListener</xsl:with-param> 
-		</xsl:call-template>
+		</xsl:call-template></td>
+		<td>
+		<a class="navigationLink" style="margin-left:5px;">
+			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			(browse)
+		</a>
+		
 		</td>
 		<td>
 		 <xsl:if test="@superCat">
@@ -300,7 +302,7 @@
 				</xsl:call-template>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-					<img src="{$param-img-directory}view.gif"/>
+					(browse)
 				</a>
 			</td>
 			<td>
@@ -393,7 +395,7 @@
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-					<img src="{$param-img-directory}view.gif"/>
+					(browse)
 				</a>
 				<xsl:call-template name="gissues">
 					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
@@ -410,11 +412,11 @@
 					<xsl:when test="child::rangeType[1][@isLink]">
 						<a class="category">
 							<xsl:attribute name="onclick">categoryActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-							<xsl:value-of select="child::rangeType[1][@name]"/>: <xsl:value-of select="child::rangeType[1]"/>
+							<xsl:value-of select="child::rangeType[1][@name]"/><xsl:value-of select="child::rangeType[1]"/>
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="child::rangeType[1][@name]"/>: <xsl:value-of select="child::rangeType[1]"/>
+						<xsl:value-of select="child::rangeType[1][@name]"/><xsl:value-of select="child::rangeType[1]"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				
@@ -430,11 +432,11 @@
 								<xsl:when test="@isLink">
 								<a class="category">
 									<xsl:attribute name="onclick">categoryActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-									<xsl:value-of select="@name"/>: <xsl:value-of select="."/>
+									<xsl:value-of select="@name"/><xsl:value-of select="."/>
 								</a>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of select="@name"/>: <xsl:value-of select="."/>
+									<xsl:value-of select="@name"/><xsl:value-of select="."/>
 								</xsl:otherwise>
 							</xsl:choose>
 							
@@ -643,7 +645,7 @@
 					</xsl:call-template> 
 					<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 						<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-						<img src="{$param-img-directory}view.gif"/>
+						(browse)
 					</a>
 	</xsl:template>
 	

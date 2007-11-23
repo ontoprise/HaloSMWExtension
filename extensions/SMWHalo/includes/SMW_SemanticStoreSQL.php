@@ -186,23 +186,8 @@
 	}
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL) {
-		global $smwgDefaultCollation;
-		$visitedNodes = array();
-		$allInstances = array();
 		$db =& wfGetDB( DB_MASTER ); 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance VARCHAR(255) '.$collation.' NOT NULL, category VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::getInstances' );
-		$this->_addDirectInstances($categoryTitle, false, $db);
-		
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			$this->_addInstances($cat, $visitedNodes, $db);
-		}
+		$this->createVirtualTableForInstances($categoryTitle, $db);
 		
 		$res = $db->select( 'smw_ob_instances', 
 		                    'DISTINCT instance, category',
@@ -217,10 +202,53 @@
 			}
 		}
 		$db->freeResult($res);
-		$db->query('DROP TABLE smw_ob_instances');
+		
+		$this->dropVirtualTableForInstances($db);
 		return $result;
 	}
 	
+	/**
+	 * Creates a virtual table and adds all (direct and indirect) instances of
+	 * $categoryTitle
+	 * 
+	 * @param Title $categoryTitle
+	 * @param & $db DB reference
+	 */
+	private function createVirtualTableForInstances($categoryTitle, & $db) {
+		global $smwgDefaultCollation;
+		$visitedNodes = array();
+		$allInstances = array();
+		
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance VARCHAR(255) '.$collation.' NOT NULL, category VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::getInstances' );
+		$this->_addDirectInstances($categoryTitle, false, $db);
+		
+		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		foreach($subCategories as $cat) {
+			$this->_addInstances($cat, $visitedNodes, $db);
+		}
+	}
+	
+	/**
+	 * Drops virtual table for instances.
+	 * 
+	 * @param & $db DB reference
+	 */
+	private function dropVirtualTableForInstances(& $db) {
+		$db->query('DROP TABLE smw_ob_instances');
+	}
+	/**
+	 * Adds direct instances of a category to the virtual table 'smw_ob_instances'.
+	 * 
+	 * @param Title $categoryTitle
+	 * @param bool $addCategory If true, categoryTitle is added, otherwise NULL
+	 * @param & $db DB reference
+	 */
 	private function _addDirectInstances($categoryTitle, $addCategory, & $db) {
 		$page = $db->tableName('page');
 	 	$categorylinks = $db->tableName('categorylinks');
@@ -231,6 +259,14 @@
 			           'SMW::_addDirectInstances');
 	}
 	
+	/**
+	 * Adds all instances of subcategories of $categoryTitle recursivly to 
+	 * virtual table 'smw_ob_instances'. Can handle cycles in category graph.
+	 * 
+	 * @param Title $categoryTitle 
+	 * @param & $visitedNodes
+	 * @param & $db DB reference
+	 */
 	private function _addInstances($categoryTitle, & $visitedNodes, & $db) {
 		array_push($visitedNodes, $categoryTitle->getArticleID());		
 		$this->_addDirectInstances($categoryTitle, true, $db);
@@ -269,24 +305,8 @@
 	
 	
 	function getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
-		global $smwgDefaultCollation;
-		$visitedNodes = array();
-		$allInstances = array();
 		$db =& wfGetDB( DB_MASTER ); 
-		if (!isset($smwgDefaultCollation)) {
-			$collation = '';
-		} else {
-			$collation = 'COLLATE '.$smwgDefaultCollation;
-		}
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getPropertiesOfCategory' );
-		$this->_addDirectProperties($categoryTitle, $db);
-		
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			$this->_addProperties($cat, $visitedNodes, $db);
-		}
-		
+		$this->createVirtualTableForProperties($categoryTitle, $db);
 		$res = $db->select( 'smw_ob_properties', 
 		                    'DISTINCT property',
 		                    array(), 'SMW::getPropertiesOfCategory', $this->getSQLOptions($requestoptions,'property'));
@@ -300,8 +320,32 @@
 			}
 		}
 		$db->freeResult($res);
-		$db->query('DROP TABLE smw_ob_properties');
+		$this->dropVirtualTableForProperties($db);
 		return $result;
+	}
+	
+	private function createVirtualTableForProperties(Title $categoryTitle, & $db) {
+		global $smwgDefaultCollation;
+		$visitedNodes = array();
+		$allInstances = array();
+		
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getPropertiesOfCategory' );
+		$this->_addDirectProperties($categoryTitle, $db);
+		
+		$subCategories = $this->getDirectSuperCategories($categoryTitle);
+		foreach($subCategories as $cat) {
+			$this->_addProperties($cat, $visitedNodes, $db);
+		}
+	}
+	
+	private function dropVirtualTableForProperties(& $db) {
+		$db->query('DROP TABLE smw_ob_properties');
 	}
 	
 	private function _addDirectProperties($categoryTitle, & $db) {
@@ -317,7 +361,7 @@
 		array_push($visitedNodes, $categoryTitle->getArticleID());		
 		$this->_addDirectProperties($categoryTitle, $db);
 	
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		$subCategories = $this->getDirectSuperCategories($categoryTitle);
 		foreach($subCategories as $cat) {
 			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
 				$this->_addProperties($cat, $visitedNodes, $db);
@@ -418,6 +462,48 @@
 		} 
 		$db->freeResult($res);
 		return $num;
+	}
+	
+	public function getNumberOfInstances(Title $category) {
+		$db =& wfGetDB( DB_MASTER ); 
+		$this->createVirtualTableForInstances($category, $db);
+		
+		$res = $db->select( 'smw_ob_instances', 
+		                    'COUNT(DISTINCT instance) AS numOfInstances',
+		                    array(), 'SMW::getNumberOfInstances', array() );
+		
+		// rewrite result as array
+		$result = -1;
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result = $row->numOfInstances;
+			}
+		}
+		$db->freeResult($res);
+		
+		$this->dropVirtualTableForInstances($db);
+		return $result;
+	}
+	
+	public function getNumberOfProperties(Title $category) {
+		$db =& wfGetDB( DB_MASTER ); 
+		$this->createVirtualTableForProperties($category, $db);
+		$res = $db->select( 'smw_ob_properties', 
+		                    'COUNT(DISTINCT property) AS numOfProperties',
+		                    array(), 'SMW::getPropertiesOfCategory', array() );
+		
+		// rewrite result as array
+		$result = -1;
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result = $row->numOfProperties;
+			}
+		}
+		$db->freeResult($res);
+		$this->dropVirtualTableForProperties($db);
+		return $result;
 	}
 	
 	public function getDistinctUnits(Title $type) {
