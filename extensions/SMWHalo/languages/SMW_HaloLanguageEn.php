@@ -240,9 +240,9 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_too_low_card' => 'Please add more annotations of $2 to article $1.',
 	'smw_gardissue_too_high_card' => 'Please remove an annotation of $2 from article $1.',
 	'smw_gardissue_wrong_unit' => 'Please correct wrong unit $3 for property $2 in article $1.',
-	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2.',
-	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible type to $2.',
-	'smw_gard_issue_incompatible_supertypes' => 'The property $1 has superproperties with incompatible types.',
+	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2. Please check that they are in the same namespace.',
+	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible datatype to $2. They should be the same but are different.',
+	'smw_gard_issue_incompatible_supertypes' => 'The property $1 has superproperties with different datatypes. Please check that they are the same.',
 	
 	'smw_gard_issue_cycle' => 'Cycle at: $1',
 	
