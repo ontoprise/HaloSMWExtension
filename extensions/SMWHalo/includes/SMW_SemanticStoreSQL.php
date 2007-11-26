@@ -228,10 +228,13 @@
 		            TYPE=MEMORY', 'SMW::getInstances' );
 		$this->_addDirectInstances($categoryTitle, false, $db);
 		
+		$numCategories = 0;
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		$numCategories = count($subCategories);
 		foreach($subCategories as $cat) {
-			$this->_addInstances($cat, $visitedNodes, $db);
+			$numCategories += $this->_addInstances($cat, $visitedNodes, $db);
 		}
+		return $numCategories;
 	}
 	
 	/**
@@ -270,14 +273,16 @@
 	private function _addInstances($categoryTitle, & $visitedNodes, & $db) {
 		array_push($visitedNodes, $categoryTitle->getArticleID());		
 		$this->_addDirectInstances($categoryTitle, true, $db);
-	
+		$numCategories = 0;
 		$subCategories = $this->getDirectSubCategories($categoryTitle);
+		$numCategories = count($subCategories);
 		foreach($subCategories as $cat) {
 			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
-				$this->_addInstances($cat, $visitedNodes, $db);
+				$numCategories += $this->_addInstances($cat, $visitedNodes, $db);
 			}
 		}
 		array_pop($visitedNodes);
+		return $numCategories;
 	}
 	
 	function getDirectInstances(Title $categoryTitle, $requestoptions = NULL) {
@@ -446,16 +451,20 @@
 		return $result;
 	}
 	
-	public function getNumberOfUsage(Title $property) {
+	public function getNumberOfUsage(Title $title) {
 		$num = 0;
 		$db =& wfGetDB( DB_MASTER );
-		$smw_attributes = $db->tableName('smw_attributes');
-	 	$smw_relations = $db->tableName('smw_relations');
-	 	$smw_nary = $db->tableName('smw_nary');	
-		$res = $db->query('SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_attributes.' s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title ' .
-						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_nary.' s WHERE attribute_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY attribute_title' .
-						  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_relations.' s WHERE relation_title = '.$db->addQuotes($property->getDBKey()).' GROUP BY relation_title;');
-		
+		if ($title->getNamespace() == NS_TEMPLATE) {
+			$templatelinks = $db->tableName('templatelinks');
+			$res = $db->query('SELECT COUNT(tl_from) AS numOfSubjects FROM '.$templatelinks.' s WHERE tl_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY tl_title ');
+		} else if ($title->getNamespace() == SMW_NS_PROPERTY) {
+			$smw_attributes = $db->tableName('smw_attributes');
+		 	$smw_relations = $db->tableName('smw_relations');
+		 	$smw_nary = $db->tableName('smw_nary');	
+			$res = $db->query('SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_attributes.' s WHERE attribute_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY attribute_title ' .
+							  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_nary.' s WHERE attribute_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY attribute_title' .
+							  ' UNION SELECT COUNT(subject_title) AS numOfSubjects FROM '.$smw_relations.' s WHERE relation_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY relation_title;');
+		}
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
 			$num = $row->numOfSubjects;
@@ -464,26 +473,26 @@
 		return $num;
 	}
 	
-	public function getNumberOfInstances(Title $category) {
+	public function getNumberOfInstancesAndSubcategories(Title $category) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableForInstances($category, $db);
+		$numCategories = $this->createVirtualTableForInstances($category, $db);
 		
 		$res = $db->select( 'smw_ob_instances', 
 		                    'COUNT(DISTINCT instance) AS numOfInstances',
 		                    array(), 'SMW::getNumberOfInstances', array() );
 		
 		// rewrite result as array
-		$result = 0;
+		$numOfInstances = 0;
 		
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
-			$result = $row->numOfInstances;
+			$numOfInstances = $row->numOfInstances;
 			
 		}
 		$db->freeResult($res);
 		
 		$this->dropVirtualTableForInstances($db);
-		return $result;
+		return array($numOfInstances, $numCategories);
 	}
 	
 	public function getNumberOfProperties(Title $category) {
@@ -518,8 +527,8 @@
 		}           
 		$db->freeResult($res);
 		
-		$res = $db->select( array($db->tableName('smw_nary_relations r'), $db->tableName('smw_nary n')), 
-		                    'COUNT(DISTINCT relation_title) AS numOfProperties',
+		$res = $db->select( array($db->tableName('smw_nary_relations'). " r", $db->tableName('smw_nary'). " n"), 
+		                    'COUNT(DISTINCT object_title) AS numOfProperties',
 		                    array('r.subject_id' => 'n.subject_id', 'object_title' => $target->getDBkey()), 'SMW::getNumberOfPropertiesForTarget', array() );
 		if($db->numRows( $res ) > 0) {
 			  $row = $db->fetchObject($res);
@@ -944,5 +953,127 @@
 			DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
  	
+ 	public function replaceRedirectAnnotations($verbose = false) {
+ 		
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$page = $db->tableName('page');
+ 		$redirect = $db->tableName('redirect');
+ 		$smw_attributes = $db->tableName('smw_attributes');
+ 		$smw_relations = $db->tableName('smw_relations');
+ 		$smw_nary = $db->tableName('smw_nary');
+ 		
+ 	
+ 		$result = array();
+ 		if ($verbose) echo "\n\nSelecting all pages with redirect annotations...\n";
+ 		
+ 		// select all annotations of redirect pages
+ 		$sql = 'page_id = rd_from AND page_title = attribute_title AND page_namespace = 102';
+ 		$res = $db->select( array($page, $redirect, $smw_attributes), array('rd_title', 'attribute_title', 'subject_title', 'subject_namespace'), 
+ 							$sql, 'SMW::repairRedirectAnnotations');
+ 		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array($row->subject_title, $row->subject_namespace, $row->attribute_title, $row->rd_title);
+			}
+		}
+		$db->freeResult($res);
+		
+		$res = $db->select( array($page, $redirect, $smw_nary), array('rd_title', 'attribute_title', 'subject_title', 'subject_namespace'), 
+ 							$sql, 'SMW::repairRedirectAnnotations');
+ 		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array($row->subject_title, $row->subject_namespace, $row->attribute_title, $row->rd_title);
+			}
+		}
+		$db->freeResult($res);
+		
+		$sql = 'page_id = rd_from AND page_title = relation_title AND page_namespace = 102';
+		$res = $db->select( array($page, $redirect, $smw_relations), array('rd_title', 'relation_title', 'subject_title', 'subject_namespace'), 
+ 							$sql, 'SMW::repairRedirectAnnotations');
+ 		
+ 		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array($row->subject_title, $row->subject_namespace, $row->relation_title, $row->rd_title);
+			}
+		}
+		$db->freeResult($res);
+ 		
+ 		if ($verbose && count($result) == 0) echo "None found! Go ahead.\n";
+ 		
+		// replace redirect annotation with annotation of redirect target. Also replace it on templates linked with the subject.
+		foreach($result as $r) {
+		
+			$title = Title::newFromText($r[0], $r[1]);
+			if ($title == NULL) continue;
+			$this->replaceProperties($title, $r[2], $r[3], $verbose);
+			$this->replacePropertiesOnTemplates($title, $r[2], $r[3], $verbose, $db);
+		}
+		
+		if ($verbose) echo "\n\n";
+ 	}
+ 	
+ 	/**
+ 	 * Gets template which are used on $title and replaced the property annotation of
+ 	 * $redirectProperty with $targetProperty. Usual constraints apply.
+ 	 * 
+ 	 * @param $title Title
+ 	 * @param $redirectProperty string
+ 	 * @param $targetProperty string
+ 	 * @param $verbose boolean
+ 	 * @param & $db database
+ 	 */
+ 	private function replacePropertiesOnTemplates(Title $title, $redirectProperty, $targetProperty, $verbose, & $db) {
+ 		$templatelinks = $db->tableName('templatelinks');
+ 		$sql = 'tl_from = '.$title->getArticleID();
+ 		$res = $db->select( $templatelinks, array('DISTINCT tl_title', 'tl_namespace'), 
+ 							$sql, 'SMW::replacePropertiesOnTemplates');
+ 		
+ 		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$title = Title::newFromText($row->tl_title, $row->tl_namespace);
+				if ($title == NULL) continue;
+				$this->replaceProperties($title, $redirectProperty, $targetProperty, $verbose);
+			}
+		}
+		$db->freeResult($res);
+		
+ 	}
+ 	
+ 	/**
+ 	 * Replaces annotations of $redirectProperty with $targetProperty on page
+ 	 * $title.
+ 	 * 
+ 	 * @param $title Title
+ 	 * @param $redirectProperty string
+ 	 * @param $targetProperty string
+ 	 * @param $verbose boolean
+ 	 */
+ 	private function replaceProperties($title, $redirectProperty, $targetProperty, $verbose) {
+ 		global $wgParser;
+ 		$options = new ParserOptions();
+ 		$rev = Revision::newFromTitle( $title );
+		if ($rev == NULL) return;
+		$a = new Article($title);
+		if ($a == NULL) return;
+			
+		$matches = array();
+		$text = $rev->getText();
+						
+		preg_match_all('/\[\[\s*'.preg_quote(str_replace("_", " ",$redirectProperty)).'\s*:[:|=]([^]]*)\]\]/i', $text, $matches);
+			
+		foreach($matches[1] as $m) {
+			$repl = "[[".str_replace("_", " ",$targetProperty)."::".$m."]]";
+			$newtext = preg_replace('/\[\[\s*'.preg_quote(str_replace("_", " ",$redirectProperty)).'\s*:[:|=]'.preg_quote($m).'\]\]/i', $repl, $text);
+		}
+			
+		if ($text != $newtext) {
+			if ($verbose) echo "\n - Replacing annotated redirects on ".$title->getText()."...";
+			
+			$a->doEdit($newtext, $rev->getComment(), EDIT_UPDATE);
+			$wgParser->parse($newtext, $title, $options, true, true, $rev->getID());
+			SMWFactbox::storeData($title, true);
+			if ($verbose) echo "done!";
+		}
+ 	}
  }
 ?>

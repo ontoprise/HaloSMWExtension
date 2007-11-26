@@ -12,7 +12,7 @@
  require_once("InverseEqualityConsistency.php");
  require_once( $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningBot.php');
  require_once( $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php');
- 
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
  
  class ConsistencyBot extends GardeningBot {
  	
@@ -39,7 +39,8 @@
  	 * Returns an array mapping parameter IDs to parameter objects
  	 */
  	public function createParameters() {
- 		return array();
+ 		$param1 = new GardeningParamBoolean('CONSISTENCY_BOT_REPLACE_REDIRECTS', wfMsg('smw_gard_param_replaceredirects'), SMW_GARD_PARAM_OPTIONAL, false );
+ 		return array($param1);
  	}
  	
  	/**
@@ -56,6 +57,11 @@
  				
  		$this->setNumberOfTasks(8); // 8 single tasks
  		
+ 		// Replace redirect annotations
+ 		if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
+ 			smwfGetSemanticStore()->replaceRedirectAnnotations(true);
+ 		}
+ 		
  		// Schema level checks
  		// first, check if there are cycles in the inheritance graphs
  		echo "Checking for cycles in inheritance graphs...";
@@ -71,7 +77,6 @@
  		$this->checkInverseEqualityRelations();
  		echo "done!\n\n";
  		
- 	
  		// Annotation level checks
  		echo "Checking annotation level...";
         $this->checkAnnotationLevel($delay);

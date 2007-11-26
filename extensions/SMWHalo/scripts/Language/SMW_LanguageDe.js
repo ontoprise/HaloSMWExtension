@@ -151,6 +151,8 @@ var wgLanguageStrings = {
 	'OB_WRONG_MAXCARD'		  : 'Falsche Max-Kardinalität',
 	'OB_WRONG_MINCARD'		  : 'Falsche Min-Kardinalität',
 	'OB_CONFIRM_INSTANCE_DELETION' : 'Wollen Sie den Artikel wirklich l&oumlschen?',
+	'SMW_OB_OPEN' 			  : '(&Oumlffne)',
+	'SMW_OB_EDIT' 		  	  : '(Editiere)',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

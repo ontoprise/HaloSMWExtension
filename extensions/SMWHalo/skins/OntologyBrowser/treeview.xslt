@@ -244,7 +244,7 @@
 		<td>
 		<a class="navigationLink" style="margin-left:5px;">
 			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-			(browse)
+			{{SMW_OB_OPEN}}
 		</a>
 		
 		</td>
@@ -302,7 +302,7 @@
 				</xsl:call-template>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-					(browse)
+					{{SMW_OB_OPEN}}
 				</a>
 			</td>
 			<td>
@@ -399,7 +399,7 @@
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-					(browse)
+					{{SMW_OB_OPEN}}
 				</a>
 				
 				
@@ -489,7 +489,7 @@
 			</span>
 			<a class="navigationLink" title="Edit {$title}" style="margin-left:5px;">
 				<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this, '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>', true)</xsl:attribute>
-				(edit)
+				{{SMW_OB_EDIT}}
 			</a>
 		</xsl:if>
 	</xsl:template>
@@ -646,7 +646,7 @@
 					</xsl:call-template> 
 					<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 						<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-						(browse)
+						{{SMW_OB_OPEN}}
 					</a>
 	</xsl:template>
 	

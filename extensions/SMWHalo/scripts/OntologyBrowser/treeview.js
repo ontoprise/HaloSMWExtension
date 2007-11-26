@@ -139,7 +139,19 @@ transformXMLToHTML: function (xmlDoc, node, level) {
   	 	var fragment = this.OB_xsltProcessor_gecko.transformToFragment(xmlDoc, document);
   	 	GeneralXMLTools.removeAllChildNodes(node); 
   	 	node.appendChild(fragment);
-  	
+  	 	
+  	 	// translate XSLT output
+  	 	var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
+   		var regex = new RegExp("\{\{(\\w+)\}\}");
+		languageNodes.each(function(n) { 
+			var vars;
+			var text = n.textContent;
+			while (vars = regex.exec(text)) { 
+				text = text.replace(new RegExp('\{\{'+vars[1]+'\}\}', "g"), gLanguage.getMessage(vars[1]));
+			}
+			n.textContent = text;
+   		});
+  		
 	} else if (OB_bd.isIE) {
       // set startDepth parameter. start on root level or below?		
 	  this.OB_xsltProcessor_ie.addParameter("startDepth", level ? 1 : 2);
@@ -152,7 +164,17 @@ transformXMLToHTML: function (xmlDoc, node, level) {
       for (var i = 0, n = node.childNodes.length; i < n; i++) {
       	GeneralBrowserTools.purge(node.childNodes[i]);
       }
-      node.innerHTML = this.OB_xsltProcessor_ie.output;
+      
+      // translate XSLT output
+      var translatedOutput = this.OB_xsltProcessor_ie.output;
+      var regex = new RegExp("\{\{(\\w+)\}\}");
+  	  var vars;
+	  while (vars = regex.exec(translatedOutput)) { 
+			translatedOutput = translatedOutput.replace(new RegExp('\{\{'+vars[1]+'\}\}', "g"), gLanguage.getMessage(vars[1]));
+	  }
+  	  // insert HTML
+      node.innerHTML = translatedOutput;
+    
   }
 }
 };

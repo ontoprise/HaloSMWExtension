@@ -160,6 +160,8 @@ var wgLanguageStrings = {
 	'OB_WRONG_MAXCARD'		  : 'Wrong max cardinality',
 	'OB_WRONG_MINCARD'		  : 'Wrong min cardinality',
 	'OB_CONFIRM_INSTANCE_DELETION' : 'Do you really want to remove this article?',
+	'SMW_OB_OPEN' 			  : '(open)',
+	'SMW_OB_EDIT' 			  : '(edit)',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

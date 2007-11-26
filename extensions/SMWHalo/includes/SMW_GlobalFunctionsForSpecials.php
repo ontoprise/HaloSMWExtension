@@ -11,7 +11,7 @@
  $wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
- $wgHooks['BeforePageDisplay'][]='smwRPAddHTMLHeader';
+ $wgHooks['BeforePageDisplay'][]='smwRSAddHTMLHeader';
  $wgHooks['ParserBeforeStrip'][] = 'smwRegisterQueryResultEditor'; // register the <ask> parser hook
  // register ajax calls
 
@@ -126,9 +126,9 @@ function smwfGetRegisteredBots() {
 	 $htmlResult = "";
 	 $first = true;
 	 foreach($registeredBots as $botID => $bot) {
-	 	if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+	 /*	if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
 	 		continue; // do not add this bot, because the user must not access it.
-	 	}
+	 	}*/
 	 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 	 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
 	 				   "<a>" .$bot->getLabel()."</a>" .
@@ -246,25 +246,25 @@ function smwAddQueryResultEditor($text, $param, &$parser) {
 	}
 }
 
-function smwRPAddHTMLHeader(& $out) {
+function smwRSAddHTMLHeader(& $out) {
 	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
 
 	$jsm = SMWResourceManager::SINGLETON();
 
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorPreview");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorStatistics");
 		
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":RefactorPreview");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":RefactorStatistics");
 
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorPreview");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorStatistics");
 		
 	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorPreview");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorPreview");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":RefactorStatistics");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":RefactorStatistics");
 		
 	}
 
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/RefactorPreview/refactorpreview.css', "all", -1, NS_SPECIAL.":RefactorPreview");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/RefactorPreview/refactorpreview.css', "all", -1, NS_SPECIAL.":RefactorStatistics");
 	
 	return true;
 }

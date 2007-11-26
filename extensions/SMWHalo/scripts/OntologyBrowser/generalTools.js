@@ -297,7 +297,38 @@ GeneralXMLTools.getNodeById = function (node, id) {
 	}
 }
 
-
+/**
+ * Returns textnodes below node which contains the given text.
+ * Does not work with IE at the moment!
+ * 
+ * @param node
+ * @param text
+ * 
+ * @return array of textnodes
+ */
+GeneralXMLTools.getNodeByText = function(node, text) {
+	if (Prototype.BrowserFeatures.XPath) {
+		var results = new Array();
+		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
+		var nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null); 
+		var nextnode = nodesWithID.iterateNext();
+		while (nextnode != null) {
+			results.push(nextnode);
+			nextnode = nodesWithID.iterateNext();
+		} 
+		return results; 
+	} else if (OB_bd.isIE) {
+		// this should work, but does not for some reason (IE does not support selectNodes although it should)
+		var nodeList = node.selectNodes("/descendant::text()[contains(string(self::node()), '"+text+"')]");
+		nodeList.moveNext();
+		nextnode = nodeList.current();
+		while (nextnode != null) {
+			results.push(nodeList.current());
+			nodeList.moveNext();
+		} 
+		return result;
+	} 
+}
 
 /*
  * Import a subtree

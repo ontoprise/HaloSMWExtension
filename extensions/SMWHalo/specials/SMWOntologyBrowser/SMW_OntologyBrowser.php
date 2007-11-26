@@ -50,9 +50,10 @@ class SMW_OntologyBrowser extends SpecialPage {
 				smwLog("","OB","opened");
 		}
 		/*ENDLOG*/
-		$showMenuBar = in_array("gardener", $wgUser->getGroups()) || in_array("sysop", $wgUser->getGroups());
+		$showMenuBar = true;//in_array("gardener", $wgUser->getGroups()) || in_array("sysop", $wgUser->getGroups());
 		// display query browser
-		$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );		
+		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );	
+		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );			
 	
 		$html = "<span id=\"OBHelp\">".wfMsg('smw_ob_help')."</span><br>";
 		$html .= "<span style=\"background-color:#F8FAAA;\">".wfMsg('smw_ac_hint') . "</span>\n";
@@ -60,7 +61,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 	
 		$html .= "<button type=\"button\" name=\"filterBrowsing\" onclick=\"globalActionListener.filterBrowsing(event, true)\">".wfMsg('smw_ob_filterbrowsing')."</button>";
 		$html .= "<button type=\"button\" name=\"refresh\" onclick=\"globalActionListener.reset(event)\">".wfMsg('smw_ob_reset')."</button>";
-		$html .= "<button type=\"button\" style=\"margin-left:10px;\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";
+		$html .= "<button type=\"button\" style=\"margin-left:10px;\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>  <a href=\"".$refactorstatstitle->getFullURL()."\">".wfMsg('smw_ob_link_stats')."</a>";
 		$html .= "<div id=\"ontologybrowser\">
 		
 				

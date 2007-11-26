@@ -156,6 +156,28 @@
 	public abstract function getNumberOfUsage(Title $property);
  	
  	/**
+ 	 * Returns number of (direct and indirect) instances and number of subcategories.
+ 	 * 
+ 	 * @param $category Title
+ 	 * @return array($numOfInstance, $numOfCategories);
+ 	 */
+ 	public abstract function getNumberOfInstancesAndSubcategories(Title $category);
+ 	
+ 	/**
+ 	 * Returns number of properties for a $category.
+ 	 * 
+ 	 * @param $category
+ 	 */
+ 	public abstract function getNumberOfProperties(Title $category);
+ 	
+ 	/**
+ 	 * Returns number of annotation which have $target as their target.
+ 	 * 
+ 	 * @param $target Title
+ 	 */
+ 	public abstract function getNumberOfPropertiesForTarget(Title $target);
+ 	
+ 	/**
  	 * Returns all different units of annotations of a given type.
  	 * 
  	 * @param Title $type
@@ -242,5 +264,14 @@
  	 *  @return array of GraphEdge objects;
  	 */
  	public abstract function getPropertyInheritanceGraph();
+ 	
+ 	/**
+ 	 * Replaces redirect annotations, i.e. pages with annotations made with redirect 
+ 	 * property pages. Does also replace such annotations on template pages with the usual 
+ 	 * constraints. Modifies database!
+ 	 * 
+ 	 * @param $verbose If true, method prints some output.
+ 	 */
+ 	public abstract function replaceRedirectAnnotations($verbose = false);
  }
 ?>

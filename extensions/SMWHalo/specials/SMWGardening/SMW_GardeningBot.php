@@ -197,9 +197,9 @@
  		$bot = $registeredBots[$botID];
  		
  		// check if user is allowed to start the bot
- 		if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+ 		/*if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
  			return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
- 		}
+ 		}*/
  		
  		// validate parameters
  	 	$isValid = GardeningBot::checkParameters($botID, GardeningBot::convertParamStringToArray($params));

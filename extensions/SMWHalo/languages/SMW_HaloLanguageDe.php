@@ -154,7 +154,7 @@ protected $smwUserMessages = array(
 	/* Messages for Gardening */
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
-	
+	'smw_gard_param_replaceredirects' => 'Ersetze Redirects',
 	'smw_gardening_log_cat' => 'GardeningLog',
 	'smw_gardeninglogs_docu' => 'Diese Seite ermöglicht den Zugriff auf die Gardening Logs.',
 	'smw_gardening_log_exp' => 'Das ist die Gardening Log Kategorie.',
@@ -378,8 +378,18 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren',
 	
 	/* Annotationtab */
- 	'smw_annotation_tab' => 'Seite annotieren'
+ 	'smw_annotation_tab' => 'Seite annotieren',
 	
+	/* Refactor preview */
+ 	'refactorstatistics' => 'Refactor Statistics',
+ 	'smw_ob_link_stats' => '&Ouml;ffne refactor statistics',
+ 	
+ 	/* SMWFindWork */
+ 	'findwork' => 'Suche Arbeit',
+ 	
+ 	/* Gardening Issue Highlighting in Inline Queries */
+	'smw_iqgi_missing' => 'fehlt',
+	'smw_iqgi_wrongunit' => 'falsche Einheit'
 );
 
 protected $smwSpecialProperties = array(

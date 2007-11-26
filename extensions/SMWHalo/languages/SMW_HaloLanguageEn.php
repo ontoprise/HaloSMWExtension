@@ -177,7 +177,7 @@ clicking the big arrows between the columns.',
 	/* Messages for Gardening */
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
-	
+	'smw_gard_param_replaceredirects' => 'Replace redirects',
 	'smw_gardening_log_cat' => 'GardeningLog',
 	'smw_gardeninglogs_docu' => 'This page provides access to logs created by the Gardening Bots. You can filter them in various ways.',
 	'smw_gardening_log_exp' => 'This is the Gardening log category',
@@ -410,7 +410,11 @@ clicking the big arrows between the columns.',
  	'smw_annotation_tab' => 'annotate',
  	
  	/* Refactor preview */
- 	'refactorpreview' => 'Refactor Preview',
+ 	'refactorstatistics' => 'Refactor Statistics',
+ 	'smw_ob_link_stats' => 'Open refactor statistics',
+ 	
+ 	/* SMWFindWork */
+ 	'findwork' => 'Find work',
  	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',

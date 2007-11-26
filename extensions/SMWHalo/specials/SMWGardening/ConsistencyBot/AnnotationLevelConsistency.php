@@ -79,9 +79,6 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			// get annotation subjects for the property.
  			$allRelationSubjects = smwfGetStore()->getAllPropertySubjects($r);
  			
- 			// check domain only once.
- 			$domainChecked = false;
- 			
  			// iterate over all property subjects
  			foreach($allRelationSubjects as $subject) { 
  				
@@ -94,6 +91,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				list($domain_cov_results, $domainCorrect) = $this->checkDomain($categoriesOfSubject, $domainRangeAnnotations);
 				if (!$domainCorrect) {
 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r );
+					
 				}
 				
  				// get property value for a given instance
@@ -105,7 +103,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
  						$rd_target = smwfGetSemanticStore()->getRedirectTarget($target->getTitle());
 	 					$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
- 						$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
+	 					if ($domainCorrect) {
+ 							$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
+	 					} else {
+	 						$rangeCorrect = $this->checkRange(NULL, $categoriesOfObject, $domainRangeAnnotations);
+	 					}
  						if (!$rangeCorrect) {
  							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
  						}	 						
@@ -125,7 +127,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  										if ($explodedValues[$i]->getTypeID() == '_wpg') { 
  											$rd_target = smwfGetSemanticStore()->getRedirectTarget($explodedValues[$i]->getTitle());
  											$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
-					 						$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
+					 						if ($domainCorrect) {
+					 							$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
+						 					} else {
+						 						$rangeCorrect = $this->checkRange(NULL, $categoriesOfObject, $domainRangeAnnotations);
+						 					}
 					 						if (!$rangeCorrect) {
 					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
 					 						}	
@@ -159,7 +165,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	
  		$result = false;
  		for($i = 0, $n = count($domainRange); $i < $n; $i++) {
- 			if (!$domain_cov_results[$i]) continue;
+ 			if ($domain_cov_results != NULL && !$domain_cov_results[$i]) continue;
  			$domRanVal = $domainRange[$i]; 
  			$rangeCorrect = false;
  			$dvs = $domRanVal->getDVs();
@@ -277,8 +283,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
  			}
  			
- 			// get redirects of property
- 			$redirects = smwfGetSemanticStore()->getRedirectPages($a);
+ 			
  			
  			foreach($domainRangeAnnotations as $domRan) {
  				$dvs = $domRan->getDVs();
@@ -293,9 +298,6 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				
 	 				// get all annoations for a subject and a property
 	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject[0], $a);
-	 				foreach($redirects as $rd) {
-	 					$allAttributeForSubject = array_merge($allAttributeForSubject, smwfGetStore()->getPropertyValues($subject[0], $rd));
-	 				}
 	 				$num = count($allAttributeForSubject);
 	 				
 	 				// compare number of appearance with defined cardinality
@@ -358,5 +360,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		preg_match("/(\d*\.?\d+)(.*)/", $con_fac, $matches);
  		return (strtolower(trim($matches[2][0])) == strtolower($unit));
  	}
+ 	
+ 	
  }
 ?>
