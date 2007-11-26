@@ -41,8 +41,28 @@ OntologyModifier.prototype = {
 	 */
 	initialize: function() {
 		this.redirect = false;
+		
+		// Array of hooks that are called, when the ajax call in <editArticle>
+		// returns
+		this.editArticleHooks = new Array();
 	},
 
+	/**
+	 * @public
+	 * 
+	 * Adds a hook function that is called, when the ajax call in <editArticle>
+	 * returns.
+	 * 
+	 * @param function hook
+	 * 		The hook function. It must have this signature:
+	 * 		hook(boolean success, boolean created, string title)
+	 * 			success: <true> if the article was successfully edited
+	 * 			created: <true> if the article has been created
+	 * 			title: Title of the article		
+	 */
+	addEditArticleHook: function(hook) {
+		this.editArticleHooks.push(hook);
+	},
 
 	/**
 	 * @public
@@ -115,6 +135,28 @@ OntologyModifier.prototype = {
 		              [title, content, optionalText, creationComment], 
 		              this.ajaxResponseCreateArticle.bind(this));
 		              
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * Replaces the complete content of an article in the wiki. If the article
+	 * does not exist, it will be created.
+	 * 
+	 * @param string title 
+	 * 			Title of the article.
+	 * @param string content 
+	 * 			New content of the article.
+	 * @param string editComment
+	 * 			This text describes why the article has been edited. 
+	 * @param bool redirect If <true>, the system asks the user, if he he wants 
+	 * 			to be redirected to the new article after its creation.
+	 */
+	editArticle : function(title, content, editComment, redirect) {
+		this.redirect = redirect;
+		sajax_do_call('smwfEditArticle', 
+		              [title, content, editComment], 
+		              this.ajaxResponseEditArticle.bind(this));
 	},
 	
 	/**
@@ -260,13 +302,18 @@ OntologyModifier.prototype = {
 	 * @param boolean openNewArticle
 	 * 			If <true> or not specified, the newly created article is opened
 	 *          in a new tab.
+	 * @param WikiTextParser wtp
+	 * 			If given, this parser is used to annotate the current article.
+	 * 			Otherwise a new one is created.
 	 */
-	createSuperProperty : function(title, initialContent, openNewArticle) {
+	createSuperProperty : function(title, initialContent, openNewArticle, wtp) {
 		if (openNewArticle == undefined) {
 			openNewArticle = true;
 		}
 		var schemaProp = this.getSchemaProperties();
-		var wtp = new WikiTextParser();
+		if (!wtp) {
+			wtp = new WikiTextParser();
+		}
 		if (   wgNamespaceNumber == 102 // SMW_NS_PROPERTY
 		    || wgNamespaceNumber == 100) {  // SMW_NS_RELATION
 			this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
@@ -298,12 +345,17 @@ OntologyModifier.prototype = {
 	 * @param boolean openNewArticle
 	 * 			If <true> or not specified, the newly created article is opened
 	 *          in a new tab.
+	 * @param WikiTextParser wtp
+	 * 			If given, this parser is used to annotate the current article.
+	 * 			Otherwise a new one is created.
 	 */
-	createSuperCategory : function(title, initialContent, openNewArticle) {
+	createSuperCategory : function(title, initialContent, openNewArticle, wtp) {
 		if (openNewArticle == undefined) {
 			openNewArticle = true;
 		}
-		var wtp = new WikiTextParser();
+		if (!wtp) {
+			wtp = new WikiTextParser();
+		}
 		if (wgNamespaceNumber == 14) {
 			this.createArticle(gLanguage.getMessage('CATEGORY')+title, initialContent, "",
 							   gLanguage.getMessage('CREATE_SUPER_CATEGORY'), 
@@ -311,7 +363,6 @@ OntologyModifier.prototype = {
 							 
 			// append the sub-category annotation to the current article
 			wtp.addCategory(title, "", true);
-			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_CATEGORY'))
 		}
@@ -391,7 +442,7 @@ OntologyModifier.prototype = {
 	 *   that it already existed(false).
 	 * - The string contains the name of the (new) article.
 	 * 
-	 * @param request Created by the framework. Contains the ajay request and
+	 * @param request Created by the framework. Contains the ajax request and
 	 *                its result.
 	 * 
 	 */
@@ -420,5 +471,53 @@ OntologyModifier.prototype = {
 				window.open("index.php?title="+title,"_blank");
 			}
 		}
+	},
+	
+	/**
+	 * This function is called when the ajax request for changing an
+	 * article returns. The answer has the following format:
+	 * bool, bool, string
+	 * - The first boolean signals success (true) of the operation.
+	 * - The second boolean signals that a new article has been created (true), or
+	 *   that it already existed(false).
+	 * - The string contains the name of the (new) article.
+	 * 
+	 * @param request Created by the framework. Contains the ajax request and
+	 *                its result.
+	 * 
+	 */
+	ajaxResponseEditArticle: function(request) {
+		if (request.status != 200) {
+			alert(gLanguage.getMessage('ERROR_EDITING_ARTICLE'));
+			return;
+		}
+		
+		var answer = request.responseText;
+		var regex = /(true|false),(true|false),(.*)/;
+		var parts = answer.match(regex);
+		
+		if (parts == null) {
+			alert(gLanguage.getMessage('ERROR_EDITING_ARTICLE'));
+			return;
+		}
+		
+		var success = parts[1];
+		var created = parts[2];
+		var title = parts[3];
+		
+		if (success == "true") {
+			if (this.redirect) {
+				// open the new article in another tab.
+				window.open("index.php?title="+title,"_blank");
+			}
+		}
+		
+		success = (success == 'true');
+		created = (created == 'true');
+		for (var i = 0; i < this.editArticleHooks.length; ++i) {
+			this.editArticleHooks[i](success, created, title);
+		}
 	}
+	
+
 }

@@ -26,6 +26,7 @@
 global $wgAjaxExportList;
 
 $wgAjaxExportList[] = 'smwfCreateArticle';
+$wgAjaxExportList[] = 'smwfEditArticle';
 $wgAjaxExportList[] = 'smwfExistsArticle';
 $wgAjaxExportList[] = 'smwfRelationSchemaData';
 $wgAjaxExportList[] = 'smwfGetWikiText';
@@ -125,6 +126,51 @@ function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
 
 	// Set the article's content
 	$success = $article->doEdit($content, $creationComment);
+
+	return ($success ? "true," : "false,").
+	       ($created ? "true," : "false,").
+	       $title->getNsText().":".$title->getText();
+}
+
+/**
+ * Replaces the complete content of an article in the wiki. If the article
+ * does not exist, it will be created.
+ * 
+ * @param string title 
+ * 			Title of the article.
+ * @param string content 
+ * 			New content of the article.
+ * @param string editComment
+ * 			This text describes why the article has been edited. 
+ * 
+ * @return string Comma separated list:
+ * 			bool success
+ * 	 			<true> if the operation was successful.
+ * 			bool created
+ * 				<true> if the article was edited,
+ * 				<false> if it was only modified
+ * 			string title
+ * 				Title of the (new) article
+ *
+ */
+function smwfEditArticle($title, $content, $editComment) {
+
+	global $smwgContLang, $smwgHaloContLang;
+
+	$success = false;
+	$created = true;
+
+	$title = Title::newFromText($title);
+
+	$article = new Article($title);
+
+	if ($article->exists()) {
+		// The article exists
+		$created = false;
+	}
+
+	// Set the article's content
+	$success = $article->doEdit($content, $editComment);
 
 	return ($success ? "true," : "false,").
 	       ($created ? "true," : "false,").
