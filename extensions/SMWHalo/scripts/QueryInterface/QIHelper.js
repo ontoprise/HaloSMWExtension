@@ -945,30 +945,35 @@ copyToClipboard:function(){
 			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 		}
 	  	else if (window.netscape) {
-			netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-			var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
-			if (!clip){
-				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-				return;
+			try {
+				netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
+				var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
+				if (!clip){
+					alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+					return;
+				}
+				var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+				if (!trans){
+					alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+					return;
+				}
+				trans.addDataFlavor('text/unicode');
+				var str = new Object();
+				var len = new Object();
+				var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+				str.data=text;
+				trans.setTransferData("text/unicode",str,text.length*2);
+				var clipid=Components.interfaces.nsIClipboard;
+				if (!clip){
+					alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
+					return;
+				}
+				clip.setData(trans,null,clipid.kGlobalClipboard);
+				alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 			}
-			var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
-			if (!trans){
+			catch (e) {
 				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-				return;
 			}
-			trans.addDataFlavor('text/unicode');
-			var str = new Object();
-			var len = new Object();
-			var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
-			str.data=text;
-			trans.setTransferData("text/unicode",str,text.length*2);
-			var clipid=Components.interfaces.nsIClipboard;
-			if (!clip){
-				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
-				return;
-			}
-			clip.setData(trans,null,clipid.kGlobalClipboard);
-			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 		}
 		else{
 			alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));

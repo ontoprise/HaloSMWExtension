@@ -170,7 +170,7 @@ var wgLanguageStrings = {
 	'QI_ENTER_INSTANCE'       : 'Please enter an instance',
 	'QI_ENTER_PROPERTY_NAME'  : 'Please enter a property name',
 	'QI_CLIPBOARD_SUCCESS'    : 'The query text was successfully copied to your clipboard',
-	'QI_CLIPBOARD_FAIL'    	  : "Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.",
+	'QI_CLIPBOARD_FAIL'    	  : 'Your browser does not allow clipboard access.\nThe query text could not be copied to your clipboard.\nPlease use function "Show full query" and copy the query manually.',
 	'QI_SUBQUERY'    	  	  : "Subquery",
 	'QI_CATEGORIES'    	  	  : " Categories:",
 	'QI_INSTANCES'    	  	  : " Instances:",
