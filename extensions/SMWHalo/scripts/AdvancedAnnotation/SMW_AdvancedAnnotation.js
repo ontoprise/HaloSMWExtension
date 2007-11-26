@@ -43,9 +43,13 @@ AdvancedAnnotation.prototype = {
 		// The wiki text parser manages the wiki text and adds annotations 
 		this.wikiTextParser = null;
 		
+		this.om = new OntologyModifier();
+		this.om.addEditArticleHook(this.annotationsSaved.bind(this));
+		
 		// Load the wiki text for the current page and store it in the parser.
 		this.loadWikiText();
 		this.annoCount = 10000;
+		this.annotationsChanged = false;
 	},
 	
 	/**
@@ -286,6 +290,7 @@ AdvancedAnnotation.prototype = {
 				this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
 				this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
 				this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
+				this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
 				catToolBar.setWikiTextParser(this.wikiTextParser);
 				relToolBar.setWikiTextParser(this.wikiTextParser);
 				catToolBar.fillList(true);
@@ -319,6 +324,8 @@ AdvancedAnnotation.prototype = {
 	categoryAdded: function(startPos, endPos, name) {
 		this.markSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
 		catToolBar.fillList();
+		$('ah-savewikitext-btn').enable();
+		this.annotationsChanged = true;
 	},
 	
 	/**
@@ -337,6 +344,23 @@ AdvancedAnnotation.prototype = {
 	relationAdded: function(startPos, endPos, name) {
 		this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		relToolBar.fillList();
+		$('ah-savewikitext-btn').enable();
+		this.annotationsChanged = true;
+	},
+	
+	
+	/**
+	 * This function is a hook for the wiki text parser. It is called after an
+	 * annotation has been removed from the wiki text.
+	 * The highlight for the annotation in the rendered article is removed.
+	 * 
+	 * @param WtpAnnotation annotation
+	 * 		The annotation that is removed.
+	 */
+	annotationRemoved: function(annotation) {
+		this.removeAnnotationHighlight(annotation);
+		$('ah-savewikitext-btn').enable();
+		this.annotationsChanged = true;
 	},
 
 	/**
@@ -455,12 +479,72 @@ AdvancedAnnotation.prototype = {
 	 */
 	deleteAnnotation: function(id) {
 		// The highlighted text is embedded in a span with the given id
-		var span = $('anno'+id);
-		if (!span) {
+		var wrapper = $('anno'+id+'w');
+		if (!wrapper) {
 			return alert("Corresponding annotation not found.");
 		}
-		// There is always a wrapper span around the span.
-		var wrapper = span.up();
+		// There is a wiki text offset anchor before the wrapper span.
+		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
+		var annotationStart = wtoAnchor.getAttribute("name")*1;
+		var type = wtoAnchor.getAttribute("annoType");
+		// Remove the annotation from the wiki text
+		var annotations = (type && type == 'category')
+							? this.wikiTextParser.getCategories()
+							: this.wikiTextParser.getRelations();
+		for (var i = 0; i < annotations.length; ++i) {
+			var anno = annotations[i];
+			if (anno.getStart() == annotationStart) {
+				// Remove the annotation from the wiki text
+				// => the highlight will be removed in the hook function 
+				//    <removeAnnotationHighlight>
+				var value = "";
+				
+				if (anno.getRepresentation().length != 0) {
+					value = anno.getRepresentation();
+				} else if (anno.getValue) {
+					value = anno.getValue();
+				}
+				anno.remove(value);
+				break;
+			}
+		}
+		
+		if (type && type == 'category') {
+			catToolBar.fillList();
+		} else {
+			relToolBar.fillList();
+		}
+	},
+	
+	
+	/**
+	 * @private
+	 * 
+	 * Removes the highlight of an annotation in the rendered article that 
+	 * corresponds to the <annotation> of the wiki text parser.
+	 * 
+	 * @param WtpAnnotation annotation
+	 * 		The highlight for this annotation is removed.
+	 */
+	removeAnnotationHighlight: function(annotation) {
+		var start = annotation.getStart();
+		
+		// find the anchor that marks the start of the annotation
+		var wtoAnchor = $('bodyContent').down('a[name="'+start+'"]');
+		if (!wtoAnchor) {
+			alert("Anchor for annotation not found.")
+			return;
+		}
+		// there must be a wrappper span for the annotation's highlight after the anchor
+		var wrapper = wtoAnchor.next("span");
+		if (!wrapper) {
+			// no wrapper found => wiki text led to empty HTML. This can happen 
+			// for category annotations
+//			return alert("Corresponding annotation not found.");
+			return;
+		}
+		// There is always the highlighting span within the wrapper span.
+		var span = wrapper.down('span');
 		
 		var htmlContent = "";
 		var content = "";
@@ -474,42 +558,59 @@ AdvancedAnnotation.prototype = {
 			content = span.textContent;
 		}
 		
-		// There is a wiki text offset anchor before the wrapper span.
-		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
+		// There is a wiki text offset anchor after the wrapper span.
 		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');
-		var annotationStart = wtoAnchor.getAttribute("name")*1;
 		
 		// replace the wrapper by the content i.e. create normal text
 		wrapper.replace(htmlContent);
 		
 		// remove the wiki text offset anchor around the annotation
-		var type = wtoAnchor.getAttribute("annoType");
-		
 		if (wtoAnchor.getAttribute("name") != "0") {
 			// do not remove the very first anchor
 			wtoAnchor.remove();
 		}
 		nextWtoAnchor.remove();
 		
-		// Remove the annotation from the wiki text
-		var annotations = (type && type == 'category')
-							? this.wikiTextParser.getCategories()
-							: this.wikiTextParser.getRelations();
-		for (var i = 0; i < annotations.length; ++i) {
-			var anno = annotations[i];
-			if (anno.getStart() == annotationStart) {
-				anno.remove(content);
-				break;
-			}
+	},
+	
+	/**
+	 * Saves the annotations of the current session.
+	 * 
+	 */
+	saveAnnotations: function() {
+		this.om.editArticle(wgTitle, this.wikiTextParser.getWikiText(),
+							gLanguage.getMessage('AH_SAVE_COMMENT'), false);
+		$('ah-savewikitext-btn').disable();
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * This hook function is called when the ajax call for saving the annotations
+	 * returns (see <saveAnnotations>).
+	 * 
+	 * @param boolean success
+	 * 		 <true> if the article was successfully edited
+	 * @param boolean created
+	 * 		<true> if the article has been created
+	 * @param string title
+	 * 		Title of the article		
+	 */
+	annotationsSaved: function(success, created, title) {
+		var msg = (success) 
+					? gLanguage.getMessage('AH_ANNOTATIONS_SAVED')
+					: gLanguage.getMessage('AH_SAVING_ANNOTATIONS_FAILED');
+					
+		smwhgAnnotationHints.showMessageAndWikiText(msg, "");
+		
+		if (success === true) {
+			this.annotationsChanged = false;
+		} else {
+			$('ah-savewikitext-btn').enable();
 		}
 		
-		if (type && type == 'category') {
-			catToolBar.fillList();
-		} else {
-			relToolBar.fillList();
-		}
-
 	}
+	
 };// End of Class
 
 AdvancedAnnotation.create = function() {
@@ -521,6 +622,20 @@ AdvancedAnnotation.create = function() {
 				              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
 				pe.stop();
 		}, 2);
+	}
+	
+};
+
+/**
+ * This function is called when the page is closed. If the annotations have been
+ * changed, the user is asked, if he wants to save the changes.
+ */
+AdvancedAnnotation.unload = function() {
+	if (wgAction == "annotate" && smwhgAdvancedAnnotation.annotationsChanged === true) {
+		var save = confirm(gLanguage.getMessage('AAM_SAVE_ANNOTATIONS'));
+		if (save === true) {
+			smwhgAdvancedAnnotation.saveAnnotations();
+		}
 	}
 	
 };
@@ -549,3 +664,5 @@ AdvancedAnnotation.smwhfEditLink = function(id) {
 
 var smwhgAdvancedAnnotation = null;
 Event.observe(window, 'load', AdvancedAnnotation.create);
+Event.observe(window, 'unload', AdvancedAnnotation.unload);
+

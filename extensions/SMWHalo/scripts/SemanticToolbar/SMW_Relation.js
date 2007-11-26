@@ -438,7 +438,7 @@ createSuperItem: function(openTargetArticle) {
 		return;
 	}
 
- 	this.om.createSuperProperty(name, "", openTargetArticle);
+ 	this.om.createSuperProperty(name, "", openTargetArticle, this.wtp);
  	this.fillList(true);
 },
 
