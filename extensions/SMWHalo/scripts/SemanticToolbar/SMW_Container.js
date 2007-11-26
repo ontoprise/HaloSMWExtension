@@ -415,6 +415,44 @@ createText: function(id, description, attributes ,visibility){
 
 },
 
+/**
+ * @public
+ * 
+ * Creates a button
+ * 
+ * @param string id
+ * 		id of the element
+ * @param string btLabel
+ * 		The label of the button
+ * @param string callback
+ * 		The function that will be called when the button is clicked
+ * @param string attributes
+ *		attributes which will be passed to the specific element
+ * @param boolean visibility
+ * 		if false the element will be collapsed initially
+ */
+createButton: function(id, btLabel, callback, attributes ,visibility){
+	
+	var containercontent = 
+		'<table class="stb-table stb-button-table ' + this.id + '-table ' + this.id + '-button-table"' +
+			(visibility ? '' : 'style="display:none;"')  + 'id="' + this.id + '-table-' + id +'">' +
+		'<tr>' +
+			//Text
+			'<td class="stb-button-col ' + this.id + '-button-col">' +
+			 '<input type="button" id="' + id + 
+			 	'" name="' + id + 
+			 	'" value="' + btLabel + 
+			 	'" '+ attributes +
+			 	'onclick="' + callback + 
+			 	'">' +
+			'</td>' +
+		'</tr>' +
+		'</table>';
+			
+	return containercontent;
+
+},
+
 
 /**
  * @public
