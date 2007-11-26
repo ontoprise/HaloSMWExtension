@@ -167,7 +167,7 @@ var wgLanguageStrings = {
 	'QI_ENTER_INSTANCE'       : 'Bitte geben Sie eine Instanz ein',
 	'QI_ENTER_PROPERTY_NAME'  : 'Bitte geben Sie einen Propertynamen ein',
 	'QI_CLIPBOARD_SUCCESS'    : 'Der Query wurde in Ihre Zwischenablage kopiert',
-	'QI_CLIPBOARD_FAIL'    	  : "Ihr Browser erlaubt keinen Zugriff auf die Zwischenablage\nDer Query konnte nicht in Ihre Zwischenablage kopiert werden.",
+	'QI_CLIPBOARD_FAIL'    	  : 'Ihr Browser erlaubt keinen Zugriff auf die Zwischenablage\nDer Query konnte nicht in Ihre Zwischenablage kopiert werden.\n Bitte verwenden Sie die Funktion "Kompletten Query anzeigen" und kopieren Sie den Query manuell.',
 	'QI_SUBQUERY'    	  	  : "Subquery",
 	'QI_CATEGORIES'    	  	  : " Kategorien:",
 	'QI_INSTANCES'    	  	  : " Instanzen:",
