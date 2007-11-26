@@ -44,6 +44,7 @@ var wgLanguageStrings = {
 	'CREATE_SUB_PROPERTY'     : 'This article has been created as sub-property. Please enter meaningful content.',
 	'CREATE_SUPER_PROPERTY'   : 'This article has been created as super-property. Please enter meaningful content.',
 	'ERROR_CREATING_ARTICLE'  : "Error while creating article.",
+	'ERROR_EDITING_ARTICLE'   : "Error while editing article.",
 	'UNMATCHED_BRACKETS'      : 'Warning! The article contains syntax errors ("]]" missing)',
 	'MAX_CARD_MUST_NOT_BE_0'  : "(e)Max. cardinality must not be 0 or less!",
 	'SPECIFY_CARDINALITY'     : "(e)Please specify this cardinality!",
@@ -118,6 +119,11 @@ var wgLanguageStrings = {
 
 	// Annotation hints
 	'ANNOTATION_HINTS'        : 'Annotation hints',
+	'AH_SAVE_ANNOTATIONS'	  : 'Save annotations',
+	'AH_SAVE_COMMENT'		  : 'Annotations added in the Advanced Annotation Mode.',
+	'AH_ANNOTATIONS_SAVED'	  : '(i) The annotations were successfully saved.',
+	'AH_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
+	'AAM_SAVE_ANNOTATIONS' 	  : 'Do you want to save the annotations of the current session?',
 	
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
