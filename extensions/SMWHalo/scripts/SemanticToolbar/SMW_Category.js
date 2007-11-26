@@ -16,8 +16,8 @@
 */
 var SMW_CAT_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true) ' +
-	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true)" ';
+		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true) ' +
+	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true, attribute:catExists=false)" ';
 
 var SMW_CAT_CHECK_CATEGORY_IIE = // Invalid if exists
 	'smwCheckType="category:exists ' +
@@ -148,13 +148,22 @@ createToolbar: function(attributes) {
 
 
 addItem: function() {
+	var catName = $("cat-name");
 	/*STARTLOG*/
-    smwhgLogger.log($("cat-name").value,"STB-Categories","annotate_added");
+    smwhgLogger.log(catName.value,"STB-Categories","annotate_added");
 	/*ENDLOG*/
 	this.wtp.initialize();
-	var name = $("cat-name").value;
+	var name = catName.value;
 	this.wtp.addCategory(name, true);
 	this.fillList(true);
+	
+	// Create the category, if it does not exist.
+	if (catName.getAttribute("catexists") == "false") {
+		this.om.createCategory(name, "");
+		/*STARTLOG*/
+	    smwhgLogger.log(name,"STB-Categories","create_added");
+		/*ENDLOG*/
+	}
 },
 
 newItem: function() {
@@ -299,7 +308,7 @@ createSuperItem: function(openTargetArticle) {
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
 		return;
 	}
- 	this.om.createSuperCategory(name, "", openTargetArticle);
+ 	this.om.createSuperCategory(name, "", openTargetArticle, this.wtp);
  	this.fillList(true);
 },
 
@@ -385,7 +394,7 @@ createNewCategory: function() {
 	/*STARTLOG*/
     smwhgLogger.log(catName,"STB-Categories","create_added");
 	/*ENDLOG*/
-	// Create an ontology modifier instance
+	// Create the new category
 	this.om.createCategory(catName, "");
 
 	//show list
