@@ -61,23 +61,27 @@ WikiTextParser.prototype = {
 	 *               
 	 */
 	initialize: function(wikiText) {
+		if (wikiText == "") {
+			// Empty strings are treated as false => make a non-emty string
+			wikiText = " ";
+		}
 		if (this.parserMode == WTP_WIKITEXT_MODE) {
-		// Parser mode is 'wiki text' => do not release the current text
+			// Parser mode is 'wiki text' => do not release the current text
 			if (!wikiText) {
 				wikiText = this.text;
 			}
 		}
 		if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
-		// no wiki text => retrieve from text area.
+			// no wiki text => retrieve from text area.
 			var txtarea;
 			if (document.editform) {
 				txtarea = document.editform.wpTextbox1;
 			} else {
- 			// some alternate form? take the first one we can find
+				// some alternate form? take the first one we can find
 				var areas = document.getElementsByTagName('textarea');
 				txtarea = areas[0];
 			}
-
+	
 			if (gEditInterface == null) {
 				gEditInterface = new SMWEditInterface();
 			}
@@ -90,19 +94,19 @@ WikiTextParser.prototype = {
 			this.parserMode = WTP_WIKITEXT_MODE;
 			this.wtsStart = -1; // start of internal wiki text selection
 			this.wtsEnd   = -1  // end of internal wiki text selection
-
+			
 		}
 		if (!this.textChangedHooks) {
-  		// Array of hooks that are called when the wiki text has been changed
+			// Array of hooks that are called when the wiki text has been changed
 			this.textChangedHooks = new Array(); 
-  		// Array of hooks that are called when a category has been added
+			// Array of hooks that are called when a category has been added
 			this.categoryAddedHooks = new Array();
-  		// Array of hooks that are called when a relation has been added
+			// Array of hooks that are called when a relation has been added
 			this.relationAddedHooks = new Array();
-		// Array of hooks that are called when an annotation has been removed
+			// Array of hooks that are called when an annotation has been removed
 			this.annotationRemovedHooks = new Array();
 		}
-
+		
 		this.relations  = null;
 		this.categories  = null;
 		this.links  = null;
@@ -239,6 +243,10 @@ WikiTextParser.prototype = {
 		this.relationAddedHooks.push(hookFnc);
 	},
 	
+	addAnnotationRemovedHook: function(hookFnc) {
+		this.annotationRemovedHooks.push(hookFnc);
+	},
+	
 	/**
 	 * @public
 	 *
@@ -265,7 +273,7 @@ WikiTextParser.prototype = {
 	 	anno += "]]";
 	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.relationAddedHooks.size(); ++i) {
-	 		this.relationAddedHooks[i](posInfo[0], posInfo[1], name);
+	 		this.relationAddedHooks[i](posInfo[0], posInfo[0] + posInfo[2], name);
 	 	}
 	 },
 
@@ -290,7 +298,7 @@ WikiTextParser.prototype = {
 	 	anno += "]]";
 	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.categoryAddedHooks.size(); ++i) {
-	 		this.categoryAddedHooks[i](posInfo[0], posInfo[1], name);
+	 		this.categoryAddedHooks[i](posInfo[0], posInfo[0] + posInfo[2], name);
 	 	}
 	 },
 
@@ -785,7 +793,8 @@ WikiTextParser.prototype = {
 	 *
 	 * @private
 	 *
-	 * Removes the annotation from the internal arrays.
+	 * Removes the annotation from the internal arrays. The hooks for removed
+	 * annotations are called.
 	 *
 	 * @param WtpAnnotation annotation The annotation that is removed.
 	 *
@@ -808,6 +817,10 @@ WikiTextParser.prototype = {
 				break;
 			}
 		}
+		for (var i = 0; i < this.annotationRemovedHooks.size(); ++i) {
+	 		this.annotationRemovedHooks[i](annotation);
+	 	}
+		
 	},
 
 	/**
