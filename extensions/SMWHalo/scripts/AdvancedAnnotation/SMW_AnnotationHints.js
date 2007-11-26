@@ -55,9 +55,16 @@ createContent: function() {
 	                        '(i)Infos for the annotation mode.',
 	                        '' , true));
 	tb.append(tb.createText('ah-wikitext-msg', '', '' , true));
+
+	tb.append(tb.createButton('ah-savewikitext-btn',
+							  gLanguage.getMessage('AH_SAVE_ANNOTATIONS'), 
+							  'smwhgAdvancedAnnotation.saveAnnotations()', 
+							  '' , true));
+	
 	tb.finishCreation();
 	
 	this.annohintcontainer.contentChanged();
+	$('ah-savewikitext-btn').disable();
 },
 
 showMessageAndWikiText: function(message, wikiText) {
