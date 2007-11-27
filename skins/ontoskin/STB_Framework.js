@@ -372,8 +372,8 @@ Slider.prototype = {
 	},
 	//if()
 	activateResizing: function() {
-	//Check if semtoolbar is available
-	if(!stb_control.isToolbarAvailable()) return;
+	//Check if semtoolbar is available and action is not annotate
+	if(!stb_control.isToolbarAvailable() || wgAction == 'annotate') return;
 	if(!$('slider')) return;
 	//Load image to the slider div
 	$('slider').innerHTML = '<img id="sliderHandle" src="' +

@@ -19,3 +19,22 @@
 .aam_template_highlight{
 	background-color: #9999ff;
 }
+
+
+#contentcol1 {
+	width: 100%;
+	vertical-align: top;
+}
+#contentcol2 {
+	width: 0%;
+	visibility: hidden;
+	vertical-align: top;
+}
+
+#ontomenuanchor {
+	position: fixed;
+	width: 300px;
+	visibility: visible;
+	bottom: 10px;
+	right: 10px;
+}

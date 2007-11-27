@@ -295,7 +295,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
-		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css');
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "edit");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "annotate");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
 		
 		// serialize the css
 		$jsm->serializeCSS($out);
@@ -312,8 +315,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
-
+			
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js');
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js');
 
 			// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
 			// include images. Changes in the above must always be coordinated with the script!
@@ -374,6 +379,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");			
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_FactboxType.js', "view");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.js', "view", -1, NS_SPECIAL.":".wfMsg('search'));
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");

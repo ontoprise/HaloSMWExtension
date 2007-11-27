@@ -94,28 +94,7 @@ class OntoSkinTemplate extends QuickTemplate {
 
 <?php 	global $wgRequest;
 		global $wgTitle;
-		// display semantic toolbar
-		switch ($wgRequest->getText( 'action' )) {
-			case "edit": ?>
-				<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
-<?php
-				break;
-			case "annotate": ?>
-				<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
-<?php
-				break;
-			case "":
-				if ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')) { ?>
-					<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/semantictoolbar.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; </style>
-<?php }
-
-				break;
-
-			default: ?>
-<?php
-		}
-		?>
-
+?>
 <?php	if($this->data['pagecss'   ]) { ?>
 		<style type="text/css"><?php $this->html('pagecss'   ) ?></style>
 <?php	}
