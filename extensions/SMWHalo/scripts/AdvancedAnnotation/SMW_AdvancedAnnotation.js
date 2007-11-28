@@ -442,6 +442,8 @@ AdvancedAnnotation.prototype = {
 	 * This function is a hook for changed text in the wiki text parser. 
 	 * It updates the anchors with the wiki text offsets in the DOM after text
 	 * has been added or removed.
+	 * If a property-annotation has been changed, it gets the highlight style
+	 * of a new annotation. 
 	 * 
 	 * @param array<int>[3] textModifications
 	 * 			[0]: start index of replacement in original text
@@ -466,10 +468,33 @@ AdvancedAnnotation.prototype = {
 					anchors[i].setAttribute('name', val+offset);
 				}
 			}
+			
+			// If an annotation has been modified, its highlighting should reflect 
+			// the change i.e. the class of the surrounding span has to be changed.
+			var anchor = $('bodyContent').getElementsBySelector('a[name="'+start+'"]');
+			if (anchor.size() == 1) {
+				// anchor with wiki text offset found. A span follows the anchor
+				var wrapperSpan = anchor[0].next('span');
+				if (wrapperSpan) {
+					// The wrapper contains a span with the actual highlight
+					var span = wrapperSpan.down('span');
+					if (span) {
+						var highlightClass = span.getAttribute('class');
+						if (highlightClass == 'aam_prop_highlight') {
+							span.setAttribute('class', 'aam_new_anno_prop_highlight');
+						}
+					}
+				}
+			}
+			
+			$('ah-savewikitext-btn').enable();
+			this.annotationsChanged = true;
 		}
 	},
 	
 	/**
+	 * @private
+	 * 
 	 * Deletes an annotation. The <span> that highlights the text and annotation in 
 	 * the wiki text are removed.
 	 * 
@@ -478,10 +503,78 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	deleteAnnotation: function(id) {
+		var annoDescr = this.findAnnotationWithId(id);
+		if (!annoDescr) {
+			return;
+		}
+		var anno = annoDescr[0];
+		var type = annoDescr[2];
+		
+		// Remove the annotation from the wiki text
+		// => the highlight will be removed in the hook function 
+		//    <removeAnnotationHighlight>
+		var value = "";
+		
+		if (anno.getRepresentation().length != 0) {
+			value = anno.getRepresentation();
+		} else if (anno.getValue) {
+			value = anno.getValue();
+		}
+		anno.remove(value);
+		
+		if (type && type == 'category') {
+			catToolBar.fillList();
+		} else {
+			relToolBar.fillList();
+		}
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Edits an annotation. The <span> that highlights the text has an <id> that
+	 * is used to find the corresponding annotation in the wiki text.
+	 * 
+	 * @param int id
+	 * 		Each <span> has a unique id that is composed of "anno" and this counter.
+	 * 
+	 */
+	editAnnotation: function(id) {
+		var annoDescr = this.findAnnotationWithId(id);
+		if (!annoDescr) {
+			return;
+		}
+		var anno = annoDescr[0];
+		var index = annoDescr[1];
+		var type = annoDescr[2];
+		
+		relToolBar.getselectedItem(index);
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Tries to find an annotation by an id. The <span> that highlights the text
+	 * in the article has an <id> that is used to find the corresponding 
+	 * annotation in the wiki text.
+	 * 
+	 * @param int id
+	 * 		Each <span> has a unique id that is composed of "anno" and this counter.
+	 * 
+	 * @return Array<WtpAnnotation, int, String>[annotation, index, type]
+	 * 			annotation: The annotation which is managed by the WikiTextParser
+	 * 			index: Index of the annotation in the array of annotations in the
+	 * 				   WikiTextParser
+	 * 			type: Type of the annotation i.e. 'category' or 'relation'
+	 * 		  or <null>, if the annotation could not be found
+	 * 
+	 */
+	findAnnotationWithId: function(id) {
 		// The highlighted text is embedded in a span with the given id
 		var wrapper = $('anno'+id+'w');
 		if (!wrapper) {
-			return alert("Corresponding annotation not found.");
+			alert("Corresponding annotation not found.");
+			return null;
 		}
 		// There is a wiki text offset anchor before the wrapper span.
 		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
@@ -494,28 +587,11 @@ AdvancedAnnotation.prototype = {
 		for (var i = 0; i < annotations.length; ++i) {
 			var anno = annotations[i];
 			if (anno.getStart() == annotationStart) {
-				// Remove the annotation from the wiki text
-				// => the highlight will be removed in the hook function 
-				//    <removeAnnotationHighlight>
-				var value = "";
-				
-				if (anno.getRepresentation().length != 0) {
-					value = anno.getRepresentation();
-				} else if (anno.getValue) {
-					value = anno.getValue();
-				}
-				anno.remove(value);
-				break;
+				return [anno, i, type];
 			}
 		}
-		
-		if (type && type == 'category') {
-			catToolBar.fillList();
-		} else {
-			relToolBar.fillList();
-		}
+		return null;		
 	},
-	
 	
 	/**
 	 * @private
@@ -640,8 +716,16 @@ AdvancedAnnotation.unload = function() {
 	
 };
 
+/**
+ * Edits an annotation. The <span> that highlights the text has an <id> that
+ * is used to find the corresponding annotation in the wiki text.
+ * 
+ * @param int id
+ * 		Each <span> has a unique id that is composed of "anno" and this counter.
+ * 
+ */
 AdvancedAnnotation.smwhfEditAnno = function(id) {
-	alert(id);
+	smwhgAdvancedAnnotation.editAnnotation(id);
 };
 
 /**
