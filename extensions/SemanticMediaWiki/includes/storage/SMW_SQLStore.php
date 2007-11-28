@@ -1011,7 +1011,8 @@ class SMWSQLStore extends SMWStore {
 		                    'relation_title'    => 'VARCHAR(255) '.$collation.' NOT NULL',
 		                    'object_namespace'  => 'INT(11) NOT NULL',
 		                    'object_title'      => 'VARCHAR(255) '.$collation.' NOT NULL',
-		                    'object_id'        => 'INT(8) UNSIGNED'), $db, $verbose);
+		                    'object_id'        => 'INT(8) UNSIGNED',
+		                    'rating'			=> 'INT(8)'), $db, $verbose);
 		$this->setupIndex($smw_relations, array('subject_id','relation_title','object_title,object_namespace','object_id'), $db);
 
 		// create attribute table
@@ -1023,7 +1024,8 @@ class SMWSQLStore extends SMWStore {
 		                    'value_unit'        => 'VARCHAR(63) '.$collation.'',
 		                    'value_datatype'    => 'VARCHAR(31) '.$collation.' NOT NULL', /// TODO: remove value_datatype column
 		                    'value_xsd'         => 'VARCHAR(255) '.$collation.' NOT NULL',
-		                    'value_num'         => 'DOUBLE'), $db, $verbose);
+		                    'value_num'         => 'DOUBLE',
+		                    'rating'			=> 'INT(8)'), $db, $verbose);
 		$this->setupIndex($smw_attributes, array('subject_id','attribute_title','value_num','value_xsd'), $db);
 
 		// create table for long string attributes

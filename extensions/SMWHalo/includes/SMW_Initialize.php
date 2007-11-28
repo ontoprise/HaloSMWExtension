@@ -114,8 +114,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWRefactorStatistics'] = $smwgHaloIP . '/specials/SMWRefactorStatistics/SMW_RefactorStatistics.php';
 	$wgSpecialPages['RefactorStatistics'] = array('SMWRefactorStatistics');
 	
-	$wgAutoloadClasses['SMWFindWork'] = $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php';
-	$wgSpecialPages['FindWork'] = array('SMWFindWork');
+	$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
 	
 	// import global functions and remaining AJAX calls
 	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );

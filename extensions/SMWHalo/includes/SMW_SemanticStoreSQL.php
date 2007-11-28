@@ -952,6 +952,23 @@
 
 			DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
+	
+	public function rateAnnotation($subject, $predicate, $object, $rating) {
+		$db =& wfGetDB( DB_MASTER );
+		
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_relations = $db->tableName('smw_relations');
+ 		
+		$res = $db->selectRow($smw_attributes, 'rating', array('subject_title' => $subject, 'attribute_title' => $predicate, 'value_xsd' => $object));
+		if ($res !== false) {
+			$db->update($smw_attributes, array('rating' => (is_numeric($res) ? $res : 0) + $rating), array('subject_title' => $subject, 'attribute_title' => $predicate, 'value_xsd' => $object));
+		} else {
+			$res = $db->selectRow($smw_relations, 'rating', array('subject_title' => $subject, 'relation_title' => $predicate, 'object_title' => $object));
+			if ($res !== false) {
+				$db->update($smw_relations, array('rating' => (is_numeric($res) ? $res : 0) + $rating), array('subject_title' => $subject, 'relation_title' => $predicate, 'object_title' => $object));
+			}  
+		}
+	}
  	
  	public function replaceRedirectAnnotations($verbose = false) {
  		

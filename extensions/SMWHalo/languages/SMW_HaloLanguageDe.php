@@ -386,7 +386,7 @@ protected $smwUserMessages = array(
  	
  	/* SMWFindWork */
  	'findwork' => 'Suche Arbeit',
- 	
+ 	'smw_findwork_docu' => 'Diese Seite zeigt Ihnen Artikel die wahrscheinlich in ihr Interessensgebiet fallen. Viel Spass!', 	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'fehlt',
 	'smw_iqgi_wrongunit' => 'falsche Einheit'

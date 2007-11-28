@@ -12,6 +12,7 @@
  $wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwRSAddHTMLHeader';
+ $wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
  $wgHooks['ParserBeforeStrip'][] = 'smwRegisterQueryResultEditor'; // register the <ask> parser hook
  // register ajax calls
 
@@ -21,7 +22,8 @@
  $wgAjaxExportList[] = 'smwfGetBotParameters';
  $wgAjaxExportList[] = 'smwfGetRegisteredBots';
  $wgAjaxExportList[] = 'smwfGetGardeningIssueClasses';
-
+ $wgAjaxExportList[] = 'smwfSendAnnotationRatings';
+ 
  // global functions
 
  // OntologyBrowser scripts callback
@@ -267,5 +269,44 @@ function smwRSAddHTMLHeader(& $out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/RefactorPreview/refactorpreview.css', "all", -1, NS_SPECIAL.":RefactorStatistics");
 	
 	return true;
+}
+
+function smwFWAddHTMLHeader(& $out) {
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":FindWork");
+		
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":FindWork");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":FindWork");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/FindWork/findwork.js', "all", -1, NS_SPECIAL.":FindWork");
+		
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":FindWork");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":FindWork");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/FindWork/findwork.js', "all", -1, NS_SPECIAL.":FindWork");
+	}
+
+	
+	
+	return true;
+}
+
+function smwfSendAnnotationRatings($json) {
+	// TODO: has to be replaced by *real* JSON decoding. >= PHP 5.2.0
+	$ratings = array();
+	$listOFRatings = substr($json, 1, strlen($json) - 2);
+	preg_match_all("/\[([^]]*)\]/", $listOFRatings, $ratings);
+	foreach($ratings[1] as $r) {
+		list($subject, $predicate, $object, $rating) = split(",", $r);
+		smwfGetSemanticStore()->rateAnnotation(trim(str_replace("\"", "", $subject)),
+											   trim(str_replace("\"", "", $predicate)), 
+											   trim(str_replace("\"", "", $object)),
+											   intval(str_replace("\"", "", $rating)));
+	}
+	return "ratings saved.";
 }
 ?>

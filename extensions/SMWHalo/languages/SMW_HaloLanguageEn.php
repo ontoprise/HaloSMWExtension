@@ -415,7 +415,7 @@ clicking the big arrows between the columns.',
  	
  	/* SMWFindWork */
  	'findwork' => 'Find work',
- 	
+ 	'smw_findwork_docu' => 'This page predicts that you will enjoy editing some of these articles. Have fun!', 	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',
 	'smw_iqgi_wrongunit' => 'wrong unit'
