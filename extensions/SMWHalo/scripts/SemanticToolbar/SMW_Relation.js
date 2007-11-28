@@ -155,11 +155,15 @@ cancel: function(){
 
 enableAnnotation: function(enable) {
 	if (enable) {
-		$('rel-menu-annotate').show();
-		$('rel-menu-has-part').show();
+		if ($('rel-menu-annotate'))
+			$('rel-menu-annotate').show();
+		if ($('rel-menu-has-part'))
+			$('rel-menu-has-part').show();
 	} else {
-		$('rel-menu-annotate').hide();
-		$('rel-menu-has-part').hide();
+		if ($('rel-menu-annotate'))
+			$('rel-menu-annotate').hide();
+		if ($('rel-menu-has-part'))
+			$('rel-menu-has-part').hide();
 	}
 },
 
@@ -235,13 +239,22 @@ newItem: function() {
 							 SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
 	                         true));
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	
+	var repr = "";
+	if (wgAction == 'annotate') {
+		repr = selection;
+	}
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+	
 	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 				];
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
 	tb.finishCreation();
+	if (wgAction == 'annotate') {
+		$('rel-show').disable();
+	}
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
@@ -733,7 +746,10 @@ newPart: function() {
 	                         SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', '', '' , true));
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), 
+	                         (wgAction == 'annotate') ? selection : '',
+	                         '', '', true));
 	var links = [['relToolBar.addPartOfRelation()',gLanguage.getMessage('ADD'), 'rel-confirm', 
 	                                               gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
@@ -741,6 +757,10 @@ newPart: function() {
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
 	tb.finishCreation();
+	if (wgAction == 'annotate') {
+		$('rel-show').disable();
+	}
+	
 	gSTBEventActions.initialCheck($("relation-content-box"));
 
 	//Sets Focus on first Element
@@ -859,7 +879,27 @@ getselectedItem: function(selindex) {
 			tb.append(renameAll);
 		}
 		tb.append(valueInputs);
-		tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), relation.getRepresentation(), '', '', true));
+		
+		// In the Advanced Annotation Mode the representation can not be changed
+		var repr = relation.getRepresentation(); 
+		if (wgAction == 'annotate') {
+			if (repr == '') {
+				// embrace further values
+				var values = relation.getSplitValues();
+				repr = values[0];
+				if (values.size() > 1) {
+					repr += ' (';
+					for (var i = 1; i < values.size(); ++i) {
+						repr += values[i];
+						if (i < values.size()-1) {
+							repr += ","
+						}
+					}
+					repr += ')';
+				}
+			}
+		}
+		tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
 
 		var links = [['relToolBar.changeItem('+selindex+')',gLanguage.getMessage('CHANGE'), 'rel-confirm', 
 		                                                    gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
@@ -869,6 +909,9 @@ getselectedItem: function(selindex) {
 		tb.append(tb.createLink('rel-links', links, '', true));
 		
 		tb.finishCreation();
+		if (wgAction == 'annotate') {
+			$('rel-show').disable();
+		}
 		gSTBEventActions.initialCheck($("relation-content-box"));
 
 		//Sets Focus on first Element
