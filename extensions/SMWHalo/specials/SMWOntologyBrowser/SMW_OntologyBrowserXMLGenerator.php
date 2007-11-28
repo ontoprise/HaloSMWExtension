@@ -136,13 +136,7 @@ public static function encapsulateAsPropertyList(array & $properties) {
 			$count++;
 		}
 	}
-	/*foreach($inheritedProperties as $t) {
-		if ($t instanceof Title) {
-			$indirectIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t); 
-			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $indirectIssues);
-			$count++;
-		}
-	}*/
+	
 	return $propertiesXML == '' ? "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>" : "<propertyList>".$propertiesXML."</propertyList>";
 }
 
