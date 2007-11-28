@@ -4,4 +4,247 @@
  *
  * Author: kai
  */
+ global $smwgHaloIP;
+ require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_SuggestStatistics.php');
+ 
+ class SMWSuggestStatisticsSQL extends SMWSuggestStatistics {
+ 	
+ 	public function getLastEditedPages($botID, $gi_class, $gi_type, $username, $requestoptions) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$page = $db->tableName('page');
+ 		$revision = $db->tableName('revision');
+ 		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
+ 		
+ 		$sqlCond = "";
+		if ($botID != NULL) {
+			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
+		}
+		if ($gi_class != NULL) {
+			$sqlCond .= 'gi_class = '.$gi_class.' AND ';
+		}
+		if ($gi_type != NULL) {
+			$sqlCond .= 'gi_type = '.$gi_type.' AND ';
+		}
+		$sqlCond .= 'TRUE';
+				
+		if ($username == NULL) {
+				$res = $db->query('SELECT DISTINCT p1_id AS id FROM '.$smw_gardeningissues.' WHERE '.$sqlCond.' ORDER BY RAND() LIMIT '.$requestoptions->limit);
+		} else {
+		
+	 			$res = $db->query('SELECT DISTINCT rev_page AS id FROM '.$revision.' JOIN '.$smw_gardeningissues.
+								' ON rev_page = p1_id LEFT JOIN '.$page.' ON page_id = p1_id ' .
+								' WHERE page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).
+								' ORDER BY rev_timestamp DESC LIMIT '.$requestoptions->limit);
+			
+		}
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromID($row->id);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function getLastEditPagesOfUndefinedCategories($username, $requestoptions) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$categorylinks = $db->tableName('categorylinks');
+ 		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
+ 		
+ 		$sql_options = $this->getSQLOptions($requestoptions,'title');
+		$limit = $sql_options['LIMIT'] != NULL ? "LIMIT ".$sql_options['LIMIT'] : "";
+		$offset = $sql_options['OFFSET'] != NULL ? "OFFSET ".$sql_options['OFFSET'] : "";
+		$orderby = $sql_options['ORDER BY'] != NULL ? "ORDER BY ".$sql_options['ORDER BY'] : "";
+		$optionText = $orderby.' '.$limit.' '.$offset;
+		
+			
+ 		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
+ 		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.
+ 							' WHERE gi_type = '.SMW_GARDISSUE_CATEGORY_UNDEFINED.' AND p1_title IN (SELECT category FROM smw_fw_categories) '.$optionText);
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, $row->namespace);
+			}
+		}
+		$db->freeResult($res);
+		$this->dropVirtualTableForCategoriesOfLastEditedPages($db);
+		return $result;
+ 	}
+ 	
+ 	public function getLastEditPagesOfUndefinedProperties($username, $requestoptions) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$page = $db->tableName('page');
+ 		$revision = $db->tableName('revision');
+ 		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
+ 		$smw_attributes = $db->tableName('smw_attributes');		
+		$smw_relations = $db->tableName('smw_relations');
+		$smw_nary = $db->tableName('smw_nary');
+		
+	 	$res = $db->query(	'SELECT DISTINCT attribute_title AS title FROM '.$revision.' JOIN '.$smw_attributes.
+							' ON rev_page = subject_id JOIN '.$smw_gardeningissues.' ON attribute_title = p1_title ' .
+							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).
+						' UNION ' .
+							' SELECT DISTINCT relation_title AS title FROM '.$revision.' JOIN '.$smw_relations.
+							' ON rev_page = subject_id JOIN '.$smw_gardeningissues.' ON relation_title = p1_title ' .
+							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).
+						' UNION ' .
+							'SELECT DISTINCT attribute_title AS title FROM '.$revision.' JOIN '.$smw_nary.
+							' ON rev_page = subject_id JOIN '.$smw_gardeningissues.' ON attribute_title = p1_title ' .
+							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).
+						' ORDER BY title LIMIT '.$requestoptions->limit);
+			
+		
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function getLastEditedPagesOfSameCategory($botID, $gi_class, $gi_type, $username, $requestoptions) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$categorylinks = $db->tableName('categorylinks');
+ 		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
+ 		
+ 		$sql_options = $this->getSQLOptions($requestoptions,'title');
+		$limit = $sql_options['LIMIT'] != NULL ? "LIMIT ".$sql_options['LIMIT'] : "";
+		$offset = $sql_options['OFFSET'] != NULL ? "OFFSET ".$sql_options['OFFSET'] : "";
+		$orderby = $sql_options['ORDER BY'] != NULL ? "ORDER BY ".$sql_options['ORDER BY'] : "";
+		$optionText = $orderby.' '.$limit.' '.$offset;
+		
+		$sqlCond = "";
+		if ($botID != NULL) {
+			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
+		}
+		if ($gi_class != NULL) {
+			$sqlCond .= 'gi_class = '.$db->addQuotes($gi_class).' AND ';
+		}
+		if ($gi_type != NULL) {
+			$sqlCond .= 'gi_type = '.$db->addQuotes($gi_type).' AND ';
+		}
+		$sqlCond .= 'TRUE';
+		
+ 		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
+ 		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.', '.$categorylinks.'' .
+ 							' WHERE '.$sqlCond.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$optionText);
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, $row->namespace);
+			}
+		}
+		$db->freeResult($res);
+		$this->dropVirtualTableForCategoriesOfLastEditedPages($db);
+		return $result;
+ 	}
+ 	
+ 	public function getAnnotationsForRating($limit, $unrated = true) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$smw_attributes = $db->tableName('smw_attributes');		
+		$smw_relations = $db->tableName('smw_relations');
+		$smw_nary = $db->tableName('smw_nary');
+		if ($unrated) $where = 'WHERE rating IS NULL'; else $where = 'WHERE rating IS NOT NULL';
+ 		$res = $db->select($smw_attributes, array('subject_title', 'attribute_title', 'value_xsd'), array('rating' => NULL), 'SMW:getAnnotationsWithoutRating', array('ORDER BY' => 'RAND()', 'LIMIT' => $limit));
+ 		$res = $db->query('(SELECT subject_title AS subject, attribute_title AS predicate, value_xsd AS object FROM '.$smw_attributes. ' '.$where.') ' .
+ 							'UNION ' .
+ 						   '(SELECT subject_title AS subject, relation_title AS predicate, object_title AS object FROM '.$smw_relations.' '.$where.') ORDER BY RAND() LIMIT '.$limit);
+ 		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array($row->subject, $row->predicate, $row->object);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function getLowRatedAnnotations($username, $requestoptions) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$smw_attributes = $db->tableName('smw_attributes');		
+		$smw_relations = $db->tableName('smw_relations');
+		$revision = $db->tableName('revision');
+		
+		if ($username == NULL) {
+			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating IS NOT NULL) ' .
+ 							'UNION ' .
+ 								'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating IS NOT NULL) ' .
+ 							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
+		} else {
+ 			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating IS NOT NULL AND rev_user_text = '.$db->addQuotes($username). ') ' .
+ 							'UNION ' .
+ 								'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating IS NOT NULL AND rev_user_text = '.$db->addQuotes($username). ') ' .
+ 							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
+		}			
+ 		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, $row->namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	/**
+ 	 * Creates a temporary table called 'smw_fw_categories' which contains all categories of 
+ 	 * articles the user $username has edited.
+ 	 * 
+ 	 * @param $username
+ 	 * @param & $db
+ 	 */
+ 	private function createVirtualTableForCategoriesOfLastEditedPages($username, & $db) {
+ 		
+ 		$revision = $db->tableName('revision');
+ 		$pages = $db->tableName('page');
+ 		$categorylinks = $db->tableName('categorylinks');
+ 		
+ 		
+ 		global $smwgDefaultCollation;
+ 		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_fw_categories (category VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForCategoriesOfLastEditedPages' );
+		
+		
+ 		
+		$db->query('INSERT INTO smw_fw_categories (category) SELECT DISTINCT cl_to FROM '.$revision.' JOIN '.$categorylinks.
+							' ON rev_page = cl_from WHERE rev_user_text = '.$db->addQuotes($username).' ORDER BY rev_timestamp DESC');
+	
+ 	}
+ 	
+ 	/**
+ 	 * Drops the temporary table 'smw_fw_categories'.
+ 	 */
+ 	private function dropVirtualTableForCategoriesOfLastEditedPages(& $db) {
+		$db->query('DROP TABLE smw_fw_categories');
+ 	}
+ 	
+ 	private function getSQLOptions($requestoptions, $valuecol = NULL) {
+		$sql_options = array();
+		if ($requestoptions !== NULL) {
+			if ($requestoptions->limit >= 0) {
+				$sql_options['LIMIT'] = $requestoptions->limit;
+			}
+			if ($requestoptions->offset > 0) {
+				$sql_options['OFFSET'] = $requestoptions->offset;
+			}
+			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
+				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
+			}
+		}
+		return $sql_options;
+	}
+ }
 ?>

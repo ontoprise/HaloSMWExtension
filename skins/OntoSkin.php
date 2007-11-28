@@ -278,8 +278,9 @@ class OntoSkinTemplate extends QuickTemplate {
 			$this->data['nav_urls']['smw_viewinOB'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'entitytitle='.$wgTitle->getText().'&ns='.$wgTitle->getNsText()) );
 		}
 		$this->data['nav_urls']['gardening'] = array( 'href' => Skin::makeSpecialUrl( 'Gardening' ) );
+		$this->data['nav_urls']['findwork'] = array( 'href' => Skin::makeSpecialUrl( 'FindWork' ) );
 		$this->data['nav_urls']['queryinterface'] = array( 'href' => Skin::makeSpecialUrl( 'QueryInterface' ) );
-		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'gardening', 'queryinterface') as $special ) {
+		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'gardening', 'findwork', 'queryinterface') as $special ) {
 
 			if($this->data['nav_urls'][$special]) {
 				?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
