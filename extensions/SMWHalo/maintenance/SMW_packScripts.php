@@ -66,7 +66,9 @@
 
  	 // scripts which will be packed in one JS file (in this order!)
 	 $scripts = array(
+	 				  'effects.js' => MIT_LICENSE_SCRIPTACULOUS,
 	 				  'slider.js' => MIT_LICENSE_SCRIPTACULOUS,
+	 				  'dragdrop.js' => MIT_LICENSE_SCRIPTACULOUS,
 	 				  'STB_Framework.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'STB_Divcontainer.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'wick.js' => WICK_LICENSE,
@@ -83,13 +85,14 @@
 	 				  'SMW_Relation.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Properties.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_DragAndResize.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_FactboxType.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'CombinedSearch.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMWEditInterface.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'obSemToolContribution.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  /*,
-	 				  'SMW_AnnotationHints.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'edit_area_loader.js',
+	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  ,
+	 				  'SMW_AnnotationHints.js' => GPL_LICENSE_ONTOPRISE
+	 				  /*'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
 	 				  );
    	buildScripts($outputFile, $scripts);
