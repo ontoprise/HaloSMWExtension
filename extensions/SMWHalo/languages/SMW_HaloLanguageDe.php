@@ -139,6 +139,13 @@ protected $smwUserMessages = array(
 	'smw_ob_undefined_type' => '*undefinierter Typ*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
 	
+	'smw_ob_hasnumofsubcategories' => 'Anzahl Unterkategorien',
+	'smw_ob_hasnumofinstances' => 'Anzahl Instanzen',
+	'smw_ob_hasnumofproperties' => 'Anzahl Properties',
+	'smw_ob_hasnumofpropusages' => 'Property wurd $1-mal annotiert.',
+	'smw_ob_hasnumoftargets' => 'Instanz wurde $1-mal verlinkt.',
+	'smw_ob_hasnumoftempuages' => 'Template wurde $1-mal benutzt.',
+	
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Subkategorie auf gleicher Ebene hinzufügen',

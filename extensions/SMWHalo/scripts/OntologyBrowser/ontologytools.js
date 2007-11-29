@@ -16,9 +16,11 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+// commandIDs
 var SMW_OB_COMMAND_ADDSUBCATEGORY = 1;
 var SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL = 2;
-var SMW_OB_COMMAND_ADDSUBCATEGORY_RENAME = 3;
+var SMW_OB_COMMAND_SUBCATEGORY_RENAME = 3;
 
 var SMW_OB_COMMAND_ADDSUBPROPERTY = 4;
 var SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL = 5;
@@ -29,15 +31,31 @@ var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
 
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
+
+// Event types
 var OB_SELECTIONLISTENER = 'selectionChanged';
 var OB_REFRESHLISTENER = 'refresh';
 
+/**
+ * Event Provider. Supports following events:
+ * 
+ *  1. selectionChanged
+ *  2. refresh
+ */
 var OBEventProvider = Class.create();
 OBEventProvider.prototype = {
 	initialize: function() {
 		this.listeners = new Array();
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adds a listener.
+	 * 
+	 * @param listener 
+	 * @param type
+	 */
 	addListener: function(listener, type) {
 		if (this.listeners[type] == null) {
 			this.listeners[type] = new Array();
@@ -47,17 +65,43 @@ OBEventProvider.prototype = {
 		}
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Removes a listener.
+	 * 
+	 * @param listener 
+	 * @param type
+	 */
 	removeListener: function(listener, type) {
 		if (this.listeners[type] == null) return;
 		this.listeners[type] = this.listeners[type].without(listener);
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Fires selectionChanged event. The listener method 
+	 * must have the name 'selectionChanged' with the following
+	 * signature:
+	 * 
+	 * @param id ID of selected element in DOM/XML tree.
+	 * @param title Title of selected element
+	 * @param ns namespace
+	 * @param node in HTML DOM tree.
+	 */
 	fireSelectionChanged: function(id, title, ns, node) {
 		this.listeners[OB_SELECTIONLISTENER].each(function (l) { 
 			l.selectionChanged(id, title, ns, node);
 		});
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Fires refresh event. The listener method 
+	 * must have the name 'refresh'
+	 */
 	fireRefresh: function() {
 		this.listeners[OB_REFRESHLISTENER].each(function (l) { 
 			l.refresh();
@@ -68,12 +112,28 @@ OBEventProvider.prototype = {
 // create instance of event provider
 var selectionProvider = new OBEventProvider();	
 
+/**
+ * Class which allows modification of wiki articles
+ * via AJAX calls.
+ */
 var OBArticleCreator = Class.create();
 OBArticleCreator.prototype = { 
 	initialize: function() {
 		this.pendingIndicator = new OBPendingIndicator();
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Creates an article
+	 * 
+	 * @param title Title of article
+	 * @param content Text which is used when article is created
+	 * @param optionalText Text which is appended when article already exists.
+	 * @param creationComment comment
+	 * @param callback Function called when creation has finished successfully.
+	 * @param node HTML node used for displaying a pending indicator.
+	 */
 	createArticle : function(title, content, optionalText, creationComment,
 	                         callback, node) {
 		
@@ -108,6 +168,16 @@ OBArticleCreator.prototype = {
 		              
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Deletes an article
+	 * 
+	 * @param title Title of article
+	 * @param reason reason
+	 * @param callback Function called when creation has finished successfully.
+	 * @param node HTML node used for displaying a pending indicator.
+	 */
 	deleteArticle: function(title, reason, callback, node) {
 		
 		function ajaxResponseDeleteArticle(request) {
@@ -127,6 +197,17 @@ OBArticleCreator.prototype = {
 		              ajaxResponseDeleteArticle.bind(this));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Renames an article
+	 * 
+	 * @param oldTitle Old title of article
+	 * @param newTitle New title of article
+	 * @param reason string
+	 * @param callback Function called when creation has finished successfully.
+	 * @param node HTML node used for displaying a pending indicator.
+	 */
 	renameArticle: function(oldTitle, newTitle, reason, callback, node) {
 		
 		function ajaxResponseRenameArticle(request) {
@@ -149,6 +230,9 @@ OBArticleCreator.prototype = {
 }
 var articleCreator = new OBArticleCreator();
 
+/**
+ * Modifies the wiki ontology and internal OB model.
+ */
 var OBOntologyModifier = Class.create();
 OBOntologyModifier.prototype = { 
 	initialize: function() {
@@ -156,6 +240,15 @@ OBOntologyModifier.prototype = {
 		this.count = 0;
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adds a new subcategory
+	 * 
+	 * @param subCategoryTitle Title of new subcategory (must not exist!)
+	 * @param superCategoryTitle Title of supercategory
+	 * @param superCategoryID ID of supercategory in OB data model (XML)
+	 */
 	addSubcategory: function(subCategoryTitle, superCategoryTitle, superCategoryID) {
 		function callback() {
 			var subCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(subCategoryTitle));
@@ -170,6 +263,15 @@ OBOntologyModifier.prototype = {
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adds a new category as sibling of another.
+	 * 
+	 * @param newCategoryTitle Title of new category (must not exist!)
+	 * @param siblingCategoryTitle Title of sibling
+	 * @param sibligCategoryID ID of siblig category in OB data model (XML)
+	 */
 	addSubcategoryOnSameLevel: function(newCategoryTitle, siblingCategoryTitle, sibligCategoryID) {
 		function callback() {
 			var newCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(newCategoryTitle));
@@ -186,6 +288,15 @@ OBOntologyModifier.prototype = {
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Renames a category.
+	 * 
+	 * @param newCategoryTitle New category title
+	 * @param categoryTitle Old category title
+	 * @param categoryID ID of category in OB data model (XML)
+	 */
 	renameCategory: function(newCategoryTitle, categoryTitle, categoryID) {
 		function callback() {
 			this.renameCategoryNode(categoryID, newCategoryTitle);
@@ -197,6 +308,15 @@ OBOntologyModifier.prototype = {
 		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adds a new subproperty
+	 * 
+	 * @param subPropertyTitle Title of new subproperty (must not exist!)
+	 * @param superPropertyTitle Title of superproperty
+	 * @param superPropertyID ID of superproperty in OB data model (XML)
+	 */
 	addSubproperty: function(subPropertyTitle, superPropertyTitle, superPropertyID) {
 		function callback() {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(subPropertyTitle));
@@ -211,6 +331,15 @@ OBOntologyModifier.prototype = {
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adds a new property as sibling of another.
+	 * 
+	 * @param newPropertyTitle Title of new property (must not exist!)
+	 * @param siblingPropertyTitle Title of sibling
+	 * @param sibligPropertyID ID of siblig property in OB data model (XML)
+	 */
 	addSubpropertyOnSameLevel: function(newPropertyTitle, siblingPropertyTitle, sibligPropertyID) {
 		function callback() {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(newPropertyTitle));
@@ -229,6 +358,15 @@ OBOntologyModifier.prototype = {
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Renames a property.
+	 * 
+	 * @param newPropertyTitle New property title
+	 * @param oldPropertyTitle Old property title
+	 * @param propertyID ID of property in OB data model (XML)
+	 */
 	renameProperty: function(newPropertyTitle, oldPropertyTitle, propertyID) {
 		function callback() {
 			this.renamePropertyNode(propertyID, newPropertyTitle);
@@ -240,9 +378,22 @@ OBOntologyModifier.prototype = {
 		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY')+oldPropertyTitle, gLanguage.getMessage('PROPERTY')+newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
 	
-	addSchemaProperty: function(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID) {
+	/**
+	 * @public
+	 * 
+	 * Adds a new property with schema information.
+	 * 
+	 * @param propertyTitle Title of property
+	 * @param minCard Minimum cardinality
+	 * @param maxCard Maximum cardinality
+	 * @param rangeOrTypes Array of range categories or types.
+	 * @param builtinTypes Array of all existing builtin types.
+	 * @param domainCategoryTitle Title of domain category
+	 * @param domainCategoryID ID of domain category in OB data model (XML)
+	 */
+	addSchemaProperty: function(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, domainCategoryTitle, domainCategoryID) {
 		function callback() {
-			var newPropertyXML = GeneralXMLTools.createDocumentFromString(this.createSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, selectedTitle, selectedID));
+			var newPropertyXML = GeneralXMLTools.createDocumentFromString(this.createSchemaProperty(propertyTitle, minCard, maxCard, rangeOrTypes, builtinTypes, domainCategoryTitle, domainCategoryID));
 			dataAccess.OB_cachedProperties.documentElement.removeAttribute('isEmpty');
 			dataAccess.OB_cachedProperties.documentElement.removeAttribute('textToDisplay');
 			GeneralXMLTools.importNode(dataAccess.OB_cachedProperties.documentElement, newPropertyXML.documentElement, true);
@@ -266,15 +417,24 @@ OBOntologyModifier.prototype = {
 			}
 		}
 		content += "\n[[SMW_SP_HAS_TYPE::"+rangeTypeStr+"]]";
-		rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+selectedTitle+"; "+gLanguage.getMessage('CATEGORY')+c+"]]" });
+		rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+domainCategoryTitle+"; "+gLanguage.getMessage('CATEGORY')+c+"]]" });
 		if (rangeCategories.length == 0) {
-			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+selectedTitle+"]]";
+			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+domainCategoryTitle+"]]";
 		}
 		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+propertyTitle, '',   
 			                   content,
-							 gLanguage.getMessage('CREATE_PROPERTY'), callback.bind(this), $(selectedID));
+							 gLanguage.getMessage('CREATE_PROPERTY'), callback.bind(this), $(domainCategoryID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Renames an instance.
+	 * 
+	 * @param newInstanceTitle
+	 * @param oldInstanceTitle
+	 * @param instanceID ID of instance node in OB data model (XML)
+	 */
 	renameInstance: function(newInstanceTitle, oldInstanceTitle, instanceID) {
 		function callback() {
 			this.renameInstanceNode(newInstanceTitle, instanceID);
@@ -286,6 +446,14 @@ OBOntologyModifier.prototype = {
 		articleCreator.renameArticle(oldInstanceTitle, newInstanceTitle, "OB", callback.bind(this), $(instanceID));
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Deletes an instance.
+	 * 
+	 * @param instanceTitle
+	 * @param instanceID ID of instance node in OB data model (XML)
+	 */
 	deleteInstance: function(instanceTitle, instanceID) {
 		function callback() {
 			this.deleteInstanceNode(instanceID);
@@ -297,16 +465,31 @@ OBOntologyModifier.prototype = {
 		articleCreator.deleteArticle(instanceTitle, "OB", callback.bind(this), $(instanceID));
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Creates a conceptTreeElement for internal OB data model (XML)
+	 */
 	createCategoryNode: function(subCategoryTitle) {
 		this.count++;
 		return '<conceptTreeElement title="'+subCategoryTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Creates a propertyTreeElement for internal OB data model (XML)
+	 */
 	createPropertyNode: function(subPropertyTitle) {
 		this.count++;
 		return '<propertyTreeElement title="'+subPropertyTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Creates a property element for internal OB data model (XML)
+	 */
 	createSchemaProperty: function(propertyTitle, minCard, maxCard, typeRanges, builtinTypes, selectedTitle, selectedID) {
 		this.count++;
 		rangeTypes = "";
@@ -323,17 +506,34 @@ OBOntologyModifier.prototype = {
 		return '<property title="'+propertyTitle+'" minCard="'+minCard+'" maxCard="'+maxCard+'">'+rangeTypes+'</property>';
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Renames an instance node in internal OB data model (XML)
+	 */
 	renameInstanceNode: function(newInstanceTitle, instanceID) {
 		var instanceNode = GeneralXMLTools.getNodeById(dataAccess.OB_cachedInstances, instanceID);
 		instanceNode.removeAttribute("title");
 		instanceNode.setAttribute("title", newInstanceTitle);
 	},
 	
+	
+	/**
+	 * @private 
+	 * 
+	 * Deletes an instance node in internal OB data model (XML)
+	 */
 	deleteInstanceNode: function(instanceID) {
 		var instanceNode = GeneralXMLTools.getNodeById(dataAccess.OB_cachedInstances, instanceID);
 		instanceNode.parentNode.removeChild(instanceNode);
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Inserts a category node in internal OB data model (XML) as subnode of another category node.
+	 *
+	 */
 	insertCategoryNode: function(superCategoryID, subCategoryXML) {
 		var superCategoryNodeCached = superCategoryID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, superCategoryID) : dataAccess.OB_cachedCategoryTree.documentElement;
 		var superCategoryNodeDisplayed = superCategoryID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, superCategoryID) : dataAccess.OB_currentlyDisplayedTree.documentElement;
@@ -349,6 +549,12 @@ OBOntologyModifier.prototype = {
 		GeneralXMLTools.importNode(superCategoryNodeDisplayed, subCategoryXML.documentElement, true);
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Inserts a property node in internal OB data model (XML) as subnode of another category node.
+	 *
+	 */
 	insertPropertyNode: function(superpropertyID, subpropertyXML) {
 		var superpropertyNodeCached = superpropertyID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, superpropertyID) : dataAccess.OB_cachedPropertyTree.documentElement;
 		var superpropertyNodeDisplayed = superpropertyID != null ? GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, superpropertyID) : dataAccess.OB_currentlyDisplayedTree.documentElement;
@@ -364,6 +570,12 @@ OBOntologyModifier.prototype = {
 		GeneralXMLTools.importNode(superpropertyNodeDisplayed, subpropertyXML.documentElement, true);
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Renames a category node in internal OB data model (XML)
+	 *
+	 */
 	renameCategoryNode: function(categoryID, newCategoryTitle) {
 		var categoryNodeCached = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, categoryID);
 		var categoryNodeDisplayed = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, categoryID);
@@ -374,6 +586,12 @@ OBOntologyModifier.prototype = {
 	
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Renames a property node in internal OB data model (XML)
+	 *
+	 */
 	renamePropertyNode: function(propertyID, newPropertyTitle) {
 		var propertyNodeCached = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, propertyID);
 		var propertyNodeDisplayed = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, propertyID);
@@ -387,8 +605,22 @@ OBOntologyModifier.prototype = {
 // global object for ontology modification
 var ontologyTools = new OBOntologyModifier();
 
+/**
+ * Input field validator. Provides an automatic validation 
+ * triggering after the user finished typing.
+ */
 var OBInputFieldValidator = Class.create();
 OBInputFieldValidator.prototype = {
+	
+	/**
+	 * @public
+	 * Constructor
+	 * 
+	 * @param id ID of INPUT field
+	 * @param isValid Flag if the input field is initially valid.
+	 * @param control Control object (derived from OBOntologySubMenu)
+	 * @param validate_fnc Validation function
+	 */
 	initialize: function(id, isValid, control, validate_fnc) {
 		this.id = id;
 		this.validate_fnc = validate_fnc;
@@ -419,6 +651,10 @@ OBInputFieldValidator.prototype = {
 		if ($(this.id) != null) this.registerListeners();
 	},
 	
+	/**
+	 * @private 
+	 * Registers some listeners on the INPUT field.
+	 */
 	registerListeners: function() {
 		var e = $(this.id);
 		this.keyListener = this.onKeyEvent.bindAsEventListener(this);
@@ -428,6 +664,10 @@ OBInputFieldValidator.prototype = {
 		Event.observe(e, "blur",  this.blurListener);
 	},
 	
+	/**
+	 * @private 
+	 * De-registers the listeners.
+	 */
 	deregisterListeners: function() {
 		var e = $(this.id);
 		Event.stopObserving(e, "keyup", this.keyListener);
@@ -435,6 +675,13 @@ OBInputFieldValidator.prototype = {
 		Event.stopObserving(e, "blur", this.blurListener);
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Triggers a timer which starts validation
+	 * when a certain time has elapsed after the last key
+	 * was pressed by the user.
+	 */
 	onKeyEvent: function(event) {
 			
 		this.istyping = true;
@@ -478,6 +725,8 @@ OBInputFieldValidator.prototype = {
 	},
 	/**
 	 * @private
+	 * 
+	 * Callback which calls itsself after timeout, if typing continues.
 	 */
 	timedCallback: function(fnc){
 		if(this.istyping){
@@ -491,6 +740,12 @@ OBInputFieldValidator.prototype = {
 		}
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Calls validation function and control.enable,
+	 * if validation has a defined value (true/false)
+	 */
 	validate: function() {
 		this.lastValidation = $F(this.id);
 		this.isValid = this.validate_fnc(this.id);
@@ -501,12 +756,27 @@ OBInputFieldValidator.prototype = {
 	
 }
 
+/**
+ * Validates if a title exists (or does not exist).
+ * 
+ */
 var OBInputTitleValidator = Class.create();
 OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
+	
+	/**
+	 * @public
+	 * Constructor
+	 * 
+	 * @param id ID of INPUT element
+ 	 * @param ns namespace for which existance is tested.
+ 	 * @param mustExist If true, existance is validated. Otherwise non-existance.
+ 	 * @param control Control object (derived from OBOntologySubMenu)
+	 */
 	initialize: function(id, ns, mustExist, control) {
 		this.OBInputFieldValidator(id, false, control, this._checkIfArticleExists.bind(this));
 		this.ns = ns;
 		this.mustExist = mustExist;
+		this.pendingElement = new OBPendingIndicator();
 	},
 	
 	/**
@@ -516,7 +786,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 	 */
 	_checkIfArticleExists: function(id) {
 		function ajaxResponseExistsArticle (id, request) {
-			pendingElement.hide();
+			this.pendingElement.hide();
 			var answer = request.responseText;
 			var regex = /(true|false)/;
 			var parts = answer.match(regex);
@@ -537,13 +807,13 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 				
 			}
 		};
-		var pendingElement = new OBPendingIndicator();
+		
 		var pageName = $F(this.id);
 		if (pageName == '') {
 			this.control.enable(false, this.id);
 			return;
 		}
-		pendingElement.show(this.id)
+		this.pendingElement.show(this.id)
 		var pageNameWithNS = this.ns == '' ? pageName : this.ns+":"+pageName;
 		sajax_do_call('smwfExistsArticle', 
 		              [pageNameWithNS], 
@@ -554,18 +824,26 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		
 });
 
-var OBOntologyGUITools = Class.create();
-OBOntologyGUITools.prototype = { 
+/**
+ * Base class for OntologyBrowser submenu GUI elements.
+ */
+var OBOntologySubMenu = Class.create();
+OBOntologySubMenu.prototype = { 
+	
+	/**
+	 * @param id ID of DIV element containing the menu
+	 * @param objectname Name of JS object (in order to refer in HTML links to it)
+	 */
 	initialize: function(id, objectname) {
-		this.OBOntologyGUITools(id, objectname);
+		this.OBOntologySubMenu(id, objectname);
 	},
 	
-	OBOntologyGUITools: function(id, objectname) {
+	OBOntologySubMenu: function(id, objectname) {
 		this.id = id;
 		this.objectname = objectname;
 				
 		this.commandID = null;
-		this.selectedTitle = null;
+		
 		
 		this.envContainerID = null;
 		this.oldHeight = 0;
@@ -577,22 +855,18 @@ OBOntologyGUITools.prototype = {
 	/**
 	 * @public
 	 * 
-	 * Shows subview.
+	 * Shows menu subview.
+	 * 
 	 * @param commandID command to execute.
-	 * @param node selected node.
+	 * @param envContainerID ID of container which contains the menu.
 	 */
-	showContent: function(commandID, selectedTitle, envContainerID) {
+	showContent: function(commandID, envContainerID) {
 		if (this.menuOpened) {
 			this._cancel();
 		}
 		this.commandID = commandID;
-		this.selectedTitle = selectedTitle;
 		this.envContainerID = envContainerID;
-		$(this.id).replace('<div id="'+this.id+'">' +
-						this.getUserDefinedControls() +
-						'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
-						'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
-					  '</div>');
+		$(this.id).replace(this.getUserDefinedControls());
 					  
 		// adjust parent container size
 		this.oldHeight = $(envContainerID).getHeight();
@@ -603,30 +877,26 @@ OBOntologyGUITools.prototype = {
 		this.menuOpened = true;		
 	},
 	
+	/**
+	 * @public
+	 * 
+	 * Adjusts size if menu is modified.
+	 */
 	adjustSize: function() {
 		var menuBarHeight = $(this.id).getHeight();
-		var newHeight = (this.oldHeight-menuBarHeight-5)+"px";
+		var newHeight = (this.oldHeight-menuBarHeight-2)+"px";
 		$(this.envContainerID).setStyle({ height: newHeight});
 		
 	},
-	/**
-	 * @abstract
-	 */
-	selectionChanged: function(id, title, ns, node) {
-		
-	},
+	
+	
 	/**
 	 * @public
 	 * 
 	 * Close subview
 	 */
 	_cancel: function() {
-		
-		
-		// deregister listeners
-		
-		
-		
+			
 		// reset height
 		var newHeight = (this.oldHeight-2)+"px";
 		$(this.envContainerID).setStyle({ height: newHeight});
@@ -636,43 +906,62 @@ OBOntologyGUITools.prototype = {
 		this.menuOpened = false;
 	},
 	
+	/**
+	 * @abstract
+	 * 
+	 * Set validators for input fields.
+	 */
+	setValidators: function() {
 		
-	
-	
-	
-	enableCommand: function(b, errorMessage) {
-		if (b) {
-			$(this.id+'_apply_ontologytools').replace('<a style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools" onclick="'+this.objectname+'.doCommand()">'+gLanguage.getMessage(this.getCommandText())+'</a>');
-		} else {
-			$(this.id+'_apply_ontologytools').replace('<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage(errorMessage)+'</span>');
-		}
 	},
 	
+	/**
+	 * @abstract 
+	 * 
+	 * Returns HTML string with user defined content of th submenu.
+	 */
+	getUserDefinedControls: function() {
+		
+	},
+	
+	/**
+	 * @abstract 
+	 * 
+	 * Executes a command
+	 */
+	doCommand: function() {
+		
+	},
+	/**
+	 * @abstract
+	 * 
+	 * Enables or disables a INPUT field and (not necessarily) the command button. 
+	 */
 	enable: function(b, id) {
-		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
-	
-		this.enableCommand(b, b ?  this.getCommandText() : $F(id) == '' ? 'OB_ENTER_TITLE': 'OB_TITLE_EXISTS');
-		$(id).setStyle({
-			backgroundColor: bg_color
-		});
-		
+		// no impl
 	},
 	
+	/**
+	 * @abstract
+	 * 
+	 * Resets a INPUT field and disables (not necessarily) the command button.
+	 */
 	reset: function(id) {
-		this.enableCommand(false, 'OB_ENTER_TITLE');
-		$(id).setStyle({
-				backgroundColor: '#FFF'
-		});
+		// no impl
 	}
-		
+			
 }
 
-var OBCatgeoryGUITools = Class.create();
-OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
+/**
+ * CategoryTree submenu
+ */
+var OBCatgeorySubMenu = Class.create();
+OBCatgeorySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	initialize: function(id, objectname) {
-		this.OBOntologyGUITools(id, objectname);
+		this.OBOntologySubMenu(id, objectname);
 	
 		this.titleInputValidator = null;
+		this.selectedTitle = null;
 		this.selectedID = null;
 	
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
@@ -698,7 +987,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 				this.cancel();
 				break;
 			}
-			case SMW_OB_COMMAND_ADDSUBCATEGORY_RENAME: {
+			case SMW_OB_COMMAND_SUBCATEGORY_RENAME: {
 				ontologyTools.renameCategory($F(this.id+'_input_ontologytools'), this.selectedTitle, this.selectedID);
 				this.cancel();
 				break;
@@ -709,7 +998,7 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	getCommandText: function() {
 		switch(this.commandID) {
-			case SMW_OB_COMMAND_ADDSUBCATEGORY_RENAME: return 'OB_RENAME';
+			case SMW_OB_COMMAND_SUBCATEGORY_RENAME: return 'OB_RENAME';
 			case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: // fall through
 			case SMW_OB_COMMAND_ADDSUBCATEGORY: return 'OB_CREATE';
 			
@@ -719,7 +1008,14 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	getUserDefinedControls: function() {
-		return '<input style="display:block; width:60%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>';
+		return '<div id="'+this.id+'">' +
+					'<div style="display: block; height: 22px;">' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
+					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+					(this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? ' | <a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' : '') +
+					'</div>' +
+	            '<div id="preview_category_tree"/></div>';
 	},
 	
 	setValidators: function() {
@@ -733,15 +1029,89 @@ OBCatgeoryGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	
 	cancel: function() {
 		this.titleInputValidator.deregisterListeners();
-		
 		this._cancel();
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * Do preview 
+	 */
+	preview: function() {
+		var pendingElement = new OBPendingIndicator();
+		pendingElement.show($('preview_category_tree'));
+		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_CATEGORY_NS], this.pastePreview.bind(this, pendingElement));
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Pastes preview data
+	 */
+	pastePreview: function(pendingElement, request) {
+		pendingElement.hide();
+		var table = '<table border="0" class="menuBarConceptTree">'+request.responseText+'</table>';
+		$('preview_category_tree').innerHTML = table;
+		this.adjustSize();
+	},
+	
+	/**
+	 * @private 
+	 * 
+	 * Replaces the command button with an enabled/disabled version.
+	 * 
+	 * @param b enable/disable
+	 * @param errorMessage message string defined in SMW_LanguageXX.js
+	 */
+	enableCommand: function(b, errorMessage) {
+		if (b) {
+			$(this.id+'_apply_ontologytools').replace('<a style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools" ' +
+						'onclick="'+this.objectname+'.doCommand()">'+gLanguage.getMessage(this.getCommandText())+'</a>');
+		} else {
+			$(this.id+'_apply_ontologytools').replace('<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">' + 
+						gLanguage.getMessage(errorMessage)+'</span>');
+		}
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * Enables or disables an INPUT field and enables or disables command button.
+	 * 
+	 * @param enabled/disable
+	 * @param id ID of input field
+	 */
+	enable: function(b, id) {
+		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
+	
+		this.enableCommand(b, b ?  this.getCommandText() : $F(id) == '' ? 'OB_ENTER_TITLE': 'OB_TITLE_EXISTS');
+		$(id).setStyle({
+			backgroundColor: bg_color
+		});
+		
+	},
+	
+	/**
+	 * Resets an input field and disables the command button. 
+	 * 
+	 * @param id ID of input field
+	 */
+	reset: function(id) {
+		this.enableCommand(false, 'OB_ENTER_TITLE');
+		$(id).setStyle({
+				backgroundColor: '#FFF'
+		});
 	}
 });
 
-var OBPropertyGUITools = Class.create();
-OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
+
+/**
+ * PropertyTree submenu
+ */
+var OBPropertySubMenu = Class.create();
+OBPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	initialize: function(id, objectname) {
-		this.OBOntologyGUITools(id, objectname);
+		this.OBOntologySubMenu(id, objectname);
 		this.selectedTitle = null;
 		this.selectedID = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
@@ -787,7 +1157,13 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	getUserDefinedControls: function() {
-		return '<input style="display:block; width:60%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>';
+		return '<div id="'+this.id+'">' +
+					'<div style="display: block; height: 22px;">' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
+					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+					(this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? ' | <a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' : '') +
+	            '</div>' +  '<div id="preview_property_tree"/></div>';
 	},
 	
 	setValidators: function() {
@@ -803,13 +1179,72 @@ OBPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.titleInputValidator.deregisterListeners();
 		
 		this._cancel();
+	},
+	
+	preview: function() {
+		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_PROPERTY_NS], this.pastePreview.bind(this));
+	},
+	
+	pastePreview: function(request) {
+		var table = '<table border="0" class="menuBarPropertyTree">'+request.responseText+'</table>';
+		$('preview_property_tree').innerHTML = table;
+		this.adjustSize();
+	},
+	
+	/**
+	 * @private 
+	 * 
+	 * Replaces the command button with an enabled/disabled version.
+	 * 
+	 * @param b enable/disable
+	 * @param errorMessage message string defined in SMW_LanguageXX.js
+	 */
+	enableCommand: function(b, errorMessage) {
+		if (b) {
+			$(this.id+'_apply_ontologytools').replace('<a style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools" onclick="'+this.objectname+'.doCommand()">'+gLanguage.getMessage(this.getCommandText())+'</a>');
+		} else {
+			$(this.id+'_apply_ontologytools').replace('<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage(errorMessage)+'</span>');
+		}
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * Enables or disables an INPUT field and enables or disables command button.
+	 * 
+	 * @param enabled/disable
+	 * @param id ID of input field
+	 */
+	enable: function(b, id) {
+		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
+	
+		this.enableCommand(b, b ?  this.getCommandText() : $F(id) == '' ? 'OB_ENTER_TITLE': 'OB_TITLE_EXISTS');
+		$(id).setStyle({
+			backgroundColor: bg_color
+		});
+		
+	},
+	
+	/**
+	 * Resets the input field and disables the command button. 
+	 * 
+	 * @param id ID of input field
+	 */
+	reset: function(id) {
+		this.enableCommand(false, 'OB_ENTER_TITLE');
+		$(id).setStyle({
+				backgroundColor: '#FFF'
+		});
 	}
 });
 
-var OBInstanceGUITools = Class.create();
-OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
+/**
+ * Instance list submenu
+ */
+var OBInstanceSubMenu = Class.create();
+OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	initialize: function(id, objectname) {
-		this.OBOntologyGUITools(id, objectname);
+		this.OBOntologySubMenu(id, objectname);
 			
 		this.selectedTitle = null;
 		this.selectedID = null;
@@ -851,7 +1286,13 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	getUserDefinedControls: function() {
-		return '<input style="display:block; width:60%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>';
+		return '<div id="'+this.id+'">' +
+					'<div style="display: block; height: 22px;">' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
+					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a> | ' +
+					'<a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' +
+	            '</div>' +  '<div id="preview_instance_list"/></div>';
 	},
 	
 	setValidators: function() {
@@ -867,13 +1308,72 @@ OBInstanceGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.titleInputValidator.deregisterListeners();
 		
 		this._cancel();
+	},
+	
+	preview: function() {
+		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_INSTANCE_NS], this.pastePreview.bind(this));
+	},
+	
+	pastePreview: function(request) {
+		var table = '<table border="0" class="menuBarInstance">'+request.responseText+'</table>';
+		$('preview_instance_list').innerHTML = table;
+		this.adjustSize();
+	},
+	
+	/**
+	 * @private 
+	 * 
+	 * Replaces the command button with an enabled/disabled version.
+	 * 
+	 * @param b enable/disable
+	 * @param errorMessage message string defined in SMW_LanguageXX.js
+	 */
+	enableCommand: function(b, errorMessage) {
+		if (b) {
+			$(this.id+'_apply_ontologytools').replace('<a style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools" onclick="'+this.objectname+'.doCommand()">'+gLanguage.getMessage(this.getCommandText())+'</a>');
+		} else {
+			$(this.id+'_apply_ontologytools').replace('<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage(errorMessage)+'</span>');
+		}
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * Enables or disables an INPUT field and enables or disables command button.
+	 * 
+	 * @param enabled/disable
+	 * @param id ID of input field
+	 */
+	enable: function(b, id) {
+		var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF' : '#F00';
+	
+		this.enableCommand(b, b ?  this.getCommandText() : $F(id) == '' ? 'OB_ENTER_TITLE': 'OB_TITLE_EXISTS');
+		$(id).setStyle({
+			backgroundColor: bg_color
+		});
+		
+	},
+	
+	/**
+	 * Resets the input field and disables the command button. 
+	 * 
+	 * @param id ID of input field
+	 */
+	reset: function(id) {
+		this.enableCommand(false, 'OB_ENTER_TITLE');
+		$(id).setStyle({
+				backgroundColor: '#FFF'
+		});
 	}
 });
 
-var OBSchemaPropertyGUITools = Class.create();
-OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
+/**
+ * Schema Property submenu
+ */
+var OBSchemaPropertySubMenu = Class.create();
+OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	initialize: function(id, objectname) {
-		this.OBOntologyGUITools(id, objectname);
+		this.OBOntologySubMenu(id, objectname);
 	
 		
 		this.selectedTitle = null;
@@ -931,7 +1431,8 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	},
 	
 	getUserDefinedControls: function() {
-		return '<table style="background-color: inherit"><tr>' +
+		return '<div id="'+this.id+'">' +
+					 '<table class="menuBarProperties"><tr>' +
 						'<td width="60px;">'+gLanguage.getMessage('NAME')+'</td>' +
 						'<td><input id="'+this.id+'_propertytitle_ontologytools" type="text" tabIndex="101"/></td>' +
 					'</tr>' +
@@ -944,13 +1445,15 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 						'<td><input id="'+this.id+'_maxCard_ontologytools" type="text" size="5" tabIndex="103"/></td>' +
 					'</tr>' +
 				'</table>' +
-				'<table id="typesAndRanges" style="background-color: inherit"></table>' +
-				'<table style="background-color: inherit">' +
+				'<table class="menuBarProperties" id="typesAndRanges"></table>' +
+				'<table class="menuBarProperties">' +
 					'<tr>' +
 						'<td><a onclick="'+this.objectname+'.addType()">'+gLanguage.getMessage('ADD_TYPE')+'</a></td>' +
 						'<td><a onclick="'+this.objectname+'.addRange()">'+gLanguage.getMessage('ADD_RANGE')+'</a></td>' +
 					'</tr>' +
-				'</table>';
+				'</table>' + '<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
+					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+	            '</div>';
 	},
 	
 	setValidators: function() {
@@ -960,12 +1463,22 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.rangeValidators = [];
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Check if max cardinality is an integer > 0
+	 */
 	checkMaxCard: function() {
 		var maxCard = $F(this.id+'_maxCard_ontologytools');
 		var valid = maxCard == '' || (maxCard.match(/^\d+$/) != null && parseInt(maxCard) > 0) ;
 		return valid;
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Check if min cardinality is an integer >= 0
+	 */
 	checkMinCard: function() {
 		var minCard = $F(this.id+'_minCard_ontologytools');
 		var valid = minCard == '' || (minCard.match(/^\d+$/) != null && parseInt(minCard) >= 0) ;
@@ -1005,12 +1518,40 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		});
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Replaces the command button with an enabled/disabled version.
+	 * 
+	 * @param b enable/disable
+	 * @param errorMessage message string defined in SMW_LanguageXX.js
+	 */
+	enableCommand: function(b, errorMessage) {
+		if (b) {
+			$(this.id+'_apply_ontologytools').replace('<a style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools" onclick="'+this.objectname+'.doCommand()">'+gLanguage.getMessage(this.getCommandText())+'</a>');
+		} else {
+			$(this.id+'_apply_ontologytools').replace('<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage(errorMessage)+'</span>');
+		}
+	},
+	
+	/**
+	 * @abstract
+	 * 
+	 * Checks if a INPUTs are valid
+	 * 
+	 * @return true/false
+	 */
 	allIsValid: function() {
 		var valid =  this.titleInputValidator.isValid && this.maxCardValidator.isValid &&  this.minCardValidator.isValid;
 		this.rangeValidators.each(function(e) { if (e!=null) valid &= e.isValid });
 		return valid;
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Requests builtin types from wiki via AJAX call.
+	 */
 	requestTypes: function() {
 				
 		function fillTypesCallback(request) {
@@ -1023,22 +1564,41 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		              fillTypesCallback.bind(this));	
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Creates new type selection box
+	 * 
+	 * @return HTML
+	 */
 	newTypeInputBox: function() {
 		var toReplace = '<select id="typeRange'+this.count+'_ontologytools" name="types'+this.count+'">';
 		for(var i = 1; i < this.builtinTypes.length; i++) {
 			toReplace += '<option>'+this.builtinTypes[i]+'</option>';
 		}
-		toReplace += '</select><img src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', false)"/>';
+		toReplace += '</select><img style="cursor: pointer; cursor: hand;" src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', false)"/>';
 	
 		return toReplace;
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Creates new range category selection box with auto-completion.
+	 * 
+	 * @return HTML
+	 */
 	newRangeInputBox: function() {
 		var toReplace = '<input class="wickEnabled" typeHint="14" type="text" id="typeRange'+this.count+'_ontologytools" tabIndex="'+(this.count+104)+'"/>';
-		toReplace += '<img src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', true)"/>';
+		toReplace += '<img style="cursor: pointer; cursor: hand;" src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', true)"/>';
 		return toReplace;
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Adds additional type selection box in typesRange container.
+	 */
 	addType: function() {
 		if (this.builtinTypes == null) {
 			return;
@@ -1052,6 +1612,11 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.adjustSize();
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Adds additional range category selection box in typesRange container.
+	 */
 	addRange: function() {
 		// tbody already in DOM?
 		var addTo = $('typesAndRanges').firstChild == null ? $('typesAndRanges') : $('typesAndRanges').firstChild;
@@ -1069,6 +1634,11 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 		this.adjustSize();
 	},
 	
+	/**
+	 * @private 
+	 * 
+	 * Removes type or range category selection box from typesRange container.
+	 */
 	removeTypeOrRange: function(id, isRange) {
 		
 		if (isRange) {		
@@ -1089,7 +1659,7 @@ OBSchemaPropertyGUITools.prototype = Object.extend(new OBOntologyGUITools(), {
 	}
 });
 
-var obCategoryMenuProvider = new OBCatgeoryGUITools('categoryTreeMenu', 'obCategoryMenuProvider');
-var obPropertyMenuProvider = new OBPropertyGUITools('propertyTreeMenu', 'obPropertyMenuProvider');
-var obInstanceMenuProvider = new OBInstanceGUITools('instanceListMenu', 'obInstanceMenuProvider');
-var obSchemaPropertiesMenuProvider = new OBSchemaPropertyGUITools('schemaPropertiesMenu', 'obSchemaPropertiesMenuProvider');
+var obCategoryMenuProvider = new OBCatgeorySubMenu('categoryTreeMenu', 'obCategoryMenuProvider');
+var obPropertyMenuProvider = new OBPropertySubMenu('propertyTreeMenu', 'obPropertyMenuProvider');
+var obInstanceMenuProvider = new OBInstanceSubMenu('instanceListMenu', 'obInstanceMenuProvider');
+var obSchemaPropertiesMenuProvider = new OBSchemaPropertySubMenu('schemaPropertiesMenu', 'obSchemaPropertiesMenuProvider');

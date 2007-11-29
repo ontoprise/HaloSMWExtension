@@ -162,6 +162,13 @@ clicking the big arrows between the columns.',
 	'smw_ob_undefined_type' => '*undefined type*',
 	'smw_ob_hideinstances' => 'Hide Instances',
 	
+	'smw_ob_hasnumofsubcategories' => 'Number of subcategories',
+	'smw_ob_hasnumofinstances' => 'Number of instances',
+	'smw_ob_hasnumofproperties' => 'Number of properties',
+	'smw_ob_hasnumofpropusages' => 'Property is annotated $1 times',
+	'smw_ob_hasnumoftargets' => 'Instance is linked $1 times.',
+	'smw_ob_hasnumoftempuages' => 'Template is used $1 times',
+	
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category on same level',

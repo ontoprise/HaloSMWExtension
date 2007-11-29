@@ -465,7 +465,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			return;
 		}
 		
-		obCategoryMenuProvider.showContent(commandID, this.selectedCategory, 'categoryTree');
+		obCategoryMenuProvider.showContent(commandID, 'categoryTree');
 	},
 	
 	
@@ -620,7 +620,7 @@ OBInstanceActionListener.prototype = {
 			if (doDelete) obInstanceMenuProvider.doCommand(commandID);
 			return;
 		}
-		obInstanceMenuProvider.showContent(commandID, this.selectedInstance, 'instanceList');
+		obInstanceMenuProvider.showContent(commandID,  'instanceList');
 	},
 	/**
 	 * Called when a supercategory of an instance is selected.
@@ -748,9 +748,9 @@ OBInstanceActionListener.prototype = {
 			Effect.Fold("instanceContainer");
 			Effect.Fold($("leftArrow"));
 		} else {
-			new Effect.Unfold('instanceContainer');
+			new Effect.Grow('instanceContainer');
 			$("hideInstancesButton").innerHTML = gLanguage.getMessage('HIDE_INSTANCES');
-			new Effect.Unfold($("leftArrow"));
+			new Effect.Grow($("leftArrow"));
 		}
 	}
 	
@@ -787,7 +787,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
 			return;
 		}
-		obPropertyMenuProvider.showContent(commandID, this.selectedProperty, 'propertyTree');
+		obPropertyMenuProvider.showContent(commandID, 'propertyTree');
 	},
 	
   select: function (event, node, propertyID, propertyName) {
@@ -916,7 +916,7 @@ OBSchemaPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}
-		obSchemaPropertiesMenuProvider.showContent(commandID, this.selectedCategory, 'relattributes');
+		obSchemaPropertiesMenuProvider.showContent(commandID, 'relattributes');
 	},
 	
 	navigateToEntity: function(event, node, attributeName, editmode) {

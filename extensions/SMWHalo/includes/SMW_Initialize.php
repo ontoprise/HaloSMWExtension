@@ -111,8 +111,8 @@ function smwgHaloSetupExtension() {
 
 	$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
 	
-	$wgAutoloadClasses['SMWRefactorStatistics'] = $smwgHaloIP . '/specials/SMWRefactorStatistics/SMW_RefactorStatistics.php';
-	$wgSpecialPages['RefactorStatistics'] = array('SMWRefactorStatistics');
+	//$wgAutoloadClasses['SMWRefactorStatistics'] = $smwgHaloIP . '/specials/SMWRefactorStatistics/SMW_RefactorStatistics.php';
+	//$wgSpecialPages['RefactorStatistics'] = array('SMWRefactorStatistics');
 	
 	$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
 	

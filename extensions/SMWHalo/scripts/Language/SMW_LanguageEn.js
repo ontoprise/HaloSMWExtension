@@ -152,6 +152,7 @@ var wgLanguageStrings = {
 	'OB_CREATE'	  			  : 'Create',
 	'OB_RENAME'	  			  : 'Rename',
 	'OB_DELETE'	  			  : 'Delete',
+	'OB_PREVIEW' 			  : 'Preview',
 	'OB_TITLE_EXISTS'		  : 'Title exists!',
 	'OB_ENTER_TITLE'		  : 'Enter title',
 	'OB_SELECT_CATEGORY'	  : 'Select category first',

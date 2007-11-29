@@ -156,11 +156,12 @@ a.selectedSwitch {
 	background-color: #99AABB;
 }
 
-#menuBarConceptTree {
+
+.menuBarConceptTree {
 	background-color: #BBCCDD;
 }
 
-#menuBarInstance {
+.menuBarInstance {
 	background-color: #DDBBBB;
 }
 
@@ -168,7 +169,7 @@ a.selectedSwitch {
 	background-color: #BB9999;
 }
 
-#menuBarProperties {
+.menuBarProperties {
 	background-color: #DDBB88;
 }
 
@@ -176,7 +177,8 @@ a.selectedSwitch {
 	background-color: #BB9966;
 }
 
-#menuBarPropertyTree{
+
+.menuBarPropertyTree{
 	background-color: #DDBB88;
 }
 
