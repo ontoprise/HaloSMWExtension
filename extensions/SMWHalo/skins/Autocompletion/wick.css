@@ -28,15 +28,15 @@ top:0px;
 /*left:0px;*/
 display:none;
 padding:0;
-
+border: 1px solid #AAA;
 }
 
 .floater td {
 font-family: Gill, Helvetica, sans-serif;
 font-size:10px;
-background-color:white;
 border:1px inset #979797;
 color:black;
+background-color:#FBFBBA;
 }
 
 .matchedSmartInputItem {
