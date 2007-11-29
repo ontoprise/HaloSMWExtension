@@ -423,6 +423,26 @@ clicking the big arrows between the columns.',
  	/* SMWFindWork */
  	'findwork' => 'Find work',
  	'smw_findwork_docu' => 'This page predicts that you will enjoy editing some of these articles. Have fun!', 	
+ 	'smw_findwork_header' => 'The article list will consider your interests based on your edit history and open gardening issues. If you don\'t know what to choose, simply press $1. The system will select something for you.<br>If you want to be more specific you can choose a field where you want to get articles from: ',
+ 	'smw_findwork_rateannotations' => '<h2>Rate annotations</h2>Are these annotations correct? Please take a second and rate them.<br><br>',
+ 	'smw_findwork_yes' => 'Yes',
+ 	'smw_findwork_no' => 'No',
+ 	'smw_findwork_dontknow' => 'Don\'t know',
+ 	'smw_findwork_sendratings' => 'Send ratings',
+ 	'smw_findwork_getsomework' => 'Get some work',
+ 	
+ 	'smw_findwork_select' => 'Select',
+ 	'smw_findwork_generalconsistencyissues' => 'General consistency problems',
+ 	'smw_findwork_missingannotations' => 'Missing Annotations',
+ 	'smw_findwork_nodomainandrange' => 'Properties without type/domain',
+ 	'smw_findwork_instwithoutcat' => 'Instances without category',
+ 	'smw_findwork_categoryleaf' => 'Category leafs',
+ 	'smw_findwork_subcategoryanomaly' => 'Subcategory anomalies',
+ 	'smw_findwork_undefinedcategory' => 'Undefined categories',
+ 	'smw_findwork_undefinedproperty' => 'Undefined properties',
+ 	'smw_findwork_lowratedannotations' => 'Pages with low rated annotations',
+ 	
+ 	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',
 	'smw_iqgi_wrongunit' => 'wrong unit'

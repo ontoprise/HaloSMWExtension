@@ -38,17 +38,16 @@ function smwfDoSpecialFindWorkPage() {
 			break;
 		}
 		
-		$this->workFields = array('Select...',
-								  'General consistency problems', 
-								  'Missing Annotations', 
-								  'Properties without type/domain',
-								  'Instances without category', 
-								  'Category leafs', 
-								  'Subcategory anomalies',
-								  'Undefined categories', 
-								  'Undefined properties',
-								  'Pages with low rated annotations'
-								  );
+		$this->workFields = array(  wfMsg('smw_findwork_select')."...", 
+								 	wfMsg('smw_findwork_generalconsistencyissues'),
+								 	wfMsg('smw_findwork_missingannotations'),
+								 	wfMsg('smw_findwork_nodomainandrange'), 
+								 	wfMsg('smw_findwork_instwithoutcat'), 
+								 	wfMsg('smw_findwork_categoryleaf'),
+								 	wfMsg('smw_findwork_subcategoryanomaly'), 
+								 	wfMsg('smw_findwork_undefinedcategory'),
+								 	wfMsg('smw_findwork_undefinedproperty'), 
+								 	wfMsg('smw_findwork_lowratedannotations'));
 	}
 	
 		
@@ -69,10 +68,8 @@ function smwfDoSpecialFindWorkPage() {
 		$html = '<p>' . wfMsg('smw_findwork_docu') . "</p>\n";
 		$specialPage = Title::newFromText($this->getName(), NS_SPECIAL);
 		$html .= "<form action=\"".$specialPage->getFullURL()."\">";
-		$html .= "The article list will consider your interests based on your edit history and open gardening issues." .
-				" If you don't know what to choose, simply press <input  name=\"gswButton\" type=\"submit\" value=\"Get some work\"/>. " .
-				"The system will select something for you.<br>If you want to be more specific you can choose a field where you want to get articles from: ";
-		
+		$html .= wfMsg('smw_findwork_header', "<input  name=\"gswButton\" type=\"submit\" value=\"".wfMsg('smw_findwork_getsomework')."\"/>");
+				
 		$html .= "<select name=\"field\">";
 		
 		$i = 0;
@@ -92,8 +89,7 @@ function smwfDoSpecialFindWorkPage() {
 	
 	private function getPageBottom() {
 		
-		$html = '<h2>Rate annotations</h2>';
-		$html .= 'Are these annotations correct? Please take a second and rate them.<br><br>';
+		$html = wfMsg('smw_findwork_rateannotations');
 		$html .= '<form id="ratingform"><table border="0">';
 		
 		// get some rated and unrated annotations
@@ -105,15 +101,15 @@ function smwfDoSpecialFindWorkPage() {
 			$html .= '<td>'.str_replace("_", " ", $a[0]).'</td>';
 			$html .= '<td>'.str_replace("_", " ", $a[1]).'</td>';
 			$html .= '<td>'.str_replace("_", " ", $a[2]).'</td>';
-			$html .= '<td><input type="radio" name="rating'.$i.'" value="1">Yes</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="-1">No</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="0" checked>Don\'t know</input>' .
+			$html .= '<td><input type="radio" name="rating'.$i.'" value="1">'.wfMsg('smw_findwork_yes').'</input>' .
+						  '<input type="radio" name="rating'.$i.'" value="-1">'.wfMsg('smw_findwork_no').'</input>' .
+						  '<input type="radio" name="rating'.$i.'" value="0" checked>'.wfMsg('smw_findwork_dontknow').'</input>' .
 					 '</td>';
 			$html .= '</tr>';
 			$i++;
 		}
 		$html .= '</table></form>';
-		$html .= '<br><input type="button" name="rate" id="sendbutton" value="Send ratings" onclick="findwork.sendRatings()"/>';
+		$html .= '<br><input type="button" name="rate" id="sendbutton" value="'.wfMsg('smw_findwork_sendratings').'" onclick="findwork.sendRatings()"/>';
 		return $html;
 	}
 	
@@ -141,7 +137,8 @@ function smwfDoSpecialFindWorkPage() {
 	    if ($result instanceof Title) {
 	    	return $skin->makeLinkObj($result);
 	    }
-	    return '__undefined_object__: '.$result;
+	    // if no title: return a helpful error message
+	    return '__undefined_object__: "'.$result.'" of class: '.get_class($result);
 	}
 
 	function getResults($options) {
@@ -168,7 +165,7 @@ function smwfDoSpecialFindWorkPage() {
 				case 2: // fall through
 				case 3: // fall through
 				case 4: // fall through
-				case 5:
+				case 5: // fall through
 				case 6: { // show some work of given type. Consider edit history if user is logged in
 							$results = $this->store->getLastEditedPages($botID, $gi_class, $gi_type, $username, $options);
 							if (count($results) == 0) {

@@ -393,7 +393,26 @@ protected $smwUserMessages = array(
  	
  	/* SMWFindWork */
  	'findwork' => 'Suche Arbeit',
- 	'smw_findwork_docu' => 'Diese Seite zeigt Ihnen Artikel die wahrscheinlich in ihr Interessensgebiet fallen. Viel Spass!', 	
+ 	'smw_findwork_docu' => 'Diese Seite zeigt Ihnen Artikel die wahrscheinlich in ihr Interessensgebiet fallen. Viel Spass!',
+ 	'smw_findwork_header' => 'Die Artikel-Liste enthält Artikel basierend auf ihrer Editier-History und offenen Gardening-Problemen. Wenn Sie nicht wissen was sie auswählen sollen, dr&uumlcken Sie einfach $1. Das Wiki w&aumlhlt dann etwas aus.<br>Wenn Sie wollen können Sie das Ergebnis auch genauer eingrenzen: ',
+ 	'smw_findwork_rateannotations' => '<h2>Bewerten Sie Annotationen</h2>Sind diese Annotationen korrekt? Bitte nehmen Sie sich einen Moment Zeit.<br><br>',
+ 	'smw_findwork_yes' => 'Ja',
+ 	'smw_findwork_no' => 'Nein',
+ 	'smw_findwork_dontknow' => 'Weiss nicht',
+ 	'smw_findwork_sendratings' => 'Sende Bewertung',
+ 	'smw_findwork_getsomework' => 'Irgendwelche Arbeit',
+ 	
+ 	'smw_findwork_select' => 'Wähle',
+ 	'smw_findwork_generalconsistencyissues' => 'Allgemeine Konsistenz-Probleme',
+ 	'smw_findwork_missingannotations' => 'Fehlende Annotationen',
+ 	'smw_findwork_nodomainandrange' => 'Properties ohne Domain/Range',
+ 	'smw_findwork_instwithoutcat' => 'Instanzen ohne Kategorie',
+ 	'smw_findwork_categoryleaf' => 'Kategorie-Blätter',
+ 	'smw_findwork_subcategoryanomaly' => 'Subkategorie-Anomalien',
+ 	'smw_findwork_undefinedcategory' => 'Undefinierte Kategorien',
+ 	'smw_findwork_undefinedproperty' => 'Undefinierte Properties',
+ 	'smw_findwork_lowratedannotations' => 'Artikel mit schlechten Annotationen',
+ 	 	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'fehlt',
 	'smw_iqgi_wrongunit' => 'falsche Einheit'
