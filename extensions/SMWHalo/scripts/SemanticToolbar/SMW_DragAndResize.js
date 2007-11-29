@@ -1,35 +1,120 @@
+//Class which holds functionality to make the toolbar draggable and resizeable
 var DragResizeHandler = Class.create();
 DragResizeHandler.prototype = {
 
+/**
+ * @public constructor to initialize class 
+ * 
+ * @param 
+ **/
 initialize: function() {
+	//Object to store scriptacolous' draggable object
 	this.draggable = null;
+	//Object to store the modified scriptacolous' object
 	this.resizeable = null;
 },
 
-callme: function(event){
+/**
+ * @public makes toolbar drag and resizable   
+ * 
+ * @param 
+ * 
+ */
+callme: function(){
+	//Makes the toolbar draggable and resizable 
 	if(wgAction == "annotate"){
-		this.resizeable = new Resizeable('ontomenuanchor',{top: 0, left:10, bottom: 0, right: 10});
+		this.resizeable = new Resizeable('ontomenuanchor',{top: 10, left:10, bottom: 10, right: 10});
 		this.enableDragging();
 	}
 },
-
+/**
+ * @public disables dragging of toolbar  
+ * 
+ * @param 
+ */
 disableDragging: function(){
 	if(this.draggable != null ){
 		this.draggable.destroy()
 		this.draggable = null;
 	}
 },
-
+/**
+ * @public enables dragging of toolbar  
+ * 
+ * @param
+ */
 enableDragging: function(){
 	if(this.draggable == null) {
 		this.draggable = new Draggable('ontomenuanchor', {	handle: 'draggable'});
 	}
-}
+},
+/**
+ * @public adjust size of the ontomenuanchor to the semtoolbar laying above   
+ * 
+ * @param
+ */
+fixAnchorSize: function(){
+	$('ontomenuanchor').setStyle({height: $('semtoolbar').scrollHeight +'px'}); 	
+},
+/**
+ * @public positions the STB at the given coordinates considering how it fits best     
+ * 
+ * @param 	posX
+ * 				desired X position
+ * 			posY 
+ * 				desired Y position
+ */
+setPosition: function(posX,posY){
+	//X-Coordinates
+	var toolbarWidth = $('ontomenuanchor').scrollWidth;
+	//Check if it fits right to the coordinates
+	if( window.innerWidth - posX < toolbarWidth) {
+		//Check if it fits left to the coordinates
+		if( posX < toolbarWidth){
+			// if not place it on the left side of the window
+			$('ontomenuanchor').setStyle({right: '' });
+			$('ontomenuanchor').setStyle({left: '10px'});
+			
+		} else {
+			//if it fits position it left to the coordinates
+			var pos = window.innerWidth - posX;
+			$('ontomenuanchor').setStyle({right: pos + 'px' });
+			$('ontomenuanchor').setStyle({left: ''});
+		}
+	} else {
+		//if it fits position it right to the coordinates
+		var pos = posX;
+		$('ontomenuanchor').setStyle({right: ''});
+		$('ontomenuanchor').setStyle({left: pos  + 'px'});
+	}
+	//Y-Coordinates
+	var toolbarHeight = $('ontomenuanchor').scrollHeight;
+	//Check if it fits bottom to the coordinates
+	if( window.innerHeight - posY < toolbarHeight) {
+		//Check if it fits top to the coordinates
+		if(posY < toolbarHeight){
+			// if not place it on the top side of the window	
+			$('ontomenuanchor').setStyle({bottom: '' });
+			$('ontomenuanchor').setStyle({top: '10px'});
+			
+		} else {
+		var pos = window.innerHeight - posY;
+			//if it fits position it top to the coordinates
+			$('ontomenuanchor').setStyle({bottom: pos + 'px' });
+			$('ontomenuanchor').setStyle({top: ''});
+		}
+	}else {
+		//if it fits position it bottom to the coordinates
+		var pos = posY;
+		$('ontomenuanchor').setStyle({bottom: ''});
+		$('ontomenuanchor').setStyle({top: pos  + 'px'});
+	}
+} 
 
 }
+
 
 // TODO: Check License for Resizeable-Code http://blog.craz8.com/articles/2005/12/01/make-your-divs-resizeable
-
 var Resizeable = Class.create();
 Resizeable.prototype = {
   initialize: function(element) {
@@ -105,6 +190,8 @@ Resizeable.prototype = {
 	      
 	      this.currentDirection = dir;
 	      Event.stop(event);
+	      //This is to fix resizing bug with only style:right on the beginning
+	      //if not set, the left side moves if the right is touched   
 	      $('ontomenuanchor').setStyle({left: $('ontomenuanchor').offsetLeft + 'px'});
 	      smwhg_dragresizetoolbar.disableDragging();
 	  }
@@ -139,6 +226,7 @@ Resizeable.prototype = {
     this.active = false;
     this.resizing = false;
     smwhg_dragresizetoolbar.enableDragging();
+    smwhg_dragresizetoolbar.fixAnchorSize();
   },
   draw: function(event) {
     var pointer = [Event.pointerX(event), Event.pointerY(event)];
@@ -223,6 +311,12 @@ Resizeable.prototype = {
   }
 }
 
-
+//Initialize dragging and resizing functions of stb
 smwhg_dragresizetoolbar = new DragResizeHandler();
 Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
+
+/*
+setTimeout(function() { 
+	setTimeout(smwhg_dragresizetoolbar.posOnXY.bind(smwhg_dragresizetoolbar, 200 , 200),1000);
+},3000);
+//*/
