@@ -187,7 +187,6 @@ Marker.prototype = {
  	* 
  	*/	
 	markNodes: function(){
-		return;
 		this.removeMarkers();
 		var time = new Date();
 		var timestamp1 = time.toGMTString();		
