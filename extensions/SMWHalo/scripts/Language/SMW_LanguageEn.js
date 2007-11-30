@@ -163,6 +163,7 @@ var wgLanguageStrings = {
 	'OB_CONFIRM_INSTANCE_DELETION' : 'Do you really want to remove this article?',
 	'SMW_OB_OPEN' 			  : '(open)',
 	'SMW_OB_EDIT' 			  : '(edit)',
+	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

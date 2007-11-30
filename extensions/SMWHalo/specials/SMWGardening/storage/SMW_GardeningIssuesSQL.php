@@ -11,6 +11,8 @@
  require_once $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php';
  require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
  
+ 
+ 
  class SMWGardeningIssuesAccessSQL extends SMWGardeningIssuesAccess {
  	
  	public function setup($verbose) {
@@ -43,7 +45,7 @@
 			DBHelper::reportProgress("   ... done!\n",$verbose);
  	}
  	
- 	public function clearGardeningIssues($bot_id = NULL, Title $t = NULL) {
+ 	public function clearGardeningIssues($bot_id = NULL, Title $t = NULL, $gi_type = NULL) {
  		$db =& wfGetDB( DB_MASTER );
  		$sqlCond = ' WHERE TRUE ';
  		if ($t != NULL) {
@@ -51,6 +53,9 @@
  		}
  		if ($bot_id != NULL) {
  			$sqlCond .= ' AND bot_id = '.$db->addQuotes($bot_id);
+ 		}
+ 		if ($gi_type != NULL) {
+ 			$sqlCond .= ' AND gi_type = '.$gi_type;
  		}
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
@@ -415,6 +420,82 @@
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
  			'p2_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL));
  	}
+ 	
+ 	
+ 	public function generatePropagationIssuesForCategories($botID, $propagationType) {
+ 		$this->clearGardeningIssues($botID, NULL, $propagationType);
+ 		$db =& wfGetDB( DB_MASTER );
+ 		
+ 		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
+				
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues ( id INT(8) UNSIGNED NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_to (id INT(8) UNSIGNED NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_prop_gardissues_from ( id INT(8) UNSIGNED NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForPropagationIssues' );
+		
+		// initialize with:
+		// 1. All (super-/member-)categories of articles having issues with instances or categories
+		// 2. All domain categories of property articles having issues. 
+		$domainRangePropertyText = smwfGetSemanticStore()->domainRangeHintRelation->getDBkey();             
+		$db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$page.' ' .
+						'JOIN '.$categorylinks.' ON page_title = cl_to ' .
+						'JOIN '.$smw_gardeningissues.' ON p1_id = cl_from ' .
+						'WHERE page_namespace = 14 AND (p1_namespace = 0 OR p1_namespace = 14) AND bot_id = '.$db->addQuotes($botID).')');
+		$db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$smw_nary.' n ' .
+						'JOIN '.$smw_gardeningissues.' ON p1_title = subject_title AND p1_namespace = subject_namespace ' .
+						'JOIN '.$page.' ON page_title = object_title ' .
+						'JOIN '.$smw_nary_relations.' r  ' .
+						'WHERE nary_pos = 0 AND attribute_title = '.$domainRangePropertyText.' AND p1_namespace = '.SMW_NS_PROPERTY.' ' .
+								'AND object_namespace = '.NS_CATEGORY.' AND page_namespace = '.NS_CATEGORY.')');
+		$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues)');
+		
+		// maximum iteration length is maximum category tree depth.
+		do  {
+		
+			$db->query('INSERT INTO smw_prop_gardissues_to (SELECT DISTINCT page_id AS id FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = 14 AND cl_from IN (SELECT id FROM smw_prop_gardissues_from))');
+			$db->query('INSERT INTO smw_prop_gardissues (SELECT * FROM smw_prop_gardissues_to)');
+		
+			$db->query('TRUNCATE TABLE smw_prop_gardissues_from');
+			$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues_to)');
+			
+			// check if there is at least one more new ID. If not, all issues have been propagated to the root level.
+			$res = $db->query('SELECT * FROM smw_prop_gardissues_to LIMIT 1');
+			$nextLevelNotEmpty = $db->numRows( $res ) > 0;
+			$db->freeResult($res);
+			
+			$db->query('TRUNCATE TABLE smw_prop_gardissues_to');
+			
+		} while ($nextLevelNotEmpty);
+		
+		// add propagated issues
+		$res = $db->query('SELECT DISTINCT id FROM smw_prop_gardissues');
+		$results = array();
+		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{	
+				$t = Title::newFromID($row->id);
+				$this->addGardeningIssueAboutArticle($botID, $propagationType, $t);
+				$row = $db->fetchObject($res);
+			}
+		}
+		$db->freeResult($res);
+		
+		// drop virtual tables
+		$db->query('DROP TABLE smw_prop_gardissues');
+		$db->query('DROP TABLE smw_prop_gardissues_to');
+		$db->query('DROP TABLE smw_prop_gardissues_from');
+		return $results;
+ 	}
+ 	
  	
  	
  	

@@ -33,7 +33,7 @@
 		
 	 			$res = $db->query('SELECT DISTINCT rev_page AS id FROM '.$revision.' JOIN '.$smw_gardeningissues.
 								' ON rev_page = p1_id LEFT JOIN '.$page.' ON page_id = p1_id ' .
-								' WHERE page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).
+								' WHERE gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).
 								' ORDER BY rev_timestamp DESC LIMIT '.$requestoptions->limit);
 			
 		}
@@ -131,7 +131,7 @@
 		
  		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
  		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.', '.$categorylinks.'' .
- 							' WHERE '.$sqlCond.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$optionText);
+ 							' WHERE '.$sqlCond.' AND gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$optionText);
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {

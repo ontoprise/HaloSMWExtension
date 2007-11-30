@@ -170,6 +170,16 @@ GeneralBrowserTools.repasteMarkup = function(attribute) {
 	}
 }
 
+GeneralBrowserTools.nextDIV = function(node) {
+	var nextDIV = node.nextSibling;
+		
+ 	// find the next DIV
+	while(nextDIV && nextDIV.nodeName != "DIV") {
+		nextDIV = nextDIV.nextSibling;
+	}
+	return nextDIV
+}
+
 // ------------------------------------------------------
 // General Tools is a Utility class.
 GeneralXMLTools = new Object();

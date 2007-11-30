@@ -14,6 +14,8 @@
  require_once( $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php');
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
  
+
+ 
  class ConsistencyBot extends GardeningBot {
  	
  	
@@ -81,6 +83,9 @@
  		echo "Checking annotation level...";
         $this->checkAnnotationLevel($delay);
  	    echo "done!\n\n";
+ 	    
+ 	    // propagate issues
+ 		SMWGardening::getGardeningIssuesAccess()->generatePropagationIssuesForCategories($this->id, SMW_GARDISSUE_CONSISTENCY_PROPAGATION);
          
  		return NULL;
  		
@@ -173,6 +178,7 @@
  
  // others
 define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
+define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 
  class ConsistencyBotIssue extends GardeningIssue {
  	
@@ -256,8 +262,10 @@ define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
 				return wfMsg('smw_gard_issue_incompatible_supertypes',$text1, $this->value);	
 			case SMW_GARD_ISSUE_CYCLE:
 				return wfMsg('smw_gard_issue_cycle',  $skin != NULL ? $this->explodeTitlesToLinkObjs($skin, $this->value) : $this->value);
+			case SMW_GARDISSUE_CONSISTENCY_PROPAGATION:
+				return wfMsg('smw_gard_issue_contains_further_problems');
 				
-			default: NULL;	
+			default: return "Unknown issue!"; // should not happen	
 		}
 	}
  }

@@ -94,10 +94,10 @@ protected $smwUserMessages = array(
 	/*Messages for Properties Special*/
 	'properties' => 'Properties',
 	'smw_properties_docu' => 'In diesem Wiki gibt es die folgenden Properties:',
-	'smw_attr_type_join' => ' with $1',
-	'smw_properties_sortalpha' => 'Sort alphabetically',
-	'smw_properties_sortmoddate' => 'Sort by modification date',
-	'smw_properties_sorttyperange' => 'Sort by type/range',
+	'smw_attr_type_join' => ' mit $1',
+	'smw_properties_sortalpha' => 'Sortiere alphabetisch',
+	'smw_properties_sortmoddate' => 'Sortiere nach Änderungsdatum',
+	'smw_properties_sorttyperange' => 'Sortiere nach Typ/Range',
 
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
@@ -227,6 +227,7 @@ protected $smwUserMessages = array(
 	'smw_gard_issue_incompatible_supertypes' => 'Das Property $1 hat Superproperties mit inkomptiblen Typen.',
 	
 	'smw_gard_issue_cycle' => 'Zyklus bei: $1',
+	'smw_gard_issue_contains_further_problems' => 'Enthält weitere Probleme',
 	
 	'smw_gardissue_class_covariance' => 'Covariance Probleme',
 	'smw_gardissue_class_undefined' => 'Invollständiges Schema',
@@ -394,7 +395,7 @@ protected $smwUserMessages = array(
  	/* SMWFindWork */
  	'findwork' => 'Suche Arbeit',
  	'smw_findwork_docu' => 'Diese Seite zeigt Ihnen Artikel die wahrscheinlich in ihr Interessensgebiet fallen. Viel Spass!',
- 	'smw_findwork_header' => 'Die Artikel-Liste enthält Artikel basierend auf ihrer Editier-History und offenen Gardening-Problemen. Wenn Sie nicht wissen was sie auswählen sollen, dr&uumlcken Sie einfach $1. Das Wiki w&aumlhlt dann etwas aus.<br>Wenn Sie wollen können Sie das Ergebnis auch genauer eingrenzen: ',
+ 	'smw_findwork_header' => 'Die Artikel-Liste enthält Artikel basierend auf ihrer Editier-History und offenen Gardening-Problemen. Wenn Sie nicht wissen was sie auswählen sollen, drücken Sie einfach $1. Das Wiki wählt dann etwas aus.<br>Wenn Sie wollen konnen Sie das Ergebnis auch genauer eingrenzen: ',
  	'smw_findwork_rateannotations' => '<h2>Bewerten Sie Annotationen</h2>Sind diese Annotationen korrekt? Bitte nehmen Sie sich einen Moment Zeit.<br><br>',
  	'smw_findwork_yes' => 'Ja',
  	'smw_findwork_no' => 'Nein',

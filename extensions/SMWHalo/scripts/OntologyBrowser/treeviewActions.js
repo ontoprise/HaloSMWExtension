@@ -198,8 +198,8 @@ OBTreeActionListener.prototype = {
 			dataAccess.OB_currentlyDisplayedTree = xmlFragmentForDisplayTree;
 		} else {
 			// get element node with children to replace
-			// nextSibling is DIV element
-			htmlNodeToReplace = document.getElementById(idOfChildrenToReplace).nextSibling
+			// one of nextSiblings is DIV element
+			htmlNodeToReplace = GeneralBrowserTools.nextDIV(document.getElementById(idOfChildrenToReplace));
 			
 			// adjust XML structure
 			GeneralXMLTools.removeAllChildNodes(parentOfChildrenToReplaceInCache);
@@ -269,7 +269,7 @@ OBTreeActionListener.prototype = {
 		} else {
 			// get element node with children to replace
 			// nextSibling is DIV element
-			htmlNodeToReplace = document.getElementById(idOfChildrenToReplace).nextSibling
+			htmlNodeToReplace = GeneralBrowserTools.nextDIV(document.getElementById(idOfChildrenToReplace));
 			
 			// adjust XML structure
 			GeneralXMLTools.removeAllChildNodes(parentOfChildrenToReplaceInCache);

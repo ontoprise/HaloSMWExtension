@@ -105,9 +105,7 @@
 					
 					<!-- Shall we expand all the leaves of the treeview ? no by default-->
 					<div>
-						<xsl:apply-templates select="categoryPartition">
-							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
-						</xsl:apply-templates>
+						
 						
 						<xsl:call-template name="setExpansionState"/>			
 							
@@ -116,6 +114,9 @@
 							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
 						</xsl:apply-templates>
 						
+						<xsl:apply-templates select="categoryPartition">
+							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
+						</xsl:apply-templates>
 					</div>
 				</td>
 				
@@ -155,10 +156,7 @@
 					
 					<!-- Shall we expand all the leaves of the treeview ? no by default-->
 					<div>
-						<xsl:apply-templates select="propertyPartition">
-							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
-						</xsl:apply-templates>
-						
+												
 						<xsl:call-template name="setExpansionState"/>			
 							
 						<!-- Thanks to the magic of reccursive calls, all the descendants of the present folder are gonna be built -->
@@ -166,6 +164,9 @@
 							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
 						</xsl:apply-templates>
 						
+						<xsl:apply-templates select="propertyPartition">
+							<xsl:with-param name="rek_depth" select="$rek_depth+1"/>
+						</xsl:apply-templates>
 					</div>
 				</td>
 			</tr>
@@ -473,15 +474,20 @@
 	<xsl:param name="title"/>
 	<xsl:param name="actionListener"/>
 		<xsl:if test="gissues">
+			<xsl:choose>
+			<xsl:when test="count(gissues/gi) = 1 and gissues/gi[@type = 100001]">
+				<!-- Display something in case of propagation -->
+			</xsl:when>
+			<xsl:otherwise>
 			<span class="smwttpersist">
 				<span class="smwtticon">warning.png</span>
 				<span class="smwttcontent">
 				
 				<ul>
 					<xsl:for-each select="gissues/gi">
-					<li>
-						<xsl:value-of select="."/>
-					</li>
+						<li>
+							<xsl:value-of select="."/>
+						</li>
 					</xsl:for-each>
 				</ul>
 			
@@ -491,6 +497,8 @@
 				<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this, '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>', true)</xsl:attribute>
 				{{SMW_OB_EDIT}}
 			</a>
+			</xsl:otherwise>
+			</xsl:choose>
 		</xsl:if>
 	</xsl:template>
 	

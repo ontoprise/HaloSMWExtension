@@ -252,6 +252,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_issue_incompatible_supertypes' => 'The property $1 has superproperties with different datatypes. Please check that they are the same.',
 	
 	'smw_gard_issue_cycle' => 'Cycle at: $1',
+	'smw_gard_issue_contains_further_problems' => 'Contains further problems below',
 	
 	'smw_gardissue_class_covariance' => 'Covariance problems',
 	'smw_gardissue_class_undefined' => 'Incomplete schema',

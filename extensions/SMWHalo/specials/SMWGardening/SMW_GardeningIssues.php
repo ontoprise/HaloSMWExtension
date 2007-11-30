@@ -135,7 +135,14 @@
  	 */
  	public abstract function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value);
  	
- 	 
+ 	/**
+ 	 * Generates propagated GardeningIssues to indicate problems up to the root level. Propagates
+ 	 * all category and instance issues.
+ 	 * 
+ 	 * @param $bot_id ID of bot whose issues should be propagated
+ 	 * @param $propagationType gi_type of propagation issue.
+ 	 */
+ 	public abstract function generatePropagationIssuesForCategories($botID, $propagationType); 
  }
 
 /**
