@@ -60,14 +60,18 @@ class SMWH_AAMParser {
 		// state 1
 		array(
 			array('*','{','*',2),
-			array('*','*','*','wc'),
+			array('*','*','*',8),
 		),
 		
 		// state 2
 		array(
 			array('*','{','n','db',6),
 			array('*','{','t',3),
-			array('*','*','*','pt'),
+			array('*','[[','*','wc'),
+			array('*',']]','*','wc'),
+			array('*','|','*','wc'),
+			array('*',"\n",'*',11),
+			array('*','*','*','pt',8),
 		),
 		
 		// state 3
@@ -92,13 +96,51 @@ class SMWH_AAMParser {
 		// state 6
 		array(
 			array('*','{','*','db',6),
-			array('*','*','*','pt'),
-		),
+			array('*','[[','*','wc'),
+			array('*',']]','*','wc'),
+			array('*','|','*','wc'),
+			array('*',"\n",'*',11),
+			array('*','*','*','pt',8),
+					),
 		
 		// state 7
 		array(
 			array('*','{','*','db',7),
 			array('*','*','*','pp'),
+		),
+				
+		// state 8
+		array(
+			array('*','|','*','wc'),
+			array('*','{','*',1),
+			array('*',"\n",'*',9),
+			array('*','}','*',10),
+			array('*','[[','*','at'),
+			array('*','}}','*','at'),
+			array('*','*','*','wc'),
+		),
+		
+		// state 9
+		array(
+			array('*','|','*','wc'),
+			array('*','}','*',10),
+			array('*',"\n",'*',9),
+			array('*','*','*','at'),
+		),
+		
+		// state 10
+		array(
+			array('*','}','*','pop'),
+			array('*','*','*','at'),
+		),
+		
+		// state 11
+		array(
+			array('*',"\n",'*',11),
+			array('*','[[','*','wc'),
+			array('*',']]','*','wc'),
+			array('*','|','*','wc'),
+			array('*','*','*','pt', 8)
 		)
 	);
 	
@@ -129,6 +171,7 @@ class SMWH_AAMParser {
 		// Search for templates, template parameters and headings
 		$parts = preg_split('/(\{)|'.
 		                    '(\})|'.
+							'(\n)|'.
 		                    '(^======.*?======\s*)|'.
 							'(^=====.*?=====\s*)|'.
 		                    '(^====.*?====\s*)|'.
@@ -137,6 +180,7 @@ class SMWH_AAMParser {
 		                    '(^=.*?=\s*)|'.
 							'(\[+)|'.
 							'(\]\])|'.
+							'(\|)|'.
 		                    '^$/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
@@ -148,7 +192,7 @@ class SMWH_AAMParser {
 		$templateStart = -1;
 		$ignoreTemplates = -1;
 		$tmplDescr = null;
-		$lastWasBrace = false;
+		$ignoredLastToken = false;
 		$numParts = count($parts);
 		for ($i = 0; $i < $numParts; ++$i) {
 			$part = $parts[$i];
@@ -214,14 +258,16 @@ class SMWH_AAMParser {
 							$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
 						} else {
 							$wto = "";
-							$isBrace = ($part0{0} == '{') || ($part0{0} == '}');
-							if (!$isBrace && !$lastWasBrace) {
+							$ignoreToken = ($part0{0} == '{') 
+							               || ($part0{0} == '}')
+							               || ($part0{0} == '|');
+							if (!$ignoreToken && !$ignoredLastToken) {
 								// write the wiki text offset only, if there are
 								// no braces at the beginning or end
 								$wto = "{wikiTextOffset=".$pos."}";	
 							}
 							$markedText .= $wto.$part0;
-							$lastWasBrace = $isBrace;
+							$ignoredLastToken = $ignoreToken;
 						}
 					}
 				}
@@ -603,35 +649,32 @@ class SMWH_AAMParser {
 			
 			// go to state 0, default
 			$this->mTpState = 0;
-			
+			if (isset($nextState[4])) {
+				$this->mTpState = $nextState[4];
+			}
 			switch ($action) {
+				case 'at':
+					// abort parsing this template canditate
+					return array('at');
 				case 'wc':
 					// return content, reset parser
 					return array('a');
 				case 'pt':
-					// start of template found, go to state 0
+					// start of template found
 					// determine the template name
-					$pos = strpos($token, '|');
-					$tn = $pos ? substr($token, 0, $pos) 
-					           : $token;
-					if (strpos($tn,"\n")) {
-						// The template name contains a line break
-						// => it is no template
-						return array('at');
-					} else if (!$tn) {
+					$tn = trim($token);
+					if (!$tn) {
 						$tn = 'Unknown template';
 					}
-					$tn = trim($tn);
 					return array('t', $tn);
 				case 'pp':
-					// start of template parameter found, go to state 0
+					// start of template parameter found
 					return array('p');
 				case 'pop':
-					// end of template (parameter) found, go to state 0
+					// end of template (parameter) found
 					return array($currentlyParsing == 't' ? 'et' : 'ep');
 				case 'db':
 					// drop one opening brace at the beginning, go to state in field 4
-					$this->mTpState = $nextState[4];
 					return array('db');
 			}			
 		}
