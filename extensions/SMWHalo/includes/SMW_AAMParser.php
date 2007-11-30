@@ -27,7 +27,81 @@
 class SMWH_AAMParser {
 
 //--- Fields ---
+	// State of the template parser
+	private $mTpState = 0; 
+	
+	// Name of the top level template
+	private $mTemplateName = null;
 
+	// This flag stores if opening braces were dropped
+	private $mBracesDropped = false;
+	
+	// States of the template parsers state machine
+	// Each state consists of these elements:
+	// 0 - Top of the template stack (t = template, p = template parameter, e = empty)
+	// 1 - Input token
+	// 2 - Type of page (n=normal, t=template) 
+	// 3 - Action:
+	//        number => index of next state
+	//        'wc'   => return content buffer and go to state 0
+	//        'pt'   => push 't', go to state 0
+	//        'pp'   => push 'p', go to state 0
+	//        'pop'  => pop element from template stack, go to state 0
+	//		  'db'	 => drop one opening brace at the beginning, go to state in field 4
+	// 4 - number => index of next state
+	private $mStateMachine = array(
+		// state 0
+		array(
+			array('*','{','*',1),
+			array('*','}','*',4),
+			array('*','*','*','wc'),
+		),
+		
+		// state 1
+		array(
+			array('*','{','*',2),
+			array('*','*','*','wc'),
+		),
+		
+		// state 2
+		array(
+			array('*','{','n','db',6),
+			array('*','{','t',3),
+			array('*','*','*','pt'),
+		),
+		
+		// state 3
+		array(
+			array('*','{','t','db',7),
+			array('*','*','*','pp'),
+		),
+		
+		// state 4
+		array(
+			array('t','}','*','pop'),
+			array('p','}','*',5),
+			array('e','*','*','wc'),
+		),
+		
+		// state 5
+		array(
+			array('p','}','*','pop'),
+			array('p','*','*','wc'),
+		),
+		
+		// state 6
+		array(
+			array('*','{','*','db',6),
+			array('*','*','*','pt'),
+		),
+		
+		// state 7
+		array(
+			array('*','{','*','db',7),
+			array('*','*','*','pp'),
+		)
+	);
+	
 
 //--- Public methods ---
 
@@ -53,8 +127,8 @@ class SMWH_AAMParser {
 		$text = $this->maskHTML($wikiText);
 		
 		// Search for templates, template parameters and headings
-		$parts = preg_split('/(\{\{\{.*?\}\}\})|'.
-		                    '(\{\{.*?\}\})|'.
+		$parts = preg_split('/(\{)|'.
+		                    '(\})|'.
 		                    '(^======.*?======\s*)|'.
 							'(^=====.*?=====\s*)|'.
 		                    '(^====.*?====\s*)|'.
@@ -71,45 +145,88 @@ class SMWH_AAMParser {
 		$id = 1;
 		$pos = 0;
 		$braceCount = 0;
-		foreach ($parts as $part) {
+		$templateStart = -1;
+		$ignoreTemplates = -1;
+		$tmplDescr = null;
+		$lastWasBrace = false;
+		$numParts = count($parts);
+		for ($i = 0; $i < $numParts; ++$i) {
+			$part = $parts[$i];
 			$len = mb_strlen($part, "UTF-8");
 			$part0 = mb_substr($wikiText, $pos, $len, "UTF-8");
+			
 			// Is the part a template?
- 			if (preg_match("/^\s*\{\{[^{].*?[^}]\}\}$/s",$part0)) {
-				preg_match("/\{\{\s*(.*?)\s*[\|\}]/", $part0, $name);
-				$markedText .=  "\n".'{wikiTextOffset='.$pos
-				               .' template="'.$name[1].'"'
-			                   .' id="tmplt'.$id.'"}'."\n".$part0
-				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
-				$id++;
-			} else if ($part0 == '[[') {
-				if ($braceCount == 0) {
-					$markedText .= "{wikiTextOffset=".$pos."}".$part0;
-				} else {
-					$markedText .= $part0;
-				}
-				$braceCount++;
-			} else if ($part0 == ']]') {
-				if ($braceCount > 0) {
-					$braceCount--;
-				}
-				$markedText .= $part0;
-			} else {
-				if ($braceCount > 0) {
-					$markedText .= $part0;
-				} else {
-					if ($part0[0] == '=' 
-					    || $part0[0] == "\n"
-					    || $part0[0] == "*"
-					    || $part0[0] == "#") {
-						// title, empty line or enumeration found
-						$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
-					} else {
-						$markedText .= "{wikiTextOffset=".$pos."}".$part0;
-					}
+			if ($templateStart == -1 && $i > $ignoreTemplates) {
+				// no template detected yet.
+				$tmplDescr = $this->parseTemplate($parts, $i);
+				if ($tmplDescr[0] == 't') {
+					// a template has been found => store only its start
+					// It may be ahead of the current parser position.
+					// It will be processed when its start is reached during
+					// normal processing.
+					$templateStart = $tmplDescr[2];
+				} else if ($tmplDescr[0] == 'a') {
+					// some tokens have been skipped 
+					// => advance parsing without looking for templates
+					$ignoreTemplates = $tmplDescr[2];
 				}
 			}
-			$pos += $len;
+			
+			if ($i == $templateStart) {
+				// a template has been found. 
+				// $tmplDescr[1]: name of the template
+				// $tmplDescr[2]: start index of the template
+				// $tmplDescr[3]: end index of the template
+				// $tmplDescr[4]: content
+				$markedText .= "\n".'{wikiTextOffset='.$pos
+				               .' template="'.$tmplDescr[1].'"'
+			                   .' id="tmplt'.$id.'"}'."\n".$tmplDescr[4]
+				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
+				$id++;
+				$templateStart = -1;
+				// The parse can continue after the template
+				$i = $tmplDescr[3];
+				$pos += mb_strlen($tmplDescr[4], "UTF-8");
+				
+			} else {
+				// parser is not collecting tokens for a template
+				if ($part0 == '[[') {
+					if ($braceCount == 0) {
+						$markedText .= "{wikiTextOffset=".$pos."}".$part0;
+					} else {
+						$markedText .= $part0;
+					}
+					$braceCount++;
+				} else if ($part0 == ']]') {
+					if ($braceCount > 0) {
+						$braceCount--;
+					}
+					$markedText .= $part0;
+				} else {
+					if ($braceCount > 0) {
+						$markedText .= $part0;
+					} else {
+						if ($part0{0} == '=' 
+						    || $part0{0} == "\n"
+						    || $part0{0} == "*"
+						    || $part0{0} == "#") {
+							// title, empty line or enumeration found
+							$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
+						} else {
+							$wto = "";
+							$isBrace = ($part0{0} == '{') || ($part0{0} == '}');
+							if (!$isBrace && !$lastWasBrace) {
+								// write the wiki text offset only, if there are
+								// no braces at the beginning or end
+								$wto = "{wikiTextOffset=".$pos."}";	
+							}
+							$markedText .= $wto.$part0;
+							$lastWasBrace = $isBrace;
+						}
+					}
+				}
+				$pos += $len;
+			}
 		}
 		$part0 = mb_substr($wikiText, $pos, 1);
 		$markedText .= $part0."\n{wikiTextOffset=".$pos."}\n";
@@ -332,6 +449,220 @@ class SMWH_AAMParser {
 			}
 		}
 		return $text;
+	}
+
+	/**
+	 * Tries to parse a template.
+	 *
+	 * @param array<string> $tokens
+	 * 		Array of pieces from the wiki text.
+	 * @param int $startIndex
+	 * 		Index where the template parsing starts in <$tokens>
+	 * @param string currentlyParsing
+	 * 		The parser is currently parsing a
+	 * 		't' - template
+	 * 		'p' - template parameter
+	 * 		'e' - nothing special
+	 */
+	private function parseTemplate(&$tokens, $startIndex, $currentlyParsing = 'e') {
+		$numTokens = count($tokens);
+		$i = $startIndex;
+		$templateStart = -1;
+		$templateEnd = -1;
+		$templateContent = "";
+		$templateName = "";
+		$bracesDropped = false;
+		$result = null;
+		
+		while ($i < $numTokens) {
+			$token = $tokens[$i];
+			$tmplDescr = $this->processTemplateToken($token, $currentlyParsing);		
+		
+			switch ($tmplDescr[0]) {
+				case 'c':
+					// The template parser collects tokens
+					if ($templateStart == -1) {
+						// perhaps a template starts
+						$templateStart = $i;
+					}
+					if ($i == $numTokens-1) {
+						// last token has been read without finding something of 
+						// interest
+						return array('a', $startIndex, $i); 
+					}
+					++$i;
+					break;
+				case 't':
+					// a template has started. 
+					// $tmplDescr[1] contains its name
+					$templateName = $tmplDescr[1];
+					$result = $this->parseTemplate($tokens, $i+1, 't');
+					if ($result[0] == 't') {
+						$end = $result[3]+1;
+						$lookahead = ($end<$numTokens) ? $tokens[$end] : null;
+						if ($bracesDropped && $lookahead == '}') {
+							// the template is not a template
+							$result = array('a', $startIndex, $result[3]);
+						}
+					}
+					break;
+				case 'et':
+					// a template has ended. 
+					$templateEnd = $i;
+					if ($currentlyParsing != 'e') {
+						return array('t', $templateName, $templateStart, $templateEnd, "");
+					}
+					break;
+				case 'p':
+					// a template parameter has started
+					$result = $this->parseTemplate($tokens, $i+1, 'p');
+					break;
+				case 'ep':
+					// a template parameter has ended
+					return array('a', $startIndex, $i);
+				case 'db':
+					// Drop one opening brace at the beginning. It does not belong
+					// to a template.
+					++$templateStart;
+					++$i;
+					$bracesDropped = true;
+					break;
+				case 'a':
+					// the processed tokens are not relevant for templates
+					if ($currentlyParsing == 'e') {
+						return array('a', $startIndex, $i);
+					}
+					++$i;
+					break;
+				case 'at':
+					// abort the current template candidate
+					return array('a', $startIndex, $i);
+			}
+			if ($result) {
+				// recursing deeper yielded a result
+				// => determine the next position to continue
+				if ($result[0] == 't') {
+					$templateEnd = $result[3];
+					$i = $result[3]+1;
+				} else if ($result[0] == 'a') {
+					$i = $result[2]+1;
+				}
+				$result = null;
+				if ($currentlyParsing == 'e') {
+					// we are on the top level
+					// => stop parsing
+					break;
+				}
+			}
+		}
+		if ($templateStart > -1 && $templateEnd > -1) {
+			
+			for ($j = $templateStart; $j <= $templateEnd; ++$j) {
+				$templateContent .= $tokens[$j];
+			}
+			return array('t', $templateName, $templateStart, $templateEnd, $templateContent);
+		}
+		return array('a', $startIndex, $i);
+	}
+	
+	/**
+	 * Templates are parsed with a state machine. The parser is only interested 
+	 * in top level templates, however, they need to be parsed thoroughly to find
+	 * their end correctly.
+	 *
+	 * @param string $token
+	 * 		The next piece of text to examine
+	 * @return array(string,string)
+	 * 		 <null>, if the template parser is still collecting tokens or
+	 * 		 an array with three values: 
+	 * 			0 - Type of result:
+	 * 				t - start of template found
+	 * 				at - abort current template candidate
+	 * 				p - start of parameter found
+	 * 				c - collecting tokens
+	 * 				db - drop one opening brace
+	 * 				a - append returned token to wiki text
+	 * 				et - end of template found
+	 * 				ep - end of parameter found
+	 * 			1 - Name of a template or <null> if no template was found
+	 * 			2 - the content of the template or the wiki text that was parsed 
+	 * 				or <null> if the parser is collecting tokens
+	 * 	
+	 */
+	private function processTemplateToken(&$token, $currentlyParsing) {
+		$nextStates = $this->mStateMachine[$this->mTpState];
+		$nextState = $this->findNextState($token, $nextStates, $currentlyParsing);
+		$action = $nextState[3];
+		
+		if (gettype($action) === 'integer' ) {
+			// go to the next state
+			$this->mTpState = $action;
+			return array('c');
+		} else {
+			// perform some action
+			
+			// go to state 0, default
+			$this->mTpState = 0;
+			
+			switch ($action) {
+				case 'wc':
+					// return content, reset parser
+					return array('a');
+				case 'pt':
+					// start of template found, go to state 0
+					// determine the template name
+					$pos = strpos($token, '|');
+					$tn = $pos ? substr($token, 0, $pos) 
+					           : $token;
+					if (strpos($tn,"\n")) {
+						// The template name contains a line break
+						// => it is no template
+						return array('at');
+					} else if (!$tn) {
+						$tn = 'Unknown template';
+					}
+					$tn = trim($tn);
+					return array('t', $tn);
+				case 'pp':
+					// start of template parameter found, go to state 0
+					return array('p');
+				case 'pop':
+					// end of template (parameter) found, go to state 0
+					return array($currentlyParsing == 't' ? 'et' : 'ep');
+				case 'db':
+					// drop one opening brace at the beginning, go to state in field 4
+					$this->mTpState = $nextState[4];
+					return array('db');
+			}			
+		}
+	}
+	
+	/**
+	 * Determines the next state of the template parser by a given token and
+	 * a set of possible next states. 
+	 *
+	 * @param string $token
+	 * 			The next piece of text to examine
+	 * @param array $nextStates
+	 * 			Array of possible next states of the state machine.
+	 * 
+	 * @return The matching state or <null>.
+	 */
+	private function findNextState(&$token, &$nextStates, $currentlyParsing) {
+		global $wgTitle;
+		
+		$pageType = $wgTitle->getNamespace() == NS_TEMPLATE
+						? 't' : 'n';
+		
+		foreach ($nextStates as $state) {
+			if (($state[0] === '*' || $state[0] == $currentlyParsing) &&
+				($state[1] === '*' || $state[1] == $token) &&
+				($state[2] === '*' || $state[2] == $pageType)) {
+				return $state;
+				}
+		}
+		return null;
+		
 	}
 	
 }
