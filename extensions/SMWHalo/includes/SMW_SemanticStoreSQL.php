@@ -13,7 +13,8 @@
  require_once( "SMW_GraphHelper.php");
  require_once( "SMW_SemanticStore.php");
 
- 
+ // max depth of category graph
+ define('SMW_MAX_CATEGORY_GRAPH_DEPTH', 10);
   
  class SMWSemanticStoreSQL extends SMWSemanticStore {
  		
@@ -189,22 +190,25 @@
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableForInstances($categoryTitle, $db);
 		
-		$res = $db->select( 'smw_ob_instances', 
-		                    'DISTINCT instance, category',
-		                    array(), 'SMW::getInstances', $this->getSQLOptions($requestoptions,'category'));
 		
-		// rewrite result as array
-		$result = array();
-		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->instance, NS_MAIN), Title::newFromText($row->category, NS_CATEGORY));
+		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', $this->getSQLOptions($requestoptions,'category'));
+		$results = array();
+		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			while($row)
+			{	
+				$instance = Title::newFromID($row->instance);
+				$category = Title::newFromText($row->category, NS_CATEGORY);
+				$results[] = array($instance, $category);
+				$row = $db->fetchObject($res);
 			}
 		}
 		$db->freeResult($res);
 		
+		// drop virtual tables
 		$this->dropVirtualTableForInstances($db);
-		return $result;
+		return $results;
 	}
 	
 	/**
@@ -216,25 +220,60 @@
 	 */
 	private function createVirtualTableForInstances($categoryTitle, & $db) {
 		global $smwgDefaultCollation;
-		$visitedNodes = array();
-		$allInstances = array();
 		
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+	
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
 		} else {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance VARCHAR(255) '.$collation.' NOT NULL, category VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::getInstances' );
-		$this->_addDirectInstances($categoryTitle, false, $db);
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance INT(8) UNSIGNED NOT NULL, category VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		
-		$numCategories = 0;
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
-		$numCategories = count($subCategories);
-		foreach($subCategories as $cat) {
-			$numCategories += $this->_addInstances($cat, $visitedNodes, $db);
-		}
-		return $numCategories;
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		
+		// initialize with:
+		
+		           
+		$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, NULL AS category FROM '.$page.' ' .
+						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+						'WHERE page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
+	
+		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
+		
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum category tree depth.
+		do  {
+			$maxDepth--;
+			
+			// get next subcategory level
+			$db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
+			
+			// insert direct instances of current subcategory level
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, cl_to AS category FROM '.$page.' ' .
+						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+						'WHERE page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
+			
+			// copy subcatgegories to supercategories of next iteration
+			$db->query('TRUNCATE TABLE smw_ob_instances_super');
+			$db->query('INSERT INTO smw_ob_instances_super (SELECT * FROM smw_ob_instances_sub)');
+			
+			// check if there was least one more subcategory. If not, all instances were found.
+			$res = $db->query('SELECT COUNT(category) AS numOfSubCats FROM smw_ob_instances_super');
+			$numOfSubCats = $db->fetchObject($res)->numOfSubCats;
+			$db->freeResult($res);
+			
+			$db->query('TRUNCATE TABLE smw_ob_instances_sub');
+			
+		} while ($numOfSubCats > 0 && $maxDepth > 0);
+		
+		
 	}
 	
 	/**
@@ -244,46 +283,10 @@
 	 */
 	private function dropVirtualTableForInstances(& $db) {
 		$db->query('DROP TABLE smw_ob_instances');
-	}
-	/**
-	 * Adds direct instances of a category to the virtual table 'smw_ob_instances'.
-	 * 
-	 * @param Title $categoryTitle
-	 * @param bool $addCategory If true, categoryTitle is added, otherwise NULL
-	 * @param & $db DB reference
-	 */
-	private function _addDirectInstances($categoryTitle, $addCategory, & $db) {
-		$page = $db->tableName('page');
-	 	$categorylinks = $db->tableName('categorylinks');
-		$superCategory = $addCategory ? $db->addQuotes($categoryTitle->getDBkey()) : "NULL";
-		$db->query("INSERT INTO smw_ob_instances (instance, category) " .
-				"SELECT page_title AS instance, $superCategory AS category FROM $page, $categorylinks " .
-					"WHERE cl_to = ". $db->addQuotes($categoryTitle->getDBkey()). " AND page_id = cl_from AND page_namespace = ". NS_MAIN, 
-			           'SMW::_addDirectInstances');
+		$db->query('DROP TABLE smw_ob_instances_sub');
+		$db->query('DROP TABLE smw_ob_instances_super');
 	}
 	
-	/**
-	 * Adds all instances of subcategories of $categoryTitle recursivly to 
-	 * virtual table 'smw_ob_instances'. Can handle cycles in category graph.
-	 * 
-	 * @param Title $categoryTitle 
-	 * @param & $visitedNodes
-	 * @param & $db DB reference
-	 */
-	private function _addInstances($categoryTitle, & $visitedNodes, & $db) {
-		array_push($visitedNodes, $categoryTitle->getArticleID());		
-		$this->_addDirectInstances($categoryTitle, true, $db);
-		$numCategories = 0;
-		$subCategories = $this->getDirectSubCategories($categoryTitle);
-		$numCategories = count($subCategories);
-		foreach($subCategories as $cat) {
-			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
-				$numCategories += $this->_addInstances($cat, $visitedNodes, $db);
-			}
-		}
-		array_pop($visitedNodes);
-		return $numCategories;
-	}
 	
 	function getDirectInstances(Title $categoryTitle, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_MASTER ); 
@@ -331,49 +334,65 @@
 	
 	private function createVirtualTableForProperties(Title $categoryTitle, & $db) {
 		global $smwgDefaultCollation;
-		$visitedNodes = array();
-		$allInstances = array();
+		
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
 		
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
 		} else {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::getPropertiesOfCategory' );
-		$this->_addDirectProperties($categoryTitle, $db);
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		
-		$subCategories = $this->getDirectSuperCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			$this->_addProperties($cat, $visitedNodes, $db);
-		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            
+		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
+					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).')');
+	
+		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryTitle->getArticleID()).')');    
+		
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum category tree depth.
+		do  {
+			$maxDepth--;
+			
+			// get next supercategory level
+			$db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = '.NS_CATEGORY.' AND cl_from IN (SELECT * FROM smw_ob_properties_sub))');
+			
+			// insert direct properties of current supercategory level
+			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
+					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
+			
+			// copy supercatgegories to subcategories of next iteration
+			$db->query('TRUNCATE TABLE smw_ob_properties_sub');
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
+			
+			// check if there was least one more supercategory. If not, all properties were found.
+			$res = $db->query('SELECT COUNT(category) AS numOfSuperCats FROM smw_ob_properties_sub');
+			$numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
+			$db->freeResult($res);
+			
+			$db->query('TRUNCATE TABLE smw_ob_properties_super');
+			
+		} while ($numOfSuperCats > 0 && $maxDepth > 0);        
+		
 	}
 	
 	private function dropVirtualTableForProperties(& $db) {
 		$db->query('DROP TABLE smw_ob_properties');
+		$db->query('DROP TABLE smw_ob_properties_super');
+		$db->query('DROP TABLE smw_ob_properties_sub');
 	}
 	
-	private function _addDirectProperties($categoryTitle, & $db) {
-		$smw_nary = $db->tableName('smw_nary');
-		$smw_nary_relations = $db->tableName('smw_nary_relations');
-		$db->query("INSERT INTO smw_ob_properties (property) " .
-				"SELECT n.subject_title AS property FROM $smw_nary n, $smw_nary_relations r" .
-					" WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = ". $db->addQuotes($this->domainRangeHintRelation->getDBkey()). " AND r.object_title = " .$db->addQuotes($categoryTitle->getDBkey()), 
-			           'SMW::_addDirectProperties');
-	}
 	
-	private function _addProperties($categoryTitle, & $visitedNodes, & $db) {
-		array_push($visitedNodes, $categoryTitle->getArticleID());		
-		$this->_addDirectProperties($categoryTitle, $db);
-	
-		$subCategories = $this->getDirectSuperCategories($categoryTitle);
-		foreach($subCategories as $cat) {
-			if (!in_array($cat->getArticleID(), $visitedNodes)) { 
-				$this->_addProperties($cat, $visitedNodes, $db);
-			}
-		}
-		array_pop($visitedNodes);
-	}
 			
 	function getDirectPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
@@ -475,10 +494,10 @@
 	
 	public function getNumberOfInstancesAndSubcategories(Title $category) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$numCategories = $this->createVirtualTableForInstances($category, $db);
+		$this->createVirtualTableForInstances($category, $db);
 		
 		$res = $db->select( 'smw_ob_instances', 
-		                    'COUNT(DISTINCT instance) AS numOfInstances',
+		                    'COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories',
 		                    array(), 'SMW::getNumberOfInstances', array() );
 		
 		// rewrite result as array
@@ -487,7 +506,7 @@
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
 			$numOfInstances = $row->numOfInstances;
-			
+			$numCategories =$row->numOfCategories;
 		}
 		$db->freeResult($res);
 		

@@ -457,8 +457,9 @@
 		$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues)');
 		
 		// maximum iteration length is maximum category tree depth.
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
 		do  {
-		
+			$maxDepth--;
 			$db->query('INSERT INTO smw_prop_gardissues_to (SELECT DISTINCT page_id AS id FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = 14 AND cl_from IN (SELECT id FROM smw_prop_gardissues_from))');
 			$db->query('INSERT INTO smw_prop_gardissues (SELECT * FROM smw_prop_gardissues_to)');
 		
@@ -472,7 +473,7 @@
 			
 			$db->query('TRUNCATE TABLE smw_prop_gardissues_to');
 			
-		} while ($nextLevelNotEmpty);
+		} while ($nextLevelNotEmpty && $maxDepth > 0);
 		
 		// add propagated issues
 		$res = $db->query('SELECT DISTINCT id FROM smw_prop_gardissues');
