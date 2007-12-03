@@ -61,7 +61,7 @@ var ajaxRequestManager = new AjaxRequestManager();
 ajaxRequestManager.initialize();
 
 var sajax_debug_mode = false;
-var sajax_request_type = "GET";
+var sajax_request_type = "POST";
 var NULL = function() {} // empty dummy function 
 /**
 * if sajax_debug_mode is true, this function outputs given the message into 
