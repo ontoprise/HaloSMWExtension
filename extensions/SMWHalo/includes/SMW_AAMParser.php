@@ -253,6 +253,8 @@ class SMWH_AAMParser {
 						if ($part0{0} == '=' 
 						    || $part0{0} == "\n"
 						    || $part0{0} == "*"
+						    || $part0{0} == "!"
+						    || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
 						    || $part0{0} == "#") {
 							// title, empty line or enumeration found
 							$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
