@@ -48,6 +48,22 @@ disableDragging: function(){
 enableDragging: function(){
 	if(this.draggable == null) {
 		this.draggable = new Draggable('ontomenuanchor', {	handle: 'draggable'});
+		
+		//Adds an Observer which stores the position of the stb after each drag
+		//this is temporary and probably will be removed if lightweight framework is implemented
+		var DragObserver = Class.create();
+		DragObserver.prototype = {
+			  initialize: function() {
+    			this.element = null;
+    	
+ 		 },
+			onEnd: function(){
+				smwhg_dragresizetoolbar.storePosition();
+			}
+		};
+		
+		var dragObserver = new DragObserver();
+		Draggables.addObserver(dragObserver);
 	}
 },
 /**
