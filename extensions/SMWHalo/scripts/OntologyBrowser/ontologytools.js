@@ -284,8 +284,8 @@ OBOntologyModifier.prototype = {
 		}
 		var superCategoryTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('title');
 		var content = superCategoryTitle != null ? "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+subCategoryTitle, content, '',
-							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+superCategoryTitle, content, '',
+							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(sibligCategoryID));
 	},
 	
 	/**
@@ -353,9 +353,9 @@ OBOntologyModifier.prototype = {
 		
 		var superPropertyTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('title');
 		var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+subPropertyTitle, '',   
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+superPropertyTitle, '',   
 			                   content,
-							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
+							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(sibligPropertyID));
 	},
 	
 	/**
