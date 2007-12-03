@@ -12,6 +12,8 @@ initialize: function() {
 	this.draggable = null;
 	//Object to store the modified scriptacolous' object
 	this.resizeable = null;
+	this.posX = null;
+	this.posY = null;
 },
 
 /**
@@ -56,6 +58,42 @@ enableDragging: function(){
 fixAnchorSize: function(){
 	$('ontomenuanchor').setStyle({height: $('semtoolbar').scrollHeight +'px'}); 	
 },
+
+/**
+ * @public buffers the current position so it can later be restored
+ * 
+ */
+storePosition: function(){
+	var pos = this.getPosition();
+	this.posX = pos[0];
+	this.posY = pos[1];
+},
+
+/**
+ * @public buffers the current position so it can later be restored
+ *
+ * @return array[0] xposition
+ * 		   array[1]	yposition
+ * 
+ */
+restorePosition: function(){
+	if(!isNaN(this.posX) && !isNaN(this.posY)){
+		this.fixAnchorSize();
+		this.setPosition(this.posX, this.posY);
+	}	
+},
+
+/**
+ * @public  returns the act. position of the toolbar
+ *
+ * @return array[0] xposition
+ * 		   array[1]	yposition
+ * 
+ */
+getPosition: function(){
+	return new Array($('ontomenuanchor').offsetLeft,$('ontomenuanchor').offsetTop);	
+},
+
 /**
  * @public positions the STB at the given coordinates considering how it fits best     
  * 
@@ -315,8 +353,14 @@ Resizeable.prototype = {
 smwhg_dragresizetoolbar = new DragResizeHandler();
 Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
 
-/*
+
 setTimeout(function() { 
-	setTimeout(smwhg_dragresizetoolbar.posOnXY.bind(smwhg_dragresizetoolbar, 200 , 200),1000);
+	setTimeout( function(){
+		smwhg_dragresizetoolbar.storePosition();
+		smwhg_dragresizetoolbar.setPosition(100,100);
+		smwhg_dragresizetoolbar.restorePosition();
+		//var ret = smwhg_dragresizetoolbar.getPosition();
+		//alert("PosX: "+ret[0]+" PosY: "+ret[0]);
+		},1000);
 },3000);
 //*/
