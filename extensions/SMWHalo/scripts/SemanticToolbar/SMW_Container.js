@@ -82,13 +82,14 @@ hideSandglass: function(){
  * 
  * @param string attributes
  * 		Attributes for the new <div>-element
+ * 		  containertype enum
  */
-createContainerBody: function(attributes){
+createContainerBody: function(attributes,containertype,headline){
 	//defines header and footer
 	var header = '<div id="' + this.id + '-box" '+attributes+'>';
 	var footer = '</div>';
 	//Adds the body to the stbframework
-	this.frameworkcontainer.setContent(header + footer);
+	this.frameworkcontainer.setContent(header + footer,containertype,headline);
 	this.frameworkcontainer.contentChanged();
 	//for testing:
 	//setTimeout(this.foo.bind(this),3000);
@@ -737,7 +738,7 @@ release: function() {
  * @param none
  */
 foo: function(){
-	this.createContainerBody('');
+	this.createContainerBody('',RELATIONCONTAINER,"Ueberschrift");
 	this.showSandglass($(this.id + '-box'));
 	this.append(this.createInput(700,'Test','', 'alert(\'loeschmich\')','',true));
 	this.append(this.createText(701,'Test','',true));

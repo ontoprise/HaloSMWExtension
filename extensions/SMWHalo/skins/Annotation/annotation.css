@@ -43,3 +43,42 @@
 #tabcontainer {
 	margin-bottom: 0px;
 }
+
+#contextmenu{
+	width: 250px;
+	position: fixed;
+	background-color:#DDDDDD;
+	border:1px solid #000000;
+}
+
+#cmPropertyHeader{
+	background-color: #ff9602;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #ff9602;
+	margin-top: 3px;
+}
+#cmPropertyContent{
+	background-color: #ffcd87;
+	border: 1px solid #ff9602;
+	overflow: auto;
+	font-size: 11px;
+}
+#cmCategoryHeader{
+	background-color: #064df3;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #064df3;
+	margin-top: 3px;
+}
+
+#cmCategoryContent{
+	border: 1px solid #064df3;
+	background-color: #94b0f3;
+	overflow: auto;
+	font-size: 11px;
+}
