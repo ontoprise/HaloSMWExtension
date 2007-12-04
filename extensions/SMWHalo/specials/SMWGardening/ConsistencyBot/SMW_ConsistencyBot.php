@@ -85,7 +85,9 @@
  	    echo "done!\n\n";
  	    
  	    // propagate issues
+ 	    echo "Propagating issues...";
  		SMWGardening::getGardeningIssuesAccess()->generatePropagationIssuesForCategories($this->id, SMW_GARDISSUE_CONSISTENCY_PROPAGATION);
+ 		echo "done!\n\n";
          
  		return NULL;
  		
@@ -149,7 +151,8 @@
  // not defined issues
  define('SMW_GARDISSUE_DOMAINS_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 1);
  define('SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 2);
- define('SMW_GARDISSUE_TYPES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 3);
+ define('SMW_GARDISSUE_RANGES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 4);
+ define('SMW_GARDISSUE_TYPES_NOT_DEFINED', (SMW_CONSISTENCY_BOT_BASE+1) * 100 + 5);
  
  
  // doubles issues
@@ -211,6 +214,8 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 				
 			case SMW_GARDISSUE_DOMAINS_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_domains_not_defined', $text1);
+			case SMW_GARDISSUE_RANGES_NOT_DEFINED: 
+				return wfMsg('smw_gardissue_ranges_not_defined', $text1);
 			case SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_domains_and_ranges_not_defined', $text1);
 			case SMW_GARDISSUE_TYPES_NOT_DEFINED: 

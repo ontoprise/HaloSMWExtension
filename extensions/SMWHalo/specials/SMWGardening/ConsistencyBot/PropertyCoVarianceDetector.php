@@ -182,7 +182,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	}
  	
  	/** 		
- 	 * Check domain co-variance
+ 	 * Check domain co-variance. Does also check if there are domains and/or range defined at all.
   	 */
  	private function checkDomainAndRangeCovariance($p) {
  		$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
@@ -195,6 +195,26 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 			if (empty($domainRangeAnnotations)) {
 	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
 	 				return;
+	 			}
+	 			
+	 			if (!$this->containsDomain($domainRangeAnnotations)) {
+	 				// no domain
+	 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
+	 			}
+	 			
+	 			if ($type[0]->getXSDValue() == '__nry') {
+	 				// n-ary relation
+	 				// only complain about missing range if it contains at least one Type:Page
+	 				if ($this->containsPageType($type[0]) && !$this->containsRange($domainRangeAnnotations)) {
+	 					// no range
+	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $p);
+	 				} 
+	 			} else {
+	 				// binary relation
+	 				if (!$this->containsRange($domainRangeAnnotations)) {
+	 					// no range
+	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $p);
+	 				}
 	 			}
 	 			
  				$res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations);
@@ -218,6 +238,12 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
 	 				return;
 	 			}
+	 			
+	 			if (!$this->containsDomain($domainRangeAnnotations)) {
+	 				// no domain
+	 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
+	 			}
+	 			
  				$res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations, true);
  				if ($res === true) return;
  				foreach($res as $cov) {
@@ -376,6 +402,44 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_SYMETRY_NOT_COVARIANT2, $a);
  				
  			}
+ 	}
+ 	
+ 	/**
+ 	 * Returns true if $domainRangeAnnotations contains at least one domain category.
+ 	 * Otherwise false.
+ 	 */
+ 	private function containsDomain($domainRangeAnnotations) {
+ 		$containsDomain = false;
+ 		foreach($domainRangeAnnotations as $dra) {
+ 			$dv = $dra->getDVs();
+ 			if($dv[0] != NULL) $containsDomain |= true;
+ 		}
+ 		return $containsDomain;
+ 	}
+ 	
+ 	/**
+ 	 * Returns true if $domainRangeAnnotations contains at least one range category.
+ 	 * Otherwise false.
+ 	 */
+ 	private function containsRange($domainRangeAnnotations) {
+ 		$containsRange = false;
+ 		foreach($domainRangeAnnotations as $dra) {
+ 			$dv = $dra->getDVs();
+ 			if($dv[1] != NULL) $containsRange |= true;
+ 		}
+ 		return $containsRange;
+ 	}
+ 	
+ 	/**
+ 	 * Returns true if $typeContainer contains at least one Type:Page
+ 	 */
+ 	private function containsPageType($typeContainer) {
+ 		$containsPageType = false;
+ 		foreach($typeContainer as $t) {
+ 			$t = $dra->getDVs();
+ 			if($t->getID() == '_wpg') $containsPageType |= true;
+ 		}
+ 		return $containsPageType;
  	}
  	
  	/**
