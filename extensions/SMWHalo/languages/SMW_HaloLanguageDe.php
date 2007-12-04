@@ -198,6 +198,7 @@ protected $smwUserMessages = array(
 	'smw_gardissue_domains_not_defined' => 'Domäne von $1 ist nicht definiert.',
 	'smw_gardissue_ranges_not_covariant' => 'Wertebereichskategorie $2 von $1 muss eine Subkategorie der Wertebereichskategorie des Super-Properties sein.',
 	'smw_gardissue_ranges_not_defined' => 'Wertebereichskategorie von $1 ist nicht definiert.',
+	'smw_gardissue_domains_and_ranges_not_defined' => 'Please define the domain and/or range of $1.',
 	'smw_gardissue_types_not_covariant' => 'Typ von $1 muss gleich dem Typ des Super-Properties sein.',
 	'smw_gardissue_types_not_defined' => 'Typ von $1 ist nicht definiert. Typ Wikipage intendiert? Bitte explizit machen.',
 	'smw_gardissue_double_type' => 'Mehr als ein Typ definiert.',
