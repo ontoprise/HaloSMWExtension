@@ -116,6 +116,7 @@ var wgLanguageStrings = {
 	'CREATE_NEW_CATEGORY'     : 'Create a new category.',
 	'CHANGE_ANNO_OF_CAT'      : 'Change the annotation of a category.',
 	'CATEGORIES'              : 'Categories',
+	'ADD_AND_CREATE_CAT'      : 'Add and create',
 
 	// Annotation hints
 	'ANNOTATION_HINTS'        : 'Annotation hints',
