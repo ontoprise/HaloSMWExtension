@@ -97,13 +97,13 @@
 																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL LIMIT '.MAX_LOG_LENGTH; 
+						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL'; 
 			} else {
 				$sql = 'SELECT page_title, page_namespace FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\' LIMIT '.MAX_LOG_LENGTH;
+						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\'';
 			}                 
 			$res = $db->query($sql);
 		
@@ -126,14 +126,14 @@
 																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' LIMIT '.MAX_LOG_LENGTH;
+						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey());
 				 	
 				} else {
 						$sql = 'SELECT page_title, page_namespace FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	 
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\' LIMIT '.MAX_LOG_LENGTH;
+						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\'';
 						
 				}
 				$res = $db->query($sql);
