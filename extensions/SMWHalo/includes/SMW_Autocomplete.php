@@ -49,16 +49,39 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
  			// no context: that means only non-semantic AC is possible.
  			
- 			// if there is a type hint (=namespace), use it.
- 			if ($typeHint != null && is_numeric($typeHint)) {
+ 			if ($typeHint == null || $typeHint == 'null') {
+ 				// if no $typeHint defined, search for (nearly) all pages.
+ 	    		$pages = AutoCompletionRequester::getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
+ 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		AutoCompletionRequester::logResult($result, $articleName);
+ 	    		return $result;
+ 			} else if (is_numeric($typeHint)) {
+ 				// if there is a numeric type hint, consider it as a namespace
  				$typeHintNum = $typeHint + 0;
  				$pages = AutoCompletionRequester::getPages($userInputToMatch, array($typeHintNum));
  	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
- 			} else { 
- 	    		$pages = AutoCompletionRequester::getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
- 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    		
+ 			} else if (strpos($typeHint, $wgLang->getNsText(NS_CATEGORY).":") !== false) {
+ 				// if typeHint contains 'Category:', use it as range and search for properties which have defined it.
+ 				$category = Title::newFromText($typeHint);
+ 				
+ 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
+ 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+  				$value->setValues($category->getDBkey(), NS_CATEGORY);
+  				$dv_container->setDVs(array(NULL, $value));
+  				
+  				// get all properties with a range category of $category
+  				$properties = smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1);
+ 	    		
+ 	    		$result = AutoCompletionRequester::encapsulateAsXML($properties);
+ 	    		AutoCompletionRequester::logResult($result, $articleName);
+ 	    		return $result;
+ 			} else {
+ 				// in all other cases, consider it as type
+ 				$properties = AutoCompletionRequester::getPropertyWithType($userInputToMatch, $typeHint);
+ 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
  			}
@@ -245,7 +268,7 @@ class AutoCompletionRequester {
  	    			$value = SMWDataValueFactory::newTypeIDValue('_wpg');
   					$value->setValues($category->getDBKey(), $category->getNamespace());
   					$dv_container->setDVs(array($value, NULL));
- 	    			$properties = smwfGetStore()->getPropertySubjects($domainRelation, $value, NULL, 0);
+ 	    			$properties = smwfGetStore()->getPropertySubjects($domainRelation, $dv_container, NULL, 0);
  	    			$pages = array_merge($pages, $properties);
  	    		}
 			
@@ -331,36 +354,35 @@ class AutoCompletionRequester {
 	/**
  	* Encapsulate an array of Titles in a xml string
  	* 
- 	* @param $titles array of Title
+ 	* @param $titles Array of Title
  	* @param $putNameSpaceInName If true system would return 'namespace:localname' otherwise 'localname'
- 	* @param optional extra data which is pasted behind the Title. (array sizes of $titles and $extraData must matched, if used.)
+ 	* @param $extraData Extra data which is pasted behind the Title. (array sizes of $titles and $extraData must matched, if used.)
  	* @return xml string
  	*/
-	public static function encapsulateAsXML($titles, $putNameSpaceInName = false, $extraData = NULL) {
+	public static function encapsulateAsXML(array & $titles, $putNameSpaceInName = false, $extraData = NULL) {
 		if ($extraData != NULL && count($titles) != count($extraData)) {
 			return SMW_AC_NORESULT;
 		}
-		$result = '<result>';
-		global $smwgContLang;
-		$ns = $smwgContLang->getNamespaces();
+		$xmlResult = '';
+				
 		for($i = 0, $n = count($titles); $i < $n; $i++) {
-			// special handling for non-SMW namespace Category
-			$namespace = AutoCompletionRequester::getNamespaceText($titles[$i]);
+			if ($titles[$i] == NULL) continue;
+			$namespace = $titles[$i]->getNsText(); //AutoCompletionRequester::getNamespaceText();
 			$extra = $extraData != NULL ? $extraData[$i] : ""; 
-			$result .= "<match type=\"".$titles[$i]->getNamespace()."\">".($putNameSpaceInName ? $namespace.":" : "").htmlspecialchars($titles[$i]->getDBkey().$extra)."</match>";
+			$xmlResult .= "<match type=\"".$titles[$i]->getNamespace()."\">".($putNameSpaceInName ? $namespace.":" : "").htmlspecialchars($titles[$i]->getDBkey().$extra)."</match>";
 		}
-		return empty($titles) ? SMW_AC_NORESULT : $result.'</result>';
+		return empty($titles) ? SMW_AC_NORESULT : '<result>'.$xmlResult.'</result>';
 	}
 
 	/**
  	*  Encapsulate an array of enums or units in a xml string.
  	*/
 	public static function encapsulateEnumsOrUnitsAsXML($arrayofEnumsOrUnits) {
-		$result = '<result>';
+		$xmlResult = '';
 		foreach($arrayofEnumsOrUnits as $eou) {
-			$result .= "<match type=\"200\">".htmlspecialchars($eou)."</match>";
+			$xmlResult .= "<match type=\"200\">".htmlspecialchars($eou)."</match>";
 		}
-		return empty($arrayofEnumsOrUnits) ? SMW_AC_NORESULT : $result.'</result>';
+		return empty($arrayofEnumsOrUnits) ? SMW_AC_NORESULT : '<result>'.$xmlResult.'</result>';
 	}
 	
 	
@@ -368,13 +390,15 @@ class AutoCompletionRequester {
 	/**
  	* Retrieves pages matching the requestoptions and the given namespaces
  	* 
+ 	* TODO: should be transferred to storage layer
+ 	* 
  	* @return array of Title
  	*/
 	public static function getPages($match, $namespaces = NULL, $requestoptions = NULL) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$sql = "";
-		
+		$page = $db->tableName('page');
 		if ($namespaces != NULL) {
 			$sql .= '(';
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
@@ -394,8 +418,8 @@ class AutoCompletionRequester {
 		//AutoCompletionRequester::getUndefinedPropertiesFromSMWTables($result, $namespaces, $requestoptions);
 		
 		// query for pages which begin with $match AND for pages which contain $match. In this order.
-		$res = $db->query('(SELECT page_title, page_namespace FROM page WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND ' .$sql.' ORDER BY page_namespace DESC) '.
-							' UNION (SELECT page_title, page_namespace FROM page WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.$sql.' ORDER BY page_namespace DESC) LIMIT '.SMW_AC_MAX_RESULTS.'');
+		$res = $db->query('(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND ' .$sql.' ORDER BY page_namespace DESC) '.
+							' UNION (SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.$sql.' ORDER BY page_namespace DESC) LIMIT '.SMW_AC_MAX_RESULTS.'');
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -403,6 +427,44 @@ class AutoCompletionRequester {
 			}
 		}
 		$db->freeResult($res);
+		return $result;
+	}
+	
+	/**
+	 * Returns properties containing $match with unit $unit
+	 * 
+	 * TODO: should be transferred to storage layer
+	 * 
+	 * @param $match substring
+	 * @param $type primitive type or unit
+	 */
+	public static function getPropertyWithType($match, $type) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_specialprops = $db->tableName('smw_specialprops');
+		$page = $db->tableName('page');
+		$result = array();
+		$handler = SMWTypeHandlerFactory::getTypeHandlerByLabel($type);
+		if ($handler != NULL) {
+			$type = $handler->getID();
+			
+		}
+		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
+							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
+							'JOIN '.$page.' ON s1.subject_id = page_id ' .
+							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
+							' AND s2.value_string REGEXP '.$db->addQuotes('[0-9] '.$type).
+							' GROUP BY title) UNION ' .
+							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
+							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($type).') GROUP BY title)' .
+							'  LIMIT '.SMW_AC_MAX_RESULTS);
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+			}
+		}
+		
+		$db->freeResult($res);
+		
 		return $result;
 	}
 	
@@ -429,10 +491,10 @@ class AutoCompletionRequester {
 	 * 
 	 * @return array of Title objects 
 	 */
-	private static function getUndefinedPropertiesFromSMWTables(& $result, $namespaces, $requestoptions) {
+	/*private static function getUndefinedPropertiesFromSMWTables(& $result, $namespaces, $requestoptions) {
 		$db =& wfGetDB( DB_MASTER );
 		if (in_array(SMW_NS_ATTRIBUTE, $namespaces)) {
-			$attConds = getSQLConditions($requestoptions,'attribute_title','attribute_title');
+			$attConds = DBHelper::getSQLConditions($requestoptions,'attribute_title','attribute_title');
 			$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes WHERE attribute_title NOT IN (SELECT page_title FROM page WHERE attribute_title = page_title)'.$attConds.";");
 		    if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -442,7 +504,7 @@ class AutoCompletionRequester {
 			$db->freeResult($res);
 		}
 		if (in_array(SMW_NS_RELATION, $namespaces)) {
-			$relConds = getSQLConditions($requestoptions,'relation_title','relation_title');
+			$relConds = DBHelper::getSQLConditions($requestoptions,'relation_title','relation_title');
 			$res = $db->query('SELECT DISTINCT relation_title FROM smw_relations WHERE relation_title NOT IN (SELECT page_title FROM page WHERE relation_title = page_title)'.$relConds.";");
 		    if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -451,84 +513,12 @@ class AutoCompletionRequester {
 			}
 			$db->freeResult($res);
 		}
-	}
+	}*/
 	
-	/**
-	 * Transform input parameters into a suitable array of SQL options.
-	 * The parameter $valuecol defines the string name of the column to which
-	 * sorting requests etc. are to be applied.
-	 */
-	private static function getSQLOptions($requestoptions, $valuecol = NULL) {
-		$sql_options = array();
-		if ($requestoptions !== NULL) {
-			if ($requestoptions->limit >= 0) {
-				$sql_options['LIMIT'] = $requestoptions->limit;
-			}
-			if ($requestoptions->offset > 0) {
-				$sql_options['OFFSET'] = $requestoptions->offset;
-			}
-			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
-				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
-			}
-		}
-		return $sql_options;
-	}
-
-	/**
-	 * Transform input parameters into a suitable string of additional SQL conditions.
-	 * The parameter $valuecol defines the string name of the column to which
-	 * value restrictions etc. are to be applied.
-	 * @param $requestoptions object with options
-	 * @param $valuecol name of SQL column to which conditions apply
-	 * @param $labelcol name of SQL column to which string conditions apply, if any
-	 */
-	 private static function getSQLConditions($requestoptions, $valuecol, $labelcol = NULL) {
-		$sql_conds = '';
-		if ($requestoptions !== NULL) {
-			$db =& wfGetDB( DB_MASTER ); // TODO: use slave?
-			if ($requestoptions->boundary !== NULL) { // apply value boundary
-				if ($requestoptions->ascending) {
-					if ($requestoptions->include_boundary) {
-						$op = ' >= ';
-					} else {
-						$op = ' > ';
-					}
-				} else {
-					if ($requestoptions->include_boundary) {
-						$op = ' <= ';
-					} else {
-						$op = ' < ';
-					}
-				}
-				$sql_conds .= ' AND ' . $valuecol . $op . $db->addQuotes($requestoptions->boundary);
-			}
-			if ($labelcol !== NULL) { // apply string conditions
-				foreach ($requestoptions->getStringConditions() as $strcond) {
-					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
-					switch ($strcond->condition) {
-						case SMW_STRCOND_PRE:
-							$string .= '%';
-							break;
-						case SMW_STRCOND_POST:
-							$string = '%' . $string;
-							break;
-						case SMW_STRCOND_MID:
-							$string = '%' . $string . '%';
-							break;
-					}
-					if ($requestoptions->isCaseSensitive) { 
-						$sql_conds .= ' AND ' . $labelcol . ' LIKE ' . $db->addQuotes($string);
-					} else {
-						$sql_conds .= ' AND UPPER(' . $labelcol . ') LIKE UPPER(' . $db->addQuotes($string).')';
-					}
-				}
-			}
-		}
-		return $sql_conds;
-	}
+	
 	
 		
-	private static function getNamespaceText($page) {
+	/*private static function getNamespaceText($page) {
  		global $smwgContLang, $wgLang;
  		$nsArray = $smwgContLang->getNamespaces();
  		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
@@ -537,7 +527,7 @@ class AutoCompletionRequester {
  			$ns = $page->getNamespace() != NS_MAIN ? $nsArray[$page->getNamespace()] : "";
  		}
  		return $ns;
- 	}
+ 	}*/
  	
  	public function logResult(& $result, $articleName) {
  		if ($result == SMW_AC_NORESULT) {
