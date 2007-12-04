@@ -67,67 +67,96 @@
  	 * @param $namespaces Array of ns constants.
  	 * @param $requestoptions SMWRequestOptions object.
  	 * @param $ignoreRedirects False, if no redirects should be returned.
+ 	 * 
+ 	 * @return array of Title
  	 */
  	public abstract function getPages($namespaces = NULL, $requestoptions = NULL, $ignoreRedirects = false);
 	
 	/**
 	 * Returns root categories (categories which have no super-category).
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getRootCategories($requestoptions = NULL);
 	
+	
 	/**
 	 *  Returns root properties (properties which have no super-property).
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getRootProperties($requestoptions = NULL);
 	
 	/**
 	 * Returns direct subcategories of $categoryTitle.
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL);
 	
 	/**
 	 * Returns direct supercategories of $categoryTitle.
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getDirectSuperCategories(Title $categoryTitle, $requestoptions = NULL);
 	
 	/**
 	 * Returns all categories the given instance is member of.
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL);
 	
 	/**
 	 * Returns all instances of $categoryTitle including instances of all subcategories of $categoryTitle.
 	 * 
-	 * In the case of a cycle in the category inheritance graph, this method should have at least a treshhold
+	 * In the case of a cycle in the category inheritance graph, this method has a treshhold
 	 * to stop execution before a stack overflow occurs.
+	 * 
+	 * @return array of tuples (instance, category)
 	 */
 	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL); 
 	
 	/**
 	 * Returns all direct instances of $categoryTitle
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getDirectInstances(Title $categoryTitle, $requestoptions = NULL);
 	
+		
 	/**
-	 * Returns all properties of $categoryTitle including properties of all subcategories of $categoryTitle.
+	 * Returns all properties with schema of $categoryTitle (including inherited).
 	 * 
-	 * In the case of a cycle in the category inheritance graph, this method should have at least a treshhold
-	 * to stop execution before a stack overflow occurs.
-	 */	
-	public abstract function getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL);
+	 * @return array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
+	 */
+	public abstract function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL); 
 	
 	/**
-	 * Returns all direct properties of $categoryTitle.
+	 * Returns all properties of matching $requestoptions
+	 * 
+	 * array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
 	 */
-	public abstract function getDirectPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL); 
-	
+	public abstract function getPropertiesWithSchemaByName($requestoptions); 
+
+	/**
+ 	* Returns direct properties of $categoryTitle (but no schema-data!)
+ 	* 
+ 	* @return array of Title
+ 	*/	
+	public abstract function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL);
 	/**
 	 * Returns all direct subproperties of $property.
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getDirectSubProperties(Title $property, $requestoptions = NULL);
 	
 	/**
 	 * Returns all direct superproperties of $property.
+	 * 
+	 * @return array of Title
 	 */
 	public abstract function getDirectSuperProperties(Title $property, $requestoptions = NULL); 
 	

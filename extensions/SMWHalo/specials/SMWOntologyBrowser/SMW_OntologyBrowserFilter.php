@@ -168,9 +168,9 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundProperties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter);
- 	 	$dummy = array();
- 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties, $dummy);
+ 	 	$foundProperties = smwfGetSemanticStore()->getPropertiesWithSchemaByName($reqfilter);
+ 	 
+ 	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties);
  	 }
  	 
  	 /**

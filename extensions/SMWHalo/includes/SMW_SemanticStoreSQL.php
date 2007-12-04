@@ -53,16 +53,16 @@
 			$sql = 'true';
 		}
 		
-		$sql .= $this->getSQLConditions($requestoptions,'page_title','page_title');
+		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 		
 		$result = array();
 		
 		if (!$ignoreRedirects) {
 			$res = $db->select( $db->tableName('page'), 
 		               array('page_title','page_namespace'),
-		               $sql, 'SMW::getPages', $this->getSQLOptions($requestoptions,'page_namespace') );
+		               $sql, 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
 		} else {
-			$sql_options = $this->getSQLOptions($requestoptions,'page_namespace');
+			$sql_options = DBHelper::getSQLOptions($requestoptions,'page_namespace');
 			$limit = $sql_options['LIMIT'] != NULL ? $sql_options['LIMIT'] : "";
 			$offset = $sql_options['OFFSET'] != NULL ? $sql_options['OFFSET'] : "";
 			$orderby = $sql_options['ORDER BY'] != NULL ? $sql_options['ORDER BY'] : "";
@@ -84,11 +84,11 @@
 		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'page_namespace=' . NS_CATEGORY .
 			   ' AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id)'.
-		       $this->getSQLConditions($requestoptions,'page_title','page_title');
+		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( $db->tableName('page'), 
 		                    'page_title',
-		                    $sql, 'SMW::getRootCategories', $this->getSQLOptions($requestoptions,'page_title') );
+		                    $sql, 'SMW::getRootCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -106,11 +106,11 @@
 		$smw_subprops = $db->tableName('smw_subprops');
 		$sql = 'page_namespace=' . SMW_NS_PROPERTY .
 			   ' AND NOT EXISTS (SELECT subject_title FROM '.$smw_subprops.' WHERE subject_title = page_title)'.
-		       $this->getSQLConditions($requestoptions,'page_title','page_title');
+		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( $db->tableName('page'), 
 		                    'page_title',
-		                    $sql, 'SMW::getRootProperties', $this->getSQLOptions($requestoptions,'page_title') );
+		                    $sql, 'SMW::getRootProperties', DBHelper::getSQLOptions($requestoptions,'page_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -127,11 +127,11 @@
 		$db =& wfGetDB( DB_MASTER );
 		$sql = 'page_namespace=' . NS_CATEGORY .
 			   ' AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id'.
-		       $this->getSQLConditions($requestoptions,'page_title','page_title');
+		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
 		                    'page_title',
-		                    $sql, 'SMW::getDirectSubCategories', $this->getSQLOptions($requestoptions,'page_title') );
+		                    $sql, 'SMW::getDirectSubCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -148,11 +148,11 @@
 		$mw_page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
 			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$mw_page.' WHERE page_title=cl_to)'.
-		       $this->getSQLConditions($requestoptions,'cl_to','cl_to');
+		       DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
 		                    'cl_to',
-		                    $sql, 'SMW::getDirectSuperCategories', $this->getSQLOptions($requestoptions,'cl_to') );
+		                    $sql, 'SMW::getDirectSuperCategories', DBHelper::getSQLOptions($requestoptions,'cl_to') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -168,11 +168,11 @@
 		$db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
 
 		$sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from'.//AND page_namespace = '.NS_MAIN.  
-			$this->getSQLConditions($requestoptions,'cl_to','cl_to');
+			DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select( array($db->tableName('page'), $db->tableName('categorylinks')), 
 		                    'DISTINCT cl_to',
-		                    $sql, 'SMW::getCategoriesForInstance',  $this->getSQLOptions($requestoptions,'cl_to'));
+		                    $sql, 'SMW::getCategoriesForInstance',  DBHelper::getSQLOptions($requestoptions,'cl_to'));
 		// rewrite result as array
 		$result = array();
 		
@@ -188,10 +188,10 @@
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableForInstances($categoryTitle, $db);
+		$this->createVirtualTableWithInstances($categoryTitle, $db);
 		
 		
-		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', $this->getSQLOptions($requestoptions,'category'));
+		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', DBHelper::getSQLOptions($requestoptions,'category'));
 		$results = array();
 		if($db->numRows( $res ) > 0)
 		{
@@ -207,7 +207,7 @@
 		$db->freeResult($res);
 		
 		// drop virtual tables
-		$this->dropVirtualTableForInstances($db);
+		$this->dropVirtualTableWithInstances($db);
 		return $results;
 	}
 	
@@ -218,7 +218,7 @@
 	 * @param Title $categoryTitle
 	 * @param & $db DB reference
 	 */
-	private function createVirtualTableForInstances($categoryTitle, & $db) {
+	private function createVirtualTableWithInstances($categoryTitle, & $db) {
 		global $smwgDefaultCollation;
 		
 		$page = $db->tableName('page');
@@ -238,9 +238,8 @@
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		
-		// initialize with:
-		
-		           
+		// initialize with direct instances
+				           
 		$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
 						'WHERE page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
@@ -273,7 +272,9 @@
 			
 		} while ($numOfSubCats > 0 && $maxDepth > 0);
 		
-		
+	
+		$db->query('DROP TABLE smw_ob_instances_super');
+		$db->query('DROP TABLE smw_ob_instances_sub');
 	}
 	
 	/**
@@ -281,10 +282,8 @@
 	 * 
 	 * @param & $db DB reference
 	 */
-	private function dropVirtualTableForInstances(& $db) {
-		$db->query('DROP TABLE smw_ob_instances');
-		$db->query('DROP TABLE smw_ob_instances_sub');
-		$db->query('DROP TABLE smw_ob_instances_super');
+	private function dropVirtualTableWithInstances(& $db) {
+			$db->query('DROP TABLE smw_ob_instances');
 	}
 	
 	
@@ -293,11 +292,11 @@
 
 		$sql = 'cl_to=' . $db->addQuotes($categoryTitle->getDBkey()) . 
 			' AND page_id = cl_from AND page_namespace = '.NS_MAIN.
-			$this->getSQLConditions($requestoptions,'page_title','page_title');
+			DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( array($db->tableName('page'), $db->tableName('categorylinks')), 
 		                    'DISTINCT page_title',
-		                    $sql, 'SMW::getDirectInstances', $this->getSQLOptions($requestoptions,'page_title'));
+		                    $sql, 'SMW::getDirectInstances', DBHelper::getSQLOptions($requestoptions,'page_title'));
 		// rewrite result as array
 		$result = array();
 		
@@ -312,27 +311,145 @@
 	}
 	
 	
-	function getPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
+	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableForProperties($categoryTitle, $db);
+		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db);
 		$res = $db->select( 'smw_ob_properties', 
 		                    'DISTINCT property',
-		                    array(), 'SMW::getPropertiesOfCategory', $this->getSQLOptions($requestoptions,'property'));
-		
-		// rewrite result as array
-		$result = array();
-		
+		                    array(), 'SMW::getPropertiesOfCategory', DBHelper::getSQLOptions($requestoptions,'property'));
+		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
 			}
 		}
 		$db->freeResult($res);
+		
+		$result = $this->getSchemaPropertyTuple($properties, $db);
 		$this->dropVirtualTableForProperties($db);
 		return $result;
 	}
 	
-	private function createVirtualTableForProperties(Title $categoryTitle, & $db) {
+	public function getPropertiesWithSchemaByName($requestoptions) {
+		$db =& wfGetDB( DB_MASTER ); 
+		$this->createVirtualTableWithPropertiesByName($requestoptions->getStringConditions(), $db);
+		
+		$res = $db->select( 'smw_ob_properties', 
+		                    'DISTINCT property',
+		                    array(), 'SMW::getPropertiesOfCategory', DBHelper::getSQLOptions($requestoptions,'property'));
+		$properties = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				
+				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+			}
+		}
+		$db->freeResult($res);
+		
+		$result = $this->getSchemaPropertyTuple($properties, $db);
+		$this->dropVirtualTableForProperties($db);
+		return $result;
+	}
+	/**
+	 * Returns property schema data for a given array of property titles.
+	 * Needs the virtual table 'smw_ob_properties' initialized with the 
+	 * data given in properties.
+	 * 
+	 * @return array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
+	 */
+	private function getSchemaPropertyTuple(array & $properties, & $db) {
+		$resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
+							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->minCard->getDBKey()). ' GROUP BY property ORDER BY property');
+		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
+							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->maxCard->getDBKey()). ' GROUP BY property ORDER BY property');
+		$resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$db->tableName('smw_specialprops').
+							 ' ON subject_title = property WHERE property_id = '.SMW_SP_HAS_TYPE. '  GROUP BY property ORDER BY property');
+		$resSymCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
+							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
+		$resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
+							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
+		$resRanges = $db->query('SELECT property, object_title AS range FROM smw_ob_properties  JOIN '.$db->tableName('smw_nary_relations'). 'r ON r.subject_id = id JOIN '.$db->tableName('smw_nary').'n ON n.subject_id = r.subject_id '.
+							 ' WHERE attribute_title = '.$db->addQuotes($this->domainRangeHintRelation->getDBKey()). ' AND nary_pos = 1 GROUP BY property ORDER BY property');					 
+		// rewrite result as array
+		$result = array();
+		
+		$rowMinCard = $db->fetchObject($resMinCard);
+		$rowMaxCard = $db->fetchObject($resMaxCard);
+		$rowType = $db->fetchObject($resTypes);
+		$rowSymCat = $db->fetchObject($resSymCats);
+		$rowTransCats = $db->fetchObject($resTransCats);
+		$rowRanges = $db->fetchObject($resRanges);
+		foreach($properties as $p) {
+				$minCard = CARDINALITY_MIN;
+				if ($rowMinCard != NULL && $rowMinCard->property == $p->getDBkey()) {
+					$minCard = $rowMinCard->minCard;
+					$rowMinCard = $db->fetchObject($resMinCard);
+				}
+				$maxCard = CARDINALITY_UNLIMITED;
+				if ($rowMaxCard != NULL && $rowMaxCard->property == $p->getDBkey()) {
+					$maxCard = $rowMaxCard->maxCard;
+					$rowMaxCard = $db->fetchObject($resMaxCard);
+				}
+				$type = '_wpg';
+				
+				if ($rowType != NULL && $rowType->property == $p->getDBkey()) {
+					$type = $rowType->type; 
+					$rowType = $db->fetchObject($resTypes);
+				}
+				$symCat = false;
+				if ($rowSymCat != NULL && $rowSymCat->property == $p->getDBkey()) {
+					$symCat = true;
+					$rowSymCat = $db->fetchObject($resSymCats);
+				}
+				$transCat = false;
+				if ($rowTransCats != NULL && $rowTransCats->property == $p->getDBkey()) {
+					$transCat = true;
+					$rowTransCats = $db->fetchObject($resTransCats);
+				}
+				$range = NULL;
+				if ($rowRanges != NULL && $rowRanges->property == $p->getDBkey()) {
+					$range = $rowRanges->range;
+					$rowRanges = $db->fetchObject($resRanges);
+				}
+				$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range);
+			
+		}
+		$db->freeResult($resMinCard);
+		$db->freeResult($resMaxCard);
+		$db->freeResult($resTypes);
+		$db->freeResult($resSymCats);
+		$db->freeResult($resTransCats);
+		$db->freeResult($resRanges);
+		return $result;
+ 	}	
+	
+	/**
+	 * Returns a virtual 'smw_ob_properties' table with properties matching $stringConditions
+	 * 
+	 */
+	private function createVirtualTableWithPropertiesByName($stringConditions, & $db) {
+		global $smwgDefaultCollation;
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		
+		$page = $db->tableName('page');
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		// TODO: better implementation for SMWRequestCondition
+		if (count($stringConditions) == 0) return;
+		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_namespace = '.SMW_NS_PROPERTY.' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$stringConditions[0]->string.'%').'))');            
+	}
+	/**
+	 * Creates 'smw_ob_properties' and fills it with all properties (including inherited)
+	 * of a category.
+	 * 
+	 * @param Title $category
+	 * @param & $db 
+	 */
+	private function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db) {
 		global $smwgDefaultCollation;
 		
 		$page = $db->tableName('page');
@@ -346,7 +463,7 @@
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties ( property VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
@@ -354,7 +471,7 @@
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		            
-		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
+		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
 					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).')');
 	
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryTitle->getArticleID()).')');    
@@ -368,7 +485,7 @@
 			$db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = '.NS_CATEGORY.' AND cl_from IN (SELECT * FROM smw_ob_properties_sub))');
 			
 			// insert direct properties of current supercategory level
-			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
+			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
 					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
 			
 			// copy supercatgegories to subcategories of next iteration
@@ -382,19 +499,22 @@
 			
 			$db->query('TRUNCATE TABLE smw_ob_properties_super');
 			
-		} while ($numOfSuperCats > 0 && $maxDepth > 0);        
-		
-	}
-	
-	private function dropVirtualTableForProperties(& $db) {
-		$db->query('DROP TABLE smw_ob_properties');
+		} while ($numOfSuperCats > 0 && $maxDepth > 0);   
+		     
 		$db->query('DROP TABLE smw_ob_properties_super');
 		$db->query('DROP TABLE smw_ob_properties_sub');
 	}
 	
+	/**
+	 * Drops table 'smw_ob_properties'.
+	 */
+	private function dropVirtualTableForProperties(& $db) {
+		$db->query('DROP TABLE smw_ob_properties');
+	}
+	
 	
 			
-	function getDirectPropertiesOfCategory(Title $categoryTitle, $requestoptions = NULL) {
+	function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
 		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
   		$dv->setValues($categoryTitle->getDBKey(), $categoryTitle->getNamespace());
@@ -410,7 +530,7 @@
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
 		                    'subject_title',
-		                    $sql, 'SMW::getDirectSubProperties', $this->getSQLOptions($requestoptions,'subject_title') );
+		                    $sql, 'SMW::getDirectSubProperties', DBHelper::getSQLOptions($requestoptions,'subject_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -429,7 +549,7 @@
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
 		                    'object_title',
-		                    $sql, 'SMW::getDirectSuperProperties', $this->getSQLOptions($requestoptions,'object_title') );
+		                    $sql, 'SMW::getDirectSuperProperties', DBHelper::getSQLOptions($requestoptions,'object_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -616,6 +736,8 @@
 		
 		return $result;
 	}
+	
+	
  	
  	
  	public function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p) {
@@ -806,81 +928,7 @@
  	
  	///// Private methods /////
 
-	/**
-	 * Transform input parameters into a suitable array of SQL options.
-	 * The parameter $valuecol defines the string name of the column to which
-	 * sorting requests etc. are to be applied.
-	 */
-	protected function getSQLOptions($requestoptions, $valuecol = NULL) {
-		$sql_options = array();
-		if ($requestoptions !== NULL) {
-			if ($requestoptions->limit >= 0) {
-				$sql_options['LIMIT'] = $requestoptions->limit;
-			}
-			if ($requestoptions->offset > 0) {
-				$sql_options['OFFSET'] = $requestoptions->offset;
-			}
-			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
-				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
-			}
-		}
-		return $sql_options;
-	}
-
-	/**
-	 * Transform input parameters into a suitable string of additional SQL conditions.
-	 * The parameter $valuecol defines the string name of the column to which
-	 * value restrictions etc. are to be applied.
-	 * @param $requestoptions object with options
-	 * @param $valuecol name of SQL column to which conditions apply
-	 * @param $labelcol name of SQL column to which string conditions apply, if any
-	 */
-	protected function getSQLConditions($requestoptions, $valuecol, $labelcol = NULL) {
-		$sql_conds = '';
-		if ($requestoptions !== NULL) {
-			$db =& wfGetDB( DB_MASTER ); // TODO: use slave?
-			if ($requestoptions->boundary !== NULL) { // apply value boundary
-				if ($requestoptions->ascending) {
-					if ($requestoptions->include_boundary) {
-						$op = ' >= ';
-					} else {
-						$op = ' > ';
-					}
-				} else {
-					if ($requestoptions->include_boundary) {
-						$op = ' <= ';
-					} else {
-						$op = ' < ';
-					}
-				}
-				$sql_conds .= ' AND ' . $valuecol . $op . $db->addQuotes($requestoptions->boundary);
-			}
-			if ($labelcol !== NULL) { // apply string conditions
-				foreach ($requestoptions->getStringConditions() as $strcond) {
-					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
-					switch ($strcond->condition) {
-						case SMW_STRCOND_PRE:
-							$string .= '%';
-							break;
-						case SMW_STRCOND_POST:
-							$string = '%' . $string;
-							break;
-						case SMW_STRCOND_MID:
-							$string = '%' . $string . '%';
-							break;
-					}
-					if ($requestoptions->isCaseSensitive) { 
-						$sql_conds .= ' AND ' . $labelcol . ' LIKE ' . $db->addQuotes($string);
-					} else {
-						$sql_conds .= ' AND UPPER(' . $labelcol . ') LIKE UPPER(' . $db->addQuotes($string).')';
-					}
-				}
-			}
-		}
-		return $sql_conds;
-	}
-
-	
+		
  		
  	/**
 	 * Creates some predefined pages
@@ -917,7 +965,7 @@
 		DBHelper::reportProgress("Predefined pages created successfully.\n",$verbose);
 	}
 	
-	private function createHelpAttributes($verbose){
+	protected function createHelpAttributes($verbose){
 		$title = Title::newFromText("Question", SMW_NS_PROPERTY);
 		if (!($title->exists())){
 			$articleContent = "[[has type::Type:String]]";

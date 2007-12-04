@@ -452,7 +452,7 @@
 						'JOIN '.$smw_gardeningissues.' ON p1_title = subject_title AND p1_namespace = subject_namespace ' .
 						'JOIN '.$page.' ON page_title = object_title ' .
 						'JOIN '.$smw_nary_relations.' r  ' .
-						'WHERE nary_pos = 0 AND attribute_title = '.$domainRangePropertyText.' AND p1_namespace = '.SMW_NS_PROPERTY.' ' .
+						'WHERE nary_pos = 0 AND attribute_title = '.$db->addQuotes($domainRangePropertyText).' AND p1_namespace = '.SMW_NS_PROPERTY.' ' .
 								'AND object_namespace = '.NS_CATEGORY.' AND page_namespace = '.NS_CATEGORY.')');
 		$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues)');
 		

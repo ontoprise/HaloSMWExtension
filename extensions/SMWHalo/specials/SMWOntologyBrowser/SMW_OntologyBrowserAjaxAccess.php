@@ -69,17 +69,11 @@ function smwfOntologyBrowserAccess($method, $params) {
  	 	
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, $instance);
  		
- 	} else if ($method == 'getDirectProperties') {
- 		$reqfilter = new SMWRequestOptions();
- 		$reqfilter->sort = true;
- 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$properties = smwfGetSemanticStore()->getDirectPropertiesOfCategory($cat, $reqfilter);
- 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
  	} else if ($method == 'getProperties') {
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$properties = smwfGetSemanticStore()->getPropertiesOfCategory($cat, $reqfilter);
+ 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $reqfilter);
  		
  	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
  		

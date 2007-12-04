@@ -133,5 +133,79 @@
 		ob_flush();
 		flush();
 	}
+	
+	/**
+	 * Transform input parameters into a suitable array of SQL options.
+	 * The parameter $valuecol defines the string name of the column to which
+	 * sorting requests etc. are to be applied.
+	 */
+	public static function getSQLOptions($requestoptions, $valuecol = NULL) {
+		$sql_options = array();
+		if ($requestoptions !== NULL) {
+			if ($requestoptions->limit >= 0) {
+				$sql_options['LIMIT'] = $requestoptions->limit;
+			}
+			if ($requestoptions->offset > 0) {
+				$sql_options['OFFSET'] = $requestoptions->offset;
+			}
+			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
+				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
+			}
+		}
+		return $sql_options;
+	}
+
+	/**
+	 * Transform input parameters into a suitable string of additional SQL conditions.
+	 * The parameter $valuecol defines the string name of the column to which
+	 * value restrictions etc. are to be applied.
+	 * @param $requestoptions object with options
+	 * @param $valuecol name of SQL column to which conditions apply
+	 * @param $labelcol name of SQL column to which string conditions apply, if any
+	 */
+	 public static function getSQLConditions($requestoptions, $valuecol, $labelcol = NULL) {
+		$sql_conds = '';
+		if ($requestoptions !== NULL) {
+			$db =& wfGetDB( DB_MASTER ); // TODO: use slave?
+			if ($requestoptions->boundary !== NULL) { // apply value boundary
+				if ($requestoptions->ascending) {
+					if ($requestoptions->include_boundary) {
+						$op = ' >= ';
+					} else {
+						$op = ' > ';
+					}
+				} else {
+					if ($requestoptions->include_boundary) {
+						$op = ' <= ';
+					} else {
+						$op = ' < ';
+					}
+				}
+				$sql_conds .= ' AND ' . $valuecol . $op . $db->addQuotes($requestoptions->boundary);
+			}
+			if ($labelcol !== NULL) { // apply string conditions
+				foreach ($requestoptions->getStringConditions() as $strcond) {
+					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
+					switch ($strcond->condition) {
+						case SMW_STRCOND_PRE:
+							$string .= '%';
+							break;
+						case SMW_STRCOND_POST:
+							$string = '%' . $string;
+							break;
+						case SMW_STRCOND_MID:
+							$string = '%' . $string . '%';
+							break;
+					}
+					if ($requestoptions->isCaseSensitive) { 
+						$sql_conds .= ' AND ' . $labelcol . ' LIKE ' . $db->addQuotes($string);
+					} else {
+						$sql_conds .= ' AND UPPER(' . $labelcol . ') LIKE UPPER(' . $db->addQuotes($string).')';
+					}
+				}
+			}
+		}
+		return $sql_conds;
+	}
  }
 ?>

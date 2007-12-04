@@ -9,6 +9,17 @@ require_once($smwgHaloIP . '/includes/SMW_ChemistryParser.php');
 require_once("SMW_OntologyBrowserErrorHighlighting.php");
 
 class SMWOntologyBrowserXMLGenerator {
+	
+/**
+ * Encapsulate an array of categories as a category partition in XML.
+ * 
+ * @param array & $titles. Category titles
+ * @param $limit Max number of categories per partition
+ * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
+ * @param $rootLevel True, if partition on root level. Otherwise false.
+ * 
+ * @return XML string
+ */
  public static function encapsulateAsConceptPartition(array & $titles, $limit, $partitionNum, $rootLevel = false) {
 	$id = uniqid (rand());
 	$count = 0;
@@ -26,7 +37,7 @@ class SMWOntologyBrowserXMLGenerator {
 	$count++;
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
-		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
+		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
 		}
 		$title_esc = htmlspecialchars($t->getDBkey()); 
@@ -42,6 +53,15 @@ class SMWOntologyBrowserXMLGenerator {
  	}
 }
 
+/**
+ * Encapsulate an array of instances as an instance partition in XML.
+ * 
+ * @param array & $titles. Instance titles
+ * @param $limit Max number of instances per partition
+ * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
+ * 
+ * @return XML string
+ */
 public static function encapsulateAsInstancePartition(array & $instances, $limit, $partitionNum) {
 	$id = uniqid (rand());
 	$count = 0;
@@ -76,6 +96,16 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>" : "<instanceList>$result</instanceList>";
 }
 
+/**
+ * Encapsulate an array of properties as a property partition in XML.
+ * 
+ * @param array & $titles. Property titles
+ * @param $limit Max number of properties per partition
+ * @param $partitionNum Number of partition (0 <= $partitionNum <= total number / limit)
+ * @param $rootLevel True, if partition on root level. Otherwise false
+ * 
+ * @return XML string
+ */
 public static function encapsulateAsPropertyPartition(array & $titles, $limit, $partitionNum, $rootLevel = false) {
 	$id = uniqid (rand());
 	$count = 0;
@@ -93,7 +123,7 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
 	$count++;
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
-		if (SMWOntologyBrowserXMLGenerator::isPredefinedProperty($t)) {
+		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
 		}
 		$title = htmlspecialchars($t->getDBkey());
@@ -109,12 +139,20 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
 	}
 }
 
-public static function encapsulateAsAnnotationList(array & $attributeAnnotations, $instance) {
+/**
+ * Encapsulate an array of annotations as XML.
+ * 
+ * @param array & $propertyAnnotations: Tuple of ($property, $value)
+ * @param Title $instance
+ * 
+ * @return XML string
+ */
+public static function encapsulateAsAnnotationList(array & $propertyAnnotations, Title $instance) {
 	$result = "";
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
-	foreach($attributeAnnotations as $a) {
-		list($attribute, $values) = $a;
-		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $attribute, $values);
+	foreach($propertyAnnotations as $a) {
+		list($property, $values) = $a;
+		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values);
 	}
 	// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
 	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD, NULL, $instance);
@@ -123,90 +161,92 @@ public static function encapsulateAsAnnotationList(array & $attributeAnnotations
 }
 
 
-
+/**
+ * Encapsulate an array of properties as XML
+ * 
+ * @param array & $properties: Tuple of (title, minCard, maxCard, type, isSym, isTrans, range)
+ * 
+ * @return XML string
+ */
 public static function encapsulateAsPropertyList(array & $properties) {
 	
 	$count = 0;
 	$propertiesXML = "";
 	$gi_store = SMWGardening::getGardeningIssuesAccess();
 	foreach($properties as $t) {
-		if ($t instanceof Title) { 
-			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
+			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t[0]);
  			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
 			$count++;
-		}
 	}
 	
 	return $propertiesXML == '' ? "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>" : "<propertyList>".$propertiesXML."</propertyList>";
 }
 
-private static function encapsulateAsProperty(Title $t, $count, array & $issues) {
+/**
+ * Returns an XML represenatation of a schema property
+ * 
+ * @param array & schemaData. Tuple of (title, minCard, maxCard, type, isSym, isTrans, range)
+ * @param count continuous number for generating new IDs
+ * @param array & issues Gardening issues for that property
+ * 
+ * @return XML string (fragment)
+ */
+private static function encapsulateAsProperty(array & $schemaData, $count, array & $issues) {
 		$id = uniqid (rand());
 		$content = "";
-		$img = "";
-		// read type of property
-		$typesOfAttribute = smwfGetStore()->getSpecialValues($t, SMW_SP_HAS_TYPE);
-		if (count($typesOfAttribute) == 0 || $typesOfAttribute[0]->getXSDValue() == '_wpg' ) {
-			// no 'has type' annotation -> it's a binary relation by default
-			$relationTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintRelation);
-			$img = "relation.gif";
-			if (count($relationTarget) == 0) {
-				$content = "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
-			} else { 
-				foreach($relationTarget as $rt) {
-					$dvs = $rt->getDVs();
-					if (count($dvs) == 2 && $dvs[1] !== NULL) {
-						$title = htmlspecialchars( $dvs[1]->getTitle()->getText()); 
-						$content .= "<rangeType isLink=\"true\">".$title."</rangeType>";
-					} else {
-						$content .= "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
-					}
-				}
-				
+		
+		// unpack schemaData array
+		$title = $schemaData[0];
+		$minCardinality = $schemaData[1];
+		$maxCardinality = $schemaData[2];
+		$type = $schemaData[3];
+		$isMemberOfSymCat = $schemaData[4];
+		$isMemberOfTransCat = $schemaData[5];
+		$range = $schemaData[6];
+		
+		if ($type == '_wpg') { // binary relation?
+			if ($range == NULL) {
+				$content .= "<rangeType>".wfMsg('smw_ob_undefined_type')."</rangeType>";
+			} else {
+				$content .= "<rangeType isLink=\"true\">".$range."</rangeType>";
 			}
-					
-		} else { 
-			// it may be an attribute or n-ary relation otherwise.
-			// n-ary relations use the attribute icon too.
-			$typesOfAttributeAsString = $typesOfAttribute[0]->getTypeLabels();
+		} else {
+			// it must be an attribute or n-ary relation otherwise.
+			$v = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE);
+			$v->setXSDValue($type);
+			$typesOfAttributeAsString = $v->getTypeLabels();
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {
 				$content .= "<rangeType>".$typeOfAttributeAsString."</rangeType>";
 			}
-			$typeLabels = $typesOfAttribute[0]->getTypeLabels();
-			$img = (count($typeLabels) == 1 && $typeLabels[0] == 'Page') ? "relation.gif" : "attribute.gif";
+			
+			
 		}
 		
-		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($t);
+		// generate attribute strings
+		$maxCardText = $maxCardinality != CARDINALITY_UNLIMITED ? "maxCard=\"".$maxCardinality."\"" : "maxCard=\"*\"";
+		$minCardText = $minCardinality != CARDINALITY_MIN ? "minCard=\"".$minCardinality."\"" : "minCard=\"0\"";
+		$isSymetricalText = $isMemberOfSymCat ? "isSymetrical=\"true\"" : "";
+		$isTransitiveText = $isMemberOfTransCat ? "isTransitive=\"true\"" : "";
+		$title_esc = htmlspecialchars($title->getDBkey());
+		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($title);
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';	
-		// read min/max cardinality
-		// TODO: check value if it is valid.
-		$minCard = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->minCard);
-		$minCardText = 'minCard="0"'; // default min cardinality
-		if (count($minCard) > 0) {
-			$minCardText = "minCard=\"".$minCard[0]->getXSDValue()."\"";
-		}
-		$maxCard = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->maxCard);
-		$maxCardText = 'maxCard="*"';// default max cardinality
-		if (count($maxCard) > 0) {
-			$maxCardText = "maxCard=\"".$maxCard[0]->getXSDValue()."\"";
-		}
-		
-		$catsOfRelation = smwfGetSemanticStore()->getCategoriesForInstance($t);
-		$isSymetricalText = '';
-		$isTransitiveText = '';
-		foreach($catsOfRelation as $c) {
-			if ($c->getDBkey() == smwfGetSemanticStore()->symetricalCat->getDBkey()) {
-				$isSymetricalText = "isSymetrical=\"true\"";
-			} else 	if ($c->getDBkey() == smwfGetSemanticStore()->transitiveCat->getDBkey()) {
-				$isTransitiveText = "isTransitive=\"true\"";
-			}
-		}
-		$title_esc = htmlspecialchars($t->getDBkey());
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		return "<property title=\"".$title_esc."\" img=\"$img\" id=\"ID_".$id.$count."\" $minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>".$content.$gi_issues."</property>";
+		return "<property title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
+					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>".
+					$content.$gi_issues.
+				"</property>";
 	
 }
 
+/**
+ * Encapsulates an annotation as XML.
+ * 
+ * @param $instance
+ * @param $annotation
+ * @param $smwValues
+ * 
+ * @return XML string (fragment)
+ */
 private static function encapsulateAsAnnotation(Title $instance, Title $annotationTitle, $smwValues) {
 	$id = uniqid (rand());
 	$count = 0;
@@ -253,7 +293,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$multiProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
+			$multiProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 	
 		} else if ($smwValue instanceof SMWWikiPageValue) { // relation
 		
@@ -262,7 +302,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"relation.gif\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
+			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
 			
 		} else if ($smwValue != NULL){ // normal attribute
 			if ($smwValue->getTypeID() == '_che') {
@@ -287,7 +327,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$singleProperties .= "<annotation title=\"".$title."\" img=\"attribute.gif\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
+			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
 		}
 		$count++;
 	}
@@ -298,15 +338,15 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 
 
 /**
- * returns true, if the property is a pre-defined schema property
+ * Returns true, if $t is a pre-defined title.
  */
-private static function isPredefinedProperty($prop) {
-	return ($prop->getDBkey()== smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) 
+private static function isPredefined($t) {
+	return ($t->getDBkey()== smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) 
 		
-		||  ($prop->getDBkey()== smwfGetSemanticStore()->minCard->getDBkey()) 
-		|| 	($prop->getDBkey()== smwfGetSemanticStore()->maxCard->getDBkey())
-		|| ($prop->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey()) 
-		|| ($prop->getDBkey()== smwfGetSemanticStore()->symetricalCat->getDBkey()); 
+		||  ($t->getDBkey()== smwfGetSemanticStore()->minCard->getDBkey()) 
+		|| 	($t->getDBkey()== smwfGetSemanticStore()->maxCard->getDBkey())
+		|| ($t->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey()) 
+		|| ($t->getDBkey()== smwfGetSemanticStore()->symetricalCat->getDBkey()); 
 } 	
 }
 ?>
