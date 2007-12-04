@@ -19,6 +19,11 @@ var SMW_CAT_CHECK_CATEGORY =
 		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true) ' +
 	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true, attribute:catExists=false)" ';
 
+var SMW_CAT_CHECK_CATEGORY_CREATE = 
+	'smwCheckType="category: exists ' +
+		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true, hide:cat-addandcreate) ' +
+	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true, attribute:catExists=false, show:cat-addandcreate)" ';
+
 var SMW_CAT_CHECK_CATEGORY_IIE = // Invalid if exists
 	'smwCheckType="category:exists ' +
 		'? (color: red, showMessage:CATEGORY_ALREADY_EXISTS, valid:false) ' +
@@ -32,7 +37,7 @@ var SMW_CAT_CHECK_EMPTY =
 var SMW_CAT_ALL_VALID =	
 	'smwAllValid="allValid ' +
  		'? (show:cat-confirm, hide:cat-invalid) ' +
- 		': (show:cat-invalid, hide:cat-confirm)"';
+ 		': (show:cat-invalid, hide:cat-confirm, hide:cat-addandcreate)"';
 
 var SMW_CAT_HINT_CATEGORY =
 	'typeHint = "' + SMW_CATEGORY_NS + '" ';
@@ -118,10 +123,12 @@ cancel: function(){
 },
 
 enableAnnotation: function(enable) {
-	if (enable) {
-		$('cat-menu-annotate').show();
-	} else {
-		$('cat-menu-annotate').hide();
+	if ($('cat-menu-annotate')) {
+		if (enable) {
+			$('cat-menu-annotate').show();
+		} else {
+			$('cat-menu-annotate').hide();
+		}
 	}
 },
 
@@ -147,7 +154,14 @@ createToolbar: function(attributes) {
 },
 
 
-addItem: function() {
+/**
+ * Annotate a category in the article as specified in the input field with id 
+ * 'cat-name'.
+ * 
+ * @param boolean create
+ * 		If <true>, the category is created, if it does not already exist.
+ */
+addItem: function(create) {
 	var catName = $("cat-name");
 	/*STARTLOG*/
     smwhgLogger.log(catName.value,"STB-Categories","annotate_added");
@@ -158,7 +172,7 @@ addItem: function() {
 	this.fillList(true);
 	
 	// Create the category, if it does not exist.
-	if (catName.getAttribute("catexists") == "false") {
+	if (create && catName.getAttribute("catexists") == "false") {
 		this.om.createCategory(name, "");
 		/*STARTLOG*/
 	    smwhgLogger.log(name,"STB-Categories","create_added");
@@ -180,24 +194,31 @@ newItem: function() {
 	/*ENDLOG*/
 
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
-	tb.append(tb.createText('cat-help-msg', 
-	                        gLanguage.getMessage('ANNOTATE_CATEGORY'),
-	                        '' , true));
+	if (wgAction == 'edit') {
+		tb.append(tb.createText('cat-help-msg', 
+		                        gLanguage.getMessage('ANNOTATE_CATEGORY'),
+		                        '' , true));
+	}
 	tb.append(tb.createInput('cat-name', 
 							 gLanguage.getMessage('CATEGORY'), selection, '',
-	                         SMW_CAT_CHECK_CATEGORY +
+	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
-	var links = [['catToolBar.addItem()',gLanguage.getMessage('ADD'), 'cat-confirm',
+	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
 	                                     gLanguage.getMessage('INVALID_VALUES'), 'cat-invalid'],
-				 ['catToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+				 ['catToolBar.addItem(true)',gLanguage.getMessage('ADD_AND_CREATE_CAT'), 'cat-addandcreate']
+	                                     
 				];
+	if (wgAction == 'edit') {
+		links.push(['catToolBar.cancel()', gLanguage.getMessage('CANCEL')]);
+	}	
 	tb.append(tb.createLink('cat-links', links, '', true));
 				
 	tb.finishCreation();
+	$('cat-addandcreate').hide();
 	gSTBEventActions.initialCheck($("category-content-box"));
 	//Sets Focus on first Element
 	setTimeout("$('cat-name').focus();",50);
