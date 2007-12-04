@@ -47,7 +47,11 @@ disableDragging: function(){
  */
 enableDragging: function(){
 	if(this.draggable == null) {
-		this.draggable = new Draggable('ontomenuanchor', {	handle: 'draggable'});
+		this.draggable = new Draggable('ontomenuanchor', {
+			//TODO: replace handle with proper tab if present	
+			handle: 'stb_cont3-headline', 
+			starteffect: function(){}, 
+			endeffect: function(){}});
 		
 		//Adds an Observer which stores the position of the stb after each drag
 		//this is temporary and probably will be removed if lightweight framework is implemented

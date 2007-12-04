@@ -14,7 +14,9 @@ Marker.prototype = {
 		//is still not present when the constructor is called
 		this.rootnode = rootnode;
 		//
-		this.markerindex = 0;		
+		this.markerindex = 0;
+		this.transparencymarkerlist = new Array();
+		this.iconmarkerlist = new Array();		
 	},
 	
 	/**
@@ -23,7 +25,55 @@ Marker.prototype = {
  	* @param divtomark object
  	* 			element to mark
  	*/
+ 	
+ 	insertMarkers: function(){
+ 		$(this.rootnode).hide();
+ 		//transparencyMarkers
+ 		 for(var index=0; index < this.transparencymarkerlist.length; index++){
+ 			new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+			//Set position of the marker		
+			$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
+			$(this.transparencymarkerlist[index][0]).setStyle( {left: this.transparencymarkerlist[index][4] + "px"});
+			//calculate and set width and height
+			var borderwidth = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"left")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"right"));
+			if(isNaN(Number(borderwidth))) return;
+			var borderheight = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"top")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"bottom"));
+			if(isNaN(Number(borderheight))) return;
+			var width = this.transparencymarkerlist[index][5] - borderwidth;
+			var height = this.transparencymarkerlist[index][5] - borderheight;
+			$(this.transparencymarkerlist[index][0]).setStyle( {height: height + "px"});
+			$(this.transparencymarkerlist[index][0]).setStyle( {width: width + "px"});
+ 		}
+ 		//iconMarkers
+ 		for(var index=0; index < this.iconmarkerlist.length; index++){
+ 			new Insertion.After(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
+			//Set position of the marker		
+			$(this.iconmarkerlist[index][0]).setStyle( {top: this.iconmarkerlist[index][3] + "px"});
+			$(this.iconmarkerlist[index][0]).setStyle( {left: this.iconmarkerlist[index][4] + "px"});
+ 		}
+ 		$(this.rootnode).show();
+ 	},
+ 	
+ 	
 	transparencyMarker: function(divtomark) {
+		if(divtomark == null) return;
+		//Create and insert markerdiv
+		var marker = '<div id="' + this.markerindex + '-marker" class="div-marker"></div>';		
+		//Get borderwidth defined in css for the div-marker
+		//var borderwidthx = Number(this.getBorderWidth(this.markerindex+"-marker","left")) + Number(this.getBorderWidth(this.markerindex+"-marker","right"));
+		//if(isNaN(Number(borderwidthx))) return;
+		//var borderwidthy = Number(this.getBorderWidth(this.markerindex+"-marker","top")) + Number(this.getBorderWidth(this.markerindex+"-marker","bottom"));
+		//if(isNaN(Number(borderwidthy))) return;
+		//Set width for the marker minus borderwidth so it fits the original element which should be marked
+		var width = divtomark.offsetWidth; //- borderwidthx;
+		var height = divtomark.offsetHeight; //- borderwidthy;
+		//Set position of the marker
+		var top = divtomark.offsetTop;
+		var left = divtomark.offsetLeft;
+		//increase marker index
+		this.transparencymarkerlist.push( new Array(this.markerindex+"-marker", marker, divtomark, top, left, height, width ))
+		this.markerindex++;	
+		/* on the fly code
 		if(divtomark == null) return;
 		//Create and insert markerdiv
 		var marker = '<div id="' + this.markerindex + '-marker" class="div-marker"></div>';
@@ -42,7 +92,7 @@ Marker.prototype = {
 		$(this.markerindex+"-marker").style.top = divtomark.offsetTop + "px";
 		$(this.markerindex+"-marker").style.left = divtomark.offsetLeft + "px";
 		//increase marker index
-		this.markerindex++;				
+		this.markerindex++;//*/	
 	},
 	
 	/**
@@ -52,6 +102,7 @@ Marker.prototype = {
  	* 			element to mark
  	*/
 	iconMarker: function(divtomark,links) {
+		///*
 		if(divtomark == null) return;
 		//Create and insert markerdiv
 		var marker = '<div id="' + this.markerindex + '-marker" class="icon-marker">';
@@ -62,7 +113,31 @@ Marker.prototype = {
 				});
 			// Check if only one link has been passe	
 			} else if ( links  instanceof String || typeof(links) == "string"){
-				marker += '<a href="'+ links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
+				marker += '<a href="'+ wgServer + wgScript+ "/" + links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
+			//If nothing has been paased, only mark it with a non clickable picture
+				} else {
+					marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
+				}
+		marker += '</div>';
+		//Set position of the marker		
+		var top = divtomark.offsetTop;
+		var left = divtomark.offsetLeft;
+		this.iconmarkerlist.push( new Array(this.markerindex+"-marker", marker, divtomark, top, left))
+		//increase marker index				
+		this.markerindex++;//*/
+				
+		/*
+		if(divtomark == null) return;
+		//Create and insert markerdiv
+		var marker = '<div id="' + this.markerindex + '-marker" class="icon-marker">';
+			//Check if multiple links has been passed and generate one clickable picture for each
+			if( links  instanceof Array){ 
+				links.each(function(link){
+					marker += '<a href="'+ wgServer + wgScript+ "/" +link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
+				});
+			// Check if only one link has been passe	
+			} else if ( links  instanceof String || typeof(links) == "string"){
+				marker += '<a href="'+ wgServer + wgScript+ "/" + links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
 			//If nothing has been paased, only mark it with a non clickable picture
 				} else {
 					marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
@@ -73,7 +148,7 @@ Marker.prototype = {
 		$(this.markerindex+"-marker").style.top = divtomark.offsetTop + "px";
 		$(this.markerindex+"-marker").style.left = divtomark.offsetLeft + "px";
 		//increase marker index				
-		this.markerindex++;			
+		this.markerindex++;//*/			
 	},
 
 	/**
@@ -188,12 +263,15 @@ Marker.prototype = {
  	*/	
 	markNodes: function(){
 		this.removeMarkers();
+		//$(this.rootnode).hide();
 		var time = new Date();
 		var timestamp1 = time.toGMTString();		
 		this.mark($(this.rootnode), true);
+		this.insertMarkers();
 		time = new Date();
 		var timestamp2 = time.toGMTString();
 		//alert(timestamp1 + " " + timestamp2 );
+		//$(this.rootnode).show();
 	},
 	
 	/**
