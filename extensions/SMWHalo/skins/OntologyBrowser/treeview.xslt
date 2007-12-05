@@ -29,6 +29,9 @@
 	
 	<!-- image source directory-->
 	<xsl:param name="param-img-directory" select="''"/>
+	<xsl:param name="param-wiki-path" select="''"/>
+	<xsl:param name="param-ns-concept" select="''"/>
+	<xsl:param name="param-ns-property" select="''"/>
 	<!-- ************************************ Variables ************************************ -->
 	<xsl:variable name="var-simple-quote">'</xsl:variable>
 	<xsl:variable name="var-slash-quote">\'</xsl:variable>
@@ -150,7 +153,7 @@
 			
 					<xsl:call-template name="createTreeNode">
 						<xsl:with-param name="actionListener" select="'propertyActionListener'"/>
-						<xsl:with-param name="typeOfEntity" select="'attribute'"/>
+						<xsl:with-param name="typeOfEntity" select="'property'"/>
 						<xsl:with-param name="rek_depth" select="$rek_depth"/>
 					</xsl:call-template>
 					
@@ -241,10 +244,12 @@
 		<xsl:call-template name="gissues">
 			<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 			<xsl:with-param name="actionListener">instanceActionListener</xsl:with-param> 
+			<xsl:with-param name="typeOfEntity"><xsl:value-of select="'instance'"/></xsl:with-param> 
 		</xsl:call-template></td>
 		<td>
+		
 		<a class="navigationLink" style="margin-left:5px;">
-			<xsl:attribute name="onclick">instanceActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="@title"/></xsl:attribute> 
 			{{SMW_OB_OPEN}}
 		</a>
 		
@@ -300,9 +305,10 @@
 				<xsl:call-template name="gissues">
 					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 					<xsl:with-param name="actionListener">propertyActionListener</xsl:with-param> 
+					<xsl:with-param name="typeOfEntity"><xsl:value-of select="'property'"/></xsl:with-param> 
 				</xsl:call-template>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 					{{SMW_OB_OPEN}}
 				</a>
 			</td>
@@ -394,12 +400,13 @@
 				<xsl:call-template name="gissues">
 					<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 					<xsl:with-param name="actionListener">propertyActionListener</xsl:with-param> 
+					<xsl:with-param name="typeOfEntity"><xsl:value-of select="'property'"/></xsl:with-param> 
 				</xsl:call-template>	
 			</td>
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-					<xsl:attribute name="onclick">schemaActionPropertyListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 					{{SMW_OB_OPEN}}
 				</a>
 				
@@ -473,6 +480,7 @@
 	<xsl:template name="gissues">
 	<xsl:param name="title"/>
 	<xsl:param name="actionListener"/>
+	<xsl:param name="typeOfEntity"/>
 		<xsl:if test="gissues">
 			<xsl:choose>
 			<xsl:when test="count(gissues/gi) = 1 and gissues/gi[@type = 100001]">
@@ -494,7 +502,17 @@
 				</span> 
 			</span>
 			<a class="navigationLink" title="Edit {$title}" style="margin-left:5px;">
-				<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this, '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>', true)</xsl:attribute>
+				<xsl:choose>
+						<xsl:when test="$typeOfEntity='concept'">
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+						</xsl:when>
+						<xsl:when test="$typeOfEntity='property'">
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+						</xsl:when>
+						<xsl:when test="$typeOfEntity='instance'">
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+						</xsl:when>
+				</xsl:choose>
 				{{SMW_OB_EDIT}}
 			</a>
 			</xsl:otherwise>
@@ -651,10 +669,18 @@
 					<xsl:call-template name="gissues">
 						<xsl:with-param name="title"><xsl:value-of select="@title"/></xsl:with-param>
 						<xsl:with-param name="actionListener"><xsl:value-of select="$actionListener"/></xsl:with-param> 
+						<xsl:with-param name="typeOfEntity"><xsl:value-of select="$typeOfEntity"/></xsl:with-param> 
 					</xsl:call-template> 
 					<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-						<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-						{{SMW_OB_OPEN}}
+						<xsl:choose>
+						<xsl:when test="$typeOfEntity='concept'">
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+						</xsl:when>
+						<xsl:when test="$typeOfEntity='property'">
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+						</xsl:when>
+						</xsl:choose>
+						{{SMW_OB_OPEN}} 
 					</a>
 	</xsl:template>
 	

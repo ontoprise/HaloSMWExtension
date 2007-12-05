@@ -68,6 +68,9 @@ TreeTransformer.prototype = {
   	// Finally import the .xsl
   	this.OB_xsltProcessor_gecko.importStylesheet(xslRef);
   	this.OB_xsltProcessor_gecko.setParameter(null, "param-img-directory", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/images/");
+	this.OB_xsltProcessor_gecko.setParameter(null, "param-wiki-path", wgServer + wgScriptPath);
+	this.OB_xsltProcessor_gecko.setParameter(null, "param-ns-concept", gLanguage.getMessage('CATEGORY_NS_WOC'));
+	this.OB_xsltProcessor_gecko.setParameter(null, "param-ns-property", gLanguage.getMessage('PROPERTY_NS_WOC'));
   } else if (OB_bd.isIE) {
   
     // create MSIE DOM object
@@ -82,6 +85,9 @@ TreeTransformer.prototype = {
 		template.stylesheet = xsl;
 		this.OB_xsltProcessor_ie = template.createProcessor();
 		this.OB_xsltProcessor_ie.addParameter("param-img-directory", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/images/");
+		this.OB_xsltProcessor_ie.addParameter("param-wiki-path", wgServer + wgScriptPath);
+		this.OB_xsltProcessor_ie.addParameter("param-ns-concept", gLanguage.getMessage('CATEGORY_NS_WOC'));
+		this.OB_xsltProcessor_ie.addParameter("param-ns-property", gLanguage.getMessage('PROPERTY_NS_WOC'));
   }
   
   // call initialize hook
