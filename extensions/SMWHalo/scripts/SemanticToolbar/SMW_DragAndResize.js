@@ -373,7 +373,7 @@ Resizeable.prototype = {
 smwhg_dragresizetoolbar = new DragResizeHandler();
 Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
 
-
+/*
 setTimeout(function() { 
 	setTimeout( function(){
 		smwhg_dragresizetoolbar.storePosition();
@@ -383,4 +383,4 @@ setTimeout(function() {
 		//alert("PosX: "+ret[0]+" PosY: "+ret[0]);
 		},1000);
 },3000);
-//*/
+*/

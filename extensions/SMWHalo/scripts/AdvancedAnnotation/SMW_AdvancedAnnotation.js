@@ -50,6 +50,9 @@ AdvancedAnnotation.prototype = {
 		this.loadWikiText();
 		this.annoCount = 10000;
 		this.annotationsChanged = false;
+		
+		this.contextMenu = null;
+		
 	},
 	
 	/**
@@ -69,7 +72,16 @@ AdvancedAnnotation.prototype = {
 			return;
 		}
 		var annoSelection = this.getSel();
-		if (annoSelection != '') {
+		this.selection = annoSelection;
+		
+		var cba = this.canBeAnnotated(annoSelection);
+			
+		if (!cba) {
+			smwhgAnnotationHints.showMessageAndWikiText(
+				gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION'), "");
+		}
+				
+		if (cba && annoSelection != '') {
 			// store details of the selection
 			this.selectedText = annoSelection.toString();
 			//trim selection
@@ -77,15 +89,76 @@ AdvancedAnnotation.prototype = {
 			this.annotatedNode = annoSelection.anchorNode;
 			this.annoOffset = annoSelection.anchorOffset;
 			
-			this.performAnnotation();
+			this.performAnnotation(event);
+		} else {
+			this.hideToolbar();
 		}
+	},
+	
+	/**
+	 * Checks if the <selection> can be annotated, as far as this can be decided
+	 * on the HTML level. This is the case, if it does not contain an annotation
+	 * or a paragraph.
+	 * 
+	 * @param selection
+	 * 			The selection may contain several nodes, starting at the
+	 * 			anchorNode and ending at the focusNode. All nodes between these
+	 * 			are analysed.
+	 * 
+	 * @return boolean
+	 * 		<false>, if a span with type 'annotationHighlight' or a paragraph 
+	 * 		         is among the selected nodes.
+	 * 		<true>, otherwise
+	 */
+	canBeAnnotated: function(selection) {
+		var anchorNode = selection.anchorNode;
+		var focusNode = selection.focusNode;
+		
+		var an = anchorNode;
+		if (!$(an).up) {
+			an = an.parentNode;
+		}
+		if ($(an).getAttribute('type') === "annotationHighlight") {
+			return false;
+		} else {
+			var annoHighlight = $(an).up('span[type="annotationHighlight"]');
+			if (annoHighlight) {
+				return false;
+			}
+		}
+	
+		var fn = focusNode;
+		if (!$(fn).up) {
+			fn = fn.parentNode;
+		}
+		if ($(fn).getAttribute('type') === "annotationHighlight") {
+			return false;
+		} else {
+			var annoHighlight = $(fn).up('span[type="annotationHighlight"]');
+			if (annoHighlight) {
+				return false;
+			}
+		}
+	
+		if (anchorNode !== focusNode) {
+			var next = this.searchForward(anchorNode, this.searchSelectionEnd.bind(this));
+			var prev = this.searchBackwards(anchorNode, this.searchSelectionEnd.bind(this));
+			if (next !== focusNode && prev !== focusNode) {
+				return false;
+			}
+		}
+		
+		return true;
 	},
 	
 	/**
 	 * Tries to find the current selection in the wiki text. If successful, the
 	 * corresponding wiki text is augmented with an annotation.
+	 * 
+	 * @param event
+	 * 		The mouse up event
 	 */
-	performAnnotation: function() {
+	performAnnotation: function(event) {
 		var anchor = null;
 		var firstAnchor = null;
 		var secondAnchor = null;
@@ -97,9 +170,14 @@ AdvancedAnnotation.prototype = {
 		if (template && $(template).getAttribute('type') == "template"){
 			msg = gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
 			msg = msg.replace(/\$1/g, this.selectedText);
-			
-			alert(msg);
-			alert("Name of template: "+ $(template).getAttribute('tmplname'));
+			var start = firstAnchor.getAttribute('name')*1;
+			var end = (secondAnchor != null)
+						? secondAnchor.getAttribute('name')*1
+						: -1;
+			smwhgAnnotationHints.showMessageAndWikiText("(e)"+msg,
+														this.wikiTextParser.text.substring(start,end));
+//			alert(msg);
+//			alert("Name of template: "+ $(template).getAttribute('tmplname'));
 			return;
 		}
 		if (firstAnchor) {
@@ -109,17 +187,18 @@ AdvancedAnnotation.prototype = {
 						: -1;
 			var res = this.wikiTextParser.findText(this.selectedText, start, end);
 			if (res != true) {
-				this.toolbarEnableAnnotation(false);
 				smwhgAnnotationHints.showMessageAndWikiText("(e)"+res,
 															this.wikiTextParser.text.substring(start,end));
 			} else {
-				this.toolbarEnableAnnotation(true);
 				smwhgAnnotationHints.showMessageAndWikiText(
 					"(i)Wikitext found for selection:<br><b>"+this.selectedText+"</b>",
 					this.wikiTextParser.text.substring(start,end));
+					
+				// Show toolbar at the cursor position
+				this.annotateWithToolbar(event);
+
 			}
 		} else {
-			this.toolbarEnableAnnotation(false);
 			smwhgAnnotationHints.showMessageAndWikiText("(e)No wiki text found for selection:",
 			                                            "<b>"+this.selectedText+"</b>");
 
@@ -128,15 +207,30 @@ AdvancedAnnotation.prototype = {
 	},
 	
 	/**
-	 * Enables or disables the annotation actions in the semantic toolbar.
+	 * Displays the semantic toolbar at the cursor position and shows the
+	 * dialogs for annotating categories or properties.
 	 * 
-	 * @param boolean enable
-	 * 		true  => enable actions
-	 * 		false => disable actions
+	 * @param event
+	 * 		The event contains the coordinates for the position of the toolbar.
+	 * 
 	 */
-	toolbarEnableAnnotation: function(enable) {
-		catToolBar.enableAnnotation(enable);
-		relToolBar.enableAnnotation(enable);
+	annotateWithToolbar: function(event) {
+		if (!this.contextMenu) {
+			this.contextMenu = new ContextMenuFramework();
+		}
+		relToolBar.createContextMenu(this.contextMenu);
+		catToolBar.createContextMenu(this.contextMenu);
+		this.contextMenu.setPosition(event.clientX, event.clientY);
+		this.contextMenu.showMenu();
+	},
+	
+	/**
+	 * Hides the toolbar if annotation has been cancelled.
+	 */
+	hideToolbar: function() {
+		if (this.contextMenu) {
+			this.contextMenu.hideMenu();
+		}		
 	},
 	
 	searchTemplate: function(node) {
@@ -152,6 +246,19 @@ AdvancedAnnotation.prototype = {
 		    && node.getAttribute('annoType') != 'category') {
 			return node;
 		} 
+	},
+	
+	searchSelectionEnd: function(node) {
+		if (node.tagName == 'P') {
+			// end search at paragraphs
+			return true;
+		}
+		if (node === this.selection.focusNode) {
+			return node;
+		} else if (node.getAttribute && 
+				   node.getAttribute('type') === 'annotationHighlight') {
+			return node;
+		}
 	},
 		
 	/**
@@ -295,7 +402,6 @@ AdvancedAnnotation.prototype = {
 				relToolBar.setWikiTextParser(this.wikiTextParser);
 				catToolBar.fillList(true);
 				relToolBar.fillList(true);
-				this.toolbarEnableAnnotation(false);
 			} else {
 				this.wikiTextParser = null;
 			}
@@ -326,6 +432,7 @@ AdvancedAnnotation.prototype = {
 		catToolBar.fillList();
 		$('ah-savewikitext-btn').enable();
 		this.annotationsChanged = true;
+		this.contextMenu.hideMenu();
 	},
 	
 	/**
@@ -346,6 +453,7 @@ AdvancedAnnotation.prototype = {
 		relToolBar.fillList();
 		$('ah-savewikitext-btn').enable();
 		this.annotationsChanged = true;
+		this.contextMenu.hideMenu();
 	},
 	
 	
@@ -384,9 +492,15 @@ AdvancedAnnotation.prototype = {
 				? '<img src="' + imgPath + 'edit.gif"/>'
 				: "" ) +
 			'</a>' +
-			'<span id="anno'+this.annoCount+'" class="'+cssClass+'">'+this.selectedText+'</span>'+
+			'<span id="anno' + this.annoCount +
+				'" class="' +cssClass +
+				'" type="annotationHighlight">' +
+				this.selectedText +
+			'</span>'+
 			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
    			'<img src="' + imgPath + 'delete.png"/></a>';
+   		
+   		// add a wrapper span
    		if (this.selectedText.length <= 20) {
 			annoDeco = '<span id="anno'+this.annoCount+'w" style="white-space:nowrap">'+
 						annoDeco +
@@ -400,7 +514,8 @@ AdvancedAnnotation.prototype = {
    		var annoType = (type == AA_RELATION) 
    						? 'annoType="relation"'
    						: 'annoType="category"';
-   						
+
+		// add wiki text offset anchors around the highlight   						
    		annoDeco = '<a type="wikiTextOffset" name="'+startPos+'" '+annoType+'></a>' 
    		           + annoDeco
    		           + '<a type="wikiTextOffset" name="'+endPos+'" '+annoType+'></a>';

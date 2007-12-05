@@ -7,7 +7,7 @@ ContextMenuFramework.prototype = {
 initialize: function() {
 		if(!$("contextmenu")){
 			var menu = '<div id="contextmenu"></div>';
-			new Insertion.Top($('innercontent'), menu );	
+			new Insertion.Top($('innercontent'), menu );
 		}
 		
 },
@@ -63,6 +63,7 @@ setContent: function(htmlcontent,containertype, headline){
 	new Insertion.Bottom('contextmenu', header );
 	new Insertion.Bottom('contextmenu', content );
 	new Insertion.Bottom(contentdiv, htmlcontent );
+
 },
 
 /**
@@ -106,7 +107,7 @@ setPosition: function(posX,posY){
 		element.setStyle({left: pos  + 'px'});
 	}
 	//Y-Coordinates
-	var toolbarHeight = $('ontomenuanchor').scrollHeight;
+	var toolbarHeight = element.scrollHeight;
 	//Check if it fits bottom to the coordinates
 	if( window.innerHeight - posY < toolbarHeight) {
 		//Check if it fits top to the coordinates

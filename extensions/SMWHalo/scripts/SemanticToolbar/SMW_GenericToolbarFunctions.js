@@ -27,26 +27,30 @@ createList: function(list,id) {
 	var divlist = "";
 	switch (id) {
 		case "category":
-			divlist ='<div id="' + id +'-tools">' +
-					'<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>' +
-					'<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
+			divlist ='<div id="' + id +'-tools">';
+			if (wgAction != 'annotate') {
+				divlist += '<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
+			}
+			divlist += '<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			if (wgNamespaceNumber == 14) {
 				divlist += '<a href="javascript:catToolBar.CreateSubSup()" class="menulink">'+gLanguage.getMessage('SUB_SUPER')+'</a>';
 			}
 			divlist += '</div>';
 	 		break;
 		case "relation":
-	  			divlist ='<div id="' + id +'-tools">' +
-	  					 '<a id="rel-menu-annotate" href="javascript:relToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>' +
-						 '<a href="javascript:relToolBar.newRelation()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
-				//regex for checking attribute namespace. 
-				//since there's no special namespace number anymore since atr and rel are united 
-				var attrregex =	new RegExp("Attribute:.*");
-				if (wgNamespaceNumber == 100 || wgNamespaceNumber == 102  || attrregex.exec(wgPageName) != null) {
-					divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
-				}
-	  			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
-	  			divlist += '</div>';
+	  		divlist ='<div id="' + id +'-tools">';
+			if (wgAction != 'annotate') {
+				divlist += '<a id="rel-menu-annotate" href="javascript:relToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
+			}
+			divlist += '<a href="javascript:relToolBar.newRelation()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
+			//regex for checking attribute namespace. 
+			//since there's no special namespace number anymore since atr and rel are united 
+			var attrregex =	new RegExp("Attribute:.*");
+			if (wgNamespaceNumber == 100 || wgNamespaceNumber == 102  || attrregex.exec(wgPageName) != null) {
+				divlist += "<a href=\"javascript:relToolBar.CreateSubSup()\" class=\"menulink\">"+gLanguage.getMessage('SUB_SUPER')+"</a>";
+			}
+  			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
+  			divlist += '</div>';
 	  		break;
 	}
   	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">";
@@ -538,7 +542,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 * - regex (valid)
 	 * - integer (valid)
 	 * - float (valid)
-	 * - category (exists)
+	 * - category (exists, annotated)
 	 * - property (exists)
 	 * (The names in brackets are the identifiers of the conditional that follows
 	 * the type.)
@@ -711,12 +715,14 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				checkName = gLanguage.getMessage('PROPERTY')+value;
 				break;
 		}
-		if (checkName) {
+		if (checkName === 'exists') {
 			this.showPendingIndicator(target);
 			this.om.existsArticle(checkName, 
 			                      this.ajaxCbSchemaCheck.bind(this), 
 			                      value, [type, check], target.id);							
-		}		
+		} else if (checkName === 'annotated') {
+			
+		}
 	},
 	
 	/*

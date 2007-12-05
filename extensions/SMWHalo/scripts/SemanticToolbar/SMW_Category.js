@@ -40,7 +40,7 @@ var SMW_CAT_ALL_VALID =
  		': (show:cat-invalid, hide:cat-confirm, hide:cat-addandcreate)"';
 
 var SMW_CAT_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" ';
+	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
 
 var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
@@ -122,16 +122,6 @@ cancel: function(){
 	this.fillList(true);
 },
 
-enableAnnotation: function(enable) {
-	if ($('cat-menu-annotate')) {
-		if (enable) {
-			$('cat-menu-annotate').show();
-		} else {
-			$('cat-menu-annotate').hide();
-		}
-	}
-},
-
 /**
  * Creates a new toolbar for the category container with the standard menu.
  * Further elements can be added to the toolbar. Call <finishCreation> after the
@@ -150,9 +140,52 @@ createToolbar: function(attributes) {
 	this.toolbarContainer = new ContainerToolBar('category-content',600,this.categorycontainer);
 	var tb = this.toolbarContainer;
 	tb.createContainerBody(attributes);
+	
 	return tb;
 },
 
+/**
+ * Creates the content of a <contextMenuContainer> for annotating a category.
+ * 
+ * @param ContextMenuFramework contextMenuContainer
+ * 		The container of the context menu.
+ */
+createContextMenu: function(contextMenuContainer) {
+	if (this.toolbarContainer) {
+		this.toolbarContainer.release();
+	}
+	this.toolbarContainer = new ContainerToolBar('category-content',600,contextMenuContainer);
+	var tb = this.toolbarContainer;
+	tb.createContainerBody(SMW_CAT_ALL_VALID, CATEGORYCONTAINER, gLanguage.getMessage('ANNOTATE_CATEGORY'));
+
+	this.currentAction = "annotate";
+	
+    this.wtp.initialize();
+	var selection = this.wtp.getSelection(true);
+	
+	/*STARTLOG*/
+    smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
+	/*ENDLOG*/
+
+	tb.append(tb.createInput('cat-name', 
+							 gLanguage.getMessage('CATEGORY'), selection, '',
+	                         SMW_CAT_CHECK_CATEGORY_CREATE +
+	                         SMW_CAT_CHECK_EMPTY +
+	                         SMW_CAT_HINT_CATEGORY,
+	                         true));
+	tb.append(tb.createText('cat-name-msg', 
+							gLanguage.getMessage('ENTER_NAME'), '' , true));
+	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
+	                                     gLanguage.getMessage('INVALID_VALUES'), 'cat-invalid'],
+				 ['catToolBar.addItem(true)',gLanguage.getMessage('ADD_AND_CREATE_CAT'), 'cat-addandcreate']
+	                                     
+				];
+	tb.append(tb.createLink('cat-links', links, '', true));
+				
+	tb.finishCreation();
+	$('cat-addandcreate').hide();
+	gSTBEventActions.initialCheck($("category-content-box"));
+},
 
 /**
  * Annotate a category in the article as specified in the input field with id 
@@ -181,8 +214,7 @@ addItem: function(create) {
 },
 
 newItem: function() {
-	var html;
-	
+		
 	this.showList = false;
 	this.currentAction = "annotate";
 	
@@ -226,8 +258,6 @@ newItem: function() {
 
 
 CreateSubSup: function() {
-    var html;
-
 	this.currentAction = "sub/super-category";
 	this.showList = false;
 	
@@ -377,8 +407,6 @@ deleteItem: function(selindex) {
 
 newCategory: function() {
 
-    var html;
-    
 	this.currentAction = "create";
 	this.showList = false;
  

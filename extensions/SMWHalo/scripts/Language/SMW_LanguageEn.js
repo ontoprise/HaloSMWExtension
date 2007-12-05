@@ -101,6 +101,7 @@ var wgLanguageStrings = {
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
 	'PAGE_TYPE'               : "page",		// name of the page data type
 	'NARY_TYPE'               : "n-ary",       // name of the n-ary data type
+	'SPECIFY_PROPERTY'		  : "Specify this property",
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotate a category.',
@@ -125,6 +126,7 @@ var wgLanguageStrings = {
 	'AH_ANNOTATIONS_SAVED'	  : '(i) The annotations were successfully saved.',
 	'AH_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
 	'AAM_SAVE_ANNOTATIONS' 	  : 'Do you want to save the annotations of the current session?',
+	'CAN_NOT_ANNOTATE_SELECTION' : 'You can not annotate the selection. It already contains annotations or paragraphs.',
 	
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',

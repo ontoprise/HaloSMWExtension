@@ -397,7 +397,7 @@ class SMWH_AAMParser {
 		$annoDeco =
 			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno($1)">'.
 			'<img src="'. $smwgHaloScriptPath . '/skins/edit.gif"/></a>'.
-			'<span id="anno$1" class="aam_prop_highlight">$2</span>'.
+			'<span id="anno$1" class="aam_prop_highlight" type="annotationHighlight">$2</span>'.
 			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno($1)">'.
    			'<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/delete.png"/></a>';
 		$shortAnnoDeco = // wrapper span with no line breaks

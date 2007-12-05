@@ -75,13 +75,13 @@ var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
 var SMW_REL_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" ';
+	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="'+ SMW_PROPERTY_NS + '" ';
+	'typeHint="'+ SMW_PROPERTY_NS + '" position="fixed"';
 
 var SMW_REL_HINT_INSTANCE =
-	'typeHint="'+ SMW_INSTANCE_NS + '" ';
+	'typeHint="'+ SMW_INSTANCE_NS + '" position="fixed"';
 	
 
 RelationToolBar.prototype = {
@@ -153,20 +153,6 @@ cancel: function(){
 	this.fillList(true);
 },
 
-enableAnnotation: function(enable) {
-	if (enable) {
-		if ($('rel-menu-annotate'))
-			$('rel-menu-annotate').show();
-		if ($('rel-menu-has-part'))
-			$('rel-menu-has-part').show();
-	} else {
-		if ($('rel-menu-annotate'))
-			$('rel-menu-annotate').hide();
-		if ($('rel-menu-has-part'))
-			$('rel-menu-has-part').hide();
-	}
-},
-
 /**
  * Creates a new toolbar for the relation container with the standard menu.
  * Further elements can be added to the toolbar. Call <finishCreation> after the
@@ -186,6 +172,55 @@ createToolbar: function(attributes) {
 	var tb = this.toolbarContainer;
 	tb.createContainerBody(attributes);
 	return tb;
+},
+
+/**
+ * Creates the content of a <contextMenuContainer> for annotating a property.
+ * 
+ * @param ContextMenuFramework contextMenuContainer
+ * 		The container of the context menu.
+ */
+createContextMenu: function(contextMenuContainer) {
+	if (this.toolbarContainer) {
+		this.toolbarContainer.release();
+	}
+	this.toolbarContainer = new ContainerToolBar('relation-content',500,contextMenuContainer);
+	var tb = this.toolbarContainer;
+	tb.createContainerBody(SMW_REL_ALL_VALID, RELATIONCONTAINER, gLanguage.getMessage('SPECIFY_PROPERTY'));
+
+    this.wtp.initialize();
+	this.currentAction = "annotate";
+
+	var selection = this.wtp.getSelection(true);
+	/*STARTLOG*/
+    smwhgLogger.log(selection,"AAM-Properties","annotate_clicked");
+	/*ENDLOG*/
+	
+	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
+	                         SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
+	                         SMW_REL_CHECK_EMPTY +
+	                         SMW_REL_HINT_PROPERTY,
+	                         true));
+	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), selection, '', 
+							 SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
+	                         true));
+	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
+	
+	var repr = selection;
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+	
+	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
+	
+	tb.append(tb.createLink('rel-links', links, '', true));
+				
+	tb.finishCreation();
+	$('relation-content-table-rel-show').hide();
+	gSTBEventActions.initialCheck($("relation-content-box"));
+	
+	//Sets Focus on first Element
+	setTimeout("$('rel-name').focus();",50);
+	
 },
 
 addItem: function() {
@@ -217,7 +252,6 @@ getRelationValue: function() {
 },
 
 newItem: function() {
-    var html;
     this.wtp.initialize();
 	this.showList = false;
 	this.currentAction = "annotate";
@@ -240,21 +274,15 @@ newItem: function() {
 	                         true));
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
-	var repr = "";
-	if (wgAction == 'annotate') {
-		repr = selection;
-	}
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
 	
 	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 				];
+	
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
 	tb.finishCreation();
-	if (wgAction == 'annotate') {
-		$('rel-show').disable();
-	}
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
@@ -346,7 +374,6 @@ updateNewItem: function(request) {
 },
 
 CreateSubSup: function() {
-    var html;
 
 	this.showList = false;
 	this.currentAction = "sub/super-category";
@@ -456,7 +483,6 @@ createSuperItem: function(openTargetArticle) {
 },
 
 newRelation: function() {
-    var html;
     gDataTypes.refresh();
     
 	this.showList = false;
@@ -715,7 +741,6 @@ deleteItem: function(selindex) {
 },
 
 newPart: function() {
-    var html;
     this.wtp.initialize();
     var selection = this.wtp.getSelection(true);
 
@@ -800,7 +825,6 @@ addPartOfRelation: function() {
 
 getselectedItem: function(selindex) {
 	this.wtp.initialize();
-	var html;
     var renameAll = "";
 
 	var annotatedElements = this.wtp.getRelations();
