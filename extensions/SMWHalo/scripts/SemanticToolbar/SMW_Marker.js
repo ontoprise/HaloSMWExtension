@@ -39,8 +39,8 @@ Marker.prototype = {
 			if(isNaN(Number(borderwidth))) return;
 			var borderheight = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"top")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"bottom"));
 			if(isNaN(Number(borderheight))) return;
-			var width = this.transparencymarkerlist[index][5] - borderwidth;
 			var height = this.transparencymarkerlist[index][5] - borderheight;
+			var width = this.transparencymarkerlist[index][6] - borderwidth;
 			$(this.transparencymarkerlist[index][0]).setStyle( {height: height + "px"});
 			$(this.transparencymarkerlist[index][0]).setStyle( {width: width + "px"});
  		}
