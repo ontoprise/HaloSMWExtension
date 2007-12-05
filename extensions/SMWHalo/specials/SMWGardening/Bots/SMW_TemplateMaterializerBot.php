@@ -14,9 +14,11 @@
  
  class TemplateMaterializerBot extends GardeningBot {
  	
+ 	private $store;
+ 	
  	function TemplateMaterializerBot() {
  		parent::GardeningBot('smw_templatematerializerbot');
- 		
+ 		$this->store = $this->getTemplateMaterializerStore();	
  	}
  	
  	public function getHelpText() {
@@ -62,7 +64,7 @@
  		}
  		
  		// get all pages using 'dirty' templates 
- 		$pageTitles = $this->getPagesUsingTemplates(NULL, $lastTemplateMaterialization);
+ 		$pageTitles = $this->store->getPagesUsingTemplates(NULL, $lastTemplateMaterialization);
  		//$log = "";
  		$this->setNumberOfTasks(1);
  		$this->addSubTask(count($pageTitles));
@@ -83,39 +85,23 @@
 		return '';
  	}
  	
- 	/**
- 	 * Returns all pages using templates which have been altered after some point in time.
- 	 * 
- 	 * @param $templateTitle Consider only this template, otherwise all.
- 	 * @param $touchedAfter Consider only templates touched after this time, othwerwise all.
- 	 * 
- 	 * @return array of Title
- 	 */
- 	private function getPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL) {
-		$result = "";
-		$db =& wfGetDB( DB_MASTER );
-		if ($templateTitle != NULL) { 
-			$sql = 'page_id=tl_from AND tl_title = '. $db->addQuotes($templateTitle->getDBkey());
-		} else {
-			$sql = 'page_id=tl_from';
-		}
-		
-		if ($touchedAfter != NULL) {
-			$sql .= ' AND tl_title IN (SELECT page_title FROM page WHERE page_touched > '. $db->addQuotes($touchedAfter).' AND page_namespace='.NS_TEMPLATE.')';
-		}       
-
-		$res = $db->select( array($db->tableName('templatelinks'),$db->tableName('page')) , 
-		                    'DISTINCT page_title',
-		                    $sql, 'SMW::getPagesUsingTemplates', NULL );
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title);
+ 	private function getTemplateMaterializerStore() {
+ 		global $smwgHaloIP;
+		if ($this->store == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$this->store = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					
+					$this->store = new TemplateMaterializerStorageSQL();
+				break;
 			}
 		}
-		$db->freeResult($res);
-		return $result;
-	}
+		return $this->store;
+ 	}
  }
  
  // instantiate once.
@@ -160,6 +146,48 @@
 	
 	public function getData($options, $request) {
 		parent::getData($options, $request);
+	}
+ }
+ 
+ abstract class TemplateMaterializerStorage {
+ 	
+ 	/**
+ 	 * Returns all pages using templates which have been altered after some point in time.
+ 	 * 
+ 	 * @param $templateTitle Consider only this template, otherwise all.
+ 	 * @param $touchedAfter Consider only templates touched after this time, othwerwise all.
+ 	 * 
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL);
+ }
+ 
+ class TemplateMaterializerStorageSQL extends TemplateMaterializerStorage {
+ 
+ 	public function getPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL) {
+		$result = "";
+		$db =& wfGetDB( DB_MASTER );
+		if ($templateTitle != NULL) { 
+			$sql = 'page_id=tl_from AND tl_title = '. $db->addQuotes($templateTitle->getDBkey());
+		} else {
+			$sql = 'page_id=tl_from';
+		}
+		
+		if ($touchedAfter != NULL) {
+			$sql .= ' AND tl_title IN (SELECT page_title FROM page WHERE page_touched > '. $db->addQuotes($touchedAfter).' AND page_namespace='.NS_TEMPLATE.')';
+		}       
+
+		$res = $db->select( array($db->tableName('templatelinks'),$db->tableName('page')) , 
+		                    'DISTINCT page_title',
+		                    $sql, 'SMW::getPagesUsingTemplates', NULL );
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
 	}
  }
 ?>

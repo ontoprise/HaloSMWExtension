@@ -10,17 +10,19 @@
  	
  	private $bot;
  	private $gi_store;
+ 	private $cc_store;
  	
  	public function InverseEqualityConsistency(& $bot) {
  		$this->bot = $bot;
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->cc_store = $bot->getConsistencyStorage();
  	}
  	
  	
  	public function checkInverseRelations() {
  		global $smwgContLang;
  		
- 		$inverseRelations = $this->getInverseRelations();
+ 		$inverseRelations = $this->cc_store->getInverseRelations();
  	
  		$work = count($inverseRelations);
  		$cnt = 0;
@@ -71,7 +73,7 @@
  	}
  	
  	public function checkEqualToRelations() {
- 		$equalToRelations = $this->getEqualToRelations();
+ 		$equalToRelations = $this->cc_store->getEqualToRelations();
  		
  		$this->bot->addSubTask(count($equalToRelations));
  		foreach($equalToRelations as $r) {
@@ -103,48 +105,7 @@
  		return '';
  	}
  	
- 	private function getInverseRelations() {
- 		$db =& wfGetDB( DB_MASTER );
-		$sql = 'relation_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()); 
-		
-		$res = $db->select(  array($db->tableName('smw_relations')), 
-		                    array('subject_title', 'object_title'),
-		                    $sql, 'SMW::getInverseRelations', NULL);
-		                    
-		
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY),  Title::newFromText($row->object_title, SMW_NS_PROPERTY));
-			}
-		}
-		
-		$db->freeResult($res);
-		
-		return $result;
- 	}
  	
- 	private function getEqualToRelations() {
- 		//TODO: read partitions of redirects
- 		$db =& wfGetDB( DB_MASTER );
-		$sql = 'rd_from = page_id'; 
-		
-		$res = $db->select(  array($db->tableName('redirect'), $db->tableName('page')), 
-		                    array('rd_namespace','rd_title', 'page_namespace', 'page_title'),
-		                    $sql, 'SMW::getInverseRelations', NULL);
-		                    
-		
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->rd_title, $row->rd_namespace), Title::newFromText($row->page_title, $row->page_namespace));
-			}
-		}
-		
-		$db->freeResult($res);
-		
-		return $result;
- 	}
  	
  	
  }

@@ -20,10 +20,12 @@
  	
  	// global log which contains wiki-markup
  	private $globalLog;
+ 	private $store;
  	
  	function AnomaliesBot() {
  		parent::GardeningBot("smw_anomaliesbot");
  		$this->globalLog = "== ".wfMsg('smw_gard_anomalylog')."! ==\n\n";
+ 		$this->store = $this->getAnomalyStore();
  	}
  	
  	public function getHelpText() {
@@ -76,7 +78,7 @@
  		if (array_key_exists('CATEGORY_LEAF_ANOMALY', $paramArray)) {  
  			echo "Checking for category leafs...\n";
  			if ($paramArray['CATEGORY_RESTRICTION'] == '') {
-       			$categoryLeaves = $this->getCategoryLeafs();
+       			$categoryLeaves = $this->store->getCategoryLeafs();
        	
        			
        			foreach($categoryLeaves as $cl) {
@@ -91,7 +93,7 @@
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
  					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
- 					$categoryLeaves = $this->getCategoryLeafs($categoryTitle);
+ 					$categoryLeaves = $this->store->getCategoryLeafs($categoryTitle);
  				
  					foreach($categoryLeaves as $cl) {
  						$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CATEGORY_LEAF, $cl);
@@ -109,7 +111,7 @@
        		echo "\nChecking for number anomalies...\n";
        		if ($paramArray['CATEGORY_RESTRICTION'] == '') {
        			
-        		$subCatAnomalies = $this->getCategoryAnomalies();
+        		$subCatAnomalies = $this->store->getCategoryAnomalies();
        			
        	
        			
@@ -127,7 +129,7 @@
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
  					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
- 					$subCatAnomalies = $this->getCategoryAnomalies($categoryTitle);
+ 					$subCatAnomalies = $this->store->getCategoryAnomalies($categoryTitle);
  					foreach($subCatAnomalies as $a) {
        					list($title, $subCatNum) = $a;
        					$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
@@ -142,14 +144,14 @@
        	if (array_key_exists('CATEGORY_LEAF_DELETE', $paramArray)) {
        		echo "\nRemoving category leaves...\n";
        		if ($paramArray['CATEGORY_RESTRICTION'] == '') {
-        		$this->removeCategoryLeaves();
+        		$this->store->removeCategoryLeaves();
        			$this->globalLog .= "\n".wfMsg('smw_gard_all_category_leaves_deleted');
        		} else {
        			$categories = explode(";", urldecode($paramArray['CATEGORY_RESTRICTION']));
        			foreach($categories as $c) {
        				$categoryDB = str_replace(" ", "_", trim($c));
        				$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
-       				$this->removeCategoryLeaves($categoryTitle);
+       				$this->store->removeCategoryLeaves($categoryTitle);
            			$this->globalLog .= "\n".wfMsg('smw_gard_category_leaves_deleted', $catNS, $c);
        			}
        		}
@@ -159,194 +161,25 @@
  		
  	}
  	
- 	/**
- 	 * Returns all categories which have neither instances nor subcategories.
- 	 * 
- 	 * @param $category as strings (dbkey)
- 	 */
- 	private function getCategoryLeafs($category = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
- 		$mw_page = $db->tableName('page');
-	 	$categorylinks = $db->tableName('categorylinks');
- 		$result = array();
-		if ($category == NULL) { 
-			$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
-	               
-			$res = $db->query($sql);
-		
-			$result = array();
-			if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-				
-					$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
-				
-				}
-			}
-			$db->freeResult($res);
-		} else {
-			
-				
-				$subCats = $this->getSubCategories($category);
-								
-				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
-	                
-				$res = $db->query($sql);
-		
-				$result = array();
-				if($db->numRows( $res ) > 0) {
-					while($row = $db->fetchObject($res)) {
-						$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
-					}
-				}
-				$db->freeResult($res);
-				
-				foreach($subCats as $subCat) { 
-					$result = array_merge($this->getCategoryLeafs($subCat), $result);
-				}
-			
-		}
-		
-		return $result;
- 	}
- 	
- 	/**
- 	 * Returns all categories which have less than MIN_SUBCATEGORY_NUM and more than MAX_SUBCATEGORY_NUM subcategories.
- 	 */
- 	private function getCategoryAnomalies($category = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
- 		$mw_page = $db->tableName('page');
-	 	$categorylinks = $db->tableName('categorylinks');
-		$result = array();
-
-		if ($category == NULL) {  		
-			$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
-		               
-			$res = $db->query($sql);
-		
-			if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-				
-					$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
+ 	private function getAnomalyStore() {
+ 		global $smwgHaloIP;
+		if ($this->store == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$this->store = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
 					
-				}
-			}
-		
-			$db->freeResult($res);
-		} else {
-			
-				
-				$subCats = $this->getSubCategories($category);
-				
-				// select all subcategories which have the subcategory-anomaly
-				$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND cl_to = '.$db->addQuotes($category->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
-		               
-				$res = $db->query($sql);
-		
-				if($db->numRows( $res ) > 0) {
-					while($row = $db->fetchObject($res)) {
-			
-						$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
-						
-					}
-				}
-		
-				$db->freeResult($res);
-				
-				// check for anomaly in all subcategories
-				foreach($subCats as $subCat) { 
-					$result = array_merge($this->getCategoryAnomalies($subCat), $result);
-				}
-			
-		}
-		return $result;
- 	}
- 	
- 	/**
- 	 * Removes all category leaves
- 	 */
- 	private function removeCategoryLeaves($category = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
- 		$mw_page = $db->tableName('page');
-	 	$categorylinks = $db->tableName('categorylinks');
- 		if ($category == NULL) {  		
- 				
-		$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY;
-	               
-		$res = $db->query($sql);
-		
-		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
-				$categoryArticle = new Article($categoryTitle);
-				$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $row->page_title));
+					$this->store = new AnomalyStorageSQL();
+				break;
 			}
 		}
-		
-		$db->freeResult($res);
- 		} else {
- 								
-				$subCats = $this->getSubCategories($category);
-								
-				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
-	                
-				$res = $db->query($sql);
-		
-				$result = array();
-				if($db->numRows( $res ) > 0) {
-					while($row = $db->fetchObject($res)) {
-						$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
-						$categoryArticle = new Article($categoryTitle);
-						$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $categoryTitle->getText()));
-					}
-				}
-				$db->freeResult($res);
-				
-				foreach($subCats as $subCat) { 
-					$this->removeCategoryLeaves($subCat);
-				}
- 		}
-		
+		return $this->store;
  	}
+ 		
  	
- 	private function getNamespaceText($page) {
- 		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaces();
- 		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
- 			$ns = $wgLang->getNsText($page->getNamespace());
- 				} else { 
- 			$ns = $page->getNamespace() != NS_MAIN ? $nsArray[$page->getNamespace()] : "";
- 		}
- 		return $ns;
- 	}
- 	
- 	private function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
-		$result = "";
-		$db =& wfGetDB( DB_MASTER );
-		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id';
-
-		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
-		                    'page_title',
-		                    $sql, 'SMW::getDirectSubCategories', NULL );
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}
-	
-	private function getSubCategories(Title $category) {
-		$subCategories = $this->getDirectSubCategories($category);
-		$result = array();
-		foreach($subCategories as $subCat) {
-			$result = array_merge($result, $this->getDirectSubCategories($subCat));
-		}
-		return array_merge($result, $subCategories);
-	}
  }
  
  new AnomaliesBot();
@@ -390,5 +223,163 @@
 	public function getData($options, $request) {
 		return parent::getData($options, $request);
 	}
+ }
+ 
+ abstract class AnomalyStorage {
+ 	public abstract function getCategoryLeafs($category = NULL);
+ 	public abstract function getCategoryAnomalies($category = NULL);
+ 	public abstract function removeCategoryLeaves($category = NULL);
+ }
+ 
+ class AnomalyStorageSQL extends AnomalyStorage {
+ 	/**
+ 	 * Returns all categories which have neither instances nor subcategories.
+ 	 * 
+ 	 * @param $category as strings (dbkey)
+ 	 */
+ 	public function getCategoryLeafs($category = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
+ 		$result = array();
+		if ($category == NULL) { 
+			$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+	               
+			$res = $db->query($sql);
+		
+			$result = array();
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+				
+					$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
+				
+				}
+			}
+			$db->freeResult($res);
+		} else {
+			
+				
+				$subCats = smwfGetSemanticStore()->getSubCategories($category);
+								
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+	                
+				$res = $db->query($sql);
+		
+				$result = array();
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+						$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
+					}
+				}
+				$db->freeResult($res);
+				
+				foreach($subCats as $subCat) { 
+					$result = array_merge($this->getCategoryLeafs($subCat), $result);
+				}
+			
+		}
+		
+		return $result;
+ 	}
+ 	
+ 	/**
+ 	 * Returns all categories which have less than MIN_SUBCATEGORY_NUM and more than MAX_SUBCATEGORY_NUM subcategories.
+ 	 */
+ 	public function getCategoryAnomalies($category = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
+		$result = array();
+
+		if ($category == NULL) {  		
+			$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
+		               
+			$res = $db->query($sql);
+		
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+				
+					$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
+					
+				}
+			}
+		
+			$db->freeResult($res);
+		} else {
+			
+				
+				$subCats = smwfGetSemanticStore()->getSubCategories($category);
+				
+				// select all subcategories which have the subcategory-anomaly
+				$sql = 'SELECT COUNT(cl_from) AS subCatNum, cl_to FROM '.$mw_page.' p, '.$categorylinks.' c WHERE cl_from = page_id AND page_namespace = '.NS_CATEGORY.' AND cl_to = '.$db->addQuotes($category->getDBkey()).' GROUP BY cl_to HAVING (COUNT(cl_from) < '.MIN_SUBCATEGORY_NUM.' OR COUNT(cl_from) > '.MAX_SUBCATEGORY_NUM.') LIMIT '.MAX_LOG_LENGTH;
+		               
+				$res = $db->query($sql);
+		
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+			
+						$result[] = array(Title::newFromText($row->cl_to, NS_CATEGORY), $row->subCatNum);
+						
+					}
+				}
+		
+				$db->freeResult($res);
+				
+				// check for anomaly in all subcategories
+				foreach($subCats as $subCat) { 
+					$result = array_merge($this->getCategoryAnomalies($subCat), $result);
+				}
+			
+		}
+		return $result;
+ 	}
+ 	
+ 	/**
+ 	 * Removes all category leaves
+ 	 */
+ 	public function removeCategoryLeaves($category = NULL) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$mw_page = $db->tableName('page');
+	 	$categorylinks = $db->tableName('categorylinks');
+ 		if ($category == NULL) {  		
+ 				
+		$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_namespace = '.NS_CATEGORY;
+	               
+		$res = $db->query($sql);
+		
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
+				$categoryArticle = new Article($categoryTitle);
+				$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $row->page_title));
+			}
+		}
+		
+		$db->freeResult($res);
+ 		} else {
+ 								
+				$subCats = smwfGetSemanticStore()->getSubCategories($category);
+								
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$categorylinks.' c ON p.page_title = c.cl_to WHERE cl_from IS NULL AND page_title = '.$db->addQuotes($category->getDBkey()).' AND page_namespace = '.NS_CATEGORY. ' LIMIT '.MAX_LOG_LENGTH;
+	                
+				$res = $db->query($sql);
+		
+				$result = array();
+				if($db->numRows( $res ) > 0) {
+					while($row = $db->fetchObject($res)) {
+						$categoryTitle = Title::newFromText($row->page_title, NS_CATEGORY);
+						$categoryArticle = new Article($categoryTitle);
+						$categoryArticle->doDeleteArticle(wfMsg('smw_gard_category_leaf_deleted', $categoryTitle->getText()));
+					}
+				}
+				$db->freeResult($res);
+				
+				foreach($subCats as $subCat) { 
+					$this->removeCategoryLeaves($subCat);
+				}
+ 		}
+		
+ 	}
  }
 ?>

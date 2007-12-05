@@ -18,11 +18,11 @@
  
  class ConsistencyBot extends GardeningBot {
  	
- 	
- 	
+ 	private $store = NULL;
+ 	 	
  	function ConsistencyBot() {
  		parent::GardeningBot("smw_consistencybot");
- 		
+ 		$this->store = $this->getConsistencyStorage();
  	}
  	
  	public function getHelpText() {
@@ -129,7 +129,23 @@
  		
  	}
  	
- 	
+ 	public function getConsistencyStorage() {
+ 		global $smwgHaloIP;
+		if ($this->store == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$this->store = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					
+					$this->store = new ConsistencyBotStorageSQL();
+				break;
+			}
+		}
+		return $this->store;
+ 	}
  }
  
  
@@ -308,5 +324,312 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 			return parent::getData($options, $request);
 		}
 	}
+ }
+ 
+ abstract class ConsitencyBotStorage {
+ 	
+ 	/* 
+ 	 * Note: 
+ 	 * 		
+ 	 *   Most of the following methods require a reference to a complete inheritance graph in memory. 
+	 *	 They are intended to be used thousands of times in a row, since it is a complex
+	 *	 task to load and prepare a complete inheritance graph for pathfinding at maximum speed. 
+	 *	 So if you just need for instance a domain of _one_ super property, do this manually. 
+	 * 
+	 */
+	 	
+ 	
+ 	/**
+ 	 * Returns the domain and ranges of the first super property which has defined some.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */ 	
+ 	public abstract function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p);
+ 	
+ 	/**
+ 	 * Determines minimum cardinality of an attribute,
+ 	 * which may be inherited.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Determines minimum cardinality of an attribute,
+ 	 * which may be inherited.
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns type of superproperty
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getTypeOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns categories of super property
+ 	 * 
+ 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
+ 	 * @param $a Property
+ 	 */
+ 	public abstract function getCategoriesOfSuperProperty(& $inheritanceGraph, $a);
+ 	
+ 	/**
+ 	 * Returns a sorted array of (category,supercategory) page_id tuples
+ 	 * representing an category inheritance graph. 
+ 	 * 
+ 	 * @return array of GraphEdge objects;
+ 	 */
+ 	public abstract function getCategoryInheritanceGraph();
+ 	
+ 	/**
+ 	 * Returns a sorted array of (attribute,superattribute) page_id tuples
+ 	 * representing an attribute inheritance graph. 
+ 	 * 
+ 	 *  @return array of GraphEdge objects;
+ 	 */
+ 	public abstract function getPropertyInheritanceGraph();
+ 	
+ 	public abstract function getInverseRelations();
+ 	
+ 	public abstract function getEqualToRelations();
+ }
+ 
+ class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
+ 	public function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p) {
+ 		$visitedNodes = array();
+ 		return $this->_getDomainsAndRangesOfSuperProperty($inheritanceGraph, $p, $visitedNodes);
+ 		
+ 	}
+ 	
+ 	private function _getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p, & $visitedNodes) {
+ 		$results = array();
+ 		$propertyID = $p->getArticleID();
+ 		array_push($visitedNodes, $propertyID);
+ 		$superProperties = GraphHelper::searchInSortedGraph($inheritanceGraph, $propertyID);
+ 		if ($superProperties == null) return $results;
+ 		foreach($superProperties as $sp) {
+ 			$spTitle = Title::newFromID($sp->to);
+ 			$domainRangeCategories = smwfGetStore()->getPropertyValues($spTitle, smwfGetSemanticStore()->domainRangeHintRelation);
+ 			if (count($domainRangeCategories) > 0) {
+ 				return $domainRangeCategories;
+ 			} else {
+ 				if (!in_array($sp->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getDomainsAndRangesOfSuperProperty($inheritanceGraph, $spTitle, $visitedNodes));
+ 				} 
+ 			}
+ 			
+ 		} 
+ 		array_pop($visitedNodes);
+ 		return $results;
+ 	}
+ 	
+ 
+	public function getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		$minCards = $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		return max($minCards); // return highest min cardinality
+ 	}
+ 	
+ 	private function _getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array(CARDINALITY_MIN);
+ 		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
+ 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$minCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->minCard);
+ 			if (count($minCards) > 0) {
+ 				
+ 				return array($minCards[0]->getXSDValue() + 0);
+ 			} else {
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getMinCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
+ 			}
+ 			
+ 		} 
+		array_pop($visitedNodes);
+ 		return $results;
+ 	}
+ 	
+ 	
+ 	public function getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		$maxCards = $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		return min($maxCards); // return smallest max cardinality
+ 	}
+ 	
+ 	private function _getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array(CARDINALITY_UNLIMITED);
+ 		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
+ 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$maxCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->maxCard);
+ 			if (count($maxCards) > 0) {
+ 				
+ 				return array($maxCards[0]->getXSDValue() + 0);
+ 			} else {
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getMaxCardinalityOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
+ 			}
+ 			
+ 		}
+ 		array_pop($visitedNodes);
+ 		return $results;
+ 	}
+ 	
+ 	
+	
+	public function getTypeOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		return $this->_getTypeOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 		
+ 	}
+ 	
+ 	private function _getTypeOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array();
+ 		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
+ 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$types = smwfGetStore()->getSpecialValues($saTitle, SMW_SP_HAS_TYPE);
+ 			if (count($types) > 0) {
+ 				return $types;
+ 			} else {
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getTypeOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
+ 			}
+ 			
+ 		}
+ 		array_pop($visitedNodes);
+ 		return $results;
+ 	}
+ 	
+ 	
+ 	public function getCategoriesOfSuperProperty(& $inheritanceGraph, $a) {
+ 		$visitedNodes = array();
+ 		return $this->_getCategoriesOfSuperProperty($inheritanceGraph, $a, $visitedNodes);
+ 	}
+ 	
+ 	private function _getCategoriesOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
+ 		$results = array();
+ 		$attributeID = $a->getArticleID();
+ 		array_push($visitedNodes, $attributeID);
+ 		$superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
+ 		if ($superAttributes == null) return $results;
+ 		foreach($superAttributes as $sa) {
+ 			$saTitle = Title::newFromID($sa->to);
+ 			$categories = smwfGetSemanticStore()->getCategoriesForInstance($saTitle);
+ 			if (count($categories) > 0) {
+ 				return $categories;
+ 			} else {
+ 				if (!in_array($sa->to, $visitedNodes)) {
+	 				$results = array_merge($results, $this->_getCategoriesOfSuperProperty($inheritanceGraph, $saTitle, $visitedNodes));
+ 				} 
+ 			}
+ 			
+ 		} 
+ 		array_pop($visitedNodes);
+ 		return $results;
+ 	}
+ 	
+ 	
+ 	public function getCategoryInheritanceGraph() {
+ 		$result = "";
+		$db =& wfGetDB( DB_MASTER );
+		$sql = 'page_namespace=' . NS_CATEGORY .
+			   ' AND cl_to = page_title';
+		$sql_options = array();
+		$sql_options['ORDER BY'] = 'cl_from';
+		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
+		                    array('cl_from','page_id', 'page_title'),
+		                    $sql, 'SMW::getCategoryInheritanceGraph', $sql_options);
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = new GraphEdge($row->cl_from, $row->page_id);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	
+ 	public function getPropertyInheritanceGraph() {
+ 		global $smwgContLang;
+  		$namespaces = $smwgContLang->getNamespaces();
+ 		$result = "";
+		$db =& wfGetDB( DB_MASTER );
+		$smw_subprops = $db->tableName('smw_subprops');
+		 $res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup FROM '.$smw_subprops.', page p1, page p2 WHERE p1.page_namespace = '.SMW_NS_PROPERTY.
+							' AND p2.page_namespace = '.SMW_NS_PROPERTY.' AND p1.page_title = subject_title AND p2.page_title = object_title ORDER BY p1.page_id');
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = new GraphEdge($row->sub, $row->sup);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+ 	}
+ 	
+ 	public function getInverseRelations() {
+ 		$db =& wfGetDB( DB_MASTER );
+		$sql = 'relation_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()); 
+		
+		$res = $db->select(  array($db->tableName('smw_relations')), 
+		                    array('subject_title', 'object_title'),
+		                    $sql, 'SMW::getInverseRelations', NULL);
+		                    
+		
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY),  Title::newFromText($row->object_title, SMW_NS_PROPERTY));
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		return $result;
+ 	}
+ 	
+ 	public function getEqualToRelations() {
+ 		//TODO: read partitions of redirects
+ 		$db =& wfGetDB( DB_MASTER );
+		$sql = 'rd_from = page_id'; 
+		
+		$res = $db->select(  array($db->tableName('redirect'), $db->tableName('page')), 
+		                    array('rd_namespace','rd_title', 'page_namespace', 'page_title'),
+		                    $sql, 'SMW::getInverseRelations', NULL);
+		                    
+		
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array(Title::newFromText($row->rd_title, $row->rd_namespace), Title::newFromText($row->page_title, $row->page_namespace));
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		return $result;
+ 	}
  }
 ?>

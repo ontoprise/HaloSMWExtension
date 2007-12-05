@@ -14,12 +14,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 class GraphCycleDetector {
  	
  	private $bot;
- 	
+ 	private $cc_store;
  	
  	
  	public function GraphCycleDetector(& $bot) {
  		
  		$this->bot = $bot;
+ 		$this->cc_store = $bot->getConsistencyStorage();
  	}
  	
  	/**
@@ -31,7 +32,7 @@ class GraphCycleDetector {
  	public function getAllCategoryCycles($header) {
  		global $wgLang;
  		print "\nCategory cycle\n";
- 		$categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
+ 		$categoryGraph = $this->cc_store->getCategoryInheritanceGraph();
  		$cycles = $this->returnCycles($categoryGraph);
  		return $this->storeCycles($cycles);
  	}
@@ -40,7 +41,7 @@ class GraphCycleDetector {
  		global $smwgContLang;
  		print "\nProperty cycle\n";
   		$namespaces = $smwgContLang->getNamespaces();
- 		$attributeGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
+ 		$attributeGraph = $this->cc_store->getPropertyInheritanceGraph();
  		$cycles = $this->returnCycles($attributeGraph);
  		return $this->storeCycles($cycles);
  	}

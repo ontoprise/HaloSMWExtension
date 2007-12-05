@@ -95,6 +95,14 @@
 	public abstract function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL);
 	
 	/**
+	 * Returns all subcategories of $category
+	 * 
+	 * @param $category
+	 * @return array of Title
+	 */
+	public abstract function getSubCategories(Title $category);
+	
+	/**
 	 * Returns direct supercategories of $categoryTitle.
 	 * 
 	 * @return array of Title
@@ -225,74 +233,6 @@
  	 */
  	public abstract function getAnnotationsWithUnit(Title $type, $unit);
  	
- 	/* 
- 	 * Note: 
- 	 * 		
- 	 *   All following methods require a reference to a complete inheritance graph in memory. 
-	 *	 They are intended to be used thousands of times in a row, since it is a complex
-	 *	 task to load and prepare a complete inheritance graph for pathfinding at maximum speed. 
-	 *	 So if you just need for instance a domain of _one_ super property, do this manually. 
-	 * 
-	 */
-	 	
- 	
- 	/**
- 	 * Returns the domain and ranges of the first super property which has defined some.
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */ 	
- 	public abstract function getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p);
- 	
- 	/**
- 	 * Determines minimum cardinality of an attribute,
- 	 * which may be inherited.
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */
- 	public abstract function getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a);
- 	
- 	/**
- 	 * Determines minimum cardinality of an attribute,
- 	 * which may be inherited.
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */
- 	public abstract function getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a);
- 	
- 	/**
- 	 * Returns type of superproperty
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */
- 	public abstract function getTypeOfSuperProperty(& $inheritanceGraph, $a);
- 	
- 	/**
- 	 * Returns categories of super property
- 	 * 
- 	 * @param & $inheritance graph Reference to array of GraphEdge objects.
- 	 * @param $a Property
- 	 */
- 	public abstract function getCategoriesOfSuperProperty(& $inheritanceGraph, $a);
- 	
- 	/**
- 	 * Returns a sorted array of (category,supercategory) page_id tuples
- 	 * representing an category inheritance graph. 
- 	 * 
- 	 * @return array of GraphEdge objects;
- 	 */
- 	public abstract function getCategoryInheritanceGraph();
- 	
- 	/**
- 	 * Returns a sorted array of (attribute,superattribute) page_id tuples
- 	 * representing an attribute inheritance graph. 
- 	 * 
- 	 *  @return array of GraphEdge objects;
- 	 */
- 	public abstract function getPropertyInheritanceGraph();
  	
  	/**
  	 * Replaces redirect annotations, i.e. pages with annotations made with redirect 

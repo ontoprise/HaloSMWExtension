@@ -19,6 +19,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	// reference to bot
  	private $bot;
  	
+ 	private $cc_store;
+ 	
  	// delay
  	private $delay;
  	
@@ -35,10 +37,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 */
  	public function PropertyCoVarianceDetector(& $bot, $delay) {
  		$this->bot = $bot;
+ 		$this->cc_store = $bot->getConsistencyStorage();
  		$this->delay = $delay;
  	
- 		$this->categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
- 		$this->propertyGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
+ 		$this->categoryGraph = $this->cc_store->getCategoryInheritanceGraph();
+ 		$this->propertyGraph = $this->cc_store->getPropertyInheritanceGraph();
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
@@ -115,7 +118,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// read min cards
  				
  				$minCardValue = $minCard[0]->getXSDValue() + 0;
- 				$minCardValueOfParent = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$minCardValueOfParent = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  				$minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
  				if ($minCardCOVTest !== true) {
@@ -126,7 +129,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// check with default min card (CARDINALITY_MIN)
  				
  				$minCardValue = CARDINALITY_MIN;
- 				$minCardValueOfParent = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$minCardValueOfParent = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  			
  				$minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
  				if ($minCardCOVTest !== true) {
@@ -160,7 +163,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// check for co-variance with parent
  				
  				$maxCardValue = $maxCard[0]->getXSDValue() + 0;
- 				$maxCardValueOfParent = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$maxCardValueOfParent = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
  				if ($maxCardCOVTest !== true) {
@@ -171,7 +174,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				// check with default max card (CARDINALITY_UNLIMITED)
  				
  				$maxCardValue = CARDINALITY_UNLIMITED;
- 				$maxCardValueOfParent = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$maxCardValueOfParent = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  				$maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);
  				if ($maxCardCOVTest !== true) {
@@ -262,7 +265,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	private function isDomainRangeCovariant($p, $domainRangeAnnotations, $isAttribute = false) {
  		
  		
- 		$domainRangeAnnotationsOfSuperProperty = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
+ 		$domainRangeAnnotationsOfSuperProperty = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
  		
  		if (empty($domainRangeAnnotationsOfSuperProperty)) {
  			return true;
@@ -334,7 +337,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_TYPE, $a, count($types));
  					return;
  				}
- 				$typesOfSuperAttribute = smwfGetSemanticStore()->getTypeOfSuperProperty($this->propertyGraph, $a);
+ 				$typesOfSuperAttribute = $this->cc_store->getTypeOfSuperProperty($this->propertyGraph, $a);
  				$typesAsString = array();
  				foreach($typesOfSuperAttribute as $t) {
  					$typesAsString[] = $t->getXSDValue();
@@ -373,7 +376,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  			
  			$categoriesOfRelation = smwfGetSemanticStore()->getCategoriesForInstance($a);
- 			$categoriesOfSuperRelation = smwfGetSemanticStore()->getCategoriesOfSuperProperty($this->propertyGraph, $a);
+ 			$categoriesOfSuperRelation = $this->cc_store->getCategoriesOfSuperProperty($this->propertyGraph, $a);
  			 			
  			$transOfRelation = $this->isTitleInArray(smwfGetSemanticStore()->transitiveCat, $categoriesOfRelation);
  			$transOfSuperRelation = $this->isTitleInArray(smwfGetSemanticStore()->transitiveCat, $categoriesOfSuperRelation);

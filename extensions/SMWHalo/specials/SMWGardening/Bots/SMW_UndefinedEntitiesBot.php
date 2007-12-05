@@ -16,7 +16,7 @@
  	
  	function UndefinedEntitiesBot() {
  		parent::GardeningBot("smw_undefinedentitiesbot");
- 		
+
  	}
  	
  	public function getHelpText() {
@@ -100,18 +100,20 @@
  class UndefinedEntitiesDetector {
  	
  	private $gi_store;
+ 	private $store;
  	private $bot_id;
  	
  	public function __construct($bot_id) {
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  		$this->bot_id = $bot_id;
+ 		$this->store = $this->getUndefinedEntitiesStorage();
  	}
  	
  	public function checkForUndefinedProperties() {
  		 	
- 		$undefindProperties = $this->getUndefinedProperties();
+ 		$undefindProperties = $this->store->getUndefinedProperties();
  		foreach($undefindProperties as $p) {
- 			$articles = $this->getArticlesUsingProperty($p);
+ 			$articles = $this->store->getArticlesUsingProperty($p);
  			foreach($articles as $a) { 
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
  			}
@@ -121,9 +123,9 @@
  	
  	public function checkForUndefinedCategories() {
  		
- 		$undefindCategories = $this->getUndefinedCategories();
+ 		$undefindCategories = $this->store->getUndefinedCategories();
  		foreach($undefindCategories as $c) {
- 			$articles = $this->getArticlesUsingCategory($c);
+ 			$articles = $this->store->getArticlesUsingCategory($c);
  			foreach($articles as $a) { 
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
  			}
@@ -133,9 +135,9 @@
  	
  	public function checkForUndefinedRelationTargets() {
  		
- 		$undefindRelationTargets = $this->getUndefinedRelationTargets();
+ 		$undefindRelationTargets = $this->store->getUndefinedRelationTargets();
  		foreach($undefindRelationTargets as $t) {
- 			$articles = $this->getRelationsUsingTarget($t);
+ 			$articles = $this->store->getRelationsUsingTarget($t);
  		
  			foreach($articles as $a) { 
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
@@ -148,7 +150,7 @@
  	
  	public function checkForInstancesWithoutCategory() {
  		
- 		$instancesWithoutCategory = $this->getInstancesWithoutCategory();
+ 		$instancesWithoutCategory = $this->store->getInstancesWithoutCategory();
  		foreach($instancesWithoutCategory as $i) {
  			$this->gi_store->addGardeningIssueAboutArticle($this->bot_id, SMW_GARDISSUE_INSTANCE_WITHOUT_CAT, $i);
  			
@@ -156,7 +158,106 @@
  		
  	}
  	
- 	private function getUndefinedProperties() {
+ 	private function getUndefinedEntitiesStorage() {
+ 		global $smwgHaloIP;
+		if ($this->store == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$this->store = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					
+					$this->store = new UndefinedEntitiesStorageSQL();
+				break;
+			}
+		}
+		return $this->store;
+ 	}
+ 	
+ }
+ 
+ class UndefinedEntitiesBotFilter extends GardeningIssueFilter {
+ 	 	
+ 	
+ 	public function __construct() {
+ 		parent::__construct(SMW_UNDEFINED_ENTITIES_BOT_BASE);
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
+						wfMsg('smw_gardissue_class_instances_without_cat'), 
+						wfMsg('smw_gardissue_class_undef_properties'), 
+						wfMsg('smw_gardissue_class_undef_categories'), 
+						wfMsg('smw_gardissue_class_undef_relationtargets'));
+ 	}
+ 	
+ 	public function getUserFilterControls($specialAttPage, $request) {
+		return '';
+	}
+	
+	
+	public function getData($options, $request) {
+		
+		return parent::getData($options, $request);
+	}
+ }
+ 
+ abstract class UndefinedEntitiesStorage {
+ 	
+ 	/**
+ 	 * Returns undefined properties
+ 	 * 
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getUndefinedProperties();
+ 	
+ 	/**
+ 	 * Returns all articles which uses a given property
+ 	 * 
+ 	 * @param $property Title
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getArticlesUsingProperty($property);
+ 	
+ 	/**
+ 	 * Returns undefined categories
+ 	 * 
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getUndefinedCategories();
+ 	
+ 	/**
+ 	 * Returns all articles which uses a given category
+ 	 * 
+ 	 * @param $category Title
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getArticlesUsingCategory($category);
+ 	
+ 	/**
+ 	 * Returns undefined relation targets (binary or n-ary)
+ 	 * 
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getUndefinedRelationTargets();
+ 	
+ 	/**
+ 	 * Returns all relations (binary or n-ary) which uses a given target instance
+ 	 * 
+ 	 * @param $target Title
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getRelationsUsingTarget($target); 
+ 	
+ 	/**
+ 	 * Returns all instances without any categories
+ 	 * 
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getInstancesWithoutCategory();
+ }
+ 
+ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
+ 	public function getUndefinedProperties() {
  		
  		
 		$db =& wfGetDB( DB_MASTER );
@@ -196,7 +297,7 @@
 		return $result;
  	}
  	
- 	private function getArticlesUsingProperty($property) {
+ 	public function getArticlesUsingProperty($property) {
  		$db =& wfGetDB( DB_MASTER );
 
 	                  
@@ -215,7 +316,7 @@
 		return $result;
  	}
  	
- 	private function getUndefinedCategories() {
+ 	public function getUndefinedCategories() {
  		$db =& wfGetDB( DB_MASTER );
  		
 		// inner query: not as fast as a LEFT JOIN
@@ -241,7 +342,7 @@
 		return $result;
  	}
  	
- 	private function getArticlesUsingCategory($category) {
+ 	public function getArticlesUsingCategory($category) {
  		$db =& wfGetDB( DB_MASTER );
 
 	                  
@@ -258,7 +359,7 @@
 		return $result;
  	}
  	
- 	private function getUndefinedRelationTargets() {
+ 	public function getUndefinedRelationTargets() {
  		$db =& wfGetDB( DB_MASTER );
  	
  		// inner query: not as fast as a LEFT JOIN
@@ -294,7 +395,7 @@
 		return $result;
  	}
  	
- 	private function getRelationsUsingTarget($target) {
+ 	public function getRelationsUsingTarget($target) {
  		$db =& wfGetDB( DB_MASTER );
 
 	                  
@@ -312,7 +413,7 @@
 		return $result;
  	}
  	
- 	private function getInstancesWithoutCategory() {
+ 	public function getInstancesWithoutCategory() {
  		$db =& wfGetDB( DB_MASTER );
  		
 		// inner query: not as fast as a LEFT JOIN
@@ -338,29 +439,5 @@
 		return $result;
  	}
  	
- 	
- }
- 
- class UndefinedEntitiesBotFilter extends GardeningIssueFilter {
- 	 	
- 	
- 	public function __construct() {
- 		parent::__construct(SMW_UNDEFINED_ENTITIES_BOT_BASE);
- 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
-						wfMsg('smw_gardissue_class_instances_without_cat'), 
-						wfMsg('smw_gardissue_class_undef_properties'), 
-						wfMsg('smw_gardissue_class_undef_categories'), 
-						wfMsg('smw_gardissue_class_undef_relationtargets'));
- 	}
- 	
- 	public function getUserFilterControls($specialAttPage, $request) {
-		return '';
-	}
-	
-	
-	public function getData($options, $request) {
-		
-		return parent::getData($options, $request);
-	}
  }
 ?>

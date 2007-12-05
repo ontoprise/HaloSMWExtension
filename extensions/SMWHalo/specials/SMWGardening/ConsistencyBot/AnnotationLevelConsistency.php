@@ -11,6 +11,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  class AnnotationLevelConsistency {
  	 	
  	private $bot;
+ 	private $cc_store;
  	private $delay; 
  	
  	// Category/Property Graph. It is cached for the whole consistency checks.
@@ -27,9 +28,10 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	public function AnnotationLevelConsistency(& $bot, $delay) {
  		$this->bot = $bot;
  		$this->delay = $delay;
+ 		$this->cc_store = $bot->getConsistencyStorage();
  		
- 		$this->categoryGraph = smwfGetSemanticStore()->getCategoryInheritanceGraph();
- 		$this->propertyGraph = smwfGetSemanticStore()->getPropertyInheritanceGraph();
+ 		$this->categoryGraph = $this->cc_store->getCategoryInheritanceGraph();
+ 		$this->propertyGraph = $this->cc_store->getPropertyInheritanceGraph();
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	/**
@@ -68,7 +70,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($domainRangeAnnotations)) {
  				// if there are no range categories defined, try to find a super relation with defined range categories
- 				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $r);
+ 				$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $r);
  			}
  			
  			if (empty($domainRangeAnnotations)) {
@@ -252,7 +254,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($minCardArray)) {
  				// if it does not exist, get minimum cardinality from superproperty
- 				$minCards = smwfGetSemanticStore()->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$minCards = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
  			} else {
  				// assume there's only one defined. If not it will be found in co-variance checker anyway
  				$minCards = $minCardArray[0]->getXSDValue() + 0;
@@ -263,7 +265,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($maxCardsArray)) {
  				// if it does not exist, get maximum cardinality from superproperty
- 				$maxCards = smwfGetSemanticStore()->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$maxCards = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
  				
  			} else {
  				// assume there's only one defined. If not it will be found in co-variance checker anyway
@@ -280,7 +282,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			 			
  			if (empty($domainRangeAnnotations)) {
  				// if there are no domain categories defined, try to find a super property with defined domain categories
- 				$domainRangeAnnotations = smwfGetSemanticStore()->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
+ 				$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
  			}
  			
  			
