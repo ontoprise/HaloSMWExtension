@@ -29,7 +29,8 @@ Marker.prototype = {
  	insertMarkers: function(){
  		$(this.rootnode).hide();
  		//transparencyMarkers
- 		 for(var index=0; index < this.transparencymarkerlist.length; index++){
+ 		///*   
+ 		for(var index=0; index < this.transparencymarkerlist.length; index++){
  			new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
 			//Set position of the marker		
 			$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
@@ -44,6 +45,7 @@ Marker.prototype = {
 			$(this.transparencymarkerlist[index][0]).setStyle( {height: height + "px"});
 			$(this.transparencymarkerlist[index][0]).setStyle( {width: width + "px"});
  		}
+ 		//*/
  		//iconMarkers
  		for(var index=0; index < this.iconmarkerlist.length; index++){
  			new Insertion.After(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
@@ -225,6 +227,8 @@ Marker.prototype = {
 			$$('.text-marker').each(function(node) {
   				node.replace(node.innerHTML);
 			});
+			this.transparencymarkerlist = new Array();
+			this.iconmarkerlist = new Array();
 			return;
 			/*var rootnode = $(this.rootnode);
 			//Check rootnode
