@@ -21,8 +21,8 @@ var SMW_CAT_CHECK_CATEGORY =
 
 var SMW_CAT_CHECK_CATEGORY_CREATE = 
 	'smwCheckType="category: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true, hide:cat-addandcreate) ' +
-	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true, attribute:catExists=false, show:cat-addandcreate)" ';
+		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true, hide:cat-addandcreate, show:cat-confirm) ' +
+	 	': (color: orange, showMessage:CATEGORY_DOES_NOT_EXIST, valid:true, attribute:catExists=false, show:cat-confirm, show:cat-addandcreate)" ';
 
 var SMW_CAT_CHECK_CATEGORY_IIE = // Invalid if exists
 	'smwCheckType="category:exists ' +
@@ -34,10 +34,20 @@ var SMW_CAT_CHECK_EMPTY =
 		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false) ' +
 		': (color:white, hideMessage)"';
 
+var SMW_CAT_CHECK_EMPTY_CM = 
+	'smwCheckEmpty="empty' +
+		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false, hide:cat-confirm, hide:cat-addandcreate) ' +
+		': (color:white, hideMessage)"';
+
 var SMW_CAT_ALL_VALID =	
 	'smwAllValid="allValid ' +
  		'? (show:cat-confirm, hide:cat-invalid) ' +
  		': (show:cat-invalid, hide:cat-confirm, hide:cat-addandcreate)"';
+
+var SMW_CAT_ALL_VALID_ANNOTATED =	
+	'smwAllValid="allValid ' +
+ 		'? (call:catToolBar.finalCategoryCheck) ' +
+ 		': (call:catToolBar.finalCategoryCheck)"';
 
 var SMW_CAT_HINT_CATEGORY =
 	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
@@ -156,7 +166,7 @@ createContextMenu: function(contextMenuContainer) {
 	}
 	this.toolbarContainer = new ContainerToolBar('category-content',600,contextMenuContainer);
 	var tb = this.toolbarContainer;
-	tb.createContainerBody(SMW_CAT_ALL_VALID, CATEGORYCONTAINER, gLanguage.getMessage('ANNOTATE_CATEGORY'));
+	tb.createContainerBody(SMW_CAT_ALL_VALID_ANNOTATED, CATEGORYCONTAINER, gLanguage.getMessage('ANNOTATE_CATEGORY'));
 
 	this.currentAction = "annotate";
 	
@@ -170,7 +180,7 @@ createContextMenu: function(contextMenuContainer) {
 	tb.append(tb.createInput('cat-name', 
 							 gLanguage.getMessage('CATEGORY'), selection, '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
-	                         SMW_CAT_CHECK_EMPTY +
+	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', 
@@ -185,6 +195,26 @@ createContextMenu: function(contextMenuContainer) {
 	tb.finishCreation();
 	$('cat-addandcreate').hide();
 	gSTBEventActions.initialCheck($("category-content-box"));
+},
+
+/**
+ * This method is called, when the name of a category has been changed in the
+ * input field of the context menu. If the category is already annotated in the
+ * wiki text, the links for adding the category are hidden.
+ * 
+ * @param string target
+ * 		ID of the element, on which the change event occurred.
+ */
+finalCategoryCheck: function(target) {
+	var catName = $('cat-name').value;
+	var cat = this.wtp.getCategory(catName);
+	if (cat) {
+		gSTBEventActions.performSingleAction('showmessage', 
+											 'CATEGORY_ALREADY_ANNOTATED', 
+											 $('cat-name'));
+		gSTBEventActions.performSingleAction('hide', 'cat-confirm');			
+		gSTBEventActions.performSingleAction('hide', 'cat-addandcreate');			
+	}
 },
 
 /**

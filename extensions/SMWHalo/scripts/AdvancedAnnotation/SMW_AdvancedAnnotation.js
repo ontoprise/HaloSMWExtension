@@ -115,6 +115,9 @@ AdvancedAnnotation.prototype = {
 		var focusNode = selection.focusNode;
 		
 		var an = anchorNode;
+		if (!an) {
+			return false;
+		}
 		if (!$(an).up) {
 			an = an.parentNode;
 		}

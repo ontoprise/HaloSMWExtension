@@ -503,6 +503,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		target.setAttribute("smwOldValue", target.value);
 		if (this.checkIfEmpty(target) == false) {
 			this.handleCheck(target);
+			this.handleChange(target);
 		}
 		this.doFinalCheck(target);
 	},
@@ -715,14 +716,10 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				checkName = gLanguage.getMessage('PROPERTY')+value;
 				break;
 		}
-		if (checkName === 'exists') {
-			this.showPendingIndicator(target);
-			this.om.existsArticle(checkName, 
-			                      this.ajaxCbSchemaCheck.bind(this), 
-			                      value, [type, check], target.id);							
-		} else if (checkName === 'annotated') {
-			
-		}
+		this.showPendingIndicator(target);
+		this.om.existsArticle(checkName, 
+		                      this.ajaxCbSchemaCheck.bind(this), 
+		                      value, [type, check], target.id);							
 	},
 	
 	/*
