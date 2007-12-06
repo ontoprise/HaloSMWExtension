@@ -670,24 +670,24 @@ a.menulink{
 	font-size: 11px;
 }
 
-#annotationhint-table{
+#saveannotations-table{
 	background-color: #ee8888;
 	width: 100%;
 }
 
-#annotationhint-tools{
+#saveannotations-tools{
 	border-bottom: 1px solid #888888;
 }
 
-.annotationhint-col1{
+.saveannotations-col1{
 	border-bottom: 1px dashed #888888;
 	vertical-align: top;
 }
 
-.annotationhint-col2{
+.saveannotations-col2{
 }
 
-.annotationhint-col3{
+.saveannotations-col3{
 	border-bottom: 1px dashed #888888;
 	text-align: right;
 	vertical-align: top;
@@ -793,6 +793,6 @@ a.menulink{
 	background-color: #ddbddd;
 }
 
-.annotationhint-content-table{
+.saveannotations-content-table{
 	background-color: #ee8888;
 }

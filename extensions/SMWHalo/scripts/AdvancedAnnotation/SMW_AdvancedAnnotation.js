@@ -61,6 +61,8 @@ AdvancedAnnotation.prototype = {
 	 * are processed
 	 */
 	onMouseUp: function(event) {
+		smwhgAnnotationHints.hideHints();
+		
 		var target = event.target;
 		while (target) {
 			if (target.id && target.id == 'bodyContent') {
@@ -78,7 +80,8 @@ AdvancedAnnotation.prototype = {
 			
 		if (!cba) {
 			smwhgAnnotationHints.showMessageAndWikiText(
-				gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION'), "");
+				gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION'), "", 
+				event.clientX, event.clientY);
 		}
 				
 		if (cba && annoSelection != '') {
@@ -178,7 +181,8 @@ AdvancedAnnotation.prototype = {
 						? secondAnchor.getAttribute('name')*1
 						: -1;
 			smwhgAnnotationHints.showMessageAndWikiText("(e)"+msg,
-														this.wikiTextParser.text.substring(start,end));
+														this.wikiTextParser.text.substring(start,end),
+														event.clientX, event.clientY);
 //			alert(msg);
 //			alert("Name of template: "+ $(template).getAttribute('tmplname'));
 			return;
@@ -190,23 +194,40 @@ AdvancedAnnotation.prototype = {
 						: -1;
 			var res = this.wikiTextParser.findText(this.selectedText, start, end);
 			if (res != true) {
+				this.toolbarEnableAnnotation(true);
 				smwhgAnnotationHints.showMessageAndWikiText("(e)"+res,
-															this.wikiTextParser.text.substring(start,end));
+															this.wikiTextParser.text.substring(start,end),
+															event.clientX, event.clientY);
 			} else {
+				this.toolbarEnableAnnotation(false);
+/*
 				smwhgAnnotationHints.showMessageAndWikiText(
 					"(i)Wikitext found for selection:<br><b>"+this.selectedText+"</b>",
-					this.wikiTextParser.text.substring(start,end));
-					
+					this.wikiTextParser.text.substring(start,end),
+					event.clientX, event.clientY);
+*/					
 				// Show toolbar at the cursor position
 				this.annotateWithToolbar(event);
 
 			}
 		} else {
+			this.toolbarEnableAnnotation(false);
 			smwhgAnnotationHints.showMessageAndWikiText("(e)No wiki text found for selection:",
-			                                            "<b>"+this.selectedText+"</b>");
-
+			                                            "<b>"+this.selectedText+"</b>",
+														event.clientX, event.clientY);
 		}
 	
+	},
+	
+	/**
+	 * Enables or disables the annotation actions in the semantic toolbar.
+	 * 
+	 * @param boolean enable
+	 * 		true  => enable actions
+	 * 		false => disable actions
+	 */
+	toolbarEnableAnnotation: function(enable) {
+		catToolBar.enableAnnotation(enable);
 	},
 	
 	/**
@@ -232,8 +253,12 @@ AdvancedAnnotation.prototype = {
 	 */
 	hideToolbar: function() {
 		if (this.contextMenu) {
-			this.contextMenu.hideMenu();
-		}		
+			this.contextMenu.remove();
+			this.contextMenu = null;
+		}
+		this.toolbarEnableAnnotation(true);
+		this.annotatedNode = null;
+		this.wikiTextParser.setSelection(-1, -1);
 	},
 	
 	searchTemplate: function(node) {
@@ -433,9 +458,11 @@ AdvancedAnnotation.prototype = {
 	categoryAdded: function(startPos, endPos, name) {
 		this.markSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
 		catToolBar.fillList();
-		$('ah-savewikitext-btn').enable();
+		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
-		this.contextMenu.hideMenu();
+		if (this.contextMenu) {
+			this.hideToolbar();
+		}
 	},
 	
 	/**
@@ -454,9 +481,9 @@ AdvancedAnnotation.prototype = {
 	relationAdded: function(startPos, endPos, name) {
 		this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		relToolBar.fillList();
-		$('ah-savewikitext-btn').enable();
+		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
-		this.contextMenu.hideMenu();
+		this.hideToolbar();
 	},
 	
 	
@@ -470,7 +497,7 @@ AdvancedAnnotation.prototype = {
 	 */
 	annotationRemoved: function(annotation) {
 		this.removeAnnotationHighlight(annotation);
-		$('ah-savewikitext-btn').enable();
+		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
 	},
 
@@ -488,6 +515,9 @@ AdvancedAnnotation.prototype = {
 	 * 		Wikitextoffset of the new annotation's end.
 	 */
 	markSelection: function(type, cssClass, startPos, endPos) {
+		if (!this.annotatedNode || this.selectedText === "") {
+			return;
+		}
 		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
 		var annoDeco =
 			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
@@ -605,7 +635,7 @@ AdvancedAnnotation.prototype = {
 				}
 			}
 			
-			$('ah-savewikitext-btn').enable();
+			smwhgSaveAnnotations.markDirty();
 			this.annotationsChanged = true;
 		}
 	},
@@ -774,7 +804,7 @@ AdvancedAnnotation.prototype = {
 	saveAnnotations: function() {
 		this.om.editArticle(wgTitle, this.wikiTextParser.getWikiText(),
 							gLanguage.getMessage('AH_SAVE_COMMENT'), false);
-		$('ah-savewikitext-btn').disable();
+		smwhgSaveAnnotations.savingAnnotations();
 	},
 	
 	/**
@@ -791,16 +821,13 @@ AdvancedAnnotation.prototype = {
 	 * 		Title of the article		
 	 */
 	annotationsSaved: function(success, created, title) {
-		var msg = (success) 
-					? gLanguage.getMessage('AH_ANNOTATIONS_SAVED')
-					: gLanguage.getMessage('AH_SAVING_ANNOTATIONS_FAILED');
 					
-		smwhgAnnotationHints.showMessageAndWikiText(msg, "");
+		smwhgSaveAnnotations.annotationsSaved(success);
 		
 		if (success === true) {
 			this.annotationsChanged = false;
 		} else {
-			$('ah-savewikitext-btn').enable();
+			smwhgSaveAnnotations.markDirty();
 		}
 		
 	}
@@ -855,7 +882,11 @@ AdvancedAnnotation.smwhfEditAnno = function(id) {
  * 
  */
 AdvancedAnnotation.smwhfDeleteAnno = function(id) {
-	smwhgAdvancedAnnotation.deleteAnnotation(id);
+	var del = confirm(gLanguage.getMessage('AAM_DELETE_ANNOTATIONS'));
+	if (del === true) {
+		smwhgAdvancedAnnotation.deleteAnnotation(id);
+	}
+	
 };
 
 AdvancedAnnotation.smwhfEditLink = function(id) {

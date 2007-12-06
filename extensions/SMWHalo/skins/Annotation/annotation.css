@@ -12,7 +12,7 @@
 }
 
 .aam_new_category_highlight{
-	background-color: #064df3;
+	background-color: #94B0F3;
 	border: 1px solid #000000;
 }
 
@@ -47,6 +47,7 @@
 #contextmenu{
 	width: 250px;
 	position: fixed;
+	z-index: 2;
 	background-color:#DDDDDD;
 	border:1px solid #000000;
 }
@@ -77,6 +78,23 @@
 }
 
 #cmCategoryContent{
+	border: 1px solid #064df3;
+	background-color: #94b0f3;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#cmAnnotationHintHeader{
+	background-color: #064df3;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #064df3;
+	margin-top: 3px;
+}
+
+#cmAnnotationHintContent{
 	border: 1px solid #064df3;
 	background-color: #94b0f3;
 	overflow: auto;

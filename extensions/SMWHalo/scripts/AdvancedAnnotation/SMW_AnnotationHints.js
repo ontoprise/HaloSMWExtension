@@ -28,76 +28,35 @@ var AnnotationHints = Class.create();
 AnnotationHints.prototype = {
 
 initialize: function() {
-    //Reference
-    this.genTB = new GenericToolBar();
-	this.toolbarContainer = null;
-	this.showList = true;
 
 },
 
-showToolbar: function(request){
-	this.annohintcontainer.setHeadline(gLanguage.getMessage('ANNOTATION_HINTS'));
-	this.createContent();
-},
-
-callme: function(event){
-	if ((wgAction == "edit" || wgAction == "annotate")
-	    && stb_control.isToolbarAvailable()){
-		this.annohintcontainer = stb_control.createDivContainer(ANNOTATIONHINTCONTAINER,0);
-		this.showToolbar();
-	}
-},
-
-createContent: function() {
+showMessageAndWikiText: function(message, wikiText, x, y) {
+	this.contextMenu = new ContextMenuFramework();
 	
-	var tb = this.createToolbar("");	
-	tb.append(tb.createText('ah-error-msg', 
-	                        '(i)Infos for the annotation mode.',
-	                        '' , true));
-	tb.append(tb.createText('ah-wikitext-msg', '', '' , true));
+	var tb = new ContainerToolBar('annotationhints-content', 1000, 
+	                              this.contextMenu);
+	tb.createContainerBody('', 'ANNOTATIONHINT', 
+	                       gLanguage.getMessage('ANNOTATION_HINTS'));
 
-	tb.append(tb.createButton('ah-savewikitext-btn',
-							  gLanguage.getMessage('AH_SAVE_ANNOTATIONS'), 
-							  'smwhgAdvancedAnnotation.saveAnnotations()', 
-							  '' , true));
-	
+	tb.append(tb.createText('ah-error-msg', message, '', true));
+	tb.append(tb.createText('ah-wikitext-msg', wikiText, '' , true));
+
 	tb.finishCreation();
 	
-	this.annohintcontainer.contentChanged();
-	$('ah-savewikitext-btn').disable();
-},
-
-showMessageAndWikiText: function(message, wikiText) {
-	var msg = this.toolbarContainer.createText('ah-error-msg',message, '', true);
-	var wt = this.toolbarContainer.createText('ah-wikitext-msg',wikiText, '', true);
-	this.toolbarContainer.replace('ah-error-msg', msg);
-	this.toolbarContainer.replace('ah-wikitext-msg', wt);
-},
-
-/**
- * Creates a new toolbar for the annotation hint container.
- * Further elements can be added to the toolbar. Call <finishCreation> after the
- * last element has been added.
- * 
- * @param string attributes
- * 		Attributes for the new container
- * @return 
- * 		A new toolbar container
- */
-createToolbar: function(attributes) {
-	if (this.toolbarContainer) {
-		this.toolbarContainer.release();
-	}
+	this.contextMenu.setPosition(x,y);
+	this.contextMenu.showMenu();
 	
-	this.toolbarContainer = new ContainerToolBar('annotationhint-content',900,this.annohintcontainer);
-	var tb = this.toolbarContainer;
-	tb.createContainerBody(attributes);
-	return tb;
+},
+
+hideHints: function() {
+	if (this.contextMenu) {
+		this.contextMenu.remove();
+	}
 }
 
 };// End of Class
 
 var smwhgAnnotationHints = new AnnotationHints();
-Event.observe(window, 'load', smwhgAnnotationHints.callme.bindAsEventListener(smwhgAnnotationHints));
 
 

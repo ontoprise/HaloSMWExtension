@@ -28,10 +28,10 @@ createList: function(list,id) {
 	switch (id) {
 		case "category":
 			divlist ='<div id="' + id +'-tools">';
+			divlist += '<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
 			if (wgAction != 'annotate') {
-				divlist += '<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
+				divlist += '<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			}
-			divlist += '<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			if (wgNamespaceNumber == 14) {
 				divlist += '<a href="javascript:catToolBar.CreateSubSup()" class="menulink">'+gLanguage.getMessage('SUB_SUPER')+'</a>';
 			}

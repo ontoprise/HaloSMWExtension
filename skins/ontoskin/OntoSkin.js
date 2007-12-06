@@ -221,7 +221,7 @@ function updtContainer(tmpcontainer) {
 				var tmpdiv = document.getElementById("cbsrch-headline");
 				tmpdiv.innerHTML = stResult;
 			break;
-		case ANNOTATIONHINTCONTAINER:
+		case SAVEANNOTATIONSCONTAINER:
 				var tmpdiv = document.getElementById("annotationhint-headline");
 				tmpdiv.innerHTML = stResult;
 			break;
@@ -344,8 +344,8 @@ function stFillContainers(tmpcontainer)
 						}
 						stResult += ">" + tmpcontainer.content + "</div>";
 					break;
-				case ANNOTATIONHINTCONTAINER:
-						stResult += "<div id=\"annotationhint-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + ANNOTATIONHINTCONTAINER + ", \'annotationhint-content\', \'annotationhint-headline-link\')\"><a id=\"annotationhint-headline-link\" class=\"";
+				case SAVEANNOTATIONSCONTAINER:
+						stResult += "<div id=\"annotationhint-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + SAVEANNOTATIONSCONTAINER + ", \'annotationhint-content\', \'annotationhint-headline-link\')\"><a id=\"annotationhint-headline-link\" class=\"";
 						if (tmpcontainer.ishidden) {
 							stResult +="plusminus";
 						} else {
@@ -429,7 +429,7 @@ function stFillTabs()
 			     || tmpcontainer.container == PROPERTIESCONTAINER
 			     || tmpcontainer.container == CBSRCHCONTAINER
 			     || tmpcontainer.container == TYPECONTAINER
-			     || tmpcontainer.container == ANNOTATIONHINTCONTAINER))
+			     || tmpcontainer.container == SAVEANNOTATIONSCONTAINER))
 			{
 				tabadd[0] = 1;
 			}

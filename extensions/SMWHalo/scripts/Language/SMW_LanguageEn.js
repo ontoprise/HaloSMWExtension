@@ -122,13 +122,18 @@ var wgLanguageStrings = {
 
 	// Annotation hints
 	'ANNOTATION_HINTS'        : 'Annotation hints',
-	'AH_SAVE_ANNOTATIONS'	  : 'Save annotations',
 	'AH_SAVE_COMMENT'		  : 'Annotations added in the Advanced Annotation Mode.',
-	'AH_ANNOTATIONS_SAVED'	  : '(i) The annotations were successfully saved.',
-	'AH_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
 	'AAM_SAVE_ANNOTATIONS' 	  : 'Do you want to save the annotations of the current session?',
 	'CAN_NOT_ANNOTATE_SELECTION' : 'You can not annotate the selection. It already contains annotations or paragraphs.',
+	'AAM_DELETE_ANNOTATIONS'  : 'Do you really want to delete this annotation?',
 	
+	// Save annotations
+	'SA_SAVE_ANNOTATION_HINTS': "Don't forget to save your work!",
+	'SA_SAVE_ANNOTATIONS'	  : 'Save annotations',
+	'SA_ANNOTATIONS_SAVED'	  : '(i) The annotations were successfully saved.',
+	'SA_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
+	'SA_SAVING_ANNOTATIONS'   : '(i) Saving annotations...',
+
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Click here to drag',

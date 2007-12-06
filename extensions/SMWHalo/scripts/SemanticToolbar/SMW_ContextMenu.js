@@ -7,9 +7,19 @@ ContextMenuFramework.prototype = {
 initialize: function() {
 		if(!$("contextmenu")){
 			var menu = '<div id="contextmenu"></div>';
-			new Insertion.Top($('innercontent'), menu );
+//			new Insertion.Top($('innercontent'), menu );
+			new Insertion.After($('content'), menu );
 		}
 		
+},
+
+/**
+ * Removes the context menu from the DOM tree.
+ */
+remove: function() {
+	if ($("contextmenu")) {
+		$("contextmenu").remove();
+	}
 },
 
 /**
@@ -48,6 +58,17 @@ setContent: function(htmlcontent,containertype, headline){
 			header =  '<div id="cmPropertyHeader">'+headline+'</div>';
 			content = '<div id="cmPropertyContent"></div>';
 			contentdiv = 'cmPropertyContent'
+			break;
+		case 'ANNOTATIONHINT':
+			if($('cmAnnotationHintHeader')) {
+				$('cmAnnotationHintHeader').remove();
+			}
+			if($('cmAnnotationHintContent')) {
+				$('cmAnnotationHintContent').remove();
+			}
+			header =  '<div id="cmAnnotationHintHeader">'+headline+'</div>';
+			content = '<div id="cmAnnotationHintContent"></div>';
+			contentdiv = 'cmAnnotationHintContent'
 			break;
 		default:
 			if($('cmDefaultHeader')) {

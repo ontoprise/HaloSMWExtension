@@ -26,7 +26,7 @@ var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relati
 var CBSRCHCONTAINER = 7; // contains combined search functions
 var COMBINEDSEARCHCONTAINER = 8;
 var HELPCONTAINER = 9; // contains help
-var ANNOTATIONHINTCONTAINER = 10; // contains categories
+var SAVEANNOTATIONSCONTAINER = 10; // contains categories
 var DBGCONTAINER = 11; // contains debug information
 
 ToolbarFramework.prototype = {

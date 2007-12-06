@@ -132,6 +132,16 @@ cancel: function(){
 	this.fillList(true);
 },
 
+enableAnnotation: function(enable) {
+	if ($('cat-menu-annotate')) {
+		if (enable) {
+			$('cat-menu-annotate').show();
+		} else {
+			$('cat-menu-annotate').hide();
+		}
+	}
+},
+
 /**
  * Creates a new toolbar for the category container with the standard menu.
  * Further elements can be added to the toolbar. Call <finishCreation> after the
@@ -255,7 +265,7 @@ newItem: function() {
     smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
 	/*ENDLOG*/
 
-	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
+	var tb = this.createToolbar(SMW_CAT_ALL_VALID_ANNOTATED);	
 	if (wgAction == 'edit') {
 		tb.append(tb.createText('cat-help-msg', 
 		                        gLanguage.getMessage('ANNOTATE_CATEGORY'),
@@ -264,19 +274,16 @@ newItem: function() {
 	tb.append(tb.createInput('cat-name', 
 							 gLanguage.getMessage('CATEGORY'), selection, '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
-	                         SMW_CAT_CHECK_EMPTY +
+	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
 	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
 	                                     gLanguage.getMessage('INVALID_VALUES'), 'cat-invalid'],
-				 ['catToolBar.addItem(true)',gLanguage.getMessage('ADD_AND_CREATE_CAT'), 'cat-addandcreate']
-	                                     
+				 ['catToolBar.addItem(true)',gLanguage.getMessage('ADD_AND_CREATE_CAT'), 'cat-addandcreate'],
+				 ['catToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 				];
-	if (wgAction == 'edit') {
-		links.push(['catToolBar.cancel()', gLanguage.getMessage('CANCEL')]);
-	}	
 	tb.append(tb.createLink('cat-links', links, '', true));
 				
 	tb.finishCreation();
