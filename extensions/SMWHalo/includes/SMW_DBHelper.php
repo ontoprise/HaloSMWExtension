@@ -154,6 +154,14 @@
 		}
 		return $sql_options;
 	}
+	
+	public static function getSQLOptionsAsString($requestoptions, $valuecol = NULL) {
+		$options = DBHelper::getSQLOptions($requestoptions,$valuecol);
+		$limit = $options['LIMIT'] != NULL ? 'LIMIT '.$options['LIMIT'] : '';
+		$offset = $options['OFFSET'] != NULL ? 'OFFSET '.$options['OFFSET'] : '';
+		$orderby = $options['ORDER BY'] != NULL ? 'ORDER BY '.$options['ORDER BY'] : '';
+		return $orderby.' '.$limit.' '.$offset;
+	}
 
 	/**
 	 * Transform input parameters into a suitable string of additional SQL conditions.

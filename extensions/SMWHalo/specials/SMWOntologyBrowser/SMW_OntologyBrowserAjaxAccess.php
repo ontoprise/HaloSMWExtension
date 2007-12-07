@@ -128,7 +128,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$type = $p_array[0];
  		$hint = explode(" ", $p_array[1]);
- 		
+ 		$hint = smwfEliminateStopWords($hint);
  		if ($type == 'category') {
  			/*STARTLOG*/
  				smwLog($p_array[1],"OB","searched categories", "Special:OntologyBrowser");
@@ -152,8 +152,24 @@ function smwfOntologyBrowserAccess($method, $params) {
  		} 
  		
  	}
+ 	 	
 }
 
-
+/**
+ * Eliminates common prefixes/suffixes from $hints array
+ * 
+ * @param array of string
+ * @return array of string
+ */
+function smwfEliminateStopWords($hints) {
+ 		$stopWords = array('has', 'of', 'in', 'by', 'is');
+ 		$result = array();
+ 		foreach($hints as $h) {
+ 			if (!in_array(strtolower($h), $stopWords)) {
+ 				$result[] = $h;
+ 			}
+ 		}
+ 		return $result;
+ 	}
 
 ?>

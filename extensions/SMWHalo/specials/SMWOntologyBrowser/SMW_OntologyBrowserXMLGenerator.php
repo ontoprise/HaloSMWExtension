@@ -157,7 +157,8 @@ public static function encapsulateAsAnnotationList(array & $propertyAnnotations,
 	// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
 	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD, NULL, $instance);
 	$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);	
-	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\"/>" : "<annotationsList>".$result."</annotationsList>";
+	$instanceTitleEscaped = htmlspecialchars($instance->getDBkey()); 
+	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title=\"$instanceTitleEscaped\"/>" : "<annotationsList>".$result."</annotationsList>";
 }
 
 
@@ -302,7 +303,8 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\">".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
+			$targetNotExists = $smwValue->getTitle()->exists() ? "" : "notexists=\"true\"";
+			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getXSDValue()."</param>$gi_issues</annotation>";
 			
 		} else if ($smwValue != NULL){ // normal attribute
 			if ($smwValue->getTypeID() == '_che') {

@@ -40,7 +40,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	public function checkPropertyAnnotations() {
  		global $smwgContLang;
  	 		
- 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), NULL, true);
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		
  		$work = count($properties);
  		$cnt = 0;
@@ -104,6 +104,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					// decide which type and do consistency checks
  					if ($target instanceof SMWWikiPageValue) {  // binary relation 
  						$rd_target = smwfGetSemanticStore()->getRedirectTarget($target->getTitle());
+ 						if (!$rd_target->exists()) continue;
 	 					$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
 	 					if ($domainCorrect) {
  							$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
@@ -128,6 +129,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  										
  										if ($explodedValues[$i]->getTypeID() == '_wpg') { 
  											$rd_target = smwfGetSemanticStore()->getRedirectTarget($explodedValues[$i]->getTitle());
+ 											if (!$rd_target->exists()) continue;
  											$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
 					 						if ($domainCorrect) {
 					 							$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
@@ -233,7 +235,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		global $smwgContLang;
  		
  		// get all properties
- 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), NULL, true);
+ 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
  			if ($this->delay > 0) {

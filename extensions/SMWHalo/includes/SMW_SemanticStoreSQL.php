@@ -32,12 +32,23 @@
 		parent::SMWSemanticStore($domainRangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat, $inverseOf);
 	}
 	
+	/**
+	 * Checks if $title is a redirect page.
+	 * 
+	 * @param $title
+	 * @param $pagetable Name of MW's 'page' table (for efficiency)
+	 * @param & $db reference for database (for efficiency)
+	 */
+	private static function isRedirect(Title $title, $pagetable, & $db) {
+		return $db->selectRow($pagetable, 'page_is_redirect', array('page_title' => $title->getDBkey(), 'page_namespace' => $title->getNamespace(), 'page_is_redirect' => 1)) !== false;
+	}
+	
 	function setup($verbose) {
 		$this->setupLogging($verbose);
 		$this->createPreDefinedPages($verbose);
  	}
 	 	
-	public function getPages($namespaces = NULL, $requestoptions = NULL, $ignoreRedirects = false) {
+	public function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		
@@ -57,23 +68,29 @@
 		
 		$result = array();
 		
-		if (!$ignoreRedirects) {
+		if (!$addRedirectTargets) {
 			$res = $db->select( $db->tableName('page'), 
 		               array('page_title','page_namespace'),
-		               $sql, 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
+		               $sql.'  AND page_is_redirect = 0', 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
+		    if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+				}
+			}
 		} else {
-			$sql_options = DBHelper::getSQLOptions($requestoptions,'page_namespace');
-			$limit = $sql_options['LIMIT'] != NULL ? $sql_options['LIMIT'] : "";
-			$offset = $sql_options['OFFSET'] != NULL ? $sql_options['OFFSET'] : "";
-			$orderby = $sql_options['ORDER BY'] != NULL ? $sql_options['ORDER BY'] : "";
-			$res = $db->query('SELECT page_title, page_namespace FROM '.$db->tableName('page').' LEFT JOIN '.$db->tableName('redirect').' ON page_id=rd_from WHERE '.$sql.' AND rd_title IS NULL '.$limit.' '.$offset.' '.$orderby);
+						
+		   $res = $db->query( '(SELECT page_title AS title, page_namespace AS ns FROM page WHERE '.$sql.' AND page_is_redirect = 0) ' .
+		   					'UNION DISTINCT ' .
+		   					  '(SELECT rd_title AS title, rd_namespace AS ns FROM page JOIN redirect ON page_id = rd_from WHERE '.$sql.' AND page_is_redirect = 1)  '.
+		   					 DBHelper::getSQLOptionsAsString($requestoptions,'ns'));
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					$result[] = Title::newFromText($row->title, $row->ns);
+				}
+			}        
 		}
 		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
-			}
-		}
+		
 		$db->freeResult($res);
 		return $result;
 	}
@@ -82,17 +99,19 @@
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$categorylinks = $db->tableName('categorylinks');
+		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id)'.
+			   ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id)'.
 		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
-		$res = $db->select( $db->tableName('page'), 
+		$res = $db->select( $page, 
 		                    'page_title',
 		                    $sql, 'SMW::getRootCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
+				 
 			}
 		}
 		$db->freeResult($res);
@@ -104,11 +123,12 @@
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$smw_subprops = $db->tableName('smw_subprops');
+		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . SMW_NS_PROPERTY .
-			   ' AND NOT EXISTS (SELECT subject_title FROM '.$smw_subprops.' WHERE subject_title = page_title)'.
+			   ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT subject_title FROM '.$smw_subprops.' WHERE subject_title = page_title)'.
 		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
-		$res = $db->select( $db->tableName('page'), 
+		$res = $db->select( $page, 
 		                    'page_title',
 		                    $sql, 'SMW::getRootProperties', DBHelper::getSQLOptions($requestoptions,'page_title') );
 		$result = array();
@@ -126,7 +146,7 @@
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id'.
+			   ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id'.
 		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
@@ -164,18 +184,20 @@
 	function getDirectSuperCategories(Title $categoryTitle, $requestoptions = NULL) {
 		
 		$db =& wfGetDB( DB_MASTER );
-		$mw_page = $db->tableName('page');
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$mw_page.' WHERE page_title=cl_to)'.
+			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$page.' WHERE page_title=cl_to)'.
 		       DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
-		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
+		$res = $db->select(  array($page, $categorylinks), 
 		                    'cl_to',
 		                    $sql, 'SMW::getDirectSuperCategories', DBHelper::getSQLOptions($requestoptions,'cl_to') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				$t = Title::newFromText($row->cl_to, NS_CATEGORY);
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
 			}
 		}
 		$db->freeResult($res);
@@ -185,7 +207,7 @@
 	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
 		
 		$db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
-
+		$page = $db->tableName('page');
 		$sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from'.//AND page_namespace = '.NS_MAIN.  
 			DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
@@ -197,7 +219,8 @@
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				$t = Title::newFromText($row->cl_to, NS_CATEGORY);
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
 			}
 		}
 		$db->freeResult($res);
@@ -261,7 +284,7 @@
 				           
 		$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
+						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
 	
 		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 		
@@ -276,7 +299,7 @@
 			// insert direct instances of current subcategory level
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, cl_to AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
+						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
 			
 			// copy subcatgegories to supercategories of next iteration
 			$db->query('TRUNCATE TABLE smw_ob_instances_super');
@@ -310,7 +333,7 @@
 		$db =& wfGetDB( DB_MASTER ); 
 
 		$sql = 'cl_to=' . $db->addQuotes($categoryTitle->getDBkey()) . 
-			' AND page_id = cl_from AND page_namespace = '.NS_MAIN.
+			' AND page_is_redirect = 0 AND page_id = cl_from AND page_namespace = '.NS_MAIN.
 			DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
 		$res = $db->select( array($db->tableName('page'), $db->tableName('categorylinks')), 
@@ -332,6 +355,7 @@
 	
 	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_MASTER ); 
+		$page = $db->tableName('page');
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db);
 		$res = $db->select( 'smw_ob_properties', 
 		                    'DISTINCT property',
@@ -339,7 +363,8 @@
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				$t = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $properties[] = $t; 
 			}
 		}
 		$db->freeResult($res);
@@ -351,7 +376,7 @@
 	
 	public function getPropertiesWithSchemaByName($requestoptions) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableWithPropertiesByName($requestoptions->getStringConditions(), $db);
+		$this->createVirtualTableWithPropertiesByName($requestoptions, $db);
 		
 		$res = $db->select( 'smw_ob_properties', 
 		                    'DISTINCT property',
@@ -359,7 +384,7 @@
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				
+				// do not check for redirect, because it's done it the query
 				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
 			}
 		}
@@ -446,7 +471,7 @@
 	 * Returns a virtual 'smw_ob_properties' table with properties matching $stringConditions
 	 * 
 	 */
-	private function createVirtualTableWithPropertiesByName($stringConditions, & $db) {
+	private function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
 		global $smwgDefaultCollation;
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
@@ -455,11 +480,15 @@
 		}
 		
 		$page = $db->tableName('page');
+		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
-		// TODO: better implementation for SMWRequestCondition
-		if (count($stringConditions) == 0) return;
-		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_namespace = '.SMW_NS_PROPERTY.' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$stringConditions[0]->string.'%').'))');            
+		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+		// add properties which match and which are no redirects 
+		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_is_redirect = 0 AND page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')'); 
+		$sql = DBHelper::getSQLConditions($requestoptions,'p1.page_title','p1.page_title');
+		// add targets of matching redirects
+		$db->query('INSERT INTO smw_ob_properties (SELECT p2.page_id, p2.page_title FROM page p1 JOIN redirect ON p1.page_id = rd_from JOIN page p2 ON p2.page_title = rd_title AND p2.page_namespace = rd_namespace WHERE p1.page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');             
 	}
 	/**
 	 * Creates 'smw_ob_properties' and fills it with all properties (including inherited)
@@ -532,7 +561,7 @@
 	}
 	
 	
-			
+	// can return directs, but it is not used anywhere		
 	function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
 		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
@@ -541,10 +570,30 @@
 		return smwfGetStore()->getPropertySubjects($this->domainRangeHintRelation, $dv_container, NULL, 0);
 	}
 	
+	/**
+ 	  * Returns all domain categories for a given property.
+ 	  */
+ 	 function getDomainCategories($propertyTitle, $reqfilter) {
+ 	 	$db =& wfGetDB( DB_MASTER );
+		$page = $db->tableName('page');
+ 	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+ 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeRelation, $reqfilter);
+ 	    $result = array();
+ 	    foreach($categories as $value) {
+ 	    	$dvs = $value->getDVs();
+ 	    	if ($dvs[0] instanceof SMWWikiPageValue) {
+ 	    		$t = $dvs[0]->getTitle();
+ 	    		if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t;
+ 	    	}
+ 	    }
+ 	    return $result;
+ 	 }
+	
 	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 	 	
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
+		$page = $db->tableName('page');
 		$sql = 'object_title = ' . $db->addQuotes($attribute->getDBkey());
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
@@ -553,7 +602,8 @@
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				$t = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
 			}
 		}
 		$db->freeResult($res);
@@ -564,6 +614,7 @@
 	 	
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
+		$page = $db->tableName('page');
 		$sql = 'subject_title = ' . $db->addQuotes($attribute->getDBkey());
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
@@ -572,7 +623,8 @@
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
+				$t = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
+				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
 			}
 		}
 		$db->freeResult($res);
@@ -605,6 +657,26 @@
 	 	}
 		$row = $db->fetchObject($res);
 		$result = Title::newFromText($row->rd_title, $row->rd_namespace);
+		$db->freeResult($res);
+		return $result;
+	}
+	
+	public function getRedirectTargetByName($ns, $requestoptions) {
+		$db =& wfGetDB( DB_MASTER );
+		$redirect = $db->tableName('redirect');
+		$page = $db->tableName('page');
+		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+	 	$res = $db->select( array($page, $redirect), 
+		               array('rd_title','rd_namespace'),
+		               ' page_id = rd_from AND rd_namespace = '.$ns.' '.$sql, 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'rd_title') );
+	 	
+	 	
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->rd_title, $row->rd_namespace);
+			}
+		}
 		$db->freeResult($res);
 		return $result;
 	}

@@ -159,24 +159,24 @@
 		$result = array();
 		if ($category == NULL) { 
 			if ($term == NULL) {
-				$sql = 'SELECT page_title, page_namespace FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL'; 
+						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL'; 
 			} else {
-				$sql = 'SELECT page_title, page_namespace FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+				$sql = 'SELECT page_title FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\'';
+						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\'';
 			}                 
 			$res = $db->query($sql);
 		
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
 					
-					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+					$result[] = Title::newFromText($row->page_title, NS_MAIN);
 					
 				}
 			}
@@ -188,25 +188,25 @@
 			$subCats[] = $categoryTitle; // add super category title too
 			foreach($subCats as $subCat) {
 				if ($term == NULL) {
-					$sql = 'SELECT page_title, page_namespace FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+					$sql = 'SELECT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey());
+						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey());
 				 	
 				} else {
-						$sql = 'SELECT page_title, page_namespace FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_title=p.page_title ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_title=p.page_title ' .
+						$sql = 'SELECT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	 
-						'WHERE p.page_namespace = '.NS_MAIN.' AND a.subject_title IS NULL AND r.subject_title IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\'';
+						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\'';
 						
 				}
 				$res = $db->query($sql);
 			
 				if($db->numRows( $res ) > 0) {
 					while($row = $db->fetchObject($res)) {
-						$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+						$result[] = Title::newFromText($row->page_title, NS_MAIN);
 					}
 				}
 		

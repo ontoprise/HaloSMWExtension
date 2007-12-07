@@ -115,6 +115,7 @@ OBTreeActionListener.prototype = {
 	    		
 	    		return;
 	    	}
+	    	selectionProvider.fireBeforeRefresh();
 	  		var subTree = transformer.transformResultToHTML(request,nextDIV);
 	  		selectionProvider.fireRefresh();
 	  		GeneralXMLTools.importSubtree(parentNode, subTree.firstChild);
@@ -209,6 +210,7 @@ OBTreeActionListener.prototype = {
 			GeneralXMLTools.importSubtree(parentOfChildrenToReplace, xmlFragmentForDisplayTree.firstChild);
 		}
 		// transform structure to HTML
+		selectionProvider.fireBeforeRefresh();
 		transformer.transformXMLToHTML(xmlFragmentForDisplayTree, htmlNodeToReplace, isRootLevel);
 		selectionProvider.fireRefresh();
 		calledOnFinish(tree);
@@ -279,6 +281,7 @@ OBTreeActionListener.prototype = {
 			GeneralXMLTools.importSubtree(parentOfChildrenToReplace, xmlFragmentForDisplayTree.firstChild);
 		}
 		// transform structure to HTML
+		selectionProvider.fireBeforeRefresh();
 		transformer.transformXMLToHTML(xmlFragmentForDisplayTree, htmlNodeToReplace, isRootLevel);
 		selectionProvider.fireRefresh();
 		calledOnFinish(tree);
@@ -339,6 +342,7 @@ OBTreeActionListener.prototype = {
    	}
    	// transform xml and add to category tree DIV 
    	var rootElement = document.getElementById(treeName);
+   	selectionProvider.fireBeforeRefresh();
    	transformer.transformXMLToHTML(xmlDoc, rootElement, true);
    	selectionProvider.fireRefresh();
    	if (treeName == 'categoryTree') { 
@@ -437,8 +441,10 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		this.selectedCategory = null;
 		this.selectedCategoryID = null;
 		this.oldSelectedNode = null;
+		this.draggableCategories = [];
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
-		
+		selectionProvider.addListener(this, OB_REFRESHLISTENER);
+		selectionProvider.addListener(this, OB_BEFOREREFRESHLISTENER);
 	},
 	
 	toggleExpand: function (event, node, folderCode) {
@@ -457,6 +463,27 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			this.selectedCategoryID = id;
 			this.oldSelectedNode = GeneralBrowserTools.toggleHighlighting(this.oldSelectedNode, node);
 		}
+	},
+	
+	beforeRefresh: function() {
+		this.draggableCategories.each(function(c) { 
+			c.destroy();
+			
+		});
+		$$('a.concept').each(function(c) { 
+			Droppables.remove(c.getAttribute('id'));
+		});
+		this.draggableCategories = [];
+	},
+	
+	refresh: function() {
+		function addDragAndDrop(c) { 
+			this.draggableCategories.push(new Draggable(c.getAttribute('id'), {revert:true, ghosting:true})); 
+			Droppables.add(c.getAttribute('id'), {accept:'concept', hoverclass:'dragHover'}); 
+		}
+		var addDragAndDrop_bind = addDragAndDrop.bind(this);
+		$$('a.concept').each(addDragAndDrop_bind);
+		
 	},
 	
 	showSubMenu: function(commandID) {
@@ -528,6 +555,7 @@ select: function (event, node, categoryID, categoryName) {
 		
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+		selectionProvider.fireBeforeRefresh();
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
 	  	selectionProvider.fireRefresh();
 	  	// de-select instance list
@@ -543,6 +571,7 @@ select: function (event, node, categoryID, categoryName) {
 		}
 		var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+		selectionProvider.fireBeforeRefresh();
 	  	transformer.transformResultToHTML(request,relattDIV);
 	  	selectionProvider.fireRefresh();
 	  	selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
@@ -669,6 +698,7 @@ OBInstanceActionListener.prototype = {
 			}
 			var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+			selectionProvider.fireBeforeRefresh();
 	  		transformer.transformResultToHTML(request,relattDIV);
 	  		if (OB_bd.isGecko) {
 	  			// FF needs repasting for chemical formulas and equations because FF's XSLT processor does not know 'disable-output-encoding' switch. IE does.
@@ -686,6 +716,7 @@ OBInstanceActionListener.prototype = {
 				categoryDIV.removeChild(categoryDIV.firstChild);
 			}
 			dataAccess.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+			selectionProvider.fireBeforeRefresh();
 			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
 			selectionProvider.fireRefresh();
 			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
@@ -735,6 +766,7 @@ OBInstanceActionListener.prototype = {
 			GeneralXMLTools.removeAllChildNodes(instanceListNode);
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(xmlFragmentInstanceList, instanceListNode, true);
 			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 			selectionProvider.fireRefresh();
@@ -826,6 +858,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			}
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
 	 	 	transformer.transformResultToHTML(request,instanceDIV, true);
 	 	 	selectionProvider.fireRefresh();
 		}
@@ -953,6 +986,7 @@ OBSchemaPropertyActionListener.prototype = {
 		
 			var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
 	  		transformer.transformResultToHTML(request,instanceDIV, true);
 	  		selectionProvider.fireRefresh();
 	  		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
@@ -1074,6 +1108,7 @@ OBGlobalActionListener.prototype = {
 			tree = dataAccess.OB_cachedCategoryTree;
 			if (filter == "") { //special case empty filter, just copy
 				dataAccess.initializeRootCategories(0);
+				selectionProvider.fireBeforeRefresh();
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
 				selectionProvider.fireRefresh();
 				selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
@@ -1084,6 +1119,7 @@ OBGlobalActionListener.prototype = {
 			tree = dataAccess.OB_cachedPropertyTree;
 			if (filter == "") {
 				dataAccess.initializeRootProperties(0);
+				selectionProvider.fireBeforeRefresh();
 				transformer.transformXMLToHTML(dataAccess.OB_currentlyDisplayedTree, $(this.activeTreeName), true);
 				selectionProvider.fireRefresh();
 				selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
@@ -1128,6 +1164,7 @@ OBGlobalActionListener.prototype = {
 				GeneralXMLTools.importNode(nodesFound.firstChild, inst, true);
 			}
 		}
+		selectionProvider.fireBeforeRefresh();
 		transformer.transformXMLToHTML(nodesFound, $("instanceList"), true); 
 		selectionProvider.fireRefresh();
 		selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
@@ -1166,6 +1203,7 @@ OBGlobalActionListener.prototype = {
 				GeneralXMLTools.importNode(nodesFound.firstChild, property, true);
 			}
 		}
+		selectionProvider.fireBeforeRefresh();
 		transformer.transformXMLToHTML(nodesFound, $("relattributes"), true); 
 		selectionProvider.fireRefresh();
 		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
@@ -1232,6 +1270,7 @@ OBGlobalActionListener.prototype = {
 		}
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+		selectionProvider.fireBeforeRefresh();
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
 	  	selectionProvider.fireRefresh();
 	  	selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
@@ -1246,6 +1285,7 @@ OBGlobalActionListener.prototype = {
 		}
 		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
 		dataAccess.OB_cachedProperties = xmlFragmentInstanceList;
+		selectionProvider.fireBeforeRefresh();
 	  	transformer.transformResultToHTML(request,propertyDIV, true);
 	  	selectionProvider.fireRefresh();
 	  	selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);

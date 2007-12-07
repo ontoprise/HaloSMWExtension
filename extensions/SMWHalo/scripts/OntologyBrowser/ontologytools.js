@@ -34,6 +34,7 @@ var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
 var OB_SELECTIONLISTENER = 'selectionChanged';
+var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
 var OB_REFRESHLISTENER = 'refresh';
 
 /**
@@ -104,6 +105,12 @@ OBEventProvider.prototype = {
 	 */
 	fireRefresh: function() {
 		this.listeners[OB_REFRESHLISTENER].each(function (l) { 
+			l.refresh();
+		});
+	},
+	
+	fireBeforeRefresh: function() {
+		this.listeners[OB_BEFOREREFRESHLISTENER].each(function (l) { 
 			l.refresh();
 		});
 	}
@@ -629,8 +636,8 @@ OBInputFieldValidator.prototype = {
 		this.keyListener = null;
 		this.blurListener = null;
 		this.istyping = false;
-		this.timerdisabled = true;
-		
+		this.timerRegistered = true;
+		this.timerID = null;
 		this.isValid = isValid;
 		
 		if ($(this.id) != null) this.registerListeners();
@@ -643,7 +650,7 @@ OBInputFieldValidator.prototype = {
 		
 		this.keyListener = null;
 		this.istyping = false;
-		this.timerdisabled = true;
+		this.timerRegistered = false;
 		
 		this.isValid = isValid;
 		this.lastValidation = null;
@@ -707,10 +714,10 @@ OBInputFieldValidator.prototype = {
 			return;
 		}
 		
-		if (this.timerdisabled) {
+		if (!this.timerRegistered) {
 			this.control.reset(this.id);
 			this.timedCallback(this.validate.bind(this));
-			this.timerdisabled = false;
+			this.timerRegistered = true;
 		}
 		
 	},
@@ -719,7 +726,7 @@ OBInputFieldValidator.prototype = {
 	 * Validate on blur if content has changed since last validation
 	 */
 	onBlurEvent: function(event) {
-		if (this.lastValidation != $F(this.id)) {
+		if (this.lastValidation != null && this.lastValidation != $F(this.id)) {
 			this.validate();
 		}
 	},
@@ -732,11 +739,11 @@ OBInputFieldValidator.prototype = {
 		if(this.istyping){
 			this.istyping = false;
 			var cb = this.timedCallback.bind(this, fnc);
-			setTimeout(cb, 1200);
+			setTimeout(cb, 1000);
 		} else {	
 			fnc(this.id);
-			this.timerdisabled = true;
-			
+			this.timerRegistered = false;
+			this.istyping = false;
 		}
 	},
 	
@@ -791,6 +798,11 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 			var regex = /(true|false)/;
 			var parts = answer.match(regex);
 			
+			// check if title got empty in the meantime
+			if ($F(id) == '') {
+				this.control.enable(false, id);
+				return;
+			}
 			if (parts == null) {
 				// call fails for some reason. Do nothing!
 				this.isValid = false;
@@ -1008,11 +1020,12 @@ OBCatgeorySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	getUserDefinedControls: function() {
+		var titlevalue = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? this.selectedTitle : '';
 		return '<div id="'+this.id+'">' +
 					'<div style="display: block; height: 22px;">' +
-					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text" value="'+titlevalue+'"/>' +
 					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
-					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
 					(this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? ' | <a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' : '') +
 					'</div>' +
 	            '<div id="preview_category_tree"/></div>';
@@ -1161,7 +1174,7 @@ OBPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 					'<div style="display: block; height: 22px;">' +
 					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
 					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
-					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
 					(this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? ' | <a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' : '') +
 	            '</div>' +  '<div id="preview_property_tree"/></div>';
 	},
@@ -1290,7 +1303,7 @@ OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 					'<div style="display: block; height: 22px;">' +
 					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
 					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
-					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a> | ' +
+					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a> | ' +
 					'<a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' +
 	            '</div>' +  '<div id="preview_instance_list"/></div>';
 	},
@@ -1452,7 +1465,7 @@ OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 						'<td><a onclick="'+this.objectname+'.addRange()">'+gLanguage.getMessage('ADD_RANGE')+'</a></td>' +
 					'</tr>' +
 				'</table>' + '<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
-					'<a onclick="'+this.objectname+'._cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
+					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
 	            '</div>';
 	},
 	

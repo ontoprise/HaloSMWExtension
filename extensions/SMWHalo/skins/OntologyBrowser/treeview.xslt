@@ -249,7 +249,7 @@
 		<td>
 		
 		<a class="navigationLink" style="margin-left:5px;">
-			<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="@title"/></xsl:attribute> 
+			<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="@title"/></xsl:attribute> 
 			{{SMW_OB_OPEN}}
 		</a>
 		
@@ -276,6 +276,10 @@
 	</xsl:when>
 	<xsl:otherwise>
 		<xsl:value-of select="@textToDisplay"></xsl:value-of>
+		<a class="navigationLink" style="margin-left:5px;">
+			<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="@title"/>?action=annotate</xsl:attribute> 
+			{{SMW_OB_ADDSOME}}
+		</a>
 	</xsl:otherwise>
 	</xsl:choose>
 	</xsl:template>
@@ -308,7 +312,7 @@
 					<xsl:with-param name="typeOfEntity"><xsl:value-of select="'property'"/></xsl:with-param> 
 				</xsl:call-template>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 					{{SMW_OB_OPEN}}
 				</a>
 			</td>
@@ -316,8 +320,17 @@
 				
 				 <xsl:choose>
 					<xsl:when test="child::param[1][@isLink]">
-						<a class="annotation" style="margin-left:5px;">
-							<xsl:attribute name="onclick">annotationActionListener.navigateToTarget(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="child::param[1]"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute> 
+						<a style="margin-left:5px;">
+							<xsl:choose>
+							<xsl:when test="child::param[1][@notexists]">
+								<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="child::param[1]"/>?action=edit</xsl:attribute> 
+								<xsl:attribute name="class">annotation titleNotExists</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="child::param[1]"/></xsl:attribute> 
+								<xsl:attribute name="class">annotation</xsl:attribute>
+							</xsl:otherwise>
+							</xsl:choose>
 							<xsl:variable name="target" select="child::param[1]"/>
 							<xsl:value-of select="translate($target, '_', ' ')"/>
 						</a>
@@ -339,8 +352,18 @@
 						
 						<xsl:choose>
 							<xsl:when test="@isLink">
-								<a class="annotation" style="margin-left:5px;">
-									<xsl:attribute name="onclick">annotationActionListener.navigateToTarget(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+								<a style="margin-left:5px;">
+									
+									<xsl:choose>
+									<xsl:when test="@notexists">
+										<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="."/>?action=edit</xsl:attribute> 
+										<xsl:attribute name="class">annotation titleNotExists</xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="."/></xsl:attribute> 
+										<xsl:attribute name="class">annotation</xsl:attribute>
+									</xsl:otherwise>
+									</xsl:choose>
 									<xsl:variable name="target" select="."/>
 									<xsl:value-of select="translate($target, '_', ' ')"/>
 								</a>
@@ -406,7 +429,7 @@
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of select="count(child::rangeType)+1"/></xsl:attribute>
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+					<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 					{{SMW_OB_OPEN}}
 				</a>
 				
@@ -504,13 +527,13 @@
 			<a class="navigationLink" title="Edit {$title}" style="margin-left:5px;">
 				<xsl:choose>
 						<xsl:when test="$typeOfEntity='concept'">
-							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
 						</xsl:when>
 						<xsl:when test="$typeOfEntity='property'">
-							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
 						</xsl:when>
 						<xsl:when test="$typeOfEntity='instance'">
-							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="@title"/>?action=edit</xsl:attribute> 
 						</xsl:when>
 				</xsl:choose>
 				{{SMW_OB_EDIT}}
@@ -674,10 +697,10 @@
 					<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 						<xsl:choose>
 						<xsl:when test="$typeOfEntity='concept'">
-							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 						</xsl:when>
 						<xsl:when test="$typeOfEntity='property'">
-							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/index.php/<xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title"/></xsl:attribute> 
 						</xsl:when>
 						</xsl:choose>
 						{{SMW_OB_OPEN}} 

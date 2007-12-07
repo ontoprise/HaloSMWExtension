@@ -15,6 +15,11 @@ to garnierjm@ifrance.com
 /*
 <!-- Customize link styles here -->
 */
+
+.dragHover {
+	background-color: #0F0;
+}
+
 a:link {text-decoration:none;}
 a:visited {text-decoration:none; }
 a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
@@ -23,6 +28,10 @@ a.concept, a.instance, a.leaf{
 	cursor: hand;
 	
 	white-space:nowrap;
+}
+
+a.titleNotExists {
+	color: #F00;
 }
 
 

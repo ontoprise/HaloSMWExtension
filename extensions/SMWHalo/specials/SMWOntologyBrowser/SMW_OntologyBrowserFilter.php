@@ -35,8 +35,10 @@
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter);
- 	 	
+ 	 	$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true);
+ 	 	if (count($foundCategories) == 0) {
+ 	 		$foundCategories = smwfGetSemanticStore()->getRedirectTargetByName(NS_CATEGORY, $reqfilter);
+ 	 	}
  	 	return $this->getCategoryTree($foundCategories);	 	
  	 }
  	 
@@ -58,7 +60,7 @@
  	  * @return xml string (category tree)
  	  */
  	 function filterForCategoriesWithProperty(Title $propertyTitle, $reqfilter) {
- 	 	$categories = $this->getDomainCategories($propertyTitle, $reqfilter);
+ 	 	$categories = smwfGetSemanticStore()->getDomainCategories($propertyTitle, $reqfilter);
  	    return $this->getCategoryTree($categories);	
  	 }
  	 
@@ -77,7 +79,10 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter);
+ 	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter, true);
+ 	 	if (count($foundInstances) == 0) {
+ 	 		$foundInstances = smwfGetSemanticStore()->getRedirectTargetByName(NS_MAIN, $reqfilter);
+ 	 	}
  	 	$result = "";
  	 	$id = uniqid (rand());
  	 	$count = 0;
@@ -116,8 +121,10 @@
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter);
- 	 	
+ 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, true);
+ 	 	if (count($foundAttributes) == 0) {
+ 	 		$foundAttributes = smwfGetSemanticStore()->getRedirectTargetByName(SMW_NS_PROPERTY, $reqfilter);
+ 	 	}
  	 	// create root object
  	 	$root = new TreeObject(null);
  	 	
@@ -169,7 +176,7 @@
  		
  		$reqfilter->isCaseSensitive = false;
  	 	$foundProperties = smwfGetSemanticStore()->getPropertiesWithSchemaByName($reqfilter);
- 	 
+ 	 	 	 	
  	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($foundProperties);
  	 }
  	 
@@ -209,21 +216,7 @@
  	 	return $serializedXML == '' ? "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_categories')."\"/>"  : '<result>'.$serializedXML.'</result>'; 
  	 }
  	 
- 	 /**
- 	  * Returns all domain categories for a given property.
- 	  */
- 	 private function getDomainCategories($propertyTitle, $reqfilter) {
- 	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeRelation, $reqfilter);
- 	    $result = array();
- 	    foreach($categories as $value) {
- 	    	$dvs = $value->getDVs();
- 	    	if ($dvs[0] instanceof SMWWikiPageValue) {
- 	    		$result[] = $dvs[0]->getTitle();
- 	    	}
- 	    }
- 	    return $result;
- 	 }
+ 	 
  	 /**
  	  * Detrmines all category paths from root to the given entity.
  	  * May be more than one in case of multiple inheritance.

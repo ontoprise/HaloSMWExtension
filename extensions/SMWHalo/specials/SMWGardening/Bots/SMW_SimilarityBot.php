@@ -168,7 +168,7 @@
  		$result = array();
  		$mw_page = $dbr->tableName('page');
  		// Calculate terms similar to $similarityTerm
- 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.$similarityTerm.'\')) <= '.$similarityDegree.";");
+ 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_is_redirect = 0 AND page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.$similarityTerm.'\')) <= '.$similarityDegree.";");
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
@@ -192,7 +192,7 @@
  		
  		$result = array();
  			// Calculate terms similar to $similarityTerm
- 			$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' WHERE ('.implode("",$cond).') AND page_namespace != '.NS_IMAGE);
+ 			$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' WHERE page_is_redirect = 0 AND ('.implode("",$cond).') AND page_namespace != '.NS_IMAGE);
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
@@ -225,7 +225,7 @@
  		// Calculate similar terms
  		// make sure that pages starting with 'Smw' are ignored because they are internal (such as logs).
  		$res = $dbr->query('SELECT p1.page_title AS page1, p2.page_title AS page2, p1.page_namespace AS pagenamespace1, p2.page_namespace AS pagenamespace2 FROM '.$mw_page.' p1, '.$mw_page.' p2 ' .
- 							 'WHERE p1.page_title != p2.page_title  AND p1.page_namespace != '.NS_IMAGE.' AND p1.page_title NOT LIKE \'Smw%\' AND (EDITDISTANCE(UPPER(p1.page_title), UPPER(p2.page_title)) <= '.$similarityDegree.' ' .
+ 							 'WHERE p1.page_is_redirect = 0 AND p2.page_is_redirect = 0 AND p1.page_title != p2.page_title  AND p1.page_namespace != '.NS_IMAGE.' AND p1.page_title NOT LIKE \'Smw%\' AND (EDITDISTANCE(UPPER(p1.page_title), UPPER(p2.page_title)) <= '.$similarityDegree.' ' .
  							 		'OR '.implode("",$cond).') LIMIT '.$limitOfResults);
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {

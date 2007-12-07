@@ -66,11 +66,11 @@
  	 * 
  	 * @param $namespaces Array of ns constants.
  	 * @param $requestoptions SMWRequestOptions object.
- 	 * @param $ignoreRedirects False, if no redirects should be returned.
+ 	 * @param $addRedirectTargets If false, redirect are completely ignored. Otherwise their targets are added. 
  	 * 
  	 * @return array of Title
  	 */
- 	public abstract function getPages($namespaces = NULL, $requestoptions = NULL, $ignoreRedirects = false);
+ 	public abstract function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false);
 	
 	/**
 	 * Returns root categories (categories which have no super-category).
@@ -154,6 +154,11 @@
  	* @return array of Title
  	*/	
 	public abstract function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL);
+	
+	/**
+ 	  * Returns all domain categories for a given property.
+ 	  */
+	public abstract function getDomainCategories($propertyTitle, $reqfilter);
 	/**
 	 * Returns all direct subproperties of $property.
 	 * 
@@ -186,6 +191,15 @@
 	 * @return Target of redirect or $title.
 	 */
 	public abstract function getRedirectTarget(Title $title);
+	
+	/**
+	 * Returns redirect targets of given $namespace. Requestoptions should be set,
+	 * otherwise you will receive many results!
+	 * 
+	 * @param $ns namespace constant
+	 * @param $requestoptions
+	 */
+	public abstract function getRedirectTargetByName($ns, $requestoptions);
 	
 	/**
 	 * Returns total number of usages of $property on arbitrary wiki pages.
