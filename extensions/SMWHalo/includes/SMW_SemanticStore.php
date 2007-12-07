@@ -192,14 +192,7 @@
 	 */
 	public abstract function getRedirectTarget(Title $title);
 	
-	/**
-	 * Returns redirect targets of given $namespace. Requestoptions should be set,
-	 * otherwise you will receive many results!
-	 * 
-	 * @param $ns namespace constant
-	 * @param $requestoptions
-	 */
-	public abstract function getRedirectTargetByName($ns, $requestoptions);
+	
 	
 	/**
 	 * Returns total number of usages of $property on arbitrary wiki pages.

@@ -1,0 +1,17 @@
+#rateannotations td{
+	border-bottom: 1px solid #000;
+	vertical-align: top;
+}
+
+.ratesection {
+	border-left: 2px solid #000;
+}
+
+a.navigationLink {
+	color: #666666;
+}
+
+.findWorkDetails {
+	margin-left: 20px;
+	background-color: #DDD;
+}

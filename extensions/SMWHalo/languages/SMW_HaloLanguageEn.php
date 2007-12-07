@@ -432,6 +432,8 @@ clicking the big arrows between the columns.',
  	'smw_findwork_dontknow' => 'Don\'t know.',
  	'smw_findwork_sendratings' => 'Send ratings',
  	'smw_findwork_getsomework' => 'Give me some Work!',
+ 	'smw_findwork_show_details' => 'Show details',
+ 	'smw_findwork_heresomework' => 'Here\'s some work',
  	
  	'smw_findwork_select' => 'Select',
  	'smw_findwork_generalconsistencyissues' => 'General consistency problems',

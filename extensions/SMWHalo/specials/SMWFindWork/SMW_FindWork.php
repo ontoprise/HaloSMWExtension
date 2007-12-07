@@ -64,6 +64,7 @@ function smwfDoSpecialFindWorkPage() {
 
 	function getPageHeader() {
 		global $wgRequest;
+		
 		$field_val = $wgRequest->getVal("field") != NULL ? intval($wgRequest->getVal("field")) : 0;
 		$html = '<p>' . wfMsg('smw_findwork_docu') . "</p>\n";
 		$specialPage = Title::newFromText($this->getName(), NS_SPECIAL);
@@ -83,14 +84,19 @@ function smwfDoSpecialFindWorkPage() {
 		}
  		$html .= "</select>" .
  				"<input name=\"goButton\" type=\"submit\" value=\"Go\"/></form>";	
- 		if ($field_val !== 0) $html .= '<h2>' . $this->workFields[$field_val] . "</h2>\n";
+ 		if ($wgRequest->getVal("gswButton") == NULL) {
+ 			if ($field_val !== 0) $html .= '<h2>' . $this->workFields[$field_val] . "</h2>\n";
+ 			
+ 		} else {
+			$html .= "<h2>".wfMsg('smw_findwork_heresomework')."</h2>\n";
+ 		}
 		return $html;
 	}
 	
 	private function getPageBottom() {
 		
 		$html = wfMsg('smw_findwork_rateannotations');
-		$html .= '<form id="ratingform"><table border="0">';
+		$html .= '<form id="ratingform"><table id="rateannotations" border="0" cellspacing="0" rowspacing="0">';
 		
 		// get some rated and unrated annotations
 		$annotations = $this->store->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
@@ -101,9 +107,9 @@ function smwfDoSpecialFindWorkPage() {
 			$html .= '<td>'.str_replace("_", " ", $a[0]).'</td>';
 			$html .= '<td>'.str_replace("_", " ", $a[1]).'</td>';
 			$html .= '<td>'.str_replace("_", " ", $a[2]).'</td>';
-			$html .= '<td><input type="radio" name="rating'.$i.'" value="1">'.wfMsg('smw_findwork_yes').'</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="-1">'.wfMsg('smw_findwork_no').'</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="0" checked>'.wfMsg('smw_findwork_dontknow').'</input>' .
+			$html .= '<td class="ratesection"><input type="radio" name="rating'.$i.'" value="1" class="yes">'.wfMsg('smw_findwork_yes').'</input>' .
+						  '<input type="radio" name="rating'.$i.'" value="-1" class="no">'.wfMsg('smw_findwork_no').'</input>' .
+						  '<input type="radio" name="rating'.$i.'" value="0" checked="checked" class="dontknow">'.wfMsg('smw_findwork_dontknow').'</input>' .
 					 '</td>';
 			$html .= '</tr>';
 			$i++;
@@ -133,9 +139,27 @@ function smwfDoSpecialFindWorkPage() {
 	}
 
 	function formatResult( $skin, $result ) {
-		
+		global $wgRequest;
+		$field = $wgRequest->getVal("field");
 	    if ($result instanceof Title) {
-	    	return $skin->makeLinkObj($result);
+	    	
+	    		// default display	
+	    		$gardeningLog = Title::newFromText("GardeningLog", NS_SPECIAL);
+	    		list($bot, $type, $class) = $this->getBotClassAndType($field);
+	    		return $skin->makeLinkObj($result).
+					' <a class="navigationLink" href="'.$gardeningLog->getFullURL().'?bot='.$bot.'&class=0&pageTitle='.urlencode($result->getPrefixedText()).'">('.wfMsg('smw_findwork_show_details').')</a>';
+	    	
+	    	
+	    } else {
+	    	global $wgServer, $wgScriptPath;
+	    	if ($field == 9) { 
+	    		// special case for low rate annoations 
+	    		list($subject, $property, $object) = $result;
+	    		$subjectEscaped = htmlspecialchars($subject->getDBkey());
+	    		$objectValue = $object instanceof Title ? $skin->makeLinkObj($object) : $object;
+	    		return $skin->makeLinkObj($subject).'<img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="findwork.toggle(\''.$subjectEscaped.'\')"/>' .
+	    				'<div class="findWorkDetails" style="display:none;" id="'.$subjectEscaped.'">'.$skin->makeLinkObj($property).' with value '.$objectValue.'</div>';
+	    	} 
 	    }
 	    // if no title: return a helpful error message
 	    return '__undefined_object__: "'.$result.'" of class: '.get_class($result);

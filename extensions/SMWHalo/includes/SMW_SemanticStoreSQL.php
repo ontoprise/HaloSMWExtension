@@ -661,25 +661,7 @@
 		return $result;
 	}
 	
-	public function getRedirectTargetByName($ns, $requestoptions) {
-		$db =& wfGetDB( DB_MASTER );
-		$redirect = $db->tableName('redirect');
-		$page = $db->tableName('page');
-		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-	 	$res = $db->select( array($page, $redirect), 
-		               array('rd_title','rd_namespace'),
-		               ' page_id = rd_from AND rd_namespace = '.$ns.' '.$sql, 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'rd_title') );
-	 	
-	 	
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->rd_title, $row->rd_namespace);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}
+	
 	
 	public function getNumberOfUsage(Title $title) {
 		$num = 0;

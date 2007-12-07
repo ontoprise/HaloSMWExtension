@@ -403,6 +403,8 @@ protected $smwUserMessages = array(
  	'smw_findwork_dontknow' => 'Weiss nicht',
  	'smw_findwork_sendratings' => 'Sende Bewertung',
  	'smw_findwork_getsomework' => 'Irgendwelche Arbeit',
+ 	'smw_findwork_show_details' => 'Zeige Details',
+ 	'smw_findwork_heresomework' => 'Zufällig ausgewählte Arbeit',
  	
  	'smw_findwork_select' => 'Wähle',
  	'smw_findwork_generalconsistencyissues' => 'Allgemeine Konsistenz-Probleme',

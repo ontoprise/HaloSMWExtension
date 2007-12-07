@@ -36,9 +36,7 @@
  		}
  		$reqfilter->isCaseSensitive = false;
  	 	$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true);
- 	 	if (count($foundCategories) == 0) {
- 	 		$foundCategories = smwfGetSemanticStore()->getRedirectTargetByName(NS_CATEGORY, $reqfilter);
- 	 	}
+ 	 	
  	 	return $this->getCategoryTree($foundCategories);	 	
  	 }
  	 
@@ -80,9 +78,7 @@
  		
  		$reqfilter->isCaseSensitive = false;
  	 	$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter, true);
- 	 	if (count($foundInstances) == 0) {
- 	 		$foundInstances = smwfGetSemanticStore()->getRedirectTargetByName(NS_MAIN, $reqfilter);
- 	 	}
+ 	 	
  	 	$result = "";
  	 	$id = uniqid (rand());
  	 	$count = 0;
@@ -122,9 +118,7 @@
  		
  		$reqfilter->isCaseSensitive = false;
  	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, true);
- 	 	if (count($foundAttributes) == 0) {
- 	 		$foundAttributes = smwfGetSemanticStore()->getRedirectTargetByName(SMW_NS_PROPERTY, $reqfilter);
- 	 	}
+ 	 	
  	 	// create root object
  	 	$root = new TreeObject(null);
  	 	

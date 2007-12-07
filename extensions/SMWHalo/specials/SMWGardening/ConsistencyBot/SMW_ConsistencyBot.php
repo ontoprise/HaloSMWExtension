@@ -311,18 +311,42 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 	}
 	
 	public function linkUserParameters(& $wgRequest) {
-		return array('matchString' => $wgRequest->getVal('matchString'));
+		return array('matchString' => $wgRequest->getVal('matchString'), 'pageTitle' => $wgRequest->getVal('pageTitle'));
 	}
 	
 	public function getData($options, $request) {
 		$matchString = $request->getVal('matchString');
+		$pageTitle = $request->getVal('pageTitle');
 		
-		if ($matchString == NULL || $matchString == '') {
-			return parent::getData($options, $request);
-		} else {
+		if ($pageTitle != NULL) {
+			// show only issue of *ONE* title
+			return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
+		}
+		if ($matchString != NULL && $matchString != '') {
+			// show all issues of title which match
 			$options->addStringCondition($matchString, SMW_STRCOND_MID);
 			return parent::getData($options, $request);
+		} else {
+			// default
+			return parent::getData($options, $request);
 		}
+	}
+	
+	/**
+	 * Returns array of ONE GardeningIssueContainer for a specific title 
+	 */
+	private function getGardeningIssueContainerForTitle($options, $request, $title) {
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
+		
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		
+		$gic = array();
+		$gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gic[] = new GardeningIssueContainer($title, $gis);
+		
+		
+		return $gic;
 	}
  }
  

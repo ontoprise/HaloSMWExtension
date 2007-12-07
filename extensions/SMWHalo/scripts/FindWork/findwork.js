@@ -52,7 +52,32 @@ FindWork.prototype = {
 		alert('Thank you for rating annotations, ' + (wgUserName ? wgUserName : "my friend") + "!");
 		// disable button to prevent repeatedly rating
 		$('sendbutton').setAttribute("disabled", "disabled");
+	},
+	
+	toggle: function(id) {
+		var div = $(id);
+		if (div.visible()) div.hide(); else div.show();
+	},
+	
+	toggleAll: function() {
+		this.showAll = !this.showAll;
+		var showAll = this.showAll;
+		var divs = $$('.findWorkDetails');
+		divs.each(function(d) { if (showAll) d.show(); else d.hide(); });
+		$('showall').innerHTML = showAll ? gLanguage.getMessage('GARDENING_LOG_COLLAPSE_ALL') : gLanguage.getMessage('GARDENING_LOG_EXPAND_ALL'); 
 	}
 }
 
 var findwork = new FindWork();
+Event.observe(window, 'load', function() {
+	// unset correct/wrong button to dont know
+	$$('input.yes').each(function(s) {
+		 s.checked = false;
+	});
+	$$('input.no').each(function(s) { 
+		 s.checked = false;
+	});
+	$$('input.dontknow').each(function(s) {
+		  s.checked = true;
+	});
+});

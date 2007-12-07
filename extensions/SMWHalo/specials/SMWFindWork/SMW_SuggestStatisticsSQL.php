@@ -170,24 +170,22 @@
 		$revision = $db->tableName('revision');
 		
 		if ($username == NULL) {
-			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
- 								'WHERE rating IS NOT NULL) ' .
+			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' WHERE rating < 0) ' .
  							'UNION ' .
- 								'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
- 								'WHERE rating IS NOT NULL) ' .
+ 								'(SELECT subject_title AS title, subject_namespace AS namespace, relation_title AS property, object_title AS value, object_namespace AS type, rating AS rt FROM '.$smw_relations. ' WHERE rating < 0) ' .
  							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
 		} else {
- 			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
- 								'WHERE rating IS NOT NULL AND rev_user_text = '.$db->addQuotes($username). ') ' .
+ 			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ') ' .
  							'UNION ' .
- 								'(SELECT subject_title AS title, subject_namespace AS namespace, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
- 								'WHERE rating IS NOT NULL AND rev_user_text = '.$db->addQuotes($username). ') ' .
+ 								'(SELECT subject_title AS title, subject_namespace AS namespace, relation_title AS property, object_title AS value, object_namespace AS type, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+ 								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ') ' .
  							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
 		}			
  		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->title, $row->namespace);
+				$result[] = array(Title::newFromText($row->title, $row->namespace), Title::newFromText($row->property, SMW_NS_PROPERTY), $row->type == 'string' ? $row->value : Title::newFromText($row->value, $row->type));
 			}
 		}
 		$db->freeResult($res);

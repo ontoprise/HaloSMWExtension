@@ -63,10 +63,9 @@
        		$notAnnotatedPages = $this->store->getPagesWithoutAnnotations($term == '' ? NULL : $term, NULL);
  		} else {
  			$categories = explode(";", $categoryRestriction);
- 			foreach($categories as $c) {
- 				$categoryDB = str_replace(" ", "_", trim($c)); 
- 				$notAnnotatedPages = array_merge($notAnnotatedPages, $this->store->getPagesWithoutAnnotations($term == '' ? NULL : $term, $categoryDB));
- 			}
+ 			
+ 			$notAnnotatedPages = array_merge($notAnnotatedPages, $this->store->getPagesWithoutAnnotations($term == '' ? NULL : $term, $categories));
+ 			
  		}
        	
        	foreach($notAnnotatedPages as $page) {
@@ -140,7 +139,7 @@
  }
  
  abstract class MissingAnnotationStorage {
- 	public abstract function getPagesWithoutAnnotations($term = NULL, $category = NULL);
+ 	public abstract function getPagesWithoutAnnotations($term = NULL, $categories = NULL);
  }
  
  class MissingAnnotationStorageSQL extends MissingAnnotationStorage {
@@ -148,7 +147,7 @@
  	 * Returns not annotated pages matching the $term (substring matching) or
  	 * which are members of the subcategories of $category.
  	 */
- 	public function getPagesWithoutAnnotations($term = NULL, $category = NULL) {
+ 	public function getPagesWithoutAnnotations($term = NULL, $categories = NULL) {
  		$db =& wfGetDB( DB_MASTER );
  		$smw_attributes = $db->tableName('smw_attributes');
 	 	$smw_relations = $db->tableName('smw_relations');
@@ -158,7 +157,7 @@
 	 	$smw_longstrings = 	$db->tableName('smw_longstrings');
 	 	
 		$result = array();
-		if ($category == NULL) { 
+		if ($categories == NULL) { 
 			if ($term == NULL) {
 				$sql = 'SELECT DISTINCT page_title FROM '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
@@ -186,38 +185,78 @@
 		
 			$db->freeResult($res);
 		} else {
-			//TODO: may produce doubles. change query
-			$categoryTitle = Title::newFromText($category, NS_CATEGORY);
-			$subCats = smwfGetSemanticStore()->getSubCategories($categoryTitle);
-			$subCats[] = $categoryTitle; // add super category title too
-			foreach($subCats as $subCat) {
-				if ($term == NULL) {
-					$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
-																	
-						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND AND ls.subject_id IS NULL p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey());
-				 	
-				} else {
-						$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
-																	 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
-																	 
-						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to = '.$db->addQuotes($subCat->getDBkey()).' AND page_title LIKE \'%'.$term.'%\'';
-						
-				}
-				$res = $db->query($sql);
-			
-				if($db->numRows( $res ) > 0) {
-					while($row = $db->fetchObject($res)) {
-						$result[] = Title::newFromText($row->page_title, NS_MAIN);
-					}
-				}
-		
-				$db->freeResult($res);
+			global $smwgDefaultCollation;
+			if (!isset($smwgDefaultCollation)) {
+				$collation = '';
+			} else {
+				$collation = 'COLLATE '.$smwgDefaultCollation;
 			}
+			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories ( category VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+			$db->query( 'CREATE TEMPORARY TABLE smw_ob_categories_super (category VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getPagesWithoutAnnotations' );
+		            
+		    foreach($categories as $category) {
+		    	$categoryTitle = Title::newFromText($category, NS_CATEGORY);
+		    	$db->query('INSERT INTO smw_ob_categories_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');       
+		    	$db->query('INSERT INTO smw_ob_categories VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');    
+		    }
+			$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+			// maximum iteration length is maximum category tree depth.
+			do  {
+				$maxDepth--;
+				
+				// get next subcategory level
+				$db->query('INSERT INTO smw_ob_categories_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$mw_page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_categories_super))');
+				
+				// insert direct instances of current subcategory level
+				$db->query('INSERT INTO smw_ob_categories (SELECT * FROM smw_ob_categories_sub)');
+				
+				// copy subcatgegories to supercategories of next iteration
+				$db->query('TRUNCATE TABLE smw_ob_categories_super');
+				$db->query('INSERT INTO smw_ob_categories_super (SELECT * FROM smw_ob_categories_sub)');
+				
+				// check if there was least one more subcategory. If not, all instances were found.
+				$res = $db->query('SELECT COUNT(category) AS numOfSubCats FROM smw_ob_categories_super');
+				$numOfSubCats = $db->fetchObject($res)->numOfSubCats;
+				$db->freeResult($res);
+				
+				$db->query('TRUNCATE TABLE smw_ob_categories_sub');
+				
+			} while ($numOfSubCats > 0 && $maxDepth > 0);
+			
+			
+			if ($term == NULL) {
+				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
+																
+					'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories)';
+			 	
+			} else {
+					$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_attributes.' a ON a.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_relations.' r ON r.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
+																 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
+																 
+					'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories) AND page_title LIKE \'%'.$term.'%\'';
+						
+			}
+			$res = $db->query($sql);
+			
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					$result[] = Title::newFromText($row->page_title, NS_MAIN);
+				}
+			}
+		
+			$db->freeResult($res);
+			$db->query('DROP TABLE smw_ob_categories');
+			$db->query('DROP TABLE smw_ob_categories_super');
+			$db->query('DROP TABLE smw_ob_categories_sub');
 		}
 		return $result;
  	}
