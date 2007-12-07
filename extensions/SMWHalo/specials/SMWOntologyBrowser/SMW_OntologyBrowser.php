@@ -50,7 +50,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 				smwLog("","OB","opened");
 		}
 		/*ENDLOG*/
-		$showMenuBar = true;//in_array("gardener", $wgUser->getGroups()) || in_array("sysop", $wgUser->getGroups());
+		$showMenuBar = in_array("gardener", $wgUser->getGroups()) || in_array("sysop", $wgUser->getGroups());
 		// display query browser
 		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );	
 		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );			
