@@ -198,11 +198,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 * Checks weather subject matches a domain/range pair.
  	 */
  	private function checkDomain($categoriesOfSubject, $domainRange) {
- 	
- 		
- 		
+ 	 		
  		$results = array();
- 		$domainCorrect = false;
+ 		$oneDomainCorrect = false;
  		foreach($domainRange as $domRanVal) { 
  			$domainCorrect = false;
  		
@@ -211,9 +209,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		
  			if ($domainCat == NULL) {
  				$domainCorrect = true;
- 			}
- 		
- 			if ($domainCat != NULL){
+ 			} else {
  				//check domain
  				
  				foreach($categoriesOfSubject as $coi) {
@@ -222,9 +218,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				}
  			}
  			$results[] = $domainCorrect;
- 			$domainCorrect |= $domainCorrect;
+ 			$oneDomainCorrect |= $domainCorrect;
  		}
- 		return array($results, $domainCorrect);
+ 		return array($results, $oneDomainCorrect);
  	}
  	
  	
