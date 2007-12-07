@@ -834,7 +834,9 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	performSingleAction: function(action, parameter, element) {
 		switch (action) {
 			case 'color':
-				element.setStyle({ background:parameter});
+				if (element) {
+					element.setStyle({ background:parameter});
+				}
 				break;
 			case 'show':
 				var tbc = smw_ctbHandler.findContainer(parameter);

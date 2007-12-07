@@ -179,8 +179,11 @@ createToolbar: function(attributes) {
  * 
  * @param ContextMenuFramework contextMenuContainer
  * 		The container of the context menu.
+ * @param string value (optional)
+ * 		The default value for the property. If it is not given, the current 
+ * 		selection of the wiki text parser is used.
  */
-createContextMenu: function(contextMenuContainer) {
+createContextMenu: function(contextMenuContainer, value) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
@@ -191,9 +194,12 @@ createContextMenu: function(contextMenuContainer) {
     this.wtp.initialize();
 	this.currentAction = "annotate";
 
-	var selection = this.wtp.getSelection(true);
+	if (!value) {
+		value = this.wtp.getSelection(true);
+	}
+	
 	/*STARTLOG*/
-    smwhgLogger.log(selection,"AAM-Properties","annotate_clicked");
+    smwhgLogger.log(value,"AAM-Properties","annotate_clicked");
 	/*ENDLOG*/
 	
 	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
@@ -202,12 +208,12 @@ createContextMenu: function(contextMenuContainer) {
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), selection, '', 
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), value, '', 
 							 SMW_REL_CHECK_EMPTY_NEV + SMW_REL_HINT_INSTANCE,
 	                         true));
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
-	var repr = selection;
+	var repr = value;
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
 	
 	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
@@ -219,7 +225,7 @@ createContextMenu: function(contextMenuContainer) {
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
-	setTimeout("$('rel-name').focus();",50);
+	setTimeout("$('rel-name').focus();",250);
 	
 },
 

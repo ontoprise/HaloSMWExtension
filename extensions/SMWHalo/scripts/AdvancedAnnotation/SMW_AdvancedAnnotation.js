@@ -479,7 +479,11 @@ AdvancedAnnotation.prototype = {
 	 * 		Name of the new relation.
 	 */
 	relationAdded: function(startPos, endPos, name) {
-		this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
+		if (this.annotationProposal) {
+			this.markProposal(AA_RELATION, 'aam_new_anno_prop_highlight');
+		} else {
+			this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
+		}
 		relToolBar.fillList();
 		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
@@ -585,7 +589,49 @@ AdvancedAnnotation.prototype = {
 		this.annoCount++;
 		
 	},
-	
+
+	/**
+	 * An annotation proposal is highlighted with a green border and a "+"-icon.
+	 * This highlight is replaced by the normal highlight of annotations.
+	 * 
+	 * @param int type
+	 * 		The selection is either AA_RELATION or AA_CATEGORY
+	 * @param string cssClass
+	 * 		Name of the css style that is added as class to the <span> tag.
+	 */
+	markProposal: function(type, cssClass) {
+		if (!this.annotationProposal) {
+			return;
+		}
+		var text = this.annotationProposal.textContent;
+		
+		var wrapper = this.annotationProposal;
+		wrapper.id = 'anno'+this.annoCount+'w';
+		if (text.length < 20) {
+			wrapper.setStyle("white-space:nowrap");
+		}
+		if (type == AA_RELATION) {
+			var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
+			$(wrapper.down('a'))
+				.replace('<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
+						 '<img src="' + imgPath + 'edit.gif"/>' +
+						 '</a>')
+		} else {
+			$(wrapper.down('a')).remove();
+		}
+		
+		var innerSpan = $(wrapper.down('span'));
+		innerSpan.className = cssClass;
+		innerSpan.id = 'anno' + this.annoCount;
+		
+		Insertion.Bottom(wrapper, 
+			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
+   			'<img src="' + imgPath + 'delete.png"/></a>'
+		);
+		this.annoCount++;
+		
+	},
+		
 	/**
 	 * This function is a hook for changed text in the wiki text parser. 
 	 * It updates the anchors with the wiki text offsets in the DOM after text
@@ -700,6 +746,40 @@ AdvancedAnnotation.prototype = {
 	},
 	
 	/**
+	 * The system highlight annotation proposals with a green border. This 
+	 * function is called to annotate the proposal with the id <id>.
+	 * 
+	 * 
+	 */
+	annotateProposal: function(id) {
+		var annoDescr = this.findAnnotationWithId(id);
+		if (!annoDescr) {
+			return;
+		}
+
+		var wrapper = $('anno'+id+'w');
+		this.annotationProposal = wrapper;
+		
+		var anno = annoDescr[0];
+		// The selection of the wiki text parser will be replaced by the annotation
+		this.wikiTextParser.setSelection(anno.getStart(), anno.getEnd());
+		// open property context menu
+		if (!this.contextMenu) {
+			this.contextMenu = new ContextMenuFramework();
+		}
+		var annoName = anno.getRepresentation();
+		if (!annoName) {
+			annoName = anno.getName();
+		}
+		relToolBar.createContextMenu(this.contextMenu, annoName);
+
+ 		var vo = wrapper.viewportOffset();
+		this.contextMenu.setPosition(vo[0], vo[1]+20);
+		this.contextMenu.showMenu();
+
+	},
+	
+	/**
 	 * @private
 	 * 
 	 * Tries to find an annotation by an id. The <span> that highlights the text
@@ -736,6 +816,15 @@ AdvancedAnnotation.prototype = {
 			var anno = annotations[i];
 			if (anno.getStart() == annotationStart) {
 				return [anno, i, type];
+			}
+		}
+		// Nothing found among categories or relations
+		// => search among links
+		var annotations = this.wikiTextParser.getLinks();
+		for (var i = 0; i < annotations.length; ++i) {
+			var anno = annotations[i];
+			if (anno.getStart() == annotationStart) {
+				return [anno, i, 'link'];
 			}
 		}
 		return null;		
@@ -890,8 +979,7 @@ AdvancedAnnotation.smwhfDeleteAnno = function(id) {
 };
 
 AdvancedAnnotation.smwhfEditLink = function(id) {
-	alert(id);
-	
+	smwhgAdvancedAnnotation.annotateProposal(id);
 };
 
 
