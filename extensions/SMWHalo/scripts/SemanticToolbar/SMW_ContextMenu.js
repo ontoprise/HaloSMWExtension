@@ -84,6 +84,20 @@ setContent: function(htmlcontent,containertype, headline){
 	new Insertion.Bottom('contextmenu', header );
 	new Insertion.Bottom('contextmenu', content );
 	new Insertion.Bottom(contentdiv, htmlcontent );
+	if ($('cmCategoryHeader')) {
+		Event.observe('cmCategoryHeader', 'click',
+					  function(event) {
+					  	$('cmCategoryContent').show();
+					  	$('cmPropertyContent').hide();
+					  });
+	}
+	if ($('cmPropertyHeader')) {
+		Event.observe('cmPropertyHeader', 'click',
+					  function(event) {
+					  	$('cmCategoryContent').hide();
+					  	$('cmPropertyContent').show();
+					  });
+	}
 
 },
 
@@ -156,6 +170,10 @@ setPosition: function(posX,posY){
  */
 showMenu: function(){
 	$('contextmenu').show();
+	if ($('cmCategoryContent')) {
+		// The category section is initially folded in
+		$('cmCategoryContent').hide();
+	}
 },
 /**
  * @public  hides menu
