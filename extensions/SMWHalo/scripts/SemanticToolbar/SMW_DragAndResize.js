@@ -49,7 +49,7 @@ enableDragging: function(){
 	if(this.draggable == null) {
 		this.draggable = new Draggable('ontomenuanchor', {
 			//TODO: replace handle with proper tab if present	
-			handle: 'stb_cont3-headline', 
+			handle: 'tab_0', 
 			starteffect: function(){}, 
 			endeffect: function(){}});
 		
@@ -76,7 +76,9 @@ enableDragging: function(){
  * @param
  */
 fixAnchorSize: function(){
-	$('ontomenuanchor').setStyle({height: $('semtoolbar').scrollHeight +'px'}); 	
+	if($('semtoolbar')){
+		$('ontomenuanchor').setStyle({height: $('semtoolbar').scrollHeight +'px'}); 	
+	}
 },
 
 /**
