@@ -40,7 +40,8 @@
 				  'p2_namespace'	=>	'INTEGER' ,
 				  'p2_title'  		=> 	'VARCHAR(255) '.$collation,
 				  'value'			=>	'VARCHAR(255) '.$collation,
-				  'valueint'		=>	'INTEGER'), $db, $verbose);
+				  'valueint'		=>	'INTEGER',
+				  'modified'		=>  'ENUM(\'y\', \'n\') DEFAULT \'n\' NOT NULL'), $db, $verbose);
 
 			DBHelper::reportProgress("   ... done!\n",$verbose);
  	}
@@ -171,13 +172,13 @@
  			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
  		}
  		$result = array();
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssuesForPairs', $sqlOptions );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint', 'modified'), $sqlCond , 'SMWGardeningIssue::getGardeningIssuesForPairs', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
 			while($row)
 			{	
-				$result[] = GardeningIssue::createIssue($bot_id, $row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value != NULL ? $row->value : $row->valueint);
+				$result[] = GardeningIssue::createIssue($bot_id, $row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value != NULL ? $row->value : $row->valueint, $row->modified == 'y');
 				$row = $db->fetchObject($res);
 			}
 		}
@@ -250,13 +251,13 @@
  		}
  	   
  		$result = array();
- 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
+ 		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint', 'modified'), $sqlCond , 'SMWGardeningIssue::getGardeningIssues', $sqlOptions );
  		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
 			while($row)
 			{	
-				$result[] = GardeningIssue::createIssue($bot_id, $row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value != NULL ? $row->value : $row->valueint);
+				$result[] = GardeningIssue::createIssue($bot_id, $row->gi_type, $row->p1_namespace, $row->p1_title, $row->p2_namespace, $row->p2_title, $row->value != NULL ? $row->value : $row->valueint, $row->modified == 'y');
 				$row = $db->fetchObject($res);
 			}
 		}
@@ -402,7 +403,7 @@
  		$db =& wfGetDB( DB_MASTER );
  		$numeric_value = is_numeric($value);
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type, 'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
- 			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL));
+ 			'p2_id' => $t2->getArticleID(), 'p2_namespace' => $t2->getNamespace(), 'p2_title' => $t2->getDBkey(), 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL, 'modified' => 'n'));
  						
  	}
  	
@@ -410,7 +411,7 @@
  		$db =& wfGetDB( DB_MASTER );
  		
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
- 			'p2_id' => -1 ,'p2_namespace' => -1, 'p2_title' => NULL, 'value' =>  NULL, 'valueint' => NULL));
+ 			'p2_id' => -1 ,'p2_namespace' => -1, 'p2_title' => NULL, 'value' =>  NULL, 'valueint' => NULL, 'modified' => 'n'));
  		
  	}
  	
@@ -418,9 +419,13 @@
  		$db =& wfGetDB( DB_MASTER );
  		$numeric_value = is_numeric($value);
  		$db->insert($db->tableName('smw_gardeningissues'), array('bot_id' => $bot_id, 'gi_type' => $gi_type,  'gi_class' => intval($gi_type / 100), 'p1_id' => $t1->getArticleID(), 'p1_namespace' => $t1->getNamespace(), 'p1_title' => $t1->getDBkey(),
- 			'p2_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL));
+ 			'p2_id' => -1, 'p2_namespace' => -1, 'p2_title' => NULL, 'value' => $numeric_value ? NULL : $value, 'valueint' => $numeric_value ? intval($value) : NULL, 'modified' => 'n'));
  	}
  	
+ 	public function setGardeningIssueToModified(Title $t) {
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$db->update($db->tableName('smw_gardeningissues'), array('modified' => 'y'), array('p1_id' => $t->getArticleID()));
+ 	}
  	
  	public function generatePropagationIssuesForCategories($botID, $propagationType) {
  		$this->clearGardeningIssues($botID, NULL, $propagationType);

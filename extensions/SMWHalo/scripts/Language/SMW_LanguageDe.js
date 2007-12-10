@@ -154,6 +154,7 @@ var wgLanguageStrings = {
 	'SMW_OB_OPEN' 			  : '(&Ouml;ffne)',
 	'SMW_OB_EDIT' 		  	  : '(Editiere)',
 	'SMW_OB_ADDSOME'		  : '(F&uuml;ge hinzu)',
+	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

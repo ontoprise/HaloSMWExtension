@@ -111,8 +111,8 @@
  
  class TemplateMaterializerBotIssue extends GardeningIssue {
  	
- 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
- 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+ 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
+ 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
  	}
  	
  	protected function getTextualRepresenation(& $skin,  $text1, $text2) {

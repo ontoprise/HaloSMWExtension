@@ -26,9 +26,9 @@
  		foreach($issues as $i) {
  			 			
  			if ($i->getTitle1() !== NULL) {
- 				
+ 				$isModified = $i->isModified() ? 'modified="true"' : '';
  				$htmlRepresentation = $i->getRepresentation();
- 				$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+ 				$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
  			}
  		}
  		
@@ -49,12 +49,13 @@
  		
  		$errorTags = "";
  		foreach($issues as $i) {
+ 			$isModified = $i->isModified() ? 'modified="true"' : '';
  			switch($i->getType()) {
  				case SMW_GARDISSUE_WRONG_UNIT: { // highlight if unit matches the GI
  					if (stripos($value->getUnit(), $i->getValue()) !== false) {
  						
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
  					} 
  					break;
  				}
@@ -63,7 +64,7 @@
  					if ($dvs[$i->getValue()] == NULL) {
  						
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
  					}
  					break;
  				}
@@ -71,7 +72,7 @@
  					if ($value->getTitle()->getDBkey() == $i->getValue()) {
  					
  						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+ 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
  					}
  					break;
  				}
@@ -80,7 +81,7 @@
  				case SMW_GARDISSUE_TOO_LOW_CARD: { // highlight always
  				
  					$htmlRepresentation = $i->getRepresentation();
- 					$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+ 					$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
  				}
  				break;
  			} 			
@@ -104,6 +105,7 @@
  		$count = 0;
  		$missingAnnotations = "";
  		foreach($issues as $i) {
+ 			$isModified = $i->isModified() ? 'modified="true"' : '';
  			// title2 contains the not annotated property in this case
  			if ($i->getType() == SMW_GARDISSUE_TOO_LOW_CARD && intval($i->getValue()) == 0 && $i->getTitle2() !== NULL) {
  				$title = htmlspecialchars($i->getTitle2()->getDBkey()); 
@@ -111,7 +113,7 @@
 		 		$errorTags = "";
 		 				 		
 		 		$htmlRepresentation = $i->getRepresentation();
-		 		$errorTags .= "<gi type=\"".$i->getType()."\"><![CDATA[$htmlRepresentation]]></gi>";
+		 		$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
 		 				 		
 		 		$missingAnnotations .= "<annotation title=\"".$title."\" img=\"property.gif\" id=\"ID_".$id.$count."\"><param>Missing</param><gissues>$errorTags</gissues></annotation>";
  				$count++;

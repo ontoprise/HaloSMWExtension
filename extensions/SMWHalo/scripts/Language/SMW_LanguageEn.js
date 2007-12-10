@@ -174,6 +174,7 @@ var wgLanguageStrings = {
 	'SMW_OB_EDIT' 			  : '(edit)',
 	'SMW_OB_ADDSOME'		  : '(add some)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
+	'SMW_OB_MODIFIED'		  : 'The page was modified. The following Gardening issues might have already been fixed:',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

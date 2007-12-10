@@ -136,6 +136,13 @@
  	public abstract function addGardeningIssueAboutValue($bot_id, $gi_type, Title $t1, $value);
  	
  	/**
+ 	 * Set modified flag for GardeningIssues of $t
+ 	 * 
+ 	 * @param Title $t
+ 	 */
+ 	public abstract function setGardeningIssueToModified(Title $t);
+ 	
+ 	/**
  	 * Generates propagated GardeningIssues to indicate problems up to the root level. Propagates
  	 * all category and instance issues.
  	 * 
@@ -157,10 +164,10 @@ abstract class GardeningIssue {
 	protected $t1;
 	protected $t2;
 	protected $value;
+	protected $isModified;
 	
 	
-	
-	protected function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+	protected function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		$this->bot_id = $bot_id;
 		$this->gi_type = $gi_type;
 		if ($t1_ns != -1 && $t1 != NULL && $t1 != '') {
@@ -174,6 +181,7 @@ abstract class GardeningIssue {
 			$this->t2 = NULL;
 		}
 		$this->value = $value;
+		$this->isModified = $isModified;
 	}
 	
 	/**
@@ -181,10 +189,10 @@ abstract class GardeningIssue {
 	 * 
 	 * @return instance of subclass of GardeningIssue.
 	 */ 
-	public static function createIssue($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value) {
+	public static function createIssue($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		global $registeredBots;
 		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
-		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value);
+		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
 	}
 	
 	
@@ -206,6 +214,10 @@ abstract class GardeningIssue {
 	
 	public function getValue() {
 		return $this->value;
+	}
+	
+	public function isModified() {
+		return $this->isModified;
 	}
 	
 	/**
