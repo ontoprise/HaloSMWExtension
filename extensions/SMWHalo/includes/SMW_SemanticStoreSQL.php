@@ -187,7 +187,7 @@
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$page.' WHERE page_title=cl_to)'.
+			   ' AND page_title =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND cl_to IN (SELECT page_title FROM '.$page.' WHERE page_title=cl_to AND page_is_redirect = 0)'.
 		       DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select(  array($page, $categorylinks), 
@@ -196,8 +196,8 @@
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$t = Title::newFromText($row->cl_to, NS_CATEGORY);
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
+				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				
 			}
 		}
 		$db->freeResult($res);
@@ -206,12 +206,13 @@
 	
 	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
 		
-		$db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
+		$db =& wfGetDB( DB_MASTER ); 
 		$page = $db->tableName('page');
-		$sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from'.//AND page_namespace = '.NS_MAIN.  
+		$categorylinks = $db->tableName('categorylinks');
+		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from AND p2.page_is_redirect = 0 AND cl_to = p2.page_title'.
 			DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
-		$res = $db->select( array($db->tableName('page'), $db->tableName('categorylinks')), 
+		$res = $db->select( array($page.' p1', $categorylinks, $page.' p2'), 
 		                    'DISTINCT cl_to',
 		                    $sql, 'SMW::getCategoriesForInstance',  DBHelper::getSQLOptions($requestoptions,'cl_to'));
 		// rewrite result as array
@@ -219,8 +220,8 @@
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$t = Title::newFromText($row->cl_to, NS_CATEGORY);
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
+				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				
 			}
 		}
 		$db->freeResult($res);
@@ -233,14 +234,14 @@
 		$this->createVirtualTableWithInstances($categoryTitle, $db);
 		
 		
-		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', DBHelper::getSQLOptions($requestoptions,'category'));
+		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', DBHelper::getSQLOptions($requestoptions,'instance'));
 		$results = array();
 		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
 			while($row)
 			{	
-				$instance = Title::newFromID($row->instance);
+				$instance = Title::newFromText($row->instance, NS_MAIN);
 				$category = Title::newFromText($row->category, NS_CATEGORY);
 				$results[] = array($instance, $category);
 				$row = $db->fetchObject($res);
@@ -272,17 +273,17 @@
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances ( instance INT(8) UNSIGNED NOT NULL, category VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255), category VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		
 		// initialize with direct instances
 				           
-		$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, NULL AS category FROM '.$page.' ' .
+		$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
 						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
 	
@@ -297,7 +298,7 @@
 			$db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
 			
 			// insert direct instances of current subcategory level
-			$db->query('INSERT INTO smw_ob_instances (SELECT page_id AS instance, cl_to AS category FROM '.$page.' ' .
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, cl_to AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
 						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
 			
@@ -363,8 +364,8 @@
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$t = Title::newFromText($row->property, SMW_NS_PROPERTY);
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $properties[] = $t; 
+				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				 
 			}
 		}
 		$db->freeResult($res);
@@ -512,15 +513,15 @@
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
-		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		            
-		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
-					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).')');
+		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
+					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).' AND p.page_is_redirect = 0)');
 	
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryTitle->getArticleID()).')');    
 		
@@ -533,11 +534,12 @@
 			$db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = '.NS_CATEGORY.' AND cl_from IN (SELECT * FROM smw_ob_properties_sub))');
 			
 			// insert direct properties of current supercategory level
-			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n, '.$smw_nary_relations.' r' .
-					' WHERE n.subject_id = r.subject_id AND r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
+			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
+					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND p.page_is_redirect = 0 AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
+	
 			
 			// copy supercatgegories to subcategories of next iteration
-			$db->query('TRUNCATE TABLE smw_ob_properties_sub');
+			$db->query('DELETE FROM smw_ob_properties_sub');
 			$db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
 			
 			// check if there was least one more supercategory. If not, all properties were found.
@@ -545,7 +547,7 @@
 			$numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
 			$db->freeResult($res);
 			
-			$db->query('TRUNCATE TABLE smw_ob_properties_super');
+			$db->query('DELETE FROM smw_ob_properties_super');
 			
 		} while ($numOfSuperCats > 0 && $maxDepth > 0);   
 		     
@@ -594,16 +596,17 @@
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$page = $db->tableName('page');
-		$sql = 'object_title = ' . $db->addQuotes($attribute->getDBkey());
+		$smw_subprops = $db->tableName('smw_subprops');
+		$sql = 'object_title = ' . $db->addQuotes($attribute->getDBkey()).' AND page_is_redirect = 0 AND subject_title = page_title AND page_namespace = '.SMW_NS_PROPERTY;
 
-		$res = $db->select(  $db->tableName('smw_subprops'), 
+		$res = $db->select( array($smw_subprops, $page), 
 		                    'subject_title',
 		                    $sql, 'SMW::getDirectSubProperties', DBHelper::getSQLOptions($requestoptions,'subject_title') );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$t = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
+				$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				
 			}
 		}
 		$db->freeResult($res);
@@ -615,7 +618,8 @@
 	 	$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$page = $db->tableName('page');
-		$sql = 'subject_title = ' . $db->addQuotes($attribute->getDBkey());
+		$smw_subprops = $db->tableName('smw_subprops');
+		$sql = 'subject_title = ' . $db->addQuotes($attribute->getDBkey()).' AND page_is_redirect = 0 AND object_title = page_title AND page_namespace = '.SMW_NS_PROPERTY;
 
 		$res = $db->select(  $db->tableName('smw_subprops'), 
 		                    'object_title',
@@ -623,8 +627,8 @@
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$t = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t; 
+				$result[] = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
+				
 			}
 		}
 		$db->freeResult($res);
@@ -687,11 +691,11 @@
 	
 	public function getNumberOfInstancesAndSubcategories(Title $category) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableForInstances($category, $db);
+		$this->createVirtualTableWithInstances($category, $db);
 		
 		$res = $db->select( 'smw_ob_instances', 
 		                    'COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories',
-		                    array(), 'SMW::getNumberOfInstances', array() );
+		                    array(), 'SMW::getNumberOfInstancesAndSubcategories', array() );
 		
 		// rewrite result as array
 		$numOfInstances = 0;
@@ -703,13 +707,13 @@
 		}
 		$db->freeResult($res);
 		
-		$this->dropVirtualTableForInstances($db);
+		$this->dropVirtualTableWithInstances($db);
 		return array($numOfInstances, $numCategories);
 	}
 	
 	public function getNumberOfProperties(Title $category) {
 		$db =& wfGetDB( DB_MASTER ); 
-		$this->createVirtualTableForProperties($category, $db);
+		$this->createVirtualTableWithPropertiesByCategory($category, $db);
 		$res = $db->select( 'smw_ob_properties', 
 		                    'COUNT(DISTINCT property) AS numOfProperties',
 		                    array(), 'SMW::getNumberOfProperties', array() );

@@ -113,6 +113,7 @@ initializeRootCategoriesCallback: function (request) {
    	this.OB_cachedCategoryTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   	//transformer.transformXMLToHTML(this.OB_cachedCategoryTree, rootElement, true);
   	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+  	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();
   	
@@ -135,6 +136,7 @@ initializeRootPropertyCallback: function (request) {
    	this.OB_cachedPropertyTree = GeneralXMLTools.createDocumentFromString(request.responseText);
   	//transformer.transformXMLToHTML(this.OB_cachedPropertyTree, rootElement, true);
   	this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString(request.responseText);
+  	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();
   	
@@ -143,6 +145,7 @@ initializeRootPropertyCallback: function (request) {
 
 updateTree: function(xmlText, rootElement) {
 	var tree = GeneralXMLTools.createDocumentFromString(xmlText);
+	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(tree, rootElement, true);
   	selectionProvider.fireRefresh();
   	return tree;

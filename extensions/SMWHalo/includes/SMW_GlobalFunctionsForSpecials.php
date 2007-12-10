@@ -36,6 +36,7 @@
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 
@@ -54,7 +55,7 @@
 	}
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/SMW_custom.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
 
 	return true;
 }
@@ -291,7 +292,7 @@ function smwFWAddHTMLHeader(& $out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/FindWork/findwork.js', "all", -1, NS_SPECIAL.":FindWork");
 	}
 
-	
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/FindWork/findwork.css', "all", -1, NS_SPECIAL.":FindWork");
 	
 	return true;
 }

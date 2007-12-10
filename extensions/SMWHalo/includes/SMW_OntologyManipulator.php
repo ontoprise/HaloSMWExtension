@@ -32,6 +32,7 @@ $wgAjaxExportList[] = 'smwfRelationSchemaData';
 $wgAjaxExportList[] = 'smwfGetWikiText';
 $wgAjaxExportList[] = 'smwfDeleteArticle';
 $wgAjaxExportList[] = 'smwfRenameArticle';
+$wgAjaxExportList[] = 'smwfMoveCategory';
 
 /**
  * Creates a new article or appends some text if it already
@@ -367,5 +368,40 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
 	} 
 	return $success === true ? "true" : "false"; 
+}
+
+/**
+ * Moves a catgory to a new super category.
+ * 
+ * @param $draggedCategory Title of category to move (String)
+ * @param $oldSuperCategory Title of old supercategory. (String)
+ * @param $newSuperCategory Title of new supercategory. (String)
+ */
+function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
+	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
+	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
+	$newSuperCategoryTitle = Title::newFromText($newSuperCategory, NS_CATEGORY);
+	
+	if ($draggedCategoryTitle == NULL || $newSuperCategoryTitle == NULL) {
+		// invalid titles
+		return "false";
+	}
+	
+	
+	$draggedCategoryRevision = Revision::newFromTitle($draggedCategoryTitle);
+	$draggedCategoryArticle = new Article($draggedCategoryTitle);
+	
+	if ($draggedCategoryRevision == NULL || $draggedCategoryArticle == NULL) {
+		// some problem occured.
+		return "false";
+	}
+	
+	$text = $draggedCategoryRevision->getText();
+	
+	// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]  
+	$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
+	$draggedCategoryArticle->doEdit($newText, $draggedCategoryRevision->getComment(), EDIT_UPDATE);
+			
+	return "true";
 }
 ?>

@@ -480,6 +480,8 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		include_once($smwgIP . '/includes/SMW_Factbox.php'); // Normally this must have happende, but you never know ...
 
 		$title=$article->getTitle();
+		SMWGardening::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
+		
 		$updatejobflag = 0;
 
 	 	/**

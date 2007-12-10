@@ -232,6 +232,27 @@ OBArticleCreator.prototype = {
 		sajax_do_call('smwfRenameArticle', 
 		              [oldTitle, newTitle, reason], 
 		              ajaxResponseRenameArticle.bind(this));
+	},
+	
+	moveCategory: function(draggedCategory, oldSuperCategory, newSuperCategory, callback, node) {
+		function ajaxResponseMoveCategory(request) {
+			this.pendingIndicator.hide();
+			if (request.status != 200) {
+				alert(gLanguage.getMessage('ERROR_MOVING_CATEGORY'));
+				return;
+			}
+			if (request.responseText != 'true') {
+				alert('Some error occured on category dragging!');
+				return;
+			}		
+			callback();
+			
+		}
+		
+		this.pendingIndicator.show(node);
+		sajax_do_call('smwfMoveCategory', 
+		              [draggedCategory, oldSuperCategory, newSuperCategory], 
+		              ajaxResponseMoveCategory.bind(this));
 	}
 	
 }
@@ -260,6 +281,7 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var subCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(subCategoryTitle));
 			this.insertCategoryNode(superCategoryID, subCategoryXML);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
 			
 			selectionProvider.fireSelectionChanged(superCategoryID, superCategoryTitle, SMW_CATEGORY_NS, $(superCategoryID))
@@ -284,6 +306,7 @@ OBOntologyModifier.prototype = {
 			var newCategoryXML = GeneralXMLTools.createDocumentFromString(this.createCategoryNode(newCategoryTitle));
 			var superCategoryID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('id');
 			this.insertCategoryNode(superCategoryID, newCategoryXML);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
 			
 			selectionProvider.fireSelectionChanged(sibligCategoryID, siblingCategoryTitle, SMW_CATEGORY_NS, $(sibligCategoryID))
@@ -307,12 +330,41 @@ OBOntologyModifier.prototype = {
 	renameCategory: function(newCategoryTitle, categoryTitle, categoryID) {
 		function callback() {
 			this.renameCategoryNode(categoryID, newCategoryTitle);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
 			
 			selectionProvider.fireSelectionChanged(categoryID, categoryTitle, SMW_CATEGORY_NS, $(categoryID))
 			selectionProvider.fireRefresh();
 		}
 		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
+	},
+	
+	moveCategory: function(fromCategoryID, toCategoryID) {
+		
+		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, fromCategoryID);
+		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, toCategoryID);
+		
+		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, fromCategoryID);
+		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, toCategoryID);
+		
+		var draggedCategory = from_cache.getAttribute('title');
+		var oldSuperCategory = from_cache.parentNode.getAttribute('title');
+		var newSuperCategory = to_cache.getAttribute('title');
+		
+		function callback() {
+			GeneralXMLTools.importNode(to_cache, from_cache, true);
+			GeneralXMLTools.importNode(to, from, true);
+			
+			from.parentNode.removeChild(from);
+			from_cache.parentNode.removeChild(from_cache);
+			
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
+			
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.moveCategory(draggedCategory, oldSuperCategory, newSuperCategory, callback.bind(this), $('categoryTree'));
 	},
 	
 	/**
@@ -328,6 +380,7 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(subPropertyTitle));
 			this.insertPropertyNode(superPropertyID, subPropertyXML);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
 			
 			selectionProvider.fireSelectionChanged(superPropertyID, superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
@@ -352,6 +405,7 @@ OBOntologyModifier.prototype = {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this.createPropertyNode(newPropertyTitle));
 			var superPropertyID = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('id');
 			this.insertPropertyNode(superPropertyID, subPropertyXML);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
 		
 			selectionProvider.fireSelectionChanged(sibligPropertyID, siblingPropertyTitle, SMW_PROPERTY_NS, $(sibligPropertyID))
@@ -377,6 +431,7 @@ OBOntologyModifier.prototype = {
 	renameProperty: function(newPropertyTitle, oldPropertyTitle, propertyID) {
 		function callback() {
 			this.renamePropertyNode(propertyID, newPropertyTitle);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
 			
 			selectionProvider.fireSelectionChanged(propertyID, newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
@@ -404,6 +459,7 @@ OBOntologyModifier.prototype = {
 			dataAccess.OB_cachedProperties.documentElement.removeAttribute('isEmpty');
 			dataAccess.OB_cachedProperties.documentElement.removeAttribute('textToDisplay');
 			GeneralXMLTools.importNode(dataAccess.OB_cachedProperties.documentElement, newPropertyXML.documentElement, true);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedProperties, $('relattributes'), true);
 					
 			selectionProvider.fireRefresh();
@@ -445,6 +501,7 @@ OBOntologyModifier.prototype = {
 	renameInstance: function(newInstanceTitle, oldInstanceTitle, instanceID) {
 		function callback() {
 			this.renameInstanceNode(newInstanceTitle, instanceID);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
 			
 			selectionProvider.fireSelectionChanged(instanceID, newInstanceTitle, SMW_INSTANCE_NS, $(instanceID))
@@ -464,6 +521,7 @@ OBOntologyModifier.prototype = {
 	deleteInstance: function(instanceTitle, instanceID) {
 		function callback() {
 			this.deleteInstanceNode(instanceID);
+			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedInstances, $('instanceList'), true);
 			
 			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null)
