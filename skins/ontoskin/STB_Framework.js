@@ -53,7 +53,6 @@ ToolbarFramework.prototype = {
 			} else {
 				this.curtabShown = 0;
 			}
-
 			this.isCollapsed = false;
 
 			this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
@@ -72,10 +71,6 @@ ToolbarFramework.prototype = {
 				}
 			}
 		}
-	},
-
-	forceAdditionalHeadline: function () {
-		this.frameworkForceHeader = true;
 	},
 
 	isToolbarAvailable: function () {
@@ -104,7 +99,8 @@ ToolbarFramework.prototype = {
 			}
 			if (this.tabarray.length > 1) {
 				this.createTabHeader();
-			} else if (this.frameworkForceHeader) {
+			} else if(wgAction == "annotate") {
+				this.frameworkForceHeader;
 				this.createForcedHeader();
 			}
 		}
