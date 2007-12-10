@@ -54,6 +54,8 @@ ToolbarFramework.prototype = {
 				this.curtabShown = 0;
 			}
 
+			this.isCollapsed = false;
+
 			this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
 			this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
 			this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
@@ -70,6 +72,10 @@ ToolbarFramework.prototype = {
 				}
 			}
 		}
+	},
+
+	forceAdditionalHeadline: function () {
+		this.frameworkForceHeader = true;
 	},
 
 	isToolbarAvailable: function () {
@@ -98,6 +104,8 @@ ToolbarFramework.prototype = {
 			}
 			if (this.tabarray.length > 1) {
 				this.createTabHeader();
+			} else if (this.frameworkForceHeader) {
+				this.createForcedHeader();
 			}
 		}
 		this.contarray[contnum] = new DivContainer();
@@ -180,6 +188,12 @@ ToolbarFramework.prototype = {
 		$("tabcontainer").update(tabHeader);
 	},
 
+	createForcedHeader : function() {
+		// force to show a header - for use in annotation mode
+		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_0\" style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
+		$("tabcontainer").update(tabHeader);
+	},
+
 	switchTab: function(tabnr) {
 		// hide current containers in current tab
 		this.hideSemanticToolbarContainerTab(tabnr);
@@ -202,6 +216,27 @@ ToolbarFramework.prototype = {
 				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
 					$("stb_cont"+i+"-headline").hide();
 					$("stb_cont"+i+"-content").hide();
+				}
+			}
+		}
+	},
+
+	collapse: function() {
+
+		if (this.isCollapsed) {
+			for(var i=0;i<this.contarray.length;i++) {
+				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && i != SAVEANNOTATIONSCONTAINER) {
+					$("stb_cont"+i+"-headline").show();
+					$("stb_cont"+i+"-content").show();
+					this.isCollapsed = false;
+				}
+			}
+		} else {
+			for(var i=0;i<this.contarray.length;i++) {
+				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && i != SAVEANNOTATIONSCONTAINER) {
+					$("stb_cont"+i+"-headline").hide();
+					$("stb_cont"+i+"-content").hide();
+					this.isCollapsed = true;
 				}
 			}
 		}
@@ -426,11 +461,11 @@ Slider.prototype = {
 	         if( typeof smwhg_marker != 'undefined' ){
 	         	smwhg_marker.markNodes();
 	         }
-	        
+
 	 },
 	 /**
 	  * Resizes the slide if window size is changed
-	  * since IE fires the resize event in much more cases than the desired 
+	  * since IE fires the resize event in much more cases than the desired
 	  * we have to do some additional checks
 	  */
 	 resizeTextbox: function(){
@@ -438,15 +473,15 @@ Slider.prototype = {
 		 	if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
 		 		this.activateResizing();
 		 		this.oldHeight = document.documentElement.clientHeight;
-				this.oldWidth  = document.documentElement.clientWidth; 
-		 	} else{ 
+				this.oldWidth  = document.documentElement.clientWidth;
+		 	} else{
 		 		if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
 		 			alert('resize');
 		 			this.activateResizing();
 		 			this.oldHeight = window.innerHeight;
-					this.oldWidth  = window.innerWidth; 		
-		 		} 
-		 	} 
+					this.oldWidth  = window.innerWidth;
+		 		}
+		 	}
 	   }else {
 	 		this.activateResizing();
 	 	}

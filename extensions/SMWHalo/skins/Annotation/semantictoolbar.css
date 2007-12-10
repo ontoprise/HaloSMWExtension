@@ -23,10 +23,10 @@
 triggered by the nested floats. It should not be removed
 	contenttab has only 97%+1%+1%=99% because firefox will show a non scrollable scrollbar width 100%*/
 	#contenttab {
-		width: 97%; 
+		width: 97%;
 		margin: 1%
 	}
-	
+
 	#contentcol1 {
 		width: 70%;
 		vertical-align: top;
@@ -36,7 +36,7 @@ triggered by the nested floats. It should not be removed
 		vertical-align: top;
 	}
 
-/* overwrites some design flaws in the original main.css */ 
+/* overwrites some design flaws in the original main.css */
 
 	#content {
 		margin: 2.8em 0 0 12.2em;
@@ -44,12 +44,12 @@ triggered by the nested floats. It should not be removed
 		position: relative;
 		z-index: 2;
 	}
-	
+
 	#wpTextbox1{
 		word-break: break-all;
 	}
 
-/*  Slider 
+/*  Slider
 	Problem: Slider should be behind content but slider handle should be in front of
 	Solution: 	set positiv z-index for innercontent
 				set greater positiv z-index for sliderhandle
@@ -87,7 +87,7 @@ triggered by the nested floats. It should not be removed
 	margin-left: 3px;
 	margin-right: 3px;
  }
- 
+
 .generic_headline{
 	margin-left: 3px;
 	margin-right: 3px;
@@ -109,7 +109,7 @@ triggered by the nested floats. It should not be removed
 	margin-right: 5px;
 }
 a.minusplus{
-	background-image:url(minus.gif);
+	background-image:url(images/minus.gif);
 	float:left;
 	height:12px;
 	margin-right:4px;
@@ -118,7 +118,7 @@ a.minusplus{
 	width:12px;
 }
 a.minusplus:hover{
-	background-image:url(minus-act.gif);
+	background-image:url(images/minus-act.gif);
 }
 
 a.plusminus{
@@ -130,10 +130,10 @@ a.plusminus{
 	width:12px;
 }
 .plusminus{
-	background-image:url(plus.gif);
+	background-image:url(images/plus.gif);
 }
 a.plusminus:hover{
-	background-image:url(plus-act.gif);
+	background-image:url(images/plus-act.gif);
 }
 
 #tab_0{
