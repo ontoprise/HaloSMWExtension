@@ -186,7 +186,7 @@ ToolbarFramework.prototype = {
 
 	createForcedHeader : function() {
 		// force to show a header - for use in annotation mode
-		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_0\" style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
+		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
 		$("tabcontainer").update(tabHeader);
 	},
 
@@ -216,9 +216,16 @@ ToolbarFramework.prototype = {
 			}
 		}
 	},
-
+	
+	setDragging: function( dragging ){
+		this.dragging = dragging;
+	},
+	
 	collapse: function() {
-
+		
+		if(this.dragging==true){
+			return;
+		}
 		if (this.isCollapsed) {
 			for(var i=0;i<this.contarray.length;i++) {
 				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && i != SAVEANNOTATIONSCONTAINER) {
