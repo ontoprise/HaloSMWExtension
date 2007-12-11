@@ -253,6 +253,27 @@ OBArticleCreator.prototype = {
 		sajax_do_call('smwfMoveCategory', 
 		              [draggedCategory, oldSuperCategory, newSuperCategory], 
 		              ajaxResponseMoveCategory.bind(this));
+	},
+	
+	moveProperty: function(draggedProperty, oldSuperProperty, newSuperProperty, callback, node) {
+		function ajaxResponseMoveProperty(request) {
+			this.pendingIndicator.hide();
+			if (request.status != 200) {
+				alert(gLanguage.getMessage('ERROR_MOVING_PROPERTY'));
+				return;
+			}
+			if (request.responseText != 'true') {
+				alert('Some error occured on property dragging!');
+				return;
+			}		
+			callback();
+			
+		}
+		
+		this.pendingIndicator.show(node);
+		sajax_do_call('smwfMoveProperty', 
+		              [draggedProperty, oldSuperProperty, newSuperProperty], 
+		              ajaxResponseMoveProperty.bind(this));
 	}
 	
 }
@@ -339,21 +360,29 @@ OBOntologyModifier.prototype = {
 		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
 	
-	moveCategory: function(fromCategoryID, toCategoryID) {
+	/**
+	 * Move category so that draggedCategoryID is a new subcategory of droppedCategoryID
+	 * 
+	 * @param draggedCategoryID ID of category which is moved.
+	 * @param droppedCategoryID ID of new supercategory of draggedCategory.
+	 */
+	moveCategory: function(draggedCategoryID, droppedCategoryID) {
 		
-		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, fromCategoryID);
-		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, toCategoryID);
+		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, draggedCategoryID);
+		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, droppedCategoryID);
 		
-		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, fromCategoryID);
-		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, toCategoryID);
+		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, draggedCategoryID);
+		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedCategoryID);
 		
 		var draggedCategory = from_cache.getAttribute('title');
 		var oldSuperCategory = from_cache.parentNode.getAttribute('title');
 		var newSuperCategory = to_cache.getAttribute('title');
 		
 		function callback() {
-			GeneralXMLTools.importNode(to_cache, from_cache, true);
-			GeneralXMLTools.importNode(to, from, true);
+			if (to_cache.hasChildNodes()) { // only move subtree, if it has already been requested 
+				GeneralXMLTools.importNode(to_cache, from_cache, true);
+				GeneralXMLTools.importNode(to, from, true);
+			}
 			
 			from.parentNode.removeChild(from);
 			from_cache.parentNode.removeChild(from_cache);
@@ -365,6 +394,42 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 		articleCreator.moveCategory(draggedCategory, oldSuperCategory, newSuperCategory, callback.bind(this), $('categoryTree'));
+	},
+	
+	/**
+	 * Move property so that draggedPropertyID is a new subproperty of droppedPropertyID
+	 * 
+	 * @param draggedPropertyID ID of property which is moved.
+	 * @param droppedPropertyID ID of new superproperty of draggedProperty.
+	 */
+	moveProperty: function(draggedPropertyID, droppedPropertyID) {
+		
+		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, draggedPropertyID);
+		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, droppedPropertyID);
+		
+		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, draggedPropertyID);
+		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedPropertyID);
+		
+		var draggedProperty = from_cache.getAttribute('title');
+		var oldSuperProperty = from_cache.parentNode.getAttribute('title');
+		var newSuperProperty = to_cache.getAttribute('title');
+		
+		function callback() {
+			if (to_cache.hasChildNodes()) { // only move subtree, if it has already been requested 
+				GeneralXMLTools.importNode(to_cache, from_cache, true);
+				GeneralXMLTools.importNode(to, from, true);
+			}
+			
+			from.parentNode.removeChild(from);
+			from_cache.parentNode.removeChild(from_cache);
+			
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree, $('propertyTree'), true);
+			
+			selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
+			selectionProvider.fireRefresh();
+		}
+		articleCreator.moveProperty(draggedProperty, oldSuperProperty, newSuperProperty, callback.bind(this), $('propertyTree'));
 	},
 	
 	/**

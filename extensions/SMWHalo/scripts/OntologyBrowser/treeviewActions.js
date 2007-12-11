@@ -500,12 +500,16 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 	
 	onStart: function(eventName, draggable, event) {
-		this.ignoreNextSelection = true;
+		if (draggable.element.hasClassName('concept')) {
+			this.ignoreNextSelection = true;
+		}
 	},
 	
 	onDrop: function(dragElement, dropElement, event) {
-		//alert('Dropped on: '+dropElement.getAttribute('id')+" from: "+dragElement.getAttribute('id'));
-		ontologyTools.moveCategory(dragElement.getAttribute('id'), dropElement.getAttribute('id'));
+		var draggedCategoryID = dragElement.getAttribute('id');
+		var droppedCategoryID = dropElement.getAttribute('id');
+		//alert('Dropped on: '+droppedCategoryID+" from: "+draggedCategoryID);
+		ontologyTools.moveCategory(draggedCategoryID, droppedCategoryID);
 	},
 	
 	showSubMenu: function(commandID) {
@@ -825,6 +829,12 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		this.selectedPropertyID = null;
 		this.oldSelectedProperty = null;
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+		selectionProvider.addListener(this, OB_REFRESHLISTENER);
+		selectionProvider.addListener(this, OB_BEFOREREFRESHLISTENER);
+		
+		
+		Draggables.addObserver(this);
+		this.draggableProperties = [];
 	},
 	
 	navigateToEntity: function(event, node, propertyName, editmode) {
@@ -840,6 +850,49 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		}
 	},
 	
+	beforeRefresh: function() {
+		if (wgUserGroups == null || (wgUserGroups.indexOf('sysop') == -1 && wgUserGroups.indexOf('gardener') == -1)) {
+			
+			return;
+		}
+		this.draggableProperties.each(function(c) { 
+			c.destroy();
+			
+		});
+		$$('a.property').each(function(c) { 
+			Droppables.remove(c.getAttribute('id'));
+		});
+		this.draggableProperties = [];
+	},
+	
+	refresh: function() {
+		if (wgUserGroups == null || (wgUserGroups.indexOf('sysop') == -1 && wgUserGroups.indexOf('gardener') == -1)) {
+			// do not allow dragging, when user is no sysop or gardener
+			return;
+		}
+		function addDragAndDrop(c) { 
+			var d = new Draggable(c.getAttribute('id'), {revert:true, ghosting:true});
+			this.draggableProperties.push(d); 
+			Droppables.add(c.getAttribute('id'), {accept:'property', hoverclass:'dragHover', onDrop:onDrop_bind}); 
+		}
+		var addDragAndDrop_bind = addDragAndDrop.bind(this);
+		var onDrop_bind = this.onDrop.bind(this);
+		$$('a.property').each(addDragAndDrop_bind);
+		
+	},
+	
+	onStart: function(eventName, draggable, event) {
+		
+	},
+	
+	onDrop: function(dragElement, dropElement, event) {
+		var draggedPropertyID = dragElement.getAttribute('id');
+		var droppedPropertyID = dropElement.getAttribute('id');
+		//alert('Dropped on: '+droppedPropertyID+" from: "+draggedPropertyID);
+		ontologyTools.moveProperty(draggedPropertyID, droppedPropertyID);
+		
+	},
+	
 	showSubMenu: function(commandID) {
 		if (this.selectedProperty == null) {
 			alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
@@ -849,7 +902,8 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	},
 	
   select: function (event, node, propertyID, propertyName) {
-  			var e = GeneralTools.getEvent(event);
+  		
+  		var e = GeneralTools.getEvent(event);
 	
 		// if Ctrl is pressed: navigation mode
 		if (e["ctrlKey"]) {

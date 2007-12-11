@@ -33,6 +33,7 @@ $wgAjaxExportList[] = 'smwfGetWikiText';
 $wgAjaxExportList[] = 'smwfDeleteArticle';
 $wgAjaxExportList[] = 'smwfRenameArticle';
 $wgAjaxExportList[] = 'smwfMoveCategory';
+$wgAjaxExportList[] = 'smwfMoveProperty';
 
 /**
  * Creates a new article or appends some text if it already
@@ -371,13 +372,14 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
 }
 
 /**
- * Moves a catgory to a new super category.
+ * Moves a category to a new super category.
  * 
  * @param $draggedCategory Title of category to move (String)
- * @param $oldSuperCategory Title of old supercategory. (String)
+ * @param $oldSuperCategory Title of old supercategory. (String) May be NULL
  * @param $newSuperCategory Title of new supercategory. (String)
  */
 function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
+	$draggedOnRootLevel = $oldSuperCategory == 'null' || $oldSuperCategory == NULL;
 	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
 	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
 	$newSuperCategoryTitle = Title::newFromText($newSuperCategory, NS_CATEGORY);
@@ -398,10 +400,63 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
 	
 	$text = $draggedCategoryRevision->getText();
 	
-	// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]  
-	$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
+	if ($draggedOnRootLevel) {
+		// dragged category was on root level
+		$newText .= $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
+	} else {
+		// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]  
+		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
+		
+	}
 	$draggedCategoryArticle->doEdit($newText, $draggedCategoryRevision->getComment(), EDIT_UPDATE);
-			
+	return "true";
+}
+
+/**
+ * Moves a property to a new super property.
+ * 
+ * @param $draggedProperty Title of property to move (String)
+ * @param $oldSuperProperty Title of old superproperty. (String) May be NULL
+ * @param $newSuperProperty Title of new superproperty. (String)
+ */
+function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
+	$draggedOnRootLevel = $oldSuperProperty == 'null' || $oldSuperProperty == NULL;
+	$draggedPropertyTitle = Title::newFromText($draggedProperty, SMW_NS_PROPERTY);
+	$oldSuperPropertyTitle = Title::newFromText($oldSuperProperty, SMW_NS_PROPERTY);
+	$newSuperPropertyTitle = Title::newFromText($newSuperProperty, SMW_NS_PROPERTY);
+	
+	if ($draggedPropertyTitle == NULL || $newSuperPropertyTitle == NULL) {
+		// invalid titles
+		return "false";
+	}
+	
+	
+	$draggedPropertyRevision = Revision::newFromTitle($draggedPropertyTitle);
+	$draggedPropertyArticle = new Article($draggedPropertyTitle);
+	
+	if ($draggedPropertyRevision == NULL || $draggedPropertyArticle == NULL) {
+		// some problem occured.
+		return "false";
+	}
+	
+	$text = $draggedPropertyRevision->getText();
+	
+	global $smwgContLang,$wgParser;
+ 	$options = new ParserOptions();
+	$sp = $smwgContLang->getSpecialPropertiesArray();
+	
+	if ($draggedOnRootLevel) {
+		// dragged property was on root level
+		$newText .= $text."\n[[".$sp[SMW_SP_SUBPROPERTY_OF]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
+	} else {
+		// replace on article $draggedProperty [[Subproperty of::$oldSuperProperty]] with [[Subproperty of::$newSuperProperty]]
+		$newText = preg_replace("/\[\[\s*".$sp[SMW_SP_SUBPROPERTY_OF]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "[[".$sp[SMW_SP_SUBPROPERTY_OF]."::".$newSuperPropertyTitle->getPrefixedText()."]]", $text);
+	}
+	
+	// save article
+	$draggedPropertyArticle->doEdit($newText, $draggedPropertyRevision->getComment(), EDIT_UPDATE);
+	$wgParser->parse($newText, $draggedPropertyTitle, $options, true, true, $draggedPropertyRevision->getID());
+	SMWFactbox::storeData($draggedPropertyTitle, true);	
 	return "true";
 }
 ?>
