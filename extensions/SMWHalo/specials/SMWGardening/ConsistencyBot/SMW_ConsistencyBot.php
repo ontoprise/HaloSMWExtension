@@ -236,10 +236,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 				return wfMsg('smw_gardissue_domains_and_ranges_not_defined', $text1);
 			case SMW_GARDISSUE_TYPES_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_types_not_defined', $text1);
-			case SMW_GARDISSUE_CATEGORY_NOT_DEFINED: 
-				return wfMsg('smw_gardissue_category_not_defined', $text1);
-			case SMW_GARDISSUE_PROPERTY_NOT_DEFINED: 
-				return wfMsg('smw_gardissue_property_not_defined', $text1);
+			
 			case SMW_GARDISSUE_TARGET_NOT_DEFINED: 
 				return wfMsg('smw_gardissue_target_not_defined', $text1);
 			
