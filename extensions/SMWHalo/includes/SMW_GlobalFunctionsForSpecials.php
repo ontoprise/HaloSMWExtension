@@ -130,9 +130,9 @@ function smwfGetRegisteredBots() {
 	 $htmlResult = "";
 	 $first = true;
 	 foreach($registeredBots as $botID => $bot) {
-	 /*	if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+	 	if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
 	 		continue; // do not add this bot, because the user must not access it.
-	 	}*/
+	 	}
 	 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 	 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
 	 				   "<a>" .$bot->getLabel()."</a>" .
