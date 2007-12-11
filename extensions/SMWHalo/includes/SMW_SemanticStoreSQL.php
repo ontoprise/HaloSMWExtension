@@ -621,7 +621,7 @@
 		$smw_subprops = $db->tableName('smw_subprops');
 		$sql = 'subject_title = ' . $db->addQuotes($attribute->getDBkey()).' AND page_is_redirect = 0 AND object_title = page_title AND page_namespace = '.SMW_NS_PROPERTY;
 
-		$res = $db->select(  $db->tableName('smw_subprops'), 
+		$res = $db->select(   array($smw_subprops, $page), 
 		                    'object_title',
 		                    $sql, 'SMW::getDirectSuperProperties', DBHelper::getSQLOptions($requestoptions,'object_title') );
 		$result = array();
