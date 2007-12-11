@@ -111,3 +111,6 @@
 #p-search {
 	z-index: 0;
 }
+#p-cactions li.selected a {
+	z-index: 0;
+}
