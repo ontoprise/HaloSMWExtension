@@ -62,7 +62,9 @@ AdvancedAnnotation.prototype = {
 	 */
 	onMouseUp: function(event) {
 		smwhgAnnotationHints.hideHints();
+		this.hideToolbar();
 		
+		// Check if the event occurred in div#bodyContent
 		var target = event.target;
 		while (target) {
 			if (target.id && target.id == 'bodyContent') {
@@ -71,6 +73,7 @@ AdvancedAnnotation.prototype = {
 			target = target.up('div');
 		}
 		if (!target) {
+			// event was outside of div#bodyContent
 			return;
 		}
 		var annoSelection = this.getSel();
@@ -93,7 +96,20 @@ AdvancedAnnotation.prototype = {
 			this.annoOffset = annoSelection.anchorOffset;
 			
 			this.performAnnotation(event);
-		} else {
+		}
+	},
+	
+	/*
+	 * Callback for key-up events. 
+	 * When the ESC-key is released, the context menu is hidden.
+	 * 
+	 * @param event 
+	 * 			The key-up event.
+	 */
+	onKeyUp: function(event){
+		
+		var key = event.which || event.keyCode;
+		if (key == Event.KEY_ESC) {
 			this.hideToolbar();
 		}
 	},
@@ -481,6 +497,7 @@ AdvancedAnnotation.prototype = {
 	relationAdded: function(startPos, endPos, name) {
 		if (this.annotationProposal) {
 			this.markProposal(AA_RELATION, 'aam_new_anno_prop_highlight');
+			this.annotationProposal = null;
 		} else {
 			this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		}
@@ -752,6 +769,8 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	annotateProposal: function(id) {
+		smwhgAnnotationHints.hideHints();
+		
 		var annoDescr = this.findAnnotationWithId(id);
 		if (!annoDescr) {
 			return;
@@ -764,9 +783,10 @@ AdvancedAnnotation.prototype = {
 		// The selection of the wiki text parser will be replaced by the annotation
 		this.wikiTextParser.setSelection(anno.getStart(), anno.getEnd());
 		// open property context menu
-		if (!this.contextMenu) {
-			this.contextMenu = new ContextMenuFramework();
+		if (this.contextMenu) {
+			this.contextMenu.remove;
 		}
+		this.contextMenu = new ContextMenuFramework();
 		var annoName = anno.getRepresentation();
 		if (!annoName) {
 			annoName = anno.getName();
@@ -930,6 +950,8 @@ AdvancedAnnotation.create = function() {
 				var content = $('content');
 				Event.observe(content, 'mouseup', 
 				              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
+				Event.observe('globalWrapper', 'keyup', 
+				              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
 				pe.stop();
 		}, 2);
 	}
