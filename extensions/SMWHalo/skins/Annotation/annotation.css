@@ -100,3 +100,14 @@
 	overflow: auto;
 	font-size: 11px;
 }
+
+/*z-index fixes so toolbar will be above elements*/
+#p-logo{
+	z-index: 0;
+}
+#p-navigation {
+	z-index: 0;
+}
+#p-search {
+	z-index: 0;
+}
