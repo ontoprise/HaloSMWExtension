@@ -31,10 +31,23 @@ Marker.prototype = {
  		//transparencyMarkers
  		///*   
  		for(var index=0; index < this.transparencymarkerlist.length; index++){
- 			new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
-			//Set position of the marker		
-			$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
-			$(this.transparencymarkerlist[index][0]).setStyle( {left: this.transparencymarkerlist[index][4] + "px"});
+	
+ 			if(this.iconmarkerlist[index][2].tagName.toLowerCase() == 'div'){
+ 				if( this.iconmarkerlist[index][2].style.position == ""){
+ 					this.iconmarkerlist[index][2].style.position = "relative";
+ 				}
+ 				 new Insertion.Bottom(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+				//Set position of the marker		
+				$(this.transparencymarkerlist[index][0]).setStyle( {top:  "0px"});
+				$(this.transparencymarkerlist[index][0]).setStyle( {left: "0px"});
+ 			} else { 	
+ 				new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+				//Set position of the marker		
+				$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
+				$(this.transparencymarkerlist[index][0]).setStyle( {left: this.transparencymarkerlist[index][4] + "px"});
+ 			}
+			
+			
 			//calculate and set width and height
 			var borderwidth = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"left")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"right"));
 			if(isNaN(Number(borderwidth))) return;
@@ -48,10 +61,20 @@ Marker.prototype = {
  		//*/
  		//iconMarkers
  		for(var index=0; index < this.iconmarkerlist.length; index++){
- 			new Insertion.After(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
-			//Set position of the marker		
-			$(this.iconmarkerlist[index][0]).setStyle( {top: this.iconmarkerlist[index][3] + "px"});
-			$(this.iconmarkerlist[index][0]).setStyle( {left: this.iconmarkerlist[index][4] + "px"});
+ 			if(this.iconmarkerlist[index][2].tagName.toLowerCase() == 'div'){
+ 				if( this.iconmarkerlist[index][2].style.position == ""){
+ 					this.iconmarkerlist[index][2].style.position = "relative";
+ 				}
+ 				new Insertion.Bottom(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
+ 				//Set position of the marker		
+				$(this.iconmarkerlist[index][0]).setStyle( {top:  "0px"});
+				$(this.iconmarkerlist[index][0]).setStyle( {left: "0px"});
+ 			} else { 			
+ 				new Insertion.After(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
+				//Set position of the marker		
+				$(this.iconmarkerlist[index][0]).setStyle( {top: this.iconmarkerlist[index][3] + "px"});
+				$(this.iconmarkerlist[index][0]).setStyle( {left: this.iconmarkerlist[index][4] + "px"});
+ 			}
  		}
  		$(this.rootnode).show();
  	},
@@ -335,7 +358,7 @@ Marker.prototype = {
   						if(mark == true && node.visible()){
   							this.transparencyMarker(node);
   							this.iconMarker(node,links);
-  						} 
+  						}
   					} else {
   						(mark == true) ? result = this.mark(node,true) : result = this.mark(node,false);
   					}
