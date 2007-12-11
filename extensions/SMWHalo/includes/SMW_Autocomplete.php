@@ -63,18 +63,28 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
  	    		
- 			} else if (strpos($typeHint, $wgLang->getNsText(NS_CATEGORY).":") !== false) {
- 				// if typeHint contains 'Category:', use it as range and search for properties which have defined it.
- 				$category = Title::newFromText($typeHint);
+ 			} else if (strpos($typeHint, ":") !== false) {
+ 				// if typeHint contains ':'
+ 				$page = Title::newFromText(substr($typeHint, 0, 1) == ':' ? substr($typeHint, 1) : $typeHint);
+ 				if ($page->getNamespace() != NS_MAIN) {
+ 					// ignore non-instances
+ 					return SMW_AC_NORESULT;
+ 				}
  				
- 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
- 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-  				$value->setValues($category->getDBkey(), NS_CATEGORY);
-  				$dv_container->setDVs(array(NULL, $value));
-  				
-  				// get all properties with a range category of $category
-  				$properties = smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1);
- 	    		
+ 				$categories = smwfGetSemanticStore()->getCategoriesForInstance($page);
+ 				
+  				$properties = array();
+ 				foreach($categories as $c) {
+	 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
+	 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+	  				$value->setValues($c->getDBkey(), NS_CATEGORY);
+	  				$dv_container->setDVs(array(NULL, $value));
+	  				
+	  				// get all properties with a range category of $category
+	  				$properties = array_merge($properties, smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1));
+	  				
+ 				}
+ 			
  	    		$result = AutoCompletionRequester::encapsulateAsXML($properties);
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
@@ -436,26 +446,23 @@ class AutoCompletionRequester {
 	 * TODO: should be transferred to storage layer
 	 * 
 	 * @param $match substring
-	 * @param $type primitive type or unit
+	 * @param $typeLabel primitive type or unit
 	 */
-	public static function getPropertyWithType($match, $type) {
+	public static function getPropertyWithType($match, $typeLabel) {
 		$db =& wfGetDB( DB_MASTER );
 		$smw_specialprops = $db->tableName('smw_specialprops');
 		$page = $db->tableName('page');
 		$result = array();
-		$handler = SMWTypeHandlerFactory::getTypeHandlerByLabel($type);
-		if ($handler != NULL) {
-			$type = $handler->getID();
-			
-		}
+		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
+		
 		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
 							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
 							'JOIN '.$page.' ON s1.subject_id = page_id ' .
 							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
-							' AND s2.value_string REGEXP '.$db->addQuotes('[0-9] '.$type).
-							' GROUP BY title) UNION ' .
+							' AND s2.value_string REGEXP '.$db->addQuotes('^[0-9].?[0-9]* '.$typeLabel.'$').
+							') UNION DISTINCT ' .
 							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
-							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($type).') GROUP BY title)' .
+							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
 							'  LIMIT '.SMW_AC_MAX_RESULTS);
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
