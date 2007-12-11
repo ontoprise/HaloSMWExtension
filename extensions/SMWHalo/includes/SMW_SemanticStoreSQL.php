@@ -51,7 +51,7 @@
 	public function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
-		
+		$sql = "";
 		if ($namespaces != NULL) {
 			$sql .= '(';
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
