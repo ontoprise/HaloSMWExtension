@@ -28,8 +28,6 @@ var SaveAnnotations = Class.create();
 SaveAnnotations.prototype = {
 
 initialize: function() {
-    //Reference
-    this.genTB = new GenericToolBar();
 	this.toolbarContainer = null;
 },
 
@@ -38,7 +36,7 @@ showToolbar: function(request){
 	this.createContent();
 },
 
-callme: function(event){
+createContainer: function(event){
 	if ((wgAction == "edit" || wgAction == "annotate")
 	    && stb_control.isToolbarAvailable()){
 		this.savehintcontainer = stb_control.createDivContainer(SAVEANNOTATIONSCONTAINER,0);
@@ -122,6 +120,6 @@ createToolbar: function(attributes) {
 };// End of Class
 
 var smwhgSaveAnnotations = new SaveAnnotations();
-Event.observe(window, 'load', smwhgSaveAnnotations.callme.bindAsEventListener(smwhgSaveAnnotations));
+Event.observe(window, 'load', smwhgSaveAnnotations.createContainer.bindAsEventListener(smwhgSaveAnnotations));
 
 
