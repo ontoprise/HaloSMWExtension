@@ -28,42 +28,42 @@ Marker.prototype = {
  	
  	insertMarkers: function(){
  		$(this.rootnode).hide();
- 		//transparencyMarkers
- 		///*   
+ 		// transparencyMarkers
  		for(var index=0; index < this.transparencymarkerlist.length; index++){
-	
- 			if(this.iconmarkerlist[index][2].tagName.toLowerCase() == 'div'){
- 				if( this.iconmarkerlist[index][2].style.position == ""){
- 					this.iconmarkerlist[index][2].style.position = "relative";
- 				}
- 				 new Insertion.Bottom(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
-				//Set position of the marker		
-				$(this.transparencymarkerlist[index][0]).setStyle( {top:  "0px"});
-				$(this.transparencymarkerlist[index][0]).setStyle( {left: "0px"});
- 			} else { 	
- 				new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
-				//Set position of the marker		
-				$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
-				$(this.transparencymarkerlist[index][0]).setStyle( {left: this.transparencymarkerlist[index][4] + "px"});
- 			}
-			
-			
-			//calculate and set width and height
-			var borderwidth = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"left")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"right"));
-			if(isNaN(Number(borderwidth))) return;
-			var borderheight = Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"top")) + Number(this.getBorderWidth(this.transparencymarkerlist[index][0],"bottom"));
-			if(isNaN(Number(borderheight))) return;
-			var height = this.transparencymarkerlist[index][5] - borderheight;
-			var width = this.transparencymarkerlist[index][6] - borderwidth;
-			$(this.transparencymarkerlist[index][0]).setStyle( {height: height + "px"});
-			$(this.transparencymarkerlist[index][0]).setStyle( {width: width + "px"});
+			if($(this.transparencymarkerlist[index][2])){
+	 			if($(this.iconmarkerlist[index][2]).tagName.toLowerCase() == 'div'){
+	 				if( $(this.iconmarkerlist[index][2]).style.position == ""){
+	 					$(this.iconmarkerlist[index][2]).style.position = "relative";
+	 				}
+	 				 new Insertion.Bottom(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+					//Set position of the marker		
+					$(this.transparencymarkerlist[index][0]).setStyle( {top:  "0px"});
+					$(this.transparencymarkerlist[index][0]).setStyle( {left: "0px"});
+	 			} else { 
+	 				new Insertion.After(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+					//Set position of the marker		
+					$(this.transparencymarkerlist[index][0]).setStyle( {top: this.transparencymarkerlist[index][3] + "px"});
+					$(this.transparencymarkerlist[index][0]).setStyle( {left: this.transparencymarkerlist[index][4] + "px"});
+	 			}
+				//calculate and set width and height
+				var borderwidth = Number(this.getBorderWidth($(this.transparencymarkerlist[index][0]),"left")) + Number(this.getBorderWidth($(this.transparencymarkerlist[index][0]),"right"));
+				if(isNaN(Number(borderwidth))) return;
+				var borderheight = Number(this.getBorderWidth($(this.transparencymarkerlist[index][0]),"top")) + Number(this.getBorderWidth($(this.transparencymarkerlist[index][0]),"bottom"));
+				if(isNaN(Number(borderheight))) return;
+				var mheight = this.transparencymarkerlist[index][5] - borderheight;
+				var mwidth = this.transparencymarkerlist[index][6] - borderwidth;
+				if(mheight > 0 && mwidth > 0 ){
+					$(this.transparencymarkerlist[index][0]).setStyle({height: mheight + "px"});
+					$(this.transparencymarkerlist[index][0]).setStyle({width: mwidth + "px"});
+				}
+			}
  		}
  		//*/
  		//iconMarkers
  		for(var index=0; index < this.iconmarkerlist.length; index++){
- 			if(this.iconmarkerlist[index][2].tagName.toLowerCase() == 'div'){
- 				if( this.iconmarkerlist[index][2].style.position == ""){
- 					this.iconmarkerlist[index][2].style.position = "relative";
+ 			if($(this.iconmarkerlist[index][2]).tagName.toLowerCase() == 'div'){
+ 				if( $(this.iconmarkerlist[index][2]).style.position == ""){
+ 					$(this.iconmarkerlist[index][2]).style.position = "relative";
  				}
  				new Insertion.Bottom(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
  				//Set position of the marker		
@@ -96,7 +96,7 @@ Marker.prototype = {
 		var top = divtomark.offsetTop;
 		var left = divtomark.offsetLeft;
 		//increase marker index
-		this.transparencymarkerlist.push( new Array(this.markerindex+"-marker", marker, divtomark, top, left, height, width ))
+		this.transparencymarkerlist.push( new Array(this.markerindex+"-marker", marker, $(divtomark).identify(), top, left, height, width ))
 		this.markerindex++;	
 		/* on the fly code
 		if(divtomark == null) return;
@@ -147,7 +147,7 @@ Marker.prototype = {
 		//Set position of the marker		
 		var top = divtomark.offsetTop;
 		var left = divtomark.offsetLeft;
-		this.iconmarkerlist.push( new Array(this.markerindex+"-marker", marker, divtomark, top, left))
+		this.iconmarkerlist.push( new Array(this.markerindex+"-marker", marker, $(divtomark).identify(), top, left))
 		//increase marker index				
 		this.markerindex++;//*/
 				
@@ -355,7 +355,7 @@ Marker.prototype = {
   							result.shift()
   							links = Array(links).concat(result);
   						}						
-  						if(mark == true && node.visible()){
+  						if(mark == true && $(node).visible()){
   							this.transparencyMarker(node);
   							this.iconMarker(node,links);
   						}
