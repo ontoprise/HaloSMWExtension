@@ -759,9 +759,10 @@ OBInputFieldValidator.prototype = {
 		this.keyListener = null;
 		this.blurListener = null;
 		this.istyping = false;
-		this.timerRegistered = true;
-		this.timerID = null;
+		this.timerRegistered = false;
+		
 		this.isValid = isValid;
+		this.lastValidation = null;
 		
 		if ($(this.id) != null) this.registerListeners();
 	},
@@ -772,6 +773,7 @@ OBInputFieldValidator.prototype = {
 		this.control = control;
 		
 		this.keyListener = null;
+		this.blurListener = null;
 		this.istyping = false;
 		this.timerRegistered = false;
 		
