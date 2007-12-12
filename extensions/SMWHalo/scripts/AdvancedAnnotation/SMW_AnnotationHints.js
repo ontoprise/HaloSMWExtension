@@ -37,7 +37,7 @@ showMessageAndWikiText: function(message, wikiText, x, y) {
 	var tb = new ContainerToolBar('annotationhints-content', 1000, 
 	                              this.contextMenu);
 	tb.createContainerBody('', 'ANNOTATIONHINT', 
-	                       gLanguage.getMessage('ANNOTATION_HINTS'));
+	                       gLanguage.getMessage('ANNOTATION_ERRORS'));
 
 	tb.append(tb.createText('ah-error-msg', message, '', true));
 	tb.append(tb.createText('ah-wikitext-msg', wikiText, '' , true));
