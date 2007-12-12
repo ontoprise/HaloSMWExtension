@@ -183,7 +183,7 @@ class SMWH_AAMParser {
 		                    '(^===.*?===\s*)|'.
 		                    '(^==.*?==\s*)|'.
 		                    '(^=.*?=\s*)|'.
-							'(\[+)|'.
+							'(\[{2,})|'.
 							'(\]\])|'.
 							'(\|)|'.
 		                    '^$/sm', $text, -1, 
@@ -241,7 +241,7 @@ class SMWH_AAMParser {
 				// parser is not collecting tokens for a template
 				if ($part0 == '[[') {
 					if ($braceCount == 0) {
-						$markedText .= "{wikiTextOffset=".$pos."}".$part0;
+						$markedText .= "\t{wikiTextOffset=".$pos."}".$part0;
 					} else {
 						$markedText .= $part0;
 					}
@@ -262,7 +262,7 @@ class SMWH_AAMParser {
 						    || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
 						    || $part0{0} == "#") {
 							// title, empty line or enumeration found
-							$markedText .= "{wikiTextOffset=".$pos."}\n".$part0;
+							$markedText .= "\t{wikiTextOffset=".$pos."}\n".$part0;
 						} else {
 							$wto = "";
 							$ignoreToken = ($part0{0} == '{') 
@@ -271,7 +271,7 @@ class SMWH_AAMParser {
 							if (!$ignoreToken && !$ignoredLastToken) {
 								// write the wiki text offset only, if there are
 								// no braces at the beginning or end
-								$wto = "{wikiTextOffset=".$pos."}";	
+								$wto = "\t{wikiTextOffset=".$pos."}";	
 							}
 							$markedText .= $wto.$part0;
 							$ignoredLastToken = $ignoreToken;
@@ -282,7 +282,7 @@ class SMWH_AAMParser {
 			}
 		}
 		$part0 = mb_substr($wikiText, $pos, 1);
-		$markedText .= $part0."\n{wikiTextOffset=".$pos."}\n";
+		$markedText .= $part0."\n\t{wikiTextOffset=".$pos."}\n";
 				
 		return $markedText;
 	}
@@ -310,7 +310,7 @@ class SMWH_AAMParser {
 		                     $text);
 			
 		// replace standalone occurrences of intermediate format
-		$text = preg_replace('/\{wikiTextOffset=(\d*)}/',
+		$text = preg_replace('/\s*\{wikiTextOffset=(\d*)}/',
 		                     '<a name="$1" type="wikiTextOffset"></a>',
 		                     $text);
         return $text;
