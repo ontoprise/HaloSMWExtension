@@ -652,8 +652,8 @@ a.menulink{
 }
 
 
-/* Annotation hint Container */
-#stb_cont10-headline{
+/* Save annotations Container */
+#stb_cont11-headline{
 	background-color: #ee2222;
 	font-weight: bold;
 	color: #FFF;
@@ -663,7 +663,7 @@ a.menulink{
 	margin-top: 3px;
 }
 
-#stb_cont10-content{
+#stb_cont11-content{
 	border: 1px solid #ee2222;
 	background-color: #ee8888;
 	overflow: auto;
@@ -688,6 +688,48 @@ a.menulink{
 }
 
 .saveannotations-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 20%;
+}
+
+/* Annotation hint Container */
+#stb_cont10-headline{
+	background-color: #22ee22;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #22ee22;
+	margin-top: 3px;
+}
+
+#stb_cont10-content{
+	border: 1px solid #22ee22;
+	background-color: #88ee88;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#annotationhint-table{
+	background-color: #88ee88;
+	width: 100%;
+}
+
+#annotationhint-tools{
+	border-bottom: 1px solid #888888;
+}
+
+.annotationhint-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.annotationhint-col2{
+}
+
+.annotationhint-col3{
 	border-bottom: 1px dashed #888888;
 	text-align: right;
 	vertical-align: top;
@@ -795,4 +837,8 @@ a.menulink{
 
 .saveannotations-content-table{
 	background-color: #ee8888;
+}
+
+.annotationhint-content-table{
+	background-color: #88ee88;
 }

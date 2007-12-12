@@ -122,6 +122,8 @@ var wgLanguageStrings = {
 
 	// Annotation hints
 	'ANNOTATION_HINTS'        : 'Annotation hints',
+	'ANNOTATION_ERRORS'       : 'Annotation errors',
+	'AH_NO_HINTS'			  : '(i)No hints for this article.',
 	'AH_SAVE_COMMENT'		  : 'Annotations added in the Advanced Annotation Mode.',
 	'AAM_SAVE_ANNOTATIONS' 	  : 'Do you want to save the annotations of the current session?',
 	'CAN_NOT_ANNOTATE_SELECTION' : 'You can not annotate the selection. It already contains annotations or paragraphs.',

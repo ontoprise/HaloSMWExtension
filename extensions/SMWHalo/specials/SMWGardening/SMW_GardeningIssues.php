@@ -11,6 +11,13 @@
  * 
  */
  
+
+/* Ajax functions */
+global $wgAjaxExportList;
+
+$wgAjaxExportList[] = 'smwfGetGardeningIssues';
+
+
  define('SMW_GARDENINGLOG_SORTFORTITLE', 0);
  define('SMW_GARDENINGLOG_SORTFORVALUE', 1);
  
@@ -411,6 +418,77 @@ abstract class GardeningIssueFilter {
 		return $gic;
 	}
 	
+	
+}
+
+/**
+ * Get Gardening issues for a pair of titles. Every parameter (except $bot_id)
+ * may be empty or NULL
+ * 
+ * @param string $botIDs A comma-separated list of Bot-IDs
+ * @param string $giType type of issue.
+ * @param string $giClass Class of issue.
+ * @param string $title The name of an article
+ * @param string $sortfor column to sort for. Default by title.
+ * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ * 
+ * @return string xml
+ * <gardeningIssues title="title" >
+ *   <bot name="botname" title="Name of bot for GUI">
+ *	   <issue>Description of issue.</issue>
+ *     ...
+ *   </bot>
+ *   ...
+ * </gardeningIssues>
+ *  
+ */
+function smwfGetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor) {
+
+	global $wgTitle;
+	$gardeningAccess = SMWGardening::getGardeningIssuesAccess();
+	
+	if (!$title) {
+		return 'smwfGetGardeningIssues: not title specified.';
+	}
+	$t = Title::newFromText($title);
+	$article = new Article($t);
+
+	if (!$article->exists()) {
+		return 'smwfGetGardeningIssues: invalid title specified.';
+	}
+	
+	if (!$botIDs) {
+		return 'smwfGetGardeningIssues: no bot specified.';
+	}
+	
+	if (!$giType) {
+		$giType = null;
+	}
+	if (!$giClass) {
+		$giClass = null;
+	}
+	if (!$sortfor) {
+		$sortfor = null;
+	}
+
+	$botIDs = explode(',', $botIDs);
+	$issues = array();
+	foreach($botIDs as $b) {
+		$issues[$b] = $gardeningAccess->getGardeningIssues($b, $giType, $giClass, $t, $sortfor, NULL);
+	}
+	
+	global $smwgHaloContLang;
+	$result = '<gardeningIssues title="'.$title.'">';
+	foreach ($issues as $bot => $issueArray) {
+		$botTitle = wfMsg($bot);
+		$result .= '<bot name="'.$bot.'" title="'.$botTitle.'">';
+		foreach ($issueArray as $is) {
+			$result .= '<issue>'.$is->getRepresentation().'</issue>';
+		}
+		$result .= '</bot>';
+	}
+	$result .= "</gardeningIssues>";
+	return $result;
 	
 }
 ?>

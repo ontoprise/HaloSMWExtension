@@ -222,6 +222,10 @@ function updtContainer(tmpcontainer) {
 				tmpdiv.innerHTML = stResult;
 			break;
 		case SAVEANNOTATIONSCONTAINER:
+				var tmpdiv = document.getElementById("saveannotation-headline");
+				tmpdiv.innerHTML = stResult;
+			break;
+		case ANNOTATIONHINTCONTAINER:
 				var tmpdiv = document.getElementById("annotationhint-headline");
 				tmpdiv.innerHTML = stResult;
 			break;
@@ -345,7 +349,24 @@ function stFillContainers(tmpcontainer)
 						stResult += ">" + tmpcontainer.content + "</div>";
 					break;
 				case SAVEANNOTATIONSCONTAINER:
-						stResult += "<div id=\"annotationhint-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + SAVEANNOTATIONSCONTAINER + ", \'annotationhint-content\', \'annotationhint-headline-link\')\"><a id=\"annotationhint-headline-link\" class=\"";
+						stResult += "<div id=\"saveannotation-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + SAVEANNOTATIONSCONTAINER + ", \'saveannotation-content\', \'saveannotation-headline-link\')\"><a id=\"saveannotation-headline-link\" class=\"";
+						if (tmpcontainer.ishidden) {
+							stResult +="plusminus";
+						} else {
+							stResult +="minusplus";
+						}
+						stResult += "\" href=\"javascript:void(0)\">&nbsp;</a>" + tmpcontainer.headline + "</div>";
+
+						stResult += "<div id=\"saveannotation-content\""
+						if (tmpcontainer.ishidden) {
+							stResult += " style=\"display:none\"";
+						}
+						stResult += ">" + tmpcontainer.content + "</div>";
+
+						stDivCount++;
+					break;
+				case ANNOTATIONHINTCONTAINER:
+						stResult += "<div id=\"annotationhint-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + ANNOTATIONHINTCONTAINER + ", \'annotationhint-content\', \'annotationhint-headline-link\')\"><a id=\"annotationhint-headline-link\" class=\"";
 						if (tmpcontainer.ishidden) {
 							stResult +="plusminus";
 						} else {
@@ -429,7 +450,8 @@ function stFillTabs()
 			     || tmpcontainer.container == PROPERTIESCONTAINER
 			     || tmpcontainer.container == CBSRCHCONTAINER
 			     || tmpcontainer.container == TYPECONTAINER
-			     || tmpcontainer.container == SAVEANNOTATIONSCONTAINER))
+			     || tmpcontainer.container == SAVEANNOTATIONSCONTAINER
+			     || tmpcontainer.container == ANNOTATIONHINTCONTAINER))
 			{
 				tabadd[0] = 1;
 			}

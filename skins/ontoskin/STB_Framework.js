@@ -26,8 +26,10 @@ var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relati
 var CBSRCHCONTAINER = 7; // contains combined search functions
 var COMBINEDSEARCHCONTAINER = 8;
 var HELPCONTAINER = 9; // contains help
-var SAVEANNOTATIONSCONTAINER = 10; // contains categories
-var DBGCONTAINER = 11; // contains debug information
+var ANNOTATIONHINTCONTAINER = 10; // gardening hints in AAM
+var SAVEANNOTATIONSCONTAINER = 11; // save annotations in AAM
+var DBGCONTAINER = 12; // contains debug information
+var LASTCONTAINERIDX = 12;
 
 ToolbarFramework.prototype = {
 
@@ -63,7 +65,7 @@ ToolbarFramework.prototype = {
 
 			this.var_stb = $("semtoolbar");
 			if (this.var_stb) {
-				for(var i=0;i<=10;i++) {
+				for(var i=0;i<=LASTCONTAINERIDX;i++) {
 					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\" class=\"generic_headline\"></div>";
 					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\" class=\"generic_content\"></div>";
 					$("stb_cont"+i+"-headline").hide();
