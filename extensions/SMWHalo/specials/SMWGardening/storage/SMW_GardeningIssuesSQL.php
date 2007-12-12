@@ -458,7 +458,7 @@
 						'JOIN '.$page.' ON page_title = object_title ' .
 						'JOIN '.$smw_nary_relations.' r  ' .
 						'WHERE nary_pos = 0 AND attribute_title = '.$db->addQuotes($domainRangePropertyText).' AND p1_namespace = '.SMW_NS_PROPERTY.' ' .
-								'AND object_namespace = '.NS_CATEGORY.' AND page_namespace = '.NS_CATEGORY.')');
+								'AND object_namespace = '.NS_CATEGORY.' AND page_namespace = '.NS_CATEGORY.' AND bot_id = '.$db->addQuotes($botID).')');
 		$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues)');
 		
 		// maximum iteration length is maximum category tree depth.
