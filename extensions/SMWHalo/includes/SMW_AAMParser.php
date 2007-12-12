@@ -165,7 +165,7 @@ class SMWH_AAMParser {
 	 * @return string Marked wiki text.
 	 */
 	public function addWikiTextOffsets(&$wikiText)	{
-		
+				
 		if (!$this->doAddWTO($wikiText)) {
 			return $wikiText;
 		}
@@ -752,7 +752,7 @@ class SMWH_AAMParser {
 				($state[1] === '*' || $state[1] == $token) &&
 				($state[2] === '*' || $state[2] == $pageType)) {
 				return $state;
-				}
+			}
 		}
 		return null;
 		
