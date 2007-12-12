@@ -23,7 +23,7 @@ define('SMW_SP_CONVERSION_FACTOR_SI', 1000);
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
-
+$smwgProcessedAnnotations = null;
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
@@ -52,6 +52,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
+	$wgHooks['smwBeforeUpdate'][] = 'smwfBeforeSemanticUpdate';
+	$wgHooks['smwAfterUpdate'][] = 'smwfAfterSemanticUpdate';
 
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
@@ -467,6 +469,35 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		Job :: batchInsert($jobs);
 		return true;
 }
+	
+	/**
+	 * Called *before* semantic annotations are updated.
+	 * Save annotation ratings in global variable.
+	 * 
+	 * @param & $title's name which is updated (textual form)
+	 */
+	function smwfBeforeSemanticUpdate(& $title) {
+		global $smwgProcessedAnnotations;
+		// save currently processed annotations in $processedAnnotations
+		$smwgProcessedAnnotations = smwfGetSemanticStore()->getRatedAnnotations(str_replace(" ","_", $title));
+		return true;
+	}
+	
+	/**
+	 * Called *after* semantic annotations has been updated.
+	 * Store saved annotations ratings.
+	 * 
+	 * @param & $title's name which is updated (textual form)
+	 */
+	function smwfAfterSemanticUpdate(& $title) {
+		global $smwgProcessedAnnotations;
+		if ($smwgProcessedAnnotations != NULL) {
+			foreach($smwgProcessedAnnotations as $pa) {
+				smwfGetSemanticStore()->rateAnnotation(str_replace(" ","_", $title), $pa[0], $pa[1], $pa[2] );
+			}
+		}
+		return true;
+	}
 	
 	/**
 	*  This method will be called after an article is saved

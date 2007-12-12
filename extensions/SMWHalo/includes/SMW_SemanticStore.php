@@ -240,6 +240,26 @@
  	 */
  	public abstract function getAnnotationsWithUnit(Title $type, $unit);
  	
+ 	/**
+ 	 * Returns all annotations tuples ($property, $value, $rating) of $subject.
+ 	 * 
+ 	 * @param $subject (DBkey) 
+ 	 */
+ 	public abstract function getRatedAnnotations($subject);
+ 	
+ 	// Methods which modifies the database
+ 	
+ 	/**
+ 	 * Rate annotation specified by $subject, $predicate, $object
+ 	 * 
+ 	 * @param $subject (DBkey)
+ 	 * @param $predicate (DBkey)
+ 	 * @param $object (DBkey)
+ 	 * @param $rating Integer (positive or negative)
+ 	 * 
+ 	 */
+ 	public abstract function rateAnnotation($subject, $predicate, $object, $rating);
+ 	
  	
  	/**
  	 * Replaces redirect annotations, i.e. pages with annotations made with redirect 

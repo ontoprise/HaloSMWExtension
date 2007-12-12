@@ -929,6 +929,31 @@
 			}  
 		}
 	}
+	
+	public function getRatedAnnotations($subject) {
+		$db =& wfGetDB( DB_MASTER );
+		
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_relations = $db->tableName('smw_relations');
+ 		
+		$res = $db->select($smw_attributes, array('attribute_title', 'value_xsd', 'rating'), array('subject_title' => $subject));
+		$res2 = $db->select($smw_relations, array('relation_title', 'object_title', 'rating'), array('subject_title' => $subject));
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				
+				$result[] = array($row->attribute_title, $row->value_xsd, $row->rating);
+			}
+		}
+		if($db->numRows( $res2 ) > 0) {
+			while($row = $db->fetchObject($res2)) {
+				$result[] = array($row->relation_title, $row->object_title, $row->rating);
+			}
+		}
+		$db->freeResult($res);
+		$db->freeResult($res2);
+		return $result;
+	}
  	
  	public function replaceRedirectAnnotations($verbose = false) {
  		

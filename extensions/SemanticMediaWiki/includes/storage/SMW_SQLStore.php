@@ -517,6 +517,7 @@ class SMWSQLStore extends SMWStore {
 		wfProfileIn("SMWSQLStore::updateData (SMW)");
 		$db =& wfGetDB( DB_MASTER );
 		$subject = $data->getSubject();
+		wfRunHooks('smwBeforeUpdate', &$subject);
 		$this->deleteSemanticData($subject);
 
 		// do bulk updates:
@@ -677,6 +678,7 @@ class SMWSQLStore extends SMWStore {
 		if (count($up_nary_longstrings) > 0) {
 			$db->insert( 'smw_nary_longstrings', $up_nary_longstrings, 'SMW::updateNAryLongData');
 		}
+		wfRunHooks('smwAfterUpdate', &$subject);
 		wfProfileOut("SMWSQLStore::updateData (SMW)");
 	}
 

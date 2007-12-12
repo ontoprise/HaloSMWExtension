@@ -15,6 +15,9 @@
  		$revision = $db->tableName('revision');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
+ 		$requestoptions->ascending = false;
+ 		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'rev_timestamp');
+ 		
  		$sqlCond = "";
 		if ($botID != NULL) {
 			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
@@ -33,8 +36,8 @@
 		
 	 			$res = $db->query('SELECT DISTINCT rev_page AS id FROM '.$revision.' JOIN '.$smw_gardeningissues.
 								' ON rev_page = p1_id LEFT JOIN '.$page.' ON page_id = p1_id ' .
-								' WHERE gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).
-								' ORDER BY rev_timestamp DESC LIMIT '.$requestoptions->limit);
+								' WHERE gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).' '.
+								$sql_options);
 			
 		}
 		$result = array();
@@ -52,16 +55,12 @@
  		$categorylinks = $db->tableName('categorylinks');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
- 		$sql_options = $this->getSQLOptions($requestoptions,'title');
-		$limit = $sql_options['LIMIT'] != NULL ? "LIMIT ".$sql_options['LIMIT'] : "";
-		$offset = $sql_options['OFFSET'] != NULL ? "OFFSET ".$sql_options['OFFSET'] : "";
-		$orderby = $sql_options['ORDER BY'] != NULL ? "ORDER BY ".$sql_options['ORDER BY'] : "";
-		$optionText = $orderby.' '.$limit.' '.$offset;
-		
+ 		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'title');
+			
 			
  		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
  		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.
- 							' WHERE gi_type = '.SMW_GARDISSUE_CATEGORY_UNDEFINED.' AND p1_title IN (SELECT category FROM smw_fw_categories) '.$optionText);
+ 							' WHERE gi_type = '.SMW_GARDISSUE_CATEGORY_UNDEFINED.' AND p1_title IN (SELECT category FROM smw_fw_categories) '.$sql_options);
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -82,6 +81,8 @@
 		$smw_relations = $db->tableName('smw_relations');
 		$smw_nary = $db->tableName('smw_nary');
 		
+		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'title');
+		
 	 	$res = $db->query(	'SELECT DISTINCT attribute_title AS title FROM '.$revision.' JOIN '.$smw_attributes.
 							' ON rev_page = subject_id JOIN '.$smw_gardeningissues.' ON attribute_title = p1_title ' .
 							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).
@@ -92,8 +93,8 @@
 						' UNION ' .
 							'SELECT DISTINCT attribute_title AS title FROM '.$revision.' JOIN '.$smw_nary.
 							' ON rev_page = subject_id JOIN '.$smw_gardeningissues.' ON attribute_title = p1_title ' .
-							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).
-						' ORDER BY title LIMIT '.$requestoptions->limit);
+							' WHERE gi_type = '.SMW_GARDISSUE_PROPERTY_UNDEFINED.' AND rev_user_text = '.$db->addQuotes($username).' '.
+						$sql_options);
 			
 		
 		$result = array();
@@ -111,12 +112,8 @@
  		$categorylinks = $db->tableName('categorylinks');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
- 		$sql_options = $this->getSQLOptions($requestoptions,'title');
-		$limit = $sql_options['LIMIT'] != NULL ? "LIMIT ".$sql_options['LIMIT'] : "";
-		$offset = $sql_options['OFFSET'] != NULL ? "OFFSET ".$sql_options['OFFSET'] : "";
-		$orderby = $sql_options['ORDER BY'] != NULL ? "ORDER BY ".$sql_options['ORDER BY'] : "";
-		$optionText = $orderby.' '.$limit.' '.$offset;
-		
+ 		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'title');
+			
 		$sqlCond = "";
 		if ($botID != NULL) {
 			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
@@ -131,7 +128,7 @@
 		
  		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
  		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.', '.$categorylinks.'' .
- 							' WHERE '.$sqlCond.' AND gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$optionText);
+ 							' WHERE '.$sqlCond.' AND gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$sql_options);
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -168,20 +165,57 @@
  		$smw_attributes = $db->tableName('smw_attributes');		
 		$smw_relations = $db->tableName('smw_relations');
 		$revision = $db->tableName('revision');
-		
+		$categorylinks = $db->tableName('categorylinks');
+		$sql_options = DBHelper::getSQLOptionsAsString($requestoptions,'rt');
+		global $smwgDefaultCollation;
+		 if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		$db->query( 'CREATE TEMPORARY TABLE smw_fw_lowratedannotations (title VARCHAR(255) '.$collation.' NOT NULL, namespace INT(11) NOT NULL, property VARCHAR(255) '.$collation.', value VARCHAR(255) '.$collation.', type VARCHAR(255) '.$collation.', rating INT(8) )
+		            TYPE=MEMORY', 'SMW::getLowRatedAnnotations' );
 		if ($username == NULL) {
-			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' WHERE rating < 0) ' .
+			// look for any low rated annotations
+			$res = $db->query(	'INSERT INTO smw_fw_lowratedannotations (title, namespace, property, value, type, rating)  (SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' WHERE rating < 0) ' .
  							'UNION ' .
  								'(SELECT subject_title AS title, subject_namespace AS namespace, relation_title AS property, object_title AS value, object_namespace AS type, rating AS rt FROM '.$smw_relations. ' WHERE rating < 0) ' .
  							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
 		} else {
- 			$res = $db->query(	'(SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
+			// look for low rated annotations of articles in edit history
+ 			$db->query(	'INSERT INTO smw_fw_lowratedannotations (title, namespace, property, value, type, rating) (SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes. ' JOIN '.$revision.' ON subject_id = rev_page ' .
  								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ') ' .
  							'UNION ' .
  								'(SELECT subject_title AS title, subject_namespace AS namespace, relation_title AS property, object_title AS value, object_namespace AS type, rating AS rt FROM '.$smw_relations. ' JOIN '.$revision.' ON subject_id = rev_page ' .
  								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ') ' .
- 							'ORDER BY rt DESC LIMIT '.$requestoptions->limit);
-		}			
+ 							$sql_options);
+ 							
+ 			// check if there are already any results
+ 			$num = $db->query('SELECT COUNT(*) AS num FROM smw_fw_lowratedannotations');
+ 			
+ 			if($db->fetchObject($num)->num == 0) {
+ 				// if there are no results, consider low rated annotations of articles from same category as articles in edit history
+ 				$db->freeResult($num);
+ 				$requestoptions->limit /= 2;
+ 				
+ 				$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
+ 				
+ 				$db->query(	'INSERT INTO smw_fw_lowratedannotations (title, namespace, property, value, type, rating) SELECT subject_title AS title, subject_namespace AS namespace, attribute_title AS property, value_xsd AS value, \'string\' AS type, rating AS rt FROM '.$smw_attributes.
+ 									 ' JOIN '.$revision.' ON subject_id = rev_page JOIN '.$categorylinks.' ON subject_id = cl_from ' .
+ 								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ' AND cl_to IN (SELECT category FROM smw_fw_categories) '.
+ 							$sql_options);
+ 							
+ 				$db->query(	'INSERT INTO smw_fw_lowratedannotations (title, namespace, property, value, type, rating) SELECT subject_title AS title, subject_namespace AS namespace, relation_title AS property, object_title AS value, object_namespace AS type, rating AS rt FROM '.$smw_relations.
+ 								 ' JOIN '.$revision.' ON subject_id = rev_page JOIN '.$categorylinks.' ON subject_id = cl_from ' .
+ 								'WHERE rating < 0 AND rev_user_text = '.$db->addQuotes($username). ' AND cl_to IN (SELECT category FROM smw_fw_categories) '.
+ 							$sql_options);
+ 				$this->dropVirtualTableForCategoriesOfLastEditedPages($db);
+ 				
+ 				
+ 				
+ 			}
+		}
+		$res = $db->query('SELECT * FROM smw_fw_lowratedannotations GROUP BY title, namespace');	
  		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -189,6 +223,7 @@
 			}
 		}
 		$db->freeResult($res);
+		$db->query('DROP TABLE smw_fw_lowratedannotations');
 		return $result;
  	}
  	
@@ -229,20 +264,6 @@
 		$db->query('DROP TABLE smw_fw_categories');
  	}
  	
- 	private function getSQLOptions($requestoptions, $valuecol = NULL) {
-		$sql_options = array();
-		if ($requestoptions !== NULL) {
-			if ($requestoptions->limit >= 0) {
-				$sql_options['LIMIT'] = $requestoptions->limit;
-			}
-			if ($requestoptions->offset > 0) {
-				$sql_options['OFFSET'] = $requestoptions->offset;
-			}
-			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
-				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
-			}
-		}
-		return $sql_options;
-	}
+ 	
  }
 ?>
