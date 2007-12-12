@@ -121,7 +121,7 @@ function smwfDoSpecialFindWorkPage() {
 	
 	function doQuery( $offset, $limit, $shownavigation=true ) {
 		global $wgRequest, $wgOut;
-		if ($wgRequest->getVal('limit') == NULL) $limit = 15;
+		if ($wgRequest->getVal('limit') == NULL) $limit = 20;
 		parent::doQuery($offset, $limit, $shownavigation);
 		$wgOut->addHTML($this->getPageBottom());
 	}
@@ -232,7 +232,7 @@ function smwfDoSpecialFindWorkPage() {
 	
 	private function getBotClassAndType($field) {
 		switch($field) {
-			case 0: return array();
+			case 0: return array(NULL, NULL, NULL);
 			case 1: return array('smw_consistencybot', NULL, NULL);
 			case 2: return array('smw_consistencybot', NULL, SMW_GARDISSUE_TOO_LOW_CARD);
 			case 3: return array('smw_consistencybot', SMW_CONSISTENCY_BOT_BASE + 1, NULL);  // SMW_CONSISTENCY_BOT_BASE + 1 is group of undefined domains/ranges/types		
@@ -241,7 +241,7 @@ function smwfDoSpecialFindWorkPage() {
 			case 6: return array('smw_anomaliesbot', NULL, SMW_GARDISSUE_SUBCATEGORY_ANOMALY);
 			case 7: return array('smw_undefinedentitiesbot', NULL, SMW_GARDISSUE_CATEGORY_UNDEFINED);
 			case 8: return array('smw_undefinedentitiesbot', NULL, SMW_GARDISSUE_PROPERTY_UNDEFINED);	
-			case 9: return array();
+			case 9: return array(NULL, NULL, NULL);
 		}
 	}
  }
