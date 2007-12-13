@@ -194,10 +194,30 @@
 		return '';
 	}
 	
+	public function linkUserParameters(& $wgRequest) {
+		return array('pageTitle' => $wgRequest->getVal('pageTitle'));
+	}
 	
 	public function getData($options, $request) {
+		$pageTitle = $request->getVal('pageTitle');
+		if ($pageTitle != NULL) {
+			// show only issue of *ONE* title
+			return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
+		} else return parent::getData($options, $request);
+	}
+	
+	private function getGardeningIssueContainerForTitle($options, $request, $title) {
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
-		return parent::getData($options, $request);
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		
+		$gic = array();
+		$gis = $gi_store->getGardeningIssues('smw_undefinedentitiesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gic[] = new GardeningIssueContainer($title, $gis);
+		
+		
+		return $gic;
 	}
  }
  

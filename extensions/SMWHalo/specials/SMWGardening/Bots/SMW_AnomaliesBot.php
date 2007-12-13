@@ -185,7 +185,7 @@
  new AnomaliesBot();
  define('SMW_ANOMALY_BOT_BASE', 600);
  define('SMW_GARDISSUE_CATEGORY_LEAF', SMW_ANOMALY_BOT_BASE * 100 + 1);
- define('SMW_GARDISSUE_SUBCATEGORY_ANOMALY', SMW_ANOMALY_BOT_BASE * 100 + 2);
+ define('SMW_GARDISSUE_SUBCATEGORY_ANOMALY', (SMW_ANOMALY_BOT_BASE+1) * 100 + 1);
 
  
  class AnomaliesBotIssue extends GardeningIssue {
@@ -219,9 +219,30 @@
 		return '';
 	}
 	
+	public function linkUserParameters(& $wgRequest) {
+		return array('pageTitle' => $wgRequest->getVal('pageTitle'));
+	}
 	
 	public function getData($options, $request) {
-		return parent::getData($options, $request);
+		$pageTitle = $request->getVal('pageTitle');
+		if ($pageTitle != NULL) {
+			// show only issue of *ONE* title
+			return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
+		} else return parent::getData($options, $request);
+	}
+	
+	private function getGardeningIssueContainerForTitle($options, $request, $title) {
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
+		
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		
+		$gic = array();
+		$gis = $gi_store->getGardeningIssues('smw_anomaliesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gic[] = new GardeningIssueContainer($title, $gis);
+		
+		
+		return $gic;
 	}
  }
  

@@ -21,7 +21,7 @@ function smwfDoSpecialLogPage() {
 class SMWGardeningLogPage extends SMWQueryPage {
 	
 	private $filter;
-	
+	private $showAll = false;
 	
 	function __construct() {
 		global $wgRequest, $registeredBots;
@@ -32,6 +32,7 @@ class SMWGardeningLogPage extends SMWQueryPage {
 			$className = get_class($registeredBots[$bot_id]).'Filter';
 			$this->filter = new $className();
 		}
+		$this->showAll = $wgRequest->getVal("pageTitle") != NULL;
 	}
 	function getName() {
 		return "GardeningLog";
@@ -78,11 +79,11 @@ class SMWGardeningLogPage extends SMWQueryPage {
 			if (is_array($bound)) {
 				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound[0]->getDBkey())).preg_replace("/'/", "&quot;", htmlspecialchars($bound[1]->getDBkey()));
 				$text = $skin->makeLinkObj($bound[0]).' <-> '.$skin->makeLinkObj($bound[1]).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
-					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
+					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:'.($this->showAll ? "block" : "none").';">';
 			} else {
 				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound->getDBkey()));
 				$text = $skin->makeLinkObj($bound).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
-					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:none;">';
+					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:'.($this->showAll ? "block" : "none").';">';
 			}
 						
 			foreach($gis as $gi) {

@@ -131,7 +131,7 @@ function smwfDoSpecialFindWorkPage() {
 		$field = $wgRequest->getVal("field") == NULL ? '' : $wgRequest->getVal("field");
 		$gswButton = $wgRequest->getVal("gswButton") == NULL ? '' : $wgRequest->getVal("gswButton");
 		$goButton = $wgRequest->getVal("goButton") == NULL ? '' : $wgRequest->getVal("goButton");
-		return array('field' => $field, 'getsomework' => $gswButton, 'go' => $goButton);
+		return array('field' => $field, 'gswButton' => $gswButton, 'goButton' => $goButton);
 	}
 	
 	function sortDescending() {
