@@ -756,6 +756,7 @@ class ExportRDFHalo extends ExportRDF {
 	 * $return nothing
 	 */
 	function printTriples(SMWExportTitleHalo $et, $fullexport=true) {
+		if ($et->title_namespace == NS_CATEGORY && !$et->exists) return;
 		// if this was already exported, don't do it again
 		if (array_key_exists($et->hashkey, $this->element_done)) return;
 		// return if younger than the filtered date
