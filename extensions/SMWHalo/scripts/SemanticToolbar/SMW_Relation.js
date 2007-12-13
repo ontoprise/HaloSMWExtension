@@ -48,8 +48,8 @@ var SMW_REL_CHECK_EMPTY =
 
 var SMW_REL_CHECK_EMPTY_NEV =   // NEV = Not Empty Valid i.e. valid if not empty
 	'smwCheckEmpty="empty' +
-		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false) ' +
-		': (color:white, hideMessage, valid:true)"';
+		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false, call:relToolBar.updateTypeHint) ' +
+		': (color:white, hideMessage, valid:true, call:relToolBar.updateTypeHint)"';
 
 var SMW_REL_CHECK_EMPTY_WIE =   // WIE = Warning if empty but still valid
 	'smwCheckEmpty="empty' +
@@ -486,6 +486,63 @@ createSuperItem: function(openTargetArticle) {
 
  	this.om.createSuperProperty(name, "", openTargetArticle, this.wtp);
  	this.fillList(true);
+},
+
+/**
+ * Sets the auto completion type hint of the relation name field depending on the
+ * value of the element with ID <elementID>.
+ * The following formats are supported:
+ * - Dates (yyyy-mm-dd and dd-mm-yyyy, separator can be "-" , "/" and ".")
+ * - Email addresses
+ * - Numerical values with units of measurement
+ * - Floats, integers
+ * - Instances that belong to a category.
+ * If no properties with these restrictions are found, all properties that match
+ * a part of the entered property name are listed.  
+ */
+updateTypeHint: function(elementID) {
+	var elem = $(elementID);
+	var value = elem.value;
+	var relation = $('rel-name');
+	
+	var hint = SMW_PROPERTY_NS;
+	
+	// Date: yyyy-mm-dd
+	var date = value.match(/\d{1,5}[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])/);
+	if (!date) {
+		// Date: dd-mm-yyyy
+		date = value.match(/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.]\d{1,5}/);
+	} 
+	var email = value.match(/^([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})$/i);
+	var numeric = value.match(/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s*(.*)/);
+	
+	if (date) {
+		hint = '_dat;'+SMW_PROPERTY_NS;
+	} else if (email) {
+		hint = '_ema;'+SMW_PROPERTY_NS;
+	} else if (numeric) {
+		var number = numeric[1];
+		var unit = numeric[4];
+		var mantissa = numeric[2];
+		if (number && unit) {
+			var c = unit.charCodeAt(0);
+			if (unit === "K" || unit === '°C' || unit === '°F' ||
+				(c == 176 && unit.length == 2 && 
+				 (unit.charAt(1) == 'C' || unit.charAt(1) == 'F'))) {
+				hint = "_tem;"+SMW_PROPERTY_NS;
+			} else {
+				hint = unit+';'+SMW_PROPERTY_NS;
+			}
+		} else if (number && mantissa) {
+			hint = '_flt;'+SMW_PROPERTY_NS;
+		} else if (number) {
+			hint = '_int;_flt;'+SMW_PROPERTY_NS;
+		} else if (unit) {
+			hint = ':'+unit+';'+SMW_PROPERTY_NS;
+		}
+	}
+	relation.setAttribute('typeHint', hint);
+	
 },
 
 newRelation: function() {
