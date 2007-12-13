@@ -602,7 +602,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
 							'JOIN '.$page.' ON s1.subject_id = page_id ' .
 							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
-							' AND s2.value_string REGEXP '.$db->addQuotes('(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)|,) '.$typeLabel.'(,|$)').
+							' AND s2.value_string REGEXP '.$db->addQuotes('([0-9].?[0-9]*|,) '.$typeLabel.'(,|$)').
 							') UNION DISTINCT ' .
 							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
 							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
