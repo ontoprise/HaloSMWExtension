@@ -429,27 +429,19 @@
 		                    array('object_title'),
 		                    $sql, 'SMW::getUndefinedRelationTargets', NULL);*/
 		
-		$res = $db->query('SELECT DISTINCT object_title FROM smw_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL');
-		
-		$res2 = $db->query('SELECT DISTINCT object_title FROM smw_nary_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL');
+		$res = $db->query('SELECT DISTINCT object_title FROM smw_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL UNION DISTINCT ' .
+				'SELECT DISTINCT object_title FROM smw_nary_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL');
 		
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-			
-				$result[] = Title::newFromText($row->object_title);
+				$t = Title::newFromText($row->object_title);
+				if ($t != NULL) $result[] = $t; 
 				
 			}
 		}
 		
-		if($db->numRows( $res2 ) > 0) {
-			while($row = $db->fetchObject($res2)) {
-			
-				$result[] = Title::newFromText($row->object_title);
 				
-			}
-		}
-		
 		$db->freeResult($res);
 		
 		return $result;
