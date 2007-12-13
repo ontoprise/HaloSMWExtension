@@ -459,13 +459,13 @@
  		$db =& wfGetDB( DB_MASTER );
 
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
-		$res = $db->query('SELECT DISTINCT relation_title FROM smw_relations WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
-				'UNION SELECT DISTINCT attribute_title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
+		$res = $db->query('SELECT DISTINCT relation_title AS title FROM smw_relations WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
+				'UNION DISTINCT SELECT DISTINCT attribute_title AS title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
 	
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->relation_title, SMW_NS_PROPERTY);
+				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
 				
 			}
 		}
