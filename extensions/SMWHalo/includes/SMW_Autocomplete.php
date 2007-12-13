@@ -47,55 +47,17 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  	$userInputToMatch = str_replace(" ","_",$userInputToMatch);
  	
  	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
- 			// no context: that means only non-semantic AC is possible.
- 			
+ 			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
  			if ($typeHint == null || $typeHint == 'null') {
  				// if no $typeHint defined, search for (nearly) all pages.
  	    		$pages = AutoCompletionRequester::getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
  	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
- 			} else if (is_numeric($typeHint)) {
- 				// if there is a numeric type hint, consider it as a namespace
- 				$typeHintNum = $typeHint + 0;
- 				$pages = AutoCompletionRequester::getPages($userInputToMatch, array($typeHintNum));
- 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
- 	    		AutoCompletionRequester::logResult($result, $articleName);
- 	    		return $result;
- 	    		
- 			} else if (strpos($typeHint, ":") !== false) {
- 				// if typeHint contains ':'
- 				$page = Title::newFromText(substr($typeHint, 0, 1) == ':' ? substr($typeHint, 1) : $typeHint);
- 				if ($page->getNamespace() != NS_MAIN) {
- 					// ignore non-instances
- 					return SMW_AC_NORESULT;
- 				}
- 				
- 				$categories = smwfGetSemanticStore()->getCategoriesForInstance($page);
- 				
-  				$properties = array();
- 				foreach($categories as $c) {
-	 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
-	 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-	  				$value->setValues($c->getDBkey(), NS_CATEGORY);
-	  				$dv_container->setDVs(array(NULL, $value));
-	  				
-	  				// get all properties with a range category of $category
-	  				$properties = array_merge($properties, smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1));
-	  				
- 				}
- 			
- 	    		$result = AutoCompletionRequester::encapsulateAsXML($properties);
- 	    		AutoCompletionRequester::logResult($result, $articleName);
- 	    		return $result;
  			} else {
- 				// in all other cases, consider it as type
- 				$properties = AutoCompletionRequester::getPropertyWithType($userInputToMatch, $typeHint);
- 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
- 	    		AutoCompletionRequester::logResult($result, $articleName);
- 	    		return $result;
+ 				return AutoCompletionRequester::getTypeHintProposals($articleName, $userInputToMatch, $typeHint);
  			}
- 	    	
+ 			
  	} else if (stripos($userContext, "[[") === 0){  
  		// semantic context
  		// decide according to context which autocompletion is appropriate
@@ -170,6 +132,56 @@ function smwfAutoCompletionOptions() {
 
 class AutoCompletionRequester { 
 	
+	
+	public static function getTypeHintProposals($articleName, $userInputToMatch, $typeHint) {
+		$result = array();
+		$typeHints = explode(";", $typeHint);
+ 		foreach($typeHints as $th) {
+		 			if (is_numeric($th)) {
+		 				// if there is a numeric type hint, consider it as a namespace
+		 				$typeHintNum = $th + 0;
+		 				$pages = AutoCompletionRequester::getPages($userInputToMatch, array($typeHintNum));
+		 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		 	    		AutoCompletionRequester::logResult($result, $articleName);
+		 	    		
+		 	    		
+		 			} else if (strpos($th, ":") !== false) {
+		 				// if typeHint contains ':'
+		 				$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
+		 				if ($page->getNamespace() != NS_MAIN) {
+		 					// ignore non-instances
+		 					return SMW_AC_NORESULT;
+		 				}
+		 				
+		 				$categories = smwfGetSemanticStore()->getCategoriesForInstance($page);
+		 				
+		  				$properties = array();
+		 				foreach($categories as $c) {
+			 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
+			 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+			  				$value->setValues($c->getDBkey(), NS_CATEGORY);
+			  				$dv_container->setDVs(array(NULL, $value));
+			  				
+			  				// get all properties with a range category of $category
+			  				$properties = array_merge($properties, smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1));
+			  				
+		 				}
+		 			
+		 	    		$result = AutoCompletionRequester::encapsulateAsXML($properties);
+		 	    		AutoCompletionRequester::logResult($result, $articleName);
+		 	    		
+		 			} else {
+		 				// in all other cases, consider it as type
+		 				$properties = AutoCompletionRequester::getPropertyWithType($userInputToMatch, $th);
+		 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
+		 	    		AutoCompletionRequester::logResult($result, $articleName);
+		 	    		
+		 			}
+		 			if ($result != SMW_AC_NORESULT) break;
+ 		}
+ 			
+ 		return $result;
+	}
 	/**
 	 * Get category proposals matching $match.
 	 */
@@ -459,7 +471,7 @@ class AutoCompletionRequester {
 							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
 							'JOIN '.$page.' ON s1.subject_id = page_id ' .
 							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
-							' AND s2.value_string REGEXP '.$db->addQuotes('^[0-9].?[0-9]* '.$typeLabel.'$').
+							' AND s2.value_string REGEXP '.$db->addQuotes('[0-9].?[0-9]* '.$typeLabel.'(,|$)').
 							') UNION DISTINCT ' .
 							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
 							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
