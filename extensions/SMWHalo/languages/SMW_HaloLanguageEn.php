@@ -284,6 +284,8 @@ clicking the big arrows between the columns.',
 
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category.',
+	'smw_gard_remove_undefined_categories' => 'Remove annotations of undefined categories',
+	
 	'smw_gardissue_property_undefined' => '$1 used on : $2',
 	'smw_gardissue_category_undefined' => '$1 used on: $2',
 	'smw_gardissue_relationtarget_undefined' => '$1 undefined when used with: $2',

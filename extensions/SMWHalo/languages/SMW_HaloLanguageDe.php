@@ -258,6 +258,8 @@ protected $smwUserMessages = array(
 	'smw_gardissue_class_similarannotations' => 'Ähnliche Annotationen',
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Properties im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
+	'smw_gard_remove_undefined_categories' => 'Entferne Annotation undefinierter Kategorien',
+	
 	'smw_gard_property_undefined' => '$1 wird benutzt auf: $2',
 	'smw_gard_category_undefined' => '$1 wird benutzt auf: $2',
 	'smw_gard_relationtarget_undefined' => '$1 undefiniert und benutzt mit: $2',

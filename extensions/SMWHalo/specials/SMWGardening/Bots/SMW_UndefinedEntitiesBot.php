@@ -35,7 +35,8 @@
  	 * Returns an array mapping parameter IDs to parameter objects
  	 */
  	public function createParameters() {
- 		return array();
+ 		$param1 = new GardeningParamBoolean('REMOVE_UNDEFINED_CATEGORIES', wfMsg('smw_gard_remove_undefined_categories'), SMW_GARD_PARAM_OPTIONAL, false );
+ 		return array($param1);
  	}
  	
  	/**
@@ -50,12 +51,23 @@
  		}
  		echo $this->getBotID()." started!\n";
  		
- 	   	echo "Checking for undefined entities...";
+ 	   	echo "\n";
         $ued = new UndefinedEntitiesDetector($this->id);
  		
- 		$ued->checkForUndefinedCategories();
+ 		$removeCategoryAnnotations = array_key_exists('REMOVE_UNDEFINED_CATEGORIES', $paramArray);
+ 		echo "\ncheck for undefiend categories...";
+ 		$ued->checkForUndefinedCategories($delay, $removeCategoryAnnotations);
+ 		echo "done!";
+ 		
+ 		echo "\ncheck for undefined properties...";
  		$ued->checkForUndefinedProperties();
+ 		echo "done!";
+ 		
+ 		echo "\ncheck for undefined relation targets...";
  		$ued->checkForUndefinedRelationTargets();
+ 		echo "done!";
+ 		
+ 		echo "\ncheck for instances without categories...";
  		$ued->checkForInstancesWithoutCategory();
         echo "done!\n\n";
           
@@ -113,7 +125,7 @@
  		 	
  		$undefindProperties = $this->store->getUndefinedProperties();
  		foreach($undefindProperties as $p) {
- 			$articles = $this->store->getArticlesUsingProperty($p);
+ 			$articles = $this->store->getArticlesUsingProperty($p, 10);
  			foreach($articles as $a) { 
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
  			}
@@ -121,23 +133,44 @@
  		
  	}
  	
- 	public function checkForUndefinedCategories() {
+ 	public function checkForUndefinedCategories($delay, $removeCategoryAnnotations) {
  		
  		$undefindCategories = $this->store->getUndefinedCategories();
- 		foreach($undefindCategories as $c) {
- 			$articles = $this->store->getArticlesUsingCategory($c);
- 			foreach($articles as $a) { 
- 				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
+ 		if ($removeCategoryAnnotations) {
+ 			foreach($undefindCategories as $c) {
+ 				if ($delay > 0) usleep($delay*1000);
+ 				// get all articles using this category
+ 				$articlesUsingCategory = $this->store->getArticlesUsingCategory($c, 0);
+ 				foreach($articlesUsingCategory as $t) {
+ 					$this->removeCategoryLink($t, $c);
+ 					echo "\n - Remove category link to ".$c->getPrefixedText()." from ".$t->getPrefixedText();
+ 				}
+ 				echo "\n";
  			}
+ 		} else {
+	 		foreach($undefindCategories as $c) {
+	 			$articles = $this->store->getArticlesUsingCategory($c, 10);
+	 			foreach($articles as $a) { 
+	 				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_CATEGORY_UNDEFINED, $c, $a);
+	 			}
+	 		}
  		}
- 		
+ 	}
+ 	
+ 	private function removeCategoryLink($title, $category) {
+ 		$rev = Revision::newFromTitle($title);
+ 		$a = new Article($title);
+ 		if ($rev == NULL || $a == NULL) return;
+ 		$text = $rev->getText();
+ 		$newText = preg_replace("/\[\[\s*".$category->getNsText()."\s*:\s*".preg_quote($category->getText())."\s*\]\]/i", "", $text);
+ 		$a->doEdit($newText, $rev->getComment(), EDIT_UPDATE);
  	}
  	
  	public function checkForUndefinedRelationTargets() {
  		
  		$undefindRelationTargets = $this->store->getUndefinedRelationTargets();
  		foreach($undefindRelationTargets as $t) {
- 			$articles = $this->store->getRelationsUsingTarget($t);
+ 			$articles = $this->store->getRelationsUsingTarget($t, 10);
  		
  			foreach($articles as $a) { 
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
@@ -231,27 +264,11 @@
  	public abstract function getUndefinedProperties();
  	
  	/**
- 	 * Returns all articles which uses a given property
- 	 * 
- 	 * @param $property Title
- 	 * @return array of Title
- 	 */
- 	public abstract function getArticlesUsingProperty($property);
- 	
- 	/**
  	 * Returns undefined categories
  	 * 
  	 * @return array of Title
  	 */
  	public abstract function getUndefinedCategories();
- 	
- 	/**
- 	 * Returns all articles which uses a given category
- 	 * 
- 	 * @param $category Title
- 	 * @return array of Title
- 	 */
- 	public abstract function getArticlesUsingCategory($category);
  	
  	/**
  	 * Returns undefined relation targets (binary or n-ary)
@@ -261,19 +278,40 @@
  	public abstract function getUndefinedRelationTargets();
  	
  	/**
- 	 * Returns all relations (binary or n-ary) which uses a given target instance
- 	 * 
- 	 * @param $target Title
- 	 * @return array of Title
- 	 */
- 	public abstract function getRelationsUsingTarget($target); 
- 	
- 	/**
  	 * Returns all instances without any categories
  	 * 
  	 * @return array of Title
  	 */
  	public abstract function getInstancesWithoutCategory();
+ 	
+ 	/**
+ 	 * Returns all articles which uses a given property
+ 	 * 
+ 	 * @param $property Title
+ 	 * @param $limit Limit of max results (or 0 if unlimited)
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getArticlesUsingProperty($property, $limit = 0);
+ 	
+ 	
+ 	/**
+ 	 * Returns all articles which uses a given category
+ 	 * 
+ 	 * @param $category Title
+ 	 * @param $limit Limit of max results (or 0 if unlimited)
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getArticlesUsingCategory($category, $limit = 0);
+ 	
+ 	/**
+ 	 * Returns all relations (binary or n-ary) which uses a given target instance
+ 	 * 
+ 	 * @param $target Title
+ 	 * @param $limit Limit of max results (or 0 if unlimited)
+ 	 * @return array of Title
+ 	 */
+ 	public abstract function getRelationsUsingTarget($target, $limit = 0); 
+ 	
  }
  
  class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
@@ -283,13 +321,13 @@
 		$db =& wfGetDB( DB_MASTER );
 
 		// read attributes		                    
-		$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes a LEFT JOIN page p ON a.attribute_title=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes a LEFT JOIN page p ON a.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL');
 	
 		// read binary relations  		
-		$res2 = $db->query('SELECT DISTINCT relation_title FROM smw_relations r LEFT JOIN page p ON r.relation_title=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res2 = $db->query('SELECT DISTINCT relation_title FROM smw_relations r LEFT JOIN page p ON r.relation_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL');
 		       
 		// read n-ary relations  
-		$res3 = $db->query('SELECT DISTINCT attribute_title FROM smw_nary r LEFT JOIN page p ON r.attribute_title=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res3 = $db->query('SELECT DISTINCT attribute_title FROM smw_nary r LEFT JOIN page p ON r.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL');
 		
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -317,12 +355,14 @@
 		return $result;
  	}
  	
- 	public function getArticlesUsingProperty($property) {
+ 	public function getArticlesUsingProperty($property, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
 
-	                  
-		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace FROM smw_attributes WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION ' .
-				'SELECT DISTINCT subject_title, subject_namespace FROM smw_relations WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' LIMIT 10');
+	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
+		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace FROM smw_attributes WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+				'SELECT DISTINCT subject_title, subject_namespace FROM smw_relations WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+				'SELECT DISTINCT subject_title, subject_namespace FROM smw_nary_attributes a JOIN smw_nary n ON n.subject_id = a.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+				'SELECT DISTINCT subject_title, subject_namespace FROM smw_nary_relations r JOIN smw_nary n ON n.subject_id = r.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).$limitConstraint);
 	
 	
 		$result = array();
@@ -346,7 +386,7 @@
 		                    array('cl_to'),
 		                    $sql, 'SMW::getUndefinedCategories', NULL);*/
 		                    
-		$res = $db->query('SELECT DISTINCT cl_to FROM categorylinks c LEFT JOIN page p ON c.cl_to=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res = $db->query('SELECT DISTINCT cl_to FROM categorylinks c LEFT JOIN page p ON c.cl_to=p.page_title AND p.page_namespace = '.NS_CATEGORY.' WHERE p.page_title IS NULL');
 		                    
 		
 		$result = array();
@@ -362,11 +402,11 @@
 		return $result;
  	}
  	
- 	public function getArticlesUsingCategory($category) {
+ 	public function getArticlesUsingCategory($category, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
 
-	                  
-		$res = $db->query('SELECT page_title, page_namespace FROM page,categorylinks WHERE page_id = cl_from AND cl_to = '.$db->addQuotes($category->getDBkey()).' LIMIT 10');
+	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;            
+		$res = $db->query('SELECT page_title, page_namespace FROM page,categorylinks WHERE page_namespace = '.NS_MAIN.' AND page_id = cl_from AND cl_to = '.$db->addQuotes($category->getDBkey()).' '.$limitConstraint);
 	
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -389,9 +429,9 @@
 		                    array('object_title'),
 		                    $sql, 'SMW::getUndefinedRelationTargets', NULL);*/
 		
-		$res = $db->query('SELECT DISTINCT object_title FROM smw_relations r LEFT JOIN page p ON r.object_title=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res = $db->query('SELECT DISTINCT object_title FROM smw_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL');
 		
-		$res2 = $db->query('SELECT DISTINCT object_title FROM smw_nary_relations r LEFT JOIN page p ON r.object_title=p.page_title WHERE p.page_title IS NULL LIMIT '.MAX_LOG_LENGTH);
+		$res2 = $db->query('SELECT DISTINCT object_title FROM smw_nary_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL');
 		
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -415,12 +455,12 @@
 		return $result;
  	}
  	
- 	public function getRelationsUsingTarget($target) {
+ 	public function getRelationsUsingTarget($target, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
 
-	                  
+	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
 		$res = $db->query('SELECT DISTINCT relation_title FROM smw_relations WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
-				'UNION SELECT DISTINCT attribute_title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' LIMIT 10');
+				'UNION SELECT DISTINCT attribute_title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
 	
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -443,7 +483,7 @@
 		                    array('page_title'),
 		                    $sql, 'SMW::getInstancesWithoutCategory', NULL);*/
 		
-		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND p.page_namespace = '.NS_MAIN.' LIMIT '.MAX_LOG_LENGTH);
+		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id AND p.page_namespace = '.NS_MAIN.' WHERE c.cl_from IS NULL');
 		                    
 		
 		$result = array();
