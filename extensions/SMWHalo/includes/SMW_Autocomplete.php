@@ -19,6 +19,8 @@ $wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
 define('SMW_AC_NORESULT', "noResult");
 define('SMW_AC_MAX_RESULTS', 15);
 
+$smwhgAutoCompletionStore = null;
+
 global $smwgIP;
 require_once( $smwgIP . "/includes/SMW_Datatype.php");
 require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
@@ -50,7 +52,7 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
  			if ($typeHint == null || $typeHint == 'null') {
  				// if no $typeHint defined, search for (nearly) all pages.
- 	    		$pages = AutoCompletionRequester::getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
  	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
  	    		AutoCompletionRequester::logResult($result, $articleName);
  	    		return $result;
@@ -129,6 +131,22 @@ function smwfAutoCompletionOptions() {
 	return $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
 }
 
+function &smwfGetAutoCompletionStore() {
+		global $smwhgAutoCompletionStore, $smwgHaloIP;
+		if ($smwhgAutoCompletionStore == NULL) {
+			global $smwgDefaultStore;
+			switch ($smwgDefaultStore) {
+				case (SMW_STORE_TESTING):
+					$smwhgAutoCompletionStore = null; // not implemented yet
+					trigger_error('Testing store not implemented for HALO extension.');
+				break;
+				case (SMW_STORE_MWDB): default:
+					$smwhgAutoCompletionStore = new AutoCompletionStorageSQL();
+				break;
+			}
+		}
+		return $smwhgAutoCompletionStore;
+}
 
 class AutoCompletionRequester { 
 	
@@ -140,7 +158,7 @@ class AutoCompletionRequester {
 		 			if (is_numeric($th)) {
 		 				// if there is a numeric type hint, consider it as a namespace
 		 				$typeHintNum = $th + 0;
-		 				$pages = AutoCompletionRequester::getPages($userInputToMatch, array($typeHintNum));
+		 				$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array($typeHintNum));
 		 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		 	    		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
@@ -172,7 +190,7 @@ class AutoCompletionRequester {
 		 	    		
 		 			} else {
 		 				// in all other cases, consider it as type
-		 				$properties = AutoCompletionRequester::getPropertyWithType($userInputToMatch, $th);
+		 				$properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
 		 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
 		 	    		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
@@ -186,7 +204,7 @@ class AutoCompletionRequester {
 	 * Get category proposals matching $match.
 	 */
 	public static function getCategoryProposals($match) {
-		$categories = AutoCompletionRequester::getPages($match, array(NS_CATEGORY));
+		$categories = smwfGetAutoCompletionStore()->getPages($match, array(NS_CATEGORY));
  	    return AutoCompletionRequester::encapsulateAsXML($categories);
 	}
 	
@@ -202,11 +220,11 @@ class AutoCompletionRequester {
  	    		
  	    	// special properties
  	    	if (stripos(strtolower($userContext), strtolower($specialProperties[SMW_SP_SUBPROPERTY_OF])) > 0) {
- 	    		$pages = AutoCompletionRequester::getPages($match, array(SMW_NS_PROPERTY));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext),strtolower($specialProperties[SMW_SP_HAS_TYPE])) > 0) { 
  	    		// has type relation. First check for user types
- 	    		$pages = AutoCompletionRequester::getPages($match, array(SMW_NS_TYPE));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_TYPE));
  	    		// then check builtin types 
  	    		$typeLabels = array_values(SMWDataValueFactory::getKnownTypeLabels());
  	    		$lower_match = strtolower($match);
@@ -220,7 +238,7 @@ class AutoCompletionRequester {
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext),strtolower($specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT])) > 0) { 
  	    		// has domain hint relation 
- 	    		$pages = AutoCompletionRequester::getPages($match, array(NS_CATEGORY));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_CATEGORY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else {
  	    		if ($semanticAC) { 
@@ -245,7 +263,7 @@ class AutoCompletionRequester {
  	    			return AutoCompletionRequester::encapsulateAsXML($pages);
  	    		} else {  	
  	    			// all others
- 	   				$pages = AutoCompletionRequester::getPages($match, array(NS_MAIN));
+ 	   				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
  	   				return AutoCompletionRequester::encapsulateAsXML($pages);
  	    		}
  	    	}
@@ -295,7 +313,7 @@ class AutoCompletionRequester {
  	    		}
 			
  	    	} else {
- 	    		$pages = AutoCompletionRequester::getPages($match, array(NS_MAIN, SMW_NS_PROPERTY, SMW_NS_RELATION));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN, SMW_NS_PROPERTY, SMW_NS_RELATION));
  	    	}
  	    	// special handling for special relations
  	    	$specialMatches = array(); // keeps matches of special relations
@@ -332,10 +350,10 @@ class AutoCompletionRequester {
  			
  			if (count($templateParameters) > 1) { 
  				// if it is a parameter try all semantic namespaces
- 				$results = AutoCompletionRequester::getPages($match, array(NS_MAIN, SMW_NS_PROPERTY));
+ 				$results = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN, SMW_NS_PROPERTY));
  				return AutoCompletionRequester::encapsulateAsXML($results);
  			} else { // otherwise it is a template name
- 	    		$templates = AutoCompletionRequester::getPages($match, array(NS_TEMPLATE));
+ 	    		$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
  	    		$extraData = array();
  	    		foreach($templates as $t) {
  	    			$extraData[] = TemplateReader::formatTemplateParameters($t);
@@ -348,10 +366,10 @@ class AutoCompletionRequester {
  			$templateParameters = explode("|", $userContext);
  			if (count($templateParameters) > 1) { 
 	 			// if it is a parameter try all semantic namespaces
- 				$results = AutoCompletionRequester::getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
+ 				$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
  				return AutoCompletionRequester::encapsulateAsXML($results);
  			} else { // otherwise it is a template name
- 	    		$templates = AutoCompletionRequester::getPages($match, array(NS_TEMPLATE));
+ 	    		$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
  	    		$extraData = array();
  	    		foreach($templates as $t) {
  	    			$extraData[] = TemplateReader::formatTemplateParameters($t);
@@ -409,83 +427,7 @@ class AutoCompletionRequester {
 	
 	
 
-	/**
- 	* Retrieves pages matching the requestoptions and the given namespaces
- 	* 
- 	* TODO: should be transferred to storage layer
- 	* 
- 	* @return array of Title
- 	*/
-	public static function getPages($match, $namespaces = NULL, $requestoptions = NULL) {
-		$result = "";
-		$db =& wfGetDB( DB_MASTER );
-		$sql = "";
-		$page = $db->tableName('page');
-		if ($namespaces != NULL) {
-			$sql .= '(';
-			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
-				if ($i > 0) $sql .= ' OR ';
-				$sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
-			}
-			if (count($namespaces) == 0) $sql .= 'true';
-			$sql .= ') ';
-		} else  {
-			$sql = 'true';
-		}
-		
-				
-		$result = array();
-		
-		// add additional titles from smw-titles which do not exist in the page table
-		//AutoCompletionRequester::getUndefinedPropertiesFromSMWTables($result, $namespaces, $requestoptions);
-		
-		// query for pages which begin with $match AND for pages which contain $match. In this order.
-		$res = $db->query('(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND ' .$sql.' ORDER BY page_namespace DESC) '.
-							' UNION (SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.$sql.' ORDER BY page_namespace DESC) LIMIT '.SMW_AC_MAX_RESULTS.'');
-		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}
 	
-	/**
-	 * Returns properties containing $match with unit $unit
-	 * 
-	 * TODO: should be transferred to storage layer
-	 * 
-	 * @param $match substring
-	 * @param $typeLabel primitive type or unit
-	 */
-	public static function getPropertyWithType($match, $typeLabel) {
-		$db =& wfGetDB( DB_MASTER );
-		$smw_specialprops = $db->tableName('smw_specialprops');
-		$page = $db->tableName('page');
-		$result = array();
-		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
-		
-		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
-							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
-							'JOIN '.$page.' ON s1.subject_id = page_id ' .
-							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
-							' AND s2.value_string REGEXP '.$db->addQuotes('[0-9].?[0-9]* '.$typeLabel.'(,|$)').
-							') UNION DISTINCT ' .
-							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
-							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
-							'  LIMIT '.SMW_AC_MAX_RESULTS);
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
-			}
-		}
-		
-		$db->freeResult($res);
-		
-		return $result;
-	}
 	
 	/**
 	 * Removes the common SMW namespace from $titleText.
@@ -587,6 +529,94 @@ class TemplateReader {
 	}
 	
 	
+}
+
+abstract class AutoCompletionStorage {
+	/**
+ 	* Retrieves pages matching the requestoptions and the given namespaces
+ 	* 
+ 	* TODO: should be transferred to storage layer
+ 	* 
+ 	* @return array of Title
+ 	*/
+	public abstract function getPages($match, $namespaces = NULL, $requestoptions = NULL);
+	
+	/**
+	 * Returns properties containing $match with unit $unit
+	 * 
+	 * TODO: should be transferred to storage layer
+	 * 
+	 * @param $match substring
+	 * @param $typeLabel primitive type or unit
+	 */
+	public abstract function getPropertyWithType($match, $typeLabel); 
+}
+
+class AutoCompletionStorageSQL extends AutoCompletionStorage {
+	
+	public function getPages($match, $namespaces = NULL, $requestoptions = NULL) {
+		$result = "";
+		$db =& wfGetDB( DB_MASTER );
+		$sql = "";
+		$page = $db->tableName('page');
+		if ($namespaces != NULL) {
+			$sql .= '(';
+			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
+				if ($i > 0) $sql .= ' OR ';
+				$sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
+			}
+			if (count($namespaces) == 0) $sql .= 'true';
+			$sql .= ') ';
+		} else  {
+			$sql = 'true';
+		}
+		
+				
+		$result = array();
+		
+		// add additional titles from smw-titles which do not exist in the page table
+		//AutoCompletionRequester::getUndefinedPropertiesFromSMWTables($result, $namespaces, $requestoptions);
+		
+		// query for pages which begin with $match AND for pages which contain $match. In this order.
+		$res = $db->query('(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND ' .$sql.' ORDER BY page_namespace DESC) '.
+							' UNION (SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.$sql.' ORDER BY page_namespace DESC) LIMIT '.SMW_AC_MAX_RESULTS.'');
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+	
+	
+	public function getPropertyWithType($match, $typeLabel) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_specialprops = $db->tableName('smw_specialprops');
+		$page = $db->tableName('page');
+		$result = array();
+		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
+		
+		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
+							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
+							'JOIN '.$page.' ON s1.subject_id = page_id ' .
+							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
+							' AND s2.value_string REGEXP '.$db->addQuotes('(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)|,) '.$typeLabel.'(,|$)').
+							') UNION DISTINCT ' .
+							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
+							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
+							'  LIMIT '.SMW_AC_MAX_RESULTS);
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		return $result;
+	}
 }
 
 
