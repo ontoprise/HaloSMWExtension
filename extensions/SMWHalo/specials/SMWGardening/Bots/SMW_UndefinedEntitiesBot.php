@@ -475,7 +475,7 @@
 		                    array('page_title'),
 		                    $sql, 'SMW::getInstancesWithoutCategory', NULL);*/
 		
-		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id AND p.page_namespace = '.NS_MAIN.' WHERE c.cl_from IS NULL');
+		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND p.page_namespace = '.NS_MAIN);
 		                    
 		
 		$result = array();
