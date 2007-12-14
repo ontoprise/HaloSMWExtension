@@ -946,13 +946,13 @@ AdvancedAnnotation.prototype = {
 AdvancedAnnotation.create = function() {
 	if (wgAction == "annotate") {
 		smwhgAdvancedAnnotation = new AdvancedAnnotation();
-			new PeriodicalExecuter(function(pe) {
-				var content = $('content');
-				Event.observe(content, 'mouseup', 
-				              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
-				Event.observe('globalWrapper', 'keyup', 
-				              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
-				pe.stop();
+		new PeriodicalExecuter(function(pe) {
+			var content = $('content');
+			Event.observe(content, 'mouseup', 
+			              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
+			Event.observe('globalWrapper', 'keyup', 
+			              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
+			pe.stop();
 		}, 2);
 	}
 	
