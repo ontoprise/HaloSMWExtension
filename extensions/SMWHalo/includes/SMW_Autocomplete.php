@@ -155,47 +155,36 @@ class AutoCompletionRequester {
 		$result = array();
 		$typeHints = explode(";", $typeHint);
  		foreach($typeHints as $th) {
-		 			if (is_numeric($th)) {
-		 				// if there is a numeric type hint, consider it as a namespace
-		 				$typeHintNum = $th + 0;
-		 				$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array($typeHintNum));
-		 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		 	    		AutoCompletionRequester::logResult($result, $articleName);
+		 	if (is_numeric($th)) {
+		 		// if there is a numeric type hint, consider it as a namespace
+		 		$typeHintNum = $th + 0;
+		 		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array($typeHintNum));
+		 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
+		  		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
 		 	    		
-		 			} else if (strpos($th, ":") !== false) {
-		 				// if typeHint contains ':'
-		 				$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
-		 				if ($page->getNamespace() != NS_MAIN) {
-		 					// ignore non-instances
-		 					return SMW_AC_NORESULT;
-		 				}
-		 				
-		 				$categories = smwfGetSemanticStore()->getCategoriesForInstance($page);
-		 				
-		  				$properties = array();
-		 				foreach($categories as $c) {
-			 				$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
-			 	    		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-			  				$value->setValues($c->getDBkey(), NS_CATEGORY);
-			  				$dv_container->setDVs(array(NULL, $value));
-			  				
-			  				// get all properties with a range category of $category
-			  				$properties = array_merge($properties, smwfGetStore()->getPropertySubjects(smwfGetSemanticStore()->domainRangeHintRelation, $dv_container, NULL, 1));
-			  				
-		 				}
-		 			
-		 	    		$result = AutoCompletionRequester::encapsulateAsXML($properties);
-		 	    		AutoCompletionRequester::logResult($result, $articleName);
+		 	} else if (strpos($th, ":") !== false) {
+		 		// if typeHint contains ':'
+		 		$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
+		 		if ($page->getNamespace() != NS_MAIN) {
+		 			// ignore non-instances
+		 			return SMW_AC_NORESULT;
+		 		}
+		 						 					 			
+		 		$properties = smwfGetAutoCompletionStore()->getPropertyForInstance($userInputToMatch, $page, false);
+		   		$result = AutoCompletionRequester::encapsulateAsXML($properties);
+	    		return $result;
+		   		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
-		 			} else {
-		 				// in all other cases, consider it as type
-		 				$properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
-		 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
-		 	    		AutoCompletionRequester::logResult($result, $articleName);
+ 			} else {
+ 				
+		 		// in all other cases, consider it as type
+				$properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
+				$result = AutoCompletionRequester::encapsulateAsXML($properties);
+	    		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
-		 			}
-		 			if ($result != SMW_AC_NORESULT) break;
+			}
+			if ($result != SMW_AC_NORESULT) break;
  		}
  			
  		return $result;
@@ -250,15 +239,16 @@ class AutoCompletionRequester {
  	    	
  	    			$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
  	    		
- 	    			$rangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $rangeRelation);
+ 	    			$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+ 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeRelation);
  	    			$pages = array();
- 	    			foreach ($domainRangeAnnotations as $dra) {
- 	    				$dv = $dra->getDVs();
+ 	    			$options = new SMWRequestOptions();
+ 	    			$options->limit = SMW_AC_MAX_RESULTS;
+ 	    			if (count($domainRangeAnnotations) > 0) { // ignore multiple ranges
+ 	    				$dv = $domainRangeAnnotations[0]->getDVs();
  	    				if ($dv[1] !== NULL && $dv[1]->isValid()) {
- 	    					$instances = smwfGetSemanticStore()->getDirectInstances($dv[1]->getTitle());
- 	    					$pages = array_merge($pages, $instances);
- 	    				}
+ 	    					$pages = smwfGetSemanticStore()->getInstances($dv[1]->getTitle(), $options);
+	    				}
  	    			}
  	    			return AutoCompletionRequester::encapsulateAsXML($pages);
  	    		} else {  	
@@ -299,18 +289,7 @@ class AutoCompletionRequester {
 		if ($semanticAC) { 
  	    		// get all categories of the article
  	    		$articleTitle = Title::newFromText($articleName);
- 	    		$categoriesOfArticle = smwfGetSemanticStore()->getCategoriesForInstance($articleTitle);
- 	    		
- 	    		$domainRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    		$pages = array();
- 	    		foreach($categoriesOfArticle as $category) {
- 	    			$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
- 	    			$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-  					$value->setValues($category->getDBKey(), $category->getNamespace());
-  					$dv_container->setDVs(array($value, NULL));
- 	    			$properties = smwfGetStore()->getPropertySubjects($domainRelation, $dv_container, NULL, 0);
- 	    			$pages = array_merge($pages, $properties);
- 	    		}
+ 	    		$pages = smwfGetAutoCompletionStore()->getPropertyForInstance($match, $articleTitle, true);
 			
  	    	} else {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN, SMW_NS_PROPERTY, SMW_NS_RELATION));
@@ -550,6 +529,16 @@ abstract class AutoCompletionStorage {
 	 * @param $typeLabel primitive type or unit
 	 */
 	public abstract function getPropertyWithType($match, $typeLabel); 
+	
+	/**
+	 * Returns (including inferred) properties which match a given $instance for domain or range
+	 * If $instance is not part of any category, it will return an empty result set.
+	 * 
+	 * @param $userInputToMatch substring must be part of property title
+	 * @param $instance
+	 * @param $matchDomainOrRange True, if $instance must match domain or range
+	 */
+	public abstract function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange);
 }
 
 class AutoCompletionStorageSQL extends AutoCompletionStorage {
@@ -615,6 +604,79 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		
 		$db->freeResult($res);
 		
+		return $result;
+	}
+	
+	
+	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
+		global $smwgDefaultCollation;
+		$db =& wfGetDB( DB_MASTER );
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
+		
+		$nary_pos = $matchDomainOrRange ? 0 : 1;
+		
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
+		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		            
+		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
+					' WHERE r.nary_pos = '.$nary_pos.' AND n.attribute_title = '. $db->addQuotes(smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()). ' AND r.object_title IN (SELECT cl_to FROM categorylinks WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND UPPER(n.subject_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') AND p.page_is_redirect = 0)');
+	
+		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_id AS category FROM categorylinks JOIN page ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');    
+		
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum category tree depth.
+		do  {
+			$maxDepth--;
+			
+			// get next supercategory level
+			$db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = '.NS_CATEGORY.' AND cl_from IN (SELECT * FROM smw_ob_properties_sub))');
+			
+			// insert direct properties of current supercategory level
+			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
+					' WHERE r.nary_pos = '.$nary_pos.' AND n.attribute_title = '. $db->addQuotes(smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()). ' AND p.page_is_redirect = 0 AND r.object_id IN (SELECT * FROM smw_ob_properties_super) AND UPPER(n.subject_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+	
+			
+			// copy supercatgegories to subcategories of next iteration
+			$db->query('DELETE FROM smw_ob_properties_sub');
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
+			
+			// check if there was least one more supercategory. If not, all properties were found.
+			$res = $db->query('SELECT COUNT(category) AS numOfSuperCats FROM smw_ob_properties_sub');
+			$numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
+			$db->freeResult($res);
+			
+			$db->query('DELETE FROM smw_ob_properties_super');
+			
+		} while ($numOfSuperCats > 0 && $maxDepth > 0);   
+		
+		$res = $db->query('SELECT DISTINCT property FROM smw_ob_properties');
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		
+		$db->query('DROP TABLE smw_ob_properties');
+		$db->query('DROP TABLE smw_ob_properties_super');
+		$db->query('DROP TABLE smw_ob_properties_sub');
 		return $result;
 	}
 }
