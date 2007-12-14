@@ -76,7 +76,7 @@ initialize: function() {
 
 },
 
-showToolbar: function(request){
+showToolbar: function(){
 	this.categorycontainer.setHeadline(gLanguage.getMessage('CATEGORIES'));
 	if (wgAction == 'edit') {
 		// Create a wiki text parser for the edit mode. In annotation mode,
