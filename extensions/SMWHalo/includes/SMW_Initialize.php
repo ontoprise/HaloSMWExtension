@@ -626,6 +626,10 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	}
 	
 function smwfAnnotateTab ($content_actions) {
+	//Check if ontoskin is available
+	global $wgUser;
+	if($wgUser->getSkin()->skinname != 'ontoskin')
+		return true;
 	//Check if edit tab is present, if not don't at annote tab
 	if (!array_key_exists('edit',$content_actions) )
 		return true;
