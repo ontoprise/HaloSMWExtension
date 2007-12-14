@@ -59,7 +59,7 @@ createContent: function(request) {
 						
 			var n = bot.childNodes.length;
 			if (n > 0) {						
-				html += '<b>' + bot.getAttribute("title") + '</b>';
+//				html += '<b>' + bot.getAttribute("title") + '</b>';
 				html += '<ul>';
 				for (var i = 0; i < n; i++) {
 					// iterate over the bot's issues
