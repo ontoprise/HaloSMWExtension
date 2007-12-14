@@ -453,10 +453,10 @@
 						'JOIN '.$categorylinks.' ON page_title = cl_to ' .
 						'JOIN '.$smw_gardeningissues.' ON p1_id = cl_from ' .
 						'WHERE page_namespace = 14 AND (p1_namespace = 0 OR p1_namespace = 14) AND bot_id = '.$db->addQuotes($botID).')');
-		$db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$smw_nary.' n ' .
-						'JOIN '.$smw_gardeningissues.' ON p1_title = subject_title AND p1_namespace = subject_namespace ' .
+		$db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id ' .
+						'JOIN '.$smw_gardeningissues.' ON p1_id = n.subject_id AND p1_namespace = n.subject_namespace ' .
 						'JOIN '.$page.' ON page_title = object_title ' .
-						'JOIN '.$smw_nary_relations.' r  ' .
+						
 						'WHERE nary_pos = 0 AND attribute_title = '.$db->addQuotes($domainRangePropertyText).' AND p1_namespace = '.SMW_NS_PROPERTY.' ' .
 								'AND object_namespace = '.NS_CATEGORY.' AND page_namespace = '.NS_CATEGORY.' AND bot_id = '.$db->addQuotes($botID).')');
 		$db->query('INSERT INTO smw_prop_gardissues_from (SELECT * FROM smw_prop_gardissues)');
