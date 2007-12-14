@@ -696,24 +696,24 @@ a.menulink{
 
 /* Annotation hint Container */
 #stb_cont10-headline{
-	background-color: #22ee22;
+	background-color: #557844;
 	font-weight: bold;
 	color: #FFF;
 /*	padding-top: 1px; */
 	padding-left: 3px;
-	border: 1px solid #22ee22;
+	border: 1px solid #557844;
 	margin-top: 3px;
 }
 
 #stb_cont10-content{
-	border: 1px solid #22ee22;
-	background-color: #88ee88;
+	border: 1px solid #557844;
+	background-color: #6CA252;
 	overflow: auto;
 	font-size: 11px;
 }
 
 #annotationhint-table{
-	background-color: #88ee88;
+	background-color: #6CA252;
 	width: 100%;
 }
 
