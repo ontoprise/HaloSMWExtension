@@ -192,7 +192,9 @@ Resizeable.prototype = {
     this.element      = $(element);
     this.handle 	  = this.element;
 
-    Element.makePositioned(this.element); // fix IE    
+	if (this.element) {
+    	Element.makePositioned(this.element); // fix IE
+    }    
 
     this.options      = options;
 
