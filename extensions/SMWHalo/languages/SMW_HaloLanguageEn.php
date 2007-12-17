@@ -343,10 +343,13 @@ clicking the big arrows between the columns.',
 
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
-
-	'smw_exportontologybot' => 'Export ontology',	
-	'smw_gard_export_docu' => 'This bot exports the wiki ontology',
 	
+	/*Message for ExportOntologyBot*/
+	'smw_exportontologybot' => 'Export ontology',	
+	'smw_gard_export_docu' => 'This bot exports the wiki ontology in the OWL format.',
+	'smw_gard_export_enterpath' => 'Export file/path',
+	'smw_gard_export_onlyschema' => 'Export only schema',
+	'smw_gard_export_ns' => 'Export to namespace',
 
 	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',

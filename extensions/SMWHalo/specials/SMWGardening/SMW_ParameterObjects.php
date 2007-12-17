@@ -96,7 +96,7 @@
  	public function serializeAsHTML() {
  		$html = "<span id=\"parentOf_".$this->ID."\"><br>".$this->label;
  		$html .= ($this->options & SMW_GARD_PARAM_REQUIRED != 0) ? "*" : "";
- 		$html .= ": <input type=\"text\" name=\"".$this->ID."\" size=\"30\"/></span>";
+ 		$html .= ": <input type=\"text\" name=\"".$this->ID."\" size=\"30\" value=\"".$this->defaultValue."\"/></span>";
  		$html .= "<span id=\"errorOf_".$this->ID."\" class=\"errorText\"></span>";
  		return $html;
  	}

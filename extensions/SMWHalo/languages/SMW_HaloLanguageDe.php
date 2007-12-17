@@ -314,7 +314,13 @@ protected $smwUserMessages = array(
 
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
-
+	
+	/*Message for ExportOntologyBot*/
+	'smw_exportontologybot' => 'Exportiere Ontologie',	
+	'smw_gard_export_docu' => 'Dieser Bot exportiert die Wiki-Ontologie im OWL-Format.',
+	'smw_gard_export_enterpath' => 'Exportdatei/-pfad',
+	'smw_gard_export_onlyschema' => 'Exportiere nur das Schema',
+	'smw_gard_export_ns' => 'Exportiere in Namensraum',
 
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',

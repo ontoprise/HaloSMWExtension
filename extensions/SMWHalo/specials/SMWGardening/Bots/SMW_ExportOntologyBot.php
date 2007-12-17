@@ -9,11 +9,13 @@
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
  
  define('LINE_FEED', "\n");
+ define('DEFAULT_EXPORT_NS', 'http://www.halowiki.org');
  
  class ExportOntologyBot extends GardeningBot {
  	
  	
  	private $mapWikiTypeToXSD;
+ 	private $namespace;
  	
  	private $numOfCategories;
  	private $numOfInstances;
@@ -44,9 +46,10 @@
  	 * Returns an array of GardeningParamObjects
  	 */
  	public function createParameters() {
- 		$param1 = new GardeningParamString('GARD_EO_FILENAME', "Export file", SMW_GARD_PARAM_REQUIRED);
- 		$param2 = new GardeningParamBoolean('GARD_EO_ONLYSCHEMA', "Export only schema", SMW_GARD_PARAM_OPTIONAL, false);
- 		return array($param1, $param2);
+ 		$param1 = new GardeningParamString('GARD_EO_FILENAME', wfMsg('smw_gard_export_enterpath'), SMW_GARD_PARAM_REQUIRED);
+ 		$param2 = new GardeningParamString('GARD_EO_NAMESPACE', wfMsg('smw_gard_export_ns'), SMW_GARD_PARAM_REQUIRED, DEFAULT_EXPORT_NS);
+ 		$param3 = new GardeningParamBoolean('GARD_EO_ONLYSCHEMA', wfMsg('smw_gard_export_onlyschema'), SMW_GARD_PARAM_OPTIONAL, false);
+ 		return array($param1, $param2, $param3);
  	}
  	
  	/**
@@ -63,7 +66,18 @@
  		
  		// get bot parameters
  		$outputFile = urldecode($paramArray['GARD_EO_FILENAME']);
+ 		$this->namespace = urldecode($paramArray['GARD_EO_NAMESPACE']);
  		$exportOnlySchema = array_key_exists('GARD_EO_ONLYSCHEMA', $paramArray);
+ 		
+ 		// validate and correct the parameters if necessary
+ 		if ($outputFile == '') {
+ 			$outputFile = 'halowiki_export.owl';
+ 		}
+ 		if ($this->namespace == '') {
+ 			$this->namespace = DEFAULT_EXPORT_NS;
+ 		}
+ 		$path_parts = pathinfo($outputFile);
+ 		if (strtolower($path_parts['extension']) != 'owl') $outputFile .= '.owl';
  		
  		// open file and write headers
  		$handle = fopen($outputFile,"wb");
@@ -75,7 +89,7 @@
  		
  		$this->setNumberOfTasks($exportOnlySchema ? 2 : 3); 
  		
- 		// start to export things
+ 		// start to export the whole shit
  		print "\n\nExport Categories...\n";
  		$this->exportCategories($handle);
  		print "\n\nExport properties...\n";
@@ -97,15 +111,18 @@
  	
  	private function writeHeader($filehandle) {
  		$header = '<!DOCTYPE owl ['.LINE_FEED;
-   		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" > ]>'.LINE_FEED;
+   		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >'.LINE_FEED;
+   		$header .=	'<!ENTITY a  "'.$this->namespace.'#" >'.LINE_FEED;
+   		$header .=	'<!ENTITY prop  "'.$this->namespace.'/property#" >'.LINE_FEED;
+   		$header .=	'<!ENTITY cat  "'.$this->namespace.'/category#" > ]>'.LINE_FEED;
 		$header .=	'<rdf:RDF'.LINE_FEED;
-    	$header .=	'xmlns:a   ="http://www.halowiki.org#"'.LINE_FEED;
-    	$header .=	'xmlns:cat ="http://www.halowiki.org/category#"'.LINE_FEED;
-		$header .=	'xmlns:prop ="http://www.halowiki.org/property#"'.LINE_FEED;				
+    	$header .=	'xmlns:a   ="&a;"'.LINE_FEED;
+    	$header .=	'xmlns:cat ="&cat;"'.LINE_FEED;
+		$header .=	'xmlns:prop ="&prop;"'.LINE_FEED;				
     	$header .=	'xmlns:owl ="http://www.w3.org/2002/07/owl#"'.LINE_FEED;
 		$header .=	'xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"'.LINE_FEED;
 		$header .=	'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">'.LINE_FEED;
-		$header .=	'<owl:Ontology rdf:about="www.halowiki.org">'.LINE_FEED;
+		$header .=	'<owl:Ontology rdf:about="'.$this->namespace.'">'.LINE_FEED;
 		$header .=	'	<rdfs:comment>HaloWiki Export</rdfs:comment>'.LINE_FEED;
 		$header .=	'	<rdfs:label>HaloWiki Ontology</rdfs:label>'.LINE_FEED;
 		$header .=	'</owl:Ontology>'.LINE_FEED;
@@ -128,10 +145,10 @@
  		$counter = 0;
  		
  		// generate default root concept
- 		$owlCat = '<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
-		$owlCat .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.LINE_FEED;
-		$owlCat .= '</owl:Class>'.LINE_FEED;
-		fwrite($filehandle, $owlCat);
+ 		$owl = '<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
+		$owl .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.LINE_FEED;
+		$owl .= '</owl:Class>'.LINE_FEED;
+		fwrite($filehandle, $owl);
  		foreach($rootCategories as $rc) {
  			
  			if (smwfGetSemanticStore()->transitiveCat->equals($rc) 
@@ -141,11 +158,11 @@
  			}
  			
  			// export root categories
- 			$owlCat = '<owl:Class rdf:about="http://www.halowiki.org/category#'.$rc->getDBkey().'">'.LINE_FEED;
-			$owlCat .= '	<rdfs:label xml:lang="en">'.$rc->getText().'</rdfs:label>'.LINE_FEED;
-			$owlCat .= '	<rdfs:subClassOf rdf:resource="http://www.halowiki.org/category#DefaultRootConcept" />'.LINE_FEED;
-			$owlCat .= '</owl:Class>'.LINE_FEED;
-			fwrite($filehandle, $owlCat);
+ 			$owl = '<owl:Class rdf:about="&cat;'.$rc->getDBkey().'">'.LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.$rc->getText().'</rdfs:label>'.LINE_FEED;
+			$owl .= '	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />'.LINE_FEED;
+			$owl .= '</owl:Class>'.LINE_FEED;
+			fwrite($filehandle, $owl);
 			$visitedNodes = array();
 			
 			$this->exportSubcategories($filehandle, $rc, $visitedNodes, $counter);
@@ -195,12 +212,12 @@
  			
  			// define member categories. If there is no, put it to DefaultRootConcept by default
 	 		$categories = smwfGetSemanticStore()->getCategoriesForInstance($inst);
- 			$owlInst = '<owl:Thing rdf:about="http://www.halowiki.org#'.smwfXMLContentEncode($inst->getDBkey()).'">'.LINE_FEED;
+ 			$owl = '<owl:Thing rdf:about="&a;'.smwfXMLContentEncode($inst->getDBkey()).'">'.LINE_FEED;
 	 		if (count($categories) == 0) {
-	 			$owlInst .= '	<rdf:type rdf:resource="http://www.halowiki.org/category#DefaultRootConcept"/>'.LINE_FEED;
+	 			$owl .= '	<rdf:type rdf:resource="&cat;DefaultRootConcept"/>'.LINE_FEED;
 	 		} else {
 	 			foreach($categories as $category) {
-	 				$owlInst .= '	<rdf:type rdf:resource="http://www.halowiki.org/category#'.smwfXMLContentEncode($category->getDBkey()).'"/>'.LINE_FEED;
+	 				$owl .= '	<rdf:type rdf:resource="&cat;'.smwfXMLContentEncode($category->getDBkey()).'"/>'.LINE_FEED;
 	 			}
 	 		}
  			$properties = smwfGetStore()->getProperties($inst);
@@ -218,24 +235,24 @@
 						
 							$targetLocal = preg_replace("/\"/", "", $target->getDBkey());
 							
-							if ($target!=NULL) $owlInst .= '	<prop:'.$propertyLocal.' rdf:resource="http://www.halowiki.org#'.$targetLocal.'"/>'.LINE_FEED;
+							if ($target!=NULL) $owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.$targetLocal.'"/>'.LINE_FEED;
 						
 		 			} else { // and all others as datatype properties (including n-aries)
 		 										
 							if ($smwValue->getUnit() != NULL && $smwValue->getUnit() != '') {
 								// special handling for units
-								$owlInst .= $this->exportSI($p, $smwValue);
+								$owl .= $this->exportSI($p, $smwValue);
 							} else {
 			 					$xsdType = $this->mapWikiTypeToXSD[$smwValue->getTypeID()] == NULL ? 'string' : $this->mapWikiTypeToXSD[$smwValue->getTypeID()];
 			 					$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
-			 					$owlInst .= '	<prop:'.$propertyLocal.' rdf:datatype="http://www.w3.org/2001/XMLSchema#'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
+			 					$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
 							}
 						
 		 			}
  				}
  			}
- 			$owlInst .= '</owl:Thing>'.LINE_FEED;
- 			fwrite($filehandle, $owlInst);
+ 			$owl .= '</owl:Thing>'.LINE_FEED;
+ 			fwrite($filehandle, $owl);
 	 		$counter++;
  			$this->worked(1);
  		}
@@ -297,12 +314,12 @@
  			}
  			if ($firstType == '_wpg') {
  				// wikipage properties will be exported as ObjectProperties
- 				$owlCat = $this->exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard);
+ 				$owl = $this->exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard);
  			} else { //TODO: how to handle n-aries? for the moment export them as string attributes
- 				$owlCat = $this->exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard);
+ 				$owl = $this->exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard);
  			}
  			
- 			fwrite($filehandle, $owlCat);
+ 			fwrite($filehandle, $owl);
  			
  			$this->printProgress($counter, $this->numOfProperties);
  		}
@@ -318,16 +335,16 @@
  			}
  			$directSuperCategories = smwfGetSemanticStore()->getDirectSuperCategories($c);
  			
- 			$owlCat = '<owl:Class rdf:about="http://www.halowiki.org/category#'.$c->getDBkey().'">'.LINE_FEED;
-			$owlCat .= '	<rdfs:label xml:lang="en">'.$c->getText().'</rdfs:label>'.LINE_FEED;
+ 			$owl = '<owl:Class rdf:about="&cat;'.$c->getDBkey().'">'.LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.$c->getText().'</rdfs:label>'.LINE_FEED;
 			foreach($directSuperCategories as $sc) {
-				$owlCat .= '	<rdfs:subClassOf rdf:resource="http://www.halowiki.org/category#'.$sc->getDBkey().'" />'.LINE_FEED;
+				$owl .= '	<rdfs:subClassOf rdf:resource="&cat;'.$sc->getDBkey().'" />'.LINE_FEED;
 			}
 			
-			$owlCat .= '</owl:Class>'.LINE_FEED;
+			$owl .= '</owl:Class>'.LINE_FEED;
 			
 			
-			fwrite($filehandle, $owlCat);
+			fwrite($filehandle, $owl);
 			if ($counter < $this->numOfCategories) {
 				$counter++;
 				$this->worked(1);
@@ -346,30 +363,30 @@
  		$xsdType = $this->mapWikiTypeToXSD[$firstType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$firstType];
  		
  		// export as subproperty 	
-		$owlCat = '<owl:DatatypeProperty rdf:about="http://www.halowiki.org/property#'.$rp->getDBkey().'">'.LINE_FEED;
+		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.$rp->getDBkey().'">'.LINE_FEED;
 		foreach($directSuperProperties as $dsp) {
- 			$owlCat .= '	<rdfs:subPropertyOf rdf:resource="http://www.halowiki.org/property#'.$dsp->getDBkey().'"/>'.LINE_FEED;
+ 			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.$dsp->getDBkey().'"/>'.LINE_FEED;
  		}
- 		$owlCat .= '</owl:DatatypeProperty>'.LINE_FEED;
+ 		$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
  		
  		// read all domains/ranges
  		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  		if ($domainRange == NULL || count($domainRange) == 0) {
  			// if no domainRange annotation exists, export as property of DefaultRootConcept
-			$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
-			$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
-			$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-			$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$rp->getDBkey().'" />'.LINE_FEED;
-			$owlCat .= '				<owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#'.$xsdType.'" />'.LINE_FEED;
-			$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-			$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
+			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
+			$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
+			$owl .= '			<owl:Restriction>'.LINE_FEED; 
+			$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+			$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
+			$owl .= '			</owl:Restriction>'.LINE_FEED;
+			$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 			if ($maxCard != NULL) {
-				$owlCat .= $this->exportMaxCard($rp, $maxCard);
+				$owl .= $this->exportMaxCard($rp, $maxCard);
 			}
 			if ($minCard != NULL) {
-				$owlCat .= $this->exportMinCard($rp, $minCard);
+				$owl .= $this->exportMinCard($rp, $minCard);
 			}
-			$owlCat .= '</owl:Class>'.LINE_FEED;
+			$owl .= '</owl:Class>'.LINE_FEED;
  		} else {
 	 			
 	 		foreach($domainRange as $dr) {
@@ -378,66 +395,66 @@
 		 		if ($domain == NULL) continue;
 		 		$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
 			
-				$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#'.$domain.'">'.LINE_FEED;
-				$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
-				$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-				$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$rp->getDBkey().'" />'.LINE_FEED;
-				$owlCat .= '				<owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#'.$xsdType.'" />'.LINE_FEED;
-				$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-				$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '	<owl:Class rdf:about="&cat;'.$domain.'">'.LINE_FEED;
+				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '			<owl:Restriction>'.LINE_FEED; 
+				$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+				$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
+				$owl .= '			</owl:Restriction>'.LINE_FEED;
+				$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 				if ($maxCard != NULL) {
-					$owlCat .= $this->exportMaxCard($rp, $maxCard);
+					$owl .= $this->exportMaxCard($rp, $maxCard);
 				}
 				if ($minCard != NULL) {
-					$owlCat .= $this->exportMinCard($rp, $minCard);
+					$owl .= $this->exportMinCard($rp, $minCard);
 				}
-				$owlCat .= '</owl:Class>'.LINE_FEED;
+				$owl .= '</owl:Class>'.LINE_FEED;
 	 		}
 	 				
  		}
-		return $owlCat;
+		return $owl;
  	}
  	
  	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
  				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOf);
  				
  				// export as symmetrical property
- 				$owlCat = '<owl:ObjectProperty rdf:about="http://www.halowiki.org/property#'.$rp->getDBkey().'">'.LINE_FEED;
+ 				$owl = '<owl:ObjectProperty rdf:about="&prop;'.$rp->getDBkey().'">'.LINE_FEED;
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->symetricalCat)) {
- 					$owlCat .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.LINE_FEED;
+ 					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.LINE_FEED;
  				}
  				// export as transitive property
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->transitiveCat)) {
- 					$owlCat .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>'.LINE_FEED;
+ 					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>'.LINE_FEED;
  				}
  				
  				// export as subproperty
  				foreach($directSuperProperties as $dsp) {
- 					$owlCat .= '	<rdfs:subPropertyOf rdf:resource="http://www.halowiki.org/property#'.$dsp->getDBkey().'"/>'.LINE_FEED;
+ 					$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.$dsp->getDBkey().'"/>'.LINE_FEED;
  				}
  				
  				// export as inverse property
  				foreach($inverseRelations as $inv) {
  					if (!($inv instanceof SMWWikiPageValue)) continue;
- 					$owlCat .= '	<owl:inverseOf rdf:resource="http://www.halowiki.org/property#'.$inv->getTitle()->getDBkey().'"/>'.LINE_FEED;
+ 					$owl .= '	<owl:inverseOf rdf:resource="&prop;'.$inv->getTitle()->getDBkey().'"/>'.LINE_FEED;
  				}
- 				$owlCat .= '</owl:ObjectProperty>'.LINE_FEED;
+ 				$owl .= '</owl:ObjectProperty>'.LINE_FEED;
  				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  				if ($domainRange == NULL || count($domainRange) == 0) {
  					// if no domainRange annotation exists, export as property of DefaultRootConcept
-			 				$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
-			 				$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
-			 				$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-							$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$rp->getDBkey().'" />'.LINE_FEED;
-							$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-							$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
+			 				$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
+			 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
+			 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+							$owl .= '			</owl:Restriction>'.LINE_FEED;
+							$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 							if ($maxCard != NULL) {
-								$owlCat .= $this->exportMaxCard($rp, $maxCard);
+								$owl .= $this->exportMaxCard($rp, $maxCard);
 							}
 							if ($minCard != NULL) {
-								$owlCat .= $this->exportMinCard($rp, $minCard);
+								$owl .= $this->exportMinCard($rp, $minCard);
 							}
-							$owlCat .= '</owl:Class>'.LINE_FEED;
+							$owl .= '</owl:Class>'.LINE_FEED;
  				} else {
 	 				
 	 				
@@ -447,44 +464,44 @@
 		 					if ($domain == NULL) continue;
 		 					$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
 		 				
-			 				$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#'.$domain.'">'.LINE_FEED;
-			 				$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
-			 				$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-							$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$rp->getDBkey().'" />'.LINE_FEED;
-							if ($range != '') $owlCat .= '				<owl:allValuesFrom rdf:resource="http://www.halowiki.org/category#'.$range.'" />'.LINE_FEED;
-							$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-							$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
+			 				$owl .= '	<owl:Class rdf:about="&cat;'.$domain.'">'.LINE_FEED;
+			 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
+			 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+							if ($range != '') $owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.$range.'" />'.LINE_FEED;
+							$owl .= '			</owl:Restriction>'.LINE_FEED;
+							$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 							if ($maxCard != NULL) {
-								$owlCat .= $this->exportMaxCard($rp, $maxCard);
+								$owl .= $this->exportMaxCard($rp, $maxCard);
 							}
 							if ($minCard != NULL) {
-								$owlCat .= $this->exportMinCard($rp, $minCard);
+								$owl .= $this->exportMinCard($rp, $minCard);
 							}
-							$owlCat .= '</owl:Class>'.LINE_FEED;
+							$owl .= '</owl:Class>'.LINE_FEED;
 	 					}
 	 				
  				}
-				return $owlCat;
+				return $owl;
  	}
  	
  	private function exportMinCard($property, $minCard) {
- 		$owlCat = '		<rdfs:subClassOf>'.LINE_FEED;
-		$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-		$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$property->getDBkey().'" />'.LINE_FEED;
-		$owlCat .= '				 <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.LINE_FEED;
-		$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-		$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
-		return $owlCat;
+ 		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
+		$owl .= '			<owl:Restriction>'.LINE_FEED; 
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.$property->getDBkey().'" />'.LINE_FEED;
+		$owl .= '				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.LINE_FEED;
+		$owl .= '			</owl:Restriction>'.LINE_FEED;
+		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+		return $owl;
  	}
  	
  	private function exportMaxCard($property, $maxCard) {
- 		$owlCat = '		<rdfs:subClassOf>'.LINE_FEED;
-		$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
-		$owlCat .= '				<owl:onProperty rdf:resource="http://www.halowiki.org/property#'.$property->getDBkey().'" />'.LINE_FEED;
-		$owlCat .= '				 <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.LINE_FEED;
-		$owlCat .= '			</owl:Restriction>'.LINE_FEED;
-		$owlCat .= '		</rdfs:subClassOf>'.LINE_FEED;
-		return $owlCat;
+ 		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
+		$owl .= '			<owl:Restriction>'.LINE_FEED; 
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.$property->getDBkey().'" />'.LINE_FEED;
+		$owl .= '				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.LINE_FEED;
+		$owl .= '			</owl:Restriction>'.LINE_FEED;
+		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+		return $owl;
  	}
  	
  	/**
@@ -508,7 +525,7 @@
 					list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
 					$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 					if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-						return "\t\t<" . $pt->getDBkey() . ' rdf:datatype="http://www.w3.org/2001/XMLSchema#float">' . smwfXMLContentEncode($dv->getXSDValue()) . '</' . $pt->getDBkey() . ">\n";
+						return "\t\t<" . $pt->getDBkey() . ' rdf:datatype="&xsd;float">' . smwfXMLContentEncode($dv->getXSDValue()) . '</' . $pt->getDBkey() . ">\n";
 					}
 
 			}
