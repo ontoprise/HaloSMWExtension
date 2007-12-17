@@ -60,25 +60,33 @@
  			return "Export ontology bot should not be done synchronously!";
  		}
  		echo "\nStart export...";
- 		$outputFile = urldecode($paramArray['GARD_EO_FILENAME']);
  		
+ 		// get bot parameters
+ 		$outputFile = urldecode($paramArray['GARD_EO_FILENAME']);
+ 		$exportOnlySchema = array_key_exists('GARD_EO_ONLYSCHEMA', $paramArray);
+ 		
+ 		// open file and write headers
  		$handle = fopen($outputFile,"wb");
  		$this->writeHeader($handle);
  		
+ 		// obtain complete number of categories
  		$db =& wfGetDB( DB_MASTER );
  		$this->numOfCategories = $db->selectField($db->tableName('page'), 'COUNT(page_id)', 'page_namespace = '.NS_CATEGORY) - 2; // 2 builtin categories
  		
+ 		$this->setNumberOfTasks($exportOnlySchema ? 2 : 3); 
+ 		
+ 		// start to export things
  		print "\n\nExport Categories...\n";
  		$this->exportCategories($handle);
  		print "\n\nExport properties...\n";
  		$this->exportProperties($handle);
- 		
- 		
- 		if (!array_key_exists('GARD_EO_ONLYSCHEMA', $paramArray)) {
+ 		 		
+ 		if (!$exportOnlySchema) {
  			print "\n\nExport Instances...\n";
  			$this->exportInstances($handle);
  		}
  		
+ 		// write footer and close
  		$this->writeFooter($handle);
 	 	fclose($handle);
 	 	 
@@ -115,8 +123,11 @@
  	 * @param $filehandle handle for a text file.
  	 */
  	private function exportCategories($filehandle) {
+ 		$this->addSubTask($this->numOfCategories);
  		$rootCategories = smwfGetSemanticStore()->getRootCategories();
  		$counter = 0;
+ 		
+ 		// generate default root concept
  		$owlCat = '<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
 		$owlCat .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.LINE_FEED;
 		$owlCat .= '</owl:Class>'.LINE_FEED;
@@ -129,6 +140,7 @@
  						continue;
  			}
  			
+ 			// export root categories
  			$owlCat = '<owl:Class rdf:about="http://www.halowiki.org/category#'.$rc->getDBkey().'">'.LINE_FEED;
 			$owlCat .= '	<rdfs:label xml:lang="en">'.$rc->getText().'</rdfs:label>'.LINE_FEED;
 			$owlCat .= '	<rdfs:subClassOf rdf:resource="http://www.halowiki.org/category#DefaultRootConcept" />'.LINE_FEED;
@@ -175,10 +187,13 @@
  		$instances = smwfGetSemanticStore()->getPages(array(NS_MAIN));
  		$counter = 0;
  		$this->numOfInstances = count($instances);
+ 		$this->addSubTask($this->numOfInstances);
  		foreach($instances as $inst) {
  			if ($counter % 10 == 0) {
  				$this->printProgress($counter, $this->numOfInstances);
  			}
+ 			
+ 			// define member categories. If there is no, put it to DefaultRootConcept by default
 	 		$categories = smwfGetSemanticStore()->getCategoriesForInstance($inst);
  			$owlInst = '<owl:Thing rdf:about="http://www.halowiki.org#'.smwfXMLContentEncode($inst->getDBkey()).'">'.LINE_FEED;
 	 		if (count($categories) == 0) {
@@ -190,11 +205,14 @@
 	 		}
  			$properties = smwfGetStore()->getProperties($inst);
  			
+ 			// export properties
  			foreach($properties as $p) {
+ 				// create valid xml export ID for property. If no exists, skip it.
  				$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getDBkey());
  				if ($propertyLocal == NULL) continue;
  				$values = smwfGetStore()->getPropertyValues($inst, $p);
  				foreach($values as $smwValue) {
+ 					// export WikiPage value as ObjectProperty
 					if ($smwValue instanceof SMWWikiPageValue) {
 						$target = $smwValue->getTitle();
 						
@@ -202,10 +220,10 @@
 							
 							if ($target!=NULL) $owlInst .= '	<prop:'.$propertyLocal.' rdf:resource="http://www.halowiki.org#'.$targetLocal.'"/>'.LINE_FEED;
 						
-		 			} else {
-		 				
-							
+		 			} else { // and all others as datatype properties (including n-aries)
+		 										
 							if ($smwValue->getUnit() != NULL && $smwValue->getUnit() != '') {
+								// special handling for units
 								$owlInst .= $this->exportSI($p, $smwValue);
 							} else {
 			 					$xsdType = $this->mapWikiTypeToXSD[$smwValue->getTypeID()] == NULL ? 'string' : $this->mapWikiTypeToXSD[$smwValue->getTypeID()];
@@ -219,7 +237,7 @@
  			$owlInst .= '</owl:Thing>'.LINE_FEED;
  			fwrite($filehandle, $owlInst);
 	 		$counter++;
- 			
+ 			$this->worked(1);
  		}
  		$this->printProgress($counter, $this->numOfInstances);
  	}
@@ -237,9 +255,10 @@
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$counter = 0;
  		$this->numOfProperties = count($properties);
+ 		$this->addSubTask($this->numOfProperties);
  		foreach($properties as $rp) {
  			$counter++;
- 			
+ 			$this->worked(1);
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($rp) 
  					|| smwfGetSemanticStore()->minCard->equals($rp) 
  					|| smwfGetSemanticStore()->maxCard->equals($rp)
@@ -248,6 +267,7 @@
  						continue;
  			}
  			
+ 			// obtain cardinalities
  			$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCard);
  			if ($maxCards != NULL || count($maxCards) > 0) {
  				$maxCard = intval($maxCards[0]->getXSDValue());
@@ -264,8 +284,10 @@
  				$minCard = NULL;
  			}
  			
+ 			// obtain direct super properties
  			$directSuperProperties = smwfGetSemanticStore()->getDirectSuperProperties($rp);
  			
+ 			// decide what to export by reading property type
  			$type = smwfGetStore()->getSpecialValues($rp, SMW_SP_HAS_TYPE);
  			if ($type == NULL || count($type) == 0) {
  				// default type: binary relation
@@ -274,6 +296,7 @@
  				$firstType = $type[0]->getID;
  			}
  			if ($firstType == '_wpg') {
+ 				// wikipage properties will be exported as ObjectProperties
  				$owlCat = $this->exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard);
  			} else { //TODO: how to handle n-aries? for the moment export them as string attributes
  				$owlCat = $this->exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard);
@@ -307,9 +330,11 @@
 			fwrite($filehandle, $owlCat);
 			if ($counter < $this->numOfCategories) {
 				$counter++;
+				$this->worked(1);
 				$this->printProgress($counter, $this->numOfCategories);
 			}
 			
+			// depth-first in category tree
 			$this->exportSubcategories($filehandle, $c, $visitedNodes, $counter);
  		}
  		array_pop($visitedNodes);
@@ -319,15 +344,18 @@
  	
  	private function exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard) {
  		$xsdType = $this->mapWikiTypeToXSD[$firstType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$firstType];
- 				
+ 		
+ 		// export as subproperty 	
 		$owlCat = '<owl:DatatypeProperty rdf:about="http://www.halowiki.org/property#'.$rp->getDBkey().'">'.LINE_FEED;
 		foreach($directSuperProperties as $dsp) {
  			$owlCat .= '	<rdfs:subPropertyOf rdf:resource="http://www.halowiki.org/property#'.$dsp->getDBkey().'"/>'.LINE_FEED;
  		}
  		$owlCat .= '</owl:DatatypeProperty>'.LINE_FEED;
+ 		
+ 		// read all domains/ranges
  		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  		if ($domainRange == NULL || count($domainRange) == 0) {
- 					
+ 			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
 			$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
 			$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
@@ -373,17 +401,22 @@
  	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
  				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOf);
  				
+ 				// export as symmetrical property
  				$owlCat = '<owl:ObjectProperty rdf:about="http://www.halowiki.org/property#'.$rp->getDBkey().'">'.LINE_FEED;
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->symetricalCat)) {
  					$owlCat .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.LINE_FEED;
  				}
+ 				// export as transitive property
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->transitiveCat)) {
  					$owlCat .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>'.LINE_FEED;
  				}
  				
+ 				// export as subproperty
  				foreach($directSuperProperties as $dsp) {
  					$owlCat .= '	<rdfs:subPropertyOf rdf:resource="http://www.halowiki.org/property#'.$dsp->getDBkey().'"/>'.LINE_FEED;
  				}
+ 				
+ 				// export as inverse property
  				foreach($inverseRelations as $inv) {
  					if (!($inv instanceof SMWWikiPageValue)) continue;
  					$owlCat .= '	<owl:inverseOf rdf:resource="http://www.halowiki.org/property#'.$inv->getTitle()->getDBkey().'"/>'.LINE_FEED;
@@ -391,6 +424,7 @@
  				$owlCat .= '</owl:ObjectProperty>'.LINE_FEED;
  				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  				if ($domainRange == NULL || count($domainRange) == 0) {
+ 					// if no domainRange annotation exists, export as property of DefaultRootConcept
 			 				$owlCat .= '	<owl:Class rdf:about="http://www.halowiki.org/category#DefaultRootConcept">'.LINE_FEED;
 			 				$owlCat .= '		<rdfs:subClassOf>'.LINE_FEED;
 			 				$owlCat .= '			<owl:Restriction>'.LINE_FEED; 
