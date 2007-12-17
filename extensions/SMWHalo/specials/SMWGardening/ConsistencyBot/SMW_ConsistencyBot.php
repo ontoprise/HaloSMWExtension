@@ -41,8 +41,8 @@
  	 * Returns an array mapping parameter IDs to parameter objects
  	 */
  	public function createParameters() {
- 		$param1 = new GardeningParamBoolean('CONSISTENCY_BOT_REPLACE_REDIRECTS', wfMsg('smw_gard_param_replaceredirects'), SMW_GARD_PARAM_OPTIONAL, false );
- 		return array($param1);
+ 		//$param1 = new GardeningParamBoolean('CONSISTENCY_BOT_REPLACE_REDIRECTS', wfMsg('smw_gard_param_replaceredirects'), SMW_GARD_PARAM_OPTIONAL, false );
+ 		return array();
  	}
  	
  	/**
@@ -60,9 +60,9 @@
  		$this->setNumberOfTasks(8); // 8 single tasks
  		
  		// Replace redirect annotations
- 		if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
- 			smwfGetSemanticStore()->replaceRedirectAnnotations(true);
- 		}
+ 		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
+ 		smwfGetSemanticStore()->replaceRedirectAnnotations(true);
+ 		//}
  		
  		// Schema level checks
  		// first, check if there are cycles in the inheritance graphs
@@ -113,7 +113,7 @@
  	private function checkAnnotationLevel($delay) {
  		
  		$alc = new AnnotationLevelConsistency($this, $delay);
- 		$alc->checkPropertyAnnotations();
+ 		$alc->checkAllPropertyAnnotations();
  		$alc->checkAnnotationCardinalities();
  		$alc->checkUnits();
  		

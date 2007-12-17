@@ -37,7 +37,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	/**
  	 * Checks if property annotations uses schema consistent values
  	 */
- 	public function checkPropertyAnnotations() {
+ 	public function checkAllPropertyAnnotations() {
  		global $smwgContLang;
  	 		
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
@@ -46,7 +46,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		$cnt = 0;
  		print "\n";
  		$this->bot->addSubTask(count($properties));
- 		foreach($properties as $r) {
+ 		foreach($properties as $p) {
  			if ($this->delay > 0) {
  				usleep($this->delay);
  			}
@@ -56,33 +56,41 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
  			}
  			
- 			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($r) 
- 					|| smwfGetSemanticStore()->minCard->equals($r) 
- 					|| smwfGetSemanticStore()->maxCard->equals($r)
- 					|| smwfGetSemanticStore()->inverseOf->equals($r)) {
+ 			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($p) 
+ 					|| smwfGetSemanticStore()->minCard->equals($p) 
+ 					|| smwfGetSemanticStore()->maxCard->equals($p)
+ 					|| smwfGetSemanticStore()->inverseOf->equals($p)) {
  						// ignore builtin properties
  						continue;
  			}
  			
- 			// get domain and range categories of property
- 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($r, smwfGetSemanticStore()->domainRangeHintRelation);
+ 			// get annotation subjects for the property.
+ 			$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p);
+ 			
+ 			$this->checkPropertyAnnotations($allPropertySubjects, $p);
+ 			
+ 		}
+ 		
+ 	}
+ 	
+ 	private function checkPropertyAnnotations(& $subjects, $property) {
+ 		// get domain and range categories of property
+ 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintRelation);
  			
  			
  			if (empty($domainRangeAnnotations)) {
  				// if there are no range categories defined, try to find a super relation with defined range categories
- 				$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $r);
+ 				$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $property);
  			}
  			
  			if (empty($domainRangeAnnotations)) {
  				// if it's still empty, there's no domain or range defined at all. In this case, simply skip it in order not to pollute the consistency log.
- 				continue;
+ 				return;
  			}
  			
- 			// get annotation subjects for the property.
- 			$allRelationSubjects = smwfGetStore()->getAllPropertySubjects($r);
- 			
+ 			 			
  			// iterate over all property subjects
- 			foreach($allRelationSubjects as $subject) { 
+ 			foreach($subjects as $subject) { 
  				
  				if ($subject == null) {
  					continue;
@@ -92,12 +100,12 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				
  				list($domain_cov_results, $domainCorrect) = $this->checkDomain($categoriesOfSubject, $domainRangeAnnotations);
 				if (!$domainCorrect) {
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $r );
+					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_DOMAIN_VALUE, $subject, $property );
 					
 				}
 				
  				// get property value for a given instance
- 				$relationTargets = smwfGetStore()->getPropertyValues($subject, $r);
+ 				$relationTargets = smwfGetStore()->getPropertyValues($subject, $property);
  				
  				foreach($relationTargets as $target) {
  					
@@ -112,7 +120,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 						$rangeCorrect = $this->checkRange(NULL, $categoriesOfObject, $domainRangeAnnotations);
 	 					}
  						if (!$rangeCorrect) {
- 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
+ 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $property, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
  						}	 						
  						
  					} else if ($target instanceof SMWNAryValue) { // n-ary relation
@@ -123,7 +131,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  								//get all range instances and check if their categories are subcategories of the range categories.
  								for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
  									if ($explodedValues[$i] == NULL) {
- 										$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $r, $i);
+ 										$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
  										
  									} else {
  										
@@ -137,7 +145,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 						 						$rangeCorrect = $this->checkRange(NULL, $categoriesOfObject, $domainRangeAnnotations);
 						 					}
 					 						if (!$rangeCorrect) {
-					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $r, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
+					 							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $property, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
 					 						}	
  										}
  									}
@@ -153,8 +161,6 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  									
  				} 
  			}
- 		}
- 		
  	}
  	
  	/**
@@ -335,32 +341,29 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			$conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
  			$si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
  			
- 			$correct_unit = false;
  			foreach($units as $u) {
+ 				
+	 			$correct_unit = false;
  				if ($u == NULL) continue;
  				foreach($conversion_factors as $c) {
- 					$correct_unit |= $this->unitMatches($u, $c);
+ 					$correct_unit |= preg_match("/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+".preg_quote($u)."/", $c) > 0;
  				}
  				foreach($si_conversion_factors as $c) {
- 					$correct_unit |= $this->unitMatches($u, $c);
+ 					$correct_unit |= preg_match("/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+".preg_quote($u)."/", $c) > 0;
  				}
- 			}
- 			if (!$correct_unit) {
- 				$annotations = smwfGetSemanticStore()->getAnnotationsWithUnit($type, $u);
  			
- 				foreach($annotations as $a) {
- 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $a[0], $a[1], $u);
- 				}
+	 			if (!$correct_unit) {
+	 				
+	 				$annotations = smwfGetSemanticStore()->getAnnotationsWithUnit($type, $u);
+	 			
+	 				foreach($annotations as $a) {
+	 					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $a[0], $a[1], $u);
+	 				}
+	 			}
  			}
  		}
  	}
  	
- 	private function unitMatches($unit, $con_fac) {
- 		$matches = array();
- 		preg_match("/(\d*\.?\d+)(.*)/", $con_fac, $matches);
- 		return (strtolower(trim($matches[2][0])) == strtolower($unit));
- 	}
- 	
- 	
+ 	 	
  }
 ?>
