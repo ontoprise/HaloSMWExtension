@@ -71,7 +71,7 @@ var Droppables = {
       ((!drop.accept) ||
         (Element.classNames(element).detect( 
           function(v) { return drop.accept.include(v) } ) )) &&
-      Position.within(drop.element, point[0], point[1]) );
+      Position.withinIncludingScrolloffsets(drop.element, point[0], point[1]) );
   },
 
   deactivate: function(drop) {
@@ -100,7 +100,7 @@ var Droppables = {
 
     if(this.last_active && this.last_active != drop) this.deactivate(this.last_active);
     if (drop) {
-      Position.within(drop.element, point[0], point[1]);
+      Position.withinIncludingScrolloffsets(drop.element, point[0], point[1]);
       if(drop.onHover)
         drop.onHover(element, drop.element, Position.overlap(drop.overlap, drop.element));
       
