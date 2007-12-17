@@ -1521,7 +1521,7 @@ OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 		this.minCardValidator = null;
 		this.rangeValidators = [];
 		
-		this.builtinTypes = null;
+		this.builtinTypes = [];
 		this.count = 0;
 		
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
@@ -1692,14 +1692,24 @@ OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	 */
 	requestTypes: function() {
 				
-		function fillTypesCallback(request) {
-			this.builtinTypes = request.responseText.split(",");
+		function fillBuiltinTypesCallback(request) {
+			this.builtinTypes = this.builtinTypes.concat(request.responseText.split(","));
 			
+		}
+		
+		function fillUserTypesCallback(request) {
+			var userTypes = request.responseText.split(",");
+			// remove first element
+			userTypes.shift();
+			this.builtinTypes = this.builtinTypes.concat(userTypes);
 		}
 		
 		sajax_do_call('smwfGetBuiltinDatatypes', 
 		              [], 
-		              fillTypesCallback.bind(this));	
+		              fillBuiltinTypesCallback.bind(this));	
+		sajax_do_call('smwfGetUserDatatypes', 
+		              [], 
+		              fillUserTypesCallback.bind(this));	
 	},
 	
 	/**
