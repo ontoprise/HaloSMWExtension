@@ -588,7 +588,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
 		
 		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
-							'JOIN '.$smw_specialprops.' s2 ON s1.value_string = s2.subject_title ' .
+							'JOIN '.$smw_specialprops.' s2 ON LOCATE(s2.subject_title, s1.value_string) > 0 ' .
 							'JOIN '.$page.' ON s1.subject_id = page_id ' .
 							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
 							' AND s2.value_string REGEXP '.$db->addQuotes('([0-9].?[0-9]*|,) '.$typeLabel.'(,|$)').
