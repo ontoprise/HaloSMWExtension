@@ -46,10 +46,9 @@
  	 * Returns an array of GardeningParamObjects
  	 */
  	public function createParameters() {
- 		$param1 = new GardeningParamString('GARD_EO_FILENAME', wfMsg('smw_gard_export_enterpath'), SMW_GARD_PARAM_REQUIRED);
- 		$param2 = new GardeningParamString('GARD_EO_NAMESPACE', wfMsg('smw_gard_export_ns'), SMW_GARD_PARAM_REQUIRED, DEFAULT_EXPORT_NS);
- 		$param3 = new GardeningParamBoolean('GARD_EO_ONLYSCHEMA', wfMsg('smw_gard_export_onlyschema'), SMW_GARD_PARAM_OPTIONAL, false);
- 		return array($param1, $param2, $param3);
+ 		$param1 = new GardeningParamString('GARD_EO_NAMESPACE', wfMsg('smw_gard_export_ns'), SMW_GARD_PARAM_REQUIRED, DEFAULT_EXPORT_NS);
+ 		$param2 = new GardeningParamBoolean('GARD_EO_ONLYSCHEMA', wfMsg('smw_gard_export_onlyschema'), SMW_GARD_PARAM_OPTIONAL, false);
+ 		return array($param1, $param2);
  	}
  	
  	/**
@@ -64,29 +63,25 @@
  		}
  		echo "\nStart export...";
  		
+ 		// create output directory and generate output filename
+ 		$wikiexportDir = __FILE__."/../../../../wikiexport";
+ 		if (!file_exists($wikiexportDir)) mkdir($wikiexportDir);
+ 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
+ 		
  		// get bot parameters
- 		$outputFile = urldecode($paramArray['GARD_EO_FILENAME']);
  		$this->namespace = urldecode($paramArray['GARD_EO_NAMESPACE']);
  		$exportOnlySchema = array_key_exists('GARD_EO_ONLYSCHEMA', $paramArray);
  		
  		// validate and correct the parameters if necessary
- 		if ($outputFile == '') {
- 			$outputFile = 'halowiki_export.owl';
- 		}
- 		if ($this->namespace == '') {
+ 		if ($this->namespace == '') { // should not happen because it is required
  			$this->namespace = DEFAULT_EXPORT_NS;
  		}
- 		$path_parts = pathinfo($outputFile);
- 		if (strtolower($path_parts['extension']) != 'owl') $outputFile .= '.owl';
- 		
+ 		 		
  		// open file and write headers
- 		$handle = fopen($outputFile,"wb");
+ 		$handle = fopen($wikiexportDir."/".$outputFile,"wb");
  		$this->writeHeader($handle);
  		
- 		// obtain complete number of categories
- 		$db =& wfGetDB( DB_MASTER );
- 		$this->numOfCategories = $db->selectField($db->tableName('page'), 'COUNT(page_id)', 'page_namespace = '.NS_CATEGORY) - 2; // 2 builtin categories
- 		
+ 		// set number of subtasks for progress indication 		
  		$this->setNumberOfTasks($exportOnlySchema ? 2 : 3); 
  		
  		// start to export the whole shit
@@ -104,9 +99,13 @@
  		$this->writeFooter($handle);
 	 	fclose($handle);
 	 	 
-	 	$successMessage = "\n\n --- Export to '$outputFile' was successful! ---\n\n";
+	 	$successMessage = "\n\nExport was successful!";
 	 	
-	 	return $successMessage;
+	 	// create download link
+	 	global $wgServer, $wgScriptPath;
+	 	$downloadLink = "\nClick [".$wgServer.$wgScriptPath."/extensions/SMWHalo/wikiexport/$outputFile here] to download wiki export as OWL file.\n";
+	 	
+	 	return $successMessage.$downloadLink;
  	}
  	
  	private function writeHeader($filehandle) {
@@ -140,6 +139,10 @@
  	 * @param $filehandle handle for a text file.
  	 */
  	private function exportCategories($filehandle) {
+ 		// obtain complete number of categories
+ 		$db =& wfGetDB( DB_MASTER );
+ 		$this->numOfCategories = $db->selectField($db->tableName('page'), 'COUNT(page_id)', 'page_namespace = '.NS_CATEGORY) - 2; // 2 builtin categories
+ 		
  		$this->addSubTask($this->numOfCategories);
  		$rootCategories = smwfGetSemanticStore()->getRootCategories();
  		$counter = 0;
@@ -169,31 +172,7 @@
  		}
  	}
  	
- 	 /**
- 	 * Exports all properties which do not have a domain category.
- 	 * Those properties are added to 
- 	 * 
- 	 * @param $filehandle handle for a text file.
- 	 */
- 	 /*
- 	private function exportPropertiesWithoutDomain($filehandle) {
- 		$db =& wfGetDB( DB_MASTER );
- 		$page = $db->tableName('page');
- 		$smw_nary = $db->tableName('smw_nary');
- 		$defaultRootCategory = Title::newFromText('DefaultRootConcept', NS_CATEGORY);
- 		$res = $db->query('SELECT DISTINCT page_title FROM '.$page.' p LEFT JOIN '.$smw_nary.' ON p.page_id=subject_id ' .
- 					'AND attribute_title = '.$db->addQuotes(smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()).
-					' WHERE subject_id IS NULL AND page_namespace = '.SMW_NS_PROPERTY);
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$property = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
-				$this->exportProperty($filehandle, $defaultRootCategory, $property);
-				
-			}
-		}
-		$db->freeResult($res);	
- 	}*/
- 	
+ 	  	
  	/**
  	 * Exports all instances. 
  	 * Instances without categories will be added to DefaultRootConcept
