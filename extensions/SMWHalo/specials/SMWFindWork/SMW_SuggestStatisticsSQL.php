@@ -16,7 +16,7 @@
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
  		$requestoptions->ascending = false;
- 		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'rev_timestamp');
+ 		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'lastrevision');
  		
  		$sqlCond = "";
 		if ($botID != NULL) {
@@ -34,9 +34,9 @@
 				$res = $db->query('SELECT DISTINCT p1_id AS id FROM '.$smw_gardeningissues.' WHERE '.$sqlCond.' ORDER BY RAND() LIMIT '.$requestoptions->limit);
 		} else {
 		
-	 			$res = $db->query('SELECT DISTINCT rev_page AS id FROM '.$revision.' JOIN '.$smw_gardeningissues.
+	 			$res = $db->query('SELECT rev_page AS id, MAX(rev_timestamp) AS lastrevision FROM '.$revision.' JOIN '.$smw_gardeningissues.
 								' ON rev_page = p1_id LEFT JOIN '.$page.' ON page_id = p1_id ' .
-								' WHERE gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).' '.
+								' WHERE gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND page_title IS NOT NULL AND '.$sqlCond.' AND rev_user_text = '.$db->addQuotes($username).' GROUP BY rev_page '.
 								$sql_options);
 			
 		}
@@ -112,6 +112,7 @@
  		$categorylinks = $db->tableName('categorylinks');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
+ 		$requestoptions->sort = false;
  		$sql_options =  DBHelper::getSQLOptionsAsString($requestoptions,'title');
 			
 		$sqlCond = "";
@@ -127,8 +128,8 @@
 		$sqlCond .= 'TRUE';
 		
  		$this->createVirtualTableForCategoriesOfLastEditedPages($username, $db);
- 		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.', '.$categorylinks.'' .
- 							' WHERE '.$sqlCond.' AND gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND p1_id = cl_from AND cl_to IN (SELECT category FROM smw_fw_categories) '.$sql_options);
+ 		$res = $db->query('SELECT DISTINCT p1_title AS title, p1_namespace AS namespace FROM '.$smw_gardeningissues.', '.$categorylinks.' LEFT JOIN smw_fw_categories ON cl_to = category' .
+ 							' WHERE '.$sqlCond.' AND gi_type != '.SMW_GARDISSUE_CONSISTENCY_PROPAGATION.' AND p1_id = cl_from AND category IS NOT NULL '.$sql_options);
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -247,13 +248,13 @@
 		} else {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
-		$db->query( 'CREATE TEMPORARY TABLE smw_fw_categories (category VARCHAR(255) '.$collation.' NOT NULL)
+		$db->query( 'CREATE TEMPORARY TABLE smw_fw_categories (category VARCHAR(255) '.$collation.' NOT NULL, lastrevision VARCHAR(14) '.$collation.' NOT NULL)
 		            TYPE=MEMORY', 'SMW::createVirtualTableForCategoriesOfLastEditedPages' );
 		
 		
  		
-		$db->query('INSERT INTO smw_fw_categories (category) SELECT DISTINCT cl_to FROM '.$revision.' JOIN '.$categorylinks.
-							' ON rev_page = cl_from WHERE rev_user_text = '.$db->addQuotes($username).' ORDER BY rev_timestamp DESC');
+		$db->query('INSERT INTO smw_fw_categories (category, lastrevision) SELECT cl_to, MAX(rev_timestamp) AS lastrevision FROM '.$revision.' JOIN '.$categorylinks.
+							' ON rev_page = cl_from WHERE rev_user_text = '.$db->addQuotes($username).' GROUP BY cl_to ORDER BY lastrevision DESC');
 	
  	}
  	
