@@ -217,6 +217,14 @@ GeneralXMLTools.createDocumentFromString = function (xmlText) {
    return xmlDoc;
 }
 
+/**
+ * Returns true if node has child nodes with tagname
+ */
+GeneralXMLTools.hasChildNodesWithTag = function(node, tagname) {
+	if (node == null) return false;
+	return node.getElementsByTagName(tagname).length > 0;
+}
+
 /*
  * Adds a branch to the current document. Ignoring document node and root node.
  * Removes the expanded attribute for leaf nodes.

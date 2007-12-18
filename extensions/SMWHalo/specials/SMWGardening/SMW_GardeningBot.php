@@ -309,7 +309,7 @@
  		$paramArray = explode(",", $param);
  		foreach($paramArray as $p) {
  			$keyValue = explode("=", $p);
- 			$result[$keyValue[0]] = $keyValue[1];
+ 			if (count($keyValue) == 2) $result[$keyValue[0]] = $keyValue[1];
  		}
  		
  		return $result;
