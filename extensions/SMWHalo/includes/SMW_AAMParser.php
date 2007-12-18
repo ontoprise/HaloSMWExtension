@@ -186,7 +186,13 @@ class SMWH_AAMParser {
 							'(\[{2,})|'.
 							'(\]\])|'.
 							'(\|)|'.
-		                    '^$/sm', $text, -1, 
+							'(<nowiki>)|'.
+							'(<\/nowiki>)|'.
+							'(<ask)|'.
+							'(<\/ask>)|'.
+							'(<pre>)|'.
+							'(<\/pre>)|'.
+							'^$/sm', $text, -1, 
 		                    PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
 		$markedText = "";
@@ -198,6 +204,7 @@ class SMWH_AAMParser {
 		$ignoreTemplates = -1;
 		$tmplDescr = null;
 		$ignoredLastToken = false;
+		$lastTokenWOT = false; // true, if the last token was an opening tag 
 		$numParts = count($parts);
 		for ($i = 0; $i < $numParts; ++$i) {
 			$part = $parts[$i];
@@ -241,7 +248,7 @@ class SMWH_AAMParser {
 				// parser is not collecting tokens for a template
 				if ($part0 == '[[') {
 					if ($braceCount == 0) {
-						$markedText .= "\t{wikiTextOffset=".$pos."}".$part0;
+						$markedText .= "\t{wikiTextOffset=".$pos.' obj="annotation"}'.$part0;
 					} else {
 						$markedText .= $part0;
 					}
@@ -262,7 +269,14 @@ class SMWH_AAMParser {
 						    || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
 						    || $part0{0} == "#") {
 							// title, empty line or enumeration found
-							$markedText .= "\t{wikiTextOffset=".$pos."}\n".$part0;
+							$obj = $part0{0};
+							if ($obj == "\n") {
+								$obj = 'newline';
+							}
+							$markedText .= "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'."\n".$part0;
+						} else if (strlen($part0) > 1 && $part0{0} == "<" && $part0{1} == "/") {
+							// closing tag found => write no offset
+							$markedText .= $part0;
 						} else {
 							$wto = "";
 							$ignoreToken = ($part0{0} == '{') 
@@ -271,7 +285,17 @@ class SMWH_AAMParser {
 							if (!$ignoreToken && !$ignoredLastToken) {
 								// write the wiki text offset only, if there are
 								// no braces at the beginning or end
-								$wto = "\t{wikiTextOffset=".$pos."}";	
+								$obj = 'text';
+								if (strpos($part0, '<ask') === 0) $obj = 'ask';
+								else if (strpos($part0, '<nowiki>') === 0) $obj = 'nowiki';
+								else if (strpos($part0, '<pre>') === 0) $obj = 'pre';
+								if ($lastTokenWOT) {
+									// write no wikitextoffset after opening tags like <nowiki>
+									$wto = ''; 
+								} else {
+									$wto = "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}';
+								}	
+								$lastTokenWOT = ($obj !== 'text');
 							}
 							$markedText .= $wto.$part0;
 							$ignoredLastToken = $ignoreToken;
@@ -282,7 +306,7 @@ class SMWH_AAMParser {
 			}
 		}
 		$part0 = mb_substr($wikiText, $pos, 1);
-		$markedText .= $part0."\n\t{wikiTextOffset=".$pos."}\n";
+		$markedText .= $part0."\n\t{wikiTextOffset=".$pos.' obj="end"'."}\n";
 				
 		return $markedText;
 	}
@@ -302,7 +326,7 @@ class SMWH_AAMParser {
 		// replace intermediate format for templates
 		$text = preg_replace(
 			'/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{wikiTextOffset=(\d*) template=\"(.*?)\" id=\"(.*?)\"\}\s*(<\/p>)?/',
-			'<a name="$4" type="wikiTextOffset"></a>'.
+			'<a name="$4" type="wikiTextOffset" obj="template"></a>'.
 			'<a type="template" tmplname="'.$templateNS.':$5" id="$6"></a>',
 			$wikiText);
 		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend:(.*?)\}\s*(<\/p>)?/',
@@ -310,8 +334,8 @@ class SMWH_AAMParser {
 		                     $text);
 			
 		// replace standalone occurrences of intermediate format
-		$text = preg_replace('/\s*\{wikiTextOffset=(\d*)}/',
-		                     '<a name="$1" type="wikiTextOffset"></a>',
+		$text = preg_replace('/\s*\{wikiTextOffset=(\d*) obj="(.*?)"}/',
+		                     '<a name="$1" type="wikiTextOffset" obj="$2"></a>',
 		                     $text);
         return $text;
 	}
@@ -429,11 +453,11 @@ class SMWH_AAMParser {
 			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno($1)">'.
    			'<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/delete.png"/></a>';
 		$shortAnnoDeco = // wrapper span with no line breaks
-			'<span id="anno$1w" style="white-space:nowrap">'.
+			' <span id="anno$1w" style="white-space:nowrap">'.
 			$annoDeco.
 			 '</span>';
 		$annoDeco =  // wrapper span
-			'<span id="anno$1w">'.
+			' <span id="anno$1w">'.
 			$annoDeco.
 			 '</span>';
 		$linkDeco =
@@ -441,11 +465,11 @@ class SMWH_AAMParser {
    			 '<img src="'. $smwgHaloScriptPath . '/skins/Annotation/images/add.png"/></a>'.
              '<span id="anno$1" class="aam_page_link_highlight">$2</span>';
 		$shortLinkDeco = // wrapper span with no line breaks
-			'<span id="anno$1w" style="white-space:nowrap">'.
+			' <span id="anno$1w" style="white-space:nowrap">'.
 			$linkDeco.
 			'</span>';
 		$linkDeco =  // wrapper span
-			'<span id="anno$1w">'.
+			' <span id="anno$1w">'.
 			$linkDeco.
 			'</span>';
 			
@@ -487,12 +511,14 @@ class SMWH_AAMParser {
 	private function maskHTML(&$wikiText)
 	{
 		$tags = array(
-			array('<ask.*?>','<ask','<\/ask>','</ask>'),
-			array('<!--','<!--','-->','-->'),
-			array('<nowiki>','<nowiki>','<\/nowiki>','</nowiki>'),
-			array('<pre>','<pre>','<\/pre>','</pre>'),
-			array('<sup id="_ref.*?>','<sup id="_ref','<\/sup>','</sup>'),
-			array('<ref .*?>','<ref','<\/ref>','</ref>')
+			// regex for opening tag, beginning of tag, regex for closing tag, 
+			// closing tag, replace tag (true) or only its content(false)
+			array('<ask.*?>','<ask','<\/ask>','</ask>', false),
+			array('<!--','<!--','-->','-->', true),
+			array('<nowiki>','<nowiki>','<\/nowiki>','</nowiki>', false),
+			array('<pre>','<pre>','<\/pre>','</pre>', false),
+			array('<sup id="_ref.*?>','<sup id="_ref','<\/sup>','</sup>', true),
+			array('<ref .*?>','<ref','<\/ref>','</ref>', true)
 			);
 		$numTags = count($tags);
 		
@@ -536,7 +562,14 @@ class SMWH_AAMParser {
 			} else if ($openingTag >= 0 && $isClosingTag) {
 				if ($openingTag == $tagIdx) {
 					//The opening tag matches the closing tag
-				    $text .= str_repeat("*", $maskLen);
+					if ($tags[$tagIdx][4] === false) {
+						// do not mask the tag; only its content
+						$t = $tags[$tagIdx];
+						$maskLen -= strlen($t[1])+strlen($t[3]);
+						$text .= $t[1].str_repeat("*", $maskLen).$t[3];
+					} else {
+				    	$text .= str_repeat("*", $maskLen);
+					}
 				    $openingTag = -1;
 				}
 			} else if ($openingTag == -1) {

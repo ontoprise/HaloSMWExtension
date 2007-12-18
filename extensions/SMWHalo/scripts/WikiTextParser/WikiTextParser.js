@@ -442,100 +442,169 @@ WikiTextParser.prototype = {
 			end = this.text.length;
 		}
 		
-		// The annotation must not be within templates, nowiki-sections and
-		// annotations
-		var SEARCH_TEXT_OR_TAG = 5;
-		var TEXT_FOUND = 6;
-		var searchState = SEARCH_TEXT_OR_TAG; 
-							 // 0 - find closing </nowiki>
-							 // 1 - find closing }}
-							 // 2 - find closing ]]
-							 // 3 - find closing </ask>
-							 // 4 - find closing </pre>
-							 // 5 - find text or <nowiki>,{{,[[,<ask, <pre>
-							 // 6 - text found
-		pos = -1;
-		var startSearches = [text, '<nowiki>', '{{', '[[', '<ask', '<pre>'];
-		var endSearches = [['</nowiki>', text], 
-		                   ['}}', text], 
-		                   [']]', text], 
-		                   ['</ask>', text], 
-		                   ['</pre>', text]];
-		var textFoundWithinTags = -1;
-		while (true) {
-			var res = this.findFirstOf(start, 
-			                           searchState == SEARCH_TEXT_OR_TAG 
-			                           	? startSearches
-			                            : endSearches[searchState]);
-			if (searchState == SEARCH_TEXT_OR_TAG) {
-				// tried to find text or <nowiki>,{{,[[,<ask
-				if (res[1] == null || res[0] > end) {
-					// nothing found => stop search
-					break;
+		// try a simple search
+		var pos = this.text.indexOf(text, start);
+		if (pos >= 0 && pos < end) {
+			this.wtsStart = pos;
+			this.wtsEnd = pos + text.length;
+			return true;
+		}
+		
+		// consider bold ''' and italic '' formatting instructions
+		// Mapping from pure text to wiki text - Example:
+		// this is '''bold''' text:&nbsp;space
+		// this is bold text: space
+		// 012345678911111111112222
+		//           01234567890123
+		// 012345671111112222233333
+		//         1234890123401234
+		// 0=>0, 8=>11, 12=>18, 19=>30
+		
+		var wikitext = this.text.substring(start,end);
+		var pureText = '';
+		var pti = 0; // Index in pure text
+		var wti = 0; // Index in wiki text
+		var map = new Array(); // Map from pure text indices to wiki text indices
+		var parts = wikitext.split(/('{2,})|(&nbsp;)|(\[\[.*?\]\])|(\[http.*?\])|(\s+)/);
+		var openApos = 0; // number of opening apostrophes (max 5)
+		
+		// Rules for finding bold an italic formatting instructions
+		var rules = [
+			[0,'a',5,3,2],
+			[2,'a',3],
+			[3,'c',3],
+			[3,'a',2],
+			[5,'c',5,3,2],
+			[3,'c',3,2],
+			[2,'c',2]
+		];
+		var closingRulesStart = 4;
+		
+		// Count all available apostrophes
+		var numApos = 0;
+		for (var i = 0; i < parts.length; ++i) {
+			if (parts[i].charAt(0) == "'") {
+				numApos += parts[i].length;
+			}
+		}
+		
+		var lastWasSpace = false;
+		for (var i = 0; i < parts.length; ++i) {
+			var part = parts[i];
+			if (part.length == 0) {
+				continue;
+			}
+			
+			if (part.charAt(0) == "'") {
+				// a sequence of at least 2 apostrophes
+				var num = part.length;
+				var rulesStart = 0;
+				if (openApos+num > numApos) {
+					rulesStart = closingRulesStart;
 				}
-				if (res[1] == text) {
-					// search text found => stop search
-					pos = res[0];
-					searchState = TEXT_FOUND;
-					break;
-				} else if (res[1] == '<nowiki>') {
-					searchState = 0;
-				} else if (res[1] == '{{') {
-					// are the more than 2 opening braces ?
-					var i = 0;
-					while (this.text.charAt(res[0]+i) == '{') {
-						i++;
-					}
-					if (i > 2) {
-						// more than 2 braces => ignore them.
-						res[0] += i-1;
-					} else {
-						searchState = 1;
-					}
-				} else if (res[1] == '[[') {
-					searchState = 2;
-				} else if (res[1] == '<ask') {
-					searchState = 3;
-				} else if (res[1] == '<pre>') {
-					searchState = 4;
+				numApos -= num;
+				var ruleApplied = false;
+				for (var r = rulesStart; r < rules.length && !ruleApplied; ++r) {
+					var rule = rules[r];
+					var writeApos = 0;
+					if (openApos == rule[0]) {
+						// number of open apostrophes matches the rule
+						for (var j = 2; j < rule.length; ++j) {
+							if (num >= rule[j]) {
+								ruleApplied = true;
+								if (rule[1] == 'a') {
+									//add opening apostrophes
+									openApos += rule[j];
+								} else if (rule[1] == 'c') {
+									//closing apostrophes
+									openApos -= rule[j];
+								}
+								writeApos = num-rule[j];
+								if (writeApos != 0) {
+									// write remaining apostrophes to pure text
+									map.push([pti,wti+writeApos,openApos]);
+									pti += writeApos;
+									while (writeApos-- > 0) {
+										pureText += "'";
+									}
+									lastWasSpace = false;
+								}
+								break;
+							}
+						}
+					} 
 				}
+			} else if (link = part.match(/\[\[(.*?)(\|.*?)?\]\]/)) {
+				var pt = link[2]; // Representation
+				if (!pt) {
+					pt = link[1]; // link
+				}
+				pureText += pt;
+				map.push([pti,wti,openApos]);
+				pti += pt.length;
+				lastWasSpace = false;
+			} else if (part.match(/\s+/) || part == '&nbsp;') {
+				if (!lastWasSpace) {
+					pureText += ' ';
+					map.push([pti,wti+part.length-1,openApos]);
+					pti++;
+				}
+				lastWasSpace = true;
+			} else if (part.charAt(0) == '[') {
+				
 			} else {
-				// tried to find some closing tag
-				if (res[1] == null) {
-					// closing tag not found => stop search
-					break;
-				} else if (res[1] == text) {
-					// text found within a tagged area
-					textFoundWithinTags = searchState;
+				// normal text
+				pureText += part;
+				map.push([pti,wti,openApos]);
+				pti += part.length;
+				lastWasSpace = false;
+			}
+			wti += part.length;
+			
+		}
+		
+		// find the selection in the pure text
+		pos = pureText.indexOf(text);
+		if (pos == -1) {
+			// text not found
+			var msg = gLanguage.getMessage('WTP_TEXT_NOT_FOUND');
+			msg = msg.replace(/\$1/g, '<b>'+text+'</b>');
+			return msg;
+		}
+		
+		// find the start and end indices in the wiki text with the map from
+		// pure text indices to wiki text indices.
+		var wtStart = -1;
+		var wtEnd = -1;
+		var startLevel = 0;
+		var endLevel = 0;
+		pos += text.length;
+		for (var i = map.length-1; i >= 0; --i) {
+			if (pos >= map[i][0]) {
+				if (wtEnd == -1) {
+					wtEnd = map[i][1] + (pos - map[i][0]);
+					endLevel = map[i][2];
+					pos -= text.length;
 				} else {
-					// closing tag found -> tried to find text again
-					textFoundWithinTags = searchState;
-					searchState = SEARCH_TEXT_OR_TAG;
+					wtStart = map[i][1] + (pos - map[i][0]);
+					startLevel = map[i][2];
+					break;
 				}
 			}
-			start = res[0]+1;
 		}
-		
-		if (searchState != TEXT_FOUND || pos < 0 || pos > end) {
-			var msgId = 'WTP_TEXT_NOT_FOUND';
-			switch (textFoundWithinTags) {
-				case 0: msgId = 'WTP_NOT_IN_NOWIKI'; break;
-				case 1: msgId = 'WTP_NOT_IN_TEMPLATE'; break;
-				case 2: msgId = 'WTP_NOT_IN_ANNOTATION'; break;
-				case 3: msgId = 'WTP_NOT_IN_QUERY'; break;
-				case 4: msgId = 'WTP_NOT_IN_PREFORMATTED'; break;
-			}
-			msg = gLanguage.getMessage(msgId);
-			return msg.replace(/\$1/g, text);
+		if (startLevel != endLevel) {
+			var msg = gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+			msg = msg.replace(/\$1/g, '<b>'+text+'</b>');
+			return msg;
 		}
-		
-		this.wtsStart = pos;
-		this.wtsEnd = pos + text.length;
-		
+		this.wtsStart = wtStart + start;
+		this.wtsEnd = wtEnd + start;
+//		var wikiText = this.text.substring(this.wtsStart, this.wtsEnd);
+//		return "Matching text:<br><b>"+wikitext+"</b><br><b>"+pureText+"</b><br><b>"+wikiText+"</b>";
 		return true;
 		
-	},
-	 
+	},	 
+
 	/**
 	 * @private
 	 *

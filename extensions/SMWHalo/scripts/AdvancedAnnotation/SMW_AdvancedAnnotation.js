@@ -37,6 +37,7 @@ AdvancedAnnotation.prototype = {
 	initialize: function() {
 		// Selection information
 		this.annotatedNode = null;
+		this.focusNode = null;
 		this.annoOffset = null;
 		this.selectedText = '';
 		
@@ -93,6 +94,7 @@ AdvancedAnnotation.prototype = {
 			//trim selection
 			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
 			this.annotatedNode = annoSelection.anchorNode;
+			this.focusNode = annoSelection.focusNode;
 			this.annoOffset = annoSelection.anchorOffset;
 			
 			this.performAnnotation(event);
@@ -185,29 +187,45 @@ AdvancedAnnotation.prototype = {
 		var firstAnchor = null;
 		var secondAnchor = null;
 		
-		firstAnchor = this.searchBackwards(this.annotatedNode, this.searchWtoAnchor.bind(this));
-		secondAnchor = this.searchForward(this.annotatedNode, this.searchWtoAnchor.bind(this));
-		// Check if the marked text is part of a template
-		var template = this.searchBackwards(this.annotatedNode, this.searchTemplate.bind(this));
-		if (template && $(template).getAttribute('type') == "template"){
-			msg = gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
-			msg = msg.replace(/\$1/g, this.selectedText);
-			var start = firstAnchor.getAttribute('name')*1;
-			var end = (secondAnchor != null)
-						? secondAnchor.getAttribute('name')*1
-						: -1;
-			smwhgAnnotationHints.showMessageAndWikiText("(e)"+msg,
-														this.wikiTextParser.text.substring(start,end),
-														event.clientX, event.clientY);
-//			alert(msg);
-//			alert("Name of template: "+ $(template).getAttribute('tmplname'));
-			return;
-		}
+		firstAnchor = this.searchBackwards(this.annotatedNode, 
+										   this.searchWtoAnchor.bind(this));
+		secondAnchor = this.searchForward(this.focusNode, 
+										  this.searchWtoAnchor.bind(this));
+
 		if (firstAnchor) {
 			var start = firstAnchor.getAttribute('name')*1;
 			var end = (secondAnchor != null)
 						? secondAnchor.getAttribute('name')*1
 						: -1;
+			// The selection must not contain invalid nodes like pre, nowiki etc.
+			var invalid = this.searchInvalidNode(firstAnchor);
+			if (!invalid && this.annotatedNode != this.focusNode) {
+				// the selection spans several nodes
+				invalid = this.searchForward(firstAnchor, 
+										     this.searchInvalidNode.bind(this),
+										     secondAnchor);
+			}
+			if (invalid && invalid !== true) {
+				// an invalid node has been found.
+				var obj = invalid.getAttribute('obj');
+				var msgId = "This selection can not be annotated.";
+				switch (obj) {
+					case 'nowiki': msgId = 'WTP_NOT_IN_NOWIKI'; break;
+					case 'template': msgId = 'WTP_NOT_IN_TEMPLATE'; break;
+					case 'annotation': msgId = 'WTP_NOT_IN_ANNOTATION'; break;
+					case 'ask': msgId = 'WTP_NOT_IN_QUERY'; break;
+					case 'pre': msgId = 'WTP_NOT_IN_PREFORMATTED'; break;
+				}
+				msg = gLanguage.getMessage(msgId);
+				msg = msg.replace(/\$1/g, this.selectedText);
+				smwhgAnnotationHints.showMessageAndWikiText("(e)"+msg,
+															this.wikiTextParser.text.substring(start,end),
+															event.clientX, event.clientY);
+
+				this.toolbarEnableAnnotation(false);
+				return;
+			}										     
+			
 			var res = this.wikiTextParser.findText(this.selectedText, start, end);
 			if (res != true) {
 				this.toolbarEnableAnnotation(true);
@@ -277,14 +295,7 @@ AdvancedAnnotation.prototype = {
 		this.wikiTextParser.setSelection(-1, -1);
 	},
 	
-	searchTemplate: function(node) {
-		if (node.tagName == 'A' 
-		    && (node.type == "template" || node.type == "templateend")) {
-			return node;
-		} 
-	},
-	
-	searchWtoAnchor: function(node) {
+	searchWtoAnchor: function(node, parameters) {
 		if (node.tagName == 'A' 
 		    && node.type == "wikiTextOffset"
 		    && node.getAttribute('annoType') != 'category') {
@@ -292,7 +303,7 @@ AdvancedAnnotation.prototype = {
 		} 
 	},
 	
-	searchSelectionEnd: function(node) {
+	searchSelectionEnd: function(node, parameters) {
 		if (node.tagName == 'P') {
 			// end search at paragraphs
 			return true;
@@ -304,13 +315,57 @@ AdvancedAnnotation.prototype = {
 			return node;
 		}
 	},
+	
+	/**
+	 * Visits all nodes between the first and the second anchor of the selection.
+	 * The selection must not span invalid nodes i.e. nowiki, pre, ask, template, 
+	 * annotations. If such a node is found, it is returned. Otherwise the search
+	 * is terminated with the result <true>.
+	 * 
+	 * @param DomNode node
+	 * 		The node that is currently visited
+	 * @param DomNode secondAnchor
+	 * 		The search end, if this node is reached.
+	 * @return DomNode or boolean
+	 * 		The invalid DOM-node or <true>, if the secondAnchor has been reached.
+	 */
+	searchInvalidNode: function(node, secondAnchor) {
+		if (node === secondAnchor) {
+			return true;
+		}
+		if (node.tagName == 'A' 
+		    && node.type == "wikiTextOffset") {
+			var obj = node.getAttribute('obj');
+			if (obj === 'pre'
+				|| obj === 'annotation'
+			    || obj === 'ask'
+			    || obj === 'nowiki'
+//			    || obj === 'newline'
+			    || obj === 'template') {
+				return node;
+			}
+		}
 		
+	},
+			
 	/**
 	 * Searches recursively backwards from the given node <startNode> to the top
 	 * of the document. The document order is traversed in reverse order, visiting
 	 * all nodes.
+	 * 
+	 * @param DomNode startNode
+	 * 		Traversal starts at this node. The callback is not called for it.
+	 * @param function cbFnc
+	 * 		This callback function is called at each node. Traversal stops,
+	 * 		if it returns a value. Signature:
+	 * 		returnValue function(DomNode node, Object parameters)
+	 * @param object parameters
+	 * 		This can be any object. It is passed as second parameter to the 
+	 * 		callback function <cbFnc>
+	 * @param boolean diveDeeper
+	 * 		Only uses internally. Don't specify this value.
 	 */
-	searchBackwards: function(startNode, cbFnc, diveDeeper) {
+	searchBackwards: function(startNode, cbFnc, parameters, diveDeeper) {
 		var node = startNode;
 		if (!diveDeeper) {
 			// go to the previous sibling or the sibling of a parent node
@@ -325,12 +380,12 @@ AdvancedAnnotation.prototype = {
 		while (node) {
 			// process all siblings and their children
 			if (node.lastChild) {
-				var result = this.searchBackwards(node.lastChild, cbFnc, true);
+				var result = this.searchBackwards(node.lastChild, cbFnc, parameters, true);
 				if (result) {
 					return result;
 				}
 			}
-			var result = cbFnc(node);
+			var result = cbFnc(node, parameters);
 			if (result) {
 				return result;
 			} 
@@ -343,7 +398,7 @@ AdvancedAnnotation.prototype = {
 		if (!diveDeeper && node) {
 			node = node.parentNode;
 			if (node) {
-				var result = this.searchBackwards(node, cbFnc);
+				var result = this.searchBackwards(node, cbFnc, parameters);
 				if (result) {
 					return result;
 				}
@@ -364,11 +419,14 @@ AdvancedAnnotation.prototype = {
 	 * @param function cbFnc
 	 * 		This callback function is called at each node. Traversal stops,
 	 * 		if it returns a value. Signature:
-	 * 		returnValue function(DomNode node)
+	 * 		returnValue function(DomNode node, Object parameters)
+	 * @param object parameters
+	 * 		This can be any object. It is passed as second parameter to the 
+	 * 		callback function <cbFnc>
 	 * @param boolean diveDeeper
 	 * 		Only uses internally. Don't specify this value.
 	 */
-	searchForward: function(startNode, cbFnc, diveDeeper) {
+	searchForward: function(startNode, cbFnc, parameters, diveDeeper) {
 		var node = startNode;
 		if (!diveDeeper) {
 			// go to the next sibling or the sibling of a parent node
@@ -383,12 +441,12 @@ AdvancedAnnotation.prototype = {
 		while (node) {
 			// process all siblings and their children
 			if (node.firstChild) {
-				var result = this.searchForward(node.firstChild, cbFnc, true);
+				var result = this.searchForward(node.firstChild, cbFnc, parameters, true);
 				if (result) {
 					return result;
 				}
 			}
-			var result = cbFnc(node);
+			var result = cbFnc(node, parameters);
 			if (result) {
 				return result;
 			} 
@@ -401,7 +459,7 @@ AdvancedAnnotation.prototype = {
 		if (!diveDeeper && node) {
 			node = node.parentNode;
 			if (node) {
-				var result = this.searchForward(node, cbFnc);
+				var result = this.searchForward(node, cbFnc, parameters);
 				if (result) {
 					return result;
 				}
@@ -425,7 +483,7 @@ AdvancedAnnotation.prototype = {
 		}
 		return txt;
 	},
-	
+		
 	/**
 	 * @public
 	 * 
@@ -539,6 +597,7 @@ AdvancedAnnotation.prototype = {
 		if (!this.annotatedNode || this.selectedText === "") {
 			return;
 		}
+		
 		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
 		var annoDeco =
 			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
