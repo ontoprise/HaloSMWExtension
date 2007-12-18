@@ -111,7 +111,7 @@ OBEventProvider.prototype = {
 	
 	fireBeforeRefresh: function() {
 		this.listeners[OB_BEFOREREFRESHLISTENER].each(function (l) { 
-			l.refresh();
+			l.beforeRefresh();
 		});
 	}
 }	
@@ -802,6 +802,7 @@ OBInputFieldValidator.prototype = {
 	 */
 	deregisterListeners: function() {
 		var e = $(this.id);
+		if (e == null) return;
 		Event.stopObserving(e, "keyup", this.keyListener);
 		Event.stopObserving(e, "keydown", this.keyListener);
 		Event.stopObserving(e, "blur", this.blurListener);
