@@ -764,7 +764,7 @@
 		$res = $db->query(	'(SELECT DISTINCT value_unit FROM '.$smw_attributes.' WHERE value_datatype = '.$db->addQuotes($type->getDBkey()).') '.
 						 ' UNION ' .
 					 		'(SELECT DISTINCT value_unit FROM '.$smw_specialprops.' s ' .
-					 				'JOIN '.$smw_nary.' n ON CONTAINS(s.value_string, '.$db->addQuotes($type->getDBkey()).') AND s.subject_title=n.attribute_title ' .
+					 				'JOIN '.$smw_nary.' n ON LOCATE('.$db->addQuotes($type->getDBkey()).', s.value_string) > 0 AND s.subject_title=n.attribute_title ' .
 					 				'JOIN '.$smw_nary_attributes.' a ON n.nary_key=a.nary_key)');
 		
 		$result = array();
