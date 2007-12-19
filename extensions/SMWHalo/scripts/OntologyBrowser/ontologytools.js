@@ -379,7 +379,8 @@ OBOntologyModifier.prototype = {
 		var newSuperCategory = to_cache.getAttribute('title');
 		
 		function callback() {
-			if (GeneralXMLTools.hasChildNodesWithTag(to_cache, 'conceptTreeElement')) { // only move subtree, if it has already been requested 
+			// only move subtree, if it has already been requested 
+			if (to_cache.getAttribute('expanded') == 'true' || GeneralXMLTools.hasChildNodesWithTag(to_cache, 'conceptTreeElement')) { 
 				GeneralXMLTools.importNode(to_cache, from_cache, true);
 				GeneralXMLTools.importNode(to, from, true);
 			}
@@ -415,7 +416,8 @@ OBOntologyModifier.prototype = {
 		var newSuperProperty = to_cache.getAttribute('title');
 		
 		function callback() {
-			if (GeneralXMLTools.hasChildNodesWithTag(to_cache, 'propertyTreeElement')) { // only move subtree, if it has already been requested 
+			// only move subtree, if it has already been requested 
+			if (to_cache.getAttribute('expanded') == 'true' || GeneralXMLTools.hasChildNodesWithTag(to_cache, 'propertyTreeElement')) { 
 				GeneralXMLTools.importNode(to_cache, from_cache, true);
 				GeneralXMLTools.importNode(to, from, true);
 			}
@@ -953,7 +955,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		}
 		this.pendingElement.show(this.id)
 		var pageNameWithNS = this.ns == '' ? pageName : this.ns+":"+pageName;
-		sajax_do_call('smwfExistsArticle', 
+		sajax_do_call('smwfExistsArticleIgnoreRedirect', 
 		              [pageNameWithNS], 
 		              ajaxResponseExistsArticle.bind(this, this.id));
 		return null;

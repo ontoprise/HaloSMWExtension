@@ -28,6 +28,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfCreateArticle';
 $wgAjaxExportList[] = 'smwfEditArticle';
 $wgAjaxExportList[] = 'smwfExistsArticle';
+$wgAjaxExportList[] = 'smwfExistsArticleIgnoreRedirect';
 $wgAjaxExportList[] = 'smwfRelationSchemaData';
 $wgAjaxExportList[] = 'smwfGetWikiText';
 $wgAjaxExportList[] = 'smwfDeleteArticle';
@@ -239,6 +240,72 @@ function smwfExistsArticle($title) {
 }
 
 /**
+ * Checks if an article exists. This function is invoked by an ajax call.
+ *
+ * @param string $title
+ * 			The name of the article
+ * @return string "true" => the article exists
+ *                "false" => the article does not exist
+ *
+ */
+function smwfExistsArticleIgnoreRedirect($title) {
+	global $wgContLang;
+
+
+	if (strpos($title,"Attribute:") == 0) {
+		$title = str_replace("Attribute:",
+		                     $wgContLang->getNsText(SMW_NS_PROPERTY).":",
+		                     $title);
+	}
+	$titleObj = Title::newFromText($title);
+	$article = new Article($titleObj);
+
+	if ($article->exists() && !smwfIsRedirect($titleObj)) {
+		return "true";
+	}
+
+	if ($titleObj->getNamespace() == SMW_NS_RELATION) {
+	    // Attributes and relations are deprecated. They are replaced by Properties.
+		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
+		$article = new Article($titleObj);
+
+		if ($article->exists() && !smwfIsRedirect($titleObj)) {
+			return "true";
+		}
+	}
+	
+	// Is the article a special property?
+	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);
+	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
+	
+	global $smwgContLang, $smwgHaloContLang;
+	$specialProps = $smwgContLang->getSpecialPropertiesArray();
+	foreach ($specialProps as $prop) {
+		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
+		if ($title == $prop) {
+			return "true";
+		}
+	}
+	// Is the article a special schema property?
+	$specialProps = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	foreach ($specialProps as $prop) {
+		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
+		if ($title == $prop) {
+			return "true";
+		}
+	}
+
+	return "false";
+}
+
+function smwfIsRedirect(Title $title) {
+	$db =& wfGetDB( DB_MASTER );
+	$pagetable = $db->tableName('page');
+	return $db->selectRow($pagetable, 'page_is_redirect', array('page_title' => $title->getDBkey(), 'page_namespace' => $title->getNamespace(), 'page_is_redirect' => 1)) !== false;
+}
+
+
+/**
  * Returns relation schema data as XML.
  *
  * 1. Arity of relation
@@ -367,7 +434,12 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
 		$success = $titleObj->moveTo($newTitleObj, true, $reason);
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
-	} 
+	} else if (smwfIsRedirect($newTitleObj)) { // target is redirect, so delete first
+		smwfDeleteArticle($newTitleObj->getPrefixedText(),"redirectrename");
+		$success = $titleObj->moveTo($newTitleObj, true, $reason);
+		$dummyForm = "";
+		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
+	}
 	return $success === true ? "true" : "false"; 
 }
 
