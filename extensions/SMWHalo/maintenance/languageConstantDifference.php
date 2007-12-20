@@ -29,14 +29,14 @@ print "SMW_HaloLanguage".$argv[1]." contains the following constants " .
 print("Difference in content messages:\n\n");
 foreach($lang1Obj->getContentMsgArray() as $key => $value) {
 	if (!array_key_exists($key, $lang2Obj->getContentMsgArray())) {
-		print("\tKey: ".$key." Value: ".$value."\n\n");
+		print("\t'".$key."' => '".$value."',\n\n");
 	}
 }
 
 print("Difference in user messages:\n\n");
 foreach($lang1Obj->getUserMsgArray() as $key => $value) {
 	if (!array_key_exists($key, $lang2Obj->getUserMsgArray())) {
-		print("\tKey: ".$key." Value: ".$value."\n\n");
+		print("\t'".$key."' => '".$value."',\n\n");
 	}
 }
  
