@@ -14,6 +14,9 @@
 *
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+*
+*	Configuration page for SMW and SMWHalo
+*
 -->
 
 <head>
@@ -26,7 +29,7 @@
 		 	// page is loaded. Read parameters: 
 		 	$content = readLocalSettings('../../../LocalSettings.php');
 		 	
-		 	$phpInterpreterText = getVariable($content, 'phpInterpreter');
+		 	$phpInterpreterText = str_replace("\\", "/", getVariable($content, 'phpInterpreter'));
 		 	$phpInterpreter = substr($phpInterpreterText,1,strlen($phpInterpreterText)-2);
 		 	
 		 	$gardeningBotDelayText = getVariable($content, 'wgGardeningBotDelay');
@@ -52,8 +55,8 @@
 		 }
 	?>
 	<h1>SMW Halo configuration page</h1>
-	This config page helps you to configure the SMWHalo extension without changing the LocalSettings.php file manually. It requires an already installed SMW extension! 
-	Please make sure that this page is not available from outside.  
+	This config page helps you to configure the SMW and SMWHalo extension without changing the LocalSettings.php file manually. You must have a running MediaWiki installation beforehand.
+	Please make sure that this page is not available from outside. It is best to delete the config directory after configuration. 
 	<form name="opt_params">
 	<h2>Required configurations</h2>
 	<p style="margin-left: 20px">
@@ -82,44 +85,49 @@
 	   // read and validate variables
 	  
 	   if ($phpInterpreter == '') {
-	   		echo "<p style=\"background-color:#F00;\">".'At least PHP-Interpreter path must be set!'."</p>";
+	   		echo "<p style=\"background-color:#F00;font-weight:bold; \">".'At least PHP-Interpreter path must be set!'."</p>";
 		    return;
 	   }
 	   if (!file_exists($phpInterpreter)) { 
-	   		echo "<p style=\"background-color:#F00;\">".'PHP interpreter at "'.$phpInterpreter.'" does not exist. (Forgot file extension .exe?)'."</p>";
+	   		echo "<p style=\"background-color:#F00;font-weight:bold; \">".'PHP interpreter at "'.$phpInterpreter.'" does not exist. (Forgot file extension .exe?)'."</p>";
 		    return;
 	   }
 	   if (!is_numeric($_GET["gdb"])) {
-	   		echo "<p style=\"background-color:#F00;\">".'GardeningBot delay must be an integer.'."</p>";
+	   		echo "<p style=\"background-color:#F00;font-weight:bold; \">".'GardeningBot delay must be an integer.'."</p>";
 		    return;
 	   }
 	  
 	   
 	  
 	   $content = readLocalSettings('../../../LocalSettings.php');
-	   // If no SMW is installed, abort.
-	   if (strpos($content, "enableSemantics") === false) {
-	   		echo "<p style=\"background-color:#F00;\">".'It seems that SMW is not installed! Abort.'."</p>";
-		    return;
-	   }
-	   // check if SMWHalo extension is already included. If not, add it at the end of LocalSettings.php
-	   if (strpos($content, "include_once('extensions/SMWHalo/includes/SMW_Initialize.php');") === false) {
+	  
+	   
+	   // check if SMW extension is already included. If not, add it at the end of LocalSettings.php
+	   if (strpos($content, "include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');") === false) {
 	   	 	$first = substr($content, 0, strpos($content, "?>") - 1);
 	   		$first .= "\n" .
 	   				  VARIABLE_INSERT_MARKER."\n" .
-	   				  "\ninclude_once('extensions/SMWHalo/includes/SMW_Initialize.php');\n" .
-	   				  "enableSMWHalo();\n";
+	   				  "\ninclude_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');\n" .
+	   				  "enableSemantics('localhost:8080');\n";
 			$content = $first."\n?>";
 	   } else {
-	   		// If it is already included, set a variable insert position marker.
+	   		// If it is already included, set a variable insert position marker BEFORE SMW is included.
 	   		if (strpos($content, VARIABLE_INSERT_MARKER) === false) {
-	   			$insertAt = strpos($content, "include_once('extensions/SMWHalo/includes/SMW_Initialize.php');");
+	   			$insertAt = strpos($content, "include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');");
 	   			$content = substr($content, 0, $insertAt)."\n".VARIABLE_INSERT_MARKER."\n".substr($content, $insertAt); 
 	   		}
 	   }	
 	   
+	   // check if SMWHalo extension is already included. If not, add it at the end of LocalSettings.php
+	   if (strpos($content, "include_once('extensions/SMWHalo/includes/SMW_Initialize.php');") === false) {
+	   	 	$first = substr($content, 0, strpos($content, "?>") - 1);
+	   		$first .= "\ninclude_once('extensions/SMWHalo/includes/SMW_Initialize.php');\n" .
+	   				  "enableSMWHalo();\n";
+			$content = $first."\n?>";
+	   } 
+	   
 	    // set/remove/change LocalSettings.php
-	    $content = setVariable($content, "phpInterpreter", $phpInterpreter);
+	    $content = setVariable($content, "phpInterpreter", str_replace("\\\\", "/", $phpInterpreter));
 	    $content = setVariable($content, "semanticAC", $semanticAC ? "true" : "false");
 	    $content = setVariable($content, "wgGardeningBotDelay", $gardeningBotDelay);
 	    $content = setVariable($content, "smwgDeployVersion", $enableDeployVersion ? "true" : "false");
@@ -129,6 +137,9 @@
 	   	
 	   	// always add
 	   	$content = setVariable($content, "smwgAllowNewHelpQuestions", "true");
+	   	$content = setVariable($content, "wgUseAjax", "true");
+	   	$content = setVariable($content, "wgEnableUploads", "true");
+	   	$content = setVariable($content, "smwgIQEnabled", "true");
 	   	 
 	   	    
 	   writeLocalSettings('LocalSettings.php', $content);
@@ -190,7 +201,7 @@
 	    */
 	   function insertVariable($content, $text) {
 	   	$insertAt = strpos($content, VARIABLE_INSERT_MARKER) + strlen(VARIABLE_INSERT_MARKER);
-	   	return substr($content, 0, $insertAt).$text."\n".substr($content, $insertAt);
+	   	return substr($content, 0, $insertAt)."\n".$text."\n".substr($content, $insertAt);
 	   }
 	?>
 </body>
