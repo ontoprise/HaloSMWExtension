@@ -247,6 +247,13 @@
  	 */
  	public abstract function getRatedAnnotations($subject);
  	
+ 	/**
+ 	 * Returns an array of $limit annotations (non-nary) which are not yet rated.
+ 	 * 
+ 	 * @param $limit integer
+ 	 * @return array of titles (subject, predicate, objectOrValue)
+ 	 */
+ 	public abstract function getAnnotationsForRating($limit);
  	// Methods which modifies the database
  	
  	/**

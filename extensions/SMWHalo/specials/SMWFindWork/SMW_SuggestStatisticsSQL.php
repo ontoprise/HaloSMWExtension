@@ -141,25 +141,7 @@
 		return $result;
  	}
  	
- 	public function getAnnotationsForRating($limit, $unrated = true) {
- 		$db =& wfGetDB( DB_MASTER );
- 		$smw_attributes = $db->tableName('smw_attributes');		
-		$smw_relations = $db->tableName('smw_relations');
-		$smw_nary = $db->tableName('smw_nary');
-		if ($unrated) $where = 'WHERE rating IS NULL'; else $where = 'WHERE rating IS NOT NULL';
- 		$res = $db->select($smw_attributes, array('subject_title', 'attribute_title', 'value_xsd'), array('rating' => NULL), 'SMW:getAnnotationsWithoutRating', array('ORDER BY' => 'RAND()', 'LIMIT' => $limit));
- 		$res = $db->query('(SELECT subject_title AS subject, attribute_title AS predicate, value_xsd AS object FROM '.$smw_attributes. ' '.$where.') ' .
- 							'UNION ' .
- 						   '(SELECT subject_title AS subject, relation_title AS predicate, object_title AS object FROM '.$smw_relations.' '.$where.') ORDER BY RAND() LIMIT '.$limit);
- 		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array($row->subject, $row->predicate, $row->object);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
- 	}
+ 	
  	
  	public function getLowRatedAnnotations($username, $requestoptions) {
  		$db =& wfGetDB( DB_MASTER );

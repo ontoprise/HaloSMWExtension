@@ -61,7 +61,7 @@
  		
  		// Replace redirect annotations
  		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
- 		//smwfGetSemanticStore()->replaceRedirectAnnotations(true);
+ 		smwfGetSemanticStore()->replaceRedirectAnnotations(true);
  		//}
  		
  		// Schema level checks

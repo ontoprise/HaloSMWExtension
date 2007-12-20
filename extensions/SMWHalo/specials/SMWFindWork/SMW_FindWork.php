@@ -99,8 +99,8 @@ function smwfDoSpecialFindWorkPage() {
 		$html .= '<form id="ratingform"><table id="rateannotations" border="0" cellspacing="0" rowspacing="0">';
 		
 		// get some rated and unrated annotations
-		$annotations = $this->store->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
-		$annotations = array_merge($this->store->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, false), $annotations);
+		$annotations = smwfGetSemanticStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
+		$annotations = array_merge(smwfGetSemanticStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, false), $annotations);
 		$i = 0;
 		foreach($annotations as $a) {
 			$html .= '<tr id="annotation'.$i.'">';

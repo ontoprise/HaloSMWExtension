@@ -346,10 +346,10 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 			$correct_unit = false;
  				if ($u == NULL) continue;
  				foreach($conversion_factors as $c) {
- 					$correct_unit |= preg_match("/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+".preg_quote($u)."/", $c) > 0;
+ 					$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u).'(,|$)/', $c) > 0;
  				}
  				foreach($si_conversion_factors as $c) {
- 					$correct_unit |= preg_match("/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+".preg_quote($u)."/", $c) > 0;
+ 					$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u).'(,|$)/', $c) > 0;
  				}
  			
 	 			if (!$correct_unit) {
