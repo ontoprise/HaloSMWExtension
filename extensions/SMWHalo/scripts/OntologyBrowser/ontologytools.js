@@ -1148,7 +1148,7 @@ OBCatgeorySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	getUserDefinedControls: function() {
-		var titlevalue = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? this.selectedTitle : '';
+		var titlevalue = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? this.selectedTitle.replace(/_/g, " ") : '';
 		return '<div id="'+this.id+'">' +
 					'<div style="display: block; height: 22px;">' +
 					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text" value="'+titlevalue+'"/>' +
@@ -1298,9 +1298,10 @@ OBPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	getUserDefinedControls: function() {
+		var titlevalue = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? this.selectedTitle.replace(/_/g, " ") : '';
 		return '<div id="'+this.id+'">' +
 					'<div style="display: block; height: 22px;">' +
-					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text" value="'+titlevalue+'"/>' +
 					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
 					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a>' +
 					(this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? ' | <a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' : '') +
@@ -1427,9 +1428,10 @@ OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	getUserDefinedControls: function() {
+		var titlevalue = this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME ? this.selectedTitle.replace(/_/g, " ") : '';
 		return '<div id="'+this.id+'">' +
 					'<div style="display: block; height: 22px;">' +
-					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text"/>' +
+					'<input style="display:block; width:45%; float:left" id="'+this.id+'_input_ontologytools" type="text" value="'+titlevalue+'"/>' +
 					'<span style="margin-left: 10px;" id="'+this.id+'_apply_ontologytools">'+gLanguage.getMessage('OB_ENTER_TITLE')+'</span> | ' +
 					'<a onclick="'+this.objectname+'.cancel()">'+gLanguage.getMessage('CANCEL')+'</a> | ' +
 					'<a onclick="'+this.objectname+'.preview()" id="'+this.id+'_preview_ontologytools">'+gLanguage.getMessage('OB_PREVIEW')+'</a>' +
