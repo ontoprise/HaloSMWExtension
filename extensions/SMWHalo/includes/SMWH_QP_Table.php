@@ -54,7 +54,8 @@ class SMWHaloTableResultPrinter extends SMWResultPrinter {
 				$tt = '';
 				if(($firstcol && $this->mLinkFirst) || $this->mLinkOthers){
 					$cont = $field->getContent();
-					if($cont[0] instanceof SMWWikiPageValue){ //for each link, add GI tooltip
+					
+					if(is_array($cont) && !is_null($cont[0]) && $cont[0] instanceof SMWWikiPageValue){ //for each link, add GI tooltip
 						$tt = $this->addTooltip($cont[0]->getTitle());
 						if($firstcol) //save gardening issues for the article of the current row
 							$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, SMW_CONSISTENCY_BOT_BASE + 3, $cont[0]->getTitle(), NULL, NULL);

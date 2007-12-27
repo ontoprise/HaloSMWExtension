@@ -38,7 +38,7 @@ class SMWQueryInterface extends SpecialPage {
 
 
 		$html = '<div id="qicontent">' .
-				'<div id="shade" style="display:none"></div>' .
+				'<div id="shade" style="display:none"></div>';
 
 		$html .= '<div id="treeview">' .
 				'<div id="treeviewheader" class="qiboxheader">' .
@@ -114,8 +114,8 @@ class SMWQueryInterface extends SpecialPage {
 							Link:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_link') . '\')">
 							<select id="layout_link">
-							<option>subject</option>
 							<option>all</option>
+							<option>subject</option>
 							<option>none</option>
 							</select>
 						</td>
