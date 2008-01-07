@@ -481,7 +481,7 @@ OBOntologyModifier.prototype = {
 		
 		var superPropertyTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('title');
 		var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+superPropertyTitle, '',   
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+newPropertyTitle, '',   
 			                   content,
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(sibligPropertyID));
 	},
