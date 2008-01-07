@@ -5,6 +5,7 @@
  * Author: kai
  */
 
+
  //get Parameter
  $wgRequestTime = microtime(true);
 
@@ -14,6 +15,7 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	print "This script must be run from the command line\n";
 	exit();
 }
+
 
 if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
 	print "Sorry! This version of MediaWiki requires PHP 5; you are running " .
@@ -46,6 +48,10 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$userId = next($argv);
 		continue;
 	}
+	if ($arg == '-s') { 
+		$servername = next($argv);
+		continue;
+	}
 	$params[] = $arg;
 }
 
@@ -53,6 +59,10 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 // methodes for maintenance scripts
 $mediaWikiLocation = dirname(__FILE__) . '/../../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+
+// set servername, because it is not set properly in async mode (always localhost)
+global $wgServer;
+$wgServer = $servername;
 
 // include bots
 require_once("ConsistencyBot/SMW_ConsistencyBot.php");

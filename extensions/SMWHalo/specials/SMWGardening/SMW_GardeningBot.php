@@ -220,14 +220,16 @@
  		}
 		
 		// and start it...
-		$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 		 		
+		$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
+		global $wgServer;	
+		$serverNameParam = escapeshellarg($wgServer);	 		
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
  			
  			
  			if ($runAsync) { 
  				//TODO: test async code for linux. 
  				//low prio 
- 				$runCommand .= " -b $botID -t $taskid -u $userId ".$params;
+ 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".$params;
   	 			$nullResult = `$runCommand > /dev/null &`;
   	 			
   	 		
@@ -253,7 +255,7 @@
  				// botID is first parameter
  				// taskID is second
  				// user defined parameters follow
- 				$runCommand .= " -b $botID -t $taskid -u $userId ".$params;
+ 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".$params;
  			
  				$oExec = $wshShell->Run($runCommand, 7, false);
  				
