@@ -404,6 +404,7 @@ protected $smwUserMessages = array(
  	/* SMWFindWork */
  	'findwork' => 'Suche Arbeit',
  	'smw_findwork_docu' => 'Diese Seite zeigt Ihnen Artikel die wahrscheinlich in ihr Interessensgebiet fallen. Viel Spass!',
+ 	'smw_findwork_user_not_loggedin' => 'Sie sind NICHT eingeloggt. Es ist möglich die Seite anonym zu nutzen, aber sie bringt bessere Ergebnisse wenn Sie eingeloggt sind.',
  	'smw_findwork_header' => 'Die Artikel-Liste enthält Artikel basierend auf ihrer Editier-History und offenen Gardening-Problemen. Wenn Sie nicht wissen was sie auswählen sollen, drücken Sie einfach $1. Das Wiki wählt dann etwas aus.<br>Wenn Sie wollen konnen Sie das Ergebnis auch genauer eingrenzen: ',
  	'smw_findwork_rateannotations' => '<h2>Bewerten Sie Annotationen</h2>Sind diese Annotationen korrekt? Bitte nehmen Sie sich einen Moment Zeit.<br><br>',
  	'smw_findwork_yes' => 'Ja',

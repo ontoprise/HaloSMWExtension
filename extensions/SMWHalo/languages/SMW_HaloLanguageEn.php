@@ -433,7 +433,8 @@ clicking the big arrows between the columns.',
  	
  	/* SMWFindWork */
  	'findwork' => 'Find work',
- 	'smw_findwork_docu' => 'This page suggests articles that are somehow problematic but which you might enjoy editing/correcting.', 	
+ 	'smw_findwork_docu' => 'This page suggests articles that are somehow problematic but which you might enjoy editing/correcting.',
+ 	'smw_findwork_user_not_loggedin' => 'You are NOT logged in. It\'s possible to use the page anonymously, but it is far better to be logged in.', 	
  	'smw_findwork_header' => 'The suggested articles will reflect your interests based on your edit history. If you don\'t know what to choose, click on $1. The system will then select something for you.<br /><br />If you want to work on a more specific issue you can choose one of the following: ',
  	'smw_findwork_rateannotations' => '<h2>Rate annotations</h2>You can help to enhance the quality of this wiki by rating the quality of the following statements. Are the following statements correct?<br><br>',
  	'smw_findwork_yes' => 'Correct.',

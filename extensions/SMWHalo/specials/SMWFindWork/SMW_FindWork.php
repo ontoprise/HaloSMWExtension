@@ -63,10 +63,14 @@ function smwfDoSpecialFindWorkPage() {
 	function isSyndicated() { return false; }
 
 	function getPageHeader() {
-		global $wgRequest;
+		global $wgRequest, $wgUser;
 		
 		$field_val = $wgRequest->getVal("field") != NULL ? intval($wgRequest->getVal("field")) : 0;
-		$html = '<p>' . wfMsg('smw_findwork_docu') . "</p>\n";
+		$html = "";
+		if ($wgUser->isAnon()) {
+			$html .= "<p class=\"warning\">".wfMsg('smw_findwork_user_not_loggedin')."</p>";
+		}
+		$html .= '<p>' . wfMsg('smw_findwork_docu') . "</p>\n";
 		$specialPage = Title::newFromText($this->getName(), NS_SPECIAL);
 		$html .= "<form action=\"".$specialPage->getFullURL()."\">";
 		$html .= wfMsg('smw_findwork_header', "<input  name=\"gswButton\" type=\"submit\" value=\"".wfMsg('smw_findwork_getsomework')."\"/>");
