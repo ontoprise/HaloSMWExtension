@@ -335,7 +335,7 @@ OBOntologyModifier.prototype = {
 		}
 		var superCategoryTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('title');
 		var content = superCategoryTitle != null ? "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+superCategoryTitle, content, '',
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+newCategoryTitle, content, '',
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(sibligCategoryID));
 	},
 	
