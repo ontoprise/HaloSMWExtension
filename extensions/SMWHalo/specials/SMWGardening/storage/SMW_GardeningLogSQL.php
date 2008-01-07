@@ -233,6 +233,31 @@
 		$twoDaysAgo  = mktime(0, 0, 0, date("m"), date("d")-2,   date("Y"));
 		$date = getDate($twoDaysAgo);
 		$dbr->query('DELETE FROM '.$tblName.' WHERE endtime IS NULL AND starttime < '.$dbr->addQuotes($this->getDBDate($date)));
+		
+		// Remove logs which are older than 1 month. (running and finished)
+		$oneMonthAgo  = mktime(0, 0, 0, date("m")-1, date("d"),   date("Y"));
+		$date = getDate($oneMonthAgo);
+		
+		// select log pages older than one month
+		$res = $dbr->query('SELECT log FROM '.$tblName.' WHERE starttime < '.$dbr->addQuotes($this->getDBDate($date)));
+		if($dbr->numRows( $res ) > 0)
+		{
+			
+			while($row = $dbr->fetchObject($res))
+			{
+				// get name of log page and remove the article
+				$log = explode("/", $row->log);
+				$logTitle = Title::newFromDBkey($log[count($log)-1]);
+				$logArticle = new Article($logTitle);
+				if ($logArticle->exists()) {
+					$logArticle->doDelete("automatic deletion");
+				} 
+			}
+		}
+		$dbr->freeResult($res);
+		
+		// remove log entries
+		$dbr->query('DELETE FROM '.$tblName.' WHERE starttime < '.$dbr->addQuotes($this->getDBDate($date)));
 	}
 	
 	/**
