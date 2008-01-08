@@ -922,7 +922,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		}
 		
 		var instanceDIV = document.getElementById("instanceList");
-		
+		var relattDIV = $("relattributes");
 		
 		
 		// fire selection event
@@ -942,11 +942,29 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 	transformer.transformResultToHTML(request,instanceDIV, true);
 	 	 	selectionProvider.fireRefresh();
 		}
+		
+		function callbackOnPropertySelect2(request) {
+		 	OB_relatt_pendingIndicator.hide();
+		  	if (relattDIV.firstChild) {
+		  			GeneralBrowserTools.purge(relattDIV.firstChild);
+					relattDIV.removeChild(relattDIV.firstChild);
+			}
+			var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+			selectionProvider.fireBeforeRefresh();
+		  	transformer.transformResultToHTML(request,relattDIV);
+		  	selectionProvider.fireRefresh();
+		  	
+	 	}
 	 	
 	 	 if (OB_LEFT_ARROW == 0) {
 		     OB_instance_pendingIndicator.show();
 		 	 dataAccess.getInstancesUsingProperty(propertyName, 0, callbackOnPropertySelect);
 		 	 selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
+	 	 }
+	 	 if (OB_RIGHT_ARROW == 0) {
+	 		OB_relatt_pendingIndicator.show();
+	 		sajax_do_call('smwfOntologyBrowserAccess', ['getAnnotations',gLanguage.getMessage('PROPERTY')+propertyName], callbackOnPropertySelect2);
 	 	 }
 		}
 	},

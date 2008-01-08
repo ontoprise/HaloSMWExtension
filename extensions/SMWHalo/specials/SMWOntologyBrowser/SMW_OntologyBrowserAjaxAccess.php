@@ -59,7 +59,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$propertyAnnotations = array();
  		
- 		$instance = Title::newFromText($p_array[0], NS_MAIN);
+ 		$instance = Title::newFromText($p_array[0]);
  		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
  		foreach($properties as $a) { 
  			$values = smwfGetStore()->getPropertyValues($instance, $a);
