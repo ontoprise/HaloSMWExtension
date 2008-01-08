@@ -94,8 +94,9 @@ AdvancedAnnotation.prototype = {
 			//trim selection
 			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
 			this.annotatedNode = annoSelection.anchorNode;
-			this.focusNode = annoSelection.focusNode;
-			this.annoOffset = annoSelection.anchorOffset;
+			this.annoOffset    = annoSelection.anchorOffset;
+			this.focusNode   = annoSelection.focusNode;
+			this.focusOffset = annoSelection.focusOffset;
 			
 			this.performAnnotation(event);
 		}
@@ -186,7 +187,7 @@ AdvancedAnnotation.prototype = {
 		var anchor = null;
 		var firstAnchor = null;
 		var secondAnchor = null;
-		
+				
 		firstAnchor = this.searchBackwards(this.annotatedNode, 
 										   this.searchWtoAnchor.bind(this));
 		secondAnchor = this.searchForward(this.focusNode, 
@@ -337,7 +338,7 @@ AdvancedAnnotation.prototype = {
 		    && node.type == "wikiTextOffset") {
 			var obj = node.getAttribute('obj');
 			if (obj === 'pre'
-				|| obj === 'annotation'
+//				|| obj === 'annotation'
 			    || obj === 'ask'
 			    || obj === 'nowiki'
 //			    || obj === 'newline'
@@ -557,7 +558,8 @@ AdvancedAnnotation.prototype = {
 			this.markProposal(AA_RELATION, 'aam_new_anno_prop_highlight');
 			this.annotationProposal = null;
 		} else {
-			this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
+//			this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
+			this.highlightSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		}
 		relToolBar.fillList();
 		smwhgSaveAnnotations.markDirty();
@@ -593,7 +595,7 @@ AdvancedAnnotation.prototype = {
 	 * @param int endPos
 	 * 		Wikitextoffset of the new annotation's end.
 	 */
-	markSelection: function(type, cssClass, startPos, endPos) {
+/*	markSelection: function(type, cssClass, startPos, endPos) {
 		if (!this.annotatedNode || this.selectedText === "") {
 			return;
 		}
@@ -659,13 +661,124 @@ AdvancedAnnotation.prototype = {
 			parentNode.replaceChild(newText, node);
 		}
 		// reset selection information
-		this.annotatedNode = null;
-		this.annoOffset = 0;
-		
+		this.resetSelection();
 		this.annoCount++;
+	},
+*/	
+	/**
+	 * Resets the stored selection information.
+	 */
+	resetSelection: function() {
+		this.selection = null;
+		this.annotatedNode = null;
+		this.focusNode = null;
+		this.annoOffset = 0;
+		this.focusOffset = 0;
+	},
+	
+	/**
+	 * Embraces the currently selected text with a <span> tag with the css style
+	 * <cssClass>.
+	 * @param int type
+	 * 		The selection is either AA_RELATION or AA_CATEGORY
+	 * @param string cssClass
+	 * 		Name of the css style that is added as class to the <span> tag.
+	 * @param int startPos
+	 * 		Wikitextoffset of the new annotation's start that has been created 
+	 * 		for the	selection.
+	 * @param int endPos
+	 * 		Wikitextoffset of the new annotation's end.
+	 */
+	highlightSelection: function(type, cssClass, startPos, endPos) {
+
+		if (!this.annotatedNode || this.selectedText === "") {
+			return;
+		}
 		
+		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
+		var annoDecoStart =
+			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
+			((type == AA_RELATION) 
+				? '<img src="' + imgPath + 'edit.gif"/>'
+				: "" ) +
+			'</a>' +
+			'<span id="anno' + this.annoCount +
+				'" class="' +cssClass +
+				'" type="annotationHighlight">';
+		var annoDecoEnd =
+			'</span>'+
+			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
+   			'<img src="' + imgPath + 'delete.png"/></a>';
+   		
+   		// add a wrapper span
+   		if (this.selectedText.length <= 20) {
+			annoDecoStart = '<span id="anno'+this.annoCount+'w" style="white-space:nowrap">'+
+						annoDecoStart;
+			annoDecoEnd += '</span>';
+   		} else {
+			annoDecoStart = '<span id="anno'+this.annoCount+'w">'+
+						annoDecoStart;
+			annoDecoEnd += '</span>';
+   		}
+   		
+   		var annoType = (type == AA_RELATION) 
+   						? 'annoType="relation"'
+   						: 'annoType="category"';
+
+		// add wiki text offset anchors around the highlight   						
+   		annoDecoStart = '<a type="wikiTextOffset" name="'+startPos+'" '+annoType+'></a>' 
+   		                + annoDecoStart;
+		annoDecoEnd += '<a type="wikiTextOffset" name="'+endPos+'" '+annoType+'></a>';
+
+		var first = this.annotatedNode;
+		var second = this.focusNode;
+		var foff = this.annoOffset;
+		var soff = this.focusOffset;
+		
+		var t = second.textContent;
+		t = t.substring(0, soff) + '###end###' + t.substring(soff);
+		second.textContent = t;
+		
+		t = first.textContent;
+		t = t.substring(0, foff) + '###start###' + t.substring(foff);
+		first.textContent = t;
+
+		var p1 = first.parentNode;
+		var p2 = second.parentNode;
+		var html1 = p1.innerHTML;
+		html1 = html1.replace(/###start###/, annoDecoStart);
+		html1 = html1.replace(/###end###/, annoDecoEnd);
+		if (p1 === p2) {
+			p1.innerHTML = html1;
+		} else {
+			// The first and the last node of the selection are different
+			var html2 = p2.innerHTML;
+			// a selection might start within a bold or italic node and end
+			// somewhere else => create the span outside the formatted node.
+			html2 = html2.replace(/(<b><i>|<i><b>|<i>|<b>)###start###/, '###start###$1');
+			html2 = html2.replace(/###start###/, annoDecoStart);
+			html2 = html2.replace(/###end###/, annoDecoEnd);
+			p1.innerHTML = html1;
+			p2.innerHTML = html2;
+		}
+		
+		// reset the current selection
+		this.resetSelection();
+		
+		// The highlighted section may contain annotation proposal => hide them
+		var wrapperSpan = $("anno"+this.annoCount+"w");
+		
+		var proposals = wrapperSpan.descendants();
+		for (var i = 0; i < proposals.length; ++i) {
+			var p = proposals[i];
+			if (p.id.match(/anno\d*w/)) {
+				this.hideProposal(p);
+			}
+		} 
+		this.annoCount++;
 	},
 
+	
 	/**
 	 * An annotation proposal is highlighted with a green border and a "+"-icon.
 	 * This highlight is replaced by the normal highlight of annotations.
@@ -706,6 +819,27 @@ AdvancedAnnotation.prototype = {
 		);
 		this.annoCount++;
 		
+	},
+	
+	/**
+	 * Hides a proposal.
+	 * Proposals are highlighted with a green border and a (+)-button. All this
+	 * is contained in a <span> that surrounds the actual text. This method hides 
+	 * the proposal visually, without deleting the <span> etc. Thus it can be
+	 * restored later.
+	 * 
+	 * @param DomNode wrapperSpan
+	 * 		This DOM node is the wrapper <span> around the proprosed text. 
+	 */
+	hideProposal: function(wrapperSpan) {
+		var img = wrapperSpan.down('img');
+		if (img) {
+			img.hide();
+		}
+		var span = wrapperSpan.down('span');
+		if (span) {
+			span.className = '';
+		}
 	},
 		
 	/**
@@ -940,15 +1074,15 @@ AdvancedAnnotation.prototype = {
 		
 		var htmlContent = "";
 		var content = "";
-		var link = span.down();
-		if (link && link.tagName == 'A') {
+///		var link = span.down();
+//		if (link && link.tagName == 'A') {
 			// the span contains a link => remove the link as well
-			htmlContent = link.innerHTML
-			content = link.textContent;
-		} else {
+//			htmlContent = link.innerHTML
+//			content = link.textContent;
+//		} else {
 			htmlContent = span.innerHTML
-			content = span.textContent;
-		}
+//			content = span.textContent;
+//		}
 		
 		// There is a wiki text offset anchor after the wrapper span.
 		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');

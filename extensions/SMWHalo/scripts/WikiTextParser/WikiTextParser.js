@@ -468,7 +468,7 @@ WikiTextParser.prototype = {
 		var parts = wikitext.split(/('{2,})|(&nbsp;)|(\[\[.*?\]\])|(\[http.*?\])|(\s+)/);
 		var openApos = 0; // number of opening apostrophes (max 5)
 		
-		// Rules for finding bold an italic formatting instructions
+		// Rules for finding bold and italic formatting instructions
 		var rules = [
 			[0,'a',5,3,2],
 			[2,'a',3],
@@ -588,6 +588,17 @@ WikiTextParser.prototype = {
 				} else {
 					wtStart = map[i][1] + (pos - map[i][0]);
 					startLevel = map[i][2];
+					if (pos == map[i][0] && startLevel != endLevel) {
+						// maybe we are at the first character of a bold/italic
+						// section
+						if (i-- >= 0) {
+							if (map[i][2] == endLevel 
+							    && wikitext.charAt(map[i+1][1]-1) == "'") {
+								wtStart = map[i][1] + (pos - map[i][0]);
+								startLevel = map[i][2];
+							}
+						}
+					}
 					break;
 				}
 			}
