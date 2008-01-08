@@ -531,7 +531,7 @@ AdvancedAnnotation.prototype = {
 	 * 		Name of the new category.
 	 */
 	categoryAdded: function(startPos, endPos, name) {
-		this.markSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
+		this.highlightSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
 		catToolBar.fillList();
 		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
