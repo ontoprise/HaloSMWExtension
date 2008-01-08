@@ -92,9 +92,13 @@ OntologyModifier.prototype = {
 			var parts = answer.match(regex);
 			
 			if (parts == null) {
-				var errMsg = gLanguage.getMessage('ERR_QUERY_EXISTS_ARTICLE');
+				// Error while querying existence of article, probably due to 
+				// invalid article name => article does not exist
+				callback(pageName, false, title, optparam, domElementID);
+/*				var errMsg = gLanguage.getMessage('ERR_QUERY_EXISTS_ARTICLE');
 				errMsg = errMsg.replace(/\$-page/g, pageName);
 				alert(errMsg);
+*/ 
 				return;
 			}
 			callback(pageName, parts[1] == 'true' ? true : false, title, optparam, domElementID);
