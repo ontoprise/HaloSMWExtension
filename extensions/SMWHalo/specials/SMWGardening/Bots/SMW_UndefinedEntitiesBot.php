@@ -357,7 +357,8 @@
  	
  	public function getArticlesUsingProperty($property, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
-
+		
+		if (!is_numeric($limit)) return array();
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
 		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace FROM smw_attributes WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
 				'SELECT DISTINCT subject_title, subject_namespace FROM smw_relations WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
@@ -404,7 +405,8 @@
  	
  	public function getArticlesUsingCategory($category, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
-
+	
+		if (!is_numeric($limit)) return array();
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;            
 		$res = $db->query('SELECT page_title, page_namespace FROM page,categorylinks WHERE page_namespace = '.NS_MAIN.' AND page_id = cl_from AND cl_to = '.$db->addQuotes($category->getDBkey()).' '.$limitConstraint);
 	
@@ -449,7 +451,9 @@
  	
  	public function getRelationsUsingTarget($target, $limit = 0) {
  		$db =& wfGetDB( DB_MASTER );
-
+		
+		if (!is_numeric($limit)) return array();
+		
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
 		$res = $db->query('SELECT DISTINCT relation_title AS title FROM smw_relations WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
 				'UNION DISTINCT SELECT DISTINCT attribute_title AS title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
@@ -475,7 +479,7 @@
 		                    array('page_title'),
 		                    $sql, 'SMW::getInstancesWithoutCategory', NULL);*/
 		
-		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND p.page_namespace = '.NS_MAIN);
+		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN);
 		                    
 		
 		$result = array();

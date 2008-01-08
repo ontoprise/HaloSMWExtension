@@ -142,14 +142,14 @@
 	public static function getSQLOptions($requestoptions, $valuecol = NULL) {
 		$sql_options = array();
 		if ($requestoptions !== NULL) {
-			if ($requestoptions->limit >= 0) {
+			if (is_numeric($requestoptions->limit) && $requestoptions->limit >= 0) {
 				$sql_options['LIMIT'] = $requestoptions->limit;
 			}
-			if ($requestoptions->offset > 0) {
+			if (is_numeric($requestoptions->offset) && $requestoptions->offset > 0) {
 				$sql_options['OFFSET'] = $requestoptions->offset;
 			}
 			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
-				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
+				$sql_options['ORDER BY'] = $requestoptions->ascending ? mysql_real_escape_string($valuecol) : mysql_real_escape_string($valuecol) . ' DESC';
 			}
 		}
 		return $sql_options;
@@ -157,8 +157,8 @@
 	
 	public static function getSQLOptionsAsString($requestoptions, $valuecol = NULL) {
 		$options = DBHelper::getSQLOptions($requestoptions,$valuecol);
-		$limit = array_key_exists('LIMIT', $options) ? 'LIMIT '.$options['LIMIT'] : '';
-		$offset = array_key_exists('OFFSET', $options) ? 'OFFSET '.$options['OFFSET'] : '';
+		$limit = array_key_exists('LIMIT', $options) && is_numeric($options['LIMIT'])? 'LIMIT '.$options['LIMIT'] : '';
+		$offset = array_key_exists('OFFSET', $options) && is_numeric($options['OFFSET']) ? 'OFFSET '.$options['OFFSET'] : '';
 		$orderby = array_key_exists('ORDER BY', $options) ? 'ORDER BY '.$options['ORDER BY'] : '';
 		return $orderby.' '.$limit.' '.$offset;
 	}
@@ -189,7 +189,7 @@
 						$op = ' < ';
 					}
 				}
-				$sql_conds .= ' AND ' . $valuecol . $op . $db->addQuotes($requestoptions->boundary);
+				$sql_conds .= ' AND ' . mysql_real_escape_string($valuecol) . $op . $db->addQuotes($requestoptions->boundary);
 			}
 			if ($labelcol !== NULL) { // apply string conditions
 				foreach ($requestoptions->getStringConditions() as $strcond) {
@@ -206,10 +206,51 @@
 							break;
 					}
 					if ($requestoptions->isCaseSensitive) { 
-						$sql_conds .= ' AND ' . $labelcol . ' LIKE ' . $db->addQuotes($string);
+						$sql_conds .= ' AND ' . mysql_real_escape_string($labelcol) . ' LIKE ' . $db->addQuotes($string);
 					} else {
-						$sql_conds .= ' AND UPPER(' . $labelcol . ') LIKE UPPER(' . $db->addQuotes($string).')';
+						$sql_conds .= ' AND UPPER(' . mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).')';
 					}
+				}
+			}
+		}
+		return $sql_conds;
+	}
+	
+	public static function getSQLConditionsAsArray($requestoptions, $valuecol, $labelcol = NULL) {
+		$sql_conds = array();
+		if ($requestoptions !== NULL) {
+			$db =& wfGetDB( DB_SLAVE );
+			if ($requestoptions->boundary !== NULL) { // apply value boundary
+				if ($requestoptions->ascending) {
+					if ($requestoptions->include_boundary) {
+						$op = ' >= ';
+					} else {
+						$op = ' > ';
+					}
+				} else {
+					if ($requestoptions->include_boundary) {
+						$op = ' <= ';
+					} else {
+						$op = ' < ';
+					}
+				}
+				$sql_conds[] =  mysql_real_escape_string($valuecol) . $op . $db->addQuotes($requestoptions->boundary);
+			}
+			if ($labelcol !== NULL) { // apply string conditions
+				foreach ($requestoptions->getStringConditions() as $strcond) {
+					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
+					switch ($strcond->condition) {
+						case SMW_STRCOND_PRE:
+							$string .= '%';
+							break;
+						case SMW_STRCOND_POST:
+							$string = '%' . $string;
+							break;
+						case SMW_STRCOND_MID:
+							$string = '%' . $string . '%';
+							break;
+					}
+					$sql_conds[] = 'UPPER('.mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).')';
 				}
 			}
 		}

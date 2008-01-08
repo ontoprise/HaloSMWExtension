@@ -23,10 +23,10 @@
 			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
 		}
 		if ($gi_class != NULL) {
-			$sqlCond .= 'gi_class = '.$gi_class.' AND ';
+			$sqlCond .= 'gi_class = '.mysql_real_escape_string($gi_class).' AND ';
 		}
 		if ($gi_type != NULL) {
-			$sqlCond .= 'gi_type = '.$gi_type.' AND ';
+			$sqlCond .= 'gi_type = '.mysql_real_escape_string($gi_type).' AND ';
 		}
 		$sqlCond .= 'TRUE';
 				
@@ -120,10 +120,10 @@
 			$sqlCond .= 'bot_id = '.$db->addQuotes($botID).' AND ';
 		}
 		if ($gi_class != NULL) {
-			$sqlCond .= 'gi_class = '.$db->addQuotes($gi_class).' AND ';
+			$sqlCond .= 'gi_class = '.mysql_real_escape_string($gi_class).' AND ';
 		}
 		if ($gi_type != NULL) {
-			$sqlCond .= 'gi_type = '.$db->addQuotes($gi_type).' AND ';
+			$sqlCond .= 'gi_type = '.mysql_real_escape_string($gi_type).' AND ';
 		}
 		$sqlCond .= 'TRUE';
 		

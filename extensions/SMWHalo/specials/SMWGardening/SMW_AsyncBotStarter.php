@@ -92,7 +92,7 @@ require_once("SMW_GardeningLog.php");
  	try { 
  		$bot->setTaskID($taskid);
  		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
- 		$log = $bot->run(GardeningBot::convertParamStringToArray(implode($params,"")), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 		$log = $bot->run(GardeningBot::convertParamStringToArray(unescapeShellArgument(implode($params,""))), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  		echo $log;
  		if ($log != NULL && $log != '') {
  			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
@@ -111,6 +111,42 @@ require_once("SMW_GardeningLog.php");
  		if ($title != NULL) echo "\nLog saved at: ".$title->getLocalURL();
  	} 
  }
+ 
+ 	/**
+ 	 * Unescapes string which are escaped by escapeShellCmd(...)
+ 	 * 
+ 	 * @param arbitrary string
+ 	 * @return string
+ 	 */
+ 	function unescapeShellArgument($arg) {
+ 		$a = str_replace("2F", "/", $arg);
+ 		$a = str_replace("3A", ":", $a);
+ 		$a = str_replace("\\;", ";", $a);
+ 		$a = str_replace("\\#", "#", $a);
+ 		$a = str_replace("\\&", "&", $a);
+ 		$a = str_replace("\\`", "`", $a);
+ 		$a = str_replace("\\|", "|", $a);
+ 		$a = str_replace("\\*", "*", $a);
+ 		$a = str_replace("\\?", "?", $a);
+ 		$a = str_replace("\\~", "~", $a);
+ 		$a = str_replace("\\<", "<", $a);
+ 		$a = str_replace("\\>", ">", $a);
+ 		$a = str_replace("\\^", "^", $a);
+ 		$a = str_replace("\\(", "(", $a);
+ 		$a = str_replace("\\)", ")", $a);
+ 		$a = str_replace("\\[", "[", $a);
+ 		$a = str_replace("\\]", "]", $a);
+ 		$a = str_replace("\\{", "{", $a);
+ 		$a = str_replace("\\}", "}", $a);
+ 		$a = str_replace('\$', '$', $a);
+ 		$a = str_replace("\\\\", "\\", $a);
+ 		$a = str_replace("\\,", ",", $a);
+ 		$a = str_replace("\\,", ",", $a);
+ 		$a = str_replace("\\,", ",", $a);
+ 		$a = str_replace("\\'", "'", $a);
+ 		$a = str_replace("\\\"", "\"", $a);
+ 		return $a;
+ 	}
  
  // get user email to send a message to him.
  /*$userEmail = getEmailFromUserId($userId);

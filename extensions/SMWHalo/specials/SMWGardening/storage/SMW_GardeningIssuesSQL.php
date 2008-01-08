@@ -55,7 +55,7 @@
  		if ($bot_id != NULL) {
  			$sqlCond .= ' AND bot_id = '.$db->addQuotes($bot_id);
  		}
- 		if ($gi_type != NULL) {
+ 		if ($gi_type != NULL && is_numeric($gi_type)) {
  			$sqlCond .= ' AND gi_type = '.$gi_type;
  		}
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
@@ -71,10 +71,11 @@
  			if (is_array($gi_class)) {
  				$cond = "";
  				foreach($gi_class as $c) {
+ 					if (!is_numeric($c)) continue;
  					$cond .= 'gi_class = '.$c.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else {
+ 			} else if (is_numeric($gi_class)) {
  				$sqlCond[] = 'gi_class = '.$gi_class;
  			}
  		}
@@ -82,10 +83,11 @@
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
+ 					if (!is_numeric($t)) continue;
  					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else { 
+ 			} else if (is_numeric($gi_type)){ 
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
@@ -112,8 +114,8 @@
  		
  		$sqlOptions = array();
  		if ($options != NULL) {
- 			$sqlOptions['LIMIT'] = $options->limit;
- 			$sqlOptions['OFFSET'] = $options->offset;
+ 			$sqlOptions['LIMIT'] = is_numeric($options->limit) ? $options->limit : "";
+ 			$sqlOptions['OFFSET'] = is_numeric($options->offset) ? $options->offset : "";
  		}
  		
  		if ($sortfor != NULL) {
@@ -150,10 +152,11 @@
  			if (is_array($gi_class)) {
  				$cond = "";
  				foreach($gi_class as $c) {
+ 					if (!is_numeric($c)) continue;
  					$cond .= 'gi_class = '.$c.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else {
+ 			} else if (is_numeric($gi_class)) {
  				$sqlCond[] = 'gi_class = '.$gi_class;
  			}
  		}
@@ -161,15 +164,16 @@
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
+ 					if (!is_numeric($t)) continue;
  					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else { 
+ 			} else if (is_numeric($gi_type)) { 
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint', 'modified'), $sqlCond , 'SMWGardeningIssue::getGardeningIssuesForPairs', $sqlOptions );
@@ -192,8 +196,8 @@
  		
  		$sqlOptions = array();
  		if ($options != NULL) {
- 			$sqlOptions['LIMIT'] = $options->limit;
- 			$sqlOptions['OFFSET'] = $options->offset;
+ 			$sqlOptions['LIMIT'] = is_numeric($options->limit) ? $options->limit : "";
+ 			$sqlOptions['OFFSET'] = is_numeric($options->offset) ? $options->offset : "";
  		}
  		
  		if ($sortfor != NULL) {
@@ -228,10 +232,11 @@
  			if (is_array($gi_class)) {
  				$cond = "";
  				foreach($gi_class as $c) {
+ 					if (!is_numeric($c)) continue;
  					$cond .= 'gi_class = '.$c.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else {
+ 			} else if (is_numeric($gi_class)) {
  				$sqlCond[] = 'gi_class = '.$gi_class;
  			}
  		}
@@ -239,15 +244,16 @@
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
+ 					if (!is_numeric($t)) continue;
  					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else { 
+ 			} else if (is_numeric($gi_type)) { 
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  	   
  		$result = array();
@@ -274,8 +280,8 @@
  		$sqlOptions = array();
  		$sqlOptions = array('GROUP BY' => 'p1_title, p1_namespace');
  		if ($options != NULL) {
- 			$sqlOptions['LIMIT'] = $options->limit;
- 			$sqlOptions['OFFSET'] = $options->offset;
+ 			$sqlOptions['LIMIT'] = is_numeric($options->limit) ? $options->limit : "";
+ 			$sqlOptions['OFFSET'] = is_numeric($options->offset) ? $options->offset : "";
  		}
  		
  		if ($sortfor != NULL) {
@@ -297,22 +303,23 @@
  			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
  		}
  		
- 		if ($gi_class != NULL) {
+ 		if ($gi_class != NULL && is_numeric($gi_class)) {
  			$sqlCond[] = 'gi_class = '.$gi_class;
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
+ 					if (!is_numeric($t)) continue;
  					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else { 
+ 			} else if (is_numeric($gi_type)) { 
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitles', $sqlOptions );
@@ -338,8 +345,8 @@
  		
  		$sqlOptions = array('GROUP BY' => 'p1_id, p2_id');
  		if ($options != NULL) {
- 			$sqlOptions['LIMIT'] = $options->limit;
- 			$sqlOptions['OFFSET'] = $options->offset;
+ 			$sqlOptions['LIMIT'] = is_numeric($options->limit) ? $options->limit : "";
+ 			$sqlOptions['OFFSET'] = is_numeric($options->offset) ? $options->offset : "";
  		}
  		
  		if ($sortfor != NULL) {
@@ -361,22 +368,23 @@
  			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
  		}
  		
- 		if ($gi_class != NULL) {
+ 		if ($gi_class != NULL && is_numeric($gi_class)) {
  			$sqlCond[] = 'gi_class = '.$gi_class;
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {
  				$cond = "";
  				foreach($gi_type as $t) {
+ 					if (!is_numeric($t)) continue;
  					$cond .= 'gi_type = '.$t.' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
- 			} else { 
+ 			} else if (is_numeric($gi_type)) { 
  				$sqlCond[] = 'gi_type = '.$gi_type;
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, $this->getSQLValueConditions($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace', 'p2_title', 'p2_namespace'), $sqlCond , 'SMWGardeningIssue::getDistinctTitlePairs', $sqlOptions );
@@ -505,45 +513,6 @@
  	
  	
  	
- 	protected function getSQLValueConditions($requestoptions, $valuecol, $labelcol = NULL) {
-		$sql_conds = array();
-		if ($requestoptions !== NULL) {
-			$db =& wfGetDB( DB_SLAVE );
-			if ($requestoptions->boundary !== NULL) { // apply value boundary
-				if ($requestoptions->ascending) {
-					if ($requestoptions->include_boundary) {
-						$op = ' >= ';
-					} else {
-						$op = ' > ';
-					}
-				} else {
-					if ($requestoptions->include_boundary) {
-						$op = ' <= ';
-					} else {
-						$op = ' < ';
-					}
-				}
-				$sql_conds[] =  $valuecol . $op . $db->addQuotes($requestoptions->boundary);
-			}
-			if ($labelcol !== NULL) { // apply string conditions
-				foreach ($requestoptions->getStringConditions() as $strcond) {
-					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
-					switch ($strcond->condition) {
-						case SMW_STRCOND_PRE:
-							$string .= '%';
-							break;
-						case SMW_STRCOND_POST:
-							$string = '%' . $string;
-							break;
-						case SMW_STRCOND_MID:
-							$string = '%' . $string . '%';
-							break;
-					}
-					$sql_conds[] = 'UPPER('.$labelcol . ') LIKE UPPER(' . $db->addQuotes($string).')';
-				}
-			}
-		}
-		return $sql_conds;
-	}
+ 	
  }
 ?>

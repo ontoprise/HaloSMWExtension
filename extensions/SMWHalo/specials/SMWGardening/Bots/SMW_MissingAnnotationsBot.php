@@ -191,7 +191,7 @@
 																	 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																	 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
 																	
-						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND page_title LIKE \'%'.$term.'%\'';
+						'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
 			}                 
 			$res = $db->query($sql);
 		
@@ -262,7 +262,7 @@
 																 'LEFT JOIN '.$smw_nary.' na ON na.subject_id=p.page_id ' .
 																 'LEFT JOIN '.$smw_longstrings.' ls ON ls.subject_id=p.page_id ' .
 																 
-					'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories) AND page_title LIKE \'%'.$term.'%\'';
+					'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND a.subject_id IS NULL AND r.subject_id IS NULL AND na.subject_id IS NULL AND ls.subject_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories) AND page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
 						
 			}
 			$res = $db->query($sql);

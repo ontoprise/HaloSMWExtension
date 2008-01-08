@@ -144,7 +144,7 @@
 		$fname = 'SMW::removeGardeningTask';
 		$db =& wfGetDB( DB_MASTER );
 		$db->delete( $db->tableName('smw_gardening'),
-		             array("id = $id"), 
+		             array('id' => $id), 
 		             $fname );
 	}
 	
@@ -163,7 +163,7 @@
 	    // get botID
 		$res = $db->select( $db->tableName('smw_gardening'),
 		             array('gardeningbot'),
-		             array('id='.$taskID),
+		             array('id' => $taskID),
 		             $fname,array());
 		if($db->numRows( $res ) == 0) {
 			throw new Exception("There is no task with the id: $taskID");

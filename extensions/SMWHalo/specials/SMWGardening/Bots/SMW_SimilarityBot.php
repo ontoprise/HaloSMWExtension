@@ -76,7 +76,7 @@
  		if ($similarityTerm == '') {
  			// global search
  			echo "\nDo a global search for schema similarities of degree $similarityDegree...";
- 			$similarities = $this->getAllSimilarTitles(NULL, $similarityDegree, $limitOfResults);
+ 			$similarities = $this->getAllSimilarTitles($similarityDegree, $limitOfResults);
  			echo "done!\n";
  			echo "Further investigations of found entities...";
  			foreach($similarities as $s) {
@@ -166,9 +166,10 @@
  	private function getSimilarTitles($similarityTerm, $similarityDegree) {
  		$dbr =& wfGetDB( DB_MASTER );
  		$result = array();
+ 		if (!is_numeric($similarityDegree)) return array();
  		$mw_page = $dbr->tableName('page');
  		// Calculate terms similar to $similarityTerm
- 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_is_redirect = 0 AND page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.$similarityTerm.'\')) <= '.$similarityDegree.";");
+ 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_is_redirect = 0 AND page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.mysql_real_escape_string($similarityTerm).'\')) <= '.$similarityDegree.";");
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
 				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
@@ -182,11 +183,12 @@
  		$dbr =& wfGetDB( DB_SLAVE );
  		$cond = array();
  		$mw_page = $dbr->tableName('page');
+ 		if (!is_numeric($similarityDegree)) return array();
  		foreach($this->commonPrefixes as $prefix) {
- 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.$prefix.$similarityTerm.'\')) <= '.$similarityDegree.' OR ';
+ 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.mysql_real_escape_string($prefix.$similarityTerm).'\')) <= '.$similarityDegree.' OR ';
  		}
  		foreach($this->commonSuffixes as $suffix) {
- 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.$similarityTerm.$suffix.'\')) <= '.$similarityDegree.' OR ';
+ 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.mysql_real_escape_string($similarityTerm.$suffix).'\')) <= '.$similarityDegree.' OR ';
  		}
  		$cond[] = 'FALSE'; // end last OR condition
  		
@@ -209,9 +211,10 @@
  	 * 
  	 * Warning: may take some time!
  	 */
- 	private function getAllSimilarTitles($similarityTerm, $similarityDegree, $limitOfResults) {
+ 	private function getAllSimilarTitles($similarityDegree, $limitOfResults) {
  		$dbr =& wfGetDB( DB_SLAVE );
  		$result = array();
+ 		if (!is_numeric($similarityDegree) || !is_numeric($limitOfResults)) return array();
  		$mw_page = $dbr->tableName('page');
 		$cond = array();
  		foreach($this->commonPrefixes as $prefix) {
@@ -252,6 +255,8 @@
  	private function getAllSimilarAnnotations($similarityTerm, $similarityDegree, $limitOfResults = NULL) {
  		$dbr =& wfGetDB( DB_SLAVE );
  		$result = array();
+ 		if (!is_numeric($similarityDegree)) return array();
+ 		if (!is_numeric($limitOfResults) && $limitOfResults != NULL) return array();
 	 	$smw_attributes = $dbr->tableName('smw_attributes');
 	 	$smw_relations = $dbr->tableName('smw_relations');
 	 	$smw_nary = $dbr->tableName('smw_nary');		
@@ -259,7 +264,7 @@
 	 	$nameRestriction = "";
 	 	if ($similarityTerm != NULL) {
 	 		$similarityTerm = str_replace(" ", "_", $similarityTerm);
-	 		$nameRestriction = "AND sa.relation_title LIKE '%$similarityTerm%'";
+	 		$nameRestriction = "AND sa.relation_title LIKE '%".mysql_real_escape_string($similarityTerm)."%'";
 	 	}
  		// Get similar attribute annotations which have no attribute page defined.
  		$res = $dbr->query('SELECT DISTINCT sa.attribute_title AS att1, sa.subject_title AS subject, sa.subject_namespace AS namespace, sa2.attribute_title AS att2, EDITDISTANCE(UPPER(sa.attribute_title), UPPER(sa2.attribute_title)) AS distance FROM '.$smw_attributes.' sa LEFT JOIN '.$mw_page.' p ON p.page_title = sa.attribute_title INNER JOIN '.$smw_attributes.' sa2 ' .

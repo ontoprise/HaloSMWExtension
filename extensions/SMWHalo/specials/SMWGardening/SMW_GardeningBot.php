@@ -229,7 +229,7 @@
  			if ($runAsync) { 
  				//TODO: test async code for linux. 
  				//low prio 
- 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".$params;
+ 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".escapeshellcmd($params);
   	 			$nullResult = `$runCommand > /dev/null &`;
   	 			
   	 		
@@ -255,7 +255,7 @@
  				// botID is first parameter
  				// taskID is second
  				// user defined parameters follow
- 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".$params;
+ 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".escapeshellcmd($params);
  			
  				$oExec = $wshShell->Run($runCommand, 7, false);
  				
@@ -358,6 +358,8 @@
  			exec("kill $processID");
  		}
  	}
+ 	
+ 	
  }
  
    
