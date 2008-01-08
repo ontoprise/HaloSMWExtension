@@ -758,7 +758,7 @@ function smwfAnnotateAction($action, $article) {
 	
 	$article->getTitle()->invalidateCache();
 	$article->view();
-	$article->getTitle()->invalidateCache();
+	
 	return false;
 }
 	

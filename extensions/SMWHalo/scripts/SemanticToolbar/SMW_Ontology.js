@@ -162,6 +162,23 @@ OntologyModifier.prototype = {
 		              [title, content, editComment], 
 		              this.ajaxResponseEditArticle.bind(this));
 	},
+
+	/**
+	 * @public
+	 * 
+	 * Touches the article with the given title, i.e. the article's HTML-cache is
+ 	 * invalidated.
+	 * 
+	 * @param string title 
+	 * 			Title of the article.
+	 */
+	touchArticle : function(title) {
+		function touchArticleCallback(request) {
+			
+		};
+		
+		sajax_do_call('smwfTouchArticle', [title], touchArticleCallback.bind(this));
+	},
 	
 	/**
 	 * @public

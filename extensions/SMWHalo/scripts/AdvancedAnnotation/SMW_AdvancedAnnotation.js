@@ -54,6 +54,9 @@ AdvancedAnnotation.prototype = {
 		
 		this.contextMenu = null;
 		
+		// Invalidate the HTML-cache for this article
+		this.om.touchArticle(wgPageName);
+		
 	},
 	
 	/**
@@ -1145,6 +1148,7 @@ AdvancedAnnotation.create = function() {
 			              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
 			Event.observe('globalWrapper', 'keyup', 
 			              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
+						              
 			pe.stop();
 		}, 2);
 	}

@@ -27,6 +27,7 @@ global $wgAjaxExportList;
 
 $wgAjaxExportList[] = 'smwfCreateArticle';
 $wgAjaxExportList[] = 'smwfEditArticle';
+$wgAjaxExportList[] = 'smwfTouchArticle';
 $wgAjaxExportList[] = 'smwfExistsArticle';
 $wgAjaxExportList[] = 'smwfExistsArticleIgnoreRedirect';
 $wgAjaxExportList[] = 'smwfRelationSchemaData';
@@ -178,6 +179,34 @@ function smwfEditArticle($title, $content, $editComment) {
 	return ($success ? "true," : "false,").
 	       ($created ? "true," : "false,").
 	       $title->getNsText().":".$title->getText();
+}
+
+/**
+ * Touches the article with the given title, i.e. the article's HTML-cache is
+ * invalidated.
+ *
+ * @param string $title
+ * 		Name of the article
+ * @return string
+ * 	'true', if the article exists
+ *  'false', otherwise
+ */
+function smwfTouchArticle($title) {
+	$title = Title::newFromText($title);
+
+	$article = new Article($title);
+
+	if ($article->exists()) {
+		// The article exists => invalidate its cache
+		
+		// The resolution of the article's timestamp is only one second
+		// => wait a little bit to get a 'new' timestamp
+		sleep(1);
+		$title->invalidateCache();
+		return "true";
+	}
+	return "false";
+	
 }
 
 /**
