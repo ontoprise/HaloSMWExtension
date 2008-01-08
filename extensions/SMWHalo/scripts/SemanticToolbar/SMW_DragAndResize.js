@@ -77,7 +77,8 @@ enableDragging: function(){
  */
 fixAnchorSize: function(){
 	if($('semtoolbar')){
-		$('ontomenuanchor').setStyle({height: $('semtoolbar').scrollHeight +'px'}); 	
+		var height = $('semtoolbar').scrollHeight + $('tabcontainer').scrollHeight + $('activetabcontainer').scrollHeight
+		$('ontomenuanchor').setStyle({height:  +'px'}); 	 	
 	}
 },
 
