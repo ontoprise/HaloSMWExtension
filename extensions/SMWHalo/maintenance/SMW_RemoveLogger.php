@@ -19,7 +19,11 @@
 /* 
  * Used to remove logger code from the js
  */
- 
+ if ($_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
+
  // directory where the scripts are located
  $mediaWikiLocation = dirname(__FILE__) . '/..';
  $path = 'c:/temp/halo_js_scripts/';

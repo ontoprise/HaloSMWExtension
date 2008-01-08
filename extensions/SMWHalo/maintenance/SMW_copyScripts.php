@@ -62,6 +62,11 @@
     return true;
 }
 
+if ($_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
+
 $source = dirname(__FILE__) . '/../../..';
 $target = 'c:/temp/halo_js_scripts';
 if (!is_dir($target)) {

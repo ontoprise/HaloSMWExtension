@@ -20,7 +20,10 @@
  * Create CSV file with gardening issue statistics
  * @author Markus Nitsche
  */
- 
+if ($_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";

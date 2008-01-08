@@ -24,6 +24,11 @@
  * Used to pack javascript files to one big file.
  */
 
+if ($_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
+
  // license constants
  define('MIT_LICENSE_PROTOTYPE', 1);
  define('MIT_LICENSE_SCRIPTACULOUS', 2);

@@ -11,7 +11,12 @@
  * 	Returns all language constants which appear in 
  * 	SMW_HaloLanguageEn but not in SMW_HaloLanguageDe 
  */
-  
+ 
+if ($_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
+
 $smwgHaloIP = dirname(__FILE__)."/..";
 
 require_once($smwgHaloIP.'/languages/SMW_HaloLanguage'.$argv[1].".php");
