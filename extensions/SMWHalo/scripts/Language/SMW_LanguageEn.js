@@ -105,7 +105,7 @@ var wgLanguageStrings = {
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotate a category.',
-	'CATEGORY_DOES_NOT_EXIST' : '(w)This category does not exists.',
+	'CATEGORY_DOES_NOT_EXIST' : '(w)This category does not exist.',
 	'CATEGORY_ALREADY_EXISTS' : '(w)This category already exists.',
 	'CREATE_SUPER_CATEGORY'   : 'Create "$-title" and make "$t" super-category of "$-title"',
 	'CREATE_SUB_CATEGORY'     : 'Create "$-title" and make "$t" sub-category of "$-title"',
