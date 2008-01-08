@@ -36,7 +36,7 @@ function smwfGetHelp($namespace, $action){
 	$html = '';
 	$helppages = array();
 	$results = false;
-	$discourseState = "$namespace:$action";
+	$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
 	$dbr =& wfGetDB( DB_SLAVE );
 	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
 

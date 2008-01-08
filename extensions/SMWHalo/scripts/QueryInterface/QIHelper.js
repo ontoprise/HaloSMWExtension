@@ -1071,7 +1071,7 @@ exportToXLS:function(){
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
 		params += $('layout_default').value==""?',':$('layout_default').value;
 		params += $('layout_headers').checked?'show':'hide';
-		sajax_do_call('smwfQIAccess', ["getQueryResult", params], this.initializeDownload.bind(this));
+		sajax_do_call('smwfQIAccess', ["getQueryResultForDownload", params], this.initializeDownload.bind(this));
 	}
 	else {
 		var request = Array();
