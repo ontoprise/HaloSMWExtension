@@ -868,7 +868,7 @@
 		}
 		$title = Title::newFromText("Description", SMW_NS_PROPERTY);
 		if (!($title->exists())){
-			$articleContent = "[[has type::Type:String]]";
+			$articleContent = "[[has type::Type:Text]]";
 			$wgArticle = new Article( $title );
 			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
 			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);

@@ -49,44 +49,57 @@ function smwfGetHelp($namespace, $action){
 		$question = '';
 		$description = '';
 		$title = '';
+		// get Questions
 		$res = $dbr->select( $dbr->tableName('smw_attributes'),
 			'*',
-			'subject_id =' . $id);
+			array('subject_id =' . $id, 'attribute_title="Question"'));
 
 		if ($dbr->numRows($res) > 0){
 			$results = true;
 			while ( $row = $dbr->fetchObject( $res ) ) {
 				$title = $row->subject_title;
-				if ($row->attribute_title == "Question"){
-					$question = $row->value_xsd;
-				}
-				else if ($row->attribute_title == "Description"){
-					$description = $row->value_xsd;
-				}
+				$question = $row->value_xsd;
 			}
 			$dbr->freeResult( $res );
+			
+			// get descriptions
+			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
+				'*',
+				array('subject_id =' . $id, 'attribute_title="Description"'));
+	
+			if ($dbr->numRows($res) > 0){
+				while ( $row = $dbr->fetchObject( $res ) ) {
+					$description = $row->value_blob;
+				}
+				$dbr->freeResult( $res );
+			}
 		}
-
-		$wikiTitle = Title::newFromText($title, NS_HELP);
-
-		if($description == wfMsg('smw_csh_newquestion')){
-			$html .= '<a href="' . $wikiTitle->getFullURL();
-			$html .= '?action=edit" class="new';
-			$html .= '" ';
-			$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'edit\')">' . $question . '?</a>';
-			$html .= '<br />';
-		}
-		else {
-			$html .= '<a href="' . $wikiTitle->getFullURL();
-			$html .= '" ';
-			$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'view\')">' . $question . '?</a>';
-			$html .= '<br />';
+		
+		
+		if($results){
+			$wikiTitle = Title::newFromText($title, NS_HELP);
+	
+			if($description == wfMsg('smw_csh_newquestion')){
+				$html .= '<a href="' . $wikiTitle->getFullURL();
+				$html .= '?action=edit" class="new';
+				$html .= '" ';
+				$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'edit\')">' . $question . '?</a>';
+				$html .= '<br />';
+			}
+			else {
+				$html .= '<a href="' . $wikiTitle->getFullURL();
+				$html .= '" ';
+				$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'view\')">' . $question . '?</a>';
+				$html .= '<br />';
+			}
 		}
 	}
-	if($results){
-		$specialTitle = Title::newFromText('ContextSensitiveHelp', NS_SPECIAL);
-		$html .= '<div id="morehelp"><a href="' . $specialTitle->getFullURL() . '?restriction=all&ds=' . $discourseState .'" target="_new">(more)</a></div><br/>';
+	if(!$results){
+		$html .= wfMsg('smw_csh_nohelp') . '<br/>';
 	}
+	$specialTitle = Title::newFromText('ContextSensitiveHelp', NS_SPECIAL);
+	$html .= '<div id="morehelp"><a href="' . $specialTitle->getFullURL() . '?restriction=all&ds=' . $discourseState .'" target="_new">(more)</a></div><br/>';
+	
 	if ($smwgAllowNewHelpQuestions){
 		$html .= '<a href="javascript:void(0)" onclick="$(\'askHelp\').show()">Ask your own question</a><br/>';
 		$html .= '<div id="askHelp" style="display:none"><input id="question" name="question" type="text" size="20" onKeyPress="return submitenter(this,event)"/>';

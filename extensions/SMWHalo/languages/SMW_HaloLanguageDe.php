@@ -330,6 +330,7 @@ protected $smwUserMessages = array(
 	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
 	'smw_contextsensitivehelp' => 'Kontext Sensitive Hilfe',
 	'smw_csh_newquestion' => 'Dies ist eine neue Hilfeseite. Klicken Sie, um sie zu beantworten!',
+	'smw_csh_nohelp' => 'Dem System wurden noch keine relevanten Hilfeseiten hinzugefügt.',
 	'smw_csh_refine_search_info' => 'Sie k&ouml;nnen Ihre Suche nach Hilfe durch die Angabe eines Seitentyps und/oder einer Aktion weiter verfeinern:',
 	'smw_csh_page_type' => 'Typ der Seite',
 	'smw_csh_action' => 'Aktion',
