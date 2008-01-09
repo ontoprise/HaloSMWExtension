@@ -163,37 +163,49 @@ function getHelpByRestriction($restriction, $param){
 		$question = '';
 		$description = '';
 		$title = '';
+		
+		//get questions
 		$res = $dbr->select( $dbr->tableName('smw_attributes'),
 			'*',
-			'subject_id =' . $id);
+			array('subject_id =' . $id, 'attribute_title="Question"'));
 
 		if ($dbr->numRows($res) > 0){
-			while ( $row = $dbr->fetchObject( $res ) ) {
-				$title = $row->subject_title;
-				if ($row->attribute_title == "Question"){
-					$question = $row->value_xsd;
-				}
-				else if ($row->attribute_title == "Description"){
-					$description = $row->value_xsd;
-				}
-			}
+			$results = true;
+			$row = $dbr->fetchObject( $res );
+			$title = $row->subject_title;
+			$question = htmlspecialchars($row->value_xsd);
 			$dbr->freeResult( $res );
+			
+			// get descriptions
+			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
+				'*',
+				array('subject_id =' . $id, 'attribute_title="Description"'));
+	
+			if ($dbr->numRows($res) > 0){
+				$row = $dbr->fetchObject( $res );
+				$description = htmlspecialchars($row->value_blob);
+			}
 		}
+		$dbr->freeResult( $res );
 		$wikiTitle = Title::newFromText($title, NS_HELP);
-
-		$link = '<a id="' . $question . '"href="' . $wikiTitle->getFullURL();
-		if($description == wfMsg('smw_csh_newquestion')){
-			$link .= '?action=edit" class="new';
+		
+		if($wikiTitle instanceof Title && $wikiTitle->exists()){
+			$link = '<a id="' . $question . '"href="' . $wikiTitle->getFullURL();
+			if($description == wfMsg('smw_csh_newquestion')){
+				$link .= '?action=edit" class="new';
+			}
+			$link .= '" ';
+			$link .= 'title="' . $description . '">' . $question . '?</a><br/>';
+			array_push($help, $link); // saved in an array first so they can be alphabetically ordered later (id)
 		}
-		$link .= '" ';
-		$link .= 'title="' . $description . '">' . $question . '?</a><br/>';
-		array_push($help, $link); // saved in an array first so they can be alphabetically ordered later (id)
 	}
-	if (sizeof($helppages)==0){
+	if (sizeof($help)==0){
 		$html = "Sorry, there are no questions in this section yet.<br/>";
 	}
 	else {
+		$help = array_unique($help);
 		asort($help);
+		
 		foreach($help as $link){
 			$html .= $link;
 		}

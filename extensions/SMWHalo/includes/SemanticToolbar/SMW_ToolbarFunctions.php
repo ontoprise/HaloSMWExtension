@@ -49,17 +49,17 @@ function smwfGetHelp($namespace, $action){
 		$question = '';
 		$description = '';
 		$title = '';
-		// get Questions
+		
+		//get questions
 		$res = $dbr->select( $dbr->tableName('smw_attributes'),
 			'*',
 			array('subject_id =' . $id, 'attribute_title="Question"'));
 
 		if ($dbr->numRows($res) > 0){
 			$results = true;
-			while ( $row = $dbr->fetchObject( $res ) ) {
-				$title = $row->subject_title;
-				$question = $row->value_xsd;
-			}
+			$row = $dbr->fetchObject( $res );
+			$title = $row->subject_title;
+			$question = htmlspecialchars($row->value_xsd);
 			$dbr->freeResult( $res );
 			
 			// get descriptions
@@ -68,13 +68,11 @@ function smwfGetHelp($namespace, $action){
 				array('subject_id =' . $id, 'attribute_title="Description"'));
 	
 			if ($dbr->numRows($res) > 0){
-				while ( $row = $dbr->fetchObject( $res ) ) {
-					$description = $row->value_blob;
-				}
-				$dbr->freeResult( $res );
+				$row = $dbr->fetchObject( $res );
+				$description = htmlspecialchars($row->value_blob);
 			}
 		}
-		
+		$dbr->freeResult( $res );
 		
 		if($results){
 			$wikiTitle = Title::newFromText($title, NS_HELP);
