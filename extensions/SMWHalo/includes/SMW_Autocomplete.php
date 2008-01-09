@@ -168,18 +168,18 @@ class AutoCompletionRequester {
 		 		$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
 		 		if ($page->getNamespace() != NS_MAIN) {
 		 			// ignore non-instances
-		 			return SMW_AC_NORESULT;
+		 			continue;
 		 		}
 		 						 					 			
 		 		$properties = smwfGetAutoCompletionStore()->getPropertyForInstance($userInputToMatch, $page, false);
 		   		$result = AutoCompletionRequester::encapsulateAsXML($properties);
-	    		return $result;
-		   		AutoCompletionRequester::logResult($result, $articleName);
+	    		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
  			} else {
  				
 		 		// in all other cases, consider it as type
 				$properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
+				if (empty($properties)) $properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, "string");
 				$result = AutoCompletionRequester::encapsulateAsXML($properties);
 	    		AutoCompletionRequester::logResult($result, $articleName);
 		 	    		
