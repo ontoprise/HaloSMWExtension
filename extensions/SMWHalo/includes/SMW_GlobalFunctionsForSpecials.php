@@ -234,14 +234,14 @@ function smwRegisterQueryResultEditor(&$parser, &$text, &$stripstate){
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
-global $smwgHaloIP;
-require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
 
 /**
  * The <ask> parser hook processing part.
  */
 function smwAddQueryResultEditor($text, $param, &$parser) {
 	global $smwgQEnabled;
+	global $smwgHaloIP;
+	require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
 	
 	if ($smwgQEnabled) {
 		return applyQueryHighlighting($text, $param);
