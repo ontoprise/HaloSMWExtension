@@ -69,7 +69,10 @@ function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
 
 	$success = false;
 	$created = true;
-
+	
+	$title = strip_tags($title);
+	if ($title == '') return "false";
+	
 	$title = Title::newFromText($title);
 
 	$article = new Article($title);
@@ -163,7 +166,10 @@ function smwfEditArticle($title, $content, $editComment) {
 
 	$success = false;
 	$created = true;
-
+	
+	$title = strip_tags($title);
+	if ($title == '') return "false";
+	
 	$title = Title::newFromText($title);
 
 	$article = new Article($title);
@@ -456,6 +462,9 @@ function smwfDeleteArticle($pagename, $reason) {
  * @param string $reason A reason why it was renamed.
  */
 function smwfRenameArticle($pagename, $newpagename, $reason) {
+	$newpagename = strip_tags($newpagename);
+	if ($newpagename == '') return "false";
+	
 	$titleObj = Title::newFromText($pagename);
 	$newTitleObj = Title::newFromText($newpagename);
 	$success = false;
@@ -480,6 +489,9 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
  * @param $newSuperCategory Title of new supercategory. (String)
  */
 function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
+	$newSuperCategory = strip_tags($newSuperCategory);
+	if ($newSuperCategory == '') return "false";
+	
 	$draggedOnRootLevel = $oldSuperCategory == 'null' || $oldSuperCategory == NULL;
 	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
 	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
@@ -521,6 +533,9 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
  * @param $newSuperProperty Title of new superproperty. (String)
  */
 function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
+	$newSuperProperty = strip_tags($newSuperProperty);
+	if ($newSuperProperty == '') return "false";
+	
 	$draggedOnRootLevel = $oldSuperProperty == 'null' || $oldSuperProperty == NULL;
 	$draggedPropertyTitle = Title::newFromText($draggedProperty, SMW_NS_PROPERTY);
 	$oldSuperPropertyTitle = Title::newFromText($oldSuperProperty, SMW_NS_PROPERTY);

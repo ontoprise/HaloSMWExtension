@@ -175,21 +175,11 @@ class SMWCategoryViewer extends CategoryViewer {
 		global $smwgHaloContLang;
 		
 		$ti = htmlspecialchars( $this->title->getText() );
-		$store = smwfGetStore();
-				
+			
 		// retrieve all properties of this category
 	
-		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-		$relationName = $sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
-		$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-		
-		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
-		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-  		$value->setValues($this->title->getDBKey(), $this->title->getNamespace());
-  		$dv_container->setDVs($domain ? array($value, NULL) : array(NULL, $value));
-  		
-		$properties = $store->getPropertySubjects($relationTitle, $dv_container,
-		                                          $options, $domain ? 0 : 1);
+		$properties = $domain ? smwfGetSemanticStore()->getPropertiesWithDomain($this->title) :
+									smwfGetSemanticStore()->getPropertiesWithRange($this->title);
 		                      
 		$r = $this->getPropertyList(SMW_NS_PROPERTY, $properties, $domain);   
 		//$r .= $this->getPropertyList(SMW_NS_ATTRIBUTE, $properties, $domain);

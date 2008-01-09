@@ -564,12 +564,41 @@
 	
 	
 	// can return directs, but it is not used anywhere		
-	function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL) {
+	/*function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL) {
 		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
 		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
   		$dv->setValues($categoryTitle->getDBKey(), $categoryTitle->getNamespace());
   		$dv_container->setDVs(array($dv, NULL));
 		return smwfGetStore()->getPropertySubjects($this->domainRangeHintRelation, $dv_container, NULL, 0);
+	}*/
+	
+	function getPropertiesWithDomain(Title $category) {
+		return $this->getNarySubjects($category, 0);
+	}
+	
+	function getPropertiesWithRange(Title $category) {
+		return $this->getNarySubjects($category, 1);
+	}
+	
+	private function getNarySubjects(Title $object, $pos) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_nary_relations = $db->tableName('smw_nary_relations');
+ 	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+ 	 	$results = array();
+ 	 	$res = $db->query('SELECT subject_title, subject_namespace FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id ' .
+ 	 						'WHERE n.attribute_title = '.$db->addQuotes($domainRangeRelation->getDBkey()).
+ 	 						' AND r.object_title = '.$db->addQuotes($object->getDBkey()).
+							' AND r.object_namespace = '.NS_CATEGORY. 
+							' AND r.nary_pos = '.mysql_real_escape_string($pos));
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				
+				$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $results;
 	}
 	
 	/**

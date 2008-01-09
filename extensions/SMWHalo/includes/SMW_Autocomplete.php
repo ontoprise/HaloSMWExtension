@@ -22,7 +22,7 @@ define('SMW_AC_MAX_RESULTS', 15);
 $smwhgAutoCompletionStore = null;
 
 global $smwgIP;
-require_once( $smwgIP . "/includes/SMW_Datatype.php");
+
 require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  /*
   * Dispatches an auto-completion request.

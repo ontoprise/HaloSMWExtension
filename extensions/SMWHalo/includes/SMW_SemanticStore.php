@@ -153,7 +153,23 @@
  	* 
  	* @return array of Title
  	*/	
-	public abstract function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL);
+	//public abstract function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL);
+	
+	/**
+	 * Returns all properties with the given domain category.
+	 * 
+	 * @param category Title
+	 * @return array of Title
+	 */
+	public abstract function getPropertiesWithDomain(Title $category);
+	
+	/**
+	 * Return all properties with the given range category
+	 * 
+	 * @param category Title
+	 * @return array of Title
+	 */
+	public abstract function getPropertiesWithRange(Title $category);
 	
 	/**
  	  * Returns all domain categories for a given property.
