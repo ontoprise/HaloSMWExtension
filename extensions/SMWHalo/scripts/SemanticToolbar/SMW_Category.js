@@ -14,6 +14,12 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+var SMW_CAT_VALID_CATEGORY_NAME =
+	'smwValidValue="^.{1,255}$: valid ' +
+		'? (color: white, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
+
 var SMW_CAT_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
 		'? (color: lightgreen, hideMessage, valid:true, attribute:catExists=true) ' +
@@ -43,11 +49,11 @@ var SMW_CAT_ALL_VALID =
 	'smwAllValid="allValid ' +
  		'? (show:cat-confirm, hide:cat-invalid) ' +
  		': (show:cat-invalid, hide:cat-confirm, hide:cat-addandcreate)"';
-
+ 		
 var SMW_CAT_ALL_VALID_ANNOTATED =	
 	'smwAllValid="allValid ' +
- 		'? (call:catToolBar.finalCategoryCheck) ' +
- 		': (call:catToolBar.finalCategoryCheck)"';
+ 		'? (show:cat-confirm, show:cat-addandcreate, call:catToolBar.finalCategoryCheck) ' +
+ 		': (hide:cat-confirm, hide:cat-addandcreate, call:catToolBar.finalCategoryCheck)"';
 
 var SMW_CAT_HINT_CATEGORY =
 	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
@@ -191,6 +197,7 @@ createContextMenu: function(contextMenuContainer) {
 							 gLanguage.getMessage('CATEGORY'), selection, '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
+	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', 
@@ -275,6 +282,7 @@ newItem: function() {
 							 gLanguage.getMessage('CATEGORY'), selection, '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
+	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', 
@@ -458,7 +466,9 @@ newCategory: function() {
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CREATE_NEW_CATEGORY'), '' , true));
 	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), 
 							 selection, '',
-	                         SMW_CAT_CHECK_CATEGORY_IIE+SMW_CAT_CHECK_EMPTY+
+	                         SMW_CAT_CHECK_CATEGORY_IIE +
+	                         SMW_CAT_CHECK_EMPTY +
+	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
@@ -511,6 +521,7 @@ getselectedItem: function(selindex) {
 	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), annotatedElements[selindex].getName(), '',
 	                         SMW_CAT_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
+	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));

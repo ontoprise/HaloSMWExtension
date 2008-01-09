@@ -418,7 +418,8 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		}
 		target.setAttribute("smwOldValue", target.value);
 		
-		if (this.checkIfEmpty(target) == false) {
+		if (this.checkIfEmpty(target) == false
+			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
 		}
 		this.doFinalCheck(target);
@@ -450,7 +451,8 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 */
 	onChange: function(event) {
 		var target = $(event.target);
-		if (this.checkIfEmpty(target) == false) {
+		if (this.checkIfEmpty(target) == false
+			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
 		}
 		this.handleChange(target);
@@ -476,7 +478,8 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			if (!oldValue || oldValue != elem.value) {
 				// content if input field did change => perform check
 
-				if (this.checkIfEmpty(elem) == false) {
+				if (this.checkIfEmpty(elem) == false
+					&& this.handleValidValue(elem)) {
 					this.handleCheck(elem);
 				}
 				elem.setAttribute("smwOldValue", elem.value);
@@ -501,7 +504,8 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			return;
 		}
 		target.setAttribute("smwOldValue", target.value);
-		if (this.checkIfEmpty(target) == false) {
+		if (this.checkIfEmpty(target) == false
+			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
 			this.handleChange(target);
 		}
@@ -536,6 +540,34 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			                    target);
 		}
 		return empty;
+	},
+	
+	/*
+	 * Checks if the value in the input field <target> is valid. A regular
+	 * expression decides if this is the case.
+	 * 
+	 * Example:
+	 *    smwValidValue="^.{1,255}$: valid ? (color:white) : (color:red)"
+	 * 
+	 * @param Object target
+	 * 			The target element (an input field)
+	 * @return boolean
+	 * 		true, if the content of the target is matched by the reg. expr.
+	 * 		false, if not
+	 */
+	handleValidValue: function(target) {
+		var check = target.getAttribute("smwValidValue");
+		if (!check)	{
+			// no constraint defined => value is valid
+			return true;
+		}
+		var regexStr = check.match(/(.*?):\s*(valid\s*\?.*)/);
+		if (regexStr) {
+			var regex = new RegExp(regexStr[1]);
+			var actions = regexStr[2];
+			return this.checkWithRegEx(target.value, regex, actions, target);
+		}
+		return true;
 	},
 	
 	/*
@@ -685,11 +717,15 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 * @param Object target
 	 * 			The target (an input field) for which the actions
 	 * 			are performed.
+	 * @return boolean
+	 * 		true, if the value was matched by the regular expression
+	 * 		false, otherwise
 	 */
 	checkWithRegEx: function(value, regex, conditional, target) {
 		var valid = value.match(regex);
 		var c = this.parseConditional("valid", conditional);
 		this.performActions(valid ? c[0] : c[1], target);
+		return valid;
 	},
 	
 	/*
@@ -717,9 +753,12 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				break;
 		}
 		this.showPendingIndicator(target);
-		this.om.existsArticle(checkName, 
+		if (!this.om.existsArticle(checkName, 
 		                      this.ajaxCbSchemaCheck.bind(this), 
-		                      value, [type, check], target.id);							
+		                      value, [type, check], target.id)) {
+			// there is something wrong with the page name
+			this.ajaxCbSchemaCheck(checkName, false, value, [type, check], target);
+		}							
 	},
 	
 	/*

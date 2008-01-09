@@ -69,9 +69,10 @@ OntologyModifier.prototype = {
 	 * 
 	 * Checks if an article exists in the wiki. This is an asynchronous ajax call.
 	 * When the result is returned, the function <callback> will be called.
+	 * The existence will not be checked, if the page name is too long.
 	 * 
-	 * @param string title 
-	 * 			Full title of the article.
+	 * @param string pageName 
+	 * 			Full page name of the article.
 	 * @param function callback
 	 * 			This function will be called, when the ajax call returns. Its
 	 * 			signature must be:
@@ -84,6 +85,9 @@ OntologyModifier.prototype = {
 	 * @param string domElementID
 	 * 			Id of the DOM element that started the query. Will be passed
 	 * 			through to the callbackfunktion.
+	 * @return boolean
+	 * 		true, if the existence of the article will be checked
+	 * 		false, if the <pageName> is longer than 254 characters.
 	 */
 	existsArticle : function(pageName, callback, title, optparam, domElementID) {
 		function ajaxResponseExistsArticle(request) {
@@ -105,9 +109,14 @@ OntologyModifier.prototype = {
 			
 		};
 		
-		sajax_do_call('smwfExistsArticle', 
-		              [pageName], 
-		              ajaxResponseExistsArticle.bind(this));
+		if (pageName.length < 255) {
+			sajax_do_call('smwfExistsArticle', 
+			              [pageName], 
+			              ajaxResponseExistsArticle.bind(this));
+			return true;
+		} else {
+			return false;
+		}
 		              
 		              
 	},

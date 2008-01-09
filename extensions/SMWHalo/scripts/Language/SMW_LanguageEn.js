@@ -79,6 +79,8 @@ var wgLanguageStrings = {
 	// Property properties toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',
 	'PROPERTY_ALREADY_EXISTS' : '(w)This property already exists.',
+	'PROPERTY_NAME_TOO_LONG'  : '(e)The name of this property is too long.',
+	'PROPERTY_VALUE_TOO_LONG' : '(w)This value is very long. It will only be stored by properties of type "Type:Text".',
 	'CREATE_SUPER_PROPERTY'   : 'Create "$-title" and make "$t" super-property of "$-title"',
 	'CREATE_SUB_PROPERTY'     : 'Create "$-title" and make "$t" sub-property of "$-title"',
 	'MAKE_SUPER_PROPERTY'     : 'Make "$t" super-property of "$-title"',
@@ -107,6 +109,7 @@ var wgLanguageStrings = {
 	'ANNOTATE_CATEGORY'       : 'Annotate a category.',
 	'CATEGORY_DOES_NOT_EXIST' : '(w)This category does not exist.',
 	'CATEGORY_ALREADY_EXISTS' : '(w)This category already exists.',
+	'CATEGORY_NAME_TOO_LONG'  : '(e)The name of this category is too long.',
 	'CREATE_SUPER_CATEGORY'   : 'Create "$-title" and make "$t" super-category of "$-title"',
 	'CREATE_SUB_CATEGORY'     : 'Create "$-title" and make "$t" sub-category of "$-title"',
 	'MAKE_SUPER_CATEGORY'     : 'Make "$t" super-category of "$-title"',
