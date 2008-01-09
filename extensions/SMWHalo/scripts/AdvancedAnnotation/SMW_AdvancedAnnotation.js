@@ -81,11 +81,16 @@ AdvancedAnnotation.prototype = {
 			return;
 		}
 		var annoSelection = this.getSel();
+		if (annoSelection.anchorNode == null) {
+			// nothing selected
+			annoSelection = null;
+		}
 		this.selection = annoSelection;
 		
 		var cba = this.canBeAnnotated(annoSelection);
 			
-		if (!cba) {
+		if (annoSelection && annoSelection != '' && !cba) {
+			// a non empty selection can not be annotated
 			smwhgAnnotationHints.showMessageAndWikiText(
 				gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION'), "", 
 				event.clientX, event.clientY);
@@ -136,6 +141,10 @@ AdvancedAnnotation.prototype = {
 	 * 		<true>, otherwise
 	 */
 	canBeAnnotated: function(selection) {
+		
+		if (!selection) {
+			return false;
+		}
 		var anchorNode = selection.anchorNode;
 		var focusNode = selection.focusNode;
 		
