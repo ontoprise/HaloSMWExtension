@@ -98,7 +98,7 @@
  	
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT:
-				return wfMsg('smw_gardissue_instance_without_cat', $text1, $skin->makeLinkObj($this->t2));
+				return wfMsg('smw_gardissue_instance_without_cat', $text1);
 			case SMW_GARDISSUE_PROPERTY_UNDEFINED:
 				return wfMsg('smw_gardissue_property_undefined', $text1, $skin->makeLinkObj($this->t2));
 			case SMW_GARDISSUE_CATEGORY_UNDEFINED:
