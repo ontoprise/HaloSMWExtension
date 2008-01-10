@@ -35,11 +35,7 @@ AdvancedAnnotation.prototype = {
 	 * Initializes an instance of this class.
 	 */
 	initialize: function() {
-		// Selection information
-		this.annotatedNode = null;
-		this.focusNode = null;
-		this.annoOffset = null;
-		this.selectedText = '';
+		this.resetSelection();
 		
 		// The wiki text parser manages the wiki text and adds annotations 
 		this.wikiTextParser = null;
@@ -82,7 +78,9 @@ AdvancedAnnotation.prototype = {
 		}
 		var annoSelection = this.getSel();
 		var sel = annoSelection.toString();
-//		window.console.log('>'+sel+"<\n");
+//		window.console.log('Current selection:>'+sel+"<\n");
+//		if (this.selection)
+//			window.console.log('Prev. selection:>'+this.selection.toString()+"<\n");
 		if (annoSelection.anchorNode == null || sel == '') {
 			// nothing selected
 			annoSelection = null;
@@ -103,7 +101,7 @@ AdvancedAnnotation.prototype = {
 				event.clientX, event.clientY);
 		}
 				
-		if (cba && annoSelection != '') {
+		if (cba && annoSelection != '' && !sameSelection) {
 			// store details of the selection
 			this.selectedText = sel;
 			//trim selection
