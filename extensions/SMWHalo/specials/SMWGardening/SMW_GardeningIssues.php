@@ -482,8 +482,9 @@ function smwfGetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor) {
 	foreach ($issues as $bot => $issueArray) {
 		$botTitle = wfMsg($bot);
 		$result .= '<bot name="'.$bot.'" title="'.$botTitle.'">';
+		$skinDummy = NULL;
 		foreach ($issueArray as $is) {
-			$result .= '<issue>'.$is->getRepresentation(null, true).'</issue>';
+			$result .= '<issue>'.$is->getRepresentation($skinDummy, true).'</issue>';
 		}
 		$result .= '</bot>';
 	}
