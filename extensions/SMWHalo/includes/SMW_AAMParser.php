@@ -270,10 +270,20 @@ class SMWH_AAMParser {
 						    || $part0{0} == "#") {
 							// title, empty line or enumeration found
 							$obj = $part0{0};
+							$newline = "\n";
 							if ($obj == "\n") {
 								$obj = 'newline';
+								$newline = '';
 							}
-							$markedText .= "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'."\n".$part0;
+							if ($part0{0} == "*" 
+							    || $part0{0} == "#") {
+							    // In lists, the wikitextoffset must no be 
+							    // immediately before the * or #
+							    preg_match('/([:\*#\s]+)(.*)/', $part0, $listParts);
+								$markedText	.= $listParts[1]."\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'.$listParts[2];
+							} else {
+								$markedText .= "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'.$newline.$part0;
+							}
 						} else if (strlen($part0) > 1 && $part0{0} == "<" && $part0{1} == "/") {
 							// closing tag found => write no offset
 							$markedText .= $part0;
@@ -332,15 +342,10 @@ class SMWH_AAMParser {
 		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend:(.*?)\}\s*(<\/p>)?/',
 		                     '<a type="templateend" id="$4_end"></a>', 
 		                     $text);
-		// special handling for several newlines in the wiki text
-		$text = preg_replace('/\t\{wikiTextOffset=(\d*) obj="newline"}\n<\/p><p><br \/>((<\/p><p><br \/>)*)/',
-		                     '<a name="$1" type="wikiTextOffset" obj="newline"></a></p><p>$2',
-		                     $text);
 		// special handling for one newline in the wiki text
-		$text = preg_replace('/\t\{wikiTextOffset=(\d*) obj="newline"}\n<\/p><p>/',
+		$text = preg_replace('/\t\{wikiTextOffset=(\d*) obj="newline"}\n/',
 		                     ' <a name="$1" type="wikiTextOffset" obj="newline"></a>',
 		                     $text);
-		                     
 		// replace standalone occurrences of intermediate format
 		$text = preg_replace('/\s*\{wikiTextOffset=(\d*) obj="(.*?)"}/',
 		                     '<a name="$1" type="wikiTextOffset" obj="$2"></a>',
