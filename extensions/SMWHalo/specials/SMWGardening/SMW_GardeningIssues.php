@@ -248,7 +248,7 @@ abstract class GardeningIssue {
  	}
 	
 	
-	public function getRepresentation(& $skin = NULL) {
+	public function getRepresentation(& $skin = NULL, $local = false) {
 		// convert title1 to string and replace if it does not exist
 		if ($this->t1 != NULL) {
  			$text1 = "'".$this->t1->getText()."'";
@@ -261,7 +261,7 @@ abstract class GardeningIssue {
  		} else {
  			$text2 = "__empty_title__"; // this is an error, if it is visible to the user.
  		}
-		return $this->getTextualRepresenation($skin, $text1, $text2);
+		return ucfirst($this->getTextualRepresenation($skin, $text1, $text2, $local));
 	}
 	
 	
@@ -272,7 +272,7 @@ abstract class GardeningIssue {
 	 * @param $text1 textual representation of title1 or constant if title1 is invalid
 	 * @param $text2 textual representation of title2 or constant if title2 is invalid
 	 */
-	protected abstract function getTextualRepresenation(& $skin, $text1, $text2);
+	protected abstract function getTextualRepresenation(& $skin, $text1, $text2, $local = false);
 	
 	
 }

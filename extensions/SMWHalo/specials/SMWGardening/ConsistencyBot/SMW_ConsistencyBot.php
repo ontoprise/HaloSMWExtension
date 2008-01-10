@@ -205,7 +205,8 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
  	}
  	
- 	protected function getTextualRepresenation(& $skin, $text1, $text2) {
+ 	protected function getTextualRepresenation(& $skin, $text1, $text2, $local = false) {
+ 		$text1 = $local ? wfMsg('smw_gard_issue_local') : $text1;
  		// show title2 as link if $skin is defined
  		$text2 = $skin != NULL ? $skin->makeLinkObj($this->t2) : $text2;
  		switch($this->gi_type) {
