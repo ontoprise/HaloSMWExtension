@@ -10,9 +10,14 @@
  * --properties   only do properties
  * --types        only do types
  * --individuals  only do pages that are no categories, properties, or types
+ * -d <delay>     slows down the export in order to stress the server less,
+ *                sleeping for <delay> milliseconds every now and then
+ * -e <each>      after how many exported entities should the server take a nap?
+ * 
+ * @author Markus Krötzsch
  */
 
-$optionsWithArgs = array( 'o' ); // -o <output file>
+$optionsWithArgs = array( 'o', 'd', 'e' ); 
 
 require_once( 'commandLine.inc' );
 require_once( "$IP/extensions/SemanticMediaWiki/specials/ExportRDF/SMW_SpecialExportRDF.php");
@@ -22,19 +27,30 @@ if ( !empty( $options['o'] ) ) {
 } else {
 	$outfile = false;
 }
+if ( !empty( $options['d'] ) ) {
+	$delay = intval($options['d']) * 1000;
+} else {
+	$delay = 0;
+}
+if ( !empty( $options['e'] ) ) {
+	$delayeach = intval($options['e']);
+} else {
+	$delayeach = ( $delay === 0 ) ? 0 : 1;
+}
 
-if ( $options['categories'] ) {
+
+if ( array_key_exists( 'categories' , $options ) ) {
 	$export_ns = NS_CATEGORY;
-} elseif ( $options['properties'] ) {
+} elseif ( array_key_exists( 'properties' , $options ) ) {
 	$export_ns = SMW_NS_PROPERTY;
-} elseif ( $options['types'] ) {
+} elseif ( array_key_exists( 'types' , $options ) ) {
 	$export_ns = SMW_NS_TYPE;
-} elseif ( $options['individuals'] ) {
+} elseif ( array_key_exists( 'individuals' , $options ) ) {
 	$export_ns = -1;
 } else {
 	$export_ns = false;
 }
 
 $exRDF = new ExportRDF();
-$exRDF->printAll($outfile, $export_ns);
+$exRDF->printAll($outfile, $export_ns, $delay, $delayeach);
 

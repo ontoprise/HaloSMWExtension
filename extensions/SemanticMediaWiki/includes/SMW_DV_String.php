@@ -1,31 +1,28 @@
 <?php
 
-global $smwgIP;
-include_once($smwgIP . '/includes/SMW_DataValue.php');
-
 /**
  * This datavalue implements String-Datavalues suitable for defining
  * String-types of properties.
  *
- * @author: Nikolas Iwan
+ * @author Nikolas Iwan
+ * @author Markus Krötzsch
+ * @note AUTOLOADED
  */
 class SMWStringValue extends SMWDataValue {
 
-	private $m_value = '';
-	private $m_xsdvalue = '';
+	protected $m_value = ''; // XML-safe, HTML-safe, Wiki-compatible value representation
 
 	protected function parseUserValue($value) {
 		if ($value!='') {
-			$this->m_xsdvalue = smwfXMLContentEncode($value);
-			if ( (strlen($this->m_xsdvalue) > 255) && ($this->m_typeid !== '_txt') ) { // limit size (for DB indexing)
-				$this->addError(wfMsgForContent('smw_maxstring', mb_substr($value, 0, 42) . ' <span class="smwwarning">[&hellip;]</span> ' . mb_substr($value, mb_strlen($this->m_xsdvalue) - 42)));
+			$this->m_value = smwfXMLContentEncode($value);
+			if ( (strlen($this->m_value) > 255) && ($this->m_typeid !== '_txt') ) { // limit size (for DB indexing)
+				$this->addError(wfMsgForContent('smw_maxstring', mb_substr($value, 0, 42) . ' <span class="smwwarning">[&hellip;]</span> ' . mb_substr($value, mb_strlen($this->m_value) - 42)));
 			}
-			$this->m_value = $this->m_xsdvalue;
 		} else {
 			$this->addError(wfMsgForContent('smw_emptystring'));
 		}
 		if ($this->m_caption === false) {
-			$this->m_caption = $this->m_value;
+			$this->m_caption = $value;
 		}
 		return true;
 	}
@@ -33,10 +30,6 @@ class SMWStringValue extends SMWDataValue {
 	protected function parseXSDValue($value, $unit) {
 		$this->parseUserValue($value); // no units, XML compatible syntax
 		$this->m_caption = $this->m_value; // this is our output text
-	}
-
-	public function setOutputFormat($formatstring) {
-		// no output formats
 	}
 
 	public function getShortWikiText($linked = NULL) {
@@ -65,27 +58,11 @@ class SMWStringValue extends SMWDataValue {
 	}
 
 	public function getXSDValue() {
-		return $this->m_xsdvalue;
+		return $this->m_value;
 	}
 
 	public function getWikiValue(){
 		return $this->m_value;
-	}
-
-	public function getNumericValue() {
-		return NULL;
-	}
-
-	public function getUnit() {
-		return ''; // empty unit
-	}
-
-	public function getHash() {
-		return $this->getLongWikiText(false) . $this->m_xsdvalue ;
-	}
-
-	public function isNumeric() {
-		return false;
 	}
 
 	public function getInfolinks() {
@@ -93,6 +70,17 @@ class SMWStringValue extends SMWDataValue {
 			return SMWDataValue::getInfolinks();
 		}
 		return $this->m_infolinks;
+	}
+
+	protected function getServiceLinkParams() {
+		// Create links to mapping services based on a wiki-editable message. The parameters 
+		// available to the message are:
+		// $1: urlencoded string
+		if ($this->m_typeid === '_txt') {
+			return false; // no services for Type:Text
+		} else {
+			return array(rawurlencode($this->m_value));
+		}
 	}
 
 	/**
@@ -103,9 +91,7 @@ class SMWStringValue extends SMWDataValue {
 	 * @return the line to be exported
 	 */
 	public function exportToRDF($QName, ExportRDF $exporter) {
-		$content = $this->m_xsdvalue;
-		$content = mb_ereg_replace ( "", "", $content);
-		return "\t\t<$QName rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">$content</$QName>\n";
+		return "\t\t<$QName rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">$this->m_value</$QName>\n";
 	}
 
 	/**

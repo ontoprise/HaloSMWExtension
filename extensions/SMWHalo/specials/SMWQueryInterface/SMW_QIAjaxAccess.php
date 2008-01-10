@@ -2,7 +2,7 @@
 
 global $wgAjaxExportList;
 global $smwgIP;
-require_once( "$smwgIP/includes/SMW_Datatype.php" );
+//require_once( "$smwgIP/includes/SMW_Datatype.php" );
 require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
 $wgAjaxExportList[] = 'smwfQIAccess';
 
@@ -38,12 +38,12 @@ function smwfQIAccess($method, $params) {
 		   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 
 		   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
-		   			$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
-		   			$isNum = $th->isNumeric()?"true":"false";
-		   			$pvalues = SMWTypeHandlerFactory::getPossibleValues($relationName);
+		   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
+		   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
+		   			$pvalues = smwfGetStore()->getSpecialValues($relationName, SMW_SP_POSSIBLE_VALUE);
 		   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
 		   			for($j = 0; $j < sizeof($pvalues); $j++){
-		   				$relSchema .= '<allowedValue value="' . $pvalues[$j] . '"/>';
+		   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
 		   			}
 					$relSchema .= '</param>';
 				}

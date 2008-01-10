@@ -6,10 +6,12 @@
 
 /**
  * New implementation of SMW's printer for result tables.
+ *
+ * @note AUTOLOADED
  */
 class SMWTableResultPrinter extends SMWResultPrinter {
 
-	protected function getHTML($res) {
+	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		smwfRequireHeadItem(SMW_HEADER_SORTTABLE);
 
@@ -20,42 +22,54 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		$result = $this->mIntro .
 		          "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
 		if ($this->mShowHeaders) { // building headers
-			$result .= "\n\t\t<tr>";
+			$result .= "\t<tr>\n";
 			foreach ($res->getPrintRequests() as $pr) {
-				$result .= "\t\t\t<th>" . $pr->getHTMLText($this->mLinker) . "</th>\n";
+				$result .= "\t\t<th>" . $pr->getText($outputmode, $this->mLinker) . "</th>\n";
 			}
-			$result .= "\n\t\t</tr>";
+			$result .= "\t</tr>\n";
 		}
 
 		// print all result rows
 		while ( $row = $res->getNext() ) {
-			$result .= "\t\t<tr>\n";
+			$result .= "\t<tr>\n";
 			$firstcol = true;
 			foreach ($row as $field) {
-				$result .= "<td>";
+				$result .= "\t\t<td>";
 				$first = true;
-				while ( ($text = $field->getNextHTMLText($this->getLinker($firstcol))) !== false ) {
-					if ($first) $first = false; else $result .= '<br />';
+				while ( ($object = $field->getNextObject()) !== false ) {
+					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
+						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
+					} else {
+						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
+					}
+					if ($first) {
+						if ($object->isNumeric()) { // use numeric sortkey
+							$result .= '<span class="smwsortkey">' . $object->getNumericValue() . '</span>';
+						}
+						$first = false;
+					} else {
+						$result .= '<br />';
+					}
 					$result .= $text;
 				}
-				$result .= "</td>";
+				$result .= "</td>\n";
 				$firstcol = false;
 			}
-			$result .= "\n\t\t</tr>\n";
+			$result .= "\t</tr>\n";
 		}
 
 		// print further results footer
-		if ($this->mInline && $res->hasFurtherResults()) {
+		if ( $this->mInline && $res->hasFurtherResults() ) {
 			$label = $this->mSearchlabel;
 			if ($label === NULL) { //apply default
 				$label = wfMsgForContent('smw_iq_moreresults');
 			}
 			if ($label != '') {
-				$result .= "\n\t\t<tr class=\"smwfooter\"><td class=\"sortbottom\" colspan=\"" . $res->getColumnCount() . '"> <a href="' . $res->getQueryURL() . '">' . $label . '</a></td></tr>';
+				$result .= "\t<tr class=\"smwfooter\"><td class=\"sortbottom\" colspan=\"" . $res->getColumnCount() . '"> ' . $this->getFurtherResultsLink($outputmode,$res,$label) . "</td></tr>\n";
 			}
 		}
-		$result .= "\t</table>"; // print footer
-		$result .= $this->getErrorString($res); // just append error messages
+		$result .= "</table>\n"; // print footer
 		return $result;
 	}
+
 }

@@ -76,14 +76,21 @@ $smwgQMaxDepth = 4;           // Maximal property depth of queries, e.g. [[rel::
 $smwgQSubcategoryDepth = 10;  // Restrict level of sub-category inclusion (steps within category hierarchy)
 $smwgQSubpropertyDepth = 10;  // Restrict level of sub-property inclusion (steps within property hierarchy)
                               // (Use 0 to disable hierarchy-inferencing in queries)
-$smwgQEqualitySupport = true; // Should #redirects be evaluated as equality between page names?
+$smwgQEqualitySupport = SMW_EQ_SOME; // Evaluate #redirects as equality between page names in simple cases
+  //$smwgQEqualitySupport = SMW_EQ_FULL; // Evaluate #redirects as equality between page names in all cases
+  //$smwgQEqualitySupport = SMW_EQ_NONE; // Never evaluate #redirects as equality between page names
 $smwgQSortingSupport  = true; // (De)activate sorting of results.
-$smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE, NS_USER, SMW_NS_PROPERTY); // Which namespaces should be searched by default?
+$smwgQDefaultNamespaces = NULL; // Which namespaces should be searched by default?
                               // (value NULL switches off default restrictions on searching -- this is faster)
+                              // Example with namespaces: $smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE);
 $smwgQMaxLimit = 10000;       // Max number of results ever retrieved, even when using special query pages.
 $smwgQDisjunctionSupport = true; // Support disjunctions in queries (||)?
                              // (Note: things like namespace defaults and property/category hierarchies
                              //        can also cause disjunctions!)
+$smwgQComparators = '<|>|!'; // List of comparator characters supported by queries, separated by '|'
+                             // Available entries: < (smaller than), < (greater than), ! (unequal to),
+                             //                    ~ (pattern with '*' as wildcard, only for Type:String)
+                             // If unsupported comparators are used, they are treated as part of the queried value
 
 ### Settings about printout of (especially inline) queries:
 $smwgQDefaultLimit = 50;    // Default number of rows returned in a query. Can be increased with <ask limit="num">...
@@ -91,10 +98,13 @@ $smwgQMaxInlineLimit = 500; // Max number of rows ever printed in a single inlin
 $smwgQPrintoutLimit = 10;   // Max number of supported printouts (added columns in result table, * statements)
 
 ### Formatting settings
-$smwgQDefaultLinking = 'subject'; // Default linking behaviour. Can be one of "none", "subject", "all"
+$smwgQDefaultLinking = 'all'; // Default linking behaviour. Can be one of "none", "subject", "all"
 
-## older query parameters below, some of those might be ignored
-//$smwgIQDisjunctiveQueriesEnabled = true; // Support disjunctions in queries (||)?
+###
+# Settings for RSS export
+##
+$smwgRSSEnabled = true;  // use to switch off RSS (it's not worse than querying Special:Ask, but attracts more users)
+$smwgRSSWithPages = true; // Should RSS feeds deliver whole pages or just link to them?
 ##
 
 ###
@@ -102,11 +112,13 @@ $smwgQDefaultLinking = 'subject'; // Default linking behaviour. Can be one of "n
 ##
 $smwgAllowRecursiveExport = false; // can normal users request recursive export?
 $smwgExportBacklinks = true; // should backlinks be included by default?
-$smwgExportSemanticRelationHierarchy = false; // should subrelations be exported with or wo semantics?
-// as long as the underlying implementation does not support the semantics the export
-// should reflect the same.
 $smwgOWLFullExport = false; // decides, if the RDF export will export, by default,
 // OWL Full or rather nice OWL DL. Can be overriden in the RDF export class.
+// global $smwgNamespace;                     // The Namespace of exported URIs.
+// $smwgNamespace = "http://example.org/id/"; // Will be set automatically if 
+// nothing is given, but in order to make pretty URIs you will need to set this
+// to something nice and adapt your Apache configuration appropriately. See the
+// documentation on http://ontoworld.org/wiki/Help:Cool_URIs
 ##
 
 ###
@@ -153,17 +165,8 @@ $smwgNamespacesWithSemanticLinks = array(
 ##
 define('SMW_STORE_MWDB',1); // uses the MediaWiki database, needs initialisation via Special:SMWAdmin.
 define('SMW_STORE_TESTING',2); // dummy store for testing
+define('SMW_STORE_RAP',3); // layers RAP between the MW db, needs initialisation via Special:SMWAdmin.
 $smwgDefaultStore = SMW_STORE_MWDB;
-##
-
-###
-# Set the following value to "true" if you want to enable support
-# for semantic annotations within templates. For the moment, this
-# will only work if after minor change in your MediaWiki files --
-# see INSTALL for details. Enabling this is necessary for normal
-# operation.
-##
-$smwgEnableTemplateSupport = true;
 ##
 
 ###

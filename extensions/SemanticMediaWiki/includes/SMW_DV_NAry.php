@@ -1,14 +1,14 @@
 <?php
 
 /**
- * The SMWDataValue in this file implements the handling of n-ary relations.
+ * SMWDataValue implements the handling of n-ary relations.
+ * TODO: support outputformat
+ * TODO: support "allows value" and "display units"
+ *
  * @author Jörg Heizmann
  * @author Markus Krötzsch
+ * @note AUTOLOADED
  */
-
-global $smwgIP;
-include_once($smwgIP . '/includes/SMW_DataValue.php');
-
 class SMWNAryValue extends SMWDataValue {
 
 	private $m_count = 0;
@@ -27,6 +27,7 @@ class SMWNAryValue extends SMWDataValue {
 	 * Should this DV operate on query syntax (special mode for parsing queries in a compatible fashion)
 	 */
 	private $m_querysyntax = false;
+
 	private $m_comparators;
 	private $m_printstatement = false;
 	private $m_outputmodifiers;
@@ -109,10 +110,6 @@ class SMWNAryValue extends SMWDataValue {
 				$this->m_values[$i] = SMWDataValueFactory::newTypeObjectValue($types[$i], $values[$i]);
 			}
 		}
-	}
-
-	public function setOutputFormat($formatstring) {
-		/// TODO
 	}
 
 	public function getShortWikiText($linked = NULL) {
@@ -203,10 +200,6 @@ class SMWNAryValue extends SMWDataValue {
 		return $result;
 	}
 
-	public function getNumericValue() {
-		return false;
-	}
-
 	public function getUnit() {
 		$first = true;
 		$result = '';
@@ -237,10 +230,6 @@ class SMWNAryValue extends SMWDataValue {
 			}
 		}
 		return $result;
-	}
-
-	public function isNumeric() {
-		return false; // the n-ary is clearly non numeric (n-ary values cannot be ordered by numbers)
 	}
 
 ////// Custom functions for n-ary attributes
@@ -283,8 +272,7 @@ class SMWNAryValue extends SMWDataValue {
 		$this->m_infolinks = array(); // clear links
 		$this->m_hasssearchlink = false;
 		$this->m_caption = false;
-		$typelabels = $this->m_type != NULL ? $this->m_type->getTypeLabels() : NULL;
-		if ($this->m_count == 0) $this->m_count = count($datavalues);
+		$typelabels = $this->m_type->getTypeLabels();
 		for ($i = 0; $i < $this->m_count; $i++) {
 			if ( ($i < count($datavalues) ) && ($datavalues[$i] !== NULL) ) {
 			    //&& ($datavalues[$i]->getTypeID() == SMWDataValueFactory::findTypeID($typelabels[$i])) ) {
@@ -370,28 +358,31 @@ class SMWNAryValue extends SMWDataValue {
 	 */
 	public function exportToRDF( $QName, ExportRDF $exporter ) {
 		$rdf = "\t\t<$QName>\n";
-		$rdf .= "\t\t\t<smw:NAry>\n";
+		$rdf.= "\t\t\t<swivt:Container>\n";
 		$count = 0;
 		foreach ($this->m_values as $value) {
 			$count++;
 			if ($value === NULL) {
 				continue;
 			}
-			$element = "nary" . $count; 
-
-//			$element = "nary" . $count . $value->getTypeID();
-			/// TODO make the element name dependent on the type of the value
-			$rdf .= "\t\t" . $value->exportToRDF( "smw:$element", $exporter );
-			if ($value->getTypeID() == '_wpg') {
+			if (($value->getTypeID() == '_wpg') || ($value->getTypeID() == '_uri') || ($value->getTypeID() == '_ema')) {
+				$element = "object" . $count; 
+				$rdf .= "\t\t" . $value->exportToRDF( "swivt:$element", $exporter );
 				$exporter->addSchemaRef( $element, "owl:ObjectProperty" );
 			} else {
+				$element = "value" . $count; 
+				$rdf .= "\t\t" . $value->exportToRDF( "swivt:$element", $exporter );
 				$exporter->addSchemaRef( $element, "owl:DatatypeProperty" );
 			}
 		}
-		$rdf .= "\t\t\t</smw:NAry>\n";
-		$exporter->addSchemaRef( "NAry", "owl:Class" );
+		$rdf .= "\t\t\t</swivt:Container>\n";
+		$exporter->addSchemaRef( "Container", "owl:Class" );
 		$rdf .= "\t\t</$QName>\n";
 		return $rdf;
+	}
+
+	protected function checkAllowedValues() {
+		return; // not implemented yet
 	}
 
 }

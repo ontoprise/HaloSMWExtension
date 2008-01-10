@@ -20,28 +20,32 @@ class SMWQueryProcessor {
 	 * formats. The formats 'table' and 'list' are defaults that cannot be disabled. The format 'broadtable'
 	 * should not be disabled either in order not to break Special:ask.
 	 */
-	static $formats = array('table', 'list', 'ol', 'ul', 'broadtable', 'embedded', 'timeline', 'eventline', 'template', 'count', 'debug');
+	static $formats = array('table'      => 'SMWTableResultPrinter',
+							'list'       => 'SMWListResultPrinter',
+							'ol'         => 'SMWListResultPrinter',
+							'ul'         => 'SMWListResultPrinter',
+							'broadtable' => 'SMWTableResultPrinter',
+							'embedded'   => 'SMWEmbeddedResultPrinter',
+							'timeline'   => 'SMWTimelineResultPrinter',
+							'eventline'  => 'SMWTimelineResultPrinter',
+							'template'   => 'SMWTemplateResultPrinter',
+							'count'      => 'SMWListResultPrinter',
+							'debug'      => 'SMWListResultPrinter',
+							'rss'        => 'SMWRSSResultPrinter');
 
 	/**
 	 * Parse a query string given in SMW's query language to create
 	 * an SMWQuery. Parameters are given as key-value-pairs in the
 	 * given array. The parameter $inline defines whether the query
 	 * is "inline" as opposed to being part of some special search page.
-	 *
-	 * If an error occurs during parsing, an error-message is returned 
-	 * as a string. Otherwise an object of type SMWQuery is returned.
+	 * An object of type SMWQuery is returned.
 	 *
 	 * The format string is used to specify the output format if already
 	 * known. Otherwise it will be determined from the parameters when 
 	 * needed. This parameter is just for optimisation in a common case.
 	 */
-	static public function createQuery($querystring, $params, $inline = true, $format = '') {
-		// This should be the proper way of substituting templates in a safe and comprehensive way:
-		global $wgTitle, $smwgQDefaultNamespaces;
-		$parser = new Parser();
-		$parserOptions = new ParserOptions();
-		$parser->startExternalParse( $wgTitle, $parserOptions, OT_HTML );
-		$querystring = $parser->transformMsg( $querystring, $parserOptions );
+	static public function createQuery($querystring, $params, $inline = true, $format = '', $extraprintouts = array()) {
+		global $smwgQDefaultNamespaces;
 
 		// parse query:
 		$qp = new SMWQueryParser();
@@ -53,12 +57,13 @@ class SMWQueryProcessor {
 		} else {
 			$mainlabel = $qp->getLabel();
 		}
-		if ( !$desc->isSingleton() || (count($desc->getPrintRequests()) == 0) ) {
+		if ( ( !$desc->isSingleton() || (count($desc->getPrintRequests()) + count($extraprintouts) == 0) ) && ($mainlabel != '-') ) {
 			$desc->prependPrintRequest(new SMWPrintRequest(SMW_PRINT_THIS, $mainlabel));
 		}
 
 		$query = new SMWQuery($desc, $inline);
 		$query->setQueryString($querystring);
+		$query->setExtraPrintouts($extraprintouts);
 		$query->addErrors($qp->getErrors()); // keep parsing errors for later output
 
 		// set query parameters:
@@ -69,32 +74,127 @@ class SMWQueryProcessor {
 			$query->querymode = SMWQuery::MODE_COUNT;
 		} elseif ($format == 'debug') {
 			$query->querymode = SMWQuery::MODE_DEBUG;
+		} elseif ($format == 'rss') {
+			$query->querymode = SMWQuery::MODE_NONE;
 		}
 		if ( (array_key_exists('offset',$params)) && (is_int($params['offset'] + 0)) ) {
-			$query->setOffset(max(0,$params['offset'] + 0));
+			$query->setOffset(max(0,trim($params['offset']) + 0));
 		}
-		if ($query->querymode != SMWQuery::MODE_COUNT) {
+		if ($query->querymode == SMWQuery::MODE_COUNT) { // largest possible limit for "count", even inline
+			global $smwgQMaxLimit;
+			$query->setOffset(0);
+			$query->setLimit($smwgQMaxLimit, false);
+		} else {
 			if ( (array_key_exists('limit',$params)) && (is_int($params['limit'] + 0)) ) {
-				$query->setLimit(max(0,$params['limit'] + 0));
+				$query->setLimit(max(0,trim($params['limit']) + 0));
 			} else {
 				global $smwgQDefaultLimit;
 				$query->setLimit($smwgQDefaultLimit);
 			}
-		} else { // largest possible limit for "count", even inline
-			global $smwgQMaxLimit;
-			$query->setOffset(0);
-			$query->setLimit($smwgQMaxLimit, false);
 		}
 		if (array_key_exists('sort', $params)) {
 			$query->sort = true;
 			$query->sortkey = smwfNormalTitleDBKey($params['sort']);
 		}
 		if (array_key_exists('order', $params)) {
-			if (('descending'==strtolower($params['order']))||('reverse'==strtolower($params['order']))||('desc'==strtolower($params['order']))) {
+			$order = strtolower(trim($params['order']));
+			if (('descending'==$order)||('reverse'==$order)||('desc'==$order)) {
 				$query->ascending = false;
 			}
 		}
 		return $query;
+	}
+
+	/**
+	 * Prerocess a query as given by an array of parameters as is  typically 
+	 * produced by the #ask parser function. The parsing results in a querystring,
+	 * an array of additional parameters, and an array of additional SMWPrintRequest
+	 * objects, which are filled into call-by-ref parameters.
+	 */
+	static public function processFunctionParams($rawparams, &$querystring, &$params, &$printouts) {
+		global $wgContLang;
+		$querystring = '';
+		$printouts = array();
+		$params = array();
+		foreach ($rawparams as $param) {
+			if ($param == '') {
+			} elseif ($param{0} == '?') { // print statement
+				$param = substr($param,1);
+				$parts = explode('=',$param,2);
+				$propparts = explode('#',$parts[0],2);
+				if (trim($propparts[0]) == '') { // print "this"
+					$printmode = SMW_PRINT_THIS;
+					if (count($parts) == 1) { // no label found, use empty label
+						$parts[] = '';
+					}
+					$title = NULL;
+				} elseif ($wgContLang->getNsText(NS_CATEGORY) == ucfirst(trim($propparts[0]))) { // print category
+					$title = NULL;
+					$printmode = SMW_PRINT_CATS;
+					if (count($parts) == 1) { // no label found, use category label
+						$parts[] = $wgContLang->getNSText(NS_CATEGORY);
+					}
+				} else { // print property or check category
+					$title = Title::newFromText(trim($propparts[0]), SMW_NS_PROPERTY); // trim needed for \n
+					if ($title === NULL) { // too bad, this is no legal property name, ignore
+						continue;
+					}
+					if ($title->getNamespace() == SMW_NS_PROPERTY) {
+						$printmode = SMW_PRINT_PROP;
+					} elseif ($title->getNamespace() == NS_CATEGORY) {
+						$printmode = SMW_PRINT_CCAT;
+					} //else?
+					if (count($parts) == 1) { // no label found, use property/category name
+						$parts[] = $title->getText();
+					}
+				}
+				if (count($propparts) == 1) { // no outputformat found, leave empty
+					$propparts[] = '';
+				}
+				$printouts[] = new SMWPrintRequest($printmode, trim($parts[1]), $title, trim($propparts[1]));
+			} else { // parameter or query
+				$parts = explode('=',$param,2);
+				if (count($parts) >= 2) {
+					$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
+				} else {
+					$querystring .= $param;
+				}
+			}
+		}
+		$querystring = str_replace(array('&lt;','&gt;'), array('<','>'), $querystring);
+	}
+
+	/**
+	 * Process and answer a query as given by an array of parameters as is 
+	 * typically produced by the #ask parser function. The result is formatted
+	 * according to the specified $outputformat. The third parameter $inline
+	 * defines whether the query is "inline" as opposed to being part of some
+	 * special search page.
+	 *
+	 * The main task of this function is to preprocess the raw parameters to
+	 * obtain actual parameters, printout requests, and the query string for
+	 * further processing.
+	 */
+	static public function getResultFromFunctionParams($rawparams, $outputmode, $inline = true) {
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI, $inline);
+	}
+
+	/**
+	 * Process and answer a query as given by a string and an array of parameters 
+	 * as is typically produced by the <ask> parser hook. The result is formatted
+	 * according to the specified $outputformat. The fourth parameter $inline
+	 * defines whether the query is "inline" as opposed to being part of some
+	 * special search page.
+	 */
+	static public function getResultFromHookParams($querystring, $params, $outputmode, $inline = true) {
+		global $wgTitle;
+		// Take care at least of some templates -- for better template support use #ask
+		$parser = new Parser();
+		$parserOptions = new ParserOptions();
+		$parser->startExternalParse( $wgTitle, $parserOptions, OT_HTML );
+		$querystring = $parser->transformMsg( $querystring, $parserOptions );
+		return SMWQueryProcessor::getResultFromQueryString($querystring, $params, array(), $outputmode, $inline);
 	}
 
 	/**
@@ -103,27 +203,45 @@ class SMWQueryProcessor {
 	 * the query and determines the serialisation mode for results. The third
 	 * parameter $inline defines whether the query is "inline" as opposed to
 	 * being part of some special search page.
+	 * @DEPRECATED use getResult
 	 */
 	static public function getResultHTML($querystring, $params, $inline = true) {
-		wfProfileIn('SMWQueryProcessor::getResultHTML (SMW)');
+		return SMWQueryProcessor::getResultFromQueryString($querystring, $params, array(), SMW_OUTPUT_HTML, $inline);
+	}
+
+	/**
+	 * Process a query string in SMW's query language and return a formatted
+	 * result set as specified by $outputmode. A parameter array of key-value-pairs 
+	 * constrains the query and determines the serialisation mode for results. 
+	 * The fourth parameter $inline defines whether the query is "inline" as opposed 
+	 * to being part of some special search page. Finally, $extraprintouts supplies
+	 * additional printout requests for the query results.
+	 */
+	static public function getResultFromQueryString($querystring, $params, $extraprintouts, $outputmode, $inline = true) {
+		wfProfileIn('SMWQueryProcessor::getResultFromQueryString (SMW)');
 		$format = SMWQueryProcessor::getResultFormat($params);
-		$query = SMWQueryProcessor::createQuery($querystring, $params, $inline, $format);
-		if ($query instanceof SMWQuery) { // query parsing successful
-			$res = smwfGetStore()->getQueryResult($query);
-			if ($query->querymode == SMWQuery::MODE_INSTANCES) {
-				wfProfileIn('SMWQueryProcessor::getResultHTML-printout (SMW)');
-				$printer = SMWQueryProcessor::getResultPrinter($format, $inline, $res);
-				$result = $printer->getResultHTML($res, $params);
-				wfProfileOut('SMWQueryProcessor::getResultHTML-printout (SMW)');
-				wfProfileOut('SMWQueryProcessor::getResultHTML (SMW)');
-				return $result;
-			} else { // result for counting or debugging is just a string
-				wfProfileOut('SMWQueryProcessor::getResultHTML (SMW)');
-				return $res;
-			}
-		} else { // error string (should be HTML-safe)
-			wfProfileOut('SMWQueryProcessor::getResultHTML (SMW)');
-			return $query;
+		$query  = SMWQueryProcessor::createQuery($querystring, $params, $inline, $format, $extraprintouts);
+		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, $outputmode, $inline, $format);
+		wfProfileOut('SMWQueryProcessor::getResultFromQueryString (SMW)');
+		return $result;
+	}
+
+	static public function getResultFromQuery($query, $params, $extraprintouts, $outputmode, $inline = true, $format = '') {
+		wfProfileIn('SMWQueryProcessor::getResultFromQuery (SMW)');
+		if ($format == '') {
+			$format = SMWQueryProcessor::getResultFormat($params);
+		}
+		$res = smwfGetStore()->getQueryResult($query);
+		if ( ($query->querymode == SMWQuery::MODE_INSTANCES) || ($query->querymode == SMWQuery::MODE_NONE) ) {
+			wfProfileIn('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
+			$printer = SMWQueryProcessor::getResultPrinter($format, $inline, $res);
+			$result = $printer->getResult($res, $params, $outputmode);
+			wfProfileOut('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
+			wfProfileOut('SMWQueryProcessor::getResultFromQuery (SMW)');
+			return $result;
+		} else { // result for counting or debugging is just a string
+			wfProfileOut('SMWQueryProcessor::getResultFromQuery (SMW)');
+			return $res;
 		}
 	}
 
@@ -133,8 +251,8 @@ class SMWQueryProcessor {
 	static protected function getResultFormat($params) {
 		$format = 'auto';
 		if (array_key_exists('format', $params)) {
-			$format = strtolower($params['format']);
-			if ( !in_array($format,SMWQueryProcessor::$formats) ) {
+			$format = strtolower(trim($params['format']));
+			if ( !array_key_exists($format, SMWQueryProcessor::$formats) ) {
 				$format = 'auto'; // If it is an unknown format, defaults to list/table again
 			}
 		}
@@ -144,25 +262,17 @@ class SMWQueryProcessor {
 	/**
 	 * Find suitable SMWResultPrinter for the given format.
 	 */
-	static protected function getResultPrinter($format,$inline,$res) {
+	static public function getResultPrinter($format,$inline,$res) {
 		if ( 'auto' == $format ) {
 			if ( ($res->getColumnCount()>1) && ($res->getColumnCount()>0) )
 				$format = 'table';
 			else $format = 'list';
 		}
-		switch ($format) {
-			case 'table': case 'broadtable':
-				return new SMWTableResultPrinter($format,$inline);
-			case 'ul': case 'ol': case 'list':
-				return new SMWListResultPrinter($format,$inline);
-			case 'timeline': case 'eventline':
-				return new SMWTimelineResultPrinter($format,$inline);
-			case 'embedded':
-				return new SMWEmbeddedResultPrinter($format,$inline);
-			case 'template':
-				return new SMWTemplateResultPrinter($format,$inline);
-			default: return new SMWListResultPrinter($format,$inline);
-		}
+		if (array_key_exists($format, SMWQueryProcessor::$formats))
+			$formatclass = SMWQueryProcessor::$formats[$format];
+		else
+			$formatclass = "SMWListResultPrinter";
+		return new $formatclass($format,$inline);
 	}
 
 }
@@ -393,8 +503,6 @@ class SMWQueryParser {
 				return $this->getPropertyDescription($chunk, $setNS, $label);
 			} elseif ($sep == ':=') { // attribute statement
 				return $this->getPropertyDescription($chunk, $setNS, $label);
-			} elseif (preg_match('/(:~+)/', $sep) ) { // close string matches...
-				return $this->getPropertyDescription($chunk, $setNS, $label);
 			} else { // Fixed article/namespace restriction. $sep should be ]] or ||
 				return $this->getArticleDescription($chunk, $setNS, $label);
 			}
@@ -458,11 +566,7 @@ class SMWQueryParser {
 	protected function getPropertyDescription($propertyname, &$setNS, &$label) {
 		global $smwgIP;
 		include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-		$sep = $this->readChunk(); // consume seperator ":="
-    	if (preg_match('/(:~+)/', $sep)) {
-			$tolerance = strlen($sep)-1;
-			$comparator = SMW_CMP_CLS;
-    	}
+		$this->readChunk(); // consume seperator ":="
 		$property = Title::newFromText($propertyname, SMW_NS_PROPERTY);
 		if ($property === NULL) {
 			$this->m_errors[] .= wfMsgForContent('smw_badtitle', htmlspecialchars($propertyname));
@@ -577,14 +681,6 @@ class SMWQueryParser {
 							if (!$dv->isValid()) {
 								$this->m_errors = $this->m_errors + $dv->getErrors();
 								$vd = new SMWThingDescription();
-							} elseif (isset($tolerance) && $tolerance > 0) {
-								if (smwfDBSupportsFunction('halowiki')) {
-									$comparator = SMW_CMP_CLS;
-									$vd = new SMWNearValueDescription($dv, $tolerance);
-								} else {
-									$this->m_errors[] = 'database does not support function: EDITDISTANCE'; //TODO: internationalise
-									return NULL;
-								}
 							} else {
 								$vd = new SMWValueDescription($dv, $comparator);
 							}
@@ -615,6 +711,7 @@ class SMWQueryParser {
 	 * effective value string, or of "*" for print statements.
 	 */
 	protected function prepareValue(&$value, &$comparator, &$printmodifier) {
+		global $smwgQComparators;
 		// get print modifier behind *
 		$list = preg_split('/^\*/',$value,2);
 		if (count($list) == 2) { //hit
@@ -626,7 +723,7 @@ class SMWQueryParser {
 		if ($value == '*') { // printout statement
 			return;
 		}
-		$list = preg_split('/^(<|>|!)/',$value, 2, PREG_SPLIT_DELIM_CAPTURE);
+		$list = preg_split('/^(' . $smwgQComparators . ')/',$value, 2, PREG_SPLIT_DELIM_CAPTURE);
 		$comparator = SMW_CMP_EQ;
 		if (count($list) == 3) { // initial comparator found ($list[1] should be empty)
 			switch ($list[1]) {
@@ -642,11 +739,15 @@ class SMWQueryParser {
 					$comparator = SMW_CMP_NEQ;
 					$value = $list[2];
 				break;
+				case '~':
+					$comparator = SMW_CMP_LIKE;
+					$value = $list[2];
+				break;
 				//default: not possible
 			}
 		}
 	}
-
+	
 	/**
 	 * Parse an article description (the part of an inline query that
 	 * is in between "[[" and the closing "]]" if it is not specifying
@@ -752,7 +853,7 @@ class SMWQueryParser {
 	 */
 	protected function readChunk($stoppattern = '', $consume=true) {
 		if ($stoppattern == '') {
-			$stoppattern = '\[\[|\]\]|:~+|::|:=|<q>|<\/q>|^' . $this->m_categoryprefix . '|\|\||\|';
+			$stoppattern = '\[\[|\]\]|::|:=|<q>|<\/q>|^' . $this->m_categoryprefix . '|\|\||\|';
 		}
 		$chunks = preg_split('/[\s]*(' . $stoppattern . ')[\s]*/', $this->m_curstring, 2, PREG_SPLIT_DELIM_CAPTURE);
 		if (count($chunks) == 1) { // no matches anymore, strip spaces and finish
@@ -829,4 +930,4 @@ class SMWQueryParser {
 		}
 	}
 }
-
+ 

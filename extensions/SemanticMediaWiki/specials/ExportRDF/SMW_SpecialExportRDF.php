@@ -12,7 +12,7 @@ if (!defined('MEDIAWIKI')) die();
 
 
 function smwfDoSpecialExportRDF($page = '') {
-	global $wgOut, $wgRequest, $wgUser, $smwgAllowRecursiveExport, $smwgExportBacklinks;
+	global $wgOut, $wgRequest, $wgUser, $smwgAllowRecursiveExport, $smwgExportBacklinks, $smwgExportAll;
 
 	$recursive = 0;  //default, no recursion
 	$backlinks = $smwgExportBacklinks; //default
@@ -23,7 +23,7 @@ function smwfDoSpecialExportRDF($page = '') {
 		$page = $wgRequest->getVal( 'page' );
 	} else {
 		//this is needed since MediaWiki 1.8, but it is wrong for 1.7
-		$page = urldecode($page);
+		$page = rawurldecode($page);
 	}
 
 	if ($page=='') { //try to get POST list; some settings are only available via POST
@@ -132,6 +132,7 @@ class SMWExportTitle {
 	 * provided DB handler.
 	 */
 	public function SMWExportTitle($title, $export, $modifier = '') {
+		wfProfileIn("RDF::ExportTitle");
 		$this->title = $title;
 		$this->title_text = $title->getText();
 		$this->title_id = $title->getArticleID();
@@ -207,6 +208,7 @@ class SMWExportTitle {
 		//TODO: should we make an exception for schema elements (Category, Attriubte, ...) where the prefix is clear from the context? At least namespaces like User: seem to be essential for understanding.
 		if ($this->modifier != '') $this->label .= " ($this->modifier)";
 		$this->label = smwfXMLContentEncode($this->label);
+		wfProfileOut("RDF::ExportTitle");
 	}
 }
 
@@ -223,32 +225,32 @@ class ExportRDF {
 	                             // avoids too much array copying; <= MAX_CACHE_SIZE!
 
 	/**
-	 * The basic namespace for acrticles in this wiki (computed on creation).
+	 * The basic namespace for articles in this wiki (computed on creation).
 	 * Version suitable for URLs.
 	 */
-	var $wiki_xmlns_url;
+	private $wiki_xmlns_url;
 
 	/**
-	 * The basic namespace for acrticles in this wiki (computed on creation).
+	 * The basic namespace for topics talked about in this wiki (computed on creation).
 	 * Version suitable for XML identifiers.
 	 */
-	var $wiki_xmlns_xml;
+	private $wiki_xmlns_xml;
 
 	/**
 	 * An array that keeps track of the elements for which we still need to
 	 * write auxilliary definitions.
 	 */
-	var $element_queue;
+	private $element_queue;
 
 	/**
 	 * An array that keeps track of the elements which have been exported already
 	 */
-	var $element_done;
+	private $element_done;
 
 	/**
 	 * URL of this special page
 	 */
-	var $special_url;
+	private $special_url;
 
 	/**
 	 * Store handler -- needed multiple times, so "cache" it
@@ -259,7 +261,7 @@ class ExportRDF {
 	 * Date used to filter the export. If a page has not been changed since that
 	 * date it will not be exported
 	 */
-	var $date;
+	private $date;
 
 	/**
 	 * Array of additional namespaces (abbreviation => URI), flushed on
@@ -270,7 +272,7 @@ class ExportRDF {
 	 * from this array can still be printed (note that you never know which
 	 * extra namespaces you encounter during export).
 	 */
-	var $extra_namespaces;
+	private $extra_namespaces;
 
 	/**
 	 * Array of namespaces that have been declared globally already. Contains
@@ -279,7 +281,13 @@ class ExportRDF {
 	 * something as rdf:bla if you do not want rdf to be the standard
 	 * namespace that is already given in every RDF export).
 	 */
-	var $global_namespaces;
+	private $global_namespaces;
+	
+	/**
+	 * Array of references to the SWIVT schema. Will be added at the end of the
+	 * export.
+	 */
+	private $schema_refs;
 
 	/**
 	 * Unprinted XML is composed from the strings $pre_ns_buffer and $post_ns_buffer.
@@ -288,18 +296,18 @@ class ExportRDF {
 	 * buffers are flushed during output in order to achieve "streaming" RDF export
 	 * for larger files.
 	 */
-	var $pre_ns_buffer;
+	private $pre_ns_buffer;
 
 	/**
 	 * See documentation for ExportRDF::pre_ns_buffer.
 	 */
-	var $post_ns_buffer;
+	private $post_ns_buffer;
 
 	/**
 	 * Boolean that is true as long as nothing was flushed yet. Indicates that
 	 * extra namespaces can still become global.
 	 */
-	var $first_flush;
+	private $first_flush;
 
 	/**
 	 * Integer that counts down the number of objects we still process before
@@ -307,7 +315,7 @@ class ExportRDF {
 	 * to get more namespaces global. Flushing will only happen if $delay_flush
 	 * is 0.
 	 */
-	var $delay_flush;
+	private $delay_flush;
 	
 	/**
 	 * Boolean. If true, the export will be in OWL Full, i.e. it will also
@@ -315,13 +323,15 @@ class ExportRDF {
 	 */
 	var $owlfull;
 
+	/**
+	 * Constructor.
+	 */
 	public function ExportRDF() {
-		global $smwgNamespace; // complete namespace for URIs (with protocol, usually http:/)
-		// if not completed yet, it wll be prefixed with a dot. Check for that and complete
 		global $wgServer;   // actual server address (with http://)
 		global $wgScript;   // "/subdirectory/of/wiki/index.php"
 		global $wgArticlePath;
 		$this->wiki_xmlns_url = $wgServer . str_replace('$1', '', $wgArticlePath);
+		global $smwgNamespace; // complete namespace for URIs (with protocol, usually http://)
 		if (''==$smwgNamespace) {
 			$resolver = Title::makeTitle( NS_SPECIAL, 'URIResolver');
 			$smwgNamespace = $resolver->getFullURL() . '/';
@@ -354,6 +364,22 @@ class ExportRDF {
 	}
 
 	/**
+	 * This outputs a single triple with a subject, object, and predicate.
+	 * Note that this is not used by printTriples, since this would make the
+	 * export far too long (opening and closing the subject all the time),
+	 * but is rather used for a single specific triple that needs to be added
+	 * for whatever reason.
+	 * All three inputs most be export titles
+	 */
+	private function printTriple(SMWExportTitle $subject, SMWExportTitle $predicate, SMWExportTitle $object) {
+		$this->flushBuffers(true);
+		$this->pre_ns_buffer =
+			  "\t<swivt:Subject rdf:about=\"$subject->long_uri\">\n" .
+		      "\t\t<$predicate->short_uri rdf:resource=\"$object->long_uri\"/>\n" .
+		      "\t</swivt:Subject>\n" . $this->pre_ns_buffer;		
+	}
+
+	/**
 	 * This function prints all selected pages. The parameter $recursion determines
 	 * how referenced ressources are treated:
 	 * '0' : add brief declarations for each
@@ -364,6 +390,9 @@ class ExportRDF {
 	 * properties are exported as well. Enables "browsable RDF."
 	 */
 	public function printPages($pages, $recursion = 1, $backlinks = true) {
+		
+		wfProfileIn("RDF::PrintPages");
+		
 		$this->store = &smwfGetStore();
 		$this->pre_ns_buffer = '';
 		$this->post_ns_buffer = '';
@@ -373,6 +402,7 @@ class ExportRDF {
 		$this->printHeader(); // also inits global namespaces
 		$linkCache =& LinkCache::singleton();
 
+		wfProfileIn("RDF::PrintPages::PrepareQueue");
 		// transform pages into queued export titles
 		$cur_queue = array();
 		foreach ($pages as $page) {
@@ -381,12 +411,15 @@ class ExportRDF {
 			$et = new SMWExportTitle($title, $this);
 			$cur_queue[$title->getPrefixedURL() . ' '] = $et; // " " is the modifier separator
 		}
+		wfProfileOut("RDF::PrintPages::PrepareQueue");
 
 		while (count($cur_queue) > 0) {
 			// first, print all selected pages
 			foreach ( $cur_queue as $et) {
+				wfProfileIn("RDF::PrintPages::PrintOne");
 				$this->printTriples($et);
 				$this->markAsDone($et);
+				wfProfileOut("RDF::PrintPages::PrintOne");
 
 				// prepare array for next iteration
 				$cur_queue = array();
@@ -396,32 +429,37 @@ class ExportRDF {
 				}
 				// possibly add backlinks
 				if ($backlinks === true) {
+					wfProfileIn("RDF::PrintPages::GetBacklinks");
 					$inRels = $this->store->getInProperties( $et->value );
 					foreach ($inRels as $inRel) {
 						$inSubs = $this->store->getPropertySubjects( $inRel, $et->value );
 						foreach($inSubs as $inSub) {
 							$st = $this->getExportTitleFromTitle( $inSub );
 							if (!array_key_exists($st->hashkey, $this->element_done)) {
-								$cur_queue[] = $st;
+								$pt = $this->getExportTitleFromTitle( $inRel );							
+								$this->printTriple($st, $pt, $et);							
+								//$cur_queue[] = $st;
 							}
 						}
 					}
 					if ( NS_CATEGORY === $et->title_namespace ) { // also print elements of categories
 						$instances = $this->store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $et->title );
 						foreach($instances as $instance) {
-							$st = $this->getExportTitleFromTitle( $instance->getTitle() );
+							$st = $this->getExportTitleFromTitle( $instance );
 							if (!array_key_exists($st->hashkey, $this->element_done)) {
 								$cur_queue[] = $st;
 							}
 						}
 					}
 					if ( 0 == $recursion ) $backlinks = false; // do not recurse through backlinks either
+					wfProfileOut("RDF::PrintPages::GetBacklinks");
 				}
 				if ($this->delay_flush > 0) $this->delay_flush--;
 			}
 			$linkCache->clear();
 		}
 
+		wfProfileIn("RDF::PrintPages::Auxilliary");
 		// if pages are not processed recursively, print mentioned declarations
 		if (!empty($this->element_queue)) {
 			if ( '' != $this->pre_ns_buffer ) {
@@ -434,16 +472,19 @@ class ExportRDF {
 				$this->printTriples($et,false);
 			}
 		}
+		wfProfileOut("RDF::PrintPages::Auxilliary");
 
 		$this->printFooter();
 		$this->flushBuffers(true);
+
+		wfProfileOut("RDF::PrintPages");
 	}
 
 	/**
 	 * This function prints RDF for *all* pages within the wiki, and for all
 	 * elements that are referred to in the exported RDF.
 	 */
-	public function printAll($outfile, $ns_restriction = false) {
+	public function printAll($outfile, $ns_restriction = false, $delay, $delayeach) {
 		global $smwgNamespacesWithSemanticLinks;
 		$linkCache =& LinkCache::singleton();
 
@@ -472,6 +513,7 @@ class ExportRDF {
 
 		$a_count = 0; $d_count = 0; //DEBUG
 
+		$delaycount = $delayeach;
 		for ($id = $start; $id <= $end; $id++) {
 			$title = Title::newFromID($id);
 			if ( ($title === NULL) || !smwfIsSemanticsProcessed($title->getNamespace()) ) continue;
@@ -501,6 +543,11 @@ class ExportRDF {
 						                                   // want to export now is a potential memory leak
 					}
 				}
+				// sleep each $delaycount for $delay ms to be nice to the server
+				if (($delaycount-- < 0) && ($delayeach != 0)) {
+					usleep($delay);
+					$delaycount = $delayeach;
+				} 
 			}
 			if ($outfile !== false) { // flush buffer
 				fwrite($file, $this->post_ns_buffer);
@@ -534,7 +581,7 @@ class ExportRDF {
 
 	/* Functions for exporting RDF */
 
-	function printHeader() {
+	private function printHeader() {
 		global $wgContLang;
 
 		$this->pre_ns_buffer .=
@@ -543,8 +590,7 @@ class ExportRDF {
 			"\t<!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>\n" .
 			"\t<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>\n" .
 			"\t<!ENTITY owl 'http://www.w3.org/2002/07/owl#'>\n" .
-			"\t<!ENTITY smw 'http://smw.ontoware.org/2005/smw#'>\n" .
-			"\t<!ENTITY smwdt 'http://smw.ontoware.org/2005/smw-datatype#'>\n" .
+			"\t<!ENTITY swivt 'http://semantic-mediawiki.org/swivt/1.0#'>\n" .
 			// A note on "wiki": this namespace is crucial as a fallback when it would be illegal to start e.g. with a number. In this case, one can always use wiki:... followed by "_" and possibly some namespace, since _ is legal as a first character.
 			"\t<!ENTITY wiki '" . $this->wiki_xmlns_xml .  "'>\n" .
 			"\t<!ENTITY property '" . $this->wiki_xmlns_xml .
@@ -555,41 +601,46 @@ class ExportRDF {
 			"\txmlns:rdf=\"&rdf;\"\n" .
 			"\txmlns:rdfs=\"&rdfs;\"\n" .
 			"\txmlns:owl =\"&owl;\"\n" .
-			"\txmlns:smw=\"&smw;\"\n" .
+			"\txmlns:swivt=\"&swivt;\"\n" .
 			"\txmlns:wiki=\"&wiki;\"\n" .
 			"\txmlns:property=\"&property;\"";
-		$this->global_namespaces = array('rdf'=>true, 'rdfs'=>true, 'owl'=>true, 'smw'=>true, 'wiki'=>true, 'property'=>true);
+		$this->global_namespaces = array('rdf'=>true, 'rdfs'=>true, 'owl'=>true, 'swivt'=>true, 'wiki'=>true, 'property'=>true);
 
 		$this->post_ns_buffer .=
 			">\n\t<!-- Ontology header -->\n" .
 			"\t<owl:Ontology rdf:about=\"\">\n" .
-			"\t\t<smw:exportDate rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">" . date(DATE_W3C) . "</smw:exportDate>\n" .
+			"\t\t<swivt:creationDate rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">" . date(DATE_W3C) . "</swivt:creationDate>\n" .
+			"\t\t<owl:imports rdf:resource=\"http://semantic-mediawiki.org/swivt/1.0\" />\n" .
 			"\t</owl:Ontology>\n" .
 			"\t<!-- exported page data -->\n";
-		$this->addSchemaRef( "hasArticle", "owl:AnnotationProperty" );
-		$this->addSchemaRef( "exportDate", "owl:AnnotationProperty" );
-		$this->addSchemaRef( "Thing", "owl:Class" );
+		$this->addSchemaRef( "page", "owl:AnnotationProperty" );
+		$this->addSchemaRef( "creationDate", "owl:AnnotationProperty" );
+		$this->addSchemaRef( "Subject", "owl:Class" );
 	}
 
-	function printFooter() {
-		$this->post_ns_buffer .= "\t<!-- reference to the Semantic MediaWiki schema -->\n";
+	/**
+	 * Prints the footer. Prints also all open schema-references.
+	 * No schema-references can be added after printing the footer.
+	 */
+	private function printFooter() {
+		$this->post_ns_buffer .= "\t<!-- references to the SWIVT Ontology, see http://semantic-mediawiki.org/swivt/ -->\n";
 		foreach (array_keys($this->schema_refs) as $name) {
 			$type = $this->schema_refs[$name];			
 			$this->post_ns_buffer .=
-				"\t<$type rdf:about=\"&smw;$name\">\n" .
-				"\t\t<rdfs:isDefinedBy rdf:resource=\"http://smw.ontoware.org/2005/smw\"/>\n" .
+				"\t<$type rdf:about=\"&swivt;$name\">\n" .
+				"\t\t<rdfs:isDefinedBy rdf:resource=\"http://semantic-mediawiki.org/swivt/1.0\"/>\n" .
 				"\t</$type>\n";				
 		}
-		$this->post_ns_buffer .= "\t<!-- Created with Semantic MediaWiki, http://ontoworld.org/wiki/SMW -->\n";
+		$this->post_ns_buffer .= "\t<!-- Created with Semantic MediaWiki, http://semantic-mediawiki.org -->\n";
 		$this->post_ns_buffer .= '</rdf:RDF>';
 	}
 	
 	/**
-	 * Adds a reference to the SMW schema. This will make sure that at the end of the page,
+	 * Adds a reference to the SWIVT schema. This will make sure that at the end of the page,
 	 * all required schema references will be defined and point to the appropriate ontology.
 	 *
 	 * @param string $name The fragmend identifier of the entity to be referenced.
-	 *                     The SMW namespace is assumed. 
+	 *                     The SWIVT namespace is added. 
 	 * @param string $type The type of the referenced identifier, i.e. is it an annotation
 	 *                     property, an object property, a class, etc. Should be given as a QName
 	 *                     (i.e. in the form "owl:Class", etc.)
@@ -608,7 +659,7 @@ class ExportRDF {
 	 * @return nothing
 	 */
 	public function addPage( Title $title, $fullexport=false ) {
-		
+		$this->element_queue[] = $this->getExportTitleFromTitle( $title );
 	}
 
 	/**
@@ -620,7 +671,7 @@ class ExportRDF {
 	 *                            a definition of the given title.
 	 * $return nothing
 	 */
-	function printTriples(SMWExportTitle $et, $fullexport=true) {
+	private function printTriples(SMWExportTitle $et, $fullexport=true) {
 		// if this was already exported, don't do it again
 		if (array_key_exists($et->hashkey, $this->element_done)) return;
 		// return if younger than the filtered date
@@ -637,12 +688,7 @@ class ExportRDF {
 		switch ($et->title_namespace) {
 			case SMW_NS_PROPERTY:
 				$equality_rel = "owl:equivalentProperty";
-				global $smwgExportSemanticRelationHierarchy;
-				if ($smwgExportSemanticRelationHierarchy) {
-					$subprop_rel = "rdfs:subPropertyOf";
-				} else {
-					$subprop_rel = "smw:subPropertyOf";
-				}
+				$subprop_rel = "rdfs:subPropertyOf";
 
 				switch ($et->has_type) {
 					case '': case '_wpg': case '_uri': case '_ema': case '__nry':
@@ -657,6 +703,7 @@ class ExportRDF {
 						$type = 'owl:DatatypeProperty';
 					break;
 				}
+				if ($this->owlfull) $category_rel = "rdf:type";
 				break;
 			case NS_CATEGORY:
 				$type = 'owl:Class';
@@ -664,7 +711,7 @@ class ExportRDF {
 				$equality_rel = "owl:equivalentClass";
 				break;
 			default:
-				$type = 'smw:Thing';
+				$type = 'swivt:Subject';
 				$category_rel = "rdf:type";
 				$equality_rel = "owl:sameAs";
 				break;
@@ -678,23 +725,23 @@ class ExportRDF {
 		}
 		$this->post_ns_buffer .= ">\n" .
 		      "\t\t<rdfs:label>" . $et->label . "</rdfs:label>\n" .
-		      "\t\t<smw:hasArticle rdf:resource=\"&wikiurl;" .
+		      "\t\t<swivt:page rdf:resource=\"&wikiurl;" .
 		              $et->title_prefurl . "\"/>\n" .
 		      "\t\t<rdfs:isDefinedBy rdf:resource=\"" .
 		              $this->special_url . '/' . $et->title_prefurl . "\"/>\n";
 		// If the property is modified by a unit, export the modifier
 		// and the base relation explicitly
 		if ( $et->has_type && $et->modifier ) {
-			$this->post_ns_buffer .= "\t\t<smw:hasModifier rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">" .
+			$this->post_ns_buffer .= "\t\t<swivt:modifier rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">" .
 				smwfXMLContentEncode($et->modifier) .
-				"</smw:hasModifier>\n";
+				"</swivt:modifier>\n";
 			$baseprop = $this->getExportTitle($et->title_text, SMW_NS_PROPERTY);
-			$this->post_ns_buffer .= "\t\t<smw:baseProperty rdf:resource=\"" . $baseprop->long_uri . "\"/>\n";
+			$this->post_ns_buffer .= "\t\t<swivt:baseProperty rdf:resource=\"" . $baseprop->long_uri . "\"/>\n";
 			if (!array_key_exists($baseprop->hashkey, $this->element_queue)) {
 				$this->element_queue[$baseprop->hashkey] = $baseprop;
 			}
 			$this->addSchemaRef( "baseProperty", "owl:AnnotationProperty" );
-			$this->addSchemaRef( "hasModifier", "owl:AnnotationProperty" );
+			$this->addSchemaRef( "modifier", "owl:AnnotationProperty" );
 		}
 
 		if ( ($fullexport) && ($et->exists) ) {
@@ -708,40 +755,38 @@ class ExportRDF {
 			}
 
 			// TODO: this is not convincing, esp. now that we have custom types
-			if (isset($datatype_handler)) {
-				$this->post_ns_buffer .= "\t\t<smw:hasType " . 'rdf:resource="&smwdt;' . $datatype_handler->getID() . "\"/>\n";
-				$this->addSchemaRef( "hasType", "owl:AnnotationProperty" );
-			}
+//			if (isset($datatype_handler)) {
+//				$this->post_ns_buffer .= "\t\t<swivt:type " . 'rdf:resource="&??;' . $datatype_handler->getID() . "\"/>\n";
+//				$this->addSchemaRef( "type", "owl:AnnotationProperty" );
+//			}
 
 			// add statements about equivalence to (external) URIs
-			// FIXME: temporarily disabled
-// 			if ($equality_rel) {
-// 				$equalities = smwfGetSpecialPropertyValues($title,SMW_SP_HAS_URI);
-// 				$fragment = $title->getFragment();
-// 				if( '' != $fragment ) {
-// 					$fragment = '#' . $fragment;
-// 				}
-// 				foreach ($equalities as $equality) {
-// 					$this->post_ns_buffer .= "\t\t<" . $equality_rel . ' rdf:resource="' . $equality . $fragment .  "\"/>\n";
-// 				}
-// 			}
+ 			if ($equality_rel) {
+ 				$equalities = $this->store->getSpecialValues( $et->title, SMW_SP_HAS_URI );
+ 				$fragment = $et->title->getFragment();
+ 				$fragment = ''; // FIXME: temporarily disabled.
+ 				// I think this should be always disabled, I am trying to think of a situation
+ 				// where something should be equal to the frag-id'd URI, but don't see the
+ 				// use case really.
+ 				if( '' != $fragment ) {
+ 					$fragment = '#' . $fragment;
+ 				}
+ 				foreach ($equalities as $equality) {
+ 					$this->post_ns_buffer .= "\t\t<" . $equality_rel . ' rdf:resource="' . $equality . $fragment .  "\"/>\n";
+ 				}
+ 			}
 
 			// add rdfs:subPropertyOf statements
  			if ($subprop_rel) {
 				$properties = $this->store->getSpecialValues($et->title, SMW_SP_SUBPROPERTY_OF);
  				foreach ($properties as $property) {
- 					// TODO in future, check type safety relations <-> attributes
- 					// TODO check also the type of what I am pointing to (is it an atrribute or sth else?)
- 					// TODO check the type of the attribute pointed to, does it match?
- 					// Could lead to inconsistencies in the output -- and in the wiki? But this will
- 					// need to be dealt with as soon as people add subattribute semantics to the wiki
- 					$supprop = $this->getExportTitle($property, SMW_NS_PROPERTY);
- 					$this->post_ns_buffer .= "\t\t<$subprop_rel rdf:resource=\"" . $supprop->long_uri . "\"/>\n";
- 					if (!array_key_exists($supprop->hashkey, $this->element_queue)) {
+ 					$supprop = $this->getExportTitleFromTitle($property);
+ 					if ($et->has_type == $supprop->has_type) {
+	 					$this->post_ns_buffer .= "\t\t<$subprop_rel rdf:resource=\"" . $supprop->long_uri . "\"/>\n";
+ 						if (!array_key_exists($supprop->hashkey, $this->element_queue)) {
  							$this->element_queue[$supprop->hashkey] = $supprop;
+ 						}
  					}
- 					if (!$smwgExportSemanticRelationHierarchy)
- 						$this->addSchemaRef( "subPropertyOf", "owl:AnnotationProperty");
  				}
  			}
 
@@ -770,7 +815,7 @@ class ExportRDF {
 	 *
 	 * @param force if true, the flush cannot be delayed any longer
 	 */
-	public function flushBuffers($force = false) {
+	private function flushBuffers($force = false) {
 		if ( '' == $this->post_ns_buffer ) return; // nothing to flush (every non-empty pre_ns_buffer also requires a non-empty post_ns_buffer)
 		if ( (0 != $this->delay_flush) && !$force ) return; // wait a little longer
 
@@ -818,7 +863,8 @@ class ExportRDF {
 	 */
 	public function getURI(Title $title, $unit = '') {
 		$et = $this->getExportTitleFromTitle( $title, $unit );
-		return $et->long_uri;
+		return $et->long_uri; // TODO this function should be static! and it should return
+		// the correct URI. Needs a bit of work still.
 	}
 
 	/** Fetch SMWExportTitle for a given article. The inputs are
@@ -923,6 +969,27 @@ class ExportRDF {
 		                   $id);
 		$id = str_replace( '-2D', '-', $id);
 		return $id;
+	}
+	
+	/**
+	 * Creates an RDF URI of the thing that is described by a page with
+	 * the given title.
+	 */
+	static function makeURIfromTitle(Title $title, $unit = '') {
+		global $smwgNamespace;
+		if (''==$smwgNamespace) {
+			$resolver = Title::makeTitle( NS_SPECIAL, 'URIResolver');
+			$smwgNamespace = $resolver->getFullURL() . '/';
+		}
+		if ($smwgNamespace[0] == '.') {
+			$resolver = Title::makeTitle( NS_SPECIAL, 'URIResolver');
+			$smwgNamespace = "http://" . mb_substr($smwgNamespace, 1) . $resolver->getLocalURL() . '/';
+		}
+		$localpart = ExportRDF::makeXMLExportId( urlencode($title->getPrefixedDBKey()));
+		if ($unit !== '') {
+			$unit = '#' . ExportRDF::makeURIfromXMLExportId($unit);
+		}
+		return $smwgNamespace . $localpart . $unit;
 	}
 }
 

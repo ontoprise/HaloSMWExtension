@@ -17,10 +17,11 @@ require_once( "$smwgIP/includes/articlepages/SMW_OrderedListPage.php");
  * that also displays values for each subject with the given property.
  */
 class SMWPropertyPage extends SMWOrderedListPage {
-
+	
 	private $subproperties; // list of sub-properties of this property
 	private $subpropStartChar;  // array of first characters of printed articles,
 	                            // used for making subheaders
+
 	protected $special_prop; // code number of special property, false if not.
 
 	/**
@@ -64,7 +65,6 @@ class SMWPropertyPage extends SMWOrderedListPage {
 				}
 			}
 			$this->articles = array_values($this->articles);
-			
 		} else {
 			// For now, do not attempt listings for special properties:
 			// they behave differently, have dedicated search UIs, and
@@ -86,7 +86,6 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		foreach ($this->subproperties as $title) {
 			$this->subpropStartChar[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
 		}
-
 	}
 
 	/**
@@ -98,7 +97,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		$r = '';
 		$ti = htmlspecialchars( $this->mTitle->getText() );
 		if ($this->special_prop !== false) {
-			$r .= '<p>' .wfMsg('smw_propertyspecial') . "</p>\n";
+			$r .= '<p>' .wfMsg('smw_isspecprop') . "</p>\n";
 		} else {		
 			$nav = $this->getNavigationLinks();
 			$r .= '<a name="SMWResults"></a>' . $nav . "<div id=\"mw-pages\">\n";
@@ -110,6 +109,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		wfProfileOut( __METHOD__ . ' (SMW)');
 		return $r;
 	}
+
 
 	/**
 	 * Generates the headline for the list of sub-properties and the HTML encoded list of pages which
@@ -152,15 +152,15 @@ class SMWPropertyPage extends SMWOrderedListPage {
 			include_once($smwgIP . '/includes/SMW_Infolink.php');
 			// Header for index letters
 			if ($this->articles_start_char[$index] != $prevchar) {
-				$r .= '<tr><th class="smwattname"><h3>' . htmlspecialchars( $this->articles_start_char[$index] ) . "</h3></th><th></th></tr>\n";
+				$r .= '<tr><th class="smwpropname"><h3>' . htmlspecialchars( $this->articles_start_char[$index] ) . "</h3></th><th></th></tr>\n";
 				$prevchar = $this->articles_start_char[$index];
 			}
 			// Property name
 			$searchlink = SMWInfolink::newBrowsingLink('+',$this->articles[$index]->getPrefixedText());
-			$r .= '<tr><td class="smwattname">' . $this->getSkin()->makeKnownLinkObj( $this->articles[$index], 
+			$r .= '<tr><td class="smwpropname">' . $this->getSkin()->makeKnownLinkObj( $this->articles[$index], 
 			  $wgContLang->convert( $this->articles[$index]->getPrefixedText() ) ) . 
 			  '&nbsp;' . $searchlink->getHTML($this->getSkin()) .
-			  '</td><td class="smwatts">';
+			  '</td><td class="smwprops">';
 			// Property values
 			$ropts = new SMWRequestOptions();
 			$ropts->limit = 4;
@@ -172,12 +172,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 				}
 				$i++;
 				if ($i < 4) {
-					$r .= $value->getLongHTMLText($this->getSkin());
-					$sep = '&nbsp;&nbsp;';
-					foreach ($value->getInfolinks() as $link) {
-						$r .= $sep . $link->getHTML($this->getSkin());
-						$sep = ' &nbsp;&nbsp;'; // allow breaking for longer lists of infolinks
-					}
+					$r .= $value->getLongHTMLText($this->getSkin()) . $value->getInfolinkText(SMW_OUTPUT_HTML, $this->getSkin());
 				} else {
 					$searchlink = SMWInfolink::newInversePropertySearchLink('&hellip;', $this->articles[$index]->getPrefixedText(), $this->mTitle->getText());
 					$r .= $searchlink->getHTML($this->getSkin());
@@ -272,7 +267,6 @@ class SMWPropertyPage extends SMWOrderedListPage {
 
 		return $r;
 	}
-
 }
 
 

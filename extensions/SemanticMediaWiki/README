@@ -2,37 +2,39 @@
 
 Semantic MediaWiki is a project for extending MediaWiki with "semantic"
 functions that enable machine-reading of wiki-content. For details and
-further links, see http://ontoworld.org/wiki/SMW
+further links, see http://semantic-mediawiki.org
 
 Notes on installing Semantic MediaWiki are found in the file INSTALL.
 
 == Contact ==
 
-If you have remarks, questions, or suggestions, please please send them
-to semediawiki-users@lists.sourceforge.net. Bugs should be filed at 
-MediaZilla, http://bugzilla.wikimedia.org/.
+If you have remarks, questions, or suggestions, please send them to
+semediawiki-users@lists.sourceforge.net. You can subscribe to this 
+list at
+http://sourceforge.net/mailarchive/forum.php?forum_name=semediawiki-user.
+
+Bugs should be filed at MediaZilla, http://bugzilla.wikimedia.org/.
 
 People who want to contribute work to the project should subscribe to
 the developers list semediawiki-devel@lists.sourceforge.net.
 
-Specific inquiries (e.g. for press releases) should go to Markus Krötzsch, 
-mak@aifb.uni-karlsruhe.de. Do not contact Markus directly for free technical 
-support -- you will get no answer.
+Specific inquiries (e.g. for press releases) should go to Markus Krötzsch,
+mak@aifb.uni-karlsruhe.de. Do not contact Markus directly if you just need
+free technical support -- that is what the user list is for.
 
-== Current developers ==
+== Developers ==
 
-Development is coordinated by Markus Krötzsch and Denny Vrandecic. The current
-core development team further consists of S Page, Daniel Herzig, Nikolas Iwan, and
-Tobias Matzner.
+Development is coordinated by Markus Krötzsch and Denny Vrandecic.
 
 Semantic MediaWiki development is funded by Institut AIFB of Universität Karlsruhe,
-Germany; see http://aifb.uni-karlsruhe.de.
-
-SMW is also supported in the Halo project, where development is coordinated by 
-ontoprise GmbH, Karlsruhe, Germany. A team of developers from ontoprise will also 
-contribute code to future releases of SMW.
+Germany; see http://aifb.uni-karlsruhe.de. Specific development tasks have been
+supported by the European Union under the projects SEKT and NeOn. SMW has also been 
+supported in the Halo project funded by Vulcan Inc., where development is coordinated 
+by ontoprise GmbH, Karlsruhe, Germany.
 
 == Contributors ==
+
+* S Page has contributed code, and currently coordinates user support.
 
 * Heiko Haller and Max Völkel contributed to the initial design and basic 
   architectural decisions.
@@ -41,8 +43,9 @@ contribute code to future releases of SMW.
   going at the early stages of the project, and set up the first testing wiki.
   The first implementation has been done by Klaus Lassleben.
 
-* Further code has been contributed by (in no particular order) Kai Hüner,
-  Fernando Correia, Yaron Koren, and Nick Grandy.
+* Code has been contributed by (in no particular order) Kai Hüner, Fernando Correia, 
+  Yaron Koren, and Nick Grandy, Jörg Heizmann, Daniel Herzig, Nikolas Iwan, Tobias Matzner,
+  Thomas Bleher.
 
 * The new logo and related artwork for Semantic MediaWiki (see ontoworld.org) 
   has been designed and realised by Rozana Vrandecic.
@@ -65,11 +68,15 @@ In general, current maintainers should also be found in the language files.
 
 * Polish translation has been provided by Łukasz Bolikowski.
 
-* Russian translation has been provided by Дмитрий Хорошев (Dmitry Khoroshev).
+* Russian translation has been provided by Дмитрий Хорошев (Dmitry Khoroshev), and cnit@uniyar.ac.ru
+
+* Dutch translation has been provided by Siebrand Mazeland
+
+* Chinese translations have been provided by Roc Michael
 
 == Credits to other projects ==
 
-* Some icons used by Semantic MediaWiki are derived from the "Crystal Clear"
+* Most icons used by Semantic MediaWiki are derived from the "Crystal Clear"
   icon theme for KDE, which was created by Everaldo (everaldo.com).
 
 * The sorttable java script function was developed by Stuart Langridge,

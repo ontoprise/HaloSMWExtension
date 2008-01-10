@@ -10,17 +10,23 @@ class SMW_LanguageNl extends SMW_Language {
 
 protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Bewerkingshulp bij eigenschappen',
-	'smw_helppage' => 'Relatie',
 	'smw_viewasrdf' => 'RDF-feed',
 	'smw_finallistconjunct' => ', en', //used in "A, B, and C"
 	'smw_factbox_head' => 'Feiten over $1',
-	'smw_spec_head' => 'Speciale eigenschappen',
+	'smw_isspecprop' => 'Dit is een speciale eigenschap in de wiki.',
+	'smw_isknowntype' => 'This type is among the standard datatypes of this wiki.', // TODO Translate
+	'smw_isaliastype' => 'This type is an alias for the datatype “$1”.', // TODO Translate
+	'smw_isnotype' => 'This type “$1” is not a standard datatype in the wiki, and has not been given a user definition either.', // TODO Translate
 	// URIs that should not be used in objects in cases where users can provide URIs
+	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
 	'smw_baduri' => 'Sorry, URI\'s uit de reeks “$1” zijn hier niet beschikbaar.',
+	// Link to RSS feeds
+	'smw_rss_link' => 'RSS', // TODO: translate (default text for linking to semantic RSS feeds)
 	// Messages and strings for inline queries
-	'smw_iq_disabled' => "<span class='smwwarning'>Sorry. Zoekopdrachten binnen tekst zijn uitgeschakeld in deze wiki.</span>",
+	'smw_iq_disabled' => "Sorry. Zoekopdrachten binnen tekst zijn uitgeschakeld in deze wiki.",
 	'smw_iq_moreresults' => '&hellip; overige resultaten',
-	'smw_iq_nojs' => 'Gebruiker een browser waarin JavaScript is ingeschakeld om dit element te zien, of <a href="$1">bekijk de resultatenlijst</a>.',
+	'smw_iq_nojs' => 'Gebruiker een browser waarin JavaScript is ingeschakeld om dit element te zien.',
+	'smw_iq_altresults' => 'Browse the result list directly.', // available link when JS is disabled // TODO: translate
 	// Messages and strings for ontology resued (import)
 	'smw_unknown_importns' => 'Importfuncties zijn niet beschikbaar voor de naamruimte “$1”.',
 	'smw_nonright_importtype' => '$1 kan alleen gebruikt worden voor pagina\'s in de naamruimte “$2”.',
@@ -29,37 +35,32 @@ protected $m_ContentMessages = array(
 	// Messages and strings for basic datatype processing
 	'smw_decseparator' => ',',
 	'smw_kiloseparator' => '.',
+	'smw_notitle' => '“$1” cannot be used as a page name in this wiki.', // TODO Translate
 	'smw_unknowntype' => 'Type “$1” is niet beschikbaar voor de gedefinieerde eigenschap.',
 	'smw_manytypes' => 'Meer dan één type gedefinieerd voor eigenschap.',
 	'smw_emptystring' => 'Lege strings zijn niet toegestaan.',
 	'smw_maxstring' => 'Stringrepresentatie $1 is te lang voor deze site.',
-	'smw_nopossiblevalues' => 'Mogelijke waarden voor deze eigenschap worden niet geenumereerd.',
 	'smw_notinenum' => '“$1” komt niet voor in de lijst met mogelijke waarden ($2) voor deze eigenschap.',
 	'smw_noboolean' => '“$1” is niet herkend als een booleaanse waarde (waar/onwaar).',
-	'smw_true_words' => 'w,ja,j',	// comma-separated synonyms for boolean TRUE besides 'true' and '1'
-	'smw_false_words' => 'o,nee,n',	// comma-separated synonyms for boolean FALSE besides 'false' and '0'
-	'smw_nointeger' => '“$1” is geen integer getal.',
-	'smw_nofloat' => '“$1” is geen getal met drijvende komma.',
+	'smw_true_words' => 'waar,w,ja,j,true',	// comma-separated synonyms for boolean TRUE besides '1', principal value first
+	'smw_false_words' => 'onwaar,o,nee,n,false',	// comma-separated synonyms for boolean FALSE besides '0', principal value first
+	'smw_nofloat' => '“$1” is geen getal.',
 	'smw_infinite' => 'Getallen zo groot als “$1” zijn niet ondersteund door deze site.',
 	'smw_infinite_unit' => 'Conversie naar eenheid “$1” resulteerde in een getal dat te groot is voor deze site.',
 	// Currently unused, floats silently store units.  'smw_unexpectedunit' => 'this property supports no unit conversion',
 	'smw_unsupportedprefix' => 'Voorvoegsels voor getallen (“$1”) worden niet ondersteund.',
 	'smw_unsupportedunit' => 'Eenheidconversie voor eenheid “$1” is niet ondersteund.',
 	// Messages for geo coordinates parsing
-	'smw_err_latitude' => 'Waarden voor breedte (N, Z) moeten tussen 0 en 90 liggen, en “$1” voldoet niet aan deze voorwaarde.',
-	'smw_err_longitude' => 'Waarden voor lengte (O, W) moeten tussen 0 en 180 liggen, en “$1” voldoet niet aan deze voorwaarde.',
-	'smw_err_noDirection' => 'Er is iets misgegaan met de opgegeven waarde “$1”.',
-	'smw_err_parsingLatLong' => 'Er is iets misgegaan met de opgegeven waarde “$1” &ndash; er werd iets verwacht als “1°2′3.4′′ W” op deze plaats.',
-	'smw_err_wrongSyntax' => 'Er is iets mis met de opgegeven waarde “$1” &ndash; er werd iets verwacht als “1°2′3.4′′ W, 5°6′7.8′′ N” op deze plaats.',
-	'smw_err_sepSyntax' => 'De opgegeven waarde “$1” lijkt in orde, maar de waarden voor breedte en lengte moeten gescheiden worden door “,” of “;”.',
-	'smw_err_notBothGiven' => 'Geef alstublieft een geldige waarde op voor zowel lengte (O, W) <it>als</it> breedte (N, Z) &ndash; er mist er tenminste één.',
-	// additionals ...
+	'smw_lonely_unit' => 'No number found before the symbol “$1”.', // $1 is something like ° TODO Translate
+	'smw_bad_latlong' => 'Latitude and longitude must be given only once, and with valid coordinates.', // TODO Translate
 	'smw_label_latitude' => 'Breedte:',
 	'smw_label_longitude' => 'Lengte:',
 	'smw_abb_north' => 'N',
 	'smw_abb_east' => 'O',
 	'smw_abb_south' => 'Z',
 	'smw_abb_west' => 'W',
+	// some links for online maps; can be translated to different language versions of services, but need not
+	'smw_service_online_maps' => " find&nbsp;maps|http://tools.wikimedia.de/~magnus/geo/geohack.php?params=\$9_\$7_\$10_\$8\n Google&nbsp;maps|http://maps.google.com/maps?ll=\$11\$9,\$12\$10&spn=0.1,0.1&t=k\n Mapquest|http://www.mapquest.com/maps/map.adp?searchtype=address&formtype=latlong&latlongtype=degrees&latdeg=\$11\$1&latmin=\$3&latsec=\$5&longdeg=\$12\$2&longmin=\$4&longsec=\$6&zoom=6",
 	// Messages for datetime parsing
 	'smw_nodatetime' => 'De datum “$1” werd niet begrepen (ondersteuning voor datums is nog experimenteel).',
 	// Errors and notices related to queries
@@ -67,13 +68,13 @@ protected $m_ContentMessages = array(
 	'smw_noclosingbrackets' => 'In uw zoekopdracht is het gebruik van “[&#x005B;” niet gesloten door een bijbehorende “]]”.',
 	'smw_misplacedsymbol' => 'Het symbool “$1” is gebruikt op een plaats waar het niet gebruikt hoort te worden.',
 	'smw_unexpectedpart' => 'Het deel “$1” van de zoekopdracht is niet begrepen. De resultaten kunnen afwijken van de verwachting.',
-	'smw_emtpysubquery' => 'Er is een subzoekopdracht met een onjuiste conditie.',
+	'smw_emptysubquery' => 'Er is een subzoekopdracht met een onjuiste conditie.',
 	'smw_misplacedsubquery' => 'Er is een subzoekopdracht gebruikt op een plaats waar subzoekopdrachten niet gebruikt mogen worden.',
 	'smw_valuesubquery' => 'Subzoekopdrachten worden niet ondersteund voor waarden van eigenschap “$1”.',
 	'smw_overprintoutlimit' => 'De zoekopdracht bevat te veel printoutverzoeken.',
 	'smw_badprintout' => 'Er is een print statement in de zoekopdracht onjuist geformuleerd.',
 	'smw_badtitle' => 'Sorry, maar “$1” is geen geldige paginanaam.',
-	'smw_badqueryatom' => 'Een onderdeel “[#x005B;&hellip]]” van de zoekopdrtacht is niet begrepen.',
+	'smw_badqueryatom' => 'Een onderdeel “[&#x005B;&hellip;]]” van de zoekopdrtacht is niet begrepen.',
 	'smw_propvalueproblem' => 'De waarde van eigenschap “$1” is niet begrepen.',
 	'smw_nodisjunctions' => 'Scheidingen in zoekopdrachten worden niet ondersteund in deze wiki en er is een deel van de zoekopdracht genegeerd ($1).',
 	'smw_querytoolarge' => 'De volgende zoekopdrachtcondities zijn niet in acht genomen vanwege beperkingen in de grootte of diepte van zoekopdrachten in deze wiki: $1.'
@@ -86,6 +87,8 @@ protected $m_UserMessages = array(
 	'smw_typearticlecount' => 'Er zijn $1 eigenschappen die gebruik maken van dit type.',
 	'smw_attribute_header' => 'Pagina\'s die de eigenschap “$1” gebruiken',
 	'smw_attributearticlecount' => '<p>Er zijn $1 pagina\'s die deze eigenschap gebruiken.</p>',
+	// Messages used in RSS feeds
+	'smw_rss_description' => '$1 RSS feed', // TODO: translate, used as default semantic RSS-feed description
 	// Messages for Export RDF Special
 	'exportrdf' => 'Export pagina\'s naar RDF', //name of this special
 	'smw_exportrdf_docu' => '<p>Deze pagina maakt het mogelijk gegevens te verkrijgen van een pagina in RDF-formaat. Geef titels in het onderstaande invoerveld in om pagina\'s te exporteren. Iedere pagina op een eigen regel.</p>',
@@ -99,7 +102,6 @@ protected $m_UserMessages = array(
 	'smw_propertylackspage' => 'Alle eigenschappen moeten op een pagina beschreven worden!',
 	'smw_propertylackstype' => 'Er is geen type opgegeven voor deze eigenschap (type $1 wordt verondersteld).',
 	'smw_propertyhardlyused' => 'Deze eigenschap wordt vrijwel niet gebruikt in de wiki!',
-	'smw_propertyspecial' => 'Dit is een speciale eigenschap met een gereserveerde betekenis in de wiki.',
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Ongebruikte eigenschappen',
 	'smw_unusedproperties_docu' => 'De volgende eigenschappen bestaan, hoewel ze niet gebruikt worden.',
@@ -129,8 +131,7 @@ protected $m_UserMessages = array(
 	// Messages for (data)Types Special
 	'types' => 'Typen',
 	'smw_types_docu' => 'Hieronder staat een lijst van alle datatypen die aan eigenschappen kunnen worden toegewezen. Ieder datatype heeft een pagina waar aanvullende informatie opgegeven kan worden.',
-	'smw_types_units' => 'Standaardeenheid: $1; ondersteunde eenheden: $2',
-	'smw_types_builtin' => 'Ingebouwde typen',
+	'smw_typeunits' => 'Units of measurement of type “$1”: $2', // TODO: Translate
 	/*Messages for SemanticStatistics Special*/
 	'semanticstatistics' => 'Semantische statistieken',
 	'smw_semstats_text' => 'Deze wiki bevat <b>$1</b> eigenschapwaaren voor <b>$2</b> verschillden <a href="$3">eigenschappen</a>. <b>$4</b> properties have an own page, and the intended datatype is specified for <b>$5</b> of those. Some of the existing properties might by <a href="$6">unused properties</a>. Eigenschappen waar nog geen pagina voor is zijn te vinden op de <a href="$7">lijst met gewenste eigenschappen</a>.',
@@ -142,12 +143,16 @@ protected $m_UserMessages = array(
 	'smw_uri_doc' => '<p>De URI-resolver implementeert de <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG finding on httpRange-14</a>. Het zorgt ervoor dat mensen niet veranderen in websites.</p>',
 	// Messages for ask Special
 	'ask' => 'Semantisch zoeken',
-	'smw_ask_docu' => '<p>Zoek door een zoekopdracht in te geven in het onderstaande invoerveld. Veredere informatie staat op de <a href="$1">helppagina voor semantisch zoeken</a>.</p>',
 	'smw_ask_doculink' => 'Semantisch zoeken',
 	'smw_ask_sortby' => 'Sort op kolom',
 	'smw_ask_ascorder' => 'Oplopend',
 	'smw_ask_descorder' => 'Aflopend',
 	'smw_ask_submit' => 'Zoek resultaten',
+	'smw_ask_editquery' => '[Edit query]', // TODO: translate
+	'smw_ask_hidequery' => 'Hide query', // TODO: translate
+	'smw_ask_help' => 'Querying help', // TODO: translate
+	'smw_ask_queryhead' => 'Query', // TODO: translate
+	'smw_ask_printhead' => 'Additional printouts (optional)', // TODO: translate
 	// Messages for the search by property special
 	'searchbyproperty' => 'Zoek op eigenschap',
 	'smw_sbv_docu' => '<p>Zoek naar alle pagina\'s die een bepaalde eigenschap en waarde hebben.</p>',
@@ -158,8 +163,10 @@ protected $m_UserMessages = array(
 	'smw_sbv_value' => 'Waarde',
 	'smw_sbv_submit' => 'Zoek resultaten',
 	// Messages for the browsing special
+	'browse' => 'Browse wiki',
 	'smw_browse_article' => 'Voer de naam in van de pagina waar u met browsen wilt beginnen.',
 	'smw_browse_go' => 'OK',
+	'smw_browse_more' => '&hellip;',
 	// Messages for the page property special
 	'pageproperty' => 'Eigenschap pagina zoeken',
 	'smw_pp_docu' => 'Zoek naar alle fillers voor een eigenschap op een gegeven pagina. Voer alstublieft zowel een pagina als een eigenschap in.',
@@ -177,10 +184,8 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Pagina', // name of page datatype
 	'_str' => 'String',  // name of the string type
 	'_txt' => 'Tekst',  // name of the text type
-	'_enu' => 'Opsomming',  // name of the enum type
 	'_boo' => 'Booleans',  // name of the boolean type
-	'_int' => 'Integer',  // name of the int type
-	'_flt' => 'Float',  // name of the floating point type
+	'_num' => 'Number', // name for the datatype of numbers // TODO: translate
 	'_geo' => 'Geographische coordinaat', // name of the geocoord type
 	'_tem' => 'Temperatuur',  // name of the temperature type
 	'_dat' => 'Datum',  // name of the datetime (calendar) type
@@ -191,12 +196,15 @@ protected $m_DatatypeLabels = array(
 
 protected $m_DatatypeAliases = array(
 	'URI'                   => '_uri',
+	'Integer'               => '_num',
+	'Float'                 => '_num',
+	'Opsomming'             => '_str',
 	// support English aliases:
 	'Page'                  => '_wpg',
 	'String'                => '_str',
 	'Text'                  => '_txt',
-	'Integer'               => '_int',
-	'Float'                 => '_flt',
+	'Boolean'               => '_boo',
+	'Number'                => '_num',
 	'Geographic coordinate' => '_geo',
 	'Temperature'           => '_tem',
 	'Date'                  => '_dat',
@@ -207,10 +215,9 @@ protected $m_DatatypeAliases = array(
 protected $m_SpecialProperties = array(
 	//always start upper-case
 	SMW_SP_HAS_TYPE  => 'Heeft type',
-	SMW_SP_HAS_URI   => 'Equivalent URI',
+	SMW_SP_HAS_URI   => 'Equivalent URI', // TODO: translate
 	SMW_SP_SUBPROPERTY_OF => 'Subeigenschap van',
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Main display unit',
-	SMW_SP_DISPLAY_UNIT => 'Display unit',
+	SMW_SP_DISPLAY_UNITS => 'Display units', // TODO: translate
 	SMW_SP_IMPORTED_FROM => 'Geïmporteerd van',
 	SMW_SP_CONVERSION_FACTOR => 'Komt overeen met',
 	SMW_SP_SERVICE_LINK => 'Verleent dienst',
@@ -222,8 +229,7 @@ protected $m_SpecialPropertyAliases = array(
 	'Has type'          => SMW_SP_HAS_TYPE,
 	'Equivalent URI'    => SMW_SP_HAS_URI,
 	'Subproperty of'    => SMW_SP_SUBPROPERTY_OF,
-	'Main display unit' => SMW_SP_MAIN_DISPLAY_UNIT,
-	'Display unit'      => SMW_SP_DISPLAY_UNIT,
+	'Display units'     => SMW_SP_DISPLAY_UNITS,
 	'Imported from'     => SMW_SP_IMPORTED_FROM,
 	'Corresponds to'    => SMW_SP_CONVERSION_FACTOR,
 	'Provides service'  => SMW_SP_SERVICE_LINK,

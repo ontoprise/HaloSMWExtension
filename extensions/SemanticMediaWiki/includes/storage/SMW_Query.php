@@ -20,9 +20,10 @@ require_once($smwgIP . '/includes/storage/SMW_Description.php');
  */
 class SMWQuery {
 
-	const MODE_INSTANCES = 1;
-	const MODE_COUNT = 2;
-	const MODE_DEBUG = 3;
+	const MODE_INSTANCES = 1; // normal instance retrieval
+	const MODE_COUNT = 2; // find result count only
+	const MODE_DEBUG = 3; // prepare query, but show debug data instead of executing it
+	const MODE_NONE = 4;  // do nothing with the query
 
 	public $sort = false;
 	public $ascending = true;
@@ -35,6 +36,7 @@ class SMWQuery {
 	protected $m_errors = array(); // keep any errors that occurred so far
 	protected $m_querystring = false; // string (inline query) version (if fixed and known)
 	protected $m_inline; // query used inline? (required for finding right default parameters)
+	protected $m_extraprintouts = array(); // SMWPrintoutRequest objects supplied outside querystring
 
 	public function SMWQuery($description = NULL, $inline = false) {
 		global $smwgQMaxLimit, $smwgQMaxInlineLimit;
@@ -50,11 +52,27 @@ class SMWQuery {
 
 	public function setDescription(SMWDescription $description) {
 		$this->m_description = $description;
+		foreach ($extraprintouts as $printout) {
+			$this->m_description->addPrintRequest($printout);
+		}
 		$this->applyRestrictions();
 	}
 
 	public function getDescription() {
 		return $this->m_description;
+	}
+
+	public function setExtraPrintouts($extraprintouts) {
+		$this->m_extraprintouts = $extraprintouts;
+		if ($this->m_description !== NULL) {
+			foreach ($extraprintouts as $printout) {
+				$this->m_description->addPrintRequest($printout);
+			}
+		}
+	}
+
+	public function getExtraPrintouts() {
+		return $this->m_extraprintouts;
 	}
 
 	public function getErrors() {

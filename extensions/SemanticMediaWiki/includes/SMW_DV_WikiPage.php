@@ -1,8 +1,5 @@
 <?php
 
-global $smwgIP;
-include_once($smwgIP . '/includes/SMW_DataValue.php');
-
 /**
  * This datavalue implements special processing suitable for defining
  * wikipages as values of properties. This value container currently
@@ -12,6 +9,7 @@ include_once($smwgIP . '/includes/SMW_DataValue.php');
  *
  * @author Nikolas Iwan
  * @author Markus Krötzsch
+ * @note AUTOLOADED
  */
 class SMWWikiPageValue extends SMWDataValue {
 
@@ -24,8 +22,10 @@ class SMWWikiPageValue extends SMWDataValue {
 	private $m_title = NULL;
 
 	public function parseUserValue($value) {
+		$value = ltrim(rtrim($value,' ]'),' ['); // support inputs like " [[Test]] "
 		if ($value != '') {
 			$this->m_value = $value;
+			$this->m_title = NULL;
 			if ($this->getTitle() !== NULL) {
 				$this->m_textform = $this->m_title->getText();
 				$this->m_dbkeyform = $this->m_title->getDBkey();
@@ -36,10 +36,11 @@ class SMWWikiPageValue extends SMWDataValue {
 					$this->m_caption = $value;
 				}
 			} else {
-				$this->addError('Invalid title string'); // TODO: internationalise
+				$this->addError(wfMsgForContent('smw_notitle', $value));
+				# TODO: Escape the text so users can see any punctuation problems (bug 11666).
 			}
 		} else {
-			$this->addError(wfMsgForContent('smw_emptystring'));
+			$this->addError(wfMsgForContent('smw_notitle', $value));
 		}
 		if ($this->m_caption === false) {
 			$this->m_caption = '';
@@ -59,10 +60,6 @@ class SMWWikiPageValue extends SMWDataValue {
 		$this->m_value = $this->m_prefixedtext;
 		$this->m_id = false; // unset id
 		$this->m_title = NULL; // unset title
-	}
-
-	public function setOutputFormat($formatstring) {
-		//no formatting
 	}
 
 	public function getShortWikiText($linked = NULL) {
@@ -91,6 +88,8 @@ class SMWWikiPageValue extends SMWDataValue {
 		}
 		if ( ($linked === NULL) || ($linked === false) ) {
 			return $this->m_prefixedtext;
+		} elseif ($this->m_namespace == NS_IMAGE) {
+			 return '[[' . str_replace("'", '&#x0027;', $this->m_prefixedtext) . '|' . $this->m_textform . '|frameless|border|text-top]]';
 		} else {
 			return '[[:' . str_replace("'", '&#x0027;', $this->m_prefixedtext) . '|' . $this->m_textform . ']]';
 		}
@@ -103,7 +102,9 @@ class SMWWikiPageValue extends SMWDataValue {
 		if ($linker === NULL) {
 			return htmlspecialchars($this->m_prefixedtext);
 		} else {
-			if ($this->getArticleID() !== 0) { // aritcle ID might be cached already, save DB calls
+			if ($this->getNamespace() == NS_MEDIA) {
+				return $linker->makeMediaLinkObj($this->getTitle(), $this->m_textform);
+			} elseif ($this->getArticleID() !== 0) { // aritcle ID might be cached already, save DB calls
 				return $linker->makeKnownLinkObj($this->getTitle(), $this->m_textform);
 			} else {
 				return $linker->makeBrokenLinkObj($this->getTitle(), $this->m_textform);
@@ -124,20 +125,19 @@ class SMWWikiPageValue extends SMWDataValue {
 		}
 	}
 
-	public function getNumericValue() {
-		return false;
-	}
-
-	public function getUnit() {
-		return '';
-	}
-
 	public function getHash() {
-		return $this->m_prefixedtext;
+		if ($this->isValid()) { // assume that XSD value + unit say all
+			return $this->m_prefixedtext;
+		} else {
+			return implode("\t", $this->m_errors);
+		}
 	}
 
-	public function isNumeric() {
-		return false;
+	protected function getServiceLinkParams() {
+		// Create links to mapping services based on a wiki-editable message. The parameters 
+		// available to the message are:
+		// $1: urlencoded article name (no namespace)
+		return array(rawurlencode(str_replace('_',' ',$this->m_dbkeyform)));
 	}
 
 	/**
@@ -148,16 +148,32 @@ class SMWWikiPageValue extends SMWDataValue {
 	 * @return the line to be exported
 	 */
 	public function exportToRDF($QName, ExportRDF $exporter) {
-		$title = $this->getTitle();
-		if ($title==NULL) return "";
-		// Check if the object is an individual -- otherwise it would be
-		// an OWL Full export, which is OK, if we should export OWL Full
-		if (!$exporter->owlfull) {
-			$title_namespace = $title->getNamespace();
-			if (($title_namespace == SMW_NS_PROPERTY) || ($title_namespace == NS_CATEGORY) )
-				return "";
+		if (!$this->isValid()) return '';
+
+		switch ($this->getNamespace()) {
+			case NS_MEDIA: // special handling for linking media files directly
+				$file = wfFindFile( $this->getTitle() );
+				if ($file) {
+					//$obj = $file->getFullURL();
+					/// TODO: the following just emulates getFullURL() which is not yet available in MW1.11:
+					$obj = $file->getUrl();
+					if( substr( $obj, 0, 1 ) == '/' ) {
+						global $wgServer;
+						$obj = $wgServer . $obj;
+					}
+				} else { // Medialink to non-existing file :-/
+					return "\t\t <!-- $QName points to the media object " . $this->getXSDValue() . " but no such file was uploaded. -->\n";
+				}
+			break;
+			case SMW_NS_PROPERTY: case NS_CATEGORY: // export would be OWL Full, check if this is desired
+				if (!$exporter->owlfull) {
+					return '';
+				} // < very bad coding: we omit the break deliberately :-o
+			default:
+				$obj = $exporter->getURI( $this->getTitle() );
+			break;
 		}
-		$obj = $exporter->getURI( $this->getTitle() );
+
 		return "\t\t<$QName rdf:resource=\"$obj\"/>\n";
 	}
 
@@ -168,7 +184,9 @@ class SMWWikiPageValue extends SMWDataValue {
 	 */
 	public function getTitle() {
 		if ($this->m_title === NULL){
-			if ($this->m_value != ''){
+			if ($this->m_dbkeyform != '') {
+				$this->m_title = Title::makeTitle($this->m_namespace, $this->m_dbkeyform);
+			} elseif ($this->m_value != ''){
 				$this->m_title = Title::newFromText($this->m_value);
 			} else {
 				return NULL; //not possible to create title from empty string
@@ -216,7 +234,17 @@ class SMWWikiPageValue extends SMWDataValue {
 	public function setValues($dbkey, $namespace, $id = false) {
 		$this->m_namespace = $namespace;
 		$this->setXSDValue($dbkey);
-		$this->m_id = $id ? $id : false;
+		$linkCache =& LinkCache::singleton();
+		$this->m_title = Title::makeTitle($namespace, $dbkey);
+		if ($id === NULL) {
+			$this->m_id = 0;
+			$linkCache->addBadLinkObj($this->m_title); // prefill link cache, save lookups
+		} elseif ($id === false) {
+			$this->m_id = false;
+		} else {
+			$this->m_id = $id;
+			$linkCache->addGoodLinkObj($id, $this->m_title); // prefill link cache, save lookups
+		}
 	}
 
 ///// Legacy methods for compatibility
@@ -225,16 +253,10 @@ class SMWWikiPageValue extends SMWDataValue {
 	 *  @DEPRECATED
 	 */
 	public function getPrefixedText(){
-		//trigger_error("The function SMWWikiPageValue::getPrefixedText) is deprecated.", E_USER_NOTICE);
+		trigger_error("The function SMWWikiPageValue::getPrefixedText) is deprecated.", E_USER_NOTICE);
 		return $this->getLongWikiText(false);
 	}
-	/**
-	 * @DEPRECATED
-	 */
-	public function getText(){
-		//trigger_error("The function SMWWikiPageValue::getText() is deprecated.", E_USER_NOTICE);
-		return $this->getLongWikiText(false);
-	}
+
 }
 
 ?>

@@ -1,8 +1,5 @@
 <?php
 
-global $smwgIP;
-include_once($smwgIP . '/includes/SMW_DataValue.php');
-
 /**
  * This datavalue implements special processing suitable for defining
  * types of properties (n-ary or binary).
@@ -11,12 +8,17 @@ include_once($smwgIP . '/includes/SMW_DataValue.php');
  * - to efficiently be generated from XSD values and to provide according 
  *   wiki values, in order to support speedy creation of datavalues in
  *   SMWDataValueFactory.
+ *
+ * @author Markus Krötzsch
+ * @note AUTOLOADED
  */
+require_once ('SMW_DataValue.php');
 class SMWTypesValue extends SMWDataValue {
 
 	private $m_typelabels = false;
 	private $m_typecaptions = false;
 	private $m_xsdvalue = false;
+	private $m_isalias = false; // record whether this is an alias to another type, used to avoid duplicates when listing page types
 
 	protected function parseUserValue($value) {
 		// no use for being lazy here: plain user values are never useful
@@ -29,17 +31,16 @@ class SMWTypesValue extends SMWDataValue {
 			$ttype = Title::newFromText($type,SMW_NS_TYPE);
 			if ( ($ttype !== NULL) && ($ttype->getNamespace() == SMW_NS_TYPE) ) {
 				$this->m_typecaptions[] = $type;
-				$this->m_typelabels[] = SMWDataValueFactory::findTypeLabel(SMWDataValueFactory::findTypeID($ttype->getText()));
+				$label = SMWDataValueFactory::findTypeLabel(SMWDataValueFactory::findTypeID($ttype->getText()));
+				$this->m_typelabels[] = $label;
+				$this->m_isalias = ($label === $ttype->getText())?false:true;
 			} // else: wrong namespace or invalid title given -- what now? TODO
 		}
 	}
 
 	protected function parseXSDValue($value, $unit) {
 		$this->m_xsdvalue = $value; // lazy parsing
-	}
-
-	public function setOutputFormat($formatstring) {
-		// no output formats supported, ignore
+		$this->m_isalias = false;
 	}
 
 	public function getShortWikiText($linked = NULL) {
@@ -95,6 +96,7 @@ class SMWTypesValue extends SMWDataValue {
 			}
 			$result = '';
 			$first = true;
+			$captions = $this->getTypeCaptions();
 			reset($captions);
 			foreach ($this->getTypeLabels() as $type) {
 				$caption = current($captions);
@@ -125,7 +127,13 @@ class SMWTypesValue extends SMWDataValue {
 				} else {
 					$result .= ', ';
 				}
-				$result .= '[[' . $typenamespace . ':' . $type . '|' . $type . ']]';
+				$id = SMWDataValueFactory::findTypeID($type);
+				if ($id{0} == '_') { // builtin
+					smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+					$result .= '<span class="smwttinline"><span class="smwbuiltin">[[' . $typenamespace . ':' . $type . '|' . $type . ']]</span><span class="smwttcontent">' . wfMsgForContent('smw_isknowntype') . '</span></span>';
+				} else {
+					$result .= '[[' . $typenamespace . ':' . $type . '|' . $type . ']]';
+				}
 			}
 			return $result;
 		}
@@ -144,7 +152,15 @@ class SMWTypesValue extends SMWDataValue {
 					$result .= ', ';
 				}
 				$title = Title::newFromText($type, SMW_NS_TYPE);
-				$result .= $linker->makeLinkObj( $title, $type);
+				$id = SMWDataValueFactory::findTypeID($type);
+				if ($id{0} == '_') { // builtin
+					smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+					$result .= '<span class="smwttinline"><span class="smwbuiltin">' . 
+					$linker->makeLinkObj( $title, $type) . '</span><span class="smwttcontent">' .
+					wfMsgForContent('smw_isknowntype') . '</span></span>';
+				} else {
+					$result .= $linker->makeLinkObj( $title, $type);
+				}
 			}
 			return $result;
 		}
@@ -174,24 +190,8 @@ class SMWTypesValue extends SMWDataValue {
 		return implode('; ', $this->getTypeLabels());
 	}
 
-	public function getNumericValue() {
-		return false;
-	}
-
-	public function getUnit() {
-		return ''; // empty unit
-	}
-
-	public function getInfolinks() {
-		return array();
-	}
-
 	public function getHash() {
 		return implode('[]', $this->getTypeLabels());
-	}
-
-	public function isNumeric() {
-		return false;
 	}
 
 	/**
@@ -214,6 +214,14 @@ class SMWTypesValue extends SMWDataValue {
 	public function isBuiltIn() {
 		$v = $this->getXSDValue();
 		return ( ($this->isUnary()) && ($v[0] == '_') );
+	}
+
+	/**
+	 * Is this an alias for another datatype in SMW? This information is used to
+	 * explain entries in Special:Types that are found since they have pages.
+	 */
+	public function isAlias() {
+		return $this->m_isalias;
 	}
 
 	/**

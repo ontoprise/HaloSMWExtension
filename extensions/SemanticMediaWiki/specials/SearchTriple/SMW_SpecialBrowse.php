@@ -15,6 +15,8 @@ include_once($IP . '/includes/SpecialPage.php');
 /**
  * A class to encapsulate the special page that allows browsing through
  * the knowledge structure of a Semantic MediaWiki.
+ *
+ * @note AUTOLOAD
  */
 class SMWSpecialBrowse extends SpecialPage {
 
@@ -51,6 +53,7 @@ class SMWSpecialBrowse extends SpecialPage {
 
 		if ($article->isValid()) {
 			$options = new SMWRequestOptions();
+			$options->sort = TRUE;
 			$atts = &smwfGetStore()->getProperties($article->getTitle(), $options);
 			$cats = &smwfGetStore()->getSpecialValues($article->getTitle(), SMW_SP_HAS_CATEGORY, $options);
 			$redout = &smwfGetStore()->getSpecialValues($article->getTitle(), SMW_SP_REDIRECTS_TO, $options);
@@ -59,7 +62,6 @@ class SMWSpecialBrowse extends SpecialPage {
 			$instances = &smwfGetStore()->getSpecialSubjects(SMW_SP_HAS_CATEGORY, $article->getTitle(), $options);
 			$options->limit = $limit+1;
 			$options->offset = $offset;
-			$options->sort = TRUE;
 			// get results (get one more, to see if we have to add a link to more)
 			$inprop = &smwfGetStore()->getInProperties($article, $options);
 
@@ -116,7 +118,10 @@ class SMWSpecialBrowse extends SpecialPage {
 					$html .= ' &nbsp;<strong>' . $skin->specialLink( 'Listredirects', 'isredirect' ) . '</strong>';
 					$html .= $vsep . "\n";
 				}
+				$count = $limit+1;
 				foreach ($inprop as $result) {
+					$count -= 1;
+					if ($count < 1) continue;
 					$subjectoptions = new SMWRequestOptions();
 					$subjectoptions->limit = $innerlimit;
 					$subjects = &smwfGetStore()->getPropertySubjects($result, $article, $subjectoptions);
@@ -130,7 +135,7 @@ class SMWSpecialBrowse extends SpecialPage {
 							$html .= $skin->makeKnownLinkObj($subject, smwfT($subject, TRUE)) . '&nbsp;' . $subjectlink->getHTML($skin);
 							if ($innercount<$subjectcount) $html .= ", \n";
 						} else {
-							$html .= '<a href="' . $skin->makeSpecialUrl('SearchByProperty', 'property=' . urlencode($result->getPrefixedText()) . '&value=' . urlencode($article->getPrefixedText())) . '">' . wfMsg("smw_browse_more") . "</a>\n";
+							$html .= '<a href="' . $skin->makeSpecialUrl('SearchByProperty', 'property=' . urlencode($result->getPrefixedText()) . '&value=' . urlencode($article->getLongWikiText())) . '">' . wfMsg("smw_browse_more") . "</a>\n";
 						}
 					}
 					// replace the last two whitespaces in the relation name with
@@ -178,7 +183,7 @@ class SMWSpecialBrowse extends SpecialPage {
 						$count += 1;
 						$html .= $object->getLongHTMLText($skin);
 						if ($object->getTypeID() == '_wpg') {
-							$searchlink = SMWInfolink::newBrowsingLink('+',$object->getPrefixedText());
+							$searchlink = SMWInfolink::newBrowsingLink('+',$object->getLongWikiText());
 							$html .= '&nbsp;' . $searchlink->getHTML($skin);
 						}
 						if ($count<$objectcount) $html .= ", ";
@@ -202,7 +207,7 @@ class SMWSpecialBrowse extends SpecialPage {
 					$count = count($cats);
 					foreach ($cats as $cat) {
 						$count -= 1;
-						$browselink = SMWInfolink::newBrowsingLink('+', $cat->getPrefixedText());
+						$browselink = SMWInfolink::newBrowsingLink('+', $cat->getLongWikiText());
 						$html .= $cat->getLongHTMLText($skin) . '&nbsp;' . $browselink->getHTML($skin);
 						if ($count > 0) $html .= ", ";
 					}

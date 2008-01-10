@@ -10,18 +10,24 @@ class SMW_LanguageSk extends SMW_Language {
 
 protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Pomoc pri upravovaní vzťahov a atribútov',
-	'smw_helppage' => 'Vzťah',
 	'smw_viewasrdf' => 'RDF feed',
 	'smw_finallistconjunct' => ' a', //used in "A, B, and C"
 	'smw_factbox_head' => 'Skutočnosti o $1 &mdash; Kliknutím na <span class="smwsearchicon">+</span> vyhľadáte podobné stránky.',
-	'smw_spec_head' => 'Zvláštne vlastnosti',
+	'smw_isspecprop' => 'This property is a special property in this wiki.', // TODO Translate
+	'smw_isknowntype' => 'This type is among the standard datatypes of this wiki.', // TODO Translate
+	'smw_isaliastype' => 'This type is an alias for the datatype “$1”.', // TODO Translate
+	'smw_isnotype' => 'This type “$1” is not a standard datatype in the wiki, and has not been given a user definition either.', // TODO Translate
 	/*URIs that should not be used in objects in cases where users can provide URIs */
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
 	'smw_baduri' => 'Prepáčte, URI z rozsahu "$1" na tomto mieste nie sú dostupné.',
+	// Link to RSS feeds
+	'smw_rss_link' => 'RSS', // TODO: translate (default text for linking to semantic RSS feeds)
 	/*Messages and strings for inline queries*/
-	'smw_iq_disabled' => "<span class='smwwarning'>Prepáčte. Inline queries have been disabled for this wiki.</span>",
-	'smw_iq_morevýsledky' => '&hellip; ďalšie výsledky',
-	'smw_iq_nojs' => 'Tento prvok zobrazíte použitím prehliadača podporujúcim JavaScript alebo priamo <a href="$1">prehliadajte zoznam výsledkov</a>.',
+	'smw_iq_disabled' => "Prepáčte. Inline queries have been disabled for this wiki.",
+	'smw_iq_moreresults' => '&hellip; ďalšie výsledky',
+	//'smw_iq_nojs' => 'Tento prvok zobrazíte použitím prehliadača podporujúcim JavaScript alebo priamo <a href="$1">prehliadajte zoznam výsledkov</a>.',
+	'smw_iq_nojs' => 'Please use a JavaScript-enabled browser to view this element.', // TODO: translate (change from above translation)
+	'smw_iq_altresults' => 'Browse the result list directly.', // available link when JS is disabled // TODO: translate
 	/*Messages and strings for ontology resued (import) */
 	'smw_unknown_importns' => 'Funkcie importu nie sú dostupné pre menný priestor "$1".',
 	'smw_nonright_importtype' => '$1 je možné použiť iba pre stránky z menného priestoru "$2".',
@@ -30,31 +36,24 @@ protected $m_ContentMessages = array(
 	/*Messages and strings for basic datatype processing*/
 	'smw_decseparator' => '.',
 	'smw_kiloseparator' => ',',
+	'smw_notitle' => '“$1” cannot be used as a page name in this wiki.', // TODO Translate
 	'smw_unknowntype' => 'Pre atribút je definovaný nepodporovaný typ "$1".',
 	'smw_manytypes' => 'Pre atribút bol definovaný viac ako jeden typ.',
 	'smw_emptystring' => 'Prázdne reťazcie nie sú akceptované.',
 	'smw_maxstring' => 'Reprezentácia reťazca $1 je pre túro stránku príliš dlhá.',
-	'smw_nopossiblevalues' => 'Possible values for this attribute are not enumerated.',	//TODO translate
 	'smw_notinenum' => '"$1" is not in the list of possible values ($2) for this attribute.',	//TODO translate
 	'smw_noboolean' => '"$1" nebolo rozpoznané ako platná hodnota typy boolean (áno/nie).',
-	'smw_true_words' => 'áno',	// comma-separated synonyms for boolean TRUE besides 'true' and '1'
-	'smw_false_words' => 'nie',	// comma-separated synonyms for boolean FALSE besides 'false' and '0'
-	'smw_nointeger' => '"$1" nie je celé číslo (integer).',
-	'smw_nofloat' => '"$1" nie je číslo s plávajúcou desatinnou čiarkou.',
+	'smw_true_words' => 'áno,true',	// comma-separated synonyms for boolean TRUE besides '1', principal value first
+	'smw_false_words' => 'nie,false',	// comma-separated synonyms for boolean FALSE besides '0', principal value first
+	'smw_nofloat' => '"$1" nie je číslo s plávajúcou desatinnou čiarkou.', // TODO Change "floating-point" number to just "number"
 	'smw_infinite' => 'Čísla také dlhé ako $1 nie sú na tejto stránke podporované.',
 	'smw_infinite_unit' => 'Konverzia na jednotky $1 dala ako výsledok číslo, ktoré je pre túto stránku príliš dlhé.',
 	// Currently unused, floats silently store units.  'smw_unexpectedunit' => 'tento atribút nepodporuje konverziu jednotiek',
 	'smw_unsupportedprefix' => 'prefixes ("$1") are not currently supported',	 // TODO: translate
 	'smw_unsupportedunit' => 'konverzia jednotiek "$1" nie je podporované',
-	/*Messages for geo coordinates parsing*/
-	'smw_err_latitude' => 'Hodnoty zemepisnej šírky (S, J) musia byť v rozmedzí 0 a 90. "$1" nespĺňa túto podmienku!',
-	'smw_err_longitude' => 'Hodnoty zemepisnej dĺžky (V, Z) musia byť v rozmedzí 0 a 180. "$1" nespĺňa túto podmienku!',
-	'smw_err_noDirection' => 'Niečo je zle na danej hodnote "$1".',
-	'smw_err_parsingLatLong' => 'Niečo je zle na danej hodnote "$1". Na tomto mieste očakávame hodnotu ako "1°2′3.4′′ Z"!',
-	'smw_err_wrongSyntax' => 'Niečo je zle na danej hodnote  "$1". Na tomto mieste očakávame hodnotu ako "1°2′3.4′′ Z, 5°6′7.8′′ S"!',
-	'smw_err_sepSyntax' => 'Daná hodnota "$1" vyzerá byť v poriadku, akehodnoty zemepisnej šírky a dĺžky by mali byť oddelené "," alebo ";".',
-	'smw_err_notBothGiven' => 'Musíte uviesť platnú hodnotu pre zemepisnú šírku (V, Z) AJ dĺžku (S, J)! Aspoň jedna z nich chýba!',
-	/* additionals ... */
+	// Messages for geo coordinates parsing
+	'smw_lonely_unit' => 'No number found before the symbol “$1”.', // $1 is something like ° TODO Translate
+	'smw_bad_latlong' => 'Latitude and longitude must be given only once, and with valid coordinates.', // TODO Translate
 	'smw_label_latitude' => 'Zemepisná šírka:',
 	'smw_label_longitude' => 'Zemepisná dĺžka:',
 	'smw_abb_north' => 'S',
@@ -71,13 +70,13 @@ protected $m_ContentMessages = array(
 	'smw_noclosingbrackets' => 'Some use of “[&#x005B;” in your query was not closed by a matching “]]”.',
 	'smw_misplacedsymbol' => 'The symbol “$1” was used in a place where it is not useful.',
 	'smw_unexpectedpart' => 'The part “$1” of the query was not understood. Results might not be as expected.',
-	'smw_emtpysubquery' => 'Some subquery has no valid condition.',
+	'smw_emptysubquery' => 'Some subquery has no valid condition.',
 	'smw_misplacedsubquery' => 'Some subquery was used in a place where no subqueries are allowed.',
 	'smw_valuesubquery' => 'Subqueries not supported for values of property “$1”.',
 	'smw_overprintoutlimit' => 'The query contains too many printout requests.',
 	'smw_badprintout' => 'Some print statement in the query was misshaped.',
 	'smw_badtitle' => 'Sorry, but “$1” is no valid page title.',
-	'smw_badqueryatom' => 'Some part “[#x005B;&hellip]]” of the query was not understood.',
+	'smw_badqueryatom' => 'Some part “[&#x005B;&hellip;]]” of the query was not understood.',
 	'smw_propvalueproblem' => 'The value of property “$1” was not understood.',
 	'smw_nodisjunctions' => 'Disjunctions in queries are not supported in this wiki and part of the query was dropped ($1).',
 	'smw_querytoolarge' => 'The following query conditions could not be considered due to the wikis restrictions in query size or depth: $1.'
@@ -91,6 +90,8 @@ protected $m_UserMessages = array(
 	'smw_typearticlecount' => 'Showing $1 attributes using this type.', // TODO translate
 	'smw_attribute_header' => 'Pages using the attribute “$1”', // TODO translate
 	'smw_attributearticlecount' => '<p>Showing $1 pages using this attribute.</p>', // TODO translate
+	// Messages used in RSS feeds
+	'smw_rss_description' => '$1 RSS feed', // TODO: translate, used as default semantic RSS-feed description
 	/*Messages for Export RDF Special*/
 	'exportrdf' => 'Exportovať stránky do RDF', //name of this special
 	'smw_exportrdf_docu' => '<p>Táto stránka vám umožňuje exportovať časti stránok do formátu RDF. Po zadaní názvov stránok do spodného textového poľa, jeden názov na riadok, môžete exportovať stránky.</p>',
@@ -104,7 +105,6 @@ protected $m_UserMessages = array(
 	'smw_propertylackspage' => 'All properties should be described by a page!', //TODO: translate
 	'smw_propertylackstype' => 'No type was specified for this property (assuming type $1 for now).', //TODO: translate
 	'smw_propertyhardlyused' => 'This property is hardly used within the wiki!', //TODO: translate
-	'smw_propertyspecial' => 'This is a special property with a reserved meaning in the wiki.', // TODO: translate
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Unused Properties', //TODO: translate
 	'smw_unusedproperties_docu' => 'The following properties exist although no other page makes use of them.', //TODO: translate
@@ -150,8 +150,7 @@ protected $m_UserMessages = array(
 	/*Messages for (data)Types Special*/
 	'types' => 'Typy',
 	'smw_types_docu' => 'Nasleduje zoznam všetkých údajových typov, ktoré je možné priradiť atribútom. Každý údajový typ má stránku, kde je možné poskytnúť dodatočné informácie.',
-	'smw_types_units' => 'Štandardné jednotky: $1; podporované jednotky: $2',
-	'smw_types_builtin' => 'Vstavané typy',
+	'smw_typeunits' => 'Units of measurement of type “$1”: $2', // TODO: Translate
 	/*Messages for SemanticStatistics Special*/
 	'semanticstatistics' => 'Semantic Statistics', // TODO: translate
 	'smw_semstats_text' => 'This wiki contains <b>$1</b> property values for a total of <b>$2</b> different <a href="$3">properties</a>. <b>$4</b> properties have an own page, and the intended datatype is specified for <b>$5</b> of those. Some of the existing properties might by <a href="$6">unused properties</a>. Properties that still lack a page are found on the <a href="$7">list of wanted properties</a>.', // TODO: translate
@@ -163,12 +162,16 @@ protected $m_UserMessages = array(
 	'smw_uri_doc' => '<p>URI resolver sa stará o implementáciu <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG hľadanie na httpRange-14</a>. Stará sa o to, aby sa ľudia nestali webstránkami.</p>',
 	/*Messages for ask Special*/
 	'ask' => 'Sémantické vyhľadávanie',
-	'smw_ask_docu' => '<p>Prehľadávajte wiki zadaním dotazu do vyhľadávacieho poľa dolu. Ďalšie informácie sú ovedené na <a href="$1">stránke pomocníka pre sémantické vyhľadávanie</a>.</p>',
 	'smw_ask_doculink' => 'Sémantické vyhľadávanie',
 	'smw_ask_sortby' => 'Zoradiť podľa stĺpca',
 	'smw_ask_ascorder' => 'Vzostupne',
 	'smw_ask_descorder' => 'Zostupne',
 	'smw_ask_submit' => 'Nájdi výsledky',
+	'smw_ask_editquery' => '[Edit query]', // TODO: translate
+	'smw_ask_hidequery' => 'Hide query', // TODO: translate
+	'smw_ask_help' => 'Querying help', // TODO: translate
+	'smw_ask_queryhead' => 'Query', // TODO: translate
+	'smw_ask_printhead' => 'Additional printouts (optional)', // TODO: translate
 	// Messages for the search by value special // TODO: consider re-translation (look at new English version)
 	'searchbyproperty' => 'Hľadať podľa hodnoty atribútu',
 	'smw_sbv_docu' => '<p>Hľadať na wiki článok, ktorý má atribút s istou hodnotou.</p>',
@@ -193,17 +196,15 @@ protected $m_UserMessages = array(
 	'smw_result_prev' => 'Späť',
 	'smw_result_next' => 'Ďalej',
 	'smw_result_results' => 'Výsledky',
-	'smw_result_noresult' => 'Prepáčte, žiadne výsledky.'
+	'smw_result_noresults' => 'Prepáčte, žiadne výsledky.'
 );
 
 protected $m_DatatypeLabels = array(
 	'_wpg' => 'Page', // name of page datatype  //TODO translate
 	'_str' => 'Reťazec',  // name of the string type
 	'_txt' => 'Text',  // name of the text type (very long strings) //TODO: translate
-	'_enu' => 'Enumeration',  // name of the enum type TODO: translate
-	'_boo' => 'Boolean',  // name of the boolean type TODO: translate
-	'_int' => 'Celé číslo',  // name of the int type
-	'_flt' => 'Desatinné číslo',  // name of the floating point type
+	'_boo' => 'Boolean',  // name of the boolean type // TODO: translate
+	'_num' => 'Číslo', // name for the datatype of numbers // TODO: check translation (done by pattern matching; mak)
 	'_geo' => 'Zemepisné súradnice', // name of the geocoord type
 	'_tem' => 'Teplota',  // name of the temperature type
 	'_dat' => 'Dátum',  // name of the datetime (calendar) type
@@ -214,12 +215,14 @@ protected $m_DatatypeLabels = array(
 
 protected $m_DatatypeAliases = array(
 	'URI'                   => '_uri',
+	'Celé číslo'            => '_num',
+	'Desatinné číslo'       => '_num',
 	// support English aliases:
 	'Page'                  => '_wpg',
 	'String'                => '_str',
 	'Text'                  => '_txt',
-	'Integer'               => '_int',
-	'Float'                 => '_flt',
+	'Boolean'               => '_boo',
+	'Number'                => '_num',
 	'Geographic coordinate' => '_geo',
 	'Temperature'           => '_tem',
 	'Date'                  => '_dat',
@@ -232,8 +235,7 @@ protected $m_SpecialProperties = array(
 	SMW_SP_HAS_TYPE  => 'Má typ',
 	SMW_SP_HAS_URI   => 'Ekvivalent URI',
 	SMW_SP_SUBPROPERTY_OF => 'Subproperty of', // TODO: translate
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Hlavná zobrazovacia jednotka',
-	SMW_SP_DISPLAY_UNIT => 'Zobrazovacia jednotka',
+	SMW_SP_DISPLAY_UNITS => 'Zobrazovacia jednotka', // TODO: should be plural now ("units"), singluar stays alias
 	SMW_SP_IMPORTED_FROM => 'Importovaný z',
 	SMW_SP_CONVERSION_FACTOR => 'Zodpovedá',
 	SMW_SP_SERVICE_LINK => 'Poskytuje službu',
@@ -241,12 +243,12 @@ protected $m_SpecialProperties = array(
 );
 
 protected $m_SpecialPropertyAliases = array(
+	'Zobrazovacia jednotka' => SMW_SP_DISPLAY_UNITS,
 	// support English aliases for special properties
 	'Has type'          => SMW_SP_HAS_TYPE,
 	'Equivalent URI'    => SMW_SP_HAS_URI,
 	'Subproperty of'    => SMW_SP_SUBPROPERTY_OF,
-	'Main display unit' => SMW_SP_MAIN_DISPLAY_UNIT,
-	'Display unit'      => SMW_SP_DISPLAY_UNIT,
+	'Display units'     => SMW_SP_DISPLAY_UNITS,
 	'Imported from'     => SMW_SP_IMPORTED_FROM,
 	'Corresponds to'    => SMW_SP_CONVERSION_FACTOR,
 	'Provides service'  => SMW_SP_SERVICE_LINK,

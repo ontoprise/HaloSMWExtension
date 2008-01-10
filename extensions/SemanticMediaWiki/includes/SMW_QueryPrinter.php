@@ -12,7 +12,8 @@
  */
 abstract class SMWResultPrinter {
 
-	// parameters:
+	protected $m_params;
+	// parameters relevant for printers in general:
 	protected $mFormat;  // a string identifier describing a valid format
 	protected $mIntro = ''; // text to print before the output in case it is *not* empty
 	protected $mSearchlabel = NULL; // text to use for link to further results, or empty if link should not be shown
@@ -42,24 +43,37 @@ abstract class SMWResultPrinter {
 	 * serialised version of the results, formatted as inline HTML
 	 * or (for special printers) as RDF or XML or whatever. Normally
 	 * not overwritten by subclasses.
+	 * @DEPRECATED use getResult()
 	 */
 	public function getResultHTML($results, $params) {
-		$this->readParameters($params);
+		return $this->getResult($results,$params,SMW_OUTPUT_HTML);
+	}
+
+	/**
+	 * Main entry point: takes an SMWQueryResult and parameters
+	 * given as key-value-pairs in an array, and returns the 
+	 * serialised version of the results, formatted as HTML or Wiki
+	 * or whatever is specified. Normally this is not overwritten by
+	 * subclasses.
+	 */
+	public function getResult($results, $params, $outputmode) {
+		$this->readParameters($params,$outputmode);
 		if ($results->getCount() == 0) {
 			if (!$results->hasFurtherResults()) {
-				return htmlspecialchars($this->mDefault);
+				return htmlspecialchars($this->mDefault) . $this->getErrorString($results);
 			} elseif ($this->mInline) {
 				$label = $this->mSearchlabel;
 				if ($label === NULL) { //apply defaults
-					$result = '<a href="' . $results->getQueryURL() . '">' . wfMsgForContent('smw_iq_moreresults') . '</a>';
-				} else {
-					$result = '<a href="' . $results->getQueryURL() . '">' . $label . '</a>';
+					$label = wfMsgForContent('smw_iq_moreresults');
 				}
-				$result .= $this->getErrorString($results); // just append error messages
+				if ($label != '') {
+					$result = $this->getFurtherResultsLink($outputmode,$results,$label);
+				}
+				$result .= $this->getErrorString($results);
 				return $result;
 			}
 		}
-		return $this->getHTML($results);
+		return $this->getResultText($results,$outputmode) . $this->getErrorString($results);
 	}
 
 	/**
@@ -67,12 +81,19 @@ abstract class SMWResultPrinter {
 	 * initialise internal member fields accordingly. Possibly overwritten
 	 * (extended) by subclasses.
 	 */
-	protected function readParameters($params) {
+	protected function readParameters($params,$outputmode) {
+		$this->m_params = $params;
 		if (array_key_exists('intro', $params)) {
-			$this->mIntro = htmlspecialchars(str_replace('_', ' ', $params['intro']));
+			$this->mIntro = str_replace('_',' ',$params['intro']);
+			if ($outputmode==SMW_OUTPUT_HTML) {
+				$this->mIntro = htmlspecialchars($this->mIntro);
+			}
 		}
 		if (array_key_exists('searchlabel', $params)) {
-			$this->mSearchlabel = htmlspecialchars($params['searchlabel']);
+			$this->mSearchlabel = $params['searchlabel'];
+			if ($outputmode==SMW_OUTPUT_HTML) {
+				$this->mSearchlabel = htmlspecialchars($this->mSearchlabel);
+			}
 		}
 		if (array_key_exists('link', $params)) {
 			switch (strtolower($params['link'])) {
@@ -91,10 +112,13 @@ abstract class SMWResultPrinter {
 			}
 		}
 		if (array_key_exists('default', $params)) {
-			$this->mDefault = htmlspecialchars(str_replace('_', ' ', $params['default']));
+			$this->mDefault = str_replace('_',' ',$params['default']);
+			if ($outputmode==SMW_OUTPUT_HTML) {
+				$this->mDefault = htmlspecialchars($this->mDefault);
+			}
 		}
 		if (array_key_exists('headers', $params)) {
-			if ( 'hide' == strtolower($params['headers'])) {
+			if ( 'hide' == strtolower(trim($params['headers']))) {
 				$this->mShowHeaders = false;
 			} else {
 				$this->mShowHeaders = true;
@@ -104,9 +128,17 @@ abstract class SMWResultPrinter {
 
 	/**
 	 * Return HTML version of serialised results.
+	 * @DEPRECATED: Legacy method, use getResultText instead
+	 */
+	protected function getHTML($res) {
+		return $this->getResultText($res,SMW_OUTPUT_HTML);
+	}
+
+	/**
+	 * Return serialised results in specified format.
 	 * Implemented by subclasses.
 	 */
-	abstract protected function getHTML($res);
+	abstract protected function getResultText($res, $outputmode);
 
 	/**
 	 * Depending on current linking settings, returns a linker object
@@ -129,6 +161,18 @@ abstract class SMWResultPrinter {
 	 */
 	protected function getErrorString($res) {
 		return smwfEncodeMessages($res->getErrors());
+	}
+
+	/**
+	 * Generate a link to further results of the given query, using syntactic encoding
+	 * as appropriate for $outputmode.
+	 */
+	protected function getFurtherResultsLink($outputmode, $res, $label) {
+		switch ($outputmode) {
+			//case SMW_OUTPUT_WIKI: return '[' . $res->getQueryURL() . ' ' . $label . ']';
+			case SMW_OUTPUT_WIKI: return '[[' . $res->getQueryTitle() . '|' . $label . ']]';
+			case SMW_OUTPUT_HTML: default: return '<a href="' . $res->getQueryURL() . '">' . $label . '</a>';
+		}
 	}
 
 }

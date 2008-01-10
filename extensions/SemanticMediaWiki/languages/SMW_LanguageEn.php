@@ -10,18 +10,23 @@ class SMW_LanguageEn extends SMW_Language {
 
 protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Editing help on properties',
-	'smw_helppage' => 'Relation',
 	'smw_viewasrdf' => 'RDF feed',
 	'smw_finallistconjunct' => ', and', //used in "A, B, and C"
 	'smw_factbox_head' => 'Facts about $1',
-	'smw_spec_head' => 'Special properties',
+	'smw_isspecprop' => 'This property is a special property in this wiki.',
+	'smw_isknowntype' => 'This type is among the standard datatypes of this wiki.',
+	'smw_isaliastype' => 'This type is an alias for the datatype “$1”.',
+	'smw_isnotype' => 'This type “$1” is not a standard datatype in the wiki, and has not been given a user definition either.',
 	// URIs that should not be used in objects in cases where users can provide URIs
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
-	'smw_baduri' => 'Sorry, URIs from the range “$1” are not available in this place.',
+	'smw_baduri' => 'Sorry, URIs of the form “$1” are not allowed.',
+	// Link to RSS feeds
+	'smw_rss_link' => 'RSS',
 	// Messages and strings for inline queries
-	'smw_iq_disabled' => "<span class='smwwarning'>Sorry. Inline queries have been disabled for this wiki.</span>",
+	'smw_iq_disabled' => "Sorry. Semantic queries have been disabled for this wiki.",
 	'smw_iq_moreresults' => '&hellip; further results',
-	'smw_iq_nojs' => 'Use a JavaScript-enabled browser to view this element, or directly <a href="$1">browse the result list</a>.',
+	'smw_iq_nojs' => 'Please use a JavaScript-enabled browser to view this element.',
+	'smw_iq_altresults' => 'Browse the result list directly.', // available link when JS is disabled
 	// Messages and strings for ontology resued (import)
 	'smw_unknown_importns' => 'Import functions are not avalable for namespace “$1”.',
 	'smw_nonright_importtype' => '$1 can only be used for pages with namespace “$2”.',
@@ -30,39 +35,32 @@ protected $m_ContentMessages = array(
 	// Messages and strings for basic datatype processing
 	'smw_decseparator' => '.',
 	'smw_kiloseparator' => ',',
+	'smw_notitle' => '“$1” cannot be used as a page name in this wiki.',
 	'smw_unknowntype' => 'Unsupported type “$1” defined for property.',
 	'smw_manytypes' => 'More than one type defined for property.',
 	'smw_emptystring' => 'Empty strings are not accepted.',
-	'smw_maxstring' => 'String representation $1 is too long for this site.',
-	'smw_nopossiblevalues' => 'Possible values for this property are not enumerated.',
+	'smw_maxstring' => 'String representation $1 is too long for {{SITENAME}}.',
 	'smw_notinenum' => '“$1” is not in the list of possible values ($2) for this property.',
-	'smw_noboolean' => '“$1” is not recognized as a boolean (true/false) value.',
-	'smw_true_words' => 't,yes,y',	// comma-separated synonyms for boolean TRUE besides 'true' and '1'
-	'smw_false_words' => 'f,no,n',	// comma-separated synonyms for boolean FALSE besides 'false' and '0'
-	'smw_nointeger' => '“$1” is no integer number.',
-	'smw_nofloat' => '“$1” is no floating point number.',
-	'smw_infinite' => 'Numbers as long as “$1” are not supported on this site.',
-	'smw_infinite_unit' => 'Conversion into unit “$1” resulted in a number that is too long for this site.',
+	'smw_noboolean' => '“$1” is not recognized as a Boolean (true/false) value.',
+	'smw_true_words' => 'true,t,yes,y', // comma-separated synonyms for Boolean TRUE besides '1', primary value first
+	'smw_false_words' => 'false,f,no,n', // comma-separated synonyms for Boolean FALSE besides '0', primary value first
+	'smw_nofloat' => '“$1” is no number.',
+	'smw_infinite' => 'Numbers as large as “$1” are not supported on {{SITENAME}}.',
+	'smw_infinite_unit' => 'Conversion into unit “$1” resulted in a number that is too large for {{SITENAME}}.',
 	// Currently unused, floats silently store units.  'smw_unexpectedunit' => 'this property supports no unit conversion',
 	'smw_unsupportedprefix' => 'Prefixes for numbers (“$1”) are not supported.',
 	'smw_unsupportedunit' => 'Unit conversion for unit “$1” not supported.',
 	// Messages for geo coordinates parsing
-	'smw_err_latitude' => 'Values for latitude (N, S) must be within 0 and 90, and “$1” does not fulfill this condition.',
-	'smw_err_longitude' => 'Values for longitude (E, W) must be within 0 and 180, and “$1” does not fulfill this condition.',
-	'smw_err_noDirection' => 'Something is wrong with the given value “$1”.',
-	'smw_err_parsingLatLong' => 'Something is wrong with the given value “$1” &ndash; we expect a value like “1°2′3.4′′ W” at this place.',
-	'smw_err_wrongSyntax' => 'Something is wrong with the given value “$1” &ndash; we expect a value like “1°2′3.4′′ W, 5°6′7.8′′ N” at this place.',
-	'smw_err_sepSyntax' => 'The given value “$1” seems to be right, but values for latitude and longitude should be seperated by “,” or “;”.',
-	'smw_err_notBothGiven' => 'Please specify a valid value for both longitude (E, W) <it>and</it> latitude (N, S) &ndash; at least one is missing.',
-	// additionals ...
-	'smw_label_latitude' => 'Latitude:',
-	'smw_label_longitude' => 'Longitude:',
+	'smw_lonely_unit' => 'No number found before the symbol “$1”.', // $1 is something like °
+	'smw_bad_latlong' => 'Latitude and longitude must be given only once, and with valid coordinates.',
 	'smw_abb_north' => 'N',
 	'smw_abb_east' => 'E',
 	'smw_abb_south' => 'S',
 	'smw_abb_west' => 'W',
+	'smw_label_latitude' => 'Latitude:',
+	'smw_label_longitude' => 'Longitude:',
 	// some links for online maps; can be translated to different language versions of services, but need not
-	'smw_service_online_maps' => " find&nbsp;maps|http://tools.wikimedia.de/~magnus/geo/geohack.php?params=\$9_\$7_\$10_\$8\n Google&nbsp;maps|http://maps.google.com/maps?ll=\$11\$9,\$12\$10&spn=0.1,0.1&t=k\n Mapquest|http://www.mapquest.com/maps/map.adp?searchtype=address&formtype=latlong&latlongtype=degrees&latdeg=\$11\$1&latmin=\$3&latsec=\$5&longdeg=\$12\$2&longmin=\$4&longsec=\$6&zoom=6",
+	'smw_service_online_maps' => " Find&nbsp;online&nbsp;maps|http://tools.wikimedia.de/~magnus/geo/geohack.php?params=\$9_\$7_\$10_\$8\n Google&nbsp;maps|http://maps.google.com/maps?ll=\$11\$9,\$12\$10&spn=0.1,0.1&t=k\n Mapquest|http://www.mapquest.com/maps/map.adp?searchtype=address&formtype=latlong&latlongtype=degrees&latdeg=\$11\$1&latmin=\$3&latsec=\$5&longdeg=\$12\$2&longmin=\$4&longsec=\$6&zoom=6",
 	// Messages for datetime parsing
 	'smw_nodatetime' => 'The date “$1” was not understood (support for dates is still experimental).',
 	// Errors and notices related to queries
@@ -70,13 +68,13 @@ protected $m_ContentMessages = array(
 	'smw_noclosingbrackets' => 'Some use of “[&#x005B;” in your query was not closed by a matching “]]”.',
 	'smw_misplacedsymbol' => 'The symbol “$1” was used in a place where it is not useful.',
 	'smw_unexpectedpart' => 'The part “$1” of the query was not understood. Results might not be as expected.',
-	'smw_emtpysubquery' => 'Some subquery has no valid condition.',
+	'smw_emptysubquery' => 'Some subquery has no valid condition.',
 	'smw_misplacedsubquery' => 'Some subquery was used in a place where no subqueries are allowed.',
 	'smw_valuesubquery' => 'Subqueries not supported for values of property “$1”.',
 	'smw_overprintoutlimit' => 'The query contains too many printout requests.',
 	'smw_badprintout' => 'Some print statement in the query was misshaped.',
 	'smw_badtitle' => 'Sorry, but “$1” is no valid page title.',
-	'smw_badqueryatom' => 'Some part “[#x005B;&hellip]]” of the query was not understood.',
+	'smw_badqueryatom' => 'Some part “[&#x005B;&hellip;]]” of the query was not understood.',
 	'smw_propvalueproblem' => 'The value of property “$1” was not understood.',
 	'smw_nodisjunctions' => 'Disjunctions in queries are not supported in this wiki and part of the query was dropped ($1).',
 	'smw_querytoolarge' => 'The following query conditions could not be considered due to the wikis restrictions in query size or depth: $1.'
@@ -90,6 +88,8 @@ protected $m_UserMessages = array(
 	'smw_typearticlecount' => 'Showing $1 properties using this type.',
 	'smw_attribute_header' => 'Pages using the property “$1”',
 	'smw_attributearticlecount' => '<p>Showing $1 pages using this property.</p>',
+	// Messages used in RSS feeds
+	'smw_rss_description' => '$1 RSS feed',
 	// Messages for Export RDF Special
 	'exportrdf' => 'Export pages to RDF', //name of this special
 	'smw_exportrdf_docu' => '<p>This page allows you to obtain data from a page in RDF format. To export pages, enter the titles in the text box below, one title per line.</p>',
@@ -103,7 +103,6 @@ protected $m_UserMessages = array(
 	'smw_propertylackspage' => 'All properties should be described by a page!',
 	'smw_propertylackstype' => 'No type was specified for this property (assuming type $1 for now).',
 	'smw_propertyhardlyused' => 'This property is hardly used within the wiki!',
-	'smw_propertyspecial' => 'This is a special property with a reserved meaning in the wiki.',
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Unused Properties',
 	'smw_unusedproperties_docu' => 'The following properties exist although no other page makes use of them.',
@@ -133,8 +132,7 @@ protected $m_UserMessages = array(
 	// Messages for (data)Types Special
 	'types' => 'Types',
 	'smw_types_docu' => 'The following is a list of all datatypes that can be assigned to properties. Each datatype has a page where additional information can be provided.',
-	'smw_types_units' => 'Standard unit: $1; supported units: $2',
-	'smw_types_builtin' => 'Built-in types',
+	'smw_typeunits' => 'Units of measurement of type “$1”: $2',
 	/*Messages for SemanticStatistics Special*/
 	'semanticstatistics' => 'Semantic Statistics',
 	'smw_semstats_text' => 'This wiki contains <b>$1</b> property values for a total of <b>$2</b> different <a href="$3">properties</a>. <b>$4</b> properties have an own page, and the intended datatype is specified for <b>$5</b> of those. Some of the existing properties might by <a href="$6">unused properties</a>. Properties that still lack a page are found on the <a href="$7">list of wanted properties</a>.',
@@ -146,12 +144,16 @@ protected $m_UserMessages = array(
 	'smw_uri_doc' => '<p>The URI resolver implements the <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG finding on httpRange-14</a>. It takes care that humans don\'t turn into websites.</p>',
 	// Messages for ask Special
 	'ask' => 'Semantic search',
-	'smw_ask_docu' => '<p>Search by entering a query into the search field below. Further information is given on the <a href="$1">help page for semantic search</a>.</p>',
 	'smw_ask_doculink' => 'Semantic search',
-	'smw_ask_sortby' => 'Sort by column',
+	'smw_ask_sortby' => 'Sort by column (optional)',
 	'smw_ask_ascorder' => 'Ascending',
 	'smw_ask_descorder' => 'Descending',
 	'smw_ask_submit' => 'Find results',
+	'smw_ask_editquery' => '[Edit query]',
+	'smw_ask_hidequery' => 'Hide query',
+	'smw_ask_help' => 'Querying help',
+	'smw_ask_queryhead' => 'Query',
+	'smw_ask_printhead' => 'Additional printouts (optional)',
 	// Messages for the search by property special
 	'searchbyproperty' => 'Search by property',
 	'smw_sbv_docu' => '<p>Search for all pages that have a given property and value.</p>',
@@ -183,10 +185,8 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Page', // name of page datatype
 	'_str' => 'String',  // name of the string type
 	'_txt' => 'Text',  // name of the text type
-	'_enu' => 'Enumeration',  // name of the enum type
-	//'_boo' => 'Boolean',  // name of the boolean type
-	'_int' => 'Integer',  // name of the int type
-	'_flt' => 'Float',  // name of the floating point type
+	'_boo' => 'Boolean',  // name of the boolean type
+	'_num' => 'Number',  // name for the datatype of numbers
 	'_geo' => 'Geographic coordinate', // name of the geocoord type
 	'_tem' => 'Temperature',  // name of the temperature type
 	'_dat' => 'Date',  // name of the datetime (calendar) type
@@ -196,7 +196,10 @@ protected $m_DatatypeLabels = array(
 );
 
 protected $m_DatatypeAliases = array(
-	'URI'  => '_uri'
+	'URI'         => '_uri',
+	'Float'       => '_num',
+	'Integer'     => '_num',
+	'Enumeration' => '_str'
 );
 
 protected $m_SpecialProperties = array(
@@ -204,12 +207,15 @@ protected $m_SpecialProperties = array(
 	SMW_SP_HAS_TYPE  => 'Has type',
 	SMW_SP_HAS_URI   => 'Equivalent URI',
 	SMW_SP_SUBPROPERTY_OF => 'Subproperty of',
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Main display unit',
-	SMW_SP_DISPLAY_UNIT => 'Display unit',
+	SMW_SP_DISPLAY_UNITS => 'Display units',
 	SMW_SP_IMPORTED_FROM => 'Imported from',
 	SMW_SP_CONVERSION_FACTOR => 'Corresponds to',
 	SMW_SP_SERVICE_LINK => 'Provides service',
 	SMW_SP_POSSIBLE_VALUE => 'Allows value'
+);
+
+protected $m_SpecialPropertyAliases = array(
+	'Display unit' => SMW_SP_DISPLAY_UNITS
 );
 
 protected $m_Namespaces = array(

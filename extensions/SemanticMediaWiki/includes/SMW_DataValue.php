@@ -4,17 +4,21 @@
  * Objects of this type represent all that is known about
  * a certain user-provided data value, especially its various
  * representations as strings, tooltips, numbers, etc.
+ *
+ * @note AUTOLOADED
  */
 abstract class SMWDataValue {
 
-	protected $m_property = false; /// The text label of the respective property or false if none given
-	protected $m_caption = false;   /// The text label to be used for output or false if none given
-	protected $m_errors = array();  /// Array of error text messages
-	protected $m_isset = false;     /// True if a value was set.
-	protected $m_typeid;            /// The type id for this value object
+	protected $m_property = false;    /// The text label of the respective property or false if none given
+	protected $m_caption;             /// The text label to be used for output or false if none given
+	protected $m_errors = array();    /// Array of error text messages
+	protected $m_isset = false;       /// True if a value was set.
+	protected $m_typeid;              /// The type id for this value object
 	protected $m_infolinks = array(); /// Array of infolink objects
+	protected $m_outformat = false;   /// output formatting string, see setOutputFormat()
 
-	private $m_hasssearchlink;    /// used to control the addition of the standard search link
+	private $m_hasssearchlink;        /// used to control the addition of the standard search link
+	private $m_hasservicelinks;       /// used to control service link creation
 
 	public function SMWDataValue($typeid) {
 		$this->m_typeid = $typeid;
@@ -32,11 +36,13 @@ abstract class SMWDataValue {
 		$this->m_errors = array(); // clear errors
 		$this->m_infolinks = array(); // clear links
 		$this->m_hasssearchlink = false;
-		if ($caption !== false) {
-			$this->m_caption = $caption;
-		}
+		$this->m_hasservicelinks = false;
+		$this->m_caption = $caption;
 		$this->parseUserValue($value); // may set caption if not set yet, depending on datavalue
 		$this->m_isset = true;
+		if ($this->isValid()) {
+			$this->checkAllowedValues();
+		}
 		wfProfileOut('SMWDataValue::setUserValue (SMW)');
 	}
 
@@ -50,6 +56,7 @@ abstract class SMWDataValue {
 		$this->m_errors = array(); // clear errors
 		$this->m_infolinks = array(); // clear links
 		$this->m_hasssearchlink = false;
+		$this->m_hasservicelinks = false;
 		$this->m_caption = false;
 		$this->parseXSDValue($value, $unit);
 		$this->m_isset = true;
@@ -70,6 +77,37 @@ abstract class SMWDataValue {
 	}
 
 	/**
+	 * Servicelinks are special kinds of infolinks that are created from current parameters
+	 * and in-wiki specification of URL templates. This method adds the current property's
+	 * servicelinks found in the messages. The number and content of the parameters is
+	 * depending on the datatype, and the service link message is usually crafted with a
+	 * particular datatype in mind.
+	 */
+	function addServiceLinks() {
+		if ($this->m_hasservicelinks) return;
+		$args = $this->getServiceLinkParams();
+		if ($args === false) return; // no services supported
+		array_unshift($args, ''); // add a 0 element as placeholder
+		$ptitle = Title::newFromText($this->m_property, SMW_NS_PROPERTY);
+		$servicelinks = array();
+		if ( $ptitle !== NULL ) {
+			$servicelinks = smwfGetStore()->getSpecialValues($ptitle, SMW_SP_SERVICE_LINK);
+		}
+
+		foreach ($servicelinks as $dvs) {
+			$args[0] = 'smw_service_' . str_replace(' ', '_', $dvs); // messages distinguish ' ' from '_'
+			$text = call_user_func_array('wfMsgForContent', $args);
+			$links = preg_split("([\n][\s]?)", $text);
+			foreach ($links as $link) {
+				$linkdat = explode('|',$link,2);
+				if (count($linkdat) == 2)
+					$this->addInfolink(SMWInfolink::newExternalLink($linkdat[0],trim($linkdat[1])));
+			}
+		}
+		$this->m_hasservicelinks = true;
+	}
+
+	/**
 	 * Define a particular output format. Output formats are user-supplied strings
 	 * that the datavalue may (or may not) use to customise its return value. For
 	 * example, quantities with units of measurement may interpret the string as
@@ -77,7 +115,9 @@ abstract class SMWDataValue {
 	 * and subject to internationalisation (which the datavalue has to implement).
 	 * In any case, an empty string resets the output format to the default.
 	 */
-	abstract public function setOutputFormat($formatstring);
+	public function setOutputFormat($formatstring) {
+		$this->m_outformat = $formatstring; // just store it, subclasses may or may not use this
+	}
 
 	/**
 	 * Add a new error string to the error list. All error string must be wiki and
@@ -150,10 +190,78 @@ abstract class SMWDataValue {
 	abstract public function getLongHTMLText($linker = NULL);
 
 	/**
-	 * Return the XSD compliant version of the value, or
-	 * FALSE if parsing the value failed and no XSD version
-	 * is available. If the datatype has units, then this
-	 * value is given in the unit provided by getUnit().
+	 * Returns a short textual representation for this data value. If the value
+	 * was initialised from a user supplied string, then this original string
+	 * should be reflected in this short version (i.e. no normalisation should
+	 * normally happen). There might, however, be additional parts such as code
+	 * for generating tooltips. The output is in the specified format.
+	 *
+	 * The parameter $linker controls linking of values such as titles and should
+	 * be some Linker object (for HTML output), or NULL for no linking.
+	 */
+	public function getShortText($outputformat, $linker = NULL) {
+		switch ($outputformat) {
+			case SMW_OUTPUT_WIKI: return $this->getShortWikiText($linker);
+			case SMW_OUTPUT_HTML: default: return $this->getShortHTMLText($linker);
+		}
+	}
+
+	/**
+	 * Return the long textual description of the value, as printed for
+	 * example in the factbox. If errors occurred, return the error message.
+	 * The output is in the specified format.
+	 *
+	 * The parameter $linker controls linking of values such as titles and should
+	 * be some Linker object (for HTML output), or NULL for no linking.
+	 */
+	public function getLongText($outputformat, $linker = NULL) {
+		switch ($outputformat) {
+			case SMW_OUTPUT_WIKI: return $this->getLongWikiText($linker);
+			case SMW_OUTPUT_HTML: default: return $this->getLongHTMLText($linker);
+		}
+	}
+
+	/**
+	 * Return text serialisation of info links. Ensures more uniform layout 
+	 * throughout wiki (Factbox, Property pages, ...).
+	 */
+	public function getInfolinkText($outputformat, $linker=NULL) {
+		$result = '';
+		$first = true;
+		$extralinks = array();
+		switch ($outputformat) {
+		case SMW_OUTPUT_WIKI:
+			foreach ($this->getInfolinks() as $link) {
+				if ($first) {
+					$result .= '<!-- -->&nbsp;&nbsp;' . $link->getWikiText();
+						// the comment is needed to prevent MediaWiki from linking URL-strings together with the nbsps!
+					$first = false;
+				} else {
+					$extralinks[] = $link->getWikiText();
+				}
+			}
+			break;
+		case SMW_OUTPUT_HTML:
+			foreach ($this->getInfolinks() as $link) {
+				if ($first) {
+					$result .= '&nbsp;&nbsp;' . $link->getHTML($linker);
+					$first = false;
+				} else {
+					$extralinks[] = $link->getHTML($linker);
+				}
+			}
+			break;
+		}
+		if (count($extralinks) > 0) {
+			$result .= smwfEncodeMessages($extralinks, 'info', ', <!--br-->');
+		}
+		return $result;
+	}
+
+	/**
+	 * Return the XSD compliant version of the value, or FALSE if parsing the 
+	 * value failed and no XSD version is available. If the datatype has units, 
+	 * then this value is given in the unit provided by getUnit().
 	 */
 	abstract public function getXSDValue();
 
@@ -172,15 +280,21 @@ abstract class SMWDataValue {
 	 * compare values of scalar types more efficiently, especially
 	 * for sorting queries. If the datatype has units, then this
 	 * value is to be interpreted wrt. the unit provided by getUnit().
+	 * Possibly overwritten by subclasses.
 	 */
-	abstract public function getNumericValue();
+	public function getNumericValue() {
+		return NULL;
+	}
 
 	/**
 	 * Return the unit in which the returned value is to be interpreted.
 	 * This string is a plain UTF-8 string without wiki or html markup.
 	 * Returns the empty string if no unit is given for the value.
+	 * Possibly overwritten by subclasses.
 	 */
-	abstract public function getUnit();
+	public function getUnit() {
+		return ''; // empty unit
+	}
 
 	/**
 	 * Return a short string that unambiguously specify the type of this value.
@@ -200,23 +314,48 @@ abstract class SMWDataValue {
 	public function getInfolinks() {
 		global $smwgIP;
 		include_once($smwgIP . '/includes/SMW_Infolink.php');
-		if (!$this->m_hasssearchlink && $this->isValid() && $this->m_property) {
-			$this->m_hasssearchlink = true;
-			$this->m_infolinks[] = SMWInfolink::newPropertySearchLink('+', $this->m_property, $this->getWikiValue());
+		if ($this->isValid() && $this->m_property) {
+			if (!$this->m_hasssearchlink) { // add default search link
+				$this->m_hasssearchlink = true;
+				$this->m_infolinks[] = SMWInfolink::newPropertySearchLink('+', $this->m_property, $this->getWikiValue());
+			}
+			if (!$this->m_hasservicelinks) { // add further service links
+				$this->addServiceLinks();
+			}
 		}
 		return $this->m_infolinks;
 	}
 
 	/**
+	 * Overwritten by callers to supply an array of parameters that can be used for 
+	 * creating servicelinks. The number and content of values in the parameter array
+	 * may vary, depending on the concrete datatype.
+	 */
+	protected function getServiceLinkParams() {
+		return false;
+	}
+
+	/**
 	 * Return a string that identifies the value of the object, and that can
 	 * be used to compare different value objects.
+	 * Possibly overwritten by subclasses (e.g. to ensure that returned value is
+	 * normalised first)
 	 */
-	abstract public function getHash();
+	public function getHash() {
+		if ($this->isValid()) { // assume that XSD value + unit say all
+			return $this->getXSDValue() . $this->getUnit();
+		} else {
+			return implode("\t", $this->m_errors);
+		}
+	}
 
 	/**
 	 * Return TRUE if values of the given type generally have a numeric version.
+	 * Possibly overwritten by subclasses.
 	 */
-	abstract public function isNumeric();
+	public function isNumeric() {
+		return false;
+	}
 
 	/**
 	 * Return TRUE if a value was defined and understood by the given type,
@@ -241,14 +380,15 @@ abstract class SMWDataValue {
 	public function getErrors() {
 		return $this->m_errors;
 	}
-	
+
 	/**
 	 * Exports the datavalue to RDF (i.e. it returns a string that consists
 	 * of the lines that, in RDF/XML, can be fitted between the object-tags.
 	 * This should be overwritten.
-	 * @param QName -- the qualified name that the data value should use for exporting,
+	 *
+	 * @param string QName -- the qualified name that the data value should use for exporting,
 	 * since it may be an imported name.
-	 * @param Exporter -- the exporting object
+	 * @param ExportRDF exporter -- the exporting object
 	 * @TODO: could we provide a more useful default? (e.g. export as untyped)
 	 */
 	public function exportToRDF($QName, ExportRDF $exporter) {
@@ -256,32 +396,35 @@ abstract class SMWDataValue {
 		return "\t\t<!-- Sorry, unknown how to export type '$type'. -->\n";
 	}
 
-	/*********************************************************************/
-	/* Legacy methods for compatiblity                                   */
-	/*********************************************************************/
-
 	/**
-	 * @DEPRECATED
+	 * Check if property is range restricted and, if so, whether the current value is allowed.
+	 * Creates an error if the value is illegal.
 	 */
-	public function getUserValue() {
-		trigger_error("The function SMWDataValue::getUserValue() is deprecated.", E_USER_NOTICE);
-		return $this->getShortWikiText();
-	}
-
-	/**
-	 * @DEPRECATED
-	 */
-	public function getValueDescription() {
-		trigger_error("The function SMWDataValue::getValueDescription() is deprecated.", E_USER_NOTICE);
-		return $this->getLongWikiText();
-	}
-
-	/**
-	 * Return error string or an empty string if no error occured.
-	 * @DEPRECATED
-	 */
-	public function getError() {
-		trigger_error("getError is no longer available. Use getErrorText or getErrors.", E_USER_NOTICE);
+	protected function checkAllowedValues() {
+		if ($this->m_property === false) return; // allowed values apply only to concrete properties
+		$ptitle = Title::newFromText($this->m_property, SMW_NS_PROPERTY);
+		if ($ptitle === NULL) return;
+		$allowedvalues = smwfGetStore()->getSpecialValues($ptitle, SMW_SP_POSSIBLE_VALUE);
+		if (count($allowedvalues) == 0) return;
+		$hash = $this->getHash();
+		$value = SMWDataValueFactory::newTypeIDValue($this->getTypeID());
+		$accept = false;
+		$valuestring = '';
+		foreach ($allowedvalues as $stringvalue) {
+			$value->setUserValue($stringvalue->getXSDValue());
+			if ($hash === $value->getHash()) {
+				$accept = true;
+				break;
+			} else {
+				if ($valuestring != '') {
+					$valuestring .= ', ';
+				}
+				$valuestring .= $value->getShortWikiText();
+			}
+		}
+		if (!$accept) {
+			$this->addError(wfMsgForContent('smw_notinenum', $this->getWikiValue(), $valuestring));
+		}
 	}
 
 }

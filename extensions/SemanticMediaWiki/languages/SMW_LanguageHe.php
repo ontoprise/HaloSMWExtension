@@ -10,18 +10,23 @@ class SMW_LanguageHe extends SMW_Language {
 
 protected $m_ContentMessages = array(
 	'smw_edithelp' => 'עזרה בנושא עריכת יחסים ותכונות',
-	'smw_helppage' => 'יחס',
 	'smw_viewasrdf' => 'RDF feed',
 	'smw_finallistconjunct' => ', וגם', //used in "A, B, and C"
 	'smw_factbox_head' => 'עובדות על אודות $1 &mdash; לחץ <span class="smwsearchicon">+</span> בכדי למצוא דפים דומים.',
-	'smw_spec_head' => 'מאפיינים מיוחדים',
+	'smw_isspecprop' => 'This property is a special property in this wiki.', // TODO Translate
+	'smw_isknowntype' => 'This type is among the standard datatypes of this wiki.', // TODO Translate
+	'smw_isaliastype' => 'This type is an alias for the datatype “$1”.', // TODO Translate
+	'smw_isnotype' => 'This type “$1” is not a standard datatype in the wiki, and has not been given a user definition either.', // TODO Translate
 	/*URIs that should not be used in objects in cases where users can provide URIs */
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
-	'smw_baduri' => 'Sorry, URIs from the range "$1" are not available in this place.',
+	'smw_baduri' => 'Sorry, URIs of the form "$1" are not allowed.',
+	// Link to RSS feeds
+	'smw_rss_link' => 'RSS', // TODO: translate (default text for linking to semantic RSS feeds)
 	/*Messages and strings for inline queries*/
-	'smw_iq_disabled' => "<span class='smwwarning'>Sorry. Inline queries have been disabled for this wiki.</span>", // TODO: translate
+	'smw_iq_disabled' => "Sorry. Semantic queries have been disabled for this wiki.", // TODO: translate
 	'smw_iq_moreresults' => '&hellip; תוצאות נוספות',
-	'smw_iq_nojs' => 'Use a JavaScript-enabled browser to view this element, or directly <a href="$1">browse the result list</a>.', //TODO: translate
+	'smw_iq_nojs' => 'Use a JavaScript-enabled browser to view this element.', //TODO: translate
+	'smw_iq_altresults' => 'Browse the result list directly.', // available link when JS is disabled // TODO: translate
 	/*Messages and strings for ontology resued (import) */
 	'smw_unknown_importns' => '[Sorry, import functions are not avalable for namespace "$1".]', // TODO: translate
 	'smw_nonright_importtype' => '[Sorry, $1 can only be used for pages with namespace "$2"]',
@@ -30,30 +35,24 @@ protected $m_ContentMessages = array(
 	/*Messages and strings for basic datatype processing*/
 	'smw_decseparator' => '.',
 	'smw_kiloseparator' => ',',
+	'smw_notitle' => '“$1” cannot be used as a page name in this wiki.', // TODO Translate
 	'smw_unknowntype' => '[אופס! טיפוס לא מוכר "$1" הוגדר עבור תכונה זו]',
 	'smw_manytypes' => '[אופס! הוגדר יותר מטיפוס אחד לתכונה זו]',
 	'smw_emptystring' => '[אופס! לא ניתן להשתמש כאן במחרוזות ריקות]',
 	'smw_maxstring' => '[מצטערת, ייצוג המחרוזת כ-$1 ארוך מדי עבור אתר זה.]',
-	'smw_nopossiblevalues' => '[אופס! הערכים האפשריים לתכונה זו לא הוגדרו]',
 	'smw_notinenum' => '[אופס! "$1" לא נמצא בערכים האפשריים ($2) לתכונה זו]',
 	'smw_noboolean' => '[אופס! "$1" אינה תכונה מטיפוס נכון-לאנכון]',
-	'smw_true_words' => 't,yes,y,כן,נכון,אמת,חיובי,כ',	// comma-separated synonyms for boolean TRUE besides 'true' and '1'
-	'smw_false_words' => 'f,no,n,לא,לא נכון,לא-נכון,שקר,שלישי,ל',	// comma-separated synonyms for boolean FALSE besides 'false' and '0'
-	'smw_nointeger' => '[אופס! "$1" אינו מספר שלם]',
-	'smw_nofloat' => '[אופס! "$1" אינו מספר מטיפוס נקודה צפה]',
+	'smw_true_words' => 't,yes,y,כן,נכון,אמת,חיובי,כ',	// comma-separated synonyms for boolean TRUE besides 'true' and '1' TODO: "true" needs to be added now, and main synonym should be first
+	'smw_false_words' => 'f,no,n,לא,לא נכון,לא-נכון,שקר,שלישי,ל',	// comma-separated synonyms for boolean FALSE besides 'false' and '0' TODO: "false" needs to be added now, and main synonym should be first
+	'smw_nofloat' => '[אופס! "$1" אינו מספר מטיפוס נקודה צפה]', // TODO Change "floating-point" number to just "number"
 	'smw_infinite' => '[מצטרת, $1 הוא מספר גדול מדי לאתר זה .]',
 	'smw_infinite_unit' => '[מצטערת, תוצאת ההמרה ליחידה $1 היא מספר גדול מדי לאתר זה.]',
-	'smw_unexpectedunit' => 'תכונה זו אינה תומכת בהמרה מטיפוס לטיפוס',
+	//'smw_unexpectedunit' => 'תכונה זו אינה תומכת בהמרה מטיפוס לטיפוס',
+	'smw_unsupportedprefix' => 'Prefixes for numbers (“$1”) are not supported.', // TODO translate
 	'smw_unsupportedunit' => 'אין תמיכה להמרת יחידות לטיפוס "$1"',
-	/*Messages for geo coordinates parsing*/
-	'smw_err_latitude' => 'הערכים לקו-רוחב (צפון, דרום) ,צריכים להיות בין 0 ל-90. "$1" הינו ערך שאינו עומד בדרישה זו!',
-	'smw_err_longitude' => 'הערכים לקו-אורך )מזרח, מערב)חייבים להיות בין 0 ל-180. "$1" הינו ערך שאינו עומד בדרישה זו!',
-	'smw_err_noDirection' => '[אופס!  משהו אינו כשורה עם הערך שצוין "$1"]',
-	'smw_err_parsingLatLong' => '[אופס!  משהו אינו כשורה עם הערך שצוין "$1". ציפיתי למשהו בסגנון "1°2′3.4′′ מערב"!]',
-	'smw_err_wrongSyntax' => '[אופס!  משהו לא בסדר עם הערך שצוין "$1". ציפיתי למשהו בסגנון "1°2′3.4′′ W, 5°6′7.8′′ צפון" !]',
-	'smw_err_sepSyntax' => 'הרך שהוזן "$1" נראה בסדר, אבל ערכים לקוי-רוחב וקוי גובה צריכים להיות מופרדים ב "," או ב ";".',
-	'smw_err_notBothGiven' => 'עליך להזין ערך חוקי לקו האורך (מערב, מזרח) וגם לקו הגובה (צפון, דרום)! אחד מהערכים לפחות חסר!',
-	/* additionals ... */
+	// Messages for geo coordinates parsing
+	'smw_lonely_unit' => 'No number found before the symbol “$1”.', // $1 is something like ° TODO Translate
+	'smw_bad_latlong' => 'Latitude and longitude must be given only once, and with valid coordinates.', // TODO Translate
 	'smw_label_latitude' => 'קו רוחב:',
 	'smw_label_longitude' => 'קו אורך:',
 	'smw_abb_north' => 'צפון',
@@ -69,13 +68,13 @@ protected $m_ContentMessages = array(
 	'smw_noclosingbrackets' => 'Some use of “[&#x005B;” in your query was not closed by a matching “]]”.',
 	'smw_misplacedsymbol' => 'The symbol “$1” was used in a place where it is not useful.',
 	'smw_unexpectedpart' => 'The part “$1” of the query was not understood. Results might not be as expected.',
-	'smw_emtpysubquery' => 'Some subquery has no valid condition.',
+	'smw_emptysubquery' => 'Some subquery has no valid condition.',
 	'smw_misplacedsubquery' => 'Some subquery was used in a place where no subqueries are allowed.',
 	'smw_valuesubquery' => 'Subqueries not supported for values of property “$1”.',
 	'smw_overprintoutlimit' => 'The query contains too many printout requests.',
 	'smw_badprintout' => 'Some print statement in the query was misshaped.',
 	'smw_badtitle' => 'Sorry, but “$1” is no valid page title.',
-	'smw_badqueryatom' => 'Some part “[#x005B;&hellip]]” of the query was not understood.',
+	'smw_badqueryatom' => 'Some part “[&#x005B;&hellip;]]” of the query was not understood.',
 	'smw_propvalueproblem' => 'The value of property “$1” was not understood.',
 	'smw_nodisjunctions' => 'Disjunctions in queries are not supported in this wiki and part of the query was dropped ($1).',
 	'smw_querytoolarge' => 'The following query conditions could not be considered due to the wikis restrictions in query size or depth: $1.'
@@ -89,6 +88,8 @@ protected $m_UserMessages = array(
 	'smw_typearticlecount' => 'Showing $1 attributes using this type.', // TODO translate
 	'smw_attribute_header' => 'Pages using the attribute “$1”', // TODO translate
 	'smw_attributearticlecount' => '<p>Showing $1 pages using this attribute.</p>', // TODO translate
+	// Messages used in RSS feeds
+	'smw_rss_description' => '$1 RSS feed', // TODO: translate, used as default semantic RSS-feed description
 	/*Messages for Export RDF Special*/ // TODO: translate
 	'exportrdf' => 'Export pages to RDF', //name of this special
 	'smw_exportrdf_docu' => '<p>This page allows you to obtain data from a page in RDF format. To export pages, enter the titles in the text box below, one title per line.</p>',
@@ -102,7 +103,6 @@ protected $m_UserMessages = array(
 	'smw_propertylackspage' => 'All properties should be described by a page!', //TODO: translate
 	'smw_propertylackstype' => 'No type was specified for this property (assuming type $1 for now).', //TODO: translate
 	'smw_propertyhardlyused' => 'This property is hardly used within the wiki!', //TODO: translate
-	'smw_propertyspecial' => 'This is a special property with a reserved meaning in the wiki.', // TODO: translate
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Unused Properties', //TODO: translate
 	'smw_unusedproperties_docu' => 'The following properties exist although no other page makes use of them.', //TODO: translate
@@ -151,8 +151,7 @@ protected $m_UserMessages = array(
 	/*Messages for (data)Types Special*/
 	'types' => 'טיפוסים',
 	'smw_types_docu' => 'ברשימה זו מופיעים כל טיפוסי המידע שתכונות יכולות להשתמש בהם . לכל טיפוס מידע יש דף המסביר על אודותיו.',
-	'smw_types_units' => 'יחיסה סטנדרטית: $1; תומכת ביחידות: $2',
-	'smw_types_builtin' => 'טיפוסים מובנים',
+	'smw_typeunits' => 'Units of measurement of type “$1”: $2', // TODO: Translate
 	/*Messages for SemanticStatistics Special*/
 	'semanticstatistics' => 'Semantic Statistics', // TODO: translate
 	'smw_semstats_text' => 'This wiki contains <b>$1</b> property values for a total of <b>$2</b> different <a href="$3">properties</a>. <b>$4</b> properties have an own page, and the intended datatype is specified for <b>$5</b> of those. Some of the existing properties might by <a href="$6">unused properties</a>. Properties that still lack a page are found on the <a href="$7">list of wanted properties</a>.', // TODO: translate
@@ -164,12 +163,16 @@ protected $m_UserMessages = array(
 	'smw_uri_doc' => '<p>The URI resolver implements the <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG finding on httpRange-14</a>. It takes care that humans don\'t turn into websites.</p>', //TODO: translate
 	/*Messages for ask Special*/
 	'ask' => 'חיפוש סמנטי',
-	'smw_ask_docu' => '<p>Search pages by entering a query into the search field below. Further information is given on the <a href="$1">help page for semantic search</a>.</p>',
 	'smw_ask_doculink' => 'חיפוש סמנטי',
 	'smw_ask_sortby' => 'מיין לפי טור',
 	'smw_ask_ascorder' => 'בסדר עולה',
 	'smw_ask_descorder' => 'בסדר יורד',
 	'smw_ask_submit' => 'חפש תוצאות',
+	'smw_ask_editquery' => '[Edit query]', // TODO: translate
+	'smw_ask_hidequery' => 'Hide query', // TODO: translate
+	'smw_ask_help' => 'Querying help', // TODO: translate
+	'smw_ask_queryhead' => 'Query', // TODO: translate
+	'smw_ask_printhead' => 'Additional printouts (optional)', // TODO: translate
 	// Messages for the search by property special TODO: translate
 	'searchbyproperty' => 'Search by property', //TODO: translate
 	'smw_sbv_docu' => '<p>Search for all pages that have a given property and value.</p>', //TODO: translate
@@ -201,10 +204,8 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Page', // name of page datatype  //TODO translate
 	'_str' => 'מחרוזת',  // name of the string type
 	'_txt' => 'Text',  // name of the text type (very long strings) //TODO: translate
-	'_enu' => 'Enumeration',  // name of the enum type
-	//'_boo' => 'נכוןלאנכון',  // name of the boolean type
-	'_int' => 'שלם',  // name of the int type
-	'_flt' => 'נקודהצפה',  // name of the floating point type
+	'_boo' => 'נכוןלאנכון',  // name of the boolean type
+	'_num' => 'Number', // name for the datatype of numbers //TODO: translate
 	'_geo' => 'קורדינטות גיאוגרפיות', // name of the geocoord type
 	'_tem' => 'טמפרטורה',  // name of the temperature type
 	'_dat' => 'תאריך',  // name of the datetime (calendar) type
@@ -216,12 +217,16 @@ protected $m_DatatypeLabels = array(
 protected $m_DatatypeAliases = array(
 	'מזהה יחודי'
 	             => '_uri',
+	'שלם'
+	             => '_num',
+	'נקודהצפה'
+	             => '_num',
 	// support English aliases:
 	'Page'                  => '_wpg',
 	'String'                => '_str',
 	'Text'                  => '_txt',
-	'Integer'               => '_int',
-	'Float'                 => '_flt',
+	'Boolean'               => '_boo',
+	'Number'                => '_num',
 	'Geographic coordinate' => '_geo',
 	'Temperature'           => '_tem',
 	'Date'                  => '_dat',
@@ -235,8 +240,7 @@ protected $m_SpecialProperties = array(
 	SMW_SP_HAS_TYPE  => 'מטיפוס',
 	SMW_SP_HAS_URI   => 'מזהה יחודי תואם',
 	SMW_SP_SUBPROPERTY_OF => 'Subproperty of', // TODO: translate
-	SMW_SP_MAIN_DISPLAY_UNIT => 'יחידת הצגה ראשית',
-	SMW_SP_DISPLAY_UNIT => 'יחידת הצגה',
+	SMW_SP_DISPLAY_UNITS => 'יחידת הצגה', // TODO: should be plural now ("units"), singluar stays alias//
 	SMW_SP_IMPORTED_FROM => 'יובא מ',
 	SMW_SP_CONVERSION_FACTOR => 'מתורגם ל',
 	SMW_SP_SERVICE_LINK => 'מספק שירות',
@@ -244,12 +248,13 @@ protected $m_SpecialProperties = array(
 );
 
 protected $m_SpecialPropertyAliases = array(
+	'יחידת הצגה'
+	                    => SMW_SP_DISPLAY_UNITS,
 	// support English aliases for special properties
 	'Has type'          => SMW_SP_HAS_TYPE,
 	'Equivalent URI'    => SMW_SP_HAS_URI,
 	'Subproperty of'    => SMW_SP_SUBPROPERTY_OF,
-	'Main display unit' => SMW_SP_MAIN_DISPLAY_UNIT,
-	'Display unit'      => SMW_SP_DISPLAY_UNIT,
+	'Display units'     => SMW_SP_DISPLAY_UNITS,
 	'Imported from'     => SMW_SP_IMPORTED_FROM,
 	'Corresponds to'    => SMW_SP_CONVERSION_FACTOR,
 	'Provides service'  => SMW_SP_SERVICE_LINK,
@@ -265,6 +270,7 @@ protected $m_Namespaces = array(
 	SMW_NS_TYPE           => 'טיפוס',
 	SMW_NS_TYPE_TALK      => 'שיחת_טיפוס'
 );
+
 
 protected $m_NamespaceAliases = array(
 	// support English aliases for namespaces

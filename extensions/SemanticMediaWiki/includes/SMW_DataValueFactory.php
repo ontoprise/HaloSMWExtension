@@ -106,7 +106,7 @@ class SMWDataValueFactory {
 			case SMW_SP_HAS_URI:
 				$result = SMWDataValueFactory::newTypeIDValue('_uri', $value, $caption);
 				break;
-			case SMW_SP_MAIN_DISPLAY_UNIT: case SMW_SP_DISPLAY_UNIT: case SMW_SP_SERVICE_LINK:
+			case SMW_SP_DISPLAY_UNITS: case SMW_SP_SERVICE_LINK:
 			case SMW_SP_CONVERSION_FACTOR: case SMW_SP_POSSIBLE_VALUE:
 				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
 				break;
@@ -138,18 +138,16 @@ class SMWDataValueFactory {
 	 */
 	static public function newTypeObjectValue(/*SMWDataValue*/ $typevalue, $value=false, $caption=false, $propertyname=false) {
 		SMWDataValueFactory::initDatatypes();
-		if (array_key_exists($typevalue->getXSDValue(), SMWDataValueFactory::$m_typeclasses)) {
-			return SMWDataValueFactory::newTypeIDValue($typevalue->getXSDValue(), $value, $caption, $propertyname);
-		} else {
-			if (!$typevalue->isUnary()) { // n-ary type?
+		$typeid = $typevalue->getXSDValue();
+		if (array_key_exists($typeid, SMWDataValueFactory::$m_typeclasses)) {
+			$result = new SMWDataValueFactory::$m_typeclasses[$typeid]($typeid);
+		} elseif (!$typevalue->isUnary()) { // n-ary type?
 				$result = SMWDataValueFactory::newTypeIDValue('__nry');
 				$result->setType($typevalue);
-			} else { ///TODO migrate to new system
-				global $smwgIP;
-				include_once($smwgIP . '/includes/SMW_OldDataValue.php');
-				$type = SMWTypeHandlerFactory::getTypeHandlerByLabel($typevalue->getXSDValue());
-				$result = new SMWOldDataValue($type);
-			}
+		} elseif ($typeid{0} != '_') { // custom type with linear conversion
+			$result = new SMWDataValueFactory::$m_typeclasses['__lin']($typeid);
+		} else { // type really unknown
+			return new SMWErrorValue(wfMsgForContent('smw_unknowntype', $typevalue->getWikiValue() ), $value, $caption);
 		}
 
 		if ($propertyname != false) {
@@ -173,8 +171,7 @@ class SMWDataValueFactory {
 	static public function newTypeIDValue($typeid, $value=false, $caption=false, $propertyname=false) {
 		SMWDataValueFactory::initDatatypes();
 		if (array_key_exists($typeid, SMWDataValueFactory::$m_typeclasses)) {
-			$className = SMWDataValueFactory::$m_typeclasses[$typeid];
-			$result = new $className($typeid);
+			$result = new SMWDataValueFactory::$m_typeclasses[$typeid]($typeid);
 		} else {
 			$typevalue = SMWDataValueFactory::newTypeIDValue('__typ');
 			$typevalue->setXSDValue($typeid);
@@ -194,6 +191,9 @@ class SMWDataValueFactory {
 	 * Quickly get the type id of some property without necessarily making another datavalue.
 	 */
 	static public function getPropertyObjectTypeID(Title $property) {
+		if ($property->getNamespace() !== SMW_NS_PROPERTY) { // somebody made a mistake ...
+			return false;
+		}
 		$propertyname = $property->getText();
 		if (array_key_exists($propertyname, SMWDataValueFactory::$m_typebyproperty)) {
 			if (SMWDataValueFactory::$m_typebyproperty[$propertyname]->isUnary() ) {
@@ -236,12 +236,18 @@ class SMWDataValueFactory {
 		// NOTE: all ids must start with underscores, where two underscores indicate
 		// truly internal (non user-acessible types). All others should also get a
 		// translation in the language files, or they won't be available for users.
-		$wgAutoloadClasses['SMWStringValue']   =  $smwgIP . '/includes/SMW_DV_String.php';
-		$wgAutoloadClasses['SMWWikiPageValue'] =  $smwgIP . '/includes/SMW_DV_WikiPage.php';
-		$wgAutoloadClasses['SMWURIValue']      =  $smwgIP . '/includes/SMW_DV_URI.php';
-		$wgAutoloadClasses['SMWTypesValue']    =  $smwgIP . '/includes/SMW_DV_Types.php';
-		$wgAutoloadClasses['SMWNAryValue']     =  $smwgIP . '/includes/SMW_DV_NAry.php';
-		$wgAutoloadClasses['SMWErrorValue']    =  $smwgIP . '/includes/SMW_DV_Error.php';
+		$wgAutoloadClasses['SMWStringValue']      =  $smwgIP . '/includes/SMW_DV_String.php';
+		$wgAutoloadClasses['SMWWikiPageValue']    =  $smwgIP . '/includes/SMW_DV_WikiPage.php';
+		$wgAutoloadClasses['SMWURIValue']         =  $smwgIP . '/includes/SMW_DV_URI.php';
+		$wgAutoloadClasses['SMWTypesValue']       =  $smwgIP . '/includes/SMW_DV_Types.php';
+		$wgAutoloadClasses['SMWNAryValue']        =  $smwgIP . '/includes/SMW_DV_NAry.php';
+		$wgAutoloadClasses['SMWErrorValue']       =  $smwgIP . '/includes/SMW_DV_Error.php';
+		$wgAutoloadClasses['SMWNumberValue']      =  $smwgIP . '/includes/SMW_DV_Number.php';
+		$wgAutoloadClasses['SMWTemperatureValue'] =  $smwgIP . '/includes/SMW_DV_Temperature.php';
+		$wgAutoloadClasses['SMWLinearValue']      =  $smwgIP . '/includes/SMW_DV_Linear.php';
+		$wgAutoloadClasses['SMWTimeValue']        =  $smwgIP . '/includes/SMW_DV_Time.php';
+		$wgAutoloadClasses['SMWGeoCoordsValue']   =  $smwgIP . '/includes/SMW_DV_GeoCoords.php';
+		$wgAutoloadClasses['SMWBoolValue']      =  $smwgIP . '/includes/SMW_DV_Bool.php';
 		SMWDataValueFactory::$m_typeclasses = array(
 			'_txt'  => 'SMWStringValue',
 			'_str'  => 'SMWStringValue',
@@ -249,7 +255,13 @@ class SMWDataValueFactory {
 			'_uri'  => 'SMWURIValue',
 			'_anu'  => 'SMWURIValue',
 			'_wpg'  => 'SMWWikiPageValue',
+			'_num'  => 'SMWNumberValue',
+			'_tem'  => 'SMWTemperatureValue',
+			'_dat'  => 'SMWTimeValue',
+			'_geo'  => 'SMWGeoCoordsValue',
+			'_boo'  => 'SMWBoolValue',
 			'__typ' => 'SMWTypesValue',
+			'__lin' => 'SMWLinearValue',
 			'__nry' => 'SMWNAryValue',
 			'__err' => 'SMWErrorValue'
 		);

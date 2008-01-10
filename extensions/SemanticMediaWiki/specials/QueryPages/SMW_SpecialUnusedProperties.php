@@ -42,13 +42,14 @@ class SMWUnusedPropertiesPage extends SMWQueryPage {
 		global $wgLang, $wgExtraNamespaces;
 		$proplink = $skin->makeKnownLinkObj( $result, $result->getText() );
 		$types = smwfGetStore()->getSpecialValues($result, SMW_SP_HAS_TYPE);
+		$errors = array();
 		if (count($types) >= 1) {
 			$typestring = $types[0]->getLongHTMLText($skin);
 		} else {
 			$type = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE);
 			$type->setXSDValue('_wpg');
 			$typestring = $type->getLongHTMLText($skin);
-			$errors[] = wfMsg('smw_propertylackstype', $type->getLongHTMLText($skin));
+			$errors[] = wfMsg('smw_propertylackstype', $type->getLongHTMLText());
 		}
 		return wfMsg('smw_unusedproperty_template', $proplink, $typestring) . ' ' . smwfEncodeMessages($errors);
 	}

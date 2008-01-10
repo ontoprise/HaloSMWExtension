@@ -3,14 +3,14 @@
  * Global functions and constants for Semantic MediaWiki.
  */
 
-define('SMW_VERSION','1.0alpha-1');
+define('SMW_VERSION','1.0');
 
 // constants for special properties, used for datatype assignment and storage
 define('SMW_SP_HAS_TYPE',1);
 define('SMW_SP_HAS_URI',2);
 define('SMW_SP_HAS_CATEGORY',4);
 define('SMW_SP_MAIN_DISPLAY_UNIT', 6);
-define('SMW_SP_DISPLAY_UNIT', 7);
+define('SMW_SP_DISPLAY_UNITS', 7);
 define('SMW_SP_IMPORTED_FROM',8);
 define('SMW_SP_EXT_BASEURI',9);
 define('SMW_SP_EXT_NSID',10);
@@ -27,11 +27,20 @@ define('SMW_FACTBOX_SPECIAL', 2);
 define('SMW_FACTBOX_NONEMPTY',  3);
 define('SMW_FACTBOX_SHOWN',  5);
 
+// constants for regulating equality reasoning
+define('SMW_EQ_NONE', 0);
+define('SMW_EQ_SOME', 1);
+define('SMW_EQ_FULL', 2);
+
 // constants for identifying javascripts as used in smwfRequireHeadItem
 define('SMW_HEADER_TIMELINE', 1);
 define('SMW_HEADER_TOOLTIP', 2);
 define('SMW_HEADER_SORTTABLE', 3);
 define('SMW_HEADER_STYLE', 4);
+
+// constants for denoting output modes in many functions: HTML or Wiki?
+define('SMW_OUTPUT_HTML', 1);
+define('SMW_OUTPUT_WIKI', 2);
 
 // HTML items to load in current page, use smwfRequireHeadItem to extend
 $smwgHeadItems = array();
@@ -44,7 +53,7 @@ $smwgHeadItems = array();
  * does not adhere to the naming conventions.
  */
 function enableSemantics($namespace = '', $complete = false) {
-	global $smwgNamespace, $wgExtensionFunctions, $wgSpecialPages, $wgAutoloadClasses, $smwgIP;
+	global $smwgNamespace, $wgExtensionFunctions, $wgSpecialPages, $wgAutoloadClasses, $smwgIP, $wgHooks;
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
 	// it is not needed in many cases.
@@ -54,36 +63,47 @@ function enableSemantics($namespace = '', $complete = false) {
 		$smwgNamespace = $namespace;
 	}
 	$wgExtensionFunctions[] = 'smwfSetupExtension';
+	$wgHooks['LanguageGetMagic'][] = 'smwfParserFunctionMagic'; // setup names for parser functions (needed here)
 
-	///// setup some autoloading /////
+	///// Set up autoloading
+	///// All classes registered for autoloading here should be tagged with this information:
+	///// Add "@note AUTOLOADED" to their class documentation. This avoids useless includes.
+
+	// printers
 	$wgAutoloadClasses['SMWResultPrinter']         = $smwgIP . '/includes/SMW_QueryPrinter.php';
 	$wgAutoloadClasses['SMWTableResultPrinter']    = $smwgIP . '/includes/SMW_QP_Table.php';
 	$wgAutoloadClasses['SMWListResultPrinter']     = $smwgIP . '/includes/SMW_QP_List.php';
 	$wgAutoloadClasses['SMWTimelineResultPrinter'] = $smwgIP . '/includes/SMW_QP_Timeline.php';
 	$wgAutoloadClasses['SMWEmbeddedResultPrinter'] = $smwgIP . '/includes/SMW_QP_Embedded.php';
 	$wgAutoloadClasses['SMWTemplateResultPrinter'] = $smwgIP . '/includes/SMW_QP_Template.php';
+	$wgAutoloadClasses['SMWRSSResultPrinter']      = $smwgIP . '/includes/SMW_QP_RSSlink.php';
+	// datavalues
+	$wgAutoloadClasses['SMWDataValue']             =  $smwgIP . '/includes/SMW_DataValue.php';
+	$wgAutoloadClasses['SMWDataValueFactory']      =  $smwgIP . '/includes/SMW_DataValueFactory.php';
+	// the builtin types are registered by SMWDataValueFactory if needed, will be reliably available
+	// to other DV-implementations that register to the factory.
 
-	///// register specials, do that early on in case some other extension calls "addPage" /////
-	$wgAutoloadClasses['SMWAskPage'] = $smwgIP . '/specials/AskSpecial/SMW_SpecialAsk.php';
-	$wgSpecialPages['Ask'] = array('SMWAskPage');
-	$wgAutoloadClasses['SMWSpecialBrowse'] = $smwgIP . '/specials/SearchTriple/SMW_SpecialBrowse.php';
-	$wgSpecialPages['Browse'] = array('SMWSpecialBrowse');
-	$wgAutoloadClasses['SMWPageProperty'] = $smwgIP . '/specials/SearchTriple/SMW_SpecialPageProperty.php';
-	$wgSpecialPages['PageProperty'] = array('SMWPageProperty');
+	///// Register specials, do that early on in case some other extension calls "addPage" /////
+	$wgAutoloadClasses['SMWAskPage']          = $smwgIP . '/specials/AskSpecial/SMW_SpecialAsk.php';
+	$wgSpecialPages['Ask']                    = array('SMWAskPage');
+	$wgAutoloadClasses['SMWSpecialBrowse']    = $smwgIP . '/specials/SearchTriple/SMW_SpecialBrowse.php';
+	$wgSpecialPages['Browse']                 = array('SMWSpecialBrowse');
+	$wgAutoloadClasses['SMWPageProperty']     = $smwgIP . '/specials/SearchTriple/SMW_SpecialPageProperty.php';
+	$wgSpecialPages['PageProperty']           = array('SMWPageProperty');
 	$wgAutoloadClasses['SMWSearchByProperty'] = $smwgIP . '/specials/SearchTriple/SMW_SpecialSearchByProperty.php';
-	$wgSpecialPages['SearchByProperty'] = array('SMWSearchByProperty');
-	$wgAutoloadClasses['SMWURIResolver'] = $smwgIP . '/specials/URIResolver/SMW_SpecialURIResolver.php';
-	$wgSpecialPages['URIResolver'] = array('SMWURIResolver');
-	$wgAutoloadClasses['SMWAdmin'] = $smwgIP . '/specials/SMWAdmin/SMW_SpecialSMWAdmin.php';
-	$wgSpecialPages['SMWAdmin'] = array('SMWAdmin');
-
-	$wgAutoloadClasses['SMWSpecialPage'] = $smwgIP . '/includes/SMW_SpecialPage.php';
-	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialProperties.php');
-	$wgSpecialPages['UnusedProperties'] = array('SMWSpecialPage','UnusedProperties', 'smwfDoSpecialUnusedProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialUnusedProperties.php');
-	$wgSpecialPages['WantedProperties'] = array('SMWSpecialPage','WantedProperties', 'smwfDoSpecialWantedProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialWantedProperties.php');
-	$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'smwfDoSpecialExportRDF', $smwgIP . '/specials/ExportRDF/SMW_SpecialExportRDF.php');
-	$wgSpecialPages['SemanticStatistics'] = array('SMWSpecialPage','SemanticStatistics', 'smwfExecuteSemanticStatistics', $smwgIP . '/specials/Statistics/SMW_SpecialStatistics.php');
-	$wgSpecialPages['Types'] = array('SMWSpecialPage','Types', 'smwfDoSpecialTypes', $smwgIP . '/specials/QueryPages/SMW_SpecialTypes.php');
+	$wgSpecialPages['SearchByProperty']       = array('SMWSearchByProperty');
+	$wgAutoloadClasses['SMWURIResolver']      = $smwgIP . '/specials/URIResolver/SMW_SpecialURIResolver.php';
+	$wgSpecialPages['URIResolver']            = array('SMWURIResolver');
+	$wgAutoloadClasses['SMWAdmin']            = $smwgIP . '/specials/SMWAdmin/SMW_SpecialSMWAdmin.php';
+	$wgSpecialPages['SMWAdmin']               = array('SMWAdmin');
+	// suboptimal special pages using the SMWSpecialPage wrapper class:
+	$wgAutoloadClasses['SMWSpecialPage']      = $smwgIP . '/includes/SMW_SpecialPage.php';
+	$wgSpecialPages['Properties']             = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialProperties.php');
+	$wgSpecialPages['UnusedProperties']       = array('SMWSpecialPage','UnusedProperties', 'smwfDoSpecialUnusedProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialUnusedProperties.php');
+	$wgSpecialPages['WantedProperties']       = array('SMWSpecialPage','WantedProperties', 'smwfDoSpecialWantedProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialWantedProperties.php');
+	$wgSpecialPages['ExportRDF']              = array('SMWSpecialPage','ExportRDF', 'smwfDoSpecialExportRDF', $smwgIP . '/specials/ExportRDF/SMW_SpecialExportRDF.php');
+	$wgSpecialPages['SemanticStatistics']     = array('SMWSpecialPage','SemanticStatistics', 'smwfExecuteSemanticStatistics', $smwgIP . '/specials/Statistics/SMW_SpecialStatistics.php');
+	$wgSpecialPages['Types']                  = array('SMWSpecialPage','Types', 'smwfDoSpecialTypes', $smwgIP . '/specials/QueryPages/SMW_SpecialTypes.php');
 
 	return true;
 }
@@ -94,7 +114,7 @@ function enableSemantics($namespace = '', $complete = false) {
  */
 function smwfSetupExtension() {
 	wfProfileIn('smwfSetupExtension (SMW)');
-	global $smwgIP, $smwgStoreActive, $wgHooks, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore;
+	global $smwgIP, $smwgStoreActive, $wgHooks, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber;
 
 	/**
 	* Setting this to false prevents any new data from being stored in
@@ -112,6 +132,7 @@ function smwfSetupExtension() {
 
 	$smwgMasterStore = NULL;
 	smwfInitContentMessages(); // this really could not be done in enableSemantics()
+	$smwgIQRunningNumber = 0;
 
 	///// register hooks /////
 	require_once($smwgIP . '/includes/SMW_Hooks.php');
@@ -119,7 +140,9 @@ function smwfSetupExtension() {
 
 	$wgHooks['InternalParseBeforeLinks'][] = 'smwfParserHook'; // parse annotations
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterInlineQueries'; // register the <ask> parser hook
+	$wgHooks['ArticleSave'][] = 'smwfPreSaveHook'; // check some settings here
 	$wgHooks['ArticleSaveComplete'][] = 'smwfSaveHook'; // store annotations
+	$wgHooks['ArticleUndelete'][] = 'smwfUndeleteHook'; // restore annotations
 	$wgHooks['ArticleDelete'][] = 'smwfDeleteHook'; // delete annotations
 	$wgHooks['TitleMoveComplete'][]='smwfMoveHook'; // move annotations
 	$wgHooks['ParserAfterTidy'][] = 'smwfAddHTMLHeadersParser'; // add items to HTML header during parsing
@@ -129,7 +152,7 @@ function smwfSetupExtension() {
 	$wgHooks['LoadAllMessages'][] = 'smwfLoadAllMessages'; // complete setup of all messages when requested by MW
 
 	///// credits (see "Special:Version") /////
-	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, Markus&nbsp;Kr&ouml;tzsch, Denny&nbsp;Vrandecic, S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://ontoworld.org/wiki/Semantic_MediaWiki', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://ontoworld.org/wiki/Help:Semantics View online documentation.]');
+	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://ontoworld.org/wiki/Semantic_MediaWiki', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/index.php/Help:Semantics View online documentation.]');
 
 	wfProfileOut('smwfSetupExtension (SMW)');
 	return true;
@@ -142,17 +165,35 @@ function smwfSetupExtension() {
  */
 function smwfRegisterInlineQueries( &$parser, &$text, &$stripstate ) {
 	$parser->setHook( 'ask', 'smwfProcessInlineQuery' );
+	$parser->setFunctionHook( 'ask', 'smwfProcessInlineQueryParserFunction' );
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
 /**
  * The <ask> parser hook processing part.
  */
-function smwfProcessInlineQuery($text, $param, &$parser) {
-	global $smwgQEnabled, $smwgIP;
+function smwfProcessInlineQuery($querytext, $params, &$parser) {
+	global $smwgQEnabled, $smwgIP, $smwgIQRunningNumber;
 	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
-		return SMWQueryProcessor::getResultHTML($text,$param);
+		return SMWQueryProcessor::getResultFromHookParams($querytext,$params,SMW_OUTPUT_HTML);
+	} else {
+		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
+	}
+}
+
+/**
+ * The {{#ask }} parser function processing part.
+ */
+function smwfProcessInlineQueryParserFunction(&$parser) {
+	global $smwgQEnabled, $smwgIP, $smwgIQRunningNumber;
+	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
+		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
+		$params = func_get_args();
+		array_shift( $params ); // we already know the $parser ...
+		return SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
 	} else {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
 	}
@@ -206,7 +247,8 @@ function smwfRequireHeadItem($id, $item = '') {
  * exploits parser caching.
  */
 function smwfAddHTMLHeadersParser(&$parser, &$text) {
-	global $smwgHeadItems;
+	global $smwgHeadItems, $smwgStoreActive;
+	if (!$smwgStoreActive) return true; // avoid doing this in SMW-generated sub-parsers
 	foreach ($smwgHeadItems as $key => $item) {
 		$parser->mOutput->addHeadItem("\t\t" . $item . "\n", $key);
 	}
@@ -221,7 +263,8 @@ function smwfAddHTMLHeadersParser(&$parser, &$text) {
  * output (exploiting parser caching).
  */
 function smwfAddHTMLHeadersOutput(&$out) {
-	global $smwgHeadItems;
+	global $smwgHeadItems, $smwgStoreActive;
+	if (!$smwgStoreActive) return true; // avoid doing this in SMW-generated sub-parsers
 	// Add scripts to output if not done already (should happen only if we are
 	// not using a parser, e.g on special pages).
 	foreach ($smwgHeadItems as $key => $item) {
@@ -260,10 +303,8 @@ function smwfAddHTMLHeadersOutput(&$out) {
 
 		// Register namespace identifiers
 		if (!is_array($wgExtraNamespaces)) { $wgExtraNamespaces=array(); }
-		//if (!is_array($wgNamespaceAliases)) { $wgNamespaceAliases=array(); }
 		$wgExtraNamespaces = $wgExtraNamespaces + $smwgContLang->getNamespaces();
 		$wgNamespaceAliases = $wgNamespaceAliases + $smwgContLang->getNamespaceAliases();
-		
 
 		// Support subpages only for talk pages by default
 		$wgNamespacesWithSubpages = $wgNamespacesWithSubpages + array(
@@ -281,6 +322,14 @@ function smwfAddHTMLHeadersOutput(&$out) {
 /**********************************************/
 /***** language settings                  *****/
 /**********************************************/
+
+	/**
+	 * Set up (possibly localised) names for SMW's parser functions.
+	 */
+	function smwfParserFunctionMagic(&$magicWords, $langCode) {
+		$magicWords['ask'] = array( 0, 'ask' );
+		return true;
+	}
 
 	/**
 	 * Initialise a global language object for content language. This
@@ -383,7 +432,11 @@ function smwfAddHTMLHeadersOutput(&$out) {
 	 * in Title.php in order to achieve conversion with less overhead.
 	 */
 	function smwfNormalTitleDBKey( $text ) {
-		return str_replace(' ', '_', ucfirst($text));
+		global $wgCapitalLinks;
+		if ($wgCapitalLinks) {
+			$text = ucfirst($text);
+		}
+		return str_replace(' ', '_', $text);
 		///// The long and secure way. Use if problems occur.
 		// 		$t = Title::newFromText( $text );
 		// 		if ($t != NULL) {
@@ -398,7 +451,11 @@ function smwfAddHTMLHeadersOutput(&$out) {
 	 * in Title.php in order to achieve conversion with less overhead.
 	 */
 	function smwfNormalTitleText( $text ) {
-		return str_replace('_', ' ', ucfirst($text));
+		global $wgCapitalLinks;
+		if ($wgCapitalLinks) {
+			$text = ucfirst($text);
+		}
+		return str_replace('_', ' ', $text);
 		///// The long and secure way. Use if problems occur.
 		// 		$t = Title::newFromText( $text );
 		// 		if ($t != NULL) {
@@ -418,13 +475,84 @@ function smwfAddHTMLHeadersOutput(&$out) {
 	}
 
 	/**
+	* This method formats a float number value according to the given
+	* language and precision settings, with some intelligence to
+	* produce readable output. Use it whenever you get a number that
+	* was not hand-formatted by a user.
+	* @param $value input number
+	* @param $decplaces optional positive integer, controls how many
+	*                   digits after the decimal point (but not in
+	*                   scientific notation)
+	*/
+	function smwfNumberFormat($value, $decplaces=3) {
+		$decseparator = wfMsgForContent('smw_decseparator');
+		$kiloseparator = wfMsgForContent('smw_kiloseparator');
+	
+		// If number is a trillion or more, then switch to scientific
+		// notation. If number is less than 0.0000001 (i.e. twice decplaces),
+		// then switch to scientific notation. Otherwise print number
+		// using number_format. This may lead to 1.200, so then use trim to
+		// remove trailing zeroes.
+		$doScientific = false;
+		//@TODO: Don't do all this magic for integers, since the formatting does not fit there
+		//       correctly. E.g. one would have integers formatted as 1234e6, not as 1.234e9, right?
+		//The "$value!=0" is relevant: we want to scientify numbers that are close to 0, but never 0!
+		if ( ($decplaces > 0) && ($value != 0) ) {
+			$absValue = abs($value);
+			if ($absValue >= 1000000000) {
+				$doScientific = true;
+			} elseif ($absValue <= pow(10,-$decplaces)) {
+				$doScientific = true;
+			} elseif ($absValue < 1) {
+				if ($absValue <= pow(10,-$decplaces)) {
+					$doScientific = true;
+				} else {
+					// Increase decimal places for small numbers, e.g. .00123 should be 5 places.
+					for ($i=0.1; $absValue <= $i; $i*=0.1) {
+						$decplaces++;
+					}
+				}
+			}
+		}
+		if ($doScientific) {
+			// Should we use decimal places here?
+			$value = sprintf("%1.6e", $value);
+			// Make it more readable by removing trailing zeroes from n.n00e7.
+			$value = preg_replace('/(\\.\\d+?)0*e/', '${1}e', $value, 1);
+			//NOTE: do not use the optional $count parameter with preg_replace. We need to
+			//      remain compatible with PHP 4.something.
+			if ($decseparator !== '.') {
+				$value = str_replace('.', $decseparator, $value);
+			}
+		} else {
+			// Format to some level of precision;
+			// this does rounding and locale formatting.
+			$value = number_format($value, $decplaces, $decseparator, wfMsgForContent('smw_kiloseparator'));
+	
+			// Make it more readable by removing ending .000 from nnn.000
+			//    Assumes substr is faster than a regular expression replacement.
+			$end = $decseparator . str_repeat('0', $decplaces);
+			$lenEnd = strlen($end);
+			if (substr($value, -$lenEnd) === $end ) {
+				$value = substr($value, 0, -$lenEnd);
+			} else {
+				// If above replacement occurred, no need to do the next one.
+				// Make it more readable by removing trailing zeroes from nn.n00.
+				$value = preg_replace("/(\\$decseparator\\d+?)0*$/", '$1', $value, 1);
+			}
+		}
+		return $value;
+	}
+
+	/**
 	 * Formats an array of message strings so that it appears as a tooltip.
+	 * $icon should be one of: 'warning' (default), 'info'
 	 */
-	function smwfEncodeMessages($msgarray) {
+	function smwfEncodeMessages($msgarray, $icon = 'warning', $sep = " <!--br-->") {
 		if (count($msgarray) > 0) {
 			smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
-			$msgs = implode(' ', $msgarray);
-			return '<span class="smwttpersist"><span class="smwtticon">warning.png</span><span class="smwttcontent">' . $msgs . '</span> </span>';
+			$msgs = implode($sep, $msgarray);
+			return '<span class="smwttpersist"><span class="smwtticon">' . $icon . '.png</span><span class="smwttcontent">' . $msgs . '</span> </span>';
 			// Note: the space is essential to make FF (and maybe other) align icons properly in tables
 		} else {
 			return '';
@@ -446,6 +574,10 @@ function smwfAddHTMLHeadersOutput(&$out) {
 				case (SMW_STORE_TESTING):
 					require_once($smwgIP . '/includes/storage/SMW_TestStore.php');
 					$smwgMasterStore = new SMWTestStore();
+				break;
+				case (SMW_STORE_RAP):
+					require_once($smwgIP . '/includes/storage/SMW_RAPStore.php');
+					$smwgMasterStore = new SMWRAPStore();
 				break;
 				case (SMW_STORE_MWDB): default:
 					require_once($smwgIP . '/includes/storage/SMW_SQLStore.php');

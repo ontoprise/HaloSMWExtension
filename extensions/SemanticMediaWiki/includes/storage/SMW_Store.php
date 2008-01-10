@@ -133,14 +133,16 @@ abstract class SMWStore {
 	 * is an array of SMWDataValue objects. The provided outputformat is a string identifier that
 	 * may be used by the datavalues to modify their output behaviour, e.g. when interpreted as a 
 	 * desired unit to convert the output to.
+	 *
+	 * If called with $subject == NULL, all values for the given property are returned.
 	 */
-	abstract function getPropertyValues(Title $subject, Title $property, $requestoptions = NULL, $outputformat = '');
+	abstract function getPropertyValues($subject, $property, $requestoptions = NULL, $outputformat = '');
 
 	/**
 	 * Get an array of all subjects that have the given value for the given property. The
 	 * result is an array of Title objects.
 	 */
-	abstract function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL, $nary_pos = NULL);
+	abstract function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all subjects that have some value for the given property. The
@@ -161,113 +163,6 @@ abstract class SMWStore {
 	 */
 	abstract function getInProperties(SMWDataValue $object, $requestoptions = NULL);
 
-
-
-////// Transition methods (deprecated)
-
-	/**
-	 * Get an array of all attribute values stored for the given subject and atttribute. The result
-	 * is an array of SMWDataValue objects. The provided outputformat is a string identifier that
-	 * may be used by the datavalues to modify their output behaviour, e.g. when interpreted as a 
-	 * desierd unit to convert the output to.
-	 * @DEPRECATED
-	 */
-	function getAttributeValues(Title $subject, Title $attribute, $requestoptions = NULL, $outputformat = '') {
-		trigger_error("Function getAttributeValues is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getPropertyValues($subject, $attribute, $requestoptions, $outputformat);
-	}
-
-	/**
-	 * Get an array of all subjects that have the given value for the given attribute. The
-	 * result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getAttributeSubjects(Title $attribute, SMWDataValue $value, $requestoptions = NULL) {
-		trigger_error("Function getAttributeSubjects is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getPropertySubjects($attribute,$value,$requestoptions);
-	}
-
-	/**
-	 * Get an array of all subjects that have some value for the given attribute. The
-	 * result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getAllAttributeSubjects(Title $attribute, $requestoptions = NULL) {
-		trigger_error("Function getAllAttributeSubjects is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getAllPropertySubjects($attribute,$requestoptions);
-	}
-
-	/**
-	 * Get an array of all attributes for which the given subject has some value. The result is an
-	 * array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getAttributes(Title $subject, $requestoptions = NULL) {
-		trigger_error("Function getAttributes is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getProperties($subject, $requestoptions);
-	}
-
-	/**
-	 * Get an array of all objects that a given subject relates to via the given relation. The
-	 * result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getRelationObjects(Title $subject, Title $relation, $requestoptions = NULL) {
-		trigger_error("Function getRelationObjects is deprecated. Use new property methods.", E_USER_NOTICE);
-		$dvs = $this->getPropertyValues($subject, $relation, $requestoptions);
-		$result = array();
-		foreach ($dvs as $dv) {
-			if ($dv->getTypeID() == '_wpg') {
-				$result[] = $dv->getTitle();
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Get an array of all subjects that are related to a given object via the given relation. The
-	 * result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getRelationSubjects(Title $relation, Title $object, $requestoptions = NULL) {
-		trigger_error("Function getRelationSubjects is deprecated. Use new property methods.", E_USER_NOTICE);
-		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$value->setValues($object->getDBKey(), $object->getNamespace());
-		return $this->getPropertySubjects($relation, $value, $requestoptions);
-	}
-
-	/**
-	 * Get an array of all subjects that relate to some object via the given relation. The
-	 * result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getAllRelationSubjects(Title $relation, $requestoptions = NULL) {
-		trigger_error("Function getAllPropertySubjects is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getAllPropertySubjects($relation, $requestoptions);
-	}
-
-	/**
-	 * Get an array of all relations via which the given subject relates to some object. The result is an
-	 * array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getOutRelations(Title $subject, $requestoptions = NULL) {
-		trigger_error("Function getOutRelations is deprecated. Use new property methods.", E_USER_NOTICE);
-		return $this->getProperties($subject, $requestoptions);
-	}
-
-	/**
-	 * Get an array of all relations for which there is some subject that relates to the given object.
-	 * The result is an array of Title objects.
-	 * @DEPRECATED
-	 */
-	function getInRelations(Title $object, $requestoptions = NULL) {
-		trigger_error("Function getInRelations is deprecated. Use new property methods.", E_USER_NOTICE);
-		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$value->setValues($object->getDBKey(), $object->getNamespace());
-		return $this->getInProperties($value,$requestoptions);
-	}
-
 ///// Writing methods /////
 
 	/**
@@ -281,9 +176,10 @@ abstract class SMWStore {
 	/**
 	 * Update the semantic data stored for some individual. The data is given
 	 * as a SMWSemData object, which contains all semantic data for one particular
-	 * subject.
+	 * subject. The boolean $newpage specifies whether the page is stored for the
+	 * first time or not.
 	 */
-	abstract function updateData(SMWSemanticData $data);
+	abstract function updateData(SMWSemanticData $data, $newpage);
 
 	/**
 	 * Update the store to reflect a renaming of some article. The old and new title objects
@@ -352,6 +248,12 @@ abstract class SMWStore {
 	 * text, possibly with some linebreaks and weak markup.
 	 */
 	abstract function setup($verbose = true);
+
+	/**
+	 * Drop (delete) all storage structures created by setup(). This will delete all semantic data and
+	 * possibly leave the wiki uninitialised.
+	 */
+	abstract function drop($verbose = true);
 
 }
 

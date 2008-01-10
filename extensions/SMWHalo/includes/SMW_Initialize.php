@@ -532,7 +532,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 
 			foreach ($specsTocheck as $type) {
 				$oldvalues = $oldstore->getSpecialValues($title, $type); //old values , array containing strings
-				$currentvalues = SMWFactbox :: $semdata->getSpecialValues($type); //current values, array containing title objects for attributes or data value objects for the rest
+				$currentvalues = SMWFactbox :: $semdata->getPropertyValues($type); //current values, array containing title objects for attributes or data value objects for the rest
 
 				/**
 				 * TODO This seems kind of wrong, still. I guess there is an easier to way to check

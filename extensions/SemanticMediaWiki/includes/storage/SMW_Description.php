@@ -11,12 +11,13 @@ define('SMW_CMP_EQ',1); // matches only datavalues that are equal to the given v
 define('SMW_CMP_LEQ',2); // matches only datavalues that are less or equal than the given value
 define('SMW_CMP_GEQ',3); // matches only datavalues that are greater or equal to the given value
 define('SMW_CMP_NEQ',4); // matches only datavalues that are unequal to the given value
-define('SMW_CMP_CLS',5); // unsharp matches.
+define('SMW_CMP_LIKE',5); // matches only datavalues that are LIKE the given value
 
 // print request
 define('SMW_PRINT_CATS', 0);  // print all direct cateories of the current element
 define('SMW_PRINT_PROP', 1);  // print all property values of a certain attribute of the current element
 define('SMW_PRINT_THIS', 2);  // print the current element
+define('SMW_PRINT_CCAT', 3);  // check whether current element is in given category
 
 
 /**
@@ -34,14 +35,17 @@ class SMWPrintRequest {
 	 * Create a print request.
 	 * @param $mode a constant defining what to printout
 	 * @param $label the string label to describe this printout
-	 * @param $title optional Title object that specifies the request (usually a relation or attribute)
+	 * @param $title optional Title object that specifies the request (usually some property)
 	 * @param $datavalue optional SMWDataValue container that sets parameters for printing data values (e.g. the unit)
 	 */
-	public function SMWPrintRequest($mode, $label, Title $title = NULL, $outputformat = '') {
+	public function SMWPrintRequest($mode, $label, $title = NULL, $outputformat = '') {
 		$this->m_mode = $mode;
 		$this->m_label = $label;
 		$this->m_title = $title;
 		$this->m_outputformat = $outputformat;
+		if ( ($mode == SMW_PRINT_CCAT) && ($outputformat === '') ) {
+			$this->m_outputformat = 'x'; // changed default for Boolean case
+		}
 	}
 	
 	public function getMode() {
@@ -63,7 +67,8 @@ class SMWPrintRequest {
 		}
 		switch ($this->m_mode) {
 			case SMW_PRINT_CATS: return htmlspecialchars($this->m_label); // TODO: link to Special:Categories
-			case SMW_PRINT_PROP: return $linker->makeLinkObj($this->m_title, htmlspecialchars($this->m_label));
+			case SMW_PRINT_PROP: case SMW_PRINT_CCAT:
+				return $linker->makeLinkObj($this->m_title, htmlspecialchars($this->m_label));
 			case SMW_PRINT_THIS: default: return htmlspecialchars($this->m_label);
 		}
 		
@@ -78,12 +83,18 @@ class SMWPrintRequest {
 		} else {
 			switch ($this->m_mode) {
 				case SMW_PRINT_CATS: return $this->m_label; // TODO: link to Special:Categories
-				case SMW_PRINT_PROP:
-					return '[[' . $this->m_title->getPrefixedText() . '|' . $this->m_label . ']]';
+				case SMW_PRINT_PROP: case SMW_PRINT_CCAT:
+					return '[[:' . $this->m_title->getPrefixedText() . '|' . $this->m_label . ']]';
 				case SMW_PRINT_THIS: default: return $this->m_label;
 			}
 		}
-		
+	}
+
+	public function getText($outputmode, $linker = NULL) {
+		switch ($outputmode) {
+			case SMW_OUTPUT_WIKI: return $this->getWikiText($linker);
+			case SMW_OUTPUT_HTML: default: return $this->getHTMLText($linker);
+		}
 	}
 
 	public function getTitle() {
@@ -116,6 +127,40 @@ class SMWPrintRequest {
 		}
 		$hash .= $this->m_outputformat . ':';
 		return $hash;
+	}
+
+	/**
+	 * Serialise this object like print requests given in #ask.
+	 */
+	public function getSerialisation() {
+		/// TODO: do not use "= label" if label is the default anyway
+		switch ($this->m_mode) {
+			case SMW_PRINT_CATS:
+				global $wgContLang;
+				$catlabel = $wgContLang->getNSText(NS_CATEGORY);
+				$result = '?' . $catlabel;
+				if ($this->m_label != $catlabel) {
+					$result .= '=' . $this->m_label;
+				}
+				return $result;
+			case SMW_PRINT_PROP: case SMW_PRINT_CCAT:
+				if ($this->m_mode == SMW_PRINT_CCAT) {
+					$result = '?' . $this->m_title->getPrefixedText();
+					if ( $this->m_outputformat != 'x' ) {
+						$result .= '#' . $this->m_outputformat;
+					}
+				} else {
+					$result = '?' . $this->m_title->getText();
+					if ( $this->m_outputformat != '' ) {
+						$result .= '#' . $this->m_outputformat;
+					}
+				}
+				if ( $this->m_title->getText() != $this->m_label ) {
+					$result .= '=' . $this->m_label;
+				}
+				return $result;
+			case SMW_PRINT_THIS: default: return ''; // no current serialisation
+		}
 	}
 }
 
@@ -299,51 +344,6 @@ class SMWClassDescription extends SMWDescription {
 }
 
 /**
- * class representing unsharp matches ov datavalues. The amount of "unsharpness" is held in the
- * $m_tolerance variable and is set when calling the constructor.
- */
-
-class SMWNearValueDescription extends SMWDescription {
-	protected $m_datavalue;
-	protected $m_comparator;
-	protected $m_tolerance;
-
-	public function SMWNearValueDescription(SMWDataValue $datavalue, $tolerance) {
-		$this->m_datavalue = $datavalue;
-		$this->m_tolerance = $tolerance;
-		$this->m_comparator = SMW_CMP_CLS;		// fixed comparator
-	}
-
-	public function getDataValue() {
-		return $this->m_datavalue;
-	}
-
-	public function getTolerance() {
-		return $this->m_tolerance;
-	}
-
-	public function getComparator() {
-		return $this->m_comparator;
-	}
-
-	public function getQueryString() {
-		if ($this->m_datavalue !== NULL) {
-			return '~' . $this->m_datavalue->getWikiValue();
-		} else {
-			return '+';
-		}
-	}
-
-	public function isSingleton() {
-		return false;
-	}
-
-	public function getSize() {
-		return 1;
-	}
-}
-
-/**
  * Description of all pages within a given wiki namespace,
  * given by a numerical constant.
  * Corresponds to a class restriction with a special class
@@ -407,13 +407,13 @@ class SMWValueDescription extends SMWDescription {
 				case SMW_CMP_GEQ:
 					$comparator = '>';
 				break;
-				case SMW_CMP_NEQ:
+				case SMW_CMP_NEQ: 
 					$comparator = '!'; // not supported yet?
 				break;
-				case SMW_CMP_CLS:
-					$comparator = 'cls'; //TODO (save actual tolerance in variabel!)
+				case SMW_CMP_LIKE: 
+					$comparator = '%'; // not supported yet?
 				break;
-				default: case SMW_CMP_EQ:
+				default: case SMW_CMP_EQ: 
 					$comparator = '';
 				break;
 			}

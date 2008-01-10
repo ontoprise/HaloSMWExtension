@@ -10,18 +10,23 @@ class SMW_LanguageEs extends SMW_Language {
 
 protected $m_ContentMessages = array(
 	'smw_edithelp' => 'Ayuda a la redacción de relaciones y atributos',
-	'smw_helppage' => 'Relaciones y atributos',
 	'smw_viewasrdf' => 'Ver como RDF',
 	'smw_finallistconjunct' => ' y',					//utilizado en "A, B, y C"
 	'smw_factbox_head' => 'Hechos relativos a à $1 — Búsqueda de páginas similares con <span class="smwsearchicon">+</span>.',
-	'smw_spec_head' => 'Propiedades especiales',
+	'smw_isspecprop' => 'This property is a special property in this wiki.', // TODO Translate
+	'smw_isknowntype' => 'This type is among the standard datatypes of this wiki.', // TODO Translate
+	'smw_isaliastype' => 'This type is an alias for the datatype “$1”.', // TODO Translate
+	'smw_isnotype' => 'This type “$1” is not a standard datatype in the wiki, and has not been given a user definition either.', // TODO Translate
 	/*URIs that should not be used in objects in cases where users can provide URIs */
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",					// http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#
 	'smw_baduri' => 'Lo sentimos. Las URIs del dominio $1 no están disponibles en este emplazamiento',
+	// Link to RSS feeds
+	'smw_rss_link' => 'RSS', // TODO: translate (default text for linking to semantic RSS feeds)
 	/*Messages and strings for inline queries*/
-	'smw_iq_disabled' => "<span class='smwwarning'>Lo sentimos. Las búsquedas en los artículos de este wiki no están autorizadas</span>",
+	'smw_iq_disabled' => "Lo sentimos. Las búsquedas en los artículos de este wiki no están autorizadas.",
 	'smw_iq_moreresults' => '&hellip; siguientes resultados',
-	'smw_iq_nojs' => 'Use un navegador con JavaScript habilitado para ver este elemento, o directamente <a href="$1">vea la lista de resultados</a>.',
+	'smw_iq_nojs' => 'Use un navegador con JavaScript habilitado para ver este elemento.',
+	'smw_iq_altresults' => 'Browse the result list directly.', // available link when JS is disabled //TODO: translate
 	/*Messages and strings for ontology resued (import) */
 	'smw_unknown_importns' => 'Ninguna función de importación está disponible para el espacio de nombres "$1".',
 	'smw_nonright_importtype' => 'El elemento "$1" no puede ser empleado más que para los artículos del espacio de nombres "$2".',
@@ -30,31 +35,24 @@ protected $m_ContentMessages = array(
 	/*Messages and strings for basic datatype processing*/
 	'smw_decseparator' => ',',
 	'smw_kiloseparator' => '.',
+	'smw_notitle' => '“$1” cannot be used as a page name in this wiki.', // TODO Translate
 	'smw_unknowntype' => 'El tipo de datos "$1" no soportado ha sido devuelto al atributo.',
-	'smw_nomanytypes' => 'Demasiados tipos de datos han sido asignados al atributo.',
+	'smw_manytypes' => 'Demasiados tipos de datos han sido asignados al atributo.',
 	'smw_emptystring' => 'No se aceptan cadenas vacías.',
 	'smw_maxstring' => 'La representación de la cadena $1 es demasiado grande para este sitio.',
-	'smw_nopossiblevalues' => 'Los posibles valores para este atributo no están enumerados',
 	'smw_notinenum' => '"$1" no esta en la lista de posibles valores ($2) para este atributo.',
 	'smw_noboolean' => '"$1" no es reconocido como un valor booleano (verdadero/falso).',
-	'smw_true_words' => 't,si,s',
-	'smw_false_words' => 'f,no,n',
-	'smw_nointeger' => '"$1" no es un número entero.',
-	'smw_nofloat' => '"$1" no es un número con coma flotante.',
+	'smw_true_words' => 'verdadero,t,si,s,true',
+	'smw_false_words' => 'falso,f,no,n,false',
+	'smw_nofloat' => '"$1" no es un número.',
 	'smw_infinite' => 'El número $1 es demasiado largo.',
 	'smw_infinite_unit' => 'La conversión en la unidad $1 es imposible : el número es demasiado largo.',
 	// Currently unused, floats silently store units.  'smw_unexpectedunit' => 'Este atributo no soporta ninguna conversión de unidad',
 	'smw_unsupportedprefix' => 'prefijos ("$1") no esta soportados actualmente',
 	'smw_unsupportedunit' => 'La conversión de la unidad "$1" no está soportada',
-	/*Messages for geo coordinates parsing*/
-	'smw_err_latitude' => 'Las indicaciones de latitud (N, S) deben estar comprendidas entre 0 et 90. "$1" no se encuentra dentro de estos límites !',
-	'smw_err_longitude' => 'Las indicaciones de longitud (E, O) deben estar comprendidas entre 0 y 180. "$1" no se encuentra dentro de estos límites !',
-	'smw_err_noDirection' => 'Algo no funciona con la indicación "$1".',
-	'smw_err_parsingLatLong' => 'Algo no funciona con la indicación "$1". Se espera algo con la forma "1°2′3.4′′O" o como mínimo algo parecido !',
-	'smw_err_wrongSyntax' => 'Algo no funciona con la indicación "$1". Se espera algo con la forma "1°2′3.4′′ O, 5°6′7.8′ N" o como mínimo algo parecido !',
-	'smw_err_sepSyntax' => 'La expresión "$1" parece ser correcta, pero los valores de la latitud y de la longitud deben ser separados por signos como "," o ";".',
-	'smw_err_notBothGiven' => 'Se debe dar un valor para la latitud (N, S) <i>y</i> la longitud (E, O).',
-	/* additionals ... */
+	// Messages for geo coordinates parsing
+	'smw_lonely_unit' => 'No number found before the symbol “$1”.', // $1 is something like ° TODO Translate
+	'smw_bad_latlong' => 'Latitude and longitude must be given only once, and with valid coordinates.', // TODO Translate
 	'smw_label_latitude' => 'Latitud :',
 	'smw_label_longitude' => 'Longitud :',
 	'smw_abb_north' => 'N',
@@ -70,13 +68,13 @@ protected $m_ContentMessages = array(
 	'smw_noclosingbrackets' => 'Some use of “[&#x005B;” in your query was not closed by a matching “]]”.',
 	'smw_misplacedsymbol' => 'The symbol “$1” was used in a place where it is not useful.',
 	'smw_unexpectedpart' => 'The part “$1” of the query was not understood. Results might not be as expected.',
-	'smw_emtpysubquery' => 'Some subquery has no valid condition.',
+	'smw_emptysubquery' => 'Some subquery has no valid condition.',
 	'smw_misplacedsubquery' => 'Some subquery was used in a place where no subqueries are allowed.',
 	'smw_valuesubquery' => 'Subqueries not supported for values of property “$1”.',
 	'smw_overprintoutlimit' => 'The query contains too many printout requests.',
 	'smw_badprintout' => 'Some print statement in the query was misshaped.',
 	'smw_badtitle' => 'Sorry, but “$1” is no valid page title.',
-	'smw_badqueryatom' => 'Some part “[#x005B;&hellip]]” of the query was not understood.',
+	'smw_badqueryatom' => 'Some part “[&#x005B;&hellip;]]” of the query was not understood.',
 	'smw_propvalueproblem' => 'The value of property “$1” was not understood.',
 	'smw_nodisjunctions' => 'Disjunctions in queries are not supported in this wiki and part of the query was dropped ($1).',
 	'smw_querytoolarge' => 'The following query conditions could not be considered due to the wikis restrictions in query size or depth: $1.'
@@ -89,6 +87,8 @@ protected $m_UserMessages = array(
 	'smw_typearticlecount' => 'Mostrando $1 atributos usando este tipo.',
 	'smw_attribute_header' => 'Paginas usando el atributo “$1”',
 	'smw_attributearticlecount' => '<p>Mostrando $1 páginas usando este atributo.</p>',
+	// Messages used in RSS feeds
+	'smw_rss_description' => '$1 RSS feed', // TODO: translate, used as default semantic RSS-feed description
 	/*Messages for Export RDF Special*/
 	'exportrdf' => 'Exportar el artículo como RDF', //name of this special
 	'smw_exportrdf_docu' => '<p> En esta página, las partes de contenido de un artículo pueden ser exportadas a formato RDF. Introduzca el nombre de las páginas deseadas en el cuadro de texto que se encuentra debajo, <i>un nombre por línea </i>.<p/>',
@@ -102,7 +102,6 @@ protected $m_UserMessages = array(
 	'smw_propertylackspage' => 'All properties should be described by a page!', //TODO: translate
 	'smw_propertylackstype' => 'No type was specified for this property (assuming type $1 for now).', //TODO: translate
 	'smw_propertyhardlyused' => 'This property is hardly used within the wiki!', //TODO: translate
-	'smw_propertyspecial' => 'This is a special property with a reserved meaning in the wiki.', // TODO: translate
 	// Messages for Unused Properties Special
 	'unusedproperties' => 'Unused Properties', //TODO: translate
 	'smw_unusedproperties_docu' => 'The following properties exist although no other page makes use of them.', //TODO: translate
@@ -134,15 +133,25 @@ protected $m_UserMessages = array(
 	'tooltip-purge' => 'Volver a actualizar todas las búsquedas y borradores de esta página.',
 	'purge' => 'Volver a actualizar',
 	/*Messages for Import Ontology Special*/
+	// Messages for Import Ontology Special
 	'ontologyimport' => 'Importar la ontología',
-	'smw_ontologyimport_docu' => 'Esta página especial permite importar datos de una ontología externa. Dicha ontología debe estar en un formato RDF simplificado. Información adicional disponible en <a href="http://wiki.ontoworld.org/index.php/Help:Ontology_import">Documentación relativa a la importación de ontologías en lengua inglesa.',
-	'smw_ontologyimport_action' => 'Importar',
-	'smw_ontologyimport_return' => 'Volver a <a href="$1">Importar la ontología</a>.',	//Différence avec la version anglaise
+	'smw_oi_docu' => 'Esta página especial permite importar datos de una ontología externa. Dicha ontología debe estar en un formato RDF simplificado. Información adicional disponible en <a href="http://wiki.ontoworld.org/index.php/Help:Ontology_import">Documentación relativa a la importación de ontologías en lengua inglesa.',
+	'smw_oi_action' => 'Importar',
+	'smw_oi_return' => 'Volver a <a href="$1">Importar la ontología</a>.',	//Différence avec la version anglaise
+	'smw_oi_noontology' => 'No ontology supplied, or could not load ontology.', // TODO Translate
+	'smw_oi_select' => 'Please select the statements to import, and then click the import button.', // TODO Translate
+	'smw_oi_textforall' => 'Header text to add to all imports (may be empty):', // TODO Translate
+	'smw_oi_selectall' => 'Select or unselect all statements', // TODO Translate
+	'smw_oi_statementsabout' => 'Statements about', // TODO Translate
+	'smw_oi_mapto' => 'Map entity to', // TODO Translate
+	'smw_oi_comment' => 'Add the following text:', // TODO Translate
+	'smw_oi_thisissubcategoryof' => 'A subcategory of', // TODO Translate
+	'smw_oi_thishascategory' => 'Is part of', // TODO Translate
+	'smw_oi_importedfromontology' => 'Import from ontology', // TODO Translate
 	/*Messages for (data)Types Special*/
-	'tipos' => 'Tipos de datos',
+	'types' => 'Tipos de datos',
 	'smw_types_docu' => 'Los tipos de datos siguientes pueden ser asignados a los atributos. Cada tipo de datos tiene su propio artículo, en el que puede figurar información más precisa.',
-	'smw_types_units' => 'Unidad estándar: $1; unidades soportadas: $2',
-	'smw_types_builtin' => 'Built-in types',
+	'smw_typeunits' => 'Units of measurement of type “$1”: $2', // TODO: Translate
 	/*Messages for SemanticStatistics Special*/
 	'semanticstatistics' => 'Semantic Statistics', // TODO translate
 	'smw_semstats_text' => 'This wiki contains <b>$1</b> property values for a total of <b>$2</b> different <a href="$3">properties</a>. <b>$4</b> properties have an own page, and the intended datatype is specified for <b>$5</b> of those. Some of the existing properties might by <a href="$6">unused properties</a>. Properties that still lack a page are found on the <a href="$7">list of wanted properties</a>.', // TODO translate
@@ -154,12 +163,16 @@ protected $m_UserMessages = array(
 	'smw_uri_doc' => '<p>El traductor de URI implementa <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">W3C TAG finding on httpRange-14</a>. Esto se preocupa de cosas que los humanos no lo hacen en los sitios web..</p>',
 	/*Messages for ask Special*/
 	'ask' => 'Búsqueda semántica',
-	'smw_ask_docu' => '<p>Buscar páginas introduciendo una consulta en el campo de búsqueda de abajo. Más información es mostrada en la <a href="$1">página de ayuda para búsqueda semántica</a>.</p>',
 	'smw_ask_doculink' => 'Búsqueda semántica',
 	'smw_ask_sortby' => 'Ordenar por columna',
 	'smw_ask_ascorder' => 'Ascendente',
 	'smw_ask_descorder' => 'Descendente',
 	'smw_ask_submit' => 'Buscar resultados',
+	'smw_ask_editquery' => '[Edit query]', // TODO: translate
+	'smw_ask_hidequery' => 'Hide query', // TODO: translate
+	'smw_ask_help' => 'Querying help', // TODO: translate
+	'smw_ask_queryhead' => 'Query', // TODO: translate
+	'smw_ask_printhead' => 'Additional printouts (optional)', // TODO: translate
 	// Messages for the search by property special
 	'searchbyproperty' => 'Buscar por atributo',
 	'smw_sbv_docu' => '<p>Buscar por todas las páginas que tiene un atributo y valor dado.</p>',
@@ -191,10 +204,8 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Page', // name of page datatype  //TODO translate
 	'_str' => 'Cadena de caracteres',  // name of the string type
 	'_txt' => 'Texto',  // name of the text type (very long strings)
-	'_enu' => 'Enumeración',  // name of the enum type
-	//'_boo' => 'Booleano',  // name of the boolean type
-	'_int' => 'Número entero',  // name of the int type
-	'_flt' => 'Número con coma',  // name of the floating point type
+	'_boo' => 'Booleano',  // name of the boolean type
+	'_num' => 'Número', // name for the datatype of numbers
 	'_geo' => 'Coordenadas geográficas', // name of the geocoord type
 	'_tem' => 'Temperatura',  // name of the temperature type
 	'_dat' => 'Fecha',  // name of the datetime (calendar) type
@@ -205,12 +216,15 @@ protected $m_DatatypeLabels = array(
 
 protected $m_DatatypeAliases = array(
 	'URI'                   => '_uri',
+	'Número entero'         => '_num',
+	'Número con coma'       => '_num',
+	'Enumeración'           => '_str',
 	// support English aliases:
 	'Page'                  => '_wpg',
 	'String'                => '_str',
 	'Text'                  => '_txt',
-	'Integer'               => '_int',
-	'Float'                 => '_flt',
+	'Boolean'               => '_boo',
+	'Number'                => '_num',
 	'Geographic coordinate' => '_geo',
 	'Temperature'           => '_tem',
 	'Date'                  => '_dat',
@@ -223,8 +237,7 @@ protected $m_SpecialProperties = array(
 	SMW_SP_HAS_TYPE  => 'Tiene tipo de datos',
 	SMW_SP_HAS_URI   => 'URI equivalente',
 	SMW_SP_SUBPROPERTY_OF => 'Subproperty of', // TODO: translate
-	SMW_SP_MAIN_DISPLAY_UNIT => 'Unidad de medida principal para la visualización',
-	SMW_SP_DISPLAY_UNIT => 'Unidad de medida',
+	SMW_SP_DISPLAY_UNITS => 'Unidad de medida', // TODO: should be plural now ("units"), singluar stays alias
 	SMW_SP_IMPORTED_FROM => 'Importado de',
 	SMW_SP_CONVERSION_FACTOR => 'Corresponde a',
 	SMW_SP_SERVICE_LINK => 'Provee servicio',
@@ -232,12 +245,12 @@ protected $m_SpecialProperties = array(
 );
 
 protected $m_SpecialPropertyAliases = array(
+	'Unidad de medida'  => SMW_SP_DISPLAY_UNITS,
 	// support English aliases for special properties
 	'Has type'          => SMW_SP_HAS_TYPE,
 	'Equivalent URI'    => SMW_SP_HAS_URI,
 	'Subproperty of'    => SMW_SP_SUBPROPERTY_OF,
-	'Main display unit' => SMW_SP_MAIN_DISPLAY_UNIT,
-	'Display unit'      => SMW_SP_DISPLAY_UNIT,
+	'Display units'     => SMW_SP_DISPLAY_UNITS,
 	'Imported from'     => SMW_SP_IMPORTED_FROM,
 	'Corresponds to'    => SMW_SP_CONVERSION_FACTOR,
 	'Provides service'  => SMW_SP_SERVICE_LINK,

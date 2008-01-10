@@ -18,21 +18,22 @@ include_once($smwgIP . '/includes/SMW_SemanticData.php');
 class SMWFactbox {
 
 	/**
-	 * The actual contained for the semantic annotations. Public, since
-	 * it is ref-passed to othes for further processing.
+	 * The actual container for the semantic annotations. Public, since
+	 * it is ref-passed to others for further processing.
 	 */
 	static $semdata;
 	/**
-	 * The skin that is to be used for output functions.
+	 * True if the respective article is newly created. This affects some
+	 * storage operations.
 	 */
-	static protected $skin;
+	static protected $m_new;
 
 	/**
 	 * Initialisation method. Must be called before anything else happens.
 	 */
-	static function initStorage($title, $skin) {
+	static function initStorage($title) {
 		SMWFactbox::$semdata = new SMWSemanticData($title);
-		SMWFactbox::$skin = $skin;
+		SMWFactbox::$m_new   = false;
 	}
 
 	/**
@@ -45,45 +46,52 @@ class SMWFactbox {
 		}
 	}
 
+	/**
+	 * True if the respective article is newly created, but always false until
+	 * an article is actually saved.
+	 */
+	static function isNewArticle() {
+		return SMWFactbox::$m_new;
+	}
+
 //// Methods for adding data to the object
 
 	/**
-	 * This method adds a new attribute with the given value to the storage.
+	 * Called to state that the respective article was newly created. Not known until
+	 * an article is actually saved.
+	 */
+	static function setNewArticle() {
+		SMWFactbox::$m_new = true;
+	}
+
+	/**
+	 * This method adds a new property with the given value to the storage.
 	 * It returns an array which contains the result of the operation in
 	 * various formats.
 	 */
-	static function addProperty($propertyname, $value, $caption) {
+	static function addProperty($propertyname, $value, $caption, $storeannotation = true) {
 		wfProfileIn("SMWFactbox::addProperty (SMW)");
-		global $smwgContLang, $smwgStoreActive, $smwgIP;
+		global $smwgContLang, $smwgIP;
 		include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-		// See if this attribute is a special one like e.g. "Has unit"
+		// See if this property is a special one, such as e.g. "has type"
 		$propertyname = smwfNormalTitleText($propertyname); //slightly normalize label
 		$special = $smwgContLang->findSpecialPropertyID($propertyname);
 
 		switch ($special) {
-			case false: // normal attribute
+			case false: // normal property
 				$result = SMWDataValueFactory::newPropertyValue($propertyname,$value,$caption);
-				if ($smwgStoreActive) {
+				if ($storeannotation) {
 					SMWFactbox::$semdata->addPropertyValue($propertyname,$result);
 				}
 				wfProfileOut("SMWFactbox::addProperty (SMW)");
 				return $result;
 			case SMW_SP_IMPORTED_FROM: // this requires special handling
-				$result = SMWFactbox::addImportedDefinition($value,$caption);
+				$result = SMWFactbox::addImportedDefinition($value,$caption,$storeannotation);
 				wfProfileOut("SMWFactbox::addProperty (SMW)");
 				return $result;
-			default: // generic special attribute
-				if ( $special === SMW_SP_SERVICE_LINK ) { // do some custom formatting in this case
-					global $wgContLang;
-					$v = str_replace(' ', '_', $value); //normalize slightly since messages distinguish '_' and ' '
-					$result = SMWDataValueFactory::newSpecialValue($special,$v,$caption);
-					$v = $result->getXSDValue(); //possibly further sanitized, so let's be cautious
-					//$result->setProcessedValues($value,$v); //set user value back to the input version
-					//$result->setPrintoutString('[[' . $wgContLang->getNsText(NS_MEDIAWIKI) . ':smw_service_' . $v . "|$value]]");
-				} else { // standard processing
-					$result = SMWDataValueFactory::newSpecialValue($special,$value,$caption);
-				}
-				if ($smwgStoreActive) {
+			default: // generic special property
+				$result = SMWDataValueFactory::newSpecialValue($special,$value,$caption);
+				if ($storeannotation) {
 					SMWFactbox::$semdata->addSpecialValue($special,$result);
 				}
 				wfProfileOut("SMWFactbox::addProperty (SMW)");
@@ -96,12 +104,12 @@ class SMWFactbox {
 	 * article for representing an element from a whitelisted external
 	 * ontology element. It does various feasibility checks (typing etc.)
 	 * and returns a "virtual" value object that can be used for printing
-	 * in text. Although many attributes are added, not all are printed in
+	 * in text. Although many property values are added, not all are printed in
 	 * the factbox, since some do not have a translated name (and thus also
 	 * could not be specified directly).
 	 */
-	static private function addImportedDefinition($value,$caption) {
-		global $wgContLang, $smwgStoreActive;
+	static private function addImportedDefinition($value,$caption,$storeannotation) {
+		global $wgContLang;
 
 		list($onto_ns,$onto_section) = explode(':',$value,2);
 		$msglines = preg_split("([\n][\s]?)",wfMsgForContent("smw_import_$onto_ns")); // get the definition for "$namespace:$section"
@@ -110,7 +118,7 @@ class SMWFactbox {
 			/// TODO: use new Error DV
 			$datavalue = SMWDataValueFactory::newTypeIDValue('__err',$value,$caption);
 			$datavalue->addError(wfMsgForContent('smw_unknown_importns',$onto_ns));
-			if ($smwgStoreActive) {
+			if ($storeannotation) {
 				SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM,$datavalue);
 			}
 			return $datavalue;
@@ -164,13 +172,13 @@ class SMWFactbox {
 		if (NULL != $error) {
 			$datavalue = SMWDataValueFactory::newTypeIDValue('__err',$value,$caption);
 			$datavalue->addError($error);
-			if ($smwgStoreActive) {
+			if ($storeannotation) {
 				SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM, $datavalue);
 			}
 			return $datavalue;
 		}
 
-		if ($smwgStoreActive) {
+		if ($storeannotation) {
 			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_BASEURI,SMWDataValueFactory::newTypeIDValue('_str',$onto_uri));
 			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_NSID,SMWDataValueFactory::newTypeIDValue('_str',$onto_ns));
 			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_SECTION,SMWDataValueFactory::newTypeIDValue('_str',$onto_section));
@@ -180,7 +188,7 @@ class SMWFactbox {
 		}
 		// print the input (this property is usually not stored, see SMW_SQLStore.php)
 		$datavalue = SMWDataValueFactory::newTypeIDValue('_str',"[$onto_uri$onto_section $value] ($onto_name)",$caption);
-		if ($smwgStoreActive) {
+		if ($storeannotation) {
 			SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM, $datavalue);
 		}
 		return $datavalue;
@@ -223,7 +231,7 @@ class SMWFactbox {
 
 		smwfRequireHeadItem(SMW_HEADER_STYLE);
 		include_once($smwgIP . '/includes/SMW_Infolink.php');
-		$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . str_replace('%2F', '/', urlencode(SMWFactbox::$semdata->getSubject()->getPrefixedText())), 'rdflink');
+		$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . str_replace('%2F', '/', rawurlencode(SMWFactbox::$semdata->getSubject()->getPrefixedText())), 'rdflink');
 
 		$browselink = SMWInfolink::newBrowsingLink(SMWFactbox::$semdata->getSubject()->getText(), SMWFactbox::$semdata->getSubject()->getPrefixedText(), 'swmfactboxheadbrowse');
 		// The "\n" is to ensure that lists on the end of articles are terminated
@@ -235,30 +243,37 @@ class SMWFactbox {
 		         '<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' .
 		         '<table class="smwfacttable">' . "\n";
 		SMWFactbox::printProperties($text);
-		SMWFactbox::printSpecialProperties($text);
 		$text .= '</table></div>';
 		wfProfileOut("SMWFactbox::printFactbox (SMW)");
 	}
 
 	/**
-	 * This method prints attribute values at the bottom of an article.
+	 * This method prints (special) property values at the bottom of an article.
 	 */
 	static protected function printProperties(&$text) {
-		if (!SMWFactbox::$semdata->hasProperties()) {
+		if (!SMWFactbox::$semdata->hasProperties() && !SMWFactbox::$semdata->hasSpecialProperties()) {
 			return;
 		}
+		global $wgContLang;
 
-		//$text .= ' <tr><th class="atthead"></th><th class="atthead">' . wfMsgForContent('smw_att_head') . "</th></tr>\n";
+		foreach(SMWFactbox::$semdata->getProperties() as $key => $property) {
+			$text .= '<tr><td class="smwpropname">';
+			if ($property instanceof Title) {
+				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[\s]/','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
+				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
+			} else { // special property
+				if ($key{0} == '_') continue; // internal special property without label
+				smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+				$text .= '<tr><td class="smwspecname"><span class="smwttinline"><span class="smwbuiltin">[[' .
+				          $wgContLang->getNsText(SMW_NS_PROPERTY) . ':' . $key . '|' . $key .
+				          ']]</span><span class="smwttcontent">' . wfMsgForContent('smw_isspecprop') .
+				          '</span></span></td><td class="smwspecs">';
+			}
 
-		foreach(SMWFactbox::$semdata->getProperties() as $attribute) {
-			$attributeValueArray = SMWFactbox::$semdata->getPropertyValues($attribute);
-			$text .= '<tr><td class="smwattname">';
-			$text .= '   [[' . $attribute->getPrefixedText() . '|' . preg_replace('/[\s]/','&nbsp;',$attribute->getText(),2) . ']] </td><td class="smwatts">';
-			// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
-
-			$l = count($attributeValueArray);
+			$propvalues = SMWFactbox::$semdata->getPropertyValues($property);
+			$l = count($propvalues);
 			$i=0;
-			foreach ($attributeValueArray as $attributeValue) {
+			foreach ($propvalues as $propvalue) {
 				if ($i!=0) {
 					if ($i>$l-2) {
 						$text .= wfMsgForContent('smw_finallistconjunct') . ' ';
@@ -267,45 +282,9 @@ class SMWFactbox {
 					}
 				}
 				$i+=1;
-
-				$text .= $attributeValue->getLongWikiText(true);
-
-				$sep = '<!-- -->&nbsp;&nbsp;'; // the comment is needed to prevent MediaWiki from linking URL-strings together with the nbsps!
-				foreach ($attributeValue->getInfolinks() as $link) {
-					$text .= $sep . $link->getWikiText();
-					$sep = ' &nbsp;&nbsp;'; // allow breaking for longer lists of infolinks
-				}
+				$text .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
 			}
 			$text .= '</td></tr>';
-		}
-	}
-
-	/**
-	 * This method prints special properties at the bottom of an article.
-	 */
-	static protected function printSpecialProperties(&$text) {
-		if (SMWFactbox::$semdata->hasSpecialProperties()) {
-			$text .= ' <tr><th class="spechead"></th><th class="spechead">' . wfMsgForContent('smw_spec_head') . "</th></tr>\n";
-		} else {
-			return true;
-		}
-
-		global $smwgContLang, $wgContLang;
-		foreach(SMWFactbox::$semdata->getSpecialProperties() as $specialProperty) {
-			$valueArray = SMWFactbox::$semdata->getSpecialValues($specialProperty);
-			$specialPropertyName = $smwgContLang->findSpecialPropertyLabel($specialProperty);
-			if ($specialPropertyName !== false) { // only print specprops with an official name
-				foreach ($valueArray as $value) {
-// 					if ($value instanceof SMWDataValue) {
-// 						$vt = $value->getLongWikiText(true);
-// 					} elseif ($value instanceof Title) {
-// 						$vt = '[[' . $value->getPrefixedText() . ']]';
-// 					} else {
-// 						$vt = $value;
-// 					}
-					$text .= '<tr><td class="smwspecname">[[' . $wgContLang->getNsText(SMW_NS_PROPERTY) . ':' . $specialPropertyName . '|' . $specialPropertyName . ']]</td><td class="smwspecs">' . $value->getLongWikiText(true) . "</td></tr>\n";
-				}
-			}
 		}
 	}
 
@@ -316,13 +295,13 @@ class SMWFactbox {
 	 * for the current article.
 	 * @TODO: is $title still needed, since we now have SMWFactbox::$title? Could they differ significantly?
 	 */
-	static function storeData(&$t, $processSemantics) {
+	static function storeData($processSemantics) {
 		// clear data even if semantics are not processed for this namespace
 		// (this setting might have been changed, so that data still exists)
 		$title = SMWFactbox::$semdata->getSubject();
 		if ($processSemantics) {
-			smwfGetStore()->updateData(SMWFactbox::$semdata);
-		} else {
+			smwfGetStore()->updateData(SMWFactbox::$semdata, SMWFactbox::$m_new);
+		} elseif (!SMWFactbox::$m_new) {
 			smwfGetStore()->deleteSubject($title);
 		}
 	}

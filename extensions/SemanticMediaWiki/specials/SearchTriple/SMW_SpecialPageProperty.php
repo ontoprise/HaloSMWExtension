@@ -5,10 +5,8 @@
  * This special page for Semantic MediaWiki implements a
  * view on a object-relation pair, i.e. a page that shows
  * all the fillers of a property for a certain page.
- * This will be assumedly seldomly used.
- *
- * FIXME: Actually this is currently not used anywhere.
- * FIXME: The result-page browsing is broken, showing the last result on one page as the first resutl of the next.
+ * This is typically used for overflow results from other 
+ * dynamic output pages.
  */
 
 if (!defined('MEDIAWIKI')) die();
@@ -16,6 +14,9 @@ if (!defined('MEDIAWIKI')) die();
 global $IP;
 include_once( "$IP/includes/SpecialPage.php" );
 
+/**
+ * @note AUTOLOAD
+ */
 class SMWPageProperty extends SpecialPage {
 
 	/**
@@ -90,11 +91,14 @@ class SMWPageProperty extends SpecialPage {
 				$html .= wfMsg( 'smw_result_noresults' );
 			} else {
 				$html .= "<ul>\n";
+				$count = $limit+1;
 				foreach ($results as $result) {
-					$html .= '<li>' . $result->getShortHTMLText($skin);
+					$count -= 1;
+					if ($count < 1) continue;
+					$html .= '<li>' . $result->getLongHTMLText($skin); // do not show infolinks, the magnifier "+" is ambiguous with the browsing '+' for '_wpg' (see below)
 					if ($result->getTypeID() == '_wpg') {
-						$browselink = SMWInfolink::newBrowsingLink('+',$result->getPrefixedText());
-						$html .= $browselink->getHTML($skin);
+						$browselink = SMWInfolink::newBrowsingLink('+',$result->getLongWikiText());
+						$html .= ' &nbsp;' . $browselink->getHTML($skin);
 					}
 					$html .=  "</li> \n";
 				}

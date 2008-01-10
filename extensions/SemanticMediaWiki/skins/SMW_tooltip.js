@@ -13,6 +13,14 @@ var all_tt = []; // all visible tooltips
 
 var imagePath=wgScriptPath+"/extensions/SemanticMediaWiki/skins/images/";
 
+//dimensions of persistent tooltips
+var SMWTT_WIDTH_P=200;
+var SMWTT_HEIGHT_P=80;
+
+//dimensions of inline tooltips
+var SMWTT_WIDTH_I=150;
+var SMWTT_HEIGHT_I=50;
+
 /*register events for the tooltips*/
 function smw_tooltipInit() {
 	var anchs = document.getElementsByTagName("span");
@@ -48,7 +56,6 @@ function smw_makePersistentTooltip(a) {
 		}
 		//make content invisible
 		//done here and not in the css so that non-js clients can see it
-		//TODO: why not delete this span completely?
 		if(spans[i].className=="smwttcontent"){
 			spans[i].style.display="none";
 		}
@@ -78,7 +85,7 @@ function smw_showTooltipPersist(e) {
 	//As we need a reference to it to get the tooltip content we need to go up the dom-tree.
 	while(!(origin.className=="smwttactivepersist")){origin=origin.parentNode};
 
-	tt = BubbleTT.createBubbleForPoint(true,origin,x,y,200,80);
+	tt = BubbleTT.createBubbleForPoint(true,origin,x,y,SMWTT_WIDTH_P,SMWTT_HEIGHT_P);
 	all_tt.push(tt);
 	BubbleTT.fillBubble(tt, origin);
 
@@ -108,9 +115,10 @@ function smw_showTooltipInline(e) {
 	//As we need a reference to it to get the tooltip content we need to go up the dom-tree.
 	while(!(origin.className=="smwttactiveinline"))origin=origin.parentNode;
 	var doc = origin.ownerDocument;
-	tt = BubbleTT.createBubbleForPoint(false,origin,x,y,150,50);
+	tt = BubbleTT.createBubbleForPoint(false,origin,x,y,SMWTT_WIDTH_I,SMWTT_HEIGHT_I);
 	BubbleTT.fillBubble(tt, origin);
 }
+
 
 
 function _smw_hideAllTooltips() {
@@ -132,7 +140,7 @@ function smw_hideTooltip(){
 BubbleTT.getElementCoordinates = function(elmt) {
 	var left = 0;
 	var top = 0;
-		
+
 	if (elmt.nodeType != 1) {
 		elmt = elmt.parentNode;
 	}
@@ -354,7 +362,13 @@ BubbleTT.fillBubble = function(bubble,origin){
 	//get tooltip content 
 	spans=origin.getElementsByTagName("span");
 	for (i=0; i<spans.length; i++){
-		if(spans[i].className=="smwttcontent") div.innerHTML=spans[i].innerHTML;
+		/* "\n" and "<!--br-->" are replaced by "<br />" to support linebreaks 
+		 * in tooltips without corrupting the page for non js-clients.
+		 */
+		if(spans[i].className=="smwttcontent") {
+			div.innerHTML=spans[i].innerHTML.replace(/\n/g,"<br />");
+			div.innerHTML=spans[i].innerHTML.replace(/<!--br-->/g,"<br />");
+		}
 	}
 	bubble.content.appendChild(div);
 }
