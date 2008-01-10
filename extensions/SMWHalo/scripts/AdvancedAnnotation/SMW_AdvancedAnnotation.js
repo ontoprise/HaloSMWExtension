@@ -81,15 +81,22 @@ AdvancedAnnotation.prototype = {
 			return;
 		}
 		var annoSelection = this.getSel();
-		if (annoSelection.anchorNode == null) {
+		var sel = annoSelection.toString();
+//		window.console.log('>'+sel+"<\n");
+		if (annoSelection.anchorNode == null || sel == '') {
 			// nothing selected
 			annoSelection = null;
+//			window.console.log("Selection empty\n");
 		}
-		this.selection = annoSelection;
 		
+		var sameSelection = (this.selection != null
+		                     && sel == this.selection.toString());
+//		window.console.log("Same selection:"+sameSelection+"\n");
+		
+		this.selection = annoSelection;
 		var cba = this.canBeAnnotated(annoSelection);
 			
-		if (annoSelection && annoSelection != '' && !cba) {
+		if (annoSelection && !sameSelection && sel != '' && !cba) {
 			// a non empty selection can not be annotated
 			smwhgAnnotationHints.showMessageAndWikiText(
 				gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION'), "", 
@@ -98,7 +105,7 @@ AdvancedAnnotation.prototype = {
 				
 		if (cba && annoSelection != '') {
 			// store details of the selection
-			this.selectedText = annoSelection.toString();
+			this.selectedText = sel;
 			//trim selection
 			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
 			this.annotatedNode = annoSelection.anchorNode;
