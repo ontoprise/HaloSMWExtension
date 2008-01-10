@@ -483,7 +483,7 @@ function smwfGetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor) {
 		$botTitle = wfMsg($bot);
 		$result .= '<bot name="'.$bot.'" title="'.$botTitle.'">';
 		foreach ($issueArray as $is) {
-			$result .= '<issue>'.$is->getRepresentation().'</issue>';
+			$result .= '<issue>'.$is->getRepresentation(null, true).'</issue>';
 		}
 		$result .= '</bot>';
 	}
