@@ -61,7 +61,7 @@ $mediaWikiLocation = dirname(__FILE__) . '/../../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 // set servername, because it is not set properly in async mode (always localhost)
-global $wgServer;
+global $wgServer, $wgScriptPath;
 $wgServer = $servername;
 
 // include bots
@@ -96,7 +96,7 @@ require_once("SMW_GardeningLog.php");
  		echo $log;
  		if ($log != NULL && $log != '') {
  			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
- 			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[[".$glp->getNsText().":".$glp->getText()."|".$glp->getText()."]]");
+ 			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$wgServer$wgScriptPath/index.php/".$glp->getNsText().":".$glp->getText()."?bot=$botID ".$glp->getText()."]");
  			$log .= "\n[[category:GardeningLog]]";
  		}
  		// mark as finished
