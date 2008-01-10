@@ -176,7 +176,7 @@ class SMWH_AAMParser {
 		// Search for templates, template parameters and headings
 		$parts = preg_split('/(\{)|'.
 		                    '(\})|'.
-							'(\n)|'.
+							'(\n+)|'.
 		                    '(^======.*?======\s*)|'.
 							'(^=====.*?=====\s*)|'.
 		                    '(^====.*?====\s*)|'.
@@ -332,7 +332,15 @@ class SMWH_AAMParser {
 		$text = preg_replace('/(<p><br \/>\s*(<\/p>)?)?(<p>)?\s*\{templateend:(.*?)\}\s*(<\/p>)?/',
 		                     '<a type="templateend" id="$4_end"></a>', 
 		                     $text);
-			
+		// special handling for several newlines in the wiki text
+		$text = preg_replace('/\t\{wikiTextOffset=(\d*) obj="newline"}\n<\/p><p><br \/>((<\/p><p><br \/>)*)/',
+		                     '<a name="$1" type="wikiTextOffset" obj="newline"></a></p><p>$2',
+		                     $text);
+		// special handling for one newline in the wiki text
+		$text = preg_replace('/\t\{wikiTextOffset=(\d*) obj="newline"}\n<\/p><p>/',
+		                     ' <a name="$1" type="wikiTextOffset" obj="newline"></a>',
+		                     $text);
+		                     
 		// replace standalone occurrences of intermediate format
 		$text = preg_replace('/\s*\{wikiTextOffset=(\d*) obj="(.*?)"}/',
 		                     '<a name="$1" type="wikiTextOffset" obj="$2"></a>',

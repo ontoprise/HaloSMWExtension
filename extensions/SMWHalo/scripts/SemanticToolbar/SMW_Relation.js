@@ -206,6 +206,8 @@ createContextMenu: function(contextMenuContainer, value) {
 
 	if (!value) {
 		value = this.wtp.getSelection(true);
+		//replace newlines by spaces
+		value = value.replace(/\n/,' ');
 	}
 	
 	/*STARTLOG*/
