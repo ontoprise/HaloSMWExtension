@@ -250,7 +250,7 @@
 				$logTitle = Title::newFromDBkey($log[count($log)-1]);
 				$logArticle = new Article($logTitle);
 				if ($logArticle->exists()) {
-					$logArticle->doDelete("automatic deletion");
+					$logArticle->doDeleteArticle("automatic deletion");
 				} 
 			}
 		}
