@@ -79,11 +79,10 @@ protected $smwUserMessages = array(
 	'smw_category_schemainfo' => 'Schema information for category "$1"',
 	'smw_category_properties' => 'Properties',
 	'smw_category_properties_range' => 'Properties whose range is "$1"',
-	'smw_category_attributes' => 'Attributes',
+	
 	'smw_category_askforallinstances' => 'Ask for all instances of "$1" and for all instances of its subcategories',
 	'smw_category_queries' => 'Queries for categories',
-	'smw_category_attributes_range' => 'Attributes whose range is "$1".',
-	'smw_category_attributes_range_expl' => '(Error! Attributes must not have a category as range!)',
+	
 	'smw_category_nrna' => 'Pages with wrongly assigned domain "$1".',
 	'smw_category_nrna_expl' => 'These page have a domain hint but they are not a property.',
 	'smw_category_nrna_range' => 'Pages with wrongly assigned range "$1".',

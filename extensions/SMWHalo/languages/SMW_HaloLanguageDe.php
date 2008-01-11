@@ -71,7 +71,25 @@ protected $smwUserMessages = array(
 
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',
 	'smw_relationarticlecount' => '<p>Es werden $1 Seiten angezeigt, die diese Relation verwenden.</p>',
-
+	
+	'smw_subproperty_header' => 'Sub-Properties von "$1"',
+	'smw_subpropertyarticlecount' => '<p>Zeige $1 Sub-Properties.</p>',
+	
+	/*Messages for category pages*/
+	'smw_category_schemainfo' => 'Schema-Information für Kategorie "$1"',
+	'smw_category_properties' => 'Properties',
+	'smw_category_properties_range' => 'Properties mit Range: "$1"',
+	
+	'smw_category_askforallinstances' => 'Frag nach allen direkten und indirekten Instanzen von "$1"',
+	'smw_category_queries' => 'Queries für Kategorien',
+	
+	'smw_category_nrna' => 'Seiten mit falsch zugewiesener Domäne "$1".',
+	'smw_category_nrna_expl' => 'Diese Seite hat eine Domäne, ist aber kein Property',
+	'smw_category_nrna_range' => 'Seiten mit falsch zugewiesener Range "$1".',
+	'smw_category_nrna_range_expl' => 'Diese Seite hat eine Range, ist aber kein Property',
+	
+	'smw_exportrdf_all' => 'Exportiere alle semantischen Daten',
+	
 	/*Messages for Search Triple Special*/
 	'searchtriple' => 'Einfache semantische Suche', //name of this special
 	'smw_searchtriple_header' => '<h1>Suche nach Relationen und Attributen</h1>',
@@ -191,7 +209,8 @@ protected $smwUserMessages = array(
 	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf�gbar.',
 	'smw_gard_import_addfiles' => 'Weitere $2-Dateien k�nnen �ber $1 hinzugef�gt werden.',
 	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf�gbar.',
-
+	'smw_gard_issue_local' => 'dieser Artikel',
+	
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prüft auf Zyklen in der Taxonomie und finden Properties ohne Domäne und Wertebereich. Er prüft außerdem die korrekte Verwendung eines Properties auf der Instanz-Ebene.',
 	'smw_gardissue_domains_not_covariant' => 'Domäne $2 von $1 muss eine Subkategorie der Domäne des Super-Properties sein.',
@@ -217,11 +236,11 @@ protected $smwUserMessages = array(
 	'smw_gard_issue_missing_param' => 'Warnung: Fehlender Parameter $3 in n-ärem Property $2 in Artikel $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domäne von $1 passt nicht zur Wertbereichskategorie von $2.',
-	'smw_gardissue_wrong_target_value' => 'Artikel $1 benutzt Property $2 mit einer Instanz der falschen Kategorie: $3.',
-	'smw_gardissue_wrong_domain_value' => 'Artikel $1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
-	'smw_gardissue_too_low_card' => 'Artikel $1 benutzt Property $2 zu wenig.',
-	'smw_gardissue_too_high_card' => 'Artikel $1 benutzt Property $2 zu häufig.',
-	'smw_gardissue_wrong_unit' => 'Artikel $1 benutzt Property $2 mit falches Einheit $3.',
+	'smw_gardissue_wrong_target_value' => '$1 benutzt Property $2 mit einer Instanz der falschen Kategorie: $3.',
+	'smw_gardissue_wrong_domain_value' => '$1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
+	'smw_gardissue_too_low_card' => '$1 benutzt Property $2 zu wenig.',
+	'smw_gardissue_too_high_card' => '$1 benutzt Property $2 zu häufig.',
+	'smw_gardissue_wrong_unit' => '$1 benutzt Property $2 mit falches Einheit $3.',
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_issue_incompatible_entity' => 'Der Artikel $1 ist inkompatibel zu $2.',
 	'smw_gard_issue_incompatible_type' => 'Das Property $1 hat einen inkompatiblen Typ zum Property $2.',
@@ -246,7 +265,7 @@ protected $smwUserMessages = array(
 	'smw_gard_similaritybothelp' => 'Diese Bot findet Elemente der Knowledgebase, die möglicherweise redundant sein und vereinigt werden können. Wenn Sie einen Term eingeben wird das System Elemente suchen, die ihm ähnlich sind. Wenn Sie keinen Term eingeben versucht das System alle potentiellen Redundanzen zu finden.',
 	
 	'smw_gardissue_similar_schema_entity' => '$1 and $2 sind sich ähnlich.',
-	'smw_gard_similarannotation' => '$1 von Artikel $2 könnte fälschlicherweise als Annotation von $3 gemeint sein.',
+	'smw_gardissue_similar_annotation' => '$1 von Artikel $2 könnte fälschlicherweise als Annotation von $3 gemeint sein.',
 	'smw_gardissue_similar_term' => '$1 ist ähnlich zum Term $2',
 	'smw_gardissue_share_categories' => '$1 und $2 sind Element derselben Kategorie(n): $3',
 	'smw_gardissue_share_domains' => '$1 und $2 sind Element derselben Domäne(n): $3',
@@ -260,10 +279,10 @@ protected $smwUserMessages = array(
 	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Properties im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
 	'smw_gard_remove_undefined_categories' => 'Entferne Annotation undefinierter Kategorien',
 	
-	'smw_gard_property_undefined' => '$1 wird benutzt auf: $2',
-	'smw_gard_category_undefined' => '$1 wird benutzt auf: $2',
-	'smw_gard_relationtarget_undefined' => '$1 undefiniert und benutzt mit: $2',
-	'smw_gard_instances_without_category' => '$1',
+	'smw_gardissue_property_undefined' => '$1 wird benutzt auf: $2',
+	'smw_gardissue_category_undefined' => '$1 wird benutzt auf: $2',
+	'smw_gardissue_relationtarget_undefined' => '$1 undefiniert und benutzt mit: $2',
+	'smw_gardissue_instance_without_cat' => '$1',
 	
 	'smw_gardissue_class_undef_categories' => 'Undefinierte Kategorien',
 	'smw_gardissue_class_undef_properties' => 'Undefinierte Properties',
@@ -274,7 +293,7 @@ protected $smwUserMessages = array(
 	'smw_gard_missingannot_docu' => 'Dieser Bot identifiziert Seiten im Wiki, die noch nicht annotiert wurden.',
 	'smw_gard_missingannot_titlecontaining' => '(Optional) Nur Seiten deren Titel folgendes enthält',
 	'smw_gard_missingannot_restricttocategory' => 'Nur unterhalb folgender Kategorien suchen',
-
+	'smw_gardissue_notannotated_page' => '$1 hat keine Annotationen',
 	/* Anomalies */
 	'smw_gard_anomaly_checknumbersubcat' => 'Überprüfe Anzahl der Subkategorien',
 	'smw_gard_anomaly_checkcatleaves' => 'Prüfe auf Kategorie-Blätter',
@@ -325,7 +344,8 @@ protected $smwUserMessages = array(
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
 	'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',
-
+	'smw_gardissue_updatearticle' => 'Artikel $1 wurde neu geparst.',
+	
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
 	'smw_contextsensitivehelp' => 'Kontext Sensitive Hilfe',
