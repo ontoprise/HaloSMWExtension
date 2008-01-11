@@ -80,8 +80,8 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  	    	
  	    	$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
  	    	
- 	    	$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext);
- 	    	
+ 	    	$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
+ 	    	 	    	
  	    	// if there is a unit or possible values, show them. Otherwise show instances.
  	    	$result = $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
  	    	AutoCompletionRequester::logResult($result, $articleName);
@@ -263,19 +263,21 @@ class AutoCompletionRequester {
 	/**
 	 * Get attribute values (units and enums)
 	 */
-	public static function getPropertyValueProposals($userContext) {
+	public static function getPropertyValueProposals($userContext, $userInput) {
 			
  	    	if (stripos($userContext,":=") > 0) {
- 	    		$attributeText = trim(substr($userContext, 2, stripos($userContext,":=")-2));
+ 	    		$propertyText = trim(substr($userContext, 2, stripos($userContext,":=")-2));
  	    	} else {
- 	    		$attributeText = trim(substr($userContext, 2, stripos($userContext,"::")-2));
+ 	    		$propertyText = trim(substr($userContext, 2, stripos($userContext,"::")-2));
  	    	}
  	    	// try units first, then possible values
- 	    	$unitsList = SMWTypeHandlerFactory::getUnitsList($attributeText);
+ 	    	$property = Title::newFromText($propertyText, SMW_NS_PROPERTY);
+ 	    	$unitsList = smwfGetAutoCompletionStore()->getUnits($property, $userInput);
+ 	    	
  	    	if (count($unitsList) > 0) {
  	    		$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($unitsList);
  	    	} else {
- 	    		$possibleValues = SMWTypeHandlerFactory::getPossibleValues($attributeText);
+ 	    		$possibleValues = smwfGetAutoCompletionStore()->getPossibleValues($property);
  	    		$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($possibleValues);
  	    	}
  	    	return $attvalues;
@@ -511,6 +513,25 @@ class TemplateReader {
 }
 
 abstract class AutoCompletionStorage {
+	
+	/**
+	 * Returns units which matches the types of the given property and the substring
+	 * 
+	 * @param $property
+	 * @param $substring
+	 * 
+	 * @return array of strings
+	 */
+	public abstract function getUnits(Title $property, $substring);
+	
+	/**
+	 * Returns possible values for a given property.
+	 * 
+	 * @param $property 
+	 * @return array of strings
+	 */
+	public abstract function getPossibleValues(Title $property);
+	
 	/**
  	* Retrieves pages matching the requestoptions and the given namespaces
  	* 
@@ -542,6 +563,49 @@ abstract class AutoCompletionStorage {
 }
 
 class AutoCompletionStorageSQL extends AutoCompletionStorage {
+	
+	public function getUnits(Title $property, $substring) {
+		$all_units = array();
+		$types = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+		foreach($types as $t) {
+			if ($t->isBuiltIn()) continue;
+			$subtypes = explode(";", $t->getXSDValue());
+			foreach($subtypes as $st) {
+				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
+				$units = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
+				$units_si = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
+				$all_units = array_merge($all_units, $units, $units_si);
+			}
+		}
+		$result = array();
+		preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $substring, $matches);
+		$substring = strtolower($matches[5]);
+		foreach($all_units as $u) {
+			$s_units = explode(",", $u);
+			foreach($s_units as $su) {
+				if ($substring != '') {
+					if (strpos(strtolower($su), $substring) > 0) {
+						preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $su, $matches);
+						if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
+					}
+				} else {
+					preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $su, $matches);
+					if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
+				}
+					
+			}
+		}
+		return array_unique($result);	
+	}
+	
+	public function getPossibleValues(Title $property) {
+		$poss_values = smwfGetStore()->getSpecialValues($property, SMW_SP_POSSIBLE_VALUE);
+		$result = array();
+		foreach($poss_values as $v) {
+			$result[] = $v->getXSDValue();
+		}		
+		return $result;
+	}
 	
 	public function getPages($match, $namespaces = NULL, $requestoptions = NULL) {
 		$result = "";
