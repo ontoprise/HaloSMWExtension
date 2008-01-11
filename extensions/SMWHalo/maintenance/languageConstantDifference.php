@@ -28,22 +28,27 @@ $lang2 = "SMW_HaloLanguage".$argv[2];
 $lang1Obj = new $lang1();
 $lang2Obj = new $lang2();
 
-print "SMW_HaloLanguage".$argv[1]." contains the following constants " .
-		"which "."SMW_HaloLanguage".$argv[2]." does not contain:\n";
+print "\nCompare SMW_HaloLanguage".$argv[1]." with SMW_HaloLanguage".$argv[2].":\n\n";
 
-print("Difference in content messages:\n\n");
+$contentDiff = false;
+print(" - Differences in content messages:\n\n");
 foreach($lang1Obj->getContentMsgArray() as $key => $value) {
 	if (!array_key_exists($key, $lang2Obj->getContentMsgArray())) {
-		print("\t'".$key."' => '".$value."',\n\n");
+		$contentDiff = true;
+		print("\t'".$key."' => '".$value."',\n");
 	}
 }
 
-print("Difference in user messages:\n\n");
+if (!$contentDiff) print "\tNone.\n";
+
+$userDiff = false;
+print(" - Differences in user messages:\n\n");
 foreach($lang1Obj->getUserMsgArray() as $key => $value) {
 	if (!array_key_exists($key, $lang2Obj->getUserMsgArray())) {
-		print("\t'".$key."' => '".$value."',\n\n");
+		$userDiff = true;
+		print("\t'".$key."' => '".$value."',\n");
 	}
 }
- 
- 
+if (!$userDiff) print "\tNone.\n"; 
+
 ?>
