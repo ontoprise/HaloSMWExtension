@@ -113,7 +113,7 @@ if($dbr->numRows( $res ) > 0) {
 			if ($newtext != NULL) {
 				$a->doEdit($newtext, $revision->getComment(), EDIT_UPDATE);
 				$wgParser->parse($newtext, $t, $options, true, true, $revision->getID());
-				SMWFactbox::storeData($title, true);
+				SMWFactbox::storeData(true);
 			}
 		}
 	}

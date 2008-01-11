@@ -1123,7 +1123,7 @@
 			
 			$a->doEdit($newtext, $rev->getComment(), EDIT_UPDATE);
 			$wgParser->parse($newtext, $title, $options, true, true, $rev->getID());
-			SMWFactbox::storeData($title, true);
+			SMWFactbox::storeData(true);
 			if ($verbose) echo "done!";
 		}
  	}
