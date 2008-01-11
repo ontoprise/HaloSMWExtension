@@ -230,7 +230,7 @@ function smwfGetGardeningIssueClasses($bot_id) {
 }
 
 function smwRegisterQueryResultEditor(&$parser, &$text, &$stripstate){
-	$parser->setHook( 'ask', 'smwAddQueryResultEditor' );
+	//$parser->setHook( 'ask', 'smwAddQueryResultEditor' );
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
