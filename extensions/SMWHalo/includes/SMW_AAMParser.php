@@ -177,12 +177,12 @@ class SMWH_AAMParser {
 		$parts = preg_split('/(\{)|'.
 		                    '(\})|'.
 							'(\n+)|'.
-		                    '(^======.*?======\s*)|'.
-							'(^=====.*?=====\s*)|'.
-		                    '(^====.*?====\s*)|'.
-		                    '(^===.*?===\s*)|'.
-		                    '(^==.*?==\s*)|'.
-		                    '(^=.*?=\s*)|'.
+		                    '(^======)|'.
+							'(^=====)|'.
+		                    '(^====)|'.
+		                    '(^===)|'.
+		                    '(^==)|'.
+		                    '(^=)|'.
 							'(\[{2,})|'.
 							'(\]\])|'.
 							'(\|)|'.
@@ -209,6 +209,7 @@ class SMWH_AAMParser {
 		$prevPart = null; // the part of the wiki text before the current part
 		$part0 = null;
 		$prefix = '';
+		$titleOpen = false; // true if a title (e.g. ==Title==) is parsed
 		for ($i = 0; $i < $numParts; ++$i) {
 			$part = $parts[$i];
 			$len = mb_strlen($part, "UTF-8");
@@ -275,6 +276,7 @@ class SMWH_AAMParser {
 						    || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
 						    || $part0{0} == "#") {
 							// title, empty line or enumeration found
+							
 							$obj = $part0{0};
 							$newline = "\n";
 							if ($obj == "\n") {
@@ -288,8 +290,19 @@ class SMWH_AAMParser {
 							    preg_match('/([:\*#\s]+)(.*)/', $part0, $listParts);
 								$markedText	.= $listParts[1]."\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'.$listParts[2];
 							} else {
-								$markedText .= "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'.$newline.$part0;
+								if ($titleOpen == true 
+								    && ($part0{0} == '=' || $part0{0} == "\n")) {
+									 // offset is not written for closing title
+									$markedText .= $part0;
+								} else {
+									$markedText .= "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}'.$newline.$part0;
+								}
 							}
+						    if ($part0{0} == '=') {
+						    	$titleOpen = true;
+						    } else if ($part0{0} == "\n") {
+						    	$titleOpen = false;
+						    }
 						} else if (strlen($part0) > 1 && $part0{0} == "<" && $part0{1} == "/") {
 							// closing tag found => write no offset
 							$markedText .= $part0;
@@ -502,10 +515,28 @@ class SMWH_AAMParser {
 			' <span id="anno$1w">'.
 			$linkDeco.
 			'</span>';
+
+		// remove annotations from table of contents
+		preg_match('/(<table id="toc".*?<\/table>)/sm', $wikiText, $toc);
+		if ($toc) {
+			$toc = $toc[1];
+			$toc = preg_replace('/(\.09)?\.7BwikiTextOffset.*?\.7D/sm', '', $toc);
+			$toc = preg_replace('/(\.7B|\{)(short)?annostart\d*(\.7D|\})/sm','',$toc);
+			$toc = preg_replace('/(\.7B|\{)(short)?annoend(\.7D|\})/sm', '', $toc);
+			$toc = preg_replace('/<a name.*?type="wikiTextOffset".*?<\/a>/sm', '', $toc);
+			$text = preg_replace('/(<table id="toc".*?<\/table>)/sm', $toc, $wikiText);
 			
+			$text = preg_replace('/(\.09)?\.7BwikiTextOffset.*?\.7D/sm', '', $text);
+			$text = preg_replace('/\.7B(short)?annostart\d*\.7D/sm', '', $text);
+			$text = preg_replace('/\.7B(short)?annoend\.7D/sm', '', $text);
+			
+		} else {
+			$text = $wikiText;
+		}
+									 
 		// decorate annotations
 		$text = preg_replace('/{annostart(\d*)}(.*?){annoend}/sm', $annoDeco,
-							 $wikiText);
+							 $text);
 		$text = preg_replace('/{shortannostart(\d*)}(.*?){shortannoend}/sm',
 							 $shortAnnoDeco, $text);
 		

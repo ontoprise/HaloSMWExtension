@@ -599,89 +599,7 @@ AdvancedAnnotation.prototype = {
 		this.annotationsChanged = true;
 	},
 
-	/**
-	 * Embraces the currently selected text with a <span> tag with the css style
-	 * <cssClass>.
-	 * @param int type
-	 * 		The selection is either AA_RELATION or AA_CATEGORY
-	 * @param string cssClass
-	 * 		Name of the css style that is added as class to the <span> tag.
-	 * @param int startPos
-	 * 		Wikitextoffset of the new annotation's start that has been created 
-	 * 		for the	selection.
-	 * @param int endPos
-	 * 		Wikitextoffset of the new annotation's end.
-	 */
-/*	markSelection: function(type, cssClass, startPos, endPos) {
-		if (!this.annotatedNode || this.selectedText === "") {
-			return;
-		}
-		
-		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
-		var annoDeco =
-			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
-			((type == AA_RELATION) 
-				? '<img src="' + imgPath + 'edit.gif"/>'
-				: "" ) +
-			'</a>' +
-			'<span id="anno' + this.annoCount +
-				'" class="' +cssClass +
-				'" type="annotationHighlight">' +
-				this.selectedText +
-			'</span>'+
-			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
-   			'<img src="' + imgPath + 'delete.png"/></a>';
-   		
-   		// add a wrapper span
-   		if (this.selectedText.length <= 20) {
-			annoDeco = '<span id="anno'+this.annoCount+'w" style="white-space:nowrap">'+
-						annoDeco +
-						'</span>';
-   		} else {
-			annoDeco = '<span id="anno'+this.annoCount+'w">'+
-						annoDeco +
-						'</span>';   			
-   		}
-   		
-   		var annoType = (type == AA_RELATION) 
-   						? 'annoType="relation"'
-   						: 'annoType="category"';
 
-		// add wiki text offset anchors around the highlight   						
-   		annoDeco = '<a type="wikiTextOffset" name="'+startPos+'" '+annoType+'></a>' 
-   		           + annoDeco
-   		           + '<a type="wikiTextOffset" name="'+endPos+'" '+annoType+'></a>';
-   		
-		var parentNode = this.annotatedNode.parentNode;
-		var node = this.annotatedNode; // node is probably a text node 
-		var origText = node.textContent;
-		if (origText.indexOf(this.selectedText) < 0) {
-			// node is not a text node i.e. it does not contain the selected
-			// text => the parent node should contain the selection
-			node = parentNode;
-			origText = node.innerHTML;
-			var newText = origText.replace(this.selectedText, annoDeco);
-			node.innerHTML = newText;
-		} else {
-			// find the selected text in the text node after the position specified
-			// by the selection
-			var newText = origText.substring(0, this.annoOffset);
-			newText += origText.substring(this.annoOffset)
-			                   .replace(this.selectedText, annoDeco);
-			// create a DOM structure for the text that is now surrounded by a <span>
-			newText = Object.toHTML(newText);
-			var range = parentNode.ownerDocument.createRange();
-			range.selectNode(parentNode);
-			newText.evalScripts.bind(newText).defer();
-			newText = range.createContextualFragment(newText.stripScripts());
-			// replace the original text node with the highlighted node
-			parentNode.replaceChild(newText, node);
-		}
-		// reset selection information
-		this.resetSelection();
-		this.annoCount++;
-	},
-*/	
 	/**
 	 * Resets the stored selection information.
 	 */
@@ -1035,7 +953,10 @@ AdvancedAnnotation.prototype = {
 			return null;
 		}
 		// There is a wiki text offset anchor before the wrapper span.
-		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
+//		var wtoAnchor = wrapper.previous('a[type="wikiTextOffset"]');
+		var wtoAnchor = this.searchBackwards(wrapper, 
+										     this.searchWtoAnchor.bind(this));
+		
 		var annotationStart = wtoAnchor.getAttribute("name")*1;
 		var type = wtoAnchor.getAttribute("annoType");
 		// Remove the annotation from the wiki text
@@ -1112,7 +1033,9 @@ AdvancedAnnotation.prototype = {
 			// do not remove the very first anchor
 			wtoAnchor.remove();
 		}
-		nextWtoAnchor.remove();
+		if (nextWtoAnchor) {
+			nextWtoAnchor.remove();
+		}
 		
 	},
 	
