@@ -206,9 +206,15 @@ class SMWH_AAMParser {
 		$ignoredLastToken = false;
 		$lastTokenWOT = false; // true, if the last token was an opening tag 
 		$numParts = count($parts);
+		$prevPart = null; // the part of the wiki text before the current part
+		$part0 = null;
+		$prefix = '';
 		for ($i = 0; $i < $numParts; ++$i) {
 			$part = $parts[$i];
 			$len = mb_strlen($part, "UTF-8");
+			if ($part0) {
+				$prevPart = $part0;
+			}
 			$part0 = mb_substr($wikiText, $pos, $len, "UTF-8");
 			
 			// Is the part a template?
@@ -275,8 +281,8 @@ class SMWH_AAMParser {
 								$obj = 'newline';
 								$newline = '';
 							}
-							if ($part0{0} == "*" 
-							    || $part0{0} == "#") {
+							if (($part0{0} == "*" || $part0{0} == "#")
+							    && ($prevPart == null || $prevPart{0} === "\n")) {
 							    // In lists, the wikitextoffset must no be 
 							    // immediately before the * or #
 							    preg_match('/([:\*#\s]+)(.*)/', $part0, $listParts);
@@ -296,6 +302,13 @@ class SMWH_AAMParser {
 								// write the wiki text offset only, if there are
 								// no braces at the beginning or end
 								$obj = 'text';
+								// conserve a space character at the beginning 
+								// of new a line
+								$prefix = (($part0{0} === ' '
+								            ||$part0{0} === ':') 
+								          && ($prevPart == null 
+								              || $prevPart{0} === "\n")) ? $part0{0} 
+								                                         : '';
 								if (strpos($part0, '<ask') === 0) $obj = 'ask';
 								else if (strpos($part0, '<nowiki>') === 0) $obj = 'nowiki';
 								else if (strpos($part0, '<pre>') === 0) $obj = 'pre';
@@ -303,11 +316,15 @@ class SMWH_AAMParser {
 									// write no wikitextoffset after opening tags like <nowiki>
 									$wto = ''; 
 								} else {
-									$wto = "\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}';
+									$wto = $prefix."\t{wikiTextOffset=".$pos.' obj="'.$obj.'"}';
 								}	
 								$lastTokenWOT = ($obj !== 'text');
 							}
-							$markedText .= $wto.$part0;
+							if (strlen($prefix) > 0) {
+								$markedText .= $wto.substr($part0, 1);
+							} else {
+								$markedText .= $wto.$part0;
+							}
 							$ignoredLastToken = $ignoreToken;
 						}
 					}
