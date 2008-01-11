@@ -1380,14 +1380,14 @@ function MatchCache() {
     this.getLookup = function(matchText, typeHint) {
     	if (typeHint == null) {
     		// use general cache
-        	if (generalCache[matchText]) {
+        	if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
            	 	return generalCache[matchText];
         	}
     	} else {
     		// use typeFiltered cache
     		var cache = typeFilteredCache[parseInt(typeHint)];
 			if (!cache) return null;
-			return cache[matchText];
+			return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
     	}
 
         return null;  // lookup failed
