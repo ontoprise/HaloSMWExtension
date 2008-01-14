@@ -87,7 +87,7 @@
  	 		$title_esc = htmlspecialchars($instance->getDBkey()); 
  	 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instance);
  			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
- 	 		$result .= "<instance title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+ 	 		$result .= "<instance title=\"".$title_esc."\" id=\"ID_$id$count\">$gi_issues</instance>";
  	 		$count++;
  	 	}
 	 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';

@@ -484,7 +484,7 @@
 		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
-		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+		$sql = DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 		// add properties which match and which are no redirects 
 		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_is_redirect = 0 AND page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')'); 
 		$sql = DBHelper::getSQLConditions($requestoptions,'p1.page_title','p1.page_title');
