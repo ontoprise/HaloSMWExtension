@@ -775,7 +775,8 @@ AutoCompleter.prototype = {
         var re2m = new RegExp("([ \"\>\<\-]+)(" + userInput + ")", "i");
         var re1 = new RegExp("([ \"\}\{\-]*)(" + userInput + ")", "gi");
         var re2 = new RegExp("([ \"\}\{\-]+)(" + userInput + ")", "gi");
-
+		var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
+		
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
             var displayMatches = (j < this.siw.MAX_MATCHES);
             var entry = pointerToCollectionToUse[i];
@@ -794,6 +795,14 @@ AutoCompleter.prototype = {
 
                 j++;
             } else if (mEntry.match(re1m) || mEntry.match(re2m)) {
+                if (displayMatches) {
+                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText(),
+                                                      mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType());
+                }
+
+                j++;
+            } else if (mEntry.match(reMeasure)) {
                 if (displayMatches) {
                     this.siw.matchCollection[j] = new SmartInputMatch(entry.getText(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
@@ -960,6 +969,7 @@ AutoCompleter.prototype = {
     insertTerm: function(addedValue, baseValue, type) {
          // replace underscore with blank
         addedValue = addedValue.replace(/_/g, " ");
+        
         var userContext = this.getUserContext();
 
         if (this.siw.customFloater) {
@@ -985,7 +995,8 @@ AutoCompleter.prototype = {
             this.currentIESelection.collapse(false);
 			this.currentIESelection.select();
             var userInput = this.getUserInputToMatch();
-
+			
+			userInput = this.removeNumberFromMeasure(userInput);
              // get TextRanges with text before and after user input
              // which is to be matched.
              // e.g. [[category:De]] would return:
@@ -1001,6 +1012,8 @@ AutoCompleter.prototype = {
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
             var userInput = this.getUserInputToMatch();
+            
+            userInput = this.removeNumberFromMeasure(userInput);
 
              // save scroll position
             var scrollTop = this.siw.inputBox.scrollTop;
@@ -1038,6 +1051,21 @@ AutoCompleter.prototype = {
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
+    },
+    
+    /**
+     *  Checks if added value has the form of a measure (= number + unit)
+     *  If that is the case, remove number from userinput
+     */
+    removeNumberFromMeasure: function(measure) {
+    	var result = measure;
+    	
+	    var reMeasure = new RegExp("[+-]?\d*(\.\d+([eE][+-]?\d*)?)?_+(.*)", "gi");
+	    if (result.match(reMeasure)) {
+	       	var reMresult = reMeasure.exec(result);
+	       	result = reMresult[3];
+	    }
+	    return result;
     },
 
 

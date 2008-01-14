@@ -566,11 +566,15 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	public function getUnits(Title $property, $substring) {
 		$all_units = array();
+		$substring = str_replace("_", " ",$substring);
+		
+		// get all types of a property (normally 1)
 		$types = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
 		foreach($types as $t) {
-			if ($t->isBuiltIn()) continue;
+			if ($t->isBuiltIn()) continue; // ignore builtin types, because they have no unit
 			$subtypes = explode(";", $t->getXSDValue());
 			foreach($subtypes as $st) {
+				// get all units registered for a given type
 				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
 				$units = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
 				$units_si = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
@@ -578,24 +582,31 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 			}
 		}
 		$result = array();
-		preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $substring, $matches);
+		
+		// regexp for a measure (=number + unit)
+		$measure = "/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/";
+		
+		// extract unit substring and ignore the number (if existing)
+		preg_match($measure, $substring, $matches);
 		$substring = strtolower($matches[5]);
+		
+		// collect all units which match the substring (if non empty, otherwise all)
 		foreach($all_units as $u) {
 			$s_units = explode(",", $u);
 			foreach($s_units as $su) {
 				if ($substring != '') {
 					if (strpos(strtolower($su), $substring) > 0) {
-						preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $su, $matches);
+						preg_match($measure, $su, $matches);
 						if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
 					}
 				} else {
-					preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/", $su, $matches);
+					preg_match($measure, $su, $matches);
 					if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
 				}
 					
 			}
 		}
-		return array_unique($result);	
+		return array_unique($result);	// make sure all units appear only once.
 	}
 	
 	public function getPossibleValues(Title $property) {
