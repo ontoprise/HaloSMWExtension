@@ -127,6 +127,11 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
  				//Inputfield 
  				'<td class="stb-input-col2 ' + this.id + '-input-col2">';
 
+	if (initialContent) {
+		initialContent = initialContent.escapeHTML();
+		initialContent = initialContent.replace(/"/g,"&quot;");
+	}
+	
  	if (deleteCallback){
 		//if deletable change classes and add button			
 		containercontent += 
