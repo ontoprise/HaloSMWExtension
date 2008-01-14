@@ -115,10 +115,19 @@ createContainerBody: function(attributes,containertype,headline){
  *		attributes which will be passed to the specific element
  * @param boolean visibility
  * 		if false the element will be collapsed initially
+ * @param boolean autoCompletion
+ * 		if <false>, the input field provides no auto completion. If <true> or
+ * 		undefined, auto completion is supported.
  */
  
-createInput: function(id, description, initialContent, deleteCallback, attributes ,visibility){
+createInput: function(id, description, initialContent, deleteCallback, attributes ,visibility, autoCompletion){
 	
+	var ac = "wickEnabled";
+	if (typeof autoCompletion == "boolean") {
+		if (autoCompletion == false) {
+			ac = "";
+		} 
+	}
 	var containercontent = '<table class="stb-table stb-input-table ' + this.id + '-table ' + this.id + '-input-table"' +
 			(visibility ? '' : 'style="display:none;"')  + 'id="' + this.id + '-table-' + id +'">' +
  			'<tr>' +
@@ -135,7 +144,7 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
  	if (deleteCallback){
 		//if deletable change classes and add button			
 		containercontent += 
-			'<input class="wickEnabled stb-delinput ' + this.id + '-delinput" ' +
+			'<input class="' + ac + ' stb-delinput ' + this.id + '-delinput" ' +
             'id="'+ id + '" ' +
             attributes + 
             ' type="text" ' +
@@ -150,7 +159,7 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
 			'/extensions/SMWHalo/skins/redcross.gif"/>';				 	
 	} else {
 		containercontent += 
-			'<input class="wickEnabled stb-input ' + this.id + '-input" ' +
+			'<input class="' + ac + ' stb-input ' + this.id + '-input" ' +
 			'id="'+ id + '" '+
 			attributes + 
 			' type="text" ' +

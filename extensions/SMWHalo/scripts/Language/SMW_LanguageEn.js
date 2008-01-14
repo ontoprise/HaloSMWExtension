@@ -49,6 +49,8 @@ var wgLanguageStrings = {
 	'MAX_CARD_MUST_NOT_BE_0'  : "(e)Max. cardinality must not be 0 or less!",
 	'SPECIFY_CARDINALITY'     : "(e)Please specify this cardinality!",
 	'MIN_CARD_INVALID'        : "(e)Min. cardinality must be smaller than max. cardinality!",
+	'ASSUME_CARDINALITY_0'    : "(i) Min. cardinality is assumed to be 0.",
+	'ASSUME_CARDINALITY_INF'  : "(i) Max. cardinality is assumed to be ∞.",
 	'DEFAULT_ROOT_CONCEPT'	  : "Default Root Concept",
 
 	// Namespaces
@@ -96,7 +98,7 @@ var wgLanguageStrings = {
 	'SYMMETRIC'               : 'Symmetric',
 	'RETRIEVING_DATATYPES'    : 'Retrieving data types...',
 	'TYPE'                    : 'Type:', //also used as namespace identifier with colon
-	'PROPERTY_PROPERTIES'     : "Property Properties",
+	'PROPERTY_PROPERTIES'     : "Property Characteristics",
 	'CATEGORY'                : "Category:",	//also used as namespace identifier with colon
 	'PROPERTY'                : "Property:",	//also used as namespace identifier with colon
 	'TEMPLATE'                : "Template:",	//also used as namespace identifier with colon

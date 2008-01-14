@@ -48,6 +48,8 @@ var wgLanguageStrings = {
 	'MAX_CARD_MUST_NOT_BE_0'  : "(e)Max. cardinality must not be 0 or less!",
 	'SPECIFY_CARDINALITY'     : "(e)Please specify this cardinality!",
 	'MIN_CARD_INVALID'        : "(e)Min. cardinality must be smaller than max. cardinality!",
+	'ASSUME_CARDINALITY_0'    : "(i) Cardinality is assumed to be 0.",
+	'ASSUME_CARDINALITY_INF'  : "(i) Cardinality is assumed to be ‚àû.",
 	'DEFAULT_ROOT_CONCEPT'	  : "Default Root Concept",
 
 	// Namespaces
@@ -145,16 +147,16 @@ var wgLanguageStrings = {
 	'OB_DELETE'	  			  : 'L&ouml;schen',
 	'OB_TITLE_EXISTS'		  : 'Seite existiert bereits',
 	'OB_ENTER_TITLE'		  : 'Seitennamen eingeben',
-	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie ausw‰hlen',
-	'OB_SELECT_PROPERTY'	  : 'Erst Property ausw‰hlen',
-	'OB_SELECT_INSTANCE'	  : 'Erst Instanz ausw‰hlen',
+	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie ausw√§hlen',
+	'OB_SELECT_PROPERTY'	  : 'Erst Property ausw√§hlen',
+	'OB_SELECT_INSTANCE'	  : 'Erst Instanz ausw√§hlen',
 	'OB_WRONG_MAXCARD'		  : 'Falsche Max-Kardinalit&auml;t',
 	'OB_WRONG_MINCARD'		  : 'Falsche Min-Kardinalit&auml;t',
 	'OB_CONFIRM_INSTANCE_DELETION' : 'Wollen Sie den Artikel wirklich l&ouml;schen?',
 	'SMW_OB_OPEN' 			  : '(&Ouml;ffne)',
 	'SMW_OB_EDIT' 		  	  : '(Editiere)',
 	'SMW_OB_ADDSOME'		  : '(F&uuml;ge hinzu)',
-	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde mˆglicherweise bereits behoben.',
+	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde m√∂glicherweise bereits behoben.',
 
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',

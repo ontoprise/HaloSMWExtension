@@ -233,10 +233,10 @@ createContent: function() {
 									  'smwChanged="(call:propToolBar.attrTypeChanged,call:propToolBar.enableWidgets)"' +
 									  SMW_PRP_NO_EMPTY_SELECTION));
 	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), minCard, '', 
-	                         SMW_PRP_CHECK_MAX_CARD, true));
+	                         SMW_PRP_CHECK_MAX_CARD, true, false));
 	tb.append(tb.createText('prp-min-card-msg', '', '' , true));
 	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), maxCard, '', 
-	                         SMW_PRP_CHECK_MAX_CARD, true));
+	                         SMW_PRP_CHECK_MAX_CARD, true, false));
 	tb.append(tb.createText('prp-max-card-msg', '', '' , true));
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
@@ -300,7 +300,7 @@ createContent: function() {
 	this.enableWidgets();
 	gSTBEventActions.initialCheck($("properties-content-box"));
 	//Sets Focus on first Element
-	setTimeout("$('prp-domain').focus();",50);
+//	setTimeout("$('prp-domain').focus();",50);
     
 },
 
@@ -357,14 +357,14 @@ checkMaxCard: function(domID) {
 	
 	if (typeof(maxCard) == 'number' && typeof(minCard) == 'string') {
 		//maxCard given, minCard not
-		gSTBEventActions.performSingleAction('color', 'red', mico);
-		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', mico);
+		gSTBEventActions.performSingleAction('color', 'white', mico);
+		gSTBEventActions.performSingleAction('showmessage', 'ASSUME_CARDINALITY_0', mico);
 		result = false;
 	}
 	if (typeof(maxCard) == 'string' && typeof(minCard) == 'number') {
 		//minCard given, maxCard not
-		gSTBEventActions.performSingleAction('color', 'red', maco);
-		gSTBEventActions.performSingleAction('showmessage', 'SPECIFY_CARDINALITY', maco);
+		gSTBEventActions.performSingleAction('color', 'white', maco);
+		gSTBEventActions.performSingleAction('showmessage', 'ASSUME_CARDINALITY_INF', maco);
 		result = false;
 	}
 
