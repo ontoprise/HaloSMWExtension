@@ -534,6 +534,9 @@ class SMWH_AAMParser {
 			$text = $wikiText;
 		}
 									 
+		// modify links so that they are opened in a new tab
+		$text = preg_replace('/<a href="(?!(javascript|#)).*?" /sm', '$0target="_new" ', $text);
+		
 		// decorate annotations
 		$text = preg_replace('/{annostart(\d*)}(.*?){annoend}/sm', $annoDeco,
 							 $text);
@@ -548,6 +551,7 @@ class SMWH_AAMParser {
 		$text = preg_replace('/{shortlinkstart(\d*)}(.*?){shortlinkend}/sm',
 		                     $shortLinkDeco, $text);
 		$text = preg_replace('/{linkstart(\d*)}(.*?){linkend}/sm', $linkDeco, $text);
+		
 		return $text;
 	}
 		
