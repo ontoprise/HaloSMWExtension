@@ -122,7 +122,7 @@ RefreshSemanticToolBar.prototype = {
 			if (gEditInterface == null) {
 				gEditInterface = new SMWEditInterface();
 			}
-			gEditInterface.focus();
+//			gEditInterface.focus();
 		}
 
 	}
