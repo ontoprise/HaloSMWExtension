@@ -942,7 +942,51 @@
         	setSelectionRange(elem, new_start, new_end);
         }
     };
-
+    
+	EditAreaLoader.prototype.selectCompleteAnnotation = function(id) {
+    	var sel= this.getSelectionRange(id);
+    	var value = this.getValue(id);
+    	var found = false;
+    	
+		// Search for opening brackets at the beginning of the selection
+		var start = sel["start"]-1;
+		while (start >= 0 && value.charAt(start) == ' ') {
+			--start;
+		}
+		while (start >= 0 && value.charAt(start) == '[') {
+			--start;
+			found = true;
+		}
+		start++;
+		if (!found) {
+			// no brackets found => skip all spaces at the beginning
+			start = sel["start"]
+			while (start < value.length && value.charAt(start) == ' ') {
+				++start;
+			}
+		}
+		found = false;
+		// Search for closing brackets at the end of the selection
+		var end = sel["end"];
+		while (end < value.length && value.charAt(end) == ' ') {
+			++end;
+		}
+		while (end < value.length && value.charAt(end) == ']') {
+			++end;
+			found = true;
+		}
+		if (!found) {
+			// no brackets found => skip all spaces at the end
+			end = sel["end"]-1;
+			while (end >= 0 && value.charAt(end) == ' ') {
+				--end;
+			}
+			++end;
+		}
+		
+        this.setSelectionRange(id, start, end);
+	};
+	
     EditAreaLoader.prototype.getSelectedText = function(id){
     	var sel= this.getSelectionRange(id);
         return this.getValue(id).substring(sel["start"], sel["end"]);

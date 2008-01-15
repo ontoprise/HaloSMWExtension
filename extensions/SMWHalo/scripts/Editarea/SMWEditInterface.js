@@ -143,7 +143,9 @@ SMWEditInterface.prototype ={
 	/*
 	 * If the current selection is within an annotation (i.e. within [[...]])
 	 * and only spaces are between the selection an the brackets,
-	 * the selection is enlarged to comprise the brackets.
+	 * the selection is enlarged to comprise the brackets. 
+	 * Otherwise the selection is trimmed i.e. spaces at the beginning and
+	 * the end are skipped.
 	 */
 	selectCompleteAnnotation: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
@@ -162,7 +164,16 @@ SMWEditInterface.prototype ={
 					moved++;
 					found = true;
 				}
-				rng.moveStart('character',found ? 1 : moved);
+				if (found) {
+					// brackets found => move the start of the selection					
+					rng.moveStart('character', 1);
+				} else {
+					// skip all spaces at the beginning of the selection
+					rng.moveStart('character', moved);
+					while (rng.text.charAt(0) == ' '
+						   && rng.moveStart('character',1) != 0) {
+					}
+				}
 
 				found = false;
 				moved = 1;
@@ -176,7 +187,16 @@ SMWEditInterface.prototype ={
 					moved++;
 					found = true;
 				}
-				rng.moveEnd('character',found ? -1 : -moved);
+				if (found) {
+					// brackets found => move the end of the selection					
+					rng.moveEnd('character', -1);
+				} else {
+					// skip all spaces at the end of the selection
+					rng.moveEnd('character', -moved);
+					while (rng.text.charAt(rng.text.length-1) == ' '
+						   && rng.moveEnd('character',-1) != 0) {
+					}
+				}
 				this.currentRange = rng.duplicate();
 				rng.select();
 			} else  {
@@ -191,7 +211,12 @@ SMWEditInterface.prototype ={
 				}
 				start++;
 				if (!found) {
+					// no brackets found => skip all spaces at the beginning
 					start = SMWEditArea.selectionStart;
+					while (start < SMWEditArea.value.length
+					       && SMWEditArea.value.charAt(start) == ' ') {
+						++start;
+					}
 				}
 				found = false;
 				// Search for closing brackets at the end of the selection
@@ -206,15 +231,20 @@ SMWEditInterface.prototype ={
 					found = true;
 				}
 				if (!found) {
-					end = SMWEditArea.selectionEnd;
+					// no brackets found => skip all spaces at the end
+					end = SMWEditArea.selectionEnd-1;
+					while (end >= 0 && SMWEditArea.value.charAt(end) == ' ') {
+						--end;
+					}
+					++end;
 				}
 				setSelectionRange(SMWEditArea,start,end);
 			}
 		} else {
-			editAreaLoader.setSelectionRange(editAreaName, start, end);
+			editAreaLoader.selectCompleteAnnotation(editAreaName);
 		}
 	},
-
+	
 	getSelectedText: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
 			SMWEditArea = $(editAreaName);
