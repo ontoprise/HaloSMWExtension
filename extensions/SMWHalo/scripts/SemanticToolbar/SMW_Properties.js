@@ -359,13 +359,13 @@ checkMaxCard: function(domID) {
 		//maxCard given, minCard not
 		gSTBEventActions.performSingleAction('color', 'white', mico);
 		gSTBEventActions.performSingleAction('showmessage', 'ASSUME_CARDINALITY_0', mico);
-		result = false;
+		return true;
 	}
 	if (typeof(maxCard) == 'string' && typeof(minCard) == 'number') {
 		//minCard given, maxCard not
 		gSTBEventActions.performSingleAction('color', 'white', maco);
 		gSTBEventActions.performSingleAction('showmessage', 'ASSUME_CARDINALITY_INF', maco);
-		result = false;
+		return true;
 	}
 
 	if (!result) {
