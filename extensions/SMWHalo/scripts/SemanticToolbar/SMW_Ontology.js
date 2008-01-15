@@ -243,6 +243,7 @@ OntologyModifier.prototype = {
 						rangeStr += ranges[i];
 					} else {
 						rangeStr += gLanguage.getMessage('TYPE_PAGE');
+/*
 						if (ranges[i]) {
 							// Range hint is not empty
 							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
@@ -253,6 +254,7 @@ OntologyModifier.prototype = {
 							          gLanguage.getMessage('DEFAULT_ROOT_CONCEPT') +
 							          "]]";
 						}
+*/
 					}
 					if (i < n-1) {
 						rangeStr += ';';
