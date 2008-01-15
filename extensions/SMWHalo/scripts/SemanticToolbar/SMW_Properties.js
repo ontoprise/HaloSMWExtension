@@ -176,13 +176,14 @@ createContent: function() {
 	} else {
 		if (range[0].getSplitValues()[1]) {
 			range = range[0].getSplitValues()[1];
+			// trim
+			range = range.replace(/^\s*(.*?)\s*$/,"$1");
+			if (range.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
+				range = range.substring(9);
+			}
 		} else {
-			range = range[0].getValue();
-		}
-		// trim
-		range = range.replace(/^\s*(.*?)\s*$/,"$1");
-		if (range.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
-			range = range.substring(9);
+			//range = range[0].getValue();
+			range = "";
 		}
 	}
 	if (maxCard == null) {
@@ -716,7 +717,7 @@ apply: function() {
 	}
 	
 	// append new annotations
-	if (domainRangeAnno == null && domainRange != null) {
+	if (domainRangeAnno == null && domainRange != null && domainRange != '') {
 		this.wtp.addRelation(DOMAIN_HINT, domainRange, null, true);
 	} 
 	if (attrTypeAnno == null && attrType != null) {
