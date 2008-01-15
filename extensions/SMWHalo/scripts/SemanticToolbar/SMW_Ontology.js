@@ -233,7 +233,9 @@ OntologyModifier.prototype = {
 	createRelation : function(title, initialContent, domain, ranges) {
 		var schema = "";
 		if (domain != null && domain != "") {
-			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY')+domain+"]]";
+			domain = gLanguage.getMessage('CATEGORY')+domain;
+		} else {
+			domain = '';
 		}
 		if (ranges != null) {
 			if (ranges.length >= 1) {
@@ -243,18 +245,20 @@ OntologyModifier.prototype = {
 						rangeStr += ranges[i];
 					} else {
 						rangeStr += gLanguage.getMessage('TYPE_PAGE');
-/*
+
 						if (ranges[i]) {
 							// Range hint is not empty
-							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::"+ranges[i]+"]]";
+							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
+							          + domain + ";" + ranges[i]+"]]";
 						} else {
 							// no range hint. Anyway a hint must be given.
-							schema += "\n[[SMW_SSP_HAS_RANGE_HINT::" +
+							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
+							          + domain + ";" +
 							          gLanguage.getMessage('CATEGORY') +
 							          gLanguage.getMessage('DEFAULT_ROOT_CONCEPT') +
 							          "]]";
 						}
-*/
+
 					}
 					if (i < n-1) {
 						rangeStr += ';';
