@@ -116,6 +116,7 @@ initializeRootCategoriesCallback: function (request) {
   	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();
+ 	selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
   	
 },
 
@@ -139,7 +140,7 @@ initializeRootPropertyCallback: function (request) {
   	selectionProvider.fireBeforeRefresh();
   	transformer.transformXMLToHTML(this.OB_currentlyDisplayedTree, rootElement, true);
  	selectionProvider.fireRefresh();
-  	
+  	selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 },
 
 
