@@ -303,7 +303,7 @@
 						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
 			
 			// copy subcatgegories to supercategories of next iteration
-			$db->query('TRUNCATE TABLE smw_ob_instances_super');
+			$db->query('DELETE FROM smw_ob_instances_super');
 			$db->query('INSERT INTO smw_ob_instances_super (SELECT * FROM smw_ob_instances_sub)');
 			
 			// check if there was least one more subcategory. If not, all instances were found.
@@ -311,7 +311,7 @@
 			$numOfSubCats = $db->fetchObject($res)->numOfSubCats;
 			$db->freeResult($res);
 			
-			$db->query('TRUNCATE TABLE smw_ob_instances_sub');
+			$db->query('DELETE FROM smw_ob_instances_sub');
 			
 		} while ($numOfSubCats > 0 && $maxDepth > 0);
 		
@@ -865,6 +865,10 @@
 				$article = new Article($t);
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT. TODO: introduce general mechanism
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Page; Type:Page]]", "", false, false);
+				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
+				} else if (strtolower($ssp[SMW_SSP_HAS_MIN_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
 				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
