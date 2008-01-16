@@ -397,7 +397,8 @@
 		 		
 		$it  = $this->model->findAsIterator($entity, RDFS::SUB_CLASS_OF(), NULL);
 
-		$slabel = $this->getLabelForEntity($entity, $this->model);
+		$slabel = $this->getLabelForEntity($entity);
+		
 		if ($entity instanceof BlankNode) return $statements;
 		$st = Title::newFromText( $slabel , NS_CATEGORY );
 		if ($st == NULL) return $statements; // Could not create a title, next please
@@ -411,7 +412,7 @@
 		
 			$superClass = $statement->getObject();
 			
-			$superClassLabel = $this->getLabelForEntity($superClass, $this->model);
+			$superClassLabel = $this->getLabelForEntity($superClass);
 			$superClassTitle = Title::newFromText( $superClassLabel , NS_CATEGORY );
 			if ($superClassTitle == NULL) continue; // Could not create a title, next please
 			if ($this->isInCategory($st, $superClassTitle)) continue;
@@ -437,7 +438,7 @@
 		$it2 = $this->model->findAsIterator($superClass, OWL::ON_PROPERTY(), NULL);
 		if ($it2->hasNext()) {
 			$property = $it2->next()->getObject();
-			$propertyName = $this->getLabelForEntity($property, $this->model);
+			$propertyName = $this->getLabelForEntity($property);
 			$propertyTitle = Title::newFromText( $propertyName);
 		}
 		
@@ -464,7 +465,7 @@
 			$s2['NS'] = $namespace;
 		
 			
-			$rangeCategoryName = $this->getLabelForEntity($range, $this->model);
+			$rangeCategoryName = $this->getLabelForEntity($range);
 			$rangeCategoryTitle = Title::newFromText( $rangeCategoryName , (ImportOntologyBot::isXMLSchemaType($range->getURI())) ? SMW_NS_TYPE : NS_CATEGORY );
 			
 		
@@ -507,7 +508,7 @@
  		$sc = $smwgHaloContLang->getSpecialCategoryArray();
 		$smwNSArray = $smwgContLang->getNamespaces();
  		
-		$slabel = $this->getLabelForEntity($entity, $this->model);
+		$slabel = $this->getLabelForEntity($entity);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
 		if ($st == NULL) continue; // Could not create a title, next please
 
@@ -626,15 +627,23 @@
 	
 	
 	
- 	private function getLabelForEntity($entity) {
-		// TODO look for language hints in the labels
-		$labelstatement = $this->model->findFirstMatchingStatement($entity, RDFS::LABEL(), NULL, 0);
-		if ($labelstatement != NULL) {
-			$label = $labelstatement->getLabelObject();
-		} else {
-			$label = $entity->getLocalName();
+ 	private function getLabelForEntity($entity, $lang = "en") {
+		
+		$label = $entity->getLocalName(); // use local name as default, if no labels exist at all
+		$it = $this->model->findAsIterator($entity, RDFS::LABEL(), NULL);
+		$takeFirst = true;
+		while ($it->hasNext()) {
+			$labelstatement = $it->next();
+			if ($takeFirst) { // make sure that at least first label is taken
+				$takeFirst = false;
+				$label = $labelstatement->getLabelObject();
+			}
+			
+			if ($labelstatement != NULL && $labelstatement->getObject()->getLanguage() == $lang) {
+				
+				$label = $labelstatement->getLabelObject();
+			} 		
 		}
-
 		return $label;
 	}
 	
@@ -751,8 +760,8 @@
 	private static function mapXSDTypesToWikiTypes($xsdType) {
 		switch($xsdType) {
 			case 'string': return 'String';
-			case 'int': return 'Integer';
-			case 'float': return 'Float';
+			case 'int': return 'Number';
+			case 'float': return 'Number';
 			default: return 'String';
 		}
 	}
