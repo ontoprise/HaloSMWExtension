@@ -378,9 +378,13 @@ OBOntologyModifier.prototype = {
 		var oldSuperCategory = from_cache.parentNode.getAttribute('title');
 		var newSuperCategory = to_cache.getAttribute('title');
 		
+				
 		function callback() {
-			// only move subtree, if it has already been requested 
+			// only move subtree, if it has already been requested.
+			// If expanded is true, it must have been requested. Otherwise it may have been requested but is now collapsed. Then it contains child elements
 			if (to_cache.getAttribute('expanded') == 'true' || GeneralXMLTools.hasChildNodesWithTag(to_cache, 'conceptTreeElement')) { 
+				to_cache.removeAttribute("isLeaf");
+				to.removeAttribute("isLeaf");
 				GeneralXMLTools.importNode(to_cache, from_cache, true);
 				GeneralXMLTools.importNode(to, from, true);
 			}
@@ -417,7 +421,10 @@ OBOntologyModifier.prototype = {
 		
 		function callback() {
 			// only move subtree, if it has already been requested 
+			// If expanded is true, it must have been requested. Otherwise it may have been requested but is now collapsed. Then it contains child elements
 			if (to_cache.getAttribute('expanded') == 'true' || GeneralXMLTools.hasChildNodesWithTag(to_cache, 'propertyTreeElement')) { 
+				to_cache.removeAttribute("isLeaf");
+				to.removeAttribute("isLeaf");
 				GeneralXMLTools.importNode(to_cache, from_cache, true);
 				GeneralXMLTools.importNode(to, from, true);
 			}
