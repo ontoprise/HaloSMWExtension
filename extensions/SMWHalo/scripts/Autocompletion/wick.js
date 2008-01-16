@@ -23,7 +23,7 @@ var SMW_INSTANCE_NS = 0;
 var SMW_TEMPLATE_NS = 10;
 var SMW_TYPE_NS = 104;
 
-var SMW_ENUM_POSSIBLE_VALUE = 200;
+var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 200;
 
 // time intervals for triggering
 var SMW_AC_MANUAL_TRIGGERING_TIME = 500;
@@ -996,7 +996,9 @@ AutoCompleter.prototype = {
 			this.currentIESelection.select();
             var userInput = this.getUserInputToMatch();
 			
-			userInput = this.removeNumberFromMeasure(userInput);
+			if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
+            	userInput = this.removeNumberFromMeasure(userInput);
+            }
              // get TextRanges with text before and after user input
              // which is to be matched.
              // e.g. [[category:De]] would return:
@@ -1013,8 +1015,9 @@ AutoCompleter.prototype = {
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
             var userInput = this.getUserInputToMatch();
             
-            userInput = this.removeNumberFromMeasure(userInput);
-
+            if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
+            	userInput = this.removeNumberFromMeasure(userInput);
+            }
              // save scroll position
             var scrollTop = this.siw.inputBox.scrollTop;
 
@@ -1060,10 +1063,9 @@ AutoCompleter.prototype = {
     removeNumberFromMeasure: function(measure) {
     	var result = measure;
     	
-	    var reMeasure = new RegExp("[+-]?\d*(\.\d+([eE][+-]?\d*)?)?_+(.*)", "gi");
-	    if (result.match(reMeasure)) {
-	       	var reMresult = reMeasure.exec(result);
-	       	result = reMresult[3];
+	    var matches = result.match(/[+-]?\d+(\.\d+([eE][+-]?\d*)?)?_+/gi);
+	    if (matches) {
+	       	result = result.substr(matches[0].length);
 	    }
 	    return result;
     },
@@ -1344,7 +1346,7 @@ function SmartInputMatch(cleanValue, value, type) {
         } else if (_type == SMW_TYPE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
-        } else if (_type == SMW_ENUM_POSSIBLE_VALUE) {
+        } else if (_type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
         	return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/enum.gif\">";
         }
