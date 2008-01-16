@@ -319,6 +319,7 @@ AutoCompleter.prototype = {
             if (userInputToMatch == null) return;
 
             this.showPendingAJAXIndicator(inputBox);
+            this.resetCursorinIE();
             sajax_do_call('smwfAutoCompletionDispatcher', [
                 wgTitle,
                 userInputToMatch,
@@ -489,14 +490,15 @@ AutoCompleter.prototype = {
                     // put floater at cursor position
                     // method to calculate floater pos is slightly different in advanced editor
                    
-
-                    var posY = this.findElementPosY(advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox);
-                    var posX = this.findElementPosX(advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox);
+					var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
+                    var posY = this.findElementPosY(textarea);
+                    var posX = this.findElementPosX(textarea);
 					
-                    this.siw.inputBox.focus();
-                    var textScrollTop = this.siw.inputBox.scrollTop;
+                   textarea.focus();
+                    var textScrollTop = textarea.scrollTop;
                     var documentScrollPos = document.documentElement.scrollTop;
-                    var selection_range = document.selection.createRange().duplicate();
+                    // var selection_range = document.selection.createRange().duplicate();
+                    var selection_range = this.currentIESelection;
                     selection_range.collapse(true);
                                         
                     this.siw.floater.style.left = selection_range.boundingLeft + (advancedEditor ? 0 : -posX);
@@ -533,10 +535,16 @@ AutoCompleter.prototype = {
 
             this.siw.floater.style.display = "block";
             this.siw.floater.style.visibility = "visible";
+            this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
 
-
+	resetCursorinIE: function() {
+		if (!OB_bd.isIE) return;
+		this.currentIESelection.scrollIntoView(true);
+		this.currentIESelection.collapse(false);
+		this.currentIESelection.select();
+	},
      /**
      * Shows small graphic indicating an AJAX call.
      */
@@ -1009,7 +1017,7 @@ AutoCompleter.prototype = {
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = addedValue;
             selection_range.collapse(false);
-            
+            this.resetCursorinIE();
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
