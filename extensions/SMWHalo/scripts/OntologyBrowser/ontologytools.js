@@ -369,10 +369,11 @@ OBOntologyModifier.prototype = {
 	moveCategory: function(draggedCategoryID, droppedCategoryID) {
 		
 		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, draggedCategoryID);
-		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, droppedCategoryID);
+		// categoryTreeSwitch allows dropping on root level
+		var to_cache = droppedCategoryID == 'categoryTreeSwitch' ? dataAccess.OB_cachedCategoryTree.documentElement : GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, droppedCategoryID);
 		
 		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, draggedCategoryID);
-		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedCategoryID);
+		var to = droppedCategoryID == 'categoryTreeSwitch' ? dataAccess.OB_currentlyDisplayedTree.documentElement : GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedCategoryID);
 		
 		var draggedCategory = from_cache.getAttribute('title');
 		var oldSuperCategory = from_cache.parentNode.getAttribute('title');
@@ -410,10 +411,10 @@ OBOntologyModifier.prototype = {
 	moveProperty: function(draggedPropertyID, droppedPropertyID) {
 		
 		var from_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, draggedPropertyID);
-		var to_cache = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, droppedPropertyID);
+		var to_cache = droppedPropertyID == 'propertyTreeSwitch' ? dataAccess.OB_cachedPropertyTree.documentElement : GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, droppedPropertyID);
 		
 		var from = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, draggedPropertyID);
-		var to = GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedPropertyID);
+		var to = droppedPropertyID == 'propertyTreeSwitch' ? dataAccess.OB_currentlyDisplayedTree.documentElement : GeneralXMLTools.getNodeById(dataAccess.OB_currentlyDisplayedTree, droppedPropertyID);
 		
 		var draggedProperty = from_cache.getAttribute('title');
 		var oldSuperProperty = from_cache.parentNode.getAttribute('title');

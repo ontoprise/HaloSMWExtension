@@ -448,6 +448,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		this.ignoreNextSelection = false;
 		Draggables.addObserver(this);
+		Droppables.add('categoryTreeSwitch', {accept:'concept', hoverclass:'dragHover', onDrop:this.onDrop.bind(this)}); 
 	},
 	
 	toggleExpand: function (event, node, folderCode) {
@@ -462,6 +463,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_CATEGORY_NS) {
+			
 			this.selectedCategory = title;
 			this.selectedCategoryID = id;
 			this.oldSelectedNode = GeneralBrowserTools.toggleHighlighting(this.oldSelectedNode, node);
@@ -472,6 +474,9 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		if (wgUserGroups == null || (wgUserGroups.indexOf('sysop') == -1 && wgUserGroups.indexOf('gardener') == -1)) {
 			
 			return;
+		}
+		if (OB_bd.isIE) {
+			return; // no DnD in IE
 		}
 		this.draggableCategories.each(function(c) { 
 			c.destroy();
@@ -488,8 +493,11 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			// do not allow dragging, when user is no sysop or gardener
 			return;
 		}
+		if (OB_bd.isIE) {
+			return; // do not activate DnD in IE, because scriptaculous is very buggy here
+		}
 		function addDragAndDrop(c) { 
-			var d = new Draggable(c.getAttribute('id'), {revert:true, ghosting:true});
+			var d = new Draggable(c.getAttribute('id'), {revert:true, ghosting:true}); 
 			this.draggableCategories.push(d); 
 			Droppables.add(c.getAttribute('id'), {accept:'concept', hoverclass:'dragHover', onDrop:onDrop_bind}); 
 		}
@@ -536,7 +544,7 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
  * @param categoryName Title of category
  */
 select: function (event, node, categoryID, categoryName) {
-	if (this.ignoreNextSelection) {
+	if (this.ignoreNextSelection && OB_bd.isGecko) {
 		this.ignoreNextSelection = false;
 		return;
 	}
@@ -835,6 +843,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 		
 		Draggables.addObserver(this);
 		this.draggableProperties = [];
+		Droppables.add('propertyTreeSwitch', {accept:'property', hoverclass:'dragHover', onDrop:this.onDrop.bind(this)}); 
 	},
 	
 	navigateToEntity: function(event, node, propertyName, editmode) {
@@ -855,6 +864,9 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			
 			return;
 		}
+		if (OB_bd.isIE) {
+			return; // no DnD in IE
+		}
 		this.draggableProperties.each(function(c) { 
 			c.destroy();
 			
@@ -870,8 +882,11 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 			// do not allow dragging, when user is no sysop or gardener
 			return;
 		}
+		if (OB_bd.isIE) {
+			return; // do not activate DnD in IE, because scriptaculous is very buggy here
+		}
 		function addDragAndDrop(c) { 
-			var d = new Draggable(c.getAttribute('id'), {revert:true, ghosting:true});
+			var d = new Draggable(c.getAttribute('id'), {revert:true, ghosting:true}); 
 			this.draggableProperties.push(d); 
 			Droppables.add(c.getAttribute('id'), {accept:'property', hoverclass:'dragHover', onDrop:onDrop_bind}); 
 		}

@@ -486,7 +486,7 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
  * 
  * @param $draggedCategory Title of category to move (String)
  * @param $oldSuperCategory Title of old supercategory. (String) May be NULL
- * @param $newSuperCategory Title of new supercategory. (String)
+ * @param $newSuperCategory Title of new supercategory. (String) May be NULL
  */
 function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
 	$newSuperCategory = strip_tags($newSuperCategory);
@@ -497,7 +497,8 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
 	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
 	$newSuperCategoryTitle = Title::newFromText($newSuperCategory, NS_CATEGORY);
 	
-	if ($draggedCategoryTitle == NULL || $newSuperCategoryTitle == NULL) {
+	
+	if ($draggedCategoryTitle == NULL) {
 		// invalid titles
 		return "false";
 	}
@@ -513,7 +514,12 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
 	
 	$text = $draggedCategoryRevision->getText();
 	
-	if ($draggedOnRootLevel) {
+	
+	if ($newSuperCategory == NULL || $newSuperCategory == 'null') {
+		// remove all category links
+		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "", $text);
+		
+	} else if ($draggedOnRootLevel) {
 		// dragged category was on root level
 		$newText .= $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
 	} else {
@@ -530,7 +536,7 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
  * 
  * @param $draggedProperty Title of property to move (String)
  * @param $oldSuperProperty Title of old superproperty. (String) May be NULL
- * @param $newSuperProperty Title of new superproperty. (String)
+ * @param $newSuperProperty Title of new superproperty. (String) May be NULL
  */
 function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
 	$newSuperProperty = strip_tags($newSuperProperty);
@@ -561,7 +567,9 @@ function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty
  	$options = new ParserOptions();
 	$sp = $smwgContLang->getSpecialPropertiesArray();
 	
-	if ($draggedOnRootLevel) {
+	if ($newSuperProperty == NULL || $newSuperProperty == 'null') {
+		$newText = preg_replace("/\[\[\s*".$sp[SMW_SP_SUBPROPERTY_OF]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "", $text);
+	} else if ($draggedOnRootLevel) {
 		// dragged property was on root level
 		$newText .= $text."\n[[".$sp[SMW_SP_SUBPROPERTY_OF]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
 	} else {
@@ -572,7 +580,7 @@ function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty
 	// save article
 	$draggedPropertyArticle->doEdit($newText, $draggedPropertyRevision->getComment(), EDIT_UPDATE);
 	$wgParser->parse($newText, $draggedPropertyTitle, $options, true, true, $draggedPropertyRevision->getID());
-	SMWFactbox::storeData($draggedPropertyTitle, true);	
+	SMWFactbox::storeData(true);	
 	return "true";
 }
 ?>
