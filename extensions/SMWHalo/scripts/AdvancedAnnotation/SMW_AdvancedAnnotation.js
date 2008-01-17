@@ -102,14 +102,38 @@ AdvancedAnnotation.prototype = {
 		}
 				
 		if (cba && annoSelection != '' && !sameSelection) {
+			// was it a selection from right to left?
+			var leftToRight = true;
+			if (annoSelection.anchorNode != annoSelection.focusNode) {
+				var node = this.searchBackwards(annoSelection.anchorNode,
+												 function(node, param) {
+												 	if (node == param) {
+												 		return node;
+												 	}
+												 },
+												 annoSelection.focusNode);
+				if (node != null) {
+					// right to left selection over different nodes
+					leftToRight = false;
+				}
+			} else if (annoSelection.anchorOffset > annoSelection.focusOffset) {
+				// right to left selection in a single nodes
+				leftToRight = false;
+			}
+			
 			// store details of the selection
 			this.selectedText = sel;
 			//trim selection
 			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
-			this.annotatedNode = annoSelection.anchorNode;
-			this.annoOffset    = annoSelection.anchorOffset;
-			this.focusNode   = annoSelection.focusNode;
-			this.focusOffset = annoSelection.focusOffset;
+			this.annotatedNode = (leftToRight) ? annoSelection.anchorNode
+											   : annoSelection.focusNode;
+			this.annoOffset    = (leftToRight) ? annoSelection.anchorOffset
+											   : annoSelection.focusOffset;
+			this.focusNode   = (leftToRight) ? annoSelection.focusNode
+											 : annoSelection.anchorNode;
+			this.focusOffset = (leftToRight) ? annoSelection.focusOffset
+											 : annoSelection.anchorOffset;
+			this.selectionContext = this.getSelectionContext();
 			
 			this.performAnnotation(event);
 		}
@@ -244,7 +268,7 @@ AdvancedAnnotation.prototype = {
 				return;
 			}										     
 			
-			var res = this.wikiTextParser.findText(this.selectedText, start, end);
+			var res = this.wikiTextParser.findText(this.selectedText, start, end, this.selectionContext);
 			if (res != true) {
 				this.toolbarEnableAnnotation(true);
 				smwhgAnnotationHints.showMessageAndWikiText("(e)"+res,
@@ -334,8 +358,16 @@ AdvancedAnnotation.prototype = {
 		}
 	},
 	
+	searchTextNode: function(node, parameters) {
+		if (node.nodeName == '#text') {
+			// found a text node
+			return node;
+		}
+		
+	},
+		
 	/**
-	 * Visits all nodes between the first and the second anchor of the selection.
+	 * Visits all nodes betweenthe first and the second anchor of the selection.
 	 * The selection must not span invalid nodes i.e. nowiki, pre, ask, template, 
 	 * annotations. If such a node is found, it is returned. Otherwise the search
 	 * is terminated with the result <true>.
@@ -500,6 +532,95 @@ AdvancedAnnotation.prototype = {
 			txt = document.selection.createRange().text;
 		}
 		return txt;
+	},
+	
+	/**
+	 * Gets the context of the current selection i.e. some words before and 
+	 * after the current selection.
+	 * 
+	 * @return array<string>
+	 * 		[0]: some words in the text node before the selection; can be empty
+	 * 		[1]: some words in the selected text node before the selection; can be empty
+	 * 		[2]: some words in the selected text node after the selection; can be empty
+	 * 		[3]: some words in the text node after the selection; can be empty
+	 *  
+	 */
+	getSelectionContext: function() {
+		var result = new Array("","","","");
+		var numWords = 2;
+		var preContext = this.annotatedNode.textContent;
+		preContext = preContext.substring(0, this.annoOffset);
+		window.console.log('preContext:'+preContext+'\n');
+		preContext = this.getWords(preContext, numWords, false);
+		window.console.log('preContext:'+preContext+'\n');
+		result[1] = preContext;
+		
+		var postContext = this.focusNode.textContent;
+		postContext = postContext.substring(this.focusOffset);
+		window.console.log('postContext:'+postContext+'\n');
+		postContext = this.getWords(postContext, numWords, true);
+		window.console.log('postContext:'+postContext+'\n');
+		result[2] = postContext;
+		
+		if (preContext == '') {
+			var prevNode = this.searchBackwards(this.annotatedNode, 
+										        this.searchTextNode.bind(this));
+			if (prevNode) {
+				preContext = prevNode.textContent;
+				preContext = this.getWords(preContext, numWords, false);
+				window.console.log('preContext:'+preContext+'\n');
+				result[0] = preContext;
+			}										        
+		}
+		if (postContext == '') {
+			var postNode = this.searchForward(this.annotatedNode, 
+										        this.searchTextNode.bind(this));
+			if (postNode) {
+				postContext = postNode.textContent;
+				postContext = this.getWords(postContext, numWords, true);
+				window.console.log('postContext:'+postContext+'\n');
+				result[3] = postContext;
+			}										        
+		}
+		
+		return result;
+	},
+	
+	/**
+	 * Returns the first/last <numWords> words of the string <str>. Words can
+	 * be separated by spaces or tabs.
+	 * 
+	 * @param string str
+	 * 		The words are extracted from this string
+	 * @param int numWords
+	 * 		Number of words to return. 
+	 * @param boolean atBeginning
+	 * 		true : words are extracted at the beginning of the string
+	 * 		false: words are extracted at the end of the string
+	 */
+	getWords: function(str, numWords, atBeginning) {
+		
+		if (numWords <= 0 || str == '') {
+			return "";
+		}
+		
+		var words = 0;
+		var len = str.length-1;
+		var start = (atBeginning) ? 0 : len;
+		var end = (atBeginning) ? len : 0;
+		var inc = (atBeginning) ? 1 : -1;
+
+		for (var i = start; i != end; i += inc) {
+			var c = str.charAt(i);
+			if (c == ' ' || c == "\t") {
+				words++;
+				if (words == numWords) {
+					break;
+				}
+			}
+		}
+		
+		return (atBeginning) ? str.substring(0,i) : str.substr(i);
 	},
 		
 	/**
@@ -1012,15 +1133,15 @@ AdvancedAnnotation.prototype = {
 		
 		var htmlContent = "";
 		var content = "";
-///		var link = span.down();
-//		if (link && link.tagName == 'A') {
+		var link = span.down();
+		if (link && link.tagName == 'A') {
 			// the span contains a link => remove the link as well
-//			htmlContent = link.innerHTML
+			htmlContent = link.innerHTML
 //			content = link.textContent;
-//		} else {
+		} else {
 			htmlContent = span.innerHTML
 //			content = span.textContent;
-//		}
+		}
 		
 		// There is a wiki text offset anchor after the wrapper span.
 		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');

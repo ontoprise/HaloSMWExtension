@@ -429,11 +429,13 @@ WikiTextParser.prototype = {
 	 * @param int end
 	 * 		0-based end index of the range where the search happens. If end==-1,
 	 * 		the search runs till the end of the text
+	 * @param array<string> context
+	 * 		The context of the text i.e. some words before and after
 	 * @return
 	 * 		boolean <true>, if the text was found
 	 * 		string reason why the search failed otherwise
 	 */
-	findText: function(text, start, end) {
+	findText: function(text, start, end, context) {
 
 		this.wtsStart = -1;
 		this.wtsEnd   = -1;
@@ -442,11 +444,19 @@ WikiTextParser.prototype = {
 			end = this.text.length;
 		}
 		
+		var withContext = text;
+		var preContext = "";
+		if (typeof(context) == "object") {
+			preContext = context[0] + context[1];
+			withContext = preContext + text + context[2] + context[3]; 
+		}
 		// try a simple search
-		var pos = this.text.indexOf(text, start);
+//		var pos = this.text.indexOf(text, start);
+		var pos = this.text.indexOf(withContext, start);
+		
 		if (pos >= 0 && pos < end) {
-			this.wtsStart = pos;
-			this.wtsEnd = pos + text.length;
+			this.wtsStart = pos + preContext.length;
+			this.wtsEnd = this.wtsStart + text.length;
 			return true;
 		}
 		
@@ -564,7 +574,12 @@ WikiTextParser.prototype = {
 		}
 		
 		// find the selection in the pure text
-		pos = pureText.indexOf(text);
+		pos = pureText.indexOf(withContext);
+		if (pos == -1) {
+			pos = pureText.indexOf(text);
+		} else {
+			pos += preContext.length;
+		}
 		if (pos == -1) {
 			// text not found
 			var msg = gLanguage.getMessage('WTP_TEXT_NOT_FOUND');
@@ -578,26 +593,42 @@ WikiTextParser.prototype = {
 		var wtEnd = -1;
 		var startLevel = 0;
 		var endLevel = 0;
+		var endMapIdx = -1;
 		pos += text.length;
 		for (var i = map.length-1; i >= 0; --i) {
 			if (pos >= map[i][0]) {
 				if (wtEnd == -1) {
 					wtEnd = map[i][1] + (pos - map[i][0]);
 					endLevel = map[i][2];
+					endMapIdx = i;
 					pos -= text.length;
+					++i;
 				} else {
 					wtStart = map[i][1] + (pos - map[i][0]);
 					startLevel = map[i][2];
-					if (pos == map[i][0] && startLevel != endLevel) {
-						// maybe we are at the first character of a bold/italic
-						// section
-						if (i-- >= 0) {
-							if (map[i][2] == endLevel 
-							    && wikitext.charAt(map[i+1][1]-1) == "'") {
-								wtStart = map[i][1] + (pos - map[i][0]);
-								startLevel = map[i][2];
+					if (startLevel != endLevel) {
+						// text across different formats
+						if (pos == map[i][0]) {
+							// maybe we are at the first character of a 
+							// bold/italic section
+							if (i-1 >= 0 
+							    && map[i-1][2] == endLevel 
+							    && wikitext.charAt(map[i][1]-1) == "'") {
+								wtStart = map[i-1][1] + (pos - map[i-1][0]);
+								startLevel = map[i-1][2];
 							}
 						}
+						if (startLevel != endLevel
+						    && pos+text.length == map[endMapIdx][0]) {
+								// maybe we are at the last character of a 
+								// bold/italic section
+							if (endMapIdx > 0 && map[endMapIdx-1][2] == startLevel) {
+								wtEnd -= startLevel;
+								endLevel = startLevel;
+								var wikiText = this.text.substring(wtStart + start, wtEnd + start);
+							}						
+						}
+						
 					}
 					break;
 				}
