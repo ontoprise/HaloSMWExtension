@@ -550,16 +550,16 @@ AdvancedAnnotation.prototype = {
 		var numWords = 2;
 		var preContext = this.annotatedNode.textContent;
 		preContext = preContext.substring(0, this.annoOffset);
-		window.console.log('preContext:'+preContext+'\n');
+//		window.console.log('preContext:'+preContext+'\n');
 		preContext = this.getWords(preContext, numWords, false);
-		window.console.log('preContext:'+preContext+'\n');
+//		window.console.log('preContext:'+preContext+'\n');
 		result[1] = preContext;
 		
 		var postContext = this.focusNode.textContent;
 		postContext = postContext.substring(this.focusOffset);
-		window.console.log('postContext:'+postContext+'\n');
+//		window.console.log('postContext:'+postContext+'\n');
 		postContext = this.getWords(postContext, numWords, true);
-		window.console.log('postContext:'+postContext+'\n');
+//		window.console.log('postContext:'+postContext+'\n');
 		result[2] = postContext;
 		
 		if (preContext == '') {
@@ -568,7 +568,7 @@ AdvancedAnnotation.prototype = {
 			if (prevNode) {
 				preContext = prevNode.textContent;
 				preContext = this.getWords(preContext, numWords, false);
-				window.console.log('preContext:'+preContext+'\n');
+//				window.console.log('preContext:'+preContext+'\n');
 				result[0] = preContext;
 			}										        
 		}
@@ -578,7 +578,7 @@ AdvancedAnnotation.prototype = {
 			if (postNode) {
 				postContext = postNode.textContent;
 				postContext = this.getWords(postContext, numWords, true);
-				window.console.log('postContext:'+postContext+'\n');
+//				window.console.log('postContext:'+postContext+'\n');
 				result[3] = postContext;
 			}										        
 		}
@@ -899,6 +899,25 @@ AdvancedAnnotation.prototype = {
 	},
 		
 	/**
+	 * Restores a proposal.
+	 * Proposals are highlighted with a green border and a (+)-button. All this
+	 * is contained in a <span> that surrounds the actual text. This method restores 
+	 * the proposal visually, without creating the <span> etc. See <hideProposal>.
+	 * 
+	 * @param DomNode wrapperSpan
+	 * 		This DOM node is the wrapper <span> around the proprosed text. 
+	 */
+	restoreProposal: function(wrapperSpan) {
+		var img = wrapperSpan.down('img');
+		if (img) {
+			img.show();
+		}
+		var span = wrapperSpan.down('span');
+		if (span) {
+			span.className = 'aam_page_link_highlight';
+		}
+	},
+	/**
 	 * This function is a hook for changed text in the wiki text parser. 
 	 * It updates the anchors with the wiki text offsets in the DOM after text
 	 * has been added or removed.
@@ -1131,17 +1150,30 @@ AdvancedAnnotation.prototype = {
 		// There is always the highlighting span within the wrapper span.
 		var span = wrapper.down('span');
 		
-		var htmlContent = "";
-		var content = "";
-		var link = span.down();
-		if (link && link.tagName == 'A') {
-			// the span contains a link => remove the link as well
-			htmlContent = link.innerHTML
-//			content = link.textContent;
-		} else {
-			htmlContent = span.innerHTML
-//			content = span.textContent;
-		}
+		// The highlighted section may contain hidden annotation proposal 
+		// => restore them
+		// Normal links are replaced by their text content
+		var proposals = span.descendants();
+		for (var i = 0; i < proposals.length; ++i) {
+			var p = proposals[i];
+			if (p.id.match(/anno\d*w/)) {
+				this.restoreProposal(p);
+			} else if (p.tagName == 'A') {
+				// found a link
+				var href = p.getAttribute("href");
+				if (href && href.startsWith(wgScriptPath)) {
+					// found an internal link.
+					if (p.parentNode.className != "aam_page_link_highlight") {
+						// its parent is not an annotation proposal
+						//  => replace it by the text content
+						p.replace(p.textContent);
+					}
+				}
+			}
+		} 
+		
+		
+		var htmlContent =  span.innerHTML;
 		
 		// There is a wiki text offset anchor after the wrapper span.
 		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');
