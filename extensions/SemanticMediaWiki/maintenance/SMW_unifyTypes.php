@@ -11,7 +11,7 @@
  * php SMW_unifyTypes.php [options...]
  *
  * -v           Be verbose about the progress.
- * -c           Checks if there are any pages that need to be moved
+ * -c           Checks if there are any pages that need to be processed.
  *
  * Author: kai
  */
@@ -24,7 +24,7 @@ global $wgParser;
 $verbose = array_key_exists( 'v', $options );
 $check_only = array_key_exists( 'c', $options );
 
-print "Checking if properties need to be unified\n";
+print "Checking if types need to be changed\n";
 
 $options = new ParserOptions();
 $dbr =& wfGetDB( DB_MASTER );
@@ -71,6 +71,11 @@ function unifyTypes($oldtext) {
 	global $smwgContLang;
 	
 	$ssp = $smwgContLang->getSpecialPropertiesArray();
+	$dls = $smwgContLang->getDatatypeLabels();
+	
+	$numLabel = $dls["_num"];
+	$aliases = array_keys($smwgContLang->getDatatypeAliases(), "_num");
+	
 	$typeAnnotations = array();
 		
 	preg_match_all('/\[\[\s*'.$ssp[SMW_SP_HAS_TYPE].'\s*:[:|=]([^]]*)\]\]/i', $oldtext, $typeAnnotations);
@@ -79,8 +84,11 @@ function unifyTypes($oldtext) {
 	if (count($typeAnnotations) > 1) {
 		
 		foreach($typeAnnotations[1] as $r) {
-			$rpl = preg_replace("/integer/i", "Number", $r);
-			$rpl = preg_replace("/float/i", "Number", $rpl);
+			$rpl = $r;
+			foreach($aliases as $a) {
+				$rpl = preg_replace("/$a/i", $numLabel, $rpl);
+			}
+			
 			$replacement = "[[".$ssp[SMW_SP_HAS_TYPE]."::".$rpl."]]";
 			$oldtext = preg_replace('/\[\[\s*'.$ssp[SMW_SP_HAS_TYPE].'\s*:[:|=]'.preg_quote($r).'\]\]/i', $replacement, $oldtext);
 		}
