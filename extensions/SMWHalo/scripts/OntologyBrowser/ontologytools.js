@@ -354,7 +354,7 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree, $('categoryTree'), true);
 			
-			selectionProvider.fireSelectionChanged(categoryID, categoryTitle, SMW_CATEGORY_NS, $(categoryID))
+			selectionProvider.fireSelectionChanged(categoryID, newCategoryTitle, SMW_CATEGORY_NS, $(categoryID))
 			selectionProvider.fireRefresh();
 		}
 		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
