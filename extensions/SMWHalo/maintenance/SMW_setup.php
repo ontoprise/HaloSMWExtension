@@ -43,6 +43,10 @@
  smwfHaloInitializeTables(false);
  print "done!\n";
  
+ $onlyTables = array_key_exists("t", $options);
+ 
+ if ($onlyTables) return;
+ 
  print "\nInstall predefined pages...";
  smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
  smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
