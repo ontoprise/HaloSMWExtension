@@ -266,6 +266,7 @@ AutoCompleter.prototype = {
         } else if (kc == 27) { // escape pressed -> hide floater
         	 this.hideSmartInputFloater();
              this.freezeEvent(e);
+              this.resetCursorinIE();
         } else if (this.siw && this.siw.inputBox) {
              // do not switch focus when user is in searchbox
             if (eL != null && eL.tagName == 'HTML' && isFloaterVisible) {
@@ -367,7 +368,7 @@ AutoCompleter.prototype = {
             	smwhgLogger.log("", "AC", "close_without_selection");
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
-                
+                this.resetCursorinIE();
             } else {
                 this.siw.selectingSomething = false;
             }
@@ -494,16 +495,22 @@ AutoCompleter.prototype = {
                     var posY = this.findElementPosY(textarea);
                     var posX = this.findElementPosX(textarea);
 					
-                   textarea.focus();
+                    textarea.focus();
                     var textScrollTop = textarea.scrollTop;
                     var documentScrollPos = document.documentElement.scrollTop;
                     // var selection_range = document.selection.createRange().duplicate();
                     var selection_range = this.currentIESelection;
                     selection_range.collapse(true);
-                                        
-                    this.siw.floater.style.left = selection_range.boundingLeft + (advancedEditor ? 0 : -posX);
-                    this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20 + (advancedEditor ? posY : 0);
-                    this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                    
+                    if (advancedEditor) {
+                    	var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+                    	this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                       	this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                    }  else {                 
+	                    this.siw.floater.style.left = selection_range.boundingLeft - posX;
+	                    this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+	                    this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                    }
                  // only IE -------------------------
 
                 }
@@ -538,7 +545,10 @@ AutoCompleter.prototype = {
             this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
-
+	
+	/**
+	 * Resets cursor and sets scroll pos to cursor pos. (in IE)
+	 */
 	resetCursorinIE: function() {
 		if (!OB_bd.isIE) return;
 		this.currentIESelection.scrollIntoView(true);
@@ -566,9 +576,14 @@ AutoCompleter.prototype = {
             var documentScrollPos = document.documentElement.scrollTop;
             var selection_range = document.selection.createRange().duplicate();
             selection_range.collapse(true);
-            pending.style.left = selection_range.boundingLeft - posX
-            pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-
+            
+            if (advancedEditor) {
+            	pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+            } else {
+            	pending.style.left = selection_range.boundingLeft - posX
+            	pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+			}
          // only IE -------------------------
 
         }
