@@ -67,8 +67,11 @@
 		$accept_sock = @socket_accept($socket);	
 		if ($accept_sock !== false) {
 			socket_getpeername($accept_sock, $name);
-			if ($name == '127.0.0.1') { // if it comes from localhost
+			if ($name == '127.0.0.1') { 
+				// only stop, if request comes from localhost. 
+				// TODO: is this SAVE? spoofing?
 				print "\n\nStopped.";
+				socket_close($accept_sock);
 				break;	
 			}
 		}
@@ -84,7 +87,8 @@
 		}
 		
 	}
-
+	
+	socket_close($socket);
 /**
  * Returns number of threads created by $wgDBuser
  */
@@ -104,6 +108,7 @@ function smwfGetDBUserThreadNum(& $db) {
 				$count++;
 			}
 		}
+		$db->freeResult($res);
 		return $count;
 }
 ?>
