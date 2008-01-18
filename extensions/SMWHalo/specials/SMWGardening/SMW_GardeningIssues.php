@@ -274,7 +274,12 @@ abstract class GardeningIssue {
 	 */
 	protected abstract function getTextualRepresenation(& $skin, $text1, $text2, $local = false);
 	
-	
+	/**
+	 * Returns class of a given $type.
+	 */
+	public static function getClass($type) {
+		return intval($type / 100);
+	}
 }
 
 /**

@@ -153,11 +153,11 @@
  				$cond = "";
  				foreach($gi_class as $c) {
  					if (!is_numeric($c)) continue;
- 					$cond .= 'gi_class = '.$c.' OR ';
+ 					$cond .= $c > 0 ? 'gi_class = '.$c.' OR ' : 'gi_class != '.(-$c).' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else if (is_numeric($gi_class)) {
- 				$sqlCond[] = 'gi_class = '.$gi_class;
+ 				$sqlCond[] = $gi_class > 0 ? 'gi_class = '.$gi_class : 'gi_class != '.(-$gi_class);
  			}
  		}
  		if ($gi_type != NULL) {
@@ -233,11 +233,11 @@
  				$cond = "";
  				foreach($gi_class as $c) {
  					if (!is_numeric($c)) continue;
- 					$cond .= 'gi_class = '.$c.' OR ';
+ 					$cond .= $c > 0 ? 'gi_class = '.$c.' OR ' : 'gi_class != '.(-$c).' OR ';
  				}
  				$sqlCond[] = '('.$cond.' FALSE)';
  			} else if (is_numeric($gi_class)) {
- 				$sqlCond[] = 'gi_class = '.$gi_class;
+ 				$sqlCond[] = $gi_class > 0 ? 'gi_class = '.$gi_class : 'gi_class != '.(-$gi_class);
  			}
  		}
  		if ($gi_type != NULL) {
@@ -304,7 +304,7 @@
  		}
  		
  		if ($gi_class != NULL && is_numeric($gi_class)) {
- 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 			$sqlCond[] = $gi_class > 0 ? 'gi_class = '.$gi_class : 'gi_class != '.(-$gi_class);
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {
@@ -369,7 +369,7 @@
  		}
  		
  		if ($gi_class != NULL && is_numeric($gi_class)) {
- 			$sqlCond[] = 'gi_class = '.$gi_class;
+ 			$sqlCond[] = $gi_class > 0 ? 'gi_class = '.$gi_class : 'gi_class != '.(-$gi_class);
  		}
  		if ($gi_type != NULL) {
  			if (is_array($gi_type)) {

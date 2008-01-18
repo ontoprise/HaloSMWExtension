@@ -321,11 +321,30 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		if ($matchString != NULL && $matchString != '') {
 			// show all issues of title which match
 			$options->addStringCondition($matchString, SMW_STRCOND_MID);
-			return parent::getData($options, $request);
+			return $this->getGardeningIssueContainer($options, $request);
 		} else {
 			// default
-			return parent::getData($options, $request);
+			return $this->getGardeningIssueContainer($options, $request);
 		}
+	}
+	
+	private function getGardeningIssueContainer($options, $request) {
+				
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
+		
+		
+		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		
+		$gic = array();
+		
+		// get issues of the given class. If no class is specified, ignore propagation issues.
+		$titles = $gi_store->getDistinctTitles('smw_consistencybot', NULL, $gi_class != NULL ? $gi_class : -GardeningIssue::getClass(SMW_GARDISSUE_CONSISTENCY_PROPAGATION), SMW_GARDENINGLOG_SORTFORTITLE, $options);
+		foreach($titles as $t) {
+			$gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $t, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+			$gic[] = new GardeningIssueContainer($t, $gis);
+		}
+		
+		return $gic;
 	}
 	
 	/**
