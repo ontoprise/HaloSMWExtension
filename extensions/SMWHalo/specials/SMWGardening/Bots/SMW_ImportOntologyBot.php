@@ -243,7 +243,7 @@
  	 * @param $text Text to add
  	 */
  	private function insertOrUpdateArticle($title, $wikiMarkup) {
- 		if (NULL == $title) continue;
+ 		if (NULL == $title) return;
 		if ($title->exists()) {
 			print " (merging)";
 			$this->globalLog .= " (merging)";
@@ -294,10 +294,10 @@
 	 */
 	private function createArticleStatements($entity) {
 		$statements = array();
-
-		$sLabel = $this->getLabelForEntity($entity);
+		global $wgLanguageCode;
+		$sLabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $sLabel , NS_MAIN );
-		if ($st == NULL) continue; // Could not create a title, next please
+		if ($st == NULL) return; // Could not create a title, next please
 		
 		// instantiated relations and attributes
 		$it  = $this->model->findAsIterator($entity, NULL, NULL);
@@ -322,7 +322,7 @@
 			$statement = $it->next();
 			
 			$concept = $statement->getObject();
-			$label = $this->getLabelForEntity($concept);
+			$label = $this->getLabelForEntity($concept, $wgLanguageCode);
 			$t = Title::newFromText( $label , NS_CATEGORY );
 			if ($this->isInCategory($st, $t)) continue;
 			if ($t == NULL) continue; // Could not create a title, next please
@@ -347,12 +347,12 @@
 	 * @param $statement reference to set of statements for this subject. 
 	 */
 	private function createRelationAnnotation($st, $property, $object, & $statements) {
-		
-		$pLabel = $this->getLabelForEntity($property);
+		global $wgLanguageCode;
+		$pLabel = $this->getLabelForEntity($property, $wgLanguageCode);
 		$pt = Title::newFromText( $pLabel , SMW_NS_PROPERTY );
-		if ($pt == NULL) continue; // Could not create a title, next please
+		if ($pt == NULL) return; // Could not create a title, next please
 			
-		$oLabel = $this->getLabelForEntity($object);
+		$oLabel = $this->getLabelForEntity($object, $wgLanguageCode);
 		$ot = Title::newFromText( $oLabel , NS_MAIN );
 		if ($ot == NULL) return; // Could not create a title, next please
 				
@@ -374,9 +374,10 @@
 	 * @param $statement reference to set of statements for this subject. 
 	 */
 	private function createAttributeAnnotation($st, $property, $object, & $statements) {
-		$pLabel = $this->getLabelForEntity($property);
+		global $wgLanguageCode;
+		$pLabel = $this->getLabelForEntity($property, $wgLanguageCode);
 			$pt = Title::newFromText( $pLabel , SMW_NS_PROPERTY );
-			if ($pt == NULL) continue; // Could not create a title, next please
+			if ($pt == NULL) return; // Could not create a title, next please
 			
 			$oLabel = $object->getLabel();
 			// TODO check if already within wiki
@@ -396,8 +397,8 @@
 		$statements = array();
 		 		
 		$it  = $this->model->findAsIterator($entity, RDFS::SUB_CLASS_OF(), NULL);
-
-		$slabel = $this->getLabelForEntity($entity);
+		global $wgLanguageCode;
+		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		
 		if ($entity instanceof BlankNode) return $statements;
 		$st = Title::newFromText( $slabel , NS_CATEGORY );
@@ -412,7 +413,7 @@
 		
 			$superClass = $statement->getObject();
 			
-			$superClassLabel = $this->getLabelForEntity($superClass);
+			$superClassLabel = $this->getLabelForEntity($superClass, $wgLanguageCode);
 			$superClassTitle = Title::newFromText( $superClassLabel , NS_CATEGORY );
 			if ($superClassTitle == NULL) continue; // Could not create a title, next please
 			if ($this->isInCategory($st, $superClassTitle)) continue;
@@ -431,14 +432,14 @@
 	}
 	
 	private function createPropertiesFromCategory($st, $superClass, & $statements) {
-		global $smwgContLang,$smwgHaloContLang, $wgContLang;
+		global $smwgContLang,$smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sp = $smwgContLang->getSpecialPropertiesArray();
  		
 		$it2 = $this->model->findAsIterator($superClass, OWL::ON_PROPERTY(), NULL);
 		if ($it2->hasNext()) {
 			$property = $it2->next()->getObject();
-			$propertyName = $this->getLabelForEntity($property);
+			$propertyName = $this->getLabelForEntity($property, $wgLanguageCode);
 			$propertyTitle = Title::newFromText( $propertyName);
 		}
 		
@@ -465,7 +466,7 @@
 			$s2['NS'] = $namespace;
 		
 			
-			$rangeCategoryName = $this->getLabelForEntity($range);
+			$rangeCategoryName = $this->getLabelForEntity($range, $wgLanguageCode);
 			$rangeCategoryTitle = Title::newFromText( $rangeCategoryName , (ImportOntologyBot::isXMLSchemaType($range->getURI())) ? SMW_NS_TYPE : NS_CATEGORY );
 			
 		
@@ -503,14 +504,14 @@
 	 */
 	private function createRelationStatements($entity) {
 		$statements = array();
- 		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+ 		global $smwgContLang, $smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sc = $smwgHaloContLang->getSpecialCategoryArray();
 		$smwNSArray = $smwgContLang->getNamespaces();
  		
-		$slabel = $this->getLabelForEntity($entity);
+		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
-		if ($st == NULL) continue; // Could not create a title, next please
+		if ($st == NULL) return; // Could not create a title, next please
 
 		$s = array();
 		$s['NS'] = SMW_NS_PROPERTY;
@@ -524,7 +525,7 @@
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
-			$label = $this->getLabelForEntity($object);
+			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$domainLabels[] = $label;
 			
 		}
@@ -535,7 +536,7 @@
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
-			$label = $this->getLabelForEntity($object);
+			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$rangeLabels[] = $label;
 			
 		}
@@ -561,7 +562,7 @@
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
-			$label = $this->getLabelForEntity($object);
+			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$s['WIKI'][] = "[[".$ssp[SMW_SSP_IS_INVERSE_OF].":=" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
 		}
 		
@@ -587,13 +588,13 @@
 	 */
 	private function createAttributeStatements($entity) {
 		$statements = array();
-		global $smwgContLang, $smwgHaloContLang, $wgContLang;
+		global $smwgContLang, $smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  		$sp = $smwgContLang->getSpecialPropertiesArray();
  		
-		$slabel = $this->getLabelForEntity($entity);
+		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
-		if ($st == NULL) continue; // Could not create a title, next please
+		if ($st == NULL) return; // Could not create a title, next please
 
 		$s = array();
 		$s['NS'] = SMW_NS_PROPERTY;
@@ -606,7 +607,7 @@
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
-			$label = $this->getLabelForEntity($object);
+			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$s['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::" . $wgContLang->getNsText(NS_CATEGORY) . ":" . $label . "]]" . "\n";
 			
 		}
@@ -616,7 +617,7 @@
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$object = $statement->getObject();
-			$label = $this->getLabelForEntity($object);
+			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$label = ImportOntologyBot::mapXSDTypesToWikiTypes($label);
 			$s['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
 		}
@@ -626,7 +627,12 @@
 	}
 	
 	
-	
+	/**
+	 * Returns a label for a given Resource $entity
+	 * 
+	 * $entity Resource
+	 * $lang language code (default is english)
+	 */
  	private function getLabelForEntity($entity, $lang = "en") {
 		
 		$label = $entity->getLocalName(); // use local name as default, if no labels exist at all
