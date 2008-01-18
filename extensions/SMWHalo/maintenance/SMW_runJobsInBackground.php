@@ -9,7 +9,7 @@
  * 
  * php SMW_runJobsInBackground.php [--r=<rate>]
  * 
- * Default rate is 2 jobs/second
+ * Default rate is 0.5 jobs/second
  * 
  * Author: kai
  */
@@ -23,8 +23,8 @@
  
  $rate = $options['r'];
 
- if (!is_numeric($rate) || $rate < 1) {
- 	$rate = 2; // 2 jobs/second is default rate
+ if (!is_numeric($rate) || $rate > 1) {
+ 	$rate = 0.5; // 0.5 jobs/second is default rate
  }
  
  $dbw = wfGetDB( DB_MASTER );
@@ -34,7 +34,7 @@
  
  print "\nRunning jobs... (rate is: $rate jobs/second)\n";
 	for (;;) {
-		sleep($rate);
+		sleep(1/$rate);
 		
 		$job = Job::pop();
 		
