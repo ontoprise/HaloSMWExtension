@@ -876,6 +876,13 @@ class SMWH_AAMParser {
 			return true;
 		}
 		
+		global $wgContLang;
+		// Do not highlight Image and Media links.
+		if (strpos($annotation, $wgContLang->getNsText(NS_IMAGE).":") == 2
+		    || strpos($annotation, $wgContLang->getNsText(NS_MEDIA).":") == 2) {
+			return true;
+		}
+		
 		return false;
 	}
 	
