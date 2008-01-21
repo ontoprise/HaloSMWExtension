@@ -70,15 +70,44 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		$search[1] = '(\[\[(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)?\]\])';
 		$replace[1] = '[[${1}' . $this->newtitle . '${2}|${3}]]';
 
+		// KK: replaced because did not work with n-aries
 		// [[m::X]]			-> [[m::Y|X]]
-		$search[2] = '(\[\[(([^:][^]]*)::)+(\s*)' . $this->oldtitle . '(\s*)\]\])';
+		/*$search[2] = '(\[\[(([^:][^]]*)::)+(\s*)' . $this->oldtitle . '(\s*)\]\])';
 		$replace[2] = '[[${1}${3}' . $this->newtitle . '${4}|'.$this->oldtitle.']]';
 
 		// [[m::X|blabla]]  -> [[m::Y|blabla]]
 		$search[3] = '(\[\[(([^:][^]]*)::)+(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)\]\])';
-		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';
-
-		$newtext = preg_replace($search, $replace, $oldtext);
+		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';*/
+		
+		// get all anntations (including n-aries!)
+		$annotations = '\[\[([^\]:]+):[:=]([^\]\|]*)\|([^\]]*)\]\]';
+		preg_match($annotations, $oldtext, $matches);
+		
+		// identify those annotations which contain one or more links to oldtitle
+		// save the index and the (changed) link
+		$indicesToReplace = array();
+		for($i= 0, $n = count($matches[2]); $i < $n; $i++) {
+			$updated = false;
+			$frgs = explode(";", $matches[2][$i]);
+			for($j = 0, $m = count($frgs); $j < $m; $j++) {
+				if (trim($frgs[$j]) == $this->oldtitle) {
+					$frgs[$j] = $this->newtitle;
+					$updated = true;
+				}
+			}
+			if ($updated) $indicesToReplace[$i] = implode("; ", $frgs);
+		}
+		
+		// replace existing annotations with saved annotations including the new links 
+		$newtext = $oldtext;
+		foreach($indicesToReplace as $i => $l) {
+			$newtext = preg_replace('\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].'\|'.$matches[3][$i].'\]\]', '\[\['.$matches[1][$i].':[:=]'.$l.'\|'.$matches[3][$i].'\]\]', $newtext);
+		}
+		
+		// replace normal links
+		$newtext = preg_replace($search, $replace, $newtext);
+		
+		// save and parse article
 		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateLinksAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
 		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
 		smwLog("finished editing article", "RF", "link refactoring");

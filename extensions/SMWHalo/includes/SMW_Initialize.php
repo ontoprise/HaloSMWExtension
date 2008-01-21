@@ -450,8 +450,11 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		$params[] = $oldtitle->getText();
 		$params[] = $newtitle->getText();
 
+		$fullparams[] = $oldtitle->getPrefixedText();
+		$fullparams[] = $newtitle->getPrefixedText();
+		
 		foreach ($titlesToUpdate as $uptitle) {
-			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $params);
+			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
 		}
 
 		if ($oldtitle->getNamespace()===SMW_NS_PROPERTY) {
