@@ -5,19 +5,29 @@ REM xampp.zip, mw-1.12beta.zip, smw-1.0.zip,
 REM smwhalo-1.0.zip must be in the same directory as this script
 
 REM extract XAMP (only if -noxampp is not specified
-IF NOT (%1) == (-noxampp) 7z x bin/xampp.zip -oc:\temp\haloexe * -r
+IF (%1) == (-noxampp) GOTO SKIPXAMPP 
+
+CD bin
+7z x xampp.zip -oc:\temp\haloexe * -r
+CD ..
+
+:SKIPXAMPP
 
 REM extract wiki
-7z x bin/mw-1.12beta.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
-7z x bin/smw-1.0.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
-7z x bin/smwhalo-1.0.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+CD bin
+7z x mw-1.12beta.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+7z x smw-1.0.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+7z x smwhalo-1.0.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+CD ..
 
 REM copy additional files
-xcopy install/* c:\temp\haloexe\xampp /Y
+xcopy install\* c:\temp\haloexe\xampp /Y
 
 REM Build executable
 IF EXIST halowiki.exe del halowiki.exe
+CD bin
 7z a -sfx7z.sfx halowiki.exe c:\temp\haloexe\xampp\*
+CD ..
 
 REM Remove extracted packages
 del /S /Q c:\temp\haloexe\*
