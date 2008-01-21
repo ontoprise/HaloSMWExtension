@@ -16,7 +16,7 @@
 */
 
 var SMW_CAT_VALID_CATEGORY_NAME =
-	'smwValidValue="^.{1,255}$: valid ' +
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 

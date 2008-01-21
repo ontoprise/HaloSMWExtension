@@ -17,7 +17,7 @@
 var RelationToolBar = Class.create();
 
 var SMW_REL_VALID_PROPERTY_NAME =
-	'smwValidValue="^.{1,255}$: valid ' +
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
@@ -45,6 +45,11 @@ var SMW_REL_CHECK_PROPERTY_IIE = // Invalid if exists
 	'smwCheckType="property: exists ' +
 		'? (color: red, showMessage:PROPERTY_ALREADY_EXISTS, valid:false) ' +
 	 	': (color: lightgreen, hideMessage, valid:true)" ';
+
+var SMW_REL_VALID_CATEGORY_NAME =
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+		'? (color: white, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 
 var SMW_REL_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
@@ -548,7 +553,7 @@ updateTypeHint: function(elementID) {
 		var mantissa = numeric[2];
 		if (number && unit) {
 			var c = unit.charCodeAt(0);
-			if (unit === "K" || unit === '°C' || unit === '°F' ||
+			if (unit === "K" || unit === 'ï¿½C' || unit === 'ï¿½F' ||
 				(c == 176 && unit.length == 2 && 
 				 (unit.charAt(1) == 'C' || unit.charAt(1) == 'F'))) {
 				hint = "_tem;"+SMW_PROPERTY_NS;
@@ -595,7 +600,9 @@ newRelation: function() {
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), domain, '', 
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_CHECK_CATEGORY +
+						     SMW_REL_VALID_CATEGORY_NAME + 
+						     SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
@@ -603,7 +610,7 @@ newRelation: function() {
 	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', 
 							 "relToolBar.removeRangeOrType('rel-range-0')", 
 						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_HINT_CATEGORY,
+						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
 	
@@ -641,7 +648,7 @@ addRangeInput:function() {
 			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', 
                              "relToolBar.removeRangeOrType('rel-range-"+i+"')",
 						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_HINT_CATEGORY,
+						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
 	                         true));
 	tb.insert('rel-range-'+i,
 	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
@@ -950,17 +957,26 @@ getselectedItem: function(selindex) {
 		}
 
 		var parameterNames = [];
+		var schemaValid = true;
 
 		if (request.responseText != 'noSchemaData') {
 
 			var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
-
-			// read parameter names
-			parameterNames = [];
-			for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
-				parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+			if (schemaData.documentElement.tagName == 'parsererror') {
+				schemaValid = false;
+			} else {
+				// read parameter names
+				parameterNames = [];
+				for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
+					parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+				}
 			}
-		} else { // schema data could not be retrieved for some reason (property may not yet exist). Show "Value" as default.
+		} else {
+			schemaValid = false; 
+		}
+		if (!schemaValid) {
+			// schema data could not be retrieved for some reason (property may 
+			// not yet exist). Show "Value" as default.
 			for (var i = 0; i < relation.getArity()-1; i++) {
 		 		parameterNames.push("Value");
 			}

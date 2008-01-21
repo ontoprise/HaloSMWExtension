@@ -31,6 +31,11 @@ var SMW_PRP_ALL_VALID =
 var SMW_PRP_CHECK_MAX_CARD =
 	'smwValid="propToolBar.checkMaxCard"';
 
+var SMW_PRP_VALID_CATEGORY_NAME =
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+		'? (color: white, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
+
 var SMW_PRP_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +
 		'? (color: lightgreen, hideMessage, valid:true) ' +
@@ -40,6 +45,11 @@ var SMW_PRP_CHECK_PROPERTY =
 	'smwCheckType="property: exists ' +
 		'? (color: lightgreen, hideMessage, valid:true) ' +
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
+
+var SMW_PRP_VALID_PROPERTY_NAME =
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+		'? (color: white, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
 
 var SMW_PRP_HINT_CATEGORY =
@@ -210,6 +220,7 @@ createContent: function() {
 	var tb = this.toolbarContainer;
 	tb.append(tb.createInput('prp-domain', gLanguage.getMessage('DOMAIN'), domain, '',
 	                         SMW_PRP_CHECK_CATEGORY + 
+	                         SMW_PRP_VALID_CATEGORY_NAME +
 	                         SMW_PRP_CHECK_EMPTY_WIE + 
 	                         SMW_PRP_HINT_CATEGORY,
 	                         true));
@@ -217,13 +228,15 @@ createContent: function() {
 
 	tb.append(tb.createInput('prp-range', gLanguage.getMessage('RANGE'), range, '',
 	                         SMW_PRP_CHECK_CATEGORY + 
+	                         SMW_PRP_VALID_CATEGORY_NAME +
 	                         SMW_PRP_CHECK_EMPTY_WIE + 
 	                         SMW_PRP_HINT_CATEGORY,
 	                         true));
 	tb.append(tb.createText('prp-range-msg', '', '' , true));
 
 	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), inverse, '',
-	                         SMW_PRP_CHECK_PROPERTY + 
+	                         SMW_PRP_CHECK_PROPERTY +
+	                         SMW_PRP_VALID_PROPERTY_NAME +
 	                         SMW_PRP_HINT_PROPERTY+
 	                         SMW_PRP_CHECK_EMPTY_VIE,
 	                         true));
@@ -272,6 +285,7 @@ createContent: function() {
 				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), r, 
 				                         'propToolBar.removeRangeOrType(\'prp-nary-' + i + '\')',
 	                         			 SMW_PRP_CHECK_CATEGORY + 
+	                         			 SMW_PRP_VALID_CATEGORY_NAME +
 	                         			 SMW_PRP_CHECK_EMPTY +
 			                 			 SMW_PRP_HINT_CATEGORY,
 	                         			 true));
@@ -448,7 +462,8 @@ addRange: function() {
 	tb.insert(insertAfter,
 			  tb.createInput('prp-nary-' + this.prpNAry, gLanguage.getMessage('RANGE'), "", 
 	                         'propToolBar.removeRangeOrType(\'prp-nary-' + this.prpNAry + '\')',
-                 			 SMW_PRP_CHECK_CATEGORY + 
+                 			 SMW_PRP_CHECK_CATEGORY +
+                 			 SMW_PRP_VALID_CATEGORY_NAME + 
                  			 SMW_PRP_CHECK_EMPTY +
                  			 SMW_PRP_HINT_CATEGORY,
                  			 true));

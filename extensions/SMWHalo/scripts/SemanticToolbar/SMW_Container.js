@@ -836,7 +836,11 @@ posInArray: function(containerid){
  */
 findContainer: function(elementid){
 	//Get list with all ancestors
-	var ancestorlist = $(elementid).ancestors();
+	var elem = $(elementid);
+	if (!elem) {
+		return false;
+	}
+	var ancestorlist = elem.ancestors();
 	//Look for an ancestor with a if that probably represents the containerbody-div
 	for(var j = 0; j< ancestorlist.length; j++ ){
 		//Read id

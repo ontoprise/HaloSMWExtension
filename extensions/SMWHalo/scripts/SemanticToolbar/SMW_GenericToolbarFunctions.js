@@ -96,7 +96,7 @@ createList: function(list,id) {
 		switch (id)	{
 			case "category":
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
-	  			firstValue = list[i].getValue ? list[i].getValue(): "";
+	  			firstValue = list[i].getValue ? list[i].getValue().escapeHTML(): "";
 	  			prefix = gLanguage.getMessage('CATEGORY');
 	 			 break
 			case "relation":
@@ -105,7 +105,7 @@ createList: function(list,id) {
 	  		
 	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
-	  			firstValue = values[0];
+	  			firstValue = values[0].escapeHTML();
 	  			var valueLink;
 
 				//firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
@@ -116,10 +116,11 @@ createList: function(list,id) {
 	  			// HTML of parameter rows (except first)
 	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
 	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
+	  				var v = values[j].escapeHTML();
 					valueLink = 
-					'<span title="' + values[j] + '">' + values[j] +
-				    '</span>';
-//						values[j];
+						'<span title="' + v + '">' + v +
+					    '</span>';
+	//						values[j];
 					multiValue += 
 						"<tr>" +
 							"<td class=\"" + id + "-col2\">" + 
@@ -131,11 +132,11 @@ createList: function(list,id) {
 		}
 		
 		//Checks if getValue exists if no it's an Category what allows longer text
-		var shortName = list[i].getName();
+		var shortName = list[i].getName().escapeHTML();
 		var elemName;
 		//shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
-		elemName = '<a href="'+wgServer+path+prefix+list[i].getName();
+		elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
 		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
 		divlist += 	"<tr>" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
@@ -879,11 +880,15 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				break;
 			case 'show':
 				var tbc = smw_ctbHandler.findContainer(parameter);
-				tbc.show(parameter, true);
+				if (tbc) {
+					tbc.show(parameter, true);
+				}
 				break;
 			case 'hide':
 				var tbc = smw_ctbHandler.findContainer(parameter);
-				tbc.show(parameter, false);
+				if (tbc) {
+					tbc.show(parameter, false);
+				}
 				break;
 			case 'call':
 				eval(parameter+'("'+element.id+'")');
