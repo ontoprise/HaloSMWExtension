@@ -41,8 +41,8 @@ xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwhalo-1.0beta.zip del smwhalo-1.0beta.zip
-7z.exe a -tzip smwhalo-1.0beta.zip %OUTPUT_DIR%\*
+IF EXIST smwhalo-1.0.zip del smwhalo-1.0.zip
+7z.exe a -tzip smwhalo-1.0.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

@@ -20,8 +20,8 @@ xcopy ..\..\SemanticMediaWiki\* %OUTPUT_DIR%\extensions\SemanticMediaWiki /S /EX
 REM Pack SMW
 
 cd bin
-IF EXIST smw-1.0beta.zip del smw-1.0beta.zip
-7z.exe a -tzip smw-1.0beta.zip %OUTPUT_DIR%\*
+IF EXIST smw-1.0.zip del smw-1.0.zip
+7z.exe a -tzip smw-1.0.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
