@@ -1,10 +1,10 @@
 @ECHO OFF
 REM Builds a self-extractable executable of SMWHalo
 REM 7z.exe needs to be in PATH!
-REM smwhalo-1.0beta.zip must be in the same directory as this script
+REM smwhalo-1.0.zip must be in the same directory as this script
 
 REM extract wiki
-7z x smwhalo-1.0beta.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+7z x bin/smwhalo-1.0.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
 
 REM Build executable
 IF EXIST halowiki.exe del halowiki.exe
