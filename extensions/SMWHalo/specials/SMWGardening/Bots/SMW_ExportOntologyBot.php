@@ -78,7 +78,7 @@
  		}
  		 		
  		// open file and write headers
- 		$handle = fopen($wikiexportDir."/".$outputFile,"wb");
+ 		$handle = fopen($wikiexportDir."/latestExport.temp","wb");
  		$this->writeHeader($handle);
  		
  		// set number of subtasks for progress indication 		
@@ -98,6 +98,11 @@
  		// write footer and close
  		$this->writeFooter($handle);
 	 	fclose($handle);
+	 	
+	 	// copy to normal output file as well as to latestOutput file
+	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/".$outputFile);
+	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/latestExport.owl");
+	 	unlink($wikiexportDir."/latestExport.temp");
 	 	 
 	 	$successMessage = "\n\nExport was successful!";
 	 	
