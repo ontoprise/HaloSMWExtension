@@ -27,6 +27,7 @@
  		$this->mapWikiTypeToXSD['_int'] = 'integer';
  		$this->mapWikiTypeToXSD['_str'] = 'string';
  		$this->mapWikiTypeToXSD['_flt'] = 'float';
+ 		$this->mapWikiTypeToXSD['_num'] = 'float';
  		$this->mapWikiTypeToXSD['_boo'] = 'boolean';
  	}
  	
