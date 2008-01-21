@@ -39,8 +39,8 @@ showMessageAndWikiText: function(message, wikiText, x, y) {
 	tb.createContainerBody('', 'ANNOTATIONHINT', 
 	                       gLanguage.getMessage('ANNOTATION_ERRORS'));
 
-	tb.append(tb.createText('ah-error-msg', message, '', true));
-	tb.append(tb.createText('ah-wikitext-msg', wikiText, '' , true));
+	tb.append(tb.createText('ah-error-msg', message.escapeHTML(), '', true));
+	tb.append(tb.createText('ah-wikitext-msg', wikiText.escapeHTML(), '' , true));
 
 	tb.finishCreation();
 	
