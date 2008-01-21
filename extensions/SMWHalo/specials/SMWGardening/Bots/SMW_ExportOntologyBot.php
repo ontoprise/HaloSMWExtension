@@ -59,7 +59,7 @@
  		
  		// do not allow to start synchronously.
  		if (!$isAsync) {
- 			return "Export ontology bot should not be done synchronously!";
+ 			return "Export ontology bot should not be executed synchronously!";
  		}
  		echo "\nStart export...";
  		
@@ -76,7 +76,10 @@
  		if ($this->namespace == '') { // should not happen because it is required
  			$this->namespace = DEFAULT_EXPORT_NS;
  		}
- 		 		
+ 		
+ 		// escape user defined namespace
+ 		$this->namespace = ExportOntologyBot::makeXMLAttributeContent($this->namespace);
+ 		
  		// open file and write headers
  		$handle = fopen($wikiexportDir."/latestExport.temp","wb");
  		$this->writeHeader($handle);
@@ -166,8 +169,8 @@
  			}
  			
  			// export root categories
- 			$owl = '<owl:Class rdf:about="&cat;'.$rc->getDBkey().'">'.LINE_FEED;
-			$owl .= '	<rdfs:label xml:lang="en">'.$rc->getText().'</rdfs:label>'.LINE_FEED;
+ 			$owl = '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($rc->getDBkey()).'">'.LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rc->getText()).'</rdfs:label>'.LINE_FEED;
 			$owl .= '	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />'.LINE_FEED;
 			$owl .= '</owl:Class>'.LINE_FEED;
 			fwrite($filehandle, $owl);
@@ -196,12 +199,12 @@
  			
  			// define member categories. If there is no, put it to DefaultRootConcept by default
 	 		$categories = smwfGetSemanticStore()->getCategoriesForInstance($inst);
- 			$owl = '<owl:Thing rdf:about="&a;'.smwfXMLContentEncode($inst->getDBkey()).'">'.LINE_FEED;
+ 			$owl = '<owl:Thing rdf:about="&a;'.ExportOntologyBot::makeXMLAttributeContent($inst->getDBkey()).'">'.LINE_FEED;
 	 		if (count($categories) == 0) {
 	 			$owl .= '	<rdf:type rdf:resource="&cat;DefaultRootConcept"/>'.LINE_FEED;
 	 		} else {
 	 			foreach($categories as $category) {
-	 				$owl .= '	<rdf:type rdf:resource="&cat;'.smwfXMLContentEncode($category->getDBkey()).'"/>'.LINE_FEED;
+	 				$owl .= '	<rdf:type rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($category->getDBkey()).'"/>'.LINE_FEED;
 	 			}
 	 		}
  			$properties = smwfGetStore()->getProperties($inst);
@@ -217,9 +220,8 @@
 					if ($smwValue instanceof SMWWikiPageValue) {
 						$target = $smwValue->getTitle();
 						
-							$targetLocal = preg_replace("/\"/", "", $target->getDBkey());
-							
-							if ($target!=NULL) $owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.$targetLocal.'"/>'.LINE_FEED;
+													
+							if ($target!=NULL) $owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($target->getDBkey()).'"/>'.LINE_FEED;
 						
 		 			} else { // and all others as datatype properties (including n-aries)
 		 										
@@ -319,10 +321,10 @@
  			}
  			$directSuperCategories = smwfGetSemanticStore()->getDirectSuperCategories($c);
  			
- 			$owl = '<owl:Class rdf:about="&cat;'.$c->getDBkey().'">'.LINE_FEED;
-			$owl .= '	<rdfs:label xml:lang="en">'.$c->getText().'</rdfs:label>'.LINE_FEED;
+ 			$owl = '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($c->getDBkey()).'">'.LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($c->getText()).'</rdfs:label>'.LINE_FEED;
 			foreach($directSuperCategories as $sc) {
-				$owl .= '	<rdfs:subClassOf rdf:resource="&cat;'.$sc->getDBkey().'" />'.LINE_FEED;
+				$owl .= '	<rdfs:subClassOf rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($sc->getDBkey()).'" />'.LINE_FEED;
 			}
 			
 			$owl .= '</owl:Class>'.LINE_FEED;
@@ -347,9 +349,9 @@
  		$xsdType = $this->mapWikiTypeToXSD[$firstType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$firstType];
  		
  		// export as subproperty 	
-		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.$rp->getDBkey().'">'.LINE_FEED;
+		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.LINE_FEED;
 		foreach($directSuperProperties as $dsp) {
- 			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.$dsp->getDBkey().'"/>'.LINE_FEED;
+ 			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.LINE_FEED;
  		}
  		$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
  		
@@ -360,7 +362,7 @@
 			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
 			$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 			$owl .= '			<owl:Restriction>'.LINE_FEED; 
-			$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+			$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
 			$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
 			$owl .= '			</owl:Restriction>'.LINE_FEED;
 			$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
@@ -379,10 +381,10 @@
 		 		if ($domain == NULL) continue;
 		 		$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
 			
-				$owl .= '	<owl:Class rdf:about="&cat;'.$domain.'">'.LINE_FEED;
+				$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
-				$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+				$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
 				$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
 				$owl .= '			</owl:Restriction>'.LINE_FEED;
 				$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
@@ -403,7 +405,7 @@
  				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOf);
  				
  				// export as symmetrical property
- 				$owl = '<owl:ObjectProperty rdf:about="&prop;'.$rp->getDBkey().'">'.LINE_FEED;
+ 				$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.LINE_FEED;
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->symetricalCat)) {
  					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.LINE_FEED;
  				}
@@ -414,13 +416,13 @@
  				
  				// export as subproperty
  				foreach($directSuperProperties as $dsp) {
- 					$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.$dsp->getDBkey().'"/>'.LINE_FEED;
+ 					$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.LINE_FEED;
  				}
  				
  				// export as inverse property
  				foreach($inverseRelations as $inv) {
  					if (!($inv instanceof SMWWikiPageValue)) continue;
- 					$owl .= '	<owl:inverseOf rdf:resource="&prop;'.$inv->getTitle()->getDBkey().'"/>'.LINE_FEED;
+ 					$owl .= '	<owl:inverseOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($inv->getTitle()->getDBkey()).'"/>'.LINE_FEED;
  				}
  				$owl .= '</owl:ObjectProperty>'.LINE_FEED;
  				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
@@ -429,7 +431,7 @@
 			 				$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
 			 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 			 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
-							$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
 							$owl .= '			</owl:Restriction>'.LINE_FEED;
 							$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 							if ($maxCard != NULL) {
@@ -448,11 +450,11 @@
 		 					if ($domain == NULL) continue;
 		 					$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
 		 				
-			 				$owl .= '	<owl:Class rdf:about="&cat;'.$domain.'">'.LINE_FEED;
+			 				$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
 			 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 			 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
-							$owl .= '				<owl:onProperty rdf:resource="&prop;'.$rp->getDBkey().'" />'.LINE_FEED;
-							if ($range != '') $owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.$range.'" />'.LINE_FEED;
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
+							if ($range != '') $owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED;
 							$owl .= '			</owl:Restriction>'.LINE_FEED;
 							$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 							if ($maxCard != NULL) {
@@ -471,7 +473,7 @@
  	private function exportMinCard($property, $minCard) {
  		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
 		$owl .= '			<owl:Restriction>'.LINE_FEED; 
-		$owl .= '				<owl:onProperty rdf:resource="&prop;'.$property->getDBkey().'" />'.LINE_FEED;
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getDBkey()).'" />'.LINE_FEED;
 		$owl .= '				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.LINE_FEED;
 		$owl .= '			</owl:Restriction>'.LINE_FEED;
 		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
@@ -481,7 +483,7 @@
  	private function exportMaxCard($property, $maxCard) {
  		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
 		$owl .= '			<owl:Restriction>'.LINE_FEED; 
-		$owl .= '				<owl:onProperty rdf:resource="&prop;'.$property->getDBkey().'" />'.LINE_FEED;
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getDBkey()).'" />'.LINE_FEED;
 		$owl .= '				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.LINE_FEED;
 		$owl .= '			</owl:Restriction>'.LINE_FEED;
 		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
@@ -601,8 +603,15 @@
 		$id = str_replace( '-2D', '-', $id);
 		return $id;
 	}
+	
+	static function makeXMLAttributeContent($attribute) {
+		return str_replace( array('"'),
+		                   array('&quot;'),
+		                   $attribute);
+	}
  	
  }
  
+ // create one instance for registration at Gardening Framework
  new ExportOntologyBot();
 ?>
