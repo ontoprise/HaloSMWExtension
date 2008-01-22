@@ -667,6 +667,7 @@ WikiTextParser.prototype = {
 		// 1 - find [[ or ]]
 		// 2 - find <nowiki> or </nowiki>
 		// 3 - find <ask> or </ask>
+		// 4 - find {{#ask:
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var nowikiCount = 0;  // Number of open <nowiki>-statements
@@ -678,7 +679,7 @@ WikiTextParser.prototype = {
 			switch (state) {
 				case 0:
 					// Search for "[[", "<nowiki>" or <ask>
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<ask"]);
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<ask", "{{#ask:"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
@@ -695,11 +696,15 @@ WikiTextParser.prototype = {
 						bracketStart = -1;
 						nowikiCount++;
 						state = 2;
-					} else {
+					} else if (findings[1] == "<ask") {
 						// <ask> found
 						bracketStart = -1;
 						askCount++;
 						state = 3;
+					} else if (findings[1] == "{{#ask:") {
+						// {{#ask: found
+						bracketStart = -1;
+						state = 4;
 					}
 					break;
 				case 1:
@@ -778,6 +783,11 @@ WikiTextParser.prototype = {
 						}
 					}
 					break;
+				case 4:
+					// we are within an {{#ask:-template
+					currentPos = this.parseAskTemplate(currentPos);
+					state = 0;
+					break;
 			}
 		}
 		if (bracketCount != 0) {
@@ -785,6 +795,68 @@ WikiTextParser.prototype = {
 		}
 	},
 
+	/**
+	 * @private
+	 *
+	 * Parses an ask-template until its end starting at position <currentPos>
+	 * in the wikitext. The position after the template is returned.
+	 * 
+	 * @param int currentPos
+	 * 		Start position in the wikitext (right after the opening '{{#ask:'
+	 * 
+	 * @return int 
+	 * 		The position after the closing '}}' or -1, if parsing fails due to
+	 * 		syntax error.
+	 */
+	parseAskTemplate : function(currentPos) {
+		var parserTable = new Object();
+		parserTable['ask'] = ["{{#ask:", "{{{", "{{", "}}"];
+		parserTable['tparam'] = ["}}}"];
+		parserTable['tmplt'] = ["{{#ask:", "{{{", "}}"];
+		
+		var actionTable = new Object();
+		actionTable['ask'] = new Object();
+		actionTable['ask']["{{#ask:"] = ["push", "ask"];
+		actionTable['ask']["{{"]      = ["push", "tmplt"];
+		actionTable['ask']["{{{"]     = ["push", "tparam"];
+		actionTable['ask']["}}"]      = ["pop"];
+		
+		actionTable['tparam'] = new Object();
+		actionTable['tparam']["}}}"] = ["pop"];
+		
+		actionTable['tmplt'] = new Object();
+		actionTable['tmplt']["{{#ask:"] = ["push", "ask"];
+		actionTable['tmplt']["{{{"]     = ["push", "tparam"];
+		actionTable['tmplt']["}}"]      = ["pop"];
+		
+		var stack = new Array();
+		stack.push('ask'); // the first opening ask is already parsed
+		while (stack.size() > 0) {
+			var ct = stack[stack.size()-1];
+			var findings = this.findFirstOf(currentPos, parserTable[ct]);
+			if (findings[1] == null) {
+				// nothing found
+				return -1;
+			}
+			
+			var action = actionTable[ct];
+			if (!action) {
+				return -1;
+			}
+			action = action[findings[1]];
+			if (!action) {
+				return -1;
+			}
+			if (action[0] === 'push') {
+				stack.push(action[1]);
+			} else if (action[0] === 'pop') {
+				stack.pop();
+			}
+			currentPos = findings[0]+ findings[1].length;
+		}
+		return currentPos;
+	},
+	
 	/**
 	 * @private
 	 *

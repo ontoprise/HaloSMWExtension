@@ -115,7 +115,7 @@ class SMWH_AAMParser {
 			array('*','{','*',1),
 			array('*',"\n",'*',9),
 			array('*','}','*',10),
-			array('*','[[','*','at'),
+//			array('*','[[','*','at'),
 			array('*','}}','*','at'),
 			array('*','*','*','wc'),
 		),
@@ -241,11 +241,17 @@ class SMWH_AAMParser {
 				// $tmplDescr[2]: start index of the template
 				// $tmplDescr[3]: end index of the template
 				// $tmplDescr[4]: content
-				$markedText .= "\n".'{wikiTextOffset='.$pos
-				               .' template="'.$tmplDescr[1].'"'
-			                   .' id="tmplt'.$id.'"}'."\n".$tmplDescr[4]
-				               ."\n".'{templateend:tmplt'.$id.'}'."\n";
-				$id++;
+				if ($tmplDescr[1] == '#ask:') {
+					// special handling of ask-template
+					$markedText .= "\t{wikiTextOffset=".$pos.' obj="ask"}'
+					               ."\n".$tmplDescr[4]."\n";
+				} else {
+					$markedText .= "\n".'{wikiTextOffset='.$pos
+					               .' template="'.$tmplDescr[1].'"'
+				                   .' id="tmplt'.$id.'"}'."\n".$tmplDescr[4]
+					               ."\n".'{templateend:tmplt'.$id.'}'."\n";
+					$id++;
+				}
 				$templateStart = -1;
 				// The parse can continue after the template
 				$i = $tmplDescr[3];
@@ -269,12 +275,13 @@ class SMWH_AAMParser {
 					if ($braceCount > 0) {
 						$markedText .= $part0;
 					} else {
-						if ($part0{0} == '=' 
-						    || $part0{0} == "\n"
-						    || $part0{0} == "*"
-						    || $part0{0} == "!"
-						    || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
-						    || $part0{0} == "#") {
+						if (!$lastTokenWOT &&
+						     ($part0{0} == '=' 
+						      || $part0{0} == "\n"
+						      || $part0{0} == "*"
+						      || $part0{0} == "!"
+						      || (strlen($part0)>1 && $part0{0} == "|" && $part0{1} == "-")
+						      || $part0{0} == "#")) {
 							// title, empty line or enumeration found
 							
 							$obj = $part0{0};
@@ -311,10 +318,16 @@ class SMWH_AAMParser {
 							$ignoreToken = ($part0{0} == '{') 
 							               || ($part0{0} == '}')
 							               || ($part0{0} == '|');
-							if (!$ignoreToken && !$ignoredLastToken) {
+							$obj = 'text';
+							if (strpos($part0, '<ask') === 0) $obj = 'ask';
+							else if (strpos($part0, '<nowiki>') === 0) $obj = 'nowiki';
+							else if (strpos($part0, '<pre>') === 0) $obj = 'pre';
+							
+							if ((!$ignoreToken && !$ignoredLastToken) || $obj !== 'text') {
 								// write the wiki text offset only, if there are
 								// no braces at the beginning or end
-								$obj = 'text';
+								// Exception: Tags after a brace are not ignored
+								
 								// conserve a space character at the beginning 
 								// of new a line
 								$prefix = (($part0{0} === ' '
@@ -322,9 +335,6 @@ class SMWH_AAMParser {
 								          && ($prevPart == null 
 								              || $prevPart{0} === "\n")) ? $part0{0} 
 								                                         : '';
-								if (strpos($part0, '<ask') === 0) $obj = 'ask';
-								else if (strpos($part0, '<nowiki>') === 0) $obj = 'nowiki';
-								else if (strpos($part0, '<pre>') === 0) $obj = 'pre';
 								if ($lastTokenWOT) {
 									// write no wikitextoffset after opening tags like <nowiki>
 									$wto = ''; 
