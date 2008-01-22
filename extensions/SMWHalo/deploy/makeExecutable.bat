@@ -15,18 +15,18 @@ CD ..
 
 REM extract wiki
 CD bin
-7z x mw-1.12beta.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
-7z x smw-1.0.zip -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
-7z x smwhalo-1.0.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+7z x mw-1.12beta.zip -oc:\temp\haloexe\htdocs\mediawiki * -r
+7z x smw-1.0.zip -oc:\temp\haloexe\htdocs\mediawiki * -r
+7z x smwhalo-1.0.zip -aoa -oc:\temp\haloexe\htdocs\mediawiki * -r
 CD ..
 
 REM copy additional files
-xcopy install\* c:\temp\haloexe\xampp /Y
+xcopy install\* c:\temp\haloexe /Y
 
 REM Build executable
-IF EXIST halowiki.exe del halowiki.exe
 CD bin
-7z a -sfx7z.sfx halowiki.exe c:\temp\haloexe\xampp\*
+IF EXIST halowiki.exe del halowiki.exe
+7z a -sfx7z.sfx halowiki.exe c:\temp\haloexe\*
 CD ..
 
 REM Remove extracted packages

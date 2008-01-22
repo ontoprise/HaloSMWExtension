@@ -5,13 +5,13 @@ REM smwhalo-1.0.zip must be in the same directory as this script
 
 REM extract wiki
 CD bin
-7z x smwhalo-1.0.zip -aoa -oc:\temp\haloexe\xampp\htdocs\mediawiki * -r
+7z x smwhalo-1.0.zip -aoa -oc:\temp\haloexe\htdocs\mediawiki * -r
 CD ..
 
 REM Build executable
-IF EXIST halowiki.exe del halowiki.exe
 CD bin
-7z a -sfx7z.sfx halowiki.exe c:\temp\haloexe\xampp\*
+IF EXIST halowiki.exe del halowiki.exe
+7z a -sfx7z.sfx halowiki.exe c:\temp\haloexe\*
 CD ..
 
 REM Remove extracted packages
