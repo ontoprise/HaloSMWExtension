@@ -1,24 +1,14 @@
 <?php
 
-function applyQueryHighlighting($text, $params){
+function applyQueryHighlighting($querystring, $params, $inline = true, $format = '', $printouts = array()){
 	global $smwgIP, $smwgHaloIP;
 	require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
 	require_once($smwgHaloIP . '/includes/SMWH_QP_Table.php');
-	/*
-	$dayArray = array("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" ,"Samstag", "Sonntag");
-	$dayType = array("Wochentag", "Wochentag", "Wochentag", "Wochentag", "Wochentag" ,"Samstag", "Sonntag");
-		
-	 $parser->getVariableValue("currentmonth")
-	w - weekday, h - hour, d - daytype: weekday, saturday, sunday
-	$ts = time();
-	$text = preg_replace('/<#time:w>/', $dayArray[date( 'N', $ts )-1], $text);
-	$text = preg_replace('/<#time:d>/', $dayType[date( 'N', $ts )-1], $text);
-	$text = preg_replace('/<#time:h>/', date( 'G', $ts ), $text);
-	*/
-			
-	$gi_store = SMWGardening::getGardeningIssuesAccess();
-	$query = SMWQueryProcessor::createQuery($text, $params);
+
+	$format = getResultFormat($params);
 	
+	$gi_store = SMWGardening::getGardeningIssuesAccess();
+	$query  = SMWQueryProcessor::createQuery($querystring, $params, $inline, $format, $printouts);
 	if ($query instanceof SMWQuery) { // query parsing successful
 		$res = smwfGetStore()->getQueryResult($query);
 		$format = getFormat($params, $res);
@@ -49,6 +39,17 @@ function applyQueryHighlighting($text, $params){
 	else {
 		return $query;
 	}
+}
+
+function getResultFormat($params){
+	$format = 'auto';
+	if (array_key_exists('format', $params)) {
+		$format = strtolower(trim($params['format']));
+		if ( !array_key_exists($format, SMWQueryProcessor::$formats) ) {
+			$format = 'auto'; // If it is an unknown format, defaults to list/table again
+		}
+	}
+	return $format;
 }
 
 function getFormat($params, $res){

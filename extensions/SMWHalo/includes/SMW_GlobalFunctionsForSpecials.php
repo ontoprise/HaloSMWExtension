@@ -13,7 +13,7 @@
  $wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwRSAddHTMLHeader';
  $wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
- $wgHooks['ParserBeforeStrip'][] = 'smwRegisterQueryResultEditor'; // register the <ask> parser hook
+ //$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterHaloInlineQueries'; // register the <ask> parser hook
  // register ajax calls
 
  $wgAjaxExportList[] = 'smwfLaunchGardeningBot';
@@ -229,8 +229,9 @@ function smwfGetGardeningIssueClasses($bot_id) {
 		}
 }
 
-function smwRegisterQueryResultEditor(&$parser, &$text, &$stripstate){
-	//$parser->setHook( 'ask', 'smwAddQueryResultEditor' );
+function smwfRegisterHaloInlineQueries( &$parser, &$text, &$stripstate ) {
+	$parser->setHook( 'ask', 'smwfProcessHaloInlineQuery' );
+	$parser->setFunctionHook( 'ask', 'smwfProcessHaloInlineQueryParserFunction' );
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
@@ -238,13 +239,32 @@ function smwRegisterQueryResultEditor(&$parser, &$text, &$stripstate){
 /**
  * The <ask> parser hook processing part.
  */
-function smwAddQueryResultEditor($text, $param, &$parser) {
-	global $smwgQEnabled;
-	global $smwgHaloIP;
-	require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
-	
+function smwfProcessHaloInlineQuery($text, $param, &$parser) {
+	global $smwgQEnabled, $smwgHaloIP, $smwgIQRunningNumber;
+
 	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
+		require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
 		return applyQueryHighlighting($text, $param);
+	} else {
+		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
+	}
+}
+
+function smwfProcessHaloInlineQueryParserFunction(&$parser) {
+	global $smwgQEnabled, $smwgIP, $smwgIQRunningNumber;
+	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
+		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
+		$rawparams = func_get_args();
+		array_shift( $rawparams ); // we already know the $parser ...
+
+		//return SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+		//return SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		
+		return applyQueryHighlighting($querystring, $params, true, $format, $printouts);
 	} else {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
 	}
