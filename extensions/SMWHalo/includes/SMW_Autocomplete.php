@@ -53,13 +53,18 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  			if ($typeHint == null || $typeHint == 'null') {
  				// if no $typeHint defined, search for (nearly) all pages.
  	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
- 	    		$result = AutoCompletionRequester::encapsulateAsXML($pages);
- 	    		AutoCompletionRequester::logResult($result, $articleName);
- 	    		return $result;
+ 	    		
  			} else {
- 				return AutoCompletionRequester::getTypeHintProposals($articleName, $userInputToMatch, $typeHint);
+ 				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
+ 				if (empty($pages)) {
+ 					// fallback
+ 					$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
+ 				}
+ 				
  			}
- 			
+ 			$result = AutoCompletionRequester::encapsulateAsXML($pages);
+ 	    	AutoCompletionRequester::logResult($result, $articleName);
+ 	    	return $result;
  	} else if (stripos($userContext, "[[") === 0){  
  		// semantic context
  		// decide according to context which autocompletion is appropriate
@@ -151,18 +156,15 @@ function &smwfGetAutoCompletionStore() {
 class AutoCompletionRequester { 
 	
 	
-	public static function getTypeHintProposals($articleName, $userInputToMatch, $typeHint) {
-		$result = array();
+	public static function getTypeHintProposals($userInputToMatch, $typeHint) {
+		$pages = array();
 		$typeHints = explode(";", $typeHint);
  		foreach($typeHints as $th) {
 		 	if (is_numeric($th)) {
 		 		// if there is a numeric type hint, consider it as a namespace
 		 		$typeHintNum = $th + 0;
 		 		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array($typeHintNum));
-		 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
-		  		AutoCompletionRequester::logResult($result, $articleName);
-		 	    		
-		 	    		
+				 	    		
 		 	} else if (strpos($th, ":") !== false) {
 		 		// if typeHint contains ':'
 		 		$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
@@ -171,23 +173,19 @@ class AutoCompletionRequester {
 		 			continue;
 		 		}
 		 						 					 			
-		 		$properties = smwfGetAutoCompletionStore()->getPropertyForInstance($userInputToMatch, $page, false);
-		   		$result = AutoCompletionRequester::encapsulateAsXML($properties);
-	    		AutoCompletionRequester::logResult($result, $articleName);
-		 	    		
+		 		$pages = smwfGetAutoCompletionStore()->getPropertyForInstance($userInputToMatch, $page, false);
+		   		
  			} else {
  				
 		 		// in all other cases, consider it as type
-				$properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
-				if (empty($properties)) $properties = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, "string");
-				$result = AutoCompletionRequester::encapsulateAsXML($properties);
-	    		AutoCompletionRequester::logResult($result, $articleName);
-		 	    		
+				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
+				if (empty($pages)) $pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, "string");
+		  		
 			}
-			if ($result != SMW_AC_NORESULT) break;
+			if (!empty($pages)) break;
  		}
  			
- 		return $result;
+ 		return $pages;
 	}
 	/**
 	 * Get category proposals matching $match.
