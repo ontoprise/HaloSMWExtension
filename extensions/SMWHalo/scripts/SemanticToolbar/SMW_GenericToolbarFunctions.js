@@ -658,6 +658,9 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 * 			processed.
 	 */
 	doFinalCheck: function(target) {
+		if (!target) {
+			return;
+		}
 		var parentDiv = target.up('div');
 		if (!parentDiv) {
 			return;
@@ -894,30 +897,36 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				eval(parameter+'("'+element.id+'")');
 				break;
 			case 'showmessage':
-				var msgElem = $(element.id+'-msg');
-				if (msgElem) {
-					var msg = gLanguage.getMessage(parameter);
-					var value = element.value;
-					msg = msg.replace(/\$c/g,value);
-					var tbc = smw_ctbHandler.findContainer(msgElem);
-					tbc.replace(msgElem.id,
-					            tbc.createText(msgElem.id, msg, '' , true));
-					tbc.show(msgElem.id, true);
+				if (element) {
+					var msgElem = $(element.id+'-msg');
+					if (msgElem) {
+						var msg = gLanguage.getMessage(parameter);
+						var value = element.value;
+						msg = msg.replace(/\$c/g,value);
+						var tbc = smw_ctbHandler.findContainer(msgElem);
+						tbc.replace(msgElem.id,
+						            tbc.createText(msgElem.id, msg, '' , true));
+						tbc.show(msgElem.id, true);
+					}
 				}
 				break;
 			case 'hidemessage':
-				var msgElem = $(element.id+'-msg');
-				if (msgElem) {
-					var tbc = smw_ctbHandler.findContainer(msgElem.id);
-					tbc.show(msgElem.id, false);
+				if (element) {
+					var msgElem = $(element.id+'-msg');
+					if (msgElem) {
+						var tbc = smw_ctbHandler.findContainer(msgElem.id);
+						tbc.show(msgElem.id, false);
+					}
 				}
 				break;
 			case 'valid':
-				element.setAttribute("smwValid", parameter);
+				if (element) {
+					element.setAttribute("smwValid", parameter);
+				}
 				break;
 			case 'attribute':
 				var attrValue = parameter.split("=");
-				if (attrValue && attrValue.length == 2) {
+				if (attrValue && attrValue.length == 2 && element) {
 					element.setAttribute(attrValue[0], attrValue[1]);
 				}
 				break;

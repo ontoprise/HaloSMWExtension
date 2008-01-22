@@ -245,7 +245,7 @@ createContextMenu: function(contextMenuContainer, value) {
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
-	setTimeout("$('rel-name').focus();",250);
+	setTimeout("if ($('rel-name')) $('rel-name').focus();",250);
 	
 },
 
