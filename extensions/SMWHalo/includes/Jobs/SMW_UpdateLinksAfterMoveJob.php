@@ -80,9 +80,9 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';*/
 		
 		// get all anntations (including n-aries!)
-		$annotations = '\[\[([^\]:]+):[:=]([^\]\|]*)\|([^\]]*)\]\]';
-		preg_match($annotations, $oldtext, $matches);
-		
+		$semanticLinkPattern = '(\[\[([^]:]+):[:=]([^|]*)(\|[^]]*)?\]\])';
+		preg_match_all($semanticLinkPattern, $oldtext, $matches);
+				
 		// identify those annotations which contain one or more links to oldtitle
 		// save the index and the (changed) link
 		$indicesToReplace = array();
@@ -95,13 +95,13 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 					$updated = true;
 				}
 			}
-			if ($updated) $indicesToReplace[$i] = implode("; ", $frgs);
+			if ($updated) $indicesToReplace[$i] = implode("; ", trim($frgs));
 		}
 		
 		// replace existing annotations with saved annotations including the new links 
 		$newtext = $oldtext;
 		foreach($indicesToReplace as $i => $l) {
-			$newtext = preg_replace('\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].'\|'.$matches[3][$i].'\]\]', '\[\['.$matches[1][$i].':[:=]'.$l.'\|'.$matches[3][$i].'\]\]', $newtext);
+			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$matches[1][$i].'::'.$l.$matches[3][$i].']]', $newtext);
 		}
 		
 		// replace normal links
