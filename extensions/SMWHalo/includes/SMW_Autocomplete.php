@@ -166,7 +166,7 @@ class AutoCompletionRequester {
 		 	} else if (strpos($th, ":") !== false) {
 		 		// if typeHint contains ':'
 		 		$page = Title::newFromText(substr($th, 0, 1) == ':' ? substr($th, 1) : $th);
-		 		if ($page->getNamespace() != NS_MAIN) {
+		 		if ($page == NULL || $page->getNamespace() != NS_MAIN) {
 		 			// ignore non-instances
 		 			continue;
 		 		}
