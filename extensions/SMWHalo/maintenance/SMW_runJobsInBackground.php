@@ -44,26 +44,39 @@
  
  $dbw = wfGetDB( DB_MASTER );
 
+ // define socket which listens for a break signal
  $socket = socket_create_listen("9876"); // port is freely chosen
  socket_set_nonblock($socket);
  
+ // max number of threads to be considered to calculate sleeping time
  define('MAX_THREADS_CONSIDERED', 10);
  
+ global $wgLoadBalancer;
  print "-------------------------------------------------\n";
  print " Running jobs... ($rate jobs/second)    		 \n";
  print "-------------------------------------------------\n";
 	for (;;) {
+								
+		// determine the most lagged slave
+		// if $lag == -1, there's no slave.
+		list( $host, $lag ) = $wgLoadBalancer->getMaxLag();
+		if ($lag == -1) {
+			// make sleeping time adaptive to database load.
+			$runningThreads = smwfGetNumOfRunningThreads($dbw);
+			$runningThreads = $runningThreads <= MAX_THREADS_CONSIDERED ? 
+								$runningThreads : MAX_THREADS_CONSIDERED;
+								
+			// wait depending on user-defined $rate and server load
+			sleep(1/$rate + $runningThreads);
+		} else {
+			// wait for most lagged slave to be *below* 1/$rate + 3 seconds lag time.
+			wfWaitForSlaves(1/$rate + 3);
+		}
 		
-		// make sleeping time adaptive to database load.
-		$currentThreadNum = smwfGetDBUserThreadNum($dbw);
-		$currentThreadNum = $currentThreadNum <= MAX_THREADS_CONSIDERED ? 
-							$currentThreadNum : MAX_THREADS_CONSIDERED;
-		
-		sleep(1/$rate + $currentThreadNum);
-		
+		// get next job
 		$job = Job::pop();
 		
-		
+		// is there a break signal?
 		$accept_sock = @socket_accept($socket);	
 		if ($accept_sock !== false) {
 			socket_getpeername($accept_sock, $name);
@@ -82,6 +95,7 @@
 		}
 		print $job->id . "  " . $job->toString() . "\n";
 		
+		// run job
 		if ( !$job->run() ) {
 			print "Error: {$job->error}\n";
 		}
@@ -90,12 +104,11 @@
 	
 	socket_close($socket);
 /**
- * Returns number of threads created by $wgDBuser
+ * Returns number of running threads in mysqld
  */
-function smwfGetDBUserThreadNum(& $db) {
-	global $wgDBuser;
-	$count = 0;
-	$res = $db->query( 'SHOW PROCESSLIST' );
+function smwfGetNumOfRunningThreads(& $db) {
+	
+	$res = $db->query( 'SHOW STATUS LIKE \'Threads_%\'' );
 		# Find slave SQL thread
 		while ( $row = $db->fetchObject( $res ) ) {
 			/* This should work for most situations - when default db 
@@ -104,11 +117,13 @@ function smwfGetDBUserThreadNum(& $db) {
 			 *
 			 * Relay log I/O thread does not select databases.
 			 */
-			if ( $row->User == $wgDBuser ) {
-				$count++;
+			if ($row->Variable_name == 'Threads_running') {
+				$threads_running = $row->Value;
 			}
+			
+			
 		}
 		$db->freeResult($res);
-		return $count;
+		return $threads_running;
 }
 ?>

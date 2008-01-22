@@ -32,6 +32,7 @@
 }
 
 print "\nStopping jobs...";
+// sending break signal
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 socket_connect($socket, "127.0.0.1", "9876"); // port is freely chosen
 socket_close($socket);
