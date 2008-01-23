@@ -616,17 +616,27 @@ WikiTextParser.prototype = {
 							    && wikitext.charAt(map[i][1]-1) == "'") {
 								wtStart = map[i-1][1] + (pos - map[i-1][0]);
 								startLevel = map[i-1][2];
+							} else if (i == 0 && endLevel == 0) {
+								// selection starts at the very beginning which
+								// is formated bold/italic and ends in normal text
+								wtStart = 0;
+								startLevel = endLevel;
 							}
 						}
-						if (startLevel != endLevel
-						    && pos+text.length == map[endMapIdx][0]) {
+						if (startLevel != endLevel) {
+							if (pos+text.length == map[endMapIdx][0]) {
 								// maybe we are at the last character of a 
 								// bold/italic section
-							if (endMapIdx > 0 && map[endMapIdx-1][2] == startLevel) {
-								wtEnd -= startLevel;
+								if (endMapIdx > 0 && map[endMapIdx-1][2] == startLevel) {
+									wtEnd -= startLevel;
+									endLevel = startLevel;
+								}
+							} else if (pos+text.length == pureText.length 
+									   && startLevel == 0) {
+								// Selection ends at the very end
+								wtEnd = wikitext.length;
 								endLevel = startLevel;
-								var wikiText = this.text.substring(wtStart + start, wtEnd + start);
-							}						
+							}
 						}
 						
 					}
