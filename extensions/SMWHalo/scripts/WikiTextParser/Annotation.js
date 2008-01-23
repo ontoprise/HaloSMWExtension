@@ -223,7 +223,7 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 	 * @param string newRelationName New name of the relation.
 	 */
 	rename: function(newRelationName) {
-		var newAnnotation = "[[" + this.prefix + newRelationName + ":=" + this.value;
+		var newAnnotation = "[[" + this.prefix + newRelationName + "::" + this.value;
 		if (this.representation) {
 			newAnnotation += "|" + this.representation;
 		}
@@ -240,8 +240,8 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 	 * @param string newValue New value of the relation.
 	 */
 	changeValue: function(newValue) {
-		var newAnnotation = "[[" + this.prefix + this.name + ":=" + newValue;
-		if (this.representation) {
+		var newAnnotation = "[[" + this.prefix + this.name + "::" + newValue;
+		if (this.representation && newValue != this.representation) {
 			newAnnotation += "|" + this.representation;
 		}
 		newAnnotation += "]]";
@@ -256,8 +256,9 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 	 *               empty string.
 	 */
 	changeRepresentation : function(newRepresentation) {
-		var newAnnotation = "[[" + this.prefix + this.name + ":=" + this.value;
-		if (newRepresentation && newRepresentation != "") {
+		var newAnnotation = "[[" + this.prefix + this.name + "::" + this.value;
+		if (newRepresentation && newRepresentation != "" 
+		    && newRepresentation != this.value) {
 			newAnnotation += "|" + newRepresentation;
 		}
 		newAnnotation += "]]";

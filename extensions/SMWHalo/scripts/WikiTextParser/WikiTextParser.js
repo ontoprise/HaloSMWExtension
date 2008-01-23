@@ -266,8 +266,8 @@ WikiTextParser.prototype = {
 	 *
 	 */
 	 addRelation : function(name, value, representation, append) {
-	 	var anno = "[[" + name + ":=" + value;
-	 	if (representation) {
+	 	var anno = "[[" + name + "::" + value;
+	 	if (representation && value != representation) {
 	 		anno += "|" + representation;
 	 	}
 	 	anno += "]]";
