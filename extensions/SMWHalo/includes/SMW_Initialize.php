@@ -729,12 +729,16 @@ function smwfAAMBeforeTidy(&$parser, &$text) {
  * @param unknown_type $text
  */
 function smwfAAMAfterTidy(&$parser, &$text) {
-	global $smwgHaloAAMParser;
+	global $smwgHaloAAMParser, $wgOut;
 	if ($smwgHaloAAMParser == null) {
 		return true;
 	}
 	$text = $smwgHaloAAMParser->wikiTextOffset2HTML($text);
 	$text = $smwgHaloAAMParser->highlightAnnotations2HTML($text);
+	// Set the article's title
+	$t = wfMsg( 'smw_annotating', $parser->mTitle->getPrefixedText() );
+	$wgOut->setPageTitle($t);
+	
 	return true;
 }
 

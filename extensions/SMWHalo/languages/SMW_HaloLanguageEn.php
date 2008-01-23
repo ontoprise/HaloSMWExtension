@@ -426,8 +426,10 @@ clicking the big arrows between the columns.',
 	'smw_qi_tt_headers' => 'Show the headers of the table or not',
 	'smw_qi_tt_default' => 'Text that will be shown if there are no results',
 	
-	/* Annotationtab */
+	/* Annotation */
  	'smw_annotation_tab' => 'annotate',
+	'smw_annotating'     => 'Annotating $1',
+
  	
  	/* Refactor preview */
  	'refactorstatistics' => 'Refactor Statistics',

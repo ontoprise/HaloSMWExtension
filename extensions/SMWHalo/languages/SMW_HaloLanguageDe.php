@@ -415,9 +415,10 @@ protected $smwUserMessages = array(
 	'smw_qi_tt_headers' => 'Tabellen&uuml;berschriften anzeigen oder nicht',
 	'smw_qi_tt_default' => 'Text, der ausgegeben wird, falls keine Ergebnisse existieren',
 	
-	/* Annotationtab */
+	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',
-	
+	'smw_annotating'     => 'Annotiere $1',
+
 	/* Refactor preview */
  	'refactorstatistics' => 'Refactor Statistics',
  	'smw_ob_link_stats' => '&Ouml;ffne refactor statistics',
