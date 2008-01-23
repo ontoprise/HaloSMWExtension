@@ -1194,12 +1194,14 @@ AdvancedAnnotation.prototype = {
 	
 	/**
 	 * Saves the annotations of the current session.
+	 * @param boolean exit
+	 * 		If <true>, AAM is exited and view mode is entered
 	 * 
 	 */
-	saveAnnotations: function() {
+	saveAnnotations: function(exit) {
 		this.om.editArticle(wgPageName, this.wikiTextParser.getWikiText(),
 							gLanguage.getMessage('AH_SAVE_COMMENT'), false);
-		smwhgSaveAnnotations.savingAnnotations();
+		smwhgSaveAnnotations.savingAnnotations(exit);
 	},
 	
 	/**

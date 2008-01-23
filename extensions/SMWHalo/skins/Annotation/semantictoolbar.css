@@ -675,6 +675,11 @@ a.menulink{
 	width: 100%;
 }
 
+.saveannotations-innertable{
+	background-color: #ee8888;
+	width: 100%;
+}
+
 #saveannotations-tools{
 	border-bottom: 1px solid #888888;
 }

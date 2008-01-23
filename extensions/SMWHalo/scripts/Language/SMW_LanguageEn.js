@@ -137,6 +137,7 @@ var wgLanguageStrings = {
 	// Save annotations
 	'SA_SAVE_ANNOTATION_HINTS': "Don't forget to save your work!",
 	'SA_SAVE_ANNOTATIONS'	  : 'Save annotations',
+	'SA_SAVE_ANNOTATIONS_AND_EXIT' : 'Save & exit',
 	'SA_ANNOTATIONS_SAVED'	  : '(i) The annotations were successfully saved.',
 	'SA_SAVING_ANNOTATIONS_FAILED' : '(e) An error occurred while saving the annotations.',
 	'SA_SAVING_ANNOTATIONS'   : '(i) Saving annotations...',

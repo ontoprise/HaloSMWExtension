@@ -29,6 +29,7 @@ SaveAnnotations.prototype = {
 
 initialize: function() {
 	this.toolbarContainer = null;
+	this.exitPage = false;
 },
 
 showToolbar: function(request){
@@ -48,19 +49,28 @@ createContent: function() {
 	
 	var tb = this.createToolbar("");
 	tb.append(tb.createText('sa-save-msg', '', '', true));
-	
-	tb.append(tb.createButton('ah-savewikitext-btn',
+	var html = '<table border="0" class= "saveannotations-innertable"><tr><td>';
+	html += tb.createButton('ah-savewikitext-btn',
 							  gLanguage.getMessage('SA_SAVE_ANNOTATIONS'), 
-							  'smwhgAdvancedAnnotation.saveAnnotations()', 
-							  '' , true));
+							  'smwhgAdvancedAnnotation.saveAnnotations(false)', 
+							  '' , true);
+	html += "</td><td>";							  
+	html += tb.createButton('ah-savewikitext-and-exit-btn',
+							  gLanguage.getMessage('SA_SAVE_ANNOTATIONS_AND_EXIT'), 
+							  'smwhgAdvancedAnnotation.saveAnnotations(true)', 
+							  '' , true);						   
+	html += "</td></tr></table>";							  
+
+	tb.append(html);
 	
 	tb.finishCreation();
 	
 	this.savehintcontainer.contentChanged();
 	$('ah-savewikitext-btn').disable();
+	$('ah-savewikitext-and-exit-btn').disable();
 },
 
-savingAnnotations: function() {
+savingAnnotations: function(exit) {
 	
 	var msg = gLanguage.getMessage('SA_SAVING_ANNOTATIONS');
 	
@@ -70,6 +80,9 @@ savingAnnotations: function() {
 	tb.replace('sa-save-msg', sm);
 	$('saveannotations-content-table-sa-save-msg').show();
 	$('ah-savewikitext-btn').disable();
+	$('ah-savewikitext-and-exit-btn').disable();
+	this.exitPage = exit;
+	
 },
 
 annotationsSaved: function(success) {
@@ -85,6 +98,10 @@ annotationsSaved: function(success) {
 	$('saveannotations-content-table-sa-save-msg').show();
 	if (success) {
 		$('ah-savewikitext-btn').disable();
+		$('ah-savewikitext-and-exit-btn').disable();
+		if (this.exitPage) {
+			location.href=wgServer+wgScript+"/"+wgPageName;
+		}
 	}
 },
 
@@ -93,6 +110,7 @@ markDirty: function() {
 	
 	$('saveannotations-content-table-sa-save-msg').hide();
 	$('ah-savewikitext-btn').enable();
+	$('ah-savewikitext-and-exit-btn').enable();
 	
 },
 
