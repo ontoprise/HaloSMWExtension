@@ -21,9 +21,10 @@ define('SMW_AC_MAX_RESULTS', 15);
 
 $smwhgAutoCompletionStore = null;
 
-global $smwgIP;
+global $smwgIP, $smwgHaloIP;
 
 require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
+require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  /*
   * Dispatches an auto-completion request.
   * 
