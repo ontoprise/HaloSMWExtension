@@ -297,7 +297,7 @@ class AutoCompletionRequester {
  	    		$pages = smwfGetAutoCompletionStore()->getPropertyForInstance($match, $articleTitle, true);
 			
  	    	} else {
- 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN, SMW_NS_PROPERTY, SMW_NS_RELATION));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
  	    	}
  	    	// special handling for special relations
  	    	$specialMatches = array(); // keeps matches of special relations
@@ -542,7 +542,7 @@ abstract class AutoCompletionStorage {
  	* 
  	* @return array of Title
  	*/
-	public abstract function getPages($match, $namespaces = NULL, $requestoptions = NULL);
+	public abstract function getPages($match, $namespaces = NULL);
 	
 	/**
 	 * Returns properties containing $match with unit $unit
@@ -621,32 +621,31 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		return $result;
 	}
 	
-	public function getPages($match, $namespaces = NULL, $requestoptions = NULL) {
+	public function getPages($match, $namespaces = NULL) {
 		$result = "";
 		$db =& wfGetDB( DB_MASTER );
 		$sql = "";
 		$page = $db->tableName('page');
-		if ($namespaces != NULL) {
-			$sql .= '(';
-			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
-				if ($i > 0) $sql .= ' OR ';
-				$sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
-			}
-			if (count($namespaces) == 0) $sql .= 'true';
-			$sql .= ') ';
-		} else  {
-			$sql = 'true';
-		}
+		$requestoptions = new SMWRequestOptions();
+		$requestoptions->limit = SMW_AC_MAX_RESULTS;
+		$options = DBHelper::getSQLOptionsAsString($requestoptions);
+		if ($namespaces == NULL || count($namespaces) == 0) {
+			
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title';
+			
+		} else {
 		
-				
+			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
+				if ($i > 0) $sql .= ' UNION ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) UNION ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) ';
+			}
+					
+		}
+						
 		$result = array();
 		
-		// add additional titles from smw-titles which do not exist in the page table
-		//AutoCompletionRequester::getUndefinedPropertiesFromSMWTables($result, $namespaces, $requestoptions);
-		
-		// query for pages which begin with $match AND for pages which contain $match. In this order.
-		$res = $db->query('(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND ' .$sql.' ORDER BY page_namespace DESC) '.
-							' UNION (SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.$sql.' ORDER BY page_namespace DESC) LIMIT '.SMW_AC_MAX_RESULTS.'');
+		$res = $db->query($sql.$options);
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
