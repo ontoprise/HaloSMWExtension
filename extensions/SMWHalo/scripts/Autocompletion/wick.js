@@ -505,10 +505,7 @@ AutoCompleter.prototype = {
 
             this.siw.floater.style.display = "block";
             this.siw.floater.style.visibility = "visible";
-            if (OB_bd.isGecko) {
-            	// dragging only in FF
-            	this.draggableFloater = new Draggable(this.siw.floater);
-            }
+            
             this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
@@ -602,7 +599,7 @@ AutoCompleter.prototype = {
         	if (OB_bd.isGecko) {
         		if (this.siw.floater.style.left != '') document.cookie = "this.AC_userDefinedX=" + this.siw.floater.style.left;
             	if (this.siw.floater.style.top != '') document.cookie = "this.AC_userDefinedY=" + this.siw.floater.style.top;
-        		if (this.draggableFloater) this.draggableFloater.destroy();
+        		
         	}
             this.siw.floater.style.display = "none";
             this.siw.floater.style.visibility = "hidden";
@@ -879,6 +876,7 @@ AutoCompleter.prototype = {
         this.modifySmartInputBoxContent(this.getSmartInputBoxContent());
     },  //this.selectFromMouseOver
     selectFromMouseClick: function() {
+    	
         this.activateCurrentSmartInputMatch();
          //this.siw.inputBox.focus();
         this.siw.inputBox.focus();
@@ -1197,6 +1195,7 @@ AutoCompleter.prototype = {
 
         var mwFloater = document.createElement("div");
         mwFloater.setAttribute("id", "MWFloater" + this.AC_idCounter);
+        
         Element.addClassName(mwFloater, "MWFloater");
         var mwContent = document.createElement("div");
         Element.addClassName(mwContent, "MWFloaterContent");
@@ -1236,6 +1235,11 @@ AutoCompleter.prototype = {
         acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
         container.appendChild(acMessage);
         this.AC_idCounter++;
+        
+        if (OB_bd.isGecko) {
+            // dragging only in FF
+            this.draggableFloater = new Draggable(mwFloater);
+        }
     },
 
      /*
