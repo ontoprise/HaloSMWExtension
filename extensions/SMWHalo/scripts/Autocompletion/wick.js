@@ -1078,6 +1078,7 @@ AutoCompleter.prototype = {
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
+        refreshSTB.changed();
     },
     
     /**
