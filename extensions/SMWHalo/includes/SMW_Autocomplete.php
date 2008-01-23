@@ -55,9 +55,10 @@ require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
  	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
  	    		
  			} else {
+ 				// otherwise use type hint 
  				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
  				if (empty($pages)) {
- 					// fallback
+ 					// fallback to standard search
  					$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
  				}
  				
@@ -179,7 +180,11 @@ class AutoCompletionRequester {
  				
 		 		// in all other cases, consider it as type
 				$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $th);
-				if (empty($pages)) $pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, "string");
+				if (empty($pages)) {
+					global $smwgContLang;
+					$dtl = $smwgContLang->getDatatypeLabels();
+					$pages = smwfGetAutoCompletionStore()->getPropertyWithType($userInputToMatch, $dtl['_str']);
+				}
 		  		
 			}
 			if (!empty($pages)) break;
