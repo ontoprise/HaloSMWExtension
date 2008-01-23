@@ -73,18 +73,24 @@ AutoCompleter.prototype = {
 
          // global floater object
         this.siw = null;
-		
-		this.notMoved = true;
-       
+
+         // flag if left mouse button is pressed
+        this.mousePressed = false;
+
          // counter for number of registered floaters 
         this.AC_idCounter = 0;
 
-        // scriptaculous object for draggable objects        
-        this.draggableFloater = null;
+        // Position data of Floater
+        this.AC_yDiff = 0;
+        this.AC_xDiff = 0;
         
-        // saves current selection in IE
+        this.AC_userDefinedY = 0;
+        this.AC_userDefinedX = 0;
+        
+        // indicates if the mouse has been moved since last AC request
+        this.notMoved = false;
+        
         this.currentIESelection = null;
-        
          // Get preference options
 		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
 		if (AC_mode == null) {
@@ -386,8 +392,10 @@ AutoCompleter.prototype = {
     handleClick: function(event) {
         var e2 = GeneralTools.getEvent(event);
         var eL2 = this.getEventElement(e2);
-       
+        this.mousePressed = false;
+
  		if (this.siw && this.siw.selectingSomething) {
+ 			this.resetCursorinIE();
             this.selectFromMouseClick();
 			
         }
@@ -406,11 +414,41 @@ AutoCompleter.prototype = {
             this.siw.selectingSomething = false;
         }
     },  //handleMouseOver
-   
-    handleMouseMove: function(event) {
-    	  	this.notMoved = false;
+    handleMouseDown: function(event) {
+        var e = GeneralTools.getEvent(event);
+        var eL = this.getEventElement(e);
+         //if (e["ctrlKey"]) {
+         //}
+        var elementClicked = Event.element(event);
+
+        if (this.siw && elementClicked
+            && (Element.hasClassName(elementClicked, "MWFloaterContentHeader")
+                   || (Element.hasClassName(elementClicked.parentNode, "MWFloaterContentHeader")))) {
+            this.mousePressed = true;
+            var x = this.findElementPosX(this.siw.inputBox);
+            var y = this.findElementPosY(this.siw.inputBox);
+            this.AC_yDiff = (e.pageY - y) - parseInt(this.siw.floater.style.top);
+            this.AC_xDiff = (e.pageX - x) - parseInt(this.siw.floater.style.left);
+        }
     },
-    
+    handleMouseMove: function(event) {
+    	this.notMoved = false;
+    	if (OB_bd.isIE) return;
+        var e = GeneralTools.getEvent(event);
+        var eL = this.getEventElement(e);
+
+        if (this.mousePressed && this.siw) {
+            var x = this.findElementPosX(this.siw.inputBox);
+            var y = this.findElementPosY(this.siw.inputBox);
+
+            this.siw.floater.style.top = (e.pageY - y - this.AC_yDiff) + "px";
+            this.siw.floater.style.left = (e.pageX - x - this.AC_xDiff) + "px";
+            this.AC_userDefinedY = (e.pageY - y - this.AC_yDiff);
+            this.AC_userDefinedX = (e.pageX - x - this.AC_xDiff);
+            document.cookie = "this.AC_userDefinedX=" + this.AC_userDefinedX;
+            document.cookie = "this.AC_userDefinedY=" + this.AC_userDefinedY;
+        }
+    },
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
             if (!this.siw.customFloater) {
@@ -486,8 +524,8 @@ AutoCompleter.prototype = {
 
 					
                     if (x != null && y != null) { // If position cookie defined, use it. 
-                        this.siw.floater.style.left = x; // + "px";
-                        this.siw.floater.style.top = y; // + "px";
+                        this.siw.floater.style.left = x + "px";
+                        this.siw.floater.style.top = y + "px";
                     } else { // Otherwise use standard position: Left bottom corner.
                     	if (advancedEditor) {
                     		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
@@ -505,7 +543,6 @@ AutoCompleter.prototype = {
 
             this.siw.floater.style.display = "block";
             this.siw.floater.style.visibility = "visible";
-            
             this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
@@ -592,15 +629,9 @@ AutoCompleter.prototype = {
         var pending = $("pendingAjaxIndicator");
         pending.style.display = "none";
         pending.style.visibility = "hidden";
-        
     },
     hideSmartInputFloater: function() {
         if (this.siw) {
-        	if (OB_bd.isGecko) {
-        		if (this.siw.floater.style.left != '') document.cookie = "this.AC_userDefinedX=" + this.siw.floater.style.left;
-            	if (this.siw.floater.style.top != '') document.cookie = "this.AC_userDefinedY=" + this.siw.floater.style.top;
-        		
-        	}
             this.siw.floater.style.display = "none";
             this.siw.floater.style.visibility = "hidden";
             this.siw = null;
@@ -876,7 +907,6 @@ AutoCompleter.prototype = {
         this.modifySmartInputBoxContent(this.getSmartInputBoxContent());
     },  //this.selectFromMouseOver
     selectFromMouseClick: function() {
-    	
         this.activateCurrentSmartInputMatch();
          //this.siw.inputBox.focus();
         this.siw.inputBox.focus();
@@ -1112,8 +1142,14 @@ AutoCompleter.prototype = {
         Event.observe(document, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
         Event.observe(document, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
         Event.observe(document, "mouseup", this.handleClick.bindAsEventListener(this), false);
-        Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
         Event.observe(document, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
+
+        if (OB_bd.isGecko) {
+             // needed for draggable floater in FF
+            Event.observe(document, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
+        }
+
+        Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
     },  //registerSmartInputListeners
 
 	/**
@@ -1178,8 +1214,14 @@ AutoCompleter.prototype = {
        			Event.observe(iFrameDocument, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
        			Event.observe(iFrameDocument, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
        			Event.observe(iFrameDocument, "mouseup", this.handleClick.bindAsEventListener(this), false);
+
+	        	if (OB_bd.isGecko) {	
+   		        	 // needed for draggable floater in FF
+   	   		     	Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
+   			     	Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
+   			 	}
+
 	        	Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
-	        	Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
         	}
         }
        
@@ -1195,7 +1237,6 @@ AutoCompleter.prototype = {
 
         var mwFloater = document.createElement("div");
         mwFloater.setAttribute("id", "MWFloater" + this.AC_idCounter);
-        
         Element.addClassName(mwFloater, "MWFloater");
         var mwContent = document.createElement("div");
         Element.addClassName(mwContent, "MWFloaterContent");
@@ -1235,11 +1276,6 @@ AutoCompleter.prototype = {
         acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
         container.appendChild(acMessage);
         this.AC_idCounter++;
-        
-        if (OB_bd.isGecko) {
-            // dragging only in FF
-            this.draggableFloater = new Draggable(mwFloater);
-        }
     },
 
      /*
