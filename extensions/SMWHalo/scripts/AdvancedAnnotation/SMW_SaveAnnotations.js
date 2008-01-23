@@ -38,7 +38,7 @@ showToolbar: function(request){
 },
 
 createContainer: function(event){
-	if ((wgAction == "edit" || wgAction == "annotate")
+	if (wgAction == "annotate"
 	    && stb_control.isToolbarAvailable()){
 		this.savehintcontainer = stb_control.createDivContainer(SAVEANNOTATIONSCONTAINER,0);
 		this.showToolbar();
