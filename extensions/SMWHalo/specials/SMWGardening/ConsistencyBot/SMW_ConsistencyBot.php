@@ -439,6 +439,22 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	public abstract function getInverseRelations();
  	
  	public abstract function getEqualToRelations();
+ 	
+ 	/**
+ 	 * Returns number of property instantiations for each instance, which has 
+ 	 * at least one instantiation of $property or one of its subproperties.
+ 	 * 
+ 	 * @return array of tuples (Title instance, Integer frequency)
+ 	 */
+ 	public abstract function getNumberOfPropertyInstantiations($property);
+ 	
+ 	/**
+ 	 * Returns number of property instantiations of $property or one of its 
+ 	 * subproperties for the given instance .
+ 	 * 
+ 	 * @return Integer frequency)
+ 	 */
+ 	public abstract function getNumberOfPropertyInstantiationForInstance($property, $instance);
  }
  
  class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
@@ -669,6 +685,168 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		$db->freeResult($res);
 		
 		return $result;
+ 	}
+ 	
+ 	public function getNumberOfPropertyInstantiations($property) {
+ 		
+		global $smwgDefaultCollation;
+		$db =& wfGetDB( DB_MASTER );
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_relations = $db->tableName('smw_relations');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_subprops = $db->tableName('smw_subprops');
+	
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_propertyinst (instance VARCHAR(255) '.$collation.', namespace INTEGER, property VARCHAR(255) '.$collation.', num INTEGER(8))
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		
+		// initialize with direct property instantiations
+				           
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY instance) ');
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT subject_title AS instance, subject_namespace AS namespace, relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY instance) ');
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY instance)');
+						
+	
+		$db->query('INSERT INTO smw_ob_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
+		
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum property tree depth.
+		do  {
+			$maxDepth--;
+			
+			// get next subproperty level
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT DISTINCT subject_title AS property FROM '.$smw_subprops.' WHERE object_title IN (SELECT * FROM smw_ob_properties_super) AND object_title NOT IN (SELECT property FROM smw_ob_propertyinst))');
+			
+			// insert number of instantiated properties of current property level level
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE attribute_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY instance) ');
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+					'(SELECT subject_title AS instance, subject_namespace AS namespace, relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE relation_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY instance)');
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+					'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE attribute_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY instance) ');
+				
+			
+			// copy subcatgegories to supercategories of next iteration
+			$db->query('DELETE FROM smw_ob_properties_super');
+			$db->query('INSERT INTO smw_ob_properties_super (SELECT * FROM smw_ob_properties_sub)');
+			
+			// check if there was least one more subcategory. If not, all instances were found.
+			$res = $db->query('SELECT COUNT(property) AS numOfSubProps FROM smw_ob_properties_super');
+			$numOfSubProps = $db->fetchObject($res)->numOfSubProps;
+			$db->freeResult($res);
+			
+			$db->query('DELETE FROM smw_ob_properties_sub');
+			
+		} while ($numOfSubProps > 0 && $maxDepth > 0);
+		
+		$res = $db->query('SELECT instance, namespace, SUM(num) AS numOfInstProps FROM smw_ob_propertyinst GROUP BY instance');
+		
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				
+				$result[] = array(Title::newFromText($row->instance, $row->namespace), $row->numOfInstProps);
+			}
+		}
+		
+		$db->freeResult($res);
+		
+		$db->query('DROP TABLE smw_ob_properties_super');
+		$db->query('DROP TABLE smw_ob_properties_sub');
+		$db->query('DROP TABLE smw_ob_propertyinst');
+		
+		return $result;
+ 	}
+ 	
+ 	public function getNumberOfPropertyInstantiationForInstance($property, $instance) {
+ 		global $smwgDefaultCollation;
+		$db =& wfGetDB( DB_MASTER );
+		$smw_attributes = $db->tableName('smw_attributes');
+		$smw_relations = $db->tableName('smw_relations');
+		$smw_nary = $db->tableName('smw_nary');
+		$smw_subprops = $db->tableName('smw_subprops');
+	
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_propertyinst (property VARCHAR(255) '.$collation.', num INTEGER(8))
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
+		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+		
+		// initialize with direct property instantiations
+				           
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND attribute_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY subject_title)');
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND relation_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY subject_title)');
+		$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND attribute_title = '.$db->addQuotes($property->getDBkey()).' GROUP BY subject_title)');
+						
+	
+		$db->query('INSERT INTO smw_ob_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
+		
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum property tree depth.
+		do  {
+			$maxDepth--;
+			
+			// get next subproperty level
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT DISTINCT subject_title AS property FROM '.$smw_subprops.' WHERE object_title IN (SELECT * FROM smw_ob_properties_super)  AND object_title NOT IN (SELECT property FROM smw_ob_propertyinst))');
+			
+			// insert number of instantiated properties of current property level level
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+				'(SELECT attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND attribute_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY subject_title)');
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+					'(SELECT relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND relation_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY subject_title) ');
+			$db->query('INSERT INTO smw_ob_propertyinst ' .
+					'(SELECT attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE subject_title = '.$db->addQuotes($instance->getDBkey()).' AND subject_namespace = '.$db->addQuotes($instance->getNamespace()).' AND attribute_title IN (SELECT * FROM smw_ob_properties_sub) GROUP BY subject_title) ');
+				
+			
+			// copy subcatgegories to supercategories of next iteration
+			$db->query('DELETE FROM smw_ob_properties_super');
+			$db->query('INSERT INTO smw_ob_properties_super (SELECT * FROM smw_ob_properties_sub)');
+			
+			// check if there was least one more subcategory. If not, all instances were found.
+			$res = $db->query('SELECT COUNT(property) AS numOfSubProps FROM smw_ob_properties_super');
+			$numOfSubProps = $db->fetchObject($res)->numOfSubProps;
+			$db->freeResult($res);
+			
+			$db->query('DELETE FROM smw_ob_properties_sub');
+			
+		} while ($numOfSubProps > 0 && $maxDepth > 0);
+		
+		$res = $db->query('SELECT SUM(num) AS numOfInstProps FROM smw_ob_propertyinst');
+		$numOfInstProps = $db->fetchObject($res)->numOfInstProps;
+		$numOfInstProps = is_numeric($numOfInstProps) ? $numOfInstProps : 0;
+		
+		
+		$db->freeResult($res);
+		
+		$db->query('DROP TABLE smw_ob_properties_super');
+		$db->query('DROP TABLE smw_ob_properties_sub');
+		$db->query('DROP TABLE smw_ob_propertyinst');
+		
+		return $numOfInstProps;
  	}
  }
 ?>

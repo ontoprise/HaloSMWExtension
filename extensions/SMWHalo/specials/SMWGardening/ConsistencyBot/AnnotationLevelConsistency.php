@@ -238,12 +238,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		
  		// get all properties
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
+ 		$work = count($properties);
+ 		$cnt = 0;
+ 		print "\n";
  		$this->bot->addSubTask(count($properties));
  		foreach($properties as $a) {
  			if ($this->delay > 0) {
  				usleep($this->delay);
  			}
  			$this->bot->worked(1);
+ 			$cnt++;
+ 			if ($cnt % 10 == 1 || $cnt == $work) { 
+ 				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
+ 			}
  			
  			// ignore builtin properties
  			if (smwfGetSemanticStore()->minCard->equals($a) 
@@ -258,7 +265,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($minCardArray)) {
  				// if it does not exist, get minimum cardinality from superproperty
- 				$minCards = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$minCards = CARDINALITY_MIN;
  			} else {
  				// assume there's only one defined. If not it will be found in co-variance checker anyway
  				$minCards = $minCardArray[0]->getXSDValue() + 0;
@@ -269,7 +276,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($maxCardsArray)) {
  				// if it does not exist, get maximum cardinality from superproperty
- 				$maxCards = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				$maxCards = CARDINALITY_UNLIMITED;
  				
  			} else {
  				// assume there's only one defined. If not it will be found in co-variance checker anyway
@@ -281,16 +288,46 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				continue;
  			}
  			
+ 			// get all instances which have instantiated properties (including subproperties) of $a
+ 			// and the number of these annotations for each for instance
+ 			$result = $this->cc_store->getNumberOfPropertyInstantiations($a);
+ 			
+ 			// compare to minCard and maxCard
+ 			foreach($result as $r) {
+ 				list($subject, $numOfInstProps) = $r;
+ 			
+	 			// compare number of appearance with defined cardinality
+		 		if ($numOfInstProps < $minCards) {
+		 			if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
+		 				
+		 				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $numOfInstProps);
+		 			}
+				} 
+				if ($numOfInstProps > $maxCards) {
+					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
+						
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $numOfInstProps);
+					}
+				}			
+ 			}
+ 			
+ 			
+ 			// special case: If minCard > CARDINALITY_MIN (=0), it may happen that an instance does not have a single property instantiation although it should.
+ 			// it will not be found with 'getNumberOfPropertyInstantiations' method
+ 			
+ 			if ($minCards == CARDINALITY_MIN) {
+ 				$minCards = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
+ 				if ($minCards == CARDINALITY_MIN) continue;
+ 			}
+ 			 
  			// get domains
  			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainRangeHintRelation);
  			 			
  			if (empty($domainRangeAnnotations)) {
- 				// if there are no domain categories defined, try to find a super property with defined domain categories
- 				$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $a);
+ 				// if there are no domain categories defined, this check can not be applied.
+ 				continue;
  			}
- 			
- 			
- 			
+		 	 		
  			foreach($domainRangeAnnotations as $domRan) {
  				$dvs = $domRan->getDVs();
  				if ($dvs[0] == NULL) continue; // ignore annotations with missing domain
@@ -302,21 +339,20 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  						continue;
 	 				}
 	 				
-	 				// get all annoations for a subject and a property
-	 				$allAttributeForSubject = smwfGetStore()->getPropertyValues($subject[0], $a);
-	 				$num = count($allAttributeForSubject);
-	 				
+	 				if (count(smwfGetSemanticStore()->getDirectSubProperties($a)) == 0) {
+	 					$num = count(smwfGetStore()->getPropertyValues($subject[0], $a));
+	 				} else {
+		 				// get number of appearances for a subject and a property (including its subproperties)
+		 				$num = $this->cc_store->getNumberOfPropertyInstantiationForInstance($a, $subject[0]);
+	 				}					
 	 				// compare number of appearance with defined cardinality
-	 				if ($num < $minCards) {
+	 				if ($num == 0) {
 	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject[0], $a)) {
+	 						
 	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject[0], $a, $num);
 	 					}
 					} 
-					if ($num > $maxCards) {
-						if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject[0], $a)) {
-							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject[0], $a, $num);
-						}
-					}
+				
  				}
  			}
  						
