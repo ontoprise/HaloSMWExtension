@@ -1034,6 +1034,8 @@ AutoCompleter.prototype = {
             selection_range.text = addedValue;
             selection_range.collapse(false);
             this.resetCursorinIE();
+            
+            if (refreshSTB) refreshSTB.changed();
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
@@ -1061,6 +1063,7 @@ AutoCompleter.prototype = {
              // set old scroll position
             this.siw.inputBox.scrollTop = scrollTop;
             
+            if (refreshSTB) refreshSTB.changed();
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
@@ -1078,7 +1081,7 @@ AutoCompleter.prototype = {
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
-        if (refreshSTB) refreshSTB.changed();
+        
     },
     
     /**
