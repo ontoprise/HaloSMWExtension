@@ -26,12 +26,16 @@
  	 * 
  	 * @return xml string (category tree)
  	 */
- 	 function filterForCategories($categoryHint) {
+ 	 function filterForCategories($categoryHints) {
  	 	
  	 	$reqfilter = new SMWRequestOptions();
  	 	$reqfilter->sort = true;
+ 	 	
+ 	 	if (count($categoryHints) == 0) {
+ 	 		return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_categories')."\"/>";
+ 	 	}
  		//$reqfilter->limit = MAX_RESULTS;
- 		foreach($categoryHint as $hint) { 
+ 		foreach($categoryHints as $hint) { 
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		$reqfilter->isCaseSensitive = false;
@@ -68,11 +72,15 @@
  	 * 
  	 * @return xml string 
  	 */
- 	 function filterForInstances($instanceHint) {
+ 	 function filterForInstances($instanceHints) {
  	 	$reqfilter = new SMWRequestOptions();
  	 	$reqfilter->sort = true;
  		//$reqfilter->limit = MAX_RESULTS;
- 		foreach($instanceHint as $hint) { 
+ 		
+ 		if (count($instanceHints) == 0) {
+ 			return "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>";
+ 		}
+ 		foreach($instanceHints as $hint) { 
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		
@@ -108,25 +116,31 @@
  	 * 
  	 * @return xml string (attribute tree)
  	 */
- 	 function filterForPropertyTree($attributeHint) {
+ 	 function filterForPropertyTree($propertyHints) {
  	 	$reqfilter = new SMWRequestOptions();
  	 	$reqfilter->sort = true;
  		//$reqfilter->limit = MAX_RESULTS;
- 		foreach($attributeHint as $hint) { 
+ 		
+ 		if (count($propertyHints) == 0) {
+ 			return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_attributes')."\"/>";
+ 		}
+ 		foreach($propertyHints as $hint) { 
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		
  		$reqfilter->isCaseSensitive = false;
- 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, true);
+ 	 	$foundAttributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $reqfilter, false);
+ 	 	
  	 	
  	 	// create root object
  	 	$root = new TreeObject(null);
  	 	
  	 	// get all paths to the root
  	 	$allPaths = array();
+ 	 	$visitedNodes = array();
  	 	foreach($foundAttributes as $cat) {
  	 		$init_path = array();
- 	 		$this->getAllPropertyPaths($cat, $init_path, $allPaths);
+ 	 		$this->getAllPropertyPaths($cat, $init_path, $allPaths, $visitedNodes);
  	 	}
  	 	
  	 	// reverse paths
@@ -160,11 +174,16 @@
  	 * 
  	 * @return xml string 
  	 */
- 	  function filterForProperties($propertyHint) {
+ 	  function filterForProperties($propertyHints) {
  	 	$reqfilter = new SMWRequestOptions();
  	 	$reqfilter->sort = true;
  		//$reqfilter->limit = MAX_RESULTS;
- 		foreach($propertyHint as $hint) { 
+ 		
+ 		if (count($propertyHints) == 0) {
+ 			return "<propertyList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_properties')."\"/>";
+ 		}
+ 		
+ 		foreach($propertyHints as $hint) { 
  			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
  		}
  		
@@ -183,9 +202,10 @@
  	 	
  	 	// get all paths to the root
  	 	$allPaths = array();
+ 	 	$vistedNodes = array(); // used internally to prevent infinite cycles
  	 	foreach($categories as $cat) {
  	 		$init_path = array();
- 	 		$this->getAllCategoryPaths($cat, $init_path, $allPaths);
+ 	 		$this->getAllCategoryPaths($cat, $init_path, $allPaths, $vistedNodes);
  	 	}
  	 	
  	 	// reverse paths
@@ -219,14 +239,20 @@
  	  * @param $path Must be an empty array
  	  * @param $allPaths Must be an empty array 
  	  */
- 	 private function getAllCategoryPaths($cat, & $path, & $allPaths) {
+ 	 private function getAllCategoryPaths($cat, & $path, & $allPaths, & $visitedNodes) {
     	 $path[] = $cat;
  	 	 $superCats = smwfGetSemanticStore()->getDirectSuperCategories($cat);
+ 	 	 array_push($visitedNodes, $cat->getDBkey());
  	 	 foreach($superCats as $superCat) {
+ 	 	 	if (in_array($superCat->getDBkey(), $visitedNodes)) {
+ 	 	 		array_pop($visitedNodes);
+ 	 	 		return;
+ 	 	 	}
  	 	 	$cloneOfPath = array_clone($path);
- 	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths);
+ 	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths, $visitedNodes);
  	 	 }
          if (count($superCats) == 0) $allPaths[] = $path;
+         array_pop($visitedNodes);
  	 }
  	 
  	  /**
@@ -237,14 +263,20 @@
  	  * @param $path Must be an empty array
  	  * @param $allPaths Must be an empty array 
  	  */
- 	 private function getAllPropertyPaths($att, & $path, & $allPaths) {
+ 	 private function getAllPropertyPaths($att, & $path, & $allPaths, & $visitedNodes) {
     	 $path[] = $att;
- 	 	 $superCats = smwfGetSemanticStore()->getDirectSuperProperties($att);
- 	 	 foreach($superCats as $superCat) {
+ 	 	 $superProps = smwfGetSemanticStore()->getDirectSuperProperties($att);
+ 	 	 array_push($visitedNodes, $att->getDBkey());
+ 	 	 foreach($superProps as $superProp) {
+ 	 	 	if (in_array($superProp->getDBkey(), $visitedNodes)) {
+ 	 	 		array_pop($visitedNodes);
+ 	 	 		return;
+ 	 	 	}
  	 	 	$cloneOfPath = array_clone($path);
- 	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths);
+ 	 	 	$this->getAllPropertyPaths($superProp, $cloneOfPath, $allPaths, $visitedNodes);
  	 	 }
-         if (count($superCats) == 0) $allPaths[] = $path;
+         if (count($superProps) == 0) $allPaths[] = $path;
+         array_pop($visitedNodes);
  	 }
  	 
  	 
