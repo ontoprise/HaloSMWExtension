@@ -1001,7 +1001,7 @@ AutoCompleter.prototype = {
             	&& !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
                 addedValue += "]]";
             } else if (type == SMW_PROPERTY_NS) {
-                addedValue += ":=";
+                addedValue += "::";
             } else if (type == SMW_INSTANCE_NS) {
             	if (!userContext.match(/|(\s|\r|\n)*$/)) { 
             		addedValue += "]]"; // add only if instance is no template parameter
@@ -1078,7 +1078,7 @@ AutoCompleter.prototype = {
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
-        refreshSTB.changed();
+        if (refreshSTB) refreshSTB.changed();
     },
     
     /**
