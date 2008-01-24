@@ -87,12 +87,14 @@
        				echo $catNS.":".$cl->getText()."\n";
        			} 
  			} else {
- 				$categories = explode(";", urldecode($paramArray['CATEGORY_RESTRICTION']));
+ 				
+ 				$categories = explode(";", $paramArray['CATEGORY_RESTRICTION']);
  				$categoryLeaves = array();
  				
  				foreach($categories as $c) {
  					$categoryDB = str_replace(" ", "_", trim($c));
  					$categoryTitle = Title::newFromText($categoryDB, NS_CATEGORY);
+ 					
  					$categoryLeaves = $this->store->getCategoryLeafs($categoryTitle);
  				
  					foreach($categoryLeaves as $cl) {
