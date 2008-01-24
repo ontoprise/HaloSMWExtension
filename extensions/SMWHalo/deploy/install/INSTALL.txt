@@ -1,0 +1,32 @@
+ENGLISH:
+
+Installation instructions for halowiki.exe
+
+1. Download halowiki.exe and doubleclick it.
+2. Enter path to directory where to extract the wiki.
+3. Go to this directory and doubleclick setup_xampp.bat. Enter 1 and press Enter.
+4. Doubleclick setup_halowiki.bat
+5. Double click xampp_start.exe
+
+The wiki is now available at: 
+	http://localhost/mediawiki/index.php
+	
+There's a admin user with these credentials: WikiSysop/m8nix
+
+------------------------------------------------------------------------------------------------------
+
+DEUTSCH:
+
+Installation von halowiki.exe
+
+1. Datei halowiki.exe runterladen und Doppelklicken zum Entpacken.
+2. Pfad eingeben wohin's entpackt werden soll.
+3. Die Datei setup_xampp.bat im eben entpackten Verzeichnis doppelklicken. Dann 1 und Enter drücken (für Refresh)
+4. Die Datei setup_halowiki.bat im eben entpackten Verzeichnis doppelklicken.
+5. Die Datei xampp_start doppelklicken um den Server zu starten. Fertig!
+
+Das Wiki ist jetzt unter:
+   http://localhost/mediawiki/index.php
+zu erreichen.
+
+Es gibt einen Admin-User mit folgenden Zugangsdaten: WikiSysop/m8nix
