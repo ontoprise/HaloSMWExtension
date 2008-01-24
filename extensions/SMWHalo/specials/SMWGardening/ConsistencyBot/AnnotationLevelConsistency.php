@@ -11,15 +11,18 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  class AnnotationLevelConsistency {
  	 	
  	private $bot;
- 	private $cc_store;
  	private $delay; 
  	
- 	// Category/Property Graph. It is cached for the whole consistency checks.
+ 	// Category/Property Graph. 
+ 	// They are cached for the whole consistency checks.
  	private $categoryGraph;
  	private $propertyGraph;
  	
  	// GardeningIssue store
  	private $gi_store;
+ 	
+ 	// Consistency store
+ 	private $cc_store;
  	
  	// Important: Attribute values (primitives) are always syntactically 
  	// correct when they are in the database. So only relations
@@ -38,8 +41,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 * Checks if property annotations uses schema consistent values
  	 */
  	public function checkAllPropertyAnnotations() {
- 		global $smwgContLang;
- 	 		
+ 		 	 		
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		
  		$work = count($properties);
@@ -52,9 +54,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  			$this->bot->worked(1);
  			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) { 
- 				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
- 			}
+ 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
  			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($p) 
  					|| smwfGetSemanticStore()->minCard->equals($p) 
@@ -234,7 +234,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 * Checks if number of property appearances in articles are schema-consistent.
  	 */
  	public function checkAnnotationCardinalities() {
- 		global $smwgContLang;
+ 		
  		
  		// get all properties
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
@@ -248,9 +248,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  			$this->bot->worked(1);
  			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) { 
- 				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
- 			}
+ 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
  			
  			// ignore builtin properties
  			if (smwfGetSemanticStore()->minCard->equals($a) 
@@ -292,17 +290,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			// and the number of these annotations for each for instance
  			$result = $this->cc_store->getNumberOfPropertyInstantiations($a);
  			
- 			// compare to minCard and maxCard
+ 			// compare actual number of appearances to minCard and maxCard and log errors if necessary
  			foreach($result as $r) {
  				list($subject, $numOfInstProps) = $r;
  			
-	 			// compare number of appearance with defined cardinality
+	 			// less than allowed?
 		 		if ($numOfInstProps < $minCards) {
 		 			if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
 		 				
 		 				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $numOfInstProps);
 		 			}
 				} 
+				
+				// too many than allowed?
 				if ($numOfInstProps > $maxCards) {
 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
 						
@@ -310,14 +310,15 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 					}
 				}			
  			}
- 			
- 			
+ 			 			
  			// special case: If minCard > CARDINALITY_MIN (=0), it may happen that an instance does not have a single property instantiation although it should.
- 			// it will not be found with 'getNumberOfPropertyInstantiations' method
+ 			// Then it will not be found with 'getNumberOfPropertyInstantiations' method. Only the schema information about the domain category can tell if
+ 			// an instance has too less annotations than allowed.
  			
  			if ($minCards == CARDINALITY_MIN) {
+ 				// check if minCard > 0 is inherited
  				$minCards = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
- 				if ($minCards == CARDINALITY_MIN) continue;
+ 				if ($minCards == CARDINALITY_MIN) continue; // do nothing for default cardinality
  			}
  			 
  			// get domains
@@ -334,11 +335,12 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
  				
- 				foreach($instances as $subject) { // check indirect instances
+ 				foreach($instances as $subject) { // check instances
  					if ($subject[0] == null) {
  						continue;
 	 				}
 	 				
+	 				// optimized: if property $a has no subprops, then simply read values of $a
 	 				if (count(smwfGetSemanticStore()->getDirectSubProperties($a)) == 0) {
 	 					$num = count(smwfGetStore()->getPropertyValues($subject[0], $a));
 	 				} else {
@@ -366,17 +368,26 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	public function checkUnits() {
  		// check attribute annotation cardinalities
  		$types = smwfGetSemanticStore()->getPages(array(SMW_NS_TYPE));
+ 		$work = count($types);
+ 		$cnt = 0;
+ 		print "\n";
  		$this->bot->addSubTask(count($types));
  		foreach($types as $type) {
  			if ($this->delay > 0) {
  				usleep($this->delay);
  			}
  			$this->bot->worked(1);
- 		
+ 			$cnt++;
+ 			if ($cnt % 5 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
+ 			 			
+ 			// get all *used* units for a given datatype
  			$units = smwfGetSemanticStore()->getDistinctUnits($type);
+ 			
+ 			// get all *defined* units for a given datatype
  			$conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
  			$si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
  			
+ 			// match used units against defined a log if there's a mismatch
  			foreach($units as $u) {
  				
 	 			$correct_unit = false;

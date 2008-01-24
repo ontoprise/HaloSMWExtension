@@ -340,6 +340,8 @@ protected $smwUserMessages = array(
 	'smw_gard_export_enterpath' => 'Exportdatei/-pfad',
 	'smw_gard_export_onlyschema' => 'Exportiere nur das Schema',
 	'smw_gard_export_ns' => 'Exportiere in Namensraum',
+	'smw_gard_export_download' => 'Der Export war erfolgreich! Klicke $1 um den Wiki-Export als OWL-Datei herunterzuladen.',
+	'smw_gard_export_here' => 'hier',
 
 	/*Message for TemplateMaterializerBot*/
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',

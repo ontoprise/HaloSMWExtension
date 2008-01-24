@@ -65,9 +65,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			$this->bot->worked(1);
  			
  			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) { 
- 				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
- 			}
+ 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
  			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
  					

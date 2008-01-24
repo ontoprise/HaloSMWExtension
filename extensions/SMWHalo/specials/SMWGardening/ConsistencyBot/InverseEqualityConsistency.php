@@ -31,9 +31,7 @@
  		foreach($inverseRelations as $r) {
  			$this->bot->worked(1);
  			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) { 
- 				print "\x08\x08\x08\x08".number_format($cnt/$work*100, 0)."% ";
- 			}
+ 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
  			
  			list($s, $t) = $r;
  			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintRelation);

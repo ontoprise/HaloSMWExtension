@@ -351,6 +351,8 @@ clicking the big arrows between the columns.',
 	'smw_gard_export_enterpath' => 'Export file/path',
 	'smw_gard_export_onlyschema' => 'Export only schema',
 	'smw_gard_export_ns' => 'Export to namespace',
+	'smw_gard_export_download' => 'Export was successful! Click $1 to download the wiki export as OWL file.',
+	'smw_gard_export_here' => 'here',
 
 	/*Message for TemplateMateriazerBot*/
 	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',

@@ -57,7 +57,7 @@
  		}
  		echo $this->getBotID()." started!\n";
  				
- 		$this->setNumberOfTasks(8); // 8 single tasks
+ 		$this->setNumberOfTasks(9); // 8 single tasks
  		
  		// Replace redirect annotations
  		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
@@ -146,6 +146,7 @@
 		}
 		return $this->store;
  	}
+ 	 	
  }
  
  

@@ -360,7 +360,14 @@
  		}
  	}
  	
- 	
+ 	/**
+ 	 * Prints a textual progress indication.
+ 	 * 
+ 	 * @param 0 <= $percentage <= 1
+ 	 */
+ 	public static function printProgress($percentage) {
+ 		print "\x08\x08\x08\x08".number_format($percentage*100, 0)."% ";
+ 	}
  }
  
    

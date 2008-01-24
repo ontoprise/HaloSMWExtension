@@ -13,17 +13,21 @@
  
  class ExportOntologyBot extends GardeningBot {
  	
- 	
+ 	// maps wiki types (e.g. Number) to XSD types
  	private $mapWikiTypeToXSD;
+ 	
+ 	// user defined namespace for exported ontology
  	private $namespace;
  	
+ 	// number of pages in different namespaces
  	private $numOfCategories;
  	private $numOfInstances;
  	private $numOfProperties;
  	
  	function __construct() {
  		parent::GardeningBot("smw_exportontologybot");
- 		 		
+ 		
+ 		// initialize map
  		$this->mapWikiTypeToXSD['_int'] = 'integer';
  		$this->mapWikiTypeToXSD['_str'] = 'string';
  		$this->mapWikiTypeToXSD['_flt'] = 'float';
@@ -81,7 +85,7 @@
  		// escape user defined namespace
  		$this->namespace = ExportOntologyBot::makeXMLAttributeContent($this->namespace);
  		
- 		// open file and write headers
+ 		// open temporary file for export and write headers
  		$handle = fopen($wikiexportDir."/latestExport.temp","wb");
  		$this->writeHeader($handle);
  		
@@ -103,18 +107,18 @@
  		$this->writeFooter($handle);
 	 	fclose($handle);
 	 	
-	 	// copy to normal output file as well as to latestOutput file
+	 	// copy to normal output file as well as to latestExport file
 	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/".$outputFile);
 	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/latestExport.owl");
+	 	
+	 	// remove temporary file
 	 	unlink($wikiexportDir."/latestExport.temp");
 	 	 
-	 	$successMessage = "\n\nExport was successful!";
-	 	
 	 	// create download link
 	 	global $wgServer, $wgScriptPath;
-	 	$downloadLink = "\nClick [".$wgServer.$wgScriptPath."/extensions/SMWHalo/wikiexport/$outputFile here] to download wiki export as OWL file.\n";
+	  	$downloadLink = wfMsg('smw_gard_export_download', "[".$wgServer.$wgScriptPath."/extensions/SMWHalo/wikiexport/$outputFile ".wfMsg('smw_gard_export_here')."]");
 	 	
-	 	return $successMessage.$downloadLink;
+	 	return "\n\n".$downloadLink."\n\n";
  	}
  	
  	private function writeHeader($filehandle) {
@@ -195,7 +199,7 @@
  		$this->addSubTask($this->numOfInstances);
  		foreach($instances as $inst) {
  			if ($counter % 10 == 0) {
- 				$this->printProgress($counter, $this->numOfInstances);
+ 				GardeningBot::printProgress($counter/$this->numOfInstances);
  			}
  			
  			// define member categories. If there is no, put it to DefaultRootConcept by default
@@ -243,7 +247,7 @@
 	 		$counter++;
  			$this->worked(1);
  		}
- 		$this->printProgress($counter, $this->numOfInstances);
+ 		GardeningBot::printProgress($counter / $this->numOfInstances);
  	}
  	
  	/**
@@ -308,7 +312,7 @@
  			
  			fwrite($filehandle, $owl);
  			
- 			$this->printProgress($counter, $this->numOfProperties);
+ 			GardeningBot::printProgress($counter / $this->numOfProperties);
  		}
  	}
  	
@@ -335,7 +339,7 @@
 			if ($counter < $this->numOfCategories) {
 				$counter++;
 				$this->worked(1);
-				$this->printProgress($counter, $this->numOfCategories);
+				GardeningBot::printProgress($counter / $this->numOfCategories);
 			}
 			
 			// depth-first in category tree
@@ -577,9 +581,7 @@
 		}
 	}
 	
-	private function printProgress($currentWorkDone, $completeWork) {
-		print "\x08\x08\x08\x08\x08".number_format($currentWorkDone/$completeWork*100, 0)."% ";
-	}
+	
 	
 	/** This function transforms a valid url-encoded URI into a string
 	 *  that can be used as an XML-ID. The mapping should be injective.

@@ -59,9 +59,8 @@ class GraphCycleDetector {
  		$this->bot->addSubTask(count($graph));
  		for($i = 0, $n = count($graph); $i < $n; $i++) {
  			$this->bot->worked(1);
- 			if ($i % 10 == 0 || $i == $work-1) { 
- 				print "\x08\x08\x08\x08\x08".number_format(($i+1)/$work*100, 0)."% ";
- 			}
+ 			if ($i % 10 == 0 || $i == $work-1) GardeningBot::printProgress(($i+1)/$work);
+ 			
  			$e = $graph[$i];
  			$visitedNodes = array();
  			$this->_returnCycles($graph, array($i,$i), $visitedNodes, $results); 			
