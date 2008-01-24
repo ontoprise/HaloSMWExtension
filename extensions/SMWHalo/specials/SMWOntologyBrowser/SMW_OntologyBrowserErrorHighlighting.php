@@ -69,12 +69,29 @@
  					break;
  				}
  				case SMW_GARDISSUE_WRONG_TARGET_VALUE: { // highlight if wrong target matches the GI
- 					if ($value->getTitle()->getDBkey() == $i->getValue()) {
- 					
- 						$htmlRepresentation = $i->getRepresentation();
- 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
+ 					if ($value instanceof SMWNAryValue) {
+ 					  $dvs = $value->getDVs();
+ 					  foreach($dvs as $dv) {
+ 					  	if ($dv instanceof SMWWikiPageValue) {
+ 					  		if ($dv->getTitle()->getDBkey() == $i->getValue()) {
+	 					
+		 						$htmlRepresentation = $i->getRepresentation();
+		 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
+		 						break;
+	 						}
+ 					  	}
+ 					  } 
+ 					  break;
+ 					  	
+ 					} else if ($value instanceof SMWWikiPageValue) {
+ 						
+	 					if ($value->getTitle()->getDBkey() == $i->getValue()) {
+	 					
+	 						$htmlRepresentation = $i->getRepresentation();
+	 						$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
+	 					}
+	 					break;
  					}
- 					break;
  				}
  				
  				case SMW_GARDISSUE_TOO_HIGH_CARD: // fall through
