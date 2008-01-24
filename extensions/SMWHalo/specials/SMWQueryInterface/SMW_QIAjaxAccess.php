@@ -3,7 +3,7 @@
 global $wgAjaxExportList;
 global $smwgIP;
 //require_once( "$smwgIP/includes/SMW_Datatype.php" );
-require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
+require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
 $wgAjaxExportList[] = 'smwfQIAccess';
 
 
@@ -20,6 +20,12 @@ function smwfQIAccess($method, $params) {
 
 		// get type definition (if it exists)
 		$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
+		if(!($relationTitle instanceof Title)){
+			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
+							'<param name="Page"/>'.
+	           	  		 '</relationSchema>';
+			return $relschema;
+		}
 		$type = smwfGetStore()->getSpecialValues($relationTitle, SMW_SP_HAS_TYPE);
 
 		// if no 'has type' annotation => normal binary relation
@@ -40,7 +46,7 @@ function smwfQIAccess($method, $params) {
 		   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
 		   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
 		   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
-		   			$pvalues = smwfGetStore()->getSpecialValues($relationName, SMW_SP_POSSIBLE_VALUE);
+		   			$pvalues = smwfGetStore()->getSpecialValues($relationTitle, SMW_SP_POSSIBLE_VALUE);
 		   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
 		   			for($j = 0; $j < sizeof($pvalues); $j++){
 		   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
@@ -74,7 +80,8 @@ function smwfQIAccess($method, $params) {
 		$result="null";
 		if ($smwgQEnabled) {
 			$params = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
-			$result = applyQueryHighlighting($p_array[0], $params);
+			//$result = applyQueryHighlighting($p_array[0], $params);
+			$result = SMWQueryProcessor::getResultFromHookParams($p_array[0],$params,SMW_OUTPUT_HTML);
 			// add target="_new" for all links
 			$pattern = "|<a|i";
 			$result = preg_replace($pattern, '<a target="_new"', $result);

@@ -192,6 +192,7 @@ var wgLanguageStrings = {
 	'QI_INSTANCE'       	  : 'Instance:',
 	'QI_PROPERTYNAME'         : 'Property name:',
 	'QI_SHOW_PROPERTY'        : 'Show in results:',
+	'QI_PROPERTY_MUST_BE_SET' : 'Value must be set:',
 	'QI_USE_SUBQUERY'         : 'Insert subquery',
 	'QI_PAGE'				  : 'Page',
 	'QI_OR'        			  : 'or',

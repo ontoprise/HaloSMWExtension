@@ -166,6 +166,7 @@ var wgLanguageStrings = {
 	'QI_INSTANCE'       	  : 'Instanz:',
 	'QI_PROPERTYNAME'         : 'Propertyname:',
 	'QI_SHOW_PROPERTY'        : 'In Ergebnissen zeigen:',
+	'QI_PROPERTY_MUST_BE_SET' : 'Wert muss gesetzt sein:',
 	'QI_USE_SUBQUERY'         : 'Subquery einf&uuml;gen',
 	'QI_PAGE'				  : 'Page', // has to be the same as the Type:Page in your language
 	'QI_OR'        			  : 'oder',
