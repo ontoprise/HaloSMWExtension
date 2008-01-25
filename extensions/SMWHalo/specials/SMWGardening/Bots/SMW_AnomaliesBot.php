@@ -98,9 +98,11 @@
  					$categoryLeaves = $this->store->getCategoryLeafs($categoryTitle);
  				
  					foreach($categoryLeaves as $cl) {
- 						$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CATEGORY_LEAF, $cl);
-       				
-       					echo $catNS.":".$cl->getText()."\n";
+ 						// maybe it exists already
+ 						if (!$gi_store->existsGardeningIssue($this->id, SMW_GARDISSUE_CATEGORY_LEAF, NULL, $cl)) {
+ 							$gi_store->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CATEGORY_LEAF, $cl);
+	       					echo $catNS.":".$cl->getText()."\n";
+ 						}
        				} 
  				}
        			
@@ -134,9 +136,10 @@
  					$subCatAnomalies = $this->store->getCategoryAnomalies($categoryTitle);
  					foreach($subCatAnomalies as $a) {
        					list($title, $subCatNum) = $a;
-       					$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
-       				
-       					echo $catNS.":".$title->getText()." has $subCatNum ".($subCatNum == 1 ? "subcategory" : "subcategories").".\n";
+       					if (!$gi_store->existsGardeningIssue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, NULL, $title)) {
+	       					$gi_store->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_SUBCATEGORY_ANOMALY, $title, $subCatNum);
+	       					echo $catNS.":".$title->getText()." has $subCatNum ".($subCatNum == 1 ? "subcategory" : "subcategories").".\n";
+       					}
        				} 
  				}
        		}
