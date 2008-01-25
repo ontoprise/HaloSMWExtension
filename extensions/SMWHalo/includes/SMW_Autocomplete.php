@@ -215,6 +215,9 @@ class AutoCompletionRequester {
  	    	if (stripos(strtolower($userContext), strtolower($specialProperties[SMW_SP_SUBPROPERTY_OF])) > 0) {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
+ 	    	} else if (stripos(strtolower($userContext), strtolower($specialSchemaProperties[SMW_SSP_IS_INVERSE_OF])) > 0) {
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY));
+ 	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext),strtolower($specialProperties[SMW_SP_HAS_TYPE])) > 0) { 
  	    		// has type relation. First check for user types
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_TYPE));
