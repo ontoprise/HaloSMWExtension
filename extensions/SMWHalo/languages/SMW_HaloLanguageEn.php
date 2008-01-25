@@ -484,8 +484,8 @@ var $smwSpecialSchemaProperties = array (
 	);
 
 var $smwSpecialCategories = array (
-	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
-	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive properties',
+	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical properties'
 );
 
 var $smwHaloDatatypes = array(

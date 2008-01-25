@@ -462,16 +462,16 @@ protected $smwSpecialProperties = array(
 
 
 var $smwSpecialSchemaProperties = array (
-	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT  => 'Has domain and range',
-	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
-	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
-	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
-	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
+	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT  => 'Hat Domain und Range',
+	SMW_SSP_HAS_MAX_CARD => 'Hat max Kardinalität',
+	SMW_SSP_HAS_MIN_CARD => 'Hat min Kardinalität',
+	SMW_SSP_IS_INVERSE_OF => 'Ist invers zu',
+	SMW_SSP_IS_EQUAL_TO => 'Ist gleich zu'
 	);
 
 var $smwSpecialCategories = array (
-	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive relations',
-	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical relations'
+	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive Properties',
+	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische Properties'
 );
 
 
