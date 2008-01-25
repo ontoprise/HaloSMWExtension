@@ -3310,7 +3310,8 @@ Object.extend(Selector, {
     var matches = new Selector(expression).findElements(), h = Selector.handlers;
     h.mark(matches);
     for (var i = 0, results = [], element; element = elements[i]; i++)
-      if (element._counted) results.push(element);
+      //TS: does not work in IE: if (element._counted) results.push(element);
+      if (element._counted == true) results.push(element);
     h.unmark(matches);
     return results;
   },

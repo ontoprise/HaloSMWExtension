@@ -70,7 +70,7 @@ AdvancedAnnotation.prototype = {
 			if (target.id && target.id == 'bodyContent') {
 				break;
 			}
-			target = target.up('div');
+			target = $(target).up('div');
 		}
 		if (!target) {
 			// event was outside of div#bodyContent
@@ -124,7 +124,10 @@ AdvancedAnnotation.prototype = {
 			// store details of the selection
 			this.selectedText = sel;
 			//trim selection
-			this.selectedText = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
+			var trimmed = this.selectedText.replace(/^\s*(.*?)\s*$/,'$1');
+			var off1 = this.selectedText.indexOf(trimmed);
+			var off2 = this.selectedText.length-trimmed.length-off1;
+			this.selectedText = trimmed;
 			this.annotatedNode = (leftToRight) ? annoSelection.anchorNode
 											   : annoSelection.focusNode;
 			this.annoOffset    = (leftToRight) ? annoSelection.anchorOffset
@@ -133,8 +136,9 @@ AdvancedAnnotation.prototype = {
 											 : annoSelection.anchorNode;
 			this.focusOffset = (leftToRight) ? annoSelection.focusOffset
 											 : annoSelection.anchorOffset;
+			this.annoOffset += off1;
+			this.focusOffset -= off2;
 			this.selectionContext = this.getSelectionContext();
-			
 			this.performAnnotation(event);
 		}
 	},
@@ -344,7 +348,7 @@ AdvancedAnnotation.prototype = {
 			return node;
 		} 
 	},
-	
+		
 	searchSelectionEnd: function(node, parameters) {
 		if (node.tagName == 'P') {
 			// end search at paragraphs
@@ -361,6 +365,14 @@ AdvancedAnnotation.prototype = {
 	searchTextNode: function(node, parameters) {
 		if (node.nodeName == '#text') {
 			// found a text node
+			if (parameters) {
+				var content = getTextContent(node);
+				if (content.indexOf(parameters) >= 0) {
+					return node;
+				} else {
+					return;
+				}
+			}
 			return node;
 		}
 		
@@ -397,7 +409,7 @@ AdvancedAnnotation.prototype = {
 		}
 		
 	},
-			
+	
 	/**
 	 * Searches recursively backwards from the given node <startNode> to the top
 	 * of the document. The document order is traversed in reverse order, visiting
@@ -529,7 +541,66 @@ AdvancedAnnotation.prototype = {
 		} else if (document.getSelection) {
 			txt = document.getSelection();
 		} else if (document.selection) {
-			txt = document.selection.createRange().text;
+			//IE 
+			var selection = document.selection.createRange();
+			if (selection.text == '') {
+				return {anchorNode: null, 
+			       focusNode: null, 
+			       anchorOffset: 0,
+			       focusOffset: 0,
+			       text:"",
+			       toString:function() {
+			       	return this.text;
+			       }
+			      };
+			}
+			var selectedText = selection.text;
+			var start = selection.duplicate();
+			var end = selection.duplicate();
+			start.collapse(true);
+			end.collapse(false);
+			start.pasteHTML('<a name="ieselectionstart" />');
+			end.pasteHTML('<a name="ieselectionend" />');
+			var startNode = start.parentElement();
+//			var tmpNode = startNode.down('a[name=ieselectionstart]');
+			var tmpNode = $$('a[name=ieselectionstart]')[0];
+			startNode = tmpNode.nextSibling;
+			var anchorOffset = 0;
+			$(tmpNode).remove();
+			var prev = startNode.previousSibling ? startNode.previousSibling : null;
+			if (prev) {
+				if (prev.nodeName == '#text') {
+					var t = getTextContent(prev);
+					anchorOffset = t.length;
+					setTextContent(startNode, t+getTextContent(startNode));
+					prev.parentNode.removeChild(prev);
+				}
+			}
+			var endNode = end.parentElement();
+//			tmpNode = endNode.down('a[name=ieselectionend]');
+			tmpNode = $$('a[name=ieselectionend]')[0];
+			endNode = tmpNode.previousSibling;
+			var focusOffset = getTextContent(endNode).length;
+			$(tmpNode).remove();
+			var next = endNode.nextSibling ? endNode.nextSibling : null;
+			if (next) {
+				if (next.nodeName == '#text') {
+					var t = getTextContent(next);
+					setTextContent(endNode, getTextContent(endNode)+t);
+					next.parentNode.removeChild(next);
+				}
+			}
+			
+						
+			txt = {anchorNode: startNode, 
+			       focusNode: endNode, 
+			       anchorOffset: anchorOffset,
+			       focusOffset: focusOffset,
+			       text:selectedText,
+			       toString:function() {
+			       	return this.text;
+			       }
+			      };
 		}
 		return txt;
 	},
@@ -548,14 +619,14 @@ AdvancedAnnotation.prototype = {
 	getSelectionContext: function() {
 		var result = new Array("","","","");
 		var numWords = 2;
-		var preContext = this.annotatedNode.textContent;
+		var preContext = getTextContent(this.annotatedNode);
 		preContext = preContext.substring(0, this.annoOffset);
 //		window.console.log('preContext:'+preContext+'\n');
 		preContext = this.getWords(preContext, numWords, false);
 //		window.console.log('preContext:'+preContext+'\n');
 		result[1] = preContext;
 		
-		var postContext = this.focusNode.textContent;
+		var postContext = getTextContent(this.focusNode);
 		postContext = postContext.substring(this.focusOffset);
 //		window.console.log('postContext:'+postContext+'\n');
 		postContext = this.getWords(postContext, numWords, true);
@@ -566,7 +637,7 @@ AdvancedAnnotation.prototype = {
 			var prevNode = this.searchBackwards(this.annotatedNode, 
 										        this.searchTextNode.bind(this));
 			if (prevNode) {
-				preContext = prevNode.textContent;
+				preContext = getTextContent(prevNode);
 				preContext = this.getWords(preContext, numWords, false);
 //				window.console.log('preContext:'+preContext+'\n');
 				result[0] = preContext;
@@ -576,7 +647,7 @@ AdvancedAnnotation.prototype = {
 			var postNode = this.searchForward(this.annotatedNode, 
 										        this.searchTextNode.bind(this));
 			if (postNode) {
-				postContext = postNode.textContent;
+				postContext = getTextContent(postNode);
 				postContext = this.getWords(postContext, numWords, true);
 //				window.console.log('postContext:'+postContext+'\n');
 				result[3] = postContext;
@@ -791,13 +862,13 @@ AdvancedAnnotation.prototype = {
 		var foff = this.annoOffset;
 		var soff = this.focusOffset;
 		
-		var t = second.textContent;
+		var t = getTextContent(second);
 		t = t.substring(0, soff) + '###end###' + t.substring(soff);
-		second.textContent = t;
+		setTextContent(second, t);
 		
-		t = first.textContent;
+		t = getTextContent(first);
 		t = t.substring(0, foff) + '###start###' + t.substring(foff);
-		first.textContent = t;
+		setTextContent(first, t);
 
 		var p1 = first.parentNode;
 		var p2 = second.parentNode;
@@ -848,7 +919,7 @@ AdvancedAnnotation.prototype = {
 		if (!this.annotationProposal) {
 			return;
 		}
-		var text = this.annotationProposal.textContent;
+		var text = getTextContent(this.annotationProposal);
 		
 		var wrapper = this.annotationProposal;
 		wrapper.id = 'anno'+this.annoCount+'w';
@@ -1148,12 +1219,12 @@ AdvancedAnnotation.prototype = {
 			return;
 		}
 		// There is always the highlighting span within the wrapper span.
-		var span = wrapper.down('span');
+		var span = $(wrapper).down('span');
 		
 		// The highlighted section may contain hidden annotation proposal 
 		// => restore them
 		// Normal links are replaced by their text content
-		var proposals = span.descendants();
+		var proposals = $(span).descendants();
 		for (var i = 0; i < proposals.length; ++i) {
 			var p = proposals[i];
 			if (p.id.match(/anno\d*w/)) {
@@ -1166,7 +1237,7 @@ AdvancedAnnotation.prototype = {
 					if (p.parentNode.className != "aam_page_link_highlight") {
 						// its parent is not an annotation proposal
 						//  => replace it by the text content
-						p.replace(p.textContent);
+						p.replace(getTextContent(p));
 					}
 				}
 			}
@@ -1293,6 +1364,32 @@ AdvancedAnnotation.smwhfEditLink = function(id) {
 	smwhgAdvancedAnnotation.annotateProposal(id);
 };
 
+function getTextContent(elem) {
+	if (!elem) {
+		return null;
+	}
+	if (elem.textContent) {
+		return elem.textContent;
+	} else if (elem.innerText) {
+		return elem.innerText;
+	} else if (elem.nodeValue) {
+		return elem.nodeValue;
+	}
+	return null;
+}
+
+function setTextContent(elem, text) {
+	if (!elem) {
+		return null;
+	}
+	if (elem.textContent) {
+		elem.textContent = text;
+	} else if (elem.innerText) {
+		elem.innerText = text;
+	} else if (elem.nodeValue) {
+		elem.nodeValue = text;
+	}
+}
 
 var smwhgAdvancedAnnotation = null;
 Event.observe(window, 'load', AdvancedAnnotation.create);

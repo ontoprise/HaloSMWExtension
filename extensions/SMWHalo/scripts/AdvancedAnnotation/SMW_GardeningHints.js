@@ -53,20 +53,22 @@ createContent: function(request) {
 	var html = '';
 	if (request.status == 200) {
 		var hints = GeneralXMLTools.createDocumentFromString(request.responseText);
-		for (var b = 0, bn = hints.documentElement.childNodes.length; b < bn; b++) {
-			// iterate over bots
-			var bot = hints.documentElement.childNodes[b];
-						
-			var n = bot.childNodes.length;
-			if (n > 0) {						
-//				html += '<b>' + bot.getAttribute("title") + '</b>';
-				html += '<ul>';
-				for (var i = 0; i < n; i++) {
-					// iterate over the bot's issues
-					var issue = bot.childNodes[i];
-					html += '<li>' + issue.textContent + '</li>';
+		if (hints.documentElement) {
+			for (var b = 0, bn = hints.documentElement.childNodes.length; b < bn; b++) {
+				// iterate over bots
+				var bot = hints.documentElement.childNodes[b];
+							
+				var n = bot.childNodes.length;
+				if (n > 0) {						
+	//				html += '<b>' + bot.getAttribute("title") + '</b>';
+					html += '<ul>';
+					for (var i = 0; i < n; i++) {
+						// iterate over the bot's issues
+						var issue = bot.childNodes[i];
+						html += '<li>' + issue.textContent?issue.textContent:issue.innerText + '</li>';
+					}
+					html += '</ul>';
 				}
-				html += '</ul>';
 			}
 		}
 	}	

@@ -48,6 +48,9 @@ showMessageAndWikiText: function(message, wikiText, x, y) {
 	this.contextMenu.showMenu();
 	
 	document.onkeyup = function(e) {
+		if (!e) {
+			return;
+		}
 		var key = e.which || e.keyCode;
 		if (key == Event.KEY_ESC) {
 			smwhgAnnotationHints.hideHints();
