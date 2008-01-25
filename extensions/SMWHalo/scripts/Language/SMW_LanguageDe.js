@@ -157,7 +157,11 @@ var wgLanguageStrings = {
 	'SMW_OB_EDIT' 		  	  : '(Editiere)',
 	'SMW_OB_ADDSOME'		  : '(F&uuml;ge hinzu)',
 	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
-
+	
+	// Find work
+	'FW_SEND_ANNOTATIONS'	  : 'Danke für das Bewerten der Annotationen, ',
+	'FW_MY_FRIEND'	  		  : 'mein Freund!',
+	
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query Interface',
 	'QI_MAIN_QUERY_NAME'	  : 'Hauptquery',

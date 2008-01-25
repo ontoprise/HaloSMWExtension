@@ -207,7 +207,11 @@ var wgLanguageStrings = {
 	'QI_QUERY_EXISTS'		  : "A query with this name already exists. Please choose another name.",
 	'QI_QUERY_SAVED'		  : "Your query has been successfully saved.",
 	'QI_SAVE_ERROR'		  	  : "An unknown error occured. Your query could not be saved.",
-
+	
+	// Find work
+	'FW_SEND_ANNOTATIONS'	  : 'Thank you for evaluating annotations, ',
+	'FW_MY_FRIEND'	  		  : 'my friend!',
+	
 	//Syntax Highlighting editor
 	'SHE_new_document'			  : "new empty document",
 	'SHE_search_button'			  : "search and replace",

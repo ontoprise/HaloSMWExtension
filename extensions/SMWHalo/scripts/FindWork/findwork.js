@@ -27,9 +27,25 @@ FindWork.prototype = {
 		var result = [];
 		var annotation = $('annotation'+i);
 		while (annotation != null) {
-			var subject = annotation.firstChild.textContent.replace(/\s/g, "_");
-			var predicate = annotation.firstChild.nextSibling.textContent.replace(/\s/g, "_");
-			var objectOrValue = annotation.firstChild.nextSibling.nextSibling.textContent.replace(/\s/g, "_");
+			var subject;
+			var predicate;
+			var objectOrValue;
+			
+			if (OB_bd.isGecko) {
+				subject = annotation.firstChild.textContent;
+				predicate = annotation.firstChild.nextSibling.textContent;
+				objectOrValue = annotation.firstChild.nextSibling.nextSibling.textContent;
+			} else if (OB_bd.isIE) {
+				subject = annotation.firstChild.innerText;
+				predicate = annotation.firstChild.nextSibling.innerText;
+				objectOrValue = annotation.firstChild.nextSibling.nextSibling.innerText;
+			}
+			
+			// replace whitespaces by underscores
+			subject = subject.replace(/\s/g, "_");
+			predicate = predicate.replace(/\s/g, "_");
+			objectOrValue = objectOrValue.replace(/\s/g, "_");
+			
 			var buttons = $('ratingform').getInputs('radio', 'rating'+i);
 			var rating = this.getValueOfChecked(buttons);
 			if (rating != 0) result.push([subject, predicate, objectOrValue, rating]);
@@ -49,8 +65,8 @@ FindWork.prototype = {
 			alert('Something went wrong! Please try again!');
 			return;
 		}
-		alert('Thank you for rating annotations, ' + (wgUserName ? wgUserName : "my friend") + "!");
-		// disable button to prevent repeatedly rating
+		alert(gLanguage.getMessage('FW_SEND_ANNOTATIONS') + (wgUserName ? wgUserName : gLanguage.getMessage('FW_MY_FRIEND')));
+		// disable button to prevent repeated rating
 		$('sendbutton').setAttribute("disabled", "disabled");
 	},
 	
