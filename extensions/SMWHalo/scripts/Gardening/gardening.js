@@ -148,8 +148,11 @@ GardeningLogPage.prototype = {
 		this.showAll = false;
 	},
 	
-	selectBot: function(bot_id) {
+	selectBot: function(event) {
+		var selectTag = Event.element(event);
 		this.pendingIndicator.show($('issueClasses'));
+		var selectedIndex = selectTag.selectedIndex;
+		var bot_id = selectTag.options[selectedIndex].value;
 		sajax_do_call('smwfGetGardeningIssueClasses', [bot_id], this.changeIssueClassesContent.bind(this));
 	},
 	

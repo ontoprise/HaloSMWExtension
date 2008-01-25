@@ -341,14 +341,14 @@ abstract class GardeningIssueFilter {
 		global $registeredBots;
 		$html = "<form action=\"".$specialAttPage->getFullURL()."\">";
 		
-		$html .= "<select name=\"bot\">";
+		$html .= "<select name=\"bot\" onchange=\"gardeningLogPage.selectBot(event)\">";
 		
 		$sent_bot_id = $request->getVal('bot');
 		foreach($registeredBots as $bot_id => $bot) {
 			if ($sent_bot_id == $bot_id) {
-		 		$html .= "<option value=\"".$bot->getBotID()."\" selected=\"selected\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
+		 		$html .= "<option value=\"".$bot->getBotID()."\" selected=\"selected\">".$bot->getLabel()."</option>";
 			} else {
-				$html .= "<option value=\"".$bot->getBotID()."\" onclick=\"gardeningLogPage.selectBot('".$bot->getBotID()."')\">".$bot->getLabel()."</option>";
+				$html .= "<option value=\"".$bot->getBotID()."\">".$bot->getLabel()."</option>";
 			}
 				
 		}
