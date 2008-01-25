@@ -3020,11 +3020,11 @@ Object.extend(Selector, {
       if (reverse) {
         for (var nodes = parentNode.childNodes, i = nodes.length - 1, j = 1; i >= 0; i--) {
           var node = nodes[i];
-          if (node.nodeType == 1 && (!ofType || node._counted)) node.nodeIndex = j++;
+          if (node.nodeType == 1 && (!ofType || (node._counted==true))) node.nodeIndex = j++;
         }
       } else {
         for (var i = 0, j = 1, nodes = parentNode.childNodes; node = nodes[i]; i++)
-          if (node.nodeType == 1 && (!ofType || node._counted)) node.nodeIndex = j++;
+          if (node.nodeType == 1 && (!ofType || (node._counted==true))) node.nodeIndex = j++;
       }
     },
 
@@ -3033,7 +3033,7 @@ Object.extend(Selector, {
       if (nodes.length == 0) return nodes;
       var results = [], n;
       for (var i = 0, l = nodes.length; i < l; i++)
-        if (!(n = nodes[i])._counted) {
+        if ((n = nodes[i])._counted != true) {
           n._counted = true;
           results.push(Element.extend(n));
         }
@@ -3234,7 +3234,7 @@ Object.extend(Selector, {
       var h = Selector.handlers, results = [], indexed = [], m;
       h.mark(nodes);
       for (var i = 0, node; node = nodes[i]; i++) {
-        if (!node.parentNode._counted) {
+        if (node.parentNode._counted != true) {
           h.index(node.parentNode, reverse, ofType);
           indexed.push(node.parentNode);
         }
@@ -3272,7 +3272,7 @@ Object.extend(Selector, {
       var exclusions = new Selector(selector).findElements(root);
       h.mark(exclusions);
       for (var i = 0, results = [], node; node = nodes[i]; i++)
-        if (!node._counted) results.push(node);
+        if (node._counted!=true) results.push(node);
       h.unmark(exclusions);
       return results;
     },

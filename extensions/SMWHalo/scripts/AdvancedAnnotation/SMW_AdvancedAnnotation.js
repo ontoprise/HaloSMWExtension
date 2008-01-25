@@ -562,8 +562,8 @@ AdvancedAnnotation.prototype = {
 			start.pasteHTML('<a name="ieselectionstart" />');
 			end.pasteHTML('<a name="ieselectionend" />');
 			var startNode = start.parentElement();
-//			var tmpNode = startNode.down('a[name=ieselectionstart]');
-			var tmpNode = $$('a[name=ieselectionstart]')[0];
+			var tmpNode = startNode.down('a[name=ieselectionstart]');
+//			var tmpNode = $$('a[name=ieselectionstart]')[0];
 			startNode = tmpNode.nextSibling;
 			var anchorOffset = 0;
 			$(tmpNode).remove();
@@ -577,8 +577,8 @@ AdvancedAnnotation.prototype = {
 				}
 			}
 			var endNode = end.parentElement();
-//			tmpNode = endNode.down('a[name=ieselectionend]');
-			tmpNode = $$('a[name=ieselectionend]')[0];
+			tmpNode = endNode.down('a[name=ieselectionend]');
+//			tmpNode = $$('a[name=ieselectionend]')[0];
 			endNode = tmpNode.previousSibling;
 			var focusOffset = getTextContent(endNode).length;
 			$(tmpNode).remove();
