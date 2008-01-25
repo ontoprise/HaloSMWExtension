@@ -91,6 +91,7 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
 	 				  'SMW_Properties.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_DragAndResize.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_ContextMenu.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_FactboxType.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'CombinedSearch.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMWEditInterface.js' => GPL_LICENSE_ONTOPRISE,
