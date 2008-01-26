@@ -872,7 +872,7 @@
 				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
-				DBHelper::reportProgress(" Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
 		
@@ -882,13 +882,13 @@
 			if (!$t->exists()) {
 				$article = new Article($t);
 				$article->insertNewArticle(wfMsg('smw_predefined_cats', $t->getText()), "", false, false);
-				DBHelper::reportProgress(" Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 			}
 		}
 		
 		$this->createHelpAttributes($verbose);
 		
-		DBHelper::reportProgress("Predefined pages created successfully.\n",$verbose);
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
 	
 	protected function createHelpAttributes($verbose){

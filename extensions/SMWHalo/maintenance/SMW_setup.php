@@ -34,6 +34,7 @@
 
  global $smwgHaloIP;
  require_once($smwgHaloIP . '/includes/SMW_Initialize.php');
+ require_once($smwgHaloIP . '/includes/SMW_DBHelper.php');
  
  if (!isset($smwgDefaultCollation)) {
 		$smwgDefaultCollation = "latin1_bin"; // default collation
@@ -41,17 +42,18 @@
 	
  print "\nSetup database for HALO extension...";
  smwfHaloInitializeTables(false);
- print "done!\n";
  
- $onlyTables = array_key_exists("t", $options);
  
- if ($onlyTables) return;
+ $installHelpPages = array_key_exists("helppages", $options);
  
- print "\nInstall predefined pages...";
- smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
- smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
- smwfInstallImages($smwgHaloIP.'/libs/predef_pages/images');
- print "\n\nAll predefined pages imported!\n";
+ if ($installHelpPages) {
+	 DBHelper::reportProgress("\nImport delivered pages...",true);
+	 smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
+	 smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
+	 smwfInstallImages($smwgHaloIP.'/libs/predef_pages/images');
+	 DBHelper::reportProgress("\n\nAll pages imported!\n",true);
+	
+ };
  
  
  /**
@@ -102,8 +104,8 @@
   */
  function smwfInstallImages($SourceDirectory) {
  	global $mediaWikiLocation, $smwgHaloIP;
- 	print "\nCopying images...\n";
- 	print $SourceDirectory;
+ 	//print "\nCopying images...\n";
+ 	//print $SourceDirectory;
  	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs 
  		return;
  	}
@@ -122,7 +124,7 @@
             continue;
         }
 		
-		print "\nProcessing ".$SourceDirectory.$entry;
+		//print "\nProcessing ".$SourceDirectory.$entry;
         if (is_dir($SourceDirectory.$entry)) {
             // Unterverzeichnis
             $success = smwfInstallImages($SourceDirectory.$entry);
@@ -138,13 +140,14 @@
             	}
             	
             	// copy image into filesystem.
-            	print "\n - Copy image: ".basename($SourceDirectory.$entry)." to ".$dest_dir."/".basename($SourceDirectory.$entry)."  ";
+            	DBHelper::reportProgress("\nCopy image: ".basename($SourceDirectory.$entry), true); 
+            	//." to ".$dest_dir."/".basename($SourceDirectory.$entry)."  ";
             	copy($SourceDirectory.$entry, $dest_dir."/".basename($SourceDirectory.$entry));
             	
             	// simulate an upload
             	$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
             	$im_file->recordUpload2("", "auto-inserted image", "noText");
-            	print "done!";
+            	
             }
         
     }
@@ -161,11 +164,11 @@
 	$contents = fread ($handle, filesize ($filepath));
 	$filename = basename($filepath, ".".$ext);
 	$filename = str_replace("_", " ", rawurldecode($filename));
-	print "\nProcessing ".$filename;
+	
 	$helpPageTitle = Title::newFromText($filename, $ns);
 	$helpPageArticle = new Article($helpPageTitle);
 	if (!$helpPageArticle->exists()) {
-		print "\nImport help page: ".$filename."...";
+		DBHelper::reportProgress("\nImport: ".$filename."...", true);
 		$helpPageArticle->insertNewArticle($contents, $helpPageTitle->getText(), false, false);
 		print "done!";
 	}
