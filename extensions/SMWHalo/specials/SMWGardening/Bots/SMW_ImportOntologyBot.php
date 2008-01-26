@@ -359,7 +359,7 @@
 		$s = array();
 		$s['NS'] = NS_MAIN;
 		$s['WIKI'] = array();
-		$s['WIKI'][] = "[[" . $pt->getText() . ":=" . $ot->getPrefixedText() . "]]";
+		$s['WIKI'][] = "[[" . $pt->getText() . "::" . $ot->getPrefixedText() . "]]";
 		$s['PAGENAME'] = $st->getDBkey();
 		$statements[] = $s;
 			
@@ -385,7 +385,7 @@
 			$s = array();
 			$s['NS'] = NS_MAIN;
 			$s['WIKI'] = array();
-			$s['WIKI'][] = "[[" . $pt->getText() . ":=" . $oLabel . "]]";
+			$s['WIKI'][] = "[[" . $pt->getText() . "::" . $oLabel . "]]";
 			$s['PAGENAME'] = $st->getDBkey();
 			$statements[] = $s;
 	}
@@ -471,10 +471,10 @@
 			
 		
 			if ((ImportOntologyBot::isXMLSchemaType($range->getURI()))) { 
-				 $s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=".$rangeCategoryTitle->getPrefixedText()."]]\n";
+				 $s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::".$rangeCategoryTitle->getPrefixedText()."]]\n";
 				 $s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."]]\n";
 			} else {
-				$s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=Type:Page]]\n";
+				$s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::Type:Page]]\n";
 				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."; ".$rangeCategoryTitle->getPrefixedText()."]]\n";
 			}
 		}
@@ -490,10 +490,10 @@
 		}
 		
 		if (isset($minCardinality)) {
-			$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_MIN_CARD].":=$minCardinality]]\n";
+			$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_MIN_CARD]."::$minCardinality]]\n";
 		}
 		if (isset($maxCardinality)) {
-			$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_MAX_CARD].":=$maxCardinality]]\n";
+			$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_MAX_CARD]."::$maxCardinality]]\n";
 		}
 		$statements[] = $s2;
 	}
@@ -563,7 +563,7 @@
 			$statement = $it->next();
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object, $wgLanguageCode);
-			$s['WIKI'][] = "[[".$ssp[SMW_SSP_IS_INVERSE_OF].":=" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
+			$s['WIKI'][] = "[[".$ssp[SMW_SSP_IS_INVERSE_OF]."::" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
 		}
 		
 		// read symetry (if available) 
@@ -619,7 +619,7 @@
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$label = ImportOntologyBot::mapXSDTypesToWikiTypes($label);
-			$s['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE].":=" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
+			$s['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
 		}
 		
 		$statements[] = $s;
