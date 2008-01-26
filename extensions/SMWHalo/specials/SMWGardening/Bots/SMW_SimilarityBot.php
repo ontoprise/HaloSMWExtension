@@ -45,13 +45,13 @@
  	 */
  	public function createParameters() {
  		$params = array();
- 		$param1 = new GardeningParamTitle('SI_TERM', wfMsg('smw_gard_similarityterm'), SMW_GARD_PARAM_OPTIONAL);
+ 		
  		$param2 = new GardeningParamListOfValues('SI_DEGREE', wfMsg('smw_gard_degreeofsimilarity'), SMW_GARD_PARAM_OPTIONAL, array('1','2','3'));
  		$param3 = new GardeningParamNumber('SI_RESULT_LIMIT', wfMsg('smw_gard_limitofresults'), SMW_GARD_PARAM_OPTIONAL, 0, 1000);
  		$param4 = new GardeningParamNumber('SI_SIM_LIMIT', wfMsg('smw_gard_limitofsim'), SMW_GARD_PARAM_OPTIONAL, 0, 3);
  		$param5 = new GardeningParamBoolean('SI_INC_ANNOT', "Include annotations (only global search)", SMW_GARD_PARAM_OPTIONAL, false);
- 		$param1->setAutoCompletion(true);
- 		$params[] = $param1;
+
+ 		
  		$params[] = $param2;
  		$params[] = $param3;
  		$params[] = $param4;
@@ -67,13 +67,13 @@
  		
  		echo "...started!\n";
  		$result = "";	 		
- 		$similarityTerm = str_replace(" ","_", urldecode($paramArray['SI_TERM']));
+ 		
  		$similarityDegree = array_key_exists('SI_DEGREE', $paramArray) ? $paramArray['SI_DEGREE'] : SMW_GARD_SIM_DEGREE_DEFAULT;
  		$limitOfResults = $paramArray['SI_RESULT_LIMIT'] == '' ? SMW_GARD_RESULT_LIMIT_DEFAULT : $paramArray['SI_RESULT_LIMIT']+0;;
  		$limitOfSim = $paramArray['SI_SIM_LIMIT'] == '' ? SMW_GARD_SIM_LIMIT_DEFAULT : $paramArray['SI_SIM_LIMIT']+0;
  		$includeAnnotations = array_key_exists('SI_INC_ANNOT', $paramArray);
  		 
- 		if ($similarityTerm == '') {
+ 		
  			// global search
  			echo "\nDo a global search for schema similarities of degree $similarityDegree...";
  			$similarities = $this->getAllSimilarTitles($similarityDegree, $limitOfResults);
@@ -98,113 +98,10 @@
 			}
 			
  			return $result;
- 		} else {
- 			// local search
- 			echo "\nSearch for similar entities of '".$similarityTerm."'...";
- 			$similarities = $this->getSimilarTitlesForTerm($similarityTerm, $similarityDegree);
- 			echo "done!\n"; 
- 			foreach($similarities as $s) {		
- 				$s->storeTermMatchingResults($this->gi_store, $this->id, $similarityTerm);
- 			}
- 			if ($includeAnnotations) {
-				echo "\nSearching for similarities on annotation level...";
-				$annotationSimilarities = $this->getAllSimilarAnnotations($similarityTerm, $similarityDegree, $limitOfResults);
-				foreach($annotationSimilarities as $as) {
-					$as->storeAnnotationLevelResults($this->gi_store, $this->id);
-				}
-				echo "done!";
-			}
-			return $result;
- 		}
+ 		
 	
  	}
- 	
- 	private function getSimilarTitlesForTerm($similarityTerm, $similarityDegree) {
- 		$similarityTermWithoutSpaces = preg_replace("/\s+/", "", $similarityTerm);
- 		$t1 = $this->getSimilarTitles($similarityTerm, $similarityDegree);
- 		$t2 = $this->getSimilarTitlesWithCommonMods($similarityTerm, $similarityDegree);
- 			
- 		// without spaces
- 		$t3 = $this->getSimilarTitles($similarityTermWithoutSpaces, $similarityDegree);
- 		$t4 = $this->getSimilarTitlesWithCommonMods($similarityTermWithoutSpaces, $similarityDegree);
- 		
- 		
- 		
- 		$uniqueTitles = array();
- 		// eliminate duplicates
- 		foreach($t1 as $t) {
- 			if (!SimilarityBot::containsTitle($t, $uniqueTitles)) {
- 				$uniqueTitles[] = $t;
- 			}
- 		}
- 		foreach($t2 as $t) {
- 			if (!SimilarityBot::containsTitle($t,$uniqueTitles)) {
- 				$uniqueTitles[] = $t;
- 			}
- 		}
- 		foreach($t3 as $t) {
- 			if (!SimilarityBot::containsTitle($t, $uniqueTitles)) {
- 				$uniqueTitles[] = $t;
- 			}
- 		}
- 		foreach($t4 as $t) {
- 			if (!SimilarityBot::containsTitle($t, $uniqueTitles)) {
- 				$uniqueTitles[] = $t;
- 			}
- 		}
- 		
- 		return $uniqueTitles;
- 	}
- 	
- 	
- 	
- 		
- 	/**
- 	 * Returns titles matching the given $similarity term 
- 	 * with the given maximum edit distance.
- 	 */
- 	private function getSimilarTitles($similarityTerm, $similarityDegree) {
- 		$dbr =& wfGetDB( DB_MASTER );
- 		$result = array();
- 		if (!is_numeric($similarityDegree)) return array();
- 		$mw_page = $dbr->tableName('page');
- 		// Calculate terms similar to $similarityTerm
- 		$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' p WHERE page_is_redirect = 0 AND page_namespace != '.NS_IMAGE.' AND EDITDISTANCE(UPPER(p.page_title),UPPER(\''.mysql_real_escape_string($similarityTerm).'\')) <= '.$similarityDegree.";");
-		if($dbr->numRows( $res ) > 0) {
-			while($row = $dbr->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
-			}
-		}
-		$dbr->freeResult( $res );
-		return $result;
- 	}
- 	
- 	private function getSimilarTitlesWithCommonMods($similarityTerm, $similarityDegree) {
- 		$dbr =& wfGetDB( DB_SLAVE );
- 		$cond = array();
- 		$mw_page = $dbr->tableName('page');
- 		if (!is_numeric($similarityDegree)) return array();
- 		foreach($this->commonPrefixes as $prefix) {
- 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.mysql_real_escape_string($prefix.$similarityTerm).'\')) <= '.$similarityDegree.' OR ';
- 		}
- 		foreach($this->commonSuffixes as $suffix) {
- 			$cond[] = 'EDITDISTANCE(UPPER(page_title),UPPER(\''.mysql_real_escape_string($similarityTerm.$suffix).'\')) <= '.$similarityDegree.' OR ';
- 		}
- 		$cond[] = 'FALSE'; // end last OR condition
- 		
- 		$result = array();
- 			// Calculate terms similar to $similarityTerm
- 			$res = $dbr->query('SELECT DISTINCT(page_title), page_namespace FROM '.$mw_page.' WHERE page_is_redirect = 0 AND ('.implode("",$cond).') AND page_namespace != '.NS_IMAGE);
-		if($dbr->numRows( $res ) > 0) {
-			while($row = $dbr->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
-			}
-		}
-		$dbr->freeResult( $res );
-			return $result;
- 	}
- 	
- 	
+ 	 	
  	/**
  	 * Returns all titles matching any other 
  	 * with the given maximum edit distance.
@@ -317,19 +214,7 @@
 		return $result;
  	}
  	
- 	/**
- 	 * Helper function to determine if an array of Titles contain
- 	 * a certain title object.
- 	 */
- 	private static function containsTitle($title, array & $uniqueTitles) {
- 		foreach($uniqueTitles as $t) {
- 			if ($t->equals($title)) {
- 				return true;
- 			}
- 		}
- 		return false;
- 	}
- 	
+ 	 	
  	/**
  	 * Helper function to determine if an array of Similarities contain
  	 * a certain similarity object.
@@ -343,40 +228,7 @@
  		return false;
  	}
  	
- 	private static function getWikiLink($title) {
- 		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaces();
- 		switch($title->getNamespace()) {
- 				case NS_CATEGORY: {
- 					$markup = "[[:".$wgLang->getNsText(NS_CATEGORY).":".$title->getText()."]]";
- 					break;
- 				}
- 				case SMW_NS_PROPERTY: {
- 					$markup = "[[".$nsArray[SMW_NS_PROPERTY].":".$title->getText()."]]";
- 					break;
- 				}
- 				case SMW_NS_RELATION: {
- 					$markup = "[[".$nsArray[SMW_NS_RELATION].":".$title->getText()."]]";
- 					break;
- 				}
- 				case SMW_NS_QUERY: {
- 					$markup = "[[".$nsArray[SMW_NS_QUERY].":".$title->getText()."]]";
- 					break;
- 				}
- 				case NS_MAIN: {
- 					$markup = "[[".$title->getText()."]]";
- 					break;
- 				}
- 				case NS_TEMPLATE: {
- 					$markup = "[[".$wgLang->getNsText(NS_TEMPLATE).":".$title->getText()."]]";
- 					break;
- 				}
- 				default: {
- 					$markup = "unknown type";
- 				}
- 			}
- 			return $markup;
- 	}
+ 	
  	
  	private static function sortSimilarityArray(array & $similarities) {
  		for ($i = 0, $n = count($similarities); $i < $n; $i++) {
