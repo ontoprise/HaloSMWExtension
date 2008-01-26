@@ -322,6 +322,7 @@
  		array_push($visitedNodes, $superCategory->getArticleID());
  		foreach($directSubcategories as $c) {
  			if (in_array($c->getArticleID(), $visitedNodes)) {
+ 				array_pop($visitedNodes);
  				return;
  			}
  			$directSuperCategories = smwfGetSemanticStore()->getDirectSuperCategories($c);

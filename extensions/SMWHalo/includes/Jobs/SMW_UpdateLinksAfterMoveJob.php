@@ -95,7 +95,7 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 					$updated = true;
 				}
 			}
-			if ($updated) $indicesToReplace[$i] = implode("; ", trim($frgs));
+			if ($updated) $indicesToReplace[$i] = ($frgs === false) ? "" : implode("; ", trim($frgs));
 		}
 		
 		// replace existing annotations with saved annotations including the new links 
