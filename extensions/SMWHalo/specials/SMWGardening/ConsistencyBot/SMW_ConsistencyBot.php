@@ -812,7 +812,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 			$maxDepth--;
 			
 			// get next subproperty level
-			$db->query('INSERT INTO smw_ob_properties_sub (SELECT DISTINCT subject_title AS property FROM '.$smw_subprops.' WHERE object_title IN (SELECT * FROM smw_ob_properties_super)  AND object_title NOT IN (SELECT property FROM smw_ob_propertyinst))');
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT DISTINCT subject_title AS property FROM '.$smw_subprops.' WHERE object_title IN (SELECT * FROM smw_ob_properties_super)  AND subject_title NOT IN (SELECT property FROM smw_ob_propertyinst))');
 			
 			// insert number of instantiated properties of current property level level
 			$db->query('INSERT INTO smw_ob_propertyinst ' .
