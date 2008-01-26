@@ -1,8 +1,6 @@
 @ECHO OFF
 REM Builds a self-extractable executable of complete XAMPP/MW/SMW/SMWHalo
-REM 7z.exe needs to be in PATH!
-REM xampp.zip, mw-1.12beta.zip, smw-1.0.zip, 
-REM smwhalo-1.0.zip must be in the same directory as this script
+REM xampp.zip, mw-1.12beta.zip, smw-1.0.zip, smwhalo-1.0.zip are packed in one executable
 
 REM extract XAMP (only if -noxampp is not specified
 IF (%1) == (-noxampp) GOTO SKIPXAMPP 

@@ -1,7 +1,6 @@
 @ECHO OFF
 REM Builds a self-extractable executable of SMWHalo
-REM 7z.exe needs to be in PATH!
-REM smwhalo-1.0.zip must be in the same directory as this script
+
 
 REM extract wiki
 CD bin
