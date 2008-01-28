@@ -616,6 +616,33 @@
  	
  }
  
+ 
+ /* 
+  * Note: This bot filter has no real functionality. It is just a dummy to
+  * prevent error messages in the GardeningLog. There are no gardening issues
+  * about exporting. Instead there's a textual log.
+  * */
+ define('SMW_EXPORTONTOLOGY_BOT_BASE', 1100);
+ 
+ class ExportOntologyBotFilter extends GardeningIssueFilter {
+ 	  	
+ 	public function __construct() {
+ 		parent::__construct(SMW_EXPORTONTOLOGY_BOT_BASE);
+ 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
+	}
+ 	
+ 	public function getUserFilterControls($specialAttPage, $request) {
+ 		return '';
+	}
+	
+	public function linkUserParameters(& $wgRequest) {
+		
+	}
+	
+	public function getData($options, $request) {
+		parent::getData($options, $request);
+	}
+ }
  // create one instance for registration at Gardening Framework
  new ExportOntologyBot();
 ?>

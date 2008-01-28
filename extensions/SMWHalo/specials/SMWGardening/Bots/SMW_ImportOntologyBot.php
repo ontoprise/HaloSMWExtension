@@ -783,17 +783,21 @@
  		return $ns;
  	}
  }
- 
- 
- 
- new ImportOntologyBot();
+
+ /* 
+  * Note: This bot filter has no real functionality. It is just a dummy to
+  * prevent error messages in the GardeningLog. There are no gardening issues
+  * about importing. Instead there's a textual log.
+  * 
+  */
+ define('SMW_IMPORTONTOLOGY_BOT_BASE', 700);
  
  class ImportOntologyBotFilter extends GardeningIssueFilter {
  	 	
  	
  	
  	public function __construct() {
- 		parent::__construct(700); //TODO: define base
+ 		parent::__construct(SMW_IMPORTONTOLOGY_BOT_BASE); 
  		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'));
 	
  	}
@@ -810,4 +814,7 @@
 		parent::getData($options, $request, 0);
 	}
  }
+ 
+ // create one instance for registration at Gardening framework
+ new ImportOntologyBot();
 ?>
