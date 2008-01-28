@@ -452,8 +452,8 @@ AutoCompleter.prototype = {
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
             if (!this.siw.customFloater) {
-                var x = this.findElementPosX(this.siw.inputBox);
-                var y = this.findElementPosY(this.siw.inputBox) + this.siw.inputBox.offsetHeight;
+                var x = Position.cumulativeOffset(this.siw.inputBox)[0];
+                var y = Position.cumulativeOffset(this.siw.inputBox)[1] + this.siw.inputBox.offsetHeight;
 
                  //hack: browser-specific adjustments.
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
@@ -614,8 +614,8 @@ AutoCompleter.prototype = {
         
         // set pending indicator for input field
         if (inputBox.tagName != 'TEXTAREA') {
-        	pending.style.left = (this.findElementPosX(inputBox)) + "px";
-            pending.style.top = (this.findElementPosY(inputBox)) + "px";
+        	pending.style.left = (Position.cumulativeOffset(inputBox)[0]) + "px";
+            pending.style.top = (Position.cumulativeOffset(inputBox)[1]) + "px";
         }
 
         pending.style.display = "block";
