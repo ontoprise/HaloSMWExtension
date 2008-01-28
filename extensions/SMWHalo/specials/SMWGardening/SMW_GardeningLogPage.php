@@ -18,6 +18,8 @@ function smwfDoSpecialLogPage() {
 	return $result;
 }
 
+define('SMW_GARD_INVISIBLE_ISSUE', 100000);
+
 class SMWGardeningLogPage extends SMWQueryPage {
 	
 	private $filter;
@@ -87,6 +89,7 @@ class SMWGardeningLogPage extends SMWQueryPage {
 			}
 						
 			foreach($gis as $gi) {
+				if ($gi->getType() > SMW_GARD_INVISIBLE_ISSUE) continue; // an invisible issue if type > 100000 is not shown textually
 				$text .= $gi->getRepresentation($skin).'<br>';
 			}
 			return $text.'</div>';

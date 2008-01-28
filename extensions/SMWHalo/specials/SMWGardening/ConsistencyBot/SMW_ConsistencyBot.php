@@ -198,6 +198,8 @@
  
  // others
 define('SMW_GARD_ISSUE_CYCLE', (SMW_CONSISTENCY_BOT_BASE+5) * 100 + 1);
+
+// issues with type > 100000 are not displayed textually in GardeningLog
 define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 
  class ConsistencyBotIssue extends GardeningIssue {

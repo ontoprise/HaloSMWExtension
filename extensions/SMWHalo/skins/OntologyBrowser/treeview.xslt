@@ -506,7 +506,7 @@
 	<xsl:param name="typeOfEntity"/>
 		<xsl:if test="gissues">
 			<xsl:choose>
-			<xsl:when test="count(gissues/gi) = 1 and gissues/gi[@type = 100001]">
+			<xsl:when test="count(gissues/gi) = count(gissues/gi[@type > 100000])">
 				<!-- Display something in case of propagation -->
 			</xsl:when>
 			<xsl:otherwise>
@@ -519,9 +519,11 @@
 						{{SMW_OB_MODIFIED}}
 						<ul>
 							<xsl:for-each select="gissues/gi">
-								<li>
-									<xsl:value-of select="."/>
-								</li>
+								<xsl:if test="@type &lt; 100000">
+									<li>
+										<xsl:value-of select="."/>
+									</li>
+								</xsl:if>
 							</xsl:for-each>
 						</ul>
 					</span> 
@@ -532,9 +534,11 @@
 				
 						<ul>
 							<xsl:for-each select="gissues/gi">
-								<li>
-									<xsl:value-of select="."/>
-								</li>
+								<xsl:if test="@type &lt; 100000">
+									<li>
+										<xsl:value-of select="."/>
+									</li>
+								</xsl:if>
 							</xsl:for-each>
 						</ul>
 			
