@@ -106,9 +106,7 @@ RefreshSemanticToolBar.prototype = {
 				saveButton.enable();
 				if ($('wpSaveWarning')) {
 					$('wpSaveWarning').remove();
-					if ($('wpTextbox1')) {
-						$('wpTextbox1').focus();
-					}
+					gEditInterface.focus();
 				}
 			} else {
 				if (!$('wpSaveWarning')){
@@ -120,9 +118,7 @@ RefreshSemanticToolBar.prototype = {
 								 'font-weight:bold;' +
 								 'text-align:left;">' +
 								 gLanguage.getMessage('UNMATCHED_BRACKETS')+'</div>');
-					if ($('wpTextbox1')) {
-						$('wpTextbox1').focus();
-					}
+					gEditInterface.focus();
 				}
 			}
 			if (gEditInterface == null) {
