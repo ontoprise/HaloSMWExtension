@@ -314,7 +314,7 @@ clicking the big arrows between the columns.',
 
 	
 	'smw_gard_all_category_leaves_deleted' => 'All Category leaves were removed.',
-	'smw_gard_category_leaves_deleted' => 'Category leaves below [[$1:$2]] were removed.',
+	'smw_gard_was_leaf_of' => 'was leaf of',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
 	'smw_gardissue_category_leaf' => '$1 is a category leaf.',
 	'smw_gardissue_subcategory_anomaly' => '$1 has $2 subcategories.',
