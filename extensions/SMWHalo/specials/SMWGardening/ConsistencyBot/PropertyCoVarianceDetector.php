@@ -188,13 +188,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	private function checkDomainAndRangeCovariance($p) {
  		$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
  		
- 		if (count($type) > 0) {
+ 		
  			if (count($type) == 0 || $type[0]->getXSDValue() == '_wpg' || $type[0]->getXSDValue() == '__nry') {
  				// default property (type wikipage), explicitly defined wikipage or nary property
  				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
  		
 	 			if (empty($domainRangeAnnotations)) {
-	 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
+	 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
 	 				return;
 	 			}
 	 			
@@ -203,7 +203,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
 	 			}
 	 			
-	 			if ($type[0]->getXSDValue() == '__nry') {
+	 			if (count($type) > 0 && $type[0]->getXSDValue() == '__nry') {
 	 				// n-ary relation
 	 				// only complain about missing range if it contains at least one Type:Page
 	 				if ($this->containsPageType($type[0]) && !$this->containsRange($domainRangeAnnotations)) {
@@ -222,13 +222,14 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				if ($res === true) return;
  				foreach($res as $cov) {
  					$domRanAnnot = $cov[2]->getDVs();
+ 					
  					if (!$cov[0]) {
  						// log domain cov error for annot
  						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domRanAnnot[0]->getTitle());
  					}
  					if (!$cov[1]) {
  						// log range cov error for annot
- 						$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p, $domRanAnnot[1]->getTitle());
+ 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p, $domRanAnnot[1]->getTitle());
  					}
  				}
  			} else {
@@ -256,7 +257,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  					
  				}
  			}
- 		} 
+ 		
 	
  	}
  	
@@ -269,6 +270,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			return true;
  		}
  		$results = array();
+ 		
  		foreach($domainRangeAnnotations as $dra) {
  			$current = array(false, false, $dra);
  			$domRanVal = $dra->getDVs();
