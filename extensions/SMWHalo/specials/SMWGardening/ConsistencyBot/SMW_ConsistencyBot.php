@@ -264,9 +264,9 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 			case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: 
 				return wfMsg('smw_gardissue_wrong_domain_value', $text1, $text2);
 			case SMW_GARDISSUE_TOO_LOW_CARD: 
-				return wfMsg('smw_gardissue_too_low_card', $text1, $text2);
+				return wfMsg('smw_gardissue_too_low_card', $text1, $text2, $this->value);
 			case SMW_GARDISSUE_TOO_HIGH_CARD: 
-				return wfMsg('smw_gardissue_too_high_card', $text1, $text2);
+				return wfMsg('smw_gardissue_too_high_card', $text1, $text2, $this->value);
 			case SMW_GARDISSUE_WRONG_UNIT: 
 				return wfMsg('smw_gardissue_wrong_unit', $text1, $text2, $this->value);
 				

@@ -85,6 +85,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			
  			if (empty($domainRangeAnnotations)) {
  				// if it's still empty, there's no domain or range defined at all. In this case, simply skip it in order not to pollute the consistency log.
+ 				// but check for missing params of n-ary relations before.
+ 				
+ 				$this->checkForMissingParams($subjects, $property);
  				return;
  			}
  			
@@ -298,7 +301,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 		 		if ($numOfInstProps < $minCards) {
 		 			if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
 		 				
-		 				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $numOfInstProps);
+		 				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $minCards - $numOfInstProps);
 		 			}
 				} 
 				
@@ -306,7 +309,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 				if ($numOfInstProps > $maxCards) {
 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
 						
-						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $numOfInstProps);
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $numOfInstProps - $maxCards);
 					}
 				}			
  			}
@@ -351,7 +354,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				if ($num == 0) {
 	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject[0], $a)) {
 	 						
-	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject[0], $a, $num);
+	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject[0], $a, $minCards);
 	 					}
 					} 
 				
@@ -408,6 +411,36 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				}
 	 			}
  			}
+ 		}
+ 	}
+ 	
+ 	/**
+ 	 * Checks for missing parameter of annotations of n-ary properties
+ 	 * 
+ 	 * @param array & $subjects which contains annotations of the given property
+ 	 * @param $property n-ary property
+ 	 */
+ 	private function checkForMissingParams(array & $subjects, $property) {
+ 		$type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+ 		
+ 		if (count($type) == 0 || $type[0]->isUnary()) return;
+ 		foreach($subjects as $subject) {
+	 		$values = smwfGetStore()->getPropertyValues($subject, $property);
+	 		foreach($values as $v) {
+	 			if ($v instanceof SMWNAryValue) { // n-ary relation
+	 						
+	 				$explodedValues = $v->getDVs();
+	 				$explodedTypes = explode(";", $v->getDVTypeIDs());
+	 				
+	 				//get all range instances and check if their categories are subcategories of the range categories.
+	 				for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
+	 					if ($explodedValues[$i] == NULL) {
+	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
+	 										
+	 					}
+	 				}
+	 			}
+	 		}
  		}
  	}
  	
