@@ -107,7 +107,8 @@ SMWEditInterface.prototype ={
 	focus: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
 			$(editAreaName).focus();
-		} else if (OB_bd.isGecko){
+		} else //if (OB_bd.isGecko){
+		{
 			editAreaLoader.execCommand(this.editAreaName, "focus();");
 		}
 	},
