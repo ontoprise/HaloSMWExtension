@@ -52,7 +52,7 @@ var SMW_CAT_ALL_VALID =
  		
 var SMW_CAT_ALL_VALID_ANNOTATED =	
 	'smwAllValid="allValid ' +
- 		'? (show:cat-confirm, show:cat-addandcreate, call:catToolBar.finalCategoryCheck) ' +
+ 		'? (show:cat-confirm, call:catToolBar.finalCategoryCheck) ' +
  		': (hide:cat-confirm, hide:cat-addandcreate, call:catToolBar.finalCategoryCheck)"';
 
 var SMW_CAT_HINT_CATEGORY =
