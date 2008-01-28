@@ -243,15 +243,16 @@
     	 $path[] = $cat;
  	 	 $superCats = smwfGetSemanticStore()->getDirectSuperCategories($cat);
  	 	 array_push($visitedNodes, $cat->getDBkey());
+ 	 	 $cycleFound = false;
  	 	 foreach($superCats as $superCat) {
  	 	 	if (in_array($superCat->getDBkey(), $visitedNodes)) {
- 	 	 		array_pop($visitedNodes);
- 	 	 		return;
+ 	 	 		$cycleFound = true;
+ 	 	 		break;
  	 	 	}
  	 	 	$cloneOfPath = array_clone($path);
  	 	 	$this->getAllCategoryPaths($superCat, $cloneOfPath, $allPaths, $visitedNodes);
  	 	 }
-         if (count($superCats) == 0) $allPaths[] = $path;
+         if (count($superCats) == 0 || $cycleFound) $allPaths[] = $path;
          array_pop($visitedNodes);
  	 }
  	 
@@ -267,15 +268,16 @@
     	 $path[] = $att;
  	 	 $superProps = smwfGetSemanticStore()->getDirectSuperProperties($att);
  	 	 array_push($visitedNodes, $att->getDBkey());
+ 	 	 $cycleFound = false;
  	 	 foreach($superProps as $superProp) {
  	 	 	if (in_array($superProp->getDBkey(), $visitedNodes)) {
- 	 	 		array_pop($visitedNodes);
- 	 	 		return;
+ 	 	 		$cycleFound = true;
+ 	 	 		break;
  	 	 	}
  	 	 	$cloneOfPath = array_clone($path);
  	 	 	$this->getAllPropertyPaths($superProp, $cloneOfPath, $allPaths, $visitedNodes);
  	 	 }
-         if (count($superProps) == 0) $allPaths[] = $path;
+         if (count($superProps) == 0 || $cycleFound) $allPaths[] = $path;
          array_pop($visitedNodes);
  	 }
  	 
