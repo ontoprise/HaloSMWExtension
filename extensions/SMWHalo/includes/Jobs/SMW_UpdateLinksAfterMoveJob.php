@@ -80,14 +80,16 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';*/
 		
 		// get all anntations (including n-aries!)
-		$semanticLinkPattern = '(\[\[([^]:]+):[:=]([^|]*)(\|[^]]*)?\]\])';
+		$semanticLinkPattern = '(\[\[([^]:]+):[:=]([^]|]*)(\|[^]]*)?\]\])';
 		preg_match_all($semanticLinkPattern, $oldtext, $matches);
-				
+		
+			
 		// identify those annotations which contain one or more links to oldtitle
 		// save the index and the (changed) link
 		$indicesToReplace = array();
 		for($i= 0, $n = count($matches[2]); $i < $n; $i++) {
 			$updated = false;
+			
 			$frgs = explode(";", $matches[2][$i]);
 			for($j = 0, $m = count($frgs); $j < $m; $j++) {
 				if (trim($frgs[$j]) == $this->oldtitle) {
@@ -95,7 +97,14 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 					$updated = true;
 				}
 			}
-			if ($updated) $indicesToReplace[$i] = ($frgs === false) ? "" : implode("; ", trim($frgs));
+			
+			if ($updated) { 
+				if ($frgs === false) {
+					$indicesToReplace[$i] = "";
+				} else {
+					$indicesToReplace[$i] = (count($frgs) == 1) ? trim($frgs[0]) : implode("; ", trim($frgs));
+				}
+			}
 		}
 		
 		// replace existing annotations with saved annotations including the new links 
