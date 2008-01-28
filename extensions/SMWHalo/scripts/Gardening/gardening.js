@@ -59,11 +59,15 @@ GardeningPage.prototype = {
 			// paste error message and highlight it.
 			errorSpan.innerHTML = "\t" + splitText[2];
 			//Effect.Pulsate(errorSpan);
+			$('runBotButton').removeAttribute("disabled");
 			return;
 		}
+		$('gardening-tooldetails-content').innerHTML = gLanguage.getMessage('BOT_WAS_STARTED');
 		$('gardening-runningbots').innerHTML = request.responseText;
 	}
 	sajax_do_call('smwfLaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params], callBackOnRunBot);
+	// disable button to prevent continuous executing
+	$('runBotButton').setAttribute("disabled","disabled");
   },
   
   cancel: function(event, taskid) {

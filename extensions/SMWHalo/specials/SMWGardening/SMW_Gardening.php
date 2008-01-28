@@ -86,7 +86,7 @@ class SMWGardening extends SpecialPage {
  			$htmlResult .= $param->serializeAsHTML()."<br>";
  		}
  		$htmlResult .= "</form><br>";
- 		$htmlResult .= "<button type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run Bot</button>";
+ 		$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run Bot</button>";
  		return $htmlResult;
 	}
 	
