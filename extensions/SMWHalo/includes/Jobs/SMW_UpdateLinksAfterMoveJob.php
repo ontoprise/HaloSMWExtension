@@ -80,7 +80,18 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';*/
 		
 		// get all anntations (including n-aries!)
-		$semanticLinkPattern = '(\[\[([^]:]+):[:=]([^]|]*)(\|[^]]*)?\]\])';
+		
+		$semanticLinkPattern = '/\[\[' .  	// Beginning of the link
+						'([^]:]+):[:=]' .  	// Property name
+						'(' .
+						'(?:[^|\[\]] |' .  	// either normal text (without |, [ or ])
+						'\[\[[^]]*\]\] |' . // or a [[link]]
+						'\[[^]]*\]' .		// or a [external link]
+						')*)' .				// all this zero or more times
+						'(\|[^]]*)?' .		// Display text (like "text" in [[link|text]]), optional
+						'\]\]' .			// End of link
+						'/x';				// ignore whitespaces
+						
 		preg_match_all($semanticLinkPattern, $oldtext, $matches);
 		
 			
