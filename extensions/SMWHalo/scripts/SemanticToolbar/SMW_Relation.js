@@ -742,18 +742,21 @@ createNewRelation: function() {
 	var rangesAndTypes = new Array();
 	while($('rel-range-'+i) != null) {
 		if ($('rel-range-'+i).getAttribute("isAttributeType") == "true") {
-			rangesAndTypes.push(gLanguage.getMessage('TYPE')+$('rel-range-'+i).value); // add as type
+			var obj = $('rel-range-'+i);
+			var value = obj.options[obj.selectedIndex].text;
+			rangesAndTypes.push(gLanguage.getMessage('TYPE')+value); // add as type
 		} else {
 			var range = $('rel-range-'+i).value;
-			rangesAndTypes.push(range ? gLanguage.getMessage('CATEGORY')+range 	// add as category
-			                          : "");
+			rangesAndTypes.push((range && range != '')
+									? gLanguage.getMessage('CATEGORY')+range 	// add as category
+			                        : "");
 		}
 		i++;
 	}
 	/*STARTLOG*/
 	var signature = "";
 	for (i = 0; i < rangesAndTypes.length; i++) {
-		signature += (rangesAndTypes[i]) ? rangesAndTypes[i] : "Type:Page";
+		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : "Type:Page";
 		if (i < rangesAndTypes.length-1) {
 			signature += ', ';
 		}
