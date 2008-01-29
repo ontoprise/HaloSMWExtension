@@ -253,10 +253,7 @@ OntologyModifier.prototype = {
 						} else {
 							// no range hint. Anyway a hint must be given.
 							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-							          + domain + ";" +
-							          gLanguage.getMessage('CATEGORY') +
-							          gLanguage.getMessage('DEFAULT_ROOT_CONCEPT') +
-							          "]]";
+							          + domain + ";]]";
 						}
 
 					}
