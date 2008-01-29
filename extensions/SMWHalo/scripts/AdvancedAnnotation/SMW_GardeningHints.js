@@ -65,7 +65,7 @@ createContent: function(request) {
 					for (var i = 0; i < n; i++) {
 						// iterate over the bot's issues
 						var issue = bot.childNodes[i];
-						html += '<li>' + issue.textContent?issue.textContent:issue.innerText + '</li>';
+						html += '<li>' + (issue.textContent?issue.textContent:issue.text) + '</li>';
 					}
 					html += '</ul>';
 				}
