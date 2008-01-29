@@ -51,7 +51,6 @@ var wgLanguageStrings = {
 	'MIN_CARD_INVALID'        : "(e)Min. cardinality must be smaller than max. cardinality!",
 	'ASSUME_CARDINALITY_0'    : "(i) Min. cardinality is assumed to be 0.",
 	'ASSUME_CARDINALITY_INF'  : "(i) Max. cardinality is assumed to be ∞.",
-	'DEFAULT_ROOT_CONCEPT'	  : "Default Root Concept",
 
 	// Namespaces
 	'NS_SPECIAL' 			  : 'Special',
