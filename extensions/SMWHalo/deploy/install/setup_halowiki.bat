@@ -1,11 +1,20 @@
 @ECHO OFF
-IF EXIST halo.info GOTO UPDATE 
+
+IF (%1) == (-help) GOTO HELP
+IF (%1) == (-update) GOTO UPDATE 
 
 :INSTALL
 .\php\php.exe SMW_install.php
 REM Create a file which indicates that Halowiki has been installed once.
-test > halo.info
 echo Halowiki configured.
+GOTO ENDE
+
+:HELP
+echo -----------------------------------------------------------------
+echo Usage: 
+echo For installation: setup_halowiki.bat 
+echo For update:       setup_halowiki.bat -update 
+echo -----------------------------------------------------------------
 GOTO ENDE
 
 :UPDATE
