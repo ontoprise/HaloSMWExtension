@@ -186,37 +186,70 @@ AdvancedAnnotation.prototype = {
 			return false;
 		}
 		if (!$(an).up) {
+			// <an> is a text node => get its parent
 			an = an.parentNode;
 		}
-		if ($(an).getAttribute('type') === "annotationHighlight") {
+		if ($(an).getAttribute('type') === "annotationHighlight" 
+		    || $(an).getAttribute('class') === "aam_page_link_highlight") {
+			// selection starts in an annotation highlight
 			return false;
 		} else {
 			var annoHighlight = $(an).up('span[type="annotationHighlight"]');
 			if (annoHighlight) {
+				// selection starts in an annotation highlight
 				return false;
 			}
+			
+			var pageLinkHighlight = $(an).up('span[class="aam_page_link_highlight"]');
+			if (pageLinkHighlight) {
+				// selection starts in an annotation page link highlight
+				return false;
+			}
+			
 		}
 	
 		var fn = focusNode;
 		if (!$(fn).up) {
+			// <fn> is a text node => get its parent
 			fn = fn.parentNode;
 		}
-		if ($(fn).getAttribute('type') === "annotationHighlight") {
+		if ($(fn).getAttribute('type') === "annotationHighlight" 
+		    || $(fn).getAttribute('class') === "aam_page_link_highlight") {
+			// selection ends in an annotation highlight
 			return false;
 		} else {
 			var annoHighlight = $(fn).up('span[type="annotationHighlight"]');
 			if (annoHighlight) {
+				// selection starts in an annotation highlight
+				return false;
+			}
+			var pageLinkHighlight = $(fn).up('span[class="aam_page_link_highlight"]');
+			if (pageLinkHighlight) {
+				// selection ends in an annotation page link highlight
 				return false;
 			}
 		}
 	
 		if (anchorNode !== focusNode) {
+			// Check if there is an annotation highlight in the selection.
 			var next = this.searchForward(anchorNode, this.searchSelectionEnd.bind(this));
 			var prev = this.searchBackwards(anchorNode, this.searchSelectionEnd.bind(this));
 			if (next !== focusNode && prev !== focusNode) {
 				return false;
 			}
+			// check if the selection spans different paragraphs
+			if ($(an).nodeName !== 'P') {
+				an = an.up('p');
+			} 
+			if ($(fn).nodeName !== 'P') {
+				fn = fn.up('p');
+			} 
+			if (an !== fn) {
+				// different paragraphs
+				return false;
+			}
 		}
+		
 		
 		return true;
 	},
