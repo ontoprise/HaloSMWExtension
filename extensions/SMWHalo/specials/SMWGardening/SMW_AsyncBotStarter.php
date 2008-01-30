@@ -92,7 +92,12 @@ require_once("SMW_GardeningLog.php");
  	try { 
  		$bot->setTaskID($taskid);
  		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
- 		$log = $bot->run(GardeningBot::convertParamStringToArray(unescapeShellArgument(implode($params,""))), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 		// Transformation of parameters:
+ 		// 	1. Concat to a string
+ 		// 	2. Replace {{percantage}} by %
+ 		// 	3. decode URL
+ 		//  4. convert string of the form (key=value,)* to a hash array 
+ 		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  		echo $log;
  		if ($log != NULL && $log != '') {
  			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
@@ -113,6 +118,7 @@ require_once("SMW_GardeningLog.php");
  }
  
  	/**
+ 	 * @deprecated
  	 * Unescapes string which are escaped by escapeShellCmd(...)
  	 * 
  	 * @param arbitrary string

@@ -230,14 +230,14 @@
  			if ($runAsync) { 
  				//TODO: test async code for linux. 
  				//low prio 
- 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(urldecode($params));
+ 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
   	 			$nullResult = `$runCommand > /dev/null &`;
   	 			
   	 		
  			} else { // run sync
  				
   
- 				$paramArray = explode(" ", $params);
+ 				$paramArray = explode(" ", urldecode($params));
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
@@ -250,24 +250,25 @@
   	 		$wshShell = new COM("WScript.Shell");
   	 		$clOption = $keepConsoleAfterTermination ? "/K" : "/C"; 
 			$runCommand = "cmd $clOption ".$runCommand;
-  		
- 			if ($runAsync) { // run async
+  			
+  			if ($runAsync) { // run async
  			
  				// botID is first parameter
  				// taskID is second
  				// user defined parameters follow
- 				$runCommand .= " -b $botID -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(urldecode($params));
+ 				// special escaping for % --> {{percentage}} because escapeshellarg(...) replaces % by blanks
+ 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
  			
  				$oExec = $wshShell->Run($runCommand, 7, false);
  				
  			} else { // run synchron
  		
 				  
- 				$paramArray = explode($params, " ");
+ 				$paramArray = explode(" ", urldecode($params));
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 				SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+ 					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
  			}
   		}
