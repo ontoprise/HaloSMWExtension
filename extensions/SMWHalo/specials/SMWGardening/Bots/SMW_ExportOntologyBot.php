@@ -356,6 +356,7 @@
  		
  		// export as subproperty 	
 		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.LINE_FEED;
+		$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rp->getText()).'</rdfs:label>'.LINE_FEED;
 		foreach($directSuperProperties as $dsp) {
  			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.LINE_FEED;
  		}
@@ -412,6 +413,7 @@
  				
  				// export as symmetrical property
  				$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.LINE_FEED;
+ 				$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rp->getText()).'</rdfs:label>'.LINE_FEED;
  				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->symetricalCat)) {
  					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.LINE_FEED;
  				}
