@@ -31,7 +31,7 @@ protected $smwContentMessages = array(
 	'smw_att_head' => 'Attribute',
 	'smw_rel_head' => 'Relationen zu anderen Seiten',
 	'smw_spec_head' => 'Spezielle Eigenschaften',
-	'smw_predefined_props' => 'Das ist das vordefinierte Property "$1"',
+	'smw_predefined_props' => 'Das ist das vordefinierte Attribut "$1"',
 	'smw_predefined_cats' => 'Das ist die vordefinierte Kategorie "$1"',
 
 	'smw_noattribspecial' => 'Die spezielle Eigenschaft „$1“ ist kein Attribut (bitte „::“ anstelle von „:=“ verwenden).',
@@ -72,21 +72,21 @@ protected $smwUserMessages = array(
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',
 	'smw_relationarticlecount' => '<p>Es werden $1 Seiten angezeigt, die diese Relation verwenden.</p>',
 	
-	'smw_subproperty_header' => 'Sub-Properties von "$1"',
-	'smw_subpropertyarticlecount' => '<p>Zeige $1 Sub-Properties.</p>',
+	'smw_subproperty_header' => 'Sub-Attribute von "$1"',
+	'smw_subpropertyarticlecount' => '<p>Zeige $1 Sub-Attribute.</p>',
 	
 	/*Messages for category pages*/
 	'smw_category_schemainfo' => 'Schema-Information für Kategorie "$1"',
-	'smw_category_properties' => 'Properties',
-	'smw_category_properties_range' => 'Properties mit Range: "$1"',
+	'smw_category_properties' => 'Attribute',
+	'smw_category_properties_range' => 'Attribute mit Range: "$1"',
 	
 	'smw_category_askforallinstances' => 'Frag nach allen direkten und indirekten Instanzen von "$1"',
 	'smw_category_queries' => 'Queries für Kategorien',
 	
 	'smw_category_nrna' => 'Seiten mit falsch zugewiesener Domäne "$1".',
-	'smw_category_nrna_expl' => 'Diese Seite hat eine Domäne, ist aber kein Property',
+	'smw_category_nrna_expl' => 'Diese Seite hat eine Domäne, ist aber kein Attribut',
 	'smw_category_nrna_range' => 'Seiten mit falsch zugewiesener Range "$1".',
-	'smw_category_nrna_range_expl' => 'Diese Seite hat eine Range, ist aber kein Property',
+	'smw_category_nrna_range_expl' => 'Diese Seite hat eine Range, ist aber kein Attribut',
 	
 	'smw_exportrdf_all' => 'Exportiere alle semantischen Daten',
 	
@@ -109,9 +109,9 @@ protected $smwUserMessages = array(
 	/*Messages for WantedRelations*/
 	'wantedrelations' => 'Gewünschte Relationen',
 	'smw_wanted_relations' => 'Folgende Relationen haben bisher keine erläuterende Seite, obwohl sie bereits für die Beschreibung anderer Seiten verwendet werden.',
-	/*Messages for Properties Special*/
-	'properties' => 'Properties',
-	'smw_properties_docu' => 'In diesem Wiki gibt es die folgenden Properties:',
+	/*Messages for Attribute Special*/
+	'properties' => 'Attribute',
+	'smw_properties_docu' => 'In diesem Wiki gibt es die folgenden Attribute:',
 	'smw_attr_type_join' => ' mit $1',
 	'smw_properties_sortalpha' => 'Sortiere alphabetisch',
 	'smw_properties_sortmoddate' => 'Sortiere nach Änderungsdatum',
@@ -131,7 +131,7 @@ protected $smwUserMessages = array(
 	'ontologybrowser' => 'OntologyBrowser',
 	'smw_ac_hint' => 'Drücken Sie Ctrl+Alt+Space für die Auto-Vervollständigung. (Ctrl+Space im IE)',
 	'smw_ob_categoryTree' => 'Kategorie-Baum',
-	'smw_ob_attributeTree' => 'Property-Baum',
+	'smw_ob_attributeTree' => 'Attribut-Baum',
 
 	'smw_ob_instanceList' => 'Instanzen',
 	'smw_ob_rel' => 'Relationen',
@@ -149,7 +149,7 @@ protected $smwUserMessages = array(
 	'smw_ob_no_attributes' => 'Keine Attribute verfügbar.',
 	'smw_ob_no_relations' => 'Keine Relationen verfügbar.',
 	'smw_ob_no_annotations' => 'Keine Annotation verfügbar.',
-	'smw_ob_no_properties' => 'Keine Properties verfügbar.',
+	'smw_ob_no_properties' => 'Keine Attribute verfügbar.',
 	'smw_ob_help' => 'Der Ontology-Browser hilft ihnen sich im Wiki zurechtzufinden, das Schema zu untersuchen und ganz allgemein Seiten zu finden.
 			Benutzen Sie den Filter-Mechanismus oben links um bestimmte Elemente der Ontologie zu finden und schränken sie das Ergebnis mit Hilfe der
 			Filter unter jeder Spalte ein. Der Selektionsfluss ist anfangs von rechts nach links. Sie können die Pfeile durch Anklicken aber umdrehen.',
@@ -159,8 +159,8 @@ protected $smwUserMessages = array(
 	
 	'smw_ob_hasnumofsubcategories' => 'Anzahl Unterkategorien',
 	'smw_ob_hasnumofinstances' => 'Anzahl Instanzen',
-	'smw_ob_hasnumofproperties' => 'Anzahl Properties',
-	'smw_ob_hasnumofpropusages' => 'Property wurd $1-mal annotiert.',
+	'smw_ob_hasnumofproperties' => 'Anzahl Attribute',
+	'smw_ob_hasnumofpropusages' => 'Attribut wurd $1-mal annotiert.',
 	'smw_ob_hasnumoftargets' => 'Instanz wurde $1-mal verlinkt.',
 	'smw_ob_hasnumoftempuages' => 'Template wurde $1-mal benutzt.',
 	
@@ -173,7 +173,7 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_renameproperty' => 'Umbenennen',
 	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
-	'smw_ob_cmd_addpropertytodomain' => 'Property hinzufügen zur Kategorie: ',
+	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
 	
 	
 	/* Messages for Gardening */
@@ -212,39 +212,39 @@ protected $smwUserMessages = array(
 	'smw_gard_issue_local' => 'dieser Artikel',
 	
 	/* Messages for Gardening Bot: ConsistencyBot */
-	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prüft auf Zyklen in der Taxonomie und finden Properties ohne Domäne und Wertebereich. Er prüft außerdem die korrekte Verwendung eines Properties auf der Instanz-Ebene.',
-	'smw_gardissue_domains_not_covariant' => 'Domäne $2 von $1 muss eine Subkategorie der Domäne des Super-Properties sein.',
+	'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prüft auf Zyklen in der Taxonomie und finden Attribute ohne Domäne und Wertebereich. Er prüft außerdem die korrekte Verwendung eines Attribute auf der Instanz-Ebene.',
+	'smw_gardissue_domains_not_covariant' => 'Domäne $2 von $1 muss eine Subkategorie der Domäne des Super-Attribute sein.',
 	'smw_gardissue_domains_not_defined' => 'Domäne von $1 ist nicht definiert.',
-	'smw_gardissue_ranges_not_covariant' => 'Wertebereichskategorie $2 von $1 muss eine Subkategorie der Wertebereichskategorie des Super-Properties sein.',
+	'smw_gardissue_ranges_not_covariant' => 'Wertebereichskategorie $2 von $1 muss eine Subkategorie der Wertebereichskategorie des Super-Attribute sein.',
 	'smw_gardissue_ranges_not_defined' => 'Wertebereichskategorie von $1 ist nicht definiert.',
 	'smw_gardissue_domains_and_ranges_not_defined' => 'Please define the domain and/or range of $1.',
-	'smw_gardissue_types_not_covariant' => 'Typ von $1 muss gleich dem Typ des Super-Properties sein.',
+	'smw_gardissue_types_not_covariant' => 'Typ von $1 muss gleich dem Typ des Super-Attribute sein.',
 	'smw_gardissue_types_not_defined' => 'Typ von $1 ist nicht definiert. Typ Wikipage intendiert? Bitte explizit machen.',
 	'smw_gardissue_double_type' => 'Mehr als ein Typ definiert.',
-	'smw_gardissue_mincard_not_covariant' => 'Mininamle Kardinalität von $1 ist geringer als im Super-Property definiert.',
-	'smw_gardissue_maxcard_not_covariant' => 'Maximale Kardinalität von $1 ist höher als im Super-Property definiert.',
+	'smw_gardissue_mincard_not_covariant' => 'Minimale Kardinalität von $1 ist geringer als im Super-Attribut definiert.',
+	'smw_gardissue_maxcard_not_covariant' => 'Maximale Kardinalität von $1 ist höher als im Super-Attribut definiert.',
 	'smw_gardissue_maxcard_not_null' => 'Maximale Kardinalität von $1 darf nicht 0 sein.',
 	'smw_gardissue_mincard_below_null' => 'Mininamle Kardinalität von $1 darf nicht kleiner 0 sein.',
-	'smw_gardissue_symetry_not_covariant1' => 'Super-Property von $1 muss auch symmetrisch sein.',
-	'smw_gardissue_symetry_not_covariant2' => 'Property $1 muss auch symmetrisch sein.',
-	'smw_gardissue_transitivity_not_covariant1' => 'Super-Property von $1 muss auch transitiv sein.',
-	'smw_gardissue_transitivity_not_covariant2' => 'Property $1 muss auch transitiv sein.',
-	'smw_gardissue_double_max_card' => 'Warnung: Mehr als ein Property "maximale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
-	'smw_gardissue_double_min_card' => 'Warnung: Mehr als ein Property "minimale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
+	'smw_gardissue_symetry_not_covariant1' => 'Super-Attribut von $1 muss auch symmetrisch sein.',
+	'smw_gardissue_symetry_not_covariant2' => 'Attribut $1 muss auch symmetrisch sein.',
+	'smw_gardissue_transitivity_not_covariant1' => 'Super-Attribut von $1 muss auch transitiv sein.',
+	'smw_gardissue_transitivity_not_covariant2' => 'Attribut $1 muss auch transitiv sein.',
+	'smw_gardissue_double_max_card' => 'Warnung: Mehr als ein Attribut "maximale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
+	'smw_gardissue_double_min_card' => 'Warnung: Mehr als ein Attribut "minimale Kardinaltät" $1 gefunden. Benutze nur ersten Wert, nämlich $2.',
 	'smw_gardissue_wrong_mincard_value' => 'Warnung: Min-Kardinaltät of $1 hat falschen Wert. Wird interpretiert als 0.',
 	'smw_gardissue_wrong_maxcard_value' => 'Warnung: Max-Kardinaltät of $1 hat falschen Wert. Muss eine positive Ganzzahl or * sein (unendlich). Wird interpretiert als 0.',
-	'smw_gard_issue_missing_param' => 'Warnung: Fehlender Parameter $3 in n-ärem Property $2 in Artikel $1.',
+	'smw_gard_issue_missing_param' => 'Warnung: Fehlender Parameter $3 in n-ärem Attribut $2 in Artikel $1.',
 
 	'smw_gard_issue_domain_not_range' => 'Domäne von $1 passt nicht zur Wertbereichskategorie von $2.',
-	'smw_gardissue_wrong_target_value' => '$1 benutzt Property $2 mit einer Instanz der falschen Kategorie: $3.',
-	'smw_gardissue_wrong_domain_value' => '$1 ist Element der falschen Kategorie, wenn es mit Property $2 benutzt wird.',
-	'smw_gardissue_too_low_card' => '$1 benutzt Property $2 (oder eines seiner Subproperties) $3-mal zu wenig.',
-	'smw_gardissue_too_high_card' => '$1 benutzt Property $2 (oder eines seiner Subproperties) $3-mal zu häufig.',
-	'smw_gardissue_wrong_unit' => '$1 benutzt Property $2 mit falches Einheit $3.',
+	'smw_gardissue_wrong_target_value' => '$1 benutzt Attribut $2 mit einer Instanz der falschen Kategorie: $3.',
+	'smw_gardissue_wrong_domain_value' => '$1 ist Element der falschen Kategorie, wenn es mit Attribut $2 benutzt wird.',
+	'smw_gardissue_too_low_card' => '$1 benutzt Attribut $2 (oder eines seiner Subproperties) $3-mal zu wenig.',
+	'smw_gardissue_too_high_card' => '$1 benutzt Attribut $2 (oder eines seiner Subproperties) $3-mal zu häufig.',
+	'smw_gardissue_wrong_unit' => '$1 benutzt Attribut $2 mit falches Einheit $3.',
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',
 	'smw_gard_issue_incompatible_entity' => 'Der Artikel $1 ist inkompatibel zu $2.',
-	'smw_gard_issue_incompatible_type' => 'Das Property $1 hat einen inkompatiblen Typ zum Property $2.',
-	'smw_gard_issue_incompatible_supertypes' => 'Das Property $1 hat Superproperties mit inkomptiblen Typen.',
+	'smw_gard_issue_incompatible_type' => 'Das Attribut $1 hat einen inkompatiblen Typ zum Attribut $2.',
+	'smw_gard_issue_incompatible_supertypes' => 'Das Attribut $1 hat Superproperties mit inkomptiblen Typen.',
 	
 	'smw_gard_issue_cycle' => 'Zyklus bei: $1',
 	'smw_gard_issue_contains_further_problems' => 'Enthält weitere Probleme',
@@ -276,7 +276,7 @@ protected $smwUserMessages = array(
 	'smw_gardissue_class_similarschema' => 'Ähnliche Schema Elemente',
 	'smw_gardissue_class_similarannotations' => 'Ähnliche Annotationen',
 	/*Undefined entities bot */
-	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Properties im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
+	'smw_gard_undefinedentities_docu' => 'Dieser Bot sucht nach Kategorien und Attribute im Wiki, die zwar an irgendeiner Stelle verwendet wurden, aber nie definiert. Des weiteren findet er Instanzen ohne Kateogorien.',
 	'smw_gard_remove_undefined_categories' => 'Entferne Annotation undefinierter Kategorien',
 	
 	'smw_gardissue_property_undefined' => '$1 wird benutzt auf: $2',
@@ -285,7 +285,7 @@ protected $smwUserMessages = array(
 	'smw_gardissue_instance_without_cat' => '$1',
 	
 	'smw_gardissue_class_undef_categories' => 'Undefinierte Kategorien',
-	'smw_gardissue_class_undef_properties' => 'Undefinierte Properties',
+	'smw_gardissue_class_undef_properties' => 'Undefinierte Attribute',
 	'smw_gardissue_class_undef_relationtargets' => 'Undefinierte Relationsziele',
 	'smw_gardissue_class_instances_without_cat' => 'Instanzen ohne Kategorie',
 
@@ -315,14 +315,14 @@ protected $smwUserMessages = array(
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',
-	'smw_cs_attributevalues_found' => 'Die folgenden Instanzen enthalten Property-Werte die ihrer Suche entsprechen.',
+	'smw_cs_attributevalues_found' => 'Die folgenden Instanzen enthalten Attribut-Werte die ihrer Suche entsprechen.',
 	'smw_cs_aksfor_allinstances_with_annotation' => 'Frage nach allen Instanzen von \'$1\' die einen Annoatation von \'$2\' haben.',
-	'smw_cs_askfor_foundproperties_and_values' => 'Frage Instanz \'$1\' nach allen gefunden Properties.',
+	'smw_cs_askfor_foundproperties_and_values' => 'Frage Instanz \'$1\' nach allen gefunden Attribute.',
 	'smw_cs_ask'=> 'Zeige',
 	'smw_cs_noresults' => 'Kein Element der Ontologie entspricht ihren Suchwörtern',
-	'smw_cs_searchforattributevalues' => 'Suche nach Propertywerten, die ihren Suchwörtern entsprechen',
+	'smw_cs_searchforattributevalues' => 'Suche nach Attributwerten, die ihren Suchwörtern entsprechen',
 	'smw_cs_instances' => 'Artikel',
-	'smw_cs_properties' => 'Properties',
+	'smw_cs_properties' => 'Attribute',
 	'smw_cs_values' => 'Werte',
 	'smw_cs_openpage' => 'Öffne Seite',
 	'smw_cs_openpage_in_ob' => 'Öffne Seite im Ontology Browser',
@@ -361,7 +361,7 @@ protected $smwUserMessages = array(
 	'smw_csh_search_special_help' => 'Sie k&ouml;nnen auch nach Hilfe zu bestimmten Funktionen des Wikis suchen:',
 	'smw_csh_show_special_help' => 'Suche nach Hilfe &uuml;ber:',
 	'smw_csh_categories' => 'Kategorien',
-	'smw_csh_properties' => 'Properties',
+	'smw_csh_properties' => 'Attribute',
 	/* Messages for the CSH discourse state. Do NOT edit or translate these
 	 * otherwise CSH will NOT work correctly anymore
 	 */
@@ -374,7 +374,7 @@ protected $smwUserMessages = array(
 	'smw_queryinterface' => 'Query Interface',
 	'smw_qi_add_category' => 'Kategorie hinzuf&uuml;gen',
 	'smw_qi_add_instance' => 'Instanz hinzuf&uuml;gen',
-	'smw_qi_add_property' => 'Property hinzuf&uuml;gen',
+	'smw_qi_add_property' => 'Attribut hinzuf&uuml;gen',
 	'smw_qi_add' => 'Hinzuf&uuml;gen',
 	'smw_qi_confirm' => 'OK',
 	'smw_qi_cancel' => 'Abbrechen',
@@ -400,7 +400,7 @@ protected $smwUserMessages = array(
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
 	'smw_qi_tt_addInstance' => 'Indem man ein Instanz hinzuf&uuml;gt, wird nur der ensprechende Artikel ber&uuml;cksichtigt',
-	'smw_qi_tt_addProperty' => 'Indem man ein Property hinzuf&uuml;gt, kann man sich die Werte dieses Properties anzeigen lassen oder erlaubte Werte vorgeben',
+	'smw_qi_tt_addProperty' => 'Indem man ein Attribut hinzuf&uuml;gt, kann man sich die Werte dieses Attribute anzeigen lassen oder erlaubte Werte vorgeben',
 	'smw_qi_tt_tcp' => 'Die Vorschau der Tabellenspalten zeigt, aus welchen Spalten die Ergebnistabelle bestehen wird',
 	'smw_qi_tt_qlm' => 'Der Query Layout Manager erlaubt es, das Ausgabeformat Ihres Queries anzupassen',
 	'smw_qi_tt_preview' => 'Anzeigen einer vollst&auml;ndigen Vorschau der Ergebnisse, einschlie&szlig;lich der Layouteinstellungen',
@@ -442,12 +442,12 @@ protected $smwUserMessages = array(
  	'smw_findwork_select' => 'Wähle',
  	'smw_findwork_generalconsistencyissues' => 'Allgemeine Konsistenz-Probleme',
  	'smw_findwork_missingannotations' => 'Fehlende Annotationen',
- 	'smw_findwork_nodomainandrange' => 'Properties ohne Domain/Range',
+ 	'smw_findwork_nodomainandrange' => 'Attribute ohne Domain/Range',
  	'smw_findwork_instwithoutcat' => 'Instanzen ohne Kategorie',
  	'smw_findwork_categoryleaf' => 'Kategorie-Blätter',
  	'smw_findwork_subcategoryanomaly' => 'Subkategorie-Anomalien',
  	'smw_findwork_undefinedcategory' => 'Undefinierte Kategorien',
- 	'smw_findwork_undefinedproperty' => 'Undefinierte Properties',
+ 	'smw_findwork_undefinedproperty' => 'Undefinierte Attribute',
  	'smw_findwork_lowratedannotations' => 'Artikel mit schlechten Annotationen',
  	 	
  	/* Gardening Issue Highlighting in Inline Queries */
@@ -470,8 +470,8 @@ var $smwSpecialSchemaProperties = array (
 	);
 
 var $smwSpecialCategories = array (
-	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive Properties',
-	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische Properties'
+	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive Attribute',
+	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische Attribute'
 );
 
 
