@@ -813,7 +813,7 @@ AutoCompleter.prototype = {
                 if (displayMatches) {
                     this.siw.matchCollection[j]
                         = new SmartInputMatch(entry.getText(),
-                              mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>"),
+                              mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>").replace(/_/g, ' '),
                               entry.getType());
                 }
 
