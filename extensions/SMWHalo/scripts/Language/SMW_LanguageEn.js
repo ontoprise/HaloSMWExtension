@@ -130,7 +130,7 @@ var wgLanguageStrings = {
 	'AH_NO_HINTS'			  : '(i)No hints for this article.',
 	'AH_SAVE_COMMENT'		  : 'Annotations added in the Advanced Annotation Mode.',
 	'AAM_SAVE_ANNOTATIONS' 	  : 'Do you want to save the annotations of the current session?',
-	'CAN_NOT_ANNOTATE_SELECTION' : 'You can not annotate the selection. It already contains annotations or paragraphs.',
+	'CAN_NOT_ANNOTATE_SELECTION' : 'You can not annotate the selection. It already contains annotations or paragraphs or ends in a link.',
 	'AAM_DELETE_ANNOTATIONS'  : 'Do you really want to delete this annotation?',
 	
 	// Save annotations
