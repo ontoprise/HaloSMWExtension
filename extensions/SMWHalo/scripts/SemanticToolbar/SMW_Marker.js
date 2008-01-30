@@ -35,7 +35,7 @@ Marker.prototype = {
 	 				if( $(this.iconmarkerlist[index][2]).style.position == ""){
 	 					$(this.iconmarkerlist[index][2]).style.position = "relative";
 	 				}
-	 				 new Insertion.Bottom(this.transparencymarkerlist[index][2], this.transparencymarkerlist[index][1]);
+	 				 new Insertion.Bottom($(this.transparencymarkerlist[index][2]), this.transparencymarkerlist[index][1]);
 					//Set position of the marker		
 					$(this.transparencymarkerlist[index][0]).setStyle( {top:  "0px"});
 					$(this.transparencymarkerlist[index][0]).setStyle( {left: "0px"});
@@ -58,7 +58,7 @@ Marker.prototype = {
 				}
 			}
  		}
- 		//*/
+ 		///*
  		//iconMarkers
  		for(var index=0; index < this.iconmarkerlist.length; index++){
  			if($(this.iconmarkerlist[index][2]).tagName.toLowerCase() == 'div'){
@@ -69,13 +69,13 @@ Marker.prototype = {
  				//Set position of the marker		
 				$(this.iconmarkerlist[index][0]).setStyle( {top:  "0px"});
 				$(this.iconmarkerlist[index][0]).setStyle( {left: "0px"});
- 			} else { 			
- 				new Insertion.After(this.iconmarkerlist[index][2], this.iconmarkerlist[index][1]);
+ 			} else {
+ 				new Insertion.After($(this.iconmarkerlist[index][2]), this.iconmarkerlist[index][1]);
 				//Set position of the marker		
 				$(this.iconmarkerlist[index][0]).setStyle( {top: this.iconmarkerlist[index][3] + "px"});
 				$(this.iconmarkerlist[index][0]).setStyle( {left: this.iconmarkerlist[index][4] + "px"});
  			}
- 		}
+ 		} //*/
  		$(this.rootnode).show();
  	},
  	
@@ -291,12 +291,12 @@ Marker.prototype = {
 	markNodes: function(){
 		this.removeMarkers();
 		//$(this.rootnode).hide();
-		var time = new Date();
-		var timestamp1 = time.toGMTString();		
+		//var time = new Date();
+		//var timestamp1 = time.toGMTString();		
 		this.mark($(this.rootnode), true);
 		this.insertMarkers();
-		time = new Date();
-		var timestamp2 = time.toGMTString();
+		//time = new Date();
+		//var timestamp2 = time.toGMTString();
 		//alert(timestamp1 + " " + timestamp2 );
 		//$(this.rootnode).show();
 	},
