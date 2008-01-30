@@ -290,6 +290,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 					if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
 						$rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
 		 				
+					} else {
+						$rangeCovariant = true;
 					}
 		 					
 					// add new co-variance tuple if it is better matching domain and range.
