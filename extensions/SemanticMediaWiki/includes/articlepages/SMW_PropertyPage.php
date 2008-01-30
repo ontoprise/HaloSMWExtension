@@ -103,7 +103,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 			$r .= '<a name="SMWResults"></a>' . $nav . "<div id=\"mw-pages\">\n";
 			$r .= '<h2>' . wfMsg('smw_attribute_header',$ti) . "</h2>\n";
 			$r .= wfMsg('smw_attributearticlecount', min($this->limit, count($this->articles))) . "\n";
-			$r .= $this->shortList( $this->articles, $this->articles_start_char ) . "\n</div>" . $nav;
+			$r .= $this->shortList( $this->articles, $this->articles_start_char ) . "\n</div>";
 			$r .= $this->getSubproperties();
 		}
 		wfProfileOut( __METHOD__ . ' (SMW)');
