@@ -107,9 +107,13 @@ class UserMailer {
 		global $wgEnotifMaxRecips;
 
 		if ( is_array( $to ) ) {
-			wfDebug( __METHOD__.': sending mail to ' . implode( ',', $to ) . "\n" );
+			if (count($to) > 1) {
+				wfDebug( __METHOD__.': sending mail to ' . implode( ',', $to ) . "\n" );
+			} else {
+				wfDebug( __METHOD__.': sending mail to ' . $to[0] . "\n" );
+			}
 		} else {
-			wfDebug( __METHOD__.': sending mail to ' . implode( ',', array( $to ) ) . "\n" );
+			wfDebug( __METHOD__.': sending mail to ' . $to . "\n" );
 		}
 
 		if (is_array( $wgSMTP )) {
