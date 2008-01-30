@@ -171,6 +171,10 @@
 		DBHelper::reportProgress("\nImport: ".$filename."...", true);
 		$helpPageArticle->insertNewArticle($contents, $helpPageTitle->getText(), false, false);
 		print "done!";
+	} else {
+		DBHelper::reportProgress("\nUpdate: ".$filename."...", true);
+		$helpPageArticle->updateArticle($contents, $helpPageTitle->getText(), false, false);
+		print "done!";
 	}
 	fclose($handle);
  }
