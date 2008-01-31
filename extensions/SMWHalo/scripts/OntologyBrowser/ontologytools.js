@@ -166,7 +166,9 @@ OBArticleCreator.prototype = {
 			
 			if (success == "true") {
 				callback(success, created, title);
-			} 
+			} else {
+				alert(gLanguage.getMessage('ERROR_CREATING_ARTICLE'));
+			}
 		}
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwfCreateArticle', 
@@ -194,7 +196,11 @@ OBArticleCreator.prototype = {
 				return;
 			}
 					
-			callback();
+			if (request.responseText == 'true') {		
+				callback();
+			} else {
+				alert(gLanguage.getMessage('ERROR_DELETING_ARTICLE'));
+			}
 			
 		}
 		
@@ -223,8 +229,11 @@ OBArticleCreator.prototype = {
 				alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
 				return;
 			}
-					
-			callback();
+			if (request.responseText == 'true') {		
+				callback();
+			} else {
+				alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
+			}
 			
 		}
 		
@@ -245,7 +254,11 @@ OBArticleCreator.prototype = {
 				alert('Some error occured on category dragging!');
 				return;
 			}		
-			callback();
+			if (request.responseText == 'true') {		
+				callback();
+			} else {
+				alert(gLanguage.getMessage('ERROR_MOVING_CATEGORY'));
+			}
 			
 		}
 		
@@ -266,7 +279,11 @@ OBArticleCreator.prototype = {
 				alert('Some error occured on property dragging!');
 				return;
 			}		
-			callback();
+			if (request.responseText == 'true') {		
+				callback();
+			} else {
+				alert(gLanguage.getMessage('ERROR_MOVING_PROPERTY'));
+			}
 			
 		}
 		
