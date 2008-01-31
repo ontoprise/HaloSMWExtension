@@ -457,13 +457,13 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
 		}
 
-		if ($oldtitle->getNamespace()===SMW_NS_PROPERTY) {
+		if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
 			$titlesToUpdate = $store->getAllPropertySubjects( $oldtitle );
 			foreach ($titlesToUpdate as $uptitle)
 				$jobs[] = new SMW_UpdatePropertiesAfterMoveJob($uptitle, $params);
 		}
 
-		if ($oldtitle->getNamespace()===NS_CATEGORY) {
+		if ($oldtitle->getNamespace()==NS_CATEGORY) {
 			$titlesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $oldtitle );
 			foreach ($titlesToUpdate as $uptitle)
 				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($uptitle, $params);

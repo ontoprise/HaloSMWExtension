@@ -118,19 +118,7 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$matches[1][$i].'::'.$l.$matches[3][$i].']]', $newtext);
 		}
 		
-		// search and replace property names
-		$matches = array();
-		preg_match_all($semanticLinkPattern, $oldtext, $matches);
-		$indicesToReplace = array();
-		// check property names itsself
-		for($i= 0, $n = count($matches[1]); $i < $n; $i++) {
-			if (trim($matches[1][$i]) == $this->oldtitle) {
-				$indicesToReplace[$i] = $this->newtitle;
-			}
-		}
-		foreach($indicesToReplace as $i => $l) {
-			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$l.'::'.$matches[2][$i].$matches[3][$i].']]', $newtext);
-		}
+		
 		
 		// search and replace normal links
 		$newtext = preg_replace($search, $replace, $newtext);
