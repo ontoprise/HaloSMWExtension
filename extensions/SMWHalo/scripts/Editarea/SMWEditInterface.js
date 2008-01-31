@@ -85,7 +85,7 @@ function getEditorCookie() {
 			return cookievalue;
 		}
 	}
-	return "off";
+	return "on";
 }
 
 
