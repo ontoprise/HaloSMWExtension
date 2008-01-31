@@ -1,0 +1,32 @@
+[[question:=How can I change an annotated category]]?
+
+[[discourseState:=Main:annotate]]
+
+[[description:=Delete it in the article or edit it in the list of categories.]]
+
+==Changing an annotated category in the AAM==
+
+To change a category annotation in the AAM normally means to delete it.  As the text of the article can not be changed, the name of the annotated category should not be changed, however, it is possible.
+
+===Delete an annotated category===
+
+If a category has been annotated in the current session it is highlighted with a blue background and decorated with a red minus button. Click the button to delete the annotation. The list of categories in the "Categories" section will be updated. The highlight in the article will vanish.
+
+[[Image:REQ_AAM_CAT_1_3.png|center|thumb|150px|A newly annotated category can be removed with the (-) button.]]
+
+Categories that have been annotated in a previous session do not appear in the article. However, they are listed in the "Categories" section of the semantic toolbar.
+
+[[Image:REQ_AAM_CAT_3_1.png|center|thumb|265px|The list of annotated categories.]]
+
+Click the edit icon to the right of the category you want to remove. Click the "Delete" link in the following dialog. The annotation is removed from the list of categories and from the wiki text (which you finally have to save, of course).
+
+[[Image:REQ_AAM_CAT_3_2.png|center|thumb|265px|Change or delete the annotation.]]
+
+
+===Change an annotated category===
+
+The name of the category to which the article belongs can be changed in the list of categories. Click the edit icon of the category you want to change, enter a new name and click "Change". 
+
+[[Image:REQ_AAM_CAT_3_3.png|center|thumb|265px|Apply the change with the "Change" link.]]
+
+The list of categories and the wiki text will be changed accordingly. (Do not forget to save your changes.) If the category was highlighted in the article, this highlight will not be changed.

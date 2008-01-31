@@ -1,0 +1,28 @@
+;Question
+:[[question:=How can I identify errors in the knowledge base]]?
+[[discourseState:=Main:edit| ]][[discourseState:=Property:edit| ]][[discourseState:=OntologyBrowser:view| ]][[discourseState:=Gardening:view| ]][[discourseState:=QueryInterface:view| ]][[discourseState:=GardeningLog:view| ]]
+;Answer
+:[[description:=Errors are displayed as small yellow warning icons]]
+
+Errors within the knowledge base of your wiki are identified by the [[Special:Gardening|Gardening Bots]]. The results are saved in the database and available in several places:
+* [[Special:GardeningLog|Gardening Log]]: This is a browsable list of all gardening issues, where you can also filter for special types of errors
+* Article edit mode: If an error exists for an article that you are currently editing, it is shwon in the "Annotation hints" box of the Semantic Toolbar
+* [[Special:OntologyBrowser|Ontology Browser]]: Errors are marked with small yellow warning icons. As soon as you click on them, a detailed error message will be shown. If an article has been edited since the last bot ran, the color of the icon will switch to green
+
+<center>
+{| border="0" style="background:transparent;"
+|-
+|
+[[Image:Ob_issues.jpg|thumb|400px|The Ontology Browser with some highlighted errors]]
+|}
+</center>
+
+* Query results: If you create a query in table format, the same icons will be shown for all articles with existing errors. Additionally, fields with missing annotations or wrong units are seperately marked. You can click these marks in order to access the edit mode of the corresponding page directly
+<center>
+{| border="0" style="background:transparent;"
+|-
+|
+[[Image:Iqrse.jpg|thumb|400px|An example of various gardening issues in a query result]]
+|}
+</center>
+* [[Special:QueryInterface|Query Interface]]: The preview mode of the query interface does also show gardening issues if you create a table format

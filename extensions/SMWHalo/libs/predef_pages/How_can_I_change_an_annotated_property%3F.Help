@@ -1,0 +1,19 @@
+[[question:=How can I change an annotated property]]?
+
+[[discourseState:=Main:annotate]]
+
+[[description:=Click the edit icon near the property in the article or in the list of properties.]]
+
+==Change an existing property annotation in the AAM==
+
+There are two ways to start changing an annotated property. In the "Properties" section of the semantic toolbar there is a list of all annotated properties with an edit icon to their right. However, more comfortable, if you want to change something while you are reading the article are the buttons near the highlighted annotation. The edit button leads to the same dialog in the semantic tool bar as the button in the list. The minus button deletes the annotation.
+
+[[Image:REQ_AAM_PROP_3_1.png|thumb|left|266px|The highlighted property can be edited and deleted.]]
+
+[[Image:REQ_AAM_PROP_3_2.png|thumb|right|353px|A property in the list of properties can be edited.]]
+<br clear="all" />
+To change the annotation, click one of the edit buttons. The dialog for editing properties opens in the semantic toolbar. It is filled with the name of the properties and its current value(s). N-ary properties are fully supported, even if their values are not displayed in the article. All values can be changed. If you change the property, its schema (arity, types) are retrieved from the wiki. The input field "Show" contains the alternative representation of the annotation. It is preset with the text that is rendered in the article and you can not change it, as you must not change the article. The dialog offers to change or delete the annotation.
+
+[[Image:REQ_AAM_PROP_3_3.png|thumb|center|353px|The edit dialog for properties.]]
+
+If you delete the annotation, it will vanish from the list of properties and the highlight in the article is removed. If you change it, the values in the list are updated, but the value in the article will not change because of the fixed alternative representation. The annotation's highlight in the article will get a black border that indicates, that this annotation has been changed but not saved.

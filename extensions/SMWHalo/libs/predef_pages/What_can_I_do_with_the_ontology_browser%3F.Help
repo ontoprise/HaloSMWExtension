@@ -2,7 +2,7 @@
 :[[Question:=What can I do with the ontology browser]]?
 
 ;Answer
-:[[Description:=The ontology browser allows easy and intuitive lookup of information from the knowledgebase.]]
+:[[Description:=The ontology browser allows easy and intuitive lookup of information from the knowledgebase. Additionally, you can modify the ontology and find gardening hints]]
 
 [[DiscourseState:=OntologyBrowser:view| ]]
 
@@ -16,7 +16,7 @@ The OntologyBrowser consists of 3 basic views:
 
 Below each of the views there is a filter input box. It filters '''currently''' available entities in the view above, i.e. those entities which are in memory at this time. It is filtered dynamically if the filter text changes. The filtering itsself is case-insensitive substring matching. All entities are in alphabetical order with one excpetion: The instance view shows the direct instances of a category first. 
 
-[[Image:OB_overview.png|thumb|400px|The ontology browser special page.]]
+[[Image:ob_overview_update.png|thumb|400px|The ontology browser special page.]]
 
 == Category Tree ==
 At the beginning the Category tree shows the root categories. You may expand the category tree by clicking the little crosses in front of a category name or by selecting the category itsself. This crosses also appear when there is no subcategory at all. In this case it will simply disappear when you try to expand it, otherwise the subcategories will appear. 
@@ -60,7 +60,7 @@ You can turn the big gray arrows by clicking on them. That means the selection t
 '''Example''':
 You switch the left arrow. If you select an instance afterwards you will get all categories of this instance at their position in the category hierarchy. Accordingly, a selection of an annotation or schema property will open the domain category. 
  
-[[Image:OB_screenshot2.png|thumb|300px|left|Ontology browser with flipped directions.]]
+[[Image:ob_switchselection_update.png|thumb|300px|left|Ontology browser with flipped directions.]]
 
 This is especially useful after FilterBrowsing, because in this case the views are not related to each other. All type of entities were searched independently only by substring matching. 
 
@@ -73,6 +73,57 @@ Inherited entities are displayed in italic font style. Inheritance comes up when
 
 == Navigation ==
 You can navigate to an entity's page by clicking the magnifier next to the entity's name. This works for all entities, even for the range categories in the PropertyView.
+
+== Ontology modification ==
+You'll see these tool bars only as a member of the groups: sysop or gardener. They appear on top of each subview.
+[[Image:menubar.png|Ontology browser tools menu]]
+
+=== Category commands ===
+[[Image:addsubcategory.png|thumb|400px|left|Add subcategory]]
+Before one of the commands can be executed, a category must be selected. All commands refer always to the currently selected category. 
+*Add subcategory: Allows adding a new subcategory. An input field appears. The user enters a title and if it does not already exist as a category, a 'Create' button will be displayed.
+*Add category on same level: Allows adding a new category on the same level of the selected category. An input field appears. The user enters a title and if it does not already exist as a category, a 'Create' button will be displayed. 
+*Rename a category: Allows renaming the category. An input field with the current name appears. The user enters a *new* title and if it does not already exist as a category (exception: as category redi-rect), the 'Rename' button will be accessible. When the category gets renamed, a redirect from the old to the new name is automatically gen-erated. There is also a 'Preview' button which shows some statistics about the selected category: 
+**Number of subcategories (direct and indirect) 
+**Number of instances (direct and indirect) 
+**Number of properties (direct and indirect) 
+
+
+
+=== Property commands ===
+These commands are conceptually the same as the category commands. 
+
+=== Instance commands ===
+[[Image:renameinstance.png|thumb|300px|left|Rename instance]]
+*Rename instance: Allows renaming an instance. An input field appears. The user enters a title and if it does not already exist as an in-stance, a 'Rename' button will be displayed. There is also a 'Preview' button which shows some statistics about the selected instance: 
+**Number of relations using this instance as target.
+*Delete instance: Deletes the selected instance. A confirm dialog is shown before the deletion is actually done. 
+
+
+===Property schema commands===
+[[Image:addproperty.png|thumb|300px|left|Add property]]
+*Add property to domain category: It adds a property and uses the se-lected category as domain. It shows initially three input fields: One for Property name, one for minimum cardinality and one for maximum car-dinality. The only required is the property's name. All others have de-faults: 
+
+*Min. card: 0 
+*Max. card: unlimited 
+*Default type is: Type:Page (= a binary property)
+The user may add one or more types and ranges by clicking on 'Add type' or 'Add range'. A new input field appears. All data is validated and only correct values will enable the 'Create' button. 
+The validated constraints are: 
+
+*Minimum Cardinality >= 0 or empty
+*Maximum Cardinality > 0 or empty
+*Range: Must already exist as category
+
+==Gardening hints==
+The Ontology Browser shows all currently identified consis-tency issues generated by the Consistency bot. If a page has attached is-sues, the title is displayed in orange and a small exclamation mark appears behind it. 
+[[Image:gardeninghints.png|thumb|150px|left|Add property]]
+If an orange coloured category does not have an exclamation, it means that this category contains issues in either its instances (direct or not) or its prop-erties (direct or inherited). Only if the category has an issue about itself, an exclamation mark will show up. 
+A click on the exclamation mark opens a tool tip with a short expla-nation. You may open more than one tool tip at a time. All open tool tips are closed if the content of a subview gets updated.
+
+There are two types of exclamation marks:
+- Yellow: normal indication for gardening issues.
+- Green: The issue is about a page which has been modified in the meantime (since last run of Consistency bot).
+The green one is an indication that the issue might have been fixed. It is not necessarily the case. Only the next consistency check can clarify that. 
 
 == Misc ==
 The 'reset' button resets the tree view (i.e. show the root entities) depending on which one is currently visible.

@@ -1,0 +1,48 @@
+{{UserDocumentation
+|status=100
+|owner=Nitsche
+|requirement=Darkmatter:REQ SEMWIKI 27
+}}
+
+'''If you want to know how to use context sensitive help (as user), please see [[Darkmatter:DOC_REQ_SEMWIKI_27]]'''
+
+
+This documentation describes the use of the context sensitive help function of Semantic MediaWiki.
+On top of the semantic toolbar you can see the context sensitive help function. Depending on your current action and the type of page you are editing, you will see different help questions in order to support your actions. When pointing the mouse over such question, a tooltip gives you a short explanation on the question topic. However, a maximum of 5 links is displayed. If you would like to access more help pages, simply click on the "more" link. This will lead to the context sensitive help special page (see  below).
+
+Furthermore, if you can't find a suitable question, you can enter your own one. This question will then be saved in the Help namespace and will from there on be visible in the help system. Other users can see those help questions and edit them in order to provide answers.
+===Setting up context sensitive help===
+In order to activate Context Sensitive Help, you have to add
+
+ $smwgAllowNewHelpQuestions = true;
+
+to your LocalSettings.php file. If you set this to true, users are allowed to add new questions to the help system whenever they want. They can do this by clicking the link "Ask your own question" on any page showing the semantic toolbar. If you set the variable to false, no new questions can be added. The existing questions, however, can still be seen and edited.
+
+The wiki offers context sensitive help (CSH) in form of a context sensitive FAQ list that is displayed within the semantic toolbar. Questions that are of potential interest in the current context are shown within this framework. The following gives a description of necessities for new help pages to be displayed correctly, as well as a styleguide for the content of a help page. It is not necessary that you create the helppages yourself but please create all user documentation articles for your requirements/deliverables with respect to this styleguide.
+
+Note that not all of the [[Darkmatter:List of all User Documentation Articles|user documentation articles]] fit to a help page. Some might also be suitable for "Type:" namespace pages.
+
+== Necessary markup ==
+A help page can have an arbitrary name but must be placed in the "Help:" Namespace. If a help page is created out of the CSH framework it is created with the question given there as its name.
+
+Note: If you create a help page yourself please link it from the respective user documentation requirement/deliverable.
+
+Each Help page needs to instanciate three mandatory properties in order to be displayed in the CSH framework:
+*the question attribute, containing the help question that is shown in the semantic toolbar, e.g.:
+ <nowiki>[[question:=How do these help pages work]]? </nowiki>
+*Discourse State, that defines when or in which context the help question is shown in the CSH. More than one discourse state can be defined if it is useful to show the question in different states. The discourse state is currently limited to the namespace in which it should be shown and the actions edit and view. The following annotation defines that the corresponding help question is shown in the semantic toolbar when editing a page from the Help - Namespace:
+ <nowiki>[[discourseState:=Help:edit]]</nowiki>
+*The third attribute is Description. Here you should give a short answer to the above mentioned help question. The description is shown as a tooltip when a user points his mouse over a help question in the Semantic Toolbar: 
+ <nowiki>[[description:=Click for more information on the context sensitive help system.]]</nowiki>
+
+These are the three mandatory attributes of a help page, if the Help page is created out of the CSH framework the question property is automatically set to the given question and the discourse state property to the respective state from which it was created. The rest of the page is yours and you can describe whatever you want on that page. The user will get to see that page if he clicks on a help question in the Semantic Toolbar or accesses the FAQ list from the specialpage [[Special:ContextSensitiveHelp]].
+
+
+===CSH Special Page===
+There are two ways to get to the special page [[Special:ContextSensitiveHelp]]:
+# Clicking on a "more"-link in the helpbox
+# Direct access through Specialpages
+
+If you click on a "more"-link in the helpbox, the special page will open up in a new window. At this state, it will show you all questions that belong to your current discourseState. If you still can't find the question you are looking for, you can click "more" again and all help questions will show up.
+
+If you access the special page directly, all help questions will be shown. You can refine your search by two select boxes. You can choose a page type and/or an ection you are seeking help for. For example, if you edit a Relation page, you could either choose Page type -> relation, action -> edit or both. After committing, the system will show you the corresponding help pages.

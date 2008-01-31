@@ -1,0 +1,14 @@
+[[question:=How does the AAM indicate annotation errors]]?
+
+[[discourseState:=Main:annotate]]
+
+[[description:=The box "Annotation errors" pops up.]]
+
+==Annotation errors in the AAM==
+
+In the advanced annotation mode a popup window informs you if your annotation is invalid and why this is the case.
+
+Normally the upper part of the section shows information or error messages concerning your current selection. The lower part shows the underlying wiki text that the system identified as relevant for the selected text. Typical messages are that the system found or did not find your selection in the wiki text.
+
+[[Image:REQ_AAM_16_1.png|thumb|left|420px|The selection can not be annotated because it is already part of an annotation.]]
+[[Image:REQ_AAM_16_2.png|thumb|right|400px|The selection can not be annotated as it ends within a link.]]

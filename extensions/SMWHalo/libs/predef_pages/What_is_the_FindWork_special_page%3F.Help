@@ -1,0 +1,14 @@
+;Question
+:[[question:=What is the FindWork special page]]?
+
+;Answer
+:[[Description:=It suggests new work for a user which should match his interests]]
+[[DiscourseState:=Find Work:view| ]]
+
+The find work special page is intended to propose pages to users which they might be interested in. It's important to be logged, although it's possible to use the page anonymously (with random results, instead of re-sults based on the user's edit-history). All pages displayed are an intersec-tion of the users edit history with the gardening issue table. If this set is empty it will intersect the categories of articles the user has edited with arti-cles containing gardening issues. If this set is also empty it will return ran-dom results, the same as if the user would not be logged in. The list is sorted descendant by modification date.
+
+The user has two possibilities to use the page. He can simply press 'Give me some work' and he gets a list of pages with random gardening issues (in re-spect to his edit-history). Alternatively, he can be more specific and choose a class of issues. The navigation works as in all MW query pages: There are previous/next buttons and buttons to choose the amount of results displayed at the same time.
+
+The user can click on (Show details) to get to the GardeningLog special page and view the details of that particular page. 
+
+[[Image:findwork_page.png| Find Work special page]]

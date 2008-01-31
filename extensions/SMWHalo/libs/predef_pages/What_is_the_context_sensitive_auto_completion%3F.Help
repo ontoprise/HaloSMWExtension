@@ -1,0 +1,53 @@
+[[question:=What is the context sensitive auto completion]]?
+
+[[discourseState:=Main:annotate]]
+
+[[description:=The auto completion tries to match the types of properties with annotated values.]]
+
+==Context sensitive auto completion==
+
+The auto completion for properties in the Advanced Annotation Mode (AAM) is context sensitive.
+
+Enter the AAM and mark something in the article. The context menu for annotation properties and categories pops up with the marked text as value for a property. Now you have to choose the name of the property. Set the input focus to the field "Property" and press Ctrl+Alt+Space. The auto completion will offer you proposals that depend on the current value.
+
+===Why do the proposed properties depend on the current value?===
+
+Properties have a domain and a range or type. The latter determine the kind of values a property can have. So if the type of a property is a number, its values must be numbers. This is where the auto completion supports you. If you selected a number, auto completion will offer you only properties of type number. If the system can not find matching properties it will offer all properties that match the partially entered name.
+
+===Which kinds of values are supported?===
+
+Auto completion tries to find matching properties for 
+*dates, 
+*email addresses, 
+*numerical values with units of measurement,
+*numbers and
+*articles that belong to categories.
+
+====Dates====
+Dates can have the formats yyyyy-mm-dd and dd-mm-yyyyy. The range of years is between 0 and 99999. The separators can be ".", "/" and "-" e.g. 2007-12-24 or 24.12.2007.
+
+====Email addresses====
+The usual syntax of email addresses is supported e.g. superman@ontoprise.de.
+
+====Units of measurement====
+The system considers units of measurement after numerical values e.g. 1.007kg/l. Properties can have user defined types. These types can define commonly used units of measurement with a <code>Corresponds to</code> definition.
+
+'''Example'''
+
+The <code>Property:density</code> has the type <code>Type:Density</code>. It defines the unit of measurement kg/l: <code><nowiki>[[Corresponds to::1 kg/l]]</nowiki></code>
+
+If you now select "1.007kg/l" in the article, auto completion will propose the property <code>density</code>.
+
+====Numbers====
+Auto completion offers properties of type <code>Type:Number</code> if the value is a natural or floating point number.
+
+====Articles with a category====
+If the property's value matches nothing of the above, the system assumes, that it is the name of an article. It tries to find the properties, whose range is the category to which the value belongs.
+
+'''Example'''
+
+The property <code>has owner</code> has the range <code>Person</code>. e.g. Batmobile <code>has owner</code> Batman. Assume you are annotating the article ''Batmobile'' and you want to define its owner. Select ''Batman''. He will be the value of a property you have to specify. Now, if there is an article about ''Batman'' that assigns him to the category <code>Person</code>, auto completion will offer <code>has owner</code>, as ''Batman'' fits into its range <code>Person</code>.
+
+For this to work, the category <code>Person</code> must exist. It is not sufficient, that the category is annotated on some page.
+
+If the value (the article) does not belong to a category or if the value is not an article, all properties will be offered by auto completion.

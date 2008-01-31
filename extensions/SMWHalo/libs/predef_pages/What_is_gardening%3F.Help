@@ -19,7 +19,7 @@ When you select a bot, he will get its parameters in the right box (2). There ar
 
 [[Image:SelectedBot.png|thumb|left|300px|The gardening page showing the properties of a selected bot.]]
 
-After the parametrization, press 'Run Bot'. The bot is started and a new line appears in the Gardening Log table below showing that a new bot has been started. When the bot has finished, the user receives an email about that (if he supplied one at registration) and he may view the log by clicking the 'Log' link in the Gardening table. The users can view all logs no matter which user group they belong to.
+After the parametrization, press 'Run Bot'. The bot is started and a new line appears in the Gardening Log table below showing that a new bot has been started. When the bot has finished, the user receives an email about that (if he supplied one at registration) and he may view the log by clicking the 'Log' link in the Gardening table. This link leads directly to the [[Help:What is the Gardening Log?|GardeningLog]] special page. The users can view all logs no matter which user group they belong to.
 
 == Administrator's note ==
 ''Note:'' The Gardening feature needs a new environment variable in LocalSettings.php to work properly:
