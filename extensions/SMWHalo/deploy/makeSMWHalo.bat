@@ -38,6 +38,11 @@ xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFor
 xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 
+REM Additional extensions
+xcopy ..\..\ParserFunctions\* %OUTPUT_DIR%\extensions\ParserFunctions /S /Y
+xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y
+xcopy ..\..\Cite.php %OUTPUT_DIR%\extensions /Y
+
 REM Pack SMWHalo Extension
 
 cd bin

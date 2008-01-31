@@ -159,6 +159,8 @@ $semanticAC=false;
 
 $phpInterpreter="{{xamp-install}}/php/php.exe";
 
+require_once( "{$IP}/extensions/Cite.php" );
+require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
 
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('localhost:8080');
