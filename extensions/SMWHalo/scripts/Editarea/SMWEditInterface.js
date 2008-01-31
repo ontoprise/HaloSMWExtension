@@ -67,7 +67,7 @@ function addSpacesForDisplay(){
 
 /*
 * Get the cookie that saves the state of the advanced editor, which
-* is "on" or "off". If the cookie is not set, "on" is standard.
+* is "on" or "off". If the cookie is not set, "off" is standard.
 * The cookie is set in the method userToggle() in edit_area_loader.js
 */
 function getEditorCookie() {
@@ -85,7 +85,7 @@ function getEditorCookie() {
 			return cookievalue;
 		}
 	}
-	return "on";
+	return "off";
 }
 
 
