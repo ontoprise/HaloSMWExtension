@@ -70,17 +70,9 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		$search[1] = '(\[\[(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)?\]\])';
 		$replace[1] = '[[${1}' . $this->newtitle . '${2}|${3}]]';
 
-		// KK: replaced because did not work with n-aries
-		// [[m::X]]			-> [[m::Y|X]]
-		/*$search[2] = '(\[\[(([^:][^]]*)::)+(\s*)' . $this->oldtitle . '(\s*)\]\])';
-		$replace[2] = '[[${1}${3}' . $this->newtitle . '${4}|'.$this->oldtitle.']]';
-
-		// [[m::X|blabla]]  -> [[m::Y|blabla]]
-		$search[3] = '(\[\[(([^:][^]]*)::)+(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)\]\])';
-		$replace[3] = '[[${1}${3}' . $this->newtitle . '${4}|${5}]]';*/
 		
-		// get all anntations (including n-aries!)
 		
+		// pattern to get all anntations (including n-aries!)
 		$semanticLinkPattern = '/\[\[' .  	// Beginning of the link
 						'([^]:]+):[:=]' .  	// Property name
 						'(' .
@@ -91,11 +83,13 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 						'(\|[^]]*)?' .		// Display text (like "text" in [[link|text]]), optional
 						'\]\]' .			// End of link
 						'/x';				// ignore whitespaces
-						
+		
+		
+		// search object links				
 		preg_match_all($semanticLinkPattern, $oldtext, $matches);
 		
 			
-		// identify those annotations which contain one or more links to oldtitle
+		// identify object links to oldtitle
 		// save the index and the (changed) link
 		$indicesToReplace = array();
 		for($i= 0, $n = count($matches[2]); $i < $n; $i++) {
@@ -118,13 +112,27 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 			}
 		}
 		
-		// replace existing annotations with saved annotations including the new links 
+		// replace object links
 		$newtext = $oldtext;
 		foreach($indicesToReplace as $i => $l) {
 			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$matches[1][$i].'::'.$l.$matches[3][$i].']]', $newtext);
 		}
 		
-		// replace normal links
+		// search and replace property names
+		$matches = array();
+		preg_match_all($semanticLinkPattern, $oldtext, $matches);
+		$indicesToReplace = array();
+		// check property names itsself
+		for($i= 0, $n = count($matches[1]); $i < $n; $i++) {
+			if (trim($matches[1][$i]) == $this->oldtitle) {
+				$indicesToReplace[$i] = $this->newtitle;
+			}
+		}
+		foreach($indicesToReplace as $i => $l) {
+			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$l.'::'.$matches[2][$i].$matches[3][$i].']]', $newtext);
+		}
+		
+		// search and replace normal links
 		$newtext = preg_replace($search, $replace, $newtext);
 		
 		// save and parse article
