@@ -27,6 +27,9 @@ var initHelp = function(){
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
 		ns = "Gardening";
 	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
+		ns = "Gardening";
+	}
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
 		ns = "OntologyBrowser";
 	}
@@ -74,6 +77,9 @@ function askQuestion(){
 		ns = "QueryInterface";
 	}
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
+		ns = "Gardening";
+	}
+	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
 		ns = "Gardening";
 	}
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
