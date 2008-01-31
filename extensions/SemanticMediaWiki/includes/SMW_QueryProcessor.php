@@ -222,42 +222,6 @@ class SMWQueryProcessor {
 		$format = SMWQueryProcessor::getResultFormat($params);
 		$query  = SMWQueryProcessor::createQuery($querystring, $params, $inline, $format, $extraprintouts);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, $outputmode, $inline, $format);
-		
-		//HALO GI Display
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
-		$regex = '';
-		$replRegex = '';
-		
-		if($outputmode == SMW_OUTPUT_WIKI)
-			$regex = '/\[\[:?(.*?)\|.*?\]\]/i';
-		else if ($outputmode == SMW_OUTPUT_HTML)
-			$regex = '|<a.*?title="(.*?)".*?</a>|i';
-		else
-			return $result;
-			
-		$titles = array();
-		preg_match_all($regex, $result, $titles);
-		for($i = 0; $i<sizeof($titles[1]); $i++){
-			$title = Title::newFromText($titles[1][$i]);
-			$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, NULL, $title, NULL, NULL);
-			$m = '';
-			$tt = '';
-			for($j = 0; $j<sizeof($gIssues); $j++){
-				if($gIssues[$j]->getRepresentation() != wfMsg('smw_gard_issue_contains_further_problems'))
-					$m .= '<li>' . $gIssues[$j]->getRepresentation() . '</li>';
-			}
-			if($m != ''){
-				$m = '<ul>' . $m . '</ul>';
-				$tt = smwfEncodeMessages(array($m));
-			}
-			if($outputmode == SMW_OUTPUT_WIKI)
-				$regex = '|\[\[:?' . $titles[1][$i] . '\|.*?\]\]|i';
-			else
-				$regex = '|<a.*?title="' . $titles[1][$i] . '".*?</a>|i';
-			
-			$replacement = "$0 $tt";
-			$result = preg_replace($regex, $replacement, $result);
-		}
 		wfProfileOut('SMWQueryProcessor::getResultFromQueryString (SMW)');
 		return $result;
 	}
