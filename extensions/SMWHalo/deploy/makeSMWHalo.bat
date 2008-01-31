@@ -27,7 +27,7 @@ REM copy files
 xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeForHalo.dat /Y
 
 REM Patches for SMW
-xcopy ..\..\SemanticMediaWiki\includes\SMW_QueryProcessor.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
+xcopy ..\..\SemanticMediaWiki\includes\SMW_QP_Table.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
 xcopy ..\..\SemanticMediaWiki\includes\articlepages\SMW_PropertyPage.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages /Y
 xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
 
