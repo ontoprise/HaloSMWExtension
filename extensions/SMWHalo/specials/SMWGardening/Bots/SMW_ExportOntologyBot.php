@@ -301,8 +301,9 @@
  				// default type: binary relation
  				$firstType = '_wpg';
  			} else {
- 				$firstType = $type[0]->getID;
+ 				$firstType = $type[0]->getXSDValue();
  			}
+ 			
  			if ($firstType == '_wpg') {
  				// wikipage properties will be exported as ObjectProperties
  				$owl = $this->exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard);
