@@ -520,7 +520,7 @@
 					list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
 					$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 					if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-						return "\t\t<" . $pt->getDBkey() . ' rdf:datatype="&xsd;float">' . smwfXMLContentEncode($dv->getXSDValue()) . '</' . $pt->getDBkey() . ">\n";
+						return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ' rdf:datatype="&xsd;float">' . smwfXMLContentEncode($dv->getXSDValue()) . '</prop:' . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ">\n";
 					}
 
 			}
