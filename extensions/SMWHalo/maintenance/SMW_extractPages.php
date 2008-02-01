@@ -123,7 +123,14 @@
 			mkpath($helpDirectory.'/images'.dirname($im_path_rel));
 		}
 		
+		
+		
 		copy($im_path_abs, $helpDirectory.'/images'.$im_path_rel);
+		$thumbnails = $im_file->getThumbnails();
+		foreach($thumbnails as $tn) {
+			mkpath($helpDirectory.'/images/thumb'.$im_path_rel);
+			copy(trim($wgUploadDirectory."/".$im_file->getThumbRel()."/$tn"), $helpDirectory.'/images/thumb'.$im_path_rel."/".$tn);
+		}
 	}
  }
  
