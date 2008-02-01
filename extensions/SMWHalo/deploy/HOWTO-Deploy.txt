@@ -1,0 +1,73 @@
+HOWTO - Deploy
+
+All scripts can be started with the external tools menu in Eclipse or manually on the command line.
+
+-- Quick start to compile an exe ---------------------------------------------------------------------
+
+	1. Get xampp.zip from: \\Link3\projekte\HALO-Vulcan\02 HALO-Vulcan-Refinement Phase\Software_Backup\xampp
+	2. Copy it to extensions/SMWHalo/deploy/bin
+	3. Run Javascript CopyScripts
+	4. Run Javascript Obfuscator (optionally, can be skipped. Needs Jasob: www.jasob.com)
+	5. Run Javscript Packer
+	6. Run makeAll
+	7. Run makeExecutable
+	
+Then you'll find halowiki.exe in extensions/SMWHalo/deploy/bin
+
+Have fun!
+
+
+
+-- Details -------------------------------------------------------------------------------------------
+
+makeSMWHalo: Builds smwhalo-1.0.zip and copies everything below SMWHalo directory into this zip. 
+			 For exceptions, take a look in excludeForHalo.dat
+			 	
+			 Additionally, the following patch files are added:
+			  
+				 extensions\SemanticMediaWiki\includes\SMW_QP_Table.php
+				 extensions\SemanticMediaWiki\includes\articlepages\SMW_PropertyPage.php
+				 extensions\SemanticMediaWiki\includes\storage\SMW_SQLStore.php
+				 includes\User.php
+				 includes\Namespace.php
+				 skins\common\ajax.js
+				 skins\ontoskin
+				 skins\OntoSkin.deps.php
+				 skins\OntoSkin.php
+				 
+			And these MW extensions: 
+			
+				 extensions\ParserFunctions\
+				 extensions\Cite.i18n.php
+				 extensions\Cite.php
+			 
+makeSMW:	 Builds smw-1.0.zip and copies everything below SemanticMediaWiki directory into this zip. 
+			 For exceptions, take a look in excludeForSMW.dat
+			 
+makeMW:		 Builds mw-1.12beta and copies everything below SemanticMediaWiki directory into this zip. 
+			 For exceptions, take a look in excludeForSMW.dat
+			 
+makeAll:  	 Builds smwhalo-1.0.zip, smw-1.0.zip and mw-1.12beta
+
+makeExecutable: Builds halowiki.exe from smwhalo-1.0.zip, smw-1.0.zip, mw-1.12beta and xampp.zip
+			    It runs with no further software!
+			 	You find xampp.zip at:
+			 	 \\Link3\projekte\HALO-Vulcan\02 HALO-Vulcan-Refinement Phase\Software_Backup\xampp
+			 	Copy it to deploy/bin before executing the script.	 
+			 	
+makeSMWHaloExecutable: Builds halowiki.exe only from smwhalo-1.0.zip (not running by itself). Just for
+					   easy deploying instead of a zip. 
+
+-------------------------------------------------------------------------------------------------------
+Javascript changes.
+
+Changes in a javascript file need special treatment. Otherwise the deployversion of the scripts
+will not work. These steps must be done *before* any of the make command from above is executed.
+
+ 1. Start 'Javascript CopyScripts' 
+ 2. Start 'Javascript Obfuscator' (needs Jasob installed: www.jasob.com, but can be skipped)
+ 3. Start 'Javascript Packer'
+ 
+Refresh workspace, you should see some new deploy*.js files.
+
+
