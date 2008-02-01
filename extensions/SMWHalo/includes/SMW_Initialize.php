@@ -187,8 +187,8 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
-	SMWGardening::getGardeningLogAccess()->setup(true);
 	SMWGardening::getGardeningIssuesAccess()->setup(true);
+	SMWGardening::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
 	return true;
 }
