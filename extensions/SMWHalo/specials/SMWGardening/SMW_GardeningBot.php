@@ -44,6 +44,10 @@
  	private $taskId = -1;
  	private $lastUpdate = 0;
  	
+ 	// socket for termination signal
+ 	private $socket;
+ 	private $isAborted = false;
+ 	
  	function GardeningBot($id) {
  		$this->id = $id;
  		
@@ -51,7 +55,7 @@
  		global $registeredBots;
  		$registeredBots[$id] = $this;
  		$this->parameters = $this->createParameters();
- 	}
+  	}
  	
  	final function getBotID() {
  		return $this->id;
@@ -61,7 +65,9 @@
  		return $this->parameters;
  	}
  	
- 	
+ 	final public function getTermSignalSocket() {
+ 		return $this->socket;
+ 	}
  	/**
  	 * Validates the Parameters. 
  	 * $paramArray: array of params sent by user
@@ -118,6 +124,14 @@
  	/**
  	 * DO NOT CALL EVER
  	 */
+ 	public function initializeTermSignal($taskid) {
+ 		// create a socket for termination signal
+ 		$this->socket = socket_create_listen(($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
+ 		socket_set_nonblock($this->socket);
+ 	}
+ 	/**
+ 	 * DO NOT CALL EVER
+ 	 */
  	public function setTaskID($taskId) {
  		$this->taskId = $taskId;
  	}
@@ -131,6 +145,8 @@
  	
  	/**
  	 * Announces work done in current subtask.
+ 	 * 
+ 	 * @param $work incremental work
  	 */
  	public function worked($work) {
  		$this->currentWork += $work;
@@ -155,6 +171,40 @@
  	 */
  	private function getCurrentWork() {
  		return (($this->currentTask-1)/$this->totalWork) + ($this->currentWork / $this->subtaskWork / $this->totalWork); 
+ 	}
+ 	
+ 	/**
+ 	 * Determines if bot was aborted.
+ 	 * Must be regularly called!
+ 	 * 
+ 	 * @return TRUE, if bot received the termination signal. Otherwise FALSE.
+ 	 */
+ 	protected function isAborted() {
+ 		if ($this->isAborted) return true;
+ 		$accept_sock = @socket_accept($this->socket);	
+		if ($accept_sock !== false) {
+			$name = "";
+			socket_getpeername($accept_sock, $name);
+			if ($name == '127.0.0.1') { 
+				socket_close($accept_sock);
+				$this->isAborted = true;
+				return true;	
+			}
+		}
+		return false;
+ 	}
+ 	
+ 	/**
+ 	 * Aborts a bot with the given $taskid
+ 	 * 
+ 	 * @param $taskid
+ 	 * @return TRUE if abortion was auccessful, otherwise FALSE.
+ 	 */
+ 	public static function abortBot($taskid) {
+ 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
+		socket_close($socket);
+		return $success;
  	}
  	
  	/**
@@ -220,6 +270,9 @@
  			$phpInterpreter = "php";
  		}
 		
+		// initialize term signal socket
+		$bot->initializeTermSignal($taskid);
+		
 		// and start it...
 		$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
 		global $wgServer;	
@@ -243,6 +296,7 @@
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
+ 				socket_close($this->socket);
  			}
   		}
   		else //windowze
@@ -270,9 +324,10 @@
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
+ 				socket_close($this->socket);
  			}
   		}
- 		return $taskid;
+   		return $taskid;
  	}
  	
  	/**

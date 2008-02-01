@@ -104,6 +104,7 @@ require_once("SMW_GardeningLog.php");
  			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$wgServer$wgScriptPath/index.php/".$glp->getNsText().":".$glp->getText()."?bot=$botID ".$glp->getText()."]");
  			$log .= "\n[[category:GardeningLog]]";
  		}
+ 		@socket_close($bot->getTermSignalSocket());
  		// mark as finished
  		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";

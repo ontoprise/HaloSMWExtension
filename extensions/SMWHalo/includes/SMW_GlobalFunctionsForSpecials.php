@@ -97,9 +97,13 @@ function smwfCancelGardeningBot($taskid) {
 	if (!GardeningBot::isUserAllowed(array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
 	 	return; // only sysops and gardeners may cancel a bot.
 	}
-	$processID = GardeningBot::getProcessID($taskid);
-	if ($processID != NULL) {
-		GardeningBot::killProcess($processID);
+	// send term signal to bot
+	if (GardeningBot::abortBot($taskid) !== true) {
+		// if bot does not react: kill process
+		$processID = GardeningBot::getProcessID($taskid);
+		if ($processID != NULL) {
+			GardeningBot::killProcess($processID);
+		}
 	}
 	SMWGardening::getGardeningLogAccess()->removeGardeningTask($taskid);
 	return SMWGardening::getGardeningLogTable();
