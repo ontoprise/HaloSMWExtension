@@ -338,27 +338,17 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
  				
- 				foreach($instances as $subject) { // check instances
- 					if ($subject[0] == null) {
- 						continue;
-	 				}
-	 				
-	 				// optimized: if property $a has no subprops, then simply read values of $a
-	 				if (count(smwfGetSemanticStore()->getDirectSubProperties($a)) == 0) {
-	 					$num = count(smwfGetStore()->getPropertyValues($subject[0], $a));
-	 				} else {
-		 				// get number of appearances for a subject and a property (including its subproperties)
-		 				$num = $this->cc_store->getNumberOfPropertyInstantiationForInstance($a, $subject[0]);
-	 				}					
-	 				// compare number of appearance with defined cardinality
-	 				if ($num == 0) {
-	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject[0], $a)) {
+ 				$results = $this->cc_store->getNumberOfPropertyInstantiationForInstances($a, $instances);
+ 				foreach($results as $result) {
+ 					list($title, $num) = $result;
+ 					if ($num == 0) {
+	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $title, $a)) {
 	 						
-	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject[0], $a, $minCards);
+	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $title, $a, $minCards);
 	 					}
 					} 
-				
  				}
+ 				
  			}
  						
  		}
