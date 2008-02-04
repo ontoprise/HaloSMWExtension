@@ -48,7 +48,7 @@
  	private $socket;
  	private $isAborted = false;
  	
- 	function GardeningBot($id) {
+ 	protected function GardeningBot($id) {
  		$this->id = $id;
  		
  		// registering bot
@@ -57,7 +57,7 @@
  		$this->parameters = $this->createParameters();
   	}
  	
- 	final function getBotID() {
+ 	final public function getBotID() {
  		return $this->id;
  	}
  	
@@ -68,25 +68,7 @@
  	final public function getTermSignalSocket() {
  		return $this->socket;
  	}
- 	/**
- 	 * Validates the Parameters. 
- 	 * $paramArray: array of params sent by user
- 	 * Returns true if everything is ok or a string
- 	 *  explaining the problem occured.
- 	 */
- 	public function validatesParameters($paramValues) {
- 		$result = true;
- 		 
- 		foreach ($this->parameters as $paramObject) {
- 			$ok = $paramObject->validate($paramValues[$paramObject->getID()]);
- 			if (gettype($ok) == 'string') { // error
- 				$lastFailure = $paramObject->getID().":".$ok;
- 			} 
- 			$result = $result && ($ok === true);
- 			
- 		}
- 		return $result ? true : $lastFailure;
- 	}
+ 	
  	
  	/**
  	 * Returns an array mapping parameter IDs to parameter objects
@@ -121,22 +103,7 @@
  	 */
  	public abstract function run($paramArray, $isAsync, $delay);
  	
- 	/**
- 	 * DO NOT CALL EVER
- 	 */
- 	public function initializeTermSignal($taskid) {
- 		// create a socket for termination signal
- 		$this->socket = socket_create_listen(($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
- 		socket_set_nonblock($this->socket);
- 	}
- 	/**
- 	 * DO NOT CALL EVER
- 	 */
- 	public function setTaskID($taskId) {
- 		$this->taskId = $taskId;
- 	}
- 	
- 	/**
+ 		/**
  	 * Total work (= total number of subtasks)
  	 */
  	public function setNumberOfTasks($totalwork) {
@@ -146,7 +113,7 @@
  	/**
  	 * Announces work done in current subtask.
  	 * 
- 	 * @param $work incremental work
+ 	 * @param $work incremental 
  	 */
  	public function worked($work) {
  		$this->currentWork += $work;
@@ -159,6 +126,8 @@
  	
  	/**
  	 * Adds next subtask
+ 	 * 
+ 	 * @param $work total work of subtask
  	 */
  	public function addSubTask($work) {
  		$this->subtaskWork = $work;
@@ -167,25 +136,19 @@
  	}
  	
  	/**
- 	 * Returns total work done.
- 	 */
- 	private function getCurrentWork() {
- 		return (($this->currentTask-1)/$this->totalWork) + ($this->currentWork / $this->subtaskWork / $this->totalWork); 
- 	}
- 	
- 	/**
  	 * Determines if bot was aborted.
- 	 * Must be regularly called!
+ 	 * Must be regularly called to be effective!
+ 	 * If it once returned TRUE, it will always return TRUE.
  	 * 
  	 * @return TRUE, if bot received the termination signal. Otherwise FALSE.
  	 */
- 	protected function isAborted() {
+ 	public function isAborted() {
  		if ($this->isAborted) return true;
  		$accept_sock = @socket_accept($this->socket);	
 		if ($accept_sock !== false) {
 			$name = "";
 			socket_getpeername($accept_sock, $name);
-			if ($name == '127.0.0.1') { 
+			if ($name == '127.0.0.1') { //TODO: save? spoofing?
 				socket_close($accept_sock);
 				$this->isAborted = true;
 				return true;	
@@ -195,7 +158,48 @@
  	}
  	
  	/**
- 	 * Aborts a bot with the given $taskid
+ 	 * DO NOT CALL EVER
+ 	 */
+ 	public function initializeTermSignal($taskid) {
+ 		// create a socket for termination signal
+ 		$this->socket = socket_create_listen(($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
+ 		socket_set_nonblock($this->socket);
+ 	}
+ 	
+ 	/**
+ 	 * DO NOT CALL EVER
+ 	 */
+ 	public function setTaskID($taskId) {
+ 		$this->taskId = $taskId;
+ 	}
+ 	
+  	/**
+ 	 * Returns total work done.
+ 	 */
+ 	private function getCurrentWork() {
+ 		return (($this->currentTask-1)/$this->totalWork) + ($this->currentWork / $this->subtaskWork / $this->totalWork); 
+ 	}
+ 	
+ 	/**
+ 	 * Checks if user is member of at least one of the given groups.
+ 	 */
+ 	public static function isUserAllowed($allowedGroupsForBot) {
+ 		global $wgUser;
+ 		$allowed = false;
+ 		$groupsOfUser = $wgUser->getGroups();
+ 		foreach($groupsOfUser as $g) {
+ 			if (in_array($g, $allowedGroupsForBot)) {
+ 				$allowed = true;
+ 			}
+ 		} 		
+ 		return $allowed;
+ 	}
+ 	
+ 	/**
+ 	 * Aborts a bot.
+ 	 * 
+ 	 * Abortion should be preferred from killing, but
+ 	 * it requires a regularly calling of GardeningBot::isAborted()
  	 * 
  	 * @param $taskid
  	 * @return TRUE if abortion was auccessful, otherwise FALSE.
@@ -208,32 +212,28 @@
  	}
  	
  	/**
- 	* Checks if the ServerOS is Windows 
- 	* returns true/false 
- 	*/
- 	private static function isWindows() {
- 		ob_start();
-        phpinfo();
-        $info = ob_get_contents();
-        ob_end_clean();
-		//Get Systemstring
-        preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
-		//Check if it consists 'windows' as string
-        preg_match('/[Ww]indows/',$ma[1],$os);
-        if($os[0]=='' && $os[0]==null ) {
-                return false;
-        } else {
-                return true;
-        }
+ 	 * Kills a bot.
+ 	 * 
+ 	 * @param taskid
+ 	 */
+ 	public static function killBot($taskid) {
+ 		$processID = GardeningBot::getProcessID($taskid);
+ 		if ($processID == NULL) return;
+ 		if (GardeningBot::isWindows()) {
+ 			exec("taskkill /PID $processID"); // should work on Windows XP Home too
+ 		} else {
+ 			exec("kill $processID");
+ 		}
  	}
- 	
- 	/*
-    * Runs a bot
-    * $botID:
-    * $params: parameter string. Blank is separator, 
+ 	 	
+ 	/**
+    * Runs a bot.
+    * 
+    * @param $botID:
+    * @param $params: parameter string. Blank is separator, 
     * 		   because it must be passed to an external script.
-    * $runAsnyc: 
-    * $keepConsoleAfterTermination: 
+    * @param $runAsnyc: 
+    * @param $keepConsoleAfterTermination: 
     */	
  	 public static function runBot($botID, $params = "", $runAsync = true) {
  	 	global $keepGardeningConsole;
@@ -331,6 +331,26 @@
  	}
  	
  	/**
+ 	* Checks if the ServerOS is Windows 
+ 	* returns true/false 
+ 	*/
+ 	private static function isWindows() {
+ 		ob_start();
+        phpinfo();
+        $info = ob_get_contents();
+        ob_end_clean();
+		//Get Systemstring
+        preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
+		//Check if it consists 'windows' as string
+        preg_match('/[Ww]indows/',$ma[1],$os);
+        if($os[0]=='' && $os[0]==null ) {
+                return false;
+        } else {
+                return true;
+        }
+ 	}
+ 	
+ 	/**
  	 * Returns true if bot is registered.
  	 */
  	private static function isBotKnown($botID) {
@@ -339,20 +359,7 @@
   		return $bot != null;
  	}
  	
- 	/**
- 	 * Checks if user is member of at least one of the given groups.
- 	 */
- 	public static function isUserAllowed($allowedGroupsForBot) {
- 		global $wgUser;
- 		$allowed = false;
- 		$groupsOfUser = $wgUser->getGroups();
- 		foreach($groupsOfUser as $g) {
- 			if (in_array($g, $allowedGroupsForBot)) {
- 				$allowed = true;
- 			}
- 		} 		
- 		return $allowed;
- 	}
+ 	
  	
  	/**
  	 * Validates parameters against a given bot
@@ -360,7 +367,27 @@
  	private static function checkParameters($botID, $params) {
  		global $registeredBots; 
   		$bot = $registeredBots[$botID];
-  		return $bot->validatesParameters($params); 
+  		return GardeningBot::validatesParameters($bot, $params); 
+ 	}
+ 	
+ 	/**
+ 	 * Validates the Parameters. 
+ 	 * $paramArray: array of params sent by user
+ 	 * Returns true if everything is ok or a string
+ 	 *  explaining the problem occured.
+ 	 */
+ 	private static function validatesParameters($bot, $paramValues) {
+ 		$result = true;
+ 		 
+ 		foreach ($bot->getParameters() as $paramObject) {
+ 			$ok = $paramObject->validate($paramValues[$paramObject->getID()]);
+ 			if (gettype($ok) == 'string') { // error
+ 				$lastFailure = $paramObject->getID().":".$ok;
+ 			} 
+ 			$result = $result && ($ok === true);
+ 			
+ 		}
+ 		return $result ? true : $lastFailure;
  	}
  	
  	public static function convertParamStringToArray($param) {
@@ -377,7 +404,7 @@
  	/**
  	 * Returns the process ID for a given task ID. (OS-dependant)
  	 */
- 	public static function getProcessID($taskID) {
+ 	private static function getProcessID($taskID) {
  		if (GardeningBot::isWindows()) {
  			$processes = array();
  			exec('tasklist /V /FO CSV /NH', $processes);
@@ -405,16 +432,7 @@
  		return NULL;
  	}
  	
- 	/**
- 	 * Kills a process (OS-dependant)
- 	 */
- 	public static function killProcess($processID) {
- 		if (GardeningBot::isWindows()) {
- 			exec("taskkill /PID $processID"); // should work on Windows XP Home too
- 		} else {
- 			exec("kill $processID");
- 		}
- 	}
+ 	
  	
  	/**
  	 * Prints a textual progress indication.
