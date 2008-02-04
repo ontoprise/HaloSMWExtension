@@ -55,9 +55,9 @@ CombinedSearchContributor.prototype = {
 		this.tripleSearchPendingElement = new OBPendingIndicator($('queryPlaceholder'));
 		if (searchTerm != undefined && searchTerm.strip() != '') {
 			this.pendingElement.show();
-			sajax_do_call('smwfCSDispatcher', [searchTerm], this.smwfCombinedSearchCallback.bind(this, "csFoundEntities"));
+			sajax_do_call('smwf_cs_Dispatcher', [searchTerm], this.smwfCombinedSearchCallback.bind(this, "csFoundEntities"));
 			this.tripleSearchPendingElement.show();
-			sajax_do_call('smwfCSSearchForTriples', [searchTerm], this.smwfTripleSearchCallback.bind(this, "queryPlaceholder"));
+			sajax_do_call('smwf_cs_SearchForTriples', [searchTerm], this.smwfTripleSearchCallback.bind(this, "queryPlaceholder"));
 		}
 
 		// add query placeholder
@@ -76,7 +76,7 @@ CombinedSearchContributor.prototype = {
 
 	searchForAttributeValues: function(parts) {
 		this.pendingElement.show($('cbsrch'));
-		sajax_do_call('smwfCSAskForAttributeValues', [parts], this.smwfCombinedSearchCallback.bind(this, "queryPlaceholder"));
+		sajax_do_call('smwf_cs_AskForAttributeValues', [parts], this.smwfCombinedSearchCallback.bind(this, "queryPlaceholder"));
 	},
 	
 	/**

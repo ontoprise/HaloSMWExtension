@@ -155,7 +155,7 @@ updateTree: function(xmlText, rootElement) {
 initializeRootCategories: function(partition, force) {
 	if (!this.OB_categoriesInitialized || force) {
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwfOntologyBrowserAccess', ['getRootCategories',OB_partitionSize+","+partition], this.initializeRootCategoriesCallback.bind(this));
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+","+partition], this.initializeRootCategoriesCallback.bind(this));
 	} else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
@@ -166,7 +166,7 @@ initializeRootCategories: function(partition, force) {
 initializeRootProperties: function(partition, force) {
 	 if (!this.OB_attributesInitialized || force) {
 	 	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwfOntologyBrowserAccess', ['getRootProperties',OB_partitionSize+","+partition], this.initializeRootPropertyCallback.bind(this));
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+","+partition], this.initializeRootPropertyCallback.bind(this));
 	 } else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
@@ -212,48 +212,48 @@ getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBa
 		callBackOnCache(subtree);
 	} else {
 		// download it
-		sajax_do_call('smwfOntologyBrowserAccess', ['getSubProperties',attributeName+","+OB_partitionSize+",0"],  callBackOnAjax);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubProperties',attributeName+","+OB_partitionSize+",0"],  callBackOnAjax);
 	}
 },
 
 
 
 getInstances: function(categoryName, partition, callback) {
-	sajax_do_call('smwfOntologyBrowserAccess', ['getInstance',categoryName+","+OB_partitionSize+","+partition], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+","+OB_partitionSize+","+partition], callback);
 },
 
 getProperties: function(categoryName, callback) {
-	sajax_do_call('smwfOntologyBrowserAccess', ['getProperties',categoryName], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName], callback);
 },
 
 getAnnotations: function(instanceName, callback) {
-	sajax_do_call('smwfOntologyBrowserAccess', ['getAnnotations',instanceName], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName], callback);
 },
 
 getCategoryPartition: function(isRootLevel, partition, categoryName, selectPartitionCallback) {
 	if (isRootLevel) {
 		// root level
-		sajax_do_call('smwfOntologyBrowserAccess', ['getRootCategories',OB_partitionSize+','+partition],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+','+partition],  selectPartitionCallback);
 	} else {
 		// every other level
-		sajax_do_call('smwfOntologyBrowserAccess', ['getSubCategory',categoryName+","+OB_partitionSize+","+partition],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubCategory',categoryName+","+OB_partitionSize+","+partition],  selectPartitionCallback);
 	}
 },
 
 getPropertyPartition: function(isRootLevel, partition, attributeName, selectPartitionCallback) {
 	if (isRootLevel) {
 		// root level
-		sajax_do_call('smwfOntologyBrowserAccess', ['getRootProperties',OB_partitionSize+','+partition],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+','+partition],  selectPartitionCallback);
 	} else {
 		// every other level
-		sajax_do_call('smwfOntologyBrowserAccess', ['getSubProperties',attributeName+","+OB_partitionSize+","+partition],  selectPartitionCallback);
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getSubProperties',attributeName+","+OB_partitionSize+","+partition],  selectPartitionCallback);
 	}
 },
 
 
 
 getInstancesUsingProperty: function(propertyName, partition, callback) {
-	sajax_do_call('smwfOntologyBrowserAccess', ['getInstancesUsingProperty',propertyName+","+OB_partitionSize+","+partition], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstancesUsingProperty',propertyName+","+OB_partitionSize+","+partition], callback);
 },
 
 filterBrowseCategories: function(title) {
@@ -270,7 +270,7 @@ filterBrowseCategories: function(title) {
 	 }
 	OB_tree_pendingIndicator.show(); 
    	globalActionListener.switchTreeComponent(null, 'categoryTree', true);
-	sajax_do_call('smwfOntologyBrowserAccess', ['filterBrowse',"category,"+title], filterBrowsingCategoryCallback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category,"+title], filterBrowsingCategoryCallback);
    	
 },
 
@@ -289,7 +289,7 @@ filterBrowseInstances: function(title) {
 		if (xmlFragmentInstanceList.firstChild.childNodes.length == 1) {
 			var instance = xmlFragmentInstanceList.firstChild.firstChild;
 			OB_relatt_pendingIndicator.show();
-			sajax_do_call('smwfOntologyBrowserAccess', ['getAnnotations',instance.getAttribute("title")], getAnnotationsCallback);
+			sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instance.getAttribute("title")], getAnnotationsCallback);
 		}
 		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
 	  	transformer.transformResultToHTML(request,instanceDIV, true);
@@ -314,7 +314,7 @@ filterBrowseInstances: function(title) {
 	 
 	 OB_instance_pendingIndicator.show();
 	
-   	 sajax_do_call('smwfOntologyBrowserAccess', ['filterBrowse',"instance,"+title], filterBrowsingInstanceCallback);	
+   	 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance,"+title], filterBrowsingInstanceCallback);	
    	
 },
 
@@ -332,7 +332,7 @@ filterBrowseProperties: function(title) {
 	 }
 	 OB_tree_pendingIndicator.show(); 
 	globalActionListener.switchTreeComponent(null, 'propertyTree', true);
-   	sajax_do_call('smwfOntologyBrowserAccess', ['filterBrowse',"propertyTree,"+title], filterBrowsingAttributeCallback);
+   	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree,"+title], filterBrowsingAttributeCallback);
 }
 
 

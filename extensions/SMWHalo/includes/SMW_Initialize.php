@@ -98,15 +98,37 @@ function smwgHaloSetupExtension() {
 	
 	// add some AJAX calls
 	if ($action == 'ajax') {
-		require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
-		require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
-		require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
-		require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-		require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
-		require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
-		require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-		require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
-		require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+		$method_prefix = smwfGetAjaxMethodPrefix();
+		switch($method_prefix) {
+			case '_ac_' : require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+						break;
+			case '_cs_' : require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+						break;
+			case '_ga_' : require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+						break;
+			case '_ob_' : require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+						break;			
+			case '_fw_' : require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
+						break;		
+			case '_ca_' : require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+						break;	
+			case '_qi_' : require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+						break;
+			//TODO: add case statements for missing groups of functions. 
+			//Don't forget the breaks:-)
+			
+			default: // default case just imports everything
+				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+				require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+				require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+				require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+				require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+				require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
+				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+		}
+		
 		
 	} else { // otherwise register special pages
 
@@ -955,5 +977,11 @@ function smwfProcessHaloInlineQueryParserFunction(&$parser) {
 	} else {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
 	}
+}
+
+function smwfGetAjaxMethodPrefix() {
+	$func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : NULL;
+	if ($func_name == NULL) return NULL;
+	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
 }	
 ?>

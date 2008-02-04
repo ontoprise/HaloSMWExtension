@@ -1206,7 +1206,7 @@ OBCatgeorySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	preview: function() {
 		var pendingElement = new OBPendingIndicator();
 		pendingElement.show($('preview_category_tree'));
-		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_CATEGORY_NS], this.pastePreview.bind(this, pendingElement));
+		sajax_do_call('smwf_ob_PreviewRefactoring', [this.selectedTitle, SMW_CATEGORY_NS], this.pastePreview.bind(this, pendingElement));
 	},
 	
 	/**
@@ -1349,7 +1349,7 @@ OBPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	preview: function() {
-		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_PROPERTY_NS], this.pastePreview.bind(this));
+		sajax_do_call('smwf_ob_PreviewRefactoring', [this.selectedTitle, SMW_PROPERTY_NS], this.pastePreview.bind(this));
 	},
 	
 	pastePreview: function(request) {
@@ -1479,7 +1479,7 @@ OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	preview: function() {
-		sajax_do_call('smwfPreviewRefactoring', [this.selectedTitle, SMW_INSTANCE_NS], this.pastePreview.bind(this));
+		sajax_do_call('smwf_ob_PreviewRefactoring', [this.selectedTitle, SMW_INSTANCE_NS], this.pastePreview.bind(this));
 	},
 	
 	pastePreview: function(request) {

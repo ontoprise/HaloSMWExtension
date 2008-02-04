@@ -12,17 +12,17 @@
 // Register AJAX functions
 
 global $wgAjaxExportList;
-$wgAjaxExportList[] = 'smwfGetCombinedSearchResultsFor';
-$wgAjaxExportList[] = 'smwfGetFactboxContentFor';
-$wgAjaxExportList[] = 'smwfGetFTSearchResultsFor';
-$wgAjaxExportList[] = 'smwfGetCategoriesFor';
-$wgAjaxExportList[] = 'smwfHTMLGetCategoriesFor';
-$wgAjaxExportList[] = 'smwfGetAskQueriesFor';
+$wgAjaxExportList[] = 'smwf_ca_GetCombinedSearchResultsFor';
+$wgAjaxExportList[] = 'smwf_ca_GetFactboxContentFor';
+$wgAjaxExportList[] = 'smwf_ca_GetFTSearchResultsFor';
+$wgAjaxExportList[] = 'smwf_ca_GetCategoriesFor';
+$wgAjaxExportList[] = 'smwf_ca_HTMLGetCategoriesFor';
+$wgAjaxExportList[] = 'smwf_ca_GetAskQueriesFor';
 
 /**
   * Returns the HTML results from the combined search
   */
-function smwfGetCombinedSearchResultsFor($searchstring) {
+function smwf_ca_GetCombinedSearchResultsFor($searchstring) {
 
    $cs = new CombinedSearch();
    $parts = $cs->explodeSearchTerm($searchstring);
@@ -51,7 +51,7 @@ function smwfGetCombinedSearchResultsFor($searchstring) {
  * Get the facts about an article (ín RDF)
  */
 
-function smwfGetFactboxContentFor($page) {
+function smwf_ca_GetFactboxContentFor($page) {
   return getPageAsRDF($page);
 }
 
@@ -59,7 +59,7 @@ function smwfGetFactboxContentFor($page) {
  * returns ordinary HTML search results for a given search string (wiki search)
  */
 
-function smwfGetFTSearchResultsFor($searchstring = '', $limit = 20) {
+function smwf_ca_GetFTSearchResultsFor($searchstring = '', $limit = 20) {
   global $wgUser;
 
   $searchPage = new FulltextSearch( $wgUser, $limit );
@@ -70,12 +70,12 @@ function smwfGetFTSearchResultsFor($searchstring = '', $limit = 20) {
  * fetches the categories a given wiki page belongs to
  */
 
-function smwfGetHTMLCategoriesFor($page) {
+function smwf_ca_GetHTMLCategoriesFor($page) {
   $title = Title::newFromText($page);
   return getHTMLCategoriesForInstance($title);
 }
 
-function smwfGetCategoriesFor($page) {
+function smwf_ca_GetCategoriesFor($page) {
   $title = Title::newFromText($page);
   return getCategoriesForInstance($title);
 }
@@ -85,7 +85,7 @@ function smwfGetCategoriesFor($page) {
  * fetches the first ask query within a given wiki page
  */
 
-function smwfGetAskQueriesFor($page) {
+function smwf_ca_GetAskQueriesFor($page) {
 	$title = Title::newFromText($page);
 	$article = getWikiText($title);
 	$askqueries = '';

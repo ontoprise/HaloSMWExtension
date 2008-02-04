@@ -10,12 +10,12 @@
  
  // register ajax calls
 
- $wgAjaxExportList[] = 'smwfLaunchGardeningBot';
- $wgAjaxExportList[] = 'smwfCancelGardeningBot';
- $wgAjaxExportList[] = 'smwfGetGardeningLog';
- $wgAjaxExportList[] = 'smwfGetBotParameters';
- $wgAjaxExportList[] = 'smwfGetRegisteredBots';
- $wgAjaxExportList[] = 'smwfGetGardeningIssueClasses';
+ $wgAjaxExportList[] = 'smwf_ga_LaunchGardeningBot';
+ $wgAjaxExportList[] = 'smwf_ga_CancelGardeningBot';
+ $wgAjaxExportList[] = 'smwf_ga_GetGardeningLog';
+ $wgAjaxExportList[] = 'smwf_ga_GetBotParameters';
+ $wgAjaxExportList[] = 'smwf_ga_GetRegisteredBots';
+ $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
  
  // Gardening ajax calls
 
@@ -31,7 +31,7 @@ require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningLog.php");
  *
  * @return $taskid ID of task.
  */
-function smwfLaunchGardeningBot($botID, $params) {
+function smwf_ga_LaunchGardeningBot($botID, $params) {
 
 	$taskid = GardeningBot::runBot($botID, $params);
 	if (gettype($taskid) == 'integer') { // task id, no error code
@@ -50,7 +50,7 @@ function smwfLaunchGardeningBot($botID, $params) {
  *
  * @param $taskid ID of task.
  */
-function smwfCancelGardeningBot($taskid) {
+function smwf_ga_CancelGardeningBot($taskid) {
 	if (!GardeningBot::isUserAllowed(array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
 	 	return; // only sysops and gardeners may cancel a bot.
 	}
@@ -69,7 +69,7 @@ function smwfCancelGardeningBot($taskid) {
 /**
  * Returns gardening log as HTML
  */
-function smwfGetGardeningLog() {
+function smwf_ga_GetGardeningLog() {
 	return SMWGardening::getGardeningLogTable();
 }
 
@@ -78,7 +78,7 @@ function smwfGetGardeningLog() {
  *
  * @param $botID
  */
-function smwfGetBotParameters($botID) {
+function smwf_ga_GetBotParameters($botID) {
 	return SMWGardening::getParameterFormularForBot($botID);
 }
 
@@ -86,7 +86,7 @@ function smwfGetBotParameters($botID) {
 /**
  * Returns list of registered bots as HTML
  */
-function smwfGetRegisteredBots() {
+function smwf_ga_GetRegisteredBots() {
 	 global $registeredBots;
 	 $htmlResult = "";
 	 $first = true;
@@ -108,7 +108,7 @@ function smwfGetRegisteredBots() {
 
 
 
-function smwfGetGardeningIssueClasses($bot_id) {
+function smwf_ga_GetGardeningIssueClasses($bot_id) {
 	global $registeredBots;
 		
 		if ($bot_id == NULL) {

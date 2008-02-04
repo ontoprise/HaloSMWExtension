@@ -8,8 +8,8 @@
 // Register AJAX functions
 
 global $wgAjaxExportList;
-$wgAjaxExportList[] = 'smwfAutoCompletionDispatcher';
-$wgAjaxExportList[] = 'smwfAutoCompletionOptions';
+$wgAjaxExportList[] = 'smwf_ac_AutoCompletionDispatcher';
+$wgAjaxExportList[] = 'smwf_ac_AutoCompletionOptions';
 
 // Register hooks
 global $wgHooks;
@@ -40,7 +40,7 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
   * 
   * Returns: xml representation with titles and type of entities.
   */
- function smwfAutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint) {
+ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint) {
  	global $semanticAC, $wgLang;
  	
 	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
@@ -133,7 +133,7 @@ function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wg
 /**
  * Return options
  */
-function smwfAutoCompletionOptions() {
+function smwf_ac_AutoCompletionOptions() {
 	global $wgUser;
 	return $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
 }

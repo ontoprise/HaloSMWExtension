@@ -94,7 +94,7 @@ AutoCompleter.prototype = {
          // Get preference options
 		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
 		if (AC_mode == null) {
-			sajax_do_call('smwfAutoCompletionOptions', [], autoCompletionsOptions);
+			sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
 		} else {
 			this.autoTriggering = (AC_mode == 'auto');
 		}
@@ -321,7 +321,7 @@ AutoCompleter.prototype = {
 
             this.showPendingAJAXIndicator(inputBox);
             this.resetCursorinIE();
-            sajax_do_call('smwfAutoCompletionDispatcher', [
+            sajax_do_call('smwf_ac_AutoCompletionDispatcher', [
                 wgTitle,
                 userInputToMatch,
                 userContext,

@@ -4,10 +4,10 @@ global $wgAjaxExportList;
 global $smwgIP;
 //require_once( "$smwgIP/includes/SMW_Datatype.php" );
 require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
-$wgAjaxExportList[] = 'smwfQIAccess';
+$wgAjaxExportList[] = 'smwf_qi_QIAccess';
 
 
-function smwfQIAccess($method, $params) {
+function smwf_qi_QIAccess($method, $params) {
 	$p_array = explode(",", $params);
 	global $smwgQEnabled;
 

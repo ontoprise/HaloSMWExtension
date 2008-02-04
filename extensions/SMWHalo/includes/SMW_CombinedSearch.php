@@ -10,16 +10,16 @@
 
  
  global $wgAjaxExportList;
- $wgAjaxExportList[] = 'smwfCSDispatcher';
- $wgAjaxExportList[] = 'smwfCSSearchForTriples';
- $wgAjaxExportList[] = 'smwfCSAskForAttributeValues';
+ $wgAjaxExportList[] = 'smwf_cs_Dispatcher';
+ $wgAjaxExportList[] = 'smwf_cs_SearchForTriples';
+ $wgAjaxExportList[] = 'smwf_cs_AskForAttributeValues';
  
  // CombinedSearch: Simple Query interface
  
  /**
   * Global CS dispatcher
   */
- function smwfCSDispatcher($searchString) {
+ function smwf_cs_Dispatcher($searchString) {
  	$cs = new CombinedSearch();
  	/*STARTLOG*/
 	  smwLog("","CS","opened");
@@ -55,7 +55,7 @@
  
 
  
- function smwfCSAskForAttributeValues($parts) {
+ function smwf_cs_AskForAttributeValues($parts) {
  	// try to find $parts as attribute values
  		global $wgServer, $wgScriptPath;
  		$cs = new CombinedSearch();
@@ -83,7 +83,7 @@
  		return $htmlResult;
  }
  
- function smwfCSSearchForTriples($searchString) {
+ function smwf_cs_SearchForTriples($searchString) {
  	$cs = new CombinedSearch();
  	
  	$parts = $cs->explodeSearchTerm($searchString);

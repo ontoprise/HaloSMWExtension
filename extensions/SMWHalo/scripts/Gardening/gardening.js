@@ -65,7 +65,7 @@ GardeningPage.prototype = {
 		$('gardening-tooldetails-content').innerHTML = gLanguage.getMessage('BOT_WAS_STARTED');
 		$('gardening-runningbots').innerHTML = request.responseText;
 	}
-	sajax_do_call('smwfLaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params], callBackOnRunBot);
+	sajax_do_call('smwf_ga_LaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params], callBackOnRunBot);
 	// disable button to prevent continuous executing
 	$('runBotButton').setAttribute("disabled","disabled");
   },
@@ -76,7 +76,7 @@ GardeningPage.prototype = {
   	}
   	
   	if (wgUserGroups.indexOf("sysop") != -1 || wgUserGroups.indexOf("gardener") != -1) {
-  		sajax_do_call('smwfCancelGardeningBot', [taskid], callBackOnCancelBot);
+  		sajax_do_call('smwf_ga_CancelGardeningBot', [taskid], callBackOnCancelBot);
   	} else {
   		alert(gLanguage.getMessage('INVALID_GARDENING_ACCESS'));
   	}
@@ -101,7 +101,7 @@ GardeningPage.prototype = {
 			this.pendingIndicator = new OBPendingIndicator($('gardening-tooldetails-content'));
 		}
 		this.pendingIndicator.show();
-		sajax_do_call('smwfGetBotParameters', [botID], this.showParamsCallback.bind(this));
+		sajax_do_call('smwf_ga_GetBotParameters', [botID], this.showParamsCallback.bind(this));
 	},
 	
 	showParamsCallback: function(request) {
@@ -132,7 +132,7 @@ GardeningPage.prototype = {
 		var gardeningLogElement = $('gardening-runningbots');
 		if (gardeningLogElement) {
 			ajaxRequestManager.stopCalls(SMW_AJAX_GARDLOG);
-			sajax_do_call('smwfGetGardeningLog', [], gardeningLogElement, SMW_AJAX_GARDLOG);
+			sajax_do_call('smwf_ga_GetGardeningLog', [], gardeningLogElement, SMW_AJAX_GARDLOG);
 		}
 	}
 
@@ -157,7 +157,7 @@ GardeningLogPage.prototype = {
 		this.pendingIndicator.show($('issueClasses'));
 		var selectedIndex = selectTag.selectedIndex;
 		var bot_id = selectTag.options[selectedIndex].value;
-		sajax_do_call('smwfGetGardeningIssueClasses', [bot_id], this.changeIssueClassesContent.bind(this));
+		sajax_do_call('smwf_ga_GetGardeningIssueClasses', [bot_id], this.changeIssueClassesContent.bind(this));
 	},
 	
 	changeIssueClassesContent: function(request) {

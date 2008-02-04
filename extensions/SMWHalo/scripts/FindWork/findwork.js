@@ -51,7 +51,7 @@ FindWork.prototype = {
 			if (rating != 0) result.push([subject, predicate, objectOrValue, rating]);
 			annotation = $('annotation' + (++i));
 		}
-		sajax_do_call('smwfSendAnnotationRatings', [result.toJSON()], this.printThankYou.bind(this));
+		sajax_do_call('smwf_fw_SendAnnotationRatings', [result.toJSON()], this.printThankYou.bind(this));
 	},
 	
 	getValueOfChecked: function(buttons) {

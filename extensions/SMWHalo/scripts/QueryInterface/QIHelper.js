@@ -73,7 +73,7 @@ switchlayout:function(){
 * Needed to find out if users can use operators (< and >)
 */
 getNumericDatatypes:function(){
-	sajax_do_call('smwfQIAccess', ["getNumericTypes", "dummy"], this.setNumericDatatypes.bind(this));
+	sajax_do_call('smwf_qi_QIAccess', ["getNumericTypes", "dummy"], this.setNumericDatatypes.bind(this));
 },
 
 /**
@@ -164,7 +164,7 @@ previewQuery:function(){
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
 		params += $('layout_default').value==""?',':$('layout_default').value;
 		params += $('layout_headers').checked?'show':'hide';
-		sajax_do_call('smwfQIAccess', ["getQueryResult", params], this.openPreview.bind(this));
+		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openPreview.bind(this));
 	}
 	else { // query is empty
 		var request = Array();
@@ -474,7 +474,7 @@ getPropertyInformation:function(){
 			this.pendingElement.hide();
 		this.pendingElement = new OBPendingIndicator($('input3'));
 		this.pendingElement.show();
-		sajax_do_call('smwfQIAccess', ["getPropertyInformation", propname], this.adaptDialogueToProperty.bind(this));
+		sajax_do_call('smwf_qi_QIAccess', ["getPropertyInformation", propname], this.adaptDialogueToProperty.bind(this));
 	}
 },
 
@@ -1009,7 +1009,7 @@ $('showAsk').toggle();
 showLoadDialogue:function(){
 	//List of saved queries with filter
 	//load
-	sajax_do_call('smwfQIAccess', ["loadQuery", "Query:SaveTestQ"], this.loadQuery.bind(this));
+	sajax_do_call('smwf_qi_QIAccess', ["loadQuery", "Query:SaveTestQ"], this.loadQuery.bind(this));
 
 },
 
@@ -1036,7 +1036,7 @@ doSave:function(){
 		this.pendingElement.show();
 		var params = $('saveName').value + ",";
 		params += this.getFullAsk();
-		sajax_do_call('smwfQIAccess', ["saveQuery", params], this.saveDone.bind(this));
+		sajax_do_call('smwf_qi_QIAccess', ["saveQuery", params], this.saveDone.bind(this));
 	}
 	else {
 		var request = Array();
@@ -1083,7 +1083,7 @@ exportToXLS:function(){
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
 		params += $('layout_default').value==""?',':$('layout_default').value;
 		params += $('layout_headers').checked?'show':'hide';
-		sajax_do_call('smwfQIAccess', ["getQueryResultForDownload", params], this.initializeDownload.bind(this));
+		sajax_do_call('smwf_qi_QIAccess', ["getQueryResultForDownload", params], this.initializeDownload.bind(this));
 	}
 	else {
 		var request = Array();

@@ -7,15 +7,15 @@
  * This allows easy transformation to HTML on client side. 
  */
 global $smwgIP, $smwgHaloIP, $wgAjaxExportList;
-$wgAjaxExportList[] = 'smwfOntologyBrowserAccess';
-$wgAjaxExportList[] = 'smwfPreviewRefactoring';
+$wgAjaxExportList[] = 'smwf_ob_OntologyBrowserAccess';
+$wgAjaxExportList[] = 'smwf_ob_PreviewRefactoring';
 
 require_once($smwgIP . "/includes/storage/SMW_Store.php");
 require_once($smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 require_once("SMW_OntologyBrowserFilter.php" );
  
-function smwfOntologyBrowserAccess($method, $params) {
+function smwf_ob_OntologyBrowserAccess($method, $params) {
 	
  	$p_array = explode(",", $params);
  	
@@ -164,7 +164,7 @@ function smwfOntologyBrowserAccess($method, $params) {
  * 
  * @return HTML table content (but no table tags!)
  */
-function smwfPreviewRefactoring($titleText, $ns) {
+function smwf_ob_PreviewRefactoring($titleText, $ns) {
 	$tableContent = "";
 	$title = Title::newFromText($titleText, $ns);
 	switch($ns) {

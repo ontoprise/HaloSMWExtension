@@ -6,7 +6,7 @@
  */
  global $wgAjaxExportList;
  
- $wgAjaxExportList[] = 'smwfSendAnnotationRatings';
+ $wgAjaxExportList[] = 'smwf_fw_SendAnnotationRatings';
   
  /**
  * TODO: need JSON decode implementation
@@ -16,7 +16,7 @@
  * 
  * @return true
  */
-function smwfSendAnnotationRatings($json) {
+function smwf_fw_SendAnnotationRatings($json) {
 	// TODO: has to be replaced by *real* JSON decoding. >= PHP 5.2.0
 	$ratings = array();
 	$listOFRatings = substr($json, 1, strlen($json) - 2);
