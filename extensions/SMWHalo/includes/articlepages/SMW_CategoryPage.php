@@ -31,7 +31,7 @@ if( !defined( 'MEDIAWIKI' ) )
 global $IP, $wgHooks, $smwgIP;
 require_once( "$IP/includes/CategoryPage.php");
 require_once($smwgIP. "/includes/SMW_Infolink.php");
-
+require_once($smwgIP. "/includes/storage/SMW_Store.php");
 //$wgHooks['CategoryPageView'][] = 'smwfSemanticCategoryPage';
 
 /**

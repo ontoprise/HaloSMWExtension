@@ -33,7 +33,7 @@ class SMWGardening extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('gardening'));
 		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('smw_gard_welcome')."</div>";
 		$html .= "<div id=\"gardening-container\">" .
-					"<div id=\"gardening-tools\">" . smwfGetRegisteredBots() .
+					"<div id=\"gardening-tools\">" . SMWGardening::getRegisteredBots() .
 					"</div>" .
 					"<div id=\"gardening-tooldetails\"><div id=\"gardening-tooldetails-content\">".wfMsg('smw_gard_choose_bot')."</div></div>
 		
@@ -71,6 +71,26 @@ class SMWGardening extends SpecialPage {
 		}
 		$html .= "</table>";
 		return $html;
+	}
+	
+	static function getRegisteredBots() {
+		global $registeredBots;
+		 $htmlResult = "";
+		 $first = true;
+		 foreach($registeredBots as $botID => $bot) {
+		 	if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+		 		continue; // do not add this bot, because the user must not access it.
+		 	}
+		 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
+		 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
+		 				   "<a>" .$bot->getLabel()."</a>" .
+		 				   "</div>";
+	
+		 }
+		 if ($htmlResult == '') {
+		 	$htmlResult .= wfMsg('smw_gard_notools');
+		 }
+		 return $htmlResult;
 	}
 	
 	static function getParameterFormularForBot($botID) {

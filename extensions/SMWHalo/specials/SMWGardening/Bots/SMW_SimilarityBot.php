@@ -7,6 +7,7 @@
  global $smwgHaloIP;
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_Gardening.php");
  
  define('SMW_GARD_RESULT_LIMIT_DEFAULT', 100);
  define('SMW_GARD_SIM_LIMIT_DEFAULT', 0);

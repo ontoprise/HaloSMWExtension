@@ -4,7 +4,7 @@
  *
  * Author: kai
  */
-define('SMW_HALO_VERSION', '1.0beta');
+define('SMW_HALO_VERSION', '1.0');
 
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -60,6 +60,13 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files.
+	$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
+	$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
+	$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
+	$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
+	
 	// Register parser hooks for advanced annotation mode
 	global $wgRequest; 
 	$action = $wgRequest->getVal('action');
@@ -90,40 +97,43 @@ function smwgHaloSetupExtension() {
 	$smwgHaloContLang->registerSpecialProperties();
 	
 	// add some AJAX calls
-	require_once('SMW_Autocomplete.php');
-	require_once('SMW_CombinedSearch.php');
-	require_once('SMW_ContentProviderForAura.php');
+	if ($action == 'ajax') {
+		require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+		require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+		require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+		require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+		require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+		require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
+		require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+		require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+		require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+		
+	} else { // otherwise register special pages
 
-
-	// Register new or overwrite existing special pages
-	$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
-	$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
-
-	$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
-	$wgSpecialPages['Gardening'] = array('SMWGardening');
-
-	$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
-	$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
-
-	$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
-	$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
-
-	$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
-	//$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
-
-	$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
+		// Register new or overwrite existing special pages
+		$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
+		$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 	
-	//$wgAutoloadClasses['SMWRefactorStatistics'] = $smwgHaloIP . '/specials/SMWRefactorStatistics/SMW_RefactorStatistics.php';
-	//$wgSpecialPages['RefactorStatistics'] = array('SMWRefactorStatistics');
+		$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
+		$wgSpecialPages['Gardening'] = array('SMWGardening');
 	
-	$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
+		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
+		$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
 	
-	// import global functions and remaining AJAX calls
-	require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-	require_once($smwgHaloIP . '/includes/SMW_GlobalFunctionsForSpecials.php');
-	require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-	require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
-	require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+		$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
+		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
+	
+		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
+		
+		//KK: Deactivate Halo RDFExport. It is too buggy
+		//$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
+	
+		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
+						
+		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
+	}
+	
+	// include SMW logger (exported as ajax function but also used locally)
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
 	
 	// import available job classes (for refactoring)
@@ -139,6 +149,7 @@ function smwgHaloSetupExtension() {
 
 	// Register Annotate-Tab
 	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
+	
 	
 	// Register Credits
 	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION, 
@@ -769,5 +780,180 @@ function smwfAnnotateAction($action, $article) {
 	
 	return false;
 }
+
+// OntologyBrowser scripts callback
+// includes necessary script and css files.
+ function smwOBAddHTMLHeader(&$out) {
+ 	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+		
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
+		
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/ontologytools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeview.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewActions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewData.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/deployOntologyBrowser.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	}
+
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
+
+	return true;
+}
+
+// Gardening scripts callback
+// includes necessary script and css files.
+function smwGAAddHTMLHeader(&$out) {
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 	
+	global $smwgHaloScriptPath, $smwgDeployVersion;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/scriptaculous.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/gardening.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/deployGardening.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		
+	}
+
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Gardening/gardening.css', "all", -1, NS_SPECIAL.":Gardening");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Gardening/gardeningLog.css', "all", -1, NS_SPECIAL.":GardeningLog");
+
+	return true;
+}
+
+// QueryInterface scripts callback
+// includes necessary script and css files.
+function smwfQIAddHTMLHeader(&$out){
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+	
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgScriptPath;
+
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Logger/smw_logger.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/treeviewQI.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/queryTree.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SemanticToolbar/SMW_Help.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	} else {
+
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	}
+	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");	
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
+
+	return true; // do not load other scripts or CSS
+}
+
+// FindWork page callback
+// includes necessary script and css files.
+function smwFWAddHTMLHeader(& $out) {
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+	
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":FindWork");
+		
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":FindWork");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":FindWork");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/FindWork/findwork.js', "all", -1, NS_SPECIAL.":FindWork");
+		
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":FindWork");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":FindWork");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/FindWork/findwork.js', "all", -1, NS_SPECIAL.":FindWork");
+	}
+
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/FindWork/findwork.css', "all", -1, NS_SPECIAL.":FindWork");
+	
+	return true;
+}
+
+function smwfRegisterHaloInlineQueries( &$parser, &$text, &$stripstate ) {
+	$parser->setHook( 'ask', 'smwfProcessHaloInlineQuery' );
+	$parser->setFunctionHook( 'ask', 'smwfProcessHaloInlineQueryParserFunction' );
+	return true; // always return true, in order not to stop MW's hook processing!
+}
+
+
+/**
+ * The <ask> parser hook processing part.
+ */
+function smwfProcessHaloInlineQuery($text, $param, &$parser) {
+	global $smwgQEnabled, $smwgHaloIP, $smwgIQRunningNumber;
+
+	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
+		require_once($smwgHaloIP . '/includes/SMW_QueryHighlighter.php');
+		return applyQueryHighlighting($text, $param);
+	} else {
+		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
+	}
+}
+
+function smwfProcessHaloInlineQueryParserFunction(&$parser) {
+	global $smwgQEnabled, $smwgIP, $smwgIQRunningNumber;
+	if ($smwgQEnabled) {
+		$smwgIQRunningNumber++;
+		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
+		$rawparams = func_get_args();
+		array_shift( $rawparams ); // we already know the $parser ...
+
+		//return SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+		//return SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		
+		return applyQueryHighlighting($querystring, $params, true, $format, $printouts);
+	} else {
+		return smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
+	}
+}	
 ?>

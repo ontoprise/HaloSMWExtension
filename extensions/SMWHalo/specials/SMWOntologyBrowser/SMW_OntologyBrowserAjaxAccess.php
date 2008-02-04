@@ -8,6 +8,7 @@
  */
 global $smwgIP, $smwgHaloIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwfOntologyBrowserAccess';
+$wgAjaxExportList[] = 'smwfPreviewRefactoring';
 
 require_once($smwgIP . "/includes/storage/SMW_Store.php");
 require_once($smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
@@ -153,6 +154,46 @@ function smwfOntologyBrowserAccess($method, $params) {
  		
  	}
  	 	
+}
+
+/**
+ * Returns semantic statistics about the page.
+ * 
+ * @param $titleText Title string
+ * @param $ns namespace
+ * 
+ * @return HTML table content (but no table tags!)
+ */
+function smwfPreviewRefactoring($titleText, $ns) {
+	$tableContent = "";
+	$title = Title::newFromText($titleText, $ns);
+	switch($ns) {
+ 			case NS_CATEGORY: {
+		 		list($numOfInstances, $numOfCategories) = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories($title);
+		 		$numOfProperties = smwfGetSemanticStore()->getNumberOfProperties($title);
+		 		$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofsubcategories').'</td><td>'.$numOfCategories.'</td></tr>';
+		 		$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofinstances').'</td><td>'.$numOfInstances.'</td></tr>';
+		 		$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofproperties').'</td><td>'.$numOfProperties.'</td></tr>';
+ 				break;
+ 			}
+ 			case SMW_NS_PROPERTY: {
+ 				$numberOfUsages = smwfGetSemanticStore()->getNumberOfUsage($title);
+ 				$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofpropusages', $numberOfUsages).'</td></tr>';
+ 				break;
+ 			}
+ 			case NS_MAIN: {
+ 				$numOfTargets = smwfGetSemanticStore()->getNumberOfPropertiesForTarget($title);
+ 				$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumoftargets', $numOfTargets).'</td></tr>';
+ 				break;
+ 			}
+ 			case NS_TEMPLATE: {
+ 				$numberOfUsages = smwfGetSemanticStore()->getNumberOfUsage($title);
+ 				$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumoftempuages', $numberOfUsages).'</td></tr>';
+ 				break;
+ 			}
+ 		}
+ 
+ 	return $tableContent;
 }
 
 /**
