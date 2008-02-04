@@ -28,11 +28,12 @@
  		parent::GardeningBot("smw_exportontologybot");
  		
  		// initialize map
- 		$this->mapWikiTypeToXSD['_int'] = 'integer';
  		$this->mapWikiTypeToXSD['_str'] = 'string';
- 		$this->mapWikiTypeToXSD['_flt'] = 'float';
  		$this->mapWikiTypeToXSD['_num'] = 'float';
  		$this->mapWikiTypeToXSD['_boo'] = 'boolean';
+ 		
+ 		$this->mapWikiTypeToXSD['_int'] = 'integer'; // deprecated
+ 		$this->mapWikiTypeToXSD['_flt'] = 'float'; // deprecated
  	}
  	
  	public function getHelpText() {
@@ -214,7 +215,7 @@
 	 		}
  			$properties = smwfGetStore()->getProperties($inst);
  			
- 			// export properties
+ 			// export property values (aka annotations)
  			foreach($properties as $p) {
  				// create valid xml export ID for property. If no exists, skip it.
  				$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getDBkey());
@@ -224,9 +225,10 @@
  					// export WikiPage value as ObjectProperty
 					if ($smwValue instanceof SMWWikiPageValue) {
 						$target = $smwValue->getTitle();
-						
-													
-							if ($target!=NULL) $owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($target->getDBkey()).'"/>'.LINE_FEED;
+																			
+							if ($target!=NULL) {
+								$owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($target->getDBkey()).'"/>'.LINE_FEED;
+							}
 						
 		 			} else { // and all others as datatype properties (including n-aries)
 		 										
@@ -520,7 +522,9 @@
 					list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
 					$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 					if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-						return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ' rdf:datatype="&xsd;float">' . smwfXMLContentEncode($dv->getXSDValue()) . '</prop:' . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ">\n";
+						return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ' rdf:datatype="&xsd;float">' . 
+										smwfXMLContentEncode($dv->getXSDValue()) . 
+								'</prop:' . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ">\n";
 					}
 
 			}
