@@ -752,7 +752,7 @@ AdvancedAnnotation.prototype = {
 			}
 		};
 		
-		sajax_do_call('smwfGetWikiText', 
+		sajax_do_call('smwf_om_GetWikiText', 
 		              [wgPageName], 
 		              ajaxResponseLoadWikiText.bind(this));
 		              

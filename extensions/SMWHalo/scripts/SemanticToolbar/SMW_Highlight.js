@@ -38,7 +38,7 @@ function getSelText()
 function mouseUp(){
 	var txt = getSelText();
 	if(txt != ''){
-		sajax_do_call('checkSelection', [wgArticleId, txt], respondToSelection);
+		sajax_do_call('smwf_tb_checkSelection', [wgArticleId, txt], respondToSelection);
 	}
 }
 

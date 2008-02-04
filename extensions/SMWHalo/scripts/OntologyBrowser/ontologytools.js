@@ -171,7 +171,7 @@ OBArticleCreator.prototype = {
 			}
 		}
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwfCreateArticle', 
+		sajax_do_call('smwf_om_CreateArticle', 
 		              [title, content, optionalText, creationComment], 
 		              ajaxResponseCreateArticle.bind(this));
 		              
@@ -205,7 +205,7 @@ OBArticleCreator.prototype = {
 		}
 		
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwfDeleteArticle', 
+		sajax_do_call('smwf_om_DeleteArticle', 
 		              [title, reason], 
 		              ajaxResponseDeleteArticle.bind(this));
 	},
@@ -238,7 +238,7 @@ OBArticleCreator.prototype = {
 		}
 		
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwfRenameArticle', 
+		sajax_do_call('smwf_om_RenameArticle', 
 		              [oldTitle, newTitle, reason], 
 		              ajaxResponseRenameArticle.bind(this));
 	},
@@ -263,7 +263,7 @@ OBArticleCreator.prototype = {
 		}
 		
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwfMoveCategory', 
+		sajax_do_call('smwf_om_MoveCategory', 
 		              [draggedCategory, oldSuperCategory, newSuperCategory], 
 		              ajaxResponseMoveCategory.bind(this));
 	},
@@ -288,7 +288,7 @@ OBArticleCreator.prototype = {
 		}
 		
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwfMoveProperty', 
+		sajax_do_call('smwf_om_MoveProperty', 
 		              [draggedProperty, oldSuperProperty, newSuperProperty], 
 		              ajaxResponseMoveProperty.bind(this));
 	}
@@ -980,7 +980,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		}
 		this.pendingElement.show(this.id)
 		var pageNameWithNS = this.ns == '' ? pageName : this.ns+":"+pageName;
-		sajax_do_call('smwfExistsArticleIgnoreRedirect', 
+		sajax_do_call('smwf_om_ExistsArticleIgnoreRedirect', 
 		              [pageNameWithNS], 
 		              ajaxResponseExistsArticle.bind(this, this.id));
 		return null;
@@ -1734,10 +1734,10 @@ OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 			this.builtinTypes = this.builtinTypes.concat(userTypes);
 		}
 		
-		sajax_do_call('smwfGetBuiltinDatatypes', 
+		sajax_do_call('smwf_tb_GetBuiltinDatatypes', 
 		              [], 
 		              fillBuiltinTypesCallback.bind(this));	
-		sajax_do_call('smwfGetUserDatatypes', 
+		sajax_do_call('smwf_tb_GetUserDatatypes', 
 		              [], 
 		              fillUserTypesCallback.bind(this));	
 	},

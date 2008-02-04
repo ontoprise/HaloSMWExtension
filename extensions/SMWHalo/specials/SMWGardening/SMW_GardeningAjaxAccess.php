@@ -22,7 +22,7 @@
 global $smwgHaloIP;
 require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningBot.php");
 require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningLog.php");
-
+require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
 /**
  * Runs a gardening bot.
  *

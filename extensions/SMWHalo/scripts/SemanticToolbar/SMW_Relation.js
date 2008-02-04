@@ -320,7 +320,7 @@ newItem: function() {
 
 updateSchema: function(elementID) {
 	relToolBar.toolbarContainer.showSandglass(elementID);
-	sajax_do_call('smwfRelationSchemaData',
+	sajax_do_call('smwf_om_RelationSchemaData',
 	              [$('rel-name').value],
 	              relToolBar.updateNewItem.bind(relToolBar));
 },
@@ -1058,7 +1058,7 @@ getselectedItem: function(selindex) {
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CHANGE_PROPERTY'), '' , true));
 	if(relation.getName().strip()!=""){
 		this.toolbarContainer.showSandglass('rel-help-msg');
-		sajax_do_call('smwfRelationSchemaData', [relation.getName()], getSchemaCallback.bind(this));
+		sajax_do_call('smwf_om_RelationSchemaData', [relation.getName()], getSchemaCallback.bind(this));
 	}
 }
 

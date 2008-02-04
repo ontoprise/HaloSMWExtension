@@ -7,7 +7,7 @@
  global $smwgHaloIP;
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
  require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
- require_once("$smwgHaloIP/specials/SMWGardening/SMW_Gardening.php");
+ require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
  
  define('SMW_GARD_RESULT_LIMIT_DEFAULT', 100);
  define('SMW_GARD_SIM_LIMIT_DEFAULT', 0);
@@ -21,12 +21,12 @@
  	
  	private $gi_store;
  	
- 	function SimilarityBot() {
+ 	function __construct() {
  		parent::GardeningBot("smw_similaritybot");
  		
  		$this->commonSuffixes = array('of');
  		$this->commonPrefixes = array('has');
-		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		
  	}
  	
  	public function getHelpText() {
@@ -65,7 +65,7 @@
  	 * Do not use echo when it is not running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		
+ 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  		echo "...started!\n";
  		$result = "";	 		
  		

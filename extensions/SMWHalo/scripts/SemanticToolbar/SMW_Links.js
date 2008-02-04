@@ -17,7 +17,7 @@
 Event.observe(window, 'load', smw_links_callme);
 
 var createLinkList = function() {
-	sajax_do_call('getLinks', [wgArticleId], addLinks);
+	sajax_do_call('smwf_tb_getLinks', [wgArticleId], addLinks);
 }
 
 function smw_links_callme(){

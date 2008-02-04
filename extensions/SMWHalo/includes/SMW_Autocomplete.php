@@ -24,7 +24,9 @@ $smwhgAutoCompletionStore = null;
 global $smwgIP, $smwgHaloIP;
 
 require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
+require_once( $smwgIP . "/includes/storage/SMW_Store.php");
 require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
+
  /*
   * Dispatches an auto-completion request.
   * 

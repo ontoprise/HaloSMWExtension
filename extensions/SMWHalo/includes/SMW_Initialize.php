@@ -89,35 +89,43 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
 	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	
-	// register message system
-	smwfHaloInitContentMessages();
-	smwfHaloInitUserMessages(); // maybe a lazy init would save time like in SMW?
-
-	// add additional special properties to SMW
-	$smwgHaloContLang->registerSpecialProperties();
+	// register message system (not for ajax, only by demand)
+	if ($action != 'ajax') {
+		smwfHaloInitMessages();
+	}
 	
 	// add some AJAX calls
 	if ($action == 'ajax') {
 		$method_prefix = smwfGetAjaxMethodPrefix();
+		
+		// decide according to ajax method prefix which script(s) to import
 		switch($method_prefix) {
 			case '_ac_' : require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
 						break;
-			case '_cs_' : require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+			case '_cs_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
 						break;
-			case '_ga_' : require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+			case '_ga_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
 						break;
-			case '_ob_' : require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-						break;			
+			case '_ob_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+						break; 			
 			case '_fw_' : require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
 						break;		
-			case '_ca_' : require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+			case '_ca_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
 						break;	
 			case '_qi_' : require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 						break;
-			//TODO: add case statements for missing groups of functions. 
-			//Don't forget the breaks:-)
-			
-			default: // default case just imports everything
+			case '_tb_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+						break;
+			case '_om_' : require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+						break;
+						
+			default: // default case just imports everything (should be avoided)
+				smwfHaloInitMessages();
 				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
 				require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
 				require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
@@ -181,6 +189,14 @@ function smwgHaloSetupExtension() {
 	return true;
 }
 
+function smwfHaloInitMessages() {
+	global $smwgHaloContLang;
+	smwfHaloInitContentMessages();
+	smwfHaloInitUserMessages(); // lazy init for ajax calls
+		
+	// add additional special properties to SMW
+	$smwgHaloContLang->registerSpecialProperties();
+}
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
@@ -980,7 +996,7 @@ function smwfProcessHaloInlineQueryParserFunction(&$parser) {
 }
 
 function smwfGetAjaxMethodPrefix() {
-	$func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : NULL;
+	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
 	if ($func_name == NULL) return NULL;
 	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
 }	

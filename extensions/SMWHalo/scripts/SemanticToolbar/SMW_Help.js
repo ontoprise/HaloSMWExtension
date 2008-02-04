@@ -33,7 +33,7 @@ var initHelp = function(){
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
 		ns = "OntologyBrowser";
 	}
-	sajax_do_call('smwfGetHelp', [ns , wgAction], displayHelp.bind(this));
+	sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
 }
 
 function smw_help_callme(){
@@ -85,7 +85,7 @@ function askQuestion(){
 	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
 		ns = "OntologyBrowser";
 	}
-	sajax_do_call('smwfAskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
+	sajax_do_call('smwf_tb_AskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
 }
 
 function hideQuestionForm(request){

@@ -25,17 +25,17 @@
 
 global $wgAjaxExportList;
 
-$wgAjaxExportList[] = 'smwfCreateArticle';
-$wgAjaxExportList[] = 'smwfEditArticle';
-$wgAjaxExportList[] = 'smwfTouchArticle';
-$wgAjaxExportList[] = 'smwfExistsArticle';
-$wgAjaxExportList[] = 'smwfExistsArticleIgnoreRedirect';
-$wgAjaxExportList[] = 'smwfRelationSchemaData';
-$wgAjaxExportList[] = 'smwfGetWikiText';
-$wgAjaxExportList[] = 'smwfDeleteArticle';
-$wgAjaxExportList[] = 'smwfRenameArticle';
-$wgAjaxExportList[] = 'smwfMoveCategory';
-$wgAjaxExportList[] = 'smwfMoveProperty';
+$wgAjaxExportList[] = 'smwf_om_CreateArticle';
+$wgAjaxExportList[] = 'smwf_om_EditArticle';
+$wgAjaxExportList[] = 'smwf_om_TouchArticle';
+$wgAjaxExportList[] = 'smwf_om_ExistsArticle';
+$wgAjaxExportList[] = 'smwf_om_ExistsArticleIgnoreRedirect';
+$wgAjaxExportList[] = 'smwf_om_RelationSchemaData';
+$wgAjaxExportList[] = 'smwf_om_GetWikiText';
+$wgAjaxExportList[] = 'smwf_om_DeleteArticle';
+$wgAjaxExportList[] = 'smwf_om_RenameArticle';
+$wgAjaxExportList[] = 'smwf_om_MoveCategory';
+$wgAjaxExportList[] = 'smwf_om_MoveProperty';
 
 /**
  * Creates a new article or appends some text if it already
@@ -63,7 +63,7 @@ $wgAjaxExportList[] = 'smwfMoveProperty';
  * 				Title of the (new) article
  *
  */
-function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
+function smwf_om_CreateArticle($title, $content, $optionalText, $creationComment) {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -160,7 +160,7 @@ function smwfCreateArticle($title, $content, $optionalText, $creationComment) {
  * 				Title of the (new) article
  *
  */
-function smwfEditArticle($title, $content, $editComment) {
+function smwf_om_EditArticle($title, $content, $editComment) {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -197,7 +197,7 @@ function smwfEditArticle($title, $content, $editComment) {
  * 	'true', if the article exists
  *  'false', otherwise
  */
-function smwfTouchArticle($title) {
+function smwf_om_TouchArticle($title) {
 	$title = Title::newFromText($title);
 
 	$article = new Article($title);
@@ -224,7 +224,7 @@ function smwfTouchArticle($title) {
  *                "false" => the article does not exist
  *
  */
-function smwfExistsArticle($title) {
+function smwf_om_ExistsArticle($title) {
 	global $wgContLang;
 
 
@@ -283,7 +283,7 @@ function smwfExistsArticle($title) {
  *                "false" => the article does not exist
  *
  */
-function smwfExistsArticleIgnoreRedirect($title) {
+function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	global $wgContLang;
 
 
@@ -333,7 +333,7 @@ function smwfExistsArticleIgnoreRedirect($title) {
 	return "false";
 }
 
-function smwfIsRedirect(Title $title) {
+function smwf_om_IsRedirect(Title $title) {
 	$db =& wfGetDB( DB_MASTER );
 	$pagetable = $db->tableName('page');
 	return $db->selectRow($pagetable, 'page_is_redirect', array('page_title' => $title->getDBkey(), 'page_namespace' => $title->getNamespace(), 'page_is_redirect' => 1)) !== false;
@@ -358,7 +358,7 @@ function smwfIsRedirect(Title $title) {
  *
  * @return xml string
  */
-function smwfRelationSchemaData($relationName) {
+function smwf_om_RelationSchemaData($relationName) {
 	global $smwgHaloContLang;
 	$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
@@ -427,7 +427,7 @@ function smwfRelationSchemaData($relationName) {
  * @return string The wiki text or an empty string.
  *
  */
-function smwfGetWikiText($pagename) {
+function smwf_om_GetWikiText($pagename) {
 	$titleObj = Title::newFromText($pagename);
 	$article = new Article($titleObj);
 
@@ -444,7 +444,7 @@ function smwfGetWikiText($pagename) {
  * @param string $pagename The name of the article.
  * @param string $reason A reason why it was deleted.
  */
-function smwfDeleteArticle($pagename, $reason) {
+function smwf_om_DeleteArticle($pagename, $reason) {
 	$titleObj = Title::newFromText($pagename);
 	$article = new Article($titleObj);
 
@@ -461,7 +461,7 @@ function smwfDeleteArticle($pagename, $reason) {
  * @param string $newpagename The new name of the article.
  * @param string $reason A reason why it was renamed.
  */
-function smwfRenameArticle($pagename, $newpagename, $reason) {
+function smwf_om_RenameArticle($pagename, $newpagename, $reason) {
 	$newpagename = strip_tags($newpagename);
 	if ($newpagename == '') return "false";
 	
@@ -488,7 +488,7 @@ function smwfRenameArticle($pagename, $newpagename, $reason) {
  * @param $oldSuperCategory Title of old supercategory. (String) May be NULL
  * @param $newSuperCategory Title of new supercategory. (String) May be NULL
  */
-function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
+function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
 	$newSuperCategory = strip_tags($newSuperCategory);
 	if ($newSuperCategory == '') return "false";
 	
@@ -538,7 +538,7 @@ function smwfMoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory
  * @param $oldSuperProperty Title of old superproperty. (String) May be NULL
  * @param $newSuperProperty Title of new superproperty. (String) May be NULL
  */
-function smwfMoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
+function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
 	$newSuperProperty = strip_tags($newSuperProperty);
 	if ($newSuperProperty == '') return "false";
 	

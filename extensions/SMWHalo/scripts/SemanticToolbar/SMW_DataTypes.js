@@ -87,11 +87,11 @@ DataTypes.prototype = {
 		}
 		if (!this.refreshPending) {
 			this.refreshPending = true;
-			sajax_do_call('smwfGetUserDatatypes', 
+			sajax_do_call('smwf_tb_GetUserDatatypes', 
 			              [], 
 			              this.ajaxResponseGetDatatypes.bind(this));
 			if (!this.builtinTypes) {
-				sajax_do_call('smwfGetBuiltinDatatypes', 
+				sajax_do_call('smwf_tb_GetBuiltinDatatypes', 
 				              [], 
 				              this.ajaxResponseGetDatatypes.bind(this));
 			}

@@ -165,6 +165,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  * @return HTML table content (but no table tags!)
  */
 function smwf_ob_PreviewRefactoring($titleText, $ns) {
+	
 	$tableContent = "";
 	$title = Title::newFromText($titleText, $ns);
 	switch($ns) {

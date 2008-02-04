@@ -110,7 +110,7 @@ OntologyModifier.prototype = {
 		};
 		
 		if (pageName.length < 255) {
-			sajax_do_call('smwfExistsArticle', 
+			sajax_do_call('smwf_om_ExistsArticle', 
 			              [pageName], 
 			              ajaxResponseExistsArticle.bind(this));
 			return true;
@@ -144,7 +144,7 @@ OntologyModifier.prototype = {
 	createArticle : function(title, content, optionalText, creationComment,
 	                         redirect) {
 		this.redirect = redirect;
-		sajax_do_call('smwfCreateArticle', 
+		sajax_do_call('smwf_om_CreateArticle', 
 		              [title, content, optionalText, creationComment], 
 		              this.ajaxResponseCreateArticle.bind(this));
 		              
@@ -167,7 +167,7 @@ OntologyModifier.prototype = {
 	 */
 	editArticle : function(title, content, editComment, redirect) {
 		this.redirect = redirect;
-		sajax_do_call('smwfEditArticle', 
+		sajax_do_call('smwf_om_EditArticle', 
 		              [title, content, editComment], 
 		              this.ajaxResponseEditArticle.bind(this));
 	},
@@ -186,7 +186,7 @@ OntologyModifier.prototype = {
 			
 		};
 		
-		sajax_do_call('smwfTouchArticle', [title], touchArticleCallback.bind(this));
+		sajax_do_call('smwf_om_TouchArticle', [title], touchArticleCallback.bind(this));
 	},
 	
 	/**

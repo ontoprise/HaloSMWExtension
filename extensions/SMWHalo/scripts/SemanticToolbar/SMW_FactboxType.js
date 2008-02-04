@@ -17,7 +17,7 @@
 function factboxTypeChanged(select, title){
 		$('typeloader').show();
 		var type = select.options[select.options.selectedIndex].value;
-		sajax_do_call('smwgNewAttributeWithType', [title, type], refreshAfterTypeChange);
+		sajax_do_call('smwf_tb_NewAttributeWithType', [title, type], refreshAfterTypeChange);
 }
 
 function refreshAfterTypeChange(request){

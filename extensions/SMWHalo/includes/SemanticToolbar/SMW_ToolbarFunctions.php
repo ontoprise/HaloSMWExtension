@@ -9,20 +9,20 @@ global $wgAjaxExportList;
 //require_once('SMW_ToolbarFramework.php');
 //require_once('SMW_Toolbartab.php');
 
-$wgAjaxExportList[] = 'smwfGetHelp';
-$wgAjaxExportList[] = 'getLinks';
-$wgAjaxExportList[] = 'getAnnotations';
-$wgAjaxExportList[] = 'checkSelection';
-$wgAjaxExportList[] = 'getEditToolbar';
-$wgAjaxExportList[] = 'getCategoryToolbar';
-$wgAjaxExportList[] = 'getAttributeToolbar';
-$wgAjaxExportList[] = 'getRelationToolbar';
-$wgAjaxExportList[] = 'smwgGetDatatypeSelector';
-$wgAjaxExportList[] = 'smwfGetBuiltinDatatypes';
-$wgAjaxExportList[] = 'smwfGetUserDatatypes';
-$wgAjaxExportList[] = 'smwfAskQuestion';
-$wgAjaxExportList[] = 'smwgChangeAttributeType';
-$wgAjaxExportList[] = 'smwgNewAttributeWithType';
+$wgAjaxExportList[] = 'smwf_tb_GetHelp';
+$wgAjaxExportList[] = 'smwf_tb_getLinks';
+$wgAjaxExportList[] = 'smwf_tb_getAnnotations';
+$wgAjaxExportList[] = 'smwf_tb_checkSelection';
+//$wgAjaxExportList[] = 'getEditToolbar';
+//$wgAjaxExportList[] = 'getCategoryToolbar';
+//$wgAjaxExportList[] = 'getAttributeToolbar';
+//$wgAjaxExportList[] = 'getRelationToolbar';
+//$wgAjaxExportList[] = 'smwgGetDatatypeSelector';
+$wgAjaxExportList[] = 'smwf_tb_GetBuiltinDatatypes';
+$wgAjaxExportList[] = 'smwf_tb_GetUserDatatypes';
+$wgAjaxExportList[] = 'smwf_tb_AskQuestion';
+//$wgAjaxExportList[] = 'smwgChangeAttributeType';
+$wgAjaxExportList[] = 'smwf_tb_NewAttributeWithType';
 
 /**
  * This function will load context sensitive help from the language help files
@@ -31,7 +31,7 @@ $wgAjaxExportList[] = 'smwgNewAttributeWithType';
  * @param $action action of current page
  * @return $html html-string containing help
  */
-function smwfGetHelp($namespace, $action){
+function smwf_tb_GetHelp($namespace, $action){
 	global $wgScriptPath, $smwgHaloScriptPath, $smwgAllowNewHelpQuestions;
 	$html = '';
 	$helppages = array();
@@ -117,7 +117,7 @@ function smwfGetHelp($namespace, $action){
  * @param $action current action of the user
  * @param $question question entered by the user
  */
-function smwfAskQuestion($namespace, $action, $question){
+function smwf_tb_AskQuestion($namespace, $action, $question){
 	if($question == ""){
 		return "Sorry, you have not entered a question.";
 	}
@@ -165,7 +165,7 @@ function smwfAskQuestion($namespace, $action, $question){
  * @param $articleId ID of current article
  * @return $html htmlstring containing all links
  */
-function getLinks($articleId){
+function smwf_tb_getLinks($articleId){
 	global $wgArticlePath, $smwgHaloScriptPath;
 	$linksExist = false;
 	$html = '<div id="edit">' .
@@ -241,7 +241,7 @@ function getRelationToolbar(){
  * @param $articleId ID of current article
  * @return $html html-string containing all annotations
  */
-function getAnnotations($articleId){
+function smwf_tb_getAnnotations($articleId){
 
 	$hadresults = false;
 	$html = '';
@@ -279,7 +279,7 @@ function getAnnotations($articleId){
  * @param $txt The selected text
  * @return anonymous A string containing '::'-seperated information of the data found
  */
-function checkSelection($articleId, $markedText){
+function smwf_tb_checkSelection($articleId, $markedText){
 
 //First check if it's a link
 	$found = false;
@@ -357,7 +357,7 @@ function smwgGetDatatypeSelector($articleId){
  * function smwfGetBuiltinDatatypes
  * This function returns a comma separated list of all builtin data types
  */
-function smwfGetBuiltinDatatypes(){
+function smwf_tb_GetBuiltinDatatypes(){
 	global $smwgIP, $smwgHaloContLang;
 	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$result = "Builtin types:";
@@ -378,7 +378,7 @@ function smwfGetBuiltinDatatypes(){
  * function smwfGetUserDatatypes
  * This function returns a comma separated list of all user defined data types
  */
-function smwfGetUserDatatypes(){
+function smwf_tb_GetUserDatatypes(){
 	global $smwgIP;
 //	include_once($smwgIP . '/includes/SMW_Datatype.php');
 	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
@@ -435,7 +435,7 @@ function smwgChangeAttributeType($id, $type){
 	$success = $wgArticle->doEdit( $content, "Changed attribute type", EDIT_UPDATE);
 }
 
-function smwgNewAttributeWithType($title, $type){
+function smwf_tb_NewAttributeWithType($title, $type){
 	$wgTitle = Title::newFromText( $title );
 	$wgArticle = new Article( $wgTitle );
 	if($wgArticle->exists()){
