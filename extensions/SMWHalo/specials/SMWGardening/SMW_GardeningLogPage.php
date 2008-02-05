@@ -6,8 +6,10 @@
  */
  if (!defined('MEDIAWIKI')) die();
 
-global $smwgIP;
+global $smwgIP, $smwgHaloIP;
 include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
+include_once( "$smwgHaloIP/specials/SMWGardening/SMW_Gardening.php");
+
 
 function smwfDoSpecialLogPage() {
 	wfProfileIn('smwfDoSpecialLogPage (SMW Halo)');
