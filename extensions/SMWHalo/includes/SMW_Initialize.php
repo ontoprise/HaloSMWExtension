@@ -121,7 +121,8 @@ function smwgHaloSetupExtension() {
 			case '_tb_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 						break;
-			case '_om_' : require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+			case '_om_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 						break;
 						
 			default: // default case just imports everything (should be avoided)
@@ -190,12 +191,14 @@ function smwgHaloSetupExtension() {
 }
 
 function smwfHaloInitMessages() {
-	global $smwgHaloContLang;
+	global $smwgHaloContLang, $smwgMessagesInitialized;
+	if (isset($smwgMessagesInitialized)) return; // prevent double init
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // lazy init for ajax calls
 		
 	// add additional special properties to SMW
 	$smwgHaloContLang->registerSpecialProperties();
+	$smwgMessagesInitialized = true;
 }
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
@@ -561,9 +564,10 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	*  or propeerty gets changed. 
 	*/
 	function smwfHaloSaveHook(&$article, &$user, &$text) {
-		global $smwgIP;
+		global $smwgIP, $smwgHaloIP;
 		include_once($smwgIP . '/includes/SMW_Factbox.php'); // Normally this must have happende, but you never know ...
-
+		include_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php'); 
+		
 		$title=$article->getTitle();
 		SMWGardening::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
 		
