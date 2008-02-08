@@ -76,7 +76,7 @@ var wgLanguageStrings = {
 	'NO_OBJECT_FOR_POR'       : 'Kein Objekt für die Teil-von Relation gegeben.',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
 
-	// Property properties toolbar
+	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)Dieses Attribut existiert nicht.',
 	'PROPERTY_ALREADY_EXISTS' : '(w)Dieses Attribut existiert bereits.',
 	'PROPERTY_NAME_TOO_LONG'  : '(e)Der Name des Attributs ist zu lang oder enthält ungültige Zeichen.',
@@ -104,6 +104,11 @@ var wgLanguageStrings = {
 	'PAGE_TYPE'               : "page",		// name of the page data type
 	'NARY_TYPE'               : "n-ary",       // name of the n-ary data type
 	'SPECIFY_PROPERTY'		  : "Spezifizieren Sie dieses Attribut.",
+	'PC_DUPLICATE'			  : "Mindestens ein Attribut wird mehrfach spezifiziert. Entfernen Sie bitte die Duplikate.",
+	'PC_HAS_TYPE'			  : "hat Typ", 
+	'PC_MAX_CARD'			  : "hat max Kardinalität",
+	'PC_MIN_CARD'			  : "hat min Kardinalität",
+	'PC_INVERSE_OF'			  : "ist invers zu", 
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotieren Sie eine Kategorie.',

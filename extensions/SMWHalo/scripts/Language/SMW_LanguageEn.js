@@ -77,7 +77,7 @@ var wgLanguageStrings = {
 	'NO_OBJECT_FOR_POR'       : 'No object for part-of relation given.',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
 
-	// Property properties toolbar
+	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',
 	'PROPERTY_ALREADY_EXISTS' : '(w)This property already exists.',
 	'PROPERTY_NAME_TOO_LONG'  : '(e)The name of this property is too long or contains invalid characters.',
@@ -105,6 +105,11 @@ var wgLanguageStrings = {
 	'PAGE_TYPE'               : "page",		// name of the page data type
 	'NARY_TYPE'               : "n-ary",       // name of the n-ary data type
 	'SPECIFY_PROPERTY'		  : "Specify this property.",
+	'PC_DUPLICATE'			  : "At least one property is specified several times. Please remove the duplicates.",
+	'PC_HAS_TYPE'			  : "has type", 
+	'PC_MAX_CARD'			  : "Has max cardinality",
+	'PC_MIN_CARD'			  : "Has min cardinality",
+	'PC_INVERSE_OF'			  : "Is inverse of", 
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotate a category.',

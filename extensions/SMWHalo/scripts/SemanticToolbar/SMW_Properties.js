@@ -99,6 +99,7 @@ initialize: function() {
 	this.isNAry = false;
 	this.numOfParams = 0;
 	this.prpNAry = 0;
+	this.hasDuplicates = false;
 },
 
 showToolbar: function(request){
@@ -143,10 +144,47 @@ createContent: function() {
 	  
 	var transitive = this.wtp.getCategory(TRANSITIVE_RELATION);
 	var symmetric = this.wtp.getCategory(SYMMETRICAL_RELATION);
+
+	// Check if some property characteristic are given several times
+	var duplicatesFound = false;
+	var doubleDefinition = gLanguage.getMessage('PC_DUPLICATE') + "<ul>";
+	
+	if (type && type.size() > 1) {
+		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_HAS_TYPE')+"<tt></li>";
+		duplicatesFound = true;
+	}
+	if (maxCard && maxCard.size() > 1) {
+		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_MAX_CARD')+"<tt></li>";
+		duplicatesFound = true;
+	}
+	if (minCard && minCard.size() > 1) {
+		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_MIN_CARD')+"<tt></li>";
+		duplicatesFound = true;
+	}
+	if (inverse && inverse.size() > 1) {
+		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_INVERSE_OF')+"<tt></li>";
+		duplicatesFound = true;
+	}
+	doubleDefinition += "</ul>";
+	
+	if (duplicatesFound) {
+		if (this.toolbarContainer) {
+			this.toolbarContainer.release();
+		}
+		this.toolbarContainer = new ContainerToolBar('properties-content',800,this.propertiescontainer);
+		this.toolbarContainer.createContainerBody(SMW_PRP_ALL_VALID);
+		this.toolbarContainer.append(doubleDefinition);
+		this.toolbarContainer.finishCreation();
+		this.hasDuplicates = true;
+		return;
+	}
 	
 	var changed = this.hasAnnotationChanged(
 						[type, domain, range, maxCard, minCard, inverse], 
 	                    [transitive, symmetric]);
+	                    
+	changed |= this.hasDuplicates; // Duplicates have been removed
+	this.hasDuplicates = false;
 	
 	if (!changed) {
 		// nothing changed
@@ -159,7 +197,7 @@ createContent: function() {
 	this.toolbarContainer = new ContainerToolBar('properties-content',800,this.propertiescontainer);
 	var tb = this.toolbarContainer;
 	tb.createContainerBody(SMW_PRP_ALL_VALID);
-	
+		
 	if (type) {
 		type = type[0].getValue();
 		// remove the prefix "Type:" and lower the case of the first character
