@@ -22,7 +22,10 @@
  define('SMW_GARD_ALL_USERS', 'darkmatter');
  define('SMW_GARD_GARDENERS', 'gardener');
  define('SMW_GARD_SYSOPS' , 'sysop');
- define('MAX_LOG_LENGTH', 50);
+ 
+ // defines a port range (100 ports) beginning with 5000 by default
+ // can be configured in LocalSettings.php by setting $smwgAbortBotPortRange
+ define('ABORT_BOT_PORT_RANGE', 5000);
  
  abstract class GardeningBot {
  	
@@ -161,9 +164,14 @@
  	 * DO NOT CALL EVER
  	 */
  	public function initializeTermSignal($taskid) {
+ 		global $smwgAbortBotPortRange;
+ 		if (!isset($smwgAbortBotPortRange)) $smwgAbortBotPortRange = ABORT_BOT_PORT_RANGE;
  		// create a socket for termination signal
- 		$this->socket = socket_create_listen(($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
- 		socket_set_nonblock($this->socket);
+ 		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
+ 		$this->socket = socket_create_listen(($taskid % 100) + $smwgAbortBotPortRange); 
+ 		if ($this->socket !== false) {
+ 			socket_set_nonblock($this->socket);
+ 		}
  	}
  	
  	/**
@@ -205,8 +213,11 @@
  	 * @return TRUE if abortion was auccessful, otherwise FALSE.
  	 */
  	public static function abortBot($taskid) {
+ 		global $smwgAbortBotPortRange;
+ 		if (!isset($smwgAbortBotPortRange)) $smwgAbortBotPortRange = ABORT_BOT_PORT_RANGE;
  		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + 500); // port is freely chosen 500 <= port <= 600
+ 		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
+		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + $smwgAbortBotPortRange); 
 		socket_close($socket);
 		return $success;
  	}

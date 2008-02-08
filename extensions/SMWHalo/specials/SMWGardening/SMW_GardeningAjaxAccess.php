@@ -56,11 +56,9 @@ function smwf_ga_CancelGardeningBot($taskid) {
 	}
 	// send term signal to bot
 	if (GardeningBot::abortBot($taskid) !== true) {
-		// if bot does not react: kill process
-		$processID = GardeningBot::getProcessID($taskid);
-		if ($processID != NULL) {
-			GardeningBot::killProcess($processID);
-		}
+		// if bot does not react: kill bot
+		GardeningBot::killBot($taskid);
+		
 	}
 	SMWGardening::getGardeningLogAccess()->removeGardeningTask($taskid);
 	return SMWGardening::getGardeningLogTable();
