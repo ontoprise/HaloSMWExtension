@@ -338,15 +338,15 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
  				
- 				$results = $this->cc_store->getNumberOfPropertyInstantiationForInstances($a, $instances);
- 				foreach($results as $result) {
- 					list($title, $num) = $result;
- 					if ($num == 0) {
+ 				$results = $this->cc_store->getMissingPropertyInstantiations($a, $instances[0]);
+ 				foreach($results as $title) {
+ 					
+ 					
 	 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $title, $a)) {
 	 						
 	 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $title, $a, $minCards);
 	 					}
-					} 
+					 
  				}
  				
  			}

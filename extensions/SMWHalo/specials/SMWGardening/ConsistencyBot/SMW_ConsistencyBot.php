@@ -457,7 +457,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	 * 
  	 * @return array of tuples (Title instance, Integer frequency)
  	 */
- 	public abstract function getNumberOfPropertyInstantiationForInstances($property, $instances);
+ 	public abstract function getMissingPropertyInstantiations($property, $instances);
  }
  
  class ConsistencyBotStorageSQL extends ConsitencyBotStorage {
@@ -774,7 +774,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		return $result;
  	}
  	
- 	public function getNumberOfPropertyInstantiationForInstances($property, $subjects) {
+ 	public function getMissingPropertyInstantiations($property, $subjects) {
  		global $smwgDefaultCollation;
 		$db =& wfGetDB( DB_MASTER );
 		$smw_attributes = $db->tableName('smw_attributes');
@@ -788,9 +788,9 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (instance VARCHAR(255) '.$collation.', namespace INTEGER, property VARCHAR(255) '.$collation.', num INTEGER(8))
+		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (id INTEGER(8))
 		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
-		$db->query( 'CREATE TEMPORARY TABLE smw_cc_allinst (id INTEGER(8))
+		$db->query( 'CREATE TEMPORARY TABLE smw_cc_allinst (id INTEGER(8), namespace INTEGER, instance VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		            
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
@@ -804,15 +804,15 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		foreach($subjects as $subject) {
 			if ($subject == NULL) continue;
 			// insert ID of instances
-			$db->query('INSERT INTO smw_cc_allinst VALUES ('.$property->getArticleID().')');
+			$db->query('INSERT INTO smw_cc_allinst VALUES ('.$subject->getArticleID().', '.$subject->getNamespace().' , '.$db->addQuotes($subject->getDBkey()).')');
 		}    
 				
 		$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_title)');
+				'(SELECT subject_id AS id FROM '.$smw_attributes.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_id)');
 		$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND relation_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_title) ');
+				'(SELECT subject_id AS id FROM '.$smw_relations.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND relation_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_id) ');
 		$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_title) ');
+				'(SELECT subject_id AS id FROM '.$smw_nary.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_super) GROUP BY subject_id) ');
 			
 		
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
@@ -826,11 +826,11 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 			
 			// insert number of instantiated properties of current property level level
 			$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_attributes.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_title)');
+				'(SELECT subject_id AS id FROM '.$smw_attributes.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_id)');
 			$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, relation_title AS property, COUNT(subject_title) AS num FROM '.$smw_relations.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND relation_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_title) ');
+				'(SELECT subject_id AS id FROM '.$smw_relations.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND relation_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_id) ');
 			$db->query('INSERT INTO smw_cc_propertyinst ' .
-				'(SELECT subject_title AS instance, subject_namespace AS namespace, attribute_title AS property, COUNT(subject_title) AS num FROM '.$smw_nary.' WHERE subject_id IN (SELECT * FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_title) ');
+				'(SELECT subject_id AS id FROM '.$smw_nary.' WHERE subject_id IN (SELECT id FROM smw_cc_allinst) AND attribute_title IN (SELECT * FROM smw_cc_properties_sub) GROUP BY subject_id) ');
 			
 			
 			// copy subcatgegories to supercategories of next iteration
@@ -848,13 +848,13 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		
 		
 		
-		$res = $db->query('SELECT DISTINCT instance, namespace, SUM(num) AS numOfInstProps FROM smw_cc_propertyinst GROUP BY instance');
+		$res = $db->query('SELECT DISTINCT allinst1.instance, allinst1.namespace FROM smw_cc_allinst allinst1 LEFT JOIN smw_cc_propertyinst allinst2 ON allinst1.id = allinst2.id WHERE allinst2.id IS NULL');
 		
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$numOfInstProps = $row->numOfInstProps;
-				$result[] = array(Title::newFromText($row->instance, $row->namespace), is_numeric($numOfInstProps) ? $numOfInstProps : 0);
+				
+				$result[] = Title::newFromText($row->instance, $row->namespace);
 			}
 		}
 				
