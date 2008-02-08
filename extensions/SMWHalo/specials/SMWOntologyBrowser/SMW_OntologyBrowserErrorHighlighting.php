@@ -51,6 +51,14 @@
  		foreach($issues as $i) {
  			$isModified = $i->isModified() ? 'modified="true"' : '';
  			switch($i->getType()) {
+ 				case SMW_GARDISSUE_WRONG_DOMAIN_VALUE: { 
+ 			
+ 					$htmlRepresentation = $i->getRepresentation();
+ 					$errorTags .= "<gi type=\"".$i->getType()."\" $isModified><![CDATA[$htmlRepresentation]]></gi>";
+ 					 
+ 					break;
+ 				}
+ 				
  				case SMW_GARDISSUE_WRONG_UNIT: { // highlight if unit matches the GI
  					if (stripos($value->getUnit(), $i->getValue()) !== false) {
  						
