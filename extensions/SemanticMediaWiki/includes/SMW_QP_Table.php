@@ -15,6 +15,8 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		global $smwgIQRunningNumber;
 		smwfRequireHeadItem(SMW_HEADER_SORTTABLE);
 		
+		global $smwgHaloIP;
+		require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
 		$cols = array(); //Names of columns
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
 
