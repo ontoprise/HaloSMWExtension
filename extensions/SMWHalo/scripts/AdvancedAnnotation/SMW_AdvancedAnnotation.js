@@ -51,7 +51,7 @@ AdvancedAnnotation.prototype = {
 		this.contextMenu = null;
 		
 		// Invalidate the HTML-cache for this article
-		this.om.touchArticle(wgPageName);
+//		this.om.touchArticle(wgPageName);
 		
 	},
 	

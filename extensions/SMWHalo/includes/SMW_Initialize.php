@@ -817,8 +817,22 @@ function smwfAAMBeforeHTML(&$out, &$text) {
  */
 function smwfAnnotateAction($action, $article) {
 	
-	$article->getTitle()->invalidateCache();
+	$title = $article->getTitle();
+	$title->invalidateCache();
 	$article->view();
+
+	// The resolution of timestamps for the cache is only in seconds. Invalidate
+	// the cache by setting a timestamp 2 seconds from now.
+	$now = wfTimestamp(TS_MW, time()+2);
+	$dbw = wfGetDB( DB_MASTER );
+	$success = $dbw->update( 'page',
+			array( /* SET */
+				'page_touched' => $now
+			), array( /* WHERE */
+				'page_namespace' => $title->getNamespace() ,
+				'page_title' => $title->getDBkey()
+			), 'SMW_Initialize::smwfAnnotateAction'
+		);
 	
 	return false;
 }
