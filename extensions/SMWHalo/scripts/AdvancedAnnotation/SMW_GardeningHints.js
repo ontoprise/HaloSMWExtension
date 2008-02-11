@@ -51,7 +51,8 @@ createContent: function(request) {
 	
 	var tb = this.createToolbar("");
 	var html = '';
-	if (request.status == 200) {
+	if (request.status == 200 
+	   && request.responseText != "smwfGetGardeningIssues: invalid title specified.") {
 		var hints = GeneralXMLTools.createDocumentFromString(request.responseText);
 		if (hints.documentElement) {
 			for (var b = 0, bn = hints.documentElement.childNodes.length; b < bn; b++) {
