@@ -116,7 +116,8 @@ function smwgHaloSetupExtension() {
 			case '_ca_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
 						break;	
-			case '_qi_' : require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+			case '_qi_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 						break;
 			case '_tb_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
