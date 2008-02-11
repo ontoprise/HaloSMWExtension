@@ -236,7 +236,9 @@ createContextMenu: function(contextMenuContainer, value) {
 	var repr = value;
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
 	
-	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
+	var links = [['relToolBar.addItem()',
+	              gLanguage.getMessage('ADD'), 'rel-confirm', 
+	              gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
 	
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
@@ -614,16 +616,18 @@ newRelation: function() {
 	                         true));
 	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
 	
-	var links = [['relToolBar.createNewRelation()',gLanguage.getMessage('CREATE'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
-				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
-				];
-	tb.append(tb.createLink('rel-links', links, '', true));
-	
-	links = [['relToolBar.addRangeInput()',gLanguage.getMessage('ADD_RANGE')],
-			 ['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]
-			];
+	var links = [['relToolBar.addRangeInput()',gLanguage.getMessage('ADD_RANGE')],
+			     ['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]
+			    ];
 	tb.append(tb.createLink('rel-add-links', links, '', true));		
 			
+	links = [['relToolBar.createNewRelation()',
+			  gLanguage.getMessage('CREATE'), 'rel-confirm', 
+			  gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
+			 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+			];
+	tb.append(tb.createLink('rel-links', links, '', true));
+	
 	tb.finishCreation();
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
