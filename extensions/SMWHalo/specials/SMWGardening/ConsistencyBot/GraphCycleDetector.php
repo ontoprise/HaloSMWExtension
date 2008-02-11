@@ -29,20 +29,15 @@ class GraphCycleDetector {
  	 * 
  	 * @return hash array containing arrays of GraphEdge objects.
  	 */
- 	public function getAllCategoryCycles($header) {
- 		global $wgLang;
+ 	public function getAllCategoryCycles(& $categoryGraph) {
  		print "\nCategory cycle\n";
- 		$categoryGraph = $this->cc_store->getCategoryInheritanceGraph();
  		$cycles = $this->returnCycles($categoryGraph);
  		return $this->storeCycles($cycles);
  	}
  	
- 	public function getAllPropertyCycles($header) {
- 		global $smwgContLang;
+ 	public function getAllPropertyCycles(& $propertyGraph) {
  		print "\nProperty cycle\n";
-  		$namespaces = $smwgContLang->getNamespaces();
- 		$attributeGraph = $this->cc_store->getPropertyInheritanceGraph();
- 		$cycles = $this->returnCycles($attributeGraph);
+  		$cycles = $this->returnCycles($propertyGraph);
  		return $this->storeCycles($cycles);
  	}
  	
@@ -55,11 +50,14 @@ class GraphCycleDetector {
  	private function returnCycles(& $graph) {
  		
  		$results = array(); // receives cycles as array of IDs
- 		$work = count($graph);
- 		$this->bot->addSubTask(count($graph));
+ 		$totalWork = count($graph);
+ 		$this->bot->addSubTask($totalWork);
  		for($i = 0, $n = count($graph); $i < $n; $i++) {
  			$this->bot->worked(1);
- 			if ($i % 10 == 0 || $i == $work-1) GardeningBot::printProgress(($i+1)/$work);
+ 			if ($i % 10 == 0 || $i == $totalWork-1)  {
+ 				if ($this->bot->isAborted()) break;
+ 				GardeningBot::printProgress(($i+1)/$totalWork);
+ 			}
  			
  			$e = $graph[$i];
  			$visitedNodes = array();

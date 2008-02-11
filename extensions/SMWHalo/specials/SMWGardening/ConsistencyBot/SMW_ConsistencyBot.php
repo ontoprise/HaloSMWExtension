@@ -59,6 +59,10 @@
  				
  		$this->setNumberOfTasks(9); // 8 single tasks
  		
+ 		// get inheritance graphs
+ 		$categoryGraph = $this->store->getCategoryInheritanceGraph();
+ 		$propertyGraph = $this->store->getPropertyInheritanceGraph();
+ 		
  		// Replace redirect annotations
  		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
  		smwfGetSemanticStore()->replaceRedirectAnnotations(true);
@@ -67,21 +71,21 @@
  		// Schema level checks
  		// first, check if there are cycles in the inheritance graphs
  		echo "Checking for cycles in inheritance graphs...";
- 		$this->checkInheritanceCycles();
+ 		$this->checkInheritanceCycles($categoryGraph, $propertyGraph);
  		echo "done!\n\n";
  		
 		
 		echo "Checking property co-variance...";
-        $this->checkPropertyCovariance($delay);
+        $this->checkPropertyCovariance($delay, $categoryGraph, $propertyGraph);
         echo "done!\n\n";
                     
  		echo "Checking inverse and equality relations...";
- 		$this->checkInverseEqualityRelations();
+ 		$this->checkInverseEqualityRelations($delay);
  		echo "done!\n\n";
  		
  		// Annotation level checks
  		echo "Checking annotation level...";
-        $this->checkAnnotationLevel($delay);
+        $this->checkAnnotationLevel($delay, $categoryGraph, $propertyGraph);
  	    echo "done!\n\n";
  	    
  	    // propagate issues
@@ -93,37 +97,37 @@
  		
  	}
  	
- 	private function checkInheritanceCycles() {
+ 	private function checkInheritanceCycles(& $categoryGraph, & $propertyGraph) {
  		
  		$gcd = new GraphCycleDetector($this);
- 		$gcd->getAllCategoryCycles("== ".wfMsg('smw_gard_errortype_categorygraph_contains_cycles')." ==\n\n");
- 		$gcd->getAllPropertyCycles("== ".wfMsg('smw_gard_errortype_propertygraph_contains_cycles')." ==\n\n");
+ 		$gcd->getAllCategoryCycles($categoryGraph);
+ 		$gcd->getAllPropertyCycles($propertyGraph);
  			
  	}
  	
  	 	
- 	private function checkPropertyCovariance($delay) {
+ 	private function checkPropertyCovariance($delay, & $categoryGraph, & $propertyGraph) {
  		
- 		$pcd = new PropertyCoVarianceDetector($this, $delay);
+ 		$pcd = new PropertyCoVarianceDetector($this, $delay, $categoryGraph, $propertyGraph);
  		$pcd->checkPropertyGraphForCovariance();
  		
  		
  	}
  	
- 	private function checkAnnotationLevel($delay) {
+ 	private function checkAnnotationLevel($delay, & $categoryGraph, & $propertyGraph) {
  		
- 		$alc = new AnnotationLevelConsistency($this, $delay);
+ 		$alc = new AnnotationLevelConsistency($this, $delay, $categoryGraph, $propertyGraph);
  		$alc->checkAllPropertyAnnotations();
- 		$alc->checkAnnotationCardinalities();
- 		$alc->checkUnits();
+ 		$alc->checkAllAnnotationCardinalities();
+ 		$alc->checkAllUnits();
  		
  	}
  	
  	
  	
- 	private function checkInverseEqualityRelations() {
+ 	private function checkInverseEqualityRelations($delay) {
  		
- 		$ier = new InverseEqualityConsistency($this);
+ 		$ier = new InverseEqualityConsistency($this, $delay);
  		$cir = $ier->checkInverseRelations();
  		$cer = $ier->checkEqualToRelations();
  		

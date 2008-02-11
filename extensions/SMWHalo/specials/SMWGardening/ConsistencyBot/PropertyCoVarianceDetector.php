@@ -35,13 +35,13 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	/**
 	 * Creates a PropertyCoVarianceDetector
 	 */
- 	public function PropertyCoVarianceDetector(& $bot, $delay) {
+ 	public function PropertyCoVarianceDetector(& $bot, $delay, & $categoryGraph, & $propertyGraph) {
  		$this->bot = $bot;
  		$this->cc_store = $bot->getConsistencyStorage();
  		$this->delay = $delay;
  	
- 		$this->categoryGraph = $this->cc_store->getCategoryInheritanceGraph();
- 		$this->propertyGraph = $this->cc_store->getPropertyInheritanceGraph();
+ 		$this->categoryGraph = $categoryGraph;
+ 		$this->propertyGraph = $propertyGraph;
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  	}
  	
@@ -51,21 +51,21 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	 * @return A log indicating inconsistencies for every subattribute definition. (wiki-markup)
  	 */
  	public function checkPropertyGraphForCovariance() {
- 		global $smwgContLang;
- 		 		
- 		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
- 		$cnt = 0;
- 		$work = count($attributes);
+ 				 		
  		print "\n";
- 		$this->bot->addSubTask(count($attributes));
+ 		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
+ 		$totalWork = count($attributes);
+ 		$this->bot->addSubTask($totalWork);
  		foreach($attributes as $a) {
  			if ($this->delay > 0) {
+ 				if ($this->bot->isAborted()) break;
  				usleep($this->delay);
  			}
  			$this->bot->worked(1);
  			
- 			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
+ 			$workDone = $this->bot->getCurrentWorkDone();
+ 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 			
  			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
  					
@@ -93,7 +93,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   	 */
  	private function checkMinCardinality($a) {
  		
-  			global $smwgContLang;
+  			
   			
  			$minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
  		
@@ -142,7 +142,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
   	 */
  	private function checkMaxCardinality($a) {
  		
- 			global $smwgContLang;
+ 			
   			
  			$maxCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
  			

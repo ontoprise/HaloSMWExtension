@@ -123,7 +123,7 @@
  		$currentTime = time();
  		if ($currentTime-$this->lastUpdate > 15) { // allow updates only after 15 seconds
  			$this->lastUpdate = $currentTime;
- 			if ($this->taskId != -1) SMWGardening::getGardeningLogAccess()->updateProgress($this->taskId, $this->getCurrentWork());
+ 			if ($this->taskId != -1) SMWGardening::getGardeningLogAccess()->updateProgress($this->taskId, $this->getWorkDone());
  		}
  	}
  	
@@ -148,7 +148,7 @@
  	public function isAborted() {
  		if ($this->isAborted) return true;
  		$accept_sock = @socket_accept($this->socket);	
-		if ($accept_sock !== false) {
+		if ($accept_sock !== false && $accept_sock !== NULL) {
 			$name = "";
 			socket_getpeername($accept_sock, $name);
 			if ($name == '127.0.0.1') { //TODO: save? spoofing?
@@ -158,6 +158,15 @@
 			}
 		}
 		return false;
+ 	}
+ 	
+ 	/**
+ 	 * Returns work done at current subtask.
+ 	 * 
+ 	 * @return Integer cummulative work done. 
+ 	 */
+ 	public function getCurrentWorkDone() {
+ 		return $this->currentWork;
  	}
  	
  	/**
@@ -183,10 +192,16 @@
  	
   	/**
  	 * Returns total work done.
+ 	 * 
+ 	 * Mutiply with 100 to get percentage value.
+ 	 * 
+ 	 * @return 0 <= $value <= 1
  	 */
- 	private function getCurrentWork() {
+ 	private function getWorkDone() {
  		return (($this->currentTask-1)/$this->totalWork) + ($this->currentWork / $this->subtaskWork / $this->totalWork); 
  	}
+ 	
+ 	
  	
  	/**
  	 * Checks if user is member of at least one of the given groups.
@@ -224,6 +239,9 @@
  	
  	/**
  	 * Kills a bot.
+ 	 * 
+ 	 * Terminates the process of the bot.
+ 	 * CAUTION: May cause database inconsistencies in rare cases.
  	 * 
  	 * @param taskid
  	 */

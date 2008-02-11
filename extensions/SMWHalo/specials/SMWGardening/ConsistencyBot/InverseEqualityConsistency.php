@@ -9,29 +9,35 @@
  	
  	
  	private $bot;
+ 	private $delay;
  	private $gi_store;
  	private $cc_store;
  	
- 	public function InverseEqualityConsistency(& $bot) {
+ 	public function InverseEqualityConsistency(& $bot, $delay) {
  		$this->bot = $bot;
+ 		$this->delay = $delay;
  		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
  		$this->cc_store = $bot->getConsistencyStorage();
  	}
  	
  	
  	public function checkInverseRelations() {
- 		global $smwgContLang;
- 		
- 		$inverseRelations = $this->cc_store->getInverseRelations();
- 	
- 		$work = count($inverseRelations);
- 		$cnt = 0;
+ 		 		
  		print "\n";
- 		$this->bot->addSubTask(count($inverseRelations));
+ 		$inverseRelations = $this->cc_store->getInverseRelations();
+ 		$totalWork = count($inverseRelations);
+ 		$this->bot->addSubTask($totalWork);
+ 		
  		foreach($inverseRelations as $r) {
+ 			if ($this->delay > 0) {
+ 				if ($this->bot->isAborted()) break;
+ 				usleep($this->delay);
+ 			}
+ 			
  			$this->bot->worked(1);
- 			$cnt++;
- 			if ($cnt % 10 == 1 || $cnt == $work) GardeningBot::printProgress($cnt/$work);
+ 			$workDone = $this->bot->getCurrentWorkDone();
+ 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 			
  			
  			list($s, $t) = $r;
  			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintRelation);
