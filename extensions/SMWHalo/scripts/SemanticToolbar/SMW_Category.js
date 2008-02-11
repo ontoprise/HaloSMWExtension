@@ -141,9 +141,17 @@ cancel: function(){
 enableAnnotation: function(enable) {
 	if ($('cat-menu-annotate')) {
 		if (enable) {
-			$('cat-menu-annotate').show();
+//		$('cat-menu-annotate').show();
+			$('cat-menu-annotate').replace(
+				'<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'
+				+ gLanguage.getMessage('ANNOTATE')
+				+ '</a>');
 		} else {
-			$('cat-menu-annotate').hide();
+//			$('cat-menu-annotate').hide();
+			$('cat-menu-annotate').replace(
+				'<span id="cat-menu-annotate" class="menulink" style="color:grey">&nbsp;'
+				+ gLanguage.getMessage('ANNOTATE')
+				+ '</span>');
 		}
 	}
 },
