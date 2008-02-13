@@ -16,7 +16,7 @@ function smwf_qi_QIAccess($method, $params) {
 		$relationName = $p_array[0];
 		global $smwgContLang, $smwgHaloContLang;
 
-		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		//$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
 		// get type definition (if it exists)
 		$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
