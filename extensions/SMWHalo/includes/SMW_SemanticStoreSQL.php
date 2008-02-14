@@ -413,7 +413,7 @@
 							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
 							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
-		$resRanges = $db->query('SELECT property, object_title AS range FROM smw_ob_properties  JOIN '.$db->tableName('smw_nary_relations'). 'r ON r.subject_id = id JOIN '.$db->tableName('smw_nary').'n ON n.subject_id = r.subject_id '.
+		$resRanges = $db->query('SELECT property, object_title AS rangeinst FROM smw_ob_properties  JOIN '.$db->tableName('smw_nary_relations'). 'r ON r.subject_id = id JOIN '.$db->tableName('smw_nary').'n ON n.subject_id = r.subject_id '.
 							 ' WHERE attribute_title = '.$db->addQuotes($this->domainRangeHintRelation->getDBKey()). ' AND nary_pos = 1 GROUP BY property ORDER BY property');					 
 		// rewrite result as array
 		$result = array();
@@ -453,7 +453,7 @@
 				}
 				$range = NULL;
 				if ($rowRanges != NULL && $rowRanges->property == $p->getDBkey()) {
-					$range = $rowRanges->range;
+					$range = $rowRanges->rangeinst;
 					$rowRanges = $db->fetchObject($resRanges);
 				}
 				$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range);
