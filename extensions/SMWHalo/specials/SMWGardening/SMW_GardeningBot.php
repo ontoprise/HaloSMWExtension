@@ -232,7 +232,7 @@
  		if (!isset($smwgAbortBotPortRange)) $smwgAbortBotPortRange = ABORT_BOT_PORT_RANGE;
  		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
  		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
-		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + $smwgAbortBotPortRange); 
+ 		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + $smwgAbortBotPortRange); 
 		socket_close($socket);
 		return $success;
  	}
@@ -469,7 +469,19 @@
  	 * @param 0 <= $percentage <= 1
  	 */
  	public static function printProgress($percentage) {
- 		print "\x08\x08\x08\x08".number_format($percentage*100, 0)."% ";
+ 		$pro_str = number_format($percentage*100, 0);
+ 		if ($percentage == 0) { 
+ 			print $pro_str."%";
+ 			return;
+ 		} 
+ 		switch(strlen($pro_str)) {
+ 			case 4: print "\x08\x08\x08\x08\x08"; break;
+ 			case 3: print "\x08\x08\x08\x08"; break;
+ 			case 2: print "\x08\x08\x08"; break;
+ 			case 1: print "\x08\x08"; break;
+ 			case 0: print "\x08";
+ 		}
+ 		print $pro_str."%";
  	}
  }
  
