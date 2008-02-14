@@ -24,16 +24,21 @@
  	private $numOfInstances;
  	private $numOfProperties;
  	
+ 	private $delay;
+ 	
  	function __construct() {
  		parent::GardeningBot("smw_exportontologybot");
  		
- 		// initialize map
+ 		// initialize type map
  		$this->mapWikiTypeToXSD['_str'] = 'string';
  		$this->mapWikiTypeToXSD['_num'] = 'float';
  		$this->mapWikiTypeToXSD['_boo'] = 'boolean';
  		
  		$this->mapWikiTypeToXSD['_int'] = 'integer'; // deprecated
  		$this->mapWikiTypeToXSD['_flt'] = 'float'; // deprecated
+ 		
+ 		global $wgGardeningBotDelay;
+ 		$this->delay = isset($wgGardeningBotDelay) && is_numeric($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0;
  	}
  	
  	public function getHelpText() {
@@ -108,6 +113,12 @@
  		$this->writeFooter($handle);
 	 	fclose($handle);
 	 	
+	 	if ($this->isAborted()) {
+	 		// remove temporary file
+	 		unlink($wikiexportDir."/latestExport.temp");
+	 		return "";
+	 	}
+	 	
 	 	// copy to normal output file as well as to latestExport file
 	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/".$outputFile);
 	 	copy($wikiexportDir."/latestExport.temp", $wikiexportDir."/latestExport.owl");
@@ -158,16 +169,17 @@
  		$this->numOfCategories = $db->selectField($db->tableName('page'), 'COUNT(page_id)', 'page_namespace = '.NS_CATEGORY) - 2; // 2 builtin categories
  		
  		$this->addSubTask($this->numOfCategories);
- 		$rootCategories = smwfGetSemanticStore()->getRootCategories();
- 		$counter = 0;
+ 		GardeningBot::printProgress(0);
  		
+ 		$rootCategories = smwfGetSemanticStore()->getRootCategories();
+ 	 		
  		// generate default root concept
  		$owl = '<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
 		$owl .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.LINE_FEED;
 		$owl .= '</owl:Class>'.LINE_FEED;
 		fwrite($filehandle, $owl);
  		foreach($rootCategories as $rc) {
- 			
+ 			if ($this->isAborted()) break;
  			if (smwfGetSemanticStore()->transitiveCat->equals($rc) 
  					|| smwfGetSemanticStore()->symetricalCat->equals($rc)) {
  						// ignore builtin categories
@@ -182,8 +194,9 @@
 			fwrite($filehandle, $owl);
 			$visitedNodes = array();
 			
-			$this->exportSubcategories($filehandle, $rc, $visitedNodes, $counter);
+			$this->exportSubcategories($filehandle, $rc, $visitedNodes);
  		}
+ 		GardeningBot::printProgress(1);
  	}
  	
  	  	
@@ -195,12 +208,18 @@
  	 */
  	private function exportInstances($filehandle) {
  		$instances = smwfGetSemanticStore()->getPages(array(NS_MAIN));
- 		$counter = 0;
+ 		
  		$this->numOfInstances = count($instances);
  		$this->addSubTask($this->numOfInstances);
+ 		GardeningBot::printProgress(0);
+ 		
  		foreach($instances as $inst) {
- 			if ($counter % 10 == 0) {
- 				GardeningBot::printProgress($counter/$this->numOfInstances);
+ 			
+ 			$workDone = $this->getCurrentWorkDone();
+ 			if ($workDone % 10 == 0) {
+ 				usleep($this->delay);
+ 				if ($this->isAborted()) break;
+ 				GardeningBot::printProgress($workDone/$this->numOfInstances);
  			}
  			
  			// define member categories. If there is no, put it to DefaultRootConcept by default
@@ -246,10 +265,10 @@
  			}
  			$owl .= '</owl:Thing>'.LINE_FEED;
  			fwrite($filehandle, $owl);
-	 		$counter++;
+	 		
  			$this->worked(1);
  		}
- 		GardeningBot::printProgress($counter / $this->numOfInstances);
+ 		GardeningBot::printProgress(1);
  	}
  	
  	/**
@@ -263,12 +282,20 @@
  	private function exportProperties($filehandle) {
  		
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
- 		$counter = 0;
+ 	
  		$this->numOfProperties = count($properties);
  		$this->addSubTask($this->numOfProperties);
+ 		GardeningBot::printProgress(0);
+ 		
  		foreach($properties as $rp) {
- 			$counter++;
- 			$this->worked(1);
+ 			
+ 			$workDone = $this->getCurrentWorkDone();
+ 			if ($workDone % 10 == 0 && $this->numOfProperties > 0) {
+ 				usleep($this->delay);
+ 				if ($this->isAborted()) break;
+ 				GardeningBot::printProgress($workDone/$this->numOfProperties);
+ 			}
+ 			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($rp) 
  					|| smwfGetSemanticStore()->minCard->equals($rp) 
  					|| smwfGetSemanticStore()->maxCard->equals($rp)
@@ -314,16 +341,18 @@
  			}
  			
  			fwrite($filehandle, $owl);
+ 			$this->worked(1);
  			
- 			GardeningBot::printProgress($counter / $this->numOfProperties);
  		}
+ 		GardeningBot::printProgress(1);
  	}
  	
  	
- 	private function exportSubcategories($filehandle, $superCategory, array & $visitedNodes, & $counter) {
+ 	private function exportSubcategories($filehandle, $superCategory, array & $visitedNodes) {
  		$directSubcategories = smwfGetSemanticStore()->getDirectSubCategories($superCategory);
  		array_push($visitedNodes, $superCategory->getArticleID());
  		foreach($directSubcategories as $c) {
+ 		
  			if (in_array($c->getArticleID(), $visitedNodes)) {
  				array_pop($visitedNodes);
  				return;
@@ -340,14 +369,17 @@
 			
 			
 			fwrite($filehandle, $owl);
-			if ($counter < $this->numOfCategories) {
-				$counter++;
-				$this->worked(1);
-				GardeningBot::printProgress($counter / $this->numOfCategories);
+			
+			$workDone = $this->getCurrentWorkDone();
+			if ($workDone % 10 == 0 && $this->numOfCategories > 0) {
+				usleep($this->delay);
+ 				if ($this->isAborted()) break;
+				GardeningBot::printProgress($workDone / $this->numOfCategories);
 			}
+			$this->worked(1);
 			
 			// depth-first in category tree
-			$this->exportSubcategories($filehandle, $c, $visitedNodes, $counter);
+			$this->exportSubcategories($filehandle, $c, $visitedNodes);
  		}
  		array_pop($visitedNodes);
  	}
