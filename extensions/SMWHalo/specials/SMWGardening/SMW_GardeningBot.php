@@ -299,9 +299,7 @@
  			$phpInterpreter = "php";
  		}
 		
-		// initialize term signal socket
-		$bot->initializeTermSignal($taskid);
-		
+				
 		// and start it...
 		$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
 		global $wgServer;	

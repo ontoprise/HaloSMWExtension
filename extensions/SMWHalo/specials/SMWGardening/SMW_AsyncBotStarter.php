@@ -91,6 +91,9 @@ require_once("SMW_GardeningLog.php");
  	global $wgGardeningBotDelay;
  	try { 
  		$bot->setTaskID($taskid);
+ 		// initialize term signal socket
+		$bot->initializeTermSignal($taskid);
+		
  		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
  		// Transformation of parameters:
  		// 	1. Concat to a string
@@ -98,13 +101,18 @@ require_once("SMW_GardeningLog.php");
  		// 	3. decode URL
  		//  4. convert string of the form (key=value,)* to a hash array 
  		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 		@socket_close($bot->getTermSignalSocket());
+ 		if ($bot->isAborted()) {
+ 			print "\n - Bot was aborted by user! - \n";
+ 			return;
+ 		}
  		echo $log;
  		if ($log != NULL && $log != '') {
  			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
  			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$wgServer$wgScriptPath/index.php/".$glp->getNsText().":".$glp->getText()."?bot=$botID ".$glp->getText()."]");
  			$log .= "\n[[category:GardeningLog]]";
  		}
- 		@socket_close($bot->getTermSignalSocket());
+ 		
  		// mark as finished
  		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
