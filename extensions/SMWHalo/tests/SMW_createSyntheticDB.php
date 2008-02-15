@@ -15,22 +15,22 @@
  */
  
  // constants which describe DB content (defaults)
- define('num_insts', 1000);
- define('num_cats', 100);
- define('num_props', 200);
+ define('num_insts', 10000);
+ define('num_cats', 500);
+ define('num_props', 700);
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
- define('depth_cat', 5);
+ define('depth_cat', 6);
  define('depth_prop', 2);
- define('inst_dist', 0.7);  
+ define('inst_dist', 0.8);  
  define('data_prop_freq', 0.3);
- define('dom_cov', 0.6);  
+ define('dom_cov', 0.7);  
  define('max_card_cov', 0.1);  
  define('min_card_cov', 0.1);  
  define('annot_cov', 0.7);  
  define('red_cov', 0.1);  
- define('blindtext_cov', 0.01);
- define('blindtext', 2);  
+ define('blindtext_cov', 0.05);
+ define('blindtext', 2);  // = 2^blindtext kb. Possible values of blindtext are:  0 <= blindtext <= 6
    
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
@@ -48,11 +48,33 @@
  $blindTexts = array();
  
  function createBlindText() {
- 	$bt = "blind text nr 0 "; // has 16 chars
- 	for($i = 4; $i < 15; $i++) { // generate 16 bytes to 32 kb of text
+ 	global $blindTexts;
+ 	$bt = "= Heading 1 =\n" .
+ 		  "== Heading 2 ==\n" .
+ 		  "*Bullet-point 1\n" .
+ 		  "*Bullet-point 2\n" .
+ 		  "*Bullet-point 3\n" .
+ 		  "----\n" .
+ 		  "Deutschland ist ein in Mitteleuropa gelegener Bundesstaat, der aus den 16 deutschen Ländern gebildet wird. " .
+ 		  "Bundeshauptstadt ist Berlin. Die Bundesrepublik Deutschland ist Gründungsmitglied der Europäischen Union und " .
+ 		  "mit über 82 Millionen Einwohnern deren bevölkerungsreichster Staat, ferner unter anderem Mitglied der Vereinten Nationen, " .
+ 		  "der OECD, der NATO, der OSZE und der Gruppe der Acht (G8). " .
+ 		  "Gemessen am Bruttoinlandsprodukt ist Deutschland die drittgrößte Volkswirtschaft der Welt. " .
+ 		  "Die naturräumlichen Großregionen sind von Nord nach Süd Norddeutsches Tiefland, Mittelgebirgszone und Alpenvorland mit Alpen. " .
+ 		  "Deutschland hat insgesamt neun Nachbarstaaten: Dänemark, Polen, Tschechien, Österreich, die Schweiz, Frankreich, Luxemburg, Belgien und die Niederlande. " .
+ 		  "Während der wechselvollen Geschichte veränderte sich auch der Mittelpunkt Deutschlands.\n".
+ 		  "=== Heading 3 ===\n" .
+ 		  "#Enumeration 1\n" .
+ 		  "#Enumeration 2\n" .
+ 		  "#Enumeration 3\n" .
+ 		  "#Enumeration 4\n" .
+ 		  "----" .
+ 		  "ENDE\n"; // has 1024 chars (= 1kb)
+ 	for($i = 0; $i < 7; $i++) { // generate 1 kb to 64 kb of text
  		$bt .= $bt;
  		$blindTexts[] = $bt;
  	}
+ 	
  }
  
  function createID() {
@@ -232,7 +254,11 @@
  }
  
  function addAnnotations() {
+ 	global $smwgIP;
  	$db = wfGetDB(DB_MASTER);
+ 	require_once($smwgIP . '/includes/storage/SMW_Store.php');
+ 	$requestoptions = new SMWRequestOptions();
+ 	$requestoptions->limit = rand(0,5);
  	$res = $db->query('SELECT page_title FROM page WHERE page_namespace = '.NS_MAIN.' ORDER BY RAND() LIMIT '.intval(num_insts * annot_cov));
  	$total = $db->numRows( $res );
  	if( $total > 0) {
@@ -241,23 +267,26 @@
  			if ($row->page_title == '' || $row->page_title == NULL) continue;
  			printProgress($i / ($total));
  			$annotationsToAdd = "";
- 			$res2 = $db->query('SELECT page_title FROM page WHERE page_namespace = '.SMW_NS_PROPERTY.' ORDER BY RAND() LIMIT '.intval(rand(0,5)));
- 			if($db->numRows( $res2 ) > 0) {
-	 			while ($row2 = $db->fetchObject($res2)) {
-	 				if ($row2->page_title == '' || $row2->page_title == NULL) continue;
-	 				$property = Title::newFromText($row2->page_title, SMW_NS_PROPERTY);
-	 				$type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+ 			$instance = Title::newFromText($row->page_title, NS_MAIN);
+ 			$categoriesForInstance = smwfGetSemanticStore()->getCategoriesForInstance($instance);
+ 			if (count($categoriesForInstance) == 0) continue;
+ 			
+ 			$propertiesOfCatgeory = smwfGetSemanticStore()->getPropertiesWithDomain($categoriesForInstance[0], $requestoptions);
+ 			if (count($propertiesOfCatgeory) == 0)  {
+ 				$propertiesOfCatgeory = getRandomProperties();
+ 			}
+ 			foreach($propertiesOfCatgeory as $p) {
+	 				
+	 				$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
 	 				if (count($type) == 0) continue;
 	 				if ($type[0]->getXSDValue() == '_str') {
-	 					$annotationsToAdd .= "[[".$property->getText()."::".getStringValue()."]]\n"; 
+	 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
 	 				} else if ($type[0]->getXSDValue() == '_wpg') {
-	 					$annotationsToAdd .= "[[".$property->getText()."::".getInstanceValue()->getText()."]]\n";
+	 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
 	 				}
-	 			}
-	 			
- 			}
- 			$db->freeResult($res2);
- 			$instance = Title::newFromText($row->page_title, NS_MAIN);
+	 		}
+	 
+ 			
  			$a = new Article($instance);
  			$r = Revision::newFromTitle($instance);
  			$a->updateArticle($r->getText()."\n".$annotationsToAdd, "", false, false);
@@ -267,6 +296,19 @@
  		}
  	}
  	$db->freeResult($res);
+ }
+ 
+ function getRandomProperties() {
+ 	$db = wfGetDB(DB_MASTER);
+ 	$results = array();
+ 	$res = $db->query('SELECT page_title FROM page WHERE page_namespace = '.SMW_NS_PROPERTY.' ORDER BY RAND() LIMIT '.intval(rand(0,5)));
+ 	if($db->numRows( $res ) > 0) {
+	 	while ($row = $db->fetchObject($res)) {
+	 		$results[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
+	 	}
+ 	}
+ 	$db->freeResult($res);
+ 	return $results;
  }
  
  function addRedirects() {
@@ -290,8 +332,9 @@
  	$db->freeResult($res);
  }
  
- function addBlindtext() {
+ function addBlindtext($random = false) {
  	global $blindTexts;
+ 	$blindTextPages = array();
  	$db = wfGetDB(DB_MASTER);
  	$res = $db->query('SELECT page_title, page_namespace FROM page ORDER BY RAND() LIMIT '.intval(num_insts * blindtext_cov));
  	$total = $db->numRows( $res );
@@ -300,15 +343,17 @@
 	 	while ($row = $db->fetchObject($res)) {
 	 		printProgress($i / ($total));
 	 		$newtitle = Title::newFromText($row->page_title, $row->page_namespace);
-		 	if ($newtitle->exists()) return; // should not happen
+		 	
 		 	$a = new Article($newtitle);
 		 	$r = Revision::newFromTitle($newtitle);
-		  	$a->updateArticle($r->getText()."\n".$blindTexts[9+blindtext], "", false, false);	
-		 	 
+		 	$size = $random ? rand(0,6) : blindtext;
+		  	$a->updateArticle($r->getText()."\n".$blindTexts[$size], "", false, false);	
+		 	$blindTextPages[] = $newtitle;
 		 	$i++;
 		}
  	}
  	$db->freeResult($res);
+ 	return $blindTextPages;
  }
  
  function getDomainAndRange() {
@@ -374,8 +419,20 @@
  
  // add blindtext for arbitrary articles
  print "Adding blind text...";
- addBlindtext();
+ $blindTextPages = addBlindtext(false);
  printProgress(1);
+  
+ $links = "";
+ foreach($blindTextPages as $page) {
+ 	$links .= "*[[".$page->getPrefixedText()."]]\n";
+ }
+ $testTitle = Title::newFromText("Pages with blind text");
+ $testArticle = new Article($testTitle);
+ if ($testTitle->exists()) {
+ 	$testArticle->updateArticle($links, "", false, false);
+ } else {
+ 	$testArticle->insertNewArticle($links, "", false, false);
+ }
  print "\n\n";
 
  print "Inserted categories: ".$cat_counter."\n";
