@@ -11,10 +11,6 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ac_AutoCompletionDispatcher';
 $wgAjaxExportList[] = 'smwf_ac_AutoCompletionOptions';
 
-// Register hooks
-global $wgHooks;
-$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
-$wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
 
 define('SMW_AC_NORESULT', "noResult");
 define('SMW_AC_MAX_RESULTS', 15);
@@ -117,20 +113,7 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
   	
  }
  
-/**
- * Register extra AC related options in Preferences->Misc
- */
-function smwfAutoCompletionToggles(&$extraToggles) {
-	$extraToggles[] = "autotriggering";
-	return true;
-}
 
-function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure) {
-	global $wgUser,$wgScriptPath;
-	$triggerMode = $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
-	setcookie("AC_mode", $triggerMode, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
-	return true;
-}
 
 /**
  * Return options

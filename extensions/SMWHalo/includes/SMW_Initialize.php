@@ -79,6 +79,10 @@ function smwgHaloSetupExtension() {
 		$wgHooks['OutputPageBeforeHTML'][] = 'smwfAAMBeforeHTML';
 	}
 	$wgHooks['UnknownAction'][] = 'smwfAnnotateAction';
+	
+	// autocompletion option registration
+	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
+	$wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
 		
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
@@ -1019,4 +1023,19 @@ function smwfGetAjaxMethodPrefix() {
 	if ($func_name == NULL) return NULL;
 	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
 }	
+
+/**
+ * Register extra AC related options in Preferences->Misc
+ */
+function smwfAutoCompletionToggles(&$extraToggles) {
+	$extraToggles[] = "autotriggering";
+	return true;
+}
+
+function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure) {
+	global $wgUser,$wgScriptPath;
+	$triggerMode = $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
+	setcookie("AC_mode", $triggerMode, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
+	return true;
+}
 ?>
