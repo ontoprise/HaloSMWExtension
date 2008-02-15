@@ -289,8 +289,8 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  				$domainCategory = $dvs[0]->getTitle();
  				$instances = smwfGetSemanticStore()->getInstances($domainCategory);
  				
- 				foreach($instances as $inst) {
-	 				$results = $this->cc_store->getMissingPropertyInstantiations($a, $inst[0]);
+ 				
+	 				$results = $this->cc_store->getMissingPropertyInstantiations($a, $instances);
 	 				foreach($results as $title) {
 	 					
 	 					
@@ -300,7 +300,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 		 					}
 						 
 	 				}
- 				}
+ 				
  				
  			}
  	}

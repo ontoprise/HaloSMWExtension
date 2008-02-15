@@ -778,7 +778,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		return $result;
  	}
  	
- 	public function getMissingPropertyInstantiations($property, $subjects) {
+ 	public function getMissingPropertyInstantiations($property, $instances) {
  		global $smwgDefaultCollation;
 		$db =& wfGetDB( DB_MASTER );
 		$smw_attributes = $db->tableName('smw_attributes');
@@ -805,10 +805,11 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		$db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
 		
 		// initialize with direct property instantiations
-		foreach($subjects as $subject) {
-			if ($subject == NULL) continue;
+		foreach($instances as $i) {
+			if ($i == NULL) continue;
 			// insert ID of instances
-			$db->query('INSERT INTO smw_cc_allinst VALUES ('.$subject->getArticleID().', '.$subject->getNamespace().' , '.$db->addQuotes($subject->getDBkey()).')');
+			list($instance, $category) = $i;
+			$db->query('INSERT INTO smw_cc_allinst VALUES ('.$instance->getArticleID().', '.$instance->getNamespace().' , '.$db->addQuotes($instance->getDBkey()).')');
 		}    
 				
 		$db->query('INSERT INTO smw_cc_propertyinst ' .
