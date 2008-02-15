@@ -6,22 +6,14 @@
  */
 global $wgAjaxExportList;
 
-//require_once('SMW_ToolbarFramework.php');
-//require_once('SMW_Toolbartab.php');
 
 $wgAjaxExportList[] = 'smwf_tb_GetHelp';
 $wgAjaxExportList[] = 'smwf_tb_getLinks';
 $wgAjaxExportList[] = 'smwf_tb_getAnnotations';
 $wgAjaxExportList[] = 'smwf_tb_checkSelection';
-//$wgAjaxExportList[] = 'getEditToolbar';
-//$wgAjaxExportList[] = 'getCategoryToolbar';
-//$wgAjaxExportList[] = 'getAttributeToolbar';
-//$wgAjaxExportList[] = 'getRelationToolbar';
-//$wgAjaxExportList[] = 'smwgGetDatatypeSelector';
 $wgAjaxExportList[] = 'smwf_tb_GetBuiltinDatatypes';
 $wgAjaxExportList[] = 'smwf_tb_GetUserDatatypes';
 $wgAjaxExportList[] = 'smwf_tb_AskQuestion';
-//$wgAjaxExportList[] = 'smwgChangeAttributeType';
 $wgAjaxExportList[] = 'smwf_tb_NewAttributeWithType';
 
 /**
@@ -38,7 +30,8 @@ function smwf_tb_GetHelp($namespace, $action){
 	$results = false;
 	$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
 	$dbr =& wfGetDB( DB_SLAVE );
-	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
+	$smw_attributes = $dbr->tableName('smw_attributes');
+	$res = $dbr->query('SELECT * FROM '.$smw_attributes.' WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
 
 	while ($row = $dbr->fetchObject( $res )) {
 		$helppages[] = $row->subject_id;
