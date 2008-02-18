@@ -413,7 +413,7 @@
  print "Generating content...\n";
  
  // add category tree and instances
- /*print "Categories and instances...";
+ print "Categories and instances...";
  addCategoryTree(NULL, 0);
  printProgress(1);
  print "\n";
@@ -434,7 +434,7 @@
  print "Redirects...";
  addRedirects();
  printProgress(1);
- print "\n";*/
+ print "\n";
  
  // add blindtext for arbitrary articles
  print "Adding blind text 64kb...";
