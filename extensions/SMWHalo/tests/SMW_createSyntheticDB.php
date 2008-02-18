@@ -446,25 +446,25 @@
  print "Adding blind text 32kb...";
  $blindTextPages = addBlindtext(4, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ addLinkPage($blindTextPages, "Pages with 32kb blind text"); 
  print "\n";
  
  print "Adding blind text 16kb...";
  $blindTextPages = addBlindtext(3, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ addLinkPage($blindTextPages, "Pages with 16kb blind text"); 
  print "\n";
  
  print "Adding blind text 8kb...";
  $blindTextPages = addBlindtext(2, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ addLinkPage($blindTextPages, "Pages with 8kb blind text"); 
  print "\n";
  
  print "Adding blind text 4kb...";
  $blindTextPages = addBlindtext(1, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ addLinkPage($blindTextPages, "Pages with 4kb blind text"); 
  print "\n";
  
  print "\n\n";
