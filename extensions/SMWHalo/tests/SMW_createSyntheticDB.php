@@ -16,7 +16,7 @@
  
  // constants which describe DB content (defaults)
  define('num_insts', 30000);
- define('num_cats', 900);
+ define('num_cats', 1000);
  define('num_props', 1800);
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
@@ -100,7 +100,7 @@
  function addCategoryTree($superCat, $depth) {
  	global $cat_counter, $inst_counter;
  	printProgress(($inst_counter + $cat_counter) / (num_cats + num_insts));
- 	if ($depth >= depth_prop || $cat_counter >= num_cats) return;
+ 	if ($depth >= depth_cat || $cat_counter >= num_cats) return;
  	$splitfactor = pow(num_cats, 1/depth_cat);
  	$cats = array();
  	if (rand(0,1) < bal_cat) {
@@ -136,7 +136,7 @@
   function addPropertyTree($superProp, $depth) {
   	global $prop_counter;
   	printProgress(($prop_counter) / (num_props));
- 	if ($depth >= depth_cat || $prop_counter >= num_props) return;
+ 	if ($depth >= depth_prop || $prop_counter >= num_props) return;
  	$splitfactor = pow(num_props, 1/depth_prop);
  	$cats = array();
  	if (rand(0,1) < bal_cat) {
