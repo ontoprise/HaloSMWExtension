@@ -15,9 +15,9 @@
  */
  
  // constants which describe DB content (defaults)
- define('num_insts', 10000);
- define('num_cats', 500);
- define('num_props', 700);
+ define('num_insts', 30000);
+ define('num_cats', 900);
+ define('num_props', 1800);
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
  define('depth_cat', 6);
@@ -28,9 +28,9 @@
  define('max_card_cov', 0.1);  
  define('min_card_cov', 0.1);  
  define('annot_cov', 0.7);  
- define('red_cov', 0.1);  
- define('blindtext_cov', 0.05);
- define('blindtext', 2);  // = 2^blindtext kb. Possible values of blindtext are:  0 <= blindtext <= 6
+ define('red_cov', 0.01);  
+ define('blindtext_cov', 0.01);
+ define('blindtext', 5);  // = 2^blindtext kb. Possible values of blindtext are:  0 <= blindtext <= 6
    
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
@@ -100,7 +100,7 @@
  function addCategoryTree($superCat, $depth) {
  	global $cat_counter, $inst_counter;
  	printProgress(($inst_counter + $cat_counter) / (num_cats + num_insts));
- 	if ($depth >= depth_cat || $cat_counter >= num_cats) return;
+ 	if ($depth >= depth_prop || $cat_counter >= num_cats) return;
  	$splitfactor = pow(num_cats, 1/depth_cat);
  	$cats = array();
  	if (rand(0,1) < bal_cat) {
@@ -190,7 +190,7 @@
  	$a = new Article($title);
  	$texttoinsert = "";
  	if ($superProp != NULL)  {
- 		$texttoinsert .= "[[subproperty of:$superProp]]\n";
+ 		$texttoinsert .= "[[Subproperty of::Property:$superProp]]\n";
  	} else {
  		$texttoinsert .= "Root property\n";
  	}
@@ -289,7 +289,7 @@
  			
  			$a = new Article($instance);
  			$r = Revision::newFromTitle($instance);
- 			$a->updateArticle($r->getText()."\n".$annotationsToAdd, "", false, false);
+ 			$a->doEdit($r->getText()."\n".$annotationsToAdd, "");
  			//print "Update article: ".$instance->getText()."\n";
  			//print "with: ".$annotationsToAdd."\n";
  			$i++;
@@ -347,7 +347,7 @@
 		 	$a = new Article($newtitle);
 		 	$r = Revision::newFromTitle($newtitle);
 		 	$size = $random ? rand(0,6) : blindtext;
-		  	$a->updateArticle($r->getText()."\n".$blindTexts[$size], "", false, false);	
+		  	$a->doEdit($r->getText()."\n".$blindTexts[$size], "");	
 		 	$blindTextPages[] = $newtitle;
 		 	$i++;
 		}
@@ -424,12 +424,16 @@
   
  $links = "";
  foreach($blindTextPages as $page) {
- 	$links .= "*[[".$page->getPrefixedText()."]]\n";
+ 	if ($page->getNamespace() == NS_CATEGORY) {
+ 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
+ 	} else {
+ 		$links .= "*[[".$page->getPrefixedText()."]]\n";
+ 	}
  }
  $testTitle = Title::newFromText("Pages with blind text");
  $testArticle = new Article($testTitle);
  if ($testTitle->exists()) {
- 	$testArticle->updateArticle($links, "", false, false);
+ 	$testArticle->doEdit($links, "");
  } else {
  	$testArticle->insertNewArticle($links, "", false, false);
  }
