@@ -15,21 +15,22 @@
  */
  
  // constants which describe DB content (defaults)
- define('num_insts', 30000);
- define('num_cats', 1000);
- define('num_props', 1800);
+ define('num_insts', 50000);
+ define('num_cats', 1200);
+ define('num_props', 2500);
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
  define('depth_cat', 6);
  define('depth_prop', 2);
  define('inst_dist', 0.8);  
  define('data_prop_freq', 0.3);
+ define('prop_fac', 5);
  define('dom_cov', 0.7);  
  define('max_card_cov', 0.1);  
  define('min_card_cov', 0.1);  
  define('annot_cov', 0.7);  
  define('red_cov', 0.01);  
- define('blindtext_cov', 0.01);
+ define('blindtext_cov', 0.001);
  define('blindtext', 5);  // = 2^blindtext kb. Possible values of blindtext are:  0 <= blindtext <= 6
    
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
@@ -239,7 +240,7 @@
  	if ($depth == depth_cat-1) {
  		// category leaf
  		if ($lh < inst_dist) {
- 			$num_inst = rand(0, 2*num_insts / num_cats);
+ 			$num_inst = rand(0, (1/(1-inst_dist))*num_insts / num_cats);
  			for ($i = 0; $i < $num_inst; $i++) {
  				createInstance($category, createID());
  			}
@@ -275,17 +276,19 @@
  			if (count($propertiesOfCatgeory) == 0)  {
  				$propertiesOfCatgeory = getRandomProperties();
  			}
- 			foreach($propertiesOfCatgeory as $p) {
-	 				
-	 				$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
-	 				if (count($type) == 0) continue;
-	 				if ($type[0]->getXSDValue() == '_str') {
-	 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
-	 				} else if ($type[0]->getXSDValue() == '_wpg') {
-	 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
-	 				}
-	 		}
-	 
+ 			 			 			
+	 			foreach($propertiesOfCatgeory as $p) {
+		 				
+		 			$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
+					if (count($type) == 0) continue;
+		 			for($j = 0; $j < prop_fac; $j++) {
+		 				if ($type[0]->getXSDValue() == '_str') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
+		 				} else if ($type[0]->getXSDValue() == '_wpg') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
+		 				}
+		 		}
+ 			}
  			
  			$a = new Article($instance);
  			$r = Revision::newFromTitle($instance);
@@ -332,7 +335,7 @@
  	$db->freeResult($res);
  }
  
- function addBlindtext($random = false) {
+ function addBlindtext($size, $random = false) {
  	global $blindTexts;
  	$blindTextPages = array();
  	$db = wfGetDB(DB_MASTER);
@@ -346,7 +349,7 @@
 		 	
 		 	$a = new Article($newtitle);
 		 	$r = Revision::newFromTitle($newtitle);
-		 	$size = $random ? rand(0,6) : blindtext;
+		 	$size = $random ? rand(0,6) : $size;
 		  	$a->doEdit($r->getText()."\n".$blindTexts[$size], "", EDIT_FORCE_BOT);	
 		 	$blindTextPages[] = $newtitle;
 		 	$i++;
@@ -385,7 +388,23 @@
   	 return chr(rand(0,25)+65).chr(rand(0,25)+65).rand(0,10);
   }
  
- 
+  function addLinkPage($pages, $pagelistname) {
+  	$links = "";
+	 foreach($pages as $page) {
+	 	if ($page->getNamespace() == NS_CATEGORY) {
+	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
+	 	} else {
+	 		$links .= "*[[".$page->getPrefixedText()."]]\n";
+	 	}
+	 }
+	 $testTitle = Title::newFromText($pagelistname);
+	 $testArticle = new Article($testTitle);
+	 if ($testTitle->exists()) {
+	 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
+	 } else {
+	 	$testArticle->insertNewArticle($links, "", false, false);
+	 }
+  } 
  // main program
  
  // initialize
@@ -394,7 +413,7 @@
  print "Generating content...\n";
  
  // add category tree and instances
- print "Categories and instances...";
+ /*print "Categories and instances...";
  addCategoryTree(NULL, 0);
  printProgress(1);
  print "\n";
@@ -415,28 +434,39 @@
  print "Redirects...";
  addRedirects();
  printProgress(1);
- print "\n";
+ print "\n";*/
  
  // add blindtext for arbitrary articles
- print "Adding blind text...";
- $blindTextPages = addBlindtext(false);
+ print "Adding blind text 64kb...";
+ $blindTextPages = addBlindtext(5, false);
  printProgress(1);
-  
- $links = "";
- foreach($blindTextPages as $page) {
- 	if ($page->getNamespace() == NS_CATEGORY) {
- 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
- 	} else {
- 		$links .= "*[[".$page->getPrefixedText()."]]\n";
- 	}
- }
- $testTitle = Title::newFromText("Pages with blind text");
- $testArticle = new Article($testTitle);
- if ($testTitle->exists()) {
- 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
- } else {
- 	$testArticle->insertNewArticle($links, "", false, false);
- }
+ addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ print "\n";
+ 
+ print "Adding blind text 32kb...";
+ $blindTextPages = addBlindtext(4, false);
+ printProgress(1);
+ addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ print "\n";
+ 
+ print "Adding blind text 16kb...";
+ $blindTextPages = addBlindtext(3, false);
+ printProgress(1);
+ addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ print "\n";
+ 
+ print "Adding blind text 8kb...";
+ $blindTextPages = addBlindtext(2, false);
+ printProgress(1);
+ addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ print "\n";
+ 
+ print "Adding blind text 4kb...";
+ $blindTextPages = addBlindtext(1, false);
+ printProgress(1);
+ addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ print "\n";
+ 
  print "\n\n";
 
  print "Inserted categories: ".$cat_counter."\n";
