@@ -289,7 +289,7 @@
  			
  			$a = new Article($instance);
  			$r = Revision::newFromTitle($instance);
- 			$a->doEdit($r->getText()."\n".$annotationsToAdd, "");
+ 			$a->doEdit($r->getText()."\n".$annotationsToAdd, "", EDIT_FORCE_BOT);
  			//print "Update article: ".$instance->getText()."\n";
  			//print "with: ".$annotationsToAdd."\n";
  			$i++;
@@ -347,7 +347,7 @@
 		 	$a = new Article($newtitle);
 		 	$r = Revision::newFromTitle($newtitle);
 		 	$size = $random ? rand(0,6) : blindtext;
-		  	$a->doEdit($r->getText()."\n".$blindTexts[$size], "");	
+		  	$a->doEdit($r->getText()."\n".$blindTexts[$size], "", EDIT_FORCE_BOT);	
 		 	$blindTextPages[] = $newtitle;
 		 	$i++;
 		}
@@ -433,7 +433,7 @@
  $testTitle = Title::newFromText("Pages with blind text");
  $testArticle = new Article($testTitle);
  if ($testTitle->exists()) {
- 	$testArticle->doEdit($links, "");
+ 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
  } else {
  	$testArticle->insertNewArticle($links, "", false, false);
  }
