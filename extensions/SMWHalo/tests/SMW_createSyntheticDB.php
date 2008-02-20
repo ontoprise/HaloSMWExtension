@@ -14,24 +14,44 @@
  * Author: kai
  */
  
- // constants which describe DB content (defaults)
- define('num_insts', 50000);
+ // constants which describe DB content (defaults, may be overidden at command line)
+ 
+ // number of instances, categories and properties
+ define('num_insts', 5000);
  define('num_cats', 1200);
  define('num_props', 2500);
+ 
+ // balance factor for trees: 0 not balanced, 1 full balanced.
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
+ 
+ // depth of trees
  define('depth_cat', 6);
  define('depth_prop', 2);
+ 
+ // instances distribution: 0 equal distribution over all categories, 
+ // 1 all instances are members of leaf categories
  define('inst_dist', 0.8);  
+ 
+ // percentage of properties which are datatype properties
  define('data_prop_freq', 0.3);
+ 
+ // max. number how often a property is annotated on a page
  define('prop_fac', 5);
+ 
+ // percentage of properties which have domains, min cards, max cards, annotations, redirects 
  define('dom_cov', 0.7);  
  define('max_card_cov', 0.1);  
  define('min_card_cov', 0.1);  
  define('annot_cov', 0.7);  
  define('red_cov', 0.01);  
+ 
+ define('queries', 20);
+ define('query_prop', 4);
+ 
+ // percentage of pages with blindtext (for every size)
  define('blindtext_cov', 0.001);
- define('blindtext', 5);  // = 2^blindtext kb. Possible values of blindtext are:  0 <= blindtext <= 6
+
    
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
@@ -335,28 +355,136 @@
  	$db->freeResult($res);
  }
  
- function addBlindtext($size, $random = false) {
- 	global $blindTexts;
- 	$blindTextPages = array();
+ /**
+  * Returns $num arbitrary pages.
+  * 
+  * @return array of Title  
+  */
+ function getRandomPages($num) {
+ 	$results = array();
  	$db = wfGetDB(DB_MASTER);
- 	$res = $db->query('SELECT page_title, page_namespace FROM page ORDER BY RAND() LIMIT '.intval(num_insts * blindtext_cov));
- 	$total = $db->numRows( $res );
- 	if( $total > 0) {
-	 	$i = 0;
-	 	while ($row = $db->fetchObject($res)) {
-	 		printProgress($i / ($total));
-	 		$newtitle = Title::newFromText($row->page_title, $row->page_namespace);
-		 	
-		 	$a = new Article($newtitle);
-		 	$r = Revision::newFromTitle($newtitle);
-		 	$size = $random ? rand(0,6) : $size;
-		  	$a->doEdit($r->getText()."\n".$blindTexts[$size], "", EDIT_FORCE_BOT);	
-		 	$blindTextPages[] = $newtitle;
-		 	$i++;
+ 	$res = $db->query('SELECT page_title, page_namespace FROM page ORDER BY RAND() LIMIT '.intval($num));
+ 	if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$results[] = Title::newFromText($row->page_title, $row->page_namespace);
+				
+			}
 		}
+		$db->freeResult($res);
+ 	
+ 	return $results;
+ }
+ 
+ /**
+  * Add blindtext to $pages with a size of 2^$size kb
+  * 
+  * @param $pages array of Title
+  * @param $size size of page (2^$size kb)
+  * @param $random random size if true.
+  */
+ function addBlindtext($pages, $size, $random = false) {
+ 	global $blindTexts;
+ 
+ 	$i = 0;
+ 	foreach($pages as $newtitle) {
+ 	 	printProgress($i / (count($pages)));
+	     $size = $random ? rand(0,6) : $size;
+		 addText($newtitle, $blindTexts[$size]);
+		 $blindTextPages[] = $newtitle;
+		 $i++;
+	
  	}
- 	$db->freeResult($res);
- 	return $blindTextPages;
+  	
+ }
+ 
+ function addText($title, $text) {
+ 	 $a = new Article($title);
+	 $r = Revision::newFromTitle($title);
+		
+	 $a->doEdit($r->getText()."\n".$text, "", EDIT_FORCE_BOT);	
+ }
+ 
+ function generateCategoryQueries() {
+ 	$categoryQueries = array();
+ 	$leaves = getLeafCats(queries);
+ 	$i = 0;
+ 	$superCats = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
+	 		$categoryQueries[] = "<ask>[[category:".$superCat->getText()."]]</ask>";
+	 		
+	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
+	 	} while (!empty($superCats));
+	 	$i++;
+ 	}
+ 	return $categoryQueries;
+ }
+ 
+ function generateCategoryPropertyQueries() {
+ 	$categoryQueries = array();
+ 	$leaves = getLeafCats(queries);
+ 	$i=0;
+ 	$superCats = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
+	 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($superCat);
+	 		$property_restr = "";
+	 		$j = 0;
+	 		foreach($properties as $prop) {
+	 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
+	 			$property_restr .= "[[$p::*]]";
+	 			if ($j >= query_prop) break;
+	 			$j++;
+	 		}
+	 		$categoryQueries[] = "<ask>[[category:".$superCat->getText()."]]$property_restr</ask>";
+	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories();
+	 	} while (!empty($superCats));
+	 	$i++;
+ 	}
+ 	return $categoryQueries;
+ }
+ 
+ function generateQueryPages($queries) {
+ 	$results = array();
+ 	$i=0;
+ 	foreach($queries as $q) {
+ 		printProgress($i / (count($queries)));
+	 	$titlename = createID();
+	 	$title = Title::newFromText($titlename, NS_MAIN);
+	 	$results[] = $title;
+	 	if ($title->exists()) return; // should not happen
+	 	$a = new Article($title);
+	 	if ($q != NULL)  {
+	 		$a->insertNewArticle($q, "", false, false);	
+	 	}
+	 	$i++;
+ 	}
+ 	return $results; 
+ }
+ 
+ /**
+  * Returns all category leaves.
+  * 
+  * @return array of Title
+  */
+ function getLeafCats($num) {
+ 	$results=array(); 
+ 	$db = wfGetDB(DB_MASTER);
+ 	$res = $db->query('SELECT DISTINCT page_title FROM page p WHERE p.page_namespace =14 AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM page p2, categorylinks WHERE cl_from = p2.page_id AND cl_to = p.page_title) ORDER BY RAND() LIMIT '.$num);
+    if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$results[] = Title::newFromText($row->page_title, NS_CATEGORY);
+				
+			}
+		}
+	$db->freeResult($res);
+	return $results; 
  }
  
  function getDomainAndRange() {
@@ -391,6 +519,7 @@
   function addLinkPage($pages, $pagelistname) {
   	$links = "";
 	 foreach($pages as $page) {
+	 
 	 	if ($page->getNamespace() == NS_CATEGORY) {
 	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
 	 	} else {
@@ -436,37 +565,56 @@
  printProgress(1);
  print "\n";
  
+ // get random pages for blindtexts
+ $blindTextPages = getRandomPages(num_insts * blindtext_cov * 5);
+ $partitions = array_chunk($blindTextPages, num_insts * blindtext_cov);
  // add blindtext for arbitrary articles
  print "Adding blind text 64kb...";
- $blindTextPages = addBlindtext(5, false);
+ $blindTextPages = addBlindtext($partitions[0], 5, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 64kb blind text"); 
+ addLinkPage($partitions[0], "Pages with 64kb blind text"); 
  print "\n";
  
  print "Adding blind text 32kb...";
- $blindTextPages = addBlindtext(4, false);
+ $blindTextPages = addBlindtext($partitions[1], 4, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 32kb blind text"); 
+ addLinkPage($partitions[1], "Pages with 32kb blind text"); 
  print "\n";
  
  print "Adding blind text 16kb...";
- $blindTextPages = addBlindtext(3, false);
+ $blindTextPages = addBlindtext($partitions[2], 3, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 16kb blind text"); 
+ addLinkPage($partitions[2], "Pages with 16kb blind text"); 
  print "\n";
  
  print "Adding blind text 8kb...";
- $blindTextPages = addBlindtext(2, false);
+ $blindTextPages = addBlindtext($partitions[3], 2, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 8kb blind text"); 
+ addLinkPage($partitions[3], "Pages with 8kb blind text"); 
  print "\n";
  
  print "Adding blind text 4kb...";
- $blindTextPages = addBlindtext(1, false);
+ $blindTextPages = addBlindtext($partitions[4], 1, false);
  printProgress(1);
- addLinkPage($blindTextPages, "Pages with 4kb blind text"); 
+ addLinkPage($partitions[4], "Pages with 4kb blind text"); 
  print "\n";
  
+ print "Adding category query pages...";
+ $categoryQueries = generateCategoryQueries();
+ printProgress(1);
+ print "\n";
+ $categoryQueryPages = generateQueryPages($categoryQueries);
+ addLinkPage($categoryQueryPages, "Pages with category queries"); 
+ printProgress(1);
+ print "\n";
+ 
+ print "Adding category/property query pages...";
+ $categoryPropertyQueries = generateCategoryQueries();
+ printProgress(1);
+ print "\n";
+ $categoryQueryPropertyPages = generateQueryPages($categoryPropertyQueries);
+ addLinkPage($categoryQueryPropertyPages, "Pages with category/property queries"); 
+ printProgress(1);
  print "\n\n";
 
  print "Inserted categories: ".$cat_counter."\n";
