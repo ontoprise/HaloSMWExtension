@@ -36,6 +36,9 @@
  // percentage of properties which are datatype properties
  define('data_prop_freq', 0.3);
  
+ // percentage of datatype properties which are strings.
+ define('data_prop_string', 0.8);
+ 
  // max. number how often a property is annotated on a page
  define('prop_fac', 5);
  
@@ -152,7 +155,11 @@
  	}
  	$isBinary = false;
  	if (rand(0,1) < data_prop_freq) {
- 		$texttoinsert .= "[[has type::Type:String]]\n";
+ 		if (rand(0,1) < data_prop_string) {
+ 			$texttoinsert .= "[[has type::Type:String]]\n";
+ 		} else {
+ 			$texttoinsert .= "[[has type::Type:Number]]\n";
+ 		}
  		
  	} else {
  		$isBinary = true;
@@ -190,7 +197,7 @@
  
  function createCategoryQueries() {
  	$categoryQueries = array();
- 	$leaves = getLeafCats(queries);
+ 	$leaves = getLeafCategories(queries);
  	$i = 0;
  	$superCats = array();
  	foreach($leaves as $leaf) {
@@ -203,13 +210,14 @@
 	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
 	 	} while (!empty($superCats));
 	 	$i++;
+	 	$categoryQueries[] = NULL;
  	}
  	return $categoryQueries;
  }
  
  function createCategoryPropertyQueries() {
  	$categoryQueries = array();
- 	$leaves = getLeafCats(queries);
+ 	$leaves = getLeafCategories(queries);
  	$i=0;
  	$superCats = array();
  	foreach($leaves as $leaf) {
@@ -231,8 +239,63 @@
 	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
 	 	} while (!empty($superCats));
 	 	$i++;
+	 	$categoryQueries[] = NULL;
  	}
  	return $categoryQueries;
+ }
+ 
+ function createCategoryPropertyWithConstraintQueries() {
+ 	$categoryQueries = array();
+ 	$leaves = getLeafCategories(queries);
+ 	$i=0;
+ 	$superCats = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
+	 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($superCat);
+	 		$property_restr = "";
+	 		$j = 0;
+	 		foreach($properties as $prop) {
+	 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
+	 			if ($type == '_num') {
+	 				$property_restr .= "[[".$p->getText()."::>50]]";
+	 			} else {
+	 				
+	 				$property_restr .= "[[".$p->getText()."::*]]";
+	 			}
+	 			if ($j >= query_prop) break;
+	 			$j++;
+	 		}
+	 		
+	 		$categoryQueries[] = "<ask>[[Category:".$superCat->getText()."]]$property_restr</ask>";
+	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
+	 	} while (!empty($superCats));
+	 	$categoryQueries[] = NULL;
+	 	$i++;
+ 	}
+ 	return $categoryQueries;
+ }
+ 
+ function createPropertyQueries() {
+ 	$propertyQueries = array();
+ 	$leaves = getLeafProperties(queries);
+ 	$i = 0;
+ 	$superProps = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superProp = !empty($superProps) ? $superProps[0] : $leaf;
+	 		$propertyQueries[] = "<ask>[[".$superProp->getText()."::*]]</ask>";
+	 		
+	 		$superProps = smwfGetSemanticStore()->getDirectSuperProperties($superProp);
+	 	} while (!empty($superProps));
+	 	$i++;
+ 	}
+ 	$propertyQueries[] = NULL;
+ 	return $propertyQueries;
  }
  
  function addInstances($category, $depth) {
@@ -332,7 +395,7 @@
  	$db = wfGetDB(DB_MASTER);
  	require_once($smwgIP . '/includes/storage/SMW_Store.php');
  	$requestoptions = new SMWRequestOptions();
- 	$requestoptions->limit = rand(0,5);
+ 	$requestoptions->limit = intval(rand(0,5));
  	$res = $db->query('SELECT page_title FROM page WHERE page_namespace = '.NS_MAIN.' ORDER BY RAND() LIMIT '.intval(num_insts * annot_cov));
  	$total = $db->numRows( $res );
  	if( $total > 0) {
@@ -358,6 +421,8 @@
 		 			for($j = 0; $j < prop_fac; $j++) {
 		 				if ($type[0]->getXSDValue() == '_str') {
 		 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
+		 				} else if ($type[0]->getXSDValue() == '_num') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".intval(rand(0,100))."]]\n"; 
 		 				} else if ($type[0]->getXSDValue() == '_wpg') {
 		 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
 		 				}
@@ -367,12 +432,14 @@
  				foreach($propertiesOfCatgeory as $prop) {
  					
 		 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-		 			print_r($p);	
+		 			
 		 			$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
 					if (count($type) == 0) continue;
 		 			for($j = 0; $j < prop_fac; $j++) {
 		 				if ($type[0]->getXSDValue() == '_str') {
 		 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
+		 				} else if ($type[0]->getXSDValue() == '_num') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".intval(rand(0,100))."]]\n"; 
 		 				} else if ($type[0]->getXSDValue() == '_wpg') {
 		 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
 		 				}
@@ -455,7 +522,7 @@
  		printProgress($i / (count($queries)));
 	 	$titlename = createID();
 	 	$title = Title::newFromText($titlename, NS_MAIN);
-	 	$results[] = $title;
+	 	$results[] = $q == NULL ? NULL : $title;
 	 	if ($title->exists()) return; // should not happen
 	 	$a = new Article($title);
 	 	if ($q != NULL)  {
@@ -469,8 +536,9 @@
   function addLinkPage($pages, $pagelistname) {
   	$links = "";
 	 foreach($pages as $page) {
-	 
-	 	if ($page->getNamespace() == NS_CATEGORY) {
+	 	if ($page == NULL) {
+	 		$links .= "----\n";
+	 	} else if ($page->getNamespace() == NS_CATEGORY) {
 	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
 	 	} else {
 	 		$links .= "*[[".$page->getPrefixedText()."]]\n";
@@ -489,13 +557,27 @@
   * 
   * @return array of Title
   */
- function getLeafCats($num) {
+ function getLeafCategories($num) {
  	$results=array(); 
  	$db = wfGetDB(DB_MASTER);
  	$res = $db->query('SELECT DISTINCT page_title FROM page p WHERE p.page_namespace =14 AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM page p2, categorylinks WHERE cl_from = p2.page_id AND cl_to = p.page_title) ORDER BY RAND() LIMIT '.$num);
     if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				$results[] = Title::newFromText($row->page_title, NS_CATEGORY);
+				
+			}
+		}
+	$db->freeResult($res);
+	return $results; 
+ }
+ 
+ function getLeafProperties($num) {
+ 	$results=array(); 
+ 	$db = wfGetDB(DB_MASTER);
+ 	$res = $db->query('SELECT DISTINCT page_title FROM page p WHERE p.page_namespace = 102 AND page_is_redirect = 0 AND NOT EXISTS (SELECT subject_title FROM page p2, smw_subprops WHERE subject_title = p2.page_title AND object_title = p.page_title) ORDER BY RAND() LIMIT '.$num);
+    if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$results[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
 				
 			}
 		}
@@ -635,17 +717,38 @@
  $categoryQueries = createCategoryQueries();
  printProgress(1);
  print "\n";
+ 
  $categoryQueryPages = addQueryPages($categoryQueries);
  addLinkPage($categoryQueryPages, "Pages with category queries"); 
  printProgress(1);
  print "\n";
  
- print "Adding category/property query pages...";
+ print "Adding property query pages...";
+ $propertyQueries = createPropertyQueries();
+ printProgress(1);
+ print "\n";
+ 
+ $propertyQueriesPages = addQueryPages($propertyQueries);
+ addLinkPage($propertyQueriesPages, "Pages with property queries"); 
+ printProgress(1);
+ print "\n";
+ 
+  print "Adding category/property query pages...";
  $categoryPropertyQueries = createCategoryPropertyQueries();
  printProgress(1);
  print "\n";
  $categoryQueryPropertyPages = addQueryPages($categoryPropertyQueries);
  addLinkPage($categoryQueryPropertyPages, "Pages with category/property queries"); 
+ printProgress(1);
+ print "\n";
+
+
+ print "Adding category/property with constraints query pages...";
+ $categoryPropertyQueries = createCategoryPropertyWithConstraintQueries();
+ printProgress(1);
+ print "\n";
+ $categoryQueryPropertyConstraintPages = addQueryPages($categoryPropertyQueries);
+ addLinkPage($categoryQueryPropertyConstraintPages, "Pages with category/property constraint queries"); 
  printProgress(1);
  print "\n\n";
 
@@ -654,6 +757,6 @@
  print "Inserted instances: ".$inst_counter."\n";
  
  print "\nTotal number of inserted articles: ".
- 	($cat_counter+$prop_counter+$inst_counter+(num_insts*red_cov));
+ 	($cat_counter+$prop_counter+$inst_counter+(num_insts*red_cov)+count($categoryQueryPages)+count($propertyQueriesPages)+count($categoryQueryPropertyPages)+count($categoryQueryPropertyConstraintPages));
  
 ?>
