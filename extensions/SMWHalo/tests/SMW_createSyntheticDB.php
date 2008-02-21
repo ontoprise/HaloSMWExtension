@@ -17,16 +17,16 @@
  // constants which describe DB content (defaults, may be overidden at command line)
  
  // number of instances, categories and properties
- define('num_insts', 5000);
- define('num_cats', 1200);
- define('num_props', 2500);
+ define('num_insts', 1000);
+ define('num_cats', 100);
+ define('num_props', 150);
  
  // balance factor for trees: 0 not balanced, 1 full balanced.
  define('bal_cat', 0.8);
  define('bal_props', 0.8);
  
  // depth of trees
- define('depth_cat', 6);
+ define('depth_cat', 4);
  define('depth_prop', 2);
  
  // instances distribution: 0 equal distribution over all categories, 
@@ -46,7 +46,9 @@
  define('annot_cov', 0.7);  
  define('red_cov', 0.01);  
  
+ // number of leaf categories selected for generating queries
  define('queries', 20);
+ // max. number of properties used in a query
  define('query_prop', 4);
  
  // percentage of pages with blindtext (for every size)
@@ -67,6 +69,23 @@
  $prop_counter = 0;
  
  $blindTexts = array();
+ 
+ function printProgress($percentage) {
+ 		$pro_str = number_format($percentage*100, 0);
+ 		if ($percentage == 0) { 
+ 			print $pro_str."%";
+ 			return;
+ 		} 
+ 		switch(strlen($pro_str)) {
+ 			case 4: print "\x08\x08\x08\x08\x08"; break;
+ 			case 3: print "\x08\x08\x08\x08"; break;
+ 			case 2: print "\x08\x08\x08"; break;
+ 			case 1: print "\x08\x08"; break;
+ 			case 0: print "\x08";
+ 		}
+ 		print $pro_str."%";
+ 	}
+ 
  
  function createBlindText() {
  	global $blindTexts;
@@ -102,21 +121,140 @@
  	return uniqid(rand());
  }
  
- function printProgress($percentage) {
- 		$pro_str = number_format($percentage*100, 0);
- 		if ($percentage == 0) { 
- 			print $pro_str."%";
- 			return;
- 		} 
- 		switch(strlen($pro_str)) {
- 			case 4: print "\x08\x08\x08\x08\x08"; break;
- 			case 3: print "\x08\x08\x08\x08"; break;
- 			case 2: print "\x08\x08\x08"; break;
- 			case 1: print "\x08\x08"; break;
- 			case 0: print "\x08";
- 		}
- 		print $pro_str."%";
+ 
+ 
+ function createCategory($superCat, $new_cat) {
+ 	global $dry_run;
+ 	if ($dry_run) return;
+ 	$title = Title::newFromText($new_cat, NS_CATEGORY);
+ 	if ($title->exists()) return; // should not happen
+ 	$a = new Article($title);
+ 	if ($superCat != NULL)  {
+ 		$a->insertNewArticle("[[category:$superCat]]", "", false, false);	
+ 	} else {
+ 		$a->insertNewArticle("Root category", "", false, false);
  	}
+ 	
+ 	//print "Insert Category:$new_cat as sub category of [[category:$superCat]].\n";
+ }
+ 
+ function createProperty($superProp, $new_prop) {
+ 	global $dry_run;
+ 	if ($dry_run) return;
+ 	$title = Title::newFromText($new_prop, SMW_NS_PROPERTY);
+ 	if ($title->exists()) return; // should not happen
+ 	$a = new Article($title);
+ 	$texttoinsert = "";
+ 	if ($superProp != NULL)  {
+ 		$texttoinsert .= "[[Subproperty of::Property:$superProp]]\n";
+ 	} else {
+ 		$texttoinsert .= "Root property\n";
+ 	}
+ 	$isBinary = false;
+ 	if (rand(0,1) < data_prop_freq) {
+ 		$texttoinsert .= "[[has type::Type:String]]\n";
+ 		
+ 	} else {
+ 		$isBinary = true;
+ 		$texttoinsert .= "[[has type::Type:Page]]\n";
+ 	}
+ 	if (rand(0,1) < dom_cov) {
+ 		list($domain, $range) = getDomainAndRange();
+ 		if ($isBinary) {
+ 			$texttoinsert .= "[[has domain and range::".$domain->getPrefixedText().";".$range->getPrefixedText()."]]\n";
+ 		} else {
+ 			$texttoinsert .= "[[has domain and range::".$domain->getPrefixedText()."]]\n";
+ 		}
+ 	}
+ 	if (rand(0,1) < max_card_cov) {
+ 		$texttoinsert .= "[[has max cardinality::".intval(rand(0,5))."]]\n";
+ 	}
+ 	if (rand(0,1) < min_card_cov) {
+ 		$texttoinsert .= "[[has min cardinality::".intval(rand(0,5))."]]\n";
+ 	}
+ 	$a->insertNewArticle($texttoinsert, "", false, false);	
+ 	//print "Insert Property:$new_prop as sub property of Property:$superProp.\n";
+ }
+ 
+ function createInstance($category, $id) {
+ 	global $dry_run;
+ 	if ($dry_run) return;
+ 	$title = Title::newFromText($id, NS_MAIN);
+ 	if ($title->exists()) return; // should not happen
+ 	$a = new Article($title);
+ 	if ($category != NULL)  {
+ 		$a->insertNewArticle("[[category:$category]]", "", false, false);	
+ 	} 
+ 	//print "Insert instance: $id as member of category:$category.\n";
+ }
+ 
+ function createCategoryQueries() {
+ 	$categoryQueries = array();
+ 	$leaves = getLeafCats(queries);
+ 	$i = 0;
+ 	$superCats = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
+	 		$categoryQueries[] = "<ask>[[Category:".$superCat->getText()."]]</ask>";
+	 		
+	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
+	 	} while (!empty($superCats));
+	 	$i++;
+ 	}
+ 	return $categoryQueries;
+ }
+ 
+ function createCategoryPropertyQueries() {
+ 	$categoryQueries = array();
+ 	$leaves = getLeafCats(queries);
+ 	$i=0;
+ 	$superCats = array();
+ 	foreach($leaves as $leaf) {
+ 			printProgress($i / (count($leaves)));
+ 			
+	 	do {
+	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
+	 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($superCat);
+	 		$property_restr = "";
+	 		$j = 0;
+	 		foreach($properties as $prop) {
+	 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
+	 			$property_restr .= "[[".$p->getText()."::*]]";
+	 			if ($j >= query_prop) break;
+	 			$j++;
+	 		}
+	 		
+	 		$categoryQueries[] = "<ask>[[Category:".$superCat->getText()."]]$property_restr</ask>";
+	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
+	 	} while (!empty($superCats));
+	 	$i++;
+ 	}
+ 	return $categoryQueries;
+ }
+ 
+ function addInstances($category, $depth) {
+ 	global $inst_counter;
+ 	if ($inst_counter > num_insts) return;
+ 	$lh = rand(0,1);
+ 	if ($depth == depth_cat-1) {
+ 		// category leaf
+ 		if ($lh < inst_dist) {
+ 			$num_inst = rand(0, (1/(1-inst_dist))*num_insts / num_cats);
+ 			for ($i = 0; $i < $num_inst; $i++) {
+ 				createInstance($category, createID());
+ 			}
+ 			$inst_counter += $num_inst;
+ 		}
+ 	} else {
+ 		if ($lh > inst_dist) {
+ 			createInstance($category, createID());
+ 			$inst_counter++;
+ 		}
+ 	}
+ }
  
  function addCategoryTree($superCat, $depth) {
  	global $cat_counter, $inst_counter;
@@ -188,91 +326,6 @@
  	}
  }
  
- function createCategory($superCat, $new_cat) {
- 	global $dry_run;
- 	if ($dry_run) return;
- 	$title = Title::newFromText($new_cat, NS_CATEGORY);
- 	if ($title->exists()) return; // should not happen
- 	$a = new Article($title);
- 	if ($superCat != NULL)  {
- 		$a->insertNewArticle("[[category:$superCat]]", "", false, false);	
- 	} else {
- 		$a->insertNewArticle("Root category", "", false, false);
- 	}
- 	
- 	//print "Insert Category:$new_cat as sub category of [[category:$superCat]].\n";
- }
- 
- function createProperty($superProp, $new_prop) {
- 	global $dry_run;
- 	if ($dry_run) return;
- 	$title = Title::newFromText($new_prop, SMW_NS_PROPERTY);
- 	if ($title->exists()) return; // should not happen
- 	$a = new Article($title);
- 	$texttoinsert = "";
- 	if ($superProp != NULL)  {
- 		$texttoinsert .= "[[Subproperty of::Property:$superProp]]\n";
- 	} else {
- 		$texttoinsert .= "Root property\n";
- 	}
- 	$isBinary = false;
- 	if (rand(0,1) < data_prop_freq) {
- 		$texttoinsert .= "[[has type::Type:String]]\n";
- 		
- 	} else {
- 		$isBinary = true;
- 		$texttoinsert .= "[[has type::Type:Page]]\n";
- 	}
- 	if (rand(0,1) < dom_cov) {
- 		list($domain, $range) = getDomainAndRange();
- 		if ($isBinary) {
- 			$texttoinsert .= "[[has domain and range::".$domain->getText().";".$range->getText()."]]\n";
- 		} else {
- 			$texttoinsert .= "[[has domain and range::".$domain->getText()."]]\n";
- 		}
- 	}
- 	if (rand(0,1) < max_card_cov) {
- 		$texttoinsert .= "[[has max cardinality::".intval(rand(0,5))."]]\n";
- 	}
- 	if (rand(0,1) < min_card_cov) {
- 		$texttoinsert .= "[[has min cardinality::".intval(rand(0,5))."]]\n";
- 	}
- 	$a->insertNewArticle($texttoinsert, "", false, false);	
- 	//print "Insert Property:$new_prop as sub property of Property:$superProp.\n";
- }
- 
- function createInstance($category, $id) {
- 	global $dry_run;
- 	if ($dry_run) return;
- 	$title = Title::newFromText($id, NS_MAIN);
- 	if ($title->exists()) return; // should not happen
- 	$a = new Article($title);
- 	if ($category != NULL)  {
- 		$a->insertNewArticle("[[category:$category]]", "", false, false);	
- 	} 
- 	//print "Insert instance: $id as member of category:$category.\n";
- }
- 
- function addInstances($category, $depth) {
- 	global $inst_counter;
- 	if ($inst_counter > num_insts) return;
- 	$lh = rand(0,1);
- 	if ($depth == depth_cat-1) {
- 		// category leaf
- 		if ($lh < inst_dist) {
- 			$num_inst = rand(0, (1/(1-inst_dist))*num_insts / num_cats);
- 			for ($i = 0; $i < $num_inst; $i++) {
- 				createInstance($category, createID());
- 			}
- 			$inst_counter += $num_inst;
- 		}
- 	} else {
- 		if ($lh > inst_dist) {
- 			createInstance($category, createID());
- 			$inst_counter++;
- 		}
- 	}
- }
  
  function addAnnotations() {
  	global $smwgIP;
@@ -292,10 +345,11 @@
  			$categoriesForInstance = smwfGetSemanticStore()->getCategoriesForInstance($instance);
  			if (count($categoriesForInstance) == 0) continue;
  			
- 			$propertiesOfCatgeory = smwfGetSemanticStore()->getPropertiesWithDomain($categoriesForInstance[0], $requestoptions);
+ 			$propertiesOfCatgeory = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($categoriesForInstance[0], $requestoptions);
+ 			
  			if (count($propertiesOfCatgeory) == 0)  {
  				$propertiesOfCatgeory = getRandomProperties();
- 			}
+ 			
  			 			 			
 	 			foreach($propertiesOfCatgeory as $p) {
 		 				
@@ -307,7 +361,24 @@
 		 				} else if ($type[0]->getXSDValue() == '_wpg') {
 		 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
 		 				}
-		 		}
+		 			}
+ 				}
+ 			} else {
+ 				foreach($propertiesOfCatgeory as $prop) {
+ 					
+		 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
+		 			print_r($p);	
+		 			$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
+					if (count($type) == 0) continue;
+		 			for($j = 0; $j < prop_fac; $j++) {
+		 				if ($type[0]->getXSDValue() == '_str') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".getStringValue()."]]\n"; 
+		 				} else if ($type[0]->getXSDValue() == '_wpg') {
+		 					$annotationsToAdd .= "[[".$p->getText()."::".getInstanceValue()->getText()."]]\n";
+		 				}
+		 			}
+ 				}
+ 				
  			}
  			
  			$a = new Article($instance);
@@ -321,18 +392,7 @@
  	$db->freeResult($res);
  }
  
- function getRandomProperties() {
- 	$db = wfGetDB(DB_MASTER);
- 	$results = array();
- 	$res = $db->query('SELECT page_title FROM page WHERE page_namespace = '.SMW_NS_PROPERTY.' ORDER BY RAND() LIMIT '.intval(rand(0,5)));
- 	if($db->numRows( $res ) > 0) {
-	 	while ($row = $db->fetchObject($res)) {
-	 		$results[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
-	 	}
- 	}
- 	$db->freeResult($res);
- 	return $results;
- }
+ 
  
  function addRedirects() {
  	$db = wfGetDB(DB_MASTER);
@@ -355,25 +415,7 @@
  	$db->freeResult($res);
  }
  
- /**
-  * Returns $num arbitrary pages.
-  * 
-  * @return array of Title  
-  */
- function getRandomPages($num) {
- 	$results = array();
- 	$db = wfGetDB(DB_MASTER);
- 	$res = $db->query('SELECT page_title, page_namespace FROM page ORDER BY RAND() LIMIT '.intval($num));
- 	if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$results[] = Title::newFromText($row->page_title, $row->page_namespace);
-				
-			}
-		}
-		$db->freeResult($res);
- 	
- 	return $results;
- }
+ 
  
  /**
   * Add blindtext to $pages with a size of 2^$size kb
@@ -404,53 +446,9 @@
 	 $a->doEdit($r->getText()."\n".$text, "", EDIT_FORCE_BOT);	
  }
  
- function generateCategoryQueries() {
- 	$categoryQueries = array();
- 	$leaves = getLeafCats(queries);
- 	$i = 0;
- 	$superCats = array();
- 	foreach($leaves as $leaf) {
- 			printProgress($i / (count($leaves)));
- 			
-	 	do {
-	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
-	 		$categoryQueries[] = "<ask>[[category:".$superCat->getText()."]]</ask>";
-	 		
-	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
-	 	} while (!empty($superCats));
-	 	$i++;
- 	}
- 	return $categoryQueries;
- }
  
- function generateCategoryPropertyQueries() {
- 	$categoryQueries = array();
- 	$leaves = getLeafCats(queries);
- 	$i=0;
- 	$superCats = array();
- 	foreach($leaves as $leaf) {
- 			printProgress($i / (count($leaves)));
- 			
-	 	do {
-	 		$superCat = !empty($superCats) ? $superCats[0] : $leaf;
-	 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($superCat);
-	 		$property_restr = "";
-	 		$j = 0;
-	 		foreach($properties as $prop) {
-	 			list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-	 			$property_restr .= "[[$p::*]]";
-	 			if ($j >= query_prop) break;
-	 			$j++;
-	 		}
-	 		$categoryQueries[] = "<ask>[[category:".$superCat->getText()."]]$property_restr</ask>";
-	 		$superCats = smwfGetSemanticStore()->getDirectSuperCategories();
-	 	} while (!empty($superCats));
-	 	$i++;
- 	}
- 	return $categoryQueries;
- }
  
- function generateQueryPages($queries) {
+ function addQueryPages($queries) {
  	$results = array();
  	$i=0;
  	foreach($queries as $q) {
@@ -468,6 +466,24 @@
  	return $results; 
  }
  
+  function addLinkPage($pages, $pagelistname) {
+  	$links = "";
+	 foreach($pages as $page) {
+	 
+	 	if ($page->getNamespace() == NS_CATEGORY) {
+	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
+	 	} else {
+	 		$links .= "*[[".$page->getPrefixedText()."]]\n";
+	 	}
+	 }
+	 $testTitle = Title::newFromText($pagelistname);
+	 $testArticle = new Article($testTitle);
+	 if ($testTitle->exists()) {
+	 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
+	 } else {
+	 	$testArticle->insertNewArticle($links, "", false, false);
+	 }
+  } 
  /**
   * Returns all category leaves.
   * 
@@ -515,25 +531,41 @@
   function getStringValue() {
   	 return chr(rand(0,25)+65).chr(rand(0,25)+65).rand(0,10);
   }
+  
+  /**
+  * Returns $num arbitrary pages.
+  * 
+  * @return array of Title  
+  */
+ function getRandomPages($num) {
+ 	$results = array();
+ 	$db = wfGetDB(DB_MASTER);
+ 	$res = $db->query('SELECT page_title, page_namespace FROM page ORDER BY RAND() LIMIT '.intval($num));
+ 	if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$results[] = Title::newFromText($row->page_title, $row->page_namespace);
+				
+			}
+		}
+		$db->freeResult($res);
+ 	
+ 	return $results;
+ }
  
-  function addLinkPage($pages, $pagelistname) {
-  	$links = "";
-	 foreach($pages as $page) {
-	 
-	 	if ($page->getNamespace() == NS_CATEGORY) {
-	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
-	 	} else {
-	 		$links .= "*[[".$page->getPrefixedText()."]]\n";
+ function getRandomProperties() {
+ 	$db = wfGetDB(DB_MASTER);
+ 	$results = array();
+ 	$res = $db->query('SELECT page_title FROM page WHERE page_namespace = '.SMW_NS_PROPERTY.' ORDER BY RAND() LIMIT '.intval(rand(0,5)));
+ 	if($db->numRows( $res ) > 0) {
+	 	while ($row = $db->fetchObject($res)) {
+	 		$results[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
 	 	}
-	 }
-	 $testTitle = Title::newFromText($pagelistname);
-	 $testArticle = new Article($testTitle);
-	 if ($testTitle->exists()) {
-	 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
-	 } else {
-	 	$testArticle->insertNewArticle($links, "", false, false);
-	 }
-  } 
+ 	}
+ 	$db->freeResult($res);
+ 	return $results;
+ }
+ 
+ 
  // main program
  
  // initialize
@@ -600,19 +632,19 @@
  print "\n";
  
  print "Adding category query pages...";
- $categoryQueries = generateCategoryQueries();
+ $categoryQueries = createCategoryQueries();
  printProgress(1);
  print "\n";
- $categoryQueryPages = generateQueryPages($categoryQueries);
+ $categoryQueryPages = addQueryPages($categoryQueries);
  addLinkPage($categoryQueryPages, "Pages with category queries"); 
  printProgress(1);
  print "\n";
  
  print "Adding category/property query pages...";
- $categoryPropertyQueries = generateCategoryQueries();
+ $categoryPropertyQueries = createCategoryPropertyQueries();
  printProgress(1);
  print "\n";
- $categoryQueryPropertyPages = generateQueryPages($categoryPropertyQueries);
+ $categoryQueryPropertyPages = addQueryPages($categoryPropertyQueries);
  addLinkPage($categoryQueryPropertyPages, "Pages with category/property queries"); 
  printProgress(1);
  print "\n\n";
