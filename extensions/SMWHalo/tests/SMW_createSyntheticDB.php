@@ -526,7 +526,7 @@
 	 	if ($title->exists()) return; // should not happen
 	 	$a = new Article($title);
 	 	if ($q != NULL)  {
-	 		$a->insertNewArticle($q, "", false, false);	
+	 		$a->insertNewArticle($q."\n[[category:Query]]", "", false, false);	
 	 	}
 	 	$i++;
  	}
@@ -756,6 +756,11 @@
  print "Inserted properties: ".$prop_counter."\n";
  print "Inserted instances: ".$inst_counter."\n";
  
+ print "add user";
+ $user = User::newFromName("LoadTest");
+ $user->addToDatabase();
+ $user->addGroup('sysop');
+					
  print "\nTotal number of inserted articles: ".
  	($cat_counter+$prop_counter+$inst_counter+(num_insts*red_cov)+count($categoryQueryPages)+count($propertyQueriesPages)+count($categoryQueryPropertyPages)+count($categoryQueryPropertyConstraintPages));
  
