@@ -189,6 +189,81 @@ Query.prototype = {
 		}
 		return asktext;
 	},
+	
+/**
+* Create the syntax for the ask query of this object in the ask parser syntax
+* which was introduced with SMW 1.0. Subqueries are not resolved
+* but marked with "Subquery:[ID]:". Recursive resolving of all subqueries is done
+* within QIHelper.js
+* @return asktext string containing the ask parser syntax
+*/
+	getParserAsk:function(){
+		var asktext = "";
+		for(var i=0; i<this.categories.length; i++){
+			asktext += "[[Category:";
+			for(var j=0; j<this.categories[i].length; j++){
+				asktext += this.categories[i][j];
+				if(j<this.categories[i].length-1){ //add disjunction operator
+					asktext += "||";
+				}
+			}
+			asktext += "]]";
+		}
+		for(var i=0; i<this.instances.length; i++){
+			asktext += "[[";
+			for(var j=0; j<this.instances[i].length; j++){
+				asktext += this.instances[i][j];
+				if(j<this.instances[i].length-1){ //add disjunction operator
+					asktext += "||";
+				}
+			}
+			asktext += "]]";
+		}
+		var displayStatements = new Array();
+		for(var i=0; i<this.properties.length; i++){
+			if(this.properties[i].isShown()){ // "Show in results" checked?
+				displayStatements.push(this.properties[i].getName());
+			}
+			if(this.properties[i].mustBeSet()){
+				asktext += "[[" + this.properties[i].getName() + ":=+]]";
+			}
+			asktext += "[[" + this.properties[i].getName() + ":=";
+			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
+				var vals = this.properties[i].getValues();
+				for(var j=0; j<vals.length; j++){
+					if(j!=0)
+						asktext += ";"; // connect values with semicolon
+					if(vals[j][1]!="=")
+						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
+					asktext += vals[j][2];
+				}
+			} else { //binary property
+				var vals = this.properties[i].getValues();
+				for(var j=0; j<vals.length; j++){
+					if(j!=0) //add disjunction operator
+						asktext += "||";
+					if(vals[j][1]!= "=")
+						asktext += vals[j][1].substring(0,1);
+					if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
+						asktext += "Subquery:" + vals[j][2] + ":";
+					else
+						asktext += vals[j][2];
+				}
+			}
+			asktext += "]]";
+		}
+		return asktext;
+	},
+	
+	getDisplayStatements:function(){
+		var displayStatements = new Array();
+		for(var i=0; i<this.properties.length; i++){
+			if(this.properties[i].isShown()){ // "Show in results" checked?
+				displayStatements.push(this.properties[i].getName());
+			}
+		}
+		return displayStatements;
+	},
 
 	isEmpty:function(){
 		if(this.categories.length == 0 && this.instances.length == 0 && this.properties.length == 0){

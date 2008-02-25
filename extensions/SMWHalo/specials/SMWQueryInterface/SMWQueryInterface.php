@@ -91,13 +91,13 @@ class SMWQueryInterface extends SpecialPage {
 							<option value="ol">ordered list</option>
 							<option value="list">list</option>
 							<option value="count">count</option>
+							<option value="rss">rss</option>
 							</select>
 						</td>
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\')">
 							Sort by:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\')">
 							<select id="layout_sort">
-							<option>Article title</option>
 							</select>
 						</td>
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_order') . '\')">
@@ -139,7 +139,7 @@ class SMWQueryInterface extends SpecialPage {
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_mainlabel') . '\')">
 							Mainlabel:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_mainlabel') . '\')">
-							<input type="text" id="layout_label" value="Article title"/>
+							<input type="text" id="layout_label"/>
 						</td>
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_default') . '\')">
 							Default:
@@ -156,7 +156,7 @@ class SMWQueryInterface extends SpecialPage {
 						//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 						'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_preview') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
 						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
-						'<button class="btn" onclick="qihelper.showFullAsk()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
+						'<button class="btn" onclick="qihelper.showFullAsk(\'parser\', true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
 						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>';
 
@@ -170,8 +170,10 @@ class SMWQueryInterface extends SpecialPage {
 				'<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'resetdialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
 				'</div>';
 
-		$html .= '<div id="showAsk" class="topDialogue" style="display:none">' .
-				'<div id="fullAskText"></div>' .
+		$html .= '<div id="showAsk" class="topDialogue" style="display:none; width:350px">' .
+				'<span id="showParserAskButton" class="qibutton" onclick="qihelper.showFullAsk(\'parser\', false)">' . wfMsg('smw_qi_parserask') . '</span>' .
+				'<span id="showAskButton" class="qibutton" onclick="qihelper.showFullAsk(\'ask\', false)">' . wfMsg('smw_qi_ask') . '</span><br/><hr/>' .
+				'<div><textarea id="fullAskText" style="width:95%" rows="10" readonly></textarea></div>' .
 				'<span class="qibutton" onclick="$(\'showAsk\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_close') . '</span>' .
 				'</div>';
 

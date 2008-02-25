@@ -396,6 +396,8 @@ protected $smwUserMessages = array(
 	'smw_qi_querySaved' => 'Der Query wurde erfolgreich gespeichert',
 	'smw_qi_exportXLS' => 'Ergebnisse nach Excel exportieren',
 	'smw_qi_showAsk' => 'Kompletten Query anzeigen',
+	'smw_qi_ask' => '&lt;ask&gt; syntax',
+	'smw_qi_parserask' => '{{#ask syntax',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',

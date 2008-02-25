@@ -407,6 +407,8 @@ clicking the big arrows between the columns.',
 	'smw_qi_querySaved' => 'New query saved by QueryInterface',
 	'smw_qi_exportXLS' => 'Export results to Excel',
 	'smw_qi_showAsk' => 'Show full query',
+	'smw_qi_ask' => '&lt;ask&gt; syntax',
+	'smw_qi_parserask' => '{{#ask syntax',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',

@@ -237,7 +237,7 @@ updateColumnPreview:function(){
 * @return string containing full ask
 */
 getFullAsk:function(){
-	var asktext = this.recurseQuery(0);
+	var asktext = this.recurseQuery(0, "ask");
 	//get Layout parameters
 	var starttag = "<ask "; //create ask tags and display params
 	starttag += 'format="' + $('layout_format').value + '" ';
@@ -253,21 +253,47 @@ getFullAsk:function(){
 	return starttag + asktext + "</ask>";
 },
 
+getFullParserAsk:function(){
+	var asktext = this.recurseQuery(0, "parser");
+	var displays = this.queries[0].getDisplayStatements();
+	var fullQuery = "{{#ask: " + asktext;
+	for(var i=0; i<displays.length; i++){
+		fullQuery += "| ?" + displays[i];
+	}
+	fullQuery += ' | format=' + $('layout_format').value;
+	fullQuery += $('layout_link').value == "subject" ? "" : (' | link=' + $('layout_link').value);
+	fullQuery += $('layout_intro').value == "" ? "" : (' | intro=' + $('layout_intro').value);
+	fullQuery += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE') ? "" : (' | sort=' + $('layout_sort').value);
+	fullQuery += $('layout_limit').value == "" ? 'limit="20"' : (' | limit=' + $('layout_limit').value);
+	fullQuery += $('layout_label').value == "" ? "" : (' | mainlabel=' + $('layout_label').value);
+	fullQuery += $('layout_order').value == "ascending" ? ' | order=ascending ' : ' | order=descending ';
+	fullQuery += $('layout_headers').checked ? '' : ' | headers=hide ';
+	fullQuery += $('layout_default').value == "" ? '' : ' | default=' + $('layout_default').value;
+	fullQuery += "|}}";
+	
+	return fullQuery;
+},
+
 /**
 * Recursive function that creates the ask syntax for the query with the ID provided
 * and all its subqueries
 * @param id ID of query to start
 */
-recurseQuery:function(id){
+recurseQuery:function(id, type){
 	var sq = this.queries[id].getSubqueryIds();
 	if(sq.length == 0)
 		return this.queries[id].getAskText(); // no subqueries, get the asktext
 	else {
+			
 		var tmptext = this.queries[id].getAskText();
 		for(var i=0; i<sq.length; i++){
 			var regex = null;
 			eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
-			tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
+			if(type == "ask")
+				tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
+			else
+				tmptext = tmptext.replace(regex, '{{#ask: ' + this.recurseQuery(sq[i]) + ' | }}'); //recursion
+		
 		}
 		return tmptext;
 	}
@@ -993,17 +1019,32 @@ copyToClipboard:function(){
 	}
 },
 
-showFullAsk:function(){
-var ask = this.getFullAsk();
-ask = ask.replace(/</g, "&lt;");
-ask = ask.replace(/>/g, "&gt;");
-ask = ask.replace(/\]\]\[\[/g, "]]<br/>[[");
-ask = ask.replace(/&gt;\[\[/g, "&gt;<br/>[[");
-ask = ask.replace(/\]\]&lt;/g, "]]<br/>&lt;");
-
-$('fullAskText').innerHTML = ask;
-$('shade').toggle();
-$('showAsk').toggle();
+showFullAsk:function(type, toggle){
+	if(toggle){
+		$('shade').toggle();
+		$('showAsk').toggle();
+	}
+	if (this.queries[0].isEmpty()){
+		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
+		return;
+	}
+	var ask = null;
+	if(type == "ask"){
+		ask = this.getFullAsk();
+		$("showAskButton").setStyle({fontWeight: 'bold', textDecoration: 'none', cursor: 'default'});
+		$("showParserAskButton").setStyle({fontWeight: 'normal', textDecoration: 'underline', cursor: 'pointer'});
+	}
+	else{
+		ask = this.getFullParserAsk();
+		$("showAskButton").setStyle({fontWeight: 'normal', textDecoration: 'underline', cursor: 'pointer'});
+		$("showParserAskButton").setStyle({fontWeight: 'bold', textDecoration: 'none', cursor: 'default'});
+	}
+	ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
+	ask = ask.replace(/>\[\[/g, ">\n[[");
+	ask = ask.replace(/\]\]</g, "]]\n<");
+	if(type == "parser")
+		ask = ask.replace(/\|/g, "|\n");
+	$('fullAskText').value = ask;
 },
 
 showLoadDialogue:function(){
@@ -1077,7 +1118,7 @@ exportToXLS:function(){
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
 		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
-		params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
+		params += $('layout_sort').value== ""?",":$('layout_sort').value + ',';
 		params += $('layout_limit').value==""?"50,":$('layout_limit').value + ',';
 		params += $('layout_label').value==""?",":$('layout_label').value + ',';
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
