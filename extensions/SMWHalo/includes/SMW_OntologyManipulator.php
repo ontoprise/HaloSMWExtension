@@ -36,6 +36,7 @@ $wgAjaxExportList[] = 'smwf_om_DeleteArticle';
 $wgAjaxExportList[] = 'smwf_om_RenameArticle';
 $wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
+$wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 
 /**
  * Creates a new article or appends some text if it already
@@ -582,5 +583,9 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 	$wgParser->parse($newText, $draggedPropertyTitle, $options, true, true, $draggedPropertyRevision->getID());
 	SMWFactbox::storeData(true);	
 	return "true";
+}
+
+function smwf_om_invalidateAllPages() {
+	smwfGetSemanticStore()->invalidateAllPages();
 }
 ?>

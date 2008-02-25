@@ -844,8 +844,19 @@
 	}
 	
 	
- 	
- 	
+ 	// public methods which are not reflected in the SMWSemanticStore interface
+ 	public function invalidateAllPages() {
+ 		
+		$dbw = wfGetDB( DB_MASTER );
+		$smw_page = $dbw->tableName('page');
+		
+		
+		$success = $dbw->update( $smw_page,
+			array( /* SET */
+				'page_touched' => $dbw->timestamp()
+			), array(), 'SMWSemanticStoreSQL::invalidatePages'
+		);
+ 	}
  	
  	
  	///// Private methods /////
