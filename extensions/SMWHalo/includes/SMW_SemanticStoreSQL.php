@@ -233,8 +233,8 @@
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableWithInstances($categoryTitle, $db);
 		
+		$res = $db->query('SELECT instance, category FROM smw_ob_instances '.DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
 		
-		$res = $db->select('smw_ob_instances', array('instance', 'category'), array(), 'SMW::getInstances', DBHelper::getSQLOptions($requestoptions,'instance'));
 		$results = array();
 		if($db->numRows( $res ) > 0)
 		{
@@ -358,9 +358,9 @@
 		$db =& wfGetDB( DB_MASTER ); 
 		$page = $db->tableName('page');
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db);
-		$res = $db->select( 'smw_ob_properties', 
-		                    'DISTINCT property',
-		                    array(), 'SMW::getPropertiesOfCategory', DBHelper::getSQLOptions($requestoptions,'property'));
+		
+		$res = $db->query( 'SELECT DISTINCT property FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,'property')); 
+	
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -379,9 +379,8 @@
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableWithPropertiesByName($requestoptions, $db);
 		
-		$res = $db->select( 'smw_ob_properties', 
-		                    'DISTINCT property',
-		                    array(), 'SMW::getPropertiesOfCategory', DBHelper::getSQLOptions($requestoptions,'property'));
+		$res = $db->query('SELECT DISTINCT property FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,'property')); 
+		                 		                    
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -722,10 +721,8 @@
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableWithInstances($category, $db);
 		
-		$res = $db->select( 'smw_ob_instances', 
-		                    'COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories',
-		                    array(), 'SMW::getNumberOfInstancesAndSubcategories', array() );
-		
+		$res = $db->query ('SELECT COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories FROM smw_ob_instances');
+				
 		// rewrite result as array
 		$numOfInstances = 0;
 		
@@ -743,9 +740,7 @@
 	public function getNumberOfProperties(Title $category) {
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableWithPropertiesByCategory($category, $db);
-		$res = $db->select( 'smw_ob_properties', 
-		                    'COUNT(DISTINCT property) AS numOfProperties',
-		                    array(), 'SMW::getNumberOfProperties', array() );
+		$res = $db->query( 'SELECT COUNT(DISTINCT property) AS numOfProperties FROM smw_ob_properties');
 		
 		// rewrite result as array
 		$result = 0;
