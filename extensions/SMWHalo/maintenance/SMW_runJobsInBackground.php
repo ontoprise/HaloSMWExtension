@@ -42,7 +42,7 @@
  	$rate = 0.5; // 0.5 jobs/second is default rate
  }
  
- $dbw = wfGetDB( DB_MASTER );
+ $dbw = wfGetDB( DB_SLAVE );
 
  // define socket which listens for a break signal
  $socket = socket_create_listen("9876"); // port is freely chosen
