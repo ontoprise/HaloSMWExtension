@@ -301,7 +301,7 @@
 		
 				
 		// and start it...
-		$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
+		$runCommand = "$phpInterpreter -q \"$IP/SMWGardening/SMW_AsyncBotStarter.php\""; 
 		global $wgServer;	
 		$serverNameParam = escapeshellarg($wgServer);	 		
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
