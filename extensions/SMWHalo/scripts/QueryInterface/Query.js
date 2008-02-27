@@ -136,7 +136,7 @@ Query.prototype = {
 	getAskText:function(){
 		var asktext = "";
 		for(var i=0; i<this.categories.length; i++){
-			asktext += "[[Category:";
+			asktext += "[[" + gLanguage.getMessage('CATEGORY');
 			for(var j=0; j<this.categories[i].length; j++){
 				asktext += this.categories[i][j];
 				if(j<this.categories[i].length-1){ //add disjunction operator
@@ -200,7 +200,7 @@ Query.prototype = {
 	getParserAsk:function(){
 		var asktext = "";
 		for(var i=0; i<this.categories.length; i++){
-			asktext += "[[Category:";
+			asktext += "[[" + gLanguage.getMessage('CATEGORY');
 			for(var j=0; j<this.categories[i].length; j++){
 				asktext += this.categories[i][j];
 				if(j<this.categories[i].length-1){ //add disjunction operator
