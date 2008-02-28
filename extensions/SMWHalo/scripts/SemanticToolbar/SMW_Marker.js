@@ -291,13 +291,13 @@ Marker.prototype = {
 	markNodes: function(){
 		this.removeMarkers();
 		//$(this.rootnode).hide();
-		//var time = new Date();
-		//var timestamp1 = time.toGMTString();		
+		var time = new Date();
+		var timestamp1 = time;//.toGMTString();		
 		this.mark($(this.rootnode), true);
 		this.insertMarkers();
-		//time = new Date();
-		//var timestamp2 = time.toGMTString();
-		//alert(timestamp1 + " " + timestamp2 );
+		time = new Date();
+		var timestamp2 = time;//.toGMTString();
+		//alert(timestamp2 -timestamp1 );
 		//$(this.rootnode).show();
 	},
 	
