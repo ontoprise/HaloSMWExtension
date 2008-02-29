@@ -849,7 +849,7 @@
 		$success = $dbw->update( $smw_page,
 			array( /* SET */
 				'page_touched' => $dbw->timestamp()
-			), array(), 'SMWSemanticStoreSQL::invalidatePages'
+			), array(true), 'SMWSemanticStoreSQL::invalidatePages'
 		);
  	}
  	
