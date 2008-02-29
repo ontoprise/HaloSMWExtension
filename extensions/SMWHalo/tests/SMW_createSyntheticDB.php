@@ -46,23 +46,22 @@
  define('dom_cov', 0.7);  
  define('max_card_cov', 0.1);  
  define('min_card_cov', 0.1);  
- define('annot_cov', 0.7);  
+ define('annot_cov', 0.2);  
  define('red_cov', 0.01);  
  
  // number of leaf categories selected for generating queries
- define('queries', 20);
+ define('queries', 50);
  // max. number of properties used in a query
  define('query_prop', 4);
  
  // percentage of pages with blindtext (for every size)
- define('blindtext_cov', 0.001);
+ define('blindtext_cov', 0.05);
 
    
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
  
- $dry_run = array_key_exists("dryrun", $options);
- 
+ // set command line options 
  foreach($options as $option => $value) {
  	define($option, $value);
  }
@@ -127,8 +126,7 @@
  
  
  function createCategory($superCat, $new_cat) {
- 	global $dry_run;
- 	if ($dry_run) return;
+ 	
  	$title = Title::newFromText($new_cat, NS_CATEGORY);
  	if ($title->exists()) return; // should not happen
  	$a = new Article($title);
@@ -142,8 +140,7 @@
  }
  
  function createProperty($superProp, $new_prop) {
- 	global $dry_run;
- 	if ($dry_run) return;
+ 	
  	$title = Title::newFromText($new_prop, SMW_NS_PROPERTY);
  	if ($title->exists()) return; // should not happen
  	$a = new Article($title);
@@ -184,8 +181,7 @@
  }
  
  function createInstance($category, $id) {
- 	global $dry_run;
- 	if ($dry_run) return;
+ 	
  	$title = Title::newFromText($id, NS_MAIN);
  	if ($title->exists()) return; // should not happen
  	$a = new Article($title);
@@ -450,9 +446,8 @@
  			
  			$a = new Article($instance);
  			$r = Revision::newFromTitle($instance);
- 			$a->doEdit($r->getText()."\n".$annotationsToAdd, "", EDIT_FORCE_BOT);
- 			//print "Update article: ".$instance->getText()."\n";
- 			//print "with: ".$annotationsToAdd."\n";
+ 			$a->doEdit($r->getText()."\n".$annotationsToAdd, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+ 			
  			$i++;
  		}
  	}
@@ -507,10 +502,12 @@
  }
  
  function addText($title, $text) {
+ 	
  	 $a = new Article($title);
 	 $r = Revision::newFromTitle($title);
 		
-	 $a->doEdit($r->getText()."\n".$text, "", EDIT_FORCE_BOT);	
+	 $a->doEdit($r->getText()."\n".$text, "", EDIT_UPDATE | EDIT_FORCE_BOT);	
+	
  }
  
  
@@ -539,15 +536,15 @@
 	 	if ($page == NULL) {
 	 		$links .= "----\n";
 	 	} else if ($page->getNamespace() == NS_CATEGORY) {
-	 		$links .= "*[[:".$page->getPrefixedText()."]]\n";
+	 		$links .= "*Pagelink:[[:".$page->getPrefixedText()."]]\n";
 	 	} else {
-	 		$links .= "*[[".$page->getPrefixedText()."]]\n";
+	 		$links .= "*Pagelink:[[".$page->getPrefixedText()."]]\n";
 	 	}
 	 }
 	 $testTitle = Title::newFromText($pagelistname);
 	 $testArticle = new Article($testTitle);
 	 if ($testTitle->exists()) {
-	 	$testArticle->doEdit($links, "", EDIT_FORCE_BOT);
+	 	$testArticle->doEdit($links, "", EDIT_UPDATE | EDIT_FORCE_BOT);
 	 } else {
 	 	$testArticle->insertNewArticle($links, "", false, false);
 	 }
@@ -756,7 +753,7 @@
  print "Inserted properties: ".$prop_counter."\n";
  print "Inserted instances: ".$inst_counter."\n";
  
- print "add user";
+ print "Add user: LoadTest with password: lt\n";
  $user = User::newFromName("LoadTest");
  $user->setPassword("lt");
  $user->addToDatabase();
@@ -764,5 +761,9 @@
 					
  print "\nTotal number of inserted articles: ".
  	($cat_counter+$prop_counter+$inst_counter+(num_insts*red_cov)+count($categoryQueryPages)+count($propertyQueriesPages)+count($categoryQueryPropertyPages)+count($categoryQueryPropertyConstraintPages));
+
+ print "\nInvalidate all pages"; 
+ smwfGetSemanticStore()->invalidateAllPages();
+ print "\nFinished.";
  
 ?>
