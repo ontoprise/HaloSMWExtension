@@ -758,6 +758,7 @@
  
  print "add user";
  $user = User::newFromName("LoadTest");
+ $user->setPassword("lt");
  $user->addToDatabase();
  $user->addGroup('sysop');
 					
