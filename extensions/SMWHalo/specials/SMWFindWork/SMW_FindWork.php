@@ -9,8 +9,10 @@
 
  define('SMW_FINDWORK_NUMBEROF_RATINGS', 5); // will be doubled (rated and unrated)
  
-global $smwgIP;
+global $smwgIP, $smwgHaloIP;
 include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
+include_once( "$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php" );
+
 
 function smwfDoSpecialFindWorkPage() {
 	wfProfileIn('smwfDoSpecialFindWorkPage (SMW Halo)');
