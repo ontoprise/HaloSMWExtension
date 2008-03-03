@@ -755,12 +755,12 @@
  print "Inserted properties: ".$prop_counter."\n";
  print "Inserted instances: ".$inst_counter."\n";
  
- print "Add user: LoadTest with password: lt\n";
+ /*print "Add user: LoadTest with password: lt\n";
  $user = User::newFromName("LoadTest");
  $user->setPassword("lt");
  $user->addToDatabase();
  $user->addGroup('sysop');
-					
+*/					
  print "\nTotal number of inserted articles: ".
  	($cat_counter+$prop_counter+$inst_counter+(num_insts*red_cov)+count($categoryQueryPages)+count($propertyQueriesPages)+count($categoryQueryPropertyPages)+count($categoryQueryPropertyConstraintPages));
 
