@@ -48,9 +48,9 @@
  
  if ($installHelpPages) {
 	 DBHelper::reportProgress("\nImport delivered pages...",true);
+	 smwfInstallImages($smwgHaloIP.'/libs/predef_pages/images');
 	 smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
 	 smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
-	 smwfInstallImages($smwgHaloIP.'/libs/predef_pages/images');
 	 DBHelper::reportProgress("\n\nAll pages imported!\n",true);
 	
  };
