@@ -316,7 +316,7 @@
 					{{SMW_OB_OPEN}}
 				</a>
 			</td>
-			<td>
+			<td align="right">
 				
 				 <xsl:choose>
 					<xsl:when test="child::param[1][@isLink]">
@@ -348,7 +348,7 @@
 		<xsl:for-each select="child::param">
 			<xsl:if test="position()!=1">
 				<tr>
-					<td>
+					<td align="right">
 						
 						<xsl:choose>
 							<xsl:when test="@isLink">

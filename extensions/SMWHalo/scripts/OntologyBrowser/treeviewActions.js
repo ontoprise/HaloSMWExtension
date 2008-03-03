@@ -808,6 +808,7 @@ OBInstanceActionListener.prototype = {
 			transformer.transformXMLToHTML(xmlFragmentInstanceList, instanceListNode, true);
 			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS, null);
 			selectionProvider.fireRefresh();
+			instanceListNode.scrollTop = 0;
 	},
 	/*
  	* Hides/Shows instance box
@@ -991,6 +992,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	function calledOnFinish(tree) {
 			dataAccess.OB_cachedPropertyTree = tree;
 			selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
+			$('propertyTree').scrollTop = 0;
 		}
 		this._selectNextPartition(e, htmlNode, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertyPartition.bind(dataAccess), "propertyTree", calledOnFinish);
 
@@ -1000,6 +1002,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 function calledOnFinish(tree) {
 			dataAccess.OB_cachedPropertyTree = tree;
 			selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
+			$('propertyTree').scrollTop = 0;
 		}
 		this._selectPreviousPartition(e, htmlNode, dataAccess.OB_cachedPropertyTree, dataAccess.getPropertyPartition.bind(dataAccess), "propertyTree", calledOnFinish);
 	
