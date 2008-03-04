@@ -3,7 +3,11 @@
 ; This script attempts to test most of the functionality of the NSIS exehead.
 
 ;--------------------------------
-!include "${NSISDIR}\include\LogicLib.nsh"
+!include "LogicLib.nsh"
+!include "WordFunc.nsh"
+!include "TextFunc.nsh"
+!include "FileFunc.nsh"
+
 
 
 !ifdef NOCOMPRESS
@@ -25,7 +29,7 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
 XPStyle on
 
-InstallDir "$PROGRAMFILES\ontoprise\xampp"
+InstallDir "$PROGRAMFILES"
 
 CheckBitmap "images\classic-cross.bmp"
 
@@ -63,7 +67,7 @@ ShowInstDetails show
 ;--------------------------------
 
 Var PHP
-Var MYSQLDUMP
+Var MYSQLBIN
 Var DBSERVER
 Var DBUSER
 Var DBPASS
@@ -77,18 +81,17 @@ FunctionEnd
 
 Function .onSelChange
 	GetCurInstType $CURINSTTYPE
-	
 FunctionEnd
 
 Function showFullInstWithoutXAMPP
   GetCurInstType $CURINSTTYPE
-   MessageBox MB_OK $CURINSTTYPE
+   
   ${If} $CURINSTTYPE == 1
   	 Push $R0
 	  InstallOptions::dialog $PLUGINSDIR\wikiinst.ini
 	  Pop $R0
 	  ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
-	  ReadINIStr $MYSQLDUMP "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
+	  ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
 	  ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
 	  ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
 	  ReadINIStr $DBPASS "$PLUGINSDIR\wikiinst.ini" "Field 10" "state"
@@ -101,7 +104,8 @@ FunctionEnd
 
 Function showMWAndSMWUpdate
   GetCurInstType $CURINSTTYPE
-  ${If} $CURINSTTYPE == 4
+  ${If} $CURINSTTYPE == 4 
+  ${OrIf} $CURINSTTYPE == 1
   	Abort
   ${Else}
   	 Push $R0
@@ -113,38 +117,120 @@ Function showMWAndSMWUpdate
  
 FunctionEnd
 
-Section "SMW+"
- SectionIn 1 2 3 4 RO 
-SectionEnd
+Function changeConfigForFullXAMPP
+	
+	ExecWait '"$INSTDIR\setup_xampp.bat"'
+	ExecWait '"$INSTDIR\setup_halowiki.bat"'	 	 
+FunctionEnd
+
+Function changeConfigForNoXAMPP
+		
+	; Set config variables
+	ExecWait '"$PHP" $INSTDIR\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
+		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
+		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
+		semanticAC=false wgGardeningBotDelay=100 importSMW=1 importSMWPlus=1'
+		
+	; Create and initialize DB
+	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
+	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
+		
+	
+FunctionEnd
+
+Function changeConfigForMWUpdate
+	StrCpy $R0 $R9
+	
+	ExecWait '"$PHP" $INSTDIR\changeLS.php phpInterpreter=$PHP \ 
+		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
+		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
+		semanticAC=false wgGardeningBotDelay=100 importSMW=1 importSMWPlus=1'
+		
+		
+	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
+	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	
+	
+FunctionEnd
+
+Function changeConfigForSMWUpdate
+	ExecWait '"$PHP" $INSTDIR\changeLS.php phpInterpreter=$PHP \ 
+		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
+		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
+		semanticAC=false wgGardeningBotDelay=100 importSMWPlus=1'
+		
+	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
+	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\runJobs.php'
+	
+	MessageBox MB_OK "Installation complete."
+FunctionEnd
+
+Function changeConfigForSMWPlusUpdate
+			
+	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
+	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_update.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
+	ExecWait '"$PHP" $INSTDIR\maintenance\runJobs.php'
+FunctionEnd
+
 ; ---- Install sections ---------------
+
 Section "-XAMPP"
   SectionIn 1 
   SetOutPath $INSTDIR
   CreateDirectory "$INSTDIR"
   ;File /r c:Programme\xampp\xampp\*
-  ;TODO: start setup_xampp
+  CALL changeConfigForFullXAMPP
+  MessageBox MB_OK "Installation complete."
+SectionEnd
+
+Section "-noXAMPP"
+  SectionIn 2 
+  SetOutPath $INSTDIR
+  CreateDirectory "$INSTDIR"
+  ;File /r c:Programme\xampp\xampp\*
+  CALL changeConfigForNoXAMPP
+  MessageBox MB_OK "Installation complete."
+  
 SectionEnd
 
 Section "-MediaWiki 1.12"
-	SectionIn 2
+	SectionIn 3
+	CALL changeConfigForMWUpdate
+		
 SectionEnd
 
 Section "-SMW 1.0"
 	SectionIn 3
+	IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexists
+  		;File /r /x CVS /x *.zip /x *.exe ..\*
+		CALL changeConfigForSMWUpdate
+   	
+  	notexists:
+  		MessageBox MB_OK|MB_ICONEXCLAMATION  "Could not find SMW. Abort here!"	
+ 		
+  
 SectionEnd
 
 Section "-SMW+ 1.0"
   SectionIn 4
-  SetOutPath $INSTDIR\htdocs\wiki
-  CreateDirectory "INSTDIR\htdocs\wiki"
-  IfFileExists $INSTDIR\htdocs\wiki\extensions\SMWHalo\*.* 0 new
-   MessageBox MB_YESNO "Do you want to update SMW+?" IDNO cancel
-  update:
-     ;File /r /x CVS /x *.zip /x *.exe ..\*
-     ;TODO start update scripts and setup DB
-  new:
- 	 ;File /r /x CVS /x *.zip /x *.exe ..\*
-  cancel:
+  SetOutPath $INSTDIR
+  
+  IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexists
+  	CALL changeConfigForSMWPlusUpdate
+   	;File /r /x CVS /x *.zip /x *.exe ..\*
+   
+  notexists:
+  	MessageBox MB_OK|MB_ICONEXCLAMATION "Could not find SMW+! Abort here!"	
+ 	 	
+  
 SectionEnd
 
 
