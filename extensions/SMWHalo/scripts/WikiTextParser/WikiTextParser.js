@@ -865,7 +865,8 @@ WikiTextParser.prototype = {
 					break;
 				case 4:
 					// we are within an {{#ask:-template
-					currentPos = this.parseAskTemplate(currentPos);
+					var pos = this.parseAskTemplate(currentPos);
+					currentPos = (pos == -1) ? currentPos+7 : pos;
 					state = 0;
 					break;
 			}
