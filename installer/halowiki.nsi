@@ -1,14 +1,13 @@
-; bigtest.nsi
+; Halowiki.nsi
 ;
-; This script attempts to test most of the functionality of the NSIS exehead.
+; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
 ;--------------------------------
 !include "LogicLib.nsh"
-!include "WordFunc.nsh"
-!include "TextFunc.nsh"
-!include "FileFunc.nsh"
 
-
+!define PRODUCT "SMWPlus"
+!define PRODUCT_CAPTION "SMW+"
+!define VERSION "1.0"
 
 !ifdef NOCOMPRESS
 SetCompress off
@@ -16,10 +15,10 @@ SetCompress off
 
 ;--------------------------------
 
-Name "Halowiki"
-Caption "SMW+ 1.0"
+Name "${PRODUCT} Version ${VERSION}"
+Caption "${PRODUCT_CAPTION} ${VERSION}"
 Icon "images\nsis1-install.ico"
-OutFile "halowiki.exe"
+OutFile "${PRODUCT}-${VERSION}.exe"
 
 SetOverwrite try
 SetDateSave on
@@ -30,12 +29,10 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
 XPStyle on
 ComponentText "" "" " "
-InstallDir "$PROGRAMFILES\ontoprise\smwplus\"
-
-
+InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCT}\"
 DirText $CHOOSEDIRTEXT "" "" ""	
 CheckBitmap "images\classic-cross.bmp"
-
+BrandingText "ontoprise GmbH 2008"
 LicenseText "GPL-License"
 LicenseData "gpl.txt"
 
@@ -338,10 +335,4 @@ SectionEnd
 
 ; Uninstaller
 
-UninstallText "This will uninstall SMW+. Hit next to continue."
-UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\nsis1-uninstall.ico"
 
-Section "Uninstall"
-
-
-SectionEnd
