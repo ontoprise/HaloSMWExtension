@@ -6,17 +6,18 @@
 		$keyvalue = explode("=", $arg);
 	
 		if (is_array($keyvalue) && (count($keyvalue) == 2)) {
-			$variables[$keyvalue[0]] = $keyvalue[1];
+			$variables[$keyvalue[0]] = str_replace('\\', "/", $keyvalue[1]);
 		}
 	}
 	
-	print "\nRead LocalSettings.php...";
-	$content = readLocalSettings("LocalSettings.php.template");
+	print "\nRead ".$variables['ls']."...";
+	$content = readLocalSettings($variables['ls']);
 	foreach($variables as $key => $value) {
 		print "\nUpdate variable: $key";
 		switch($key) {
 			case 'importSMW': importSMW($content);break;
-			case 'importSMWPlus': importSMWPlus($content);break;		
+			case 'importSMWPlus': importSMWPlus($content);break;
+			case 'ls': break;		
 			default: setVariable($content, $key, $value);
 		}
 	  
@@ -66,8 +67,8 @@
 	   }
 	   
 	   function importSMWPlus(& $content) {
-	   		$content .= "require_once( \"{$IP}/extensions/Cite.php\" );\n".
-						"require_once( \"$IP/extensions/ParserFunctions/ParserFunctions.php\" );\n".
+	   		$content .= "require_once( \"\$IP/extensions/Cite.php\" );\n".
+						"require_once( \"\$IP/extensions/ParserFunctions/ParserFunctions.php\" );\n".
 						"include_once(\"extensions/SMWHalo/includes/SMW_Initialize.php\");\n".
 						"enableSMWHalo();\n"; 
 	   
