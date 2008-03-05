@@ -6,7 +6,7 @@ IF (%1) == (-update) GOTO UPDATE
 :INSTALL
 .\php\php.exe SMW_install.php
 REM Create a file which indicates that Halowiki has been installed once.
-echo Halowiki configured.
+
 GOTO ENDE
 
 :HELP

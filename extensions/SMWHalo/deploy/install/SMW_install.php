@@ -12,22 +12,9 @@
  $localsettings = $xamppDir.'/htdocs/mediawiki/LocalSettings.php';
  
  // main
- generateFileFromTemplate($apache, array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-autoindex.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-dav.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-default.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-info.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-languages.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-manual.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-mpm.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-multilang-errordoc.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-ssl.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-userdir.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-vhosts.conf', array('xamp-install' => $xamppDir));
- generateFileFromTemplate($xamppDir.'/apache/conf/extra/httpd-xampp.conf', array('xamp-install' => $xamppDir));
  
  generateFileFromTemplate($localsettings, array('xamp-install' => $xamppDir, 'script-path' => 'mediawiki'));
- 
+ print "HaloWiki configured!";
  /**
   * Replaces in $dest.template the parameters in $param and save as $dest
   */
@@ -37,7 +24,11 @@
  	print "\nRead template file...";
  	global $xamppDir;
  	$filename = $dest.".template";
- 	$handle = fopen($filename, "rb");
+ 	$handle = @fopen($filename, "rb");
+ 	if ($handle === false) {
+ 	  print "\n\nCould not open file: ".$filename."\n";
+ 	  die;
+  }
  	$contents = fread ($handle, filesize ($filename));
  	fclose($handle);
  	print "done!";
