@@ -3,11 +3,27 @@
 ; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
 ;--------------------------------
+!include "MUI2.nsh"
 !include "LogicLib.nsh"
 
 !define PRODUCT "SMWPlus"
 !define PRODUCT_CAPTION "SMW+"
 !define VERSION "1.0"
+
+!define MUI_ABORTWARNING
+
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP "images\header-install.bmp"
+
+!define MUI_WELCOMEFINISHPAGE 
+!define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard-install.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+!define MUI_COMPONENTSPAGE_SMALLDESC
+
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the ${PRODUCT} ${VERSION} Setup Wizard"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PRODUCT} ${VERSION}."
+!define MUI_FINISHPAGE_LINK "Visit the ontoprise website for the latest news"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.ontoprise.com/"
 
 !ifdef NOCOMPRESS
 SetCompress off
@@ -27,30 +43,35 @@ CRCCheck on
 SilentInstall normal
 BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
-XPStyle on
+;XPStyle on
 ComponentText "" "" " "
 InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCT}\"
 DirText $CHOOSEDIRTEXT "" "" ""	
 CheckBitmap "images\classic-cross.bmp"
-BrandingText "ontoprise GmbH 2008"
+BrandingText "ontoprise GmbH 2008 www.ontoprise.de"
 LicenseText "GPL-License"
 LicenseData "gpl.txt"
 
 RequestExecutionLevel admin
 
-;--------------------------------
 
-Page license
-Page components
+; Pages --------------------------------
+
+  
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "gpl.txt"
+!insertmacro MUI_PAGE_COMPONENTS
 Page custom showFullInstWithoutXAMPP checkForFilesWithoutXAMPP
 Page custom showMWAndSMWUpdate checkMWAndSMWUpdate
-Page directory
-Page instfiles
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
 
-UninstPage uninstConfirm
-UninstPage instfiles
+; Language ------------------------------
 
-;--------------------------------
+!insertmacro MUI_LANGUAGE "English"
+
+; Installation types ---------------------------
 
 !ifndef NOINSTTYPES ; only if not defined
   InstType "New (with XAMPP)"
@@ -80,6 +101,7 @@ Function ".onInit"
   InitPluginsDir
   File /oname=$PLUGINSDIR\wikiinst.ini "gui\wikiinst.ini"
   File /oname=$PLUGINSDIR\smwinst.ini "gui\smwinst.ini"
+ 
 FunctionEnd
 
 Function .onSelChange
@@ -111,9 +133,14 @@ FunctionEnd
 Function showMWAndSMWUpdate
   GetCurInstType $CURINSTTYPE
   
-  ; if SMW+ or wiki with/without XAMPP then abort
-  ${If} $CURINSTTYPE == 4 
-  ${OrIf} $CURINSTTYPE == 1
+  ; if SMW+ 
+  ${If} $CURINSTTYPE == 4
+  	  StrCpy $CHOOSEDIRTEXT "Select your installation directory of MediaWiki"
+  	  Abort
+  ${EndIf}
+  
+  ; if xampp or noxampp
+  ${If} $CURINSTTYPE == 1
   ${OrIf} $CURINSTTYPE == 0
    	Abort
   ${Else} 
@@ -128,8 +155,9 @@ Function showMWAndSMWUpdate
 FunctionEnd
 
 Function changeConfigForFullXAMPP
-	
+	; setup XAMPP (setup_xampp.bat and install script slightly modified)
 	ExecWait '"$INSTDIR\setup_xampp.bat"'
+	; setup halowiki (change LocalSettings.php)
 	ExecWait '"$INSTDIR\setup_halowiki.bat"'	 	 
 FunctionEnd
 
@@ -265,13 +293,13 @@ Section "Wiki with XAMPP"
   SectionIn 1 RO
   SetOutPath $INSTDIR
   CreateDirectory "$INSTDIR"
-  ;File /r d:\xampp\*
+  File /r d:\xampp\*
   SetOutPath $INSTDIR\htdocs\mediawiki
   CreateDirectory "$INSTDIR\htdocs\mediawiki"
   File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
   SetOutPath $INSTDIR
   CALL changeConfigForFullXAMPP
-  MessageBox MB_OK "Installation complete."
+  
 SectionEnd
 
 Section "Wiki without XAMPP"
@@ -281,8 +309,7 @@ Section "Wiki without XAMPP"
   CreateDirectory "$INSTDIR"
   File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
   CALL changeConfigForNoXAMPP
-  MessageBox MB_OK "Installation complete. Please restart Apache."
-  
+    
 SectionEnd
 
 Section "Wiki update"
