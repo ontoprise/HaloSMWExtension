@@ -41,14 +41,14 @@ SetDateSave on
 SetDatablockOptimize on
 CRCCheck on
 SilentInstall normal
-BGGradient 000000 800000 FFFFFF
+BGGradient 000000 95F5E2 FFFFFF
 InstallColors FF8080 000030
 ;XPStyle on
 ComponentText "" "" " "
 InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCT}\"
 DirText $CHOOSEDIRTEXT "" "" ""	
 CheckBitmap "images\classic-cross.bmp"
-BrandingText "ontoprise GmbH 2008 www.ontoprise.de"
+BrandingText "ontoprise GmbH 2008 - www.ontoprise.de"
 LicenseText "GPL-License"
 LicenseData "gpl.txt"
 
@@ -83,7 +83,7 @@ Page custom showMWAndSMWUpdate checkMWAndSMWUpdate
 !endif
 
 AutoCloseWindow false
-ShowInstDetails show
+ShowInstDetails hide
 
 ;--------------------------------
 
@@ -289,7 +289,7 @@ FunctionEnd
 
 ; ---- Install sections ---------------
 
-Section "Wiki with XAMPP"
+Section "Wiki with XAMPP" wikixampp
   SectionIn 1 RO
   SetOutPath $INSTDIR
   CreateDirectory "$INSTDIR"
@@ -300,9 +300,13 @@ Section "Wiki with XAMPP"
   SetOutPath $INSTDIR
   CALL changeConfigForFullXAMPP
   
+  ; Create shortcuts
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Stop.lnk" "$INSTDIR\xampp_stop.exe"
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main page.lnk" "http://localhost/mediawiki/index.php"
 SectionEnd
 
-Section "Wiki without XAMPP"
+Section "Wiki without XAMPP" wikinoxampp
   SectionIn 2 RO
   
   SetOutPath $INSTDIR
@@ -312,7 +316,7 @@ Section "Wiki without XAMPP"
     
 SectionEnd
 
-Section "Wiki update"
+Section "Wiki update" wikiupdate
 	SectionIn 3 RO
 	SetOutPath $INSTDIR
 	IfFileExists $INSTDIR\LocalSettings.php 0 notexists
@@ -330,7 +334,7 @@ Section "Wiki update"
 	out:		
 SectionEnd
 
-Section "Update SMW 1.0"
+Section "Update SMW 1.0" smwupdate
 	SectionIn 4 RO
 	SetOutPath $INSTDIR
 	IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexists
@@ -343,7 +347,7 @@ Section "Update SMW 1.0"
   	out:
 SectionEnd
 
-Section "Update SMW+ 1.0"
+Section "Update SMW+ 1.0" smwplusupdate
   SectionIn 5 RO
   SetOutPath $INSTDIR
   
@@ -357,7 +361,21 @@ Section "Update SMW+ 1.0"
   
 SectionEnd
 
+;--------------------------------
+LangString DESC_wikixampp ${LANG_ENGLISH} "Installs SMW+ and XAMPP. No other software is required."
+LangString DESC_wikinoxampp ${LANG_ENGLISH} "Installs only SMW+. Needs environement: MySQL, Apache, PHP."
+LangString DESC_wikiupdate ${LANG_ENGLISH} "Updates existing MediaWiki installation."
+LangString DESC_smwupdate ${LANG_ENGLISH} "Updates existing SMW installation."
+LangString DESC_smwplusupdate ${LANG_ENGLISH} "Updates existing SMW+ installation."
 
+;Assign language strings to sections
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+	!insertmacro MUI_DESCRIPTION_TEXT ${wikixampp} $(DESC_wikixampp)
+	!insertmacro MUI_DESCRIPTION_TEXT ${wikinoxampp} $(DESC_wikinoxampp)
+	!insertmacro MUI_DESCRIPTION_TEXT ${wikiupdate} $(DESC_wikiupdate)
+	!insertmacro MUI_DESCRIPTION_TEXT ${smwupdate} $(DESC_smwupdate)
+	!insertmacro MUI_DESCRIPTION_TEXT ${smwplusupdate} $(DESC_smwplusupdate)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;--------------------------------
 
 ; Uninstaller
