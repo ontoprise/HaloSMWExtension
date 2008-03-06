@@ -296,7 +296,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	$titleObj = Title::newFromText($title);
 	$article = new Article($titleObj);
 
-	if ($article->exists() && !smwfIsRedirect($titleObj)) {
+	if ($article->exists() && !smwf_om_IsRedirect($titleObj)) {
 		return "true";
 	}
 
@@ -305,7 +305,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
 		$article = new Article($titleObj);
 
-		if ($article->exists() && !smwfIsRedirect($titleObj)) {
+		if ($article->exists() && !smwf_om_IsRedirect($titleObj)) {
 			return "true";
 		}
 	}
