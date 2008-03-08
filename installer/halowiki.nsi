@@ -2,6 +2,9 @@
 ;
 ; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
+;Without files (much faster for debugging)
+!define NOFILES
+
 ;--------------------------------
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
@@ -57,13 +60,15 @@ RequestExecutionLevel admin
 
 ; Pages --------------------------------
 
+
   
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "gpl.txt"
 !insertmacro MUI_PAGE_COMPONENTS
-Page custom showFullInstWithoutXAMPP checkForFilesWithoutXAMPP
-Page custom showMWAndSMWUpdate checkMWAndSMWUpdate
-!insertmacro MUI_PAGE_DIRECTORY
+!define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
+!insertmacro MUI_PAGE_DIRECTORY 
+Page custom showDialogs checkDialogs
+Page custom showWikiCustomize checkWikiCustomize 
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -75,11 +80,8 @@ Page custom showMWAndSMWUpdate checkMWAndSMWUpdate
 
 !ifndef NOINSTTYPES ; only if not defined
   InstType "New (with XAMPP)"
-  InstType "New (without XAMPP)"
-  InstType "Update from MediaWiki"
-  InstType "Update from SMW"
-  InstType "Update from SMW+"
-  InstType /NOCUSTOM
+  InstType "New/Update (without XAMPP)"
+  InstType /COMPONENTSONLYONCUSTOM 
 !endif
 
 AutoCloseWindow false
@@ -94,92 +96,217 @@ Var DBUSER
 Var DBPASS
 VAR HTTPD
 VAR WIKIPATH
-Var CURINSTTYPE
+
 Var CHOOSEDIRTEXT
 
 Function ".onInit"
   InitPluginsDir
   File /oname=$PLUGINSDIR\wikiinst.ini "gui\wikiinst.ini"
   File /oname=$PLUGINSDIR\smwinst.ini "gui\smwinst.ini"
- 
+  File /oname=$PLUGINSDIR\wikicustomize.ini "gui\wikicustomize.ini"
 FunctionEnd
 
-Function .onSelChange
-	GetCurInstType $CURINSTTYPE
-FunctionEnd
 
-Function showFullInstWithoutXAMPP
-  GetCurInstType $CURINSTTYPE
-  StrCpy $CHOOSEDIRTEXT "Select a directory where to install XAMPP and the wiki" 
-  ${If} $CURINSTTYPE == 1
-  	  StrCpy $CHOOSEDIRTEXT "Select a directory which is published by your Apache webserver"
-  	  Push $R0
-	  InstallOptions::dialog $PLUGINSDIR\wikiinst.ini
-	  Pop $R0
-	  ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
-	  ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
-	  ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
-	  ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
-	  ReadINIStr $DBPASS "$PLUGINSDIR\wikiinst.ini" "Field 10" "state"
-	  ReadINIStr $WIKIPATH "$PLUGINSDIR\wikiinst.ini" "Field 12" "state"
-	  ReadINIStr $HTTPD "$PLUGINSDIR\wikiinst.ini" "Field 14" "state"
-	  Pop $R0
+
+
+
+; ---- Install sections ---------------
+
+Section "XAMPP" xampp
+  SectionIn 1
+  SetOutPath $INSTDIR
+  CreateDirectory "$INSTDIR"
+  !ifndef NOFILES
+  	File /r d:\xampp\*
+  !endif
+  
+  
+  ; Create shortcuts
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Stop.lnk" "$INSTDIR\xampp_stop.exe"
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main page.lnk" "http://localhost/mediawiki/index.php"
+SectionEnd
+
+SectionGroup "SMW+ 1.0" 
+Section "SMW+ 1.0 core" smwplus
+  SectionIn 1 2 RO
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == 1
+  	; XAMPP section did already install SMWPlus
+  	SetOutPath $INSTDIR\htdocs\mediawiki
+  	CreateDirectory "$INSTDIR\htdocs\mediawiki"
+  
   ${Else}
-  	  Abort
-  ${EndIf}
   
+	SetOutPath $INSTDIR
+  	CreateDirectory "$INSTDIR"
+  	
+  ${EndIf}
+  !ifndef NOFILES
+    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
+  !endif
+  ${If} $0 == 1 
+	  SetOutPath $INSTDIR
+	  CALL changeConfigForFullXAMPP
+	 
+  ${Else}
+  	IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
+  	
+  	CALL changeConfigForSMWPlusUpdate
+   	goto out
+  	notexistsSMWPlus:
+	   IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexistsSMW
+	  		
+			CALL changeConfigForSMWUpdate
+	   		goto out
+	  	  
+	  	  notexistsSMW:
+	  		  	
+		  IfFileExists $INSTDIR\LocalSettings.php 0 notexists
+				copy:
+				IfFileExists $INSTDIR\AdminSettings.php 0 as_noexists
+				
+				CALL changeConfigForMWUpdate
+				goto out
+			notexists:
+				
+			  	CALL changeConfigForNoXAMPP
+				goto out
+			as_noexists:
+				MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. \
+				Please create one using AdminSettingsTemplate.php and continue afterwards."
+				goto copy
+			out:	
+  ${EndIf}
+    
+SectionEnd
+
+Section "LDAP Authentication" ldap
+SectionEnd
+
+Section "ACL - Access Control Lists" acl
+SectionEnd
+
+SectionGroupEnd
+;--------------------------------
+LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP if you don't have Apache and stuff. No other software is required."
+LangString DESC_smwplus ${LANG_ENGLISH} "SMWPlus 1.0"
+LangString CUSTOMIZE_PAGE_TITLE ${LANG_ENGLISH} "Customize your wiki"
+LangString CUSTOMIZE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set wiki name or logo"
+LangString CONFIG_PAGE_TITLE ${LANG_ENGLISH} "Specify wiki environment"
+LangString CONFIG_PAGE_SUBTITLE ${LANG_ENGLISH} "Give some details about your server environment."
+LangString PHP_PAGE_TITLE ${LANG_ENGLISH} "Set your PHP-Interpreter"
+LangString PHP_PAGE_SUBTITLE ${LANG_ENGLISH} "It's needed for the Gardening tools to work."
+
+;Assign language strings to sections
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+	!insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
+	!insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
+	
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+;--------------------------------
+
+Function preDirectory
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == 1
+  	StrCpy $CHOOSEDIRTEXT "Select an empty directory where to install XAMPP and the wiki."
+  ${Else}
+  	StrCpy $CHOOSEDIRTEXT "Select an existing installation to update or an empty directory for a new."
+  ${EndIf}
 FunctionEnd
 
-Function showMWAndSMWUpdate
-  GetCurInstType $CURINSTTYPE
+Function showDialogs
   
-  ; if SMW+ 
-  ${If} $CURINSTTYPE == 4
-  	  StrCpy $CHOOSEDIRTEXT "Select your installation directory of MediaWiki"
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+
+  ${If} $0 == 0
+  	  ; XAMPP is NOT selected
+  	  IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
+  	  goto out
+  	  notexistsSMWPlus:
+  	  	IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexistsSMW
+  	  	; show PHP dialog
+  	  	CALL showPHP
+  	  	goto out
+  	  	notexistsSMW:
+  	  	IfFileExists $INSTDIR\extensions\LocalSettings.php 0 notexistsMW
+  	  		; show PHP dialog
+  	  		CALL showPHP
+  	  		goto out
+  	  		notexistsMW:
+	  	  	CALL showFull
+	  	  
+  ${Else}
+  	  ; XAMPP is selected
   	  Abort
   ${EndIf}
-  
-  ; if xampp or noxampp
-  ${If} $CURINSTTYPE == 1
-  ${OrIf} $CURINSTTYPE == 0
-   	Abort
-  ${Else} 
-  	  StrCpy $CHOOSEDIRTEXT "Select your installation directory of MediaWiki"
-  	  Push $R0
-	  InstallOptions::dialog $PLUGINSDIR\smwinst.ini
-	  Pop $R0
-	  ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
-	  Pop $R0	
-  ${EndIf}
+  out:
+FunctionEnd
+
+Function showFull
+	!insertmacro MUI_HEADER_TEXT $(CONFIG_PAGE_TITLE) $(CONFIG_PAGE_SUBTITLE)
+	Push $R0
+	InstallOptions::dialog $PLUGINSDIR\wikiinst.ini
+	Pop $R0
+	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
+	ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
+	ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
+	ReadINIStr $DBPASS "$PLUGINSDIR\wikiinst.ini" "Field 10" "state"
+	ReadINIStr $WIKIPATH "$PLUGINSDIR\wikiinst.ini" "Field 12" "state"
+	ReadINIStr $HTTPD "$PLUGINSDIR\wikiinst.ini" "Field 14" "state"
+	Pop $R0 
+FunctionEnd
+
+Function showPHP
+    !insertmacro MUI_HEADER_TEXT $(PHP_PAGE_TITLE) $(PHP_PAGE_SUBTITLE)	
+   	Push $R0
+	InstallOptions::dialog $PLUGINSDIR\smwinst.ini
+	Pop $R0
+ 	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+ 	Pop $R0	
+
  
 FunctionEnd
 
-Function changeConfigForFullXAMPP
-	; setup XAMPP (setup_xampp.bat and install script slightly modified)
-	ExecWait '"$INSTDIR\setup_xampp.bat"'
-	; setup halowiki (change LocalSettings.php)
-	ExecWait '"$INSTDIR\setup_halowiki.bat"'	 	 
+Function showWikiCustomize
+	 !insertmacro MUI_HEADER_TEXT $(CUSTOMIZE_PAGE_TITLE) $(CUSTOMIZE_PAGE_SUBTITLE)
+	  Push $R0
+	  InstallOptions::dialog $PLUGINSDIR\wikicustomize.ini
+	  Pop $R0
+	  ReadINIStr $PHP "$PLUGINSDIR\wikicustomize.ini" "Field 2" "state"
+	  Pop $R0
 FunctionEnd
 
-Function changeConfigForNoXAMPP
+Function checkWikiCustomize
+FunctionEnd
+
+
 	
-	; Set config variables
-	ExecWait '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
-		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
-		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
-		semanticAC=false wgGardeningBotDelay=100 script-path=$WIKIPATH ls=LocalSettings.php.template'
-		
-	; Set httpd
-	ExecWait '"$PHP" $INSTDIR\installer\changeHttpd.php httpd=$HTTPD wiki-path=$WIKIPATH fs-path=$INSTDIR'
+Function checkDialogs
+
+	SectionGetFlags ${xampp} $0
+  	IntOp $0 $0 & ${SF_SELECTED}
 	
-	; Create and initialize DB
-	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
-	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
+	${If} $0 == 0
+		IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
+		goto out
+		notexistsSMWPlus:
+			IfFileExists $INSTDIR\extensions\LocalSettings.php 0 notexistsMW
+			CALL checkPHP
+			goto out
+			notexistsMW:
+				CALL checkFull
+	${EndIf}
+	out:
 	
 FunctionEnd
-	
-Function checkForFilesWithoutXAMPP
-	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+
+Function checkFull
+ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
 	ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
 	ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
 	ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
@@ -231,6 +358,39 @@ Function checkForFilesWithoutXAMPP
 	aborthere:
 		Abort
 	out:
+FunctionEnd
+
+Function checkPHP
+	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	IfFileExists $PHP 0 notexistsPHP
+	goto out
+	notexistsPHP:
+		MessageBox MB_OK "php.exe does not exist!"
+		Abort
+	out:
+FunctionEnd
+
+Function changeConfigForFullXAMPP
+	; setup XAMPP (setup_xampp.bat and install script slightly modified)
+	nsExec::ExecToLog '"$INSTDIR\setup_xampp.bat"'
+	; setup halowiki (change LocalSettings.php)
+	nsExec::ExecToLog '"$INSTDIR\setup_halowiki.bat"'	 	 
+FunctionEnd
+
+Function changeConfigForNoXAMPP
+	
+	; Set config variables
+	ExecWait '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
+		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
+		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
+		semanticAC=false wgGardeningBotDelay=100 script-path=$WIKIPATH ls=LocalSettings.php.template'
+		
+	; Set httpd
+	ExecWait '"$PHP" $INSTDIR\installer\changeHttpd.php httpd=$HTTPD wiki-path=$WIKIPATH fs-path=$INSTDIR'
+	
+	; Create and initialize DB
+	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
+	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
 	
 FunctionEnd
 
@@ -250,15 +410,7 @@ Function changeConfigForMWUpdate
 	
 FunctionEnd
 
-Function checkMWAndSMWUpdate
-	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
-	IfFileExists $PHP 0 notexistsPHP
-	goto out
-	notexistsPHP:
-		MessageBox MB_OK "php.exe does not exist!"
-		Abort
-	out:
-FunctionEnd
+
 
 Function changeConfigForSMWUpdate
 	
@@ -286,98 +438,6 @@ Function changeConfigForSMWPlusUpdate
 	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
 	ExecWait '"$PHP" $INSTDIR\maintenance\runJobs.php'
 FunctionEnd
-
-; ---- Install sections ---------------
-
-Section "Wiki with XAMPP" wikixampp
-  SectionIn 1 RO
-  SetOutPath $INSTDIR
-  CreateDirectory "$INSTDIR"
-  File /r d:\xampp\*
-  SetOutPath $INSTDIR\htdocs\mediawiki
-  CreateDirectory "$INSTDIR\htdocs\mediawiki"
-  File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-  SetOutPath $INSTDIR
-  CALL changeConfigForFullXAMPP
-  
-  ; Create shortcuts
-  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
-  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Stop.lnk" "$INSTDIR\xampp_stop.exe"
-  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main page.lnk" "http://localhost/mediawiki/index.php"
-SectionEnd
-
-Section "Wiki without XAMPP" wikinoxampp
-  SectionIn 2 RO
-  
-  SetOutPath $INSTDIR
-  CreateDirectory "$INSTDIR"
-  File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-  CALL changeConfigForNoXAMPP
-    
-SectionEnd
-
-Section "Wiki update" wikiupdate
-	SectionIn 3 RO
-	SetOutPath $INSTDIR
-	IfFileExists $INSTDIR\LocalSettings.php 0 notexists
-		copy:
-		IfFileExists $INSTDIR\AdminSettings.php 0 as_noexists
-		File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-		CALL changeConfigForMWUpdate
-		goto out
-	notexists:
-		MessageBox MB_OK|MB_ICONEXCLAMATION  "Could not find Mediawiki. Abort here!"
-		goto out
-	as_noexists:
-		MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. Please create and continue afterwards."
-		goto copy
-	out:		
-SectionEnd
-
-Section "Update SMW 1.0" smwupdate
-	SectionIn 4 RO
-	SetOutPath $INSTDIR
-	IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexists
-  		File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-		CALL changeConfigForSMWUpdate
-   		goto out
-  	notexists:
-  		MessageBox MB_OK|MB_ICONEXCLAMATION  "Could not find SMW. Abort here!"	
- 		
-  	out:
-SectionEnd
-
-Section "Update SMW+ 1.0" smwplusupdate
-  SectionIn 5 RO
-  SetOutPath $INSTDIR
-  
-  IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexists
-  	CALL changeConfigForSMWPlusUpdate
-    File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-   	goto out
-  notexists:
-  	MessageBox MB_OK|MB_ICONEXCLAMATION "Could not find SMW+! Abort here!"	
-  out: 	
-  
-SectionEnd
-
-;--------------------------------
-LangString DESC_wikixampp ${LANG_ENGLISH} "Installs SMW+ and XAMPP. No other software is required."
-LangString DESC_wikinoxampp ${LANG_ENGLISH} "Installs only SMW+. Needs environement: MySQL, Apache, PHP."
-LangString DESC_wikiupdate ${LANG_ENGLISH} "Updates existing MediaWiki installation."
-LangString DESC_smwupdate ${LANG_ENGLISH} "Updates existing SMW installation."
-LangString DESC_smwplusupdate ${LANG_ENGLISH} "Updates existing SMW+ installation."
-
-;Assign language strings to sections
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-	!insertmacro MUI_DESCRIPTION_TEXT ${wikixampp} $(DESC_wikixampp)
-	!insertmacro MUI_DESCRIPTION_TEXT ${wikinoxampp} $(DESC_wikinoxampp)
-	!insertmacro MUI_DESCRIPTION_TEXT ${wikiupdate} $(DESC_wikiupdate)
-	!insertmacro MUI_DESCRIPTION_TEXT ${smwupdate} $(DESC_smwupdate)
-	!insertmacro MUI_DESCRIPTION_TEXT ${smwplusupdate} $(DESC_smwplusupdate)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
-;--------------------------------
-
 ; Uninstaller
 
 
