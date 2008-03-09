@@ -3,7 +3,7 @@
 ; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
 ;Without files (much faster for debugging)
-!define NOFILES
+;!define NOFILES
 
 ;--------------------------------
 !include "MUI2.nsh"
@@ -96,6 +96,7 @@ Var DBUSER
 Var DBPASS
 VAR HTTPD
 VAR WIKIPATH
+Var INSTALLTYPE
 
 Var CHOOSEDIRTEXT
 
@@ -117,7 +118,7 @@ Section "XAMPP" xampp
   SetOutPath $INSTDIR
   CreateDirectory "$INSTDIR"
   !ifndef NOFILES
-  	File /r d:\xampp\*
+  	File /r ..\..\xampp\*
   !endif
   
   
@@ -130,56 +131,81 @@ SectionEnd
 SectionGroup "SMW+ 1.0" 
 Section "SMW+ 1.0 core" smwplus
   SectionIn 1 2 RO
+  
+  ; check for AdminSettings.php
+  IfFileExists $INSTDIR\LocalSettings.php 0 setpath
+  	tryagain:
+  	IfFileExists $INSTDIR\AdminSettings.php 0 as_noexists
+  		goto setpath
+  		as_noexists:
+  			MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. \
+			Please create one using AdminSettingsTemplate.php and continue afterwards."
+			goto tryagain
+			
+  setpath:
+  
+  ; Set output path 
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
+  
   ${If} $0 == 1
   	; XAMPP section did already install SMWPlus
   	SetOutPath $INSTDIR\htdocs\mediawiki
   	CreateDirectory "$INSTDIR\htdocs\mediawiki"
-  
   ${Else}
-  
-	SetOutPath $INSTDIR
+ 	SetOutPath $INSTDIR
   	CreateDirectory "$INSTDIR"
-  	
   ${EndIf}
-  !ifndef NOFILES
-    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings ..\*
-  !endif
+  
+  ; Copy files and config 
   ${If} $0 == 1 
-	  SetOutPath $INSTDIR
-	  CALL changeConfigForFullXAMPP
-	 
+	 IntOp $INSTALLTYPE 0 + 4
   ${Else}
   	IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
-  	
-  	CALL changeConfigForSMWPlusUpdate
-   	goto out
+    	
+   	IntOp $INSTALLTYPE 0 + 0
+   	goto copyfiles
+   	
   	notexistsSMWPlus:
 	   IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexistsSMW
-	  		
-			CALL changeConfigForSMWUpdate
-	   		goto out
+	   		   		
+			IntOp $INSTALLTYPE 0 + 1
+	   		goto copyfiles
 	  	  
 	  	  notexistsSMW:
-	  		  	
-		  IfFileExists $INSTDIR\LocalSettings.php 0 notexists
-				copy:
-				IfFileExists $INSTDIR\AdminSettings.php 0 as_noexists
+	  		  IfFileExists $INSTDIR\LocalSettings.php 0 notexistsMW
+									
+					IntOp $INSTALLTYPE 0 + 2
+					goto copyfiles
+			notexistsMW:
 				
-				CALL changeConfigForMWUpdate
-				goto out
-			notexists:
+				IntOp $INSTALLTYPE 0 + 3
+				goto copyfiles
+			
 				
-			  	CALL changeConfigForNoXAMPP
-				goto out
-			as_noexists:
-				MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. \
-				Please create one using AdminSettingsTemplate.php and continue afterwards."
-				goto copy
-			out:	
   ${EndIf}
-    
+  
+  copyfiles:
+	  !ifndef NOFILES
+	    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php ..\*
+	  !endif  
+  
+  ;configure:
+	  ${If} $INSTALLTYPE == 0 
+	  	CALL changeConfigForSMWPlusUpdate
+	  ${EndIf}
+	  ${If} $INSTALLTYPE == 1
+	  	CALL changeConfigForSMWUpdate
+	  ${EndIf}
+	  ${If} $INSTALLTYPE == 2
+	  	CALL changeConfigForMWUpdate
+	  ${EndIf}
+	  ${If} $INSTALLTYPE == 3 
+	  	CALL changeConfigForNoXAMPP
+	  ${EndIf}
+	  ${If} $INSTALLTYPE == 4
+	  	CALL changeConfigForFullXAMPP
+	  ${EndIf}
 SectionEnd
 
 Section "LDAP Authentication" ldap
@@ -207,6 +233,7 @@ LangString PHP_PAGE_SUBTITLE ${LANG_ENGLISH} "It's needed for the Gardening tool
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;--------------------------------
 
+
 Function preDirectory
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
@@ -225,6 +252,7 @@ Function showDialogs
   ${If} $0 == 0
   	  ; XAMPP is NOT selected
   	  IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
+  	  CALL showPHP
   	  goto out
   	  notexistsSMWPlus:
   	  	IfFileExists $INSTDIR\extensions\SemanticMediaWiki\*.* 0 notexistsSMW
@@ -232,7 +260,7 @@ Function showDialogs
   	  	CALL showPHP
   	  	goto out
   	  	notexistsSMW:
-  	  	IfFileExists $INSTDIR\extensions\LocalSettings.php 0 notexistsMW
+  	  	IfFileExists $INSTDIR\LocalSettings.php 0 notexistsMW
   	  		; show PHP dialog
   	  		CALL showPHP
   	  		goto out
@@ -292,10 +320,7 @@ Function checkDialogs
   	IntOp $0 $0 & ${SF_SELECTED}
 	
 	${If} $0 == 0
-		IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
-		goto out
-		notexistsSMWPlus:
-			IfFileExists $INSTDIR\extensions\LocalSettings.php 0 notexistsMW
+			IfFileExists $INSTDIR\LocalSettings.php 0 notexistsMW
 			CALL checkPHP
 			goto out
 			notexistsMW:
@@ -306,7 +331,7 @@ Function checkDialogs
 FunctionEnd
 
 Function checkFull
-ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
 	ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
 	ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
 	ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
@@ -374,38 +399,43 @@ Function changeConfigForFullXAMPP
 	; setup XAMPP (setup_xampp.bat and install script slightly modified)
 	nsExec::ExecToLog '"$INSTDIR\setup_xampp.bat"'
 	; setup halowiki (change LocalSettings.php)
-	nsExec::ExecToLog '"$INSTDIR\setup_halowiki.bat"'	 	 
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php phpInterpreter=$INSTDIR\php\php.exe \
+		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
+		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
+		semanticAC=false wgGardeningBotDelay=100 wgScriptPath=/mediawiki ls=LocalSettings.php.template'	 
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeHttpd.php httpd=$INSTDIR\apache\conf\httpd.conf wiki-path=mediawiki fs-path=$INSTDIR\htdocs\mediawiki'
 FunctionEnd
 
 Function changeConfigForNoXAMPP
-	
+	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	MessageBox MB_OK "Make sure that your database is running. It'll be updated now."
 	; Set config variables
-	ExecWait '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
+	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
 		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
-		semanticAC=false wgGardeningBotDelay=100 script-path=$WIKIPATH ls=LocalSettings.php.template'
+		semanticAC=false wgGardeningBotDelay=100 wgScriptPath=/$WIKIPATH ls=LocalSettings.php.template'
 		
 	; Set httpd
-	ExecWait '"$PHP" $INSTDIR\installer\changeHttpd.php httpd=$HTTPD wiki-path=$WIKIPATH fs-path=$INSTDIR'
+	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeHttpd.php httpd=$HTTPD wiki-path=$WIKIPATH fs-path=$INSTDIR'
 	
 	; Create and initialize DB
-	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
-	ExecWait '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
+	nsExec::ExecToLog '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
+	nsExec::ExecToLog '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
 	
 FunctionEnd
 
 Function changeConfigForMWUpdate
-	
-	
-	ExecWait '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
+	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	MessageBox MB_OK "Make sure that your webserver and database are running."
+	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
 		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
 		semanticAC=false wgGardeningBotDelay=100 importSMW=1 importSMWPlus=1 ls=LocalSettings.php'
 		
 		
-	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
-	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
 	
 	
 FunctionEnd
@@ -413,30 +443,56 @@ FunctionEnd
 
 
 Function changeConfigForSMWUpdate
-	
-	ExecWait '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
+	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	MessageBox MB_OK "Make sure that your webserver and database are running."
+	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
 		smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
 		semanticAC=false wgGardeningBotDelay=100 importSMWPlus=1 ls=LocalSettings.php'
-		
-	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
-	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\runJobs.php'
+	
+	; update MediaWiki
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
+	
+	; update SMW tables
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	
+	; setup SMW+
+	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	
+	; unify Types in SMW
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
+	; update all semantic data
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
+	
+	; run job queue
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\runJobs.php'
 	
 	
 FunctionEnd
 
 Function changeConfigForSMWPlusUpdate
+	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	MessageBox MB_OK "Make sure that your webserver and database are running."
+	; update MediaWiki
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
 	
-	ExecWait '"$PHP" $INSTDIR\maintenance\update.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
-	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
-	ExecWait '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_update.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
-	ExecWait '"$PHP" $INSTDIR\maintenance\runJobs.php'
+	; update SMW tables
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	
+	; update SMW+ tables
+	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
+	
+	; update SMW+ data
+	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_update.php'
+	
+	; unify Types in SMW
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
+	
+	; update all semantic data
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
+	
+	; run job queue
+	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\runJobs.php'
 FunctionEnd
 ; Uninstaller
 

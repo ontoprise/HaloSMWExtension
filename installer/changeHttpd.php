@@ -33,12 +33,12 @@
 	   }
 	   
 	   function getTemplate() {
-	   	return "\n<Directory \"{{fs-path}}\">
-    				Options Indexes MultiViews
-    				AllowOverride None
-    				Order allow,deny
-    				Allow from all
-				</Directory>
-				Alias /{{wiki-path}} \"{{fs-path}}\"\n";
+	   	return "\n<Directory \"{{fs-path}}\">".
+			   	"\n\tOptions Indexes MultiViews".
+			   	"\n\tAllowOverride None".
+			   	"\n\tOrder allow,deny".
+			   	"\n\tAllow from all".
+			   	"\n</Directory>".
+			   	"\nAlias /{{wiki-path}} \"{{fs-path}}\"\n";
 	   }
 ?>
