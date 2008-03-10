@@ -620,7 +620,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 		if ($namespaces == NULL || count($namespaces) == 0) {
 			
-			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title';
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
 			
 		} else {
 		
