@@ -8,14 +8,18 @@ Marker.prototype = {
  	* @param rootnode string
  	* 			root element where all elements which have to be marked are child of
  	*/
+ 	//TODO: Optimized for IE
 	initialize: function(rootnode) {
 		//root node from which all descendants will be checked for marking 
 		//storing the object directly would cause errors, since in most cases the object 
 		//is still not present when the constructor is called
-		this.rootnode = rootnode;
-		//
+		this.rootnode = rootnode;	
 		this.markerindex = 0;
+		//Stores the information for marking elements after traversing the DOM-Tree
+		//Elements are array [0] ID of Marker [1] html of Marker [2] Item to Mark [3] Position Top [4] Position Left [5] Height [6] Width   
 		this.transparencymarkerlist = new Array();
+		//Stores the information for marking elements after traversing the DOM-Tree
+		//Elements are array [0] ID of Marker [1] html of Marker [2] Item to Mark [3] Position Top [4] Position Left
 		this.iconmarkerlist = new Array();		
 	},
 	
@@ -25,12 +29,12 @@ Marker.prototype = {
  	* @param divtomark object
  	* 			element to mark
  	*/
- 	
  	insertMarkers: function(){
+ 		
  		$(this.rootnode).hide();
  		// transparencyMarkers
  		for(var index=0; index < this.transparencymarkerlist.length; index++){
-			if($(this.transparencymarkerlist[index][2])){
+			if($(this.iconmarkerlist[index][2])){
 	 			if($(this.iconmarkerlist[index][2]).tagName.toLowerCase() == 'div'){
 	 				if( $(this.iconmarkerlist[index][2]).style.position == ""){
 	 					$(this.iconmarkerlist[index][2]).style.position = "relative";
@@ -79,45 +83,25 @@ Marker.prototype = {
  		$(this.rootnode).show();
  	},
  	
- 	
+ 	/**
+ 	* @public marks an element with an overlay
+ 	* 
+ 	* @param divtomark object
+ 	* 			element to mark
+ 	*/
 	transparencyMarker: function(divtomark) {
 		if(divtomark == null) return;
 		//Create and insert markerdiv
-		var marker = '<div id="' + this.markerindex + '-marker" class="div-marker"></div>';		
-		//Get borderwidth defined in css for the div-marker
-		//var borderwidthx = Number(this.getBorderWidth(this.markerindex+"-marker","left")) + Number(this.getBorderWidth(this.markerindex+"-marker","right"));
-		//if(isNaN(Number(borderwidthx))) return;
-		//var borderwidthy = Number(this.getBorderWidth(this.markerindex+"-marker","top")) + Number(this.getBorderWidth(this.markerindex+"-marker","bottom"));
-		//if(isNaN(Number(borderwidthy))) return;
-		//Set width for the marker minus borderwidth so it fits the original element which should be marked
-		var width = divtomark.offsetWidth; //- borderwidthx;
-		var height = divtomark.offsetHeight; //- borderwidthy;
+		var marker = '<div id="' + this.markerindex + '-marker" class="div-marker"></div>';
+		//Set width&height for the marker so it fits the original element which should be marked
+		var width = divtomark.offsetWidth;
+		var height = divtomark.offsetHeight;
 		//Set position of the marker
 		var top = divtomark.offsetTop;
 		var left = divtomark.offsetLeft;
 		//increase marker index
 		this.transparencymarkerlist.push( new Array(this.markerindex+"-marker", marker, $(divtomark).identify(), top, left, height, width ))
 		this.markerindex++;	
-		/* on the fly code
-		if(divtomark == null) return;
-		//Create and insert markerdiv
-		var marker = '<div id="' + this.markerindex + '-marker" class="div-marker"></div>';
-		new Insertion.After(divtomark, marker );		
-		//Get borderwidth defined in css for the div-marker
-		var borderwidthx = Number(this.getBorderWidth(this.markerindex+"-marker","left")) + Number(this.getBorderWidth(this.markerindex+"-marker","right"));
-		if(isNaN(Number(borderwidthx))) return;
-		var borderwidthy = Number(this.getBorderWidth(this.markerindex+"-marker","top")) + Number(this.getBorderWidth(this.markerindex+"-marker","bottom"));
-		if(isNaN(Number(borderwidthy))) return;
-		//Set width for the marker minus borderwidth so it fits the original element which should be marked
-		var width = divtomark.offsetWidth - borderwidthx;
-		$(this.markerindex+"-marker").style.width = width + "px";
-		var height = divtomark.offsetHeight - borderwidthy;
-		$(this.markerindex+"-marker").style.height = height + "px";
-		//Set position of the marker
-		$(this.markerindex+"-marker").style.top = divtomark.offsetTop + "px";
-		$(this.markerindex+"-marker").style.left = divtomark.offsetLeft + "px";
-		//increase marker index
-		this.markerindex++;//*/	
 	},
 	
 	/**
@@ -125,55 +109,33 @@ Marker.prototype = {
  	* 
  	* @param divtomark object
  	* 			element to mark
+ 	* 		 links
+ 	* 			links to the templates
  	*/
 	iconMarker: function(divtomark,links) {
-		///*
 		if(divtomark == null) return;
 		//Create and insert markerdiv
-		var marker = '<div id="' + this.markerindex + '-marker" class="icon-marker">';
+		var marker = Array();
+		marker.push('<div id="' + this.markerindex + '-marker" class="icon-marker">');
 			//Check if multiple links has been passed and generate one clickable picture for each
-			if( links  instanceof Array){ 
-				links.each(function(link){
-					marker += '<a href="'+ wgServer + wgScript+ "/" +link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
-				});
+			if( links  instanceof Array){					
+				for(var index=0; index < links.length; index++){ 
+					marker.push('<a href="'+ wgServer + wgScript+ "/" +links[index] +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>');
+				};
 			// Check if only one link has been passe	
 			} else if ( links  instanceof String || typeof(links) == "string"){
-				marker += '<a href="'+ wgServer + wgScript+ "/" + links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
-			//If nothing has been paased, only mark it with a non clickable picture
+				marker.push('<a href="'+ wgServer + wgScript+ "/" + links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'); 
+			//If nothing has been passed, only mark it with a non clickable picture
 				} else {
-					marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
+					marker.push('<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>');
 				}
-		marker += '</div>';
+		marker.push( '</div>');
 		//Set position of the marker		
 		var top = divtomark.offsetTop;
 		var left = divtomark.offsetLeft;
-		this.iconmarkerlist.push( new Array(this.markerindex+"-marker", marker, $(divtomark).identify(), top, left))
+		this.iconmarkerlist.push( new Array(this.markerindex+"-marker", marker.join(''), $(divtomark).identify(), top, left))
 		//increase marker index				
-		this.markerindex++;//*/
-				
-		/*
-		if(divtomark == null) return;
-		//Create and insert markerdiv
-		var marker = '<div id="' + this.markerindex + '-marker" class="icon-marker">';
-			//Check if multiple links has been passed and generate one clickable picture for each
-			if( links  instanceof Array){ 
-				links.each(function(link){
-					marker += '<a href="'+ wgServer + wgScript+ "/" +link +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>';
-				});
-			// Check if only one link has been passe	
-			} else if ( links  instanceof String || typeof(links) == "string"){
-				marker += '<a href="'+ wgServer + wgScript+ "/" + links +'"><img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/></a>'; 
-			//If nothing has been paased, only mark it with a non clickable picture
-				} else {
-					marker += '<img src="' + wgScriptPath  + '/extensions/SMWHalo/skins/templatemarker.png"/>';
-				}
-		marker += '</div>';
-		new Insertion.After(divtomark, marker );
-		//Set position of the marker		
-		$(this.markerindex+"-marker").style.top = divtomark.offsetTop + "px";
-		$(this.markerindex+"-marker").style.left = divtomark.offsetLeft + "px";
-		//increase marker index				
-		this.markerindex++;//*/			
+		this.markerindex++;
 	},
 
 	/**
@@ -218,6 +180,7 @@ Marker.prototype = {
  	* 			borderposition string
  	* 				location of the border, possible values: "left", "right", "bottom", "top"
  	*/
+ 	//TODO: Optimized for IE
 	getBorderWidth: function(el, borderposition)
 	{
 		//retrieve css value
@@ -228,9 +191,8 @@ Marker.prototype = {
 		if(regexresult = borderregex.exec(borderwidth)) {
 			return regexresult[1];
 		} else {
-			return "";
+			return 0;
 		}
-
 	}, 
 	
 	
@@ -240,92 +202,68 @@ Marker.prototype = {
  	* @param rootnode object 
  	* 				Element which descendants will be checked for removing
  	*/
+ 	//TODO: Optimized for IE
 	removeMarkers: function(){
-			$$('.icon-marker').each(function(node) {
-  				node.remove();
-			});
-			$$('.div-marker').each(function(node) {
-  				node.remove();
-			});
-			$$('.text-marker').each(function(node) {
-  				node.replace(node.innerHTML);
-			});
+			$(this.rootnode).hide();
+			var markers = $$('.icon-marker');
+			for(var index=0; index < markers.length; index++){
+				markers[index].remove();
+			}
+			var markers = $$('.div-marker');
+			for(var index=0; index < markers.length; index++){
+				markers[index].remove();
+			}
+			var markers = $$('.text-marker');
+			for(var index=0; index < markers.length; index++){
+				markers[index].remove();
+			}
 			this.transparencymarkerlist = new Array();
 			this.iconmarkerlist = new Array();
-			return;
-			/*var rootnode = $(this.rootnode);
-			//Check rootnode
-			if(rootnode == null) return;
-			//Get childs
-			var elements = rootnode.descendants();
-			//remove marker
-			elements.each(this.removeMarker.bind(this));
-			//reset marker index
-			this.markerindex = 0;*/
+			$(this.rootnode).show();
 	},
-	
-	/**
- 	* @private Check if the element is an marker and if yes removes it
- 	* 
- 	* @param element object 
- 	* 				element to check
- 	*/	
-	/*removeMarker: function(element){
-		//firstchild.tagName.toLowerCase() == 'span'
-		//debugger;
-		if(element == null) return;
-		//Check if tabindex is set, if yes update it
-		if(element.readAttribute('class')!= null && (element.readAttribute('class')== "icon-marker" || element.readAttribute('class')== "div-marker")){
-			element.remove();
-		}
-		//Check for textmarkers and remove only the span not the text 
-		if(element.readAttribute('class')!= null && element.readAttribute('class')== "text-marker"){
-			element.replace(element.innerHTML);
-		}	
-	},*/
 	
 	/**
  	* @public Marks all templates
  	* 
  	*/	
+ 	//TODO: Optimized for IE
 	markNodes: function(){
-		this.removeMarkers();
-		//$(this.rootnode).hide();
-		var time = new Date();
-		var timestamp1 = time;//.toGMTString();		
+		this.removeMarkers();		
+		//var time = new Date();
+		//var timestamp1 = time;		
 		this.mark($(this.rootnode), true);
 		this.insertMarkers();
-		time = new Date();
-		var timestamp2 = time;//.toGMTString();
+		//time = new Date();
+		//var timestamp2 = time;
 		//alert(timestamp2 -timestamp1 );
-		//$(this.rootnode).show();
 	},
 	
 	/**
  	* @public Checks all child nodes for templates and marks the proper Elements
  	* 
  	* @param 
- 	*/	
+ 	*/
+ 	//TODO: Optimized for IE	
 	mark: function(rootnode, mark){
-
-		
-		var templates = Array();
-		templates.push(0);
-		
+		//Stores template links found by checking the subtree of childelements, so elements can be marked with later
+		//return:  -1 the currently opened template was close in the subtree
+		// 			0 nothing has been found in the subtree
+		// 		 else template found returned 
+		var templates = Array();		
+		templates.push(0);		
 		//Stores the templatename and the id of the current open but not closed template
 		var currentTmpl = null;
-		//Get first Child
-		var element = rootnode.firstChild;
+		//Get Childelements
+		var childelements = rootnode.childNodes;
 		//Walk over every next sibling
 		//this uses plain javascript functions, since prototype doesn't support textnodes
-		while( element != null){
-			//Get current node and set element to the next sibling so it won't be effected by changes of the current node
-			var node = element;
-			element = element.nextSibling;			
+		for(var index=0; index < childelements.length; index++){
+			//Get current node 
+			var node = childelements[index];			
 			//If nodetyp is textnode and template tag is open but not closed
-			if(node.nodeType == 3 && currentTmpl != null ){
+			if( node.nodeType == 3 && currentTmpl != null ){
 				//mark text
-				if(mark == true) this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
+				if( mark == true) this.textMarker(node,wgServer + wgScript+ "/" +currentTmpl);
 			//If nodetype is elementnode
 			} else if(node.nodeType == 1 ){
 				//Treating different types of elements
@@ -334,13 +272,14 @@ Marker.prototype = {
 					if(tag == 'a'){
 						//Find opening and closing tags
 							//Check if this is an opening anchor, indicating that a template starts 
-							if($(node).readAttribute('type')=='template'){
-			  					currentTmpl = node.readAttribute('tmplname');
+							var attrtype = $(node).readAttribute('type');
+							if( attrtype =='template'){
+			  					currentTmpl = $(node).readAttribute('tmplname');
 			  					templates.push(currentTmpl); 			
 			  					continue;
 			  				}
 			  				//Check if this is an closing anchor, indicating that a template ends
-			  				if($(node).readAttribute('type')=='templateend'){
+			  				if( attrtype =='templateend'){
 			  					currentTmpl = null;
 			  					templates[0] = -1;
 			  				 	continue;
@@ -360,9 +299,10 @@ Marker.prototype = {
   							this.iconMarker(node,links);
   						}
   					} else {
+  						
   						(mark == true) ? result = this.mark(node,true) : result = this.mark(node,false);
   					}
-  					
+ 					  						
   					switch(result[0]){
   						//template close
   						case -1: 
@@ -375,9 +315,10 @@ Marker.prototype = {
   						default:
   							templates.push( result[0] );
   							currentTmpl = result[0];
-  						}
+  					}
+  						
 					if(result.length > 1){
-						result.shift()
+						result.shift();
 						templates = templates.concat( result );
 					};
 				
@@ -389,28 +330,7 @@ Marker.prototype = {
 			templates[0] = currentTmpl; 
 		}
 		return templates;	
-	},
-
-	//Samplepage for develepoment
-	//TODO: Remove if not needed anymore
-	samplePage: function(){
-		$("innercontent").replace('<div id="innercontent">' +
-				'<a id="1" type="template" tmplname="Template:1"></a>normal text<br><a id="1_end" type="templateend"></a>' +
-				'normal text<br>' +
-				'<a id="2" type="template" tmplname="Template:2"></a>Text vor der Tabelle' +
-				'<table><tr><td>Eins</td><td>Zwei</td></tr><a id="2_end" type="templateend"/></a>' +
-				'<a id="3" type="template" tmplname="Template:3"></a><tr><td>Drei</td><td>Vier</td></tr></table>'+
-				'<br>Hier kommt noch eine schoene Tabellen unterschrift<a id="3_end" type="templateend"/></a>' +
-				'<br>normal text<br>' +
-				'normal text<br>' +
-				'normal text<br>' +
-				'<a id="4" type="template" tmplname="Template:4"></a>normal text<br><a id="4_end" type="templateend"></a>' +
-				'</div>');
-		//this.checkForTemplates();
-		this.markNodes();
-		//this.removeMarkers();
 	}
-
 }
 
 
