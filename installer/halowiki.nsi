@@ -8,6 +8,9 @@
 ;--------------------------------
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
+!include "FileFunc.nsh"
+
+!insertmacro GetFileName
 
 !define PRODUCT "SMWPlus"
 !define PRODUCT_CAPTION "SMW+"
@@ -98,12 +101,20 @@ VAR HTTPD
 VAR WIKIPATH
 Var INSTALLTYPE
 
+;Wiki customizations
+Var WIKINAME 
+Var WIKILOGO 
+Var WIKILANG 
+Var WIKISKIN 
+Var CSH 
+Var INSTHELP
+
 Var CHOOSEDIRTEXT
 
 Function ".onInit"
   InitPluginsDir
   File /oname=$PLUGINSDIR\wikiinst.ini "gui\wikiinst.ini"
-  File /oname=$PLUGINSDIR\smwinst.ini "gui\smwinst.ini"
+  File /oname=$PLUGINSDIR\wikiupdate.ini "gui\wikiupdate.ini"
   File /oname=$PLUGINSDIR\wikicustomize.ini "gui\wikicustomize.ini"
 FunctionEnd
 
@@ -279,25 +290,15 @@ Function showFull
 	Push $R0
 	InstallOptions::dialog $PLUGINSDIR\wikiinst.ini
 	Pop $R0
-	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
-	ReadINIStr $MYSQLBIN "$PLUGINSDIR\wikiinst.ini" "Field 4" "state"
-	ReadINIStr $DBSERVER "$PLUGINSDIR\wikiinst.ini" "Field 6" "state"
-	ReadINIStr $DBUSER "$PLUGINSDIR\wikiinst.ini" "Field 8" "state"
-	ReadINIStr $DBPASS "$PLUGINSDIR\wikiinst.ini" "Field 10" "state"
-	ReadINIStr $WIKIPATH "$PLUGINSDIR\wikiinst.ini" "Field 12" "state"
-	ReadINIStr $HTTPD "$PLUGINSDIR\wikiinst.ini" "Field 14" "state"
-	Pop $R0 
+	
 FunctionEnd
 
 Function showPHP
     !insertmacro MUI_HEADER_TEXT $(PHP_PAGE_TITLE) $(PHP_PAGE_SUBTITLE)	
    	Push $R0
-	InstallOptions::dialog $PLUGINSDIR\smwinst.ini
+	InstallOptions::dialog $PLUGINSDIR\wikiupdate.ini
 	Pop $R0
- 	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
- 	Pop $R0	
-
- 
+ 	 
 FunctionEnd
 
 Function showWikiCustomize
@@ -305,8 +306,7 @@ Function showWikiCustomize
 	  Push $R0
 	  InstallOptions::dialog $PLUGINSDIR\wikicustomize.ini
 	  Pop $R0
-	  ReadINIStr $PHP "$PLUGINSDIR\wikicustomize.ini" "Field 2" "state"
-	  Pop $R0
+	 
 FunctionEnd
 
 Function checkWikiCustomize
@@ -386,7 +386,7 @@ Function checkFull
 FunctionEnd
 
 Function checkPHP
-	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	IfFileExists $PHP 0 notexistsPHP
 	goto out
 	notexistsPHP:
@@ -397,103 +397,308 @@ FunctionEnd
 
 Function changeConfigForFullXAMPP
 	; setup XAMPP (setup_xampp.bat and install script slightly modified)
+	DetailPrint "Update XAMPP"
+	SetOutPath $INSTDIR
 	nsExec::ExecToLog '"$INSTDIR\setup_xampp.bat"'
+	SetOutPath $INSTDIR\htdocs\mediawiki
+	
 	; setup halowiki (change LocalSettings.php)
+	DetailPrint "Update LocalSettings.php"
 	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php phpInterpreter=$INSTDIR\php\php.exe \
 		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
-		semanticAC=false wgGardeningBotDelay=100 wgScriptPath=/mediawiki ls=LocalSettings.php.template'	 
+		semanticAC=false wgGardeningBotDelay=100 wgScriptPath=/mediawiki ls=LocalSettings.php.template'
+		
+	DetailPrint "Update httpd.conf"	 
 	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeHttpd.php httpd=$INSTDIR\apache\conf\httpd.conf wiki-path=mediawiki fs-path=$INSTDIR\htdocs\mediawiki'
+	
+	DetailPrint "Config customizations"
+	CALL configCustomizationsForNewWithXAMPP
 FunctionEnd
 
 Function changeConfigForNoXAMPP
 	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
 	MessageBox MB_OK "Make sure that your database is running. It'll be updated now."
+	
 	; Set config variables
+	DetailPrint "Update LocalSettings.php"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP wgDBserver=$DBSERVER wgDBuser=$DBUSER wgDBpassword=$DBPASS \
 		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
 		semanticAC=false wgGardeningBotDelay=100 wgScriptPath=/$WIKIPATH ls=LocalSettings.php.template'
 		
 	; Set httpd
+	DetailPrint "Update httpd.conf"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeHttpd.php httpd=$HTTPD wiki-path=$WIKIPATH fs-path=$INSTDIR'
 	
 	; Create and initialize DB
 	nsExec::ExecToLog '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\createDB.inf"' $0
 	nsExec::ExecToLog '"cmd" /C $MYSQLBIN --host=$DBSERVER --user=$DBUSER --password=$DBPASS < "$INSTDIR\installer\halodb.sql"' $1
 	
+	DetailPrint "Config customizations"
+	CALL configCustomizationsForNewWithoutXAMPP
 FunctionEnd
 
 Function changeConfigForMWUpdate
-	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	MessageBox MB_OK "Make sure that your webserver and database are running."
+	
+	DetailPrint "Update LocalSettings.php"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
 		smwgIQEnabled=true smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
 		semanticAC=false wgGardeningBotDelay=100 importSMW=1 importSMWPlus=1 ls=LocalSettings.php'
 		
-		
+	
+	DetailPrint "Update MediaWiki database"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
+	
+	DetailPrint "Update SMW tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
+	
+	DetailPrint "Update SMW+ tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
 	
-	
+	DetailPrint "Config customizations"
+	CALL configCustomizationsForUpdate
 FunctionEnd
 
 
 
 Function changeConfigForSMWUpdate
-	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	MessageBox MB_OK "Make sure that your webserver and database are running."
+	
+	DetailPrint "Update LocalSettings.php"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php phpInterpreter=$PHP \ 
 		smwgAllowNewHelpQuestions=true smwgAllowNewHelpQuestions=true \
 		keepGardeningConsole=false smwhgEnableLogging=false smwgDeployVersion=true \
 		semanticAC=false wgGardeningBotDelay=100 importSMWPlus=1 ls=LocalSettings.php'
 	
 	; update MediaWiki
+	DetailPrint "Update MediaWiki database"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
 	
 	; update SMW tables
+	DetailPrint "Update SMW tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
 	
 	; setup SMW+
+	DetailPrint "Update SMW+ tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
 	
 	; unify Types in SMW
+	DetailPrint "Unify types"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
+	
 	; update all semantic data
+	DetailPrint "Refresh all semantic data"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
 	
 	; run job queue
+	DetailPrint "Run job queue"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\runJobs.php'
 	
-	
+	DetailPrint "Config customizations"
+	CALL configCustomizationsForUpdate
 FunctionEnd
 
 Function changeConfigForSMWPlusUpdate
-	ReadINIStr $PHP "$PLUGINSDIR\smwinst.ini" "Field 2" "state"
+	ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	MessageBox MB_OK "Make sure that your webserver and database are running."
 	; update MediaWiki
+	DetailPrint "Update MediaWiki database"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\update.php'
 	
 	; update SMW tables
+	DetailPrint "Update SMW tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_setup.php'
 	
 	; update SMW+ tables
+	DetailPrint "Update SMW+ tables"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php'
 	
 	; update SMW+ data
+	DetailPrint "Update SMW+ data"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_update.php'
 	
 	; unify Types in SMW
+	DetailPrint "Unify types"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_unifyTypes.php'
 	
 	; update all semantic data
+	DetailPrint "Refresh all semantic data"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\SMW_refreshData.php'
 	
 	; run job queue
+	DetailPrint "Run job queue"
 	nsExec::ExecToLog '"$PHP" $INSTDIR\maintenance\runJobs.php'
+	
+	DetailPrint "Config customizations"
+	CALL configCustomizationsForUpdate
 FunctionEnd
+
+Function configCustomizationsForNewWithXAMPP
+	
+	ReadINIStr $WIKINAME "$PLUGINSDIR\wikicustomize.ini" "Field 2" "state"
+	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
+	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
+	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
+	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
+	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 12" "state"
+	
+	${If} $WIKINAME == ""
+		StrCpy $WIKINAME "MyWiki"
+	${EndIf}
+	${If} $WIKISKIN == ""
+		StrCpy $WIKINAME "OntoSkin"
+	${EndIf}
+	${Switch} $WIKILANG
+	  ${Case} 'English'
+	    StrCpy $WIKILANG "en"
+	    ${Break}
+	  ${Case} 'German'
+	    StrCpy $WIKILANG "de"
+	    ${Break}
+	  ${Default}
+	    StrCpy $WIKILANG "en"
+	    ${Break}
+	${EndSwitch}
+	${Switch} $CSH
+		${Case} 1
+			StrCpy $CSH "true"
+		${Break}
+		${Case} 0
+			StrCpy $CSH "false"
+		${Break}
+	${EndSwitch}
+	
+	IfFileExists $WIKILOGO 0 logo_not_exists
+		CopyFiles $WIKILOGO $INSTDIR\htdocs\mediawiki
+	logo_not_exists:
+		
+		${GetFileName} $WIKILOGO $R0
+		nsExec::ExecToLog ' "$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
+		wgSitename=$WIKINAME wgLogo=$$wgScriptPath/$R0 wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
+		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
+	
+	${If} $INSTHELP == 1
+		DetailPrint "Installing helppages"
+		DetailPrint "Starting XAMPP"
+		SetOutPath $INSTDIR
+		Exec "$INSTDIR\xampp_start.exe"
+		MessageBox MB_OK "Continue when servers has been started."
+		SetOutPath $INSTDIR\htdocs\mediawiki
+		nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
+	${EndIf} 
+FunctionEnd
+
+Function configCustomizationsForNewWithoutXAMPP
+	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	ReadINIStr $WIKINAME "$PLUGINSDIR\wikicustomize.ini" "Field 2" "state"
+	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
+	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
+	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
+	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
+	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 12" "state"
+	
+	${If} $WIKINAME == ""
+		StrCpy $WIKINAME "MyWiki"
+	${EndIf}
+	${If} $WIKISKIN == ""
+		StrCpy $WIKINAME "OntoSkin"
+	${EndIf}
+	${Switch} $WIKILANG
+	  ${Case} 'English'
+	    StrCpy $WIKILANG "en"
+	    ${Break}
+	  ${Case} 'German'
+	    StrCpy $WIKILANG "de"
+	    ${Break}
+	  ${Default}
+	    StrCpy $WIKILANG "en"
+	    ${Break}
+	${EndSwitch}
+	${Switch} $CSH
+		${Case} 1
+			StrCpy $CSH "true"
+		${Break}
+		${Case} 0
+			StrCpy $CSH "false"
+		${Break}
+	${EndSwitch}
+	
+	IfFileExists $WIKILOGO 0 logo_not_exists
+		CopyFiles $WIKILOGO $INSTDIR
+	logo_not_exists:
+	
+	
+		${GetFileName} $WIKILOGO $R0
+		nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
+		wgSitename=$WIKINAME wgLogo=$$wgScriptPath/$R0 wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
+		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
+	
+	${If} $INSTHELP == 1
+		DetailPrint "Installing helppages"
+		MessageBox MB_OK "Start your servers and then continue."
+		nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
+	${EndIf} 
+FunctionEnd
+
+Function configCustomizationsForUpdate
+	ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
+	ReadINIStr $WIKINAME "$PLUGINSDIR\wikicustomize.ini" "Field 2" "state"
+	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
+	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
+	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
+	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
+	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 12" "state"
+	
+	${If} $WIKINAME == ""
+		StrCpy $WIKINAME "**notset**"
+	${EndIf}
+	${If} $WIKISKIN == ""
+		StrCpy $WIKINAME "**notset**"
+	${EndIf}
+	${Switch} $WIKILANG
+	  ${Case} 'English'
+	    StrCpy $WIKILANG "en"
+	    ${Break}
+	  ${Case} 'German'
+	    StrCpy $WIKILANG "de"
+	    ${Break}
+	  ${Default}
+	    StrCpy $WIKILANG "**notset**"
+	    ${Break}
+	${EndSwitch}
+	${Switch} $CSH
+		${Case} 1
+			StrCpy $CSH "true"
+		${Break}
+		${Case} 0
+			StrCpy $CSH "false"
+		${Break}
+	${EndSwitch}
+	
+	IfFileExists $WIKILOGO 0 logo_not_exists
+		CopyFiles $WIKILOGO $INSTDIR
+		${GetFileName} $WIKILOGO $R0
+		StrCpy $WIKILOGO "$$wgScriptPath/$R0"
+		goto updateLocalSettings
+	logo_not_exists:
+		StrCpy $WIKILOGO "**notset**"
+	updateLocalSettings:
+		nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
+		wgSitename=$WIKINAME wgLogo=$WIKILOGO wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
+		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
+	
+	${If} $INSTHELP == 1
+		DetailPrint "Installing helppages"
+		MessageBox MB_OK "Make sure that Apache and MySQL are running." 
+		nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
+	${EndIf} 
+FunctionEnd
+
 ; Uninstaller
 
 
