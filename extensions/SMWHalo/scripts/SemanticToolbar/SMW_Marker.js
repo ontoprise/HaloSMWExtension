@@ -8,7 +8,6 @@ Marker.prototype = {
  	* @param rootnode string
  	* 			root element where all elements which have to be marked are child of
  	*/
- 	//TODO: Optimized for IE
 	initialize: function(rootnode) {
 		//root node from which all descendants will be checked for marking 
 		//storing the object directly would cause errors, since in most cases the object 
@@ -180,7 +179,6 @@ Marker.prototype = {
  	* 			borderposition string
  	* 				location of the border, possible values: "left", "right", "bottom", "top"
  	*/
- 	//TODO: Optimized for IE
 	getBorderWidth: function(el, borderposition)
 	{
 		//retrieve css value
@@ -202,7 +200,6 @@ Marker.prototype = {
  	* @param rootnode object 
  	* 				Element which descendants will be checked for removing
  	*/
- 	//TODO: Optimized for IE
 	removeMarkers: function(){
 			$(this.rootnode).hide();
 			var markers = $$('.icon-marker');
@@ -226,7 +223,6 @@ Marker.prototype = {
  	* @public Marks all templates
  	* 
  	*/	
- 	//TODO: Optimized for IE
 	markNodes: function(){
 		this.removeMarkers();		
 		//var time = new Date();
@@ -242,8 +238,7 @@ Marker.prototype = {
  	* @public Checks all child nodes for templates and marks the proper Elements
  	* 
  	* @param 
- 	*/
- 	//TODO: Optimized for IE	
+ 	*/	
 	mark: function(rootnode, mark){
 		//Stores template links found by checking the subtree of childelements, so elements can be marked with later
 		//return:  -1 the currently opened template was close in the subtree
@@ -338,9 +333,3 @@ Marker.prototype = {
 var smwhg_marker = new Marker('bodyContent');
 Event.observe(window, 'resize', smwhg_marker.markNodes.bind(smwhg_marker));
 Event.observe(window, 'load', smwhg_marker.markNodes.bind(smwhg_marker));
-
-/*
-setTimeout(function() { 
-	setTimeout(smwhg_marker.samplePage.bind(smwhg_marker),1000);
-},3000);
-//*/
