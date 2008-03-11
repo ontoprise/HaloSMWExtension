@@ -39,6 +39,8 @@
 		switch($key) {
 			case 'importSMW': importSMW($content);break;
 			case 'importSMWPlus': importSMWPlus($content);break;
+			case 'importACL': importACL($content);break;
+			case 'importLDAP': importLDAP($content);break;
 			case 'ls': break;		
 			default: setVariable($content, $key, $value);
 		}
@@ -94,5 +96,31 @@
 						"include_once(\"extensions/SMWHalo/includes/SMW_Initialize.php\");\n".
 						"enableSMWHalo();\n"; 
 	   
+	   }
+	   
+	   function importACL(& $content) {
+	   		$content .= "require_once('extensions/PermissionACL.php');\n".
+	   		"if (file_exists('ACLs.php')) require_once('ACLs.php');";	
+	   }
+	   
+	   function importLDAP(& $content) {
+	   		$content .= "/*require_once('extensions/LdapAuthentication.php');\n".
+						"\$wgAuth = new LdapAuthenticationPlugin();\n".
+						"\$wgLDAPDomainNames = array('Ontoprise');\n".
+						"\$wgLDAPServerNames = array('Ontoprise' => 'localhost');\n".
+						"\$wgLDAPSearchStrings = array('Ontoprise' => 'uid=USER-NAME,ou=Users,dc=example,dc=com');\n".
+						"\$wgLDAPUseLocal = false;\n". 
+						"\$wgLDAPEncryptionType = array( 'Ontoprise'=> 'tcl'');\n".
+						"\$wgLDAPOptions['no_url'] = true;\n".
+						"\$wgLDAPOptions['port'] = 10389;\n".
+						"\$wgMinimalPasswordLength = 1;\n".
+						
+						"\$wgLDAPRequiredGroups['Ontoprise'] = array('cn=sysop,ou=groups,dc=example,dc=com');\n".
+						"\$wgLDAPGroupBaseDNs['Ontoprise'] = 'ou=groups,dc=example,dc=com';\n".
+						"\$wgLDAPGroupObjectclass['Ontoprise'] = 'groupOfUniqueNames';\n".
+						"\$wgLDAPGroupAttribute['Ontoprise'] = 'uniquemember';\n".
+						"\$wgLDAPGroupAttributeValue['Ontoprise'] = 'uid=USER-NAME,ou=users';\n".
+						"\$wgLDAPGroupNameAttribute['Ontoprise'] = 'cn';\n".
+						"\$wgLDAPUseLDAPGroups['Ontoprise'] = true;\n*/";
 	   }
 ?>

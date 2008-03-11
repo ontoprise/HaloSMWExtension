@@ -3,7 +3,7 @@
 ; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
 ;Without files (much faster for debugging)
-;!define NOFILES
+!define NOFILES
 
 ;--------------------------------
 !include "MUI2.nsh"
@@ -198,7 +198,7 @@ Section "SMW+ 1.0 core" smwplus
   
   copyfiles:
 	  !ifndef NOFILES
-	    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php ..\*
+	    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php ..\*
 	  !endif  
   
   ;configure:
@@ -220,9 +220,51 @@ Section "SMW+ 1.0 core" smwplus
 SectionEnd
 
 Section "LDAP Authentication" ldap
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  
+  ${If} $0 == 1
+  	; XAMPP section did already install SMWPlus
+  	SetOutPath $INSTDIR\htdocs\mediawiki
+  	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
+  	importLDAP=1 ls=LocalSettings.php'
+  ${Else}
+ 	SetOutPath $INSTDIR
+ 	${If} $INSTALLTYPE == 3 
+	  	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	${Else}
+		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
+	${EndIf}
+  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
+  	importLDAP=1 ls=LocalSettings.php'
+  	
+  	
+  ${EndIf}
 SectionEnd
 
 Section "ACL - Access Control Lists" acl
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  
+  ${If} $0 == 1
+  	; XAMPP section did already install SMWPlus
+  	SetOutPath $INSTDIR\htdocs\mediawiki
+  	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
+  	importACL=1 ls=LocalSettings.php'
+  ${Else}
+ 	SetOutPath $INSTDIR
+ 	${If} $INSTALLTYPE == 3 
+	  	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	${Else}
+		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
+	${EndIf}
+  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
+  	importACL=1 ls=LocalSettings.php'
+  	
+  	
+  ${EndIf}
+  
+  
 SectionEnd
 
 SectionGroupEnd
@@ -551,7 +593,7 @@ Function configCustomizationsForNewWithXAMPP
 		StrCpy $WIKINAME "MyWiki"
 	${EndIf}
 	${If} $WIKISKIN == ""
-		StrCpy $WIKINAME "OntoSkin"
+		StrCpy $WIKISKIN "ontoskin"
 	${EndIf}
 	${Switch} $WIKILANG
 	  ${Case} 'English'
@@ -575,11 +617,15 @@ Function configCustomizationsForNewWithXAMPP
 	
 	IfFileExists $WIKILOGO 0 logo_not_exists
 		CopyFiles $WIKILOGO $INSTDIR\htdocs\mediawiki
+		${GetFileName} $WIKILOGO $R0
+		StrCpy $WIKILOGO "$$wgScriptPath/$R0"
+		goto updateLocalSettings
 	logo_not_exists:
-		
+		StrCpy $WIKILOGO "**notset**"
+	updateLocalSettings:	
 		${GetFileName} $WIKILOGO $R0
 		nsExec::ExecToLog ' "$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
-		wgSitename=$WIKINAME wgLogo=$$wgScriptPath/$R0 wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
+		wgSitename=$WIKINAME wgLogo=$WIKILOGO wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
 		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
 	
 	${If} $INSTHELP == 1
@@ -606,7 +652,7 @@ Function configCustomizationsForNewWithoutXAMPP
 		StrCpy $WIKINAME "MyWiki"
 	${EndIf}
 	${If} $WIKISKIN == ""
-		StrCpy $WIKINAME "OntoSkin"
+		StrCpy $WIKISKIN "ontoskin"
 	${EndIf}
 	${Switch} $WIKILANG
 	  ${Case} 'English'
@@ -630,12 +676,15 @@ Function configCustomizationsForNewWithoutXAMPP
 	
 	IfFileExists $WIKILOGO 0 logo_not_exists
 		CopyFiles $WIKILOGO $INSTDIR
+		${GetFileName} $WIKILOGO $R0
+		StrCpy $WIKILOGO "$$wgScriptPath/$R0"
+		goto updateLocalSettings
 	logo_not_exists:
-	
-	
+		StrCpy $WIKILOGO "**notset**"
+	updateLocalSettings:
 		${GetFileName} $WIKILOGO $R0
 		nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
-		wgSitename=$WIKINAME wgLogo=$$wgScriptPath/$R0 wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
+		wgSitename=$WIKINAME wgLogo=$WIKILOGO wgLanguageCode=$WIKILANG wgDefaultSkin=$WIKISKIN \
 		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
 	
 	${If} $INSTHELP == 1
@@ -658,7 +707,7 @@ Function configCustomizationsForUpdate
 		StrCpy $WIKINAME "**notset**"
 	${EndIf}
 	${If} $WIKISKIN == ""
-		StrCpy $WIKINAME "**notset**"
+		StrCpy $WIKISKIN "**notset**"
 	${EndIf}
 	${Switch} $WIKILANG
 	  ${Case} 'English'

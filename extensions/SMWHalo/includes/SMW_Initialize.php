@@ -66,6 +66,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
+	$wgHooks['BeforePageDisplay'][]='smwACLAddHTMLHeader';
 	
 	// Register parser hooks for advanced annotation mode
 	global $wgRequest; 
@@ -130,6 +131,8 @@ function smwgHaloSetupExtension() {
 			case '_om_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 						break;
+			case '_al_' : require_once($smwgHaloIP . '/specials/ACL/ACLSpecialPage.php');
+						break;
 						
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -153,6 +156,9 @@ function smwgHaloSetupExtension() {
 	
 		$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
 		$wgSpecialPages['Gardening'] = array('SMWGardening');
+		
+		$wgAutoloadClasses['ACLSpecialPage'] = $smwgHaloIP . '/specials/ACL/ACLSpecialPage.php';
+		$wgSpecialPages['ACL'] = array('ACLSpecialPage');
 	
 		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
 		$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
@@ -871,6 +877,37 @@ function smwfAnnotateAction($action, $article) {
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
 	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
+
+	return true;
+}
+
+// ACL scripts callback
+// includes necessary script and css files.
+ function smwACLAddHTMLHeader(&$out) {
+ 	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+		
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":ACL");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/ACL/acl.js', "all", -1, NS_SPECIAL.":ACL");
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":ACL");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":ACL");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/ACL/acl.js', "all", -1, NS_SPECIAL.":ACL");
+	}
+
+	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":ACL");
 
 	return true;
 }

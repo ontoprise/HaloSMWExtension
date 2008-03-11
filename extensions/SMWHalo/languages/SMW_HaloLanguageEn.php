@@ -467,7 +467,23 @@ clicking the big arrows between the columns.',
  	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',
-	'smw_iqgi_wrongunit' => 'wrong unit'
+	'smw_iqgi_wrongunit' => 'wrong unit',
+	
+	/* ACL */
+	'acl' => 'Access Control Lists',
+	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
+	'smw_acl_up' => 'up',
+	'smw_acl_down' => 'down',
+	'smw_acl_groups' => 'Groups',
+	'smw_acl_namespaces' => 'Namespaces',
+	'smw_acl_actions' => 'Actions',
+	'smw_acl_permission' => 'Permission',
+	'smw_acl_whitelist' => 'Whitelist (comma separated with namespace)',
+	'smw_acl_superusers' => 'Superusers (comma separated)',
+	'smw_acl_update' => 'Update rules',
+	'smw_acl_remove' => 'Remove rule',
+	'smw_acl_newrule' => 'New rule'
+	
 );
 
 
