@@ -27,8 +27,13 @@ class ACLSpecialPage extends SpecialPage {
 	}
 	
 	public function execute() {
-		global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser;
+		global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits;
 		$wgOut->setPageTitle(wfMsg('acl'));
+		if (!self::hasExtension("other", "PermissionACL")) {
+			$wgOut->addHTML("PermissionACL extension not detected! Please insert: <pre>require_once('extensions/PermissionACL.php');\n".
+							"if (file_exists('ACLs.php')) require_once('ACLs.php');</pre>in your LocalSettings.php!");
+			return;
+		}
 		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('acl_welcome')."</div>";
 		$html .= "<form id=\"permissions\"><table class=\"smwtable\">";
 		$html .= "<tr><th width=\"30\"><input type=\"button\" name=\"up\" value=\"".wfMsg('smw_acl_up')."\" onclick=\"acl.up()\"/>".
@@ -127,6 +132,16 @@ class ACLSpecialPage extends SpecialPage {
 		}
 		$result .= $namespaces[$i] == NS_MAIN ? "Main" : $wgLang->getNsText($namespaces[count($namespaces)-1]);
 		return $result;
+	}
+	
+	private static function hasExtension($ext, $name) {
+		global $wgExtensionCredits;
+		if (isset($wgExtensionCredits[$ext])) {
+			foreach($wgExtensionCredits[$ext] as $e) {
+				if ($e['name']==$name) return true;
+			}
+		}
+		return false;
 	}
 }
 
