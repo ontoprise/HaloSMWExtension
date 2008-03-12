@@ -472,6 +472,7 @@ clicking the big arrows between the columns.',
 	/* ACL */
 	'acl' => 'Access Control Lists',
 	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
+	'smw_acl_rules' => 'Rules',
 	'smw_acl_up' => 'up',
 	'smw_acl_down' => 'down',
 	'smw_acl_groups' => 'Groups',

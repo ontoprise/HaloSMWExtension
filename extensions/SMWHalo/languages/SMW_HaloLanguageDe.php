@@ -459,6 +459,7 @@ protected $smwUserMessages = array(
 	/* ACL */
 	'acl' => 'Zugriffskontroll-Listen',
 	'acl_welcome' => 'Diese Spezialseite dient der Verwaltung der Zugriffskontroll-Listen. Damit können sie den Zugang auf das Wiki für bestimmte Gruppen regulieren.',
+	'smw_acl_rules' => 'Rules',
 	'smw_acl_up' => 'hoch',
 	'smw_acl_down' => 'runter',
 	'smw_acl_groups' => 'Gruppen',
