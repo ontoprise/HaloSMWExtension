@@ -159,5 +159,5 @@ var smwghLoggerEnabled=false;var SmwhgLogger=Class.create();SmwhgLogger.prototyp
 
 // SMW_Language.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var Language=Class.create();Language.prototype={initialize:function(){},getMessage:function(id){var msg=wgLanguageStrings[id];if(!msg){msg=id;}msg=msg.replace(/\$n/g,wgCanonicalNamespace);msg=msg.replace(/\$p/g,wgPageName);msg=msg.replace(/\$t/g,wgTitle);msg=msg.replace(/\$u/g,wgUserName);msg=msg.replace(/\$s/g,wgServer);return msg;}};var gLanguage=new Language();
+var Language=Class.create();Language.prototype={initialize:function(){},getMessage:function(id,type){switch(type){case "user":var msg=wgUserLanguageStrings[id];if(!msg){msg=id;}break;case "cont":var msg=wgContLanguageStrings[id];if(!msg){msg=id;}break;default:var msg=wgUserLanguageStrings[id];if(!msg){var msg=wgContLanguageStrings[id];if(!msg){msg=id;}}}msg=msg.replace(/\$n/g,wgCanonicalNamespace);msg=msg.replace(/\$p/g,wgPageName);msg=msg.replace(/\$t/g,wgTitle);msg=msg.replace(/\$u/g,wgUserName);msg=msg.replace(/\$s/g,wgServer);return msg;}};var gLanguage=new Language();
 
