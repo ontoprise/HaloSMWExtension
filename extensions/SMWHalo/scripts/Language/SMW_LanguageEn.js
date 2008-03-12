@@ -269,5 +269,14 @@ var wgLanguageStrings = {
 	'WTP_NOT_IN_ANNOTATION'		  : "'$1' is part of an annotation.\nIt can not be annotated.",
 	'WTP_NOT_IN_QUERY'            : "'$1' is part of a query.\nIt can not be annotated.",
 	'WTP_NOT_IN_PREFORMATTED'	  : "'$1' is part of a preformatted text.\nIt can not be annotated.",
-	'WTP_SELECTION_OVER_FORMATS'  : "The selection spans different formats:\n$1"
+	'WTP_SELECTION_OVER_FORMATS'  : "The selection spans different formats:\n$1",
+	
+	// ACL extension
+	'smw_acl_*' : '*',
+	'smw_acl_read' : 'read',
+	'smw_acl_edit' : 'edit',
+	'smw_acl_create' : 'create',
+	'smw_acl_move' : 'move',
+	'smw_acl_permit' : 'permit',
+	'smw_acl_deny' : 'deny'
 };

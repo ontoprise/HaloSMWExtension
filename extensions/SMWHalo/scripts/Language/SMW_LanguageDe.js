@@ -268,6 +268,15 @@ var wgLanguageStrings = {
 	'WTP_NOT_IN_ANNOTATION'		  : "'$1' ist Teil einer Annotation.\nEr kann nicht annotiert werden.",
 	'WTP_NOT_IN_QUERY'            : "'$1' ist Teil einer Query.\nEr kann nicht annotiert werden.",
 	'WTP_NOT_IN_PREFORMATTED'	  : "'$1' ist Teil eines vorformatierten Textes.\nEr kann nicht annotiert werden.",
-	'WTP_SELECTION_OVER_FORMATS'  : "Die Auswahl erstreckt sich über verschiedene Formate:\n$1"
+	'WTP_SELECTION_OVER_FORMATS'  : "Die Auswahl erstreckt sich über verschiedene Formate:\n$1",
+	
+	// ACL extension
+	'smw_acl_*' : '*',
+	'smw_acl_read' : 'lesen',
+	'smw_acl_edit' : 'editieren',
+	'smw_acl_create' : 'erzeugen',
+	'smw_acl_move' : 'umbenennen',
+	'smw_acl_permit' : 'erlauben',
+	'smw_acl_deny' : 'verbieten'
 	
 };

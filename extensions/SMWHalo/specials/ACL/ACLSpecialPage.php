@@ -37,24 +37,28 @@ class ACLSpecialPage extends SpecialPage {
 		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('acl_welcome')."</div>";
 		$html .= "<form id=\"permissions\"><table class=\"smwtable\">";
 		$html .= "<tr><th width=\"30\"><input type=\"button\" name=\"up\" value=\"".wfMsg('smw_acl_up')."\" onclick=\"acl.up()\"/>".
-		"<input type=\"button\" name=\"".wfMsg('smw_acl_down')."\" value=\"down\" onclick=\"acl.down()\"/>".
+		"<input type=\"button\" name=\"down\" value=\"".wfMsg('smw_acl_down')."\" onclick=\"acl.down()\"/>".
 		"</th><th>".wfMsg('smw_acl_groups')."</th><th>".wfMsg('smw_acl_namespaces')."</th><th>".wfMsg('smw_acl_actions')."</th><th>".wfMsg('smw_acl_permission')."</th></tr>";
 		$i = 0;
 		if (isset($wgPermissionACL)) {
 			foreach($wgPermissionACL as $pm) {
 				$group = $pm['group'];
-				$namespaces = $pm['namespace'];
-				$action = $pm['action'];
-				$operation = $pm['operation'];
-				$html .= "<tr>";
 				$groupText = is_array($group) ? implode(",", $group) : $group;
-				$namespacesText = is_array($namespaces) ? $this->implodeNS($namespaces) : $namespaces == "*" ? "*" : $wgLang->getNsText($namespaces);
-				$actionText = is_array($action) ? implode(",", $action) : $action;
+				
+				$namespaces = $pm['namespace'];
+				$namespacesText = is_array($namespaces) ? $this->implodeNS($namespaces) : ($namespaces == "*" ? "*" : $wgLang->getNsText($namespaces));
+				
+				$action = is_array($pm['action']) ? implode(",", $pm['action'] ) : $pm['action'];
+				$actionText = is_array($action) ? implode(",", $this->translateActions($action)) : wfMsg('smw_acl_'.$action);
+				
+				$operation = $pm['operation'];
+				
+				$html .= "<tr>";
 				$html .= "<td><input type=\"radio\" name=\"select\" value=\"\"/></td>";
 				$html .= "<td>".$groupText."</td>";
 				$html .= "<td>".$namespacesText."</td>";
-				$html .= "<td>".$actionText."</td>";
-				$html .= "<td>".$operation."</td>";
+				$html .= "<td value=\"".$action."\">".$actionText."</td>";
+				$html .= "<td value=\"$operation\">".wfMsg('smw_acl_'.$operation)."</td>";
 				$html .= "</tr>";
 				$i++;
 			}
@@ -104,23 +108,23 @@ class ACLSpecialPage extends SpecialPage {
 		$html .= "<tr>";
 			$html .= "<td>".wfMsg('smw_acl_actions')."</td>";
 			$html .= "<td><select name=\"action\" id=\"action\">";
-			$html .= "<option selected=\"selected\">*</option>";
-			$html .= "<option>read</option>";
-			$html .= "<option>edit</option>";
-			$html .= "<option>create</option>";
-			$html .= "<option>move</option>";
+			$html .= "<option value=\"*\" selected=\"selected\">*</option>";
+			$html .= "<option value=\"read\">".wfMsg('smw_acl_read')."</option>";
+			$html .= "<option value=\"edit\">".wfMsg('smw_acl_edit')."</option>";
+			$html .= "<option value=\"create\">".wfMsg('smw_acl_create')."</option>";
+			$html .= "<option value=\"move\">".wfMsg('smw_acl_move')."</option>";
  			$html .= "</select></td>";
 		$html .= "</tr>";
 		$html .= "<tr>";
 			$html .= "<td>".wfMsg('smw_acl_permission')."</td>";
 			$html .= "<td><select name=\"operation\" id=\"operation\">";
-			$html .= "<option selected=\"selected\">permit</option>";
-			$html .= "<option>deny</option>";
+			$html .= "<option value=\"permit\" selected=\"selected\">".wfMsg('smw_acl_permit')."</option>";
+			$html .= "<option value=\"deny\">".wfMsg('smw_acl_deny')."</option>";
 			
  			$html .= "</select></td>";
 		$html .= "</tr>";
 		$html .= "</table></form>";
-		$html .= "<input type=\"button\" name=\"addRule\" value=\"Add rule\" onclick=\"acl.addRule()\"/>";
+		$html .= "<input type=\"button\" name=\"addRule\" value=\"".wfMsg('smw_acl_addrule')."\" onclick=\"acl.addRule()\"/>";
 		$wgOut->addHTML($html);
 	}
 	
@@ -132,6 +136,13 @@ class ACLSpecialPage extends SpecialPage {
 		}
 		$result .= $namespaces[$i] == NS_MAIN ? "Main" : $wgLang->getNsText($namespaces[count($namespaces)-1]);
 		return $result;
+	}
+	
+	private function translateActions(& $tarray) {
+		foreach($tarray as $t) {
+			$t = wfMsg('smw_acl_'.$t);
+		}
+		return $tarray;
 	}
 	
 	private static function hasExtension($ext, $name) {
@@ -176,9 +187,8 @@ class ACLManager {
 			$operation = $pm->operation;
 			$groupText = ACLManager::implodeQuoted(",", $group);
 			$namespacesText = count($namespaces) > 1 ? 
-					"array(".implode(",", ACLManager::convertNSToIndex($namespaces)).")" : 
-					$namespaces[0] == "*" ? "\"*\"" :  $wgLang->getNsIndex($namespaces[0]);
-					
+					"array(".implode(",", ACLManager::convertNSToIndex($namespaces)).")" :
+					implode(",", ACLManager::convertNSToIndex($namespaces));
 			$actionText = count($action) > 1 ? "array(".ACLManager::implodeQuoted(",", $action).")" : "\"".$action[0]."\"";
 			$data .= "\$wgPermissionACL[] = array( 'group' => array(".$groupText."),\n". 
 						"\t'namespace' => ".$namespacesText.",\n".
@@ -189,7 +199,11 @@ class ACLManager {
 		
 		// serialize whitelist
 		$whitelist = explode(",", $whitelist);
-		$data .= "\$wgWhitelistRead = array('Special:ACL', 'Special:Userlogin', 'Special:Userlogout', 'Special:Resetpass', 'Special:Confirmemail', ".ACLManager::implodeQuoted(",", $whitelist).");\n\n";
+		global $wgContLang;
+		$spns_text = $wgContLang->getNsText(NS_SPECIAL);
+		$sp_aliases = $wgContLang->getSpecialPageAliases();
+		$data .= "\$wgWhitelistRead = array('$spns_text:ACL', '$spns_text:".$sp_aliases['Userlogin'][0]."',". 
+		"'$spns_text:".$sp_aliases['Userlogout'][0]."', '$spns_text:".$sp_aliases['Resetpass'][0]."', ".ACLManager::implodeQuoted(",", $whitelist).");\n\n";
 				
 		// serialize superusers
 		$superusers = explode(",", $superusers);
@@ -210,6 +224,7 @@ class ACLManager {
 	private static function convertNSToIndex($namespaces) {
 		global $wgLang;
 		$result = array();
+		if (!is_array($namespaces)) $namespaces = array($namespaces);
 		foreach($namespaces as $ns) {
 			switch(trim($ns)) {
 				case '*' : $result[] = '"*"';break;

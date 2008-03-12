@@ -145,6 +145,7 @@ function smwgHaloSetupExtension() {
 				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+				require_once($smwgHaloIP . '/specials/ACL/ACLSpecialPage.php');
 		}
 		
 		

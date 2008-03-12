@@ -84,8 +84,8 @@ ACL.prototype = {
 							'<td><input type=\"radio\" name=\"select\" value=\"\"/></td>' +
 							'<td>'+rule['group']+'</td>' +
 							'<td>'+rule['namespaces']+'</td>' +
-							'<td>'+rule['action']+'</td>' +
-							'<td>'+rule['operation']+'</td></tr>');
+							'<td value="'+rule['action']+'">'+gLanguage.getMessage('smw_acl_'+rule['action'])+'</td>' +
+							'<td value="'+rule['operation']+'">'+gLanguage.getMessage('smw_acl_'+rule['operation'])+'</td></tr>');
 	},
 	
 	/**
@@ -126,8 +126,8 @@ ACL.prototype = {
 		while(row != null) {
 			var group = row.firstChild.nextSibling.innerHTML.split(",");
 			var namespaces = row.firstChild.nextSibling.nextSibling.innerHTML.split(",");
-			var action = row.firstChild.nextSibling.nextSibling.nextSibling.innerHTML.split(",");
-			var operation = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.innerHTML;
+			var action = row.firstChild.nextSibling.nextSibling.nextSibling.getAttribute("value").split(",");
+			var operation = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.getAttribute("value");
 			rules.push(new Rule(group, namespaces, action, operation));
 			row = row.nextSibling;
 		}
@@ -144,10 +144,10 @@ ACL.prototype = {
 		var namespaces = $('namespaces').options[selectedIndex].innerHTML;
 		
 		var selectedIndex = $('action').selectedIndex;
-		var action = $('action').options[selectedIndex].innerHTML;
+		var action = $('action').options[selectedIndex].value;
 		
 		var selectedIndex = $('operation').selectedIndex;
-		var operation = $('operation').options[selectedIndex].innerHTML;
+		var operation = $('operation').options[selectedIndex].value;
 		
 		return new Rule(group, namespaces, action, operation);
 	}

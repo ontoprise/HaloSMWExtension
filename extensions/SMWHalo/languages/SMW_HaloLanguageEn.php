@@ -482,7 +482,16 @@ clicking the big arrows between the columns.',
 	'smw_acl_superusers' => 'Superusers (comma separated)',
 	'smw_acl_update' => 'Update rules',
 	'smw_acl_remove' => 'Remove rule',
-	'smw_acl_newrule' => 'New rule'
+	'smw_acl_newrule' => 'New rule',
+	'smw_acl_addrule' => 'Add rule',
+
+	'smw_acl_*' => '*',
+	'smw_acl_read' => 'read',
+	'smw_acl_edit' => 'edit',
+	'smw_acl_create' => 'create',
+	'smw_acl_move' => 'move',
+	'smw_acl_permit' => 'permit',
+	'smw_acl_deny' => 'deny'
 	
 );
 
