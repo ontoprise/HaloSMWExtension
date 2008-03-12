@@ -106,7 +106,7 @@ class SMWQueryProcessor {
 	}
 
 	/**
-	 * Prerocess a query as given by an array of parameters as is  typically 
+	 * Preprocess a query as given by an array of parameters as is  typically
 	 * produced by the #ask parser function. The parsing results in a querystring,
 	 * an array of additional parameters, and an array of additional SMWPrintRequest
 	 * objects, which are filled into call-by-ref parameters.
@@ -723,7 +723,7 @@ class SMWQueryParser {
 		if ($value == '*') { // printout statement
 			return;
 		}
-		$list = preg_split('/^(' . $smwgQComparators . ')/',$value, 2, PREG_SPLIT_DELIM_CAPTURE);
+		$list = preg_split('/^(' . $smwgQComparators . ')/u',$value, 2, PREG_SPLIT_DELIM_CAPTURE);
 		$comparator = SMW_CMP_EQ;
 		if (count($list) == 3) { // initial comparator found ($list[1] should be empty)
 			switch ($list[1]) {
@@ -855,7 +855,7 @@ class SMWQueryParser {
 		if ($stoppattern == '') {
 			$stoppattern = '\[\[|\]\]|::|:=|<q>|<\/q>|^' . $this->m_categoryprefix . '|\|\||\|';
 		}
-		$chunks = preg_split('/[\s]*(' . $stoppattern . ')[\s]*/', $this->m_curstring, 2, PREG_SPLIT_DELIM_CAPTURE);
+		$chunks = preg_split('/[\s]*(' . $stoppattern . ')[\s]*/u', $this->m_curstring, 2, PREG_SPLIT_DELIM_CAPTURE);
 		if (count($chunks) == 1) { // no matches anymore, strip spaces and finish
 			if ($consume) {
 				$this->m_curstring = '';

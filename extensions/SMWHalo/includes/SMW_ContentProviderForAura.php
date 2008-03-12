@@ -7,7 +7,7 @@
  require_once('SMW_CombinedSearch.php');
  require_once('SpecialSearch.php');
  require_once('SpecialCategories.php');
- require_once($smwgIP . '/specials/ExportRDF/SMW_SpecialExportRDF.php');
+ require_once($smwgIP . '/specials/ExportRDF/SMW_SpecialOWLExport.php');
 
 // Register AJAX functions
 

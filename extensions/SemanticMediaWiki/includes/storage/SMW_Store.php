@@ -115,6 +115,20 @@ abstract class SMWStore {
 ///// Reading methods /////
 
 	/**
+	 * Retrieve all data stored about the given subject and return it as a
+	 * SMWSemanticData container. There are no options: it just returns all
+	 * available data as shown in the page's Factbox.
+	 * $filter is an array of strings that are datatype IDs or special
+	 * property ids. If given, the function will only retreive values for 
+	 * these properties/properties of this type.
+	 *
+	 * Note: there is currently no guarantee that the store does not retrieve
+	 * more data than requested when a filter is used. Filtering just ensures that
+	 * only necessary requests are made, i.e. it improves performance.
+	 */
+	abstract function getSemanticData(Title $subject, $filter = false);
+
+	/**
 	 * Get an array of all special values stored for the given subject and special property
 	 * (identified as usual by an integer constant). The result is an array which may contain
 	 * different kinds of contents depending on the special property that was requested.
@@ -177,9 +191,19 @@ abstract class SMWStore {
 	 * Update the semantic data stored for some individual. The data is given
 	 * as a SMWSemData object, which contains all semantic data for one particular
 	 * subject. The boolean $newpage specifies whether the page is stored for the
-	 * first time or not.
+	 * first time or not; its correct value is esential to keep stores consistent.
 	 */
 	abstract function updateData(SMWSemanticData $data, $newpage);
+
+	/**
+	 * Clear all semantic data specified for some page. $newpage works like for
+	 * SMWStore::updateData() -- if $newpage is set, nothing is really cleared
+	 * but the id of the page might be used internally by the store.
+	 */
+	function clearData(Title $subject, $newpage) {
+		$emptydata = new SMWSemanticData($subject);
+		$this->updateData($emptydata, $newpage);
+	}
 
 	/**
 	 * Update the store to reflect a renaming of some article. The old and new title objects

@@ -11,6 +11,7 @@
 class SMWStringValue extends SMWDataValue {
 
 	protected $m_value = ''; // XML-safe, HTML-safe, Wiki-compatible value representation
+	                         // however, this string might contain HTML entities such as &amp;
 
 	protected function parseUserValue($value) {
 		if ($value!='') {
@@ -83,15 +84,13 @@ class SMWStringValue extends SMWDataValue {
 		}
 	}
 
-	/**
-	 * Creates the export line for the RDF export
-	 *
-	 * @param string $QName The element name of this datavalue
-	 * @param ExportRDF $exporter the exporter calling this function
-	 * @return the line to be exported
-	 */
-	public function exportToRDF($QName, ExportRDF $exporter) {
-		return "\t\t<$QName rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">$this->m_value</$QName>\n";
+	public function getExportData() {
+		if ($this->isValid()) {
+			$lit = new SMWExpLiteral(smwfHTMLtoUTF8($this->m_value), $this, 'http://www.w3.org/2001/XMLSchema#string');
+			return new SMWExpData($lit);
+		} else {
+			return NULL;
+		}
 	}
 
 	/**

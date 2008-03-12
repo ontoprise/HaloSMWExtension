@@ -31,6 +31,7 @@ xcopy ..\..\SemanticMediaWiki\includes\SMW_QP_Table.php %OUTPUT_DIR%\extensions\
 xcopy ..\..\SemanticMediaWiki\includes\articlepages\SMW_PropertyPage.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages /Y
 xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
 xcopy ..\..\SemanticMediaWiki\skins\SMW_sorttable.js %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins /Y
+xcopy ..\..\SemanticMediaWiki\skins\SMW_tooltip.js %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins /Y
 
 REM Patches for MW
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y

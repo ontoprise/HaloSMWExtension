@@ -26,14 +26,15 @@ class SMWFactbox {
 	 * True if the respective article is newly created. This affects some
 	 * storage operations.
 	 */
-	static protected $m_new;
+	static protected $m_new = false;
 
 	/**
 	 * Initialisation method. Must be called before anything else happens.
 	 */
 	static function initStorage($title) {
-		SMWFactbox::$semdata = new SMWSemanticData($title);
-		SMWFactbox::$m_new   = false;
+		SMWFactbox::$semdata = new SMWSemanticData($title); // reset data 
+		///TODO: is this (global) reset safe when cloned subparses happen? May kill unsafed data.
+		//SMWFactbox::$m_new   = false; // do not reset, keep (order of hooks can be strange ...)
 	}
 
 	/**
@@ -112,7 +113,7 @@ class SMWFactbox {
 		global $wgContLang;
 
 		list($onto_ns,$onto_section) = explode(':',$value,2);
-		$msglines = preg_split("([\n][\s]?)",wfMsgForContent("smw_import_$onto_ns")); // get the definition for "$namespace:$section"
+		$msglines = preg_split("/[\n][\s]?/u",wfMsgForContent("smw_import_$onto_ns")); // get the definition for "$namespace:$section"
 
 		if ( count($msglines) < 2 ) { //error: no elements for this namespace
 			/// TODO: use new Error DV
@@ -202,14 +203,24 @@ class SMWFactbox {
 	static function printFactbox(&$text) {
 		global $wgContLang, $wgServer, $smwgShowFactbox, $smwgShowFactboxEdit, $smwgStoreActive, $smwgIP, $wgRequest;
 		if (!$smwgStoreActive) return;
+		wfProfileIn("SMWFactbox::printFactbox (SMW)");
 
+		// Global settings:
 		if ( $wgRequest->getCheck('wpPreview') ) {
 			$showfactbox = $smwgShowFactboxEdit;
 		} else {
 			$showfactbox = $smwgShowFactbox;
 		}
+		// Page settings via Magic Words:
+		$mw = MagicWord::get('SMW_NOFACTBOX');
+		if ($mw->matchAndRemove($text)) {
+			$showfactbox = SMW_FACTBOX_HIDDEN;
+		}
+		$mw = MagicWord::get('SMW_SHOWFACTBOX');
+		if ($mw->matchAndRemove($text)) {
+			$showfactbox = SMW_FACTBOX_NONEMPTY;
+		}
 
-		wfProfileIn("SMWFactbox::printFactbox (SMW)");
 		switch ($showfactbox) {
 		case SMW_FACTBOX_HIDDEN: // never
 			wfProfileOut("SMWFactbox::printFactbox (SMW)");
@@ -259,7 +270,7 @@ class SMWFactbox {
 		foreach(SMWFactbox::$semdata->getProperties() as $key => $property) {
 			$text .= '<tr><td class="smwpropname">';
 			if ($property instanceof Title) {
-				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[\s]/','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
+				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[ ]/u','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
 				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
 			} else { // special property
 				if ($key{0} == '_') continue; // internal special property without label
@@ -293,24 +304,15 @@ class SMWFactbox {
 	/**
 	 * This method stores the semantic data, and clears any outdated entries
 	 * for the current article.
-	 * @TODO: is $title still needed, since we now have SMWFactbox::$title? Could they differ significantly?
 	 */
 	static function storeData($processSemantics) {
 		// clear data even if semantics are not processed for this namespace
 		// (this setting might have been changed, so that data still exists)
-		$title = SMWFactbox::$semdata->getSubject();
 		if ($processSemantics) {
 			smwfGetStore()->updateData(SMWFactbox::$semdata, SMWFactbox::$m_new);
-		} elseif (!SMWFactbox::$m_new) {
-			smwfGetStore()->deleteSubject($title);
+		} else {
+			smwfGetStore()->clearData(SMWFactbox::$semdata->getSubject(), SMWFactbox::$m_new);
 		}
-	}
-
-	/**
-	 * Delete semantic data currently associated with some article.
-	 */
-	static function clearData($s_title) {
-		smwfGetStore()->deleteSubject($s_title);
 	}
 
 }

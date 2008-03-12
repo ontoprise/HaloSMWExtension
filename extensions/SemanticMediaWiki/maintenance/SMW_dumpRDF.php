@@ -13,14 +13,17 @@
  * -d <delay>     slows down the export in order to stress the server less,
  *                sleeping for <delay> milliseconds every now and then
  * -e <each>      after how many exported entities should the server take a nap?
- * 
+ * --server=<server> The protocol and server name to as base URLs, e.g.
+ *                http://en.wikipedia.org. This is sometimes necessary because
+ *                server name detection may fail in command line scripts.
+ *
  * @author Markus Krötzsch
  */
 
 $optionsWithArgs = array( 'o', 'd', 'e' ); 
 
 require_once( 'commandLine.inc' );
-require_once( "$IP/extensions/SemanticMediaWiki/specials/ExportRDF/SMW_SpecialExportRDF.php");
+require_once( "$IP/extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php");
 
 if ( !empty( $options['o'] ) ) {
 	$outfile = $options['o'];
@@ -51,6 +54,10 @@ if ( array_key_exists( 'categories' , $options ) ) {
 	$export_ns = false;
 }
 
-$exRDF = new ExportRDF();
+if ( isset( $options['server'] ) ) {
+	$wgServer = $options['server'];
+}
+
+$exRDF = new OWLExport();
 $exRDF->printAll($outfile, $export_ns, $delay, $delayeach);
 

@@ -37,7 +37,11 @@ abstract class SMWDataValue {
 		$this->m_infolinks = array(); // clear links
 		$this->m_hasssearchlink = false;
 		$this->m_hasservicelinks = false;
-		$this->m_caption = $caption;
+		if ( is_string($caption) ) {
+			$this->m_caption = trim($caption);
+		} else {
+			$this->m_caption = false;
+		}
 		$this->parseUserValue($value); // may set caption if not set yet, depending on datavalue
 		$this->m_isset = true;
 		if ($this->isValid()) {
@@ -97,7 +101,7 @@ abstract class SMWDataValue {
 		foreach ($servicelinks as $dvs) {
 			$args[0] = 'smw_service_' . str_replace(' ', '_', $dvs); // messages distinguish ' ' from '_'
 			$text = call_user_func_array('wfMsgForContent', $args);
-			$links = preg_split("([\n][\s]?)", $text);
+			$links = preg_split("/[\n][\s]?/u", $text);
 			foreach ($links as $link) {
 				$linkdat = explode('|',$link,2);
 				if (count($linkdat) == 2)
@@ -382,18 +386,18 @@ abstract class SMWDataValue {
 	}
 
 	/**
-	 * Exports the datavalue to RDF (i.e. it returns a string that consists
-	 * of the lines that, in RDF/XML, can be fitted between the object-tags.
-	 * This should be overwritten.
-	 *
-	 * @param string QName -- the qualified name that the data value should use for exporting,
-	 * since it may be an imported name.
-	 * @param ExportRDF exporter -- the exporting object
-	 * @TODO: could we provide a more useful default? (e.g. export as untyped)
+	 * Create an SMWExpData object that encodes the given data value in an exportable
+	 * way. This representation is used by exporters, e.g. to be further decomposed into
+	 * RDF triples or to generate OWL/XML serialisations.
+	 * If the value is empty or invalid, NULL is returned.
 	 */
-	public function exportToRDF($QName, ExportRDF $exporter) {
-		$type = $this->getTypeID();
-		return "\t\t<!-- Sorry, unknown how to export type '$type'. -->\n";
+	public function getExportData() { // default implementation: encode value as untyped string
+		if ($this->isValid()) {
+			$lit = new SMWExpLiteral(smwfHTMLtoUTF8($this->getXSDValue()), $this);
+			return new SMWExpData($lit);
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
