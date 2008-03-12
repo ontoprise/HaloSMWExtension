@@ -50,11 +50,31 @@ Language.prototype = {
 	 * @return string
 	 * 			The language dependent message for the given ID.
 	 */
-	getMessage: function(id) {
-		var msg = wgLanguageStrings[id];
-		if (!msg) {
-			msg = id;
-		}
+	getMessage: function(id, type) {
+		switch (type) {
+			case "user":
+				var msg = wgUserLanguageStrings[id];
+				if (!msg) {
+					msg = id;
+				} 
+				break;
+				
+			case "cont":
+				var msg = wgContLanguageStrings[id];
+				if (!msg) {
+					msg = id;
+				} 
+				break;
+			default: 
+				var msg = wgUserLanguageStrings[id];
+				if (!msg) {
+					var msg = wgContLanguageStrings[id];
+					if (!msg) {
+						msg = id;
+					}
+				}
+		} 
+			
 		// Replace variables
 		msg = msg.replace(/\$n/g,wgCanonicalNamespace); 
 		msg = msg.replace(/\$p/g,wgPageName);

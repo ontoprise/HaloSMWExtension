@@ -475,17 +475,32 @@ function smwfHaloAddHTMLHeader(&$out) {
  * Add appropriate JS language script
  */
 function smwfHaloAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-	global $smwgHaloIP, $wgLanguageCode, $smwgHaloScriptPath;
+	global $smwgHaloIP, $wgLanguageCode, $smwgHaloScriptPath, $wgUser;
+	
+	// content language file
 	$lng = '/scripts/Language/SMW_Language';
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($smwgHaloIP . $lng)) {
 			$jsm->addScriptIf($smwgHaloScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
-			$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
 		}
 	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath . '/skins/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
+	}
+	
+	// user language file
+	$lng = '/scripts/Language/SMW_Language';
+	if (isset($wgUser)) {
+		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($smwgHaloIP . $lng)) {
+			$jsm->addScriptIf($smwgHaloScriptPath . $lng, $mode, $namespace, $pages);
+		} else {
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageUserEn.js', $mode, $namespace, $pages);
+		}
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
 }
 
