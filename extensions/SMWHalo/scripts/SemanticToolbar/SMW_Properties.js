@@ -614,17 +614,15 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 //			sel += '<option selected="">' + origTypeString + '</option>';
 		}
 		
-//		if ($(id)) {
-//			$(id).innerHTML = sel;
-//		}
-		gSTBEventActions.initialCheck($(id).up());
+		if ($(id)) {
+			gSTBEventActions.initialCheck($(id).up());
+		}
 		propToolBar.toolbarContainer.finishCreation();
 		return [allTypes, selIdx];
 	};
 	var sel = [[gLanguage.getMessage('RETRIEVING_DATATYPES')],0];
 	if (gDataTypes.getUserDefinedTypes() == null 
-	    || gDataTypes.getBuiltinTypes() == null
-	    || !$(id)) {
+	    || gDataTypes.getBuiltinTypes() == null) {
 		// types are not available yet
 		gDataTypes.refresh(closure);
 	} else {

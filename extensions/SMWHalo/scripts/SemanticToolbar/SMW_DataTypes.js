@@ -85,6 +85,16 @@ DataTypes.prototype = {
 		if (callback) {
 			this.callback.push(callback);
 		}
+		if (this.builtinTypes && this.userTypes) {
+// Change request (Bug 7077): Do not update the user types every time they are
+// needed.
+			for (var i = 0; i < this.callback.length; ++i) {
+				this.callback[i]();
+			}
+			this.callback.clear();
+			
+			return;
+		}
 		if (!this.refreshPending) {
 			this.refreshPending = true;
 			sajax_do_call('smwf_tb_GetUserDatatypes', 
