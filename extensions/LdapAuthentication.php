@@ -942,12 +942,32 @@ class LdapAuthenticationPlugin extends AuthPlugin {
 			$this->setGroups( $user );
 
 			$saveSettings = true;
+		} else {
+			$localGroups = $this->getLocalGroups($user);
+			$this->printDebug( "Setting local user groups for: ".$user->getName(), NONSENSITIVE );
+			foreach($localGroups as $lGroup) {
+				$this->printDebug( "add group: ".$lGroup, NONSENSITIVE );
+				$user->addGroup($lGroup);
+			}
 		}
 
 		if ( $saveSettings ) {
 			$this->printDebug( "Saving user settings.", NONSENSITIVE );
 			$user->saveSettings();
 		}
+	}
+	
+	function getLocalGroups($user) {
+		$db =& wfGetDB( DB_SLAVE );
+		$groups = array();
+		$res = $db->select($db->tableName('user_groups'), array('ug_group'), array('ug_user' => $user->getID()));
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$groups[] = $row->ug_group;
+			}
+		}
+		$db->freeResult($res);
+		return $groups;
 	}
 
 	/**
