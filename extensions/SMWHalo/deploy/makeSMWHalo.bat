@@ -19,6 +19,7 @@ mkdir %OUTPUT_DIR%\includes
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage
+mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
 mkdir %OUTPUT_DIR%\extensions\ParserFunctions
 
