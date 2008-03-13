@@ -28,6 +28,7 @@ var SMW_PRP_ALL_VALID =
  		'? (show:prop-confirm, hide:prop-invalid) ' +
  		': (show:prop-invalid, hide:prop-confirm)"';
  		
+ 		
 var SMW_PRP_CHECK_MAX_CARD =
 	'smwValid="propToolBar.checkMaxCard"';
 
