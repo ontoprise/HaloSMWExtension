@@ -71,6 +71,8 @@ RequestExecutionLevel admin
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
 !insertmacro MUI_PAGE_DIRECTORY 
 Page custom showDialogs checkDialogs
+Page custom showLDAPConfig
+Page custom showLDAPConfig2
 Page custom showWikiCustomize checkWikiCustomize 
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -116,6 +118,8 @@ Function ".onInit"
   File /oname=$PLUGINSDIR\wikiinst.ini "gui\wikiinst.ini"
   File /oname=$PLUGINSDIR\wikiupdate.ini "gui\wikiupdate.ini"
   File /oname=$PLUGINSDIR\wikicustomize.ini "gui\wikicustomize.ini"
+  File /oname=$PLUGINSDIR\ldap.ini "gui\ldap.ini"
+  File /oname=$PLUGINSDIR\ldap2.ini "gui\ldap2.ini"
 FunctionEnd
 
 
@@ -235,8 +239,15 @@ Section "LDAP Authentication" ldap
 	${Else}
 		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	${EndIf}
-  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
-  	importLDAP=1 ls=LocalSettings.php'
+    ReadINIStr $R0 "$PLUGINSDIR\ldap.ini" "Field 2" "state"
+    ReadINIStr $R1 "$PLUGINSDIR\ldap.ini" "Field 4" "state"
+    ReadINIStr $R2 "$PLUGINSDIR\ldap.ini" "Field 6" "state"
+    ReadINIStr $R3 "$PLUGINSDIR\ldap.ini" "Field 8" "state"
+    ReadINIStr $R4 "$PLUGINSDIR\ldap.ini" "Field 9" "state"
+    ReadINIStr $R5 "$PLUGINSDIR\ldap.ini" "Field 10" "state"
+  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php importLDAP=1 wgLDAPDomainNames=($R0) \
+    wgLDAPServerNames=$R0~$R1 wgLDAPSearchStrings=$R0~$R3 wgLDAPUseLocal=false wgLDAPEncryptionType=$R0~$R4 \
+    ls=LocalSettings.php'
   	
   	
   ${EndIf}
@@ -277,6 +288,8 @@ LangString CONFIG_PAGE_TITLE ${LANG_ENGLISH} "Specify wiki environment"
 LangString CONFIG_PAGE_SUBTITLE ${LANG_ENGLISH} "Give some details about your server environment."
 LangString PHP_PAGE_TITLE ${LANG_ENGLISH} "Set your PHP-Interpreter"
 LangString PHP_PAGE_SUBTITLE ${LANG_ENGLISH} "It's needed for the Gardening tools to work."
+LangString LDAP_CONFIG1_PAGE_TITLE ${LANG_ENGLISH} "Configure your LDAP server"
+LangString LDAP_CONFIG1_PAGE_SUBTITLE ${LANG_ENGLISH} "Server, Port, Connection type,..."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -354,7 +367,34 @@ FunctionEnd
 Function checkWikiCustomize
 FunctionEnd
 
+Function showLDAPConfig
+	SectionGetFlags ${ldap} $0
+  	IntOp $0 $0 & ${SF_SELECTED}
+  	
+  	${If} $0 == 1 
+		!insertmacro MUI_HEADER_TEXT $(LDAP_CONFIG1_PAGE_TITLE) $(LDAP_CONFIG1_PAGE_SUBTITLE)
+	  	Push $R0
+	  	InstallOptions::dialog $PLUGINSDIR\ldap.ini
+	  	Pop $R0
+	${Else}
+	 	Abort
+	${EndIf}
+FunctionEnd
 
+Function showLDAPConfig2
+	SectionGetFlags ${ldap} $0
+  	IntOp $0 $0 & ${SF_SELECTED}
+  	ReadINIStr $R0 "$PLUGINSDIR\ldap.ini" "Field 12" "state"
+  	${If} $0 == 1 
+  	${AndIf} $R0 == 1
+		!insertmacro MUI_HEADER_TEXT $(LDAP_CONFIG1_PAGE_TITLE) $(LDAP_CONFIG1_PAGE_SUBTITLE)
+	  	Push $R0
+	  	InstallOptions::dialog $PLUGINSDIR\ldap2.ini
+	  	Pop $R0
+	${Else}
+	 	Abort
+	${EndIf}
+FunctionEnd
 	
 Function checkDialogs
 

@@ -21,34 +21,77 @@
 * 	Takes Key/Value Pairs as parameters and set/change them in LocalSettings.php. Additionally
 * 	some include statements are added if specified.
 */ 	
-	$variables = array();
+    
+    // Stores all variable bindings:
+    //
+    //  1. simple key/value pairs, e.g. $var1="test"
+    //  2. arrays, e.g. $var2=array("test",test2")
+    //  3. hash arrays, e.g. $var3=array("key1" => "value1");
+    $variables = array();
+	
+    // Parses cmdline arguments
 	for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	 
 		$keyvalue = explode("=", $arg);
-	
+			
 		if (is_array($keyvalue) && (count($keyvalue) == 2)) {
-			$variables[$keyvalue[0]] = str_replace('\\', "/", $keyvalue[1]);
+			if (preg_match('/^\[[^]]*\]$/', $keyvalue[1])) {
+			    // arrays
+			 $variables[$keyvalue[0]] = explode(",", substr(str_replace('\\', "/", $keyvalue[1]), 1, -1));	
+			} else if (count(explode("~", $keyvalue[1])) == 2) {
+				// hash arrays
+				 $mapkeys = explode("~",  str_replace('\\', "/", $keyvalue[1]));
+				 $variables[$keyvalue[0]] = new Mapping($mapkeys[0], $mapkeys[1]);
+			} else {
+				// normal variables
+			 $variables[$keyvalue[0]] = str_replace('\\', "/", $keyvalue[1]);
+			}
 		}
 	}
 	
+	// Reads file specified with parameter: ls
 	print "\nRead ".$variables['ls']."...";
 	$content = readLocalSettings($variables['ls']);
+	
+	// applies changes
 	foreach($variables as $key => $value) {
 		if ($value == '**notset**') continue;
-		print "\nUpdate variable: $key";
 		switch($key) {
-			case 'importSMW': importSMW($content);break;
-			case 'importSMWPlus': importSMWPlus($content);break;
-			case 'importACL': importACL($content);break;
-			case 'importLDAP': importLDAP($content);break;
-			case 'ls': break;		
-			default: setVariable($content, $key, $value);
+			// imports, just adding some text
+			case 'importSMW': print "\n *import SMW"; importSMW($content);break;
+			case 'importSMWPlus': print "\n *import SMW+"; importSMWPlus($content);break;
+			case 'importACL': print "\n *import ACL"; importACL($content);break;
+			case 'importLDAP': print "\n *import LDAP"; importLDAP($content);break;
+			case 'ls': break;
+			
+			// variable exchanges
+			default:		
+			    
+				if (is_array($value)) {
+					 $arrayValue = "array(";
+					 for($i = 0; $i < count($value)-1; $i++) {
+					 	if (is_numeric($value[$i])) $arrayValue .= $value[$i].", "; else $arrayValue .= "'".$value[$i]."', ";
+					 }
+					 if (is_numeric($value[count($value)-1])) $arrayValue .= $value[count($value)-1]." "; else $arrayValue .= "'".$value[count($value)-1]."' ";
+					 $arrayValue .= ")";
+					 setVariable($content, $key, $arrayValue, true);
+					 print "\n *update variable: $key with value: $arrayValue";
+				} else if ($value instanceof Mapping) {
+					setVariable($content, $key, 'array('.$value->key.' => '.$value->value.')', true);
+					print "\n *update variable: $key with value: ".'array('.$value->key.' => '.$value->value.')';
+				} else {
+					print "\n *update variable: $key with value: $value";
+				    setVariable($content, $key, $value);
+				}
 		}
 	  
 	}
+	
+	// Write changed file
 	print "\nWrite LocalSettings.php...";
 	writeLocalSettings("LocalSettings.php", $content);
 	
+	// Helper functions
 	  function readLocalSettings($filename) {
 	   	$handle = fopen($filename, "rb");
 	 	$contents = fread ($handle, filesize ($filename));
@@ -64,15 +107,15 @@
 	 	fclose($handle);
 	   }
 	   
-	  function setVariable(& $content, $name, $value) {
+	  function setVariable(& $content, $name, $value, $notquote=false) {
 	   		if ($value == '') {
 	   			// remove it
-	   			$content = preg_replace('/\$'.$name.'\s*=.*/', "", $content);
+	   			$content = preg_replace('/\$'.preg_quote($name).'\s*=.*/', "", $content);
 	   		
 	   		}
-	   		$value = is_numeric($value) || $value == 'true' || $value == 'false' ? $value : "\"".$value."\"";
-	   		if (preg_match('/\$'.$name.'\s*=.*/', $content) > 0) {
-	   			$content = preg_replace('/\$'.$name.'\s*=.*/', "\$$name=$value;", $content);
+	   		$value = is_numeric($value) || $value == 'true' || $value == 'false' || $notquote ? $value : "\"".$value."\"";
+	   		if (preg_match('/\$'.preg_quote($name).'\s*=.*/', $content) > 0) {
+	   			$content = preg_replace('/\$'.preg_quote($name).'\s*=.*/', "\$$name=$value;", $content);
 	   		} else {
 	   			$content = $content."\n\$$name=$value;";
 	   		}
@@ -104,13 +147,13 @@
 	   }
 	   
 	   function importLDAP(& $content) {
-	   		$content .= "/*require_once('extensions/LdapAuthentication.php');\n".
+	   		$content .= "require_once('extensions/LdapAuthentication.php');\n".
 						"\$wgAuth = new LdapAuthenticationPlugin();\n".
 						"\$wgLDAPDomainNames = array('Ontoprise');\n".
 						"\$wgLDAPServerNames = array('Ontoprise' => 'localhost');\n".
 						"\$wgLDAPSearchStrings = array('Ontoprise' => 'uid=USER-NAME,ou=Users,dc=example,dc=com');\n".
 						"\$wgLDAPUseLocal = false;\n". 
-						"\$wgLDAPEncryptionType = array( 'Ontoprise'=> 'tcl'');\n".
+						"\$wgLDAPEncryptionType = array( 'Ontoprise'=> 'tcl');\n".
 						"\$wgLDAPOptions['no_url'] = true;\n".
 						"\$wgLDAPOptions['port'] = 10389;\n".
 						"\$wgMinimalPasswordLength = 1;\n".
@@ -121,6 +164,16 @@
 						"\$wgLDAPGroupAttribute['Ontoprise'] = 'uniquemember';\n".
 						"\$wgLDAPGroupAttributeValue['Ontoprise'] = 'uid=USER-NAME,ou=users';\n".
 						"\$wgLDAPGroupNameAttribute['Ontoprise'] = 'cn';\n".
-						"\$wgLDAPUseLDAPGroups['Ontoprise'] = true;\n*/";
+						"\$wgLDAPUseLDAPGroups['Ontoprise'] = true;\n";
+	   }
+	   
+	   class Mapping {
+	   	 public $key;
+	   	 public $value;
+	   	 
+	   	 public function __construct($key, $value) {
+	   	 	$this->key = "'".$key."'";
+	   	 	$this->value = is_numeric($value) ? $value : "'".$value."'";
+	   	 }
 	   }
 ?>
