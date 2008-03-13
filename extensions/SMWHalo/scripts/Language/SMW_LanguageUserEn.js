@@ -282,9 +282,9 @@ var wgUserLanguageStrings = {
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
 	'CATEGORY_NS_WOC'         : 'Category', // Category namespace without colon
 	
-	'CATEGORY'                : "Category:",	//also used as namespace identifier with colon
-	'PROPERTY'                : "Property:",	//also used as namespace identifier with colon
-	'TEMPLATE'                : "Template:",	//also used as namespace identifier with colon	
-	'TYPE'                    : 'Type:', //also used as namespace identifier with colon
-	'TYPE_PAGE'               : "Type:Page"	// type identifier
+	'CATEGORY'                : "Category:",
+	'PROPERTY'                : "Property:",
+	'TEMPLATE'                : "Template:",	
+	'TYPE'                    : 'Type:',
+	'TYPE_PAGE'               : "Type:Page"
 };

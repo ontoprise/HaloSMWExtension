@@ -980,7 +980,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
 	 		OB_relatt_pendingIndicator.show();
-	 		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',gLanguage.getMessage('PROPERTY')+propertyName], callbackOnPropertySelect2);
+	 		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',gLanguage.getMessage('PROPERTY_NS')+propertyName], callbackOnPropertySelect2);
 	 	 }
 		}
 	},

@@ -363,7 +363,7 @@ WikiTextParser.prototype = {
 	 *
 	 */
 	 addCategory : function(name, append) {
-	 	var anno = "[["+gLanguage.getMessage('CATEGORY') + name;
+	 	var anno = "[["+gLanguage.getMessage('CATEGORY_NS') + name;
 	 	anno += "]]";
 	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.categoryAddedHooks.size(); ++i) {

@@ -325,8 +325,8 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireSelectionChanged(superCategoryID, superCategoryTitle, SMW_CATEGORY_NS, $(superCategoryID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+subCategoryTitle,  
-			                   "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]", '',
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')+subCategoryTitle,  
+			                   "[["+gLanguage.getMessage('CATEGORY_NS')+superCategoryTitle+"]]", '',
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(superCategoryID));
 	},
 	
@@ -351,8 +351,8 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 		var superCategoryTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode.getAttribute('title');
-		var content = superCategoryTitle != null ? "[["+gLanguage.getMessage('CATEGORY')+superCategoryTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY')+newCategoryTitle, content, '',
+		var content = superCategoryTitle != null ? "[["+gLanguage.getMessage('CATEGORY_NS')+superCategoryTitle+"]]" : "";
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')+newCategoryTitle, content, '',
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this), $(sibligCategoryID));
 	},
 	
@@ -374,7 +374,7 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireSelectionChanged(categoryID, newCategoryTitle, SMW_CATEGORY_NS, $(categoryID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY')+categoryTitle, gLanguage.getMessage('CATEGORY')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
+		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY_NS')+categoryTitle, gLanguage.getMessage('CATEGORY_NS')+newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
 	
 	/**
@@ -478,8 +478,8 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireSelectionChanged(superPropertyID, superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+subPropertyTitle, '',   
-			                    "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]",
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')+subPropertyTitle, '',   
+			                    "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]",
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
 	},
 	
@@ -505,8 +505,8 @@ OBOntologyModifier.prototype = {
 		}
 		
 		var superPropertyTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('title');
-		var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY')+superPropertyTitle+"]]" : "";
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+newPropertyTitle, '',   
+		var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]" : "";
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')+newPropertyTitle, '',   
 			                   content,
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(sibligPropertyID));
 	},
@@ -529,7 +529,7 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireSelectionChanged(propertyID, newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY')+oldPropertyTitle, gLanguage.getMessage('PROPERTY')+newPropertyTitle, "OB", callback.bind(this), $(propertyID));
+		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS')+oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS')+newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
 	
 	/**
@@ -565,18 +565,18 @@ OBOntologyModifier.prototype = {
 		for(var i = 0, n = rangeOrTypes.length; i < n; i++) {
 			if (builtinTypes.indexOf(rangeOrTypes[i]) != -1) {
 				// is type
-				rangeTypeStr += gLanguage.getMessage('TYPE')+rangeOrTypes[i]+(i == n-1 ? "" : ";");
+				rangeTypeStr += gLanguage.getMessage('TYPE_NS')+rangeOrTypes[i]+(i == n-1 ? "" : ";");
 			} else {
 				rangeTypeStr += gLanguage.getMessage('TYPE_PAGE')+(i == n-1 ? "" : ";");
 				rangeCategories.push(rangeOrTypes[i]);
 			}
 		}
 		content += "\n[[SMW_SP_HAS_TYPE::"+rangeTypeStr+"]]";
-		rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+domainCategoryTitle+"; "+gLanguage.getMessage('CATEGORY')+c+"]]" });
+		rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"; "+gLanguage.getMessage('CATEGORY_NS')+c+"]]" });
 		if (rangeCategories.length == 0) {
-			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY')+domainCategoryTitle+"]]";
+			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"]]";
 		}
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY')+propertyTitle, '',   
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')+propertyTitle, '',   
 			                   content,
 							 gLanguage.getMessage('CREATE_PROPERTY'), callback.bind(this), $(domainCategoryID));
 	},

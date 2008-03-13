@@ -555,7 +555,7 @@ updateTypeHint: function(elementID) {
 		var mantissa = numeric[2];
 		if (number && unit) {
 			var c = unit.charCodeAt(0);
-			if (unit === "K" || unit === '�C' || unit === '�F' ||
+			if (unit === "K" || unit === '°C' || unit === '°F' ||
 				(c == 176 && unit.length == 2 && 
 				 (unit.charAt(1) == 'C' || unit.charAt(1) == 'F'))) {
 				hint = "_tem;"+SMW_PROPERTY_NS;
@@ -748,11 +748,11 @@ createNewRelation: function() {
 		if ($('rel-range-'+i).getAttribute("isAttributeType") == "true") {
 			var obj = $('rel-range-'+i);
 			var value = obj.options[obj.selectedIndex].text;
-			rangesAndTypes.push(gLanguage.getMessage('TYPE')+value); // add as type
+			rangesAndTypes.push(gLanguage.getMessage('TYPE_NS')+value); // add as type
 		} else {
 			var range = $('rel-range-'+i).value;
 			rangesAndTypes.push((range && range != '')
-									? gLanguage.getMessage('CATEGORY')+range 	// add as category
+									? gLanguage.getMessage('CATEGORY_NS')+range 	// add as category
 			                        : "");
 		}
 		i++;

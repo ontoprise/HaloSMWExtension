@@ -206,12 +206,12 @@ OntologyModifier.prototype = {
 	createAttribute : function(title, initialContent, domain, type) {
 		var schema = "";
 		if (domain != null && domain != "") {
-			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY')+domain+"]]";
+			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domain+"]]";
 		}
 		if (type != null && type != "") {
-			schema += "\n[[SMW_SP_HAS_TYPE::"+gLanguage.getMessage('TYPE')+type+"]]";
+			schema += "\n[[SMW_SP_HAS_TYPE::"+gLanguage.getMessage('TYPE_NS')+type+"]]";
 		}
-		this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
+		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
 						   "Create a property for category " + domain, true);
 	},
@@ -233,7 +233,7 @@ OntologyModifier.prototype = {
 	createRelation : function(title, initialContent, domain, ranges) {
 		var schema = "";
 		if (domain != null && domain != "") {
-			domain = gLanguage.getMessage('CATEGORY')+domain;
+			domain = gLanguage.getMessage('CATEGORY_NS')+domain;
 		} else {
 			domain = '';
 		}
@@ -241,7 +241,7 @@ OntologyModifier.prototype = {
 			if (ranges.length >= 1) {
 				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
 				for(var i = 0, n = ranges.length; i < n; i++) {
-					if (ranges[i].indexOf(gLanguage.getMessage('TYPE')) == 0) {
+					if (ranges[i].indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
 						rangeStr += ranges[i];
 					} else {
 						rangeStr += gLanguage.getMessage('TYPE_PAGE');
@@ -265,7 +265,7 @@ OntologyModifier.prototype = {
 			} 
 		}
 		
-		this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
+		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
 						   gLanguage.getMessage('CREATE_PROP_FOR_CAT').replace(/\$cat/g, domain),
 						   true);
@@ -282,7 +282,7 @@ OntologyModifier.prototype = {
 	 * 			Initial content of the article.
 	 */
 	createCategory : function(title, initialContent) {
-		this.createArticle(gLanguage.getMessage('CATEGORY')+title, 
+		this.createArticle(gLanguage.getMessage('CATEGORY_NS')+title, 
 						   initialContent, "",
 						   gLanguage.getMessage('CREATE_CATEGORY'), true);
 	},
@@ -308,7 +308,7 @@ OntologyModifier.prototype = {
 		var schemaProp = this.getSchemaProperties();
 		if (   wgNamespaceNumber == 102    // SMW_NS_PROPERTY
 		    || wgNamespaceNumber == 100) { // SMW_NS_RELATION
-			this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
+			this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 							 initialContent, 
 							 schemaProp + 
 							 "\n[[SMW_SP_SUBPROPERTY_OF::"+wgPageName+"]]",
@@ -349,14 +349,14 @@ OntologyModifier.prototype = {
 		}
 		if (   wgNamespaceNumber == 102 // SMW_NS_PROPERTY
 		    || wgNamespaceNumber == 100) {  // SMW_NS_RELATION
-			this.createArticle(gLanguage.getMessage('PROPERTY')+title, 
+			this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 							 initialContent, 
 							 schemaProp,
 							 gLanguage.getMessage('CREATE_SUPER_PROPERTY'), 
 							 openNewArticle);
 							 
 			// append the sub-property annotation to the current article
-			wtp.addRelation("subproperty of", gLanguage.getMessage('PROPERTY')+title, "", true);
+			wtp.addRelation("subproperty of", gLanguage.getMessage('PROPERTY_NS')+title, "", true);
 			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_PROPERTY'));
@@ -390,7 +390,7 @@ OntologyModifier.prototype = {
 			wtp = new WikiTextParser();
 		}
 		if (wgNamespaceNumber == 14) {
-			this.createArticle(gLanguage.getMessage('CATEGORY')+title, initialContent, "",
+			this.createArticle(gLanguage.getMessage('CATEGORY_NS')+title, initialContent, "",
 							   gLanguage.getMessage('CREATE_SUPER_CATEGORY'), 
 							   openNewArticle);
 							 
@@ -416,8 +416,8 @@ OntologyModifier.prototype = {
 	 */
 	createSubCategory : function(title, initialContent) {
 		if (wgNamespaceNumber == 14) {
-			this.createArticle(gLanguage.getMessage('CATEGORY')+title, initialContent, 
-			                   "[["+gLanguage.getMessage('CATEGORY')+wgTitle+"]]",
+			this.createArticle(gLanguage.getMessage('CATEGORY_NS')+title, initialContent, 
+			                   "[["+gLanguage.getMessage('CATEGORY_NS')+wgTitle+"]]",
 							   gLanguage.getMessage('CREATE_SUB_CATEGORY'), true);			
 		} else {
 			alert(gLanguage.getMessage('NOT_A_CATEGORY'))

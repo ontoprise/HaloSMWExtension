@@ -97,11 +97,11 @@ createList: function(list,id) {
 			case "category":
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
 	  			firstValue = list[i].getValue ? list[i].getValue().escapeHTML(): "";
-	  			prefix = gLanguage.getMessage('CATEGORY');
+	  			prefix = gLanguage.getMessage('CATEGORY_NS');
 	 			 break
 			case "relation":
 	  			fn = "relToolBar.getselectedItem(" + i + ")";
-	  			prefix = gLanguage.getMessage('PROPERTY');
+	  			prefix = gLanguage.getMessage('PROPERTY_NS');
 	  		
 	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
@@ -750,10 +750,10 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		var checkName;
 		switch (type) {
 			case 'category':
-				checkName = gLanguage.getMessage('CATEGORY')+value;
+				checkName = gLanguage.getMessage('CATEGORY_NS')+value;
 				break;
 			case 'property':
-				checkName = gLanguage.getMessage('PROPERTY')+value;
+				checkName = gLanguage.getMessage('PROPERTY_NS')+value;
 				break;
 		}
 		this.showPendingIndicator(target);

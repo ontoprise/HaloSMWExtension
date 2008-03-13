@@ -214,7 +214,7 @@ createContent: function() {
 		domain = domain[0].getSplitValues()[0];
 		// trim
 		domain = domain.replace(/^\s*(.*?)\s*$/,"$1");
-		if (domain.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
+		if (domain.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
 			// Strip the category-keyword
 			domain = domain.substring(9);
 		}
@@ -226,7 +226,7 @@ createContent: function() {
 			range = range[0].getSplitValues()[1];
 			// trim
 			range = range.replace(/^\s*(.*?)\s*$/,"$1");
-			if (range.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
+			if (range.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
 				range = range.substring(9);
 			}
 		} else {
@@ -248,7 +248,7 @@ createContent: function() {
 		inverse = "";
 	} else {
 		inverse = inverse[0].getValue();
-		if (inverse.indexOf(gLanguage.getMessage('PROPERTY')) == 0) {
+		if (inverse.indexOf(gLanguage.getMessage('PROPERTY_NS')) == 0) {
 			inverse = inverse.substring(9);
 		}
 	}
@@ -317,7 +317,7 @@ createContent: function() {
 				// trim
 				r = r.replace(/^\s*(.*?)\s*$/,"$1");
 				
-				if (r.indexOf(gLanguage.getMessage('CATEGORY')) == 0) {
+				if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
 					r = r.substring(9);
 				}
 				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), r, 
@@ -332,7 +332,7 @@ createContent: function() {
 				this.numOfParams++;
 			} else {
 				var t = types[i];
-				if (t.indexOf(gLanguage.getMessage('TYPE')) == 0) {
+				if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
 					t = t.substring(5);
 					tb.append(this.createTypeSelector("prp-nary-" + i, 
 					                                  "prpNaryType"+i, true, t,
@@ -700,10 +700,10 @@ apply: function() {
 	var transitive = this.isRelation ? $("prp-transitive") : null;
 	var symmetric  = this.isRelation ? $("prp-symmetric") : null;
 
-	domain   = (domain   != null && domain   != "") ? gLanguage.getMessage('CATEGORY')+domain : null;
-	range    = (range    != null && range    != "") ? gLanguage.getMessage('CATEGORY')+range : null;
-	attrType = (attrType != null && attrType != "") ? gLanguage.getMessage('TYPE')+attrType : null;
-	inverse  = (inverse  != null && inverse  != "") ? gLanguage.getMessage('PROPERTY')+inverse : null;
+	domain   = (domain   != null && domain   != "") ? gLanguage.getMessage('CATEGORY_NS')+domain : null;
+	range    = (range    != null && range    != "") ? gLanguage.getMessage('CATEGORY_NS')+range : null;
+	attrType = (attrType != null && attrType != "") ? gLanguage.getMessage('TYPE_NS')+attrType : null;
+	inverse  = (inverse  != null && inverse  != "") ? gLanguage.getMessage('PROPERTY_NS')+inverse : null;
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
@@ -809,10 +809,10 @@ apply: function() {
 			if (obj) {
 				if (obj.tagName && obj.tagName == "SELECT") {
 					// Type found
-					typeString += gLanguage.getMessage('TYPE') + obj.value + ";";
+					typeString += gLanguage.getMessage('TYPE_NS') + obj.value + ";";
 				} else {
 					// Page found
-					var r = gLanguage.getMessage('CATEGORY')+obj.value;
+					var r = gLanguage.getMessage('CATEGORY_NS')+obj.value;
 					r = ((domain == null) ? "" : domain) + "; " + r;
 					typeString += gLanguage.getMessage('TYPE_PAGE')+';';
 					this.wtp.addRelation(RANGE_HINT, r, null, true);

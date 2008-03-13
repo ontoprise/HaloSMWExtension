@@ -328,7 +328,7 @@ WtpCategory.prototype = Object.extend(new WtpAnnotation(), {
 	 * @param string newCategoryName New name of the category.
 	 */
 	changeCategory: function(newCategoryName) {
-		var newAnnotation = "[[" + this.prefix + gLanguage.getMessage('CATEGORY') + newCategoryName;
+		var newAnnotation = "[[" + this.prefix + gLanguage.getMessage('CATEGORY_NS') + newCategoryName;
 		if (this.representation) {
 			newAnnotation += "|" + this.representation;
 		}
@@ -344,7 +344,7 @@ WtpCategory.prototype = Object.extend(new WtpAnnotation(), {
 	 *               empty string.
 	 */
 	changeRepresentation : function(newRepresentation) {
-		var newAnnotation = "[[" + this.prefix + gLanguage.getMessage('CATEGORY') + this.name;
+		var newAnnotation = "[[" + this.prefix + gLanguage.getMessage('CATEGORY_NS') + this.name;
 		if (newRepresentation && newRepresentation != "") {
 			newAnnotation += "|" + newRepresentation;
 		}

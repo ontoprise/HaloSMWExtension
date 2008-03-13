@@ -20,9 +20,9 @@ var wgContLanguageStrings = {
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
 	'CATEGORY_NS_WOC'         : 'Category', // Category namespace without colon
 	
-	'CATEGORY'                : "Category:",	//also used as namespace identifier with colon
-	'PROPERTY'                : "Property:",	//also used as namespace identifier with colon
-	'TEMPLATE'                : "Template:",	//also used as namespace identifier with colon	
-	'TYPE'                    : 'Type:', //also used as namespace identifier with colon
+	'CATEGORY_NS'             : "Category:",	//namespace identifier with colon
+	'PROPERTY_NS'             : "Property:",	//namespace identifier with colon
+	'TEMPLATE_NS'             : "Template:",	//namespace identifier with colon	
+	'TYPE_NS'                 : 'Type:', 		//namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Page"	// type identifier
 }
