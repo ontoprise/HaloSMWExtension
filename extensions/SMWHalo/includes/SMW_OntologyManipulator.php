@@ -587,5 +587,6 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 
 function smwf_om_invalidateAllPages() {
 	smwfGetSemanticStore()->invalidateAllPages();
+	return "true";
 }
 ?>
