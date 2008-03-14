@@ -2,7 +2,7 @@
 ;
 ; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
 
-;Without files (much faster for debugging)
+;Without files (compiles much faster for debugging)
 !define NOFILES
 
 ;--------------------------------
@@ -133,7 +133,7 @@ Section "XAMPP" xampp
   SetOutPath $INSTDIR
   CreateDirectory "$INSTDIR"
   !ifndef NOFILES
-  	File /r ..\..\xampp\*
+  	File /r /x CVS ..\..\xampp\*
   !endif
   
   
@@ -224,36 +224,59 @@ Section "SMW+ 1.0 core" smwplus
 SectionEnd
 
 Section "LDAP Authentication" ldap
+    
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
-  
+  ReadINIStr $R0 "$PLUGINSDIR\ldap.ini" "Field 2" "state"
+  ReadINIStr $R1 "$PLUGINSDIR\ldap.ini" "Field 4" "state"
+  ReadINIStr $R2 "$PLUGINSDIR\ldap.ini" "Field 6" "state"
+  ReadINIStr $R3 "$PLUGINSDIR\ldap.ini" "Field 8" "state"
+  ReadINIStr $R4 "$PLUGINSDIR\ldap.ini" "Field 10" "state"
+  ReadINIStr $R5 "$PLUGINSDIR\ldap.ini" "Field 12" "state"
+    
   ${If} $0 == 1
-  	; XAMPP section did already install SMWPlus
+  	; LDAP with XAMPP
   	SetOutPath $INSTDIR\htdocs\mediawiki
-  	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
-  	importLDAP=1 ls=LocalSettings.php'
+    StrCpy $R8 "$INSTDIR\php\php.exe"
+    StrCpy $R9 "$INSTDIR\htdocs\mediawiki"
+  	
   ${Else}
  	SetOutPath $INSTDIR
  	${If} $INSTALLTYPE == 3 
-	  	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	  	ReadINIStr $R8 "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
 	${Else}
-		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
+		ReadINIStr $R8 "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	${EndIf}
-    ReadINIStr $R0 "$PLUGINSDIR\ldap.ini" "Field 2" "state"
-    ReadINIStr $R1 "$PLUGINSDIR\ldap.ini" "Field 4" "state"
-    ReadINIStr $R2 "$PLUGINSDIR\ldap.ini" "Field 6" "state"
-    ReadINIStr $R3 "$PLUGINSDIR\ldap.ini" "Field 8" "state"
-    ReadINIStr $R4 "$PLUGINSDIR\ldap.ini" "Field 9" "state"
-    ReadINIStr $R5 "$PLUGINSDIR\ldap.ini" "Field 10" "state"
-  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php importLDAP=1 wgLDAPDomainNames=($R0) \
-    wgLDAPServerNames=$R0~$R1 wgLDAPSearchStrings=$R0~$R3 wgLDAPUseLocal=false wgLDAPEncryptionType=$R0~$R4 \
-    ls=LocalSettings.php'
-  	
-  	
+    StrCpy $R9 "$INSTDIR"
   ${EndIf}
+  
+    ; Configure basic LDAP options
+    DetailPrint "Configure basic LDAP features"
+  	nsExec::ExecToLog '"$R8" $R9\installer\changeLS.php \
+    importLDAP=1 wgLDAPDomainNames=[$R0] wgLDAPServerNames=$R0~$R1 wgLDAPSearchStrings=$R0~$R3 \
+    wgLDAPUseLocal=false wgLDAPEncryptionType=$R0~$R4 wgLDAPOptions[$\'no_url$\']=true \
+    wgLDAPOptions[$\'port$\']=$R2 wgMinimalPasswordLength=1 ls=LocalSettings.php'
+  	
+    ${If} $R5 == 1
+        ; Configure LDAP group options
+        DetailPrint "Configure LDAP group features"
+        ReadINIStr $R1 "$PLUGINSDIR\ldap2.ini" "Field 2" "state"
+        ReadINIStr $R2 "$PLUGINSDIR\ldap2.ini" "Field 4" "state"
+        ReadINIStr $R3 "$PLUGINSDIR\ldap2.ini" "Field 6" "state"
+        ReadINIStr $R4 "$PLUGINSDIR\ldap2.ini" "Field 8" "state"
+        ReadINIStr $R5 "$PLUGINSDIR\ldap2.ini" "Field 10" "state"
+        ReadINIStr $R6 "$PLUGINSDIR\ldap2.ini" "Field 12" "state"
+        nsExec::ExecToLog '"$R8" $R9\installer\changeLS.php wgLDAPRequiredGroups[$\'$R0$\']=[$R1] \
+        wgLDAPGroupBaseDNs[$\'$R0$\']=$R2 wgLDAPGroupObjectclass[$\'$R0$\']=$R3 wgLDAPGroupAttribute[$\'$R0$\']=$R4 \
+        wgLDAPGroupAttributeValue[$\'$R0$\']=$R5 wgLDAPGroupNameAttribute[$\'$R0$\']=$R6 wgLDAPUseLDAPGroups[$\'$R0$\']=true \
+        ls=LocalSettings.php'
+    ${EndIf}
+  	
+ 
 SectionEnd
 
 Section "ACL - Access Control Lists" acl
+  DetailPrint "Configure ACL extension"
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   
@@ -282,6 +305,8 @@ SectionGroupEnd
 ;--------------------------------
 LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP if you don't have Apache and stuff. No other software is required."
 LangString DESC_smwplus ${LANG_ENGLISH} "SMWPlus 1.0"
+LangString DESC_ldap ${LANG_ENGLISH} "Authenticate users with an existing LDAP server."
+LangString DESC_acl ${LANG_ENGLISH} "Access Control Lists allow restricting wiki access for groups by excluding namespaces and wiki operations."
 LangString CUSTOMIZE_PAGE_TITLE ${LANG_ENGLISH} "Customize your wiki"
 LangString CUSTOMIZE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set wiki name or logo"
 LangString CONFIG_PAGE_TITLE ${LANG_ENGLISH} "Specify wiki environment"
@@ -295,6 +320,8 @@ LangString LDAP_CONFIG1_PAGE_SUBTITLE ${LANG_ENGLISH} "Server, Port, Connection 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
 	!insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
+    !insertmacro MUI_DESCRIPTION_TEXT ${ldap} $(DESC_ldap)
+    !insertmacro MUI_DESCRIPTION_TEXT ${acl} $(DESC_acl)
 	
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;--------------------------------
@@ -626,8 +653,8 @@ Function configCustomizationsForNewWithXAMPP
 	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
 	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
 	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
-	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
-	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 12" "state"
+	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 9" "state"
+	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
 	
 	${If} $WIKINAME == ""
 		StrCpy $WIKINAME "MyWiki"
@@ -685,8 +712,8 @@ Function configCustomizationsForNewWithoutXAMPP
 	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
 	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
 	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
-	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
-	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 12" "state"
+	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 9" "state"
+	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
 	
 	${If} $WIKINAME == ""
 		StrCpy $WIKINAME "MyWiki"
@@ -729,7 +756,7 @@ Function configCustomizationsForNewWithoutXAMPP
 	
 	${If} $INSTHELP == 1
 		DetailPrint "Installing helppages"
-		MessageBox MB_OK "Start your servers and then continue."
+		MessageBox MB_OK "Make sure that Apache and MySQL are running." 
 		nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
 	${EndIf} 
 FunctionEnd
