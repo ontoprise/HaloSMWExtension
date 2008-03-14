@@ -293,7 +293,7 @@
  		$IP = realpath( dirname( __FILE__ ) . '/..' );
  		
  		
- 		if (!$phpInterpreter) {
+ 		if (!isset($phpInterpreter)) {
  			// if $phpInterpreter is not set, assume it is in search path
  			// if not, starting of bot will FAIL!
  			$phpInterpreter = "php";
@@ -301,7 +301,7 @@
 		
 				
 		// and start it...
-		$runCommand = "$phpInterpreter -q \"$IP/SMWGardening/SMW_AsyncBotStarter.php\""; 
+		$runCommand = "\"\"$phpInterpreter\" -q \"$IP/SMWGardening/SMW_AsyncBotStarter.php\"\""; 
 		global $wgServer;	
 		$serverNameParam = escapeshellarg($wgServer);	 		
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
