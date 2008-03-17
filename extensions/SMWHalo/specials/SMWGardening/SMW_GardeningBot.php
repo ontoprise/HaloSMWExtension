@@ -301,12 +301,12 @@
 		
 				
 		// and start it...
-		$runCommand = "\"\"$phpInterpreter\" -q \"$IP/SMWGardening/SMW_AsyncBotStarter.php\"\""; 
 		global $wgServer;	
 		$serverNameParam = escapeshellarg($wgServer);	 		
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
  			
- 			
+ 			//FIXME: $runCommand must allow whitespaces in paths too
+ 			$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
  			if ($runAsync) { 
  				//TODO: test async code for linux. 
  				//low prio 
@@ -328,6 +328,7 @@
   		}
   		else //windowze
   		{
+  			$runCommand = "\"\"$phpInterpreter\" -q \"$IP/SMWGardening/SMW_AsyncBotStarter.php\"\""; 
   	 		$wshShell = new COM("WScript.Shell");
   	 		$clOption = $keepConsoleAfterTermination ? "/K" : "/C"; 
 			$runCommand = "cmd $clOption ".$runCommand;
