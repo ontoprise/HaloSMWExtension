@@ -244,9 +244,9 @@ getFullAsk:function(){
 	starttag += $('layout_link').value == "subject" ? "" : ('link="' + $('layout_link').value + '" ');
 	starttag += $('layout_intro').value == "" ? "" : ('intro="' + $('layout_intro').value + '" ');
 	starttag += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE') ? "" : ('sort="' + $('layout_sort').value + '" ');
-	starttag += $('layout_limit').value == "" ? 'limit="20"' : ('limit="' + $('layout_limit').value + '" ');
+	starttag += $('layout_limit').value == "" ? '' : ('limit="' + $('layout_limit').value + '" ');
 	starttag += $('layout_label').value == "" ? "" : ('mainlabel="' + $('layout_label').value + '" ');
-	starttag += $('layout_order').value == "ascending" ? 'order="ascending" ' : 'order="descending" ';
+	starttag += $('layout_order').value == "ascending" ? '' : 'order="descending" ';
 	starttag += $('layout_headers').checked ? '' : 'headers="hide" ';
 	starttag += $('layout_default').value == "" ? '' : 'default="' + $('layout_default').value +'" ';
 	starttag += ">";
@@ -264,9 +264,9 @@ getFullParserAsk:function(){
 	fullQuery += $('layout_link').value == "subject" ? "" : (' | link=' + $('layout_link').value);
 	fullQuery += $('layout_intro').value == "" ? "" : (' | intro=' + $('layout_intro').value);
 	fullQuery += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE') ? "" : (' | sort=' + $('layout_sort').value);
-	fullQuery += $('layout_limit').value == "" ? 'limit="20"' : (' | limit=' + $('layout_limit').value);
+	fullQuery += $('layout_limit').value == "" ? '' : (' | limit=' + $('layout_limit').value);
 	fullQuery += $('layout_label').value == "" ? "" : (' | mainlabel=' + $('layout_label').value);
-	fullQuery += $('layout_order').value == "ascending" ? ' | order=ascending ' : ' | order=descending ';
+	fullQuery += $('layout_order').value == "ascending" ? '' : ' | order=descending ';
 	fullQuery += $('layout_headers').checked ? '' : ' | headers=hide ';
 	fullQuery += $('layout_default').value == "" ? '' : ' | default=' + $('layout_default').value;
 	fullQuery += "|}}";

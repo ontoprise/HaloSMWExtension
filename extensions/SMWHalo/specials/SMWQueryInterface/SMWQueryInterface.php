@@ -122,7 +122,7 @@ class SMWQueryInterface extends SpecialPage {
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_limit') . '\')">
 							Limit:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_limit') . '\')">
-							<input type="text" id="layout_limit" value="50"/>
+							<input type="text" id="layout_limit"/>
 						</td>
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_headers') . '\')">
 							Headers:
