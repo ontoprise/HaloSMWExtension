@@ -1,9 +1,17 @@
-; Halowiki.nsi
-;
-; This script builds an installer for MediaWiki, SMW, SMW+ and XAMPP
+/*
+* Halowiki.nsi (c) Ontoprise 2008
+*
+*    This script builds an installer for SMW+
+*
+* Author: Kai Kühn
+*
+* Needs NSIS 2.35 or higher
+* additional extensions: (see extension folder) 
+*    - FindProcDLL.dll
+*/
 
-;Without files (compiles much faster for debugging)
-!define NOFILES
+;Without files (compiles much faster, for debugging)
+;!define NOFILES
 
 ;--------------------------------
 !include "MUI2.nsh"
@@ -42,6 +50,7 @@ Caption "${PRODUCT_CAPTION} ${VERSION}"
 Icon "images\nsis1-install.ico"
 OutFile "${PRODUCT}-${VERSION}.exe"
 
+
 SetOverwrite try
 SetDateSave on
 SetDatablockOptimize on
@@ -63,10 +72,11 @@ RequestExecutionLevel admin
 
 ; Pages --------------------------------
 
-
+!define MUI_ICON "images\smwplus.ico"
   
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "gpl.txt"
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForNeededProcess
 !insertmacro MUI_PAGE_COMPONENTS
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
 !insertmacro MUI_PAGE_DIRECTORY 
@@ -94,14 +104,15 @@ ShowInstDetails hide
 
 ;--------------------------------
 
+; Basic variables for environment
 Var PHP
+Var MEDIAWIKIDIR
 Var MYSQLBIN
 Var DBSERVER
 Var DBUSER
 Var DBPASS
 VAR HTTPD
 VAR WIKIPATH
-Var INSTALLTYPE
 
 ;Wiki customizations
 Var WIKINAME 
@@ -111,7 +122,9 @@ Var WIKISKIN
 Var CSH 
 Var INSTHELP
 
+; Helper
 Var CHOOSEDIRTEXT
+Var INSTALLTYPE
 
 Function ".onInit"
   InitPluginsDir
@@ -140,7 +153,8 @@ Section "XAMPP" xampp
   ; Create shortcuts
   CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
   CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Stop.lnk" "$INSTDIR\xampp_stop.exe"
-  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main page.lnk" "http://localhost/mediawiki/index.php"
+  CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main Page.lnk" "http://localhost/mediawiki/index.php" \
+  "" "$INSTDIR\htdocs\mediawiki\installer\smwplus.ico" 0
 SectionEnd
 
 SectionGroup "SMW+ 1.0" 
@@ -237,22 +251,22 @@ Section "LDAP Authentication" ldap
   ${If} $0 == 1
   	; LDAP with XAMPP
   	SetOutPath $INSTDIR\htdocs\mediawiki
-    StrCpy $R8 "$INSTDIR\php\php.exe"
-    StrCpy $R9 "$INSTDIR\htdocs\mediawiki"
+    StrCpy $PHP "$INSTDIR\php\php.exe"
+    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   	
   ${Else}
  	SetOutPath $INSTDIR
  	${If} $INSTALLTYPE == 3 
-	  	ReadINIStr $R8 "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
+	  	ReadINIStr $PHP "$PLUGINSDIR\wikiinst.ini" "Field 2" "state"
 	${Else}
-		ReadINIStr $R8 "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
+		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	${EndIf}
-    StrCpy $R9 "$INSTDIR"
+    StrCpy $MEDIAWIKIDIR "$INSTDIR"
   ${EndIf}
   
     ; Configure basic LDAP options
     DetailPrint "Configure basic LDAP features"
-  	nsExec::ExecToLog '"$R8" $R9\installer\changeLS.php \
+  	nsExec::ExecToLog '"$PHP" $MEDIAWIKIDIR\installer\changeLS.php \
     importLDAP=1 wgLDAPDomainNames=[$R0] wgLDAPServerNames=$R0~$R1 wgLDAPSearchStrings=$R0~$R3 \
     wgLDAPUseLocal=false wgLDAPEncryptionType=$R0~$R4 wgLDAPOptions[$\'no_url$\']=true \
     wgLDAPOptions[$\'port$\']=$R2 wgMinimalPasswordLength=1 ls=LocalSettings.php'
@@ -266,7 +280,7 @@ Section "LDAP Authentication" ldap
         ReadINIStr $R4 "$PLUGINSDIR\ldap2.ini" "Field 8" "state"
         ReadINIStr $R5 "$PLUGINSDIR\ldap2.ini" "Field 10" "state"
         ReadINIStr $R6 "$PLUGINSDIR\ldap2.ini" "Field 12" "state"
-        nsExec::ExecToLog '"$R8" $R9\installer\changeLS.php wgLDAPRequiredGroups[$\'$R0$\']=[$R1] \
+        nsExec::ExecToLog '"$PHP" $MEDIAWIKIDIR\installer\changeLS.php wgLDAPRequiredGroups[$\'$R0$\']=[$R1] \
         wgLDAPGroupBaseDNs[$\'$R0$\']=$R2 wgLDAPGroupObjectclass[$\'$R0$\']=$R3 wgLDAPGroupAttribute[$\'$R0$\']=$R4 \
         wgLDAPGroupAttributeValue[$\'$R0$\']=$R5 wgLDAPGroupNameAttribute[$\'$R0$\']=$R6 wgLDAPUseLDAPGroups[$\'$R0$\']=true \
         ls=LocalSettings.php'
@@ -281,10 +295,11 @@ Section "ACL - Access Control Lists" acl
   IntOp $0 $0 & ${SF_SELECTED}
   
   ${If} $0 == 1
-  	; XAMPP section did already install SMWPlus
+  	
   	SetOutPath $INSTDIR\htdocs\mediawiki
-  	nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\installer\changeLS.php \
-  	importACL=1 ls=LocalSettings.php'
+    StrCpy $PHP "$INSTDIR\php\php.exe"
+    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
+  	
   ${Else}
  	SetOutPath $INSTDIR
  	${If} $INSTALLTYPE == 3 
@@ -292,12 +307,11 @@ Section "ACL - Access Control Lists" acl
 	${Else}
 		ReadINIStr $PHP "$PLUGINSDIR\wikiupdate.ini" "Field 2" "state"
 	${EndIf}
-  	nsExec::ExecToLog '"$PHP" $INSTDIR\installer\changeLS.php \
-  	importACL=1 ls=LocalSettings.php'
-  	
-  	
+    StrCpy $MEDIAWIKIDIR "$INSTDIR"
   ${EndIf}
   
+  ; change config file
+  nsExec::ExecToLog '"$PHP" $MEDIAWIKIDIR\installer\changeLS.php importACL=1 ls=LocalSettings.php'
   
 SectionEnd
 
@@ -333,8 +347,51 @@ Function preDirectory
   ${If} $0 == 1
   	StrCpy $CHOOSEDIRTEXT "Select an empty directory where to install XAMPP and the wiki."
   ${Else}
-  	StrCpy $CHOOSEDIRTEXT "Select an existing installation to update or an empty directory for a new."
+    StrCpy $CHOOSEDIRTEXT "Select an existing installation to update or an empty directory for a new."
   ${EndIf}
+FunctionEnd
+
+Function checkForNeededProcess
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == 0
+    CALL checkForApacheAndMySQL
+  ${EndIf}
+FunctionEnd
+
+Function checkForApacheAndMySQL
+ checkagain:
+   FindProcDLL::FindProc "apache.exe"
+   IntOp $0 0 + $R0
+   FindProcDLL::FindProc "mysqld.exe"
+   ${If} $R0 == 0
+   ${OrIf} $0 == 0
+    MessageBox MB_OKCANCEL  "Please start Apache and MySQL" IDOK 0 IDCANCEL skipCheck
+    goto checkagain
+   ${EndIf}
+   goto out
+ skipcheck:
+    Abort
+ out:
+FunctionEnd
+
+Function waitForApacheAndMySQL
+   IntOp $1 0 + 10
+ checkagain:
+   Sleep 1000
+   FindProcDLL::FindProc "apache.exe"
+   IntOp $0 0 + $R0
+   FindProcDLL::FindProc "mysqld.exe"
+   ${If} $R0 == 0
+   ${OrIf} $0 == 0
+    IntOp $1 $1 - 1
+    IntCmp $1 0 notfound
+    goto checkagain
+   ${EndIf}
+   goto out
+ notfound:
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Apache and MySQL could not be started for some reason. Installation may not be complete!"
+ out:
 FunctionEnd
 
 Function showDialogs
@@ -700,7 +757,8 @@ Function configCustomizationsForNewWithXAMPP
 		DetailPrint "Starting XAMPP"
 		SetOutPath $INSTDIR
 		Exec "$INSTDIR\xampp_start.exe"
-		MessageBox MB_OK "Continue when servers has been started."
+		CALL waitForApacheAndMySQL
+        MessageBox MB_OK "If Windows Firewall complains, unblock the two processes. Then continue."
 		SetOutPath $INSTDIR\htdocs\mediawiki
 		nsExec::ExecToLog '"$INSTDIR\php\php.exe" $INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
 	${EndIf} 
@@ -756,7 +814,7 @@ Function configCustomizationsForNewWithoutXAMPP
 	
 	${If} $INSTHELP == 1
 		DetailPrint "Installing helppages"
-		MessageBox MB_OK "Make sure that Apache and MySQL are running." 
+		;MessageBox MB_OK "Make sure that Apache and MySQL are running." 
 		nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
 	${EndIf} 
 FunctionEnd
@@ -810,7 +868,7 @@ Function configCustomizationsForUpdate
 	
 	${If} $INSTHELP == 1
 		DetailPrint "Installing helppages"
-		MessageBox MB_OK "Make sure that Apache and MySQL are running." 
+		;MessageBox MB_OK "Make sure that Apache and MySQL are running." 
 		nsExec::ExecToLog '"$PHP" $INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php --helppages'
 	${EndIf} 
 FunctionEnd
