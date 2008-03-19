@@ -40,7 +40,7 @@ function smwf_ca_GetCombinedSearchResultsFor($searchstring) {
     $resultHTML = '<br>';
    } else {
      $resultHTML .= $cs->getIdentifiedEntitiesAsHTML($allEntities);
-     $resultHTML .= $cs->getFurtherQueriesAsHTML($allEntities);
+     $resultHTML .= $cs->getFurtherQueriesAsHTML($allEntities, null);
    }
 
    return $resultHTML;
