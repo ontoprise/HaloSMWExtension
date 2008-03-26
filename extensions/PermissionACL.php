@@ -182,6 +182,5 @@ function ArrayToLower($ar) {
     foreach($ar as $index => $value)
         $tmp[$index] = strtolower($value);
     return $tmp;
-}//function ArrayToLower
+}
 ?>
-
