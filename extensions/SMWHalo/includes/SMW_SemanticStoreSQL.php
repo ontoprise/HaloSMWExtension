@@ -643,7 +643,7 @@
 	
 	function getDirectSuperProperties(Title $attribute, $requestoptions = NULL) {
 	 	
-	 	$result = "";
+	 	
 		$db =& wfGetDB( DB_MASTER );
 		$page = $db->tableName('page');
 		$smw_subprops = $db->tableName('smw_subprops');
