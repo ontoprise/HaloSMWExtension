@@ -18,18 +18,28 @@ define('USE_LEAF_QUERIES_NUM', 20);
 define('USE_LEAF_PROPERTIES_NUM', 20);
 define('MAX_PROPS_IN_QUERY', 4);
 define('MAX_DEPTH', 3);
+define('DEFAULT_QUERY_NUM', 20);
+
+define('CREATE_NUM_OF_SYMPROPS', 25);
+define('CREATE_NUM_OF_TRANSPROPS', 25);
+define('CREATE_NUM_OF_INVPROPS', 25);
 
 // **** main program begin *****
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+// add additional statements if 'addOWL' option is specified
 if (array_key_exists("addOWL", $options)) {
 	print "Adding OWL annotations...\n";
-	//addSymmetricalProperties();
-	addTransitiveProperties();
-	//addInverseProperties();
-	print "OWL annotations added";
+	print " Add symmetric properties:  ";
+	addSymmetricalProperties();printProgress(1);print "\n";
+	print " Add transitive properties:  ";
+	addTransitiveProperties();printProgress(1);print "\n";
+	print " Add inverse properties:  ";
+	addInverseProperties();printProgress(1);print "\n";
+	print "OWL annotations added\n";
 }
+
  // set command line options 
 foreach($options as $option => $value) {
    define($option, $value);
@@ -37,18 +47,20 @@ foreach($options as $option => $value) {
 
 $queries = array();
 // create Queries
-//$queries['categoryQueries'] = createCategoryQueries(); printProgress(1);print "\n";
-//$queries['categoryPropertyQueries'] = createCategoryPropertyQueries();printProgress(1);print "\n";
-//$queries['categoryPropertyQueriesOptional'] = createCategoryPropertyQueriesOptional();printProgress(1);print "\n";
-//$queries['categoryPropertyQueriesUnion'] = createCategoryPropertyQueriesUnion();printProgress(1);print "\n";
-//$queries['propertyQueries'] = createPropertyQueries();printProgress(1);print "\n";
-//$queries['categoryPropertyQueriesWithConstraint'] = createCategoryPropertyWithConstraintQueries();printProgress(1);print "\n";
-//$queries['propertyQueriesWithConstraint'] = createPropertyWithConstraintQueries();printProgress(1);print "\n";
-//$queries['literalMatchQuery'] = createLiteralMatchQuery();printProgress(1);print "\n";
-//$queries['pathQuery'] = createPathQuery();printProgress(1);print "\n";
-//$queries['symPropQueries'] = createSymPropQueries();printProgress(1);print "\n";
+print "Create queries...\n";
+$queries['categoryQueries'] = createCategoryQueries(); printProgress(1);print "\n";
+$queries['categoryPropertyQueries'] = createCategoryPropertyQueries();printProgress(1);print "\n";
+$queries['categoryPropertyQueriesOptional'] = createCategoryPropertyQueriesOptional();printProgress(1);print "\n";
+$queries['categoryPropertyQueriesUnion'] = createCategoryPropertyQueriesUnion();printProgress(1);print "\n";
+$queries['propertyQueries'] = createPropertyQueries();printProgress(1);print "\n";
+$queries['categoryPropertyQueriesWithConstraint'] = createCategoryPropertyWithConstraintQueries();printProgress(1);print "\n";
+$queries['propertyQueriesWithConstraint'] = createPropertyWithConstraintQueries();printProgress(1);print "\n";
+$queries['literalMatchQuery'] = createLiteralMatchQuery();printProgress(1);print "\n";
+$queries['pathQuery'] = createPathQuery();printProgress(1);print "\n";
+$queries['symPropQueries'] = createSymPropQueries();printProgress(1);print "\n";
 $queries['transPropQueries'] = createTransPropQueries();printProgress(1);print "\n";
-
+$queries['invPropQueries'] = createInvPropQueries();printProgress(1);print "\n";
+print "done.\n";
 
 // serialize to file
 serializeQueriesToXML("d:\\testsets.xml", $queries);
@@ -155,7 +167,7 @@ function createCategoryQueries() {
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
                 $property_restr .= "?x ".$p->getDBkey()." ".getVar($j).".\n";
-                if ($j >= query_prop) break;
+                if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
             
@@ -185,7 +197,7 @@ function createCategoryQueries() {
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
                 $property_restr .= " OPTIONAL {?x ".$p->getDBkey()." ".getVar($j)."}. \n";
-                if ($j >= query_prop) break;
+                if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
             
@@ -214,12 +226,12 @@ function createCategoryPropertyQueriesUnion() {
             $j = 0;
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-                $property_restr .= " UNION {?x ".$p->getDBkey()." ".getVar($j)."}. \n";
-                if ($j >= query_prop) break;
+                $property_restr .= " UNION { ?x rdf:type cat:".$superCat->getDBkey().". ?x ".$p->getDBkey()." ".getVar($j)."} \n";
+                if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
             
-            $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j)." WHERE { ?x rdf:type cat:".$superCat->getDBkey().".\n ".$property_restr." }";
+            $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j)." WHERE { ".$property_restr." }";
             $superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
         } while (!empty($superCats));
         $i++;
@@ -329,8 +341,8 @@ function createPropertyWithConstraintQueries() {
  function createLiteralMatchQuery() {
  	$prefixes = getStandardPrefixes();
  	$literalMatchingQueries = array();
- 	for($i = 0; $i < 20; $i++) {
- 	  printProgress($i / 20);
+ 	for($i = 0; $i < DEFAULT_QUERY_NUM; $i++) {
+ 	  printProgress($i / DEFAULT_QUERY_NUM);
       list($a, $v) = getArbitraryAttributeAnnotation();
       if (is_numeric($v)) {
       	 $literalMatchingQueries[] = $prefixes."SELECT ?x WHERE {?x prop:".$a->getDBkey()." \"$v\"^^<http://www.w3.org/2001/XMLSchema#float>. }";
@@ -345,8 +357,8 @@ function createPropertyWithConstraintQueries() {
  function createPathQuery() {
  	$prefixes = getStandardPrefixes();
     $pathQueries = array();
-    for($i = 0; $i < 20; $i++) {
-      printProgress($i / 20);
+    for($i = 0; $i < DEFAULT_QUERY_NUM; $i++) {
+      printProgress($i / DEFAULT_QUERY_NUM);
       $graph = getRelationGraph(MAX_DEPTH);
       $q = $prefixes."SELECT ?x WHERE {";
       $j = 0;
@@ -364,11 +376,11 @@ function createPropertyWithConstraintQueries() {
  function createSymPropQueries() {
  	$prefixes = getStandardPrefixes();
     $smyPropQueries = array();
-    $symAnnot = getSymmetricalAnnotations(20);
+    $symAnnot = getSymmetricalAnnotations(DEFAULT_QUERY_NUM);
     $i = 0;
     foreach($symAnnot as $a) {
       list($s, $p, $o) = $a;
-      printProgress($i / 20);
+      printProgress($i / DEFAULT_QUERY_NUM);
       
       $smyPropQueries[] = $prefixes."SELECT ?x WHERE { a:".$o->getDBkey()." prop:".$p->getDBkey()." ?x. }";
       $i++;
@@ -379,11 +391,11 @@ function createPropertyWithConstraintQueries() {
  function createTransPropQueries() {
  	$prefixes = getStandardPrefixes();
     $transPropQueries = array();
-    $transAnnot = getTransitiveAnnotations(20);
+    $transAnnot = getTransitiveAnnotations(DEFAULT_QUERY_NUM);
     $i = 0;
     foreach($transAnnot as $a) {
       list($s, $p, $o) = $a;
-      printProgress($i / 20);
+      printProgress($i / DEFAULT_QUERY_NUM);
       
       $transPropQueries[] = $prefixes."SELECT ?x WHERE { a:".$s->getDBkey()." prop:".$p->getDBkey()." ?x. }";
       $i++;
@@ -394,13 +406,13 @@ function createPropertyWithConstraintQueries() {
  function createInvPropQueries() {
     $prefixes = getStandardPrefixes();
     $invPropQueries = array();
-    $invAnnot = getInverseAnnotations(20);
+    $invAnnot = getInverseAnnotations(DEFAULT_QUERY_NUM);
     $i = 0;
     foreach($invAnnot as $a) {
       list($s, $p, $o, $inv_p) = $a;
-      printProgress($i / 20);
+      printProgress($i / DEFAULT_QUERY_NUM);
       
-      $invPropQueries[] = $prefixes."SELECT ?x WHERE { a:".$s->getDBkey()." prop:".$p->getDBkey()." ?x. }";
+      $invPropQueries[] = $prefixes."SELECT ?x WHERE { a:".$o->getDBkey()." prop:".$inv_p->getDBkey()." ?x. }";
       $i++;
     }
     return $invPropQueries;
@@ -620,26 +632,28 @@ function _getRelationGraph($next, & $graph, $depth) {
 function getInverseAnnotations($limit) {
 	$result=array();
 	$db = wfGetDB(DB_MASTER);
-    $invProps = getInverseProperties(20);
-    foreach($invProps as $p) {
-    	$res = $db->query('SELECT subject_title, relation_title, object_title FROM smw_relations WHERE relation_title='.$db->addQuotes($p->getDBkey()).' ORDER BY RAND() LIMIT 1');
+    $invProps = getInverseProperties($limit);
+    foreach($invProps as $invProp) {
+    	list($p, $inv_p) = $invProp;
+    	$res = $db->query('SELECT subject_title, object_title FROM smw_relations WHERE relation_title='.$db->addQuotes($p->getDBkey()).' ORDER BY RAND() LIMIT 1');
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->subject_title, NS_MAIN),Title::newFromText($row->relation_title, SMW_NS_PROPERTY),Title::newFromText($row->object_title, NS_MAIN), $p);
+                $result[] = array(Title::newFromText($row->subject_title, NS_MAIN),$p,Title::newFromText($row->object_title, NS_MAIN), $inv_p);
                 
             }
         }
-    $db->freeResult($res);
+        $db->freeResult($res);
     }
+    return $result;
 }
 
 function getInverseProperties($limit) {
 	$result=array(); 
     $db = wfGetDB(DB_MASTER);
-    $res = $db->query('SELECT subject_title FROM smw_relations WHERE relation_title='.$db->addQuotes('Is_inverse_of').' ORDER BY RAND() LIMIT '.$limit);
+    $res = $db->query('SELECT subject_title, object_title FROM smw_relations WHERE relation_title='.$db->addQuotes('Is_inverse_of').' ORDER BY RAND() LIMIT '.$limit);
     if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = Title::newFromText($row->relation_title, SMW_NS_PROPERTY);
+                $result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), Title::newFromText($row->object_title, SMW_NS_PROPERTY));
                 
             }
         }
@@ -652,18 +666,23 @@ function getInverseProperties($limit) {
  // 1. Inverse properties
  // 2. Symetrical properties
  // 3. Transitive properties
+ //
+ // needed to test advanced features of an OWL reasoner
  
  /**
   * Adds symetrical properties
   *
   */
  function addSymmetricalProperties() {
- 	$properties = getArbitraryRelations(25);
+ 	$properties = getArbitraryRelations(CREATE_NUM_OF_SYMPROPS);
+ 	$i = 0;
  	foreach($properties as $p) {
+ 		 printProgress($i / CREATE_NUM_OF_SYMPROPS);
 	 	 $a = new Article($p);
 	     $r = Revision::newFromTitle($p);
 	        
 	     $a->doEdit($r->getText()."\n[[category:Symmetrical properties]]", "", EDIT_UPDATE | EDIT_FORCE_BOT);
+	     $i++;
  	}    
  }
  
@@ -673,8 +692,10 @@ function getInverseProperties($limit) {
   */
  function addTransitiveProperties() {
  	$result[] = array();
- 	$properties = getArbitraryRelations(25);
+ 	$properties = getArbitraryRelations(CREATE_NUM_OF_TRANSPROPS);
+ 	$i = 0;
     foreach($properties as $p) {
+    	printProgress($i / CREATE_NUM_OF_TRANSPROPS);
     	addText($p, "\n[[category:Transitive properties]]");
     	$inst1 = getArbitraryInstances(1);
         $inst2 = getArbitraryInstances(1);
@@ -686,6 +707,7 @@ function getInverseProperties($limit) {
         }
         $end = $inst1[0];
         $result[] = array($start, $end, $p);
+        $i++;
     }   
     return $result;
  	
@@ -696,10 +718,13 @@ function getInverseProperties($limit) {
   *
   */
  function addInverseProperties() {
- 	$properties = getArbitraryRelations(25);
+ 	$properties = getArbitraryRelations(CREATE_NUM_OF_INVPROPS);
+ 	$i = 0;
     foreach($properties as $p) {
+    	printProgress($i / CREATE_NUM_OF_INVPROPS);
          $someprop = getArbitraryProperties(1);   
     	 addText($p, "\n[[Is inverse of::Property:".$someprop[0]->getDBkey()."]]");
+    	 $i++;
     }   
  }
  
