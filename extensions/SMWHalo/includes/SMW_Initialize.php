@@ -105,7 +105,8 @@ function smwgHaloSetupExtension() {
 		
 		// decide according to ajax method prefix which script(s) to import
 		switch($method_prefix) {
-			case '_ac_' : require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+			case '_ac_' : smwfHaloInitMessages();
+			            require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
 						break;
 			case '_cs_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
