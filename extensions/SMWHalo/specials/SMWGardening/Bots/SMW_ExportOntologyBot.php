@@ -190,6 +190,11 @@
  			$owl = '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($rc->getDBkey()).'">'.LINE_FEED;
 			$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rc->getText()).'</rdfs:label>'.LINE_FEED;
 			$owl .= '	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />'.LINE_FEED;
+ 		    // export redirects
+            $redirects = smwfGetSemanticStore()->getRedirectPages($rc);
+            foreach($redirects as $r) {
+                $owl .= "\t".'<owl:equivalentClass rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.LINE_FEED;
+            }
 			$owl .= '</owl:Class>'.LINE_FEED;
 			fwrite($filehandle, $owl);
 			$visitedNodes = array();
@@ -263,6 +268,12 @@
 		 			}
  				}
  			}
+ 			// export redirects
+ 			$redirects = smwfGetSemanticStore()->getRedirectPages($inst);
+ 			foreach($redirects as $r) {
+ 				$owl .= "\t".'<owl:sameAs rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.LINE_FEED;
+ 			}
+ 			
  			$owl .= '</owl:Thing>'.LINE_FEED;
  			fwrite($filehandle, $owl);
 	 		
@@ -364,7 +375,11 @@
 			foreach($directSuperCategories as $sc) {
 				$owl .= '	<rdfs:subClassOf rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($sc->getDBkey()).'" />'.LINE_FEED;
 			}
-			
+ 		    // export redirects
+            $redirects = smwfGetSemanticStore()->getRedirectPages($c);
+            foreach($redirects as $r) {
+                $owl .= "\t".'<owl:equivalentClass rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.LINE_FEED;
+            }
 			$owl .= '</owl:Class>'.LINE_FEED;
 			
 			
@@ -395,6 +410,11 @@
 		foreach($directSuperProperties as $dsp) {
  			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.LINE_FEED;
  		}
+ 	    // export redirects
+        $redirects = smwfGetSemanticStore()->getRedirectPages($rp);
+        foreach($redirects as $r) {
+            $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.LINE_FEED;
+        }
  		$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
  		
  		// read all domains/ranges
@@ -467,6 +487,12 @@
  					if (!($inv instanceof SMWWikiPageValue)) continue;
  					$owl .= '	<owl:inverseOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($inv->getTitle()->getDBkey()).'"/>'.LINE_FEED;
  				}
+ 				
+ 	            // export redirects
+	            $redirects = smwfGetSemanticStore()->getRedirectPages($rp);
+	            foreach($redirects as $r) {
+	                $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.LINE_FEED;
+	            }
  				$owl .= '</owl:ObjectProperty>'.LINE_FEED;
  				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  				if ($domainRange == NULL || count($domainRange) == 0) {
@@ -475,6 +501,7 @@
 			 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 			 				$owl .= '			<owl:Restriction>'.LINE_FEED; 
 							$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
+							$owl .= '               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />'.LINE_FEED;
 							$owl .= '			</owl:Restriction>'.LINE_FEED;
 							$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 							if ($maxCard != NULL) {
@@ -623,34 +650,45 @@
 	
 	
 	
-	/** This function transforms a valid url-encoded URI into a string
-	 *  that can be used as an XML-ID. The mapping should be injective.
+	/** 
+	 *  This function transforms a string that can be used as an XML-ID. 
 	 */
-	static function makeXMLExportId($uri) {
-		$uri = str_replace( '-', '-2D', $uri);
-		//$uri = str_replace( ':', '-3A', $uri); //already done by PHP
-		//$uri = str_replace( '_', '-5F', $uri); //not necessary
-		$uri = str_replace( array('"','#','&',"'",'+','%',')','('),
+	static function makeXMLExportId($element) {
+		// make sure it starts with a letter or underscore (necessary for valid XML)
+	    if (preg_match('/^[A-z_].*/', $element) === 0) {
+            $element = "_".$element;
+        }
+        // replace some chars which must not appear in element names
+	   $element = str_replace( array('"','#','&',"'",'+','%',')','('),
 		                    array('-22','-23','-26','-27','-2B','-','-29','-28'),
-		                    $uri);
-		return preg_match('/^[\d\w_-]+$/', $uri) > 0 ? $uri : NULL;
+		                    $element);
+		return preg_match('/^[A-z_][\d\w_-]*$/', $element) > 0 ? $element : NULL;
 	}
 
-	/** This function transforms an XML-ID string into a valid
-	 *  url-encoded URI. This is the inverse to makeXMLExportID.
-	 */
-	static function makeURIfromXMLExportId($id) {
-		$id = str_replace( array('-22','-23','-26','-27','-2B','-','-29','-28'),
-		                   array('"','#','&',"'",'+','%',')','('),
-		                   $id);
-		$id = str_replace( '-2D', '-', $id);
-		return $id;
-	}
-	
-	static function makeXMLAttributeContent($attribute) {
-		return str_replace( array('"'),
-		                   array('&quot;'),
-		                   $attribute);
+	/** 
+     *  This function transforms a string that can be used as an XML attribute value. 
+     * 
+     *  @param $attribute value
+     *  @param $matchElementID true if value should be escaped same way as element name
+     */
+	static function makeXMLAttributeContent($attribute, $matchElementID = true) {
+		if ($matchElementID) {
+			// make sure it starts with a letter or underscore (to match the element names)
+			if (preg_match('/^[A-z_].*/', $attribute) === 0) {
+				$attribute = "_".$attribute;
+			}
+			// this chars may appear in attribute values, but they have to match element names
+			$attribute = str_replace( array('"','#','&',"'",'+','%',')','('),
+	                            array('-22', '-23','-26','-27','-2B','-','-29','-28'),
+	                            $attribute);
+	        return $attribute;
+	        
+		} else {
+			// " must be escaped in attribute values
+			return str_replace( array('"'),
+                               array('&quot;'),
+                               $attribute);
+		}
 	}
  	
  }
