@@ -1,0 +1,56 @@
+;Question
+:[[question:=How can I use LDAP authentication]]? 
+[[discourseState:=Help:view| ]]
+;Answer
+:[[description:=The LDAP extension is deployed with SMW+. Just include some configurations in LocalSettings.php.]]
+
+;What is LDAP?
+LDAP is a hierarchical database used as a directory service. It's commonly used as a central authentication service by many applications. Since there is an LDAP extension for MW, wiki users can also be authenticated by an LDAP server. It's possible to manage only users or both users and groups on an LDAP server. Additionally, you can use the LDAP server together with the normal authentication mechanism of MW during a migration process.
+
+;Basic authentication
+The basic authentication mode verifies only users in the wiki, but not groups. Groups are managed in the wiki manner, not at the LDAP server. To use that mode, you have to add some lines to your LocalSettings.php:
+<pre>
+require_once('extensions/LdapAuthentication.php');
+$wgAuth = new LdapAuthenticationPlugin();
+$wgLDAPDomainNames = array(   // (1)
+  'Ontoprise'
+);
+$wgLDAPServerNames = array(   // (2)
+  'Ontoprise' => 'localhost'
+);
+$wgLDAPSearchStrings = array( // (3)
+  'Ontoprise' => 'uid=USER-NAME,ou=Users,dc=example,dc=com'
+);
+$wgLDAPUseLocal = false;      // (4)
+$wgLDAPEncryptionType = array( "Ontoprise"=> "tcl"); // (5)
+$wgLDAPOptions['no_url'] = true; // (6)
+$wgLDAPOptions['port'] = 10389;  // (7)
+$wgMinimalPasswordLength = 1;    // (8)
+</pre>
+
+Explanation:
+#The domain used to login. (Arbitrary name)
+#The LDAP server name.
+#Query string which identifies a user. The variable USER-NAME is replaced by the actual user name.
+#Use only LDAP for auth or local DB too. Good for transitional purposes if not all users are already registered at the LDAP server. 
+#Server encryption protocol: SSL or TCL 
+#Do not put the protocol name 'ldap://' before the server name. Some servers do not accept that (e.g. Apache Directory)
+#Server port of LDAP service
+#Minimal length of password
+
+;Advanced LDAP authentication
+The advanced auth allows to handle the groups at the LDAP server too. It needs some additional configs:
+*'''Required groups''': all fully qualified names of required groups, e.g.
+:<pre>$wgLDAPRequiredGroups['Ontoprise'] = array("cn=sysop,ou=groups,dc=example,dc=com","cn=gardener,ou=groups,dc=example,dc=com");</pre>
+*'''Group Base DN''': Base DN of groups
+:<pre>$wgLDAPGroupBaseDNs['Ontoprise'] = "ou=groups,dc=example,dc=com";</pre>
+*'''Group object''': objectclass of $wgLDAPGroupAttribute
+:<pre>$wgLDAPGroupObjectclass['Ontoprise'] = "groupOfUniqueNames";</pre>
+*'''Group attribute''': attribute which links to group members (users)
+:<pre>$wgLDAPGroupAttribute['Ontoprise'] = "uniquemember";</pre>
+*'''Group attribute value''': template for target of $wgLDAPGroupAttribute (USER-NAME is replaced by actual username)
+:<pre>$wgLDAPGroupAttributeValue['Ontoprise'] = "uid=USER-NAME,ou=users";</pre>
+*'''Group name attribute''': name of attribute of group name
+:<pre>$wgLDAPGroupNameAttribute['Ontoprise'] = "cn";</pre>
+
+[[category:Helppage]]
