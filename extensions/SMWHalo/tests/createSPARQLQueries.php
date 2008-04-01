@@ -22,9 +22,7 @@ define('MAX_PROPS_IN_QUERY', 4);
 define('MAX_DEPTH', 3);
 define('DEFAULT_QUERY_NUM', 20);
 
-define('CREATE_NUM_OF_SYMPROPS', 25);
-define('CREATE_NUM_OF_TRANSPROPS', 25);
-define('CREATE_NUM_OF_INVPROPS', 25);
+define('OWL_PROPERTIES', 25);
 
 // **** main program begin *****
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
@@ -33,12 +31,15 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 // add additional statements if 'addOWL' option is specified
 if (array_key_exists("addOWL", $options)) {
 	print "Adding OWL annotations...\n";
+	
+	$properties = getArbitraryRelations(OWL_PROPERTIES);
+	$properties_num = count($properties);
 	print " Add symmetric properties:  ";
-	addSymmetricalProperties();printProgress(1);print "\n";
+	addSymmetricalProperties(array_slice($properties, intval(($properties_num/3)*0), intval(($properties_num/3))));printProgress(1);print "\n";
 	print " Add transitive properties:  ";
-	addTransitiveProperties();printProgress(1);print "\n";
+	addTransitiveProperties(array_slice($properties, intval(($properties_num/3)*1), intval(($properties_num/3))));printProgress(1);print "\n";
 	print " Add inverse properties:  ";
-	addInverseProperties();printProgress(1);print "\n";
+	addInverseProperties(array_slice($properties, intval(($properties_num/3)*2)));printProgress(1);print "\n";
 	print "OWL annotations added\n";
 }
 
@@ -170,12 +171,13 @@ function createCategoryQueries() {
             $j = 0;
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-                $property_restr .= "?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j).".\n";
+                $property_restr .= "?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j)." .\n";
                 if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
-            
-            $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j-1)." WHERE { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." .\n ".$property_restr." }";
+            if ($j > 0) {
+                $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j-1)." WHERE { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." .\n ".$property_restr." }";
+            }
             $superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
         } while (!empty($superCats));
         $i++;
@@ -200,12 +202,13 @@ function createCategoryQueries() {
             $j = 0;
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-                $property_restr .= " OPTIONAL {?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j)."}. \n";
+                $property_restr .= " OPTIONAL {?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j)." } . \n";
                 if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
-            
-            $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j-1)." WHERE { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." .\n ".$property_restr." }";
+            if ($j > 0) {
+                $categoryQueries[] = $prefixes."SELECT ?x ".getVarString(0, $j-1)." WHERE { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." .\n ".$property_restr." }";
+            }
             $superCats = smwfGetSemanticStore()->getDirectSuperCategories($superCat);
         } while (!empty($superCats));
         $i++;
@@ -230,7 +233,7 @@ function createCategoryPropertyQueriesUnion() {
             $j = 0;
             foreach($properties as $prop) {
                 list($p, $minCard, $maxCard, $type, $symCat, $transCat, $range) = $prop;
-                $property_restr .= ($j > 0 ? " UNION " : " ")." { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." . ?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j)."} \n";
+                $property_restr .= ($j > 0 ? " UNION " : " ")." { ?x rdf:type cat:".USE_PREFIX.$superCat->getDBkey()." . ?x prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j)." } \n";
                 if ($j >= MAX_PROPS_IN_QUERY) break;
                 $j++;
             }
@@ -369,7 +372,7 @@ function createPropertyWithConstraintQueries() {
       $j = 0;
       foreach($graph as $n) {
      	 list($s, $p, $o) = $n;
-     	 $q .= getVar($j)." prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j+1)." .";
+     	 $q .= getVar($j)." prop:".USE_PREFIX.$p->getDBkey()." ".getVar($j+1)." . ";
      	 $j++;
       }
       $q .= "}";
@@ -536,11 +539,11 @@ function getArbitraryInstances($limit) {
     return $result; 
  }
  
-function getArbitraryProperties($limit, $object_prop = false) {
+function getArbitraryProperties($limit, $object_prop = false, $maxOccur = 50) {
    $result=array(); 
     $db = wfGetDB(DB_MASTER);
     if ($object_prop) {
-    	 $res = $db->query('SELECT DISTINCT r1.relation_title AS title FROM smw_relations r1 WHERE NOT EXISTS (SELECT r2.subject_id FROM smw_attributes r2 WHERE r2.subject_title = r1.relation_title AND (r2.attribute_title = \'Has_min_cardinality\' OR r2.attribute_title = \'Has_max_cardinality\')) ORDER BY RAND() LIMIT '.$limit);
+    	 $res = $db->query('SELECT DISTINCT r1.relation_title AS title FROM smw_relations r1 WHERE NOT EXISTS (SELECT r2.subject_id FROM smw_attributes r2 WHERE r2.subject_title = r1.relation_title AND (r2.attribute_title = \'Has_min_cardinality\' OR r2.attribute_title = \'Has_max_cardinality\' OR r2.attribute_title = \'Is_inverse_of\')) GROUP BY r1.relation_title HAVING COUNT(r1.relation_title) < '.$maxOccur.' ORDER BY RAND() LIMIT '.$limit);
     } else {
         $res = $db->query('SELECT page_title AS title FROM page p WHERE page_namespace = 102 AND page_is_redirect = 0 WHERE NOT EXISTS (SELECT r2.subject_id FROM smw_attributes r2 WHERE r2.subject_title = p.page_title AND (r2.attribute_title = \'Has_min_cardinality\' OR r2.attribute_title = \'Has_max_cardinality\')) ORDER BY RAND() LIMIT '.$limit);
     	
@@ -555,10 +558,10 @@ function getArbitraryProperties($limit, $object_prop = false) {
     return $result; 
  }
  
-function getArbitraryRelations($limit) {
+function getArbitraryRelations($limit, $maxOccur = 50) {
     $result=array(); 
     $db = wfGetDB(DB_MASTER);
-   $res = $db->query('SELECT DISTINCT r1.relation_title FROM smw_relations r1 WHERE NOT EXISTS (SELECT r2.subject_id FROM smw_attributes r2 WHERE r2.subject_title = r1.relation_title AND (r2.attribute_title = \'Has_min_cardinality\' OR r2.attribute_title = \'Has_max_cardinality\')) ORDER BY RAND() LIMIT '.$limit);
+   $res = $db->query('SELECT DISTINCT r1.relation_title FROM smw_relations r1 WHERE NOT EXISTS (SELECT r2.subject_id FROM smw_attributes r2 WHERE r2.subject_title = r1.relation_title AND (r2.attribute_title = \'Has_min_cardinality\' OR r2.attribute_title = \'Has_max_cardinality\' OR r2.attribute_title = \'Is_inverse_of\') )  GROUP BY r1.relation_title HAVING COUNT(r1.relation_title) < '.$maxOccur.' ORDER BY RAND() LIMIT '.$limit);
     if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
                 $result[] =Title::newFromText($row->relation_title, SMW_NS_PROPERTY);
@@ -628,7 +631,7 @@ function _getRelationGraph($next, & $graph, $depth) {
  function getTransitiveAnnotations($limit) {
     $result=array();
     $db = wfGetDB(DB_MASTER);
-    $res = $db->query('SELECT subject_title, relation_title, object_title FROM page JOIN categorylinks ON page_id = cl_from AND page_namespace = 102 JOIN smw_relations ON relation_title = page_title WHERE cl_to='.$db->addQuotes('Transitive_properties').' ORDER BY RAND() LIMIT '.$limit);
+    $res = $db->query('SELECT subject_title, relation_title, object_title FROM smw_relations JOIN categorylinks ON subject_id = cl_from WHERE cl_to='.$db->addQuotes('Transitive_Queries').' ORDER BY RAND() LIMIT '.$limit);
     if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
                 $result[] = array(Title::newFromText($row->subject_title, NS_MAIN),Title::newFromText($row->relation_title, SMW_NS_PROPERTY),Title::newFromText($row->object_title, NS_MAIN));
@@ -683,15 +686,12 @@ function getInverseProperties($limit) {
   * Adds symetrical properties
   *
   */
- function addSymmetricalProperties() {
- 	$properties = getArbitraryRelations(CREATE_NUM_OF_SYMPROPS);
+ function addSymmetricalProperties($properties) {
+ 	
  	$i = 0;
  	foreach($properties as $p) {
  		 printProgress($i / CREATE_NUM_OF_SYMPROPS);
-	 	 $a = new Article($p);
-	     $r = Revision::newFromTitle($p);
-	        
-	     $a->doEdit($r->getText()."\n[[category:Symmetrical properties]]", "", EDIT_UPDATE | EDIT_FORCE_BOT);
+	 	 addText($p, "\n[[category:Symmetrical properties]]");
 	     $i++;
  	}    
  }
@@ -700,9 +700,9 @@ function getInverseProperties($limit) {
   * Adds transitive properties and annotations
   *
   */
- function addTransitiveProperties() {
+ function addTransitiveProperties($properties) {
  	$result[] = array();
- 	$properties = getArbitraryRelations(CREATE_NUM_OF_TRANSPROPS);
+ 	
  	$i = 0;
     foreach($properties as $p) {
     	printProgress($i / CREATE_NUM_OF_TRANSPROPS);
@@ -710,6 +710,7 @@ function getInverseProperties($limit) {
     	$inst1 = getArbitraryInstances(1);
         $inst2 = getArbitraryInstances(1);
     	$start = $inst1[0];
+    	addText($start, "\n[[category:Transitive Queries]]");
         for($i = 0; $i < 3; $i++) {
          	addText($inst1[0], "\n[[".$p->getDBkey()."::".$inst2[0]->getDBkey()."]]");
          	$inst1 = $inst2;
@@ -727,8 +728,8 @@ function getInverseProperties($limit) {
   * Adds inverse properties
   *
   */
- function addInverseProperties() {
- 	$properties = getArbitraryRelations(CREATE_NUM_OF_INVPROPS);
+ function addInverseProperties($properties) {
+ 	
  	$i = 0;
     foreach($properties as $p) {
     	printProgress($i / CREATE_NUM_OF_INVPROPS);
