@@ -289,11 +289,7 @@ recurseQuery:function(id, type){
 		for(var i=0; i<sq.length; i++){
 			var regex = null;
 			eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
-			if(type == "ask")
-				tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
-			else
-				tmptext = tmptext.replace(regex, '{{#ask: ' + this.recurseQuery(sq[i]) + ' | }}'); //recursion
-		
+			tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
 		}
 		return tmptext;
 	}

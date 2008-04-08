@@ -157,12 +157,12 @@ Query.prototype = {
 		}
 		for(var i=0; i<this.properties.length; i++){
 			if(this.properties[i].isShown()){ // "Show in results" checked?
-				asktext += "[[" + this.properties[i].getName() + ":=*]]"; // Display statement
+				asktext += "[[" + this.properties[i].getName() + "::*]]"; // Display statement
 			}
 			if(this.properties[i].mustBeSet()){
-				asktext += "[[" + this.properties[i].getName() + ":=+]]";
+				asktext += "[[" + this.properties[i].getName() + "::+]]";
 			}
-			asktext += "[[" + this.properties[i].getName() + ":=";
+			asktext += "[[" + this.properties[i].getName() + "::";
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
@@ -225,9 +225,9 @@ Query.prototype = {
 				displayStatements.push(this.properties[i].getName());
 			}
 			if(this.properties[i].mustBeSet()){
-				asktext += "[[" + this.properties[i].getName() + ":=+]]";
+				asktext += "[[" + this.properties[i].getName() + "::+]]";
 			}
-			asktext += "[[" + this.properties[i].getName() + ":=";
+			asktext += "[[" + this.properties[i].getName() + "::";
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
