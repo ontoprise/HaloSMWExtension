@@ -1,11 +1,15 @@
 <?php
-/** Français Cadien
- * This is the Winaray localisation file
+/** Cajun French (Français cadien)
  *
- * @author RoyAlcatraz, JeanVoisin (September 2007)
- * 
  * @addtogroup Language
+ *
+ * @author RoyAlcatraz
+ * @author JeanVoisin
+ * @author Siebrand
+ * @author Nike
  */
+
+
 
 $messages = array(
 # User preference toggles
@@ -195,29 +199,29 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'         => "Qui c'est {{SITENAME}}?",
-'aboutpage'         => '{{ns:project}}:Info',
+'aboutpage'         => 'Project:Info',
 'bugreports'        => "Rapport d'erreurs",
-'bugreportspage'    => "{{ns:project}}:Rapport d'erreurs",
+'bugreportspage'    => "Project:Rapport d'erreurs",
 'copyright'         => 'Les matières sont avalable en accord avec $1',
 'copyrightpagename' => '{{SITENAME}} Protection de Droits',
 'copyrightpage'     => '{{ns:project}}:Protection de Droits',
 'currentevents'     => 'Événements',
-'currentevents-url' => 'Événements',
+'currentevents-url' => 'Project:Événements',
 'disclaimers'       => 'Avertissements',
-'disclaimerpage'    => '{{ns:project}}:Avertissements ordinaires',
+'disclaimerpage'    => 'Project:Avertissements ordinaires',
 'edithelp'          => 'Aide',
-'edithelppage'      => '{{ns:help}}:Comment changer une page',
+'edithelppage'      => 'Help:Comment changer une page',
 'faq'               => 'Questions Communes',
-'faqpage'           => '{{ns:project}}:Questions Communes',
-'helppage'          => '{{ns:help}}:Aide',
+'faqpage'           => 'Project:Questions Communes',
+'helppage'          => 'Help:Aide',
 'mainpage'          => 'Page Principale',
-'policy-url'        => '{{ns:project}}:Régulations',
+'policy-url'        => 'Project:Régulations',
 'portal'            => 'Communauté',
-'portal-url'        => '{{ns:project}}:Communauté',
+'portal-url'        => 'Project:Communauté',
 'privacy'           => 'Régulations des affaires privées',
-'privacypage'       => '{{ns:project}}:Régulations des affaires privées',
+'privacypage'       => 'Project:Régulations des affaires privées',
 'sitesupport'       => "Donner de l'argent",
-'sitesupport-url'   => "{{ns:project}}:Donner de l'argent",
+'sitesupport-url'   => "Project:Donner de l'argent",
 
 'badaccess'        => 'Erreur de permission',
 'badaccess-group0' => 'Vous avez pas assez de permission de faire ça que vous demandez.',
@@ -245,7 +249,7 @@ $messages = array(
 'feedlinks'               => 'Distribution RSS:',
 'feed-invalid'            => 'Mauvaise qualité de distribution RSS.',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-user'     => 'Useur',
 'nstab-media'    => 'Média',
 'nstab-special'  => 'Espécial',
@@ -360,7 +364,7 @@ Votre compte a été créé.  Oubliez pas de changer votre réglage sus {{SITENA
 'uid'                        => "Numéro d'useur:",
 'yourrealname'               => 'Vrai nom:',
 'yourlanguage'               => 'Langue:',
-'yourvariant'                => 'Différent',
+'yourvariant'                => 'Différent:',
 'yournick'                   => "'Tit nom:",
 'badsig'                     => 'Votre signature brute est pas bonne.  Regardez-voir les tags HTML.',
 'badsiglength'               => "Votre 'tit nom est trop long.  Il faut que ça soye moins que $1 caractères.",
@@ -373,7 +377,7 @@ Votre compte a été créé.  Oubliez pas de changer votre réglage sus {{SITENA
 'loginsuccesstitle'          => 'Vous êtes connecté',
 'loginsuccess'               => "'''Asteur vous êtes connecté à {{SITENAME}} comme \"\$1\".'''",
 'nosuchuser'                 => 'Y a aucun useur avec le nom "$1".  Regardez donc l\'espellage, ou créez un nouveau compte.',
-'nosuchusershort'            => 'Y a aucun useur avec le nom "$1".  Regardez donc l\'espellage.',
+'nosuchusershort'            => 'Y a aucun useur avec le nom "<nowiki>$1</nowiki>".  Regardez donc l\'espellage.',
 'nouserspecified'            => "Il faut mettre un nom d'useur.",
 'wrongpassword'              => "Mauvais mot de passe.  Assayez encore s'il vous plaît.",
 'wrongpasswordempty'         => "Le mot de passe était vide.  Assayez encore s'il vous plaît.",
@@ -457,7 +461,7 @@ Le blocage a été fait par $1.  La raison donnée est ''$2''.
 * Le blocage va être ôté: $6
 * L'useur bloqué: $7  
 
-Vous pouvez contacter $1 ou un autre [[{{MediaWiki:grouppage-sysop}}|administrateur]] pour discuter le blocage.  Vous pouvez pas user la fonction 'envoyer un e-mail à cet useur' hormis que vous avez une adresse e-mail confirmée dans votre [[Special:Preferences|réglage de compte]] et vous avez la permission de l'user.  Votre adresse IP est $3, et le numéro du blocage est #$5.  Mettez donc cette information dans toutes vos demandes.",
+Vous pouvez contacter $1 ou un autre [[{{MediaWiki:Grouppage-sysop}}|administrateur]] pour discuter le blocage.  Vous pouvez pas user la fonction 'envoyer un e-mail à cet useur' hormis que vous avez une adresse e-mail confirmée dans votre [[Special:Preferences|réglage de compte]] et vous avez la permission de l'user.  Votre adresse IP est $3, et le numéro du blocage est #$5.  Mettez donc cette information dans toutes vos demandes.",
 'autoblockedtext'           => "Le système a bloqué votre adresse IP parce qu'alle a été usée par un autre useur qu'était bloqué par $1.  
 
 La raison donnée est: ''$2''  
@@ -465,7 +469,7 @@ La raison donnée est: ''$2''
 * La date du blocage: $8
 * Le blocage va être ôté: $6  
 
-Vous pouvez contacter $1 ou un autre [[{{MediaWiki:grouppage-sysop}}|administrateur]] pour discuter le blocage.
+Vous pouvez contacter $1 ou un autre [[{{MediaWiki:Grouppage-sysop}}|administrateur]] pour discuter le blocage.
 
 Notez donc que vous pouvez pas user la fonction 'envoyer un e-mail à cet useur' hormis que vous avez une adresse e-mail confirmée dans votre [[Special:Preferences|réglage de compte]] et vous avez la permission de l'user.
 
@@ -488,7 +492,7 @@ Votre numéro de blocage est #$5.  Mettez donc cette information dans toutes vos
 'accmailtitle'              => 'Mot de passe envoyé.',
 'accmailtext'               => 'Le mot de passe pour "$1" a été envoyé à $2.',
 'newarticle'                => '(Nouveau)',
-'newarticletext'            => "Vous avez suit un lien à une page qu'existe pas encore.  Pour créer la page, mettez des mots dans la boëte en bas (voyez la [[{{MediaWiki:helppage}}|page d'aide]] pour plus d'information.  Si vous êtes ici par erreur, cliquez le bouton \"back\" sus votre navigateur.",
+'newarticletext'            => "Vous avez suit un lien à une page qu'existe pas encore.  Pour créer la page, mettez des mots dans la boëte en bas (voyez la [[{{MediaWiki:Helppage}}|page d'aide]] pour plus d'information.  Si vous êtes ici par erreur, cliquez le bouton \"back\" sus votre navigateur.",
 'anontalkpagetext'          => "----''Ça ici, c'est la page de discussion pour un useur sans nom qu'a pas encore créé un compte ou qui l'use pas.  Ça fait, il faut user l'adresse IP numérique pour l'identifier.  Une adresse comme ça pourrait être usée par plusieurs useurs.  Si vous êtes un useur sans nom et vous croyez que des messages sans rapport ont été envoyés à vous, [[Special:Userlogin|créer un compte ou connecter]] pour empêcher la confusion avec des autres useurs sans nom dans l'avenir.''",
 'noarticletext'             => 'À présent, y a pas de texte sus cette page.
 
@@ -554,7 +558,6 @@ Les notes d'ôtage pour cette page sont données ici pour vous aider:",
 'cantcreateaccounttitle' => 'Impossible de créer le compte',
 
 # History pages
-'revhistory'          => 'Détails des changements',
 'viewpagelogs'        => 'Voir les notes pour cette page',
 'nohistory'           => 'Y a pas de changements pour cette page.',
 'revnotfound'         => 'Changement pas trouvé',
@@ -625,19 +628,15 @@ Des autres administrateurs sus ce wiki ont la permission de voir et de rétablir
 'overlogpagetext' => 'Cette liste ici montre les ôtages et les blocages avec du texte caché des administrateurs.  Lire la [[Special:Ipblocklist|liste des comptes bloqués]] pour la liste des blocages courants.',
 
 # Diffs
-'difference'                => '(Différences entre les versions)',
-'loadingrev'                => "Import de l'ancienne version pour comparer",
-'lineno'                    => 'Ligne $1:',
-'editcurrent'               => 'Changer la version courante de cette page',
-'selectnewerversionfordiff' => 'Choisir une plus nouvelle version pour comparer',
-'selectolderversionfordiff' => 'Choisir une plus vieille version pour comparer',
-'compareselectedversions'   => 'Comparer les versions choisies',
-'editundo'                  => 'renverser',
-'diff-multi'                => '({{PLURAL:$1|Un changement moyen caché|$1 changements moyens cachés}})',
+'difference'              => '(Différences entre les versions)',
+'lineno'                  => 'Ligne $1:',
+'compareselectedversions' => 'Comparer les versions choisies',
+'editundo'                => 'renverser',
+'diff-multi'              => '({{PLURAL:$1|Un changement moyen caché|$1 changements moyens cachés}})',
 
 # Search results
 'searchresults'    => 'Résultats de la charche',
-'searchresulttext' => "Pour plus d'information pour vous aider à charcher dans {{SITENAME}}, voyez [[{{MediaWiki:helppage}}|{{int:help}}]].",
+'searchresulttext' => "Pour plus d'information pour vous aider à charcher dans {{SITENAME}}, voyez [[{{MediaWiki:Helppage}}|{{int:help}}]].",
 
 # Preferences page
 'preferences'   => 'Réglage',

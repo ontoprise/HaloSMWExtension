@@ -745,8 +745,8 @@ class Database {
 			global $wgUser;
 			if ( is_object( $wgUser ) && !($wgUser instanceof StubObject) ) {
 				$userName = $wgUser->getName();
-				if ( strlen( $userName ) > 15 ) {
-					$userName = substr( $userName, 0, 15 ) . '...';
+				if ( mb_strlen( $userName ) > 15 ) {
+					$userName = mb_substr( $userName, 0, 15 ) . '...';
 				}
 				$userName = str_replace( '/', '', $userName );
 			} else {
@@ -759,9 +759,13 @@ class Database {
 
 		# If DBO_TRX is set, start a transaction
 		if ( ( $this->mFlags & DBO_TRX ) && !$this->trxLevel() && 
-			$sql != 'BEGIN' && $sql != 'COMMIT' && $sql != 'ROLLBACK' 
-		) {
-			$this->begin();
+			$sql != 'BEGIN' && $sql != 'COMMIT' && $sql != 'ROLLBACK') {
+			// avoid establishing transactions for SHOW and SET statements too -
+			// that would delay transaction initializations to once connection 
+			// is really used by application
+			$sqlstart = substr($sql,0,10); // very much worth it, benchmark certified(tm)
+			if (strpos($sqlstart,"SHOW ")!==0 and strpos($sqlstart,"SET ")!==0) 
+				$this->begin(); 
 		}
 
 		if ( $this->debug() ) {
@@ -1564,7 +1568,15 @@ class Database {
 			} elseif ( ($mode == LIST_SET) && is_numeric( $field ) ) {
 				$list .= "$value";
 			} elseif ( ($mode == LIST_AND || $mode == LIST_OR) && is_array($value) ) {
-				$list .= $field." IN (".$this->makeList($value).") ";
+				if( count( $value ) == 0 ) {
+					// Empty input... or should this throw an error?
+					$list .= '0';
+				} elseif( count( $value ) == 1 ) {
+					// Special-case single values, as IN isn't terribly efficient
+					$list .= $field." = ".$this->addQuotes( $value[0] );
+				} else {
+					$list .= $field." IN (".$this->makeList($value).") ";
+				}
 			} elseif( is_null($value) ) {
 				if ( $mode == LIST_AND || $mode == LIST_OR ) {
 					$list .= "$field IS ";
@@ -2027,10 +2039,11 @@ class Database {
 	}
 
 	/**
-	 * Rollback a transaction
+	 * Rollback a transaction.
+	 * No-op on non-transactional databases.
 	 */
 	function rollback( $fname = 'Database::rollback' ) {
-		$this->query( 'ROLLBACK', $fname );
+		$this->query( 'ROLLBACK', $fname, true );
 		$this->mTrxLevel = 0;
 	}
 

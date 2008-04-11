@@ -478,6 +478,8 @@ if ( $conf->eaccel ) {
 	print "<li><a href=\"http://eaccelerator.sourceforge.net/\">eAccelerator</a> installed</li>\n";
 }
 
+$conf->dba = function_exists( 'dba_open' );
+
 if( !( $conf->turck || $conf->eaccel || $conf->apc || $conf->xcache ) ) {
 	echo( '<li>Couldn\'t find <a href="http://turck-mmcache.sourceforge.net">Turck MMCache</a>,
 		<a href="http://eaccelerator.sourceforge.net">eAccelerator</a>,
@@ -599,8 +601,8 @@ print "<li style='font-weight:bold;color:green;font-size:110%'>Environment check
 /* Check for validity */
 $errs = array();
 
-if( $conf->Sitename == "" || $conf->Sitename == "MediaWiki" || $conf->Sitename == "Mediawiki" ) {
-	$errs["Sitename"] = "Must not be blank or \"MediaWiki\"";
+if( preg_match( '/^$|^mediawiki$|#/i', $conf->Sitename ) ) {
+	$errs["Sitename"] = "Must not be blank or \"MediaWiki\" and may not contain \"#\"";
 }
 if( $conf->DBuser == "" ) {
 	$errs["DBuser"] = "Must not be blank";
@@ -751,6 +753,8 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 		$wgDBts2schema = $conf->DBts2schema;
 
 		$wgCommandLineMode = true;
+		if (! defined ( 'STDERR' ) )
+			define( 'STDERR', fopen("php://stderr", "wb"));
 		$wgUseDatabaseMessages = false; /* FIXME: For database failure */
 		require_once( "$IP/includes/Setup.php" );
 		chdir( "config" );
@@ -839,6 +843,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 					$errs["RootPW"] = "and password";
 					continue;
 				}
+				$wgDatabase->initial_setup($conf->RootPW, 'postgres');
 			}
 			echo( "<li>Attempting to connect to database \"$wgDBname\" as \"$wgDBuser\"..." );
 			$wgDatabase = $dbc->newFromParams($wgDBserver, $wgDBuser, $wgDBpassword, $wgDBname, 1);
@@ -847,6 +852,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			} else {
 				$myver = $wgDatabase->getServerVersion();
 			}
+			$wgDatabase->initial_setup('', $wgDBname);
 		}
 
 		if ( !$wgDatabase->isOpen() ) {
@@ -1202,7 +1208,7 @@ if( count( $errs ) ) {
 	</p>
 
 	<div class="config-input">
-		<label class='column'>Shared memory caching:</label>
+		<label class='column'>Object caching:</label>
 
 		<ul class="plain">
 		<li><?php aField( $conf, "Shm", "No caching", "radio", "none" ); ?></li>
@@ -1227,6 +1233,11 @@ if( count( $errs ) ) {
 				aField( $conf, "Shm", "eAccelerator", "radio", "eaccel" );
 				echo "</li>";
 			}
+			if ( $conf->dba ) {
+				echo "<li>";
+				aField( $conf, "Shm", "DBA (not recommended)", "radio", "dba" );
+				echo "</li>";
+			}
 		?>
 		<li><?php aField( $conf, "Shm", "Memcached", "radio", "memcached" ); ?></li>
 		</ul>
@@ -1238,6 +1249,9 @@ if( count( $errs ) ) {
 		<br /><br />
 		MediaWiki can also detect and support eAccelerator, Turck MMCache, APC, and XCache, but
 		these should not be used if the wiki will be running on multiple application servers.
+		<br/><br/>
+		DBA (Berkeley-style DB) is generally slower than using no cache at all, and is only 
+		recommended for testing.
 	</p>
 </div>
 
@@ -1468,6 +1482,9 @@ EOT;
 
 
 function escapePhpString( $string ) {
+	if ( is_array( $string ) || is_object( $string ) ) {
+		return false;
+	}
 	return strtr( $string,
 		array(
 			"\n" => "\\n",
@@ -1496,6 +1513,10 @@ function writeLocalSettings( $conf ) {
 		case 'apc':
 		case 'eaccel':
 			$cacheType = 'CACHE_ACCEL';
+			$mcservers = 'array()';
+			break;
+		case 'dba':
+			$cacheType = 'CACHE_DBA';
 			$mcservers = 'array()';
 			break;
 		default:
@@ -1670,9 +1691,8 @@ if ( \$wgCommandLineMode ) {
 
 # When you make changes to this configuration file, this will make
 # sure that cached pages are cleared.
-\$configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
-\$wgCacheEpoch = max( \$wgCacheEpoch, \$configdate );
-	"; ## End of setting the $localsettings string
+\$wgCacheEpoch = max( \$wgCacheEpoch, gmdate( 'YmdHis', @filemtime( __FILE__ ) ) );
+"; ## End of setting the $localsettings string
 
 	// Keep things in Unix line endings internally;
 	// the system will write out as local text type.
@@ -1816,7 +1836,6 @@ function testMemcachedServer( $server ) {
 	}
 	if ( !$errstr && count( $hostport ) != 2 ) {
 		$errstr = 'Please specify host and port';
-		var_dump( $hostport );
 	}
 	if ( !$errstr ) {
 		list( $host, $port ) = $hostport;
@@ -1914,7 +1933,7 @@ function printListItem( $item ) {
 			<li><a href="http://meta.wikipedia.org/wiki/MediaWiki_User's_Guide">User's Guide</a></li>
 			<li><a href="http://meta.wikimedia.org/wiki/MediaWiki_FAQ">FAQ</a></li>
 		</ul>
-		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2007 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
+		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2008 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
 	</div></div>
 </div>
 

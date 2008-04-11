@@ -53,10 +53,26 @@ class ApiMain extends ApiBase {
 	 */
 	private static $Modules = array (
 		'login' => 'ApiLogin',
+		'logout' => 'ApiLogout',
 		'query' => 'ApiQuery',
+		'expandtemplates' => 'ApiExpandTemplates',
+		'parse' => 'ApiParse',
 		'opensearch' => 'ApiOpenSearch',
 		'feedwatchlist' => 'ApiFeedWatchlist',
 		'help' => 'ApiHelp',
+		'paraminfo' => 'ApiParamInfo',
+	);
+	
+	private static $WriteModules = array (
+		'rollback' => 'ApiRollback',
+		'delete' => 'ApiDelete',
+		'undelete' => 'ApiUndelete',
+		'protect' => 'ApiProtect',
+		'block' => 'ApiBlock',
+		'unblock' => 'ApiUnblock',
+		'move' => 'ApiMove',
+		#'changerights' => 'ApiChangeRights'
+		# Disabled for now
 	);
 
 	/**
@@ -73,7 +89,11 @@ class ApiMain extends ApiBase {
 		'xmlfm' => 'ApiFormatXml',
 		'yaml' => 'ApiFormatYaml',
 		'yamlfm' => 'ApiFormatYaml',
-		'rawfm' => 'ApiFormatJson'
+		'rawfm' => 'ApiFormatJson',
+		'txt' => 'ApiFormatTxt',
+		'txtfm' => 'ApiFormatTxt',
+		'dbg' => 'ApiFormatDbg',
+		'dbgfm' => 'ApiFormatDbg'
 	);
 
 	private $mPrinter, $mModules, $mModuleNames, $mFormats, $mFormatNames;
@@ -98,16 +118,27 @@ class ApiMain extends ApiBase {
 			// If the current user cannot read, 
 			// Remove all modules other than login
 			global $wgUser;
+			
+			if( $request->getVal( 'callback' ) !== null ) {
+				// JSON callback allows cross-site reads.
+				// For safety, strip user credentials.
+				wfDebug( "API: stripping user credentials for JSON callback\n" );
+				$wgUser = new User();
+			}
+			
 			if (!$wgUser->isAllowed('read')) {
 				self::$Modules = array(
-					'login' => self::$Modules['login'],
-					'help' => self::$Modules['help']
+					'login'  => self::$Modules['login'],
+					'logout' => self::$Modules['logout'],
+					'help'   => self::$Modules['help'],
 					); 
 			}
 		}
 
-		global $wgAPIModules; // extension modules
+		global $wgAPIModules, $wgEnableWriteAPI; // extension modules
 		$this->mModules = $wgAPIModules + self :: $Modules;
+		if($wgEnableWriteAPI)
+			$this->mModules += self::$WriteModules;
 
 		$this->mModuleNames = array_keys($this->mModules); // todo: optimize
 		$this->mFormats = self :: $Formats;
@@ -149,7 +180,7 @@ class ApiMain extends ApiBase {
 	public function requestWriteMode() {
 		if (!$this->mEnableWrite)
 			$this->dieUsage('Editing of this site is disabled. Make sure the $wgEnableWriteAPI=true; ' .
-			'statement is included in the site\'s LocalSettings.php file', 'readonly');
+			'statement is included in the site\'s LocalSettings.php file', 'noapiwrite');
 	}
 
 	/**
@@ -279,16 +310,34 @@ class ApiMain extends ApiBase {
 	 * Execute the actual module, without any error handling
 	 */
 	protected function executeAction() {
-		
+
 		$params = $this->extractRequestParams();
-		
+
 		$this->mShowVersions = $params['version'];
 		$this->mAction = $params['action'];
 
 		// Instantiate the module requested by the user
 		$module = new $this->mModules[$this->mAction] ($this, $this->mAction);
-
+		
+		if( $module->shouldCheckMaxlag() && isset( $params['maxlag'] ) ) {
+			// Check for maxlag
+			global $wgLoadBalancer, $wgShowHostnames;
+			$maxLag = $params['maxlag'];
+			list( $host, $lag ) = $wgLoadBalancer->getMaxLag();
+			if ( $lag > $maxLag ) {
+				if( $wgShowHostnames ) {
+					ApiBase :: dieUsage( "Waiting for $host: $lag seconds lagged", 'maxlag' );
+				} else {
+					ApiBase :: dieUsage( "Waiting for a database server: $lag seconds lagged", 'maxlag' );
+				}
+				return;
+			}
+		}
+		
 		if (!$this->mInternalMode) {
+			// Ignore mustBePosted() for internal calls
+			if($module->mustBePosted() && !$this->mRequest->wasPosted())
+				$this->dieUsage("The {$this->mAction} module requires a POST request", 'mustbeposted');
 
 			// See if custom printer is used
 			$this->mPrinter = $module->getCustomPrinter();
@@ -318,14 +367,15 @@ class ApiMain extends ApiBase {
 	protected function printResult($isError) {
 		$printer = $this->mPrinter;
 		$printer->profileIn();
-		$printer->initPrinter($isError);
 	
 		/* If the help message is requested in the default (xmlfm) format,
 		 * tell the printer not to escape ampersands so that our links do
 		 * not break. */
 		$params = $this->extractRequestParams();
-		$printer->setUnescapeAmps ( $this->mAction == 'help' 
+		$printer->setUnescapeAmps ( ( $this->mAction == 'help' || $isError ) 
 				&& $params['format'] == ApiMain::API_DEFAULT_FORMAT );
+
+		$printer->initPrinter($isError);
 
 		$printer->execute();
 		$printer->closePrinter();
@@ -335,7 +385,7 @@ class ApiMain extends ApiBase {
 	/**
 	 * See ApiBase for description.
 	 */
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'format' => array (
 				ApiBase :: PARAM_DFLT => ApiMain :: API_DEFAULT_FORMAT,
@@ -345,25 +395,29 @@ class ApiMain extends ApiBase {
 				ApiBase :: PARAM_DFLT => 'help',
 				ApiBase :: PARAM_TYPE => $this->mModuleNames
 			),
-			'version' => false
+			'version' => false,
+			'maxlag'  => array (
+				ApiBase :: PARAM_TYPE => 'integer'
+			),
 		);
 	}
 
 	/**
 	 * See ApiBase for description.
 	 */
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'format' => 'The format of the output',
 			'action' => 'What action you would like to perform',
-			'version' => 'When showing help, include version for each module'
+			'version' => 'When showing help, include version for each module',
+			'maxlag' => 'Maximum lag'
 		);
 	}
 
 	/**
 	 * See ApiBase for description.
 	 */
-	protected function getDescription() {
+	public function getDescription() {
 		return array (
 			'',
 			'',
@@ -396,8 +450,9 @@ class ApiMain extends ApiBase {
 	 */
 	protected function getCredits() {
 		return array(
-			'This API is being implemented by Yuri Astrakhan [[User:Yurik]] / <Firstname><Lastname>@gmail.com',
-			'Please leave your comments and suggestions at http://www.mediawiki.org/wiki/API'
+			'This API is being implemented by Roan Kattouw <Firstname>.<Lastname>@home.nl',
+			'Please send your comments, suggestions and questions to mediawiki-api@lists.wikimedia.org',
+			'or file a bug report at http://bugzilla.wikimedia.org/'
 		);
 	}
 
@@ -405,6 +460,8 @@ class ApiMain extends ApiBase {
 	 * Override the parent to generate help messages for all available modules.
 	 */
 	public function makeHelpMsg() {
+		
+		$this->mPrinter->setHelp();
 
 		// Use parent to make default message for the main module
 		$msg = parent :: makeHelpMsg();
@@ -445,11 +502,12 @@ class ApiMain extends ApiBase {
 	} 
 
 	private $mIsBot = null;
-	
 	private $mIsSysop = null;
+	private $mCanApiHighLimits = null;
 	
 	/**
 	 * Returns true if the currently logged in user is a bot, false otherwise
+	 * OBSOLETE, use canApiHighLimits() instead
 	 */
 	public function isBot() {
 		if (!isset ($this->mIsBot)) {
@@ -462,6 +520,7 @@ class ApiMain extends ApiBase {
 	/**
 	 * Similar to isBot(), this method returns true if the logged in user is
 	 * a sysop, and false if not.
+	 * OBSOLETE, use canApiHighLimits() instead
 	 */
 	public function isSysop() {
 		if (!isset ($this->mIsSysop)) {
@@ -470,6 +529,15 @@ class ApiMain extends ApiBase {
 		}
 
 		return $this->mIsSysop;
+	}
+	
+	public function canApiHighLimits() {
+		if (!isset($this->mCanApiHighLimits)) {
+			global $wgUser;
+			$this->mCanApiHighLimits = $wgUser->isAllowed('apihighlimits');
+		}
+
+		return $this->mCanApiHighLimits;
 	}
 
 	public function getShowVersions() {
@@ -515,6 +583,13 @@ class ApiMain extends ApiBase {
 	protected function addFormat( $fmtName, $fmtClass ) {
 		$this->mFormats[$fmtName] = $fmtClass;
 	}
+	
+	/**
+	 * Get the array mapping module names to class names
+	 */
+	function getModules() {
+		return $this->mModules;
+	}
 }
 
 /**
@@ -538,4 +613,5 @@ class UsageException extends Exception {
 		return "{$this->getCodeString()}: {$this->getMessage()}";
 	}
 }
+
 

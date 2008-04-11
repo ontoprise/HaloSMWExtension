@@ -110,8 +110,9 @@ abstract class ApiQueryBase extends ApiBase {
 
 		if (!is_null($end))
 			$this->addWhere($field . $before . $db->addQuotes($end));
-
-		$this->addOption('ORDER BY', $field . ($isDirNewer ? '' : ' DESC'));
+		
+		if (!isset($this->options['ORDER BY']))
+			$this->addOption('ORDER BY', $field . ($isDirNewer ? '' : ' DESC'));
 	}
 
 	protected function addOption($name, $value = null) {
@@ -215,6 +216,10 @@ abstract class ApiQueryBase extends ApiBase {
 	}
 
 	public function getTokenFlag($tokenArr, $action) {
+		if ($this->getMain()->getRequest()->getVal('callback') !== null) {
+			// Don't do any session-specific data.
+			return false;
+		}
 		if (in_array($action, $tokenArr)) {
 			global $wgUser;
 			if ($wgUser->isAllowed($action))

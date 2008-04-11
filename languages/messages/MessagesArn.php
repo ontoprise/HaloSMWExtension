@@ -1,10 +1,10 @@
 <?php
-/** Mapudungun
- * This is the Mapudungun localisation file
+/** Araucanian (Mapudungun)
  *
- * @author Lin linao (September 2007)
- * 
  * @addtogroup Language
+ *
+ * @author Lin linao
+ * @author Poquil
  */
 
 $fallback = 'es';
@@ -21,6 +21,10 @@ $messages = array(
 'thursday'      => 'Kuefe',
 'friday'        => 'Fierne',
 'saturday'      => 'Safado',
+'sun'           => 'dom',
+'mon'           => 'lun',
+'tue'           => 'mar',
+'wed'           => 'mie',
 'thu'           => 'kue',
 'fri'           => 'fie',
 'sat'           => 'saf',
@@ -61,11 +65,15 @@ $messages = array(
 'nov'           => 'konlu nofiempüre küyeṉ mew',
 'dec'           => 'konlu disiempüre küyeṉ mew',
 
-'qbfind' => 'Kintun',
-'qbedit' => 'Welukan',
-'mytalk' => 'Tañi nütramkawe',
+'qbfind'      => 'Kintun',
+'qbedit'      => 'Wirin',
+'qbmyoptions' => 'tañi nütramkawe',
+'mypage'      => 'tañi nütramkawe',
+'mytalk'      => 'Tañi nütramkawe',
+'and'         => 'ka',
 
 'returnto'         => 'Wüñonge $1 püle.',
+'tagline'          => '{{SITENAME}} mew',
 'help'             => 'Kellu',
 'search'           => 'Kintun',
 'searchbutton'     => 'Kintun',
@@ -73,41 +81,54 @@ $messages = array(
 'searcharticle'    => 'Amun',
 'history'          => 'Pünon',
 'history_short'    => 'Pünon',
-'edit'             => 'Welukan',
+'edit'             => 'Wirin',
+'delete'           => 'Ñamümün',
+'protect'          => 'Elulan ñi wiriael',
+'unprotect'        => 'Elun ñi wiriael',
 'talkpagelinktext' => 'Nütramkawe',
+'articlepage'      => 'adkintun artículo',
 'talk'             => 'Nütramkawe',
 'toolbox'          => 'Küdawpeyüm',
+'userpage'         => 'adkintun página de usuario',
+'projectpage'      => 'adkintun página meta',
+'imagepage'        => 'adkintun página de imagen',
+'mediawikipage'    => 'adkintun página de mensaje',
+'templatepage'     => 'adkintun página de plantilla',
+'viewhelppage'     => 'adkintun página de ayuda',
+'categorypage'     => 'adkintun página de categoría',
 'viewtalkpage'     => 'Pen ti nütramkawe',
 'otherlanguages'   => 'Kake dungun',
 'jumpto'           => 'Amun:',
 'jumptosearch'     => 'kintu',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'helppage' => 'Project:Kellu',
+'helppage' => 'Help:Kellu',
 
 'ok'                      => 'Feley may',
 'youhavenewmessages'      => 'Elungeymi $1 ($2).',
 'newmessageslink'         => 'we dungu',
 'youhavenewmessagesmulti' => 'Elungeymi we dungu $1 mew.',
-'editsection'             => 'welukan',
-'editold'                 => 'welukan',
+'editsection'             => 'wirin',
+'editold'                 => 'wirin',
 'showtoc'                 => 'pengelün',
 'hidetoc'                 => 'ellkan',
 'viewdeleted'             => 'Küpaadkintuymi $1 am?',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-user'      => 'Lludüchi',
 'nstab-special'   => 'Kangelu',
 'nstab-mediawiki' => 'Dungu',
 'nstab-help'      => 'Kelluwe',
 
 # General errors
-'filenotfound' => 'Pepipelafuy "$1".',
-'badtitle'     => 'Nornongey ta üy',
+'filedeleteerror' => 'Pepiñamümüngelay "$1".',
+'filenotfound'    => 'Pepipelafuy "$1".',
+'badtitle'        => 'Nornongey ta üy',
 
 # Login and logout pages
 'yourname'           => 'Tami lludüchi üy',
-'yourpassword'       => 'Tami dungu konael',
+'yourpassword'       => 'Tami konün dungu',
+'login'              => 'Konün',
 'logout'             => 'Tripan',
 'userlogout'         => 'Tripan',
 'notloggedin'        => 'Petu konlaymi.',
@@ -128,6 +149,9 @@ $messages = array(
 
 # Revision feed
 'history-feed-item-nocomment' => '$1 $2 mew', # user at time
+
+# Revision deletion
+'rev-delundel' => 'pengelün/ellkan',
 
 # Diffs
 'lineno'   => 'Wirin $1:',
@@ -150,11 +174,25 @@ $messages = array(
 'minoreditletter' => 'p',
 'newpageletter'   => 'W',
 
-# Image list
-'ilsubmit'       => 'Kintu',
-'imagelist_name' => 'Üy',
+'nolicense' => 'Chemnorume dullinnongey',
 
-'brokenredirects-edit' => '(welukan)',
+# Image list
+'ilsubmit'           => 'Kintu',
+'imgdelete'          => 'ñam',
+'filehist-deleteall' => 'kom ñamümün',
+'filehist-deleteone' => 'tüfa ñamümün',
+'imagelist_name'     => 'Üy',
+
+# File deletion
+'filedelete'         => '$1 ñamümün',
+'filedelete-intro'   => "Ñamümmekeymi '''[[Media:$1|$1]]'''.",
+'filedelete-submit'  => 'Ñamümün',
+'filedelete-success' => "'''$1''' ñamümngey.",
+
+'brokenredirects-edit'   => '(wirin)',
+'brokenredirects-delete' => '(ñamümün)',
+
+'withoutinterwiki-submit' => 'Pengelün',
 
 # Miscellaneous special pages
 'move' => 'Wiñamün',
@@ -215,9 +253,6 @@ $messages = array(
 'tooltip-pt-mytalk' => 'Tañi nütramkawe',
 'tooltip-pt-logout' => 'Tripan',
 
-# Attribution
-'and' => 'ka',
-
 # Spam protection
 'listingcontinuesabbrev' => 'ramt.',
 
@@ -230,13 +265,22 @@ $messages = array(
 # EXIF tags
 'exif-exposuretime-format' => '$1 sek ($2)',
 
+'exif-meteringmode-0' => 'Kimnoelchi',
+
+'exif-lightsource-0' => 'Kimnoelchi',
+
 'exif-gaincontrol-0' => 'Chemnorume',
+
+'exif-subjectdistancerange-0' => 'Kimnoelchi',
 
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'kom',
 'imagelistall'     => 'kom',
 'namespacesall'    => 'kom',
 'monthsall'        => '(kom)',
+
+# action=purge
+'confirm_purge_button' => 'Feley may',
 
 # Multipage image navigation
 'imgmultigo' => 'Amun!',

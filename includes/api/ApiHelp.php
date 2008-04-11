@@ -46,7 +46,11 @@ class ApiHelp extends ApiBase {
 		$this->dieUsage('', 'help');
 	}
 
-	protected function getDescription() {
+	public function shouldCheckMaxlag() {
+		return false;
+	}
+
+	public function getDescription() {
 		return array (
 			'Display this help screen.'
 		);

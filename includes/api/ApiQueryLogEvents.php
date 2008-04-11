@@ -198,7 +198,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		global $wgLogTypes;
 		return array (
 			'prop' => array (
@@ -243,8 +243,9 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
+			'prop' => 'Which properties to get',
 			'type' => 'Filter log entries to only this type(s)',
 			'start' => 'The timestamp to start enumerating from.',
 			'end' => 'The timestamp to end enumerating.',
@@ -255,7 +256,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Get events from logs.';
 	}
 

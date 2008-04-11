@@ -47,6 +47,15 @@ table.filehistory th.mw-imagepage-filesize {
 	white-space:nowrap;
 }
 
+/*
+ * rev_deleted stuff
+ */
+li span.deleted, span.history-deleted {
+	text-decoration: line-through;
+	color: #888;
+	font-style: italic;
+}
+
 /**
  * Forms
  */
@@ -59,3 +68,12 @@ body.rtl td.mw-submit { text-align: right; }
 
 td.mw-label { vertical-align: top; }
 td.mw-submit { white-space: nowrap; }
+
+/**
+ * Image captions
+ */
+body.rtl .thumbcaption { text-align:right; }
+body.rtl .magnify { float:left; }
+
+body.ltr .thumbcaption { text-align:left; }
+body.ltr .magnify { float:right; }

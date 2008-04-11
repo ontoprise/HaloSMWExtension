@@ -62,6 +62,7 @@ class ApiFeedWatchlist extends ApiBase {
 			// limit to the number of hours going from now back
 			$endTime = wfTimestamp(TS_MW, time() - intval($params['hours'] * 60 * 60));
 	
+			$dbr = wfGetDB( DB_SLAVE );
 			// Prepare parameters for nested request
 			$fauxReqArr = array (
 				'action' => 'query',
@@ -70,7 +71,7 @@ class ApiFeedWatchlist extends ApiBase {
 				'list' => 'watchlist',
 				'wlprop' => 'title|user|comment|timestamp',
 				'wldir' => 'older',		// reverse order - from newest to oldest
-				'wlend' => $endTime,	// stop at this time
+				'wlend' => $dbr->timestamp($endTime),	// stop at this time
 				'wllimit' => 50
 			);
 
@@ -137,7 +138,7 @@ class ApiFeedWatchlist extends ApiBase {
 		return new FeedItem($titleStr, $completeText, $titleUrl, $timestamp, $user);
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		global $wgFeedClasses;
 		$feedFormatNames = array_keys($wgFeedClasses);
 		return array (
@@ -155,7 +156,7 @@ class ApiFeedWatchlist extends ApiBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'feedformat' => 'The format of the feed',
 			'hours'      => 'List pages modified within this many hours from now',
@@ -163,7 +164,7 @@ class ApiFeedWatchlist extends ApiBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'This module returns a watchlist feed';
 	}
 

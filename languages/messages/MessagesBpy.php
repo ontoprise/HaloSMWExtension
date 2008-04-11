@@ -1,9 +1,26 @@
 <?php
-/** Bishnupriya Manipuri (বিষ্ণুপ্রিয়া মণিপুরী)
+/** Bishnupriya (ইমার ঠার/বিষ্ণুপ্রিয়া মণিপুরী)
  *
  * @addtogroup Language
- * @Author Uttam Singha, Dec 2006
+ *
+ * @author Uttam Singha, Dec 2006
+ * @author Usingha
+ * @author Siebrand
  */
+
+$digitTransformTable = array(
+	'0' => '০',
+	'1' => '১',
+	'2' => '২',
+	'3' => '৩',
+	'4' => '৪',
+	'5' => '৫',
+	'6' => '৬',
+	'7' => '৭',
+	'8' => '৮',
+	'9' => '৯'
+);
+
 $namespaceNames = array(
 	NS_MEDIA          => 'মিডিয়া',
 	NS_SPECIAL        => 'বিশেষ',
@@ -158,6 +175,7 @@ $messages = array(
 'mytalk'         => 'মর য়্যারি-পরি',
 'anontalk'       => 'অচিনা এগর য়্যারির পাতা',
 'navigation'     => 'দিশা-ধরুনী',
+'and'            => 'বারো',
 
 # Metadata in edit box
 'metadata_help' => 'মেটাডাটা:',
@@ -217,29 +235,29 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'         => '{{SITENAME}}র বারে',
-'aboutpage'         => '{{ns:project}}:বারে',
+'aboutpage'         => 'Project:বারে',
 'bugreports'        => 'লাল বিবরণী',
-'bugreportspage'    => '{{ns:project}}:লাল_বিবরণী',
+'bugreportspage'    => 'Project:লাল_বিবরণী',
 'copyright'         => '$1-র মাতুঙে এহানর মেথেলহানি পানা একরের।',
 'copyrightpagename' => '{{SITENAME}} স্বত্তাধিকারহান',
 'copyrightpage'     => '{{ns:project}}:স্বত্তাধিকারহানি',
 'currentevents'     => 'হাদি এহানর ঘটনা',
-'currentevents-url' => 'হাদি এহানর ঘটনাহানি',
+'currentevents-url' => 'Project:হাদি এহানর ঘটনাহানি',
 'disclaimers'       => 'দাবি বেলানি',
-'disclaimerpage'    => '{{ns:project}}:ইজ্জু দাবি বেলানি',
+'disclaimerpage'    => 'Project:ইজ্জু দাবি বেলানি',
 'edithelp'          => 'পতানি পাংলাক',
-'edithelppage'      => '{{ns:project}}:কিসাদে_পাতা_আহান_পতানি',
+'edithelppage'      => 'Help:কিসাদে_পাতা_আহান_পতানি',
 'faq'               => 'আঙলাক',
-'faqpage'           => '{{ns:project}}:আঙলাক',
-'helppage'          => '{{ns:project}}:পাংলাক',
+'faqpage'           => 'Project:আঙলাক',
+'helppage'          => 'Help:পাংলাক',
 'mainpage'          => 'পয়লা পাতা',
-'policy-url'        => '{{ns:project}}:নীতিহান',
+'policy-url'        => 'Project:নীতিহান',
 'portal'            => 'শিংলুপ',
-'portal-url'        => '{{ns:project}}:শিংলুপ',
+'portal-url'        => 'Project:শিংলুপ',
 'privacy'           => 'লুকরানির নীতিহান',
-'privacypage'       => '{{ns:project}}:লুকরানির নীতিহান',
+'privacypage'       => 'Project:লুকরানির নীতিহান',
 'sitesupport'       => 'দান দেনা',
-'sitesupport-url'   => '{{ns:project}}:দান দেনা',
+'sitesupport-url'   => 'Project:দান দেনা',
 
 'badaccess'        => 'য়্যাথাঙে লালসে',
 'badaccess-group0' => 'তি যে কামহানর হেইচা করিসত, তরতা অহান করানির য়্যাথাং নেই।',
@@ -256,7 +274,7 @@ $messages = array(
 'showtoc'         => 'ফংকর',
 'hidetoc'         => 'মেথেল আরুম কর',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'নিবন্ধ',
 'nstab-user'      => 'আতাকুরার পাতা',
 'nstab-special'   => 'বিশেষ',
@@ -306,7 +324,9 @@ $messages = array(
 'watchthis'        => 'পাতাএহান খিয়ালে থ',
 'anoneditwarning'  => "'''সিঙুইসঃ''' তি লগইন নাকরিসত। পতানির ইতিহাসহাত তর IP addressহান সিজিল ইতই।",
 'blockedtitle'     => 'আতাকুরাগরে থেপ করানি অসে',
-'blockedtext'      => "তর আতাকুরা নাঙহান নাইলেউ আইপি ঠিকানাহানরে $1 থেপকরানি অসে। এহানর কারণহান অসেতাইঃ:<br />''$2''<p>তি $1 নাইলেউ [[{{MediaWiki:grouppage-sysop}}|প্রশাসকর]] মা যে কোন আগর লগে বিষয় এহান্ন য়্যারি পরি দে পারর। বিশেষ মাতিলতাঃ তর ই-মেইল ঠিকানাহান যদি [[Special:Preferences|তর পছন তালিকাত]] বরিয়া নাথার, অতা ইলে তি উইকিপিডিয়াত হের আতাকুরারে ই-মেইল করানি নুৱারবে। তর আইপি ঠিকানাহান ইলতাই $3। কৃপা করিয়া যে কোন যোগাযোগর সময়ত এরে ঠিকানা এহান যেসাদেউ বরিস।",
+'blockedtext'      => "তর আতাকুরা নাঙহান নাইলেউ আইপি ঠিকানাহানরে $1 থেপকরানি অসে। এহানর কারণহান অসেতাইঃ:<br />''$2''
+
+তি $1 নাইলেউ [[{{MediaWiki:Grouppage-sysop}}|প্রশাসকর]] মা যে কোন আগর লগে বিষয় এহান্ন য়্যারি পরি দে পারর। বিশেষ মাতিলতাঃ তর ই-মেইল ঠিকানাহান যদি [[Special:Preferences|তর পছন তালিকাত]] বরিয়া নাথার, অতা ইলে তি উইকিপিডিয়াত হের আতাকুরারে ই-মেইল করানি নুৱারবে। তর আইপি ঠিকানাহান ইলতাই $3। কৃপা করিয়া যে কোন যোগাযোগর সময়ত এরে ঠিকানা এহান যেসাদেউ বরিস।",
 'confirmedittitle' => 'সম্পাদনা করানির কা ই-মেইল লেপকানি থকিতই',
 'confirmedittext'  => 'যেহানউ সম্পাদনা করানির আগে তর ই-মেইল ঠিকানাহন যেসাদেউ লেপকরানি লাগতই। কৃপাকরিয়া তর ই-মেইল ঠিকানাহান [[Special:Preferences|আতাকুরার পছনতালিকা]]ত চুমকরে বরা।',
 'loginreqtitle'    => 'লগইন দরকার ইসে',
@@ -362,13 +382,15 @@ $messages = array(
 'bysize'     => 'আকারহানর সিজিলন',
 'imagelinks' => 'জুরিসিতা',
 
+# Random page
+'randompage' => 'খাংদা পাতা',
+
 'brokenredirects' => 'বারো-নির্দেশ কামনাকরের',
 
 # Miscellaneous special pages
 'nbytes'       => '$1 বাইট',
 'ncategories'  => '$1 {{PLURAL:$1|থাক|থাকহানি}}',
 'allpages'     => 'হাবি পাতাহানি',
-'randompage'   => 'খাংদা পাতা',
 'specialpages' => 'বিশেষ পাতাহানি',
 'ancientpages' => 'পুরানা পাতাহানি',
 'move'         => 'থেইকরানি',
@@ -395,7 +417,9 @@ $messages = array(
 'watchlist'       => 'মর তালাবি',
 'mywatchlist'     => 'মর তালাবি',
 'addedwatch'      => 'তালাবির তালিকাহাত থনা ইল',
-'addedwatchtext'  => "\"\$1\" পাতা এহান তর [[Special:Watchlist|আহির-আরুম তালিকা]]-ত তিলকরানি ইল। পিসেদে এরে পাতা এহান বারো পাতা এহানর লগে সাকেই আসে য়্যারী পাতাত অইতই হারি জাতর পতানি এহানাত তিলকরানি অইতই। অতাবাদেউ [[Special:Recentchanges|হাদি এহানর পতানিহানি]]-ত পাতা এহানরে '''গাঢ়করা''' মেয়েকে দেহা দেনা অইতই যাতে তি নুঙিকরে পাতা এহান চিনে পারবেতা। <p>পিসেদে তি পাতা এহানরে থেইকরানি মনেইলে \"আহির-আরুমেত্ত থেইকরেদে\" ট্যাবগত ক্লিক করিস৷",
+'addedwatchtext'  => "\"<nowiki>\$1</nowiki>\" পাতা এহান তর [[Special:Watchlist|আহির-আরুম তালিকা]]-ত তিলকরানি ইল। পিসেদে এরে পাতা এহান বারো পাতা এহানর লগে সাকেই আসে য়্যারী পাতাত অইতই হারি জাতর পতানি এহানাত তিলকরানি অইতই। অতাবাদেউ [[Special:Recentchanges|হাদি এহানর পতানিহানি]]-ত পাতা এহানরে '''গাঢ়করা''' মেয়েকে দেহা দেনা অইতই যাতে তি নুঙিকরে পাতা এহান চিনে পারবেতা।
+
+পিসেদে তি পাতা এহানরে থেইকরানি মনেইলে \"আহির-আরুমেত্ত থেইকরেদে\" ট্যাবগত ক্লিক করিস৷",
 'watch'           => 'তালাবি',
 'watchthispage'   => 'পাতাএহান খিয়ালে থ',
 'unwatch'         => 'তালাবি নেই',
@@ -405,7 +429,6 @@ $messages = array(
 
 # Delete/protect/revert
 'confirm'        => 'লেপকরানি',
-'confirmdelete'  => 'পুসানিহান লেপকর',
 'actioncomplete' => 'কামহান লমিল।',
 'cantrollback'   => 'আগেকার সঙস্করনহাত আলথকে যানা নুৱারলু, লমিলগা সম্পদনাকরেকুরা অগ পাতা অহানর আকখুলা লেখকগ।',
 
@@ -451,7 +474,6 @@ $messages = array(
 
 # Attribution
 'anonymous' => '{{SITENAME}}র বেনাঙর আতাকুরা(গি)',
-'and'       => 'বারো',
 
 # Spam protection
 'categoryarticlecount' => 'এরে বিষয়রথাকে $1হান নিবন্ধ আসে।',

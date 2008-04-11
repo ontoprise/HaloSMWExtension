@@ -45,13 +45,13 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$fld_comment = false, $fld_user = false, $fld_content = false;
 
 	public function execute() {
-		$limit = $startid = $endid = $start = $end = $dir = $prop = $user = $excludeuser = null;
-		extract($this->extractRequestParams());
+		$limit = $startid = $endid = $start = $end = $dir = $prop = $user = $excludeuser = $token = null;
+		extract($this->extractRequestParams(false));
 
 		// If any of those parameters are used, work in 'enumeration' mode.
 		// Enum mode can only be used when exactly one page is provided.
-		// Enumerating revisions on multiple pages make it extremelly 
-		// difficult to manage continuations and require additional sql indexes  
+		// Enumerating revisions on multiple pages make it extremely 
+		// difficult to manage continuations and require additional SQL indexes  
 		$enumRevMode = (!is_null($user) || !is_null($excludeuser) || !is_null($limit) || !is_null($startid) || !is_null($endid) || $dir === 'newer' || !is_null($start) || !is_null($end));
 		
 
@@ -67,7 +67,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$this->dieUsage('The revids= parameter may not be used with the list options (limit, startid, endid, dirNewer, start, end).', 'revids');
 
 		if ($pageCount > 1 && $enumRevMode)
-			$this->dieUsage('titles, pageids or a generator was used to supply multiple pages, but the limit, startid, endid, dirNewer, user, excludeuser, start, and end parameters may only be used on a single page.', 'multpages');
+			$this->dieUsage('titles, pageids or a generator was used to supply multiple pages, but the limit, startid, endid, dirNewer, user, excludeuser, start and end parameters may only be used on a single page.', 'multpages');
 
 		$this->addTables('revision');
 		$this->addWhere('rev_deleted=0');
@@ -85,12 +85,20 @@ class ApiQueryRevisions extends ApiQueryBase {
 		$this->fld_timestamp = $this->addFieldsIf('rev_timestamp', isset ($prop['timestamp']));
 		$this->fld_comment = $this->addFieldsIf('rev_comment', isset ($prop['comment']));
 		$this->fld_size = $this->addFieldsIf('rev_len', isset ($prop['size']));
+		$this->tok_rollback = false; // Prevent PHP undefined property notice
+		if(!is_null($token))
+		{
+			$this->tok_rollback = $this->getTokenFlag($token, 'rollback');
+		}
 
 		if (isset ($prop['user'])) {
 			$this->addFields('rev_user');
 			$this->addFields('rev_user_text');
 			$this->fld_user = true;
 		}
+		else if($this->tok_rollback)
+			$this->addFields('rev_user_text');
+		
 		if (isset ($prop['content'])) {
 
 			// For each page we will request, the user must have read rights for that page
@@ -112,12 +120,16 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$this->expandTemplates = $expandtemplates;
 		}
 
-		$userMax = ($this->fld_content ? 50 : 500);
-		$botMax = ($this->fld_content ? 200 : 10000);
+		$userMax = ( $this->fld_content ? ApiBase::LIMIT_SML1 : ApiBase::LIMIT_BIG1 );
+		$botMax  = ( $this->fld_content ? ApiBase::LIMIT_SML2 : ApiBase::LIMIT_BIG2 );
+		if( $limit == 'max' ) {
+			$limit = $this->getMain()->canApiHighLimits() ? $botMax : $userMax;
+			$this->getResult()->addValue( 'limits', $this->getModuleName(), $limit );
+		}
 
 		if ($enumRevMode) {
 
-			// This is mostly to prevent parameter errors (and optimize sql?)
+			// This is mostly to prevent parameter errors (and optimize SQL?)
 			if (!is_null($startid) && !is_null($start))
 				$this->dieUsage('start and startid cannot be used together', 'badparams');
 
@@ -205,7 +217,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				$this->extractRowInfo($row));
 		}
 		$db->freeResult($res);
-
+		
 		// Ensure that all revisions are shown as '<rev>' elements
 		$result = $this->getResult();
 		if ($result->getIsRawMode()) {
@@ -248,19 +260,27 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$vals['comment'] = $row->rev_comment;
 		}
 		
-		if ($this->fld_content) {
-			$text = Revision :: getRevisionText($row);
-			if ($this->expandTemplates) {
-				global $wgParser;
-				$text = $wgParser->preprocess( $text, Title::newFromID($row->rev_page), new ParserOptions() );
-			}
-			ApiResult :: setContent($vals, $text);
+		if($this->tok_rollback || ($this->fld_content && $this->expandTemplates))
+			$title = Title::newFromID($row->rev_page);
+		
+		if($this->tok_rollback) {
+			global $wgUser;
+			$vals['rollbacktoken'] = $wgUser->editToken(array($title->getPrefixedText(), $row->rev_user_text));
 		}
 		
+		
+		if ($this->fld_content) {
+			$text = Revision :: getRevisionText($row);			
+			if ($this->expandTemplates) {
+				global $wgParser;
+				$text = $wgParser->preprocess( $text, $title, new ParserOptions() );
+			}
+			ApiResult :: setContent($vals, $text);
+		}		
 		return $vals;
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'prop' => array (
 				ApiBase :: PARAM_ISMULTI => true,
@@ -308,10 +328,16 @@ class ApiQueryRevisions extends ApiQueryBase {
 			),
 			
 			'expandtemplates' => false,
+			'token' => array(
+				ApiBase :: PARAM_TYPE => array(
+					'rollback'
+				),
+				ApiBase :: PARAM_ISMULTI => true
+			),
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => 'Which properties to get for each revision.',
 			'limit' => 'limit how many revisions will be returned (enum)',
@@ -322,11 +348,12 @@ class ApiQueryRevisions extends ApiQueryBase {
 			'dir' => 'direction of enumeration - towards "newer" or "older" revisions (enum)',
 			'user' => 'only include revisions made by user',
 			'excludeuser' => 'exclude revisions made by user',
-			'expandtemplates' => 'expand templates in revision content'
+			'expandtemplates' => 'expand templates in revision content',
+			'token' => 'Which tokens to obtain for each revision',
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return array (
 			'Get revision information.',
 			'This module may be used in several ways:',

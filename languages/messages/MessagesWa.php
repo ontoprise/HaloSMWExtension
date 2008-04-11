@@ -1,8 +1,11 @@
 <?php
-/**
- * Walloon (Walon)
+/** Walloon (Walon)
  *
  * @addtogroup Language
+ *
+ * @author Srtxg
+ * @author Siebrand
+ * @author לערי ריינהארט
  */
 
 $fallback = 'fr';
@@ -188,9 +191,10 @@ $messages = array(
 'mytalk'         => 'Mi copinaedje',
 'anontalk'       => 'Pådje di copene po ciste adresse IP',
 'navigation'     => 'Naiviaedje',
+'and'            => 'eyet',
 
 # Metadata in edit box
-'metadata_help' => 'Meta-dnêyes (loukîz [[Project:Meta-dnêyes]] po pus di racsegnes)',
+'metadata_help' => 'Meta-dnêyes :',
 
 'errorpagetitle'    => 'Aroke',
 'returnto'          => 'Rivni al pådje «$1».',
@@ -242,22 +246,22 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'         => 'Åd fwait di {{SITENAME}}',
-'aboutpage'         => '{{ns:project}}:Åd fwait',
+'aboutpage'         => 'Project:Åd fwait',
 'bugreports'        => 'Rapoirts di bugs',
-'bugreportspage'    => '{{ns:project}}:Rapoirts di bugs',
+'bugreportspage'    => 'Project:Rapoirts di bugs',
 'copyright'         => "Li contnou est dizo l' $1.",
 'copyrightpagename' => 'Abondroets {{SITENAME}}',
 'copyrightpage'     => '{{ns:project}}:Abondroets',
 'currentevents'     => 'Actouwålités',
-'currentevents-url' => 'Actouwålités',
+'currentevents-url' => 'Project:Actouwålités',
 'edithelp'          => 'Aidance',
-'edithelppage'      => '{{ns:help}}:Kimint candjî ene pådje',
-'helppage'          => '{{ns:help}}:Aidance',
+'edithelppage'      => 'Help:Kimint candjî ene pådje',
+'helppage'          => 'Help:Aidance',
 'mainpage'          => 'Mwaisse pådje',
 'portal'            => 'Inte di nozôtes',
-'portal-url'        => '{{ns:project}}:Inte di nozôtes',
+'portal-url'        => 'Project:Inte di nozôtes',
 'sitesupport'       => 'Ecwårlaedje',
-'sitesupport-url'   => '{{ns:project}}:Ecwårlaedje',
+'sitesupport-url'   => 'Project:Ecwårlaedje',
 
 'badaccess' => "Åk n' a nén stî avou les permissions",
 
@@ -282,7 +286,7 @@ $messages = array(
 'feedlinks'               => 'Sindicåcion:',
 'feed-invalid'            => 'Sôre di sindicåcion nén valide.',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Årtike',
 'nstab-user'      => "Pådje di l' uzeu",
 'nstab-media'     => 'Media',
@@ -394,7 +398,7 @@ Vosse conte a stî ahivé.
 'nosuchuser'                 => "I g na nou uzeu dizo l' no «$1».
 Verifyîz çou k' vos avoz tapé, oudonbén rimplixhoz les ôtes tchamps
 et clitchîz sol boton po-z ahiver on novea conte.",
-'nosuchusershort'            => "I g na nou uzeu dizo l' no «$1». Verifyîz çou k' vos avoz tapé.",
+'nosuchusershort'            => "I g na nou uzeu dizo l' no «<nowiki>$1</nowiki>». Verifyîz çou k' vos avoz tapé.",
 'nouserspecified'            => "Vos dvoz dner on no d' elodjaedje.",
 'wrongpassword'              => "Li scret ki vs avoz dné est måva. Rissayîz s' i vs plait.",
 'wrongpasswordempty'         => "Vos avoz dné on vude sicret. Rissayîz s' i vs plait.",
@@ -461,7 +465,7 @@ Divant d' poleur evoyî èn ôte emile a ci conte la, vos dvroz shure les instru
 'blockedtitle'              => "L' uzeu est bloké",
 'blockedtext'               => "Vosse no d' uzeu ou voste adresse IP a stî blokêye pa $1.
 Li råjhon dnêye est:<br />''$2''<p>Vos ploz contacter $1 oudonbén onk des
-[[Project:Manaedjeus|manaedjeus]] po discuter do blocaedje.
+[[{{MediaWiki:Grouppage-sysop}}|manaedjeus]] po discuter do blocaedje.
 
 Notez ki vos n' poloz nén eployî l' fonccion «emiler a l' uzeu» a moens ki vos åyîz ene adresse emile valide dins vos [[Special:Preferences|preferinces]].
 
@@ -560,7 +564,6 @@ Do côp, vos n' såroz schaper vos candjmints asteure; motoit vos dvrîz copyî 
 'nocreatetext'              => "Cisse waibe ci a limité l' possibilité d' ahiver des novelès pådjes. Vos ploz rivni en erî eyet candjî ene pådje k' egzistêye dedja, oudonbén, [[Special:Userlogin|vos elodjî ou ahiver on conte d' uzeu]].",
 
 # History pages
-'revhistory'          => 'Istwere des modêyes',
 'viewpagelogs'        => 'Vey les djournås po cisse pådje ci',
 'nohistory'           => "I n' a pont d' istwere des modêyes po cisse pådje chal.",
 'revnotfound'         => 'Modêye nén trovêye',
@@ -586,7 +589,7 @@ Ledjinde: (ast.) = diferince avou l' modêye d' asteure,
 'deletedrev'          => '[disfacé]',
 'histfirst'           => 'li pus vî',
 'histlast'            => 'li dierin',
-'historysize'         => '($1 octets)',
+'historysize'         => '({{PLURAL:$1|1 octet|$1 octets}})',
 'historyempty'        => '(vude)',
 
 # Revision feed
@@ -621,18 +624,14 @@ Les ôtes manaedjeus so ç' wiki ci pôront todi vey li contnou catchî eyet l' 
 'logdelete-logaction'         => '$1 {{PLURAL:$1|evenmint|evenmints}} po [[$3]] metou e môde $2',
 
 # Diffs
-'difference'                => '(Diferinces inte les modêyes)',
-'loadingrev'                => 'tcherdjaedje del modêye po les diferinces',
-'lineno'                    => 'Roye $1:',
-'editcurrent'               => 'Candjî li modêye do moumint di cisse pådje chal',
-'selectnewerversionfordiff' => 'Tchoezi ene nouve modêye po comparer',
-'selectolderversionfordiff' => 'Tchoezi ene modêye pus viye po comparer',
-'compareselectedversions'   => 'Comparer les modêyes tchoezeyes',
-'editundo'                  => 'disfé',
+'difference'              => '(Diferinces inte les modêyes)',
+'lineno'                  => 'Roye $1:',
+'compareselectedversions' => 'Comparer les modêyes tchoezeyes',
+'editundo'                => 'disfé',
 
 # Search results
 'searchresults'         => 'Rizultats do cweraedje',
-'searchresulttext'      => 'Po pus di racsegnes sol manire di fé des cweraedjes so {{SITENAME}}, loukîz [[Project:Cweraedje|Cweraedje so {{SITENAME}}]].',
+'searchresulttext'      => 'Po pus di racsegnes sol manire di fé des cweraedjes so {{SITENAME}}, loukîz [[{{MediaWiki:Helppage}}|{{int:help}}]].',
 'searchsubtitle'        => 'Pol cweraedje «[[$1]]»',
 'searchsubtitleinvalid' => 'Pol cweraedje «$1»',
 'noexactmatch'          => "'''I n' a nole pådje avou l' tite «$1».''' Vos poloz [[:$1|ahiver cisse pådje la]].",
@@ -731,9 +730,9 @@ Les groupes nén tchoezis èn seront nén candjîs. Vos ploz distchoezi on group
 'group-sysop-member'      => 'manaedjeu',
 'group-bureaucrat-member' => 'mwaisse-manaedjeu',
 
-'grouppage-bot'        => 'Project:Robots',
-'grouppage-sysop'      => 'Project:Manaedjeus',
-'grouppage-bureaucrat' => 'Project:Mwaisse-manaedjeus',
+'grouppage-bot'        => '{{ns:project}}:Robots',
+'grouppage-sysop'      => '{{ns:project}}:Manaedjeus',
+'grouppage-bureaucrat' => '{{ns:project}}:Mwaisse-manaedjeus',
 
 # User rights log
 'rightslog'      => 'Djournå des droets des uzeus',
@@ -762,7 +761,7 @@ Les groupes nén tchoezis èn seront nén candjîs. Vos ploz distchoezi on group
 'number_of_watching_users_pageview' => '[shuvou pa $1 uzeu(s)]',
 'rc_categories'                     => 'Limiter åzès categoreyes (separer avou des «|»)',
 'rc_categories_any'                 => 'Totes',
-'newsectionsummary'                 => '!!FUZZY!!Novele seccion:',
+'newsectionsummary'                 => '/* $1 */ novele seccion',
 
 # Recent changes linked
 'recentchangeslinked' => 'Candjmints aloyîs',
@@ -880,6 +879,9 @@ ou co po les sons
 'unusedtemplatestext' => "Cisse pådje ci mostere totes les pådjes di modele (espåce di lomaedje «{{ns:template}}») ki n' sont nén eployîs dins ene ôte pådje. Rimimbrez vs di verifyî s' i n' a nén des ôtes loyéns divant delzès disfacer.",
 'unusedtemplateswlh'  => 'ôtes loyéns',
 
+# Random page
+'randompage' => "Årtike a l' astcheyance",
+
 # Random redirect
 'randomredirect' => "Redjiblaedje a l' astcheyance",
 
@@ -938,7 +940,6 @@ Li longueur del [http://meta.wikimedia.org/wiki/Help:Job_queue cawêye des bouye
 'mostrevisions'           => "Årtikes avou l' pus di candjmints",
 'allpages'                => 'Totes les pådjes',
 'prefixindex'             => 'Indecse pa betchete',
-'randompage'              => "Årtike a l' astcheyance",
 'shortpages'              => 'Coûtès pådjes',
 'longpages'               => 'Longowès pådjes',
 'deadendpages'            => 'Pådjes sins nou loyén wiki',
@@ -947,7 +948,6 @@ Li longueur del [http://meta.wikimedia.org/wiki/Help:Job_queue cawêye des bouye
 'specialpages'            => 'Pådjes sipeciåles',
 'spheading'               => 'Pådjes sipeciåles po tos ls uzeus',
 'restrictedpheading'      => 'Pådjes sipeciåles po les manaedjeus',
-'rclsub'                  => '(ezès pådjes ki «$1» a-st on loyén dzeu)',
 'newpages'                => 'Novelès pådjes',
 'ancientpages'            => 'Viyès pådjes',
 'intl'                    => 'Loyéns eterlingaedjes',
@@ -1019,14 +1019,14 @@ Do côp, c' est nén possibe di lyi evoyî èn emile.",
 'watchnologin'         => "Vos n' estoz nén elodjî",
 'watchnologintext'     => 'I vs fåt esse [[Special:Userlogin|elodjî]] po pleur candjî vosse djivêye des pådjes a shuve.',
 'addedwatch'           => 'Radjouté ås shuvous',
-'addedwatchtext'       => "Li pådje «$1» a stî radjoutêye a vosse [[Special:Watchlist|djivêye des pådjes a shuve]].
+'addedwatchtext'       => "Li pådje «<nowiki>$1</nowiki>» a stî radjoutêye a vosse [[Special:Watchlist|djivêye des pådjes a shuve]].
 Tos les candjmints k' i gn årè di cisse pådje chal, 
 eyet di si pådje di copene, seront håynés chal, eyet li pådje serè metowe e '''cråssès letes'''
 el [[Special:Recentchanges|djivêye des dierins candjmints]] po k' ça soeye pus åjhey por vos del rimårker.
 
 Si vos vloz bodjî l' pådje foû di vosse djivêye des shuvous, clitchîz so «Èn pus shuve li pådje» dins l' bår di menu sol costé.",
 'removedwatch'         => 'Bodjî foû des shuvous',
-'removedwatchtext'     => 'Li pådje «$1» a stî bodjeye foû di vosse djivêye des pådjes a shuve.',
+'removedwatchtext'     => 'Li pådje «<nowiki>$1</nowiki>» a stî bodjeye foû di vosse djivêye des pådjes a shuve.',
 'watch'                => 'Shuve',
 'watchthispage'        => 'Shuve cisse pådje',
 'unwatch'              => 'Èn pus shuve',
@@ -1081,16 +1081,14 @@ Po pus d\' aidance:
 'excontentauthor'             => "li contnou esteut: «$1» (eyet l' seu contribouweu esteut «$2»)",
 'exbeforeblank'               => "li contnou dvant l' disfaçaedje esteut: «$1»",
 'exblank'                     => 'li pådje esteut vude',
-'confirmdelete'               => 'Acertinaedje do disfaçaedje',
-'deletesub'                   => '(Disfaçaedje di «$1»)',
 'historywarning'              => 'Asteme: Li pådje ki vos alez disfacer a-st ene istwere:',
 'confirmdeletetext'           => "Vos alez disfacer po tofer del båze di dnêyes ene
 pådje ou ene imådje, avou tote si istwere.
 Acertinez s' i vs plait ki c' est bén çoula ki vos vloz fé,
 ki vos comprindoz les consecwinces, et ki vos fjhoz çoula
-tot [[Project:Rîles a shure|shuvant les rîles]].",
+tot [[{{MediaWiki:Policy-url}}|shuvant les rîles]].",
 'actioncomplete'              => 'Fwait',
-'deletedtext'                 => 'Li pådje «$1» a stî disfacêye. Loukîz li $2 po ene
+'deletedtext'                 => 'Li pådje «<nowiki>$1</nowiki>» a stî disfacêye. Loukîz li $2 po ene
 djivêye des dierins disfaçaedjes.',
 'deletedarticle'              => 'pådje «$1» disfacêye',
 'dellogpage'                  => 'Djournå des disfaçaedjes',
@@ -1105,7 +1103,7 @@ ene sakî d' ôte a ddja candjî l' årtike ou ddja rmetou l' modêye di dvant.
 
 Li dierin candjmint a stî fwait pa [[User:$3|$3]] ([[User talk:$3|Copene]]).",
 'editcomment'                 => 'Li comintaire do candjmint esteut: «<i>$1</i>».', # only shown if there is an edit comment
-'revertpage'                  => 'Disfwait li candjmint da [[Special:Contributions/$2|$2]] ([[User talk:$2|copene]]); li dierin candjmint est asteure da [[User:$1|$1]]',
+'revertpage'                  => 'Disfwait li candjmint da [[Special:Contributions/$2|$2]] ([[User talk:$2|copene]]); li dierin candjmint est asteure da [[User:$1|$1]]', # Additional available: $3: revid of the revision reverted to, $4: timestamp of the revision reverted to, $5: revid of the revision reverted from, $6: timestamp of the revision reverted from
 'protectlogpage'              => 'Djournå des protedjaedjes',
 'protectlogtext'              => "Chal pa dzo c' est ene djivêye des protedjaedjes et disprotedjaedjes des pådjes.",
 'protectedarticle'            => '«[[$1]]» protedjî',
@@ -1115,7 +1113,7 @@ Li dierin candjmint a stî fwait pa [[User:$3|$3]] ([[User talk:$3|Copene]]).",
 'protectcomment'              => 'Råjhon po protedjî',
 'unprotectsub'                => '(Disprotedjant «$1»)',
 'protect-unchain'             => 'Disbloker les permissions di displaeçaedje',
-'protect-text'                => "Vos ploz droci vey eyet candjî l' livea d' protedjaedje pol pådje <strong>$1</strong>.",
+'protect-text'                => "Vos ploz droci vey eyet candjî l' livea d' protedjaedje pol pådje <strong><nowiki>$1</nowiki></strong>.",
 'protect-default'             => '(prémetou)',
 'protect-level-autoconfirmed' => 'Bloker les uzeus nén eredjîstrés',
 'protect-level-sysop'         => 'Seulmint les manaedjeus',
@@ -1168,10 +1166,6 @@ Loukîz l' [[Special:Log/delete|djournå des disfaçaedjes]] po ene djivêye des
 'ucnote'        => "Chal pa dzo les <b>$1</b> dierins candjmints di l' uzeu so les <b>$2</b> dierins djoûs.",
 'uclinks'       => 'Vey les $1 dierins candjmints; vey les $2 dierins djoûs.',
 
-'sp-contributions-newest' => 'Dierins ovraedjes',
-'sp-contributions-oldest' => 'Prumîs ovraedjes',
-'sp-contributions-newer'  => '$1 di dvant',
-'sp-contributions-older'  => '$1 shuvants',
 'sp-contributions-submit' => 'Cweri',
 
 'sp-newimages-showfrom' => 'Mostrer les nouvès imådjes a pårti do $1',
@@ -1189,7 +1183,7 @@ Loukîz l' [[Special:Log/delete|djournå des disfaçaedjes]] po ene djivêye des
 l' accès e scrijhaedje d' èn uzeu dné ou a pårt d' ene
 adresse IP dnêye. Çouci èn doet esse fwait ki po-z arester les
 vandales, et çoula doet esse fwait tot shuvant les
-[[Project:Rîles a shure|rîles di {{SITENAME}}]].
+[[{{MediaWiki:Policy-url}}|rîles]].
 Dinez ene råjhon do blocaedje (eg: dijhoz les pådjes k' ont
 stî vandalijheyes).",
 'ipaddress'                   => "Adresse IP/no d' uzeu",
@@ -1198,7 +1192,7 @@ stî vandalijheyes).",
 'ipbreason'                   => 'Råjhon',
 'ipbsubmit'                   => 'Bloker cist uzeu',
 'ipbother'                    => 'Ôte termene',
-'ipboptions'                  => '2 eures:2 hours,1 djoû:1 day,3 djoûs:3 days,1 samwinne:1 week,2 samwinnes:2 weeks,1 moes:1 month,3 moes:3 months,6 moes:6 months,1 anêye:1 year,po todi:infinite',
+'ipboptions'                  => '2 eures:2 hours,1 djoû:1 day,3 djoûs:3 days,1 samwinne:1 week,2 samwinnes:2 weeks,1 moes:1 month,3 moes:3 months,6 moes:6 months,1 anêye:1 year,po todi:infinite', # display1:time1,display2:time2,...
 'ipbotheroption'              => 'ôte',
 'badipaddress'                => "Nol uzeu avou ç' no la, ou adresse IP nén valide",
 'blockipsuccesssub'           => 'Li blocaedje a stî comifåt',
@@ -1308,13 +1302,12 @@ Dins ç' dierin cas, vos ploz eto eployî ene hårdêye, eg: [[Special:Export/{{
 'allmessagesdefault'        => 'Tecse prémetou',
 'allmessagescurrent'        => 'Tecse pol moumint',
 'allmessagestext'           => "Çouchal est ene djivêye di tos les messaedjes k' i gn a dins l' espåce di lomaedje ''MediaWiki:''",
-'allmessagesnotsupportedDB' => "'''Special:AllMessages''' n' est nén sopoirté paski '''\$wgUseDatabaseMessages''' est dismetou.",
+'allmessagesnotsupportedDB' => "'''{{ns:special}}:AllMessages''' n' est nén sopoirté paski '''\$wgUseDatabaseMessages''' est dismetou.",
 'allmessagesfilter'         => 'Erîlêye ratourneure pol passete:',
 'allmessagesmodified'       => 'Seulmint les cis candjîs',
 
 # Thumbnails
 'thumbnail-more'  => 'Ragrandi',
-'missingimage'    => '<b>Imådje mancante:</b><br /><i>$1</i>',
 'filemissing'     => 'Fitchî mancant',
 'thumbnail_error' => "Åk n' a nén stî tot fjhant l' pitite imådje: $1",
 
@@ -1405,7 +1398,6 @@ Totes les accions di rcopiaedje eterwiki sont metowes e [[Special:Log/import|djo
 'anonymous'        => 'Uzeu(s) anonime(s) di {{SITENAME}}',
 'siteuser'         => "Uzeu d' {{SITENAME}} «$1»",
 'lastmodifiedatby' => 'Cisse pådje a stî candjeye pol dierin côp li $2, $1 pa $3.', # $1 date, $2 time, $3 user
-'and'              => 'eyet',
 'othercontribs'    => "Båzé so l' ovraedje da $1.",
 'others'           => 'des ôtes',
 'siteusers'        => "Uzeu(s) d' {{SITENAME}} «$1»",
@@ -1462,7 +1454,7 @@ est raptiti. Les ôtes seront catchîs.
 * datetimeoriginal
 * exposuretime
 * fnumber
-* focallength",
+* focallength", # Do not translate list items
 
 # EXIF tags
 'exif-imagewidth'                => 'Lårdjeur',
@@ -1659,7 +1651,6 @@ $1",
 'size-gigabytes' => '$1 Go',
 
 # Watchlist editor
-'watchlistedit-clear-submit' => 'Netyî',
-'watchlistedit-raw-titles'   => 'Tites:',
+'watchlistedit-raw-titles' => 'Tites:',
 
 );
