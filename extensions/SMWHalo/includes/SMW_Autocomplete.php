@@ -39,7 +39,7 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
   * Returns: xml representation with titles and type of entities.
   */
  function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint) {
- 	global $semanticAC, $wgLang;
+ 	global $smwgSemanticAC, $wgLang;
  	
 	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
   	// remove common namespaces from user input
@@ -192,7 +192,7 @@ class AutoCompletionRequester {
 	public static function getPropertyTargetProposals($userContext, $match) {
 		// special handling for special relations
 		
- 	    	global $smwgContLang, $smwgHaloContLang, $semanticAC, $wgLang;
+ 	    	global $smwgContLang, $smwgHaloContLang, $smwgSemanticAC, $wgLang;
  	    	$specialProperties = $smwgContLang->getSpecialPropertiesArray();
  	    	$specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  	    		
@@ -222,7 +222,7 @@ class AutoCompletionRequester {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_CATEGORY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else {
- 	    		if ($semanticAC) { 
+ 	    		if ($smwgSemanticAC) { 
  	    			if (stripos($userContext,":=") > 0) { 
  	    				$relationText = substr($userContext, 2, stripos($userContext,":=")-2);
  	    			} else {
@@ -233,14 +233,13 @@ class AutoCompletionRequester {
  	    		
  	    			$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
  	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeRelation);
- 	    			$pages = array();
- 	    			$options = new SMWRequestOptions();
- 	    			$options->limit = SMW_AC_MAX_RESULTS;
- 	    			if (count($domainRangeAnnotations) > 0) { // ignore multiple ranges
- 	    				$dv = $domainRangeAnnotations[0]->getDVs();
- 	    				if ($dv[1] !== NULL && $dv[1]->isValid()) {
- 	    					$pages = smwfGetSemanticStore()->getInstances($dv[1]->getTitle(), $options);
-	    				}
+ 	    				    			
+ 	    			$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
+ 	    			
+ 	    			if (count($pages) == 0) {
+ 	    				// fallback to non semantic AC
+ 	    				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
+ 	    				
  	    			}
  	    			return AutoCompletionRequester::encapsulateAsXML($pages);
  	    		} else {  	
@@ -279,12 +278,16 @@ class AutoCompletionRequester {
 	 * Get property proposals. Consider special properties too.
 	 */
 	public static function getPropertyProposals($articleName, $match) {
-		global $semanticAC, $wgLang;
-		if ($semanticAC) { 
+		global $smwgSemanticAC, $wgLang;
+		   if ($smwgSemanticAC) { 
  	    		// get all categories of the article
  	    		$articleTitle = Title::newFromText($articleName);
  	    		$pages = smwfGetAutoCompletionStore()->getPropertyForInstance($match, $articleTitle, true);
-			
+			    if (count($pages) == 0) {
+			    	// fallback to non semantic AC
+			    	$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
+			    	
+			    }
  	    	} else {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
  	    	}
@@ -313,8 +316,8 @@ class AutoCompletionRequester {
 	 */
 	public static function getTemplateProposals($userContext, $match) {
 		// template context
- 		global $semanticAC, $wgLang;
- 		if ($semanticAC) {
+ 		global $smwgSemanticAC, $wgLang;
+ 		if ($smwgSemanticAC) {
  			// TODO: need template schema data. current implementation is the same as for non-semantic AC.
  			
  			// -------------- this is obsolete --------------------
@@ -509,8 +512,8 @@ abstract class AutoCompletionStorage {
 	/**
 	 * Returns units which matches the types of the given property and the substring
 	 * 
-	 * @param $property
-	 * @param $substring
+	 * @param Title $property
+	 * @param string $substring
 	 * 
 	 * @return array of strings
 	 */
@@ -519,7 +522,7 @@ abstract class AutoCompletionStorage {
 	/**
 	 * Returns possible values for a given property.
 	 * 
-	 * @param $property 
+	 * @param Title $property 
 	 * @return array of strings
 	 */
 	public abstract function getPossibleValues(Title $property);
@@ -527,7 +530,8 @@ abstract class AutoCompletionStorage {
 	/**
  	* Retrieves pages matching the requestoptions and the given namespaces
  	* 
- 	* TODO: should be transferred to storage layer
+ 	* @param string match
+ 	* @param array of integer or NULL
  	* 
  	* @return array of Title
  	*/
@@ -538,8 +542,8 @@ abstract class AutoCompletionStorage {
 	 * 
 	 * TODO: should be transferred to storage layer
 	 * 
-	 * @param $match substring
-	 * @param $typeLabel primitive type or unit
+	 * @param string $match substring
+	 * @param string $typeLabel primitive type or unit
 	 */
 	public abstract function getPropertyWithType($match, $typeLabel); 
 	
@@ -547,11 +551,21 @@ abstract class AutoCompletionStorage {
 	 * Returns (including inferred) properties which match a given $instance for domain or range
 	 * If $instance is not part of any category, it will return an empty result set.
 	 * 
-	 * @param $userInputToMatch substring must be part of property title
-	 * @param $instance
-	 * @param $matchDomainOrRange True, if $instance must match domain or range
+	 * @param string $userInputToMatch substring must be part of property title
+	 * @param Title $instance
+	 * @param boolean $matchDomainOrRange True, if $instance must match domain, false for range
 	 */
 	public abstract function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange);
+	
+	/**
+	 * Returns instances which are member of the given range(s) and which match $userInputToMatch.
+	 *
+	 * @param string $userInputToMatch
+	 * @param Array of SMWNaryValue $domainRangeAnnotations
+	 * 
+	 * @return array of (Title instance)
+	 */
+	public abstract function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations);
 }
 
 class AutoCompletionStorageSQL extends AutoCompletionStorage {
@@ -744,6 +758,92 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$db->query('DROP TABLE smw_ob_properties_super');
 		$db->query('DROP TABLE smw_ob_properties_sub');
 		return $result;
+	}
+	
+	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
+		global $smwgDefaultCollation;
+        $db =& wfGetDB( DB_MASTER ); 
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+    
+        if (!isset($smwgDefaultCollation)) {
+            $collation = '';
+        } else {
+            $collation = 'COLLATE '.$smwgDefaultCollation;
+        }
+        // create virtual tables
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.')
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+        
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+      
+        // initialize with direct instances
+        foreach($domainRangeAnnotations as $dr) {               
+        	$dvs = $dr->getDVs();
+        	if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
+            $db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+                        'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+    
+       
+            $db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).')');
+            
+        }
+        
+        $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+        // maximum iteration length is maximum category tree depth.
+        do  {
+            $maxDepth--;
+            
+            // get next subcategory level
+            $db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
+            
+            // insert direct instances of current subcategory level
+            $db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+                        'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+            
+            // copy subcatgegories to supercategories of next iteration
+            $db->query('DELETE FROM smw_ob_instances_super');
+            $db->query('INSERT INTO smw_ob_instances_super (SELECT * FROM smw_ob_instances_sub)');
+            
+            // check if there was least one more subcategory. If not, all instances were found.
+            $res = $db->query('SELECT COUNT(category) AS numOfSubCats FROM smw_ob_instances_super');
+            $numOfSubCats = $db->fetchObject($res)->numOfSubCats;
+            $db->freeResult($res);
+            
+            $db->query('DELETE FROM smw_ob_instances_sub');
+            
+        } while ($numOfSubCats > 0 && $maxDepth > 0);
+        
+    
+        $db->query('DROP TABLE smw_ob_instances_super');
+        $db->query('DROP TABLE smw_ob_instances_sub');
+        
+       
+        $res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
+        
+        $results = array();
+        if($db->numRows( $res ) > 0)
+        {
+            $row = $db->fetchObject($res);
+           
+               while($row)
+                {   
+                    $instance = Title::newFromText($row->instance, NS_MAIN);
+                    $results[] = $instance;
+                    $row = $db->fetchObject($res);
+                }
+            
+        }
+        $db->freeResult($res);
+        
+        // drop virtual tables
+        $db->query('DROP TABLE smw_ob_instances');
+        return $results;
 	}
 }
 

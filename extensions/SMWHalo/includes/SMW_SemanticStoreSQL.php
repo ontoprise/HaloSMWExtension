@@ -229,22 +229,35 @@
 		return $result;
 	}
 	
-	function getInstances(Title $categoryTitle, $requestoptions = NULL) {
+	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
 		$db =& wfGetDB( DB_MASTER ); 
 		$this->createVirtualTableWithInstances($categoryTitle, $db);
+		$sqlCond = DBHelper::getSQLConditions($requestoptions, 'instance', 'instance');
 		
-		$res = $db->query('SELECT instance, category FROM smw_ob_instances '.DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
-		
+		if ($withCategories) {
+		  $res = $db->query('SELECT instance, category FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
+		} else {
+		  $res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
+		}
 		$results = array();
 		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
-			while($row)
-			{	
-				$instance = Title::newFromText($row->instance, NS_MAIN);
-				$category = Title::newFromText($row->category, NS_CATEGORY);
-				$results[] = array($instance, $category);
-				$row = $db->fetchObject($res);
+			if ($withCategories) {
+			   while($row)
+                {   
+                    $instance = Title::newFromText($row->instance, NS_MAIN);
+                    $category = Title::newFromText($row->category, NS_CATEGORY);
+                    $results[] = array($instance, $category);
+                    $row = $db->fetchObject($res);
+                }
+			} else {
+			   while($row)
+                {   
+                    $instance = Title::newFromText($row->instance, NS_MAIN);
+                    $results[] = $instance;
+                    $row = $db->fetchObject($res);
+                }
 			}
 		}
 		$db->freeResult($res);
@@ -927,7 +940,7 @@
 	 * Initializes the logging component
 	 */
 	protected function setupLogging($verbose) {
-			global $smwhgEnableLogging; 
+			
 			DBHelper::reportProgress("Setting up logging ...\n",$verbose);
 			DBHelper::reportProgress("   ... Creating logging database \n",$verbose);
 			global $wgDBname;

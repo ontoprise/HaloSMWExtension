@@ -88,7 +88,7 @@ require_once("SMW_GardeningLog.php");
  if ($bot != null) { 
  	echo ("Starting bot: $botID\n");
  	// run bot
- 	global $wgGardeningBotDelay;
+ 	global $smwgGardeningBotDelay;
  	try { 
  		$bot->setTaskID($taskid);
  		// initialize term signal socket
@@ -100,7 +100,7 @@ require_once("SMW_GardeningLog.php");
  		// 	2. Replace {{percantage}} by %
  		// 	3. decode URL
  		//  4. convert string of the form (key=value,)* to a hash array 
- 		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  		@socket_close($bot->getTermSignalSocket());
  		if ($bot->isAborted()) {
  			print "\n - Bot was aborted by user! - \n";

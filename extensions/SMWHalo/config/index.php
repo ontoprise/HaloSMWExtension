@@ -32,13 +32,13 @@
 		 	$phpInterpreterText = str_replace("\\", "/", getVariable($content, 'phpInterpreter'));
 		 	$phpInterpreter = substr($phpInterpreterText,1,strlen($phpInterpreterText)-2);
 		 	
-		 	$gardeningBotDelayText = getVariable($content, 'wgGardeningBotDelay');
+		 	$gardeningBotDelayText = getVariable($content, 'smwgGardeningBotDelay');
 		 	$gardeningBotDelay =  $gardeningBotDelayText == '' ? 100 : $gardeningBotDelayText;
 		 	
-		 	$semanticAC = isTrue($content, 'semanticAC');
+		 	$semanticAC = isTrue($content, 'smwgSemanticAC');
 		 	$enableDeployVersion = isTrue($content, 'smwgDeployVersion');
-		 	$enabledLogging = isTrue($content, 'smwhgEnableLogging');
-		 	$keepGardeningConsole = isTrue($content, 'keepGardeningConsole');
+		 	$enabledLogging = isTrue($content, 'smwgEnableLogging');
+		 	$keepGardeningConsole = isTrue($content, 'smwgKeepGardeningConsole');
 		 	
 		 	$collationText = getVariable($content, 'smwgDefaultCollation');
 		 	$collation = $collationText == NULL ? NULL : substr($collationText, 1, strlen($collationText) -2);
@@ -128,12 +128,12 @@
 	   
 	    // set/remove/change LocalSettings.php
 	    $content = setVariable($content, "phpInterpreter", str_replace("\\\\", "/", $phpInterpreter));
-	    $content = setVariable($content, "semanticAC", $semanticAC ? "true" : "false");
-	    $content = setVariable($content, "wgGardeningBotDelay", $gardeningBotDelay);
+	    $content = setVariable($content, "smwgSemanticAC", $semanticAC ? "true" : "false");
+	    $content = setVariable($content, "smwgGardeningBotDelay", $gardeningBotDelay);
 	    $content = setVariable($content, "smwgDeployVersion", $enableDeployVersion ? "true" : "false");
-	    $content = setVariable($content, "smwhgEnableLogging", $enabledLogging ? "true" : "false");
+	    $content = setVariable($content, "smwgEnableLogging", $enabledLogging ? "true" : "false");
 	    $content = setVariable($content, "smwgDefaultCollation", $collation);
-	    $content = setVariable($content, "keepGardeningConsole", $keepGardeningConsole ? "true" : "false");
+	    $content = setVariable($content, "smwgKeepGardeningConsole", $keepGardeningConsole ? "true" : "false");
 	   	
 	   	// always add
 	   	$content = setVariable($content, "smwgAllowNewHelpQuestions", "true");

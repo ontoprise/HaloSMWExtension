@@ -29,8 +29,8 @@
  * to the database
  */
 function smwLog($logmsg, $type = "" , $function="", $locationForce = "" , $timestamp = ""){
-		global $smwhgEnableLogging, $wgUser, $wgTitle;
-		if($smwhgEnableLogging !== true){
+		global $smwgEnableLogging, $wgUser, $wgTitle;
+		if($smwgEnableLogging !== true){
 			return "";
 		}
 		$db = wfGetDB( DB_MASTER );

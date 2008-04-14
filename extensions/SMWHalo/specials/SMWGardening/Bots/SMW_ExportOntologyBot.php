@@ -37,8 +37,8 @@
  		$this->mapWikiTypeToXSD['_int'] = 'integer'; // deprecated
  		$this->mapWikiTypeToXSD['_flt'] = 'float'; // deprecated
  		
- 		global $wgGardeningBotDelay;
- 		$this->delay = isset($wgGardeningBotDelay) && is_numeric($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0;
+ 		global $smwgGardeningBotDelay;
+ 		$this->delay = isset($smwgGardeningBotDelay) && is_numeric($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0;
  	}
  	
  	public function getHelpText() {

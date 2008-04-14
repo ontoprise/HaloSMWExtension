@@ -265,14 +265,14 @@
     * @param $keepConsoleAfterTermination: 
     */	
  	 public static function runBot($botID, $params = "", $runAsync = true) {
- 	 	global $keepGardeningConsole;
- 	 	$keepConsoleAfterTermination = isset($keepGardeningConsole) ? $keepGardeningConsole : false;
+ 	 	global $smwgKeepGardeningConsole;
+ 	 	$keepConsoleAfterTermination = isset($smwgKeepGardeningConsole) ? $smwgKeepGardeningConsole : false;
  	 	
  	 	// check if bot is registered
  	 	if (!GardeningBot::isBotKnown($botID)) {
  	 		return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_unknown_bot');  
  	 	}
- 	 	global $phpInterpreter, $wgUser, $registeredBots, $wgGardeningBotDelay;
+ 	 	global $phpInterpreter, $wgUser, $registeredBots, $smwgGardeningBotDelay;
  		$userId = $wgUser->getId();
  		$bot = $registeredBots[$botID];
  		
@@ -319,7 +319,7 @@
   
  				$paramArray = explode(" ", urldecode($params));
  				if ($bot != null) { 
- 					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 					$log = $bot->run($paramArray, $runAsync, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
@@ -348,7 +348,7 @@
 				  
  				$paramArray = explode(" ", urldecode($params));
  				if ($bot != null) { 
- 					$log = $bot->run($paramArray, $runAsync, isset($wgGardeningBotDelay) ? $wgGardeningBotDelay : 0);
+ 					$log = $bot->run($paramArray, $runAsync, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}

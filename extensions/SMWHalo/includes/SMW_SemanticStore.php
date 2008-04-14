@@ -122,9 +122,9 @@
 	 * In the case of a cycle in the category inheritance graph, this method has a treshhold
 	 * to stop execution before a stack overflow occurs.
 	 * 
-	 * @return array of tuples (instance, category)
+	 * @return if $withCategories == true array of tuples (Title instance, Title category), otherwise array of Title
 	 */
-	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL); 
+	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true); 
 	
 	/**
 	 * Returns all direct instances of $categoryTitle

@@ -147,15 +147,15 @@ $smwgIQEnabled=true;
 
 $smwgAllowNewHelpQuestions=true;
 
-$keepGardeningConsole=true;
+$smwgKeepGardeningConsole=true;
 
-$smwhgEnableLogging=false;
+$smwgEnableLogging=false;
 
 $smwgDeployVersion=false;
 
-$wgGardeningBotDelay=100;
+$smwgGardeningBotDelay=100;
 
-$semanticAC=false;
+$smwgSemanticAC=false;
 
 $phpInterpreter="{{xamp-install}}/php/php.exe";
 
