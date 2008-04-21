@@ -501,7 +501,8 @@ OntologyModifier.prototype = {
 		if (success == "true") {
 			if (this.redirect) {
 				// open the new article in another tab.
-				window.open("index.php?title="+title,"_blank");
+				var indexStr = wgScript.substring(wgScript.lastIndexOf("/")+1);
+				window.open(indexStr+"?title="+title,"_blank");
 			}
 		}
 	},
