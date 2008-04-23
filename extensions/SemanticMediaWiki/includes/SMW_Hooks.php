@@ -150,7 +150,7 @@ function smwfDeleteHook(&$article, &$user, &$reason) {
 *  semantic properties are moved accordingly.
 */
 function smwfMoveHook(&$old_title, &$new_title, &$user, $pageid, $redirid) {
-	smwfGetStore()->changeTitle($old_title, $new_title);
+	smwfGetStore()->changeTitle($old_title, $new_title, $pageid, $redirid);
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
@@ -162,11 +162,9 @@ function smwfMoveHook(&$old_title, &$new_title, &$user, $pageid, $redirid) {
 function smwfShowListPage (&$title, &$article){
 	global $smwgIP;
 	if ($title->getNamespace() == SMW_NS_TYPE){
-		smwfInitUserMessages();
 		include_once($smwgIP . '/includes/articlepages/SMW_TypePage.php');
 		$article = new SMWTypePage($title);
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
-		smwfInitUserMessages();
 		include_once($smwgIP . '/includes/articlepages/SMW_PropertyPage.php');
 		$article = new SMWPropertyPage($title);
 	}

@@ -19,7 +19,7 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
 		$cols = array(); //Names of columns
 		$gi_store = SMWGardening::getGardeningIssuesAccess();
-
+		
 		// print header
 		if ('broadtable' == $this->mFormat)
 			$widthpara = ' width="100%"';
@@ -69,12 +69,10 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 						}
 					}
 				}
-				
 				while ( ($object = $field->getNextObject()) !== false ) {
 					if($firstcol){ //save gardening issues for the article of the current row
 						$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, SMW_CONSISTENCY_BOT_BASE + 3, $object->getTitle(), NULL, NULL);
 					}
-					
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
 						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 					} else {
@@ -102,14 +100,12 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		}
 
 		// print further results footer
-		if ( $this->mInline && $res->hasFurtherResults() ) {
-			$label = $this->mSearchlabel;
-			if ($label === NULL) { //apply default
-				$label = wfMsgForContent('smw_iq_moreresults');
+		if ( $this->mInline && $res->hasFurtherResults() && $this->mSearchlabel !== '') {
+			$link = $res->getQueryLink();
+			if ($this->mSearchlabel) {
+				$link->setCaption($this->mSearchlabel);
 			}
-			if ($label != '') {
-				$result .= "\t<tr class=\"smwfooter\"><td class=\"sortbottom\" colspan=\"" . $res->getColumnCount() . '"> ' . $this->getFurtherResultsLink($outputmode,$res,$label) . "</td></tr>\n";
-			}
+			$result .= "\t<tr class=\"smwfooter\"><td class=\"sortbottom\" colspan=\"" . $res->getColumnCount() . '"> ' . $link->getText($outputmode,$this->getLinker()) . "</td></tr>\n";
 		}
 		$result .= "</table>\n"; // print footer
 		return $result;
@@ -132,5 +128,4 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		}
 		return $tt;
 	}
-
 }

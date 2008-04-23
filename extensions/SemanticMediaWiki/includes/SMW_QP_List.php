@@ -34,7 +34,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 	}
 
 	protected function getResultText($res,$outputmode) {
-		global $wgTitle,$smwgStoreActive;
+		global $smwgStoreActive, $wgParser;
 		// print header
 		$result = $this->mIntro;
 		if ( ('ul' == $this->mFormat) || ('ol' == $this->mFormat) ) {
@@ -58,7 +58,6 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		}
 
 		if ($this->mTemplate != '') {
-			global $wgParser;
 			$parser_options = new ParserOptions();
 			$parser_options->setEditSection(false);  // embedded sections should not have edit links
 			$parser = clone $wgParser;
@@ -126,7 +125,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 			$old_smwgStoreActive = $smwgStoreActive;
 			$smwgStoreActive = false; // no annotations stored, no factbox printed
 			if ($outputmode === SMW_OUTPUT_HTML) {
-				$parserOutput = $parser->parse($result, $wgTitle, $parser_options);
+				$parserOutput = $parser->parse($result, $wgParser->getTitle(), $parser_options);
 				$result = $parserOutput->getText();
 			} else {
 				if ( method_exists($parser, 'getPreprocessor') ) {
@@ -134,22 +133,31 @@ class SMWListResultPrinter extends SMWResultPrinter {
 					$dom = $parser->preprocessToDom( $result );
 					$result = $frame->expand( $dom );
 				} else {
-					$result = $parser->preprocess($result, $wgTitle, $parser_options);
+					$result = $parser->preprocess($result, $wgParser->getTitle(), $parser_options);
 				}
 			}
 			$smwgStoreActive = $old_smwgStoreActive;
 		}
 
-		if ( $this->mInline && $res->hasFurtherResults() ) {
-			$label = $this->mSearchlabel;
-			if ($label === NULL) { //apply defaults
-				if ('ol' == $this->mFormat) $label = '';
-				else $label = wfMsgForContent('smw_iq_moreresults');
+		if ( $this->mInline && $res->hasFurtherResults() && ($this->mSearchlabel !== '') &&
+		     ( ('ol' != $this->mFormat) || ($this->mSearchlabel) ) ) {
+			$link = $res->getQueryLink();
+			if ($this->mSearchlabel) {
+				$link->setCaption($this->mSearchlabel);
 			}
-			if (!$first_row) $result .= ' '; // relevant for list, unproblematic for ul/ol
-			if ($label != '') {
-				$result .= $rowstart . $this->getFurtherResultsLink($outputmode,$res,$label) . $rowend;
+			// not needed for 'ul' (see below):
+// 			if ($this->mSep != '') {
+// 				$link->setParameter($this->mSep,'sep');
+// 			}
+
+			$link->setParameter('ul','format'); // always use ul, other formats suck as search page output
+			if ($this->mTemplate != '') {
+				$link->setParameter($this->mTemplate,'template');
+				if (array_key_exists('link', $this->m_params)) { // linking may interfere with templates
+					$link->setParameter($this->m_params['link'],'link');
+				}
 			}
+			$result .= $rowstart . $link->getText($outputmode,$this->getLinker()) . $rowend;
 		}
 
 		// print footer

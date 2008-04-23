@@ -119,7 +119,6 @@ function smw_showTooltipInline(e) {
 	BubbleTT.fillBubble(tt, origin);
 }
 
-
 function _smw_hideAllTooltips() {
 	for(var i = 0; i < all_tt.length; i++) {
 		all_tt[i].close();

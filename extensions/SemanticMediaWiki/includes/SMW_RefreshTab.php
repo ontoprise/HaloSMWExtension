@@ -9,10 +9,9 @@ $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddRefreshTab';
 function smwfAddRefreshTab($obj, $content_actions) {
 	global $wgUser, $wgTitle;
 	if($wgUser->isAllowed('delete')){
-		smwfInitUserMessages();
 		$content_actions['purge'] = array(
 			'class' => false,
-			'text' => wfMsg('purge'),
+			'text' => wfMsg('smw_purge'),
 			'href' => $wgTitle->getLocalUrl( 'action=purge' )
 		);
 	}

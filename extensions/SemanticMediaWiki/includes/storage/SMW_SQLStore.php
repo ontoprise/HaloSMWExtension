@@ -16,18 +16,17 @@ require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
 class SMWSQLStore extends SMWStore {
 
 	/**
-	 * The (normalised) name of the property by which results during query
-	 * processing should be ordered, if any. False otherwise (default from
-	 * SMWQuery). Needed during query processing (where this key is searched
-	 * while building the query conditions).
+	 * Array of sorting requests ("Property_name" => "ASC"/"DESC". Used during query
+	 * processing (where these property names are searched while building the query
+	 * conditions).
 	 */
-	protected $m_sortkey;
+	protected $m_sortkeys;
 	/**
-	 * The database field name by which results during query processing should
-	 * be ordered, if any. False if no $m_sortkey was specified or if the key
-	 * did not match any condition.
+	 * Array of database field names by which results during query processing should
+	 * be ordered, if any. Format "Property_name" => "DB field name". Entries default
+	 * to false when no appropriate field was found yet.
 	 */
-	protected $m_sortfield;
+	protected $m_sortfields;
 	/**
 	 * Global counter to prevent clashes between table aliases.
 	 */
@@ -50,12 +49,20 @@ class SMWSQLStore extends SMWStore {
 
 ///// Reading methods /////
 
-	function getSemanticData(Title $subject, $filter = false) {
+	function getSemanticData($subject, $filter = false) {
 		wfProfileIn("SMWSQLStore::getSemanticData (SMW)");
 		$db =& wfGetDB( DB_SLAVE );
-		$result = new SMWSemanticData($subject);
 
-		$subjectid = $subject->getArticleID(); // avoid queries for nonexisting pages
+		if ( $subject instanceof Title ) {
+			$subjectid = $subject->getArticleID(); // avoid queries for nonexisting pages
+			$result = new SMWSemanticData($subject);
+		} elseif ($subject instanceof SMWWikiPageValue) {
+			$subjectid = $subject->getArticleID(); // avoid queries for nonexisting pages
+			$result = new SMWSemanticData($subject->getTitle());
+		} else {
+			$subjectid = 0;
+			$result = NULL;
+		}
 		if ($subjectid <= 0) {
 			wfProfileOut("SMWSQLStore::getSemanticData (SMW)");
 			return $result;
@@ -862,7 +869,6 @@ class SMWSQLStore extends SMWStore {
 								       'subject_title' => $subject->getDBkey(),
 								       'attribute_title' => $property->getDBkey(),
 								       'value_unit' => $value->getUnit(),
-								       'value_datatype' => $value->getTypeID(),
 								       'value_xsd' => $value->getXSDValue(),
 								       'value_num' => $value->getNumericValue() );
 						}
@@ -935,34 +941,18 @@ class SMWSQLStore extends SMWStore {
 		wfProfileOut("SMWSQLStore::updateData (SMW)");
 	}
 
-	function changeTitle(Title $oldtitle, Title $newtitle, $keepid = true) {
+	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
 		wfProfileIn("SMWSQLStore::changeTitle (SMW)");
 		$db =& wfGetDB( DB_MASTER );
 
+		// First change all data for the old subject to its new name
+		// (data moves with the subject, as it is part of the page)
 		$cond_array = array( 'subject_title' => $oldtitle->getDBkey(),
 		                     'subject_namespace' => $oldtitle->getNamespace() );
 		$val_array  = array( 'subject_title' => $newtitle->getDBkey(),
-		                     'subject_namespace' => $newtitle->getNamespace() );
-
-		// don't do this by default, since the ids you get when moving articles
-		// are not the ones from the old article and the new one (in reality, the
-		// $old_title refers to the newly generated redirect article, which does
-		// not have the old id that was stored in the database):
-		// TODO: in its current form this is useless and it's incomplete for naries anyway
-		if (!$keepid) {
-			$old_id = $oldtitle->getArticleID();
-			$new_id = $newtitle->getArticleID();
-			if ($old_id != 0) {
-				$cond_array['subject_id'] = $old_id;
-			}
-			if ($new_id != 0) {
-				$val_array['subject_id'] = $new_id;
-			}
-		} else {
-			/// FIXME: this just sets ids to NULL -- the redirect article does not exist yet
-			$db->update('smw_relations', array('object_id' => $oldtitle->getArticleID()), array('object_id' => $newtitle->getArticleID()), 'SMW::changeTitle');
-			$db->update('smw_nary_relations', array('object_id' => $oldtitle->getArticleID()), array('object_id' => $newtitle->getArticleID()), 'SMW::changeTitle');
-		}
+		                     'subject_namespace' => $newtitle->getNamespace(),
+		                     'subject_id' => $pageid );
+		// Note on the above: usually the ID does not change, but setting it does not hurt either
 
 		$db->update('smw_relations', $val_array, $cond_array, 'SMW::changeTitle');
 		$db->update('smw_attributes', $val_array, $cond_array, 'SMW::changeTitle');
@@ -970,6 +960,7 @@ class SMWSQLStore extends SMWStore {
 		$db->update('smw_specialprops', $val_array, $cond_array, 'SMW::changeTitle');
 		$db->update('smw_nary', $val_array, $cond_array, 'SMW::changeTitle');
 
+		// properties need special treatment (special table layout)
 		if ( $oldtitle->getNamespace() == SMW_NS_PROPERTY ) {
 			if ( $newtitle->getNamespace() == SMW_NS_PROPERTY ) {
 				$db->update('smw_subprops', array('subject_title' => $newtitle->getDBkey()), array('subject_title' => $oldtitle->getDBkey()), 'SMW::changeTitle');
@@ -977,6 +968,26 @@ class SMWSQLStore extends SMWStore {
 				$db->delete('smw_subprops', array('subject_title' => $oldtitle->getDBkey()), 'SMW::changeTitle');
 			}
 		}
+
+		// Second change all objects referring to the old page
+		// (objects are bound to the old name and do not point to the new page)
+		if ($redirid == 0) $redirid = NULL; // use NULL in DB to unset id
+		$cond_array = array( 'object_title' => $oldtitle->getDBkey(),
+		                     'object_namespace' => $oldtitle->getNamespace() );
+		$val_array  = array( 'object_id' => $redirid );
+
+		$db->update('smw_relations', $val_array, $cond_array, 'SMW::changeTitle');
+		$db->update('smw_nary_relations', $val_array, $cond_array, 'SMW::changeTitle');
+
+		// Third change all objects referring to the new page
+		// (objects are bound to the old name and do not point to the new page)
+		$cond_array = array( 'object_title' => $newtitle->getDBkey(),
+		                     'object_namespace' => $newtitle->getNamespace() );
+		$val_array  = array( 'object_id' => $pageid );
+
+		$db->update('smw_relations', $val_array, $cond_array, 'SMW::changeTitle');
+		$db->update('smw_nary_relations', $val_array, $cond_array, 'SMW::changeTitle');
+
 		wfProfileOut("SMWSQLStore::changeTitle (SMW)");
 	}
 
@@ -1002,8 +1013,11 @@ class SMWSQLStore extends SMWStore {
 
 		// Build main query
 		$this->m_usedtables = array();
-		$this->m_sortkey = $query->sortkey;
-		$this->m_sortfield = false;
+		$this->m_sortkeys = $query->sortkeys;
+		$this->m_sortfields = array();
+		foreach ($this->m_sortkeys as $key => $order) {
+			$this->m_sortfields[$key] = false; // no field found yet
+		}
 
 		$pagetable = $db->tableName('page');
 		$from = $pagetable;
@@ -1016,25 +1030,42 @@ class SMWSQLStore extends SMWStore {
 		$sql_options['LIMIT'] = $query->getLimit() + 1;
 		$sql_options['OFFSET'] = $query->getOffset();
 		if ( $smwgQSortingSupport ) {
-			$order = $query->ascending ? 'ASC' : 'DESC';
-			if ( ($this->m_sortfield == false) && ($this->m_sortkey == false) ) {
-				$sql_options['ORDER BY'] = "$pagetable.page_title $order "; // default
-			} else {
-				if ($this->m_sortfield == false) { // also query for sort property
-					$extrawhere = '';
-					$sorttitle = Title::newFromText($this->m_sortkey, SMW_NS_PROPERTY);
-					if ($sorttitle !== NULL) { // careful, Title creation might well fail
-						$this->createSQLQuery(new SMWSomeProperty($sorttitle, new SMWThingDescription()), $from, $extrawhere, $db, $curtables);
-						if ($extrawhere != '') {
-							if ($where != '') {
-								$where = "($where) AND ";
-							}
-							$where .= "($extrawhere)";
+			$extraproperties = array(); // collect required extra property descriptions
+			foreach ($this->m_sortkeys as $key => $order) {
+				if ($this->m_sortfields[$key] == false) { // find missing property to sort by
+					if ($key == '') { // sort by first column (page titles)
+						$this->m_sortfields[$key] = "$pagetable.page_title";
+					} else { // try to extend query
+						$extrawhere = '';
+						$sorttitle = Title::newFromText($key, SMW_NS_PROPERTY);
+						if ($sorttitle !== NULL) { // careful, Title creation might still fail!
+							$extraproperties[] = new SMWSomeProperty($sorttitle, new SMWThingDescription());
 						}
 					}
 				}
-				if ($this->m_sortfield != false) { // field found or successfully added
-					$sql_options['ORDER BY'] = $this->m_sortfield . " $order ";
+			}
+			if (count($extraproperties) > 0) {
+				if (count($extraproperties) == 1) {
+					$desc = end($extraproperties);
+				} else {
+					$desc = new SMWConjunction($extraproperties);
+				}
+				$this->createSQLQuery($desc, $from, $extrawhere, $db, $curtables);
+				if ($extrawhere != '') {
+					if ($where != '') {
+						$where = "($where) AND ";
+					}
+					$where .= "($extrawhere)";
+				}
+			}
+			foreach ($this->m_sortkeys as $key => $order) {
+				if ($this->m_sortfields[$key] != false) { // field successfully added
+					if (!array_key_exists('ORDER BY', $sql_options)) {
+						$sql_options['ORDER BY'] = '';
+					} else {
+						$sql_options['ORDER BY'] .= ', ';
+					}
+					$sql_options['ORDER BY'] .= $this->m_sortfields[$key] . " $order ";
 				}
 			}
 		}
@@ -1302,7 +1333,7 @@ class SMWSQLStore extends SMWStore {
 		                    'relation_title'    => 'VARCHAR(255) binary NOT NULL',
 		                    'object_namespace'  => 'INT(11) NOT NULL',
 		                    'object_title'      => 'VARCHAR(255) binary NOT NULL',
-		                    'object_id'        => 'INT(8) UNSIGNED',
+		                    'object_id'        => 'INT(8) UNSIGNED', 
 		                    'rating'			=> 'INT(8)'), $db, $verbose);
 		$this->setupIndex($smw_relations, array('subject_id','relation_title','object_title,object_namespace','object_id'), $db);
 
@@ -1313,7 +1344,6 @@ class SMWSQLStore extends SMWStore {
 		                    'subject_title'     => 'VARCHAR(255) binary NOT NULL',
 		                    'attribute_title'   => 'VARCHAR(255) binary NOT NULL',
 		                    'value_unit'        => 'VARCHAR(63) binary',
-		                    'value_datatype'    => 'VARCHAR(31) binary NOT NULL', /// TODO: remove value_datatype column
 		                    'value_xsd'         => 'VARCHAR(255) binary NOT NULL',
 		                    'value_num'         => 'DOUBLE',
 		                    'rating'			=> 'INT(8)'), $db, $verbose);
@@ -1564,9 +1594,8 @@ class SMWSQLStore extends SMWStore {
 		// TODO: unclear why this commit is needed -- is it a MySQL 4.x problem?
 		$db->query("COMMIT");
 		$db->query( 'CREATE TEMPORARY TABLE ' . $tablename .
-		            '( title VARCHAR(255) binary NOT NULL )
+		            '( title VARCHAR(255) binary NOT NULL PRIMARY KEY)
 		             TYPE=MEMORY', 'SMW::getCategoryTable' );
-		$db->query( 'ALTER TABLE ' . $tablename . ' ADD PRIMARY KEY ( title )' );
 		if (array_key_exists($hashkey, SMWSQLStore::$m_categorytables)) { // just copy known result
 			$db->query("INSERT INTO $tablename (title) SELECT " .
 			            SMWSQLStore::$m_categorytables[$hashkey] .
@@ -1626,9 +1655,8 @@ class SMWSQLStore extends SMWStore {
 		$tablename = 'prop' . SMWSQLStore::$m_tablenum++;
 		$this->m_usedtables[] = $tablename;
 		$db->query( 'CREATE TEMPORARY TABLE ' . $tablename .
-		            '( title VARCHAR(255) binary NOT NULL )
+		            '( title VARCHAR(255) binary NOT NULL PRIMARY KEY)
 		             TYPE=MEMORY', 'SMW::getPropertyTable' );
-		$db->query( 'ALTER TABLE ' . $tablename . ' ADD PRIMARY KEY ( title )' );
 		if (array_key_exists($propname, SMWSQLStore::$m_propertytables)) { // just copy known result
 			$db->query("INSERT INTO $tablename (title) SELECT " .
 			            SMWSQLStore::$m_propertytables[$propname] .
@@ -1992,14 +2020,16 @@ class SMWSQLStore extends SMWStore {
 			}
 		} elseif ($description instanceof SMWSomeProperty) {
 			$id = SMWDataValueFactory::getPropertyObjectTypeID($description->getProperty());
-			$sort = false;
+			$sortfield = false;
+			$sortkey = false;
 			switch ($id) {
 				case '_wpg':
 					$tablename = 'RELS';
 					$pcolumn = 'relation_title';
 					$sub = true;
-					if ($this->m_sortkey == $description->getProperty()->getDBkey()) {
-						$sort = 'object_title';
+					if ( array_key_exists($description->getProperty()->getDBkey(), $this->m_sortkeys) ) {
+						$sortkey = 'object_title';
+						$sortfield = 'object_title';
 					}
 				break;
 				case '_txt':
@@ -2016,11 +2046,12 @@ class SMWSQLStore extends SMWStore {
 					$tablename = 'ATTS';
 					$pcolumn = 'attribute_title';
 					$sub = true;
-					if ($this->m_sortkey == $description->getProperty()->getDBkey()) {
+					if ( array_key_exists($description->getProperty()->getDBkey(), $this->m_sortkeys) ) {
+						$sortkey = $description->getProperty()->getDBkey();
 						if (SMWDataValueFactory::newTypeIDValue($id)->isNumeric()) {
-							$sort = 'value_num';
+							$sortfield = 'value_num';
 						} else {
-							$sort = 'value_xsd';
+							$sortfield = 'value_xsd';
 						}
 					}
 			}
@@ -2038,8 +2069,8 @@ class SMWSQLStore extends SMWStore {
 					$nexttables = array();
 					$nexttables['p' . $tablename] = $table; // keep only current table for reference
 					$this->createSQLQuery($description->getDescription(), $from, $subwhere, $db, $nexttables, $nary_pos);
-					if ($sort) {
-						$this->m_sortfield = "$table.$sort";
+					if ($sortfield) {
+						$this->m_sortfields[$sortkey] = "$table.$sortfield";
 					}
 					if ( $subwhere != '') {
 						$where .= ' AND (' . $subwhere . ')';

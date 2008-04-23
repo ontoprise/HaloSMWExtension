@@ -31,7 +31,8 @@ class SMWQueryProcessor {
 							'template'   => 'SMWTemplateResultPrinter',
 							'count'      => 'SMWListResultPrinter',
 							'debug'      => 'SMWListResultPrinter',
-							'rss'        => 'SMWRSSResultPrinter');
+							'rss'        => 'SMWRSSResultPrinter',
+							'icalendar'  => 'SMWiCalendarResultPrinter');	
 
 	/**
 	 * Parse a query string given in SMW's query language to create
@@ -92,16 +93,44 @@ class SMWQueryProcessor {
 				$query->setLimit($smwgQDefaultLimit);
 			}
 		}
-		if (array_key_exists('sort', $params)) {
-			$query->sort = true;
-			$query->sortkey = smwfNormalTitleDBKey($params['sort']);
-		}
-		if (array_key_exists('order', $params)) {
-			$order = strtolower(trim($params['order']));
-			if (('descending'==$order)||('reverse'==$order)||('desc'==$order)) {
-				$query->ascending = false;
+		// determine sortkeys and ascendings:
+		if ( array_key_exists('order', $params) ) {
+			$orders = explode( ',', $params['order'] );
+			foreach ($orders as $key => $order) { // normalise
+				$order = strtolower(trim($order));
+				if ( ('descending' != $order) && ('reverse' != $order) && ('desc' != $order) ) {
+					$orders[$key] = 'ASC';
+				} else {
+					$orders[$key] = 'DESC';
+				}
 			}
+		} else {
+			$orders = Array();
 		}
+		reset($orders);
+		if ( array_key_exists('sort', $params) ) {
+			$query->sort = true;
+			$query->sortkeys = Array();
+			foreach ( explode( ',', trim($params['sort']) ) as $sort ) {
+				$sort = smwfNormalTitleDBKey( trim($sort) ); // slight normalisation
+				$order = current($orders);
+				if ($order === false) { // default
+					$order = 'ASC';
+				}
+				if (array_key_exists($sort, $query->sortkeys) ) {
+					// maybe throw an error here?
+				} else {
+					$query->sortkeys[$sort] = $order;
+				}
+				next($orders);
+			}
+			if (current($orders) !== false) { // sort key remaining, apply to page name
+				$query->sortkeys[''] = current($orders);
+			}
+		} else { // sort by page title (main column) by default
+			$query->sortkeys[''] = (current($orders) != false)?current($orders):'ASC';
+		} // TODO: check and report if there are further order statements?
+
 		return $query;
 	}
 
@@ -116,7 +145,10 @@ class SMWQueryProcessor {
 		$querystring = '';
 		$printouts = array();
 		$params = array();
-		foreach ($rawparams as $param) {
+		foreach ($rawparams as $name => $param) {
+			if ( is_string($name) && ($name != '') ) { // accept 'name' => 'value' just as '' => 'name=value'
+				$param = $name . '=' . $param;
+			}
 			if ($param == '') {
 			} elseif ($param{0} == '?') { // print statement
 				$param = substr($param,1);

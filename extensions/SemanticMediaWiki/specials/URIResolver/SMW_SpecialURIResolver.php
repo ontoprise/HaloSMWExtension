@@ -20,7 +20,6 @@ class SMWURIResolver extends SpecialPage {
 	 * Constructor
 	 */
 	public function __construct() {
-		smwfInitUserMessages();
 		parent::__construct('URIResolver', '', false);
 	}
 
@@ -28,7 +27,14 @@ class SMWURIResolver extends SpecialPage {
 		global $wgOut, $smwgIP;
 		wfProfileIn('SpecialURIResolver::execute (SMW)');
 		if ('' == $query) {
-			$wgOut->addHTML(wfMsg('smw_uri_doc'));
+			if (stristr($_SERVER['HTTP_ACCEPT'], 'RDF')) {
+				$wgOut->disable();
+				header('HTTP/1.1 303 See Other');
+				$s = Skin::makeSpecialUrl('ExportRDF', 'stats=1');
+				header('Location: ' . $s);
+			} else {
+				$wgOut->addHTML(wfMsg('smw_uri_doc'));
+			}
 		} else {
 			$wgOut->disable();
 			$query = SMWExporter::decodeURI($query);
