@@ -33,7 +33,9 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 function enableSMWHalo() {
 	global $wgExtensionFunctions;
 	global $smwgOWLFullExport;
+	global $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
+	$wgHooks['LanguageGetMagic'][] = 'smwfAddHaloMagicWords';
 	$smwgOWLFullExport = TRUE;
 }
 
@@ -54,6 +56,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['smwBeforeUpdate'][] = 'smwfBeforeSemanticUpdate';
 	$wgHooks['smwAfterUpdate'][] = 'smwfAfterSemanticUpdate';
+	
 
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
@@ -84,6 +87,9 @@ function smwgHaloSetupExtension() {
 	// autocompletion option registration
 	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
 	$wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
+	
+	//parser function for multiple template annotations
+	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
 		
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
@@ -1086,6 +1092,31 @@ function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wg
 	global $wgUser,$wgScriptPath;
 	$triggerMode = $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
 	setcookie("AC_mode", $triggerMode, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
+	return true;
+}
+
+function smwfRegisterCommaAnnotation( &$parser, &$text, &$stripstate ) {
+	$parser->setFunctionHook( 'annotateList', 'smwfCommaAnnotation' );
+	return true; // always return true, in order not to stop MW's hook processing!
+}
+
+function smwfCommaAnnotation(&$parser){
+	$params = func_get_args();
+	array_shift( $params ); // we already know the $parser ...
+	$annoName = $params[0];
+	$annoValues = split(',', $params[1]);
+	$ret = '';
+	for ($i=0; $i<sizeof($annoValues); $i++){
+		if ($i == 0)
+			$ret .= "[[$annoName::$annoValues[$i]]]";
+		else
+			$ret .= ", [[$annoName::$annoValues[$i]]]";
+	}
+	return $ret;
+}
+
+function smwfAddHaloMagicWords(&$magicWords, $langCode){
+	$magicWords['annotateList'] = array( 0, 'annotateList' );
 	return true;
 }
 ?>
