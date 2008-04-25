@@ -97,34 +97,36 @@ class SMWPropertiesPage extends SMWQueryPage {
 		$NSatt = SMW_NS_PROPERTY;
 		$dbr =& wfGetDB( DB_SLAVE );
 		$attributes = $dbr->tableName( 'smw_attributes' );
+		$specialprops = $dbr->tableName( 'smw_specialprops' );
 		$pages = $dbr->tableName( 'page' );
 		switch($sort) {
 			case 0: return "SELECT 'Attributes' as type, 
 					{$NSatt} as namespace,
-					value_datatype as value,
-					attribute_title as title,
+					s.value_string as value,
+					a.attribute_title as title,
 					COUNT(*) as count,
 					'-1' as obns		
-					FROM $attributes
-					GROUP BY attribute_title, value_datatype";
+					FROM $attributes a JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." 
+					GROUP BY a.attribute_title, s.value_string";
 					
 			case 1: return "SELECT 'Attributes' as type, 
-					{$NSatt} as namespace,
-					value_datatype as value,
-					attribute_title as title,
-					COUNT(*) as count,
-					'-1' as obns			
-					FROM $attributes,$pages WHERE attribute_title = page_title
-					GROUP BY attribute_title, value_datatype";
+                    {$NSatt} as namespace,
+                    s.value_string as value,
+                    a.attribute_title as title,
+                    COUNT(*) as count,
+                    '-1' as obns        
+                    FROM $attributes a LEFT JOIN $pages p ON p.page_title = a.attribute_title AND p.page_namespace = ".SMW_NS_PROPERTY.
+                    " JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." WHERE p.page_title IS NOT NULL 
+                    GROUP BY a.attribute_title, s.value_string";
 					
 			case 2: return "SELECT 'Attributes' as type, 
-					{$NSatt} as namespace,
-					value_datatype as value,
-					attribute_title as title,
-					COUNT(*) as count,
-					'-1' as obns			
-					FROM $attributes
-					GROUP BY attribute_title, value_datatype";
+                    {$NSatt} as namespace,
+                    s.value_string as value,
+                    a.attribute_title as title,
+                    COUNT(*) as count,
+                    '-1' as obns        
+                    FROM $attributes a JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." 
+                    GROUP BY a.attribute_title, s.value_string";
 		}
 	}
 	
@@ -204,7 +206,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 			case 0: { switch($sort) {
 							case 0: return '';
 							case 1: return ' ORDER BY page_touched';
-							case 2: return ' ORDER BY value_datatype';
+							case 2: return ' ORDER BY s.value_string';
 					  } 
 					  break;
 					}
@@ -243,7 +245,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 		$type = $wgRequest->getVal("type") == NULL ? 0 : $wgRequest->getVal("type") + 0;
 		// The attribute title is in value, see getSQL().
 		
-		// The value_datatype is in title, see getSQL().
+		
 		$errors = array();
 		if ($result[5]<=5) {
 			$errors[] = wfMsg('smw_propertyhardlyused');

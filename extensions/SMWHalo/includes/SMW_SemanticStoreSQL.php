@@ -798,7 +798,7 @@
 		$smw_nary_attributes = $db->tableName('smw_nary_attributes');
 		$smw_specialprops = $db->tableName('smw_specialprops');
 	 	
-		$res = $db->query(	'(SELECT DISTINCT value_unit FROM '.$smw_attributes.' WHERE value_datatype = '.$db->addQuotes($type->getDBkey()).') '.
+		$res = $db->query(	'(SELECT DISTINCT a.value_unit FROM '.$smw_attributes.' a JOIN '.$smw_specialprops.' s ON a.attribute_title = s.subject_title AND s.property_id = '.SMW_SP_HAS_TYPE.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).') '.
 						 ' UNION ' .
 					 		'(SELECT DISTINCT value_unit FROM '.$smw_specialprops.' s ' .
 					 				'JOIN '.$smw_nary.' n ON LOCATE('.$db->addQuotes($type->getDBkey()).', s.value_string) > 0 AND s.subject_title=n.attribute_title ' .
@@ -823,8 +823,8 @@
 	 	$smw_specialprops = $db->tableName('smw_specialprops');
 	 	
 		$result = array();
-		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace, attribute_title FROM '.$smw_attributes.
-							' WHERE value_datatype = '.$db->addQuotes($type->getDBkey()).' AND value_unit = '.$db->addQuotes($unit));
+		$res = $db->query('SELECT DISTINCT a.subject_title, a.subject_namespace, a.attribute_title FROM '.$smw_attributes.' a JOIN '.$smw_specialprops.' s ON a.attribute_title = s.subject_title AND s.property_id = '.SMW_SP_HAS_TYPE.
+							' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).' AND a.value_unit = '.$db->addQuotes($unit));
 		
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
