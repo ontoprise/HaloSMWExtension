@@ -117,7 +117,7 @@ class GraphCycleDetector {
 	}
 	
 	private function storeCycles($cycles) {
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($cycles as $c) {
 			
  			$titles = $c->translateToTitle();

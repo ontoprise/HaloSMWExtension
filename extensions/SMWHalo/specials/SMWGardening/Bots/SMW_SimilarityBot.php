@@ -65,7 +65,7 @@
  	 * Do not use echo when it is not running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		echo "...started!\n";
  		$result = "";	 		
  		
@@ -646,7 +646,7 @@
 		
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + SMW_SIMILARITY_BOT_BASE - 1;
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		$titles = $gi_store->getDistinctTitlePairs($bot, NULL, $gi_class, $sortfor, $options);
 		foreach($titles as $t) {
 			$gis = $gi_store->getGardeningIssuesForPairs($bot, NULL, $gi_class, array($t), SMW_GARDENINGLOG_SORTFORTITLE, NULL);

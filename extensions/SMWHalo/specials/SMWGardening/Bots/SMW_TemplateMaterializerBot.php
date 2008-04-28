@@ -48,7 +48,7 @@
  	 * Do not use echo when it is NOT running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		$gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		if ($isAsync) { 
  			echo "...started!\n";
  			echo array_key_exists('APPLY_TO_TOUCHED_TEMPLATES', $paramArray) ? "Incremental update\n" : "Full materialization\n";
@@ -56,7 +56,7 @@
  		}
  		
  		// get timestamp of last template materialization operation
- 		$lastTemplateMaterialization = SMWGardening::getGardeningLogAccess()->getLastFinishedGardeningTask($this->id);
+ 		$lastTemplateMaterialization = SMWGardeningLog::getGardeningLogAccess()->getLastFinishedGardeningTask($this->id);
  		
  		// if not null, incremental update is possible to be configured by user
  		if ($lastTemplateMaterialization != NULL) {

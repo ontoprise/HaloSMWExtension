@@ -65,6 +65,7 @@ global $wgServer, $wgScriptPath, $wgScript;
 $wgServer = $servername;
 
 // include bots
+require_once( $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningBot.php');
 require_once("ConsistencyBot/SMW_ConsistencyBot.php");
 require_once("Bots/SMW_SimilarityBot.php");
 require_once("Bots/SMW_TemplateMaterializerBot.php");
@@ -94,7 +95,7 @@ require_once("SMW_GardeningLog.php");
  		// initialize term signal socket
 		$bot->initializeTermSignal($taskid);
 		
- 		SMWGardening::getGardeningIssuesAccess()->clearGardeningIssues($botID);
+ 		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->clearGardeningIssues($botID);
  		// Transformation of parameters:
  		// 	1. Concat to a string
  		// 	2. Replace {{percantage}} by %
@@ -102,9 +103,10 @@ require_once("SMW_GardeningLog.php");
  		//  4. convert string of the form (key=value,)* to a hash array 
  		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  		@socket_close($bot->getTermSignalSocket());
+ 		
  		if ($bot->isAborted()) {
  			print "\n - Bot was aborted by user! - \n";
- 			return;
+ 			die();
  		}
  		echo $log;
  		if ($log != NULL && $log != '') {
@@ -114,14 +116,16 @@ require_once("SMW_GardeningLog.php");
  		}
  		
  		// mark as finished
- 		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+ 		$title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
  		
  	} catch(Exception $e) {
+ 	    
  		$log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
  		$log .= "\n[[category:GardeningLog]]";
- 		$title = SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		echo $log;
+ 	    
+ 		$title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  		if ($title != NULL) echo "\nLog saved at: ".$title->getLocalURL();
  	} 
  }

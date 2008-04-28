@@ -66,7 +66,7 @@
  	 */
  	public function run($paramArray, $isAsync, $delay) {
  		global $wgLang;
- 		$gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		if (!$isAsync) {
  			echo 'Missing annotations bot should not be run synchronously! Abort bot.'; // do not externalize
  			return;
@@ -243,7 +243,7 @@
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_anomaliesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

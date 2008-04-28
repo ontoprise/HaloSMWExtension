@@ -7,7 +7,7 @@ function applyQueryHighlighting($querystring, $params, $inline = true, $format =
 
 	$format = getResultFormat($params);
 	
-	$gi_store = SMWGardening::getGardeningIssuesAccess();
+	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 	$query  = SMWQueryProcessor::createQuery($querystring, $params, $inline, $format, $printouts);
 	if ($query instanceof SMWQuery) { // query parsing successful
 		$res = smwfGetStore()->getQueryResult($query);

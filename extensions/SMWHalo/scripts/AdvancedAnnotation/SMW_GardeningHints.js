@@ -34,7 +34,7 @@ initialize: function() {
 showToolbar: function() {
 	this.gardeningHintContainer.setHeadline(gLanguage.getMessage('ANNOTATION_HINTS'));
 	
-	sajax_do_call('smwfGetGardeningIssues', 
+	sajax_do_call('smwf_ga_GetGardeningIssues', 
 	              [['smw_consistencybot', 'smw_undefinedentitiesbot', 'smw_missingannotationsbot'], '', '', wgPageName, ''], 
 	              this.createContent.bind(this));
 },
@@ -52,7 +52,7 @@ createContent: function(request) {
 	var tb = this.createToolbar("");
 	var html = '';
 	if (request.status == 200 
-	   && request.responseText != "smwfGetGardeningIssues: invalid title specified.") {
+	   && request.responseText != "smwf_ga_GetGardeningIssues: invalid title specified.") {
 		var hints = GeneralXMLTools.createDocumentFromString(request.responseText);
 		if (hints.documentElement) {
 			for (var b = 0, bn = hints.documentElement.childNodes.length; b < bn; b++) {

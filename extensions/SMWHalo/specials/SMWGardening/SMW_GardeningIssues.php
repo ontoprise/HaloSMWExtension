@@ -15,7 +15,7 @@
 /* Ajax functions */
 global $wgAjaxExportList;
 
-$wgAjaxExportList[] = 'smwfGetGardeningIssues';
+
 
 
  define('SMW_GARDENINGLOG_SORTFORTITLE', 0);
@@ -26,7 +26,7 @@ $wgAjaxExportList[] = 'smwfGetGardeningIssues';
   */
  abstract class SMWGardeningIssuesAccess {
  	
- 	
+ 	static $gi_interface;
  	/**
  	 * Setups GardeningIssues table(s).
  	 */
@@ -156,7 +156,25 @@ $wgAjaxExportList[] = 'smwfGetGardeningIssues';
  	 * @param $bot_id ID of bot whose issues should be propagated
  	 * @param $propagationType gi_type of propagation issue.
  	 */
- 	public abstract function generatePropagationIssuesForCategories($botID, $propagationType); 
+ 	public abstract function generatePropagationIssuesForCategories($botID, $propagationType);
+
+    public static function getGardeningIssuesAccess() {
+        global $smwgHaloIP;
+        if (SMWGardeningIssuesAccess::$gi_interface == NULL) {
+            global $smwgDefaultStore;
+            switch ($smwgDefaultStore) {
+                case (SMW_STORE_TESTING):
+                    SMWGardeningIssuesAccess::$gi_interface = null; // not implemented yet
+                    trigger_error('Testing store not implemented for HALO extension.');
+                break;
+                case (SMW_STORE_MWDB): default:
+                    require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
+                    SMWGardeningIssuesAccess::$gi_interface = new SMWGardeningIssuesAccessSQL();
+                break;
+            }
+        }
+        return SMWGardeningIssuesAccess::$gi_interface;
+    }
  }
 
 /**
@@ -410,7 +428,7 @@ abstract class GardeningIssueFilter {
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		
@@ -426,75 +444,5 @@ abstract class GardeningIssueFilter {
 	
 }
 
-/**
- * Get Gardening issues for a pair of titles. Every parameter (except $bot_id)
- * may be empty or NULL
- * 
- * @param string $botIDs A comma-separated list of Bot-IDs
- * @param string $giType type of issue.
- * @param string $giClass Class of issue.
- * @param string $title The name of an article
- * @param string $sortfor column to sort for. Default by title.
- * 				One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
- * 
- * @return string xml
- * <gardeningIssues title="title" >
- *   <bot name="botname" title="Name of bot for GUI">
- *	   <issue>Description of issue.</issue>
- *     ...
- *   </bot>
- *   ...
- * </gardeningIssues>
- *  
- */
-function smwfGetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor) {
 
-	global $wgTitle;
-	$gardeningAccess = SMWGardening::getGardeningIssuesAccess();
-	
-	if (!$title) {
-		return 'smwfGetGardeningIssues: not title specified.';
-	}
-	$t = Title::newFromText($title);
-	$article = new Article($t);
-
-	if (!$article->exists()) {
-		return 'smwfGetGardeningIssues: invalid title specified.';
-	}
-	
-	if (!$botIDs) {
-		return 'smwfGetGardeningIssues: no bot specified.';
-	}
-	
-	if (!$giType) {
-		$giType = null;
-	}
-	if (!$giClass) {
-		$giClass = null;
-	}
-	if (!$sortfor) {
-		$sortfor = null;
-	}
-
-	$botIDs = explode(',', $botIDs);
-	$issues = array();
-	foreach($botIDs as $b) {
-		$issues[$b] = $gardeningAccess->getGardeningIssues($b, $giType, $giClass, $t, $sortfor, NULL);
-	}
-	
-	global $smwgHaloContLang;
-	$result = '<gardeningIssues title="'.$title.'">';
-	foreach ($issues as $bot => $issueArray) {
-		$botTitle = wfMsg($bot);
-		$result .= '<bot name="'.$bot.'" title="'.$botTitle.'">';
-		$skinDummy = NULL;
-		foreach ($issueArray as $is) {
-			$result .= '<issue>'.$is->getRepresentation($skinDummy, true).'</issue>';
-		}
-		$result .= '</bot>';
-	}
-	$result .= "</gardeningIssues>";
-	return $result;
-	
-}
 ?>

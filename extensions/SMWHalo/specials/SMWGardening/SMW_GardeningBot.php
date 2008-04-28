@@ -6,16 +6,7 @@
  */
 
  
- // include them for synchronous run
- require_once("ConsistencyBot/SMW_ConsistencyBot.php");
- require_once("Bots/SMW_SimilarityBot.php");
- require_once("Bots/SMW_TemplateMaterializerBot.php");
- require_once("Bots/SMW_UndefinedEntitiesBot.php");
- require_once("Bots/SMW_MissingAnnotationsBot.php");
- require_once("Bots/SMW_AnomaliesBot.php");
- require_once("Bots/SMW_ImportOntologyBot.php");
- require_once("Bots/SMW_ExportOntologyBot.php");
- 
+  
  require_once("SMW_GardeningLog.php");
  
  // user groups  
@@ -123,7 +114,7 @@
  		$currentTime = time();
  		if ($currentTime-$this->lastUpdate > 15) { // allow updates only after 15 seconds
  			$this->lastUpdate = $currentTime;
- 			if ($this->taskId != -1) SMWGardening::getGardeningLogAccess()->updateProgress($this->taskId, $this->getWorkDone());
+ 			if ($this->taskId != -1) SMWGardeningLog::getGardeningLogAccess()->updateProgress($this->taskId, $this->getWorkDone());
  		}
  	}
  	
@@ -147,9 +138,11 @@
  	 */
  	public function isAborted() {
  		if ($this->isAborted) return true;
+ 		
  		$accept_sock = @socket_accept($this->socket);	
 		if ($accept_sock !== false && $accept_sock !== NULL) {
 			$name = "";
+			
 			socket_getpeername($accept_sock, $name);
 			if ($name == '127.0.0.1') { //TODO: save? spoofing?
 				socket_close($accept_sock);
@@ -178,6 +171,7 @@
  		// create a socket for termination signal
  		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
  		$this->socket = socket_create_listen(($taskid % 100) + $smwgAbortBotPortRange); 
+ 		echo "\nUsing command port: ".(($taskid % 100) + $smwgAbortBotPortRange)."\n";
  		if ($this->socket !== false) {
  			socket_set_nonblock($this->socket);
  		}
@@ -289,7 +283,7 @@
  	 	}
  	 	
  	 	// ok everything is fine, so add a gardening task
- 	 	$taskid = SMWGardening::getGardeningLogAccess()->addGardeningTask($botID);
+ 	 	$taskid = SMWGardeningLog::getGardeningLogAccess()->addGardeningTask($botID);
  		$IP = realpath( dirname( __FILE__ ) . '/..' );
  		
  		
@@ -321,7 +315,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+ 					SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
  				socket_close($this->socket);
  			}
@@ -350,7 +344,7 @@
  				if ($bot != null) { 
  					$log = $bot->run($paramArray, $runAsync, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
  					$log .= "\n[[category:GardeningLog]]";
- 					SMWGardening::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+ 					SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
  				socket_close($this->socket);
  			}
@@ -485,7 +479,7 @@
  }
  
    
-   
+ 
  	
  	
 ?>

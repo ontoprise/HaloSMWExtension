@@ -90,7 +90,7 @@
  	 	$result = "";
  	 	$id = uniqid (rand());
  	 	$count = 0;
- 	 	$gi_store = SMWGardening::getGardeningIssuesAccess();
+ 	 	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  	 	foreach($foundInstances as $instance) {
  	 		$title_esc = htmlspecialchars($instance->getDBkey()); 
  	 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instance);
@@ -329,7 +329,7 @@
  		$id = uniqid (rand());
 		$count = 0;		
  		$result = "";
- 		$gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($this->children as $title => $treeObject) {
  			$isExpanded = count($treeObject->children) == 0 ? "false" : "true";
  			$title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey()); 

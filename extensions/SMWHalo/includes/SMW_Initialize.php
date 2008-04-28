@@ -63,16 +63,22 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	
-	// register AddHTMLHeader functions for special pages
-	// to include javascript and css files.
-	$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
-	$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
-	$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
-	$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
-	$wgHooks['BeforePageDisplay'][]='smwACLAddHTMLHeader';
+	global $wgRequest, $wgContLang, $smwgMaintenanceScript;
 	
+    $spns_text = $wgContLang->getNsText(NS_SPECIAL);
+    $sp_aliases = $wgContLang->getSpecialPageAliases();
+    
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files (only on special page requests).
+	if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false) {
+		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwACLAddHTMLHeader';
+	}
 	// Register parser hooks for advanced annotation mode
-	global $wgRequest; 
+	
 	$action = $wgRequest->getVal('action');
 	if ($action == 'annotate') {
 		$wgHooks['ParserBeforeStrip'][] = 'smwfAAMBeforeStrip';
@@ -93,13 +99,15 @@ function smwgHaloSetupExtension() {
 		
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
-	
-	// Register job classes
-	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
-	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
-	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
-	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
-	
+	    
+	// Register job classes (if Move operation or maintenance script)
+    $isMoveOP = ($wgRequest->getVal("title") == $spns_text.':'.$sp_aliases['Movepage'][0]);
+	if ($isMoveOP || $smwgMaintenanceScript) {
+		$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
+		$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
+		$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+		$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
+	}
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
 		smwfHaloInitMessages();
@@ -188,11 +196,13 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
 	
 	// import available job classes (for refactoring)
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
-
+	// do this only when the page is actually moved.
+	if ($isMoveOP || $smwgMaintenanceScript) {
+		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
+		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
+		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
+		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
+	}
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
@@ -259,8 +269,8 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
-	SMWGardening::getGardeningIssuesAccess()->setup(true);
-	SMWGardening::getGardeningLogAccess()->setup(true);
+	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
+	SMWGardeningLog::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
 	return true;
 }
@@ -599,7 +609,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		include_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php'); 
 		
 		$title=$article->getTitle();
-		SMWGardening::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
+		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
 		
 		$updatejobflag = 0;
 

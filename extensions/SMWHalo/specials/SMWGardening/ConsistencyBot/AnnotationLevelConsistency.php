@@ -35,7 +35,7 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		
  		$this->categoryGraph = $categoryGraph;
  		$this->propertyGraph = $propertyGraph;
- 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  	}
  	/**
  	 * Checks if property annotations uses schema consistent values

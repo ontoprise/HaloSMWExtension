@@ -28,6 +28,9 @@
 * 
 * 	Author: kai
 */
+
+$smwgMaintenanceScript = true;
+
  if ($_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;

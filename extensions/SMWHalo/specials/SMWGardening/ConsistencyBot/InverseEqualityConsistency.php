@@ -16,7 +16,7 @@
  	public function InverseEqualityConsistency(& $bot, $delay) {
  		$this->bot = $bot;
  		$this->delay = $delay;
- 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		$this->cc_store = $bot->getConsistencyStorage();
  	}
  	

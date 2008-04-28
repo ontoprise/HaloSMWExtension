@@ -16,13 +16,13 @@
  $wgAjaxExportList[] = 'smwf_ga_GetBotParameters';
  $wgAjaxExportList[] = 'smwf_ga_GetRegisteredBots';
  $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
+ $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssues';
  
  // Gardening ajax calls
 
 global $smwgHaloIP;
-require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningBot.php");
-require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningLog.php");
 require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
+
 /**
  * Runs a gardening bot.
  *
@@ -32,7 +32,7 @@ require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
  * @return $taskid ID of task.
  */
 function smwf_ga_LaunchGardeningBot($botID, $params) {
-
+	
 	$taskid = GardeningBot::runBot($botID, $params);
 	if (gettype($taskid) == 'integer') { // task id, no error code
 
@@ -51,6 +51,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params) {
  * @param $taskid ID of task.
  */
 function smwf_ga_CancelGardeningBot($taskid) {
+	
 	if (!GardeningBot::isUserAllowed(array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
 	 	return; // only sysops and gardeners may cancel a bot.
 	}
@@ -60,7 +61,7 @@ function smwf_ga_CancelGardeningBot($taskid) {
 		GardeningBot::killBot($taskid);
 		
 	}
-	SMWGardening::getGardeningLogAccess()->removeGardeningTask($taskid);
+	SMWGardeningLog::getGardeningLogAccess()->removeGardeningTask($taskid);
 	return SMWGardening::getGardeningLogTable();
 }
 
@@ -68,6 +69,7 @@ function smwf_ga_CancelGardeningBot($taskid) {
  * Returns gardening log as HTML
  */
 function smwf_ga_GetGardeningLog() {
+	
 	return SMWGardening::getGardeningLogTable();
 }
 
@@ -77,6 +79,7 @@ function smwf_ga_GetGardeningLog() {
  * @param $botID
  */
 function smwf_ga_GetBotParameters($botID) {
+	
 	return SMWGardening::getParameterFormularForBot($botID);
 }
 
@@ -85,6 +88,7 @@ function smwf_ga_GetBotParameters($botID) {
  * Returns list of registered bots as HTML
  */
 function smwf_ga_GetRegisteredBots() {
+	
 	 global $registeredBots;
 	 $htmlResult = "";
 	 $first = true;
@@ -107,6 +111,7 @@ function smwf_ga_GetRegisteredBots() {
 
 
 function smwf_ga_GetGardeningIssueClasses($bot_id) {
+	
 	global $registeredBots;
 		
 		if ($bot_id == NULL) {
@@ -130,6 +135,76 @@ function smwf_ga_GetGardeningIssueClasses($bot_id) {
 }
 
 
+/**
+ * Get Gardening issues for a pair of titles. Every parameter (except $bot_id)
+ * may be empty or NULL
+ * 
+ * @param string $botIDs A comma-separated list of Bot-IDs
+ * @param string $giType type of issue.
+ * @param string $giClass Class of issue.
+ * @param string $title The name of an article
+ * @param string $sortfor column to sort for. Default by title.
+ *              One of the constants: SMW_GARDENINGLOG_SORTFORTITLE, SMW_GARDENINGLOG_SORTFORVALUE 
+ * 
+ * @return string xml
+ * <gardeningIssues title="title" >
+ *   <bot name="botname" title="Name of bot for GUI">
+ *     <issue>Description of issue.</issue>
+ *     ...
+ *   </bot>
+ *   ...
+ * </gardeningIssues>
+ *  
+ */
+function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor) {
+	   
+    global $wgTitle;
+    $gardeningAccess = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+    
+    if (!$title) {
+        return 'smwf_ga_GetGardeningIssues: not title specified.';
+    }
+    $t = Title::newFromText($title);
+    $article = new Article($t);
 
+    if (!$article->exists()) {
+        return 'smwf_ga_GetGardeningIssues: invalid title specified.';
+    }
+    
+    if (!$botIDs) {
+        return 'smwf_ga_GetGardeningIssues: no bot specified.';
+    }
+    
+    if (!$giType) {
+        $giType = null;
+    }
+    if (!$giClass) {
+        $giClass = null;
+    }
+    if (!$sortfor) {
+        $sortfor = null;
+    }
+
+    $botIDs = explode(',', $botIDs);
+    $issues = array();
+    foreach($botIDs as $b) {
+        $issues[$b] = $gardeningAccess->getGardeningIssues($b, $giType, $giClass, $t, $sortfor, NULL);
+    }
+    
+    global $smwgHaloContLang;
+    $result = '<gardeningIssues title="'.$title.'">';
+    foreach ($issues as $bot => $issueArray) {
+        $botTitle = wfMsg($bot);
+        $result .= '<bot name="'.$bot.'" title="'.$botTitle.'">';
+        $skinDummy = NULL;
+        foreach ($issueArray as $is) {
+            $result .= '<issue>'.$is->getRepresentation($skinDummy, true).'</issue>';
+        }
+        $result .= '</bot>';
+    }
+    $result .= "</gardeningIssues>";
+    return $result;
+    
+}
  
 ?>

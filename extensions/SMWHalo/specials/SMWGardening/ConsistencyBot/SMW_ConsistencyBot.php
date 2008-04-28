@@ -90,7 +90,7 @@
  	    
  	    // propagate issues
  	    echo "Propagating issues...";
- 		SMWGardening::getGardeningIssuesAccess()->generatePropagationIssuesForCategories($this->id, SMW_GARDISSUE_CONSISTENCY_PROPAGATION);
+ 		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->generatePropagationIssuesForCategories($this->id, SMW_GARDISSUE_CONSISTENCY_PROPAGATION);
  		echo "done!\n\n";
          
  		return NULL;
@@ -340,7 +340,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		
@@ -361,7 +361,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

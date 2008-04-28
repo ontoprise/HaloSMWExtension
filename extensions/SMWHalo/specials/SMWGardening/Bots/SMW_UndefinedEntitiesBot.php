@@ -116,7 +116,7 @@
  	private $bot_id;
  	
  	public function __construct($bot_id) {
- 		$this->gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		$this->bot_id = $bot_id;
  		$this->store = $this->getUndefinedEntitiesStorage();
  	}
@@ -243,7 +243,7 @@
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_undefinedentitiesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

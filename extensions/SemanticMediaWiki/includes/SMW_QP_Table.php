@@ -16,9 +16,11 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 		smwfRequireHeadItem(SMW_HEADER_SORTTABLE);
 		
 		global $smwgHaloIP;
-		require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
+		require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_GardeningIssues.php");
+		require_once( $smwgHaloIP . "/specials/SMWGardening/ConsistencyBot/SMW_ConsistencyBot.php");
+		
 		$cols = array(); //Names of columns
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		// print header
 		if ('broadtable' == $this->mFormat)
@@ -114,7 +116,7 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 	protected function addTooltip($title){
 		$tt = '';
 		if($title instanceof Title){
-			$gi_store = SMWGardening::getGardeningIssuesAccess();
+			$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 			$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, NULL, $title, NULL, NULL);
 			$messages = array();
 			for($j = 0; $j<sizeof($gIssues); $j++){

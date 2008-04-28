@@ -48,7 +48,7 @@
  	 * Do not use echo when it is not running asynchronously.
  	 */
  	public function run($paramArray, $isAsync, $delay) {
- 		$gi_store = SMWGardening::getGardeningIssuesAccess();
+ 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		if (!$isAsync) {
  			echo 'Missing annotations bot should not be run synchronously! Abort bot.'; // do not externalize
  			return;
@@ -147,7 +147,7 @@
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 		
 		
-		$gi_store = SMWGardening::getGardeningIssuesAccess();
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_missingannotationsbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
