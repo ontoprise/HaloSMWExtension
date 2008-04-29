@@ -1117,10 +1117,12 @@ function smwfCommaAnnotation(&$parser){
 	$annoValues = split(',', $params[1]);
 	$ret = '';
 	for ($i=0; $i<sizeof($annoValues); $i++){
+		$val = $annoValues[$i];
+		$val = trim($val);
 		if ($i == 0)
-			$ret .= "[[$annoName::$annoValues[$i]]]";
+			$ret .= "[[$annoName::$val]]";
 		else
-			$ret .= ", [[$annoName::$annoValues[$i]]]";
+			$ret .= ", [[$annoName::$val]]";
 	}
 	return $ret;
 }
