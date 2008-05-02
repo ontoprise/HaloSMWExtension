@@ -18,11 +18,10 @@
  
  class ConsistencyBot extends GardeningBot {
  	
- 	private $store = NULL;
- 	 	
+ 	 	 	
  	function ConsistencyBot() {
  		parent::GardeningBot("smw_consistencybot");
- 		$this->store = $this->getConsistencyStorage();
+ 		$this->store = ConsitencyBotStorage::getConsistencyStorage();
  	}
  	
  	public function getHelpText() {
@@ -133,23 +132,7 @@
  		
  	}
  	
- 	public function getConsistencyStorage() {
- 		global $smwgHaloIP;
-		if ($this->store == NULL) {
-			global $smwgDefaultStore;
-			switch ($smwgDefaultStore) {
-				case (SMW_STORE_TESTING):
-					$this->store = null; // not implemented yet
-					trigger_error('Testing store not implemented for HALO extension.');
-				break;
-				case (SMW_STORE_MWDB): default:
-					
-					$this->store = new ConsistencyBotStorageSQL();
-				break;
-			}
-		}
-		return $this->store;
- 	}
+ 	
  	 	
  }
  
@@ -193,6 +176,7 @@
  define('SMW_GARDISSUE_TOO_HIGH_CARD', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 8);
  define('SMW_GARDISSUE_WRONG_UNIT', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 9);
  define('SMW_GARD_ISSUE_MISSING_PARAM', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 10);
+ define('SMW_GARDISSUE_MISSING_ANNOTATIONS', (SMW_CONSISTENCY_BOT_BASE+3) * 100 + 11);
  
  // incompatible entity issues
  define('SMW_GARD_ISSUE_DOMAIN_NOT_RANGE', (SMW_CONSISTENCY_BOT_BASE+4) * 100 + 1);
@@ -271,6 +255,8 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 				return wfMsg('smw_gardissue_wrong_domain_value', $text1, $text2);
 			case SMW_GARDISSUE_TOO_LOW_CARD: 
 				return wfMsg('smw_gardissue_too_low_card', $text1, $text2, $this->value);
+			case SMW_GARDISSUE_MISSING_ANNOTATIONS:
+				return wfMsg('smw_gardissue_missing_annotations', $text1, $text2, $this->value);
 			case SMW_GARDISSUE_TOO_HIGH_CARD: 
 				return wfMsg('smw_gardissue_too_high_card', $text1, $text2, $this->value);
 			case SMW_GARDISSUE_WRONG_UNIT: 
@@ -374,6 +360,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  
  abstract class ConsitencyBotStorage {
  	
+ 	private static $store = NULL;
  	/* 
  	 * Note: 
  	 * 		
@@ -462,6 +449,24 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	 * @return array of tuples (Title instance, Integer frequency)
  	 */
  	public abstract function getMissingPropertyInstantiations($property, $instances);
+ 	
+    public static function getConsistencyStorage() {
+        global $smwgHaloIP;
+        if (self::$store == NULL) {
+            global $smwgDefaultStore;
+            switch ($smwgDefaultStore) {
+                case (SMW_STORE_TESTING):
+                    self::$store = null; // not implemented yet
+                    trigger_error('Testing store not implemented for HALO extension.');
+                break;
+                case (SMW_STORE_MWDB): default:
+                    
+                    self::$store = new ConsistencyBotStorageSQL();
+                break;
+            }
+        }
+        return self::$store;
+    }
  }
  
  class ConsistencyBotStorageSQL extends ConsitencyBotStorage {

@@ -239,6 +239,7 @@ protected $smwUserMessages = array(
 	'smw_gardissue_wrong_target_value' => '$1 benutzt Attribut $2 mit einer Instanz der falschen Kategorie: $3.',
 	'smw_gardissue_wrong_domain_value' => '$1 ist Element der falschen Kategorie, wenn es mit Attribut $2 benutzt wird.',
 	'smw_gardissue_too_low_card' => '$1 benutzt Attribut $2 (oder eines seiner Subproperties) $3-mal zu wenig.',
+    'smw_gardissue_missing_annotations' => 'Fehlende Annotationen. $1 benutzt Attribut $2 (oder eines seiner Subproperties) $3-mal zu wenig.',
 	'smw_gardissue_too_high_card' => '$1 benutzt Attribut $2 (oder eines seiner Subproperties) $3-mal zu häufig.',
 	'smw_gardissue_wrong_unit' => '$1 benutzt Attribut $2 mit falches Einheit $3.',
 	'smw_gard_no_errors' => 'Gratulation! Das Wiki ist konsistent.',

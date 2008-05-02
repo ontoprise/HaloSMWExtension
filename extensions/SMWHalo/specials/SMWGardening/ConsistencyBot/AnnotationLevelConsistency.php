@@ -24,18 +24,21 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	// Consistency store
  	private $cc_store;
  	
+ 	private $no_feedback = false;
+ 	
  	// Important: Attribute values (primitives) are always syntactically 
  	// correct when they are in the database. So only relations
  	// will be checked.
  	
- 	public function AnnotationLevelConsistency(& $bot, $delay, & $categoryGraph, & $propertyGraph) {
+ 	public function AnnotationLevelConsistency(& $bot, $delay, & $categoryGraph, & $propertyGraph, $no_feedback = false) {
  		$this->bot = $bot;
  		$this->delay = $delay;
- 		$this->cc_store = $bot->getConsistencyStorage();
+ 		$this->cc_store = ConsitencyBotStorage::getConsistencyStorage();
  		
  		$this->categoryGraph = $categoryGraph;
  		$this->propertyGraph = $propertyGraph;
  		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+ 		$this->no_feedback = $no_feedback;
  	}
  	/**
  	 * Checks if property annotations uses schema consistent values
@@ -45,16 +48,19 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		print "\n";
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$totalWork = count($properties);
- 		$this->bot->addSubTask($totalWork);
+ 		if ($this->no_feedback) $this->bot->addSubTask($totalWork);
  		
  		foreach($properties as $p) {
- 			if ($this->delay > 0) {
- 				if ($this->bot->isAborted()) break;
- 				usleep($this->delay);
- 			}
- 			$this->bot->worked(1);
- 			$workDone =$this->bot->getCurrentWorkDone();
- 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 			
+ 			if (!$this->no_feedback && $this->bot->isAborted()) break;
+ 			usleep($this->delay);
+ 			
+ 			
+ 			if ($this->no_feedback) {
+ 				$this->bot->worked(1);
+	 			$workDone =$this->bot->getCurrentWorkDone();
+	 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+	 		}
  			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($p) 
  					|| smwfGetSemanticStore()->minCard->equals($p) 
@@ -185,15 +191,16 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		print "\n";
  		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$totalWork = count($properties);
- 		$this->bot->addSubTask($totalWork);
+ 		if ($this->no_feedback) $this->bot->addSubTask($totalWork);
  		foreach($properties as $a) {
- 			if ($this->delay > 0) {
+ 			if (!$this->no_feedback && $this->bot->isAborted()) break;
  				usleep($this->delay);
- 			}
- 			$this->bot->worked(1);
- 			$workDone = $this->bot->getCurrentWorkDone();
- 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
  			
+ 		     if ($this->no_feedback) {
+	 			$this->bot->worked(1);
+	 			$workDone = $this->bot->getCurrentWorkDone();
+	 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 		     }
  			
  			// ignore builtin properties
  			if (smwfGetSemanticStore()->minCard->equals($a) 
@@ -294,9 +301,9 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 				foreach($results as $title) {
 	 					
 	 					
-		 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $title, $a)) {
+		 					if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $title, $a)) {
 		 						
-		 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $title, $a, $minCards);
+		 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_MISSING_ANNOTATIONS, $title, $a, $minCards);
 		 					}
 						 
 	 				}
@@ -305,6 +312,98 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  			}
  	}
  	
+ public function checkAnnotationCardinalitiesForInstance($instance, array & $domainProperties) {
+ 	
+ 	  $properties = smwfGetStore()->getProperties($instance);
+ 	  
+ 	  foreach($properties as $a) {
+        // get minimum cardinality
+            $minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
+            
+            if (empty($minCardArray)) {
+                // if it does not exist, get minimum cardinality from superproperty
+                $minCards = CARDINALITY_MIN;
+            } else {
+                // assume there's only one defined. If not it will be found in co-variance checker anyway
+                $minCards = $minCardArray[0]->getXSDValue() + 0;
+            }
+            
+            // get maximum cardinality
+            $maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
+            
+            if (empty($maxCardsArray)) {
+                // if it does not exist, get maximum cardinality from superproperty
+                $maxCards = CARDINALITY_UNLIMITED;
+                
+            } else {
+                // assume there's only one defined. If not it will be found in co-variance checker anyway
+                $maxCards = $maxCardsArray[0]->getXSDValue() + 0;
+            }
+            
+            if ($minCards == CARDINALITY_MIN && $maxCards == CARDINALITY_UNLIMITED) {
+                // default case: no check needed, so skip it.
+                continue;
+            }
+            
+            // get all instances which have instantiated properties (including subproperties) of $a
+            // and the number of these annotations for each for instance
+            $result = smwfGetStore()->getPropertyValues($instance, $a);
+            
+            // compare actual number of appearances to minCard and maxCard and log errors if necessary
+           
+                $subject = $instance;
+                $numOfInstProps = count($result);
+                
+                // less than allowed?
+                if ($numOfInstProps < $minCards) {
+                    if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
+                        
+                        $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $minCards - $numOfInstProps);
+                    }
+                } 
+                
+                // too many than allowed?
+                if ($numOfInstProps > $maxCards) {
+                    if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
+                        
+                        $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $numOfInstProps - $maxCards);
+                    }
+                }           
+            
+ 	  }        
+            // special case: If minCard > CARDINALITY_MIN (=0), it may happen that an instance does not have a single property instantiation although it should.
+          
+ 	        foreach($domainProperties as $domainProperty) {
+ 	        	
+	 	         // get minimum cardinality
+	            $minCardArray = smwfGetStore()->getPropertyValues($domainProperty, smwfGetSemanticStore()->minCard);
+	            
+	            if (empty($minCardArray)) {
+	                // if it does not exist, get minimum cardinality from superproperty
+	                $minCards = CARDINALITY_MIN;
+	            } else {
+	                // assume there's only one defined. If not it will be found in co-variance checker anyway
+	                $minCards = $minCardArray[0]->getXSDValue() + 0;
+	            }
+	            
+	            if ($minCards == CARDINALITY_MIN) {
+	                // default case: no check needed, so skip it.
+	                continue;
+	            }
+	            
+	            $num = count(smwfGetStore()->getPropertyValues($instance, $domainProperty));
+	            
+	            if ($num == 0) {
+	            	
+	            	 $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_MISSING_ANNOTATIONS, $instance, $domainProperty, $minCards);
+	            }
+ 	        }
+            
+          
+           
+                
+            
+    }
  	/**
  	 * Checks if all annotations with units have proper units (such defined by 'corresponds to' relations).
  	 */
@@ -313,15 +412,16 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		print "\n";
  		$types = smwfGetSemanticStore()->getPages(array(SMW_NS_TYPE));
  		$totalWork = count($types);
- 		$this->bot->addSubTask($totalWork);
+ 		if ($this->no_feedback) $this->bot->addSubTask($totalWork);
  		foreach($types as $type) {
- 			if ($this->delay > 0) {
- 				usleep($this->delay);
- 			}
- 			$this->bot->worked(1);
- 			$workDone = $this->bot->getCurrentWorkDone();
- 			if ($workDone % 5 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 			if (!$this->no_feedback && $this->bot->isAborted()) break;
+ 		    usleep($this->delay);
  			
+ 		    if ($this->no_feedback) {
+	 			$this->bot->worked(1);
+	 			$workDone = $this->bot->getCurrentWorkDone();
+	 			if ($workDone % 5 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
+ 		    }
  			 			
  			$this->checkUnits($type);
  		}
@@ -357,6 +457,34 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 	 			}
  			}
  	} 
+ 	
+ 	public function checkUnitForInstance($instance) {
+ 		
+ 		    $properties = smwfGetStore()->getProperties($instance);
+ 		    foreach($properties as $p) {
+ 		    	$values = smwfGetStore()->getPropertyValues($instance, $p);
+ 		    	foreach($values as $v) {
+ 		    		if ($v->getUnit() != '') {
+ 		    			$type = smwfGetStore()->getSpecialValues($type, SMW_SP_HAS_TYPE);
+ 		    			if (count($type) == 0) continue;
+ 		    			$conversion_factors = smwfGetStore()->getSpecialValues($type[0], SMW_SP_CONVERSION_FACTOR);
+                        $si_conversion_factors = smwfGetStore()->getSpecialValues($type[0], SMW_SP_CONVERSION_FACTOR_SI);
+	 		    		$correct_unit = false;
+		               
+		                foreach($conversion_factors as $c) {
+		                    $correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+		                }
+		                foreach($si_conversion_factors as $c) {
+		                    $correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+		                }
+		                if (!$correct_unit) {
+		                	$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $instance, $p, $v->getUnit());
+		                }
+	 		    	}
+	 		    }
+ 		    }
+            
+    } 
  	
  	/**
  	 * Checks for missing parameter of annotations of n-ary properties

@@ -132,7 +132,7 @@
  		foreach($issues as $i) {
  			$isModified = $i->isModified() ? 'modified="true"' : '';
  			// title2 contains the not annotated property in this case
- 			if ($i->getType() == SMW_GARDISSUE_TOO_LOW_CARD && intval($i->getValue()) == 0 && $i->getTitle2() !== NULL) {
+ 			if ($i->getType() == SMW_GARDISSUE_MISSING_ANNOTATIONS && $i->getTitle2() !== NULL) {
  				$title = htmlspecialchars($i->getTitle2()->getDBkey()); 
  				
 		 		$errorTags = "";

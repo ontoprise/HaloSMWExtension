@@ -20,7 +20,7 @@ class GraphCycleDetector {
  	public function GraphCycleDetector(& $bot) {
  		
  		$this->bot = $bot;
- 		$this->cc_store = $bot->getConsistencyStorage();
+ 		$this->cc_store = ConsitencyBotStorage::getConsistencyStorage();
  	}
  	
  	/**

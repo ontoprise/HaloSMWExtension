@@ -4,7 +4,7 @@
  *
  * Author: kai
  */
-define('SMW_HALO_VERSION', '1.0');
+define('SMW_HALO_VERSION', '1.1');
 
  // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -62,6 +62,7 @@ function smwgHaloSetupExtension() {
 	// new and functionally enhanced smwfHaloSaveHook
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
+	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	
 	global $wgRequest, $wgContLang, $smwgMaintenanceScript;
 	
@@ -108,6 +109,7 @@ function smwgHaloSetupExtension() {
 		$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
 		$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	}
+	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
 		smwfHaloInitMessages();
@@ -203,6 +205,8 @@ function smwgHaloSetupExtension() {
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
 	}
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_LocalGardeningJob.php');
+	
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
@@ -566,6 +570,28 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 }
 	
 	/**
+	 * Called *before* an article is saved. Used for LocalGardening
+	 *
+	 * @param unknown_type $article
+	 * @param unknown_type $user
+	 * @param unknown_type $text
+	 * @param unknown_type $summary
+	 * @param unknown_type $minor
+	 * @param unknown_type $watch
+	 * @param unknown_type $sectionanchor
+	 * @param unknown_type $flags
+	 */
+    function smwfHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
+    	// -- LocalGardening --
+    	global $smwgLocalGardening;
+    	if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
+	        $gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
+	        Job :: batchInsert($gard_jobs);
+    	}
+        return true;
+        // --------------------
+    }
+	/**
 	 * Called *before* semantic annotations are updated.
 	 * Save annotation ratings in global variable.
 	 * 
@@ -612,7 +638,8 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
 		
 		$updatejobflag = 0;
-
+        
+		
 	 	/**
 		 * Checks if the semantic data has been changed.
 		 * Sets the updateflag is so.

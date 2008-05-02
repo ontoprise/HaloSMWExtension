@@ -17,7 +17,7 @@
  		$this->bot = $bot;
  		$this->delay = $delay;
  		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
- 		$this->cc_store = $bot->getConsistencyStorage();
+ 		$this->cc_store = ConsitencyBotStorage::getConsistencyStorage();
  	}
  	
  	

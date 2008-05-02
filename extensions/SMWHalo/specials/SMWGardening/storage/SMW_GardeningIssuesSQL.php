@@ -46,18 +46,24 @@
 			DBHelper::reportProgress("   ... done!\n",$verbose);
  	}
  	
- 	public function clearGardeningIssues($bot_id = NULL, Title $t = NULL, $gi_type = NULL) {
+ 	public function clearGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, Title $t1 = NULL, Title $t2 = NULL) {
  		$db =& wfGetDB( DB_MASTER );
  		$sqlCond = ' WHERE TRUE ';
- 		if ($t != NULL) {
- 			$sqlCond = ' AND p1_id = '.$t->getArticleID();
+ 		if ($t1 != NULL) {
+ 			$sqlCond .= ' AND p1_id = '.$t1->getArticleID();
  		}
+ 	    if ($t2 != NULL) {
+            $sqlCond .= ' AND p2_id = '.$t2->getArticleID();
+        }
  		if ($bot_id != NULL) {
  			$sqlCond .= ' AND bot_id = '.$db->addQuotes($bot_id);
  		}
  		if ($gi_type != NULL && is_numeric($gi_type)) {
  			$sqlCond .= ' AND gi_type = '.$gi_type;
  		}
+ 	    if ($gi_class != NULL && is_numeric($gi_class)) {
+            $sqlCond .= ' AND gi_class = '.$gi_class;
+        }
  		$db->query('DELETE FROM '.$db->tableName('smw_gardeningissues').$sqlCond);
  	}
  	
@@ -436,7 +442,7 @@
  	}
  	
  	public function generatePropagationIssuesForCategories($botID, $propagationType) {
- 		$this->clearGardeningIssues($botID, NULL, $propagationType);
+ 		$this->clearGardeningIssues($botID, $propagationType);
  		$db =& wfGetDB( DB_MASTER );
  		
  		$page = $db->tableName('page');

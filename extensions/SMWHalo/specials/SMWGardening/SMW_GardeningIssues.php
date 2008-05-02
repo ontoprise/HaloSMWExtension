@@ -38,7 +38,7 @@ global $wgAjaxExportList;
  	 * @param $bot_id if not NULL, clear only GardeningIssues of this bot. Otherwise all.
  	 * @param $t1 Clear only Gardening issues of this title.
  	 */
- 	public abstract function clearGardeningIssues($bot_id = NULL, Title $t1 = NULL);
+ 	public abstract function clearGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL,Title $t1 = NULL, Title $t2 = NULL);
  	
  	/**
  	 * Detects if a GardeningIssue about an article does already exist.

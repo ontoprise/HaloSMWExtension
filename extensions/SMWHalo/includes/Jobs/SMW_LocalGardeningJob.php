@@ -15,12 +15,12 @@ require_once( "$IP/includes/JobQueue.php" );
 
 
 class SMW_LocalGardeningJob extends Job {
-    
-	// page which was saved or removed
-	public $title;
-	
+    		
 	// action which was done (save, remove)
 	public $action;
+	
+	// pages which are relevant for consistency checking
+	public $pagesToCheck;
 	
 	// need not to be serialized (how to do this?)
 	public $categoryGraph = NULL;
@@ -37,8 +37,10 @@ class SMW_LocalGardeningJob extends Job {
     function __construct(Title $title, $action) {
         wfDebug(__METHOD__." ".get_class($this)." \r\n");
         parent::__construct( get_class($this), $title);
-        $this->title = $title;
+       
         $this->action = $action;
+        $this->pagesToCheck = $this->selectPages($title);
+      
     }
     
     /**
@@ -46,39 +48,100 @@ class SMW_LocalGardeningJob extends Job {
      *
      * @return Array of Title
      */
-    private function selectPages() {
-    	switch($this->title->getNamespace()) {
-    		case SMW_NS_PROPERTY: return PageSelector::getPagesForPropertySave($this->title); break;
-    		case NS_CATEGORY: return PageSelector::getPagesForCategorySave($this->title); break;
-    		case NS_MAIN: return $this->action == "save" ? $this->title : NULL; break;
-    		case SMW_NS_TYPE: return $this->action == "save" ? $this->title : NULL; break;
+    private function selectPages(Title $title) {
+    	switch($title->getNamespace()) {
+    		case SMW_NS_PROPERTY: return PageSelector::getPagesForPropertySave($title); break;
+    		case NS_CATEGORY: return PageSelector::getPagesForCategorySave($title); break;
+    		case NS_MAIN: return PageSelector::getPagesForInstanceSave($title); break;
+    		case SMW_NS_TYPE: return array(); break;
     	}
     	return NULL;
     }
     
    
-    private function checkInstancesUsingProperty(Title $property) {
-    
+    private function checkCategoryChange(Title $property) {
+    	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+        
     	$subjects = smwfGetStore()->getAllPropertySubjects($property);
+    	foreach($subjects as $s) {
+    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$s, $property);
+    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s, $property);
+    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s,$property);
+       	}
       	$this->annot_checker->checkPropertyAnnotations($subjects, $property);
     }
     
-    private function checkPropertyCovariance(Title $property) {
+    private function checkPropertyChange(Title $property) {
+    	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+
+    	// clear all issues which will be checked
+    	$gi_store->clearGardeningIssues('smw_consistencybot', NULL, $property);
+        $subjects = smwfGetStore()->getAllPropertySubjects($property);
+        foreach($subjects as $s) {
+            $gi_store->clearGardeningIssues('smw_consistencybot', NULL, SMW_CONSISTENCY_BOT_BASE, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', NULL, SMW_CONSISTENCY_BOT_BASE + 1, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', NULL, SMW_CONSISTENCY_BOT_BASE + 2, $property);
+            
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MAXCARD_NOT_NULL, NULL, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MINCARD_BELOW_NULL, NULL, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_MINCARD_VALUE, NULL,$property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_MAXCARD_VALUE,NULL, $property);
+            
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE,NULL, $s, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD,NULL, $s, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_HIGH_CARD,NULL, $s, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$s, $property);
+            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s, $property);
+            
+        }
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $property);
+        
+    	// covariance check
     	$this->cov_checker->checkPropertyForCovariance($property);
+                
+    	// domain/range check
+        $this->annot_checker->checkPropertyAnnotations($subjects, $property);
+        
+        // cardinality check
+        $this->annot_checker->checkAnnotationCardinalities($property);
+        
+        //TODO: unit checks?
     }
     
-    private function checkInstance(Title $instance) {
-    	if ($instance == NULL) return;
+    private function checkInstanceChange(array & $domainProperties) {
+    	if ($this->title == NULL) return;
+    	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+    	
+    	// clear issues to check again
+    	$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_HIGH_CARD, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL,$instance);
+        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$instance);
+        
+    	$instance = $this->title;
     	$subjects[] = $instance;
         $properties = smwfGetStore()->getProperties($instance);
-        
+               
+        // domain/range check
         foreach($properties as $property) {
             $this->annot_checker->checkPropertyAnnotations($subjects, $property);
+            
         }
+        
+        // cardinality check
+        $this->annot_checker->checkAnnotationCardinalitiesForInstance($instance, $domainProperties);
+        
+        // units check
+        $this->annot_checker->checkUnitForInstance($instance);
     }
     
-    private function checkType(Title $type) {
+    private function checkTypeChange(Title $type) {
     	if ($type == NULL) return;
+    	//TODO: delete unit issues
         foreach($properties as $property) {
             $this->annot_checker->checkUnits($type);
         }
@@ -104,28 +167,27 @@ class SMW_LocalGardeningJob extends Job {
         $cc_bot = $registeredBots['smw_consistencybot'];
         $this->annot_checker = new AnnotationLevelConsistency($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
         $this->cov_checker = new PropertyCoVarianceDetector($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
-         
-        // select page which need to be processed
-        $pagestocheck = $this->selectPages();
-        
+
+       
         switch($this->title->getNamespace()) {
-        	case NS_CATEGORY: foreach($pagestocheck as $p) {
-						            print "Checking annotations of '".$p->getText()."'...";
-						            $this->checkInstancesUsingProperty($p);
+        	case NS_CATEGORY: foreach($this->pagesToCheck as $p) {
+        		                    
+						            print "Checking annotations of '".$p."'...";
+						            $this->checkCategoryChange(Title::newFromText($p, SMW_NS_PROPERTY));
 						            print "done.\n";
 						      } break;
-        	case SMW_NS_PROPERTY: foreach($pagestocheck as $p) {
-                                    print "Checking annotations and covariance of '".$p->getText()."'...";
-                                    $this->checkInstancesUsingProperty($p);
-                                    $this->checkPropertyCovariance($p);
+        	case SMW_NS_PROPERTY: foreach($this->pagesToCheck as $p) {
+                                    print "Checking annotations and covariance of '".$p."'...";
+                                    
+                                    $this->checkPropertyChange(Title::newFromText($p, SMW_NS_PROPERTY));
                                     print "done.\n";
                               } break;	
-        	case NS_MAIN:           print "Checking annotations of '".$this->title->getText()."'...";
-                                    $this->checkInstance($this->title);
+        	case NS_MAIN:           print "Checking annotations of '".$this->title."'...";
+                                    $this->checkInstanceChange(TitleHelper::string2Title($this->pagesToCheck));
                                     print "done.\n";
                                 break;
-        	case SMW_NS_TYPE:       print "Checking annotations of '".$this->title->getText()."'...";
-                                    $this->checkType($this->title);
+        	case SMW_NS_TYPE:       print "Checking annotations of '".$this->title."'...";
+                                    $this->checkTypeChange($this->title);
                                     print "done.\n";
                                 break;
         }
@@ -153,7 +215,7 @@ class PageSelector {
 			$rangeProperties = smwfGetSemanticStore()->getPropertiesWithRange($c);
 			$properties = array_merge($properties, $domainProperties, $rangeProperties);
 		}
-		return PageSelector::makeTitlesUnique($properties);
+		return TitleHelper::title2string(PageSelector::makeTitlesUnique($properties));
 	}
 	
 	/**
@@ -166,11 +228,26 @@ class PageSelector {
 		$allSubProperties = array();
 		$visitedNodes = array();
 		PageSelector::getAllSubProperties($title, $allSubProperties, $visitedNodes);
-		return PageSelector::makeTitlesUnique($allSubProperties);
+		return TitleHelper::title2string(PageSelector::makeTitlesUnique($allSubProperties));
+	}
+	
+	static function getPagesForInstanceSave(Title $title) {
+		$properties = array();
+        $allSuperCategories = array();
+        $visitedNodes = array();
+        $directCats = smwfGetSemanticStore()->getCategoriesForInstance($title);
+        foreach($directCats as $dc) {
+	        PageSelector::getAllSuperCategories($dc, $allSuperCategories, $visitedNodes);
+	        foreach($allSuperCategories as $c) {
+	            $domainProperties = smwfGetSemanticStore()->getPropertiesWithDomain($c);
+	            $properties = array_merge($properties, $domainProperties);
+	        }
+        }
+        return TitleHelper::title2string(PageSelector::makeTitlesUnique($properties));
 	}
 	
 	// Note: may contain duplicates. cycle safe.
-	static function getAllSuperCategories(Title $category, & $results, & $visitedNodes) {
+	private static function getAllSuperCategories(Title $category, & $results, & $visitedNodes) {
 	
 		$store = smwfGetSemanticStore();
 		$superCategories = $store->getDirectSuperCategories($category);
@@ -185,7 +262,7 @@ class PageSelector {
 	}
 	
 	// Note: may contain duplicates. cycle safe.
-	static function getAllSubProperties(Title $property, & $results, & $visitedNodes) {
+	private static function getAllSubProperties(Title $property, & $results, & $visitedNodes) {
         
         $store = smwfGetSemanticStore();
         $superProperties = $store->getDirectSubProperties($property);
@@ -200,16 +277,16 @@ class PageSelector {
     }
     
     /**
-     * Returns an array of Title which contains every title only once.
+     * Returns an array of prefixed title names which contains every title only once. 
      *
-     * @param array $titles
-     * @return array of Title
+     * @param array Title $titles
+     * @return array of prefixed title names
      */
-    static function makeTitlesUnique(array & $titles) {
+    private static function makeTitlesUnique(array & $titles) {
     	$uniques = array();
     	for ($i = 0, $n = count($titles); $i < $n; $i++) {
 	    	for ($j = 0, $n = count($titles); $j < $n-1; $j++) {
-	            if (strcmp($titles[$j+1]->getDBkey(), $titles[$j]->getDBkey() < 0)) {
+	            if (strcmp($titles[$j+1]->getDBkey(), $titles[$j]->getDBkey()) < 0) {
 	            	$help = $titles[$j+1];
 	            	$titles[$j+1] = $titles[$j];
 	            	$titles[$j] = $help;
@@ -224,6 +301,26 @@ class PageSelector {
     		}
     	}
     	return $uniques;
+    }
+    
+    
+}
+
+class TitleHelper {
+    public static function string2Title(array & $titlenames) {
+        $results = array();
+        foreach($titlenames as $t) {
+            $results[] = Title::newFromText($t);
+        }
+        return $results;
+    }
+    
+    public static function title2string(array & $titlenames) {
+    	$results = array();
+        foreach($titlenames as $t) {
+            $results[] = $t->getPrefixedText();
+        }
+        return $results;
     }
 }
 ?>

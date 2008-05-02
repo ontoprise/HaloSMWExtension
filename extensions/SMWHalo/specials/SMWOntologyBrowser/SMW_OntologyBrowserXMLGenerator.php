@@ -155,7 +155,7 @@ public static function encapsulateAsAnnotationList(array & $propertyAnnotations,
 		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values);
 	}
 	// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
-	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD, NULL, $instance);
+	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
 	$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);	
 	$instanceTitleEscaped = htmlspecialchars($instance->getDBkey()); 
 	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title=\"$instanceTitleEscaped\"/>" : "<annotationsList>".$result."</annotationsList>";

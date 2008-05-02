@@ -31,18 +31,21 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  	// GardeningIssue store
  	private $gi_store;
  	
+	private $no_feedback = false;
 	
 	/**
 	 * Creates a PropertyCoVarianceDetector
 	 */
- 	public function PropertyCoVarianceDetector(& $bot, $delay, & $categoryGraph, & $propertyGraph) {
+ 	public function PropertyCoVarianceDetector(& $bot, $delay, & $categoryGraph, & $propertyGraph, $no_feedback = false) {
  		$this->bot = $bot;
- 		$this->cc_store = $bot->getConsistencyStorage();
+ 		$this->cc_store = ConsitencyBotStorage::getConsistencyStorage();
  		$this->delay = $delay;
  	
  		$this->categoryGraph = $categoryGraph;
  		$this->propertyGraph = $propertyGraph;
  		$this->gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+ 		
+ 		$this->no_feedback = $no_feedback;
  	}
  	
  	/**
@@ -55,17 +58,17 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		print "\n";
  		$attributes = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
  		$totalWork = count($attributes);
- 		$this->bot->addSubTask($totalWork);
+ 		if ($this->no_feedback) $this->bot->addSubTask($totalWork);
  		foreach($attributes as $a) {
- 			if ($this->delay > 0) {
- 				if ($this->bot->isAborted()) break;
- 				usleep($this->delay);
+ 			
+ 			if (!$this->no_feedback && $this->bot->isAborted()) break;
+ 			usleep($this->delay);
+ 			
+ 			if ($this->no_feedback) {
+	 			$this->bot->worked(1);
+	 			$workDone = $this->bot->getCurrentWorkDone();
+	 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
  			}
- 			$this->bot->worked(1);
- 			
- 			$workDone = $this->bot->getCurrentWorkDone();
- 			if ($workDone % 10 == 1 || $workDone == $totalWork) GardeningBot::printProgress($workDone/$totalWork);
- 			
  			
  			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($a) 
  					
@@ -76,16 +79,20 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  						continue;
  			}
   			
- 			$this->checkMinCardinality($a);
- 			$this->checkMaxCardinality($a);
- 			$this->checkDomainAndRangeCovariance($a);
- 			$this->checkTypeEquality($a);
- 			//$this->checkRangeCovariance($a);
- 			$this->checkSymTransCovariance($a);
  			
+ 			$this->checkPropertyForCovariance($a);
  			
  		}
  		
+ 	}
+ 	
+ 	public function checkPropertyForCovariance($a) {
+ 		$this->checkMinCardinality($a);
+        $this->checkMaxCardinality($a);
+        $this->checkDomainAndRangeCovariance($a);
+        $this->checkTypeEquality($a);
+        //$this->checkRangeCovariance($a);
+        $this->checkSymTransCovariance($a);
  	}
  	
  	/** 		
