@@ -39,7 +39,17 @@ DivContainer.prototype = {
 	contentChanged : function() {
 		stb_control.contentChanged(this.getContainerNr());
 	},
-
+    
+    // @abstract
+    showContainerEvent: function() {
+        // no impl
+    },
+    
+    // @abstract
+    showTabEvent: function(tabnum) {
+        // no impl
+    },
+        
 	// tab
 	setTab : function(tabnr) {
 		this.tabnr = tabnr;

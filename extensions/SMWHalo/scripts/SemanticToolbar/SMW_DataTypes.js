@@ -101,9 +101,12 @@ DataTypes.prototype = {
 			              [], 
 			              this.ajaxResponseGetDatatypes.bind(this));
 			if (!this.builtinTypes) {
-				sajax_do_call('smwf_tb_GetBuiltinDatatypes', 
-				              [], 
-				              this.ajaxResponseGetDatatypes.bind(this));
+				this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
+				if (this.builtinTypes == null) {
+					sajax_do_call('smwf_tb_GetBuiltinDatatypes', 
+					              [], 
+					              this.ajaxResponseGetDatatypes.bind(this));
+				}
 			}
 		}
 
@@ -134,6 +137,7 @@ DataTypes.prototype = {
 			for (var i = 1, len = types.length; i < len; ++i) {
 				this.builtinTypes[i-1] = types[i];
 			}
+			GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
 		}
 		if (this.userTypes && this.builtinTypes) {
 			

@@ -16,15 +16,37 @@
 */
 Event.observe(window, 'load', smw_links_callme);
 
+
 var createLinkList = function() {
 	sajax_do_call('smwf_tb_getLinks', [wgArticleId], addLinks);
 }
 
+
+    
+    
 function smw_links_callme(){
 	if(wgAction == "edit"
 	   && stb_control.isToolbarAvailable()){
+		var _linksHaveBeenAdded = false;
 		editcontainer = stb_control.createDivContainer(EDITCONTAINER, 1);
-		createLinkList();
+		
+		// KK: checks if link tab is open and ask for links if necessary
+		var stbpreftab = GeneralBrowserTools.getCookie("stbpreftab")
+		if (stbpreftab) {
+			if (stbpreftab.split(",")[0] == '0') {
+				createLinkList();
+                _linksHaveBeenAdded = true;
+			}
+		}
+		
+		// KK: called when the user switches the tab.
+		editcontainer.showTabEvent = function(tabnum) {
+			if (tabnum == 1 && !_linksHaveBeenAdded) {
+				createLinkList();
+				_linksHaveBeenAdded = true;
+			}
+		}
+		
 	}
 }
 

@@ -122,6 +122,8 @@ ToolbarFramework.prototype = {
 		// return newly created div container
 		return this.contarray[contnum];
 	},
+	
+	
 
 	showSemanticToolbarContainer : function(container) {
 		if (container != null) {
@@ -161,6 +163,9 @@ ToolbarFramework.prototype = {
 		this.showSemanticToolbarContainer(contnum);
 		// probably resize toolbar
 		this.resizeToolbar();
+		
+		// send show/hide container event
+		this.contarray[contnum].showContainerEvent();
 
 	},
 
@@ -206,6 +211,9 @@ ToolbarFramework.prototype = {
 		this.showSemanticToolbarContainer();
 		this.resizeToolbar();
 		this.setCookie(this.tabarray);
+		
+		// send tab change event
+		this.contarray.each(function (c) { if (c) c.showTabEvent(tabnr); });
 	},
 
 	hideSemanticToolbarContainerTab : function(tabnr) {

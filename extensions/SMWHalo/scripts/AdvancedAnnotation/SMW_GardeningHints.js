@@ -33,10 +33,18 @@ initialize: function() {
 
 showToolbar: function() {
 	this.gardeningHintContainer.setHeadline(gLanguage.getMessage('ANNOTATION_HINTS'));
-	
-	sajax_do_call('smwf_ga_GetGardeningIssues', 
-	              [['smw_consistencybot', 'smw_undefinedentitiesbot', 'smw_missingannotationsbot'], '', '', wgPageName, ''], 
-	              this.createContent.bind(this));
+	var container = this;
+	var hintsLoaded = false;
+	container.gardeningHintContainer.showContainerEvent = function() {
+		if (hintsLoaded) return;
+		if (!container.gardeningHintContainer.isVisible()) return;
+		sajax_do_call('smwf_ga_GetGardeningIssues', 
+                  [['smw_consistencybot', 'smw_undefinedentitiesbot', 'smw_missingannotationsbot'], '', '', wgPageName, ''], 
+                  container.createContent.bind(container));
+        hintsLoaded = true;
+	}
+	this.gardeningHintContainer.setVisibility(false);
+	this.gardeningHintContainer.contentChanged();
 },
 
 createContainer: function(event){

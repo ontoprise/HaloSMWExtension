@@ -16,40 +16,66 @@
 */
 Event.observe(window, 'load', smw_help_callme);
 
-var initHelp = function(){
+var smw_help_getNamespace = function() {
 	var ns = wgNamespaceNumber==0?"Main":wgCanonicalNamespace ;
-	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
-		ns = "Search";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
-		ns = "QueryInterface";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
-		ns = "Gardening";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
-		ns = "Gardening";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
-		ns = "OntologyBrowser";
-	}
+    if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
+        ns = "Search";
+    }
+    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
+        ns = "QueryInterface";
+    }
+    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
+        ns = "Gardening";
+    }
+    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
+        ns = "Gardening";
+    }
+    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
+        ns = "OntologyBrowser";
+    }
+    return ns;
+}
+var initHelp = function(){
+	var ns = smw_help_getNamespace();
 	sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
+	
 }
 
 function smw_help_callme(){
+	var ns = smw_help_getNamespace();
 	if((wgAction == "edit" || wgAction == "annotate"
 	    || wgCanonicalSpecialPageName == "Search")
 	   && stb_control.isToolbarAvailable()){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
 		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> Help');
-		initHelp();
+		
+		// KK: initalize help only when Help container is open.
+		var helpLoaded = false;
+		helpcontainer.showContainerEvent = function() {
+			if (!helpcontainer.isVisible()) return;
+			if (helpLoaded) return;
+					   
+		    sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
+		    helpLoaded = true;
+		}
+		
+		displayHelp();	
+			
+		
 	}
-	else if(wgCanonicalSpecialPageName == "QueryInterface"){
-		initHelp();
+	else if (wgCanonicalSpecialPageName == "QueryInterface"){
+		
+		 sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
 	}
 }
 
 function displayHelp(request){
+	
+	if (!request) {
+		helpcontainer.setHeadline = ' ';
+		helpcontainer.contentChanged();
+		return;
+	}
 	//No SemTB in QI, therefore special treatment
 	if(wgCanonicalSpecialPageName == "QueryInterface"){
 		if ( request.responseText != '' ){
@@ -69,22 +95,7 @@ function displayHelp(request){
 
 function askQuestion(){
 	$('questionLoaderIcon').show();
-	var ns = wgNamespaceNumber==0?"Main":wgCanonicalNamespace ;
-	if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Search"){
-		ns = "Search";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "QueryInterface"){
-		ns = "QueryInterface";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "Gardening"){
-		ns = "Gardening";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
-		ns = "Gardening";
-	}
-	else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
-		ns = "OntologyBrowser";
-	}
+	var ns = smw_help_getNamespace();
 	sajax_do_call('smwf_tb_AskQuestion', [ns , wgAction, $('question').value], hideQuestionForm.bind(this));
 }
 
