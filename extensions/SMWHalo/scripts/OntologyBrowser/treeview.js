@@ -49,7 +49,7 @@ TreeTransformer.prototype = {
 	initializeTree: function () {
 	
 	// deactivate not supported browsers
-	if (OB_bd.isKonqueror || OB_bd.isSafari) {
+	if (OB_bd.isKonqueror) {
 		alert(gLanguage.getMessage('KS_NOT_SUPPORTED'));
 		return;
 	}
@@ -117,7 +117,7 @@ transformResultToHTML: function (request, node, level) {
   		  return;
   		}
   		// parse xml and transform it to HTML
-  		if (OB_bd.isGeckoOrOpera) {
+  		if (OB_bd.isGecko) {
   			var parser=new DOMParser();
   			var xmlDoc=parser.parseFromString(request.responseText,"text/xml");
   			this.transformXMLToHTML(xmlDoc, node, level ? level : false);
@@ -137,7 +137,7 @@ transformResultToHTML: function (request, node, level) {
  level: true = root level, otherwise false (only relevant for tree transformations)
 */
 transformXMLToHTML: function (xmlDoc, node, level) {
-	if (OB_bd.isGeckoOrOpera) {
+	if (OB_bd.isGecko) {
 		// set startDepth parameter. start on root level or below?
  		this.OB_xsltProcessor_gecko.setParameter(null, "startDepth", level ? 1 : 2);
  		
@@ -148,7 +148,7 @@ transformXMLToHTML: function (xmlDoc, node, level) {
   	 	
   	 	// translate XSLT output
   	 	var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
-   		var regex = new RegExp("\{\{(\\w+)\}\}");
+	    var regex = new RegExp("\{\{(\\w+)\}\}");
 		languageNodes.each(function(n) { 
 			var vars;
 			var text = n.textContent;

@@ -39,9 +39,9 @@ GardeningPage.prototype = {
 	var gardeningParamForm = $("gardeningParamForm");
 	var params = Form.serialize(gardeningParamForm);
 	params = params.replace(/&/g, ","); // replace & by , because command interpreter (cmd.exe) does not like & as parameter
-		
 	// clear errorTexts
-	Element.getElementsByClassName(gardeningParamForm, "errorText").each(function(e) { e.innerHTML = ''; });
+	$$('span.errorText').each(function(e) { e.innerHTML = ''; });
+	
 	
 	function callBackOnRunBot(request) {
 		
@@ -66,6 +66,7 @@ GardeningPage.prototype = {
 		$('gardening-runningbots').innerHTML = request.responseText;
 	}
 	sajax_do_call('smwf_ga_LaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params], callBackOnRunBot);
+	
 	// disable button to prevent continuous executing
 	$('runBotButton').setAttribute("disabled","disabled");
   },

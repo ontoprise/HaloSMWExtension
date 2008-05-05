@@ -159,7 +159,7 @@ var wgUserLanguageStrings = {
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
 	
-	'KS_NOT_SUPPORTED'        : 'Konqueror/Safari werden momentan nicht unterstützt.',
+	'KS_NOT_SUPPORTED'        : 'Konqueror wird momentan nicht unterstützt.',
 	'SHOW_INSTANCES'          : 'Zeige Instanzen',
 	'HIDE_INSTANCES'          : 'Verstecke Instanzen',
 	'ENTER_MORE_LETTERS'      : "Bitte geben Sie mindestens zwei Buchstaben ein. Sonst erhalten Sie wahrscheinlich zu viele Ergebnisse.",

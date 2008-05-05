@@ -7,6 +7,7 @@
  global $smwgHaloIP;
  require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_SuggestStatistics.php');
  require_once($smwgHaloIP . '/includes/SMW_DBHelper.php');
+ require_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php');
  
  class SMWSuggestStatisticsSQL extends SMWSuggestStatistics {
  	

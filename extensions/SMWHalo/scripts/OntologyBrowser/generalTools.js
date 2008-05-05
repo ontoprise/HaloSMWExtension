@@ -25,7 +25,7 @@ function BrowserDetectLite() {
 	var ua = navigator.userAgent.toLowerCase();
 
 	// browser name
-	this.isGecko     = (ua.indexOf('gecko') != -1);
+	this.isGecko     = (ua.indexOf('gecko') != -1) || (ua.indexOf("safari") != -1); // include Safari in isGecko
 	this.isMozilla   = (this.isGecko && ua.indexOf("gecko/") + 14 == ua.length);
 	this.isNS        = ( (this.isGecko) ? (ua.indexOf('netscape') != -1) : ( (ua.indexOf('mozilla') != -1) && (ua.indexOf('spoofer') == -1) && (ua.indexOf('compatible') == -1) && (ua.indexOf('opera') == -1) && (ua.indexOf('webtv') == -1) && (ua.indexOf('hotjava') == -1) ) );
 	this.isIE        = ( (ua.indexOf("msie") != -1) && (ua.indexOf("opera") == -1) && (ua.indexOf("webtv") == -1) );
@@ -36,6 +36,7 @@ function BrowserDetectLite() {
 	this.isAol       = (ua.indexOf("aol") != -1);
 	this.isWebtv     = (ua.indexOf("webtv") != -1);
 	this.isGeckoOrOpera = this.isGecko || this.isOpera;
+	this.isGeckoOrSafari = this.isGecko || this.isSafari;
 }
 
 // one global instance of Browser detector 
@@ -315,6 +316,7 @@ GeneralXMLTools.getNodeById = function (node, id) {
 	}
 }
 
+
 /**
  * Returns textnodes below node which contains the given text.
  * Does not work with IE at the moment!
@@ -345,7 +347,32 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 			nodeList.moveNext();
 		} 
 		return result;
-	} 
+	} else if (OB_bd.isSafari) {
+		// should be relative slow. Safari does not support XPath
+		var nodes = new Array();
+    
+	    function iterate(_node) {
+	        // do a depth first search
+	        var children = _node.childNodes;
+	        var result;
+	        if (children.length == 0) { return; }
+	        for (var i=0, n = children.length; i < n;i++) {
+	            if (children[i].nodeType == 3) { // textnode
+	                
+	                if (children[i].nodeValue.indexOf(text) != -1) {
+	                    nodes.push(children[i]);
+	                }
+	            } else {
+	                iterate(children[i]);
+	            }
+	           
+	        }
+	        
+	    }
+	    
+	    iterate(node, text);
+	    return nodes;
+	}
 }
 
 /*

@@ -162,7 +162,7 @@ var wgUserLanguageStrings = {
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
 	
-	'KS_NOT_SUPPORTED'        : 'Konqueror/Safari are not supported currently!',
+	'KS_NOT_SUPPORTED'        : 'Konqueror is not supported currently!',
 	'SHOW_INSTANCES'          : 'Show instances',
 	'HIDE_INSTANCES'          : 'Hide instances',
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
