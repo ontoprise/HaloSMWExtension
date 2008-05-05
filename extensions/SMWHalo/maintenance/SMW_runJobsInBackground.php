@@ -29,9 +29,7 @@
 * 	Author: kai
 */
 
-$smwgMaintenanceScript = true;
-
- if ($_SERVER['SERVER_NAME'] != NULL) {
+if ($_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;
 }
@@ -46,7 +44,8 @@ $smwgMaintenanceScript = true;
  }
  
  $dbw = wfGetDB( DB_SLAVE );
-
+ 
+ 
  // define socket which listens for a break signal
  $socket = socket_create_listen("9876"); // port is freely chosen
  socket_set_nonblock($socket);

@@ -465,10 +465,11 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		    	$values = smwfGetStore()->getPropertyValues($instance, $p);
  		    	foreach($values as $v) {
  		    		if ($v->getUnit() != '') {
- 		    			$type = smwfGetStore()->getSpecialValues($type, SMW_SP_HAS_TYPE);
- 		    			if (count($type) == 0) continue;
- 		    			$conversion_factors = smwfGetStore()->getSpecialValues($type[0], SMW_SP_CONVERSION_FACTOR);
-                        $si_conversion_factors = smwfGetStore()->getSpecialValues($type[0], SMW_SP_CONVERSION_FACTOR_SI);
+ 		    			$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
+ 		    			if (count($type) == 0 || $type[0]->isBuiltIn()) continue;
+ 		    			$typeTitle = Title::newFromText($type[0]->getXSDValue(), SMW_NS_TYPE);
+ 		    			$conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
+                        $si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
 	 		    		$correct_unit = false;
 		               
 		                foreach($conversion_factors as $c) {
@@ -485,6 +486,33 @@ require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
  		    }
             
     } 
+    
+    public function checkUnitsForProperty($property) {
+    	$type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+    	if (count($type) == 0 || $type[0]->isBuiltIn()) return;
+    	$typeTitle = Title::newFromText($type[0]->getXSDValue(), SMW_NS_TYPE);
+        $subjects = smwfGetStore()->getAllPropertySubjects($property);
+        foreach($subjects as $s) {
+        	$values = smwfGetStore()->getPropertyValues($s, $property);
+        	foreach($values as $v) {
+                    if ($v->getUnit() != '') {
+                        $conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
+                        $si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
+                        $correct_unit = false;
+                       
+                        foreach($conversion_factors as $c) {
+                            $correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+                        }
+                        foreach($si_conversion_factors as $c) {
+                            $correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+                        }
+                        if (!$correct_unit) {
+                            $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $s, $property, $v->getUnit());
+                        }
+                    }
+        	}
+        }
+    }
  	
  	/**
  	 * Checks for missing parameter of annotations of n-ary properties

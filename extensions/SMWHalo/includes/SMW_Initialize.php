@@ -64,9 +64,10 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	
-	global $wgRequest, $wgContLang, $smwgMaintenanceScript;
+	global $wgRequest, $wgContLang, $wgCommandLineMode;
 	
     $spns_text = $wgContLang->getNsText(NS_SPECIAL);
+    $tyns_text = $wgContLang->getNsText(SMW_NS_TYPE);
     $sp_aliases = $wgContLang->getSpecialPageAliases();
     
 	// register AddHTMLHeader functions for special pages
@@ -102,8 +103,11 @@ function smwgHaloSetupExtension() {
 	$wgFileExtensions[] = 'owl'; // for ontology import
 	    
 	// Register job classes (if Move operation or maintenance script)
-    $isMoveOP = ($wgRequest->getVal("title") == $spns_text.':'.$sp_aliases['Movepage'][0]);
-	if ($isMoveOP || $smwgMaintenanceScript) {
+    $needRefactorJobs = ($wgRequest->getVal("title") == $spns_text.':'.$sp_aliases['Movepage'][0])
+                        || (stripos($wgRequest->getVal("title"), $tyns_text.":") === 0);
+    
+   
+	if ($needRefactorJobs || $wgCommandLineMode) {
 		$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 		$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 		$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
@@ -199,7 +203,7 @@ function smwgHaloSetupExtension() {
 	
 	// import available job classes (for refactoring)
 	// do this only when the page is actually moved.
-	if ($isMoveOP || $smwgMaintenanceScript) {
+	if ($needRefactorJobs || $wgCommandLineMode) {
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
@@ -273,6 +277,8 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
+	global $smwgHaloIP;
+	require_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php');
 	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
 	SMWGardeningLog::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
