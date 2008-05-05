@@ -22,6 +22,9 @@ class SMW_LocalGardeningJob extends Job {
 	// pages which are relevant for consistency checking
 	public $pagesToCheck;
 	
+	// direct categories (needed for optimization)
+	private $directCategories;
+	
 	// need not to be serialized (how to do this?)
 	public $categoryGraph = NULL;
 	public $propertyGraph = NULL;
@@ -36,11 +39,16 @@ class SMW_LocalGardeningJob extends Job {
 	 */
     function __construct(Title $title, $action) {
         wfDebug(__METHOD__." ".get_class($this)." \r\n");
+        wfProfileIn( __METHOD__ );
         parent::__construct( get_class($this), $title);
        
         $this->action = $action;
         $this->pagesToCheck = $this->selectPages($title);
-      
+        
+        // optimization: save direct categories to detect changes
+        $this->directCategories = $action == "save" ? TitleHelper::title2string(smwfGetSemanticStore()->getCategoriesForInstance($title)) : array();
+        
+        wfProfileOut( __METHOD__ );
     }
     
     /**
@@ -57,7 +65,12 @@ class SMW_LocalGardeningJob extends Job {
 	    		case SMW_NS_TYPE: return array(); break;
 	    	}
     	} else if ($this->action = "remove") {
-    		//TODO: implement
+    	      switch($title->getNamespace()) {
+                case SMW_NS_PROPERTY: return PageSelector::getPagesForPropertySave($title); break;
+                case NS_CATEGORY: return PageSelector::getPagesForCategorySave($title); break;
+                case NS_MAIN: return array(); break;
+                case SMW_NS_TYPE: return array(); break;
+            }
     	}
     	return NULL;
     }
@@ -79,6 +92,7 @@ class SMW_LocalGardeningJob extends Job {
         
         // check issues
         foreach($properties as $property) {
+        	print "Checking domain property: '".$property->getText()."'\n";
         	$subjects = smwfGetStore()->getAllPropertySubjects($property);
         	$this->annot_checker->checkPropertyAnnotations($subjects, $property);
         }
@@ -108,7 +122,7 @@ class SMW_LocalGardeningJob extends Job {
 	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s, $property);
 	            
 	        }
-	        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $property);
+	        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, NULL, $property);
     	}
     	
     	// check issues
@@ -199,28 +213,47 @@ class SMW_LocalGardeningJob extends Job {
         $this->annot_checker = new AnnotationLevelConsistency($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
         $this->cov_checker = new PropertyCoVarianceDetector($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
 
-       
-        switch($this->title->getNamespace()) {
-        	case NS_CATEGORY: 
-        		                    print "Checking annotations of '".$this->title."'...";
-						            $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
-						            print "done.\n";
-						       break;
-        	case SMW_NS_PROPERTY: 
-                                    print "Checking annotations and covariance of '".$this->title."'...";
-                                    $this->checkPropertyChange(TitleHelper::string2Title($this->pagesToCheck));
-                                    print "done.\n";
-                                break;	
-        	case NS_MAIN:           print "Checking annotations of '".$this->title."'...";
-                                    $this->checkInstanceChange(TitleHelper::string2Title($this->pagesToCheck));
-                                    print "done.\n";
-                                break;
-        	case SMW_NS_TYPE:       print "Checking annotations of '".$this->title."'...";
-                                    $this->checkTypeChange();
-                                    print "done.\n";
-                                break;
+        if ($this->action == "save") {
+	        switch($this->title->getNamespace()) {
+	        	case NS_CATEGORY:      $directcats = TitleHelper::title2string(smwfGetSemanticStore()->getCategoriesForInstance($this->title));
+	                                    if (count(array_diff($directcats, $this->directCategories)) == 0 
+	                                        && count(array_diff($this->directCategories, $directcats)) == 0) break;
+	                                        
+	        		                    print "Checking consistency due to save of '".$this->title."'...";
+							            $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
+							            print "done.\n";
+							       break;
+	        	case SMW_NS_PROPERTY: 
+	                                    print "Checking consistency due to save of '".$this->title."'...";
+	                                    $this->checkPropertyChange(TitleHelper::string2Title($this->pagesToCheck));
+	                                    print "done.\n";
+	                                break;	
+	        	case NS_MAIN:           print "Checking consistency due to save of '".$this->title."'...";
+	                                    $this->checkInstanceChange(TitleHelper::string2Title($this->pagesToCheck));
+	                                    print "done.\n";
+	                                break;
+	        	case SMW_NS_TYPE:       print "Checking consistency due to save of '".$this->title."'...";
+	                                    $this->checkTypeChange();
+	                                    print "done.\n";
+	                                break;
+	        }
+        } else if ($this-action == "remove") {
+             switch($this->title->getNamespace()) {
+                case NS_CATEGORY:                                                  
+                                        print "Checking consistency due to removing of '".$this->title."'...";
+                                        $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
+                                        print "done.\n";
+                                   break;
+                case SMW_NS_PROPERTY: 
+                                        print "Checking consistency due to removing of '".$this->title."'...";
+                                        $this->checkPropertyChange(TitleHelper::string2Title($this->pagesToCheck));
+                                        print "done.\n";
+                                    break;  
+                                    
+                case NS_MAIN:       break;
+                case SMW_NS_TYPE:   break;
+            }
         }
-        
         wfProfileOut( __METHOD__ );
         return true;
     }
@@ -247,6 +280,9 @@ class PageSelector {
 			$rangeProperties = smwfGetSemanticStore()->getPropertiesWithRange($c);
 			$properties = array_merge($properties, $domainProperties, $rangeProperties);
 		}
+		$domainProperties = smwfGetSemanticStore()->getPropertiesWithDomain($title);
+        $rangeProperties = smwfGetSemanticStore()->getPropertiesWithRange($title);
+        $properties = array_merge($properties, $domainProperties, $rangeProperties);
 		return TitleHelper::title2string(PageSelector::makeTitlesUnique($properties));
 	}
 	
@@ -259,7 +295,7 @@ class PageSelector {
 	 * @return Array of Title
 	 */
 	static function getPagesForPropertySave(Title $title) {
-		$allSubProperties = array();
+		$allSubProperties = $this->action = "save" ? array($title) : array(); // include property if it saved, not removed.
 		$visitedNodes = array();
 		PageSelector::getAllSubProperties($title, $allSubProperties, $visitedNodes);
 		return TitleHelper::title2string(PageSelector::makeTitlesUnique($allSubProperties));

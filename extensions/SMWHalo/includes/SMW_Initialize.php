@@ -63,6 +63,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
+	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
 	
 	global $wgRequest, $wgContLang, $wgCommandLineMode;
 	
@@ -578,14 +579,14 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	/**
 	 * Called *before* an article is saved. Used for LocalGardening
 	 *
-	 * @param unknown_type $article
-	 * @param unknown_type $user
-	 * @param unknown_type $text
-	 * @param unknown_type $summary
-	 * @param unknown_type $minor
-	 * @param unknown_type $watch
+	 * @param Article $article
+	 * @param User $user
+	 * @param string $text
+	 * @param string $summary
+	 * @param bool $minor
+	 * @param bool $watch
 	 * @param unknown_type $sectionanchor
-	 * @param unknown_type $flags
+	 * @param int $flags
 	 */
     function smwfHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
     	// -- LocalGardening --
@@ -597,6 +598,25 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
         return true;
         // --------------------
     }
+    
+    /**
+     * Called *before* an article gets deleted.
+     *
+     * @param Article $article
+     * @param User $user
+     * @param string $reason
+     * @return unknown
+     */
+    function smwfHaloPreDeleteHook(&$article, &$user, &$reason) {
+    	// -- LocalGardening --
+        global $smwgLocalGardening;
+        if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
+            $gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "remove");
+            Job :: batchInsert($gard_jobs);
+        }
+        return true;
+    }
+    
 	/**
 	 * Called *before* semantic annotations are updated.
 	 * Save annotation ratings in global variable.
