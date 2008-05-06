@@ -157,7 +157,7 @@ class SMW_LocalGardeningJob extends Job {
         $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$instance);
         
     	$instance = $this->title;
-    	$subjects[] = $instance;
+    	$subjects = array($instance);
         $properties = smwfGetStore()->getProperties($instance);
                
         // domain/range check
@@ -295,7 +295,7 @@ class PageSelector {
 	 * @return Array of Title
 	 */
 	static function getPagesForPropertySave(Title $title) {
-		$allSubProperties = $this->action = "save" ? array($title) : array(); // include property if it saved, not removed.
+		$allSubProperties = array($title);
 		$visitedNodes = array();
 		PageSelector::getAllSubProperties($title, $allSubProperties, $visitedNodes);
 		return TitleHelper::title2string(PageSelector::makeTitlesUnique($allSubProperties));
