@@ -3,10 +3,6 @@ var myDOM;
 var xmldoc;
 
 function updateQueryTree(xmltext){
-	if (OB_bd.isKonqueror || OB_bd.isSafari) {
-		alert(gLanguage.getMessage('KS_NOT_SUPPORTED'));
-		return;
-	}
 
 	var xmldoc = GeneralXMLTools.createDocumentFromString(xmltext);
 	if (OB_bd.isGeckoOrOpera) {
