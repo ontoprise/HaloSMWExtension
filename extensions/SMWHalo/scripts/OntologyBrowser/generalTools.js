@@ -272,13 +272,13 @@ GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
  */
 GeneralXMLTools.importNode = function(parentNode, child, deep) {
 	var appendedChild;
-	if (OB_bd.isGeckoOrOpera) {
+	if (OB_bd.isIE || OB_bd.isSafari) {
+        appendedChild = parentNode.appendChild(child.cloneNode(deep));
+
+    } else if (OB_bd.isGecko) {
 		appendedChild = parentNode.appendChild(document.importNode(child, deep));
 		
-	} else if (OB_bd.isIE) {
-		appendedChild = parentNode.appendChild(child.cloneNode(deep));
-
-	}
+	} 
 	return appendedChild;
 }
 
@@ -300,19 +300,23 @@ GeneralXMLTools.getNodeById = function (node, id) {
 	var children = node.childNodes;
 	var result;
 	if (children.length == 0) { return null; }
+	
 	for (var i=0, n = children.length; i < n;i++) {
-		if (children[i].getAttribute("id")) {
-			
+		
+		if (children[i].nodeType == 4) continue; // ignore CDATA sections
+					
 			if (children[i].getAttribute("id") == id) {
 				return children[i];
 			}
-		}
+		
     	result = GeneralXMLTools.getNodeById(children[i], id);
     	if (result != null) {
+    	
     		return result;
     	}
 	}
-	return result;
+	
+	return null;
 	}
 }
 
