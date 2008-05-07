@@ -197,6 +197,9 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
 						
 		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
+
+//		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
+//		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 	}
 	
 	// include SMW logger (exported as ajax function but also used locally)
@@ -226,6 +229,7 @@ function smwgHaloSetupExtension() {
 			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Maintained by [http://www.ontoprise.de Ontoprise].", 
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://ontoworld.org/wiki/Halo_Extension View feature description.]');
+	
 	return true;
 }
 
