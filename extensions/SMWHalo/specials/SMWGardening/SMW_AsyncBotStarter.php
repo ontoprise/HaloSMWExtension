@@ -74,6 +74,8 @@ require_once("Bots/SMW_MissingAnnotationsBot.php");
 require_once("Bots/SMW_AnomaliesBot.php");
 require_once("Bots/SMW_ImportOntologyBot.php");
 require_once("Bots/SMW_ExportOntologyBot.php");
+global $smwgHaloIP;
+require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 
 require_once("SMW_GardeningLog.php");
 
@@ -84,8 +86,7 @@ require_once("SMW_GardeningLog.php");
   
   global $registeredBots, $wgUser; 
   $bot = $registeredBots[$botID];
-  
-  
+    
  if ($bot != null) { 
  	echo ("Starting bot: $botID\n");
  	// run bot
