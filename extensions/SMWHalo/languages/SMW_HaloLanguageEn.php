@@ -360,6 +360,9 @@ clicking the big arrows between the columns.',
 	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
 	'smw_gardissue_updatearticle' => 'Article $1 was newly parsed.',
 
+	/* Messages for the TermImportBot */
+	'smw_gard_termimportbothelp' => 'This bot imports an external vocabulary.',
+
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Context Sensitive Help',
 	'smw_contextsensitivehelp' => 'Context Sensitive Help',
@@ -493,7 +496,27 @@ clicking the big arrows between the columns.',
 	'smw_acl_create' => 'create',
 	'smw_acl_move' => 'move',
 	'smw_acl_permit' => 'permit',
-	'smw_acl_deny' => 'deny'
+	'smw_acl_deny' => 'deny',
+	
+	/* Messages of the Thesaurus Import */
+	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
+	'smw_ti_class_not_found' => 'Class "$1" not found.',
+	'smw_ti_no_tl_module_spec' => 'Could not find specification for TL module with ID "$1".',
+	'smw_ti_xml_error' => 'XML error: $1 at line $2',
+	'smw_ti_filename'  => 'Filename:',
+	'smw_ti_fileerror' => 'The file "$1" does not exist or is empty.',
+	'smw_ti_no_article_names' => 'There are no article names in the specified data source.',
+	'smw_ti_termimport' => 'Import vocabulary',
+	'termimport' => 'Import vocabulary',
+	'smw_ti_botstarted' => 'The bot for the import of vocabulary was successfully started.',
+	'smw_ti_botnotstarted' => 'The bot for the import of vocabulary could not be started.',
+	'smw_ti_couldnotwritesettings' => 'Could not write the settings for the vocabulary import bot.',
+	'smw_ti_missing_articlename' => 'An article can not be created as the "articleName" is missing in the term\'s description.',
+	'smw_ti_invalid_articlename' => 'The article name "$1" is invalid.',
+	'smw_ti_articleNotUpdated' => 'The existing article "$1" was not overwritten with a new version.',
+	'smw_ti_creationComment' => 'This article was created/updated by the vocabulary import framework.',
+	'smw_ti_creationFailed' => 'The article "$1" could not be created or updated.',
+	'smw_ti_missing_mp' => 'The mapping policy is missing.'
 	
 );
 

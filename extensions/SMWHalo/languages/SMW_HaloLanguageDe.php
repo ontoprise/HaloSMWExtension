@@ -348,7 +348,10 @@ protected $smwUserMessages = array(
 	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
 	'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',
 	'smw_gardissue_updatearticle' => 'Artikel $1 wurde neu geparst.',
-	
+
+	/* Messages for the TermImportBot */
+	'smw_gard_termimportbothelp' => 'Dieser Bot importiert ein externes Vokabular.',
+
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
 	'smw_contextsensitivehelp' => 'Kontext Sensitive Hilfe',
@@ -480,7 +483,28 @@ protected $smwUserMessages = array(
 	'smw_acl_create' => 'erzeugen',
 	'smw_acl_move' => 'umbenennen',
 	'smw_acl_permit' => 'erlauben',
-	'smw_acl_deny' => 'verbieten'
+	'smw_acl_deny' => 'verbieten',
+	
+	/* Messages of the Thesaurus Import */
+	'smw_ti_succ_connected' => 'Erfolgreich mit "$1" verbunden.',
+	'smw_ti_class_not_found' => 'Klasse "$1" nicht gefunden.',
+	'smw_ti_no_tl_module_spec' => 'Die Spezifikation des TL-Moduls mit der ID "$1" konnte nicht gefunden werden.',
+	'smw_ti_xml_error' => 'XML Fehler: $1 in Zeile $2',
+	'smw_ti_filename'  => 'Dateiname:',
+	'smw_ti_fileerror' => 'Die Datei "$1" existiert nicht oder ist leer.',
+	'smw_ti_no_article_names' => 'In der angegebenen Datenquelle gibt es keine Artikelnamen.',
+	'smw_ti_termimport' => 'Vokabular importieren',
+	'termimport' => 'Vokabular importieren',
+	'smw_ti_botstarted' => 'Der Bot zum Importieren eines Vokabulars wurde erfolgreich gestartet.',
+	'smw_ti_botnotstarted' => 'Der Bot zum Importieren eines Vokabulars konnte nicht gestartet werden.',
+	'smw_ti_couldnotwritesettings' => 'Die Einstellungen für den Vokabelimportbot konnten nicht gespeichert werden.',
+	'smw_ti_missing_articlename' => 'Ein Artikel konnte nicht erzeugt werden, da der "articleName" in der Beschreibung des Begriffs fehlt.',
+	'smw_ti_invalid_articlename' => 'Der Artikelname "$1" ist ungültig.',
+	'smw_ti_articleNotUpdated' => 'Der existierende Artikel "$1" wurde nicht durch eine neue Version ersetzt.',
+	'smw_ti_creationComment' => 'Dieser Artikel wurde vom Vokalbelimport-Framework erzeugt bzw. aktualisiert.',
+	'smw_ti_creationFailed'  => 'Der Artikel "$1" konnte nicht erzeugt bzw. aktualisiert werden.',
+	'smw_ti_missing_mp' => 'Die Mapping Policy fehlt.'
+	
 );
 
 protected $smwSpecialProperties = array(
