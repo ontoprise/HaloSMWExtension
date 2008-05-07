@@ -658,7 +658,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	function smwfHaloSaveHook(&$article, &$user, &$text) {
 		global $smwgIP, $smwgHaloIP;
 		include_once($smwgIP . '/includes/SMW_Factbox.php'); // Normally this must have happende, but you never know ...
-		include_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php'); 
+		include_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php'); 
 		
 		$title=$article->getTitle();
 		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
