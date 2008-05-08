@@ -205,7 +205,8 @@ protected $smwUserMessages = array(
 	'smw_renamingbot' => 'Benenne Seiten um',
 	'smw_importontologybot' => 'Importiere eine Ontologie',
 	'smw_gardissue_class_all' => 'Alle',
-	
+	'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
+
 	'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf�gbar.',
 	'smw_gard_import_addfiles' => 'Weitere $2-Dateien k�nnen �ber $1 hinzugef�gt werden.',
 	'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf�gbar.',
@@ -312,7 +313,7 @@ protected $smwUserMessages = array(
 	'smw_gardissue_class_category_leaves' => 'Kategorie-Blätter',
 	'smw_gardissue_class_number_anomalies' => 'Subkategorie Anomalien',
 	
-	
+
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',
@@ -503,7 +504,18 @@ protected $smwUserMessages = array(
 	'smw_ti_articleNotUpdated' => 'Der existierende Artikel "$1" wurde nicht durch eine neue Version ersetzt.',
 	'smw_ti_creationComment' => 'Dieser Artikel wurde vom Vokalbelimport-Framework erzeugt bzw. aktualisiert.',
 	'smw_ti_creationFailed'  => 'Der Artikel "$1" konnte nicht erzeugt bzw. aktualisiert werden.',
-	'smw_ti_missing_mp' => 'Die Mapping Policy fehlt.'
+	'smw_ti_missing_mp' => 'Die Mapping Policy fehlt.',
+	'smw_ti_import_error' => 'Importfehler',
+	'smw_ti_added_article' => '$1 wurde zum Wiki hinzugefügt.',
+	'smw_ti_updated_article' => '$1 wurde aktualisiert.',
+	'smw_ti_import_errors' => 'Einige Begriffe wurden nicht korrekt importiert. Bitte schauen Sie sich das Gardening Log an!',
+	'smw_ti_import_successful' => 'Alle Begriffe wurden erfolgreich importiert.',
+
+	'smw_gardissue_ti_class_added_article' => 'Importierte Artikel',
+	'smw_gardissue_ti_class_updated_article' => 'Aktualisierte Artikel',
+	'smw_gardissue_ti_class_system_error' => 'Importsystemfehler',
+	'smw_gardissue_ti_class_update_skipped' => 'Übersprungene Aktualisierungen',
+
 	
 );
 

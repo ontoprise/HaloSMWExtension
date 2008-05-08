@@ -209,7 +209,8 @@ clicking the big arrows between the columns.',
 	'smw_renamingbot' => 'Rename page',
 	'smw_importontologybot' => 'Import an ontology',
 	'smw_gardissue_class_all' => 'All',
-	
+	'smw_termimportbot' => 'Import terms of a vocabulary',
+
 	/* Messages for Gardening Bot: ImportOntology Bot*/
 	'smw_gard_import_choosefile' => 'The following $1 files are available.',
 	'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
@@ -322,7 +323,6 @@ clicking the big arrows between the columns.',
 	
 	'smw_gardissue_class_category_leaves' => 'Category leaves',
 	'smw_gardissue_class_number_anomalies' => 'Subcategory anomaly',
-	
 	
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
@@ -516,8 +516,19 @@ clicking the big arrows between the columns.',
 	'smw_ti_articleNotUpdated' => 'The existing article "$1" was not overwritten with a new version.',
 	'smw_ti_creationComment' => 'This article was created/updated by the vocabulary import framework.',
 	'smw_ti_creationFailed' => 'The article "$1" could not be created or updated.',
-	'smw_ti_missing_mp' => 'The mapping policy is missing.'
-	
+	'smw_ti_missing_mp' => 'The mapping policy is missing.',
+	'smw_ti_import_error' => 'Import error',
+	'smw_ti_added_article' => '$1 was added to the wiki.',
+	'smw_ti_updated_article' => '$1 was updated.',
+	'smw_ti_import_errors' => 'Some terms were not properly imported. Please see the Gardening Log!',
+	'smw_ti_import_successful' => 'All terms were successfully imported.',
+
+	'smw_gardissue_ti_class_added_article' => 'Imported articles',
+	'smw_gardissue_ti_class_updated_article' => 'Updated articles',
+	'smw_gardissue_ti_class_system_error' => 'Import system errors',
+	'smw_gardissue_ti_class_update_skipped' => 'Skipped updates',
+
+
 );
 
 
