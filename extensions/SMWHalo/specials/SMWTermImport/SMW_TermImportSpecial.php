@@ -105,7 +105,7 @@ class SMWTermImportSpecial extends SpecialPage {
 	$mappingPolicy =
 		'<?xml version="1.0"?>'."\n".
 		'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    	'	<page>TermImport</page>'."\n".
+    	'	<page>TermImportMapping</page>'."\n".
 		'</MappingPolicy >';
 	
 	$conflictPolicy =
@@ -114,13 +114,14 @@ class SMWTermImportSpecial extends SpecialPage {
     	'	<overwriteExistingTerms>true</overwriteExistingTerms>'."\n".
 		'</ConflictPolicy >';
 		
-//	$terms = $wil->importTerms($moduleConfig, $source, $impSet, $ip, 
-//	                           $mappingPolicy, $conflictPolicy);
+	$terms = $wil->importTerms($moduleConfig, $source, $impSet, $ip, 
+	                           $mappingPolicy, $conflictPolicy);
 	$html .= "<br /><br />===Terms===<br />";
 	$html .= $terms;
 	
 	//TEST import
-	$settings = "\n<ImportSettings>\n"
+/*
+ 	$settings = "\n<ImportSettings>\n"
 				.$moduleConfig."\n"
 				.$source."\n"
 				.$importSets."\n"
@@ -136,7 +137,7 @@ class SMWTermImportSpecial extends SpecialPage {
 	$tib = new TermImportBot();
 	$html .= $tib->importTerms($settings);
 	
-	
+*/	
 	//TEST import
 //---- End: TEST for Import ---- 		 
 		$wgOut->addHTML($html);
