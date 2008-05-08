@@ -91,7 +91,7 @@ class SMWGardeningLogPage extends SMWQueryPage {
 			}
 						
 			foreach($gis as $gi) {
-				if ($gi->getType() > SMW_GARD_INVISIBLE_ISSUE) continue; // an invisible issue if type > 100000 is not shown textually
+				if ($gi->getType() == SMW_GARD_INVISIBLE_ISSUE) continue; // an invisible issue if type > 100000 is not shown textually
 				$text .= $gi->getRepresentation($skin).'<br>';
 			}
 			return $text.'</div>';
