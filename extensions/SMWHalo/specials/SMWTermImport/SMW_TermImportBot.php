@@ -20,6 +20,7 @@
 
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
+require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
 
 /**
@@ -66,9 +67,9 @@ class TermImportBot extends GardeningBot {
 		$filename = $paramArray["settings"];
 		$settings = file_get_contents($filename);
 		unlink($filename);
-				
-		$this->importTerms($settings);
 		
+		$result = $this->importTerms($settings);
+
 		return $result;
 
 	}
@@ -88,6 +89,9 @@ class TermImportBot extends GardeningBot {
 	 * 
 	 */
 	public function importTerms($settings) {
+		
+		echo "Starting to import terms...\n";
+		
 		global $smwgHaloIP;
 		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
 		
@@ -98,21 +102,29 @@ class TermImportBot extends GardeningBot {
 		}
 		
 		$tlModule  = $parser->getValuesOfElement(array('TLModules', 'Module', 'id'));
-		//TODO Fehlerbehandlung
+		if (count($tlModule) == 0) {
+			return "Missing transport layer module.";
+		}
 		$dalModule = $parser->getValuesOfElement(array('DALModules', 'Module', 'id'));
-		//TODO Fehlerbehandlung
-		
+		if (count($dalModule) == 0) {
+			return "Missing data access layer module.";
+		}
+				
 		global $smwgHaloIP;
 		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_WIL.php');
 		$wil = new WIL();
 		$tlModules = $wil->getTLModules();
 	
 		$res = $wil->connectTL($tlModule[0], $tlModules);
-		//TODO Fehlerbehandlung
+		if (stripos($res, '<value>true</value>') === false) {
+			return "Connecting the transport layer module $tlModule[0] failed.";
+		}
 		$dalModules = $wil->getDALModules();
 		$res = $wil->connectDAL($dalModule[0], $dalModules);
-		//TODO Fehlerbehandlung
-		
+		if (stripos($res, '<value>true</value>') === false) {
+			return "Connecting the data access layer module $dalModule[0] failed.";
+		}
+				
 		$source = $parser->serializeElement(array('DataSource'));
 		$importSets = $parser->serializeElement(array('ImportSets'));
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
@@ -122,7 +134,13 @@ class TermImportBot extends GardeningBot {
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
 		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 		
-		$this->createArticles($terms, $mappingPolicy, $conflictPolicy);
+		$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy);
+		
+		echo "Bot finished!\n";
+		if ($result === true) {
+			$result = wfMsg('smw_ti_import_successful');			
+		}
+		return $result;
 		
 	}
 	
@@ -182,9 +200,14 @@ class TermImportBot extends GardeningBot {
 		}
 		
 		$nextElem = 0;
+		$noErrors = true;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
 			$caResult = $this->createArticle($term, $mp, $cp);
+			if ($caResult !== true) {
+				$noErrors = false;
+			}
 		}
+		return $noErrors ? true : wfMsg('smw_ti_import_errors');
 	}
 	
 	/**
@@ -204,42 +227,60 @@ class TermImportBot extends GardeningBot {
 	 * 		error message, otherwise.
 	 */
 	private function createArticle(&$term, $mappingPolicy, $overwriteExistingArticle) {
+ 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		
 		$title = $term['ARTICLENAME'];
 		if (is_array($title)) {
 			$title = $title[0];
 		}
 		if (!$title) {
+			$log->addGardeningIssueAboutArticle(
+				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME, 
+				Title::newFromText(wfMsg('smw_ti_import_error')));
 			return wfMsg('smw_ti_missing_articlename');
 		}
 		$title = strip_tags($title);
 		if ($title == '') {
+			$log->addGardeningIssueAboutArticle(
+				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME, 
+				Title::newFromText(wfMsg('smw_ti_import_error')));
 			return wfMsg('smw_ti_invalid_articlename', $title);
 		}
 		
+		$articleName = $title;
 		$title = Title::newFromText($title);
 		$article = new Article($title);
 		
+		$updated = false;
 		// Check if the article already exists
 		if ($article->exists()) {
 			// The article exists
 			// Can an existing article be overwritten?
 			if (!$overwriteExistingArticle) {
+				echo wfMsg('smw_ti_articleNotUpdated', $title)."\n";
+				$log->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_UPDATE_SKIPPED, $title);
 				return wfMsg('smw_ti_articleNotUpdated', $title);
 			}
+			$updated = true;
 		}
 		
 		// Create the content of the article based on the mapping policy
 		$content = $this->createContent($term, $mappingPolicy);
-		$content = $term['CONTENT'];
-		if (is_array($content)) {
-			$content = $content[0];
-		}
 		
 		// Create/update the article
 		$success = $article->doEdit($content, wfMsg('smw_ti_creationComment'));
 		if (!$success) {
+			$log->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CREATION_FAILED, $title);
 			return wfMsg('smw_ti_creationFailed', $title);
 		}
+		
+		echo "Article $articleName ";
+		echo $updated==true ? "updated\n" : " created.\n";
+		$log->addGardeningIssueAboutArticle(
+				$this->id, 
+				$updated == true ? SMW_GARDISSUE_UPDATED_ARTICLE 
+				                 : SMW_GARDISSUE_ADDED_ARTICLE, 
+				$title);
 		
 		return true;
 	}
@@ -247,20 +288,188 @@ class TermImportBot extends GardeningBot {
 	/**
 	 * Creates the content of an article based on the description of the term and
 	 * the mapping policy.
+	 * The method calls itself recursively. The further parameters ($offset, 
+	 * $replace and $level) are only used in the recursion.
 	 *
 	 * @param array $term
 	 * 		The XML structure of the term encoded in nested arrays.
 	 * @param string $mappingPolicy
 	 * 		The mapping policy as content of the corresponding article.
+	 * @param int $offset
+	 * 		Start for search operations in the mapping policy
+	 * @param  bool $useMapping
+	 * 		If <true>, the content of a mapping-element is used for the final
+	 * 		text. Otherwise it is skipped with all child mappings.
+	 * @param int $level
+	 * 		Level of recursion.
 	 * 
-	 * @return string
-	 * 		The content of the article.
+	 * @return mixed string or array
+	 * 		string: The content of the article.
+	 * 		array: If the method returns from a recursion, an array is returned. It 
+	 * 		contains the content of a mapping-element and the offset for the
+	 * 		next search operation.
 	 */
-	private function createContent(&$term, $mappingPolicy) {
+	private function createContent(&$term, $mappingPolicy, $offset = 0, 
+	                               $useMapping = true, $level = 0) {
 		
+		$result = '';
+		
+		while (true) {
+			$openPos = stripos($mappingPolicy, '<mapping', $offset);
+			$closePos = stripos($mappingPolicy, '</mapping>', $offset);
+			$closeFirst = (($openPos !==false && $closePos !== false && $closePos < $openPos)
+			               || ($openPos === false && $closePos !== false));
+			               
+			if ($openPos === false || $closeFirst) {
+				// no further mapping tags 
+				if ($level == 0) {
+					if ($closeFirst && $openPos !== false) {
+						// there are further opening mappings after an unmatched
+						// </mapping>
+						// => append till the start of the next mapping
+						$result .= substr($mappingPolicy, $offset, $openPos-$offset);
+						$offset = $openPos;
+					} else {
+						// append the rest of the text
+						$result .= substr($mappingPolicy, $offset);
+						return $result;
+					}
+				} else {
+					// append until the next </mapping>
+					$result .= substr($mappingPolicy, $offset, $closePos-$offset);
+					return array($result, $closePos+10);
+				}
+			} else {
+				// append text from $offset till the beginning of the mapping
+				$result .= substr($mappingPolicy, $offset, $openPos - $offset);
+				
+				$useMap = $useMapping;
+				$parameters = null;
+				if ($useMap) {
+					// opening mapping found
+					$numMatch = preg_match('/<mapping\s*properties\s*=\s*"(.*?)"\s*>/i',
+					                       $mappingPolicy, $parameters, 
+					                       PREG_OFFSET_CAPTURE, $openPos);
+					
+					if ($numMatch == 0 || $parameters[0][1] != $openPos) {
+						// The mapping is invalid 
+						// => just append the invalid mapping to the result
+						//    and continue in the loop
+						$result .= '<mapping';
+						$offset = $openPos + 8;
+						continue;
+					} else {
+						// continue after the opening mapping tag
+						$openPos += strlen($parameters[0][0]);
+						$parameters = $parameters[1][0];
+						$parameters = explode(',', $parameters);
+						$numParam = count($parameters);
+						for ($i = 0; $i < $numParam; ++$i) {
+							$p = trim($parameters[$i]);
+							if (!$term[strtoupper($p)]) {
+								// the parameter is not present 
+								// => skip the whole content of the mapping
+								$useMap = false;
+								break;
+							}
+						}
+											
+					}
+				}
+				// process the content of the mapping
+				list($r,$offset) = $this->createContent($term, $mappingPolicy, 
+				                                        $openPos, $useMap, $level+1);
+				if ($useMap) {
+					// replace the parameters in the result string by their actual
+					// values
+					foreach ($parameters as $p) {
+						$v = $term[strtoupper($p)][0];
+						$p = '{{{'.$p.'}}}';
+						$r = str_replace($p, $v, $r);
+					}
+					$result .= $r; 
+				}
+			}
+		}
 	}
+	
 }
 
 // Create one instance to register the bot.
 new TermImportBot();
+
+define('SMW_TERMIMPORT_BOT_BASE', 2200);
+define('SMW_GARDISSUE_ADDED_ARTICLE', SMW_TERMIMPORT_BOT_BASE * 100 + 1);
+define('SMW_GARDISSUE_UPDATED_ARTICLE', (SMW_TERMIMPORT_BOT_BASE+1) * 100 + 1);
+define('SMW_GARDISSUE_MISSING_ARTICLE_NAME', (SMW_TERMIMPORT_BOT_BASE+2) * 100 + 1);
+define('SMW_GARDISSUE_CREATION_FAILED', (SMW_TERMIMPORT_BOT_BASE+2) * 100 + 2);
+define('SMW_GARDISSUE_UPDATE_SKIPPED', (SMW_TERMIMPORT_BOT_BASE+3) * 100 + 1);
+
+class TermImportBotIssue extends GardeningIssue {
+
+	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
+		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
+	}
+
+	protected function getTextualRepresenation(& $skin, $text1, $text2, $local = false) {
+		switch($this->gi_type) {
+			case SMW_GARDISSUE_ADDED_ARTICLE:
+				return wfMsg('smw_ti_added_article', $text1);
+			case SMW_GARDISSUE_UPDATED_ARTICLE:
+				return wfMsg('smw_ti_updated_article', $text1);
+			case SMW_GARDISSUE_MISSING_ARTICLE_NAME:
+				return wfMsg('smw_ti_missing_articlename');
+			case SMW_GARDISSUE_CREATION_FAILED:
+				return wfMsg('smw_ti_creation_failed', $text1);
+			case SMW_GARDISSUE_UPDATE_SKIPPED:
+				return wfMsg('smw_ti_articleNotUpdated', $text1);
+				
+			default: return NULL;
+				
+		}
+	}
+}
+
+class TermImportBotFilter extends GardeningIssueFilter {
+
+	public function __construct() {
+		parent::__construct(SMW_TERMIMPORT_BOT_BASE);
+		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'), 
+		                                wfMsg('smw_gardissue_ti_class_added_article'),
+		                                wfMsg('smw_gardissue_ti_class_updated_article'),
+		                                wfMsg('smw_gardissue_ti_class_system_error'),
+		                                wfMsg('smw_gardissue_ti_class_update_skipped'));
+	}
+
+	public function getUserFilterControls($specialAttPage, $request) {
+		return '';
+	}
+
+	public function linkUserParameters(& $wgRequest) {
+		return array('pageTitle' => $wgRequest->getVal('pageTitle'));
+	}
+
+	public function getData($options, $request) {
+		$pageTitle = $request->getVal('pageTitle');
+		if ($pageTitle != NULL) {
+			// show only issue of *ONE* title
+			return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
+		} else return parent::getData($options, $request);
+	}
+
+	private function getGardeningIssueContainerForTitle($options, $request, $title) {
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
+
+
+		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+
+		$gic = array();
+		$gis = $gi_store->getGardeningIssues('smw_anomaliesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gic[] = new GardeningIssueContainer($title, $gis);
+
+
+		return $gic;
+	}
+}
+
 ?>
