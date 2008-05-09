@@ -113,7 +113,7 @@ class DALReadCSV implements IDAL {
 	 * 		<?xml version="1.0"?>
 	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
 	 *		    <value>false</value>
-	 *		    <message>The property 'articleName' is not defined in file "..."</message>
+	 *		    <message>The specified data source does not exist.</message>
 	 *		</ReturnValue>
 	 * 
 	 */
@@ -245,8 +245,8 @@ class DALReadCSV implements IDAL {
 	 * 		<?xml version="1.0"?>
 	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
 	 *		    <value>false</value>
-	 *		    <message>The property 'articleName' is not defined in file "..."</message>
-	 *		</ReturnValue>
+	 *		    <message>The specified data source does not exist.</message>
+	 * 		</ReturnValue>
 	 * 
 	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
@@ -470,6 +470,14 @@ class DALReadCSV implements IDAL {
      * 
      * @return string
 	 *		An XML structure that contains all requested terms.
+	 * 		If the operation fails, an error message is returned.
+	 * 		Example:
+	 * 		<?xml version="1.0"?>
+	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 *		    <value>false</value>
+	 *		    <message>The specified data source does not exist.</message>
+	 * 		</ReturnValue>
+	 *  
 	 */
 	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, 
 	                             $createTermList) {

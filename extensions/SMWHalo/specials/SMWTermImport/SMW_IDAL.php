@@ -76,6 +76,14 @@ interface IDAL {
 	 *		    </importSet>
 	 *		</ImportSets>
 	 *
+	 *		If the operation fails, an error message is returned.
+	 * 		Example:
+	 * 		<?xml version="1.0"?>
+	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 *		    <value>false</value>
+	 *		    <message>The specified data source does not exist.</message>
+	 *		</ReturnValue>
+	 *
 	 */
 	public function getImportSets($dataSourceSpec);
      
@@ -110,7 +118,14 @@ interface IDAL {
      *		    </property>
      *		</Properties>
 	 * 
-	 *
+	 * 		If the operation fails, an error message is returned.
+	 * 		Example:
+	 * 		<?xml version="1.0"?>
+	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 *		    <value>false</value>
+	 *		    <message>The property 'articleName' is not defined in file "..."</message>
+	 *		</ReturnValue>
+	 * 
 	 */
 	public function getProperties($dataSourceSpec, $importSet);
 	
@@ -136,6 +151,13 @@ interface IDAL {
 	 *		    <articleName>Helium</articleName>
 	 *		</terms>
 	 * 
+	 * 		If the operation fails, an error message is returned.
+	 * 		Example:
+	 * 		<?xml version="1.0"?>
+	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 *		    <value>false</value>
+	 *		    <message>The specified data source does not exist.</message>
+	 * 		</ReturnValue>
 	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy);
 	
@@ -171,6 +193,14 @@ interface IDAL {
 	 *		    </term>
 	 *		</terms>
 	 *
+	 * 		If the operation fails, an error message is returned.
+	 * 		Example:
+	 * 		<?xml version="1.0"?>
+	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 *		    <value>false</value>
+	 *		    <message>The specified data source does not exist.</message>
+	 * 		</ReturnValue>
+	 * 
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy);
 	

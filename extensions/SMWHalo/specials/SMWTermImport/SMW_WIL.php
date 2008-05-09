@@ -387,6 +387,8 @@ class WIL implements IWIL {
 		$settings = '<?xml version="1.0"?>'.
 					str_replace('<?xml version="1.0"?>', "", $settings);
 		
+		// The parameters for the bot are passed in a temporary file that will
+		// be deleted by the bot.					
 		$filename = "$wgUploadDirectory/importSettings_".microtime(true);
 		if (file_put_contents($filename, $settings)) {
 			
