@@ -212,7 +212,9 @@ class TermImportBot extends GardeningBot {
 	
 	/**
 	 * Creates an article for the given term according to the mapping and 
-	 * conflict policy.
+	 * conflict policy. The special ontology properties that can be defined for
+	 * terms (sub-category etc.) are considered and used for creating corresponding 
+	 * annotations.
 	 *
 	 * @param array $term
 	 * 		This parsed XML structure contains the description of one term.
@@ -246,9 +248,12 @@ class TermImportBot extends GardeningBot {
 				Title::newFromText(wfMsg('smw_ti_import_error')));
 			return wfMsg('smw_ti_invalid_articlename', $title);
 		}
+
+		// Create the ontological properties
+		list($ontoAnno, $namespace) = $this->createOntologyAnnotations($term);
 		
-		$articleName = $title;
-		$title = Title::newFromText($title);
+		$articleName = $namespace.$title;
+		$title = Title::newFromText($articleName);
 		$article = new Article($title);
 		
 		$updated = false;
@@ -266,6 +271,10 @@ class TermImportBot extends GardeningBot {
 		
 		// Create the content of the article based on the mapping policy
 		$content = $this->createContent($term, $mappingPolicy);
+		
+		if (!empty($ontoAnno)) {
+			$content .= "\n\n".$ontoAnno;
+		}
 		
 		// Create/update the article
 		$success = $article->doEdit($content, wfMsg('smw_ti_creationComment'));
@@ -391,6 +400,65 @@ class TermImportBot extends GardeningBot {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * A term may contain ontological properties. These are converted to 
+	 * annotations in form of wiki text or namespaces. 
+	 * 
+	 * The following mapping is applied from ontological properties to wiki:
+	 * isCategory => Namespace: Category (language dependent) 
+	 * isProperty => Namespace: Property (language dependent) 
+	 * isOfCategory(cat) => [[Category:cat]]
+	 * isSubCategoryOf(superCat) => Namespace: Category and [[Category:superCat]]
+	 * isSubPropertyOf(superProp) => Namespace: Property and 
+	 *                               [[subproperty of::Property:superProp]]
+	 *
+	 * @param array $term
+	 * 		This parsed XML structure contains the description of one term.
+	 * 
+	 * @return array(string, string)
+	 * 		-The wiki text of the annotations.
+	 *      -The namespace (Category, Property)
+	 * 
+	 */
+	private function createOntologyAnnotations(&$term) {
+		global $wgLang, $smwgContLang;
+		
+		$anno = '';
+		$namespace = '';
+		
+		$isCat     = &$term['ISCATEGORY'];
+		$isProp    = &$term['ISPROPERTY'];
+		$cat       = &$term['ISOFCATEGORY'];
+		$subCatOf  = &$term['ISSUBCATEGORYOF'];
+		$subPropOf = &$term['ISSUBPROPERTYOF'];
+		
+		if ($isCat) {
+			$namespace = $wgLang->getNsText(NS_CATEGORY).':'; 
+		}
+		if ($isProp) {
+			$namespace = $wgLang->getNsText(SMW_NS_PROPERTY).':';
+		}
+		if ($cat) {
+			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$cat[0]."]]\n";
+		}
+		if ($subCatOf) {
+			$namespace = $wgLang->getNsText(NS_CATEGORY).':'; 
+			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$subCatOf[0]."]]\n";
+		}
+		if ($subPropOf) {
+			$specialProperties = $smwgContLang->getSpecialPropertiesArray();
+			
+			$namespace = $wgLang->getNsText(SMW_NS_PROPERTY).':'; 
+			$anno .= '[['.$specialProperties[SMW_SP_SUBPROPERTY_OF].':'
+			         .$wgLang->getNsText(SMW_NS_PROPERTY).':'.$subPropOf[0]."]]\n";
+		}
+		
+		$result = array($anno, $namespace);
+		
+		return $result;
+		
 	}
 	
 }
