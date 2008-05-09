@@ -207,7 +207,7 @@ createContent: function() {
 	} else {
 		type = "page";
 	}
-	this.isRelation = (type == "page");
+	this.isRelation = (type.toLowerCase() == "page");
 	
 	if (domain == null) {
 		domain = "";
@@ -538,7 +538,7 @@ removeRangeOrType: function(domID) {
 		var selector = $('prp-attr-type');
 		var options = selector.options;
 		for (var i = 0; i < options.length; i++) {
-			if (options[i].value == 'page') {
+			if (options[i].value.toLowerCase() == 'page') {
 				selector.selectedIndex = i;
 				break;
 			}
@@ -560,7 +560,7 @@ attrTypeChanged: function(target) {
 	target = $(target);
 	if (target.id == 'prp-attr-type') {
 		this.isNAry = target.value == 'n-ary';
-		this.isRelation = target.value == 'page';
+		this.isRelation = target.value.toLowerCase() == 'page';
 	}
 },
 
