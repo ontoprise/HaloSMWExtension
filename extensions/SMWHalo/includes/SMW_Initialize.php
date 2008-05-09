@@ -23,6 +23,7 @@ define('SMW_SP_CONVERSION_FACTOR_SI', 1000);
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
+$smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
@@ -816,9 +817,13 @@ function smwfAnnotateTab ($content_actions) {
  * @param unknown_type $strip_stat
  */
 function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
+	global $smwgDisableAAMParser;
+	if ($smwgDisableAAMParser) {
+		return true;
+	}
+	
 	global $smwgHaloIP, $smwgHaloAAMParser;
 	require_once( "$smwgHaloIP/includes/SMW_AAMParser.php");
-
 	
 	if ($smwgHaloAAMParser == null) {
 		$smwgHaloAAMParser = new SMWH_AAMParser($text);
@@ -838,6 +843,10 @@ function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
  * @param unknown_type $strip_stat
  */
 function smwfAAMAfterStrip(&$parser, &$text, &$strip_stat) {
+	global $smwgDisableAAMParser;
+	if ($smwgDisableAAMParser) {
+		return true;
+	}
 	global $smwgHaloAAMParser;
 	if ($smwgHaloAAMParser == null) {
 		return true;
@@ -879,7 +888,11 @@ function smwfAAMBeforeTidy(&$parser, &$text) {
  * @param unknown_type $text
  */
 function smwfAAMAfterTidy(&$parser, &$text) {
-	global $smwgHaloAAMParser, $wgOut, $wgTitle;
+	global $smwgDisableAAMParser;
+	if ($smwgDisableAAMParser) {
+		return true;
+	}
+	global $smwgHaloAAMParser, $wgOut, $wgTitle, $smwgDisableAAMParser;
 	if ($smwgHaloAAMParser == null) {
 		return true;
 	}
@@ -888,7 +901,14 @@ function smwfAAMAfterTidy(&$parser, &$text) {
 	// Set the article's title
 //	$t = wfMsg( 'smw_annotating', $parser->mTitle->getPrefixedText() );
 	$t = wfMsg( 'smw_annotating', $wgTitle->getPrefixedText() );
+	
+	// setPageTitle calls the parser recursively
+	// => disable the parser
+	$smwgDisableAAMParser = true;
 	$wgOut->setPageTitle($t);
+	
+	// The parser is left disabled, as there are several parsing phases after the 
+	// main text that is now completed.
 	
 	return true;
 }
