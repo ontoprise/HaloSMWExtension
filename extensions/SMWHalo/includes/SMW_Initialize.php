@@ -66,7 +66,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
 	
-	global $wgRequest, $wgContLang, $wgCommandLineMode;
+	global $wgRequest, $wgContLang, $wgCommandLineMode, $smwgLocalGardening;
 	
     $spns_text = $wgContLang->getNsText(NS_SPECIAL);
     $tyns_text = $wgContLang->getNsText(SMW_NS_TYPE);
@@ -115,7 +115,7 @@ function smwgHaloSetupExtension() {
 		$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
 		$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	}
-	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+	if ($smwgLocalGardening || $wgCommandLineMode) $wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
 		smwfHaloInitMessages();
@@ -214,7 +214,7 @@ function smwgHaloSetupExtension() {
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
 	}
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_LocalGardeningJob.php');
+	if ($smwgLocalGardening || $wgCommandLineMode) require_once($smwgHaloIP . '/includes/Jobs/SMW_LocalGardeningJob.php');
 	
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';

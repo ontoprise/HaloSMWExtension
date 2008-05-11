@@ -205,7 +205,7 @@ class SMW_LocalGardeningJob extends Job {
         require_once( $smwgHaloIP . "/specials/SMWGardening/ConsistencyBot/SMW_ConsistencyBot.php");
         
         // initialize consistency checkers
-        global $registeredBots;
+        global $registeredBots, $wgCommandLineMode;
         $cc_store = ConsitencyBotStorage::getConsistencyStorage();
         $this->categoryGraph = $cc_store->getCategoryInheritanceGraph();
         $this->propertyGraph = $cc_store->getPropertyInheritanceGraph();
@@ -219,35 +219,35 @@ class SMW_LocalGardeningJob extends Job {
 	                                    if (count(array_diff($directcats, $this->directCategories)) == 0 
 	                                        && count(array_diff($this->directCategories, $directcats)) == 0) break;
 	                                        
-	        		                    print "Checking consistency due to save of '".$this->title."'...";
+	        		                    if ($wgCommandLineMode) print "Checking consistency due to save of '".$this->title."'...";
 							            $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
-							            print "done.\n";
+							            if ($wgCommandLineMode) print "done.\n";
 							       break;
 	        	case SMW_NS_PROPERTY: 
-	                                    print "Checking consistency due to save of '".$this->title."'...";
+	                                    if ($wgCommandLineMode) print "Checking consistency due to save of '".$this->title."'...";
 	                                    $this->checkPropertyChange(TitleHelper::string2Title($this->pagesToCheck));
-	                                    print "done.\n";
+	                                    if ($wgCommandLineMode) print "done.\n";
 	                                break;	
-	        	case NS_MAIN:           print "Checking consistency due to save of '".$this->title."'...";
+	        	case NS_MAIN:           if ($wgCommandLineMode) print "Checking consistency due to save of '".$this->title."'...";
 	                                    $this->checkInstanceChange(TitleHelper::string2Title($this->pagesToCheck));
-	                                    print "done.\n";
+	                                    if ($wgCommandLineMode) print "done.\n";
 	                                break;
-	        	case SMW_NS_TYPE:       print "Checking consistency due to save of '".$this->title."'...";
+	        	case SMW_NS_TYPE:       if ($wgCommandLineMode) print "Checking consistency due to save of '".$this->title."'...";
 	                                    $this->checkTypeChange();
-	                                    print "done.\n";
+	                                    if ($wgCommandLineMode) print "done.\n";
 	                                break;
 	        }
         } else if ($this-action == "remove") {
              switch($this->title->getNamespace()) {
                 case NS_CATEGORY:                                                  
-                                        print "Checking consistency due to removing of '".$this->title."'...";
+                                        if ($wgCommandLineMode) print "Checking consistency due to removing of '".$this->title."'...";
                                         $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
-                                        print "done.\n";
+                                        if ($wgCommandLineMode) print "done.\n";
                                    break;
                 case SMW_NS_PROPERTY: 
-                                        print "Checking consistency due to removing of '".$this->title."'...";
+                                        if ($wgCommandLineMode) print "Checking consistency due to removing of '".$this->title."'...";
                                         $this->checkPropertyChange(TitleHelper::string2Title($this->pagesToCheck));
-                                        print "done.\n";
+                                        if ($wgCommandLineMode) print "done.\n";
                                     break;  
                                     
                 case NS_MAIN:       break;
