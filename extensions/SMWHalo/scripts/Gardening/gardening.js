@@ -65,7 +65,7 @@ GardeningPage.prototype = {
 		$('gardening-tooldetails-content').innerHTML = gLanguage.getMessage('BOT_WAS_STARTED');
 		$('gardening-runningbots').innerHTML = request.responseText;
 	}
-	sajax_do_call('smwf_ga_LaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params], callBackOnRunBot);
+	sajax_do_call('smwf_ga_LaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params, null, null], callBackOnRunBot);
 	
 	// disable button to prevent continuous executing
 	$('runBotButton').setAttribute("disabled","disabled");

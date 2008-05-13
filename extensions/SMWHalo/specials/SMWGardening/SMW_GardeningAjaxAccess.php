@@ -17,6 +17,7 @@
  $wgAjaxExportList[] = 'smwf_ga_GetRegisteredBots';
  $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
  $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssues';
+ $wgAjaxExportList[] = 'smwf_ga_LaunchDedicatedGardeningBot';
  
  // Gardening ajax calls
 
@@ -31,17 +32,46 @@ require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
  *
  * @return $taskid ID of task.
  */
-function smwf_ga_LaunchGardeningBot($botID, $params) {
+function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
+	global $smwgDedicatedGardeningMachine;
 	
-	$taskid = GardeningBot::runBot($botID, $params);
-	if (gettype($taskid) == 'integer') { // task id, no error code
-
-		if ($taskid >= 0) {
-			return SMWGardening::getGardeningLogTable();
+	if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
+		$db = wfGetDB(DB_MASTER);
+		$user = NULL;
+		if ($user_id != NULL) {
+		        $passwordBlob = smwfGetPasswordBlob($user_id);
+		        if ($passwordBlob === $user_pass) {
+		            $user = User::newFromId($user_id);
+		        } 
+		    
 		}
-
+		$taskid = GardeningBot::runBot($botID, $params, $user);
+		if (gettype($taskid) == 'integer') { // task id, no error code
+	
+			if ($taskid >= 0) {
+				return SMWGardening::getGardeningLogTable();
+			}
+	
+		} else {
+			return $taskid;
+		}
 	} else {
-		return $taskid;
+		// redirect call to dedicated gardening server
+	    global $wgScript, $wgCookiePrefix;
+	    $userID = $_COOKIE[$wgCookiePrefix."UserID"];
+	              
+	    $passwordBlob = smwfGetPasswordBlob($userID);
+	    if($passwordBlob != NULL) {
+	        $matches = array();
+	        $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot
+	            &rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob), array('timeout' => 5));
+	        preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
+	        if (isset($matches[1])) {
+	             $contentLength = $matches[1];
+	             return substr($result, strlen($result) - $contentLength);
+	        }
+	    }   
+	    return $result;
 	}
 }
 
@@ -205,6 +235,23 @@ function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor
     $result .= "</gardeningIssues>";
     return $result;
     
+}
+
+/**
+ * Returns (MD5-hashed) passwort.
+ *
+ * @param int $userID
+ * @return password hash as string
+ */
+function smwfGetPasswordBlob($userID) {
+	$db = wfGetDB(DB_MASTER);
+	$pass_blob = NULL;
+    $res = $db->select($db->tableName('user'), array('user_password'), array('user_id'=>$userID));
+    if($db->numRows( $res ) == 1) {
+    	$row = $db->fetchObject($res);
+        $pass_blob = $row->user_password;
+    }
+    return $pass_blob;
 }
  
 ?>

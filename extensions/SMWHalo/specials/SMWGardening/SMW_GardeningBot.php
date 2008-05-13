@@ -200,10 +200,12 @@
  	/**
  	 * Checks if user is member of at least one of the given groups.
  	 */
- 	public static function isUserAllowed($allowedGroupsForBot) {
+ 	public static function isUserAllowed($user, $allowedGroupsForBot) {
  		global $wgUser;
  		$allowed = false;
- 		$groupsOfUser = $wgUser->getGroups();
+ 		if ($user == NULL) $user = $wgUser;
+ 		if ($user == NULL) return false;
+ 		$groupsOfUser = $user->getGroups();
  		foreach($groupsOfUser as $g) {
  			if (in_array($g, $allowedGroupsForBot)) {
  				$allowed = true;
@@ -258,7 +260,7 @@
     * @param $runAsnyc: 
     * @param $keepConsoleAfterTermination: 
     */	
- 	 public static function runBot($botID, $params = "", $runAsync = true) {
+ 	 public static function runBot($botID, $params = "", $user = NULL, $runAsync = true) {
  	 	global $smwgKeepGardeningConsole;
  	 	$keepConsoleAfterTermination = isset($smwgKeepGardeningConsole) ? $smwgKeepGardeningConsole : false;
  	 	
@@ -271,7 +273,7 @@
  		$bot = $registeredBots[$botID];
  		
  		// check if user is allowed to start the bot
- 		if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+ 		if (!GardeningBot::isUserAllowed($user, $bot->allowedForUserGroups())) {
  			return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
  		}
  		
