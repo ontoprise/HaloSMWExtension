@@ -716,6 +716,9 @@ class Sanitizer {
 
 			$attribs[] = "$encAttribute=\"$encValue\"";
 		}
+	    if ( !wfRunHooks( 'SanitizerAfterFixTagAttributes', array( $text, $element, &$attribs ) ) ) {
+            return '';
+        }
 		return count( $attribs ) ? ' ' . implode( ' ', $attribs ) : '';
 	}
 

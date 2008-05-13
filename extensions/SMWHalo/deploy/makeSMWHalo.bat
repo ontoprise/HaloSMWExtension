@@ -42,6 +42,10 @@ xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeFor
 xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 
+REM Patches for MW (only FCKEdit)
+xcopy ..\..\..\includes\EditPage.php %OUTPUT_DIR%\includes /Y
+xcopy ..\..\..\includes\Sanitizer.php %OUTPUT_DIR%\includes /Y
+
 REM Additional extensions
 xcopy ..\..\ParserFunctions\* %OUTPUT_DIR%\extensions\ParserFunctions /S /Y
 xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y

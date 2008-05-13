@@ -1363,7 +1363,7 @@ END
 		$autosumm = $this->autoSumm ? $this->autoSumm : md5( $this->summary );
 		$wgOut->addHtml( wfHidden( 'wpAutoSummary', $autosumm ) );
 
-		if ( $this->isConflict ) {
+		if ( $this->isConflict && wfRunHooks( 'EditPageBeforeConflictDiff', array( &$this, &$wgOut ) )) {
 			$wgOut->wrapWikiMsg( '==$1==', "yourdiff" );
 
 			$de = new DifferenceEngine( $this->mTitle );
