@@ -29,6 +29,8 @@ require_once( $smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
  *
  * @param $botID ID of bot
  * @param $params parameters as comma separated string
+ * @param $user_id ID of user (may be NULL, in this case the user logged in is used)
+ * @param $user_pass password of user (may be NULL, in this case the user logged in is used)
  *
  * @return $taskid ID of task.
  */
@@ -71,7 +73,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 	             return substr($result, strlen($result) - $contentLength);
 	        }
 	    }   
-	    return $result;
+	    return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
 	}
 }
 
