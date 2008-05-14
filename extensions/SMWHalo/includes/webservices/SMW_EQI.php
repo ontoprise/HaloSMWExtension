@@ -7,11 +7,14 @@
  * @return XML string
  */
 function query($queryString) { 
-  
   $mediaWikiLocation = dirname(__FILE__) . '/../../..';
+ 
+  //TODO: import a triple store config file
   require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
   require_once "$mediaWikiLocation/SMWHalo/includes/SMW_QP_XML.php";
   
+  global $smwgUseTripleStore;
+  $eqi = new ExternalQueryInterface();
   // use heuristic to optimize parsing order
   if (stripos($queryString, "SELECT") !== false) {
     // parse possible SPARQL query text before ASK
@@ -27,14 +30,24 @@ function query($queryString) {
     $parser = new SparqlParser();
     try {
         $query = $parser->parse($queryString);
-    return answerSPARQL($queryString, $query);
+        if (isset($smwgUseTripleStore)) {
+            return $eqi->answerSPARQL($queryString);
+        } else {
+        	// try to convert to ASK
+        	try {
+	        	$ask = $eqi->transformSPARQLToASK($query);
+	        	return $eqi->answerASK($ask);
+        	} catch(Exception $e) {
+        		return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
+        	}
+        }
     } catch(SparqlParserException $e) {
 	    $query = SMWQueryProcessor::createQuery($queryString, false, "xml");
 	    if (count($query->getErrors()) > 0) {
 	    	// probably SPARQL query, so return SPARQL parser error
 	       return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
 	    } else {
-	    	return answerASK($queryString, $query);
+	    	return $eqi->answerASK($queryString);
 	    }
     }
        
@@ -54,7 +67,7 @@ function query($queryString) {
 	    $parser = new SparqlParser();
 	    try {
 	       $query = $parser->parse($queryString);
-	    return answerSPARQL($queryString, $query);
+	       return $eqi->answerSPARQL($queryString);
 	    } catch(SparqlParserException $e) {
 	         $errors = implode(",",$query->getErrors());
 		     // probably ASK query, so return SMWProcessor error
@@ -62,20 +75,45 @@ function query($queryString) {
 	    }
 	  
 	} else {
-		return answerASK($queryString, $query);
+		return $eqi->answerASK($queryString);
 	}
   }
 } 
 
-function answerASK($queryString, $query) {
-  SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter';
-  $result =  SMWQueryProcessor::getResultFromHookParams($queryString,array('format' => 'xml'),SMW_OUTPUT_HTML);
-  return $result;
-}
-
-function answerSPARQL($queryString, $query) {
-	//TODO: ask triple store
-	return "Answer SPARQL";
+class ExternalQueryInterface {
+	
+	/**
+	 * Answers a ASK query.
+	 *
+	 * @param string $queryString
+	 * @return SPARQL XML string
+	 */
+	function answerASK($queryString) {
+	  SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter';
+	  $result =  SMWQueryProcessor::getResultFromHookParams($queryString,array('format' => 'xml'),SMW_OUTPUT_HTML);
+	  return $result;
+	}
+	
+	/**
+	 * Answers a SPARQL query.
+	 *
+	 * @param string $queryString
+	 * @return SPARQL XML string
+	 */
+	function answerSPARQL($queryString) {
+		//TODO: ask triple store
+		return "Answer SPARQL";
+	}
+	
+	/**
+	 * Converts a SPARQL query to ASK syntax
+	 *
+	 * @param Query $query (object from SPARQLParser)
+	 */
+	function transformSPARQLToASK($query) {
+		// TODO: try to transform SPARQL to ASK
+		throw new Exception("Query is not transformable to SPARQL");
+	}
 }
 
 ?>
