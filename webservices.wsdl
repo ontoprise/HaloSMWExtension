@@ -22,11 +22,15 @@
     <wsdl:message name="queryResponse">
     	<wsdl:part name="parameters" type="xsd:string"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="query_faultMsg">
+    	<wsdl:part name="fault" type="xsd:string"></wsdl:part>
+    </wsdl:message>
     <wsdl:portType name="QueryPortType">
     	<wsdl:operation name="query">
     		<wsdl:input message="tns:queryRequest"></wsdl:input>
     		<wsdl:output message="tns:queryResponse"></wsdl:output>
-    	</wsdl:operation>
+            <wsdl:fault name="MalformedQuery" message="tns:query_faultMsg"></wsdl:fault>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="NewBinding" type="tns:QueryPortType">
     	<soap:binding style="document"
