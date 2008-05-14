@@ -377,6 +377,7 @@ clicking the big arrows between the columns.',
 	'smw_csh_show_special_help' => 'Search for help on:',
 	'smw_csh_categories' => 'Categories',
 	'smw_csh_properties' => 'Properties',
+	'smw_csh_mediawiki' => 'MediaWiki Help',
 	/* Messages for the CSH discourse state. Do NOT edit or translate these
 	 * otherwise CSH will NOT work correctly anymore
 	 */

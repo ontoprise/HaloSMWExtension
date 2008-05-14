@@ -123,6 +123,13 @@ function getHelpByRestriction($restriction, $param){
 	$html = '';
 	
 	$dbr =& wfGetDB( DB_SLAVE );
+	if($restriction == "ns" && $param == "mediawiki"){
+		$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "HelppageComponent" AND subject_namespace = "' . NS_HELP . '"');
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			if ($row->value_xsd == "MediaWiki")
+				$helppages[] = $row->subject_id;
+		}
+	} else {
 	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND subject_namespace = "' . NS_HELP . '"');
 
 	//First, find all pages that are relevant and save their id
@@ -156,6 +163,7 @@ function getHelpByRestriction($restriction, $param){
 				break;
 		}
 		$dbr->freeResult( $res );
+	}
 	}
 
 	//now go through all pages and create the links
@@ -256,13 +264,14 @@ function createHelpSelector(){
 //------------------------------------------------------------
 
 	$smwns = $smwgContLang->getNamespaces();
-	$specials = array( $wgCanonicalNamespaceNames[NS_CATEGORY], $smwns[SMW_NS_PROPERTY], wfmsg('smw_contextsensitivehelp'), wfmsg('smw_queryinterface'), wfmsg('ontologybrowser'), wfmsg('smw_combined_search'), );
+	$specials = array( $wgCanonicalNamespaceNames[NS_CATEGORY], $smwns[SMW_NS_PROPERTY], wfmsg('smw_csh_mediawiki'), wfmsg('smw_contextsensitivehelp'), wfmsg('smw_queryinterface'), wfmsg('ontologybrowser'), wfmsg('smw_combined_search'), );
 
 	$html .= '<form action="' . $specialTitle->getFullURL() . '" method="get">' . wfmsg('smw_csh_search_special_help');
 	$html .= '<blockquote>' . wfmsg('smw_csh_show_special_help') . '&nbsp;';
 	$html .= '<select name="helpns" size="1" style="vertical-align:middle;">';
 	$html .= '<option value="' . $wgCanonicalNamespaceNames[NS_CATEGORY] . '">' . wfmsg('smw_csh_categories') . '</option>';
 	$html .= '<option value="' . $smwns[SMW_NS_PROPERTY] . '">' . wfmsg('smw_csh_properties') . '</option>';
+	$html .= '<option value="mediawiki">' . wfmsg('smw_csh_mediawiki') . '</option>';
 	$html .= '<option value="' . wfmsg('smw_csh_ds_queryinterface') . '">' . wfmsg('smw_queryinterface') . '</option>';
 	$html .= '<option value="' . wfmsg('smw_csh_ds_ontologybrowser') . '">' . wfmsg('ontologybrowser') . '</option>';
 	$html .= '<option value="' . wfmsg('smw_csh_ds_combinedsearch') . '">' . wfmsg('smw_combined_search') . '</option>';

@@ -367,6 +367,7 @@ protected $smwUserMessages = array(
 	'smw_csh_show_special_help' => 'Suche nach Hilfe &uuml;ber:',
 	'smw_csh_categories' => 'Kategorien',
 	'smw_csh_properties' => 'Attribute',
+	'smw_csh_mediawiki' => 'MediaWiki Hilfe',
 	/* Messages for the CSH discourse state. Do NOT edit or translate these
 	 * otherwise CSH will NOT work correctly anymore
 	 */
