@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions name="eqi" targetNamespace="http://www.example.org/eqi/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.example.org/eqi/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/eqi/">
+	<xsd:element name="query">
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<xsd:element name="in" type="xsd:string"></xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="queryResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<xsd:element name="out" type="xsd:string"></xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element></xsd:schema></wsdl:types>
+    <wsdl:message name="queryRequest">
+    	<wsdl:part name="parameters" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="queryResponse">
+    	<wsdl:part name="parameters" type="xsd:string"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="QueryPortType">
+    	<wsdl:operation name="query">
+    		<wsdl:input message="tns:queryRequest"></wsdl:input>
+    		<wsdl:output message="tns:queryResponse"></wsdl:output>
+    	</wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="NewBinding" type="tns:QueryPortType">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<wsdl:operation name="query">
+    		<soap:operation
+    			soapAction="http://www.example.org/eqi/query" />
+    		<wsdl:input>
+    			<soap:body use="literal" />
+    		</wsdl:input>
+    		<wsdl:output>
+    			<soap:body use="literal" />
+    		</wsdl:output>
+    	</wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EQI">
+		<wsdl:port name="QueryPort" binding="tns:NewBinding">
+			<soap:address location="http://localhost/halowiki/index.php?action=wsmethod"></soap:address>
+		</wsdl:port>
+	</wsdl:service></wsdl:definitions>

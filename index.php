@@ -73,6 +73,27 @@ if ( $wgUseAjax && $action == 'ajax' ) {
 	exit;
 }
 
+#
+# Handle webservice call
+#
+if ($action == 'wsmethod' ) {
+    require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_Webservices.php' );
+    $mediaWiki->restInPeace( $wgLoadBalancer );
+    exit;
+}
+
+#
+# Returns WSDL file for wiki webservices
+#
+if ($action == 'get_wsdl') {
+	$handle = fopen("webservices.wsdl", "rb");
+    $contents = fread ($handle, filesize ("webservices.wsdl"));
+    fclose($handle);
+    
+    echo str_replace("localhost", $_SERVER['SERVER_ADDR'], $contents);
+    exit;
+}
+
 
 wfProfileOut( 'main-misc-setup' );
 
