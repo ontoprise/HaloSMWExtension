@@ -16,37 +16,51 @@
      */
     public function transform() {
         
+        //return print_r($this->sparqlAST, true);
         $res = $this->checkQuery();
         if ($res !== true) {
-            throw new Exception($res);
+            throw new MalformedQueryException($res);
         }
         
         $resultPart = $this->sparqlAST->getResultPart();
-        $graphPattern = $resultPart[0]->getTriplePattern();
+        $allTriples = SPARQLTransformHelper::getAllTriples($resultPart);
         
-        $rootTriples = SPARQLTransformHelper::getRootTriples($graphPattern);
+        $rootTriples = SPARQLTransformHelper::getRootTriples($allTriples);
         $resultVars = $this->sparqlAST->getResultVars();
         
         $propertyRestr = "";
         $categoryRestr = "";
         foreach($rootTriples as $triple) {
+            $subQuery = $this->_transform($triple, $allTriples);
+            if (strlen($subQuery) > 0) {
+               $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::<q>".$subQuery."</q>]]";
+               continue;
+            } else if ($triple->getPredicate()->getURI() != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+            	if ($triple->getObject() instanceof Literal) {
+            		$propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::".$triple->getObject()->getLabel()."]]";
+            	} else if ($triple->getObject() instanceof Resource) {
+                    $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::".$triple->getObject()->getLocalName()."]]";
+            	} else if (SPARQLTransformHelper::isVariable($triple->getObject()) && !in_array($triple->getObject(), $resultVars)) {
+            		list($operator, $operand) = SPARQLTransformHelper::getConstraints($resultPart, $triple->getObject());
+            		if (is_string($operator) && is_string($operand)) {
+             		  $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::$operator".$operand."]]";
+            		}
+            	}
+            }
         	if (in_array($triple->getObject(), $resultVars)) {
-        		$propertyRestr .= "[[".$triple->getPredicate()->getURI()."::*]]";
+        		$selector = SPARQLTransformHelper::isTripelOptional($triple, $resultPart) ? "*" : "+";
+        		$propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::$selector]]";
         		continue;
         	}
-        	if ($triple->getPredicate()->getLocalName() == 'type') {
-        		$categoryRestr .= "[[Category:".$triple->getObject()->getURI()."]]";
+        	if ($triple->getPredicate()->getURI() == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+        		global $wgLang;
+        		$categoryRestr .= "[[".$wgLang->getNsText(NS_CATEGORY).":".$triple->getObject()->getLocalName()."]]";
         		continue;
         	}
-        	$subQuery = $this->_transform($triple, $graphPattern);
-        	if (strlen($subQuery) > 0) {
-        	   $propertyRestr .= "[[".$triple->getPredicate()->getURI()."::<q>".$subQuery."</q>]]";
-        	} else {
-        		$propertyRestr .= "[[".$triple->getPredicate()->getURI()."::*]]";
-        	}
+        	
         }
         
-        return $categoryRestr.$propertyRestr; //print_r($this->sparqlAST, true);
+        return  $categoryRestr.$propertyRestr; 
     }
     
     private function _transform($triple, & $graphPatterns) {
@@ -56,16 +70,30 @@
             $triples = SPARQLTransformHelper::getSubjectsToVar($triple->getObject(), $graphPatterns);
             foreach($triples as $triple) {
 	            
-	            if ($triple->getPredicate()->getURI() == 'rdf:type') {
-	                $categoryRestr .= "[[Category:".$triple->getObject()->getURI()."]]";
+	            if ($triple->getPredicate()->getURI() == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+	            	global $wgLang;
+	                $categoryRestr .= "[[".$wgLang->getNsText(NS_CATEGORY).":".$triple->getObject()->getLocalName()."]]";
 	                continue;
 	            }
               
 	            $subQuery = $this->_transform($triple, $graphPattern);
 	            if (strlen($subQuery) > 0) {
-	               $propertyRestr .= "[[".$triple->getPredicate()->getURI()."::<q>".$subQuery."</q>]]";
-	            } else {
-	                $propertyRestr .= "[[".$triple->getPredicate()->getURI()."::*]]";
+	               $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::<q>".$subQuery."</q>]]";
+	              
+	            } else if ($triple->getPredicate()->getURI() != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+	                if ($triple->getObject() instanceof Literal) {
+	                    $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::".$triple->getObject()->getLabel()."]]";
+	                } else if ($triple->getObject() instanceof Resource) {
+	                    $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::".$triple->getObject()->getLocalName()."]]";
+	                } else {
+		                list($operator, $operand) = SPARQLTransformHelper::getConstraints($resultPart, $triple->getObject());
+	                    if (is_string($operator) && is_string($operand)) {
+	                        $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::$operator".$operand."]]";
+	                    } else {
+		                	$selector = SPARQLTransformHelper::isTripelOptional($triple, $this->sparqlAST->getResultPart()) ? "*" : "+";
+	                        $propertyRestr .= "[[".$triple->getPredicate()->getLocalName()."::$selector]]";
+	                    }
+	                }
 	            }
             }
         }
@@ -118,18 +146,29 @@
      */
     private function checkCond1() {
         $resultPart = $this->sparqlAST->getResultPart();
-        $graphPattern = $resultPart[0]->getTriplePattern();
+        $graphPattern = SPARQLTransformHelper::getAllTriples($resultPart);
         
         // get root triples
         $rootTriples = SPARQLTransformHelper::getRootTriples($graphPattern);
         
         // checks if result vars appear in subject or object of root triples 
         $resultVars = $this->sparqlAST->getResultVars();
-        $ok = true;
+        $appear = true;
         foreach($resultVars as $var) {
-            $ok = $ok && (SPARQLTransformHelper::inSubjectOrObject($var, $rootTriples));
+            $appear = $appear && (SPARQLTransformHelper::inSubjectOrObject($var, $rootTriples));
         }
-        if (!$ok) return false;
+        if (!$appear) return false;
+                
+        // get non root triples
+        $nonRootTriples = SPARQLTransformHelper::getNonRootTriples($graphPattern);
+        
+        // check if result vars does not appear in subject or object of non root triples
+        $resultVars = $this->sparqlAST->getResultVars();
+        $appear = false;
+        foreach($resultVars as $var) {
+            $appear = $appear || (SPARQLTransformHelper::inSubjectOrObject($var, $nonRootTriples));
+        }
+        if ($appear) return false; 
         
         // check if all object variables appear only once in root triples
         $objectVariables = array();
@@ -150,7 +189,7 @@
     private function checkCond2() {
     	$resultVars = $this->sparqlAST->getResultVars();
     	$resultPart = $this->sparqlAST->getResultPart();
-        $graphPattern = $resultPart[0]->getTriplePattern();
+        $graphPattern = SPARQLTransformHelper::getAllTriples($resultPart);
         
         // get root triples
         $rootTriples = SPARQLTransformHelper::getRootTriples($graphPattern);
@@ -177,7 +216,7 @@
      */
     private function checkCond3() {
     	$resultPart = $this->sparqlAST->getResultPart();
-        $graphPattern = $resultPart[0]->getTriplePattern();
+        $graphPattern = SPARQLTransformHelper::getAllTriples($resultPart);
         $rootTriples = SPARQLTransformHelper::getRootTriples($graphPattern);
         if (empty($rootTriples)) return false;
         $no_cycle = true;
@@ -211,7 +250,7 @@
      */
     private function checkCond4() {
         $resultPart = $this->sparqlAST->getResultPart();
-        $graphPattern = $resultPart[0]->getTriplePattern();
+        $graphPattern = SPARQLTransformHelper::getAllTriples($resultPart);
         
         // check properties and objects of rdf:type for groundness
         foreach($graphPattern as $triple) {
@@ -257,6 +296,22 @@
         return $rootTriples;
     }
     
+    public static function getNonRootTriples($graphPattern) {
+        $nonrootTriples = array();
+        foreach($graphPattern as $triple1) {
+            $isRoot = true;
+            foreach($graphPattern as $triple2) {
+                
+                if ($triple1->getSubject() == $triple2->getObject()) {
+                    $isRoot = false;
+                    break;
+                }
+            }
+            if (!$isRoot) $nonrootTriples[] = $triple1;
+        }
+        return $nonrootTriples;
+    }
+    
     public static function getSubjectsToVar($var, $graphPatterns) {
     	$triples = array();
         foreach($graphPatterns as $triple) {
@@ -276,6 +331,46 @@
     		}
     	}
     	return false;
+    }
+    
+    public static function getAllTriples($resultPart) {
+    	$triples = array();
+    	foreach($resultPart as $parts) {
+    		$triples = array_merge($triples, $parts->getTriplePattern());
+    	}
+    	return $triples;
+    }
+    
+    public static function isTripelOptional($triple, $resultPart) {
+        foreach($resultPart as $parts) {
+            if (SPARQLTransformHelper::containsTriple($triple, $parts->getTriplePattern())) {
+                return (is_numeric($parts->getOptional()));
+                
+            }
+        }
+    }
+    
+    public static function getConstraints($resultPart, $var) {
+    	$operator = NULL;
+    	$value = NULL;
+    	foreach($resultPart as $parts) {
+    		if (is_array($parts->getConstraint())) {
+    			foreach($parts->getConstraint() as $cs) {
+		    		$cst = $cs->getTree();
+		    		if ($cst['operand1']['value'] == $var) {
+			    		switch($cst['type']) {
+			    			case "equation": {$operator = $cst['operator']; $value = $cst['operand2']['value']; } 
+			    		}
+		    		}
+		    	    if ($cst['operand2']['value'] == $var) {
+		                switch($cst['type']) {
+		                    case "equation": {$operator = $cst['operator']; $value = $cst['operand1']['value']; } 
+		                }
+		            }
+    			}
+    		}
+    	}
+    	return array($operator == "=" ? "":$operator, $value); // return = as empty string, because ASK queries omit equation operator
     }
  }
  

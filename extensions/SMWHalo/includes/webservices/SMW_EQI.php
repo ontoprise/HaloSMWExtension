@@ -35,6 +35,7 @@ function query($queryString) {
         } else {
             // try to convert to ASK
             try {
+            	
                 $ask = $eqi->transformSPARQLToASK($query);
                 return $ask;
                 //return $eqi->answerASK($ask);
@@ -112,11 +113,15 @@ class ExternalQueryInterface {
      * @param Query $query (object from SPARQLParser)
      */
     function transformSPARQLToASK($query) {
-        require_once 'SMW_SPARQLTransformer.php';
+    	require_once 'SMW_SPARQLTransformer.php';
         $st = new SMWSPARQLTransformer($query);
         return $st->transform();
         
     }
+}
+
+class MalformedQueryException extends Exception {
+	
 }
 
 ?>
