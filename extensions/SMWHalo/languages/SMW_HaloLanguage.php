@@ -31,9 +31,12 @@ abstract class SMW_HaloLanguage {
 	protected $smwSpecialProperties;
 	protected $smwSpecialSchemaProperties;
 	protected $smwHaloDatatypes;
-
+	protected $smwHaloNamespaces;
+	protected $smwHaloNamespaceAliases;
+	
 	/**
-	 * Function that returns an array of namespace identifiers.
+	 * Function that returns an array of namespace identifiers. This function 
+	 * is obsolete
 	 */
 	abstract function getNamespaceArray();
 
@@ -105,6 +108,41 @@ abstract class SMW_HaloLanguage {
 	 */
 	function getUserMsgArray() {
 		return $this->smwUserMessages;
+	}
+	
+	/**
+	 * Returns the name of the namespace with the ID <$namespaceID>.
+	 *
+	 * @param int $namespaceID
+	 * 		ID of the namespace whose name is requested
+	 * @return string
+	 * 		Name of the namespace or <null>.
+	 * 
+	 */
+	public function getNamespace($namespaceID) {
+		return $this->smwHaloNamespaces[$namespaceID];
+	}
+	
+	/**
+	 * Returns the array with all namespaces of the halo extension.
+	 *
+	 * @return string
+	 * 		Array of additional namespaces.
+	 * 
+	 */
+	public function getNamespaces() {
+		return $this->smwHaloNamespaces;
+	}
+	
+	/**
+	 * Returns the array with all namespace aliases of the halo extension. 
+	 *
+	 * @return string
+	 * 		Array of additional namespace aliases.
+	 * 
+	 */
+	public function getNamespaceAliases() {
+		return $this->smwHaloNamespaceAliases;
 	}
 	
 	
