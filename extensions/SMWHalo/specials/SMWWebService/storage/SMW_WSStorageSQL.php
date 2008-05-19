@@ -87,7 +87,7 @@ class WSStorageSQL {
 		// create properties table
 		$propTable = $db->tableName('smw_ws_properties');
 		DBHelper::setupTable($propTable, array(
-				  'property_id'     =>  'INT(8) NOT NULL' ,
+				  'property_id'     =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL',

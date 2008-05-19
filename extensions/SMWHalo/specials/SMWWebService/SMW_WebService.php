@@ -186,8 +186,28 @@ class WebService {
 		$valid &= self::getWWSDElement($wwsd, 'webservice/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($wwsd, 'webservice/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($wwsd, 'webservice/method', 'name', $ws->mMethod, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/parameter', null, $ws->mParameters, false, 1, 100, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/result', null, $ws->mResult, false, 1, 100, $msg);
+		$valid &= self::getWWSDElement($wwsd, 'webservice/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
+		if ($ws->mParsedParameters) {
+			// store the serialized form of the parameter description
+			$path = array('webservice','parameter');
+			$i = 0;
+			do {
+				$xml = $parser->serializeElement($path, $i, false);
+				$ws->mParameters .= $xml."\n";
+				++$i;
+			} while (!empty($xml));
+		}
+		$valid &= self::getWWSDElement($wwsd, 'webservice/result', null, $ws->mParsedResult, false, 1, 100, $msg);
+		if ($ws->mParsedResult) {
+			// store the serialized form of the result description
+			$path = array('webservice','result');
+			$i = 0;
+			do {
+				$xml = $parser->serializeElement($path, $i, false);
+				$ws->mResult .= $xml."\n";
+				++$i;
+			} while (!empty($xml));
+		}
 		
 		$tmpMsg = "";
 		$v = self::getWWSDElement($wwsd, 'webservice/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
@@ -303,7 +323,7 @@ class WebService {
 			$elem = $pathElems[$i];
 			$subTree = &$subTree[$elem];
 			if (!$subTree) {
-				$msg .= wfMsg('smw_ws_wwsd_element_missing', $wwsdElementPath).'<br />';
+				$msg .= wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 				return false;
 			}
 			if ($i != $numElems - 1) {
@@ -312,11 +332,11 @@ class WebService {
 		}
 		
 		if (count($subTree) < $min) {
-			$msg .= wfMsg('smw_ws_wwsd_element_missing', $wwsdElementPath).'<br />';
+			$msg .= wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 			return false;
 		}
 		if (count($subTree) > $max) {
-			$msg .= wfMsg('smw_ws_too_many_wwsd_elements', $wwsdElementPath).'<br />';
+			$msg .= wfMsg('smw_wws_too_many_wwsd_elements', $wwsdElementPath).'<br />';
 			return false;
 		}
 		
@@ -325,7 +345,7 @@ class WebService {
 			if ($attribute) {
 				$val = $subTree[0]['attributes'][$attribute];
 				if ($val == null) {
-					$msg .= wfMsg('smw_ws_wwsd_attribute_missing', $attribute, $wwsdElementPath).'<br />';
+					$msg .= wfMsg('smw_wws_wwsd_attribute_missing', $attribute, $wwsdElementPath).'<br />';
 					return false;
 				}
 			} else {
