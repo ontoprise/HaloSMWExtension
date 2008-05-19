@@ -126,7 +126,6 @@ function smwgHaloSetupExtension() {
 		
 		global $smwgEnableWikiWebServices;
 		if ($smwgEnableWikiWebServices) {
-			WebServiceManager::initDatabaseTables();
 			// Initialize the Wiki Web Service Extension
 			WebServiceManager::initWikiWebServiceExtension();
 			
@@ -296,11 +295,16 @@ function smwfHaloShowListPage(&$title, &$article){
  * Called from SMW when admin re-initializes tables
  */
 function smwfHaloInitializeTables() {
-	global $smwgHaloIP;
+	global $smwgHaloIP, $smwgEnableWikiWebServices;
 	require_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php');
 	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
 	SMWGardeningLog::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
+
+	if ($smwgEnableWikiWebServices) {
+		WebServiceManager::initDatabaseTables();
+	}
+	
 	return true;
 }
 /**
