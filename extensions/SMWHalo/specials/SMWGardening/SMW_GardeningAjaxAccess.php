@@ -38,7 +38,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 	global $smwgDedicatedGardeningMachine;
 	
 	if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
-		$db = wfGetDB(DB_MASTER);
+		
 		$user = NULL;
 		if ($user_id != NULL) {
 		        $passwordBlob = smwfGetPasswordBlob($user_id);
@@ -65,12 +65,15 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 	    $passwordBlob = smwfGetPasswordBlob($userID);
 	    if($passwordBlob != NULL) {
 	        $matches = array();
-	        $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot
-	            &rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob), array('timeout' => 5));
+	        $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot&rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob));
+	            
 	        preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
 	        if (isset($matches[1])) {
 	             $contentLength = $matches[1];
 	             return substr($result, strlen($result) - $contentLength);
+	        } else if (stripos($result, "<table") !== false) { 
+	        	// heuristic if length is missing in HTTP answer (why can this happen?)
+	        	return substr($result, stripos($result, "<table"));
 	        }
 	    }   
 	    return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
@@ -246,7 +249,7 @@ function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor
  * @return password hash as string
  */
 function smwfGetPasswordBlob($userID) {
-	$db = wfGetDB(DB_MASTER);
+	$db = wfGetDB(DB_SLAVE);
 	$pass_blob = NULL;
     $res = $db->select($db->tableName('user'), array('user_password'), array('user_id'=>$userID));
     if($db->numRows( $res ) == 1) {
