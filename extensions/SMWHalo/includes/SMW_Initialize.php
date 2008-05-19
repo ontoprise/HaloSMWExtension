@@ -26,6 +26,10 @@ $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
 
+if ($smwgEnableWikiWebServices) {
+	require_once('extensions/SMWHalo/specials/SMWWebService/SMW_WebServiceManager.php');
+}
+
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
  * Configures SMW Halo Extension for initialization.
@@ -119,6 +123,15 @@ function smwgHaloSetupExtension() {
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
 		smwfHaloInitMessages();
+		
+		global $smwgEnableWikiWebServices;
+		if ($smwgEnableWikiWebServices) {
+			WebServiceManager::initDatabaseTables();
+			// Initialize the Wiki Web Service Extension
+			WebServiceManager::initWikiWebServiceExtension();
+			
+		}
+		
 	}
 	
 	// add some AJAX calls
@@ -199,8 +212,8 @@ function smwgHaloSetupExtension() {
 						
 		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
 
-//		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
-//		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
+		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
+		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 	}
 	
 	// include SMW logger (exported as ajax function but also used locally)
