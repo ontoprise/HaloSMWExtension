@@ -103,12 +103,15 @@ class XMLParser {
 	 * @param int $startIdx
 	 * 		This optional index is the start of an XML element. If this value
 	 * 		is given, only this element is serialized.
+	 * @param bool $addXmlHeader 
+	 * 	 	If <true>, the XML header is added at the beginning.
+	 *  
 	 * @return string
 	 * 		An XML string
 	 *
 	 */
-	public function serialize($startIdx = 0) {
-		$xml = '<?xml version="1.0"?>'."\n";
+	public function serialize($startIdx = 0, $addXmlHeader = true) {
+		$xml = $addXmlHeader ? '<?xml version="1.0"?>'."\n" : '';
 		$len = count($this->xmlStructure);
 		
 		$elem = $this->xmlStructure[$startIdx];
@@ -163,16 +166,20 @@ class XMLParser {
 	}
 	
 	/**
-	 * Returns the XML string  of the first XML elements with the
-	 * path <$elementPath>.
+	 * Returns the XML string of the XML element with the path <$elementPath>.
 	 *
 	 * @param array<string> $elementPath
 	 * 		The values in this array build a path that starts somewhere in the
 	 * 		hierarchy and ends at a leaf.
+	 * @param int $elemIndex
+	 * 		Several elements may match the given path. This parameter specifies
+	 * 		which of the matching elements is serialized.
+	 * @param bool $addXmlHeader 
+	 * 	 	If <true>, the XML header is added at the beginning.
 	 * @return string
 	 * 		The serialized XML structure of the element. Can be empty.
 	 */
-	public function serializeElement($elementPath) {
+	public function serializeElement($elementPath, $elemIndex = 0, $addXmlHeader = true) {
 		$result = '';
 		$pi = count($elementPath)-1;
 		if ($pi < 0) {
@@ -183,23 +190,38 @@ class XMLParser {
 		if (!$indices) {
 			return $result;
 		}
-		$elem = &$this->xmlStructure[$indices[0]];
-		// candidate found => check if the path is correct
-		$i = $pi-1;
-		$found = true;
-		$parent = &$elem;
-		while ($i >= 0) {
-			$parent = &$this->xmlStructure[$parent['parent']];
-			if ($parent['tag'] != strtoupper($elementPath[$i])) {
+		
+		$ei = -1;
+		$indicesIndex = 0;
+		while (true) {
+			$elem = &$this->xmlStructure[$indices[$indicesIndex]];
+			// candidate found => check if the path is correct
+			$i = $pi-1;
+			$found = true;
+			$parent = &$elem;
+			while ($i >= 0) {
+				$parent = &$this->xmlStructure[$parent['parent']];
+				if ($parent['tag'] != strtoupper($elementPath[$i])) {
+					$found = false;
+					break;
+				}
+				--$i;
+			}
+			if ($found) {
+				++$ei;
+				if ($ei == $elemIndex) {
+					break;
+				}
+			}
+			++$indicesIndex;
+			if ($indicesIndex >= count($indices)) {
 				$found = false;
 				break;
 			}
-			--$i;
 		}
-		
 		if ($found) {
 			// ok => serialize the element 
-			$result = $this->serialize($indices[0]);
+			$result = $this->serialize($indices[$indicesIndex], $addXmlHeader);
 		}
 		return $result;
 	}
