@@ -146,6 +146,7 @@ class SMW_LocalGardeningJob extends Job {
     private function checkInstanceChange(array & $domainProperties) {
     	if ($this->title == NULL) return;
     	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+    	$instance = $this->title;
     	
     	// clear issues to check again
     	$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$instance);
@@ -156,7 +157,6 @@ class SMW_LocalGardeningJob extends Job {
         $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL,$instance);
         $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$instance);
         
-    	$instance = $this->title;
     	$subjects = array($instance);
         $properties = smwfGetStore()->getProperties($instance);
                
@@ -216,8 +216,10 @@ class SMW_LocalGardeningJob extends Job {
         if ($this->action == "save") {
 	        switch($this->title->getNamespace()) {
 	        	case NS_CATEGORY:      $directcats = TitleHelper::title2string(smwfGetSemanticStore()->getCategoriesForInstance($this->title));
-	                                    if (count(array_diff($directcats, $this->directCategories)) == 0 
-	                                        && count(array_diff($this->directCategories, $directcats)) == 0) break;
+	        	                        if (count($directcats) > 0) {
+		                                    if (count(array_diff($directcats, $this->directCategories)) == 0 
+		                                        && count(array_diff($this->directCategories, $directcats)) == 0) break;
+	        	                        }
 	                                        
 	        		                    if ($wgCommandLineMode) print "Checking consistency due to save of '".$this->title."'...";
 							            $this->checkCategoryChange(TitleHelper::string2Title($this->pagesToCheck));
