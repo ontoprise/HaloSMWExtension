@@ -132,7 +132,7 @@ class WebServiceManager {
 		
 		
 		//--- TEST
-		
+/*		
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 		
@@ -145,6 +145,10 @@ class WebServiceManager {
 				'    <result name="temp">'.
 				'        <part name="celsius" path="cityWeather.temperature.celsius" />'.
 				'        <part name="fahrenheit" path="cityWeather.temperature.fahrenheit" />'.
+				'    </result>'.
+				'    <result name="temperature">'.
+				'        <part name="c" path="cityWeather.temperature.celsius" />'.
+				'        <part name="f" path="cityWeather.temperature.fahrenheit" />'.
 				'    </result>'.
 				'    <displayPolicy>'.
 				'        <once />'.
@@ -172,7 +176,7 @@ class WebServiceManager {
 		for ($i = 2000; $i < 2100; ++$i) {
 			WSStorage::getDatabase()->addWSProperty($i ,$id, 142, $i);
 		}
-
+*/
 		//--- TEST
 		
 	}
