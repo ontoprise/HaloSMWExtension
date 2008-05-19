@@ -517,7 +517,16 @@ protected $smwUserMessages = array(
 	'smw_gardissue_ti_class_system_error' => 'Importsystemfehler',
 	'smw_gardissue_ti_class_update_skipped' => 'Übersprungene Aktualisierungen',
 
-	
+	/* Messages for the wiki web services */
+	'smw_wws_articles_header' => 'Seiten, die den Web-Service "$1" benutzen',
+	'smw_wws_properties_header' => 'Eigenschaften, die von "$1" gesetzt werden',
+	'smw_wws_articlecount' => '<p>Zeige $1 Seiten, die diesen Web-Service benutzen.</p>',
+	'smw_wws_propertyarticlecount' => '<p>Zeige $1 Eigenschaften, die ihren Wert von diesem Web-Service erhalten.</p>',
+	'smw_wws_invalid_wwsd' => 'Ungültige Wiki Web Service Definition.',
+	'smw_wws_wwsd_element_missing' => 'Das Element "$1" fehlt in der Wiki Web Service Definition.',
+	'smw_wws_wwsd_attribute_missing' => 'Das Attribut "$1" fehlt im Element "$2" der Wiki Web Service Definition.',
+	'smw_wws_too_many_wwsd_elements' => 'Das Element "$1" erscheint mehrmals Wiki Web Service Definition.',
+
 );
 
 protected $smwSpecialProperties = array(
@@ -545,6 +554,17 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_equation' => 'Chemische Gleichung',
 	'smw_hdt_mathematical_equation' => 'Mathematische Gleichung',
 );
+
+protected $smwHaloNamespaces = array(
+	SMW_NS_WEB_SERVICE       => 'WebService',
+	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
+);
+
+protected $smwHaloNamespaceAliases = array(
+	'WebService'       => SMW_NS_WEB_SERVICE,
+	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
+);
+
 
 	/**
 	 * Function that returns the namespace identifiers.

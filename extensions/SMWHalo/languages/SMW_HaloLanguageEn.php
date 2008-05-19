@@ -529,6 +529,15 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_ti_class_system_error' => 'Import system errors',
 	'smw_gardissue_ti_class_update_skipped' => 'Skipped updates',
 
+	/* Messages for the wiki web services */
+	'smw_wws_articles_header' => 'Pages using the web service "$1"',
+	'smw_wws_properties_header' => 'Properties that are set by "$1"',
+	'smw_wws_articlecount' => '<p>Showing $1 pages using this web service.</p>',
+	'smw_wws_propertyarticlecount' => '<p>Showing $1 properties that get their value from this web service.</p>',
+	'smw_wws_invalid_wwsd' => 'Invalid Wiki Web Service Definition.',
+	'smw_wws_wwsd_element_missing' => 'The element "$1" is missing in the Wiki Web Service Definition.',
+	'smw_wws_wwsd_attribute_missing' => 'The attribute "$1" is missing in element "$2" of the Wiki Web Service Definition.',
+	'smw_wws_too_many_wwsd_elements' => 'The element "$1" appears several times in the Wiki Web Service Definition.',
 
 );
 
@@ -558,8 +567,18 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_mathematical_equation' => 'Mathematical equation',
 );
 
+protected $smwHaloNamespaces = array(
+	SMW_NS_WEB_SERVICE       => 'WebService',
+	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
+);
+
+protected $smwHaloNamespaceAliases = array(
+	'WebService'       => SMW_NS_WEB_SERVICE,
+	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
+);
+
 	/**
-	 * Function that returns the namespace identifiers.
+	 * Function that returns the namespace identifiers. This is probably obsolete!
 	 */
 	public function getNamespaceArray() {
 		return array(

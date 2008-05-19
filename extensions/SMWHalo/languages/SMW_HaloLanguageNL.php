@@ -463,7 +463,73 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
  	
  	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'ontbrekend',
-	'smw_iqgi_wrongunit' => 'verkeerde eenheid'
+	'smw_iqgi_wrongunit' => 'verkeerde eenheid',
+	
+	/* ACL */
+	'acl' => 'Access Control Lists',
+	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
+	'smw_acl_rules' => 'Rules',
+	'smw_acl_up' => 'up',
+	'smw_acl_down' => 'down',
+	'smw_acl_groups' => 'Groups',
+	'smw_acl_namespaces' => 'Namespaces',
+	'smw_acl_actions' => 'Actions',
+	'smw_acl_permission' => 'Permission',
+	'smw_acl_whitelist' => 'Whitelist (comma separated with namespace)',
+	'smw_acl_superusers' => 'Superusers (comma separated)',
+	'smw_acl_update' => 'Update rules',
+	'smw_acl_remove' => 'Remove rule',
+	'smw_acl_newrule' => 'New rule',
+	'smw_acl_addrule' => 'Add rule',
+
+	'smw_acl_*' => '*',
+	'smw_acl_read' => 'read',
+	'smw_acl_edit' => 'edit',
+	'smw_acl_create' => 'create',
+	'smw_acl_move' => 'move',
+	'smw_acl_permit' => 'permit',
+	'smw_acl_deny' => 'deny',
+	
+	/* Messages of the Thesaurus Import */
+	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
+	'smw_ti_class_not_found' => 'Class "$1" not found.',
+	'smw_ti_no_tl_module_spec' => 'Could not find specification for TL module with ID "$1".',
+	'smw_ti_xml_error' => 'XML error: $1 at line $2',
+	'smw_ti_filename'  => 'Filename:',
+	'smw_ti_fileerror' => 'The file "$1" does not exist or is empty.',
+	'smw_ti_no_article_names' => 'There are no article names in the specified data source.',
+	'smw_ti_termimport' => 'Import vocabulary',
+	'termimport' => 'Import vocabulary',
+	'smw_ti_botstarted' => 'The bot for the import of vocabulary was successfully started.',
+	'smw_ti_botnotstarted' => 'The bot for the import of vocabulary could not be started.',
+	'smw_ti_couldnotwritesettings' => 'Could not write the settings for the vocabulary import bot.',
+	'smw_ti_missing_articlename' => 'An article can not be created as the "articleName" is missing in the term\'s description.',
+	'smw_ti_invalid_articlename' => 'The article name "$1" is invalid.',
+	'smw_ti_articleNotUpdated' => 'The existing article "$1" was not overwritten with a new version.',
+	'smw_ti_creationComment' => 'This article was created/updated by the vocabulary import framework.',
+	'smw_ti_creationFailed' => 'The article "$1" could not be created or updated.',
+	'smw_ti_missing_mp' => 'The mapping policy is missing.',
+	'smw_ti_import_error' => 'Import error',
+	'smw_ti_added_article' => '$1 was added to the wiki.',
+	'smw_ti_updated_article' => '$1 was updated.',
+	'smw_ti_import_errors' => 'Some terms were not properly imported. Please see the Gardening Log!',
+	'smw_ti_import_successful' => 'All terms were successfully imported.',
+
+	'smw_gardissue_ti_class_added_article' => 'Imported articles',
+	'smw_gardissue_ti_class_updated_article' => 'Updated articles',
+	'smw_gardissue_ti_class_system_error' => 'Import system errors',
+	'smw_gardissue_ti_class_update_skipped' => 'Skipped updates',
+
+	/* Messages for the wiki web services */
+	'smw_wws_articles_header' => 'Pages using the web service "$1"',
+	'smw_wws_properties_header' => 'Properties that are set by "$1"',
+	'smw_wws_articlecount' => '<p>Showing $1 pages using this web service.</p>',
+	'smw_wws_propertyarticlecount' => '<p>Showing $1 properties that get their value from this web service.</p>',
+	'smw_wws_invalid_wwsd' => 'Invalid Wiki Web Service Definition.',
+	'smw_wws_wwsd_element_missing' => 'The element "$1" is missing in the Wiki Web Service Definition.',
+	'smw_wws_wwsd_attribute_missing' => 'The attribute "$1" is missing in element "$2" of the Wiki Web Service Definition.',
+	'smw_wws_too_many_wwsd_elements' => 'The element "$1" appears several times in the Wiki Web Service Definition.',
+
 );
 
 
@@ -490,6 +556,16 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische formule',
 	'smw_hdt_chemical_equation' => 'Chemische gelijkheid',
 	'smw_hdt_mathematical_equation' => 'Wiskundige gelijkheid',
+);
+
+protected $smwHaloNamespaces = array(
+	SMW_NS_WEB_SERVICE       => 'WebService',
+	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
+);
+
+protected $smwHaloNamespaceAliases = array(
+	'WebService'       => SMW_NS_WEB_SERVICE,
+	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
 );
 
 	/**
