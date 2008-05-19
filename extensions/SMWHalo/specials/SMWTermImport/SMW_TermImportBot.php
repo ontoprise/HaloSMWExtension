@@ -93,7 +93,7 @@ class TermImportBot extends GardeningBot {
 		echo "Starting to import terms...\n";
 		
 		global $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
+		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 		
 		$parser = new XMLParser($settings);
 		$result = $parser->parse();
@@ -162,7 +162,7 @@ class TermImportBot extends GardeningBot {
 	private function createArticles($terms, $mappingPolicy, $conflictPolicy) {
 
 		global $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
+		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 		
 		$parser = new XMLParser($mappingPolicy);
 		$result = $parser->parse();
@@ -202,7 +202,7 @@ class TermImportBot extends GardeningBot {
 		$nextElem = 0;
 		$noErrors = true;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
-			$caResult = $this->createArticle($term, $mp, $cp);
+			$caResult = $this->createArticle($term['TERM'][0]['value'], $mp, $cp);
 			if ($caResult !== true) {
 				$noErrors = false;
 			}
@@ -233,7 +233,7 @@ class TermImportBot extends GardeningBot {
 		
 		$title = $term['ARTICLENAME'];
 		if (is_array($title)) {
-			$title = $title[0];
+			$title = $title[0]['value'];
 		}
 		if (!$title) {
 			$log->addGardeningIssueAboutArticle(
@@ -392,7 +392,7 @@ class TermImportBot extends GardeningBot {
 					// replace the parameters in the result string by their actual
 					// values
 					foreach ($parameters as $p) {
-						$v = $term[strtoupper($p)][0];
+						$v = $term[strtoupper($p)][0]['value'];
 						$p = '{{{'.$p.'}}}';
 						$r = str_replace($p, $v, $r);
 					}
@@ -441,18 +441,18 @@ class TermImportBot extends GardeningBot {
 			$namespace = $wgLang->getNsText(SMW_NS_PROPERTY).':';
 		}
 		if ($cat) {
-			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$cat[0]."]]\n";
+			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$cat[0]['value']."]]\n";
 		}
 		if ($subCatOf) {
 			$namespace = $wgLang->getNsText(NS_CATEGORY).':'; 
-			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$subCatOf[0]."]]\n";
+			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$subCatOf[0]['value']."]]\n";
 		}
 		if ($subPropOf) {
 			$specialProperties = $smwgContLang->getSpecialPropertiesArray();
 			
 			$namespace = $wgLang->getNsText(SMW_NS_PROPERTY).':'; 
 			$anno .= '[['.$specialProperties[SMW_SP_SUBPROPERTY_OF].':'
-			         .$wgLang->getNsText(SMW_NS_PROPERTY).':'.$subPropOf[0]."]]\n";
+			         .$wgLang->getNsText(SMW_NS_PROPERTY).':'.$subPropOf[0]['value']."]]\n";
 		}
 		
 		$result = array($anno, $namespace);

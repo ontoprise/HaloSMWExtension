@@ -91,7 +91,7 @@ class TLConnectLocal implements ITL {
 	 */
 	public function connectDAL($moduleID, &$moduleDesc) {
     	global $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
+		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 		
 		$retVal = 'true';
 		$parser = new XMLParser($moduleDesc);

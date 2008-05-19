@@ -364,7 +364,7 @@ class DALReadCSV implements IDAL {
 	 */
 	private function parseImportSets(&$importSets) {
     	global $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
+		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 
 		$parser = new XMLParser($importSets);
 		$result = $parser->parse();
@@ -389,7 +389,7 @@ class DALReadCSV implements IDAL {
 	 */
 	private function parseInputPolicy(&$inputPolicy) {
     	global $smwgHaloIP;
-		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_XMLParser.php');
+		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 
 		$parser = new XMLParser($inputPolicy);
 		$result = $parser->parse();
