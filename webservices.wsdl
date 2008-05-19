@@ -48,6 +48,6 @@
     </wsdl:binding>
     <wsdl:service name="EQI">
 		<wsdl:port name="QueryPort" binding="tns:NewBinding">
-			<soap:address location="http://localhost/halowiki/index.php?action=wsmethod"></soap:address>
+			<soap:address location="http://{{wiki-path}}?action=wsmethod"></soap:address>
 		</wsdl:port>
 	</wsdl:service></wsdl:definitions>
