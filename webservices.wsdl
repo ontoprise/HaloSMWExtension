@@ -1,53 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions name="eqi" targetNamespace="http://www.example.org/eqi/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.example.org/eqi/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-    <wsdl:types><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/eqi/">
-	<xsd:element name="query">
-		<xsd:complexType>
-			<xsd:sequence>
+<?xml version="1.0" encoding="UTF-8" ?> 
+<definitions name="com.ontoprise.semanticwiki.EQI"
+targetNamespace="http://www.themindelectric.com/wsdl/
+com.ontoprise.semanticwiki.EQI/" 
+xmlns:tns="http://www.themindelectric.com/wsdl/
+com.ontoprise.semanticwiki.EQI/"
+xmlns:electric="http://www.themindelectric.com/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns="http://schemas.xmlsoap.org/wsdl/">
 
-				<xsd:element name="in" type="xsd:string"></xsd:element>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="queryResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-
-				<xsd:element name="out" type="xsd:string"></xsd:element>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element></xsd:schema></wsdl:types>
-    <wsdl:message name="queryRequest">
-    	<wsdl:part name="parameters" type="xsd:string"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="queryResponse">
-    	<wsdl:part name="parameters" type="xsd:string"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="query_faultMsg">
-    	<wsdl:part name="fault" type="xsd:string"></wsdl:part>
-    </wsdl:message>
-    <wsdl:portType name="QueryPortType">
-    	<wsdl:operation name="query">
-    		<wsdl:input message="tns:queryRequest"></wsdl:input>
-    		<wsdl:output message="tns:queryResponse"></wsdl:output>
-            <wsdl:fault name="MalformedQuery" message="tns:query_faultMsg"></wsdl:fault>
-        </wsdl:operation>
-    </wsdl:portType>
-    <wsdl:binding name="NewBinding" type="tns:QueryPortType">
-    	<soap:binding style="document"
-    		transport="http://schemas.xmlsoap.org/soap/http" />
-    	<wsdl:operation name="query">
-    		<soap:operation
-    			soapAction="http://www.example.org/eqi/query" />
-    		<wsdl:input>
-    			<soap:body use="literal" />
-    		</wsdl:input>
-    		<wsdl:output>
-    			<soap:body use="literal" />
-    		</wsdl:output>
-    	</wsdl:operation>
-    </wsdl:binding>
-    <wsdl:service name="EQI">
-		<wsdl:port name="QueryPort" binding="tns:NewBinding">
-			<soap:address location="http://{{wiki-path}}?action=wsmethod"></soap:address>
-		</wsdl:port>
-	</wsdl:service></wsdl:definitions>
+<message name="queryRequest">
+  <part name="queryText" type="xsd:string" /> 
+  
+</message>
+<message name="queryResponse">
+  <part name="sparql-xml" type="xsd:string" /> 
+</message>
+    <message name="query_faultMsg">
+    	<part name="fault" type="xsd:string"></part>
+    </message>
+    <portType name="com.ontoprise.semanticwiki.EQIPortType">
+  <operation name="query" parameterOrder="queryText">
+    <input message="tns:queryRequest" /> 
+    <output message="tns:queryResponse" /> 
+    <fault name="MalformedQuery" message="tns:query_faultMsg"></fault>
+  </operation>
+</portType>
+<binding name="com.ontoprise.semanticwiki.EQIBinding" 
+type="tns:com.ontoprise.semanticwiki.EQIPortType">
+<soap:binding style="rpc"
+transport="http://schemas.xmlsoap.org/soap/http" />
+  <operation name="query">
+  <soap:operation soapAction="urn:com.ontoprise.semanticwiki.EQI#query" /> 
+    <input>
+      <soap:body use="encoded" namespace="urn:com.ontoprise.semanticwiki.EQI"
+      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /> 
+    </input>
+    <output>
+      <soap:body use="encoded" namespace="urn:com.ontoprise.semanticwiki.EQI"
+      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /> 
+    </output>
+  </operation>
+</binding>
+<service name="com.ontoprise.semanticwiki.EQIService">
+  <documentation>
+  com.ontoprise.semanticwiki.EQI web service
+  </documentation> 
+  <port name="com.ontoprise.semanticwiki.EQIPort"
+  binding="tns:com.ontoprise.semanticwiki.EQIBinding">
+    <soap:address location="http://{{wiki-path}}?action=wsmethod" /> 
+  </port>
+</service>
+</definitions>
