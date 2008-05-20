@@ -165,7 +165,7 @@
  	 */
  	private function exportCategories($filehandle) {
  		// obtain complete number of categories
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$this->numOfCategories = $db->selectField($db->tableName('page'), 'COUNT(page_id)', 'page_namespace = '.NS_CATEGORY) - 2; // 2 builtin categories
  		
  		$this->addSubTask($this->numOfCategories);
@@ -564,7 +564,7 @@
  	 * Checks if $title is member of $category
  	 */
  	private function checkIfMemberOfCategory($title, $category) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$res = $db->selectRow($db->tableName('categorylinks'), 'cl_to', array('cl_from'=>$title->getArticleID(), 'cl_to'=>$category->getDBkey()));
  		return $res !== false;
  	}

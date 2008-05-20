@@ -221,7 +221,7 @@ function smwf_tb_GetUserDatatypes(){
 	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$result = "User defined types:";
 
-	$db =& wfGetDB( DB_MASTER );
+	$db =& wfGetDB( DB_SLAVE );
 
 	$NStype = SMW_NS_TYPE;
 	$page = $db->tableName( 'page' );

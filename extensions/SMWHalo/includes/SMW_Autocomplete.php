@@ -429,7 +429,7 @@ class AutoCompletionRequester {
 	 * @return array of Title objects 
 	 */
 	/*private static function getUndefinedPropertiesFromSMWTables(& $result, $namespaces, $requestoptions) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		if (in_array(SMW_NS_ATTRIBUTE, $namespaces)) {
 			$attConds = DBHelper::getSQLConditions($requestoptions,'attribute_title','attribute_title');
 			$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes WHERE attribute_title NOT IN (SELECT page_title FROM page WHERE attribute_title = page_title)'.$attConds.";");
@@ -626,7 +626,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	public function getPages($match, $namespaces = NULL) {
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
 		$page = $db->tableName('page');
 		$requestoptions = new SMWRequestOptions();
@@ -661,7 +661,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	
 	public function getPropertyWithType($match, $typeLabel) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_specialprops = $db->tableName('smw_specialprops');
 		$page = $db->tableName('page');
 		$result = array();
@@ -690,7 +690,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
 		global $smwgDefaultCollation;
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_nary = $db->tableName('smw_nary');
@@ -762,7 +762,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
 		global $smwgDefaultCollation;
-        $db =& wfGetDB( DB_MASTER ); 
+        $db =& wfGetDB( DB_SLAVE ); 
         $page = $db->tableName('page');
         $categorylinks = $db->tableName('categorylinks');
     

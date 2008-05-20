@@ -124,7 +124,7 @@ function getWikiText(Title $title) {
 
 
 function getCategoriesForInstance(Title $instanceTitle) {
-  $db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
+  $db =& wfGetDB( DB_SLAVE ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
 
   $sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from';
 
@@ -152,7 +152,7 @@ function getCategoriesForInstance(Title $instanceTitle) {
 }
 
 function getHTMLCategoriesForInstance(Title $instanceTitle) {
-  $db =& wfGetDB( DB_MASTER ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
+  $db =& wfGetDB( DB_SLAVE ); // TODO: can we use SLAVE here? Is '=&' needed in PHP5?
 
   $sql = 'page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND page_id = cl_from';
 

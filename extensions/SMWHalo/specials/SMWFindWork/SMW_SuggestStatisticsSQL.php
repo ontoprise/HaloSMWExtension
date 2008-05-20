@@ -12,7 +12,7 @@
  class SMWSuggestStatisticsSQL extends SMWSuggestStatistics {
  	
  	public function getLastEditedPages($botID, $gi_class, $gi_type, $username, $requestoptions) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$page = $db->tableName('page');
  		$revision = $db->tableName('revision');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
@@ -53,7 +53,7 @@
  	}
  	
  	public function getLastEditPagesOfUndefinedCategories($username, $requestoptions) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$categorylinks = $db->tableName('categorylinks');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
@@ -75,7 +75,7 @@
  	}
  	
  	public function getLastEditPagesOfUndefinedProperties($username, $requestoptions) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$page = $db->tableName('page');
  		$revision = $db->tableName('revision');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
@@ -110,7 +110,7 @@
  	}
  	
  	public function getLastEditedPagesOfSameCategory($botID, $gi_class, $gi_type, $username, $requestoptions) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$categorylinks = $db->tableName('categorylinks');
  		$smw_gardeningissues = $db->tableName('smw_gardeningissues');
  		
@@ -146,7 +146,7 @@
  	
  	
  	public function getLowRatedAnnotations($username, $requestoptions) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$smw_attributes = $db->tableName('smw_attributes');		
 		$smw_relations = $db->tableName('smw_relations');
 		$revision = $db->tableName('revision');

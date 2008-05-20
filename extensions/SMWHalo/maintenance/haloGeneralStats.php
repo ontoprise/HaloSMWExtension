@@ -43,7 +43,7 @@ $ts = time();
 
 
 
-$dbr =& wfGetDB( DB_MASTER );
+$dbr =& wfGetDB( DB_SLAVE );
 
 $wikistats = $dbr->selectRow( 'site_stats', '*', false, __METHOD__ );
 $views = $wikistats->ss_total_views;

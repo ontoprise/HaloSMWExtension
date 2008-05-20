@@ -619,7 +619,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	
  	public function getCategoryInheritanceGraph() {
  		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'page_namespace=' . NS_CATEGORY .
 			   ' AND cl_to = page_title';
 		$sql_options = array();
@@ -642,7 +642,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  		global $smwgContLang;
   		$namespaces = $smwgContLang->getNamespaces();
  		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_subprops = $db->tableName('smw_subprops');
 		 $res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup FROM '.$smw_subprops.', page p1, page p2 WHERE p1.page_namespace = '.SMW_NS_PROPERTY.
 							' AND p2.page_namespace = '.SMW_NS_PROPERTY.' AND p1.page_title = subject_title AND p2.page_title = object_title ORDER BY p1.page_id');
@@ -657,7 +657,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	}
  	
  	public function getInverseRelations() {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'relation_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()); 
 		
 		$res = $db->select(  array($db->tableName('smw_relations')), 
@@ -679,7 +679,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	
  	public function getEqualToRelations() {
  		//TODO: read partitions of redirects
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'rd_from = page_id'; 
 		
 		$res = $db->select(  array($db->tableName('redirect'), $db->tableName('page')), 
@@ -702,7 +702,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	public function getNumberOfPropertyInstantiations($property) {
  		
 		global $smwgDefaultCollation;
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_attributes = $db->tableName('smw_attributes');
 		$smw_relations = $db->tableName('smw_relations');
 		$smw_nary = $db->tableName('smw_nary');
@@ -785,7 +785,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
  	
  	public function getMissingPropertyInstantiations($property, $instances) {
  		global $smwgDefaultCollation;
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_attributes = $db->tableName('smw_attributes');
 		$smw_relations = $db->tableName('smw_relations');
 		$smw_nary = $db->tableName('smw_nary');

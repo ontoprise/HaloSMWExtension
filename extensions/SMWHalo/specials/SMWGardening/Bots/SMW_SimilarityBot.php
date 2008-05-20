@@ -422,7 +422,7 @@
  	
  	private function getSharedMemberCategories() {
 		
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_categorylinks = $db->tableName('categorylinks');			
 		$res = $db->query('SELECT c1.cl_to FROM '.$smw_categorylinks.' c1, '.$smw_categorylinks.' c2 ' .
 				'WHERE c1.cl_from = '.$this->title1->getArticleID(). ' AND c2.cl_from = '.$this->title2->getArticleID().' AND c1.cl_to = c2.cl_to');
@@ -443,7 +443,7 @@
 		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		
 		
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');
 		$res = $db->query('SELECT DISTINCT r1.object_title AS cat FROM '.$smw_nary.' n1, '.$smw_nary.' n2, '.$smw_nary_relations.' r1, '.$smw_nary_relations.' r2 ' .
@@ -466,7 +466,7 @@
 		
 		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
 		
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');	
 		$res = $db->query('SELECT DISTINCT r1.object_title AS cat FROM '.$smw_nary.' n1, '.$smw_nary.' n2, '.$smw_nary_relations.' r1, '.$smw_nary_relations.' r2 ' .
@@ -484,7 +484,7 @@
  	}
  	
  	private function getSharedTypes() {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$smw_specialprops = $db->tableName('smw_specialprops');		

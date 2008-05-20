@@ -194,7 +194,7 @@ require_once("SMW_GardeningLog.php");
   * Returns user email from user id.
   */
  function getEmailFromUserId($userId) {
- 	$db =& wfGetDB( DB_MASTER );
+ 	$db =& wfGetDB( DB_SLAVE );
  	$res = $db->select( $db->tableName('user'), 
 		                    'user_email',
 		                    'user_id = '.$db->addQuotes($userId), 'SMW::getEmailFromUserId', NULL );

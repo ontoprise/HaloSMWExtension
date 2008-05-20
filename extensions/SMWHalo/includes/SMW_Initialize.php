@@ -108,18 +108,12 @@ function smwgHaloSetupExtension() {
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 	    
-	// Register job classes (if Move operation or maintenance script)
-    $needRefactorJobs = ($wgRequest->getVal("title") == $spns_text.':'.$sp_aliases['Movepage'][0])
-                        || (stripos($wgRequest->getVal("title"), $tyns_text.":") === 0);
-    
-   
-	if ($needRefactorJobs || $wgCommandLineMode) {
-		$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
-		$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
-		$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
-		$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
-	}
-	if ($smwgLocalGardening || $wgCommandLineMode) $wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
+	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
+	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
+	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+	
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
 		smwfHaloInitMessages();
@@ -218,15 +212,12 @@ function smwgHaloSetupExtension() {
 	// include SMW logger (exported as ajax function but also used locally)
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
 	
-	// import available job classes (for refactoring)
-	// do this only when the page is actually moved.
-	if ($needRefactorJobs || $wgCommandLineMode) {
-		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
-		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
-		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
-		require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
-	}
-	if ($smwgLocalGardening || $wgCommandLineMode) require_once($smwgHaloIP . '/includes/Jobs/SMW_LocalGardeningJob.php');
+	
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_LocalGardeningJob.php');
 	
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';

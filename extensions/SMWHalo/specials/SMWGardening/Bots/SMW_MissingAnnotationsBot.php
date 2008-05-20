@@ -168,7 +168,7 @@
  	 * which are members of the subcategories of $category.
  	 */
  	public function getPagesWithoutAnnotations($term = NULL, $categories = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$smw_attributes = $db->tableName('smw_attributes');
 	 	$smw_relations = $db->tableName('smw_relations');
 	 	$smw_nary = $db->tableName('smw_nary');	

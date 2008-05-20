@@ -226,7 +226,7 @@
  	
  	private function getUploadedFilesAsHTML() {
  		$htmlResult = "";
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		$fname = 'getUploadedFilesAsHTML';
 		$res = $db->select( $db->tableName('image'),
 		             array('img_name'), array('LOWER(img_name) LIKE LOWER('. $db->addQuotes('%.'.$this->fileExtension).')' ),

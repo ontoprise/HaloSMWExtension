@@ -360,7 +360,7 @@ class SMWCategoryViewer extends CategoryViewer {
 	private function getRedirectFrom($targetTitle) {
 
 		$result = null;
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		
 		// Find out from where title is redirected
 		$sql = 'rd_title=' . $db->addQuotes($targetTitle);

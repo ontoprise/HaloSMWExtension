@@ -290,7 +290,7 @@
     
     public function getInstancesWithAttributeValue($values) {
         $result = array();
-        $db =& wfGetDB( DB_MASTER );
+        $db =& wfGetDB( DB_SLAVE );
         $sql = "(";
         for($i = 0, $n = count($values); $i < $n; $i++) {
             if (is_numeric($values[$i])) {
@@ -337,7 +337,7 @@
      */
     private function getPage($entityTitle) {
         $result = array();
-        $db =& wfGetDB( DB_MASTER );
+        $db =& wfGetDB( DB_SLAVE );
         $allowedNamespaces = ' AND (page_namespace = '.NS_CATEGORY.' OR page_namespace = '.NS_TEMPLATE.' OR page_namespace = '.SMW_NS_PROPERTY.' OR page_namespace = '.NS_MAIN.' OR page_namespace = '.SMW_NS_TYPE.')';
         // try exact match
         $sql = 'UPPER(page_title) = UPPER('.$db->addQuotes($entityTitle).')'.$allowedNamespaces; 
@@ -388,7 +388,7 @@
      */
     private function replaceRedirects(array & $titles) {
         $result = array();
-        $db =& wfGetDB( DB_MASTER );
+        $db =& wfGetDB( DB_SLAVE );
         
         for($i = 0, $n = count($titles); $i < $n; $i++) {
             $sql = "rd_from = ".$titles[$i]->getArticleID();

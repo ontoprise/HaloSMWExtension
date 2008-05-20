@@ -318,7 +318,7 @@
  	public function getUndefinedProperties() {
  		
  		
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 
 		// read attributes		                    
 		$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes a LEFT JOIN page p ON a.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL');
@@ -356,7 +356,7 @@
  	}
  	
  	public function getArticlesUsingProperty($property, $limit = 0) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		
 		if (!is_numeric($limit)) return array();
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;                 
@@ -378,7 +378,7 @@
  	}
  	
  	public function getUndefinedCategories() {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
 		// inner query: not as fast as a LEFT JOIN
 		/*$sql = 'cl_to NOT IN (SELECT page_title FROM page WHERE page_title = cl_to)'; 
@@ -404,7 +404,7 @@
  	}
  	
  	public function getArticlesUsingCategory($category, $limit = 0) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 	
 		if (!is_numeric($limit)) return array();
 	    $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;            
@@ -422,7 +422,7 @@
  	}
  	
  	public function getUndefinedRelationTargets() {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  	
  		// inner query: not as fast as a LEFT JOIN
 		/*$sql = 'object_title NOT IN (SELECT page_title FROM page WHERE page_title = object_title)'; 
@@ -450,7 +450,7 @@
  	}
  	
  	public function getRelationsUsingTarget($target, $limit = 0) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
 		
 		if (!is_numeric($limit)) return array();
 		
@@ -470,7 +470,7 @@
  	}
  	
  	public function getInstancesWithoutCategory() {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
 		// inner query: not as fast as a LEFT JOIN
 		/*$sql = 'page_namespace = '.NS_MAIN.' AND page_id NOT IN (SELECT cl_from FROM categorylinks WHERE page_id = cl_from)'; 

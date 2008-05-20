@@ -88,7 +88,7 @@
  	public function getGardeningLogAsTable() {
  		$this->cleanupGardeningLog();
 		$fname = 'SMW::getGardeningLog';
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		
 		$res = $db->select( $db->tableName('smw_gardening'),
 		             array('user','gardeningbot', 'starttime','endtime','log', 'progress', 'id'), array(),
@@ -203,7 +203,7 @@
 	public function getLastFinishedGardeningTask($botID = NULL) {
 		
 		$fname = 'SMW::getLastFinishedGardeningTask';
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 			         
 		$res = $db->select( $db->tableName('smw_gardening'),
 		             array('MAX(timestamp_end)'),
@@ -225,7 +225,7 @@
 	 * Initializes Gardening table.
 	 */
 	public function cleanupGardeningLog() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr =& wfGetDB( DB_MASTER );
 		$tblName = $dbr->tableName('smw_gardening');
 		
 		// Remove very old (2 days) and still running tasks. They are probably crashed. 

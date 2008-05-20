@@ -50,7 +50,7 @@
 	 	
 	public function getPages($namespaces = NULL, $requestoptions = NULL, $addRedirectTargets = false) {
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
 		if ($namespaces != NULL) {
 			$sql .= '(';
@@ -97,7 +97,7 @@
 		
 	function getRootCategories($requestoptions = NULL) {
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$categorylinks = $db->tableName('categorylinks');
 		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
@@ -121,7 +121,7 @@
 	function getRootProperties($requestoptions = NULL) {
 		
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_subprops = $db->tableName('smw_subprops');
 		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . SMW_NS_PROPERTY .
@@ -144,7 +144,7 @@
 	
 	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'page_namespace=' . NS_CATEGORY .
 			   ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id'.
 		       DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
@@ -183,7 +183,7 @@
 	
 	function getDirectSuperCategories(Title $categoryTitle, $requestoptions = NULL) {
 		
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'page_namespace=' . NS_CATEGORY .
@@ -206,7 +206,7 @@
 	
 	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
 		
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from AND p2.page_is_redirect = 0 AND cl_to = p2.page_title'.
@@ -230,7 +230,7 @@
 	}
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$this->createVirtualTableWithInstances($categoryTitle, $db);
 		$sqlCond = DBHelper::getSQLConditions($requestoptions, 'instance', 'instance');
 		
@@ -344,7 +344,7 @@
 	
 	
 	function getDirectInstances(Title $categoryTitle, $requestoptions = NULL) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 
 		$sql = 'cl_to=' . $db->addQuotes($categoryTitle->getDBkey()) . 
 			' AND page_is_redirect = 0 AND page_id = cl_from AND page_namespace = '.NS_MAIN.
@@ -368,7 +368,7 @@
 	
 	
 	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$page = $db->tableName('page');
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db);
 		
@@ -389,7 +389,7 @@
 	}
 	
 	public function getPropertiesWithSchemaByName($requestoptions) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$this->createVirtualTableWithPropertiesByName($requestoptions, $db);
 		
 		$res = $db->query('SELECT DISTINCT property FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,'property')); 
@@ -593,7 +593,7 @@
 	}
 	
 	private function getNarySubjects(Title $object, $pos) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');
  	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
@@ -617,7 +617,7 @@
  	  * Returns all domain categories for a given property.
  	  */
  	 function getDomainCategories($propertyTitle, $reqfilter) {
- 	 	$db =& wfGetDB( DB_MASTER );
+ 	 	$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
  	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
  	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeRelation, $reqfilter);
@@ -635,7 +635,7 @@
 	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 	 	
 	 	$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$smw_subprops = $db->tableName('smw_subprops');
 		$sql = 'object_title = ' . $db->addQuotes($attribute->getDBkey()).' AND page_is_redirect = 0 AND subject_title = page_title AND page_namespace = '.SMW_NS_PROPERTY;
@@ -657,7 +657,7 @@
 	function getDirectSuperProperties(Title $attribute, $requestoptions = NULL) {
 	 	
 	 	
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$smw_subprops = $db->tableName('smw_subprops');
 		$sql = 'subject_title = ' . $db->addQuotes($attribute->getDBkey()).' AND page_is_redirect = 0 AND object_title = page_title AND page_namespace = '.SMW_NS_PROPERTY;
@@ -677,7 +677,7 @@
 	}
 	
 	public function getRedirectPages(Title $title) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 	 	$redirect = $db->tableName('redirect');
 	 	$res = $db->query('SELECT page_title, page_namespace FROM '.$page.', '.$redirect.' WHERE '.$db->addQuotes($title->getDBkey()).' = rd_title AND '.$title->getNamespace().' = rd_namespace AND page_id = rd_from');
@@ -692,7 +692,7 @@
 	}
 	
 	public function getRedirectTarget(Title $title) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$redirect = $db->tableName('redirect');
 	 	$res = $db->query('SELECT rd_namespace, rd_title FROM '.$redirect.' WHERE rd_from = '.$title->getArticleID());
 	 	
@@ -710,7 +710,7 @@
 	
 	public function getNumberOfUsage(Title $title) {
 		$num = 0;
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		if ($title->getNamespace() == NS_TEMPLATE) {
 			$templatelinks = $db->tableName('templatelinks');
 			$res = $db->query('SELECT COUNT(tl_from) AS numOfSubjects FROM '.$templatelinks.' s WHERE tl_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY tl_title ');
@@ -731,7 +731,7 @@
 	}
 	
 	public function getNumberOfInstancesAndSubcategories(Title $category) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$this->createVirtualTableWithInstances($category, $db);
 		
 		$res = $db->query ('SELECT COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories FROM smw_ob_instances');
@@ -751,7 +751,7 @@
 	}
 	
 	public function getNumberOfProperties(Title $category) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$this->createVirtualTableWithPropertiesByCategory($category, $db);
 		$res = $db->query( 'SELECT COUNT(DISTINCT property) AS numOfProperties FROM smw_ob_properties');
 		
@@ -769,7 +769,7 @@
 	}
 	
 	public function getNumberOfPropertiesForTarget(Title $target) {
-		$db =& wfGetDB( DB_MASTER ); 
+		$db =& wfGetDB( DB_SLAVE ); 
 		$result = 0;
 		$res = $db->select( $db->tableName('smw_relations'), 
 		                    'COUNT(DISTINCT relation_title) AS numOfProperties',
@@ -792,7 +792,7 @@
 	}
 	
 	public function getDistinctUnits(Title $type) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_attributes = $db->tableName('smw_attributes');
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_attributes = $db->tableName('smw_nary_attributes');
@@ -816,7 +816,7 @@
 	
 	public function getAnnotationsWithUnit(Title $type, $unit) {
 		
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$smw_attributes = $db->tableName('smw_attributes');
 		$smw_nary = $db->tableName('smw_nary');
 	 	$smw_nary_attributes = $db->tableName('smw_nary_attributes');
@@ -983,7 +983,7 @@
 	}
 	
 	public function getRatedAnnotations($subject) {
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		
 		$smw_attributes = $db->tableName('smw_attributes');
 		$smw_relations = $db->tableName('smw_relations');
@@ -1008,7 +1008,7 @@
 	}
 	
 	public function getAnnotationsForRating($limit, $unrated = true) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$smw_attributes = $db->tableName('smw_attributes');		
 		$smw_relations = $db->tableName('smw_relations');
 		$smw_nary = $db->tableName('smw_nary');

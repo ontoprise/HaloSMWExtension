@@ -68,7 +68,7 @@
  	}
  	
  	public function existsGardeningIssue($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $title1 = NULL, $title2 = NULL, $value = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$sqlCond = array();
  		if ($bot_id != NULL) { 
  			$sqlCond[] = 'bot_id = '.$db->addQuotes($bot_id);
@@ -116,7 +116,7 @@
  	
  	public function getGardeningIssuesForPairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
  		$sqlOptions = array();
  		if ($options != NULL) {
@@ -198,7 +198,7 @@
  	
  	public function getGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $titles = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
  		$sqlOptions = array();
  		if ($options != NULL) {
@@ -281,7 +281,7 @@
  	
  	public function getDistinctTitles($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
  		$sqlOptions = array();
  		$sqlOptions = array('GROUP BY' => 'p1_title, p1_namespace');
@@ -347,7 +347,7 @@
  	
  	public function getDistinctTitlePairs($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, $sortfor = NULL, $options = NULL) {
  		global $registeredBots;
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
  		$sqlOptions = array('GROUP BY' => 'p1_id, p2_id');
  		if ($options != NULL) {
@@ -443,7 +443,7 @@
  	
  	public function generatePropagationIssuesForCategories($botID, $propagationType) {
  		$this->clearGardeningIssues($botID, $propagationType);
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		
  		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');

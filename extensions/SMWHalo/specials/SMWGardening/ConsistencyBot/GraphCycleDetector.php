@@ -166,7 +166,7 @@ class Cycle {
 	 */
 	public function translateToTitle() {
 		
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
 		for ($i = 0, $n = count($this->cycle); $i < $n; $i++) {
 			if ($i < $n-1) { 

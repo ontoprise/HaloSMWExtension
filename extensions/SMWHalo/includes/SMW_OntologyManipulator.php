@@ -335,7 +335,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 }
 
 function smwf_om_IsRedirect(Title $title) {
-	$db =& wfGetDB( DB_MASTER );
+	$db =& wfGetDB( DB_SLAVE );
 	$pagetable = $db->tableName('page');
 	return $db->selectRow($pagetable, 'page_is_redirect', array('page_title' => $title->getDBkey(), 'page_namespace' => $title->getNamespace(), 'page_is_redirect' => 1)) !== false;
 }

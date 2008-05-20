@@ -44,7 +44,7 @@ $report = "\n\n\nVERIFICATION WIKI GARDENING ISSUE STATISTICS " . date("d.m.y H:
 $report .= "--------------------------------------------------------------\n\n";
 
 
-$dbr =& wfGetDB( DB_MASTER );
+$dbr =& wfGetDB( DB_SLAVE );
 $res = $dbr->query("SELECT bot_id, COUNT(bot_id) AS num FROM smw_gardeningissues GROUP BY bot_id");
 if($dbr->numRows( $res ) > 0) {
 	while($row = $dbr->fetchObject($res)) {

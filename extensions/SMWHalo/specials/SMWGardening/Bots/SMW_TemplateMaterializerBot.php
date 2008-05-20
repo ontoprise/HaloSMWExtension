@@ -166,7 +166,7 @@
  
  	public function getPagesUsingTemplates($templateTitle = NULL, $touchedAfter = NULL) {
 		$result = "";
-		$db =& wfGetDB( DB_MASTER );
+		$db =& wfGetDB( DB_SLAVE );
 		if ($templateTitle != NULL) { 
 			$sql = 'page_id=tl_from AND tl_title = '. $db->addQuotes($templateTitle->getDBkey());
 		} else {

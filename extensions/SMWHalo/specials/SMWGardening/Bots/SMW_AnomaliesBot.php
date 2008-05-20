@@ -267,7 +267,7 @@
  	 * @param $category as strings (dbkey)
  	 */
  	public function getCategoryLeafs($categories = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$mw_page = $db->tableName('page');
 	 	$categorylinks = $db->tableName('categorylinks');
  		$result = array();
@@ -301,7 +301,7 @@
  	 * Returns all categories which have less than MIN_SUBCATEGORY_NUM and more than MAX_SUBCATEGORY_NUM subcategories.
  	 */
  	public function getCategoryAnomalies($categories = NULL) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$mw_page = $db->tableName('page');
 	 	$categorylinks = $db->tableName('categorylinks');
 		$result = array();
@@ -332,7 +332,7 @@
  	 * Removes all category leaves
  	 */
  	public function removeCategoryLeaves($categories = NULL, array & $deletedCategories) {
- 		$db =& wfGetDB( DB_MASTER );
+ 		$db =& wfGetDB( DB_SLAVE );
  		$mw_page = $db->tableName('page');
 	 	$categorylinks = $db->tableName('categorylinks');
  		if ($categories == NULL) {  		
