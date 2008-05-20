@@ -154,35 +154,38 @@ class WebService {
 	 * Creates a new instance of a WebService from the given wiki web service
 	 * description <$wwsd>.
 	 *
+	 * @param string $name
+	 * 		The name of the web service (without namespace).
 	 * @param string $wwsd
 	 * 		This wiki web service definition is parsed and its values are
 	 * 		stored in the fields of a new object.
 	 * 
 	 * @return mixed WebService/string
 	 * 		A new instance of WebService or
-	 * 		an error message, if parsing of the WWSD failed.
+	 * 		an array of error messages, if parsing of the WWSD failed.
 	 */
-	public static function newFromWWSD($wwsd) {
+	public static function newFromWWSD($name, $wwsd) {
     	global $smwgHaloIP;
 		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 		
 		$parser = new XMLParser($wwsd);
 		$result = $parser->parse();
 		if ($result !== true) {
-			return $result;
+			return array($result);
 		}
 		
 		// Check if the roor node of the XML structure is 'webservice'
 		if (!$parser->rootIs('webservice')) {
 			return wfMsg('smw_wws_invalid_wwsd');
 		}
-		$wwsd = $parser->getElement(array('webservice'));
-		$ws = new WebService();
-		$msg = '';
+
+		$msg = array();
 		$valid = true;
-		$valid &= self::getWWSDElement($wwsd, 'webservice', 'name', $ws->mName, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/ur', 'name', $ws->mURI, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/uri', 'nam', $ws->mURI, false, 1, 1, $msg);
+
+		$wwsd = $parser->getElement(array('webservice'));
+
+		$ws = new WebService();
+		$ws->mName = $name;
 		$valid &= self::getWWSDElement($wwsd, 'webservice/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($wwsd, 'webservice/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($wwsd, 'webservice/method', 'name', $ws->mMethod, false, 1, 1, $msg);
@@ -209,7 +212,7 @@ class WebService {
 			} while (!empty($xml));
 		}
 		
-		$tmpMsg = "";
+		$tmpMsg = array();
 		$v = self::getWWSDElement($wwsd, 'webservice/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
 			$ws->mDisplayPolicy = 0;
@@ -243,7 +246,7 @@ class WebService {
 		return ($valid) ? $ws : $msg;
 		
 	}
-	
+		
 	/**
 	 * Returns the article ID of this WebService i.e. the page ID of the article
 	 * that contains the service's WWSD.
@@ -300,8 +303,8 @@ class WebService {
 	 * 		Minimal number of occurrences of the element
 	 * @param int $max
 	 * 		Maximal number of occurrences of the element
-	 * @param string $msg
-	 * 		If the element is erroneous, this error message is enhanced.
+	 * @param array<string> $msg
+	 * 		If the element is erroneous, an error message is added to this array.
 	 *
 	 * @return bool
 	 * 		<true>, if the requested WWSD element could be retrieved without an
@@ -323,7 +326,7 @@ class WebService {
 			$elem = $pathElems[$i];
 			$subTree = &$subTree[$elem];
 			if (!$subTree) {
-				$msg .= wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
+				$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 				return false;
 			}
 			if ($i != $numElems - 1) {
@@ -332,11 +335,11 @@ class WebService {
 		}
 		
 		if (count($subTree) < $min) {
-			$msg .= wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
+			$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 			return false;
 		}
 		if (count($subTree) > $max) {
-			$msg .= wfMsg('smw_wws_too_many_wwsd_elements', $wwsdElementPath).'<br />';
+			$msg[] = wfMsg('smw_wws_too_many_wwsd_elements', $wwsdElementPath).'<br />';
 			return false;
 		}
 		
@@ -345,7 +348,7 @@ class WebService {
 			if ($attribute) {
 				$val = $subTree[0]['attributes'][$attribute];
 				if ($val == null) {
-					$msg .= wfMsg('smw_wws_wwsd_attribute_missing', $attribute, $wwsdElementPath).'<br />';
+					$msg[] = wfMsg('smw_wws_wwsd_attribute_missing', $attribute, $wwsdElementPath).'<br />';
 					return false;
 				}
 			} else {

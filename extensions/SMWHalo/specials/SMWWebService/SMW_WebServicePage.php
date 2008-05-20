@@ -32,9 +32,10 @@
 
 if( !defined( 'MEDIAWIKI' ) )   die( 1 );
 
-global $smwgIP;
+global $smwgIP, $smwgHaloIP;
 require_once("$smwgIP/includes/articlepages/SMW_OrderedListPage.php");
 require_once("$smwgIP/includes/storage/SMW_Store.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
 
 /**
  * Implementation of MediaWiki's Article that shows additional information on

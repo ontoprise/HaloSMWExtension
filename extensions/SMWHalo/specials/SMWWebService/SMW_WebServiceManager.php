@@ -60,6 +60,8 @@ WebServiceManager::registerWWSNamespaces();
 
 class WebServiceManager {
 
+	private static $mNewWebService = null;
+	
 	/**
 	 * Register the WebServicePage for articles in the namespace 'WebService'.
 	 *
@@ -119,7 +121,7 @@ class WebServiceManager {
 	 *
 	 */
 	static function initWikiWebServiceExtension() {
-		global $wgRequest, $wgHooks;
+		global $wgRequest, $wgHooks, $wgParser;
 		$action = $wgRequest->getVal('action');
 	
 		if ($action == 'ajax') {
@@ -129,6 +131,10 @@ class WebServiceManager {
 			
 		// Install the extended representation of articles in the namespace 'WebService'.
 		$wgHooks['ArticleFromTitle'][] = 'WebServiceManager::showWebServicePage';
+		
+		$wgParser->setHook('WebService', 'WebServiceManager::wwsdParserHook');
+		$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
+		
 		
 		
 		//--- TEST
@@ -180,18 +186,85 @@ class WebServiceManager {
 		//--- TEST
 		
 	}
+
+	
+	/**
+	 * This function is called, when a <WebService>-tag for a WWSD has been 
+	 * found in an article. If the content of the definition is correct, and
+	 * if the namespace of the article is the WebService namespace, the WWSD
+	 * will be stored in the database.
+	 *
+	 * @param string $input
+	 * 		The content of the tag
+	 * @param array $args
+	 * 		Array of attributes in the tag
+	 * @param Parser $parser
+	 * 		The wiki text parser
+	 * @return string
+	 * 		The text to be rendered
+	 */
+	public static function wwsdParserHook($input, $args, $parser) {
+		global $smwgHaloIP;
+		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
+		
+		$attr = "";
+		foreach ($args as $k => $v) {
+			$attr .= $k . '="' . $v . '" ';
+		}
+		$completeWWSD =
+			"<WebService $attr>".
+			$input.
+			"</WebService>\n";
+			
+		$notice = '';
+		$name = $parser->mTitle->getText();
+		$id = $parser->mTitle->getArticleID();
+		$ws = WebService::newFromWWSD($name, $completeWWSD);
+		if (is_array($ws)) {
+			// Errors within the WWSD => show them as a bullet list
+			$msg = '<b>'.wfMsg('smw_wws_wwsd_errors').'</b><ul>';
+			foreach ($ws as $err) {
+				$msg .= '<li>'.$err.'</li>';
+			}
+			$msg .= '</ul>';
+			return "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
+		} else {
+			if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
+				// store the WWSD in the database in the hook function <articleSavedHook>.
+				self::$mNewWebService = $ws;
+			} else {
+				// add message: namespace webService needed.
+				$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
+			}
+		}
+		return  "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice;
+	}
+	
+	/**
+	 * Stores the previously parsed WWSD in the database. This function is a hook for
+	 * 'ArticleSaveComplete.'
+	 *
+	 * @param Article $article
+	 * @param User $user
+	 * @param string $text
+	 * @return boolean true
+	 */
+	public static function articleSavedHook(&$article, &$user, &$text) {
+		if (self::$mNewWebService) {
+			self::$mNewWebService->store();
+		}
+		return true;
+	}
 	
 	/**
 	 * Creates the database tables that are used by the web service extension.
 	 *
 	 */
-	static function initDatabaseTables() {
+	public static function initDatabaseTables() {
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
 		WSStorage::getDatabase()->initDatabaseTables();	
 	}
 }
-
-
 
 ?>
