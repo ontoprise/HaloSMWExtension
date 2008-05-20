@@ -6,7 +6,7 @@
  * @param string $queryString in ASK or SPARQL syntax
  * @return XML string
  */
-function query($queryString) { 
+function query($queryString, $format = "xml") { 
   $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  
   //TODO: import a triple store config file
@@ -49,13 +49,13 @@ function query($queryString) {
             // probably SPARQL query, so return SPARQL parser error
            return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
         } else {
-            return $eqi->answerASK($queryString);
+            return $eqi->answerASK($queryString, $format);
         }
     }
        
   } else {
     // the other way round
-    $query = SMWQueryProcessor::createQuery($queryString, false, "xml");
+    $query = SMWQueryProcessor::createQuery($queryString, array(), false);
     if (count($query->getErrors()) > 0) {
         $smwgRAPPath = $mediaWikiLocation . "/SemanticMediaWiki/libs/rdfapi-php";
         $Rdfapi_includes= $smwgRAPPath . '/api/';
@@ -77,7 +77,7 @@ function query($queryString) {
         }
       
     } else {
-        return $eqi->answerASK($queryString);
+        return $eqi->answerASK($queryString, $format);
     }
   }
 } 
@@ -90,9 +90,9 @@ class ExternalQueryInterface {
      * @param string $queryString
      * @return SPARQL XML string
      */
-    function answerASK($queryString) {
+    function answerASK($queryString, $format = "xml") {
       SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter';
-      $result =  SMWQueryProcessor::getResultFromHookParams($queryString,array('format' => 'xml'),SMW_OUTPUT_HTML);
+      $result =  SMWQueryProcessor::getResultFromHookParams($queryString,array('format' => $format),SMW_OUTPUT_HTML);
       return $result;
     }
     

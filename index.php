@@ -83,6 +83,17 @@ if ($action == 'wsmethod' ) {
 }
 
 #
+# Handle 'quick query' call
+# (answers URL-encoded ASK queries formatted as table in HTML)
+#
+if ($action == 'query') {
+	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+	echo query($wgRequest->getVal( 'querytext' ), "table");
+	$mediaWiki->restInPeace( $wgLoadBalancer );
+	exit;
+}
+
+#
 # Returns WSDL file for wiki webservices
 #
 if ($action == 'get_wsdl') {
