@@ -245,6 +245,7 @@ class OntoSkinTemplate extends QuickTemplate {
 			</div></form>
 		</div>
 	</div>
+	   <?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$this ) ); ?>
 	<div class="portlet" id="p-tb">
 		<h5><?php $this->msg('toolbox') ?></h5>
 		<div class="pBody">
