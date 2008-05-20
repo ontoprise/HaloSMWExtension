@@ -529,6 +529,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_wws_wwsd_element_missing' => 'The element "$1" is missing in the Wiki Web Service Definition.',
 	'smw_wws_wwsd_attribute_missing' => 'The attribute "$1" is missing in element "$2" of the Wiki Web Service Definition.',
 	'smw_wws_too_many_wwsd_elements' => 'The element "$1" appears several times in the Wiki Web Service Definition.',
+	'smw_wss_wwsd_needs_namespace' => 'Please note: Wiki web service definitions are only considered in articles with namespace "WebService"!',
+	'smw_wws_wwsd_errors' => 'The Wiki Web Service Definition is erroneous:',
 
 );
 

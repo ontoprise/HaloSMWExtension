@@ -526,6 +526,9 @@ protected $smwUserMessages = array(
 	'smw_wws_wwsd_element_missing' => 'Das Element "$1" fehlt in der Wiki Web Service Definition.',
 	'smw_wws_wwsd_attribute_missing' => 'Das Attribut "$1" fehlt im Element "$2" der Wiki Web Service Definition.',
 	'smw_wws_too_many_wwsd_elements' => 'Das Element "$1" erscheint mehrmals Wiki Web Service Definition.',
+	'smw_wws_wwsd_needs_namespace' => 'Bitte beachten Sie: Wiki Web-Service Definitionen werden nur in Artikeln mit dem Namensraum "WebService" berücksichtigt!',
+	'smw_wws_wwsd_errors' => 'Die Wiki Web Service Definition ist fehlerhaft:',
+
 
 );
 
