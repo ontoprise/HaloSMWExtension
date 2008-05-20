@@ -21,6 +21,8 @@ REM remove LocalSettings.php and AdminSettings.php
 del %OUTPUT_DIR%\LocalSettings.php
 del %OUTPUT_DIR%\AdminSettings.php
 
+REM Remove image directory content
+del /S /Q %OUTPUT_DIR%\images\*
 
 REM Pack MW
 
