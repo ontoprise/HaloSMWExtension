@@ -116,7 +116,7 @@ class WSStorageSQL {
 	public function storeWS(WebService &$webService) {
  		$db =& wfGetDB( DB_MASTER );
  		try {
-			$db->insert($db->tableName('smw_ws_wwsd'), array(
+			$db->replace($db->tableName('smw_ws_wwsd'), null, array(
 					  'web_service_id'	=>  $webService->getArticleID(),
 					  'uri'  	        =>  $webService->getURI() ,
 					  'protocol'        =>  $webService->getProtocol() ,
