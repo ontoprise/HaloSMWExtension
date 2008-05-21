@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <definitions name="com.ontoprise.semanticwiki.EQI"
-targetNamespace="http://www.themindelectric.com/wsdl/
-com.ontoprise.semanticwiki.EQI/" 
-xmlns:tns="http://www.themindelectric.com/wsdl/
-com.ontoprise.semanticwiki.EQI/"
-xmlns:electric="http://www.themindelectric.com/" 
+targetNamespace="com.ontoprise.semanticwiki.EQI/" 
+xmlns:tns="com.ontoprise.semanticwiki.EQI/"
 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
 xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
