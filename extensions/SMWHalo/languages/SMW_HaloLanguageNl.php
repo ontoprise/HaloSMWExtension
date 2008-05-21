@@ -23,7 +23,7 @@
 global $smwgHaloIP;
 include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 
-class SMW_HaloLanguageEn extends SMW_HaloLanguage {
+class SMW_HaloLanguageNl extends SMW_HaloLanguage {
 
 protected $smwContentMessages = array(
 
