@@ -27,6 +27,9 @@
 *   
 *       php SMW_startBot.php -b smw_exportontologybot -p "GARD_EO_NAMESPACE=http://sementicwiki.org, GARD_EO_ONLYSCHEMA=1"
 * 
+*   Note:
+*      Apostroph char '"' is escaped by {{apos}}
+* 
 *   Author: kai
 */
 
@@ -98,7 +101,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWGardening/SM
         //  2. Replace {{percantage}} by %
         //  3. decode URL
         //  4. convert string of the form (key=value,)* to a hash array
-        $paramString = urldecode(str_replace("{{percentage}}", "%", implode($params,"")));
+        $paramString = urldecode(str_replace("{{apos}}", "\"", implode($params,"")));
         $parameters = GardeningBot::convertParamStringToArray($paramString); 
         $log = $bot->run($parameters, true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
         
