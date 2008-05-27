@@ -86,6 +86,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
  * @param $taskid ID of task.
  */
 function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
+	global $smwgDedicatedGardeningMachine;
     if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
         
         $user = NULL;
