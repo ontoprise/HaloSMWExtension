@@ -23,6 +23,12 @@
  * @author Ingo Steinbauer
  *
  */
+// necessary for querying used properties
+global $smwgIP;
+require_once($smwgIP. "/includes/SMW_SemanticData.php");
+
+// needed for db access
+require_once("SMW_WSStorage.php");
 
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
@@ -31,7 +37,13 @@ $wgHooks['LanguageGetMagic'][] = 'webServiceUsage_Magic';
 
 // used to delete unused parameter sets that are no longer referred
 // and web services that are no longer used on the edited article
-$wgHooks['ParserAfterTidy'][] = 'detectRemovedWebServiceUsages';
+//$wgHooks['ParserBeforeTidy'][] = 'detectRemovedWebServiceUsages';
+$wgHooks['ArticleSaveComplete'][] = 'detectRemovedWebServiceUsages';
+
+// necessary for finding possible ws-property-pairs before they are processed
+// by the responsible parsers
+$wgHooks['ParserAfterStrip'][] = 'findWSPropertyPairs';
+
 
 // needed for formatting the ws-usage result
 global $smwgHaloIP;
@@ -40,8 +52,51 @@ $wgAutoloadClasses['WebServiceUlResultPrinter'] = $smwgHaloIP . '/specials/SMWWe
 $wgAutoloadClasses['WebServiceOlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRPOl.php';
 $wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRPTable.php';
 
-// needed for db access
-require_once("SMW_WSStorage.php");
+
+
+
+
+/*
+ * find possible ws-property-pairs
+ */
+function findWSPropertyPairs(&$parser, &$text){
+	$pattern = "/\[\[		# beginning of semantic attribute
+				[^]]*		# no closing squared bracket but everything else
+				::			# identifies a semantic property
+				[^]]*		# no closing squared bracket but everything else
+				\{\{
+				[^\]]*		# no closing squared bracket but everything else
+				\#ws:		# beginning of webservice usage declaration
+				[^]]*		# n closing squared bracket but everything else
+				[^[]*
+				\|	
+				/xu";
+
+	$text = preg_replace_callback($pattern, extractWSPropertyPairNames, &$text);
+	return true;
+}
+
+/*
+ * extract names from possible ws-property-pairs and
+ * remember them for later validation
+ */
+function extractWSPropertyPairNames($hits){
+	foreach ($hits as $hit){
+		$hit = trim($hit);
+		$sColPos = strPos($hit, "::");
+		$propertyName = substr($hit, 2 ,$sColPos-2);
+		$propertyName = trim($propertyName);
+
+		$wsColPos = strPos($hit, "#ws:");
+		$wsSPos = strPos($hit, "|", $wsColPos);
+		$wsName = substr($hit, $wsColPos+4, $wsSPos-5-$wsColPos);
+		$wsName = trim($wsName);
+
+		$hit.="_property = ".$propertyName." | ";
+		return $hit;
+	}
+}
+
 /**
  * Set a function hook associating the "webServiceUsage" magic word with our function
  */
@@ -66,6 +121,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
+	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
 
 	// the name of the ws must be the first parameter of the parser function
@@ -75,8 +131,7 @@ function webServiceUsage_Render( &$parser) {
 	$wsParameters = array();
 	$wsReturnValues = array();
 	$wsFormat = "";
-	$wsFormattedResult = "syntax error";
-
+	
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
 	//todo: handle defaults
@@ -86,23 +141,26 @@ function webServiceUsage_Render( &$parser) {
 			$wsReturnValues[getSpecifiedParameterName(substr($parameters[$i], 1, strlen($parameters[$i])))] = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 7) == "_format"){
 			$wsFormat = getSpecifiedParameterValue($parameter);
+		} else if (substr($parameter,0, 9) == "_property"){
+			$propertyName = getSpecifiedParameterValue($parameter);
 		} else {
 			$wsParameters[getSpecifiedParameterName($parameter)] = getSpecifiedParameterValue($parameter);
 		}
 	}
 
 	if(validateWSUsage($wsName, $wsReturnValues, $wsParameters)){
-
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters);
-		$wsFormattedResult = formatWSResult($wsFormat, $wsResults)." parametersetid: ".$parameterSetId;
-		rememberWSUsage($wsName, $parameterSetId);
-		WSStorage::getDatabase()->addWSArticle($wsName, $parameterSetId, $parser->getTitle()->getArticleID())." zo ";
+		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		WSStorage::getDatabase()->addWSArticle($wsName, $parameterSetId, $parser->getTitle()->getArticleID());
+			
+		global $usageTest;
+		$usageTest = "hallo";
+		
+		$wgsmwRememberedWSUsages[] = array($wsName, $parameterSetId, $propertyName);
+		return $wsFormattedResult;
 	}
-
-	return $wsFormattedResult;
 }
-
 /**
  * determines if a value is specified by the parameter
  * by an equality sign
@@ -115,7 +173,6 @@ function webServiceUsage_Render( &$parser) {
  */
 function getSpecifiedParameterValue($parameter){
 	$pos = strpos($parameter, "=");
-
 	if($pos > 0){
 		return trim(substr($parameter, $pos+1));
 	} else {
@@ -181,9 +238,16 @@ function validateWSUsage($wsName, $wsReturnValues, $wsParameters){
  * @param string $text
  * @return boolean true
  */
-function detectRemovedWebServiceUsages(&$parser, &$text){
-	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($parser->getTitle()->getArticleID());
-	$rememberedWSUsages = getRememberedWSUsages();
+function detectRemovedWebServiceUsages(&$article, &$user, &$text){
+	global $usageTest;
+	$usageTest.=" www ";
+	$articleId  = $article->getID();
+	if($articleId == null){
+		return true;
+	}
+	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
+	global $wgsmwRememberedWSUsages;
+	$rememberedWSUsages = $wgsmwRememberedWSUsages;
 
 	foreach($oldWSUsages as $oldWSUsage){
 		$remove = true;
@@ -195,7 +259,7 @@ function detectRemovedWebServiceUsages(&$parser, &$text){
 		}
 
 		if($remove){
-			WSStorage::getDatabase()->removeWSArticle($oldWSUsage[0], $oldWSUsage[1], $parser->getTitle()->getArticleId());
+			WSStorage::getDatabase()->removeWSArticle($oldWSUsage[0], $oldWSUsage[1], $articleId);
 			$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($oldWSUsage[1]);
 			if(sizeof($parameterSetIds) == 0){
 				WSStorage::getDatabase()->removeParameterSet($oldWSUsage[1]);
@@ -203,7 +267,33 @@ function detectRemovedWebServiceUsages(&$parser, &$text){
 		}
 	}
 
-	initWSUsageMemory();
+	$smwProperties = SMWFactbox::$semdata->getProperties();
+
+	foreach($rememberedWSUsages as $rememberedWSUsage){
+		$text.=" add:remWSUsdage-prop: ".$rememberedWSUsage[2];
+		if($smwProperties[$rememberedWSUsage[2]] != null){
+			$text.=" add:smwProp ".$smwProperties[$rememberedWSUsage[2]]->getArticleId();
+			WSStorage::getDatabase()->addWSProperty($smwProperties[$rememberedWSUsage[2]]->getArticleId(), $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+		}
+	}
+
+	$wsProperties = WSStorage::getDatabase()->getWSPropertiesUsedOnPage($articleId);
+	
+	foreach($wsProperties as $wsProperty){
+		$deleteProperty = true;
+		$text .= " foreach started";
+		foreach($rememberedWSUsages as $rememberedWSUsage){
+			if($rememberedWSUsage[2] != null){
+			if (($rememberedWSUsage[0] == $wsProperty[0])
+			&& ($rememberedWSUsage[1] == $wsProperty[1])
+			&& ($smwProperties[$rememberedWSUsage[2]]->getArticleId() == $wsProperty[2])){
+				$deleteProperty = False;
+			}}
+		}
+		if($deleteProperty){
+			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
+		}
+	}
 	return true;
 }
 
@@ -227,42 +317,17 @@ function getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters){
  *
  * @param string $wsName
  */
-function rememberWSUsage($wsName, $parameterSetId){
-	WSUsageMemory::rememberWSUsage($wsName, $parameterSetId);
+function rememberWSUsage($wsName, $parameterSetId, $propertyName){
+	global $wgsmwRememberedWSUsages;
+	array_push(&$wgsmwRememberedWSUsages, array($wsName, $parameterSetId, $propertyName));
 }
 
 /*
  * get remembered ws-usages
  */
 function getRememberedWSUsages(){
-	return WSUsageMemory::getWSUsages();
-}
-/*
- * initialize the ws-usage memory
- */
-function initWSUsageMemory(){
-	WSUsageMemory::refresh();
+	global $wgsmwRememberedWSUsages;
+	return $wgsmwRememberedWSUsages;
 }
 
-/*
- * helper class for remembering ws-usage
- * todo: replace this with a better solution
- */
-class WSUsageMemory{
-
-	static private $wsUsages = array();
-
-	static public function rememberWSUsage($wsName, $parameterSetId){
-		array_push(WSUsageMemory::$wsUsages, array($wsName, $parameterSetId));
-	}
-
-	static public function getWSUsages(){
-		return WSUsageMemory::$wsUsages;
-	}
-
-	static public function refresh(){
-		WSUsageMemory::$wsUsages = array();
-	}
-
-}
 ?>

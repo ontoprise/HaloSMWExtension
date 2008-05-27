@@ -31,7 +31,6 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceSettings.php");
 // include the web service syntax parser
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceUsage.php");
 
-
 ###
 # If you already have custom namespaces on your site, insert
 # $smwgWWSNamespaceIndex = ???;
