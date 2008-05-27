@@ -525,12 +525,15 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_wws_properties_header' => 'Properties that are set by "$1"',
 	'smw_wws_articlecount' => '<p>Showing $1 pages using this web service.</p>',
 	'smw_wws_propertyarticlecount' => '<p>Showing $1 properties that get their value from this web service.</p>',
-	'smw_wws_invalid_wwsd' => 'Invalid Wiki Web Service Definition.',
+	'smw_wws_invalid_wwsd' => 'The Wiki Web Service Definition is invalid or does not exist.',
 	'smw_wws_wwsd_element_missing' => 'The element "$1" is missing in the Wiki Web Service Definition.',
 	'smw_wws_wwsd_attribute_missing' => 'The attribute "$1" is missing in element "$2" of the Wiki Web Service Definition.',
 	'smw_wws_too_many_wwsd_elements' => 'The element "$1" appears several times in the Wiki Web Service Definition.',
 	'smw_wss_wwsd_needs_namespace' => 'Please note: Wiki web service definitions are only considered in articles with namespace "WebService"!',
 	'smw_wws_wwsd_errors' => 'The Wiki Web Service Definition is erroneous:',
+	'smw_wws_invalid_protocol' => 'The protocol specified in the Wiki Web Service Definition is not supported.',
+	'smw_wws_invalid_operation' => 'The operation "$1" is not provided by the web service.',
+
 
 );
 
