@@ -85,19 +85,50 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
  *
  * @param $taskid ID of task.
  */
-function smwf_ga_CancelGardeningBot($taskid) {
-	
-	if (!GardeningBot::isUserAllowed(array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
-	 	return; // only sysops and gardeners may cancel a bot.
-	}
-	// send term signal to bot
-	if (GardeningBot::abortBot($taskid) !== true) {
-		// if bot does not react: kill bot
-		GardeningBot::killBot($taskid);
-		
-	}
-	SMWGardeningLog::getGardeningLogAccess()->removeGardeningTask($taskid);
-	return SMWGardening::getGardeningLogTable();
+function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
+    if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
+        
+        $user = NULL;
+        if ($user_id != NULL) {
+                $passwordBlob = smwfGetPasswordBlob($user_id);
+                if ($passwordBlob === $user_pass) {
+                    $user = User::newFromId($user_id);
+                } 
+            
+        }
+    
+		if (!GardeningBot::isUserAllowed($user, array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
+		 	return; // only sysops and gardeners may cancel a bot.
+		}
+		// send term signal to bot
+		if (GardeningBot::abortBot($taskid) !== true) {
+			// if bot does not react: kill bot
+			GardeningBot::killBot($taskid);
+			
+		}
+		SMWGardeningLog::getGardeningLogAccess()->removeGardeningTask($taskid);
+		return SMWGardening::getGardeningLogTable();
+    } else {
+    	// redirect call to dedicated gardening server
+        global $wgScript, $wgCookiePrefix;
+        $userID = $_COOKIE[$wgCookiePrefix."UserID"];
+                  
+        $passwordBlob = smwfGetPasswordBlob($userID);
+        if($passwordBlob != NULL) {
+            $matches = array();
+            $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_CancelGardeningBot&rsargs[]=".$taskid."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob));
+                
+            preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
+            if (isset($matches[1])) {
+                 $contentLength = $matches[1];
+                 return substr($result, strlen($result) - $contentLength);
+            } else if (stripos($result, "<table") !== false) { 
+                // heuristic if length is missing in HTTP answer (why can this happen?)
+                return substr($result, stripos($result, "<table"));
+            }
+        }   
+        return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
+    }
 }
 
 /**

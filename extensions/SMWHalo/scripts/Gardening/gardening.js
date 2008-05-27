@@ -77,7 +77,7 @@ GardeningPage.prototype = {
   	}
   	
   	if (wgUserGroups.indexOf("sysop") != -1 || wgUserGroups.indexOf("gardener") != -1) {
-  		sajax_do_call('smwf_ga_CancelGardeningBot', [taskid], callBackOnCancelBot);
+  		sajax_do_call('smwf_ga_CancelGardeningBot', [taskid, null, null], callBackOnCancelBot);
   	} else {
   		alert(gLanguage.getMessage('INVALID_GARDENING_ACCESS'));
   	}

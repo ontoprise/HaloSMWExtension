@@ -179,7 +179,7 @@
 		$db->update( $db->tableName('smw_gardening'),
 		             array('endtime' => $this->getDBDate($date),
 		             	   'timestamp_end' => $db->timestamp(),
-		             	   'log' => $title != NULL ? $title->getLocalURL() : $gardeningLogPage->getLocalURL()."?bot=".$botID,
+		             	   'log' => $title != NULL ? $title->getDBkey() : $gardeningLogPage->getDBkey()."?bot=".$botID,
 		             	   'progress' => 1),
 		             array( 'id' => $taskID), 
 		             $fname );

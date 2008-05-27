@@ -52,6 +52,7 @@ class SMWGardening extends SpecialPage {
 	}
 	
 	static function getGardeningLogTable() {
+		global $wgServer,$wgScript;
 		$html = "<table width=\"100%\" class=\"smwtable\"><tr><th>User</th><th>Action</th><th>Start-Time</th><th>End-Time</th><th>Log</th><th>Progress</th><th>State</th></tr>";
 		$gardeningLog = SMWGardeningLog::getGardeningLogAccess()->getGardeningLogAsTable();
 		if ($gardeningLog == null || !is_array($gardeningLog)) {
@@ -63,7 +64,7 @@ class SMWGardening extends SpecialPage {
 				
 					
 				if ($i == 4 && $row[3] != null) {
-					$html .= "<td><a href=\"".$row[$i]."\">Log</a></td>";
+					$html .= "<td><a href=\"".$wgServer.$wgScript."/".$row[$i]."\">Log</a></td>";
 				} else if ($i == 1) {
 					$html .= "<td>".wfMsg($row[$i])."</td>";
 				 } else if ($i == 5) {
