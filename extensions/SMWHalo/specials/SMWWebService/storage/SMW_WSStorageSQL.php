@@ -306,7 +306,7 @@ class WSStorageSQL {
 	 * 		the parameter set id of the new or an
 	 * 		appropriate parameter set which allready exists
 	 */
-	
+
 	public function storeParameterset($parameters){
 		$db =& wfGetDB( DB_SLAVE );
 		$ptbl = $db->tableName('smw_ws_parameters');
@@ -428,7 +428,7 @@ class WSStorageSQL {
 	 */
 	public function removeParameterSet($parameterSetId) {
 		$db =& wfGetDB( DB_MASTER );
-		
+
 		try {
 			$db->delete($db->tableName('smw_ws_parameters'), array(
 			'param_set_id' => $parameterSetId));
@@ -449,7 +449,7 @@ class WSStorageSQL {
 	function getUsedParameterSetIds($parameterSetId){
 		$db =& wfGetDB( DB_SLAVE );
 		$ptb = $db->tableName('smw_ws_articles');
-	
+
 		$sql = "SELECT wsArticles.param_set_id"
 		." FROM ".$ptb." wsArticles ".
 		"WHERE wsArticles.param_set_id = ".$parameterSetId."";
@@ -461,11 +461,11 @@ class WSStorageSQL {
 			while ($row = $db->fetchObject($res)) {
 				array_push(&$webServices, array($row->param_set_id));
 			}
-		} 
+		}
 		$db->freeResult($res);
 		return $webServices;
 	}
-	
+
 	/**
 	 * this method retrieves all webservices and the parameter sets used
 	 * by those, which are used on the given article
@@ -477,7 +477,7 @@ class WSStorageSQL {
 	function getWSsUsedInArticle($articleId){
 		$db =& wfGetDB( DB_SLAVE );
 		$ptb = $db->tableName('smw_ws_articles');
-	
+
 		$sql = "SELECT wsArticles.web_service_id, wsArticles.param_set_id"
 		." FROM ".$ptb." wsArticles ".
 		"WHERE wsArticles.page_id =".$articleId."";
@@ -489,15 +489,68 @@ class WSStorageSQL {
 			while ($row = $db->fetchObject($res)) {
 				array_push(&$webServices, array($row->web_service_id, $row->param_set_id));
 			}
-		} 
+		}
 		$db->freeResult($res);
 		return $webServices;
+	}
+
+	function getParameters($parameterSetId){
+		$db =& wfGetDB( DB_SLAVE );
+		$ptb = $db->tableName('smw_ws_articles');
+
+		$sql = "SELECT param.name param.value"
+		." FROM ".$ptb." param ".
+		"WHERE param.param_set_id = ".$parameterSetId."";
+
+		$parameters = array();
+		$res = $db->query($sql);
+
+		if ($db->numRows($res) > 0) {
+			while ($row = $db->fetchObject($res)) {
+				array_push(&$webServices, array($row->name, $row->value));
+			}
+		}
+		$db->freeResult($res);
+		return $parameters;
+	}
+
+	public function getWSPropertiesUsedOnPage($pageId) {
+		$db =& wfGetDB( DB_SLAVE );
+		$ptb = $db->tableName('smw_ws_properties');
+		$sql = "SELECT prop.property_id, prop.web_service_id, prop.param_set_id FROM ".$ptb." prop ".
+		          "WHERE prop.page_id ='".$pageId."' ";
+
+		$properties = array();
+
+		$res = $db->query($sql);
+
+		if ($db->numRows($res) > 0) {
+			while ($row = $db->fetchObject($res)) {
+				array_push(&$properties, array($row->web_service_id, $row->param_set_id, $row->property_id));
+			}
+		}
+		$db->freeResult($res);
+		return $properties;
+
 	}
 
 
 
 
 
-
+	public function removeWSProperty($propertyId, $wsPageId, $paramSetId, $pageId) {
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$db->delete($db->tableName('smw_ws_properties'), array(
+					  'property_id'    => $propertyId,
+					  'web_service_id' => $wsPageId,
+					  'param_set_id'   => $paramSetId,
+					  'page_id'        => $pageId));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+		return true;
+	}
 }
 ?>
