@@ -533,6 +533,18 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_wws_wwsd_errors' => 'The Wiki Web Service Definition is erroneous:',
 	'smw_wws_invalid_protocol' => 'The protocol specified in the Wiki Web Service Definition is not supported.',
 	'smw_wws_invalid_operation' => 'The operation "$1" is not provided by the web service.',
+	'smw_wws_parameter_without_name' => 'A parameter of the Wiki Web Service Definition has no name.',
+	'smw_wws_parameter_without_path' => 'The attribute "path" of the parameter "$1" is missing.',
+	'smw_wws_duplicate_parameter' => 'The parameter "$1" appears several times.',
+	'smw_wwsd_undefined_param' => 'The operation needs the parameter "$1". Please define an alias.',
+	'smw_wwsd_obsolete_param' => 'The parameter "$1" is defined but not used by the operation. You can remove it.',
+	'smw_wwsd_overflow' => 'The structure "$1" may be continued endlessly. Parameters of this type are not supported by the Wiki Web Service Extension.',
+	'smw_wws_result_without_name' => 'A result of the Wiki Web Service Definition has no name.',
+	'smw_wws_result_part_without_name' => 'The result "$1" contains a part without name.',
+	'smw_wws_result_part_without_path' => 'The attribute "path" of the part "$1" of the result "$2" is missing.',
+	'smw_wws_duplicate_result_part' => 'The part "$1" appears several times in the result "$2".',
+	'smw_wws_duplicate_result' => 'The result "$1" appears several times.',
+	'smw_wwsd_undefined_result' => 'The path of the result "$1" can not be found in the result of the service.',
 
 
 );
