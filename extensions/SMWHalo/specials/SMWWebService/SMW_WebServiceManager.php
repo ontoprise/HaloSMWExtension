@@ -31,6 +31,7 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceSettings.php");
 // include the web service syntax parser
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceUsage.php");
 
+
 ###
 # If you already have custom namespaces on your site, insert
 # $smwgWWSNamespaceIndex = ???;
@@ -141,6 +142,7 @@ class WebServiceManager {
 		
 		
 		//--- TEST
+				
 /*		
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
@@ -212,10 +214,10 @@ class WebServiceManager {
 		
 		$attr = "";
 		foreach ($args as $k => $v) {
-			$attr .= $k . '="' . $v . '" ';
+			$attr .= " ". $k . '="' . $v . '"';
 		}
 		$completeWWSD =
-			"<WebService $attr>".
+			"<WebService$attr>".
 			$input.
 			"</WebService>\n";
 			
@@ -223,6 +225,15 @@ class WebServiceManager {
 		$name = $parser->mTitle->getText();
 		$id = $parser->mTitle->getArticleID();
 		$ws = WebService::newFromWWSD($name, $completeWWSD);
+		if (!is_array($ws)) {
+			// A web service object was returned. Validate the definition
+			// with respect to the WSDL.
+			$res = $ws->validateWithWSDL();
+			if (is_array($res)) {
+				// Error messages were returned
+				$ws = $res;
+			}
+		}
 		if (is_array($ws)) {
 			// Errors within the WWSD => show them as a bullet list
 			$msg = '<b>'.wfMsg('smw_wws_wwsd_errors').'</b><ul>';
