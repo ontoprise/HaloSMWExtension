@@ -18,6 +18,7 @@
 
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_IWebServiceClient.php");
 
 /**
  * Instances of this class describe a web service.
@@ -47,6 +48,9 @@ class WebService {
 							  // after an update. Otherwise it starts after the
 							  // last access.
 	private $mConfirmed;      //bool: confirmed by sysop (true) or not (false)
+	
+	private $mWSClient;		  //IWebServiceClient: the web service client provides
+							  //   access to the service 
 	
 	/**
 	 * Constructor for new WebService objects.
@@ -166,73 +170,66 @@ class WebService {
 	 */
 	public static function newFromWWSD($name, $wwsd) {
     	global $smwgHaloIP;
-		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 		
-		$parser = new XMLParser($wwsd);
-		$result = $parser->parse();
-		if ($result !== true) {
-			return array($result);
-		}
+    	try {
+			$parser = new SimpleXMLElement($wwsd);
+    	} catch (Exception $e) {
+    		$msg = $e->getMessage();
+    		return array($msg);
+    	}
 		
 		// Check if the roor node of the XML structure is 'webservice'
-		if (!$parser->rootIs('webservice')) {
+		$rootName = $parser->getName();
+		if ($rootName !== 'WebService') {
 			return wfMsg('smw_wws_invalid_wwsd');
 		}
 
 		$msg = array();
 		$valid = true;
 
-		$wwsd = $parser->getElement(array('webservice'));
-
 		$ws = new WebService();
 		$ws->mName = $name;
-		$valid &= self::getWWSDElement($wwsd, 'webservice/uri', 'name', $ws->mURI, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/method', 'name', $ws->mMethod, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($wwsd, 'webservice/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
 		if ($ws->mParsedParameters) {
 			// store the serialized form of the parameter description
-			$path = array('webservice','parameter');
-			$i = 0;
-			do {
-				$xml = $parser->serializeElement($path, $i, false);
-				$ws->mParameters .= $xml."\n";
-				++$i;
-			} while (!empty($xml));
+			$path = $parser->xpath('/WebService/parameter');
+			foreach ($path as $p) {
+				$ws->mParameters .= $p->asXML()."\n";
+			}
 		}
-		$valid &= self::getWWSDElement($wwsd, 'webservice/result', null, $ws->mParsedResult, false, 1, 100, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/result', null, $ws->mParsedResult, false, 1, 100, $msg);
 		if ($ws->mParsedResult) {
 			// store the serialized form of the result description
-			$path = array('webservice','result');
-			$i = 0;
-			do {
-				$xml = $parser->serializeElement($path, $i, false);
-				$ws->mResult .= $xml."\n";
-				++$i;
-			} while (!empty($xml));
+			$path = $parser->xpath('/WebService/result');
+			foreach ($path as $p) {
+				$ws->mResult .= $p->asXML()."\n";
+			}
 		}
 		
 		$tmpMsg = array();
-		$v = self::getWWSDElement($wwsd, 'webservice/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
+		$v = self::getWWSDElement($parser, '/WebService/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
 			$ws->mDisplayPolicy = 0;
 		} else {
-			$valid &= self::getWWSDElement($wwsd, 'webservice/displayPolicy/maxage', 'value', $ws->mDisplayPolicy, true, 1, 1, $msg);
+			$valid &= self::getWWSDElement($parser, '/WebService/displayPolicy/maxAge', 'value', $ws->mDisplayPolicy, true, 1, 1, $msg);
 		}
 
-		$v = self::getWWSDElement($wwsd, 'webservice/queryPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
+		$v = self::getWWSDElement($parser, '/WebService/queryPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
 			$ws->mQueryPolicy = 0;
 		} else {
-			$valid &= self::getWWSDElement($wwsd, 'webservice/queryPolicy/maxage', 'value', $ws->mQueryPolicy, true, 1, 1, $msg);
+			$valid &= self::getWWSDElement($parser, '/WebService/queryPolicy/maxAge', 'value', $ws->mQueryPolicy, true, 1, 1, $msg);
 		}
-		$v = self::getWWSDElement($wwsd, 'webservice/queryPolicy/delay', 'value', $ws->mUpdateDelay, true, 1, 1, $tmpMsg);
+		$v = self::getWWSDElement($parser, '/WebService/queryPolicy/delay', 'value', $ws->mUpdateDelay, true, 1, 1, $tmpMsg);
 		if (!$v) {
 			// The update delay is optional. Its default value is 0.
 			$ws->mUpdateDelay = 0;
 		}
 		
-		$valid &= self::getWWSDElement($wwsd, 'webservice/spanoflife', 'value', $ws->mSpanOfLife, false, 1, 1, $msg);
+		$valid &= self::getWWSDElement($parser, '/WebService/spanOfLife', 'value', $ws->mSpanOfLife, false, 1, 1, $msg);
 		if ($valid) {
 			if (strtolower($ws->mSpanOfLife) == 'forever') {
 				$ws->mSpanOfLife = 0;
@@ -241,12 +238,12 @@ class WebService {
 			}
 		}
 		$ws->mExpiresAfterUpdate = false;
-		$v = self::getWWSDElement($wwsd, 'webservice/spanoflife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
+		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
 		
 		return ($valid) ? $ws : $msg;
 		
 	}
-		
+	
 	/**
 	 * Returns the article ID of this WebService i.e. the page ID of the article
 	 * that contains the service's WWSD.
@@ -282,6 +279,73 @@ class WebService {
 		         : WSStorage::getDatabase()->storeWS($this);
 	}
 	
+	/**
+	 * Checks if the definition of the web service is valid with respect to the
+	 * WSDL it refers to.
+	 * 
+	 * @return mixed(boolean, array<string>)
+	 * 		<true>, if the definition is correct or an
+	 * 		array of error messages otherwise
+	 *
+	 */
+	public function validateWithWSDL() {
+
+		// include the correct client
+    	global $smwgHaloIP;
+		try {
+			include_once($smwgHaloIP . "/specials/SMWWebService/SMW_".
+			             $this->mProtocol."Client.php");
+			$classname = "SMW".ucfirst(strtolower($this->mProtocol))."Client";
+			if (!class_exists($classname)) {
+				return array(wfMsg("smw_wws_invalid_protocol"));
+			}
+			$this->mWSClient = new $classname($this->mURI);
+		} catch (Exception $e) {
+			// The wwsd is erroneous
+			return array(wfMsg("smw_wws_invalid_wwsd"));
+		}
+				
+		$msg = array();
+		
+		// Check, if the method exists
+		$op = $this->mWSClient->getOperation($this->mMethod);
+		if (!$op) {
+			$msg[] = wfMsg('smw_wws_invalid_operation', $this->mMethod);
+		}
+		
+		$res = $this->checkParameters();
+		if (is_array($res)) {
+			// result contains error messages
+			$msg = array_merge($msg, $res);
+		}
+
+		$res = $this->checkResult();
+		if (is_array($res)) {
+			// result contains error messages
+			$msg = array_merge($msg, $res);
+		}
+		
+		return (count($msg) == 0 ? true : $msg);
+	}
+	
+	/**
+	 * Calls the web service and considers the cache.
+	 *
+	 */
+	public function call() {
+//TODO: define parameters: input parameters, kind of result, etc
+
+		//TODO: Check if result is in cache
+		
+		// Result is not in cache => get the value from the service and store
+		// it in the cache
+		$this->mWSClient->call();
+
+		//TODO: analyze result and store it in cache
+		
+		//TODO: return requested result
+	}
+	
 	//--- Private methods ---
 	
 	/**
@@ -315,23 +379,10 @@ class WebService {
 									$attribute, &$variable, $isNumeric, 
 									$min, $max, &$msg) {
 		
-    	$wwsdElementPath = strtoupper($wwsdElementPath);
-		$attribute       = strtoupper($attribute);
-
-		$pathElems = explode('/', $wwsdElementPath);
-		$subTree = &$wwsd;
-		$numElems = count($pathElems);
-		
-		for ($i = 0; $i < $numElems; ++$i) {
-			$elem = $pathElems[$i];
-			$subTree = &$subTree[$elem];
-			if (!$subTree) {
-				$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
-				return false;
-			}
-			if ($i != $numElems - 1) {
-				$subTree = &$subTree[0]['value'];
-			}
+		$subTree = $wwsd->xpath($wwsdElementPath);
+		if (!$subTree) {
+			$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
+			return false;
 		}
 		
 		if (count($subTree) < $min) {
@@ -346,13 +397,13 @@ class WebService {
 		if ($min == 1 && $max == 1) {
 			// exactly one element is expected and present
 			if ($attribute) {
-				$val = $subTree[0]['attributes'][$attribute];
+				$val = (string) $subTree[0]->attributes()->$attribute;
 				if ($val == null) {
 					$msg[] = wfMsg('smw_wws_wwsd_attribute_missing', $attribute, $wwsdElementPath).'<br />';
 					return false;
 				}
 			} else {
-				$val = $subTree[0]['value'];
+				$val = (string) $subTree[0][0];
 			}
 			if ($val && $isNumeric) {
 				$val = floatval($val);
@@ -363,6 +414,226 @@ class WebService {
 			$variable = $subTree;
 		}
 		return true;
+	}
+	
+	/**
+	 * Checks if the parameters that are defined in the WWSD are compatible with
+	 * the parameters in the WSDL. This comprises:
+	 * - Does the WWSD contain parameters without name?
+	 * - Does the WWSD contain parameters without path?
+	 * - Does the WWSD contain several parameters with the same name?
+	 * - Does a type of the WSDL cause an overflow (e.g. struct List { next: List}) ?
+	 * - Is there a definition for each parameter of the WSDL?
+	 * - Are the obsolete parameters in the definition?
+	 * 
+	 * @return mixed(boolean, array<string>)
+	 * 		<true>, if everything is correct or an
+	 * 		array of error messages otherwise
+	 * 
+	 */
+	private function checkParameters() {
+		// check if there are duplicate parameters in the wwsd
+		$msg = array();
+		
+		$pNames = array();
+		$wwsdPaths = array();
+		foreach ($this->mParsedParameters as $p) {
+			$name = (string) $p->attributes()->name;
+			$path = (string) $p->attributes()->path;
+			if ($name == null) {
+				// parameter has no name
+				$msg[] = wfMsg('smw_wws_parameter_without_name');
+				continue;		
+			}
+			if ($path == null) {
+				// parameter has no path
+				$msg[] = wfMsg('smw_wws_parameter_without_path', $name);
+				continue;		
+			}
+			if (array_key_exists($name, $pNames)) {
+				if ($pNames[$name]++ == 1) {	
+					$msg[] = wfMsg('smw_wws_duplicate_parameter', $name);
+				}
+				continue;		
+			} else {
+				$pNames[$name] = 1;
+				$wwsdPaths[$name] = $path;
+			}
+		}
+		
+		// Check if there is an alias for every parameter of the WSDL.
+		$wsdlParams = $this->mWSClient->getOperation($this->mMethod);
+		if ($wsdlParams != null) {
+			// examine parameters
+			$names = array();
+			// Collect the components of all parameters
+			$numParam = count($wsdlParams);
+			for ($i = 1; $i < $numParam; ++$i) {
+				$pName = $wsdlParams[$i][0];
+				$pType = $wsdlParams[$i][1];
+				$names = array_merge($names, $this->flattenParam($pName, $pType));
+			}
+			// find elements that lead to overflows (e.g. potentially endless lists)
+			foreach ($names as $idx=>$name) {
+				$pos = strpos($name, '##overflow##');
+				if ($pos) {
+					$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
+					unset($names[$idx]);
+				}
+			}
+			// find undefined parameters
+			$inWsdl = array_diff($names, $wwsdPaths);
+			foreach ($inWsdl as $p) {
+				$msg[] = wfMsg('smw_wwsd_undefined_param', $p);
+			}
+			// find obsolete parameters
+			$inWwsd = array_diff($wwsdPaths, $names);
+			foreach ($inWwsd as $p) {
+				$p = array_search($p, $wwsdPaths);
+				$msg[] = wfMsg('smw_wwsd_obsolete_param', $p);
+			}
+		}
+		return count($msg) == 0 ? true : $msg;
+	}
+
+	/**
+	 * Checks if the results that are defined in the WWSD are compatible with
+	 * the result in the WSDL. This comprises:
+	 * - Does the WWSD contain results without name?
+	 * - Does the WWSD contain result parts without path?
+	 * - Does the WWSD contain several results with the same name?
+	 * - Does a type of the WSDL cause an overflow (e.g. struct List { next: List}) ?
+	 * - Is there a definition for each result of the WSDL?
+	 * 
+	 * @return mixed(boolean, array<string>)
+	 * 		<true>, if everything is correct or an
+	 * 		array of error messages otherwise
+	 * 
+	 */
+	private function checkResult() {
+		// check if there are duplicate results in the wwsd
+		$msg = array();
+		
+		$rNames = array(); // Names of results
+		$wwsdPaths = array();
+		foreach ($this->mParsedResult as $r) {
+			$rName = (string) $r->attributes()->name;
+			if ($rName == null) {
+				// result has no name
+				$msg[] = wfMsg('smw_wws_result_without_name');
+				continue;		
+			}
+			// Check all parts of a result
+			foreach ($r->children() as $part) {
+				$pNames = array();
+				if ($part->getName() != 'part') {
+					//ignore 'select' elements
+					continue;
+				}
+				$pName = (string) $part->attributes()->name;
+				if ($pName == null) {
+					// result part has no name
+					$msg[] = wfMsg('smw_wws_result_part_without_name', $rName);
+					continue;
+				}
+				$path = (string) $part->attributes()->path;
+				if ($path == null) {
+					// result part has no path
+					$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
+					continue;		
+				}
+				if (array_key_exists($pName, $pNames)) {
+					if ($pNames[$pName]++ == 1) {	
+						$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
+					}
+					continue;		
+				} else {
+					$pNames[$pName] = 1;
+					$wwsdPaths[$rName.'.'.$pName] = $path;
+				}
+				
+			}
+			if (array_key_exists($rName, $rNames)) {
+				if ($rNames[$rName]++ == 1) {	
+					$msg[] = wfMsg('smw_wws_duplicate_result', $rName);
+				}
+				continue;		
+			} else {
+				$rNames[$rName] = 1;
+			}
+		}
+		
+		// Check if there is a result in the WSDL for each alias.
+		$wsdlResult = $this->mWSClient->getOperation($this->mMethod);
+		if ($wsdlResult != null) {
+			// Collect the components of the result
+			$rType = $wsdlResult[0];
+			$names = $this->flattenParam('', $rType);
+			
+			// find elements that lead to overflows (e.g. potentially endless lists)
+			foreach ($names as $idx=>$name) {
+				$pos = strpos($name, '##overflow##');
+				if ($pos) {
+					$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
+					unset($names[$idx]);
+				}
+			}
+			// find undefined results
+			$inWwsd = array_diff($wwsdPaths, $names);
+			foreach ($inWwsd as $r) {
+				$r = array_search($r, $wwsdPaths);
+				$msg[] = wfMsg('smw_wwsd_undefined_result', $r);
+			}
+		}
+		return count($msg) == 0 ? true : $msg;
+	}	
+		
+	/**
+	 * Takes all parts of the given type and appends its fields to the given name.
+	 * This happend recursively down to builtin types.
+	 * Example:
+	 * $name = point
+	 * $type = Point (with the fields x and y)
+	 * result: 
+	 *    - point.x
+	 *    - point.y
+	 * 
+	 * @param string $name
+	 * 		The fields of the type are added to this name, separated by a dot.
+	 * @param string $type
+	 * 		The name of an XSD base type or a type defined in the WSDL.
+	 * @param array<string> $typePath
+	 * 		This array contains all types that were encountered in the recursion.
+	 * 		To avoid an inifinite loop, the recursion stops if $type is already
+	 * 		in the $typePath. This parameter is omitted in the top level call. 
+	 * @return array<string>
+	 * 		All resulting paths. If a path causes an endless recursion, the
+	 * 		keyword ##overflow## is appended to the path.
+	 */
+	private function flattenParam($name, $type, &$typePath=null) {
+		$flatParams = array();
+		
+		$tp = $this->mWSClient->getTypeDefinition($type);
+		foreach ($tp as $var => $type) {
+			$fname = empty($name) ? $var : $name.'.'.$var;
+			if ($this->mWSClient->isCustomType($type)) {
+				if (!$typePath) {
+					$typePath = array();
+				}
+				if (in_array($type, $typePath)) {
+					// stop recursion
+					$flatParams[] = $fname."##overflow##";
+					break;
+				}
+				$typePath[] = $type;
+				$names = $this->flattenParam($fname, $type, $typePath);
+				$flatParams = array_merge($flatParams,$names);
+				array_pop($typePath);
+			} else {
+				$flatParams[] = $fname;
+			}
+		}
+		return $flatParams;
 	}
 }
 
