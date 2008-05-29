@@ -25,6 +25,7 @@ $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
+global $smwgEnableWikiWebServices;
 
 if ($smwgEnableWikiWebServices) {
 	require_once('extensions/SMWHalo/specials/SMWWebService/SMW_WebServiceManager.php');
