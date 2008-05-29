@@ -17,18 +17,22 @@
  */
 
 /**
- * This file provides a parser for the {{ws: }} syntax used by the
- * web service extension
+ * This file is responsible for detecting and processing
+ * the usage of web services in an article and in semantic properties.  
  *
  * @author Ingo Steinbauer
  *
  */
+
+// todo alle ws-namen durch die ids ersetzen
+
 // necessary for querying used properties
 global $smwgIP;
-require_once($smwgIP. "/includes/SMW_SemanticData.php");
+require_once($smwgIP. "/includes/SMW_Factbox.php");
 
 // needed for db access
 require_once("SMW_WSStorage.php");
+
 
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
@@ -36,28 +40,26 @@ $wgExtensionFunctions[] ='webServiceUsage_Setup';
 $wgHooks['LanguageGetMagic'][] = 'webServiceUsage_Magic';
 
 // used to delete unused parameter sets that are no longer referred
-// and web services that are no longer used on the edited article
-//$wgHooks['ParserBeforeTidy'][] = 'detectRemovedWebServiceUsages';
-$wgHooks['ArticleSaveComplete'][] = 'detectRemovedWebServiceUsages';
+// and web services that are no longer used in this article.
+$wgHooks['ArticleSaveComplete'][] = 'detectEditedWSUsages';
+$wgHooks['ArticleDelete'][] = 'detectDeletedWSUsages';
 
 // necessary for finding possible ws-property-pairs before they are processed
 // by the responsible parsers
 $wgHooks['ParserAfterStrip'][] = 'findWSPropertyPairs';
 
 
+
 // needed for formatting the ws-usage result
 global $smwgHaloIP;
-$wgAutoloadClasses['WebServiceListResultPrinter'] = $smwgHaloIP.'/specials/SMWWebService/SMW_WebServiceRPList.php';
-$wgAutoloadClasses['WebServiceUlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRPUl.php';
-$wgAutoloadClasses['WebServiceOlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRPOl.php';
-$wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRPTable.php';
-
-
-
+$wgAutoloadClasses['WebServiceListResultPrinter'] = $smwgHaloIP.'/specials/SMWWebService/resultprinters/SMW_WebServiceRPList.php';
+$wgAutoloadClasses['WebServiceUlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPUl.php';
+$wgAutoloadClasses['WebServiceOlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPOl.php';
+$wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTable.php';
 
 
 /*
- * find possible ws-property-pairs
+ * find ws that are used in properties
  */
 function findWSPropertyPairs(&$parser, &$text){
 	$pattern = "/\[\[		# beginning of semantic attribute
@@ -97,6 +99,7 @@ function extractWSPropertyPairNames($hits){
 	}
 }
 
+
 /**
  * Set a function hook associating the "webServiceUsage" magic word with our function
  */
@@ -127,11 +130,10 @@ function webServiceUsage_Render( &$parser) {
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
 
-
 	$wsParameters = array();
 	$wsReturnValues = array();
 	$wsFormat = "";
-	
+
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
 	//todo: handle defaults
@@ -153,12 +155,11 @@ function webServiceUsage_Render( &$parser) {
 		$wsResults = getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters);
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
 		WSStorage::getDatabase()->addWSArticle($wsName, $parameterSetId, $parser->getTitle()->getArticleID());
-			
-		global $usageTest;
-		$usageTest = "hallo";
 		
 		$wgsmwRememberedWSUsages[] = array($wsName, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
+	} else {
+		//do something
 	}
 }
 /**
@@ -230,65 +231,82 @@ function validateWSUsage($wsName, $wsReturnValues, $wsParameters){
 	return true;
 }
 
+/*
+ * calls detectRemovedWebServiceUsages
+ *
+ */
+function detectDeletedWSUsages(&$article, &$user, $reason){
+	$articleId  = $article->getID();
+	detectRemovedWebServiceUsages($articleId);
+	return true;
+}
+/*
+ * calls detectRemovedWebServiceUsages()
+ *
+ */
+function detectEditedWSUsages(&$article, &$user, &$text){
+	$articleId  = $article->getID();
+	if($articleId != null){
+		detectRemovedWebServiceUsages($articleId);
+	}
+	return true;
+}
+
+
 /**
  * this function detects parameter sets that are no longer referred and
- * web services that are no longer used in this article
+ * web services that are no longer used in this article or in a semantic property
  *
- * @param Parser $parser
- * @param string $text
+ * @param string $articleId
+ * 
  * @return boolean true
  */
-function detectRemovedWebServiceUsages(&$article, &$user, &$text){
-	global $usageTest;
-	$usageTest.=" www ";
-	$articleId  = $article->getID();
-	if($articleId == null){
-		return true;
-	}
+function detectRemovedWebServiceUsages($articleId){
 	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
 	global $wgsmwRememberedWSUsages;
 	$rememberedWSUsages = $wgsmwRememberedWSUsages;
 
 	foreach($oldWSUsages as $oldWSUsage){
 		$remove = true;
-		foreach($rememberedWSUsages as $rememberedWSUsage){
-			if(($rememberedWSUsage[0] == $oldWSUsage[0])
-			&& ($rememberedWSUsage[1] == $oldWSUsage[1])){
-				$remove = false;
+		if($rememberedWSUsages != null){
+			foreach($rememberedWSUsages as $rememberedWSUsage){
+				if(($rememberedWSUsage[0] == $oldWSUsage[0])
+				&& ($rememberedWSUsage[1] == $oldWSUsage[1])){
+					$remove = false;
+				}
 			}
 		}
-
 		if($remove){
 			WSStorage::getDatabase()->removeWSArticle($oldWSUsage[0], $oldWSUsage[1], $articleId);
+			//WebServiceCache::removeWSParameterPair($oldWSUsage[0], $oldWSUsage[1]);
 			$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($oldWSUsage[1]);
 			if(sizeof($parameterSetIds) == 0){
 				WSStorage::getDatabase()->removeParameterSet($oldWSUsage[1]);
 			}
 		}
 	}
-
-	$smwProperties = SMWFactbox::$semdata->getProperties();
-
-	foreach($rememberedWSUsages as $rememberedWSUsage){
-		$text.=" add:remWSUsdage-prop: ".$rememberedWSUsage[2];
-		if($smwProperties[$rememberedWSUsage[2]] != null){
-			$text.=" add:smwProp ".$smwProperties[$rememberedWSUsage[2]]->getArticleId();
-			WSStorage::getDatabase()->addWSProperty($smwProperties[$rememberedWSUsage[2]]->getArticleId(), $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+	
+	if($rememberedWSUsages != null){
+		$smwProperties = SMWFactbox::$semdata->getProperties();
+		foreach($rememberedWSUsages as $rememberedWSUsage){
+			if($smwProperties[$rememberedWSUsage[2]] != null){
+				WSStorage::getDatabase()->addWSProperty($smwProperties[$rememberedWSUsage[2]]->getArticleId(), $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+			}
 		}
 	}
+	$wsProperties = WSStorage::getDatabase()->getWSPropertiesUsedInArticle($articleId);
 
-	$wsProperties = WSStorage::getDatabase()->getWSPropertiesUsedOnPage($articleId);
-	
 	foreach($wsProperties as $wsProperty){
 		$deleteProperty = true;
-		$text .= " foreach started";
-		foreach($rememberedWSUsages as $rememberedWSUsage){
-			if($rememberedWSUsage[2] != null){
-			if (($rememberedWSUsage[0] == $wsProperty[0])
-			&& ($rememberedWSUsage[1] == $wsProperty[1])
-			&& ($smwProperties[$rememberedWSUsage[2]]->getArticleId() == $wsProperty[2])){
-				$deleteProperty = False;
-			}}
+		if($rememberedWSUsages != null){
+			foreach($rememberedWSUsages as $rememberedWSUsage){
+				if($rememberedWSUsage[2] != null){
+					if (($rememberedWSUsage[0] == $wsProperty[0])
+					&& ($rememberedWSUsage[1] == $wsProperty[1])
+					&& ($smwProperties[$rememberedWSUsage[2]]->getArticleId() == $wsProperty[2])){
+						$deleteProperty = False;
+					}}
+			}
 		}
 		if($deleteProperty){
 			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
@@ -310,24 +328,6 @@ function getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters){
 		array_push(&$testArray, $testArraySub);
 	}
 	return $testArray;
-}
-
-/**
- * remember ws-usage
- *
- * @param string $wsName
- */
-function rememberWSUsage($wsName, $parameterSetId, $propertyName){
-	global $wgsmwRememberedWSUsages;
-	array_push(&$wgsmwRememberedWSUsages, array($wsName, $parameterSetId, $propertyName));
-}
-
-/*
- * get remembered ws-usages
- */
-function getRememberedWSUsages(){
-	global $wgsmwRememberedWSUsages;
-	return $wgsmwRememberedWSUsages;
 }
 
 ?>

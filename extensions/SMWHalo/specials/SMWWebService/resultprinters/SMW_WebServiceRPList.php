@@ -23,7 +23,8 @@
  * @author Ingo Steinbauer
  */
 
-require_once("SMW_WebServiceResultPrinter.php");
+global $smwgHaloIP;
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceResultPrinter.php");
 
 /**
  * an abstract class which represents a printer for web service usage results
