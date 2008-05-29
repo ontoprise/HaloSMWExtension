@@ -90,9 +90,17 @@ class WebService {
 		$this->mProtocol = $protcol;	                     	
 		$this->mMethod = $method;
 		$this->mParameters = $parameters;
-		$this->mParsedParameters = new SimpleXMLElement($parameters);
-		$this->mResult = $result;
-		$this->mParsedResult = new SimpleXMLElement($result);
+		try {
+			$this->mParsedParameters = empty($parameters) 
+			                               ? null
+			                               : new SimpleXMLElement($parameters);
+			$this->mResult = $result;
+			$this->mParsedResult = empty($result) 
+			                               ? null
+			                               : new SimpleXMLElement($result);
+		} catch (Exception $e) {
+			// parser error
+		}
 		$this->mDisplayPolicy = $dp;
 		$this->mQueryPolicy = $qp;
 		$this->mUpdateDelay = $updateDelay;
