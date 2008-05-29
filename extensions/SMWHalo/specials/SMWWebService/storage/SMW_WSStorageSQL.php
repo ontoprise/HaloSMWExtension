@@ -412,7 +412,7 @@ class WSStorageSQL {
 					  'page_id'        => $pageID));
 		} catch (Exception $e) {
 			echo $e->getMessage();
-			return false.$e;
+			return false;
 		}
 		return true;
 	}
@@ -434,7 +434,7 @@ class WSStorageSQL {
 			'param_set_id' => $parameterSetId));
 		} catch (Exception $e) {
 			echo $e->getMessage();
-			return false.$e;
+			return false;
 		}
 		return true;
 	}
@@ -494,6 +494,13 @@ class WSStorageSQL {
 		return $webServices;
 	}
 
+	/**
+	 * get all parameters and their values that belong
+	 * to the given parameterset
+	 *
+	 * @param string $parameterSetId
+	 * @return array of parameters and their values
+	 */
 	function getParameters($parameterSetId){
 		$db =& wfGetDB( DB_SLAVE );
 		$ptb = $db->tableName('smw_ws_articles');
@@ -514,7 +521,13 @@ class WSStorageSQL {
 		return $parameters;
 	}
 
-	public function getWSPropertiesUsedOnPage($pageId) {
+	/**
+	 * Get all properties that are used in this article
+	 *
+	 * @param string $pageId
+	 * @return boolean success
+	 */
+	public function getWSPropertiesUsedInArticle($pageId) {
 		$db =& wfGetDB( DB_SLAVE );
 		$ptb = $db->tableName('smw_ws_properties');
 		$sql = "SELECT prop.property_id, prop.web_service_id, prop.param_set_id FROM ".$ptb." prop ".
@@ -531,13 +544,19 @@ class WSStorageSQL {
 		}
 		$db->freeResult($res);
 		return $properties;
-
 	}
 
-
-
-
-
+	/**
+	 * remove a webservice-parameterset-pait that
+	 * is no longer used in the given semantic property
+	 * in the given articke
+	 *
+	 * @param string $propertyId
+	 * @param string $wsPageId
+	 * @param string $paramSetId
+	 * @param string_$pageId
+	 * @return boolean success
+	 */
 	public function removeWSProperty($propertyId, $wsPageId, $paramSetId, $pageId) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
@@ -552,5 +571,73 @@ class WSStorageSQL {
 		}
 		return true;
 	}
+
+	/**
+	 * Removes a single cache entry
+	 *
+	 * @param string $wsPageID
+	 * @param string_type $paramSetID
+	 * @return boolean success
+	 */
+	public function removeWSEntryFromCache($wsPageID, $paramSetID) {
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$db->delete($db->tableName('smw_ws_cache'), array(
+					  'web_service_id' => $wsPageID,
+					  'param_set_id'   => $paramSetID));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Get all articles that use the given ws-parameterset-combination
+	 *
+	 * @param string $wsPageId
+	 * @param string $parameterSetId
+	 * @return unknown
+	 */
+	function getArticlesUsingWSParameterSetPair($wsPageId, $parameterSetId){
+		$db =& wfGetDB( DB_SLAVE );
+		$ptb = $db->tableName('smw_ws_articles');
+
+		$sql = "SELECT wsArticles.page_id"
+		." FROM ".$ptb." wsArticles ".
+		"WHERE wsArticles.param_set_id = ".$parameterSetId.
+		"AND wsArticles.web_service_id =".$wsPageId;
+
+		$articles = array();
+		$res = $db->query($sql);
+
+		if ($db->numRows($res) > 0) {
+			while ($row = $db->fetchObject($res)) {
+				array_push(&$$articles, array($row->page_id));
+			}
+		}
+		$db->freeResult($res);
+		return $articles;
+	}
+
+	/**
+	 * remove allentries according to the given ws-id
+	 * from the cache
+	 *
+	 * @param string $wsPageID
+	 * @return boolean success
+	 */
+	public function removeWSFromCache($wsPageID) {
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$db->delete($db->tableName('smw_ws_cache'), array(
+					  'web_service_id' => $wsPageID));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+		return true;
+	}
 }
+
 ?>
