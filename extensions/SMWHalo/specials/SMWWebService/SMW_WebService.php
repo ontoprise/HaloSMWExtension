@@ -90,9 +90,9 @@ class WebService {
 		$this->mProtocol = $protcol;	                     	
 		$this->mMethod = $method;
 		$this->mParameters = $parameters;
-		$this->mParsedParameters = null;
+		$this->mParsedParameters = new SimpleXMLElement($parameters);
 		$this->mResult = $result;
-		$this->mParsedResult = null;
+		$this->mParsedResult = new SimpleXMLElement($result);
 		$this->mDisplayPolicy = $dp;
 		$this->mQueryPolicy = $qp;
 		$this->mUpdateDelay = $updateDelay;
