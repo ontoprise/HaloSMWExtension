@@ -82,5 +82,12 @@ interface IWebServiceClient {
 	 * 
 	 */
 	public function getTypeDefinition($typename);
+	
+	/**
+	 * Calls the web service
+	 *
+	 */
+	public function call();
+	
 }
 ?>
