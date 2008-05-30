@@ -613,26 +613,7 @@ class WSStorageSQL {
 	 * @param string $parameterSetId
 	 * @return unknown
 	 */
-	function getArticlesUsingWSParameterSetPair($wsPageId, $parameterSetId){
-		$db =& wfGetDB( DB_SLAVE );
-		$ptb = $db->tableName('smw_ws_articles');
 
-		$sql = "SELECT wsArticles.page_id"
-		." FROM ".$ptb." wsArticles ".
-		"WHERE wsArticles.param_set_id = ".$parameterSetId.
-		"AND wsArticles.web_service_id =".$wsPageId;
-
-		$articles = array();
-		$res = $db->query($sql);
-
-		if ($db->numRows($res) > 0) {
-			while ($row = $db->fetchObject($res)) {
-				array_push(&$$articles, array($row->page_id));
-			}
-		}
-		$db->freeResult($res);
-		return $articles;
-	}
 
 	/**
 	 * remove allentries according to the given ws-id
@@ -652,6 +633,52 @@ class WSStorageSQL {
 		}
 		return true;
 	}
-}
 
-?>
+	/**
+	 * get results for the given web service/parameter-pair
+	 * from the cache
+	 *
+	 * @param string $wsPageId
+	 * @param string $parameterSetId
+	 * @return result array
+	 */
+	function getResultFromCache($wsPageId, $parameterSetId){
+		$db =& wfGetDB( DB_SLAVE );
+		$ptb = $db->tableName('smw_ws_cache');
+
+		$sql = "SELECT cache.result, cache.last_update, cache.last_access"
+		." FROM ".$ptb." cache ".
+		"WHERE cache.web_service_id = ".$$wsPageId.
+		"AND wsArticles.param_set_id =".$parameterSetId;
+
+		$result = array();
+		$res = $db->query($sql);
+
+		if ($db->numRows($res) == 1) {
+			$row = $db->fetchObject($res);
+			$result["result"] = $row->result;
+			$result["last_update"] = $row->last_update;
+			$result["last_access"] = $row->last_access;
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+
+	/**
+	 * remove a wwsd
+	 *
+	 * @param string $wsPageID
+	 * @return boolean success
+	 */
+	public function removeWS($wsPageID) {
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$db->delete($db->tableName('smw_ws_wwsd'), array(
+					  'web_service_id' => $wsPageID));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+		return true;
+	}
+}
