@@ -646,6 +646,15 @@ class WebService {
 		}
 		return $flatParams;
 	}
+
+/**
+	 * remove this ws from the database
+	 *
+	 */
+	public function removeFromDB() {
+		WSStorage::getDatabase()->removeWS($this->getArticleID());
+	}
 }
+
 
 ?>
