@@ -74,7 +74,7 @@ function findWSPropertyPairs(&$parser, &$text){
 				\|	
 				/xu";
 
-	$text = preg_replace_callback($pattern, extractWSPropertyPairNames, &$text);
+	$text = preg_replace_callback($pattern, "extractWSPropertyPairNames", &$text);
 	return true;
 }
 
