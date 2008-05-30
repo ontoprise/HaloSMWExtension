@@ -21,8 +21,13 @@
 	 *
 	 * NOTE: the function partly ignores the order in which fields are set up.
 	 * Only if the type of some field changes will its order be adjusted explicitly.
+	 * 
+	 * @param string $primaryKeys
+	 * 		This optional string specifies the primary keys if there is more
+	 * 		than one. This is a comma separated list of column names. The primary
+	 * 		keys are not altered, if the table already exists.
 	 */
-	public static function setupTable($table, $fields, $db, $verbose) {
+	public static function setupTable($table, $fields, $db, $verbose, $primaryKeys = "") {
 		global $wgDBname;
 		DBHelper::reportProgress("Setting up table $table ...\n",$verbose);
 		if ($db->tableExists($table) === false) { // create new table
@@ -35,6 +40,9 @@
 					$sql .= ',';
 				}
 				$sql .= $name . '  ' . $type;
+			}
+			if (!empty($primaryKeys)) {
+				$sql .= ", PRIMARY KEY(".$primaryKeys.")";
 			}
 			$sql .= ') TYPE=innodb';
 			$db->query( $sql, 'DBHelper::setupTable' );
