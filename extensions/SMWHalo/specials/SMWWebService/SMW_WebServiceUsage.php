@@ -30,8 +30,11 @@
 global $smwgIP;
 require_once($smwgIP. "/includes/SMW_Factbox.php");
 
+//todo files richtig einbinden
 // needed for db access
 require_once("SMW_WSStorage.php");
+require_once("SMW_WebServiceCache.php");
+require_once("SMW_WebService.php");
 
 
 // Define a setup function for the {{ ws:}} Syntax Parser
@@ -129,6 +132,7 @@ function webServiceUsage_Render( &$parser) {
 
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
+	$wsId = WebService::newFromName($wsName);
 
 	$wsParameters = array();
 	$wsReturnValues = array();
@@ -150,13 +154,14 @@ function webServiceUsage_Render( &$parser) {
 		}
 	}
 
-	if(validateWSUsage($wsName, $wsReturnValues, $wsParameters)){
+	if(validateWSUsage($wsId, $wsReturnValues, $wsParameters)){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
-		$wsResults = getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters);
-		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $wsParameters);
+		//$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$wsFormattedResult = $wsResults;
 		WSStorage::getDatabase()->addWSArticle($wsName, $parameterSetId, $parser->getTitle()->getArticleID());
 		
-		$wgsmwRememberedWSUsages[] = array($wsName, $parameterSetId, $propertyName);
+		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
 	} else {
 		//do something
@@ -226,7 +231,7 @@ function formatWSResult($wsFormat, $wsResults){
 }
 
 //todo
-function validateWSUsage($wsName, $wsReturnValues, $wsParameters){
+function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	//todo
 	return true;
 }
@@ -278,7 +283,7 @@ function detectRemovedWebServiceUsages($articleId){
 		}
 		if($remove){
 			WSStorage::getDatabase()->removeWSArticle($oldWSUsage[0], $oldWSUsage[1], $articleId);
-			//WebServiceCache::removeWSParameterPair($oldWSUsage[0], $oldWSUsage[1]);
+			WebServiceCache::removeWSParameterPair($oldWSUsage[0], $oldWSUsage[1]);
 			$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($oldWSUsage[1]);
 			if(sizeof($parameterSetIds) == 0){
 				WSStorage::getDatabase()->removeParameterSet($oldWSUsage[1]);
@@ -317,7 +322,7 @@ function detectRemovedWebServiceUsages($articleId){
 
 
 //todo
-function getWSResultsFromCache($wsName, $wsReturnValues, $wsParameters){
+function getWSResultsFromCache($wsId, $wsReturnValues, $wsParameters){
 	$testArray = array();
 	for($k=0; $k < 7; $k++){
 		$testArraySub = array();
