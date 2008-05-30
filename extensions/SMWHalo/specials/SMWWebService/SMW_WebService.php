@@ -159,7 +159,10 @@ class WebService {
 	 */
 	public static function newFromID($id) {
 		$ws = WSStorage::getDatabase()->getWS($id);
-		$ws->mArticleID = $id;
+		if ($ws) {
+			$ws->mArticleID = $id;
+		}
+		return $ws;
 	}
 	
 	/**
