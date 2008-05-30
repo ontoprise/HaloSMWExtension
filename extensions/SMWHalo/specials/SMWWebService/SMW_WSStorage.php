@@ -84,10 +84,10 @@ class WSStorage {
 	}
 	
 	/**
-	 * Returns the single instance of this class.
+	 * Returns the actual database. 
 	 *
-	 * @return WSStorage
-	 * 		The single instance of this class.
+	 * @return object
+	 * 		The object to access the database.
 	 */
 	public static function getDatabase() {
         self::getInstance(); // Make sure, singleton is initialized
