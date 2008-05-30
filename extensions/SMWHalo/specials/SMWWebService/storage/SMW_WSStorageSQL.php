@@ -47,12 +47,12 @@ class WSStorageSQL {
 
 		$db =& wfGetDB( DB_MASTER );
 
+		$verbose = true;
+		DBHelper::reportProgress("Setting up web services ...\n",$verbose);
+		
 		// create WWSD table
+		DBHelper::reportProgress("   ... Creating WWSD table \n",$verbose);
 		$wwsdTable = $db->tableName('smw_ws_wwsd');
-		if ($db->tableExists($wwsdTable) === true) {
-			return;
-		}
-
 		DBHelper::setupTable($wwsdTable, array(
 				  'web_service_id'		 =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
 				  'uri'  	             =>  'VARCHAR(1024) NOT NULL' ,
@@ -65,41 +65,55 @@ class WSStorageSQL {
 				  'update_delay'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'span_of_life'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'expires_after_update' =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL' ,
-				  'confirmed'            =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL'), $db, true);
+				  'confirmed'            =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL'), 
+				  $db, $verbose);
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 
+		
 		// create ws value cache table
+		DBHelper::reportProgress("   ... Creating web service cache table \n",$verbose);
 		$cacheTable = $db->tableName('smw_ws_cache');
 		DBHelper::setupTable($cacheTable, array(
 				  'web_service_id'  =>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'result'          =>  'TEXT NOT NULL' ,
 				  'last_update'    	=>  'DATETIME NOT NULL' ,
-				  'last_access'    	=>  'DATETIME NOT NULL' ,
-				  'PRIMARY KEY(web_service_id,param_set_id)' =>  ''), $db, true);
+				  'last_access'    	=>  'DATETIME NOT NULL'), 
+		          $db, $verbose, 'web_service_id,param_set_id');
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 
+		
 		// create parameter table
+		DBHelper::reportProgress("   ... Creating parameter table \n",$verbose);
 		$paramTable = $db->tableName('smw_ws_parameters');
 		DBHelper::setupTable($paramTable, array(
 				  'name'		    =>  'VARCHAR(255) NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'value'      	    =>  'VARCHAR(255) NOT NULL'), $db, true);
+				  'value'      	    =>  'VARCHAR(255) NOT NULL'), $db, $verbose);
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 
+		
 		// create properties table
+		DBHelper::reportProgress("   ... Creating properties table \n",$verbose);
 		$propTable = $db->tableName('smw_ws_properties');
 		DBHelper::setupTable($propTable, array(
 				  'property_id'     =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
-				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL',
-				  'PRIMARY KEY(property_id,page_id,web_service_id,param_set_id)' => ''), $db, true);
+				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL'), 
+		          $db, $verbose, 'property_id,page_id,web_service_id,param_set_id');
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 
+		
 		// create articles table
+		DBHelper::reportProgress("   ... Creating article table \n",$verbose);
 		$articlesTable = $db->tableName('smw_ws_articles');
 		DBHelper::setupTable($articlesTable, array(
 				  'web_service_id'  =>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'PRIMARY KEY(web_service_id,param_set_id,page_id)' =>  ''), $db, true);
+				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL'), 
+		          $db, $verbose, 'web_service_id,param_set_id,page_id');
+		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 	}
 
