@@ -1,0 +1,104 @@
+{{Helppage
+|question=How do I add interwiki links
+|answer=Like normal internal links, with a prefix to the link name corresponding to the respective wiki
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+
+
+'''Interwiki links''' are links to pages of other projects, using a prefixed internal link style.
+
+Interwiki links make it possible, to link to pages of (e.g.) Wikipedia, Wikibooks, Wikinews etc. or to your wiki-project in different languages. 
+
+A link like <code><nowiki>[[Wikipedia:Main Page]]</nowiki></code> will appear like this: [[Wikipedia:Main Page]] and redirect you to Wikipedia's Main Page. 
+
+==Interwiki links to other projects==
+===Default===
+Several Wikimedia-Projects (and others) are ready for interwiki linking by default, so you can use them without editing your database. Note that wikipedia was only added as one of the interwiki defaults since v1.10
+
+The following are some examples of interwiki prefixes which are available by default:
+{| {{prettytable}}
+|{{Hl3}} align="center"|'''prefix'''
+|{{Hl3}} align="center"|'''destination URL'''
+|{{Hl3}} align="center"|'''usage example'''
+|-
+|commons
+|<nowiki>http://commons.wikimedia.org/wiki/</nowiki>
+|<code><nowiki>[[commons:MediaWiki]]</nowiki></code>
+|-
+|mediazilla
+|<nowiki>http://bugzilla.wikimedia.org/</nowiki>
+|<code><nowiki>[[mediazilla:1209]]</nowiki></code>
+|-
+|meta
+|<nowiki>http://meta.wikimedia.org/wiki/</nowiki>
+|<code><nowiki>[[meta:Main Page]]</nowiki></code>
+|-
+|mw
+|<nowiki>http://www.mediawiki.org/wiki/</nowiki>
+|<code><nowiki>[[mw:Help:Contents]]</nowiki></code>
+|-
+|wikibooks
+|<nowiki>http://en.wikibooks.org/wiki/</nowiki>
+|<code><nowiki>[[wikibooks:Main Page]]</nowiki></code>
+|-
+|wikimedia
+|<nowiki>http://wikimediafoundation.org/wiki/</nowiki>
+|<code><nowiki>[[wikimedia:Main Page]]</nowiki></code>
+|-
+|wikinews
+|<nowiki>http://en.wikinews.org/wiki/</nowiki>
+|<code><nowiki>[[wikinews:Main Page]]</nowiki></code>
+|-
+|wikiquote
+|<nowiki>http://en.wikiquote.org/wiki/</nowiki>
+|<code><nowiki>[[wikiquote:Main Page]]</nowiki></code>
+|-
+|wikisource
+|<nowiki>http://en.wikisource.org/wiki/</nowiki>
+|<code><nowiki>[[wikisource:Main Page]]</nowiki></code>
+|-
+|wikispecies
+|<nowiki>http://species.wikimedia.org/wiki/</nowiki>
+|<code><nowiki>[[wikispecies:Main Page]]</nowiki></code>
+|-
+|wiktionary
+|<nowiki>http://en.wiktionary.org/wiki/</nowiki>
+|<code>  <nowiki>[[wiktionary:Main Page]]</nowiki></code>
+|-
+|}
+
+{{NoteIntext}} In some installations none of these is pre-installed. Try <code><nowiki>[[metawikipedia:Main_Page]]</nowiki></code> in this case.
+
+===Adding a new website for interwiki linking===
+For setting up interwiki links, you might need to edit the wiki's database or to install an [http://www.mediawiki.org/wiki/Category:Interwiki_extensions Interwiki extension]. Please contact your wiki administrator for that.
+
+
+==Interwiki links to other languages==
+[[Image:M-en-interwiki lang.png|thumb|Interwiki links to other languages]]
+If on your system there is a Wiki family running (more than one wiki on a single server, using the same source code and the same database), you can link from an article to its equivalent in another language. 
+
+
+For instance, adding this line of code: <code><nowiki>[[de:Hauptseite]]</nowiki></code> on 
+your English Main_Page will create a link "Deutsch" below the toolbox, which leads to the Main_Page of the German wiki (Hauptseite).
+
+
+
+Note, that this link is shown in Sidebar's section, '''only''', and not inside of the article. If you want to create a link inside of the text, you have to add a colon previous to the prefix: <code><nowiki>[[:de:Hauptseite]]</nowiki></code>.
+
+
+== External Links ==
+[http://meta.wikimedia.org/wiki/Help:Interwiki_linking Help:Interwiki linking]
+
+{{Languages|Help:How do I add interwiki links?}}
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://www.mediawiki.org/wiki/Help:Interwiki_linking
+|title=Help:Interwiki linking
+|retrieved=2008-04-11 
+|lastmodified=2008-03-17
+|publisher=MediaWiki
+}}

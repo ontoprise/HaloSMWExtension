@@ -1,0 +1,43 @@
+{{Helppage
+|question=How can I create an external search for a topic
+|answer=Using templates
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+
+It is possible to create external searches of a topic using key words using a template.
+
+For example, this is something that would work for Google:
+<pre><nowiki>
+<span style="border: 1px solid #CCD5DB;">[[Image:GoogleIcon.PNG]]
+[http://www.google.com/search?hl=en&safe=off&q={{{1|Wiki}}}&btnG=Search&meta= {{{1|Google}}}]</span>
+<noinclude>
+==Usage==
+Allows to establish a link to a search query at the Google search engine:
+<div style="display:table; width:auto;"><pre>
+{{Google|Term1+Term2+Term3}}
+&lt;/pre></div>
+[[Category:Template|Google]]
+</noinclude></nowiki></pre>
+
+The usage is: <nowiki>{{Google|firstTerm+Second+etc}}</nowiki> 
+
+It is also possible to do phrases by using %22Term1+Term2+etc%22
+
+*External searches are useful where an article requires certain keywords to make an effective search.
+*For the editor it allows making searches of web more quickly and painlessly.
+
+Other applications of the template include searching Forums, for bug reports of the same type for software development wikis where the wiki and forum work together.
+
+Note: Wikipedia has an [[Help:How do I add interwiki links?|interwiki prefix]] with a similar effect, so you can link to google results with <nowiki>[[Google:firstTerm+Second+etc]]</nowiki>, although templates are still useful for linking other search engines.
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://www.mediawiki.org/wiki/Help:External_searches
+|title=Help:External searches
+|retrieved=2008-04-11 
+|lastmodified=2008-03-15
+|publisher=MediaWiki
+}}

@@ -1,0 +1,109 @@
+{{Helppage
+|question=How do I add links to a page
+|answer=As simple text or surrounded by wiki markup
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+
+There are four sorts of links in MediaWiki: 
+# internal links to other pages in the wiki
+# external links to websites
+# [[Help:How do I add interwiki links?|inter-wiki links]] (links to other wikis)
+# inter-language links to other language versions of the same wiki
+
+To add an internal link, enclose the name of the page you want to link to in double square brackets. When you save the page, you'll see the new link pointing to your page. If the page exists already, it is displayed in blue, empty pages are displayed in red. Selflinks to the current page are not transformed in URLs but displayed in bold.
+
+The first letter of the target page is automatically capitalized and spaces are represented as underscores (typing an underscore in the link will have a similar effect as typing a space, but is not recommended, since the underscore will also be shown in the text).
+
+== How to link ==
+{| {{Prettytable1}}
+|-
+|{{Hl3}}|'''Description'''
+|{{Hl3}}|'''You type'''
+|{{Hl3}}|'''You get'''
+|-
+|Internal link
+|<tt><nowiki>[[Main Page]]</nowiki></tt>
+|[[Main Page]]
+|-
+|Category link
+|<tt><nowiki>[[:Category:Help]]</nowiki></tt>
+|[[:Category:Help]]
+|-
+|Piped link 
+|<tt><nowiki>[[Main Page|different text]]</nowiki></tt>
+|[[Main Page|different text]]
+|-
+|Anchor link 
+|<tt><nowiki>[[#External links|Anchor link]]</nowiki></tt>
+|[[#External links|Anchor link]]
+|-
+|External link
+|<tt><nowiki>http://mediawiki.org</nowiki></tt>
+|http://mediawiki.org
+|-
+|Internal link to image file
+|<tt><nowiki>[[media:example.jpg]]</nowiki></tt>
+|[[media:example.jpg]]
+|-
+|External link,<br />
+different title
+|<tt><nowiki>[http://mediawiki.org MediaWiki]</nowiki></tt>
+|[http://mediawiki.org MediaWiki]
+|-
+|Piped link,<br />
+different title
+|<tt><nowiki>[[Main Page|<span title="different title">different text</span>]]</nowiki></tt>
+|[[Main Page|<span title="different title">different text</span>]]
+|-
+|External link,<br />
+unnamed
+|<tt><nowiki>[http://mediawiki.org]</nowiki></tt>
+|[http://mediawiki.org]
+|-
+|External link,<br />
+same host unnamed
+|<tt><nowiki>[http://{{SERVERNAME}}/pagename]</nowiki></tt>
+|[http://{{SERVERNAME}}/pagename]
+|-
+|Interwiki link
+|<tt><nowiki>[[Wikipedia:MediaWiki]]</nowiki></tt>
+|[[Wikipedia:MediaWiki]]
+|-
+|mailto
+|<tt><nowiki>mailto:info@example.org</nowiki></tt>
+|mailto:info@example.org
+|-
+|mailto unnamed
+|<tt><nowiki>[mailto:info@example.org]</nowiki></tt>
+|[mailto:info@example.org]
+|-
+|mailto named
+|<tt><nowiki>[mailto:info@example.org info]</nowiki></tt>
+|[mailto:info@example.org info]
+|-
+|mailto named with subject line
+|<tt><nowiki>[mailto:info@example.org?Subject=URL%20Encoded%20Subject info]</nowiki></tt>
+|[mailto:info@example.org?Subject=URL%20Encoded%20Subject info]
+|-
+|redirect
+|<tt><nowiki>#REDIRECT [[Main Page]]</nowiki></tt>
+| &rarr; [[Main Page]]
+|}
+
+
+== External Links ==
+[http://meta.wikimedia.org/wiki/Help:Link Help:Link]
+
+{{Languages|Help:How do I add links to a page?}}
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://www.mediawiki.org/wiki/Help:Links
+|title=Help:Links
+|retrieved=2008-04-10 
+|lastmodified=2008-03-07
+|publisher=MediaWiki
+}}

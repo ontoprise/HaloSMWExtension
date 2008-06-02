@@ -1,0 +1,154 @@
+{{Helppage
+|question=How do I format text
+|answer=Using wiki markup (normal characters like asterisks, single quotes or equation marks which have a special function in the wiki)
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+
+You can format your text using wiki markup. This consists of normal characters like asterisks, single quotes or equation marks which have a special function in the wiki, sometimes depending on their position. For example, to format a word in ''italic'', you include it in two single quotes like <tt><nowiki>''this''</nowiki></tt>
+
+== Text formatting markup ==
+
+{| align="center" {{Prettytable1}}
+|-
+|{{Hl2}} |'''Description'''
+|{{Hl2}} |'''You type'''	
+|{{Hl2}} |'''You get'''
+|-
+| colspan="3" align="center" | ''applies anywhere''
+|-
+|Italic text
+|<tt><nowiki>''italic''</nowiki></tt>
+|''italic''
+|-
+| Bold text
+|<tt><nowiki>'''bold'''</nowiki></tt>
+|'''bold'''
+|-
+| Bold and italic
+|<tt><nowiki>'''''bold & italic'''''</nowiki></tt>
+|'''''bold & italic'''''
+|-
+|Escape wiki markup
+|<tt><nowiki><nowiki>no ''markup''</nowiki></nowiki></tt>
+|<nowiki>no ''markup''</nowiki>
+|-
+| colspan="3" align="center" | ''only at the beginning of the line''
+|-
+| Indent text
+|<tt><nowiki>:Indent text</nowiki></tt>
+|&nbsp;&nbsp;&nbsp;&nbsp;Indent text
+|-
+|Headings of<br />
+different levels <ref>Use of a heading created by single equal signs is discouraged as it appears with the same formatting and size as the page title, which can be confusing.</ref><ref>An article with four or more headings will automatically create a [http://en.wikipedia.org/wiki/Wikipedia:Section#Table_of_contents_.28TOC.29 table of contents].</ref>
+|
+<tt><nowiki>==level 1==</nowiki></tt><br />
+<tt><nowiki>===level 2===</nowiki></tt><br />
+<tt><nowiki>====level 3====</nowiki></tt><br />
+<tt><nowiki>=====level 4=====</nowiki></tt>
+|
+==Level 1==
+===Level 2===
+====Level 3====
+=====Level 4=====
+|-
+|Horizontal rule
+|
+<tt><nowiki>----</nowiki></tt>
+|
+----
+|-
+|Bullet list
+|
+&#42; one<br>
+&#42; two<br>
+&#42; three<br>
+&#42;&#42; three and one-third<br>
+&#42;&#42; three and two-thirds<br>
+|
+* one
+* two
+* three
+** three and one-third
+** three and two-thirds
+|-
+|Numbered list
+|
+&#35; one<br />
+&#35; two<nowiki><br></nowiki>spanning several lines<nowiki><br></nowiki>without breaking the numbering<br />
+&#35; three<br />
+&#35;&#35; three point one<br />
+&#35;&#35; three point two<br />
+|
+# one
+# two<br>spanning several lines<br>without breaking the numbering
+# three
+## three point one
+## three point two
+|-
+| Mixture of bulleted<br /> and numbered lists
+|
+&#35; one<br />
+&#35; two<br />
+&#35;&#42; two point one<br />
+&#35;&#42; two point two<br />
+|
+# one
+# two
+#* two point one
+#* two point two
+|-
+|Definition list
+|
+&#59;Definition<br />
+&#58;item 1<br />
+&#58;item 2<br />
+|
+;Definition
+:item 1
+:item 2
+|-
+|Preformatted text
+|
+&nbsp;&nbsp;preformatted text is done with<br />
+&nbsp;&nbsp;a space at the<br />
+&nbsp;&nbsp;beginning of the line<br />
+|
+ preformatted text is done with
+ a space at the 
+ beginning of the line
+|}
+
+Notes: <references/>
+
+== Paragraphs ==
+
+MediaWiki ignores normal line breaks. To start a new paragraph, leave an empty line. You can also start a new line with the HTML tags <tt><nowiki><br> or <br/></nowiki></tt>.
+
+== HTML ==
+
+Some [http://en.wikipedia.org/wiki/HTML HTML] tags are allowed in MediaWiki, for example <tt><nowiki><code></nowiki></tt>, <tt><nowiki><div></nowiki></tt>, <tt><nowiki><span></nowiki></tt> and <tt><nowiki><font></nowiki></tt>.
+
+
+== Other formatting ==
+Beyond the text formatting markup shown above, here are some other formatting references:
+*[[Help:How do I add links to a page?|Links]]
+*[[Help:How do I add images to a page?|Images]]
+*[[Help:How do I use tables?|Tables]]
+[http://en.wikipedia.org/wiki/Wikipedia:WikiProject_User_Page_Help/Do-It-Yourself/Formatting_Text More Formatting from Wikipedia]
+
+== External Links ==
+[http://meta.wikimedia.org/wiki/Help:Editing Help:Editing]
+
+{{Languages|Help:How do I format text?}}
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://www.mediawiki.org/wiki/Help:Formatting
+|title=Help:Formatting
+|retrieved=2008-04-10 
+|lastmodified=2008-03-31
+|publisher=MediaWiki
+}}

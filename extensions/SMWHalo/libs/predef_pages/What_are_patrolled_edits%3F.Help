@@ -1,0 +1,51 @@
+{{Helppage
+|question=What are patrolled edits
+|answer=Allowing specific users to mark items in recent changes as having been "patrolled" or "approved". By default this is only available if you have sysop permissions
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+
+
+'''Patrolled edits''' is a feature which allows specific users to mark items in recent changes as having been "patrolled" or "approved". By default this is only available if you have sysop permissions.
+
+This feature is useful when reviewing recent changes for undesirable edits, link spam and vandalism. This allows people (those who can see it) to coordinate their patrolling activity, such that edits gets checked over once, but with less wasted effort (different people checking the same edit)
+
+== Marking edits as patrolled ==
+
+; To mark an edit as patrolled
+
+#Access [[Special:Recentchanges]]
+#:Changes which are not patrolled will be indicated with a red exclamation mark
+#Click the (diff) link next to an edit
+#To mark the edit as patrolled, click the ''mark as patrolled'' link
+
+== Customization ==
+
+
+=== Automatic patrolling ===
+In MediaWiki 1.6 through 1.8, there is a [[Help:How do I change my user preferences?|user preference]] available to users who are able to mark edits as patrolled. When set, this causes their edits to be patrolled automatically.
+
+This option is not available if patrolled edits are switched off.
+
+In MediaWiki 1.9 this user preference has been removed and replaced by a new "autopatrol" right, assigned only to sysops by default. Also, users cannot mark their own edits as patrolled.
+
+=== Marker ===
+
+The formatting of the unpatrolled edit marker can be altered using CSS.
+
+
+== External Links ==
+[http://meta.wikimedia.org/wiki/Help:Patrolled_edit Help:Patrolled edit]
+
+{{Languages|Help:What are patrolled edits?}}
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://www.mediawiki.org/wiki/Help:Talk_pages
+|title=Help:Talk pages
+|retrieved=2008-04-11 
+|lastmodified=2007-12-21
+|publisher=MediaWiki
+}}

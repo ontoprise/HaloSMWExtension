@@ -1,0 +1,71 @@
+{{Helppage
+|question=How do I use the RDF export functionality
+|answer=Go to [[Special:ExportRDF]] or use the SMW_dumpRDF.php maintenance script
+|audience=End User
+|component=semantic MediaWiki
+|discourseState=Help:view
+}}
+<br/>
+Based on the user's semantic annotations of articles, SMW+ generates machine-readable documents in OWL/RDF format, that can be accessed via [[Special:ExportRDF]]. Moreover, there is a maintenance script for automatically generating complete exports of all semantic data. This article explains how annotations are formally interpreted in the OWL ontology language, and how a suitable RDF serialization is generated.
+
+== Using the export functionality ==
+
+You can easily access the generated RDF via the page [[Special:ExportRDF]] by entering a list of articles into the input field. The export will contain one OWL/RDF specification with various description blocks for exported elements. In addition to the requested articles, the export will also contain basic declarations for any further elements (such as mentioned instances, properties, and classes). There are two settings that further influence the set of exported articles:
+
+* '''Recursive export.''' Every article usually has relations to various other articles. Normally, those other articles are just declared briefly such that tools can find further RDF specifications for them if desired. By enabling recursive export, all information about the encountered objects will be exported right away. Since this process is continued for all further objects, this option can lead to large results.
+
+* '''Backlinks.''' The RDF data model is based on directed graphs. When exporting an article, one usually exports only the statements within which the corresponding element occurs as a subject, and the exported document does not include incoming links. This restricts RDF browsers, since they cannot access all elements that have some relationship to something without retrieving the whole RDF first. For this reason, one can enable the export of backlinks. All articles that have relations to any of the exported articles then will also be exported.
+
+The server administrator can restrict the availability of the above options, and can set default values cases where no parameters can be given (see below). The reason is that the above options, especially in combination, can easily lead to the export of major parts of the wiki in RDF, which might overly impair the performance of large sites.
+
+In addition to the form at [[Special:ExportRDF]], you can also retrieve RDF by calling appropriate URLs directly. This is suitable for linking to RDF specifications directly. In its basic form, this is achieved by appending a (URL encoded version of an) article name to the URL of the export service. For instance, you can link to
+
+
+http://wiki.ontoworld.org/index.php/Special:ExportRDF/ESWC2006
+
+to get this RDF directly. Alternatively, the article name can also be specified as a GET parameter "page" within the URL, e.g.
+
+ http://wiki.ontoworld.org/index.php?title=Special:ExportRDF&page=ESWC2006
+
+=== Additional GET parameters ===
+In addition to title and page, ExportRDF has additional GET (query string) parameters.
+* Backlinks can be enabled or disabled by setting "backlinks" to 1 or 0, respectively.
+* Recursive export can be enabled or disabled by setting "recursive" to 1 or 0. 
+Both settings will be ignored if disabled by the administrator. If no settings are given, site-wide default values apply. For example, the ontoworld.org wiki always exports RDF with backlinks.
+
+The default Content-Type of ExportRDF's output is <tt>application/xml</tt> (with charset=UTF-8).
+Content-Type of <tt>application/rdf+xml</tt> can be set by adding the "xmlmime=rdf" GET parameter;
+some processing tools require this RDF mimetype to process the output.
+
+== Exporting all data ==
+
+In addition to the wiki's [[Special:ExportRDF]] function, there is also a maintenance script that allows you to export all of the wiki's semantic data at once. The script is called <tt>SMW_dumpRDF.php</tt> and can be found in SMW's [http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/maintenance/ maintenance directory]. This directory also contains a [http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/maintenance/README README file] that describes how to install maintenance scripts in your local wiki installation.
+
+The script <tt>SMW_dumpRDF.php</tt> can generate full exports, or it can be restricted to certain elements of the schema, e.g. to export only the category hierarchy or only the attributes with their types. Details are described in the [http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/maintenance/SMW_dumpRDF.php script itself].
+
+The script can easily be run automatically as a [http://en.wikipedia.org/wiki/Cronjob cronjob] to generate RDF dumps on a regular basis. For ontoworld.org, the generated dumps can be obtained from http://ontoworld.org/RDF/.
+
+== The exported data in detail ==
+
+=== Mapping wiki-pages to ontology elements ===
+The export distinguishes the page in the wiki and the "thing" that the page discusses. ...
+
+It is possible to [[Help:How do I import vocabulary?|import an external vocabulary]] (such as foaf or Dublin Core) into SMW+ and [[Property:Imported_from|associate attributes and relations in SMW+ with the external vocabulary]], so that in RDF export the SMW+ attributes and relations export as properties in the external vocabulary (such as ''foaf:knows'' or ''skos:concept'').
+
+=== Categories ===
+MediaWiki category relations are exported using existing RDF/RDFS properties.  In brief:
+* A category assignment in a regular article is exported as [http://www.w3.org/TR/rdf-schema/#ch_type rdf:type] which states "is an instance of a class".  So use of MediaWiki categories is a good match for "is a" in the sense of "''San Diego'' is an instance of the class Cities".
+* A category assignment in a Category article is exported as [http://www.w3.org/TR/rdf-schema/#ch_subclassof rdfs:subClassOf] which states "all the instances of one class are instances of another".  So use of MediaWiki categories within categories is a good match for "is a" in the sense of "all instances of ''Divided cities'' are Cities".
+
+There are '''many''' usages of MediaWiki categories that conflict with these semantics.  For example, the article ''Urban decay'' might be in category Cities, but it is not a city.  And ''Category:City museums'' might be in category Cities, but city museums are not cities.
+
+
+{{
+Cite web in help
+|wiki=Semantic MediaWiki
+|url=http://semantic-mediawiki.org/wiki/Help:RDF_export
+|title=Help:RDF export
+|retrieved=2008-04-09 
+|lastmodified=2008-03-13  
+|publisher=Semantic MediaWiki
+}}

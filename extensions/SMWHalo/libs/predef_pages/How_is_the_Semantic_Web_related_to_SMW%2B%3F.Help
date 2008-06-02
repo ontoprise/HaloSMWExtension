@@ -1,0 +1,39 @@
+{{Helppage
+|question=How is the Semantic Web related to SMW+
+|answer=Semantic Web technologies enable the wiki to share its knowledge with external applications by encoding it into the standard OWL/RDF format
+|audience=End User
+|component=semantic MediaWiki
+|discourseState=Help:view
+}}
+<br/>
+
+Although SMW+ is designed to be used without additional technical background knowledge, it is closely related to well-known [http://ontoworld.org/wiki/Semantic_Web Semantic Web] technologies. These technologies enable the wiki to share its knowledge with external applications by encoding it into the standard OWL/RDF format. Below is an overview of some related resources. These should be instructive for those who are familiar with ontology languages or who wish to implement tools that use SMW+'s RDF export. 
+
+== RDF export ==
+
+The explicit semantic content of SMW+ is formally interpreted in the [http://ontoworld.org/wiki/OWL_DL OWL DL] ontology language, and is made available in OWL/RDF format. For further details on the exported format, see [[Help:How do I use the RDF export functionality?]].
+
+== Reusing vocabulary from external ontologies ==
+
+Normally, all statements in the wiki refer to concepts and properties defined in the wiki, but it is also possible to directly use vocabulary from other sources. E.g. this wiki imports a number of [http://ontoworld.org/wiki/FOAF FOAF] elements for use within the wiki. A detailed description of how to use this feature is given in the article on [[Help:How do I import vocabulary?|vocabulary import]].
+
+== Importing ontologies ==
+
+Users with administrator status are allowed to import data from OWL DL ontologies into the wiki. This function is suitable for bootstrapping a wiki with existing semantic knowledge, so that articles about relevant topics are already available and include some basic annotations. Naturally, the import function cannot create sophisticated human-readable texts or import complex ontological statements that are otherwise not representable within the wiki. However, one can achieve good results in populating a wiki with a great number of articles. For further details, see [[Help:How do I import an ontology?]].
+
+== SPARQL query service ==
+
+We provide an external [http://ontoworld.org/wiki/SPARQL_endpoint SPARQL endpoint] that enables expressive querying against the wiki's content. Since the wiki is primarily used for authoring "ABox" statements (i.e. simple facts concerning given individuals in contrast to complex schema information).
+
+== External reuse ==
+
+Tools that can process OWL/RDF in a meaningful way (including many RDF tools), can also be used with Semantic MediaWiki. [[Help:What external tools can be used with SMW+?]] lists a number of applications that have been tested with the ontoworld.org wiki's output.
+{{
+Cite web in help
+|wiki=Semantic MediaWiki
+|url=
+|title=Help:Semantic Web
+|retrieved=2008-04-09 
+|lastmodified=2008-03-13  
+|publisher=Semantic MediaWiki
+}}

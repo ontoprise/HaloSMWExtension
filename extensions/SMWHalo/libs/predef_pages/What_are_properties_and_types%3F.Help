@@ -1,0 +1,168 @@
+{{Helppage
+|question=What are properties and types
+|answer=Properties and types are the basic way of entering semantic data in SMW+
+|audience=End User
+|component=semantic MediaWiki
+|discourseState=Main:annotate
+}}
+
+'''Properties and types''' are the basic way of entering semantic data in SMW+. Properties can be viewed as «categories for values in wiki pages». They are used by a simple mark-up, similar to the syntax of links:
+
+: <tt><nowiki>[[</nowiki>''property name''::''value''<nowiki>]]</nowiki></tt>
+
+This statement defines a <tt>''value''</tt> for the property of the given <tt>''property name''</tt>. The page where this is used will just show the text for <tt>''value''</tt> and not the property assignment.
+
+Existing links can be directly augmented with such property information, while other '''types of data''' (such as numbers or calendar dates) need an additional editing step. 
+
+== Turning Links into Properties ==
+
+Consider the [http://en.wikipedia.org/wiki/Berlin Wikipedia article on Berlin]. This article contains many links to other articles, such as «Germany», «European Union», and «United States». However, the link to «Germany» has a special meaning: it was put there since Berlin is the capital of Germany. To make this knowledge available to computer programs, one would like to «tag» the link
+
+ <nowiki>[[Germany]]</nowiki>
+
+in the article text, identifying it as a link that describes a «capital property». With SMW+, this is done by putting a property name and '''::''' in front of the link inside the brackets, thus:
+
+ <nowiki>[[capital of::Germany]]</nowiki>
+
+In the article, this text still is displayed as a simple hyperlink to «Germany». The additional text <tt>capital of</tt> is the name of the '''property''' that classifies the link to Germany. As in the case of categories, the name of the property is arbitrary, but you should try to re-use properties that already appear elsewhere.
+
+To simplify this re-use, every property has its own article in the wiki, just as every category has an article.  You can see all the properties in use in the wiki with the [[Special:Properties]] page. Just as category articles are prefixed with <tt>Category:</tt>, all property articles are prefixed with <tt>Property:</tt> to distinguish them from other articles. So you can also also use the [[Special:Search]] page to find existing properties. As with categories, a property's article can be empty, but it is strongly recommended to add a description that explains the intent of the property and its proper usage.
+
+There are various ways of adding properties to pages:
+
+{| border="1" cellpadding="2" cellspacing="0"
+ ! What it does 
+ ! What you type
+ |-
+ | Classify a [[link]] with the property "example property."
+ | <pre><nowiki> Classify a [[example property::link]] with the property "example property."</nowiki></pre>
+ |-
+ | Make [[link|alternate text]] appear in place of the link.
+ | <pre><nowiki>Make [[example relation::link|alternate text]] appear in place of the link.</nowiki></pre>
+ |-
+ | To hide the property [[link| ]] from appearing at all,<br />use a space as the alternate text.
+ | <pre><nowiki>To hide the property [[example relation::link| ]] from appearing at all</nowiki></pre>
+ |-
+ | To make an ordinary link with :: without creating a property, escape the markup with a colon in front, e.g.<br />The [[:C++ :: operator]]. 
+ | <pre><nowiki>The [[:C++ :: operator]].</nowiki></pre>
+ |-
+ | To assign one value to multiple properties, add :: between each name, <br />e.g. [[link]]. 
+ | <pre><nowiki>e.g. [[property1::property2::link]]. </nowiki></pre>
+|}
+
+== Turning values in text into Properties ==
+
+There is other useful information in articles besides links.  For example, there is a number in the [[Berlin]] article giving its population.  To make this knowledge available to computer programs, one would like to "tag" the text
+
+ 3,396,990 
+
+in the article, identifying it as a value for the "population property".  With SMW+, this is done by putting the property name and '''::''' in front of the text and surrounding it with <nowiki>[[ ]]</nowiki> brackets, thus:
+ <nowiki>[[population::3,396,990]].</nowiki>
+
+This works fine.  However, it creates a link to a ''3,396,990'' page, and having an article for every population value probably does not make sense.
+Furthermore, if you wanted to create a list of all German cities ordered by population, numeric order is different from the alphabetical order that you would expect for article names. For example, in alphabetical order, "1,000,000" comes before "345".
+
+=== Types of Properties ===
+
+We want to be able to tell SMW+ that "population" is a number, not a link to a page in the wiki.  The way to do this is to specify a '''type''' for the "population" property.  SMW+ has several built-in ''datatypes'' that we can choose for properties.  For our population example, the appropriate type is called [[Type:Number]]; the prefix "Type:" is again a separate namespace that distinguishes descriptive articles about types from normal pages.  We want to give property "population" a special property that specifies it has "type:number".  To support this SMW+ has a built-in special property called [[Property:Has type]].  We use the same syntax for this special property as for any other property, so in the Property:Population article, we write:
+
+ <nowiki>[[has type::number]]</nowiki>
+
+(You don't need to specify the Type: namespace here.)
+
+SMW+ knows a number of ''special properties'' like [[Property:has type]]. Regardless of whether these properties have their own articles in the wiki, they have a special built-in meaning and are not evaluated like other relations.
+
+=== Datatypes ===
+
+Datatypes are very important for evaluating properties. Firstly, the datatype determines how tools should handle the given values, e.g. for displaying values and sorting values in search results. Secondly, the datatype is required to understand which values have the same meaning, e.g. the values "1532", "1,532", and "1.532e3" all encode the same number. Finally, some datatypes have special behavior, as will be described below. For these reasons, every property has a datatype, listed on the [[Special:Properties]] page.
+
+The reason we didn't have to specify a datatype for the "capital of" property above
+is that the default datatype is [[Type:Page]], which displays as a link.
+(Note that if you change the datatype of a property later on it does not affect the annotations of existing articles until they are saved again or purged.)
+Even though Type:Page is the default, you should explicitly specify a datatype for every property, just to prevent confusion or later redefinition with an unintended type.
+
+The same mark-up for properties that are links to pages also works for properties of other datatypes.  Here are some more examples.
+
+{| border="1" cellpadding="2" cellspacing="0"
+ ! What it does 
+ ! What you type
+ |-
+ | Assign the value 1,234,567 to the property "example."
+ | <pre><nowiki>Assign the value [[example::1,234,567]] to the property "example."</nowiki></pre>
+ |-
+ | Assign a numeric value, but showing different text in the article.
+ | <pre><nowiki>Assign a value of [[example::999,331|about a million]], 
+but showing different text in the article.</nowiki></pre>
+ |-
+ | Specifying the type in a property's article:<br/>This property is a [[Type:Number|number]].
+ | <pre><nowiki>Giving the type in an property's article:
+This property is a [[has type::Type:Number|number]].</nowiki></pre>
+ |- 
+ | Combining MediaWiki markup with property values:<br/>John's username is 
+[mailto:john@mailinator.com john]<br/>''Hint: Use a [[Help:How do I use templates to simplify annotations?|template]] for this.''
+ | <pre><nowiki>Combining MediaWiki markup with property values:
+John's username is 
+[[username::john|[mailto:john@mailinator.com john]]].</nowiki></pre>
+|}
+
+== Datatypes and units of measurement ==
+
+Using different types, properties can be used to describe very different kinds of values. A complete list of available types is available from [[Special:Types]]. Basic types include:
+* [[Type:String]] (text strings)
+* [[Type:Number]] (integer and decimal numbers with optional exponent) 
+* [[Type:Page]] (links to pages, the default)
+These can be used creatively for very different purposes. For instance, properties of type string can be used for encoding phone numbers (which could can contain non-numeric symbols).
+
+=== Units ===
+Type:Number allows a unit after the numeric value to distinguish values (e.g. "30.3 mpg" versus "47 km/liter"), but does not know how to convert between them. To support automatic conversion and multiple unit formats, you can define your own datatype with [[Help:How do I use custom units of measurement?|custom units]].  These automatically convert values to and from standard representations, so that you are free to use your preferred unit in each article yet still query and compare with property values in other articles.
+
+=== Special datatypes ===
+There are some special built-in datatypes which support more complicated formats and unit conversions.
+
+* [[Type:Boolean]] restricts the value of a property to true/false (also 1/0 and yes/no).
+* [[Type:Text]] is like Type:String but can have unlimited length;
+* [[Type:Temperature]] can't be user-defined since converting temperature units is more complicated than multiplying by a conversion factor.
+* [[Type:Geographic coordinate]] describes geographic locations. It recognizes different forms of geographic coordinates.  Using [[Help:What are service links?|service links]] it can dynamically provides links to online map services. 
+* [[Type:Date]] specifies particular points in time. ''This type is still somewhat experimental, but may feature complex conversions between (historic) calendar models in the future.''
+
+For specifying URLs and emails, there are some special variations of the string datatype:
+* [[Type:URL]] displays an external link to its URL object.
+* [[Type:Annotation URI]]: properties of this type are interpreted as relations to external objects, denoted by the URI. They are special since they are interpreted as ''annotation properties'' on export. See the type's page for documentation.
+* [[Type:Email]] displays an e-mail address as a link (with <nowiki>mailto:</nowiki>).
+
+=== Properties with multiple types ===
+In human language it is easy to introduce multiple facts at once.
+For example, "John F. Kennedy was the 35th president of the U.S.A., serving from 1961 until his assassination in 1963."
+This is information about John F. Kennedy that belongs in his wiki page,
+but it shifts to information about his presidency.
+You could simply have a property "Presidency_details" of Type:String and put the text in it.  But it will only be meaningful to humans, you can't query on it or sort it to produce a list of presidents.
+
+You can't nest semantic annotations, so you cannot have a string property that contains additional annotations.
+
+Often the best way to represent this is to create an article for the object of the property, so this can be annotated with the additional information.  So property "Has_presidency" would be of Type:Page, and then the article "Presidency of JFK" has properties Of_country::U.S.A., Count:35, Start_date:1961-01-20, End_date:1963-11-22, etc.
+Wikipedia frowns on so-called "stub" articles, but in a semantic wiki they are appropriate as they provide information for semantic queries and browsing.
+
+It is also possible to create a property in Semantic MediaWiki that takes multiple values,
+these are sometimes called "n-ary relations".
+So "Has_presidency" could have Type:Page; Type:Number; Type:Date; Type:Date,
+where the four values are the country, the count of the presidency, the start date, and the end date.  See [[Help:What are n-ary relations?]] for more information.
+
+== Special properties ==
+
+We mentioned the special property [[Property:Has type]] that you use to tell SMW the datatype of a property.  SMW has other predefined special properties that have special meaning (even if you do not create property pages for them in your wiki).  You ''cannot'' use these names for your own properties.  In SMW 1.0, the list of special properties is
+: [[Property:Allows value|Allows value]], [[Property:Corresponds to|Corresponds to]], [[Property:Display units|Display units]], [[Property:Equivalent URI|Equivalent URI]], [[Property:Has type|Has type]], [[Property:Imported from|Imported from]], [[Property:Provides service|Provides service]], and [[Property:Subproperty of|Subproperty of]].
+
+Additionally, [[Property:Display unit|Display unit]] is an alias for [[Property:Display units|Display unit'''s''']].
+
+These internal special properties do not appear in the [[Special:Properties]] list, you cannot query for them, and a special property's page does not show the pages using the property.
+
+==Notes==
+{{
+Cite web in help
+|wiki=Semantic MediaWiki
+|url=http://semantic-mediawiki.org/wiki/Help:Properties_and_types
+|title=Help:Properties and types
+|retrieved=2008-04-08 
+|lastmodified=2008-03-26  
+|publisher=Semantic MediaWiki
+}}

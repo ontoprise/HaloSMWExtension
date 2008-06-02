@@ -1,0 +1,100 @@
+The text of this help page is representing parts of the original [http://www.mediawiki.org/w/index.php?title=Extension:Semantic_Forms Semantic Forms] documentation and is licensed undter the [http://www.gnu.org/copyleft/fdl.html GNU Free Documentation License]
+----
+{{Helppage
+|question=How do I use Semantic Forms
+|answer=Please read this help article 
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:view
+}}
+[[discourseState::Main:edit| ]][[HelppageAudience::Administrator| ]]
+
+==Description==
+Very simply, Semantic Forms allows you to have '''forms for adding and editing data''' on your wiki, '''without any programming'''. Forms can be created and edited not just by administrators, but by users themselves.
+
+The main components of Semantic Forms functionality are form definition pages, which exist in a new namespace, 'Form:'. These are pages consisting of markup code which gets parsed when a user goes to add or edit data. Since forms are defined strictly through these definition pages, users can themselves create and edit forms, without the need for any actual programming.
+
+The Semantic Forms extension enforces the use of [http://meta.wikimedia.org/wiki/Help:Template|templates] in creating semantic data. It does not support direct semantic markup in data pages; instead, all the semantic markup is meant to be stored indirectly through templates. A form allows a user to populate a pre-defined set of templates for a page (behind the scenes, that data is turned into semantic properties once the page is saved).
+
+Semantic Forms also supports '''autocompletion of fields''', so users can easily see what the previously-entered values were for a given field. This greatly helps to avoid issues of naming ambiguity, spelling, etc.
+
+Data in a page that doesn't fit into the form, like a free-form text description of the page's subject, doesn't get ignored when the page is edited with a form; instead, it gets placed into a separate input box, called "Free text".
+
+==Special pages==
+The extension defines eight "special" MediaWiki pages:
+
+* '''Special:AddData''' - lets a user add a page using a user-defined form. ([http://discoursedb.org/wiki/Special:AddData/Magazine/Some_New_Magazine See example of page])
+* '''Special:AddPage''' - lets a user specify a page name, to be either added or edited depending on whether it already exists. ([http://discoursedb.org/wiki/Special:AddPage/Magazine See example of page]) This page is somewhat deprecated.
+* '''Special:CreateForm''' - lets a user create a new form for adding/editing data. ([http://discoursedb.org/wiki/Special:CreateForm See example of page])
+* '''Special:CreateTemplate''' - lets a user create a new template. ([http://discoursedb.org/wiki/Special:CreateTemplate See example of page])
+* '''Special:CreateProperty''' - lets a user create a new property. ([http://discoursedb.org/wiki/Special:CreateProperty See example of page])
+* '''Special:CreateCategory''' - lets a user create a new category. ([http://discoursedb.org/wiki/Special:CreateCategory See example of page])
+* '''Special:EditData''' - lets a user edit an existing page using a user-defined form. ([http://discoursedb.org/wiki/Special:EditData/Magazine/Newsweek See example of page]) This page is somewhat deprecated.
+* '''Special:Forms''' - lists all form pages on the site. ([http://discoursedb.org/wiki/Special:Forms See example of page])
+* '''Special:Templates''' - lists all templates on the site. ([http://discoursedb.org/wiki/Special:Templates See example of page])
+
+==Getting started==
+So, you've set up all the software on your site. Now what? Now it's time to create the structures to hold, display and enable adding and editing of your data; thankfully all of this can be done simply by creating various wiki pages. You should take the following steps:
+
+* '''Figure out your data structure.''' What types of pages will the site have? What data will be contained on each one? You can change all of this around later, but it's good to have a starting plan.
+
+* '''Create properties.''' The basic building blocks of any semantic site are the connections between data, which in Semantic MediaWiki are known as properties. A property is used to specify a single piece of information about the topic of this page; the value of a property can either be a standalone  value, or the name of a page on the wiki. Every property should be defined on your wiki, with a page in the "Property:" namespace. The easiest way to do that is using the 'CreateProperty' special page (see above).
+
+* '''Create templates.''' A template sets the display of the data on a page, holds the markup to turn the data into actual semantic information, and (often) defines the page as being of a certain category, and thus of a certain page type. There will generally be one template per page type, although sometimes a single page type will contain more than one template. A template can also be used for aggregation, by displaying a list of all other pages that have a certain relationship to this page (see the [http://semantic-mediawiki.org/index.php/Help:Inline_queries inline queries] documentation for much more information on this). The easiest way to create templates is using the 'CreateTemplate' special page (see above).
+
+* '''Create forms.''' Now you can create forms to allow users to easily add and edit pages of various types. There should be one form per page type; a form should populate the template or templates that this page type contains. As before, there's a special page to create new forms: 'CreateForm' (see above). See below for documentation on the special markup language used to define forms. One common request is for these three special pages ('CreateProperty', 'CreateTemplate' and 'CreateForm') to be able to edit existing property/template/form pages, and not just create new ones. However, this is programatically much harder to implement than creating new pages, because it requires parsing. For the foreseeable future, modifying existing properties, templates and forms will have to be done by hand.
+
+* '''Create categories.''' One template in each form should define each article that the form creates as being part of a certain category. You should create a page for each such category, and specify a default form for it so that every article is automatically editable with the same form that created it. The easiest way to do that is using the 'CreateCategory' special page (see above).
+
+* '''Enable links to forms.''' Besides creating categories that have a default form, there are other steps you should take to enable users to access the forms that you have created. These include adding links to add data in the sidebar and elsewhere, and setting default forms and alternate forms on properties, to have red-links to nonexistent pages point to a form for creating them. These actions are all explained further below.
+
+* '''Add data.''' You should also add data to the site, using your new forms, to make sure that forms, templates and categories are working the way you want them to.
+
+* '''Add links on sidebar and elsewhere.''' The sidebar (which, for English-language wikis, can be edited at the page "MediaWiki:Sidebar") should hold links to add each of the data types, and to the categories for each of these data types as well. You can also include such links on the main page and elsewhere.
+
+* '''Customize.''' Once the structure is in place, you can customize all you want - changing the look-and-feel of the entire wiki, of the various templates, and of the forms, adding and changing fields and adding and changing inline queries for queries.
+
+==Adding data==
+Adding data is usually structured as a two-step process: first the user inputs a page title, and then he/she is sent to a form for either adding or editing that page, depending on whether or not the page already exists; this ensures that users don't accidentally overwrite existing pages. However, it's also possible to skip the first step, if the form contains a formula for setting the page title based on the user input.
+
+===The two-step process===
+There are two ways to let users add data in this way:
+
+* Use the 'forminput' parser function - adding this tag to any page will make an input that will let the user specify a title for adding or editing. By default, this input is included in every from created by the 'CreateForm' page. Here is the generic call for the tag:
+
+:{{#forminput:form_name|size|value|button_text|query_string}}
+
+:All arguments are optional. form_name is the name of the SF form to be used; if it is left empty, a dropdown will appear, letting the user choose among all existing forms. size represents the size of the text input (default is 25), and value is the starting value of the input (default is blank). button_text is the text that will appear on the "submit" button, and query_string is the set of values that you want passed in through the query string to the form.
+
+* Use 'AddPage' - the user can go to /Special:AddPage; a form name can optionally be specified in the URL, so it looks like /Special:AddPage/form-name. If no form name is specified, a dropdown of all available forms in the wiki will appear next to the input for the page name, letting the user choose. (This approach is no longer recommended.)
+
+====Adding pages of a specific namespace====
+You can have a page-input form create pages within a specific namespace (like 'User:') by default, without forcing users to type in that namespace every time. If you're using the 'forminput' tag, the "query_string" value should include 'namespace=''namespace-name'''. If you're using 'AddPage', you can do so by setting the URL to something like "<nowiki>http://mywiki.com/Special:AddPage/</nowiki>''form-name''/Namespace:''namespace-name''".
+
+====Adding sub-pages====
+In MediaWiki, you can create [http://en.wikipedia.org/wiki/Wikipedia:Subpages sub-pages] by including a slash in the page name. To have the page that's added automatically be a sub-page, you can add a value for "super_page=" in the query string. To make it a sub-page of the current page, you can set this value to "super_page={{PAGENAME}}". This will prepend a "current-page-name/" onto the beginning of the page name that the user types in.
+
+===The one-step process===
+You can have the name of the page created by the form be created automatically, by adding a "page name" parameter within the form definition's "info" tag. There are two types of "variables" one can include in the value for this field:
+* <nowiki>'<</nowiki>''TemplateName''[''FieldName'']<nowiki>>'</nowiki> - gets replaced with the value for the specified field in the specified template
+* <nowiki>'<unique number>'</nowiki> - gets replaced by the lowest number for which the page title that's generated is unique. Normally, this value starts out as blank, then goes to 2, then 3, etc. However, one can manually set the starting number for this value, by adding a "start=" parameter; this number must be 0 or higher. For instance, to have the number start at 1 and go upward, you should set the tag to be "<nowiki><unique number;start=1></nowiki>". Note that the parameter is delimited by a semicolon.
+
+For example, the form described above could have a declaration of "page name=<Item[Author]> opinion item <unique number>". This would include the author's name in the name of every opinion item, as well as a number to guarantee the uniqueness of every opinion-item page added. A user could then go to the URL "<nowiki>http://discoursedb.org/wiki/Special:AddData/Item</nowiki>" and fill out the form; if they set the author to be "Ernest Hemingway", and no other opinion items in the wiki had him as an author, then hitting the "Save page" button would result in a new page called "Ernest Hemingway opinion item 1".
+
+Note that users must be sent to the page "Special:AddData/''form-name''" for this automatic page-setting to work; if they go instead to the regular form page, or to "Special:AddPage", they will be prompted for a page name, which will override whatever the automatic page name would be. (Though it should be noted that you can also change the form page to link to "Special:AddData/''form-name''", in place of having the #forminput input.)
+
+If you want, you can generate this link using the "#formlink" parser function, instead of creating the URL directly. This function is called as:
+
+:{{#formlink:form_name|link_text|link_type|query_string}}
+
+The first, second and fourth arguments work much the same way that their equivalents in "#forminput" work (see above). The "link_type" argument sets the display of the link: if it's set to "button", the link will show up as a button; if it's set to blank or anything else, it will show up as a regular link.
+
+===Preloading data===
+You may want a form to already contain some data when the user goes to it. (Note that this only applies to adding new data; for editing an existing page, there is no way to set the contents of the form to anything other than the current contents of that page.) There are various ways to do this:
+
+* Specify a "default" value for whatever fields you want to have a value for in the form.
+* Specify a "preload" page for the "free text" field, which will preload the free text field with the contents of that page.
+* Add 'preload=''preload-page-name''' to the 'query_string' value in the 'forminput' call; this will preload the entire form with the contents of that page.
+* Similarly, you can add a "preload=..." value to the query string for an 'AddPage' or 'AddData' URL.
+* Add "''template-name[field-name]=field-value''" to the 'query_string' value in the 'forminput' call, to set the value for a specific field.
+* Similarly, you can add a value for a specific field to the URL query string for 'AddPage' or 'AddData'.

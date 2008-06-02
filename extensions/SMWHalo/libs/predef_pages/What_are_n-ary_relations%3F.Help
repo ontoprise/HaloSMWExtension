@@ -1,0 +1,59 @@
+{{Helppage
+|question=What are n-ary relations
+|answer=Properties with more than one type
+|audience=End User
+|component=semantic MediaWiki
+|discourseState=Main:annotate
+}}
+
+===Overview - Create Property===
+In the section "Properties" of the semantic toolbar you click "Create".
+[[Image:SEMWIKI26_CreateAttr.png|center|thumb|200px|The Properties section in the semantic toolbar.]]
+
+Then you need to specify the name of the property and its range or type. The domain is already set to the current category.
+
+[[Image:SEMWIKI26_EnterAttr.png|center|thumb|200px|Creating a new property for the current category.]]
+
+When you click "Create", the new property is created and its properties are set in the corresponding new article. A new window opens (popups have to be accepted from this page) and shows the newly created property page for further elaboration.
+
+
+===Ranges and types===
+
+Normally, binary properties are created. They have a domain and a type. By default the type is "Type:Page" i.e. the value of the property is another article. For reasoning and gardening purposes, the category of these articles should be specified in the input field "Range:".
+
+Range hints are generated in the wiki text e.g.
+ <nowiki>
+ [[Has range hint::Category:Product]]
+ </nowiki>
+
+On the other hand, types are simple data types like integer numbers or strings.
+To define a type, the range can be removed with the red cross. Then the new type is added by clicking the link "Add type". All built-in types can be selected in the selection field. Future versions will provide all data types, even user-defined ones.
+
+[[Image:SEMWIKI26_EnterType.png|center|thumb|200px|The range has been removed and a type was added.]]
+
+For the example above, the following type definition is added to the wiki text:
+ <nowiki>
+ [[has type:=Type:Float]]
+ </nowiki>
+
+===Defining n-ary properties===
+
+You can define n-ary properties in the same way as described above. Additional types and ranges can be added with the corresponding links.
+
+N-ary properties are like binary properties with additional conditions. For instance, the density is a property of a substance. But it varies with temperature and pressure. This can be expressed with an n-ary property.
+
+[[Image:SEMWIKI26_Nary.png|center|thumb|200px|The density of a substance (float value) is specified for a temperature and a pressure (float value).]]
+
+The following type definition will be generated in the wiki text:
+ <nowiki>
+ [[Has type:=Type:Temperature;Type:Float;Type:Float]]
+ </nowiki>
+
+If proper types are defined in the wiki, this specification can be made even more precise:
+ <nowiki>
+ [[Has type:=Type:Temperature;Type:Pressure;Type:Density]]
+ </nowiki>
+
+As mentioned above, user-defined type like <code>Type:Pressure</code> are not yet available in the semantic toolbar. However, they are offered by the autocompletion when typing the wiki text.
+
+So, n-ary properties are defined by a semi-colon separated list of types. What appears as range in the semantic toolbar will be encoded as <code>Type:Page</code> with an additional range hint.

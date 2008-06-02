@@ -1,0 +1,773 @@
+{{Helppage
+|question=How do I use the ParserFunctions extension 
+|answer= <nowiki>{{#functionname| argument 1 | argument 2 | argument 3...}}</nowiki>
+|audience=End User
+|component=MediaWiki
+|discourseState=Main:edit
+}}
+<br/>
+
+
+The '''ParserFunctions''' extension is a collection of [[Help:What are parser functions?|parser functions]] (note the difference between the name of the collection, and the general term). These parser functions have a hash character in front of the function name, so they typically have the syntax:
+: {{ft|#functionname|<nowiki>argument 1 | argument 2 | argument 3...</nowiki>}}
+
+==Functions==
+The extension defines nine functions:
+<tt>[[#.23expr:|expr]]</tt>, 
+<tt>[[#.23if:|if]]</tt>, 
+<tt>[[#.23ifeq:|ifeq]]</tt>, 
+<tt>[[#.23ifexist:|ifexist]]</tt>, 
+<tt>[[#.23ifexpr:|ifexpr]]</tt>,
+<tt>[[#.23switch:|switch]]</tt>, 
+<tt>[[#.23time:|time]]</tt>, 
+<tt>[[#.23rel2abs:|rel2abs]]</tt>, and
+<tt>[[#.23titleparts:|titleparts]]</tt>.
+
+
+<h3 style="background: beige">#expr:</h3>
+* syntax: {{ft|#expr|expression}}
+
+The <tt>expr</tt> function computes mathematical expressions based on permutations of numbers (or [[Help:What are wiki variables?|variable]]s/[http://meta.wikimedia.org/wiki/Help:Template#Parameters parameter]s that translate to numbers) and operators. It does not recognize strings (use <tt>[[#.23ifeq:|ifeq]]</tt> below instead). The accuracy and format of numeric results varies with the server's operating system.
+
+Operators are listed below. In a complex expression, operators are evaluated from left to right with the following precedence (explained in more detail in [[Help:How can I perform simple mathematical computations?]]):
+# grouping (parentheses);
+# unary (+/- signs and NOT);
+# multiplicative (*, /, div, mod);
+# additive (+ and -);
+# round;
+# comparative (=, !=, &lt;, &gt;, etc.);
+# logical AND;
+# logical OR.
+
+When evaluating as boolean, "0" is considered false and any other non-space value is true (boolean true is represented as "{{#expr: 30 and 7}}").
+
+Decimal numbers use "." as a decimal point (<code>[[Help:What are parser functions?|formatnum:]]</code> can be used to change the decimal point to a comma for the appropriate locales). Scientific notation with <tt>E</tt> plus exponent is not yet supported on input for expressions, but used on output (see [[Help:How can I perform simple mathematical computations?]]).
+
+{| {{prettytable}}
+! Operator
+! Operation
+! Example
+! Result
+|-
+| rowspan="2" colspan="2" align="center"| ''none''
+| {{ft|#expr|123456789012345}}
+| {{#expr:123456789012345}}
+|-
+| {{ft|#expr|0.000001}}
+| {{#expr:0.000001}}
+|-
+!colspan="4"| Arithmetic
+|-
+! +
+| Unary positive sign
+| {{ft|#expr|+30 * +7}}
+| {{#expr:+30 * +7}}
+|-
+!-
+| Unary negative sign
+| {{ft|#expr|-30 * -7}}
+| {{#expr:-30 * -7}}
+|-
+! *
+| Multiplication
+| {{ft|#expr|30 * 7}}
+| {{#expr:30 * 7}}
+|-
+! /<br />div
+| Division
+| {{ft|#expr|30 / 7}}<br />{{ft|#expr|30 div 7}}
+| {{#expr:30 / 7}}<br />{{#expr:30 div 7}}
+|-
+! <tt>+</tt>
+| Addition
+| {{ft|#expr|30 + 7}}
+| {{#expr:30 + 7}}
+|-
+! <tt>-</tt>
+| Subtraction
+| {{ft|#expr|30 - 7}}
+| {{#expr:30 - 7}}
+|-
+!colspan="4"| Logic
+|-
+! not
+| Unary NOT<br />logical NOT
+| {{ft|#expr|not 0 * 7}}<br />{{ft|#expr|not 30 + 7}} 
+| {{#expr: not 0 * 7}}<br />{{#expr:not 30+7}}
+|-
+! and
+| Logical AND
+|
+{{ft|#expr|4 &lt; 5 and 4 mod 2}}
+|{{#expr: 4<5 and 4 mod 2}}
+|-
+! or
+| Logical OR
+|
+{{ft|#expr|4 &lt; 5 or 4 mod 2}}
+|{{#expr: 4<5 or 4 mod 2}}
+|-
+!colspan="4"| Comparison
+|-
+! =
+| Equality (numerical & logical)
+| {{ft|#expr|<nowiki>30 = 7</nowiki>}}
+| {{#expr:30 = 7}}
+|-
+! &lt;&gt;<br />!=
+| Inequality, logical exclusive or
+| {{ft|#expr|30 &lt;&gt; 7}}<br />{{ft|#expr|<nowiki>1 != 0</nowiki>}} 
+| {{#expr:30 <> 7}}<br />{{#expr:1 != 0}}
+|-
+! &lt;
+| Less than
+|
+{{ft|#expr|30 &lt; 7}}
+|{{#expr: 30 < 7}}
+|-
+! &gt;
+| Greater than
+|
+{{ft|#expr|30 &gt; 7}}
+|{{#expr: 30 > 7}}
+|-
+! &lt;=
+| Less than or equal to
+|
+{{ft|#expr|<nowiki>30 &lt;= 7</nowiki>}}
+|{{#expr: 30 <= 7}}
+|-
+! &gt;=
+| Greater than or equal to
+|
+{{ft|#expr|<nowiki>30 &gt;= 7</nowiki>}}
+|{{#expr: 30 >= 7}}
+|-
+!colspan="4"| Other
+|-
+! ( )
+| Grouping operators
+| {{ft|#expr|(30 + 7) * 7 }}
+| {{#expr:(30 + 7) * 7 }}
+|-
+! mod
+| "Modulo" truncates the numbers to whole numbers, divides the left number by the right, and returns the remainder that could not be divided.<br />Note: ''div'' and ''mod'' are different from all programming languages.
+| {{ft|#expr|30 mod 7}}<br />{{ft|#expr|-8 mod -3}}<br />{{ft|#expr|8 mod 2.7}}<br />
+| {{#expr:30 mod 7}}<br />{{#expr:-8 mod -3}}<br />{{#expr:8 mod 2.7}}<br />
+|-
+! round
+| Rounds off the number on the left to the power of 1/10 given on the right.
+| {{ft|#expr|30 / 7 round 4}}<br />{{ft|#expr|30 / 7 round 1}}<br />{{ft|#expr|1911 round -2}}<br />{{ft|#expr|-2.5 round 0}}
+| {{#expr: 30 / 7 round 4}}<br />{{#expr:30 / 7 round 1}}<br />{{#expr:1911 round -2}}<br />{{#expr:-2.5 round 0}}
+|}
+
+<h3 style="background: beige">#if:</h3>
+* syntax: 
+*: {{ft|#if|<nowiki><condition string> | <code if true></nowiki>}}
+*: {{ft|#if|<nowiki><condition string> | <code if true> | <code if false></nowiki>}}
+
+The <code>if</code> function is an if-then-else construct. The condition is always true unless it is empty or whitespace-only. The code in the second argument is parsed if the condition is true, and the third argument is parsed if the condition is false (either or both may be blank, and the code-if-false argument can be omitted entirely).
+
+The condition is evaluated as text, so mathematical expressions will always evaluate as true; to use expressions as conditions, see <tt>[[#.23ifexpr:|#ifexpr]]</tt>. It is not possible to distinguish between an undefined parameter in a template and a blank one (it is possible with <tt>[[#.23ifexpr:|#ifexpr]]</tt>).
+
+Examples:
+* {{ft|#if|<nowiki>foo | do if true | do if false</nowiki>}} = {{#if:foo| do if true | do if false}}
+* {{ft|#if|<nowiki>0   | do if true | do if false</nowiki>}} = {{#if:0  | do if true | do if false}}
+* {{ft|#if|<nowiki>    | do if true | do if false</nowiki>}} = {{#if:   | do if true | do if false}}
+
+<h3 style="background: beige">#ifeq:</h3>
+* syntax:
+*: {{ft|#ifeq|<nowiki><text 1> | <text 2> | <code if equal></nowiki>}}
+*: {{ft|#ifeq|<nowiki><text 1> | <text 2> | <code if equal> | <code if not equal></nowiki>}}
+
+The <code>ifeq</code> function compares two strings or numbers, and returns the second argument if they are equal and the third argument if not equal (either or both may be blank, and the code-if-not-equal argument can be omitted entirely).
+
+Comparison of strings is case-sensitive (for example, {{#ifeq:A|a|A = a|A != a}}). If both strings can be interpreted numerically, they will be compared numerically (for example, {{#ifeq:01|1|01 = 1|01 != 1}}); To force a string-based comparison, add non-numerical characters (such as quotes <code>"</code>) to both compared arguments.
+
+It is possible to distinguish between undefined and empty template parameters by comparing default values (if the parameter is defined, it will overwrite the default value even if blank):
+* {{ft|#ifeq|<nowiki>{{{parameter|default}}} | default | parameter not defined  | parameter defined</nowiki>}} = {{#ifeq:{{{parameter|default}}} | default | parameter not defined | parameter defined}}
+
+Issues:
+* Text between &lt;nowiki&gt; tags is temporarily replaced by a unique code. This affects comparisons: {{ft|#ifeq|<nowiki>&lt;nowiki&gt;abc&lt;/nowiki&gt; | &lt;nowiki&gt;abc&lt;/nowiki&gt; | equal | not equal</nowiki>}} returns "{{#ifeq:<nowiki>abc</nowiki> | <nowiki>abc</nowiki> | equal | not equal}}".
+
+<h3 style="background: beige">#ifexist:</h3>
+
+{{ft|#ifexist}} returns one of two results based on whether or not a particular page exists. 
+
+ {{ft|#ifexist|<nowiki>&lt;page name&gt; | &lt;wikitext if page exists&gt; | &lt;wikitext if page does not exist&gt; </nowiki>}}
+
+
+The usual case-sensitivity applies: if a page exists then also a non-canonical name for that page gives a positive result. E.g. on DMSWiki:
+:{{ft|#ifexist|<nowiki>Density|Foo|RFC 3092</nowiki>}} gives {{#ifexist:Density|Foo|RFC 3092}}, because [[Density]] exists
+:{{ft|#ifexist|<nowiki>density|Foo|RFC 3092</nowiki>}} gives {{#ifexist:density|Foo|RFC 3092}}, because [[density]] is in canonical form the existing [[Density]]
+:{{ft|#ifexist|<nowiki>DENSITY|Foo|RFC 3092</nowiki>}} gives {{#ifexist:DENSITY|Foo|RFC 3092}} because [[DENSITY]] does not exist
+:{{ft|#ifexist|<nowiki>m:Help:Calculation|Yes|Oops</nowiki>}} gives {{#ifexist:m:Help:Calculation|Yes|Oops}} although [http://meta.wikimedia.org/wiki/Help:Calculation m:Help:Calculation] exists, because of the interwiki prefix.
+
+The first parameter is the title to check for, the second is the positive result, and the third, the negative result. If the parameter passed does not produce a valid title object, then the result is negative.
+
+[[template:exists]] gives the same result, except that the result is positive for an interwiki link. You can also handle an interwiki link differently with [[template:if interwiki link]].
+
+{{ft|#ifexist}} doesn't handle relative paths (like '../foo'), for that, use it in combination of {{ft|#rel2abs}}.
+
+The page where <nowiki>{{#ifexist:foo}}</nowiki> appears is listed on Special:Whatlinkshere/foo (as a page which links to foo), see below.
+
+On Wikimedia wikis there is a maximum for the number of distinct pages for which #ifexist is called on a page. A call of #ifexist after a transclusion of the same page does not require an extra database query and is therefore not counted. A call beyond the maximum returns "false". The html-source of each page shows the counted number of calls, as well as the maximum. The maximum is currently 500, and it has been announced that this will be lowered to 100. [http://en.wikipedia.org/wiki/Wikipedia:Village_pump_%28technical%29#Abuse_of_.23ifexist_parser_function].
+
+{{ft|#ifexist}} always returns the false condition with Special pages:
+:{{ft|#ifexist|<nowiki>Special:Version|'''works'''|'''doesn't work'''</nowiki>}} gives {{#ifexist:Special:Version|'''works'''|'''doesn't work'''}}
+
+<h3 style="background: beige">#ifexpr:</h3>
+{{ft|#ifexpr}} evaluates a mathematical expression (see #expr) and returns one of two strings depending on the result. 
+
+ {{ft|#ifexpr|<nowiki>&lt;expression&gt; | &lt;then text&gt; | &lt;else text&gt; </nowiki>}}
+
+
+If the expression evaluates to zero, then the ''else text'' is returned, otherwise the ''then text'' is returned. Expression syntax is the same as for <tt>expr</tt>.
+
+Example:
+:{{ft|#ifexpr| 10 > 9<nowiki> | yes | no</nowiki>}} {{#ifexpr: 10 > 9|yes|no}} -- Because 10 is greater than 9.
+
+;At the moment the ''else text'' is also returned for an empty expression&#58;
+:{{ft|#ifexpr|<nowiki>{{ns:0}}|Toast| '''or else'''</nowiki>}} gives {{#ifexpr: {{ns:0}}|Toast|'''or else'''}}
+;Omitting both ''then text'' and ''else text'' gives no output except possibly an error message; this can be used to check the correctness of an expression, or to check the wording of the error message (emulated ''assertions'', forced errors)&#58;
+:{{ft|#ifexpr|1/{{ft sub|#ifeq|{{ft sub|ns|4}} <nowiki>| DMSWiki | 1 | 0</nowiki>}}}} {{#ifexpr: 1/{{#ifeq: {{ns:4}}|DMSWiki|1|0}}}} -- no result, hence "<nowiki>1/{{#ifeq: {{ns:4}}|DMSWiki|1|0}}"</nowiki> is a correct expression
+:{{ft|#ifexpr|1/{{ft sub|#ifeq|{{ft sub|ns|0}} <nowiki>| DMSWiki | 1 | 0</nowiki>}}}} {{#ifexpr: 1/{{#ifeq: {{ns:0}}|DMSWiki|1|0}}}}
+:{{ft|#if|{{ft sub|#ifexpr|<nowiki>1=2</nowiki>}}<nowiki> | wrong | correct</nowiki>}} {{#if:{{#ifexpr: 1=2}}|wrong|correct}} -- "1=2" is a correct Boolean expression (not to be confused with one with the value 1, representing "true")
+:{{ft|#if|{{ft sub|#ifexpr|1E2}}<nowiki> | wrong | correct</nowiki>}} {{#if:{{#ifexpr: 1E2}}|wrong|correct}} -- "1E2" not allowed in expressions
+:{{ft|#if|{{ft sub|#ifexpr|1/0}}<nowiki> | wrong | correct</nowiki>}} {{#if:{{#ifexpr: 1/0}}|wrong|correct}} -- "1/0" not allowed
+
+:{{ft|#if|{{ft sub|#ifexpr|<nowiki>a=b</nowiki>}}<nowiki> | wrong | correct</nowiki>}} {{#if:{{#ifexpr: a=b}}|wrong|correct}} ("a=b" not allowed, to compare strings use #ifeq)
+
+Example of an application: <nowiki>{{ #if: {{#ifexpr: {{PAGENAME}} }} || </nowiki>''action if PAGENAME is a number (or correct numeric expression)'' }} 
+
+For another application, see also [[Template:evalns]]
+
+<h3 style="background: beige">#switch:</h3>
+
+<code>switch</code> compares a single value against multiple others, returning a string if a match is found. The syntax is basically:
+
+ {{ft begin|#switch}} <span style="color: green;">''&lt;comparison value&gt;''</span>
+  | ''&lt;value<sub>1</sub>&gt;'' = ''&lt;result<sub>1</sub>&gt;''
+  | ''&lt;value<sub>2</sub>&gt;'' = ''&lt;result<sub>2</sub>&gt;''
+  | ''...''
+  | ''&lt;value<sub>n</sub>&gt;'' = ''&lt;result<sub>n</sub>&gt;''
+  | <span style="color: blue;">''&lt;default result&gt;''</span>
+ {{ft end}}
+
+<code>switch</code> will search through each value passed until a match is found with the comparison value. When found, the result for that value is returned (the text string after the equal sign). If no match is found, but the last item has no equal sign in it, it will be returned as the default result. If your default result ''must'' have an equal sign, you may use <code>#default</code>:
+
+ {{ft begin|#switch}} <span style="color: green;">''&lt;comparison value&gt;''</span>
+  | ''&lt;value&gt;'' = ''&lt;result&gt;''
+  | <span style="color: blue;">#default = ''&lt;default result&gt;''</span>
+ {{ft end}}
+
+Note that it's also possible to have "fall through" for values (reducing the need to duplicate results). For example:
+
+ {{ft begin|#switch}} <span style="color: green;">''&lt;comparison value&gt;''</span>
+ | ''&lt;value<sub>1</sub>&gt;''
+ | ''&lt;value<sub>2</sub>&gt;''
+ | ''&lt;value<sub>3</sub>&gt;'' = ''&lt;result<sub>1, 2, 3</sub>&gt;''
+ | ''...''
+ | ''&lt;value<sub>n</sub>&gt;'' = ''&lt;result<sub>n</sub>&gt;''
+ | <span style="color: blue;">''&lt;default result&gt;''</span>
+ {{ft end}}
+
+Note how value<sub>1</sub> and value<sub>2</sub> contain no equal sign. If they're matched, they are given the result for value<sub>3</sub> (that is, whatever is in result<sub>3</sub>).
+
+;As for [[##ifeq:|#ifeq:]] the comparison is numerical where possible&#58;
+:{{ft|#switch|<nowiki>+07 | 7 = Yes | 007 = Bond | No </nowiki>}} gives {{ #switch: +07 | 7 = Yes | 007 = Bond | No }}
+:{{ft|#switch|<nowiki>"+07"|"7"= Yes |"007"= Bond | No </nowiki>}} gives {{ #switch:"+07"|"7"= Yes |"007"= Bond | No }}
+;The matched value can be empty, therefore the following constructs are equivalent&#58;
+:{{ft|#if|<nowiki>{&#123;ns:0&#125;} | not empty | empty </nowiki>}} gives {{ #if: {{ns:0}} | not empty | empty }}
+:{{ft|#switch|<nowiki>{&#123;ns:0&#125;}|=empty|not empty </nowiki>}} gives {{ #switch:{{ns:0}}|=empty|not empty }}
+
+Comparison of strings is case-sensitive:
+:{{ft|#switch|<nowiki>A | a=lower | A=UPPER </nowiki>}} gives {{#switch: A | a=lower | A=UPPER }}
+:{{ft|#switch|<nowiki>A | a=lower | UPPER </nowiki>}} gives {{#switch: A | a=lower | UPPER }}
+:{{ft|#switch|<nowiki>a | a=lower | UPPER </nowiki>}} gives {{#switch: a | a=lower | UPPER }}
+
+This is not to be confused with the fact that parser function names are case-insensitive:
+:{{ft|#swItch|<nowiki>A | a=lower | UPPER </nowiki>}} gives {{#swItch: A | a=lower | UPPER }}
+
+To have the [[##switch:|#switch]] statement be case-insensitive, use the construct <nowiki>{{lc:}}</nowiki> or <nowiki>{{uc:}}</nowiki>
+:{{ft|#switch|<nowiki>{{lc:A}} | a=lower | A=UPPER </nowiki>}} gives {{#switch: {{lc:A}} | a=lower | A=UPPER }}
+:{{ft|#switch|<nowiki>{{lc:A}} | a=lower | UPPER </nowiki>}} gives {{#switch: {{lc:A}} | a=lower | UPPER }}
+:{{ft|#switch|<nowiki>{{lc:a}} | a=lower | UPPER </nowiki>}} gives {{#switch: {{lc:a}} | a=lower | UPPER }}
+
+This is usually used in templates, when you want to have case-insensitivity on in param values:
+ {{ft begin|#switch}} <span style="color: green;">{{ft sub|lc|<nowiki>{{{1| B }}}</nowiki>}}</span>
+ | a
+ | b
+ | c = <nowiki>'''''abc''' or '''ABC'''''</nowiki>
+ | A
+ | B
+ | C = <nowiki>''Memory corruption due to cosmic rays''</nowiki>
+ | <span style="color: blue;">#default = ''N/A''</span>
+ {{ft end}}
+gives {{#switch: {{lc: {{{1| B }}} }}
+| a
+| b
+| c = '''''abc''' or '''ABC'''''
+| A
+| B
+| C = ''Memory corruption due to cosmic rays''
+| #default = N/A
+}}
+
+[[##switch:|#switch]] may be used instead of [[##ifeq:|#ifeq]]:
+:{{ft|#switch|<nowiki>a | a=true | false </nowiki>}} gives {{#switch: a | a=true | false }}
+:{{ft|#ifeq|<nowiki>a | a | true | false </nowiki>}} gives {{#ifeq: a | a | true | false }}
+
+<h3 style="background: beige">#time:</h3>
+
+{{ft|#time}} is a time and date formatting function ('''for dates from 1 Jan 1970 only!'''). The syntax is:
+
+ {{ft|#time|format}}
+ {{ft|#time|format &#124; time}}
+
+If the time is not specified, the time at which the article is converted to HTML is used. Note that due to caching, this may be up to a week different to the time at which the article is viewed. Manual updates may be required, this can be achieved by saving the page without making any changes (a "null edit") or viewed with <code>action=purge</code> in search string of URL or viewed by a user whose option is "Disable page caching". 
+
+The ''format'' parameter is a format string similar to the one used by [http://www.php.net/date PHP's date]. 
+
+The following format codes have the same meaning as in PHP. Significant differences from PHP's behaviour, apart from internationalisation (i.e. language and locale differences), should be considered an error of ParserFunctions and should be reported. All numeric format codes return numbers formatted according to the local language, use the xn code described below to override this.
+
+{| cellpadding="6" style="border:1px solid #C0C0C0; border-collapse:collapse;"
+! Code 
+! Description
+! Example output
+! Current output
+|-
+|colspan="4"| Year:
+|-
+| Y
+| The 4-digit year.
+| e.g. 2006
+| {{#time:Y}}
+|-
+| y
+| The 2-digit year.
+| 00 to 99, e.g. 06 for year 2006.
+| {{#time:y}}
+|-
+|colspan="4"| Month:
+|-
+| n
+| The month number, not zero-padded.
+| 1 to 12 
+| {{#time:n}}
+|-
+| m
+| The month number, zero-padded.
+| 01 to 12
+| {{#time:m}}
+|-
+| M
+| An abbreviation of the month name. Often internationalised.
+| Jan to Dec
+| {{#time:M}}
+|-
+| F
+| The full month name. Often internationalised.
+| January
+| {{#time:F}}
+|-
+|colspan="4"| Week:
+|-
+| W
+| ISO 8601 week number (ISO years have full weeks from monday to sunday, and ISO week number 1 always contains January 4 or the first thursday of the civil year), zero-padded.
+| 01 to 52 or 53 (depends on year)
+| {{#time:W}}
+|-
+|colspan="4"| Day:
+|-
+| j
+| The day of the month, not zero-padded.
+| 1 to 31
+| {{#time:j}}
+|-
+| d
+| The day of the month, zero-padded.
+| 01 to 31
+| {{#time:d}}
+|-
+| z
+| The day of the year (starting from 0)
+| 0 to 364, or 365 on a leap year
+| {{#time:z}}
+|-
+| D
+| An abbreviation for the day of the week. Rarely internationalised.
+| Mon to Sun
+| {{#time:D}}
+|-
+| l
+| The full weekday name. Rarely internationalised.
+| Monday to Sunday
+| {{#time:l}}
+|-
+| N
+| ISO 8601 day of the week (according to the ISO 8601 week).
+| 1 (for Monday) through 7 (for Sunday)
+| {{#time:N}}
+|-
+| w
+| number of the day of the week (according to the American week).
+| 0 (for Sunday) through 6 (for Saturday)
+| {{#time:w}}
+|-
+|colspan="4"| Hour:
+|-
+| a
+| am (between 01:00:00 and 12:59:59 on the same day) or pm, with lowercase (used with the 12-hour format).
+| am or pm
+| {{#time:a}}
+|-
+| A
+| Same as with code <tt>a</tt> above, but with uppercase.
+| AM or PM
+| {{#time:A}}
+|-
+| g
+| 12-hour format of the hour without leading zeros (one or two digits, used with am/pm or AM/PM).
+| 1 to 12
+| {{#time:g}}
+|-
+| h
+| 12-hour format of the hour, with leading padding zero (two digits, used with am/pm or AM/PM).
+| 01 to 12
+| {{#time:h}}
+|-
+| G
+| 24-hour format of the hour, without leading padding zero (one or two digits).
+| 0 to 23
+| {{#time:G}}
+|-
+| H
+| 24-hour format of the hour, with leading padding zero (two digits).
+| 00 to 23
+| {{#time:H}}
+|-
+|colspan="4"| Minutes and seconds:
+|-
+| i
+| The minute, with leading padding zero (two digits).
+| 00 to 59
+| {{#time:i}}
+|-
+| s
+| The second, with leading padding zero (two digits).
+| 00 to 59
+| {{#time:s}}
+|-
+| U
+| Seconds since January 1 1970 00:00:00 GMT.
+| 0 to infinite
+| {{#time:U}}
+|-
+|colspan="4"| Miscellaneous:
+|-
+| L
+| Whether it's a leap year.
+| 1 if it is a leap year, 0 otherwise.
+| {{#time:L}}
+|-
+| t
+| Number of days in the month.
+| 28 to 31
+| {{#time:t}}
+|-
+| c
+| ISO 8601 formatted date, same as {&#123;#time:Y-m-dTH:i:s{&#123;#time:+H:i&#124;+0 hours&#125;}&#125;}.
+| fixed length string
+| {{#time:c}}
+|-
+| r
+| RFC 2822 formatted date, same as {&#123;#time:D, j M Y H:i:s {&#123;#time:+H:i&#124;+0 hours&#125;}&#125;}.
+| variable length string
+| {{#time:r}}
+|}
+
+The following format codes are extensions to the PHP syntax:
+
+{| cellpadding="6" style="border:1px solid #C0C0C0; border-collapse:collapse;"
+! Code 
+! Description
+|--------------
+| xn
+| Format the next numeric code as a raw ASCII number. For example, in the Hindi language, {{ft|#time|H, xnH}} produces ०६, 06.
+|--------------
+| xN
+| Toggle a permanent raw number formatting flag. Like xn, except it lasts until the end of the string or until the same code appears again.
+|--------------
+| xr
+| Format the next numeric code as a roman numeral. Only works for numbers up to 3000.
+|--------------
+| xg
+| Output the genitive form of the month name, for languages which make such a distinction between genitive and nominative.
+|--------------
+| xx
+| A literal "x"
+|--------------
+| xij
+| The day of the month in Iranian calendar.
+|--------------
+| xiF
+| The full month name in Iranian calendar
+|--------------
+| xin 
+| The month number in Iranian calendar
+|--------------
+| xiY
+|  The full year in Iranian calendar
+|--------------
+| xjj 
+| The day of the month in Hebrew calendar
+|--------------
+| xjF
+| The full month name in Hebrew calendar
+|--------------
+| xjx 
+| Genitive form of the month name in Hebrew calendar
+|--------------
+| xjn 
+| The month number in Hebrew calendar
+|--------------
+|  xjY 
+| The full year in Hebrew calendar
+|--------------
+|  xkY 
+| The full year in Thai solar calendar
+|}
+
+Any unrecognised character will be passed through to the output unmodified. There are also two quoting conventions which can be used to output literal characters. 
+
+* Characters enclosed in double quotes will be considered literal (with the quotes themselves removed). Unmatched quotes will be considered literal quotes. Example:
+** {{ft|#time|"The month is" F}} &rarr; {{ #time: "The month is" F }}
+** {{ft|#time|i's"}} &rarr; {{ #time: i's" }}
+* Backslash escaping as in PHP's date() is supported. \H produces a literal H, \" produces a literal ".
+
+More format codes may be added in the future, as demanded by the users of this extension. This may come in the form of either a more complete implementation of PHP's format codes, or additional "x" codes.
+
+The format of the ''time'' parameter is identical to the one used by PHP's function [http://php.net/manual/en/function.strtotime.php strtotime()]. It supports both absolute and relative dates, such as "<tt>December 11</tt>" and/or "<tt>+10 hours</tt>", which can be used for timezone translation. See also [http://www.gnu.org/software/tar/manual/html_node/tar_109.html the GNU tar manual] for more information.
+
+====Examples====
+*{{ft|#time|<nowiki>l j F Y | 20070304</nowiki>}} gives "{{#time:l j F Y|20070304}}"
+*{{ft|#time|<nowiki>l j F Y | 2007-3-4</nowiki>}} gives "{{#time:l j F Y|2007-3-4}}" 
+*{{ft|#time|<nowiki>l j F Y | 4 March 2007</nowiki>}} gives "{{#time:l j F Y|4 March 2007}}"
+*{{ft|#time|<nowiki>l j F Y | -32 days</nowiki>}} gives "{{#time:l j F Y|-32 days}}" (32 days ago)
+*{{ft|#time|<nowiki>H:i | +6 hours</nowiki>}} gives "{{#time:H:i|+6 hours}}" (6 hours later than UTC)
+*{{ft|#time|<nowiki>H:i | 8:15 +6 hours</nowiki>}} gives "{{#time:H:i|8:15 +6 hours}}"
+*{{ft|#time|<nowiki>m/Y | -17 months</nowiki>}} gives "{{#time:m/Y|-17 months}}" (17 months ago)
+
+In combination with [[Help:Date formatting and linking|user-specified date formatting]]:
+*{{ft|#time|<nowiki>l [[j F]] [[Y]] | 4 March 2007</nowiki>}} gives "{{#time:l [[j F]] [[Y]] | 4 March 2007}}"
+*{{ft|#time|<nowiki>l [[Y-m-d]] | 4 March 2007</nowiki>}} gives "{{#time:l [[Y-m-d]] | 4 March 2007}}"
+
+Both give the user-specified format; the two are different if no preference has been specified.
+
+====Range====
+The range of proper functioning is 01 January 1970 00:00:01 through 19 January 2038 03:14:07, or 1 through <math>2^{31}-1</math> seconds after the start of 1970 (the [http://en.wikipedia.org/wiki/Year_2038_problem Year 2038 problem]). For arbitrary dates that may exceed this range, use [http://meta.wikimedia.org/wiki/Category:Date_computing_template date computing templates] such as [http://meta.wikimedia.org/wiki/Template:Dowa Template:dowa] instead.
+
+Dates before 1901 give an error message, dates between 1901 and 1970 even give (perhaps depending on the server) a wrong result (!):
+
+*<code><nowiki>"{{#time:c|5 April 1967}}"</nowiki></code> gives {{#time:c|5 April 1967}}
+*<code><nowiki>"{{#time:c|5 April 1867}}"</nowiki></code> gives {{#time:c|5 April 1867}}
+
+====Incomplete dates====
+*<code><nowiki>"{{#time:c|2007}}"</nowiki></code> gives {{#time:c|2007}} (not a year but a time: today, 20:07)
+*<code><nowiki>"{{#time:c|1997}}"</nowiki></code> gives {{#time:c|1997}} (19:97 is not a valid time, therefore interpreted as year, giving the current date and time in that year)
+*<code><nowiki>"{{#time:c|1967}}"</nowiki></code> gives {{#time:c|1967}} (19:67 is not a valid time, therefore interpreted as year; this gives a date that is out of range which is changed to the start of the valid range)
+*<code><nowiki>"{{#time:c|April 2007}}"</nowiki></code> gives {{#time:c|April 2007}} (start of the month)
+*<code><nowiki>"{{#time:c|5 April}}"</nowiki></code> gives {{#time:c|5 April}} (specified date of the current year)
+
+====February 29====
+Caution should be taken with February 29, as <nowiki>{{#time:j|February 29}}</nowiki> will vary with the year. For example
+
+*{{ft|#time|<nowiki>j|February 29 2006</nowiki>}} gives {{#time:j|February 29 2006}}
+*{{ft|#time|<nowiki>j|February 29 2008</nowiki>}} gives {{#time:j|February 29 2008}}
+
+====Timezones====
+
+Give UTC for a specified time, expressed in time zone UTC-3:
+*<code><nowiki>"{{#time:H:i:s|7:00:00 -0300}}"</nowiki></code> gives {{#time:H:i:s|7:00:00 -0300}}
+*<code><nowiki>"{{#time:H:i:s|7:00:00 -3}}"</nowiki></code> gives {{#time:H:i:s|7:00:00 -3}}
+
+Give the UTC 3 hours ago:
+*<code><nowiki>"{{#time:H:i:s|-3 hours}}"</nowiki></code> gives {{#time:H:i:s|-3 hours}}
+
+Give the UTC 3 hours before a specified time expressed as UTC:
+*<code><nowiki>"{{#time:H:i:s|7:00:00 -3 hours}}"</nowiki></code> gives {{#time:H:i:s|7:00:00 -3 hours}}
+
+Give the UTC 3 hours before a specified time expressed in time zone UTC-3:
+*<code><nowiki>"{{#time:H:i:s|7:00:00 -3 -3 hours}}"</nowiki></code> gives {{#time:H:i:s|7:00:00 -3 -3 hours}}
+
+Thus "-0300" and "-3" ''add'' 3 hours, while "-3 hours" subtracts them.
+
+
+<h3 style="background: beige">#rel2abs:</h3>
+
+{{ft|#rel2abs}} converts a relative path to an absolute path.
+
+ {{ft|#rel2abs|path}}
+ {{ft|#rel2abs|path &#124; base path}}
+
+A relative path is a path starting with '/', './', '../'. or is containing '/../' or '/.' or is simply the strings  '..' or '.'.<br />
+If a <tt>base path</tt> is given, is should be defined in an absolute syntax.
+
+Example:
+*If standing in <tt>Help:Foo/bar</tt> and is calling {{ft|#rel2abs|../baz}}, the result will be <tt>{{#rel2abs:../baz|Help:Foo/bar}}</tt>
+*If standing in <tt>Help:Foo</tt> and is calling {{ft|#rel2abs|../baz}}, the result will be <tt>{{ #rel2abs: ../baz | Help:Foo }}</tt>
+*If standing in <tt>Help:Foo</tt> and is calling {{ft|#rel2abs|../../baz}}, the result will be <tt>{{ #rel2abs: ../../baz | Help:Foo }}</tt>
+*If calling {{ft|#rel2abs|../baz &#124; Help:Bar/foo}}, the result will be <tt>{{ #rel2abs: ../baz | Help:Bar/foo }}</tt>
+*If calling {{ft|#rel2abs|Help:Foo/bar/../baz}}, the result will be <tt>{{ #rel2abs: Help:Foo/bar/../baz }}</tt>
+
+There is no check if the path does exist, for that you might use {{ft|#ifexist}} in combination:
+:{{ft|#ifexist|{{ft sub|#rel2abs|..}}<nowiki> | '..' exist | '..' does not exist</nowiki>}} gives <tt>{{ #ifexist: {{#rel2abs: .. }} | '..' exist | '..' does not exist }}</tt>
+:{{ft|#ifexist|{{ft sub|#rel2abs|.}}<nowiki> | '.' exist | '.' does not exist</nowiki>}} gives <tt>{{ #ifexist: {{#rel2abs: . }} | '.' exist | '.' does not exist }}</tt>
+
+<h3 style="background: beige">#titleparts:</h3>
+
+'''<nowiki>{{</nowiki> #titleparts: ''pagename'' | ''n_of_segments'' | ''starting_from'' }}'''<br />
+returns ''n_of_segments'' slash-separated segments of ''pagename'', starting from the specified starting segment.
+* if ''starting_from'' is omitted, it is considered to be equal 1
+* namespace part of ''pagename'' is converted into localized namespace name
+
+Examples with one numeric parameter:
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|0|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|0|}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|1|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|1|}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|2|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|2|}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|3|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|3|}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|4|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|4|}}
+
+Examples with two numeric parameters:
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|2|2}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|2|2}}
+:This gives two parts of the title, starting at the second part. Likewise:
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|1|2}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|1|2}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|1|3}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|1|3}}
+
+Examples with negative parameters (which means "counting from the right"):
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|-1|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|-1|}}
+*<code><nowiki>"{{#titleparts:Help:Link/a/b|1|-1|}}"</nowiki></code> gives {{#titleparts:Help:Link/a/b|1|-1|}}
+
+
+<h3 style="background: beige">#iferror:</h3>
+
+<nowiki>{{#iferror</nowiki>:''expression''|''error''|''success''}} returns ''error'' if the expression contains a <nowiki><strong class="error"></nowiki> as generated by #expr, #ifexpr, #time, #rel2abs, and some other MediaWiki situations (such as recursive depth and template loop checks). This is most useful in catching bad input passed to such parserfunctions. For example:
+
+*<code><nowiki>{{#iferror:{{#expr:1+1}}|bad input|valid expression}}</nowiki></code> gives {{#iferror:{{#expr:1+1}}|bad input|valid expression}} 
+*<code><nowiki>{{#iferror:{{#expr:1+Z}}|bad input|valid expression}}</nowiki></code> gives {{#iferror:{{#expr:1+Z}}|bad input|valid expression}}
+
+The last two parameters are also optional. If the ''success'' parameter is omitted, then the ''expression'' is returned on success. If the ''error'' parameter is also omitted, then no output is generated on error, and ''expression'' is returned on success.
+*<code><nowiki>{{#iferror:{{#expr:1+1}}|bad input}}</nowiki></code> gives {{#iferror:{{#expr:1+1}}|bad input}}
+*<code><nowiki>{{#iferror:{{#expr:1+Z}}|bad input}}</nowiki></code> gives {{#iferror:{{#expr:1+Z}}|bad input}}
+*<code><nowiki>{{#iferror:{{#expr:1+1}}}}</nowiki></code> gives {{#iferror:{{#expr:1+1}}}}
+*<code><nowiki>{{#iferror:{{#expr:1+Z}}}}</nowiki></code> gives {{#iferror:{{#expr:1+Z}}}}
+
+Thus:
+*<nowiki>{{#iferror:</nowiki>''wikitext''|''alternative''}} means "render ''wikitext'' if it is correct, and otherwise ''alternative''".
+*<nowiki>{{#iferror:</nowiki>''wikitext''}} means "render ''wikitext'' if it is correct".
+
+
+== Caveats ==
+Like other [[Help:What are parser functions?|parser function]]s the parser functions in this extension are affected by [[mediazilla:5678|5678]] in a predictable way. Summary: undefined parameters can be overwritten by ''corresponding'' parameters, for details see [[mediazilla:5678|5678]] and [[Help:Substitution#Corrupted_default_value|Substitution]]. Substitution is the only case where this is critical with respect to parameter defaults. It doesn't affect defined parameters.
+
+===Substitution===
+Applying "subst:" to a parser function works, provided that there is no space between "subst:" and "#". For details see [[Help:Substitution]]. 
+Note that unless a technique like [[Help:Substitution#Optional substitution|optional substitution]] is used, substituting a template which uses a parser function does not replace that parser function with its result. This is often undesirable.
+
+See also the previous section.
+
+===Tables===
+Currently wiki pipe table syntax doesn't work inside conditionals, but there are some workarounds.
+* Hide the pipe from parser functions by putting it in a template, e.g. [[Template:!]].
+* Use html style table syntax instead of wiki style table syntax.
+* See also [[Help:Table]], completely empty rows or columns are not displayed. Empty cells could be also transformed into dummy <tt>&amp;nbsp;</tt> cells on pages not affected by [[mediazilla:5569|5569]].
+Note that "'''<tt>|</tt>'''" and "'''<tt>=</tt>'''" were always tricky within templates, this is no new issue.
+
+
+==== useTidy ====
+If you decide to use this, you will need to download the HTML tidy program from http://tidy.sourceforge.net/.
+
+===Expressions===
+*'''div''' is not integer division and is redundant, use '''/''' (slash) for real divisions.
+*'''mod''' uses PHP's % operator, which is different from modulo-operators in all other programming languages, see also [[Template:mod]] and [[mediazilla:6356 6068]].
+*'''mod''' sometimes returns wrong results for the same input values, see [[mediazilla:6356|6356]] and [[ParserFunctions/MOD10000|/MOD10000]]. ''Update: values less than 1E+12 are apparently not affected.''  
+*Valid [[#.23expr:|#expr:]] results like {{#expr: 0.0000001}} are not yet supported as '''#expr:''' input:
+*:<nowiki>{{#expr:</nowiki>{{#expr:0.0000001}}<nowiki>}}</nowiki> yields ''{{#expr:{{#expr:0.0000001}}}}''.
+*Under certain conditions '''round 0''' results in '''-0''' instead of '''0'''. For an expression '''x''' using '''0+(x)''' fixes this oddity.
+
+===Newlines and spaces===
+Newlines and spaces are stripped from the start and end of parameters of all parser functions. In cases where these matter, e.g. in wikitable syntax, for conditionals use [[Template:if]] as a workaround.
+
+See also [[Help:Newlines and spaces]].
+
+==Code execution==
+
+Oddly, the page to which #ifexist is applied (i.e. the page whose existence is the condition) is registered as link target of a link from the page with #ifexist.  (See [https://bugzilla.wikimedia.org/show_bug.cgi?id=12019 bug #12019].)
+
+See also {{ml|Help:Parser_function|Interpretation_of_a_parser_function_as_a_template|interpretation of a parser function as a template}}.
+
+== Alteration and localization ==
+The file [http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/ParserFunctions/ParserFunctions.i18n.php ParserFunctions.i18n.php] contains the localization for the parserfunctions.  Adding more may be done by editing it according to the following guidelines.
+
+In the latest MediaWiki versions, a new case for the language code should be added to function efParserFunctionsWords, for example:
+<pre>
+        $words['fr'] = array(
+	    'expr'       => array( 0, 'calcul',        'expr' ),
+            'if'         => array( 0, 'si',            'if' ),
+            'ifeq'       => array( 0, 'si-similaire',  'ifeq' ),
+            'ifexpr'     => array( 0, 'si-calcul',     'ifexpr' ),
+            'switch'     => array( 0, 'achemine',      'switch' ),
+	    'default'    => array( 0, '#default' ); // same
+            'ifexist'    => array( 0, 'si-existe',     'ifexist' ),
+	    'time'       => array( 0, 'temps',         'time' ),
+	    'rel2abs'    => array( 0, 'rel-a-abso',    'rel2abs' ),
+	    'titleparts' => array( 0, 'part-titre',    'titleparts' ),
+        );
+</pre>
+* Please note that every hook established in function wfSetupParserFunctions '''must''' have an associated magic-words statement for it to work. Failure to associate a magic word may result in PHP warning messages (see [http://bugzilla.wikimedia.org/show_bug.cgi?id=10166 bug #10166]).
+
+This method may not work on older version. Alternatively, hooks may be established in function wfSetupParserFunctions, as follows.
+<pre>
+// fr
+$wgParser->setFunctionHook( '#calcul', array( &$wgExtParserFunctions, 'expr' ) );
+$wgParser->setFunctionHook( '#si', array( &$wgExtParserFunctions, 'ifHook' ) );
+$wgParser->setFunctionHook( '#si-similaire', array( &$wgExtParserFunctions, 'ifeq' ) );
+$wgParser->setFunctionHook( '#si-calcul', array( &$wgExtParserFunctions, 'ifexpr' ) );
+$wgParser->setFunctionHook( '#achemine', array( &$wgExtParserFunctions, 'switchHook' ) );
+$wgParser->setFunctionHook( '#si-existe', array( &$wgExtParserFunctions, 'ifexist' ) );	
+$wgParser->setFunctionHook( '#temps', array( &$wgExtParserFunctions, 'time' ) );	
+</pre>
+* Tested on MediaWiki 1.6.10
+
+==See also==
+
+* Help pages
+** [[Help:Calculation|Calculation]]
+** [[Help:Magic words|Magic words]]
+** [[Help:Template|Template]]
+** [[Help:Newlines and spaces|Newlines and spaces]] - shows how in branching newlines and spaces are preserved.
+* Similar extensions
+** [[mw:Extension:ParserFunctions (extended)]]
+** [[mw:Extension:MathStatFunctions]]
+** [[mw:Extension:VariablesExtension]]
+** [[mw:Extension:StringFunctions]]
+** [[mw:Extension:DynamicFunctions]]
+** [[mw:Extending wiki markup#Parser functions]]
+** [[mw:Extension:LoopFunctions]], [[bugzilla:2357]] - loop functionality
+** [[mw:Extension:Control Structure Functions]]
+
+* Discussions
+** [http://mail.wikipedia.org/pipermail/wikitech-l/2006-April/thread.html#34685 Discussion about the ParserFunctions in the Wikitech-l list archive]
+
+
+
+{{
+Cite web in help
+|wiki=MediaWiki
+|url=http://meta.wikimedia.org/wiki/ParserFunctions
+|title=Help:ParserFunctions
+|retrieved=2008-04-14 
+|lastmodified=2008-04-13
+|publisher=Wikimedia. Meta-wiki
+}}
