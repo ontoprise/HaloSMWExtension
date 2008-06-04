@@ -144,36 +144,31 @@ class WebServiceManager {
 
 		//--- TEST
 
-		/*
+/*		 
 		 global $smwgHaloIP;
 		 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
-		 $wwsd = '<webservice name="Weather">'.
-		 '    <uri name="http://weather.example.com/weather.wsdl" />'.
-		 '    <protocol>SOAP</protocol>'.
-		 '    <method name="getTemperature" />'.
-		 '    <parameter name="zipCode" defaultValue="98101" optional="false" path="cityWeather.zipCode" />'.
-		 '    <parameter name="zipCode" defaultValue="98100" optional="false" path="cityWeather.zipCode" />'.
-		 '    <result name="temp">'.
-		 '        <part name="celsius" path="cityWeather.temperature.celsius" />'.
-		 '        <part name="fahrenheit" path="cityWeather.temperature.fahrenheit" />'.
-		 '    </result>'.
-		 '    <result name="temperature">'.
-		 '        <part name="c" path="cityWeather.temperature.celsius" />'.
-		 '        <part name="f" path="cityWeather.temperature.fahrenheit" />'.
-		 '    </result>'.
-		 '    <displayPolicy>'.
-		 '        <once />'.
-		 '    </displayPolicy>'.
-		 '    <queryPolicy>'.
-		 '        <maxAge value="1440"/>'.
-		 '        <delay value="1"/>'.
-		 '    </queryPolicy>'.
-		 '    <spanOfLife value="180" expiresAfterUpdate="true"/>'.
-		 '</webservice>';
+		 $wwsd = '<WebService>'.
+  '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'. 
+  '<protocol>SOAP</protocol>'.
+  '<method name="getCurrencyValue" />'.
+  '<parameter name="provider" path="parameters.provider" />'.
+  '<parameter name="in" path="parameters.srcCurrency" />'.
+  '<parameter name="out" path="parameters.dstCurrency" />'.
+  '<result name="mode">'.
+  '</result>'.
+  '<displayPolicy>'.
+   '<once />'.
+  '</displayPolicy>'.
+  '<queryPolicy>'.
+    '<maxAge value="1440"/>'.
+    '<delay value="1"/>'.
+  '</queryPolicy>'.
+  '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
+'</WebService>';
 
-		 $ws = WebService::newFromWWSD($wwsd);
-
+		 $ws = WebService::newFromWWSD("CurrencyCalculator",$wwsd);
+		 $ws->validateWithWSDL();
 		 $ws = new WebService('MySecondWebService', 'http://some.uri.com', 'SOAP', 'getValue',
 		 '<parameters> </parameters>', '<result> </result>',
 		 1000, 2000, 0, 90, false, true);
@@ -210,6 +205,7 @@ class WebServiceManager {
 	 * 		The text to be rendered
 	 */
 	public static function wwsdParserHook($input, $args, $parser) {
+		
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
