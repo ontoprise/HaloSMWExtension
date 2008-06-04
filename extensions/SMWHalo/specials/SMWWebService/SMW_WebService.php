@@ -300,7 +300,7 @@ class WebService {
 	 *
 	 */
 	public function validateWithWSDL() {
-
+		
 		// include the correct client
     	global $smwgHaloIP;
 		try {
@@ -601,7 +601,7 @@ class WebService {
 		
 	/**
 	 * Takes all parts of the given type and appends its fields to the given name.
-	 * This happend recursively down to builtin types.
+	 * This happens recursively down to builtin types.
 	 * Example:
 	 * $name = point
 	 * $type = Point (with the fields x and y)
@@ -624,6 +624,11 @@ class WebService {
 	private function flattenParam($name, $type, &$typePath=null) {
 		$flatParams = array();
 		
+		if (!$this->mWSClient->isCustomType($type)) {
+			// $type is a simple type
+			$flatParams[] = $name;
+			return $flatParams;
+		}
 		$tp = $this->mWSClient->getTypeDefinition($type);
 		foreach ($tp as $var => $type) {
 			$fname = empty($name) ? $var : $name.'.'.$var;
