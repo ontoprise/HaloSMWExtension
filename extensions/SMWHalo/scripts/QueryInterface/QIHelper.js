@@ -249,6 +249,12 @@ getFullAsk:function(){
 	starttag += $('layout_order').value == "ascending" ? '' : 'order="descending" ';
 	starttag += $('layout_headers').checked ? '' : 'headers="hide" ';
 	starttag += $('layout_default').value == "" ? '' : 'default="' + $('layout_default').value +'" ';
+	if ($('layout_format').value == "template"){
+		starttag += 'template="' + $('template_name').value + '" ';
+	} else if ($('layout_format').value == "rss"){
+		starttag += $('rsstitle').value == "" ? '' : 'rsstitle="' + $('rsstitle').value + '" ';
+		starttag += $('rssdescription').value == "" ? '' : 'rssdescription="' + $('rssdescription').value + '" ';
+	}
 	starttag += ">";
 	return starttag + asktext + "</ask>";
 },
@@ -269,6 +275,12 @@ getFullParserAsk:function(){
 	fullQuery += $('layout_order').value == "ascending" ? '' : ' | order=descending ';
 	fullQuery += $('layout_headers').checked ? '' : ' | headers=hide ';
 	fullQuery += $('layout_default').value == "" ? '' : ' | default=' + $('layout_default').value;
+	if ($('layout_format').value == "template"){
+		fullQuery += ' | template=' + $('template_name').value;
+	} else if ($('layout_format').value == "rss"){
+		fullQuery += $('rsstitle').value == "" ? '' : ' | rsstitle=' + $('rsstitle').value;
+		fullQuery += $('rssdescription').value == "" ? '' : ' | rssdescription=' + $('rssdescription').value;
+	}
 	fullQuery += "|}}";
 	
 	return fullQuery;
@@ -967,6 +979,8 @@ copyToClipboard:function(){
 
 	if(this.queries[0].isEmpty() ){
 		alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
+	} else if (($('layout_format').value == "template") && ($('template_name').value == "")){
+		alert (gLanguage.getMessage('QI_EMPTY_TEMPLATE'));
 	} else {
 		/*STARTLOG*/
 		if(window.smwhgLogger){
@@ -1022,6 +1036,9 @@ showFullAsk:function(type, toggle){
 	}
 	if (this.queries[0].isEmpty()){
 		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
+		return;
+	} else if (($('layout_format').value == "template") && ($('template_name').value == "")){
+		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_TEMPLATE');
 		return;
 	}
 	var ask = null;
@@ -1138,6 +1155,19 @@ initializeDownload:function(request){
 	encodedHtml = encodedHtml.replace(/@/g,"%40");
 	var url = wgServer + wgScriptPath + "/extensions/SMWHalo/specials/SMWQueryInterface/SMW_QIExport.php?q=" + encodedHtml;
 	window.open(url, "Download", 'height=1,width=1');
+},
+
+checkFormat:function(){
+	if($('layout_format').value == "template"){
+		$('templatenamefield').style.display = "";
+		$('rssfield').style.display = "none";
+	} else if ($('layout_format').value == "rss"){
+		$('rssfield').style.display = "";
+		$('templatenamefield').style.display = "none";
+	} else {
+		$('templatenamefield').style.display = "none";
+		$('rssfield').style.display = "none";
+	}
 }
 
 } //end class qiHelper

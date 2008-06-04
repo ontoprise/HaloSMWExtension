@@ -9,16 +9,6 @@ require_once( $IP . "/includes/SpecialPage.php" );
 require_once( "SMW_QIAjaxAccess.php" );
 
 /*
-// standard functions for creating a new special page
-function doSMWQueryInterface()  {
-		SMWQueryInterface::execute();
-}
-
-SpecialPage::addPage( new SpecialPage('QueryInterface','',true,'doSMWQueryInterface',false)) ;
-
-*/
-
-/*
  * Standard class that is resopnsible for the creation of the Special Page
  */
 class SMWQueryInterface extends SpecialPage {
@@ -84,12 +74,13 @@ class SMWQueryInterface extends SpecialPage {
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
 							Format:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
-							<select id="layout_format">
+							<select id="layout_format" onchange="qihelper.checkFormat()">
 							<option value="table">table</option>
 							<option value="broadtable">broad table</option>
 							<option value="ul">bullet list</option>
 							<option value="ol">ordered list</option>
 							<option value="list">list</option>
+							<option value="template">template</option>
 							<option value="count">count</option>
 							<option value="rss">rss</option>
 							</select>
@@ -145,6 +136,28 @@ class SMWQueryInterface extends SpecialPage {
 							Default:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_default') . '\')">
 							<input type="text" id="layout_default"/>
+						</td>
+					</tr>
+					<tr id="templatenamefield" style="display:none">
+						<td>
+							Template name:
+						</td>
+						<td>
+							<input type="text" id="template_name" class="wickEnabled general-forms" typehint="' . NS_TEMPLATE . '">
+						</td>
+					</tr>
+					<tr id="rssfield" style="display:none">
+						<td>
+							RSS Title:
+						</td>
+						<td>
+							<input type="text" id="rsstitle">
+						</td>
+						<td>
+							RSS Description:
+						</td>
+						<td>
+							<input type="text" id="rssdescription">
 						</td>
 					</tr>
 				</table>

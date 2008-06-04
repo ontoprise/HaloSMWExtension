@@ -209,6 +209,7 @@ var wgUserLanguageStrings = {
 	'QI_QUERY_EXISTS'		  : "A query with this name already exists. Please choose another name.",
 	'QI_QUERY_SAVED'		  : "Your query has been successfully saved.",
 	'QI_SAVE_ERROR'		  	  : "An unknown error occured. Your query could not be saved.",
+	'QI_EMPTY_TEMPLATE'		  : "In order to use the format 'template', you have to enter a template name.",
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Thank you for evaluating annotations, ',

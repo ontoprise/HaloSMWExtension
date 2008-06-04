@@ -210,6 +210,8 @@ var wgUserLanguageStrings = {
 	'QI_QUERY_EXISTS'		  : "Ein Query mit diesem Namen existiert bereits. Bitte wählen sie einen neuen Namen.",
 	'QI_QUERY_SAVED'		  : "Ihr Query wurde erfolgreich gespeichert",
 	'QI_SAVE_ERROR'		  	  : "Ein unbekannter Fehler ist aufgetreten. Ihr Query konnte nicht gespeichert werden.",
+	'QI_EMPTY_TEMPLATE'		  : "Um das Ausgabeformat 'template' benutzen zu können, müssen Sie einen Templatenamen angeben.",
+	
 
 	//Syntax Highlighting editor
 	'SHE_new_document'			  : "neues leeres Dokument",
