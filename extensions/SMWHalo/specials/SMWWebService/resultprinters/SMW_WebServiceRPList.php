@@ -56,9 +56,8 @@ class WebServiceListResultPrinter extends WebServiceResultPrinter {
 	 */
 	public function getWikiText($wsResult){
 		$return = ""; 
-		
-		for($i=0; $i < sizeof($wsResult); $i++){
-		if($i != 0){
+		for($i = 1; $i<sizeof($wsResult);$i++){
+			if($i != 1){
 				$return.= ", ";	
 			}
 			$return.= implode(", ", $wsResult[$i]);

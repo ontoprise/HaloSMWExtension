@@ -57,12 +57,12 @@ class WebServiceTableResultPrinter extends WebServiceResultPrinter {
 	 */
 	public function getWikiText($wsResult){
 
-		$return = "<table>";
 
-		for($i=0; $i < sizeof($wsResult); $i++){
+		$return = "<table>";
+		for($i = 0; $i < sizeof($wsResult) ;$i++){
 			$return.= "<tr>";
 			for($k=0; $k < sizeof($wsResult[$i]); $k++){
-				if($i==0){
+				if($i == 0){
 					$return.= "<th>".$wsResult[$i][$k]."</th>";
 				} else {
 					$return.= "<td>".$wsResult[$i][$k]."</td>";
@@ -70,6 +70,19 @@ class WebServiceTableResultPrinter extends WebServiceResultPrinter {
 			}
 			$return.= "</tr>";
 		}
+
+
+			
+		//			for($k=0; $k < sizeof($values); $k++){
+		//				if($i==0){
+		//					$return.= "<th>".$values[$k]."</th>";
+		//				} else {
+		//
+		//				}
+		//			}
+		//			$i++;
+		//			$return.= "</tr>";
+		//		}
 		$return.="</table>";
 		return $return;
 	}

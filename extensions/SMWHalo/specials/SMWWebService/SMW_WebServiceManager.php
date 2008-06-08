@@ -65,7 +65,7 @@ WebServiceManager::registerWWSNamespaces();
 class WebServiceManager {
 
 	private static $mNewWebService = null;
-	private static $mOldWebservice = null;
+	
 
 	/**
 	 * Register the WebServicePage for articles in the namespace 'WebService'.
@@ -165,6 +165,24 @@ class WebServiceManager {
     '<delay value="1"/>'.
   '</queryPolicy>'.
   '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
+'</WebService>'
+		 $wwsd = '<WebService>'.
+  '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'. 
+  '<protocol>SOAP</protocol>'.
+  '<method name="getCurrencyValue" />'.
+  '<parameter name="provider" path="parameters.provider" />'.
+  '<parameter name="in" path="parameters.srcCurrency" />'.
+  '<parameter name="out" path="parameters.dstCurrency" />'.
+  '<result name="mode">'.
+  '</result>'.
+  '<displayPolicy>'.
+   '<once />'.
+  '</displayPolicy>'.
+  '<queryPolicy>'.
+    '<maxAge value="1440"/>'.
+    '<delay value="1"/>'.
+  '</queryPolicy>'.
+  '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
 '</WebService>';
 
 		 $ws = WebService::newFromWWSD("CurrencyCalculator",$wwsd);
@@ -209,6 +227,8 @@ class WebServiceManager {
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
+		WebServiceCache::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
+		
 		$attr = "";
 		foreach ($args as $k => $v) {
 			$attr .= " ". $k . '="' . $v . '"';
@@ -264,32 +284,8 @@ class WebServiceManager {
 	 * @return boolean true
 	 */
 	public static function articleSavedHook(&$article, &$user, &$text) {
-		if(self::$mOldWebservice){
-			$remove = true;
-			if(!self::$mNewWebService){
-				WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
-				self::$mOldWebservice->removeFromDB();
-				return true;
-			}
-			if(self::$mOldWebservice->getArticleId() != self::$mNewWebService->getArticleId()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getMethod() == self::$mNewWebService->getMethod()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getName() == self::$mNewWebService->getName()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getParameters() == self::$mNewWebService->getParameters()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getProtocol() == self::$mNewWebService->getProtocol()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getResult() == self::$mNewWebService->getResult()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getURI() == self::$mNewWebService->getURI()){
-				$remove = false;
-			} else if(remove){
-				WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
-				self::$mOldWebservice->removeFromDB();
-			}
-		}
+		WebServiceCache::detectModifiedWWSD(self::$mNewWebService->getArticleId());
+		
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
 		}

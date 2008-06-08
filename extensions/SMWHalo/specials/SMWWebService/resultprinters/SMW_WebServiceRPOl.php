@@ -58,7 +58,7 @@ class WebServiceOlResultPrinter extends WebServiceResultPrinter {
 	public function getWikiText($wsResult){
 		
 		$return.= "<ol>"; 
-		for($i=0; $i < sizeof($wsResult); $i++){
+		for($i = 1; $i<sizeof($wsResult);$i++){
 			$return.= "<li>";	
 			$return.= implode(", ", $wsResult[$i]);
 			$return.= "</li>";

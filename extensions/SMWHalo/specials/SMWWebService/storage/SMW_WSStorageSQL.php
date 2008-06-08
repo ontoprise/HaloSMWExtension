@@ -49,7 +49,7 @@ class WSStorageSQL {
 
 		$verbose = true;
 		DBHelper::reportProgress("Setting up web services ...\n",$verbose);
-		
+
 		// create WWSD table
 		DBHelper::reportProgress("   ... Creating WWSD table \n",$verbose);
 		$wwsdTable = $db->tableName('smw_ws_wwsd');
@@ -66,10 +66,10 @@ class WSStorageSQL {
 				  'span_of_life'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'expires_after_update' =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL' ,
 				  'confirmed'            =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL'), 
-				  $db, $verbose);
+		$db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
-		
+
 		// create ws value cache table
 		DBHelper::reportProgress("   ... Creating web service cache table \n",$verbose);
 		$cacheTable = $db->tableName('smw_ws_cache');
@@ -77,12 +77,12 @@ class WSStorageSQL {
 				  'web_service_id'  =>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'result'          =>  'TEXT NOT NULL' ,
-				  'last_update'    	=>  'DATETIME NOT NULL' ,
-				  'last_access'    	=>  'DATETIME NOT NULL'), 
-		          $db, $verbose, 'web_service_id,param_set_id');
+				  'last_update'    	=>  'VARCHAR(14) NOT NULL' ,
+				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
+		$db, $verbose, 'web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
-		
+
 		// create parameter table
 		DBHelper::reportProgress("   ... Creating parameter table \n",$verbose);
 		$paramTable = $db->tableName('smw_ws_parameters');
@@ -92,7 +92,7 @@ class WSStorageSQL {
 				  'value'      	    =>  'VARCHAR(255) NOT NULL'), $db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
-		
+
 		// create properties table
 		DBHelper::reportProgress("   ... Creating properties table \n",$verbose);
 		$propTable = $db->tableName('smw_ws_properties');
@@ -101,10 +101,10 @@ class WSStorageSQL {
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL'), 
-		          $db, $verbose, 'property_id,page_id,web_service_id,param_set_id');
+		$db, $verbose, 'property_id,page_id,web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
-		
+
 		// create articles table
 		DBHelper::reportProgress("   ... Creating article table \n",$verbose);
 		$articlesTable = $db->tableName('smw_ws_articles');
@@ -112,7 +112,7 @@ class WSStorageSQL {
 				  'web_service_id'  =>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL'), 
-		          $db, $verbose, 'web_service_id,param_set_id,page_id');
+		$db, $verbose, 'web_service_id,param_set_id,page_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 	}
@@ -512,14 +512,14 @@ class WSStorageSQL {
 	 * get all parameters and their values that belong
 	 * to the given parameterset
 	 *
-	 * @param string $parameterSetId
+	 * @param int $parameterSetId
 	 * @return array of parameters and their values
 	 */
 	function getParameters($parameterSetId){
 		$db =& wfGetDB( DB_SLAVE );
-		$ptb = $db->tableName('smw_ws_articles');
+		$ptb = $db->tableName('smw_ws_parameters');
 
-		$sql = "SELECT param.name param.value"
+		$sql = "SELECT param.name, param.value"
 		." FROM ".$ptb." param ".
 		"WHERE param.param_set_id = ".$parameterSetId."";
 
@@ -528,7 +528,7 @@ class WSStorageSQL {
 
 		if ($db->numRows($res) > 0) {
 			while ($row = $db->fetchObject($res)) {
-				array_push(&$webServices, array($row->name, $row->value));
+				$parameters[$row->name] = $row->value;
 			}
 		}
 		$db->freeResult($res);
@@ -644,25 +644,39 @@ class WSStorageSQL {
 	 */
 	function getResultFromCache($wsPageId, $parameterSetId){
 		$db =& wfGetDB( DB_SLAVE );
-		$ptb = $db->tableName('smw_ws_cache');
-
-		$sql = "SELECT cache.result, cache.last_update, cache.last_access"
-		." FROM ".$ptb." cache ".
-		"WHERE cache.web_service_id = ".$$wsPageId.
-		"AND wsArticles.param_set_id =".$parameterSetId;
-
 		$result = array();
-		$res = $db->query($sql);
-
+		$res = $db->select( $db->tableName("smw_ws_cache"),
+		array("result", "last_update", "last_access"),
+		array(	"web_service_id" => $wsPageId,
+		             		"param_set_id" => $parameterSetId));
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$result["result"] = $row->result;
-			$result["last_update"] = $row->last_update;
-			$result["last_access"] = $row->last_access;
+			$result["lastUpdate"] = $row->last_update;
+			$result["lastAccess"] = $row->last_access;
 		}
 		$db->freeResult($res);
 		return $result;
 	}
+
+	function storeCacheEntry($wsId, $parameterSetId, $result, $lastUpdate, $lastAccess){
+		$db =& wfGetDB( DB_MASTER );
+		$ptb = $db->tableName('smw_ws_cache');
+
+		try {
+			$db->insert($db->tableName('smw_ws_cache'), array(
+					  'web_service_id'    => $wsId,
+					  'param_set_id' => $parameterSetId,
+					  'result'   => $result,
+						'last_update' => $db->timestamp(),
+						'last_access' => $db->timestamp()));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+
+	}
+
 
 	/**
 	 * remove a wwsd

@@ -1,20 +1,20 @@
 <?php
 /*  Copyright 2008, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
@@ -22,12 +22,12 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_IWebServiceClient.php");
 
 /**
  * Instances of this class describe a web service.
- * 
+ *
  * @author Thomas Schweitzer
- * 
+ *
  */
 class WebService {
-	
+
 	//--- Private fields ---
 	private $mArticleID = 0;  //int: page ID of the service's WWSD
 	private $mName;           //string: name of the web service in the wiki without namespace
@@ -36,22 +36,22 @@ class WebService {
 	private $mMethod;         //string: name of the method in the service's WSDL
 	private $mParameters;     //string: description of the parameter structure
 	private $mParsedParameters; // The parsed structure of the parameter description
-							    // in form of nested arrays 
+	// in form of nested arrays
 	private $mResult;         //string: description of the result structure
 	private $mParsedResult;   // The parsed structure of the result description
-							  // in form of nested arrays 
+	// in form of nested arrays
 	private $mDisplayPolicy;  //int: display update policy in minutes. 0 means only once.
 	private $mQueryPolicy;    //int: query update policy in minutes. 0 means only once.
 	private $mUpdateDelay;    //int: update delay for the query policy in seconds
 	private $mSpanOfLife;     //int: span of life in days. 0 means forever.
 	private $mExpiresAfterUpdate; //bool: <true> if the span of life starts to expire
-							  // after an update. Otherwise it starts after the
-							  // last access.
+	// after an update. Otherwise it starts after the
+	// last access.
 	private $mConfirmed;      //bool: confirmed by sysop (true) or not (false)
-	
+
 	private $mWSClient;		  //IWebServiceClient: the web service client provides
-							  //   access to the service 
-	
+	//   access to the service
+	private $mCallParameters;
 	/**
 	 * Constructor for new WebService objects.
 	 *
@@ -80,24 +80,24 @@ class WebService {
 	 *      update. Otherwise it begins after the last access.
 	 * @param bool $confirmed
 	 * 		Confirmed by sysop (true) or not (false)
-	 */		
-	function __construct($name = "", $uri = "", $protcol = "", $method = "", 
-	                     $parameters = "", $result = "", 
-	                     $dp = 0, $qp = 0, $updateDelay = 0, $sol = 0, 
-	                     $expiresAfterUpdate = false, $confirmed = false) {
+	 */
+	function __construct($name = "", $uri = "", $protcol = "", $method = "",
+	$parameters = "", $result = "",
+	$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
+	$expiresAfterUpdate = false, $confirmed = false) {
 		$this->mName = $name;
-		$this->mURI = $uri;	                     	
-		$this->mProtocol = $protcol;	                     	
+		$this->mURI = $uri;
+		$this->mProtocol = $protcol;
 		$this->mMethod = $method;
 		$this->mParameters = $parameters;
 		try {
-			$this->mParsedParameters = empty($parameters) 
-			                               ? null
-			                               : new SimpleXMLElement($parameters);
+			$this->mParsedParameters = empty($parameters)
+			? null
+			: new SimpleXMLElement("<p>".$parameters."</p>");
 			$this->mResult = $result;
-			$this->mParsedResult = empty($result) 
-			                               ? null
-			                               : new SimpleXMLElement($result);
+			$this->mParsedResult = empty($result)
+			? null
+			: new SimpleXMLElement($result);
 		} catch (Exception $e) {
 			// parser error
 		}
@@ -108,7 +108,7 @@ class WebService {
 		$this->mExpiresAfterUpdate = $expiresAfterUpdate;
 		$this->mConfirmed = $confirmed;
 	}
-	
+
 
 	//--- getter/setter ---
 	public function getName()          {return $this->mName;}
@@ -123,21 +123,21 @@ class WebService {
 	public function getSpanOfLife()    {return $this->mSpanOfLife;}
 	public function doesExpireAfterUpdate()   {return $this->mExpiresAfterUpdate;}
 	public function isConfirmed()      {return $this->mConfirmed;}
-		
+
 	//--- Public methods ---
-	
-	
+
+
 	/**
 	 * Creates a new instance of a WebService object that is stored in the
-	 * database with the specified name. 
+	 * database with the specified name.
 	 *
 	 * @param string $name
-	 * 		The unique name of the web service i.e. article	that contains the 
-	 *      WWSD of the web service (without the namespace). 
-	 * 
+	 * 		The unique name of the web service i.e. article	that contains the
+	 *      WWSD of the web service (without the namespace).
+	 *
 	 * @return WebService
 	 * 		If the web service exists in the database, a new object is created
-	 * 		and initialized with the database values. Otherwise <null> is returned. 
+	 * 		and initialized with the database values. Otherwise <null> is returned.
 	 */
 	public static function newFromName($name) {
 		$t = Title::makeTitleSafe(SMW_NS_WEB_SERVICE, $name);
@@ -147,15 +147,15 @@ class WebService {
 
 	/**
 	 * Creates a new instance of a WebService object that is stored in the
-	 * database with the given page ID. 
+	 * database with the given page ID.
 	 *
 	 * @param int $id
-	 * 		The database ID of the web service i.e. the page ID of the article 
-	 *      that contains the WWSD of the web service. 
-	 * 
+	 * 		The database ID of the web service i.e. the page ID of the article
+	 *      that contains the WWSD of the web service.
+	 *
 	 * @return WebService
 	 * 		If the web service exists in the database a new object is created
-	 * 		and initialized with the database values. Otherwise <null> is returned. 
+	 * 		and initialized with the database values. Otherwise <null> is returned.
 	 */
 	public static function newFromID($id) {
 		$ws = WSStorage::getDatabase()->getWS($id);
@@ -164,7 +164,7 @@ class WebService {
 		}
 		return $ws;
 	}
-	
+
 	/**
 	 * Creates a new instance of a WebService from the given wiki web service
 	 * description <$wwsd>.
@@ -174,21 +174,21 @@ class WebService {
 	 * @param string $wwsd
 	 * 		This wiki web service definition is parsed and its values are
 	 * 		stored in the fields of a new object.
-	 * 
+	 *
 	 * @return mixed WebService/string
 	 * 		A new instance of WebService or
 	 * 		an array of error messages, if parsing of the WWSD failed.
 	 */
 	public static function newFromWWSD($name, $wwsd) {
-    	global $smwgHaloIP;
-		
-    	try {
+		global $smwgHaloIP;
+
+		try {
 			$parser = new SimpleXMLElement($wwsd);
-    	} catch (Exception $e) {
-    		$msg = $e->getMessage();
-    		return array($msg);
-    	}
-		
+		} catch (Exception $e) {
+			$msg = $e->getMessage();
+			return array($msg);
+		}
+
 		// Check if the roor node of the XML structure is 'webservice'
 		$rootName = $parser->getName();
 		if ($rootName !== 'WebService') {
@@ -219,7 +219,7 @@ class WebService {
 				$ws->mResult .= $p->asXML()."\n";
 			}
 		}
-		
+
 		$tmpMsg = array();
 		$v = self::getWWSDElement($parser, '/WebService/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
@@ -239,7 +239,7 @@ class WebService {
 			// The update delay is optional. Its default value is 0.
 			$ws->mUpdateDelay = 0;
 		}
-		
+
 		$valid &= self::getWWSDElement($parser, '/WebService/spanOfLife', 'value', $ws->mSpanOfLife, false, 1, 1, $msg);
 		if ($valid) {
 			if (strtolower($ws->mSpanOfLife) == 'forever') {
@@ -250,15 +250,15 @@ class WebService {
 		}
 		$ws->mExpiresAfterUpdate = false;
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
-		
+
 		return ($valid) ? $ws : $msg;
-		
+
 	}
-	
+
 	/**
 	 * Returns the article ID of this WebService i.e. the page ID of the article
 	 * that contains the service's WWSD.
-	 * 
+	 *
 	 * @return int
 	 * 		The article ID of the web service or
 	 * 		0, if the article does not exist.
@@ -271,11 +271,11 @@ class WebService {
 		}
 		return $this->mArticleID;
 	}
-	
+
 	/**
-	 * Stores the web service in the database. There must be a corresponding 
+	 * Stores the web service in the database. There must be a corresponding
 	 * article that contains the service's WWSD.
-	 * 
+	 *
 	 * @return bool
 	 * 	  <true>, if successful
 	 *    <false>, otherwise
@@ -285,45 +285,36 @@ class WebService {
 		if ($this->mArticleID == 0) {
 			$this->getArticleID();
 		}
-		return ($this->mArticleID == 0) 
-		         ? false 
-		         : WSStorage::getDatabase()->storeWS($this);
+		return ($this->mArticleID == 0)
+		? false
+		: WSStorage::getDatabase()->storeWS($this);
 	}
-	
+
 	/**
 	 * Checks if the definition of the web service is valid with respect to the
 	 * WSDL it refers to.
-	 * 
+	 *
 	 * @return mixed(boolean, array<string>)
 	 * 		<true>, if the definition is correct or an
 	 * 		array of error messages otherwise
 	 *
 	 */
 	public function validateWithWSDL() {
-		
-		// include the correct client
-    	global $smwgHaloIP;
-		try {
-			include_once($smwgHaloIP . "/specials/SMWWebService/SMW_".
-			             $this->mProtocol."Client.php");
-			$classname = "SMW".ucfirst(strtolower($this->mProtocol))."Client";
-			if (!class_exists($classname)) {
-				return array(wfMsg("smw_wws_invalid_protocol"));
-			}
-			$this->mWSClient = new $classname($this->mURI);
-		} catch (Exception $e) {
-			// The wwsd is erroneous
-			return array(wfMsg("smw_wws_invalid_wwsd"));
+
+
+		$msg = $this->createWSClient();
+		if ($msg === true) {
+			// client successfully created
+			$msg = array();
 		}
-				
-		$msg = array();
-		
+
+
 		// Check, if the method exists
 		$op = $this->mWSClient->getOperation($this->mMethod);
 		if (!$op) {
 			$msg[] = wfMsg('smw_wws_invalid_operation', $this->mMethod);
 		}
-		
+
 		$res = $this->checkParameters();
 		if (is_array($res)) {
 			// result contains error messages
@@ -335,30 +326,120 @@ class WebService {
 			// result contains error messages
 			$msg = array_merge($msg, $res);
 		}
-		
+
 		return (count($msg) == 0 ? true : $msg);
 	}
-	
+
 	/**
 	 * Calls the web service and considers the cache.
 	 *
 	 */
-	public function call() {
-//TODO: define parameters: input parameters, kind of result, etc
+	public function call($parameterSetId, $resultParts) {
+		$cacheResult = WSStorage::getDatabase()->getResultFromCache($this->mArticleID, $parameterSetId);
+		$response = null;
 
-		//TODO: Check if result is in cache
-		
-		// Result is not in cache => get the value from the service and store
-		// it in the cache
-		$this->mWSClient->call();
+		if($cacheResult != null){
+			$t1 = wfTime();
+			$t2 = wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"]);
+			$t3 = $this->getDisplayPolicy()*60;
+			 
+			if(($this->mDisplayPolicy == 0) ||
+			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
+			> ($this->getDisplayPolicy()*60))){
+				$response = unserialize($cacheResult["result"]);
+			}
+		}
 
-		//TODO: analyze result and store it in cache
-		
-		//TODO: return requested result
+		if(!$response){
+			$this->createWSClient();
+			$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
+
+			//init call-parameters with respect to default values
+			$this->mCallParameters	= array();
+			foreach($this->mParsedParameters->children() as $child){
+				$value = "".$child["defaultValue"];
+				if($specParameters["".$child["name"]]){
+					$value = $specParameters["".$child["name"]];
+				}
+				$this->getPathSteps("".$child["path"], $value);
+			}
+
+			// do the call
+			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
+
+			WSStorage::getDatabase()->storeCacheEntry(
+			$this->mArticleID,
+			$parameterSetId,
+			serialize($response),
+			wfTimeStamp(TS_MW, wfTime()),
+			wfTimeStamp(TS_MW, wfTime()));
+		}
+
+
+		// get the wanted part of the result
+		$paths = array();
+		foreach($resultParts as $resultPart){
+			foreach($this->mParsedResult->children() as $child){
+				if("".$child["name"] == $resultPart){
+					$paths["".$child["name"]] = "".$child["path"];
+				}
+			}
+		}
+
+		$result = array();
+
+		// todo: handle unspecified return value
+		foreach($paths as $key => $path){
+			$pathSteps = explode(".", $path);
+			$tempObject = array();
+			$tempObject[] = $response;
+			//todo handle brackets-syntax in general and selektors
+			for($i=0; $i < sizeof($pathSteps); $i++){
+				$newTempObject = array();
+				if($tempObject){
+					foreach($tempObject as $temp){
+						if(is_array($temp)){
+							foreach($temp as $t){
+								$newTempObject[] = $t;
+							}
+							$i -= 1;
+						} else {
+							$newTempObject[] = $temp->$pathSteps[$i];
+						}
+					}
+				}
+				$tempObject = $newTempObject;
+			}
+			$result[$key] = $tempObject;
+		}
+
+		return $result;
 	}
-	
+
+	/**
+	 * todo:describe
+	 *
+	 * @param unknown_type $path
+	 * @param unknown_type $value
+	 */
+	private function getPathSteps($path, $value){
+		$walkedParameters = explode(".", $path);
+		$temp = &$this->mCallParameters;
+
+		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
+			if(!$temp[$walkedParameters[$i]]){
+				$temp[$walkedParameters[$i]] = array();
+			}
+			$temp = &$temp[$walkedParameters[$i]];
+		}
+		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
+			
+	}
+
+
+
 	//--- Private methods ---
-	
+
 	/**
 	 * Gets an element from the WWSD and assigns it to a variable that is passed
 	 * by reference.
@@ -371,7 +452,7 @@ class WebService {
 	 * 	 	Name of an attribute in the WWSD element. If <null>, the content
 	 * 		of the element is assigned.
 	 * @param mixed $variable
-	 * 		The content of the WWSD element is assigned to this variable. 
+	 * 		The content of the WWSD element is assigned to this variable.
 	 * @param bool $isNumeric
 	 * 		<true>, if the value is a numeric
 	 * @param int $min
@@ -386,16 +467,16 @@ class WebService {
 	 * 			    error
 	 * 		<false> otherwise.
 	 */
-	private static function getWWSDElement(&$wwsd, $wwsdElementPath, 
-									$attribute, &$variable, $isNumeric, 
-									$min, $max, &$msg) {
-		
+	private static function getWWSDElement(&$wwsd, $wwsdElementPath,
+	$attribute, &$variable, $isNumeric,
+	$min, $max, &$msg) {
+
 		$subTree = $wwsd->xpath($wwsdElementPath);
 		if (!$subTree) {
 			$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 			return false;
 		}
-		
+
 		if (count($subTree) < $min) {
 			$msg[] = wfMsg('smw_wws_wwsd_element_missing', $wwsdElementPath).'<br />';
 			return false;
@@ -404,7 +485,7 @@ class WebService {
 			$msg[] = wfMsg('smw_wws_too_many_wwsd_elements', $wwsdElementPath).'<br />';
 			return false;
 		}
-		
+
 		if ($min == 1 && $max == 1) {
 			// exactly one element is expected and present
 			if ($attribute) {
@@ -426,7 +507,37 @@ class WebService {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Creates the web service client according to the protocol of this WebService
+	 * object.
+	 *
+	 * @return mixed (bool/array<string>)
+	 * 		<true>, if successfull or an
+	 * 		array of error messages otherwise
+	 *
+	 */
+	private function createWSClient() {
+		// include the correct client
+		global $smwgHaloIP;
+		if(!$this->mWSClient){
+			try {
+				include_once($smwgHaloIP . "/specials/SMWWebService/SMW_".
+				$this->mProtocol."Client.php");
+				$classname = "SMW".ucfirst(strtolower($this->mProtocol))."Client";
+				if (!class_exists($classname)) {
+					return array(wfMsg("smw_wws_invalid_protocol"));
+				}
+				$this->mWSClient = new $classname($this->mURI);
+			} catch (Exception $e) {
+				// The wwsd is erroneous
+				return array(wfMsg("smw_wws_invalid_wwsd"));
+			}
+		}
+		return true;
+
+	}
+
 	/**
 	 * Checks if the parameters that are defined in the WWSD are compatible with
 	 * the parameters in the WSDL. This comprises:
@@ -436,16 +547,16 @@ class WebService {
 	 * - Does a type of the WSDL cause an overflow (e.g. struct List { next: List}) ?
 	 * - Is there a definition for each parameter of the WSDL?
 	 * - Are the obsolete parameters in the definition?
-	 * 
+	 *
 	 * @return mixed(boolean, array<string>)
 	 * 		<true>, if everything is correct or an
 	 * 		array of error messages otherwise
-	 * 
+	 *
 	 */
 	private function checkParameters() {
 		// check if there are duplicate parameters in the wwsd
 		$msg = array();
-		
+
 		$pNames = array();
 		$wwsdPaths = array();
 		foreach ($this->mParsedParameters as $p) {
@@ -454,24 +565,24 @@ class WebService {
 			if ($name == null) {
 				// parameter has no name
 				$msg[] = wfMsg('smw_wws_parameter_without_name');
-				continue;		
+				continue;
 			}
 			if ($path == null) {
 				// parameter has no path
 				$msg[] = wfMsg('smw_wws_parameter_without_path', $name);
-				continue;		
+				continue;
 			}
 			if (array_key_exists($name, $pNames)) {
-				if ($pNames[$name]++ == 1) {	
+				if ($pNames[$name]++ == 1) {
 					$msg[] = wfMsg('smw_wws_duplicate_parameter', $name);
 				}
-				continue;		
+				continue;
 			} else {
 				$pNames[$name] = 1;
 				$wwsdPaths[$name] = $path;
 			}
 		}
-		
+
 		// Check if there is an alias for every parameter of the WSDL.
 		$wsdlParams = $this->mWSClient->getOperation($this->mMethod);
 		if ($wsdlParams != null) {
@@ -515,16 +626,16 @@ class WebService {
 	 * - Does the WWSD contain several results with the same name?
 	 * - Does a type of the WSDL cause an overflow (e.g. struct List { next: List}) ?
 	 * - Is there a definition for each result of the WSDL?
-	 * 
+	 *
 	 * @return mixed(boolean, array<string>)
 	 * 		<true>, if everything is correct or an
 	 * 		array of error messages otherwise
-	 * 
+	 *
 	 */
 	private function checkResult() {
 		// check if there are duplicate results in the wwsd
 		$msg = array();
-		
+
 		$rNames = array(); // Names of results
 		$wwsdPaths = array();
 		foreach ($this->mParsedResult as $r) {
@@ -532,7 +643,7 @@ class WebService {
 			if ($rName == null) {
 				// result has no name
 				$msg[] = wfMsg('smw_wws_result_without_name');
-				continue;		
+				continue;
 			}
 			// Check all parts of a result
 			foreach ($r->children() as $part) {
@@ -551,36 +662,36 @@ class WebService {
 				if ($path == null) {
 					// result part has no path
 					$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
-					continue;		
+					continue;
 				}
 				if (array_key_exists($pName, $pNames)) {
-					if ($pNames[$pName]++ == 1) {	
+					if ($pNames[$pName]++ == 1) {
 						$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
 					}
-					continue;		
+					continue;
 				} else {
 					$pNames[$pName] = 1;
 					$wwsdPaths[$rName.'.'.$pName] = $path;
 				}
-				
+
 			}
 			if (array_key_exists($rName, $rNames)) {
-				if ($rNames[$rName]++ == 1) {	
+				if ($rNames[$rName]++ == 1) {
 					$msg[] = wfMsg('smw_wws_duplicate_result', $rName);
 				}
-				continue;		
+				continue;
 			} else {
 				$rNames[$rName] = 1;
 			}
 		}
-		
+
 		// Check if there is a result in the WSDL for each alias.
 		$wsdlResult = $this->mWSClient->getOperation($this->mMethod);
 		if ($wsdlResult != null) {
 			// Collect the components of the result
 			$rType = $wsdlResult[0];
 			$names = $this->flattenParam('', $rType);
-			
+
 			// find elements that lead to overflows (e.g. potentially endless lists)
 			foreach ($names as $idx=>$name) {
 				$pos = strpos($name, '##overflow##');
@@ -597,18 +708,18 @@ class WebService {
 			}
 		}
 		return count($msg) == 0 ? true : $msg;
-	}	
-		
+	}
+
 	/**
 	 * Takes all parts of the given type and appends its fields to the given name.
-	 * This happens recursively down to builtin types.
+	 * This happend recursively down to builtin types.
 	 * Example:
 	 * $name = point
 	 * $type = Point (with the fields x and y)
-	 * result: 
+	 * result:
 	 *    - point.x
 	 *    - point.y
-	 * 
+	 *
 	 * @param string $name
 	 * 		The fields of the type are added to this name, separated by a dot.
 	 * @param string $type
@@ -616,15 +727,16 @@ class WebService {
 	 * @param array<string> $typePath
 	 * 		This array contains all types that were encountered in the recursion.
 	 * 		To avoid an inifinite loop, the recursion stops if $type is already
-	 * 		in the $typePath. This parameter is omitted in the top level call. 
+	 * 		in the $typePath. This parameter is omitted in the top level call.
 	 * @return array<string>
 	 * 		All resulting paths. If a path causes an endless recursion, the
 	 * 		keyword ##overflow## is appended to the path.
 	 */
 	private function flattenParam($name, $type, &$typePath=null) {
 		$flatParams = array();
+
 		
-		if (!$this->mWSClient->isCustomType($type)) {
+		if (!$this->mWSClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
 			// $type is a simple type
 			$flatParams[] = $name;
 			return $flatParams;
@@ -632,6 +744,9 @@ class WebService {
 		$tp = $this->mWSClient->getTypeDefinition($type);
 		foreach ($tp as $var => $type) {
 			$fname = empty($name) ? $var : $name.'.'.$var;
+			if(substr($type,0, 7) == "ArrayOf"){
+				$type = substr($type, 7);
+			}
 			if ($this->mWSClient->isCustomType($type)) {
 				if (!$typePath) {
 					$typePath = array();
@@ -652,12 +767,58 @@ class WebService {
 		return $flatParams;
 	}
 
-/**
+	/**
 	 * remove this ws from the database
 	 *
 	 */
 	public function removeFromDB() {
 		WSStorage::getDatabase()->removeWS($this->getArticleID());
+	}
+
+	//todo: non optional parameters
+	public function validateSpecifiedParameters($specifiedParameters){
+		$messages = array();
+		foreach($specifiedParameters as $pName => $pValue){
+			$exists = false;
+			foreach($this->mParsedParameters->children() as $child){
+				if("".$child["name"] == $pName){
+					$exists = true;
+				}
+			}
+			if(!$exists){
+				$messages[] = "The parameter ".$pName." does not exist.";
+			}
+		}
+		foreach($this->mParsedParameters->children() as $child){
+			if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
+				foreach($specifiedParameters as $pName => $pValue){
+					if("".$child["name"] == $pName){
+						$exists = true;
+					}
+				}
+				if(!$exists){
+					$messages[] = "The parameter ".$child["name"]." is not optional and no default value was provided by the wwsd.";
+				}
+			}
+		}
+		return $messages;
+	}
+
+
+	public function validateSpecifiedResults($specifiedResults){
+		$messages = array();
+		foreach($specifiedResults as $rName => $rValue){
+			$exists = false;
+			foreach($this->mParsedResult->children() as $child){
+				if("".$child["name"] == $rName){
+					$exists = true;
+				}
+			}
+			if(!$exists){
+				$messages[] = "The result part ".$rName." does not exist.";
+			}
+		}
+		return $messages;
 	}
 }
 

@@ -18,24 +18,22 @@
 
 /**
  * This file is responsible for detecting and processing
- * the usage of web services in an article and in semantic properties.  
+ * the usage of web services in an article and in semantic properties.
  *
  * @author Ingo Steinbauer
  *
  */
 
-// todo alle ws-namen durch die ids ersetzen
-
 // necessary for querying used properties
 global $smwgIP;
 require_once($smwgIP. "/includes/SMW_Factbox.php");
 
-//todo files richtig einbinden
-// needed for db access
-require_once("SMW_WSStorage.php");
-require_once("SMW_WebServiceCache.php");
-require_once("SMW_WebService.php");
+global $smwgHaloIP;
 
+// needed for db access
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceCache.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
@@ -132,7 +130,12 @@ function webServiceUsage_Render( &$parser) {
 
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-	$wsId = WebService::newFromName($wsName);
+	
+	$ws = WebService::newFromName($wsName);
+	if(!$ws){
+		return "Error: A WWSD for ".$wsName." does not exist"; 
+	}
+	$wsId = $ws->getArticleID();
 
 	$wsParameters = array();
 	$wsReturnValues = array();
@@ -140,7 +143,7 @@ function webServiceUsage_Render( &$parser) {
 
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
-	//todo: handle defaults
+	
 	for($i=2; $i < sizeof($parameters); $i++){
 		$parameter = trim($parameters[$i]);
 		if($parameter{0} == "?"){
@@ -150,21 +153,29 @@ function webServiceUsage_Render( &$parser) {
 		} else if (substr($parameter,0, 9) == "_property"){
 			$propertyName = getSpecifiedParameterValue($parameter);
 		} else {
-			$wsParameters[getSpecifiedParameterName($parameter)] = getSpecifiedParameterValue($parameter);
+			$specParam = getSpecifiedParameterValue($parameter);
+			if($specParam){
+				$wsParameters[getSpecifiedParameterName($parameter)] = $specParam;
+			}
 		}
 	}
-
-	if(validateWSUsage($wsId, $wsReturnValues, $wsParameters)){
+	
+	//todo allow empty parameter sets:parametersetid=0;
+	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
-		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $wsParameters);
-		//$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
-		$wsFormattedResult = $wsResults;
-		WSStorage::getDatabase()->addWSArticle($wsName, $parameterSetId, $parser->getTitle()->getArticleID());
-		
+		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId);
+		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
 	} else {
-		//do something
+		$return = "The usage of the #ws-syntax was errone: <ul>"; 
+		foreach($messages as $mess){
+			$return .= "<li>".$mess."</li>";
+		}
+		$return .="</ul>";
+		return $return;
 	}
 }
 /**
@@ -182,7 +193,7 @@ function getSpecifiedParameterValue($parameter){
 	if($pos > 0){
 		return trim(substr($parameter, $pos+1));
 	} else {
-		return "default";
+		return null;
 	}
 }
 
@@ -199,7 +210,7 @@ function getSpecifiedParameterName($parameter){
 	if($pos > 0){
 		return trim(substr($parameter, 0, $pos));
 	} else {
-		return $parameterName;
+		return $parameter;
 	}
 }
 
@@ -214,26 +225,28 @@ function getSpecifiedParameterName($parameter){
 function formatWSResult($wsFormat, $wsResults){
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsResults);
+		return $printer->getWikiText(getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "list"){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsResults);
+		return $printer->getWikiText(getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "ol"){
 		$printer = WebServiceOlResultPrinter::getInstance();
-		return $printer->getWikiText($wsResults);
+		return $printer->getWikiText(getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "ul"){
 		$printer = WebServiceUlResultPrinter::getInstance();
-		return $printer->getWikiText($wsResults);
+		return $printer->getWikiText(getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "table"){
 		$printer = WebServiceTableResultPrinter::getInstance();
-		return $printer->getWikiText($wsResults);
+		return $printer->getWikiText(getReadyToPrintResult($wsResults));
 	}
 }
 
 //todo
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
-	//todo
-	return true;
+	$ws = WebService::newFromId($wsId);
+	$mP = $ws->validateSpecifiedParameters($wsParameters);
+	$mR = $ws->validateSpecifiedResults($wsReturnValues);
+	return array_merge($mP, $mR);
 }
 
 /*
@@ -263,7 +276,7 @@ function detectEditedWSUsages(&$article, &$user, &$text){
  * web services that are no longer used in this article or in a semantic property
  *
  * @param string $articleId
- * 
+ *
  * @return boolean true
  */
 function detectRemovedWebServiceUsages($articleId){
@@ -290,7 +303,7 @@ function detectRemovedWebServiceUsages($articleId){
 			}
 		}
 	}
-	
+
 	if($rememberedWSUsages != null){
 		$smwProperties = SMWFactbox::$semdata->getProperties();
 		foreach($rememberedWSUsages as $rememberedWSUsage){
@@ -322,17 +335,65 @@ function detectRemovedWebServiceUsages($articleId){
 
 
 //todo
-function getWSResultsFromCache($wsId, $wsReturnValues, $wsParameters){
-	$testArray = array();
-	for($k=0; $k < 7; $k++){
-		$testArraySub = array();
+function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
+	//todo: handle default return values
 
-		for($i=0; $i < 6; $i++){
-			array_push(&$testArraySub, $i);
-		}
-		array_push(&$testArray, $testArraySub);
+	$returnValues = array();
+
+	foreach($wsReturnValues as $key => $value){
+		$returnValues[] = $key;
 	}
-	return $testArray;
+
+	$ws = WebService::newFromID($wsId);
+	$result = $ws->call($parameterSetId, $returnValues);
+
+	return $result;
 }
+
+//todo:: wenn aber kein array von array zurückgegeben wird??
+// was kann alles zurückgegeben werden??
+function getReadyToPrintResult($result){
+	$niceResult = array();
+	$size = 0;
+	foreach($result as $title => $values){
+		$size = sizeof($values);
+		break;
+	}
+
+	for($i=0; $i<($size+1); $i++){
+		$niceResult[$i] = array();
+		foreach($result as $title => $values){
+			if($i == 0){
+				$niceResult[$i][] = $title;
+			} else {
+				$niceResult[$i][] = $values[$i-1];
+			}
+		}
+	}
+	return $niceResult;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>

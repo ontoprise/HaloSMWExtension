@@ -87,7 +87,7 @@ interface IWebServiceClient {
 	 * Calls the web service
 	 *
 	 */
-	public function call();
+	public function call($operationName, $parameters);
 	
 }
 ?>

@@ -117,7 +117,6 @@ class SMWSoapClient implements IWebServiceClient {
 		if ($pos) {
 			$typename = substr($typename, $pos+1);
 		}
-
 		return $this->mTypes[$typename] !== null;
 		
 	}
@@ -150,23 +149,17 @@ class SMWSoapClient implements IWebServiceClient {
 	 * Calls the web service
 	 *
 	 */
-	public function call() {
-		//TODO: implement
-		//--TEST
+	public function call($operationName, $parameters) {
 		ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
  		$this->mClient = new SoapClient($this->mURI);
-// 		$dein_parameter="irgendwas";
-
+// 		
  		try {
-/*
- 			$response = $this->mClient->query($dein_parameter);
-*/
- 		} catch(Exception $e) {
+			$response = $this->mClient->getPoint($parameters);
+		} catch(Exception $e) {
  			print_r($e);
  		}
- 		echo($response);
-		//TEST
-	}
+ 		return $response;
+ 	}
 	
 	//---Private methods ---
 	
