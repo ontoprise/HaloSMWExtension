@@ -26,72 +26,35 @@
 require_once("SMW_WSStorage.php");
 require_once("SMW_WebService.php");
 
-/*
- * todo: describe this
+/**
+ * this class provides some static methods for
+ * managing the cache
+ *
  */
 class WebServiceCache {
 
-	private static $mOldWebservice = null;
-
 	/**
+	 * this function checks if the given ws-parameterset-pair is
+	 * no longer referenced and deletes the related cache entry
+	 * in this case
 	 *
+	 * @param string $webServiceId
+	 * @param string $parameterSetId
 	 */
 	public static function removeWSParameterPair($webServiceId, $parameterSetId){
-		//if(sizeof(WSStorage::getDatabase()->getArticlesUsingWSParameterSetPair($wsPageId, $parameterSetId)) == 0){
-		//	$wsResult = WSStorage::getDatabase()->removeWSEntryFromCache($webServiceId, $parameterSetId);
-		//}
+		if(sizeof(WSStorage::getDatabase()->getArticlesUsingWSParameterSetPair($wsPageId, $parameterSetId)) == 0){
+			$wsResult = WSStorage::getDatabase()->removeWSEntryFromCache($webServiceId, $parameterSetId);
+		}
 	}
-
+	
 	/**
+	 * this function deletes all cache entries related
+	 * to a wwsd that longer exists..
 	 *
+	 * @param string $webServiceId
 	 */
 	public static function removeWS($webServiceId){
 		WSStorage::getDatabase()->removeWSFromCache($webServiceId);
-	}
-
-
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $ws
-	 */
-	public static function rememberWWSD($ws){
-		self::$mOldWebservice = $ws;
-	}
-
-
-	/**
-	 *
-	 *
-	 */
-	public static function detectModifiedWWSD($mNewWebService){
-		if(self::$mOldWebservice){
-			$remove = true;
-			if(!$mNewWebService){
-				WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
-				self::$mOldWebservice->removeFromDB();
-				return true;
-			}
-			if(self::$mOldWebservice->getArticleId() != $mNewWebService->getArticleId()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getMethod() == $mNewWebService->getMethod()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getName() == $mNewWebService->getName()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getParameters() == $mNewWebService->getParameters()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getProtocol() == $mNewWebService->getProtocol()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getResult() == $mNewWebService->getResult()){
-				$remove = false;
-			} else if(self::$mOldWebservice->getURI() == $mNewWebService->getURI()){
-				$remove = false;
-			}
-			if(remove){
-				self::removeWS(self::$mOldWebservice->getArticleID());
-				self::$mOldWebservice->removeFromDB();
-			}
-		}
 	}
 }
 

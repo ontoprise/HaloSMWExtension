@@ -65,7 +65,8 @@ WebServiceManager::registerWWSNamespaces();
 class WebServiceManager {
 
 	private static $mNewWebService = null;
-	
+	private static $mOldWebservice = null; // the webserve in its state before the wwsd is changed
+
 
 	/**
 	 * Register the WebServicePage for articles in the namespace 'WebService'.
@@ -144,46 +145,46 @@ class WebServiceManager {
 
 		//--- TEST
 
-/*		 
+		/*
 		 global $smwgHaloIP;
 		 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
 		 $wwsd = '<WebService>'.
-  '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'. 
-  '<protocol>SOAP</protocol>'.
-  '<method name="getCurrencyValue" />'.
-  '<parameter name="provider" path="parameters.provider" />'.
-  '<parameter name="in" path="parameters.srcCurrency" />'.
-  '<parameter name="out" path="parameters.dstCurrency" />'.
-  '<result name="mode">'.
-  '</result>'.
-  '<displayPolicy>'.
-   '<once />'.
-  '</displayPolicy>'.
-  '<queryPolicy>'.
-    '<maxAge value="1440"/>'.
-    '<delay value="1"/>'.
-  '</queryPolicy>'.
-  '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
-'</WebService>'
+		 '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'.
+		 '<protocol>SOAP</protocol>'.
+		 '<method name="getCurrencyValue" />'.
+		 '<parameter name="provider" path="parameters.provider" />'.
+		 '<parameter name="in" path="parameters.srcCurrency" />'.
+		 '<parameter name="out" path="parameters.dstCurrency" />'.
+		 '<result name="mode">'.
+		 '</result>'.
+		 '<displayPolicy>'.
+		 '<once />'.
+		 '</displayPolicy>'.
+		 '<queryPolicy>'.
+		 '<maxAge value="1440"/>'.
+		 '<delay value="1"/>'.
+		 '</queryPolicy>'.
+		 '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
+		 '</WebService>'
 		 $wwsd = '<WebService>'.
-  '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'. 
-  '<protocol>SOAP</protocol>'.
-  '<method name="getCurrencyValue" />'.
-  '<parameter name="provider" path="parameters.provider" />'.
-  '<parameter name="in" path="parameters.srcCurrency" />'.
-  '<parameter name="out" path="parameters.dstCurrency" />'.
-  '<result name="mode">'.
-  '</result>'.
-  '<displayPolicy>'.
-   '<once />'.
-  '</displayPolicy>'.
-  '<queryPolicy>'.
-    '<maxAge value="1440"/>'.
-    '<delay value="1"/>'.
-  '</queryPolicy>'.
-  '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
-'</WebService>';
+		 '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'.
+		 '<protocol>SOAP</protocol>'.
+		 '<method name="getCurrencyValue" />'.
+		 '<parameter name="provider" path="parameters.provider" />'.
+		 '<parameter name="in" path="parameters.srcCurrency" />'.
+		 '<parameter name="out" path="parameters.dstCurrency" />'.
+		 '<result name="mode">'.
+		 '</result>'.
+		 '<displayPolicy>'.
+		 '<once />'.
+		 '</displayPolicy>'.
+		 '<queryPolicy>'.
+		 '<maxAge value="1440"/>'.
+		 '<delay value="1"/>'.
+		 '</queryPolicy>'.
+		 '<spanOfLife value="180" expiresAfterUpdate="true"/>'.
+		 '</WebService>';
 
 		 $ws = WebService::newFromWWSD("CurrencyCalculator",$wwsd);
 		 $ws->validateWithWSDL();
@@ -223,12 +224,12 @@ class WebServiceManager {
 	 * 		The text to be rendered
 	 */
 	public static function wwsdParserHook($input, $args, $parser) {
-		
+
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
-		WebServiceCache::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
-		
+		WebServiceManager::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
+
 		$attr = "";
 		foreach ($args as $k => $v) {
 			$attr .= " ". $k . '="' . $v . '"';
@@ -274,7 +275,7 @@ class WebServiceManager {
 	/**
 	 * Stores the previously parsed WWSD in the database. This function is a hook for
 	 * 'ArticleSaveComplete.'
-	 * 
+	 *
 	 * This function also deletes wwsd and cache entries from the db
 	 * that are no longer needed.
 	 *
@@ -284,8 +285,13 @@ class WebServiceManager {
 	 * @return boolean true
 	 */
 	public static function articleSavedHook(&$article, &$user, &$text) {
-		WebServiceCache::detectModifiedWWSD(self::$mNewWebService->getArticleId());
-		
+		// check if an wwsd was change and delete the old wwsd and the
+		// related cache entries from the db
+		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService->getArticleId())){
+			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
+			self::$mOldWebservice->removeFromDB();
+		}
+
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
 		}
@@ -294,7 +300,7 @@ class WebServiceManager {
 
 	/*
 	 * Removes a deleted wwsd and its related cache entries from the database.
-	 * This function is a hook for 'ArticleDElete'
+	 * This function is a hook for 'ArticleDelete'
 	 */
 	function articleDeleteHook(&$article, &$user, $reason){
 		WebServiceCache::removeWS($article->getID());
@@ -311,6 +317,36 @@ class WebServiceManager {
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
 		WSStorage::getDatabase()->initDatabaseTables();
+	}
+
+	public static function detectModifiedWWSD($mNewWebService){
+		if(self::$mOldWebservice){
+			$remove = false;
+			if(!$mNewWebService){
+				return true;
+			}
+			if(self::$mOldWebservice->getArticleId() != $mNewWebService->getArticleId()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getMethod() != $mNewWebService->getMethod()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getName() != $mNewWebService->getName()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getParameters() != $mNewWebService->getParameters()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getProtocol() != $mNewWebService->getProtocol()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getResult() != $mNewWebService->getResult()){
+				$remove = true;
+			} else if(self::$mOldWebservice->getURI() != $mNewWebService->getURI()){
+				$remove = true;
+			}
+			return $remove;
+		}
+		return false;
+	}
+
+	public static function rememberWWSD($ws){
+		self::$mOldWebservice = $ws;
 	}
 }
 

@@ -331,18 +331,21 @@ class WebService {
 	}
 
 	/**
-	 * Calls the web service and considers the cache.
+	 * calls the webservice and returns the
+	 * webservice result. if an appropriate result
+	 * allready exists in the cache, then the
+	 * result is taken from the cache
 	 *
+	 * @param string $parameterSetId
+	 * @param string $resultParts
+	 * @return an array that contains the result
 	 */
 	public function call($parameterSetId, $resultParts) {
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($this->mArticleID, $parameterSetId);
 		$response = null;
 
+		//check if an appropriate result allready exists in the cache
 		if($cacheResult != null){
-			$t1 = wfTime();
-			$t2 = wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"]);
-			$t3 = $this->getDisplayPolicy()*60;
-			 
 			if(($this->mDisplayPolicy == 0) ||
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
 			> ($this->getDisplayPolicy()*60))){
@@ -350,6 +353,8 @@ class WebService {
 			}
 		}
 
+		// get the result from a call to a webservice if there
+		// was no appropriate result in the cache
 		if(!$response){
 			$this->createWSClient();
 			$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
@@ -389,6 +394,9 @@ class WebService {
 		$result = array();
 
 		// todo: handle unspecified return value
+		// todo: handle [] syntax
+		// todo; handle selectors
+		// TODO. CHECK THE NATURE OF THE RESULT
 		foreach($paths as $key => $path){
 			$pathSteps = explode(".", $path);
 			$tempObject = array();
@@ -417,10 +425,10 @@ class WebService {
 	}
 
 	/**
-	 * todo:describe
+	 * helper function for building the ws-call object
 	 *
-	 * @param unknown_type $path
-	 * @param unknown_type $value
+	 * @param string $path the path to the part of the ws-call object
+	 * @param string $value the value of the call parameter with the given path
 	 */
 	private function getPathSteps($path, $value){
 		$walkedParameters = explode(".", $path);
@@ -433,7 +441,6 @@ class WebService {
 			$temp = &$temp[$walkedParameters[$i]];
 		}
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
-			
 	}
 
 
@@ -775,8 +782,14 @@ class WebService {
 		WSStorage::getDatabase()->removeWS($this->getArticleID());
 	}
 
-	//todo: non optional parameters
+	/**
+	 * validate the parameters used in the #ws-syntax
+	 *
+	 * @param array (parameter-name => value) $specifiedParameters
+	 * @return array of error messages
+	 */
 	public function validateSpecifiedParameters($specifiedParameters){
+		// todo: construct error messages like in the validate wwsd example
 		$messages = array();
 		foreach($specifiedParameters as $pName => $pValue){
 			$exists = false;
@@ -805,7 +818,15 @@ class WebService {
 	}
 
 
+	/**
+	 * validate the result parts requested in the #ws-syntax
+	 *
+	 * @param array (resultname => default value) $specifiedResults
+	 * @return array of error-messages
+	 */
 	public function validateSpecifiedResults($specifiedResults){
+		// todo: construct error messages like in the validate wwsd example
+		//todo: validate selectors and []-syntax
 		$messages = array();
 		foreach($specifiedResults as $rName => $rValue){
 			$exists = false;

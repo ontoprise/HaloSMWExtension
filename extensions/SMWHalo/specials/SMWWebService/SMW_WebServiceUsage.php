@@ -334,7 +334,14 @@ function detectRemovedWebServiceUsages($articleId){
 }
 
 
-//todo
+/**
+ * get the result from the cache
+ *
+ * @param unknown_string $wsId
+ * @param array $wsReturnValues the requested result parts and default values
+ * @param array $parameterSetId the specified parameters
+ * @return array
+ */
 function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
 	//todo: handle default return values
 
@@ -350,9 +357,15 @@ function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
 	return $result;
 }
 
-//todo:: wenn aber kein array von array zurückgegeben wird??
-// was kann alles zurückgegeben werden??
+
+/**
+ * prepares the result for the result printers
+ *
+ * @param array $result
+ * @return array
+ */
 function getReadyToPrintResult($result){
+	//todo:: handle all kinds of result anatomy
 	$niceResult = array();
 	$size = 0;
 	foreach($result as $title => $values){

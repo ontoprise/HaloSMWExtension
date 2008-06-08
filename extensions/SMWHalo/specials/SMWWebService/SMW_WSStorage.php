@@ -28,6 +28,8 @@ global $smwgHaloIP;
 require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
 
 
+//todo: add methods used in the wsstoragesql
+
 /**
  * This class encapsulates all methods that care about the database tables of 
  * the web service extension. It is a singleton that contains an instance 

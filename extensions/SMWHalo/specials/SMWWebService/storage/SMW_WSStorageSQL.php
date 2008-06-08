@@ -658,8 +658,14 @@ class WSStorageSQL {
 		$db->freeResult($res);
 		return $result;
 	}
-
-	function storeCacheEntry($wsId, $parameterSetId, $result, $lastUpdate, $lastAccess){
+	/**
+	 * stores the result of a ws-call in the cache
+	 *
+	 * @param string_type $wsId
+	 * @param string $parameterSetId
+	 * @param string $result (the serialized result of the ws-call)
+	 */
+	function storeCacheEntry($wsId, $parameterSetId, $result){
 		$db =& wfGetDB( DB_MASTER );
 		$ptb = $db->tableName('smw_ws_cache');
 
