@@ -101,7 +101,7 @@ if ($action == 'get_wsdl') {
     $contents = fread ($handle, filesize ("webservices.wsdl"));
     fclose($handle);
     
-    echo str_replace("{{wiki-path}}", $_SERVER['SERVER_ADDR'].$_SERVER['SCRIPT_NAME'], $contents);
+    echo str_replace("{{wiki-path}}", $_SERVER['SERVER_ADDR'].":".$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'], $contents);
     exit;
 }
 
