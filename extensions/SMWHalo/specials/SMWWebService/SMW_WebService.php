@@ -345,6 +345,7 @@ class WebService {
 		$response = null;
 
 		//check if an appropriate result allready exists in the cache
+		//todo: update db with last access of cache entry
 		if($cacheResult != null){
 			if(($this->mDisplayPolicy == 0) ||
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
@@ -380,10 +381,58 @@ class WebService {
 			wfTimeStamp(TS_MW, wfTime()));
 		}
 
+		//todo: what if the ws returns null?
 
-		// get the wanted part of the result
+
+		//initialize array containing select paths and their value
+		$selects = array();
+		foreach($this->mParsedResult->children() as $child){
+			if ($child->getName() == 'select') {
+				$selects["".$child["object"]] = "".$child["value"];
+			}
+		}
+
+		// initialize array of paths and elements that are not selected in the result
+		$outselectedPaths = array();
+		$printO[] = array();
+		foreach($selects as $path => $value){
+			$pathSteps = explode(".", $path);
+			$tempObject[$pathSteps[0]] = $response;
+			for($i=1; $i < sizeof($pathSteps); $i++){
+				if($tempObject){
+					foreach($tempObject as $key => $temp){
+						if(is_array($temp)){
+							$index = 0;
+							foreach($temp as $t){
+								$newTempObject[$key.".".$index] = $t;
+								$index += 1;
+							}
+							$i -= 1;
+						} else {
+							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
+							if($i == (sizeof($pathSteps)-1)){
+								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
+									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
+								} else {
+									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
+								}
+							}
+						}
+					}
+				}
+				$tempObject = $newTempObject;
+				$newTempObject = array();
+			}
+		}
+
+		//return "result: ".print_r($outselectedPaths, true);
+
+		// get the requested part of the result
 		$paths = array();
 		foreach($resultParts as $resultPart){
+
+			$tempObject[] = $response;
 			foreach($this->mParsedResult->children() as $child){
 				if("".$child["name"] == $resultPart){
 					$paths["".$child["name"]] = "".$child["path"];
@@ -400,28 +449,47 @@ class WebService {
 		foreach($paths as $key => $path){
 			$pathSteps = explode(".", $path);
 			$tempObject = array();
-			$tempObject[] = $response;
-			//todo handle brackets-syntax in general and selektors
-			for($i=0; $i < sizeof($pathSteps); $i++){
+			$tempObject[$pathSteps[0]] = $response;
+
+			for($i=1; $i < sizeof($pathSteps); $i++){
 				$newTempObject = array();
 				if($tempObject){
-					foreach($tempObject as $temp){
-						if(is_array($temp)){
-							foreach($temp as $t){
-								$newTempObject[] = $t;
+					foreach($tempObject as $id => $temp){
+						$falseCount = 0;
+						$trueCount = 0;
+						foreach($outselectedPaths as $k => $v){
+							if(substr($k, 0, strlen($id)) == $id){
+								if($v){
+									$trueCount += 1;
+								} else {
+									$falseCount += 1; 
+								}
 							}
-							$i -= 1;
-						} else {
-							$newTempObject[] = $temp->$pathSteps[$i];
 						}
-					}
-				}
-				$tempObject = $newTempObject;
+						if($trueCount > 0 || $falseCount == 0){
+							if(is_array($temp)){
+								$index = 0;
+								foreach($temp as $t){
+									$newTempObject[$id.".".$index] = $t;
+									$index +=1;
+								}
+								$i -= 1;
+							} else {
+								$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+								$newTempObj = $temp->$niceStep;
+								if(is_array($newTempObj) && $this->getReturnPartBrscketValue($pathSteps[$i])){
+									$newTempObj = $newTempObj[$this->getReturnPartBrscketValue($pathSteps[$i])];
+								}
+								$newTempObject[$id.".".$pathSteps[$i]] = $newTempObj;
+							}
+						}
+					}}
+					$tempObject = $newTempObject;
 			}
 			$result[$key] = $tempObject;
 		}
 
-		return $result;
+		return print_r($result, true);
 	}
 
 	/**
@@ -655,32 +723,48 @@ class WebService {
 			// Check all parts of a result
 			foreach ($r->children() as $part) {
 				$pNames = array();
-				if ($part->getName() != 'part') {
-					//ignore 'select' elements
-					continue;
-				}
-				$pName = (string) $part->attributes()->name;
-				if ($pName == null) {
-					// result part has no name
-					$msg[] = wfMsg('smw_wws_result_part_without_name', $rName);
-					continue;
-				}
-				$path = (string) $part->attributes()->path;
-				if ($path == null) {
-					// result part has no path
-					$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
-					continue;
-				}
-				if (array_key_exists($pName, $pNames)) {
-					if ($pNames[$pName]++ == 1) {
-						$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
+				$selects = array();
+				$selectCount = 0;
+				if ($part->getName() == 'part') {
+					$pName = (string) $part->attributes()->name;
+					if ($pName == null) {
+						// result part has no name
+						$msg[] = wfMsg('smw_wws_result_part_without_name', $rName);
+						continue;
 					}
-					continue;
-				} else {
-					$pNames[$pName] = 1;
-					$wwsdPaths[$rName.'.'.$pName] = $path;
+					$path = (string) $part->attributes()->path;
+					if ($path == null) {
+						// result part has no path
+						$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
+						continue;
+					}
+					if (array_key_exists($pName, $pNames)) {
+						if ($pNames[$pName]++ == 1) {
+							$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
+						}
+						continue;
+					} else {
+						$pNames[$pName] = 1;
+						$wwsdPaths[$rName.'.'.$pName] = $path;
+					}
+				} else if ($part->getName() == 'select') {
+					$selectCount = 0;
+					$objectPath = (string) $part->attributes()->object;
+					if ($objectPath == null) {
+						// result select has no object
+						$msg[] = wfMsg('smw_wws_result_part_without_path', "select-o", $rName);
+						continue;
+					} //todo: the same for the values
+					if (array_key_exists($objectPath, $selects)) {
+						//	if ($selects[$object]++ == 1) {
+						//		$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
+						//	}
+						continue;
+					} else {
+						$pNames[$pName] = 1;
+						$wwsdPaths[$rName.'.'."select".$selectCount] = $objectPath;
+					}
 				}
-
 			}
 			if (array_key_exists($rName, $rNames)) {
 				if ($rNames[$rName]++ == 1) {
@@ -690,6 +774,7 @@ class WebService {
 			} else {
 				$rNames[$rName] = 1;
 			}
+
 		}
 
 		// Check if there is a result in the WSDL for each alias.
@@ -697,8 +782,9 @@ class WebService {
 		if ($wsdlResult != null) {
 			// Collect the components of the result
 			$rType = $wsdlResult[0];
-			$names = $this->flattenParam('', $rType);
-
+			$names = $this->flattenParam("pointresponse", $rType);
+			// examine parameters
+				
 			// find elements that lead to overflows (e.g. potentially endless lists)
 			foreach ($names as $idx=>$name) {
 				$pos = strpos($name, '##overflow##');
@@ -708,6 +794,20 @@ class WebService {
 				}
 			}
 			// find undefined results
+
+			// this is a quick fix in order to allow brackets in result parts
+			// todo:: valide the usage of the bracket syntax
+			// for a no array object
+			foreach($wwsdPaths as $key => $path){
+				$pathSteps = explode(".", $path);
+				for($z=0; $z < sizeof($pathSteps); $z++){
+					if($this->getReturnPartBrscketValue($pathSteps[$z])){
+						$pathSteps[$z] = $this->getReturnPartPathStep($pathSteps[$z]);
+					}
+				}
+				$wwsdPaths[$key] = implode(".", $pathSteps);
+			}
+
 			$inWwsd = array_diff($wwsdPaths, $names);
 			foreach ($inWwsd as $r) {
 				$r = array_search($r, $wwsdPaths);
@@ -742,7 +842,7 @@ class WebService {
 	private function flattenParam($name, $type, &$typePath=null) {
 		$flatParams = array();
 
-		
+
 		if (!$this->mWSClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
 			// $type is a simple type
 			$flatParams[] = $name;
@@ -840,6 +940,35 @@ class WebService {
 			}
 		}
 		return $messages;
+	}
+
+	/**
+	 * returns values for brackets used in resultparts
+	 *
+	 * @param string $name
+	 * @return string value or false
+	 */
+	//todo: remove eror in function title
+	public function getReturnPartBrscketValue($name){
+		if(strpos($name, "[")){
+			if($name{strlen($name)-1} == "]"){
+				return substr($name, strpos($name, "[")+1, strlen($name)-strpos($name, "[")-2);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * returns the pathstep of a resultpart without brackets
+	 *
+	 * @param string $name
+	 * @return string name without brackets
+	 */
+	public function getReturnPartPathStep($name){
+		if(strpos($name, "[")){
+			return substr($name, 0, strpos($name, "["));
+		}
+		return $name;
 	}
 }
 

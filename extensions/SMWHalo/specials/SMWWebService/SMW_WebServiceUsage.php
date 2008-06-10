@@ -125,15 +125,16 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
+	//todo; results muessen über result.part angesprochen werden
 	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
 
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-	
+
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
-		return "Error: A WWSD for ".$wsName." does not exist"; 
+		return "Error: A WWSD for ".$wsName." does not exist";
 	}
 	$wsId = $ws->getArticleID();
 
@@ -143,7 +144,7 @@ function webServiceUsage_Render( &$parser) {
 
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
-	
+
 	for($i=2; $i < sizeof($parameters); $i++){
 		$parameter = trim($parameters[$i]);
 		if($parameter{0} == "?"){
@@ -159,18 +160,18 @@ function webServiceUsage_Render( &$parser) {
 			}
 		}
 	}
-	
+
 	//todo allow empty parameter sets:parametersetid=0;
 	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId);
-		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$wsFormattedResult = $wsResults;//formatWSResult($wsFormat, $wsResults);
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
 	} else {
-		$return = "The usage of the #ws-syntax was errone: <ul>"; 
+		$return = "The usage of the #ws-syntax was errone: <ul>";
 		foreach($messages as $mess){
 			$return .= "<li>".$mess."</li>";
 		}
@@ -365,12 +366,18 @@ function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
  * @return array
  */
 function getReadyToPrintResult($result){
-	//todo:: handle all kinds of result anatomy
 	$niceResult = array();
 	$size = 0;
 	foreach($result as $title => $values){
-		$size = sizeof($values);
-		break;
+		if($size < sizeof($values)){
+			$size = sizeof($values);
+		}
+	}
+
+	foreach($result as $title => $values){
+		while(sizeof($values) < $size){
+			$values[] = "";
+		}
 	}
 
 	for($i=0; $i<($size+1); $i++){
@@ -385,25 +392,6 @@ function getReadyToPrintResult($result){
 	}
 	return $niceResult;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

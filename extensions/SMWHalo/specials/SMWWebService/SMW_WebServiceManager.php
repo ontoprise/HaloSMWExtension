@@ -228,7 +228,7 @@ class WebServiceManager {
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
-		WebServiceManager::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
+		self::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
 
 		$attr = "";
 		foreach ($args as $k => $v) {
@@ -287,7 +287,7 @@ class WebServiceManager {
 	public static function articleSavedHook(&$article, &$user, &$text) {
 		// check if an wwsd was change and delete the old wwsd and the
 		// related cache entries from the db
-		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService->getArticleId())){
+		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
 			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
 			self::$mOldWebservice->removeFromDB();
 		}
@@ -325,7 +325,7 @@ class WebServiceManager {
 			if(!$mNewWebService){
 				return true;
 			}
-			if(self::$mOldWebservice->getArticleId() != $mNewWebService->getArticleId()){
+			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
 			} else if(self::$mOldWebservice->getMethod() != $mNewWebService->getMethod()){
 				$remove = true;
