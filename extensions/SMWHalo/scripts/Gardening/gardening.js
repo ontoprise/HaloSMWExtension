@@ -54,12 +54,13 @@ GardeningPage.prototype = {
 			var errorSpan = $("errorOf_"+splitText[1]);
 			if (errorSpan == null) {
 				// if not it is a general error.
-				errorSpan = $(splitText[1]);
+				errorSpan = $('gardening-tooldetails-content');
 			}
 			// paste error message and highlight it.
 			errorSpan.innerHTML = "\t" + splitText[2];
 			//Effect.Pulsate(errorSpan);
-			$('runBotButton').removeAttribute("disabled");
+			var runButton = $('runBotButton');
+			if (runButton != null) runButton.removeAttribute("disabled");
 			return;
 		}
 		$('gardening-tooldetails-content').innerHTML = gLanguage.getMessage('BOT_WAS_STARTED');
