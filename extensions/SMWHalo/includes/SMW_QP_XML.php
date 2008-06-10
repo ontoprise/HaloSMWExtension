@@ -30,10 +30,10 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
         foreach ($printRequests as $pr) {
            $title = $pr->getTitle();
            if($title instanceof Title) {
-               $result .= "\t\t<variable name=\"".$title->getText()."\">\n";
+               $result .= "\t\t<variable name=\"".$title->getText()."\"/>\n";
                $variables[] = $title->getText();
            } else {
-               $result .= "\t\t<variable name=\"".$synthVar.$i."\">\n";
+               $result .= "\t\t<variable name=\"".$synthVar.$i."\"/>\n";
                $variables[] = $synthVar.$i;
            }
            $i++;
