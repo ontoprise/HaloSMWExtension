@@ -237,6 +237,7 @@ OntologyModifier.prototype = {
 		} else {
 			domain = '';
 		}
+		var domainHintWritten = false;
 		if (ranges != null) {
 			if (ranges.length >= 1) {
 				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
@@ -245,7 +246,7 @@ OntologyModifier.prototype = {
 						rangeStr += ranges[i];
 					} else {
 						rangeStr += gLanguage.getMessage('TYPE_PAGE');
-
+						domainHintWritten = true;
 						if (ranges[i]) {
 							// Range hint is not empty
 							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
@@ -265,6 +266,10 @@ OntologyModifier.prototype = {
 			} 
 		}
 		
+		if (!domainHintWritten && domain != '') {
+			schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
+			          + domain + ";]]";
+		}
 		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
 						   gLanguage.getMessage('CREATE_PROP_FOR_CAT').replace(/\$cat/g, domain),
