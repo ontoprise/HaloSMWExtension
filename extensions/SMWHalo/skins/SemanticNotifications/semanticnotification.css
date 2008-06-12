@@ -1,0 +1,74 @@
+@CHARSET "ISO-8859-1";
+
+* {
+	-moz-background-clip: padding;
+	z-index: 0
+}
+
+a {
+	cursor: pointer
+}
+
+body,iframe {
+	margin: 0px;
+	padding: 0px
+}
+
+div,span,img,a,form,body,label {
+	border-width: 1px;
+	border-color: black
+}
+
+.sn-button-link {
+	background-color: #EFEFEF;
+	border: 1px Silver outset;
+	color: Blue;
+	margin: 0px;
+	padding: 2px;
+	text-decoration: underline;
+	font-size: 11px;
+}
+
+.mynotificationstitle_nm {
+	background-color: #00B55A;
+	color: White;
+	font-size: 16px;
+	padding: 6px;
+	text-align: left;
+	vertical-align: text-top;
+}
+
+.notificationbox_nm {
+	background-color: #28FF94;
+	border-width: 1px;
+	border-style: solid;
+	margin: 0px;
+}
+
+.previewbox_nm {
+	border: 2px Silver solid;
+}
+
+.sn-query-text {
+	border-color: Silver;
+}
+
+#footer {
+	border-bottom: none;
+	border-top: none;
+}
+
+.Panel1_nm {
+	border: 0px Silver outset;
+}
+
+.index_nm {
+	color: #000000;
+	font-family: Arial;
+	font-size: 20px;
+}
+
+.sn-labels {
+	font-size: 11px;
+}
+

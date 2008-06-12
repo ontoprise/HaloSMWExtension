@@ -73,6 +73,20 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
+	$wgHooks['smwExtDeleteOutput'][] = 'smwfExtDeleteOutput';
+	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
+	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
+	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'wfNavTree';
+	
+	// Conversion of documents (PDF, MS Office)
+	global $smwgEnableUploadConverter;
+	if ($smwgEnableUploadConverter) {
+		global $wgExtensionMessagesFiles;
+		$wgAutoloadClasses['UploadConverter'] = $smwgHaloIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
+		$wgExtensionMessagesFiles['UploadConverter'] = $smwgHaloIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
+		
+		$wgHooks['UploadComplete'][] = 'UploadConverter::convertUpload';
+	}
 	
 	global $wgRequest, $wgContLang, $wgCommandLineMode, $smwgLocalGardening;
 	
@@ -108,6 +122,7 @@ function smwgHaloSetupExtension() {
 	
 	//parser function for multiple template annotations
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
+	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterTreeGenerator';
 		
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
@@ -135,6 +150,8 @@ function smwgHaloSetupExtension() {
 		}
 		
 	}
+	
+	require_once($smwgHaloIP . '/includes/SMW_WYSIWYGTab.php');
 	
 	// add some AJAX calls
 	if ($action == 'ajax') {
@@ -216,6 +233,7 @@ function smwgHaloSetupExtension() {
 
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
+
 	}
 	
 	// include SMW logger (exported as ajax function but also used locally)
@@ -273,7 +291,10 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
 	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
 	                                      $smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
-
+	$wgAutoloadClasses['SMWGlossaryTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_Glossary.php';
+	SMWDataValueFactory::registerDatatype('_glo', 'SMWGlossaryTypeHandler',
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_glossary'));
+	                                      
 	return true;
 }
 
@@ -418,6 +439,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "edit");
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "annotate");
 		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 		
 		// serialize the css
 		$jsm->serializeCSS($out);
@@ -504,7 +527,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/SMWEditInterface.js', "edit");
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
-			
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticNotification/SMW_SemanticNotifications.js', "view", -1, NS_SPECIAL.":SemanticNotifications");
 		} else {
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -1226,6 +1249,152 @@ function smwfCommaAnnotation(&$parser){
 
 function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	$magicWords['annotateList'] = array( 0, 'annotateList' );
+	$magicWords['generateTree'] = array( 0, 'generateTree' );
 	return true;
 }
+
+function smwfRegisterTreeGenerator( &$parser, &$text, &$stripstate ) {
+    $parser->setFunctionHook( 'generateTree', 'smwfGenerateTree' );
+    return true; // always return true, in order not to stop MW's hook processing!
+}
+
+function smwfGenerateTree(&$parser){
+    $params = func_get_args();
+    array_shift( $params ); // we already know the $parser ...
+    $genTreeParameters = array();
+    foreach($params as $p) {
+    	$keyValue = explode("=", $p);
+    	if (count($keyValue) != 2) continue;
+    	$genTreeParameters[$keyValue[0]] = $keyValue[1];
+    }
+    if (!array_key_exists('property', $genTreeParameters)) return "";
+    $relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
+    $categoryName = array_key_exists('category', $genTreeParameters) ? Title::newFromText($genTreeParameters['category'], NS_CATEGORY) : NULL;
+    $start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
+    $result = "";
+    $tree = smwfGetSemanticStore()->getHierarchyByRelation($relationName, $categoryName, $start);
+    $maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
+    if ($maxDepth > 0) $redirectPage = Title::newFromText($genTreeParameters['redirectPage']);
+    $displayProperty = array_key_exists('display', $genTreeParameters) ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY) : NULL;
+    smwfDumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty);
+    return $result;
+}
+
+function smwfDumpTree($tree, &$result, $maxDepth, $redirectPage, $displayProperty, $hchar='*') {
+	if ($maxDepth === NULL || $maxDepth >= 0) {
+		foreach($tree->children as $n) {
+			if ($displayProperty == NULL) {
+			  $result .= $hchar."[[".$n->title->getText()."]]\n";	
+			} else {
+				$smwValues = smwfGetStore()->getPropertyValues($n->title, $displayProperty);
+				if (count($smwValues) > 0) {
+					 $result .= $hchar."[[".$n->title->getText()."|".$smwValues[0]->getXSDValue()."]]\n";   
+				} else {
+					$result .= $hchar."[[".$n->title->getText()."]]\n";    
+				}
+			}
+			if ($maxDepth !== NULL) $maxDepth--;
+			smwfDumpTree($n, $result, $maxDepth, $redirectPage, $displayProperty, $hchar.'*');
+		}
+	} else if ($maxDepth < 0 && $redirectPage !== NULL) {
+		$result .= $hchar."[[".$redirectPage->getText()."|...]]\n";
+	}
+}
+
+/**
+ * Returns additional HTML for delete page.
+ * 
+ * @param $article Article which is about to be deleted.
+ * @param $output HTML output.
+ */
+function smwfExtDeleteOutput(& $article, & $output) {
+	global $smwgHaloIP;
+	require_once($smwgHaloIP . '/includes/SMW_DeleteMoveExtension.php');
+	$output = SMWDeleteMoveExtension::showLinksToArticle($article);
+	return true;
+}
+
+/**
+ * Hook which populates Toolbox toolbar
+ * 
+ * @param $template SkinTemplate class
+ */
+function smwfOntoSkinTemplateToolboxEnd(& $template) {
+	echo smwfCreateLinks('Toolbox');
+    return true;
+}
+
+/**
+ * Hook which populates Navigation toolbar
+ * 
+ * @param $template SkinTemplate class
+ */
+function smwfOntoSkinTemplateNavigationEnd(& $template) {
+	echo smwfCreateLinks('Navigation');
+    return true;
+}
+
+/**
+ * Creates links for different groups by accessing group link pages.
+ * Name of page is: $name_$group 
+ * 
+ * @return HTML
+ */
+function smwfCreateLinks($name) {
+	global $wgUser, $wgTitle;
+    $groups = $wgUser->getGroups();
+    $links = array();
+    foreach($groups as $g) {
+         $nav = new Article(Title::newFromText($name.'_'.$g, NS_MEDIAWIKI));
+         $content = $nav->fetchContent(0,false,false);
+         $matches = array();
+         preg_match_all('/\*\s*([^|]+)\|\s*(.*)/', $content, $matches);
+         for($i = 0; $i < count($matches[0]); $i++) {
+            $links[$matches[2][$i]] = $matches[1][$i];
+         }
+    }
+    $links = array_unique($links);
+    $result = "";
+    foreach($links as $name => $page_title) {
+      $name = Sanitizer::stripAllTags($name);
+      $page_title = Sanitizer::stripAllTags($page_title);
+      $query = "";
+      if (stripos($page_title, "?") !== false) {
+        $query = substr($page_title, stripos($page_title, "?")+1);
+        $page_title = substr($page_title, 0, stripos($page_title, "?"));
+      }
+      
+      // Replace some variables:
+      // PAGE_TITLE : Page title WITH namespace
+      // PAGE_TITLE_WNS : Page title WITHOUT namespace
+      // PAGE_NS : Page namespace as text
+      $query = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $query);
+      $query = str_replace("{{{PAGE_NS}}}", $wgTitle->getNsText(), $query);
+      $query = str_replace("{{{PAGE_TITLE_WNS}}}", $wgTitle->getDBkey(), $query);
+      $page_title = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $page_title);
+      $result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+    }
+    return $result;
+}
+
+function wfNavTree() {
+ global $wgUser,$wgTitle,$wgParser;
+ if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
+ $opt = ParserOptions::newFromUser($wgUser);
+ $nav = new Article(Title::newFromText('NavTree', NS_MEDIAWIKI));
+ $out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+ echo $out->getText() . '<br/>';
+ $groups = $wgUser->getGroups();
+ foreach($groups as $g) {
+ 	$title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
+ 	if ($title->exists()) {
+ 		$nav = new Article($title);
+		$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+		echo $out->getText() . '<br/>';
+ 	}
+ }
+ return true;
+}
+
+
 ?>

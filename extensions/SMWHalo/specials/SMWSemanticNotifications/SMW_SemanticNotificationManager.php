@@ -52,12 +52,36 @@ class SemanticNotificationManager {
 			// Do not install the extension for ajax calls
 			return;
 		}
+
+		// Install the special page
+		global $wgAutoloadClasses, $wgSpecialPages, $wgExtensionMessagesFiles, $smwgHaloIP;
+		$wgAutoloadClasses['SMWSemanticNotificationSpecial'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationSpecial.php';
+		$wgSpecialPages['SemanticNotifications'] = array('SMWSemanticNotificationSpecial');
+		$wgExtensionMessagesFiles['SemanticNotification'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationMessages.php';
+		wfLoadExtensionMessages('SemanticNotification');
 		
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotification.php");
 		//---Test---
+		SemanticNotificationManager::getUserLimitations();
+/*
+		$sn = new SemanticNotification("MyNotification", "Thomas", 
+		                               "[[Category:Reactant]]", 2);
+		$sn->query();
+
+ 		$sn = new SemanticNotification("MyNotification", "Thomas", 
+		                               "[[SNname::*]]".
+									   "[[SNname::+]]".
+									   "[[SNzip::*]]".
+									   "[[SNzip::+]]".
+									   "[[SNstreet::*]]".
+									   "[[SNstreet::+]]".
+									   "[[SNhousenumber::*]]".
+									   "[[SNhousenumber::+]]", 2);
+		$sn->query();
+*/
+
 /*		
-		$sn = new SemanticNotification("MyNotification", "Thomas", "{{#ask: something}}", 2);
 		$sn->store();
 		
 		$sn = SemanticNotification::newFromName("MyNotification", "Thomas");
@@ -80,6 +104,38 @@ class SemanticNotificationManager {
 		global $smwgHaloIP;
 		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNStorage.php");
 		SNStorage::getDatabase()->initDatabaseTables();	
+	}
+	
+	/**
+	 * Returns the semantic notification limits of the current user.
+	 *
+	 * @return array<key => int>
+	 * 		An array with the following keys: 
+	 * 			notifications: The maximal number of notifications.
+	 * 			size: The maximal size of a result that is stored in the DB in bytes
+	 * 			min interval: Minimal update interval in days
+	 */
+	public static function getUserLimitations() {
+		global $smwgSemanticNotificationLimits, $wgUser;
+		$groups = $wgUser->getGroups();
+		$groups[] = 'allUsers';
+		
+		$limits = array("notifications" => 0, 
+                        "size" => 0, 
+                        "min interval" => 100000);
+		foreach ($groups as $g) {
+			if ($g !== 'allUsers') {
+				$g = 'group '.$g;
+			}
+			$l = $smwgSemanticNotificationLimits[$g];
+			if ($l) {
+				// find the least restrictive limits from several groups
+				$limits['notifications'] = max($limits['notifications'], $l['notifications']);
+				$limits['size']          = max($limits['size'], $l['size']);
+				$limits['min interval']  = min($limits['min interval'], $l['min interval']);
+			}
+		}
+		return $limits;
 	}
 }
 

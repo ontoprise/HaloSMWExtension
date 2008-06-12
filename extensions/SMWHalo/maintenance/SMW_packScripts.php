@@ -98,7 +98,8 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
 	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  ,
 	 				  'SMW_AnnotationHints.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_GardeningHints.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_SaveAnnotations.js' => GPL_LICENSE_ONTOPRISE
+	 				  'SMW_SaveAnnotations.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_SemanticNotifications.js' => GPL_LICENSE_ONTOPRISE
 	 				  /*'edit_area_loader.js',
 	 				  'SMWEditInterface.js'*/
 	 				  );

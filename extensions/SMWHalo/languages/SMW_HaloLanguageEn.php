@@ -27,7 +27,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 protected $smwContentMessages = array(
 
 	'smw_viewinOB' => 'Open in OntologyBrowser',
-
+    'smw_wysiwyg' => 'WYSIWYG',
 	'smw_att_head' => 'Attribute values',
 	'smw_rel_head' => 'Relations to other pages',
 	'smw_predefined_props' => 'This is the predefined property "$1"',
@@ -362,6 +362,13 @@ clicking the big arrows between the columns.',
 
 	/* Messages for the TermImportBot */
 	'smw_gard_termimportbothelp' => 'This bot imports an external vocabulary.',
+    
+    'smw_checkrefintegritybot' => "Check referential integrity",
+    'smw_gard_checkrefint_docu' => "This bot checks the integrity of links to external resources.",
+    'smw_gardissue_resource_not_exists' => "<a href=\"$1\">$2</a> does not exist.",
+    'smw_gardissue_resource_moved_permanantly' => "<a href=\"$1\">$2</a> was moved permanantly.",
+    'smw_gardissue_resource_not_accessible' => "<a href=\"$1\">$2</a> is not accessible for some reason.",
+    'smw_gardissue_thisresource' => "This resource",
 
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Context Sensitive Help',
@@ -481,7 +488,11 @@ clicking the big arrows between the columns.',
 	'smw_acl_up' => 'up',
 	'smw_acl_down' => 'down',
 	'smw_acl_groups' => 'Groups',
+    'smw_acl_user' => 'User',
 	'smw_acl_namespaces' => 'Namespaces',
+    'smw_acl_category' => 'Category',
+    'smw_acl_page' => 'Page',
+
 	'smw_acl_actions' => 'Actions',
 	'smw_acl_permission' => 'Permission',
 	'smw_acl_whitelist' => 'Whitelist (comma separated with namespace)',
@@ -490,6 +501,9 @@ clicking the big arrows between the columns.',
 	'smw_acl_remove' => 'Remove rule',
 	'smw_acl_newrule' => 'New rule',
 	'smw_acl_addrule' => 'Add rule',
+    'smw_acl_user_constraint' => 'User constraint',
+	'smw_acl_category_constraint' => 'Category constraint',
+	'smw_acl_page_constraint' => 'Page constraint',
 
 	'smw_acl_*' => '*',
 	'smw_acl_read' => 'read',
@@ -555,6 +569,18 @@ clicking the big arrows between the columns.',
 	'smw_wws_duplicate_result' => 'The result "$1" appears several times.',
 	'smw_wwsd_undefined_result' => 'The path of the result "$1" can not be found in the result of the service.',
 
+    'smw_deletepage_nolinks' => 'There are no links to this page!',
+    'smw_deletepage_linkstopage'=> 'Pages with links to that page',
+    'smw_deletepage_prev' => 'Prev',
+    'smw_deletepage_next' => 'Next',
+
+	// Glossary
+	'smw_gloss_no_description' => '"$1" is annotated as glossary term but has no description yet.',
+	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
+	'smw_glossarybot' => 'Update glossary highlighting',
+	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
+
+    
 );
 
 
@@ -569,7 +595,8 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
-	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
+	SMW_SSP_IS_EQUAL_TO => 'Is equal to',
+	SMW_SSP_GLOSSARY => 'glossary'
 	);
 
 var $smwSpecialCategories = array (
@@ -581,6 +608,7 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemical formula',
 	'smw_hdt_chemical_equation' => 'Chemical equation',
 	'smw_hdt_mathematical_equation' => 'Mathematical equation',
+	'smw_hdt_glossary' => 'Glossary Term',
 );
 
 protected $smwHaloNamespaces = array(

@@ -116,6 +116,42 @@ class SemanticNotification {
 		return SNStorage::getDatabase()->storeSN($this);
 	}
 	
+	/**
+	 * Executes the query and stores the result in the field <mQueryResult>.
+	 *
+	 */
+	public function query() {
+//--Test
+		global $smwgIP, $smwgHaloIP;
+		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_QP_SNXML.php");
+		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
+
+		// find the variables for sorting the result		
+		$q = SMWQueryProcessor::createQuery($this->mQueryText, new ParserOptions());
+		$desc = $q->getDescription();
+		$requests = $desc->getPrintRequests();
+		$sortvars = "";
+		$first = true;
+		foreach ($requests as $pr) {
+			if ($pr->getMode() == SMW_PRINT_PROP) {
+				$sortvars .= ($first ? "" : ",") . $pr->getLabel();
+				$first = false;
+			}
+		}
+		
+		global $smwgQMaxLimit;
+		SMWQueryProcessor::$formats['snxml'] = 'SMW_SN_XMLResultPrinter';
+		
+		$this->mQueryResult = SMWQueryProcessor::getResultFromHookParams(
+								$this->mQueryText, 
+								array('format' => 'snxml', 
+								      'sort' => $sortvars,
+									  'limit' => $smwgQMaxLimit), 
+								SMW_OUTPUT_HTML);
+//--Test
+		
+	}
+	
 	
 	
 }

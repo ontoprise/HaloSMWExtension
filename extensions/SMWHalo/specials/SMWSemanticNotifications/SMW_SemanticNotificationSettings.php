@@ -22,4 +22,22 @@
  * @author Thomas Schweitzer
  */
 
+$smwgSemanticNotificationLimits = array(
+    "allUsers" => array(
+        "notifications" => 2, 
+        "size" => 10000, 
+        "min interval" => 7),
+    "group darkmatter" => array(
+        "notifications" => 10, 
+        "size" => 100000, 
+        "min interval" => 3),
+    "group gardener" => array(
+        "notifications" => 20, 
+        "size" => 1000000,
+        "min interval" => 1),
+    "group sysop" => array(
+        "notifications" => 100, 
+        "size" => 1000000,
+        "min interval" => 1)
+);
 ?>
