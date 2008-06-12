@@ -24,6 +24,9 @@ del %OUTPUT_DIR%\AdminSettings.php
 REM Remove image directory content
 del /S /Q %OUTPUT_DIR%\images\*
 
+REM create extensions dir
+mkdir %OUTPUT_DIR%\extensions
+
 REM Pack MW
 
 cd bin
