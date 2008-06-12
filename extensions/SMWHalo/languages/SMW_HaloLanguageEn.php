@@ -584,7 +584,7 @@ clicking the big arrows between the columns.',
 	'smw_wsuse_wrong_resultpart' => 'The result-part "$1" does not exist in the Wiki Web Service Definition.',
 	'smw_wsuse_wwsd_not_existing' => 'A Wiki Web Service Definition with the name "$1" does not exist.',
 	'smw_wsuse_wwsd_error' => 'The usage of the Web Service was erroneous:',
-	'wbservices' => 'Web Services',
+	'webservices' => 'Web Services',
 
 
 	);
