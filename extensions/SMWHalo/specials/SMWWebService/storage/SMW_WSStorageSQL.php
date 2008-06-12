@@ -1,3 +1,4 @@
+F
 <?php
 /*  Copyright 2008, ontoprise GmbH
  *  This file is part of the halo-Extension.
@@ -701,4 +702,35 @@ class WSStorageSQL {
 		}
 		return true;
 	}
+
+
+	function getUsedWSParameterSetPairs($wsId, $parameterSetId){
+		$db =& wfGetDB( DB_SLAVE );
+		$result = array();
+		$res = $db->select( $db->tableName("smw_ws_articles"),
+		array("page_id"),
+		array(	"web_service_id" => $wsId,
+		             		"param_set_id" => $parameterSetId));
+
+		$result = array();
+		while($row = $db->fetchObject($res)){
+			$result[] = $row->page_id;
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+
+	function storeCacheAccess($wsId, $parameterSetId){
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$res = $db->update( $db->tableName("smw_ws_cache"), array(  'last_access' => $db->timestamp()),
+			array(	'web_service_id'    => $wsId,
+					'param_set_id' => $parameterSetId)
+			);
+		}catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
+
+
 }

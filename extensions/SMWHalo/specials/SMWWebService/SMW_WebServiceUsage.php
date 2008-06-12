@@ -68,7 +68,7 @@ function findWSPropertyPairs(&$parser, &$text){
 				::			# identifies a semantic property
 				[^]]*		# no closing squared bracket but everything else
 				\{\{
-				[^\]]*		# no closing squared bracket but everything else
+				[^]]*		# no closing squared bracket but everything else
 				\#ws:		# beginning of webservice usage declaration
 				[^]]*		# n closing squared bracket but everything else
 				[^[]*
@@ -134,7 +134,7 @@ function webServiceUsage_Render( &$parser) {
 
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
-		return "Error: A WWSD for ".$wsName." does not exist";
+		return wfMsg('smw_wsuse_wwsd_not_existing', $wsName);
 	}
 	$wsId = $ws->getArticleID();
 
@@ -166,12 +166,13 @@ function webServiceUsage_Render( &$parser) {
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId);
-		$wsFormattedResult = $wsResults;//formatWSResult($wsFormat, $wsResults);
+		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$wsFormattedResult.= $propertyName;
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
 	} else {
-		$return = "The usage of the #ws-syntax was errone: <ul>";
+		$return = wfMsg('smw_wsuse_wwsd_error')."<ul>";
 		foreach($messages as $mess){
 			$return .= "<li>".$mess."</li>";
 		}
@@ -328,7 +329,7 @@ function detectRemovedWebServiceUsages($articleId){
 			}
 		}
 		if($deleteProperty){
-			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
+			//WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
 		}
 	}
 	return true;
@@ -386,7 +387,8 @@ function getReadyToPrintResult($result){
 			if($i == 0){
 				$niceResult[$i][] = $title;
 			} else {
-				$niceResult[$i][] = $values[$i-1];
+				$keys = array_keys($values);
+				$niceResult[$i][] = $values[$keys[$i-1]];
 			}
 		}
 	}
