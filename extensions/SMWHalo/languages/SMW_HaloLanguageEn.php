@@ -1,20 +1,20 @@
 <?php
 /*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * @author Markus Krötzsch
  */
@@ -24,7 +24,7 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 
 class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 
-protected $smwContentMessages = array(
+	protected $smwContentMessages = array(
 
 	'smw_viewinOB' => 'Open in OntologyBrowser',
     'smw_wysiwyg' => 'WYSIWYG',
@@ -63,10 +63,10 @@ protected $smwContentMessages = array(
 	'smw_help_error' => "Oops. An error seems to have occured.\nYour question could not be added to the system. Sorry.",
 	'smw_help_question_added' => "Your question has been added to our help system\nand can now be answered by other wiki users."
 
-);
+	);
 
 
-protected $smwUserMessages = array(
+	protected $smwUserMessages = array(
 	'smw_devel_warning' => 'This feature is currently under development, and might not be fully functional. Backup your data before using it.',
 	// Messages for pages of types, relations, and attributes
 
@@ -79,10 +79,10 @@ protected $smwUserMessages = array(
 	'smw_category_schemainfo' => 'Schema information for category "$1"',
 	'smw_category_properties' => 'Properties',
 	'smw_category_properties_range' => 'Properties whose range is "$1"',
-	
+
 	'smw_category_askforallinstances' => 'Ask for all instances of "$1" and for all instances of its subcategories',
 	'smw_category_queries' => 'Queries for categories',
-	
+
 	'smw_category_nrna' => 'Pages with wrongly assigned domain "$1".',
 	'smw_category_nrna_expl' => 'These page have a domain hint but they are not a property.',
 	'smw_category_nrna_range' => 'Pages with wrongly assigned range "$1".',
@@ -129,14 +129,14 @@ protected $smwUserMessages = array(
 	'smw_unusedattributes_docu' => 'The following attribute pages exist although no other page makes use of them.',
 
 
-/*Messages for OntologyBrowser*/
+	/*Messages for OntologyBrowser*/
 	'ontologybrowser' => 'OntologyBrowser',
 	'smw_ac_hint' => 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Category Tree',
 	'smw_ob_attributeTree' => 'Property Tree',
 
 	'smw_ob_instanceList' => 'Instances',
-	
+
 	'smw_ob_att' => 'Properties',
 	'smw_ob_relattValues' => 'Values',
 	'smw_ob_relattRangeType' => 'Type/Range',
@@ -160,14 +160,14 @@ Initially the flow of browsing is left to right. You can flip the flow by
 clicking the big arrows between the columns.',
 	'smw_ob_undefined_type' => '*undefined type*',
 	'smw_ob_hideinstances' => 'Hide Instances',
-	
+
 	'smw_ob_hasnumofsubcategories' => 'Number of subcategories',
 	'smw_ob_hasnumofinstances' => 'Number of instances',
 	'smw_ob_hasnumofproperties' => 'Number of properties',
 	'smw_ob_hasnumofpropusages' => 'Property is annotated $1 times',
 	'smw_ob_hasnumoftargets' => 'Instance is linked $1 times.',
 	'smw_ob_hasnumoftempuages' => 'Template is used $1 times',
-	
+
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category on same level',
@@ -178,8 +178,8 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
-	
-	
+
+
 	/* Messages for Gardening */
 	'gardening' => 'Gardening', // name of special page 'Gardening'
 	'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
@@ -215,13 +215,13 @@ clicking the big arrows between the columns.',
 	'smw_gard_import_choosefile' => 'The following $1 files are available.',
 	'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
 	'smw_gard_import_nofiles' => 'No files of type $1 are available',
-	
+
 	/* Messages for Gardening Bot: ConsistencyBot */
 	'smw_gard_consistency_docu'  => 'The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors.',
 	'smw_gard_no_errors' => 'Congratulations! The wiki is consistent.',
 	'smw_gard_issue_local' => 'this article',
-	
-	
+
+
 	'smw_gardissue_domains_not_covariant' => 'Please match the domain $2 of $1 to the domain category of its super property (or a subcategory).',
 	'smw_gardissue_domains_not_defined' => 'Please define the domain of $1.',
 	'smw_gardissue_ranges_not_covariant' => 'Please match the range $2 of $1 to a subcategory of the ranges of its super property.',
@@ -254,10 +254,10 @@ clicking the big arrows between the columns.',
 	'smw_gard_issue_incompatible_entity' => 'The entity $1 is incompatible to $2. Please check that they are in the same namespace.',
 	'smw_gard_issue_incompatible_type' => 'The property $1 has an incompatible datatype to $2. They should be the same but are different.',
 	'smw_gard_issue_incompatible_supertypes' => 'The property $1 has superproperties with different datatypes. Please check that they are the same.',
-	
+
 	'smw_gard_issue_cycle' => 'Cycle at: $1',
 	'smw_gard_issue_contains_further_problems' => 'Contains further problems below',
-	
+
 	'smw_gardissue_class_covariance' => 'Covariance problems',
 	'smw_gardissue_class_undefined' => 'Incomplete schema',
 	'smw_gardissue_class_missdouble' => 'Doubles',
@@ -272,7 +272,7 @@ clicking the big arrows between the columns.',
 	'smw_gard_limitofsim' => 'Show only entities which appear to be',
 	'smw_gard_similarityterm' => 'Search for entities similar to the following term (may be empty)',
 	'smw_gard_similaritybothelp' => 'This is the bot to identify entities in the knowledgebase that could potentially be unified. If you enter a term, the system will try to find entities which are similar to that. If you do not enter a term, the system will find possibly redundant entities.',
-	
+
 	'smw_gardissue_similar_schema_entity' => '$1 and $2 are lexically similar.',
 	'smw_gardissue_similar_annotation' => '$3 contain two very similar annotations: $1 and $2',
 	'smw_gardissue_similar_term' => '$1 is similar to term $2',
@@ -281,19 +281,19 @@ clicking the big arrows between the columns.',
 	'smw_gardissue_share_ranges' =>  '$1 and $2 share the following ranges: $3',
 	'smw_gardissue_share_types' => '$1 and $2 share the following types: $3',
 	'smw_gardissue_distinctby_prefix' => '$1 and $2 are distinct by common prefix or suffix',
-	
+
 	'smw_gardissue_class_similarschema' => 'Similar schema elements',
 	'smw_gardissue_class_similarannotations' => 'Similar annotations',
 
 	/*Undefined entities bot */
 	'smw_gard_undefinedentities_docu' => 'The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category.',
 	'smw_gard_remove_undefined_categories' => 'Remove annotations of undefined categories',
-	
+
 	'smw_gardissue_property_undefined' => '$1 used on : $2',
 	'smw_gardissue_category_undefined' => '$1 used on: $2',
 	'smw_gardissue_relationtarget_undefined' => '$1 undefined when used with: $2',
 	'smw_gardissue_instance_without_cat' => '$1 is not member of a category',
-	
+
 	'smw_gardissue_class_undef_categories' => 'Undefined categories',
 	'smw_gardissue_class_undef_properties' => 'Undefined properties',
 	'smw_gardissue_class_undef_relationtargets' => 'Undefined relation targets',
@@ -314,16 +314,16 @@ clicking the big arrows between the columns.',
 	'smw_gard_anomaly_docu' => 'This bot identifies  Category leafs (Categories that contain neither subcategories nor instances) and Subcategory number anomalies (Categories with only one or more than eight subcategories).',
 	'smw_gard_anomalylog' => 'The anomaly bot removed the following pages',
 
-	
+
 	'smw_gard_all_category_leaves_deleted' => 'All Category leaves were removed.',
 	'smw_gard_was_leaf_of' => 'was leaf of',
 	'smw_gard_category_leaf_deleted' => '$1 was a category leaf. Removed by anomaly bot.',
 	'smw_gardissue_category_leaf' => '$1 is a category leaf.',
 	'smw_gardissue_subcategory_anomaly' => '$1 has $2 subcategories.',
-	
+
 	'smw_gardissue_class_category_leaves' => 'Category leaves',
 	'smw_gardissue_class_number_anomalies' => 'Subcategory anomaly',
-	
+
 	/* Combined Search*/
 	'smw_combined_search' => 'Combined Search',
 	'smw_cs_entities_found' => 'The following entities were found in the wiki ontology:',
@@ -345,7 +345,7 @@ clicking the big arrows between the columns.',
 
 	/*Message for ImportOntologyBot*/
 	'smw_gard_import_docu' => 'Imports an OWL file.',
-	
+
 	/*Message for ExportOntologyBot*/
 	'smw_exportontologybot' => 'Export ontology',	
 	'smw_gard_export_docu' => 'This bot exports the wiki ontology in the OWL format.',
@@ -362,7 +362,7 @@ clicking the big arrows between the columns.',
 
 	/* Messages for the TermImportBot */
 	'smw_gard_termimportbothelp' => 'This bot imports an external vocabulary.',
-    
+
     'smw_checkrefintegritybot' => "Check referential integrity",
     'smw_gard_checkrefint_docu' => "This bot checks the integrity of links to external resources.",
     'smw_gardissue_resource_not_exists' => "<a href=\"$1\">$2</a> does not exist.",
@@ -441,17 +441,17 @@ clicking the big arrows between the columns.',
 	'smw_qi_tt_order' => 'Ascending or descending order',
 	'smw_qi_tt_headers' => 'Show the headers of the table or not',
 	'smw_qi_tt_default' => 'Text that will be shown if there are no results',
-	
+
 	/* Annotation */
  	'smw_annotation_tab' => 'annotate',
 	'smw_annotating'     => 'Annotating $1',
 
- 	
- 	/* Refactor preview */
+
+	/* Refactor preview */
  	'refactorstatistics' => 'Refactor Statistics',
  	'smw_ob_link_stats' => 'Open refactor statistics',
- 	
- 	/* SMWFindWork */
+
+	/* SMWFindWork */
  	'findwork' => 'Find work',
  	'smw_findwork_docu' => 'This page suggests articles that are somehow problematic but which you might enjoy editing/correcting.',
  	'smw_findwork_user_not_loggedin' => 'You are NOT logged in. It\'s possible to use the page anonymously, but it is far better to be logged in.', 	
@@ -464,7 +464,7 @@ clicking the big arrows between the columns.',
  	'smw_findwork_getsomework' => 'Give me some Work!',
  	'smw_findwork_show_details' => 'Show details',
  	'smw_findwork_heresomework' => 'Here\'s some work',
- 	
+
  	'smw_findwork_select' => 'Select',
  	'smw_findwork_generalconsistencyissues' => 'General consistency problems',
  	'smw_findwork_missingannotations' => 'Missing Annotations',
@@ -475,12 +475,12 @@ clicking the big arrows between the columns.',
  	'smw_findwork_undefinedcategory' => 'Undefined categories',
  	'smw_findwork_undefinedproperty' => 'Undefined properties',
  	'smw_findwork_lowratedannotations' => 'Pages with low rated annotations',
- 	
- 	
- 	/* Gardening Issue Highlighting in Inline Queries */
+
+
+	/* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'missing',
 	'smw_iqgi_wrongunit' => 'wrong unit',
-	
+
 	/* ACL */
 	'acl' => 'Access Control Lists',
 	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
@@ -512,7 +512,7 @@ clicking the big arrows between the columns.',
 	'smw_acl_move' => 'move',
 	'smw_acl_permit' => 'permit',
 	'smw_acl_deny' => 'deny',
-	
+
 	/* Messages of the Thesaurus Import */
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
 	'smw_ti_class_not_found' => 'Class "$1" not found.',
@@ -579,18 +579,24 @@ clicking the big arrows between the columns.',
 	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
 	'smw_glossarybot' => 'Update glossary highlighting',
 	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
+'smw_wsuse_wrong_parameter' => 'The parameter "$1" does not exist in the Wiki Web Service Definition.',
+	'smw_wsuse_parameter_missing' => 'The parameter "$1" is not optional and no default value was provided by the Wiki Web Service Definition.',
+	'smw_wsuse_wrong_resultpart' => 'The result-part "$1" does not exist in the Wiki Web Service Definition.',
+	'smw_wsuse_wwsd_not_existing' => 'A Wiki Web Service Definition with the name "$1" does not exist.',
+	'smw_wsuse_wwsd_error' => 'The usage of the Web Service was erroneous:',
+	'wbservices' => 'Web Services',
 
-    
-);
+
+	);
 
 
-protected $smwSpecialProperties = array(
+	protected $smwSpecialProperties = array(
 	//always start upper-case
 	SMW_SP_CONVERSION_FACTOR_SI => 'Corresponds to SI'
-);
+	);
 
 
-var $smwSpecialSchemaProperties = array (
+	var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Has domain and range',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
@@ -599,39 +605,39 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_GLOSSARY => 'glossary'
 	);
 
-var $smwSpecialCategories = array (
+	var $smwSpecialCategories = array (
 	SMW_SC_TRANSITIVE_RELATIONS => 'Transitive properties',
 	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrical properties'
-);
+	);
 
-var $smwHaloDatatypes = array(
+	var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemical formula',
 	'smw_hdt_chemical_equation' => 'Chemical equation',
 	'smw_hdt_mathematical_equation' => 'Mathematical equation',
 	'smw_hdt_glossary' => 'Glossary Term',
-);
+	);
 
-protected $smwHaloNamespaces = array(
+	protected $smwHaloNamespaces = array(
 	SMW_NS_WEB_SERVICE       => 'WebService',
 	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
-);
+	);
 
-protected $smwHaloNamespaceAliases = array(
+	protected $smwHaloNamespaceAliases = array(
 	'WebService'       => SMW_NS_WEB_SERVICE,
 	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
-);
+	);
 
 	/**
 	 * Function that returns the namespace identifiers. This is probably obsolete!
 	 */
 	public function getNamespaceArray() {
 		return array(
-			SMW_NS_RELATION       => 'Relation',
-			SMW_NS_RELATION_TALK  => 'Relation_talk',
-			SMW_NS_PROPERTY       => 'Property',
-			SMW_NS_PROPERTY_TALK  => 'Property_talk',
-			SMW_NS_TYPE           => 'Type',
-			SMW_NS_TYPE_TALK      => 'Type_talk'
+		SMW_NS_RELATION       => 'Relation',
+		SMW_NS_RELATION_TALK  => 'Relation_talk',
+		SMW_NS_PROPERTY       => 'Property',
+		SMW_NS_PROPERTY_TALK  => 'Property_talk',
+		SMW_NS_TYPE           => 'Type',
+		SMW_NS_TYPE_TALK      => 'Type_talk'
 		);
 	}
 
