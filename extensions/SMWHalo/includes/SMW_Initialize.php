@@ -30,9 +30,6 @@ global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 if ($smwgEnableWikiWebServices) {
 	require_once('extensions/SMWHalo/specials/SMWWebService/SMW_WebServiceManager.php');
 }
-if ($smwgEnableSemanticNotifications) {
-	require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationManager.php');
-}
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
@@ -145,8 +142,8 @@ function smwgHaloSetupExtension() {
 		}
 		if ($smwgEnableSemanticNotifications) {
 			// Initialize the Semantic Notification Extension
+			require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationManager.php');
 			SemanticNotificationManager::initSemanticNotificationExtension();
-			
 		}
 		
 	}
@@ -186,7 +183,8 @@ function smwgHaloSetupExtension() {
 			case '_om_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 						break;
-			
+			case '_sn_' : require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
+						break;
 						
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -201,11 +199,9 @@ function smwgHaloSetupExtension() {
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 				
 		}
-		
-		
 	} else { // otherwise register special pages
-
-		// Register new or overwrite existing special pages
+				
+	// Register new or overwrite existing special pages
 		$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
 		$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 	
