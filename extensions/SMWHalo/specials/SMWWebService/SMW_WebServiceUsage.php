@@ -125,7 +125,6 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
-	//todo; results muessen über result.part angesprochen werden
 	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
 
@@ -167,7 +166,6 @@ function webServiceUsage_Render( &$parser) {
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId);
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
-		$wsFormattedResult.= $propertyName;
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
@@ -188,7 +186,6 @@ function webServiceUsage_Render( &$parser) {
  * @return string
  * 		the specified parameter or Null if none was specified
  *
- * todo: return null
  */
 function getSpecifiedParameterValue($parameter){
 	$pos = strpos($parameter, "=");
@@ -225,6 +222,14 @@ function getSpecifiedParameterName($parameter){
  * 		the formatted result
  */
 function formatWSResult($wsFormat, $wsResults){
+	if(is_string($wsResults)){
+		if(substr($wsResults, 0, 11) == "_ws-error: "){
+			// todo:  use wfmessage  
+			// todo: use default values
+			return "It was not possible to call the WebService";
+		}
+	}
+
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
 		return $printer->getWikiText(getReadyToPrintResult($wsResults));
@@ -243,7 +248,7 @@ function formatWSResult($wsFormat, $wsResults){
 	}
 }
 
-//todo
+
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$ws = WebService::newFromId($wsId);
 	$mP = $ws->validateSpecifiedParameters($wsParameters);
@@ -345,8 +350,6 @@ function detectRemovedWebServiceUsages($articleId){
  * @return array
  */
 function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
-	//todo: handle default return values
-
 	$returnValues = array();
 
 	foreach($wsReturnValues as $key => $value){

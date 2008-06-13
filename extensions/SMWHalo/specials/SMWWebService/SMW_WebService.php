@@ -47,7 +47,7 @@ class WebService {
 	private $mExpiresAfterUpdate; //bool: <true> if the span of life starts to expire
 	// after an update. Otherwise it starts after the
 	// last access.
-	private $mConfirmed;      //bool: confirmed by sysop (true) or not (false)
+	private $mConfirmationStatus;      //bool: confirmed by sysop (true) or not (false)
 
 	private $mWSClient;		  //IWebServiceClient: the web service client provides
 	//   access to the service
@@ -81,11 +81,12 @@ class WebService {
 	 * @param bool $confirmed
 	 * 		Confirmed by sysop (true) or not (false)
 	 */
-	function __construct($name = "", $uri = "", $protcol = "", $method = "",
+	function __construct($id = 0, $uri = "", $protcol = "", $method = "",
 	$parameters = "", $result = "",
 	$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
 	$expiresAfterUpdate = false, $confirmed = false) {
-		$this->mName = $name;
+		$this->mArticleID = $id;
+		$this->mName = Title::nameOf($id);
 		$this->mURI = $uri;
 		$this->mProtocol = $protcol;
 		$this->mMethod = $method;
@@ -106,7 +107,7 @@ class WebService {
 		$this->mUpdateDelay = $updateDelay;
 		$this->mSpanOfLife = $sol;
 		$this->mExpiresAfterUpdate = $expiresAfterUpdate;
-		$this->mConfirmed = $confirmed;
+		$this->mConfirmationStatus = $confirmed;
 	}
 
 
@@ -122,7 +123,7 @@ class WebService {
 	public function getUpdateDelay()   {return $this->mUpdateDelay;}
 	public function getSpanOfLife()    {return $this->mSpanOfLife;}
 	public function doesExpireAfterUpdate()   {return $this->mExpiresAfterUpdate;}
-	public function isConfirmed()      {return $this->mConfirmed;}
+	public function getConfirmationStatus()      {return $this->mConfirmationStatus;}
 
 	//--- Public methods ---
 
@@ -249,6 +250,7 @@ class WebService {
 			}
 		}
 		$ws->mExpiresAfterUpdate = false;
+		$ws->mConfirmationStatus = "false";
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
 
 		return ($valid) ? $ws : $msg;
@@ -350,9 +352,15 @@ class WebService {
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
 			< ($this->getDisplayPolicy()*60))){
 				$response = unserialize($cacheResult["result"]);
-				WSStorage::getDatabase()->storeCacheAccess($this->mArticleID, $parameterSetId);
+				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 		}
+
+		//		if($this->getConfirmationStatus() == "once"){
+		//			return "need confirmation first";
+		//		}
+
+		//return array("da"=> " gib schon was aus");
 
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
@@ -369,10 +377,16 @@ class WebService {
 				}
 				$this->getPathSteps("".$child["path"], $value);
 			}
-			
+
 			// do the call
 			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
-
+			
+			if(is_string($response)){
+				if(substr($response, 0, 11) == "_ws-error: "){
+					return $response;
+				}
+			}
+			
 			WSStorage::getDatabase()->storeCacheEntry(
 			$this->mArticleID,
 			$parameterSetId,
@@ -381,61 +395,58 @@ class WebService {
 			wfTimeStamp(TS_MW, wfTime()));
 		}
 
-		//todo: what if the ws returns null?
-
-
 		//initialize array containing select paths and their value
 		$selects = array();
-		
-		foreach($this->mParsedResult->children() as $child){
-			if ($child->getName() == 'select') {
-				$selects["".$child["object"]] = "".$child["value"];
-			}
-		}
 
-		// initialize array of paths and elements that are not selected in the result
-		$outselectedPaths = array();
-		$printO[] = array();
-		foreach($selects as $path => $value){
-			$pathSteps = explode(".", $path);
-			$tempObject[""] = $response;
-			for($i=0; $i < sizeof($pathSteps); $i++){
-				if($tempObject){
-					foreach($tempObject as $key => $temp){
-						if(is_array($temp)){
-							$index = 0;
-							foreach($temp as $t){
-								$newTempObject[$key.".".$index] = $t;
-								$index += 1;
-							}
-							$i -= 1;
-						} else {
-							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
-							if($i == (sizeof($pathSteps)-1)){
-								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
-									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
-								} else {
-									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
-								}
-							}
-						}
-					}
-				}
-				$tempObject = $newTempObject;
-				$newTempObject = array();
-			}
-		}
-
-		//return "result: ".print_r($outselectedPaths, true);
+		//		foreach($this->mParsedResult->children() as $child){
+		//			if ($child->getName() == 'select') {
+		//				$selects["".$child["object"]] = "".$child["value"];
+		//			}
+		//		}
+		//
+		//		// initialize array of paths and elements that are not selected in the result
+		//		$outselectedPaths = array();
+		//		$printO[] = array();
+		//		foreach($selects as $path => $value){
+		//			$pathSteps = explode(".", $path);
+		//			$tempObject[""] = $response;
+		//			for($i=0; $i < sizeof($pathSteps); $i++){
+		//				if($tempObject){
+		//					foreach($tempObject as $key => $temp){
+		//						if(is_array($temp)){
+		//							$index = 0;
+		//							foreach($temp as $t){
+		//								$newTempObject[$key.".".$index] = $t;
+		//								$index += 1;
+		//							}
+		//							$i -= 1;
+		//						} else {
+		//							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+		//							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
+		//							if($i == (sizeof($pathSteps)-1)){
+		//								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
+		//									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
+		//								} else {
+		//									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+		//				$tempObject = $newTempObject;
+		//				$newTempObject = array();
+		//			}
+		//		}
 
 		// get the requested part of the result
 		$paths = array();
 		foreach($resultParts as $resultPart){
 
 			$tempObject[] = $response;
+				
+			$rName = "".$this->mParsedResult["name"];
 			foreach($this->mParsedResult->children() as $child){
-				if("".$child["name"] == $resultPart){
+				if($rName.".".$child["name"] == $resultPart){
 					$paths["".$child["name"]] = "".$child["path"];
 				}
 			}
@@ -443,10 +454,6 @@ class WebService {
 
 		$result = array();
 
-		// todo: handle unspecified return value
-		// todo: handle [] syntax
-		// todo; handle selectors
-		// TODO. CHECK THE NATURE OF THE RESULT
 		foreach($paths as $key => $path){
 			$pathSteps = explode(".", $path);
 			$tempObject = array();
@@ -520,7 +527,7 @@ class WebService {
 				}
 				$temp = &$temp[$this->getReturnPartBracketValue($walkedParameters[$i])];
 			}
-				
+
 		}
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
 	}
@@ -774,18 +781,23 @@ class WebService {
 					$selectCount = 0;
 					$objectPath = (string) $part->attributes()->object;
 					if ($objectPath == null) {
-						// result select has no object
-						$msg[] = wfMsg('smw_wws_result_part_without_path', "select-o", $rName);
+						$msg[] = wfMsg('smw_wws_select_without_object', "s-".$selectCount, $rName);
 						continue;
-					} //todo: the same for the values
+					}
+					$selectValue = (string) $part->attributes()->value;
+					if ($selectValue == null) {
+						$msg[] = wfMsg('smw_wws_select_without_value', "s-".$selectCount, $rName);
+						continue;
+					}
+
 					if (array_key_exists($objectPath, $selects)) {
-						//	if ($selects[$object]++ == 1) {
-						//		$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
-						//	}
+						if ($selects[$objectPath]++ == 1) {
+							$msg[] = wfMsg('smw_wws_duplicate_select', "s-".$selectCount, $rName);
+						}
 						continue;
 					} else {
-						$pNames[$pName] = 1;
-						$wwsdPaths[$rName.'.'."select".$selectCount] = $objectPath;
+						$selects[$objectPath] = 1;
+						$wwsdPaths[$rName.".s-".$selectCount] = $objectPath;
 					}
 				}
 			}
@@ -819,8 +831,6 @@ class WebService {
 			// find undefined results
 
 			// this is a quick fix in order to allow brackets in result parts
-			// todo:: valide the usage of the bracket syntax
-			// for a no array object
 			foreach($wwsdPaths as $key => $path){
 				$pathSteps = explode(".", $path);
 				for($z=0; $z < sizeof($pathSteps); $z++){
@@ -923,7 +933,7 @@ class WebService {
 				}
 			}
 			if(!$exists){
-				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $pName); 
+				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $pName);
 			}
 		}
 		foreach($this->mParsedParameters->children() as $child){
@@ -968,17 +978,20 @@ class WebService {
 	}
 
 	/**
-	 * returns values for brackets used in resultparts
+	 * returns values for the last brackets used in resultparts
 	 *
 	 * @param string $name
 	 * @return string value or false
 	 */
-	//todo: remove eror in function title
-	public function getReturnPartBracketValue($name){
-		// todo: check the last occurance
-		if(strpos($name, "[")){
+	private function getReturnPartBracketValue($name){
+		$strpos = strpos($name, "[");
+		while(strpos($name, "[", $strpos+1)){
+			$strpos = strpos($name, "[", $strpos+1);
+		}
+
+		if($strpos){
 			if(strpos($name, "]")){
-				$return = substr($name, strpos($name, "[")+1, strpos($name, "]")-strpos($name, "[")-1);
+				$return = substr($name, $strpos+1, strpos($name, "]")-strpos($name, "[")-1);
 				if($return == ""){
 					return true;
 				} else {
@@ -994,11 +1007,15 @@ class WebService {
 	 * returns the pathstep of a resultpart without brackets
 	 *
 	 * @param string $name
-	 * @return string name without brackets
+	 * @return string name without the last brackets
 	 */
-	public function getReturnPartPathStep($name){
-		if(strpos($name, "[")){
-			return substr($name, 0, strpos($name, "["));
+	private function getReturnPartPathStep($name){
+		$strpos = strpos($name, "[");
+		while(strpos($name, "[", $strpos+1)){
+			$strpos = strpos($name, "[", $strpos+1);
+		}
+		if($strpos){
+			return substr($name, 0, $strpos);
 		}
 		return $name;
 	}

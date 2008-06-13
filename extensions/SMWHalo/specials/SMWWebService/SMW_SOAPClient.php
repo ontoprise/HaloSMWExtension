@@ -156,7 +156,7 @@ class SMWSoapClient implements IWebServiceClient {
  		try {
 			$response = $this->mClient->getPoint($parameters);
 		} catch(Exception $e) {
- 			print_r($e);
+ 			return "_ws-error: ".print_r($e, true);
  		}
  		return $response;
  	}

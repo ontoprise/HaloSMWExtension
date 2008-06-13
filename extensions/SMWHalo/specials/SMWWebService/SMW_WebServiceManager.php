@@ -31,6 +31,8 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceSettings.php");
 // include the web service syntax parser
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceUsage.php");
 
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceAjaxAccess.php");
+
 
 ###
 # If you already have custom namespaces on your site, insert
@@ -319,6 +321,13 @@ class WebServiceManager {
 		WSStorage::getDatabase()->initDatabaseTables();
 	}
 
+	/**
+	 * this method checks if a wwsd was deleted or modified
+	 * and therefore has to be removed from the database
+	 *
+	 * @param WebService $mNewWebService
+	 * @return boolean
+	 */
 	public static function detectModifiedWWSD($mNewWebService){
 		if(self::$mOldWebservice){
 			$remove = false;
