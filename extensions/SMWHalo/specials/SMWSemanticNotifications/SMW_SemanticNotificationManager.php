@@ -27,6 +27,7 @@
 global $smwgHaloIP;
 
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationSettings.php");
+require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNAjax.php");
 
 /**
  * This class contains the top level functionality of the Semantic Notification
@@ -45,14 +46,6 @@ class SemanticNotificationManager {
 	 */
 	static function initSemanticNotificationExtension() {
 		
-		global $wgRequest;
-		$action = $wgRequest->getVal('action');
-	
-		if ($action == 'ajax') {
-			// Do not install the extension for ajax calls
-			return;
-		}
-
 		// Install the special page
 		global $wgAutoloadClasses, $wgSpecialPages, $wgExtensionMessagesFiles, $smwgHaloIP;
 		$wgAutoloadClasses['SMWSemanticNotificationSpecial'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationSpecial.php';
@@ -60,11 +53,10 @@ class SemanticNotificationManager {
 		$wgExtensionMessagesFiles['SemanticNotification'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationMessages.php';
 		wfLoadExtensionMessages('SemanticNotification');
 		
-		global $smwgHaloIP;
-		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotification.php");
 		//---Test---
-		SemanticNotificationManager::getUserLimitations();
 /*
+		smwf_sn_AddNotification("n1", "WikiSysop", "[[Category:Reactant]]", "1");
+		SemanticNotificationManager::getUserLimitations();
 		$sn = new SemanticNotification("MyNotification", "Thomas", 
 		                               "[[Category:Reactant]]", 2);
 		$sn->query();
@@ -108,6 +100,10 @@ class SemanticNotificationManager {
 	
 	/**
 	 * Returns the semantic notification limits of the current user.
+	 * 
+	 * @param string $userName
+	 * 		Name of the user or <null> if the values should be retrieved for the
+	 * 		current user.
 	 *
 	 * @return array<key => int>
 	 * 		An array with the following keys: 
@@ -115,9 +111,19 @@ class SemanticNotificationManager {
 	 * 			size: The maximal size of a result that is stored in the DB in bytes
 	 * 			min interval: Minimal update interval in days
 	 */
-	public static function getUserLimitations() {
+	public static function getUserLimitations($userName = null) {
+		
 		global $smwgSemanticNotificationLimits, $wgUser;
-		$groups = $wgUser->getGroups();
+		$groups = null;
+		if ($userName) {
+			$u = User::newFromName($userName);
+			if (!$u) {
+				return null;
+			}
+			$groups = $wgUser->getGroups();
+		} else {
+			$groups = $wgUser->getGroups();
+		}
 		$groups[] = 'allUsers';
 		
 		$limits = array("notifications" => 0, 
@@ -137,6 +143,39 @@ class SemanticNotificationManager {
 		}
 		return $limits;
 	}
+	
+	/**
+	 * Returns an array of the names of all notifications of the given user.
+	 *
+	 * @param string $userName
+	 * 		Name of the user, whose notifications are requested.
+	 * 
+	 * @return array<string>
+	 * 		The names of all notifications of the given user.
+	 * 
+	 */
+	public static function getNotificationsOfUser($userName) {
+		global $smwgHaloIP;
+		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNStorage.php");
+		return SNStorage::getDatabase()->getNotificationsOfUser($userName);
+	}
+	
+	/**
+	 * Returns the number of all notifications of the given user.
+	 *
+	 * @param string $userName
+	 * 		Name of the user, whose notifications are requested.
+	 *
+	 * @return int
+	 * 		Number of all notifications of the given user.
+	 *
+	 */
+	public static function getNumberOfNotificationsOfUser($userName) {
+		global $smwgHaloIP;
+		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNStorage.php");
+		return SNStorage::getDatabase()->getNumberOfNotificationsOfUser($userName);
+	}
+		
 }
 
 ?>

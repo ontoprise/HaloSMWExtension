@@ -40,6 +40,10 @@ $messages['en'] = array(
 							' result set of your query changes. The toolbar on the'.
 							' right shows your existing notifications. You can'.
 							' use it to edit or delete existing notifications.',
+	'smw_sn_notification_limit' => 
+		'You can\'t add further notifications. Your limit of $1 notification(s)'.
+		' is exceeded. Please contact your wiki administrator to extend the limit.',
+
 );
 
 /** 
@@ -60,6 +64,10 @@ $messages['de'] = array(
 							 ' Die Werkzeugleiste auf der rechten Seite zeigt Ihre Benachrichtungen.'.
 							 ' Sie können sie zum Verändern oder Löschen existierender'.
 							 ' Benachrichtigungen verwenden.',
+	'smw_sn_notification_limit' => 
+		'Es können keine weiteren Benachrichtigungen hinzugefügt werden. Ihre '.
+		'Grenze von $1 Benachrichtigungen ist erreicht.'.
+		' Bitten Sie Ihren Wiki-Administrator, die Grenze zu erhöhen.',
 
 );
 ?>

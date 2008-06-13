@@ -37,7 +37,7 @@ class SNStorageSQL {
 	/**
 	 * Initializes the database tables of the semantic notification extensions.
 	 * These are:
-	 * - table of all queries with results: 
+	 * - table of all queries with results:
 	 *
 	 */
 	public function initDatabaseTables() {
@@ -46,7 +46,7 @@ class SNStorageSQL {
 
 		$verbose = true;
 		DBHelper::reportProgress("Setting up semantic notification ...\n",$verbose);
-	
+
 		// create SN table
 		$snTable = $db->tableName('smw_sem_notification');
 
@@ -58,9 +58,9 @@ class SNStorageSQL {
 				  'query_result'     =>  'MEDIUMTEXT NOT NULL' ,
 				  'update_interval'  =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'timestamp'        =>  'VARCHAR(14) NOT NULL'),
-		 		  $db, $verbose, 'user_id, query_name');
+				$db, $verbose, 'user_id, query_name');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-		
+
 	}
 
 	/**
@@ -82,7 +82,7 @@ class SNStorageSQL {
 			// invalid user name
 			return false;
 		}
-		
+
 		try {
 			$now = wfTimestampNow();
 			$db->replace($db->tableName('smw_sem_notification'), null, array(
@@ -103,17 +103,17 @@ class SNStorageSQL {
 	}
 
 	/**
-	 * Retrieves the definition of the notification with the name <$name> and 
+	 * Retrieves the definition of the notification with the name <$name> and
 	 * the user with the name <$userName> from the database.
 	 *
 	 * @param string $name
 	 * 		The unique name of the notification.
 	 * @param string $userName
 	 * 		The user who owns the notification.
-	 *  
+	 *
 	 * @return SemanticNotification
 	 * 		If the notification exists in the database, a new object is created
-	 * 		and initialized with the database values. Otherwise <null> is returned. 
+	 * 		and initialized with the database values. Otherwise <null> is returned.
 	 */
 	public function getSN($name, $userName) {
 		$userID = User::idFromName($userName);
@@ -121,7 +121,7 @@ class SNStorageSQL {
 			// invalid user name
 			return null;
 		}
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$snt = $db->tableName('smw_sem_notification');
 		$sql = "SELECT sn.* FROM $snt sn ".
@@ -132,19 +132,19 @@ class SNStorageSQL {
 
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
-			$sn = new SemanticNotification($name, $userName, $row->query_text, 
-			                               $row->update_interval,
-			                               $row->query_result,
-			                               $row->timestamp);
+			$sn = new SemanticNotification($name, $userName, $row->query_text,
+										   $row->update_interval,
+										   $row->query_result,
+										   $row->timestamp);
 		}
 		$db->freeResult($res);
 		return $sn;
-		
+
 	}
-	
+
 	/**
 	 * Deletes the semantic notification with the name <$name> of the user <$userName>
-	 * from database. 
+	 * from database.
 	 *
 	 * @param string $name
 	 * 		The unique name of the notification.
@@ -157,15 +157,78 @@ class SNStorageSQL {
 			// invalid user name
 			return null;
 		}
-		
+
 		$db =& wfGetDB( DB_MASTER );
 		$snt = $db->tableName('smw_sem_notification');
-		$db->delete($snt, array('user_id' => $userID, 
+		$db->delete($snt, array('user_id' => $userID,
 		                        'query_name' => $name), 
 		            "SNStorage::deleteSN");
-		
+
+	}
+
+	/**
+	 * Returns an array of the names of all notifications of the given user.
+	 *
+	 * @param string $userName
+	 * 		Name of the user, whose notifications are requested.
+	 *
+	 * @return array<string>
+	 * 		The names of all notifications of the given user or
+	 * 		<null>, if there are none.
+	 *
+	 */
+	public static function getNotificationsOfUser($userName) {
+		$userID = User::idFromName($userName);
+		if (!$userID) {
+			// invalid user name
+			return null;
+		}
+
+		$db =& wfGetDB( DB_SLAVE );
+		$snt = $db->tableName('smw_sem_notification');
+		$sql = "SELECT sn.query_name FROM $snt sn ".
+		          "WHERE user_id = $userID;";
+		$sn = null;
+
+		$res = $db->query($sql);
+		if ($db->numRows($res) == 0) {
+			// no notifications
+			return null;
+		}
+		$notifications = array();
+		while ($row = $db->fetchObject($res)) {
+			$notifications[] = $row->query_name;
+		}
+		$db->freeResult($res);
+		return $notifications;
 	}
 	
+	/**
+	 * Returns the number of all notifications of the given user.
+	 *
+	 * @param string $userName
+	 * 		Name of the user, whose notifications are requested.
+	 *
+	 * @return int
+	 * 		Number of all notifications of the given user.
+	 *
+	 */
+	public static function getNumberOfNotificationsOfUser($userName) {
+		$userID = User::idFromName($userName);
+		if (!$userID) {
+			// invalid user name
+			return null;
+		}
+
+		$db =& wfGetDB( DB_SLAVE );
+		$snt = $db->tableName('smw_sem_notification');
+		$sql = "SELECT count(*) AS num FROM $snt sn ".
+		          "WHERE user_id = $userID;";
+		$res = $db->query($sql);
+		$num = $db->fetchObject($res);
+		$db->freeResult($res);
+		return $num->num;
+	}
 
 }
 ?>
