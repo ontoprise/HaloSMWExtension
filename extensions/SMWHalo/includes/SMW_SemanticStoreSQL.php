@@ -888,6 +888,8 @@
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MIN_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
+				} else if (strtolower($ssp[SMW_SSP_GLOSSARY]) == strtolower($t->getText())) { // special handling for SMW_SSP_GLOSSARY
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Glossary Term]]", "", false, false);
 				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
