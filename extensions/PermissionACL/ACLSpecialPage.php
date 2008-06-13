@@ -36,7 +36,7 @@ class ACLSpecialPage extends SpecialPage {
 		}
 		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('acl_welcome')."</div>";
 		$html .= "<h2>".wfMsg('smw_acl_rules')."</h2>";
-		$html .= "<form id=\"permissions\"><table class=\"smwtable\">";
+		$html .= "<form id=\"permissions\"><table class=\"acltable\">";
 		$html .= "<tr><th width=\"30\"><input type=\"button\" name=\"up\" value=\"".wfMsg('smw_acl_up')."\" onclick=\"acl.up()\"/>".
 		"<input type=\"button\" name=\"down\" value=\"".wfMsg('smw_acl_down')."\" onclick=\"acl.down()\"/>".
 		"</th><th>".wfMsg('smw_acl_groups')."</th><th>".wfMsg('smw_acl_user')."</th><th>".wfMsg('smw_acl_namespaces')."</th><th>".wfMsg('smw_acl_category')."</th><th>".wfMsg('smw_acl_page')."</th><th>".wfMsg('smw_acl_actions')."</th><th>".wfMsg('smw_acl_permission')."</th></tr>";

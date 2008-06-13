@@ -16,19 +16,38 @@ $wgExtensionCredits['other'][] = array(
 
 global $wgExtensionFunctions, $wgHooks;
 $wgHooks['userCan'][] = 'PermissionACL_userCan';
+
+// use SMW_AddScripts hook from SMWHalo to make sure that Prototype is available.
 $wgHooks['SMW_AddScripts'][]='wfACLAddHeader';
 $wgExtensionFunctions[] = 'wfACLSetupExtension';
 
+/**
+ * Add javascripts and css files
+ *
+ * @param unknown_type $out
+ * @return unknown
+ */
 function wfACLAddHeader(& $out) {
 	global $wgScriptPath;
+	$out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $wgScriptPath . '/extensions/PermissionACL/acl.css'
+                ));
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/PermissionACL/acl.js"></script>');
 	return true;
 }
 
+/**
+ * Initializes PermissionACL extension 
+ *
+ * @return unknown
+ */
 function wfACLSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath;
 	wfACLInitMessages();
-	$wgAutoloadClasses['ACLSpecialPage'] = $wgScriptPath . '/extensions/PermissionACL/ACLSpecialPage.php';
+	$wgAutoloadClasses['ACLSpecialPage'] = 'extensions/PermissionACL/ACLSpecialPage.php';
     $wgSpecialPages['ACL'] = array('ACLSpecialPage');
     return true;
 }
@@ -54,9 +73,9 @@ function wfACLInitMessages() {
        
         $wgMessageCache->addMessages($aclgHaloLang->acl_userMessages, $wgLang->getCode());
 
-    }
+}
 
-require_once('ACLSpecialPage.php');
+// old extension Code
 
 function PermissionACL_userCan($title, $user, $action, &$result) {
     global $wgPermissionACL, $wgPermissionACL_Superuser, $wgWhitelistRead;
