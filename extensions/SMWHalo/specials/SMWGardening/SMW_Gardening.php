@@ -20,6 +20,8 @@ require_once("Bots/SMW_AnomaliesBot.php");
 require_once("Bots/SMW_ImportOntologyBot.php");
 require_once("Bots/SMW_ExportOntologyBot.php");
 require_once("Bots/SMW_CheckReferentialIntegrityBot.php");
+require_once("Bots/SMW_GlossaryBot.php");
+
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 

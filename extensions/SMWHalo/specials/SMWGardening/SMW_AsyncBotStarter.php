@@ -75,6 +75,7 @@ require_once("Bots/SMW_AnomaliesBot.php");
 require_once("Bots/SMW_ImportOntologyBot.php");
 require_once("Bots/SMW_ExportOntologyBot.php");
 require_once("Bots/SMW_CheckReferentialIntegrityBot.php");
+require_once("Bots/SMW_GlossaryBot.php");
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 
@@ -169,6 +170,42 @@ require_once("SMW_GardeningLog.php");
  		return $a;
  	}
  
+ // get user email to send a message to him.
+ /*$userEmail = getEmailFromUserId($userId);
  
+ if ($smtpServerIP && $userEmail != null && $userEmail != '') { 
+ 	// send email when finished.
+ 	echo "Sending email to: ".$userEmail;
+ 	sendmail($userEmail, $bot);
+ }*/
+ 
+ /**
+  * Sends a mail to $to using server $smtpServerIP as SMTP server
+  * $bot is the bot which has finished.
+  */
+ function sendmail($to, $bot) {
+ 	$header = "From: $to" . "\r\n" .
+   	"Reply-To: $to" . "\r\n" .
+   	"X-Mailer: PHP/" . phpversion();
+  	
+ 	mail($to, $bot->getLabel()." has finished", wfMsg('smw_autogen_mail'), $header);
+ 
+ }
+ 
+ /**
+  * Returns user email from user id.
+  */
+ function getEmailFromUserId($userId) {
+ 	$db =& wfGetDB( DB_MASTER );
+ 	$res = $db->select( $db->tableName('user'), 
+		                    'user_email',
+		                    'user_id = '.$db->addQuotes($userId), 'SMW::getEmailFromUserId', NULL );
+	if($db->numRows( $res ) > 0) {
+		$row = $db->fetchObject($res);
+		return $row->user_email;
+		
+	}
+	return NULL;
+ }
 
 ?>
