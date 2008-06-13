@@ -4,12 +4,25 @@
 | Copyright (c) 2002-2003 Geir Landrö               |
 |--------------------------------------------------*/
 
-.dtree {
+.dtreestatic {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size: 11px;
+	
 	color: #666;
 	white-space: nowrap;
+	overflow-y:auto;
+	width:12em;
+	height:20em;
+	border:1px solid #AAA
 }
+
+.dtree {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    
+    color: #666;
+    white-space: nowrap;
+    
+}
+
 .dtree img {
 	border: 0px;
 	vertical-align: middle;

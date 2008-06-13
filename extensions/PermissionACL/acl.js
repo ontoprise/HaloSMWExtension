@@ -256,6 +256,9 @@ Rule.prototype = {
 	}
 }
 
-var acl = new ACL();
-Event.observe(window, 'load', acl.initializeListeners.bind(acl));
+// do only import on Special:ACL
+if (wgCanonicalSpecialPageName == 'ACL') {
+	var acl = new ACL();
+    Event.observe(window, 'load', acl.initializeListeners.bind(acl));
+}
 	 

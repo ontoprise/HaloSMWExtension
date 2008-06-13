@@ -28,7 +28,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 };
 
 // Tree object
-function dTree(objName) {
+function dTree(objName, className) {
 	this.config = {
 		target					: null,
 		folderLinks			: true,
@@ -63,6 +63,7 @@ function dTree(objName) {
 	this.selectedNode = null;
 	this.selectedFound = false;
 	this.completed = false;
+	this.className = className;
 };
 
 // Adds a new node to the node array
@@ -80,7 +81,7 @@ dTree.prototype.closeAll = function() {
 
 // Outputs the tree to the page
 dTree.prototype.toString = function() {
-	var str = '<div class="dtree">\n';
+	var str = '<div class="'+this.className+'">\n';
 	if (document.getElementById) {
 		if (this.config.useCookies) this.selectedNode = this.getSelected();
 		str += this.addNode(this.root);
@@ -119,7 +120,7 @@ dTree.prototype.addNode = function(pNode) {
 
 // Creates the node icon, url and text
 dTree.prototype.node = function(node, nodeId) {
-	var str = '<div class="dTreeNode">' + this.indent(node, nodeId);
+	var str = '<div class="dTreeNode" style="white-space:nowrap;">' + this.indent(node, nodeId);
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;

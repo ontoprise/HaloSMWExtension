@@ -51,7 +51,6 @@ class TreeView5 {
             $wgTreeView5Magic,$wgTreeViewImages,$wgTreeViewShowLines;
  
         # Add hooks
-        
         $wgParser->setFunctionHook($wgTreeView5Magic,array($this,'expandTree'));
         $wgHooks['ParserAfterTidy'][] = array($this,'renderTree');
  
@@ -74,6 +73,12 @@ class TreeView5 {
  
         # Add link to output to load dtree.js script
         $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Treeview5 --></script>\n");
+        $wgOut->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => "{$this->baseUrl}/dtree.css"
+                ));
         }
  
  
@@ -91,6 +96,8 @@ class TreeView5 {
         # Create a unique id for this tree or use id supplied in args and store args wrt id
         $this->id = isset($args['id']) ? $args['id'] : uniqid('');
         $this->args[$this->id] = $args;
+        
+        $this->class = isset($args['class']) ? $args['class'] : "dtree";
  
         # Reformat tree rows for matching in ParserAfterStrip
         $text = preg_replace('/(?<=\\*)\\s*\\[\\[Image:(.+?)\\]\\]/',"{$this->uniq}3$1{$this->uniq}4",$text);
@@ -182,7 +189,7 @@ class TreeView5 {
                         <div class='Treeview5' id='$id'>
                             <script type=\"$wgJsMimeType\">
                                 // TreeView{$this->version}
-                                tree = new dTree('{$this->uniqname}$id');
+                                tree = new dTree('{$this->uniqname}$id', '{$this->class}');
                                 for (i in tree.icon) tree.icon[i] = '{$this->baseUrl}/'+tree.icon[i];{$this->images}
                                 tree.config.useLines = {$this->useLines};
                                 $add
@@ -202,9 +209,7 @@ class TreeView5 {
         $text = preg_replace("/\x7f1$u\x7f.+?[\\r\\n]+/m",'',$text); # Remove all unreplaced row information
         return true;
     }
-    
-    
-    
+ 
 }
  
  
@@ -213,8 +218,7 @@ class TreeView5 {
  */
 function wfSetupTreeView5() {
     global $wgTreeView5;
-    
-    // register tree generator
+     // register tree generator
     new TreeGenerator();
     $wgTreeView5 = new TreeView5();
     }
@@ -227,8 +231,5 @@ function wfTreeView5LanguageGetMagic(&$magicWords,$langCode = 0) {
     global $wgTreeView5Magic;
     $magicWords[$wgTreeView5Magic] = array($langCode,$wgTreeView5Magic);
     return true;
-}
-
-
-    
+    }
   
