@@ -21,7 +21,6 @@ mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage
 mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
-mkdir %OUTPUT_DIR%\extensions\ParserFunctions
 
 REM copy files
 
@@ -43,18 +42,12 @@ xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\index.php %OUTPUT_DIR% /Y
 
-REM Additional extensions
-xcopy ..\..\ParserFunctions\* %OUTPUT_DIR%\extensions\ParserFunctions /S /Y
-xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y
-xcopy ..\..\Cite.php %OUTPUT_DIR%\extensions /Y
-xcopy ..\..\LdapAuthentication.php %OUTPUT_DIR%\extensions /Y
-xcopy ..\..\PermissionACL.php %OUTPUT_DIR%\extensions /Y
 
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwhalo-1.0.zip del smwhalo-1.0.zip
-7z.exe a -tzip smwhalo-1.0.zip %OUTPUT_DIR%\*
+IF EXIST smwplus-1.1.zip del smwplus-1.1.zip
+7z.exe a -tzip smwplus-1.1.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

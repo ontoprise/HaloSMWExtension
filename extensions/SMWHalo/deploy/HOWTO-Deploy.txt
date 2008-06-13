@@ -34,27 +34,45 @@ makeSMWHalo: Builds smwhalo-1.0.zip and copies everything below SMWHalo director
 				 skins\ontoskin
 				 skins\OntoSkin.deps.php
 				 skins\OntoSkin.php
+				 index.php
 				 
-			And these MW extensions: 
-			
-				 extensions\ParserFunctions\
-				 extensions\Cite.i18n.php
-				 extensions\Cite.php
-			 
+makeExt:    Extension package with additional MW patches
+
+                - MIME-Extensions
+                - WYSIWYG
+                - StringFunctions
+                - Semantic Treeview
+                - Semantic Calendar
+                - Semantic Forms
+                - PermissionACL
+                - DynamicPageList
+                - Lockdown
+                - ParserFunctions
+                - LDAP Auth
+                - Cite
+                
+                and several patches to MW 1.12
+                
+                
+makeAll:     Builds smwplus-1.1.zip, smwplus-ext.zip
+
+
+
+@deprecated
 makeSMW:	 Builds smw-1.0.zip and copies everything below SemanticMediaWiki directory into this zip. 
 			 For exceptions, take a look in excludeForSMW.dat
-			 
+@deprecated			 
 makeMW:		 Builds mw-1.12beta and copies everything below SemanticMediaWiki directory into this zip. 
 			 For exceptions, take a look in excludeForSMW.dat
 			 
-makeAll:  	 Builds smwhalo-1.0.zip, smw-1.0.zip and mw-1.12beta
 
+@deprecated
 makeExecutable: Builds halowiki.exe from smwhalo-1.0.zip, smw-1.0.zip, mw-1.12beta and xampp.zip
 			    It runs with no further software!
 			 	You find xampp.zip at:
 			 	 \\Link3\projekte\HALO-Vulcan\02 HALO-Vulcan-Refinement Phase\Software_Backup\xampp
 			 	Copy it to deploy/bin before executing the script.	 
-			 	
+@deprecated		 	
 makeSMWHaloExecutable: Builds halowiki.exe only from smwhalo-1.0.zip (not running by itself). Just for
 					   easy deploying instead of a zip. 
 
