@@ -547,6 +547,12 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_wwsd_undefined_result' => 'The path of the result "$1" can not be found in the result of the service.',
 
 
+	// Glossary
+	'smw_gloss_no_description' => '"$1" is annotated as glossary term but has no description yet.',
+	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
+	'smw_glossarybot' => 'Update glossary highlighting',
+	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
+
 );
 
 
@@ -561,8 +567,9 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
 	SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
 	SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
-	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan'
-	);
+	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan',
+	SMW_SSP_GLOSSARY => 'glossary'
+);
 
 var $smwSpecialCategories = array (
 	SMW_SC_TRANSITIVE_RELATIONS => 'Transitieve eigenschappen',

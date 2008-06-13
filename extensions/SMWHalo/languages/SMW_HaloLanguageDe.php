@@ -520,6 +520,11 @@ protected $smwUserMessages = array(
 	'smw_wws_duplicate_result' => 'Das Resultat "$1" erscheint mehrmals.',
 	'smw_wwsd_undefined_result' => 'Der Pfad des Resultats "$1" kann nicht im Resultat des Services gefunden werden.',
 
+	// Glossary
+	'smw_gloss_no_description' => '"$1" ist als Glossar-Begriff annotiert, hat aber noch keine Beschreibung.',
+	'smw_gard_glossarybothelp' => 'Dieser Bot markiert Begriffe aus dem Glossar in allen Artikeln die der Kategorie "ShowGlossary" angehören.',
+	'smw_glossarybot' => 'Glossarmarkierungen aktualisieren',
+	'smw_gloss_annotated_glossary' => 'Glossar-Begriffe im Artikel "$1" gefunden und annotiert.',
 
 );
 
@@ -534,7 +539,8 @@ var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_MAX_CARD => 'Hat max Kardinalität',
 	SMW_SSP_HAS_MIN_CARD => 'Hat min Kardinalität',
 	SMW_SSP_IS_INVERSE_OF => 'Ist invers zu',
-	SMW_SSP_IS_EQUAL_TO => 'Ist gleich zu'
+	SMW_SSP_IS_EQUAL_TO => 'Ist gleich zu',
+	SMW_SSP_GLOSSARY => 'glossar'
 	);
 
 var $smwSpecialCategories = array (
@@ -547,6 +553,7 @@ var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische Formel',
 	'smw_hdt_chemical_equation' => 'Chemische Gleichung',
 	'smw_hdt_mathematical_equation' => 'Mathematische Gleichung',
+	'smw_hdt_glossary' => 'Glossar',
 );
 
 protected $smwHaloNamespaces = array(
