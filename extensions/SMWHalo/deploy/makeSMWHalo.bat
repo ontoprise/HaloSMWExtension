@@ -41,10 +41,7 @@ xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
 xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
 xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
-
-REM Patches for MW (only FCKEdit)
-xcopy ..\..\..\includes\EditPage.php %OUTPUT_DIR%\includes /Y
-xcopy ..\..\..\includes\Sanitizer.php %OUTPUT_DIR%\includes /Y
+xcopy ..\..\..\index.php %OUTPUT_DIR% /Y
 
 REM Additional extensions
 xcopy ..\..\ParserFunctions\* %OUTPUT_DIR%\extensions\ParserFunctions /S /Y
