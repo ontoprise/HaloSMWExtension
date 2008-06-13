@@ -1,4 +1,3 @@
-F
 <?php
 /*  Copyright 2008, ontoprise GmbH
  *  This file is part of the halo-Extension.
@@ -702,6 +701,7 @@ class WSStorageSQL {
 		}
 		return true;
 	}
+}
 
 
 	function getUsedWSParameterSetPairs($wsId, $parameterSetId){
@@ -731,6 +731,5 @@ class WSStorageSQL {
 			echo $e->getMessage();
 		}
 	}
-
-
 }
+?>

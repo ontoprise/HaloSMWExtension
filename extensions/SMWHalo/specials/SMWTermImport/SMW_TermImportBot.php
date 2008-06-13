@@ -532,7 +532,7 @@ class TermImportBotFilter extends GardeningIssueFilter {
 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();
-		$gis = $gi_store->getGardeningIssues('smw_anomaliesbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gis = $gi_store->getGardeningIssues('smw_termimportbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
 		$gic[] = new GardeningIssueContainer($title, $gis);
 
 
