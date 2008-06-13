@@ -14,6 +14,8 @@
 *
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* 
+*  @author: kai
 */
 
 var ACL = Class.create();
@@ -22,6 +24,9 @@ ACL.prototype = {
 		 // do nothing
 	},
 	
+	/**
+	 * Exchanges the selected row with the row above it
+	 */
 	up: function() {
 		var selectedRow = this.getSelectedRow();
 		if (selectedRow != null) {
@@ -35,6 +40,9 @@ ACL.prototype = {
 	}
 	},
 	
+	/**
+	 * Exchanges the selected row with the row below it
+	 */
 	down: function() {
 		var selectedRow = this.getSelectedRow();
 		if (selectedRow != null) {
@@ -48,6 +56,9 @@ ACL.prototype = {
 		}
 	},
 	
+	/**
+	 * Updates ACLs.php file
+	 */
 	update: function() {
 		var acl_rules = this.getRules();
 		var whitelist = $('whitelist').value;
@@ -67,6 +78,9 @@ ACL.prototype = {
 		alert("ACLs have been updated.");
 	},
 	
+	/**
+	 * Removes the selected rule
+	 */
 	removeRule: function() {
 		var selectedRow = this.getSelectedRow();
 		if (selectedRow != null) {
@@ -76,14 +90,20 @@ ACL.prototype = {
 		}
 	},
 	
+	/**
+	 * Adds a new rule
+	 */
 	addRule: function() {
 		var rule = this.getNewRule();
 		var tbody = $('permissions').firstChild.firstChild;
 		var newrow = tbody.appendChild(document.createElement("tr"));
 		$(newrow).replace('<tr>' +
 							'<td><input type=\"radio\" name=\"select\" value=\"\"/></td>' +
-							'<td>'+rule['group']+'</td>' +
-							'<td>'+rule['namespaces']+'</td>' +
+							'<td>'+(rule['group'] == null ? "-" : rule['group']) +'</td>' +
+							'<td>'+(rule['user'] == null ? "-" : rule['user'])+'</td>' +
+							'<td>'+(rule['namespaces'] == null ? "-" : rule['namespaces'])+'</td>' +
+							'<td>'+(rule['category'] == null ? "-" : rule['category'])+'</td>' +
+							'<td>'+(rule['page'] == null ? "-" : rule['page'])+'</td>' +
 							'<td value="'+rule['action']+'">'+gLanguage.getMessage('smw_acl_'+rule['action'])+'</td>' +
 							'<td value="'+rule['operation']+'">'+gLanguage.getMessage('smw_acl_'+rule['operation'])+'</td></tr>');
 	},
@@ -117,6 +137,7 @@ ACL.prototype = {
 	},
 	
 	/** 
+	 * Builds Rule objects from HTML Table
 	 * @private
 	 */
 	getRules: function() {
@@ -125,23 +146,55 @@ ACL.prototype = {
 		var row = header.nextSibling;
 		while(row != null) {
 			var group = row.firstChild.nextSibling.innerHTML.split(",");
-			var namespaces = row.firstChild.nextSibling.nextSibling.innerHTML.split(",");
-			var action = row.firstChild.nextSibling.nextSibling.nextSibling.getAttribute("value").split(",");
-			var operation = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.getAttribute("value");
-			rules.push(new Rule(group, namespaces, action, operation));
+			var user = row.firstChild.nextSibling.nextSibling.innerHTML.split(",");
+			var namespaces = row.firstChild.nextSibling.nextSibling.nextSibling.innerHTML.split(",");
+			var category = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.innerHTML.split(",");
+			var page = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.innerHTML.split(",");
+			var action = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.getAttribute("value").split(",");
+			var operation = row.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.getAttribute("value");
+			rules.push(new Rule(group == '-' ? null : group, 
+								user == '-' ? null : user, 
+								namespaces == '-' ? null : namespaces, 
+								category == '-' ? null : category, 
+								page == '-' ? null : page, 
+								action, 
+								operation));
 			row = row.nextSibling;
 		}
 		
 		return rules;
 	},
 	
+	/**
+	 * Reads a new rule from the INPUT elements
+	 */
 	getNewRule: function() {
 		
 		var selectedIndex = $('group').selectedIndex;
-		var group = $('group').options[selectedIndex].innerHTML;
-		
+		var group, user;
+		if (selectedIndex == 0) {
+			group = null
+            user = $('userconstraint').value;
+    	} else {
+    		group = $('group').options[selectedIndex].innerHTML;
+    		user = null;
+    	}
+    	
 		var selectedIndex = $('namespaces').selectedIndex;
-		var namespaces = $('namespaces').options[selectedIndex].innerHTML;
+		var namespaces, category, page;
+		if (selectedIndex == 0) {
+		  category = $('categoryconstraint').value;
+		  namepsaces = null;	
+		  page = null;
+		} else if (selectedIndex == 1) {
+		  category = null;
+          namepsaces = null;    
+          page = $('pageconstraint').value;
+		} else {
+		  category = null;
+		  page = null;
+          namespaces = $('namespaces').options[selectedIndex].innerHTML;
+		}
 		
 		var selectedIndex = $('action').selectedIndex;
 		var action = $('action').options[selectedIndex].value;
@@ -149,20 +202,60 @@ ACL.prototype = {
 		var selectedIndex = $('operation').selectedIndex;
 		var operation = $('operation').options[selectedIndex].value;
 		
-		return new Rule(group, namespaces, action, operation);
+		return new Rule(group, user, namespaces, category, page, action, operation);
+	},
+	
+	/**
+	 * Initialize some action listeners for INPUT elements
+	 */
+	initializeListeners: function() {
+		Event.observe($('group'), 'change', this.groupSelected.bind(this));
+		Event.observe($('namespaces'), 'change', this.namespaceSelected.bind(this));
+	},
+	
+	/**
+	 * Called when group has been selected
+	 */
+	groupSelected: function() {
+		var selectedIndex = $('group').selectedIndex;
+        if (selectedIndex == 0) Form.Element.enable($('userconstraint')); else Form.Element.disable($('userconstraint'));
+	},
+	
+	/**
+	 * Called when a namespace has been selected
+	 */
+	namespaceSelected: function() {
+		var selectedIndex = $('namespaces').selectedIndex;
+        if (selectedIndex == 0) {
+        	Form.Element.enable($('categoryconstraint'));
+        	Form.Element.disable($('pageconstraint'));
+        } else if (selectedIndex == 1) {
+            Form.Element.enable($('pageconstraint'));
+            Form.Element.disable($('categoryconstraint'));
+        } else {
+        	Form.Element.disable($('pageconstraint'));
+        	Form.Element.disable($('categoryconstraint'));
+        }
 	}
 }
 
+/**
+ * General ACL rule object
+ */
 var Rule = Class.create();
 Rule.prototype = {
-	initialize: function(group, namespaces, action, operation) {
+	initialize: function(group, user, namespaces, category, page, action, operation) {
 		 this['group'] = group;
 		 this['namespaces'] = namespaces;
 		 this['action'] = action;
 		 this['operation'] = operation;
+		 
+		 this['user'] = user;
+		 this['page'] = page;
+		 this['category'] = category;
 	}
 }
 
 var acl = new ACL();
-
+Event.observe(window, 'load', acl.initializeListeners.bind(acl));
 	 

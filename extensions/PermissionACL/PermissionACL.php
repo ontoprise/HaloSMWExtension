@@ -4,16 +4,60 @@ if( !defined( 'MEDIAWIKI' ) ) {
     echo("This file is an extension to the MediaWiki software and cannot be used standalone.\n");
     die(1);
 }
- 
+
+if (file_exists('ACLs.php')) require_once('ACLs.php');
+
 $wgExtensionCredits['other'][] = array(
         'name' => 'PermissionACL',
         'author' => 'Jan Vavricek',
         'url' => 'http://mediawiki.org/wiki/Extension:PermissionACL',
         'description' => 'permissions access control list',
 );
- 
+
+global $wgExtensionFunctions, $wgHooks;
 $wgHooks['userCan'][] = 'PermissionACL_userCan';
- 
+$wgHooks['SMW_AddScripts'][]='wfACLAddHeader';
+$wgExtensionFunctions[] = 'wfACLSetupExtension';
+
+function wfACLAddHeader(& $out) {
+	global $wgScriptPath;
+	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/PermissionACL/acl.js"></script>');
+	return true;
+}
+
+function wfACLSetupExtension() {
+	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath;
+	wfACLInitMessages();
+	$wgAutoloadClasses['ACLSpecialPage'] = $wgScriptPath . '/extensions/PermissionACL/ACLSpecialPage.php';
+    $wgSpecialPages['ACL'] = array('ACLSpecialPage');
+    return true;
+}
+
+/**
+ * Registers ACL messages.
+ */
+function wfACLInitMessages() {
+        global $wgMessageCache, $wgLang;
+
+        $aclLangClass = 'ACL_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
+    
+        if (file_exists('extensions/PermissionACL/languages/'. $aclLangClass . '.php')) {
+            include_once('extensions/PermissionACL/languages/'. $aclLangClass . '.php' );
+        }
+        // fallback if language not supported
+       if ( !class_exists($aclLangClass)) {
+            include_once('extensions/PermissionACL/languages/ACL_LanguageEn.php' );
+            $aclgHaloLang = new ACL_LanguageEn();
+        } else {
+            $aclgHaloLang = new $aclLangClass();
+        }
+       
+        $wgMessageCache->addMessages($aclgHaloLang->acl_userMessages, $wgLang->getCode());
+
+    }
+
+require_once('ACLSpecialPage.php');
+
 function PermissionACL_userCan($title, $user, $action, &$result) {
     global $wgPermissionACL, $wgPermissionACL_Superuser, $wgWhitelistRead;
  

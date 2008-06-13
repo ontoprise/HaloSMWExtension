@@ -39,15 +39,24 @@ class ACLSpecialPage extends SpecialPage {
 		$html .= "<form id=\"permissions\"><table class=\"smwtable\">";
 		$html .= "<tr><th width=\"30\"><input type=\"button\" name=\"up\" value=\"".wfMsg('smw_acl_up')."\" onclick=\"acl.up()\"/>".
 		"<input type=\"button\" name=\"down\" value=\"".wfMsg('smw_acl_down')."\" onclick=\"acl.down()\"/>".
-		"</th><th>".wfMsg('smw_acl_groups')."</th><th>".wfMsg('smw_acl_namespaces')."</th><th>".wfMsg('smw_acl_actions')."</th><th>".wfMsg('smw_acl_permission')."</th></tr>";
+		"</th><th>".wfMsg('smw_acl_groups')."</th><th>".wfMsg('smw_acl_user')."</th><th>".wfMsg('smw_acl_namespaces')."</th><th>".wfMsg('smw_acl_category')."</th><th>".wfMsg('smw_acl_page')."</th><th>".wfMsg('smw_acl_actions')."</th><th>".wfMsg('smw_acl_permission')."</th></tr>";
 		$i = 0;
 		if (isset($wgPermissionACL)) {
 			foreach($wgPermissionACL as $pm) {
 				$group = $pm['group'];
-				$groupText = is_array($group) ? implode(",", $group) : $group;
+				$groupText = $group == NULL ? "-" : $group;
+				
+				$user = $pm['user'];
+                $userText = $user == NULL ? "-" : $user;
 				
 				$namespaces = $pm['namespace'];
-				$namespacesText = is_array($namespaces) ? $this->implodeNS($namespaces) : ($namespaces == "*" ? "*" : $wgLang->getNsText($namespaces));
+				$namespacesText = $namespaces == NULL ? "-" : ($namespaces == "*" ? "*" : $wgLang->getNsText($namespaces));
+				
+				$category = $pm['category'];
+				$categoryText = $category == NULL ? "-" : $category;
+				
+				$page = $pm['page'];
+                $pageText = $page == NULL ? "-" : $page;
 				
 				$action = is_array($pm['action']) ? implode(",", $pm['action'] ) : $pm['action'];
 				$actionText = is_array($action) ? implode(",", $this->translateActions($action)) : wfMsg('smw_acl_'.$action);
@@ -57,7 +66,10 @@ class ACLSpecialPage extends SpecialPage {
 				$html .= "<tr>";
 				$html .= "<td><input type=\"radio\" name=\"select\" value=\"\"/></td>";
 				$html .= "<td>".$groupText."</td>";
+				$html .= "<td>".$userText."</td>";
 				$html .= "<td>".$namespacesText."</td>";
+				$html .= "<td>".$categoryText."</td>";
+				$html .= "<td>".$pageText."</td>";
 				$html .= "<td value=\"".$action."\">".$actionText."</td>";
 				$html .= "<td value=\"$operation\">".wfMsg('smw_acl_'.$operation)."</td>";
 				$html .= "</tr>";
@@ -81,7 +93,7 @@ class ACLSpecialPage extends SpecialPage {
 			$html .= "<td>".wfMsg('smw_acl_groups')."</td>";
 			$html .= "<td><select name=\"group\" id=\"group\">";
 		
-			
+			$html .= "<option>".wfMsg('smw_acl_user_constraint')."</option>";
 			$html .= "<option selected=\"selected\">*</option>";
 			foreach($allgroups as $group) {
 				
@@ -89,14 +101,15 @@ class ACLSpecialPage extends SpecialPage {
 				
 				
 			}
- 			$html .= "</select></td>";
+ 			$html .= "</select> ".wfMsg('smw_acl_user').": <input id=\"userconstraint\" type=\"text\" disabled=\"disabled\"/></td>";
 			
 		$html .= "</tr>";
 		$html .= "<tr>";
 			$html .= "<td>".wfMsg('smw_acl_namespaces')."</td>";
 			$html .= "<td><select name=\"namespaces\" id=\"namespaces\">";
 		
-			
+			$html .= "<option>".wfMsg('smw_acl_category_constraint')."</option>";
+			$html .= "<option>".wfMsg('smw_acl_page_constraint')."</option>";
 			$html .= "<option selected=\"selected\">*</option>";
 			foreach($allnamespaces as $ns) {
 				if ($ns == '') $ns = 'Main';
@@ -104,7 +117,9 @@ class ACLSpecialPage extends SpecialPage {
 				
 				
 			}
- 			$html .= "</select></td>";
+ 			$html .= "</select>".
+		 			 " ".wfMsg('smw_acl_category').": <input id=\"categoryconstraint\" type=\"text\" disabled=\"disabled\"/>".
+		 			 " ".wfMsg('smw_acl_page').": <input id=\"pageconstraint\" type=\"text\" disabled=\"disabled\"/></td>";
 		$html .= "</tr>";
 		$html .= "<tr>";
 			$html .= "<td>".wfMsg('smw_acl_actions')."</td>";
@@ -183,19 +198,32 @@ class ACLManager {
 		// serialize permissions
 		foreach($acl_list as $pm) {
 			$group = $pm->group;
+			$user = $pm->user;
 			$namespaces = $pm->namespaces;
 			$action = $pm->action;
 			$operation = $pm->operation;
-			$groupText = ACLManager::implodeQuoted(",", $group);
-			$namespacesText = count($namespaces) > 1 ? 
-					"array(".implode(",", ACLManager::convertNSToIndex($namespaces)).")" :
-					implode(",", ACLManager::convertNSToIndex($namespaces));
-			$actionText = count($action) > 1 ? "array(".ACLManager::implodeQuoted(",", $action).")" : "\"".$action[0]."\"";
-			$data .= "\$wgPermissionACL[] = array( 'group' => array(".$groupText."),\n". 
-						"\t'namespace' => ".$namespacesText.",\n".
-						"\t'action' => ".$actionText.",\n".
-						"\t'operation' =>\"".$operation."\"\n".
-						");\n\n";
+			$namespacesText = ACLManager::convertNSToIndex($namespaces);
+			$category = $pm->category;
+			$page = $pm->page;
+			
+			$data .= "\$wgPermissionACL[] = array(";
+			if ($group != null) {
+			     $data .= "'group' => \"".$group[0]."\",\n";
+			} else {
+				 $data .= "'user' => \"".$user[0]."\",\n";
+			}
+			
+			if ($namespaces != NULL) {
+				$data .= "\t'namespace' => ".$namespacesText[0].",\n";
+			} else if ($category != NULL) {
+				$data .= "\t'category' => \"".$category[0]."\",\n";
+			} else {
+				$data .= "\t'page' => \"".$page[0]."\",\n";
+			}
+						
+			$data .= "\t'action' => \"".$action[0]."\",\n";
+			$data .= "\t'operation' =>\"".$operation."\"\n";
+			$data .= ");\n\n";
 		}
 		
 		// serialize whitelist

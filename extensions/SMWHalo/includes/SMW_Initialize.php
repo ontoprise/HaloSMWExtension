@@ -101,7 +101,7 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
-		$wgHooks['BeforePageDisplay'][]='smwACLAddHTMLHeader';
+		
 	}
 	// Register parser hooks for advanced annotation mode
 	
@@ -186,8 +186,7 @@ function smwgHaloSetupExtension() {
 			case '_om_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 						break;
-			case '_al_' : require_once($smwgHaloIP . '/specials/ACL/ACLSpecialPage.php');
-						break;
+			
 						
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -200,7 +199,7 @@ function smwgHaloSetupExtension() {
 				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-				require_once($smwgHaloIP . '/specials/ACL/ACLSpecialPage.php');
+				
 		}
 		
 		
@@ -213,8 +212,7 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
 		$wgSpecialPages['Gardening'] = array('SMWGardening');
 		
-		$wgAutoloadClasses['ACLSpecialPage'] = $smwgHaloIP . '/specials/ACL/ACLSpecialPage.php';
-		$wgSpecialPages['ACL'] = array('ACLSpecialPage');
+		
 	
 		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
 		$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
@@ -547,6 +545,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		// serialize the scripts
 		$jsm->serializeScripts($out);
+		// for additinal scripts which are dependant of Halo scripts (e.g. ACL extension)
+		wfRunHooks("SMW_AddScripts", array (& $out));
+		
 		return true; // always return true, in order not to stop MW's hook processing!
 }
 
@@ -1037,36 +1038,7 @@ function smwfAnnotateAction($action, $article) {
 	return true;
 }
 
-// ACL scripts callback
-// includes necessary script and css files.
- function smwACLAddHTMLHeader(&$out) {
- 	global $wgTitle;
-	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
-		
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
 
-	$jsm = SMWResourceManager::SINGLETON();
-
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":ACL");
-
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/ACL/acl.js', "all", -1, NS_SPECIAL.":ACL");
-	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":ACL");
-
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":ACL");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/ACL/acl.js', "all", -1, NS_SPECIAL.":ACL");
-	}
-
-	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":ACL");
-
-	return true;
-}
 
 // Gardening scripts callback
 // includes necessary script and css files.
@@ -1325,7 +1297,9 @@ function smwfNavTree() {
  global $wgUser,$wgTitle,$wgParser;
  if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
  $opt = ParserOptions::newFromUser($wgUser);
- $nav = new Article(Title::newFromText('NavTree', NS_MEDIAWIKI));
+ $nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
+ if (!$nav_title->exists()) return true;
+ $nav = new Article($nav_title);
  $out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
  echo $out->getText() . '<br/>';
  $groups = $wgUser->getGroups();
