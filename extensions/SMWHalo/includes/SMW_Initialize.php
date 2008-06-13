@@ -73,7 +73,10 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
-	
+	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
+    $wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
+	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
+	$wgHooks['ExtDeleteOutput'][] = 'smwfExtDeleteOutput';
 	
 	// Conversion of documents (PDF, MS Office)
 	global $smwgEnableUploadConverter;
@@ -467,6 +470,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "all");
 			//}
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
+			
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/breadcrump.js');
+			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/contentSlider.js');
 
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
 
@@ -1249,7 +1255,102 @@ function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	return true;
 }
 
+/**
+ * Hook which populates Toolbox toolbar
+ * 
+ * @param $template SkinTemplate class
+ */
+function smwfOntoSkinTemplateToolboxEnd(& $template) {
+    echo smwfCreateLinks('Toolbox');
+    return true;
+}
 
+/**
+ * Hook which populates Navigation toolbar
+ * 
+ * @param $template SkinTemplate class
+ */
+function smwfOntoSkinTemplateNavigationEnd(& $template) {
+    echo smwfCreateLinks('Navigation');
+    return true;
+}
 
+/**
+ * Creates links for different groups by accessing group link pages.
+ * Name of page is: $name_$group 
+ * 
+ * @return HTML
+ */
+function smwfCreateLinks($name) {
+    global $wgUser, $wgTitle;
+    $groups = $wgUser->getGroups();
+    $links = array();
+    foreach($groups as $g) {
+         $nav = new Article(Title::newFromText($name.'_'.$g, NS_MEDIAWIKI));
+         $content = $nav->fetchContent(0,false,false);
+         $matches = array();
+         preg_match_all('/\*\s*([^|]+)\|\s*(.*)/', $content, $matches);
+         for($i = 0; $i < count($matches[0]); $i++) {
+            $links[$matches[2][$i]] = $matches[1][$i];
+         }
+    }
+    $links = array_unique($links);
+    $result = "";
+    foreach($links as $name => $page_title) {
+      $name = Sanitizer::stripAllTags($name);
+      $page_title = Sanitizer::stripAllTags($page_title);
+      $query = "";
+      if (stripos($page_title, "?") !== false) {
+        $query = substr($page_title, stripos($page_title, "?")+1);
+        $page_title = substr($page_title, 0, stripos($page_title, "?"));
+      }
+      
+      // Replace some variables:
+      // PAGE_TITLE : Page title WITH namespace
+      // PAGE_TITLE_WNS : Page title WITHOUT namespace
+      // PAGE_NS : Page namespace as text
+      $query = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $query);
+      $query = str_replace("{{{PAGE_NS}}}", $wgTitle->getNsText(), $query);
+      $query = str_replace("{{{PAGE_TITLE_WNS}}}", $wgTitle->getDBkey(), $query);
+      $page_title = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $page_title);
+      $result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+    }
+    return $result;
+}
+
+/**
+ * Includes Navigation tree in sidebar
+ */
+function smwfNavTree() {
+ global $wgUser,$wgTitle,$wgParser;
+ if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
+ $opt = ParserOptions::newFromUser($wgUser);
+ $nav = new Article(Title::newFromText('NavTree', NS_MEDIAWIKI));
+ $out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+ echo $out->getText() . '<br/>';
+ $groups = $wgUser->getGroups();
+ foreach($groups as $g) {
+    $title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
+    if ($title->exists()) {
+        $nav = new Article($title);
+        $out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
+        echo $out->getText() . '<br/>';
+    }
+ }
+ return true;
+}
+
+/**
+ * Returns additional HTML for delete page.
+ * 
+ * @param $article Article which is about to be deleted.
+ * @param $output HTML output.
+ */
+function smwfExtDeleteOutput(& $article, & $output) {
+    global $smwgHaloIP;
+    require_once($smwgHaloIP . '/includes/SMW_DeleteMoveExtension.php');
+    $output = SMWDeleteMoveExtension::showLinksToArticle($article);
+    return true;
+}
 
 ?>

@@ -10,7 +10,9 @@
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
  
 define('TREEVIEW5_VERSION','5.1.10, 2008-04-15');
- 
+
+require_once('TreeGenerator.php');
+
 # Set any unset images to default titles
 if (!isset($wgTreeViewImages) || !is_array($wgTreeViewImages)) $wgTreeViewImages = array();
  
@@ -49,6 +51,7 @@ class TreeView5 {
             $wgTreeView5Magic,$wgTreeViewImages,$wgTreeViewShowLines;
  
         # Add hooks
+        
         $wgParser->setFunctionHook($wgTreeView5Magic,array($this,'expandTree'));
         $wgHooks['ParserAfterTidy'][] = array($this,'renderTree');
  
@@ -199,7 +202,9 @@ class TreeView5 {
         $text = preg_replace("/\x7f1$u\x7f.+?[\\r\\n]+/m",'',$text); # Remove all unreplaced row information
         return true;
     }
- 
+    
+    
+    
 }
  
  
@@ -208,6 +213,9 @@ class TreeView5 {
  */
 function wfSetupTreeView5() {
     global $wgTreeView5;
+    
+    // register tree generator
+    new TreeGenerator();
     $wgTreeView5 = new TreeView5();
     }
  
@@ -219,5 +227,8 @@ function wfTreeView5LanguageGetMagic(&$magicWords,$langCode = 0) {
     global $wgTreeView5Magic;
     $magicWords[$wgTreeView5Magic] = array($langCode,$wgTreeView5Magic);
     return true;
-    }
+}
+
+
+    
   

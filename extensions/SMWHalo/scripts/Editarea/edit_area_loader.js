@@ -302,9 +302,10 @@
 			span.id= "EditAreaArroundInfos_"+id;
 			var html="";
 			if(editAreas[id]["settings"]["allow_toggle"]){
+				var isDisabled = GeneralBrowserTools.getURLParameter('mode') == 'wysiwyg' ? "disabled" : "";
 				checked=(editAreas[id]["settings"]["display"]=="onload")?"checked":"";
 				html+="<div id='edit_area_toggle_"+i+"'>";
-				html+="<input id='edit_area_toggle_checkbox_"+ id +"' class='toggle_"+ id +"' type='checkbox' onclick='editAreaLoader.userToggle(\""+ id +"\");' accesskey='e' "+checked+" />";
+				html+="<input id='edit_area_toggle_checkbox_"+ id +"' class='toggle_"+ id +"' type='checkbox' onclick='editAreaLoader.userToggle(\""+ id +"\");' accesskey='e' "+checked+" "+isDisabled+"/>";
 				html+="<label for='edit_area_toggle_checkbox_"+ id +"'>{$toggle}</label></div>";
 			}
 			if(editAreas[id]["settings"]["debug"])

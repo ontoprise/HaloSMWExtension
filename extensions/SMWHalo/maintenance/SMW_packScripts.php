@@ -151,6 +151,8 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
  	// scripts which will be packed in one JS file (in this order!)
  	$scripts = array(
  					 'generalTools.js' => GPL_LICENSE_ONTOPRISE,
+ 	                 'breadcrump.js' => GPL_LICENSE_ONTOPRISE,
+ 	                 'contentSlider.js' => GPL_LICENSE_ONTOPRISE,
  					 'smw_logger.js' => GPL_LICENSE_ONTOPRISE,
  					 'SMW_Language.js' => GPL_LICENSE_ONTOPRISE);
 

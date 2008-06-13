@@ -116,6 +116,7 @@ class OntoSkinTemplate extends QuickTemplate {
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 	<div id="globalWrapper">
 		<div id="column-content">
+		
 	<div id="content">
 	<?php 	global $wgRequest,$wgTitle;
 
@@ -149,9 +150,9 @@ class OntoSkinTemplate extends QuickTemplate {
 				</div>
 				</td>
 				<td id="contentcol2">
-				<div id="ontomenuanchor">
+				<?php if ($_REQUEST['mode'] !== 'wysiwyg') echo '<div id="ontomenuanchor"></div>' ?>
 					<!-- This is the location, where the ontoskin.js will insert the toolbar. -->
-	            </div>
+	            
 	            <!--</div>-->
 	            </td>
 	        </table>
@@ -160,7 +161,7 @@ class OntoSkinTemplate extends QuickTemplate {
 			}
 			else
 			{ ?>
-
+                       
 					<div id="innercontent">
 					<a name="top" id="top"></a>
 					<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
@@ -198,6 +199,13 @@ class OntoSkinTemplate extends QuickTemplate {
 			</ul>
 		</div>
 	</div>
+	<!-- Add content slider to slide content pane -->
+	<?php  global $wgRequest,$wgTitle;
+
+       if ($wgRequest->getText('action') != "edit" && $wgRequest->getText('action') != "annotate" && ($wgTitle->getPrefixedText() != $wgTitle->getNsText().":".wfMsg('search')))
+       { ?>
+	       <div id="contentslider"></div>
+	<?php } ?>
 	<div class="portlet" id="p-personal">
 		<h5><?php $this->msg('personaltools') ?></h5>
 		<div class="pBody">
@@ -211,6 +219,8 @@ class OntoSkinTemplate extends QuickTemplate {
 				echo htmlspecialchars($item['text']) ?></a></li>
 <?php			} ?>
 			</ul>
+		</div>
+		<div id="breadcrump" class="pBody">
 		</div>
 	</div>
 	<div class="portlet" id="p-logo">
@@ -228,7 +238,7 @@ class OntoSkinTemplate extends QuickTemplate {
 				<li id="<?php echo Sanitizer::escapeId($val['id']) ?>"<?php
 					if ( $val['active'] ) { ?> class="active" <?php }
 				?>><a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?></a></li>
-<?php			} ?>
+<?php			} wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$this ) ); ?>
 			</ul>
 		</div>
 	</div>
@@ -274,16 +284,17 @@ class OntoSkinTemplate extends QuickTemplate {
 					<?php } ?></li><?php
 		}
 		global $wgTitle;
-		$this->data['nav_urls']['ontologybrowser'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'src=toolbar' ) );
-		if ($wgTitle != null && $wgTitle->getNamespace() != NS_SPECIAL && $wgTitle->getNamespace() != NS_TEMPLATE) { 
+		//$this->data['nav_urls']['ontologybrowser'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'src=toolbar' ) );
+		/*if ($wgTitle != null && $wgTitle->getNamespace() != NS_SPECIAL && $wgTitle->getNamespace() != NS_TEMPLATE) { 
 			$this->data['nav_urls']['smw_viewinOB'] = array( 'href' => Skin::makeSpecialUrl( 'OntologyBrowser', 'entitytitle='.$wgTitle->getText().'&ns='.$wgTitle->getNsText()) );
-		}
-		$this->data['nav_urls']['gardening'] = array( 'href' => Skin::makeSpecialUrl( 'Gardening' ) );
+			$this->data['nav_urls']['smw_editwysiwyg'] = array( 'href' => Skin::makeUrl($wgTitle->getText(), "action=edit&mode=wysiwyg") );
+		}*/
+		/*$this->data['nav_urls']['gardening'] = array( 'href' => Skin::makeSpecialUrl( 'Gardening' ) );
 		$this->data['nav_urls']['gardeninglog'] = array( 'href' => Skin::makeSpecialUrl( 'GardeningLog' ) );
 		$this->data['nav_urls']['findwork'] = array( 'href' => Skin::makeSpecialUrl( 'FindWork' ) );
-		$this->data['nav_urls']['queryinterface'] = array( 'href' => Skin::makeSpecialUrl( 'QueryInterface' ) );
-		$this->data['nav_urls']['smw_ti_termimport'] = array( 'href' => Skin::makeSpecialUrl( 'TermImport' ) );
-		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {
+		$this->data['nav_urls']['queryinterface'] = array( 'href' => Skin::makeSpecialUrl( 'QueryInterface' ) );*/
+//		$this->data['nav_urls']['smw_ti_termimport'] = array( 'href' => Skin::makeSpecialUrl( 'TermImport' ) );
+		foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'smw_editwysiwyg', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {
 
 			if($this->data['nav_urls'][$special]) {
 				?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])

@@ -22,7 +22,7 @@
 	#column-content {
 		width: 100%;
 		float: right;
-		margin: 0 0 .6em -12.2em;
+		margin: 0 0 .6em -100%;
 		padding: 0;
 	}
 	#content {
@@ -1630,4 +1630,10 @@ p.mw-ipb-conveniencelinks {
 .gardeningissue_notify {
 	color:#FF9602;
 	font-size:90%;
+}
+
+#contentSliderHandle {
+cursor:move;
+position:relative;
+z-index:5;
 }
