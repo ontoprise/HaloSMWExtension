@@ -29,7 +29,7 @@ div,span,img,a,form,body,label {
 	font-size: 11px;
 }
 
-.mynotificationstitle_nm {
+.sn-my-notificationstitle {
 	background-color: #00B55A;
 	color: White;
 	font-size: 16px;
@@ -38,11 +38,18 @@ div,span,img,a,form,body,label {
 	vertical-align: text-top;
 }
 
-.notificationbox_nm {
+.sn-my-notificationbox {
 	background-color: #28FF94;
-	border-width: 1px;
+	border-width: 2px;
 	border-style: solid;
+	border-color: #00B55A;
 	margin: 0px;
+}
+
+.sn-my-notifications-table {
+	background-color: #28FF94;
+	
+	
 }
 
 .previewbox_nm {
