@@ -553,7 +553,10 @@ clicking the big arrows between the columns.',
 	'smw_wsuse_wrong_resultpart' => 'The result-part "$1" does not exist in the Wiki Web Service Definition.',
 	'smw_wsuse_wwsd_not_existing' => 'A Wiki Web Service Definition with the name "$1" does not exist.',
 	'smw_wsuse_wwsd_error' => 'The usage of the Web Service was erroneous:',
-	'webservices' => 'Web Services',
+	'webservicerepository' => 'Web Service Repository',
+	'smw_wws_select_without_object' => 'The attribute "object" of the select "$1" of the result "$2" is missing.',
+	'smw_wws_select_without_value' => 'The attribute "value" of the select "$1" of the result "$2" is missing.',
+	'smw_wws_duplicate_select' => 'The select "$1" appears several times in the result "$2".',
 
 
 	);
