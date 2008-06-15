@@ -65,7 +65,7 @@ class WSStorageSQL {
 				  'update_delay'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'span_of_life'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'expires_after_update' =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL' ,
-				  'confirmed'            =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL'), 
+				  'confirmed'            =>  'ENUM(\'true\', \'false\', \'once\') DEFAULT \'false\' NOT NULL'), 
 		$db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -143,7 +143,7 @@ class WSStorageSQL {
 					  'span_of_life'    =>  $webService->getSpanOfLife() ,
 					  'expires_after_update'
 					  =>  $webService->doesExpireAfterUpdate() ? 'true' : 'false',
-					  'confirmed'       =>  $webService->isConfirmed() ? 'true' : 'false'));
+					  'confirmed'       =>  $webService->getConfirmationStatus()));
 		} catch (Exception $e) {
 			echo $e->getMessage();
 			return false;
@@ -175,7 +175,7 @@ class WSStorageSQL {
 
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
-			$ws = new WebService($row->page_title, $row->uri, $row->protocol,
+			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
 			$row->method, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->updateDelay, $row->span_of_life,
@@ -613,10 +613,24 @@ class WSStorageSQL {
 	 * @param string $parameterSetId
 	 * @return unknown
 	 */
+	function getUsedWSParameterSetPairs($wsId, $parameterSetId){
+		$db =& wfGetDB( DB_SLAVE );
+		$result = array();
+		$res = $db->select( $db->tableName("smw_ws_articles"),
+		array("page_id"),
+		array(	"web_service_id" => $wsId,
+		             		"param_set_id" => $parameterSetId));
 
+		$result = array();
+		while($row = $db->fetchObject($res)){
+			$result[] = $row->page_id;
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 
 	/**
-	 * remove allentries according to the given ws-id
+	 * remove all entries according to the given ws-id
 	 * from the cache
 	 *
 	 * @param string $wsPageID
@@ -658,6 +672,7 @@ class WSStorageSQL {
 		$db->freeResult($res);
 		return $result;
 	}
+
 	/**
 	 * stores the result of a ws-call in the cache
 	 *
@@ -680,7 +695,6 @@ class WSStorageSQL {
 			echo $e->getMessage();
 			return false;
 		}
-
 	}
 
 
@@ -701,26 +715,16 @@ class WSStorageSQL {
 		}
 		return true;
 	}
-}
 
 
-	function getUsedWSParameterSetPairs($wsId, $parameterSetId){
-		$db =& wfGetDB( DB_SLAVE );
-		$result = array();
-		$res = $db->select( $db->tableName("smw_ws_articles"),
-		array("page_id"),
-		array(	"web_service_id" => $wsId,
-		             		"param_set_id" => $parameterSetId));
 
-		$result = array();
-		while($row = $db->fetchObject($res)){
-			$result[] = $row->page_id;
-		}
-		$db->freeResult($res);
-		return $result;
-	}
-
-	function storeCacheAccess($wsId, $parameterSetId){
+	/**
+	 * sets the timestamp of the last access of a cache entry.
+	 *
+	 * @param unknown_type $wsId
+	 * @param unknown_type $parameterSetId
+	 */
+	function updateCacheLastAccess($wsId, $parameterSetId){
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$res = $db->update( $db->tableName("smw_ws_cache"), array(  'last_access' => $db->timestamp()),
@@ -731,5 +735,53 @@ class WSStorageSQL {
 			echo $e->getMessage();
 		}
 	}
+
+	/**
+	 * this method returns an array of all defined web services
+	 *
+	 * @return array of webservices
+	 */
+	public function getWebServices() {
+		$db =& wfGetDB( DB_SLAVE );
+		$ptb = $db->tableName("smw_ws_wwsd");
+		$sql = "SELECT * FROM ".$ptb;
+
+		$res = $db->query($sql);
+
+		$webServices = array();
+
+		while($row = $db->fetchObject($res)){
+			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
+			$row->method, $row->parameters, $row->result,
+			$row->display_policy, $row->query_policy,
+			$row->updateDelay, $row->span_of_life,
+			$rwow->expires_after_update == 'true',
+			$row->confirmed == 'true');
+			$webServices[] = $ws;
+		}
+
+		$db->freeResult($res);
+		return $webServices;
+
+	}
+
+	/**
+	 * this method changes the confirmation status of a wwsd to
+	 * the given value.
+	 *
+	 * @param string $wsId
+	 * @param string $status possible values are: "false", "once" and "true"
+	 */
+	function setWWSDConfirmationStatus($wsId, $status){
+		//TODO: change db scheme
+		//TODO: ws method
+		$db =& wfGetDB( DB_MASTER );
+		try {
+			$res = $db->update( $db->tableName("smw_ws_wwsd"),
+			array(  'confirmed' => $status),
+			array(	'web_service_id'    => $wsId));
+		}catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
 }
-?>
