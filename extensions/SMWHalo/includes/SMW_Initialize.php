@@ -148,6 +148,7 @@ function smwgHaloSetupExtension() {
 		
 	}
 	
+	//require_once($smwgHaloIP . '/includes/SMW_WYSIWYGTab.php');
 	
 	
 	// add some AJAX calls
@@ -227,7 +228,9 @@ function smwgHaloSetupExtension() {
 
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
-
+		
+		$wgAutoloadClasses['SMWWebServiceSpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceSpecial.php';
+		$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceSpecial');
 	}
 	
 	// include SMW logger (exported as ajax function but also used locally)
@@ -525,6 +528,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 			$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
 			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticNotification/SMW_SemanticNotifications.js', "view", -1, NS_SPECIAL.":SemanticNotifications");
+			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WebServices/webservices.js', "view", -1, NS_SPECIAL.":WebServiceRepository");
 		} else {
 			$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 			$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -1047,12 +1051,12 @@ function smwGAAddHTMLHeader(&$out) {
 	$jsm = SMWResourceManager::SINGLETON();
 
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog", NS_SPECIAL.":WebServicerepository"));
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/scriptaculous.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Language/SMW_Language.js',  "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Gardening/gardening.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
-		
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/WebServices/webservices.js', "all", -1, array(NS_SPECIAL.":WebServicerepository"));
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":Gardening", NS_SPECIAL.":GardeningLog"));
