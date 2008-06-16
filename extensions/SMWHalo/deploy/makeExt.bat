@@ -43,6 +43,7 @@ xcopy ..\..\Variables %OUTPUT_DIR%\extensions\Variables /S /EXCLUDE:excludeForHa
 xcopy ..\..\LdapAuthentication.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Cite.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y
+xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
 
 cd bin
 IF EXIST smwplus-ext.zip del smwplus-ext.zip
