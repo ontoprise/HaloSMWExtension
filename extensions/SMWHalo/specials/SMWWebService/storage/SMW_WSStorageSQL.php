@@ -322,6 +322,10 @@ class WSStorageSQL {
 	 */
 
 	public function storeParameterset($parameters){
+		if(sizeof($parameters) == 0){
+			return "0";
+		}
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$ptbl = $db->tableName('smw_ws_parameters');
 

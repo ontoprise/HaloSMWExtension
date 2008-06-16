@@ -160,7 +160,6 @@ function webServiceUsage_Render( &$parser) {
 		}
 	}
 
-	//todo allow empty parameter sets:parametersetid=0;
 	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);

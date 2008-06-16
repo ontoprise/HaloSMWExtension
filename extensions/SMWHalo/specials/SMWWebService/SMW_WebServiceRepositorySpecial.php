@@ -3,7 +3,7 @@
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 
-class SMWWebServiceSpecial extends SpecialPage {
+class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('WebServicerepository');
