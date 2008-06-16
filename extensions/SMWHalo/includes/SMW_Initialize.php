@@ -229,8 +229,8 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 		
-		$wgAutoloadClasses['SMWWebServiceSpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceSpecial.php';
-		$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceSpecial');
+		$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRepositorySpecial.php';
+		$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceRepositorySpecial');
 	}
 	
 	// include SMW logger (exported as ajax function but also used locally)
