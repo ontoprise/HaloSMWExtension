@@ -7,6 +7,12 @@ if( !defined( 'MEDIAWIKI' ) ) {
 
 if (file_exists('ACLs.php')) require_once('ACLs.php');
 
+global $wgAjaxExportList;
+
+ 
+ // register ajax calls
+ $wgAjaxExportList[] = 'smwf_al_updateACLs';
+ 
 $wgExtensionCredits['other'][] = array(
         'name' => 'PermissionACL',
         'author' => 'Jan Vavricek',
@@ -75,9 +81,110 @@ function wfACLInitMessages() {
 
 }
 
+function smwf_al_updateACLs($acl_list_json, $whitelist, $superusers) {
+    $acls = json_decode($acl_list_json);
+    $acl_manager = ACLManager::SINGLETON();
+    $acl_manager->writeConfig($acls, $whitelist, $superusers);
+    return "true";
+}
+
+class ACLManager {
+    
+    private static $instance = NULL;
+    
+    public static function SINGLETON() {
+        if (ACLManager::$instance == NULL) {
+            $instance = new ACLManager();
+        }
+        return $instance;
+    }
+    
+    public function writeConfig($acl_list, $whitelist, $superusers) {
+        $serializedData = $this->serialize($acl_list, $whitelist, $superusers);
+        $handle = fopen('ACLs.php','wb');
+        fwrite($handle, $serializedData);
+        fclose($handle);
+    }
+    
+    private function serialize($acl_list, $whitelist, $superusers) {
+        global $wgWhitelistRead, $wgPermissionACL_Superuser, $wgLang;
+        
+        $data = "<?php\nglobal \$wgPermissionACL, \$wgWhitelistRead, \$wgPermissionACL_Superuser;\n\n";
+        
+        // serialize permissions
+        foreach($acl_list as $pm) {
+            $group = $pm->group;
+            $user = $pm->user;
+            $namespaces = $pm->namespaces;
+            $action = $pm->action;
+            $operation = $pm->operation;
+            $namespacesText = ACLManager::convertNSToIndex($namespaces);
+            $category = $pm->category;
+            $page = $pm->page;
+            
+            $data .= "\$wgPermissionACL[] = array(";
+            if ($group != null) {
+                 $data .= "'group' => \"".$group[0]."\",\n";
+            } else {
+                 $data .= "'user' => \"".$user[0]."\",\n";
+            }
+            
+            if ($namespaces != NULL) {
+                $data .= "\t'namespace' => ".$namespacesText[0].",\n";
+            } else if ($category != NULL) {
+                $data .= "\t'category' => \"".str_replace(" ","_",trim($category[0]))."\",\n";
+            } else {
+                $data .= "\t'page' => \"".str_replace(" ","_",trim($page[0]))."\",\n";
+            }
+                        
+            $data .= "\t'action' => \"".$action[0]."\",\n";
+            $data .= "\t'operation' =>\"".$operation."\"\n";
+            $data .= ");\n\n";
+        }
+        
+        // serialize whitelist
+        $whitelist = explode(",", $whitelist);
+        global $wgContLang;
+        $spns_text = $wgContLang->getNsText(NS_SPECIAL);
+        $sp_aliases = $wgContLang->getSpecialPageAliases();
+        $data .= "\$wgWhitelistRead = array('$spns_text:".$sp_aliases['Userlogin'][0]."',". 
+        "'$spns_text:".$sp_aliases['Userlogout'][0]."', '$spns_text:".$sp_aliases['Resetpass'][0]."', ".ACLManager::implodeQuoted(",", $whitelist).");\n\n";
+                
+        // serialize superusers
+        $superusers = explode(",", $superusers);
+        $data .= "\$wgPermissionACL_Superuser = array(".ACLManager::implodeQuoted(",", $superusers).");\n\n";
+        
+        $data .= "?>";
+        return $data;
+    }
+    
+    private static function implodeQuoted($delimeter, $tarray) {
+        $result = array();
+        foreach($tarray as $t) {
+            $result[] = '"'.trim($t).'"';
+        }
+        return implode($delimeter, $result);
+    }
+    
+    private static function convertNSToIndex($namespaces) {
+        global $wgLang;
+        $result = array();
+        if (!is_array($namespaces)) $namespaces = array($namespaces);
+        foreach($namespaces as $ns) {
+            switch(trim($ns)) {
+                case '*' : $result[] = '"*"';break;
+                case 'Main' :  $result[] = 0;break;
+                default: $result[] = $wgLang->getNsIndex(trim($ns));
+            }
+                    
+        }
+        return $result;
+    }
+}
 // old extension Code
 
 function PermissionACL_userCan($title, $user, $action, &$result) {
+	
     global $wgPermissionACL, $wgPermissionACL_Superuser, $wgWhitelistRead;
  
     $result = NULL;
