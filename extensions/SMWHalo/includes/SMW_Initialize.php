@@ -980,7 +980,9 @@ function smwfAAMBeforeHTML(&$out, &$text) {
  * @return false => processing should continue
  */
 function smwfAnnotateAction($action, $article) {
-	
+	if ($action != 'annotate') {
+ 		return true;
+	}
 	$title = $article->getTitle();
 	$title->invalidateCache();
 	$article->view();
