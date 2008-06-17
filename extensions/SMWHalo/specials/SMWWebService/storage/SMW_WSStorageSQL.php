@@ -667,6 +667,7 @@ class WSStorageSQL {
 		array("result", "last_update", "last_access"),
 		array(	"web_service_id" => $wsPageId,
 		             		"param_set_id" => $parameterSetId));
+		
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$result["result"] = $row->result;
@@ -676,6 +677,40 @@ class WSStorageSQL {
 		$db->freeResult($res);
 		return $result;
 	}
+	
+/**
+	 * get results for the given web service id
+	 * from the cache
+	 *
+	 * @param string $wsPageId
+	 * @return result array
+	 */
+	function getResultsFromCache($wsId){
+		$db =& wfGetDB( DB_SLAVE );
+		$tbn = $db->tableName('smw_ws_cache');
+		
+		$sql = "SELECT cache.result, cache.last_update, cache.last_access";
+		$sql .= " FROM ".$tbn." cache";
+		$sql .= " WHERE cache.web_service_id =\"".$wsId."\"";
+		$sql .= " ORDER BY cache.last_update ASC";
+		
+		$res = $db->query($sql);
+		
+		$results = array();
+		$result = array();
+		
+		while ($row = $db->fetchObject($res)) {
+			$result["result"] = $row->result;
+			$result["lastUpdate"] = $row->last_update;
+			$result["lastAccess"] = $row->last_access;
+			$results[] = $result;
+		}
+		
+		$db->freeResult($res);
+		return $results;
+	}
+	
+	
 
 	/**
 	 * stores the result of a ws-call in the cache

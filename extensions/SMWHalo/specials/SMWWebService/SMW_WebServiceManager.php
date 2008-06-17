@@ -31,7 +31,9 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceSettings.php");
 // include the web service syntax parser
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceUsage.php");
 
-require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceAjaxAccess.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceRepositoryAjaxAccess.php");
+
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_DefineWebServiceAjaxAccess.php");
 
 
 ###

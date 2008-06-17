@@ -3,12 +3,15 @@
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 
+//todo: describe
 class SMWWebServiceRepositorySpecial extends SpecialPage {
 
+	//todo: make only accessible for admins
+	//todo: describe
 	public function __construct() {
 		parent::__construct('WebServicerepository');
 	}
-
+	//todo: describe
 	public function execute() {
 		global $wgRequest, $wgOut;
 
@@ -23,18 +26,24 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		
 		$html .= "<h2><span class=\"mw-headline\">Available Wiki Web Service Definitions</span></h2>";
 		
-		$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Update</th><th>Update</th><th>Confirm</th></tr>";
+		$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th><th>Update</th><th>Confirm</th></tr>";
 		foreach($webServices as $ws){
 			$wsUrl = Title::newFromID($ws->getArticleID())->getInternalURL();
 			$wsName = substr($ws->getName(), 11, strlen($ws->getName())); 
 			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
-			$cacheResult = WSStorage::getDatabase()->getResultFromCache($this->mArticleID, $parameterSetId);
-			$lastUpdate = wfTimestamp(TS_MW, $cacheResult["lastUpdate"]);
 			
-			$html .= "<td>".$lastUpdate."</td>";
+			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
+			$oldestUpdate = $cacheResults[0]["lastUpdate"];			
+			$latestUpdate = $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"];
+			$html .= "<td>".$oldestUpdate." - ".$latestUpdate."</td>";
 			
 			$html .= "<td><button type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache(".$ws->getArticleID().")\">Update</button></td>";
-			$html .= "<td><button type=\"button\" id=\"confirm\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+			
+			if($ws->getConfirmationStatus() != "true"){
+				$html .= "<td id=\"confirmText\">  <button type=\"button\" id=\"confirmButton\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+			} else {
+				$html .= "<td>confirmed</td></tr>";
+			}
 		}
 		$html .= "</table>";
 		
