@@ -159,35 +159,35 @@ function smwgHaloSetupExtension() {
 		// decide according to ajax method prefix which script(s) to import
 		switch($method_prefix) {
 			case '_ac_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
-			break;
+			            require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+						break;
 			case '_cs_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
-			break;
+						require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+						break;
 			case '_ga_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
-			break;
+						require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+						break;
 			case '_ob_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-			break;
-			case '_fw_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
-			break;
+						require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+						break; 			
+			case '_fw_' : smwfHaloInitMessages(); 
+						 require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
+						break;		
 			case '_ca_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
-			break;
+						require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+						break;	
 			case '_qi_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-			break;
+						require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+						break;
 			case '_tb_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
-			break;
+						require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+						break;
 			case '_om_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-			break;
+						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+						break;
 			case '_sn_' : require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
-			break;
-
+						break;
+						
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
 				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
@@ -282,20 +282,20 @@ function smwfHaloInitDatatypes() {
 	global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
 	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
 	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_formula'));
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_formula'));
 	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
 	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
 	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
 	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
-	$smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
+	                                      $smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
 	$wgAutoloadClasses['SMWGlossaryTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_Glossary.php';
 	SMWDataValueFactory::registerDatatype('_glo', 'SMWGlossaryTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_glossary'));
-	 
+	                                      $smwgHaloContLang->getHaloDatatype('smw_hdt_glossary'));
+	                                      
 	return true;
 }
 
@@ -767,7 +767,7 @@ function smwfHaloSaveHook(&$article, &$user, &$text) {
 				if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
 					foreach ($oldvalues as $olddata) {
 						if ($olddata instanceof SMWDataValue)
-						$oldstrings[] = $olddata->getWikiValue();
+							$oldstrings[] = $olddata->getWikiValue();
 					}
 				}
 			}
@@ -833,10 +833,10 @@ function smwfAnnotateTab ($content_actions) {
 	//Check if ontoskin is available
 	global $wgUser;
 	if($wgUser->getSkin()->skinname != 'ontoskin')
-	return true;
+		return true;
 	//Check if edit tab is present, if not don't at annote tab
 	if (!array_key_exists('edit',$content_actions) )
-	return true;
+		return true;
 	global $wgUser, $wgRequest;
 	$action = $wgRequest->getText( 'action' );
 	//Build annotate tab
@@ -956,8 +956,8 @@ function smwfAAMAfterTidy(&$parser, &$text) {
 	// => disable the parser
 	$smwgDisableAAMParser = true;
 	$wgOut->setPageTitle($t);
-
-	// The parser is left disabled, as there are several parsing phases after the
+	
+	// The parser is left disabled, as there are several parsing phases after the 
 	// main text that is now completed.
 
 	return true;
@@ -995,14 +995,14 @@ function smwfAnnotateAction($action, $article) {
 	$now = wfTimestamp(TS_MW, time()+2);
 	$dbw = wfGetDB( DB_MASTER );
 	$success = $dbw->update( 'page',
-	array( /* SET */
+			array( /* SET */
 				'page_touched' => $now
-	), array( /* WHERE */
+			), array( /* WHERE */
 				'page_namespace' => $title->getNamespace() ,
 				'page_title' => $title->getDBkey()
-	), 'SMW_Initialize::smwfAnnotateAction'
-	);
-
+			), 'SMW_Initialize::smwfAnnotateAction'
+		);
+	
 	return false;
 }
 
@@ -1239,9 +1239,9 @@ function smwfCommaAnnotation(&$parser){
 		$val = $annoValues[$i];
 		$val = trim($val);
 		if ($i == 0)
-		$ret .= "[[$annoName::$val]]";
+			$ret .= "[[$annoName::$val]]";
 		else
-		$ret .= ", [[$annoName::$val]]";
+			$ret .= ", [[$annoName::$val]]";
 	}
 	return $ret;
 }
@@ -1253,7 +1253,7 @@ function smwfAddHaloMagicWords(&$magicWords, $langCode){
 
 /**
  * Hook which populates Toolbox toolbar
- *
+ * 
  * @param $template SkinTemplate class
  */
 function smwfOntoSkinTemplateToolboxEnd(& $template) {
