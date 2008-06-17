@@ -96,9 +96,10 @@ if ($action == 'query') {
 #
 # Returns WSDL file for wiki webservices
 #
-if ($action == 'get_wsdl') {
-	$handle = fopen("webservices.wsdl", "rb");
-    $contents = fread ($handle, filesize ("webservices.wsdl"));
+if ($action == 'get_eqi') {
+    $wsdl = "extensions/SMWHalo/includes/webservices/eqi.wsdl";
+    $handle = fopen($wsdl, "rb");
+    $contents = fread ($handle, filesize ($wsdl));
     fclose($handle);
     
     echo str_replace("{{wiki-path}}", $_SERVER['SERVER_ADDR'].":".$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'], $contents);
