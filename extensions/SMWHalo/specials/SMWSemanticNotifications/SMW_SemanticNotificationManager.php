@@ -52,7 +52,7 @@ class SemanticNotificationManager {
 		$wgSpecialPages['SemanticNotifications'] = array('SMWSemanticNotificationSpecial');
 		$wgExtensionMessagesFiles['SemanticNotification'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationMessages.php';
 		wfLoadExtensionMessages('SemanticNotification');
-		
+//TODO: Remove the test code below		
 		//---Test---
 /*
 		smwf_sn_AddNotification("n1", "WikiSysop", "[[Category:Reactant]]", "1");
