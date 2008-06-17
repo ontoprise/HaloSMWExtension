@@ -43,6 +43,33 @@ $messages['en'] = array(
 	'smw_sn_notification_limit' => 
 		'You can\'t add further notifications. Your limit of $1 notification(s)'.
 		' is exceeded. Please contact your wiki administrator to extend the limit.',
+	'smw_sn_not_logged_in' =>
+		'You are currently not logged in. Anonymous users can not receive semantic '.
+		'notifications. Please <a href="$1">log in</a>, before you create one.',
+	'smw_sn_no_email' =>
+		'You have not provided a valid e-mail address yet. Please go to '.
+		'<a href="$1">"$2"</a> and enter an address in order to enable semantic'.
+		' notifications.',
+	'smw_sn_special1' => 'Enter query (you can use either ask or SPARQL) or use the',
+	'smw_sn_special2' => 'Query Interface',
+	'smw_sn_special3' => 'Show Preview',
+	'smw_sn_special4' => 'Notifications for your query will be gathered over a'.
+						 ' certain time span before the notification mail is sent.'.
+						 ' Please enter how often you would like to receive this'.
+						 ' notification. If there were no changes, no notification'.
+						 ' will be sent.',
+	'smw_sn_special5' => 'I would like to receive this notification every',
+	'smw_sn_special6' => 'day(s).',
+	'smw_sn_special7' => 'Enter a name for your notification:',
+	'smw_sn_special8' => 'Please check the preview first.',
+	'smw_sn_special9' => 'Add notification',
+	'smw_sn_special10' => 'My notifications',
+
+	'smw_qi_insertNotification' => 'Insert as notification',
+	'smw_qi_tt_insertNotification' => 'Inserts the query as semantic notification',
+	'smw_sn_tt_addNotification' => 'Adds the new or changed query to your personal semantic notifications.',
+	'smw_sn_tt_showPreview' => 'Shows a preview of the results of your query.',
+	'smw_sn_tt_openQueryInterface' => 'Go to the query interface to define your query.',
 
 );
 
@@ -68,6 +95,34 @@ $messages['de'] = array(
 		'Es können keine weiteren Benachrichtigungen hinzugefügt werden. Ihre '.
 		'Grenze von $1 Benachrichtigungen ist erreicht.'.
 		' Bitten Sie Ihren Wiki-Administrator, die Grenze zu erhöhen.',
+	'smw_sn_not_logged_in' =>
+		'Sie sind momentan nicht angemeldet. Anonyme Benutzer können keine '.
+		'semantischen Benachrichtigungen erhalten. Bitte <a href="$1">melden Sie'.
+		' zuerst sich an.</a>',
+	'smw_sn_no_email' =>
+		'Sie haben noch keine E-Mail-Adresse angegeben. Bitte gehen Sie zu '.
+		'<a href="$1">"$2"</a> und geben Sie eine gültige Adresse an, damit Sie '.
+		'semantische Benachrichtigungen erhalten können.',
+	'smw_sn_special1' => 'Geben Sie eine Query ein (ASK oder SPARQL) oder benutzen Sie das',
+	'smw_sn_special2' => 'Query Interface',
+	'smw_sn_special3' => 'Vorschau zeigen',
+	'smw_sn_special4' => 'Benachrichtigungen für eine Query werden über einen '.
+						 'bestimmten Zeitraum gesammelt bevor eine E-Mail gesendet wird. '.
+						 'Bitte geben Sie ein, wie oft Sie diese Benachrichtigung '.
+						 'erhalten möchten. Wenn es keine Änderungen gibt, werden '.
+						 'keine Benachrichtigungen versendet.',
+	'smw_sn_special5' => 'Ich möchte diese Benachrichtigung alle',
+	'smw_sn_special6' => 'Tage erhalten.',
+	'smw_sn_special7' => 'Geben Sie Ihrer Benachrichtigung einen Namen:',
+	'smw_sn_special8' => 'Sehen Sie sich zuerst die Vorschau an.',
+	'smw_sn_special9' => 'Benachrichtigung hinzufügen',
+	'smw_sn_special10' => 'Meine Benachrichtigungen',
+
+	'smw_qi_insertNotification' => 'Als Benachrichtigung einfügen',
+	'smw_qi_tt_insertNotification' => 'Fügt die Query als semantische Benachrichtigung ein.',
+	'smw_sn_tt_addNotification' => 'Fügt die neue oder geänderte Query zu Ihren persönlichen semantischen Benachrichtigungen hinzu.',
+	'smw_sn_tt_showPreview' => 'Zeigt eine Vorschau der Query-Ergebnisse.',
+	'smw_sn_tt_openQueryInterface' => 'Definieren Sie die Query im Query-Interface.',
 
 );
 ?>
