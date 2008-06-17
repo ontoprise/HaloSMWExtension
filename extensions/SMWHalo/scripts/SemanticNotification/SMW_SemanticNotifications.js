@@ -28,6 +28,21 @@ SemanticNotifications.prototype = {
 
 	initialize: function() {
 		this.pendingIndicator = null;
+		$('sn-notification-name').disable();
+		this.enable('sn-add-notification', false);
+	},
+
+	/**
+	 * Key-up callback for the query text area. If the query text has been changed
+	 * the input field for the name of the notification and the 'Add' button 
+	 * are disabled.
+	 */	
+	onKeyUp: function(event) {
+		var key = event.which || event.keyCode;
+		$('sn-notification-name').disable();
+		this.enable('sn-add-notification', false);
+		$('sn-querytext').focus();
+		
 	},
 	
 	/**
@@ -41,14 +56,24 @@ SemanticNotifications.prototype = {
 				// success
 				if (request.responseText == 'true') {
 					this.getAllNotifications();
+					// disable button and name input
+					$('sn-notification-name').disable();
+					this.enable('sn-add-notification', false);
 				} else {
 					alert(request.responseText);
 				}
 			} else {
 			}
 		};
+		
+	 	var e = $('sn-add-notification');
+	 	var cls = e.className;
+	 	if (cls.indexOf('btndisabled') >= 0) {
+	 		// Button is disabled
+	 		return;
+	 	}
 
-		this.showPendingIndicator($('sn-add-notification'));
+		this.showPendingIndicator(e);
 		var query = $('sn-querytext').value;
 		var name =  $('sn-notification-name').value;
 		var ui = $('sn-update-interval').value;
@@ -66,17 +91,44 @@ SemanticNotifications.prototype = {
 		function ajaxResponseShowPreview(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-				$('sn-previewbox').innerHTML = request.responseText;
+				var pos = request.responseText.indexOf(',');
+				success = request.responseText.substring(0, pos);
+				var res = request.responseText.substr(pos+1);
+				$('sn-previewbox').innerHTML = res;
+				if (success == 'true') {
+					$('sn-notification-name').enable();
+					this.enable('sn-add-notification', true);
+				}
 			} else {
+				$('sn-notification-name').disable();
+				this.enable('sn-add-notification', false);
 			}
 		};
 
-		this.showPendingIndicator($('sn-show-preview-link'));
+	 	var e = $('sn-show-preview-btn');
+	 	var cls = e.className;
+	 	if (cls.indexOf('btndisabled') >= 0) {
+	 		// Button is disabled
+	 		return;
+	 	}
+
+		this.showPendingIndicator(e);
 		var query = $('sn-querytext').value;
+		query = this.stripQuery(query);
 		sajax_do_call('smwf_sn_ShowPreview', 
                       [query], 
                       ajaxResponseShowPreview.bind(this));
 		
+	},
+	
+	/**
+	 * Opens the query interface in another tab
+	 */
+	openQueryInterface: function(element) {
+		var qiPage = element.target.readAttribute('specialpage');
+		qiPage = unescape(qiPage);
+		location.href = qiPage;
+//		window.open(qiPage, '_blank');
 	},
 	
 	/**
@@ -94,11 +146,14 @@ SemanticNotifications.prototype = {
 						+ '</colgroup>';	
 				for (var i = 0; i < notifications.length; ++i) {
 					// trim
-  					$n = notifications[i].replace(/^\s*(.*?)\s*$/,"$1");
-  					html += "<tr><td>"+$n+"</td>";
-  					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+$n+'\')">';
+  					n = notifications[i].replace(/^\s*(.*?)\s*$/,"$1");
+  					if (n == '') { 
+  						continue;
+  					}
+  					html += "<tr><td>"+n+"</td>";
+  					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+n+'\')">';
   					html += '<img src="/develwiki/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
-  					html += '<td><a href="javascript:smwhgSemanticNotifications.deleteNotification(\''+$n+'\')">';
+  					html += '<td><a href="javascript:smwhgSemanticNotifications.deleteNotification(\''+n+'\')">';
   					html += '<img src="/develwiki/extensions/SMWHalo/skins/delete.png" /></a></td>'; 
 					html += "</tr>";
 				}
@@ -118,7 +173,7 @@ SemanticNotifications.prototype = {
 	 * Retrieves the definition of the given notification and displays the 
 	 * values for editing.
 	 * 
-	 * @param string $notification
+	 * @param string notification
 	 * 		Name of the notification
 	 */
 	editNotification: function(notification) {
@@ -148,7 +203,7 @@ SemanticNotifications.prototype = {
 	/**
 	 * Deletes the given notification in the wiki's database.
 	 * 
-	 * @param string $notification
+	 * @param string notification
 	 * 		Name of the notification
 	 */
 	deleteNotification: function(notification) {
@@ -189,21 +244,125 @@ SemanticNotifications.prototype = {
 			this.pendingIndicator.hide();
 			this.pendingIndicator = null;
 		}
+	},
+
+	/**
+	 * 
+	 */
+	 enable: function(element, enable) {
+	 	var e = $(element);
+	 	var cls = e.className;
+	 	var start = cls.indexOf('btndisabled');
+	 	if (enable) {
+	 		if (start >= 0) {
+	 			e.className = cls.substring(0, start) + cls.substring(start+11);
+	 		}
+	 	} else {
+	 		if (start == -1) {
+	 			e.className = cls + " btndisabled";
+	 		}
+	 	} 
+	 },
+	 
+	 /**
+	  * Sets the css-class 'btnhov' for the button under the mouse cursor.
+	  */
+	 btnMouseOver: function(element) {
+	 	var e = element.target;
+	 	var cls = e.className;
+	 	var start = cls.indexOf('btnhov');
+ 		if (start == -1) {
+ 			e.className = cls + " btnhov";
+ 		}
+	 },
+
+	 /**
+	  * Removes the css-class 'btnhov' from the button that the mouse cursor
+	  * just left.
+	  */
+	 btnMouseOut: function(element) {
+	 	var e = element.target;
+	 	var cls = e.className;
+	 	var start = cls.indexOf('btnhov');
+ 		if (start >= 0) {
+ 			e.className = cls.substring(0, start) + cls.substring(start+6);
+ 		}
+	 },
+	
+	/**
+	 * Removes the ask tags from a query
+	 */
+	stripQuery: function(query) {
+		query = query.replace(/^\s*<ask.*?>\s*(.*?)\s*<\/ask>\s*$/m,"$1");
+		
+		// strip {{ask#
+		var p = query.indexOf('{{#ask:');
+		if (p >= 0) {
+			query = query.substr(p+7);
+			p = query.indexOf('|');
+			if (p >= 0) {
+				query = query.substring(0, p);
+			} else {
+				p = query.lastIndexOf('}}');
+				if (p >= 0) {
+					query = query.substring(0, p);
+				}
+			}
+		}
+		
+		return query;
+		
 	}
 
 }
 
 SemanticNotifications.create = function() {
-	smwhgSemanticNotifications = new SemanticNotifications();
-	var addNotification = $('sn-add-notification');
-	Event.observe(addNotification, 'click', 
-			      smwhgSemanticNotifications.addNotification.bindAsEventListener(smwhgSemanticNotifications));
-	var showPreview = $('sn-show-preview-link');
-	Event.observe(showPreview, 'click', 
-			      smwhgSemanticNotifications.showPreview.bindAsEventListener(smwhgSemanticNotifications));
+	// Check, if semantic notifications are enabled (user logged in with valid 
+	// email address). If not, the complete UI is disabled.
+	var qt = $('sn-querytext');
+	var enabled = qt.readAttribute('snenabled');
+	if (enabled == 'true') {
+		// enable the user interface
+		smwhgSemanticNotifications = new SemanticNotifications();
+		var addNotification = $('sn-add-notification');
+		Event.observe(addNotification, 'click', 
+				      smwhgSemanticNotifications.addNotification.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(addNotification, 'mouseover', 
+				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(addNotification, 'mouseout', 
+				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
 
-	smwhgSemanticNotifications.getAllNotifications();		      
+		var showPreview = $('sn-show-preview-btn');
+		Event.observe(showPreview, 'click', 
+				      smwhgSemanticNotifications.showPreview.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(showPreview, 'mouseover', 
+				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(showPreview, 'mouseout', 
+				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
+
+		var queryInterface = $('sn-query-interface-btn');
+		Event.observe(queryInterface, 'click', 
+				      smwhgSemanticNotifications.openQueryInterface.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(queryInterface, 'mouseover', 
+				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe(queryInterface, 'mouseout', 
+				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
+
+		Event.observe('sn-querytext', 'keyup', 
+		              smwhgSemanticNotifications.onKeyUp.bindAsEventListener(smwhgSemanticNotifications));
 	
+		var query = document.cookie;
+		var start = query.indexOf('NOTIFICATION_QUERY=<snq>');
+		var end = query.indexOf('</snq>');
+		if (start >= 0 && end >= 0) {
+			// remove the query from the cookie
+			document.cookie = 'NOTIFICATION_QUERY=<snq></snq>;';
+			query = query.substring(start+24, end);
+			qt.value = query;
+		}
+		
+		smwhgSemanticNotifications.getAllNotifications();		      
+	}	
 }
 
 var smwhgSemanticNotifications = null;

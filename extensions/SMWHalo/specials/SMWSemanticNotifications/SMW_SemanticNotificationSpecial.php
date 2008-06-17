@@ -38,72 +38,124 @@ class SMWSemanticNotificationSpecial extends SpecialPage {
 	public function __construct() {
 		parent::__construct('SemanticNotifications');
 	}
+	
 	/**
 	 * Overloaded function that is resopnsible for the creation of the Special Page
 	 */
 	public function execute() {
 
-		global $wgRequest, $wgOut;
+		global $wgRequest, $wgOut, $wgUser, $wgScript,$smwgHaloScriptPath;
 
 		$wgOut->setPageTitle(wfMsg('smw_sn_special_page'));
-
+		$imagepath = $smwgHaloScriptPath . '/skins/SemanticNotifications/images';
+		
+		$initialContent = "";
+		$snEnabled = 'true';
+		// Check, if a user is logged in
+		if (!$wgUser->isLoggedIn()) {
+			$initialContent = wfMsg('smw_sn_not_logged_in',
+									SpecialPage::getTitleFor('Userlogin')->getFullURL());
+			$snEnabled = 'false';
+		} else {
+			// Check, if the user has a valid email address
+			$email = $wgUser->getEmail();
+			if (empty($email)) {
+				$initialContent = wfMsg('smw_sn_no_email',
+										SpecialPage::getTitleFor('Preferences')->getFullURL(),
+				                        wfMsg('mypreferences'));
+				$snEnabled = 'false';
+			}
+		}
+		$queryInterfaceLink = ' specialpage="'.urlencode(SpecialPage::getTitleFor('QueryInterface')->getFullURL()).'"';
+		
+		$ttAdd = wfMsg('smw_sn_tt_addNotification');
+		$ttPreview = wfMsg('smw_sn_tt_showPreview');
+		$ttQI = wfMsg('smw_sn_tt_openQueryInterface');
+		$txtSn1 = wfMsg('smw_sn_special1');
+		$txtSn2 = wfMsg('smw_sn_special2');
+		$txtSn3 = wfMsg('smw_sn_special3');
+		$txtSn4 = wfMsg('smw_sn_special4');
+		$txtSn5 = wfMsg('smw_sn_special5');
+		$txtSn6 = wfMsg('smw_sn_special6');
+		$txtSn7 = wfMsg('smw_sn_special7');
+		$txtSn8 = wfMsg('smw_sn_special8');
+		$txtSn9 = wfMsg('smw_sn_special9');
+		$txtSn10 = wfMsg('smw_sn_special10');
+		
+		$disabled = ($snEnabled == 'true') ? "" : 'disabled=""';
+		$textArea = ($snEnabled == 'true') 
+			? 
+<<<HTML
+      <textarea class="sn-query-text" id="sn-querytext" snEnabled="$snEnabled"
+                style="width:79%; height:130px; position:relative;"></textarea>
+HTML
+		    :
+<<<HTML
+      <div class="sn-warning-msg" id="sn-querytext" snEnabled="$snEnabled"
+                style="width:79%; height:130px; float:left; ">$initialContent</div>
+HTML;
+		    
 		$html = '';
 
-		//TODO: Internationalize the strings
-		//---Test start
 		$html = wfMsg('smw_sn_explanation');
 		$html .= <<<HTML
-    <div class="Panel1_nm" id="Panel1" style="position:relative; overflow:hidden; height:600px; top:20px;">
+    <div class="sn-outerdiv" style="position:relative; overflow:hidden; height:600px; top:20px;">
 	  <div id="querypreview" style="float:left; width:79%">
 	      <div id="sn-querybox" style="float:left; width:100%;">
 		      <div id="sn-querydesc" style="width:20%; float:left; overflow:hidden; top:32px; left:16px; ">
 			      <div class="sn-labels" id="sn-enter-query-txt" style="width:100%; float:left; overflow:hidden;">
-			      	Enter query (you can use either ask or SPAQRL) or use the 
+			      	$txtSn1 
 			      </div>
-			      <div class="sn-button-link" id="sn-query-interface-link" style="float:left;">
-			      	QueryInterface
-			      </div>
+				  <button class="btn" id="sn-query-interface-btn" style="float:left;" 
+				          $queryInterfaceLink
+				          onmouseover="Tip('$ttQI')">
+				    $txtSn2
+				  </button>
 			  </div>
-		      <textarea name="sn-querytext" class="sn-query-text" id="sn-querytext" style="width:79%; height:130px; position:relative;"></textarea>
+		      $textArea
 	      </div>
 	      <div id="sn-separator" style="width:100%; height:10px; float:left"></div>
 	      <div id="sn-preview" style="float:left; width:100%;">
 	      	<div id="sn-preview-linkbox" style="float:left; width:20%;">
-		      <div class="sn-button-link" id="sn-show-preview-link" style="float:left;">
-		      	Show Preview
-		      </div>
+			  <button class="btn" id="sn-show-preview-btn" style="float:left;"
+			          onmouseover="Tip('$ttPreview')">
+	      	     $txtSn3
+			  </button>
 		    </div>
-	        <div class="previewbox_nm" id="sn-previewbox" style="width:79%; height:320px; position:relative; overflow:hidden;"></div>
+	        <div class="sn-previewbox" id="sn-previewbox" style="width:79%; height:320px; position:relative; overflow:hidden;"></div>
 	        <div id="sn-footer" style="width:79%; float:right; overflow:hidden;">
-		        Notifications for your query will be gathered over a certain time span before the notification mail is sent. Please enter how
-		        often you would like to receive this notification. If there were no changes, no notification will be sent.
-		        <div class="sn_labels" id="sn-enter-updateinterval-txt" style="overflow:hidden; float:left;">
-			      	I would like to receive this notification every 
+			  $txtSn4
+	          <div class="sn_labels" id="sn-enter-updateinterval-txt" style="overflow:hidden; float:left;">
+			      	$txtSn5&nbsp; 
 			    </div>
-			    <input name="sn-notification-ui" type="text" value="7" id="sn-update-interval" style=" float:left; width:10%; overflow:hidden;"/>
+			    <input $disabled name="sn-notification-ui" type="text" value="7" id="sn-update-interval" style=" float:left; width:10%; overflow:hidden;"/>
 		        <div class="sn_labels" id="sn-enter-updateinterval-days" style="overflow:hidden; float:left;">
-			      	 day(s).
+			      	 &nbsp;$txtSn6
 			    </div>
 	      		<div style="width:100%; height:10px; float:left"></div>
 			    <div class="sn_labels" id="sn-enter-name-txt" style="overflow:hidden; float:left;">
-			      	Enter a name for your notification:
+			      	$txtSn7&nbsp;
 			    </div>
-			    <input name="sn-notification-name" type="text" value="Please check the preview first." id="sn-notification-name" style=" float:left; width:40%; overflow:hidden;"/>
-			    <input type="button" value="Add notification" id="sn-add-notification" style="float:right;"/>
+			    <input $disabled name="sn-notification-name" type="text" value="$txtSn8" id="sn-notification-name" style=" float:left; width:40%; overflow:hidden;"/>
+			    <button class="btn" id="sn-add-notification" style="float:right;"
+			            onmouseover="Tip('$ttAdd')">
+			    	<img src="$imagepath/add.png"/>&nbsp;
+			    	$txtSn9
+			    </button>
 	        </div>
 	  	</div>
       </div>
       <div class="sn-my-notificationbox" id="sn-my-notifications-box" style="width:20%; height:462px; float:right; overflow:hidden; top:32px; left:544px; ">
         <div id="mynottitle" class="sn-my-notificationstitle" style="width:100%; height:20px; position:relative; overflow:hidden;">
-          My notifications
+          $txtSn10
         </div>
         <div id="sn-notifications-list" style="position:relative; overflow:hidden; left:5px; ">
         </div>
       </div>
     </div>
+	<script type="text/javascript" src="$smwgHaloScriptPath/scripts/QueryInterface/qi_tooltip.js"></script>
+    
 HTML;
-
-		//---Test end
 
 		$wgOut->addHTML($html);
 	}
