@@ -286,6 +286,18 @@ getFullParserAsk:function(){
 	return fullQuery;
 },
 
+insertAsNotification: function() {
+	var query = this.recurseQuery(0);
+	document.cookie = "NOTIFICATION_QUERY=<snq>"+query+"</snq>";
+	if (query != "") {
+		var snPage = $('qi-insert-notification-btn').readAttribute('specialpage');
+		snPage = unescape(snPage);
+		location.href = snPage;
+		//window.open(snPage), "_blank");
+	}
+	
+},
+
 /**
 * Recursive function that creates the ask syntax for the query with the ID provided
 * and all its subqueries
