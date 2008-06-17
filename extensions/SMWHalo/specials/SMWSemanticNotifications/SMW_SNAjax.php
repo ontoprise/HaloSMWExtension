@@ -88,6 +88,18 @@ function smwf_sn_AddNotification($name, $userName, $query, $updateInterval) {
 function smwf_sn_ShowPreview($query) {
 	global $smwgIP;
 	require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
+
+	$q = SMWQueryProcessor::createQuery($query, new ParserOptions());
+	$errors = $q->getErrors();
+	
+	if (count($errors) > 0) {
+		$r = '<ul>';
+		foreach ($errors as $e) {
+			$r .= "<li>$e</li>";
+		}
+		$r .= "</ul>";
+		return 'false,'.$r;
+	}
 	
 	$params = array('format' => 'table');
 	$result = SMWQueryProcessor::getResultFromHookParams($query, $params, SMW_OUTPUT_HTML);
@@ -95,7 +107,7 @@ function smwf_sn_ShowPreview($query) {
 	$pattern = "|<a|i";
 	$result = preg_replace($pattern, '<a target="_new"', $result);
 
-	return $result;
+	return 'true,'.$result;
 }
 
 /**
