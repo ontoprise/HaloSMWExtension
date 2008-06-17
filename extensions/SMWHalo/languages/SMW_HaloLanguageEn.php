@@ -557,6 +557,7 @@ clicking the big arrows between the columns.',
 	'smw_wws_select_without_object' => 'The attribute "object" of the select "$1" of the result "$2" is missing.',
 	'smw_wws_select_without_value' => 'The attribute "value" of the select "$1" of the result "$2" is missing.',
 	'smw_wws_duplicate_select' => 'The select "$1" appears several times in the result "$2".',
+	'definewebservice' => 'Define Web Service',
 
 
 	);

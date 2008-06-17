@@ -1,7 +1,7 @@
 
-var WebServiceSpecial = Class.create();
+var WebServiceRepositorySpecial = Class.create();
 
-WebServiceSpecial.prototype = {
+WebServiceRepositorySpecial.prototype = {
 	initialize: function() {
 		},
 		
@@ -18,9 +18,10 @@ WebServiceSpecial.prototype = {
 	},
 
 	confirmWWSDCallBack : function(request) {
-		alert(request.responseText);
-		document.getElementById("confirm").style.visibility = "hidden";
+		document.getElementById("confirmButton").style.visibility = "hidden";
+		document.getElementById("confirmButton").style.width = "1px";
+		document.getElementById("confirmText").childNodes[0].nodeValue = "confirmed";
 	}	
 }	
 
-webServiceSpecial = new WebServiceSpecial();
+webServiceSpecial = new WebServiceRepositorySpecial();
