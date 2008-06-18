@@ -36,7 +36,7 @@ $GLOBALS['smwgSemanticNotificationLimits'] = array(
         "size" => 1000000,
         "min interval" => 1),
     "group sysop" => array(
-        "notifications" => 3, 
+        "notifications" => 100, 
         "size" => 1000000,
         "min interval" => 1)
 );
