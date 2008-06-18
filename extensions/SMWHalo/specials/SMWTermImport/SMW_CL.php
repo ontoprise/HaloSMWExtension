@@ -106,121 +106,7 @@ public function execute() {
 		
 		$html .= "</div>"; //bottom-container
 		
-		$wgOut->addHTML($html);
-				
-		
-		//-----GUI-test-----
-			
-		
-
-		/*
-		$html .= "<div>";
-		$html .= "<br /><br />===TL Modules===<br />";
-		$html .= $this->tlModules;
-		
-		$html .= "<br /><br />===DAL Modules===<br />";
-		$html .= $dalModules;
-		$res = $wil->connectDAL("ReadCSV", $dalModules);
-
-		$source = $wil->getSourceSpecification();
-		
-		$html .= "<br /><br />===Source Specification===<br />";
-		$html .= $source;
-
-		$importSets = $wil->getImportSets($source);
-		$html .= "<br /><br />===Import Sets===<br />";
-		$html .= $importSets;
-
-		require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
-		$p = new XMLParser($importSets);
-		$result = $p->parse();
-			
-		//$p->removeAllParentElements('NAME', 'Bio');
-		$impSet = $p->serialize();
-		$properties = $wil->getProperties($source, $impSet);
-		$html .= "<br /><br />===Properties===<br />";
-//		$html .= $properties;
-
-
-		$ip =
-		'<?xml version="1.0"?>'."\n".
-		'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    	'<terms>'."\n".
-        '	<regex>.*</regex>'."\n".
-        '	<term>Cell</term>'."\n".
-        '	<term>Fox</term>'."\n".
-    	'</terms>'."\n".
-    	'<properties>'."\n".
-       	'	<property>articleName</property>'."\n".
-       	'	<property>Content</property>'."\n".
-       	'	<property>author</property>'."\n".
-    	'</properties>'."\n".
-		'</InputPolicy>'."\n";
-		
-	
-
-		$terms = $wil->getTermList($source, $impSet, $ip);
-//		$terms = $wil->getTermList($source, $impSet, $ip_test);
-		$html .= "<br /><br />===List of Terms===<br />";
-		$html .= $terms;
-
-		$moduleConfig =
-		'<?xml version="1.0"?>'."\n".
-		'<ModuleConfiguration xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		'  <TLModules>'."\n".
-		'    <Module>'."\n".
-		'        <id>ConnectLocal</id>'."\n".
-		'    </Module>'."\n".
-		'  </TLModules >'."\n".
-		'  <DALModules>'."\n".
-		'    <Module>'."\n".
-		'        <id>ReadCSV</id>'."\n".
-		'    </Module>'."\n".
-		'  </DALModules >'."\n".
-		'</ModuleConfiguration>';
-
-		$mappingPolicy =
-		'<?xml version="1.0"?>'."\n".
-		'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    	'	<page>TermImportMapping</page>'."\n".
-		'</MappingPolicy >';
-
-		$conflictPolicy =
-		'<?xml version="1.0"?>'."\n".
-		'<ConflictPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    	'	<overwriteExistingTerms>true</overwriteExistingTerms>'."\n".
-		'</ConflictPolicy >';
-
-		$terms = $wil->importTerms($moduleConfig, $source, $impSet, $ip,
-		$mappingPolicy, $conflictPolicy);
-		$html .= "<br /><br />===Terms===<br />";
-		$html .= $terms;
-		
-		$html.= "</div>";
-		
-
-		//TEST import
-		/*
-		 $settings = "\n<ImportSettings>\n"
-		 .$moduleConfig."\n"
-		 .$source."\n"
-		 .$importSets."\n"
-		 .$ip."\n"
-		 .$mappingPolicy."\n"
-		 .$conflictPolicy."\n"
-		 ."</ImportSettings>";
-		 $settings = '<?xml version="1.0"?>'.
-		 str_replace('<?xml version="1.0"?>', "", $settings);
-
-		 global $smwgHaloIP;
-		 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
-		 $tib = new TermImportBot();
-		 $html .= $tib->importTerms($settings);
-
-		 */
-		//TEST import
-		//---- End: TEST for Import ----
-		
+		$wgOut->addHTML($html);		
 	}
 		
 	/*
@@ -270,6 +156,8 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 	$tlModules = $wil->getTLModules(); 
 	
 	//return '<result>'.$tlModules.'</result>';
+	
+	//TODO Errorhandling!!!
 	
 	if(!$tlID) {
 		// Error,keine TLID angegeben!!!
@@ -329,11 +217,11 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 				'<?xml version="1.0"?>'."\n".
 				'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
     			'<terms>'."\n".
-    		    '	<regex>.*</regex>'."\n".
-    		    '	<term>Cell</term>'."\n".
+    		    '	<regex></regex>'."\n".
+    		    '	<term></term>'."\n".
    			 	'</terms>'."\n".
     			'<properties>'."\n".
-       			'	<property></property>'."\n".
+       			'	<property>articleName</property>'."\n".
     			'</properties>'."\n".
 				'</InputPolicy>'."\n";
 	}
@@ -396,42 +284,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		}
 		else {
 			//Error!no conflict policy given... is it possible with <select>?!?
-		}
-/*
-		 $settings = "\n<ImportSettings>\n"
-					 .$moduleConfig."\n"
-					 .$source."\n"
-					 .$importSets."\n"
-					 .$ip."\n"
-					 .$mappingPolicy."\n"
-					 .$conflictPolicy."\n"
-					 ."</ImportSettings>";
-		 $settings = '<?xml version="1.0"?>'.
-					 str_replace('<?xml version="1.0"?>', "", $settings);
-
-		 global $smwgHaloIP;
-		 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
-		 $tib = new TermImportBot();
-		 $html .= $tib->importTerms($settings);*/
-
-		//problem liegt bei den input policies
-		
-		/*
-		$ip =
-		'<?xml version="1.0"?>'."\n".
-		'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    	'<terms>'."\n".
-        '	<regex>.*</regex>'."\n".
-        '	<term>Cell</term>'."\n".
-        '	<term>Fox</term>'."\n".
-    	'</terms>'."\n".
-    	'<properties>'."\n".
-       	'	<property>articleName</property>'."\n".
-       	'	<property>Content</property>'."\n".
-       	'	<property>author</property>'."\n".
-    	'</properties>'."\n".
-		'</InputPolicy>'."\n";*/
-		
+		}		
 		
 		$terms = $wil->importTerms($moduleConfig, $source_result, $importSets, $givenInputPol,
 					$mappingPolicy, $conflictPolicy);

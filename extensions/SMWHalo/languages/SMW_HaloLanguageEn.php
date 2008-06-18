@@ -483,6 +483,7 @@ clicking the big arrows between the columns.',
 
 	
 	/* Messages of the Thesaurus Import */
+	'smw_ti_welcome' => 'Please select a transport layer module (TLM) and then an data access module (DAM):',
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
 	'smw_ti_class_not_found' => 'Class "$1" not found.',
 	'smw_ti_no_tl_module_spec' => 'Could not find specification for TL module with ID "$1".',
