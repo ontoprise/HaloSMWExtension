@@ -287,5 +287,10 @@ var wgUserLanguageStrings = {
 	'PROPERTY'                : "Property:",
 	'TEMPLATE'                : "Template:",	
 	'TYPE'                    : 'Type:',
-	'TYPE_PAGE'               : "Type:Page"
+	'TYPE_PAGE'               : "Type:Page",
+
+	// Semantic notifications
+	'SN_OVERWRITE_EXISTING'   : 'The notification "$1" already exists. Do you really want to overwrite it?',
+	'SN_DELETE'               : 'Do you really want to delete the notification "$1"?',
+	
 };

@@ -285,4 +285,8 @@ var wgUserLanguageStrings = {
 	'PROPERTY'                : "Attribut:",
 	'TEMPLATE'                : "Vorlage:",
 	'TYPE'                    : 'Typ:',
+	
+	// Semantic notifications
+	'SN_OVERWRITE_EXISTING'   : 'Die Benachrichtigung "$1" existiert bereits. Möchten Sie sie wirklich überschreiben?',
+	'SN_DELETE'               : 'Möchten Sie die Benachrichtigung "$1" wirklich löschen?',
 };
