@@ -94,6 +94,12 @@ HTML
       <div class="sn-warning-msg" id="sn-querytext" snEnabled="$snEnabled"
                 style="width:79%; height:130px; float:left; ">$initialContent</div>
 HTML;
+
+        $minInterval = 7;
+       	$limits = SemanticNotificationManager::getUserLimitations($wgUser->getName());
+       	if (is_array($limits)) {
+       		$minInterval = $limits['min interval'];
+       	}
 		    
 		$html = '';
 
@@ -128,7 +134,7 @@ HTML;
 	          <div class="sn_labels" id="sn-enter-updateinterval-txt" style="overflow:hidden; float:left;">
 			      	$txtSn5&nbsp; 
 			    </div>
-			    <input $disabled name="sn-notification-ui" type="text" value="7" id="sn-update-interval" style=" float:left; width:10%; overflow:hidden;"/>
+			    <input $disabled type="text" value="$minInterval" id="sn-update-interval" style=" float:left; width:10%; overflow:hidden;" />
 		        <div class="sn_labels" id="sn-enter-updateinterval-days" style="overflow:hidden; float:left;">
 			      	 &nbsp;$txtSn6
 			    </div>

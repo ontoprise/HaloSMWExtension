@@ -33,6 +33,7 @@ SemanticNotifications.prototype = {
 		this.notifications = [];	// The names of all existing notifications
 		this.queryLen = 0;
 		this.queryEdited = false;
+		this.minInterval = 1000;
 	},
 
 	/**
@@ -52,6 +53,21 @@ SemanticNotifications.prototype = {
 			this.queryLen = len;
 		}
 		
+	},
+	
+	/**
+	 * The user has changed the update interval. Check if the value is valid.
+	 */
+	updateIntervalChanged: function(event) {
+		var val = $('sn-update-interval').value;
+		val = parseInt(val); 
+		if (isNaN(val) || val < this.minInterval) {
+			var msg = gLanguage.getMessage('SMW_SN_INVALID_UPDATE_INTERVAL');
+			msg = msg.replace(/\$1/g, this.minInterval);
+			alert(msg);
+			val = this.minInterval;
+		}
+		$('sn-update-interval').value = val;
 	},
 	
 	/**
@@ -217,6 +233,7 @@ SemanticNotifications.prototype = {
 				$('sn-notification-name').value = name;
 				$('sn-querytext').value = query;
 				$('sn-update-interval').value = ui;
+				$('sn-previewbox').innerHTML = '';
 				
 				this.queryLen = query.length;
 				this.queryChanged = false;
@@ -369,6 +386,8 @@ SemanticNotifications.create = function() {
 	if (enabled == 'true') {
 		// enable the user interface
 		smwhgSemanticNotifications = new SemanticNotifications();
+		smwhgSemanticNotifications.minInterval = $('sn-update-interval').value;
+		
 		var addNotification = $('sn-add-notification');
 		Event.observe(addNotification, 'click', 
 				      smwhgSemanticNotifications.addNotification.bindAsEventListener(smwhgSemanticNotifications));
@@ -397,6 +416,9 @@ SemanticNotifications.create = function() {
 		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
 		Event.observe('sn-querytext', 'blur', 
 		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
+
+		Event.observe('sn-update-interval', 'blur', 
+		              smwhgSemanticNotifications.updateIntervalChanged.bindAsEventListener(smwhgSemanticNotifications));
 	
 		// read a query of the query interface from the cookie
 		var query = document.cookie;
