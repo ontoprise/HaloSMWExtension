@@ -99,6 +99,8 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwWSAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwSNAddHTMLHeader';
+		
 
 	}
 	// Register parser hooks for advanced annotation mode
@@ -440,7 +442,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "edit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
 	// serialize the css
@@ -531,7 +532,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/SMWEditInterface.js', "edit");
 		$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticNotification/SMW_SemanticNotifications.js', "view", -1, NS_SPECIAL.":SemanticNotifications");
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -1158,6 +1158,34 @@ function smwFWAddHTMLHeader(& $out) {
 	}
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/FindWork/findwork.css', "all", -1, NS_SPECIAL.":FindWork");
+
+	return true;
+}
+
+// SemanticNotifications page callback
+// includes necessary script and css files.
+function smwSNAddHTMLHeader(& $out) {
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/prototype.js', "all", -1, NS_SPECIAL.":SemanticNotifications");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticNotification/SMW_SemanticNotifications.js', "view", -1, NS_SPECIAL.":SemanticNotifications");
+
+		$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
+
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":SemanticNotifications");
+
+	} else {
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":SemanticNotifications");
+		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":SemanticNotifications");
+	}
+
 
 	return true;
 }
