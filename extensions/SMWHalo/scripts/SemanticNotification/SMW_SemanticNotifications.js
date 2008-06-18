@@ -30,18 +30,27 @@ SemanticNotifications.prototype = {
 		this.pendingIndicator = null;
 		$('sn-notification-name').disable();
 		this.enable('sn-add-notification', false);
+		this.notifications = [];	// The names of all existing notifications
+		this.queryLen = 0;
+		this.queryEdited = false;
 	},
 
 	/**
-	 * Key-up callback for the query text area. If the query text has been changed
-	 * the input field for the name of the notification and the 'Add' button 
-	 * are disabled.
+	 * Key-up and blur callback for the query text area. If the query text has 
+	 * been changed the input field for the name of the notification and the 'Add' 
+	 * button are disabled.
 	 */	
-	onKeyUp: function(event) {
+	queryChanged: function(event) {
 		var key = event.which || event.keyCode;
-		$('sn-notification-name').disable();
-		this.enable('sn-add-notification', false);
-		$('sn-querytext').focus();
+		
+		var len = $('sn-querytext').value.length;
+		if (len != this.queryLen) {
+			$('sn-notification-name').disable();
+			this.enable('sn-add-notification', false);
+			$('sn-querytext').focus();
+			this.queryEdited = true;
+			this.queryLen = len;
+		}
 		
 	},
 	
@@ -59,6 +68,13 @@ SemanticNotifications.prototype = {
 					// disable button and name input
 					$('sn-notification-name').disable();
 					this.enable('sn-add-notification', false);
+
+					// Clear input box for query text
+					$('sn-querytext').value = '';
+					$('sn-notification-name').value = '';
+					$('sn-previewbox').innerHTML = '';
+					
+					this.queryEdited = false;
 				} else {
 					alert(request.responseText);
 				}
@@ -73,9 +89,19 @@ SemanticNotifications.prototype = {
 	 		return;
 	 	}
 
-		this.showPendingIndicator(e);
-		var query = $('sn-querytext').value;
 		var name =  $('sn-notification-name').value;
+		
+		// does the name already exist?
+		if (this.notifications.indexOf(name) >= 0) {
+			var msg = gLanguage.getMessage('SN_OVERWRITE_EXISTING');
+			msg = msg.replace(/\$1/g, name);
+			
+			if (!confirm(msg)) {
+				return;
+			}
+		}
+		var query = $('sn-querytext').value;
+		this.showPendingIndicator(e);
 		var ui = $('sn-update-interval').value;
 		sajax_do_call('smwf_sn_AddNotification', 
                       [name, wgUserName, query, ui], 
@@ -137,19 +163,21 @@ SemanticNotifications.prototype = {
 	 */
 	getAllNotifications: function() {
 		function ajaxResponseGetAllNotifications(request) {
+			this.notifications.clear();
 			if (request.status == 200) {
 				var notifications = request.responseText.split(",");
 				var html = '<table class="sn-my-notifications-table">';
 				html += '<colgroup>'
 						+ '<col width="80%" span="1">'
 						+ '<col width="10%" span="2">'
-						+ '</colgroup>';	
+						+ '</colgroup>';
 				for (var i = 0; i < notifications.length; ++i) {
 					// trim
   					n = notifications[i].replace(/^\s*(.*?)\s*$/,"$1");
   					if (n == '') { 
   						continue;
   					}
+  					this.notifications.push(n);
   					html += "<tr><td>"+n+"</td>";
   					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+n+'\')">';
   					html += '<img src="/develwiki/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
@@ -189,9 +217,18 @@ SemanticNotifications.prototype = {
 				$('sn-notification-name').value = name;
 				$('sn-querytext').value = query;
 				$('sn-update-interval').value = ui;
+				
+				this.queryLen = query.length;
+				this.queryChanged = false;
 			} else {
 			}
 		};
+
+		if (this.queryEdited) {
+			if (!confirm('The current query has been edited but not saved. Do you really want to edit another notification?')) {
+				return;
+			}
+		}
 
 		this.showPendingIndicator($('sn-notifications-list'));
 		sajax_do_call('smwf_sn_GetNotification', 
@@ -216,6 +253,14 @@ SemanticNotifications.prototype = {
 			} else {
 			}
 		};
+		
+		var msg = gLanguage.getMessage('SN_DELETE');
+		msg = msg.replace(/\$1/g, notification);
+		
+		if (!confirm(msg)) {
+			return;
+		}
+		
 
 		this.showPendingIndicator($('sn-notifications-list'));
 		sajax_do_call('smwf_sn_DeleteNotification', 
@@ -349,19 +394,26 @@ SemanticNotifications.create = function() {
 				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
 
 		Event.observe('sn-querytext', 'keyup', 
-		              smwhgSemanticNotifications.onKeyUp.bindAsEventListener(smwhgSemanticNotifications));
+		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe('sn-querytext', 'blur', 
+		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
 	
+		// read a query of the query interface from the cookie
 		var query = document.cookie;
 		var start = query.indexOf('NOTIFICATION_QUERY=<snq>');
 		var end = query.indexOf('</snq>');
 		if (start >= 0 && end >= 0) {
+			// Query found
 			// remove the query from the cookie
 			document.cookie = 'NOTIFICATION_QUERY=<snq></snq>;';
 			query = query.substring(start+24, end);
 			qt.value = query;
+			
+			this.queryEdited = true;
+			this.queryLen = query.length;
 		}
 		
-		smwhgSemanticNotifications.getAllNotifications();		      
+		smwhgSemanticNotifications.getAllNotifications();
 	}	
 }
 
