@@ -58,8 +58,8 @@ class SMWSemanticNotificationSpecial extends SpecialPage {
 			$snEnabled = 'false';
 		} else {
 			// Check, if the user has a valid email address
-			$email = $wgUser->getEmail();
-			if (empty($email)) {
+			$email = $wgUser->isEmailConfirmed();
+			if (!$email) {
 				$initialContent = wfMsg('smw_sn_no_email',
 										SpecialPage::getTitleFor('Preferences')->getFullURL(),
 				                        wfMsg('mypreferences'));
@@ -122,7 +122,7 @@ HTML;
 	      	     $txtSn3
 			  </button>
 		    </div>
-	        <div class="sn-previewbox" id="sn-previewbox" style="width:79%; height:320px; position:relative; overflow:hidden;"></div>
+	        <div class="sn-previewbox" id="sn-previewbox" style="width:79%; height:320px; position:relative;"></div>
 	        <div id="sn-footer" style="width:79%; float:right; overflow:hidden;">
 			  $txtSn4
 	          <div class="sn_labels" id="sn-enter-updateinterval-txt" style="overflow:hidden; float:left;">
@@ -145,11 +145,11 @@ HTML;
 	        </div>
 	  	</div>
       </div>
-      <div class="sn-my-notificationbox" id="sn-my-notifications-box" style="width:20%; height:462px; float:right; overflow:hidden; top:32px; left:544px; ">
+      <div class="sn-my-notificationbox" id="sn-my-notifications-box" style="width:20%; height:462px; float:right; top:32px; left:544px; ">
         <div id="mynottitle" class="sn-my-notificationstitle" style="width:100%; height:20px; position:relative; overflow:hidden;">
           $txtSn10
         </div>
-        <div id="sn-notifications-list" style="position:relative; overflow:hidden; left:5px; ">
+        <div id="sn-notifications-list" style="position:relative; left:5px; height:430px; overflow-y:scroll">
         </div>
       </div>
     </div>
