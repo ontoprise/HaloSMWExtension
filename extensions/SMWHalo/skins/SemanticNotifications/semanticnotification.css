@@ -36,12 +36,18 @@ div,span,img,a,form,body,label {
 	margin: 0px;
 }
 
+.sn-my-notifications-list {
+	height: 430px;
+	overflow-y: scroll;
+}
+
 .sn-my-notifications-table {
 	background-color: #28FF94;
 }
 
 .sn-previewbox {
 	border: 2px Silver solid;
+	overflow-y: scroll; 
 }
 
 .sn-query-text {
