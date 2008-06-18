@@ -47,7 +47,7 @@ $messages['en'] = array(
 		'You are currently not logged in. Anonymous users can not receive semantic '.
 		'notifications. Please <a href="$1">log in</a>, before you create one.',
 	'smw_sn_no_email' =>
-		'You have not provided a valid e-mail address yet. Please go to '.
+		'You have not provided or confirmed a valid e-mail address yet. Please go to '.
 		'<a href="$1">"$2"</a> and enter an address in order to enable semantic'.
 		' notifications.',
 	'smw_sn_special1' => 'Enter query (you can use either ask or SPARQL) or use the',
@@ -100,7 +100,7 @@ $messages['de'] = array(
 		'semantischen Benachrichtigungen erhalten. Bitte <a href="$1">melden Sie'.
 		' zuerst sich an.</a>',
 	'smw_sn_no_email' =>
-		'Sie haben noch keine E-Mail-Adresse angegeben. Bitte gehen Sie zu '.
+		'Sie haben noch keine E-Mail-Adresse angegeben oder bestätigt. Bitte gehen Sie zu '.
 		'<a href="$1">"$2"</a> und geben Sie eine gültige Adresse an, damit Sie '.
 		'semantische Benachrichtigungen erhalten können.',
 	'smw_sn_special1' => 'Geben Sie eine Query ein (ASK oder SPARQL) oder benutzen Sie das',
