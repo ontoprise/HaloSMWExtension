@@ -1,0 +1,254 @@
+.errorText {
+color:red;
+font-weight:bold;
+}
+
+a:link {text-decoration:none;}
+a:visited {text-decoration:none; }
+a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
+
+#top-container{
+	width: 100%;
+	height: 260px;
+	border-bottom: 1px solid #AAAAAA;
+	padding-bottom: 10px;
+}
+#top-container #tl-content{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	/*border: 1px solid #AAAAAA;*/
+	float: left;
+	/*overflow: hidden;*/
+	width: 230px;
+	height: 200px;	
+}
+#top-container #tl-content #tlid{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	float: left;
+	width: 230px;
+	height: 100px;
+	border: 1px solid #AAAAAA;
+	border-bottom: none;
+}
+#top-container #tl-content #tldesc{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	float: left;
+	width: 220px;
+	height: 100px;
+	border: 1px solid #AAAAAA;
+	padding: 3px 5px 3px 5px;
+}
+#top-container #dal-content{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	/*border: 1px solid #AAAAAA;*/
+	float: left;
+	width: 230px;
+	height: 200px;
+	margin-left: 50px;
+}
+#top-container #dal-content #dalid{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border: 1px solid #AAAAAA;
+	border-bottom: none;
+	float: left;
+	width: 230px;
+	height: 100px;	
+}
+#top-container #dal-content #daldesc{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border: 1px solid #AAAAAA;
+	float: left;
+	width: 220px;
+	height: 100px;
+	padding: 3px 5px 3px 5px;
+}
+#summary{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border-bottom: 1px solid #AAAAAA;
+	float: left;
+	width: 100%;
+	display: none;
+	padding-bottom: 10px;	
+}
+#top-container #source-spec{
+	width: 400px;	
+	float: left;
+	height: 200px;
+	margin-left: 50px;
+	/*visibility: hidden;*/
+}
+#top-container #source-speci #fileinput{
+	border: 1px solid #AAAAAA;
+	width: 250px;
+}
+#tlid .entry{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	/*background-color: #EEE;*/
+}
+#tlid .entry-over{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	/*background-color: #CCC;*/
+	cursor: pointer;
+}
+#tlid .entry-active{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	background-color: #F1F7AE;
+}
+#tlid .entry-clicked{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	background-color: #00BFFF;
+}
+
+#dalid .entry{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	/*background-color: #EEE;*/
+}
+#dalid .entry-over{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	/*background-color: #CCC;*/
+	cursor: pointer;
+}
+#dalid .entry-active{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	background-color: #F1F7AE;
+}
+#dalid .entry-clicked{
+	padding: 3px 5px 3px 5px;
+	border-bottom: 1px solid #CCC;
+	background-color: #00BFFF;
+}
+#bottom-container{
+	/*width: 1000px;*/
+	/*height: 500px;*/
+	margin-top: 10px;
+}	
+#bottom-container #extras{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	float: left;
+	width: 100%;
+	display: none;
+	margin-top: 10px;
+	/*height: 500px*/
+}
+#bottom-container #extras-bottom{
+	width:100%;
+	float: left;
+	margin-top: 10px;
+}
+#bottom-container #extras-bottom #preview-button{
+	/*align: right;*/	
+}
+#bottom-container #extras #extras-left{
+	width: 50%;
+	/*height: 400px;*/
+	float: left;
+	border-right: 1px solid #AAAAAA; 
+	padding: 3px 5px 3px 5px;
+}
+#bottom-container #extras #extras-right{
+	width: 25%;
+	/*height: 400px;*/
+	float: left;
+	display: none;
+	margin-left: 10px;
+	padding: 3px 5px 3px 5px;
+}
+#bottom-container #extras #extras-left #importset{
+	width: 510px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/
+	padding-top: 3px;
+}
+#bottom-container #extras #extras-left #importset #importset-input-field{
+	border: 1px solid #AAAAAA;
+	width: 170px;
+	background-color: lightgrey;
+}
+#bottom-container #extras #extras-left #policy{
+	width: 510px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/
+}
+
+#bottom-container #extras #extras-left #policy #policy-input{
+	width: 350px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/	
+}
+#bottom-container #extras #extras-left #policy #policy-input #policy-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #policy #policy-textarea{
+	width: 158px;
+	float: left;
+	border: 1px solid #AAAAAA;
+}
+
+#bottom-container #extras #extras-left #mapping{
+	width: 510px;
+	float: left;
+}
+#bottom-container #extras #extras-left #mapping #mapping-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #conflict{
+	width: 510px;
+	float: left;
+}
+#bottom-container #extras #extras-left #conflict #conflict-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #attrib-articles{
+	width: 255px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/
+}
+#bottom-container #extras #extras-right #attrib-articles #attrib{
+	width: 255px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/
+	padding: 3px 5px 3px 5px;
+}
+#bottom-container #extras #extras-right #attrib-articles #articles{
+	width: 255px;
+	float: left;
+	/*border: 1px solid #AAAAAA;*/
+	padding: 15px 5px 3px 5px;
+}
+.inputfield{
+	border: 1px solid #AAAAAA;
+}
+.summarytab{
+	cellspacing: 10;
+}
+.mytable{
+	border: 1px solid #AAAAAA;
+	border-collapse: collapse;
+	width: 100%;
+}
+.mytd{
+	border-top: 1px dashed #AAAAAA;
+	border-bottom: 1px dashed #AAAAAA;
+	border-left: 1px solid #AAAAAA;
+	border-right: 1px solid #AAAAAA;
+	padding: 3px 5px 3px 5px;
+}
+.myinfo{
+	padding: 3px 5px 3px 5px;
+	/*text-align: center;
+	vertical-align: middle;*/
+}
