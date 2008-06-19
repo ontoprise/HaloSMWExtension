@@ -20,7 +20,7 @@ div,span,img,a,form,body,label {
 }
 
 .sn-my-notificationstitle {
-	background-color: #00B55A;
+	background-color: #74dc83;
 	color: White;
 	font-size: 16px;
 	padding: 6px;
@@ -29,10 +29,10 @@ div,span,img,a,form,body,label {
 }
 
 .sn-my-notificationbox {
-	background-color: #28FF94;
+	background-color: #b5edbc;
 	border-width: 2px;
 	border-style: solid;
-	border-color: #00B55A;
+	border-color: #74dc83;
 	margin: 0px;
 }
 
@@ -42,7 +42,7 @@ div,span,img,a,form,body,label {
 }
 
 .sn-my-notifications-table {
-	background-color: #28FF94;
+	background-color: #b5edbc;
 }
 
 .sn-previewbox {
