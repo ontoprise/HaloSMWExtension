@@ -269,9 +269,11 @@ TermImportPage.prototype = {
 		}
 		//show properties on the right side
 		var properties = list.getElementsByTagName("Properties")[0].childNodes;
-		var property_response = "The following attributes can be extracted from data source defined:" +
-				"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-											"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";
+		var property_response = "The following attributes can be extracted from data source defined:";
+		
+		/*		"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+											"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";*/
+											
 		property_response += '<table id=\"attrib_table\" class=\'mytable\'>';
 		
 		for (var i = 0, n = properties.length; i < n; i++) {
@@ -283,7 +285,7 @@ TermImportPage.prototype = {
 				if ( property_name_obj ){
 					var property_name = property_name_obj[0].firstChild.nodeValue;
 					// add importset item to the list
-					property_response += "<tr><td class=\"mytd\">" + property_name + "</td><td class=\"mytd\">mein test!!!<tr>";
+					property_response += "<tr><td class=\"mytd\">" + property_name + "</td></tr>";
 				}	
 			}	
 		}

@@ -16,19 +16,10 @@ class CL {
 	}
 
 public function execute() {
-		$html = '';
-		
-		
-		/*smwf_ti_connectTL("ConnectLocal", "ReadCSV" , "<DataSource><filename>C:\Dokumente und Einstellungen\uNcLeBeNz\Desktop\wiki\articles.csv</filename></DataSource>",
-						 "Physics", "",
-						 "test", true, 1);*/
-
-		//smwf_ti_connectTL('ConnectLocal', 'ReadCSV', '<DataSource><filename>C:\Dokumente und Einstellungen\uNcLeBeNz\Desktop\wiki\articles.csv</filename><TEST>inhaltTest</TEST><TEST2>BEN</TEST2></DataSource>', '', '', '', 'true', 1);
-		//---- Start: TEST for Import ----
 		global $smwgHaloIP, $wgOut, $wgRequest;
 		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_WIL.php');
+		
 		$wil = new WIL();
-
 		$tlModules = $wil->getTLModules();
 		
 		$html .= "<div id=\"summary\"></div>" .
@@ -38,11 +29,6 @@ public function execute() {
 						"<div id=\"tlid\">" . $this->getTLIDs($tlModules) . "</div>" . 
 						"<div id=\"tldesc\">" . "Info: " . "</div>" .
 					"</div>";
-		
-		//$res = $this->connectTL($tlID, $tlModules);
-		$res = $wil->connectTL("ConnectLocal", $tlModules);
-		$dalModules = $wil->getDALModules();
-
 		$html .= "<div id=\"dal-content\">DAM:" .
 				 "<div id=\"dalid\">" . "<div class=\"myinfo\">first select TLM</div>" . "</div>" .
 				 "<div id=\"daldesc\">" . "</div>" .
@@ -135,15 +121,16 @@ public function execute() {
 
 //AJAX Calls
 /**
- * Connects a Transport Layer.
  *
  * @param $tlID the ID of the Transport Layer
  * @param $dalID
  * @param $source_input an XML structure of the given source inputs
  * @param $givenImportSetName the given import set name (String)
- * @param $givenInputPol an XML structure with the given input policy 
+ * @param $givenInputPol an XML structure with the given input policy
+ * @param $mappingPage The name of the mapping article 
  * @param $givenConflictPol Boolean: overwrite=true, preserve=false 
  * @param $runBot run the bot???
+ * 
  * @return $result an XML structure
  */
 function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName, 
@@ -154,8 +141,6 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 	require_once($smwgHaloIP . '/includes/SMW_XMLParser.php');
 	$wil = new WIL();
 	$tlModules = $wil->getTLModules(); 
-	
-	//return '<result>'.$tlModules.'</result>';
 	
 	//TODO Errorhandling!!!
 	
@@ -272,10 +257,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
    	 			'	<page>' . $mappingPage . '</page>'."\n".
 				'</MappingPolicy >';
 		}
-//		else {
-//			//Error! no mappingPage given
-//		}
-		if($givenConflictPol) {
+		if($givenConflictPol && $givenConflictPol != '') {
 			$conflictPolicy =
 				'<?xml version="1.0"?>'."\n".
 				'<ConflictPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -294,7 +276,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		return true;
 	}
 	else {
-		// error, $runBot neither 'yes' nor 'no'
+		// error, $runBot neither 0 nor 1
 	}
 	return null;
 }
