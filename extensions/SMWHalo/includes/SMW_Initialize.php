@@ -100,7 +100,7 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwSNAddHTMLHeader';
-		
+		$wgHooks['BeforePageDisplay'][]='smwTIAddHTMLHeader';
 
 	}
 	// Register parser hooks for advanced annotation mode
@@ -189,6 +189,9 @@ function smwgHaloSetupExtension() {
 						break;
 			case '_sn_' : require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
 						break;
+			case '_ti_' : smwfHaloInitMessages();
+						require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_CL.php');
+						break;
 						
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -201,7 +204,7 @@ function smwgHaloSetupExtension() {
 				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-
+				require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_TermImport.php');
 		}
 	} else { // otherwise register special pages
 
@@ -1188,6 +1191,27 @@ function smwSNAddHTMLHeader(& $out) {
 
 
 	return true;
+}
+
+// TermImport scripts callback
+// includes necessary css files.
+function smwTIAddHTMLHeader(&$out){
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgScriptPath;
+
+
+	$jsm = SMWResourceManager::SINGLETON();
+	
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":TermImport");
+	smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":TermImport");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TermImport/termimport.js', "all", -1, NS_SPECIAL.":TermImport");
+	
+	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":TermImport");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");
+	
+	return true; // do not load other scripts or CSS
 }
 
 function smwfRegisterHaloInlineQueries( &$parser, &$text, &$stripstate ) {
