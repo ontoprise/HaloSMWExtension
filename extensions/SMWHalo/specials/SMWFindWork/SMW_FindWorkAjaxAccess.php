@@ -4,10 +4,14 @@
  *
  * Author: kai
  */
- global $wgAjaxExportList;
+ global $wgAjaxExportList, $smwgHaloIP;
  
  $wgAjaxExportList[] = 'smwf_fw_SendAnnotationRatings';
-  
+
+ if (!class_exists('Services_JSON')) {
+    require_once($smwgHaloIP . '/includes/JSON.php');
+ }
+ 
  /**
  * Receives rating from FindWork special page.
  * 
@@ -16,7 +20,8 @@
  * @return true
  */
 function smwf_fw_SendAnnotationRatings($json) {
-	$ratings = json_decode($json);
+	$jsonservice = new Services_JSON();
+   	$ratings = $jsonservice->decode($json);
 	foreach($ratings as $r) {
 		list($subject, $predicate, $object, $rating) = $r;
 		smwfGetSemanticStore()->rateAnnotation(trim($subject),

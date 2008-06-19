@@ -7,6 +7,10 @@ if( !defined( 'MEDIAWIKI' ) ) {
 
 if (file_exists('ACLs.php')) require_once('ACLs.php');
 
+if (!class_exists('Services_JSON')) {
+    require_once ('JSON.php');
+}
+
 global $wgAjaxExportList;
 
  
@@ -82,7 +86,8 @@ function wfACLInitMessages() {
 }
 
 function smwf_al_updateACLs($acl_list_json, $whitelist, $superusers) {
-    $acls = json_decode($acl_list_json);
+    $jsonservice = new Services_JSON();
+    $acls = $jsonservice->decode($acl_list_json);
     $acl_manager = ACLManager::SINGLETON();
     $acl_manager->writeConfig($acls, $whitelist, $superusers);
     return "true";
