@@ -5,8 +5,7 @@
 |--------------------------------------------------*/
 
 .dtreestatic {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	
+	font-size: 95%;    	
 	color: #666;
 	white-space: nowrap;
 	overflow-y:auto;
@@ -16,8 +15,7 @@
 }
 
 .dtree {
-    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-    
+    font-size: 95%;    
     color: #666;
     white-space: nowrap;
     

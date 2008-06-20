@@ -24,6 +24,7 @@ class TreeGenerator {
 	 * @return String Wiki-Tree
 	 */
 	public function generateTree(&$parser){
+		global $wgUser;
 		$params = func_get_args();
 		array_shift( $params ); // we already know the $parser ...
 		$genTreeParameters = array();
@@ -34,7 +35,12 @@ class TreeGenerator {
 		}
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
-		$categoryName = array_key_exists('category', $genTreeParameters) ? Title::newFromText($genTreeParameters['category'], NS_CATEGORY) : NULL;
+		if (array_key_exists('category', $genTreeParameters)) {
+	        $genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
+	        $categoryName = Title::newFromText($genTreeParameters['category'], NS_CATEGORY);
+	    } else {
+	        $categoryName = NULL;
+	    }
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
 		$result = "";
 		$tree = $this->getHierarchyByRelation($relationName, $categoryName, $start);

@@ -6,7 +6,7 @@ Slider.prototype = {
         this.sliderObj = null;
         this.oldHeight = 0;
         this.oldWidth  = 0;
-        this.sliderWidth = 25;
+        this.sliderWidth = OB_bd.isIE ? 13 : 12;
        
     },
     //if()
@@ -21,8 +21,9 @@ Slider.prototype = {
             '/extensions/SMWHalo/skins/slider.gif"/>';
         var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
         // 25px for the silder
-        var iv = ($("p-logo").clientWidth -  this.sliderWidth) / windowWidth;    
-        var initialvalue = iv;
+        var iv = ($("p-logo").clientWidth -  this.sliderWidth) / windowWidth;
+        var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
+        var initialvalue = saved_iv != null ? saved_iv : iv;
         this.slide(initialvalue);
        //create slider after old one is removed
        if(this.sliderObj != null){
@@ -60,23 +61,24 @@ Slider.prototype = {
                 smwhg_slider.sliderObj.setValue(rightmax);
                 return;
              }
-           
+            var sliderSmooth = OB_bd.isIE ? v*25 : v*38;
             // move toolbar and content pane
-            $('p-cactions').style.marginLeft = (windowWidth*(v-iv)) +"px";
-            $('content').style.marginLeft = currMarginDiv + "px";
+            $('p-cactions').style.marginLeft = (windowWidth*(v-iv)) - sliderSmooth +"px";
+            $('content').style.marginLeft = currMarginDiv - sliderSmooth + "px";
            
            // change width of Treeviews of class 'dtreestatic'
            var sliderWidth = this.sliderWidth;
            $$('div.dtreestatic').each(function(s) { 
-                s.style.width = windowWidth*v+sliderWidth-7+"px";
+                s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
            });
            
            
            // change sidebars
-           $('p-navigation').style.width = windowWidth*v+sliderWidth-5+"px";
-           $('p-search').style.width = windowWidth*v+sliderWidth-5+"px";
-           $('p-tb').style.width = windowWidth*v+sliderWidth-5+"px";
+           $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           $('p-search').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           $('p-tb').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            
+           document.cookie = "cp-slider="+v+"; path="+wgScript;
     },
      /**
       * Resizes the slide if window size is changed
