@@ -1,0 +1,16 @@
+@CHARSET "ISO-8859-1";
+
+.OuterLeftIndent{
+	padding-left: 40px;
+}
+
+.OKButton{
+	padding-left: 15px;
+	cursor: pointer;
+}
+
+.HeadlineDelimiter{
+	padding-left: 10px;
+	padding-right: 10px;	
+} 
+
