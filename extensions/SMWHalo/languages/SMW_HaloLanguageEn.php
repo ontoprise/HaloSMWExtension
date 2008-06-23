@@ -559,7 +559,25 @@ clicking the big arrows between the columns.',
 	'smw_wws_select_without_value' => 'The attribute "value" of the select "$1" of the result "$2" is missing.',
 	'smw_wws_duplicate_select' => 'The select "$1" appears several times in the result "$2".',
 	'definewebservice' => 'Define Web Service',
-
+	'smw_wws_s1-help' => 'Please enter the URI of a WebService. The URI must direct towards the WSDL (Web Service Description Language) file of the WebService. If you do not have an URI yet, you can search for different WebService providers on the internet. Please take a look at Web Service Search Engines in order to find what you are looking for.',
+	'smw_wws_s2-help' => 'Each WebService may provide different methods which in turn deliver different types of data. The WebService support in this wiki does allow to collect results from only one method of the WebService. If you would like to gather results from different methods of the same WebService, you have to create one WebService definition for each method.',
+	'smw_wws_s3-help' => 'todo: write help message',
+	'smw_wws_s4-help' => 'todo: write help message',
+	'smw_wws_s5-help' => 'The update policies define after which a value delivered by a WebService will be updated. The display policy will be relevant whenever a value is displayed in an article, whereas the query policy is only relevant for semantic queries. The delay value allows to give a delay (in seconds) that has to be considered between two calls to a WebService.',
+	'smw_wws_s6-help' => 'In order to use this WebService you need to give it a name. Please use a meaningful name that makes it easy for other users to recognize the purpose of this WebService.',
+	'smw_wws_s1-menue' => '1. Specify URI',
+	'smw_wws_s2-menue' => '2. Select Method',
+	'smw_wws_s3-menue' => '3. Define Parameters',
+	'smw_wws_s4-menue' => '4. Define Aliases',
+	'smw_wws_s5-menue' => '5. Define Update Policy',
+	'smw_wws_s6-menue' => '6. Choose Name',
+	'smw_wws_s1-intro' => 'Please enter the URI of the WebService: ',
+	'smw_wws_s2-intro' => 'Please select one of the following methods provided by the WebService: ',
+	'smw_wws_s3-intro' => 'The method asks for the following parameters.',
+	'smw_wws_s4-intro' => '4. Please provide an alias for each result that is delivered by the WebService. This alias will be used whenever you include this WebService. Please use short but distinctive aliases or use the generate function.',
+	'smw_wws_s5-intro' => 'Please define the update policies for this WebService.',
+	'smw_wws_s6-intro' => 'Please enter a name for this WebService: ',
+	
 
 	);
 
