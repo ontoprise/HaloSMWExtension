@@ -574,7 +574,7 @@ clicking the big arrows between the columns.',
 	'smw_wws_s1-intro' => 'Please enter the URI of the WebService: ',
 	'smw_wws_s2-intro' => 'Please select one of the following methods provided by the WebService: ',
 	'smw_wws_s3-intro' => 'The method asks for the following parameters.',
-	'smw_wws_s4-intro' => '4. Please provide an alias for each result that is delivered by the WebService. This alias will be used whenever you include this WebService. Please use short but distinctive aliases or use the generate function.',
+	'smw_wws_s4-intro' => 'Please provide an alias for each result that is delivered by the WebService. This alias will be used whenever you include this WebService. Please use short but distinctive aliases or use the generate function.',
 	'smw_wws_s5-intro' => 'Please define the update policies for this WebService.',
 	'smw_wws_s6-intro' => 'Please enter a name for this WebService: ',
 	
