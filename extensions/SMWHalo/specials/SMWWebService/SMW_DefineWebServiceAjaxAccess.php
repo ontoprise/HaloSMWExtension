@@ -5,7 +5,11 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ws_processStep1';
 $wgAjaxExportList[] = 'smwf_ws_processStep2';
 $wgAjaxExportList[] = 'smwf_ws_processStep3';
-$wgAjaxExportList[] = 'smwf_ws_processStep4';
+$wgAjaxExportList[] = 'smwf_ws_processStep6';
+
+
+global $smwgHaloIP;
+require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WebService.php');
 
 function smwf_ws_processStep1($uri){
 	$wsClient = createWSClient($uri);
@@ -13,8 +17,7 @@ function smwf_ws_processStep1($uri){
 		return "false";
 	} else {
 		$operations = $wsClient->getOperations();
-		return implode(";", $operations);
-
+		return "todo:handle exceptions;".implode(";", $operations);
 	}
 }
 
@@ -29,20 +32,31 @@ function smwf_ws_processStep2($uri, $methodName){
 		$pType = $rawParameters[$i][1];
 		$parameters = array_merge($parameters ,flattenParam($wsClient, $pName, $pType));
 	}
-
-	return implode(";", $parameters);
+	return "todo:handle exceptions;".implode(";", $parameters);
 }
 
 function smwf_ws_processStep3($uri, $methodName, $parameters){
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
 
-	return implode(";", flattenParam($wsClient ,"", $rawResult[0]));
+	return "todo:handle exceptions;".implode(";", flattenParam($wsClient ,"", $rawResult[0]));
 }
 
-
-function smwf_ws_processStep4($results){
-	return $results;
+function smwf_ws_processStep6($name, $wwsd){
+	$ws = WebService::newFromWWSD($name, $wwsd);
+	if(is_array($ws)){
+		return implode(";", $ws);
+	} else {
+		$res = $ws->validateWithWSDL();
+		if(is_array($res)){
+			return implode(";", $res);
+		}
+		$res = $ws->store();
+		if(!$res){
+			return "error";
+		}
+		return "ok";
+	}
 }
 
 
@@ -63,12 +77,12 @@ function createWSClient($uri) {
 		}
 		$wsClient = new $classname($uri);
 	} catch (Exception $e) {
-		// The wwsd is erroneous
 		return array(wfMsg("smw_wws_invalid_wwsd"));
 	}
 	return $wsClient;
-
 }
+
+
 
 function flattenParam($wsClient, $name, $type, &$typePath=null) {
 	$flatParams = array();

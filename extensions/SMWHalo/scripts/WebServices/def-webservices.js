@@ -16,49 +16,87 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep1CallBack : function(request) {
-		// clear the widget for step 2
-		var existingOptions = document.getElementById("step2-methods")
-				.cloneNode(false);
-		document.getElementById("step2-methods").id = "old-step2-methods";
-		document.getElementById("old-step2-methods").parentNode.insertBefore(
-				existingOptions, document.getElementById("old-step2-methods"));
-		document.getElementById("old-step2-methods").parentNode
-				.removeChild(document.getElementById("old-step2-methods"));
-		existingOptions.id = "step2-methods";
-
-		// fill the widget for step2 with content
 		var wsMethods = request.responseText.split(";");
-		for (i = 0; i < wsMethods.length; i++) {
-			var option = document.createElement("option");
-			var mName = document.createTextNode(wsMethods[i]);
-			option.appendChild(mName);
-			document.getElementById("step2-methods").appendChild(option);
-		}
 
-		// hide or display widgets of other steps
-		document.getElementById("step2").style.display = "block";
-		document.getElementById("step3").style.display = "none";
-		document.getElementById("step4").style.display = "none";
-		document.getElementById("step5").style.display = "none";
-		document.getElementById("step6").style.display = "none";
-		;
-		document.getElementById("menue-step2").style.fontWeight = "bold";
-		document.getElementById("menue-step3").style.fontWeight = "normal";
-		document.getElementById("menue-step4").style.fontWeight = "normal";
-		document.getElementById("menue-step5").style.fontWeight = "normal";
-		document.getElementById("menue-step6").style.fontWeight = "normal";
-		document.getElementById("step1-help").style.display = "none";
-		document.getElementById("step3-help").style.display = "none";
-		document.getElementById("step4-help").style.display = "none";
-		document.getElementById("step5-help").style.display = "none";
-		document.getElementById("step6-help").style.display = "none";
-		document.getElementById("step2-help").style.display = "block";
-		document.getElementById("step1-img").style.visibility = "hidden";
-		document.getElementById("step3-img").style.visibility = "hidden";
-		document.getElementById("step4-img").style.visibility = "hidden";
-		document.getElementById("step5-img").style.visibility = "hidden";
-		document.getElementById("step6-img").style.visibility = "hidden";
-		document.getElementById("step2-img").style.visibility = "visible";
+		if (wsMethods[0] != "todo:handle exceptions") {
+			document.getElementById("errors").style.display = "block";
+			document.getElementById("step1-error").style.display = "block";
+			document.getElementById("step2a-error").style.display = "none";
+			document.getElementById("step2b-error").style.display = "none";
+			document.getElementById("step3-error").style.display = "none";
+			document.getElementById("step4-error").style.display = "none";
+			document.getElementById("step5-error").style.display = "none";
+			document.getElementById("step6-error").style.display = "none";
+
+			document.getElementById("step2").style.display = "none";
+			document.getElementById("step3").style.display = "none";
+			document.getElementById("step4").style.display = "none";
+			document.getElementById("step5").style.display = "none";
+			document.getElementById("step6").style.display = "none";
+
+			document.getElementById("step1-help").style.display = "block";
+			document.getElementById("step2-help").style.display = "none";
+			document.getElementById("step3-help").style.display = "none";
+			document.getElementById("step4-help").style.display = "none";
+			document.getElementById("step5-help").style.display = "none";
+			document.getElementById("step6-help").style.display = "none";
+
+			document.getElementById("step1-img").style.visibility = "visible";
+			document.getElementById("step2-img").style.visibility = "hidden";
+			document.getElementById("step3-img").style.visibility = "hidden";
+			document.getElementById("step4-img").style.visibility = "hidden";
+			document.getElementById("step5-img").style.visibility = "hidden";
+			document.getElementById("step6-img").style.visibility = "hidden";
+		} else {
+			wsMethods.shift();
+			document.getElementById("errors").style.display = "none";
+			document.getElementById("step1-error").style.display = "none";
+
+			// clear the widget for step 2
+			var existingOptions = document.getElementById("step2-methods")
+					.cloneNode(false);
+			document.getElementById("step2-methods").id = "old-step2-methods";
+			document.getElementById("old-step2-methods").parentNode
+					.insertBefore(existingOptions, document
+							.getElementById("old-step2-methods"));
+			document.getElementById("old-step2-methods").parentNode
+					.removeChild(document.getElementById("old-step2-methods"));
+			existingOptions.id = "step2-methods";
+
+			// fill the widget for step2 with content
+
+			for (i = 0; i < wsMethods.length; i++) {
+				var option = document.createElement("option");
+				var mName = document.createTextNode(wsMethods[i]);
+				option.appendChild(mName);
+				document.getElementById("step2-methods").appendChild(option);
+			}
+
+			// hide or display widgets of other steps
+			document.getElementById("step2").style.display = "block";
+			document.getElementById("step3").style.display = "none";
+			document.getElementById("step4").style.display = "none";
+			document.getElementById("step5").style.display = "none";
+			document.getElementById("step6").style.display = "none";
+			;
+			document.getElementById("menue-step2").style.fontWeight = "bold";
+			document.getElementById("menue-step3").style.fontWeight = "normal";
+			document.getElementById("menue-step4").style.fontWeight = "normal";
+			document.getElementById("menue-step5").style.fontWeight = "normal";
+			document.getElementById("menue-step6").style.fontWeight = "normal";
+			document.getElementById("step1-help").style.display = "none";
+			document.getElementById("step3-help").style.display = "none";
+			document.getElementById("step4-help").style.display = "none";
+			document.getElementById("step5-help").style.display = "none";
+			document.getElementById("step6-help").style.display = "none";
+			document.getElementById("step2-help").style.display = "block";
+			document.getElementById("step1-img").style.visibility = "hidden";
+			document.getElementById("step3-img").style.visibility = "hidden";
+			document.getElementById("step4-img").style.visibility = "hidden";
+			document.getElementById("step5-img").style.visibility = "hidden";
+			document.getElementById("step6-img").style.visibility = "hidden";
+			document.getElementById("step2-img").style.visibility = "visible";
+		}
 	},
 
 	/**
@@ -74,133 +112,174 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep2CallBack : function(request) {
-		// clear widgets of step 3
-		var okButton = document.getElementById("step3-ok").cloneNode(true);
-		document.getElementById("step3-ok").id = "old-step3-ok";
-		document.getElementById("old-step3-ok").parentNode.removeChild(document
-				.getElementById("old-step3-ok"));
-		var tempHead = document.getElementById("step3-parameters").childNodes[0].childNodes[0]
-				.cloneNode(true);
-		var tempTable = document.getElementById("step3-parameters").childNodes[0]
-				.cloneNode(false);
-		document.getElementById("step3-parameters").removeChild(
-				document.getElementById("step3-parameters").childNodes[0]);
-		document.getElementById("step3-parameters").appendChild(tempTable);
-		document.getElementById("step3-parameters").childNodes[0]
-				.appendChild(tempHead);
-
-		// fill widgets for step 3 with content
 		var wsParameters = request.responseText.split(";");
-		for (i = 0; i < wsParameters.length; i++) {
-			var paramRow = document.createElement("tr");
-			document.getElementById("step3-parameters").childNodes[0]
-					.appendChild(paramRow);
-
-			var paramTD0 = document.createElement("td");
-			paramRow.appendChild(paramTD0);
-
-			var paramPath = document.createElement("span");
-			var arraySteps = wsParameters[i].split("[");
-			var ppText = "";
-			for ( var k = 0; k < arraySteps.length; k++) {
-				var paramPathText;
-				if (k != arraySteps.length - 1) {
-					paramPathText = document.createTextNode(arraySteps[k]
-							+ "[0");
-				} else {
-					paramPathText = document.createTextNode(arraySteps[k]);
-				}
-				paramPath.appendChild(paramPathText);
-				if (k != arraySteps.length - 1) {
-					var addButton = document.createElement("span");
-					addButton.style.cursor = "pointer";
-					var addButtonText = document.createTextNode("+");
-					addButton.appendChild(addButtonText);
-					var addButtonOnClick = document.createAttribute("onclick");
-					addButtonOnClick.value = "webServiceSpecial.addParameter("
-							+ i + ", " + k + ")";
-					addButton.setAttributeNode(addButtonOnClick);
-					paramPath.appendChild(addButton);
-				}
-			}
-			paramTD0.appendChild(paramPath);
-			paramPath.id = "s3-path" + i;
-			paramPath.className = "OuterLeftIndent";
-
-			var paramTD1 = document.createElement("td");
-			paramRow.appendChild(paramTD1);
-
-			var aliasInput = document.createElement("input");
-			aliasInput.id = "s3-alias" + i;
-			aliasInput.size = "15";
-			aliasInput.maxLength = "40";
-			paramTD1.appendChild(aliasInput);
-
-			var paramTD2 = document.createElement("td");
-			paramRow.appendChild(paramTD2);
-
-			var optionalRadio1 = document.createElement("input");
-			optionalRadio1.id = "s3-optional-true" + i;
-			optionalRadio1.name = "s3-optional-radio" + i;
-			optionalRadio1.type = "radio";
-			optionalRadio1.value = "yes";
-			paramTD2.appendChild(optionalRadio1);
-
-			var optionalRadio1Span = document.createElement("span");
-			var optionalRadio1TextY = document.createTextNode("Yes");
-			optionalRadio1Span.appendChild(optionalRadio1TextY);
-			paramTD2.appendChild(optionalRadio1Span);
-
-			var optionalRadio2 = document.createElement("input");
-			optionalRadio2.checked = true;
-			optionalRadio2.id = "s3-optional-false" + i;
-			optionalRadio2.name = "s3-optional-radio" + i;
-			optionalRadio2.type = "radio";
-			optionalRadio2.value = "false";
-			paramTD2.appendChild(optionalRadio2);
-
-			var optionalRadio2Span = document.createElement("span");
-			var optionalRadio2TextN = document.createTextNode("No");
-			optionalRadio2Span.appendChild(optionalRadio2TextN);
-			paramTD2.appendChild(optionalRadio2Span);
-
-			var paramTD3 = document.createElement("td");
-			paramRow.appendChild(paramTD3);
-
-			var defaultInput = document.createElement("input");
-			defaultInput.id = "s3-default" + i;
-			defaultInput.size = "15";
-			defaultInput.maxLength = "40";
-			paramTD3.appendChild(defaultInput);
-
-			var paramTD4 = document.createElement("td");
-			paramRow.appendChild(paramTD4);
-
-			if (i == wsParameters.length - 1) {
-				paramTD4.appendChild(okButton);
+		var overflow = false;
+		
+		for(i=0; i < wsParameters.length; i++){
+			if(wsParameters[i].indexOf("##overflow##") > 0){
+				overflow = true;
 			}
 		}
+		
+		if (wsParameters[0] != "todo:handle exceptions" || overflow) {
+			document.getElementById("step3").style.display = "none";
+			document.getElementById("step4").style.display = "none";
+			document.getElementById("step5").style.display = "none";
+			document.getElementById("step6").style.display = "none";
 
-		// hide or display widgets of other steps
-		document.getElementById("step3").style.display = "block";
-		document.getElementById("step4").style.display = "none";
-		document.getElementById("step5").style.display = "none";
-		document.getElementById("step6").style.display = "none";
-		;
-		document.getElementById("menue-step3").style.fontWeight = "bold";
-		document.getElementById("menue-step4").style.fontWeight = "normal";
-		document.getElementById("menue-step5").style.fontWeight = "normal";
-		document.getElementById("menue-step6").style.fontWeight = "normal";
-		document.getElementById("step2-help").style.display = "none";
-		document.getElementById("step4-help").style.display = "none";
-		document.getElementById("step5-help").style.display = "none";
-		document.getElementById("step6-help").style.display = "none";
-		document.getElementById("step3-help").style.display = "block";
-		document.getElementById("step2-img").style.visibility = "hidden";
-		document.getElementById("step4-img").style.visibility = "hidden";
-		document.getElementById("step5-img").style.visibility = "hidden";
-		document.getElementById("step6-img").style.visibility = "hidden";
-		document.getElementById("step3-img").style.visibility = "visible";
+			document.getElementById("errors").style.display = "block";
+			if(overflow){
+				document.getElementById("step2b-error").style.display = "block";
+			} else {
+				document.getElementById("step2a-error").style.display = "block";
+			}
+			document.getElementById("step3-error").style.display = "none";
+			document.getElementById("step4-error").style.display = "none";
+			document.getElementById("step5-error").style.display = "none";
+			document.getElementById("step6-error").style.display = "none";
+
+			document.getElementById("step2-help").style.display = "block";
+			document.getElementById("step3-help").style.display = "none";
+			document.getElementById("step4-help").style.display = "none";
+			document.getElementById("step5-help").style.display = "none";
+			document.getElementById("step6-help").style.display = "none";
+
+			document.getElementById("step2-img").style.visibility = "visible";
+			document.getElementById("step3-img").style.visibility = "hidden";
+			document.getElementById("step4-img").style.visibility = "hidden";
+			document.getElementById("step5-img").style.visibility = "hidden";
+			document.getElementById("step6-img").style.visibility = "hidden";
+		} else {
+			wsParameters.shift();
+			// clear widgets of step 3
+			var okButton = document.getElementById("step3-ok").cloneNode(true);
+			document.getElementById("step3-ok").id = "old-step3-ok";
+			document.getElementById("old-step3-ok").parentNode
+					.removeChild(document.getElementById("old-step3-ok"));
+			var tempHead = document.getElementById("step3-parameters").childNodes[0].childNodes[0]
+					.cloneNode(true);
+			var tempTable = document.getElementById("step3-parameters").childNodes[0]
+					.cloneNode(false);
+			document.getElementById("step3-parameters").removeChild(
+					document.getElementById("step3-parameters").childNodes[0]);
+			document.getElementById("step3-parameters").appendChild(tempTable);
+			document.getElementById("step3-parameters").childNodes[0]
+					.appendChild(tempHead);
+
+			// fill widgets for step 3 with content
+
+			for (i = 0; i < wsParameters.length; i++) {
+				var paramRow = document.createElement("tr");
+				document.getElementById("step3-parameters").childNodes[0]
+						.appendChild(paramRow);
+
+				var paramTD0 = document.createElement("td");
+				paramRow.appendChild(paramTD0);
+
+				var paramPath = document.createElement("span");
+				var arraySteps = wsParameters[i].split("[");
+				var ppText = "";
+				for ( var k = 0; k < arraySteps.length; k++) {
+					var paramPathText;
+					if (k != arraySteps.length - 1) {
+						paramPathText = document.createTextNode(arraySteps[k]
+								+ "[0");
+					} else {
+						paramPathText = document.createTextNode(arraySteps[k]);
+					}
+					paramPath.appendChild(paramPathText);
+					if (k != arraySteps.length - 1) {
+						var addButton = document.createElement("span");
+						addButton.style.cursor = "pointer";
+						var addButtonText = document.createTextNode("+");
+						addButton.appendChild(addButtonText);
+						var addButtonOnClick = document
+								.createAttribute("onclick");
+						addButtonOnClick.value = "webServiceSpecial.addParameter("
+								+ i + ", " + k + ")";
+						addButton.setAttributeNode(addButtonOnClick);
+						paramPath.appendChild(addButton);
+					}
+				}
+				paramTD0.appendChild(paramPath);
+				paramPath.id = "s3-path" + i;
+				paramPath.className = "OuterLeftIndent";
+
+				var paramTD1 = document.createElement("td");
+				paramRow.appendChild(paramTD1);
+
+				var aliasInput = document.createElement("input");
+				aliasInput.id = "s3-alias" + i;
+				aliasInput.size = "15";
+				aliasInput.maxLength = "40";
+				paramTD1.appendChild(aliasInput);
+
+				var paramTD2 = document.createElement("td");
+				paramRow.appendChild(paramTD2);
+
+				var optionalRadio1 = document.createElement("input");
+				optionalRadio1.id = "s3-optional-true" + i;
+				optionalRadio1.name = "s3-optional-radio" + i;
+				optionalRadio1.type = "radio";
+				optionalRadio1.value = "yes";
+				paramTD2.appendChild(optionalRadio1);
+
+				var optionalRadio1Span = document.createElement("span");
+				var optionalRadio1TextY = document.createTextNode("Yes");
+				optionalRadio1Span.appendChild(optionalRadio1TextY);
+				paramTD2.appendChild(optionalRadio1Span);
+
+				var optionalRadio2 = document.createElement("input");
+				optionalRadio2.checked = true;
+				optionalRadio2.id = "s3-optional-false" + i;
+				optionalRadio2.name = "s3-optional-radio" + i;
+				optionalRadio2.type = "radio";
+				optionalRadio2.value = "false";
+				paramTD2.appendChild(optionalRadio2);
+
+				var optionalRadio2Span = document.createElement("span");
+				var optionalRadio2TextN = document.createTextNode("No");
+				optionalRadio2Span.appendChild(optionalRadio2TextN);
+				paramTD2.appendChild(optionalRadio2Span);
+
+				var paramTD3 = document.createElement("td");
+				paramRow.appendChild(paramTD3);
+
+				var defaultInput = document.createElement("input");
+				defaultInput.id = "s3-default" + i;
+				defaultInput.size = "15";
+				defaultInput.maxLength = "40";
+				paramTD3.appendChild(defaultInput);
+
+				var paramTD4 = document.createElement("td");
+				paramRow.appendChild(paramTD4);
+
+				if (i == wsParameters.length - 1) {
+					paramTD4.appendChild(okButton);
+				}
+			}
+
+			// hide or display widgets of other steps
+			document.getElementById("step3").style.display = "block";
+			document.getElementById("step4").style.display = "none";
+			document.getElementById("step5").style.display = "none";
+			document.getElementById("step6").style.display = "none";
+
+			document.getElementById("menue-step3").style.fontWeight = "bold";
+			document.getElementById("menue-step4").style.fontWeight = "normal";
+			document.getElementById("menue-step5").style.fontWeight = "normal";
+			document.getElementById("menue-step6").style.fontWeight = "normal";
+			document.getElementById("step2-help").style.display = "none";
+			document.getElementById("step4-help").style.display = "none";
+			document.getElementById("step5-help").style.display = "none";
+			document.getElementById("step6-help").style.display = "none";
+			document.getElementById("step3-help").style.display = "block";
+			document.getElementById("step2-img").style.visibility = "hidden";
+			document.getElementById("step4-img").style.visibility = "hidden";
+			document.getElementById("step5-img").style.visibility = "hidden";
+			document.getElementById("step6-img").style.visibility = "hidden";
+			document.getElementById("step3-img").style.visibility = "visible";
+		}
 	},
 
 	/**
@@ -220,107 +299,132 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep3CallBack : function(request) {
-		// clear widgets of step 4
-		var okButton = document.getElementById("step4-ok").cloneNode(true);
-		document.getElementById("step4-ok").id = "old-step4-ok";
-		document.getElementById("old-step4-ok").parentNode.removeChild(document
-				.getElementById("old-step4-ok"));
-
-		var tempHead = document.getElementById("step4-results").childNodes[0].childNodes[0]
-				.cloneNode(true);
-		var tempTable = document.getElementById("step4-results").childNodes[0]
-				.cloneNode(false);
-		document.getElementById("step4-results").removeChild(
-				document.getElementById("step4-results").childNodes[0]);
-		document.getElementById("step4-results").appendChild(tempTable);
-		document.getElementById("step4-results").childNodes[0]
-				.appendChild(tempHead);
-
-		// fill the widgets of step4 with content
 		var wsResults = request.responseText.split(";");
-		for (i = 0; i < wsResults.length; i++) {
-			var resultRow = document.createElement("tr");
+		if (wsResults[0] != "todo:handle exceptions") {
+			document.getElementById("errors").style.display = "block";
+			document.getElementById("step3-error").style.display = "block";
+			document.getElementById("step4-error").style.display = "none";
+			document.getElementById("step5-error").style.display = "none";
+			document.getElementById("step6-error").style.display = "none";
+
+			document.getElementById("step3").style.display = "block";
+			document.getElementById("step4").style.display = "none";
+			document.getElementById("step5").style.display = "none";
+			document.getElementById("step6").style.display = "none";
+
+			document.getElementById("step3-help").style.display = "block";
+			document.getElementById("step4-help").style.display = "none";
+			document.getElementById("step5-help").style.display = "none";
+			document.getElementById("step6-help").style.display = "none";
+
+			document.getElementById("step3-img").style.visibility = "visible";
+			document.getElementById("step4-img").style.visibility = "hidden";
+			document.getElementById("step5-img").style.visibility = "hidden";
+			document.getElementById("step6-img").style.visibility = "hidden";
+		} else {
+			wsResults.shift();
+			// clear widgets of step 4
+			var okButton = document.getElementById("step4-ok").cloneNode(true);
+			document.getElementById("step4-ok").id = "old-step4-ok";
+			document.getElementById("old-step4-ok").parentNode
+					.removeChild(document.getElementById("old-step4-ok"));
+
+			var tempHead = document.getElementById("step4-results").childNodes[0].childNodes[0]
+					.cloneNode(true);
+			var tempTable = document.getElementById("step4-results").childNodes[0]
+					.cloneNode(false);
+			document.getElementById("step4-results").removeChild(
+					document.getElementById("step4-results").childNodes[0]);
+			document.getElementById("step4-results").appendChild(tempTable);
 			document.getElementById("step4-results").childNodes[0]
-					.appendChild(resultRow);
+					.appendChild(tempHead);
 
-			var resultTD0 = document.createElement("td");
-			resultRow.appendChild(resultTD0);
+			// fill the widgets of step4 with content
 
-			var resultTD1 = document.createElement("td");
-			resultRow.appendChild(resultTD1);
+			for (i = 0; i < wsResults.length; i++) {
+				var resultRow = document.createElement("tr");
+				document.getElementById("step4-results").childNodes[0]
+						.appendChild(resultRow);
 
-			var resultPath = document.createElement("span");
-			var arraySteps = wsResults[i].split("[");
-			var ppText = "";
-			for ( var k = 0; k < arraySteps.length; k++) {
-				var paramPathText;
-				if (k == 0 && arraySteps.length > 1) {
-					var addButton = document.createElement("span");
-					addButton.className = "OuterLeftIndent";
-					addButton.style.cursor = "pointer";
-					var addButtonText = document.createTextNode("+");
-					addButton.appendChild(addButtonText);
-					var addButtonOnClick = document.createAttribute("onclick");
-					addButtonOnClick.value = "webServiceSpecial.addResultPart("
-							+ i + ")";
-					addButton.setAttributeNode(addButtonOnClick);
-					resultTD0.appendChild(addButton);
-				} else {
-					var spacer = document.createElement("span");
-					spacer.className = "OuterLeftIndent";
-					var spacerText = document.createTextNode("");
-					spacer.appendChild(spacerText);
-					resultTD0.appendChild(spacer);
+				var resultTD0 = document.createElement("td");
+				resultRow.appendChild(resultTD0);
+
+				var resultTD1 = document.createElement("td");
+				resultRow.appendChild(resultTD1);
+
+				var resultPath = document.createElement("span");
+				var arraySteps = wsResults[i].split("[");
+				var ppText = "";
+				for ( var k = 0; k < arraySteps.length; k++) {
+					var paramPathText;
+					if (k == 0 && arraySteps.length > 1) {
+						var addButton = document.createElement("span");
+						addButton.className = "OuterLeftIndent";
+						addButton.style.cursor = "pointer";
+						var addButtonText = document.createTextNode("+");
+						addButton.appendChild(addButtonText);
+						var addButtonOnClick = document
+								.createAttribute("onclick");
+						addButtonOnClick.value = "webServiceSpecial.addResultPart("
+								+ i + ")";
+						addButton.setAttributeNode(addButtonOnClick);
+						resultTD0.appendChild(addButton);
+					} else {
+						var spacer = document.createElement("span");
+						spacer.className = "OuterLeftIndent";
+						var spacerText = document.createTextNode("");
+						spacer.appendChild(spacerText);
+						resultTD0.appendChild(spacer);
+					}
+
+					if (k != arraySteps.length - 1) {
+
+						paramPathText = document.createTextNode(arraySteps[k]
+								+ "[");
+
+						resultPath.appendChild(paramPathText);
+
+						var pathIndexInput = document.createElement("input");
+						pathIndexInput.type = "text";
+						pathIndexInput.size = "1";
+						pathIndexInput.maxLength = "10";
+						pathIndexInput.value = "";
+						resultPath.appendChild(pathIndexInput);
+					} else {
+						paramPathText = document.createTextNode(arraySteps[k]);
+						resultPath.appendChild(paramPathText);
+					}
+
 				}
 
-				if (k != arraySteps.length - 1) {
+				resultPath.id = "s4-path" + i;
+				resultTD1.appendChild(resultPath);
 
-					paramPathText = document
-							.createTextNode(arraySteps[k] + "[");
+				var resultTD2 = document.createElement("td");
+				resultRow.appendChild(resultTD2);
 
-					resultPath.appendChild(paramPathText);
+				var aliasInput = document.createElement("input");
+				aliasInput.id = "s4-alias" + i;
+				aliasInput.size = "15";
+				aliasInput.maxLength = "40";
+				resultTD2.appendChild(aliasInput);
 
-					var pathIndexInput = document.createElement("input");
-					pathIndexInput.type = "text";
-					pathIndexInput.size = "1";
-					pathIndexInput.maxLength = "10";
-					pathIndexInput.value = "";
-					resultPath.appendChild(pathIndexInput);
-				} else {
-					paramPathText = document.createTextNode(arraySteps[k]);
-					resultPath.appendChild(paramPathText);
+				var resultTD3 = document.createElement("td");
+				resultRow.appendChild(resultTD3);
+
+				if (i == wsResults.length - 1) {
+					resultTD3.appendChild(okButton);
 				}
-
 			}
+			// hide or display widgets of other steps
+			document.getElementById("step4").style.display = "block";
 
-			resultPath.id = "s4-path" + i;
-			resultTD1.appendChild(resultPath);
-
-			var resultTD2 = document.createElement("td");
-			resultRow.appendChild(resultTD2);
-
-			var aliasInput = document.createElement("input");
-			aliasInput.id = "s4-alias" + i;
-			aliasInput.size = "15";
-			aliasInput.maxLength = "40";
-			resultTD2.appendChild(aliasInput);
-
-			var resultTD3 = document.createElement("td");
-			resultRow.appendChild(resultTD3);
-
-			if (i == wsResults.length - 1) {
-				resultTD3.appendChild(okButton);
-			}
+			document.getElementById("menue-step4").style.fontWeight = "bold";
+			document.getElementById("step3-help").style.display = "none";
+			document.getElementById("step4-help").style.display = "block";
+			document.getElementById("step3-img").style.visibility = "hidden";
+			document.getElementById("step4-img").style.visibility = "visible";
 		}
-		// hide or display widgets of other steps
-		document.getElementById("step4").style.display = "block";
-
-		document.getElementById("menue-step4").style.fontWeight = "bold";
-		document.getElementById("step3-help").style.display = "none";
-		document.getElementById("step4-help").style.display = "block";
-		document.getElementById("step3-img").style.visibility = "hidden";
-		document.getElementById("step4-img").style.visibility = "visible";
-
 	},
 
 	/**
@@ -355,12 +459,12 @@ DefineWebServiceSpecial.prototype = {
 		var result = "<WebService>\n";
 
 		var uri = document.getElementById("step1-uri").value;
-		result += "<uri name=\"" + uri + "\" />";
+		result += "<uri name=\"" + uri + "\" />\n";
 
-		result += "<protocol>SOAP</protocol>";
+		result += "<protocol>SOAP</protocol>\n";
 
 		var method = document.getElementById("step2-methods").value;
-		result += "<method name=\"" + method + "\" />";
+		result += "<method name=\"" + method + "\" />\n";
 
 		for ( var i = 0; i < document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1; i++) {
 			result += "<parameter name=\""
@@ -368,35 +472,54 @@ DefineWebServiceSpecial.prototype = {
 			var optional = document.getElementById("s3-optional-true" + i).checked;
 			result += " optional=\"" + optional + "\" ";
 			if (document.getElementById("s3-default" + i).value != "") {
-				result += " defaultValue=\""
-						+ document.getElementById("s3-default" + i).value
-						+ "\" ";
+				if (document.getElementById("s3-default" + i).value != "") {
+					result += " defaultValue=\""
+							+ document.getElementById("s3-default" + i).value
+							+ "\" ";
+				}
 			}
 			var path = "";
-			for ( var k = 0; k < document.getElementById("step3-parameters").childNodes[0].childNodes[i].childNodes[0].firstChild.childNodes.length; k += 2) {
-				var pathStep = document.getElementById("step3-parameters").childNodes[0].childNodes[i].childNodes[0].firstChild.childNodes[k].nodeValue;
-				if (k == document.getElementById("step3-parameters").childNodes[0].childNodes[i].childNodes[0].firstChild.childNodes.length - 1) {
-					pathStep = pathStep
-							.substr(0, pathStep.lastIndexOf("(") - 1);
+			for ( var k = 0; k < document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length; k += 2) {
+				var pathStep = document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].nodeValue;
+				if (k == document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length - 1) {
+					if (pathStep.lastIndexOf("(") > 0) {
+						pathStep = pathStep.substr(0,
+								pathStep.lastIndexOf("(") - 1);
+					}
 				}
 				path += pathStep;
 			}
-			result += " path=\"" + path + "\" />";
+			result += " path=\"" + path + "\" />\n";
 		}
 
-		result += "<result name=\"result\" >";
+		result += "<result name=\"result\" >\n";
 
 		var results = document.getElementById("step4-results").childNodes[0].childNodes;
 		for (i = 0; i < results.length - 1; i++) {
 			result += "<part name=\""
 					+ document.getElementById("s4-alias" + i).value + "\" ";
-			result += " path=\"" + "\" />";
-		}
-		result += "</result>";
 
-		result += "<displayPolicy>"
-		if (document.getElementById("step4-display-once").checked == true) {
-			result += "<once/>";
+			var rPath = "";
+			for (k = 0; k < document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length; k += 2) {
+				var rPathStep = document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k].nodeValue;
+				if (k > 0) {
+					rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value;
+				}
+				if (k == document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length - 1) {
+					rPathStep = rPathStep.substr(0,
+							rPathStep.lastIndexOf("(") - 1);
+				}
+				rPath += rPathStep;
+			}
+
+			result += " path=\"" + rPath + "\" />\n";
+
+		}
+		result += "</result>\n";
+
+		result += "<displayPolicy>\n"
+		if (document.getElementById("step5-display-once").checked == true) {
+			result += "<once/>\n";
 		} else {
 			result += "<maxAge value=\"";
 			var minutes = 0;
@@ -404,31 +527,113 @@ DefineWebServiceSpecial.prototype = {
 			minutes += document.getElementById("step5-display-hours").value * 60;
 			minutes += document.getElementById("step5-display-minutes").value * 1;
 			result += minutes;
-			result += "\"></maxAge>";
+			result += "\"></maxAge>\n";
 		}
-		result += "</displayPolicy>"
+		result += "</displayPolicy>\n"
 
-		result += "<queryPolicy>"
-		if (document.getElementById("step4-query-once").checked == true) {
-			result += "<once/>";
+		result += "<queryPolicy>\n"
+		if (document.getElementById("step5-query-once").checked == true) {
+			result += "<once/>\n";
 		} else {
 			result += "<maxAge value=\"";
 			var minutes = 0;
 			minutes += document.getElementById("step5-query-days").value * 60 * 24;
 			minutes += document.getElementById("step5-query-hours").value * 60;
 			minutes += document.getElementById("step5-query-minutes").value * 1;
-			result += "\"></maxAge>";
+			result += "\"></maxAge>\n";
 		}
-		result += "</queryPolicy>"
-
+		var delay = document.getElementById("step5-delay").value;
+		if (delay.length == 0) {
+			delay = 0;
+		}
+		result += "<delay value=\"" + delay + "\"/>\n";
+		result += "</queryPolicy>\n"
+		result += "<spanOfLife value=\""+ document.getElementById("step5-spanoflife").value*1;
+		if(document.getElementById("step5-expires-yes").checked){
+			result += "\" expiresAfterUpdate=\"true\" />\n";
+		} else {
+			result += "\" expiresAfterUpdate=\"false\" />\n";
+		}
 		result += "</WebService>";
+		this.wwsd = result;
+		var wsName = document.getElementById("step6-name").value;
+		sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
+				this.wwsd, "" ], this.processStep6CallBack.bind(this));
 
-		sajax_do_call("smwf_om_EditArticle", [ "webservice:ws6", result, "" ],
-				this.processStep6CallBack.bind(this));
+	},
+	processStep6CallBack : function(request) {
+		var wsName = document.getElementById("step6-name").value;
+		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
+				this.processStep6CallBack2.bind(this));
 	},
 
-	processStep6CallBack : function(request) {
+	processStep6CallBack2 : function(request) {
 		alert(request.responseText);
+		var wsName = document.getElementById("step6-name").value;
+		sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
+				this.processStep6CallBack3.bind(this));
+	},
+
+	processStep6CallBack3 : function(request) {
+		var wsNameText = document.createTextNode(document
+				.getElementById("step6-name").value);
+		document.getElementById("step7-name").appendChild(wsNameText);
+		var rowDiv = document.createElement("div");
+		var rowText = document.createTextNode("{{#ws: "
+				+ document.getElementById("step6-name").value);
+		rowDiv.appendChild(rowText);
+		document.getElementById("step7-container").appendChild(rowDiv);
+
+		for ( var i = 0; i < document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1; i++) {
+			rowDiv = document.createElement("div");
+			rowDiv.className = "OuterLeftIndent";
+			rowText = document.createTextNode("| "
+					+ document.getElementById("s3-alias" + i).value
+					+ " [Please enter a value here]");
+			rowDiv.appendChild(rowText);
+			document.getElementById("step7-container").appendChild(rowDiv);
+		}
+
+		var results = document.getElementById("step4-results").childNodes[0].childNodes;
+		for (i = 0; i < results.length - 1; i++) {
+			rowDiv = document.createElement("div");
+			rowDiv.className = "OuterLeftIndent";
+			rowText = document.createTextNode("| ?result."
+					+ document.getElementById("s4-alias" + i).value);
+			rowDiv.appendChild(rowText);
+			document.getElementById("step7-container").appendChild(rowDiv);
+		}
+
+		rowDiv = document.createElement("div");
+		rowText = document.createTextNode("}}");
+		rowDiv.appendChild(rowText);
+		document.getElementById("step7-container").appendChild(rowDiv);
+
+		document.getElementById("step7").style.display = "block";
+		document.getElementById("step1").style.display = "none";
+		document.getElementById("step2").style.display = "none";
+		document.getElementById("step3").style.display = "none";
+		document.getElementById("step4").style.display = "none";
+		document.getElementById("step5").style.display = "none";
+		document.getElementById("step6").style.display = "none";
+		document.getElementById("step6-help").style.display = "none";
+		document.getElementById("menue").style.display = "none";
+		document.getElementById("help").style.display = "none";
+	},
+
+	processStep7 : function(request) {
+		document.getElementById("step1-img").style.visibility = "visible";
+		document.getElementById("step1-help").style.display = "block";
+		document.getElementById("step7").style.display = "none";
+		document.getElementById("menue").style.display = "block";
+		document.getElementById("menue-step2").style.fontWeight = "normal";
+		document.getElementById("menue-step3").style.fontWeight = "normal";
+		document.getElementById("menue-step4").style.fontWeight = "normal";
+		document.getElementById("menue-step5").style.fontWeight = "normal";
+		document.getElementById("menue-step6").style.fontWeight = "normal";
+		document.getElementById("help").style.display = "block";
+		document.getElementById("step1").style.display = "block";
+		document.getElementById("step1-uri").Value = "";
 	},
 
 	generateParameterAliases : function() {
@@ -437,17 +642,18 @@ DefineWebServiceSpecial.prototype = {
 		var aliases = new Array();
 
 		for (i = 0; i < paramCount; i++) {
-			var alias = document.getElementById("s3-alias"+i).value;
+			var alias = document.getElementById("s3-alias" + i).value;
 			if (alias.length == 0) {
 				alias = document.getElementById("s3-path" + i).childNodes[document
 						.getElementById("s3-path" + i).childNodes.length - 1].nodeValue;
-
 				var openBracketPos = alias.lastIndexOf("(");
-				alias = alias.substr(0, openBracketPos - 1);
+				if (openBracketPos > 0) {
+					alias = alias.substr(0, openBracketPos - 1);
+				}
 				var dotPos = alias.lastIndexOf(".");
 				alias = alias.substr(dotPos + 1);
 			}
-			
+
 			for ( var k = 0; k < aliases.length; k++) {
 				var endPosA = alias.length;
 				if (alias.lastIndexOf("-") != -1) {
@@ -489,7 +695,7 @@ DefineWebServiceSpecial.prototype = {
 
 		var aliases = new Array();
 
-		for (i = 0; i < resultsCount-1; i++) {
+		for (i = 0; i < resultsCount - 1; i++) {
 			var alias = document.getElementById("s4-alias" + i).value;
 			if (alias.length == 0) {
 				alias = document.getElementById("s4-path" + i).childNodes[document
@@ -501,6 +707,9 @@ DefineWebServiceSpecial.prototype = {
 			}
 			var dotPos = alias.lastIndexOf(".");
 			alias = alias.substr(dotPos + 1);
+			if (alias.length == 0) {
+				alias = "result";
+			}
 			for ( var k = 0; k < aliases.length; k++) {
 				var endPosA = alias.length;
 				if (alias.lastIndexOf("-") != -1) {

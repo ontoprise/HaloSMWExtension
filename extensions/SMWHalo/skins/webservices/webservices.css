@@ -9,8 +9,22 @@
 	cursor: pointer;
 }
 
+.Marker{
+	padding-right: 15px;
+	cursor: pointer;
+}
+
 .HeadlineDelimiter{
 	padding-left: 10px;
 	padding-right: 10px;	
-} 
+}
+
+.StepDiv{
+	padding-bottom: 25px;
+}
+
+.HelpDiv{
+	padding-top: 75px;
+}
+
 
