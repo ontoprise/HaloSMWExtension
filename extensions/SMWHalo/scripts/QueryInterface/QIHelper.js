@@ -582,12 +582,12 @@ adaptDialogueToProperty:function(request){
 				$('dialoguecontent').rows[3].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
 				$('dialoguecontent').rows[3].cells[4].className = "subquerycell";
 				$('usesub').checked = oldcheck;
-				this.activeInputs = 3;
+				this.activeInputs = 4;
 			}
 			else { //no checkbox for other types
 				$('dialoguecontent').rows[3].cells[4].innerHTML = ""
 				$('dialoguecontent').rows[3].cells[4].className = "";
-				this.activeInputs = 3;
+				this.activeInputs = 4;
 			}
 			if(possibleValues.length > 0){ //enumeration
 				this.propIsEnum = true;
@@ -605,7 +605,7 @@ adaptDialogueToProperty:function(request){
 		}
 		else {
 		// properties with arity >2: no conjunction, no subqueries
-			this.activeInputs = 3;
+			this.activeInputs = 4;
 			$('dialoguecontent').rows[3].cells[3].innerHTML = "";
 			$('dialoguecontent').rows[3].cells[4].innerHTML = "";
 			$('dialoguecontent').rows[3].cells[4].className = "";
