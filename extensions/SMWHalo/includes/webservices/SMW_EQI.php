@@ -13,7 +13,7 @@ function query($queryString, $format = "xml") {
   require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
   require_once "$mediaWikiLocation/SMWHalo/includes/SMW_QP_XML.php";
   
-  global $smwgUseTripleStore;
+  global $smwgSPARQLEndpoint;
   $eqi = new ExternalQueryInterface();
   // use heuristic to optimize parsing order
   if (stripos($queryString, "SELECT") !== false) {
@@ -30,7 +30,7 @@ function query($queryString, $format = "xml") {
     $parser = new SparqlParser();
     try {
         $query = $parser->parse($queryString);
-        if (isset($smwgUseTripleStore)) {
+        if (isset($smwgSPARQLEndpoint)) {
             return $eqi->answerSPARQL($queryString);
         } else {
             // try to convert to ASK
@@ -103,8 +103,17 @@ class ExternalQueryInterface {
      * @return SPARQL XML string
      */
     function answerSPARQL($queryString) {
-        //TODO: ask triple store
-        return "Answer SPARQL";
+    	global $wgServer, $wgScript;
+        $client = new SoapClient("$wgServer$wgScript?action=get_sparql");
+                
+        try {
+             global $smwgNamespace;
+             $response = $client->query($queryString, $smwgNamespace);
+             return $response;
+
+         } catch(Exception $e) {
+             return ""; // What to return here?
+         }
     }
     
     /**
