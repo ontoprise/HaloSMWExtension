@@ -11,7 +11,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 	public function __construct() {
 		parent::__construct('WebServicerepository');
 	}
-	//todo: describe
+	
 	public function execute() {
 		global $wgRequest, $wgOut;
 
@@ -33,8 +33,8 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
 			
 			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
-			$oldestUpdate = $cacheResults[0]["lastUpdate"];			
-			$latestUpdate = $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"];
+			$oldestUpdate = wfTimestamp(TS_DB, $cacheResults[0]["lastUpdate"]);			
+			$latestUpdate = wfTimestamp(TS_DB, $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"]);
 			$html .= "<td>".$oldestUpdate." - ".$latestUpdate."</td>";
 			
 			$html .= "<td><button type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache(".$ws->getArticleID().")\">Update</button></td>";
