@@ -380,13 +380,13 @@ class WebService {
 
 			// do the call
 			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
-			
+				
 			if(is_string($response)){
 				if(substr($response, 0, 11) == "_ws-error: "){
 					return $response;
 				}
 			}
-			
+				
 			WSStorage::getDatabase()->storeCacheEntry(
 			$this->mArticleID,
 			$parameterSetId,
@@ -443,7 +443,7 @@ class WebService {
 		foreach($resultParts as $resultPart){
 
 			$tempObject[] = $response;
-				
+
 			$rName = "".$this->mParsedResult["name"];
 			foreach($this->mParsedResult->children() as $child){
 				if($rName.".".$child["name"] == $resultPart){
@@ -764,9 +764,11 @@ class WebService {
 					}
 					$path = (string) $part->attributes()->path;
 					if ($path == null) {
-						// result part has no path
-						$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
-						continue;
+						// this throws an error also if the result path is an empty string
+						// which is ok
+						//						// result part has no path
+						//						$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
+						//						continue;
 					}
 					if (array_key_exists($pName, $pNames)) {
 						if ($pNames[$pName]++ == 1) {
