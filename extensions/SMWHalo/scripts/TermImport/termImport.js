@@ -289,30 +289,28 @@ TermImportPage.prototype = {
 					}	
 				}	
 			}
-				property_response += "</table>";
-		}
-		catch(e){
-			
-		}
-		var article_response = "The following articles will be generated in the wiki:" +
-					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";		
-		try {
+			property_response += "</table>";
+		
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			article_response += '<table id=\"article_table\" class=\'mytable\'>';
+			var article_response = '<table id=\"article_table\" class=\'mytable\'>';
+			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
 				var term = terms[i]; 
 				if(term.nodeType == 1) {
 					//find the name Obj of the 
-					var article_name = term.firstChild.nodeValue;
-					if ( article_name ){
+					if ( term.firstChild ){
+						var article_name = term.firstChild.nodeValue;
 						// add article name to the table
 						article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
+						article_count++;
 					}	
 				}	
 			}
-			article_response += "</table>";
+			article_response = "The following " + article_count + " articles will be generated in the wiki:" +
+					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>"
+					+ article_response + "</table>";
 			
 		}
 		catch(e){
@@ -512,25 +510,30 @@ TermImportPage.prototype = {
 		var result = request.responseText;
 		var list = GeneralXMLTools.createDocumentFromString(result);
 		
-		var article_response = "The following articles will be generated in the wiki:" +
-					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";		
+				
 		try {
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			article_response += '<table id=\"article_table\" class=\'mytable\'>';
+			var article_response = '<table id=\"article_table\" class=\'mytable\'>';
+			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
 				var term = terms[i]; 
 				if(term.nodeType == 1) {
 					//find the name Obj of the 
-					var article_name = term.firstChild.nodeValue;
-					if ( article_name ){
-						// add article name to the table
-						article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
+					if ( term.firstChild ){
+						var article_name = term.firstChild.nodeValue;
+						if ( article_name ){
+							// add article name to the table
+							article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
+							article_count++;
+						}
 					}	
 				}	
 			}
-			article_response += "</table>";
+			article_response = "The following " + article_count + " articles will be generated in the wiki:" +
+					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>" + 
+					article_response + "</table>";
 			
 		}
 		catch(e){
@@ -607,10 +610,24 @@ TermImportPage.prototype = {
 		//redirect to GardeningPage???
 				
 	},
-	importItNowCallback: function(){
+	importItNowCallback: function(tlID, dalID, request){
 		var text = 'succesfully started this fucking bot!!!';
 		
-		//$('extras-bottom').innerHTML = text;
+		var message= '';
+		try {
+			var result = request.responseText;
+			var list = GeneralXMLTools.createDocumentFromString(result);
+		
+
+			message = list.getElementsByTagName("message")[0].firstChild.nodeValue;
+		}
+		catch(e){
+			
+		}
+		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
+		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details';
+		
+		$('extras-bottom').innerHTML = message;
 	}
 }
  // ----- Classes -----------
