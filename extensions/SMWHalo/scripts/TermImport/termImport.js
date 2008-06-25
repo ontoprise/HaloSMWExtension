@@ -226,6 +226,7 @@ TermImportPage.prototype = {
 					" onClick=\"termImportPage.getTopContainer(event, this)\">edit</a></td></tr></table>";
 		}
 		catch(e) {
+			//TODO: errorhandling
 		}
 		
 		$('summary').style.display = "inline";
@@ -248,48 +249,51 @@ TermImportPage.prototype = {
 		var result = request.responseText;
 		var list = GeneralXMLTools.createDocumentFromString(result);
 		
-		
-		//why is ImportSet in Uppercases???
-		var importsets = list.getElementsByTagName("IMPORTSETS")[0].childNodes;
-		var import_response='';
-		
-		for (var i = 0, n = importsets.length; i < n; i++) {
-			// get one of the importsets
-			var importset = importsets[i]; 
-			if(importset.nodeType == 1) {
-				//find the name Obj of the 
-				var import_name_obj = importset.getElementsByTagName('NAME');
-				if ( import_name_obj ){
-					var import_name= import_name_obj[0].firstChild.nodeValue;
-					// add importset item to the list
-					import_response += "<option value='" + import_name + "'>" + import_name + "</option>";
+		try {
+			//why is ImportSet in Uppercases???
+			var importsets = list.getElementsByTagName("IMPORTSETS")[0].childNodes;
+			var import_response='';
+			
+			for (var i = 0, n = importsets.length; i < n; i++) {
+				// get one of the importsets
+				var importset = importsets[i]; 
+				if(importset.nodeType == 1) {
+					//find the name Obj of the 
+					var import_name_obj = importset.getElementsByTagName('NAME');
+					if ( import_name_obj ){
+						var import_name= import_name_obj[0].firstChild.nodeValue;
+						// add importset item to the list
+						import_response += "<option value='" + import_name + "'>" + import_name + "</option>";
+					}	
 				}	
-			}	
-		}
-		//show properties on the right side
-		var properties = list.getElementsByTagName("Properties")[0].childNodes;
-		var property_response = "The following attributes can be extracted from data source defined:";
-		
-		/*		"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-											"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";*/
-											
-		property_response += '<table id=\"attrib_table\" class=\'mytable\'>';
-		
-		for (var i = 0, n = properties.length; i < n; i++) {
-			// get one of the importsets
-			var property = properties[i]; 
-			if(property.nodeType == 1) {
-				//find the name Obj of the 
-				var property_name_obj = property.getElementsByTagName('name');
-				if ( property_name_obj ){
-					var property_name = property_name_obj[0].firstChild.nodeValue;
-					// add importset item to the list
-					property_response += "<tr><td class=\"mytd\">" + property_name + "</td></tr>";
+			}
+			//show properties on the right side
+			var properties = list.getElementsByTagName("Properties")[0].childNodes;
+			var property_response = "The following attributes can be extracted from data source defined:";
+			
+			/*		"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+												"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";*/
+												
+			property_response += '<table id=\"attrib_table\" class=\'mytable\'>';
+			
+			for (var i = 0, n = properties.length; i < n; i++) {
+				// get one of the importsets
+				var property = properties[i]; 
+				if(property.nodeType == 1) {
+					//find the name Obj of the 
+					var property_name_obj = property.getElementsByTagName('name');
+					if ( property_name_obj ){
+						var property_name = property_name_obj[0].firstChild.nodeValue;
+						// add importset item to the list
+						property_response += "<tr><td class=\"mytd\">" + property_name + "</td></tr>";
+					}	
 				}	
-			}	
+			}
+				property_response += "</table>";
 		}
-		property_response += "</table>";
-
+		catch(e){
+			
+		}
 		var article_response = "The following articles will be generated in the wiki:" +
 					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
 					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";		
@@ -349,17 +353,21 @@ TermImportPage.prototype = {
 	 * adds the new entry from the policy field to the list
 	 */
 	getPolicy: function(e, node){
-		
-		//var policy_selects = document.getElementsByName('policy-select');		
-		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
-		var newpolicy = document.getElementById('policy-input-field').value;
-		var response = '';
-		for (var i = 0, n = policy_selects.length; i < n; i++) {
-			var policy_select = policy_selects[i];
-			//could be an empty string so that firstChild.nodeValue can't exist!
-			if (policy_select.firstChild) {
-				response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+		try {
+			//var policy_selects = document.getElementsByName('policy-select');		
+			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
+			var newpolicy = document.getElementById('policy-input-field').value;
+			var response = '';
+			for (var i = 0, n = policy_selects.length; i < n; i++) {
+				var policy_select = policy_selects[i];
+				//could be an empty string so that firstChild.nodeValue can't exist!
+				if (policy_select.firstChild) {
+					response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+				}
 			}
+		}
+		catch(e) {
+			
 		}
 		response += "<option name='policy-select'>" + newpolicy + "</option>";
 		if (Prototype.Browser.IE) {
@@ -376,16 +384,22 @@ TermImportPage.prototype = {
 	 * deletes the selected policy entries from the list
 	 */
 	deletePolicy: function(e, node) {
-		//this doesn't work in IE...
-		//var policy_selects = document.getElementsByName('policy-select');
-		//this works:
-		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
-		var response = '';
-		for (var i = 0, n = policy_selects.length; i < n; i++) {
-			var policy_select = policy_selects[i];
-			if(policy_select.selected == false) {
-				response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+		
+		try {
+			//this doesn't work in IE...
+			//var policy_selects = document.getElementsByName('policy-select');
+			//this works:
+			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
+			var response = '';
+			for (var i = 0, n = policy_selects.length; i < n; i++) {
+				var policy_select = policy_selects[i];
+				if(policy_select.selected == false) {
+					response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+				}
 			}
+		}
+		catch(e){
+			
 		}
 		//response += "<option name='policy-select'>" + newpolicy + "</option>";
 		if (Prototype.Browser.IE) {
@@ -442,50 +456,50 @@ TermImportPage.prototype = {
 					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 				}
 			}
+		
+			dataSource = "<DataSource>" + dataSource + "</DataSource>";
+		
+			//gets the selected import set 
+			var importSetName = document.getElementById('importset-input-field').value;
+		
+			//input policy
+			//this doesn't work in IE...
+			//var policy_selects = document.getElementsByName('policy-select');
+			//this works:	
+			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
+			
+			if (policy_selects.length > 0) {
+				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
+					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
+   		 			'<terms>'+"\n";
+    	
+   		 		for(var i = 0, n = policy_selects.length; i < n; i++) {
+    				inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
+    			}
+				inputPolicy +='<term></term>'+
+					'</terms>'+"\n"+
+					'<properties>'+"\n"+
+					'</properties>'+"\n"+
+					'	<property>articleName</property>'+"\n"+
+					'</InputPolicy>'+"\n";
+			}
+			else {
+				var inputPolicy = '';
+			}
+			//mapping policy
+			var mappingPage = document.getElementById('mapping-input-field').value;
+		
+			//conflict policy
+			if(document.getElementById('conflict-input-field').value == 'overwrite') {
+				var conflictPol = true;
+			}
+			else {
+				var conflictPol = false;
+			}
 		}
 		catch(e) {
 		}
-		dataSource = "<DataSource>" + dataSource + "</DataSource>";
-		
-		//gets the selected import set 
-		var importSetName = document.getElementById('importset-input-field').value;
-		
-		//input policy
-		//this doesn't work in IE...
-		//var policy_selects = document.getElementsByName('policy-select');
-		//this works:	
-		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
-		
-		if (policy_selects.length > 0) {
-			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-				'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-    			'<terms>'+"\n";
-    	
-    		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    			inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
-    		}
-			inputPolicy +='<term></term>'+
-				'</terms>'+"\n"+
-				'<properties>'+"\n"+
-				'</properties>'+"\n"+
-				'	<property>articleName</property>'+"\n"+
-				'</InputPolicy>'+"\n";
-		}
-		else {
-			var inputPolicy = '';
-		}
-		//mapping policy
-		var mappingPage = document.getElementById('mapping-input-field').value;
-		
-		//conflict policy
-		if(document.getElementById('conflict-input-field').value == 'overwrite') {
-			var conflictPol = true;
-		}
-		else {
-			var conflictPol = false;
-		}
-				
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 0], this.refreshPreviewCallback.bind(this, tlID, dalID));
+			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 0], this.refreshPreviewCallback.bind(this, tlID, dalID));
 	},
 	
 	refreshPreviewCallback: function(tlID, dalID, request){
@@ -545,51 +559,49 @@ TermImportPage.prototype = {
 					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 				}
 			}
+			dataSource = "<DataSource>" + dataSource + "</DataSource>";
+			
+			//gets the selected import set 
+			var importSetName = document.getElementById('importset-input-field').value;
+			
+			//input policy
+			//this doesn't work in IE...
+			//var policy_selects = document.getElementsByName('policy-select');
+			//this works:
+			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');	
+		
+			if (policy_selects.length > 0) {
+				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
+					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
+   		 			'<terms>'+"\n";
+    	
+    			for(var i = 0, n = policy_selects.length; i < n; i++) {
+    				inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
+    			}
+   	 			inputPolicy +='<term></term>'+
+   	 				'</terms>'+"\n"+
+   	 				'<properties>'+"\n"+
+   	 				'	<property>articleName</property>'+"\n"+
+   	 				'</properties>'+"\n"+
+					'</InputPolicy>'+"\n";
+			}
+			else {
+				var inputPolicy = '';
+			}
+			//mapping policy
+			var mappingPage = document.getElementById('mapping-input-field').value;
+			
+			//conflict policy
+			var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
+			if( conflict == 'overwrite') {
+				var conflictPol = true;
+			}
+			else {
+				var conflictPol = false;
+			}
 		}
 		catch(e) {
 		}
-		dataSource = "<DataSource>" + dataSource + "</DataSource>";
-		
-		//gets the selected import set 
-		var importSetName = document.getElementById('importset-input-field').value;
-		
-		//input policy
-		//this doesn't work in IE...
-		//var policy_selects = document.getElementsByName('policy-select');
-		//this works:
-		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');	
-		
-		if (policy_selects.length > 0) {
-			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-				'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-    			'<terms>'+"\n";
-    	
-    		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    			inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
-    		}
-   	 		inputPolicy +='<term></term>'+
-   	 			'</terms>'+"\n"+
-   	 			'<properties>'+"\n"+
-   	 			'	<property>articleName</property>'+"\n"+
-   	 			'</properties>'+"\n"+
-				'</InputPolicy>'+"\n";
-		}
-		else {
-			var inputPolicy = '';
-		}
-		//mapping policy
-		var mappingPage = document.getElementById('mapping-input-field').value;
-		
-		//conflict policy
-		var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
-		if( conflict == 'overwrite') {
-			var conflictPol = true;
-		}
-		else {
-			var conflictPol = false;
-		}
-		
-		//smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName, $givenInputPol, $mappingPage, $givenConflictPol = true, $runBot)
 		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, 'TestPage', conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));
 		
 		//redirect to GardeningPage???
