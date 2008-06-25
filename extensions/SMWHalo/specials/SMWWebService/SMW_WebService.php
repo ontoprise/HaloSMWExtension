@@ -360,8 +360,6 @@ class WebService {
 		//			return "need confirmation first";
 		//		}
 
-		//return array("da"=> " gib schon was aus");
-
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
@@ -380,13 +378,13 @@ class WebService {
 
 			// do the call
 			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
-				
+
 			if(is_string($response)){
 				if(substr($response, 0, 11) == "_ws-error: "){
 					return $response;
 				}
 			}
-				
+
 			WSStorage::getDatabase()->storeCacheEntry(
 			$this->mArticleID,
 			$parameterSetId,
@@ -398,47 +396,47 @@ class WebService {
 		//initialize array containing select paths and their value
 		$selects = array();
 
-		//		foreach($this->mParsedResult->children() as $child){
-		//			if ($child->getName() == 'select') {
-		//				$selects["".$child["object"]] = "".$child["value"];
-		//			}
-		//		}
-		//
-		//		// initialize array of paths and elements that are not selected in the result
-		//		$outselectedPaths = array();
-		//		$printO[] = array();
-		//		foreach($selects as $path => $value){
-		//			$pathSteps = explode(".", $path);
-		//			$tempObject[""] = $response;
-		//			for($i=0; $i < sizeof($pathSteps); $i++){
-		//				if($tempObject){
-		//					foreach($tempObject as $key => $temp){
-		//						if(is_array($temp)){
-		//							$index = 0;
-		//							foreach($temp as $t){
-		//								$newTempObject[$key.".".$index] = $t;
-		//								$index += 1;
-		//							}
-		//							$i -= 1;
-		//						} else {
-		//							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-		//							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
-		//							if($i == (sizeof($pathSteps)-1)){
-		//								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
-		//									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
-		//								} else {
-		//									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
-		//								}
-		//							}
-		//						}
-		//					}
-		//				}
-		//				$tempObject = $newTempObject;
-		//				$newTempObject = array();
-		//			}
-		//		}
+		foreach($this->mParsedResult->children() as $child){
+			if ($child->getName() == 'select') {
+				$selects["".$child["object"]] = "".$child["value"];
+			}
+		}
 
-		// get the requested part of the result
+		// initialize array of paths and elements that are not selected in the result
+		$outselectedPaths = array();
+		$printO[] = array();
+		foreach($selects as $path => $value){
+			$pathSteps = explode(".", $path);
+			$tempObject[""] = $response;
+			for($i=0; $i < sizeof($pathSteps); $i++){
+				if($tempObject){
+					foreach($tempObject as $key => $temp){
+						if(is_array($temp)){
+							$index = 0;
+							foreach($temp as $t){
+								$newTempObject[$key.".".$index] = $t;
+								$index += 1;
+							}
+							$i -= 1;
+						} else {
+							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
+							if($i == (sizeof($pathSteps)-1)){
+								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
+									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
+								} else {
+									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
+								}
+							}
+						}
+					}
+				}
+				$tempObject = $newTempObject;
+				$newTempObject = array();
+			}
+		}
+
+		//get the requested part of the result
 		$paths = array();
 		foreach($resultParts as $resultPart){
 
@@ -461,7 +459,9 @@ class WebService {
 			for($i=0; $i < sizeof($pathSteps); $i++){
 				$newTempObject = array();
 				if($tempObject){
+					$tempObjectCount = -1;
 					foreach($tempObject as $id => $temp){
+						$tempObjectCount += 1;
 						$falseCount = 0;
 						$trueCount = 0;
 						foreach($outselectedPaths as $k => $v){
@@ -485,7 +485,11 @@ class WebService {
 								$i -= 1;
 							} else {
 								$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-								$newTempObj = $temp->$niceStep;
+								if($niceStep == ""){
+									$newTempObj = $temp;
+								} else {
+									$newTempObj = $temp->$niceStep;
+								}
 								if(is_array($newTempObj) && (ctype_digit($this->getReturnPartBracketValue($pathSteps[$i])) == true)){
 									$newTempObj = $newTempObj[$this->getReturnPartBracketValue($pathSteps[$i])];
 								}
@@ -510,7 +514,7 @@ class WebService {
 	private function getPathSteps($path, $value){
 		$walkedParameters = explode(".", $path);
 		$temp = &$this->mCallParameters;
-
+		
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
 			if($this->getReturnPartBracketValue($walkedParameters[$i]) === false){
 				if(!$temp[$walkedParameters[$i]]){
@@ -529,6 +533,7 @@ class WebService {
 			}
 
 		}
+		
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
 	}
 
@@ -883,6 +888,14 @@ class WebService {
 			$flatParams[] = $name;
 			return $flatParams;
 		}
+
+		if (substr($type,0, 7) == "ArrayOf") {
+			if (!$this->mWSClient->isCustomType(substr($type,0, 7))) {
+				$flatParams[] = $name."[]";
+				return $flatParams;
+			}
+		}
+
 		$tp = $this->mWSClient->getTypeDefinition($type);
 		foreach ($tp as $var => $type) {
 			if(substr($type,0, 7) == "ArrayOf"){
@@ -1016,7 +1029,7 @@ class WebService {
 		while(strpos($name, "[", $strpos+1)){
 			$strpos = strpos($name, "[", $strpos+1);
 		}
-		if($strpos){
+		if($strpos !== -1){
 			return substr($name, 0, $strpos);
 		}
 		return $name;

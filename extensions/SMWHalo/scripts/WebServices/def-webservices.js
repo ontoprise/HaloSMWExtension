@@ -17,7 +17,6 @@ DefineWebServiceSpecial.prototype = {
 
 	processStep1CallBack : function(request) {
 		var wsMethods = request.responseText.split(";");
-
 		if (wsMethods[0] != "todo:handle exceptions") {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step1-error").style.display = "block";
@@ -114,13 +113,13 @@ DefineWebServiceSpecial.prototype = {
 	processStep2CallBack : function(request) {
 		var wsParameters = request.responseText.split(";");
 		var overflow = false;
-		
-		for(i=0; i < wsParameters.length; i++){
-			if(wsParameters[i].indexOf("##overflow##") > 0){
+
+		for (i = 0; i < wsParameters.length; i++) {
+			if (wsParameters[i].indexOf("##overflow##") > 0) {
 				overflow = true;
 			}
 		}
-		
+
 		if (wsParameters[0] != "todo:handle exceptions" || overflow) {
 			document.getElementById("step3").style.display = "none";
 			document.getElementById("step4").style.display = "none";
@@ -128,7 +127,7 @@ DefineWebServiceSpecial.prototype = {
 			document.getElementById("step6").style.display = "none";
 
 			document.getElementById("errors").style.display = "block";
-			if(overflow){
+			if (overflow) {
 				document.getElementById("step2b-error").style.display = "block";
 			} else {
 				document.getElementById("step2a-error").style.display = "block";
@@ -442,6 +441,20 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("step5-help").style.display = "block";
 		document.getElementById("step4-img").style.visibility = "hidden";
 		document.getElementById("step5-img").style.visibility = "visible";
+		
+		document.getElementById("step5-display-once").checked = true;
+		document.getElementById("step5-display-days").value = "";
+		document.getElementById("step5-display-hours").value = "";
+		document.getElementById("step5-display-minutes").value = "";
+		
+		document.getElementById("step5-query-once").checked = true;
+		document.getElementById("step5-query-days").value = "";
+		document.getElementById("step5-query-hours").value = "";
+		document.getElementById("step5-query-minutes").value = "";
+		document.getElementById("step5-delay").value = "";
+			
+		document.getElementById("step5-spanoflife").value = "";
+		document.getElementById("step5-expires-yes").checked = true;
 	},
 
 	processStep5 : function() {
@@ -453,131 +466,155 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("step6-help").style.display = "block";
 		document.getElementById("step5-img").style.visibility = "hidden";
 		document.getElementById("step6-img").style.visibility = "visible";
+		document.getElementById("step6-name").value = "";
 	},
 
 	processStep6 : function() {
-		var result = "<WebService>\n";
+		if (document.getElementById("step6-name").value.length > 0) {
+			document.getElementById("errors").style.display = "none";
+			document.getElementById("step6-error").style.display = "none";
+			var result = "<WebService>\n";
 
-		var uri = document.getElementById("step1-uri").value;
-		result += "<uri name=\"" + uri + "\" />\n";
+			var uri = document.getElementById("step1-uri").value;
+			result += "<uri name=\"" + uri + "\" />\n";
 
-		result += "<protocol>SOAP</protocol>\n";
+			result += "<protocol>SOAP</protocol>\n";
 
-		var method = document.getElementById("step2-methods").value;
-		result += "<method name=\"" + method + "\" />\n";
+			var method = document.getElementById("step2-methods").value;
+			result += "<method name=\"" + method + "\" />\n";
 
-		for ( var i = 0; i < document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1; i++) {
-			result += "<parameter name=\""
-					+ document.getElementById("s3-alias" + i).value + "\" ";
-			var optional = document.getElementById("s3-optional-true" + i).checked;
-			result += " optional=\"" + optional + "\" ";
-			if (document.getElementById("s3-default" + i).value != "") {
+			for ( var i = 0; i < document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1; i++) {
+				result += "<parameter name=\""
+						+ document.getElementById("s3-alias" + i).value + "\" ";
+				var optional = document.getElementById("s3-optional-true" + i).checked;
+				result += " optional=\"" + optional + "\" ";
 				if (document.getElementById("s3-default" + i).value != "") {
-					result += " defaultValue=\""
-							+ document.getElementById("s3-default" + i).value
-							+ "\" ";
-				}
-			}
-			var path = "";
-			for ( var k = 0; k < document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length; k += 2) {
-				var pathStep = document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].nodeValue;
-				if (k == document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length - 1) {
-					if (pathStep.lastIndexOf("(") > 0) {
-						pathStep = pathStep.substr(0,
-								pathStep.lastIndexOf("(") - 1);
+					if (document.getElementById("s3-default" + i).value != "") {
+						result += " defaultValue=\""
+								+ document.getElementById("s3-default" + i).value
+								+ "\" ";
 					}
 				}
-				path += pathStep;
-			}
-			result += " path=\"" + path + "\" />\n";
-		}
-
-		result += "<result name=\"result\" >\n";
-
-		var results = document.getElementById("step4-results").childNodes[0].childNodes;
-		for (i = 0; i < results.length - 1; i++) {
-			result += "<part name=\""
-					+ document.getElementById("s4-alias" + i).value + "\" ";
-
-			var rPath = "";
-			for (k = 0; k < document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length; k += 2) {
-				var rPathStep = document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k].nodeValue;
-				if (k > 0) {
-					rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value;
+				var path = "";
+				for ( var k = 0; k < document
+						.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length; k += 2) {
+					var pathStep = document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].nodeValue;
+					if (k == document.getElementById("step3-parameters").childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes.length - 1) {
+						if (pathStep.lastIndexOf("(") > 0) {
+							pathStep = pathStep.substr(0, pathStep
+									.lastIndexOf("(") - 1);
+						}
+					}
+					path += pathStep;
 				}
-				if (k == document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length - 1) {
-					rPathStep = rPathStep.substr(0,
-							rPathStep.lastIndexOf("(") - 1);
-				}
-				rPath += rPathStep;
+				result += " path=\"" + path + "\" />\n";
 			}
 
-			result += " path=\"" + rPath + "\" />\n";
+			result += "<result name=\"result\" >\n";
 
-		}
-		result += "</result>\n";
+			var results = document.getElementById("step4-results").childNodes[0].childNodes;
+			for (i = 0; i < results.length - 1; i++) {
+				result += "<part name=\""
+						+ document.getElementById("s4-alias" + i).value + "\" ";
 
-		result += "<displayPolicy>\n"
-		if (document.getElementById("step5-display-once").checked == true) {
-			result += "<once/>\n";
-		} else {
-			result += "<maxAge value=\"";
-			var minutes = 0;
-			minutes += document.getElementById("step5-display-days").value * 60 * 24;
-			minutes += document.getElementById("step5-display-hours").value * 60;
-			minutes += document.getElementById("step5-display-minutes").value * 1;
-			result += minutes;
-			result += "\"></maxAge>\n";
-		}
-		result += "</displayPolicy>\n"
+				var rPath = "";
+				for (k = 0; k < document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length; k += 2) {
+					var rPathStep = document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k].nodeValue;
+					if (k > 0) {
+						rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value;
+					}
+					if (k == document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length - 1) {
+						if (rPathStep.lastIndexOf("(") > 0) {
+							rPathStep = rPathStep.substr(0, rPathStep
+									.lastIndexOf("(") - 1);
+						}
+						
 
-		result += "<queryPolicy>\n"
-		if (document.getElementById("step5-query-once").checked == true) {
-			result += "<once/>\n";
+						// if(rPathStep == ""){
+						// rPathStep = "]";
+						//						}
+					}
+					
+					rPath += rPathStep;
+				}
+
+				result += " path=\"" + rPath + "\" />\n";
+
+			}
+			result += "</result>\n";
+
+			result += "<displayPolicy>\n"
+			if (document.getElementById("step5-display-once").checked == true) {
+				result += "<once/>\n";
+			} else {
+				result += "<maxAge value=\"";
+				var minutes = 0;
+				minutes += document.getElementById("step5-display-days").value * 60 * 24;
+				minutes += document.getElementById("step5-display-hours").value * 60;
+				minutes += document.getElementById("step5-display-minutes").value * 1;
+				result += minutes;
+				result += "\"></maxAge>\n";
+			}
+			result += "</displayPolicy>\n"
+
+			result += "<queryPolicy>\n"
+			if (document.getElementById("step5-query-once").checked == true) {
+				result += "<once/>\n";
+			} else {
+				result += "<maxAge value=\"";
+				var minutes = 0;
+				minutes += document.getElementById("step5-query-days").value * 60 * 24;
+				minutes += document.getElementById("step5-query-hours").value * 60;
+				minutes += document.getElementById("step5-query-minutes").value * 1;
+				result += "\"></maxAge>\n";
+			}
+			var delay = document.getElementById("step5-delay").value;
+			if (delay.length == 0) {
+				delay = 0;
+			}
+			result += "<delay value=\"" + delay + "\"/>\n";
+			result += "</queryPolicy>\n"
+			result += "<spanOfLife value=\""
+					+ document.getElementById("step5-spanoflife").value * 1;
+			if (document.getElementById("step5-expires-yes").checked) {
+				result += "\" expiresAfterUpdate=\"true\" />\n";
+			} else {
+				result += "\" expiresAfterUpdate=\"false\" />\n";
+			}
+			result += "</WebService>";
+			this.wwsd = result;
+			var wsName = document.getElementById("step6-name").value;
+			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
+					this.wwsd, "" ], this.processStep6CallBack.bind(this));
 		} else {
-			result += "<maxAge value=\"";
-			var minutes = 0;
-			minutes += document.getElementById("step5-query-days").value * 60 * 24;
-			minutes += document.getElementById("step5-query-hours").value * 60;
-			minutes += document.getElementById("step5-query-minutes").value * 1;
-			result += "\"></maxAge>\n";
+			document.getElementById("errors").style.display = "block";
+			document.getElementById("step6-error").style.display = "block";
 		}
-		var delay = document.getElementById("step5-delay").value;
-		if (delay.length == 0) {
-			delay = 0;
-		}
-		result += "<delay value=\"" + delay + "\"/>\n";
-		result += "</queryPolicy>\n"
-		result += "<spanOfLife value=\""+ document.getElementById("step5-spanoflife").value*1;
-		if(document.getElementById("step5-expires-yes").checked){
-			result += "\" expiresAfterUpdate=\"true\" />\n";
-		} else {
-			result += "\" expiresAfterUpdate=\"false\" />\n";
-		}
-		result += "</WebService>";
-		this.wwsd = result;
-		var wsName = document.getElementById("step6-name").value;
-		sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
-				this.wwsd, "" ], this.processStep6CallBack.bind(this));
 
 	},
 	processStep6CallBack : function(request) {
 		var wsName = document.getElementById("step6-name").value;
 		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
 				this.processStep6CallBack2.bind(this));
+
 	},
 
 	processStep6CallBack2 : function(request) {
-		alert(request.responseText);
 		var wsName = document.getElementById("step6-name").value;
 		sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
 				this.processStep6CallBack3.bind(this));
 	},
 
 	processStep6CallBack3 : function(request) {
+		var container = document.getElementById("step7-container").cloneNode(false);
+		document.getElementById("step7-container").id = "old-step7-container";
+		document.getElementById("old-step7-container").parentNode.insertBefore(container, document.getElementById("old-step7-container"));
+		document.getElementById("old-step7-container").parentNode.removeChild(document.getElementById("old-step7-container"));
+		
 		var wsNameText = document.createTextNode(document
 				.getElementById("step6-name").value);
 		document.getElementById("step7-name").appendChild(wsNameText);
+		
 		var rowDiv = document.createElement("div");
 		var rowText = document.createTextNode("{{#ws: "
 				+ document.getElementById("step6-name").value);
@@ -589,7 +626,7 @@ DefineWebServiceSpecial.prototype = {
 			rowDiv.className = "OuterLeftIndent";
 			rowText = document.createTextNode("| "
 					+ document.getElementById("s3-alias" + i).value
-					+ " [Please enter a value here]");
+					+ " = [Please enter a value here]");
 			rowDiv.appendChild(rowText);
 			document.getElementById("step7-container").appendChild(rowDiv);
 		}
@@ -646,6 +683,11 @@ DefineWebServiceSpecial.prototype = {
 			if (alias.length == 0) {
 				alias = document.getElementById("s3-path" + i).childNodes[document
 						.getElementById("s3-path" + i).childNodes.length - 1].nodeValue;
+				if (alias == "]") {
+					alias = document.getElementById("s3-path" + i).childNodes[document
+							.getElementById("s3-path" + i).childNodes.length - 3].nodeValue;
+					alias = alias.substr(0, alias.length - 2);
+				}
 				var openBracketPos = alias.lastIndexOf("(");
 				if (openBracketPos > 0) {
 					alias = alias.substr(0, openBracketPos - 1);
@@ -701,6 +743,9 @@ DefineWebServiceSpecial.prototype = {
 				alias = document.getElementById("s4-path" + i).childNodes[document
 						.getElementById("s4-path" + i).childNodes.length - 1].nodeValue;
 			}
+			if(alias == "]"){
+				alias = "";
+			}
 			var openBracketPos = alias.lastIndexOf("(");
 			if (openBracketPos != -1) {
 				alias = alias.substr(0, openBracketPos - 1);
@@ -747,6 +792,10 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	addParameter : function(i, k) {
+		var okButton = document.getElementById("step3-ok").cloneNode(true);
+		okButton.id = "step3-ok"
+		document.getElementById("step3-ok").parentNode.removeChild(document
+				.getElementById("step3-ok"));
 
 		// detect the new index of the parameters to create
 		var pathPatterns = new Array(k + 1);
@@ -831,11 +880,6 @@ DefineWebServiceSpecial.prototype = {
 				paramRow.childNodes[3].childNodes[0].id = "s3-default"
 						+ elementIdCount;
 				paramRow.childNodes[3].childNodes[0].value = "";
-				var okButton = document.getElementById("step3-ok").cloneNode(
-						true);
-				okButton.id = "step3-ok"
-				document.getElementById("step3-ok").parentNode
-						.removeChild(document.getElementById("step3-ok"));
 
 				paramRow.childNodes[3].appendChild(okButton);
 				var pos = elementIdCount - 1;

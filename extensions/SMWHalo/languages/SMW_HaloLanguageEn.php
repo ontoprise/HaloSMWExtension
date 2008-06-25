@@ -586,7 +586,7 @@ clicking the big arrows between the columns.',
 	'smw_wws_s3-error' => 'It was not possible to connect to the specified URI. Please change the URI or try again.',
 	'smw_wws_s4-error' => 'todo: write error message',
 	'smw_wws_s5-error' => 'todo: write error message',
-	'smw_wws_s6-error' => 'It was not possible to create the WWSD',
+	'smw_wws_s6-error' => 'You have to specify a name for the WWSD before it is possible to proceed.',
 	
 
 	);

@@ -40,7 +40,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
 		$html .= "<img id=\"step1-img\" class=\"Marker\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= wfMsg("smw_wws_s1-intro");
-		$html .= "<input id=\"step1-uri\" type=\"text\" size=\"50\" maxlength=\"300\" value=\"http://localhost/halowiki/index.php?action=get_wsdl\"/>";
+		$html .= "<input id=\"step1-uri\" type=\"text\" size=\"50\" maxlength=\"300\" value=\"\"/>";
 
 		$html .= "<img onclick=\"webServiceSpecial.processStep1()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "<br>";

@@ -24,13 +24,14 @@ function smwf_ws_processStep1($uri){
 function smwf_ws_processStep2($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawParameters = $wsClient->getOperation($methodName);
-
 	$parameters = array();
 	$numParam = count($rawParameters);
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		$parameters = array_merge($parameters ,flattenParam($wsClient, $pName, $pType));
+		//return $pName."-".$pType;
+		$tempFlat = flattenParam($wsClient, $pName, $pType);
+		$parameters = array_merge($parameters , $tempFlat);
 	}
 	return "todo:handle exceptions;".implode(";", $parameters);
 }
@@ -92,6 +93,14 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
 		$flatParams[] = $name;
 		return $flatParams;
 	}
+
+	if (substr($type,0, 7) == "ArrayOf") {
+		if (!$wsClient->isCustomType(substr($type,0, 7))) {
+			$flatParams[] = $name."[]";
+			return $flatParams;
+		}
+	}
+
 	$tp = $wsClient->getTypeDefinition($type);
 	foreach ($tp as $var => $type) {
 		if(substr($type,0, 7) == "ArrayOf"){
