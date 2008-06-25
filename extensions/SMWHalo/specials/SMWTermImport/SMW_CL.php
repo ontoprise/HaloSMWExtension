@@ -50,7 +50,7 @@ public function execute() {
 					"<div id=\"extras\">" .
 							"<div id=\"extras-left\">" .
 								"<div id=\"importset\">" . $importText .
-									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\"><option value=\"test\">importset-test</option></select>" .
+									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\"></select>" .
 									"<br><br>" .
 								"</div>" . //importset
 								"<div id=\"policy\">" .
