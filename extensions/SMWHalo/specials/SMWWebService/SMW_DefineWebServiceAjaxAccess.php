@@ -1,4 +1,28 @@
 <?php
+/*  Copyright 2008, ontoprise GmbH
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This file provides methods that are accessed by ajax-calls from
+ * the special page for defining a wwsd.
+ *
+ * @author Ingo Steinbauer
+ *
+ */
 
 global $wgAjaxExportList;
 
@@ -11,9 +35,14 @@ $wgAjaxExportList[] = 'smwf_ws_processStep6';
 global $smwgHaloIP;
 require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WebService.php');
 
+/**
+ * this method is called after step 1 (specifying uri)
+ *
+ * @param string $uri uri of a wsdl
+ * @return string with "-,"-separated list of method-names provided by the wwsd
+ */
 function smwf_ws_processStep1($uri){
-	$wsClient = createWSClient($uri);
-	if(is_array($wsClient)){
+	$wsClient = createWSClient($uri);	if(is_array($wsClient)){
 		return "false";
 	} else {
 		$operations = $wsClient->getOperations();
@@ -21,6 +50,14 @@ function smwf_ws_processStep1($uri){
 	}
 }
 
+/**
+ * this method is called after step 2 (choose method)
+ *
+ * @param unknown_string $uri uri of the wsdl
+ * @param unknown_string $methodName the method which was chosen by the user
+ * @return string ";"-separated list of parameters that have to be specified
+ * 			for this method
+ */
 function smwf_ws_processStep2($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawParameters = $wsClient->getOperation($methodName);
@@ -29,20 +66,34 @@ function smwf_ws_processStep2($uri, $methodName){
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		//return $pName."-".$pType;
 		$tempFlat = flattenParam($wsClient, $pName, $pType);
 		$parameters = array_merge($parameters , $tempFlat);
 	}
 	return "todo:handle exceptions;".implode(";", $parameters);
 }
 
-function smwf_ws_processStep3($uri, $methodName, $parameters){
+/**
+ * this method is called after step 3 (specify parameters)
+ *
+ * @param unknown_string $uri uri of the wsdl
+ * @param unknown_string $methodName the method which was chosen by the user
+ * @return string ";"-separated list of return types that have to be specified
+ * 			for this method
+ */
+function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
 
 	return "todo:handle exceptions;".implode(";", flattenParam($wsClient ,"", $rawResult[0]));
 }
 
+/**
+ * this method is called after step 3 (specify ws-name)
+ *
+ * @param string $name name of the webservice
+ * @param string $wwsd the wwsd which was created
+ * @return string error/ok signals if the wwsd could be validated
+ */
 function smwf_ws_processStep6($name, $wwsd){
 	$ws = WebService::newFromWWSD($name, $wwsd);
 	if(is_array($ws)){
@@ -61,6 +112,12 @@ function smwf_ws_processStep6($name, $wwsd){
 }
 
 
+/**
+ * creates a webservice-client for the given uri
+ *
+ * @param string $uri uri of the wsdl 
+ * @return ws-client
+ */
 function createWSClient($uri) {
 	// include the correct client
 	global $smwgHaloIP;
@@ -85,7 +142,17 @@ function createWSClient($uri) {
 
 
 
+/**
+ * creates flat "."-separated paths
+ *
+ * @param unknown_type $wsClient
+ * @param unknown_type $name
+ * @param unknown_type $type
+ * @param unknown_type $typePath
+ * @return unknown
+ */
 function flattenParam($wsClient, $name, $type, &$typePath=null) {
+	//todo: this method was copied from WebService -> refactor
 	$flatParams = array();
 
 	if (!$wsClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {

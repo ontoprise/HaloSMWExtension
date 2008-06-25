@@ -1,3 +1,27 @@
+/*  Copyright 2008, ontoprise GmbH
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This file provides methods for the special page define wiki web service description
+ * 
+ * @author Ingo Steinbauer
+ *
+ */
+
 var DefineWebServiceSpecial = Class.create();
 
 DefineWebServiceSpecial.prototype = {
@@ -15,8 +39,15 @@ DefineWebServiceSpecial.prototype = {
 				this.processStep1CallBack.bind(this));
 	},
 
+	/**
+	 * callback-method for the ajax-call of step 1 this method initializes the
+	 * gui for step 2 choose methods
+	 * 
+	 * @param request
+	 * 
+	 */
 	processStep1CallBack : function(request) {
-		var wsMethods = request.responseText.split(";");
+		var wsMethods = request.rext.split(";");
 		if (wsMethods[0] != "todo:handle exceptions") {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step1-error").style.display = "block";
@@ -101,7 +132,6 @@ DefineWebServiceSpecial.prototype = {
 	/**
 	 * called when the user finishes step 2 choose method
 	 * 
-	 * @return
 	 */
 	processStep2 : function() {
 		var method = document.getElementById("step2-methods").value;
@@ -110,6 +140,13 @@ DefineWebServiceSpecial.prototype = {
 				this.processStep2CallBack.bind(this));
 	},
 
+	/**
+	 * callback-method for the ajax-call of step 2 this method initializes the
+	 * gui for step 3 specify parameters
+	 * 
+	 * @param request
+	 * 
+	 */
 	processStep2CallBack : function(request) {
 		var wsParameters = request.responseText.split(";");
 		var overflow = false;
@@ -292,11 +329,17 @@ DefineWebServiceSpecial.prototype = {
 		var uri = document.getElementById("step1-uri").value;
 		var parameters = "";
 
-		// todo: remove parameters
-		sajax_do_call("smwf_ws_processStep3", [ uri, method, parameters ],
+		sajax_do_call("smwf_ws_processStep3", [ uri, method ],
 				this.processStep3CallBack.bind(this));
 	},
 
+	/**
+	 * callback-method for the ajax-call of step 3 this method initializes the
+	 * gui for step 4 specify result aliases
+	 * 
+	 * @param request
+	 * 
+	 */
 	processStep3CallBack : function(request) {
 		var wsResults = request.responseText.split(";");
 		if (wsResults[0] != "todo:handle exceptions") {
@@ -427,7 +470,8 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	/**
-	 * called when the user finishes step 4 define results
+	 * called when the user finishes step 4 define results initialises the gui
+	 * for step-5 define update policy
 	 * 
 	 * @return
 	 */
@@ -441,22 +485,29 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("step5-help").style.display = "block";
 		document.getElementById("step4-img").style.visibility = "hidden";
 		document.getElementById("step5-img").style.visibility = "visible";
-		
+
 		document.getElementById("step5-display-once").checked = true;
 		document.getElementById("step5-display-days").value = "";
 		document.getElementById("step5-display-hours").value = "";
 		document.getElementById("step5-display-minutes").value = "";
-		
+
 		document.getElementById("step5-query-once").checked = true;
 		document.getElementById("step5-query-days").value = "";
 		document.getElementById("step5-query-hours").value = "";
 		document.getElementById("step5-query-minutes").value = "";
 		document.getElementById("step5-delay").value = "";
-			
+
 		document.getElementById("step5-spanoflife").value = "";
 		document.getElementById("step5-expires-yes").checked = true;
 	},
 
+	/**
+	 * called after step 5 specify query policy this method initializes the gui
+	 * for step 6 specify wwsd-name
+	 * 
+	 * @param request
+	 * 
+	 */
 	processStep5 : function() {
 		// hide or display widgets of other steps
 		document.getElementById("step6").style.display = "block";
@@ -469,6 +520,9 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("step6-name").value = "";
 	},
 
+	/**
+	 * called after step 6 specify ws-name this method constructs the wwsd
+	 */
 	processStep6 : function() {
 		if (document.getElementById("step6-name").value.length > 0) {
 			document.getElementById("errors").style.display = "none";
@@ -528,16 +582,12 @@ DefineWebServiceSpecial.prototype = {
 							rPathStep = rPathStep.substr(0, rPathStep
 									.lastIndexOf("(") - 1);
 						}
-						
-
 						// if(rPathStep == ""){
 						// rPathStep = "]";
-						//						}
+						// }
 					}
-					
 					rPath += rPathStep;
 				}
-
 				result += " path=\"" + rPath + "\" />\n";
 
 			}
@@ -592,6 +642,11 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 	},
+
+	/**
+	 * callback method for step 6
+	 * 
+	 */
 	processStep6CallBack : function(request) {
 		var wsName = document.getElementById("step6-name").value;
 		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
@@ -599,22 +654,34 @@ DefineWebServiceSpecial.prototype = {
 
 	},
 
+	/**
+	 * callback method for step-6
+	 * 
+	 */
 	processStep6CallBack2 : function(request) {
 		var wsName = document.getElementById("step6-name").value;
 		sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
 				this.processStep6CallBack3.bind(this));
 	},
 
+	/**
+	 * callback method for step-6 this method initializes the gui for step which
+	 * provides an example for the #ws-syntax
+	 * 
+	 */
 	processStep6CallBack3 : function(request) {
-		var container = document.getElementById("step7-container").cloneNode(false);
+		var container = document.getElementById("step7-container").cloneNode(
+				false);
 		document.getElementById("step7-container").id = "old-step7-container";
-		document.getElementById("old-step7-container").parentNode.insertBefore(container, document.getElementById("old-step7-container"));
-		document.getElementById("old-step7-container").parentNode.removeChild(document.getElementById("old-step7-container"));
-		
+		document.getElementById("old-step7-container").parentNode.insertBefore(
+				container, document.getElementById("old-step7-container"));
+		document.getElementById("old-step7-container").parentNode
+				.removeChild(document.getElementById("old-step7-container"));
+
 		var wsNameText = document.createTextNode(document
 				.getElementById("step6-name").value);
 		document.getElementById("step7-name").appendChild(wsNameText);
-		
+
 		var rowDiv = document.createElement("div");
 		var rowText = document.createTextNode("{{#ws: "
 				+ document.getElementById("step6-name").value);
@@ -658,6 +725,10 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("help").style.display = "none";
 	},
 
+	/**
+	 * called after step 7 this method initializes the gui for step 1
+	 * 
+	 */
 	processStep7 : function(request) {
 		document.getElementById("step1-img").style.visibility = "visible";
 		document.getElementById("step1-help").style.display = "block";
@@ -673,6 +744,11 @@ DefineWebServiceSpecial.prototype = {
 		document.getElementById("step1-uri").Value = "";
 	},
 
+	/**
+	 * this method is responsible for automatic alias-creation in step 3 specify
+	 * parameters
+	 * 
+	 */
 	generateParameterAliases : function() {
 		var paramCount = document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1;
 
@@ -732,6 +808,11 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * this method is responsible for automatic alias-creation in step 4 specify
+	 * result aliases
+	 * 
+	 */
 	generateResultAliases : function() {
 		var resultsCount = document.getElementById("step4-results").childNodes[0].childNodes.length;
 
@@ -743,7 +824,7 @@ DefineWebServiceSpecial.prototype = {
 				alias = document.getElementById("s4-path" + i).childNodes[document
 						.getElementById("s4-path" + i).childNodes.length - 1].nodeValue;
 			}
-			if(alias == "]"){
+			if (alias == "]") {
 				alias = "";
 			}
 			var openBracketPos = alias.lastIndexOf("(");
@@ -791,6 +872,15 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * this method is responsible for adding new parameters in step 3
+	 * 
+	 * @param int
+	 *            i index of the parameter where the add-button was pressed
+	 * @param int
+	 *            k index of the path-step where the add-button was pressed
+	 * 
+	 */
 	addParameter : function(i, k) {
 		var okButton = document.getElementById("step3-ok").cloneNode(true);
 		okButton.id = "step3-ok"
@@ -891,6 +981,13 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * this method is responsible for adding new result parts in step 4
+	 * 
+	 * @param int
+	 *            i index of the result-part where the add-button was pressed
+	 * 
+	 */
 	addResultPart : function(i) {
 		var elementIdCount = document.getElementById("step4-results").childNodes[0].childNodes.length - 1;
 		var okButton = document.getElementById("step4-ok").cloneNode(true);

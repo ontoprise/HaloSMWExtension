@@ -1,20 +1,46 @@
 <?php
 
+/*  Copyright 2008, ontoprise GmbH
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This is responsible for the special page define webservice
+ *
+ * @author Ingo Steinbauer
+ *
+ */
+
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 
 global $smwgHaloIP;
 include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 
-//todo: describe
 class SMWDefineWebServiceSpecial extends SpecialPage {
 
-	//todo: describe
+
 	public function __construct() {
 		parent::__construct('DefineWebService');
 	}
-	
-	//todo: describe
+
+	/**
+	 * This method constructs the special page for defining webservices
+	 *
+	 */
 	public function execute() {
 		global $wgRequest, $wgOut;
 
@@ -45,7 +71,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img onclick=\"webServiceSpecial.processStep1()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "<br>";
 		$html .= "</div>";
-		
+
 
 		//2. Specify method
 		$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: none\">";
@@ -56,7 +82,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img onclick=\"webServiceSpecial.processStep2()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "<br>";
 		$html .= "</div>";
-		
+
 		//3. Define Parameters
 		$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<img class=\"Marker\" id=\"step3-img\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
@@ -65,7 +91,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<img id=\"step3-ok\" onclick=\"webServiceSpecial.processStep3()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "</div>";
-		
+
 
 		// 4. Define Results
 		$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: none\">";
@@ -76,15 +102,15 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<img id=\"step4-ok\" onclick=\"webServiceSpecial.processStep4()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "</div>";
-		
+
 
 		// 5. Define updatae policy
 		$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: none\" >";
 		$html .= "<img id=\"step5-img\" class=\"Marker\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= wfMsg("smw_wws_s5-intro");
-		
+
 		$html .= "<table id=\"step5-policies\">";
-		
+
 		$html .= "<tr><td><span class=\"OuterLeftIndent\">Display policy: </span></td>";
 		$html .= "<td><input id=\"step5-display-once\" checked=\"true\" type=\"radio\" name=\"step5-display\" value=\"once\">Once</input>";
 		$html .= "<input id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input>";
@@ -108,12 +134,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<input type=\"text\" id=\"step5-query-minutes\" text\" size=\"7\" maxlength=\"10\" />";
 		$html .= "<span> minutes </span>";
 		$html .= "</td></tr>";
-		
+
 		$html .= "<tr><td></td>";
 		$html .= "<td><span> Delay value (seconds): </span>";
 		$html .= "<input type=\"text\" id=\"step5-delay\" text\" size=\"7\" maxlength=\"10\" />";
 		$html .= "</td></tr></table>";
-		
+
 		$html .= "<span class=\"OuterLeftIndent\"> Span of life (in days): </span>";
 		$html .= "<input type=\"text\" id=\"step5-spanoflife\" text\" size=\"7\" maxlength=\"10\" />";
 		$html .= "<span> Expires after update: </span>";
@@ -121,7 +147,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<input id=\"step5-expires-no\" type=\"radio\" name=\"step5-expires\" value=\"\">No</input>";
 		$html .= "<img onclick=\"webServiceSpecial.processStep5()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "</div>";
-//
+		//
 		// 6. Specify name
 		$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<img id=\"step6-img\" class=\"Marker\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
@@ -131,13 +157,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img onclick=\"webServiceSpecial.processStep6()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "<br>";
 		$html .= "</div>";
-		
-		
+
+
 		//7. show #ws-usage
 		$html .= "<div id=\"step7\" style=\"display: none\">";
 		$html .= "<span>Your WebService \"";
 		$html .= "<span id=\"step7-name\"></span>";
-		$html .= "\" has been successfully created. In order to include this WebService into a page, please use the following syntax:</span>"; 
+		$html .= "\" has been successfully created. In order to include this WebService into a page, please use the following syntax:</span>";
 		$html .= "<br><br>";
 		$url = Title::makeTitleSafe(NS_SPECIAL, wfMsg('webservicerepository'))->getInternalURL();
 		$html .= "<div id=\"step7-container\"></div>";
@@ -145,9 +171,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a></span>";
 		$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= "</div>";
-		
-		
-		
+
+
+
 		//errors
 		$html .= "<div id=\"errors\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<h2>Error</h2>";
@@ -159,9 +185,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step5-error\" style=\"display: none\">".wfMsg("smw_wws_s5-error")."</div>";
 		$html .= "<div id=\"step6-error\" style=\"display: none\">".wfMsg("smw_wws_s6-error")."</div>";
 		$html .= "</div>";
-		
-		
-		
+
+
+
 		// Help
 		$html .= "<div id=\"help\" class=\"HelpDiv\">";
 		$html .= "<h2>Help</h2>";
@@ -172,9 +198,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step5-help\" style=\"display: none\">".wfMsg("smw_wws_s5-help")."</div>";
 		$html .= "<div id=\"step6-help\" style=\"display: none\">".wfMsg("smw_wws_s6-help")."</div>";
 		$html .= "</div>";
-		
-		
-		
+
+
+
 		$wgOut->addHTML($html);
 	}
 }
