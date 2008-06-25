@@ -1,5 +1,5 @@
-/*  Copyright 2007, ontoprise GmbH
-*   Author: Kai Kühn
+/*  Copyright 2008, ontoprise GmbH
+*   Author: Benjamin Langguth
 *   This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -152,6 +152,7 @@ TermImportPage.prototype = {
 		}
 		
 		//create the right input-div
+//		var datasources = list.getElementsByTagName("DataSource");
 		var datasources = list.getElementsByTagName("DataSource")[0].childNodes;
 		response = "<i>The following Information is needed in order to start the Import</i><br><br><form id=\"source\"><Table>Source&nbsp;";
 		
@@ -161,7 +162,7 @@ TermImportPage.prototype = {
 			var datasource = datasources[i]; 
 			if(datasource.nodeType == 1) {
 				//
-				if ( datasource.hasAttribute ) {
+				//if ( datasource.hasAttribute ) {
 					
 					//TagName bekommen
 					var tag = datasource.tagName;
@@ -177,17 +178,15 @@ TermImportPage.prototype = {
 						if ( attrib_type == "file" ) {
 							response += "<tr><td>" + attrib_display + "</td><td><input name=\"source\" id=\"" + 
 										attrib_display + "\" class=\"inputfield\" type=\"file\" size=\"25\" maxlength=\"100\" value=\"" + 
-										datasource.textContent + "\">" +
-									"</td>";
+										datasource.textContent + "\">" + "</td></tr>";
 						}
 						else {
 							response += "<tr><td>" + attrib_display + "</td><td><input name=\"source\" id=\"" + 
-							attrib_display+"\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\"" + datasource.textContent + "\"></td>";
-							//fieldnumber++;
+							attrib_display+"\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\"" + datasource.textContent + "\"></td></tr>";
 						}
 						response += "<input type=\"hidden\" id=\"tag_"+ attrib_display +"\" value=\""+tag+"\"/>"						
 					}					
-				}	
+				//}	
 			}		
 		}
 		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" onclick=\"termImportPage.getSource(event, this,'" +tlID+ "','" + dalID +"')\">Submit</button></form>";
@@ -317,9 +316,14 @@ TermImportPage.prototype = {
 		}
 		if (import_response) {
 			$('extras').style.display = "inline";
-			$('extras-bottom').style.display = "inline";
-			$('importset-input-field').style.backgroundColor = "white";
-			$('importset-input-field').innerHTML = import_response;
+			if (Prototype.Browser.IE) {
+				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+				$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\">" + 
+					import_response + "</select>";
+			}
+			else {
+				$('importset-input-field').innerHTML = import_response;
+			}
 			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
 											"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
 		}		
@@ -346,7 +350,8 @@ TermImportPage.prototype = {
 	 */
 	getPolicy: function(e, node){
 		
-		var policy_selects = document.getElementsByName('policy-select');		
+		//var policy_selects = document.getElementsByName('policy-select');		
+		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 		var newpolicy = document.getElementById('policy-input-field').value;
 		var response = '';
 		for (var i = 0, n = policy_selects.length; i < n; i++) {
@@ -357,16 +362,24 @@ TermImportPage.prototype = {
 			}
 		}
 		response += "<option name='policy-select'>" + newpolicy + "</option>";
-		
-		$('policy-textarea').innerHTML = response;
+		if (Prototype.Browser.IE) {
+			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+			$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" + 
+				response + "</select>";
+		}
+		else {
+			$('policy-textarea').innerHTML = response;
+		}
 	},
 	
 	/*
 	 * deletes the selected policy entries from the list
 	 */
 	deletePolicy: function(e, node) {
-		
-		var policy_selects = document.getElementsByName('policy-select');
+		//this doesn't work in IE...
+		//var policy_selects = document.getElementsByName('policy-select');
+		//this works:
+		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 		var response = '';
 		for (var i = 0, n = policy_selects.length; i < n; i++) {
 			var policy_select = policy_selects[i];
@@ -375,8 +388,14 @@ TermImportPage.prototype = {
 			}
 		}
 		//response += "<option name='policy-select'>" + newpolicy + "</option>";
-		
-		$('policy-textarea').innerHTML = response;
+		if (Prototype.Browser.IE) {
+			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+			$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" + 
+				response + "</select>";
+		}
+		else {
+			$('policy-textarea').innerHTML = response;
+		}
 	},
 	
 	/*
@@ -432,7 +451,10 @@ TermImportPage.prototype = {
 		var importSetName = document.getElementById('importset-input-field').value;
 		
 		//input policy
-		var policy_selects = document.getElementsByName('policy-select');	
+		//this doesn't work in IE...
+		//var policy_selects = document.getElementsByName('policy-select');
+		//this works:	
+		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 		
 		if (policy_selects.length > 0) {
 			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
@@ -440,7 +462,7 @@ TermImportPage.prototype = {
     			'<terms>'+"\n";
     	
     		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    			inputPolicy += '<regex>' + policy_selects[i].value + '</regex>'+"\n";
+    			inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
     		}
 			inputPolicy +='<term></term>'+
 				'</terms>'+"\n"+
@@ -532,7 +554,10 @@ TermImportPage.prototype = {
 		var importSetName = document.getElementById('importset-input-field').value;
 		
 		//input policy
-		var policy_selects = document.getElementsByName('policy-select');	
+		//this doesn't work in IE...
+		//var policy_selects = document.getElementsByName('policy-select');
+		//this works:
+		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');	
 		
 		if (policy_selects.length > 0) {
 			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
@@ -540,7 +565,7 @@ TermImportPage.prototype = {
     			'<terms>'+"\n";
     	
     		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    			inputPolicy += '<regex>' + policy_selects[i].value + '</regex>'+"\n";
+    			inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
     		}
    	 		inputPolicy +='<term></term>'+
    	 			'</terms>'+"\n"+
@@ -556,7 +581,8 @@ TermImportPage.prototype = {
 		var mappingPage = document.getElementById('mapping-input-field').value;
 		
 		//conflict policy
-		if(document.getElementById('conflict-input-field').value == 'overwrite') {
+		var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
+		if( conflict == 'overwrite') {
 			var conflictPol = true;
 		}
 		else {
