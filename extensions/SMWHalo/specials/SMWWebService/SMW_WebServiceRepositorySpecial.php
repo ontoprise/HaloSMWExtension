@@ -1,17 +1,42 @@
 <?php
+/*  Copyright 2008, ontoprise GmbH
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 
-//todo: describe
+/**
+ * This class represents the special page webservice repository
+ *
+ * @author Ingo Steinbauer
+ *
+ */
 class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 	//todo: make only accessible for admins
-	//todo: describe
 	public function __construct() {
 		parent::__construct('WebServicerepository');
 	}
-
+	
+	/**
+	 * this methods constructs the special page webservice repository
+	 *
+	 */
 	public function execute() {
 		global $wgRequest, $wgOut;
 
