@@ -52,39 +52,6 @@ class SemanticNotificationManager {
 		$wgSpecialPages['SemanticNotifications'] = array('SMWSemanticNotificationSpecial');
 		$wgExtensionMessagesFiles['SemanticNotification'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationMessages.php';
 		wfLoadExtensionMessages('SemanticNotification');
-	
-//TODO: Remove the test code below		
-		//---Test---
-/*
-		smwf_sn_AddNotification("n1", "WikiSysop", "[[Category:Reactant]]", "1");
-		SemanticNotificationManager::getUserLimitations();
-		$sn = new SemanticNotification("MyNotification", "Thomas", 
-		                               "[[Category:Reactant]]", 2);
-		$sn->query();
-
- 		$sn = new SemanticNotification("MyNotification", "Thomas", 
-		                               "[[SNname::*]]".
-									   "[[SNname::+]]".
-									   "[[SNzip::*]]".
-									   "[[SNzip::+]]".
-									   "[[SNstreet::*]]".
-									   "[[SNstreet::+]]".
-									   "[[SNhousenumber::*]]".
-									   "[[SNhousenumber::+]]", 2);
-		$sn->query();
-*/
-
-/*		
-		$sn->store();
-		
-		$sn = SemanticNotification::newFromName("MyNotification", "Thomas");
-		var_dump($sn);
-		$sn->setQueryResult("some result");
-		$sn->store();
-		
-		SemanticNotification::deleteFromDB("MyNotification", "Thomas");
-*/
-		//--Test--
 		
 	}
 
@@ -176,7 +143,21 @@ class SemanticNotificationManager {
 		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNStorage.php");
 		return SNStorage::getDatabase()->getNumberOfNotificationsOfUser($userName);
 	}
-		
+	
+	/**
+	 * All notifications of all users i.e. the user-id/name-pairs.
+	 * 
+	 * @return array<array<int,string>>
+	 * 		An array of arrays where the inner array contains the tuples of
+	 * 		user id and notification name.
+	 * 
+	 */
+	public static function getAllNotifications() {
+		global $smwgHaloIP;
+		require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNStorage.php");
+		return SNStorage::getDatabase()->getAllNotifications();
+	}
+	
 }
 
 ?>
