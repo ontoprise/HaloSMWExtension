@@ -47,7 +47,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep1CallBack : function(request) {
-		var wsMethods = request.rext.split(";");
+		var wsMethods = request.responseText.split(";");
 		if (wsMethods[0] != "todo:handle exceptions") {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step1-error").style.display = "block";
