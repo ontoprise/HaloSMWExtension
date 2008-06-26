@@ -219,7 +219,7 @@ class SNStorageSQL {
 
 		$db =& wfGetDB( DB_SLAVE );
 		$snt = $db->tableName('smw_sem_notification');
-		$sql = "SELECT sn.user_id, sn.query_name FROM wikidb.smw_sem_notification sn;";
+		$sql = "SELECT sn.user_id, sn.query_name FROM $snt sn;";
 		$sn = null;
 
 		$res = $db->query($sql);
