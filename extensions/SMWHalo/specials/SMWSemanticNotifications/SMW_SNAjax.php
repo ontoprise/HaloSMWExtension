@@ -73,7 +73,8 @@ function smwf_sn_AddNotification($name, $userName, $query, $updateInterval) {
 		$sn->setQueryText($query);
 		$sn->setUpdateInterval($updateInterval);
 	}
-		
+	// get the current results of the query
+	$sn->query();
 	$success = $sn->store();
 	return $success ? "true" : "false";
 }
