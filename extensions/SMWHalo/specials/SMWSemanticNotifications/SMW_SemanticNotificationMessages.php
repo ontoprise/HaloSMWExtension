@@ -71,6 +71,28 @@ $messages['en'] = array(
 	'smw_sn_tt_showPreview' => 'Shows a preview of the results of your query.',
 	'smw_sn_tt_openQueryInterface' => 'Go to the query interface to define your query.',
 
+	'smw_semanticnotificationbot' => 'Semantic Notifications',
+	'smw_gard_semanticnotificationhelp' => 'Sends notifications, if the result sets of watched queries have changed.',
+	
+	'smw_sn_msg_salutation' =>  'Dear $1,<br />'.
+							'you are receiving this e-mail, because your SMW notification "<b>$2</b>" detected '.
+							'a change in the semantic database of your wiki.<br />',
+	'smw_sn_msg_query' =>  'The result of the following query changed:<br /><pre>$1</pre><br />',
+	'smw_sn_msg_changes_found' => '<br />The following changes were found:<br />'.
+								  '(<span style="background-color:#ff0000">Removed</span> '.
+								  '<span style="background-color:#00ff00">Added</span> '.
+								  '<span style="background-color:#ffaa00">Changed (old values in parenthesis)</span>)<br /><br />',
+	'smw_sn_msg_numadded' => '$1 result(s) was/were added.<br />',
+	'smw_sn_msg_numremoved' => '$1 result(s) was/were removed.<br />',
+	'smw_sn_msg_limit' => '<br />This notification does not contain the details of the semantic changes, '.
+                          'as the size of the result set exceeds your limit. Please contact your wiki\'s '.
+						  'administrator if detailed change descriptions are essential for you.<br /><br />',
+	'smw_sn_msg_link' => '<br />To manage your notifications, please go to $1.<br /><br />    --Your SMW notification service.',
+
+	'smw_sn_processed_notification' => 'Processed notification "$1" of user "$2".',
+	'smw_sn_mail_title' => 'Semantic notification from $1',
+
+
 );
 
 /** 
@@ -123,6 +145,28 @@ $messages['de'] = array(
 	'smw_sn_tt_addNotification' => 'Fügt die neue oder geänderte Query zu Ihren persönlichen semantischen Benachrichtigungen hinzu.',
 	'smw_sn_tt_showPreview' => 'Zeigt eine Vorschau der Query-Ergebnisse.',
 	'smw_sn_tt_openQueryInterface' => 'Definieren Sie die Query im Query-Interface.',
+
+	'smw_semanticnotificationbot' => 'Semantische Benachrichtigungen',
+	'smw_gard_semanticnotificationhelp' => 'Versendet Nachrichten, wenn sich die Ergebnisse von beobachteten Queries verändert haben.',
+
+	'smw_sn_msg_salutation' =>  'Liebe(r) $1,<br />'.
+							'Sie erhalten diese E-Mail, weil sich in der semantischen Datenbank'.
+							' Ihres Wikis Änderungen bezüglich Ihrer semantischen Benachrichtigung'.
+							'"<b>$2</b>" ergeben haben.<br />',
+	'smw_sn_msg_query' =>  'Die Ergebnismenge der folgenden Query hat sich geändert:<br /><pre>$1</pre><br />',
+	'smw_sn_msg_changes_found' => '<br />Die folgenden Änderungen wurden gefunden:<br />'.
+								  '(<span style="background-color:#ff0000">Entfernt</span> '.
+								  '<span style="background-color:#00ff00">Hinzugefügt</span> '.
+								  '<span style="background-color:#ffaa00">Verändert (alte Werte in Klammern)</span>)<br /><br />',
+	'smw_sn_msg_numadded' => '$1 Ergebnis(se) wurde(n) hinzgefügt.<br />',
+	'smw_sn_msg_numremoved' => '$1 Ergebnis(se) wurde(n) entfernt.<br />',
+	'smw_sn_msg_limit' => '<br />Diese Benachrichtigung enthält keine Details zu den Veränderungen der semantischen Annotationen, '.
+						  'da die Größe der Ergebnismenge Ihre Begrenzungen überschreitet. Bitte setzen Sie sich'.
+						  ' mit Ihrem Wiki-Administrator in Verbindung.<br /><br />',
+	'smw_sn_msg_link' => '<br />Bitte gehen Sie zum Verwalten Ihrer Benachrichtigungen zu $1.<br /><br />    --Ihr SMW Benachrichtigungsdienst.',
+
+	'smw_sn_processed_notification' => 'Die Benachrichtigung $1 des Benutzers "$2" wurde bearbeitet.',
+	'smw_sn_mail_title' => 'Semantische Benachrichtigung von $1',
 
 );
 ?>
