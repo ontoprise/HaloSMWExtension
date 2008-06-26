@@ -289,5 +289,5 @@ var wgUserLanguageStrings = {
 	// Semantic notifications
 	'SN_OVERWRITE_EXISTING'   : 'Die Benachrichtigung "$1" existiert bereits. Möchten Sie sie wirklich überschreiben?',
 	'SN_DELETE'               : 'Möchten Sie die Benachrichtigung "$1" wirklich löschen?',
-	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'Das Aktualisierungsinterval ist ungültig. Der kleinste zulässige Wert ist $1.',
+	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'Das Aktualisierungsinterval ist ungültig. Der kleinste zulässige Wert ist $1.'
 };
