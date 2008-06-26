@@ -81,7 +81,7 @@ dTree.prototype.closeAll = function() {
 
 // Outputs the tree to the page
 dTree.prototype.toString = function() {
-	var str = '<div class="'+this.className+'">\n';
+	var str = '<h5><label>browse</label></h5><div class="'+this.className+'">\n';
 	if (document.getElementById) {
 		if (this.config.useCookies) this.selectedNode = this.getSelected();
 		str += this.addNode(this.root);

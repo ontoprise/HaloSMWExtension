@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor Extension for MediaWiki specific settings.
  */
 
@@ -20,7 +20,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	['FitWindow','-','About']
+	[/*'FitWindow',*/'-','About']
 ] ;
 
 // Load the extension plugins.

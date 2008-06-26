@@ -11,14 +11,22 @@
 	overflow-y:auto;
 	width:12em;
 	height:20em;
-	border:1px solid #AAA
+	background-color: white;
+	border:1px solid #AAA;
+}
+
+.Treeview5 h5 {
+    padding:0pt 1em 0pt 0.5em;
+    font-size:91%;
+    font-weight:normal;
+    
 }
 
 .dtree {
     font-size: 95%;    
     color: #666;
     white-space: nowrap;
-    
+    background-color: white;
 }
 
 .dtree img {

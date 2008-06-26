@@ -47,7 +47,10 @@ class TreeGenerator {
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		if ($maxDepth > 0) $redirectPage = Title::newFromText($genTreeParameters['redirectPage']);
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY) : NULL;
-		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty);
+		$startLevel = array_key_exists('level', $genTreeParameters) ? $genTreeParameters['level'] : 1;
+        $hchar = "";
+        for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
+		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty, $hchar);
 		return $result;
 	}
     
@@ -65,20 +68,20 @@ class TreeGenerator {
 		if ($maxDepth === NULL || $maxDepth >= 0) {
 			foreach($tree->children as $n) {
 				if ($displayProperty == NULL) {
-					$result .= $hchar."[[".$n->title->getText()."]]\n";
+					$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
 				} else {
 					$smwValues = smwfGetStore()->getPropertyValues($n->title, $displayProperty);
 					if (count($smwValues) > 0) {
-						$result .= $hchar."[[".$n->title->getText()."|".$smwValues[0]->getXSDValue()."]]\n";
+						$result .= $hchar."[[".$n->title->getPrefixedText()."|".$smwValues[0]->getXSDValue()."]]\n";
 					} else {
-						$result .= $hchar."[[".$n->title->getText()."]]\n";
+						$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
 					}
 				}
 				if ($maxDepth !== NULL) $maxDepth--;
 				$this->dumpTree($n, $result, $maxDepth, $redirectPage, $displayProperty, $hchar.'*');
 			}
 		} else if ($maxDepth < 0 && $redirectPage !== NULL) {
-			$result .= $hchar."[[".$redirectPage->getText()."|...]]\n";
+			$result .= $hchar."[[".$redirectPage->getPrefixedText()."|...]]\n";
 		}
 	}
     
