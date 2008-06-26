@@ -796,7 +796,8 @@ class WSStorageSQL {
 			$row->updateDelay, $row->span_of_life,
 			$rwow->expires_after_update == 'true',
 			$row->confirmed == 'true');
-			$webServices[] = $ws;
+			
+			$webServices[$ws->getName()] = $ws;
 		}
 
 		$db->freeResult($res);

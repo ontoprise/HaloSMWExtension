@@ -48,6 +48,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		require_once($smwgHaloIP . '/specials/SMWWebService/SMW_WSStorage.php');
 
 		$webServices = WSStorage::getDatabase()->getWebServices();
+		ksort($webServices); 
 
 		$html .= "<h2><span class=\"mw-headline\">Available Wiki Web Service Definitions</span></h2>";
 
@@ -78,7 +79,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$html .= "<td><button type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache(".$ws->getArticleID().")\">Update</button></td>";
 
 			if($ws->getConfirmationStatus() != "true"){
-				$html .= "<td id=\"confirmText\">  <button type=\"button\" id=\"confirmButton\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+				$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
 			} else {
 				$html .= "<td>confirmed</td></tr>";
 			}

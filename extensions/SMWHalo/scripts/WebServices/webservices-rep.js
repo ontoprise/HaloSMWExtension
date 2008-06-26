@@ -62,9 +62,9 @@ WebServiceRepositorySpecial.prototype = {
 	 * 
 	 */
 	confirmWWSDCallBack : function(request) {
-		document.getElementById("confirmButton").style.visibility = "hidden";
-		document.getElementById("confirmButton").style.width = "1px";
-		document.getElementById("confirmText").childNodes[0].nodeValue = "confirmed";
+		var wsId = request.responseText;
+		document.getElementById("confirmButton"+wsId).style.display = "none";
+		document.getElementById("confirmText"+wsId).childNodes[0].nodeValue = "confirmed";
 	}	
 }	
 
