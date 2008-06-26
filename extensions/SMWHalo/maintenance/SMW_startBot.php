@@ -73,6 +73,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWGardening/Bo
 require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWGardening/Bots/SMW_ExportOntologyBot.php");
 require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWTermImport/SMW_TermImportBot.php");
 require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWGardening/SMW_GardeningLog.php");
+require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
 
 
 // run bot

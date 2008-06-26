@@ -24,6 +24,7 @@ require_once("Bots/SMW_GlossaryBot.php");
 
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
+require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
 
 
 
