@@ -104,19 +104,19 @@ class SNStorageSQL {
 
 	/**
 	 * Retrieves the definition of the notification with the name <$name> and
-	 * the user with the name <$userName> from the database.
+	 * the user with the id or name <$user> from the database.
 	 *
 	 * @param string $name
 	 * 		The unique name of the notification.
-	 * @param string $userName
-	 * 		The user who owns the notification.
+	 * @param mixed (int, string) $user
+	 * 		The user (id or name) who owns the notification.
 	 *
 	 * @return SemanticNotification
 	 * 		If the notification exists in the database, a new object is created
 	 * 		and initialized with the database values. Otherwise <null> is returned.
 	 */
-	public function getSN($name, $userName) {
-		$userID = User::idFromName($userName);
+	public function getSN($name, $user) {
+		$userID = (is_int($user)) ? $user : User::idFromName($user);
 		if (!$userID) {
 			// invalid user name
 			return null;
@@ -132,7 +132,11 @@ class SNStorageSQL {
 
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
-			$sn = new SemanticNotification($name, $userName, $row->query_text,
+			if (is_int($user)) {
+				$u = User::newFromId($user);
+				$user = $u->getName();
+			}
+			$sn = new SemanticNotification($name, $user, $row->query_text,
 										   $row->update_interval,
 										   $row->query_result,
 										   $row->timestamp);
@@ -202,6 +206,35 @@ class SNStorageSQL {
 		$db->freeResult($res);
 		return $notifications;
 	}
+	
+	/**
+	 * All notifications of all users i.e. the user-id/name-pairs.
+	 *
+	 * @return array<array<int,string>>
+	 * 		An array of arrays where the inner array contains the tuples of
+	 * 		user id and notification name.
+	 *
+	 */
+	public static function getAllNotifications() {
+
+		$db =& wfGetDB( DB_SLAVE );
+		$snt = $db->tableName('smw_sem_notification');
+		$sql = "SELECT sn.user_id, sn.query_name FROM wikidb.smw_sem_notification sn;";
+		$sn = null;
+
+		$res = $db->query($sql);
+		if ($db->numRows($res) == 0) {
+			// no notifications
+			return null;
+		}
+		$notifications = array();
+		while ($row = $db->fetchObject($res)) {
+			$notifications[] = array((int) $row->user_id, $row->query_name);
+		}
+		$db->freeResult($res);
+		return $notifications;
+	}
+	
 	
 	/**
 	 * Returns the number of all notifications of the given user.
