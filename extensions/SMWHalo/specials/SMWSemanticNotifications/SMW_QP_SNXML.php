@@ -67,7 +67,6 @@ class SMW_SN_XMLResultPrinter extends SMWResultPrinter {
 	 * 		The query result as XML structure.
 	 */
     protected function getResultText($res, $outputmode) {
-       $variables = array();
        $result = $this->printHeader();
        $meta   = $this->printMetaData($res);
        $r      = $this->printResults($res, $hash);
@@ -90,6 +89,12 @@ class SMW_SN_XMLResultPrinter extends SMWResultPrinter {
         $result .= "\t\t<rows>".$res->getCount()."</rows>\n";
         $result .= "\t\t<columns>".$res->getColumnCount()."</columns>\n";
         $result .= "\t\t<hash></hash>\n";
+        $result .= "\t\t<columnnames>\n";
+        $prs = $res->getPrintRequests();
+        foreach ($prs as $pr) {
+        	$result .= "\t\t\t<col>".$pr->getLabel()."</col>\n";
+        }
+        $result .= "\t\t</columnnames>\n";
         $result .= "\t</table>\n";
         return $result;
     }
@@ -143,6 +148,7 @@ class SMW_SN_XMLResultPrinter extends SMWResultPrinter {
         }
         
 		$hash = hash_final($hash);
+		
 		if (strlen($rowsLong) <= $this->mMaxSize) {
 			// return the long result
 	        $result .= $rowsLong."\t</result>\n";
