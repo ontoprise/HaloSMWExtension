@@ -210,7 +210,7 @@ clicking the big arrows between the columns.',
 	'smw_importontologybot' => 'Import an ontology',
 	'smw_gardissue_class_all' => 'All',
 	'smw_termimportbot' => 'Import terms of a vocabulary',
-
+	
 	/* Messages for Gardening Bot: ImportOntology Bot*/
 	'smw_gard_import_choosefile' => 'The following $1 files are available.',
 	'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
@@ -538,18 +538,7 @@ clicking the big arrows between the columns.',
 	'smw_wws_duplicate_result_part' => 'The part "$1" appears several times in the result "$2".',
 	'smw_wws_duplicate_result' => 'The result "$1" appears several times.',
 	'smw_wwsd_undefined_result' => 'The path of the result "$1" can not be found in the result of the service.',
-
-    'smw_deletepage_nolinks' => 'There are no links to this page!',
-    'smw_deletepage_linkstopage'=> 'Pages with links to that page',
-    'smw_deletepage_prev' => 'Prev',
-    'smw_deletepage_next' => 'Next',
-
-	// Glossary
-	'smw_gloss_no_description' => '"$1" is annotated as glossary term but has no description yet.',
-	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
-	'smw_glossarybot' => 'Update glossary highlighting',
-	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
-'smw_wsuse_wrong_parameter' => 'The parameter "$1" does not exist in the Wiki Web Service Definition.',
+	'smw_wsuse_wrong_parameter' => 'The parameter "$1" does not exist in the Wiki Web Service Definition.',
 	'smw_wsuse_parameter_missing' => 'The parameter "$1" is not optional and no default value was provided by the Wiki Web Service Definition.',
 	'smw_wsuse_wrong_resultpart' => 'The result-part "$1" does not exist in the Wiki Web Service Definition.',
 	'smw_wsuse_wwsd_not_existing' => 'A Wiki Web Service Definition with the name "$1" does not exist.',
@@ -587,6 +576,20 @@ clicking the big arrows between the columns.',
 	'smw_wws_s4-error' => 'todo: write error message',
 	'smw_wws_s5-error' => 'todo: write error message',
 	'smw_wws_s6-error' => 'You have to specify a name for the WWSD before it is possible to proceed.',
+	
+    'smw_deletepage_nolinks' => 'There are no links to this page!',
+    'smw_deletepage_linkstopage'=> 'Pages with links to that page',
+    'smw_deletepage_prev' => 'Prev',
+    'smw_deletepage_next' => 'Next',
+
+	// Glossary
+	'smw_gloss_no_description' => '"$1" is annotated as glossary term but has no description yet.',
+	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
+	'smw_glossarybot' => 'Update glossary highlighting',
+	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
+	
+	
+
 	
 
 	);
