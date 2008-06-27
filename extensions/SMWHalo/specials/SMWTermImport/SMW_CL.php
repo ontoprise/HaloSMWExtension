@@ -16,7 +16,7 @@ class CL {
 	}
 
 public function execute() {
-		global $smwgHaloIP, $wgOut, $wgRequest;
+		global $smwgHaloIP, $wgOut, $wgRequest, $wgScriptPath;
 		require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_WIL.php');
 		
 		$wil = new WIL();
