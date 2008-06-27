@@ -733,7 +733,7 @@ WikiTextParser.prototype = {
 	 * Parses the content of the edit box and retrieves relations, 
 	 * categories and links. These are stored in internal arrays.
 	 *
-	 * <nowiki> and <ask>-sections are ignored.
+	 * <nowiki>, <pre> and <ask>-sections are ignored.
 	 */
 	parseAnnotations: function() {
 
@@ -743,14 +743,16 @@ WikiTextParser.prototype = {
 		this.error = WTP_NO_ERROR;
 
 		// Parsing-States
-		// 0 - find [[, <nowiki> or <ask>
+		// 0 - find [[, <nowiki>, <pre> or <ask>
 		// 1 - find [[ or ]]
 		// 2 - find <nowiki> or </nowiki>
 		// 3 - find <ask> or </ask>
 		// 4 - find {{#ask:
+		// 5 - find <pre> or </pre>
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var nowikiCount = 0;  // Number of open <nowiki>-statements
+		var preCount = 0;     // Number of open <pre>-statements
 		var askCount = 0;  	  // Number of open <ask>-statements
 		var currentPos = 0;   // Starting index for next search
 		var bracketStart = -1;
@@ -758,8 +760,8 @@ WikiTextParser.prototype = {
 		while (parsing) {
 			switch (state) {
 				case 0:
-					// Search for "[[", "<nowiki>" or <ask>
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<ask", "{{#ask:"]);
+					// Search for "[[", "<nowiki>", <pre> or <ask>
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "{{#ask:"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
@@ -776,6 +778,11 @@ WikiTextParser.prototype = {
 						bracketStart = -1;
 						nowikiCount++;
 						state = 2;
+					} else if (findings[1] == "<pre>") {
+						// <pre> found
+						bracketStart = -1;
+						preCount++;
+						state = 5;
 					} else if (findings[1] == "<ask") {
 						// <ask> found
 						bracketStart = -1;
@@ -868,6 +875,28 @@ WikiTextParser.prototype = {
 					var pos = this.parseAskTemplate(currentPos);
 					currentPos = (pos == -1) ? currentPos+7 : pos;
 					state = 0;
+					break;
+				case 5:
+					// we are within a <pre>-block
+					// => search for <pre> or </pre>
+					var findings = this.findFirstOf(currentPos, ["</pre>", "<pre>"]);
+					if (findings[1] == null) {
+						// nothing found
+						parsing = false;
+						break;
+					}
+					currentPos = findings[0]+4;
+					if (findings[1] == "<pre>") {
+						// <pre> found
+						preCount++;
+					} else {
+						// </pre> found
+						preCount--;
+						if (preCount == 0) {
+							// all opening <pre>s are closed
+							state = 0;
+						}
+					}
 					break;
 			}
 		}
