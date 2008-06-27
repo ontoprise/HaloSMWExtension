@@ -155,7 +155,7 @@ HTML;
         <div id="mynottitle" class="sn-my-notificationstitle" style="width:100%; height:20px; position:relative; overflow:hidden;">
           $txtSn10
         </div>
-        <div id="sn-notifications-list" style="position:relative; left:5px; height:430px; overflow-y:scroll">
+        <div id="sn-notifications-list" class="sn-my-notifications-list" style="position:relative;">
         </div>
       </div>
     </div>
