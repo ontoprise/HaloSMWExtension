@@ -597,10 +597,10 @@ DefineWebServiceSpecial.prototype = {
 					} 
 					if (k == 0){
 						tPath = rPathStep;
-						if(tPath.indexOf("result") == 0){
-							tPath = tPath.substr(6, tPath.length);
-						} else {
+						if(tPath.indexOf("result.") == 0){
 							tPath = tPath.substr(7, tPath.length);
+						} else {
+							tPath = tPath.substr(6, tPath.length);
 						}
 						rPathStep = tPath;
 					}
