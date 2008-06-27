@@ -187,7 +187,8 @@ function smwgHaloSetupExtension() {
 			case '_om_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 						break;
-			case '_sn_' : require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
+			case '_sn_' : smwfHaloInitMessages(); 
+						require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
 						break;
 			case '_ti_' : smwfHaloInitMessages();
 						require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_CL.php');
