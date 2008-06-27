@@ -38,7 +38,7 @@ div,span,img,a,form,body,label {
 
 .sn-my-notifications-list {
 	height: 430px;
-	overflow-y: scroll;
+	overflow: auto;
 }
 
 .sn-my-notifications-table {
@@ -47,7 +47,7 @@ div,span,img,a,form,body,label {
 
 .sn-previewbox {
 	border: 2px Silver solid;
-	overflow-y: scroll; 
+	overflow: auto; 
 }
 
 .sn-query-text {
