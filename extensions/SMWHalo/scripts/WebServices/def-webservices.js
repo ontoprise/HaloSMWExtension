@@ -227,8 +227,10 @@ DefineWebServiceSpecial.prototype = {
 					if (k != arraySteps.length - 1) {
 						var addButton = document.createElement("span");
 						addButton.style.cursor = "pointer";
-						var addButtonText = document.createTextNode("+");
-						addButton.appendChild(addButtonText);
+						var addButtonIMG = document.createElement("img");
+						addButtonIMG.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+						addButtonIMG.alt = "Please click here to generate Aliases";
+						addButton.appendChild(addButtonIMG);
 						var addButtonOnClick = document
 								.createAttribute("onclick");
 						addButtonOnClick.value = "webServiceSpecial.addParameter("
@@ -395,6 +397,14 @@ DefineWebServiceSpecial.prototype = {
 				resultRow.appendChild(resultTD1);
 
 				var resultPath = document.createElement("span");
+				
+				var dotSteps = wsResults[i].split(".");
+				if(dotSteps.length > 1){
+					wsResults[i] = "result." + wsResults[i];
+				} else {
+					wsResults[i] = "result" + wsResults[i];
+				}
+				
 				var arraySteps = wsResults[i].split("[");
 				var ppText = "";
 				for ( var k = 0; k < arraySteps.length; k++) {
@@ -403,8 +413,10 @@ DefineWebServiceSpecial.prototype = {
 						var addButton = document.createElement("span");
 						addButton.className = "OuterLeftIndent";
 						addButton.style.cursor = "pointer";
-						var addButtonText = document.createTextNode("+");
-						addButton.appendChild(addButtonText);
+						var addButtonIMG = document.createElement("img");
+						addButtonIMG.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+						addButtonIMG.alt = "Please click here to generate Aliases";
+						addButton.appendChild(addButtonIMG);
 						var addButtonOnClick = document
 								.createAttribute("onclick");
 						addButtonOnClick.value = "webServiceSpecial.addResultPart("
@@ -438,7 +450,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 				}
-
+				
 				resultPath.id = "s4-path" + i;
 				resultTD1.appendChild(resultPath);
 
@@ -575,16 +587,22 @@ DefineWebServiceSpecial.prototype = {
 				for (k = 0; k < document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length; k += 2) {
 					var rPathStep = document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k].nodeValue;
 					if (k > 0) {
-						rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value;
+						rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value; 
 					}
 					if (k == document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length - 1) {
 						if (rPathStep.lastIndexOf("(") > 0) {
 							rPathStep = rPathStep.substr(0, rPathStep
 									.lastIndexOf("(") - 1);
 						}
-						// if(rPathStep == ""){
-						// rPathStep = "]";
-						// }
+					} 
+					if (k == 0){
+						tPath = rPathStep;
+						if(tPath.indexOf("result") == 0){
+							tPath = tPath.substr(6, tPath.length);
+						} else {
+							tPath = tPath.substr(7, tPath.length);
+						}
+						rPathStep = tPath;
 					}
 					rPath += rPathStep;
 				}

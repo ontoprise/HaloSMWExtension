@@ -247,14 +247,15 @@ class WebService {
 				$ws->mSpanOfLife = 0;
 			} else {
 				$ws->mSpanOfLife = intval($ws->mSpanOfLife);
+				//$ws->mExpiresAfterUpdate = 
 			}
 		}
 		$ws->mExpiresAfterUpdate = false;
+		
 		$ws->mConfirmationStatus = "false";
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
 
 		return ($valid) ? $ws : $msg;
-
 	}
 
 	/**
@@ -352,8 +353,8 @@ class WebService {
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
 			< ($this->getDisplayPolicy()*60))){
 				$response = unserialize($cacheResult["result"]);
-				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
+			WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 		}
 
 		//		if($this->getConfirmationStatus() == "once"){

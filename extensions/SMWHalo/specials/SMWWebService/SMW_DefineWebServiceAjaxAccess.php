@@ -83,8 +83,8 @@ function smwf_ws_processStep2($uri, $methodName){
 function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
-
-	return "todo:handle exceptions;".implode(";", flattenParam($wsClient ,"", $rawResult[0]));
+	$flatResult = flattenParam($wsClient ,"", $rawResult[0]);
+	return "todo:handle exceptions;".implode(";", $flatResult);
 }
 
 /**
