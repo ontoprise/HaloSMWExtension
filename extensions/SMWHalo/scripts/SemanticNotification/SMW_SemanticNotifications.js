@@ -34,6 +34,8 @@ SemanticNotifications.prototype = {
 		this.queryLen = 0;
 		this.queryEdited = false;
 		this.minInterval = 1000;
+		this.initialName = $('sn-notification-name').value;
+		this.previewOK = false;
 	},
 
 	/**
@@ -54,6 +56,26 @@ SemanticNotifications.prototype = {
 		}
 		
 	},
+	
+	/**
+	 * Key-up and blur callback for the query text area. If the query text has 
+	 * been changed the input field for the name of the notification and the 'Add' 
+	 * button are disabled.
+	 */	
+	nameChanged: function(event) {
+		var key = event.which || event.keyCode;
+		var name = $('sn-notification-name').value.replace(/^\s*(.*?)\s*$/,"$1");
+		
+		if (name.length == 0) {
+			// no name given
+			this.enable('sn-add-notification', false);
+			$('sn-notification-name').focus();
+		} else {
+			this.enable('sn-add-notification', this.previewOK);
+		}
+		
+	},
+	
 	
 	/**
 	 * The user has changed the update interval. Check if the value is valid.
@@ -105,7 +127,7 @@ SemanticNotifications.prototype = {
 	 		return;
 	 	}
 
-		var name =  $('sn-notification-name').value;
+		var name =  $('sn-notification-name').value.replace(/^\s*(.*?)\s*$/,"$1");
 		
 		// does the name already exist?
 		if (this.notifications.indexOf(name) >= 0) {
@@ -138,12 +160,20 @@ SemanticNotifications.prototype = {
 				var res = request.responseText.substr(pos+1);
 				$('sn-previewbox').innerHTML = res;
 				if (success == 'true') {
+					this.previewOK = true;
 					$('sn-notification-name').enable();
-					this.enable('sn-add-notification', true);
+					$('sn-notification-name').focus();
+					if ($('sn-notification-name').value == this.initialName) {
+						$('sn-notification-name').value = '';
+						this.enable('sn-add-notification', false);
+					} else {
+						this.enable('sn-add-notification', true);
+					}
 				}
 			} else {
 				$('sn-notification-name').disable();
 				this.enable('sn-add-notification', false);
+				this.previewOK = false;
 			}
 		};
 
@@ -196,9 +226,9 @@ SemanticNotifications.prototype = {
   					this.notifications.push(n);
   					html += "<tr><td>"+n+"</td>";
   					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+n+'\')">';
-  					html += '<img src="/develwiki/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
+  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
   					html += '<td><a href="javascript:smwhgSemanticNotifications.deleteNotification(\''+n+'\')">';
-  					html += '<img src="/develwiki/extensions/SMWHalo/skins/delete.png" /></a></td>'; 
+  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/delete.png" /></a></td>'; 
 					html += "</tr>";
 				}
 				html += "</table>";
@@ -234,7 +264,7 @@ SemanticNotifications.prototype = {
 				$('sn-querytext').value = query;
 				$('sn-update-interval').value = ui;
 				$('sn-previewbox').innerHTML = '';
-				
+				$('sn-querytext').focus();
 				this.queryLen = query.length;
 				this.queryChanged = false;
 			} else {
@@ -417,6 +447,11 @@ SemanticNotifications.create = function() {
 		Event.observe('sn-querytext', 'blur', 
 		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
 
+		Event.observe('sn-notification-name', 'keyup', 
+		              smwhgSemanticNotifications.nameChanged.bindAsEventListener(smwhgSemanticNotifications));
+		Event.observe('sn-notification-name', 'blur', 
+		              smwhgSemanticNotifications.nameChanged.bindAsEventListener(smwhgSemanticNotifications));
+
 		Event.observe('sn-update-interval', 'blur', 
 		              smwhgSemanticNotifications.updateIntervalChanged.bindAsEventListener(smwhgSemanticNotifications));
 	
@@ -436,6 +471,7 @@ SemanticNotifications.create = function() {
 		}
 		
 		smwhgSemanticNotifications.getAllNotifications();
+		$('sn-querytext').focus();
 	}	
 }
 
