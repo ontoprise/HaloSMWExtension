@@ -751,8 +751,6 @@ WikiTextParser.prototype = {
 		// 5 - find <pre> or </pre>
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
-		var nowikiCount = 0;  // Number of open <nowiki>-statements
-		var preCount = 0;     // Number of open <pre>-statements
 		var askCount = 0;  	  // Number of open <ask>-statements
 		var currentPos = 0;   // Starting index for next search
 		var bracketStart = -1;
@@ -776,12 +774,10 @@ WikiTextParser.prototype = {
 					} else if (findings[1] == "<nowiki>") {
 						// <nowiki> found
 						bracketStart = -1;
-						nowikiCount++;
 						state = 2;
 					} else if (findings[1] == "<pre>") {
 						// <pre> found
 						bracketStart = -1;
-						preCount++;
 						state = 5;
 					} else if (findings[1] == "<ask") {
 						// <ask> found
@@ -828,25 +824,16 @@ WikiTextParser.prototype = {
 					break;
 				case 2:
 					// we are within a <nowiki>-block
-					// => search for <nowiki> or </nowiki>
-					var findings = this.findFirstOf(currentPos, ["</nowiki>", "<nowiki>"]);
+					// => search for </nowiki>
+					var findings = this.findFirstOf(currentPos, ["</nowiki>"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
 						break;
 					}
 					currentPos = findings[0]+7;
-					if (findings[1] == "<nowiki>") {
-						// <nowiki> found
-						nowikiCount++;
-					} else {
-						// </nowiki> found
-						nowikiCount--;
-						if (nowikiCount == 0) {
-							// all opening <nowiki>s are closed
-							state = 0;
-						}
-					}
+					// opening <nowiki> is closed
+					state = 0;
 					break;
 				case 3:
 					// we are within an <ask>-block
@@ -878,25 +865,16 @@ WikiTextParser.prototype = {
 					break;
 				case 5:
 					// we are within a <pre>-block
-					// => search for <pre> or </pre>
-					var findings = this.findFirstOf(currentPos, ["</pre>", "<pre>"]);
+					// => search for </pre>
+					var findings = this.findFirstOf(currentPos, ["</pre>"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
 						break;
 					}
 					currentPos = findings[0]+4;
-					if (findings[1] == "<pre>") {
-						// <pre> found
-						preCount++;
-					} else {
-						// </pre> found
-						preCount--;
-						if (preCount == 0) {
-							// all opening <pre>s are closed
-							state = 0;
-						}
-					}
+					// opening <pre> is closed
+					state = 0;
 					break;
 			}
 		}
