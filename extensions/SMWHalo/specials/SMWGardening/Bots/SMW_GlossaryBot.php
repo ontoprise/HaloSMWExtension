@@ -370,7 +370,7 @@ class GlossaryBot extends GardeningBot {
 }
 
 // Create one instance to register the bot.
-new GlossaryBot();
+//new GlossaryBot(); //Bot is disabled
 
 define('SMW_GLOSSARY_BOT_BASE', 2300);
 define('SMW_GARDISSUE_FOUND_TERMS_IN_ARTICLE', SMW_GLOSSARY_BOT_BASE * 100 + 1);
