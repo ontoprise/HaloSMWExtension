@@ -34,7 +34,7 @@ $wgExtensionCredits['parserhook'][] = array(
 $wgExtensionFunctions[] = 'glossarySetup';
 function glossarySetup() {
   global $wgOut, $wgScriptPath;
-  $wgOut->addHTML("<script type='text/javascript' src='$wgScriptPath/extensions/tooltip/wz_tooltip.js'></script>");
+  //$wgOut->addHTML("<script type='text/javascript' src='$wgScriptPath/extensions/tooltip/wz_tooltip.js'></script>");
 }
 
 $wgHooks['ParserBeforeTidy'][] = 'glossaryParser';
