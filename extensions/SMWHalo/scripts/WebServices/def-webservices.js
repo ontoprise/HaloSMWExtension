@@ -16,10 +16,11 @@
  */
 
 /**
- * This file provides methods for the special page define wiki web service description
+ * This file provides methods for the special page define wiki web service
+ * description
  * 
  * @author Ingo Steinbauer
- *
+ * 
  */
 
 var DefineWebServiceSpecial = Class.create();
@@ -397,14 +398,14 @@ DefineWebServiceSpecial.prototype = {
 				resultRow.appendChild(resultTD1);
 
 				var resultPath = document.createElement("span");
-				
+
 				var dotSteps = wsResults[i].split(".");
-				if(dotSteps.length > 1){
+				if (wsResults[i].length > 0) {
 					wsResults[i] = "result." + wsResults[i];
 				} else {
 					wsResults[i] = "result" + wsResults[i];
 				}
-				
+
 				var arraySteps = wsResults[i].split("[");
 				var ppText = "";
 				for ( var k = 0; k < arraySteps.length; k++) {
@@ -450,7 +451,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 				}
-				
+
 				resultPath.id = "s4-path" + i;
 				resultTD1.appendChild(resultPath);
 
@@ -587,17 +588,17 @@ DefineWebServiceSpecial.prototype = {
 				for (k = 0; k < document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length; k += 2) {
 					var rPathStep = document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k].nodeValue;
 					if (k > 0) {
-						rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value; 
+						rPath += document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes[k - 1].value;
 					}
 					if (k == document.getElementById("step4-results").childNodes[0].childNodes[i + 1].childNodes[1].firstChild.childNodes.length - 1) {
 						if (rPathStep.lastIndexOf("(") > 0) {
 							rPathStep = rPathStep.substr(0, rPathStep
 									.lastIndexOf("(") - 1);
 						}
-					} 
-					if (k == 0){
+					}
+					if (k == 0) {
 						tPath = rPathStep;
-						if(tPath.indexOf("result.") == 0){
+						if (tPath.indexOf("result.") == 0) {
 							tPath = tPath.substr(7, tPath.length);
 						} else {
 							tPath = tPath.substr(6, tPath.length);
@@ -630,7 +631,7 @@ DefineWebServiceSpecial.prototype = {
 				result += "<once/>\n";
 			} else {
 				result += "<maxAge value=\"";
-				var minutes = 0;
+				minutes = 0;
 				minutes += document.getElementById("step5-query-days").value * 60 * 24;
 				minutes += document.getElementById("step5-query-hours").value * 60;
 				minutes += document.getElementById("step5-query-minutes").value * 1;
@@ -643,7 +644,7 @@ DefineWebServiceSpecial.prototype = {
 			result += "<delay value=\"" + delay + "\"/>\n";
 			result += "</queryPolicy>\n"
 			result += "<spanOfLife value=\""
-					+ document.getElementById("step5-spanoflife").value * 1;
+					+ (0 + document.getElementById("step5-spanoflife").value * 1);
 			if (document.getElementById("step5-expires-yes").checked) {
 				result += "\" expiresAfterUpdate=\"true\" />\n";
 			} else {
