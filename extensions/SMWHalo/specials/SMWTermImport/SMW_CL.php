@@ -30,50 +30,43 @@ public function execute() {
 						"<div id=\"tldesc\">" . "Info: " . "</div>" .
 					"</div>";
 		$html .= "<div id=\"dal-content\">DAM:" .
-				 "<div id=\"dalid\">" . "<div class=\"myinfo\">first select TLM</div>" . "</div>" .
+				 "<div id=\"dalid\">" . "<div class=\"myinfo\">" . wfMsg('smw_ti_firstselectTLM') . "</div>" . "</div>" .
 				 "<div id=\"daldesc\">" . "</div>" .
 				 "</div>";
 		
 		$html .= "<div id=\"source-spec\">" . 
-				"<table height=\"200px\"><tr><td valign=\"middle\"><i>Please select a DAM </i></td></tr></table>".
+				"<table height=\"200px\"><tr><td valign=\"middle\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
 				"</div>";
 		$html .= "</div>"; //top-container
 		
-		$importText = "Please choose one of the available import sets: &nbsp; &nbsp;";
-		
-		//TODO: wfmsg!!!
-		$policyInfo = "Info: <br>With the input policy, you can define which information should be importet, using regular expressions. 
-										For example, use \"Em*\" in order to import only data sets that start with \"Em\". If no input policy is chosen, all data will be imported.";
-		
-				
 		$html .= "<div id=\"bottom-container\">" .
 					"<div id=\"extras\">" .
 							"<div id=\"extras-left\">" .
-								"<div id=\"importset\">" . $importText .
+								"<div id=\"importset\">" . wfMsg('smw_ti_selectImport') .
 									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\"></select>" .
 									"<br><br>" .
 								"</div>" . //importset
 								"<div id=\"policy\">" .
 									"<div id=\"policy-input\">" .
-										"<table><tr><td>" ."Please define an input policy: &nbsp; &nbsp;" . 
+										"<table><tr><td>" .wfMsg('smw_ti_define_inputpolicy')."&nbsp; &nbsp;" . 
 										"<input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\" background=\"grey\"> &nbsp;</td>" .
 										"<td><img style=\"cursor: pointer;\" onclick=\"termImportPage.getPolicy(event, this)\" src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/Add.png\" /></td></tr>" . 
 										"<tr><td/><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
-										"<i>" .$policyInfo . "</i>" . 
+										"<i>" . wfMsg('smw_ti_inputpolicy') . "</i>" . 
 									"</div>" .	
 									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" .  
 									"</select>" .
 								"</div>" . //policy
 								"<div id=\"mapping\">" .
 									"<table>
-										<tr><td><br><br>Please enter the name of the article that does contain the mapping policies:<br></td></tr>" .
+										<tr><td><br><br>".wfMsg('smw_ti_mappingPage')."<br></td></tr>" .
 										"<tr><td><input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\">&nbsp&nbsp
-										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">View</a>&nbsp&nbsp
-										<a onClick=\"termImportPage.editMappingArticle(event,this)\">Edit</td></tr>
+										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">" . wfMsg('smw_ti_viewMappingPage') . "</a>&nbsp&nbsp
+										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') . "</td></tr>
 									</table>" .
 								"</div>" . //mapping
 								"<div id=\"conflict\">" .
-									"<br><br>Please define a conflict policy. The conflict policy defines what happens if articles are imported that already exist in this wiki:&nbsp;" .
+									"<br><br>".wfMsg('smw_ti_conflictpolicy')."&nbsp;" .
 									"<select name=\"conflict\" id=\"conflict-input-field\">" .
 										"<option>overwrite</option>" .
 										"<option>preserve current versions</option>" .
@@ -111,7 +104,7 @@ public function execute() {
 			for($i = 0; $i < $count; $i++) {
 				$tlid = $tlmodules['TLMODULES'][0]['value']['MODULE'][$i]['value']['ID'][0]['value'];
 				$html .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
-		 				 " onMouseOut=\"\" onClick=\"termImportPage.connectTL(event, this, '$tlid')\">" .							
+		 				 " onMouseOut=\"termImportPage.showRightTLM(event, this, '$tlid')\" onClick=\"termImportPage.connectTL(event, this, '$tlid')\">" .							
 						"<a>" . $tlid . "</a>" . "</div>";
 			}
 		}
@@ -273,7 +266,9 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		if ( $terms == false) {
 			//error while running bot
 		}
-		return true;
+		else {
+			return $terms;
+		}
 	}
 	else {
 		// error, $runBot neither 0 nor 1

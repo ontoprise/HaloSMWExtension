@@ -94,7 +94,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 #tlid .entry-over{
 	padding: 3px 5px 3px 5px;
 	border-bottom: 1px solid #CCC;
-	/*background-color: #CCC;*/
+	background-color: #CCC;
 	cursor: pointer;
 }
 #tlid .entry-active{
@@ -116,7 +116,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 #dalid .entry-over{
 	padding: 3px 5px 3px 5px;
 	border-bottom: 1px solid #CCC;
-	/*background-color: #CCC;*/
+	background-color: #CCC;
 	cursor: pointer;
 }
 #dalid .entry-active{
@@ -222,7 +222,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	width: 255px;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
-	padding: 15px 5px 3px 5px;
+	padding: 20px 5px 3px 5px;
 }
 .inputfield{
 	border: 1px solid #AAAAAA;
