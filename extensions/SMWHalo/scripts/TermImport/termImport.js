@@ -20,8 +20,22 @@ var TermImportPage = Class.create();
 
 TermImportPage.prototype = {
 	initialize: function() {
-	
+		this.currentSelectedTLM = null;
+		this.currentSelectedDAM = null;
 		/*if (wgCanonicalSpecialPageName != 'Gardening') return;*/
+	},
+	
+	/**
+	 * Formats the selected TLM entry correctly when mouseout
+	 */
+	showRightTLM: function(e, node, tlID){
+		if (this.currentSelectedTLM!=node) {
+			Element.removeClassName(node,'entry-over');
+			Element.addClassName(node,'entry');
+		}else{
+			Element.removeClassName(node,'entry-over');
+			Element.addClassName(node,'entry-active');
+		}
 	},
 	
 	/**
@@ -29,10 +43,14 @@ TermImportPage.prototype = {
 	 * in the tl-desc respectively dal-id
 	 */
 	connectTL: function(e, node, tlID) {
-		Element.removeClassName(node,'entry');
+		if (this.currentSelectedTLM) {
+			Element.removeClassName(this.currentSelectedTLM,'entry-active');
+			Element.addClassName(this.currentSelectedTLM,'entry');
+		}
+		Element.removeClassName(node, 'entry');
 		Element.addClassName(node, 'entry-active');
-		
-		if (this.pendingIndicator == null) {
+		this.currentSelectedTLM = node;		
+		if (this.pendingIndicatorTL == null && this.pendingIndicatorDAL == null) {
 			this.pendingIndicatorTL = new OBPendingIndicator($('tldesc'));
 			this.pendingIndicatorDAL = new OBPendingIndicator($('dalid'));
 		}
@@ -90,7 +108,7 @@ TermImportPage.prototype = {
 					//get the nodeValue
 					var dalid = dalid_obj[0].firstChild.nodeValue;
 					response += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" +
-		 				 "onMouseOut=\"\" onClick=\"termImportPage.getDAL(event, this, '" + dalid + "', '" + tlID + "')\"><a>" + dalid + "</a></div>";
+		 				 "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" onClick=\"termImportPage.getDAL(event, this, '" + dalid + "', '" + tlID + "')\"><a>" + dalid + "</a></div>";
 				}	
 			}	
 		}
@@ -99,14 +117,31 @@ TermImportPage.prototype = {
 		}
 	},
 	
+	/**
+	 * Formats the selected DAM entry correctly when mouseout
+	 */
+	showRightDAM: function(e, node, tlID){
+		if (this.currentSelectedDAM!=node) {
+			Element.removeClassName(node,'entry-over');
+			Element.addClassName(node,'entry');
+		}else{
+			Element.removeClassName(node,'entry-over');
+			Element.addClassName(node,'entry-active');
+		}
+	},
+	
 	/*
 	 * function for getting all DAMs for the chosen TLM
 	 */
 	getDAL: function(e, node, dalID, tlID) {
+		if (this.currentSelectedDAM) {
+			Element.removeClassName(this.currentSelectedDAM,'entry-active');
+			Element.addClassName(this.currentSelectedDAM,'entry');
+		}
 		Element.removeClassName(node,'entry');
 		Element.addClassName(node, 'entry-active');
-		
-		if (this.pendingIndicator == null) {
+		this.currentSelectedDAM = node;
+		if (this.pendingIndicatorDALDesc == null && this.pendingIndicatorSourceSpec == null) {
 			this.pendingIndicatorDALDesc = new OBPendingIndicator($('daldesc'));
 			this.pendingIndicatorSourceSpec = new OBPendingIndicator($('source-spec'));
 		}
@@ -154,7 +189,8 @@ TermImportPage.prototype = {
 		//create the right input-div
 //		var datasources = list.getElementsByTagName("DataSource");
 		var datasources = list.getElementsByTagName("DataSource")[0].childNodes;
-		response = "<i>The following Information is needed in order to start the Import</i><br><br><form id=\"source\"><Table>Source&nbsp;";
+		response = "<i>" + gLanguage.getMessage('smw_ti_sourceinfo') + "</i><br><br><form id=\"source\"><Table>" +
+					gLanguage.getMessage('smw_ti_source') + "&nbsp;";
 		
 		var fieldnumber = 0;
 		for (var i = 0, n = datasources.length; i < n; i++) {
@@ -196,7 +232,7 @@ TermImportPage.prototype = {
 	
 	getSource: function(e, node, tlID, dalID) {
 				
-		if (this.pendingIndicator == null) {
+		if (this.pendingIndicatorImportset == null) {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}
 		this.pendingIndicatorImportset.show();
@@ -208,13 +244,14 @@ TermImportPage.prototype = {
 			//XML structure for the DataSource
 			var dataSource = '';
 			var topcontainer = "<table cellspacing=\"10\"><tr><td>TLM: " + tlID + "</td><td>DAM: " + dalID + "</td><td><ul>";
+			
 			for (var i = 0, n = source.length; i < n; i++) {
 				sourcearray[i] = document.getElementById(source[i].id).value;
 				if (sourcearray[i] && sourcearray[i] != '') {
 					//create XML doc
-					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
+					tag_array[i] = document.getElementById("tag_" + source[i].id);
 					
-					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
+					dataSource += "<" + tag_array[i].value + ">" + sourcearray[i] + "</" + tag_array[i].value + ">";
 					
 					//change the top-container
 					var display = source[i].id;
@@ -223,7 +260,7 @@ TermImportPage.prototype = {
 				}
 			}
 			topcontainer += "</ul></td><td><a style=\"cursor: pointer;\"" +
-					" onClick=\"termImportPage.getTopContainer(event, this)\">edit</a></td></tr></table>";
+					" onClick=\"termImportPage.getTopContainer(event, this)\">" + gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 		}
 		catch(e) {
 			//TODO: errorhandling
@@ -269,7 +306,7 @@ TermImportPage.prototype = {
 			}
 			//show properties on the right side
 			var properties = list.getElementsByTagName("Properties")[0].childNodes;
-			var property_response = "The following attributes can be extracted from data source defined:";
+			var property_response = gLanguage.getMessage('smw_ti_attributes');
 			
 			/*		"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
 												"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";*/
@@ -304,10 +341,10 @@ TermImportPage.prototype = {
 						// add article name to the table
 						article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
 						article_count++;
-					}	
-				}	
+					}
+				}
 			}
-			article_response = "The following " + article_count + " articles will be generated in the wiki:" +
+			article_response = gLanguage.getMessage('smw_ti_articles1') + article_count + gLanguage.getMessage('smw_ti_articles2') +
 					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
 					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>"
 					+ article_response + "</table>";
@@ -434,7 +471,7 @@ TermImportPage.prototype = {
 	 */
 	refreshPreview: function(e, node, tlID, dalID) {
 		
-		if (this.pendingIndicator == null) {
+		if (this.pendingIndicatorArticles == null) {
 			this.pendingIndicatorArticles = new OBPendingIndicator($('article_table'));
 		}
 		this.pendingIndicatorArticles.show();
@@ -605,14 +642,9 @@ TermImportPage.prototype = {
 		}
 		catch(e) {
 		}
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, 'TestPage', conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));
-		
-		//redirect to GardeningPage???
-				
+		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, 'TestPage', conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));				
 	},
 	importItNowCallback: function(tlID, dalID, request){
-		var text = 'succesfully started this fucking bot!!!';
-		
 		var message= '';
 		try {
 			var result = request.responseText;
