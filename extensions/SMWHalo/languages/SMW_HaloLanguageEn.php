@@ -484,6 +484,18 @@ clicking the big arrows between the columns.',
 	
 	/* Messages of the Thesaurus Import */
 	'smw_ti_welcome' => 'Please select a transport layer module (TLM) and then an data access module (DAM):',
+	'smw_ti_selectDAM' => 'Please select a DAM',
+	'smw_ti_firstselectTLM' => 'first select TLM',
+	'smw_ti_selectImport' => 'Please choose one of the available import sets:&nbsp;&nbsp;',
+	'smw_ti_inputpolicy' => 'Info: <br>With the input policy, you can define which information should be importet, using regular expressions. 
+							For example, use "Em*" in order to import only data sets that start with "Em". 
+							If no input policy is chosen, all data will be imported.',
+	'smw_ti_define_inputpolicy' => 'Please define an input policy:',
+	'smw_ti_mappingPage' => 'Please enter the name of the article that does contain the mapping policies:',
+	'smw_ti_viewMappingPage' => 'View',
+	'smw_ti_editMappingPage' => 'Edit',
+	'smw_ti_conflictpolicy' => 'Please define a conflict policy. The conflict policy defines what happens if articles are imported that already exist in this wiki:',
+		
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
 	'smw_ti_class_not_found' => 'Class "$1" not found.',
 	'smw_ti_no_tl_module_spec' => 'Could not find specification for TL module with ID "$1".',

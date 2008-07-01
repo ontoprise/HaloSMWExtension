@@ -292,6 +292,13 @@ var wgUserLanguageStrings = {
 	// Semantic notifications
 	'SN_OVERWRITE_EXISTING'   : 'The notification "$1" already exists. Do you really want to overwrite it?',
 	'SN_DELETE'               : 'Do you really want to delete the notification "$1"?',
-	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'The update interval is invalid. The smallest possible value is $1.'
+	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'The update interval is invalid. The smallest possible value is $1.',
 	
+	//Term Import
+	'smw_ti_sourceinfo'		: 'The following Information is needed in order to start the Import',
+	'smw_ti_source'			: 'Source',
+	'smw_ti_edit'			: 'edit',
+	'smw_ti_attributes'		: 'The following attributes can be extracted from data source defined:',
+	'smw_ti_articles1'		: 'The following ',
+	'smw_ti_articles2'		: ' articles will be generated in the wiki:'
 };
