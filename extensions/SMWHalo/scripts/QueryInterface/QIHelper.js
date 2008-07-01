@@ -305,17 +305,30 @@ insertAsNotification: function() {
 */
 recurseQuery:function(id, type){
 	var sq = this.queries[id].getSubqueryIds();
-	if(sq.length == 0)
-		return this.queries[id].getAskText(); // no subqueries, get the asktext
+	if(sq.length == 0){
+		if(type == "parser")
+			return this.queries[id].getParserAsk();
+		else
+			return this.queries[id].getAskText(); // no subqueries, get the asktext
+	}
 	else {
-			
-		var tmptext = this.queries[id].getAskText();
-		for(var i=0; i<sq.length; i++){
-			var regex = null;
-			eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
-			tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i]) + '</q>'); //recursion
+		if(type == "parser"){
+			var tmptext = this.queries[id].getAskText();
+			for(var i=0; i<sq.length; i++){
+				var regex = null;
+				eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
+				tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i], "ask") + '</q>'); //recursion
+			}
+			return tmptext;
+		} else {
+			var tmptext = this.queries[id].getParserAsk();
+			for(var i=0; i<sq.length; i++){
+				var regex = null;
+				eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
+				tmptext = tmptext.replace(regex, '<q>' + this.recurseQuery(sq[i], "parser") + '</q>'); //recursion
+			}
+			return tmptext;
 		}
-		return tmptext;
 	}
 },
 
@@ -1068,7 +1081,7 @@ showFullAsk:function(type, toggle){
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
 	if(type == "parser")
-		ask = ask.replace(/\|/g, "|\n");
+		ask = ask.replace(/\|/g, "\n|");
 	$('fullAskText').value = ask;
 },
 

@@ -162,8 +162,9 @@ Query.prototype = {
 			if(this.properties[i].mustBeSet()){
 				asktext += "[[" + this.properties[i].getName() + "::+]]";
 			}
-			asktext += "[[" + this.properties[i].getName() + "::";
+			
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
+				asktext += "[[" + this.properties[i].getName() + "::";
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
@@ -174,18 +175,23 @@ Query.prototype = {
 				}
 			} else { //binary property
 				var vals = this.properties[i].getValues();
-				for(var j=0; j<vals.length; j++){
-					if(j!=0) //add disjunction operator
-						asktext += "||";
-					if(vals[j][1]!= "=")
-						asktext += vals[j][1].substring(0,1);
-					if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
-						asktext += "Subquery:" + vals[j][2] + ":";
-					else
-						asktext += vals[j][2];
+				if (vals.length == 1 && vals[0][2] == "*"){}
+				else{
+					asktext += "[[" + this.properties[i].getName() + "::";
+					for(var j=0; j<vals.length; j++){
+						if(j!=0) //add disjunction operator
+							asktext += "||";
+						if(vals[j][1]!= "=")
+							asktext += vals[j][1].substring(0,1);
+						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
+							asktext += "Subquery:" + vals[j][2] + ":";
+						else
+							asktext += vals[j][2];
+					}
+				asktext += "]]";
 				}
 			}
-			asktext += "]]";
+			
 		}
 		return asktext;
 	},
@@ -227,8 +233,8 @@ Query.prototype = {
 			if(this.properties[i].mustBeSet()){
 				asktext += "[[" + this.properties[i].getName() + "::+]]";
 			}
-			asktext += "[[" + this.properties[i].getName() + "::";
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
+				asktext += "[[" + this.properties[i].getName() + "::";
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
@@ -237,20 +243,25 @@ Query.prototype = {
 						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
 					asktext += vals[j][2];
 				}
+				asktext += "]]";
 			} else { //binary property
 				var vals = this.properties[i].getValues();
-				for(var j=0; j<vals.length; j++){
-					if(j!=0) //add disjunction operator
-						asktext += "||";
-					if(vals[j][1]!= "=")
-						asktext += vals[j][1].substring(0,1);
-					if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
-						asktext += "Subquery:" + vals[j][2] + ":";
-					else
-						asktext += vals[j][2];
+				if (vals.length == 1 && vals[0][2] == "*"){}
+				else{
+					asktext += "[[" + this.properties[i].getName() + "::";
+					for(var j=0; j<vals.length; j++){
+						if(j!=0) //add disjunction operator
+							asktext += "||";
+						if(vals[j][1]!= "=")
+							asktext += vals[j][1].substring(0,1);
+						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
+							asktext += "Subquery:" + vals[j][2] + ":";
+						else
+							asktext += vals[j][2];
+					}
+					asktext += "]]";
 				}
 			}
-			asktext += "]]";
 		}
 		return asktext;
 	},
