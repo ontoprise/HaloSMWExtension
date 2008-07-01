@@ -180,7 +180,7 @@ class WSStorageSQL {
 			$row->display_policy, $row->query_policy,
 			$row->updateDelay, $row->span_of_life,
 			$rwow->expires_after_update == 'true',
-			$row->confirmed == 'true');
+			$row->confirmed);
 		}
 		$db->freeResult($res);
 		return $ws;
@@ -204,6 +204,10 @@ class WSStorageSQL {
 	public function addWSArticle($wsPageID, $paramSetID, $pageID) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
+			$db->delete($db->tableName('smw_ws_articles'), array(
+					  'web_service_id' => $wsPageID,
+					  'param_set_id'   => $paramSetID,
+					  'page_id'        => $pageID));
 			$db->insert($db->tableName('smw_ws_articles'), array(
 					  'web_service_id' => $wsPageID,
 					  'param_set_id'   => $paramSetID,
@@ -265,6 +269,11 @@ class WSStorageSQL {
 	public function addWSProperty($propertyID, $wsPageID, $paramSetID, $pageID) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
+			$db->delete($db->tableName('smw_ws_properties'), array(
+					  'property_id'    => $propertyID,
+					  'web_service_id' => $wsPageID,
+					  'param_set_id'   => $paramSetID,
+					  'page_id'        => $pageID));
 			$db->insert($db->tableName('smw_ws_properties'), array(
 					  'property_id'    => $propertyID,
 					  'web_service_id' => $wsPageID,
@@ -325,7 +334,7 @@ class WSStorageSQL {
 		if(sizeof($parameters) == 0){
 			return "0";
 		}
-		
+
 		$db =& wfGetDB( DB_SLAVE );
 		$ptbl = $db->tableName('smw_ws_parameters');
 
@@ -667,7 +676,7 @@ class WSStorageSQL {
 		array("result", "last_update", "last_access"),
 		array(	"web_service_id" => $wsPageId,
 		             		"param_set_id" => $parameterSetId));
-		
+
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$result["result"] = $row->result;
@@ -677,8 +686,8 @@ class WSStorageSQL {
 		$db->freeResult($res);
 		return $result;
 	}
-	
-/**
+
+	/**
 	 * get results for the given web service id
 	 * from the cache
 	 *
@@ -688,29 +697,30 @@ class WSStorageSQL {
 	function getResultsFromCache($wsId){
 		$db =& wfGetDB( DB_SLAVE );
 		$tbn = $db->tableName('smw_ws_cache');
-		
-		$sql = "SELECT cache.result, cache.last_update, cache.last_access";
+
+		$sql = "SELECT cache.param_set_id ,cache.result, cache.last_update, cache.last_access";
 		$sql .= " FROM ".$tbn." cache";
 		$sql .= " WHERE cache.web_service_id =\"".$wsId."\"";
 		$sql .= " ORDER BY cache.last_update ASC";
-		
+
 		$res = $db->query($sql);
-		
+
 		$results = array();
 		$result = array();
-		
+
 		while ($row = $db->fetchObject($res)) {
+			$result["paramSetId"] = $row->param_set_id;
 			$result["result"] = $row->result;
 			$result["lastUpdate"] = $row->last_update;
 			$result["lastAccess"] = $row->last_access;
 			$results[] = $result;
 		}
-		
+
 		$db->freeResult($res);
 		return $results;
 	}
-	
-	
+
+
 
 	/**
 	 * stores the result of a ws-call in the cache
@@ -724,6 +734,9 @@ class WSStorageSQL {
 		$ptb = $db->tableName('smw_ws_cache');
 
 		try {
+			$db->delete($db->tableName('smw_ws_cache'), array(
+					  'web_service_id'    => $wsId,
+					  'param_set_id' => $parameterSetId));
 			$db->insert($db->tableName('smw_ws_cache'), array(
 					  'web_service_id'    => $wsId,
 					  'param_set_id' => $parameterSetId,
@@ -795,8 +808,8 @@ class WSStorageSQL {
 			$row->display_policy, $row->query_policy,
 			$row->updateDelay, $row->span_of_life,
 			$rwow->expires_after_update == 'true',
-			$row->confirmed == 'true');
-			
+			$row->confirmed);
+				
 			$webServices[$ws->getName()] = $ws;
 		}
 
@@ -823,5 +836,46 @@ class WSStorageSQL {
 		}catch (Exception $e) {
 			echo $e->getMessage();
 		}
+	}
+
+	//todo: describe
+	function getWSPropertyNames(){
+		$db =& wfGetDB( DB_SLAVE );
+		$result = array();
+		$tbn = $db->tableName('smw_ws_properties');
+
+		$sql = "SELECT DISTINCT props.property_id FROM "
+		.$tbn. " props ORDER BY props.property_id ASC";
+			
+		$res = $db->query($sql);
+
+		$props = array();
+
+		while($row = $db->fetchObject($res)){
+			$props[] = $row->property_id;
+		}
+		
+		return $props;
+	}
+	
+//todo: describe
+	function getWSPropertyUsages($wsId){
+		$db =& wfGetDB( DB_SLAVE );
+		$result = array();
+		$tbn = $db->tableName('smw_ws_properties');
+
+		$sql = "SELECT DISTINCT props.property_id, props.param_set_id FROM "
+			.$tbn. " props WHERE props.web_service_id = \"".$wsId."\"";
+			
+		$res = $db->query($sql);
+
+		$result = array();
+
+		while($row = $db->fetchObject($res)){
+			$result[] = array("propertyId" => $row->property_id,
+				"paramSetId" => $row->param_set_id);
+		}
+		
+		return $result;
 	}
 }

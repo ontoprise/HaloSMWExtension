@@ -47,20 +47,22 @@ class WebServiceListResultPrinter extends WebServiceResultPrinter {
 		return self::$instance;
 	}
 
-	
+
 	/**
-	 * get web service usage result as wikitext 
+	 * get web service usage result as wikitext
 	 *
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
 	public function getWikiText($wsResult){
-		$return = ""; 
+		$return = "";
 		for($i = 1; $i<sizeof($wsResult);$i++){
 			if($i != 1){
-				$return.= ", ";	
+				$return.= ", ";
 			}
+			//return print_r($wsResult[$i], true);
 			$return.= implode(", ", $wsResult[$i]);
+			//$return.= print_r($wsResult[$i], true);
 		}
 		return $return;
 	}

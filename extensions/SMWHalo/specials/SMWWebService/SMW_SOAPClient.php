@@ -154,9 +154,11 @@ class SMWSoapClient implements IWebServiceClient {
  		$this->mClient = new SoapClient($this->mURI);
 // 		
  		try {
-			$response = $this->mClient->getPoint($parameters);
+			$response = $this->mClient->$operationName($parameters);
+			//return print_r($response, true);
 		} catch(Exception $e) {
- 			return "_ws-error: ".print_r($e, true);
+ 			//return "_ws-error: ".print_r($e, true);
+ 			return print_r($e, true) . $this->mClient->__getLastResponse();
  		}
  		return $response;
  	}
@@ -191,15 +193,16 @@ class SMWSoapClient implements IWebServiceClient {
  				$retType = $matches[1];
  				$fname = $matches[2];
  				$params = $matches[3];
- 				$this->mOperations[$fname] = array($retType);
- 				if ($params) {
- 					$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
- 					for ($i = 0; $i < $numParam; ++$i) {
- 						$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
- 					} 
+ 				if(!$this->mOperations[$fname]){
+ 					$this->mOperations[$fname] = array($retType);
+ 					if ($params) {
+ 						$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
+ 						for ($i = 0; $i < $numParam; ++$i) {
+ 							$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
+ 						} 
+ 					}
  				}
  			}
- 			
  		}
  		
  		$this->mTypes = array();

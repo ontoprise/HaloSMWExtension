@@ -247,11 +247,11 @@ class WebService {
 				$ws->mSpanOfLife = 0;
 			} else {
 				$ws->mSpanOfLife = intval($ws->mSpanOfLife);
-				//$ws->mExpiresAfterUpdate = 
+				//$ws->mExpiresAfterUpdate =
 			}
 		}
 		$ws->mExpiresAfterUpdate = false;
-		
+
 		$ws->mConfirmationStatus = "false";
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
 
@@ -349,24 +349,23 @@ class WebService {
 
 		//check if an appropriate result allready exists in the cache
 		if($cacheResult != null){
-			if(($this->mDisplayPolicy === 0) ||
-			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
-			< ($this->getDisplayPolicy()*60))){
+			if(($this->mDisplayPolicy == 0) ||
+					(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
+					< ($this->getDisplayPolicy()*60))){
 				$response = unserialize($cacheResult["result"]);
 			}
 			WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 		}
-
-		//		if($this->getConfirmationStatus() == "once"){
-		//			return "need confirmation first";
-		//		}
-
+		
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
+			if($this->getConfirmationStatus() == "once"){
+				//todo: create language message
+				return "need confirmation first";
+			}
 			$this->createWSClient();
 			$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
-
 			//init call-parameters with respect to default values
 			$this->mCallParameters	= array();
 			foreach($this->mParsedParameters->children() as $child){
@@ -384,6 +383,8 @@ class WebService {
 				if(substr($response, 0, 11) == "_ws-error: "){
 					return $response;
 				}
+				//todo: think about this
+				return $response;
 			}
 
 			WSStorage::getDatabase()->storeCacheEntry(
@@ -503,6 +504,13 @@ class WebService {
 			}
 			$result[$key] = $tempObject;
 		}
+
+		$ws = $this->mArticleID;
+		if($this->getConfirmationStatus() == "false"){
+			$this->mConfirmationStatus = once;
+			WSStorage::getDatabase()->setWWSDConfirmationStatus($this->mArticleID, "once");
+		}
+
 		return $result;
 	}
 
@@ -515,7 +523,7 @@ class WebService {
 	private function getPathSteps($path, $value){
 		$walkedParameters = explode(".", $path);
 		$temp = &$this->mCallParameters;
-		
+
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
 			if($this->getReturnPartBracketValue($walkedParameters[$i]) === false){
 				if(!$temp[$walkedParameters[$i]]){
@@ -534,7 +542,7 @@ class WebService {
 			}
 
 		}
-		
+
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
 	}
 
@@ -1030,10 +1038,22 @@ class WebService {
 		while(strpos($name, "[", $strpos+1)){
 			$strpos = strpos($name, "[", $strpos+1);
 		}
-		if($strpos !== -1){
+		if($strpos){
 			return substr($name, 0, $strpos);
 		}
 		return $name;
+	}
+	
+/**
+	 * Returns an instance of IWebServiceClient  
+	 *
+	 * @return IWebServiceClient
+	 * 		
+	 *
+	 */
+	public function getWSClient() {
+		$this->createWSClient();
+		return $this->mWSClient;
 	}
 
 

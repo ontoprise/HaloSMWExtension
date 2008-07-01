@@ -127,7 +127,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
 function webServiceUsage_Render( &$parser) {
 	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
-
+	
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
 
@@ -152,6 +152,7 @@ function webServiceUsage_Render( &$parser) {
 			$wsFormat = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 9) == "_property"){
 			$propertyName = getSpecifiedParameterValue($parameter);
+			//$propertyName = $parameter;
 		} else {
 			$specParam = getSpecifiedParameterValue($parameter);
 			if($specParam){
@@ -226,6 +227,8 @@ function formatWSResult($wsFormat, $wsResults){
 			// todo:  use wfmessage  
 			// todo: use default values
 			return "It was not possible to call the WebService";
+		} else {
+			return $wsResults;
 		}
 	}
 
@@ -313,6 +316,8 @@ function detectRemovedWebServiceUsages($articleId){
 	if($rememberedWSUsages != null){
 		$smwProperties = SMWFactbox::$semdata->getProperties();
 		foreach($rememberedWSUsages as $rememberedWSUsage){
+			//todo: properties duerfen nicht klein geschrieben werden,
+			// sonst schlägt dieser vergleich hier fehl
 			if($smwProperties[$rememberedWSUsage[2]] != null){
 				WSStorage::getDatabase()->addWSProperty($smwProperties[$rememberedWSUsage[2]]->getArticleId(), $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
 			}
@@ -333,7 +338,7 @@ function detectRemovedWebServiceUsages($articleId){
 			}
 		}
 		if($deleteProperty){
-			//WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
+			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
 		}
 	}
 	return true;
