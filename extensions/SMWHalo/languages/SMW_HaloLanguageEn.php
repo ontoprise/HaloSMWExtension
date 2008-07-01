@@ -594,6 +594,8 @@ clicking the big arrows between the columns.',
 	'smw_wsupdatebot' => 'Update the Cache',
 	'smw_ws_updatebothelp' => 'This bot updates the cache.',
 	'smw_ws_updatebot_log' => 'Cache entries for this WebService were updated.',
+	'smw_ws_updatebot_callerror' => 'An error occured while updating the cache entries of this WebService',
+	'smw_ws_updatebot_confirmation' => 'It was not possible to update this WebService due to a missing confirmation of the WWSD',
 	
     'smw_deletepage_nolinks' => 'There are no links to this page!',
     'smw_deletepage_linkstopage'=> 'Pages with links to that page',
