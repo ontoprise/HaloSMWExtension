@@ -6,8 +6,8 @@
 <mapAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_PROPERTIES">
 <mapEntry key="outputDir" value="c:\\Temp\\HaloSMWExtension"/>
 <mapEntry key="eclipse.pdebuild.templates" value="/C:/Programme/eclipse/plugins/org.eclipse.pde.build_3.2.1.r321_v20060823/templates/"/>
-<mapEntry key="eclipse.pdebuild.home" value="/C:/Programme/eclipse/plugins/org.eclipse.pde.build_3.2.1.r321_v20060823/./"/>
 <mapEntry key="eclipse.pdebuild.scripts" value="/C:/Programme/eclipse/plugins/org.eclipse.pde.build_3.2.1.r321_v20060823/scripts/"/>
+<mapEntry key="eclipse.pdebuild.home" value="/C:/Programme/eclipse/plugins/org.eclipse.pde.build_3.2.1.r321_v20060823/./"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="HaloSMWExtension"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_INSTALL_NAME" value="jre1.6.0_01"/>
