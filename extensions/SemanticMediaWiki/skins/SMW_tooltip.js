@@ -100,6 +100,11 @@ function smw_showTooltipPersist(e) {
 
 
 function smw_showTooltipInline(e) {
+	if (tt) {
+		// don't show further tooltips 
+		return;
+	}
+	
 	var x;
 	var y;
 	if(BubbleTT.Platform.browser.isIE){
@@ -127,7 +132,10 @@ function _smw_hideAllTooltips() {
 }
 
 function smw_hideTooltip(){
-	if (tt) tt.close();
+	if (tt) {
+		tt.close();
+		tt = null;
+	}
 }
 
 /**
