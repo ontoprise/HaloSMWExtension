@@ -187,7 +187,6 @@ TermImportPage.prototype = {
 		}
 		
 		//create the right input-div
-//		var datasources = list.getElementsByTagName("DataSource");
 		var datasources = list.getElementsByTagName("DataSource")[0].childNodes;
 		response = "<i>" + gLanguage.getMessage('smw_ti_sourceinfo') + "</i><br><br><form id=\"source\"><Table>" +
 					gLanguage.getMessage('smw_ti_source') + "&nbsp;";
@@ -243,7 +242,7 @@ TermImportPage.prototype = {
 			var tag_array = new Array();
 			//XML structure for the DataSource
 			var dataSource = '';
-			var topcontainer = "<table cellspacing=\"10\"><tr><td>TLM: " + tlID + "</td><td>DAM: " + dalID + "</td><td><ul>";
+			var topcontainer = "<table id=\"sumtable\"><tr><td class=\"abstand\">TLM: <b>" + tlID + "</b></td><td class=\"abstand\">DAM: <b>" + dalID + "</b></td><td><ul>";
 			
 			for (var i = 0, n = source.length; i < n; i++) {
 				sourcearray[i] = document.getElementById(source[i].id).value;
@@ -256,10 +255,10 @@ TermImportPage.prototype = {
 					//change the top-container
 					var display = source[i].id;
 					//.charAt(0).toUpperCase()+source[i].substr(1 ,source[i].id.value.length);
-					topcontainer += "<li>" + display + "&nbsp;" +sourcearray[i] + "</li>";
+					topcontainer += "<li>" + display + "&nbsp;<b>" +sourcearray[i] + "</b></li>";
 				}
 			}
-			topcontainer += "</ul></td><td><a style=\"cursor: pointer;\"" +
+			topcontainer += "</ul></td><td class=\"abstand\"><a style=\"cursor: pointer;\"" +
 					" onClick=\"termImportPage.getTopContainer(event, this)\">" + gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 		}
 		catch(e) {
@@ -271,7 +270,7 @@ TermImportPage.prototype = {
 		
 		$('top-container').style.display = "none";
 				
-		dataSource = "<DataSource>" + dataSource + "</DataSource>";
+		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
 		
 		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
 	},
@@ -289,8 +288,8 @@ TermImportPage.prototype = {
 		try {
 			//why is ImportSet in Uppercases???
 			var importsets = list.getElementsByTagName("IMPORTSETS")[0].childNodes;
-			var import_response='';
-			
+			var import_response="<option value='ALL' selected>ALL</option>";
+			//onclick='"+this.refreshPreview(e,node,tlID,dalID)+"'
 			for (var i = 0, n = importsets.length; i < n; i++) {
 				// get one of the importsets
 				var importset = importsets[i]; 
@@ -307,9 +306,6 @@ TermImportPage.prototype = {
 			//show properties on the right side
 			var properties = list.getElementsByTagName("Properties")[0].childNodes;
 			var property_response = gLanguage.getMessage('smw_ti_attributes');
-			
-			/*		"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-												"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>";*/
 												
 			property_response += '<table id=\"attrib_table\" class=\'mytable\'>';
 			
@@ -339,15 +335,16 @@ TermImportPage.prototype = {
 					if ( term.firstChild ){
 						var article_name = term.firstChild.nodeValue;
 						// add article name to the table
-						article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
+						article_response += "<tr><td class=\"mytd\">" + article_name + "</td></tr>";
 						article_count++;
 					}
 				}
 			}
-			article_response = gLanguage.getMessage('smw_ti_articles1') + article_count + gLanguage.getMessage('smw_ti_articles2') +
-					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>"
-					+ article_response + "</table>";
+			article_response = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
+					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td>" +
+					"<td><a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table>" + 
+					article_response + "</table>";
 			
 		}
 		catch(e){
@@ -363,25 +360,30 @@ TermImportPage.prototype = {
 			else {
 				$('importset-input-field').innerHTML = import_response;
 			}
-			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
-											"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
+			
 		}		
 		if (property_response) {
 			$('extras-right').style.display = "inline";
 			$('attrib').innerHTML = property_response;
 			$('articles').innerHTML = article_response;
 		}
+		$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
+										"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
 	},
 	
 	/*
 	 * hides the summary div and shows (again) the select boxes for the
 	 * transport layer module (TLM) and the data access module (DAM) and the source specification fields
 	 */
-	getTopContainer: function(e,node) {
+	getTopContainer: function(e, node) {
 		$('summary').style.display = "none";		
 		$('top-container').style.display = "inline";
 		$('extras').style.display = "none";
 		$('extras-bottom').style.display = "none";
+	},
+	
+	importSetChanged: function(e, node) {
+		this.refreshPreview(e, node, this.currentSelectedTLM.textContent, this.currentSelectedDAM.textContent);
 	},
 	
 	/*
@@ -389,22 +391,40 @@ TermImportPage.prototype = {
 	 */
 	getPolicy: function(e, node){
 		try {
-			//var policy_selects = document.getElementsByName('policy-select');		
+			// get the old and the new policies		
 			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 			var newpolicy = document.getElementById('policy-input-field').value;
+			// get the type of the new policy
+			var policy_type = document.getElementsByName('policy_type');
+			for (var i = 0, n = policy_type.length; i < n; i++) {
+				if (policy_type[i].checked) {
+					var my_policy_type = policy_type[i].value;
+				}
+			}
 			var response = '';
 			for (var i = 0, n = policy_selects.length; i < n; i++) {
 				var policy_select = policy_selects[i];
 				//could be an empty string so that firstChild.nodeValue can't exist!
 				if (policy_select.firstChild) {
-					response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+					if (policy_select.label == 'term'){
+						response += "<option name='policy-select' label='"+policy_select.label+"'>" + policy_select.firstChild.nodeValue + "</option>";
+					}
+					else {
+						response += "<option name='policy-select' label='"+policy_select.label+"' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
+					}
 				}
 			}
 		}
 		catch(e) {
 			
 		}
-		response += "<option name='policy-select'>" + newpolicy + "</option>";
+		if (my_policy_type == 'term'){
+			response += "<option name='policy-select' label='"+my_policy_type+"'>" + newpolicy + "</option>";
+		}
+		else {
+			response += "<option name='policy-select' label='"+my_policy_type+"' style=\"color:#900000; text-decoration:underline;\">" + newpolicy + "</option>";
+		}
+		
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
 			$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" + 
@@ -413,6 +433,8 @@ TermImportPage.prototype = {
 		else {
 			$('policy-textarea').innerHTML = response;
 		}
+		$('policy-input-field').value = "";
+		this.refreshPreview(e, node,this.currentSelectedTLM.textContent,this.currentSelectedDAM.textContent);
 	},
 	
 	/*
@@ -429,7 +451,12 @@ TermImportPage.prototype = {
 			for (var i = 0, n = policy_selects.length; i < n; i++) {
 				var policy_select = policy_selects[i];
 				if(policy_select.selected == false) {
-					response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
+					if (policy_select.label == 'term'){
+						response += "<option name='policy-select' label='"+policy_select.label+"'>" + policy_select.firstChild.nodeValue + "</option>";
+					}
+					else {
+						response += "<option name='policy-select' label='"+policy_select.label+"' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
+					}
 				}
 			}
 		}
@@ -445,6 +472,7 @@ TermImportPage.prototype = {
 		else {
 			$('policy-textarea').innerHTML = response;
 		}
+		this.refreshPreview(e, node,this.currentSelectedTLM.textContent,this.currentSelectedDAM.textContent);
 	},
 	
 	/*
@@ -492,7 +520,7 @@ TermImportPage.prototype = {
 				}
 			}
 		
-			dataSource = "<DataSource>" + dataSource + "</DataSource>";
+			dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
 		
 			//gets the selected import set 
 			var importSetName = document.getElementById('importset-input-field').value;
@@ -509,13 +537,14 @@ TermImportPage.prototype = {
    		 			'<terms>'+"\n";
     	
    		 		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    				inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
+    				inputPolicy += '<' + policy_selects[i].label + '>' + 
+    								policy_selects[i].firstChild.nodeValue + 
+    								'</' + policy_selects[i].label + '>'+"\n";
     			}
-				inputPolicy +='<term></term>'+
-					'</terms>'+"\n"+
+				inputPolicy +='</terms>'+"\n"+
 					'<properties>'+"\n"+
-					'</properties>'+"\n"+
 					'	<property>articleName</property>'+"\n"+
+					'</properties>'+"\n"+
 					'</InputPolicy>'+"\n";
 			}
 			else {
@@ -538,8 +567,6 @@ TermImportPage.prototype = {
 	},
 	
 	refreshPreviewCallback: function(tlID, dalID, request){
-		//can Properties change?!?
-		
 		
 		//refresh the article preview!!!
 		this.pendingIndicatorArticles.hide();
@@ -567,9 +594,10 @@ TermImportPage.prototype = {
 					}	
 				}	
 			}
-			article_response = "The following " + article_count + " articles will be generated in the wiki:" +
-					"<a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Cog_add.png\"></a><br/><br/>" + 
+			article_response = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
+					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td>" +
+					"<td><a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table>" + 
 					article_response + "</table>";
 			
 		}
@@ -599,7 +627,7 @@ TermImportPage.prototype = {
 					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 				}
 			}
-			dataSource = "<DataSource>" + dataSource + "</DataSource>";
+			dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
 			
 			//gets the selected import set 
 			var importSetName = document.getElementById('importset-input-field').value;
@@ -616,10 +644,11 @@ TermImportPage.prototype = {
    		 			'<terms>'+"\n";
     	
     			for(var i = 0, n = policy_selects.length; i < n; i++) {
-    				inputPolicy += '<regex>' + policy_selects[i].firstChild.nodeValue + '</regex>'+"\n";
+    				inputPolicy += '<' + policy_selects[i].label + '>' + 
+    								policy_selects[i].firstChild.nodeValue + 
+    								'</' + policy_selects[i].label + '>'+"\n";
     			}
-   	 			inputPolicy +='<term></term>'+
-   	 				'</terms>'+"\n"+
+   	 			inputPolicy +='</terms>'+"\n"+
    	 				'<properties>'+"\n"+
    	 				'	<property>articleName</property>'+"\n"+
    	 				'</properties>'+"\n"+

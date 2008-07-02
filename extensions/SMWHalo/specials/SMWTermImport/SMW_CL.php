@@ -25,13 +25,16 @@ public function execute() {
 		$html .= "<div id=\"summary\"></div>" .
 				"<div id=\"top-container\">" .
 					"<div style=\"margin-bottom:10px;\">".wfMsg('smw_ti_welcome')."</div>" .
-					"<div id=\"tl-content\">TLM:" .
+					"<div><div id=\"tl-content\">TLM:" .
 						"<div id=\"tlid\">" . $this->getTLIDs($tlModules) . "</div>" . 
-						"<div id=\"tldesc\">" . "Info: " . "</div>" .
+						"<div id=\"tldesc\">" . "Info: " . "</div></div>" .
+						"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/arrow.gif\"/></div>".
 					"</div>";
-		$html .= "<div id=\"dal-content\">DAM:" .
-				 "<div id=\"dalid\">" . "<div class=\"myinfo\">" . wfMsg('smw_ti_firstselectTLM') . "</div>" . "</div>" .
-				 "<div id=\"daldesc\">" . "</div>" .
+					
+		$html .= "<div><div id=\"dal-content\">DAM:" .
+				 	"<div id=\"dalid\">" . "<div class=\"myinfo\">" . wfMsg('smw_ti_firstselectTLM') . "</div>" . "</div>" .
+				 	"<div id=\"daldesc\">" . "</div></div>" .
+					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/arrow.gif\"/></div>".
 				 "</div>";
 		
 		$html .= "<div id=\"source-spec\">" . 
@@ -43,15 +46,15 @@ public function execute() {
 					"<div id=\"extras\">" .
 							"<div id=\"extras-left\">" .
 								"<div id=\"importset\">" . wfMsg('smw_ti_selectImport') .
-									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\"></select>" .
+									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\"></select>" .
 									"<br><br>" .
 								"</div>" . //importset
 								"<div id=\"policy\">" .
 									"<div id=\"policy-input\">" .
-										"<table><tr><td>" .wfMsg('smw_ti_define_inputpolicy')."&nbsp; &nbsp;" . 
-										"<input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\" background=\"grey\"> &nbsp;</td>" .
+										"<table><tr><td>" .wfMsg('smw_ti_define_inputpolicy')."</td>" . 
+										"<td><input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\"></td>" .
 										"<td><img style=\"cursor: pointer;\" onclick=\"termImportPage.getPolicy(event, this)\" src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/Add.png\" /></td></tr>" . 
-										"<tr><td/><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
+										"<tr><td align=\"left\"><b><i>Info:</i></b></td><td align=\"right\"><input type=\"radio\" name=\"policy_type\" value=\"regex\" checked><span style=\"color:#900000;\"><u>RegEx</u></span><input type=\"radio\" name=\"policy_type\" value=\"term\">Term</span></td><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/SMWHalo/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
 										"<i>" . wfMsg('smw_ti_inputpolicy') . "</i>" . 
 									"</div>" .	
 									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" .  
@@ -182,7 +185,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 	$importSets = $wil->getImportSets($source_result);	
 	$p = new XMLParser($importSets);
 	$result = $p->parse();
-	if ($result == TRUE && $givenImportSetName && $givenImportSetName != '') {
+	if ($result == TRUE && $givenImportSetName && $givenImportSetName != '' && $givenImportSetName != 'ALL') {
 			$p->removeAllParentElements('NAME', $givenImportSetName);
 	}
 	$importSets = $p->serialize();

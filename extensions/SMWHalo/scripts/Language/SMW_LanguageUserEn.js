@@ -298,7 +298,7 @@ var wgUserLanguageStrings = {
 	'smw_ti_sourceinfo'		: 'The following Information is needed in order to start the Import',
 	'smw_ti_source'			: 'Source',
 	'smw_ti_edit'			: 'edit',
-	'smw_ti_attributes'		: 'The following attributes can be extracted from data source defined:',
-	'smw_ti_articles1'		: 'The following ',
+	'smw_ti_attributes'		: '<b>Available attributes in this data source</b><br/>The following attributes can be extracted from data source defined:',
+	'smw_ti_articles1'		: '<b>Articles to be imported from this data source</b><br/>The following ',
 	'smw_ti_articles2'		: ' articles will be generated in the wiki:'
 };
