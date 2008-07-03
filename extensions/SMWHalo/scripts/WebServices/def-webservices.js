@@ -26,7 +26,9 @@
 var DefineWebServiceSpecial = Class.create();
 
 DefineWebServiceSpecial.prototype = {
+
 	initialize : function() {
+		this.step = "step1";
 	},
 
 	/**
@@ -35,6 +37,13 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep1 : function() {
+		if (this.step != "step1") {
+			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
+			if (check == false) {
+				return;
+			}
+		}
+		this.step = "step2";
 		var uri = document.getElementById("step1-uri").value;
 		sajax_do_call("smwf_ws_processStep1", [ uri ],
 				this.processStep1CallBack.bind(this));
@@ -50,6 +59,7 @@ DefineWebServiceSpecial.prototype = {
 	processStep1CallBack : function(request) {
 		var wsMethods = request.responseText.split(";");
 		if (wsMethods[0] != "todo:handle exceptions") {
+			this.step = "step1";
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step1-error").style.display = "block";
 			document.getElementById("step2a-error").style.display = "none";
@@ -135,6 +145,14 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep2 : function() {
+		if (this.step != "step2") {
+			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
+			if (check == false) {
+				return;
+			}
+		}
+
+		this.step = "step3+";
 		var method = document.getElementById("step2-methods").value;
 		var uri = document.getElementById("step1-uri").value;
 		sajax_do_call("smwf_ws_processStep2", [ uri, method ],
@@ -159,6 +177,7 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		if (wsParameters[0] != "todo:handle exceptions" || overflow) {
+			this.step = "step2";
 			document.getElementById("step3").style.display = "none";
 			document.getElementById("step4").style.display = "none";
 			document.getElementById("step5").style.display = "none";
@@ -653,8 +672,32 @@ DefineWebServiceSpecial.prototype = {
 			result += "</WebService>";
 			this.wwsd = result;
 			var wsName = document.getElementById("step6-name").value;
+
+			// the three additional "#" tell the ws-syntax processor not to
+			// process
+			// this ws-syntax
+			var wsSyntax = "\n== Syntax for using the WWSD in an article==";
+			wsSyntax += "\n<nowiki>{{#ws: "
+					+ document.getElementById("step6-name").value
+					+ "</nowiki>\n";
+			for (i = 0; i < document.getElementById("step3-parameters").childNodes[0].childNodes.length - 1; i++) {
+				wsSyntax += "| "
+						+ document.getElementById("s3-alias" + i).value
+						+ " = [Please enter a value here]\n";
+			}
+			results = document.getElementById("step4-results").childNodes[0].childNodes;
+			for (i = 0; i < results.length - 1; i++) {
+				wsSyntax += "| ?result."
+						+ document.getElementById("s4-alias" + i).value + "\n";
+			}
+
+			wsSyntax += "}}";
+
+			// todo:diesen callback und den folgenden vertauschen
 			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
-					this.wwsd, "" ], this.processStep6CallBack.bind(this));
+					this.wwsd + wsSyntax, "" ], this.processStep6CallBack
+					.bind(this));
+
 		} else {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step6-error").style.display = "block";
@@ -749,6 +792,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep7 : function(request) {
+		this.step = "step1";
 		document.getElementById("step1-img").style.visibility = "visible";
 		document.getElementById("step1-help").style.display = "block";
 		document.getElementById("step7").style.display = "none";
@@ -1026,7 +1070,43 @@ DefineWebServiceSpecial.prototype = {
 		resultRow.childNodes[3].appendChild(okButton);
 		document.getElementById("step4-results").childNodes[0]
 				.appendChild(resultRow);
+	},
+
+	/**
+	 * The method checks if the enter button was pressed in a input-element and
+	 * calls the right method
+	 * 
+	 * @param event :
+	 *            the keyevent
+	 * @param string
+	 *            step : defines which process step to call
+	 */
+	checkEnterKey : function(event, step) {
+		if (event.which == 13) {
+			if (step == "step1") {
+				this.processStep1();
+			} else if (step == "step6") {
+				this.processStep6();
+			}
+		}
+	},
+
+	selectRadio : function(radioId) {
+		document.getElementById(radioId).checked = true;
+	},
+
+	selectRadioOnce : function(radioId) {
+		if (radioId == "step5-display-once") {
+			document.getElementById("step5-display-days").value = "";
+			document.getElementById("step5-display-hours").value = "";
+			document.getElementById("step5-display-minutes").value = "";
+		} else if (radioId == "step5-query-once") {
+			document.getElementById("step5-query-days").value = "";
+			document.getElementById("step5-query-hours").value = "";
+			document.getElementById("step5-query-minutes").value = "";
+		}
 	}
+
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
