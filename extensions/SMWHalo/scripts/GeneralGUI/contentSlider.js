@@ -71,7 +71,9 @@ Slider.prototype = {
            $$('div.dtreestatic').each(function(s) { 
                 s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
            });
-           
+           $$('div.Treeview5').each(function(s) { 
+                s.style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           });
            
            // change sidebars
            $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";

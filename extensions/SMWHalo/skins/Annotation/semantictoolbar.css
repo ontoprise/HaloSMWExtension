@@ -39,7 +39,7 @@ triggered by the nested floats. It should not be removed
 /* overwrites some design flaws in the original main.css */
 
     #content {
-        margin: 3.8em 0 0 12.2em;
+        margin: 2.8em 0 0 12.2em;
         padding: 0px;
         position: relative;
         z-index: 2;

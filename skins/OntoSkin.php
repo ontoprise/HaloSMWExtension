@@ -116,7 +116,7 @@ class OntoSkinTemplate extends QuickTemplate {
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 	<div id="globalWrapper">
 		<div id="column-content">
-		
+		 <div id="contentslider"></div>
 	<div id="content">
 	<?php 	global $wgRequest,$wgTitle;
 
@@ -200,12 +200,7 @@ class OntoSkinTemplate extends QuickTemplate {
 		</div>
 	</div>
 	<!-- Add content slider to slide content pane -->
-	<?php  global $wgRequest,$wgTitle;
-
-       if ($wgRequest->getText('action') != "edit" && $wgRequest->getText('action') != "annotate" && ($wgTitle->getPrefixedText() != $wgTitle->getNsText().":".wfMsg('search')))
-       { ?>
-	       <div id="contentslider"></div>
-	<?php } ?>
+	
 	<div class="portlet" id="p-personal">
 		<h5><?php $this->msg('personaltools') ?></h5>
 		<div class="pBody">

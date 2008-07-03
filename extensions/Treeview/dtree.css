@@ -22,6 +22,15 @@
     
 }
 
+.Treeview5 {
+    border: none;
+    margin: 0 0 .5em;
+    padding: 0;
+    float: none;
+    width: 11.6em;
+    overflow: hidden;
+}
+
 .dtree {
     font-size: 95%;    
     color: #666;
