@@ -130,10 +130,10 @@ function webServiceUsage_Render( &$parser) {
 	
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-
+	
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
-		return wfMsg('smw_wsuse_wwsd_not_existing', $wsName);
+		return smwfEncodeMessages(array(wfMsg('smw_wsuse_wwsd_not_existing', $wsName)));
 	}
 	$wsId = $ws->getArticleID();
 
@@ -170,12 +170,13 @@ function webServiceUsage_Render( &$parser) {
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
 		return $wsFormattedResult;
 	} else {
-		$return = wfMsg('smw_wsuse_wwsd_error')."<ul>";
-		foreach($messages as $mess){
-			$return .= "<li>".$mess."</li>";
-		}
-		$return .="</ul>";
-		return $return;
+//		$return = wfMsg('smw_wsuse_wwsd_error')."<ul>";
+//		foreach($messages as $mess){
+//			$return .= "<li>".$mess."</li>";
+//		}
+//		$return .="</ul>";
+//		return $return;
+		return smwfEncodeMessages($messages);
 	}
 }
 /**
@@ -221,7 +222,7 @@ function getSpecifiedParameterName($parameter){
  * @return string
  * 		the formatted result
  */
-function formatWSResult($wsFormat, $wsResults){
+function formatWSResult($wsFormat, $wsResults = null){
 	if(is_string($wsResults)){
 		if(substr($wsResults, 0, 11) == "_ws-error: "){
 			// todo:  use wfmessage  
@@ -319,7 +320,7 @@ function detectRemovedWebServiceUsages($articleId){
 			//todo: properties duerfen nicht klein geschrieben werden,
 			// sonst schlägt dieser vergleich hier fehl
 			if($smwProperties[$rememberedWSUsage[2]] != null){
-				WSStorage::getDatabase()->addWSProperty($smwProperties[$rememberedWSUsage[2]]->getArticleId(), $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+				WSStorage::getDatabase()->addWSProperty($rememberedWSUsage[2], $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
 			}
 		}
 	}
@@ -332,7 +333,7 @@ function detectRemovedWebServiceUsages($articleId){
 				if($rememberedWSUsage[2] != null){
 					if (($rememberedWSUsage[0] == $wsProperty[0])
 					&& ($rememberedWSUsage[1] == $wsProperty[1])
-					&& ($smwProperties[$rememberedWSUsage[2]]->getArticleId() == $wsProperty[2])){
+					&& ($rememberedWSUsage[2] == $wsProperty[2])){
 						$deleteProperty = False;
 					}}
 			}

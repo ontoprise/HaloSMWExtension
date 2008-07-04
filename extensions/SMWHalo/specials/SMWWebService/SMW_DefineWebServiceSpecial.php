@@ -210,5 +210,4 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$wgOut->addHTML($html);
 	}
 }
-
 ?>

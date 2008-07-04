@@ -97,11 +97,11 @@ class WSStorageSQL {
 		DBHelper::reportProgress("   ... Creating properties table \n",$verbose);
 		$propTable = $db->tableName('smw_ws_properties');
 		DBHelper::setupTable($propTable, array(
-				  'property_id'     =>  'INT(8) UNSIGNED NOT NULL' ,
+				  'property_name'     =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL'), 
-		$db, $verbose, 'property_id,page_id,web_service_id,param_set_id');
+		$db, $verbose, 'property_name,page_id,web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 
@@ -254,7 +254,7 @@ class WSStorageSQL {
 	 * The database stores which web services with which parameter set IDs are
 	 * used in which article. This method adds such a usage to the DB.
 	 *
-	 * @param int $propertyID
+	 * @param int $propertyName
 	 * 		The unique page ID of the property.
 	 * @param int $wsPageID
 	 * 		The unique page ID of the web service's WWSD.
@@ -266,16 +266,16 @@ class WSStorageSQL {
 	 * 		<true>, if the DB entry was successfully added
 	 * 		<false>, otherwise
 	 */
-	public function addWSProperty($propertyID, $wsPageID, $paramSetID, $pageID) {
+	public function addWSProperty($propertyName, $wsPageID, $paramSetID, $pageID) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$db->delete($db->tableName('smw_ws_properties'), array(
-					  'property_id'    => $propertyID,
+					  'property_name'    => $propertyName,
 					  'web_service_id' => $wsPageID,
 					  'param_set_id'   => $paramSetID,
 					  'page_id'        => $pageID));
 			$db->insert($db->tableName('smw_ws_properties'), array(
-					  'property_id'    => $propertyID,
+					  'property_name'    => $propertyName,
 					  'web_service_id' => $wsPageID,
 					  'param_set_id'   => $paramSetID,
 					  'page_id'        => $pageID));
@@ -557,7 +557,7 @@ class WSStorageSQL {
 	public function getWSPropertiesUsedInArticle($pageId) {
 		$db =& wfGetDB( DB_SLAVE );
 		$ptb = $db->tableName('smw_ws_properties');
-		$sql = "SELECT prop.property_id, prop.web_service_id, prop.param_set_id FROM ".$ptb." prop ".
+		$sql = "SELECT prop.property_name, prop.web_service_id, prop.param_set_id FROM ".$ptb." prop ".
 		          "WHERE prop.page_id ='".$pageId."' ";
 
 		$properties = array();
@@ -566,7 +566,7 @@ class WSStorageSQL {
 
 		if ($db->numRows($res) > 0) {
 			while ($row = $db->fetchObject($res)) {
-				array_push(&$properties, array($row->web_service_id, $row->param_set_id, $row->property_id));
+				array_push(&$properties, array($row->web_service_id, $row->param_set_id, $row->property_name));
 			}
 		}
 		$db->freeResult($res);
@@ -578,17 +578,17 @@ class WSStorageSQL {
 	 * is no longer used in the given semantic property
 	 * in the given articke
 	 *
-	 * @param string $propertyId
+	 * @param string $propertyName
 	 * @param string $wsPageId
 	 * @param string $paramSetId
 	 * @param string_$pageId
 	 * @return boolean success
 	 */
-	public function removeWSProperty($propertyId, $wsPageId, $paramSetId, $pageId) {
+	public function removeWSProperty($propertyName, $wsPageId, $paramSetId, $pageId) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$db->delete($db->tableName('smw_ws_properties'), array(
-					  'property_id'    => $propertyId,
+					  'property_name'    => $propertyName,
 					  'web_service_id' => $wsPageId,
 					  'param_set_id'   => $paramSetId,
 					  'page_id'        => $pageId));
@@ -844,15 +844,15 @@ class WSStorageSQL {
 		$result = array();
 		$tbn = $db->tableName('smw_ws_properties');
 
-		$sql = "SELECT DISTINCT props.property_id FROM "
-		.$tbn. " props ORDER BY props.property_id ASC";
+		$sql = "SELECT DISTINCT props.property_name FROM "
+		.$tbn. " props ORDER BY props.property_name ASC";
 			
 		$res = $db->query($sql);
 
 		$props = array();
 
 		while($row = $db->fetchObject($res)){
-			$props[] = $row->property_id;
+			$props[] = $row->property_name;
 		}
 		
 		return $props;
@@ -864,7 +864,7 @@ class WSStorageSQL {
 		$result = array();
 		$tbn = $db->tableName('smw_ws_properties');
 
-		$sql = "SELECT DISTINCT props.property_id, props.param_set_id FROM "
+		$sql = "SELECT DISTINCT props.property_name, props.param_set_id, props.page_id FROM "
 			.$tbn. " props WHERE props.web_service_id = \"".$wsId."\"";
 			
 		$res = $db->query($sql);
@@ -872,10 +872,12 @@ class WSStorageSQL {
 		$result = array();
 
 		while($row = $db->fetchObject($res)){
-			$result[] = array("propertyId" => $row->property_id,
-				"paramSetId" => $row->param_set_id);
+			$result[] = array("propertyName" => $row->property_name,
+				"paramSetId" => $row->param_set_id,
+				"pageId" => $row->page_id);
 		}
-		
 		return $result;
 	}
 }
+
+?>

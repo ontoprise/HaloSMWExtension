@@ -51,6 +51,6 @@ function smwf_ws_confirmWWSD($wsId){
 	require_once($smwgHaloIP . '/specials/SMWWebService/SMW_WSStorage.php');
 	WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "true");
 	return $wsId;
-}	
+}
 
 ?>

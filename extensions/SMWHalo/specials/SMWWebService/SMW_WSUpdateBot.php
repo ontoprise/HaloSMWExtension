@@ -22,6 +22,12 @@ global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
 
 
+// needed for db access
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
+
+//todo: refactor result-formatting
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebServiceUsage.php");
+
 /**
  * This bot updates outdated ws-cache-entries that are used in semantic
  * properties
@@ -63,61 +69,131 @@ class WSUpdateBot extends GardeningBot {
 	}
 
 	/**
-	 * todo: write help message
-	 *
+	 * This method updates cache entries that are used in properties
+	 * that are outdated for all webservices
 	 *
 	 */
 	private function updateAllWSProperties(){
+		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 		$webServices = WSStorage::getDatabase()->getWebservices();
 		$this->setNumberOfTasks(sizeof($webServices));
-		// todo: confirmation status beruecksichtigen
 		foreach($webServices as $ws){
 			//echo($ws->getName(). " started\n");
-			$this->updateWSProperty($ws);
+			if($ws->getConfirmationStatus() == "once"
+			|| $ws->getConfirmationStatus() == "false"){
+				//todo: error handling
+				$log->addGardeningIssueAboutValue(
+				$this->id, SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES,
+				Title::newFromText($ws->getName()), 0);
+			} else {
+				$this->updateWSProperty($ws);
+			}
 		}
 	}
 
 	/**
-	 * todo:write
+	 * This method updates cache entries that are used in properties
+	 * that are outdated for a single webservice
 	 *
 	 */
 	private function updateWSProperty($ws){
 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
-		
+
 		$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
-		
+
 		if(sizeof($props) > 0){
-			echo($ws->getName()."numProps: ".sizeof($props)." \n");
 			$this->addSubTask(sizeof($props)+1);
 			$updatedEntries = 0;
-			foreach ($props as $prop){
-				echo($props["propertyId"]." -".$prop["paramSetId"]."\n");
-				$cacheResult = WSStorage::getDatabase()->getResultFromCache(
-					$ws->getArticleID(), $prop["paramSetId"]);
 
-				if(!$cacheResult || !(($ws->getQueryPolicy() == 0) ||
-						(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
-					< ($ws->getQueryPolicy()*60)))){
-					$parameters = WSStorage::getDatabase()->getParameters($prop["paramSetId"]);
+			foreach ($props as $prop){
+				echo("\n0; ".$ws->getName());
+				echo(" 1; ".$prop["pageId"]);
+				echo(" 2: ".$prop["propertyName"]);
+
+				$cacheResult = WSStorage::getDatabase()->getResultFromCache(
+				$ws->getArticleID(), $prop["paramSetId"]);
+
+				//todo: muss der cleanCacheBot dann auch die smw-db-leeren???
+
+				$refresh = false;
+				if(count($cacheResult) < 1){
+					$refresh = true;
+				}
+				if(!$refresh){
+					if($ws->getQueryPolicy() > 0){
+						if(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
+						> ($ws->getQueryPolicy()*60)){
+							$refresh = true;
+						}
+					}
+				}
+
+				//updates are necessary
+				if(refresh){
 					if($updatedEntries > 0){
 						sleep($ws->getUpdateDelay());
 					}
-					echo("wake up");
+
+					$parameters = WSStorage::getDatabase()->getParameters($prop["paramSetId"]);
 					$response = $ws->getWSClient()->call($ws->getMethod(), parameters);
+
+					$goon = true;
 					if(is_string($response)){
 						if(substr($response, 0, 11) == "_ws-error: "){
-							//todo: error handling: log entry
-						} else {
-							//todo: nur speichern, wenn kein fehler
-							WSStorage::getDatabase()->storeCacheEntry(
-								$ws->getArticleID(),
-								$prop["paramSetId"],
-								serialize($response),
-								wfTimeStamp(TS_MW, wfTime()),
-								wfTimeStamp(TS_MW, wfTime()));
-
-							$updatedEntries += 1;
+							$log->addGardeningIssueAboutValue(
+							$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
+							Title::newFromText($ws->getName()), 0);
+							$goon = false;
+							echo("\nresponse was a string\n");
 						}
+					}
+					if($goon) {
+						WSStorage::getDatabase()->storeCacheEntry(
+							$ws->getArticleID(),
+							$prop["paramSetId"],
+							serialize($response),
+							wfTimeStamp(TS_MW, wfTime()),
+							wfTimeStamp(TS_MW, wfTime()));
+
+						//update the smw-storage
+						print_r($response);
+						$response = formatWSResult("list", $response);
+						echo("\n+++++++++++++++++++++++++++++++++++\n");
+						print_r($response);
+						
+						$subject = Title::newFromID($prop["pageId"]);
+						$smwData = smwfGetStore()->getSemanticData($subject);
+						//todo: dont use ns-string
+
+						echo(" 4: ".$prop["propertyName"]);
+
+						$smwProps = $smwData->getProperties();
+
+						$tempPropertyValues = array();
+						foreach($smwProps as $smwProp){
+							$tempPropertyValues[$smwProp->getText()] =
+							$smwData->getPropertyValues($smwProp);
+						}
+
+						$smwData->clear();
+
+						foreach($tempPropertyValues as $key => $values){
+							foreach($values as $value){
+								$content = $value->getXSDValue();
+								echo(" a; ".$key);
+								echo(" b; ".$prop["propertyName"]);
+								echo(" c; ".$content);
+								echo(" d; ".$response."\n");
+								if($key == $prop["propertyId"] && $cacheResult == $response){
+									$content = "changed";
+								}
+								$newValue = SMWDataValueFactory::newPropertyValue($key, $content);
+								$smwData->addPropertyValue($key, $newValue);
+							}
+						}
+
+						smwfGetStore()->updateData($smwData, false);
+						$updatedEntries += 1;
 					}
 				}
 				$this->worked(1);
@@ -137,7 +213,8 @@ class WSUpdateBot extends GardeningBot {
 new WSUpdateBot();
 define('SMW_WSUPDATE_BOT_BASE', 2600);
 define('SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 1);
-
+define('SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 2);
+define('SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 3);
 
 class WSUpdateBotIssue extends GardeningIssue {
 
@@ -149,6 +226,10 @@ class WSUpdateBotIssue extends GardeningIssue {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES:
 				return wfMsg('smw_ws_update_log');
+			case SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES:
+				return wfMsg('ws_updatebot_confirmation');
+			case SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES:
+				return wfMsg('smw_ws_updatebot_callerror');
 			default: return NULL;
 		}
 	}

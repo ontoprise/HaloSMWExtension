@@ -94,8 +94,8 @@ class WSCacheBot extends GardeningBot {
 					$compareTS = 0;
 					if($cacheResult["lastAccess"]){
 						if($cacheResult["lastAccess"]
-						< $cacheResult["lastUpdate"]){
-							$compareTS = $cacheResult["lastUpdate"];
+							< $cacheResult["lastUpdate"]){
+								$compareTS = $cacheResult["lastUpdate"];
 						} else {
 							$compareTS = $cacheResult["lastAccess"];
 						}
