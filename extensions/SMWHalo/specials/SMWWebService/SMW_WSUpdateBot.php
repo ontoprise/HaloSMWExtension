@@ -1,4 +1,4 @@
-<?
+<?php
 /*  Copyright 2008, ontoprise GmbH
  *  This file is part of the halo-Extension.
  *
@@ -7,7 +7,6 @@
  *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   The halo-Extension is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -15,7 +14,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Author: Ingo Steinbauer
+ *  @author: Ingo Steinbauer
  */
 
 global $smwgHaloIP;
@@ -135,7 +134,9 @@ class WSUpdateBot extends GardeningBot {
 					}
 
 					$parameters = WSStorage::getDatabase()->getParameters($prop["paramSetId"]);
-					$response = $ws->getWSClient()->call($ws->getMethod(), parameters);
+					$parameters = $ws->initializeCallParameters($parameters);
+
+					$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
 
 					$goon = true;
 					if(is_string($response)){
@@ -149,18 +150,17 @@ class WSUpdateBot extends GardeningBot {
 					}
 					if($goon) {
 						WSStorage::getDatabase()->storeCacheEntry(
-							$ws->getArticleID(),
-							$prop["paramSetId"],
-							serialize($response),
-							wfTimeStamp(TS_MW, wfTime()),
-							wfTimeStamp(TS_MW, wfTime()));
+						$ws->getArticleID(),
+						$prop["paramSetId"],
+						serialize($response),
+						wfTimeStamp(TS_MW, wfTime()),
+						wfTimeStamp(TS_MW, wfTime()));
 
 						//update the smw-storage
-						print_r($response);
-						$response = formatWSResult("list", $response);
-						echo("\n+++++++++++++++++++++++++++++++++++\n");
-						print_r($response);
-						
+						$response = $ws->getCallResultParts($response, array($prop["resultSpec"]));
+						$response = array_pop(array_pop($response));
+
+
 						$subject = Title::newFromID($prop["pageId"]);
 						$smwData = smwfGetStore()->getSemanticData($subject);
 						//todo: dont use ns-string
@@ -178,16 +178,25 @@ class WSUpdateBot extends GardeningBot {
 						$smwData->clear();
 
 						foreach($tempPropertyValues as $key => $values){
-							foreach($values as $value){
-								$content = $value->getXSDValue();
-								echo(" a; ".$key);
-								echo(" b; ".$prop["propertyName"]);
-								echo(" c; ".$content);
-								echo(" d; ".$response."\n");
-								if($key == $prop["propertyId"] && $cacheResult == $response){
-									$content = "changed";
+							$added = false;
+							if(count($cacheResult)>0){
+								foreach($values as $value){
+									$content = $value->getXSDValue();
+									echo(" a; ".$key);
+									echo(" b; ".$prop["propertyName"]);
+									echo(" c; ".$content);
+									echo(" d; ".$response."\n");
+									if(strtolower($key) == strtolower($prop["propertyName"])
+									&& strtolower($content) == strtolower($cacheResult)){
+										$content = $response;
+										$added = true;
+									}
+									$newValue = SMWDataValueFactory::newPropertyValue($key, $content);
+									$smwData->addPropertyValue($key, $newValue);
 								}
-								$newValue = SMWDataValueFactory::newPropertyValue($key, $content);
+							}
+							if(!$added){
+								$newValue = SMWDataValueFactory::newPropertyValue($key, $response);
 								$smwData->addPropertyValue($key, $newValue);
 							}
 						}
@@ -210,11 +219,12 @@ class WSUpdateBot extends GardeningBot {
 	}
 }
 
-new WSUpdateBot();
+$ws = new WSUpdateBot();
 define('SMW_WSUPDATE_BOT_BASE', 2600);
 define('SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 1);
 define('SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 2);
 define('SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 3);
+
 
 class WSUpdateBotIssue extends GardeningIssue {
 
