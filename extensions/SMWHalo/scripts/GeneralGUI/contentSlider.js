@@ -108,8 +108,6 @@ Slider.prototype = {
 }
 
 var smwhg_slider = new Slider();
-if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
-    Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
-    //Resizes the slider if window size is changed
-    Event.observe(window, 'resize', smwhg_slider.resizeTextbox.bind(smwhg_slider));
-}
+Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
+//Resizes the slider if window size is changed
+Event.observe(window, 'resize', smwhg_slider.resizeTextbox.bind(smwhg_slider));
