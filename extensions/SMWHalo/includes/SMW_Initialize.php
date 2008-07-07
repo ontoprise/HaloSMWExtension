@@ -377,8 +377,8 @@ function smwfHaloInitUserMessages() {
 	}
 	// fallback if language not supported
 	if ( !class_exists($smwLangClass)) {
-		global $smwgContLang;
-		$smwgHaloLang = $smwgContLang;
+		global $smwgHaloContLang;
+		$smwgHaloLang = $smwgHaloContLang;
 	} else {
 		$smwgHaloLang = new $smwLangClass();
 	}
