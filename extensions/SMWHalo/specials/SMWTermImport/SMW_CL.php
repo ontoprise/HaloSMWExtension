@@ -58,7 +58,7 @@ public function execute() {
 										"<i>" . wfMsg('smw_ti_inputpolicy') . "</i>" . 
 									"</div>" .	
 									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" .  
-									"</select>" .
+									"</select><div id=\"hidden_pol_type\"></div>" .
 								"</div>" . //policy
 								"<div id=\"mapping\">" .
 									"<table>
