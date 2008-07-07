@@ -219,7 +219,7 @@ TermImportPage.prototype = {
 							response += "<tr><td>" + attrib_display + "</td><td><input name=\"source\" id=\"" + 
 							attrib_display+"\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\"" + datasource.textContent + "\"></td></tr>";
 						}
-						response += "<input type=\"hidden\" id=\"tag_"+ attrib_display +"\" value=\""+tag+"\"/>"						
+						response += "<input type=\"hidden\" id=\"tag_"+ attrib_display +"\" value=\""+tag+"\"/>";						
 					}					
 				//}	
 			}		
@@ -325,7 +325,7 @@ TermImportPage.prototype = {
 			property_response += "</table>";
 		
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<table id=\"article_table\" class=\'mytable\'>';
+			var article_response = '<div id=\"article_table\"><table class=\'mytable\'>';
 			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
@@ -340,11 +340,11 @@ TermImportPage.prototype = {
 					}
 				}
 			}
-			article_response = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
+			article_response = "<div id=\"article_intro\"><table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
 					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td>" +
 					"<td><a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table>" + 
-					article_response + "</table>";
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table></div>" + 
+					article_response + "</table></div>";
 			
 		}
 		catch(e){
@@ -354,7 +354,7 @@ TermImportPage.prototype = {
 			$('extras').style.display = "inline";
 			if (Prototype.Browser.IE) {
 				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
-				$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\">" + 
+				$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\">" + 
 					import_response + "</select>";
 			}
 			else {
@@ -383,7 +383,19 @@ TermImportPage.prototype = {
 	},
 	
 	importSetChanged: function(e, node) {
-		this.refreshPreview(e, node, this.currentSelectedTLM.textContent, this.currentSelectedDAM.textContent);
+		var hasInnerText =
+		(this.currentSelectedTLM.innerText != undefined) ? true : false;
+			var elem = this.currentSelectedTLM;
+			var elem2 = this.currentSelectedDAM;
+
+		if(!hasInnerText){
+    		var tlid = elem.textContent;
+    		var dalid = elem2.textContent;
+		} else{
+    		var tlid = elem.innerText;
+    		var dalid = elem2.innerText;
+		}
+		this.refreshPreview(e, node, tlid, dalid);
 	},
 	
 	/*
@@ -395,23 +407,26 @@ TermImportPage.prototype = {
 			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 			var newpolicy = document.getElementById('policy-input-field').value;
 			// get the type of the new policy
-			var policy_type = document.getElementsByName('policy_type');
-			for (var i = 0, n = policy_type.length; i < n; i++) {
-				if (policy_type[i].checked) {
-					var my_policy_type = policy_type[i].value;
+			var new_policy_type = document.getElementsByName('policy_type');
+			for (var i = 0, n = new_policy_type.length; i < n; i++) {
+				if (new_policy_type[i].checked) {
+					var my_policy_type = new_policy_type[i].value;
 				}
 			}
 			var response = '';
+			var hidden_response = '';
 			for (var i = 0, n = policy_selects.length; i < n; i++) {
 				var policy_select = policy_selects[i];
 				//could be an empty string so that firstChild.nodeValue can't exist!
 				if (policy_select.firstChild) {
-					if (policy_select.label == 'term'){
-						response += "<option name='policy-select' label='"+policy_select.label+"'>" + policy_select.firstChild.nodeValue + "</option>";
+					var policy_type = document.getElementById("pol-type_" + policy_select.firstChild.nodeValue);
+					if (policy_type.value == 'term'){
+						response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
 					}
 					else {
-						response += "<option name='policy-select' label='"+policy_select.label+"' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
+						response += "<option name='policy-select' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
 					}
+					hidden_response += "<input type=\"hidden\" id=\"pol-type_" + policy_select.firstChild.nodeValue + "\" value=\"" + policy_type.value + "\"/>";
 				}
 			}
 		}
@@ -419,11 +434,12 @@ TermImportPage.prototype = {
 			
 		}
 		if (my_policy_type == 'term'){
-			response += "<option name='policy-select' label='"+my_policy_type+"'>" + newpolicy + "</option>";
+			response += "<option name='policy-select'>" + newpolicy + "</option>";
 		}
 		else {
-			response += "<option name='policy-select' label='"+my_policy_type+"' style=\"color:#900000; text-decoration:underline;\">" + newpolicy + "</option>";
+			response += "<option name='policy-select' style=\"color:#900000; text-decoration:underline;\">" + newpolicy + "</option>";
 		}
+		hidden_response += "<input type=\"hidden\" id=\"pol-type_" + newpolicy + "\" value=\"" + my_policy_type + "\"/>";
 		
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -433,8 +449,22 @@ TermImportPage.prototype = {
 		else {
 			$('policy-textarea').innerHTML = response;
 		}
+		$('hidden_pol_type').innerHTML = hidden_response;
 		$('policy-input-field').value = "";
-		this.refreshPreview(e, node,this.currentSelectedTLM.textContent,this.currentSelectedDAM.textContent);
+		
+		var hasInnerText =
+		(this.currentSelectedTLM.innerText != undefined) ? true : false;
+			var elem = this.currentSelectedTLM;
+			var elem2 = this.currentSelectedDAM;
+
+		if(!hasInnerText){
+    		var tlid = elem.textContent;
+    		var dalid = elem2.textContent;
+		} else{
+    		var tlid = elem.innerText;
+    		var dalid = elem2.innerText;
+		}
+		this.refreshPreview(e, node,tlid,dalid);
 	},
 	
 	/*
@@ -448,15 +478,18 @@ TermImportPage.prototype = {
 			//this works:
 			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
 			var response = '';
+			var hidden_response = '';
 			for (var i = 0, n = policy_selects.length; i < n; i++) {
 				var policy_select = policy_selects[i];
 				if(policy_select.selected == false) {
-					if (policy_select.label == 'term'){
-						response += "<option name='policy-select' label='"+policy_select.label+"'>" + policy_select.firstChild.nodeValue + "</option>";
+					var policy_type = document.getElementById("pol-type_" + policy_select.firstChild.nodeValue);
+					if (policy_type.value == 'term'){
+						response += "<option name='policy-select'>" + policy_select.firstChild.nodeValue + "</option>";
 					}
 					else {
-						response += "<option name='policy-select' label='"+policy_select.label+"' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
+						response += "<option name='policy-select' style=\"color:#900000\; text-decoration:underline;\">" + policy_select.firstChild.nodeValue + "</option>";
 					}
+					hidden_response += "<input type=\"hidden\" id=\"pol-type_" + policy_select.firstChild.nodeValue + "\" value=\"" + policy_type.value + "\"/>";
 				}
 			}
 		}
@@ -472,7 +505,21 @@ TermImportPage.prototype = {
 		else {
 			$('policy-textarea').innerHTML = response;
 		}
-		this.refreshPreview(e, node,this.currentSelectedTLM.textContent,this.currentSelectedDAM.textContent);
+		$('hidden_pol_type').innerHTML = hidden_response;
+		$('policy-input-field').value = "";
+		var hasInnerText =
+		(this.currentSelectedTLM.innerText != undefined) ? true : false;
+			var elem = this.currentSelectedTLM;
+			var elem2 = this.currentSelectedDAM;
+
+		if(!hasInnerText){
+    		var tlid = elem.textContent;
+    		var dalid = elem2.textContent;
+		} else{
+    		var tlid = elem.innerText;
+    		var dalid = elem2.innerText;
+		}
+		this.refreshPreview(e, node, tlid, dalid);
 	},
 	
 	/*
@@ -535,16 +582,26 @@ TermImportPage.prototype = {
 				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
 					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
    		 			'<terms>'+"\n";
-    	
-   		 		for(var i = 0, n = policy_selects.length; i < n; i++) {
-    				inputPolicy += '<' + policy_selects[i].label + '>' + 
+    			for(var i = 0, n = policy_selects.length; i < n; i++) {
+   		 			var policy_type = document.getElementById("pol-type_" + policy_selects[i].firstChild.nodeValue);
+    				inputPolicy += '<' + policy_type.value + '>' + 
     								policy_selects[i].firstChild.nodeValue + 
-    								'</' + policy_selects[i].label + '>'+"\n";
+    								'</' + policy_type.value + '>'+"\n";
     			}
-				inputPolicy +='</terms>'+"\n"+
-					'<properties>'+"\n"+
-					'	<property>articleName</property>'+"\n"+
-					'</properties>'+"\n"+
+    			inputPolicy +='</terms>'+"\n"+
+   	 				'<properties>'+"\n";
+    			//and now the properties
+				var properties = document.getElementById('attrib_table').getElementsByTagName('td');
+				for (var i = 0, n = properties.length; i < n; i++) {
+					// get one of the importsets
+					var property = properties[i]; 
+					if(property.nodeType == 1) {
+						if ( property.firstChild.nodeValue ){
+							inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
+						}	
+					}	
+				}   	 				
+   	 			inputPolicy += '</properties>'+"\n"+
 					'</InputPolicy>'+"\n";
 			}
 			else {
@@ -577,7 +634,9 @@ TermImportPage.prototype = {
 				
 		try {
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<table id=\"article_table\" class=\'mytable\'>';
+			//var article_response = '<table id=\"article_table\" class=\'mytable\'>';
+			var article_response = '<table class=\"mytable\">';
+			var article_intro = '';
 			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
@@ -588,23 +647,23 @@ TermImportPage.prototype = {
 						var article_name = term.firstChild.nodeValue;
 						if ( article_name ){
 							// add article name to the table
-							article_response += "<tr><td class=\"mytd\">" + article_name + "</td>";
+							article_response += "<tr><td class=\"mytd\">" + article_name + "</td></tr>";
 							article_count++;
 						}
 					}	
 				}	
 			}
-			article_response = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
+			article_response += '</table>';
+			article_intro = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
 					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td>" +
 					"<td><a onClick=\"termImportPage.refreshPreview(event, this,'" +tlID+ "','" + dalID +"')\">" + 
-					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table>" + 
-					article_response + "</table>";
-			
+					"<img align=\"right\" src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/refresh.gif\"></a></td></tr></table>";			
 		}
 		catch(e){
 			
 		}		
-		$('articles').innerHTML = article_response;
+		$('article_intro').innerHTML = article_intro;
+		$('article_table').innerHTML = article_response;
 	},
 	
 	/*
@@ -642,16 +701,27 @@ TermImportPage.prototype = {
 				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
 					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
    		 			'<terms>'+"\n";
-    	
+   		 		//get the terms...
     			for(var i = 0, n = policy_selects.length; i < n; i++) {
-    				inputPolicy += '<' + policy_selects[i].label + '>' + 
+   		 			var policy_type = document.getElementById("pol-type_" + policy_selects[i].firstChild.nodeValue);
+    				inputPolicy += '<' + policy_type.value + '>' + 
     								policy_selects[i].firstChild.nodeValue + 
-    								'</' + policy_selects[i].label + '>'+"\n";
+    								'</' + policy_type.value + '>'+"\n";
     			}
-   	 			inputPolicy +='</terms>'+"\n"+
-   	 				'<properties>'+"\n"+
-   	 				'	<property>articleName</property>'+"\n"+
-   	 				'</properties>'+"\n"+
+    			inputPolicy +='</terms>'+"\n"+
+   	 				'<properties>'+"\n";
+    			//and now the properties...
+				var properties = document.getElementById('attrib_table').getElementsByTagName('td');
+				for (var i = 0, n = properties.length; i < n; i++) {
+					// get one of the importsets
+					var property = properties[i]; 
+					if(property.nodeType == 1) {
+						if ( property.firstChild.nodeValue ){
+							inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
+						}	
+					}	
+				}   	 				
+   	 			inputPolicy += '</properties>'+"\n"+
 					'</InputPolicy>'+"\n";
 			}
 			else {
@@ -671,7 +741,7 @@ TermImportPage.prototype = {
 		}
 		catch(e) {
 		}
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, 'TestPage', conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));				
+		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));				
 	},
 	importItNowCallback: function(tlID, dalID, request){
 		var message= '';
