@@ -33,8 +33,10 @@ WebServiceRepositorySpecial.prototype = {
 	 * @param string wsId id of the webservice that has to be updated
 	 * 
 	 */	
-	updateCache : function(wsId) {
-		sajax_do_call("smwf_ws_updateCache", [ wsId ], this.updateCacheCallBack.bind(this));
+	updateCache : function(botId, wsId) {
+		this.wsId = wsId.substr(8, wsId.length);
+		sajax_do_call('smwf_ga_LaunchGardeningBot', 
+				[botId, wsId, null, null], this.updateCacheCallBack.bind(this));
 	},
 
 	/**
@@ -43,7 +45,12 @@ WebServiceRepositorySpecial.prototype = {
 	 * 
 	 */
 	updateCacheCallBack : function(request) {
-		alert(request.responseText);
+		if(request.responseText.substr(0,15) == "ERROR:gardening"){
+			alert(request.responseText);
+		} else {
+			$('update' + this.wsId).style.display = "none";
+			$('updating' + this.wsId).style.display = "block";
+		}
 	},
 	
 	/**

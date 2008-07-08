@@ -68,6 +68,7 @@ DefineWebServiceSpecial.prototype = {
 			document.getElementById("step4-error").style.display = "none";
 			document.getElementById("step5-error").style.display = "none";
 			document.getElementById("step6-error").style.display = "none";
+			document.getElementById("step6b-error").style.display = "none";
 
 			document.getElementById("step2").style.display = "none";
 			document.getElementById("step3").style.display = "none";
@@ -193,7 +194,8 @@ DefineWebServiceSpecial.prototype = {
 			document.getElementById("step4-error").style.display = "none";
 			document.getElementById("step5-error").style.display = "none";
 			document.getElementById("step6-error").style.display = "none";
-
+			document.getElementById("step6b-error").style.display = "none";
+			
 			document.getElementById("step2-help").style.display = "block";
 			document.getElementById("step3-help").style.display = "none";
 			document.getElementById("step4-help").style.display = "none";
@@ -370,7 +372,8 @@ DefineWebServiceSpecial.prototype = {
 			document.getElementById("step4-error").style.display = "none";
 			document.getElementById("step5-error").style.display = "none";
 			document.getElementById("step6-error").style.display = "none";
-
+			document.getElementById("step6b-error").style.display = "none";
+			
 			document.getElementById("step3").style.display = "block";
 			document.getElementById("step4").style.display = "none";
 			document.getElementById("step5").style.display = "none";
@@ -559,6 +562,7 @@ DefineWebServiceSpecial.prototype = {
 		if (document.getElementById("step6-name").value.length > 0) {
 			document.getElementById("errors").style.display = "none";
 			document.getElementById("step6-error").style.display = "none";
+			document.getElementById("step6b-error").style.display = "none";
 			var result = "<WebService>\n";
 
 			var uri = document.getElementById("step1-uri").value;
@@ -693,23 +697,37 @@ DefineWebServiceSpecial.prototype = {
 
 			wsSyntax += "}}";
 
-			// todo:diesen callback und den folgenden vertauschen
-			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
-					this.wwsd + wsSyntax, "" ], this.processStep6CallBack
-					.bind(this));
+			this.wsSyntax = wsSyntax;
+
+			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
+					this.processStep6CallBack.bind(this));
 
 		} else {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step6-error").style.display = "block";
+			document.getElementById("step6b-error").style.display = "none";
 		}
 
 	},
 
+	processStep6CallBack : function(request) {
+		if (request.responseText == "false") {
+			var wsName = document.getElementById("step6-name").value;
+			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
+					this.wwsd + this.wsSyntax, "" ], this.processStep6CallBack1
+					.bind(this));
+		} else {
+			document.getElementById("errors").style.display = "block";
+			document.getElementById("step6b-error").style.display = "block";
+			document.getElementById("step6-error").style.display = "none";
+		}
+	},
+
 	/**
-	 * callback method for step 6
+	 * callback method for step 6Callback
 	 * 
 	 */
-	processStep6CallBack : function(request) {
+	processStep6CallBack1 : function(request) {
 		var wsName = document.getElementById("step6-name").value;
 		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
 				this.processStep6CallBack2.bind(this));
