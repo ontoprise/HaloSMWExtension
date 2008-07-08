@@ -17,8 +17,14 @@
  */
 
 
+
+define('SMW_WS_SYSOP' , 'sysop');
+
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
+
+global $smwgHaloIP;
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSUpdateBot.php");
 
 /**
  * This class represents the special page webservice repository
@@ -28,7 +34,6 @@ require_once( $IP . "/includes/SpecialPage.php" );
  */
 class SMWWebServiceRepositorySpecial extends SpecialPage {
 
-	//todo: make only accessible for admins
 	public function __construct() {
 		parent::__construct('WebServicerepository');
 	}
@@ -42,9 +47,24 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 		$wgOut->setPageTitle("Web Service Repository");
 
+		global $wgCookiePrefix;
+	    
+		$allowed = false;
+		global $wgUser;
+		$user = $wgUser;
+		if($user != null){
+	    	$groupsOfUser = $user->getGroups();
+	    	foreach($groupsOfUser as $key => $group) {
+	    		if($group == SMW_WS_SYSOP){
+	    			$allowed = true;
+	    		}
+	    	}
+	    }
+	    
 		$html = "";
-
-		global $smwgHaloIP;
+		
+		
+	    global $smwgHaloIP;
 		require_once($smwgHaloIP . '/specials/SMWWebService/SMW_WSStorage.php');
 
 		$webServices = WSStorage::getDatabase()->getWebServices();
@@ -52,12 +72,17 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 		$html .= "<h2><span class=\"mw-headline\">Available Wiki Web Service Definitions</span></h2>";
 
-		$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th><th>Update</th><th>Confirm</th></tr>";
+		if($allowed){
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th><th>Update</th><th>Confirm</th></tr>";
+		} else {
+			$html .= "<p>If you do not see the buttons for updating and confirming WebServices, you might not be logged in or you do not have any rights to use these functions.</p>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th></tr>";
+		}
 		foreach($webServices as $ws){
 			$wsUrl = Title::newFromID($ws->getArticleID())->getInternalURL();
 			$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
 			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
-
+		
 			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
 			$oldestUpdate = $cacheResults[0]["lastUpdate"];
 			if(strlen($oldestUpdate) > 0){
@@ -74,14 +99,21 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 					}
 				}
 			}
+			
 			$html .= "<td>".$oldestUpdate.$latestUpdate."</td>";
-
-			$html .= "<td><button type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache(".$ws->getArticleID().")\">Update</button></td>";
-
-			if($ws->getConfirmationStatus() != "true"){
-				$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+				
+			if($allowed){
+				$wsUpdateBot = new WSUpdateBot();
+				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">Update</button>";
+				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">Updating</div></td>";
+				
+				if($ws->getConfirmationStatus() != "true"){
+					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+				} else {
+					$html .= "<td>confirmed</td></tr>";
+				}
 			} else {
-				$html .= "<td>confirmed</td></tr>";
+				$html .= "</tr>";
 			}
 		}
 

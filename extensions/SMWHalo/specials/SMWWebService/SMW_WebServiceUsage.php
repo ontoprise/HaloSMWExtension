@@ -88,7 +88,7 @@ function extractWSPropertyPairNames($hits){
 		$hit = trim($hit);
 		$sColPos = strPos($hit, "::");
 		$propertyName = substr($hit, 2 ,$sColPos-2);
-		$propertyName = trim($propertyName);
+		$propertyName = ucfirst(trim($propertyName));
 
 		$wsColPos = strPos($hit, "#ws:");
 		$wsSPos = strPos($hit, "|", $wsColPos);
@@ -160,22 +160,30 @@ function webServiceUsage_Render( &$parser) {
 			}
 		}
 	}
+	//todo:language message
+	if(count($wsReturnValues) > 1 && $propertyName != null){
+		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
+	}
 
 	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
-		$wsResults = getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId);
+		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
+		if($propertyName != null){
+			$wsFormat = "list";
+		}
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$errorMessages = $ws->getErrorMessages();
+		if(count($errorMessages) > 0){
+			//$wsFormattedResult .= " ".smwfEncodeMessages($errorMessages); 
+		}
+		if($wsResult == wfMsg('smw_wsuse_getresult_error')){
+			return smwfEncodeMessages(array($wsResult));
+		}
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
-		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName);
+		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
 		return $wsFormattedResult;
 	} else {
-//		$return = wfMsg('smw_wsuse_wwsd_error')."<ul>";
-//		foreach($messages as $mess){
-//			$return .= "<li>".$mess."</li>";
-//		}
-//		$return .="</ul>";
-//		return $return;
 		return smwfEncodeMessages($messages);
 	}
 }
@@ -225,11 +233,9 @@ function getSpecifiedParameterName($parameter){
 function formatWSResult($wsFormat, $wsResults = null){
 	if(is_string($wsResults)){
 		if(substr($wsResults, 0, 11) == "_ws-error: "){
-			// todo:  use wfmessage  
-			// todo: use default values
-			return "It was not possible to call the WebService";
+			return smwfEncodeMessages(array(wfMsg('smw_wsuse_getresult_error', substr($wsResults, 11, 111))));
 		} else {
-			return $wsResults;
+			return smwfEncodeMessages(array($wsResults));
 		}
 	}
 
@@ -317,10 +323,13 @@ function detectRemovedWebServiceUsages($articleId){
 	if($rememberedWSUsages != null){
 		$smwProperties = SMWFactbox::$semdata->getProperties();
 		foreach($rememberedWSUsages as $rememberedWSUsage){
-			//todo: properties duerfen nicht klein geschrieben werden,
-			// sonst schlägt dieser vergleich hier fehl
 			if($smwProperties[$rememberedWSUsage[2]] != null){
-				WSStorage::getDatabase()->addWSProperty($rememberedWSUsage[2], $rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+				WSStorage::getDatabase()->addWSProperty(
+					$rememberedWSUsage[2], 
+					$rememberedWSUsage[0], 
+					$rememberedWSUsage[1], 
+					$articleId, 
+					$rememberedWSUsage[3]);
 			}
 		}
 	}
@@ -330,11 +339,14 @@ function detectRemovedWebServiceUsages($articleId){
 		$deleteProperty = true;
 		if($rememberedWSUsages != null){
 			foreach($rememberedWSUsages as $rememberedWSUsage){
+				$temp1 = $rememberedWSUsage[2];
+				$temp2 = $wsProperty[2];
+				
 				if($rememberedWSUsage[2] != null){
 					if (($rememberedWSUsage[0] == $wsProperty[0])
 					&& ($rememberedWSUsage[1] == $wsProperty[1])
 					&& ($rememberedWSUsage[2] == $wsProperty[2])){
-						$deleteProperty = False;
+						$deleteProperty = false;
 					}}
 			}
 		}
@@ -354,14 +366,13 @@ function detectRemovedWebServiceUsages($articleId){
  * @param array $parameterSetId the specified parameters
  * @return array
  */
-function getWSResultsFromCache($wsId, $wsReturnValues, $parameterSetId){
+function getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId){
 	$returnValues = array();
 
 	foreach($wsReturnValues as $key => $value){
 		$returnValues[] = $key;
 	}
 
-	$ws = WebService::newFromID($wsId);
 	$result = $ws->call($parameterSetId, $returnValues);
 
 	return $result;

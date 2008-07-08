@@ -100,7 +100,8 @@ class WSStorageSQL {
 				  'property_name'     =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
-				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL'), 
+				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL',
+				'result_spec'  	=>  'VARCHAR(64) UNSIGNED NOT NULL'), 
 		$db, $verbose, 'property_name,page_id,web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -266,19 +267,21 @@ class WSStorageSQL {
 	 * 		<true>, if the DB entry was successfully added
 	 * 		<false>, otherwise
 	 */
-	public function addWSProperty($propertyName, $wsPageID, $paramSetID, $pageID) {
+	public function addWSProperty($propertyName, $wsPageID, $paramSetID, $pageID, $resultSpec) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$db->delete($db->tableName('smw_ws_properties'), array(
 					  'property_name'    => $propertyName,
 					  'web_service_id' => $wsPageID,
 					  'param_set_id'   => $paramSetID,
-					  'page_id'        => $pageID));
+					  'page_id'        => $pageID,
+						'result_spec' => $resultSpec));
 			$db->insert($db->tableName('smw_ws_properties'), array(
 					  'property_name'    => $propertyName,
 					  'web_service_id' => $wsPageID,
 					  'param_set_id'   => $paramSetID,
-					  'page_id'        => $pageID));
+					  'page_id'        => $pageID,
+					'result_spec' => $resultSpec));
 		} catch (Exception $e) {
 			echo $e->getMessage();
 			return false;
@@ -826,8 +829,6 @@ class WSStorageSQL {
 	 * @param string $status possible values are: "false", "once" and "true"
 	 */
 	function setWWSDConfirmationStatus($wsId, $status){
-		//TODO: change db scheme
-		//TODO: ws method
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$res = $db->update( $db->tableName("smw_ws_wwsd"),
@@ -838,7 +839,12 @@ class WSStorageSQL {
 		}
 	}
 
-	//todo: describe
+	/**
+	 * Get all properties that use the result of
+	 * a web service
+	 *
+	 * @return array of propertiy names
+	 */
 	function getWSPropertyNames(){
 		$db =& wfGetDB( DB_SLAVE );
 		$result = array();
@@ -858,14 +864,20 @@ class WSStorageSQL {
 		return $props;
 	}
 	
-//todo: describe
+	/**
+	 * get all properties that use the results of the
+	 * given webservice
+	 *
+	 * @param string $wsId
+	 * @return array
+	 */
 	function getWSPropertyUsages($wsId){
 		$db =& wfGetDB( DB_SLAVE );
 		$result = array();
 		$tbn = $db->tableName('smw_ws_properties');
 
-		$sql = "SELECT DISTINCT props.property_name, props.param_set_id, props.page_id FROM "
-			.$tbn. " props WHERE props.web_service_id = \"".$wsId."\"";
+		$sql = "SELECT DISTINCT props.property_name, props.param_set_id, props.page_id, 
+			props.result_spec FROM ".$tbn. " props WHERE props.web_service_id = \"".$wsId."\"";
 			
 		$res = $db->query($sql);
 
@@ -874,7 +886,8 @@ class WSStorageSQL {
 		while($row = $db->fetchObject($res)){
 			$result[] = array("propertyName" => $row->property_name,
 				"paramSetId" => $row->param_set_id,
-				"pageId" => $row->page_id);
+				"pageId" => $row->page_id,
+				"resultSpec" => $row->result_spec);
 		}
 		return $result;
 	}

@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Author: Ingo Steinbauer
+ *  @author: Ingo Steinbauer
  */
 
 global $smwgHaloIP;
@@ -83,7 +83,7 @@ class WSCacheBot extends GardeningBot {
 	 */
 	private function cleanWSCacheEntries($ws){
 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
-		
+
 		if($ws->getSpanOfLife() != "0"){
 			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
 			$this->addSubTask(sizeof($cacheResults)+1);
@@ -94,8 +94,8 @@ class WSCacheBot extends GardeningBot {
 					$compareTS = 0;
 					if($cacheResult["lastAccess"]){
 						if($cacheResult["lastAccess"]
-							< $cacheResult["lastUpdate"]){
-								$compareTS = $cacheResult["lastUpdate"];
+						< $cacheResult["lastUpdate"]){
+							$compareTS = $cacheResult["lastUpdate"];
 						} else {
 							$compareTS = $cacheResult["lastAccess"];
 						}
@@ -105,20 +105,66 @@ class WSCacheBot extends GardeningBot {
 				} else {
 					$compareTS = $cacheResult["lastUpdate"];
 				}
+
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
-						> $ws->getSpanOfLife() *24*60*60/60/24){
+				> $ws->getSpanOfLife() *24*60*60/60/24){
 					WSStorage::getDatabase()->removeWSEntryFromCache(
 					$ws->getArticleID(), $cacheResult["paramSetId"]);
 					$deletedCacheEntries += 1;
+						
+					$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
+						
+					foreach($props as $prop){
+						echo("\n 0:".$prop["propertyName"]);
+						if($prop["paramSetId"] == $cacheResult["paramSetId"]){
+							echo("\n 1:".$prop["pageId"]);
+							$subject = Title::newFromID($prop["pageId"]);
+							$smwData = smwfGetStore()->getSemanticData($subject);
+								
+							$smwProps = $smwData->getProperties();
+								
+							$tempPropertyValues = array();
+							foreach($smwProps as $smwProp){
+								$tempPropertyValues[$smwProp->getText()] =
+								$smwData->getPropertyValues($smwProp);
+							}
+								
+							$smwData->clear();
+
+							$cacheRes = $ws->getCallResultParts
+								($cacheResult["result"], array($prop["resultSpec"]));
+							echo("\n\na: ".print_r($cacheRes, true));
+							$cacheRes = $ws->getCallResultParts
+								(unserialize($cacheResult["result"]), array($prop["resultSpec"]));
+							echo("\n\na: ".print_r($cacheRes, true));
+							
+							$cacheRes = array_pop(array_pop($cacheRes));
+							
+							foreach($tempPropertyValues as $key => $values){
+								echo("\n 2:".$key);
+								if(strtolower($key) == strtolower($prop["propertyName"])){
+									foreach($values as $value){
+										$content = $value->getXSDValue();
+										if(strtolower($content) != strtolower($cacheRes)){
+											echo("\n 7:".$content);
+											echo("\n 8:".$cacheRes);
+											$smwData->addPropertyValue($key, $value);			
+										} 
+									}
+								}
+							}
+							smwfGetStore()->updateData($smwData, false);
+						}
+					}
 				}
 				$this->worked(1);
 			}
 			// echo($ws->getName()."-".$deletedCacheEntries);
 			if($deletedCacheEntries > 0){
 				$log->addGardeningIssueAboutValue(
-					$this->id, SMW_GARDISSUE__REMOVED_WSCACHE_ENTRIES,
-					Title::newFromText($ws->getName()), $deletedCacheEntries);
+				$this->id, SMW_GARDISSUE__REMOVED_WSCACHE_ENTRIES,
+				Title::newFromText($ws->getName()), $deletedCacheEntries);
 			}
 		} else {
 			$this->addSubTask(1);
@@ -145,7 +191,7 @@ class WSCacheBotIssue extends GardeningIssue {
 		switch($this->gi_type) {
 			case SMW_GARDISSUE__REMOVED_WSCACHE_ENTRIES:
 				return wfMsg('smw_ws_cachbot_log');
-			
+					
 			default: return NULL;
 
 		}

@@ -52,6 +52,8 @@ class WebService {
 	private $mWSClient;		  //IWebServiceClient: the web service client provides
 	//   access to the service
 	private $mCallParameters;
+	// for memorizing errors occuring during ws-call
+	private $mCallErrorMessages = array();
 	/**
 	 * Constructor for new WebService objects.
 	 *
@@ -309,6 +311,8 @@ class WebService {
 		if ($msg === true) {
 			// client successfully created
 			$msg = array();
+		} else {
+			return $msg;
 		}
 
 
@@ -350,51 +354,77 @@ class WebService {
 		//check if an appropriate result allready exists in the cache
 		if($cacheResult != null){
 			if(($this->mDisplayPolicy == 0) ||
-					(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
-					< ($this->getDisplayPolicy()*60))){
+			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
+			< ($this->getDisplayPolicy()*60))){
 				$response = unserialize($cacheResult["result"]);
+				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
+				$this->interrupt();
 			}
-			WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
+				
+				
 		}
-		
+
+		$this->createWSClient();
+		$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
+		$this->initializeCallParameters($specParameters);
+
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
 			if($this->getConfirmationStatus() == "once"){
-				//todo: create language message
-				return "need confirmation first";
-			}
-			$this->createWSClient();
-			$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
-			//init call-parameters with respect to default values
-			$this->mCallParameters	= array();
-			foreach($this->mParsedParameters->children() as $child){
-				$value = "".$child["defaultValue"];
-				if($specParameters["".$child["name"]]){
-					$value = $specParameters["".$child["name"]];
-				}
-				$this->getPathSteps("".$child["path"], $value);
+				//todo: change
+				return wfMsg('smw_wws_need_confirmation');
 			}
 
 			// do the call
 			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 
 			if(is_string($response)){
-				if(substr($response, 0, 11) == "_ws-error: "){
-					return $response;
+				if($cacheResult == null){
+					if(substr($response, 0, 11) == "_ws-error: "){
+						return $response;
+					} else {
+						return "_ws-error: ".$response;
+					}
+				} else {
+					if(substr($response, 0, 11) == "_ws-error: "){
+						$this->mCallErrorMessages[] = $response;
+					} else {
+						$this->mCallErrorMessages[] = "_ws-error: ".$response;
+					}
+					$response = unserialize($cacheResult["result"]);
 				}
-				//todo: think about this
-				return $response;
+			} else {
+				WSStorage::getDatabase()->storeCacheEntry(
+					$this->mArticleID,
+					$parameterSetId,
+					serialize($response),
+					wfTimeStamp(TS_MW, wfTime()),
+					wfTimeStamp(TS_MW, wfTime()));
 			}
-
-			WSStorage::getDatabase()->storeCacheEntry(
-			$this->mArticleID,
-			$parameterSetId,
-			serialize($response),
-			wfTimeStamp(TS_MW, wfTime()),
-			wfTimeStamp(TS_MW, wfTime()));
 		}
 
+		$result = $this->getCallResultParts($response, $resultParts);
+
+		$ws = $this->mArticleID;
+		if($this->getConfirmationStatus() == "false"){
+			$this->mConfirmationStatus = once;
+			WSStorage::getDatabase()->setWWSDConfirmationStatus($this->mArticleID, "once");
+		}
+
+		return $result;
+	}
+
+
+	/**
+	 * This methods returns these parts of the ws-response
+	 * that are of interrest
+	 *
+	 * @param $response the response of the webservice
+	 * @param array $resultParts the parts of the result that are of interrest
+	 * @return array the result of interrest
+	 */
+	public function getCallResultParts($response, $resultParts){
 		//initialize array containing select paths and their value
 		$selects = array();
 
@@ -404,7 +434,7 @@ class WebService {
 			}
 		}
 
-		// initialize array of paths and elements that are not selected in the result
+		//initialize array of paths and elements that are not selected in the result
 		$outselectedPaths = array();
 		$printO[] = array();
 		foreach($selects as $path => $value){
@@ -505,13 +535,27 @@ class WebService {
 			$result[$key] = $tempObject;
 		}
 
-		$ws = $this->mArticleID;
-		if($this->getConfirmationStatus() == "false"){
-			$this->mConfirmationStatus = once;
-			WSStorage::getDatabase()->setWWSDConfirmationStatus($this->mArticleID, "once");
+		return $result;
+	}
+
+	/**
+	 * This methods prepares the parameters for the ws-call
+	 *
+	 * @param the parameters
+	 * @return array the prepared parameters
+	 */
+	public function initializeCallParameters($specParameters){
+		//init call-parameters with respect to default values
+		$this->mCallParameters	= array();
+		foreach($this->mParsedParameters->children() as $child){
+			$value = "".$child["defaultValue"];
+			if($specParameters["".$child["name"]]){
+				$value = $specParameters["".$child["name"]];
+			}
+			$this->getPathSteps("".$child["path"], $value);
 		}
 
-		return $result;
+		return $this->mCallParameters;
 	}
 
 	/**
@@ -1043,17 +1087,25 @@ class WebService {
 		}
 		return $name;
 	}
-	
-/**
-	 * Returns an instance of IWebServiceClient  
+
+	/**
+	 * Returns an instance of IWebServiceClient
 	 *
 	 * @return IWebServiceClient
-	 * 		
+	 *
 	 *
 	 */
 	public function getWSClient() {
 		$this->createWSClient();
 		return $this->mWSClient;
+	}
+
+	public function getErrorMessages(){
+		$eMess = $this->mCallErrorMessages;
+		$this->mCallErrorMessages = array();
+		$eMess = array();
+		$eMess[] = "hallo";
+		return $eMess;
 	}
 
 
