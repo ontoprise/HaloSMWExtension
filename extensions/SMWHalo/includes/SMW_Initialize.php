@@ -28,7 +28,7 @@ $smwgProcessedAnnotations = null;
 global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 
 if ($smwgEnableWikiWebServices) {
-	require_once('extensions/SMWHalo/specials/SMWWebService/SMW_WebServiceManager.php');
+	require_once($smwgHaloIP. '/specials/SMWWebService/SMW_WebServiceManager.php');
 }
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
@@ -145,7 +145,7 @@ function smwgHaloSetupExtension() {
 		}
 		if ($smwgEnableSemanticNotifications) {
 			// Initialize the Semantic Notification Extension
-			require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationManager.php');
+			require_once($smwgHaloIP. '/specials/SMWSemanticNotifications/SMW_SemanticNotificationManager.php');
 			SemanticNotificationManager::initSemanticNotificationExtension();
 		}
 
@@ -325,16 +325,15 @@ function smwfHaloShowListPage(&$title, &$article){
 function smwfHaloInitializeTables() {
 	global $smwgHaloIP, $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 	require_once($smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php');
+	require_once($smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceManager.php');
+	require_once($smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationManager.php');
+	
 	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
 	SMWGardeningLog::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
 
-	if ($smwgEnableWikiWebServices) {
-		WebServiceManager::initDatabaseTables();
-	}
-	if ($smwgEnableSemanticNotifications) {
-		SemanticNotificationManager::initDatabaseTables();
-	}
+	WebServiceManager::initDatabaseTables();
+	SemanticNotificationManager::initDatabaseTables();
 
 	return true;
 }

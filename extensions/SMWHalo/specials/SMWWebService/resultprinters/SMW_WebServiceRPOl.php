@@ -69,4 +69,3 @@ class WebServiceOlResultPrinter extends WebServiceResultPrinter {
 }
 
 ?>
-?>
