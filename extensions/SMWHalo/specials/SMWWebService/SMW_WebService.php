@@ -358,10 +358,9 @@ class WebService {
 			< ($this->getDisplayPolicy()*60))){
 				$response = unserialize($cacheResult["result"]);
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
-				$this->interrupt();
 			}
-				
-				
+
+
 		}
 
 		$this->createWSClient();
@@ -372,35 +371,31 @@ class WebService {
 		// was no appropriate result in the cache
 		if(!$response){
 			if($this->getConfirmationStatus() == "once"){
-				//todo: change
-				return wfMsg('smw_wws_need_confirmation');
-			}
-
-			// do the call
-			$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
-
-			if(is_string($response)){
 				if($cacheResult == null){
-					if(substr($response, 0, 11) == "_ws-error: "){
-						return $response;
-					} else {
-						return "_ws-error: ".$response;
-					}
+					return wfMsg('smw_wws_need_confirmation');
 				} else {
-					if(substr($response, 0, 11) == "_ws-error: "){
-						$this->mCallErrorMessages[] = $response;
-					} else {
-						$this->mCallErrorMessages[] = "_ws-error: ".$response;
-					}
+					$this->mCallErrorMessages[] = wfMsg('smw_wws_need_confirmation');
 					$response = unserialize($cacheResult["result"]);
 				}
 			} else {
-				WSStorage::getDatabase()->storeCacheEntry(
+				$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
+					
+				if(is_string($response)){
+					if($cacheResult == null){
+						return wfMSG('smw_wsuse_getresult_error');
+					} else {
+						$this->mCallErrorMessages[] = 
+							wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
+						$response = unserialize($cacheResult["result"]);
+					}
+				} else {
+					WSStorage::getDatabase()->storeCacheEntry(
 					$this->mArticleID,
 					$parameterSetId,
 					serialize($response),
 					wfTimeStamp(TS_MW, wfTime()),
 					wfTimeStamp(TS_MW, wfTime()));
+				}
 			}
 		}
 
@@ -1103,8 +1098,6 @@ class WebService {
 	public function getErrorMessages(){
 		$eMess = $this->mCallErrorMessages;
 		$this->mCallErrorMessages = array();
-		$eMess = array();
-		$eMess[] = "hallo";
 		return $eMess;
 	}
 

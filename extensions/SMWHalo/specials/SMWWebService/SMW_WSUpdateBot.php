@@ -101,7 +101,7 @@ class WSUpdateBot extends GardeningBot {
 	 */
 	private function updateWSProperty($ws, $all){
 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
-
+		
 		$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
 
 		if(sizeof($props) > 0){
@@ -145,20 +145,22 @@ class WSUpdateBot extends GardeningBot {
 					$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
 
 					$goon = true;
-					if(is_string($response)){
+					
+					$errorMessages = $ws->getErrorMessages();
+					if(is_string($response) || sizeof($errorMessages) > 0){
 						$log->addGardeningIssueAboutValue(
 						$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
 						Title::newFromText($ws->getName()), 0);
 						$goon = false;
-						//echo("\nresponse was a string\n");
-					}
+					} 
+					
 					if($goon) {
 						WSStorage::getDatabase()->storeCacheEntry(
-						$ws->getArticleID(),
-						$prop["paramSetId"],
-						serialize($response),
-						wfTimeStamp(TS_MW, wfTime()),
-						wfTimeStamp(TS_MW, wfTime()));
+							$ws->getArticleID(),
+							$prop["paramSetId"],
+							serialize($response),
+							wfTimeStamp(TS_MW, wfTime()),
+							wfTimeStamp(TS_MW, wfTime()));
 
 						//update the smw-storage
 						$response = $ws->getCallResultParts($response, array($prop["resultSpec"]));
@@ -212,14 +214,14 @@ class WSUpdateBot extends GardeningBot {
 
 						smwfGetStore()->updateData($smwData, false);
 						$updatedEntries += 1;
-					}
+					} 
 				}
 				$this->worked(1);
 			}
 			if($updatedEntries > 0){
 				$log->addGardeningIssueAboutValue(
-				$this->id, SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES,
-				Title::newFromText($ws->getName()), $updatedEntries);
+					$this->id, SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES,
+					Title::newFromText($ws->getName()), $updatedEntries);
 			}
 		} else {
 			$this->addSubTask(1);
@@ -246,7 +248,7 @@ class WSUpdateBotIssue extends GardeningIssue {
 			case SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES:
 				return wfMsg('smw_ws_updatebot_log');
 			case SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES:
-				return wfMsg('ws_updatebot_confirmation');
+				return wfMsg('smw_ws_updatebot_confirmation');
 			case SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES:
 				return wfMsg('smw_ws_updatebot_callerror');
 			default: return NULL;

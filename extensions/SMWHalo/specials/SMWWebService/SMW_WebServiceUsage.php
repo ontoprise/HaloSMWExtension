@@ -143,7 +143,6 @@ function webServiceUsage_Render( &$parser) {
 
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
-
 	for($i=2; $i < sizeof($parameters); $i++){
 		$parameter = trim($parameters[$i]);
 		if($parameter{0} == "?"){
@@ -173,13 +172,14 @@ function webServiceUsage_Render( &$parser) {
 			$wsFormat = "list";
 		}
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
-			//$wsFormattedResult .= " ".smwfEncodeMessages($errorMessages); 
+			if(!sizeof($propertyName)){
+				$wsFormattedResult .= smwfEncodeMessages($errorMessages); 
+			}
 		}
-		if($wsResult == wfMsg('smw_wsuse_getresult_error')){
-			return smwfEncodeMessages(array($wsResult));
-		}
+		
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
 		return $wsFormattedResult;
@@ -232,11 +232,7 @@ function getSpecifiedParameterName($parameter){
  */
 function formatWSResult($wsFormat, $wsResults = null){
 	if(is_string($wsResults)){
-		if(substr($wsResults, 0, 11) == "_ws-error: "){
-			return smwfEncodeMessages(array(wfMsg('smw_wsuse_getresult_error', substr($wsResults, 11, 111))));
-		} else {
-			return smwfEncodeMessages(array($wsResults));
-		}
+		return smwfEncodeMessages(array($wsResults));
 	}
 
 	if($wsFormat == null){
