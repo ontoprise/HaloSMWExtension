@@ -101,7 +101,7 @@ class WSStorageSQL {
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL',
-				'result_spec'  	=>  'VARCHAR(64) UNSIGNED NOT NULL'), 
+				  'result_spec'  	=>  'VARCHAR(64) NOT NULL'), 
 		$db, $verbose, 'property_name,page_id,web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
