@@ -169,6 +169,10 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep2CallBack : function(request) {
 		var wsParameters = request.responseText.split(";");
+		if(wsParameters[0] == "todo:handle noparams"){
+			this.processStep3();
+			return;
+		}
 		var overflow = false;
 
 		for (i = 0; i < wsParameters.length; i++) {

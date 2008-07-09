@@ -206,14 +206,20 @@ class WebService {
 		$valid &= self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
-		$valid &= self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
-		if ($ws->mParsedParameters) {
-			// store the serialized form of the parameter description
-			$path = $parser->xpath('/WebService/parameter');
-			foreach ($path as $p) {
-				$ws->mParameters .= $p->asXML()."\n";
+		//$valid &= self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
+		$exists = self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
+		if($exists){
+			if ($ws->mParsedParameters) {
+				// store the serialized form of the parameter description
+				$path = $parser->xpath('/WebService/parameter');
+				foreach ($path as $p) {
+					$ws->mParameters .= $p->asXML()."\n";
+				}
 			}
+		} else {
+			$ws->mParsedParameters = null;
 		}
+			
 		$valid &= self::getWWSDElement($parser, '/WebService/result', null, $ws->mParsedResult, false, 1, 100, $msg);
 		if ($ws->mParsedResult) {
 			// store the serialized form of the result description
@@ -384,8 +390,8 @@ class WebService {
 					if($cacheResult == null){
 						return wfMSG('smw_wsuse_getresult_error');
 					} else {
-						$this->mCallErrorMessages[] = 
-							wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
+						$this->mCallErrorMessages[] =
+						wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
 						$response = unserialize($cacheResult["result"]);
 					}
 				} else {
@@ -542,12 +548,14 @@ class WebService {
 	public function initializeCallParameters($specParameters){
 		//init call-parameters with respect to default values
 		$this->mCallParameters	= array();
-		foreach($this->mParsedParameters->children() as $child){
-			$value = "".$child["defaultValue"];
-			if($specParameters["".$child["name"]]){
-				$value = $specParameters["".$child["name"]];
+		if($this->mParsedParameters != null){
+			foreach($this->mParsedParameters->children() as $child){
+				$value = "".$child["defaultValue"];
+				if($specParameters["".$child["name"]]){
+					$value = $specParameters["".$child["name"]];
+				}
+				$this->getPathSteps("".$child["path"], $value);
 			}
-			$this->getPathSteps("".$child["path"], $value);
 		}
 
 		return $this->mCallParameters;
@@ -999,15 +1007,17 @@ class WebService {
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $pName);
 			}
 		}
-		foreach($this->mParsedParameters->children() as $child){
-			if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
-				foreach($specifiedParameters as $pName => $pValue){
-					if("".$child["name"] == $pName){
-						$exists = true;
+		if($this->mParsedParameters != null){
+			foreach($this->mParsedParameters->children() as $child){
+				if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
+					foreach($specifiedParameters as $pName => $pValue){
+						if("".$child["name"] == $pName){
+							$exists = true;
+						}
 					}
-				}
-				if(!$exists){
-					$messages[] = wfMsg('smw_wsuse_parameter_missing', "".$child["name"]);
+					if(!$exists){
+						$messages[] = wfMsg('smw_wsuse_parameter_missing', "".$child["name"]);
+					}
 				}
 			}
 		}

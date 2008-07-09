@@ -63,6 +63,11 @@ function smwf_ws_processStep2($uri, $methodName){
 	$rawParameters = $wsClient->getOperation($methodName);
 	$parameters = array();
 	$numParam = count($rawParameters);
+	if($numParam == 1){
+		if($rawParameters[0][0] == 0){
+			return "todo:handle noparams;ok";
+		}
+	}
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
@@ -115,7 +120,7 @@ function smwf_ws_processStep6($name, $wwsd){
 /**
  * creates a webservice-client for the given uri
  *
- * @param string $uri uri of the wsdl 
+ * @param string $uri uri of the wsdl
  * @return ws-client
  */
 function createWSClient($uri) {

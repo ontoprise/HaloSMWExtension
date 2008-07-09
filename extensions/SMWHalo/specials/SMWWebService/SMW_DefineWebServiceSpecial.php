@@ -171,7 +171,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<span id=\"step7-name\"></span>";
 		$html .= "\" has been successfully created. In order to include this WebService into a page, please use the following syntax:</span>";
 		$html .= "<br><br>";
-		$url = Title::makeTitleSafe(NS_SPECIAL, wfMsg('webservicerepository'))->getInternalURL();
+		$url = Title::makeTitleSafe(NS_SPECIAL, "webservicerepository")->getInternalURL();
 		$html .= "<div id=\"step7-container\"></div>";
 		$html .= "<br><br>";
 		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a></span>";
