@@ -210,8 +210,8 @@ class SMW_LocalGardeningJob extends Job {
         $this->categoryGraph = $cc_store->getCategoryInheritanceGraph();
         $this->propertyGraph = $cc_store->getPropertyInheritanceGraph();
         $cc_bot = $registeredBots['smw_consistencybot'];
-        $this->annot_checker = new AnnotationLevelConsistency($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
-        $this->cov_checker = new PropertyCoVarianceDetector($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, true);
+        $this->annot_checker = new AnnotationLevelConsistency($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, false);
+        $this->cov_checker = new PropertyCoVarianceDetector($cc_bot, 0, $this->categoryGraph, $this->propertyGraph, false);
 
         if ($this->action == "save") {
 	        switch($this->title->getNamespace()) {

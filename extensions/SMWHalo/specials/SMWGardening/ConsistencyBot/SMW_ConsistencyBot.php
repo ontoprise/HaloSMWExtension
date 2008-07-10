@@ -107,7 +107,7 @@
  	 	
  	private function checkPropertyCovariance($delay, & $categoryGraph, & $propertyGraph) {
  		
- 		$pcd = new PropertyCoVarianceDetector($this, $delay, $categoryGraph, $propertyGraph);
+ 		$pcd = new PropertyCoVarianceDetector($this, $delay, $categoryGraph, $propertyGraph, true);
  		$pcd->checkPropertyGraphForCovariance();
  		
  		
@@ -115,7 +115,7 @@
  	
  	private function checkAnnotationLevel($delay, & $categoryGraph, & $propertyGraph) {
  		
- 		$alc = new AnnotationLevelConsistency($this, $delay, $categoryGraph, $propertyGraph);
+ 		$alc = new AnnotationLevelConsistency($this, $delay, $categoryGraph, $propertyGraph, true);
  		$alc->checkAllPropertyAnnotations();
  		$alc->checkAllAnnotationCardinalities();
  		$alc->checkAllUnits();
@@ -656,13 +656,13 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		return $result;
  	}
  	
- 	public function getInverseRelations() {
+ 	public function getInverseRelations($requestoptions = NULL) {
  		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'relation_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()); 
 		
 		$res = $db->select(  array($db->tableName('smw_relations')), 
 		                    array('subject_title', 'object_title'),
-		                    $sql, 'SMW::getInverseRelations', NULL);
+		                    $sql, 'SMW::getInverseRelations', DBHelper::getSQLOptions($requestoptions));
 		                    
 		
 		$result = array();
@@ -677,14 +677,14 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		return $result;
  	}
  	
- 	public function getEqualToRelations() {
+ 	public function getEqualToRelations($requestoptions = NULL) {
  		//TODO: read partitions of redirects
  		$db =& wfGetDB( DB_SLAVE );
 		$sql = 'rd_from = page_id'; 
 		
 		$res = $db->select(  array($db->tableName('redirect'), $db->tableName('page')), 
 		                    array('rd_namespace','rd_title', 'page_namespace', 'page_title'),
-		                    $sql, 'SMW::getInverseRelations', NULL);
+		                    $sql, 'SMW::getEqualToRelations', DBHelper::getSQLOptions($requestoptions));
 		                    
 		
 		$result = array();

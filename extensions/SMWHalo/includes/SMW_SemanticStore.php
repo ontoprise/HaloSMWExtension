@@ -238,6 +238,13 @@
  	public abstract function getNumberOfPropertiesForTarget(Title $target);
  	
  	/**
+ 	 * Returns number of pages of the given namespace.
+ 	 *
+ 	 * @param int $namespace
+ 	 */
+ 	public abstract function getNumber($namespace);
+ 	
+ 	/**
  	 * Returns all different units of annotations of a given type.
  	 * 
  	 * @param Title $type

@@ -791,6 +791,20 @@
 		return $result;
 	}
 	
+	public function getNumber($namespace) {
+		$db =& wfGetDB( DB_SLAVE ); 
+        $result = 0;
+        $res = $db->select( $db->tableName('page'), 
+                            'COUNT(DISTINCT page_title) AS num',
+                            array('page_namespace' => $namespace), 'SMW::getNumber', array() );
+        if($db->numRows( $res ) > 0) {
+              $row = $db->fetchObject($res);
+              $result += $row->num;
+        }           
+        $db->freeResult($res);
+        return $result;
+	}
+	
 	public function getDistinctUnits(Title $type) {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_attributes = $db->tableName('smw_attributes');

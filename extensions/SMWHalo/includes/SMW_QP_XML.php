@@ -63,7 +63,8 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
                         }
                     }
                                       
-                    $result .= $text;
+                     $result .= $first ? $text : ";".$text;
+                     $first = false;
                 }
               
                 $result .= "</binding>\n";

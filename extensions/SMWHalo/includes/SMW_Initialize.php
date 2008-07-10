@@ -331,7 +331,7 @@ function smwfHaloInitializeTables() {
 	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
 	SMWGardeningLog::getGardeningLogAccess()->setup(true);
 	smwfGetSemanticStore()->setup(true);
-
+	
 	WebServiceManager::initDatabaseTables();
 	SemanticNotificationManager::initDatabaseTables();
 
@@ -423,11 +423,19 @@ function &smwfGetSemanticStore() {
  * Checks if a database function is available (considers only UDF functions).
  */
 function smwfDBSupportsFunction($lib) {
+	global $smwgUseEditDistance;
+	return isset($smwgUseEditDistance) ? $smwgUseEditDistance : false;
+	
+	// KK: this causes problems for many users since they do not 
+	// always have access to system tables. This is why it is better to return 
+	// a config variable. However, it may happen that the SimilarEntitiesBot crashes,
+	// because the EDITDISTANCE function is not available.
+	/*
 	$dbr =& wfGetDB( DB_SLAVE );
 	$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
 	$hasSupport = ($dbr->numRows($res) > 0);
 	$dbr->freeResult( $res );
-	return $hasSupport;
+	return $hasSupport; */
 }
 
 /**
