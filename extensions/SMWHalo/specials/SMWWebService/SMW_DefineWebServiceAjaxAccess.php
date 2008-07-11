@@ -105,9 +105,9 @@ function smwf_ws_processStep6($name, $wwsd){
 		return implode(";", $ws);
 	} else {
 		$res = $ws->validateWithWSDL();
-		if(is_array($res)){
-			return implode(";", $res);
-		}
+//TS		if(is_array($res)){
+//			return implode(";", $res);
+//		}
 		$res = $ws->store();
 		if(!$res){
 			return "error";

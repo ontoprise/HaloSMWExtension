@@ -148,11 +148,59 @@ class WebServiceManager {
 
 
 		//--- TEST
-
-		/*
+/*
 		 global $smwgHaloIP;
 		 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
+		 $wwsd = 
+<<<WWSD
+<WebService>
+<uri name="http://webservices.amazon.com/AWSECommerceService/AWSECommerceService.wsdl" />
+<protocol>SOAP</protocol>
+<method name="ItemSearch" />
+<parameter name="MarketplaceDomain"  optional="false"  path="body.MarketplaceDomain" />
+<parameter name="AWSAccessKeyId"  optional="false"  path="body.AWSAccessKeyId" />
+<parameter name="Manufacturer"  optional="false"  path="body.Request.Manufacturer" />
+<parameter name="SearchIndex"  optional="false"  path="body.Request.SearchIndex" />
+<parameter name="Title"  optional="true"  path="body.Request.Title" />
+<result name="result" >
+<part name="Name"  path="OperationRequest.HTTPHeaders.Header.Name" />
+<part name="Value"  path="OperationRequest.HTTPHeaders.Header.Value" />
+<part name="RequestId"  path="OperationRequest.RequestId" />
+<part name="Name-1"  path="OperationRequest.Arguments.Argument.Name" />
+<part name="Value-1"  path="OperationRequest.Arguments.Argument.Value" />
+<part name="Code"  path="OperationRequest.Errors.Error.Code" />
+<part name="Message"  path="OperationRequest.Errors.Error.Message" />
+<part name="RequestProcessingTime"  path="OperationRequest.RequestProcessingTime" />
+<part name="ASIN"  path="Items.Item.ASIN" />
+<part name="Manufacturer"  path="Items.Item.ItemAttributes.Manufacturer" />
+<part name="ProductGroup"  path="Items.Item.ItemAttributes.ProductGroup" />
+<part name="Title"  path="Items.Item.ItemAttributes.Title" />
+<part name="Price"  path="Items.Item.ItemAttributes.ListPrice.FormattedPrice" />
 
+<part name="Code-1"  path="Items.Item.Errors.Error.Code" />
+<part name="ErrorMessage"  path="Items.Item.Errors.Error.Message" />
+<part name="DetailPageURL"  path="Items.Item.DetailPageURL" />
+<part name="Description"  path="Items.Item.ItemLinks.ItemLink.Description" />
+<part name="URL"  path="Items.Item.ItemLinks.ItemLink.URL" />
+<part name="SalesRank"  path="Items.Item.SalesRank" />
+<part name="ImageUrl"  path="Items.Item.SmallImage.URL" />
+
+</result>
+
+<displayPolicy>
+<maxAge value="0"></maxAge>
+</displayPolicy>
+<queryPolicy>
+<maxAge value="60"></maxAge>
+<delay value="1"/>
+</queryPolicy>
+<spanOfLife value="90" expiresAfterUpdate="true" />
+</WebService>
+WWSD;
+		 $ws = WebService::newFromWWSD("Amazon",$wwsd);
+		 $ws->store();
+ */
+		/*
 		 $wwsd = '<WebService>'.
 		 '<uri name="http://www.currencyserver.de/webservice/currencyserverwebservice.asmx?WSDL" />'.
 		 '<protocol>SOAP</protocol>'.
@@ -247,33 +295,40 @@ class WebServiceManager {
 		$name = $parser->mTitle->getText();
 		$id = $parser->mTitle->getArticleID();
 		$ws = WebService::newFromWWSD($name, $completeWWSD);
-		if (!is_array($ws)) {
+		$errors = null;
+		$warnings = null;
+		if (is_array($ws)) {
+			$errors = $ws;
+		} else {
 			// A web service object was returned. Validate the definition
 			// with respect to the WSDL.
 			$res = $ws->validateWithWSDL();
 			if (is_array($res)) {
-				// Error messages were returned
-				$ws = $res;
+				// Warnings were returned
+				$warnings = $res;
 			}
 		}
-		if (is_array($ws)) {
+		$msg = "";
+		if ($errors != null || $warnings != null) {
 			// Errors within the WWSD => show them as a bullet list
+			$ew = $errors ? $errors : $warnings;
 			$msg = '<b>'.wfMsg('smw_wws_wwsd_errors').'</b><ul>';
-			foreach ($ws as $err) {
+			foreach ($ew as $err) {
 				$msg .= '<li>'.$err.'</li>';
 			}
 			$msg .= '</ul>';
-			return "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
-		} else {
-			if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
-				// store the WWSD in the database in the hook function <articleSavedHook>.
-				self::$mNewWebService = $ws;
-			} else {
-				// add message: namespace webService needed.
-				$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
+			if ($errors) {
+				return "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
 			}
 		}
-		return  "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice;
+		if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
+			// store the WWSD in the database in the hook function <articleSavedHook>.
+			self::$mNewWebService = $ws;
+		} else {
+			// add message: namespace webService needed.
+			$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
+		}
+		return  "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg;
 	}
 
 	/**

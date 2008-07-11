@@ -1087,13 +1087,7 @@ class WebService {
 	 */
 	private function getReturnPartPathStep($name){
 		$strpos = strrpos($name, "[");
-		//		while(strpos($name, "[", $strpos+1)){
-		//			$strpos = strpos($name, "[", $strpos+1);
-		//		}
-		if($strpos){
-			return substr($name, 0, $strpos);
-		}
-		return $name;
+		return $strpos ? substr($name, 0, $strpos) : $name;
 	}
 
 	/**
