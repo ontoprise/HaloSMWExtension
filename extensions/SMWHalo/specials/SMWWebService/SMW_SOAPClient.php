@@ -153,8 +153,12 @@ class SMWSoapClient implements IWebServiceClient {
 		ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
  		$this->mClient = new SoapClient($this->mURI);
 // 		
- 		try {
-			$response = $this->mClient->$operationName($parameters);
+		try {
+			if($parameters == null){
+				$response = $this->mClient->$operationName();
+			} else {
+				$response = $this->mClient->$operationName($parameters);
+			}
 			//return print_r($response, true);
 		} catch(Exception $e) {
  			//return "_ws-error: ".print_r($e, true);

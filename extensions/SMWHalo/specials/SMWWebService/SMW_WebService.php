@@ -716,6 +716,9 @@ class WebService {
 
 		$pNames = array();
 		$wwsdPaths = array();
+		if($this->mParsedParameters == null){
+			$this->mParsedParameters = array();
+		}
 		foreach ($this->mParsedParameters as $p) {
 			$name = (string) $p->attributes()->name;
 			$path = (string) $p->attributes()->path;

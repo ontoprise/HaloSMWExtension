@@ -56,9 +56,7 @@ class WebServiceTableResultPrinter extends WebServiceResultPrinter {
 	 * @return unknown
 	 */
 	public function getWikiText($wsResult){
-
-
-		$return = "<table>";
+		$return = "<table width=\"100%\" class=\"smwtable\">";
 		for($i = 0; $i < sizeof($wsResult) ;$i++){
 			$return.= "<tr>";
 			for($k=0; $k < sizeof($wsResult[$i]); $k++){

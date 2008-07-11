@@ -662,6 +662,7 @@ DefineWebServiceSpecial.prototype = {
 				minutes += document.getElementById("step5-query-days").value * 60 * 24;
 				minutes += document.getElementById("step5-query-hours").value * 60;
 				minutes += document.getElementById("step5-query-minutes").value * 1;
+				result += minutes;
 				result += "\"></maxAge>\n";
 			}
 			var delay = document.getElementById("step5-delay").value;
