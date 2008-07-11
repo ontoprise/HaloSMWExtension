@@ -370,7 +370,16 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep3CallBack : function(request) {
 		var wsResults = request.responseText.split(";");
-		if (wsResults[0] != "todo:handle exceptions") {
+		
+		var overflow = false;
+
+		for (i = 0; i < wsResults.length; i++) {
+			if (wsResults[i].indexOf("##overflow##") > 0) {
+				overflow = true;
+			}
+		}
+		
+		if (wsResults[0] != "todo:handle exceptions" || overflow) {
 			document.getElementById("errors").style.display = "block";
 			document.getElementById("step3-error").style.display = "block";
 			document.getElementById("step4-error").style.display = "none";
@@ -501,6 +510,7 @@ DefineWebServiceSpecial.prototype = {
 			document.getElementById("step4").style.display = "block";
 
 			document.getElementById("menue-step4").style.fontWeight = "bold";
+			document.getElementById("menue-step3").style.fontWeight = "bold";
 			document.getElementById("step3-help").style.display = "none";
 			document.getElementById("step4-help").style.display = "block";
 			document.getElementById("step3-img").style.visibility = "hidden";
@@ -845,17 +855,19 @@ DefineWebServiceSpecial.prototype = {
 			if (alias.length == 0) {
 				alias = document.getElementById("s3-path" + i).childNodes[document
 						.getElementById("s3-path" + i).childNodes.length - 1].nodeValue;
-				if (alias == "]") {
-					alias = document.getElementById("s3-path" + i).childNodes[document
-							.getElementById("s3-path" + i).childNodes.length - 3].nodeValue;
-					alias = alias.substr(0, alias.length - 2);
-				}
+				
 				var openBracketPos = alias.lastIndexOf("(");
 				if (openBracketPos > 0) {
 					alias = alias.substr(0, openBracketPos - 1);
 				}
 				var dotPos = alias.lastIndexOf(".");
 				alias = alias.substr(dotPos + 1);
+				
+				if (alias == "]") {
+					alias = document.getElementById("s3-path" + i).childNodes[document
+							.getElementById("s3-path" + i).childNodes.length - 3].nodeValue;
+					alias = alias.substr(0, alias.length - 2);
+				}
 			}
 
 			for ( var k = 0; k < aliases.length; k++) {
