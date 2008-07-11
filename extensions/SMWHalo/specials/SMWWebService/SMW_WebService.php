@@ -1060,10 +1060,10 @@ class WebService {
 	 * @return string value or false
 	 */
 	private function getReturnPartBracketValue($name){
-		$strpos = strpos($name, "[");
-		while(strpos($name, "[", $strpos+1)){
-			$strpos = strpos($name, "[", $strpos+1);
-		}
+		$strpos = strrpos($name, "[");
+		//		while(strpos($name, "[", $strpos+1)){
+		//			$strpos = strpos($name, "[", $strpos+1);
+		//		}
 
 		if($strpos){
 			if(strpos($name, "]")){
@@ -1086,10 +1086,10 @@ class WebService {
 	 * @return string name without the last brackets
 	 */
 	private function getReturnPartPathStep($name){
-		$strpos = strpos($name, "[");
-		while(strpos($name, "[", $strpos+1)){
-			$strpos = strpos($name, "[", $strpos+1);
-		}
+		$strpos = strrpos($name, "[");
+		//		while(strpos($name, "[", $strpos+1)){
+		//			$strpos = strpos($name, "[", $strpos+1);
+		//		}
 		if($strpos){
 			return substr($name, 0, $strpos);
 		}
