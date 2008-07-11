@@ -46,7 +46,7 @@ class WebServiceCache {
 			$wsResult = WSStorage::getDatabase()->removeWSEntryFromCache($webServiceId, $parameterSetId);
 		}
 	}
-	
+
 	/**
 	 * this function deletes all cache entries related
 	 * to a wwsd that longer exists..
@@ -54,7 +54,44 @@ class WebServiceCache {
 	 * @param string $webServiceId
 	 */
 	public static function removeWS($webServiceId){
+		//also remove property values that
+		$props = WSStorage::getDatabase()->getWSPropertyUsages($webServiceId);
+		foreach ($props as $prop){
+				
+			$cacheResult = WSStorage::getDatabase()->getResultFromCache(
+				$webServiceId, $prop["paramSetId"]);
+				
+			$subject = Title::newFromID($prop["pageId"]);
+			$smwData = smwfGetStore()->getSemanticData($subject);
+
+			$smwProps = $smwData->getProperties();
+
+			$tempPropertyValues = array();
+			foreach($smwProps as $smwProp){
+				$tempPropertyValues[$smwProp->getText()] =
+				$smwData->getPropertyValues($smwProp);
+			}
+
+			$smwData->clear();
+
+			foreach($tempPropertyValues as $key => $values){
+				if(count($cacheResult)>0){
+					foreach($values as $value){
+						$content = $value->getXSDValue();
+						
+						if(strtolower($key) != strtolower($prop["propertyName"])
+								&& strtolower($content) != strtolower($cacheResult)){
+							$smwData->addPropertyValue($key, $content);		
+						}
+					}
+				}
+			}
+			smwfGetStore()->updateData($smwData, false);	
+		}
+
 		WSStorage::getDatabase()->removeWSFromCache($webServiceId);
+
+
 	}
 }
 
