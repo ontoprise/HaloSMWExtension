@@ -111,7 +111,7 @@ class SemanticNotification {
 	 * 		The user who owns the notification.
 	 */
 	public static function deleteFromDB($name, $userName) {
-		SNStorage::getDatabase()->deleteSN($name, $userName);
+		return SNStorage::getDatabase()->deleteSN($name, $userName);
 	}
 		
 	/**

@@ -159,14 +159,20 @@ class SNStorageSQL {
 		$userID = User::idFromName($userName);
 		if (!$userID) {
 			// invalid user name
+			return "Invalid user id";
 			return null;
 		}
 
 		$db =& wfGetDB( DB_MASTER );
-		$snt = $db->tableName('smw_sem_notification');
+		$snt = 'smw_sem_notification';
+		try {
 		$db->delete($snt, array('user_id' => $userID,
 		                        'query_name' => $name), 
 		            "SNStorage::deleteSN");
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
+		return "true";
 
 	}
 

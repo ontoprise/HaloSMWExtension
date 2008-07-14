@@ -173,7 +173,7 @@ function smwf_sn_DeleteNotification($name, $userName) {
 	global $smwgHaloIP;
 	require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotification.php");
 	
-	SemanticNotification::deleteFromDB($name, $userName);
+	return SemanticNotification::deleteFromDB($name, $userName);
 	
 	return "true";
 	
