@@ -364,7 +364,9 @@ WWSD;
 	function articleDeleteHook(&$article, &$user, $reason){
 		WebServiceCache::removeWS($article->getID());
 		$ws = WebService::newFromID($article->getID());
-		$ws->removeFromDB();
+		if ($ws) {
+			$ws->removeFromDB();
+		}
 		return true;
 	}
 
