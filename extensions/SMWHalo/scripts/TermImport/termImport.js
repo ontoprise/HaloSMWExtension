@@ -878,7 +878,7 @@ TermImportPage.prototype = {
 		catch(e){
 			
 		}
-		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
+		var path = wgArticlePath.replace(/\$1/, "Special:GardeningLog?bot=smw_termimportbot&class=0");
 		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details';
 		
 		$('extras-bottom').innerHTML = message;
