@@ -467,7 +467,7 @@ DefineWebServiceSpecial.prototype = {
 		var overflow = false;
 		for (i = 0; i < wsResults.length; i++) {
 			if (wsResults[i].indexOf("##overflow##") > 0) {
-				wsResults[i] = wsResults[i].substr(0, wsResults[i].indexOf("##overflow##"));
+				wsResults[i] = wsResults[i].substr(0, wsResults[i].lastIndexOf("."));
 			}
 		}
 
@@ -495,10 +495,6 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		if (wsResults[0] != "todo:handle exceptions" || overflow) {
-			if(overflow){
-				alert("overflow");
-			}
-			
 			$("errors").style.display = "block";
 			$("step3-error").style.display = "block";
 			$("step4-error").style.display = "none";
@@ -740,12 +736,18 @@ DefineWebServiceSpecial.prototype = {
 				}
 				var path = "";
 				for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
-					var pathStep = this.preparedPathSteps[i][k]["value"];
+					var pathStep = "";
+					if(k > 0){
+						pathStep += ".";
+					}
+					pathStep += this.preparedPathSteps[i][k]["value"];
 					if (pathStep.lastIndexOf("(") > 0) {
 						pathStep = pathStep.substr(0,
 								pathStep.lastIndexOf("(") - 1);
 					}
-					path += pathStep;
+					if(pathStep != "."){
+						path += pathStep;
+					}
 				}
 				result += " path=\"" + path + "\" />\n";
 			}
@@ -758,15 +760,21 @@ DefineWebServiceSpecial.prototype = {
 
 				var rPath = "";
 				for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
-					var rPathStep = this.preparedRPathSteps[i][k]["value"];
-					if(k > 0){
+					var rPathStep = "";
+					
+					if(k > 1){
 						rPathStep += ".";
 					}
+					rPathStep = this.preparedRPathSteps[i][k]["value"];
+					
+					
 					if (rPathStep.lastIndexOf("(") > 0) {
 						rPathStep = rPathStep.substr(0, rPathStep
 								.lastIndexOf("(") - 1);
 					}
-					rPath += rPathStep;
+					if(rPathStep != "."){
+						rPath += rPathStep;
+					} 
 				}
 				result += " path=\"" + rPath + "\" />\n";
 
