@@ -175,8 +175,6 @@ function smwf_sn_DeleteNotification($name, $userName) {
 	
 	return SemanticNotification::deleteFromDB($name, $userName);
 	
-	return "true";
-	
 }
 
 

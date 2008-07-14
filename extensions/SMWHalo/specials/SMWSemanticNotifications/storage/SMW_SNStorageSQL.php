@@ -166,9 +166,9 @@ class SNStorageSQL {
 		$db =& wfGetDB( DB_MASTER );
 		$snt = 'smw_sem_notification';
 		try {
-		$db->delete($snt, array('user_id' => $userID,
-		                        'query_name' => $name), 
-		            "SNStorage::deleteSN");
+			$db->delete($snt, array('user_id' => $userID,
+		                            'query_name' => $name), 
+		                "SNStorage::deleteSN");
 		} catch (Exception $e) {
 			return $e->getMessage();
 		}

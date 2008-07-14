@@ -294,7 +294,6 @@ SemanticNotifications.prototype = {
 		function ajaxResponseDeleteNotification(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-				alert(request.responseText);
 				if (request.responseText == "true") {
 					this.getAllNotifications();
 				}
