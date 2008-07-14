@@ -75,7 +75,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding: 3px 20px 3px 20px;
 }
 #top-container #source-spec{
-	width: 400px;	
+	width: 250px;	
 	float: left;
 	height: 200px;
 }
@@ -141,7 +141,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	margin-top: 10px;
 }
 #bottom-container #extras #extras-left{
-	width: 50%;
+	width: 550px;
 	float: left;
 	border-right: 1px solid #AAAAAA; 
 	padding: 3px 5px 3px 5px;
