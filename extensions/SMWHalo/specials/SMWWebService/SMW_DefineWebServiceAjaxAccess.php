@@ -65,7 +65,7 @@ function smwf_ws_processStep2($uri, $methodName){
 	$numParam = count($rawParameters);
 	if($numParam == 1){
 		if($rawParameters[0][0] == 0){
-			return "todo:handle noparams;ok";
+			return "todo:handle noparams;";
 		}
 	}
 	for ($i = 1; $i < $numParam; ++$i) {
