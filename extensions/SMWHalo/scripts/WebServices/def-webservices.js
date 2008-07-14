@@ -195,6 +195,13 @@ DefineWebServiceSpecial.prototype = {
 		var treeView = false;
 		var aTreeRoot = false;
 
+		var overflow = false;
+		for (i = 0; i < wsParameters.length; i++) {
+			if (wsParameters[i].indexOf("##overflow##") > 0) {
+				wsParameters[i] = wsParameters[i].substr(0, wsParameters[i].indexOf("##overflow##"));
+			}
+		}
+		
 		for ( var i = 1; i < wsParameters.length; i++) {
 			var steps = wsParameters[i].split(".");
 			var preparedPathStepsDot = new Array();
@@ -207,14 +214,6 @@ DefineWebServiceSpecial.prototype = {
 			}
 			this.preparedPathSteps[i - 1] = preparedPathStepsDot;
 
-		}
-
-		var overflow = false;
-
-		for (i = 0; i < wsParameters.length; i++) {
-			if (wsParameters[i].indexOf("##overflow##") > 0) {
-				overflow = true;
-			}
 		}
 
 		if (wsParameters[0] != "todo:handle exceptions" || overflow) {
@@ -464,6 +463,13 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep3CallBack : function(request) {
 		var wsResults = request.responseText.split(";");
+		
+		var overflow = false;
+		for (i = 0; i < wsResults.length; i++) {
+			if (wsResults[i].indexOf("##overflow##") > 0) {
+				wsResults[i] = wsResults[i].substr(0, wsResults[i].indexOf("##overflow##"));
+			}
+		}
 
 		var aTreeRoot = false;
 		var treeView = false;
@@ -486,14 +492,6 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			this.preparedRPathSteps[i - 1] = preparedPathStepsDot;
-		}
-
-		var overflow = false;
-
-		for (i = 0; i < wsResults.length; i++) {
-			if (wsResults[i].indexOf("##overflow##") > 0) {
-				overflow = true;
-			}
 		}
 
 		if (wsResults[0] != "todo:handle exceptions" || overflow) {
