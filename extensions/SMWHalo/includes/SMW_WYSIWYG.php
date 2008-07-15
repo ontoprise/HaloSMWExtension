@@ -7,7 +7,7 @@
 global $wgHooks;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
 
-if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && $_REQUEST['rs'] == 'wfSajaxWikiToHTML')) {
+if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
     require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
 /**
