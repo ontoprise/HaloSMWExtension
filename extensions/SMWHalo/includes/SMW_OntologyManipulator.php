@@ -473,8 +473,8 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason) {
 		$success = $titleObj->moveTo($newTitleObj, true, $reason);
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
-	} else if (smwfIsRedirect($newTitleObj)) { // target is redirect, so delete first
-		smwfDeleteArticle($newTitleObj->getPrefixedText(),"redirectrename");
+	} else if (smwf_om_IsRedirect($newTitleObj)) { // target is redirect, so delete first
+		smwf_om_DeleteArticle($newTitleObj->getPrefixedText(),"redirectrename");
 		$success = $titleObj->moveTo($newTitleObj, true, $reason);
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
