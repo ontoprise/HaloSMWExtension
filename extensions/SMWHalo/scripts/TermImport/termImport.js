@@ -230,7 +230,6 @@ TermImportPage.prototype = {
 	},
 	
 	getSource: function(e, node, tlID, dalID) {
-				
 		if (this.pendingIndicatorImportset == null) {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}
@@ -245,13 +244,29 @@ TermImportPage.prototype = {
 			var topcontainer = "<table id=\"sumtable\"><tr><td class=\"abstand\">TLM: <b>" + tlID + "</b></td><td class=\"abstand\">DAM: <b>" + dalID + "</b></td><td><ul>";
 			
 			for (var i = 0, n = source.length; i < n; i++) {
+				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
+				if (document.getElementById(source[i].id).files) {
+					//ffx3 - try to have access to full path
+					try {
+						netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
+					}
+					catch (e){
+						alert('Unable to access local files due to browser security settings. ' +
+								'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
+								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
+								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
+	    				return;
+						
+					}
+				}
+				
 				sourcearray[i] = document.getElementById(source[i].id).value;
-				if (sourcearray[i] && sourcearray[i] != '') {
+				if (sourcearray[i] && sourcearray[i] != '') {					
 					//create XML doc
 					tag_array[i] = document.getElementById("tag_" + source[i].id);
 					
 					dataSource += "<" + tag_array[i].value + ">" + sourcearray[i] + "</" + tag_array[i].value + ">";
-					
+			
 					//change the top-container
 					var display = source[i].id;
 					//.charAt(0).toUpperCase()+source[i].substr(1 ,source[i].id.value.length);
@@ -618,6 +633,21 @@ TermImportPage.prototype = {
 			//XML structure for the DataSource
 			var dataSource = '';
 			for (var i = 0, n = source.length; i < n; i++) {
+				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
+				if (document.getElementById(source[i].id).files) {
+					//ffx3 - try to have access to full path
+					try {
+						netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
+					}
+					catch (e){
+						alert('Unable to access local files due to browser security settings. ' +
+								'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
+								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
+								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
+	    				return;
+						
+					}
+				}
 				sourcearray[i] = document.getElementById(source[i].id).value;
 				if (sourcearray[i] && sourcearray[i] != '') {
 					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
@@ -776,6 +806,21 @@ TermImportPage.prototype = {
 			//XML structure for the DataSource
 			var dataSource = '';
 			for (var i = 0, n = source.length; i < n; i++) {
+				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
+				if (document.getElementById(source[i].id).files) {
+					//ffx3 - try to have access to full path
+					try {
+						netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
+					}
+					catch (e){
+						alert('Unable to access local files due to browser security settings. ' +
+								'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
+								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
+								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
+	    				return;
+						
+					}
+				}
 				sourcearray[i] = document.getElementById(source[i].id).value;
 				if (sourcearray[i] && sourcearray[i] != '') {
 					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
