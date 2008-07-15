@@ -621,7 +621,6 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 					if (k == treeViewK && k != aTreeRootK) {
-						alert(i + "--" + k + " ok " + resultPathText);
 						var expandPathStep = document.createElement("span");
 						var expandIMG = document.createElement("img");
 						expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
