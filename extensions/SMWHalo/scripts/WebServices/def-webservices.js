@@ -180,9 +180,6 @@ DefineWebServiceSpecial.prototype = {
 			return;
 		}
 
-		var treeView = false;
-		var aTreeRoot = false;
-
 		var overflow = false;
 		for (i = 0; i < wsParameters.length; i++) {
 			if (wsParameters[i].indexOf("##overflow##") > 0) {
@@ -230,9 +227,6 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsParameters.shift();
 			// clear widgets of step 3
-			var okButton = $("step3-ok").cloneNode(true);
-			$("step3-ok").id = "old-step3-ok";
-			$("old-step3-ok").parentNode.removeChild($("old-step3-ok"));
 			var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step3-parameters").childNodes[0]
@@ -244,7 +238,12 @@ DefineWebServiceSpecial.prototype = {
 
 			// fill widgets for step 3 with content
 
+			var treeView = false;
+			var aTreeRoot = false;
+
 			for (i = 0; i < wsParameters.length; i++) {
+				treeView = false;
+				aTreeRoot = false;
 				var paramRow = document.createElement("tr");
 				paramRow.id = "step3-paramRow-" + i;
 				$("step3-parameters").childNodes[0].appendChild(paramRow);
@@ -261,6 +260,9 @@ DefineWebServiceSpecial.prototype = {
 				paramPath.className = "OuterLeftIndent";
 
 				for (k = 0; k < dotSteps.length; k++) {
+					var treeViewK = -1;
+					var aTreeRootK = -1;
+					
 					var paramPathStep = document.createElement("span");
 					paramPathStep.id = "s3-pathstep-" + i + "-" + k;
 					if (aTreeRoot) {
@@ -277,10 +279,18 @@ DefineWebServiceSpecial.prototype = {
 					paramPath.appendChild(paramPathStep);
 					if (i > 0) {
 						if ($("s3-pathstep-" + (i - 1) + "-" + k) != null) {
-							if (paramPathText == $("s3-pathstep-" + (i - 1)
-									+ "-" + k).firstChild.nodeValue) {
+							var compareNode;
+							if ($("s3-pathstep-" + (i - 1) + "-" + k).childNodes.length > 1) {
+								compareNode = $("s3-pathstep-" + (i - 1) + "-"
+										+ k).childNodes[1];
+							} else {
+								compareNode = $("s3-pathstep-" + (i - 1) + "-"
+										+ k).childNodes[0];
+							}
+							if (paramPathText == compareNode.nodeValue) {
 								$("s3-pathstep-" + i + "-" + k).style.visibility = "hidden";
 								treeView = true;
+								treeViewK = k;
 							}
 						}
 					}
@@ -293,6 +303,7 @@ DefineWebServiceSpecial.prototype = {
 								this.preparedPathSteps[i][k]["i"] = i + 1;
 								this.preparedPathSteps[i][k]["k"] = k;
 								aTreeRoot = true;
+								aTreeRootK = k;
 
 								var expandPathStep = document
 										.createElement("span");
@@ -306,15 +317,14 @@ DefineWebServiceSpecial.prototype = {
 										+ i + "\",\"" + k + "\")";
 								expandPathStep.setAttributeNode(expandOnClick);
 
-//								expandPathStepText = document
-//										.createTextNode("+");
-//								expandPathStep.appendChild(expandPathStepText);
+								// expandPathStepText = document
+								// .createTextNode("+");
+								// expandPathStep.appendChild(expandPathStepText);
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 								expandPathStep.appendChild(expandIMG);
-								
-								
+
 								expandPathStep.style.cursor = "pointer";
 								$("s3-pathstep-" + i + "-" + k)
 										.insertBefore(
@@ -322,6 +332,15 @@ DefineWebServiceSpecial.prototype = {
 												$("s3-pathstep-" + i + "-" + k).firstChild);
 							}
 						}
+					}
+					if (k == treeViewK && k != aTreeRootK) {
+						expandPathStep = document.createElement("span");
+						expandIMG = document.createElement("img");
+						expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+						expandPathStep.appendChild(expandIMG);
+						$("s3-pathstep-" + i + "-" + k).insertBefore(
+								expandPathStep,
+								$("s3-pathstep-" + i + "-" + k).firstChild);
 					}
 				}
 
@@ -335,7 +354,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.maxLength = "40";
 				paramTD1.appendChild(aliasInput);
 
-				if (aTreeRoot || treeView) {
+				if (treeView) {
 					paramTD1.style.visibility = "hidden";
 				}
 
@@ -390,15 +409,12 @@ DefineWebServiceSpecial.prototype = {
 				paramTD4.id = "step3-paramTD4-" + i;
 				paramRow.appendChild(paramTD4);
 
-				if (i == wsParameters.length - 1) {
-					paramTD4.appendChild(okButton);
-				}
 				if (aTreeRoot || treeView) {
 					paramTD4.style.visibility = "hidden";
 				}
 
 				if (treeView) {
-					paramRow.style.display = "none";
+					$("step3-paramRow-" + i).style.display = "none";
 				}
 			}
 			// hide or display widgets of other steps
@@ -416,6 +432,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
 		}
+		$("step3-parameters").style.display = "none";
 
 		// hide or display widgets of other steps
 		$("step4").style.display = "none";
@@ -439,6 +456,8 @@ DefineWebServiceSpecial.prototype = {
 		$("step5-error").style.display = "none";
 		$("step6-error").style.display = "none";
 		$("step6b-error").style.display = "none";
+
+		$("step3-parameters").style.display = "block";
 	},
 
 	/**
@@ -474,9 +493,6 @@ DefineWebServiceSpecial.prototype = {
 			}
 		}
 
-		var aTreeRoot = false;
-		var treeView = false;
-
 		this.preparedRPathSteps = new Array();
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
@@ -503,9 +519,6 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsResults.shift();
 			// clear widgets of step 4
-//			var okButton = $("step4-ok").cloneNode(true);
-//			$("step4-ok").id = "old-step4-ok";
-//			$("old-step4-ok").parentNode.removeChild($("old-step4-ok"));
 
 			var tempHead = $("step4-results").childNodes[0].childNodes[0]
 					.cloneNode(true);
@@ -516,7 +529,12 @@ DefineWebServiceSpecial.prototype = {
 
 			// fill the widgets of step4 with content
 
+			var aTreeRoot;
+			var treeView;
 			for (i = 0; i < wsResults.length; i++) {
+				aTreeRoot = false;
+				treeView = false;
+
 				var resultRow = document.createElement("tr");
 				resultRow.id = "step4-resultRow-" + i;
 				$("step4-results").childNodes[0].appendChild(resultRow);
@@ -532,6 +550,9 @@ DefineWebServiceSpecial.prototype = {
 				resultTD1.appendChild(resultPath);
 
 				for (k = 0; k < this.preparedRPathSteps[i].length; k++) {
+					var treeViewK = -1;
+					var aTreeRootK = -1;
+					
 					var resultPathStep = document.createElement("span");
 					resultPathStep.id = "s4-pathstep-" + i + "-" + k;
 					if (aTreeRoot) {
@@ -549,10 +570,18 @@ DefineWebServiceSpecial.prototype = {
 					resultPath.appendChild(resultPathStep);
 					if (i > 0) {
 						if ($("s4-pathstep-" + (i - 1) + "-" + k) != null) {
-							if (resultPathText == $("s4-pathstep-" + (i - 1)
-									+ "-" + k).firstChild.nodeValue) {
+							var compareNode;
+							if ($("s4-pathstep-" + (i - 1) + "-" + k).childNodes.length > 1) {
+								compareNode = $("s4-pathstep-" + (i - 1) + "-"
+										+ k).childNodes[1];
+							} else {
+								compareNode = $("s4-pathstep-" + (i - 1) + "-"
+										+ k).childNodes[0];
+							}
+							if (resultPathText == compareNode.nodeValue) {
 								$("s4-pathstep-" + i + "-" + k).style.visibility = "hidden";
 								treeView = true;
+								treeViewK = k;
 							}
 						}
 					}
@@ -565,6 +594,7 @@ DefineWebServiceSpecial.prototype = {
 								this.preparedRPathSteps[i][k]["i"] = i + 1;
 								this.preparedRPathSteps[i][k]["k"] = k;
 								aTreeRoot = true;
+								aTreeRootK = k;
 
 								var expandPathStep = document
 										.createElement("span");
@@ -577,7 +607,7 @@ DefineWebServiceSpecial.prototype = {
 										+ i + "\",\"" + k + "\")";
 								expandPathStep.setAttributeNode(expandOnClick);
 								expandPathStep.expanded = false;
-								
+
 								var expandIMG = document.createElement("img");
 								expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 								expandPathStep.appendChild(expandIMG);
@@ -590,6 +620,17 @@ DefineWebServiceSpecial.prototype = {
 							}
 						}
 					}
+					if (k == treeViewK && k != aTreeRootK) {
+						alert(i + "--" + k + " ok " + resultPathText);
+						var expandPathStep = document.createElement("span");
+						var expandIMG = document.createElement("img");
+						expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+						expandPathStep.appendChild(expandIMG);
+						$("s4-pathstep-" + i + "-" + k).insertBefore(
+								expandPathStep,
+								$("s4-pathstep-" + i + "-" + k).firstChild);
+					}
+
 				}
 
 				resultPath.id = "s4-path" + i;
@@ -616,12 +657,8 @@ DefineWebServiceSpecial.prototype = {
 				resultRow.appendChild(resultTD3);
 
 				if (treeView) {
-					resultRow.style.display = "none";
+					$("step4-resultRow-" + i).style.display = "none";
 				}
-				
-//				if (i == wsResults.length - 1) {
-//					resultTD3.appendChild(okButton);
-//				}
 			}
 
 			// hide or display widgets of other steps
@@ -640,6 +677,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-img").style.visibility = "visible";
 
 			$("step3-error").style.display = "none";
+
 		}
 
 		// hide or display widgets of other steps
@@ -647,6 +685,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step5-error").style.display = "none";
 		$("step6-error").style.display = "none";
 		$("step6b-error").style.display = "none";
+
 	},
 
 	/**
@@ -1268,7 +1307,7 @@ DefineWebServiceSpecial.prototype = {
 						+ "\")");
 		$("step3-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
 		$("step3-expand-" + i + "-" + k).expanded = true;
-		
+
 		var goon = true;
 		while (goon) {
 			var display = true;
@@ -1287,7 +1326,7 @@ DefineWebServiceSpecial.prototype = {
 				if (visible) {
 					$("s3-pathstep-" + i + "-" + m).style.visibility = "visible";
 					if (this.preparedPathSteps[i][m]["i"] != "null") {
-						if ($("step3-expand-" + i + "-" + m).expanded){
+						if ($("step3-expand-" + i + "-" + m).expanded) {
 							this.expandParamPathStep(i, m);
 						}
 						m = this.preparedPathSteps[i].length;
@@ -1323,7 +1362,7 @@ DefineWebServiceSpecial.prototype = {
 				+ "\")");
 		$("step3-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 		$("step3-expand-" + i + "-" + k).expanded = false;
-		
+
 		for ( var m = k * 1 + 1; m < this.preparedPathSteps[i].length; m++) {
 			$("s3-pathstep-" + i + "-" + m).style.visibility = "hidden";
 		}
@@ -1358,7 +1397,7 @@ DefineWebServiceSpecial.prototype = {
 						+ "\")");
 		$("step4-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
 		$("step4-expand-" + i + "-" + k).expanded = true;
-		
+
 		var goon = true;
 		while (goon) {
 			var display = true;
@@ -1411,7 +1450,7 @@ DefineWebServiceSpecial.prototype = {
 				+ "\")");
 		$("step4-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 		$("step4-expand-" + i + "-" + k).expanded = false;
-		
+
 		for ( var m = k * 1 + 1; m < this.preparedRPathSteps[i].length; m++) {
 			$("s4-pathstep-" + i + "-" + m).style.visibility = "hidden";
 		}
