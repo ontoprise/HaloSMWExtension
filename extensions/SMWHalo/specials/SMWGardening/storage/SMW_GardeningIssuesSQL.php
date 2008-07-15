@@ -510,9 +510,9 @@
 		$db->freeResult($res);
 		
 		// drop virtual tables
-		$db->query('DROP TABLE smw_prop_gardissues');
-		$db->query('DROP TABLE smw_prop_gardissues_to');
-		$db->query('DROP TABLE smw_prop_gardissues_from');
+		$db->query('DROP TEMPORARY TABLE smw_prop_gardissues');
+		$db->query('DROP TEMPORARY TABLE smw_prop_gardissues_to');
+		$db->query('DROP TEMPORARY TABLE smw_prop_gardissues_from');
 		return $results;
  	}
  	

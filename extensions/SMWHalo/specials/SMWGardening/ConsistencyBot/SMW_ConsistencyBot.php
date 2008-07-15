@@ -776,9 +776,9 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		
 		$db->freeResult($res);
 		
-		$db->query('DROP TABLE smw_cc_properties_super');
-		$db->query('DROP TABLE smw_cc_properties_sub');
-		$db->query('DROP TABLE smw_cc_propertyinst');
+		$db->query('DROP TEMPORARY TABLE smw_cc_properties_super');
+		$db->query('DROP TEMPORARY TABLE smw_cc_properties_sub');
+		$db->query('DROP TEMPORARY TABLE smw_cc_propertyinst');
 		
 		return $result;
  	}
@@ -870,10 +870,10 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 				
 		$db->freeResult($res);
 		
-		$db->query('DROP TABLE smw_cc_properties_super');
-		$db->query('DROP TABLE smw_cc_properties_sub');
-		$db->query('DROP TABLE smw_cc_allinst');
-		$db->query('DROP TABLE smw_cc_propertyinst');
+		$db->query('DROP TEMPORARY TABLE smw_cc_properties_super');
+		$db->query('DROP TEMPORARY TABLE smw_cc_properties_sub');
+		$db->query('DROP TEMPORARY TABLE smw_cc_allinst');
+		$db->query('DROP TEMPORARY TABLE smw_cc_propertyinst');
 		
 		return $result;
  	}

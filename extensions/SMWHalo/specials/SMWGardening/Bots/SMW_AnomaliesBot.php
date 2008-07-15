@@ -442,9 +442,9 @@
 		}
 		$db->freeResult($res);
 		
-		$db->query('DROP TABLE smw_gard_ab_super');
-		$db->query('DROP TABLE smw_gard_ab_sub');
-		$db->query('DROP TABLE smw_gard_ab_leaves');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_super');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_sub');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_leaves');
 		return $result;
 	}
 	
@@ -517,9 +517,9 @@
 		}
 		$db->freeResult($res);
 		
-		$db->query('DROP TABLE smw_gard_ab_super');
-		$db->query('DROP TABLE smw_gard_ab_sub');
-		$db->query('DROP TABLE smw_gard_ab_anomalies');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_super');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_sub');
+		$db->query('DROP TEMPORARY TABLE smw_gard_ab_anomalies');
 		return $result;
 	}
  }

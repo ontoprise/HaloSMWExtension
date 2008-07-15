@@ -81,7 +81,12 @@ dTree.prototype.closeAll = function() {
 
 // Outputs the tree to the page
 dTree.prototype.toString = function() {
-	var str = '<h5><label>browse</label></h5><div class="'+this.className+'">\n';
+	var str;
+    if (this.className == 'dtreestatic') {
+       str = '<h5><label>'+gLanguage.getMessage('smw_stv_browse')+'</label></h5><div class="'+this.className+'">\n';
+    } else {
+       str = '<div class="'+this.className+'">\n';
+    }
 	if (document.getElementById) {
 		if (this.config.useCookies) this.selectedNode = this.getSelected();
 		str += this.addNode(this.root);

@@ -278,6 +278,9 @@ var wgUserLanguageStrings = {
 	'smw_acl_permit' : 'permit',
 	'smw_acl_deny' : 'deny',
 	
+	// Treeview
+    'smw_stv_browse' : 'browse',
+    
 	// former content
 	'PROPERTY_NS_WOC'         : 'Property', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon

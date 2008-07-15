@@ -329,8 +329,8 @@
 		} while ($numOfSubCats > 0 && $maxDepth > 0);
 		
 	
-		$db->query('DROP TABLE smw_ob_instances_super');
-		$db->query('DROP TABLE smw_ob_instances_sub');
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances_super');
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
 	}
 	
 	/**
@@ -339,7 +339,7 @@
 	 * @param & $db DB reference
 	 */
 	private function dropVirtualTableWithInstances(& $db) {
-			$db->query('DROP TABLE smw_ob_instances');
+			$db->query('DROP TEMPORARY TABLE smw_ob_instances');
 	}
 	
 	
@@ -563,15 +563,15 @@
 			
 		} while ($numOfSuperCats > 0 && $maxDepth > 0);   
 		     
-		$db->query('DROP TABLE smw_ob_properties_super');
-		$db->query('DROP TABLE smw_ob_properties_sub');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_super');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
 	}
 	
 	/**
 	 * Drops table 'smw_ob_properties'.
 	 */
 	private function dropVirtualTableForProperties(& $db) {
-		$db->query('DROP TABLE smw_ob_properties');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties');
 	}
 	
 	

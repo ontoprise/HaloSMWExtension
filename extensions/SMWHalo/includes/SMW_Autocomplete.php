@@ -754,9 +754,9 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$db->freeResult($res);
 		
 		
-		$db->query('DROP TABLE smw_ob_properties');
-		$db->query('DROP TABLE smw_ob_properties_super');
-		$db->query('DROP TABLE smw_ob_properties_sub');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_super');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
 		return $result;
 	}
 	
@@ -820,8 +820,8 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
         } while ($numOfSubCats > 0 && $maxDepth > 0);
         
     
-        $db->query('DROP TABLE smw_ob_instances_super');
-        $db->query('DROP TABLE smw_ob_instances_sub');
+        $db->query('DROP TEMPORARY TABLE smw_ob_instances_super');
+        $db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
         
        
         $res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
@@ -842,7 +842,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
         $db->freeResult($res);
         
         // drop virtual tables
-        $db->query('DROP TABLE smw_ob_instances');
+        $db->query('DROP TEMPORARY TABLE smw_ob_instances');
         return $results;
 	}
 }

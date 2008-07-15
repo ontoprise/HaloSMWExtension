@@ -274,9 +274,9 @@
 			}
 		
 			$db->freeResult($res);
-			$db->query('DROP TABLE smw_ob_categories');
-			$db->query('DROP TABLE smw_ob_categories_super');
-			$db->query('DROP TABLE smw_ob_categories_sub');
+			$db->query('DROP TEMPORARY TABLE smw_ob_categories');
+			$db->query('DROP TEMPORARY TABLE smw_ob_categories_super');
+			$db->query('DROP TEMPORARY TABLE smw_ob_categories_sub');
 		}
 		return $result;
  	}

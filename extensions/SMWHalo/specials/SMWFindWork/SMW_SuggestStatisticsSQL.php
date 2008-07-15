@@ -208,7 +208,7 @@
 			}
 		}
 		$db->freeResult($res);
-		$db->query('DROP TABLE smw_fw_lowratedannotations');
+		$db->query('DROP TEMPORARY TABLE smw_fw_lowratedannotations');
 		return $result;
  	}
  	
@@ -246,7 +246,7 @@
  	 * Drops the temporary table 'smw_fw_categories'.
  	 */
  	private function dropVirtualTableForCategoriesOfLastEditedPages(& $db) {
-		$db->query('DROP TABLE smw_fw_categories');
+		$db->query('DROP TEMPORARY TABLE smw_fw_categories');
  	}
  	
  	
