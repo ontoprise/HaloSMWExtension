@@ -1,6 +1,6 @@
 /* Resizing Content window slider using scriptacolus slider */
-var Slider = Class.create();
-Slider.prototype = {
+var ContentSlider = Class.create();
+ContentSlider.prototype = {
 
     initialize: function() {
         this.sliderObj = null;
@@ -53,12 +53,12 @@ Slider.prototype = {
             var rightmax = 1; // range 0 - 1
 
              if( v < leftmax){
-                smwhg_slider.sliderObj.setValue(leftmax);
+                this.sliderObj.setValue(leftmax);
                 return;
              }
 
              if( v > rightmax){
-                smwhg_slider.sliderObj.setValue(rightmax);
+                this.sliderObj.setValue(rightmax);
                 return;
              }
             var sliderSmooth = OB_bd.isIE ? v*25 : v*38;
@@ -107,7 +107,7 @@ Slider.prototype = {
      }
 }
 
-var smwhg_slider = new Slider();
-Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
+var smwhg_contentslider = new ContentSlider();
+Event.observe(window, 'load', smwhg_contentslider.activateResizing.bind(smwhg_contentslider));
 //Resizes the slider if window size is changed
-Event.observe(window, 'resize', smwhg_slider.resizeTextbox.bind(smwhg_slider));
+//Event.observe(window, 'resize', smwhg_contentslider.resizeTextbox.bind(smwhg_contentslider));
