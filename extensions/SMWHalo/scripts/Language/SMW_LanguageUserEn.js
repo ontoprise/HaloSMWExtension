@@ -147,6 +147,7 @@ var wgUserLanguageStrings = {
 
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
+	'WW_AUTOCOMPLETION_HINT'  : 'The WYSIWYG editor neither supports autocompletion nor the semantic toolbar.',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Click here to drag',
 
 	// Combined search
