@@ -442,16 +442,19 @@ function smwfDBSupportsFunction($lib) {
  * Called from MW to fill HTML Header before page is displayed.
  */
 function smwfHaloAddHTMLHeader(&$out) {
-	global $wgStylePath;
+	global $wgStylePath,$wgUser;
 	global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
 
+	$skin = $wgUser->getSkin();
 	$jsm = SMWResourceManager::SINGLETON();
-
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "edit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/semantictoolbar.css', "annotate");
+	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
+	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "edit");
+	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "annotate");
+	//Remove before check in
+	//print $wgStylePath.'/'.$skin->getSkinName().'/semantictoolbar.css';
+	//die;
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
@@ -843,7 +846,9 @@ function smwfHaloSaveHook(&$article, &$user, &$text) {
 function smwfAnnotateTab ($content_actions) {
 	//Check if ontoskin is available
 	global $wgUser;
-	if($wgUser->getSkin()->skinname != 'ontoskin')
+	if(!method_exists($wgUser->getSkin(),'isSemantic'))
+		return true;
+	IF($wgUser->getSkin()->isSemantic() != true)
 		return true;
 	//Check if edit tab is present, if not don't at annote tab
 	if (!array_key_exists('edit',$content_actions) )

@@ -445,6 +445,7 @@ clicking the big arrows between the columns.',
 	/* Annotation */
  	'smw_annotation_tab' => 'annotate',
 	'smw_annotating'     => 'Annotating $1',
+	'annotatethispage'   => 'Annotate this page',
 
 
 	/* Refactor preview */

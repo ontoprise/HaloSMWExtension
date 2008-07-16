@@ -429,6 +429,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	/* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',
 	'smw_annotating'     => '$1 aantekenen',
+	'annotatethispage'   => 'Deze pagina annoteren',
 
  	
  	/* Refactor preview */

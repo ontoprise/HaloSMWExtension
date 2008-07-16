@@ -37,6 +37,7 @@ require_once('includes/SkinTemplate.php');
  * @addtogroup Skins
  */
 class SkinOntoSkin extends SkinTemplate {
+	
 	/** Using ontoskin. */
 	function initPage( &$out ) {
 		SkinTemplate::initPage( $out );
@@ -44,6 +45,15 @@ class SkinOntoSkin extends SkinTemplate {
 		$this->stylename = 'ontoskin';
 		$this->template  = 'OntoSkinTemplate';
 	}
+	
+	function getSkinName() {
+		return 'ontoskin';
+	}
+	
+	function isSemantic() {
+		return true;	
+	}
+	
 }
 
 /**

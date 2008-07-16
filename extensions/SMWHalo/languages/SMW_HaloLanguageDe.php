@@ -428,6 +428,7 @@ protected $smwUserMessages = array(
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',
 	'smw_annotating'     => 'Annotiere $1',
+	'annotatethispage'   => 'Annotiere diese Seite',
 
 	/* Refactor preview */
  	'refactorstatistics' => 'Refactor Statistics',
