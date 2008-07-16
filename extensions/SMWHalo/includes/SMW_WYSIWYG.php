@@ -16,12 +16,17 @@ if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos(
  */
 function smwfAddWYSIWYGTab($obj, $content_actions) {
     global $wgUser, $wgTitle;
-    
+        $wwactive = $_REQUEST['action'] == 'edit' && $_REQUEST['mode'] == 'wysiwyg' ? 'selected' : false;
         $content_actions['wysiwyg'] = array(
-            'class' => false,
+            'class' => $wwactive,
             'text' => wfMsg('smw_wysiwyg'),
             'href' => $wgTitle->getLocalUrl( 'action=edit&mode=wysiwyg' )
         );
+        
+        // adjust edit tab
+        $editactive = $_REQUEST['action'] == 'edit' && $_REQUEST['mode'] != 'wysiwyg' ? 'selected' : false;
+        $content_actions['edit']['class'] = $editactive;
+       
     
     return true; // always return true, in order not to stop MW's hook processing!
 }
