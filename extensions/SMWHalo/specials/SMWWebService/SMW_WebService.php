@@ -39,7 +39,7 @@ class WebService {
 	// in form of nested arrays
 	private $mResult;         //string: description of the result structure
 	private $mParsedResult;   // The parsed structure of the result description
-	// in form of nested arrays
+							  // as array if SimpleXMLElements
 	private $mDisplayPolicy;  //int: display update policy in minutes. 0 means only once.
 	private $mQueryPolicy;    //int: query update policy in minutes. 0 means only once.
 	private $mUpdateDelay;    //int: update delay for the query policy in seconds
@@ -95,12 +95,19 @@ class WebService {
 		$this->mParameters = $parameters;
 		try {
 			$this->mParsedParameters = empty($parameters)
-			? null
-			: new SimpleXMLElement("<p>".$parameters."</p>");
+				? null
+				: new SimpleXMLElement("<p>".$parameters."</p>");
 			$this->mResult = $result;
-			$this->mParsedResult = empty($result)
-			? null
-			: new SimpleXMLElement($result);
+			if (empty($result)) {
+				$this->mParsedResult = null;
+			} else {
+				$this->mParsedResult = new SimpleXMLElement("<r>$result</r>");
+				$r = array();
+				foreach ($this->mParsedResult->result as $rdef) {
+					$r[] = $rdef; 
+				}
+				$this->mParsedResult = $r;
+			}
 		} catch (Exception $e) {
 			// parser error
 		}
@@ -425,19 +432,21 @@ class WebService {
 	 * @param array $resultParts the parts of the result that are of interrest
 	 * @return array the result of interrest
 	 */
+/*		
 	public function getCallResultParts($response, $resultParts){
 		//initialize array containing select paths and their value
 		$selects = array();
-
-		foreach($this->mParsedResult->children() as $child){
-			if ($child->getName() == 'select') {
-				$selects["".$child["object"]] = "".$child["value"];
+		foreach ($this->mParsedResult as $rdef) {
+			foreach($rdef->children() as $child){
+				if ($child->getName() == 'select') {
+//					$selects["".$rdef['name'].'.'.$child["object"]] = "".$child["value"];
+					$selects["".$child["object"]] = "".$child["value"];
+				}
 			}
 		}
-
+		
 		//initialize array of paths and elements that are not selected in the result
 		$outselectedPaths = array();
-		$printO[] = array();
 		foreach($selects as $path => $value){
 			$pathSteps = explode(".", $path);
 			$tempObject[""] = $response;
@@ -475,14 +484,17 @@ class WebService {
 
 			$tempObject[] = $response;
 
-			$rName = "".$this->mParsedResult["name"];
-			foreach($this->mParsedResult->children() as $child){
-				if($rName.".".$child["name"] == $resultPart){
-					$paths["".$child["name"]] = "".$child["path"];
+			foreach ($this->mParsedResult as $rdef) {
+				$rName = "".$rdef["name"];
+				foreach($rdef->children() as $child){
+					if($rName.".".$child["name"] == $resultPart){
+//						$paths["".$child["name"]] = $rName.'.'.$child["path"];
+						$paths["".$child["name"]] = "".$child["path"];
+					}
 				}
 			}
 		}
-
+				
 		$result = array();
 
 		foreach($paths as $key => $path){
@@ -538,7 +550,188 @@ class WebService {
 
 		return $result;
 	}
+*/
+	/**
+	 * This methods returns these parts of the ws-response
+	 * that are of interrest
+	 *
+	 * @param $response the response of the webservice
+	 * @param array $resultParts the parts of the result that are of interrest
+	 * @return array the result of interrest
+	 */
+	public function getCallResultParts($response, $resultParts){
+		$results = array();
+		foreach ($resultParts as $rp) {
+			$parts = explode(".", $rp);
+			$rdef = $this->getResultDefinition($parts[0]);
+			if (count($parts) == 1) {
+				// There is only the name of the result with no parts
+				// => return all parts of the result
+				foreach ($rdef->part as $part) {
+					$part = ''.$part['name'];
+					$results[$part] = $this->getResults($response, $rdef, $part);
+				}
+			} else {
+				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
+			}
+		}
+		return $results;
+	}
+	
+	
+	/**
+	 * Returns the results for the alias $alias of the result definition 
+	 * $resultDef based on the complete result set $response.
+	 *
+	 * @param Object $response
+	 * @param SimpleXMLElement $resultDef
+	 * @param string $alias
+	 */
+	private function getResults($response, $resultDef, $alias) {
+		$path = $this->getPathForAlias($alias, $resultDef);
 
+		
+		// apply all selects on the result
+		$response = $this->applySelects($response, $resultDef);
+		
+		// collect the interesting parts of the result
+		$result = $this->getResultParts($response, $path, $selects);
+		return $result;
+	}
+	
+	/**
+	 * Removes all results from the result set that do not match the selectors
+	 * of the result definition
+	 *
+	 * @param Object $response
+	 * 		The web services response
+	 * @param SimpleXMLElement $resultDef
+	 * 		Definition of the result 
+	 * @return Object
+	 * 		The response without elements that do not match the select.
+	 */
+ 	private function applySelects($response, $resultDef) {
+		$s = $resultDef->select;
+		if (count($s) == 0) {
+			return $response;
+		}
+		$selects = array();
+		foreach ($s as $select) {
+			$selects[] = array(explode('.', ''.$select['object']), 
+			                   ''.$select['value']);
+		}
+		
+		$this->doApplySelects($response, $selects, 0);
+		return $response;
+	}
+
+	/**
+	 * Walks recursively through the result and marks all values that match the
+	 * selections conditions with a new field '___selected = true'. Otherwise 
+	 * '___selected' is set to false. 
+	 *
+	 * @param Object $selectedResults
+	 * 		The results of the web service as returned by the SOAP client. 
+	 * @param array<int->array(array(string pathSteps), select-value)> $selects
+	 * 		Definition of the selections
+	 * @param int $partIdx
+	 * 		The index of part of the selection path to consider.
+	 */
+	private function doApplySelects(&$selectedResults, &$selects, $partIdx) {
+		foreach ($selects as $sel) {
+			$parts = &$sel[0];
+			if ($partIdx >= count($parts)) {
+				// The selection <$sel> has been fully processed
+				continue;
+			}
+			$part = $parts[$partIdx];
+			$sr = &$selectedResults->$part;
+			if ($sr) {
+				if (is_array($sr)) {
+					foreach ($sr as $srpart) {
+						// Process all members of the array
+						$this->doApplySelects($srpart, $selects, $partIdx+1);
+					}
+				} else {
+					if ($partIdx == count($parts)-1) {
+						// Leaf reached => Set selection status according to the
+						// requested value.
+						if (!isset($selectedResults->___selected) 
+						    || $selectedResults->___selected == true) {
+							$selectedResults->___selected = ($sr == $sel[1]);
+						}
+					} else {
+						$this->doApplySelects($sr, $selects, $partIdx+1);
+					}
+				}
+			} else {
+				$selectedResults->___selected = false;
+			}
+		}
+	}
+	
+	/**
+	 * Recursively collects all results for the given path.
+	 *
+	 * @param Object $resultSet
+	 * @param string $path
+	 */
+	private function getResultParts($resultSet, $path) {
+		if (empty($path)) {
+			return array($resultSet);
+		}
+		// Filter all elements that are explicitly not selected
+		if (isset($resultSet->___selected) && $resultSet->___selected == false) {
+			return array();
+		}
+
+		$result = array();
+		
+		$pathParts = explode('.', $path);
+		$part = $pathParts[0];
+		unset($pathParts[0]);
+		$path = implode('.', $pathParts);
+		
+		$objName = $part;
+		$arrayIdx = null;
+		if (preg_match("/(.*?)\[(\d+|[a-z]|)\]/", $part, $matches) == 1) {
+			// Array specified
+			$objName = $matches[1];
+			$arrayIdx = $matches[2];
+			if (ctype_alpha($arrayIdx)) {
+				// index is a variable => ignore it
+				$arrayIdx = null;
+			}
+		}
+		$obj = $resultSet->$objName;
+		
+		if (is_array($obj)) {
+			// Handle an array
+			if ($arrayIdx != null) {
+				// Collect the result at the specified array index
+				$result = array_merge($result, $this->getResultParts($obj[$arrayIdx*1], $path)); 
+			} else {
+				for ($i = 0, $n = count($obj); $i < $n; ++$i) {
+					$result = array_merge($result, $this->getResultParts($obj[$i], $path)); 
+				}
+			}
+		} else {
+			// a simple object
+			$result = array_merge($result, $this->getResultParts($obj, $path)); 
+		}
+		return $result;
+	}
+	
+	private function getPathForAlias($alias, $resultDef) {
+		foreach ($resultDef->part as $part) {
+			if ($alias == ''.$part['name']) {
+				return ''.$part['path'];
+			}
+		}
+		return null;
+		
+	}
+	
 	/**
 	 * This methods prepares the parameters for the ws-call
 	 *
@@ -804,7 +997,7 @@ class WebService {
 	private function checkResult() {
 		// check if there are duplicate results in the wwsd
 		$msg = array();
-
+		
 		$rNames = array(); // Names of results
 		$wwsdPaths = array();
 		foreach ($this->mParsedResult as $r) {
@@ -815,10 +1008,10 @@ class WebService {
 				continue;
 			}
 			// Check all parts of a result
+			$pNames = array();
+			$selects = array();
+			$selectCount = 0;
 			foreach ($r->children() as $part) {
-				$pNames = array();
-				$selects = array();
-				$selectCount = 0;
 				if ($part->getName() == 'part') {
 					$pName = (string) $part->attributes()->name;
 					if ($pName == null) {
@@ -844,7 +1037,7 @@ class WebService {
 						$wwsdPaths[$rName.'.'.$pName] = $path;
 					}
 				} else if ($part->getName() == 'select') {
-					$selectCount = 0;
+					++$selectCount;
 					$objectPath = (string) $part->attributes()->object;
 					if ($objectPath == null) {
 						$msg[] = wfMsg('smw_wws_select_without_object', "s-".$selectCount, $rName);
@@ -1035,12 +1228,18 @@ class WebService {
 	 * @return array of error-messages
 	 */
 	public function validateSpecifiedResults($specifiedResults){
+		
 		$messages = array();
 		foreach($specifiedResults as $rName => $rValue){
 			$rPathSteps = explode(".",$rName);
 			$exists = false;
-			if($rPathSteps[0] == $this->mParsedResult['name']){
-				foreach($this->mParsedResult->children() as $child){
+			$resultDef = $this->getResultDefinition($rPathSteps[0]);
+			if($resultDef != null){
+				if (count($rPathSteps) == 1 ) {
+					// Only the name of the result definition is given
+					return $messages;
+				}
+				foreach($resultDef->children() as $child){
 					if("".$child["name"] == $rPathSteps[1]){
 						$exists = true;
 					}
@@ -1052,7 +1251,7 @@ class WebService {
 		}
 		return $messages;
 	}
-
+	
 	/**
 	 * returns values for the last brackets used in resultparts
 	 *
@@ -1107,6 +1306,27 @@ class WebService {
 		$this->mCallErrorMessages = array();
 		return $eMess;
 	}
+	
+	
+	/**
+	 * A WWSD can contain several result definitions that have a unique name.
+	 * This method returns the parsed XML structure of the result definition
+	 * with the given name.
+	 *
+	 * @param string $defName
+	 * 		Name of the requested result definition
+	 * @return SimpleXMLElement
+	 * 		The request definition or <null>, if the definition does not exist.
+	 */
+	private function getResultDefinition($defName) {
+		foreach ($this->mParsedResult as $rdef) {
+			if ($defName == $rdef['name']) {
+				return $rdef;
+			}
+		}
+		return null;
+	}
+	
 
 
 }
