@@ -51,14 +51,14 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
  			if ($typeHint == null || $typeHint == 'null') {
  				// if no $typeHint defined, search for (nearly) all pages.
- 	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
+ 	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, SMW_NS_WEB_SERVICE));
  	    		
  			} else {
  				// otherwise use type hint 
  				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
  				if (empty($pages)) {
  					// fallback to standard search
- 					$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE));
+ 					$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, SMW_NS_WEB_SERVICE));
  				}
  				
  			}
@@ -396,7 +396,7 @@ class AutoCompletionRequester {
 	public static function encapsulateEnumsOrUnitsAsXML($arrayofEnumsOrUnits) {
 		$xmlResult = '';
 		foreach($arrayofEnumsOrUnits as $eou) {
-			$xmlResult .= "<match type=\"200\">".htmlspecialchars($eou)."</match>";
+			$xmlResult .= "<match type=\"500\">".htmlspecialchars($eou)."</match>";
 		}
 		return empty($arrayofEnumsOrUnits) ? SMW_AC_NORESULT : '<result>'.$xmlResult.'</result>';
 	}
@@ -422,49 +422,7 @@ class AutoCompletionRequester {
 		return preg_replace("/".$regex."/", "", $titleText);
 	
 	}
-	/**
-	 * Retrieves attribute and relation titles matching requestoptions which do not exist in page table, 
-	 * i.e. the method retrieves attributes/relation which were already used but not defined.
-	 * 
-	 * @return array of Title objects 
-	 */
-	/*private static function getUndefinedPropertiesFromSMWTables(& $result, $namespaces, $requestoptions) {
-		$db =& wfGetDB( DB_SLAVE );
-		if (in_array(SMW_NS_ATTRIBUTE, $namespaces)) {
-			$attConds = DBHelper::getSQLConditions($requestoptions,'attribute_title','attribute_title');
-			$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes WHERE attribute_title NOT IN (SELECT page_title FROM page WHERE attribute_title = page_title)'.$attConds.";");
-		    if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-					$result[] = Title::newFromText($row->attribute_title, SMW_NS_ATTRIBUTE);
-				}
-			}
-			$db->freeResult($res);
-		}
-		if (in_array(SMW_NS_RELATION, $namespaces)) {
-			$relConds = DBHelper::getSQLConditions($requestoptions,'relation_title','relation_title');
-			$res = $db->query('SELECT DISTINCT relation_title FROM smw_relations WHERE relation_title NOT IN (SELECT page_title FROM page WHERE relation_title = page_title)'.$relConds.";");
-		    if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-					$result[] = Title::newFromText($row->relation_title, SMW_NS_RELATION);
-				}
-			}
-			$db->freeResult($res);
-		}
-	}*/
 	
-	
-	
-		
-	/*private static function getNamespaceText($page) {
- 		global $smwgContLang, $wgLang;
- 		$nsArray = $smwgContLang->getNamespaces();
- 		if ($page->getNamespace() == NS_TEMPLATE || $page->getNamespace() == NS_CATEGORY) {
- 			$ns = $wgLang->getNsText($page->getNamespace());
- 				} else { 
- 			$ns = $page->getNamespace() != NS_MAIN ? $nsArray[$page->getNamespace()] : "";
- 		}
- 		return $ns;
- 	}*/
  	
  	public function logResult(& $result, $articleName) {
  		if ($result == SMW_AC_NORESULT) {
