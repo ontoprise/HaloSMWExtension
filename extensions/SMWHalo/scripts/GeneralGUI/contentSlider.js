@@ -94,8 +94,9 @@ ContentSlider.prototype = {
         } else {
         	
         	if (this.timer != null) window.clearTimeout(this.timer);
+        	var slider = this; // copy reference to make it readable in closure
         	this.timer = window.setTimeout(function() { 
-        	  this.activateResizing();
+        	  slider.activateResizing();
         	},1000);
         	 
         }        
