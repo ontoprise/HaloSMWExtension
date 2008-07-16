@@ -8,7 +8,7 @@ addOnloadHook(smw_tooltipInit);
 BubbleTT = new Object();
 BubbleTT.Platform= new Object();
 
-var tt; //the tooltip
+var tt = null; //the tooltip
 var all_tt = []; // all visible tooltips
 
 var imagePath=wgScriptPath+"/extensions/SemanticMediaWiki/skins/images/";
@@ -100,7 +100,7 @@ function smw_showTooltipPersist(e) {
 
 
 function smw_showTooltipInline(e) {
-	if (tt) {
+	if (tt != null) {
 		// don't show further tooltips 
 		return;
 	}
