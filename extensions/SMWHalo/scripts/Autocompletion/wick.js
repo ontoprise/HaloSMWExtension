@@ -16,14 +16,18 @@
  */
 
 
- // namespace constants
+ // namespace constants MW / SMW
 var SMW_CATEGORY_NS = 14;
 var SMW_PROPERTY_NS = 102;
 var SMW_INSTANCE_NS = 0;
 var SMW_TEMPLATE_NS = 10;
 var SMW_TYPE_NS = 104;
 
-var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 200;
+// Halo defined namespaces constants
+var SMW_WEBSERVICE_NS = 200;
+
+// special 
+var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
 
 // time intervals for triggering
 var SMW_AC_MANUAL_TRIGGERING_TIME = 500;
@@ -1072,10 +1076,11 @@ AutoCompleter.prototype = {
         	if (pasteNS != null) {
         		switch(type) {
         			
-        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS')+theString; break;
-        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS')+theString; break;
-        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS')+theString; break;
-        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS')+theString; break;
+        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
+        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
+        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
+        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
+        			case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
         		}
         	}
             this.siw.inputBox.value = theString;
@@ -1275,10 +1280,15 @@ AutoCompleter.prototype = {
 
         Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
         container.appendChild(f);
-        var acMessage = document.createElement("span");
-        Element.addClassName(acMessage, "acMessage");
-        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
-        container.appendChild(acMessage);
+        
+	    var acMessage = document.createElement("span");
+	    Element.addClassName(acMessage, "acMessage");
+        if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
+	        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
+        } else {
+        	acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
+        }
+	    container.appendChild(acMessage);
         this.AC_idCounter++;
     },
 
