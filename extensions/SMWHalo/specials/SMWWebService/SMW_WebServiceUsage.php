@@ -125,6 +125,9 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
+	
+	smwfRequireHeadItem(SMW_HEADER_STYLE);
+	
 	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
 	
