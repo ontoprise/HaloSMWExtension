@@ -7,7 +7,7 @@ ContentSlider.prototype = {
         this.oldHeight = 0;
         this.oldWidth  = 0;
         this.sliderWidth = OB_bd.isIE ? 13 : 12;
-       
+        this.timer = null;
     },
     //if()
     activateResizing: function() {
@@ -34,7 +34,7 @@ ContentSlider.prototype = {
           //axis:'vertical',
           sliderValue:initialvalue,
           minimum:iv,
-          maximum:1,
+          maximum:0.5,
           //range: $R(0.5,0.75),
           onSlide: this.slide.bind(this),
           onChange: this.slide.bind(this)
@@ -45,20 +45,21 @@ ContentSlider.prototype = {
     //Checks for min max and sets the content and the semtoolbar to the correct width
     slide: function(v)
           {
+          	
             var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
             var iv = ($("p-logo").clientWidth - this.sliderWidth) / windowWidth;    
             var currMarginDiv = windowWidth*(v-iv)+$("p-logo").clientWidth;
             
             var leftmax = iv; // range 0 - 1
-            var rightmax = 1; // range 0 - 1
+            var rightmax = 0.5; // range 0 - 1
 
              if( v < leftmax){
-                this.sliderObj.setValue(leftmax);
+                if (this.sliderObj != null) this.sliderObj.setValue(leftmax);
                 return;
              }
 
              if( v > rightmax){
-                this.sliderObj.setValue(rightmax);
+                if (this.sliderObj != null) this.sliderObj.setValue(rightmax);
                 return;
              }
             var sliderSmooth = OB_bd.isIE ? v*25 : v*38;
@@ -88,26 +89,20 @@ ContentSlider.prototype = {
       * we have to do some additional checks
       */
      resizeTextbox: function(){
-        if( OB_bd.isIE == true){
-            if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
-                this.activateResizing();
-                this.oldHeight = document.documentElement.clientHeight;
-                this.oldWidth  = document.documentElement.clientWidth;
-            } else{
-                if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
-                    alert('resize');
-                    this.activateResizing();
-                    this.oldHeight = window.innerHeight;
-                    this.oldWidth  = window.innerWidth;
-                }
-            }
-       }else {
+        if( !OB_bd.isIE ){
             this.activateResizing();
-        }
+        } else {
+        	
+        	if (this.timer != null) window.clearTimeout(this.timer);
+        	this.timer = window.setTimeout(function() { 
+        	  this.activateResizing();
+        	},1000);
+        	 
+        }        
      }
 }
 
 var smwhg_contentslider = new ContentSlider();
 Event.observe(window, 'load', smwhg_contentslider.activateResizing.bind(smwhg_contentslider));
 //Resizes the slider if window size is changed
-//Event.observe(window, 'resize', smwhg_contentslider.resizeTextbox.bind(smwhg_contentslider));
+Event.observe(window, 'resize', smwhg_contentslider.resizeTextbox.bind(smwhg_contentslider));
