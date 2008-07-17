@@ -79,9 +79,9 @@ $messages['en'] = array(
 							'a change in the semantic database of your wiki.<br />',
 	'smw_sn_msg_query' =>  'The result of the following query changed:<br /><pre>$1</pre><br />',
 	'smw_sn_msg_changes_found' => '<br />The following changes were found:<br />'.
-								  '(<span style="background-color:#ff0000">Removed</span> '.
-								  '<span style="background-color:#00ff00">Added</span> '.
-								  '<span style="background-color:#ffaa00">Changed (old values in parenthesis)</span>)<br /><br />',
+								  '(<span style="border:2px solid; border-color:#ff0000;">Removed</span> '.
+								  '<span style="border:2px solid; border-color:#00ff00">Added</span> '.
+								  '<span style="border:2px solid; border-color:#ffaa00">Changed (old values in parenthesis)</span>)<br /><br />',
 	'smw_sn_msg_numadded' => '$1 result(s) was/were added.<br />',
 	'smw_sn_msg_numremoved' => '$1 result(s) was/were removed.<br />',
 	'smw_sn_msg_limit' => '<br />This notification does not contain the details of the semantic changes, '.
@@ -155,9 +155,9 @@ $messages['de'] = array(
 							'"<b>$2</b>" ergeben haben.<br />',
 	'smw_sn_msg_query' =>  'Die Ergebnismenge der folgenden Query hat sich geändert:<br /><pre>$1</pre><br />',
 	'smw_sn_msg_changes_found' => '<br />Die folgenden Änderungen wurden gefunden:<br />'.
-								  '(<span style="background-color:#ff0000">Entfernt</span> '.
-								  '<span style="background-color:#00ff00">Hinzugefügt</span> '.
-								  '<span style="background-color:#ffaa00">Verändert (alte Werte in Klammern)</span>)<br /><br />',
+								  '(<span style="border:2px solid; border-color:#ff0000">Entfernt</span> '.
+								  '<span style="border:2px solid; border-color:#00ff00">Hinzugefügt</span> '.
+								  '<span style="border:2px solid; border-color:#ffaa00">Verändert (alte Werte in Klammern)</span>)<br /><br />',
 	'smw_sn_msg_numadded' => '$1 Ergebnis(se) wurde(n) hinzgefügt.<br />',
 	'smw_sn_msg_numremoved' => '$1 Ergebnis(se) wurde(n) entfernt.<br />',
 	'smw_sn_msg_limit' => '<br />Diese Benachrichtigung enthält keine Details zu den Veränderungen der semantischen Annotationen, '.
