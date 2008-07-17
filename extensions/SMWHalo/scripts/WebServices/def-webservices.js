@@ -175,8 +175,19 @@ DefineWebServiceSpecial.prototype = {
 		this.preparedPathSteps = new Array();
 
 		if (wsParameters[0] == "todo:handle noparams") {
+			$("step3").style.display = "block";
+			$("step2-img").style.visibility = "hidden";
+			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
+			$("step3-parameters").style.display = "none";
+			$("step3-ok").style.display = "none";
 			this.processStep3();
 			return;
+		} else {
+			//todo: find better solution
+			$("step2-img").style.visibility = "visible";
+			$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
+			$("step3-parameters").style.display = "block";
+			$("step3-ok").style.display = "block";
 		}
 
 		var overflow = false;
