@@ -564,15 +564,19 @@ class WebService {
 		foreach ($resultParts as $rp) {
 			$parts = explode(".", $rp);
 			$rdef = $this->getResultDefinition($parts[0]);
+
+			// find all selected paths on the resulti
+			$selectedPath = $this->getSelectedPaths($response, $rdef);
+		
 			if (count($parts) == 1) {
 				// There is only the name of the result with no parts
 				// => return all parts of the result
 				foreach ($rdef->part as $part) {
 					$part = ''.$part['name'];
-					$results[$part] = $this->getResults($response, $rdef, $part);
+					$results[$part] = $this->getResults($response, $rdef, $part, $selectedPath);
 				}
 			} else {
-				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
+				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1], $selectedPath);
 			}
 		}
 		return $results;
@@ -587,15 +591,19 @@ class WebService {
 	 * @param SimpleXMLElement $resultDef
 	 * @param string $alias
 	 */
-	private function getResults($response, $resultDef, $alias) {
+	private function getResults($response, $resultDef, $alias, $selectedPaths) {
 		$path = $this->getPathForAlias($alias, $resultDef);
-
 		
-		// apply all selects on the result
-		$response = $this->applySelects($response, $resultDef);
+		$paths = $this->matchSelectedPath($path, $selectedPaths);
 		
+		$result = array();
+		if (count($paths) == 0) {
+			return $result;
+		}
 		// collect the interesting parts of the result
-		$result = $this->getResultParts($response, $path, $selects);
+		foreach ($paths as $p) {
+			$result = array_merge($result, $this->getResultParts($response, $p, $selects));
+		}
 		return $result;
 	}
 	
@@ -610,7 +618,7 @@ class WebService {
 	 * @return Object
 	 * 		The response without elements that do not match the select.
 	 */
- 	private function applySelects($response, $resultDef) {
+ 	private function getSelectedPaths($response, $resultDef) {
 		$s = $resultDef->select;
 		if (count($s) == 0) {
 			return $response;
@@ -621,14 +629,54 @@ class WebService {
 			                   ''.$select['value']);
 		}
 		
-		$this->doApplySelects($response, $selects, 0);
-		return $response;
+		$selectedPaths = array();
+		$this->doApplySelects($response, $selects, 0, $selectedPaths);
+		return $selectedPaths;
 	}
 
 	/**
-	 * Walks recursively through the result and marks all values that match the
-	 * selections conditions with a new field '___selected = true'. Otherwise 
-	 * '___selected' is set to false. 
+	 * Enter description here...
+	 *
+	 * @param unknown_type $path
+	 * @param unknown_type $selectedPaths
+	 */
+	private function matchSelectedPath($path, &$selectedPaths) {
+		$pathParts = explode('.', $path);
+		$numPathParts = count($pathParts);
+		$result = array();
+		
+		foreach ($selectedPaths as $sp) {
+			$spParts = explode('.', $sp);
+			
+			$newPath = "";
+			for ($i = 0; $i < $numPathParts; ++$i) {
+				$pp = $pathParts[$i];
+				$spp = $spParts[$i];
+				if ($pp == $spp || !isset($spp)) {
+					$newPath .= '.'.$pp;
+					continue;
+				}
+				if (preg_match("/(.*?)\[([a-z]+)\]/", $pp, $ppMatches) == 1 
+				    && preg_match("/(.*?)\[([a-z]+)\]=(\d+)/", $spp, $sppMatches)) {
+					if ($ppMatches[1] == $sppMatches[1]
+					    && $ppMatches[2] == $sppMatches[2]) {
+						$newPath .= ".".$ppMatches[1].'['.$sppMatches[3].']';
+					}
+				} else {
+					$newPath .= '.'.$pp;
+				}
+			}
+			// are there unbound variables in the path
+			if (preg_match("/.*?\[[a-z]\]/", $newPath) == 0) {
+				$result[] = substr($newPath,1);
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Walks recursively through the result and finds all paths to elements that
+	 * match the selection criteria.
 	 *
 	 * @param Object $selectedResults
 	 * 		The results of the web service as returned by the SOAP client. 
@@ -637,7 +685,8 @@ class WebService {
 	 * @param int $partIdx
 	 * 		The index of part of the selection path to consider.
 	 */
-	private function doApplySelects(&$selectedResults, &$selects, $partIdx) {
+	private function doApplySelects(&$selectedResults, &$selects, $partIdx, 
+									&$selectedPaths, $currPath = '') {
 		foreach ($selects as $sel) {
 			$parts = &$sel[0];
 			if ($partIdx >= count($parts)) {
@@ -645,12 +694,26 @@ class WebService {
 				continue;
 			}
 			$part = $parts[$partIdx];
+			$pathTail = '.'.$part;
+			$hasIndex = false;
+			if (preg_match("/(.*?)\[([a-z])\]/", $part, $matches) == 1) {
+				// The part has an array index
+				$part = $matches[1];
+				$arrayIdx = $matches[2];
+				$hasIndex = true;
+				$pathTail = '.'.$part."[$arrayIdx]";
+			}
+			
 			$sr = &$selectedResults->$part;
 			if ($sr) {
 				if (is_array($sr)) {
+					$i = 0;
 					foreach ($sr as $srpart) {
 						// Process all members of the array
-						$this->doApplySelects($srpart, $selects, $partIdx+1);
+						$pathTail2 = ($hasIndex) ? '='.$i : '';
+						$this->doApplySelects($srpart, $selects, $partIdx+1, 
+						                      $selectedPaths, $currPath.$pathTail.$pathTail2);
+						++$i;
 					}
 				} else {
 					if ($partIdx == count($parts)-1) {
@@ -659,9 +722,13 @@ class WebService {
 						if (!isset($selectedResults->___selected) 
 						    || $selectedResults->___selected == true) {
 							$selectedResults->___selected = ($sr == $sel[1]);
+							if ($selectedResults->___selected == true) {
+								$selectedPaths[] = substr($currPath.$pathTail, 1);
+							}
 						}
 					} else {
-						$this->doApplySelects($sr, $selects, $partIdx+1);
+						$this->doApplySelects($sr, $selects, $partIdx+1, 
+						                      $selectedPaths, $currPath.$pathTail);
 					}
 				}
 			} else {
@@ -694,14 +761,10 @@ class WebService {
 		
 		$objName = $part;
 		$arrayIdx = null;
-		if (preg_match("/(.*?)\[(\d+|[a-z]|)\]/", $part, $matches) == 1) {
+		if (preg_match("/(.*?)\[(\d+|)\]/", $part, $matches) == 1) {
 			// Array specified
 			$objName = $matches[1];
 			$arrayIdx = $matches[2];
-			if (ctype_alpha($arrayIdx)) {
-				// index is a variable => ignore it
-				$arrayIdx = null;
-			}
 		}
 		$obj = $resultSet->$objName;
 		
