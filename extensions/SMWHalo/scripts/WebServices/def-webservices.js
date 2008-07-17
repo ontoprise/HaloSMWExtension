@@ -183,7 +183,7 @@ DefineWebServiceSpecial.prototype = {
 			this.processStep3();
 			return;
 		} else {
-			//todo: find better solution
+			// todo: find better solution
 			$("step2-img").style.visibility = "visible";
 			$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
 			$("step3-parameters").style.display = "block";
@@ -595,6 +595,13 @@ DefineWebServiceSpecial.prototype = {
 						pathIndexInput.style.width = "7px";
 						pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
 						pathIndexInput.value = "";
+
+						var pathIndexInputOnBlur = document
+								.createAttribute("onblur");
+						pathIndexInputOnBlur.value = "webServiceSpecial.updateInputBoxes("
+								+ i + "," + k + ")";
+						pathIndexInput.setAttributeNode(pathIndexInputOnBlur);
+
 						$("s4-pathstep-" + i + "-" + k).appendChild(
 								pathIndexInput);
 						pathTextEnd = document.createTextNode("]");
@@ -1394,6 +1401,11 @@ DefineWebServiceSpecial.prototype = {
 					pathSteps[r].childNodes[3].setAttribute("onclick",
 							"webServiceSpecial.addResultPart(" + newI + "," + r
 									+ ")");
+					
+					pathSteps[r].childNodes[1].setAttribute("onblur",
+							"webServiceSpecial.updateInputBoxes(" + newI + "," + r
+									+ ")");
+					
 					pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
 				} // both
 				else if (pathSteps[r].childNodes.length == 5) {
@@ -1406,6 +1418,11 @@ DefineWebServiceSpecial.prototype = {
 					pathSteps[r].firstChild.setAttribute("onclick",
 							"webServiceSpecial.expandResultPathStep(" + newI
 									+ "," + r + ")");
+					
+					pathSteps[r].childNodes[2].setAttribute("onblur",
+							"webServiceSpecial.updateInputBoxes(" + newI + "," + r
+									+ ")");
+					
 					pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
 					if (appendRows[m].childNodes[1].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
 							+ (i * 1 + m) + "-" + r) {
@@ -1657,8 +1674,37 @@ DefineWebServiceSpecial.prototype = {
 				goon = false;
 			}
 		}
-	}
+	},
 
+	updateInputBoxes : function(i, k) {
+		var inputValue;
+		var root = true;
+		var goon = true;
+		while (goon) {
+			if (!root) {
+				if ($("s4-pathstep-" + i + "-" + k).childNodes.length == 4) {
+					$("s4-pathstep-" + i + "-" + k).childNodes[1].value = rootValue;
+				} else if ($("s4-pathstep-" + i + "-" + k).childNodes.length == 5) {
+					$("s4-pathstep-" + i + "-" + k).childNodes[2].value = rootValue;
+				}
+			} else {
+				if ($("s4-pathstep-" + i + "-" + k).childNodes.length == 4) {
+					rootValue = $("s4-pathstep-" + i + "-" + k).childNodes[1].value;
+				} else if ($("s4-pathstep-" + i + "-" + k).childNodes.length == 5) {
+					rootValue = $("s4-pathstep-" + i + "-" + k).childNodes[2].value;
+				}
+				root = false;
+			}
+
+			if (this.preparedRPathSteps[i][k]["i"] != "null") {
+				var iTemp = this.preparedRPathSteps[i][k]["i"];
+				k = this.preparedRPathSteps[i][k]["k"];
+				i = iTemp;
+			} else {
+				goon = false;
+			}
+		}
+	}
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
