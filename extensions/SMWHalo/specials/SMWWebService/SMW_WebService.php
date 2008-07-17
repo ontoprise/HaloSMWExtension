@@ -621,7 +621,7 @@ class WebService {
  	private function getSelectedPaths($response, $resultDef) {
 		$s = $resultDef->select;
 		if (count($s) == 0) {
-			return $response;
+			return array();
 		}
 		$selects = array();
 		foreach ($s as $select) {
@@ -641,6 +641,10 @@ class WebService {
 	 * @param unknown_type $selectedPaths
 	 */
 	private function matchSelectedPath($path, &$selectedPaths) {
+		
+		if (count($selectedPaths) == 0) {
+			return array($path);
+		}
 		$pathParts = explode('.', $path);
 		$numPathParts = count($pathParts);
 		$result = array();
