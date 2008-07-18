@@ -108,39 +108,39 @@ class WSCacheBot extends GardeningBot {
 
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
-				> $ws->getSpanOfLife() *24*60*60/60/24){
+				> $ws->getSpanOfLife() *24*60*60){
 					WSStorage::getDatabase()->removeWSEntryFromCache(
 					$ws->getArticleID(), $cacheResult["paramSetId"]);
 					$deletedCacheEntries += 1;
-						
+
 					$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
-						
+
 					foreach($props as $prop){
 						echo("\n 0:".$prop["propertyName"]);
 						if($prop["paramSetId"] == $cacheResult["paramSetId"]){
 							echo("\n 1:".$prop["pageId"]);
 							$subject = Title::newFromID($prop["pageId"]);
 							$smwData = smwfGetStore()->getSemanticData($subject);
-								
+
 							$smwProps = $smwData->getProperties();
-								
+
 							$tempPropertyValues = array();
 							foreach($smwProps as $smwProp){
 								$tempPropertyValues[$smwProp->getText()] =
 								$smwData->getPropertyValues($smwProp);
 							}
-								
+
 							$smwData->clear();
 
 							$cacheRes = $ws->getCallResultParts
-								($cacheResult["result"], array($prop["resultSpec"]));
+							($cacheResult["result"], array($prop["resultSpec"]));
 							echo("\n\na: ".print_r($cacheRes, true));
 							$cacheRes = $ws->getCallResultParts
-								(unserialize($cacheResult["result"]), array($prop["resultSpec"]));
+							(unserialize($cacheResult["result"]), array($prop["resultSpec"]));
 							echo("\n\na: ".print_r($cacheRes, true));
-							
+								
 							$cacheRes = array_pop(array_pop($cacheRes));
-							
+								
 							foreach($tempPropertyValues as $key => $values){
 								echo("\n 2:".$key);
 								if(strtolower($key) == strtolower($prop["propertyName"])){
@@ -149,8 +149,8 @@ class WSCacheBot extends GardeningBot {
 										if(strtolower($content) != strtolower($cacheRes)){
 											echo("\n 7:".$content);
 											echo("\n 8:".$cacheRes);
-											$smwData->addPropertyValue($key, $value);			
-										} 
+											$smwData->addPropertyValue($key, $value);
+										}
 									}
 								}
 							}
