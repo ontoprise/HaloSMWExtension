@@ -8,7 +8,9 @@
 		  
 		  		
 		<!-- unzip input zip file to temp directory -->
+		<!--
 		<unzip src="patches/Patch_AdditionalMIMETypes.zip" dest="${outputDir}" />
+		-->
 
 	</target>
 </project>
