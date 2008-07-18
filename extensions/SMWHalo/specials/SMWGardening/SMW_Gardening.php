@@ -25,8 +25,12 @@ require_once("Bots/SMW_GlossaryBot.php");
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
-require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSCacheBot.php");
-require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSUpdateBot.php");
+
+global $smwgEnableWikiWebServices;
+if ($smwgEnableWikiWebServices) {
+	require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSCacheBot.php");
+	require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSUpdateBot.php");
+}
 
 
 /*
