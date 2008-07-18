@@ -615,30 +615,92 @@ class WebService {
 	 * 		The web services response
 	 * @param SimpleXMLElement $resultDef
 	 * 		Definition of the result 
-	 * @return Object
-	 * 		The response without elements that do not match the select.
+	 * @return array<string>
+	 * 		An array of paths, where variable indices are decorated with concrete 
+	 *      numbers e.g. AnElement[a]=5.value
 	 */
  	private function getSelectedPaths($response, $resultDef) {
 		$s = $resultDef->select;
-		if (count($s) == 0) {
+		$num = count($s);
+		if ($num == 0) {
 			return array();
 		}
 		$selects = array();
-		foreach ($s as $select) {
-			$selects[] = array(explode('.', ''.$select['object']), 
+		$selectedPaths = array();
+		for ($i = 0; $i < $num; ++$i) {
+			// find the paths that match the selections
+			$select = & $s[$i];
+			$sel = array(explode('.', ''.$select['object']), 
 			                   ''.$select['value']);
+			$selPaths = array();
+			$this->doApplySelects($response, $sel, 0, $selPaths);
+			$selectedPaths[] = $selPaths;
 		}
 		
-		$selectedPaths = array();
-		$this->doApplySelects($response, $selects, 0, $selectedPaths);
-		return $selectedPaths;
+		// Selections on the same index variable are ANDed i.e. the intersection
+		// of valid indices must be built
+		$numSelections = count($selectedPaths);
+		for ($si1 = 0; $si1 < $numSelections; ++$si1) {
+			$paths1 = $selectedPaths[$si1];
+			for ($pi = 0, $pn = count($paths1); $pi < $pn; ++$pi) {
+				$vp1 = $paths1[$pi];
+				// check the indices of one valid path against the indices of
+				// all other selections
+				for ($si2 = 0; $si2 < $numSelections; ++$si2) {
+					if ($si1 == $si2) {
+						continue;
+					}
+					$paths2 = $selectedPaths[$si2];
+					$found = true;
+					$varP1 = $vp1[1];
+					foreach ($paths2 as $vp2) {
+						if ($vp2 == null) {
+							continue;
+						}
+						$varP2 = $vp2[1];
+						// each index in $varP1 must have the same value as in $varP2
+						$found = true;
+						foreach ($varP1 as $varName => $value) {
+							if (isset($varP2[$varName]) && ($varP2[$varName] != $value)) {
+								$found = false;
+								break;
+							}
+						}
+						if ($found == true) {
+							break;
+						}
+					}
+					if ($found == false) {
+						// The selected path is invalid as another selection did
+						// not match
+						$selectedPaths[$si1][$pi] = null;
+						break;
+					}
+				}
+			}
+		}
+		
+		// All invalid path are replace by <null>. Now collect all remaining
+		// paths.
+		$selPath = array();
+		foreach ($selectedPaths as $validInSelection) {
+			foreach ($validInSelection as $vp) {
+				if ($vp != null && !in_array($vp[0], $selPath)) {
+					$selPath[] = $vp[0];
+				}
+			}
+		}
+		return $selPath;
 	}
 
 	/**
-	 * Enter description here...
+	 * Checks if a given path matches the valid paths of a selection.
 	 *
-	 * @param unknown_type $path
-	 * @param unknown_type $selectedPaths
+	 * @param string $path
+	 * @param array<string> $selectedPaths
+	 * 
+	 * @return array<string>
+	 * 		Valid paths, where variable indices are replaced concrete numbers
 	 */
 	private function matchSelectedPath($path, &$selectedPaths) {
 		
@@ -650,10 +712,11 @@ class WebService {
 		$result = array();
 		
 		foreach ($selectedPaths as $sp) {
+			$processNextPath = false;
 			$spParts = explode('.', $sp);
 			
 			$newPath = "";
-			for ($i = 0; $i < $numPathParts; ++$i) {
+			for ($i = 0; $i < $numPathParts && !$processNextPath; ++$i) {
 				$pp = $pathParts[$i];
 				$spp = $spParts[$i];
 				if ($pp == $spp || !isset($spp)) {
@@ -665,13 +728,15 @@ class WebService {
 					if ($ppMatches[1] == $sppMatches[1]
 					    && $ppMatches[2] == $sppMatches[2]) {
 						$newPath .= ".".$ppMatches[1].'['.$sppMatches[3].']';
+					} else {
+						$processNextPath = true; // Paths do not match => check the next path
 					}
 				} else {
 					$newPath .= '.'.$pp;
 				}
 			}
 			// are there unbound variables in the path
-			if (preg_match("/.*?\[[a-z]\]/", $newPath) == 0) {
+			if (!$processNextPath && preg_match("/.*?\[[a-z]\]/", $newPath) == 0) {
 				$result[] = substr($newPath,1);
 			}
 		}
@@ -691,52 +756,54 @@ class WebService {
 	 */
 	private function doApplySelects(&$selectedResults, &$selects, $partIdx, 
 									&$selectedPaths, $currPath = '') {
-		foreach ($selects as $sel) {
-			$parts = &$sel[0];
-			if ($partIdx >= count($parts)) {
-				// The selection <$sel> has been fully processed
-				continue;
-			}
-			$part = $parts[$partIdx];
-			$pathTail = '.'.$part;
-			$hasIndex = false;
-			if (preg_match("/(.*?)\[([a-z])\]/", $part, $matches) == 1) {
-				// The part has an array index
-				$part = $matches[1];
-				$arrayIdx = $matches[2];
-				$hasIndex = true;
-				$pathTail = '.'.$part."[$arrayIdx]";
-			}
-			
-			$sr = &$selectedResults->$part;
-			if ($sr) {
-				if (is_array($sr)) {
-					$i = 0;
-					foreach ($sr as $srpart) {
-						// Process all members of the array
-						$pathTail2 = ($hasIndex) ? '='.$i : '';
-						$this->doApplySelects($srpart, $selects, $partIdx+1, 
-						                      $selectedPaths, $currPath.$pathTail.$pathTail2);
-						++$i;
-					}
-				} else {
-					if ($partIdx == count($parts)-1) {
-						// Leaf reached => Set selection status according to the
-						// requested value.
-						if (!isset($selectedResults->___selected) 
-						    || $selectedResults->___selected == true) {
-							$selectedResults->___selected = ($sr == $sel[1]);
-							if ($selectedResults->___selected == true) {
-								$selectedPaths[] = substr($currPath.$pathTail, 1);
-							}
-						}
-					} else {
-						$this->doApplySelects($sr, $selects, $partIdx+1, 
-						                      $selectedPaths, $currPath.$pathTail);
-					}
+		$parts = &$selects[0];
+		if ($partIdx >= count($parts)) {
+			// The selection <$sel> has been fully processed
+			continue;
+		}
+		$part = $parts[$partIdx];
+		$pathTail = '.'.$part;
+		$hasIndex = false;
+		if (preg_match("/(.*?)\[([a-z])\]/", $part, $matches) == 1) {
+			// The part has an array index
+			$part = $matches[1];
+			$arrayIdx = $matches[2];
+			$hasIndex = true;
+			$pathTail = '.'.$part."[$arrayIdx]";
+		}
+		
+		$sr = &$selectedResults->$part;
+		if ($sr) {
+			if (is_array($sr)) {
+				$i = 0;
+				foreach ($sr as $srpart) {
+					// Process all members of the array
+					$pathTail2 = ($hasIndex) ? '='.$i : '';
+					$this->doApplySelects($srpart, $selects, $partIdx+1, 
+					                      $selectedPaths, $currPath.$pathTail.$pathTail2);
+					++$i;
 				}
 			} else {
-				$selectedResults->___selected = false;
+				if ($partIdx == count($parts)-1) {
+					// Leaf reached => Set selection status according to the
+					// requested value.
+					if ($sr == $selects[1]) {
+						// value matches => get the array indices
+						$p = substr($currPath.$pathTail, 1); 
+						$matchedIndices = array();
+						preg_match_all("/\[(.*?)\]=(\d+)/", $p, $matchedIndices);
+						$indices = array();
+						if (count($matchedIndices) == 3) {
+							for ($mi = 0, $mn = count($matchedIndices[1]); $mi < $mn; ++$mi) {
+								$indices[$matchedIndices[1][$mi]] = $matchedIndices[2][$mi];
+							}
+						}
+						$selectedPaths[] = array($p, $indices);
+					}
+				} else {
+					$this->doApplySelects($sr, $selects, $partIdx+1, 
+					                      $selectedPaths, $currPath.$pathTail);
+				}
 			}
 		}
 	}
@@ -750,10 +817,6 @@ class WebService {
 	private function getResultParts($resultSet, $path) {
 		if (empty($path)) {
 			return array($resultSet);
-		}
-		// Filter all elements that are explicitly not selected
-		if (isset($resultSet->___selected) && $resultSet->___selected == false) {
-			return array();
 		}
 
 		$result = array();
