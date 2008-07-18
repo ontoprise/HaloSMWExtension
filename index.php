@@ -88,7 +88,7 @@ if ($action == 'wsmethod' ) {
 #
 if ($action == 'query') {
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	echo query($wgRequest->getVal( 'querytext' ), "table");
+	echo query($wgRequest->getVal( 'querytext' ), "exceltable");
 	$mediaWiki->restInPeace( $wgLoadBalancer );
 	exit;
 }

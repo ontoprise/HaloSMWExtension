@@ -55,7 +55,12 @@ function smwgHaloSetupExtension() {
 	global $mediaWiki;
 
 	$smwgMasterGeneralStore = NULL;
-
+    
+	// Autoloading. Use it for everything! No include_once or require_once please!
+    $wgAutoloadClasses['SMWQueryProcessor'] = $smwgIP . '/includes/SMW_QueryProcessor.php';
+    $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
+    SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter'; 
+	
 	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
