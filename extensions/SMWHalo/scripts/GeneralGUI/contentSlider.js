@@ -4,8 +4,7 @@ ContentSlider.prototype = {
 
     initialize: function() {
         this.sliderObj = null;
-        this.oldHeight = 0;
-        this.oldWidth  = 0;
+        this.savedPos = -1; // save position within a page. hack for IE
         this.sliderWidth = OB_bd.isIE ? 13 : 12;
         this.timer = null;
     },
@@ -23,7 +22,8 @@ ContentSlider.prototype = {
         // 25px for the silder
         var iv = ($("p-logo").clientWidth -  this.sliderWidth) / windowWidth;
         var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
-        var initialvalue = saved_iv != null ? saved_iv : iv;
+        var initialvalue = saved_iv != null ? saved_iv : this.savedPos != -1 ? this.savedPos : iv;
+        
         this.slide(initialvalue);
        //create slider after old one is removed
        if(this.sliderObj != null){
@@ -82,6 +82,7 @@ ContentSlider.prototype = {
            $('p-tb').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            
            document.cookie = "cp-slider="+v+"; path="+wgScript;
+           this.savedPos = v;
     },
      /**
       * Resizes the slide if window size is changed
@@ -95,8 +96,8 @@ ContentSlider.prototype = {
         	
         	if (this.timer != null) window.clearTimeout(this.timer);
         	var slider = this; // copy reference to make it readable in closure
-        	this.timer = window.setTimeout(function() { 
-        	  slider.activateResizing();
+        	this.timer = window.setTimeout(function() {
+        		 slider.activateResizing();
         	},1000);
         	 
         }        
