@@ -1473,9 +1473,11 @@ OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	},
 	
 	cancel: function() {
-		this.titleInputValidator.deregisterListeners();
+		if (this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME) {
+			this.titleInputValidator.deregisterListeners();
+			this._cancel();
+		}
 		
-		this._cancel();
 	},
 	
 	preview: function() {
