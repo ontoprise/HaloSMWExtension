@@ -136,6 +136,7 @@ class ExportOntologyBot extends GardeningBot {
 	}
 
 	private function writeHeader($filehandle) {
+		$header = '<?xml version="1.0" encoding="UTF-8"?>'.LINE_FEED;
 		$header = '<!DOCTYPE owl ['.LINE_FEED;
 		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >'.LINE_FEED;
 		$header .=	'<!ENTITY a  "'.$this->namespace.'#" >'.LINE_FEED;
@@ -541,7 +542,11 @@ class ExportOntologyBot extends GardeningBot {
 				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
 				$owl .= '			<owl:Restriction>'.LINE_FEED;
 				$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.LINE_FEED;
-				if ($range != '') $owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED;
+				if ($range != '') {
+					$owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED; 
+				} else {
+					$owl .= '               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />'.LINE_FEED;
+				}
 				$owl .= '			</owl:Restriction>'.LINE_FEED;
 				$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 				if ($maxCard != NULL) {
@@ -679,7 +684,7 @@ class ExportOntologyBot extends GardeningBot {
 		$element = str_replace( array('"','#','&',"'",'+','%',')','('),
 		array('-22','-23','-26','-27','-2B','-','-29','-28'),
 		$element);
-		return preg_match('/^[A-z_][\d\w_-]*$/', $element) > 0 ? $element : NULL;
+		return preg_match('/^[A-z_][\d\w_-]*$/', $element) > 0 ? utf8_encode($element) : NULL;
 	}
 
 	/**
@@ -698,13 +703,13 @@ class ExportOntologyBot extends GardeningBot {
 			$attribute = str_replace( array('"','#','&',"'",'+','%',')','('),
 			array('-22', '-23','-26','-27','-2B','-','-29','-28'),
 			$attribute);
-			return $attribute;
+			return utf8_encode($attribute);
 
 		} else {
 			// " must be escaped in attribute values
-			return str_replace( array('"'),
+			return utf8_encode(str_replace( array('"'),
 			array('&quot;'),
-			$attribute);
+			$attribute));
 		}
 	}
 
