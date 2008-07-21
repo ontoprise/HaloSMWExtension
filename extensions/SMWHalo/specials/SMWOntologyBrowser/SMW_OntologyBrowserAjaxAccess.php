@@ -170,7 +170,8 @@ function smwf_ob_PreviewRefactoring($titleText, $ns) {
 	$title = Title::newFromText($titleText, $ns);
 	switch($ns) {
  			case NS_CATEGORY: {
-		 		list($numOfInstances, $numOfCategories) = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories($title);
+ 				$numOfCategories = count(smwfGetSemanticStore()->getSubCategories($title));
+		 		$numOfInstances = smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories($title);
 		 		$numOfProperties = smwfGetSemanticStore()->getNumberOfProperties($title);
 		 		$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofsubcategories').'</td><td>'.$numOfCategories.'</td></tr>';
 		 		$tableContent .= '<tr><td>'.wfMsg('smw_ob_hasnumofinstances').'</td><td>'.$numOfInstances.'</td></tr>';

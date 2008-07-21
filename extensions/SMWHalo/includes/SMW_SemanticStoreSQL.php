@@ -734,7 +734,7 @@
 		$db =& wfGetDB( DB_SLAVE ); 
 		$this->createVirtualTableWithInstances($category, $db);
 		
-		$res = $db->query ('SELECT COUNT(DISTINCT instance) AS numOfInstances, COUNT(DISTINCT category) AS numOfCategories FROM smw_ob_instances');
+		$res = $db->query ('SELECT COUNT(DISTINCT instance) AS numOfInstances FROM smw_ob_instances');
 				
 		// rewrite result as array
 		$numOfInstances = 0;
@@ -742,12 +742,12 @@
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
 			$numOfInstances = $row->numOfInstances;
-			$numCategories =$row->numOfCategories;
+			
 		}
 		$db->freeResult($res);
 		
 		$this->dropVirtualTableWithInstances($db);
-		return array($numOfInstances, $numCategories);
+		return $numOfInstances;
 	}
 	
 	public function getNumberOfProperties(Title $category) {
