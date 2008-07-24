@@ -496,7 +496,8 @@ clicking the big arrows between the columns.',
 	'smw_ti_viewMappingPage' => 'View',
 	'smw_ti_editMappingPage' => 'Edit',
 	'smw_ti_conflictpolicy' => 'Please define a conflict policy. The conflict policy defines what happens if articles are imported that already exist in this wiki:',
-		
+	'smw_ti_nomappingpage' => 'The entered article that should contain the mapping policies does not exist',
+
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
 	'smw_ti_class_not_found' => 'Class "$1" not found.',
 	'smw_ti_no_tl_module_spec' => 'Could not find specification for TL module with ID "$1".',
