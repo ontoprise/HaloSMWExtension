@@ -22,6 +22,10 @@ public function execute() {
 		$wil = new WIL();
 		$tlModules = $wil->getTLModules();
 		
+		$t = Title::newFromText('super123');
+		if( !$t->exists() ){
+			$msg = wfMsg('smw_ti_mappingPageNotExist');
+		}
 		$html .= "<div id=\"summary\"></div>" .
 				"<div id=\"top-container\">" .
 					"<div style=\"margin-bottom:10px;\">".wfMsg('smw_ti_welcome')."</div>" .
@@ -63,7 +67,7 @@ public function execute() {
 								"<div id=\"mapping\">" .
 									"<table>
 										<tr><td><br><br>".wfMsg('smw_ti_mappingPage')."<br></td></tr>" .
-										"<tr><td><input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\">&nbsp&nbsp
+										"<tr><td><input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\">&nbsp&nbsp
 										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">" . wfMsg('smw_ti_viewMappingPage') . "</a>&nbsp&nbsp
 										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') . "</td></tr>
 									</table>" .
@@ -210,20 +214,21 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		
 	if ( $runBot == 0 ) {
 		// prepare XML strings for return...
-		$tlModules =  str_replace( "<?xml version=\"1.0\"?>", "", $tlModules );
-		$dalModules =  str_replace( "<?xml version=\"1.0\"?>", "", $dalModules );
-		$source_result =  str_replace( "<?xml version=\"1.0\"?>", "", $source_result );
-		$importSets =  str_replace( "<?xml version=\"1.0\"?>", "", $importSets );
-		$properties = str_replace( "<?xml version=\"1.0\"?>", "", $properties );
-		
-		$terms = str_replace( "<?xml version=\"1.0\"?>", "", $terms );
 		$xmlResult = '<result>' . $tlModules . $dalModules . $source_result . $importSets . $properties . $terms . '</result>'; 
-				
+		$xmlResult = '<?xml version="1.0"?>'.
+					str_replace('<?xml version="1.0"?>', "", $xmlResult);	
 		return $xmlResult;
 	}
 	elseif ( $runBot == 1 ){
 		//do the Import!
-		
+		$title = Title::newFromText($mappingPage);
+		if( !$title->exists() ) {
+			return '<?xml version="1.0"?>
+	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 		    <value>falseMap</value>
+	 		    <message>' . wfMsg('smw_ti_nomappingpage') . '</message>
+	 			</ReturnValue >';
+		}
 		$moduleConfig =
 			'<?xml version="1.0"?>'."\n".
 			'<ModuleConfiguration xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -238,21 +243,12 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 			'    </Module>'."\n".
 			'  </DALModules >'."\n".
 			'</ModuleConfiguration>';
+		$mappingPolicy =
+			'<?xml version="1.0"?>'."\n".
+			'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
+   	 		'	<page>' . $mappingPage . '</page>'."\n".
+			'</MappingPolicy >';
 		
-		if(!$mappingPage || $mappingPage == '') {
-			$mappingPolicy =
-				'<?xml version="1.0"?>'."\n".
-				'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-   	 			'	<page>BLABLA</page>'."\n".
-				'</MappingPolicy >';
-		}
-		else{
-			$mappingPolicy =
-				'<?xml version="1.0"?>'."\n".
-				'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-   	 			'	<page>' . $mappingPage . '</page>'."\n".
-				'</MappingPolicy >';
-		}
 		if($givenConflictPol && $givenConflictPol != '') {
 			$conflictPolicy =
 				'<?xml version="1.0"?>'."\n".
