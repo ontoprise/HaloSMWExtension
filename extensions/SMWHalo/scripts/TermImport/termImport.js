@@ -333,7 +333,7 @@ TermImportPage.prototype = {
 			var properties = list.getElementsByTagName("Properties")[0].childNodes;
 			var property_response = gLanguage.getMessage('smw_ti_attributes');
 												
-			property_response += '<table id=\"attrib_table\" class=\'mytable\'>';
+			property_response += '<div class=\"scrolling\"><table id=\"attrib_table\" class=\'mytable\'>';
 			
 			for (var i = 0, n = properties.length; i < n; i++) {
 				// get one of the importsets
@@ -357,10 +357,10 @@ TermImportPage.prototype = {
 					}	
 				}	
 			}
-			property_response += "</table>";
+			property_response += "</table></div>";
 		
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<div id=\"article_table\"><table class=\'mytable\'>';
+			var article_response = '<div id=\"article_table\" class=\"scrolling\"><table class=\'mytable\'>';
 			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
@@ -416,6 +416,15 @@ TermImportPage.prototype = {
 			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
 				"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
 		}
+		if (Prototype.Browser.IE) {
+			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+			$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple></select>";
+		}
+		else {
+			$('policy-textarea').innerHTML = '';
+		}
+		$('policy-input-field').value = '';
+		$('mapping-input-field').value = '';
 		
 	},
 	
@@ -884,7 +893,19 @@ TermImportPage.prototype = {
 				'</InputPolicy>'+"\n";
 			//mapping policy
 			var mappingPage = document.getElementById('mapping-input-field').value;
-			
+			if(mappingPage == ''){
+				//do not import without a mapping page!
+				$('mapping-input-field').style.backgroundColor = "red";
+				return;
+			}
+			var re = /\w+/g;
+			if(mappingPage.length > 0){
+   				// min. one other char than a whitespace
+   				if(re.test(mappingPage) != true) {
+   					$('mapping-input-field').style.backgroundColor = "red";
+   					return;	
+   				}
+			} 
 			//conflict policy
 			var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
 			if( conflict == 'overwrite') {
@@ -923,10 +944,28 @@ TermImportPage.prototype = {
 		catch(e){
 			
 		}
+		try {
+			var result = request.responseText;
+			var list = GeneralXMLTools.createDocumentFromString(result);
+			
+			var value = list.getElementsByTagName("value")[0].firstChild.nodeValue;
+			message = list.getElementsByTagName("message")[0].firstChild.nodeValue;
+			if(value == "falseMap") {
+				$('mapping-input-field').style.backgroundColor = "red";
+				alert(message);
+				return;
+			}
+			
+		} catch (e) {
+			// TODO: handle exception
+		}
 		var path = wgArticlePath.replace(/\$1/, "Special:GardeningLog?bot=smw_termimportbot&class=0");
 		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details';
 		
 		$('extras-bottom').innerHTML = message;
+	},
+	changeBackground: function(e, node) {
+		$('mapping-input-field').style.backgroundColor = "white";
 	}
 }
  // ----- Classes -----------
