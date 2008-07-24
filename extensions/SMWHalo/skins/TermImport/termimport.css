@@ -103,7 +103,6 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border-bottom: 1px solid #CCC;
 	background-color: #00BFFF;
 }
-
 #dalid .entry{
 	padding: 3px 5px 3px 5px;
 	border-bottom: 1px solid #CCC;
@@ -141,13 +140,13 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	margin-top: 10px;
 }
 #bottom-container #extras #extras-left{
-	width: 550px;
+	width: 55%;
 	float: left;
 	border-right: 1px solid #AAAAAA; 
 	padding: 3px 5px 3px 5px;
 }
 #bottom-container #extras #extras-right{
-	width: 25%;
+	width: 35%;
 	/*height: 400px;*/
 	float: left;
 	display: none;
@@ -155,7 +154,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding: 3px 5px 3px 5px;
 }
 #bottom-container #extras #extras-left #importset{
-	width: 510px;
+	width: 100%;;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
 	padding-top: 3px;
@@ -165,13 +164,13 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	width: 170px;
 }
 #bottom-container #extras #extras-left #policy{
-	width: 510px;
+	width: 100%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
 }
 
 #bottom-container #extras #extras-left #policy #policy-input{
-	width: 350px;
+	width: 70%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/	
 }
@@ -179,38 +178,38 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 }
 #bottom-container #extras #extras-left #policy #policy-textarea{
-	width: 158px;
+	width: 150px;
 	float: left;
 	border: 1px solid #AAAAAA;
 }
 
 #bottom-container #extras #extras-left #mapping{
-	width: 510px;
+	width: 100%;
 	float: left;
 }
 #bottom-container #extras #extras-left #mapping #mapping-input-field{
 	border: 1px solid #AAAAAA;
 }
 #bottom-container #extras #extras-left #conflict{
-	width: 510px;
+	width: 100%;
 	float: left;
 }
 #bottom-container #extras #extras-left #conflict #conflict-input-field{
 	border: 1px solid #AAAAAA;
 }
-#bottom-container #extras #extras-left #attrib-articles{
-	width: 255px;
+#bottom-container #extras #extras-right #attrib-articles{
+	width: 100%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
 }
 #bottom-container #extras #extras-right #attrib-articles #attrib{
-	width: 255px;
+	width: 90%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
 	padding: 3px 5px 3px 5px;
 }
 #bottom-container #extras #extras-right #attrib-articles #articles{
-	width: 255px;
+	width: 90%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/
 	padding: 20px 5px 3px 5px;
@@ -230,7 +229,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 .mytable{
 	border: 1px solid #AAAAAA;
 	border-collapse: collapse;
-	width: 100%;
+	width: 99%;
 	table-layout: auto;
 }
 .mytd{
@@ -245,4 +244,9 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 }
 .abstand{
 	padding: 3px 10px 3px 10px;
+}
+.scrolling{
+	padding: 3px 5px 3px 5px;
+	max-height: 200px;
+	overflow: auto;
 }
