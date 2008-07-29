@@ -1,9 +1,13 @@
 <?php
 /*
- * This is an implementation of the SMW store that still uses the default
- * SMW SQL Store for everything SMW does, but it decorates all edits to
+ * This is an implementation of the SMW store that still uses the new
+ * SMW SQL 2 Store for everything SMW does, but it decorates all edits to
  * the store with calls to a RAP store, so it keeps in parallel a second
  * store with all the semantic data. This allows for a SPARQL endpoint.
+ * 
+ * TODO: This currently sucks big time because SMW_RAPStor2 is basically
+ * a copy of SMW_RAPStore. The architecture of these two stores need to be
+ * rethought so that code duplication can be avoided. 
  * 
  * @author Denny Vrandecic (V. 0.1)
  * @author Felix Kratzer (V. 0.2)
@@ -22,7 +26,7 @@ require_once( "$smwgRAPPath/RdfAPI.php");
  * Storage access class for using RAP as a triple store.
  * Most of the functions are simply forwarded to the SQL store.
  */
-class SMWRAPStore extends SMWSQLStore {
+class SMWRAPStore2 extends SMWSQLStore2 {
 	protected $sqlstore;
 	protected $rapstore;
 	protected $modeluri;
@@ -32,7 +36,7 @@ class SMWRAPStore extends SMWSQLStore {
 	/**
 	* TODO: maybe find a better nomenclatur for the model
 	**/
-	public function SMWRAPStore() {
+	public function SMWRAPStore2() {
 		global $smwgRAPPath,$wgServer;
 
 	
@@ -262,57 +266,6 @@ class SMWRAPStore extends SMWSQLStore {
 	protected function closeRAP() {
 		//$this->rapstore->close();
 	}	
-		
-///// Reading methods -- All forwarded /////
-	function getSpecialValues(Title $subject, $specialprop, $requestoptions = NULL) {
-		return parent::getSpecialValues($subject, $specialprop, $requestoptions);
-	}
-	function getSpecialSubjects($specialprop, SMWDataValue $value, $requestoptions = NULL) {
-		return parent::getSpecialSubjects($specialprop, $value, $requestoptions);
-	}
-
-	function getPropertyValues($subject, $property, $requestoptions = NULL, $outputformat = '') {
-		return parent::getPropertyValues($subject, $property, $requestoptions, $outputformat);
-	}
-	function getPropertySubjects(Title $property, $value, $requestoptions = NULL) {
-		return parent::getPropertySubjects($property, $value, $requestoptions);
-	}
-	function getAllPropertySubjects(Title $property, $requestoptions = NULL) {
-		return parent::getAllPropertySubjects($property, $requestoptions);
-	}
-	function getProperties(Title $subject, $requestoptions = NULL) {
-		return parent::getProperties($subject, $requestoptions);
-	}
-	function getInProperties(SMWDataValue $object, $requestoptions = NULL) {
-		return parent::getInProperties($object, $requestoptions);	
-	}
-	/**
-	* This one returns semantic data from the parent store (RAP is only made for writing, reading is ALL handles by the SQL store)
-	**/
-	function getSemanticData($subject, $filter = false){
-		return parent::getSemanticData($subject, $filter);
-	}
-
-///// Query answering -- all forwarded /////
-
-	function getQueryResult(SMWQuery $query) {
-		return parent::getQueryResult($query);
-	}
-
-///// Special page functions -- all forwarded /////
-
-	function getPropertiesSpecial($requestoptions = NULL) {
-		return parent::getPropertiesSpecial($requestoptions);
-	}
-	function getUnusedPropertiesSpecial($requestoptions = NULL) {
-		return parent::getUnusedPropertiesSpecial($requestoptions);
-	}
-	function getWantedPropertiesSpecial($requestoptions = NULL) {
-		return parent::getWantedPropertiesSpecial($requestoptions);
-	}
-	function getStatistics() {
-		return parent::getStatistics();
-	}
 
 	/**
 	 * Print some output to indicate progress. The output message is given by

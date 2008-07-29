@@ -13,6 +13,7 @@
 class SMWTemplateResultPrinter extends SMWResultPrinter {
 
 	protected $m_template;
+	protected $m_userparam;
 
 	protected function readParameters($params,$outputmode) {
 		SMWResultPrinter::readParameters($params,$outputmode);
@@ -22,28 +23,40 @@ class SMWTemplateResultPrinter extends SMWResultPrinter {
 		} else {
 			$this->m_template = false;
 		}
+
+		if (array_key_exists('userparam', $params)) {
+			$this->m_userparam = trim($params['userparam']);
+		} else {
+			$this->m_userparam = false;
+		}
 	}
 
 	protected function getResultText($res, $outputmode) {
 		// handle factbox
 		global $smwgStoreActive, $wgParser;
+		$parsetitle = $wgParser->getTitle();
+		if ($parsetitle === NULL) { // try that in emergency, needed in 1.11 in Special:Ask
+			global $wgTitle;
+			$parsetitle = $wgTitle;
+		}
 
 		// print all result rows
 		if ($this->m_template == false) {
-			return 'Please provide parameter "template" for query to work.'; // TODO: internationalise, beautify
+			$res->addErrors(array(wfMsgForContent('smw_notemplategiven')));
+			return '';
 		}
 
 		$parserinput = $this->mIntro;
 		while ( $row = $res->getNext() ) {
 			$i = 1; // explicitly number parameters for more robust parsing (values may contain "=")
-			$wikitext = '';
+			$wikitext = ($this->m_userparam)?"|userparam=$this->m_userparam":'';
 			$firstcol = true;
 			foreach ($row as $field) {
 				$wikitext .= '|' . $i++ . '=';
 				$first = true;
 				while ( ($text = $field->getNextText(SMW_OUTPUT_WIKI, $this->getLinker($firstcol))) !== false ) {
 					if ($first) {
-						$first = false; 
+						$first = false;
 					} else {
 						$wikitext .= ', ';
 					}
@@ -59,17 +72,17 @@ class SMWTemplateResultPrinter extends SMWResultPrinter {
 		$parser_options = new ParserOptions();
 		$parser_options->setEditSection(false);  // embedded sections should not have edit links
 		$parser = clone $wgParser;
-		if ($outputmode == SMW_OUTPUT_HTML) {
-			$parserOutput = $parser->parse($parserinput, $wgParser->getTitle(), $parser_options);
-			$result = $parserOutput->getText();
-		} else {
+		if ($outputmode == SMW_OUTPUT_WIKI) {
 			if ( method_exists($parser, 'getPreprocessor') ) {
 				$frame = $parser->getPreprocessor()->newFrame();
 				$dom = $parser->preprocessToDom( $parserinput );
 				$result = $frame->expand( $dom );
 			} else {
-				$result = $parser->preprocess($parserinput, $wgParser->getTitle(), $parser_options);
+				$result = $parser->preprocess($parserinput, $parsetitle, $parser_options);
 			}
+		} else /* SMW_OUTPUT_HTML, SMW_OUTPUT_FILE */ {
+			$parserOutput = $parser->parse($parserinput, $parsetitle, $parser_options);
+			$result = $parserOutput->getText();
 		}
 		$smwgStoreActive = $old_smwgStoreActive;
 		// show link to more results
@@ -83,7 +96,7 @@ class SMWTemplateResultPrinter extends SMWResultPrinter {
 			if (array_key_exists('link', $this->m_params)) { // linking may interfere with templates
 				$link->setParameter($this->m_params['link'],'link');
 			}
-			$result .= $link->getText($outputmode,$this->getLinker());
+			$result .= $link->getText($outputmode,$this->mLinker);
 		}
 		return $result;
 	}

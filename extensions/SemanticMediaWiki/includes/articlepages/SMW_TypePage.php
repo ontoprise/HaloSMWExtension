@@ -7,15 +7,10 @@
  * @author: Markus Krötzsch
  */
 
-if( !defined( 'MEDIAWIKI' ) )   die( 1 );
-
-global $smwgIP;
-include_once($smwgIP . '/includes/articlepages/SMW_OrderedListPage.php');
-include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-
 /**
  * Implementation of MediaWiki's Article that shows additional information on
  * Type: pages. Very simliar to CategoryPage.
+ * @note AUTOLOADED
  */
 class SMWTypePage extends SMWOrderedListPage {
 
@@ -55,8 +50,8 @@ class SMWTypePage extends SMWOrderedListPage {
 		} else {
 			$this->articles = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $typevalue, $options);
 		}
-		foreach ($this->articles as $title) {
-			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
+		foreach ($this->articles as $dv) {
+			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $dv->getSortkey() ) );
 		}
 	}
 
@@ -153,10 +148,10 @@ class SMWTypePage extends SMWOrderedListPage {
 					$cont_msg = "";
 					if ( $this->articles_start_char[$index] == $prev_start_char )
 						$cont_msg = wfMsgHtml('listingcontinuesabbrev');
-					$r .= "<h3>" . htmlspecialchars( $this->articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
+					$r .= "<h3>" . htmlspecialchars( $this->articles_start_char[$index] ) . " $cont_msg</h3>\n<ul>";
 					$prev_start_char = $this->articles_start_char[$index];
 				}
-				$r .= "<li>" . $this->getArticleLink($this->articles[$index]) . "</li>\n";
+				$r .= "<li>" . $this->articles[$index]->getLongHTMLText($this->getSkin()) . "</li>\n";
 			}
 			if( !$atColumnTop ) {
 				$r .= "</ul>\n";
@@ -172,20 +167,15 @@ class SMWTypePage extends SMWOrderedListPage {
 	 */
 	private function shortList($start, $end) {
 		$r = '<h3>' . htmlspecialchars( $this->articles_start_char[$start] ) . "</h3>\n";
-		$r .= '<ul><li>'. $this->getArticleLink($this->articles[$start]) . '</li>';
+		$r .= '<ul><li>'. $this->articles[$start]->getLongHTMLText($this->getSkin()) . '</li>';
 		for ($index = $start+1; $index < $end; $index++ ) {
 			if ($this->articles_start_char[$index] != $this->articles_start_char[$index - 1]) {
 				$r .= "</ul><h3>" . htmlspecialchars( $this->articles_start_char[$index] ) . "</h3>\n<ul>";
 			}
-			$r .= '<li>' . $this->getArticleLink( $this->articles[$index] ) . '</li>';
+			$r .= '<li>' . $this->articles[$index]->getLongHTMLText($this->getSkin()) . '</li>';
 		}
 		$r .= '</ul>';
 		return $r;
-	}
-	
-	private function getArticleLink($title) {
-		global $wgContLang;
-		return $this->getSkin()->makeKnownLinkObj( $title, $wgContLang->convert( $title->getText() ) );
 	}
 
 }

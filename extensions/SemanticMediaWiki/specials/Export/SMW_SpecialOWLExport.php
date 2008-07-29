@@ -353,7 +353,7 @@ class OWLExport {
 				foreach ($this->element_queue as $key => $staux) {
 					$taux = Title::makeTitle($staux->namespace, $staux->dbkey);
 					if ( !smwfIsSemanticsProcessed($staux->namespace) || ($staux->modifier !== '') ||
-					     !OWLExport::fitsNsRestriction($ns_restriction, $styux->namespace) ||
+					     !OWLExport::fitsNsRestriction($ns_restriction, $staux->namespace) ||
 					     (!$taux->exists()) ) {
 					// Note: we do not need to check the cache to guess if an element was already
 					// printed. If so, it would not be included in the queue in the first place.
@@ -584,47 +584,57 @@ class OWLExport {
 	/**
 	 * Serialise the given semantic data.
 	 */
-	protected function printExpData(/*SMWExpData*/ $data) {
+	protected function printExpData(/*SMWExpData*/ $data, $indent = '') {
 		$type = $data->extractMainType()->getQName();
 		if ('' == $this->pre_ns_buffer) { // start new ns block
-			$this->pre_ns_buffer .= "\t<$type";
+			$this->pre_ns_buffer .= "\t$indent<$type";
 		} else {
-			$this->post_ns_buffer .= "\t<$type";
+			$this->post_ns_buffer .= "\t$indent<$type";
 		}
 		if ( ($data->getSubject() instanceof SMWExpLiteral) || ($data->getSubject() instanceof SMWExpResource) ) {
 			 $this->post_ns_buffer .= ' rdf:about="' . $data->getSubject()->getName() . '"';
 		} // else: blank node
-		$this->post_ns_buffer .= ">\n";
-
-		foreach ($data->getProperties() as $property) {
-			$this->queueElement($property);
-			foreach ($data->getValues($property) as $value) {
-				$this->post_ns_buffer .= "\t\t<" . $property->getQName();
-				$this->addExtraNamespace($property->getNamespaceID(),$property->getNamespace());
-				$object = $value->getSubject();
-				if ($object instanceof SMWExpLiteral) {
-					if ($object->getDatatype() != '') {
-						$this->post_ns_buffer .= ' rdf:datatype="' . $object->getDatatype() . '"';
-					}
-					$this->post_ns_buffer .= '>' . 
-					     str_replace(array('&', '>', '<'), array('&amp;', '&gt;', '&lt;'), $object->getName()) . 
-					     '</' . $property->getQName() . ">\n";
-				} else { // bnode or resource, may have subdescriptions
-					if (count($value->getProperties()) > 0) {
-						$this->post_ns_buffer .= ">\n";
-						$this->printExpData($value);
-						$this->post_ns_buffer .= "\t\t</" . $property->getQName() . ">\n";
-					} else {
-						if ($object instanceof SMWExpResource) {
-							$this->post_ns_buffer .= ' rdf:resource="' . $object->getName() . '"';
-							$this->queueElement($object); // queue only non-explicated resources
+		if (count($data->getProperties()) == 0) {
+			$this->post_ns_buffer .= " />\n";
+		} else {
+			$this->post_ns_buffer .= ">\n";
+			foreach ($data->getProperties() as $property) {
+				$this->queueElement($property);
+				foreach ($data->getValues($property) as $value) {
+					$this->post_ns_buffer .= "\t\t$indent<" . $property->getQName();
+					$this->addExtraNamespace($property->getNamespaceID(),$property->getNamespace());
+					$object = $value->getSubject();
+					if ($object instanceof SMWExpLiteral) {
+						if ($object->getDatatype() != '') {
+							$this->post_ns_buffer .= ' rdf:datatype="' . $object->getDatatype() . '"';
 						}
-						$this->post_ns_buffer .= "/>\n";
+						$this->post_ns_buffer .= '>' . 
+							str_replace(array('&', '>', '<'), array('&amp;', '&gt;', '&lt;'), $object->getName()) . 
+							'</' . $property->getQName() . ">\n";
+					} else { // bnode or resource, may have subdescriptions
+						$collection = $value->getCollection();
+						if ($collection != false) {
+							$this->post_ns_buffer .= " rdf:parseType=\"Collection\">\n";
+							foreach ($collection as $subvalue) {
+								$this->printExpData($subvalue, $indent . "\t\t");
+							}
+							$this->post_ns_buffer .= "\t\t$indent</" . $property->getQName() . ">\n";
+						} elseif (count($value->getProperties()) > 0) {
+							$this->post_ns_buffer .= ">\n";
+							$this->printExpData($value, $indent . "\t\t");
+							$this->post_ns_buffer .= "\t\t$indent</" . $property->getQName() . ">\n";
+						} else {
+							if ($object instanceof SMWExpResource) {
+								$this->post_ns_buffer .= ' rdf:resource="' . $object->getName() . '"';
+								$this->queueElement($object); // queue only non-explicated resources
+							}
+							$this->post_ns_buffer .= "/>\n";
+						}
 					}
 				}
 			}
+			$this->post_ns_buffer .= "\t$indent</" . $type . ">\n";
 		}
-		$this->post_ns_buffer .= "\t</" . $type . ">\n";
 		$this->flushBuffers();
 	}
 
@@ -677,17 +687,40 @@ class OWLExport {
 				}
 			}
 			if ( NS_CATEGORY === $title->getNamespace() ) { // also print elements of categories
-				$instances = smwfGetStore()->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $title );
+				$options = new SMWRequestOptions();
+				$options->limit = 100; /// Categories can be large, use limit
+				$instances = smwfGetStore()->getSpecialSubjects( SMW_SP_INSTANCE_OF, $value, $options );
 				foreach($instances as $instance) {
 					$stb = new SMWSmallTitle();
 					$stb->dbkey = $instance->getDBKey();
 					$stb->namespace = $instance->getNamespace();
 					if (!array_key_exists($stb->getHash(), $this->element_done)) {
 						$semdata = smwfGetStore()->getSemanticData($instance, array(SMW_SP_HAS_URI, SMW_SP_HAS_TYPE, SMW_SP_EXT_BASEURI));
-						$semdata->addSpecialValue(SMW_SP_HAS_CATEGORY, $value);
+						$semdata->addSpecialValue(SMW_SP_INSTANCE_OF, $value);
 						$data = SMWExporter::makeExportData($semdata);
 						$this->printExpData($data);
 					}
+				}
+			} elseif  ( SMW_NS_CONCEPT === $title->getNamespace() ) { // print concept members (slightly different code)
+				$desc = new SMWConceptDescription($title);
+				$desc->addPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, ''));
+				$query = new SMWQuery($desc);
+				$query->setLimit(100);
+
+				$res = smwfGetStore()->getQueryResult($query);
+				$resarray = $res->getNext();
+				while ($resarray !== false) {
+					$instance = end($resarray)->getNextObject();
+					$stb = new SMWSmallTitle();
+					$stb->dbkey = $instance->getDBKey();
+					$stb->namespace = $instance->getNamespace();
+					if (!array_key_exists($stb->getHash(), $this->element_done)) {
+						$semdata = smwfGetStore()->getSemanticData($instance, array(SMW_SP_HAS_URI, SMW_SP_HAS_TYPE, SMW_SP_EXT_BASEURI));
+						$semdata->addSpecialValue(SMW_SP_INSTANCE_OF, $value);
+						$data = SMWExporter::makeExportData($semdata);
+						$this->printExpData($data);
+					}
+					$resarray = $res->getNext();
 				}
 			}
 			wfProfileOut("RDF::PrintPages::GetBacklinks");
@@ -791,6 +824,7 @@ class OWLExport {
 	 */
 	static public function fitsNsRestriction($res, $ns) {
 		if ($res === false) return true;
+		if (is_array($res)) return in_array($ns,$res);
 		if ($res >= 0) return ( $res == $ns );
 		return ( ($res != NS_CATEGORY) && ($res != SMW_NS_PROPERTY) && ($res != SMW_NS_TYPE) );
 	}

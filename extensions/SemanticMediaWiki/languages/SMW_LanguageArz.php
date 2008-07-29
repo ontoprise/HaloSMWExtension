@@ -1,6 +1,5 @@
 <?php
 /**
- * @author Mahmoud Zouari  mahmoudzouari@yahoo.fr http://www.cri.ensmp.fr
  * @author Meno25
  */
 
@@ -13,19 +12,19 @@ if (!defined('MEDIAWIKI')) die();
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
-class SMW_LanguageAr extends SMW_Language {
+class SMW_LanguageArz extends SMW_Language {
 
 protected $m_DatatypeLabels = array(
 	'_wpg' => 'الصفحة', // name of page datatype
-	'_str' => 'سلسلة أحرف',  // name of the string type
+	'_str' => 'سلسلة حروف',  // name of the string type
 	'_txt' => 'نص',  // name of the text type
 	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
-	'_boo' => 'منطقي',  // name of the boolean type
+	'_boo' => 'منطقى',  // name of the boolean type
 	'_num' => 'عدد',  // name for the datatype of numbers
 	'_geo' => 'الإحداثيات', // name of the geocoord type
 	'_tem' => 'الحرارة',  // name of the temperature type
 	'_dat' => 'التاريخ',  // name of the datetime (calendar) type
-	'_ema' => 'البريد الإلكتروني',  // name of the email type
+	'_ema' => 'البريد الإلكترونى',  // name of the email type
 	'_uri' => 'عنوان الصفحة',  // name of the URL type
 	'_anu' => 'التعليق علي معرف الموارد الموحد'  // name of the annotation URI type (OWL annotation property)
 );
