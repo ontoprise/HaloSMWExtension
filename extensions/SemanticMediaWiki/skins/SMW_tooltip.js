@@ -8,7 +8,8 @@ addOnloadHook(smw_tooltipInit);
 BubbleTT = new Object();
 BubbleTT.Platform= new Object();
 
-var tt; //the tooltip
+var tt = null; //the tooltip
+var all_tt = []; // all visible tooltips
 
 var imagePath=wgScriptPath+"/extensions/SemanticMediaWiki/skins/images/";
 
@@ -17,8 +18,8 @@ var SMWTT_WIDTH_P=200;
 var SMWTT_HEIGHT_P=80;
 
 //dimensions of inline tooltips
-var SMWTT_WIDTH_I=150;
-var SMWTT_HEIGHT_I=50;
+var SMWTT_WIDTH_I=250;
+var SMWTT_HEIGHT_I=150;
 
 /*register events for the tooltips*/
 function smw_tooltipInit() {
@@ -85,6 +86,7 @@ function smw_showTooltipPersist(e) {
 	while(!(origin.className=="smwttactivepersist")){origin=origin.parentNode};
 
 	tt = BubbleTT.createBubbleForPoint(true,origin,x,y,SMWTT_WIDTH_P,SMWTT_HEIGHT_P);
+	all_tt.push(tt);
 	BubbleTT.fillBubble(tt, origin);
 
 	//unregister handler to open bubble 
@@ -98,6 +100,11 @@ function smw_showTooltipPersist(e) {
 
 
 function smw_showTooltipInline(e) {
+	if (tt != null) {
+		// don't show further tooltips 
+		return;
+	}
+	
 	var x;
 	var y;
 	if(BubbleTT.Platform.browser.isIE){
@@ -117,9 +124,18 @@ function smw_showTooltipInline(e) {
 	BubbleTT.fillBubble(tt, origin);
 }
 
+function _smw_hideAllTooltips() {
+	for(var i = 0; i < all_tt.length; i++) {
+		all_tt[i].close();
+	}
+	all_tt = [];
+}
 
 function smw_hideTooltip(){
-	if (tt) tt.close();
+	if (tt) {
+		tt.close();
+		tt = null;
+	}
 }
 
 /**

@@ -9,11 +9,18 @@
  * TODO: The code below is still very very messy and undocumented. Cleanup needed!
  */
 
+if (!defined('MEDIAWIKI')) die();
+
+global $IP;
+require_once( "$IP/includes/SpecialPage.php" );
+
 SpecialPage::addPage( new SpecialPage('OntologyImport','delete',true,'doSpecialImportOntology',false) );
 
+
 function doSpecialImportOntology($par = NULL) {
-	global $smwgIP;
+	global $IP, $smwgIP;
 	require_once($smwgIP . '/includes/SMW_Storage.php');
+	require_once($IP . '/includes/Title.php' );
 
 	global $wgOut, $wgRequest, $wgUser;
 	global $wgServer; // "http://www.yourserver.org"

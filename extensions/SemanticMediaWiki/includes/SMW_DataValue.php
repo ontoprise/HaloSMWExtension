@@ -16,12 +16,9 @@ abstract class SMWDataValue {
 	protected $m_typeid;              /// The type id for this value object
 	protected $m_infolinks = array(); /// Array of infolink objects
 	protected $m_outformat = false;   /// output formatting string, see setOutputFormat()
-	protected $m_stubdata = false;    /// usually unstub() checks if this contains useful content, 
-	                                  /// and inits the value if this is the case; false while unused
 
 	private $m_hasssearchlink;        /// used to control the addition of the standard search link
 	private $m_hasservicelinks;       /// used to control service link creation
-	
 
 	public function SMWDataValue($typeid) {
 		$this->m_typeid = $typeid;
@@ -110,8 +107,8 @@ abstract class SMWDataValue {
 			$servicelinks = smwfGetStore()->getSpecialValues($ptitle, SMW_SP_SERVICE_LINK);
 		}
 
-		foreach ($servicelinks as $dv) {
-			$args[0] = 'smw_service_' . str_replace(' ', '_', $dv->getXSDValue()); // messages distinguish ' ' from '_'
+		foreach ($servicelinks as $dvs) {
+			$args[0] = 'smw_service_' . str_replace(' ', '_', $dvs); // messages distinguish ' ' from '_'
 			$text = call_user_func_array('wfMsgForContent', $args);
 			$links = preg_split("/[\n][\s]?/u", $text);
 			foreach ($links as $link) {
@@ -158,16 +155,6 @@ abstract class SMWDataValue {
 	 * of this implementation for getXSDValue() and getUnit().
 	 */
 	abstract protected function parseXSDValue($value, $unit);
-
-	/**
-	 * It makes sense for datavalues to have a stubbing mechanism, especially when
-	 * initialised by parseXSDValue. Such a mechanism quickly stores the initialisation
-	 * parameters and prevents to do any work on them. Each function that requires
-	 * values to be set then first calls unstub() to trigger the required processing.
-	 * This is especially useful for datatypes where this processing may take some time.
-	 */
-	protected function unstub() {
-	}
 
 ///// Get methods /////
 
@@ -228,7 +215,7 @@ abstract class SMWDataValue {
 	public function getShortText($outputformat, $linker = NULL) {
 		switch ($outputformat) {
 			case SMW_OUTPUT_WIKI: return $this->getShortWikiText($linker);
-			case SMW_OUTPUT_HTML: case SMW_OUTPUT_FILE: default: return $this->getShortHTMLText($linker);
+			case SMW_OUTPUT_HTML: default: return $this->getShortHTMLText($linker);
 		}
 	}
 
@@ -243,7 +230,7 @@ abstract class SMWDataValue {
 	public function getLongText($outputformat, $linker = NULL) {
 		switch ($outputformat) {
 			case SMW_OUTPUT_WIKI: return $this->getLongWikiText($linker);
-			case SMW_OUTPUT_HTML: case SMW_OUTPUT_FILE: default: return $this->getLongHTMLText($linker);
+			case SMW_OUTPUT_HTML: default: return $this->getLongHTMLText($linker);
 		}
 	}
 
@@ -267,7 +254,7 @@ abstract class SMWDataValue {
 				}
 			}
 			break;
-		case SMW_OUTPUT_HTML: case SMW_OUTPUT_FILE: default:
+		case SMW_OUTPUT_HTML:
 			foreach ($this->getInfolinks() as $link) {
 				if ($first) {
 					$result .= '&nbsp;&nbsp;' . $link->getHTML($linker);
@@ -338,6 +325,8 @@ abstract class SMWDataValue {
 	 * text, but no more. Result might have no entries but is always an array.
 	 */
 	public function getInfolinks() {
+		global $smwgIP;
+		include_once($smwgIP . '/includes/SMW_Infolink.php');
 		if ($this->isValid() && $this->m_property) {
 			if (!$this->m_hasssearchlink) { // add default search link
 				$this->m_hasssearchlink = true;
@@ -366,7 +355,6 @@ abstract class SMWDataValue {
 	 * normalised first)
 	 */
 	public function getHash() {
-		$this->unstub();
 		if ($this->isValid()) { // assume that XSD value + unit say all
 			return $this->getXSDValue() . $this->getUnit();
 		} else {
@@ -387,7 +375,6 @@ abstract class SMWDataValue {
 	 * and false if parsing errors occured or no value was given.
 	 */
 	public function isValid() {
-		$this->unstub();
 		return ( (count($this->m_errors) == 0) && $this->m_isset );
 	}
 
@@ -396,7 +383,6 @@ abstract class SMWDataValue {
 	 * an empty string if no errors happened.
 	 */
 	public function getErrorText() {
-		$this->unstub();
 		return smwfEncodeMessages($this->m_errors);
 	}
 
@@ -405,7 +391,6 @@ abstract class SMWDataValue {
 	 * if no errors occurred.
 	 */
 	public function getErrors() {
-		$this->unstub();
 		return $this->m_errors;
 	}
 
@@ -416,7 +401,6 @@ abstract class SMWDataValue {
 	 * If the value is empty or invalid, NULL is returned.
 	 */
 	public function getExportData() { // default implementation: encode value as untyped string
-		$this->unstub();
 		if ($this->isValid()) {
 			$lit = new SMWExpLiteral(smwfHTMLtoUTF8($this->getXSDValue()), $this);
 			return new SMWExpData($lit);

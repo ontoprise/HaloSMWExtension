@@ -44,7 +44,6 @@ class SMWDataValueFactory {
 	 * can be set later on.
 	 */
 	static public function newPropertyValue($propertyname, $value=false, $caption=false) {
-		global $smwgPDefaultType;
 		wfProfileIn("SMWDataValueFactory::newPropertyValue (SMW)");
 		if(array_key_exists($propertyname,SMWDataValueFactory::$m_typebyproperty)) { // use cache
 			$result = SMWDataValueFactory::newTypeObjectValue(SMWDataValueFactory::$m_typebyproperty[$propertyname], $value, $caption, $propertyname);
@@ -57,9 +56,9 @@ class SMWDataValueFactory {
 			$result = SMWDataValueFactory::newPropertyObjectValue($ptitle,$value,$caption);
 		} else {
 			$type = SMWDataValueFactory::newTypeIDValue('__typ');
-			$type->setXSDValue($smwgPDefaultType);
+			$type->setXSDValue('_wpg');
 			SMWDataValueFactory::$m_typebyproperty[$propertyname] = $type;
-			$result = SMWDataValueFactory::newTypeIDValue($smwgPDefaultType,$value,$caption,$propertyname);
+			$result = SMWDataValueFactory::newTypeIDValue('_wpg',$value,$caption,$propertyname);
 		}
 		wfProfileOut("SMWDataValueFactory::newPropertyValue (SMW)");
 		return $result;
@@ -71,7 +70,6 @@ class SMWDataValueFactory {
 	 * can be set later on.
 	 */
 	static public function newPropertyObjectValue(Title $property, $value=false, $caption=false) {
-		global $smwgPDefaultType;
 		$propertyname = $property->getText();
 		if(array_key_exists($propertyname,SMWDataValueFactory::$m_typebyproperty)) { // use cache
 			return SMWDataValueFactory::newTypeObjectValue(SMWDataValueFactory::$m_typebyproperty[$propertyname], $value, $caption, $propertyname);
@@ -79,15 +77,17 @@ class SMWDataValueFactory {
 
 		$typearray = smwfGetStore()->getSpecialValues($property,SMW_SP_HAS_TYPE);
 		if (count($typearray)==1) {
-			SMWDataValueFactory::$m_typebyproperty[$propertyname] = current($typearray);
+			SMWDataValueFactory::$m_typebyproperty[$propertyname] = $typearray[0];
 			$result = SMWDataValueFactory::newTypeObjectValue(SMWDataValueFactory::$m_typebyproperty[$propertyname], $value, $caption, $propertyname);
 			return $result;
 		} elseif (count($typearray)==0) {
 			$type = SMWDataValueFactory::newTypeIDValue('__typ');
-			$type->setXSDValue($smwgPDefaultType);
+			$type->setXSDValue('_wpg');
 			SMWDataValueFactory::$m_typebyproperty[$propertyname] = $type;
-			return SMWDataValueFactory::newTypeIDValue($smwgPDefaultType,$value,$caption,$propertyname);
+			return SMWDataValueFactory::newTypeIDValue('_wpg',$value,$caption,$propertyname);
 		} else {
+			global $smwgIP;
+			include_once($smwgIP . '/includes/SMW_DV_Error.php');
 			return new SMWErrorValue(wfMsgForContent('smw_manytypes'), $value, $caption);
 		}
 	}
@@ -110,12 +110,8 @@ class SMWDataValueFactory {
 			case SMW_SP_CONVERSION_FACTOR: case SMW_SP_POSSIBLE_VALUE:
 				$result = SMWDataValueFactory::newTypeIDValue('_str', $value, $caption);
 				break;
-			case SMW_SP_SUBPROPERTY_OF: case SMW_SP_SUBCLASS_OF: case SMW_SP_REDIRECTS_TO: 
-			case SMW_SP_INSTANCE_OF:
+			case SMW_SP_SUBPROPERTY_OF:
 				$result = SMWDataValueFactory::newTypeIDValue('_wpg', $value, $caption);
-				break;
-			case SMW_SP_CONCEPT_DESC:
-				$result = SMWDataValueFactory::newTypeIDValue('__con', $value, $caption);
 				break;
 			default:
 				/// NOTE: unstable hook, future versions might have better ways of enabling extensions to add properties
@@ -251,11 +247,9 @@ class SMWDataValueFactory {
 		$wgAutoloadClasses['SMWLinearValue']      =  $smwgIP . '/includes/SMW_DV_Linear.php';
 		$wgAutoloadClasses['SMWTimeValue']        =  $smwgIP . '/includes/SMW_DV_Time.php';
 		$wgAutoloadClasses['SMWGeoCoordsValue']   =  $smwgIP . '/includes/SMW_DV_GeoCoords.php';
-		$wgAutoloadClasses['SMWBoolValue']        =  $smwgIP . '/includes/SMW_DV_Bool.php';
-		$wgAutoloadClasses['SMWConceptValue']     =  $smwgIP . '/includes/SMW_DV_Concept.php';
+		$wgAutoloadClasses['SMWBoolValue']      =  $smwgIP . '/includes/SMW_DV_Bool.php';
 		SMWDataValueFactory::$m_typeclasses = array(
 			'_txt'  => 'SMWStringValue',
-			'_cod'  => 'SMWStringValue',
 			'_str'  => 'SMWStringValue',
 			'_ema'  => 'SMWURIValue',
 			'_uri'  => 'SMWURIValue',
@@ -269,8 +263,7 @@ class SMWDataValueFactory {
 			'__typ' => 'SMWTypesValue',
 			'__lin' => 'SMWLinearValue',
 			'__nry' => 'SMWNAryValue',
-			'__err' => 'SMWErrorValue',
-			'__con' => 'SMWConceptValue'
+			'__err' => 'SMWErrorValue'
 		);
 
 		wfRunHooks( 'smwInitDatatypes' );

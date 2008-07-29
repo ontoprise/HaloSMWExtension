@@ -1,10 +1,14 @@
 <?php
 /**
  * Test implementation of SMW's storage abstraction layer.
- * FIXME: Currently not really functional.
  *
  * @author Markus Krötzsch
  */
+
+global $smwgIP;
+require_once( "$smwgIP/includes/storage/SMW_Store.php" );
+require_once( "$smwgIP/includes/SMW_Datatype.php" );
+require_once( "$smwgIP/includes/SMW_DataValue.php" );
 
 /**
  * Storage access class for testing purposes. No persitent storage is implemented, but
@@ -16,13 +20,9 @@ class SMWTestStore extends SMWStore {
 
 ///// Reading methods /////
 
-	function getSemanticData($subject, $filter = false) {
-		return NULL;
-	}
-
 	function getSpecialValues(Title $subject, $specialprop, $requestoptions = NULL) {
 		// TODO
-		if ($specialprop === SMW_SP_INSTANCE_OF) { // category membership
+		if ($specialprop === SMW_SP_HAS_CATEGORY) { // category membership
 			if ( ($requestoptions->limit == -1) || $requestoptions->limit > 8) {
 				$requestoptions->limit = 5;
 			}
@@ -52,8 +52,8 @@ class SMWTestStore extends SMWStore {
 		}
 	}
 
-	function getSpecialSubjects($specialprop, SMWDataValue $value, $requestoptions = NULL) {
-		if ($specialprop === SMW_SP_INSTANCE_OF) { // category membership
+	function getSpecialSubjects($specialprop, $value, $requestoptions = NULL) {
+		if ($specialprop === SMW_SP_HAS_CATEGORY) { // category membership
 			if ( !($value instanceof Title) || ($value->getNamespace() != NS_CATEGORY) ) {
 				return array();
 			}
@@ -67,8 +67,8 @@ class SMWTestStore extends SMWStore {
 		}
 	}
 
-	function getPropertyValues($subject, $property, $requestoptions = NULL, $outputformat = '') {
-		$type = $this->getSpecialValues($property,SMW_SP_HAS_TYPE);
+	function getAttributeValues(Title $subject, Title $attribute, $requestoptions = NULL) {
+		$type = $this->getSpecialValues($attribute,SMW_SP_HAS_TYPE);
 		$type = $type[0];
 		$valarray = array();
 		switch ($th->getID()) {
@@ -94,32 +94,51 @@ class SMWTestStore extends SMWStore {
 		$result = Array();
 		foreach ($valarray as $val) {
 			$dv = SMWDataValueFactory::newTypeObjectValue($type);
-			$dv->setAttribute($property->getText());
+			$dv->setAttribute($attribute->getText());
 			$dv->setXSDValue($val,'');
 			$result[] = $dv;
 		}
 		return $result;
 	}
 
-	function getPropertySubjects(Title $property, $value, $requestoptions = NULL) {
+	function getAttributeSubjects(Title $attribute, SMWDataValue $value, $requestoptions = NULL) {
 		if ( !$value->isValid() ) {
 			return array();
 		}
 		return $this->getTestTitles($requestoptions);
 	}
 
-	function getAllPropertySubjects(Title $property, $requestoptions = NULL) {
+	function getAllAttributeSubjects(Title $attribute, $requestoptions = NULL) {
 		return $this->getTestTitles($requestoptions);
 	}
 
-	function getProperties(Title $subject, $requestoptions = NULL) {
+	function getAttributes(Title $subject, $requestoptions = NULL) {
 		if ( ($requestoptions->limit == -1) || $requestoptions->limit > 8) {
 			$requestoptions->limit = 8;
 		}
 		return $this->getTestTitles($requestoptions, SMW_NS_PROPERTY);
 	}
 
-	function getInProperties(SMWDataValue $object, $requestoptions = NULL) {
+	function getRelationObjects(Title $subject, Title $relation, $requestoptions = NULL) {
+		return $this->getTestTitles($requestoptions);
+	}
+
+	function getRelationSubjects(Title $relation, Title $object, $requestoptions = NULL) {
+		return $this->getTestTitles($requestoptions);
+	}
+
+	function getAllRelationSubjects(Title $relation, $requestoptions = NULL) {
+		return $this->getTestTitles($requestoptions);
+	}
+
+	function getOutRelations(Title $subject, $requestoptions = NULL) {
+		if ( ($requestoptions->limit == -1) || $requestoptions->limit > 6) {
+			$requestoptions->limit = 6;
+		}
+		return $this->getTestTitles($requestoptions, SMW_NS_RELATION);
+	}
+
+	function getInRelations(Title $object, $requestoptions = NULL) {
 		return $this->getTestTitles($requestoptions, SMW_NS_RELATION);
 	}
 
@@ -128,10 +147,10 @@ class SMWTestStore extends SMWStore {
 	function deleteSubject(Title $subject) {
 	}
 
-	function updateData(SMWSemanticData $data, $newpage) {
+	function updateData(SMWSemanticData $data) {
 	}
 
-	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
+	function changeTitle(Title $oldtitle, Title $newtitle, $keepid = true) {
 	}
 
 ///// Query answering /////
@@ -151,13 +170,16 @@ class SMWTestStore extends SMWStore {
 			$row = array();
 			foreach ($prs as $pr) {
 				switch ($pr->getMode()) {
-					case SMWPrintRequest::PRINT_THIS:
+					case SMW_PRINT_THIS:
 						$row[] = new SMWResultArray(array($qt), $pr);
 						break;
-					case SMWPrintRequest::PRINT_CATS:
-						$row[] = new SMWResultArray($this->getSpecialValues($qt,SMW_SP_INSTANCE_OF), $pr);
+					case SMW_PRINT_RELS:
+						$row[] = new SMWResultArray($this->getRelationObjects($qt,$pr->getTitle()), $pr);
 						break;
-					case SMWPrintRequest::PRINT_PROP:
+					case SMW_PRINT_CATS:
+						$row[] = new SMWResultArray($this->getSpecialValues($qt,SMW_SP_HAS_CATEGORY), $pr);
+						break;
+					case SMW_PRINT_ATTS:
 						///TODO: respect given datavalue (desired unit), needs extension of getAttributeValues()
 						$row[] = new SMWResultArray($this->getAttributeValues($qt,$pr->getTitle()), $pr);
 						break;
@@ -169,31 +191,13 @@ class SMWTestStore extends SMWStore {
 		return $result;
 	}
 
-///// Special page functions /////
-
-	function getPropertiesSpecial($requestoptions = NULL) {
-		return array();
-	}
-
-	function getUnusedPropertiesSpecial($requestoptions = NULL) {
-		return array();
-	}
-
-	function getWantedPropertiesSpecial($requestoptions = NULL) {
-		return array();
-	}
-
-	function getStatistics() {
-		return array('PROPUSES' => 0, 'USEDPROPS' => 0, 'DECLPROPS' => 0);
-	}
-
 ///// Setup store /////
 
-	function setup($verbose = true) {
+	function setup() {
 		return true;
 	}
 
-	function drop($verbose = true) {
+	function drop() {
 		return true;
 	}
 
@@ -290,13 +294,13 @@ class SMWTestStore extends SMWStore {
 // 				foreach ($requestoptions->getStringConditions() as $strcond) {
 // 					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
 // 					switch ($strcond->condition) {
-// 						case SMWStringCondition::STRCOND_PRE:
+// 						case SMW_STRCOND_PRE:
 // 							$string .= '%';
 // 							break;
-// 						case SMWStringCondition::STRCOND_POST:
+// 						case SMW_STRCOND_POST:
 // 							$string = '%' . $string;
 // 							break;
-// 						case SMWStringCondition::STRCOND_MID:
+// 						case SMW_STRCOND_MID:
 // 							$string = '%' . $string . '%';
 // 							break;
 // 					}

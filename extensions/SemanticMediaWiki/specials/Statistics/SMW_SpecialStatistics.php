@@ -5,6 +5,11 @@
  * This special page of the Semantic MediaWiki extension displays some 
  * statistics about properties.
  */
+if (!defined('MEDIAWIKI')) die();
+
+global $IP;
+require_once( "$IP/includes/SpecialPage.php" );
+require_once( "$IP/includes/Title.php" );
 
 function smwfExecuteSemanticStatistics() {
 	global $wgOut, $wgLang;

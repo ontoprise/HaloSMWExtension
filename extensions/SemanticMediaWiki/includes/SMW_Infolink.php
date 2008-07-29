@@ -137,7 +137,7 @@ class SMWInfolink {
 			if ($title !== NULL) {
 				if ($outputformat == SMW_OUTPUT_WIKI) {
 					$link = "[[$titletext|$this->m_caption]]";
-				} else { // SMW_OUTPUT_HTML, SMW_OUTPUT_FILE
+				} else { // SMW_OUTPUT_HTML
 					$link = $this->getLinker($linker)->makeKnownLinkObj($title, $this->m_caption);
 				}
 			} else { // Title creation failed, maybe illegal symbols or too long; make a direct URL link 
@@ -148,7 +148,7 @@ class SMWInfolink {
 				if ($title !== NULL) {
 					if ($outputformat == SMW_OUTPUT_WIKI) {
 						$link = "[" . $title->getFullURL(SMWInfolink::encodeParameters($this->m_params,false)) . " $this->m_caption]";
-					} else { // SMW_OUTPUT_HTML, SMW_OUTPUT_FILE
+					} else { // SMW_OUTPUT_HTML
 						$link = $this->getLinker($linker)->makeKnownLinkObj($title, $this->m_caption, SMWInfolink::encodeParameters($this->m_params,false));
 					}
 				} else {
@@ -159,7 +159,7 @@ class SMWInfolink {
 			$target = $this->getURL();
 			if ($outputformat == SMW_OUTPUT_WIKI) {
 				$link = "[$target $this->m_caption]";
-			} else { //SMW_OUTPUT_HTML, SMW_OUTPUT_FILE
+			} else {
 				$link = "<a href=\"" . htmlspecialchars($target) . "\">$this->m_caption</a>";
 			}
 		}
@@ -247,28 +247,22 @@ class SMWInfolink {
 				// - : used in SMW-encoding strings, needs escaping too
 				// [ ] < > &lt; &gt; '' |: problematic in MW titles
 				// & : sometimes problematic in MW titles ([[&amp;]] is OK, [[&test]] is OK, [[&test;]] is not OK)
-				//     (Note: '&' in strings obtained during parsing already has &entities; replaced by 
-				//      UTF8 anyway)
+				//     (Note: '&' in strings obtained during parsing already has &entities; replaced by UTF8 anyway)
 				// ' ': are equivalent with '_' in MW titles, but are not equivalent in certain parameter values
 				// "\n": real breaks not possible in [[...]]
 				// "#": has special meaning in URLs, triggers additional MW escapes (using . for %)
-				// '%': must be escaped to prevent any impact of double decoding when replacing - 
-				//      by % before urldecode
-				// '?': if not escaped, strange effects were observed on some sites (printout and other 
-				//      parameters ignored without obvious cause); SMW-escaping is always save to do -- it just
-				//      make URLs less readable
 				//
 				$value = str_replace(
-				          array('-', '#', "\n", ' ', '/', '[', ']', '<', '>', '&lt;', '&gt;', '&amp;', '\'\'', '|', '&', '%', '?'),
-				          array('-2D', '-23', '-0A', '-20', '-2F', '-5B', '-5D', '-3C', '-3E', '-3C', '-3E', '-26', '-27-27', '-7C', '-26', '-25', '-3F'), $value);
+				          array('-', '#', "\n", ' ', '/', '[', ']', '<', '>', '&lt;', '&gt;', '&amp;', '\'\'', '|', '&'),
+				          array('-2D', '-23', '-0A', '-20', '-2F', '-5B', '-5D', '-3C', '-3E', '-3C', '-3E', '-26', '-27-27', '-7C', '-26'), $value);
 				if ($result != '') $result .= '/';
 				$result .= $value;
 			}
-		} else { // Note: this requires to have HTTP compatible parameter names (ASCII)
+		} else {
 			$q = array(); // collect unlabelled query parameters here
 			foreach ($params as $name => $value) {
 				if ( is_string($name) && ($name != '') ) {
-					$value = $name . '=' . rawurlencode($value);
+					$value = $name . '=' . urlencode($value);
 					if ($result != '') $result .= '&';
 					$result .= $value;
 				} else {
@@ -277,7 +271,7 @@ class SMWInfolink {
 			}
 			if (count($q)>0) { // prepend encoding for unlabelled parameters
 				if ($result != '') $result = '&' . $result;
-				$result = 'x=' . rawurlencode(SMWInfolink::encodeParameters($q,true)) . $result;
+				$result = 'x=' . SMWInfolink::encodeParameters($q,true) . $result;
 			}
 		}
 		return $result;
@@ -294,9 +288,6 @@ class SMWInfolink {
 	 *
 	 * $titleparam is the string extracted by MediaWiki from special page calls of the 
 	 * form Special:Something/titleparam
-	 * Note: it is assumed that the given $titleparam is already urldecoded, as is normal
-	 * when getting such parameters from MediaWiki. SMW-escaped parameters largely prevent 
-	 * double decoding effects (i.e. there are no new "%" after one pass of urldecoding)
 	 *
 	 * The function SMWInfolink::encodeParameters() can be used to create a suitable 
 	 * encoding. It is strongly recommended to not create any code that depends on the 

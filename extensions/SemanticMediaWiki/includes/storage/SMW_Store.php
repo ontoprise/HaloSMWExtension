@@ -5,23 +5,28 @@
  * @author Markus Krötzsch
  */
 
+global $smwgIP;
+require_once($smwgIP . '/includes/SMW_SemanticData.php');
+require_once($smwgIP . '/includes/storage/SMW_Query.php');
+require_once($smwgIP . '/includes/storage/SMW_QueryResult.php');
+
+define('SMW_STRCOND_PRE',0);
+define('SMW_STRCOND_POST',1);
+define('SMW_STRCOND_MID',2);
+
 /**
  * Small data container class for describing filtering conditions on the string
  * label of some entity. States that a given string should either be prefix, postfix,
  * or some arbitrary part of labels.
- * @note AUTOLOADED
  */
 class SMWStringCondition {
-	const STRCOND_PRE = 0;
-	const STRCOND_POST = 1;
-	const STRCOND_MID = 2;
 	/**
 	 * String to match.
 	 */
 	public $string;
 	/**
-	 * Condition. One of STRCOND_PRE (string matches prefix),
-	 * STRCOND_POST (string matches postfix), STRCOND_MID
+	 * Condition. One of SMW_STRCOND_PRE (string matches prefix),
+	 * SMW_STRCOND_POST (string matches postfix), SMW_STRCOND_MID
 	 * (string matches to some inner part).
 	 */
 	public $condition;
@@ -39,7 +44,6 @@ class SMWStringCondition {
  * to their more complex structure.
  * Options that should not be used or where default values should be used
  * can be left as initialised.
- * @note AUTOLOADED
  */
 class SMWRequestOptions {
 	/**
@@ -85,7 +89,7 @@ class SMWRequestOptions {
 	/**
 	 * Set a new string condition applied to labels of results (if available).
 	 * @param $string the string to match
-	 * @param $condition type of condition, one of STRCOND_PRE, STRCOND_POST, STRCOND_MID
+	 * @param $condition type of condition, one of SMW_STRCOND_PRE, SMW_STRCOND_POST, SMW_STRCOND_MID
 	 */
 	public function addStringCondition($string, $condition) {
 		$this->stringcond[] = new SMWStringCondition($string, $condition);
@@ -133,10 +137,10 @@ abstract class SMWStore {
 
 	/**
 	 * Get an array of all pages that have a certain special value for a given special property
-	 * (identified as usual by an integer constant). The result is an array of SMWWikiPageValue
-	 * objects. The type of the input value depends on the kind of special property that was requested.
+	 * (identified as usual by an integer constant). The result is an array of titles. The tpye of
+	 * the input value depends on the kind of special property that was requested
 	 */
-	abstract function getSpecialSubjects($specialprop, SMWDataValue $value, $requestoptions = NULL);
+	abstract function getSpecialSubjects($specialprop, $value, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all property values stored for the given subject and property. The result
@@ -150,14 +154,13 @@ abstract class SMWStore {
 
 	/**
 	 * Get an array of all subjects that have the given value for the given property. The
-	 * result is an array of SMWWikiPageValue objects. If NULL is given as a value, all subjects having
-	 * that property are returned.
+	 * result is an array of Title objects.
 	 */
-	abstract function getPropertySubjects(Title $property, $value, $requestoptions = NULL);
+	abstract function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all subjects that have some value for the given property. The
-	 * result is an array of SMWWikiPageValue objects.
+	 * result is an array of Title objects.
 	 */
 	abstract function getAllPropertySubjects(Title $property, $requestoptions = NULL);
 
@@ -198,9 +201,7 @@ abstract class SMWStore {
 	 * but the id of the page might be used internally by the store.
 	 */
 	function clearData(Title $subject, $newpage) {
-		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$dv->setValues($subject->getDBkey(), $subject->getNamespace());
-		$emptydata = new SMWSemanticData($dv);
+		$emptydata = new SMWSemanticData($subject);
 		$this->updateData($emptydata, $newpage);
 	}
 

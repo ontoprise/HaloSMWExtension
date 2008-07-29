@@ -2,8 +2,13 @@
 /**
  * @author Markus Krötzsch
  *
- * This page shows all used properties.
+ * This page shows all used attributes.
  */
+
+if (!defined('MEDIAWIKI')) die();
+
+global $smwgIP;
+include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
 
 function smwfDoSpecialProperties() {
 	wfProfileIn('smwfDoSpecialProperties (SMW)');
@@ -43,7 +48,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 		if ($result[0]->exists()) {
 			$types = smwfGetStore()->getSpecialValues($result[0], SMW_SP_HAS_TYPE);
 			if (count($types) >= 1) {
-				$typestring = current($types)->getLongHTMLText($skin);
+				$typestring = $types[0]->getLongHTMLText($skin);
 			}
 			$proplink = $skin->makeKnownLinkObj( $result[0], $result[0]->getText());
 		} else {

@@ -6,6 +6,9 @@
  * @author Markus Krötzsch
  */
 
+global $smwgIP;
+require_once($smwgIP . '/includes/storage/SMW_Description.php');
+
 /**
  * Representation of queries in SMW, each consisting of a query 
  * description and various parameters. Some settings might also lead to 
@@ -14,7 +17,6 @@
  * Most additional query parameters (limit, sort, ascending, ...) are 
  * interpreted as in SMWRequestOptions (though the latter contains some
  * additional settings).
- * @note: AUTOLOADED
  */
 class SMWQuery {
 

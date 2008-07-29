@@ -2,9 +2,13 @@
 /**
  * @author Markus Krötzsch
  *
- * This page shows all unused properties.
+ * This page shows all used attributes.
  */
 
+if (!defined('MEDIAWIKI')) die();
+
+global $smwgIP;
+include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
 
 function smwfDoSpecialUnusedProperties() {
 	wfProfileIn('smwfDoSpecialUnusedProperties (SMW)');
@@ -40,7 +44,7 @@ class SMWUnusedPropertiesPage extends SMWQueryPage {
 		$types = smwfGetStore()->getSpecialValues($result, SMW_SP_HAS_TYPE);
 		$errors = array();
 		if (count($types) >= 1) {
-			$typestring = current($types)->getLongHTMLText($skin);
+			$typestring = $types[0]->getLongHTMLText($skin);
 		} else {
 			$type = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE);
 			$type->setXSDValue('_wpg');

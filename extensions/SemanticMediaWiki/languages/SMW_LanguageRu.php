@@ -4,12 +4,6 @@
  * @author cnit@uniyar.ac.ru
  */
 
-/**
- * Protect against register_globals vulnerabilities.
- * This line must be present before any global variable is referenced.
- */
-if (!defined('MEDIAWIKI')) die();
-
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
@@ -19,7 +13,6 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Страница', // name of page datatype
 	'_str' => 'Строка',  // name of the string type
 	'_txt' => 'Текст',  // name of the text type (very long strings)
-	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
 	'_boo' => 'Булево',  // name of the boolean type
 	'_num' => 'Число', // name for the datatype of numbers
 	'_geo' => 'Географическая координата', // name of the geocoord type
@@ -76,14 +69,12 @@ protected $m_SpecialPropertyAliases = array(
 
 
 protected $m_Namespaces = array(
-	SMW_NS_RELATION       => 'Отношение',
-	SMW_NS_RELATION_TALK  => 'Обсуждение_отношения',
-	SMW_NS_PROPERTY       => 'Свойство',
-	SMW_NS_PROPERTY_TALK  => 'Обсуждение_свойства',
-	SMW_NS_TYPE           => 'Тип',
-	SMW_NS_TYPE_TALK      => 'Обсуждение_типа',
-	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
-	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
+    SMW_NS_RELATION       => 'Отношение',
+    SMW_NS_RELATION_TALK  => 'Обсуждение_отношения',
+    SMW_NS_PROPERTY       => 'Свойство',
+    SMW_NS_PROPERTY_TALK  => 'Обсуждение_свойства',
+    SMW_NS_TYPE           => 'Тип',
+    SMW_NS_TYPE_TALK      => 'Обсуждение_типа'
 );
 
 protected $m_NamespaceAliases = array(
@@ -93,9 +84,7 @@ protected $m_NamespaceAliases = array(
 	'Property'      => SMW_NS_PROPERTY,
 	'Property_talk' => SMW_NS_PROPERTY_TALK,
 	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK,
-	'Concept'       => SMW_NS_CONCEPT,
-	'Concept_talk'  => SMW_NS_CONCEPT_TALK
+	'Type_talk'     => SMW_NS_TYPE_TALK
 );
 
 }

@@ -47,21 +47,24 @@ class SMWExporter {
 	 */
 	static public function makeExportData(/*SMWSemanticData*/ $semdata, $modifier = '') {
 		SMWExporter::initBaseURIs();
-		$subject = $semdata->getSubject();
+		///TODO: currently the subject is a Title; should change to SMWWikiPageValue (needs Factbox changes)
+		$subject = SMWDataValueFactory::newTypeIDValue('_wpg');
+		$subj_title = $semdata->getSubject();
+		$subject->setValues($subj_title->getDBKey(), $subj_title->getNamespace());
 		$result = $subject->getExportData();
 
 		// first set some general parameters for export
 		global $smwgOWLFullExport; // export like individual (even if Category/Property)
-		$indexp = ((($subject->getNamespace() != SMW_NS_PROPERTY) &&
-		            ($subject->getNamespace() != NS_CATEGORY)) || $smwgOWLFullExport);
+		$indexp = ((($subj_title->getNamespace() != SMW_NS_PROPERTY) &&
+		            ($subj_title->getNamespace() != NS_CATEGORY)) || $smwgOWLFullExport);
 		$category_pe = NULL;
 		$subprop_pe = NULL;
-		switch ($subject->getNamespace()) {
-			case NS_CATEGORY: case SMW_NS_CONCEPT:
+		switch ($subj_title->getNamespace()) {
+			case NS_CATEGORY:
 				$category_pe = SMWExporter::getSpecialElement('rdfs','subClassOf');
 				$equality_pe = SMWExporter::getSpecialElement('owl','equivalentClass');
 				$maintype_pe = SMWExporter::getSpecialElement('owl','Class');
-				$label = $subject->getText();
+				$label = $subj_title->getText();
 			break;
 			case SMW_NS_PROPERTY:
 				if ($indexp) {
@@ -70,14 +73,29 @@ class SMWExporter {
 				$subprop_pe = SMWExporter::getSpecialElement('rdfs','subPropertyOf');
 				$equality_pe = SMWExporter::getSpecialElement('owl','equivalentProperty');
 				$types = $semdata->getPropertyValues(SMW_SP_HAS_TYPE);
-				$maintype_pe = SMWExporter::getSpecialElement('owl', SMWExporter::getOWLPropertyType(end($types)));
-				$label = $subject->getText();
+				/// TODO: improved mechanism for selecting property types is needed.
+				if (count($types)>0) {
+					$typeid = (current($types)->isUnary())?current($types)->getXSDValue():'__nry';
+				} else {
+					$typeid = '';
+				}
+				switch ($typeid) {
+					case '_anu':
+						$maintype_pe = SMWExporter::getSpecialElement('owl','AnnotationProperty');
+					break;
+					case '': case '_wpg': case '_uri': case '_ema': case '__nry':
+						$maintype_pe = SMWExporter::getSpecialElement('owl','ObjectProperty');
+					break;
+					default:
+						$maintype_pe = SMWExporter::getSpecialElement('owl','DatatypeProperty');
+				}
+				$label = $subj_title->getText();
 			break;
 			default:
 				$category_pe = SMWExporter::getSpecialElement('rdf','type');
 				$equality_pe = SMWExporter::getSpecialElement('owl','sameAs');
 				$maintype_pe = SMWExporter::getSpecialElement('swivt','Subject');
-				$label = $subject->getWikiValue();
+				$label = $subj_title->getPrefixedText();
 		}
 
 		// export standard properties
@@ -86,7 +104,6 @@ class SMWExporter {
 			$label .= ' (' . $modifier . ')';
 		}
 		$ed = new SMWExpData(new SMWExpLiteral($label));
-		$subj_title = $subject->getTitle();
 		$result->addPropertyObjectValue(SMWExporter::getSpecialElement('rdfs','label'), $ed);
 		$ed = new SMWExpData(new SMWExpResource('&wikiurl;' . $subj_title->getPrefixedURL()));
 		$result->addPropertyObjectValue(SMWExporter::getSpecialElement('swivt','page'), $ed);
@@ -94,7 +111,7 @@ class SMWExporter {
 		$result->addPropertyObjectValue(SMWExporter::getSpecialElement('rdfs','isDefinedBy'), $ed);
 		$result->addPropertyObjectValue(SMWExporter::getSpecialElement('rdf','type'), new SMWExpData($maintype_pe));
 		if ($modifier != '') { // make variant and possibly add meta data on base properties
-			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
+			if ($subj_title->getNamespace() == SMW_NS_PROPERTY) {
 				$ed = new SMWExpData(new SMWExpLiteral($modifier, NULL, 'http://www.w3.org/2001/XMLSchema#string'));
 				$result->addPropertyObjectValue(SMWExporter::getSpecialElement('swivt','modifier'), $ed);
  				$result->addPropertyObjectValue(SMWExporter::getSpecialElement('swivt','baseProperty'), new SMWExpData($result->getSubject()));
@@ -116,13 +133,9 @@ class SMWExporter {
 				}
 			} else { // special property
 				$pe = NULL;
-				$cat_only = false; // basic namespace checking for equivalent categories
 				switch ($property) {
-					case SMW_SP_INSTANCE_OF: ///TODO: distinguish instanceof and subclassof
+					case SMW_SP_HAS_CATEGORY:
 						$pe = $category_pe;
-					break;
-					case SMW_SP_CONCEPT_DESC:
-						$pe = $equality_pe;
 					break;
 					case SMW_SP_HAS_URI:
 						$pe = $equality_pe;
@@ -131,36 +144,14 @@ class SMWExporter {
 						$pe = $subprop_pe;
 					break;
 					case SMW_SP_REDIRECTS_TO: /// TODO: currently no check for avoiding OWL DL illegal redirects is done
-						if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
-							$pe = NULL; // checking the typing here is too cumbersome, smart stores will smush the properties anyway, and the others will not handle them equivalently
-						} else {
-							$pe = $equality_pe;
-							$cat_only = ($subject->getNamespace() == NS_CATEGORY);
-						}
+						$pe = $equality_pe;
 					break;
 				}
 				if ($pe !== NULL) {
 					foreach ($semdata->getPropertyValues($property) as $dv) {
-						if ($cat_only) {
-							if ( !($dv instanceof SMWWikiPageValue) || ($dv->etNamespace != NS_CATEGORY) ) {
-								continue;
-							}
-						}
 						$ed = $dv->getExportData();
 						if ($ed !== NULL) {
-							if ( ($property == SMW_SP_CONCEPT_DESC) &&
-							     ($ed->getSubject()->getName() == '') ) {
-								// equivalent to anonymous class -> simplify description
-								foreach ($ed->getProperties() as $subp) {
-									if ($subp->getName() != SMWExporter::getSpecialElement('rdf','type')->getName()) {
-										foreach ($ed->getValues($subp) as $subval) {
-											$result->addPropertyObjectValue($subp, $subval);
-										}
-									}
-								}
-							} else {
-								$result->addPropertyObjectValue($pe, $ed);
-							}
+							$result->addPropertyObjectValue($pe, $ed);
 						}
 					}
 				}
@@ -209,25 +200,6 @@ class SMWExporter {
 		}
 
 		return new SMWExpResource($localname, $dv, $namespace, $namespaceid);
-	}
-
-	/**
-	 * Determine what kind of OWL property some SMW property should be exported as.
-	 * The input is a SMWTypeValue object, a typeid string, or empty (use default)
-	 */
-	static public function getOWLPropertyType($type = '') {
-		/// TODO: improved mechanism for selecting property types is needed.
-		if ($type instanceof SMWTypeValue) {
-			$type = ($type->isUnary())?$type->getXSDValue():'__nry';
-		} elseif ($type == false) {
-			$type = '';
-		} // else keep $type
-		switch ($type) {
-			case '_anu': return 'AnnotationProperty';
-			case '': case '_wpg': case '_uri': case '_ema': case '__nry':
-				return 'ObjectProperty';
-			default: return 'DatatypeProperty';
-		}
 	}
 
 	/**

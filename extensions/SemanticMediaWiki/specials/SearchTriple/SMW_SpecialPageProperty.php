@@ -9,6 +9,11 @@
  * dynamic output pages.
  */
 
+if (!defined('MEDIAWIKI')) die();
+
+global $IP;
+include_once( "$IP/includes/SpecialPage.php" );
+
 /**
  * @note AUTOLOAD
  */
@@ -19,14 +24,12 @@ class SMWPageProperty extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct('PageProperty', '', false);
-		//the key defining the group name in the language files is specialpages-group-smw_group
-		if (method_exists('SpecialPage', 'setGroup')) { 
-			parent::setGroup('PageProperty', 'smw_group');	
-		}
 	}
 
 	public function execute($query = '') {
-		global $wgRequest, $wgOut, $wgUser;
+		global $wgRequest, $wgOut, $wgUser, $smwgIP;
+		include_once($smwgIP . '/includes/storage/SMW_Store.php');
+		include_once($smwgIP . '/includes/SMW_Infolink.php');
 
 		$skin = $wgUser->getSkin();
 
@@ -65,7 +68,6 @@ class SMWPageProperty extends SpecialPage {
 			$options = new SMWRequestOptions();
 			$options->limit = $limit+1;
 			$options->offset = $offset;
-			$options->sort = true;
 			// get results (get one more, to see if we have to add a link to more)
 			$results = &smwfGetStore()->getPropertyValues($subject, $relation, $options);
 
