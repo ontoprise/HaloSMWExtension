@@ -99,7 +99,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step4-img\" class=\"Marker\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= wfMsg("smw_wws_s4-intro");
 			
-		$html .= "<table id=\"step4-results\"><tr><th></th><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases()\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases()\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
 
 		$html .= "<img id=\"step4-ok\" onclick=\"webServiceSpecial.processStep4()\" src=\"".$smwgHaloScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
 		$html .= "</div>";

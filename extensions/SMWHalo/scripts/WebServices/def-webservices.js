@@ -251,6 +251,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step3-parameters").appendChild(tempTable);
 			$("step3-parameters").childNodes[0].appendChild(tempHead);
 
+			this.parameterContainer = $("step3-parameters").cloneNode(true);
+
 			// fill widgets for step 3 with content
 
 			var treeView = false;
@@ -261,7 +263,6 @@ DefineWebServiceSpecial.prototype = {
 				aTreeRoot = false;
 				var paramRow = document.createElement("tr");
 				paramRow.id = "step3-paramRow-" + i;
-				$("step3-parameters").childNodes[0].appendChild(paramRow);
 
 				var paramTD0 = document.createElement("td");
 				paramTD0.id = "step3-paramTD0-" + i;
@@ -294,7 +295,7 @@ DefineWebServiceSpecial.prototype = {
 					paramPath.appendChild(paramPathStep);
 
 					if (this.preparedPathSteps[i][k]["value"].indexOf("[") > 0) {
-						$("s3-pathstep-" + i + "-" + k).firstChild.nodeValue = this.preparedPathSteps[i][k]["value"]
+						paramPathStep.firstChild.nodeValue = this.preparedPathSteps[i][k]["value"]
 								.substr(0,
 										this.preparedPathSteps[i][k]["value"]
 												.indexOf("]"));
@@ -304,11 +305,9 @@ DefineWebServiceSpecial.prototype = {
 						var pathIndexText = document.createTextNode("1");
 						pathIndexSpan.appendChild(pathIndexText);
 
-						$("s3-pathstep-" + i + "-" + k).appendChild(
-								pathIndexSpan);
+						paramPathStep.appendChild(pathIndexSpan);
 						pathTextEnd = document.createTextNode("]");
-						$("s3-pathstep-" + i + "-" + k)
-								.appendChild(pathTextEnd);
+						paramPathStep.appendChild(pathTextEnd);
 
 						// the add-button
 						var addButton = document.createElement("span");
@@ -321,15 +320,15 @@ DefineWebServiceSpecial.prototype = {
 						addButtonOnClick.value = "webServiceSpecial.addParameter("
 								+ i + "," + k + ")";
 						addButton.setAttributeNode(addButtonOnClick);
-						$("s3-pathstep-" + i + "-" + k).appendChild(addButton);
+						paramPathStep.appendChild(addButton);
 					}
 
 					if (i > 0) {
-						if ($("s3-pathstep-" + (i - 1) + "-" + k) != null) {
+						if (this.preparedPathSteps[i - 1][k] != null) {
 							if (paramPathText == "."
 									+ this.preparedPathSteps[i - 1][k]["value"]
 									|| paramPathText == this.preparedPathSteps[i - 1][k]["value"]) {
-								$("s3-pathstep-" + i + "-" + k).style.visibility = "hidden";
+								paramPathStep.style.visibility = "hidden";
 								treeView = true;
 								treeViewK = k;
 							}
@@ -367,10 +366,8 @@ DefineWebServiceSpecial.prototype = {
 								expandPathStep.appendChild(expandIMG);
 
 								expandPathStep.style.cursor = "pointer";
-								$("s3-pathstep-" + i + "-" + k)
-										.insertBefore(
-												expandPathStep,
-												$("s3-pathstep-" + i + "-" + k).firstChild);
+								paramPathStep.insertBefore(expandPathStep,
+										paramPathStep.firstChild);
 							}
 						}
 					}
@@ -379,9 +376,8 @@ DefineWebServiceSpecial.prototype = {
 						expandIMG = document.createElement("img");
 						expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 						expandPathStep.appendChild(expandIMG);
-						$("s3-pathstep-" + i + "-" + k).insertBefore(
-								expandPathStep,
-								$("s3-pathstep-" + i + "-" + k).firstChild);
+						paramPathStep.insertBefore(expandPathStep,
+								paramPathStep.firstChild);
 					}
 				}
 
@@ -455,9 +451,15 @@ DefineWebServiceSpecial.prototype = {
 				}
 
 				if (treeView) {
-					$("step3-paramRow-" + i).style.display = "none";
+					paramRow.style.display = "none";
 				}
+				this.parameterContainer.childNodes[0].appendChild(paramRow);
 			}
+
+			var parent = $("step3-parameters").parentNode;
+			parent.removeChild($("step3-parameters"));
+			parent.insertBefore(this.parameterContainer, parent.childNodes[2]);
+
 			// hide or display widgets of other steps
 			$("step3").style.display = "block";
 
@@ -571,20 +573,18 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-results").appendChild(tempTable);
 			$("step4-results").childNodes[0].appendChild(tempHead);
 
-			// fill the widgets of step4 with content
+			this.resultContainer = $("step4-results").cloneNode(true);
 
+			// fill the widgets of step4 with content
 			var aTreeRoot;
 			var treeView;
+
 			for (i = 0; i < wsResults.length; i++) {
 				aTreeRoot = false;
 				treeView = false;
 
 				var resultRow = document.createElement("tr");
 				resultRow.id = "step4-resultRow-" + i;
-				$("step4-results").childNodes[0].appendChild(resultRow);
-
-				var resultTD0 = document.createElement("td");
-				resultRow.appendChild(resultTD0);
 
 				var resultTD1 = document.createElement("td");
 				resultTD1.id = "step4-resultTD1-" + i;
@@ -615,7 +615,7 @@ DefineWebServiceSpecial.prototype = {
 
 					if (this.preparedRPathSteps[i][k]["value"].indexOf("[") > 0) {
 						// the input-field
-						$("s4-pathstep-" + i + "-" + k).firstChild.nodeValue = this.preparedRPathSteps[i][k]["value"]
+						resultPathStep.firstChild.nodeValue = this.preparedRPathSteps[i][k]["value"]
 								.substr(0,
 										this.preparedRPathSteps[i][k]["value"]
 												.indexOf("]"));
@@ -633,11 +633,9 @@ DefineWebServiceSpecial.prototype = {
 								+ i + "," + k + ")";
 						pathIndexInput.setAttributeNode(pathIndexInputOnBlur);
 
-						$("s4-pathstep-" + i + "-" + k).appendChild(
-								pathIndexInput);
+						resultPathStep.appendChild(pathIndexInput);
 						pathTextEnd = document.createTextNode("]");
-						$("s4-pathstep-" + i + "-" + k)
-								.appendChild(pathTextEnd);
+						resultPathStep.appendChild(pathTextEnd);
 
 						// the add-button
 						var addButton = document.createElement("span");
@@ -650,15 +648,15 @@ DefineWebServiceSpecial.prototype = {
 						addButtonOnClick.value = "webServiceSpecial.addResultPart("
 								+ i + "," + k + ")";
 						addButton.setAttributeNode(addButtonOnClick);
-						$("s4-pathstep-" + i + "-" + k).appendChild(addButton);
+						resultPathStep.appendChild(addButton);
 					}
 
 					if (i > 0) {
-						if ($("s4-pathstep-" + (i - 1) + "-" + k) != null) {
+						if (this.preparedRPathSteps[i - 1][k] != null) {
 							if (resultPathText == "."
 									+ this.preparedRPathSteps[i - 1][k]["value"]
 									|| resultPathText == this.preparedRPathSteps[i - 1][k]["value"]) {
-								$("s4-pathstep-" + i + "-" + k).style.visibility = "hidden";
+								resultPathStep.style.visibility = "hidden";
 								treeView = true;
 								treeViewK = k;
 							}
@@ -695,10 +693,8 @@ DefineWebServiceSpecial.prototype = {
 								expandPathStep.appendChild(expandIMG);
 
 								expandPathStep.style.cursor = "pointer";
-								$("s4-pathstep-" + i + "-" + k)
-										.insertBefore(
-												expandPathStep,
-												$("s4-pathstep-" + i + "-" + k).firstChild);
+								resultPathStep.insertBefore(expandPathStep,
+										resultPathStep.firstChild);
 							}
 						}
 					}
@@ -707,9 +703,8 @@ DefineWebServiceSpecial.prototype = {
 						var expandIMG = document.createElement("img");
 						expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 						expandPathStep.appendChild(expandIMG);
-						$("s4-pathstep-" + i + "-" + k).insertBefore(
-								expandPathStep,
-								$("s4-pathstep-" + i + "-" + k).firstChild);
+						resultPathStep.insertBefore(expandPathStep,
+								resultPathStep.firstChild);
 					}
 				}
 
@@ -726,20 +721,19 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.maxLength = "40";
 				resultTD2.appendChild(aliasInput);
 
-				var resultTD3 = document.createElement("td");
-				resultTD3.id = "step4-resultTD3-" + i;
-
 				if (aTreeRoot || treeView) {
 					resultTD2.style.visibility = "hidden";
-					resultTD3.style.visibility = "hidden";
 				}
-
-				resultRow.appendChild(resultTD3);
 
 				if (treeView) {
-					$("step4-resultRow-" + i).style.display = "none";
+					resultRow.style.display = "none";
 				}
+				this.resultContainer.childNodes[0].appendChild(resultRow);
 			}
+
+			var parent = $("step4-results").parentNode;
+			parent.removeChild($("step4-results"));
+			parent.insertBefore(this.resultContainer, parent.childNodes[2]);
 
 			// hide or display widgets of other steps
 			$("step4").style.display = "block";
@@ -844,12 +838,13 @@ DefineWebServiceSpecial.prototype = {
 				if (this.preparedPathSteps[i] != "null") {
 					result += "<parameter name=\"" + $("s3-alias" + i).value
 							+ "\" ";
-					var optional = $("s3-optional-true" + i).checked;
+					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked;
 					result += " optional=\"" + optional + "\" ";
-					if ($("s3-default" + i).value != "") {
-						if ($("s3-default" + i).value != "") {
-							result += " defaultValue=\""
-									+ $("s3-default" + i).value + "\" ";
+
+					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value;
+					if (defaultValue != "") {
+						if (defaultValue != "") {
+							result += " defaultValue=\"" + defaultValue + "\" ";
 						}
 					}
 					var path = "";
@@ -881,7 +876,9 @@ DefineWebServiceSpecial.prototype = {
 
 			for (i = 0; i < this.preparedRPathSteps.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					result += "<part name=\"" + $("s4-alias" + i).value + "\" ";
+					result += "<part name=\""
+							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+							+ "\" ";
 					var rPath = "";
 					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
 						var rPathStep = "";
@@ -963,7 +960,8 @@ DefineWebServiceSpecial.prototype = {
 			parameters = this.preparedPathSteps;
 			for (i = 0; i < parameters.length; i++) {
 				if (this.preparedPathSteps[i] != "null") {
-					wsSyntax += "| " + $("s3-alias" + i).value
+					wsSyntax += "| "
+							+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
 							+ " = [Please enter a value here]\n";
 				}
 			}
@@ -971,7 +969,9 @@ DefineWebServiceSpecial.prototype = {
 			results = this.preparedRPathSteps;
 			for (i = 0; i < results.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					wsSyntax += "| ?result." + $("s4-alias" + i).value + "\n";
+					wsSyntax += "| ?result."
+							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+							+ "\n";
 				}
 			}
 			wsSyntax += "}}";
@@ -1036,6 +1036,8 @@ DefineWebServiceSpecial.prototype = {
 		$("old-step7-container").parentNode
 				.removeChild($("old-step7-container"));
 
+		var step7Container = $("step7-container").cloneNode(true);
+
 		var wsNameText = document.createTextNode(document
 				.getElementById("step6-name").value);
 		$("step7-name").appendChild(wsNameText);
@@ -1044,18 +1046,19 @@ DefineWebServiceSpecial.prototype = {
 		var rowText = document
 				.createTextNode("{{#ws: " + $("step6-name").value);
 		rowDiv.appendChild(rowText);
-		$("step7-container").appendChild(rowDiv);
+		step7Container.appendChild(rowDiv);
 
 		var parameters = this.preparedPathSteps;
 		for (i = 0; i < parameters.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
 				rowDiv = document.createElement("div");
 				rowDiv.className = "OuterLeftIndent";
-				rowText = document.createTextNode("| "
-						+ $("s3-alias" + i).value
-						+ " = [Please enter a value here]");
+				rowText = document
+						.createTextNode("| "
+								+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+								+ " = [Please enter a value here]");
 				rowDiv.appendChild(rowText);
-				$("step7-container").appendChild(rowDiv);
+				step7Container.appendChild(rowDiv);
 			}
 		}
 
@@ -1064,17 +1067,22 @@ DefineWebServiceSpecial.prototype = {
 			if (this.preparedRPathSteps[i] != "null") {
 				rowDiv = document.createElement("div");
 				rowDiv.className = "OuterLeftIndent";
-				rowText = document.createTextNode("| ?result."
-						+ $("s4-alias" + i).value);
+				rowText = document
+						.createTextNode("| ?result."
+								+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value);
 				rowDiv.appendChild(rowText);
-				$("step7-container").appendChild(rowDiv);
+				step7Container.appendChild(rowDiv);
 			}
 		}
 
 		rowDiv = document.createElement("div");
 		rowText = document.createTextNode("}}");
 		rowDiv.appendChild(rowText);
-		$("step7-container").appendChild(rowDiv);
+		step7Container.appendChild(rowDiv);
+
+		var parentOf = $("step7-container").parentNode;
+		parentOf.insertBefore(step7Container, $("step7-container"));
+		parentOf.removeChild(parentOf.childNodes[6]);
 
 		$("step7").style.display = "block";
 		$("step1").style.display = "none";
@@ -1117,10 +1125,11 @@ DefineWebServiceSpecial.prototype = {
 		var paramCount = this.preparedPathSteps.length;
 
 		var aliases = new Array();
+		var aliasesObject = new Object();
 
 		for (i = 0; i < paramCount; i++) {
 			if (this.preparedPathSteps[i] != "null") {
-				var alias = $("s3-alias" + i).value;
+				var alias = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value;
 				if (alias.length == 0) {
 					alias = this.preparedPathSteps[i][this.preparedPathSteps[i].length - 1]["value"];
 
@@ -1138,59 +1147,36 @@ DefineWebServiceSpecial.prototype = {
 					alias = alias.substr(dotPos + 1);
 				}
 
-				for ( var k = 0; k < aliases.length; k++) {
-					var endPosA = alias.length;
-					if (alias.lastIndexOf("-") != -1) {
-						endPosA = alias.lastIndexOf("-");
-					}
+				var goon = true;
+				var aliasTemp = alias;
+				var k = 0;
 
-					var endPosB = aliases[k].length;
-					if (aliases[k].lastIndexOf("-") != -1) {
-						endPosB = aliases[k].lastIndexOf("-");
-					}
-
-					if (alias.substr(0, endPosA) == aliases[k].substr(0,
-							endPosB)) {
-						if (alias.lastIndexOf("-") != -1) {
-							if (aliases[k].lastIndexOf("-") != -1) {
-								if (alias.substr(endPosA) * 1 <= aliases[k]
-										.substr(endPosB) * 1) {
-									var newIndex = (aliases[k]
-											.substr(endPosB + 1) * 1) + 1;
-									alias = alias.substr(0, endPosA) + "-"
-											+ newIndex;
-								}
-							}
-						} else {
-							if (aliases[k].lastIndexOf("-") != -1) {
-								newIndex = (aliases[k].substr(endPosB + 1) * 1) + 1;
-								alias = alias.substr(0, endPosA) + "-"
-										+ newIndex;
-							} else {
-								alias = alias + "-1";
-							}
-						}
+				while (goon) {
+					if (aliasesObject[aliasTemp] != 1) {
+						goon = false;
+						alias = aliasTemp;
+						aliasesObject[alias] = 1;
+					} else {
+						aliasTemp = alias + "-" + k;
+						k++;
 					}
 				}
-				$("s3-alias" + i).value = alias;
+
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = alias;
 				aliases.push(alias);
 			}
 		}
 	},
 
-	/**
-	 * this method is responsible for automatic alias-creation in step 4 specify
-	 * result aliases
-	 * 
-	 */
 	generateResultAliases : function() {
 		var resultsCount = this.preparedRPathSteps.length;
 
 		var aliases = new Array();
+		var aliasesObject = new Object();
 
 		for (i = 0; i < resultsCount; i++) {
 			if (this.preparedRPathSteps[i] != "null") {
-				var alias = $("s4-alias" + i).value;
+				var alias = this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value;
 				if (alias.length == 0) {
 					alias = this.preparedRPathSteps[i][this.preparedRPathSteps[i].length - 1]["value"];
 				}
@@ -1206,41 +1192,22 @@ DefineWebServiceSpecial.prototype = {
 					alias = "result";
 				}
 
-				for ( var k = 0; k < aliases.length; k++) {
-					var endPosA = alias.length;
-					if (alias.lastIndexOf("-") != -1) {
-						endPosA = alias.lastIndexOf("-");
-					}
+				var goon = true;
+				var aliasTemp = alias;
+				var k = 0;
 
-					var endPosB = aliases[k].length;
-					if (aliases[k].lastIndexOf("-") != -1) {
-						endPosB = aliases[k].lastIndexOf("-");
-					}
-
-					if (alias.substr(0, endPosA) == aliases[k].substr(0,
-							endPosB)) {
-						if (alias.lastIndexOf("-") != -1) {
-							if (aliases[k].lastIndexOf("-") != -1) {
-								if (alias.substr(endPosA) * 1 <= aliases[k]
-										.substr(endPosB) * 1) {
-									var newIndex = (aliases[k]
-											.substr(endPosB + 1) * 1) + 1;
-									alias = alias.substr(0, endPosA) + "-"
-											+ newIndex;
-								}
-							}
-						} else {
-							if (aliases[k].lastIndexOf("-") != -1) {
-								newIndex = (aliases[k].substr(endPosB + 1) * 1) + 1;
-								alias = alias.substr(0, endPosA) + "-"
-										+ newIndex;
-							} else {
-								alias = alias + "-1";
-							}
-						}
+				while (goon) {
+					if (aliasesObject[aliasTemp] != 1) {
+						goon = false;
+						alias = aliasTemp;
+						aliasesObject[alias] = 1;
+					} else {
+						aliasTemp = alias + "-" + k;
+						k++;
 					}
 				}
-				$("s4-alias" + i).value = alias;
+
+				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = alias;
 				aliases.push(alias);
 			}
 		}
@@ -1593,8 +1560,6 @@ DefineWebServiceSpecial.prototype = {
 
 			appendRow.childNodes[2].childNodes[0].id = "s4-alias" + newI;
 
-			appendRow.childNodes[3].id = "step4-resultTD3-" + newI;
-
 			// insert element
 			// todo: remove >=;
 
@@ -1642,12 +1607,15 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	expandParamPathStep : function(i, k) {
-		$("step3-expand-" + i + "-" + k).setAttribute(
-				"onclick",
-				"webServiceSpecial.contractParamPathStep(\"" + i + "\",\"" + k
-						+ "\")");
-		$("step3-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
-		$("step3-expand-" + i + "-" + k).expanded = true;
+		i = i * 1;
+		k = k * 1;
+
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild
+				.setAttribute("onclick",
+						"webServiceSpecial.contractParamPathStep(\"" + i
+								+ "\",\"" + k + "\")");
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild.expanded = true;
 
 		var goon = true;
 		while (goon) {
@@ -1665,7 +1633,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 				if (visible) {
-					$("s3-pathstep-" + i + "-" + m).style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedPathSteps[i][m]["i"] != "null") {
 						if ($("step3-expand-" + i + "-" + m).expanded) {
 							this.expandParamPathStep(i, m);
@@ -1676,12 +1644,12 @@ DefineWebServiceSpecial.prototype = {
 				}
 			}
 			if (display) {
-				$("step3-paramRow-" + i).style.display = "";
+				this.parameterContainer.firstChild.childNodes[i + 1].style.display = "";
 
 				if (complete) {
-					$("step3-paramTD1-" + i).style.visibility = "visible";
-					$("step3-paramTD2-" + i).style.visibility = "visible";
-					$("step3-paramTD3-" + i).style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].style.visibility = "visible";
 				}
 			}
 
@@ -1696,28 +1664,34 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	contractParamPathStep : function(i, k) {
-		$("step3-expand-" + i + "-" + k).setAttribute("onclick",
-				"webServiceSpecial.expandParamPathStep(\"" + i + "\",\"" + k
 
-				+ "\")");
-		$("step3-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
-		$("step3-expand-" + i + "-" + k).expanded = false;
+		i = i * 1;
+		k = k * 1;
+
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild
+				.setAttribute("onclick",
+						"webServiceSpecial.expandParamPathStep(\"" + i
+								+ "\",\"" + k
+
+								+ "\")");
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+		this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[k].firstChild.expanded = false;
 
 		for ( var m = k * 1 + 1; m < this.preparedPathSteps[i].length; m++) {
-			$("s3-pathstep-" + i + "-" + m).style.visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[i + 1].firstChild.firstChild.childNodes[m].style.visibility = "hidden";
 		}
 
 		var goon = true;
 		var root = true;
 		while (goon) {
 			if (!root) {
-				$("step3-paramRow-" + i).style.display = "none";
+				this.parameterContainer.firstChild.childNodes[i + 1].style.display = "none";
 			}
 			root = false;
 
-			$("step3-paramTD1-" + i).style.visibility = "hidden";
-			$("step3-paramTD2-" + i).style.visibility = "hidden";
-			$("step3-paramTD3-" + i).style.visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].style.visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].style.visibility = "hidden";
 
 			if (this.preparedPathSteps[i][k]["i"] != "null") {
 				iTemp = this.preparedPathSteps[i][k]["i"];
@@ -1730,12 +1704,15 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	expandResultPathStep : function(i, k) {
-		$("step4-expand-" + i + "-" + k).setAttribute(
-				"onclick",
-				"webServiceSpecial.contractResultPathStep(\"" + i + "\",\"" + k
-						+ "\")");
-		$("step4-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
-		$("step4-expand-" + i + "-" + k).expanded = "true";
+		i = i * 1;
+		k = k * 1;
+
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0]
+				.setAttribute("onclick",
+						"webServiceSpecial.contractResultPathStep(\"" + i
+								+ "\",\"" + k + "\")");
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "true";
 
 		var goon = true;
 		while (goon) {
@@ -1753,9 +1730,9 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 				if (visible) {
-					$("s4-pathstep-" + i + "-" + m).style.visibility = "visible";
+					this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedRPathSteps[i][m]["i"] != "null") {
-						if ($("step4-expand-" + i + "-" + m).expanded == "true") {
+						if (this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded == "true") {
 							this.expandResultPathStep(i, m);
 						}
 						m = this.preparedRPathSteps[i].length;
@@ -1764,11 +1741,10 @@ DefineWebServiceSpecial.prototype = {
 				}
 			}
 			if (display) {
-				$("step4-resultRow-" + i).style.display = "";
+				this.resultContainer.childNodes[0].childNodes[i + 1].style.display = "";
 
 				if (complete) {
-					$("step4-resultTD2-" + i).style.visibility = "visible";
-					$("step4-resultTD3-" + i).style.visibility = "visible";
+					this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[1].style.visibility = "visible";
 				}
 			}
 
@@ -1783,26 +1759,31 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	contractResultPathStep : function(i, k) {
-		$("step4-expand-" + i + "-" + k).setAttribute("onclick",
-				"webServiceSpecial.expandResultPathStep(\"" + i + "\",\"" + k
+		i = i * 1;
+		k = k * 1;
 
-				+ "\")");
-		$("step4-expand-" + i + "-" + k).firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
-		$("step4-expand-" + i + "-" + k).expanded = "false";
-		for ( var m = k * 1 + 1; m < this.preparedRPathSteps[i].length; m++) {
-			$("s4-pathstep-" + i + "-" + m).style.visibility = "hidden";
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0]
+				.setAttribute("onclick",
+						"webServiceSpecial.expandResultPathStep(\"" + i
+								+ "\",\"" + k + "\")");
+
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+		this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "false";
+		for ( var m = k + 1; m < this.preparedRPathSteps[i].length; m++) {
+			this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[m].style.visibility = "hidden";
 		}
 
 		var goon = true;
 		var root = true;
 		while (goon) {
+			i = i * 1;
+			k = k * 1;
 			if (!root) {
-				$("step4-resultRow-" + i).style.display = "none";
+				this.resultContainer.childNodes[0].childNodes[i + 1].style.display = "none";
 			}
 			root = false;
 
-			$("step4-resultTD2-" + i).style.visibility = "hidden";
-			$("step4-resultTD3-" + i).style.visibility = "hidden";
+			this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[1].style.visibility = "hidden";
 
 			if (this.preparedRPathSteps[i][k]["i"] != "null") {
 				var iTemp = this.preparedRPathSteps[i][k]["i"];
