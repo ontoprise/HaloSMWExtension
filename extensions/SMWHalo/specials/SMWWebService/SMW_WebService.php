@@ -395,7 +395,8 @@ class WebService {
 					
 				if(is_string($response)){
 					if($cacheResult == null){
-						return wfMSG('smw_wsuse_getresult_error');
+						$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
+						return "";
 					} else {
 						$this->mCallErrorMessages[] =
 						wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');

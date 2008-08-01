@@ -125,15 +125,15 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
-	
+
 	smwfRequireHeadItem(SMW_HEADER_STYLE);
-	
+
 	global $wgsmwRememberedWSUsages;
 	$parameters = func_get_args();
-	
+
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-	
+
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_wwsd_not_existing', $wsName)));
@@ -174,15 +174,17 @@ function webServiceUsage_Render( &$parser) {
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
+		
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		
 		
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
 			if(!sizeof($propertyName)){
-				$wsFormattedResult .= smwfEncodeMessages($errorMessages); 
+				$wsFormattedResult .= smwfEncodeMessages($errorMessages);
 			}
 		}
-		
+
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
 		return $wsFormattedResult;
@@ -324,11 +326,11 @@ function detectRemovedWebServiceUsages($articleId){
 		foreach($rememberedWSUsages as $rememberedWSUsage){
 			if($smwProperties[$rememberedWSUsage[2]] != null){
 				WSStorage::getDatabase()->addWSProperty(
-					$rememberedWSUsage[2], 
-					$rememberedWSUsage[0], 
-					$rememberedWSUsage[1], 
-					$articleId, 
-					$rememberedWSUsage[3]);
+				$rememberedWSUsage[2],
+				$rememberedWSUsage[0],
+				$rememberedWSUsage[1],
+				$articleId,
+				$rememberedWSUsage[3]);
 			}
 		}
 	}
@@ -340,7 +342,7 @@ function detectRemovedWebServiceUsages($articleId){
 			foreach($rememberedWSUsages as $rememberedWSUsage){
 				$temp1 = $rememberedWSUsage[2];
 				$temp2 = $wsProperty[2];
-				
+
 				if($rememberedWSUsage[2] != null){
 					if (($rememberedWSUsage[0] == $wsProperty[0])
 					&& ($rememberedWSUsage[1] == $wsProperty[1])

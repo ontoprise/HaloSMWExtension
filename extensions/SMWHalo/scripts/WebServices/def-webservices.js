@@ -1498,10 +1498,10 @@ DefineWebServiceSpecial.prototype = {
 
 			appendRow.id = "step4-resultRow-" + newI;
 
-			appendRow.childNodes[1].id = "step4-resultTD1-" + newI;
-			var pathSteps = appendRow.childNodes[1].childNodes[0].childNodes;
+			appendRow.childNodes[0].id = "step4-resultTD1-" + newI;
+			var pathSteps = appendRow.childNodes[0].childNodes[0].childNodes;
 
-			appendRow.childNodes[1].childNodes[0].id = "s4-path" + newI;
+			appendRow.childNodes[0].childNodes[0].id = "s4-path" + newI;
 
 			var objectRow = new Array();
 			for (r = 0; r < pathSteps.length; r++) {
@@ -1516,7 +1516,7 @@ DefineWebServiceSpecial.prototype = {
 					pathSteps[r].firstChild.setAttribute("onclick",
 							"webServiceSpecial.expandResultPathStep(" + newI
 									+ "," + r + ")");
-					if (appendRows[m].childNodes[1].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
+					if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
 							+ (i * 1 + m) + "-" + r) {
 						$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
 								+ (i * 1 + m) + "-" + r).expanded;
@@ -1551,7 +1551,7 @@ DefineWebServiceSpecial.prototype = {
 									+ r + ")");
 
 					pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
-					if (appendRows[m].childNodes[1].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
+					if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
 							+ (i * 1 + m) + "-" + r) {
 						$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
 								+ (i * 1 + m) + "-" + r).expanded;
@@ -1576,9 +1576,9 @@ DefineWebServiceSpecial.prototype = {
 
 			}
 
-			appendRow.childNodes[2].id = "step4-resultTD2-" + newI;
+			appendRow.childNodes[1].id = "step4-resultTD2-" + newI;
 
-			appendRow.childNodes[2].childNodes[0].id = "s4-alias" + newI;
+			appendRow.childNodes[1].childNodes[0].id = "s4-alias" + newI;
 
 			// insert element
 			// todo: remove >=;
