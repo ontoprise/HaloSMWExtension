@@ -42,6 +42,9 @@ DefineWebServiceSpecial.prototype = {
 				return;
 			}
 		}
+		
+		this.showPendingIndicator("step1-go");
+		
 		this.step = "step2";
 		var uri = $("step1-uri").value;
 		sajax_do_call("smwf_ws_processStep1", [ uri ],
@@ -141,6 +144,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step6-error").style.display = "none";
 		$("step6b-error").style.display = "none";
 
+		this.hidePendingIndicator();
 	},
 
 	/**
@@ -158,6 +162,9 @@ DefineWebServiceSpecial.prototype = {
 		this.step = "step3+";
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
+		
+		this.showPendingIndicator("step2-go");
+		
 		sajax_do_call("smwf_ws_processStep2", [ uri, method ],
 				this.processStep2CallBack.bind(this));
 	},
@@ -179,7 +186,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step2-img").style.visibility = "hidden";
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			$("step3-parameters").style.display = "none";
-			$("step3-ok").style.display = "none";
+			$("step3-go-img").style.display = "none";
 			this.processStep3();
 			return;
 		} else {
@@ -187,7 +194,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step2-img").style.visibility = "visible";
 			$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
 			$("step3-parameters").style.display = "block";
-			$("step3-ok").style.display = "block";
+			$("step3-go-img").style.display = "block";
 		}
 
 		var overflow = false;
@@ -501,6 +508,8 @@ DefineWebServiceSpecial.prototype = {
 		$("step6b-error").style.display = "none";
 
 		$("step3-parameters").style.display = "block";
+		
+		this.hidePendingIndicator();
 	},
 
 	/**
@@ -514,6 +523,8 @@ DefineWebServiceSpecial.prototype = {
 		var uri = $("step1-uri").value;
 		var parameters = "";
 
+		this.showPendingIndicator("step3-go");
+		
 		sajax_do_call("smwf_ws_processStep3", [ uri, method ],
 				this.processStep3CallBack.bind(this));
 	},
@@ -734,6 +745,8 @@ DefineWebServiceSpecial.prototype = {
 			var parent = $("step4-results").parentNode;
 			parent.removeChild($("step4-results"));
 			parent.insertBefore(this.resultContainer, parent.childNodes[2]);
+			
+			this.resultContainer = $("step4-results");
 
 			// hide or display widgets of other steps
 			$("step4").style.display = "block";
@@ -759,7 +772,8 @@ DefineWebServiceSpecial.prototype = {
 		$("step5-error").style.display = "none";
 		$("step6-error").style.display = "none";
 		$("step6b-error").style.display = "none";
-
+		
+		this.hidePendingIndicator();
 	},
 
 	/**
@@ -769,6 +783,7 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep4 : function() {
+		this.showPendingIndicator("step4-go");
 		// hide or display widgets of other steps
 		this.generateResultAliases();
 		$("step5").style.display = "block";
@@ -793,6 +808,8 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step5-spanoflife").value = "";
 		$("step5-expires-yes").checked = true;
+	
+		this.hidePendingIndicator();
 	},
 
 	/**
@@ -820,6 +837,7 @@ DefineWebServiceSpecial.prototype = {
 	 * called after step 6 specify ws-name this method constructs the wwsd
 	 */
 	processStep6 : function() {
+		this.showPendingIndicator("step6-go");
 		if ($("step6-name").value.length > 0) {
 			$("errors").style.display = "none";
 			$("step6-error").style.display = "none";
@@ -1094,6 +1112,8 @@ DefineWebServiceSpecial.prototype = {
 		$("step6-help").style.display = "none";
 		$("menue").style.display = "none";
 		$("help").style.display = "none";
+	
+		this.hidePendingIndicator();
 	},
 
 	/**
@@ -1732,7 +1752,7 @@ DefineWebServiceSpecial.prototype = {
 				if (visible) {
 					this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedRPathSteps[i][m]["i"] != "null") {
-						if (this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded == "true") {
+						if (this.resultContainer.childNodes[0].childNodes[i + 1].childNodes[0].firstChild.childNodes[m].childNodes[0].expanded == "true") {
 							this.expandResultPathStep(i, m);
 						}
 						m = this.preparedRPathSteps[i].length;
@@ -1823,7 +1843,32 @@ DefineWebServiceSpecial.prototype = {
 				goon = false;
 			}
 		}
-	}
+	},
+	
+	/*
+	 * Shows the pending indicator on the element with the DOM-ID <onElement>
+	 * 
+	 * @param string onElement
+	 * 			DOM-ID if the element over which the indicator appears
+	 */
+	showPendingIndicator: function(onElement) {
+		this.hidePendingIndicator();
+		$(onElement + "-img").style.visibility = "hidden";
+		this.pendingIndicator = new OBPendingIndicator($(onElement));
+		this.pendingIndicator.show();
+		this.pendingIndicator.onElement = onElement;
+	},
+	
+	/*
+	 * Hides the pending indicator.
+	 */
+	hidePendingIndicator: function() {
+		if (this.pendingIndicator != null) {
+			$(this.pendingIndicator.onElement + "-img").style.visibility = "visible";
+			this.pendingIndicator.hide();
+			this.pendingIndicator = null;
+		}
+	},
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
