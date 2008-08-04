@@ -211,7 +211,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	 * Format a list of articles chunked by letter in a table that shows subject articles in
 	 * one column and object articles/values in the other one.
 	 */
-	private function shortList(&$articles, &$startChar, $until) {
+	protected function shortList(&$articles, &$startChar, $until) {
 		global $wgContLang;
 
 		$ac = count($articles);
