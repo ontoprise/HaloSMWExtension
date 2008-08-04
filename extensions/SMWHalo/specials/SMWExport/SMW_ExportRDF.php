@@ -138,11 +138,11 @@ class SMWExportTitleHalo extends OWLExport {
 				if (count($a)>0) $this->has_type = $a[0];
 			}
 			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_BASEURI );
-			if (count($a)>0) $this->ns_uri = $a[0];
+			if (count($a)>0) $this->ns_uri = end($a)->getXSDValue();
 			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_NSID );
-			if (count($a)>0) $this->ext_nsid = $a[0];
+			if (count($a)>0) $this->ext_nsid = end($a)->getXSDValue();
 			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_SECTION );
-			if (count($a)>0) $this->ext_section = $a[0];
+			if (count($a)>0) $this->ext_section = end($a)->getXSDValue();
 		}
 
 		// Calculate URIs and label

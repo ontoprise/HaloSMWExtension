@@ -33,9 +33,6 @@ define("SMW_DT_SI_CD",    'cd');
 define("SMW_DT_SI_ERR",   'error');
 define("SMW_DT_SI_VALUE", 'value');
 
-global $smwgIP;
-include_once($smwgIP . '/includes/SMW_DataValue.php');
-
 class SMWSIUnitTypeHandler extends SMWDataValue {
 
 //--- Fields ---

@@ -36,7 +36,7 @@
  	 	}
  		//$reqfilter->limit = MAX_RESULTS;
  		foreach($categoryHints as $hint) { 
- 			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
+ 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
  		}
  		$reqfilter->isCaseSensitive = false;
  	 	$foundCategories = smwfGetSemanticStore()->getPages(array(NS_CATEGORY), $reqfilter, true);
@@ -81,7 +81,7 @@
  			return "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>";
  		}
  		foreach($instanceHints as $hint) { 
- 			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
+ 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
  		}
  		
  		$reqfilter->isCaseSensitive = false;
@@ -125,7 +125,7 @@
  			return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_attributes')."\"/>";
  		}
  		foreach($propertyHints as $hint) { 
- 			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
+ 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
  		}
  		
  		$reqfilter->isCaseSensitive = false;
@@ -184,7 +184,7 @@
  		}
  		
  		foreach($propertyHints as $hint) { 
- 			$reqfilter->addStringCondition($hint, SMW_STRCOND_MID);
+ 			$reqfilter->addStringCondition($hint, SMWStringCondition::STRCOND_MID);
  		}
  		
  		$reqfilter->isCaseSensitive = false;

@@ -195,8 +195,7 @@ function smwf_tb_getLinks($articleId){
  * This function returns a comma separated list of all builtin data types
  */
 function smwf_tb_GetBuiltinDatatypes(){
-	global $smwgIP, $smwgHaloContLang;
-	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
+	global $smwgHaloContLang;
 	$result = "Builtin types:";
 
 	$types = SMWDataValueFactory::getKnownTypeLabels();
@@ -216,9 +215,6 @@ function smwf_tb_GetBuiltinDatatypes(){
  * This function returns a comma separated list of all user defined data types
  */
 function smwf_tb_GetUserDatatypes(){
-	global $smwgIP;
-//	include_once($smwgIP . '/includes/SMW_Datatype.php');
-	include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
 	$result = "User defined types:";
 
 	$db =& wfGetDB( DB_SLAVE );

@@ -7,15 +7,10 @@
  * @author: Markus Krötzsch
  */
 
-if( !defined( 'MEDIAWIKI' ) )   die( 1 );
-
-global $smwgIP;
-include_once($smwgIP . '/includes/articlepages/SMW_OrderedListPage.php');
-include_once($smwgIP . '/includes/SMW_DataValueFactory.php');
-
 /**
  * Implementation of MediaWiki's Article that shows additional information on
  * Type: pages. Very simliar to CategoryPage.
+ * @note AUTOLOADED
  */
 class SMWTypePage extends SMWOrderedListPage {
 
@@ -55,8 +50,8 @@ class SMWTypePage extends SMWOrderedListPage {
 		} else {
 			$this->articles = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $typevalue, $options);
 		}
-		foreach ($this->articles as $title) {
-			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
+		foreach ($this->articles as $dv) {
+			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $dv->getSortkey() ) );
 		}
 	}
 
@@ -110,82 +105,12 @@ class SMWTypePage extends SMWOrderedListPage {
 		}
 
 		if ( count ( $this->articles ) > $cutoff ) {
-			return $this->columnList( $start, $end );
+			return $this->columnList( $start, $end, $this->articles, $this->articles_start_char );
 		} elseif ( count($this->articles) > 0) {
 			// for short lists of articles
-			return $this->shortList( $start, $end );
+			return $this->shortList( $start, $end, $this->articles, $this->articles_start_char );
 		}
 		return '';
-	}
-
-	/**
-	 * Format a list of articles chunked by letter in a three-column
-	 * list, ordered vertically.
-	 */
-	private function columnList($start, $end) {
-		// divide list into three equal chunks
-		$chunk = (int) ( ($end-$start+1) / 3);
-
-		// get and display header
-		$r = '<table width="100%"><tr valign="top">';
-
-		$prev_start_char = 'none';
-
-		// loop through the chunks
-		for($startChunk = $start, $endChunk = $chunk, $chunkIndex = 0;
-			$chunkIndex < 3;
-			$chunkIndex++, $startChunk = $endChunk, $endChunk += $chunk + 1) {
-			$r .= "<td>\n";
-			$atColumnTop = true;
-
-			// output all articles
-			for ($index = $startChunk ;
-				$index < $endChunk && $index < $end;
-				$index++ ) {
-				// check for change of starting letter or begining of chunk
-				if ( ($index == $startChunk) ||
-					 ($this->articles_start_char[$index] != $this->articles_start_char[$index - 1]) ) {
-					if( $atColumnTop ) {
-						$atColumnTop = false;
-					} else {
-						$r .= "</ul>\n";
-					}
-					$cont_msg = "";
-					if ( $this->articles_start_char[$index] == $prev_start_char )
-						$cont_msg = wfMsgHtml('listingcontinuesabbrev');
-					$r .= "<h3>" . htmlspecialchars( $this->articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
-					$prev_start_char = $this->articles_start_char[$index];
-				}
-				$r .= "<li>" . $this->getArticleLink($this->articles[$index]) . "</li>\n";
-			}
-			if( !$atColumnTop ) {
-				$r .= "</ul>\n";
-			}
-			$r .= "</td>\n";
-		}
-		$r .= '</tr></table>';
-		return $r;
-	}
-
-	/**
-	 * Format a list of articles chunked by letter in a bullet list.
-	 */
-	private function shortList($start, $end) {
-		$r = '<h3>' . htmlspecialchars( $this->articles_start_char[$start] ) . "</h3>\n";
-		$r .= '<ul><li>'. $this->getArticleLink($this->articles[$start]) . '</li>';
-		for ($index = $start+1; $index < $end; $index++ ) {
-			if ($this->articles_start_char[$index] != $this->articles_start_char[$index - 1]) {
-				$r .= "</ul><h3>" . htmlspecialchars( $this->articles_start_char[$index] ) . "</h3>\n<ul>";
-			}
-			$r .= '<li>' . $this->getArticleLink( $this->articles[$index] ) . '</li>';
-		}
-		$r .= '</ul>';
-		return $r;
-	}
-	
-	private function getArticleLink($title) {
-		global $wgContLang;
-		return $this->getSkin()->makeKnownLinkObj( $title, $wgContLang->convert( $title->getText() ) );
 	}
 
 }

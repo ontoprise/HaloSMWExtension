@@ -6,6 +6,12 @@
  * @author Terry A. Hurlbut
  */
 
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
+
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
@@ -15,6 +21,7 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => '인공', // name of page datatype
 	'_str' => '배열의 문자',  // name of the string type
 	'_txt' => '텍스트',  // name of the text type
+	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
 	'_boo' => '부울',  // name of the boolean type
 	'_num' => '번호',  // name for the datatype of numbers
 	'_geo' => '지리적 좌표', // name of the geocoord type
@@ -81,7 +88,9 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY       => '부동산',
 	SMW_NS_PROPERTY_TALK  => '부동산토론',
 	SMW_NS_TYPE           => '유형',
-	SMW_NS_TYPE_TALK      => '유형토론'
+	SMW_NS_TYPE_TALK      => '유형토론',
+	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
+	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
 );
 
 protected $m_NamespaceAliases = array(
@@ -91,7 +100,9 @@ protected $m_NamespaceAliases = array(
 	'Property'      => SMW_NS_PROPERTY,
 	'Property_talk' => SMW_NS_PROPERTY_TALK,
 	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK
+	'Type_talk'     => SMW_NS_TYPE_TALK,
+	'Concept'       => SMW_NS_CONCEPT,
+	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
 }
 

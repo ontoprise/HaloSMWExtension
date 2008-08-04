@@ -17,10 +17,7 @@ define('SMW_AC_MAX_RESULTS', 15);
 
 $smwhgAutoCompletionStore = null;
 
-global $smwgIP, $smwgHaloIP;
-
-require_once( $smwgIP . "/includes/SMW_DataValueFactory.php");
-require_once( $smwgIP . "/includes/storage/SMW_Store.php");
+global $smwgHaloIP;
 require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
 
  /*
@@ -140,6 +137,9 @@ function &smwfGetAutoCompletionStore() {
 		return $smwhgAutoCompletionStore;
 }
 
+/**
+ * TODO: Document, including member functions
+ */
 class AutoCompletionRequester { 
 	
 	
@@ -526,6 +526,9 @@ abstract class AutoCompletionStorage {
 	public abstract function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations);
 }
 
+/**
+ * TODO: Document, including member functions
+ */
 class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	
 	public function getUnits(Title $property, $substring) {
@@ -556,7 +559,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		
 		// collect all units which match the substring (if non empty, otherwise all)
 		foreach($all_units as $u) {
-			$s_units = explode(",", $u);
+			$s_units = explode(",", $u->getXSDValue());
 			foreach($s_units as $su) {
 				if ($substring != '') {
 					if (strpos(strtolower($su), $substring) > 0) {
@@ -624,16 +627,18 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$page = $db->tableName('page');
 		$result = array();
 		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
-		
-		$res = $db->query('(SELECT page_title AS title FROM '.$smw_specialprops.' s1 ' .
-							'JOIN '.$smw_specialprops.' s2 ON LOCATE(s2.subject_title, s1.value_string) > 0 ' .
-							'JOIN '.$page.' ON s1.subject_id = page_id ' .
-							'WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND s1.subject_namespace = '.SMW_NS_PROPERTY.
-							' AND s2.value_string REGEXP '.$db->addQuotes('([0-9].?[0-9]*|,) '.$typeLabel.'(,|$)').
-							') UNION DISTINCT ' .
-							'(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
-							' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
-							'  LIMIT '.SMW_AC_MAX_RESULTS);
+
+		$res = $db->query("(SELECT p1.page_title AS title FROM $smw_specialprops s2 " .
+		                    "JOIN $page p2 ON s2.subject_id=p2.page_id" .
+		                    "JOIN $smw_specialprops s1 ON LOCATE(p2.page_title, s1.value_string) > 0 " .
+		                    "JOIN $page p1 ON s1.subject_id = p1.page_id " .
+		                    'WHERE UPPER(p1.page_title) LIKE UPPER(' . $db->addQuotes("%$match%") .
+		                    ') AND p1.page_namespace = ' . SMW_NS_PROPERTY .
+		                    ' AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
+		                    ') UNION DISTINCT ' .
+		                    '(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
+		                    ' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
+		                    '  LIMIT '.SMW_AC_MAX_RESULTS);
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);

@@ -11,17 +11,24 @@
  * Class for representing chunks of semantic data for one given 
  * article (subject), similar what is typically displayed in the factbox.
  * This is a light-weight data container.
+ * @note: AUTOLOADED
  */
 class SMWSemanticData {
 	protected $attribvals = array(); // text keys and arrays of datavalue objects
 	protected $attribtitles = array(); // text keys and title objects
 	protected $hasprops = false; // any normal properties yet?
 	protected $hasspecs = false; // any special properties yet?
+	protected $hasvisiblespecs = false; // any displayable special properties yet? (some are internal only withot a display name)
+	protected $m_noduplicates; // avoid repeated values? 
+	/// NOTE: not needing (e.g. when loading from store) can safe much time, 
+	/// since objects can remain stubs until someone really acesses their value
+	static protected $m_propertyprefix = false; // cache for the local version of "Property:"
 
-	protected $subject;
+	protected $subject; // SMWWikiPageValue object
 
-	public function SMWSemanticData(Title $subject) {
+	public function __construct(SMWWikiPageValue $subject, $noduplicates = true) {
 		$this->subject = $subject;
+		$this->m_noduplicates = $noduplicates;
 	}
 
 	/**
@@ -68,6 +75,14 @@ class SMWSemanticData {
 	}
 
 	/**
+	 * Return true if there are any special properties that can
+	 * be displayed.
+	 */
+	public function hasVisibleSpecialProperties() {
+		return $this->hasvisiblespecs;
+	}
+
+	/**
 	 * Store a value for an property identified by its title object. Duplicate 
 	 * value entries are ignored.
 	 */
@@ -76,7 +91,11 @@ class SMWSemanticData {
 			$this->attribvals[$property->getText()] = array();
 			$this->attribtitles[$property->getText()] = $property;
 		}
-		$this->attribvals[$property->getText()][$value->getHash()] = $value;
+		if ($this->m_noduplicates) {
+			$this->attribvals[$property->getText()][$value->getHash()] = $value;
+		} else {
+			$this->attribvals[$property->getText()][] = $value;
+		}
 		$this->hasprops = true;
 	}
 
@@ -88,7 +107,11 @@ class SMWSemanticData {
 		if (array_key_exists($propertyname, $this->attribtitles)) {
 			$property = $this->attribtitles[$propertyname];
 		} else {
-			$property = Title::newFromText($propertyname, SMW_NS_PROPERTY);
+			if (SMWSemanticData::$m_propertyprefix == false) {
+				global $wgContLang;
+				SMWSemanticData::$m_propertyprefix = $wgContLang->getNsText(SMW_NS_PROPERTY) . ':';
+			} // explicitly use prefix to cope with things like [[Property:User:Stupid::somevalue]]
+			$property = Title::newFromText(SMWSemanticData::$m_propertyprefix . $propertyname);
 			if ($property === NULL) { // error, maybe illegal title text
 				return;
 			}
@@ -105,13 +128,20 @@ class SMWSemanticData {
 		$property = $smwgContLang->findSpecialPropertyLabel($special);
 		if ($property === false) {
 			$property = '_' . $special;
+		} else {
+			$this->hasvisiblespecs = true;
 		}
 		if (!array_key_exists($property, $this->attribvals)) {
 			$this->attribvals[$property] = array();
 			$this->attribtitles[$property] = $special;
 		}
 		if ($value instanceof SMWDataValue) {
-			$this->attribvals[$special][$value->getHash()] = $value;
+			if ($this->m_noduplicates) {
+				$this->attribvals[$special][$value->getHash()] = $value;
+			} else {
+				$this->attribvals[$special][] = $value;
+			}
+		/// TODO: legacy cases, should soon be obsolete (maybe already now):
 		} elseif ($value instanceof Title) {
 			$this->attribvals[$special][$value->getPrefixedText()] = $value;
 		} else {
@@ -128,6 +158,7 @@ class SMWSemanticData {
 		$this->attribtitles = array();
 		$this->hasprops = false;
 		$this->hasspecs = false;
+		$this->hasvisiblespecs = false;
 	}
 
 }

@@ -313,7 +313,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 		}
 		if ($matchString != NULL && $matchString != '') {
 			// show all issues of title which match
-			$options->addStringCondition($matchString, SMW_STRCOND_MID);
+			$options->addStringCondition($matchString, SMWStringCondition::STRCOND_MID);
 			return $this->getGardeningIssueContainer($options, $request);
 		} else {
 			// default

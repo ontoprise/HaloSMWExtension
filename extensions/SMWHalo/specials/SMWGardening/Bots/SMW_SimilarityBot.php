@@ -634,7 +634,7 @@
 		if ($matchString == NULL || $matchString == '') {
 			return $this->getSortedData($options, $request, $sortfor == 0 ? SMW_GARDENINGLOG_SORTFORTITLE : SMW_GARDENINGLOG_SORTFORVALUE);
 		} else {
-			$options->addStringCondition($matchString, SMW_STRCOND_MID);
+			$options->addStringCondition($matchString, SMWStringCondition::STRCOND_MID);
 			return $this->getSortedData($options, $request, $sortfor == 0 ? SMW_GARDENINGLOG_SORTFORTITLE : SMW_GARDENINGLOG_SORTFORVALUE);
 		}
 	}

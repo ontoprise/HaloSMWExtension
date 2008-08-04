@@ -81,6 +81,9 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 	foreach($instances as $t) { 
 		$instWithCat = is_array($t);
 		$instanceTitle =  $instWithCat ?  $t[0] : $t;
+		if ($instanceTitle instanceof SMWWikiPageValue) { // also accept SMW datavalue here
+			$instanceTitle = $instanceTitle->getTitle();
+		}
 		$titleEscaped = htmlspecialchars($instanceTitle->getDBkey()); 
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instanceTitle);
  		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);

@@ -4,7 +4,7 @@
  *
  * Author: kai
  */
-define('SMW_HALO_VERSION', '1.1');
+define('SMW_HALO_VERSION', '1.2-for-SMW-1.2');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -12,6 +12,7 @@ define('SMW_SSP_HAS_MAX_CARD', 2);
 define('SMW_SSP_HAS_MIN_CARD', 3);
 define('SMW_SSP_IS_INVERSE_OF', 4);
 define('SMW_SSP_IS_EQUAL_TO', 5);
+define('SMW_SSP_GLOSSARY', 6);
 
 // constants for special categories
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
@@ -25,6 +26,7 @@ $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
+$wgCustomVariables = array('CURRENTUSER');
 global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 
 if ($smwgEnableWikiWebServices) {
@@ -37,12 +39,16 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  * Must be called *AFTER* SMW is intialized.
  */
 function enableSMWHalo() {
-	global $wgExtensionFunctions;
-	global $smwgOWLFullExport;
-	global $wgHooks;
+	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
-	$wgHooks['LanguageGetMagic'][] = 'smwfAddHaloMagicWords';
-	$smwgOWLFullExport = TRUE;
+	$smwgOWLFullExport = true;
+	$smwgDefaultStore = 'SMWHaloStore'; // the only store supported by Halo now
+	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
+	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
+	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
+	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
+	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
+
 }
 
 /**
@@ -57,7 +63,9 @@ function smwgHaloSetupExtension() {
 	$smwgMasterGeneralStore = NULL;
     
 	// Autoloading. Use it for everything! No include_once or require_once please!
-    $wgAutoloadClasses['SMWQueryProcessor'] = $smwgIP . '/includes/SMW_QueryProcessor.php';
+	$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
+	$wgAutoloadClasses['SMWGardeningTableResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_GardeningTable.php';
+	SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
     $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
     SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter'; 
 	
@@ -65,14 +73,10 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
-	$wgHooks['smwBeforeUpdate'][] = 'smwfBeforeSemanticUpdate';
-	$wgHooks['smwAfterUpdate'][] = 'smwfAfterSemanticUpdate';
-
-
+	
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
-	$wgHooks['ArticleSaveComplete'] = array_diff($wgHooks['ArticleSaveComplete'], array('smwfSaveHook'));
-	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // store annotations
+	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // gardening update (SMW does the storing)
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
@@ -410,18 +414,13 @@ function smwfHaloInitContentMessages() {
  * Returns GeneralStore
  */
 function &smwfGetSemanticStore() {
-	global $smwgMasterGeneralStore, $smwgHaloIP;
+	global $smwgMasterGeneralStore, $smwgHaloIP, $smwgDefaultStore;
 	if ($smwgMasterGeneralStore == NULL) {
-		global $smwgDefaultStore;
-		switch ($smwgDefaultStore) {
-			case (SMW_STORE_TESTING):
-				$smwgMasterGeneralStore = null; // not implemented yet
-				trigger_error('Testing store not implemented for HALO extension.');
-				break;
-			case (SMW_STORE_MWDB): default:
-				require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL.php');
-				$smwgMasterGeneralStore = new SMWSemanticStoreSQL();
-				break;
+		if ($smwgDefaultStore != 'SMWHaloStore') {
+			trigger_error("The store '$smwgDefaultStore' is not implemented for the HALO extension. Please use 'SMWHaloStore'.");
+		} else {
+			require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL.php');
+			$smwgMasterGeneralStore = new SMWSemanticStoreSQL();
 		}
 	}
 	return $smwgMasterGeneralStore;
@@ -624,232 +623,94 @@ function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
  * Called when an article has been moved.
  */
 function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
-	$store = smwfGetStore();
+		$store = smwfGetStore();
 
-	$titlesToUpdate = $oldtitle->getLinksTo();
-	$params[] = $oldtitle->getText();
-	$params[] = $newtitle->getText();
+		$titlesToUpdate = $oldtitle->getLinksTo();
+		$params[] = $oldtitle->getText();
+		$params[] = $newtitle->getText();
 
-	$fullparams[] = $oldtitle->getPrefixedText();
-	$fullparams[] = $newtitle->getPrefixedText();
+		$fullparams[] = $oldtitle->getPrefixedText();
+		$fullparams[] = $newtitle->getPrefixedText();
 
-	foreach ($titlesToUpdate as $uptitle) {
-		$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
-	}
-
-	if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
-		$titlesToUpdate = $store->getAllPropertySubjects( $oldtitle );
-		foreach ($titlesToUpdate as $uptitle)
-		$jobs[] = new SMW_UpdatePropertiesAfterMoveJob($uptitle, $params);
-	}
-
-	if ($oldtitle->getNamespace()==NS_CATEGORY) {
-		$titlesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $oldtitle );
-		foreach ($titlesToUpdate as $uptitle)
-		$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($uptitle, $params);
-	}
-
-	Job :: batchInsert($jobs);
-	return true;
-}
-
-/**
- * Called *before* an article is saved. Used for LocalGardening
- *
- * @param Article $article
- * @param User $user
- * @param string $text
- * @param string $summary
- * @param bool $minor
- * @param bool $watch
- * @param unknown_type $sectionanchor
- * @param int $flags
- */
-function smwfHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
-	// -- LocalGardening --
-	global $smwgLocalGardening;
-	if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
-		$gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
-		Job :: batchInsert($gard_jobs);
-	}
-	return true;
-	// --------------------
-}
-
-/**
- * Called *before* an article gets deleted.
- *
- * @param Article $article
- * @param User $user
- * @param string $reason
- * @return unknown
- */
-function smwfHaloPreDeleteHook(&$article, &$user, &$reason) {
-	// -- LocalGardening --
-	global $smwgLocalGardening;
-	if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
-		$gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "remove");
-		Job :: batchInsert($gard_jobs);
-	}
-	return true;
-}
-
-/**
- * Called *before* semantic annotations are updated.
- * Save annotation ratings in global variable.
- *
- * @param & $title's name which is updated (textual form)
- */
-function smwfBeforeSemanticUpdate(& $title) {
-	global $smwgProcessedAnnotations;
-	// save currently processed annotations in $processedAnnotations
-	$smwgProcessedAnnotations = smwfGetSemanticStore()->getRatedAnnotations(str_replace(" ","_", $title));
-	return true;
-}
-
-/**
- * Called *after* semantic annotations has been updated.
- * Store saved annotations ratings.
- *
- * @param & $title's name which is updated (textual form)
- */
-function smwfAfterSemanticUpdate(& $title) {
-	global $smwgProcessedAnnotations;
-	if ($smwgProcessedAnnotations != NULL) {
-		foreach($smwgProcessedAnnotations as $pa) {
-			smwfGetSemanticStore()->rateAnnotation(str_replace(" ","_", $title), $pa[0], $pa[1], $pa[2] );
+		foreach ($titlesToUpdate as $uptitle) {
+			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
 		}
-	}
-	return true;
+
+		if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
+			$wikipagesToUpdate = $store->getAllPropertySubjects( $oldtitle );
+			foreach ($wikipagesToUpdate as $dv)
+				$jobs[] = new SMW_UpdatePropertiesAfterMoveJob($dv->getTitle(), $params);
+		}
+
+		if ($oldtitle->getNamespace()==NS_CATEGORY) {
+			$wikipagesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $oldtitle );
+			foreach ($wikipagesToUpdate as $dv)
+				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($dv->getTitle(), $params);
+		}
+
+		Job :: batchInsert($jobs);
+		return true;
 }
 
 /**
- *  This method will be called after an article is saved
- *  and stores the semantic properties in the database. One
- *  could consider creating an object for deferred saving
- *  as used in other places of MediaWiki.
- *  This hook extends SMW's smwfSaveHook insofar that it
- *  updates dependent properties or individuals when a type
- *  or propeerty gets changed.
- */
-function smwfHaloSaveHook(&$article, &$user, &$text) {
-	global $smwgIP, $smwgHaloIP;
-	include_once($smwgIP . '/includes/SMW_Factbox.php'); // Normally this must have happende, but you never know ...
-	include_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php');
+	 * Called *before* an article is saved. Used for LocalGardening
+	 *
+	 * @param Article $article
+	 * @param User $user
+	 * @param string $text
+	 * @param string $summary
+	 * @param bool $minor
+	 * @param bool $watch
+	 * @param unknown_type $sectionanchor
+	 * @param int $flags
+	 */
+    function smwfHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
+    	// -- LocalGardening --
+    	global $smwgLocalGardening;
+    	if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
+	        $gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
+	        Job :: batchInsert($gard_jobs);
+    	}
+        return true;
+        // --------------------
+    }
 
-	$title=$article->getTitle();
-	SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
-
-	$updatejobflag = 0;
-
+    /**
+     * Called *before* an article gets deleted.
+     *
+     * @param Article $article
+     * @param User $user
+     * @param string $reason
+     * @return unknown
+     */
+    function smwfHaloPreDeleteHook(&$article, &$user, &$reason) {
+    	// -- LocalGardening --
+        global $smwgLocalGardening;
+        if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
+            $gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "remove");
+            Job :: batchInsert($gard_jobs);
+        }
+        return true;
+    }
 
 	/**
-	 * Checks if the semantic data has been changed.
-	 * Sets the updateflag is so.
-	 */
-	if ($namespace = $article->getTitle()->getNamespace() == SMW_NS_PROPERTY || SMW_NS_TYPE) {
-		$specsTocheck = array (
-		SMW_SP_HAS_TYPE,
-		SMW_SP_POSSIBLE_VALUE,
-		SMW_SP_CONVERSION_FACTOR
-		);
+	*  This method will be called after an article is saved
+	*  and stores the semantic properties in the database. One
+	*  could consider creating an object for deferred saving
+	*  as used in other places of MediaWiki.
+	*  This hook extends SMW's smwfSaveHook insofar that it
+	*  updates dependent properties or individuals when a type
+	*  or property gets changed.
+	*/
+	function smwfHaloSaveHook(&$article, &$user, &$text) {
+		global $smwgHaloIP;
+		include_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php');
 
-		$oldstore = smwfGetStore();
+		$title=$article->getTitle();
+		SMWGardeningIssuesAccess::getGardeningIssuesAccess()->setGardeningIssueToModified($title);
 
-		foreach ($specsTocheck as $type) {
-			$oldvalues = $oldstore->getSpecialValues($title, $type); //old values , array containing strings
-			$currentvalues = SMWFactbox :: $semdata->getPropertyValues($type); //current values, array containing title objects for attributes or data value objects for the rest
-
-			/**
-			 * TODO This seems kind of wrong, still. I guess there is an easier to way to check
-			 * if currentvalues and oldvalues have indeed a diff.
-			 */
-			$currentstrings = array ();
-			if ($type == SMW_SP_HAS_TYPE) {
-				foreach ($currentvalues as $currentdata) {
-					if ($currentdata instanceof Title) {
-						$currentstrings[] = $currentdata->getText();
-					} else {
-						$currentstrings[] = $currentdata->getWikiValue();
-					}
-				}
-			} else {
-				if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
-					foreach ($currentvalues as $currentdata) {
-						$currentstrings[] = $currentdata->getWikiValue();
-					}
-				}
-			}
-			$oldstrings = array ();
-			if ($type == SMW_SP_HAS_TYPE) {
-				foreach ($oldvalues as $olddata) {
-					$oldstrings[] = $olddata->getWikiValue();
-				}
-			} else {
-				if ($type == SMW_SP_POSSIBLE_VALUE || SMW_SP_CONVERSION_FACTOR) {
-					foreach ($oldvalues as $olddata) {
-						if ($olddata instanceof SMWDataValue)
-						$oldstrings[] = $olddata->getWikiValue();
-					}
-				}
-			}
-
-			// double side diff
-			$diff = array_merge(array_diff($currentstrings, $oldstrings), array_diff($oldstrings, $currentstrings));
-
-			if (!empty ($diff)) {
-					
-				$updatejobflag = 1;
-				break;
-			}
-
-		}
-
+		return true; // always return true, in order not to stop MW's hook processing!
 	}
-
-	SMWFactbox::storeData($title, smwfIsSemanticsProcessed($title->getNamespace()));
-
-	/*
-	 * Triggers the relevant Updatejobs if necessary
-	 */
-	if ($updatejobflag == 1) {
-		$store = smwfGetStore();
-		if ($article->getTitle()->getNamespace() == SMW_NS_PROPERTY) {
-			smwLog("Property type of '".$article->getTitle()->getText()."' changed.", "RF", "smwfHaloSaveHook");
-
-			$subjectsOfAttribpages = $store->getAllPropertySubjects($article->getTitle());
-
-			foreach ($subjectsOfAttribpages as $titleb) {
-				if ($titleb != NULL) {
-					$jobs[] = new SMW_UpdateJob($titleb);
-				}
-			}
-
-
-		} else {
-			if ($article->getTitle()->getNamespace() == SMW_NS_TYPE) {
-					
-				smwLog("Type '".$article->getTitle()->getText()."' changed.", "RF", "smwfHaloSaveHook");
-					
-				$subjects = array ();
-				$subjects = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $title);
-
-				foreach ($subjects as $titlesofattributepagestoupdate) {
-					$subjectsOfAttribpages = array ();
-					$subjectsOfAttribpages = $store->getAllPropertySubjects($titlesofattributepagestoupdate);
-
-					foreach ($subjectsOfAttribpages as $titleb) {
-						if ($titleb != NULL) {
-							$jobs[] = new SMW_UpdateJob($titleb);
-						}
-					}
-				}
-			}
-		}
-		Job :: batchInsert($jobs);
-	}
-	return true; // always return true, in order not to stop MW's hook processing!
-}
 
 function smwfAnnotateTab ($content_actions) {
 	//Check if ontoskin is available
@@ -1372,6 +1233,24 @@ function smwfNavTree() {
 			$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
 			echo $out->getText() . '<br/>';
 		}
+	}
+	return true;
+}
+
+function wfAddCustomVariable(&$magicWords) {
+	foreach($GLOBALS['wgCustomVariables'] as $var) $magicWords[] = "MAG_$var";
+	return true;
+}
+
+function wfAddCustomVariableID(&$variables) {
+	foreach($GLOBALS['wgCustomVariables'] as $var) $variables[] = constant("MAG_$var");
+	return true;
+}
+
+function wfAddCustomVariableLang(&$langMagic, $langCode = 0) {
+	foreach($GLOBALS['wgCustomVariables'] as $var) {
+		$magic = "MAG_$var";
+		$langMagic[defined($magic) ? constant($magic) : $magic] = array(0,$var);
 	}
 	return true;
 }

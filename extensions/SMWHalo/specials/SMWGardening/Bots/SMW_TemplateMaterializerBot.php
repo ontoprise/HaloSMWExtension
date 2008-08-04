@@ -4,10 +4,10 @@
  *
  * Author: KK
  */
-global $smwgHaloIP, $smwgIP;
+global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
-require_once("$smwgIP/includes/storage/SMW_Store.php");
+
 // Parameters of bot
 
 

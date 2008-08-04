@@ -11,6 +11,11 @@
  * "printout statement" --> Ausgabeanweisung
  */
 
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
 
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
@@ -21,6 +26,7 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Seite', // name of page datatype
 	'_str' => 'Zeichenkette',  // name of the string type
 	'_txt' => 'Text',  // name of the text type
+	'_cod' => 'Quellcode',  // name of the (source) code type
 	'_boo' => 'Wahrheitswert',  // name of the boolean type
 	'_num' => 'Zahl', // name for the datatype of numbers
 	'_geo' => 'Geografische Koordinaten', // name of the geocoord type
@@ -40,6 +46,7 @@ protected $m_DatatypeAliases = array(
 	'Page'                  => '_wpg',
 	'String'                => '_str',
 	'Text'                  => '_txt',
+	'Code'                  => '_cod',
 	'Boolean'               => '_boo',
 	'Number'                => '_num',
 	'Geographic coordinate' => '_geo',
@@ -81,7 +88,9 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY       => "Attribut",
 	SMW_NS_PROPERTY_TALK  => "Attribut_Diskussion",
 	SMW_NS_TYPE           => "Datentyp",
-	SMW_NS_TYPE_TALK      => "Datentyp_Diskussion"
+	SMW_NS_TYPE_TALK      => "Datentyp_Diskussion",
+	SMW_NS_CONCEPT        => 'Konzept',
+	SMW_NS_CONCEPT_TALK   => 'Konzept_Diskussion'
 );
 
 protected $m_NamespaceAliases = array(
@@ -91,7 +100,9 @@ protected $m_NamespaceAliases = array(
 	'Property'      => SMW_NS_PROPERTY,
 	'Property_talk' => SMW_NS_PROPERTY_TALK,
 	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK
+	'Type_talk'     => SMW_NS_TYPE_TALK,
+	'Concept'       => SMW_NS_CONCEPT,
+	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
 
 }

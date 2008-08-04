@@ -3,6 +3,12 @@
  * @author helix84
  */
 
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
+
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
@@ -12,6 +18,7 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Page', // name of page datatype  //TODO translate
 	'_str' => 'Reťazec',  // name of the string type
 	'_txt' => 'Text',  // name of the text type (very long strings) //TODO: translate
+	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
 	'_boo' => 'Boolean',  // name of the boolean type // TODO: translate
 	'_num' => 'Číslo', // name for the datatype of numbers // TODO: check translation (done by pattern matching; mak)
 	'_geo' => 'Zemepisné súradnice', // name of the geocoord type
@@ -71,7 +78,9 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY       => 'Atribút',
 	SMW_NS_PROPERTY_TALK  => 'Diskusia o atribúte',
 	SMW_NS_TYPE           => 'Typ',
-	SMW_NS_TYPE_TALK      => 'Diskusia o type'
+	SMW_NS_TYPE_TALK      => 'Diskusia o type',
+	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
+	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
 );
 
 protected $m_NamespaceAliases = array(
@@ -81,7 +90,9 @@ protected $m_NamespaceAliases = array(
 	'Property'      => SMW_NS_PROPERTY,
 	'Property_talk' => SMW_NS_PROPERTY_TALK,
 	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK
+	'Type_talk'     => SMW_NS_TYPE_TALK,
+	'Concept'       => SMW_NS_CONCEPT,
+	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
 
 }

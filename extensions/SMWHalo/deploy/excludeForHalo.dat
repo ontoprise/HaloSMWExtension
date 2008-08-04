@@ -5,3 +5,5 @@ deploy\bin\mw-1.12.zip
 deploy\bin\xampp.zip
 deploy\bin\halowiki.exe
 wikiexport\
+bin\antiword
+bin\xpdf

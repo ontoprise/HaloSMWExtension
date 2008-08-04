@@ -5,10 +5,8 @@
  * Author: kai
  */
  
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
-global $smwgIP;
-include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
 
 // replace SMW Properties SpecialPage with advanced HALO Properties SpecialPage.
 //SpecialPage::removePage(wfMsg('properties'));
@@ -99,35 +97,11 @@ class SMWPropertiesPage extends SMWQueryPage {
 		$attributes = $dbr->tableName( 'smw_attributes' );
 		$specialprops = $dbr->tableName( 'smw_specialprops' );
 		$pages = $dbr->tableName( 'page' );
-		switch($sort) {
-			case 0: return "SELECT 'Attributes' as type, 
-					{$NSatt} as namespace,
-					s.value_string as value,
-					a.attribute_title as title,
-					COUNT(*) as count,
-					'-1' as obns		
-					FROM $attributes a JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." 
-					GROUP BY a.attribute_title, s.value_string";
-					
-			case 1: return "SELECT 'Attributes' as type, 
-                    {$NSatt} as namespace,
-                    s.value_string as value,
-                    a.attribute_title as title,
-                    COUNT(*) as count,
-                    '-1' as obns        
-                    FROM $attributes a LEFT JOIN $pages p ON p.page_title = a.attribute_title AND p.page_namespace = ".SMW_NS_PROPERTY.
-                    " JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." WHERE p.page_title IS NOT NULL 
-                    GROUP BY a.attribute_title, s.value_string";
-					
-			case 2: return "SELECT 'Attributes' as type, 
-                    {$NSatt} as namespace,
-                    s.value_string as value,
-                    a.attribute_title as title,
-                    COUNT(*) as count,
-                    '-1' as obns        
-                    FROM $attributes a JOIN $specialprops s ON a.attribute_title=s.subject_title AND s.property_id=".SMW_SP_HAS_TYPE." 
-                    GROUP BY a.attribute_title, s.value_string";
-		}
+		return "SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value, 
+		                a.attribute_title as title, COUNT(*) as count, '-1' as obns
+		        FROM $specialprops s JOIN $pages p ON p.page_id=s.subject_id 
+		        JOIN $attributes a ON a.attribute_title=p.page_title AND s.property_id=".SMW_SP_HAS_TYPE."
+		        GROUP BY a.attribute_title, s.value_string";
 	}
 	
 	function getWikiPageProperties($sort) {

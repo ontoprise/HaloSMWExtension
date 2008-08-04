@@ -78,9 +78,11 @@ class AnnotationLevelConsistency {
 	 		}
 
 	 		// get annotation subjects for the property.
-	 		$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p);
-
-	 		$this->checkPropertyAnnotations($allPropertySubjects, $p);
+	 		$subjects = array();
+			foreach (smwfGetStore()->getAllPropertySubjects($p) as $dv) {
+				$subjects[] = $dv->getTitle();
+			};
+ 			$this->checkPropertyAnnotations($subjects, $p);
 
 			}
 			$requestoptions->offset += $this->limit;
@@ -449,10 +451,10 @@ class AnnotationLevelConsistency {
 			$correct_unit = false;
 			if ($u == NULL) continue;
 			foreach($conversion_factors as $c) {
-				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c) > 0;
+				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c->getXSDValue()) > 0;
 			}
 			foreach($si_conversion_factors as $c) {
-				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c) > 0;
+				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c->getXSDValue()) > 0;
 			}
 
 			if (!$correct_unit) {
@@ -481,10 +483,10 @@ class AnnotationLevelConsistency {
 					$correct_unit = false;
 
 					foreach($conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
 					}
 					foreach($si_conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
 					}
 					if (!$correct_unit) {
 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $instance, $p, $v->getUnit());
@@ -501,7 +503,7 @@ class AnnotationLevelConsistency {
 		$typeTitle = Title::newFromText($type[0]->getXSDValue(), SMW_NS_TYPE);
 		$subjects = smwfGetStore()->getAllPropertySubjects($property);
 		foreach($subjects as $s) {
-			$values = smwfGetStore()->getPropertyValues($s, $property);
+			$values = smwfGetStore()->getPropertyValues($s->getTitle(), $property);
 			foreach($values as $v) {
 				if ($v->getUnit() != '') {
 					$conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
@@ -509,13 +511,13 @@ class AnnotationLevelConsistency {
 					$correct_unit = false;
 
 					foreach($conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
 					}
 					foreach($si_conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c) > 0;
+						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
 					}
 					if (!$correct_unit) {
-						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $s, $property, $v->getUnit());
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $s->getTitle(), $property, $v->getUnit());
 					}
 				}
 			}

@@ -4,6 +4,12 @@
  * @author Meno25
  */
 
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
+
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
@@ -13,6 +19,7 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'الصفحة', // name of page datatype
 	'_str' => 'سلسلة أحرف',  // name of the string type
 	'_txt' => 'نص',  // name of the text type
+	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
 	'_boo' => 'منطقي',  // name of the boolean type
 	'_num' => 'عدد',  // name for the datatype of numbers
 	'_geo' => 'الإحداثيات', // name of the geocoord type
@@ -52,7 +59,9 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY       => 'الخاصية',
 	SMW_NS_PROPERTY_TALK  => 'الحديث عن السمة',
 	SMW_NS_TYPE           => 'النوع',
-	SMW_NS_TYPE_TALK      => 'نوع الحديث'
+	SMW_NS_TYPE_TALK      => 'نوع الحديث',
+	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
+	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
 );
 
 }

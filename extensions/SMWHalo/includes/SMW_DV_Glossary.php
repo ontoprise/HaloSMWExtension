@@ -44,12 +44,10 @@ class SMWGlossaryTypeHandler extends SMWWikiPageValue {
 	 */
 	public function getTermDescription($term) {
 		
-		global $smwgIP;
-		include_once($smwgIP . "/includes/SMW_QueryProcessor.php");
 		$query_string = "[[$term]][[description::*]][[description::+]]";
 		$params = array();
 		$printlabel = "";
-		$printouts[] = new SMWPrintRequest(SMW_PRINT_THIS, $printlabel);
+		$printouts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $printlabel);
 		$query  = SMWQueryProcessor::createQuery($query_string, $params, true, 'auto', $printouts);
 		$results = smwfGetStore()->getQueryResult($query);
 		$row = $results->getNext();

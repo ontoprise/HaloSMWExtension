@@ -5,12 +5,11 @@
  * Author: kai
  */
  
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
- define('SMW_FINDWORK_NUMBEROF_RATINGS', 5); // will be doubled (rated and unrated)
+define('SMW_FINDWORK_NUMBEROF_RATINGS', 5); // will be doubled (rated and unrated)
  
-global $smwgIP, $smwgHaloIP;
-include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
+global $smwgHaloIP;
 include_once( "$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php" );
 
 

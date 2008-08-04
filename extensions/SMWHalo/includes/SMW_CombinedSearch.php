@@ -4,10 +4,6 @@
  *
  * Author: kai
  */
-global $smwgIP;
-//require_once($smwgIP ."/includes/SMW_QueryProcessor.php");
-require_once($smwgIP ."/includes/SMW_DataValueFactory.php");
-
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_cs_Dispatcher';
@@ -142,7 +138,7 @@ function smwf_cs_SearchForTriples($searchString) {
 			if (count($subjects) > 0) {
 				$tripleFound = true;
 				/*STARTLOG*/
-				smwLog($subjects[0]->getText().";".$a->getText().";".$term,"CS","found_fact");
+				smwLog($subjects[0]->getShortWikiText().";".$a->getText().";".$term,"CS","found_fact");
 				/*ENDLOG*/
 				$tripleTableData .= "<tr>";
 				$tripleTableData .= "<td>".$subjects[0]->getText()."</td>";

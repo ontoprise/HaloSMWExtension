@@ -4,10 +4,9 @@
  *
  * Author: kai
  */
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
-global $smwgIP, $smwgHaloIP;
-include_once( "$smwgIP/specials/QueryPages/SMW_QueryPage.php" );
+global $smwgHaloIP;
 include_once( "$smwgHaloIP/specials/SMWGardening/SMW_Gardening.php");
 
 

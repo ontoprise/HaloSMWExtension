@@ -4,7 +4,9 @@
  * the pages that might have semantic data, and calling functions that
  * re-save semantic data for each one.
  *
- * Note: this file must be placed in MediaWiki's "maintenance" directory!
+ * Note: if SMW is not installed in its standard path under ./extensions
+ *       then the MW_INSTALL_PATH environment variable must be set.
+ *       See README in the maintenance directory.
  *
  * Usage:
  * php SMW_refreshData.php [options...]
@@ -12,24 +14,35 @@
  * -d <delay>   Wait for this many milliseconds after processing an article, useful for limiting server load.
  * -s <startid> Start refreshing at given article ID, useful for partial refreshing
  * -e <endid>   Stop refreshing at given article ID, useful for partial refreshing 
+ * -b <backend> Execute the operation for the storage backend of the given name 
+ *              (default is to use the current backend)
  * -v           Be verbose about the progress.
  * -c           Will refresh only category pages (and other explicitly named namespaces)
  * -p           Will refresh only property pages (and other explicitly named namespaces)
  * -t           Will refresh only type pages (and other explicitly named namespaces)
  * -f           Fully delete all content instead of just refreshing relevant entries. This will also
  *              rebuild the whole storage structure. May leave the wiki temporarily incomplete.
+ * --server=<server> The protocol and server name to as base URLs, e.g.
+ *              http://en.wikipedia.org. This is sometimes necessary because
+ *              server name detection may fail in command line scripts.
  *
  * @author Yaron Koren
  * @author Markus Krötzsch
  */
 
-$optionsWithArgs = array( 'd', 's', 'e' ); // -d <delay>, -s <startid>
+$optionsWithArgs = array( 'd', 's', 'e', 'b', 'server'); // -d <delay>, -s <startid>, -e <endid>, -b <backend>
 
-require_once('counter.php');
-require_once('commandLine.inc');
+require_once ( getenv('MW_INSTALL_PATH') !== false
+    ? getenv('MW_INSTALL_PATH')."/maintenance/commandLine.inc"
+    : dirname( __FILE__ ) . '/../../../maintenance/commandLine.inc' );
+require_once("$IP/maintenance/counter.php");
 
-global $smwgIP;
-require_once($smwgIP . '/includes/SMW_Factbox.php');
+global $smwgEnableUpdateJobs, $wgServer;
+$smwgEnableUpdateJobs = false; // do not fork additional update jobs while running this script
+
+if ( isset( $options['server'] ) ) {
+	$wgServer = $options['server'];
+}
 
 $dbr =& wfGetDB( DB_MASTER );
 
@@ -47,6 +60,12 @@ if ( array_key_exists( 's', $options ) ) {
 $end = $dbr->selectField( 'page', 'max(page_id)', false, 'SMW_refreshData' );
 if ( array_key_exists( 'e', $options ) ) {
 	$end = min(intval($options['e']), $end);
+}
+
+if ( array_key_exists( 'b', $options ) ) {
+	global $smwgDefaultStore;
+	$smwgDefaultStore = $options['b'];
+	print "\nSelected storage $smwgDefaultStore for update!\n\n";
 }
 
 if (  array_key_exists( 'v', $options ) ) {
@@ -88,8 +107,10 @@ if (  array_key_exists( 'f', $options ) ) {
 	}
 	echo "\n";
 	smwfGetStore()->drop($verbose);
+	wfRunHooks('smwDropTables');
 	print "\n";
 	smwfGetStore()->setup($verbose);
+	wfRunHooks('smwInitializeTables');
 	while (ob_get_level() > 0) { // be sure to have some buffer, otherwise some PHPs complain
 		ob_end_flush();
 	}
@@ -98,7 +119,12 @@ if (  array_key_exists( 'f', $options ) ) {
 
 global $wgParser;
 
-print "Refreshing all semantic data in the database!\n";
+print "Refreshing all semantic data in the database!\n---\n" .
+" Some versions of PHP suffer from memory leaks in long-running scripts.\n" .
+" If your machine gets very slow after many pages (typically more than\n" .
+" 1000) were refreshed, please abort with CTRL-C and resume this script\n" .
+" at the last processed page id using the parameter -s (use -v to display\n" .
+" page ids during refresh). Continue this until all pages were refreshed.\n---\n";
 print "Processing pages from ID $start to ID $end ...\n";
 
 $num_files = 0;
@@ -126,7 +152,7 @@ for ($id = $start; $id <= $end; $id++) {
 		$revision = Revision::newFromTitle( $title );
 		if ( $revision === NULL ) continue;
 		$wgParser->parse($revision->getText(), $title, $options, true, true, $revision->getID());
-		SMWFactbox::storeData($title, true);
+		SMWFactbox::storeData(true);
 		// sleep to be nice to the server
 		if ( ($delay !== false) && (($num_files+1) % 100 === 0) ) {
 			usleep($delay);

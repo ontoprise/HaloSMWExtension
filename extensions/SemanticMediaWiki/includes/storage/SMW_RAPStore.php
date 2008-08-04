@@ -13,10 +13,7 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-global $smwgIP,$smwgRAPPath;
-require_once( "$smwgIP/includes/storage/SMW_Store.php" );
-require_once( "$smwgIP/includes/storage/SMW_SQLStore.php" );
-require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
+global $smwgRAPPath;
 
 define('RDFAPI_INCLUDE_DIR',$smwgRAPPath);
 require_once( "$smwgRAPPath/RdfAPI.php");
@@ -270,14 +267,14 @@ class SMWRAPStore extends SMWSQLStore {
 	function getSpecialValues(Title $subject, $specialprop, $requestoptions = NULL) {
 		return parent::getSpecialValues($subject, $specialprop, $requestoptions);
 	}
-	function getSpecialSubjects($specialprop, $value, $requestoptions = NULL) {
+	function getSpecialSubjects($specialprop, SMWDataValue $value, $requestoptions = NULL) {
 		return parent::getSpecialSubjects($specialprop, $value, $requestoptions);
 	}
 
 	function getPropertyValues($subject, $property, $requestoptions = NULL, $outputformat = '') {
 		return parent::getPropertyValues($subject, $property, $requestoptions, $outputformat);
 	}
-	function getPropertySubjects(Title $property, SMWDataValue $value, $requestoptions = NULL) {
+	function getPropertySubjects(Title $property, $value, $requestoptions = NULL) {
 		return parent::getPropertySubjects($property, $value, $requestoptions);
 	}
 	function getAllPropertySubjects(Title $property, $requestoptions = NULL) {

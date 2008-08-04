@@ -16,26 +16,19 @@ mkdir %OUTPUT_DIR%\skins\common
 mkdir %OUTPUT_DIR%\skins\ontoskin
 mkdir %OUTPUT_DIR%\includes
 
-mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes
-mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages
-mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage
-mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
 
 REM copy files
 
 xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeForHalo.dat /Y
 
-REM Patches for SMW
-xcopy ..\..\SemanticMediaWiki\includes\SMW_QP_Table.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
-xcopy ..\..\SemanticMediaWiki\includes\articlepages\SMW_PropertyPage.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\articlepages /Y
-xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
-xcopy ..\..\SemanticMediaWiki\skins\SMW_sorttable.js %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins /Y
-xcopy ..\..\SemanticMediaWiki\skins\SMW_tooltip.js %OUTPUT_DIR%\extensions\SemanticMediaWiki\skins /Y
+REM Patches for SMW (NONE!)
 
 REM Patches for MW
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
+
+REM ontoskin
 xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
 xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
 xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y

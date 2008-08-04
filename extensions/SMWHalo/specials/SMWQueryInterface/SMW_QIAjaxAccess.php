@@ -1,9 +1,6 @@
 <?php
 
 global $wgAjaxExportList;
-global $smwgIP;
-//require_once( "$smwgIP/includes/SMW_Datatype.php" );
-require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 
 

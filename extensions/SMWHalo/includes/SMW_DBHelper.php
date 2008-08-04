@@ -203,13 +203,13 @@
 				foreach ($requestoptions->getStringConditions() as $strcond) {
 					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
 					switch ($strcond->condition) {
-						case SMW_STRCOND_PRE:
+						case SMWStringCondition::STRCOND_PRE:
 							$string .= '%';
 							break;
-						case SMW_STRCOND_POST:
+						case SMWStringCondition::STRCOND_POST:
 							$string = '%' . $string;
 							break;
-						case SMW_STRCOND_MID:
+						case SMWStringCondition::STRCOND_MID:
 							$string = '%' . $string . '%';
 							break;
 					}
@@ -248,13 +248,13 @@
 				foreach ($requestoptions->getStringConditions() as $strcond) {
 					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
 					switch ($strcond->condition) {
-						case SMW_STRCOND_PRE:
+						case SMWStringCondition::STRCOND_PRE:
 							$string .= '%';
 							break;
-						case SMW_STRCOND_POST:
+						case SMWStringCondition::STRCOND_POST:
 							$string = '%' . $string;
 							break;
-						case SMW_STRCOND_MID:
+						case SMWStringCondition::STRCOND_MID:
 							$string = '%' . $string . '%';
 							break;
 					}

@@ -23,27 +23,34 @@ mkdir %OUTPUT_DIR%\extensions\SemanticForms
 mkdir %OUTPUT_DIR%\extensions\StringFunctions
 mkdir %OUTPUT_DIR%\extensions\Treeview
 mkdir %OUTPUT_DIR%\extensions\Variables
-
+mkdir %OUTPUT_DIR%\includes
+mkdir %OUTPUT_DIR%\skins
+mkdir %OUTPUT_DIR%\extensions\SMWHalo\includes
+mkdir %OUTPUT_DIR%\extensions\SMWHalo\bin
 
 REM patch files
-xcopy ..\..\..\patches %OUTPUT_DIR% /S /EXCLUDE:excludeForHalo.dat /Y
+xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /Y /EXCLUDE:excludeForExt.dat
+xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
+xcopy ..\..\..\patches\extensions\SMWHalo\includes %OUTPUT_DIR%\extensions\SMWHalo\includes /Y /EXCLUDE:excludeForExt.dat
+xcopy ..\..\..\patches\extensions\SMWHalo\bin %OUTPUT_DIR%\extensions\SMWHalo\bin /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
-xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\FCKeditor %OUTPUT_DIR%\extensions\FCKeditor /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\Lockdown %OUTPUT_DIR%\extensions\Lockdown /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\ParserFunctions %OUTPUT_DIR%\extensions\ParserFunctions /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\PermissionACL %OUTPUT_DIR%\extensions\PermissionACL /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\SemanticCalendar %OUTPUT_DIR%\extensions\SemanticCalendar /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\SemanticForms %OUTPUT_DIR%\extensions\SemanticForms /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\StringFunctions %OUTPUT_DIR%\extensions\StringFunctions /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\Treeview %OUTPUT_DIR%\extensions\Treeview /S /EXCLUDE:excludeForHalo.dat /Y
-xcopy ..\..\Variables %OUTPUT_DIR%\extensions\Variables /S /EXCLUDE:excludeForHalo.dat /Y
+xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\FCKeditor %OUTPUT_DIR%\extensions\FCKeditor /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\Lockdown %OUTPUT_DIR%\extensions\Lockdown /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\ParserFunctions %OUTPUT_DIR%\extensions\ParserFunctions /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\PermissionACL %OUTPUT_DIR%\extensions\PermissionACL /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\SemanticCalendar %OUTPUT_DIR%\extensions\SemanticCalendar /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\SemanticForms %OUTPUT_DIR%\extensions\SemanticForms /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\StringFunctions %OUTPUT_DIR%\extensions\StringFunctions /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\Treeview %OUTPUT_DIR%\extensions\Treeview /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\Variables %OUTPUT_DIR%\extensions\Variables /S /EXCLUDE:excludeForExt.dat /Y
 
 xcopy ..\..\LdapAuthentication.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Cite.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
+
 
 cd bin
 IF EXIST smwplus-ext.zip del smwplus-ext.zip

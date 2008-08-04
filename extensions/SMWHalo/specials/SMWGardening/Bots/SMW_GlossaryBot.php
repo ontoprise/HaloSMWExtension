@@ -85,16 +85,13 @@ class GlossaryBot extends GardeningBot {
 	 *
 	 */
 	private function processArticles() {
-		global $smwgIP;
-		include_once($smwgIP . "/includes/SMW_QueryProcessor.php");
-		
 		// Find all articles with the property 'description'.
 		$gt = &$this->getGlossaryTerms();
 		
 		$query_string = "[[Category:ShowGlossary]]";
 		$params = array();
 		$printlabel = "";
-		$printouts[] = new SMWPrintRequest(SMW_PRINT_THIS, $printlabel);
+		$printouts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $printlabel);
 		$query  = SMWQueryProcessor::createQuery($query_string, $params, true, 'auto', $printouts);
 		$results = smwfGetStore()->getQueryResult($query);
 		
@@ -178,7 +175,7 @@ class GlossaryBot extends GardeningBot {
 		$query_string = "[[description::*]][[description::+]]";
 		$params = array();
 		$printlabel = "";
-		$printouts[] = new SMWPrintRequest(SMW_PRINT_THIS, $printlabel);
+		$printouts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $printlabel);
 		$query  = SMWQueryProcessor::createQuery($query_string, $params, true, 'auto', $printouts);
 		global $smwgQMaxLimit;
 		$query->setLimit($smwgQMaxLimit, false);

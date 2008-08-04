@@ -83,18 +83,21 @@ class SMW_LocalGardeningJob extends Job {
         foreach($properties as $property) {
 	    	$subjects = smwfGetStore()->getAllPropertySubjects($property);
 	    	foreach($subjects as $s) {
-	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$s, $property);
-	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s, $property);
-	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s,$property);
+	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$s->getTitle(), $property);
+	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s->getTitle(), $property);
+	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s->getTitle(),$property);
 	       	}
 	      	
         }
         
         // check issues
         foreach($properties as $property) {
-        	print "Checking domain property: '".$property->getText()."'\n";
-        	$subjects = smwfGetStore()->getAllPropertySubjects($property);
-        	$this->annot_checker->checkPropertyAnnotations($subjects, $property);
+			print "Checking domain property: '".$property->getText()."'\n";
+			$subjects = array();
+			foreach (smwfGetStore()->getAllPropertySubjects($property) as $dv) {
+				$subjects[] = $dv->getTitle();
+			};
+			$this->annot_checker->checkPropertyAnnotations($subjects, $property);
         }
     }
     
@@ -114,12 +117,12 @@ class SMW_LocalGardeningJob extends Job {
 	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_MINCARD_VALUE, NULL,$property);
 	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_MAXCARD_VALUE,NULL, $property);
 	            
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s, $property);
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE,NULL, $s, $property);
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD,NULL, $s, $property);
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_HIGH_CARD,NULL, $s, $property);
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$s, $property);
-	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s, $property);
+	             $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s->getTitle(), $property);
+	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE,NULL, $s->getTitle(), $property);
+	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_LOW_CARD,NULL, $s->getTitle(), $property);
+	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_TOO_HIGH_CARD,NULL, $s->getTitle(), $property);
+	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_UNIT, NULL,$s->getTitle(), $property);
+	            $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARD_ISSUE_MISSING_PARAM, NULL, $s->getTitle(), $property);
 	            
 	        }
 	        $gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, NULL, $property);
@@ -127,7 +130,10 @@ class SMW_LocalGardeningJob extends Job {
     	
     	// check issues
     	foreach($properties as $property) {
-    		$subjects = smwfGetStore()->getAllPropertySubjects($property);
+    		$subjects = array();
+			foreach (smwfGetStore()->getAllPropertySubjects($property) as $dv) {
+				$subjects[] = $dv->getTitle();
+			};
         
 	    	// covariance check
 	    	$this->cov_checker->checkPropertyForCovariance($property);

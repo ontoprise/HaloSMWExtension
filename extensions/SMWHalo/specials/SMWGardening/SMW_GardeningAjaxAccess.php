@@ -65,7 +65,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 	    $passwordBlob = smwfGetPasswordBlob($userID);
 	    if($passwordBlob != NULL) {
 	        $matches = array();
-	        $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot&rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob));
+	        $result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot&rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob), array('timeout' => 5));
 	            
 	        preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
 	        if (isset($matches[1])) {
