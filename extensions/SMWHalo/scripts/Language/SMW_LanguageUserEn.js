@@ -252,7 +252,7 @@ var wgUserLanguageStrings = {
 	'SHE_add_tab'				  : "add tabulation to text",
 	'SHE_remove_tab'			  : "remove tabulation to text",
 	'SHE_about_notice'			  : "Notice': syntax highlight function is only for small text",
-	'SHE_toggle'				  : "Switch between syntax highlighted and standard editor",
+	'SHE_toggle'				  : "Switch between syntax highlighted and standard editor (not for WYSIWYG)",
 	'SHE_accesskey'				  : "Accesskey",
 	'SHE_tab'					  : "Tab",
 	'SHE_shift'					  : "Shift",

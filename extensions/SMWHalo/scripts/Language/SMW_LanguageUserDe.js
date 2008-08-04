@@ -250,7 +250,7 @@ var wgUserLanguageStrings = {
 	'SHE_add_tab'				  : "Tab zum Text hinzufügen",
 	'SHE_remove_tab'			  : "Tab aus Text entfernen",
 	'SHE_about_notice'			  : "Bemerkung: Syntax Highlighting ist nur für kurze Texte",
-	'SHE_toggle'				  : "Syntax Highlighting an- und ausschalten",
+	'SHE_toggle'				  : "Syntax Highlighting an- und ausschalten (nicht für WYSIWYG)",
 	'SHE_accesskey'				  : "Accesskey",
 	'SHE_tab'					  : "Tab",
 	'SHE_shift'					  : "Shift",
