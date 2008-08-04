@@ -138,7 +138,7 @@ Query.prototype = {
 		for(var i=0; i<this.categories.length; i++){
 			asktext += "[[" + gLanguage.getMessage('CATEGORY_NS');
 			for(var j=0; j<this.categories[i].length; j++){
-				asktext += this.categories[i][j];
+				asktext += this.categories[i][j].unescapeHTML();
 				if(j<this.categories[i].length-1){ //add disjunction operator
 					asktext += "||";
 				}
@@ -148,7 +148,7 @@ Query.prototype = {
 		for(var i=0; i<this.instances.length; i++){
 			asktext += "[[";
 			for(var j=0; j<this.instances[i].length; j++){
-				asktext += this.instances[i][j];
+				asktext += this.instances[i][j].unescapeHTML();
 				if(j<this.instances[i].length-1){ //add disjunction operator
 					asktext += "||";
 				}
@@ -164,20 +164,20 @@ Query.prototype = {
 			}
 			
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
-				asktext += "[[" + this.properties[i].getName() + "::";
+				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
 						asktext += ";"; // connect values with semicolon
 					if(vals[j][1]!="=")
 						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
-					asktext += vals[j][2];
+					asktext += vals[j][2].unescapeHTML();
 				}
 			} else { //binary property
 				var vals = this.properties[i].getValues();
 				if (vals.length == 1 && vals[0][2] == "*"){}
 				else{
-					asktext += "[[" + this.properties[i].getName() + "::";
+					asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
 					for(var j=0; j<vals.length; j++){
 						if(j!=0) //add disjunction operator
 							asktext += "||";
@@ -186,7 +186,7 @@ Query.prototype = {
 						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
-							asktext += vals[j][2];
+							asktext += vals[j][2].unescapeHTML();
 					}
 				asktext += "]]";
 				}
@@ -208,9 +208,9 @@ Query.prototype = {
 		for(var i=0; i<this.categories.length; i++){
 			asktext += "[[" + gLanguage.getMessage('CATEGORY_NS');
 			for(var j=0; j<this.categories[i].length; j++){
-				asktext += this.categories[i][j];
+				asktext += this.categories[i][j].unescapeHTML();
 				if(j<this.categories[i].length-1){ //add disjunction operator
-					asktext += "||";
+					asktext += "||" + gLanguage.getMessage('CATEGORY_NS');
 				}
 			}
 			asktext += "]]";
@@ -218,7 +218,7 @@ Query.prototype = {
 		for(var i=0; i<this.instances.length; i++){
 			asktext += "[[";
 			for(var j=0; j<this.instances[i].length; j++){
-				asktext += this.instances[i][j];
+				asktext += this.instances[i][j].unescapeHTML();
 				if(j<this.instances[i].length-1){ //add disjunction operator
 					asktext += "||";
 				}
@@ -228,27 +228,27 @@ Query.prototype = {
 		var displayStatements = new Array();
 		for(var i=0; i<this.properties.length; i++){
 			if(this.properties[i].isShown()){ // "Show in results" checked?
-				displayStatements.push(this.properties[i].getName());
+				displayStatements.push(this.properties[i].getName().unescapeHTML());
 			}
 			if(this.properties[i].mustBeSet()){
-				asktext += "[[" + this.properties[i].getName() + "::+]]";
+				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::+]]";
 			}
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
-				asktext += "[[" + this.properties[i].getName() + "::";
+				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
 				var vals = this.properties[i].getValues();
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
 						asktext += ";"; // connect values with semicolon
 					if(vals[j][1]!="=")
 						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
-					asktext += vals[j][2];
+					asktext += vals[j][2].unescapeHTML();
 				}
 				asktext += "]]";
 			} else { //binary property
 				var vals = this.properties[i].getValues();
 				if (vals.length == 1 && vals[0][2] == "*"){}
 				else{
-					asktext += "[[" + this.properties[i].getName() + "::";
+					asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::";
 					for(var j=0; j<vals.length; j++){
 						if(j!=0) //add disjunction operator
 							asktext += "||";
@@ -257,7 +257,7 @@ Query.prototype = {
 						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
-							asktext += vals[j][2];
+							asktext += vals[j][2].unescapeHTML();
 					}
 					asktext += "]]";
 				}

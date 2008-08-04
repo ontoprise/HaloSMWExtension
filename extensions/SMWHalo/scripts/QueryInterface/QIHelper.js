@@ -533,7 +533,7 @@ getPropertyInformation:function(){
 			this.pendingElement.hide();
 		this.pendingElement = new OBPendingIndicator($('input3'));
 		this.pendingElement.show();
-		sajax_do_call('smwf_qi_QIAccess', ["getPropertyInformation", propname], this.adaptDialogueToProperty.bind(this));
+		sajax_do_call('smwf_qi_QIAccess', ["getPropertyInformation", escapeQueryHTML(propname)], this.adaptDialogueToProperty.bind(this));
 	}
 },
 
@@ -663,10 +663,10 @@ loadCategoryDialogue:function(id){
 	this.newCategoryDialogue(false);
 	this.loadedFromId = id;
 	var cats = this.activeQuery.getCategoryGroup(id); //get the category group
-	$('input0').value = cats[0];
+	$('input0').value = unescapeQueryHTML(cats[0]);
 	for (var i=1; i<cats.length; i++){
 		this.addDialogueInput();
-		$('input' + i).value = cats[i];
+		$('input' + i).value = unescapeQueryHTML(cats[i]);
 	}
 	$('qidelete').style.display = ""; // show delete button
 },
@@ -680,10 +680,10 @@ loadInstanceDialogue:function(id){
 	this.newInstanceDialogue(false);
 	this.loadedFromId = id;
 	var ins = this.activeQuery.getInstanceGroup(id);
-	$('input0').value = ins[0];
+	$('input0').value = unescapeQueryHTML(ins[0]);
 	for (var i=1; i<ins.length; i++){
 		this.addDialogueInput();
-		$('input' + i).value = ins[i];
+		$('input' + i).value = unescapeQueryHTML(ins[i]);
 	}
 	$('qidelete').style.display = "";
 },
@@ -702,7 +702,7 @@ loadPropertyDialogue:function(id){
 	var vals = prop.getValues();
 	this.proparity = prop.getArity();
 
-	$('input0').value = prop.getName(); //fill input filed with name
+	$('input0').value = unescapeQueryHTML(prop.getName()); //fill input filed with name
 	$('input1').checked = prop.isShown(); //check box if appropriate
 	$('input2').checked = prop.mustBeSet();
 	$('mainlabel').innerHTML = (vals[0][0] == "subquery"?gLanguage.getMessage('QI_PAGE'):vals[0][0]); //subquery means type is page
@@ -726,12 +726,12 @@ loadPropertyDialogue:function(id){
 		$('usesub').checked = true;
 	} else {
 		if(!prop.isEnumeration())
-			$('input3').value = vals[0][2]; //enter the value into the input box
+			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
 			var tmphtml = '<select id="input3" style="width:100%">';
 			this.enumValues = prop.getEnumValues();
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + this.enumValues[i] + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
@@ -741,7 +741,7 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				$('input' + (i+2)).value = vals[i][2];
+				$('input' + (i+2)).value = unescapeQueryHTML(vals[i][2]);
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
@@ -751,7 +751,7 @@ loadPropertyDialogue:function(id){
 				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
-					tmphtml += '<option value="' + this.enumValues[j] + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + this.enumValues[j] + '</option>';
+					tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+3].cells[2].innerHTML = tmphtml;
@@ -776,9 +776,9 @@ loadPropertyDialogue:function(id){
 
 			cell = row.insertCell(2); // input field
 			if(vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion needed?
-				cell.innerHTML = '<input type="text" class="wickEnabled general-forms" typehint="0" autocomplete="OFF" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
+				cell.innerHTML = '<input type="text" class="wickEnabled general-forms" typehint="0" autocomplete="OFF" id="input' + (i+2) + '" value="' + unescapeQueryHTML(vals[i][2]) + '"/>';
 			else
-				cell.innerHTML = '<input type="text" id="input' + (i+2) + '" value="' + vals[i][2] + '"/>';
+				cell.innerHTML = '<input type="text" id="input' + (i+2) + '" value="' + unescapeQueryHTML(vals[i][2]) + '"/>';
 		}
 		autoCompleter.registerAllInputs();
 	}
@@ -908,7 +908,7 @@ addCategoryGroup:function(){
 	var allinputs = true; // checks if all inputs are set for error message
 	for(var i=0; i<this.activeInputs; i++){
 		var tmpid = "input" + i;
-		tmpcat.push($(tmpid).value);
+		tmpcat.push(escapeQueryHTML($(tmpid).value));
 		if($(tmpid).value == "")
 			allinputs = false;
 	}
@@ -934,7 +934,7 @@ addInstanceGroup:function(){
 	var allinputs = true;
 	for(var i=0; i<this.activeInputs; i++){
 		var tmpid = "input" + i;
-		tmpins.push($(tmpid).value);
+		tmpins.push(escapeQueryHTML($(tmpid).value));
 		if($(tmpid).value == "")
 			allinputs = false;
 	}
@@ -964,7 +964,7 @@ addPropertyGroup:function(){
 		var pshow = $('input1').checked; // show in results?
 		var pmust = $('input2').checked;
 		var arity = this.proparity;
-		var pgroup = new PropertyGroup(pname, arity, pshow, pmust, this.propIsEnum, this.enumValues); //create propertyGroup
+		var pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust, this.propIsEnum, this.enumValues); //create propertyGroup
 		for(var i = 3; i<$('dialoguecontent').rows.length; i++){
 			var paramvalue = $('input' + i).value;
 			paramvalue = paramvalue==""?"*":paramvalue; //no value is replaced by "*" which means all values
@@ -981,8 +981,9 @@ addPropertyGroup:function(){
 				}
 				/*ENDLOG*/
 			}
+
 			var restriction = $('dialoguecontent').rows[i].cells[1].firstChild.value;
-			pgroup.addValue(paramname, restriction, paramvalue); // add a value group to the property group
+			pgroup.addValue(paramname, restriction, escapeQueryHTML(paramvalue)); // add a value group to the property group
 		}
 		/*STARTLOG*/
 		if(window.smwhgLogger){
@@ -1084,6 +1085,7 @@ showFullAsk:function(type, toggle){
 		ask = ask.replace(/\|/g, "\n|");
 	$('fullAskText').value = ask;
 },
+
 
 showLoadDialogue:function(){
 	//List of saved queries with filter
@@ -1247,6 +1249,19 @@ Event.observe(window, 'load', initialize_qi);
 
 function initialize_qi(){
 	qihelper = new QIHelper();
+}
+
+function escapeQueryHTML(string){
+	string = string.escapeHTML();
+	string = string.replace(/\"/g, "&quot;");
+	return string;
+}
+
+
+function unescapeQueryHTML(string){
+	string = string.unescapeHTML();
+	string = string.replace(/&quot;/g, "\"");
+	return string;
 }
 
 
