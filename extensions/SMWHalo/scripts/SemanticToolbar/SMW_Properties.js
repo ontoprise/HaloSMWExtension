@@ -20,8 +20,8 @@ var HAS_TYPE = "has type";
 var MAX_CARDINALITY = "Has max cardinality";
 var MIN_CARDINALITY = "Has min cardinality";
 var INVERSE_OF = "Is inverse of";
-var TRANSITIVE_RELATION = "Transitive relations";
-var SYMMETRICAL_RELATION = "Symmetrical relations";
+var TRANSITIVE_RELATION = "Transitive properties";
+var SYMMETRICAL_RELATION = "Symmetrical properties";
 
 var SMW_PRP_ALL_VALID =	
 	'smwAllValid="allValid ' +
