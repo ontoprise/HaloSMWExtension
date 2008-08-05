@@ -1637,3 +1637,7 @@ cursor:move;
 position:relative;
 z-index:5;
 }
+
+#contentslider{
+	height: 1.9em;
+}
