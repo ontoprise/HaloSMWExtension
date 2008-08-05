@@ -39,7 +39,7 @@ class WebService {
 	// in form of nested arrays
 	private $mResult;         //string: description of the result structure
 	private $mParsedResult;   // The parsed structure of the result description
-							  // as array if SimpleXMLElements
+	// as array if SimpleXMLElements
 	private $mDisplayPolicy;  //int: display update policy in minutes. 0 means only once.
 	private $mQueryPolicy;    //int: query update policy in minutes. 0 means only once.
 	private $mUpdateDelay;    //int: update delay for the query policy in seconds
@@ -95,8 +95,8 @@ class WebService {
 		$this->mParameters = $parameters;
 		try {
 			$this->mParsedParameters = empty($parameters)
-				? null
-				: new SimpleXMLElement("<p>".$parameters."</p>");
+			? null
+			: new SimpleXMLElement("<p>".$parameters."</p>");
 			$this->mResult = $result;
 			if (empty($result)) {
 				$this->mParsedResult = null;
@@ -104,7 +104,7 @@ class WebService {
 				$this->mParsedResult = new SimpleXMLElement("<r>$result</r>");
 				$r = array();
 				foreach ($this->mParsedResult->result as $rdef) {
-					$r[] = $rdef; 
+					$r[] = $rdef;
 				}
 				$this->mParsedResult = $r;
 			}
@@ -226,7 +226,18 @@ class WebService {
 		} else {
 			$ws->mParsedParameters = null;
 		}
+
+		// check if indexes used in parameter-paths that contain arrays
+		// are valid
+		if($ws->mParsedParameters){
+			$aParamPaths = array();
 			
+			foreach($ws->mParsedParameters as $child){
+				$aParamPaths[] = "".$child["path"];
+			}
+			$valid &= $ws->checkParameterArrayIndexes($aParamPaths, $msg);
+		}
+		
 		$valid &= self::getWWSDElement($parser, '/WebService/result', null, $ws->mParsedResult, false, 1, 100, $msg);
 		if ($ws->mParsedResult) {
 			// store the serialized form of the result description
@@ -433,125 +444,125 @@ class WebService {
 	 * @param array $resultParts the parts of the result that are of interrest
 	 * @return array the result of interrest
 	 */
-/*		
-	public function getCallResultParts($response, $resultParts){
+	/*
+	 public function getCallResultParts($response, $resultParts){
 		//initialize array containing select paths and their value
 		$selects = array();
 		foreach ($this->mParsedResult as $rdef) {
-			foreach($rdef->children() as $child){
-				if ($child->getName() == 'select') {
-//					$selects["".$rdef['name'].'.'.$child["object"]] = "".$child["value"];
-					$selects["".$child["object"]] = "".$child["value"];
-				}
-			}
+		foreach($rdef->children() as $child){
+		if ($child->getName() == 'select') {
+		//					$selects["".$rdef['name'].'.'.$child["object"]] = "".$child["value"];
+		$selects["".$child["object"]] = "".$child["value"];
 		}
-		
+		}
+		}
+
 		//initialize array of paths and elements that are not selected in the result
 		$outselectedPaths = array();
 		foreach($selects as $path => $value){
-			$pathSteps = explode(".", $path);
-			$tempObject[""] = $response;
-			for($i=0; $i < sizeof($pathSteps); $i++){
-				if($tempObject){
-					foreach($tempObject as $key => $temp){
-						if(is_array($temp)){
-							$index = 0;
-							foreach($temp as $t){
-								$newTempObject[$key.".".$index] = $t;
-								$index += 1;
-							}
-							$i -= 1;
-						} else {
-							$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-							$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
-							if($i == (sizeof($pathSteps)-1)){
-								if($newTempObject[$key.".".$pathSteps[$i]] != $value){
-									$outselectedPaths[$key.".".$pathSteps[$i]] = false;
-								} else {
-									$outselectedPaths[$key.".".$pathSteps[$i]] = true;
-								}
-							}
-						}
-					}
-				}
-				$tempObject = $newTempObject;
-				$newTempObject = array();
-			}
+		$pathSteps = explode(".", $path);
+		$tempObject[""] = $response;
+		for($i=0; $i < sizeof($pathSteps); $i++){
+		if($tempObject){
+		foreach($tempObject as $key => $temp){
+		if(is_array($temp)){
+		$index = 0;
+		foreach($temp as $t){
+		$newTempObject[$key.".".$index] = $t;
+		$index += 1;
+		}
+		$i -= 1;
+		} else {
+		$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+		$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
+		if($i == (sizeof($pathSteps)-1)){
+		if($newTempObject[$key.".".$pathSteps[$i]] != $value){
+		$outselectedPaths[$key.".".$pathSteps[$i]] = false;
+		} else {
+		$outselectedPaths[$key.".".$pathSteps[$i]] = true;
+		}
+		}
+		}
+		}
+		}
+		$tempObject = $newTempObject;
+		$newTempObject = array();
+		}
 		}
 
 		//get the requested part of the result
 		$paths = array();
 		foreach($resultParts as $resultPart){
 
-			$tempObject[] = $response;
+		$tempObject[] = $response;
 
-			foreach ($this->mParsedResult as $rdef) {
-				$rName = "".$rdef["name"];
-				foreach($rdef->children() as $child){
-					if($rName.".".$child["name"] == $resultPart){
-//						$paths["".$child["name"]] = $rName.'.'.$child["path"];
-						$paths["".$child["name"]] = "".$child["path"];
-					}
-				}
-			}
+		foreach ($this->mParsedResult as $rdef) {
+		$rName = "".$rdef["name"];
+		foreach($rdef->children() as $child){
+		if($rName.".".$child["name"] == $resultPart){
+		//						$paths["".$child["name"]] = $rName.'.'.$child["path"];
+		$paths["".$child["name"]] = "".$child["path"];
 		}
-				
+		}
+		}
+		}
+
 		$result = array();
 
 		foreach($paths as $key => $path){
-			$pathSteps = explode(".", $path);
-			$tempObject = array();
-			$tempObject[""] = $response;
-			for($i=0; $i < sizeof($pathSteps); $i++){
-				$newTempObject = array();
-				if($tempObject){
-					$tempObjectCount = -1;
-					foreach($tempObject as $id => $temp){
-						$tempObjectCount += 1;
-						$falseCount = 0;
-						$trueCount = 0;
-						foreach($outselectedPaths as $k => $v){
-							if((substr($k, 0, strlen($id)) == $id)
-							&& (strlen($this->getReturnPartBracketValue($id)) > 0)
-							&& !(ctype_digit($this->getReturnPartBracketValue($id) == true))){
-								if($v){
-									$trueCount += 1;
-								} else {
-									$falseCount += 1;
-								}
-							}
-						}
-						if($trueCount > 0 || $falseCount == 0){
-							if(is_array($temp)){
-								$index = 0;
-								foreach($temp as $t){
-									$newTempObject[$id.".".$index] = $t;
-									$index +=1;
-								}
-								$i -= 1;
-							} else {
-								$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-								if($niceStep == ""){
-									$newTempObj = $temp;
-								} else {
-									$newTempObj = $temp->$niceStep;
-								}
-								if(is_array($newTempObj) && (ctype_digit($this->getReturnPartBracketValue($pathSteps[$i])) == true)){
-									$newTempObj = $newTempObj[$this->getReturnPartBracketValue($pathSteps[$i])];
-								}
-								$newTempObject[$id.".".$pathSteps[$i]] = $newTempObj;
-							}
-						}
-					}
-				}
-				$tempObject = $newTempObject;
-			}
-			$result[$key] = $tempObject;
+		$pathSteps = explode(".", $path);
+		$tempObject = array();
+		$tempObject[""] = $response;
+		for($i=0; $i < sizeof($pathSteps); $i++){
+		$newTempObject = array();
+		if($tempObject){
+		$tempObjectCount = -1;
+		foreach($tempObject as $id => $temp){
+		$tempObjectCount += 1;
+		$falseCount = 0;
+		$trueCount = 0;
+		foreach($outselectedPaths as $k => $v){
+		if((substr($k, 0, strlen($id)) == $id)
+		&& (strlen($this->getReturnPartBracketValue($id)) > 0)
+		&& !(ctype_digit($this->getReturnPartBracketValue($id) == true))){
+		if($v){
+		$trueCount += 1;
+		} else {
+		$falseCount += 1;
+		}
+		}
+		}
+		if($trueCount > 0 || $falseCount == 0){
+		if(is_array($temp)){
+		$index = 0;
+		foreach($temp as $t){
+		$newTempObject[$id.".".$index] = $t;
+		$index +=1;
+		}
+		$i -= 1;
+		} else {
+		$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
+		if($niceStep == ""){
+		$newTempObj = $temp;
+		} else {
+		$newTempObj = $temp->$niceStep;
+		}
+		if(is_array($newTempObj) && (ctype_digit($this->getReturnPartBracketValue($pathSteps[$i])) == true)){
+		$newTempObj = $newTempObj[$this->getReturnPartBracketValue($pathSteps[$i])];
+		}
+		$newTempObject[$id.".".$pathSteps[$i]] = $newTempObj;
+		}
+		}
+		}
+		}
+		$tempObject = $newTempObject;
+		}
+		$result[$key] = $tempObject;
 		}
 
 		return $result;
-	}
-*/
+		}
+		*/
 	/**
 	 * This methods returns these parts of the ws-response
 	 * that are of interrest
@@ -568,7 +579,7 @@ class WebService {
 
 			// find all selected paths on the resulti
 			$selectedPath = $this->getSelectedPaths($response, $rdef);
-		
+
 			if (count($parts) == 1) {
 				// There is only the name of the result with no parts
 				// => return all parts of the result
@@ -582,10 +593,10 @@ class WebService {
 		}
 		return $results;
 	}
-	
-	
+
+
 	/**
-	 * Returns the results for the alias $alias of the result definition 
+	 * Returns the results for the alias $alias of the result definition
 	 * $resultDef based on the complete result set $response.
 	 *
 	 * @param Object $response
@@ -594,9 +605,9 @@ class WebService {
 	 */
 	private function getResults($response, $resultDef, $alias, $selectedPaths) {
 		$path = $this->getPathForAlias($alias, $resultDef);
-		
+
 		$paths = $this->matchSelectedPath($path, $selectedPaths);
-		
+
 		$result = array();
 		if (count($paths) == 0) {
 			return $result;
@@ -607,7 +618,7 @@ class WebService {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Removes all results from the result set that do not match the selectors
 	 * of the result definition
@@ -615,12 +626,12 @@ class WebService {
 	 * @param Object $response
 	 * 		The web services response
 	 * @param SimpleXMLElement $resultDef
-	 * 		Definition of the result 
+	 * 		Definition of the result
 	 * @return array<string>
-	 * 		An array of paths, where variable indices are decorated with concrete 
+	 * 		An array of paths, where variable indices are decorated with concrete
 	 *      numbers e.g. AnElement[a]=5.value
 	 */
- 	private function getSelectedPaths($response, $resultDef) {
+	private function getSelectedPaths($response, $resultDef) {
 		$s = $resultDef->select;
 		$num = count($s);
 		if ($num == 0) {
@@ -631,13 +642,13 @@ class WebService {
 		for ($i = 0; $i < $num; ++$i) {
 			// find the paths that match the selections
 			$select = & $s[$i];
-			$sel = array(explode('.', ''.$select['object']), 
+			$sel = array(explode('.', ''.$select['object']),
 			                   ''.$select['value']);
 			$selPaths = array();
 			$this->doApplySelects($response, $sel, 0, $selPaths);
 			$selectedPaths[] = $selPaths;
 		}
-		
+
 		// Selections on the same index variable are ANDed i.e. the intersection
 		// of valid indices must be built
 		$numSelections = count($selectedPaths);
@@ -680,7 +691,7 @@ class WebService {
 				}
 			}
 		}
-		
+
 		// All invalid path are replace by <null>. Now collect all remaining
 		// paths.
 		$selPath = array();
@@ -699,23 +710,23 @@ class WebService {
 	 *
 	 * @param string $path
 	 * @param array<string> $selectedPaths
-	 * 
+	 *
 	 * @return array<string>
 	 * 		Valid paths, where variable indices are replaced concrete numbers
 	 */
 	private function matchSelectedPath($path, &$selectedPaths) {
-		
+
 		if (count($selectedPaths) == 0) {
 			return array($path);
 		}
 		$pathParts = explode('.', $path);
 		$numPathParts = count($pathParts);
 		$result = array();
-		
+
 		foreach ($selectedPaths as $sp) {
 			$processNextPath = false;
 			$spParts = explode('.', $sp);
-			
+				
 			$newPath = "";
 			for ($i = 0; $i < $numPathParts && !$processNextPath; ++$i) {
 				$pp = $pathParts[$i];
@@ -724,10 +735,10 @@ class WebService {
 					$newPath .= '.'.$pp;
 					continue;
 				}
-				if (preg_match("/(.*?)\[([a-z]+)\]/", $pp, $ppMatches) == 1 
-				    && preg_match("/(.*?)\[([a-z]+)\]=(\d+)/", $spp, $sppMatches)) {
+				if (preg_match("/(.*?)\[([a-z]+)\]/", $pp, $ppMatches) == 1
+				&& preg_match("/(.*?)\[([a-z]+)\]=(\d+)/", $spp, $sppMatches)) {
 					if ($ppMatches[1] == $sppMatches[1]
-					    && $ppMatches[2] == $sppMatches[2]) {
+					&& $ppMatches[2] == $sppMatches[2]) {
 						$newPath .= ".".$ppMatches[1].'['.$sppMatches[3].']';
 					} else {
 						$processNextPath = true; // Paths do not match => check the next path
@@ -743,20 +754,20 @@ class WebService {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Walks recursively through the result and finds all paths to elements that
 	 * match the selection criteria.
 	 *
 	 * @param Object $selectedResults
-	 * 		The results of the web service as returned by the SOAP client. 
+	 * 		The results of the web service as returned by the SOAP client.
 	 * @param array<int->array(array(string pathSteps), select-value)> $selects
 	 * 		Definition of the selections
 	 * @param int $partIdx
 	 * 		The index of part of the selection path to consider.
 	 */
-	private function doApplySelects(&$selectedResults, &$selects, $partIdx, 
-									&$selectedPaths, $currPath = '') {
+	private function doApplySelects(&$selectedResults, &$selects, $partIdx,
+	&$selectedPaths, $currPath = '') {
 		$parts = &$selects[0];
 		if ($partIdx >= count($parts)) {
 			// The selection <$sel> has been fully processed
@@ -772,7 +783,7 @@ class WebService {
 			$hasIndex = true;
 			$pathTail = '.'.$part."[$arrayIdx]";
 		}
-		
+
 		$sr = &$selectedResults->$part;
 		if ($sr) {
 			if (is_array($sr)) {
@@ -780,8 +791,8 @@ class WebService {
 				foreach ($sr as $srpart) {
 					// Process all members of the array
 					$pathTail2 = ($hasIndex) ? '='.$i : '';
-					$this->doApplySelects($srpart, $selects, $partIdx+1, 
-					                      $selectedPaths, $currPath.$pathTail.$pathTail2);
+					$this->doApplySelects($srpart, $selects, $partIdx+1,
+					$selectedPaths, $currPath.$pathTail.$pathTail2);
 					++$i;
 				}
 			} else {
@@ -790,7 +801,7 @@ class WebService {
 					// requested value.
 					if ($sr == $selects[1]) {
 						// value matches => get the array indices
-						$p = substr($currPath.$pathTail, 1); 
+						$p = substr($currPath.$pathTail, 1);
 						$matchedIndices = array();
 						preg_match_all("/\[(.*?)\]=(\d+)/", $p, $matchedIndices);
 						$indices = array();
@@ -802,13 +813,13 @@ class WebService {
 						$selectedPaths[] = array($p, $indices);
 					}
 				} else {
-					$this->doApplySelects($sr, $selects, $partIdx+1, 
-					                      $selectedPaths, $currPath.$pathTail);
+					$this->doApplySelects($sr, $selects, $partIdx+1,
+					$selectedPaths, $currPath.$pathTail);
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Recursively collects all results for the given path.
 	 *
@@ -821,12 +832,12 @@ class WebService {
 		}
 
 		$result = array();
-		
+
 		$pathParts = explode('.', $path);
 		$part = $pathParts[0];
 		unset($pathParts[0]);
 		$path = implode('.', $pathParts);
-		
+
 		$objName = $part;
 		$arrayIdx = null;
 		if (preg_match("/(.*?)\[(\d+|)\]/", $part, $matches) == 1) {
@@ -835,24 +846,24 @@ class WebService {
 			$arrayIdx = $matches[2];
 		}
 		$obj = $resultSet->$objName;
-		
+
 		if (is_array($obj)) {
 			// Handle an array
 			if ($arrayIdx != null) {
 				// Collect the result at the specified array index
-				$result = array_merge($result, $this->getResultParts($obj[$arrayIdx*1], $path)); 
+				$result = array_merge($result, $this->getResultParts($obj[$arrayIdx*1], $path));
 			} else {
 				for ($i = 0, $n = count($obj); $i < $n; ++$i) {
-					$result = array_merge($result, $this->getResultParts($obj[$i], $path)); 
+					$result = array_merge($result, $this->getResultParts($obj[$i], $path));
 				}
 			}
 		} else {
 			// a simple object
-			$result = array_merge($result, $this->getResultParts($obj, $path)); 
+			$result = array_merge($result, $this->getResultParts($obj, $path));
 		}
 		return $result;
 	}
-	
+
 	private function getPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
 			if ($alias == ''.$part['name']) {
@@ -860,9 +871,9 @@ class WebService {
 			}
 		}
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * This methods prepares the parameters for the ws-call
 	 *
@@ -903,11 +914,14 @@ class WebService {
 				$temp = &$temp[$walkedParameters[$i]];
 			} else {
 				if(!$temp[$this->getReturnPartPathStep($walkedParameters[$i])]){
-					$temp[$this->getReturnPartPathStep($walkedParameters[$i])] =array();
+					$temp[$this->getReturnPartPathStep($walkedParameters[$i])] = array();
 				}
+
 				$temp = &$temp[$this->getReturnPartPathStep($walkedParameters[$i])];
 				if(!$temp[$this->getReturnPartBracketValue($walkedParameters[$i])]){
-					$temp[$this->getReturnPartBracketValue($walkedParameters[$i])] = array();
+					$index = $this->getReturnPartBracketValue($walkedParameters[$i])*1;
+					$temp[$index] = array();
+					ksort($temp);
 				}
 				$temp = &$temp[$this->getReturnPartBracketValue($walkedParameters[$i])];
 			}
@@ -1128,7 +1142,7 @@ class WebService {
 	private function checkResult() {
 		// check if there are duplicate results in the wwsd
 		$msg = array();
-		
+
 		$rNames = array(); // Names of results
 		$wwsdPaths = array();
 		foreach ($this->mParsedResult as $r) {
@@ -1359,7 +1373,7 @@ class WebService {
 	 * @return array of error-messages
 	 */
 	public function validateSpecifiedResults($specifiedResults){
-		
+
 		$messages = array();
 		foreach($specifiedResults as $rName => $rValue){
 			$rPathSteps = explode(".",$rName);
@@ -1382,7 +1396,7 @@ class WebService {
 		}
 		return $messages;
 	}
-	
+
 	/**
 	 * returns values for the last brackets used in resultparts
 	 *
@@ -1391,9 +1405,6 @@ class WebService {
 	 */
 	private function getReturnPartBracketValue($name){
 		$strpos = strrpos($name, "[");
-		//		while(strpos($name, "[", $strpos+1)){
-		//			$strpos = strpos($name, "[", $strpos+1);
-		//		}
 
 		if($strpos){
 			if(strpos($name, "]")){
@@ -1437,8 +1448,8 @@ class WebService {
 		$this->mCallErrorMessages = array();
 		return $eMess;
 	}
-	
-	
+
+
 	/**
 	 * A WWSD can contain several result definitions that have a unique name.
 	 * This method returns the parsed XML structure of the result definition
@@ -1457,10 +1468,65 @@ class WebService {
 		}
 		return null;
 	}
-	
 
+	/**
+	 * checks if array indexes in parameter paths are appropriate
+	 *
+	 * @param array_type $paths : the paths to check
+	 * @param array msg : error messages and warnings
+	 * @return boolean check result
+	 */
+	public function checkParameterArrayIndexes($paths, &$msg){
+		$ok = true;
+		$aPaths = array();
+
+		foreach($paths as $path){
+			$pathSteps = explode(".", $path);
+			$aPath = "";
+			
+			foreach($pathSteps as $pathStep){
+				if(!(WebService::getReturnPartBracketValue($pathStep) === false)){
+					if(WebService::getReturnPartBracketValue($pathStep) !== true){
+						$index = WebService::getReturnPartBracketValue($pathStep);
+						$tAPath = $aPath.".".WebService::getReturnPartPathStep($pathStep);
+		
+						if(strpos(".".$path, $aPath.".".$pathStep) > -1){
+							$tAPath .= "[].".substr($path, strlen($aPath.".".$pathStep));
+						}
+						
+						if(!$aPaths[$tAPath]){
+							$aPaths[$tAPath] = array();
+						}
+						
+						$aPaths[$tAPath][] = $index;
+					}
+					else {
+						$msg[] = wfMsg('smw_wwsd_array_index_missing', $path);
+						$ok = false;
+					}
+				}
+				$aPath .= ".".$pathStep;
+			}
+		}
+		
+		foreach($aPaths as $key => $aPath){
+			sort($aPath);
+			
+			$index = 0;
+			foreach($aPath as $aIndex){
+				
+				if($aIndex != $index){
+					$ok = false;
+					$msg[] = wfMsg('smw_wwsd_array_index_incorrect', $key);
+					break;
+				}
+				$index += 1;
+			}
+		}
+		
+		return $ok;
+	}
 
 }
-
 
 ?>
