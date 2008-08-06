@@ -894,9 +894,6 @@ DefineWebServiceSpecial.prototype = {
 
 			for (i = 0; i < this.preparedRPathSteps.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					result += "<part name=\""
-							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-							+ "\" ";
 					var rPath = "";
 					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
 						var rPathStep = "";
@@ -921,7 +918,12 @@ DefineWebServiceSpecial.prototype = {
 							rPath += rPathStep;
 						}
 					}
+					if(rPath.indexOf("Request.CartAddRequest.Items.Item.MerchantItemAttributes.Cuisine") == -1){
+					result += "<part name=\""
+						+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+						+ "\" ";
 					result += " path=\"" + rPath + "\" />\n";
+					}
 				}
 			}
 			result += "</result>\n";
@@ -995,7 +997,7 @@ DefineWebServiceSpecial.prototype = {
 			wsSyntax += "}}";
 
 			this.wsSyntax = wsSyntax;
-
+			
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack.bind(this));
 
@@ -1008,6 +1010,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep6CallBack : function(request) {
+		alert(request.responseText);
 		if (request.responseText == "false") {
 			var wsName = $("step6-name").value;
 			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
@@ -1025,6 +1028,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack1 : function(request) {
+		alert(request.responseText);
 		var wsName = $("step6-name").value;
 		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
 				this.processStep6CallBack2.bind(this));
@@ -1036,6 +1040,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack2 : function(request) {
+		alert(request.responseText);
 		var wsName = $("step6-name").value;
 		sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
 				this.processStep6CallBack3.bind(this));
@@ -1047,6 +1052,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack3 : function(request) {
+		alert(request.responseText);
 		var container = $("step7-container").cloneNode(false);
 		$("step7-container").id = "old-step7-container";
 		$("old-step7-container").parentNode.insertBefore(container,
