@@ -28,7 +28,7 @@ createList: function(list,id) {
 	switch (id) {
 		case "category":
 			divlist ='<div id="' + id +'-tools">';
-			divlist += '<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
+			divlist += '<a id="cat-menu-annotate" enabled="true" href="javascript:catToolBar.newItem()" class="menulink">'+gLanguage.getMessage('ANNOTATE')+'</a>';
 			if (wgAction != 'annotate') {
 				divlist += '<a href="javascript:catToolBar.newCategory()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
 			}

@@ -140,16 +140,20 @@ cancel: function(){
 
 enableAnnotation: function(enable) {
 	if ($('cat-menu-annotate')) {
+		var enabled = $('cat-menu-annotate').readAttribute('enabled') == 'true';
+		if (enable == enabled) {
+			return;
+		}
 		if (enable) {
 //		$('cat-menu-annotate').show();
 			$('cat-menu-annotate').replace(
-				'<a id="cat-menu-annotate" href="javascript:catToolBar.newItem()" class="menulink">'
+				'<a id="cat-menu-annotate" enabled="true" href="javascript:catToolBar.newItem()" class="menulink">'
 				+ gLanguage.getMessage('ANNOTATE')
 				+ '</a>');
 		} else {
 //			$('cat-menu-annotate').hide();
 			$('cat-menu-annotate').replace(
-				'<span id="cat-menu-annotate" class="menulink" style="color:grey">&nbsp;'
+				'<span id="cat-menu-annotate" enabled="false" class="menulink" style="color:grey">&nbsp;'
 				+ gLanguage.getMessage('ANNOTATE')
 				+ '</span>');
 		}
@@ -269,7 +273,7 @@ addItem: function(create) {
 },
 
 newItem: function() {
-		
+
 	this.showList = false;
 	this.currentAction = "annotate";
 	

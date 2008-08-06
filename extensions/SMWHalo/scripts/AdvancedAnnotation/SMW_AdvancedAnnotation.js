@@ -267,9 +267,9 @@ AdvancedAnnotation.prototype = {
 		var secondAnchor = null;
 				
 		firstAnchor = this.searchBackwards(this.annotatedNode, 
-										   this.searchWtoAnchor.bind(this));
+										   this.searchWtoAnchorWoCat.bind(this));
 		secondAnchor = this.searchForward(this.focusNode, 
-										  this.searchWtoAnchor.bind(this));
+										  this.searchWtoAnchorWoCat.bind(this));
 
 		if (firstAnchor) {
 			var start = firstAnchor.getAttribute('name')*1;
@@ -374,10 +374,17 @@ AdvancedAnnotation.prototype = {
 		this.wikiTextParser.setSelection(-1, -1);
 	},
 	
-	searchWtoAnchor: function(node, parameters) {
+	searchWtoAnchorWoCat: function(node, parameters) {
 		if (node.tagName == 'A' 
 		    && node.type == "wikiTextOffset"
 		    && node.getAttribute('annoType') != 'category') {
+			return node;
+		} 
+	},
+
+	searchWtoAnchor: function(node, parameters) {
+		if (node.tagName == 'A' 
+		    && node.type == "wikiTextOffset") {
 			return node;
 		} 
 	},
