@@ -1252,14 +1252,14 @@ function initialize_qi(){
 }
 
 function escapeQueryHTML(string){
-	string = string.escapeHTML();
+	string = ("" + string).escapeHTML();
 	string = string.replace(/\"/g, "&quot;");
 	return string;
 }
 
 
 function unescapeQueryHTML(string){
-	string = string.unescapeHTML();
+	string = ("" + string).unescapeHTML();
 	string = string.replace(/&quot;/g, "\"");
 	return string;
 }
