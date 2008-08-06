@@ -34,6 +34,9 @@ class WebService {
 	private $mURI;            //string: URI of the web service
 	private $mProtocol;       //string: SOAP or REST
 	private $mMethod;         //string: name of the method in the service's WSDL
+	private $mAuthenticationType; //string "HTTP" or an empty string if no auth is required
+	private $mAuthenticationLogin; //string login name or an empty string if no auth is required
+	private $mAuthenticationPassword;//string: password or an empty string if no auth is required
 	private $mParameters;     //string: description of the parameter structure
 	private $mParsedParameters; // The parsed structure of the parameter description
 	// in form of nested arrays
@@ -65,6 +68,12 @@ class WebService {
 	 * 		SOAP or REST
 	 * @param string $method
 	 * 		Name of the method in the service's WSDL
+	 * @param string authenticationType
+	 * 		HTTP or an empty string if no authentication is required
+	 * @param string authenticationLogin
+	 * 		login name or an empty string if no authentication is required
+	 * @param string authenticationPassword
+	 * 		password or an empty string if no authentication is required
 	 * @param string $parameters
 	 * 		Description of the parameter structure
 	 * @param string $result
@@ -84,6 +93,7 @@ class WebService {
 	 * 		Confirmed by sysop (true) or not (false)
 	 */
 	function __construct($id = 0, $uri = "", $protcol = "", $method = "",
+	$mAuthenticationType = "", $mAuthenticationLogin = "", $mAuthenticationPassword = "", 
 	$parameters = "", $result = "",
 	$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
 	$expiresAfterUpdate = false, $confirmed = false) {
@@ -92,6 +102,9 @@ class WebService {
 		$this->mURI = $uri;
 		$this->mProtocol = $protcol;
 		$this->mMethod = $method;
+		$this->mAuthenticationType = $mAuthenticationType;
+		$this->mAuthenticationLogin = $mAuthenticationLogin;
+		$this->mAuthenticationPassword = $mAuthenticationPassword;
 		$this->mParameters = $parameters;
 		try {
 			$this->mParsedParameters = empty($parameters)
@@ -125,6 +138,9 @@ class WebService {
 	public function getURI()           {return $this->mURI;}
 	public function getProtocol()      {return $this->mProtocol;}
 	public function getMethod()        {return $this->mMethod;}
+	public function getAuthenticationType()		{return $this->mAuthenticationType;}
+	public function getAuthenticationLogin()		{return $this->mAuthenticationLogin;}
+	public function getAuthenticationPassword()	{return $this->mAuthenticationPassword;}
 	public function getParameters()    {return $this->mParameters;}
 	public function getResult()        {return $this->mResult;}
 	public function getDisplayPolicy() {return $this->mDisplayPolicy;}
@@ -213,6 +229,12 @@ class WebService {
 		$valid &= self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
+		
+		if(self::getWWSDElement($parser, '/WebService/authentication', null, $ignore, false, 1, 1, $ignoreMsg = array())){
+			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'type', $ws->mAuthenticationType, false, 1, 1, $msg);
+			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'login', $ws->mAuthenticationLogin, false, 1, 1, $msg);
+			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'password', $ws->mAuthenticationPassword, false, 1, 1, $msg);
+		}
 		//$valid &= self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
 		$exists = self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
 		if($exists){
@@ -1023,7 +1045,9 @@ class WebService {
 				if (!class_exists($classname)) {
 					return array(wfMsg("smw_wws_invalid_protocol"));
 				}
-				$this->mWSClient = new $classname($this->mURI);
+				
+				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType, 
+					$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 			} catch (Exception $e) {
 				// The wwsd is erroneous
 				return array(wfMsg("smw_wws_invalid_wwsd"));

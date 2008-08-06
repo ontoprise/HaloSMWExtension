@@ -50,9 +50,9 @@ class WSStorageSQL {
 		$verbose = true;
 		DBHelper::reportProgress("Setting up web services ...\n",$verbose);
 
-		// create WWSD table
 		DBHelper::reportProgress("   ... Creating WWSD table \n",$verbose);
 		$wwsdTable = $db->tableName('smw_ws_wwsd');
+		
 		DBHelper::setupTable($wwsdTable, array(
 				  'web_service_id'		 =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
 				  'uri'  	             =>  'VARCHAR(1024) NOT NULL' ,
@@ -65,7 +65,10 @@ class WSStorageSQL {
 				  'update_delay'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'span_of_life'         =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'expires_after_update' =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL' ,
-				  'confirmed'            =>  'ENUM(\'true\', \'false\', \'once\') DEFAULT \'false\' NOT NULL'), 
+				  'confirmed'            =>  'ENUM(\'true\', \'false\', \'once\') DEFAULT \'false\' NOT NULL',
+		 		 'authentication_type'       =>  'VARCHAR(10) NOT NULL' ,
+				'authentication_login'       =>  'VARCHAR(20) NOT NULL' ,
+				'authentication_password'    =>  'VARCHAR(20) NOT NULL' ),
 		$db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -144,8 +147,13 @@ class WSStorageSQL {
 					  'span_of_life'    =>  $webService->getSpanOfLife() ,
 					  'expires_after_update'
 					  =>  $webService->doesExpireAfterUpdate() ? 'true' : 'false',
-					  'confirmed'       =>  $webService->getConfirmationStatus()));
+					  'confirmed'       =>  $webService->getConfirmationStatus(),
+					  'authentication_type' => $webService->getAuthenticationType(),
+					  'authentication_login' => $webService->getAuthenticationLogin(),
+					  'authentication_password' => $webService->getAuthenticationPassword()));
 		} catch (Exception $e) {
+			$temp = $e->getMessage();
+			$this->$temp();
 			echo $e->getMessage();
 			return false;
 		}
@@ -177,7 +185,8 @@ class WSStorageSQL {
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
-			$row->method, $row->parameters, $row->result,
+			$row->method, $row->authentication_type, $row->authentication_login, 
+			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->updateDelay, $row->span_of_life,
 			$rwow->expires_after_update == 'true',

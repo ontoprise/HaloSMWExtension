@@ -43,6 +43,9 @@ class SMWSoapClient implements IWebServiceClient {
 	private $mWsdl;		  // SimpleXMLElement: The content of the service's WSDL
 	private $mTypes;	  // array(string=>string): A mapping from the name of a type's
 						  //     field to its type.
+	private $mAuthenticationType; //todo:describe
+	private $mAuthenticationLogin; //todo:describe
+	private $mAuthenticationPassword; //todo:describe
 
 	//--- Constructor ---
 	
@@ -59,8 +62,15 @@ class SMWSoapClient implements IWebServiceClient {
 	 * 		If the WSDL can be accessed and is valid, a new instance of SMWSoapClient
 	 * 		is returned.
 	 */
-	public function __construct($uri) {
+	//todo: describe parameters
+	public function __construct($uri, $authenticationType = "", 
+			$authenticationLogin = "", $authenticationPassword = "") {
 		$this->mURI = $uri;	
+		$this->mAuthenticationType = $authenticationType;
+		$this->mAuthenticationLogin = $authenticationLogin;
+		$this->mAuthenticationPassword = $authenticationPassword;
+		
+		
 		$this->mClient = null;
 		if (!$this->getWSDL()) {
 			throw new Exception("Invalid WSDL file");
@@ -151,8 +161,16 @@ class SMWSoapClient implements IWebServiceClient {
 	 */
 	public function call($operationName, $parameters) {
 		//ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
- 		$this->mClient = new SoapClient($this->mURI);
-// 		
+ 		
+		//todo: define a statix value somewhere
+		if($this->mAuthenticationType == "http"){
+			$this->mClient = new SoapClient($this->mURI, 
+				array("login" => $this->mAuthenticationLogin, 
+				"password" => $this->mAuthenticationPassword));
+ 		} else {
+ 			$this->mClient = new SoapClient($this->mURI);
+ 		}	
+
 		try {
 			if($parameters == null){
 				$response = $this->mClient->$operationName();
