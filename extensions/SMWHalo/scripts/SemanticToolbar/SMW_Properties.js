@@ -559,8 +559,11 @@ removeRangeOrType: function(domID) {
 attrTypeChanged: function(target) {
 	target = $(target);
 	if (target.id == 'prp-attr-type') {
-		this.isNAry = target.value == 'n-ary';
-		this.isRelation = target.value.toLowerCase() == 'page';
+		var selector = $('prp-attr-type');
+		var attrType = selector[selector.selectedIndex].text;
+		
+		this.isNAry = attrType == 'n-ary';
+		this.isRelation = attrType.toLowerCase() == 'page';
 	}
 },
 
@@ -692,7 +695,8 @@ apply: function() {
 	this.wtp.initialize();
 	var domain   = $("prp-domain").value;
 	var range    = this.isRelation ? $("prp-range").value : null;
-	var attrType = $("prp-attr-type").value;
+	var selector = $('prp-attr-type');
+	var attrType = selector[selector.selectedIndex].text;
 	var inverse  = this.isRelation ? $("prp-inverse-of").value : null;
 	var minCard  = this.isNAry ? null : $("prp-min-card").value;
 	var maxCard  = this.isNAry ? null : $("prp-max-card").value;
