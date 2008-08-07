@@ -18,7 +18,7 @@
  *
  *  @author: Ingo Steinbauer
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
 

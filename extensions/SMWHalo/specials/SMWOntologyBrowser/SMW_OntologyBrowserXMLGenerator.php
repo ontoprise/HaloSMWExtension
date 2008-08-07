@@ -4,6 +4,7 @@
  *
  * Author: kai
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 require_once($smwgHaloIP . '/includes/SMW_ChemistryParser.php');
 require_once("SMW_OntologyBrowserErrorHighlighting.php");

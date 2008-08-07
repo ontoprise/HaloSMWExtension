@@ -23,7 +23,7 @@
  * @author Thomas Schweitzer
  *
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgHaloIP;
 require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
 

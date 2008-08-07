@@ -17,7 +17,7 @@
  */
 
 
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_WS_SYSOP' , 'sysop');
 
 global $IP;

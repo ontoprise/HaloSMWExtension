@@ -23,7 +23,7 @@
  * @author Ingo Steinbauer
  *
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 // necessary for querying used properties
 global $smwgIP;
 require_once($smwgIP. "/includes/SMW_Factbox.php");

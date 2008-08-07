@@ -6,6 +6,7 @@
  */
 
 // Register AJAX functions
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ac_AutoCompletionDispatcher';

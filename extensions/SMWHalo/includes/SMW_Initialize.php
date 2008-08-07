@@ -4,6 +4,8 @@
  *
  * Author: kai
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
 define('SMW_HALO_VERSION', '1.2-for-SMW-1.2');
 
 // constant for special schema properties

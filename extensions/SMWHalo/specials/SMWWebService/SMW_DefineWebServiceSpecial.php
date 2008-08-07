@@ -23,7 +23,7 @@
  * @author Ingo Steinbauer
  *
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 global $IP;
 require_once( $IP . "/includes/SpecialPage.php" );
 

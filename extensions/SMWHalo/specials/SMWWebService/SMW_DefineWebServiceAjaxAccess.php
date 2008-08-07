@@ -23,7 +23,7 @@
  * @author Ingo Steinbauer
  *
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 global $wgAjaxExportList;
 
 $wgAjaxExportList[] = 'smwf_ws_processStep1';

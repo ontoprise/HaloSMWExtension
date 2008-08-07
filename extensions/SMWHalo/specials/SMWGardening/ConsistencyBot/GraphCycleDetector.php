@@ -7,6 +7,8 @@
  * GraphCycleDetector is used to detect cycles in the 
  * inheritance graphs of the semantic model.
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
 require_once("GraphEdge.php"); 
 global $smwgHaloIP;
 require_once("$smwgHaloIP/includes/SMW_GraphHelper.php"); 

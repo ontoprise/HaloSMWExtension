@@ -4,6 +4,8 @@
  *
  * Author: KK
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");

@@ -6,6 +6,8 @@
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side. 
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
 global $smwgHaloIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ob_OntologyBrowserAccess';
 $wgAjaxExportList[] = 'smwf_ob_PreviewRefactoring';

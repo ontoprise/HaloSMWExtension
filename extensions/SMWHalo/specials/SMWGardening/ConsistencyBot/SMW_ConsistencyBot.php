@@ -4,6 +4,7 @@
  *
  * Author: KK
  */
+ if ( !defined( 'MEDIAWIKI' ) ) die;
  
  global $smwgHaloIP;
  require_once("GraphCycleDetector.php");

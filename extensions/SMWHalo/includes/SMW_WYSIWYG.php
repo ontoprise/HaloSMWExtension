@@ -3,6 +3,7 @@
 /**
  * Include this script for WYSIWYG support
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgHooks;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';

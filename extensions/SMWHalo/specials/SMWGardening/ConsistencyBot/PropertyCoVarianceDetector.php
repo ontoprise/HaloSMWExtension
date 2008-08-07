@@ -4,6 +4,7 @@
  *
  * Author: kai
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $smwgHaloIP;
 require_once("GraphEdge.php");

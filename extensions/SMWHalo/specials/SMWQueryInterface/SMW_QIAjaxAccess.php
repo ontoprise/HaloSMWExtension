@@ -1,4 +1,5 @@
 <?php
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';

@@ -24,6 +24,7 @@
  * 
  * @author Thomas Schweitzer
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
 
 require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_IWIL.php');
 

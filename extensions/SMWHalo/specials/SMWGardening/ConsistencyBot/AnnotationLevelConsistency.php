@@ -4,6 +4,8 @@
  *
  * Author: kai
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
 global $smwgHaloIP;
 require_once("GraphEdge.php");
 require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
@@ -438,52 +440,52 @@ class AnnotationLevelConsistency {
 	}
 
 	public function checkUnits($type) {
-		// get all *used* units for a given datatype
-		$units = smwfGetSemanticStore()->getDistinctUnits($type);
-
-		// get all *defined* units for a given datatype
-		$conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
-		$si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
-
-		// match used units against defined a log if there's a mismatch
-		foreach($units as $u) {
-
-			$correct_unit = false;
-			if ($u == NULL) continue;
-			// check if a unit matches
-			foreach($conversion_factors as $c) {
-				$valuetrimmed = trim($c->getXSDValue());
-				// remove linear factory, then split the units separted by comma
-				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
-				$units = explode(",", $unitString);
-				print_r($units);
-				print $v->getUnit();
-				foreach($units as $u) {
-					$correct_unit |= $v->getUnit() == trim($u);
-				}
-			}
-
-			// check if a SI unit matches
-			foreach($si_conversion_factors as $c) {
-				$valuetrimmed = trim($c->getXSDValue());
-				// remove linear factory, then split the units separted by comma
-				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
-				$units = explode(",", $unitString);
-				foreach($units as $u) {
-					$correct_unit |= $v->getUnit() == trim($u);
-				}
-			}
-
-			if (!$correct_unit) {
-
-				$annotations = smwfGetSemanticStore()->getAnnotationsWithUnit($type, $u);
-					
-				foreach($annotations as $a) {
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $a[0], $a[1], $u);
-				}
-			}
-		}
-	}
+            // get all *used* units for a given datatype
+            $units = smwfGetSemanticStore()->getDistinctUnits($type);
+            
+            // get all *defined* units for a given datatype
+            $conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
+            $si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
+            
+            // match used units against defined a log if there's a mismatch
+            foreach($units as $unit) {
+                
+                $correct_unit = false;
+                if ($unit == NULL) continue;
+                
+                    // check if a unit matches 
+                    foreach($conversion_factors as $c) {
+                        $valuetrimmed = trim($c->getXSDValue());
+                        // remove linear factory, then split the units separted by comma
+                        $unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+                        $units = explode(",", $unitString);
+                      
+                        foreach($units as $u) {
+                              $correct_unit |= $unit == trim($u);
+                        } 
+                    }
+                    
+                    // check if a SI unit matches
+                    foreach($si_conversion_factors as $c) {
+                        $valuetrimmed = trim($c->getXSDValue());
+                        // remove linear factory, then split the units separted by comma
+                        $unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+                        $units = explode(",", $unitString);
+                        foreach($units as $u) {
+                              $correct_unit |= $unit == trim($u);
+                        } 
+                    }
+            
+                if (!$correct_unit) {
+                    
+                    $annotations = smwfGetSemanticStore()->getAnnotationsWithUnit($type, $unit);
+                
+                    foreach($annotations as $a) {
+                        $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $a[0], $a[1], $unit);
+                    }
+                }
+            }
+    } 
 
 	public function checkUnitForInstance($instance) {
 			

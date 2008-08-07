@@ -4,6 +4,9 @@
  *
  * Author: kai
  */
+
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
  global $wgAjaxExportList, $smwgHaloIP;
  
  $wgAjaxExportList[] = 'smwf_fw_SendAnnotationRatings';

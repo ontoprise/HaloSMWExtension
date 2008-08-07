@@ -22,7 +22,7 @@
  * @author Thomas Schweitzer
  * 
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 // Include the settings file for the configuration of the Web Service extension.
 global $smwgHaloIP;
 

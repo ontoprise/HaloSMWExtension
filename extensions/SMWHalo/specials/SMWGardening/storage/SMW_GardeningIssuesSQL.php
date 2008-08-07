@@ -6,6 +6,7 @@
  * 
  * Author: kai
  */
+ if ( !defined( 'MEDIAWIKI' ) ) die;
  
  global $smwgHaloIP;
  require_once $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php';

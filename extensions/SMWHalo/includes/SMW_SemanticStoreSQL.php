@@ -5,6 +5,8 @@
  * 
  * Database access class (mainly) for OntologyBrowser.
  */
+if ( !defined( 'MEDIAWIKI' ) ) die;
+
  global $smwgIP,$smwgHaloIP;
  require_once( "$smwgIP/includes/storage/SMW_Store.php" );
  require_once( "$smwgIP/includes/SMW_DV_WikiPage.php" );

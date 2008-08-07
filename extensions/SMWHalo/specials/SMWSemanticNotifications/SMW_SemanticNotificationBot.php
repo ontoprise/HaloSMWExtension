@@ -17,7 +17,7 @@
  *
  *  Author: Thomas Schweitzer
  */
-
+if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgHaloIP, $wgExtensionMessagesFiles;
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
 require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
