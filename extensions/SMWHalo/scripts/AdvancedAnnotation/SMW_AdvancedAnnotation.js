@@ -80,7 +80,7 @@ AdvancedAnnotation.prototype = {
 		var sel = annoSelection.toString();
 //		window.console.log('Current selection:>'+sel+"<\n");
 //		if (this.selection)
-//			window.console.log('Prev. selection:>'+this.selection.toString()+"<\n");
+//			window.console.log('Prev. selection:>'+this.selectionText+"<\n");
 		if (annoSelection.anchorNode == null || sel == '') {
 			// nothing selected
 			annoSelection = null;
@@ -88,10 +88,12 @@ AdvancedAnnotation.prototype = {
 		}
 		
 		var sameSelection = (this.selection != null
-		                     && sel == this.selection.toString());
+		                     && sel == this.selectionText);
 //		window.console.log("Same selection:"+sameSelection+"\n");
 		
 		this.selection = annoSelection;
+		this.selectionText = annoSelection ? annoSelection.toString() : null;
+		
 		var cba = this.canBeAnnotated(annoSelection);
 			
 		if (annoSelection && !sameSelection && sel != '' && !cba) {
@@ -837,6 +839,7 @@ AdvancedAnnotation.prototype = {
 	 */
 	resetSelection: function() {
 		this.selection = null;
+		this.selectionText = null;
 		this.annotatedNode = null;
 		this.focusNode = null;
 		this.annoOffset = 0;
