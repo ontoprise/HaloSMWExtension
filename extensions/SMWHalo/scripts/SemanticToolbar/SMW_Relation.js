@@ -565,7 +565,7 @@ updateTypeHint: function(elementID) {
 		} else if (number && mantissa) {
 			hint = '_flt;'+SMW_PROPERTY_NS;
 		} else if (number) {
-			hint = '_int;_flt;'+SMW_PROPERTY_NS;
+			hint = '_num;_int;_flt;'+SMW_PROPERTY_NS;
 		} else if (unit) {
 			hint = ':'+unit+';'+SMW_PROPERTY_NS;
 		}
