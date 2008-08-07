@@ -74,6 +74,7 @@ function smwfDoSpecialFindWorkPage() {
 		$html .= '<p>' . wfMsg('smw_findwork_docu') . "</p>\n";
 		$specialPage = Title::newFromText($this->getName(), NS_SPECIAL);
 		$html .= "<form action=\"".$specialPage->getFullURL()."\">";
+		$html .= '<input type="hidden" name="title" value="' . $specialPage->getPrefixedText() . '"/>';
 		$html .= wfMsg('smw_findwork_header', "<input  name=\"gswButton\" type=\"submit\" value=\"".wfMsg('smw_findwork_getsomework')."\"/>");
 				
 		$html .= "<select name=\"field\">";

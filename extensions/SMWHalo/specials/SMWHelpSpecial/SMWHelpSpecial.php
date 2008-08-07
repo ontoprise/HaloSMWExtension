@@ -241,6 +241,7 @@ function createHelpSelector(){
 	$actions = array('ALL', 'view', 'edit', 'move', 'delete', 'history');
 
 	$html = '<form action="' . $specialTitle->getFullURL() . '" method="get">' . wfmsg('smw_csh_refine_search_info');
+	$html .= '<input type="hidden" name="title" value="' . $specialTitle->getPrefixedText() . '"/>';
 	$html .= '<blockquote>' . wfmsg('smw_csh_page_type') . '&nbsp;';
 	$html .= '<select name="helpns" size="1" style="vertical-align:middle;">';
 	foreach($actualNamespaces as $id => $name){

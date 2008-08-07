@@ -44,7 +44,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 		$propertyType = array(wfMsg('smw_properties_sortdatatype'), wfMsg('smw_properties_sortwikipage'), wfMsg('smw_properties_sortnary'));
 		
 		$html .= "<form action=\"".$specialAttPage->getFullURL()."\">";
-		
+		$html .= '<input type="hidden" name="title" value="' . $specialAttPage->getPrefixedText() . '"/>';
 		// type of property
  		$html .= 	"<select name=\"type\">";
 		$i = 0;

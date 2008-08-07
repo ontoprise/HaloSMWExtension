@@ -358,7 +358,7 @@ abstract class GardeningIssueFilter {
 	public function getFilterControls($specialAttPage, $request) {
 		global $registeredBots;
 		$html = "<form action=\"".$specialAttPage->getFullURL()."\">";
-		
+		$html .= '<input type="hidden" name="title" value="' . $specialAttPage->getPrefixedText() . '"/>';
 		$html .= "<select name=\"bot\" onchange=\"gardeningLogPage.selectBot(event)\">";
 		
 		$sent_bot_id = $request->getVal('bot');
