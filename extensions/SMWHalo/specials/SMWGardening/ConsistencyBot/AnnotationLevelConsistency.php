@@ -54,7 +54,7 @@ class AnnotationLevelConsistency {
 		if ($this->verbose) $this->bot->addSubTask($totalWork);
 		do {
 			$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY), $requestoptions);
-				
+
 
 			foreach($properties as $p) {
 
@@ -79,10 +79,10 @@ class AnnotationLevelConsistency {
 
 	 		// get annotation subjects for the property.
 	 		$subjects = array();
-			foreach (smwfGetStore()->getAllPropertySubjects($p) as $dv) {
-				$subjects[] = $dv->getTitle();
-			};
- 			$this->checkPropertyAnnotations($subjects, $p);
+	 		foreach (smwfGetStore()->getAllPropertySubjects($p) as $dv) {
+	 			$subjects[] = $dv->getTitle();
+	 		};
+	 		$this->checkPropertyAnnotations($subjects, $p);
 
 			}
 			$requestoptions->offset += $this->limit;
@@ -450,11 +450,28 @@ class AnnotationLevelConsistency {
 
 			$correct_unit = false;
 			if ($u == NULL) continue;
+			// check if a unit matches
 			foreach($conversion_factors as $c) {
-				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c->getXSDValue()) > 0;
+				$valuetrimmed = trim($c->getXSDValue());
+				// remove linear factory, then split the units separted by comma
+				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+				$units = explode(",", $unitString);
+				print_r($units);
+				print $v->getUnit();
+				foreach($units as $u) {
+					$correct_unit |= $v->getUnit() == trim($u);
+				}
 			}
+
+			// check if a SI unit matches
 			foreach($si_conversion_factors as $c) {
-				$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($u,"/").'(,|$)/', $c->getXSDValue()) > 0;
+				$valuetrimmed = trim($c->getXSDValue());
+				// remove linear factory, then split the units separted by comma
+				$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+				$units = explode(",", $unitString);
+				foreach($units as $u) {
+					$correct_unit |= $v->getUnit() == trim($u);
+				}
 			}
 
 			if (!$correct_unit) {
@@ -482,11 +499,28 @@ class AnnotationLevelConsistency {
 					$si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
 					$correct_unit = false;
 
+					// check if a unit matches
 					foreach($conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
+						$valuetrimmed = trim($c->getXSDValue());
+						// remove linear factory, then split the units separted by comma
+						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+						$units = explode(",", $unitString);
+						print_r($units);
+						print $v->getUnit();
+						foreach($units as $u) {
+							$correct_unit |= $v->getUnit() == trim($u);
+						}
 					}
+
+					// check if a SI unit matches
 					foreach($si_conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
+						$valuetrimmed = trim($c->getXSDValue());
+						// remove linear factory, then split the units separted by comma
+						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+						$units = explode(",", $unitString);
+						foreach($units as $u) {
+							$correct_unit |= $v->getUnit() == trim($u);
+						}
 					}
 					if (!$correct_unit) {
 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $instance, $p, $v->getUnit());
@@ -510,11 +544,28 @@ class AnnotationLevelConsistency {
 					$si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
 					$correct_unit = false;
 
+					// check if a unit matches
 					foreach($conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
+						$valuetrimmed = trim($c->getXSDValue());
+						// remove linear factory, then split the units separted by comma
+						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+						$units = explode(",", $unitString);
+						print_r($units);
+						print $v->getUnit();
+						foreach($units as $u) {
+							$correct_unit |= $v->getUnit() == trim($u);
+						}
 					}
+
+					// check if a SI unit matches
 					foreach($si_conversion_factors as $c) {
-						$correct_unit |= preg_match("/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?".preg_quote($v->getUnit(),"/").'(,|$)/', $c->getXSDValue()) > 0;
+						$valuetrimmed = trim($c->getXSDValue());
+						// remove linear factory, then split the units separted by comma
+						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
+						$units = explode(",", $unitString);
+						foreach($units as $u) {
+							$correct_unit |= $v->getUnit() == trim($u);
+						}
 					}
 					if (!$correct_unit) {
 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $s->getTitle(), $property, $v->getUnit());
