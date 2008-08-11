@@ -27,12 +27,11 @@ mkdir %OUTPUT_DIR%\includes
 mkdir %OUTPUT_DIR%\skins
 mkdir %OUTPUT_DIR%\extensions\SMWHalo\includes
 mkdir %OUTPUT_DIR%\extensions\SMWHalo\bin
+mkdir %OUTPUT_DIR%\extensions\SMWHalo\specials\SMWUploadConverter
 
 REM patch files
 xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /Y /EXCLUDE:excludeForExt.dat
 xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
-xcopy ..\..\..\patches\extensions\SMWHalo\includes %OUTPUT_DIR%\extensions\SMWHalo\includes /Y /EXCLUDE:excludeForExt.dat
-xcopy ..\..\..\patches\extensions\SMWHalo\bin %OUTPUT_DIR%\extensions\SMWHalo\bin /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
 xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForExt.dat /Y
@@ -51,10 +50,11 @@ xcopy ..\..\Cite.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Cite.i18n.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
 
+xcopy ..\..\..\patches\extensions\SMWHalo %OUTPUT_DIR%\extensions\SMWHalo /Y /S /EXCLUDE:excludeForExt.dat
 
 cd bin
-IF EXIST smwplus-ext.zip del smwplus-ext.zip
-7z.exe a -tzip smwplus-ext.zip %OUTPUT_DIR%\*
+IF EXIST smwplus-1.2-ext.zip del smwplus-ext.zip
+7z.exe a -tzip smwplus-1.2-ext.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
