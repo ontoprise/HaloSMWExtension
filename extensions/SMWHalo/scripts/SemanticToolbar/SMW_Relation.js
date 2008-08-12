@@ -713,7 +713,7 @@ removeRangeOrType: function(id) {
 		var obj;
 		while ((obj = $(id + ++i))) {
 			// is there a delete-button
-			var delBtn = obj.up().down('a');
+			var delBtn = obj.up().up().down('a');
 			if (delBtn) {
 				var action = delBtn.getAttribute("href");
 				var regex = new RegExp(id+i);
