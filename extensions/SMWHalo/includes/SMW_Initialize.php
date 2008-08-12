@@ -72,6 +72,7 @@ function smwgHaloSetupExtension() {
     
 	// Autoloading. Use it for everything! No include_once or require_once please!
 	$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
+	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 	$wgAutoloadClasses['SMWGardeningTableResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_GardeningTable.php';
 	SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
     $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
@@ -424,9 +425,12 @@ function smwfHaloInitContentMessages() {
 function &smwfGetSemanticStore() {
 	global $smwgMasterGeneralStore, $smwgHaloIP, $smwgDefaultStore;
 	if ($smwgMasterGeneralStore == NULL) {
-		if ($smwgDefaultStore != 'SMWHaloStore') {
+		if ($smwgDefaultStore != 'SMWHaloStore' && $smwgDefaultStore != 'SMWHaloStore2') {
 			trigger_error("The store '$smwgDefaultStore' is not implemented for the HALO extension. Please use 'SMWHaloStore'.");
-		} else {
+		} elseif ($smwgDefaultStore == 'SMWHaloStore2') {
+            require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL2.php');
+            $smwgMasterGeneralStore = new SMWSemanticStoreSQL2();
+        }  else {
 			require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL.php');
 			$smwgMasterGeneralStore = new SMWSemanticStoreSQL();
 		}
