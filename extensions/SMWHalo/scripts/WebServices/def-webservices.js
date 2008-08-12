@@ -1013,7 +1013,7 @@ DefineWebServiceSpecial.prototype = {
 		alert(request.responseText);
 		if (request.responseText == "false") {
 			var wsName = $("step6-name").value;
-			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
+			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName, wgUserName,
 					this.wwsd + this.wsSyntax, "" ], this.processStep6CallBack1
 					.bind(this));
 		} else {
