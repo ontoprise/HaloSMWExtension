@@ -34,6 +34,12 @@ global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 if ($smwgEnableWikiWebServices) {
 	require_once($smwgHaloIP. '/specials/SMWWebService/SMW_WebServiceManager.php');
 }
+if (!defined('SMW_NS_WEB_SERVICE')) {
+	// Suppress warnings if web services are not enabled.
+	define('SMW_NS_WEB_SERVICE',      200);
+	define('SMW_NS_WEB_SERVICE_TALK', 201);
+};
+
 
 require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
