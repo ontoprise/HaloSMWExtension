@@ -93,7 +93,7 @@ class WebService {
 	 * 		Confirmed by sysop (true) or not (false)
 	 */
 	function __construct($id = 0, $uri = "", $protcol = "", $method = "",
-	$mAuthenticationType = "", $mAuthenticationLogin = "", $mAuthenticationPassword = "", 
+	$mAuthenticationType = "", $mAuthenticationLogin = "", $mAuthenticationPassword = "",
 	$parameters = "", $result = "",
 	$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
 	$expiresAfterUpdate = false, $confirmed = false) {
@@ -114,7 +114,10 @@ class WebService {
 			if (empty($result)) {
 				$this->mParsedResult = null;
 			} else {
-				$this->mParsedResult = new SimpleXMLElement("<r>$result</r>");
+				if(strpos($result, "^") > -1){
+					$this->error();
+				}
+				$this->mParsedResult = new SimpleXMLElement("<res>".$result."</res>");
 				$r = array();
 				foreach ($this->mParsedResult->result as $rdef) {
 					$r[] = $rdef;
@@ -122,7 +125,8 @@ class WebService {
 				$this->mParsedResult = $r;
 			}
 		} catch (Exception $e) {
-			// parser error
+			//	$temp = print_r($e, true);
+			//	$this->$temp();
 		}
 		$this->mDisplayPolicy = $dp;
 		$this->mQueryPolicy = $qp;
@@ -229,7 +233,7 @@ class WebService {
 		$valid &= self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
-		
+
 		if(self::getWWSDElement($parser, '/WebService/authentication', null, $ignore, false, 1, 1, $ignoreMsg = array())){
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'type', $ws->mAuthenticationType, false, 1, 1, $msg);
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'login', $ws->mAuthenticationLogin, false, 1, 1, $msg);
@@ -253,13 +257,13 @@ class WebService {
 		// are valid
 		if($ws->mParsedParameters){
 			$aParamPaths = array();
-			
+
 			foreach($ws->mParsedParameters as $child){
 				$aParamPaths[] = "".$child["path"];
 			}
 			$valid &= $ws->checkParameterArrayIndexes($aParamPaths, $msg);
 		}
-		
+
 		$valid &= self::getWWSDElement($parser, '/WebService/result', null, $ws->mParsedResult, false, 1, 100, $msg);
 		if ($ws->mParsedResult) {
 			// store the serialized form of the result description
@@ -748,7 +752,7 @@ class WebService {
 		foreach ($selectedPaths as $sp) {
 			$processNextPath = false;
 			$spParts = explode('.', $sp);
-				
+
 			$newPath = "";
 			for ($i = 0; $i < $numPathParts && !$processNextPath; ++$i) {
 				$pp = $pathParts[$i];
@@ -1045,9 +1049,9 @@ class WebService {
 				if (!class_exists($classname)) {
 					return array(wfMsg("smw_wws_invalid_protocol"));
 				}
-				
-				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType, 
-					$this->mAuthenticationLogin, $this->mAuthenticationPassword);
+
+				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType,
+				$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 			} catch (Exception $e) {
 				// The wwsd is erroneous
 				return array(wfMsg("smw_wws_invalid_wwsd"));
@@ -1115,7 +1119,8 @@ class WebService {
 			for ($i = 1; $i < $numParam; ++$i) {
 				$pName = $wsdlParams[$i][0];
 				$pType = $wsdlParams[$i][1];
-				$names = array_merge($names, $this->flattenParam($pName, $pType));
+				//$names = array_merge($names, $this->flattenParam($pName, $pType));
+				$names = array_merge($names, $this->getFlatParameters($pName, $pType, false));
 			}
 			// find elements that lead to overflows (e.g. potentially endless lists)
 			foreach ($names as $idx=>$name) {
@@ -1245,9 +1250,10 @@ class WebService {
 		if ($wsdlResult != null) {
 			// Collect the components of the result
 			$rType = $wsdlResult[0];
-			$names = $this->flattenParam("", $rType);
-			// examine parameters
+			//$names = $this->flattenParam("", $rType);
+			$names = $this->getFlatParameters("", $rType, true);
 
+			// examine parameters
 			// find elements that lead to overflows (e.g. potentially endless lists)
 			foreach ($names as $idx=>$name) {
 				$pos = strpos($name, '##overflow##');
@@ -1507,21 +1513,21 @@ class WebService {
 		foreach($paths as $path){
 			$pathSteps = explode(".", $path);
 			$aPath = "";
-			
+
 			foreach($pathSteps as $pathStep){
 				if(!(WebService::getReturnPartBracketValue($pathStep) === false)){
 					if(WebService::getReturnPartBracketValue($pathStep) !== true){
 						$index = WebService::getReturnPartBracketValue($pathStep);
 						$tAPath = $aPath.".".WebService::getReturnPartPathStep($pathStep);
-		
+
 						if(strpos(".".$path, $aPath.".".$pathStep) > -1){
 							$tAPath .= "[].".substr($path, strlen($aPath.".".$pathStep));
 						}
-						
+
 						if(!$aPaths[$tAPath]){
 							$aPaths[$tAPath] = array();
 						}
-						
+
 						$aPaths[$tAPath][] = $index;
 					}
 					else {
@@ -1532,13 +1538,13 @@ class WebService {
 				$aPath .= ".".$pathStep;
 			}
 		}
-		
+
 		foreach($aPaths as $key => $aPath){
 			sort($aPath);
-			
+
 			$index = 0;
 			foreach($aPath as $aIndex){
-				
+
 				if($aIndex != $index){
 					$ok = false;
 					$msg[] = wfMsg('smw_wwsd_array_index_incorrect', $key);
@@ -1547,10 +1553,28 @@ class WebService {
 				$index += 1;
 			}
 		}
-		
+
 		return $ok;
 	}
 
+	//todo:check if separated from other ws-types
+	//todo: document this
+	function getFlatParameters($name, $type, $result=false, &$typePath=null){
+		$flatParams = $this->flattenParam($name, $type, $typePath);
+
+		//todo: what if soap but no wsdl available
+
+		$arrayDetector = new WSDLArrayDetector($this->mURI);
+			
+		//todo: is type correct here?
+		$adParameters = $arrayDetector->getArrayPaths($type, $name);
+
+		if($result){
+			$adParameters = $arrayDetector->cleanResultParts($adParameters);
+		}
+
+		return $arrayDetector->mergePaths($flatParams, $adParameters);
+	}
 }
 
 ?>

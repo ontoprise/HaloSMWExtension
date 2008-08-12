@@ -34,6 +34,7 @@ $wgAjaxExportList[] = 'smwf_ws_processStep6';
 
 global $smwgHaloIP;
 require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WebService.php');
+require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WSDLArrayDetector.php');
 
 /**
  * this method is called after step 1 (specifying uri)
@@ -41,6 +42,7 @@ require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WebService.php');
  * @param string $uri uri of a wsdl
  * @return string with "-,"-separated list of method-names provided by the wwsd
  */
+
 function smwf_ws_processStep1($uri){
 	$wsClient = createWSClient($uri);	if(is_array($wsClient)){
 		return "false";
@@ -71,7 +73,7 @@ function smwf_ws_processStep2($uri, $methodName){
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		$tempFlat = flattenParam($wsClient, $pName, $pType);
+		$tempFlat = getFlatParameters($uri, $wsClient, $pName, $pType, false);
 		$parameters = array_merge($parameters , $tempFlat);
 	}
 	return "todo:handle exceptions;".implode(";", $parameters);
@@ -88,7 +90,7 @@ function smwf_ws_processStep2($uri, $methodName){
 function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
-	$flatResult = flattenParam($wsClient ,"", $rawResult[0]);
+	$flatResult = getFlatParameters($uri, $wsClient ,"", $rawResult[0], true);
 	return "todo:handle exceptions;".implode(";", $flatResult);
 }
 
@@ -105,9 +107,9 @@ function smwf_ws_processStep6($name, $wwsd){
 		return implode(";", $ws);
 	} else {
 		$res = $ws->validateWithWSDL();
-//TS		if(is_array($res)){
-//			return implode(";", $res);
-//		}
+		//TS		if(is_array($res)){
+		//			return implode(";", $res);
+		//		}
 		$res = $ws->store();
 		if(!$res){
 			return "error";
@@ -199,6 +201,24 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
 		}
 	}
 	return $flatParams;
+}
+
+function getFlatParameters($uri, $wsClient, $name, $type, $result=false, &$typePath=null){
+	$flatParams = flattenParam($wsClient, $name, $type, $typePath);
+
+	//todo: what if soap but no wsdl available
+	
+	//todo require_once
+	$arrayDetector = new WSDLArrayDetector($uri);
+			
+	//todo: is type correct here?
+	$adParameters = $arrayDetector->getArrayPaths($type, $name);
+
+	if($result){
+		$adParameters = $arrayDetector->cleanResultParts($adParameters);
+	}
+	
+	return $arrayDetector->mergePaths($flatParams, $adParameters);
 }
 
 
