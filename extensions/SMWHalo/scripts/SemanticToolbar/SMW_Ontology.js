@@ -145,7 +145,7 @@ OntologyModifier.prototype = {
 	                         redirect) {
 		this.redirect = redirect;
 		sajax_do_call('smwf_om_CreateArticle', 
-		              [title, content, optionalText, creationComment], 
+		              [title, wgUserName , content, optionalText, creationComment], 
 		              this.ajaxResponseCreateArticle.bind(this));
 		              
 	},
@@ -168,7 +168,7 @@ OntologyModifier.prototype = {
 	editArticle : function(title, content, editComment, redirect) {
 		this.redirect = redirect;
 		sajax_do_call('smwf_om_EditArticle', 
-		              [title, content, editComment], 
+		              [title, wgUserName, content, editComment], 
 		              this.ajaxResponseEditArticle.bind(this));
 	},
 
@@ -490,7 +490,7 @@ OntologyModifier.prototype = {
 		}
 		
 		var answer = request.responseText;
-		var regex = /(true|false),(true|false),(.*)/;
+		var regex = /(true|false),(true|denied|false),(.*)/;
 		var parts = answer.match(regex);
 		
 		if (parts == null) {
@@ -508,6 +508,9 @@ OntologyModifier.prototype = {
 				var indexStr = wgScript.substring(wgScript.lastIndexOf("/")+1);
 				window.open(indexStr+"?title="+title,"_blank");
 			}
+		} else if (created == 'denied') {
+			var msg = gLanguage.getMessage('smw_acl_create_denied').replace(/\$1/g, title);
+			alert(msg);
 		}
 	},
 	
@@ -531,7 +534,7 @@ OntologyModifier.prototype = {
 		}
 		
 		var answer = request.responseText;
-		var regex = /(true|false),(true|false),(.*)/;
+		var regex = /(true|false),(true|denied|false),(.*)/;
 		var parts = answer.match(regex);
 		
 		if (parts == null) {
@@ -548,6 +551,9 @@ OntologyModifier.prototype = {
 				// open the new article in another tab.
 				window.open("index.php?title="+title,"_blank");
 			}
+		} else if (created == 'denied') {
+			var msg = gLanguage.getMessage('smw_acl_edit_denied').replace(/\$1/g, title);
+			alert(msg);
 		}
 		
 		success = (success == 'true');

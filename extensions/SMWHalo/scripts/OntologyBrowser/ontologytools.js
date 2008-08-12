@@ -152,7 +152,7 @@ OBArticleCreator.prototype = {
 			}
 			
 			var answer = request.responseText;
-			var regex = /(true|false),(true|false),(.*)/;
+			var regex = /(true|false),(true|denied|false),(.*)/;
 			var parts = answer.match(regex);
 			
 			if (parts == null) {
@@ -167,12 +167,17 @@ OBArticleCreator.prototype = {
 			if (success == "true") {
 				callback(success, created, title);
 			} else {
-				alert(gLanguage.getMessage('ERROR_CREATING_ARTICLE'));
+				if (created == 'denied') {
+					var msg = gLanguage.getMessage('smw_acl_create_denied').replace(/\$1/g, title);
+					alert(msg);
+				} else {				
+					alert(gLanguage.getMessage('ERROR_CREATING_ARTICLE'));
+				}
 			}
 		}
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwf_om_CreateArticle', 
-		              [title, content, optionalText, creationComment], 
+		              [title, wgUserName, content, optionalText, creationComment], 
 		              ajaxResponseCreateArticle.bind(this));
 		              
 	},
@@ -199,14 +204,19 @@ OBArticleCreator.prototype = {
 			if (request.responseText == 'true') {		
 				callback();
 			} else {
-				alert(gLanguage.getMessage('ERROR_DELETING_ARTICLE'));
+				if (request.responseText == 'denied') {
+					var msg = gLanguage.getMessage('smw_acl_delete_denied').replace(/\$1/g, title);
+					alert(msg);
+				} else {				
+					alert(gLanguage.getMessage('ERROR_DELETING_ARTICLE'));
+				}
 			}
 			
 		}
 		
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwf_om_DeleteArticle', 
-		              [title, reason], 
+		              [title, wgUserName, reason], 
 		              ajaxResponseDeleteArticle.bind(this));
 	},
 	
@@ -232,14 +242,19 @@ OBArticleCreator.prototype = {
 			if (request.responseText == 'true') {		
 				callback();
 			} else {
-				alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
+				if (request.responseText == 'denied') {
+					var msg = gLanguage.getMessage('smw_acl_delete_denied').replace(/\$1/g, oldTitle);
+					alert(msg);
+				} else {				
+					alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
+				}
 			}
 			
 		}
 		
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwf_om_RenameArticle', 
-		              [oldTitle, newTitle, reason], 
+		              [oldTitle, newTitle, reason, wgUserName], 
 		              ajaxResponseRenameArticle.bind(this));
 	},
 	
@@ -1474,10 +1489,9 @@ OBInstanceSubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
 	
 	cancel: function() {
 		if (this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME) {
-			this.titleInputValidator.deregisterListeners();
-			this._cancel();
-		}
-		
+            this.titleInputValidator.deregisterListeners();
+            this._cancel();
+        }
 	},
 	
 	preview: function() {

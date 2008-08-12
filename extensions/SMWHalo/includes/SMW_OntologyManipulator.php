@@ -44,6 +44,8 @@ $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
  *
  * @param string $title
  * 			The name of the article
+ * @param string $user
+ * 			The name of the user
  * @param string $content
  * 			The initial content of the article. It is only set if the article
  * 			is newly created.
@@ -60,11 +62,12 @@ $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
  * 			bool created
  * 				<true> if the article was created,
  * 				<false> if it was only modified
+ * 				<denied> if the permission was denied
  * 			string title
  * 				Title of the (new) article
  *
  */
-function smwf_om_CreateArticle($title, $content, $optionalText, $creationComment) {
+function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creationComment) {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -76,6 +79,13 @@ function smwf_om_CreateArticle($title, $content, $optionalText, $creationComment
 	
 	$title = Title::newFromText($title);
 
+	$user = User::newFromName($user);
+	$result = true;
+	wfRunHooks('userCan', array($title, $user, "edit", &$result));
+	if ($result == false) {
+		return "false,denied,$title";
+	}
+	
 	$article = new Article($title);
 
 	if ($article->exists()) {
@@ -146,6 +156,8 @@ function smwf_om_CreateArticle($title, $content, $optionalText, $creationComment
  * 
  * @param string title 
  * 			Title of the article.
+ * @param string $user
+ * 			The name of the user
  * @param string content 
  * 			New content of the article.
  * @param string editComment
@@ -157,11 +169,12 @@ function smwf_om_CreateArticle($title, $content, $optionalText, $creationComment
  * 			bool created
  * 				<true> if the article was edited,
  * 				<false> if it was only modified
+ * 				<denied> if the permission was denied
  * 			string title
  * 				Title of the (new) article
  *
  */
-function smwf_om_EditArticle($title, $content, $editComment) {
+function smwf_om_EditArticle($title, $user, $content, $editComment) {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -173,6 +186,13 @@ function smwf_om_EditArticle($title, $content, $editComment) {
 	
 	$title = Title::newFromText($title);
 
+	$user = User::newFromName($user);
+	$result = true;
+	wfRunHooks('userCan', array($title, $user, "edit", &$result));
+	if ($result == false) {
+		return "false,denied,$title";
+	}
+	
 	$article = new Article($title);
 
 	if ($article->exists()) {
@@ -444,9 +464,18 @@ function smwf_om_GetWikiText($pagename) {
  * 
  * @param string $pagename The name of the article.
  * @param string $reason A reason why it was deleted.
+ * @param string $user The name of the user who wants to delete the article
  */
-function smwf_om_DeleteArticle($pagename, $reason) {
+function smwf_om_DeleteArticle($pagename, $user, $reason) {
 	$titleObj = Title::newFromText($pagename);
+
+	$user = User::newFromName($user);
+	$result = true;
+	wfRunHooks('userCan', array($titleObj, $user, "delete", &$result));
+	if ($result == false) {
+		return "denied";
+	}	
+	
 	$article = new Article($titleObj);
 
 	if ($article->exists()) {
@@ -461,12 +490,21 @@ function smwf_om_DeleteArticle($pagename, $reason) {
  * @param string $pagename The name of the article.
  * @param string $newpagename The new name of the article.
  * @param string $reason A reason why it was renamed.
+ * @param string $user The name of the user who requested this action.
  */
-function smwf_om_RenameArticle($pagename, $newpagename, $reason) {
+function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	$newpagename = strip_tags($newpagename);
 	if ($newpagename == '') return "false";
 	
 	$titleObj = Title::newFromText($pagename);
+	
+	$user = User::newFromName($user);
+	$result = true;
+	wfRunHooks('userCan', array($titleObj, $user, "move", &$result));
+	if ($result == false) {
+		return "denied";
+	}
+	
 	$newTitleObj = Title::newFromText($newpagename);
 	$success = false;
 	if ($titleObj->exists() && !$newTitleObj->exists()) {
@@ -589,4 +627,3 @@ function smwf_om_invalidateAllPages() {
 	smwfGetSemanticStore()->invalidateAllPages();
 	return "true";
 }
-?>
