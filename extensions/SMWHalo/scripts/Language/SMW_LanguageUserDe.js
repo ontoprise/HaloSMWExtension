@@ -276,6 +276,9 @@ var wgUserLanguageStrings = {
 	'smw_acl_move' : 'umbenennen',
 	'smw_acl_permit' : 'erlauben',
 	'smw_acl_deny' : 'verbieten',
+	'smw_acl_create_denied' : 'Sie sind nicht berechtigt, den Artikel "$1" zu erzeugen.',
+	'smw_acl_edit_denied'   : 'Sie sind nicht berechtigt, den Artikel "$1" zu bearbeiten.',
+	'smw_acl_delete_denied' : 'Sie sind nicht berechtigt, den Artikel "$1" zu löschen.',
 	
 	// Treeview
     'smw_stv_browse' : 'browsen',

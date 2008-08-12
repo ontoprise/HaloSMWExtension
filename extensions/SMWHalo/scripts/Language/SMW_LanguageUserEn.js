@@ -278,6 +278,9 @@ var wgUserLanguageStrings = {
 	'smw_acl_move' : 'move',
 	'smw_acl_permit' : 'permit',
 	'smw_acl_deny' : 'deny',
+	'smw_acl_create_denied' : 'You have no right to create the article "$1".',
+	'smw_acl_edit_denied' : 'You have no right to edit the article "$1".',
+	'smw_acl_delete_denied' : 'You have no right to delete the article "$1".',
 	
 	// Treeview
     'smw_stv_browse' : 'browse',
