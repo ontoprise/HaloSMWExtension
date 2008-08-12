@@ -1010,7 +1010,6 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep6CallBack : function(request) {
-		alert(request.responseText);
 		if (request.responseText == "false") {
 			var wsName = $("step6-name").value;
 			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName, wgUserName,
@@ -1028,7 +1027,6 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack1 : function(request) {
-		alert(request.responseText);
 		var wsName = $("step6-name").value;
 		sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
 				this.processStep6CallBack2.bind(this));
@@ -1040,7 +1038,6 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack2 : function(request) {
-		alert(request.responseText);
 		var wsName = $("step6-name").value;
 		sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
 				this.processStep6CallBack3.bind(this));
@@ -1052,7 +1049,6 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack3 : function(request) {
-		alert(request.responseText);
 		var container = $("step7-container").cloneNode(false);
 		$("step7-container").id = "old-step7-container";
 		$("old-step7-container").parentNode.insertBefore(container,
