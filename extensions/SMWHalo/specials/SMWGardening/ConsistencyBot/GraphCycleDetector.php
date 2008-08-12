@@ -122,7 +122,7 @@ class GraphCycleDetector {
 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($cycles as $c) {
 			
- 			$titles = $c->translateToTitle();
+ 			$titles = $this->cc_store->translateToTitle($c);
  			$cycle = "";
  			foreach($titles as $t) {
  				$cycle .= $t->getNsText().':'.$t->getText().';';
@@ -163,38 +163,7 @@ class Cycle {
 		sort($this->cycle);
 	}
 	
-	/**
-	 * Returns a hash array from ID -> Title
-	 */
-	public function translateToTitle() {
-		
-		$db =& wfGetDB( DB_SLAVE );
-		$sql = "";
-		for ($i = 0, $n = count($this->cycle); $i < $n; $i++) {
-			if ($i < $n-1) { 
-				$sql .= 'page_id ='.$this->cycle[$i].' OR ';
-			} else {
-				$sql .= 'page_id ='.$this->cycle[$i];
-			}
-		}
-		
-		$res = $db->select(  array($db->tableName('page')), 
-		                    array('page_title','page_namespace', 'page_id'),
-		                    $sql, 'SMW::translate', NULL);
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[$row->page_id] = Title::newFromText($row->page_title, $row->page_namespace);
-			}
-		}
-		$db->freeResult($res);
-		
-		$titles = array();
-		foreach($this->cycle as $id) {
-			$titles[] = $result[$id];
-		}
-		return $titles;
-	}
+	
 }
  
 ?>

@@ -276,7 +276,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * @param Title $categoryTitle
 	 * @param & $db DB reference
 	 */
-	private function createVirtualTableWithInstances($categoryTitle, & $db) {
+	protected function createVirtualTableWithInstances($categoryTitle, & $db) {
 		global $smwgDefaultCollation;
 		
 		$page = $db->tableName('page');
@@ -340,7 +340,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * 
 	 * @param & $db DB reference
 	 */
-	private function dropVirtualTableWithInstances(& $db) {
+	protected function dropVirtualTableWithInstances(& $db) {
 			$db->query('DROP TEMPORARY TABLE smw_ob_instances');
 	}
 	
@@ -416,7 +416,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * 
 	 * @return array of tuples: (title, minCard, maxCard, type, isSym, isTrans, range)
 	 */
-	private function getSchemaPropertyTuple(array & $properties, & $db) {
+	protected function getSchemaPropertyTuple(array & $properties, & $db) {
 		$resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
 							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->minCard->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
@@ -486,7 +486,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * Returns a virtual 'smw_ob_properties' table with properties matching $stringConditions
 	 * 
 	 */
-	private function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
+	protected function createVirtualTableWithPropertiesByName($requestoptions, & $db) {
 		global $smwgDefaultCollation;
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
@@ -512,7 +512,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * @param Title $category
 	 * @param & $db 
 	 */
-	private function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db) {
+	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db) {
 		global $smwgDefaultCollation;
 		
 		$page = $db->tableName('page');
@@ -572,7 +572,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	/**
 	 * Drops table 'smw_ob_properties'.
 	 */
-	private function dropVirtualTableForProperties(& $db) {
+	protected function dropVirtualTableForProperties(& $db) {
 		$db->query('DROP TEMPORARY TABLE smw_ob_properties');
 	}
 	
@@ -594,7 +594,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		return $this->getNarySubjects($category, 1);
 	}
 	
-	private function getNarySubjects(Title $object, $pos) {
+	protected function getNarySubjects(Title $object, $pos) {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_nary = $db->tableName('smw_nary');
 		$smw_nary_relations = $db->tableName('smw_nary_relations');

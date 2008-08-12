@@ -235,7 +235,11 @@ class UndefinedEntitiesDetector {
 					$this->store = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');
 					break;
-				case (SMW_STORE_MWDB): default:
+				case ('SMWHaloStore2'): default:
+
+                    $this->store = new UndefinedEntitiesStorageSQL2();
+                    break;
+				case ('SMWHaloStore'): default:
 
 					$this->store = new UndefinedEntitiesStorageSQL();
 					break;
@@ -355,17 +359,20 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 			
 		$db =& wfGetDB( DB_SLAVE );
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
-
+        $smw_attributes = $db->tableName('smw_attributes');
+        $smw_relations = $db->tableName('smw_relations');
+        $smw_nary = $db->tableName('smw_nary');
+        
 		// read attributes
-		$res = $db->query('SELECT DISTINCT attribute_title FROM smw_attributes a LEFT JOIN page p ON a.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
+		$res = $db->query('SELECT DISTINCT attribute_title FROM '.$smw_attributes.' a LEFT JOIN page p ON a.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
 		                      ' WHERE p.page_title IS NULL '.$sqlOptions);
 
 		// read binary relations
-		$res2 = $db->query('SELECT DISTINCT relation_title FROM smw_relations r LEFT JOIN page p ON r.relation_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
+		$res2 = $db->query('SELECT DISTINCT relation_title FROM '.$smw_relations.' r LEFT JOIN page p ON r.relation_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
 		                      ' WHERE p.page_title IS NULL '.$sqlOptions);
 			
 		// read n-ary relations
-		$res3 = $db->query('SELECT DISTINCT attribute_title FROM smw_nary r LEFT JOIN page p ON r.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
+		$res3 = $db->query('SELECT DISTINCT attribute_title FROM '.$smw_nary.' r LEFT JOIN page p ON r.attribute_title=p.page_title AND p.page_namespace = '.SMW_NS_PROPERTY.
 		                      ' WHERE p.page_title IS NULL '.$sqlOptions);
 
 		$result = array();
@@ -394,39 +401,44 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 		return $result;
 	}
 
-	public function getArticlesUsingProperty($property, $limit = 0) {
-		$db =& wfGetDB( DB_SLAVE );
+    public function getArticlesUsingProperty($property, $limit = 0) {
+        $db =& wfGetDB( DB_SLAVE );
+    
+        $smw_attributes = $db->tableName('smw_attributes');
+        $smw_relations = $db->tableName('smw_relations');
+        $smw_nary = $db->tableName('smw_nary');
+        $smw_nary_relations = $db->tableName('smw_nary_relations');
+        $smw_nary_attributes = $db->tableName('smw_nary_attributes');
+        
+        if (!is_numeric($limit)) return array();
+        $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
+        $res = $db->query('SELECT DISTINCT subject_title, subject_namespace FROM '.$smw_attributes.' WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+                'SELECT DISTINCT subject_title, subject_namespace FROM '.$smw_relations.' WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+                'SELECT DISTINCT subject_title, subject_namespace FROM '.$smw_nary_attributes.' a JOIN '.$smw_nary.' n ON n.subject_id = a.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
+                'SELECT DISTINCT subject_title, subject_namespace FROM '.$smw_nary_relations.' r JOIN '.$smw_nary.' n ON n.subject_id = r.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).$limitConstraint);
 
-		if (!is_numeric($limit)) return array();
-		$limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
-		$res = $db->query('SELECT DISTINCT subject_title, subject_namespace FROM smw_attributes WHERE attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
-				'SELECT DISTINCT subject_title, subject_namespace FROM smw_relations WHERE relation_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
-				'SELECT DISTINCT subject_title, subject_namespace FROM smw_nary_attributes a JOIN smw_nary n ON n.subject_id = a.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).' UNION DISTINCT ' .
-				'SELECT DISTINCT subject_title, subject_namespace FROM smw_nary_relations r JOIN smw_nary n ON n.subject_id = r.subject_id WHERE n.attribute_title = '.$db->addQuotes($property->getDBkey()).$limitConstraint);
 
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = Title::newFromText($row->subject_title, $row->subject_namespace);
 
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->subject_title, $row->subject_namespace);
-
-			}
-		}
-		$db->freeResult($res);
-		return $result;
-	}
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
 
 	public function getUndefinedCategories($requestoptions = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 			
-		// inner query: not as fast as a LEFT JOIN
-		/*$sql = 'cl_to NOT IN (SELECT page_title FROM page WHERE page_title = cl_to)';
-
-		$res = $db->select(  array($db->tableName('categorylinks')),
-		array('cl_to'),
-		$sql, 'SMW::getUndefinedCategories', NULL);*/
+		$page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+       
+		
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
-		$res = $db->query('SELECT DISTINCT cl_to FROM categorylinks c LEFT JOIN page p ON c.cl_to=p.page_title AND p.page_namespace = '.NS_CATEGORY.' WHERE p.page_title IS NULL '.$sqlOptions);
+		$res = $db->query('SELECT DISTINCT cl_to FROM '.$categorylinks.' c LEFT JOIN '.$page.' p ON c.cl_to=p.page_title AND p.page_namespace = '.NS_CATEGORY.
+		                      ' WHERE p.page_title IS NULL '.$sqlOptions);
 
 
 		$result = array();
@@ -444,10 +456,13 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 
 	public function getArticlesUsingCategory($category, $limit = 0) {
 		$db =& wfGetDB( DB_SLAVE );
-
+        
+		$page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        
 		if (!is_numeric($limit)) return array();
 		$limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
-		$res = $db->query('SELECT page_title, page_namespace FROM page,categorylinks '.
+		$res = $db->query('SELECT page_title, page_namespace FROM '.$page.','.$categorylinks.' '.
 		                      'WHERE page_namespace = '.NS_MAIN.' AND page_id = cl_from AND cl_to = '.$db->addQuotes($category->getDBkey()).' '.$limitConstraint);
 
 		$result = array();
@@ -464,15 +479,15 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 	public function getUndefinedRelationTargets($requestoptions = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 
-		// inner query: not as fast as a LEFT JOIN
-		/*$sql = 'object_title NOT IN (SELECT page_title FROM page WHERE page_title = object_title)';
-
-		$res = $db->select(  array($db->tableName('smw_relations')),
-		array('object_title'),
-		$sql, 'SMW::getUndefinedRelationTargets', NULL);*/
+		
+        $page = $db->tableName('page');
+        $smw_relations = $db->tableName('smw_relations');
+        $smw_nary_relations = $db->tableName('smw_nary_relations');
+     
+		
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
-		$res = $db->query('SELECT DISTINCT object_title FROM smw_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL UNION DISTINCT ' .
-				'SELECT DISTINCT object_title FROM smw_nary_relations r LEFT JOIN page p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL '.$sqlOptions);
+		$res = $db->query('SELECT DISTINCT object_title FROM '.$smw_relations.' r LEFT JOIN '.$page.' p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL UNION DISTINCT ' .
+				'SELECT DISTINCT object_title FROM '.$smw_nary_relations.' r LEFT JOIN '.$page.' p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL '.$sqlOptions);
 
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -491,12 +506,16 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 
 	public function getRelationsUsingTarget($target, $limit = 0) {
 		$db =& wfGetDB( DB_SLAVE );
-
+      	
+        $smw_relations = $db->tableName('smw_relations');
+        $smw_nary = $db->tableName('smw_nary');
+        $smw_nary_relations = $db->tableName('smw_nary_relations');
+    
 		if (!is_numeric($limit)) return array();
 
 		$limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
-		$res = $db->query('SELECT DISTINCT relation_title AS title FROM smw_relations WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
-				'UNION DISTINCT SELECT DISTINCT attribute_title AS title FROM smw_nary n, smw_nary_relations r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
+		$res = $db->query('SELECT DISTINCT relation_title AS title FROM '.$smw_relations.' WHERE object_title = '.$db->addQuotes($target->getDBkey()).' ' .
+				'UNION DISTINCT SELECT DISTINCT attribute_title AS title FROM '.$smw_nary.' n, '.$smw_nary_relations.' r WHERE n.subject_id = r.subject_id AND r.object_title =  '.$db->addQuotes($target->getDBkey()).' '.$limitConstraint);
 
 		$result = array();
 		if($db->numRows( $res ) > 0) {
@@ -512,14 +531,11 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 	public function getInstancesWithoutCategory($requestoptions = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 			
-		// inner query: not as fast as a LEFT JOIN
-		/*$sql = 'page_namespace = '.NS_MAIN.' AND page_id NOT IN (SELECT cl_from FROM categorylinks WHERE page_id = cl_from)';
-
-		$res = $db->select(  array($db->tableName('page')),
-		array('page_title'),
-		$sql, 'SMW::getInstancesWithoutCategory', NULL);*/
+		$page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
-		$res = $db->query('SELECT DISTINCT page_title FROM page p LEFT JOIN categorylinks c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' '.$sqlOptions);
+		$res = $db->query('SELECT DISTINCT page_title FROM '.$page.' p LEFT JOIN '.$categorylinks.' c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' '.$sqlOptions);
 
 
 		$result = array();
@@ -534,6 +550,120 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 		$db->freeResult($res);
 		return $result;
 	}
+
+}
+
+class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
+    public function getUndefinedProperties($requestoptions = NULL) {
+            
+            
+        $db =& wfGetDB( DB_SLAVE );
+        $sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+        $smw_ids = $db->tableName('smw_ids');
+        $page = $db->tableName('page');
+        
+        // read attributes
+        $res = $db->query('SELECT DISTINCT smw_title FROM '.$smw_ids.' a LEFT JOIN '.$page.' p ON a.smw_title=p.page_title AND a.smw_iw != ":smw" AND a.smw_namespace = '.SMW_NS_PROPERTY.
+                                ' AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL AND a.smw_iw != ":smw"'.$sqlOptions);
+        
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+            	$title = Title::newFromText($row->smw_title, SMW_NS_PROPERTY);
+                if ($title != NULL) $result[] = $title; 
+
+            }
+        }
+      
+        $db->freeResult($res);
+        return $result;
+    }
+
+    public function getArticlesUsingProperty($property, $limit = 0) {
+        $db =& wfGetDB( DB_SLAVE );
+        
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_atts2 = $db->tableName('smw_atts2');
+        $smw_rels2 = $db->tableName('smw_rels2');
+      
+        
+        if (!is_numeric($limit)) return array();
+        $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
+        
+        $res = $db->query('(SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace'. 
+                           ' FROM '.$smw_atts2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id'. 
+                            ' JOIN '.$smw_ids.' i2 ON p_id = i2.smw_id WHERE i2.smw_title =  '.$db->addQuotes($property->getDBkey()).' AND i2.smw_namespace = '.SMW_NS_PROPERTY.
+                          ') UNION DISTINCT '.
+                          '(SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace'. 
+                           ' FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id'. 
+                            ' JOIN '.$smw_ids.' i2 ON p_id = i2.smw_id WHERE i2.smw_title =  '.$db->addQuotes($property->getDBkey()).' AND i2.smw_namespace = '.SMW_NS_PROPERTY.') '.$limitConstraint);
+        
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $title =  Title::newFromText($row->subject_title, $row->subject_namespace);
+                if ($title != NULL) $result[] = $title; 
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
+
+    
+    public function getUndefinedRelationTargets($requestoptions = NULL) {
+        $db =& wfGetDB( DB_SLAVE );
+
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $page = $db->tableName('page');
+        
+        $sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+        
+        $res = $db->query('SELECT DISTINCT smw_title AS object_title, smw_namespace AS object_namespace'. 
+                           ' FROM '.$smw_rels2.' JOIN '.$smw_ids.' ON o_id = smw_id LEFT JOIN '.$page.' ON smw_title = page_title AND smw_namespace = page_namespace'. 
+                            ' WHERE page_title IS NULL '.$sqlOptions);
+              
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $t = Title::newFromText($row->object_title);
+                if ($t != NULL) $result[] = $t;
+
+            }
+        }
+
+
+        $db->freeResult($res);
+
+        return $result;
+    }
+
+    public function getRelationsUsingTarget($target, $limit = 0) {
+        $db =& wfGetDB( DB_SLAVE );
+        
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $page = $db->tableName('page');
+        
+        if (!is_numeric($limit)) return array();
+
+        $limitConstraint =  $limit == 0 ? ''  : 'LIMIT '.$limit;
+        
+        $res = $db->query('SELECT DISTINCT i2.smw_title AS title'. 
+                           ' FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON o_id = i.smw_id JOIN '.$smw_ids.' i2 ON p_id = i2.smw_id '. 
+                            ' WHERE i2.smw_title = '.$db->addQuotes($target->getDBkey()).' AND i2.smw_namespace = '.$target->getNamespace().' '.$limitConstraint);
+
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $t = Title::newFromText($row->title, SMW_NS_PROPERTY);
+                if ($t != NULL) $result[] = $t;
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
+
 
 }
 ?>

@@ -167,7 +167,12 @@ global $wgAjaxExportList;
                     SMWGardeningIssuesAccess::$gi_interface = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');
                 break;
-                case (SMW_STORE_MWDB): default:
+                case ('SMWHaloStore2'): default:
+                	require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
+                    require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL2.php');
+                    SMWGardeningIssuesAccess::$gi_interface = new SMWGardeningIssuesAccessSQL2();
+                break;
+                case ('SMWHaloStore'): default:
                     require_once($smwgHaloIP . '/specials/SMWGardening/storage/SMW_GardeningIssuesSQL.php');
                     SMWGardeningIssuesAccess::$gi_interface = new SMWGardeningIssuesAccessSQL();
                 break;
