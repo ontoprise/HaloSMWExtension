@@ -57,7 +57,8 @@ function smwf_cs_AskForAttributeValues($parts) {
 	$cs = new CombinedSearch();
 	$parts = explode(",", $parts);
 	$htmlResult = "<div class=\"cbsrch-content\">";
-	$titlesAndValues = $cs->getInstancesWithAttributeValue($parts);
+	$cs_storage = CombinedSearchStorage::getCombinedSearchStore();
+	$titlesAndValues = $cs_storage->getInstancesWithAttributeValue($parts);
 	if (count($titlesAndValues) > 0) {
 		$htmlResult .= wfMsg('smw_cs_attributevalues_found');
 		$htmlResult .= "<table class=\"cbsrch-table\">";
@@ -284,45 +285,7 @@ class CombinedSearch {
 
 	}
 
-	public function getInstancesWithAttributeValue($values) {
-		$result = array();
-		$db =& wfGetDB( DB_SLAVE );
-		$sql = "(";
-		for($i = 0, $n = count($values); $i < $n; $i++) {
-			if (is_numeric($values[$i])) {
-				// allow deviance of 1 %.
-				$sql .= '(value_xsd >= '.($values[$i]-(0.01*$values[$i])). ' AND value_xsd <= '.($values[$i]+(0.01*$values[$i])). ') OR ';
-			} else {
-				$sql .= 'UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$values[$i].'%').') OR ';
-				if (smwfDBSupportsFunction('halowiki')) {
-					$sql .= 'EDITDISTANCE(UPPER(value_xsd), UPPER('.$db->addQuotes($values[$i]).')) <= 1 OR ';
-				}
-			}
-		}
-		$sql .= "false)";
-
-		$res = $db->select( $db->tableName('smw_attributes'),
-		array('subject_title','subject_namespace', 'attribute_title', 'value_xsd'),
-		$sql, 'SMW::getInstancesWithAttributeValue', NULL );
-
-		$res2 = $db->select( array($db->tableName('smw_nary'), $db->tableName('smw_nary_attributes')),
-		array('subject_title','subject_namespace', 'attribute_title', 'value_xsd'),
-		$sql.' AND smw_nary.subject_id = smw_nary_attributes.subject_id', 'SMW::getInstancesWithAttributeValue', NULL );
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY), $row->value_xsd);
-			}
-		}
-		if($db->numRows( $res2 ) > 0) {
-			while($row = $db->fetchObject($res2)) {
-				$result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY), $row->value_xsd);
-			}
-		}
-		$db->freeResult($res);
-		$db->freeResult($res2);
-		return $result;
-	}
+	
 
 
 
@@ -404,6 +367,120 @@ class CombinedSearch {
 	}
 
 
+}
+
+abstract class CombinedSearchStorage {
+	
+	private static $INSTANCE = NULL;
+	/**
+	 * Returns all instances which have annotations of the given $values.
+	 *
+	 * @param String[] $values
+	 * 
+	 * @return array of (Title, Title)
+	 */
+	public abstract function getInstancesWithAttributeValue($values);
+	
+    public static function getCombinedSearchStore() {
+        global $smwgHaloIP;
+        if (self::$INSTANCE == NULL) {
+            global $smwgDefaultStore;
+            switch ($smwgDefaultStore) {
+                case (SMW_STORE_TESTING):
+                    self::$INSTANCE = null; // not implemented yet
+                    trigger_error('Testing store not implemented for HALO extension.');
+                break;
+                case ('SMWHaloStore2'): default:
+                    self::$INSTANCE = new CombinedSearchStorageSQL2();
+                break;
+                case ('SMWHaloStore'): default:
+                    self::$INSTANCE = new CombinedSearchStorageSQL();
+                break;
+            }
+        }
+        return self::$INSTANCE;
+}
+}
+
+class CombinedSearchStorageSQL extends CombinedSearchStorage {
+    public function getInstancesWithAttributeValue($values) {
+        $result = array();
+        $db =& wfGetDB( DB_SLAVE );
+        $sql = "(";
+        for($i = 0, $n = count($values); $i < $n; $i++) {
+            if (is_numeric($values[$i])) {
+                // allow deviance of 1 %.
+                $sql .= '(value_xsd >= '.($values[$i]-(0.01*$values[$i])). ' AND value_xsd <= '.($values[$i]+(0.01*$values[$i])). ') OR ';
+            } else {
+                $sql .= 'UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$values[$i].'%').') OR ';
+                if (smwfDBSupportsFunction('halowiki')) {
+                    $sql .= 'EDITDISTANCE(UPPER(value_xsd), UPPER('.$db->addQuotes($values[$i]).')) <= 1 OR ';
+                }
+            }
+        }
+        $sql .= "false)";
+
+        $res = $db->select( $db->tableName('smw_attributes'),
+        array('subject_title','subject_namespace', 'attribute_title', 'value_xsd'),
+        $sql, 'SMW::getInstancesWithAttributeValue', NULL );
+
+        $res2 = $db->select( array($db->tableName('smw_nary'), $db->tableName('smw_nary_attributes')),
+        array('subject_title','subject_namespace', 'attribute_title', 'value_xsd'),
+        $sql.' AND smw_nary.subject_id = smw_nary_attributes.subject_id', 'SMW::getInstancesWithAttributeValue', NULL );
+
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY), $row->value_xsd);
+            }
+        }
+        if($db->numRows( $res2 ) > 0) {
+            while($row = $db->fetchObject($res2)) {
+                $result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY), $row->value_xsd);
+            }
+        }
+        $db->freeResult($res);
+        $db->freeResult($res2);
+        return $result;
+    }
+}
+
+class CombinedSearchStorageSQL2 extends CombinedSearchStorageSQL {
+public function getInstancesWithAttributeValue($values) {
+        $result = array();
+        $db =& wfGetDB( DB_SLAVE );
+      
+        $smw_atts2 = $db->tableName('smw_atts2');
+        $smw_ids = $db->tableName('smw_ids');
+        
+        $sql = "(";
+        for($i = 0, $n = count($values); $i < $n; $i++) {
+            if (is_numeric($values[$i])) {
+                // allow deviance of 1 %.
+                $sql .= '(value_xsd >= '.($values[$i]-(0.01*$values[$i])). ' AND value_xsd <= '.($values[$i]+(0.01*$values[$i])). ') OR ';
+            } else {
+                $sql .= 'UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$values[$i].'%').') OR ';
+                if (smwfDBSupportsFunction('halowiki')) {
+                    $sql .= 'EDITDISTANCE(UPPER(value_xsd), UPPER('.$db->addQuotes($values[$i]).')) <= 1 OR ';
+                }
+            }
+        }
+        $sql .= "false)";
+    
+        $res = $db->query('SELECT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title, value_xsd FROM '.$smw_atts2.
+        ' JOIN '.$smw_ids.' i ON i.smw_id = s_id '.
+        ' JOIN '.$smw_ids.' i2 ON i2.smw_id = p_id '.
+        'WHERE '.$sql );
+       
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY), $row->value_xsd);
+            }
+        }
+       
+        $db->freeResult($res);
+       
+        return $result;
+    }
 }
 
 class CombinedSearchHelper {

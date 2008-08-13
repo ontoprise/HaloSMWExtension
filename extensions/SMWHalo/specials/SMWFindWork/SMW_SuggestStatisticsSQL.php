@@ -222,7 +222,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	 * @param $username
  	 * @param & $db
  	 */
- 	private function createVirtualTableForCategoriesOfLastEditedPages($username, & $db) {
+ 	protected function createVirtualTableForCategoriesOfLastEditedPages($username, & $db) {
  		
  		$revision = $db->tableName('revision');
  		$pages = $db->tableName('page');
@@ -248,7 +248,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	/**
  	 * Drops the temporary table 'smw_fw_categories'.
  	 */
- 	private function dropVirtualTableForCategoriesOfLastEditedPages(& $db) {
+ 	protected function dropVirtualTableForCategoriesOfLastEditedPages(& $db) {
 		$db->query('DROP TEMPORARY TABLE smw_fw_categories');
  	}
  	

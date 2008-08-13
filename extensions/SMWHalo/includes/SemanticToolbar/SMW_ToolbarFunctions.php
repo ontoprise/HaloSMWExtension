@@ -23,17 +23,10 @@ $wgAjaxExportList[] = 'smwf_tb_AskQuestion';
 function smwf_tb_GetHelp($namespace, $action){
 	global $wgScriptPath, $smwgHaloScriptPath, $smwgAllowNewHelpQuestions;
 	$html = '';
-	$helppages = array();
 	$results = false;
-	$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
-	$dbr =& wfGetDB( DB_SLAVE );
-	$smw_attributes = $dbr->tableName('smw_attributes');
-	$res = $dbr->query('SELECT * FROM '.$smw_attributes.' WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
-
-	while ($row = $dbr->fetchObject( $res )) {
-		$helppages[] = $row->subject_id;
-	}
-	$dbr->freeResult( $res );
+	
+	$tb_store = SMWToolbarStorage::getToolbarStorage();
+	$helppages = $tb_store->getHelppages($namespace, $action);
 
 	foreach($helppages as $id){
 		$question = '';
@@ -253,5 +246,76 @@ function smwf_tb_GetUserDatatypes(){
 	return $result;
 }
 
+abstract class SMWToolbarStorage {
+	
+	private static $INSTANCE = NULL;
+	
+	public static function getToolbarStorage() {
+	    global $smwgDefaultStore;
+	    if (self::$INSTANCE == NULL) {
+	        switch ($smwgDefaultStore) {
+	            case (SMW_STORE_TESTING):
+	                self::$INSTANCE = NULL; // not implemented yet
+	                trigger_error('Testing stores not implemented for HALO extension.');
+	            break;
+	            case ('SMWHaloStore2'): default:
+	                self::$INSTANCE = new SMWToolbarStorageSQL2();
+	            break;
+	            case ('SMWHaloStore'): default:
+	                self::$INSTANCE = new SMWToolbarStorageSQL();
+	            break;
+	        }
+	    }
+        return self::$INSTANCE;
+	}
+	
+	/**
+	 * TODO: Write documentation
+	 */
+	public abstract function  getHelppages($namespace, $action);
+}
+
+class SMWToolbarStorageSQL extends SMWToolbarStorage {
+	public function getHelppages($namespace, $action) {
+		$helppages = array();
+		$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
+	    $dbr =& wfGetDB( DB_SLAVE );
+	    $smw_attributes = $dbr->tableName('smw_attributes');
+	    $res = $dbr->query('SELECT * FROM '.$smw_attributes.' WHERE attribute_title = "DiscourseState" AND value_xsd= "' . $discourseState . '" AND subject_namespace = "' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
+	
+	    while ($row = $dbr->fetchObject( $res )) {
+	        $helppages[] = $row->subject_id;
+	    }
+	    $dbr->freeResult( $res );
+		return $helppages;
+	}
+}
+
+class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
+    public function getHelppages($namespace, $action) {
+        $helppages = array();
+        $discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
+        $db =& wfGetDB( DB_SLAVE );
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_atts2 = $db->tableName('smw_atts2');     
+        $page = $db->tableName('page');
+        
+        $discourseStateID = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>'DiscourseState', 'smw_namespace' => SMW_NS_PROPERTY));
+        if ($discourseStateID != null) {
+        	$discourseStateID = $discourseStateID->smw_id;
+        } else return array();
+        
+        $res = $db->query('SELECT page_id FROM '.$smw_atts2.
+        ' JOIN '.$smw_ids.' ON smw_id = s_id '.
+        ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
+        ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . ' AND page_namespace = ' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
+    
+        while ($row = $db->fetchObject( $res )) {
+            $helppages[] = $row->page_id;
+        }
+        $db->freeResult( $res );
+        return $helppages;
+    }
+}
 
 ?>

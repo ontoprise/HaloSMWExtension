@@ -50,7 +50,7 @@ function enableSMWHalo() {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	$smwgDefaultStore = 'SMWHaloStore'; // the only store supported by Halo now
+	$smwgDefaultStore = 'SMWHaloStore2'; // the only store supported by Halo now
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';

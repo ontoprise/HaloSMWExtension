@@ -33,7 +33,11 @@ function smwfDoSpecialFindWorkPage() {
 				$this->store = null; // not implemented yet
 				trigger_error('Testing stores not implemented for HALO extension.');
 			break;
-			case (SMW_STORE_MWDB): default:
+			case ('SMWHaloStore2'): default:
+                require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_SuggestStatisticsSQL2.php');
+                $this->store = new SMWSuggestStatisticsSQL2();
+            break;
+			case ('SMWHaloStore'): default:
 				require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_SuggestStatisticsSQL.php');
 				$this->store = new SMWSuggestStatisticsSQL();
 			break;

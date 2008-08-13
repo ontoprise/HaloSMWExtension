@@ -118,54 +118,12 @@ class SMWHelpSpecial extends SpecialPage {
  * @return $html the html string containing all links to relevant helppages
  */
 function getHelpByRestriction($restriction, $param){
-	$helppages = array();
 	$help = array();
 	$html = '';
 	
-	$dbr =& wfGetDB( DB_SLAVE );
-	if($restriction == "ns" && $param == "mediawiki"){
-		$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "HelppageComponent" AND subject_namespace = "' . NS_HELP . '"');
-		while ( $row = $dbr->fetchObject( $res ) ) {
-			if ($row->value_xsd == "MediaWiki")
-				$helppages[] = $row->subject_id;
-		}
-	} else {
-	$res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND subject_namespace = "' . NS_HELP . '"');
-
-	//First, find all pages that are relevant and save their id
-	if ($dbr->numRows($res) > 0){
-		switch($restriction) {
-			case "none":
-				while ( $row = $dbr->fetchObject( $res ) ) {
-					$helppages[] = $row->subject_id;
-				}
-				break;
-			case "all":
-				while ( $row = $dbr->fetchObject( $res ) ) {
-					if ($row->value_xsd == $param){
-						$helppages[] = $row->subject_id;
-					}
-				}
-				break;
-			case "ns":
-				while ( $row = $dbr->fetchObject( $res ) ) {
-					if (strpos($row->value_xsd, $param)===0){
-						$helppages[] = $row->subject_id;
-					}
-				}
-				break;
-			case "action":
-				while ( $row = $dbr->fetchObject( $res ) ) {
-					if (strpos($row->value_xsd, $param)!==false){
-						$helppages[] = $row->subject_id;
-					}
-				}
-				break;
-		}
-		$dbr->freeResult( $res );
-	}
-	}
-
+	$hs_storage = HelpSpecialStorage::getHelpSpecialStorage();
+	$helppages = $hs_storage->getHelppagesByRestriction($restriction, $param);
+	
 	//now go through all pages and create the links
 	foreach($helppages as $id){
 		$question = '';
@@ -283,5 +241,154 @@ function createHelpSelector(){
 	return $html;
 }
 
+abstract class HelpSpecialStorage {
+	private static $INSTANCE = NULL;
+    
+    public static function getHelpSpecialStorage() {
+        global $smwgDefaultStore;
+        if (self::$INSTANCE == NULL) {
+            switch ($smwgDefaultStore) {
+                case (SMW_STORE_TESTING):
+                    self::$INSTANCE = NULL; // not implemented yet
+                    trigger_error('Testing stores not implemented for HALO extension.');
+                break;
+                case ('SMWHaloStore2'): default:
+                    self::$INSTANCE = new HelpSpecialStorageSQL2();
+                break;
+                case ('SMWHaloStore'): default:
+                    self::$INSTANCE = new HelpSpecialStorageSQL();
+                break;
+            }
+        }
+        return self::$INSTANCE;
+    }
+    
+    /**
+     * TODO: Write documentation
+     */
+    public abstract function getHelppagesByRestriction($restriction, $param);
+}
 
+class HelpSpecialStorageSQL extends HelpSpecialStorage {
+	public function getHelppagesByRestriction($restriction, $param) {
+		$helppages = array();
+		$dbr =& wfGetDB( DB_SLAVE );
+	    if($restriction == "ns" && $param == "mediawiki"){
+	        $res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "HelppageComponent" AND subject_namespace = "' . NS_HELP . '"');
+	        while ( $row = $dbr->fetchObject( $res ) ) {
+	            if ($row->value_xsd == "MediaWiki")
+	                $helppages[] = $row->subject_id;
+	        }
+	    } else {
+	    $res = $dbr->query('SELECT * FROM smw_attributes WHERE attribute_title = "DiscourseState" AND subject_namespace = "' . NS_HELP . '"');
+	
+	    //First, find all pages that are relevant and save their id
+	    if ($dbr->numRows($res) > 0){
+	        switch($restriction) {
+	            case "none":
+	                while ( $row = $dbr->fetchObject( $res ) ) {
+	                    $helppages[] = $row->subject_id;
+	                }
+	                break;
+	            case "all":
+	                while ( $row = $dbr->fetchObject( $res ) ) {
+	                    if ($row->value_xsd == $param){
+	                        $helppages[] = $row->subject_id;
+	                    }
+	                }
+	                break;
+	            case "ns":
+	                while ( $row = $dbr->fetchObject( $res ) ) {
+	                    if (strpos($row->value_xsd, $param)===0){
+	                        $helppages[] = $row->subject_id;
+	                    }
+	                }
+	                break;
+	            case "action":
+	                while ( $row = $dbr->fetchObject( $res ) ) {
+	                    if (strpos($row->value_xsd, $param)!==false){
+	                        $helppages[] = $row->subject_id;
+	                    }
+	                }
+	                break;
+	        }
+	        $dbr->freeResult( $res );
+	    }
+	    }
+	    return $helppages;
+	}
+}
+
+class HelpSpecialStorageSQL2 extends HelpSpecialStorageSQL {
+public function getHelppagesByRestriction($restriction, $param) {
+        $helppages = array();
+        $db =& wfGetDB( DB_SLAVE );
+        
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_atts2 = $db->tableName('smw_atts2');     
+        $page = $db->tableName('page');
+        
+        if($restriction == "ns" && $param == "mediawiki"){
+        	
+        	$attributeID = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>'HelppageComponent', 'smw_namespace' => SMW_NS_PROPERTY));
+	        if ($attributeID != null) {
+	            $attributeID = $attributeID->smw_id;
+	        } else return array();
+	        
+	        $res = $db->query('SELECT page_id, value_xsd FROM '.$smw_atts2.
+	        ' JOIN '.$smw_ids.' ON smw_id = s_id '.
+	        ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
+	        ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . '" AND page_namespace = ' . NS_HELP);
+        
+            while ( $row = $db->fetchObject( $res ) ) {
+                if ($row->value_xsd == "MediaWiki")
+                    $helppages[] = $row->page_id;
+            }
+        } else {
+            $attributeID = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>'DiscourseState', 'smw_namespace' => SMW_NS_PROPERTY));
+            if ($attributeID != null) {
+                $attributeID = $attributeID->smw_id;
+            } else return array();
+            $res = $db->query('SELECT page_id, value_xsd FROM '.$smw_atts2.
+	            ' JOIN '.$smw_ids.' ON smw_id = s_id '.
+	            ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
+	            ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . '" AND page_namespace = ' . NS_HELP);
+        
+    
+            //First, find all pages that are relevant and save their id
+	        if ($db->numRows($res) > 0){
+	            switch($restriction) {
+	                case "none":
+	                    while ( $row = $db->fetchObject( $res ) ) {
+	                        $helppages[] = $row->subject_id;
+	                    }
+	                    break;
+	                case "all":
+	                    while ( $row = $db->fetchObject( $res ) ) {
+	                        if ($row->value_xsd == $param){
+	                            $helppages[] = $row->subject_id;
+	                        }
+	                    }
+	                    break;
+	                case "ns":
+	                    while ( $row = $db->fetchObject( $res ) ) {
+	                        if (strpos($row->value_xsd, $param)===0){
+	                            $helppages[] = $row->subject_id;
+	                        }
+	                    }
+	                    break;
+	                case "action":
+	                    while ( $row = $db->fetchObject( $res ) ) {
+	                        if (strpos($row->value_xsd, $param)!==false){
+	                            $helppages[] = $row->subject_id;
+	                        }
+	                    }
+	                    break;
+	            }
+	            $db->freeResult( $res );
+	        }
+        }
+        return $helppages;
+    }
+}
 ?>
