@@ -352,7 +352,7 @@ class SMWSQLStore extends SMWStore {
 		$result = array();
 
 		if ( ($specialprop === SMW_SP_INSTANCE_OF) || ($specialprop === SMW_SP_SUBCLASS_OF) ) { // category membership
-			if ( !($value instanceof Title) || ($value->getNamespace() != NS_CATEGORY) ) {
+			if ( !($value instanceof SMWWikiPageValue) || ($value->getNamespace() != NS_CATEGORY) ) {
 				wfProfileOut("SMWSQLStore::getSpecialSubjects-$specialprop (SMW)");
 				return array();
 			}
@@ -399,21 +399,11 @@ class SMWSQLStore extends SMWStore {
 			}
 			$db->freeResult($res);
 		} else {
-			if ($value instanceof SMWDataValue) {
-				if ($value->getXSDValue() !== false) { // filters out error-values etc.
-					$stringvalue = $value->getXSDValue();
-				} else {
-					wfProfileOut("SMWSQLStore::getSpecialSubjects-$specialprop (SMW)");
-					return array();
-				}
-			} elseif ($value instanceof Title) {
-				if ( $specialprop == SMW_SP_HAS_TYPE ) { // special handling, TODO: change this to use type ids
-					$stringvalue = $value->getText();
-				} else {
-					$stringvalue = $value->getPrefixedText();
-				}
+			if ($value->getXSDValue() !== false) { // filters out error-values etc.
+				$stringvalue = $value->getXSDValue();
 			} else {
-				$stringvalue = $value;
+				wfProfileOut("SMWSQLStore::getSpecialSubjects-$specialprop (SMW)");
+				return array();
 			}
 
 			$sql = 'property_id=' . $db->addQuotes($specialprop) .
@@ -880,7 +870,7 @@ class SMWSQLStore extends SMWStore {
 				}
 			} else { // special property
 				switch ($property) {
-					case SMW_SP_IMPORTED_FROM: case SMW_SP_INSTANCE_OF: case SMW_SP_SUBCLASS_OF: case SMW_SP_REDIRECTS_TO: case SMW_SP_CONCEPT_DESC: case SMW_SP_DEFAULT_SORT:
+					case SMW_SP_IMPORTED_FROM: case SMW_SP_INSTANCE_OF: case SMW_SP_SUBCLASS_OF: case SMW_SP_REDIRECTS_TO: case SMW_SP_CONCEPT_DESC:
 						// don't store this, just used for display;
 						// TODO: filtering here is bad for fully neglected properties (IMPORTED FROM)
 						// NOTE: concept descriptions are ignored by that storage implementation
@@ -940,6 +930,11 @@ class SMWSQLStore extends SMWStore {
 		if (count($up_nary_longstrings) > 0) {
 			$db->insert( 'smw_nary_longstrings', $up_nary_longstrings, 'SMW::updateNAryLongData');
 		}
+
+		if ($subject->getNamespace() == SMW_NS_PROPERTY) { // be sure that this is not invalid after update
+			SMWDataValueFactory::clearTypeCache($subject);
+		}
+
 		wfProfileOut("SMWSQLStore::updateData (SMW)");
 	}
 
@@ -1427,7 +1422,7 @@ class SMWSQLStore extends SMWStore {
 
 		foreach ($tables as $table) {
 			$name = $db->tableName($table);
-			$db->query("DROP TABLE $name", 'SMWSQLStore::drop');
+			$db->query("DROP TABLE IF EXISTS $name", 'SMWSQLStore::drop');
 			$this->reportProgress(" ... dropped table $name.\n", $verbose);
 		}
 		$this->reportProgress("All data removed successfully.\n",$verbose);

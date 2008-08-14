@@ -16,7 +16,7 @@ class SMWStringValue extends SMWDataValue {
 	protected function parseUserValue($value) {
 		if ($value!='') {
 			$this->m_value = smwfXMLContentEncode($value);
-			if ( (mb_strlen($this->m_value) > 255) && ($this->m_typeid == '_str') ) { // limit size (for DB indexing)
+			if ( (strlen($this->m_value) > 255) && ($this->m_typeid == '_str') ) { // limit size (for DB indexing)
 				$this->addError(wfMsgForContent('smw_maxstring', mb_substr($value, 0, 42) . ' <span class="smwwarning">[&hellip;]</span> ' . mb_substr($value, mb_strlen($this->m_value) - 42)));
 			}
 		} else {
@@ -94,8 +94,6 @@ class SMWStringValue extends SMWDataValue {
 	 */
 	protected function getAbbValue($linked) {
 		$len = mb_strlen($this->m_value);
-		$starttag = ($this->m_typeid=='_cod')?'<pre>':'';
-		$endtag = ($this->m_typeid=='_cod')?'</pre>':'';
 		if ( ($len > 255) && ($this->m_typeid != '_cod') ) {
 			if ( ($linked === NULL)||($linked === false) ) {
 				return mb_substr($this->m_value, 0, 42) . ' <span class="smwwarning">&hellip;</span> ' . mb_substr($this->m_value, $len - 42);
@@ -103,7 +101,7 @@ class SMWStringValue extends SMWDataValue {
 				smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
 				return mb_substr($this->m_value, 0, 42) . ' <span class="smwttpersist"> &hellip; <span class="smwttcontent">' . $this->m_value . '</span></span> ' . mb_substr($this->m_value, $len - 42);
 			}
-		} elseif ($len > 255) {
+		} elseif ($this->m_typeid == '_cod') {
 			return $this->getCodeDisplay($this->m_value,true);
 		} else {
 			return $this->m_value;

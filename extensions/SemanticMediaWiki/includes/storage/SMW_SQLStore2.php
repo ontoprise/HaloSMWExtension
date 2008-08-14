@@ -42,10 +42,13 @@ class SMWSQLStore2 extends SMWStore {
 	/// Like SMWSQLStore2::m_semdata, but containing flags indicating completeness of the SMWSemanticData objs
 	protected $m_sdstate = array();
 
+	protected static $in_getSemanticData = 0; /// >0 while getSemanticData runs, used to prevent nested calls from clearing the cache while another call runs and is about to fill it with data
+
 ///// Reading methods /////
 
 	function getSemanticData($subject, $filter = false) {
 		wfProfileIn("SMWSQLStore2::getSemanticData (SMW)");
+		SMWSQLStore2::$in_getSemanticData++;
 		$db =& wfGetDB( DB_SLAVE );
 
 		if ( $subject instanceof Title ) {
@@ -61,6 +64,7 @@ class SMWSQLStore2 extends SMWStore {
 		}
 		if ($sid == 0) { // no data, safe our time
 		/// NOTE: we consider redirects for getting $sid, so $sid == 0 also means "no redirects"
+			SMWSQLStore2::$in_getSemanticData--;
 			wfProfileOut("SMWSQLStore2::getSemanticData (SMW)");
 			return isset($svalue)?(new SMWSemanticData($svalue)):NULL;
 		}
@@ -105,7 +109,8 @@ class SMWSQLStore2 extends SMWStore {
 			$this->m_sdstate[$sid] = $this->m_sdstate[$sid] | $tasks;
 			$tasks = $newtasks;
 		}
-		if (count($this->m_semdata) > 1000) { // prevent memory leak on very long PHP runs
+		if ( (count($this->m_semdata) > 1000) && (SMWSQLStore2::$in_getSemanticData == 0) ) {
+			// prevent memory leak on very long PHP runs
 			$this->m_semdata = array($sid => $this->m_semdata[$sid]);
 			$this->m_sdstate = array($sid => $this->m_sdstate[$sid]);
 		}
@@ -266,6 +271,7 @@ class SMWSQLStore2 extends SMWStore {
 			}
 		}
 
+		SMWSQLStore2::$in_getSemanticData--;
 		wfProfileOut("SMWSQLStore2::getSemanticData (SMW)");
 		return $this->m_semdata[$sid];
 	}
@@ -371,6 +377,8 @@ class SMWSQLStore2 extends SMWStore {
 		wfProfileIn("SMWSQLStore2::getPropertyValues (SMW)");
 		if ($subject !== NULL) {
 			$sid = $this->getSMWPageID($subject->getDBkey(), $subject->getNamespace(),$subject->getInterwiki());
+		} else {
+			$sid = 0;
 		}
 		$pid = $this->getSMWPageID($property->getDBkey(), SMW_NS_PROPERTY, $property->getInterwiki());
 		if ( ( ($sid == 0) && ($subject !== NULL) ) || ($pid == 0)) {
@@ -527,7 +535,9 @@ class SMWSQLStore2 extends SMWStore {
 		}
 
 		switch ($typeid) {
-		case '_txt': case '_cod': break; // not supported
+		case '_txt': case '_cod':
+			$table = 'smw_text2'; // ignore value condition in any case
+		break;
 		case '_wpg': // wikipage
 			if ($value !== NULL) {
 				$oid = $this->getSMWPageID($value->getDBkey(),$value->getNamespace(),$value->getInterwiki());
@@ -667,6 +677,7 @@ class SMWSQLStore2 extends SMWStore {
 		///FIXME: if a property page is deleted, more pages may need to be updated by jobs!
 		///TODO: who is responsible for these updates? Some update jobs are currently created in SMW_Hooks, some internally in the store
 		///TODO: Possibly delete ID here (at least for non-properties/categories, if not used in any place in rels2)
+		///FIXME: clean internal caches here
 		wfProfileOut('SMWSQLStore2::deleteSubject (SMW)');
 	}
 
@@ -683,7 +694,7 @@ class SMWSQLStore2 extends SMWStore {
 		} else {
 			$this->updateRedirects($subject->getDBKey(),$subject->getNamespace());
 		}
-		// always make an ID (pages without ID cannot be in qurey results, not even in fixed value queries!):
+		// always make an ID (pages without ID cannot be in query results, not even in fixed value queries!):
 		$sid = $this->makeSMWPageID($subject->getDBkey(),$subject->getNamespace(),'',true,$subject->getSortkey());
 		$db =& wfGetDB( DB_MASTER );
 
@@ -828,6 +839,12 @@ class SMWSQLStore2 extends SMWStore {
 		}
 		if (count($up_conc2) > 0) {
 			$db->insert( 'smw_conc2', $up_conc2, 'SMW::updateConc2Data');
+		}
+
+		$this->m_semdata[$sid] = clone $data; // update cache, important if jobs are directly following this call
+		$this->m_sdstate[$sid] = 0xFFFFFFFF; // everything that one can know
+		if ($subject->getNamespace() == SMW_NS_PROPERTY) { // be sure that this is not invalid after update
+			SMWDataValueFactory::clearTypeCache($subject->getTitle());
 		}
 
 		wfProfileOut("SMWSQLStore2::updateData (SMW)");
@@ -1119,7 +1136,7 @@ class SMWSQLStore2 extends SMWStore {
 		                'smw_conc2');
 		foreach ($tables as $table) {
 			$name = $db->tableName($table);
-			$db->query("DROP TABLE $name", 'SMWSQLStore2::drop');
+			$db->query("DROP TABLE IF EXISTS $name", 'SMWSQLStore2::drop');
 			$this->reportProgress(" ... dropped table $name.\n", $verbose);
 		}
 		$this->reportProgress("All data removed successfully.\n",$verbose);
@@ -1453,14 +1470,14 @@ class SMWSQLStore2 extends SMWStore {
 			$res = $db->select('smw_ids', array('smw_id', 'smw_iw', 'smw_sortkey'), 'smw_title=' . $db->addQuotes($title) . ' AND ' . 'smw_namespace=' . $db->addQuotes($namespace) . ' AND (smw_iw=' . $db->addQuotes('') . ' OR smw_iw=' . $db->addQuotes(SMW_SQL2_SMWREDIIW) . ')', 'SMW::getSMWPageID', array('LIMIT'=>1));
 			if ($row = $db->fetchObject($res)) {
 				$sort = $row->smw_sortkey;
+				$id = $row->smw_id; // set id in any case, the below check for properties will use even the redirect id in emergency
 				if ( ($row->smw_iw == '') || (!$canonical) || ($smwgQEqualitySupport == SMW_EQ_NONE) ) {
-					$id = $row->smw_id;
 					if ($row->smw_iw == '') {
 						$this->m_ids[$ckey] = $id; // what we found is also the canonical key, cache it
 					}
 				} else {
 					$redirect = true;
-					$this->m_ids[$nkey] = $row->smw_id; // what we found is the non-canonical key, cache it
+					$this->m_ids[$nkey] = $id; // what we found is the non-canonical key, cache it
 				}
 			}
 		}
@@ -1499,13 +1516,14 @@ class SMWSQLStore2 extends SMWStore {
 		$id = $this->getSMWPageIDandSort($title, $namespace, $iw, $oldsort, $canonical);
 		if ($id == 0) {
 			$db =& wfGetDB( DB_MASTER );
-			$sortkey = $sortkey?$sortkey:$title;
+			$sortkey = $sortkey?$sortkey:(str_replace('_',' ',$title));
 			$db->insert('smw_ids', array('smw_id' => 0, 'smw_title' => $title, 'smw_namespace' => $namespace, 'smw_iw' => $iw, 'smw_sortkey' => $sortkey), 'SMW::makeSMWPageID');
 			$id = $db->insertId();
 			$this->m_ids["$iw $namespace $title -"] = $id; // fill that cache, even if canonical was given
-			if ($canonical) { // this ID is also authorative for the canonical version
-				$this->m_ids["$iw $namespace $title C"] = $id;
-			}
+			// This ID is also authorative for the canonical version.
+			// This is always the case: if $canonical===false and $id===0, then there is no redi-entry in
+			// smw_ids either, hence the object just did not exist at all.
+			$this->m_ids["$iw $namespace $title C"] = $id;
 		} elseif ( ($sortkey != '') && ($sortkey != $oldsort) ) {
 			$db =& wfGetDB( DB_MASTER );
 			$db->update('smw_ids', array('smw_sortkey' => $sortkey), array('smw_id' => $id), 'SMW::makeSMWPageID');
@@ -1528,7 +1546,7 @@ class SMWSQLStore2 extends SMWStore {
 			$this->m_ids = array();
 		}
 		$this->m_ids[$nkey] = $id;
-		if ($real_iw == $iw) {
+		if ($real_iw === $iw) {
 			$this->m_ids[$ckey] = $id;
 		}
 	}
@@ -1571,7 +1589,7 @@ class SMWSQLStore2 extends SMWStore {
 	 * Delete all semantic data stored for the given subject.
 	 * Used for update purposes.
 	 */
-	protected function deleteSemanticData($subject) {
+	public function deleteSemanticData($subject) {
 		$db =& wfGetDB( DB_MASTER );
 		/// NOTE: redirects are handled by updateRedirects(), not here!
 			//$db->delete('smw_redi2', array('s_title' => $subject->getDBkey(),'s_namespace' => $subject->getNamespace()), 'SMW::deleteSubject::Redi2');

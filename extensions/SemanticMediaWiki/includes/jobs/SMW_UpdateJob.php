@@ -29,6 +29,10 @@ class SMWUpdateJob extends Job {
 			$this->error = "SMWUpdateJob: Invalid title";
 			wfProfileOut('SMWUpdateJob::run (SMW)');
 			return false;
+		} elseif (!$this->title->exists()) {
+			smwfGetStore()->deleteSubject($this->title); // be sure to clear the data
+			wfProfileOut('SMWUpdateJob::run (SMW)');
+			return true;
 		}
 
 		$revision = Revision::newFromTitle( $this->title );
@@ -56,7 +60,8 @@ class SMWUpdateJob extends Job {
 		wfProfileOut( __METHOD__.'-parse' );
 		wfProfileIn( __METHOD__.'-update' );
 
-		SMWFactbox::storeData(true); /// FIXME: why is this just fixed to "true"?
+		SMWFactbox::initStorage($this->title); // be sure we have our title, strange things happen in parsing
+		SMWFactbox::storeData(smwfIsSemanticsProcessed($this->title->getNamespace()));
 		wfProfileOut( __METHOD__.'-update' );
 		wfProfileOut('SMWUpdateJob::run (SMW)');
 		return true;

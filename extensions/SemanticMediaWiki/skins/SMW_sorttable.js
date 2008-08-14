@@ -85,9 +85,9 @@ function smw_getInnerText(el){
 	for (var i=0;i<spans.length;i++) {
 	    if(spans[i].className=="smwsortkey") return spans[i].innerHTML;
 	}
-    }
+    }else{
 	return el.innerHTML;	
-    
+    }
 
 }
 

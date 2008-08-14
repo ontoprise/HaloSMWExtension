@@ -36,19 +36,46 @@ class SMWFactbox {
 	static protected $m_blocked = false;
 
 	/**
+	 * True *while* the Factbox is used for writing, prevents
+	 * broken submethods of MW and extensions to screw up our
+	 * subject title due to illegal $wgTitle uses in parsing.
+	 */
+	static protected $m_writelock = false;
+
+	/**
+	 * To prevent cross-firing parser hooks (e.g. by other extensions' subparsers) 
+	 * from resetting our global data, cache the last non-empty data set and restore
+	 * it later if we should "return" to this article.
+	 */
+	static protected $m_oldsemdata = NULL;
+
+	/**
 	 * Initialisation method. Must be called before anything else happens.
 	 */
 	static function initStorage($title) {
 		// reset only if title exists, is new and is not the notorious
 		// NO TITLE thing the MW parser creates
-		if ( $title === NULL || $title->getText() == 'NO TITLE' ) return;
+		if ( SMWFactbox::$m_writelock || $title === NULL || $title->getText() == 'NO TITLE' ) return;
 		if ( (SMWFactbox::$semdata === NULL) ||
-		     (SMWFactbox::$semdata->getSubject()->getDBkey() != $title->getDBkey()) || 
+		     (SMWFactbox::$semdata->getSubject()->getDBkey() != $title->getDBkey()) ||
 		     (SMWFactbox::$semdata->getSubject()->getNamespace() != $title->getNamespace()) ) {
-			$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$dv->setValues($title->getDBkey(), $title->getNamespace());
-			SMWFactbox::$semdata = new SMWSemanticData($dv); // reset data
-			SMWFactbox::$m_printed = false;
+			$curdata = SMWFactbox::$semdata;
+			// check if we can restore the previous (non-empty) data container:
+			if ( (SMWFactbox::$m_oldsemdata !== NULL) &&
+			     (SMWFactbox::$m_oldsemdata->getSubject()->getDBkey() == $title->getDBkey()) &&
+			     (SMWFactbox::$m_oldsemdata->getSubject()->getNamespace() == $title->getNamespace()) ) {
+				SMWFactbox::$semdata = SMWFactbox::$m_oldsemdata;
+			} else { // otherwise make a new data container
+				$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+				$dv->setValues($title->getDBkey(), $title->getNamespace());
+				SMWFactbox::$semdata = new SMWSemanticData($dv); // reset data
+				SMWFactbox::$m_printed = false;
+			}
+			// store non-empty existing data, just in case we need it later again
+			if ( ($curdata !== NULL) && 
+			     ($curdata->hasProperties() || $curdata->hasSpecialProperties() ) ) {
+				SMWFactbox::$m_oldsemdata = $curdata;
+			}
 			//print " Title set: " . $title->getPrefixedText() . "\n"; // useful for debug
 		}
 		//SMWFactbox::$m_new   = false; // do not reset, keep (order of hooks can be strange ...)
@@ -61,15 +88,25 @@ class SMWFactbox {
 		global $smwgStoreActive;
 		if ($smwgStoreActive) {
 			SMWFactbox::$semdata->clear();
+			SMWFactbox::$m_oldsemdata = NULL;
 			SMWFactbox::$m_printed = false;
 		}
 	}
-	
+
 	/**
 	 * Blocks the next rendering of the Factbox
 	 */
 	static function blockOnce() {
 		SMWFactbox::$m_blocked = true;
+	}
+
+	/**
+	 * Set the writlock (true while the Factbox is used for writing,
+	 * ensures that our title object cannot be changed by cross-firing
+	 * hooks).
+	 */
+	static function setWriteLock($value) {
+		SMWFactbox::$m_writelock = $value;
 	}
 
 	/**
@@ -250,6 +287,7 @@ class SMWFactbox {
 		switch ($showfactbox) {
 		case SMW_FACTBOX_HIDDEN: // never
 			wfProfileOut("SMWFactbox::printFactbox (SMW)");
+			SMWFactbox::$m_printed = true; // do not print again, period (the other cases may safely try again, if new data should come in)
 			return;
 		case SMW_FACTBOX_SPECIAL: // only when there are special properties
 			if ( !SMWFactbox::$semdata->hasVisibleSpecialProperties() ) {

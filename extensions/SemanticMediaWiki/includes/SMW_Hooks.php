@@ -13,8 +13,9 @@
 *  at the end of the article.
 */
 function smwfParserHook(&$parser, &$text) {
-	global $smwgStoreAnnotations, $smwgTempStoreAnnotations, $smwgStoreActive;
+	global $smwgStoreAnnotations, $smwgTempStoreAnnotations, $smwgStoreActive, $smwgLinksInValues;
 	SMWFactbox::initStorage($parser->getTitle()); // be sure we have our title, strange things happen in parsing
+	SMWFactbox::setWritelock(true); // disallow changes to the title object by other hooks!
 
 	// store the results if enabled (we have to parse them in any case, in order to
 	// clean the wiki source for further processing)
@@ -38,17 +39,26 @@ function smwfParserHook(&$parser, &$text) {
 	// In the regexp matches below, leading ':' escapes the markup, as
 	// known for Categories.
 	// Parse links to extract semantic properties
-	$semanticLinkPattern = '/\[\[               # Beginning of the link
-	                        (([^:][^]]*):[=:])+ # Property name (can be nested?)
-	                        (                   # After that:
-	                          (?:[^|\[\]]       #   either normal text (without |, [ or ])
-	                          |\[\[[^]]*\]\]    #   or a [[link]]
-	                          |\[[^]]*\]        #   or an [external link]
-	                        )*)                 # all this zero or more times
-	                        (\|([^]]*))?        # Display text (like "text" in [[link|text]]), optional
-	                        \]\]                # End of link
-	                        /xu';
-	$text = preg_replace_callback($semanticLinkPattern, 'smwfParsePropertiesCallback', $text);
+	if ($smwgLinksInValues) { // more complex regexp -- lib PCRE may cause segfaults if text is long :-(
+		$semanticLinkPattern = '/\[\[                 # Beginning of the link
+		                        (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
+		                        (                     # After that:
+		                          (?:[^|\[\]]         #   either normal text (without |, [ or ])
+		                          |\[\[[^]]*\]\]      #   or a [[link]]
+		                          |\[[^]]*\]          #   or an [external link]
+		                        )*)                   # all this zero or more times
+		                        (?:\|([^]]*))?        # Display text (like "text" in [[link|text]]), optional
+		                        \]\]                  # End of link
+		                        /xu';
+		$text = preg_replace_callback($semanticLinkPattern, 'smwfParsePropertiesCallback', $text);
+	} else { // simpler regexps -- no segfaults found for those, but no links in values
+		$semanticLinkPattern = '/\[\[                 # Beginning of the link
+		                        (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
+		                        ([^\[\]]*)            # content: anything but [, |, ]
+		                        \]\]                  # End of link
+		                        /xu';
+		$text = preg_replace_callback($semanticLinkPattern, 'smwfSimpleParsePropertiesCallback', $text);
+	}
 	SMWFactbox::printFactbox($text);
 
 	// add link to RDF to HTML header
@@ -58,21 +68,48 @@ function smwfParserHook(&$parser, &$text) {
 	                       'ExportRDF/' . $parser->getTitle()->getPrefixedText(), 'xmlmime=rdf'
 	                    )) . "\" />");
 
+	SMWFactbox::setWritelock(false); // free Factbox again (the hope of course is that it is only reset after the data we just gathered was processed; but this then might be okay, e.g. if some jobs are processed)
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
 /**
 * This callback function strips out the semantic attributes from a wiki
-* link.
+* link. Expected parameter: array(linktext, properties, value|caption)
+* This function is a preprocessing for smwfParsePropertiesCallback, and
+* takes care of separating value and caption (instead of leaving this to
+* a more complex regexp).
+*/
+function smwfSimpleParsePropertiesCallback($semanticLink) {
+	$value = '';
+	$caption = false;
+	if (array_key_exists(2,$semanticLink)) {
+		$parts = explode('|',$semanticLink[2]);
+		if (array_key_exists(0,$parts)) {
+			$value = $parts[0];
+		}
+		if (array_key_exists(1,$parts)) {
+			$caption = $parts[1];
+		}
+	}
+	if ($caption !== false) {
+		return smwfParsePropertiesCallback(array($semanticLink[0],$semanticLink[1],$value,$caption));
+	} else {
+		return smwfParsePropertiesCallback(array($semanticLink[0],$semanticLink[1],$value));
+	}
+}
+
+/**
+* This callback function strips out the semantic attributes from a wiki
+* link. Expected parameter: array(linktext, properties, value, caption)
 */
 function smwfParsePropertiesCallback($semanticLink) {
 	global $smwgInlineErrors, $smwgStoreAnnotations, $smwgTempStoreAnnotations;
 	wfProfileIn("smwfParsePropertiesCallback (SMW)");
-	if (array_key_exists(2,$semanticLink)) {
-		$property = $semanticLink[2];
+	if (array_key_exists(1,$semanticLink)) {
+		$property = $semanticLink[1];
 	} else { $property = ''; }
-	if (array_key_exists(3,$semanticLink)) {
-		$value = $semanticLink[3];
+	if (array_key_exists(2,$semanticLink)) {
+		$value = $semanticLink[2];
 	} else { $value = ''; }
 
 	if ($property == 'SMW') {
@@ -84,8 +121,8 @@ function smwfParsePropertiesCallback($semanticLink) {
 		return '';
 	}
 
-	if (array_key_exists(5,$semanticLink)) {
-		$valueCaption = $semanticLink[5];
+	if (array_key_exists(3,$semanticLink)) {
+		$valueCaption = $semanticLink[3];
 	} else { $valueCaption = false; }
 
 	//extract annotations and create tooltip
@@ -140,6 +177,7 @@ function smwfEqualDatavalues($dv1, $dv2) {
 	// The hashes of all values of both arrays are taken, then sorted
 	// and finally concatenated, thus creating one long hash out of each
 	// of the data value arrays. These are compared.
+
 	$values = array();
 	foreach($dv1 as $v) $values[] = $v->getHash();
 	sort($values);
@@ -148,8 +186,8 @@ function smwfEqualDatavalues($dv1, $dv2) {
 	foreach($dv2 as $v) $values[] = $v->getHash();
 	sort($values);
 	$dv2hash = implode("___", $values);
-	
-	return ($dv1hash == $dv2hash);	
+
+	return ($dv1hash == $dv2hash);
 }
 
 /**
@@ -159,7 +197,7 @@ function smwfEqualDatavalues($dv1, $dv2) {
  * conversion factors have changed. If so, it triggers SMWUpdateJobs for the relevant articles,
  * which then asynchronously update the semantic data in the database.
  *
- *  Known Bug -- TODO
+ *  Known bug/limitation -- TODO
  *  Updatejobs are triggered when a property or type definition has
  *  changed, so that all affected pages get updated. However, if a page
  *  uses a property but the given value caused an error, then there is
@@ -168,54 +206,68 @@ function smwfEqualDatavalues($dv1, $dv2) {
  */
 function smwfSaveDataForTitle($title) {
 	global $smwgEnableUpdateJobs;
+	SMWFactbox::initStorage($title); // be sure we have our title, strange things happen in parsing
 	$namespace = $title->getNamespace();
+	$processSemantics = smwfIsSemanticsProcessed($namespace);
+	if ($processSemantics) {
+		$newdata = SMWFactbox::$semdata;
+	} else { // nothing stored, use empty container
+		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+		$dv->setValues($title->getDBkey(), $title->getNamespace());
+		$newdata = new SMWSemanticData($dv);
+	}
 
 	// Check if the semantic data has been changed.
 	// Sets the updateflag to true if so.
+	// Careful: storage access must happen *before* the storage update;
+	// even finding uses of a property fails after its type was changed.
 	$updatejobflag = false;
+	$jobs = array();
 	if ($smwgEnableUpdateJobs && ($namespace == SMW_NS_PROPERTY) ) {
 		// if it is a property, then we need to check if the type or
-		// the allowed values have been changed 
+		// the allowed values have been changed
 		$oldtype = smwfGetStore()->getSpecialValues($title, SMW_SP_HAS_TYPE);
-		$newtype = SMWFactbox::$semdata->getPropertyValues(SMW_SP_HAS_TYPE);
-				
-		if (smwfEqualDatavalues($oldtype, $newtype)) {
+		$newtype = $newdata->getPropertyValues(SMW_SP_HAS_TYPE);
+
+		if (!smwfEqualDatavalues($oldtype, $newtype)) {
 			$updatejobflag = true;
 		} else {
 			$oldvalues = smwfGetStore()->getSpecialValues($title, SMW_SP_POSSIBLE_VALUE);
-			$newvalues = SMWFactbox::$semdata->getPropertyValues(SMW_SP_POSSIBLE_VALUE);
-			$updatejobflag = smwfEqualDatavalues($oldvalues, $newvalues);
+			$newvalues = $newdata->getPropertyValues(SMW_SP_POSSIBLE_VALUE);
+			$updatejobflag = !smwfEqualDatavalues($oldvalues, $newvalues);
+		}
+
+		if ($updatejobflag) {
+			$subjects = smwfGetStore()->getAllPropertySubjects($title);
+			foreach ($subjects as $subject) {
+				$jobs[] = new SMWUpdateJob($subject);
+			}
 		}
 	} elseif ($smwgEnableUpdateJobs && ($namespace == SMW_NS_TYPE) ) {
 		// if it is a type we need to check if the conversion factors have been changed
 		$oldfactors = smwfGetStore()->getSpecialValues($title, SMW_SP_CONVERSION_FACTOR);
-		$newfactors = SMWFactbox::$semdata->getPropertyValues(SMW_SP_CONVERSION_FACTOR);
-		$updatejobflag = smwfEqualDatavalues($oldfactors, $newfactors);
-	}
-
-	// Actually store semantic data
-	SMWFactbox::storeData(smwfIsSemanticsProcessed($title->getNamespace()));
-
-	// Trigger relevant Updatejobs if necessary
-	if ($updatejobflag) {
-		$jobs = array();
-		$store = smwfGetStore();
-		if ($namespace == SMW_NS_PROPERTY) {
-			$subjects = $store->getAllPropertySubjects($title);
-			foreach ($subjects as $subject) {
-				$jobs[] = new SMWUpdateJob($subject);
-			}
-		} elseif ($namespace == SMW_NS_TYPE) {
+		$newfactors = $newdata->getPropertyValues(SMW_SP_CONVERSION_FACTOR);
+		$updatejobflag = !smwfEqualDatavalues($oldfactors, $newfactors);
+		if ($updatejobflag) {
+			$store = smwfGetStore();
+			/// FIXME: this would kill large wikis! Use incremental updates!
 			$dv = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE,$title->getDBkey());
 			$subjects = $store->getSpecialSubjects(SMW_SP_HAS_TYPE, $dv);
-			foreach ($subjects as $titlesofpropertypagestoupdate) {
-				$subjectsPropertyPages = $store->getAllPropertySubjects($titlesofpropertypagestoupdate->getTitle());
-				$jobs[] = new SMWUpdateJob($titlesofpropertypagestoupdate);
+			foreach ($subjects as $valueofpropertypagestoupdate) {
+				$subjectsPropertyPages = $store->getAllPropertySubjects($valueofpropertypagestoupdate->getTitle());
+				$jobs[] = new SMWUpdateJob($valueofpropertypagestoupdate->getTitle());
 				foreach ($subjectsPropertyPages as $titleOfPageToUpdate) {
 					$jobs[] = new SMWUpdateJob($titleOfPageToUpdate);
 				}
 			}
 		}
+	}
+
+	// Actually store semantic data
+	SMWFactbox::storeData($processSemantics);
+
+	// Trigger relevant Updatejobs if necessary
+	if ($updatejobflag) {
 		Job::batchInsert($jobs); ///NOTE: this only happens if $smwgEnableUpdateJobs was true above
 	}
 	return true;

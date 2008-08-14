@@ -29,6 +29,8 @@ $messages['en'] = array(
 
 	// Link to RSS feeds
 	'smw_rss_link' => 'RSS',
+	// Link to CSV feeds
+	'smw_csv_link' => 'CSV',
 
 	// Link to iCalendar and vCard files
 	'smw_icalendar_link' => 'iCalendar',
@@ -36,7 +38,7 @@ $messages['en'] = array(
 
 	// Messages and strings for inline queries
 	'smw_iq_disabled'    => "Sorry. Semantic queries have been disabled for this wiki.",
-	'smw_iq_moreresults' => '&hellip; further results',
+	'smw_iq_moreresults' => '… further results',
 	'smw_iq_nojs'        => 'Please use a JavaScript-enabled browser to view this element.',
 	'smw_iq_altresults'  => 'Browse the result list directly.', // available link when JS is disabled
 
@@ -85,7 +87,7 @@ $messages['en'] = array(
 
 	// Errors and notices related to queries
 	'smw_toomanyclosing'    => 'There appear to be too many occurrences of "$1" in the query.',
-	'smw_noclosingbrackets' => 'Some use of "[&#x005B;" in your query was not closed by a matching "]]".',
+	'smw_noclosingbrackets' => 'Some use of "<nowiki>[[</nowiki>" in your query was not closed by a matching "]]".',
 	'smw_misplacedsymbol'   => 'The symbol "$1" was used in a place where it is not useful.',
 	'smw_unexpectedpart'    => 'The part "$1" of the query was not understood.
 Results might not be as expected.',
@@ -95,7 +97,7 @@ Results might not be as expected.',
 	'smw_overprintoutlimit' => 'The query contains too many printout requests.',
 	'smw_badprintout'       => 'Some print statement in the query was misshaped.',
 	'smw_badtitle'          => 'Sorry, but "$1" is no valid page title.',
-	'smw_badqueryatom'      => 'Some part "[&#x005B;&hellip;]]" of the query was not understood.',
+	'smw_badqueryatom'      => 'Some part "<nowiki>[[…]]</nowiki>" of the query was not understood.',
 	'smw_propvalueproblem'  => 'The value of property "$1" was not understood.',
 	'smw_noqueryfeature'    => 'Some query feature was not supported in this wiki and part of the query was dropped ($1).',
 	'smw_noconjunctions'    => 'Conjunctions in queries are not supported in this wiki and part of the query was dropped ($1).',
@@ -218,7 +220,7 @@ The number of incorrect properties is given in the brackets.',
 	'browse'             => 'Browse wiki',
 	'smw_browse_article' => 'Enter the name of the page to start browsing from.',
 	'smw_browse_go'      => 'Go',
-	'smw_browse_more'    => '&hellip;',
+	'smw_browse_more'    => '…',
 
 	// Messages for the page property special
 	'pageproperty'  => 'Page property search',
@@ -298,7 +300,6 @@ $messages['af'] = array(
 /** Arabic (العربية)
  * @author Mahmoud Zouari  mahmoudzouari@yahoo.fr http://www.cri.ensmp.fr
  * @author Meno25
- * @author Siebrand
  */
 $messages['ar'] = array(
 	'smw_edithelp'                 => 'تعديل المساعدة على الخصائص',
@@ -317,7 +318,7 @@ $messages['ar'] = array(
 	'smw_icalendar_link'           => 'آي كالندر',
 	'smw_vcard_link'               => 'في كارد',
 	'smw_iq_disabled'              => 'عذرا. استعلامات السيمانتيك تم تعطيلها في هذا الويكي.',
-	'smw_iq_moreresults'           => '&hellip; مزيد من النتائج',
+	'smw_iq_moreresults'           => '… مزيد من النتائج',
 	'smw_iq_nojs'                  => 'الرجاء استخدام المتصفح الذي يمكن جافا سكريبت لعرض هذا العنصر.',
 	'smw_iq_altresults'            => 'استعرض قائمة النتائج مباشرة.',
 	'smw_unknown_importns'         => 'إمكانية استيراد ليست متوفرة للنطاق "$1".',
@@ -350,7 +351,7 @@ $messages['ar'] = array(
 	'smw_label_longitude'          => 'خطوط الطول:',
 	'smw_nodatetime'               => 'التاريخ "$1" لم يفهم (الدعم للتواريخ مازال تجريبيا).',
 	'smw_toomanyclosing'           => 'يبدو أنه هناك الكثير من "$1" في الاستعلام.',
-	'smw_noclosingbrackets'        => '"]]" في استعلامك لم تكن مغلقة باستخدام "[&#x005B;" بعض استخدام',
+	'smw_noclosingbrackets'        => '"]]" في استعلامك لم تكن مغلقة باستخدام "<nowiki>[[</nowiki>" بعض استخدام',
 	'smw_misplacedsymbol'          => 'الرمز "$1" تم استخدامه في مكان حيث هو ليس مفيدا.',
 	'smw_unexpectedpart'           => 'الجزء "$1" من الاستعلام لم يفهم.
 النتائج قد لا تكون كما هو متوقع.',
@@ -360,7 +361,7 @@ $messages['ar'] = array(
 	'smw_overprintoutlimit'        => 'هذا الاستعلام يحتوي على عدد كبير جدا من طلبات الطبع.',
 	'smw_badprintout'              => 'بعض المطبوعات في الاستعلام لم تتشكل بصورة صحيحة.',
 	'smw_badtitle'                 => 'عذرا، لكن "$1" ليس عنوان صفحة صحيحا.',
-	'smw_badqueryatom'             => 'من الاستعلام لم يتم فهمه "[&#x005B;&hellip;]]" أجزاء من.',
+	'smw_badqueryatom'             => 'جزء ما "<nowiki>[[…]]</nowiki>" من الاستعلام لم يتم فهمه.',
 	'smw_propvalueproblem'         => 'قيمة الخاصية "$1" لم يتم فهمها.',
 	'smw_noqueryfeature'           => 'ميزة استعلام ما لم يتم دعمها في هذا الويكي وجزء من الاستعلام تم إسقاطه ($1).',
 	'smw_noconjunctions'           => 'الوقوفات في الاستعلامات غير مدعومة في هذا الويكي وجزء من الاستعلام تم إسقاطه ($1).',
@@ -568,7 +569,7 @@ $messages['cs'] = array(
 	'smw_label_longitude'       => 'Zeměpisná délka:',
 	'smw_nodatetime'            => 'Datum "$1" nedává smysl. Podpora datumů je stále experimentální.',
 	'smw_toomanyclosing'        => 'Dotazovaný řetězec „$1“ má příliš mnoho výskytů.',
-	'smw_noclosingbrackets'     => 'Užití „[&#x005B;” ve vašem dotazu nebylo ukončeno odpovídajícími „]]”.',
+	'smw_noclosingbrackets'     => 'Užití „<nowiki>[[</nowiki>” ve vašem dotazu nebylo ukončeno odpovídajícími „]]”.',
 	'smw_misplacedsymbol'       => 'Symbol „$1“ byl užitý na místě, kde nemá význam.',
 	'smw_unexpectedpart'        => 'Část dotazu „$1“ nedává smysl.
 Výsledky pravděpodobně nesplní očekávání.',
@@ -578,7 +579,7 @@ Výsledky pravděpodobně nesplní očekávání.',
 	'smw_overprintoutlimit'     => 'Obsah dotazu překračuje limity pro výpis.',
 	'smw_badprintout'           => 'Některý příkaz pro výpis byl v dotazu chybně utvořený.',
 	'smw_badtitle'              => 'Promiňte, ale „$1” není platný název stránky.',
-	'smw_badqueryatom'          => 'Některá část „[&#x005B;&hellip;]]“ nebyla srozumitelná.',
+	'smw_badqueryatom'          => 'Některá část „<nowiki>[[…]]</nowiki>“ nebyla srozumitelná.',
 	'smw_propvalueproblem'      => 'Hodnota vlastnosti „$1“ nedávala smysl.',
 	'smw_nodisjunctions'        => 'Disjunkce nejsou v dotazech na této wiki podporované a část dotazu byla ignorována ($1).',
 	'smw_querytoolarge'         => 'Následující podmínky dotazu nebudou zohledněné z důvodu omezení této wiki na délku nebo hĺoubku dotazu: $1.',
@@ -603,6 +604,7 @@ Výsledky pravděpodobně nesplní očekávání.',
  * @author Denny
  * @author DaSch
  * @author Pill
+ * @author Raymond
  */
 $messages['de'] = array(
 	'smw_edithelp'                => 'Bearbeitungshilfe für Attribute',
@@ -654,7 +656,7 @@ $messages['de'] = array(
 	'smw_label_longitude'         => 'Länge:',
 	'smw_nodatetime'              => 'Das Datum „$1“ wurde nicht verstanden. Die Unterstützung von Kalenderdaten ist zur Zeit noch experimentell.',
 	'smw_toomanyclosing'          => 'In der Anfrage kommen zu viele „$1“ vor.',
-	'smw_noclosingbrackets'       => 'Ein Vorkommen von „[&#x005B;“ in der Anfrage wurde nicht durch ein entsprechendes „]]“ abgeschlossen.',
+	'smw_noclosingbrackets'       => 'Ein Vorkommen von „<nowiki>[[</nowiki>“ in der Anfrage wurde nicht durch ein entsprechendes „]]“ abgeschlossen.',
 	'smw_misplacedsymbol'         => 'Das Symbol „$1“ wurde an einer Stelle verwendet, wo es keinen Sinn macht.',
 	'smw_unexpectedpart'          => 'Der Teil „$1“ der Anfrage wurde nicht verstanden. Die Ergebnisse sind eventuell nicht wie erwartet.',
 	'smw_emptysubquery'           => 'Keine Bedingung in Teilanfrage.',
@@ -663,7 +665,7 @@ $messages['de'] = array(
 	'smw_overprintoutlimit'       => 'Die Anfrage enhält zu viele Ausgabeanweisungen.',
 	'smw_badprintout'             => 'Eine Ausgabeanweisung wurde nicht verstanden.',
 	'smw_badtitle'                => 'Leider ist „$1“ als Seitentitel nicht zulässig.',
-	'smw_badqueryatom'            => 'Ein Teil „[&#x005B…]]“ der Anfrage wurde nicht verstanden.',
+	'smw_badqueryatom'            => 'Ein Teil „<nowiki>[[…]]</nowiki>“ der Anfrage wurde nicht verstanden.',
 	'smw_propvalueproblem'        => 'Der Wert des Attributs „$1“ wurde nicht verstanden.',
 	'smw_nodisjunctions'          => 'Disjunktionen (ODER) in Anfragen sind in diesem Wiki nicht zulässig und ein Teil der Anfrage muss daher ignoriert werden ($1).',
 	'smw_querytoolarge'           => 'Die folgenden Anfragebedingungen konnten wegen den in diesem Wiki gültigen Beschränkungen für größe und Tiefe von Anfragen nicht berücksichtigt werden: $1.',
@@ -740,7 +742,6 @@ $messages['de'] = array(
 	'browse'                      => 'Wiki browsen',
 	'smw_browse_article'          => 'Bitte gib den Titel einer Seite ein.',
 	'smw_browse_go'               => 'Los',
-	'smw_browse_more'             => '…',
 	'pageproperty'                => 'Attributswerte einer Seite',
 	'smw_pp_docu'                 => 'Suche nach allen Werten, die ein bestimmtes Attribut für die angegebene Seite hat.',
 	'smw_pp_from'                 => 'Seite',
@@ -756,8 +757,10 @@ $messages['de'] = array(
  * @author Consta
  */
 $messages['el'] = array(
-	'smw_sbv_property' => 'Ιδιότητα',
-	'smw_pp_type'      => 'Ιδιότητα',
+	'smw_sbv_property'     => 'Ιδιότητα',
+	'smw_pp_type'          => 'Ιδιότητα',
+	'smw_result_results'   => 'Αποτελέσματα',
+	'smw_result_noresults' => 'Συγνώμη, δεν υπάρχουν αποτελέσματα.',
 );
 
 /** Esperanto (Esperanto)
@@ -775,7 +778,7 @@ $messages['eo'] = array(
 	'smw_baduri'                  => 'Bedaŭrinde, URI-oj de la kamparo "$1" ne estas permesita.',
 	'smw_icalendar_link'          => 'iKalendaro',
 	'smw_iq_disabled'             => 'Bedaŭrinde, semantikaj informmendoj estis malebligitaj por ĉi tiu vikio.',
-	'smw_iq_moreresults'          => '&hellip; pluaj rezultoj',
+	'smw_iq_moreresults'          => '… pluaj rezultoj',
 	'smw_iq_nojs'                 => 'Bonvolu uzi retumilon kiu povas montri JavaScript-on por rigardi ĉi tiun elementon.',
 	'smw_iq_altresults'           => 'Rigardu la rezulto-liston rekte.',
 	'smw_unknown_importns'        => 'Import-funkcioj ne estas uzeblaj por nomspaco "$1".',
@@ -1108,7 +1111,6 @@ Certaines des propriétés existantes peuvent faire être <a href="$6">inutilis�
 	'browse'                       => 'Parcourir le wiki',
 	'smw_browse_article'           => 'Entrez le nom de la page à partir de laquelle commencer la navigation.',
 	'smw_browse_go'                => 'Démarrer',
-	'smw_browse_more'              => '…',
 	'pageproperty'                 => 'Rechercher dans les propriétés de la page',
 	'smw_pp_docu'                  => "Rechercher toutes les valeurs d'une propriété dans une page donnée. Veuillez entrer la page et une propriété.",
 	'smw_pp_from'                  => 'De la page',
@@ -1146,7 +1148,7 @@ $messages['gl'] = array(
 	'smw_icalendar_link'          => 'iCalendario',
 	'smw_vcard_link'              => 'vTarxeta',
 	'smw_iq_disabled'             => 'Sentímolo. As preguntas semánticas foron deshabilitadas para este wiki.',
-	'smw_iq_moreresults'          => '&hellip; máis resultados',
+	'smw_iq_moreresults'          => '… máis resultados',
 	'smw_iq_nojs'                 => 'Por favor, use un nevegador co JavaScript permitido para ver este elemento.',
 	'smw_iq_altresults'           => 'Procurar directamente pola lista de resultados.',
 	'smw_unknown_importns'        => 'As funcións de importación non están dispoñibles no espazo de nomes “$1”.',
@@ -1178,7 +1180,7 @@ $messages['gl'] = array(
 	'smw_label_longitude'         => 'Lonxitude:',
 	'smw_nodatetime'              => 'A data “$1” non foi entendida (o soporte para as datas aínda é experimental).',
 	'smw_toomanyclosing'          => 'Parece que hai demasiados acontecementos de “$1” na pregunta.',
-	'smw_noclosingbrackets'       => 'Algún uso de “[&#x005B;” na súa pregunta non foi pechado polo seu “]]” correspondente.',
+	'smw_noclosingbrackets'       => 'Algún uso de “<nowiki>[[</nowiki>” na súa pregunta non foi pechado polo seu “]]” correspondente.',
 	'smw_misplacedsymbol'         => 'O símbolo “$1” foi usado nun lugar no que non era útil.',
 	'smw_unexpectedpart'          => 'A parte “$1” da pregunta non foi entendida.
 Pode que os resultados non sexan os agardados.',
@@ -1188,7 +1190,7 @@ Pode que os resultados non sexan os agardados.',
 	'smw_overprintoutlimit'       => 'A pregunta contén demasiadas solicitudes de copias impresas.',
 	'smw_badprintout'             => 'Algunha declaración imprimida da pregunta non foi entendida.',
 	'smw_badtitle'                => 'Sentímolo, pero “$1” non é un título de páxina válido.',
-	'smw_badqueryatom'            => 'Unha parte “[&#x005B;&hellip;]]” da pregunta non foi entendida.',
+	'smw_badqueryatom'            => 'Unha parte “<nowiki>[[…]]</nowiki>” da pregunta non foi entendida.',
 	'smw_propvalueproblem'        => 'O valor da propiedade “$1” non foi entendido.',
 	'smw_noqueryfeature'          => 'Algunha característica da pregunta non está soportada neste wiki, polo que unha parte foi excluída ($1).',
 	'smw_noconjunctions'          => 'As conxuncións nas preguntas non están soportadas neste wiki, polo que unha parte foi excluída ($1).',
@@ -1338,7 +1340,7 @@ $messages['hi'] = array(
 	'smw_finallistconjunct'       => ', और',
 	'smw_factbox_head'            => '$1 के बारेमें फ़ैक्ट्स',
 	'smw_icalendar_link'          => 'आइकैलेंडर',
-	'smw_iq_moreresults'          => '&hellip; आगे के रिज़ल्ट',
+	'smw_iq_moreresults'          => '… आगे के रिज़ल्ट',
 	'smw_true_words'              => 'सही,t,हां,y',
 	'smw_false_words'             => 'गलत,f,ना,n',
 	'smw_nofloat'                 => '“$1” यह संख्या नहीं हैं।',
@@ -1380,7 +1382,7 @@ $messages['ht'] = array(
 	'smw_baduri'              => 'Eskize nou, URIs yo pou domèn "$1" pa otorize, oubyen li pa disponib nan plas isit la.',
 	'smw_icalendar_link'      => 'iKalandrye',
 	'smw_iq_disabled'         => 'Eskize nou. Rechèch nan atik wiki sa a pa otorize oubyen nou dezaktive l.',
-	'smw_iq_moreresults'      => '&hellip; lòt rezilta yo',
+	'smw_iq_moreresults'      => '… lòt rezilta yo',
 	'smw_iq_nojs'             => 'Souple, itilize yon navigatè (bwozè entènèt) ki aksepte JavaScript aktive pou ou kapab wè eleman sa, bagay sa.',
 	'smw_iq_altresults'       => 'Fouye, gade lis rezilta yo dirèkteman.',
 	'smw_unknown_importns'    => 'Fonksyon pou ou kapab chaje fichye (rekipere pou ou menm) pa disponib pou espas non sa "$1".',
@@ -1571,7 +1573,7 @@ $messages['jv'] = array(
 	'smw_baduri'                  => 'Nuwun sèwu, URI awujud “$1” ora diidinaké.',
 	'smw_icalendar_link'          => 'iKalèndher',
 	'smw_iq_disabled'             => 'Nuwun sèwu. Kwéri sémantik kanggo wiki iki dipatèni.',
-	'smw_iq_moreresults'          => '&hellip; pituwas sabanjuré',
+	'smw_iq_moreresults'          => '… pituwas sabanjuré',
 	'smw_iq_nojs'                 => 'Mangga nganggo sawijining panjlajah wèb JavaScript kanggo ndeleng unsur iki.',
 	'smw_iq_altresults'           => 'Sigra mirsani daftar pituwas.',
 	'smw_unknown_importns'        => 'Fungsi impor ora ana kanggo bilik nama “$1”.',
@@ -1603,7 +1605,7 @@ $messages['jv'] = array(
 	'smw_label_longitude'         => 'Longituda:',
 	'smw_nodatetime'              => 'Tanggal “$1” ora dimangertèni (pasengkuyungan kanggo tanggal isih ing tahapan èkspèrimèntal).',
 	'smw_toomanyclosing'          => 'Katoné ana kakèhan “$1” sajroning kwéri.',
-	'smw_noclosingbrackets'       => 'Sawetara panrapan “[&#x005B;” ing kwéri panjenengan ora ditutup déning “]]” sing cocog.',
+	'smw_noclosingbrackets'       => 'Sawetara panrapan “<nowiki>[[</nowiki>” ing kwéri panjenengan ora ditutup déning “]]” sing cocog.',
 	'smw_misplacedsymbol'         => 'Simbul “$1” dienggo ing sawijining panggonan sing ora miguna.',
 	'smw_unexpectedpart'          => 'Bagéyan “$1” saka kwéri ora dimangertèni.
 Pituwasé bisa-bisa ora kaya sing diarepaké.',
@@ -1613,7 +1615,7 @@ Pituwasé bisa-bisa ora kaya sing diarepaké.',
 	'smw_overprintoutlimit'       => 'Kwériné kakèhan ngandhut panyuwunan cithakan.',
 	'smw_badprintout'             => 'Sawetara déklarasi print sajroning kwéri formulasiné salah.',
 	'smw_badtitle'                => 'Nuwun sèwu, nanging "$1" iku dudu irah-irahan utawa judhul kaca sing absah.',
-	'smw_badqueryatom'            => 'Ora mudheng “[&#x005B;&hellip;]]” sawetara bagéyan kwéri.',
+	'smw_badqueryatom'            => 'Ora mudheng “<nowiki>[[…]]</nowiki>” sawetara bagéyan kwéri.',
 	'smw_propvalueproblem'        => 'Bijih sifat "$1" ora dimangertèni.',
 	'smw_nodisjunctions'          => 'Pamisahan ing kwéri ora disengkuyung ing wiki iki lan sabagéyan saka kwéri dadi dilirwakaké ($1).',
 	'smw_querytoolarge'           => 'Sarat kwéri sing kapacak ing ngisor iki ora bisa digalih amerga anané rèstriksi wiki ing ukuran utawa jeroné: $1.',
@@ -1888,7 +1890,7 @@ $messages['lb'] = array(
 	'smw_finallistconjunct'       => ', an',
 	'smw_factbox_head'            => 'Fakten iwwer $1',
 	'smw_icalendar_link'          => 'iKalenner',
-	'smw_iq_moreresults'          => '&hellip; weider Resultater',
+	'smw_iq_moreresults'          => '… weider Resultater',
 	'smw_iq_nojs'                 => 'Benotzt w.e.g e Browser matt JavaScript fir dëst Element ze gesinn',
 	'smw_emptystring'             => 'Eidel Zeeche ginn net akzeptéiert.',
 	'smw_true_words'              => 'wouer,w,jo,j',
@@ -1939,7 +1941,7 @@ $messages['ml'] = array(
 	'smw_finallistconjunct'       => 'ഉം',
 	'smw_factbox_head'            => '$1നെ കുറിച്ചുള്ള സത്യങ്ങള്‍',
 	'smw_icalendar_link'          => 'iകലണ്ടര്‍',
-	'smw_iq_moreresults'          => '&hellip; കൂടുതല്‍ ഫലങ്ങള്‍',
+	'smw_iq_moreresults'          => '… കൂടുതല്‍ ഫലങ്ങള്‍',
 	'smw_iq_nojs'                 => 'ഈ എലമെന്റ് കാണുവാന്‍ ദയവായി ജാവാസ്ക്രിപ് എനേബിള്‍ ചെയ്ത ബ്രൗസര്‍ ഉപയോഗിക്കുക.',
 	'smw_unknown_importns'        => 'ഇറക്കുമതി ഫങ്ങ്ഷന്‍സ് “$1” എന്ന നേംസ്പേസില്‍ ലഭ്യമല്ല.',
 	'smw_nonright_importtype'     => '“$2” എന്ന നേംസ്പേസിലുള്ള താളുകളില്‍ മാത്രമേ $1 ഉപയോഗിക്കാന്‍ പറ്റൂ.',
@@ -1995,7 +1997,7 @@ $messages['mr'] = array(
 	'smw_baduri'                   => 'माफ करा, “$1” अर्जाचे URI वापरण्यास परवानगी नाही.',
 	'smw_icalendar_link'           => 'इ-कैलेंडर',
 	'smw_iq_disabled'              => 'माफ करा. या विकिवर सिमँटिक पॄच्छा करण्यास बंदी आहे.',
-	'smw_iq_moreresults'           => '&hellip; पुढचे निकाल',
+	'smw_iq_moreresults'           => '… पुढचे निकाल',
 	'smw_iq_nojs'                  => 'हा एलेमेंट पाहण्यासाठी जावास्क्रीप्ट युक्त ब्राउजर वापरा.',
 	'smw_iq_altresults'            => 'थेट निकाल यादी चाळा.',
 	'smw_unknown_importns'         => '“$1” या नामविश्वासाठी आयात कार्ये उपलब्ध नाहीत.',
@@ -2027,7 +2029,7 @@ $messages['mr'] = array(
 	'smw_label_longitude'          => 'रेखांश:',
 	'smw_nodatetime'               => '“$1” हा दिनांक समजला नाही (दिनांक प्रकार अजूनही प्रायोगिक अवस्थेत आहेत).',
 	'smw_toomanyclosing'           => 'या पृच्छेमध्ये “$1” खूप ठिकाणी आलेले आहे.',
-	'smw_noclosingbrackets'        => 'तुमच्या पृच्छेत कुठेतरी वापरलेले “[&#x005B;” हे योग्य अशा जुळणार्‍या “]]” ने बंद केलेले नाही.',
+	'smw_noclosingbrackets'        => 'तुमच्या पृच्छेत कुठेतरी वापरलेले “<nowiki>[[</nowiki>” हे योग्य अशा जुळणार्‍या “]]” ने बंद केलेले नाही.',
 	'smw_misplacedsymbol'          => '“$1” चिन्ह जिथे उपयोगी नाही अशा ठिकाणी वापरलेले आहे.',
 	'smw_unexpectedpart'           => 'पृच्छेचा “$1” हा भाग समजलेला नाही.
 निकाल योग्य असतीलच याची खात्री नाही.',
@@ -2037,7 +2039,7 @@ $messages['mr'] = array(
 	'smw_overprintoutlimit'        => 'या पृच्छेमध्ये खूप जास्त प्रिंट विनंत्या आहेत.',
 	'smw_badprintout'              => 'या पृच्छेमधील काही प्रिंट मागण्या अयोग्य प्रकारे दिलेल्या आहेत.',
 	'smw_badtitle'                 => 'माफ करा, पण “$1” हे योग्य पानाचे शीर्षक नाही.',
-	'smw_badqueryatom'             => 'पृच्छेचा काही भाग “[&#x005B;&hellip;]]” समजलेला नाही.',
+	'smw_badqueryatom'             => 'पृच्छेचा काही भाग “<nowiki>[[…]]</nowiki>” समजलेला नाही.',
 	'smw_propvalueproblem'         => '“$1” गुणधर्माची किंमत समजलेली नाही.',
 	'smw_nodisjunctions'           => 'पृच्छे मध्ये तुकडे या विकिवर चालत नाहीत, त्यामुळे पृच्छेचा तुकडा टाकून दिला  ($1).',
 	'smw_querytoolarge'            => 'पृच्छेचा आकार अथवा खोलीवर असणार्‍या ह्या विकिवरील मर्यादांमुळे खालील पृच्छा अटी लक्षात घेता आलेल्या नाहीत: $1.',
@@ -2134,10 +2136,21 @@ $messages['mr'] = array(
 	'smw_result_noresults'         => 'माफ करा, निकाल नाहीत.',
 );
 
-/** Nahuatl (Nahuatl)
+/** Maltese (Malti)
+ * @author Roderick Mallia
+ */
+$messages['mt'] = array(
+	'smw_result_prev' => "Ta' qabel",
+);
+
+/** Nahuatl (Nāhuatl)
  * @author Fluence
  */
 $messages['nah'] = array(
+	'smw_abb_north'   => 'M',
+	'smw_abb_east'    => 'T',
+	'smw_abb_south'   => 'H',
+	'smw_abb_west'    => 'C',
 	'smw_oi_action'   => 'Tiquicōhuāz',
 	'smw_browse_go'   => 'Yāuh',
 	'smw_result_prev' => 'Achtopa',
@@ -2163,7 +2176,7 @@ $messages['nl'] = array(
 	'smw_icalendar_link'          => 'iCalendar',
 	'smw_vcard_link'              => 'vCard',
 	'smw_iq_disabled'             => 'Sorry. Zoekopdrachten binnen tekst zijn uitgeschakeld in deze wiki.',
-	'smw_iq_moreresults'          => '&hellip; overige resultaten',
+	'smw_iq_moreresults'          => '… overige resultaten',
 	'smw_iq_nojs'                 => 'Gebruiker een browser waarin JavaScript is ingeschakeld om dit element te zien.',
 	'smw_iq_altresults'           => 'De resultatenlijst direct bekijken',
 	'smw_unknown_importns'        => 'Importfuncties zijn niet beschikbaar voor de naamruimte “$1”.',
@@ -2197,7 +2210,7 @@ $messages['nl'] = array(
 	'smw_label_longitude'         => 'Lengte:',
 	'smw_nodatetime'              => 'De datum “$1” werd niet begrepen (ondersteuning voor datums is nog experimenteel).',
 	'smw_toomanyclosing'          => '“$1” lijkt te vaak voor te komen in de zoekopdracht.',
-	'smw_noclosingbrackets'       => 'In uw zoekopdracht is het gebruik van “[&#x005B;” niet gesloten door een bijbehorende “]]”.',
+	'smw_noclosingbrackets'       => 'In uw zoekopdracht is het gebruik van “<nowiki>[[</nowiki>” niet gesloten door een bijbehorende “]]”.',
 	'smw_misplacedsymbol'         => 'Het symbool “$1” is gebruikt op een plaats waar het niet gebruikt hoort te worden.',
 	'smw_unexpectedpart'          => 'Het deel “$1” van de zoekopdracht is niet begrepen. De resultaten kunnen afwijken van de verwachting.',
 	'smw_emptysubquery'           => 'Er is een subzoekopdracht met een onjuiste conditie.',
@@ -2206,7 +2219,7 @@ $messages['nl'] = array(
 	'smw_overprintoutlimit'       => 'De zoekopdracht bevat te veel printoutverzoeken.',
 	'smw_badprintout'             => 'Er is een print statement in de zoekopdracht onjuist geformuleerd.',
 	'smw_badtitle'                => 'Sorry, maar “$1” is geen geldige paginanaam.',
-	'smw_badqueryatom'            => 'Een onderdeel “[&#x005B;&hellip;]]” van de zoekopdracht is niet begrepen.',
+	'smw_badqueryatom'            => 'Een onderdeel “<nowiki>[[…]]</nowiki>” van de zoekopdracht is niet begrepen.',
 	'smw_propvalueproblem'        => 'De waarde van eigenschap “$1” is niet begrepen.',
 	'smw_noqueryfeature'          => 'Een bepaalde vraagoptie wordt niet ondersteund in deze wiki en een deel van de zoekopdracht is genegeerd ($1).',
 	'smw_noconjunctions'          => 'Verbindingen in zoekopdrachten worden in deze wiki niet ondersteund en een deel van de zoekopdracht is genegeerd ($1).',
@@ -2315,7 +2328,7 @@ $messages['no'] = array(
 	'smw_icalendar_link'          => 'iKalender',
 	'smw_vcard_link'              => 'vCard',
 	'smw_iq_disabled'             => 'Beklager. Semantiske spørringer er slått av på denne wikien.',
-	'smw_iq_moreresults'          => '&hellip; flere resultater',
+	'smw_iq_moreresults'          => '… flere resultater',
 	'smw_iq_nojs'                 => 'Bruk en nettleser med JavaScript-støtte for å vise dette elementet.',
 	'smw_iq_altresults'           => 'Gå gjennom resultatlisten direkte.',
 	'smw_unknown_importns'        => 'Importeringsfunksjoner er ikke tilgjengelige for navnerommet «$1».',
@@ -2347,7 +2360,7 @@ $messages['no'] = array(
 	'smw_label_longitude'         => 'Lengdegrad:',
 	'smw_nodatetime'              => 'Datoen «$1» ble ikke forstått (støtte for datoer er fortsatt eksperimentelt).',
 	'smw_toomanyclosing'          => '«$1» opptrer for mange ganger i spørringen.',
-	'smw_noclosingbrackets'       => 'Bruken av «[&#x005B;» i spørringen din ble ikke stengt av «]]».',
+	'smw_noclosingbrackets'       => 'Bruken av «<nowiki>[[</nowiki>» i spørringen din ble ikke stengt av «]]».',
 	'smw_misplacedsymbol'         => 'Symbolet «$1» ble brukt på et sted hvor det ikke er nyttig.',
 	'smw_unexpectedpart'          => '«$1»-delen av spørringen var uforståelig.
 Resultatene kan være uventede.',
@@ -2357,7 +2370,7 @@ Resultatene kan være uventede.',
 	'smw_overprintoutlimit'       => 'Spørringen inneholder for mange skriveforespørsler.',
 	'smw_badprintout'             => 'Noen skriveuttrykk i spørringen hadde ugyldig form.',
 	'smw_badtitle'                => 'Beklager, «$1» er ikke en gyldig sidetittel.',
-	'smw_badqueryatom'            => 'En del («[&#x005B;&hellip;]]») av spørringen ble ikke forstått.',
+	'smw_badqueryatom'            => 'En del («<nowiki>[[…]]</nowiki>») av spørringen ble ikke forstått.',
 	'smw_propvalueproblem'        => 'Verdien av egenskapen «$1» ble ikke forstått.',
 	'smw_noqueryfeature'          => 'Noen spørringsfunksjoner ble ikke støttet i denne wikien, og deler av spørringen ble hoppet over ($1).',
 	'smw_noconjunctions'          => 'Konjunksjoner i spørringer støttes ikke i denne wikien, og deler av spørringen ble hoppet over ($1).',
@@ -2459,7 +2472,6 @@ Skriv inn både sidenavn og egenskap.',
 
 /** Occitan (Occitan)
  * @author Cedric31
- * @author Siebrand
  */
 $messages['oc'] = array(
 	'smw_edithelp'                => "Ajuda a la redaccion de relacions e d'atributs",
@@ -2470,11 +2482,14 @@ $messages['oc'] = array(
 	'smw_isknowntype'             => "Aqueste tipe fa partida dels tipes de donadas estandards d'aqueste wiki.",
 	'smw_isaliastype'             => 'Aqueste tipe es un aliàs del tipe de donadas “$1”.',
 	'smw_isnotype'                => 'Lo tipe “$1” es pas un tipe de donadas estandard sus aqueste wiki, e tanpauc es pas estat definit per un utilizaire.',
+	'smw_concept_description'     => 'Descripcion del concèpte « $1 »',
+	'smw_no_concept_namespace'    => 'Los concèptes pòt unicament èsser definits dins la pagina dins lo Concèpte : espaci de nom.',
+	'smw_multiple_concepts'       => 'Cada pagina de concèpte pòt pas aver qu’una sola definicion.',
 	'smw_baduri'                  => 'O planhèm. Las URIs del domeni $1 son pas disponiblas a aqueste emplaçament',
 	'smw_icalendar_link'          => 'iCalendièr',
 	'smw_vcard_link'              => 'vCarta',
 	'smw_iq_disabled'             => "O planhèm. Las recèrcas dins los articles d'aqueste wiki son pas autorizadas.",
-	'smw_iq_moreresults'          => '&hellip; autres resultats',
+	'smw_iq_moreresults'          => '… autres resultats',
 	'smw_iq_nojs'                 => 'Utilizatz un navigador amb JavaScript per veire aqueste element.',
 	'smw_iq_altresults'           => 'Percórrer dirèctament la lista dels resultats.',
 	'smw_unknown_importns'        => 'Cap de foncion d\'impòrt es pas disponible per l\'espaci de nomenatge "$1".',
@@ -2506,7 +2521,7 @@ $messages['oc'] = array(
 	'smw_label_longitude'         => 'Longitud :',
 	'smw_nodatetime'              => 'La data "$1" es pas estada compresa. Lo supòrt de las donadas calendaras es encara experimental.',
 	'smw_toomanyclosing'          => "Sembla que i a tròp d'ocuréncias de “$1” dins la requèsta.",
-	'smw_noclosingbrackets'       => "D'unes “[&#x005B;” dins vòstra requèsta son pas estats clauses per de “]]” correspondents.",
+	'smw_noclosingbrackets'       => "D'unes “<nowiki>[[</nowiki>” dins vòstra requèsta son pas estats clauses per de “]]” correspondents.",
 	'smw_misplacedsymbol'         => 'Lo simbòl “$1” es estat utilizat a un endrech ont es pas util.',
 	'smw_unexpectedpart'          => 'La partida “$1” de la requèsta es pas estada compresa. Los resultats pòdon èsser imprevists.',
 	'smw_emptysubquery'           => "D'unas sosrequèstas an una condicion invalida.",
@@ -2515,8 +2530,10 @@ $messages['oc'] = array(
 	'smw_overprintoutlimit'       => "La requèsta conten tròp d'instruccions de formatatge.",
 	'smw_badprintout'             => "D'unas instruccions de formatatge dins la requèsta son pas estadas compresas.",
 	'smw_badtitle'                => 'O planhèm, mas “$1” es pas un títol de pagina valable.',
-	'smw_badqueryatom'            => 'Las partidas “[&#x005B;&hellip;]]” de la requèsta son pas estadas compresas.',
+	'smw_badqueryatom'            => 'Las partidas “<nowiki>[[…]]</nowiki>” de la requèsta son pas estadas compresas.',
 	'smw_propvalueproblem'        => 'La valor de la proprietat “$1” es pas estada compresa.',
+	'smw_noqueryfeature'          => 'Qualques foncionalitats de requèstas son pas suportadas sus aqueste wiki e una partida d’entre elas es estada levada ($1).',
+	'smw_noconjunctions'          => 'Las conjoncions dins las requèstas son pas suportadas sus aqueste wiki e una partida d’entre elas es estada levada ($1).',
 	'smw_nodisjunctions'          => 'Las disjoncions dins las requèstas son pas suportadas sus aqueste wiki e de partidas de la requèsta son estadas ignoradas($1).',
 	'smw_querytoolarge'           => "Las condicions seguentas de la requèsta an pas pogut èsser evaluadas en rason de las restriccions d'aqueste wiki a la talha o a la prigondor de las requèstas : $1.",
 	'smw_devel_warning'           => "Aquesta foncion es encara en desvolopament e benlèu es pas encara operacionala. Pòt èsser judiciós de far un salvament del contengut del wiki abans tota utilizacion d'aquesta foncion.",
@@ -2525,6 +2542,8 @@ $messages['oc'] = array(
 	'smw_typearticlecount'        => 'Afichar los atributs de $1 en utilizant aqueste tipe.',
 	'smw_attribute_header'        => "Paginas utilizant l'atribut “$1”",
 	'smw_attributearticlecount'   => 'Afichar $1 paginas utilizant aquesta atribut.',
+	'smw_subproperty_header'      => 'Sosproprietats',
+	'smw_subpropertyarticlecount' => 'Aquesta proprietat dispausa de las $1 sosproprietats seguentas.',
 	'smw_rss_description'         => '$1 fial RSS',
 	'exportrdf'                   => "Exportar l'article en RDF",
 	'smw_exportrdf_docu'          => "<p>Sus aquesta pagina, de partidas del contengut d'un article pòdon èsser exportadas dins lo format RDF. Picatz lo nom de las paginas desiradas dins la bóstia de tèxt çaijós, <i>un nom per linha </i>.</p>",
@@ -2739,7 +2758,7 @@ $messages['pt'] = array(
 	'smw_baduri'                  => 'Desculpe, URIs da forma “$1” não são permitidos.',
 	'smw_icalendar_link'          => 'iCalendário',
 	'smw_iq_disabled'             => 'Desculpe. Pesquisas semânticas foram desactivadas neste wiki.',
-	'smw_iq_moreresults'          => '&hellip; mais resultados',
+	'smw_iq_moreresults'          => '… mais resultados',
 	'smw_iq_nojs'                 => 'Por favor, use um navegador com JavaScript activado para visualizar este elemento.',
 	'smw_iq_altresults'           => 'Navegar pela lista de resultados directamente.',
 	'smw_unknown_importns'        => 'As funções de importação não estão disponíveis para o espaço nominal “$1”.',
@@ -2771,7 +2790,7 @@ $messages['pt'] = array(
 	'smw_label_longitude'         => 'Longitude:',
 	'smw_nodatetime'              => 'A data “$1” não foi compreendida (o suporte de datas ainda é experimental).',
 	'smw_toomanyclosing'          => 'Parece haver demasiadas ocorrências de “$1” na pesquisa.',
-	'smw_noclosingbrackets'       => 'Um uso de “[&#x005B;” na sua pesquisa não foi fechada por um “]]” correspondente.',
+	'smw_noclosingbrackets'       => 'Um uso de “<nowiki>[[</nowiki>” na sua pesquisa não foi fechada por um “]]” correspondente.',
 	'smw_misplacedsymbol'         => 'O símbolo “$1” foi usado num sítio onde não é útil.',
 	'smw_unexpectedpart'          => 'A parte “$1” da pesquisa não foi compreendida.
 Os resultados podem não ser os esperados.',
@@ -2781,7 +2800,7 @@ Os resultados podem não ser os esperados.',
 	'smw_overprintoutlimit'       => 'Esta pesquisa contém demasiados pedidos de saídas.',
 	'smw_badprintout'             => 'Uma frase de saída na pesquisa estava mal formada.',
 	'smw_badtitle'                => 'Desculpe, mas “$1” não é um título de página válido.',
-	'smw_badqueryatom'            => 'Uma parte “[&#x005B;&hellip;]]” da pesquisa não foi compreendida.',
+	'smw_badqueryatom'            => 'Uma parte “<nowiki>[[…]]</nowiki>” da pesquisa não foi compreendida.',
 	'smw_propvalueproblem'        => 'O valor da propriedade “$1” não foi compreendido.',
 	'smw_nodisjunctions'          => 'Disjunções em pesquisas não são suportadas neste wiki e parte da pesquisa foi descartada ($1).',
 	'smw_querytoolarge'           => 'As seguintes condições da pesquisa não puderam ser consideradas devido às restrições dos wikis em tamanho ou profundidade de pesquisa: $1.',
@@ -3086,7 +3105,7 @@ $messages['sk'] = array(
 	'smw_label_longitude'         => 'Zemepisná dĺžka:',
 	'smw_nodatetime'              => 'Nevedel som interpretovať dátum "$1". Ale podpora dátumov je stále v experimentálno štádiu.',
 	'smw_toomanyclosing'          => 'Zdá sa, že požiadavka obsahuje príliš mnoho výskytov „$1“.',
-	'smw_noclosingbrackets'       => 'Niektoré použitie „[&#x005B;” vo vašej požiadavke nebolo ukončené zodpovedajúcim „]]”.',
+	'smw_noclosingbrackets'       => 'Niektoré použitie „<nowiki>[[</nowiki>” vo vašej požiadavke nebolo ukončené zodpovedajúcim „]]”.',
 	'smw_misplacedsymbol'         => 'Symbol „$1“ bol použitý na mieste, kde nemá význam.',
 	'smw_unexpectedpart'          => 'Časť požiadavky „$1“ nebola pochopená.
 Výsledky nemusia byť podľa očakávaní.',
@@ -3096,7 +3115,7 @@ Výsledky nemusia byť podľa očakávaní.',
 	'smw_overprintoutlimit'       => 'Požiadavka obsahuje príliš mnoho požiadaviek na výpis.',
 	'smw_badprintout'             => 'Niektorý príkaz na výpis v požiadavke bol chybne utvorený.',
 	'smw_badtitle'                => 'Prepáčte, ale „$1“ nie je platný názov stránky.',
-	'smw_badqueryatom'            => 'Niektorá časť „[&#x005B;&hellip;]]“ nebola pochopená.',
+	'smw_badqueryatom'            => 'Niektorá časť „<nowiki>[[…]]</nowiki>“ nebola pochopená.',
 	'smw_propvalueproblem'        => 'Hodnota vlastnosti „$1“ nebola pochopená.',
 	'smw_noqueryfeature'          => 'Táto wiki nepodporuje istú časť požiadavky a jej časť bola ignorovaná ($1).',
 	'smw_noconjunctions'          => 'Táto wiki nepodporuje konjunkcie v požiadavkách a časť požiadavky bola ignorovaná ($1).',
@@ -3212,7 +3231,7 @@ $messages['sv'] = array(
 	'smw_icalendar_link'          => 'iKalender',
 	'smw_vcard_link'              => 'vCard',
 	'smw_iq_disabled'             => 'Beklagar. Semantiska efterfrågningar har slagits av på den här wikin.',
-	'smw_iq_moreresults'          => '&hellip; mer resultat',
+	'smw_iq_moreresults'          => '… mer resultat',
 	'smw_iq_nojs'                 => 'Var god använd en webbläsare som stödjer JavaScript för att visa det här elementet.',
 	'smw_iq_altresults'           => 'Gå igenom resultatslistan direkt.',
 	'smw_unknown_importns'        => 'Importeringfunktioner är inte tillgängliga för namnrymden "$1".',
@@ -3244,7 +3263,7 @@ $messages['sv'] = array(
 	'smw_label_longitude'         => 'Longitud:',
 	'smw_nodatetime'              => 'Datumet "$1" förståddes inte (stöd för datum är fortsatt experimentellt).',
 	'smw_toomanyclosing'          => '"$1" uppträder för många gånger i efterfrågningen.',
-	'smw_noclosingbrackets'       => 'Användningen av "[&#x005B;" i din efterfrågning stängdes inte av "]]".',
+	'smw_noclosingbrackets'       => 'Användningen av "<nowiki>[[</nowiki>" i din efterfrågning stängdes inte av "]]".',
 	'smw_misplacedsymbol'         => 'Symbolen "$1" användes på en plats där den inte är användbar.',
 	'smw_unexpectedpart'          => 'Delen "$1" av efterfrågningen förstods inte.
 Vissa resultat kan bli oväntade.',
@@ -3254,7 +3273,7 @@ Vissa resultat kan bli oväntade.',
 	'smw_overprintoutlimit'       => 'Efterfrågningen innehåller för många utskriftsbegäran.',
 	'smw_badprintout'             => 'Något utskriftsuttryck i frågan var felutformad.',
 	'smw_badtitle'                => 'Beklagar, "$1" är inte en giltig sidtitel.',
-	'smw_badqueryatom'            => 'Någon del “[&#x005B;&hellip;]]” av frågan förstods inte.',
+	'smw_badqueryatom'            => 'Någon del “<nowiki>[[…]]</nowiki>” av frågan förstods inte.',
 	'smw_propvalueproblem'        => 'Värdet på egenskap “$1” förstods inte.',
 	'smw_noqueryfeature'          => 'För någon frågefunktion saknades det stöd i denna wikin och delar av frågan hoppades över ($1).',
 	'smw_noconjunctions'          => 'För konjunktioner i frågor saknas det stöd i denna wikin och delar av frågan hoppades över ($1).',
@@ -3267,6 +3286,8 @@ Gör backup på din data innan du använder den.',
 	'smw_typearticlecount'        => 'Visar $1 egenskaper som använder denna typen.',
 	'smw_attribute_header'        => 'Sidor som använder egenskapen "$1"',
 	'smw_attributearticlecount'   => 'Visar $1 sidor som använder denna egenskapen.',
+	'smw_subproperty_header'      => 'Underegenskaper',
+	'smw_subpropertyarticlecount' => 'Denna egenskap har följande $1 underegenskaper.',
 	'exportrdf'                   => 'Exportera sidor till RDF',
 	'smw_exportrdf_docu'          => '<p>Den här sidan låter dig hämta data från en sida i RDF-format.
 Skriv sidtitlar i textrutan härunder för att exportera sidor (en titel per rad).</p>',
@@ -3357,7 +3378,7 @@ Skriv in både en sida och en egenskap.',
  */
 $messages['te'] = array(
 	'smw_finallistconjunct'       => ', మరియు',
-	'smw_iq_moreresults'          => '&hellip; మరిన్ని ఫలితాలు',
+	'smw_iq_moreresults'          => '… మరిన్ని ఫలితాలు',
 	'smw_true_words'              => 'true,t,yes,y,అవును,సత్యం',
 	'smw_false_words'             => 'false,f,no,n,కాదు,అసత్యం',
 	'smw_nofloat'                 => '“$1” అనేది సంఖ్య కాదు.',
@@ -3380,6 +3401,13 @@ $messages['te'] = array(
 	'smw_result_noresults'        => 'క్షమించండి, ఫలితాలేమీ లేవు.',
 );
 
+/** Tajik (Cyrillic) (Тоҷикӣ/tojikī (Cyrillic))
+ * @author Ibrahim
+ */
+$messages['tg-cyrl'] = array(
+	'smw_sbv_value' => 'Қимат',
+);
+
 /** Vietnamese (Tiếng Việt)
  * @author Vinhtantran
  * @author Minh Nguyen
@@ -3397,7 +3425,7 @@ $messages['vi'] = array(
 	'smw_baduri'                  => 'Rất tiếc, không cho phép URI có dạng “$1”.',
 	'smw_icalendar_link'          => 'iCalendar',
 	'smw_iq_disabled'             => 'Rất tiếc. Chức năng truy vấn ngữ nghĩa đã bị tắt tại wiki này.',
-	'smw_iq_moreresults'          => '&hellip; kết quả khác',
+	'smw_iq_moreresults'          => '… kết quả khác',
 	'smw_iq_nojs'                 => 'Xin hãy dùng trình duyệt có kích hoạt JavaScript để xem thành phần này.',
 	'smw_iq_altresults'           => 'Xem qua trực tiếp danh sách kết quả.',
 	'smw_unknown_importns'        => 'Nhập các hàm chưa có tại không gian tên “$1”.',
@@ -3429,7 +3457,7 @@ $messages['vi'] = array(
 	'smw_label_longitude'         => 'Kinh độ:',
 	'smw_nodatetime'              => 'Không hiểu ngày “$1” (hỗ trợ ngày tháng vẫn còn đang thử nghiệm).',
 	'smw_toomanyclosing'          => 'Dường có quá nhiều lần xuất hiện “$1” trong câu truy vấn.',
-	'smw_noclosingbrackets'       => 'Lần sử dụng “[&#x005B;” nào đó trong câu truy vấn của bạn không được đóng bằng “]]”.',
+	'smw_noclosingbrackets'       => 'Lần sử dụng “<nowiki>[[</nowiki>” nào đó trong câu truy vấn của bạn không được đóng bằng “]]”.',
 	'smw_misplacedsymbol'         => 'Ký hiệu “$1” được dùng tại nơi nó không hữu ích.',
 	'smw_unexpectedpart'          => 'Phần “$1” của câu truy vấn không hiểu được.
 Kết quả có thể không như mong đợi.',
@@ -3439,7 +3467,7 @@ Kết quả có thể không như mong đợi.',
 	'smw_overprintoutlimit'       => 'Câu truy vấn chứa quá nhiều yêu cầu trang in.',
 	'smw_badprintout'             => 'Lệnh yêu cầu in nào đó trong câu truy vấn có dạng sai.',
 	'smw_badtitle'                => 'Tên trang “$1” không hợp lệ.',
-	'smw_badqueryatom'            => 'Phần “[&#x005B;&hellip;]]” nào đó của câu truy vấn không hiểu được.',
+	'smw_badqueryatom'            => 'Phần “<nowiki>[[…]]</nowiki>” nào đó của câu truy vấn không hiểu được.',
 	'smw_propvalueproblem'        => 'Không hiểu giá trị của thuộc tính “$1”.',
 	'smw_nodisjunctions'          => 'Phân tách trong câu truy vấn không hỗ trợ trong wiki này và một phần câu truy vấn bị bỏ qua ($1).',
 	'smw_querytoolarge'           => 'Các điều kiện truy vấn sau đây không được xem xét do hạn chế của wiki trong độ dài hoặc độ sâu truy vấn: $1.',
