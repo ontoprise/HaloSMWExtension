@@ -197,7 +197,7 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 		this.name = relationName;
 		this.value = relationValue;
 		this.representation = representation;
-		this.splitValues = this.value.split(";");
+		this.splitValues = this.splitValues(this.value);
 		this.arity = this.splitValues.length + 1; // subject is also part of arity, thus (+1)
 	},
 	
@@ -266,6 +266,53 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 		this.replaceAnnotation(newAnnotation);
 	},
 	
+	/**
+	 * @private
+	 * 
+	 * Splits the (n-ary) values of a relation at semicolons and takes care of
+	 * HTML-entities like &auml;
+	 * 
+	 * @param string value
+	 * 		The value(s) of the relation
+	 * 
+	 */
+	splitValues: function(value) {
+		var values = [];
+		var start = 0;
+		var htmlEntity = '';
+		for (var i = 0, n = value.length; i < n; ++i) {
+			var ch = value.charAt(i);
+			
+			if (ch == '&') {
+				// maybe a html entity starts
+				htmlEntity = '&';
+			} else if (ch == ';') {
+				var split = false;
+				if (htmlEntity != '') {
+					// maybe a html entity ends
+					htmlEntity += ';';
+					var ch = htmlEntity.unescapeHTML();
+					if (ch == htmlEntity) {
+						// no html entity found
+						// => values must be split
+						split = true;;
+					}
+					htmlEntity = '';
+				} else {
+					// no html entity => values must be split
+					split = true;;
+				}
+				if (split) {				
+					values.push(value.substring(start, i));
+					start = i + 1;
+				}
+			} else if (htmlEntity != '') {
+				htmlEntity += ch;
+			}
+		}
+		values.push(value.substring(start, i));
+		return values;
+	},
 	
 	/**
 	 * Returns a printable representation of the object.
