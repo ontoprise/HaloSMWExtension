@@ -61,14 +61,15 @@ class SMWSoapClient implements IWebServiceClient {
 	 *
 	 * @param string $uri
 	 * 		URI of a WSDL that can be retrieved with HTTP_GET.
-	 *
+	 * @param string $authenticationType
+	 * @param string $authenticationPassword
+	 * @param string $authenticationlogin
 	 * @return SMWSoapClient
 	 * 		If the WSDL can be accessed and is valid, a new instance of SMWSoapClient
 	 * 		is returned.
 	 */
-	//todo: describe parameters
 	public function __construct($uri, $authenticationType = "",
-	$authenticationLogin = "", $authenticationPassword = "") {
+			$authenticationLogin = "", $authenticationPassword = "") {
 		$this->mURI = $uri;
 		$this->mAuthenticationType = $authenticationType;
 		$this->mAuthenticationLogin = $authenticationLogin;
@@ -281,7 +282,6 @@ class SMWSoapClient implements IWebServiceClient {
 
 		$this->wsdl = new SimpleXMLElement($this->mURI, null, true);
 
-		//todo: handle xs-ns!!!
 		$namespaces = $this->wsdl->getNamespaces(true);
 		foreach($namespaces as $prefix => $ns){
 			$this->wsdl->registerXPathNamespace($prefix, $ns);
@@ -428,6 +428,18 @@ class SMWSoapClient implements IWebServiceClient {
 			}
 		}
 	}
-
+	
+	/**
+	 * Checks if the given type is defined in the wsdl
+	 *
+	 * @param string $typeName
+	 * @return boolean
+	 */
+	public function isExistingType($typeName){
+		if($this->mTypes[$typeName]){
+			return(true);
+		}
+		return false;
+	}
 }
 ?>

@@ -1317,7 +1317,7 @@ class WebService {
 		}
 
 		if (substr($type,0, 7) == "ArrayOf") {
-			if (!$this->mWSClient->isCustomType(substr($type,0, 7))) {
+			if (!$this->mWSClient->isCustomType(substr($type, 7))) {
 				$flatParams[] = $name."[]";
 				return $flatParams;
 			}
