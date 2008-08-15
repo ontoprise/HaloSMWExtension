@@ -237,16 +237,17 @@ function smwfSetupExtension() {
 	$wgHooks['BeforeParserrenderImageGallery'][] = 'smwfBlockFactboxFromImageGallery';
 
 	$wgHooks['ArticleFromTitle'][] = 'smwfShowListPage'; // special implementations for property/type articles
-
+    $wgHooks['SMWQueryParser'][] = 'smwfSPARQLQueryParser';
+     
 	///// credits (see "Special:Version") /////
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://semantic-mediawiki.org', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation.]');
 
-	wfProfileOut('smwfSetupExtension (SMW)');
 	
     global $smwgSPARQLEndpoint, $wgAjaxExportList;
     if (isset($smwgSPARQLEndpoint)) {
         $wgAjaxExportList[] = 'smwfGetSPARQLWebservice';
     }
+	wfProfileOut('smwfSetupExtension (SMW)');
 	return true;
 }
 
@@ -755,3 +756,33 @@ function smwfAddHTMLHeadersOutput(&$out) {
 		return $smwgMasterStore;
 	}
 
+function smwfSPARQLQueryParser($querystring, $params, $extraprintouts, & $query) {
+    global $smwgQDefaultNamespaces;
+    if (stripos($querystring, "SELECT") === false && !array_key_exists('usesparql', $params)) { //TODO: use real SPARQL parser here.
+       $query = NULL;
+       return true;
+    }
+
+    global $smwgIP;
+    require_once ( $smwgIP . '/includes/SMW_SPARQLQueryParser.php');
+    // assume it's SPARQL
+    $qp = new SMWSPARQLQueryParser();
+    $qp->setDefaultNamespaces($smwgQDefaultNamespaces);
+    $desc = $qp->getQueryDescription($querystring);
+
+    if (array_key_exists('mainlabel', $params)) {
+        $mainlabel = $params['mainlabel'] . $qp->getLabel();
+    } else {
+        $mainlabel = $qp->getLabel();
+    }
+    if ( ( !$desc->isSingleton() || (count($desc->getPrintRequests()) + count($extraprintouts) == 0) ) && ($mainlabel != '-') ) {
+        $desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS_THIS, $mainlabel));
+    }
+
+    $query = new SMWSPARQLQuery($desc, true);
+    $query->fromASK = array_key_exists('usesparql', $params);
+    $query->setQueryString($querystring);
+    $query->setExtraPrintouts($extraprintouts);
+    $query->addErrors($qp->getErrors());
+    return false;
+}

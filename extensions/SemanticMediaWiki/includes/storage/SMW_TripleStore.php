@@ -571,13 +571,13 @@ class SMWTripleStore extends SMWStore {
 			// do not generate new PrintRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query->fromASK)) continue;
 		    if (stripos($b, self::$CAT_NS) === 0) {
-                $prs[] = new SMWPrintRequest(SMW_PRINT_THIS, $var_name, Title::newFromText($var_name, NS_CATEGORY));
+                $prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, NS_CATEGORY));
             } else if (stripos($b, self::$PROP_NS) === 0) {
-                $prs[] = new SMWPrintRequest(SMW_PRINT_THIS, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
+                $prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
             } else if (stripos($b, self::$INST_NS) === 0) {
-                $prs[] = new SMWPrintRequest(SMW_PRINT_THIS, $var_name, Title::newFromText($var_name, NS_MAIN));
+                $prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, NS_MAIN));
             } else {
-                $prs[] = new SMWPrintRequest(SMW_PRINT_PROP, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
+                $prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
             }
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
