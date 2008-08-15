@@ -94,7 +94,8 @@
 		$res = $db->select( $db->tableName('smw_gardening'),
 		             array('user','gardeningbot', 'starttime','endtime','log', 'progress', 'id'), array(),
 		             $fname, array('ORDER BY' => 'id DESC') );
-		             
+
+		$result = array();
 		if($db->numRows( $res ) > 0)
 		{
 			$row = $db->fetchObject($res);
