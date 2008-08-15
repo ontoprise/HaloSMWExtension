@@ -24,7 +24,7 @@
  * Used to pack javascript files to one big file.
  */
 
-if ($_SERVER['SERVER_NAME'] != NULL) {
+if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;
 }
@@ -49,7 +49,7 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
  					APACHE_LICENSE => 'Apache-License',
  					LGPL_LICENSE => 'LGPL-License',
  					BSD_LICENSE => 'BSD-License',
- 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)',
+ 					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)');
 
  // add script name as hint or not?
  $addScriptName = true;
@@ -63,7 +63,7 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
 
 /* 'smw' section*/
 
- if ($argv[1] == 'smw' || $buildAll) {  // standard scripts which are loaded always (except special pages)
+ if ($buildAll || $argv[1] == 'smw') {  // standard scripts which are loaded always (except special pages)
  	 // name of output file
  	 $outputFile = $mediaWikiLocation.'/scripts/deployGeneralScripts.js';
 
