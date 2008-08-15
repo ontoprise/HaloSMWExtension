@@ -271,7 +271,8 @@ class ExportOntologyBot extends GardeningBot {
 								// special handling for units
 								$owl .= $this->exportSI($p, $smwValue);
 							} else {
-								$xsdType = $this->mapWikiTypeToXSD[$smwValue->getTypeID()] == NULL ? 'string' : $this->mapWikiTypeToXSD[$smwValue->getTypeID()];
+								$wikiType = array_key_exists($smwValue->getTypeID(), $this->mapWikiTypeToXSD) ? $smwValue->getTypeID() : "_str";
+                                $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 								$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
 								$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
 							}
@@ -422,7 +423,8 @@ class ExportOntologyBot extends GardeningBot {
 
 
 	private function exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard) {
-		$xsdType = $this->mapWikiTypeToXSD[$firstType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$firstType];
+		$wikiType = array_key_exists($firstType, $this->mapWikiTypeToXSD) ? $firstType : "_str";
+        $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 			
 		// export as subproperty
 		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'">'.LINE_FEED;
