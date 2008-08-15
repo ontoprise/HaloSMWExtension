@@ -5,7 +5,7 @@
  * Author: kai
  */
 
- 
+ if ( !defined( 'MEDIAWIKI' ) ) die;
   
  require_once("SMW_GardeningLog.php");
  
@@ -137,6 +137,8 @@
  	 * @return TRUE, if bot received the termination signal. Otherwise FALSE.
  	 */
  	public function isAborted() {
+ 		global $smwgAbortBotPortRange;
+ 		if (!isset($smwgAbortBotPortRange)) return false;
  		if ($this->isAborted) return true;
  		
  		$accept_sock = @socket_accept($this->socket);	
@@ -167,7 +169,7 @@
  	 */
  	public function initializeTermSignal($taskid) {
  		global $smwgAbortBotPortRange;
- 		if (!isset($smwgAbortBotPortRange)) $smwgAbortBotPortRange = ABORT_BOT_PORT_RANGE;
+ 		if (!isset($smwgAbortBotPortRange)) return;
  		// create a socket for termination signal
  		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
  		$this->socket = socket_create_listen(($taskid % 100) + $smwgAbortBotPortRange); 
@@ -225,7 +227,7 @@
  	 */
  	public static function abortBot($taskid) {
  		global $smwgAbortBotPortRange;
- 		if (!isset($smwgAbortBotPortRange)) $smwgAbortBotPortRange = ABORT_BOT_PORT_RANGE;
+ 		if (!isset($smwgAbortBotPortRange)) return false;
  		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
  		// port is freely chosen $smwgAbortBotPortRange <= port <= $smwgAbortBotPortRange + 100
  		$success = @socket_connect($socket, "127.0.0.1", ($taskid % 100) + $smwgAbortBotPortRange); 
@@ -297,7 +299,7 @@
 		
 				
 		// and start it...
-		global $wgServer;	
+		global $wgServer, $smwgAbortBotPortRange;	
 		$serverNameParam = escapeshellarg($wgServer);	 		
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
  			
@@ -319,7 +321,7 @@
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
- 				socket_close($this->socket);
+ 				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
  			}
   		}
   		else //windowze
@@ -348,7 +350,7 @@
  					$log .= "\n[[category:GardeningLog]]";
  					SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
  				}
- 				socket_close($this->socket);
+ 				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
  			}
   		}
    		return $taskid;
@@ -404,6 +406,8 @@
  		$result = true;
  		 
  		foreach ($bot->getParameters() as $paramObject) {
+	 		// do not validate boolean parameters, since Prototype does not serialize them when deactivated
+ 			if ($paramObject instanceof GardeningParamBoolean) continue; 
  			$ok = $paramObject->validate($paramValues[$paramObject->getID()]);
  			if (gettype($ok) == 'string') { // error
  				$lastFailure = $paramObject->getID().":".$ok;
@@ -435,8 +439,8 @@
  			
  			foreach($processes as $p) {
  				$data = explode(",", $p);
- 				if (strpos($data[8], "-t $taskID") !== false 
- 					&& strpos($data[8], "SMW_AsyncBotStarter.php") !== false) {
+ 				if (strpos(end($data), "-t $taskID") !== false 
+ 					&& strpos(end($data), "SMW_AsyncBotStarter.php") !== false) {
  					return str_replace("\"", "", $data[1]) + 0; // return processID as number
  				}
  			}
@@ -479,9 +483,3 @@
  		print $pro_str."%";
  	}
  }
- 
-   
- 
- 	
- 	
-?>
