@@ -141,7 +141,14 @@ function smwgHaloSetupExtension() {
 	//parser function for multiple template annotations
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
 
-
+    // add triple store hooks if necessary
+    global $smwgMessageBroker;
+    if (isset($smwgMessageBroker)) {
+       require_once('storage/SMW_TS_Contributor.php');
+       $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
+       $wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
+       
+    }
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 
@@ -253,7 +260,10 @@ function smwgHaloSetupExtension() {
 
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
-
+        
+		$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
+        $wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
+        
 		global $smwgEnableWikiWebServices;
 		if ($smwgEnableWikiWebServices) {
 			$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRepositorySpecial.php';

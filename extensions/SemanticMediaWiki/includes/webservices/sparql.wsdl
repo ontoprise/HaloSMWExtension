@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" name="SparqlEndpointService">
+ 
+  <message name="query">
+    <part name="arg0" type="xsd:string" />
+    <part name="arg1" type="xsd:string" />
+    <part name="arg2" type="xsd:string" />
+  </message>
+  <message name="queryResponse">
+    <part name="return" type="xsd:string" />
+  </message>
+  <message name="MalformedQuery">
+    <part name="fault" element="xsd:string" />
+  </message>
+  <message name="QueryRequestRefused">
+    <part name="fault" element="xsd:string" />
+
+  </message>
+  <message name="getTripleStoreStatus">
+    <part name="arg0" type="xsd:string" />
+  </message>
+  <message name="getTripleStoreStatusResponse">
+    <part name="return" type="xsd:string" />
+  </message>
+  <portType name="SPARQLEndpoint">
+    <operation name="query" parameterOrder="arg0 arg1 arg2">
+
+      <input message="tns:query" />
+      <output message="tns:queryResponse" />
+      <fault name="MalformedQuery" message="tns:MalformedQuery" />
+      <fault name="QueryRequestRefused" message="tns:QueryRequestRefused" />
+    </operation>
+    <operation name="getTripleStoreStatus" parameterOrder="arg0">
+      <input message="tns:getTripleStoreStatus" />
+      <output message="tns:getTripleStoreStatusResponse" />
+    </operation>
+
+  </portType>
+  <binding name="SPARQLEndpointPortBinding" type="tns:SPARQLEndpoint">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <operation name="query">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" />
+      </input>
+      <output>
+
+        <soap:body use="literal" namespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" />
+      </output>
+      <fault name="MalformedQuery">
+        <soap:fault name="MalformedQuery" use="literal" />
+      </fault>
+      <fault name="QueryRequestRefused">
+        <soap:fault name="QueryRequestRefused" use="literal" />
+      </fault>
+    </operation>
+
+    <operation name="getTripleStoreStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" />
+      </output>
+    </operation>
+
+  </binding>
+  <service name="SparqlEndpointService">
+    <port name="SPARQLEndpointPort" binding="tns:SPARQLEndpointPortBinding">
+      <soap:address location="http://{{sparql-endpoint}}/sparql" />
+    </port>
+  </service>
+</definitions>

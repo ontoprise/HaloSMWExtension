@@ -146,6 +146,7 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgAutoloadClasses['SMWSomeProperty']           = $smwgIP . '/includes/storage/SMW_Description.php';
 	$wgAutoloadClasses['SMWSQLStore']               = $smwgIP . '/includes/storage/SMW_SQLStore.php';
 	$wgAutoloadClasses['SMWSQLStore2']              = $smwgIP . '/includes/storage/SMW_SQLStore2.php';
+	$wgAutoloadClasses['SMWTripleStore']            = $smwgIP . '/includes/storage/SMW_TripleStore.php';
 	// Do not autoload RAPStore, since some special pages load all autoloaded classes, which causes
 	// troubles with RAP store if RAP is not installed (require_once fails).
 	//$wgAutoloadClasses['SMWRAPStore']             = $smwgIP . '/includes/storage/SMW_RAPStore.php';
@@ -241,7 +242,26 @@ function smwfSetupExtension() {
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://semantic-mediawiki.org', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation.]');
 
 	wfProfileOut('smwfSetupExtension (SMW)');
+	
+    global $smwgSPARQLEndpoint, $wgAjaxExportList;
+    if (isset($smwgSPARQLEndpoint)) {
+        $wgAjaxExportList[] = 'smwfGetSPARQLWebservice';
+    }
 	return true;
+}
+
+/**
+ * Returns WSDL of SPARQL webservice
+ *
+ * @return wsdl string
+ */
+function smwfGetSPARQLWebservice() {
+    global $smwgIP, $smwgSPARQLEndpoint;
+    $wsdl = "$smwgIP/includes/webservices/sparql.wsdl";
+    $handle = fopen($wsdl, "rb");
+    $contents = fread ($handle, filesize ($wsdl));
+    fclose($handle);
+    return str_replace("{{sparql-endpoint}}", $smwgSPARQLEndpoint, $contents); 
 }
 
 /**
@@ -725,7 +745,12 @@ function smwfAddHTMLHeadersOutput(&$out) {
 			include_once($smwgIP . '/includes/storage/SMW_RAPStore2.php');
 		}
 		if ($smwgMasterStore === NULL) {
-			$smwgMasterStore = new $smwgDefaultStore();
+		      global $smwgMessageBroker;
+              if (isset($smwgMessageBroker)) {
+                   $smwgMasterStore = new SMWTripleStore(new $smwgDefaultStore());
+              } else {
+                   $smwgMasterStore = new $smwgDefaultStore();
+              }
 		}
 		return $smwgMasterStore;
 	}

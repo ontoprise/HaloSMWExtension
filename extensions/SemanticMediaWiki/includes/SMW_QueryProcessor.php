@@ -214,12 +214,17 @@ class SMWQueryProcessor {
 				}
 				$printouts[] = new SMWPrintRequest($printmode, trim($parts[1]), $title, trim($propparts[1]));
 			} else { // parameter or query
-				$parts = explode('=',$param,2);
-				if (count($parts) >= 2) {
-					$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
-				} else {
-					$querystring .= $param;
-				}
+			    // FIX:KK special handling for SPARQL queries here 
+                if (strpos($param, "SELECT ") !== false) {
+                    $querystring .= $param;
+                } else {
+                    $parts = explode('=',$param,2);
+                    if (count($parts) >= 2) {
+                        $params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
+                    } else {
+                        $querystring .= $param;
+                    }
+                }
 			}
 		}
 		$querystring = str_replace(array('&lt;','&gt;'), array('<','>'), $querystring);

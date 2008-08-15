@@ -526,7 +526,22 @@ protected $smwUserMessages = array(
 	'smw_gard_glossarybothelp' => 'Dieser Bot markiert Begriffe aus dem Glossar in allen Artikeln die der Kategorie "ShowGlossary" angehören.',
 	'smw_glossarybot' => 'Glossarmarkierungen aktualisieren',
 	'smw_gloss_annotated_glossary' => 'Glossar-Begriffe im Artikel "$1" gefunden und annotiert.',
-
+    
+    // Triple Store Admin
+    'tsa' => 'Triplestore Administration',
+    'smw_tsa_welcome' => 'Diese Spezialseite hilft ihnen die Wiki/Triplestore Verbindung zu konfiguieren.',
+    'smw_tsa_couldnotconnect' => 'Kann keine Verbindung zu einem Triple store aufbauen.',
+    'smw_tsa_notinitalized' => 'Das Wiki ist nicht mit einem Triple store verbunden.',
+    'smw_tsa_waitsoemtime'=> 'Bitte warten Sie einige Sekunden und klicken dann auf diesen Link.',
+    'smw_tsa_wikiconfigured' => 'Das Wiki ist mit dem Triple store an $1 verbunden.',
+    'smw_tsa_initialize' => 'Initialisieren',
+    'smw_tsa_pressthebutton' => 'Bitte den Knopf unten drücken.',
+    'smw_tsa_addtoconfig' => 'Bitte fügen Sie folgende Zeilen in die LocalSettings.php ein und prüfen Sie ob der Triple store connector läuft.',
+    'smw_tsa_driverinfo' => 'Treiberinformation',
+    'smw_tsa_status' => 'Status',
+    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableFlogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
+    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgEnableFlogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.'
+    
 );
 
 protected $smwSpecialProperties = array(
