@@ -11,13 +11,6 @@
 
 var editAreaName = "wpTextbox1";
 
-function trim(string) {
-	return string.replace(/(^\s+|\s+$)/g, "");
-}
-
-
-//editAreaLoader.execCommand("wpTextbox1", "update_size();");
-
 var SMWEditInterface = Class.create();
 SMWEditInterface.prototype ={
 
@@ -32,9 +25,7 @@ SMWEditInterface.prototype ={
 	focus: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
 			$(editAreaName).focus();
-		} else if (OB_bd.isGecko){
-			editAreaLoader.execCommand(this.editAreaName, "focus();");
-		}
+		} 
 	},
 
 	setSelectionRange: function(start, end){
@@ -60,9 +51,7 @@ SMWEditInterface.prototype ={
 				SMWEditArea.selectionEnd = end;
 				SMWEditArea.caretPos = start;
 			}
-		} else {
-			editAreaLoader.setSelectionRange(editAreaName, start, end);
-		}
+		} 
 	},
 
 	/*
@@ -165,8 +154,6 @@ SMWEditInterface.prototype ={
 				}
 				this.setSelectionRange(start,end);
 			}
-		} else {
-			editAreaLoader.selectCompleteAnnotation(editAreaName);
 		}
 	},
 	
@@ -190,12 +177,8 @@ SMWEditInterface.prototype ={
 				}
 				return "";
 			}
-		} else {
-			if(editAreaLoader.getSelectedText(editAreaName) != ""){
-				this.currentRange = editAreaLoader.getSelectionRange(editAreaName);
-			}
-			return editAreaLoader.getSelectedText(editAreaName);
-		}
+		} 
+		return "";
 	},
 
 	setSelectedText: function(text){
@@ -252,26 +235,18 @@ SMWEditInterface.prototype ={
 			if (SMWEditArea.createTextRange) {
 				SMWEditArea.caretPos = document.selection.createRange().duplicate();
 			}
-		} else {
-			if(editAreaLoader.getSelectedText(editAreaName) == "" && this.currentRange){
-				editAreaLoader.setSelectionRange(editAreaName, this.currentRange["start"], this.currentRange["end"]);
-			}
-			editAreaLoader.setSelectedText(editAreaName, text);
-		}
+		} 
 	},
 
 	getValue: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
 			return $(editAreaName).value;
-		else
-			return editAreaLoader.getValue(editAreaName);
+		return "";
 	},
 
 	setValue: function(text){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
 			$(editAreaName).value = text;
-		else
-			editAreaLoader.setValue(editAreaName, text);
 	},
 
 	getTextBeforeCursor: function() {
@@ -288,10 +263,7 @@ SMWEditInterface.prototype ={
 				var start = this.siw.inputBox.selectionStart;
 				return this.siw.inputBox.value.substring(0, start);
 			}
-		} else {
-			return editAreaLoader.getValue(editAreaName).substring(0, editAreaLoader.getSelectionRange(editAreaName)["start"]);
-
-		}
+		} 
          // cannot return anything
         return "";
     }
