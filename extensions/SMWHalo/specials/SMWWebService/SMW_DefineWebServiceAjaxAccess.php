@@ -73,7 +73,7 @@ function smwf_ws_processStep2($uri, $methodName){
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		$tempFlat = getFlatParameters($uri, $wsClient, $pName, $pType, false);
+		$tempFlat = getFlatParameters($uri, $wsClient, $pName, $pType);
 		$parameters = array_merge($parameters , $tempFlat);
 	}
 	return "todo:handle exceptions;".implode(";", $parameters);
@@ -90,7 +90,7 @@ function smwf_ws_processStep2($uri, $methodName){
 function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
-	$flatResult = getFlatParameters($uri, $wsClient ,"", $rawResult[0], true);
+	$flatResult = getFlatParameters($uri, $wsClient ,"", $rawResult[0]);
 	return "todo:handle exceptions;".implode(";", $flatResult);
 }
 
@@ -150,16 +150,31 @@ function createWSClient($uri) {
 
 
 /**
- * creates flat "."-separated paths
+ * Takes all parts of the given type and appends its fields to the given name.
+ * This happend recursively down to builtin types.
+ * Example:
+ * $name = point
+ * $type = Point (with the fields x and y)
+ * result:
+ *    - point.x
+ *    - point.y
  *
- * @param unknown_type $wsClient
- * @param unknown_type $name
- * @param unknown_type $type
- * @param unknown_type $typePath
- * @return unknown
+ * @param SMWSoapClient $wsClient
+ * 		a properly initialized soapclient for accessing the wsdl
+ * @param string $name
+ * 		The fields of the type are added to this name, separated by a dot.
+ * @param string $type
+ * 		The name of an XSD base type or a type defined in the WSDL.
+ * @param array<string> $typePath
+ * 		This array contains all types that were encountered in the recursion.
+ * 		To avoid an inifinite loop, the recursion stops if $type is already
+ * 		in the $typePath. This parameter is omitted in the top level call.
+ * @return array<string>
+ * 		All resulting paths. If a path causes an endless recursion, the
+ * 		keyword ##overflow## is appended to the path.
  */
 function flattenParam($wsClient, $name, $type, &$typePath=null) {
-	//todo: this method was copied from WebService -> refactor
+	//todo: this method was copied from SMW_WebService.php -> refactor
 	$flatParams = array();
 
 	if (!$wsClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
@@ -169,7 +184,7 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
 	}
 
 	if (substr($type,0, 7) == "ArrayOf") {
-		if (!$wsClient->isCustomType(substr($type,0, 7))) {
+		if (!$wsClient->isCustomType(substr($type, 7))) {
 			$flatParams[] = $name."[]";
 			return $flatParams;
 		}
@@ -178,8 +193,12 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
 	$tp = $wsClient->getTypeDefinition($type);
 	foreach ($tp as $var => $type) {
 		if(substr($type,0, 7) == "ArrayOf"){
-			$type = substr($type, 7);
-			$fname = empty($name) ? $var."[]" : $name.'.'.$var."[]";
+			if($wsClient->isExistingType($type)){
+				$fname = empty($name) ? $var : $name.'.'.$var;
+			} else {
+				$type = substr($type, 7);
+				$fname = empty($name) ? $var."[]" : $name.'.'.$var."[]";
+			}
 		} else {
 			$fname = empty($name) ? $var : $name.'.'.$var;
 		}
@@ -203,21 +222,49 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
 	return $flatParams;
 }
 
-function getFlatParameters($uri, $wsClient, $name, $type, $result=false, &$typePath=null){
+/**
+ *
+ *
+ * @param string $uri
+ * @param SoapClient $wsClient
+ * @param string $name
+ * @param string $type
+ * @param boolean $result
+ * @param  $typePath
+ * @return unknown
+ */
+
+/**
+ *
+ * @param string $uri
+ * 		the uri of the wsdl
+ * @param SMWSoapClient $wsClient
+ * 		a properly initialized soapclient for accessing the wsdl
+ * @param string $name
+ * 		The fields of the type are added to this name, separated by a dot.
+ * @param string $type
+ * 		The name of an XSD base type or a type defined in the WSDL.
+ * @param array<string> $typePath
+ * 		This array contains all types that were encountered in the recursion.
+ * 		To avoid an inifinite loop, the recursion stops if $type is already
+ * 		in the $typePath. This parameter is omitted in the top level call.
+ * @return array<string>
+ * 		All resulting paths. If a path causes an endless recursion, the
+ * 		keyword ##overflow## is appended to the path.
+ */
+function getFlatParameters($uri, $wsClient, $name, $type, &$typePath=null){
 	$flatParams = flattenParam($wsClient, $name, $type, $typePath);
 
-	//todo: what if soap but no wsdl available
-	
-	//todo require_once
 	$arrayDetector = new WSDLArrayDetector($uri);
-			
-	//todo: is type correct here?
+
 	$adParameters = $arrayDetector->getArrayPaths($type, $name);
 
 	if($result){
 		$adParameters = $arrayDetector->cleanResultParts($adParameters);
 	}
-	
+
+	return $flatParams;
+	return $adParameters;
 	return $arrayDetector->mergePaths($flatParams, $adParameters);
 }
 
