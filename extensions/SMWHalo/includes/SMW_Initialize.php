@@ -50,7 +50,7 @@ function enableSMWHalo() {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	$smwgDefaultStore = 'SMWHaloStore2'; // the only store supported by Halo now
+	$smwgDefaultStore = 'SMWHaloStore'; // the only store supported by Halo now
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
@@ -561,16 +561,12 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.js', "view", -1, NS_SPECIAL.":".wfMsg('search'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/SMWEditInterface.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
 		$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
-			
-		//FIXME: these scripts must be exchanged by a full editor script
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Editarea/edit_area_loader.js', "edit");
 
 		smwfHaloAddJSLanguageScripts($jsm);
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');

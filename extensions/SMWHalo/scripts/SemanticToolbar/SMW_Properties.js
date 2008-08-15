@@ -835,7 +835,6 @@ apply: function() {
 			}
 		}
 	}
-	editAreaLoader.execCommand(editAreaName, "resync_highlight(true)");
 	
 	this.createContent();
 	this.refreshOtherTabs();

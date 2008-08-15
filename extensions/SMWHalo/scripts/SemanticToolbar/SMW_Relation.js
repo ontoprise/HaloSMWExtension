@@ -805,7 +805,6 @@ changeItem: function(selindex) {
 			for (var i = 0, len = relations.length; i < len; i++) {
 				relations[i].rename(relName);
 			}
-			editAreaLoader.execCommand(editAreaName, "resync_highlight(true)");
 		}
  		//change relation
 		relation.rename(relName);

@@ -39,7 +39,6 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
  define('LGPL_LICENSE', 7);
  define('BSD_LICENSE', 8);
  define('LGPL_LICENSE_TOOLTIPS', 9);
-  define('LGPL_LICENSE_EDITAREA', 10);
 
  // license hints
  $licenses = array( MIT_LICENSE_PROTOTYPE => 'MIT-License; Copyright (c) 2005-2007 Sam Stephenson',
@@ -51,7 +50,6 @@ if ($_SERVER['SERVER_NAME'] != NULL) {
  					LGPL_LICENSE => 'LGPL-License',
  					BSD_LICENSE => 'BSD-License',
  					LGPL_LICENSE_TOOLTIPS => 'LGPL-License; (c) 2002-2007 Walter Zorn (http://www.walterzorn.com)',
- 					LGPL_LICENSE_EDITAREA => 'LGPL-License; (c) 2007 Christophe Dolivet');
 
  // add script name as hint or not?
  $addScriptName = true;

@@ -10,87 +10,10 @@
 
 
 var editAreaName = "wpTextbox1";
-var loc = document.location.href.indexOf("mode=wysiwyg");
-if (loc != -1)
-	editAreaLoader.init({id : "wpTextbox1", display:"later"}); //disable in WYSIWYG mode
-else if((wgAction == "edit") && skin == "ontoskin"){
-	if(getEditorCookie() == "on")
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff"});
-	else //display:later
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff", display: "later"});
-}
 
 function trim(string) {
 	return string.replace(/(^\s+|\s+$)/g, "");
 }
-
-function changeEdit(){
-	$("wpTextbox1").value = editAreaLoader.getValue(editAreaName);
-}
-
-function toggleEAOn(id){
-	document.getElementById("toolbar").style.display = "none";
-	addSpacesForDisplay();
-}
-
-function toggleEAOff(id){
-	document.getElementById("toolbar").style.display = "";
-}
-
-/*
-* There is a display error in IE: the last 3-5 characters are not shown.
-* Therefore the longest line will be extended by some whitespaces so all
-* characters are shown. Ugly but it works.
-*/
-function addSpacesForDisplay(){
-	if (navigator.appName == "Microsoft Internet Explorer" && editAreaLoader.getValue(editAreaName) != ""){
-		var lines = editAreaLoader.getValue(editAreaName).split("\n");
-		var max = 0;
-		var theLine = 0;
-		var text = "";
-		for(var i=0; i<lines.length; i++){
-			if(lines[i].length > max){
-				max = lines[i].length;
-				theLine = i;
-			}
-		}
-		for(var i=0; i<lines.length; i++){
-			if(i == theLine){
-				lines[i] = lines[i].substring(0, lines[i].length-2);
-				text = text + lines[i] + "         " + "\n";
-			}
-			else {
-				text = text + lines[i];
-			}
-		}
-		editAreaLoader.setValue(editAreaName, text)
-	}
-}
-
-/*
-* Get the cookie that saves the state of the advanced editor, which
-* is "on" or "off". If the cookie is not set, "off" is standard.
-* The cookie is set in the method userToggle() in edit_area_loader.js
-*/
-function getEditorCookie() {
-	var cookie = document.cookie;
-	var length = cookie.length-1;
-	if (cookie.charAt(length) != ";")
-		cookie += ";";
-	var a = cookie.split(";");
-
-	// walk through cookies...
-	for (var i=0; i<a.length; i++) {
-		var cookiename = trim(a[i].substring(0, a[i].search('=')));
-		var cookievalue = a[i].substring(a[i].search('=')+1,a[i].length);
-		if (cookiename == "smwUseAdvancedEditor") {
-			return cookievalue;
-		}
-	}
-	return "on";
-}
-
-
 
 
 //editAreaLoader.execCommand("wpTextbox1", "update_size();");
@@ -240,7 +163,7 @@ SMWEditInterface.prototype ={
 					}
 					++end;
 				}
-				setSelectionRange(SMWEditArea,start,end);
+				this.setSelectionRange(start,end);
 			}
 		} else {
 			editAreaLoader.selectCompleteAnnotation(editAreaName);
