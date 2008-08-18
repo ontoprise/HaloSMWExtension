@@ -19,11 +19,11 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
 	if ($property instanceof Title && smwfGetSemanticStore()->domainRangeHintRelation->equals($property)) {
-
+    
 		foreach($propertyValueArray as $domRange) {
 			if (count($domRange->getDVs()) == 2) {
 				$dvs = $domRange->getDVs();
-				if ($dvs[0]->isValid() && $dvs[1]->isValid()) { // domain and range
+				if ($dvs[0] != NULL && $dvs[1] != NULL && $dvs[0]->isValid() && $dvs[1]->isValid()) { // domain and range
 					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCard);
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
 					
@@ -44,7 +44,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 						if ($value->getXSDValue() !== false)
 						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
 					}
-				} elseif ($dvs[0]->isValid()) { // only domain
+				} elseif ($dvs[0] != NULL && $dvs[0]->isValid()) { // only domain
 					$typeValues = $data->getPropertyValues(SMW_SP_HAS_TYPE);
 					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCard);
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
