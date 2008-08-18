@@ -110,9 +110,12 @@ class SMWTripleStore extends SMWStore {
 		$subj_ns = $this->getNSPrefix($subject->getNamespace());
 		if ($subj_ns == NULL) return;
         
-		$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
-        SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
-        
+		// clear rules
+		global $smwgEnableFlogicRules;
+		if (isset($smwgEnableFlogicRules)) {
+			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
+	        SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
+		}
 		global $smwgMessageBroker, $smwgNamespace;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
@@ -232,11 +235,13 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		// rules
-		$new_rules = $data->getRules();
-		$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
-		SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
-		SMWRuleStore::getInstance()->addRules($subject->getArticleId(), $new_rules);
-		
+		global $smwgEnableFlogicRules;
+        if (isset($smwgEnableFlogicRules)) {
+			$new_rules = $data->getRules();
+			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
+			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
+			SMWRuleStore::getInstance()->addRules($subject->getArticleId(), $new_rules);
+        }
 
 		// redirects
 		$redirects = $data->getRedirects();
@@ -265,14 +270,16 @@ class SMWTripleStore extends SMWStore {
             }
 			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."INSERT INTO <$smwgNamespace> { ".$this->implodeTriples($triples)." }");
 			
-			// delete old rules...
-			foreach($old_rules as $ruleID) {
-				$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
-			}
-			// ...and add new
-			foreach($new_rules as $ruleID => $ruleText) {
-				$con->send("/topic/WIKI.TS.UPDATE", "INSERT RULE $ruleID INTO <$smwgNamespace> : \"".$this->escapeQuotes($ruleText)."\"");
-			}
+			  if (isset($smwgEnableFlogicRules)) {
+				// delete old rules...
+				foreach($old_rules as $ruleID) {
+					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
+				}
+				// ...and add new
+				foreach($new_rules as $ruleID => $ruleText) {
+					$con->send("/topic/WIKI.TS.UPDATE", "INSERT RULE $ruleID INTO <$smwgNamespace> : \"".$this->escapeQuotes($ruleText)."\"");
+				}
+			  }
 			$con->disconnect();
 		} catch(Exception $e) {
 			// print something??
@@ -290,7 +297,10 @@ class SMWTripleStore extends SMWStore {
 		if ($new_ns == NULL) return;
         
 		// update local rule store
-		SMWRuleStore::getInstance()->updateRules($redirid, $pageid);
+		global $smwgEnableFlogicRules;
+        if (isset($smwgEnableFlogicRules)) {
+		  SMWRuleStore::getInstance()->updateRules($redirid, $pageid);
+        }
 		
 		// update triple store
 		global $smwgMessageBroker, $smwgNamespace;

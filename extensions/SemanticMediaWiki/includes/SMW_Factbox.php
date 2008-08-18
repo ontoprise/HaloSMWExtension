@@ -66,10 +66,21 @@ class SMWFactbox {
 			     (SMWFactbox::$m_oldsemdata->getSubject()->getNamespace() == $title->getNamespace()) ) {
 				SMWFactbox::$semdata = SMWFactbox::$m_oldsemdata;
 			} else { // otherwise make a new data container
-				$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-				$dv->setValues($title->getDBkey(), $title->getNamespace());
-				SMWFactbox::$semdata = new SMWSemanticData($dv); // reset data
-				SMWFactbox::$m_printed = false;
+								
+			    global $smwgMessageBroker;
+		        if (isset($smwgMessageBroker)) {
+		            global $smwgIP;
+		            include_once($smwgIP . '/includes/SMW_FullSemanticData.php');
+		            $dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+                    $dv->setValues($title->getDBkey(), $title->getNamespace());
+                    SMWFactbox::$semdata = new SMWFullSemanticData($dv);
+                    SMWFactbox::$m_printed = false;
+		        } else {
+		            $dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+	                $dv->setValues($title->getDBkey(), $title->getNamespace());
+	                SMWFactbox::$semdata = new SMWSemanticData($dv); // reset data
+	                SMWFactbox::$m_printed = false;
+		        }
 			}
 			// store non-empty existing data, just in case we need it later again
 			if ( ($curdata !== NULL) && 
