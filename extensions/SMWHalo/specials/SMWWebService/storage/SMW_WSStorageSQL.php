@@ -814,12 +814,14 @@ class WSStorageSQL {
 
 		$webServices = array();
 
+		//todo:authentification parameter hinzufuegen
 		while($row = $db->fetchObject($res)){
 			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
-			$row->method, $row->parameters, $row->result,
+			$row->method, $row->authentication_type, $row->authentication_login, 
+			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->updateDelay, $row->span_of_life,
-			$rwow->expires_after_update == 'true',
+			$row->expires_after_update == 'true',
 			$row->confirmed);
 				
 			$webServices[$ws->getName()] = $ws;
