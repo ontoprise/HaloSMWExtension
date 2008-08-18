@@ -323,9 +323,43 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
         $db->freeResult( $res );
         return $helppages;
     }
-    //TODO: write this function for SQLStore 2
+   
     public function getQuestions($id){
-    	return 0;
+    	$db =& wfGetDB( DB_SLAVE );
+    	
+    	$smw_ids = $db->tableName('smw_ids');
+        $smw_atts2 = $db->tableName('smw_atts2');     
+        $smw_text2 = $db->tableName('smw_text2');
+        $page = $db->tableName('page');
+        
+         $res = $db->query('SELECT i.smw_title AS subject_title, value_xsd FROM '.$smw_ids.' i '.
+                            ' JOIN '.$smw_atts2.' ON i.smw_id = s_id '.
+                            ' JOIN '.$smw_ids.' i2 ON i2.smw_id = p_id '.
+                            ' JOIN '.$page.' p ON p.page_title = i.smw_title AND p.page_namespace = i.smw_namespace'.
+                            ' WHERE p.page_id = '.$id.' AND i2.smw_title = "Question" AND i2.smw_namespace = '.SMW_NS_PROPERTY);
+        
+        if ($db->numRows($res) > 0){
+            $results = true;
+            $row = $db->fetchObject( $res );
+            $title = $row->subject_title;
+            $question = htmlspecialchars($row->value_xsd);
+            $db->freeResult( $res );
+            
+            $res = $db->query('SELECT value_blob FROM '.$smw_text2.' JOIN '.$smw_ids.' ON smw_id = p_id '.
+                               ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace'.
+                               ' WHERE page_id = '.$id.' AND smw_title = "Description" AND smw_namespace = '.SMW_NS_PROPERTY);
+            
+            $description = '';
+            
+            if ($db->numRows($res) > 0){
+                $row = $db->fetchObject( $res );
+                $description = htmlspecialchars($row->value_blob);
+            }
+            $db->freeResult( $res );
+            return array($title, $question, $description);
+        }
+        $db->freeResult( $res );
+        return 0;
     }
 }
 
