@@ -101,6 +101,7 @@
 	public static function searchInSortedGraph( & $sortedGraph, $from) {
  	 $lowerBound = 0;
  	 $upperBound = count($sortedGraph)-1;
+ 	 if ($upperBound == -1) return null;
  	 do {
  		$diff = $upperBound - $lowerBound;
  		$diff = $diff % 2 == 0 ? $diff/2 : intval($diff/2);
