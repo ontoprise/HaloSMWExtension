@@ -123,50 +123,27 @@ function getHelpByRestriction($restriction, $param){
 	
 	$hs_storage = HelpSpecialStorage::getHelpSpecialStorage();
 	$helppages = $hs_storage->getHelppagesByRestriction($restriction, $param);
-	
-	//now go through all pages and create the links
-	foreach($helppages as $id){
-		$question = '';
-		$description = '';
-		$title = '';
-		
-		//get questions
-		$res = $dbr->select( $dbr->tableName('smw_attributes'),
-			'*',
-			array('subject_id =' . $id, 'attribute_title="Question"'));
 
-		if ($dbr->numRows($res) > 0){
-			$results = true;
-			$row = $dbr->fetchObject( $res );
-			$title = $row->subject_title;
-			$question = htmlspecialchars($row->value_xsd);
-			$dbr->freeResult( $res );
-			
-			// get descriptions
-			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
-				'*',
-				array('subject_id =' . $id, 'attribute_title="Description"'));
-	
-			if ($dbr->numRows($res) > 0){
-				$row = $dbr->fetchObject( $res );
-				$description = htmlspecialchars($row->value_blob);
-			}
-		}
-		$dbr->freeResult( $res );
-		$wikiTitle = Title::newFromText($title, NS_HELP);
+	foreach($helppages as $id){
+		$questions = $hs_storage->getQuestions($id);
+		//get questions
 		
-		if($wikiTitle instanceof Title && $wikiTitle->exists()){
-			$link = '<a id="' . $question . '"href="' . $wikiTitle->getFullURL();
-			if($description == wfMsg('smw_csh_newquestion')){
-				$link .= '?action=edit" class="new';
+		if(is_array($questions)){
+			$results = true;
+			$wikiTitle = Title::newFromText($questions[0], NS_HELP);
+			if($wikiTitle instanceof Title && $wikiTitle->exists()){
+				$link = '<a id="' . $questions[1] . '"href="' . $wikiTitle->getFullURL();
+				if($questions[2] == wfMsg('smw_csh_newquestion')){
+					$link .= '?action=edit" class="new';
+				}
+				$link .= '" ';
+				$link .= 'title="' . $questions[2] . '">' . $questions[1] . '?</a><br/>';
+				array_push($help, $link); // saved in an array first so they can be alphabetically ordered later (id)
 			}
-			$link .= '" ';
-			$link .= 'title="' . $description . '">' . $question . '?</a><br/>';
-			array_push($help, $link); // saved in an array first so they can be alphabetically ordered later (id)
 		}
 	}
 	if (sizeof($help)==0){
-		$html = "Sorry, there are no questions in this section yet.<br/>";
+			$html = "Sorry, there are no questions in this section yet.<br/>";
 	}
 	else {
 		$help = array_unique($help);
@@ -267,6 +244,7 @@ abstract class HelpSpecialStorage {
      * TODO: Write documentation
      */
     public abstract function getHelppagesByRestriction($restriction, $param);
+    public abstract function getQuestions($id);
 }
 
 class HelpSpecialStorageSQL extends HelpSpecialStorage {
@@ -316,6 +294,34 @@ class HelpSpecialStorageSQL extends HelpSpecialStorage {
 	    }
 	    }
 	    return $helppages;
+	}
+	public function getQuestions($id){
+		$dbr =& wfGetDB( DB_SLAVE );
+		$res = $dbr->select( $dbr->tableName('smw_attributes'),
+			'*',
+			array('subject_id =' . $id, 'attribute_title="Question"'));
+		if ($dbr->numRows($res) > 0){
+			$results = true;
+			$row = $dbr->fetchObject( $res );
+			$title = $row->subject_title;
+			$question = htmlspecialchars($row->value_xsd);
+			$dbr->freeResult( $res );
+			
+			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
+				'*',
+				array('subject_id =' . $id, 'attribute_title="Description"'));
+			
+			$description = '';
+			
+			if ($dbr->numRows($res) > 0){
+				$row = $dbr->fetchObject( $res );
+				$description = htmlspecialchars($row->value_blob);
+			}
+			$dbr->freeResult( $res );
+			return array($title, $question, $description);
+		}
+		$dbr->freeResult( $res );
+		return 0;
 	}
 }
 
@@ -389,6 +395,10 @@ public function getHelppagesByRestriction($restriction, $param) {
 	        }
         }
         return $helppages;
+    }
+    //TODO: write this function for SQLStore2 
+    public function getQuestions($id){
+    	return 0;
     }
 }
 ?>

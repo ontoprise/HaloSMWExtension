@@ -29,48 +29,24 @@ function smwf_tb_GetHelp($namespace, $action){
 	$helppages = $tb_store->getHelppages($namespace, $action);
 
 	foreach($helppages as $id){
-		$question = '';
-		$description = '';
-		$title = '';
-		
+		$questions = $tb_store->getQuestions($id);
 		//get questions
-		$res = $dbr->select( $dbr->tableName('smw_attributes'),
-			'*',
-			array('subject_id =' . $id, 'attribute_title="Question"'));
-
-		if ($dbr->numRows($res) > 0){
-			$results = true;
-			$row = $dbr->fetchObject( $res );
-			$title = $row->subject_title;
-			$question = htmlspecialchars($row->value_xsd);
-			$dbr->freeResult( $res );
-			
-			// get descriptions
-			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
-				'*',
-				array('subject_id =' . $id, 'attribute_title="Description"'));
-	
-			if ($dbr->numRows($res) > 0){
-				$row = $dbr->fetchObject( $res );
-				$description = htmlspecialchars($row->value_blob);
-			}
-		}
-		$dbr->freeResult( $res );
 		
-		if($results){
-			$wikiTitle = Title::newFromText($title, NS_HELP);
+		if(is_array($questions)){
+			$results = true;
+			$wikiTitle = Title::newFromText($questions[0], NS_HELP);
 	
 			if($description == wfMsg('smw_csh_newquestion')){
 				$html .= '<a href="' . $wikiTitle->getFullURL();
 				$html .= '?action=edit" class="new';
 				$html .= '" ';
-				$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'edit\')">' . $question . '?</a>';
+				$html .= 'title="' . $questions[2] . '" target="_new" onClick="return helplog(\'' . $questions[1] . '\', \'edit\')">' . $questions[1] . '?</a>';
 				$html .= '<br />';
 			}
 			else {
 				$html .= '<a href="' . $wikiTitle->getFullURL();
 				$html .= '" ';
-				$html .= 'title="' . $description . '" target="_new" onClick="return helplog(\'' . $question . '\', \'view\')">' . $question . '?</a>';
+				$html .= 'title="' . $questions[2] . '" target="_new" onClick="return helplog(\'' . $questions[1] . '\', \'view\')">' . $questions[1] . '?</a>';
 				$html .= '<br />';
 			}
 		}
@@ -273,6 +249,8 @@ abstract class SMWToolbarStorage {
 	 * TODO: Write documentation
 	 */
 	public abstract function  getHelppages($namespace, $action);
+	
+	public abstract function getQuestions($id);
 }
 
 class SMWToolbarStorageSQL extends SMWToolbarStorage {
@@ -288,6 +266,35 @@ class SMWToolbarStorageSQL extends SMWToolbarStorage {
 	    }
 	    $dbr->freeResult( $res );
 		return $helppages;
+	}
+	
+	public function getQuestions($id){
+		$dbr =& wfGetDB( DB_SLAVE );
+		$res = $dbr->select( $dbr->tableName('smw_attributes'),
+			'*',
+			array('subject_id =' . $id, 'attribute_title="Question"'));
+		if ($dbr->numRows($res) > 0){
+			$results = true;
+			$row = $dbr->fetchObject( $res );
+			$title = $row->subject_title;
+			$question = htmlspecialchars($row->value_xsd);
+			$dbr->freeResult( $res );
+			
+			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
+				'*',
+				array('subject_id =' . $id, 'attribute_title="Description"'));
+			
+			$description = '';
+			
+			if ($dbr->numRows($res) > 0){
+				$row = $dbr->fetchObject( $res );
+				$description = htmlspecialchars($row->value_blob);
+			}
+			$dbr->freeResult( $res );
+			return array($title, $question, $description);
+		}
+		$dbr->freeResult( $res );
+		return 0;
 	}
 }
 
@@ -315,6 +322,10 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
         }
         $db->freeResult( $res );
         return $helppages;
+    }
+    //TODO: write this function for SQLStore 2
+    public function getQuestions($id){
+    	return 0;
     }
 }
 
