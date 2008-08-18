@@ -203,7 +203,7 @@ class AnnotationLevelConsistency {
 		print "\n";
 		$properties = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY));
 		$totalWork = count($properties);
-		if ($this->no_feedback) $this->bot->addSubTask($totalWork);
+		if ($this->verbose) $this->bot->addSubTask($totalWork);
 		foreach($properties as $a) {
 			if ($this->verbose && $this->bot->isAborted()) break;
 			usleep($this->delay);

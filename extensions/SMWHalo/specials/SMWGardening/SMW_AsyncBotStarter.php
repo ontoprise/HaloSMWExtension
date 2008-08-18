@@ -26,7 +26,6 @@ if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
 	die( -1 );
 }
 
-define('MEDIAWIKI',true);
 
 # Process command line arguments
 # Parse arguments

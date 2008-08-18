@@ -25,7 +25,7 @@
  * Author: kai
  */
  
-if ($_SERVER['SERVER_NAME'] != NULL) {
+if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;
 }
