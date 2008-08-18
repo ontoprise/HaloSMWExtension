@@ -422,7 +422,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
 							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->maxCard->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$db->tableName('smw_specialprops').
-							 ' ON subject_title = property WHERE property_id = '.SMW_SP_HAS_TYPE. '  GROUP BY property ORDER BY property');
+							 ' ON subject_id = id WHERE property_id = '.SMW_SP_HAS_TYPE. '  GROUP BY property ORDER BY property');
 		$resSymCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
 							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
@@ -896,8 +896,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		foreach($ssp as $key => $value) {
 			$t = Title::newFromText($value, SMW_NS_PROPERTY);
+		    $article = new Article($t);
 			if (!$t->exists()) {
-				$article = new Article($t);
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT. TODO: introduce general mechanism
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Page; Type:Page]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
@@ -910,6 +910,11 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
 				DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+			} else {
+				// save article again. Necessary when storage implementation has switched.
+				$rev = Revision::newFromTitle($t);
+				$article->doEdit($rev->getRawText(), $rev->getRawComment(), EDIT_UPDATE | EDIT_FORCE_BOT);
+				DBHelper::reportProgress("   ... re-saved page ".$t->getNsText().":".$t->getText().".\n",$verbose);
 			}
 		}
 		
