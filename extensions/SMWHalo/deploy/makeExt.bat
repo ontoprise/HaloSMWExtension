@@ -14,6 +14,7 @@ REM Create directories
 mkdir %OUTPUT_DIR%
 mkdir %OUTPUT_DIR%\extensions
 mkdir %OUTPUT_DIR%\extensions\DynamicPageList
+mkdir %OUTPUT_DIR%\extensions\Glossary
 mkdir %OUTPUT_DIR%\extensions\FCKeditor
 mkdir %OUTPUT_DIR%\extensions\Lockdown
 mkdir %OUTPUT_DIR%\extensions\ParserFunctions
@@ -35,6 +36,7 @@ xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
 xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\Glossary %OUTPUT_DIR%\extensions\Glossary /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\FCKeditor %OUTPUT_DIR%\extensions\FCKeditor /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\Lockdown %OUTPUT_DIR%\extensions\Lockdown /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\ParserFunctions %OUTPUT_DIR%\extensions\ParserFunctions /S /EXCLUDE:excludeForExt.dat /Y
