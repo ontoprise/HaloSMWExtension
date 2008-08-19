@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '1.2-for-SMW-1.2');
+define('SMW_HALO_VERSION', '1.3-for-SMW-1.2.1');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -46,12 +46,14 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
 /**
  * Configures SMW Halo Extension for initialization.
  * Must be called *AFTER* SMW is intialized.
+ * 
+ * @param String $store SMWHaloStore (old) or SMWHaloStore2 (new). Uses old by default.
  */
-function enableSMWHalo() {
+function enableSMWHalo($store = 'SMWHaloStore') {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	$smwgDefaultStore = 'SMWHaloStore'; // the only store supported by Halo now
+	$smwgDefaultStore = $store; 
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
