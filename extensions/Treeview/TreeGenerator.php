@@ -6,7 +6,7 @@ $wgHooks['LanguageGetMagic'][] = 'wfTreeGeneratorLanguageGetMagic';
 define ('GENERATE_TREE_PF', 'generateTree');
 
 class TreeGenerator {
-    
+
 	/**
 	 * Register parser function for tree generation
 	 *
@@ -14,9 +14,9 @@ class TreeGenerator {
 	public function __construct() {
 		global $wgTreeView5Magic, $wgParser;
 		$wgParser->setFunctionHook( GENERATE_TREE_PF, array($this,'generateTree'));
-		
+
 	}
-	
+
 	/**
 	 * Entry point for parser function
 	 *
@@ -36,24 +36,25 @@ class TreeGenerator {
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
 		if (array_key_exists('category', $genTreeParameters)) {
-	        $genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
-	        $categoryName = Title::newFromText($genTreeParameters['category'], NS_CATEGORY);
-	    } else {
-	        $categoryName = NULL;
-	    }
+			$genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
+			$categoryName = Title::newFromText($genTreeParameters['category'], NS_CATEGORY);
+		} else {
+			$categoryName = NULL;
+		}
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
 		$result = "";
-		$tree = $this->getHierarchyByRelation($relationName, $categoryName, $start);
+		$tv_store = TreeviewStorage::getTreeviewStorage();
+		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		if ($maxDepth > 0) $redirectPage = Title::newFromText($genTreeParameters['redirectPage']);
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY) : NULL;
 		$startLevel = array_key_exists('level', $genTreeParameters) ? $genTreeParameters['level'] : 1;
-        $hchar = "";
-        for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
+		$hchar = "";
+		for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
 		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty, $hchar);
 		return $result;
 	}
-    
+
 	/**
 	 * Recursive tree generator function.
 	 *
@@ -84,16 +85,47 @@ class TreeGenerator {
 			$result .= $hchar."[[".$redirectPage->getPrefixedText()."|...]]\n";
 		}
 	}
+
+
+}
+
+abstract class TreeviewStorage {
     
+	private static $store;
 	/**
 	 * Returns hierrachy of Titles connected by given relation.
 	 *
-	 * @param Title $relation Connector relation 
+	 * @param Title $relation Connector relation
 	 * @param Title $category Category constraint (optional)
 	 * @param Title $start Article to start (optional)
 	 * @return Tree of TreeNode objects
 	 */
-	private function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
+	public abstract function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL);
+	
+    public static function getTreeviewStorage() {
+        global $smwgHaloIP;
+        if (self::$store == NULL) {
+            global $smwgDefaultStore;
+            switch ($smwgDefaultStore) {
+                case (SMW_STORE_TESTING):
+                    self::$store = null; // not implemented yet
+                    trigger_error('Testing store not implemented for HALO extension.');
+                    break;
+                case ('SMWHaloStore2'):
+                    self::$store = new TreeviewStorageSQL2();
+                    break;
+                case ('SMWHaloStore'): default:
+                    self::$store = new TreeviewStorageSQL();
+                    break;
+            }
+        }
+        return self::$store;
+    }
+}
+
+class TreeviewStorageSQL extends TreeviewStorage {
+
+	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 		$db =& wfGetDB( DB_MASTER );
 		$smw_relations = $db->tableName('smw_relations');
 		$page = $db->tableName('page');
@@ -127,7 +159,7 @@ class TreeGenerator {
 		}
 		return $tree;
 	}
-    
+
 	/**
 	 * Returns hierrachy of Titles connected by given relation.
 	 *
@@ -167,6 +199,95 @@ class TreeGenerator {
 	}
 }
 
+class TreeviewStorageSQL2 extends TreeviewStorageSQL {
+	
+	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_rels2 = $db->tableName('smw_rels2');
+        $smw_ids = $db->tableName('smw_ids');
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+		 
+		$tree = new TreeNode();
+		$treelevel = &$tree->children;
+
+		$categoryConstraint = "";
+		$categoryConstraintWhere = "";
+		if ($category != NULL) {
+			$categoryConstraint = " JOIN $page ON i3.smw_title = page_title AND i3.smw_namespace = page_namespace JOIN $categorylinks ON page_id = cl_from ";
+			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
+		}
+		if ($start == NULL) {
+			// query for root pages
+			$res = $db->query('SELECT i.smw_namespace AS ns, i.smw_title AS title '.
+			                 'FROM '.$smw_rels2.' r '.
+			                 'JOIN '.$smw_ids.' i ON r.o_id = i.smw_id '.
+			                 'JOIN '.$smw_ids.' i2 ON r.p_id = i2.smw_id '.
+			                 'JOIN '.$smw_ids.' i3 ON r.s_id = i3.smw_id '.$categoryConstraint.
+			                 'WHERE i2.smw_title='.$db->addQuotes($relation->getDBkey()).$categoryConstraintWhere.
+                             ' AND NOT EXISTS (SELECT s_id FROM '.$smw_rels2.' r2 JOIN '.$smw_ids.' i4 ON r2.p_id = i4.smw_id WHERE r.o_id=r2.s_id AND i4.smw_title = '.$db->addQuotes($relation->getDBkey()).') GROUP BY ns,title');
+			if($db->numRows( $res ) > 0) {
+				while($row = $db->fetchObject($res)) {
+					$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
+				}
+			}
+			$db->freeResult($res);
+		} else {
+			$treelevel[] = new TreeNode($start);
+		}
+		$visitedNodes = array();
+		foreach($treelevel as $n) {
+			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
+		}
+		return $tree;
+	}
+
+	/**
+	 * Returns hierrachy of Titles connected by given relation.
+	 *
+	 * @param Title $relation
+	 * @param Title $category
+	 * @param TreeNode $node Current node
+	 * @param Array of String $visitedNodes
+	 */
+	private function _getHierarchyByRelation(Title $relation, $category, & $node, & $visitedNodes) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$smw_ids = $db->tableName('smw_ids');
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		if (in_array($node->title->getDBkey().$node->title->getNamespace(), $visitedNodes)) {
+			return;
+		}
+		$categoryConstraint = "";
+		$categoryConstraintWhere = "";
+		if ($category != NULL) {
+			$categoryConstraint = " JOIN $page ON i3.smw_title = page_title AND i3.smw_namespace = page_namespace JOIN $categorylinks ON page_id = cl_from";
+			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
+		}
+		$visitedNodes[] = $node->title->getDBkey().$node->title->getNamespace();
+		$treelevel = &$node->children;
+		// query for root pages
+		$query = 'SELECT i3.smw_namespace AS ns, i3.smw_title AS title '.
+                             'FROM '.$smw_rels2.' r '.
+                             'JOIN '.$smw_ids.' i ON r.o_id = i.smw_id '.
+                             'JOIN '.$smw_ids.' i2 ON r.p_id = i2.smw_id '.
+                             'JOIN '.$smw_ids.' i3 ON r.s_id = i3.smw_id '.$categoryConstraint.
+                             ' WHERE i2.smw_title='.$db->addQuotes($relation->getDBkey()).' AND i.smw_title = '.$db->addQuotes($node->title->getDBkey()).' AND i.smw_namespace = '.$node->title->getNamespace().$categoryConstraintWhere;
+		$res = $db->query($query);
+		
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
+			}
+		}
+		$db->freeResult($res);
+		foreach($treelevel as $n) {
+			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
+		}
+		array_pop($visitedNodes);
+	}
+}
 /**
  * Helper class for representing a Tree of Titles.
  *
@@ -182,7 +303,7 @@ class TreeNode {
 }
 
 function wfTreeGeneratorLanguageGetMagic(&$magicWords,$langCode = 0) {
-    $magicWords[GENERATE_TREE_PF] = array( 0, GENERATE_TREE_PF );
-    return true;
+	$magicWords[GENERATE_TREE_PF] = array( 0, GENERATE_TREE_PF );
+	return true;
 }
 ?>
