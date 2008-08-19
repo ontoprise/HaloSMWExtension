@@ -122,10 +122,10 @@ class GraphCycleDetector {
 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($cycles as $c) {
 			
- 			$titles = $this->cc_store->translateToTitle($c);
+ 			$titles = $this->cc_store->translateToTitle($c->cycle);
  			$cycle = "";
  			foreach($titles as $t) {
- 				$cycle .= $t->getNsText().':'.$t->getText().';';
+ 				$cycle .= $t->getPrefixedText().';';
  			}
  			if (count($titles) > 0) {
  				// attach Gardening issue for this cycle to first title

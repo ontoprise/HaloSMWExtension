@@ -914,7 +914,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         $db->freeResult($res);
         
         $titles = array();
-        foreach($this->cycle as $id) {
+        foreach($cycle as $id) {
             $titles[] = $result[$id];
         }
         return $titles;
@@ -928,7 +928,16 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         $result = "";
         $db =& wfGetDB( DB_SLAVE );
         $smw_subs2 = $db->tableName('smw_subs2');
-         $res = $db->query('SELECT s_id AS sub, o_id AS sup FROM '.$smw_subs2.' ORDER BY sub');
+        $smw_ids = $db->tableName('smw_ids');
+        $page = $db->tableName('page');
+         $res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup '.
+         'FROM '.$smw_subs2.' '.
+         'JOIN '.$smw_ids.' subprop ON subprop.smw_id = s_id '.
+         'JOIN '.$page.' p1 ON p1.page_title = subprop.smw_title AND p1.page_namespace = subprop.smw_namespace '.
+         'JOIN '.$smw_ids.' superprop ON superprop.smw_id = o_id '.
+         'JOIN '.$page.' p2 ON p2.page_title = superprop.smw_title AND p2.page_namespace = superprop.smw_namespace '.
+         'ORDER BY sub');
+         
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -1141,36 +1150,6 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         return $result;
     }
     
-     public function translateToTitle(& $cycle) {
-        
-        $db =& wfGetDB( DB_SLAVE );
-        $page = $db->tableName('page');
-        $smw_ids = $db->tableName('smw_ids');
-        
-        $sql = "";
-        for ($i = 0, $n = count($cycle); $i < $n; $i++) {
-            if ($i < $n-1) { 
-                $sql .= 'smw_id ='.$cycle[$i].' OR ';
-            } else {
-                $sql .= 'smw_id ='.$cycle[$i];
-            }
-        }
-        
-        $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' JOIN '.$smw_ids.' ON page_title = smw_title AND page_namespace = smw_namespace WHERE '.$sql);
-        
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                $result[$row->page_id] = Title::newFromText($row->page_title, $row->page_namespace);
-            }
-        }
-        $db->freeResult($res);
-        
-        $titles = array();
-        foreach($this->cycle as $id) {
-            $titles[] = $result[$id];
-        }
-        return $titles;
-    }
+     
  }
 ?>

@@ -124,13 +124,13 @@
 		$value = $sortedGraph[$index]->from;
 		
 		$indexUp = $index+1;
-		while($sortedGraph[$indexUp]->from == $value) {
+		while($indexUp < count($sortedGraph) && $sortedGraph[$indexUp]->from == $value) {
 			$result[] = $sortedGraph[$indexUp];
 			$indexUp++;
 		}
 		
 		$indexDown = $index-1;
-		while($sortedGraph[$indexDown]->from == $value) {
+		while($indexDown >= 0 && $sortedGraph[$indexDown]->from == $value) {
 			$result[] = $sortedGraph[$indexDown];
 			$indexDown--;
 		}
@@ -144,13 +144,13 @@
 		$value = $sortedGraph[$index]->from;
 		
 		$indexUp = $index+1;
-		while($sortedGraph[$indexUp]->from == $value) {
+		while($indexUp < count($sortedGraph) && $sortedGraph[$indexUp]->from == $value) {
 			
 			$indexUp++;
 		}
 		
 		$indexDown = $index-1;
-		while($sortedGraph[$indexDown]->from == $value) {
+		while($indexDown >= 0 && $sortedGraph[$indexDown]->from == $value) {
 			
 			$indexDown--;
 		}
