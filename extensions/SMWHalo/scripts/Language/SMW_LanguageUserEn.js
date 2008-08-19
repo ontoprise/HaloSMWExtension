@@ -17,7 +17,7 @@
 
 var wgUserLanguageStrings = {
 	'MUST_NOT_BE_EMPTY'       : '(e)This input field must not be empty.',
-	'VALUE_IMPROVES_QUALITY'  : '(i)A value in this input field improves the qualitiy of the knowledge base.',
+	'VALUE_IMPROVES_QUALITY'  : '(i)A value in this input field improves the quality of the knowledge base.',
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)The selection must not be empty!',
 	'INVALID_FORMAT_OF_VALUE' : '(e)The value has an invalid format.',
 	'INVALID_VALUES'          : 'Invalid values.',
