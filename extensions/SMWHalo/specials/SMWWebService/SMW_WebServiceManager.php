@@ -102,9 +102,11 @@ class WebServiceManager {
 		if (!isset($smwgWWSNamespaceIndex)) {
 			$smwgWWSNamespaceIndex = $baseIndex;
 		}
-
-		define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
-		define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
+		
+		if (!defined('SMW_NS_WEB_SERVICE')) { 
+			define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
+			define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
+		}
 	}
 
 	/**
