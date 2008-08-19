@@ -68,6 +68,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
         $offset = 0;
         $this->setNumberOfTasks(1);
         $total_links_num = $this->getNumberOfExternalLinks();
+        if ($total_links_num == 0) return;
         $this->addSubTask($total_links_num);
         print "\n";
         GardeningBot::printProgress(0);
@@ -82,6 +83,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
                 
                 // request header and add issue if necessary.
                 $http_status = $this->getHTTPStatus($url);
+                
                 if ($http_status != "200") { // 200 == OK
                     switch($http_status) {
                         case "404" : $gi->addGardeningIssueAboutValue($this->id, SMW_GARDISSUE_RESOURCE_NOT_EXISTS, $title, $url); break;
@@ -151,7 +153,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
         //echo "Loading header: ".$url."\n";
         $head = @get_headers($url);
         
-        if ($head == NULL) return -1;
+        if ($head == NULL || $head == false) return -1;
         
         $matches = array();
         preg_match('/HTTP\/1\.[01]\s*(\d+)/', $head[0], $matches);
