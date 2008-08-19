@@ -12,7 +12,7 @@ ContentSlider.prototype = {
     activateResizing: function() {
     //Check if semtoolbar is available and action is not annotate
    
-    if(!$('contentslider')) return;
+    if(!$('contentslider') || wgAction == "annotate") return;
     
     //Load image to the slider div
     $('contentslider').innerHTML = '<img id="contentSliderHandle" src="' +
