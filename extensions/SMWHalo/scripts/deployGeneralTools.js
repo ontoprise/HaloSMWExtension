@@ -151,21 +151,870 @@ Lesser General Public License for more details.
 */
 // generalTools.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-function BrowserDetectLite(){var ua=navigator.userAgent.toLowerCase();this.isGecko=(ua.indexOf('gecko')!= -1)||(ua.indexOf("safari")!= -1);this.isMozilla=(this.isGecko&&ua.indexOf("gecko/")+14==ua.length);this.isNS=((this.isGecko)?(ua.indexOf('netscape')!= -1):((ua.indexOf('mozilla')!= -1)&&(ua.indexOf('spoofer')== -1)&&(ua.indexOf('compatible')== -1)&&(ua.indexOf('opera')== -1)&&(ua.indexOf('webtv')== -1)&&(ua.indexOf('hotjava')== -1)));this.isIE=((ua.indexOf("msie")!= -1)&&(ua.indexOf("opera")== -1)&&(ua.indexOf("webtv")== -1));this.isOpera=(ua.indexOf("opera")!= -1);this.isSafari=(ua.indexOf("safari")!= -1);this.isKonqueror=(ua.indexOf("konqueror")!= -1);this.isIcab=(ua.indexOf("icab")!= -1);this.isAol=(ua.indexOf("aol")!= -1);this.isWebtv=(ua.indexOf("webtv")!= -1);this.isGeckoOrOpera=this.isGecko||this.isOpera;this.isGeckoOrSafari=this.isGecko||this.isSafari;};var OB_bd=new BrowserDetectLite();GeneralBrowserTools=new Object();GeneralBrowserTools.getCookie=function(name){var value=null;if(document.cookie!=""){var kk=document.cookie.indexOf(name+"=");if(kk>=0){kk=kk+name.length+1;var ll=document.cookie.indexOf(";",kk);if(ll<0)ll=document.cookie.length;value=document.cookie.substring(kk,ll);value=unescape(value);}}return value;};GeneralBrowserTools.setCookieObject=function(key,object){var json=Object.toJSON(object);document.cookie=key+"="+json;};GeneralBrowserTools.getCookieObject=function(key){var json=GeneralBrowserTools.getCookie(key);return json!=null?json.evalJSON(false):null;};GeneralBrowserTools.selectAllCheckBoxes=function(formid){var form=$(formid);var checkboxes=form.getInputs('checkbox');checkboxes.each(function(cb){cb.checked= !cb.checked});};GeneralBrowserTools.getSelectedText=function(textArea){if(OB_bd.isGecko){var selStart=textArea.selectionStart;var selEnd=textArea.selectionEnd;var text=textArea.value.substring(selStart,selEnd);}else if(OB_bd.isIE){var text=document.selection.createRange().text;}return text;};GeneralBrowserTools.isTextSelected=function(inputBox){if(OB_bd.isGecko){if(inputBox.selectionStart!=inputBox.selectionEnd){return true;}}else if(OB_bd.isIE){if(document.selection.createRange().text.length>0){return true;}}return false;};GeneralBrowserTools.purge=function(d){var a=d.attributes,i,l,n;if(a){l=a.length;for(i=0;i<l;i+=1){n=a[i].name;if(typeof d[n]==='function'){d[n]=null;}}}a=d.childNodes;if(a){l=a.length;for(i=0;i<l;i+=1){GeneralBrowserTools.purge(d.childNodes[i]);}}};GeneralBrowserTools.getURLParameter=function(paramName){var queryParams=location.href.toQueryParams();return queryParams[paramName];};GeneralBrowserTools.navigateToPage=function(ns,name,editmode){var articlePath=wgArticlePath.replace(/\$1/,ns!=null?ns+":"+name:name);window.open(wgServer+articlePath+(editmode?"?action=edit":""),"");};GeneralBrowserTools.toggleHighlighting=function(oldNode,newNode){if(oldNode){Element.removeClassName(oldNode,"selectedItem");}Element.addClassName(newNode,"selectedItem");return newNode;};GeneralBrowserTools.repasteMarkup=function(attribute){if(Prototype.BrowserFeatures.XPath){var nodesWithID=document.evaluate("//*[@"+attribute+"=\"true\"]",document,null,XPathResult.ANY_TYPE,null);var node=nodesWithID.iterateNext();var nodes=new Array();var i=0;while(node!=null){nodes[i]=node;node=nodesWithID.iterateNext();i++;}nodes.each(function(n){var textContent=n.textContent;n.innerHTML=textContent;});}};GeneralBrowserTools.nextDIV=function(node){var nextDIV=node.nextSibling;while(nextDIV&&nextDIV.nodeName!="DIV"){nextDIV=nextDIV.nextSibling;}return nextDIV};GeneralXMLTools=new Object();GeneralXMLTools.createTreeViewDocument=function(){if(OB_bd.isGeckoOrOpera){var parser=new DOMParser();var xmlDoc=parser.parseFromString("<result/>","text/xml");}else if(OB_bd.isIE){var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");xmlDoc.async="false";xmlDoc.loadXML("<result/>");}return xmlDoc;};GeneralXMLTools.createDocumentFromString=function(xmlText){if(OB_bd.isGeckoOrOpera){var parser=new DOMParser();var xmlDoc=parser.parseFromString(xmlText,"text/xml");}else if(OB_bd.isIE){var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");xmlDoc.async="false";xmlDoc.loadXML(xmlText);}return xmlDoc;};GeneralXMLTools.hasChildNodesWithTag=function(node,tagname){if(node==null)return false;return node.getElementsByTagName(tagname).length>0;};GeneralXMLTools.addBranch=function(xmlDoc,branch){var currentNode=xmlDoc;for(var i=branch.length-3;i>=0;i--){currentNode=GeneralXMLTools.addNodeIfNecessary(branch[i],currentNode);}if(!currentNode.hasChildNodes()){currentNode.removeAttribute("expanded");}};GeneralXMLTools.addNodeIfNecessary=function(nodeToAdd,parentNode){var a1=nodeToAdd.getAttribute("title");for(var i=0;i<parentNode.childNodes.length;i++){if(parentNode.childNodes[i].getAttribute("title")==a1){return parentNode.childNodes[i];}}var appendedChild=GeneralXMLTools.importNode(parentNode,nodeToAdd,false);if(nodeToAdd.firstChild!=null&&nodeToAdd.firstChild.tagName=='gissues'){GeneralXMLTools.importNode(appendedChild,nodeToAdd.firstChild,true);}return appendedChild;};GeneralXMLTools.importNode=function(parentNode,child,deep){var appendedChild;if(OB_bd.isIE||OB_bd.isSafari){appendedChild=parentNode.appendChild(child.cloneNode(deep));}else if(OB_bd.isGecko){appendedChild=parentNode.appendChild(document.importNode(child,deep));}return appendedChild;};GeneralXMLTools.getNodeById=function(node,id){if(Prototype.BrowserFeatures.XPath){var nodeWithID=document.evaluate("//*[@id=\""+id+"\"]",node,null,XPathResult.ANY_TYPE,null);return nodeWithID.iterateNext();}else if(OB_bd.isIE){return node.selectSingleNode("//*[@id=\""+id+"\"]");}else{var children=node.childNodes;var result;if(children.length==0){return null;}for(var i=0,n=children.length;i<n;i++){if(children[i].nodeType==4)continue;if(children[i].getAttribute("id")==id){return children[i];}result=GeneralXMLTools.getNodeById(children[i],id);if(result!=null){return result;}}return null;}};GeneralXMLTools.getNodeByText=function(node,text){if(Prototype.BrowserFeatures.XPath){var results=new Array();var nodesWithID=document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]",node,null,XPathResult.ANY_TYPE,null);var nextnode=nodesWithID.iterateNext();while(nextnode!=null){results.push(nextnode);nextnode=nodesWithID.iterateNext();}return results;}else if(OB_bd.isIE){var nodeList=node.selectNodes("/descendant::text()[contains(string(self::node()), '"+text+"')]");nodeList.moveNext();nextnode=nodeList.current();while(nextnode!=null){results.push(nodeList.current());nodeList.moveNext();}return result;}else if(OB_bd.isSafari){var nodes=new Array();function iterate(_node){var children=_node.childNodes;var result;if(children.length==0){return;}for(var i=0,n=children.length;i<n;i++){if(children[i].nodeType==3){if(children[i].nodeValue.indexOf(text)!= -1){nodes.push(children[i]);}}else{iterate(children[i]);}}};iterate(node,text);return nodes;}};GeneralXMLTools.importSubtree=function(nodeToImport,subTree){for(var i=0;i<subTree.childNodes.length;i++){GeneralXMLTools.importNode(nodeToImport,subTree.childNodes[i],true);}};GeneralXMLTools.removeAllChildNodes=function(node){if(node.firstChild){child=node.firstChild;do{nextSibling=child.nextSibling;GeneralBrowserTools.purge(child);node.removeChild(child);child=nextSibling;}while(child!=null);}};GeneralXMLTools.getAllParents=function(node){var parentNodes=new Array();var count=0;do{parentNodes[count]=node;node=node.parentNode;count++;}while(node!=null);return parentNodes;};GeneralTools=new Object();GeneralTools.getEvent=function(event){return event?event:window.event;};GeneralTools.getImgDirectory=function(source){return source.substring(0,source.lastIndexOf('/')+1);};GeneralTools.splitSearchTerm=function(searchTerm){var filterParts=searchTerm.split(" ");return filterParts.without('');};GeneralTools.matchArrayOfRegExp=function(term,regexArray){var doesMatch=true;for(var j=0,m=regexArray.length;j<m;j++){if(regexArray[j].exec(term)==null){doesMatch=false;break;}}return doesMatch;};var OBPendingIndicator=Class.create();OBPendingIndicator.prototype={initialize:function(container){this.container=container;this.pendingIndicator=document.createElement("img");Element.addClassName(this.pendingIndicator,"obpendingElement");this.pendingIndicator.setAttribute("src",wgServer+wgScriptPath+"/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif");this.contentElement=null;},show:function(container,alignment){if($("content")==null){return;}var alignOffset=0;if(alignment!=undefined){switch(alignment){case "right":{if(!container){alignOffset=$(this.container).offsetWidth-16;}else{alignOffset=$(container).offsetWidth-16;}break;}case "left":break;}}if(this.contentElement==null){this.contentElement=$("content");this.contentElement.appendChild(this.pendingIndicator);}if(!container){this.pendingIndicator.style.left=(alignOffset+Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";this.pendingIndicator.style.top=(Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1]+this.container.scrollTop)+"px";}else{this.pendingIndicator.style.left=(alignOffset+Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";this.pendingIndicator.style.top=(Position.cumulativeOffset($(container))[1]-Position.realOffset($(container))[1]+$(container).scrollTop)+"px";}this.pendingIndicator.style.display="block";this.pendingIndicator.style.visibility="visible";},hide:function(){Element.hide(this.pendingIndicator);}}
+/*  Copyright 2007, ontoprise GmbH
+*   Author: Kai Kühn
+*   This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+ * General JS tools
+ */
+
+function BrowserDetectLite() {
+
+	var ua = navigator.userAgent.toLowerCase();
+
+	// browser name
+	this.isGecko     = (ua.indexOf('gecko') != -1) || (ua.indexOf("safari") != -1); // include Safari in isGecko
+	this.isMozilla   = (this.isGecko && ua.indexOf("gecko/") + 14 == ua.length);
+	this.isNS        = ( (this.isGecko) ? (ua.indexOf('netscape') != -1) : ( (ua.indexOf('mozilla') != -1) && (ua.indexOf('spoofer') == -1) && (ua.indexOf('compatible') == -1) && (ua.indexOf('opera') == -1) && (ua.indexOf('webtv') == -1) && (ua.indexOf('hotjava') == -1) ) );
+	this.isIE        = ( (ua.indexOf("msie") != -1) && (ua.indexOf("opera") == -1) && (ua.indexOf("webtv") == -1) );
+	this.isOpera     = (ua.indexOf("opera") != -1);
+	this.isSafari    = (ua.indexOf("safari") != -1);
+	this.isKonqueror = (ua.indexOf("konqueror") != -1);
+	this.isIcab      = (ua.indexOf("icab") != -1);
+	this.isAol       = (ua.indexOf("aol") != -1);
+	this.isWebtv     = (ua.indexOf("webtv") != -1);
+	this.isGeckoOrOpera = this.isGecko || this.isOpera;
+	this.isGeckoOrSafari = this.isGecko || this.isSafari;
+}
+
+// one global instance of Browser detector 
+var OB_bd = new BrowserDetectLite();
+
+GeneralBrowserTools = new Object();
+
+/**
+ * Returns the cookie value for the given key
+ */
+GeneralBrowserTools.getCookie = function (name) {
+    var value=null;
+    if(document.cookie != "") {
+      var kk=document.cookie.indexOf(name+"=");
+      if(kk >= 0) {
+        kk=kk+name.length+1;
+        var ll=document.cookie.indexOf(";", kk);
+        if(ll < 0)ll=document.cookie.length;
+        value=document.cookie.substring(kk, ll);
+        value=unescape(value); 
+      }
+    }
+    return value;
+  }
+  
+ GeneralBrowserTools.setCookieObject = function(key, object) {
+ 	var json = Object.toJSON(object);
+ 	document.cookie = key+"="+json; 
+ }
+ 
+ GeneralBrowserTools.getCookieObject = function(key) {
+ 	var json = GeneralBrowserTools.getCookie(key);
+ 	return json != null ? json.evalJSON(false) : null;
+ }
+  
+GeneralBrowserTools.selectAllCheckBoxes = function(formid) {
+	var form = $(formid)
+	var checkboxes = form.getInputs('checkbox');
+	checkboxes.each(function(cb) { cb.checked = !cb.checked});
+}
+
+GeneralBrowserTools.getSelectedText = function (textArea) {
+ if (OB_bd.isGecko) {
+	var selStart = textArea.selectionStart;
+	var selEnd = textArea.selectionEnd;
+    var text = textArea.value.substring(selStart, selEnd);
+ } else if (OB_bd.isIE) {
+	var text = document.selection.createRange().text;
+ }
+ return text;
+}
+
+/*
+ * checks if some text is selected.
+ */
+GeneralBrowserTools.isTextSelected = function (inputBox) {
+	if (OB_bd.isGecko) {
+		if (inputBox.selectionStart != inputBox.selectionEnd) {
+			return true;
+		}
+	} else if (OB_bd.isIE) {
+		if (document.selection.createRange().text.length > 0) {
+			return true;
+		}
+	}
+	return false;
+}
+/**
+ * Purge method for removing DOM elements in IE properly 
+ * and *without* memory leak. Harmless to Mozilla/FF/Opera
+ */
+GeneralBrowserTools.purge = function (d) {
+    var a = d.attributes, i, l, n;
+    if (a) {
+        l = a.length;
+        for (i = 0; i < l; i += 1) {
+            n = a[i].name;
+            if (typeof d[n] === 'function') {
+                d[n] = null;
+            }
+        }
+    }
+    a = d.childNodes;
+    if (a) {
+        l = a.length;
+        for (i = 0; i < l; i += 1) {
+            GeneralBrowserTools.purge(d.childNodes[i]);
+        }
+    }
+}
+
+GeneralBrowserTools.getURLParameter = function (paramName) {
+  var queryParams = location.href.toQueryParams();
+  return queryParams[paramName];
+}
+
+/*
+ * ns: namespace, e.g. Category. May be null.
+ * name: name of article
+ */
+GeneralBrowserTools.navigateToPage = function (ns, name, editmode) {
+	var articlePath = wgArticlePath.replace(/\$1/, ns != null ? ns+":"+name : name);
+	window.open(wgServer + articlePath + (editmode ? "?action=edit" : ""), "");
+}
+
+GeneralBrowserTools.toggleHighlighting = function  (oldNode, newNode) {
+	if (oldNode) {
+		Element.removeClassName(oldNode,"selectedItem");
+	}
+	Element.addClassName(newNode,"selectedItem");
+	return newNode;
+	
+}
+
+GeneralBrowserTools.repasteMarkup = function(attribute) {
+	if (Prototype.BrowserFeatures.XPath) {
+		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
+		// Browser which don't support XPath do nothing here
+		var nodesWithID = document.evaluate("//*[@"+attribute+"=\"true\"]", document, null, XPathResult.ANY_TYPE,null); 
+		var node = nodesWithID.iterateNext(); 
+		var nodes = new Array();
+		var i = 0;
+		while (node != null) {
+			nodes[i] = node;
+			node = nodesWithID.iterateNext(); 
+			i++;
+		}
+		nodes.each(function(n) {
+			var textContent = n.textContent;
+			n.innerHTML = textContent; 
+		});
+	}
+}
+
+GeneralBrowserTools.nextDIV = function(node) {
+	var nextDIV = node.nextSibling;
+		
+ 	// find the next DIV
+	while(nextDIV && nextDIV.nodeName != "DIV") {
+		nextDIV = nextDIV.nextSibling;
+	}
+	return nextDIV
+}
+
+// ------------------------------------------------------
+// General Tools is a Utility class.
+GeneralXMLTools = new Object();
+
+
+/**
+ * Creates an XML document with a treeview node as root node.
+ */
+GeneralXMLTools.createTreeViewDocument = function() {
+	 // create empty treeview
+   if (OB_bd.isGeckoOrOpera) {
+   	 var parser=new DOMParser();
+     var xmlDoc=parser.parseFromString("<result/>","text/xml");
+   } else if (OB_bd.isIE) {
+   	 var xmlDoc = new ActiveXObject("Microsoft.XMLDOM") 
+     xmlDoc.async="false"; 
+     xmlDoc.loadXML("<result/>");   
+   }
+   return xmlDoc;
+}
+
+/**
+ * Creates an XML document from string
+ */
+GeneralXMLTools.createDocumentFromString = function (xmlText) {
+	 // create empty treeview
+   if (OB_bd.isGeckoOrOpera) {
+   	 var parser=new DOMParser();
+     var xmlDoc=parser.parseFromString(xmlText,"text/xml");
+   } else if (OB_bd.isIE) {
+   	 var xmlDoc = new ActiveXObject("Microsoft.XMLDOM") 
+     xmlDoc.async="false"; 
+     xmlDoc.loadXML(xmlText);   
+   }
+   return xmlDoc;
+}
+
+/**
+ * Returns true if node has child nodes with tagname
+ */
+GeneralXMLTools.hasChildNodesWithTag = function(node, tagname) {
+	if (node == null) return false;
+	return node.getElementsByTagName(tagname).length > 0;
+}
+
+/*
+ * Adds a branch to the current document. Ignoring document node and root node.
+ * Removes the expanded attribute for leaf nodes.
+ * branch: array of nodes
+ * xmlDoc: document to add branch to
+ */
+GeneralXMLTools.addBranch = function (xmlDoc, branch) {
+	var currentNode = xmlDoc;
+	// ignore document and root node
+	for (var i = branch.length-3; i >= 0; i-- ) {
+		currentNode = GeneralXMLTools.addNodeIfNecessary(branch[i], currentNode);
+	}
+	if (!currentNode.hasChildNodes()) {
+		currentNode.removeAttribute("expanded");
+	}
+}
+
+/*
+ * Add the node if a child with same title does not exist.
+ * nodeToAdd: node to add
+ * parentNode: node to add it to
+ */
+GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
+	var a1 = nodeToAdd.getAttribute("title");
+	for (var i = 0; i < parentNode.childNodes.length; i++) {
+		if (parentNode.childNodes[i].getAttribute("title") == a1) {
+			return parentNode.childNodes[i];
+		}
+	}
+	
+	var appendedChild = GeneralXMLTools.importNode(parentNode, nodeToAdd, false);
+	
+	/// XXX: hack to include gardening issues. They must be firstchild of treeelement
+	if (nodeToAdd.firstChild != null && nodeToAdd.firstChild.tagName == 'gissues') {
+		GeneralXMLTools.importNode(appendedChild, nodeToAdd.firstChild, true);
+		
+	}
+	
+	return appendedChild;
+}
+
+/*
+ * Import a node
+ */
+GeneralXMLTools.importNode = function(parentNode, child, deep) {
+	var appendedChild;
+	if (OB_bd.isIE || OB_bd.isSafari) {
+        appendedChild = parentNode.appendChild(child.cloneNode(deep));
+
+    } else if (OB_bd.isGecko) {
+		appendedChild = parentNode.appendChild(document.importNode(child, deep));
+		
+	} 
+	return appendedChild;
+}
+
+/* 
+ * Search a node in the xml caching
+ * node: root where search begins
+ * id: id
+ */
+GeneralXMLTools.getNodeById = function (node, id) {
+	if (Prototype.BrowserFeatures.XPath) {
+		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
+		var nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null); 
+		return nodeWithID.iterateNext(); // there *must* be only one
+	} else if (OB_bd.isIE) {
+		// IE supports XPath in a proprietary way
+		return node.selectSingleNode("//*[@id=\""+id+"\"]");
+	} else {
+	// otherwise do a depth first search:
+	var children = node.childNodes;
+	var result;
+	if (children.length == 0) { return null; }
+	
+	for (var i=0, n = children.length; i < n;i++) {
+		
+		if (children[i].nodeType == 4) continue; // ignore CDATA sections
+					
+			if (children[i].getAttribute("id") == id) {
+				return children[i];
+			}
+		
+    	result = GeneralXMLTools.getNodeById(children[i], id);
+    	if (result != null) {
+    	
+    		return result;
+    	}
+	}
+	
+	return null;
+	}
+}
+
+
+/**
+ * Returns textnodes below node which contains the given text.
+ * Does not work with IE at the moment!
+ * 
+ * @param node
+ * @param text
+ * 
+ * @return array of textnodes
+ */
+GeneralXMLTools.getNodeByText = function(node, text) {
+	if (Prototype.BrowserFeatures.XPath) {
+		var results = new Array();
+		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
+		var nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null); 
+		var nextnode = nodesWithID.iterateNext();
+		while (nextnode != null) {
+			results.push(nextnode);
+			nextnode = nodesWithID.iterateNext();
+		} 
+		return results; 
+	} else if (OB_bd.isIE) {
+		// this should work, but does not for some reason (IE does not support selectNodes although it should)
+		var nodeList = node.selectNodes("/descendant::text()[contains(string(self::node()), '"+text+"')]");
+		nodeList.moveNext();
+		nextnode = nodeList.current();
+		while (nextnode != null) {
+			results.push(nodeList.current());
+			nodeList.moveNext();
+		} 
+		return result;
+	} else if (OB_bd.isSafari) {
+		// should be relative slow. Safari does not support XPath
+		var nodes = new Array();
+    
+	    function iterate(_node) {
+	        // do a depth first search
+	        var children = _node.childNodes;
+	        var result;
+	        if (children.length == 0) { return; }
+	        for (var i=0, n = children.length; i < n;i++) {
+	            if (children[i].nodeType == 3) { // textnode
+	                
+	                if (children[i].nodeValue.indexOf(text) != -1) {
+	                    nodes.push(children[i]);
+	                }
+	            } else {
+	                iterate(children[i]);
+	            }
+	           
+	        }
+	        
+	    }
+	    
+	    iterate(node, text);
+	    return nodes;
+	}
+}
+
+/*
+ * Import a subtree
+ * nodeToImport: node to which the subtree is appended.
+ * subTree: node which children are imported.
+ */ 
+GeneralXMLTools.importSubtree = function (nodeToImport, subTree) {
+	for (var i = 0; i < subTree.childNodes.length; i++) {
+			GeneralXMLTools.importNode(nodeToImport, subTree.childNodes[i], true);
+	}
+}
+
+/*
+ * Remove all children of a node.
+ */
+GeneralXMLTools.removeAllChildNodes = function (node) {
+	if (node.firstChild) {
+		child = node.firstChild;
+		do {
+			nextSibling = child.nextSibling;
+			GeneralBrowserTools.purge(child); // important for IE. Prevents memory leaks.
+			node.removeChild(child);
+			child = nextSibling;
+		} while (child!=null);
+	}
+}
+
+
+/*
+ * Get all parents of a node
+ */
+GeneralXMLTools.getAllParents = function (node) {
+	var parentNodes = new Array();
+	var count = 0;
+	do {
+		parentNodes[count] = node;
+		node = node.parentNode;
+		count++;
+	} while (node != null);
+	return parentNodes;
+}
+
+
+// ------ misc tools --------------------------------------------
+
+GeneralTools = new Object();
+
+GeneralTools.getEvent = function (event) {
+	return event ? event : window.event;
+}
+
+GeneralTools.getImgDirectory = function (source) {
+    return source.substring(0, source.lastIndexOf('/') + 1);
+}
+
+
+GeneralTools.splitSearchTerm = function (searchTerm) {
+   	var filterParts = searchTerm.split(" ");
+   	return filterParts.without('');
+}
+
+GeneralTools.matchArrayOfRegExp = function (term, regexArray) {
+	var doesMatch = true;
+    for(var j = 0, m = regexArray.length; j < m; j++) {
+    	if (regexArray[j].exec(term) == null) {
+    		doesMatch = false;
+    		break;
+    	}
+    }
+    return doesMatch;
+}
+  
+
+
+
+
+var OBPendingIndicator = Class.create();
+OBPendingIndicator.prototype = {
+	initialize: function(container) {
+		this.container = container;
+		this.pendingIndicator = document.createElement("img");
+		Element.addClassName(this.pendingIndicator, "obpendingElement");
+		this.pendingIndicator.setAttribute("src", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif");
+		//this.pendingIndicator.setAttribute("id", "pendingAjaxIndicator_OB");
+		//this.pendingIndicator.style.left = (Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
+		//this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1])+"px";
+		//this.hide();
+		//Indicator will not be added to the page on creation anymore but on fist time calling show
+		//this is preventing errors during add if contentelement is not yet available  
+		this.contentElement = null;
+	},
+	
+	/**
+	 * Shows pending indicator relative to given container or relative to initial container
+	 * if container is not specified.
+	 */
+	show: function(container, alignment) {
+		//check if the content element is there
+		if($("content") == null){
+			return;
+		}
+		
+		var alignOffset = 0;
+		if (alignment != undefined) {
+			switch(alignment) {
+				case "right": { 
+					if (!container) { 
+						alignOffset = $(this.container).offsetWidth - 16;
+					} else {
+						alignOffset = $(container).offsetWidth - 16;
+					}
+					
+					break;
+				}
+				case "left": break;
+			}
+		}
+			
+		//if not already done, append the indicator to the content element so it can become visible
+		if(this.contentElement == null) {
+				this.contentElement = $("content");
+				this.contentElement.appendChild(this.pendingIndicator);
+		}
+		if (!container) {
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
+			this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1]+this.container.scrollTop)+"px";
+		} else {
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";
+			this.pendingIndicator.style.top = (Position.cumulativeOffset($(container))[1]-Position.realOffset($(container))[1]+$(container).scrollTop)+"px";
+		}
+		// hmm, why does Element.show(...) not work here?
+		this.pendingIndicator.style.display="block";
+		this.pendingIndicator.style.visibility="visible";
+
+	},
+	
+	hide: function() {
+		Element.hide(this.pendingIndicator);
+	}
+}
 
 // breadcrump.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var Breadcrump=Class.create();Breadcrump.prototype={initialize:function(lengthOfBreadcrump){this.lengthOfBreadcrump=lengthOfBreadcrump;},update:function(){var breadcrump=GeneralBrowserTools.getCookie("breadcrump");var breadcrumpArray;if(breadcrump==null){breadcrump=wgTitle;breadcrumpArray=[breadcrump];}else{breadcrumpArray=breadcrump.split(",");if(breadcrumpArray[breadcrumpArray.length-1]!=wgPageName){breadcrumpArray.push(wgPageName);if(breadcrumpArray.length>this.lengthOfBreadcrump){breadcrumpArray.shift();}}breadcrump="";for(var i=0;i<breadcrumpArray.length-1;i++){breadcrump+=breadcrumpArray[i]+",";}breadcrump+=breadcrumpArray[breadcrumpArray.length-1];}document.cookie="breadcrump="+breadcrump+"; path="+wgScript;this.pasteInHTML(breadcrumpArray);},pasteInHTML:function(breadcrumpArray){var html="";breadcrumpArray.each(function(b){var title=b.split(":");var show=title.length==2?title[1]:title[0];show=show.replace("_"," ");html+='<li><a href="'+wgServer+wgScript+'/'+b+'">'+show+' &gt; </a>';});var bc_div=$('breadcrump');if(bc_div!=null)bc_div.innerHTML="<ul>"+html+"</ul>";}};var smwhg_breadcrump=new Breadcrump(5);Event.observe(window,'load',smwhg_breadcrump.update.bind(smwhg_breadcrump));
+/**
+ * Breadcrump is a tool which displays the last 5 (default) visited pages as a queue.
+ * 
+ * It uses a DIV element with id 'breadcrump' to add its list content. If this is not
+ * available it displays nothing.
+ */
+var Breadcrump = Class.create();
+Breadcrump.prototype = {
+    initialize: function(lengthOfBreadcrump) {
+        this.lengthOfBreadcrump = lengthOfBreadcrump;
+    },
+    
+    update: function() {
+        var breadcrump = GeneralBrowserTools.getCookie("breadcrump");
+        var breadcrumpArray;
+        if (breadcrump == null) {
+            breadcrump = wgTitle;
+            breadcrumpArray = [breadcrump];
+        } else {
+            // parse breadcrump and add new title
+            breadcrumpArray = breadcrump.split(",");
+            // do not add doubles
+            if (breadcrumpArray[breadcrumpArray.length-1] != wgPageName) {
+                breadcrumpArray.push(wgPageName);
+                if (breadcrumpArray.length > this.lengthOfBreadcrump) {
+                    breadcrumpArray.shift();
+                } 
+            }
+            //serialize breadcrump
+            breadcrump = "";
+            for (var i = 0; i < breadcrumpArray.length-1; i++) {
+                breadcrump += breadcrumpArray[i]+",";
+            }
+            breadcrump += breadcrumpArray[breadcrumpArray.length-1];
+                
+        }
+        // (re-)set cookie
+        document.cookie = "breadcrump="+breadcrump+"; path="+wgScript;
+        this.pasteInHTML(breadcrumpArray);
+    },
+    
+    pasteInHTML: function(breadcrumpArray) {
+        var html = "";
+        breadcrumpArray.each(function(b) {
+            
+            // remove namespace and replace underscore by whitespace
+            var title = b.split(":");
+            var show = title.length == 2 ? title[1] : title[0];
+            show = show.replace("_", " ");
+            
+            // add item 
+            html += '<li><a href="'+wgServer+wgScript+'/'+b+'">'+show+' &gt; </a>'; 
+        });
+        var bc_div = $('breadcrump');
+        if (bc_div != null) bc_div.innerHTML = "<ul>"+html+"</ul>";
+    }
+}
+var smwhg_breadcrump = new Breadcrump(5);
+Event.observe(window, 'load', smwhg_breadcrump.update.bind(smwhg_breadcrump));
 
 // contentSlider.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var Slider=Class.create();Slider.prototype={initialize:function(){this.sliderObj=null;this.oldHeight=0;this.oldWidth=0;this.sliderWidth=25;},activateResizing:function(){if(!$('contentslider'))return;$('contentslider').innerHTML='<img id="contentSliderHandle" src="'+wgScriptPath+'/extensions/SMWHalo/skins/slider.gif"/>';var windowWidth=OB_bd.isIE?document.body.offsetWidth:window.innerWidth;var iv=($("p-logo").clientWidth-this.sliderWidth)/windowWidth;var initialvalue=iv;this.slide(initialvalue);if(this.sliderObj!=null){this.sliderObj.setDisabled();this.sliderObj=null;}this.sliderObj=new Control.Slider('contentSliderHandle','contentslider',{sliderValue:initialvalue,minimum:iv,maximum:1,onSlide:this.slide.bind(this),onChange:this.slide.bind(this)});},slide:function(v){var windowWidth=OB_bd.isIE?document.body.offsetWidth:window.innerWidth;var iv=($("p-logo").clientWidth-this.sliderWidth)/windowWidth;var currMarginDiv=windowWidth*(v-iv)+$("p-logo").clientWidth;var leftmax=iv;var rightmax=1;if(v<leftmax){smwhg_slider.sliderObj.setValue(leftmax);return;}if(v>rightmax){smwhg_slider.sliderObj.setValue(rightmax);return;}$('p-cactions').style.marginLeft=(windowWidth*(v-iv))+"px";$('content').style.marginLeft=currMarginDiv+"px";var sliderWidth=this.sliderWidth;$$('div.dtreestatic').each(function(s){s.style.width=windowWidth*v+sliderWidth-7+"px";});$('p-navigation').style.width=windowWidth*v+sliderWidth-5+"px";$('p-search').style.width=windowWidth*v+sliderWidth-5+"px";$('p-tb').style.width=windowWidth*v+sliderWidth-5+"px";},resizeTextbox:function(){if(OB_bd.isIE==true){if(typeof document.documentElement!='undefined'&&document.documentElement.clientHeight!=this.oldHeight&&document.documentElement.clientHeight!=this.oldWidth){this.activateResizing();this.oldHeight=document.documentElement.clientHeight;this.oldWidth=document.documentElement.clientWidth;}else{if(typeof window.innerHeight!='undefined'&&window.innerHeight!=this.oldHeight&&window.innerWidth!=this.oldWidth){alert('resize');this.activateResizing();this.oldHeight=window.innerHeight;this.oldWidth=window.innerWidth;}}}else{this.activateResizing();}}};var smwhg_slider=new Slider();if(GeneralBrowserTools.getURLParameter("mode")!='wysiwyg'){Event.observe(window,'load',smwhg_slider.activateResizing.bind(smwhg_slider));Event.observe(window,'resize',smwhg_slider.resizeTextbox.bind(smwhg_slider));}
+/* Resizing Content window slider using scriptacolus slider */
+var ContentSlider = Class.create();
+ContentSlider.prototype = {
+
+    initialize: function() {
+        this.sliderObj = null;
+        this.savedPos = -1; // save position within a page. hack for IE
+        this.sliderWidth = OB_bd.isIE ? 13 : 12;
+        this.timer = null;
+    },
+    //if()
+    activateResizing: function() {
+    //Check if semtoolbar is available and action is not annotate
+   
+    if(!$('contentslider')) return;
+    
+    //Load image to the slider div
+    $('contentslider').innerHTML = '<img id="contentSliderHandle" src="' +
+            wgScriptPath +
+            '/extensions/SMWHalo/skins/slider.gif"/>';
+        var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
+        // 25px for the silder
+        var iv = ($("p-logo").clientWidth -  this.sliderWidth) / windowWidth;
+        var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
+        var initialvalue = saved_iv != null ? saved_iv : this.savedPos != -1 ? this.savedPos : iv;
+        
+        this.slide(initialvalue);
+       //create slider after old one is removed
+       if(this.sliderObj != null){
+            this.sliderObj.setDisabled();
+            this.sliderObj= null;
+       }
+       this.sliderObj = new Control.Slider('contentSliderHandle','contentslider',{
+          //axis:'vertical',
+          sliderValue:initialvalue,
+          minimum:iv,
+          maximum:0.5,
+          //range: $R(0.5,0.75),
+          onSlide: this.slide.bind(this),
+          onChange: this.slide.bind(this)
+       });
+      
+    },
+
+    //Checks for min max and sets the content and the semtoolbar to the correct width
+    slide: function(v)
+          {
+          	
+            var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
+            var iv = ($("p-logo").clientWidth - this.sliderWidth) / windowWidth;    
+            var currMarginDiv = windowWidth*(v-iv)+$("p-logo").clientWidth;
+            
+            var leftmax = iv; // range 0 - 1
+            var rightmax = 0.5; // range 0 - 1
+
+             if( v < leftmax){
+                if (this.sliderObj != null) this.sliderObj.setValue(leftmax);
+                return;
+             }
+
+             if( v > rightmax){
+                if (this.sliderObj != null) this.sliderObj.setValue(rightmax);
+                return;
+             }
+            var sliderSmooth = OB_bd.isIE ? v*25 : v*38;
+            // move toolbar and content pane
+            $('p-cactions').style.marginLeft = (windowWidth*(v-iv)) - sliderSmooth +"px";
+            $('content').style.marginLeft = currMarginDiv - sliderSmooth + "px";
+           
+           // change width of Treeviews of class 'dtreestatic'
+           var sliderWidth = this.sliderWidth;
+           $$('div.dtreestatic').each(function(s) { 
+                s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
+           });
+           $$('div.Treeview5').each(function(s) { 
+                s.style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           });
+           
+           // change sidebars
+           $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           $('p-search').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           $('p-tb').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           
+           document.cookie = "cp-slider="+v+"; path="+wgScript;
+           this.savedPos = v;
+    },
+     /**
+      * Resizes the slide if window size is changed
+      * since IE fires the resize event in much more cases than the desired
+      * we have to do some additional checks
+      */
+     resizeTextbox: function(){
+        if( !OB_bd.isIE ){
+            this.activateResizing();
+        } else {
+        	
+        	if (this.timer != null) window.clearTimeout(this.timer);
+        	var slider = this; // copy reference to make it readable in closure
+        	this.timer = window.setTimeout(function() {
+        		 slider.activateResizing();
+        	},1000);
+        	 
+        }        
+     }
+}
+
+var smwhg_contentslider = new ContentSlider();
+Event.observe(window, 'load', smwhg_contentslider.activateResizing.bind(smwhg_contentslider));
+//Resizes the slider if window size is changed
+Event.observe(window, 'resize', smwhg_contentslider.resizeTextbox.bind(smwhg_contentslider));
+
 
 // smw_logger.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var smwghLoggerEnabled=false;var SmwhgLogger=Class.create();SmwhgLogger.prototype={initialize:function(){},log:function(logmsg,type,func){if(!smwghLoggerEnabled){return;}var logmsg=(logmsg==null)?"":logmsg;var type=(type==null)?"":type;var time=new Date();var timestamp=time.toGMTString();var userid=(wgUserName==null)?"":wgUserName;var locationURL=(wgPageName==null)?"":wgPageName;var func=(func==null)?"":func;sajax_do_call('smwLog',[logmsg,type,func,locationURL,timestamp],this.logcallback.bind(this));},logcallback:function(param){if(param.status!=200){alert('logging failed: '+param.statusText);}}};var smwhgLogger=new SmwhgLogger();
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  Logger - logs msgs to the database 
+ */
+var smwghLoggerEnabled = false;
+
+var SmwhgLogger = Class.create();
+SmwhgLogger.prototype = {
+	
+	/**
+	* default constructor
+	* Constructor
+	*
+	*/
+	initialize: function() {
+	},
+	
+	/**
+	 * Logs msgs through Ajax
+	 * * @param 
+	 * 
+	 * Remote function in php is:
+	 * smwLog($logmsg, $errortype = "" , $timestamp = "",$userid = "",$location="", $function="")
+	 * 
+	 */
+	log: function(logmsg, type, func){
+		if (!smwghLoggerEnabled) {
+			return;
+		}
+		//Default values
+		var logmsg = (logmsg == null) ? "" : logmsg; 
+		var type = (type == null) ? "" : type; 
+			//Get Timestamp
+			var time = new Date();
+			var timestamp = time.toGMTString();
+		var userid = (wgUserName == null) ? "" : wgUserName; 
+		var locationURL = (wgPageName == null) ? "" : wgPageName; 
+		var func= (func == null) ? "" : func;
+		
+		sajax_do_call('smwLog', 
+		              [logmsg,type,func,locationURL,timestamp], 
+		              this.logcallback.bind(this));	
+	},
+	
+	/**
+	 * Shows alert if logging failed
+	 * * @param ajax xml returnvalue
+	 */
+	logcallback: function(param) {
+		if(param.status!=200){
+			alert('logging failed: ' + param.statusText);
+		}
+	}
+	
+}
+
+var smwhgLogger = new SmwhgLogger();
 
 // SMW_Language.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-var Language=Class.create();Language.prototype={initialize:function(){},getMessage:function(id,type){switch(type){case "user":var msg=wgUserLanguageStrings[id];if(!msg){msg=id;}break;case "cont":var msg=wgContLanguageStrings[id];if(!msg){msg=id;}break;default:var msg=wgUserLanguageStrings[id];if(!msg){var msg=wgContLanguageStrings[id];if(!msg){msg=id;}}}msg=msg.replace(/\$n/g,wgCanonicalNamespace);msg=msg.replace(/\$p/g,wgPageName);msg=msg.replace(/\$t/g,wgTitle);msg=msg.replace(/\$u/g,wgUserName);msg=msg.replace(/\$s/g,wgServer);return msg;}};var gLanguage=new Language();
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/**
+* SMW_Language.js
+* 
+* A class that reads language strings from the server by an ajax call.
+* 
+* @author Thomas Schweitzer
+*
+*/
+
+var Language = Class.create();
+
+/**
+ * This class provides language dependent strings for an identifier.
+ * 
+ */
+Language.prototype = {
+
+	/**
+	 * @public
+	 * 
+	 * Constructor.
+	 */
+	initialize: function() {
+	},
+
+	/*
+	 * @public
+	 * 
+	 * Returns a language dependent message for an ID, or the ID, if there is 
+	 * no message for it.
+	 * 
+	 * @param string id
+	 * 			ID of the message to be retrieved.
+	 * @return string
+	 * 			The language dependent message for the given ID.
+	 */
+	getMessage: function(id, type) {
+		switch (type) {
+			case "user":
+				var msg = wgUserLanguageStrings[id];
+				if (!msg) {
+					msg = id;
+				} 
+				break;
+				
+			case "cont":
+				var msg = wgContLanguageStrings[id];
+				if (!msg) {
+					msg = id;
+				} 
+				break;
+			default: 
+				var msg = wgUserLanguageStrings[id];
+				if (!msg) {
+					var msg = wgContLanguageStrings[id];
+					if (!msg) {
+						msg = id;
+					}
+				}
+		} 
+			
+		// Replace variables
+		msg = msg.replace(/\$n/g,wgCanonicalNamespace); 
+		msg = msg.replace(/\$p/g,wgPageName);
+		msg = msg.replace(/\$t/g,wgTitle);
+		msg = msg.replace(/\$u/g,wgUserName);
+		msg = msg.replace(/\$s/g,wgServer);
+		return msg;
+	}
+	
+}
+
+// Singleton of this class
+
+var gLanguage = new Language();
 
