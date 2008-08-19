@@ -113,6 +113,7 @@ function smwgHaloSetupExtension() {
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
 	if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false) {
+		
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwGAAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwWSAddHTMLHeader';
@@ -1074,6 +1075,7 @@ function smwFWAddHTMLHeader(& $out) {
 // SemanticNotifications page callback
 // includes necessary script and css files.
 function smwSNAddHTMLHeader(& $out) {
+	
 	global $wgTitle;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
@@ -1093,8 +1095,8 @@ function smwSNAddHTMLHeader(& $out) {
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":SemanticNotifications");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":SemanticNotifications");
+		$jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
 	}
-
 
 	return true;
 }
