@@ -779,7 +779,7 @@ function smwfSPARQLQueryParser($querystring, $params, $extraprintouts, & $query)
         $mainlabel = $qp->getLabel();
     }
     if ( ( !$desc->isSingleton() || (count($desc->getPrintRequests()) + count($extraprintouts) == 0) ) && ($mainlabel != '-') ) {
-        $desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS_THIS, $mainlabel));
+        $desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
     }
 
     $query = new SMWSPARQLQuery($desc, true);
