@@ -373,6 +373,7 @@ AdvancedAnnotation.prototype = {
 		}
 		this.toolbarEnableAnnotation(true);
 		this.annotatedNode = null;
+		this.annotationProposal = null;
 		this.wikiTextParser.setSelection(-1, -1);
 	},
 	
