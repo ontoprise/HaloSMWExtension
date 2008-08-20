@@ -709,7 +709,7 @@ class SMWSQLStore2 extends SMWStore {
 			$propertyValueArray = $data->getPropertyValues($property);
 			if ($property instanceof Title) { // normal property
 				foreach($propertyValueArray as $value) {
-					if ($value->isValid()) {
+					if ($value->isValid() && !$value->isDerived()) {
 						if ( ($value->getTypeID() == '_txt') || ($value->getTypeID() == '_cod') ){
 							$up_text2[] =
 								array( 's_id' => $sid,

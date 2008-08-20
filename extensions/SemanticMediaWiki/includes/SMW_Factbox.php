@@ -342,7 +342,7 @@ class SMWFactbox {
 		}
 		global $wgContLang;
 
-		foreach(SMWFactbox::$semdata->getProperties() as $key => $property) {
+		foreach(SMWFactbox::$semdata->getProperties(true) as $key => $property) {
 			if ($property instanceof Title) {
 				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[ ]/u','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
 				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
@@ -367,7 +367,35 @@ class SMWFactbox {
 					}
 				}
 				$i+=1;
-				$text .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
+				$pv = $propvalue->getLongWikiText(true);
+				
+				if ($propvalue->isDerived()) {
+					// derived properties are rendered in italics with underline
+					// and a tooltip
+					$tooltip = wfMsgForContent('smw_derived_property');	
+					$pv = "''".$pv."''"; // add italics
+					smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+					if (strpos($pv, 'smwttinline') === FALSE) {
+						// No tooltip present yet => add our own tooltip
+						global $wgContLang;
+						/*$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
+						$link .= '?i='.SMWFactbox::$semdata->getSubject()->getTitle()->getPrefixedDBkey();
+						$link .= '&p='.$property->getPrefixedDBkey();
+						$link .= '&v='.urlencode($propvalue->getWikiValue());
+						$link .= '&mode=property';*/ // needed for explanation link
+						
+						$linker = new Linker();
+						global $wgTitle;
+						$l = $linker->makeKnownLink($wgTitle->getDBkey(), " ");
+						//$l = $linker->makeKnownLink('xyz123', " ");
+						//$link = str_ireplace('xyz123', $link, $l);
+						
+						$pv = '<span class="smwttinline"><u>' . $pv . '</u><span class="smwttcontent">' . $tooltip . '</span>'.
+						      '</span>&nbsp;'.
+							  '<span class="smwexplanation">'.$l.'</span>';
+					}
+				}
+				$text .= $pv . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
 			}
 			$text .= '</td></tr>';
 		}

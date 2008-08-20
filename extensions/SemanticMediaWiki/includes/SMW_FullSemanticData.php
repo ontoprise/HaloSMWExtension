@@ -130,7 +130,7 @@ class SMWFullSemanticData extends SMWSemanticData {
 	 */
 	public function hasProperties() {
 		if (!$this->hasprops) {
-//			$this->addDerivedProperties(); Due to a bug in SMW 
+			//$this->addDerivedProperties(); //Due to a bug in SMW 
 //              SMWFactbox::printFactbox() is called too often and fact boxes with
 // 				derived properties are even generated in edit mode. So, showing
 //				derives properties works by now only if there is at least on normal property.

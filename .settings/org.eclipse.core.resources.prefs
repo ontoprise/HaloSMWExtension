@@ -1,4 +1,4 @@
-#Wed Mar 12 12:11:37 CET 2008
+#Wed Aug 20 17:03:53 CEST 2008
 eclipse.preferences.version=1
 encoding//extensions/SMWHalo/languages/SMW_HaloLanguageDe.php=UTF-8
 encoding//extensions/SMWHalo/languages/SMW_HaloLanguageEn.php=UTF-8
@@ -7,3 +7,4 @@ encoding//extensions/SMWHalo/scripts/Language/SMW_LanguageEn.js=UTF-8
 encoding//extensions/SMWHalo/scripts/Language/SMW_LanguageUserDe.js=UTF-8
 encoding//extensions/SMWHalo/scripts/Language/SMW_LanguageUserEn.js=UTF-8
 encoding//extensions/SMWHalo/scripts/SemanticToolbar/SMW_Relation.js=UTF-8
+encoding//extensions/SemanticMediaWiki/languages/SMW_Messages.php=UTF-8

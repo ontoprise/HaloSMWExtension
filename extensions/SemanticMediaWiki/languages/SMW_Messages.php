@@ -22,6 +22,7 @@ $messages['en'] = array(
 	'smw_concept_description' => 'Description of concept "$1"', // used in the namespace "Concept:"
 	'smw_no_concept_namespace'=> 'Concepts can only be defined on pages in the Concept: namespace.',
 	'smw_multiple_concepts'   => 'Each concept page can have only one concept definition.',
+    'smw_derived_property'  => 'This is a derived property.',
 
 	// URIs that should not be used in objects in cases where users can provide URIs
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
