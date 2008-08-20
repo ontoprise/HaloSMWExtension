@@ -365,7 +365,7 @@ public function getDistinctUnits(Title $type) {
         
         $res = $db->selectRow($smw_atts2, 'rating', array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'value_xsd' => $object));
         if ($res !== false) {
-            $db->update($smw_attributes, array('rating' => (is_numeric($res->rating) ? $res->rating : 0) + $rating), array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'value_xsd' => $object));
+            $db->update($smw_atts2, array('rating' => (is_numeric($res->rating) ? $res->rating : 0) + $rating), array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'value_xsd' => $object));
         } else {
         	$object = $db->selectRow($smw_ids, 'smw_id', array('smw_title' => $object));
             $res = $db->selectRow($smw_rels2, 'rating', array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'o_id' => $object->smw_id));
