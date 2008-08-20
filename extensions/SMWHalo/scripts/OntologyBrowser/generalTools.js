@@ -290,7 +290,7 @@ GeneralXMLTools.importNode = function(parentNode, child, deep) {
 GeneralXMLTools.getNodeById = function (node, id) {
 	if (Prototype.BrowserFeatures.XPath) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
-		var nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null); 
+		var nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null); 
 		return nodeWithID.iterateNext(); // there *must* be only one
 	} else if (OB_bd.isIE) {
 		// IE supports XPath in a proprietary way
@@ -334,7 +334,7 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 	if (Prototype.BrowserFeatures.XPath) {
 		var results = new Array();
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
-		var nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null); 
+		var nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null); 
 		var nextnode = nodesWithID.iterateNext();
 		while (nextnode != null) {
 			results.push(nextnode);
