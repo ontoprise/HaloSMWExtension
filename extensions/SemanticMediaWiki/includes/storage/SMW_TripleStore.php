@@ -125,10 +125,12 @@ class SMWTripleStore extends SMWStore {
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 			 $con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgNamespace> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
 			}
-		    // delete old rules...
-            foreach($old_rules as $ruleID) {
-                $con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
-            }
+			if (isset($smwgEnableFlogicRules)) {
+			    // delete old rules...
+	            foreach($old_rules as $ruleID) {
+	                $con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
+	            }
+			}
 			$con->disconnect();
 		} catch(Exception $e) {
 			 
