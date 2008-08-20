@@ -299,7 +299,7 @@ public function getDistinctUnits(Title $type) {
         $res = $db->query(  '(SELECT DISTINCT a.value_unit FROM '.$smw_atts2.' a JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.sp_id = '.SMW_SP_HAS_TYPE.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).') '.
                          ' UNION ' .
                             '(SELECT DISTINCT value_unit FROM '.$smw_spec2.' s ' .
-                                    'JOIN '.$smw_rels2.' r ON LOCATE('.$db->addQuotes($type->getDBkey()).', s.value_string) > 0 AND s.s_id=r.p_id ');
+                                    'JOIN '.$smw_rels2.' r ON LOCATE('.$db->addQuotes($type->getDBkey()).', s.value_string) > 0 AND s.s_id=r.p_id) ');
                                     
         
         $result = array();
