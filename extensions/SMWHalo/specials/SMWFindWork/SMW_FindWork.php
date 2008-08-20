@@ -157,7 +157,7 @@ function smwfDoSpecialFindWorkPage() {
 	    		$gardeningLog = Title::newFromText("GardeningLog", NS_SPECIAL);
 	    		list($bot, $type, $class) = $this->getBotClassAndType($field);
 	    		return $skin->makeLinkObj($result).
-					' <a class="navigationLink" href="'.$gardeningLog->getFullURL().'?bot='.$bot.'&class=0&pageTitle='.urlencode($result->getPrefixedText()).'">('.wfMsg('smw_findwork_show_details').')</a>';
+					' <a class="navigationLink" href="'.$gardeningLog->getFullURL('bot='.$bot.'&class=0&pageTitle='.urlencode($result->getPrefixedText())).'">('.wfMsg('smw_findwork_show_details').')</a>';
 	    	
 	    	
 	    } else {
