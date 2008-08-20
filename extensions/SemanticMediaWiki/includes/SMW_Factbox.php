@@ -384,15 +384,13 @@ class SMWFactbox {
 						$link .= '&v='.urlencode($propvalue->getWikiValue());
 						$link .= '&mode=property';*/ // needed for explanation link
 						
-						$linker = new Linker();
-						global $wgTitle;
-						$l = $linker->makeKnownLink($wgTitle->getDBkey(), " ");
+//						$linker = new Linker();
 						//$l = $linker->makeKnownLink('xyz123', " ");
 						//$link = str_ireplace('xyz123', $link, $l);
 						
 						$pv = '<span class="smwttinline"><u>' . $pv . '</u><span class="smwttcontent">' . $tooltip . '</span>'.
-						      '</span>&nbsp;'.
-							  '<span class="smwexplanation">'.$l.'</span>';
+						      '</span>&nbsp;';
+							  //.'<span class="smwexplanation">'.$link.'</span>';
 					}
 				}
 				$text .= $pv . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
