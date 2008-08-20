@@ -376,14 +376,14 @@ class SMWTripleStore extends SMWStore {
         
 		$this->createTables($verbose);
 		
-		global $smwgMessageBroker, $smwgNamespace, $wgDBtype, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode;
+		global $smwgMessageBroker, $smwgNamespace, $wgDBtype, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgDefaultStore;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgNamespace>"); // drop may fail. don't worry
 			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgNamespace>");
-			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://$wgDBuser:$wgDBpassword@$wgDBserver/$wgDBname?lang=$wgLanguageCode#$wgDBprefix INTO <$smwgNamespace>");
+			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://$wgDBuser:$wgDBpassword@$wgDBserver/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgDefaultStore#$wgDBprefix INTO <$smwgNamespace>");
 			$con->disconnect();
 		} catch(Exception $e) {
 				
