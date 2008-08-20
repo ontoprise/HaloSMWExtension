@@ -243,10 +243,16 @@ class SMWCategoryViewer extends CategoryViewer {
 			if ($propFound) {
 				// Find the range of the property
 				$range = null;
-				$range = $store->getPropertyValues($prop, $relationTitle);
-				if (count($range) == 0) {
-					$range = $store->getSpecialValues($prop, SMW_SP_HAS_TYPE);
-				} else {
+				$type = $store->getSpecialValues($prop, SMW_SP_HAS_TYPE);
+				if (count($type) > 0) {
+					$type = $type[0];
+					$xsd = $type->getXSDValue();
+					if ($xsd != '_wpg') {
+						$range = $type;
+					}
+				}
+				if ($range == null) {
+					$range = $store->getPropertyValues($prop, $relationTitle);
 					$rangePageContainers = array();
 					foreach($range as $c) {
 						$h = $c->getDVs();
@@ -339,7 +345,11 @@ class SMWCategoryViewer extends CategoryViewer {
 						$r .= $range[0];
 					}
 				}
-			}			
+			} else if ($props[$index+1] instanceof SMWTypesValue) {
+				$t = $props[$index+1];
+				$t = $t->getTypeLabels();
+				$r .= $t[0];
+			}
 			$r .= "</td></tr>\n";
 		}
 		$r .= '</table>';
