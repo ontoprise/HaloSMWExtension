@@ -300,21 +300,22 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 		$mw_page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_ids = $db->tableName('smw_ids');
-
+		$smw_atts2 = $db->tableName('smw_atts2');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        
 		$result = array();
 		if ($categories == NULL) {
 			if ($term == NULL) {
 					
-				$sql = 'SELECT DISTINCT page_title FROM '.$mw_page.' p LEFT JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
+				$sql = 'SELECT DISTINCT p.page_title FROM '.$mw_page.' p JOIN '.$smw_ids.' i ON p.page_title = i.smw_title AND p.page_namespace = i.smw_namespace  LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id ' .
 					
-                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND i.smw_id IS NULL';
+                        'WHERE i.smw_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL)';
 
 			} else {
-				$sql = 'SELECT DISTINCT page_title FROM '.$mw_page.' p LEFT JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
-					
-                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND i.smw_id IS NULL AND page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
-
-					
+				$sql = 'SELECT DISTINCT p.page_title FROM '.$mw_page.' p JOIN '.$smw_ids.' i ON p.page_title = i.smw_title AND p.page_namespace = i.smw_namespace  LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id ' .
+                    
+                        'WHERE i.smw_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND i.smw_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
+								
 			}
 			$res = $db->query($sql);
 
@@ -346,7 +347,7 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 				$db->query('INSERT INTO smw_ob_categories_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 				$db->query('INSERT INTO smw_ob_categories VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 			}
-			$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+			$maxDepth = 10;
 			// maximum iteration length is maximum category tree depth.
 			do  {
 				$maxDepth--;
@@ -372,16 +373,15 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 
 
 			if ($term == NULL) {
-				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
-				 
-                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND i.smw_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories)';
+				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
+				        'LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id '.
+                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories)';
 
 
 			} else {
-				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p LEFT JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
-				 
-                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND i.smw_id IS NULL AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories) AND page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
-
+				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
+                        'LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id '.
+                        'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND p.page_id = c.cl_from AND cl_to IN (SELECT * FROM smw_ob_categories) AND p.page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
 
 			}
 			$res = $db->query($sql);
