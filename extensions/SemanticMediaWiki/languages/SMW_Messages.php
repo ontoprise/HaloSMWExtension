@@ -112,7 +112,7 @@ Backup your data before using it.',
 	'smw_type_header'             => 'Properties of type "$1"',
 	'smw_typearticlecount'        => 'Showing $1 properties using this type.',
 	'smw_attribute_header'        => 'Pages using the property "$1"',
-	'smw_attributearticlecount'   => 'Showing $1 pages using this property.',
+	'smw_attributearticlecount'   => 'Showing $1 page(s) using this property.',
 	'smw_subproperty_header'      => 'Subproperties',
         'smw_subpropertyarticlecount' => 'This property has the following $1 subproperties.',
 
