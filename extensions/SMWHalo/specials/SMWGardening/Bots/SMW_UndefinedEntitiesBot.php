@@ -134,8 +134,8 @@ class UndefinedEntitiesDetector {
 		$requestoptions->offset = 0;
 
 		do {
-			$undefindProperties = $this->store->getUndefinedProperties($requestoptions);
-			foreach($undefindProperties as $p) {
+			$undefinedProperties = $this->store->getUndefinedProperties($requestoptions);
+			foreach($undefinedProperties as $p) {
 				$articles = $this->store->getArticlesUsingProperty($p, 10);
 				foreach($articles as $a) {
 					$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_PROPERTY_UNDEFINED, $p, $a);
@@ -197,7 +197,7 @@ class UndefinedEntitiesDetector {
 			$undefindRelationTargets = $this->store->getUndefinedRelationTargets($requestoptions);
 			foreach($undefindRelationTargets as $t) {
 				$articles = $this->store->getRelationsUsingTarget($t, 10);
-
+                
 				foreach($articles as $a) {
 					$this->gi_store->addGardeningIssueAboutArticles($this->bot_id, SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, $t, $a);
 				}
@@ -619,14 +619,17 @@ class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
         
         $sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
         
-        $res = $db->query('SELECT DISTINCT smw_title AS object_title, smw_namespace AS object_namespace'. 
-                           ' FROM '.$smw_rels2.' JOIN '.$smw_ids.' ON o_id = smw_id LEFT JOIN '.$page.' ON smw_title = page_title AND smw_namespace = page_namespace'. 
-                            ' WHERE page_title IS NULL '.$sqlOptions);
+        $res = $db->query('SELECT DISTINCT o.smw_title AS object_title, o.smw_namespace AS object_namespace'.
+                            ' FROM '.$smw_rels2.
+                            ' JOIN '.$smw_ids.' s ON s_id = s.smw_id '.
+                            ' LEFT JOIN '.$smw_ids.' o ON o_id = o.smw_id '.
+                            ' LEFT JOIN '.$page.' ON page_title = o.smw_title AND page_namespace = o.smw_namespace '.
+                            ' WHERE page_title IS NULL AND o.smw_iw != ":smw" '.$sqlOptions);
               
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $t = Title::newFromText($row->object_title);
+            	$t = Title::newFromText($row->object_title, $row->object_namespace);
                 if ($t != NULL) $result[] = $t;
 
             }
@@ -651,7 +654,7 @@ class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
         
         $res = $db->query('SELECT DISTINCT i2.smw_title AS title'. 
                            ' FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON o_id = i.smw_id JOIN '.$smw_ids.' i2 ON p_id = i2.smw_id '. 
-                            ' WHERE i2.smw_title = '.$db->addQuotes($target->getDBkey()).' AND i2.smw_namespace = '.$target->getNamespace().' '.$limitConstraint);
+                            ' WHERE i.smw_title = '.$db->addQuotes($target->getDBkey()).' AND i.smw_namespace = '.$target->getNamespace().' '.$limitConstraint);
 
         $result = array();
         if($db->numRows( $res ) > 0) {
