@@ -72,7 +72,6 @@ protected $smwUserMessages = array(
 	// Messages for pages of types, relations, and attributes
 
 	'smw_relation_header' => 'Pagina´s met de eigenschap "$1"',
-	'smw_relationarticlecount' => '<p>Toont $1 pagina´s die deze eigenschap gebruiken.</p>',
 	'smw_subproperty_header' => 'Sub-eigenschappen van "$1"',
 	'smw_subpropertyarticlecount' => '<p>Toont $1 sub-eigenschappen.</p>',
 

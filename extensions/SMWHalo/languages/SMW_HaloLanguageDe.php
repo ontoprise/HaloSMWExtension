@@ -70,7 +70,6 @@ protected $smwUserMessages = array(
 	'smw_devel_warning' => 'Diese Funktion befindet sich zur Zeit in Entwicklung und ist eventuell noch nicht voll einsatzfähig. Eventuell ist es ratsam, den Inhalt des Wikis vor der Benutzung dieser Funktion zu sichern.',
 
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',
-	'smw_relationarticlecount' => '<p>Es werden $1 Seiten angezeigt, die diese Relation verwenden.</p>',
 	
 	'smw_subproperty_header' => 'Sub-Attribute von "$1"',
 	'smw_subpropertyarticlecount' => '<p>Zeige $1 Sub-Attribute.</p>',

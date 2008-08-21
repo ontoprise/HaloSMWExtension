@@ -71,7 +71,6 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	// Messages for pages of types, relations, and attributes
 
 	'smw_relation_header' => 'Pages using the property "$1"',
-	'smw_relationarticlecount' => '<p>Showing $1 pages using this property.</p>',
 	'smw_subproperty_header' => 'Sub-properties of "$1"',
 	'smw_subpropertyarticlecount' => '<p>Showing $1 sub-properties.</p>',
 
