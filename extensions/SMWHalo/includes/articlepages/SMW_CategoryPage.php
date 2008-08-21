@@ -143,9 +143,13 @@ class SMWCategoryViewer extends CategoryViewer {
 			$r .= '<h2>' . wfMsg('smw_category_schemainfo',$this->title->getText()) . "</h2>\n";
 		$r .= "</div>";
 		
-		$r .= $this->getShortRelationList($options, true);
-		$r .= $this->getShortRelationList($options, false);
-		return $r;
+		$pl = $this->getShortRelationList($options, true);
+		$pl .= $this->getShortRelationList($options, false);
+		
+		if (empty($pl)) {
+			return "";
+		}
+		return $r.$pl;
 		
 	}
 	
