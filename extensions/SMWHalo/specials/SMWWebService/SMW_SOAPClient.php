@@ -69,7 +69,7 @@ class SMWSoapClient implements IWebServiceClient {
 	 * 		is returned.
 	 */
 	public function __construct($uri, $authenticationType = "",
-			$authenticationLogin = "", $authenticationPassword = "") {
+	$authenticationLogin = "", $authenticationPassword = "") {
 		$this->mURI = $uri;
 		$this->mAuthenticationType = $authenticationType;
 		$this->mAuthenticationLogin = $authenticationLogin;
@@ -232,7 +232,7 @@ class SMWSoapClient implements IWebServiceClient {
 				}
 			}
 		}
-			
+
 		$this->mTypes = array();
 		foreach ($types as $t) {
 			if (preg_match("/\s*struct\s*(\b.*?)\s*\{([^}]*)\}/", $t, $matches)) {
@@ -240,59 +240,94 @@ class SMWSoapClient implements IWebServiceClient {
 				$fields = $matches[2];
 				$numFields = preg_match_all("/\s*(\b.*?)\s+([^;]*);/",$fields, $fList);
 				$add = true;
-				if($this->mTypes[$tname] || count(array_keys($this->duplicates, $tname)) > 0){
-					if(!$this->duplicates[$tname]){
-						$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
-						$temp = $this->mTypes[$tname];
-						unset($this->mTypes[$tname]);
-						$tname = $tname."##".(count($this->duplicates)-1);
-						$this->mTypes[$tname] = $temp;
-					} else {
-						foreach(array_keys($this->duplicates, $tname) as $dupType){
-							$found = true;
-							if($numFields != count($this->mTypes[$dupType])){
-								$found = false;
-							} else {
-								for ($i = 0; $i < $numFields; ++$i) {
-									if($this->mTypes[$dupType][$fList[2][$i]] != $fList[1][$i]){
-										$found = false;
-										break;
-									}
-								}
-							}
-							if($found){
-								$add = false;
-								break;
-							}
-						}
-						if($add){
-							$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
-							$tname = $tname."##".(count($this->duplicates)-1);
-						}
-					}
+				if($this->mTypes[$tname]){
+					$this->duplicates[$tname] = $tname;
 				}
-				if($add){
-					for ($i = 0; $i < $numFields; ++$i) {
-						$this->mTypes[$tname][$fList[2][$i]] = $fList[1][$i];
-					}
+				for ($i = 0; $i < $numFields; ++$i) {
+					$this->mTypes[$tname][$fList[2][$i]] = $fList[1][$i];
 				}
 			}
-
 		}
 
-		$this->wsdl = new SimpleXMLElement($this->mURI, null, true);
+		foreach($this->duplicates as $duplicate){
+			$temp = $this->mTypes[$duplicate];
+			unset($this->mTypes[$duplicate]);
+			$duplicate = $duplicate."##duplicate";
+			$this->mTypes[$duplicate] = $temp;
+		}
 
-		$namespaces = $this->wsdl->getNamespaces(true);
-		foreach($namespaces as $prefix => $ns){
-			$this->wsdl->registerXPathNamespace($prefix, $ns);
-			if($ns == "http://www.w3.org/2001/XMLSchema"){
-				$this->xs = $prefix;
+		foreach($this->mTypes as $typeN => $typeD){
+			foreach($typeD as $typeName => $typeDef){
+				if($this->duplicates[$typeDef]){
+					//$temp = $this->mTypes[$typeN][$typeName];
+					unset($this->mTypes[$typeN][$typeName]);
+					//$typeName = $typeName."##duplicate";
+					$this->mTypes[$typeN][$typeName."##duplicate"] = $typeDef."##duplicate";
+				}
 			}
 		}
 
-		foreach(array_unique(array_values($this->duplicates)) as $duplicate){
-			$this->detectTypeRelations($duplicate);
-		}
+
+		//		$this->mTypes = array();
+		//		foreach ($types as $t) {
+		//			if (preg_match("/\s*struct\s*(\b.*?)\s*\{([^}]*)\}/", $t, $matches)) {
+		//				$tname = $matches[1];
+		//				$fields = $matches[2];
+		//				$numFields = preg_match_all("/\s*(\b.*?)\s+([^;]*);/",$fields, $fList);
+		//				$add = true;
+		//				if($this->mTypes[$tname] || count(array_keys($this->duplicates, $tname)) > 0){
+		//					if(!$this->duplicates[$tname]){
+		//						$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
+		//						$temp = $this->mTypes[$tname];
+		//						unset($this->mTypes[$tname]);
+		//						$tname = $tname."##".(count($this->duplicates)-1);
+		//						$this->mTypes[$tname] = $temp;
+		//					} else {
+		//						foreach(array_keys($this->duplicates, $tname) as $dupType){
+		//							$found = true;
+		//							if($numFields != count($this->mTypes[$dupType])){
+		//								$found = false;
+		//							} else {
+		//								for ($i = 0; $i < $numFields; ++$i) {
+		//									if($this->mTypes[$dupType][$fList[2][$i]] != $fList[1][$i]){
+		//										$found = false;
+		//										break;
+		//									}
+		//								}
+		//							}
+		//							if($found){
+		//								$add = false;
+		//								break;
+		//							}
+		//						}
+		//						if($add){
+		//							$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
+		//							$tname = $tname."##".(count($this->duplicates)-1);
+		//						}
+		//					}
+		//				}
+		//				if($add){
+		//					for ($i = 0; $i < $numFields; ++$i) {
+		//						$this->mTypes[$tname][$fList[2][$i]] = $fList[1][$i];
+		//					}
+		//				}
+		//			}
+		//
+		//		}
+
+		//		$this->wsdl = new SimpleXMLElement($this->mURI, null, true);
+		//
+		//		$namespaces = $this->wsdl->getNamespaces(true);
+		//		foreach($namespaces as $prefix => $ns){
+		//			$this->wsdl->registerXPathNamespace($prefix, $ns);
+		//			if($ns == "http://www.w3.org/2001/XMLSchema"){
+		//				$this->xs = $prefix;
+		//			}
+		//		}
+
+		//		foreach(array_unique(array_values($this->duplicates)) as $duplicate){
+		//			$this->detectTypeRelations($duplicate);
+		//		}
 
 		return true;
 	}
@@ -409,7 +444,7 @@ class SMWSoapClient implements IWebServiceClient {
 				}
 			}
 		}
-		
+
 		foreach(array_keys($this->duplicates, $parentName) as $dup){
 			$add = true;
 			if(count($this->mTypes[$dup]) == count($childTypes)){
@@ -428,7 +463,7 @@ class SMWSoapClient implements IWebServiceClient {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the given type is defined in the wsdl
 	 *

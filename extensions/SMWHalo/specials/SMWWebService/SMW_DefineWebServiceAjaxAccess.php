@@ -61,6 +61,7 @@ function smwf_ws_processStep1($uri){
  * 			for this method
  */
 function smwf_ws_processStep2($uri, $methodName){
+	//$this->error();
 	$wsClient = createWSClient($uri);
 	$rawParameters = $wsClient->getOperation($methodName);
 	$parameters = array();
@@ -88,6 +89,8 @@ function smwf_ws_processStep2($uri, $methodName){
  * 			for this method
  */
 function smwf_ws_processStep3($uri, $methodName){
+	//$this->error();
+	
 	$wsClient = createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
 	$flatResult = getFlatParameters($uri, $wsClient ,"", $rawResult[0]);
@@ -254,18 +257,17 @@ function flattenParam($wsClient, $name, $type, &$typePath=null) {
  */
 function getFlatParameters($uri, $wsClient, $name, $type, &$typePath=null){
 	$flatParams = flattenParam($wsClient, $name, $type, $typePath);
+	
+	//$arrayDetector = new WSDLArrayDetector($uri);
 
-	$arrayDetector = new WSDLArrayDetector($uri);
+	//$adParameters = $arrayDetector->getArrayPaths($type, $name);
 
-	$adParameters = $arrayDetector->getArrayPaths($type, $name);
-
-	if($result){
-		$adParameters = $arrayDetector->cleanResultParts($adParameters);
-	}
+	//if($result){
+	//	$adParameters = $arrayDetector->cleanResultParts($adParameters);
+	//}
 
 	return $flatParams;
-	return $adParameters;
-	return $arrayDetector->mergePaths($flatParams, $adParameters);
+	//return $arrayDetector->mergePaths($flatParams, $adParameters);
 }
 
 

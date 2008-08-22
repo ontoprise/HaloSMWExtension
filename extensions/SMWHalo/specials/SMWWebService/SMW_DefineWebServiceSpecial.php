@@ -92,7 +92,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<img class=\"Marker\" id=\"step3-img\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= wfMsg("smw_wws_s3-intro");
-		$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases()\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
+		$html .= "<div id=\"step3-duplicates\" style=\"display:none\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/warning.png\"></img>";
+		$html .= wfMsg("smw_wws_duplicate");
+		$html .= "</div>";
+		$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
 
 		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
 		$html .= "<img id=\"step3-go-img\" onclick=\"webServiceSpecial.processStep3()\" src=\"".$smwgHaloScriptPath."/skins/webservices/Control_play.png\" ></img>";
@@ -104,8 +107,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<img id=\"step4-img\" class=\"Marker\" src=\"".$smwgHaloScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
 		$html .= wfMsg("smw_wws_s4-intro");
-			
-		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases()\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
+		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/warning.png\"></img>";
+		$html .= wfMsg("smw_wws_duplicate");
+		$html .= "</div>";	
+		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgHaloScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
 
 		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
 		$html .= "<img id=\"step4-go-img\" onclick=\"webServiceSpecial.processStep4()\" src=\"".$smwgHaloScriptPath."/skins/webservices/Control_play.png\" ></img>";
@@ -203,6 +208,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step5-error\" style=\"display: none\">".wfMsg("smw_wws_s5-error")."</div>";
 		$html .= "<div id=\"step6-error\" style=\"display: none\">".wfMsg("smw_wws_s6-error")."</div>";
 		$html .= "<div id=\"step6b-error\" style=\"display: none\">".wfMsg("smw_wws_s6-error2")."</div>";
+		$html .= "<div id=\"step6c-error\" style=\"display: none\">".wfMsg("smw_wws_s6-error3")."</div>";
 		$html .= "</div>";
 
 
