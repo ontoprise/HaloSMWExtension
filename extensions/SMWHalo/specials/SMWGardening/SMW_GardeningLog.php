@@ -65,8 +65,8 @@
     public static function getGardeningLogAccess() {
         global $smwgHaloIP;
         if (SMWGardeningLog::$g_interface == NULL) {
-            global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
+            global $smwgBaseStore;
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     SMWGardeningLog::$g_interface = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');

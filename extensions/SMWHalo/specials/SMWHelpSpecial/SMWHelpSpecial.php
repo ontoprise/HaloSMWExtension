@@ -222,9 +222,9 @@ abstract class HelpSpecialStorage {
 	private static $INSTANCE = NULL;
     
     public static function getHelpSpecialStorage() {
-        global $smwgDefaultStore;
+        global $smwgBaseStore;
         if (self::$INSTANCE == NULL) {
-            switch ($smwgDefaultStore) {
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     self::$INSTANCE = NULL; // not implemented yet
                     trigger_error('Testing stores not implemented for HALO extension.');

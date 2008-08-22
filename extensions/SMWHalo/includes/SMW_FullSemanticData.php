@@ -63,9 +63,9 @@ class SMWFullSemanticData extends SMWSemanticData {
  		}
  		$this->derivedPropertiesAdded = true;
  		
-		global $smwgIP, $smwgNamespace;
+		global $smwgIP, $smwgHaloIP, $smwgNamespace;
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
-        require_once($smwgIP . '/includes/storage/SMW_TripleStore.php');
+        require_once($smwgHaloIP . '/includes/storage/SMW_TripleStore.php');
         
         $subject = $this->subject->getDBkey();
         
@@ -73,7 +73,7 @@ class SMWFullSemanticData extends SMWSemanticData {
 //		$queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		$queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		
-		$q = SMWQueryProcessor::createQuery($queryText, new ParserOptions());
+		$q = SMWSPARQLQueryProcessor::createQuery($queryText, new ParserOptions());
 		$res = smwfGetStore()->getQueryResult($q);
 		
 		$propVal = array();

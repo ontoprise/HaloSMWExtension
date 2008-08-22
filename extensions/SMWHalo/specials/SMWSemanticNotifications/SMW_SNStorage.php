@@ -51,8 +51,8 @@ class SNStorage {
 	private function __construct() {
         global $smwgHaloIP;
         if (self::$mDatabase == NULL) {
-            global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
+            global $smwgBaseStore;
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     trigger_error('Testing store not implemented for HALO extension.');
                 	break;

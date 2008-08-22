@@ -146,7 +146,6 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgAutoloadClasses['SMWSomeProperty']           = $smwgIP . '/includes/storage/SMW_Description.php';
 	$wgAutoloadClasses['SMWSQLStore']               = $smwgIP . '/includes/storage/SMW_SQLStore.php';
 	$wgAutoloadClasses['SMWSQLStore2']              = $smwgIP . '/includes/storage/SMW_SQLStore2.php';
-	$wgAutoloadClasses['SMWTripleStore']            = $smwgIP . '/includes/storage/SMW_TripleStore.php';
 	// Do not autoload RAPStore, since some special pages load all autoloaded classes, which causes
 	// troubles with RAP store if RAP is not installed (require_once fails).
 	//$wgAutoloadClasses['SMWRAPStore']             = $smwgIP . '/includes/storage/SMW_RAPStore.php';
@@ -237,35 +236,12 @@ function smwfSetupExtension() {
 	$wgHooks['BeforeParserrenderImageGallery'][] = 'smwfBlockFactboxFromImageGallery';
 
 	$wgHooks['ArticleFromTitle'][] = 'smwfShowListPage'; // special implementations for property/type articles
-    $wgHooks['SMWQueryParser'][] = 'smwfSPARQLQueryParser';
-     
+
 	///// credits (see "Special:Version") /////
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://semantic-mediawiki.org', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation.]');
 
-    global $smwgSPARQLEndpoint, $wgAjaxExportList, $smwgMessageBroker;
-    if (isset($smwgMessageBroker)) {
-        $wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
-        
-    }
-    if (isset($smwgSPARQLEndpoint)) {
-        $wgAjaxExportList[] = 'smwfGetSPARQLWebservice';
-    }
 	wfProfileOut('smwfSetupExtension (SMW)');
 	return true;
-}
-
-/**
- * Returns WSDL of SPARQL webservice
- *
- * @return wsdl string
- */
-function smwfGetSPARQLWebservice() {
-    global $smwgIP, $smwgSPARQLEndpoint;
-    $wsdl = "$smwgIP/includes/webservices/sparql.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    return str_replace("{{sparql-endpoint}}", $smwgSPARQLEndpoint, $contents); 
 }
 
 /**
@@ -749,43 +725,8 @@ function smwfAddHTMLHeadersOutput(&$out) {
 			include_once($smwgIP . '/includes/storage/SMW_RAPStore2.php');
 		}
 		if ($smwgMasterStore === NULL) {
-		      global $smwgMessageBroker;
-              if (isset($smwgMessageBroker)) {
-                   $smwgMasterStore = new SMWTripleStore(new $smwgDefaultStore());
-              } else {
-                   $smwgMasterStore = new $smwgDefaultStore();
-              }
+			$smwgMasterStore = new $smwgDefaultStore();
 		}
 		return $smwgMasterStore;
 	}
 
-function smwfSPARQLQueryParser($querystring, $params, $extraprintouts, & $query) {
-    global $smwgQDefaultNamespaces;
-    if (stripos($querystring, "SELECT") === false && !array_key_exists('usesparql', $params)) { //TODO: use real SPARQL parser here.
-       $query = NULL;
-       return true;
-    }
-
-    global $smwgIP;
-    require_once ( $smwgIP . '/includes/SMW_SPARQLQueryParser.php');
-    // assume it's SPARQL
-    $qp = new SMWSPARQLQueryParser();
-    $qp->setDefaultNamespaces($smwgQDefaultNamespaces);
-    $desc = $qp->getQueryDescription($querystring);
-
-    if (array_key_exists('mainlabel', $params)) {
-        $mainlabel = $params['mainlabel'] . $qp->getLabel();
-    } else {
-        $mainlabel = $qp->getLabel();
-    }
-    if ( ( !$desc->isSingleton() || (count($desc->getPrintRequests()) + count($extraprintouts) == 0) ) && ($mainlabel != '-') ) {
-        $desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
-    }
-
-    $query = new SMWSPARQLQuery($desc, true);
-    $query->fromASK = array_key_exists('usesparql', $params);
-    $query->setQueryString($querystring);
-    $query->setExtraPrintouts($extraprintouts);
-    $query->addErrors($qp->getErrors());
-    return false;
-}

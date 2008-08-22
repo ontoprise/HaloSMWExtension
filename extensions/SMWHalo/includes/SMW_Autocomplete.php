@@ -124,8 +124,8 @@ function smwf_ac_AutoCompletionOptions() {
 function &smwfGetAutoCompletionStore() {
 		global $smwhgAutoCompletionStore, $smwgHaloIP;
 		if ($smwhgAutoCompletionStore == NULL) {
-			global $smwgDefaultStore;
-			switch ($smwgDefaultStore) {
+			global $smwgBaseStore;
+			switch ($smwgBaseStore) {
 				case (SMW_STORE_TESTING):
 					$smwhgAutoCompletionStore = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');

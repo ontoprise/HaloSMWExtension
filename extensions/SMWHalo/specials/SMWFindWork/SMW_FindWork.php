@@ -27,8 +27,8 @@ function smwfDoSpecialFindWorkPage() {
 	private $store;
 	
 	public function __construct() {
-		global $smwgDefaultStore, $smwgHaloIP, $wgUser;
-		switch ($smwgDefaultStore) {
+		global $smwgBaseStore, $smwgHaloIP, $wgUser;
+		switch ($smwgBaseStore) {
 			case (SMW_STORE_TESTING):
 				$this->store = null; // not implemented yet
 				trigger_error('Testing stores not implemented for HALO extension.');

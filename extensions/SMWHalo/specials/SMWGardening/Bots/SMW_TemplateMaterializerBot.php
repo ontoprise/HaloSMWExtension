@@ -106,8 +106,8 @@ class TemplateMaterializerBot extends GardeningBot {
 	private function getTemplateMaterializerStore() {
 		global $smwgHaloIP;
 		if ($this->store == NULL) {
-			global $smwgDefaultStore;
-			switch ($smwgDefaultStore) {
+			global $smwgBaseStore;
+			switch ($smwgBaseStore) {
 				case (SMW_STORE_TESTING):
 					$this->store = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');

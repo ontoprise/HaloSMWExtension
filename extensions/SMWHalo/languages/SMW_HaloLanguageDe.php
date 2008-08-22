@@ -25,7 +25,9 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 class SMW_HaloLanguageDe extends SMW_HaloLanguage {
 
 protected $smwContentMessages = array(
-
+    
+    'smw_derived_property'  => 'Das ist ein abgeleitetes Property.',
+    'smw_sparql_disabled'=> 'Keine SPARQL-Unterstützung aktiviert.',
 	'smw_viewinOB' => 'Im Ontology-Browser öffnen',
 
 	'smw_att_head' => 'Attribute',

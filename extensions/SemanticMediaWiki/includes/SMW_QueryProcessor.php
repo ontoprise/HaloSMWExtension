@@ -65,6 +65,10 @@ class SMWQueryProcessor {
 		} else {
 			$queryfeatures = $smwgQFeatures;
 		}
+		$qp = new SMWQueryParser($queryfeatures);
+		$qp->setDefaultNamespaces($smwgQDefaultNamespaces);
+		$desc = $qp->getQueryDescription($querystring);
+
 		if ($format == '') {
 			$format = SMWQueryProcessor::getResultFormat($params);
 		}
@@ -77,34 +81,25 @@ class SMWQueryProcessor {
 		} else {
 			$querymode = SMWQuery::MODE_INSTANCES;
 		}
-	   // parse query:
-        wfRunHooks("SMWQueryParser", array ($querystring, $params, $extraprintouts, & $query));
-        if ($query === NULL) { // default query parser
-            $qp = new SMWQueryParser($queryfeatures);
-            $qp->setDefaultNamespaces($smwgQDefaultNamespaces);
-            $desc = $qp->getQueryDescription($querystring);
-    
-            if (array_key_exists('mainlabel', $params)) {
-            $mainlabel = $params['mainlabel'] . $qp->getLabel();
-             } else {
-            $mainlabel = $qp->getLabel();
-	        }
-	        if ( ($querymode == SMWQuery::MODE_NONE) ||
-	             ( ( !$desc->isSingleton() ||
-	                 (count($desc->getPrintRequests()) + count($extraprintouts) == 0) 
-	               ) && ($mainlabel != '-') 
-	             )
-	           ) {
-	            $desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
-	        }
-	
-	        $query = new SMWQuery($desc, ($context != SMWQueryProcessor::SPECIAL_PAGE));
-	        $query->setQueryString($querystring);
-	        $query->setExtraPrintouts($extraprintouts);
-	        $query->addErrors($qp->getErrors()); // keep parsing errors for later output
-        }
-		
 
+		if (array_key_exists('mainlabel', $params)) {
+			$mainlabel = $params['mainlabel'] . $qp->getLabel();
+		} else {
+			$mainlabel = $qp->getLabel();
+		}
+		if ( ($querymode == SMWQuery::MODE_NONE) ||
+		     ( ( !$desc->isSingleton() ||
+		         (count($desc->getPrintRequests()) + count($extraprintouts) == 0) 
+		       ) && ($mainlabel != '-') 
+		     )
+		   ) {
+			$desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
+		}
+
+		$query = new SMWQuery($desc, ($context != SMWQueryProcessor::SPECIAL_PAGE));
+		$query->setQueryString($querystring);
+		$query->setExtraPrintouts($extraprintouts);
+		$query->addErrors($qp->getErrors()); // keep parsing errors for later output
 
 		// set query parameters:
 		$query->querymode = $querymode;
@@ -219,17 +214,12 @@ class SMWQueryProcessor {
 				}
 				$printouts[] = new SMWPrintRequest($printmode, trim($parts[1]), $title, trim($propparts[1]));
 			} else { // parameter or query
-			    // FIX:KK special handling for SPARQL queries here 
-                if (strpos($param, "SELECT ") !== false) {
-                    $querystring .= $param;
-                } else {
-                    $parts = explode('=',$param,2);
-                    if (count($parts) >= 2) {
-                        $params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
-                    } else {
-                        $querystring .= $param;
-                    }
-                }
+				$parts = explode('=',$param,2);
+				if (count($parts) >= 2) {
+					$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
+				} else {
+					$querystring .= $param;
+				}
 			}
 		}
 		$querystring = str_replace(array('&lt;','&gt;'), array('<','>'), $querystring);

@@ -49,11 +49,13 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  * 
  * @param String $store SMWHaloStore (old) or SMWHaloStore2 (new). Uses old by default.
  */
-function enableSMWHalo($store = 'SMWHaloStore') {
-	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $wgHooks;
+function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
+	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore, $smwgSemanticDataClass, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	$smwgDefaultStore = $store; 
+	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store; 
+	$smwgBaseStore = $store;
+	$smwgSemanticDataClass = 'SMWFullSemanticData';
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
@@ -77,6 +79,10 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 	$wgAutoloadClasses['SMWGardeningTableResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_GardeningTable.php';
+	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
+	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
+	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
+	$wgAutoloadClasses['SMWFullSemanticData']            = $smwgHaloIP . '/includes/SMW_FullSemanticData.php';
 	SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
     $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
     SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter'; 
@@ -88,6 +94,7 @@ function smwgHaloSetupExtension() {
 	
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
+	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
 	$wgHooks['ArticleSaveComplete'][] = 'smwfHaloSaveHook'; // gardening update (SMW does the storing)
 	$wgHooks['ArticleSave'][] = 'smwfHaloPreSaveHook';
 	$wgHooks['ArticleDelete'][] = 'smwfHaloPreDeleteHook';
@@ -266,9 +273,11 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
         
-		$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
-        $wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
-        
+		if (isset($smwgMessageBroker)) {
+			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
+	        $wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
+		}
+		
 		global $smwgEnableWikiWebServices;
 		if ($smwgEnableWikiWebServices) {
 			$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRepositorySpecial.php';
@@ -303,8 +312,51 @@ function smwgHaloSetupExtension() {
 			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Maintained by [http://www.ontoprise.de Ontoprise].", 
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://ontoworld.org/wiki/Halo_Extension View feature description.]');
-
+	
+    global $smwgSPARQLEndpoint, $wgAjaxExportList, $smwgMessageBroker;
+    if (isset($smwgMessageBroker)) {
+        $wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
+        
+    }
+    if (isset($smwgSPARQLEndpoint)) {
+        $wgAjaxExportList[] = 'smwfGetSPARQLWebservice';
+    }
 	return true;
+}
+
+function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
+   
+    $parser->setFunctionHook( 'sparql', 'smwfProcessSPARQLInlineQueryParserFunction' );
+   
+    return true; // always return true, in order not to stop MW's hook processing!
+}
+
+/**
+ * The {{#sparql }} parser function processing part.
+ */
+function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
+    global $smwgMessageBroker;
+    if (isset($smwgMessageBroker)) {
+        $params = func_get_args();
+        array_shift( $params ); // we already know the $parser ...
+        return SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+    } else {
+        return smwfEncodeMessages(array(wfMsgForContent('smw_sparql_disabled')));
+    }
+}
+
+/**
+ * Returns WSDL of SPARQL webservice
+ *
+ * @return wsdl string
+ */
+function smwfGetSPARQLWebservice() {
+    global $smwgHaloIP, $smwgSPARQLEndpoint;
+    $wsdl = "$smwgHaloIP/includes/webservices/sparql.wsdl";
+    $handle = fopen($wsdl, "rb");
+    $contents = fread ($handle, filesize ($wsdl));
+    fclose($handle);
+    return str_replace("{{sparql-endpoint}}", $smwgSPARQLEndpoint, $contents); 
 }
 
 function smwfHaloInitMessages() {
@@ -438,11 +490,11 @@ function smwfHaloInitContentMessages() {
  * Returns GeneralStore
  */
 function &smwfGetSemanticStore() {
-	global $smwgMasterGeneralStore, $smwgHaloIP, $smwgDefaultStore;
+	global $smwgMasterGeneralStore, $smwgHaloIP, $smwgBaseStore;
 	if ($smwgMasterGeneralStore == NULL) {
-		if ($smwgDefaultStore != 'SMWHaloStore' && $smwgDefaultStore != 'SMWHaloStore2') {
-			trigger_error("The store '$smwgDefaultStore' is not implemented for the HALO extension. Please use 'SMWHaloStore'.");
-		} elseif ($smwgDefaultStore == 'SMWHaloStore2') {
+		if ($smwgBaseStore != 'SMWHaloStore' && $smwgBaseStore != 'SMWHaloStore2') {
+			trigger_error("The store '$smwgBaseStore' is not implemented for the HALO extension. Please use 'SMWHaloStore'.");
+		} elseif ($smwgBaseStore == 'SMWHaloStore2') {
             require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL2.php');
             $smwgMasterGeneralStore = new SMWSemanticStoreSQL2();
         }  else {
@@ -1171,6 +1223,7 @@ function smwfCommaAnnotation(&$parser){
 
 function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	$magicWords['annotateList'] = array( 0, 'annotateList' );
+	$magicWords['sparql']  = array( 0, 'sparql' );
 	return true;
 }
 
@@ -1292,4 +1345,82 @@ function smwfExtDeleteOutput(& $article, & $output) {
 	return true;
 }
 
+/**
+ * Parses additinal semantic data need for a triple store:
+ *
+ *  1. categories
+ *  2. rules (optional)
+ */
+function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
+    global $smwgIP, $smwgNamespace, $smwgRuleRewriter, $smwgEnableFlogicRules;
+    include_once($smwgIP . '/includes/SMW_Factbox.php');
+        
+    // parse categories:
+    $categoryLinkPattern = '/\[\[               # Beginning of the link
+                            category:           # category link (case insensitive!)
+                            ([^]]+)               # category
+                            \]\]                # End of link
+                            /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
+    $categories = array();
+    $matches = array();
+    preg_match_all($categoryLinkPattern, $text, $matches);
+    if (isset($matches[1])) {
+        foreach($matches[1] as $m) {
+            $categories[] = Title::newFromText($m, NS_CATEGORY);
+        }
+    }
+
+    // rules
+    // meant to be a hash map $ruleID => $ruleText,
+    // where $ruleID has to be a URI (i.e. containing at least one colon)
+
+    $rules = array();
+    if (isset($smwgEnableFlogicRules)) {
+        // search rule tags
+        $ruleTagPattern = '/&lt;rule(.*?&gt;)(.*?.)&lt;\/rule&gt;/ixus';
+        preg_match_all($ruleTagPattern, trim($text), $matches);
+    
+        // at least one parameter and content?
+        for($i = 0; $i < count($matches[0]); $i++) {
+            $header = trim($matches[1][$i]);
+            $ruletext = trim($matches[2][$i]);
+    
+            // parse header parameters
+            $ruleparamterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
+            preg_match_all($ruleparamterPattern, $header, $matchesheader);
+    
+            // fetch name of rule (ruleid) and put into rulearray
+            for ($j = 0; $j < count($matchesheader[0]); $j++) {
+                if (trim($matchesheader[1][$j]) == 'name') {
+                    $name = $matchesheader[2][$j];
+                    $name = $smwgNamespace . "/" . $name;
+                    $ruletext = str_replace("&lt;","<", $ruletext);
+                    $ruletext = str_replace("&gt;",">", $ruletext);
+                    $rules[$name] = $smwgRuleRewriter != NULL ? $smwgRuleRewriter->rewrite($ruletext) : $ruletext;
+                }
+            }
+        }
+        // remove rule tags from text
+        $text = preg_replace($ruleTagPattern, "", $text);
+    }
+    // parse redirects
+    $redirectLinkPattern = '/\#REDIRECT          # REDIRECT command
+                            \[\[                # Beginning of the link
+                            ([^]]+)               # target
+                            \]\]                # End of link
+                            /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
+    $redirects = array();
+    $matches = array();
+    preg_match_all($redirectLinkPattern, $text, $matches);
+    if (isset($matches[1])) {
+        foreach($matches[1] as $m) {
+            $redirects[] = Title::newFromText($m);
+        }
+    }
+
+    SMWFactbox::$semdata->setCategories($categories);
+    SMWFactbox::$semdata->setRules($rules);
+    SMWFactbox::$semdata->setRedirects($redirects);
+    return true;
+}
 ?>

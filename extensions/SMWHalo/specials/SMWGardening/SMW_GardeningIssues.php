@@ -161,8 +161,8 @@ global $wgAjaxExportList;
     public static function getGardeningIssuesAccess() {
         global $smwgHaloIP;
         if (SMWGardeningIssuesAccess::$gi_interface == NULL) {
-            global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
+            global $smwgBaseStore;
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     SMWGardeningIssuesAccess::$gi_interface = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');

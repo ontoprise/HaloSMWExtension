@@ -533,8 +533,8 @@ abstract class SimilarityBotStorage {
 	public static function getSimilarityStorage() {
 		global $smwgHaloIP;
 		if (self::$store == NULL) {
-			global $smwgDefaultStore;
-			switch ($smwgDefaultStore) {
+			global $smwgBaseStore;
+			switch ($smwgBaseStore) {
 				case (SMW_STORE_TESTING):
 					self::$store = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');

@@ -384,8 +384,8 @@ abstract class CombinedSearchStorage {
     public static function getCombinedSearchStore() {
         global $smwgHaloIP;
         if (self::$INSTANCE == NULL) {
-            global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
+            global $smwgBaseStore;
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     self::$INSTANCE = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');
