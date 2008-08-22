@@ -239,9 +239,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
 				return wfMsg('smw_gardissue_double_min_card', $text1, $this->value);
 			case SMW_GARD_ISSUE_MISSING_PARAM: 
 				return wfMsg('smw_gard_issue_missing_param',$text1, $text2, $this->value);
-			case SMW_GARDISSUE_INSTANCE_WITHOUT_CAT: 
-				return wfMsg('smw_gardissue_instance_without_cat', $text1);
-				
+							
 			case SMW_GARDISSUE_MAXCARD_NOT_NULL: 
 				return wfMsg('smw_gardissue_maxcard_not_null', $text1);
 			case SMW_GARDISSUE_MINCARD_BELOW_NULL: 
