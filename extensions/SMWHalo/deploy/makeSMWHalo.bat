@@ -17,12 +17,17 @@ mkdir %OUTPUT_DIR%\skins\ontoskin
 mkdir %OUTPUT_DIR%\includes
 
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
+mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes
+mkdir %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage
 
 REM copy files
 
 xcopy ..\* %OUTPUT_DIR%\extensions\SMWHalo /S /EXCLUDE:excludeForHalo.dat /Y
 
-REM Patches for SMW (NONE!)
+REM Patches for SMW 
+xcopy ..\..\SemanticMediaWiki\includes\SMW_FactBox.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes /Y
+xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
+xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore2.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
 
 REM Patches for MW
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
