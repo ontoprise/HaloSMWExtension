@@ -91,16 +91,17 @@ class SMWGardening extends SpecialPage {
 	}
 	
 	static function getRegisteredBots() {
-		global $registeredBots, $wgUser;
+		global $registeredBots, $wgUser, $wgServer, $wgScriptPath;
 		 $htmlResult = "";
 		 $first = true;
 		 foreach($registeredBots as $botID => $bot) {
 		 	if (!GardeningBot::isUserAllowed($wgUser, $bot->allowedForUserGroups())) {
 		 		continue; // do not add this bot, because the user must not access it.
 		 	}
+		 	
 		 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 		 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
-		 				   "<a>" .$bot->getLabel()."</a>" .
+		 				   "<img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/Gardening/".$botID."_image.png\"/><a>" .$bot->getLabel()."</a>" .
 		 				   "</div>";
 	
 		 }
