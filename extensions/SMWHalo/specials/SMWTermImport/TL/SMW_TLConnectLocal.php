@@ -27,7 +27,7 @@
 global $smwgHaloIP;
 require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_ITL.php');
 
-if (!defined(TERM_IMPORT_PATH)) {
+if ( !defined( 'TERM_IMPORT_PATH' ) ) {
 	define ('TERM_IMPORT_PATH', $smwgHaloIP.'/specials/SMWTermImport/');
 }
 define ('DAL_MODULE_CFG', TERM_IMPORT_PATH.'TL/ConnectLocalDAL.cfg');
