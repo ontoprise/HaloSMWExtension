@@ -162,7 +162,7 @@ function webServiceUsage_Render( &$parser) {
 			}
 		}
 	}
-	//todo:language message
+	
 	if(count($wsReturnValues) > 1 && $propertyName != null){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
 	}
@@ -240,6 +240,22 @@ function formatWSResult($wsFormat, $wsResults = null){
 		return smwfEncodeMessages(array($wsResults));
 	}
 
+	//handle erroneous wwsds
+	foreach($wsResults as $key => $wsResult){
+		if(is_string($wsResult)){
+		} else if(is_array($wsResult)){
+			foreach($wsResult as $subKey => $subWsResult){
+				$k++;
+				if(is_string($subWsResult)){
+				} else {
+					$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true);
+				}
+			}	
+		} else {
+			$wsResult[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true);
+		}
+	}
+	
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
 		return $printer->getWikiText(getReadyToPrintResult($wsResults));
