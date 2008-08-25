@@ -745,6 +745,21 @@ release: function() {
 	autoCompleter.registerAllInputs();		
 },
 
+/**
+ * Sets value of input field and corrects size in ie
+ * This is a workaround for IE, which sets the size 
+ * of input fields too large in the case the value 
+ * attribute is set with a long string bt javascript
+ */
+setInputValue: function(id,presetvalue){
+	if (OB_bd.isIE) {
+		var parentwidth = $(id).getOffsetParent().getWidth();
+		$(id).value = presetvalue;
+		$(id).setStyle({width: parentwidth + "px"});
+	} else {
+		$(id).value = presetvalue;
+	}
+},
 
 /**
  * @public this is just a test function adding some sample boxes
