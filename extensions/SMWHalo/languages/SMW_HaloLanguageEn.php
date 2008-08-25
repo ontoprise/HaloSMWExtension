@@ -366,9 +366,9 @@ clicking the big arrows between the columns.',
 
     'smw_checkrefintegritybot' => "Check referential integrity",
     'smw_gard_checkrefint_docu' => "This bot checks the integrity of links to external resources.",
-    'smw_gardissue_resource_not_exists' => "<a href=\"$1\">$2</a> does not exist.",
-    'smw_gardissue_resource_moved_permanantly' => "<a href=\"$1\">$2</a> was moved permanantly.",
-    'smw_gardissue_resource_not_accessible' => "<a href=\"$1\">$2</a> is not accessible for some reason.",
+    'smw_gardissue_resource_not_exists' => '<a href=\"$1\">$2</a> does not exist.',
+    'smw_gardissue_resource_moved_permanantly' => '<a href=\"$1\">$2</a> was moved permanantly.',
+    'smw_gardissue_resource_not_accessible' => '<a href=\"$1\">$2</a> is not accessible for some reason.',
     'smw_gardissue_thisresource' => "This resource",
 
 	/*Messages for ContextSensitiveHelp*/
