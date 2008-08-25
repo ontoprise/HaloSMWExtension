@@ -27,7 +27,9 @@
 global $smwgHaloIP;
 require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_ITL.php');
 
-define ('TERM_IMPORT_PATH', $smwgHaloIP.'/specials/SMWTermImport/');
+if (!defined(TERM_IMPORT_PATH)) {
+	define ('TERM_IMPORT_PATH', $smwgHaloIP.'/specials/SMWTermImport/');
+}
 define ('DAL_MODULE_CFG', TERM_IMPORT_PATH.'TL/ConnectLocalDAL.cfg');
 
 class TLConnectLocal implements ITL {

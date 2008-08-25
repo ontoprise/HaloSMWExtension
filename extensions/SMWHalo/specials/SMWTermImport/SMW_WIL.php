@@ -28,7 +28,9 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_IWIL.php');
 
-define ('TERM_IMPORT_PATH', $smwgHaloIP.'/specials/SMWTermImport/');
+if (!defined(TERM_IMPORT_PATH)) {
+	define ('TERM_IMPORT_PATH', $smwgHaloIP.'/specials/SMWTermImport/');
+}
 define ('TL_MODULE_CFG', TERM_IMPORT_PATH.'TL/TransportLayer.cfg');
 
 class WIL implements IWIL {
