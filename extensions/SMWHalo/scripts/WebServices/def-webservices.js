@@ -1035,6 +1035,7 @@ DefineWebServiceSpecial.prototype = {
 				if (this.preparedPathSteps[i] != "null") {
 					if(this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
 						continue;
+					}
 					wsSyntax += "| "
 							+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
 							+ " = [Please enter a value here]\n";
@@ -1058,7 +1059,6 @@ DefineWebServiceSpecial.prototype = {
 			
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack.bind(this));
-
 		} else {
 			$("errors").style.display = "block";
 			$("step6-error").style.display = "block";
