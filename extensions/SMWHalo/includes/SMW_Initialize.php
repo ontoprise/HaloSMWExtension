@@ -60,8 +60,6 @@ function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
 	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
-	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
-
 }
 
 /**

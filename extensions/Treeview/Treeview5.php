@@ -230,6 +230,7 @@ function wfSetupTreeView5() {
 function wfTreeView5LanguageGetMagic(&$magicWords,$langCode = 0) {
     global $wgTreeView5Magic;
     $magicWords[$wgTreeView5Magic] = array($langCode,$wgTreeView5Magic);
+    $magicWords['generateTree']  = array( 0, 'generateTree' );
     return true;
     }
   
