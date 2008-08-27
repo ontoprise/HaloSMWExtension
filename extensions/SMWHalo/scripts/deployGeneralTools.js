@@ -443,7 +443,13 @@ GeneralXMLTools.importNode = function(parentNode, child, deep) {
 GeneralXMLTools.getNodeById = function (node, id) {
 	if (Prototype.BrowserFeatures.XPath) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
-		var nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null); 
+		var nodeWithID;
+		// distinguish between XML and HTML content (necessary in FF3)
+		if (node.contentType != null && node.contentType == "text/xml") {
+		  nodeWithID = node.documentElement.ownerDocument.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		} else {
+	      nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+		}
 		return nodeWithID.iterateNext(); // there *must* be only one
 	} else if (OB_bd.isIE) {
 		// IE supports XPath in a proprietary way
@@ -487,7 +493,13 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 	if (Prototype.BrowserFeatures.XPath) {
 		var results = new Array();
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
-		var nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null); 
+		var nodesWithID;
+		// distinguish between XML and HTML content (necessary in FF3)
+		if (node.contentType != null && node.contentType == "text/xml") {
+            nodesWithID = node.documentElement.ownerDocument.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
+		} else {
+            nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+		}
 		var nextnode = nodesWithID.iterateNext();
 		while (nextnode != null) {
 			results.push(nextnode);
