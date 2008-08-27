@@ -81,9 +81,15 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
 	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 	$wgAutoloadClasses['SMWFullSemanticData']            = $smwgHaloIP . '/includes/SMW_FullSemanticData.php';
-	SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
     $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
-    SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter'; 
+    if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
+		SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
+		SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter';
+	} else { // registration since SMW 1.3.*
+		global $smwgResultFormats;
+		$smwgResultFormats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
+		$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
+	}
 	
 	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
