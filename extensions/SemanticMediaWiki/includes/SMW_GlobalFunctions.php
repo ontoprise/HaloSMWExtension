@@ -3,7 +3,7 @@
  * Global functions and constants for Semantic MediaWiki.
  */
 
-define('SMW_VERSION','1.2.2a-SVN');
+define('SMW_VERSION','1.2.2');
 
 // constants for special properties, used for datatype assignment and storage
 define('SMW_SP_HAS_TYPE',1);
@@ -185,8 +185,6 @@ function enableSemantics($namespace = '', $complete = false) {
 	///// Register Jobs
 	$wgAutoloadClasses['SMWUpdateJob']              = $smwgIP . '/includes/jobs/SMW_UpdateJob.php';
 	$wgJobClasses['SMWUpdateJob']                   = 'SMWUpdateJob';
-	$wgJobClasses['SMWRefreshJob']                  = 'SMWRefreshJob';
-	$wgAutoloadClasses['SMWRefreshJob']             = $smwgIP . '/includes/jobs/SMW_RefreshJob.php';
 
 	return true;
 }
@@ -225,7 +223,6 @@ function smwfSetupExtension() {
 	require_once($smwgIP . '/includes/SMW_RefreshTab.php');
 
 	$wgHooks['InternalParseBeforeLinks'][] = 'smwfParserHook'; // parse annotations
-	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterInlineQueries'; // register the <ask> parser hook
 	$wgHooks['ArticleSave'][] = 'smwfPreSaveHook'; // check some settings here
 	$wgHooks['ArticleUndelete'][] = 'smwfUndeleteHook'; // restore annotations
 	$wgHooks['ArticleDelete'][] = 'smwfDeleteHook'; // delete annotations
@@ -237,6 +234,15 @@ function smwfSetupExtension() {
 
 	$wgHooks['ArticleFromTitle'][] = 'smwfShowListPage'; // special implementations for property/type articles
 
+	if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
+		$wgHooks['ParserFirstCallInit'][] = 'smwfRegisterParserFunctions';
+	} else {
+		if ( class_exists( 'StubObject' ) && !StubObject::isRealObject( $wgParser ) ) {
+			$wgParser->_unstub();
+		}
+		smwfRegisterParserFunctions( $wgParser );
+	}
+
 	///// credits (see "Special:Version") /////
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://semantic-mediawiki.org', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation.]');
 
@@ -245,21 +251,16 @@ function smwfSetupExtension() {
 }
 
 /**
- * This hook registers a parser-hook to the current parser.
+ * This hook registers parser functions and hooks to the given parser.
  * Note that parser hooks are something different than MW hooks
  * in general, which explains the two-level registration.
  */
-function smwfRegisterInlineQueries( &$parser, &$text, &$stripstate ) {
-	SMWFactbox::initStorage($parser->getTitle());
-
-	$oldhook = $parser->setFunctionHook( 'ask', 'smwfProcessInlineQueryParserFunction' );
-	if ($oldhook != 'smwfProcessInlineQueryParserFunction') {
-		$parser->setHook( 'ask', 'smwfProcessInlineQuery' );
-		$parser->setFunctionHook( 'ask', 'smwfProcessInlineQueryParserFunction' );
-		$parser->setFunctionHook( 'show', 'smwfProcessShowParserFunction' );
-		$parser->setFunctionHook( 'info', 'smwfProcessInfoParserFunction' );
-		$parser->setFunctionHook( 'concept', 'smwfProcessConceptParserFunction' );
-	}
+function smwfRegisterParserFunctions( &$parser) {
+	$parser->setHook( 'ask', 'smwfProcessInlineQuery' );
+	$parser->setFunctionHook( 'ask', 'smwfProcessInlineQueryParserFunction' );
+	$parser->setFunctionHook( 'show', 'smwfProcessShowParserFunction' );
+	$parser->setFunctionHook( 'info', 'smwfProcessInfoParserFunction' );
+	$parser->setFunctionHook( 'concept', 'smwfProcessConceptParserFunction' );
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
@@ -314,6 +315,7 @@ function smwfProcessConceptParserFunction(&$parser) {
 	// The global $smwgConceptText is used to pass information to the MW hooks for storing it,
 	// $smwgPreviousConcept is used to detect if we already have a concept defined for this page.
 	$title = $parser->getTitle();
+	SMWFactbox::initStorage($title); // make sure we have the right title
 	if ($title->getNamespace() != SMW_NS_CONCEPT) {
 		return smwfEncodeMessages(array(wfMsgForContent('smw_no_concept_namespace')));
 	} elseif (isset($smwgPreviousConcept) && ($smwgPreviousConcept == $title->getText())) {
@@ -331,7 +333,9 @@ function smwfProcessConceptParserFunction(&$parser) {
 
 	$dv = SMWDataValueFactory::newSpecialValue(SMW_SP_CONCEPT_DESC);
 	$dv->setValues($concept_text, $concept_docu);
-	SMWFactbox::$semdata->addSpecialValue(SMW_SP_CONCEPT_DESC,$dv);
+	if (SMWFactbox::$semdata !== NULL) {
+		SMWFactbox::$semdata->addSpecialValue(SMW_SP_CONCEPT_DESC,$dv);
+	}
 
 	// display concept box:
 	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $title->getPrefixedText(), 'rdflink');
@@ -411,8 +415,8 @@ function smwfRequireHeadItem($id, $item = '') {
 function smwfParserAfterTidy(&$parser, &$text) {
 	global $smwgHeadItems, $smwgStoreActive;
 	SMWFactbox::initStorage($parser->getTitle()); // be sure we have our title, strange things happen in parsing
+	if (!$smwgStoreActive || (SMWFactbox::$semdata === NULL)) return true; // avoid doing this in SMW-generated sub-parsers
 	// make HTML header
-	if (!$smwgStoreActive) return true; // avoid doing this in SMW-generated sub-parsers
 	foreach ($smwgHeadItems as $key => $item) {
 		$parser->mOutput->addHeadItem("\t\t" . $item . "\n", $key);
 	}

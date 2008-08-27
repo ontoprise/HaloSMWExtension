@@ -21,7 +21,8 @@ abstract class SMWDataValue {
 
 	private $m_hasssearchlink;        /// used to control the addition of the standard search link
 	private $m_hasservicelinks;       /// used to control service link creation
-	private $m_isderived = false;    /// True, if the value of the property is derived by a rule
+
+	private $m_isderived = false;    /// True, if the value of the property is derived by a rule ///NOTE: HALO patch
 
 	public function SMWDataValue($typeid) {
 		$this->m_typeid = $typeid;
@@ -391,19 +392,22 @@ abstract class SMWDataValue {
 		return ( (count($this->m_errors) == 0) && $this->m_isset );
 	}
 
-    /**
-     * Return TRUE if a value was derived by a rule.
-     */
-    public function isDerived() {
-        return $this->m_isderived;
-    }
-    
-    /**
-     * Sets the value as being derived or not.
-     */
-    public function setDerived($derived) {
-        $this->m_isderived = $derived;
-    }
+	/**
+	 * Return TRUE if a value was derived by a rule.
+	 * @NOTE: HALO patch
+	 */
+	public function isDerived() {
+		return $this->m_isderived;
+	}
+	
+	/**
+	 * Sets the value as being derived or not.
+	 * @NOTE: HALO patch
+	 */
+	public function setDerived($derived) {
+		$this->m_isderived = $derived;
+	}
+
 	/**
 	 * Return a string that displays all error messages as a tooltip, or
 	 * an empty string if no errors happened.

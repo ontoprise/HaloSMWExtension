@@ -22,7 +22,6 @@ $messages['en'] = array(
 	'smw_concept_description' => 'Description of concept "$1"', // used in the namespace "Concept:"
 	'smw_no_concept_namespace'=> 'Concepts can only be defined on pages in the Concept: namespace.',
 	'smw_multiple_concepts'   => 'Each concept page can have only one concept definition.',
-   
 
 	// URIs that should not be used in objects in cases where users can provide URIs
 	'smw_uri_blacklist' => " http://www.w3.org/1999/02/22-rdf-syntax-ns#\n http://www.w3.org/2000/01/rdf-schema#\n http://www.w3.org/2002/07/owl#",
@@ -112,7 +111,7 @@ Backup your data before using it.',
 	'smw_type_header'             => 'Properties of type "$1"',
 	'smw_typearticlecount'        => 'Showing $1 properties using this type.',
 	'smw_attribute_header'        => 'Pages using the property "$1"',
-	'smw_attributearticlecount'   => 'Showing $1 page(s) using this property.',
+	'smw_attributearticlecount'   => 'Showing $1 pages using this property.',
 	'smw_subproperty_header'      => 'Subproperties',
         'smw_subpropertyarticlecount' => 'This property has the following $1 subproperties.',
 

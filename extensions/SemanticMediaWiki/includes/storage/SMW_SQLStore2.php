@@ -656,6 +656,7 @@ class SMWSQLStore2 extends SMWStore {
 		if ($value->getTypeID() == '_wpg') {
 			$oid = $this->getSMWPageID($value->getDBkey(),$value->getNamespace(),$value->getInterwiki());
 			$sql = 'p_id=smw_id AND o_id=' . $db->addQuotes($oid) .
+			       ' AND smw_iw=' . $db->addQuotes('') . // only local, non-internal properties
 			       $this->getSQLConditions($requestoptions,'smw_sortkey','smw_sortkey');
 			$res = $db->select( array('smw_rels2','smw_ids'), 'DISTINCT smw_title',
 			                    $sql, 'SMW::getInProperties', $this->getSQLOptions($requestoptions,'smw_sortkey') );
@@ -709,7 +710,7 @@ class SMWSQLStore2 extends SMWStore {
 			$propertyValueArray = $data->getPropertyValues($property);
 			if ($property instanceof Title) { // normal property
 				foreach($propertyValueArray as $value) {
-					if ($value->isValid() && !$value->isDerived()) {
+					if ($value->isValid() && !$value->isDerived()) { ///NOTE HALO patch
 						if ( ($value->getTypeID() == '_txt') || ($value->getTypeID() == '_cod') ){
 							$up_text2[] =
 								array( 's_id' => $sid,
@@ -1589,7 +1590,7 @@ class SMWSQLStore2 extends SMWStore {
 	 * Delete all semantic data stored for the given subject.
 	 * Used for update purposes.
 	 */
-	public function deleteSemanticData($subject) {
+	protected function deleteSemanticData($subject) {
 		$db =& wfGetDB( DB_MASTER );
 		/// NOTE: redirects are handled by updateRedirects(), not here!
 			//$db->delete('smw_redi2', array('s_title' => $subject->getDBkey(),'s_namespace' => $subject->getNamespace()), 'SMW::deleteSubject::Redi2');
