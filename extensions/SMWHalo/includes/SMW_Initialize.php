@@ -60,6 +60,7 @@ function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
 	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
+	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
 }
 
 /**
@@ -1336,6 +1337,18 @@ function wfAddCustomVariableLang(&$langMagic, $langCode = 0) {
 	return true;
 }
 
+function wfGetCustomVariable(&$parser,&$cache,&$index,&$ret) {
+	switch ($index) {
+
+		case MAG_CURRENTUSER:
+ 			$parser->disableCache(); # Mark this content as uncacheable
+			$ret = $GLOBALS['wgUser']->mName;
+			 break;
+
+		}
+	return true;
+}
+
 /**
  * Returns additional HTML for delete page.
  *
@@ -1427,4 +1440,6 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
     SMWFactbox::$semdata->setRedirects($redirects);
     return true;
 }
+
+
 ?>
