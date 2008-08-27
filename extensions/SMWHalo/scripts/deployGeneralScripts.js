@@ -9104,6 +9104,21 @@ release: function() {
 	autoCompleter.registerAllInputs();		
 },
 
+/**
+ * Sets value of input field and corrects size in ie
+ * This is a workaround for IE, which sets the size 
+ * of input fields too large in the case the value 
+ * attribute is set with a long string bt javascript
+ */
+setInputValue: function(id,presetvalue){
+	if (OB_bd.isIE) {
+		var parentwidth = $(id).getOffsetParent().getWidth();
+		$(id).value = presetvalue;
+		$(id).setStyle({width: parentwidth + "px"});
+	} else {
+		$(id).value = presetvalue;
+	}
+},
 
 /**
  * @public this is just a test function adding some sample boxes
@@ -10157,7 +10172,7 @@ Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar))
 var RelationToolBar = Class.create();
 
 var SMW_REL_VALID_PROPERTY_NAME =
-	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\\|&$\\/=\\?\\{\\}\\[\\]]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
@@ -10187,7 +10202,7 @@ var SMW_REL_CHECK_PROPERTY_IIE = // Invalid if exists
 	 	': (color: lightgreen, hideMessage, valid:true)" ';
 
 var SMW_REL_VALID_CATEGORY_NAME =
-	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\\|!&$%&\\/=\\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 
@@ -10945,7 +10960,6 @@ changeItem: function(selindex) {
 			for (var i = 0, len = relations.length; i < len; i++) {
 				relations[i].rename(relName);
 			}
-			editAreaLoader.execCommand(editAreaName, "resync_highlight(true)");
 		}
  		//change relation
 		relation.rename(relName);
@@ -12052,7 +12066,6 @@ apply: function() {
 			}
 		}
 	}
-	editAreaLoader.execCommand(editAreaName, "resync_highlight(true)");
 	
 	this.createContent();
 	this.refreshOtherTabs();
@@ -12953,90 +12966,6 @@ Event.observe(window, 'load', csContributor.registerContributor.bind(csContribut
 
 
 var editAreaName = "wpTextbox1";
-var loc = document.location.href.indexOf("mode=wysiwyg");
-if (loc != -1)
-	editAreaLoader.init({id : "wpTextbox1", display:"later"}); //disable in WYSIWYG mode
-else if((wgAction == "edit") && skin == "ontoskin"){
-	if(getEditorCookie() == "on")
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff"});
-	else //display:later
-		editAreaLoader.init({id : "wpTextbox1", syntax: "wiki", start_highlight: true, plugins: "SMW", allow_resize: "no", toolbar: "bold, italic, intlink, extlink, heading, img, media, formula, nowiki, signature, line, |, undo, redo, |, change_smooth_selection, highlight, reset_highlight, |, help", replace_tab_by_spaces: "0", EA_toggle_on_callback: "toggleEAOn", EA_toggle_off_callback: "toggleEAOff", display: "later"});
-}
-
-function trim(string) {
-	return string.replace(/(^\s+|\s+$)/g, "");
-}
-
-function changeEdit(){
-	$("wpTextbox1").value = editAreaLoader.getValue(editAreaName);
-}
-
-function toggleEAOn(id){
-	document.getElementById("toolbar").style.display = "none";
-	addSpacesForDisplay();
-}
-
-function toggleEAOff(id){
-	document.getElementById("toolbar").style.display = "";
-}
-
-/*
-* There is a display error in IE: the last 3-5 characters are not shown.
-* Therefore the longest line will be extended by some whitespaces so all
-* characters are shown. Ugly but it works.
-*/
-function addSpacesForDisplay(){
-	if (navigator.appName == "Microsoft Internet Explorer" && editAreaLoader.getValue(editAreaName) != ""){
-		var lines = editAreaLoader.getValue(editAreaName).split("\n");
-		var max = 0;
-		var theLine = 0;
-		var text = "";
-		for(var i=0; i<lines.length; i++){
-			if(lines[i].length > max){
-				max = lines[i].length;
-				theLine = i;
-			}
-		}
-		for(var i=0; i<lines.length; i++){
-			if(i == theLine){
-				lines[i] = lines[i].substring(0, lines[i].length-2);
-				text = text + lines[i] + "         " + "\n";
-			}
-			else {
-				text = text + lines[i];
-			}
-		}
-		editAreaLoader.setValue(editAreaName, text)
-	}
-}
-
-/*
-* Get the cookie that saves the state of the advanced editor, which
-* is "on" or "off". If the cookie is not set, "off" is standard.
-* The cookie is set in the method userToggle() in edit_area_loader.js
-*/
-function getEditorCookie() {
-	var cookie = document.cookie;
-	var length = cookie.length-1;
-	if (cookie.charAt(length) != ";")
-		cookie += ";";
-	var a = cookie.split(";");
-
-	// walk through cookies...
-	for (var i=0; i<a.length; i++) {
-		var cookiename = trim(a[i].substring(0, a[i].search('=')));
-		var cookievalue = a[i].substring(a[i].search('=')+1,a[i].length);
-		if (cookiename == "smwUseAdvancedEditor") {
-			return cookievalue;
-		}
-	}
-	return "on";
-}
-
-
-
-
-//editAreaLoader.execCommand("wpTextbox1", "update_size();");
 
 var SMWEditInterface = Class.create();
 SMWEditInterface.prototype ={
@@ -13052,9 +12981,7 @@ SMWEditInterface.prototype ={
 	focus: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
 			$(editAreaName).focus();
-		} else if (OB_bd.isGecko){
-			editAreaLoader.execCommand(this.editAreaName, "focus();");
-		}
+		} 
 	},
 
 	setSelectionRange: function(start, end){
@@ -13080,9 +13007,7 @@ SMWEditInterface.prototype ={
 				SMWEditArea.selectionEnd = end;
 				SMWEditArea.caretPos = start;
 			}
-		} else {
-			editAreaLoader.setSelectionRange(editAreaName, start, end);
-		}
+		} 
 	},
 
 	/*
@@ -13183,10 +13108,8 @@ SMWEditInterface.prototype ={
 					}
 					++end;
 				}
-				setSelectionRange(SMWEditArea,start,end);
+				this.setSelectionRange(start,end);
 			}
-		} else {
-			editAreaLoader.selectCompleteAnnotation(editAreaName);
 		}
 	},
 	
@@ -13210,12 +13133,8 @@ SMWEditInterface.prototype ={
 				}
 				return "";
 			}
-		} else {
-			if(editAreaLoader.getSelectedText(editAreaName) != ""){
-				this.currentRange = editAreaLoader.getSelectionRange(editAreaName);
-			}
-			return editAreaLoader.getSelectedText(editAreaName);
-		}
+		} 
+		return "";
 	},
 
 	setSelectedText: function(text){
@@ -13272,26 +13191,18 @@ SMWEditInterface.prototype ={
 			if (SMWEditArea.createTextRange) {
 				SMWEditArea.caretPos = document.selection.createRange().duplicate();
 			}
-		} else {
-			if(editAreaLoader.getSelectedText(editAreaName) == "" && this.currentRange){
-				editAreaLoader.setSelectionRange(editAreaName, this.currentRange["start"], this.currentRange["end"]);
-			}
-			editAreaLoader.setSelectedText(editAreaName, text);
-		}
+		} 
 	},
 
 	getValue: function(){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
 			return $(editAreaName).value;
-		else
-			return editAreaLoader.getValue(editAreaName);
+		return "";
 	},
 
 	setValue: function(text){
 		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
 			$(editAreaName).value = text;
-		else
-			editAreaLoader.setValue(editAreaName, text);
 	},
 
 	getTextBeforeCursor: function() {
@@ -13308,10 +13219,7 @@ SMWEditInterface.prototype ={
 				var start = this.siw.inputBox.selectionStart;
 				return this.siw.inputBox.value.substring(0, start);
 			}
-		} else {
-			return editAreaLoader.getValue(editAreaName).substring(0, editAreaLoader.getSelectionRange(editAreaName)["start"]);
-
-		}
+		} 
          // cannot return anything
         return "";
     }
@@ -13841,6 +13749,7 @@ AdvancedAnnotation.prototype = {
 		}
 		this.toolbarEnableAnnotation(true);
 		this.annotatedNode = null;
+		this.annotationProposal = null;
 		this.wikiTextParser.setSelection(-1, -1);
 	},
 	
