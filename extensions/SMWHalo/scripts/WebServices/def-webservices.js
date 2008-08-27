@@ -42,9 +42,9 @@ DefineWebServiceSpecial.prototype = {
 				return;
 			}
 		}
-		
+
 		this.showPendingIndicator("step1-go");
-		
+
 		this.step = "step2";
 		var uri = $("step1-uri").value;
 		sajax_do_call("smwf_ws_processStep1", [ uri ],
@@ -67,16 +67,16 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step1").className = "ActualMenueStep";
 			$("menue-step2").className = "TodoMenueStep";
 
-			$("step1-help").style.display = "block";
+			$("step1-help").style.display = "";
 			$("step2-help").style.display = "none";
 
 			$("step1-img").style.visibility = "visible";
 			$("step2-img").style.visibility = "hidden";
 
-			$("step1-error").style.display = "block";
+			$("step1-error").style.display = "";
 
 			this.step = "step1";
-			$("errors").style.display = "block";
+			$("errors").style.display = "";
 		} else {
 			wsMethods.shift();
 			$("errors").style.display = "none";
@@ -97,17 +97,18 @@ DefineWebServiceSpecial.prototype = {
 				var option = document.createElement("option");
 				var mName = document.createTextNode(wsMethods[i]);
 				option.appendChild(mName);
+				option.value = wsMethods[i];
 				$("step2-methods").appendChild(option);
 			}
 
 			// hide or display widgets of other steps
-			$("step2").style.display = "block";
+			$("step2").style.display = "";
 
 			$("menue-step1").className = "DoneMenueStep";
 			$("menue-step2").className = "ActualMenueStep";
 
 			$("step1-help").style.display = "none";
-			$("step2-help").style.display = "block";
+			$("step2-help").style.display = "";
 
 			$("step1-img").style.visibility = "hidden";
 			$("step2-img").style.visibility = "visible";
@@ -163,9 +164,9 @@ DefineWebServiceSpecial.prototype = {
 		this.step = "step3+";
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
-		
+
 		this.showPendingIndicator("step2-go");
-		
+
 		sajax_do_call("smwf_ws_processStep2", [ uri, method ],
 				this.processStep2CallBack.bind(this));
 	},
@@ -183,7 +184,7 @@ DefineWebServiceSpecial.prototype = {
 		this.preparedPathSteps = new Array();
 
 		if (wsParameters[0] == "todo:handle noparams") {
-			$("step3").style.display = "block";
+			$("step3").style.display = "";
 			$("step2-img").style.visibility = "hidden";
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			$("step3-parameters").style.display = "none";
@@ -194,8 +195,8 @@ DefineWebServiceSpecial.prototype = {
 			// todo: find better solution
 			$("step2-img").style.visibility = "visible";
 			$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
-			$("step3-parameters").style.display = "block";
-			$("step3-go-img").style.display = "block";
+			$("step3-parameters").style.display = "";
+			$("step3-go-img").style.display = "";
 		}
 
 		var overflow = false;
@@ -212,8 +213,9 @@ DefineWebServiceSpecial.prototype = {
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
 				var tO = new Object();
-				if(steps[k].indexOf("##duplicate") > -1){
-					tO["value"] = steps[k].substr(0, steps[k].indexOf("##duplicate"));
+				if (steps[k].indexOf("##duplicate") > -1) {
+					tO["value"] = steps[k].substr(0, steps[k]
+							.indexOf("##duplicate"));
 					tO["duplicate"] = true;
 					duplicate = true;
 				} else {
@@ -231,8 +233,8 @@ DefineWebServiceSpecial.prototype = {
 			this.preparedPathSteps[i - 1] = preparedPathStepsDot;
 
 		}
-		if(duplicate){
-			$("step3-duplicates").style.display = "block";
+		if (duplicate) {
+			$("step3-duplicates").style.display = "";
 		}
 
 		if (wsParameters[0] != "todo:handle exceptions" || overflow) {
@@ -242,20 +244,20 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step2").className = "ActualMenueStep";
 			$("menue-step3").className = "TodoMenueStep";
 
-			$("step2-help").style.display = "block";
+			$("step2-help").style.display = "";
 			$("step3-help").style.display = "none";
 
 			$("step2-img").style.visibility = "visible";
 			$("step3-img").style.visibility = "hidden";
-			
-			$("errors").style.display = "block";
+
+			$("errors").style.display = "";
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
 
 			if (overflow) {
-				$("step2b-error").style.display = "block";
+				$("step2b-error").style.display = "";
 			} else {
-				$("step2a-error").style.display = "block";
+				$("step2a-error").style.display = "";
 			}
 		} else {
 			wsParameters.shift();
@@ -309,7 +311,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 					paramPathText += dotSteps[k];
 					paramPathTextNode = document.createTextNode(paramPathText);
-					if(this.preparedPathSteps[i][k]["duplicate"]){
+					if (this.preparedPathSteps[i][k]["duplicate"]) {
 						paramPathStep.style.color = "red";
 					}
 					paramPathStep.appendChild(paramPathTextNode);
@@ -336,11 +338,13 @@ DefineWebServiceSpecial.prototype = {
 						var addButtonIMG = document.createElement("img");
 						addButtonIMG.src = "../extensions/SMWHalo/skins/webservices/Add.png";
 						addButton.appendChild(addButtonIMG);
-						var addButtonOnClick = document
-								.createAttribute("onclick");
-						addButtonOnClick.value = "webServiceSpecial.addParameter("
-								+ i + "," + k + ")";
-						addButton.setAttributeNode(addButtonOnClick);
+
+						addButtonIMG.i = i;
+						addButtonIMG.k = k;
+						addButtonIMG.addA = true;
+						Event.observe(addButtonIMG, "click", this.addRemoveParameter
+								.bindAsEventListener(this));
+
 						paramPathStep.appendChild(addButton);
 					}
 
@@ -361,18 +365,15 @@ DefineWebServiceSpecial.prototype = {
 										+ k;
 								expandPathStep.expanded = false;
 
-								var expandOnClick = document
-										.createAttribute("onclick");
-								expandOnClick.value = "webServiceSpecial.expandParamPathStep(\""
-										+ i + "\",\"" + k + "\")";
-								expandPathStep.setAttributeNode(expandOnClick);
-
-								// expandPathStepText = document
-								// .createTextNode("+");
-								// expandPathStep.appendChild(expandPathStepText);
-
 								var expandIMG = document.createElement("img");
 								expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+								expandIMG.i = i;
+								expandIMG.k = k;
+								var el = this.paramPathStepClick
+										.bindAsEventListener(this)
+								expandIMG.expand = true;
+								Event.observe(expandIMG, "click", el);
+
 								expandPathStep.appendChild(expandIMG);
 
 								expandPathStep.style.cursor = "pointer";
@@ -381,7 +382,7 @@ DefineWebServiceSpecial.prototype = {
 							}
 						}
 					}
-					
+
 					if (i > 0) {
 						if (this.preparedPathSteps[i - 1][k] != null) {
 							if (this.preparedPathSteps[i][k]["value"] == "."
@@ -394,7 +395,7 @@ DefineWebServiceSpecial.prototype = {
 							}
 						}
 					}
-					
+
 					if (k == treeViewK && k != aTreeRootK) {
 						expandPathStep = document.createElement("span");
 						expandIMG = document.createElement("img");
@@ -423,10 +424,16 @@ DefineWebServiceSpecial.prototype = {
 				paramTD2.id = "step3-paramTD2-" + i;
 				paramRow.appendChild(paramTD2);
 
-				var optionalRadio1 = document.createElement("input");
+				if (navigator.appName.indexOf("Explorer") != -1) {
+					var optionalRadio1 = document
+							.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+									+ i + "\">");
+				} else {
+					var optionalRadio1 = document.createElement("input");
+					optionalRadio1.type = "radio";
+					optionalRadio1.name = "s3-optional-radio" + i;
+				}
 				optionalRadio1.id = "s3-optional-true" + i;
-				optionalRadio1.name = "s3-optional-radio" + i;
-				optionalRadio1.type = "radio";
 				optionalRadio1.value = "yes";
 				paramTD2.appendChild(optionalRadio1);
 
@@ -435,11 +442,18 @@ DefineWebServiceSpecial.prototype = {
 				optionalRadio1Span.appendChild(optionalRadio1TextY);
 				paramTD2.appendChild(optionalRadio1Span);
 
-				var optionalRadio2 = document.createElement("input");
-				optionalRadio2.checked = true;
+				if (navigator.appName.indexOf("Explorer") != -1) {
+					var optionalRadio2 = document
+							.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+									+ i + "\" checked=\"checked\">");
+				} else {
+					var optionalRadio2 = document.createElement("input");
+					optionalRadio2.type = "radio";
+					optionalRadio2.name = "s3-optional-radio" + i;
+					optionalRadio2.checked = true;
+				}
+
 				optionalRadio2.id = "s3-optional-false" + i;
-				optionalRadio2.name = "s3-optional-radio" + i;
-				optionalRadio2.type = "radio";
 				optionalRadio2.value = "false";
 				paramTD2.appendChild(optionalRadio2);
 
@@ -482,26 +496,26 @@ DefineWebServiceSpecial.prototype = {
 
 			var parent = $("step3-parameters").parentNode;
 			parent.removeChild($("step3-parameters"));
-			parent.insertBefore(this.parameterContainer, parent.childNodes[2]);
+			var parent = $("step3");
+			parent.insertBefore(this.parameterContainer, parent.childNodes[3]);
 
 			// hide or display widgets of other steps
-			$("step3").style.display = "block";
+			$("step3").style.display = "";
 
 			$("menue-step2").className = "DoneMenueStep";
 			$("menue-step3").className = "ActualMenueStep";
 
 			$("step2-help").style.display = "none";
-			$("step3-help").style.display = "block";
+			$("step3-help").style.display = "";
 
 			$("step2-img").style.visibility = "hidden";
 			$("step3-img").style.visibility = "visible";
 
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
-			
+
 			$("errors").style.display = "none";
 		}
-		$("step3-parameters").style.display = "none";
 
 		// hide or display widgets of other steps
 		$("step4").style.display = "none";
@@ -527,8 +541,8 @@ DefineWebServiceSpecial.prototype = {
 		$("step6b-error").style.display = "none";
 		$("step6c-error").style.display = "none";
 
-		$("step3-parameters").style.display = "block";
-		
+		// $("step3-parameters").style.display = "";
+
 		this.hidePendingIndicator();
 	},
 
@@ -544,7 +558,7 @@ DefineWebServiceSpecial.prototype = {
 		var parameters = "";
 
 		this.showPendingIndicator("step3-go");
-		
+
 		sajax_do_call("smwf_ws_processStep3", [ uri, method ],
 				this.processStep3CallBack.bind(this));
 	},
@@ -568,7 +582,7 @@ DefineWebServiceSpecial.prototype = {
 		// }
 
 		this.preparedRPathSteps = new Array();
-		
+
 		var duplicate = false;
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
@@ -580,11 +594,14 @@ DefineWebServiceSpecial.prototype = {
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
 				var tO = new Object();
-				if(steps[k].indexOf("##duplicate") > -1){
-					if(steps[k].indexOf("[]") > -1){
-						tO["value"] = steps[k].substr(0, steps[k].indexOf("##duplicate")) + "[]";
+				if (steps[k].indexOf("##duplicate") > -1) {
+					if (steps[k].indexOf("[]") > -1) {
+						tO["value"] = steps[k].substr(0, steps[k]
+								.indexOf("##duplicate"))
+								+ "[]";
 					} else {
-						tO["value"] = steps[k].substr(0, steps[k].indexOf("##duplicate"));
+						tO["value"] = steps[k].substr(0, steps[k]
+								.indexOf("##duplicate"));
 					}
 					tO["duplicate"] = true;
 					duplicate = true;
@@ -603,14 +620,14 @@ DefineWebServiceSpecial.prototype = {
 			this.preparedRPathSteps[i - 1] = preparedPathStepsDot;
 		}
 
-		if(duplicate){
-			$("step4-duplicates").style.display = "block";
+		if (duplicate) {
+			$("step4-duplicates").style.display = "";
 		}
-		
+
 		if (wsResults[0] != "todo:handle exceptions" || overflow) {
 			// hide or display widgets of other steps
-			$("step3-error").style.display = "block";
-			$("errors").style.display = "block";
+			$("step3-error").style.display = "";
+			$("errors").style.display = "";
 		} else {
 			wsResults.shift();
 			// clear widgets of step 4
@@ -659,7 +676,7 @@ DefineWebServiceSpecial.prototype = {
 					resultPathText += this.preparedRPathSteps[i][k]["value"];
 					var resultPathTextNode = document
 							.createTextNode(resultPathText);
-					if(this.preparedRPathSteps[i][k]["duplicate"]){
+					if (this.preparedRPathSteps[i][k]["duplicate"]) {
 						resultPathStep.style.color = "red";
 					}
 					resultPathStep.appendChild(resultPathTextNode);
@@ -694,12 +711,14 @@ DefineWebServiceSpecial.prototype = {
 						addButton.style.cursor = "pointer";
 						var addButtonIMG = document.createElement("img");
 						addButtonIMG.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+						addButtonIMG.i = i;
+						addButtonIMG.k = k;
+						addButtonIMG.addA = true;
+						Event.observe(addButtonIMG, "click", this.addRemoveResultPart
+								.bindAsEventListener(this));
+
 						addButton.appendChild(addButtonIMG);
-						var addButtonOnClick = document
-								.createAttribute("onclick");
-						addButtonOnClick.value = "webServiceSpecial.addResultPart("
-								+ i + "," + k + ")";
-						addButton.setAttributeNode(addButtonOnClick);
+
 						resultPathStep.appendChild(addButton);
 					}
 
@@ -722,15 +741,16 @@ DefineWebServiceSpecial.prototype = {
 										.createElement("span");
 								expandPathStep.id = "step4-expand-" + i + "-"
 										+ k;
-								var expandOnClick = document
-										.createAttribute("onclick");
-								expandOnClick.value = "webServiceSpecial.expandResultPathStep(\""
-										+ i + "\",\"" + k + "\")";
-								expandPathStep.setAttributeNode(expandOnClick);
 								expandPathStep.expanded = false;
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
+								expandIMG.i = i;
+								expandIMG.k = k;
+								var el = this.resultPathStepClick
+										.bindAsEventListener(this)
+								expandIMG.expand = true;
+								Event.observe(expandIMG, "click", el);
 								expandPathStep.appendChild(expandIMG);
 
 								expandPathStep.style.cursor = "pointer";
@@ -739,7 +759,7 @@ DefineWebServiceSpecial.prototype = {
 							}
 						}
 					}
-					
+
 					if (i > 0) {
 						if (this.preparedRPathSteps[i - 1][k] != null) {
 							if (resultPathText == "."
@@ -752,7 +772,7 @@ DefineWebServiceSpecial.prototype = {
 							}
 						}
 					}
-					
+
 					if (k == treeViewK && k != aTreeRootK) {
 						var expandPathStep = document.createElement("span");
 						var expandIMG = document.createElement("img");
@@ -788,12 +808,13 @@ DefineWebServiceSpecial.prototype = {
 
 			var parent = $("step4-results").parentNode;
 			parent.removeChild($("step4-results"));
-			parent.insertBefore(this.resultContainer, parent.childNodes[2]);
-			
+			var parent = $("step4");
+			parent.insertBefore(this.resultContainer, parent.childNodes[3]);
+
 			this.resultContainer = $("step4-results");
 
 			// hide or display widgets of other steps
-			$("step4").style.display = "block";
+			$("step4").style.display = "";
 
 			$("menue-step2").className = "DoneMenueStep";
 			$("menue-step3").className = "DoneMenueStep";
@@ -802,7 +823,7 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			$("step3-help").style.display = "none";
-			$("step4-help").style.display = "block";
+			$("step4-help").style.display = "";
 
 			$("step3-img").style.visibility = "hidden";
 			$("step4-img").style.visibility = "visible";
@@ -817,7 +838,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step6-error").style.display = "none";
 		$("step6b-error").style.display = "none";
 		$("step6c-error").style.display = "none";
-		
+
 		this.hidePendingIndicator();
 	},
 
@@ -831,12 +852,12 @@ DefineWebServiceSpecial.prototype = {
 		this.showPendingIndicator("step4-go");
 		// hide or display widgets of other steps
 		this.generateResultAliases(false);
-		$("step5").style.display = "block";
+		$("step5").style.display = "";
 
 		$("menue-step4").className = "DoneMenueStep";
 		$("menue-step5").className = "ActualMenueStep";
 		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "block";
+		$("step5-help").style.display = "";
 		$("step4-img").style.visibility = "hidden";
 		$("step5-img").style.visibility = "visible";
 
@@ -853,7 +874,7 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step5-spanoflife").value = "";
 		$("step5-expires-yes").checked = true;
-	
+
 		this.hidePendingIndicator();
 	},
 
@@ -866,13 +887,13 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep5 : function() {
 		// hide or display widgets of other steps
-		$("step6").style.display = "block";
+		$("step6").style.display = "";
 
 		$("menue-step5").className = "DoneMenueStep";
 		$("menue-step6").className = "ActualMenueStep";
 
 		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "block";
+		$("step6-help").style.display = "";
 		$("step5-img").style.visibility = "hidden";
 		$("step6-img").style.visibility = "visible";
 		$("step6-name").value = "";
@@ -888,7 +909,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step6-error").style.display = "none";
 			$("step6b-error").style.display = "none";
 			$("step6c-error").style.display = "none";
-			
+
 			var result = "<WebService>\n";
 
 			var uri = $("step1-uri").value;
@@ -901,9 +922,9 @@ DefineWebServiceSpecial.prototype = {
 
 			for ( var i = 0; i < this.preparedPathSteps.length; i++) {
 				if (this.preparedPathSteps[i] != "null") {
-					if($("s3-alias" + i).value.length == 0){
+					if ($("s3-alias" + i).value.length == 0) {
 						continue;
-					} 
+					}
 					result += "<parameter name=\"" + $("s3-alias" + i).value
 							+ "\" ";
 					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked;
@@ -944,10 +965,10 @@ DefineWebServiceSpecial.prototype = {
 
 			for (i = 0; i < this.preparedRPathSteps.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					if(this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
+					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
 						continue;
 					}
-						var rPath = "";
+					var rPath = "";
 					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
 						var rPathStep = "";
 
@@ -971,12 +992,12 @@ DefineWebServiceSpecial.prototype = {
 							rPath += rPathStep;
 						}
 					}
-					
+
 					result += "<part name=\""
-						+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-						+ "\" ";
+							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+							+ "\" ";
 					result += " path=\"" + rPath + "\" />\n";
-					
+
 				}
 			}
 			result += "</result>\n";
@@ -1033,7 +1054,7 @@ DefineWebServiceSpecial.prototype = {
 			parameters = this.preparedPathSteps;
 			for (i = 0; i < parameters.length; i++) {
 				if (this.preparedPathSteps[i] != "null") {
-					if(this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
+					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
 						continue;
 					}
 					wsSyntax += "| "
@@ -1045,7 +1066,7 @@ DefineWebServiceSpecial.prototype = {
 			results = this.preparedRPathSteps;
 			for (i = 0; i < results.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					if(this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
+					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
 						continue;
 					}
 					wsSyntax += "| ?result."
@@ -1056,12 +1077,12 @@ DefineWebServiceSpecial.prototype = {
 			wsSyntax += "}}";
 
 			this.wsSyntax = wsSyntax;
-			
+
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack.bind(this));
 		} else {
-			$("errors").style.display = "block";
-			$("step6-error").style.display = "block";
+			$("errors").style.display = "";
+			$("step6-error").style.display = "";
 			$("step6b-error").style.display = "none";
 			$("step6c-error").style.display = "none";
 		}
@@ -1071,12 +1092,12 @@ DefineWebServiceSpecial.prototype = {
 	processStep6CallBack : function(request) {
 		if (request.responseText == "false") {
 			var wsName = $("step6-name").value;
-			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName, wgUserName,
-					this.wwsd + this.wsSyntax, "" ], this.processStep6CallBack1
-					.bind(this));
+			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
+					wgUserName, this.wwsd + this.wsSyntax, "" ],
+					this.processStep6CallBack1.bind(this));
 		} else {
-			$("errors").style.display = "block";
-			$("step6b-error").style.display = "block";
+			$("errors").style.display = "";
+			$("step6b-error").style.display = "";
 			$("step6-error").style.display = "none";
 			$("step6c-error").style.display = "none";
 			this.hidePendingIndicator();
@@ -1089,15 +1110,15 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep6CallBack1 : function(request) {
 		res = request.responseText.split(",");
-		if(res[0] == "true"){
+		if (res[0] == "true") {
 			var wsName = $("step6-name").value;
 			sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd ],
 					this.processStep6CallBack2.bind(this));
 		} else {
-			$("errors").style.display = "block";
+			$("errors").style.display = "";
 			$("step6b-error").style.display = "none";
 			$("step6-error").style.display = "none";
-			$("step6c-error").style.display = "block";
+			$("step6c-error").style.display = "";
 			this.hidePendingIndicator();
 		}
 	},
@@ -1107,15 +1128,15 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack2 : function(request) {
-		if(request.responseText == "ok"){
+		if (request.responseText == "ok") {
 			var wsName = $("step6-name").value;
 			sajax_do_call("smwf_om_TouchArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack3.bind(this));
 		} else {
-			$("errors").style.display = "block";
+			$("errors").style.display = "";
 			$("step6b-error").style.display = "none";
 			$("step6-error").style.display = "none";
-			$("step6c-error").style.display = "block";
+			$("step6c-error").style.display = "";
 			this.hidePendingIndicator();
 		}
 	},
@@ -1126,85 +1147,85 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack3 : function(request) {
-		if(request.responseText == "true"){
-		var container = $("step7-container").cloneNode(false);
-		$("step7-container").id = "old-step7-container";
-		$("old-step7-container").parentNode.insertBefore(container,
-				$("old-step7-container"));
-		$("old-step7-container").parentNode
-				.removeChild($("old-step7-container"));
+		if (request.responseText == "true") {
+			var container = $("step7-container").cloneNode(false);
+			$("step7-container").id = "old-step7-container";
+			$("old-step7-container").parentNode.insertBefore(container,
+					$("old-step7-container"));
+			$("old-step7-container").parentNode
+					.removeChild($("old-step7-container"));
 
-		var step7Container = $("step7-container").cloneNode(true);
+			var step7Container = $("step7-container").cloneNode(true);
 
-		var wsNameText = document.createTextNode(document
-				.getElementById("step6-name").value);
-		$("step7-name").appendChild(wsNameText);
+			var wsNameText = document.createTextNode(document
+					.getElementById("step6-name").value);
+			$("step7-name").appendChild(wsNameText);
 
-		var rowDiv = document.createElement("div");
-		var rowText = document
-				.createTextNode("{{#ws: " + $("step6-name").value);
-		rowDiv.appendChild(rowText);
-		step7Container.appendChild(rowDiv);
+			var rowDiv = document.createElement("div");
+			var rowText = document.createTextNode("{{#ws: "
+					+ $("step6-name").value);
+			rowDiv.appendChild(rowText);
+			step7Container.appendChild(rowDiv);
 
-		var parameters = this.preparedPathSteps;
-		for (i = 0; i < parameters.length; i++) {
-			if (this.preparedPathSteps[i] != "null") {
-				if(this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
-					continue;
+			var parameters = this.preparedPathSteps;
+			for (i = 0; i < parameters.length; i++) {
+				if (this.preparedPathSteps[i] != "null") {
+					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
+						continue;
+					}
+					rowDiv = document.createElement("div");
+					rowDiv.className = "OuterLeftIndent";
+					rowText = document
+							.createTextNode("| "
+									+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
+									+ " = [Please enter a value here]");
+					rowDiv.appendChild(rowText);
+					step7Container.appendChild(rowDiv);
 				}
-				rowDiv = document.createElement("div");
-				rowDiv.className = "OuterLeftIndent";
-				rowText = document
-						.createTextNode("| "
-								+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-								+ " = [Please enter a value here]");
-				rowDiv.appendChild(rowText);
-				step7Container.appendChild(rowDiv);
 			}
-		}
 
-		var results = this.preparedRPathSteps;
-		for (i = 0; i < results.length; i++) {
-			if (this.preparedRPathSteps[i] != "null") {
-				if(this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0){
-					continue;
+			var results = this.preparedRPathSteps;
+			for (i = 0; i < results.length; i++) {
+				if (this.preparedRPathSteps[i] != "null") {
+					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
+						continue;
+					}
+					rowDiv = document.createElement("div");
+					rowDiv.className = "OuterLeftIndent";
+					rowText = document
+							.createTextNode("| ?result."
+									+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value);
+					rowDiv.appendChild(rowText);
+					step7Container.appendChild(rowDiv);
 				}
-				rowDiv = document.createElement("div");
-				rowDiv.className = "OuterLeftIndent";
-				rowText = document
-						.createTextNode("| ?result."
-								+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value);
-				rowDiv.appendChild(rowText);
-				step7Container.appendChild(rowDiv);
 			}
-		}
 
-		rowDiv = document.createElement("div");
-		rowText = document.createTextNode("}}");
-		rowDiv.appendChild(rowText);
-		step7Container.appendChild(rowDiv);
+			rowDiv = document.createElement("div");
+			rowText = document.createTextNode("}}");
+			rowDiv.appendChild(rowText);
+			step7Container.appendChild(rowDiv);
 
-		var parentOf = $("step7-container").parentNode;
-		parentOf.insertBefore(step7Container, $("step7-container"));
-		parentOf.removeChild(parentOf.childNodes[6]);
+			var parentOf = $("step7-container").parentNode;
+			parentOf.insertBefore(step7Container, $("step7-container"));
+			parentOf.removeChild(parentOf.childNodes[6]);
 
-		$("step7").style.display = "block";
-		$("step1").style.display = "none";
-		$("step2").style.display = "none";
-		$("step3").style.display = "none";
-		$("step4").style.display = "none";
-		$("step5").style.display = "none";
-		$("step6").style.display = "none";
-		$("step6-help").style.display = "none";
-		$("menue").style.display = "none";
-		$("help").style.display = "none";
-	
-		this.hidePendingIndicator();
+			$("step7").style.display = "";
+			$("step1").style.display = "none";
+			$("step2").style.display = "none";
+			$("step3").style.display = "none";
+			$("step4").style.display = "none";
+			$("step5").style.display = "none";
+			$("step6").style.display = "none";
+			$("step6-help").style.display = "none";
+			$("menue").style.display = "none";
+			$("help").style.display = "none";
+
+			this.hidePendingIndicator();
 		} else {
-			$("errors").style.display = "block";
+			$("errors").style.display = "";
 			$("step6b-error").style.display = "none";
 			$("step6-error").style.display = "none";
-			$("step6c-error").style.display = "block";
+			$("step6c-error").style.display = "";
 			this.hidePendingIndicator();
 		}
 	},
@@ -1216,16 +1237,16 @@ DefineWebServiceSpecial.prototype = {
 	processStep7 : function(request) {
 		this.step = "step1";
 		$("step1-img").style.visibility = "visible";
-		$("step1-help").style.display = "block";
+		$("step1-help").style.display = "";
 		$("step7").style.display = "none";
-		$("menue").style.display = "block";
+		$("menue").style.display = "";
 		$("menue-step2").style.fontWeight = "normal";
 		$("menue-step3").style.fontWeight = "normal";
 		$("menue-step4").style.fontWeight = "normal";
 		$("menue-step5").style.fontWeight = "normal";
 		$("menue-step6").style.fontWeight = "normal";
-		$("help").style.display = "block";
-		$("step1").style.display = "block";
+		$("help").style.display = "";
+		$("step1").style.display = "";
 		$("step1-uri").Value = "";
 	},
 
@@ -1235,15 +1256,14 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	generateParameterAliases : function(createAll) {
-		var paramCount = this.preparedPathSteps.length;
-
 		var aliases = new Array();
 		var aliasesObject = new Object();
 
-		for (i = 0; i < paramCount; i++) {
+		var offset = 0;
+		for (i = 0; i < this.preparedPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
-				var alias = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value;
-				if(alias.length == 0 && !createAll){
+				var alias = this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value;
+				if (alias.length == 0 && !createAll) {
 					continue;
 				}
 				if (alias.length == 0) {
@@ -1278,22 +1298,24 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = alias;
+				this.parameterContainer.firstChild.childNodes[i + 1 -offset].childNodes[1].firstChild.value = alias;
 				aliases.push(alias);
+			} else {
+				offset += 1;
 			}
 		}
 	},
 
 	generateResultAliases : function(createAll) {
 		var resultsCount = this.preparedRPathSteps.length;
-
+		var offset = 0;
 		var aliases = new Array();
 		var aliasesObject = new Object();
 
 		for (i = 0; i < resultsCount; i++) {
 			if (this.preparedRPathSteps[i] != "null") {
-				var alias = this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value;
-				if(alias.length == 0 && !createAll){
+				var alias = this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value;
+				if (alias.length == 0 && !createAll) {
 					continue;
 				}
 				if (alias.length == 0) {
@@ -1326,497 +1348,604 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 
-				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = alias;
+				this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = alias;
 				aliases.push(alias);
+			} else {
+				offset += 1;
 			}
 		}
 	},
 
 	/**
-	 * this method is responsible for adding new parameters in step 3
+	 * this method is responsible for adding new parameters 
+	 * respectivelyin parameters that are not used any more in step 3
 	 * 
-	 * @param int
-	 *            i index of the parameter where the add-button was pressed
-	 * @param int
-	 *            k index of the path-step where the add-button was pressed
+	 * @param event from the event handler 
+	 *       
 	 * 
 	 */
-	addParameter : function(i, k) {
-		// find position where to insert the new rows
-		var goon = true;
-		var m = i;
-		var nextSibling = null;
-		var goon = true;
-		var appendIndex = i;
-		while(goon){
-			nextSibling = $("step3-paramRow-"+m).nextSibling;
-			if(nextSibling != null){
-				if (this.preparedPathSteps[m] != "null") {
-					m = nextSibling.id.substr(nextSibling.id.lastIndexOf("-")+1);
-					if(this.preparedPathSteps[m][k] != null){
-						if (this.preparedPathSteps[m][k]["value"] == this.preparedPathSteps[i][k]["value"]) {
-							appendIndex = m;
+	addRemoveParameter : function(event) {
+		var node = Event.element(event);
+		var i = node.i * 1;
+		var k = node.k * 1;
+
+		if (node.addA) {
+			// find position where to insert the new rows
+
+			var goon = true;
+			var m = i;
+			var nextSibling = null;
+			var goon = true;
+			var appendIndex = i;
+			while (goon) {
+				nextSibling = $("step3-paramRow-" + m).nextSibling;
+				if (nextSibling != null) {
+					if (this.preparedPathSteps[m] != "null") {
+						m = nextSibling.id.substr(nextSibling.id
+								.lastIndexOf("-") + 1);
+						if (this.preparedPathSteps[m][k] != null) {
+							if (this.preparedPathSteps[m][k]["value"] == this.preparedPathSteps[i][k]["value"]) {
+								appendIndex = m;
+							} else {
+								goon = false;
+							}
 						} else {
 							goon = false;
 						}
-					} else{
+					} else {
 						goon = false;
 					}
 				} else {
 					goon = false;
 				}
-			} else {
-				goon = false;
 			}
-		}
-		var rememberedIs = new Array();
-		for(var s=0; s < k; s++){
-			rememberedIs.push(this.preparedPathSteps[appendIndex][s]["i"]);
-			this.preparedPathSteps[appendIndex][s]["i"] = this.preparedPathSteps.length;
-		}
-		
-		// get nodes to insert
-		var goon = true;
-		var appendRows = new Array();
-		var appendRowsIndex = i;
-		var lastC = i-1;
-		while (goon) {
-			var tAR = $("step3-paramRow-" + appendRowsIndex);
-			
-			if(appendRowsIndex == lastC + 1){
-				appendRows.push(tAR);
-				lastC = appendRowsIndex; 
+			var rememberedIs = new Array();
+			for ( var s = 0; s < k; s++) {
+				rememberedIs.push(this.preparedPathSteps[appendIndex][s]["i"]);
+				this.preparedPathSteps[appendIndex][s]["i"] = this.preparedPathSteps.length;
+				this.preparedPathSteps[appendIndex][s]["k"] = s;
 			}
-			if (this.preparedPathSteps[appendRowsIndex][k]["i"] != "null") {
-				appendRowsIndex = this.preparedPathSteps[appendRowsIndex][k]["i"];
-			} else {
-				goon = false;
-			}
-		}
-		
-		
-		
-		// create new row
-		var newI = this.preparedPathSteps.length;
 
-		for (m = 0; m < appendRows.length; m++) {
-			var appendRow = appendRows[m].cloneNode(true);
+			// get nodes to insert
+			var goon = true;
+			var appendRows = new Array();
+			var appendRowsIndex = i;
+			var lastC = i - 1;
+			while (goon) {
+				var tAR = $("step3-paramRow-" + appendRowsIndex);
 
-			if (nextSibling == null){
-				$("step3-parameters").childNodes[0].appendChild(appendRow);
-			} else {
-				$("step3-parameters").childNodes[0].insertBefore(appendRow,
-						nextSibling);
-			}
-			
-			appendRow.id = "step3-paramRow-" + newI;
-
-			appendRow.childNodes[0].id = "step3-paramTD0-" + newI;
-			var pathSteps = appendRow.childNodes[0].childNodes[0].childNodes;
-
-			appendRow.childNodes[0].childNodes[0].id = "s3-path" + newI;
-
-			var objectRow = new Array();
-			for (r = 0; r < pathSteps.length; r++) {
-				pathSteps[r].id = "s3-pathstep-" + newI + "-" + r;
-				if (r < k) {
-					pathSteps[r].style.visibility = "hidden";
+				if (appendRowsIndex == lastC + 1) {
+					appendRows.push(tAR);
+					lastC = appendRowsIndex;
 				}
-				// an aTreeRoot
-				if (pathSteps[r].childNodes.length == 2) {
-					pathSteps[r].firstChild.id = "step3-expand-" + newI + "-"
-							+ r;
-					pathSteps[r].firstChild.setAttribute("onclick",
-							"webServiceSpecial.expandParamPathStep(" + newI
-									+ "," + r + ")");
-				} // an array
-				else if (pathSteps[r].childNodes.length == 4) {
-					pathSteps[r].childNodes[1].id = "step3-arrayspan-" + newI
-							+ "-" + r;
-					if(r <= k){
-						pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
-						pathSteps[r].childNodes[3].setAttribute("onclick",
-							"webServiceSpecial.removeParameter(" + newI + "," + r + ")");
-						pathSteps[r].childNodes[1].firstChild.nodeValue = 
-							this.preparedPathSteps[i + m][r]["arrayIndex"]+1;
-					} else {
-						pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
-					
-						pathSteps[r].childNodes[3].setAttribute("onclick",
-							"webServiceSpecial.addParameter(" + newI + ","
-									+ r + ")");
-						pathSteps[r].childNodes[1].firstChild.nodeValue = 1;
-					}
-					if(r == k){
-						this.preparedPathSteps[i + m][r]["arrayIndexUsers"]
-						                           .push(newI + "-" + r);
-						this.preparedPathSteps[i + m][r]["arrayIndex"] = (this.preparedPathSteps[i
-						                    + m][r]["arrayIndex"] * 1) + 1;
-					}
-
-				} // both
-				else if (pathSteps[r].childNodes.length == 5) {
-					pathSteps[r].firstChild.id = "step3-expand-" + newI + "-"
-							+ r;
-					pathSteps[r].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.gif";
-					pathSteps[r].firstChild.setAttribute("onclick",
-							"webServiceSpecial.expandParamPathStep(" + newI
-									+ "," + r + ")");
-					if(r <= k){
-						pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
-						pathSteps[r].childNodes[4].setAttribute("onclick",
-							"webServiceSpecial.removeParameter(" + newI + "," + r + ")");
-						pathSteps[r].childNodes[2].firstChild.nodeValue = this.preparedPathSteps[i
-						                                             							+ m][r]["arrayIndex"]+1;
-					} else {
-						pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
-					
-						pathSteps[r].childNodes[4].setAttribute("onclick",
-							"webServiceSpecial.addParameter(" + newI + ","
-									+ r + ")");
-						pathSteps[r].childNodes[2].firstChild.nodeValue = 1;
-					}
-					if(r == k){
-						this.preparedPathSteps[i + m][r]["arrayIndexUsers"]
-						                           .push(newI + "-" + r);
-						this.preparedPathSteps[i + m][r]["arrayIndex"] = (this.preparedPathSteps[i
-						                    + m][r]["arrayIndex"] * 1) + 1;
-					}
-					pathSteps[r].childNodes[2].id = "step3-arrayspan-" + newI
-					+ "-" + r;
-				}
-
-				var tO = new Object();
-				tO["value"] = this.preparedPathSteps[i + m][r]["value"];
-				if (this.preparedPathSteps[i + m][r]["i"] != "null") {
-					tO["i"] = newI + 1;
-					tO["k"] = this.preparedPathSteps[i + m][r]["k"];
+				if (this.preparedPathSteps[appendRowsIndex][k]["i"] != "null") {
+					appendRowsIndex = this.preparedPathSteps[appendRowsIndex][k]["i"];
 				} else {
-					tO["i"] = "null";
-					tO["k"] = "null";
+					goon = false;
 				}
-				if(m == 0 && r == k){
-					tO["arrayIndexRoot"] = true;
-				}
-				if (this.preparedPathSteps[i + m][r]["arrayIndex"] != "null") {
-					if(r <= k){
-						tO["arrayIndexOrigin"] = (i + m) + "-" + r;
-						tO["arrayIndex"] = this.preparedPathSteps[i + m][r]["arrayIndex"];
-					} else {
-						tO["arrayIndex"] = 1;
-						tO["arrayIndexOrigin"] = null;
-					}
-					tO["arrayIndexUsers"] = new Array();
-				}
-				tO["root"] = this.preparedPathSteps[i + m][r]["root"];
-
-				objectRow.push(tO);
-
 			}
 
-			appendRow.childNodes[1].id = "step3-paramTD1-" + newI;
+			// create new row
+			var newI = this.preparedPathSteps.length;
 
-			appendRow.childNodes[1].childNodes[0].id = "s3-alias" + newI;
+			for (m = 0; m < appendRows.length; m++) {
+				var appendRow = appendRows[m].cloneNode(true);
 
-			appendRow.childNodes[2].id = "step3-paramTD2-" + newI;
-			appendRow.childNodes[2].childNodes[0].id = "s3-optional-true"
-					+ newI;
-			appendRow.childNodes[2].childNodes[0].name = "s3-optional-radio"
-					+ newI;
-			appendRow.childNodes[2].childNodes[3].id = "s3-optional-false"
-					+ newI;
-			appendRow.childNodes[2].childNodes[3].name = "s3-optional-radio"
-					+ newI;
-
-			appendRow.childNodes[3].id = "step3-paramTD3-" + newI;
-			appendRow.childNodes[3].childNodes[0].id = "s3-default" + newI;
-
-			newI += 1;
-			
-			this.preparedPathSteps.push(objectRow);
-
-		}
-		for(s=0; s < rememberedIs.length; s++){
-			this.preparedPathSteps[this.preparedPathSteps.length-1][s]["i"] = rememberedIs[s];
-		}
-	},
-
-	removeParameter : function(i, k) {
-		var goon = true;
-		
-		var prevSibling = $("step3-paramRow-"	+ i).previousSibling;
-		var prevI = prevSibling.id.substr(prevSibling.id.lastIndexOf("-")+1);
-		
-		while (goon) {
-			$("step3-paramRow-" + i).parentNode.removeChild($("step3-paramRow-"
-					+ i));
-			var iTemp = i;
-
-			if (this.preparedPathSteps[i][k]["arrayIndex"] != "null") {
-				var tempArrayIndexO = this.preparedPathSteps[i][k]["arrayIndexOrigin"];
-				var tempArrayIndex = this.preparedPathSteps[i][k]["arrayIndex"];
-
-				s = tempArrayIndexO.substr(0, tempArrayIndexO.indexOf("-"));
-				w = tempArrayIndexO.substr(tempArrayIndexO.indexOf("-") + 1,
-						tempArrayIndexO.length);
-				this.preparedPathSteps[s][w]["arrayIndex"] = this.preparedPathSteps[s][w]["arrayIndex"] - 1;
-
-				var users = this.preparedPathSteps[s][w]["arrayIndexUsers"];
-				if(users == null){
-					users = new Array();
+				if (nextSibling == null) {
+					$("step3-parameters").childNodes[0].appendChild(appendRow);
+				} else {
+					$("step3-parameters").childNodes[0].insertBefore(appendRow,
+							nextSibling);
 				}
-				for ( var c = 0; c < users.length; c++) {
-					s = users[c].substr(0, users[c].indexOf("-"));
-					w = users[c].substr(users[c].indexOf("-") + 1,
-							users[c].length);
-					if (this.preparedPathSteps[s][w]["arrayIndex"] * 1 > tempArrayIndex) {
-						this.preparedPathSteps[s][w]["arrayIndex"] = this.preparedPathSteps[s][w]["arrayIndex"] * 1 - 1
-						if ($("s3-pathstep-" + s + "-" + w).childNodes.length == 4) {
-							$("s3-pathstep-" + s + "-" + w).childNodes[1].firstChild.nodeValue = this.preparedPathSteps[s][w]["arrayIndex"];
+
+				appendRow.id = "step3-paramRow-" + newI;
+
+				appendRow.childNodes[0].id = "step3-paramTD0-" + newI;
+				var pathSteps = appendRow.childNodes[0].childNodes[0].childNodes;
+
+				appendRow.childNodes[0].childNodes[0].id = "s3-path" + newI;
+
+				var objectRow = new Array();
+				for (r = 0; r < pathSteps.length; r++) {
+					pathSteps[r].id = "s3-pathstep-" + newI + "-" + r;
+					if (r < k) {
+						pathSteps[r].style.visibility = "hidden";
+					}
+					// an aTreeRoot
+					if (pathSteps[r].childNodes.length == 2) {
+						pathSteps[r].firstChild.id = "step3-expand-" + newI
+								+ "-" + r;
+						pathSteps[r].firstChild.firstChild.i = newI;
+						pathSteps[r].firstChild.firstChild.k = r;
+						if (pathSteps[r].firstChild.firstChild.expand == null) {
+							if (pathSteps[r].firstChild.firstChild.src == "../extensions/SMWHalo/skins/webservices/Plus.gif") {
+								pathSteps[r].firstChild.firstChild.expand = true;
+								pathSteps[r].firstChild.expanded = false;
+							} else {
+								pathSteps[r].firstChild.firstChild.expand = false;
+								pathSteps[r].firstChild.expanded = true;
+							}
+							var el = this.paramPathStepClick
+									.bindAsEventListener(this);
+							pathSteps[r].firstChild.firstChild.el = el;
+							Event.observe(pathSteps[r].firstChild.firstChild,
+									"click", el);
+						}
+					} // an array
+					else if (pathSteps[r].childNodes.length == 4) {
+						pathSteps[r].childNodes[1].id = "step3-arrayspan-"
+								+ newI + "-" + r;
+
+						if (pathSteps[r].childNodes[3].firstChild.addA == null) {
+							var el = this.addRemoveParameter
+									.bindAsEventListener(this);
+							Event.observe(
+									pathSteps[r].childNodes[3].firstChild,
+									"click", el);
+						}
+
+						pathSteps[r].childNodes[3].firstChild.i = newI;
+						pathSteps[r].childNodes[3].firstChild.k = r;
+						if (r <= k) {
+							pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
+
+							pathSteps[r].childNodes[3].firstChild.addA = false;
+							pathSteps[r].childNodes[1].firstChild.nodeValue = this.preparedPathSteps[i
+									+ m][r]["arrayIndex"] + 1;
 						} else {
-							$("s3-pathstep-" + s + "-" + w).childNodes[2].firstChild.nodeValue = this.preparedPathSteps[s][w]["arrayIndex"];
+							pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+
+							pathSteps[r].childNodes[3].firstChild.addA = true;
+
+							pathSteps[r].childNodes[1].firstChild.nodeValue = 1;
+						}
+						if (r == k) {
+							this.preparedPathSteps[i + m][r]["arrayIndexUsers"]
+									.push(newI + "-" + r);
+							this.preparedPathSteps[i + m][r]["arrayIndex"] = (this.preparedPathSteps[i
+									+ m][r]["arrayIndex"] * 1) + 1;
+						}
+
+					} // both
+					else if (pathSteps[r].childNodes.length == 5) {
+						pathSteps[r].firstChild.id = "step3-expand-" + newI
+								+ "-" + r;
+						pathSteps[r].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.gif";
+
+						pathSteps[r].firstChild.firstChild.i = newI;
+						Event.stopObserving(pathSteps[r].firstChild.firstChild,
+								"click", pathSteps[r].firstChild.firstChild.el);
+
+						pathSteps[r].firstChild.firstChild.k = r;
+						if (pathSteps[r].firstChild.firstChild.expand == null) {
+							if (pathSteps[r].firstChild.firstChild.src
+									.indexOf("Plus.gif") != -1) {
+								pathSteps[r].firstChild.firstChild.expand = true;
+								pathSteps[r].firstChild.expanded = false;
+							} else {
+								pathSteps[r].firstChild.firstChild.expand = false;
+								pathSteps[r].firstChild.expanded = true;
+							}
+							var el = this.paramPathStepClick
+									.bindAsEventListener(this);
+							Event.observe(pathSteps[r].firstChild.firstChild,
+									"click", el);
+						}
+						if (pathSteps[r].childNodes[4].firstChild.addA == null) {
+							var el = this.addRemoveParameter
+									.bindAsEventListener(this);
+							Event.observe(
+									pathSteps[r].childNodes[4].firstChild,
+									"click", el);
+						}
+						if (r <= k) {
+							pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
+
+							pathSteps[r].childNodes[4].firstChild.i = newI;
+							pathSteps[r].childNodes[4].firstChild.k = r;
+
+							pathSteps[r].childNodes[4].firstChild.addA = false;
+
+							pathSteps[r].childNodes[2].firstChild.nodeValue = this.preparedPathSteps[i
+									+ m][r]["arrayIndex"] + 1;
+						} else {
+							pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+
+							pathSteps[r].childNodes[4].firstChild.i = newI;
+							pathSteps[r].childNodes[4].firstChild.k = r;
+
+							pathSteps[r].childNodes[4].firstChild.addA = true;
+
+							pathSteps[r].childNodes[2].firstChild.nodeValue = 1;
+						}
+						if (r == k) {
+							this.preparedPathSteps[i + m][r]["arrayIndexUsers"]
+									.push(newI + "-" + r);
+							this.preparedPathSteps[i + m][r]["arrayIndex"] = (this.preparedPathSteps[i
+									+ m][r]["arrayIndex"] * 1) + 1;
+						}
+						pathSteps[r].childNodes[2].id = "step3-arrayspan-"
+								+ newI + "-" + r;
+					}
+
+					var tO = new Object();
+					tO["value"] = this.preparedPathSteps[i + m][r]["value"];
+					if (this.preparedPathSteps[i + m][r]["i"] != "null") {
+						tO["i"] = newI + 1;
+						tO["k"] = this.preparedPathSteps[i + m][r]["k"];
+					} else {
+						tO["i"] = "null";
+						tO["k"] = "null";
+					}
+					if (m == 0 && r == k) {
+						tO["arrayIndexRoot"] = true;
+					}
+					if (this.preparedPathSteps[i + m][r]["arrayIndex"] != "null") {
+						if (r <= k) {
+							tO["arrayIndexOrigin"] = (i + m) + "-" + r;
+							tO["arrayIndex"] = this.preparedPathSteps[i + m][r]["arrayIndex"];
+						} else {
+							tO["arrayIndex"] = 1;
+							tO["arrayIndexOrigin"] = null;
+						}
+						tO["arrayIndexUsers"] = new Array();
+					}
+					tO["root"] = this.preparedPathSteps[i + m][r]["root"];
+
+					objectRow.push(tO);
+
+				}
+
+				appendRow.childNodes[1].id = "step3-paramTD1-" + newI;
+
+				appendRow.childNodes[1].childNodes[0].id = "s3-alias" + newI;
+
+				appendRow.childNodes[2].id = "step3-paramTD2-" + newI;
+				appendRow.childNodes[2].childNodes[0].id = "s3-optional-true"
+						+ newI;
+				appendRow.childNodes[2].childNodes[0].name = "s3-optional-radio"
+						+ newI;
+				appendRow.childNodes[2].childNodes[3].id = "s3-optional-false"
+						+ newI;
+				appendRow.childNodes[2].childNodes[3].name = "s3-optional-radio"
+						+ newI;
+
+				appendRow.childNodes[3].id = "step3-paramTD3-" + newI;
+				appendRow.childNodes[3].childNodes[0].id = "s3-default" + newI;
+
+				newI += 1;
+
+				this.preparedPathSteps.push(objectRow);
+
+			}
+			for (s = 0; s < rememberedIs.length; s++) {
+				this.preparedPathSteps[this.preparedPathSteps.length - 1][s]["i"] = rememberedIs[s];
+			}
+		} else {
+			var goon = true;
+
+			var prevSibling = $("step3-paramRow-" + i).previousSibling;
+			var prevI = prevSibling.id
+					.substr(prevSibling.id.lastIndexOf("-") + 1);
+
+			while (goon) {
+				$("step3-paramRow-" + i).parentNode
+						.removeChild($("step3-paramRow-" + i));
+				var iTemp = i;
+
+				if (this.preparedPathSteps[i][k]["arrayIndex"] != "null") {
+					var tempArrayIndexO = this.preparedPathSteps[i][k]["arrayIndexOrigin"];
+					var tempArrayIndex = this.preparedPathSteps[i][k]["arrayIndex"];
+
+					s = tempArrayIndexO.substr(0, tempArrayIndexO.indexOf("-"));
+					w = tempArrayIndexO.substr(
+							tempArrayIndexO.indexOf("-") + 1,
+							tempArrayIndexO.length);
+					this.preparedPathSteps[s][w]["arrayIndex"] = this.preparedPathSteps[s][w]["arrayIndex"] - 1;
+
+					var users = this.preparedPathSteps[s][w]["arrayIndexUsers"];
+					if (users == null) {
+						users = new Array();
+					}
+					for ( var c = 0; c < users.length; c++) {
+						s = users[c].substr(0, users[c].indexOf("-"));
+						w = users[c].substr(users[c].indexOf("-") + 1,
+								users[c].length);
+						if (this.preparedPathSteps[s][w]["arrayIndex"] * 1 > tempArrayIndex) {
+							this.preparedPathSteps[s][w]["arrayIndex"] = this.preparedPathSteps[s][w]["arrayIndex"] * 1 - 1
+							if ($("s3-pathstep-" + s + "-" + w).childNodes.length == 4) {
+								$("s3-pathstep-" + s + "-" + w).childNodes[1].firstChild.nodeValue = this.preparedPathSteps[s][w]["arrayIndex"];
+							} else {
+								$("s3-pathstep-" + s + "-" + w).childNodes[2].firstChild.nodeValue = this.preparedPathSteps[s][w]["arrayIndex"];
+							}
 						}
 					}
 				}
+
+				if (this.preparedPathSteps[i][k]["i"] != "null") {
+					i = this.preparedPathSteps[i][k]["i"];
+				} else {
+					goon = false;
+				}
+				this.preparedPathSteps[iTemp] = "null";
 			}
 
-			if (this.preparedPathSteps[i][k]["i"] != "null") {
-				i = this.preparedPathSteps[i][k]["i"];
+			var nextSibling = prevSibling.nextSibling;
+			if (nextSibling == null) {
+				var nextI = "null";
 			} else {
-				goon = false;
+				var nextI = nextSibling.id.substr(nextSibling.id
+						.lastIndexOf("-") + 1);
 			}
-			this.preparedPathSteps[iTemp] = "null";
-		}
-	
-		var nextSibling = prevSibling.nextSibling;
-		if(nextSibling == null){
-			var nextI = "null";
-		} else {
-			var nextI = nextSibling.id.substr(nextSibling.id.lastIndexOf("-")+1);
-		}
-		for(r=0; r <= k; r++){
-			if(this.preparedPathSteps[prevI][r]["i"] != "null"){
-				if($("step3-paramRow-"	+ this.preparedPathSteps[prevI][r]["i"]) == null){
-					this.preparedPathSteps[prevI][r]["i"] = nextI;
+			for (r = 0; r <= k; r++) {
+				if (this.preparedPathSteps[prevI][r]["i"] != "null") {
+					if ($("step3-paramRow-"
+							+ this.preparedPathSteps[prevI][r]["i"]) == null) {
+						this.preparedPathSteps[prevI][r]["i"] = nextI;
+					}
 				}
 			}
 		}
 	},
 
+	
 	/**
-	 * this method is responsible for removing result parts in step 4
+	 * this method is responsible for adding new result parts 
+	 * respectivelyin result parts that are not used any more in step 4
 	 * 
-	 * @param int
-	 *            i index of the result-part where the add-button was pressed
+	 * @param event from the event handler 
+	 *       
 	 * 
 	 */
-	removeResultPart : function(i, k) {
-		var goon = true;
-
-		var prevSibling = $("step4-resultRow-"	+ i).previousSibling;
-		var prevI = prevSibling.id.substr(prevSibling.id.lastIndexOf("-")+1);
-		
-		while (goon) {
-			$("step4-resultRow-" + i).parentNode
-					.removeChild($("step4-resultRow-" + i));
-			var iTemp = i;
-			if (this.preparedRPathSteps[i][k]["i"] != "null") {
-				i = this.preparedRPathSteps[i][k]["i"];
-			} else {
-				goon = false;
-			}
-			this.preparedRPathSteps[iTemp] = "null";
-		}
-		
-		var nextSibling = prevSibling.nextSibling;
-		if(nextSibling == null){
-			var nextI = "null";
-		} else {
-			var nextI = nextSibling.id.substr(nextSibling.id.lastIndexOf("-")+1);
-		}
-		
-		for(r=0; r <= k; r++){
-			if(this.preparedRPathSteps[prevI][r]["i"] != "null"){
-				if($("step4-resultRow-"	+ this.preparedRPathSteps[prevI][r]["i"]) == null){
-					this.preparedRPathSteps[prevI][r]["i"] = nextI;
-				}
-			}
-		}
-	},
-
-	addResultPart : function(i, k) {
-		// find position where to insert the new rows
-		var goon = true;
-		var m = i;
-		var nextSibling = null;
-		var goon = true;
-		var appendIndex = i;
-		while(goon){
-			nextSibling = $("step4-resultRow-"+m).nextSibling;
-			if(nextSibling != null){
-				if (this.preparedRPathSteps[m] != "null") {
-					m = nextSibling.id.substr(nextSibling.id.lastIndexOf("-")+1);
-					if(this.preparedRPathSteps[m][k] != null){
-						if (this.preparedRPathSteps[m][k]["value"] == this.preparedRPathSteps[i][k]["value"]) {
-							appendIndex = m;
+	addRemoveResultPart : function(event) {
+		var node = Event.element(event);
+		var i = node.i * 1;
+		var k = node.k * 1;
+		if (node.addA) {
+			// find position where to insert the new rows
+			var goon = true;
+			var m = i;
+			var nextSibling = null;
+			var goon = true;
+			var appendIndex = i;
+			while (goon) {
+				nextSibling = $("step4-resultRow-" + m).nextSibling;
+				if (nextSibling != null) {
+					if (this.preparedRPathSteps[m] != "null") {
+						m = nextSibling.id.substr(nextSibling.id
+								.lastIndexOf("-") + 1);
+						if (this.preparedRPathSteps[m][k] != null) {
+							if (this.preparedRPathSteps[m][k]["value"] == this.preparedRPathSteps[i][k]["value"]) {
+								appendIndex = m;
+							} else {
+								goon = false;
+							}
 						} else {
 							goon = false;
 						}
-					} else{
+					} else {
 						goon = false;
 					}
 				} else {
 					goon = false;
 				}
-			} else {
-				goon = false;
 			}
-		}
-		var rememberedIs = new Array();
-		for(var s=0; s < k; s++){
-			rememberedIs.push(this.preparedRPathSteps[appendIndex][s]["i"]);
-			this.preparedRPathSteps[appendIndex][s]["i"] = this.preparedRPathSteps.length;
-		}
-	
-		// get nodes to insert
-		var goon = true;
-		var appendRows = new Array();
-		var appendRowsIndex = i;
-		var lastC = i-1;
-		while (goon) {
-			var tAR = $("step4-resultRow-" + appendRowsIndex);
-			
-			if(appendRowsIndex == lastC + 1){
-				appendRows.push(tAR);
-				lastC = appendRowsIndex; 
+			var rememberedIs = new Array();
+			for ( var s = 0; s < k; s++) {
+				rememberedIs.push(this.preparedRPathSteps[appendIndex][s]["i"]);
+				this.preparedRPathSteps[appendIndex][s]["i"] = this.preparedRPathSteps.length;
+				this.preparedRPathSteps[appendIndex][s]["k"] = s;
 			}
-			if (this.preparedRPathSteps[appendRowsIndex][k]["i"] != "null") {
-				appendRowsIndex = this.preparedRPathSteps[appendRowsIndex][k]["i"];
-			} else {
-				goon = false;
-			}
-		}
-		
-		// create new row
-		var newI = this.preparedRPathSteps.length;
-		appendRowsIndex = i;
 
-		for (m = 0; m < appendRows.length; m++) {
-			var appendRow = appendRows[m].cloneNode(true);
+			// get nodes to insert
+			var goon = true;
+			var appendRows = new Array();
+			var appendRowsIndex = i;
+			var lastC = i - 1;
+			while (goon) {
+				var tAR = $("step4-resultRow-" + appendRowsIndex);
 
-			if (nextSibling == null){
-				$("step4-results").childNodes[0].appendChild(appendRow);
-			} else {
-				$("step4-results").childNodes[0].insertBefore(appendRow,
-						nextSibling);
-			}
-			
-			appendRow.id = "step4-resultRow-" + newI;
-
-			appendRow.childNodes[0].id = "step4-resultTD1-" + newI;
-			var pathSteps = appendRow.childNodes[0].childNodes[0].childNodes;
-
-			appendRow.childNodes[0].childNodes[0].id = "s4-path" + newI;
-
-			var objectRow = new Array();
-			for (r = 0; r < pathSteps.length; r++) {
-				pathSteps[r].id = "s4-pathstep-" + newI + "-" + r;
-				if (r < k) {
-					pathSteps[r].style.visibility = "hidden";
+				if (appendRowsIndex == lastC + 1) {
+					appendRows.push(tAR);
+					lastC = appendRowsIndex;
 				}
-				// an aTreeRoot
-				if (pathSteps[r].childNodes.length == 2) {
-					pathSteps[r].firstChild.id = "step4-expand-" + newI + "-"
-							+ r;
-					pathSteps[r].firstChild.setAttribute("onclick",
-							"webServiceSpecial.expandResultPathStep(" + newI
-									+ "," + r + ")");
-					if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
-							+ (i * 1 + m) + "-" + r) {
-						$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
-								+ (i * 1 + m) + "-" + r).expanded;
-					}
-				} // an array
-				else if (pathSteps[r].childNodes.length == 4) {
-					pathSteps[r].childNodes[1].id = "step4-arrayinput-" + newI
-							+ "-" + r;
-					pathSteps[r].childNodes[3].setAttribute("onclick",
-							"webServiceSpecial.addResultPart(" + newI + "," + r
-									+ ")");
-
-					pathSteps[r].childNodes[1].setAttribute("onblur",
-							"webServiceSpecial.updateInputBoxes(" + newI + ","
-									+ r + ")");
-
-					pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
-				} // both
-				else if (pathSteps[r].childNodes.length == 5) {
-					pathSteps[r].childNodes[2].id = "step4-arrayinput-" + newI
-							+ "-" + r;
-					if(r <= k){
-						pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
-						pathSteps[r].childNodes[4].setAttribute("onclick",
-							"webServiceSpecial.removeResultPart(" + newI + "," + r + ")");
-					} else {
-						pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
-					
-						pathSteps[r].childNodes[4].setAttribute("onclick",
-							"webServiceSpecial.addResultPart(" + newI + ","
-									+ r + ")");
-					}
-					
-					pathSteps[r].firstChild.id = "step4-expand-" + newI + "-"
-							+ r;
-					pathSteps[r].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.gif";
-					pathSteps[r].firstChild.setAttribute("onclick",
-							"webServiceSpecial.expandResultPathStep(" + newI
-									+ "," + r + ")");
-
-					pathSteps[r].childNodes[2].setAttribute("onblur",
-							"webServiceSpecial.updateInputBoxes(" + newI + ","
-									+ r + ")");
-
-					if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
-							+ (i * 1 + m) + "-" + r) {
-						$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
-								+ (i * 1 + m) + "-" + r).expanded;
-					}
-				}
-				
-				var tO = new Object();
-				tO["value"] = this.preparedRPathSteps[i + m][r]["value"];
-				if (this.preparedRPathSteps[i + m][r]["i"] != "null") {
-					tO["i"] = newI + 1;
-					tO["k"] = this.preparedRPathSteps[i + m][r]["k"];
+				if (this.preparedRPathSteps[appendRowsIndex][k]["i"] != "null") {
+					appendRowsIndex = this.preparedRPathSteps[appendRowsIndex][k]["i"];
 				} else {
-					tO["i"] = "null";
-					tO["k"] = "null";
+					goon = false;
 				}
-				
-				if(m == 0 && k == r){
-					tO["arrayIndexRoot"] = true;
-				}
-				
-				tO["root"] = this.preparedRPathSteps[i + m][r]["root"];
-				objectRow.push(tO);
 			}
 
-			appendRow.childNodes[1].id = "step4-resultTD2-" + newI;
+			// create new row
+			var newI = this.preparedRPathSteps.length;
+			appendRowsIndex = i;
 
-			appendRow.childNodes[1].childNodes[0].id = "s4-alias" + newI;
+			for (m = 0; m < appendRows.length; m++) {
+				var appendRow = appendRows[m].cloneNode(true);
 
-			// insert element
-			// todo: remove >=;
+				if (nextSibling == null) {
+					$("step4-results").childNodes[0].appendChild(appendRow);
+				} else {
+					$("step4-results").childNodes[0].insertBefore(appendRow,
+							nextSibling);
+				}
 
-			newI += 1;
-			appendIndex += 1;
+				appendRow.id = "step4-resultRow-" + newI;
 
-			this.preparedRPathSteps.push(objectRow);
+				appendRow.childNodes[0].id = "step4-resultTD1-" + newI;
+				var pathSteps = appendRow.childNodes[0].childNodes[0].childNodes;
 
-		}
-		
-		for(s=0; s < rememberedIs.length; s++){
-			this.preparedRPathSteps[this.preparedRPathSteps.length-1][s]["i"] = rememberedIs[s];
+				appendRow.childNodes[0].childNodes[0].id = "s4-path" + newI;
+
+				var objectRow = new Array();
+				for (r = 0; r < pathSteps.length; r++) {
+					pathSteps[r].id = "s4-pathstep-" + newI + "-" + r;
+					if (r < k) {
+						pathSteps[r].style.visibility = "hidden";
+					}
+					// an aTreeRoot
+					if (pathSteps[r].childNodes.length == 2) {
+						pathSteps[r].firstChild.id = "step4-expand-" + newI
+								+ "-" + r;
+
+						pathSteps[r].firstChild.firstChild.i = newI;
+						pathSteps[r].firstChild.firstChild.k = r;
+
+						if (pathSteps[r].firstChild.firstChild.expand == null) {
+							if (pathSteps[r].firstChild.firstChild.src == "../extensions/SMWHalo/skins/webservices/Plus.gif") {
+								pathSteps[r].firstChild.firstChild.expand = true;
+								pathSteps[r].firstChild.expanded = false;
+							} else {
+								pathSteps[r].firstChild.firstChild.expand = false;
+								pathSteps[r].firstChild.expanded = true;
+							}
+							var el = this.resultPathStepClick
+									.bindAsEventListener(this);
+							Event.observe(pathSteps[r].firstChild.firstChild,
+									"click", el);
+						}
+					} // an array
+					else if (pathSteps[r].childNodes.length == 4) {
+						pathSteps[r].childNodes[1].id = "step4-arrayinput-"
+								+ newI + "-" + r;
+						pathSteps[r].childNodes[1].setAttribute("onblur",
+								"webServiceSpecial.updateInputBoxes(" + newI
+										+ "," + r + ")");
+						
+						pathSteps[r].childNodes[3].firstChild.i = newI;
+						pathSteps[r].childNodes[3].firstChild.k = r;
+						if (r <= k) {
+							pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
+
+							pathSteps[r].childNodes[3].firstChild.addA = false;
+						} else {
+							pathSteps[r].childNodes[3].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+
+							pathSteps[r].childNodes[3].firstChild.addA = true;
+						}
+					} // both
+					else if (pathSteps[r].childNodes.length == 5) {
+						pathSteps[r].childNodes[2].id = "step4-arrayinput-"
+								+ newI + "-" + r;
+
+						pathSteps[r].childNodes[4].i = newI;
+						pathSteps[r].childNodes[4].firstChild.k = r;
+
+						if (pathSteps[r].childNodes[4].firstChild.addA == null) {
+							var el = this.addRemoveResultPart
+									.bindAsEventListener(this);
+							Event.observe(
+									pathSteps[r].childNodes[4].firstChild,
+									"click", el);
+						}
+						if (r <= k) {
+							pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.png";
+							pathSteps[r].childNodes[4].firstChild.addA = false;
+						} else {
+							pathSteps[r].childNodes[4].firstChild.src = "../extensions/SMWHalo/skins/webservices/Add.png";
+
+							pathSteps[r].childNodes[4].firstChild.addA = true;
+						}
+
+						pathSteps[r].firstChild.id = "step4-expand-" + newI
+								+ "-" + r;
+						pathSteps[r].firstChild.firstChild.i = newI;
+						pathSteps[r].firstChild.firstChild.k = r;
+
+						pathSteps[r].firstChild.src = "../extensions/SMWHalo/skins/webservices/delete.gif";
+						if (pathSteps[r].firstChild.firstChild.expand == null) {
+							if (pathSteps[r].firstChild.firstChild.src == "../extensions/SMWHalo/skins/webservices/Plus.gif") {
+								pathSteps[r].firstChild.firstChild.expand = true;
+							} else {
+								pathSteps[r].firstChild.firstChild.expand = false;
+							}
+							var el = this.resultPathStepClick
+									.bindAsEventListener(this);
+							Event.observe(pathSteps[r].firstChild.firstChild,
+									"click", el);
+						}
+
+						pathSteps[r].childNodes[2].setAttribute("onblur",
+								"webServiceSpecial.updateInputBoxes(" + newI
+										+ "," + r + ")");
+
+						if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
+								+ (i * 1 + m) + "-" + r) {
+							$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
+									+ (i * 1 + m) + "-" + r).expanded;
+						}
+					}
+
+					var tO = new Object();
+					tO["value"] = this.preparedRPathSteps[i + m][r]["value"];
+					if (this.preparedRPathSteps[i + m][r]["i"] != "null") {
+						tO["i"] = newI + 1;
+						tO["k"] = this.preparedRPathSteps[i + m][r]["k"];
+					} else {
+						tO["i"] = "null";
+						tO["k"] = "null";
+					}
+
+					if (m == 0 && k == r) {
+						tO["arrayIndexRoot"] = true;
+					}
+
+					tO["root"] = this.preparedRPathSteps[i + m][r]["root"];
+					objectRow.push(tO);
+				}
+
+				appendRow.childNodes[1].id = "step4-resultTD2-" + newI;
+
+				appendRow.childNodes[1].childNodes[0].id = "s4-alias" + newI;
+
+				// insert element
+				// todo: remove >=;
+
+				newI += 1;
+				appendIndex += 1;
+
+				this.preparedRPathSteps.push(objectRow);
+
+			}
+
+			for (s = 0; s < rememberedIs.length; s++) {
+				this.preparedRPathSteps[this.preparedRPathSteps.length - 1][s]["i"] = rememberedIs[s];
+			}
+		} else {
+			var goon = true;
+
+			var prevSibling = $("step4-resultRow-" + i).previousSibling;
+			var prevI = prevSibling.id
+					.substr(prevSibling.id.lastIndexOf("-") + 1);
+
+			while (goon) {
+				$("step4-resultRow-" + i).parentNode
+						.removeChild($("step4-resultRow-" + i));
+				var iTemp = i;
+				if (this.preparedRPathSteps[i][k]["i"] != "null") {
+					i = this.preparedRPathSteps[i][k]["i"];
+				} else {
+					goon = false;
+				}
+				this.preparedRPathSteps[iTemp] = "null";
+			}
+
+			var nextSibling = prevSibling.nextSibling;
+			if (nextSibling == null) {
+				var nextI = "null";
+			} else {
+				var nextI = nextSibling.id.substr(nextSibling.id
+						.lastIndexOf("-") + 1);
+			}
+
+			for (r = 0; r <= k; r++) {
+				if (this.preparedRPathSteps[prevI][r]["i"] != "null") {
+					if ($("step4-resultRow-"
+							+ this.preparedRPathSteps[prevI][r]["i"]) == null) {
+						this.preparedRPathSteps[prevI][r]["i"] = nextI;
+					}
+				}
+			}
 		}
 	},
 
@@ -1830,7 +1959,14 @@ DefineWebServiceSpecial.prototype = {
 	 *            step : defines which process step to call
 	 */
 	checkEnterKey : function(event, step) {
-		if (event.which == 13) {
+		var key;
+		if (window.event) {
+			key = window.event.keyCode; // IE
+		} else {
+			key = event.which;
+		}
+
+		if (key == 13) {
 			if (step == "step1") {
 				this.processStep1();
 				this.showPendingIndicator("step1-go");
@@ -1857,22 +1993,42 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * used for the click event in the tree view of step 3
+	 * @param event
+	 * @return
+	 */
+	paramPathStepClick : function(event) {
+		var node = Event.element(event);
+		Event.stop(event);
+
+		if (node.expand) {
+			this.expandParamPathStep(node.i, node.k);
+			node.expand = false;
+		} else {
+			this.contractParamPathStep(node.i, node.k);
+			node.expand = true;
+		}
+	},
+
+	/**
+	 * used to expand the elements of the tree view in step 3
+	 * @param i
+	 * @param k
+	 * @return
+	 */
 	expandParamPathStep : function(i, k) {
 		i = i * 1;
 		k = k * 1;
-		
-		var r = $("step3-paramRow-"+i).rowIndex;
-		
-		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild
-				.setAttribute("onclick",
-						"webServiceSpecial.contractParamPathStep(\"" + i
-								+ "\",\"" + k + "\")");
+
+		var r = $("step3-paramRow-" + i).rowIndex;
+
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = true;
 
 		var goon = true;
 		while (goon) {
-			r = $("step3-paramRow-"+i).rowIndex;
+			r = $("step3-paramRow-" + i).rowIndex;
 			var display = true;
 			var complete = true;
 			for ( var m = k * 1 + 1; m < this.preparedPathSteps[i].length; m++) {
@@ -1880,7 +2036,7 @@ DefineWebServiceSpecial.prototype = {
 				if (i > 0) {
 					if (this.preparedPathSteps[i - 1][m] != null) {
 						if (this.preparedPathSteps[i][m]["value"] == this.preparedPathSteps[i - 1][m]["value"]) {
-							if(!this.preparedPathSteps[i][m]["arrayIndexRoot"]){
+							if (!this.preparedPathSteps[i][m]["arrayIndexRoot"]) {
 								m = this.preparedPathSteps[i].length;
 								visible = false;
 								display = false;
@@ -1911,27 +2067,26 @@ DefineWebServiceSpecial.prototype = {
 
 			if (this.preparedPathSteps[i][k]["i"] != "null") {
 				iTemp = this.preparedPathSteps[i][k]["i"];
-				
+
 				k = this.preparedPathSteps[i][k]["k"];
 				i = iTemp;
 			} else {
 				goon = false;
 			}
-		}	
+		}
 	},
 
+	/**
+	 * used to contract elements of the tree view in step 3
+	 * @param i
+	 * @param k
+	 * @return
+	 */
 	contractParamPathStep : function(i, k) {
-
 		i = i * 1;
 		k = k * 1;
-		var r = $("step3-paramRow-"+i).rowIndex; 
+		var r = $("step3-paramRow-" + i).rowIndex;
 
-		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild
-				.setAttribute("onclick",
-						"webServiceSpecial.expandParamPathStep(\"" + i
-								+ "\",\"" + k
-
-								+ "\")");
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = false;
 
@@ -1942,7 +2097,7 @@ DefineWebServiceSpecial.prototype = {
 		var goon = true;
 		var root = true;
 		while (goon) {
-			r = $("step3-paramRow-"+i).rowIndex;
+			r = $("step3-paramRow-" + i).rowIndex;
 			if (!root) {
 				this.parameterContainer.firstChild.childNodes[r].style.display = "none";
 			}
@@ -1962,15 +2117,35 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * used for the onlick event in the tree view of step 4
+	 * 
+	 * @param event
+	 * @return
+	 */
+	resultPathStepClick : function(event) {
+		var node = Event.element(event);
+		Event.stop(event);
+		if (node.expand) {
+			node.expand = false;
+			this.expandResultPathStep(node.i, node.k);
+		} else {
+			node.expand = true;
+			this.contractResultPathStep(node.i, node.k);
+		}
+	},
+
+	/**
+	 * used in step 4 to expand elements of the tree view
+	 * @param i
+	 * @param k
+	 * @return
+	 */
 	expandResultPathStep : function(i, k) {
 		i = i * 1;
 		k = k * 1;
-		var r = $("step4-resultRow-"+i).rowIndex;
-		
-		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0]
-				.setAttribute("onclick",
-						"webServiceSpecial.contractResultPathStep(\"" + i
-								+ "\",\"" + k + "\")");
+		var r = $("step4-resultRow-" + i).rowIndex;
+
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = "../extensions/SMWHalo/skins/webservices/Minus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "true";
 
@@ -1978,13 +2153,13 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			var display = true;
 			var complete = true;
-			r = $("step4-resultRow-"+i).rowIndex;
+			r = $("step4-resultRow-" + i).rowIndex;
 			for ( var m = k * 1 + 1; m < this.preparedRPathSteps[i].length; m++) {
 				var visible = true;
 				if (i > 0) {
 					if (this.preparedRPathSteps[i - 1][m] != null) {
 						if (this.preparedRPathSteps[i][m]["value"] == this.preparedRPathSteps[i - 1][m]["value"]) {
-							if(!this.preparedRPathSteps[i][m]["arrayIndexRoot"]){
+							if (!this.preparedRPathSteps[i][m]["arrayIndexRoot"]) {
 								m = this.preparedRPathSteps[i].length;
 								visible = false;
 								display = false;
@@ -2021,15 +2196,16 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * used for step 4 to contract elements of the tree view
+	 * @param i
+	 * @param k
+	 * @return
+	 */
 	contractResultPathStep : function(i, k) {
 		i = i * 1;
 		k = k * 1;
-		var r = $("step4-resultRow-"+i).rowIndex;
-
-		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0]
-				.setAttribute("onclick",
-						"webServiceSpecial.expandResultPathStep(\"" + i
-								+ "\",\"" + k + "\")");
+		var r = $("step4-resultRow-" + i).rowIndex;
 
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = "../extensions/SMWHalo/skins/webservices/Plus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "false";
@@ -2042,8 +2218,8 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			i = i * 1;
 			k = k * 1;
-			r = $("step4-resultRow-"+i).rowIndex;
-			
+			r = $("step4-resultRow-" + i).rowIndex;
+
 			if (!root) {
 				this.resultContainer.childNodes[0].childNodes[r].style.display = "none";
 			}
@@ -2061,6 +2237,13 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
+	/**
+	 * this method is used in step 4 to update array indexes of
+	 * path steps that are hidden
+	 * @param i
+	 * @param k
+	 * @return
+	 */
 	updateInputBoxes : function(i, k) {
 		var inputValue;
 		var root = true;
@@ -2090,31 +2273,31 @@ DefineWebServiceSpecial.prototype = {
 			}
 		}
 	},
-	
+
 	/*
 	 * Shows the pending indicator on the element with the DOM-ID <onElement>
 	 * 
 	 * @param string onElement DOM-ID if the element over which the indicator
 	 * appears
 	 */
-	showPendingIndicator: function(onElement) {
+	showPendingIndicator : function(onElement) {
 		this.hidePendingIndicator();
 		$(onElement + "-img").style.visibility = "hidden";
 		this.pendingIndicator = new OBPendingIndicator($(onElement));
 		this.pendingIndicator.show();
 		this.pendingIndicator.onElement = onElement;
 	},
-	
+
 	/*
 	 * Hides the pending indicator.
 	 */
-	hidePendingIndicator: function() {
+	hidePendingIndicator : function() {
 		if (this.pendingIndicator != null) {
 			$(this.pendingIndicator.onElement + "-img").style.visibility = "visible";
 			this.pendingIndicator.hide();
 			this.pendingIndicator = null;
 		}
-	},
+	}
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
