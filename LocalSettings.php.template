@@ -11,9 +11,9 @@
 # If you customize your file layout, set $IP to the directory that contains
 # the other MediaWiki files. It will be used as a base to locate files.
 if( defined( 'MW_INSTALL_PATH' ) ) {
-	$IP = MW_INSTALL_PATH;
+    $IP = MW_INSTALL_PATH;
 } else {
-	$IP = dirname( __FILE__ );
+    $IP = dirname( __FILE__ );
 }
 
 $path = array( $IP, "$IP/includes", "$IP/languages" );
@@ -25,12 +25,12 @@ require_once( "includes/DefaultSettings.php" );
 # ini_set( 'memory_limit', '20M' );
 
 if ( $wgCommandLineMode ) {
-	if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-		die( "This script must be run from the command line\n" );
-	}
+    if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+        die( "This script must be run from the command line\n" );
+    }
 } elseif ( empty( $wgNoOutputBuffer ) ) {
-	## Compress output if the browser supports it
-	if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
+    ## Compress output if the browser supports it
+    if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
 }
 
 $wgSitename         = "Halo3wiki";
@@ -159,6 +159,8 @@ $smwgSemanticAC=false;
 
 $phpInterpreter="{{xamp-install}}/php/php.exe";
 
+$smwgOWLFullExport = true;
+
 require_once( "{$IP}/extensions/Cite.php" );
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
 
@@ -167,5 +169,28 @@ enableSemantics('localhost:8080');
 
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo();
+
+include("extensions/DynamicPageList/DynamicPageList.php");
+require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
+
+require_once( "$IP/extensions/Variables/Variables.php" );
+
+#MIME-Type
+include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
+
+#Glossary
+require_once( "$IP/extensions/Glossary/Glossary.php" );
+
+
+#Set default searching for document and pdf namespace
+$wgNamespacesToBeSearchedDefault = array(
+        NS_DOCUMENT => true,
+        NS_PDF => true
+);
+
+#IOC Logo
+$wgLogo="ioc_logo.png";
+
+
 
 ?>
