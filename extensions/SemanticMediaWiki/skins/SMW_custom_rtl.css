@@ -115,3 +115,10 @@ span.smwsearchicon { /*FIXME: this was only used for Factbox docu, should be rem
 	margin-left: 0px;
 	background: url(images/rdf_flyer.18.gif) center left no-repeat;
 }
+
+#bodyContent span.smwexplanation a{
+	padding-right: 16px;
+	margin-right: 2px;
+	color: #888888;
+	background: url(images/lightbulb.png) center right no-repeat;
+}
