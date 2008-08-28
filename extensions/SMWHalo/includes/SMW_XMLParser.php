@@ -285,9 +285,10 @@ class XMLParser {
 		if ($pi < 0) {
 			return $values;
 		}
-		
-		$indices = $this->xmlIndex[strtoupper($elementPath[$pi])];
-		if (!$indices) {
+		if (array_key_exists(strtoupper($elementPath[$pi]), $this->xmlIndex)){
+			$indices = $this->xmlIndex[strtoupper($elementPath[$pi])];
+		}
+		else {
 			return $values;
 		}
 		foreach ($indices as $idx) {
@@ -308,7 +309,12 @@ class XMLParser {
 				
 				if ($found) {
 					// ok => add the value
-					$values[] = $elem['value'];
+					if ( array_key_exists('value',$elem) ) {
+						$values[] = $elem['value'];
+					}
+					else {
+						$values[]='';
+					}
 				}
 			}
 		}
@@ -473,7 +479,10 @@ class XMLParser {
 		
 		
 		$endTag = $elem['tag'];
-		$attr = $elem['attributes'];
+		$attr = '';
+		if( array_key_exists('attributes',$elem) ) {
+			$attr = $elem['attributes'];	
+		}
 		if ($elem['type'] == 'complete') {
 			$result = array('value' => $elem['value'], 'attributes' => $attr);
 			$result = array($endTag => array($result));
