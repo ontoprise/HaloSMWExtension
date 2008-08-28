@@ -88,6 +88,9 @@ RefreshSemanticToolBar.prototype = {
 		if(window.relToolBar){
 			relToolBar.fillList()
 		}
+		if(window.ruleToolBar){
+			ruleToolBar.fillList()
+		}
 
 		if(window.propToolBar){
 			propToolBar.createContent();

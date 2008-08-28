@@ -52,6 +52,11 @@ createList: function(list,id) {
   			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
   			divlist += '</div>';
 	  		break;
+		case "rules":
+			divlist ='<div id="' + id +'-tools">';
+			divlist += '<a id="rules-menu-annotate" href="javascript:ruleToolBar.createRule()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
+			divlist += '</div>';
+	 		break;
 	}
   	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">";
 
@@ -98,7 +103,12 @@ createList: function(list,id) {
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
 	  			firstValue = list[i].getValue ? list[i].getValue().escapeHTML(): "";
 	  			prefix = gLanguage.getMessage('CATEGORY_NS');
-	 			 break
+	 			break
+			case "rules":
+	  			fn = "ruleToolBar.editRule(" + i + ")";
+	  			firstValue = "";
+	  			prefix = '';
+	 			break
 			case "relation":
 	  			fn = "relToolBar.getselectedItem(" + i + ")";
 	  			prefix = gLanguage.getMessage('PROPERTY_NS');
@@ -136,8 +146,12 @@ createList: function(list,id) {
 		var elemName;
 		//shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
-		elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
-		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
+		if (id == 'rules') {
+			elemName = list[i].getName().escapeHTML();
+		} else {
+			elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
+			elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
+		}
 		divlist += 	"<tr>" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
 					elemName + 
