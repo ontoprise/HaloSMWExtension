@@ -40,7 +40,7 @@
  
  global $smwgIP;
  require_once($smwgIP . '/includes/SMW_GlobalFunctions.php');
- smwfInitNamespaces();
+ //smwfInitNamespaces();
  
  global $smwgHaloIP, $wgContLang, $argv;
  require_once($smwgHaloIP . '/includes/SMW_Initialize.php');
