@@ -179,6 +179,7 @@ WikiTextParser.prototype = {
 		this.relations  = null;
 		this.categories  = null;
 		this.links  = null;
+		this.rules  = null;
 		this.error = WTP_NO_ERROR;
 	},
 	
@@ -299,6 +300,46 @@ WikiTextParser.prototype = {
 
 		return this.links;
 	},
+
+	/**
+	 * @public
+	 *
+	 * Returns the rule with the given name or null if it is not present.
+	 *
+	 * @return WtpRule The rule's definitions.
+	 */
+	getRule: function(name) {
+		if (this.rules == null) {
+			this.parseAnnotations();
+		}
+		var matching = new Array();
+
+		for (var i = 0, num = this.rules.length; i < num; ++i) {
+			var rule = this.rules[i];
+			if (this.equalWikiName(rule.getName(), name)) {
+				return rule;
+			}
+		}
+		return null;
+	},
+
+
+	/**
+	 * @public
+	 *
+	 * Returns an array that contains the rules, that are annotated in
+	 * the current wiki text. Rules within templates are not considered.
+	 *
+	 * @return array(WtpRule) An array of rule definitions.
+	 */
+	getRules: function() {
+		if (this.rules == null) {
+			this.parseAnnotations();
+		}
+
+		return this.rules;
+	},
+
 
 	addTextChangedHook: function(hookFnc) {
 		this.textChangedHooks.push(hookFnc);
@@ -740,6 +781,7 @@ WikiTextParser.prototype = {
 		this.relations  = new Array();
 		this.categories = new Array();
 		this.links      = new Array();
+		this.rules      = new Array();
 		this.error = WTP_NO_ERROR;
 
 		// Parsing-States
@@ -749,6 +791,7 @@ WikiTextParser.prototype = {
 		// 3 - find <ask> or </ask>
 		// 4 - find {{#ask:
 		// 5 - find <pre> or </pre>
+		// 6 - find <rule or </rule>
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var askCount = 0;  	  // Number of open <ask>-statements
@@ -758,8 +801,8 @@ WikiTextParser.prototype = {
 		while (parsing) {
 			switch (state) {
 				case 0:
-					// Search for "[[", "<nowiki>", <pre> or <ask>
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "{{#ask:"]);
+					// Search for "[[", "<nowiki>", <pre>, <rule or <ask
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
@@ -876,6 +919,25 @@ WikiTextParser.prototype = {
 					// opening <pre> is closed
 					state = 0;
 					break;
+				case 6:
+					// we are within a <rule>-block
+					// => search for </rule>
+					var findings = this.findFirstOf(currentPos, ["</rule>"]);
+					if (findings[1] == null) {
+						// nothing found
+						parsing = false;
+						break;
+					}
+					var start = currentPos-1;
+					var end = findings[0]+7;
+					var rule = this.parseRule(this.text.substring(start, end), start, end);
+					if (rule != null) {
+						this.rules.push(rule);
+					}
+					currentPos = end;
+					// opening <rule> is closed
+					state = 0;
+					break;
 			}
 		}
 		if (bracketCount != 0) {
@@ -944,6 +1006,40 @@ WikiTextParser.prototype = {
 		}
 		return currentPos;
 	},
+	
+	/**
+	 * @private
+	 * 
+	 * Parses the rule that is given in <ruleTxt>.
+	 * 
+	 * @param string ruleTxt
+	 * 		Definition of the rule
+	 * @param int start
+	 * 		Start index of the rule in the wiki text
+	 * @param int ent
+	 * 		End index of the rule in the wiki text
+	 * 
+	 * @return WtpRule
+	 * 		A rule object or <null> if parsing failed.
+	 * 
+	 */
+	 parseRule: function(ruleTxt, start, end) {
+		var hl = ruleTxt.match(/.*hostlanguage\s*=\s*"(.*?)"/);
+		var rulename = ruleTxt.match(/.*name\s*=\s*"(.*?)"/);
+		var type = ruleTxt.match(/.*type\s*=\s*"(.*?)"/);
+		var rule = ruleTxt.match(/<rule(?:.|\s)*?>((.|\s)*?)<\/rule>/m);
+		
+		if (hl && rulename && type && rule) {
+			hl = hl[1];
+			rulename = rulename[1];
+			type = type[1];
+			rule = rule[1];
+			return new WtpRule(ruleTxt, start, end, this, rulename, hl, type, rule);
+		} else {
+			return null;
+		} 
+		
+	 },
 	
 	/**
 	 * @private

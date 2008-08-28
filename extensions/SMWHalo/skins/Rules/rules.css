@@ -1,0 +1,76 @@
+@CHARSET "ISO-8859-1";
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/* CSS for Simple Rules Interface */
+
+.rules-complete-content {
+	font-size: 10pt;
+}
+	
+.rules-frame {
+	border: 1px solid #aaaaaa;
+}
+
+.rules-title {
+	color: #ffffff;
+	background: #aaaaaa;
+	font-size: 10pt;
+	width:	100px;
+	font-weight: bold;
+	padding-left: 5px
+}
+
+.rules-variable {
+	color: #00bb00;
+	font-weight: bold;
+}
+
+.rules-content {
+	padding: 1em;
+}
+	
+.rules-category {
+	color: #000000;
+	font-weight: bold;
+}
+
+.rules-err-msg {
+	border: #ff0000 2px solid;
+	margin: 1em;
+}
+
+.rules-variable-frame {
+	border-left:0px;
+	border-right:0px;
+	border-top:0px;
+	border-bottom:1px solid #aaaaaa;
+}
+
+#sr-calc-op-help-table {
+	background: #e4e4e4;
+	border:1px solid #a8a8a8;
+}
+
+.sr-calc-op-help-table-head {
+	background: #a8a8a8;
+}
+
+.calc-rule-variable {
+	font-weight: bold;
+}

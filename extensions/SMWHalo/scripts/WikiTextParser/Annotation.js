@@ -500,3 +500,72 @@ WtpLink.prototype = Object.extend(new WtpAnnotation(), {
 	
 });
 
+/**
+ * Class for simples rules - derived from WtpAnnotation
+ * 
+ * Stores
+ * - the name of the rule
+ * - the host language
+ * - the type of the rule
+ * - the text of the rule
+ * 
+ */
+var WtpRule = Class.create();
+WtpRule.prototype = Object.extend(new WtpAnnotation(), {
+	
+	/**
+	 * @public
+	 * @see constructor of WtpRule
+	 */
+	initialize: function(annotation, start, end, wtp, 
+	                     name, hostlanguage, type, ruleText) {
+		this.WtpAnnotation(annotation, start, end, wtp, "");
+		this.WtpRule(name, hostlanguage, type, ruleText);
+	},
+
+	/**
+	 * @private - called by <initialize>
+	 * 
+	 * Constructor.
+	 * 
+	 * @param string name
+	 * 		Name of the rule
+	 * @param string hostlanguage
+	 * 		Host language e.g. FLogic
+	 * @param string type
+	 * 		Type of the rule e.g. Definition, Calculation
+	 * @param string ruleText
+	 * 		Text of the rule
+	 * 
+	 */
+	WtpRule: function(name, hostlanguage, type, ruleText) {
+		this.name = name;
+		this.hostlanguage = hostlanguage;
+		this.type = type;
+		this.ruleText = ruleText;
+	},
+
+	/**
+	 * @public
+	 * 
+	 * Replaces a rule in the wiki text.
+	 * 
+	 * @param string newRule The complete definition of the new rule
+	 */
+	changeRule: function(newRule) {
+		this.replaceAnnotation(newRule);
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * @return string
+	 * 		Returns the text of the rule e.g. the FLogic.
+	 */
+	getRuleText: function() {
+		return this.ruleText;
+	}
+	
+	
+});
+
