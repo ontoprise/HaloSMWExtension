@@ -553,6 +553,14 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_glossarybot' => 'Update glossary highlighting',
 	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
 
+	// Simple Rules formula parser
+	'smw_srf_expected_factor' => 'Expected a function, variable, constant or braces near $1',
+	'smw_srf_expected_comma' => 'Expected a comma near $1',
+	'smw_srf_expected_(' => 'Expected an opening brace near $1',
+	'smw_srf_expected_)' => 'Expected a closing brace near $1',
+	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
+	'smw_srf_missing_operator' => 'Expected an operator near $1',
+
 );
 
 

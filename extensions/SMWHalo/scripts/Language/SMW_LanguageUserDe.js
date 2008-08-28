@@ -25,6 +25,7 @@ var wgUserLanguageStrings = {
 	'ADD'                     : 'Hinzufügen',
 	'CANCEL'                  : 'Abbrechen',
 	'CREATE'                  : 'Erzeugen',
+	'EDIT'                    : 'Editieren',
 	'ANNOTATE'                : 'Annotieren',
 	'SUB_SUPER'               : 'Sub/Super',
 	'MHAS_PART'               : 'Hat Teil',
@@ -233,6 +234,16 @@ var wgUserLanguageStrings = {
 	'smw_acl_create_denied' : 'Sie sind nicht berechtigt, den Artikel "$1" zu erzeugen.',
 	'smw_acl_edit_denied'   : 'Sie sind nicht berechtigt, den Artikel "$1" zu bearbeiten.',
 	'smw_acl_delete_denied' : 'Sie sind nicht berechtigt, den Artikel "$1" zu löschen.',
+
+	// Rule toolbar
+	'RULE_RULES' 		: 'Regeln',
+	'RULE_CREATE'		: 'Erzeugen Sie eine neue Regel.',
+	'RULE_EDIT'			: 'Bearbeiten Sie eine Regel.',
+	'RULE_NAME_TOO_LONG': '(e)Der Name dieser Regel ist zu lang oder enthält ungültige Zeichen.',
+	'RULE_TYPE'			: 'Regeltyp:',
+	'RULE_TYPE_DEFINITION'    : 'Definition',
+	'RULE_TYPE_PROP_CHAINING' : 'Eigenschaftsverkettung',
+	'RULE_TYPE_CALCULATION'   : 'Berechnung',
 	
 	// Treeview
     'smw_stv_browse' : 'browsen',
@@ -246,6 +257,48 @@ var wgUserLanguageStrings = {
 	'PROPERTY'                : "Attribut:",
 	'TEMPLATE'                : "Vorlage:",
 	'TYPE'                    : 'Typ:',
+
+	// Simple rules
+	
+	'SR_DERIVE_BY'		: 'Ableitung von $1 $2 durch eine komplexe Regel',
+	'SR_HEAD'			: 'Kopf',
+	'SR_BODY'			: 'Rumpf',
+	'SR_CAT_HEAD_TEXT'	: 'Alle Artikel $1 die zu $2 $3 gehören, werden definiert durch:',
+	'SR_PROP_HEAD_TEXT' : 'Alle Artikel $1 haben das Property $2 mit dem Wert $3, falls',
+	'SR_MCATPROP'		: 'Sie gehören zu einer bestimmten $1Kategorie$2 oder einem $3Attribut$4',
+	'SR_RULE_IMPLIES'	: 'Diese Regel impliziert Folgendes:',
+	'SR_SAVE_RULE'		: 'Regel speichern',
+	'SR_ALL_ARTICLES'	: 'Alle Artikel',
+	'SR_BELONG_TO_CAT'	: 'gehören zur Kategorie',
+	'SR_AND'			: 'UND',
+	'SR_HAVE_PROP'		: 'haben das Attribut',
+	'SR_WITH_VALUE'		: 'mit dem Wert',
+	'SR_SIMPLE_VALUE'	: 'einem bestimmten Wert',
+
+	'SR_ENTER_FORMULA'	: 'Bitte geben Sie eine Formel ein, um den Wert von "$1" zu berechnen.',
+	'SR_SUBMIT'			: 'Absenden...',
+	'SR_SPECIFY_VARIABLES' : 'Bitte geben Sie den Wert der folgenden Variablen aus Ihrer Formel ein:',
+	'SR_DERIVED_FACTS'	: 'Abgeleitete Fakten (Die Aktualisierung kann eine Weile dauern.)',
+	'SR_SYNTAX_CHECKED' : '(Syntax überprüft)',
+	'SR_EDIT_FORMULA'	: 'Formel editieren',
+	'SR_NO_VARIABLE'	: 'Es gibt keine Variable in der Formel. Solche Formeln haben keine Bedeutung.',
+	'SR_IS_A'			: 'ist ein',
+	'SR_PROPERTY_VALUE' : 'Property Wert',
+	'SR_ABSOLUTE_TERM'	: 'absoluter Term',
+	'SR_ENTER_VALUE'	: 'Geben Sie einen Wert ein...',
+	'SR_ENTER_PROPERTY'	: 'Geben Sie ein Property ein...',
+	
+	'SR_OP_HELP_ENTER'	: 'Bitte geben Sie eine math. Formel mit den folgenden Operatoren ein:',
+	'SR_OP_ADDITION'	: 'Addition',
+	'SR_OP_SQUARE_ROOT'	: 'Quadratwurzel',
+	'SR_OP_SUBTRACTION'	: 'Subtraktion',
+	'SR_OP_EXPONENTIATE': 'Potenzieren',
+	'SR_OP_MULTIPLY'	: 'Multiplizieren',
+	'SR_OP_SINE'		: 'Sinus',
+	'SR_OP_DIVIDE'		: 'Dividieren',
+	'SR_OP_COSINE'		: 'Cosinus',
+	'SR_OP_MODULO'		: 'Rest',
+	'SR_OP_TANGENT'		: 'Tangens',
 	
 	// Semantic notifications
 	'SN_OVERWRITE_EXISTING'   : 'Die Benachrichtigung "$1" existiert bereits. Möchten Sie sie wirklich überschreiben?',
