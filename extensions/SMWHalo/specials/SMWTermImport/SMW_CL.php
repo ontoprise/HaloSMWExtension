@@ -26,7 +26,7 @@ public function execute() {
 		if( !$t->exists() ){
 			$msg = wfMsg('smw_ti_mappingPageNotExist');
 		}
-		$html .= "<div id=\"summary\"></div>" .
+		$html = "<div id=\"summary\"></div>" .
 				"<div id=\"top-container\">" .
 					"<div style=\"margin-bottom:10px;\">".wfMsg('smw_ti_welcome')."</div>" .
 					"<div><div id=\"tl-content\">TLM:" .
@@ -110,7 +110,7 @@ public function execute() {
 			$count = count($tlmodules['TLMODULES'][0]['value']['MODULE']);
 			for($i = 0; $i < $count; $i++) {
 				$tlid = $tlmodules['TLMODULES'][0]['value']['MODULE'][$i]['value']['ID'][0]['value'];
-				$html .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
+				$html = "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 		 				 " onMouseOut=\"termImportPage.showRightTLM(event, this, '$tlid')\" onClick=\"termImportPage.connectTL(event, this, '$tlid')\">" .							
 						"<a>" . $tlid . "</a>" . "</div>";
 			}
