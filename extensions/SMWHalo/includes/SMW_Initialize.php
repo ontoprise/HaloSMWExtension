@@ -203,38 +203,41 @@ function smwgHaloSetupExtension() {
 		// decide according to ajax method prefix which script(s) to import
 		switch($method_prefix) {
 			case '_ac_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
-			break;
+				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
+				break;
 			case '_cs_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
-			break;
+				require_once($smwgHaloIP . '/includes/SMW_CombinedSearch.php');
+				break;
 			case '_ga_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
-			break;
+				require_once($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningAjaxAccess.php');
+				break;
 			case '_ob_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-			break;
+				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
+				break;
 			case '_fw_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
-			break;
+				require_once($smwgHaloIP . '/specials/SMWFindWork/SMW_FindWorkAjaxAccess.php');
+				break;
 			case '_ca_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
-			break;
+				require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+				break;
 			case '_qi_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-			break;
+				require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
+				break;
 			case '_tb_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
-			break;
+				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
+				break;
 			case '_om_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-			break;
+				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
+				break;
 			case '_sn_' : smwfHaloInitMessages();
-			require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
-			break;
+				require_once('extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SNAjax.php');
+				break;
 			case '_ti_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_CL.php');
-			break;
+				require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_CL.php');
+				break;
+			case '_sr_' : smwfHaloInitMessages();
+				require_once($smwgHaloIP . '/includes/rules/SMW_RulesAjax.php');
+				break;
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -266,6 +269,10 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
 		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
 
+		
+		$wgAutoloadClasses['SMWExplanations'] = $smwgHaloIP . '/specials/SMWExplanations/SMWExplanations.php';
+		$wgSpecialPages['Explanations'] = array('SMWExplanations');
+		
 		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 
 		//KK: Deactivate Halo RDFExport. It is too buggy
@@ -547,6 +554,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 	//print $wgStylePath.'/'.$skin->getSkinName().'/semantictoolbar.css';
 	//die;
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Rules/rules.css', "edit");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
 	// serialize the css
@@ -626,6 +635,11 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Rule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Rule.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_CategoryRule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_CalculationRule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_PropertyChain.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
@@ -636,6 +650,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
 		$jsm->addScriptIf($wgStylePath . '/ontoskin/obSemToolContribution.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticNotification/SMW_SemanticNotifications.js', "view", -1, NS_SPECIAL.":SemanticNotifications");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Explanations/Explanations.js', "view", -1, NS_SPECIAL.":Explanations");
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
