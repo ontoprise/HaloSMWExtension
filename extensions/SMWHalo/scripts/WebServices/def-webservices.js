@@ -696,12 +696,11 @@ DefineWebServiceSpecial.prototype = {
 						pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
 						pathIndexInput.value = "";
 
-						var pathIndexInputOnBlur = document
-								.createAttribute("onblur");
-						pathIndexInputOnBlur.value = "webServiceSpecial.updateInputBoxes("
-								+ i + "," + k + ")";
-						pathIndexInput.setAttributeNode(pathIndexInputOnBlur);
-
+						pathIndexInput.i = i;
+						pathIndexInput.k = k;
+						Event.observe(pathIndexInput, "blur",
+								this.updateInputBoxes.bindAsEventListener(this));
+						
 						resultPathStep.appendChild(pathIndexInput);
 						pathTextEnd = document.createTextNode("]");
 						resultPathStep.appendChild(pathTextEnd);
@@ -1823,6 +1822,13 @@ DefineWebServiceSpecial.prototype = {
 
 							pathSteps[r].childNodes[3].firstChild.addA = true;
 						}
+						
+						if(pathSteps[r].childNodes[1].i == null){
+							Event.observe(pathSteps[r].childNodes[1], "blur",
+									this.updateInputBoxes.bindAsEventListener(this));
+						}
+						pathSteps[r].childNodes[1].i = newI;
+						pathSteps[r].childNodes[1].k = r;
 					} // both
 					else if (pathSteps[r].childNodes.length == 5) {
 						pathSteps[r].childNodes[2].id = "step4-arrayinput-"
@@ -1865,10 +1871,15 @@ DefineWebServiceSpecial.prototype = {
 									"click", el);
 						}
 
-						pathSteps[r].childNodes[2].setAttribute("onblur",
-								"webServiceSpecial.updateInputBoxes(" + newI
-										+ "," + r + ")");
-
+						if(pathSteps[r].childNodes[2].i == null){
+							Event.observe(pathSteps[r].childNodes[2], "blur",
+									this.updateInputBoxes.bindAsEventListener(this));
+						}
+						pathSteps[r].childNodes[2].i = newI;
+						pathSteps[r].childNodes[2].k = r;
+						
+						
+						
 						if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
 								+ (i * 1 + m) + "-" + r) {
 							$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
@@ -2244,7 +2255,10 @@ DefineWebServiceSpecial.prototype = {
 	 * @param k
 	 * @return
 	 */
-	updateInputBoxes : function(i, k) {
+	updateInputBoxes : function(event) {
+		var node = Event.element(event);
+		var i = node.i;
+		var k = node.k;
 		var inputValue;
 		var root = true;
 		var goon = true;
