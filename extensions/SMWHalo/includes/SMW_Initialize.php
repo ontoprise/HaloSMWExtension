@@ -55,7 +55,7 @@ function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store; 
 	$smwgBaseStore = $store;
-	$smwgSemanticDataClass = 'SMWFullSemanticData';
+	$smwgSemanticDataClass = $tripleStore !== NULL ? 'SMWFullSemanticData' : 'SMWSemanticData';
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';

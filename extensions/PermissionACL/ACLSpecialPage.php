@@ -42,16 +42,16 @@ class ACLSpecialPage extends SpecialPage {
 				$group = $pm['group'];
 				$groupText = $group == NULL ? "-" : $group;
 				
-				$user = $pm['user'];
+				$user = array_key_exists('user',$pm) ? $pm['user'] : NULL;
                 $userText = $user == NULL ? "-" : $user;
-				
-				$namespaces = $pm['namespace'];
-				$namespacesText = $namespaces == NULL ? "-" : ($namespaces == "*" ? "*" : $wgLang->getNsText($namespaces));
-				
-				$category = $pm['category'];
-				$categoryText = $category == NULL ? "-" : $category;
-				
-				$page = $pm['page'];
+                
+                $namespaces = array_key_exists('namespace',$pm) ? $pm['namespace'] : NULL;
+                $namespacesText = $namespaces == NULL ? "-" : ($namespaces == "*" ? "*" : $wgLang->getNsText($namespaces));
+                
+                $category = array_key_exists('category',$pm) ? $pm['category'] : NULL;
+                $categoryText = $category == NULL ? "-" : $category;
+                
+                $page = array_key_exists('page',$pm) ? $pm['page'] : NULL;
                 $pageText = $page == NULL ? "-" : $page;
 				
 				$action = is_array($pm['action']) ? implode(",", $pm['action'] ) : $pm['action'];
