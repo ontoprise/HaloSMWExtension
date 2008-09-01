@@ -412,7 +412,7 @@ SemanticNotifications.create = function() {
 	// Check, if semantic notifications are enabled (user logged in with valid 
 	// email address). If not, the complete UI is disabled.
 	var qt = $('sn-querytext');
-	var enabled = qt.readAttribute('snenabled');
+	var enabled = (qt != null) && qt.readAttribute('snenabled');
 	if (enabled == 'true') {
 		// enable the user interface
 		smwhgSemanticNotifications = new SemanticNotifications();
