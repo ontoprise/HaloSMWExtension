@@ -147,7 +147,7 @@ function scfGetEvents_1_0($date_property, $filter_query) {
 	$inline = true;
 	$format = 'auto';
 	$printlabel = "";
-	$printouts[] = new SMWPrintRequest(SMW_PRINT_THIS, $printlabel);
+	$printouts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $printlabel);
 	$query  = SMWQueryProcessor::createQuery($query_string, $params, $inline, $format, $printouts);
 	$results = smwfGetStore()->getQueryResult($query);
 	while ($row = $results->getNext()) {
