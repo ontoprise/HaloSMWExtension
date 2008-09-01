@@ -739,7 +739,8 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 		}
 
 		if ($oldtitle->getNamespace()==NS_CATEGORY) {
-			$wikipagesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $oldtitle );
+			$wikipagesToUpdate = $store->getSpecialSubjects( SMW_SP_HAS_CATEGORY, 
+			                                                 SMWDataValueFactory::newPropertyObjectValue($oldtitle) );
 			foreach ($wikipagesToUpdate as $dv)
 				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($dv->getTitle(), $params);
 		}
