@@ -234,7 +234,8 @@ createContextMenu: function(contextMenuContainer, value) {
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
 	var repr = value;
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	tb.setInputValue('rel-show', repr);	                         
 	
 	var links = [['relToolBar.addItem()',
 	              gLanguage.getMessage('ADD'), 'rel-confirm', 
@@ -298,11 +299,13 @@ newItem: function() {
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), selection, '', 
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', 
 							 SMW_REL_CHECK_EMPTY_NEV +
 							 SMW_REL_HINT_INSTANCE +
 							 SMW_REL_VALID_PROPERTY_VALUE,
 	                         true));
+	tb.setInputValue('rel-value-0', selection);	                         
+	                         
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
@@ -391,11 +394,13 @@ updateNewItem: function(request) {
 				? oldValues[i]
 				: '');
 		tb.insert(insertAfter,
-				  tb.createInput('rel-value-'+ i, parameterNames[i], value, '', 
+				  tb.createInput('rel-value-'+ i, parameterNames[i], '', '', 
 								 SMW_REL_CHECK_EMPTY_NEV +
 							     SMW_REL_VALID_PROPERTY_VALUE + 
 								 (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : ""),
 		                         true));
+		tb.setInputValue('rel-value-'+ i, value);    
+		                         
 		tb.insert('rel-value-'+ i,
 				  tb.createText('rel-value-'+i+'-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 		selection = "";
@@ -419,12 +424,13 @@ CreateSubSup: function() {
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-subsuper', 
-							 gLanguage.getMessage('PROPERTY'), selection, '',
+							 gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY +
 	                         SMW_REL_CHECK_EMPTY +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-subsuper', selection);	                         
 	tb.append(tb.createText('rel-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createLink('rel-make-sub-link', 
@@ -593,20 +599,22 @@ newRelation: function() {
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-name', 
-							 gLanguage.getMessage('PROPERTY'), selection, '',
+							 gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_IIE +
 	                         SMW_REL_CHECK_EMPTY+
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name', selection);	                         
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
-	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), domain, '', 
+	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), '', '', 
 						     SMW_REL_CHECK_CATEGORY +
 						     SMW_REL_VALID_CATEGORY_NAME + 
 						     SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('rel-domain', domain);	                         
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
 	
 	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', 
@@ -869,16 +877,19 @@ newPart: function() {
 							 SMW_REL_CHECK_PART_OF_RADIO, true));
 	
 	tb.append(tb.createInput('rel-name', 
-							 gLanguage.getMessage('OBJECT'), selection, '',
+							 gLanguage.getMessage('OBJECT'), '', '',
 	                         SMW_REL_CHECK_EMPTY_NEV +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_INSTANCE,
 	                         true));
+	tb.setInputValue('rel-name', selection);	                         
+	                         
 	tb.append(tb.createText('rel-name-msg', '', '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), 
-	                         (wgAction == 'annotate') ? selection : '',
-	                         '', '', true));
+	                         '', '', '', true));
+	tb.setInputValue('rel-show', (wgAction == 'annotate') ? selection : '');	                         
+	                         
 	var links = [['relToolBar.addPartOfRelation()',gLanguage.getMessage('ADD'), 'rel-confirm', 
 	                                               gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
@@ -1004,17 +1015,20 @@ getselectedItem: function(selindex) {
 									 typeCheck +
 							 		 SMW_REL_VALID_PROPERTY_VALUE +
 									 (parName == "Page" ? SMW_REL_HINT_INSTANCE : "") ,true);
+
 			valueInputs.push(obj);
 			obj = tb.createText('rel-value-'+i+'-msg', '', '', true);
 			valueInputs.push(obj);
 		}
 		tb.append(tb.createInput('rel-name', 
-								 gLanguage.getMessage('PROPERTY'), relation.getName(), '', 
+								 gLanguage.getMessage('PROPERTY'), '', '', 
 								 SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
 		 						 SMW_REL_CHECK_EMPTY +
 		                         SMW_REL_VALID_PROPERTY_NAME +
 		 						 SMW_REL_HINT_PROPERTY,
 		 						 true));
+		tb.setInputValue('rel-name', relation.getName());	                         
+		 						 
 		tb.append(tb.createText('rel-name-msg', '', '' , true));
 		if (renameAll !='') {
 			tb.append(renameAll);
@@ -1041,6 +1055,7 @@ getselectedItem: function(selindex) {
 			}
 		}
 		tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+		tb.setInputValue('rel-show', repr);	                         
 
 		var links = [['relToolBar.changeItem('+selindex+')',gLanguage.getMessage('CHANGE'), 'rel-confirm', 
 		                                                    gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],

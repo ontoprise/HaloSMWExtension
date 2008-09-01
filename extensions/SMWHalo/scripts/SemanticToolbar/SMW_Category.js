@@ -206,12 +206,13 @@ createContextMenu: function(contextMenuContainer) {
 	/*ENDLOG*/
 
 	tb.append(tb.createInput('cat-name', 
-							 gLanguage.getMessage('CATEGORY'), selection, '',
+							 gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
 	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
@@ -291,12 +292,13 @@ newItem: function() {
 		                        '' , true));
 	}
 	tb.append(tb.createInput('cat-name', 
-							 gLanguage.getMessage('CATEGORY'), selection, '',
+							 gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
 	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
@@ -328,11 +330,12 @@ CreateSubSup: function() {
 	var tb = this.createToolbar(SMW_CAT_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_CAT'), '' , true));
 	tb.append(tb.createInput('cat-subsuper', gLanguage.getMessage('CATEGORY'),
-	                         selection, '',
+	                         '', '',
 	                         SMW_CAT_SUB_SUPER_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-subsuper',selection);	                         
 	tb.append(tb.createText('cat-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createLink('cat-make-sub-link', 
@@ -477,12 +480,13 @@ newCategory: function() {
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CREATE_NEW_CATEGORY'), '' , true));
 	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), 
-							 selection, '',
+							 '', '',
 	                         SMW_CAT_CHECK_CATEGORY_IIE +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 		
 	var links = [['catToolBar.createNewCategory()',gLanguage.getMessage('CREATE'), 'cat-confirm', 
@@ -530,12 +534,14 @@ getselectedItem: function(selindex) {
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CHANGE_ANNO_OF_CAT'), '' , true));
 	
-	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), annotatedElements[selindex].getName(), '',
+	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',annotatedElements[selindex].getName());	                         
+	                         
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 		
 	var links = [['catToolBar.changeItem(' + selindex +')', gLanguage.getMessage('CHANGE'), 'cat-confirm', 

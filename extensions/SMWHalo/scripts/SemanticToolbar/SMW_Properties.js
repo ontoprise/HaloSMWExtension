@@ -257,39 +257,48 @@ createContent: function() {
 	symmetric = (symmetric != null) ? "checked" : "";
 
 	var tb = this.toolbarContainer;
-	tb.append(tb.createInput('prp-domain', gLanguage.getMessage('DOMAIN'), domain, '',
+	tb.append(tb.createInput('prp-domain', gLanguage.getMessage('DOMAIN'), '', '',
 	                         SMW_PRP_CHECK_CATEGORY + 
 	                         SMW_PRP_VALID_CATEGORY_NAME +
 	                         SMW_PRP_CHECK_EMPTY_WIE + 
 	                         SMW_PRP_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('prp-domain',domain);	                         
+	                         
 	tb.append(tb.createText('prp-domain-msg', '', '' , true));
 
-	tb.append(tb.createInput('prp-range', gLanguage.getMessage('RANGE'), range, '',
+	tb.append(tb.createInput('prp-range', gLanguage.getMessage('RANGE'), '', '',
 	                         SMW_PRP_CHECK_CATEGORY + 
 	                         SMW_PRP_VALID_CATEGORY_NAME +
 	                         SMW_PRP_CHECK_EMPTY_WIE + 
 	                         SMW_PRP_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('prp-range',range);	                         
+	                         
 	tb.append(tb.createText('prp-range-msg', '', '' , true));
 
-	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), inverse, '',
+	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), '', '',
 	                         SMW_PRP_CHECK_PROPERTY +
 	                         SMW_PRP_VALID_PROPERTY_NAME +
 	                         SMW_PRP_HINT_PROPERTY+
 	                         SMW_PRP_CHECK_EMPTY_VIE,
 	                         true));
+	tb.setInputValue('prp-inverse-of',inverse);	                         
+	                         
 	tb.append(tb.createText('prp-inverse-of-msg', '', '' , true));
 
 	tb.append(this.createTypeSelector("prp-attr-type", "prpSelection", false, 
 									  type, '', 
 									  'smwChanged="(call:propToolBar.attrTypeChanged,call:propToolBar.enableWidgets)"' +
 									  SMW_PRP_NO_EMPTY_SELECTION));
-	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), minCard, '', 
+	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), '', '', 
 	                         SMW_PRP_CHECK_MAX_CARD, true, false));
+	tb.setInputValue('prp-min-card',minCard);	                         
+	                         
 	tb.append(tb.createText('prp-min-card-msg', '', '' , true));
-	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), maxCard, '', 
+	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), '', '', 
 	                         SMW_PRP_CHECK_MAX_CARD, true, false));
+	tb.setInputValue('prp-max-card',maxCard);	                         
 	tb.append(tb.createText('prp-max-card-msg', '', '' , true));
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
@@ -321,13 +330,15 @@ createContent: function() {
 				if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
 					r = r.substring(9);
 				}
-				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), r, 
+				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), '', 
 				                         'propToolBar.removeRangeOrType(\'prp-nary-' + i + '\')',
 	                         			 SMW_PRP_CHECK_CATEGORY + 
 	                         			 SMW_PRP_VALID_CATEGORY_NAME +
 	                         			 SMW_PRP_CHECK_EMPTY +
 			                 			 SMW_PRP_HINT_CATEGORY,
 	                         			 true));
+				tb.setInputValue('prp-nary-' + i, r);	                         
+	                         			 
 				tb.append(tb.createText('prp-nary-' + i + '-msg', '', '' , true));
 				this.prpNAry++;
 				this.numOfParams++;
@@ -506,6 +517,7 @@ addRange: function() {
                  			 SMW_PRP_CHECK_EMPTY +
                  			 SMW_PRP_HINT_CATEGORY,
                  			 true));
+                 			 
 	tb.insert('prp-nary-' + this.prpNAry,
 	          tb.createText('prp-nary-' + this.prpNAry + '-msg', '', '' , true));
 
