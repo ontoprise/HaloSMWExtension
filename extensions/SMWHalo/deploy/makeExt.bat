@@ -55,8 +55,8 @@ xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\..\patches\extensions\SMWHalo %OUTPUT_DIR%\extensions\SMWHalo /Y /S /EXCLUDE:excludeForExt.dat
 
 cd bin
-IF EXIST smwplus-1.2-ext.zip del smwplus-ext.zip
-7z.exe a -tzip smwplus-1.2-ext.zip %OUTPUT_DIR%\*
+IF EXIST smwplus-1.3-ext.zip del smwplus-1.3-ext.zip
+7z.exe a -tzip smwplus-1.3-ext.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

@@ -106,7 +106,7 @@ class PropertyCoVarianceDetector {
 		$this->checkDomainAndRangeCovariance($p);
 		$this->checkTypeEquality($p);
 		//$this->checkRangeCovariance($a);
-		$this->checkSymTransCovariance($p);
+		//$this->checkSymTransCovariance($p);
 	}
 
 	/**

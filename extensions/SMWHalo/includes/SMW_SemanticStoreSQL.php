@@ -935,29 +935,44 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
 	
-	protected function createHelpAttributes($verbose){
-		$title = Title::newFromText("Question", SMW_NS_PROPERTY);
-		if (!($title->exists())){
-			$articleContent = "[[has type::Type:String]]";
-			$wgArticle = new Article( $title );
-			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
-		}
-		$title = Title::newFromText("Description", SMW_NS_PROPERTY);
-		if (!($title->exists())){
-			$articleContent = "[[has type::Type:Text]]";
-			$wgArticle = new Article( $title );
-			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
-		}
-		$title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
-		if (!($title->exists())){
-			$articleContent = "[[has type::Type:String]]";
-			$wgArticle = new Article( $title );
-			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
-			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
-		}
-	}
+    protected function createHelpAttributes($verbose){
+        $title = Title::newFromText("Question", SMW_NS_PROPERTY);
+        $article = new Article($title);
+        if (!($title->exists())){
+            $articleContent = "[[has type::Type:String]]";
+            $wgArticle = new Article( $title );
+            $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+            DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+        } else {
+            $rev = Revision::newFromTitle($title);
+            $article->doEdit($rev->getRawText(), $rev->getRawComment(), EDIT_UPDATE | EDIT_FORCE_BOT);
+            DBHelper::reportProgress("   ... re-saved page ".$title->getNsText().":".$title->getText().".\n",$verbose);
+        }
+        $title = Title::newFromText("Description", SMW_NS_PROPERTY);
+        $article = new Article($title);
+        if (!($title->exists())){
+            $articleContent = "[[has type::Type:Text]]";
+            $wgArticle = new Article( $title );
+            $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+            DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+        } else {
+            $rev = Revision::newFromTitle($title);
+            $article->doEdit($rev->getRawText(), $rev->getRawComment(), EDIT_UPDATE | EDIT_FORCE_BOT);
+            DBHelper::reportProgress("   ... re-saved page ".$title->getNsText().":".$title->getText().".\n",$verbose);
+        }
+        $title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
+        $article = new Article($title);
+        if (!($title->exists())){
+            $articleContent = "[[has type::Type:String]]";
+            $wgArticle = new Article( $title );
+            $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
+            DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
+        } else {
+            $rev = Revision::newFromTitle($title);
+            $article->doEdit($rev->getRawText(), $rev->getRawComment(), EDIT_UPDATE | EDIT_FORCE_BOT);
+            DBHelper::reportProgress("   ... re-saved page ".$title->getNsText().":".$title->getText().".\n",$verbose);
+        }
+    }
 	
 	
 	

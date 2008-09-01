@@ -45,8 +45,8 @@ xcopy ..\..\..\index.php %OUTPUT_DIR% /Y
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwplus-1.2.zip del smwplus-1.1.zip
-7z.exe a -tzip smwplus-1.2.zip %OUTPUT_DIR%\*
+IF EXIST smwplus-1.3.zip del smwplus-1.3.zip
+7z.exe a -tzip smwplus-1.3.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

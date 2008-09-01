@@ -287,9 +287,9 @@ a.plusminus:hover{
     border-bottom: 1px dashed #74DD82;
 }
 #queryPlaceholder .cbsrch-table {
-    background-color: #DDDDDD;
+   
     width:90%;
-    border: 1px solid #C0C0C0;
+   
     font-weight: normal;
 }
 #queryPlaceholder .cbsrch-table td{

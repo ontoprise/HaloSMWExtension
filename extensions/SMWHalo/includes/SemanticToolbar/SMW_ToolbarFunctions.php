@@ -315,7 +315,7 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
         $res = $db->query('SELECT page_id FROM '.$smw_atts2.
         ' JOIN '.$smw_ids.' ON smw_id = s_id '.
         ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
-        ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . ' AND page_namespace = ' . NS_HELP . '" ORDER BY RAND() LIMIT 5');
+        ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . ' AND page_namespace = ' . NS_HELP . ' ORDER BY RAND() LIMIT 5');
     
         while ($row = $db->fetchObject( $res )) {
             $helppages[] = $row->page_id;
