@@ -753,7 +753,7 @@ release: function() {
  */
 setInputValue: function(id,presetvalue){
 	if (OB_bd.isIE) {
-		var parentwidth = $(id).getOffsetParent().getWidth();
+		var parentwidth = $(id).getWidth();
 		$(id).value = presetvalue;
 		$(id).setStyle({width: parentwidth + "px"});
 	} else {
