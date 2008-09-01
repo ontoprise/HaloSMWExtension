@@ -243,13 +243,18 @@ HTML;
 		$requests = $desc->getPrintRequests();
 		$sortvars = "";
 		foreach ($requests as $pr) {
-			if ($pr->getMode() == SMW_PRINT_PROP) {
+			if ($pr->getMode() == SMWPrintRequest::PRINT_PROP) {
 				$sortvars .= "," . $pr->getLabel();
 			}
 		}
 		
 		global $smwgQMaxLimit;
-		SMWQueryProcessor::$formats['snxml'] = 'SMW_SN_XMLResultPrinter';
+	    if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
+			SMWQueryProcessor::$formats['snxml'] = 'SMW_SN_XMLResultPrinter';
+		} else { // registration since SMW 1.3.*
+			global $smwgResultFormats;
+			$smwgResultFormats['snxml'] = 'SMW_SN_XMLResultPrinter';
+		}
 		
 		$this->mQueryResult = SMWQueryProcessor::getResultFromHookParams(
 								$this->mQueryText, 
