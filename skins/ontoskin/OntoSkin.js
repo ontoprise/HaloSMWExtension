@@ -197,6 +197,10 @@ function updtContainer(tmpcontainer) {
 				var tmpdiv = document.getElementById("relation-headline");
 				tmpdiv.innerHTML = stResult;
 			break;
+		case RULESCONTAINER:
+				var tmpdiv = document.getElementById("rules-headline");
+				tmpdiv.innerHTML = stResult;
+			break;
 		case ATTRIBUTECONTAINER:
 				var tmpdiv = document.getElementById("attribute-headline");
 				tmpdiv.innerHTML = stResult;
@@ -297,6 +301,21 @@ function stFillContainers(tmpcontainer)
 						stResult += "\" href=\"javascript:void(0)\">&nbsp;</a>" + tmpcontainer.headline + "</div>";
 
 						stResult += "<div id=\"relation-content\""
+						if (tmpcontainer.ishidden) {
+							stResult += " style=\"display:none\"";
+						}
+						stResult += ">" + tmpcontainer.content + "</div>";
+						stDivCount++;
+					break;
+				case RULESCONTAINER:
+						stResult += "<div id=\"rules-headline\" style=\"cursor:pointer;cursor:hand;\" onclick=\"switchVisibility(" + RULESCONTAINER + ", \'rules-content\', \'rules-headline-link\')\"><a id=\"rules-headline-link\" class=\"";
+						if (tmpcontainer.ishidden) {
+							stResult +="plusminus";
+						} else 
+							stResult +="minusplus";
+						stResult += "\" href=\"javascript:void(0)\">&nbsp;</a>" + tmpcontainer.headline + "</div>";
+
+						stResult += "<div id=\"rules-content\""
 						if (tmpcontainer.ishidden) {
 							stResult += " style=\"display:none\"";
 						}
@@ -447,6 +466,7 @@ function stFillTabs()
 			     || tmpcontainer.container == CATEGORYCONTAINER
 			     || tmpcontainer.container == ATTRIBUTECONTAINER
 			     || tmpcontainer.container == RELATIONCONTAINER
+			     || tmpcontainer.container == RULESCONTAINER
 			     || tmpcontainer.container == PROPERTIESCONTAINER
 			     || tmpcontainer.container == CBSRCHCONTAINER
 			     || tmpcontainer.container == TYPECONTAINER
