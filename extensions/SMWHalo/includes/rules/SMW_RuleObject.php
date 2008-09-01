@@ -331,7 +331,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	private function parseMathRuleArray($stack) {
 		global $smwgNamespace; 
 		$flogic = "";
-		$count;
+		$count = 0;
 		for ($x = 0; $x <= sizeof($stack); $x++)
 		{
 			// fetch type token
