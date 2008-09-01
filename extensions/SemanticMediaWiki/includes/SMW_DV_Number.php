@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * This datavalue implements numerical datavalues, and supports optional
@@ -20,9 +24,9 @@
  * @author Markus Krötzsch
  * @note AUTOLOADED
  *
- * @TODO Wiki-HTML-conversion for unit strings must be revisited, as the current
+ * @todo Wiki-HTML-conversion for unit strings must be revisited, as the current
  * solution might be unsafe.
- * @TODO respect desired output unit (relevant for queries)
+ * @todo Respect desired output unit (relevant for queries).
  */
 class SMWNumberValue extends SMWDataValue {
 
@@ -36,6 +40,8 @@ class SMWNumberValue extends SMWDataValue {
 		$this->m_wikivalue = $value;
 		$this->m_unitin = false;
 		$this->m_unitvalues = false;
+
+		wfLoadExtensionMessages('SemanticMediaWiki');
 
 		// Parse to find value and unit
 		$decseparator = wfMsgForContent('smw_decseparator');

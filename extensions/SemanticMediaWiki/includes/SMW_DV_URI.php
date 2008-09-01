@@ -1,4 +1,12 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
+
+define('SMW_URI_MODE_EMAIL',1);
+define('SMW_URI_MODE_URI',3);
+define('SMW_URI_MODE_ANNOURI',4);
 
 /**
  * This datavalue implements URL/URI/ANNURI/EMAIL-Datavalues suitable for defining
@@ -7,14 +15,7 @@
  * @author Nikolas Iwan
  * @author Markus Krötzsch
  * @note AUTOLOADED
- */
-
-define('SMW_URI_MODE_EMAIL',1);
-define('SMW_URI_MODE_URI',3);
-define('SMW_URI_MODE_ANNOURI',4);
-
-/**
- * FIXME: correctly create safe HTML and Wiki text.
+ * @bug Correctly create safe HTML and Wiki text.
  */
 class SMWURIValue extends SMWDataValue {
 
@@ -39,6 +40,7 @@ class SMWURIValue extends SMWDataValue {
 	}
 
 	protected function parseUserValue($value) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$value = trim($value);
 		if ($value!='') { //do not accept empty strings
 			$this->m_value = $value;

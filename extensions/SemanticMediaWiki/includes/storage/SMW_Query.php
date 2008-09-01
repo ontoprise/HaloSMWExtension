@@ -2,8 +2,17 @@
 /**
  * This file contains the class for representing queries in SMW, each
  * consisting of a query description and possible query parameters.
- *
+ * @file
+ * @ingroup SMWQuery
  * @author Markus Krötzsch
+ */
+
+/**
+ * This group contains all parts of SMW that relate to processing semantic queries.
+ * SMW components that relate to plain storage access (for querying or otherwise)
+ * have their own group.
+ * @defgroup SMWQuery SMWQuery
+ * @ingroup SMW
  */
 
 /**
@@ -142,6 +151,7 @@ class SMWQuery {
 			$log = array();
 			$this->m_description = $this->m_description->prune($maxsize, $maxdepth, $log);
 			if (count($log) > 0) {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$this->m_errors[] = wfMsgForContent('smw_querytoolarge',implode(', ' , $log));
 			}
 		}

@@ -1,8 +1,17 @@
 <?php
 /**
  * Basic abstract classes for SMW's storage abstraction layer.
- *
+ * @file
+ * @ingroup SMWStore
  * @author Markus Krötzsch
+ */
+
+/**
+ * This group contains all parts of SMW that relate to storing and retrieving
+ * semantic data. SMW components that relate to semantic querying only have their
+ * own group.
+ * @defgroup SMWStore SMWStore
+ * @ingroup SMW
  */
 
 /**

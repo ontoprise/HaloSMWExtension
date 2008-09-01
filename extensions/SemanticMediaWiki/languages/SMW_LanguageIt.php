@@ -1,9 +1,10 @@
 <?php
 /**
- * @author Davide Eynard, David Laniado
+ * @file
+ * @ingroup SMWLanguage
  */
 
-/**
+/*
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
@@ -12,7 +13,14 @@ if (!defined('MEDIAWIKI')) die();
 global $smwgIP;
 include_once($smwgIP . '/languages/SMW_Language.php');
 
-class SMW_LanguageIt extends SMW_Language {
+/**
+ * Italian language labels for important SMW labels (namespaces, datatypes,...).
+ *
+ * @author Davide Eynard
+ * @author David Laniado
+ * @ingroup Language
+ */
+class SMWLanguageIt extends SMWLanguage {
 
 protected $m_DatatypeLabels = array(
 	'_wpg' => 'Pagina',  // name of page datatypee

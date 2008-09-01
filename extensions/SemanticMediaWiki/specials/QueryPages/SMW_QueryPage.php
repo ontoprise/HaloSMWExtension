@@ -4,6 +4,8 @@
  *
  * An abstract query page base class that supports array-based
  * data retrieval instead of the SQL-based access used by MW.
+ * @file
+ * @ingroup SMW
  */
 
 /**
@@ -54,6 +56,7 @@ abstract class SMWQueryPage extends QueryPage {
 
 			// if list is empty, show it
 			if( $num == 0 ) {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$wgOut->addHTML( '<p>' . wfMsgHTML('specialpage-empty') . '</p>' );
 				return;
 			}

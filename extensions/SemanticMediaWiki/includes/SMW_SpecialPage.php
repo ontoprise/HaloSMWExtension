@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
+ */
 
 /**
  * A simple extension of SpecialPage that ensures that all relevant SMW-user
@@ -6,6 +11,8 @@
  * relevant as an adaptor for query pages.
  *
  * @note AUTOLOAD
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
  */
 class SMWSpecialPage extends SpecialPage {
 

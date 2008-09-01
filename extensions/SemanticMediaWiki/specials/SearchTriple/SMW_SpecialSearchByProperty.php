@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
+ */
 
 /**
  * @author Denny Vrandecic
@@ -9,6 +14,8 @@
  * or all winners of the Academy Award for best actress.
  *
  * @note AUTOLOADED
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
  */
 class SMWSearchByProperty extends SpecialPage {
 
@@ -17,15 +24,13 @@ class SMWSearchByProperty extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct('SearchByProperty');
-		//the key defining the group name in the language files is specialpages-group-smw_group
-		if (method_exists('SpecialPage', 'setGroup')) { 
-			parent::setGroup('SearchByProperty', 'smw_group');	
-		}
+		wfLoadExtensionMessages('SemanticMediaWiki');
 	}
 
 	public function execute($query = '') {
 		global $wgRequest, $wgOut, $wgUser, $smwgQMaxInlineLimit;
 		$skin = $wgUser->getSkin();
+		$this->setHeaders();
 
 		// get the GET parameters
 		$attributestring = $wgRequest->getVal( 'property' );

@@ -5,7 +5,8 @@
  * These classes might once be replaced by interfaces that are implemented
  * by storage-specific classes if this is useful (e.g. for performance gains by
  * lazy retrieval).
- *
+ * @file
+ * @ingroup SMWQuery
  * @author Markus Krötzsch
  */
 
@@ -163,6 +164,7 @@ class SMWQueryResult {
 			$params['order'] = $porder;
 		}
 		if ($caption == false) {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$caption = ' ' . wfMsgForContent('smw_iq_moreresults'); // the space is right here, not in the QPs!
 		}
 		$result = SMWInfolink::newInternalLink($caption,':Special:Ask', false, $params);
@@ -175,7 +177,7 @@ class SMWQueryResult {
 	 * Return URL of a page that displays those search results
 	 * (and enables browsing results, and is accessible even without
 	 * JavaScript enabled browsers).
-	 * @DEPRECATED (since >1.1) use getQueryLink
+	 * @deprecated use SMWQueryResult::getQueryLink() in SMW >1.1
 	 */
 	public function getQueryURL() {
 		$title = Title::makeTitle(NS_SPECIAL, 'ask');
@@ -204,7 +206,7 @@ class SMWQueryResult {
 	 * Return titlestring of a page that displays those search results
 	 * (and enables browsing results, and is accessible even without
 	 * JavaScript enabled browsers).
-	 * @DEPRECATED (since >1.1) use getQueryLink
+	 * @deprecated use SMWQueryResult::getQueryLink() in SMW >1.1
 	 */
 	public function getQueryTitle($prefixed = true) {
 		if ($prefixed) {
@@ -279,7 +281,7 @@ class SMWResultArray {
 	 *
 	 * The parameter $linker controls linking of title values and should
 	 * be some Linker object (or NULL for no linking).
-	 * @DEPRECATED Use getNextText()
+	 * @deprecated Use SMWResultArray::getNextText()
 	 */
 	public function getNextHTMLText($linker = NULL) {
 		$object = current($this->content);
@@ -300,7 +302,7 @@ class SMWResultArray {
 	 * (Title or SMWDataValue) as Wikitext. The parameter $linked controls 
 	 * linking of title values and should be non-NULL and non-false if this 
 	 * is desired.
-	 * @DEPRECATED Use getNextText()
+	 * @deprecated Use SMWResultArray::getNextText()
 	 */
 	public function getNextWikiText($linked = NULL) {
 		$object = current($this->content);

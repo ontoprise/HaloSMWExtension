@@ -4,12 +4,16 @@
  * @author Markus Krötzsch
  *
  * This special page for MediaWiki provides an interface
- * that allows to import an ontology. 
- *
- * TODO: The code below is still very very messy and undocumented. Cleanup needed!
+ * that allows to import an ontology.
+ * @file
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
+ * @todo The code in this file is still very very messy and undocumented. Cleanup needed!
  */
 
-SpecialPage::addPage( new SpecialPage('OntologyImport','delete',true,'doSpecialImportOntology',false) );
+//ToDo: Please refactor into a real class we can autoload
+wfLoadExtensionMessages('SemanticMediaWiki');
+SpecialPage::addPage( new SpecialPage('OntologyImport','import',true,'doSpecialImportOntology',false) );
 
 function doSpecialImportOntology($par = NULL) {
 	global $smwgIP;
@@ -20,8 +24,8 @@ function doSpecialImportOntology($par = NULL) {
 						// (should be equal to 'http://'.$_SERVER['SERVER_NAME'])
 	global $wgScript;   // "/subdirectory/of/wiki/index.php"
 
-	if ( ! $wgUser->isAllowed('delete') ) {
-		$wgOut->sysopRequired();
+	if ( ! $wgUser->isAllowed('import') ) {
+		$wgOut->permissionRequired('import');
 		return;
 	}
 
@@ -42,6 +46,8 @@ function doSpecialImportOntology($par = NULL) {
 	}
 
 	/**** Output ****/
+
+	wfLoadExtensionMessages('SemanticMediaWiki');
 
 	// only report success/failure after an action
 	if ( $message!='' ) {
@@ -161,6 +167,7 @@ class SMWOntologyImport {
 			}
 		}
 
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		// categories
 		$it  = $model->findAsIterator($entity, RDF::TYPE(), NULL);
 		while ($it->hasNext()) {
@@ -196,6 +203,7 @@ class SMWOntologyImport {
 		$st = Title::newFromText( $slabel , NS_CATEGORY );
 		if ($st == NULL) continue; // Could not create a title, next please
 
+		wfLoadExtensionMessages('SemanticMediaWiki'); 
 		while ($it->hasNext()) {
 			$statement = $it->next();
 			$superclass = $statement->getObject();
@@ -276,6 +284,8 @@ class SMWOntologyImport {
 	function createStatements($entity, $ns, $model) {
 		$statements = array();
 
+		wfLoadExtensionMessages('SemanticMediaWiki');
+
 		$it  = $model->findAsIterator($entity, RDFS::COMMENT(), NULL);
 		while ($it->hasNext()) {
 			$comment = $it->next();
@@ -324,6 +334,7 @@ class SMWOntologyImport {
 		if ((count($statements) == 0) && !$need_to_map) return ''; // nothing to add
 
 		// TODO $message .= '<input type="checkbox" />'; one click to click all statements about an entity
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$message .= wfMsg( 'smw_oi_statementsabout' ) . ' <a href="'. $t->getLocalURL() .'" '. $classnew .'title="'. $t->getPrefixedText() .'">'. $t->getPrefixedText() .'</a> <br />' . "\n";
 
 		$snr = 0;
@@ -364,6 +375,8 @@ class SMWOntologyImport {
 			$changesns[$ns][$subject] .= $text . "\n";
 		}
 
+		wfLoadExtensionMessages('SemanticMediaWiki');
+
 		$nskeys = array_keys($changesns);
 		foreach ($nskeys as $ns) {
 			$changes = $changesns[$ns];
@@ -402,6 +415,8 @@ class SMWOntologyImport {
 
 		global $wgRequest;
 		$file = $_FILES['ontologyfile']['tmp_name'];
+
+		wfLoadExtensionMessages('SemanticMediaWiki');
 
 		if ($file=='') {
 			$message = '<strong> ' . wfMsg( 'smw_oi_noontology' ) . '</strong> <br /></p>' . "\n";

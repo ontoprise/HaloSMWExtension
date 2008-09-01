@@ -2,7 +2,8 @@
 /**
  * This file contains a static class for accessing functions to generate and execute
  * semantic queries and to serialise their results.
- *
+ * @file
+ * @ingroup SMWQuery
  * @author Markus Krötzsch
  */
 
@@ -21,27 +22,6 @@ class SMWQueryProcessor {
 	const CONCEPT_DESC = 2; // query for concept definition
 
 	/**
-	 * Array of enabled formats for formatting queries. Can be redefined in the settings to disallow certain
-	 * formats. The formats 'table' and 'list' are defaults that cannot be disabled. The format 'broadtable'
-	 * should not be disabled either in order not to break Special:ask.
-	 */
-	static $formats = array('table'      => 'SMWTableResultPrinter',
-							'list'       => 'SMWListResultPrinter',
-							'ol'         => 'SMWListResultPrinter',
-							'ul'         => 'SMWListResultPrinter',
-							'broadtable' => 'SMWTableResultPrinter',
-							'embedded'   => 'SMWEmbeddedResultPrinter',
-							'timeline'   => 'SMWTimelineResultPrinter',
-							'eventline'  => 'SMWTimelineResultPrinter',
-							'template'   => 'SMWTemplateResultPrinter',
-							'count'      => 'SMWListResultPrinter',
-							'debug'      => 'SMWListResultPrinter',
-							'rss'        => 'SMWRSSResultPrinter',
-							'icalendar'  => 'SMWiCalendarResultPrinter',
-							'vcard'      => 'SMWvCardResultPrinter',
-							'csv'        => 'SMWCsvResultPrinter');
-
-	/**
 	 * Parse a query string given in SMW's query language to create
 	 * an SMWQuery. Parameters are given as key-value-pairs in the
 	 * given array. The parameter $context defines in what context the
@@ -52,7 +32,7 @@ class SMWQueryProcessor {
 	 * known. Otherwise it will be determined from the parameters when 
 	 * needed. This parameter is just for optimisation in a common case.
 	 *
-	 * @TODO: this method contains too many special cases for certain 
+	 * @todo This method contains too many special cases for certain 
 	 * printouts. Especially the case of rss, icalendar, etc. (no query) 
 	 * should be specified differently.
 	 */
@@ -263,7 +243,7 @@ class SMWQueryProcessor {
 	 * the query and determines the serialisation mode for results. The parameter
 	 * $context defines in what context the query is used, which affects ceretain
 	 * general settings.
-	 * @DEPRECATED use getResult
+	 * @deprecated use SMWQueryProcessor::getResult()
 	 */
 	static public function getResultHTML($querystring, $params, $context = SMWQueryProcessor::INLINE_QUERY) {
 		return SMWQueryProcessor::getResultFromQueryString($querystring, $params, array(), SMW_OUTPUT_HTML, $context);
@@ -312,7 +292,8 @@ class SMWQueryProcessor {
 		$format = 'auto';
 		if (array_key_exists('format', $params)) {
 			$format = strtolower(trim($params['format']));
-			if ( !array_key_exists($format, SMWQueryProcessor::$formats) ) {
+			global $smwgResultFormats;
+			if ( !array_key_exists($format, $smwgResultFormats) ) {
 				$format = 'auto'; // If it is an unknown format, defaults to list/table again
 			}
 		}
@@ -328,8 +309,9 @@ class SMWQueryProcessor {
 				$format = 'table';
 			else $format = 'list';
 		}
-		if (array_key_exists($format, SMWQueryProcessor::$formats))
-			$formatclass = SMWQueryProcessor::$formats[$format];
+		global $smwgResultFormats;
+		if (array_key_exists($format, $smwgResultFormats))
+			$formatclass = $smwgResultFormats[$format];
 		else
 			$formatclass = "SMWListResultPrinter";
 		return new $formatclass($format, ($context != SMWQueryProcessor::SPECIAL_PAGE));
@@ -447,6 +429,7 @@ class SMWQueryParser {
 	 */
 	protected function getSubqueryDescription(&$setNS, &$label) {
 		global $smwgQPrintoutLimit;
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$conjunction = NULL;      // used for the current inner conjunction
 		$disjuncts = array();     // (disjunctive) array of subquery conjunctions
 		$printrequests = array(); // the printrequests found for this query level
@@ -635,6 +618,7 @@ class SMWQueryParser {
 	 */
 	protected function getPropertyDescription($propertyname, &$setNS, &$label) {
 		global $smwgSMWBetaCompatible; // support for old * printouts of beta
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$this->readChunk(); // consume separator ":=" or "::"
 		// first process property chain syntax (e.g. "property1.property2::value"):
 		if ($propertyname{0} == ' ') { // escape
@@ -846,6 +830,7 @@ class SMWQueryParser {
 	 * passed as a parameter.
 	 */
 	protected function getArticleDescription($firstchunk, &$setNS, &$label) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$chunk = $firstchunk;
 		$result = NULL;
 		$continue = true;
@@ -885,6 +870,7 @@ class SMWQueryParser {
 	}
 	
 	protected function finishLinkDescription($chunk, $hasNamespaces, $result, &$setNS, &$label) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		if ($result === NULL) { // no useful information or concrete error found
 			$this->m_errors[] = wfMsgForContent('smw_badqueryatom');
 		} elseif (!$hasNamespaces && $setNS && ($this->m_defaultns !== NULL) ) {
@@ -996,6 +982,7 @@ class SMWQueryParser {
 	 * also be changed (if it was non-NULL).
 	 */
 	protected function addDescription($curdesc, $newdesc, $conjunction = true) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$notallowedmessage = 'smw_noqueryfeature';
 		if ($newdesc instanceof SMWSomeProperty) {
 			$allowed = $this->m_queryfeatures & SMW_PROPERTY_QUERY;

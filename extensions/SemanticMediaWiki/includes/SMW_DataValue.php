@@ -1,4 +1,15 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
+
+/**
+ * This group contains all parts of SMW that relate to the processing of datavalues
+ * of various types.
+ * @defgroup SMWDataValues SMWDataValues
+ * @ingroup SMW
+ */
 
 /**
  * Objects of this type represent all that is known about
@@ -55,6 +66,7 @@ abstract class SMWDataValue {
 			$this->parseUserValue($value); // may set caption if not set yet, depending on datavalue
 			$this->m_isset = true;
 		} else {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_parseerror'));
 		}
 		if ($this->isValid()) {
@@ -112,6 +124,7 @@ abstract class SMWDataValue {
 		}
 
 		foreach ($servicelinks as $dv) {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$args[0] = 'smw_service_' . str_replace(' ', '_', $dv->getXSDValue()); // messages distinguish ' ' from '_'
 			$text = call_user_func_array('wfMsgForContent', $args);
 			$links = preg_split("/[\n][\s]?/u", $text);
@@ -469,6 +482,7 @@ abstract class SMWDataValue {
 			}
 		}
 		if (!$accept) {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_notinenum', $this->getWikiValue(), $valuestring));
 		}
 	}

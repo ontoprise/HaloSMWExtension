@@ -4,6 +4,8 @@
  * Some code based on CategoryPage.php
  *
  * @author: Markus Krötzsch
+ * @file
+ * @ingroup SMW
  */
 
 /**
@@ -88,6 +90,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 	 */
 	protected function getPages() {
 		wfProfileIn( __METHOD__ . ' (SMW)');
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$r = '';
 		$ti = htmlspecialchars( $this->mTitle->getText() );
 		if ($this->special_prop !== false) {

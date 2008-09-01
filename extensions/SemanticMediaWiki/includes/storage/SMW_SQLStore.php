@@ -1,7 +1,8 @@
 <?php
 /**
  * SQL implementation of SMW's storage abstraction layer.
- *
+ * @file
+ * @ingroup SMWStore
  * @author Markus Krötzsch
  */
 
@@ -870,10 +871,9 @@ class SMWSQLStore extends SMWStore {
 				}
 			} else { // special property
 				switch ($property) {
-					case SMW_SP_IMPORTED_FROM: case SMW_SP_INSTANCE_OF: case SMW_SP_SUBCLASS_OF: case SMW_SP_REDIRECTS_TO: case SMW_SP_CONCEPT_DESC:
+					case SMW_SP_INSTANCE_OF: case SMW_SP_SUBCLASS_OF: case SMW_SP_REDIRECTS_TO: case SMW_SP_CONCEPT_DESC:
 						// don't store this, just used for display;
-						// TODO: filtering here is bad for fully neglected properties (IMPORTED FROM)
-						// NOTE: concept descriptions are ignored by that storage implementation
+						/// NOTE: concept descriptions are ignored by that storage implementation
 					break;
 					case SMW_SP_SUBPROPERTY_OF:
 						if ( $subject->getNamespace() != SMW_NS_PROPERTY ) {
@@ -1895,7 +1895,8 @@ class SMWSQLStore extends SMWStore {
 	 * @param $curtables Array with names of aliases of tables refering to the 'current' element (the one to which the description basically applies).
 	 * @param $nary_pos If the subcondition is directly appended to an nary relation, this parameter holds the numerical index of the position in the nary in order to be able to join condition tables to that position.
 	 *
-	 * @TODO: Maybe there need to be optimisations in certain cases (atomic implementation for common nestings of descriptions?)
+	 * @todo Maybe there need to be further optimisations in certain cases (atomic implementation for 
+	 * common nestings of descriptions?).
 	 */
 	protected function createSQLQuery(SMWDescription $description, &$from, &$where, &$db, &$curtables, $nary_pos = '') {
 		$subwhere = '';

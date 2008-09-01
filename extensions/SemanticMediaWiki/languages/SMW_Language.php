@@ -1,12 +1,22 @@
 <?php
 /**
- * @author Markus Krötzsch
+ * @file
+ * @ingroup SMWLanguage
  */
 
 /**
- * Base class for all language classes.
+ * This group contains all parts of SMW that relate to localisation and
+ * translation.
+ * @defgroup SMWLanguage SMWLanguage
+ * @ingroup SMW
  */
-abstract class SMW_Language {
+
+/**
+ * Base class for all SMW language classes.
+ * @author Markus Krötzsch
+ * @ingroup Language
+ */
+abstract class SMWLanguage {
 
 	// the special message arrays ...
 	protected $m_DatatypeLabels;

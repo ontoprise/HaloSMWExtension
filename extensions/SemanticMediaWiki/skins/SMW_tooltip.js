@@ -18,8 +18,8 @@ var SMWTT_WIDTH_P=200;
 var SMWTT_HEIGHT_P=80;
 
 //dimensions of inline tooltips
-var SMWTT_WIDTH_I=250;
-var SMWTT_HEIGHT_I=150;
+var SMWTT_WIDTH_I=150;
+var SMWTT_HEIGHT_I=50;
 
 /*register events for the tooltips*/
 function smw_tooltipInit() {

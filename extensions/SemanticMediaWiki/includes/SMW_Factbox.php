@@ -2,7 +2,8 @@
 /**
  * The class in this file manages the parsing, displaying, and storing of semantic
  * data that is usually displayed within the factbox.
- *
+ * @file
+ * @ingroup SMW
  * @author Markus Krötzsch
  */
 
@@ -43,6 +44,13 @@ class SMWFactbox {
 	static protected $m_writelock = false;
 
 	/**
+	 * To prevent cross-firing parser hooks (e.g. by other extensions' subparsers) 
+	 * from resetting our global data, cache the last non-empty data set and restore
+	 * it later if we should "return" to this article.
+	 */
+	static protected $m_oldsemdata = NULL;
+
+	/**
 	 * Initialisation method. Must be called before anything else happens.
 	 */
 	static function initStorage($title) {
@@ -50,13 +58,28 @@ class SMWFactbox {
 		// NO TITLE thing the MW parser creates
 		if ( SMWFactbox::$m_writelock || $title === NULL || $title->getText() == 'NO TITLE' ) return;
 		if ( (SMWFactbox::$semdata === NULL) ||
-		     (SMWFactbox::$semdata->getSubject()->getDBkey() != $title->getDBkey()) || 
+		     (SMWFactbox::$semdata->getSubject()->getDBkey() != $title->getDBkey()) ||
 		     (SMWFactbox::$semdata->getSubject()->getNamespace() != $title->getNamespace()) ) {
-			global $smwgSemanticDataClass; ///NOTE: HALO patch
-			$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$dv->setValues($title->getDBkey(), $title->getNamespace());
-			SMWFactbox::$semdata = isset($smwgSemanticDataClass) ? new $smwgSemanticDataClass($dv) : new SMWSemanticData($dv); // reset data
-			SMWFactbox::$m_printed = false;
+			$curdata = SMWFactbox::$semdata;
+			// check if we can restore the previous (non-empty) data container:
+			if ( (SMWFactbox::$m_oldsemdata !== NULL) &&
+			     (SMWFactbox::$m_oldsemdata->getSubject()->getDBkey() == $title->getDBkey()) &&
+			     (SMWFactbox::$m_oldsemdata->getSubject()->getNamespace() == $title->getNamespace()) ) {
+				SMWFactbox::$semdata = SMWFactbox::$m_oldsemdata;
+			} else { // otherwise make a new data container
+				$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+				$dv->setValues($title->getDBkey(), $title->getNamespace());
+				///NOTE: HALO patch (begin)
+				global $smwgSemanticDataClass;
+				SMWFactbox::$semdata = isset($smwgSemanticDataClass) ? new $smwgSemanticDataClass($dv) : new SMWSemanticData($dv); // reset data
+				///NOTE: HALO patch (end)
+				SMWFactbox::$m_printed = false;
+			}
+			// store non-empty existing data, just in case we need it later again
+			if ( ($curdata !== NULL) && 
+			     ($curdata->hasProperties() || $curdata->hasSpecialProperties() ) ) {
+				SMWFactbox::$m_oldsemdata = $curdata;
+			}
 			//print " Title set: " . $title->getPrefixedText() . "\n"; // useful for debug
 		}
 		//SMWFactbox::$m_new   = false; // do not reset, keep (order of hooks can be strange ...)
@@ -69,6 +92,7 @@ class SMWFactbox {
 		global $smwgStoreActive;
 		if ($smwgStoreActive) {
 			SMWFactbox::$semdata->clear();
+			SMWFactbox::$m_oldsemdata = NULL;
 			SMWFactbox::$m_printed = false;
 		}
 	}
@@ -126,10 +150,6 @@ class SMWFactbox {
 				}
 				wfProfileOut("SMWFactbox::addProperty (SMW)");
 				return $result;
-			case SMW_SP_IMPORTED_FROM: // this requires special handling
-				$result = SMWFactbox::addImportedDefinition($value,$caption,($storeannotation && (SMWFactbox::$semdata !== NULL)) );
-				wfProfileOut("SMWFactbox::addProperty (SMW)");
-				return $result;
 			default: // generic special property
 				$result = SMWDataValueFactory::newSpecialValue($special,$value,$caption);
 				if ($storeannotation && (SMWFactbox::$semdata !== NULL)) {
@@ -140,102 +160,6 @@ class SMWFactbox {
 		}
 	}
 
-	/**
-	 * This method adds multiple special properties needed to use the given
-	 * article for representing an element from a whitelisted external
-	 * ontology element. It does various feasibility checks (typing etc.)
-	 * and returns a "virtual" value object that can be used for printing
-	 * in text. Although many property values are added, not all are printed in
-	 * the factbox, since some do not have a translated name (and thus also
-	 * could not be specified directly).
-	 */
-	static private function addImportedDefinition($value,$caption,$storeannotation) {
-		global $wgContLang;
-
-		list($onto_ns,$onto_section) = explode(':',$value,2);
-		$msglines = preg_split("/[\n][\s]?/u",wfMsgForContent("smw_import_$onto_ns")); // get the definition for "$namespace:$section"
-
-		if ( count($msglines) < 2 ) { //error: no elements for this namespace
-			/// TODO: use new Error DV
-			$datavalue = SMWDataValueFactory::newTypeIDValue('__err',$value,$caption);
-			$datavalue->addError(wfMsgForContent('smw_unknown_importns',$onto_ns));
-			if ($storeannotation) {
-				SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM,$datavalue);
-			}
-			return $datavalue;
-		}
-
-		list($onto_uri,$onto_name) = explode('|',array_shift($msglines),2);
-		if ( ' ' == $onto_uri[0]) $onto_uri = mb_substr($onto_uri,1); // tolerate initial space
-		$elemtype = -1;
-		$datatype = NULL;
-		foreach ( $msglines as $msgline ) {
-			list($secname,$typestring) = explode('|',$msgline,2);
-			if ( $secname === $onto_section ) {
-				list($namespace, ) = explode(':',$typestring,2);
-				// check whether type matches
-				switch ($namespace) {
-					case $wgContLang->getNsText(SMW_NS_TYPE):
-						$elemtype = SMW_NS_PROPERTY;
-						$datatype = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE, $typestring);
-						break;
-					case $wgContLang->getNsText(SMW_NS_PROPERTY):
-						$elemtype = SMW_NS_PROPERTY;
-						break;
-					case $wgContLang->getNsText(NS_CATEGORY):
-						$elemtype = NS_CATEGORY;
-						break;
-					default: // match all other namespaces
-						$elemtype = NS_MAIN;
-				}
-				break;
-			}
-		}
-
-		// check whether element of correct type was found
-		if (SMWFactbox::$semdata !== NULL) {
-			$this_ns = SMWFactbox::$semdata->getSubject()->getNamespace();
-			$error = NULL;
-			switch ($elemtype) {
-				case SMW_NS_PROPERTY: case NS_CATEGORY:
-					if ($this_ns != $elemtype) {
-						$error = wfMsgForContent('smw_nonright_importtype',$value, $wgContLang->getNsText($elemtype));
-					}
-					break;
-				case NS_MAIN:
-					if ( (SMW_NS_PROPERTY == $this_ns) || (NS_CATEGORY == $this_ns)) {
-						$error = wfMsgForContent('smw_wrong_importtype',$value, $wgContLang->getNsText($this_ns));
-					}
-					break;
-				case -1:
-					$error = wfMsgForContent('smw_no_importelement',$value);
-			}
-	
-			if (NULL != $error) {
-				$datavalue = SMWDataValueFactory::newTypeIDValue('__err',$value,$caption);
-				$datavalue->addError($error);
-				if ($storeannotation) {
-					SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM, $datavalue);
-				}
-				return $datavalue;
-			}
-		}
-
-		if ($storeannotation) {
-			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_BASEURI,SMWDataValueFactory::newTypeIDValue('_str',$onto_uri));
-			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_NSID,SMWDataValueFactory::newTypeIDValue('_str',$onto_ns));
-			SMWFactbox::$semdata->addSpecialValue(SMW_SP_EXT_SECTION,SMWDataValueFactory::newTypeIDValue('_str',$onto_section));
-			if (NULL !== $datatype) {
-				SMWFactbox::$semdata->addSpecialValue(SMW_SP_HAS_TYPE,$datatype);
-			}
-		}
-		// print the input (this property is usually not stored, see SMW_SQLStore.php)
-		$datavalue = SMWDataValueFactory::newTypeIDValue('_str',"[$onto_uri$onto_section $value] ($onto_name)",$caption);
-		if ($storeannotation) {
-			SMWFactbox::$semdata->addSpecialValue(SMW_SP_IMPORTED_FROM, $datavalue);
-		}
-		return $datavalue;
-	}
 
 //// Methods for printing the content of this object into an factbox   */
 
@@ -271,13 +195,13 @@ class SMWFactbox {
 			SMWFactbox::$m_printed = true; // do not print again, period (the other cases may safely try again, if new data should come in)
 			return;
 		case SMW_FACTBOX_SPECIAL: // only when there are special properties
-			if ( !SMWFactbox::$semdata->hasVisibleSpecialProperties() ) {
+			if ( (SMWFactbox::$semdata === NULL) || (!SMWFactbox::$semdata->hasVisibleSpecialProperties()) ) {
 				wfProfileOut("SMWFactbox::printFactbox (SMW)");
 				return;
 			}
 			break;
 		case SMW_FACTBOX_NONEMPTY: // only when non-empty
-			if ( (!SMWFactbox::$semdata->hasProperties()) && (!SMWFactbox::$semdata->hasVisibleSpecialProperties()) ) {
+			if ( (SMWFactbox::$semdata === NULL) || (!SMWFactbox::$semdata->hasProperties()) && (!SMWFactbox::$semdata->hasVisibleSpecialProperties()) ) {
 				wfProfileOut("SMWFactbox::printFactbox (SMW)");
 				return;
 			}
@@ -317,8 +241,10 @@ class SMWFactbox {
 			return;
 		}
 		global $wgContLang;
+		
+		wfLoadExtensionMessages('SemanticMediaWiki');
 
-		foreach(SMWFactbox::$semdata->getProperties(true) as $key => $property) { //NOTE: HALO patch
+		foreach(SMWFactbox::$semdata->getProperties() as $key => $property) {
 			if ($property instanceof Title) {
 				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[ ]/u','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
 				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later

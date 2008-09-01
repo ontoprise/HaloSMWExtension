@@ -1,11 +1,14 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * This datavalue implements special processing suitable for defining
  * wikipages as values of properties. This value container currently
  * behaves somewhat special in that its xsdvalue is not contained all
  * relevant information (it just gives the DB-Key, not the namespace).
- * TODO: This should change, but is not really critical now.
  *
  * @author Nikolas Iwan
  * @author Markus Krötzsch
@@ -42,10 +45,12 @@ class SMWWikiPageValue extends SMWDataValue {
 					$this->m_caption = $value;
 				}
 			} else {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$this->addError(wfMsgForContent('smw_notitle', $value));
 				# TODO: Escape the text so users can see any punctuation problems (bug 11666).
 			}
 		} else {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_notitle', $value));
 		}
 		if ($this->m_caption === false) {
@@ -57,7 +62,7 @@ class SMWWikiPageValue extends SMWDataValue {
 		// This method in its current for is not really useful for init, since the XSD value is just
 		// the (dbkey) title string without the namespace.
 		/// FIXME: change this to properly use a prefixed title string, in case someone wants to use this
-		$this->m_stubdata = array($value,$this->m_namespace,false,'');
+		$this->m_stubdata = array($value,$this->m_namespace,false,'','');
 	}
 
 	protected function unstub() {

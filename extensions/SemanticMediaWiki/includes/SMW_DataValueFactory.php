@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * Factory class for creating SMWDataValue objects for supplied types or properties
@@ -88,6 +92,7 @@ class SMWDataValueFactory {
 			SMWDataValueFactory::$m_typebyproperty[$propertyname] = $type;
 			return SMWDataValueFactory::newTypeIDValue($smwgPDefaultType,$value,$caption,$propertyname);
 		} else {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			return new SMWErrorValue(wfMsgForContent('smw_manytypes'), $value, $caption);
 		}
 	}
@@ -116,6 +121,9 @@ class SMWDataValueFactory {
 				break;
 			case SMW_SP_CONCEPT_DESC:
 				$result = SMWDataValueFactory::newTypeIDValue('__con', $value, $caption);
+				break;
+			case SMW_SP_IMPORTED_FROM:
+				$result = SMWDataValueFactory::newTypeIDValue('__imp', $value, $caption);
 				break;
 			default:
 				/// NOTE: unstable hook, future versions might have better ways of enabling extensions to add properties
@@ -151,6 +159,7 @@ class SMWDataValueFactory {
 		} elseif ($typeid{0} != '_') { // custom type with linear conversion
 			$result = new SMWDataValueFactory::$m_typeclasses['__lin']($typeid);
 		} else { // type really unknown
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			return new SMWErrorValue(wfMsgForContent('smw_unknowntype', $typevalue->getWikiValue() ), $value, $caption);
 		}
 
@@ -264,6 +273,7 @@ class SMWDataValueFactory {
 		$wgAutoloadClasses['SMWGeoCoordsValue']   =  $smwgIP . '/includes/SMW_DV_GeoCoords.php';
 		$wgAutoloadClasses['SMWBoolValue']        =  $smwgIP . '/includes/SMW_DV_Bool.php';
 		$wgAutoloadClasses['SMWConceptValue']     =  $smwgIP . '/includes/SMW_DV_Concept.php';
+		$wgAutoloadClasses['SMWImportValue']      =  $smwgIP . '/includes/SMW_DV_Import.php';
 		SMWDataValueFactory::$m_typeclasses = array(
 			'_txt'  => 'SMWStringValue',
 			'_cod'  => 'SMWStringValue',
@@ -281,7 +291,8 @@ class SMWDataValueFactory {
 			'__lin' => 'SMWLinearValue',
 			'__nry' => 'SMWNAryValue',
 			'__err' => 'SMWErrorValue',
-			'__con' => 'SMWConceptValue'
+			'__con' => 'SMWConceptValue',
+			'__imp'  => 'SMWImportValue',
 		);
 
 		wfRunHooks( 'smwInitDatatypes' );

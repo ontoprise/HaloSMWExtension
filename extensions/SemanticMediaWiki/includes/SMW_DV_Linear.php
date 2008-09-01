@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * This datavalue implements unit support custom units, for which users have
@@ -162,6 +166,7 @@ class SMWLinearValue extends SMWNumberValue {
 		if (count($factors)==0) { // no custom type
 			// delete all previous errors, this is our real problem
 			/// TODO: probably we should check for this earlier, but avoid unnecessary DB requests ...
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->m_errors = array(wfMsgForContent('smw_unknowntype', SMWDataValueFactory::findTypeLabel($this->getTypeID())));
 			return;
 		}

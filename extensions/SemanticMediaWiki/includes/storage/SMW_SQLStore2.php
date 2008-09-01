@@ -3,6 +3,8 @@
  * New SQL implementation of SMW's storage abstraction layer.
  *
  * @author Markus Krötzsch
+ * @file
+ * @ingroup SMWStore
  */
 
 define('SMW_SQL2_SMWIW',':smw'); // virtual "interwiki prefix" for special SMW objects
@@ -23,8 +25,8 @@ define('SMW_SQL2_CONC2',256);
 /**
  * Storage access class for using the standard MediaWiki SQL database
  * for keeping semantic data.
- * 
- * NOTE: Regarding the use of interwiki links in the store, there is currently
+ *
+ * @note Regarding the use of interwiki links in the store, there is currently
  * no support for storing semantic data about interwiki objects, and hence queries
  * that involve interwiki objects really make sense only for them occurring in 
  * object positions. Most methods still use the given input interwiki text as a simple
@@ -634,7 +636,7 @@ class SMWSQLStore2 extends SMWStore {
 		$sql = 's_id=' . $db->addQuotes($sid) . ' AND p_id=smw_id' . $this->getSQLConditions($requestoptions,'smw_sortkey','smw_sortkey');
 
 		$result = array();
-		// NOTE: the following also includes naries, which are now kepn in smw_rels2
+		// NOTE: the following also includes naries, which are now kept in smw_rels2
 		foreach (array('smw_atts2','smw_text2','smw_rels2') as $table) {
 			$res = $db->select( array($table,'smw_ids'), 'DISTINCT smw_title',
 			                    $sql, 'SMW::getProperties', $this->getSQLOptions($requestoptions,'smw_sortkey') );
@@ -767,8 +769,6 @@ class SMWSQLStore2 extends SMWStore {
 				}
 			} else { // special property
 				switch ($property) {
-					case SMW_SP_IMPORTED_FROM: // don't store this, just used for display;
-						/// TODO: filtering here is bad for fully neglected properties (IMPORTED FROM)
 					case SMW_SP_REDIRECTS_TO: // handled above
 					break;
 					case SMW_SP_INSTANCE_OF:
@@ -1590,7 +1590,7 @@ class SMWSQLStore2 extends SMWStore {
 	 * Delete all semantic data stored for the given subject.
 	 * Used for update purposes.
 	 */
-	protected function deleteSemanticData($subject) {
+	public function deleteSemanticData($subject) {
 		$db =& wfGetDB( DB_MASTER );
 		/// NOTE: redirects are handled by updateRedirects(), not here!
 			//$db->delete('smw_redi2', array('s_title' => $subject->getDBkey(),'s_namespace' => $subject->getNamespace()), 'SMW::deleteSubject::Redi2');

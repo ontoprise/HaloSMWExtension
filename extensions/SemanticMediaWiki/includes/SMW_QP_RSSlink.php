@@ -1,6 +1,8 @@
 <?php
 /**
  * Print links to RSS feeds for query results.
+ * @file
+ * @ingroup SMWQuery
  */
 
 /**
@@ -36,7 +38,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $smwgRSSEnabled, $wgRequest;
 		$result = '';
-
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		if ($outputmode == SMW_OUTPUT_FILE) { // make RSS feed
 			if (!$smwgRSSEnabled) return '';
 			if ($this->m_title == '') {
@@ -139,7 +141,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 /**
  * Represents a single entry, or item, in an RSS feed. Useful since those items are iterated more
  * than once when serialising RSS.
- * @TODO: this code still needs cleanup, it's a mess
+ * @todo This code still needs cleanup, it's a mess.
  */
 class SMWRSSItem {
 

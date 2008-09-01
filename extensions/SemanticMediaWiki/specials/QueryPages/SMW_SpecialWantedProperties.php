@@ -3,6 +3,9 @@
  * @author Markus Krötzsch
  *
  * This page shows all wanted properties (used but not having a page).
+ * @file
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
  */
 
 function smwfDoSpecialWantedProperties() {
@@ -30,12 +33,14 @@ class SMWWantedPropertiesPage extends SMWQueryPage {
 	}
 
 	function getPageHeader() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		return '<p>' . wfMsg('smw_wantedproperties_docu') . "</p><br />\n";
 	}
 
 	function formatResult( $skin, $result ) {
 		global $wgLang, $wgExtraNamespaces;
 		$proplink = $skin->makeLinkObj($result[0], $result[0]->getText(), 'action=view');
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		return wfMsg('smw_wantedproperty_template', $proplink, $result[1]);
 	}
 	

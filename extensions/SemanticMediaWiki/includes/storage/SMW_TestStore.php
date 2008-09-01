@@ -1,8 +1,9 @@
 <?php
 /**
  * Test implementation of SMW's storage abstraction layer.
- * FIXME: Currently not really functional.
- *
+ * @bug Currently not really functional.
+ * @file
+ * @ingroup SMWStore
  * @author Markus Krötzsch
  */
 

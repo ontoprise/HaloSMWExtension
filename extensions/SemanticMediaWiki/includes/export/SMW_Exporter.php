@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMW
+ */
 
 /**
  * SMWExporter is a class for converting internal page-based data (SMWSemanticData) into
@@ -185,11 +189,11 @@ class SMWExporter {
 		} else {
 			return NULL;
 		}
-		$uridata = smwfGetStore()->getSemanticData($dv->getTitle(), array(SMW_SP_EXT_BASEURI, SMW_SP_EXT_NSID, SMW_SP_EXT_SECTION));
-		if (count($uridata->getPropertyValues(SMW_SP_EXT_BASEURI)) > 0) {
-			$namespace = current($uridata->getPropertyValues(SMW_SP_EXT_BASEURI))->getXSDValue();
-			$namespaceid = current($uridata->getPropertyValues(SMW_SP_EXT_NSID))->getXSDValue();
-			$localname = current($uridata->getPropertyValues(SMW_SP_EXT_SECTION))->getXSDValue();
+		$uridata = smwfGetStore()->getSemanticData($dv->getTitle(), array(SMW_SP_IMPORTED_FROM));
+		if (count($uridata->getPropertyValues(SMW_SP_IMPORTED_FROM)) > 0) {
+			$namespace = current($uridata->getPropertyValues(SMW_SP_IMPORTED_FROM))->getNS();
+			$namespaceid = current($uridata->getPropertyValues(SMW_SP_IMPORTED_FROM))->getNSID();
+			$localname = current($uridata->getPropertyValues(SMW_SP_IMPORTED_FROM))->getLocalName();
 		} else {
 			$localname = '';
 			if ($dv->getNamespace() == SMW_NS_PROPERTY) {

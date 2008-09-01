@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * This datavalue implements String-Datavalues suitable for defining
@@ -14,6 +18,7 @@ class SMWStringValue extends SMWDataValue {
 	                         // however, this string might contain HTML entities such as &amp;
 
 	protected function parseUserValue($value) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		if ($value!='') {
 			$this->m_value = smwfXMLContentEncode($value);
 			if ( (strlen($this->m_value) > 255) && ($this->m_typeid == '_str') ) { // limit size (for DB indexing)

@@ -1,10 +1,11 @@
 <?php
-
 /**
  * Special handling for relation/attribute description pages.
  * Some code based on CategoryPage.php
  *
  * @author: Markus Krötzsch
+ * @file
+ * @ingroup SMW
  */
 
 /**
@@ -61,6 +62,7 @@ class SMWTypePage extends SMWOrderedListPage {
 	 */
 	protected function getPages() {
 		wfProfileIn( __METHOD__ . ' (SMW)');
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		$r = '';
 		$typevalue = $this->m_typevalue;
 		if ( $typevalue->isBuiltIn() ) {

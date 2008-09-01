@@ -1,6 +1,8 @@
 <?php
 /**
  * CSV export for SMW Queries
+ * @file
+ * @ingroup SMWQuery
  */
 
 /**
@@ -61,6 +63,7 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 			if ($this->mSearchlabel) {
 				$label = $this->mSearchlabel;
 			} else {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$label = wfMsgForContent('smw_csv_link');
 			}
 

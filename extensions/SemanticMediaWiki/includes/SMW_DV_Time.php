@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWDataValues
+ */
 
 /**
  * This datavalue captures values of dates and times.
@@ -17,7 +21,7 @@
  * weekdays in your values, and use ":" between hours, minutes,
  * and seconds (i.e. no "1230" as 12:30).
  *
- * @TODO currently we cannot distinguish incomplete dates
+ * @todo Currently we cannot distinguish incomplete dates
  * such as "Oct 10 2007" from certain complete dates such
  * as "Oct 10 2007T00:00:00". This should change.
  *
@@ -35,6 +39,7 @@ class SMWTimeValue extends SMWDataValue {
 		$this->m_wikivalue = $value;
 		$this->m_time = strtotime(trim($value));
 		if ( ($this->m_time == -1) || ($this->m_time === false) ) {
+			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_nodatetime',$value));
 		}
 		if ($this->m_caption === false) {

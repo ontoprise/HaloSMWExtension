@@ -1,6 +1,9 @@
 <?php
 /**
  * @author Markus Krötzsch
+ * @file
+ * @ingroup SMWSpecialPage
+ * @ingroup SpecialPage
  *
  * This page shows all used properties.
  */
@@ -30,6 +33,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 	}
 
 	function getPageHeader() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		return '<p>' . wfMsg('smw_properties_docu') . "</p><br />\n";
 	}
 
@@ -37,6 +41,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 		global $wgLang, $wgExtraNamespaces;
 		$typestring = '';
 		$errors = array();
+		wfLoadExtensionMessages('SemanticMediaWiki');
 		if ($result[1]<=5) {
 			$errors[] = wfMsg('smw_propertyhardlyused');
 		}
