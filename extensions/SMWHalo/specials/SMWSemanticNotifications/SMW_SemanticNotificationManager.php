@@ -101,8 +101,8 @@ class SemanticNotificationManager {
 			if ($g !== 'allUsers') {
 				$g = 'group '.$g;
 			}
-			$l = $smwgSemanticNotificationLimits[$g];
-			if ($l) {
+			if (array_key_exists($g, $smwgSemanticNotificationLimits)) {
+				$l = $smwgSemanticNotificationLimits[$g];
 				// find the least restrictive limits from several groups
 				$limits['notifications'] = max($limits['notifications'], $l['notifications']);
 				$limits['size']          = max($limits['size'], $l['size']);
