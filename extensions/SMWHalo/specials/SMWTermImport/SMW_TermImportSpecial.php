@@ -36,15 +36,20 @@ require_once( $IP . "/extensions/SMWHalo/specials/SMWTermImport/SMW_CL.php" );
  */
 class SMWTermImportSpecial extends SpecialPage {
 	public function __construct() {
-		parent::__construct('TermImport');
+		parent::__construct('TermImport', 'delete');
 	}
 	/**
 	 * Overloaded function that is resopnsible for the creation of the Special Page
 	 */
 	public function execute() {
 
-		global $wgOut;
+		global $wgOut, $wgUser;
 
+		if ( ! $wgUser->isAllowed('delete') ) {
+			$wgOut->permissionRequired('delete');
+			return;
+		}
+		
 		$wgOut->setPageTitle(wfMsg('smw_ti_termimport'));
 
 		$cl = new CL();
