@@ -918,9 +918,12 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 						var value = element.value;
 						msg = msg.replace(/\$c/g,value);
 						var tbc = smw_ctbHandler.findContainer(msgElem);
+						var visible = tbc.isVisible(element.id);
 						tbc.replace(msgElem.id,
 						            tbc.createText(msgElem.id, msg, '' , true));
-						tbc.show(msgElem.id, true);
+					 	// Show the message, if the corresponding element is
+					 	// visible.
+					 	tbc.show(msgElem.id, visible);
 					}
 				}
 				break;
