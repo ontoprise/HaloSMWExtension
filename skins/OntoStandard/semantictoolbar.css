@@ -228,7 +228,7 @@ a.plusminus:hover{
     font-size: 11px;
 }
 
-#stb_cont9-content{
+#stb_cont10-content{
     background-color: #FFFFCC;
     border: 1px solid #E6E600;
     padding-right: 5px;
@@ -246,7 +246,7 @@ a.plusminus:hover{
     text-align: right;
     font-size: 10px;
 }
-#stb_cont7-headline{
+#stb_cont8-headline{
     background-color: #74DD82;
     border: 1px solid #74DD82;
     font-weight: bold;
@@ -255,7 +255,7 @@ a.plusminus:hover{
     padding-left: 3px;
     margin-top: 3px;
 }
-#stb_cont7-content{
+#stb_cont8-content{
     background-color: #B5EDBC;
     border: 1px solid #74DD82;
     overflow: auto;
@@ -263,7 +263,7 @@ a.plusminus:hover{
     /*border-bottom: 1px solid #74DD82;*/
 }
 
-#stb_cont8-content{
+#stb_cont9-content{
     background-color: #B5EDBC;
     border: 1px solid #74DD82;
     padding-right: 5px;
@@ -335,7 +335,7 @@ a.plusminus:hover{
     padding-left: 3px;
     border: 1px solid #74DD82;
 }
-#stb_cont8-headline{
+#stb_cont9-headline{
     background-color: #74DD82;
     font-weight: bold;
     color: #FFF;
@@ -371,7 +371,7 @@ a.plusminus:hover{
     border: 1px solid #74DD82;
     margin-top: 3px;
 }
-#stb_cont9-headline{
+#stb_cont10-headline{
     background-color: #E6E600;
     font-weight: bold;
     color: #FFF;
@@ -654,7 +654,7 @@ a.menulink{
 
 
 /* Save annotations Container */
-#stb_cont11-headline{
+#stb_cont12-headline{
     background-color: #ee2222;
     font-weight: bold;
     color: #FFF;
@@ -664,7 +664,7 @@ a.menulink{
     margin-top: 3px;
 }
 
-#stb_cont11-content{
+#stb_cont12-content{
     border: 1px solid #ee2222;
     background-color: #ee8888;
     overflow: auto;
@@ -701,7 +701,7 @@ a.menulink{
 }
 
 /* Annotation hint Container */
-#stb_cont10-headline{
+#stb_cont11-headline{
     background-color: #557844;
     font-weight: bold;
     color: #FFF;
@@ -711,7 +711,7 @@ a.menulink{
     margin-top: 3px;
 }
 
-#stb_cont10-content{
+#stb_cont11-content{
     border: 1px solid #557844;
     background-color: #6CA252;
     overflow: auto;
@@ -742,6 +742,22 @@ a.menulink{
     width: 20%;
 }
 
+/* Rule Container */
+#stb_cont7-headline{
+	background-color: #9a3334;
+	font-weight: bold;
+	color: #FFF;
+	padding-left: 3px;
+	border: 1px solid #9a3334;
+	margin-top: 3px;
+}
+
+#stb_cont7-content{
+	border: 1px solid #9a3334;
+	background-color: #f1e5e5;
+	overflow: auto;
+	font-size: 11px;
+}
 /* css for Containerframework
  *
  * if an element has different classes defining the same style
@@ -849,11 +865,42 @@ a.menulink{
     background-color: #88ee88;
 }
 
+#rules-table{
+	background-color: #f1e5e5;
+	width: 100%;
+}
+	
 #breadcrump {
 	
+}
+
+.rules-content-table{
+	background-color: #f1e5e5;
+}
+
+.rules-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.rules-col2{
+}
+
+.rules-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 20%;
 }
 
 #bodyContent{
 width: 60%;
 float: left;
+}
+
+#bodyContent span.smwexplanation a{
+	padding-right: 16px;
+	margin-right: 2px;
+	color: #888888;
+	background: url(images/lightbulb.png) center right no-repeat;
 }
