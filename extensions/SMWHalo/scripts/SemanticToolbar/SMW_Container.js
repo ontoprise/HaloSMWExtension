@@ -708,6 +708,26 @@ show: function(id, visibility){
 },
 
 /**
+ * @public
+ * 
+ * Checks, if the element with the given id is visible.
+ * @param string id
+ * 		The id of the element whose visibility is checked.
+ * 
+ * @return bool
+ * 		true, if the element is visible and
+ * 		false otherwise
+ */
+ isVisible: function(id) {
+	var obj = $(this.id + '-table-' + id);
+	if (!obj) {
+		obj = $(id);
+	}
+	return (obj) ? obj.visible() : false;
+ 	
+ },
+ 
+/**
  * This function must be called after the last element has been added or after
  * the container has been modified.
  */
