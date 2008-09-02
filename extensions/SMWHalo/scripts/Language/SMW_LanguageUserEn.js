@@ -98,6 +98,7 @@ var wgUserLanguageStrings = {
 	'TRANSITIVE'              : 'Transitive',
 	'SYMMETRIC'               : 'Symmetric',
 	'RETRIEVING_DATATYPES'    : 'Retrieving data types...',
+	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
 	
 	'PROPERTY_PROPERTIES'     : "Property Characteristics",
 	

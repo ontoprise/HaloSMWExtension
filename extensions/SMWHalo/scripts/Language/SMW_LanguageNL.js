@@ -97,6 +97,7 @@ var wgLanguageStrings = {
 	'SYMMETRIC'               : 'Symmetrisch',
 	'RETRIEVING_DATATYPES'    : 'Datatypes worden opgevraagd...',
 	'TYPE'                    : 'Type:', //also used as namespace identifier with colon
+	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
 	'PROPERTY_PROPERTIES'     : "Eigenschap karakteristieken",
 	'CATEGORY'                : "Categorie:",	//also used as namespace identifier with colon
 	'PROPERTY'                : "Eigenschap:",	//also used as namespace identifier with colon

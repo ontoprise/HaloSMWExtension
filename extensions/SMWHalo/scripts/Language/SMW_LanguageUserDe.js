@@ -96,6 +96,7 @@ var wgUserLanguageStrings = {
 	'TRANSITIVE'              : 'Transitiv',
 	'SYMMETRIC'               : 'Symmetrisch',
 	'RETRIEVING_DATATYPES'    : 'Ermittele Datentypen...',
+	'NARY_ADD_TYPES'		  : '(e) Bitte fügen Sie Typen oder Ranges hinzu.',
 	
 	'PROPERTY_PROPERTIES'     : "Attribut Characteristik",
 	
