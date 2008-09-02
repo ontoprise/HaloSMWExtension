@@ -1170,11 +1170,9 @@ AdvancedAnnotation.prototype = {
 			this.contextMenu.remove;
 		}
 		this.contextMenu = new ContextMenuFramework();
-		var annoName = anno.getRepresentation();
-		if (!annoName) {
-			annoName = anno.getName();
-		}
-		relToolBar.createContextMenu(this.contextMenu, annoName);
+		var annoRepr = anno.getRepresentation();
+		var annoName = anno.getName();
+		relToolBar.createContextMenu(this.contextMenu, annoName, annoRepr);
 
  		var vo = wrapper.viewportOffset();
 		this.contextMenu.setPosition(vo[0], vo[1]+20);
