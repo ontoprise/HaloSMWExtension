@@ -143,6 +143,7 @@ function webServiceUsage_Render( &$parser) {
 	$wsParameters = array();
 	$wsReturnValues = array();
 	$wsFormat = "";
+	$propertyName = null;
 
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
