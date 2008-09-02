@@ -171,6 +171,10 @@ DefineWebServiceSpecial.prototype = {
 				this.processStep2CallBack.bind(this));
 	},
 
+	processStep2CallBack : function(request) {
+		this.processStep2Do(request.responseText, false);
+	},
+
 	/**
 	 * callback-method for the ajax-call of step 2 this method initializes the
 	 * gui for step 3 specify parameters
@@ -178,25 +182,29 @@ DefineWebServiceSpecial.prototype = {
 	 * @param request
 	 * 
 	 */
-	processStep2CallBack : function(request) {
-		var wsParameters = request.responseText.split(";");
+	processStep2Do : function(parameterString, edit) {
+		var wsParameters = parameterString.split(";");
 
 		this.preparedPathSteps = new Array();
 
 		if (wsParameters[0] == "todo:handle noparams") {
-			$("step3").style.display = "";
-			$("step2-img").style.visibility = "hidden";
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
-			$("step3-parameters").style.display = "none";
-			$("step3-go-img").style.display = "none";
-			this.processStep3();
+			if (!edit) {
+				$("step3").style.display = "";
+				$("step2-img").style.visibility = "hidden";
+				$("step3-parameters").style.display = "none";
+				$("step3-go-img").style.display = "none";
+				this.processStep3();
+			}
 			return;
 		} else {
 			// todo: find better solution
-			$("step2-img").style.visibility = "visible";
-			$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
-			$("step3-parameters").style.display = "";
-			$("step3-go-img").style.display = "";
+			if (!edit) {
+				$("step2-img").style.visibility = "visible";
+				$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
+				$("step3-parameters").style.display = "";
+				$("step3-go-img").style.display = "";
+			}
 		}
 
 		var overflow = false;
@@ -342,8 +350,9 @@ DefineWebServiceSpecial.prototype = {
 						addButtonIMG.i = i;
 						addButtonIMG.k = k;
 						addButtonIMG.addA = true;
-						Event.observe(addButtonIMG, "click", this.addRemoveParameter
-								.bindAsEventListener(this));
+						Event.observe(addButtonIMG, "click",
+								this.addRemoveParameter
+										.bindAsEventListener(this));
 
 						paramPathStep.appendChild(addButton);
 					}
@@ -416,7 +425,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.maxLength = "40";
 				paramTD1.appendChild(aliasInput);
 
-				if (treeView) {
+				if (aTreeRoot || treeView) {
 					paramTD1.style.visibility = "hidden";
 				}
 
@@ -500,47 +509,50 @@ DefineWebServiceSpecial.prototype = {
 			parent.insertBefore(this.parameterContainer, parent.childNodes[3]);
 
 			// hide or display widgets of other steps
-			$("step3").style.display = "";
+			if (!edit) {
+				$("step3").style.display = "";
 
-			$("menue-step2").className = "DoneMenueStep";
-			$("menue-step3").className = "ActualMenueStep";
+				$("menue-step2").className = "DoneMenueStep";
+				$("menue-step3").className = "ActualMenueStep";
 
-			$("step2-help").style.display = "none";
-			$("step3-help").style.display = "";
+				$("step2-help").style.display = "none";
+				$("step3-help").style.display = "";
 
-			$("step2-img").style.visibility = "hidden";
-			$("step3-img").style.visibility = "visible";
+				$("step2-img").style.visibility = "hidden";
+				$("step3-img").style.visibility = "visible";
 
-			$("step2a-error").style.display = "none";
-			$("step2b-error").style.display = "none";
+				$("step2a-error").style.display = "none";
+				$("step2b-error").style.display = "none";
 
-			$("errors").style.display = "none";
+				$("errors").style.display = "none";
+			}
 		}
 
 		// hide or display widgets of other steps
-		$("step4").style.display = "none";
-		$("step5").style.display = "none";
-		$("step6").style.display = "none";
+		if (!edit) {
+			$("step4").style.display = "none";
+			$("step5").style.display = "none";
+			$("step6").style.display = "none";
 
-		$("menue-step4").className = "TodoMenueStep";
-		$("menue-step5").className = "TodoMenueStep";
-		$("menue-step6").className = "TodoMenueStep";
+			$("menue-step4").className = "TodoMenueStep";
+			$("menue-step5").className = "TodoMenueStep";
+			$("menue-step6").className = "TodoMenueStep";
 
-		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "none";
+			$("step4-help").style.display = "none";
+			$("step5-help").style.display = "none";
+			$("step6-help").style.display = "none";
 
-		$("step4-img").style.visibility = "hidden";
-		$("step5-img").style.visibility = "hidden";
-		$("step6-img").style.visibility = "hidden";
+			$("step4-img").style.visibility = "hidden";
+			$("step5-img").style.visibility = "hidden";
+			$("step6-img").style.visibility = "hidden";
 
-		$("step3-error").style.display = "none";
-		$("step4-error").style.display = "none";
-		$("step5-error").style.display = "none";
-		$("step6-error").style.display = "none";
-		$("step6b-error").style.display = "none";
-		$("step6c-error").style.display = "none";
-
+			$("step3-error").style.display = "none";
+			$("step4-error").style.display = "none";
+			$("step5-error").style.display = "none";
+			$("step6-error").style.display = "none";
+			$("step6b-error").style.display = "none";
+			$("step6c-error").style.display = "none";
+		}
 		// $("step3-parameters").style.display = "";
 
 		this.hidePendingIndicator();
@@ -563,6 +575,10 @@ DefineWebServiceSpecial.prototype = {
 				this.processStep3CallBack.bind(this));
 	},
 
+	processStep3CallBack : function(request) {
+		this.processStep3Do(request.responseText, false);
+	},
+
 	/**
 	 * callback-method for the ajax-call of step 3 this method initializes the
 	 * gui for step 4 specify result aliases
@@ -570,8 +586,8 @@ DefineWebServiceSpecial.prototype = {
 	 * @param request
 	 * 
 	 */
-	processStep3CallBack : function(request) {
-		var wsResults = request.responseText.split(";");
+	processStep3Do : function(resultsString, edit) {
+		var wsResults = resultsString.split(";");
 
 		var overflow = false;
 		// for (i = 0; i < wsResults.length; i++) {
@@ -698,9 +714,11 @@ DefineWebServiceSpecial.prototype = {
 
 						pathIndexInput.i = i;
 						pathIndexInput.k = k;
-						Event.observe(pathIndexInput, "blur",
-								this.updateInputBoxes.bindAsEventListener(this));
-						
+						Event
+								.observe(pathIndexInput, "blur",
+										this.updateInputBoxes
+												.bindAsEventListener(this));
+
 						resultPathStep.appendChild(pathIndexInput);
 						pathTextEnd = document.createTextNode("]");
 						resultPathStep.appendChild(pathTextEnd);
@@ -713,8 +731,9 @@ DefineWebServiceSpecial.prototype = {
 						addButtonIMG.i = i;
 						addButtonIMG.k = k;
 						addButtonIMG.addA = true;
-						Event.observe(addButtonIMG, "click", this.addRemoveResultPart
-								.bindAsEventListener(this));
+						Event.observe(addButtonIMG, "click",
+								this.addRemoveResultPart
+										.bindAsEventListener(this));
 
 						addButton.appendChild(addButtonIMG);
 
@@ -813,31 +832,34 @@ DefineWebServiceSpecial.prototype = {
 			this.resultContainer = $("step4-results");
 
 			// hide or display widgets of other steps
-			$("step4").style.display = "";
+			if (!edit) {
+				$("step4").style.display = "";
 
-			$("menue-step2").className = "DoneMenueStep";
-			$("menue-step3").className = "DoneMenueStep";
-			if ($("menue-step4").className == "TodoMenueStep") {
-				$("menue-step4").className = "ActualMenueStep";
+				$("menue-step2").className = "DoneMenueStep";
+				$("menue-step3").className = "DoneMenueStep";
+				if ($("menue-step4").className == "TodoMenueStep") {
+					$("menue-step4").className = "ActualMenueStep";
+				}
+
+				$("step3-help").style.display = "none";
+				$("step4-help").style.display = "";
+
+				$("step3-img").style.visibility = "hidden";
+				$("step4-img").style.visibility = "visible";
+
+				$("step3-error").style.display = "none";
+				$("errors").style.display = "none";
 			}
-
-			$("step3-help").style.display = "none";
-			$("step4-help").style.display = "";
-
-			$("step3-img").style.visibility = "hidden";
-			$("step4-img").style.visibility = "visible";
-
-			$("step3-error").style.display = "none";
-			$("errors").style.display = "none";
 		}
 
 		// hide or display widgets of other steps
-		$("step4-error").style.display = "none";
-		$("step5-error").style.display = "none";
-		$("step6-error").style.display = "none";
-		$("step6b-error").style.display = "none";
-		$("step6c-error").style.display = "none";
-
+		if (!edit) {
+			$("step4-error").style.display = "none";
+			$("step5-error").style.display = "none";
+			$("step6-error").style.display = "none";
+			$("step6b-error").style.display = "none";
+			$("step6c-error").style.display = "none";
+		}
 		this.hidePendingIndicator();
 	},
 
@@ -1089,7 +1111,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep6CallBack : function(request) {
-		if (request.responseText == "false") {
+		if (request.responseText == "false" || this.editMode == true) {
 			var wsName = $("step6-name").value;
 			sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
 					wgUserName, this.wwsd + this.wsSyntax, "" ],
@@ -1261,7 +1283,8 @@ DefineWebServiceSpecial.prototype = {
 		var offset = 0;
 		for (i = 0; i < this.preparedPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
-				var alias = this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value;
+				var alias = this.parameterContainer.firstChild.childNodes[i + 1
+						- offset].childNodes[1].firstChild.value;
 				if (alias.length == 0 && !createAll) {
 					continue;
 				}
@@ -1297,7 +1320,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 
-				this.parameterContainer.firstChild.childNodes[i + 1 -offset].childNodes[1].firstChild.value = alias;
+				this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = alias;
 				aliases.push(alias);
 			} else {
 				offset += 1;
@@ -1313,7 +1336,8 @@ DefineWebServiceSpecial.prototype = {
 
 		for (i = 0; i < resultsCount; i++) {
 			if (this.preparedRPathSteps[i] != "null") {
-				var alias = this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value;
+				var alias = this.resultContainer.firstChild.childNodes[i + 1
+						- offset].childNodes[1].firstChild.value;
 				if (alias.length == 0 && !createAll) {
 					continue;
 				}
@@ -1356,11 +1380,12 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	/**
-	 * this method is responsible for adding new parameters 
-	 * respectivelyin parameters that are not used any more in step 3
+	 * this method is responsible for adding new parameters respectivelyin
+	 * parameters that are not used any more in step 3
 	 * 
-	 * @param event from the event handler 
-	 *       
+	 * @param event
+	 *            from the event handler
+	 * 
 	 * 
 	 */
 	addRemoveParameter : function(event) {
@@ -1687,13 +1712,13 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
-	
 	/**
-	 * this method is responsible for adding new result parts 
-	 * respectivelyin result parts that are not used any more in step 4
+	 * this method is responsible for adding new result parts respectivelyin
+	 * result parts that are not used any more in step 4
 	 * 
-	 * @param event from the event handler 
-	 *       
+	 * @param event
+	 *            from the event handler
+	 * 
 	 * 
 	 */
 	addRemoveResultPart : function(event) {
@@ -1810,7 +1835,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].childNodes[1].setAttribute("onblur",
 								"webServiceSpecial.updateInputBoxes(" + newI
 										+ "," + r + ")");
-						
+
 						pathSteps[r].childNodes[3].firstChild.i = newI;
 						pathSteps[r].childNodes[3].firstChild.k = r;
 						if (r <= k) {
@@ -1822,10 +1847,11 @@ DefineWebServiceSpecial.prototype = {
 
 							pathSteps[r].childNodes[3].firstChild.addA = true;
 						}
-						
-						if(pathSteps[r].childNodes[1].i == null){
+
+						if (pathSteps[r].childNodes[1].i == null) {
 							Event.observe(pathSteps[r].childNodes[1], "blur",
-									this.updateInputBoxes.bindAsEventListener(this));
+									this.updateInputBoxes
+											.bindAsEventListener(this));
 						}
 						pathSteps[r].childNodes[1].i = newI;
 						pathSteps[r].childNodes[1].k = r;
@@ -1871,15 +1897,14 @@ DefineWebServiceSpecial.prototype = {
 									"click", el);
 						}
 
-						if(pathSteps[r].childNodes[2].i == null){
+						if (pathSteps[r].childNodes[2].i == null) {
 							Event.observe(pathSteps[r].childNodes[2], "blur",
-									this.updateInputBoxes.bindAsEventListener(this));
+									this.updateInputBoxes
+											.bindAsEventListener(this));
 						}
 						pathSteps[r].childNodes[2].i = newI;
 						pathSteps[r].childNodes[2].k = r;
-						
-						
-						
+
 						if (appendRows[m].childNodes[0].childNodes[0].childNodes[r].firstChild.id == "step4-expand-"
 								+ (i * 1 + m) + "-" + r) {
 							$("step4-expand-" + newI + "-" + r).expanded = $("step4-expand-"
@@ -2006,6 +2031,7 @@ DefineWebServiceSpecial.prototype = {
 
 	/**
 	 * used for the click event in the tree view of step 3
+	 * 
 	 * @param event
 	 * @return
 	 */
@@ -2024,6 +2050,7 @@ DefineWebServiceSpecial.prototype = {
 
 	/**
 	 * used to expand the elements of the tree view in step 3
+	 * 
 	 * @param i
 	 * @param k
 	 * @return
@@ -2089,6 +2116,7 @@ DefineWebServiceSpecial.prototype = {
 
 	/**
 	 * used to contract elements of the tree view in step 3
+	 * 
 	 * @param i
 	 * @param k
 	 * @return
@@ -2148,6 +2176,7 @@ DefineWebServiceSpecial.prototype = {
 
 	/**
 	 * used in step 4 to expand elements of the tree view
+	 * 
 	 * @param i
 	 * @param k
 	 * @return
@@ -2209,6 +2238,7 @@ DefineWebServiceSpecial.prototype = {
 
 	/**
 	 * used for step 4 to contract elements of the tree view
+	 * 
 	 * @param i
 	 * @param k
 	 * @return
@@ -2249,8 +2279,9 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	/**
-	 * this method is used in step 4 to update array indexes of
-	 * path steps that are hidden
+	 * this method is used in step 4 to update array indexes of path steps that
+	 * are hidden
+	 * 
 	 * @param i
 	 * @param k
 	 * @return
@@ -2311,7 +2342,74 @@ DefineWebServiceSpecial.prototype = {
 			this.pendingIndicator.hide();
 			this.pendingIndicator = null;
 		}
+	},
+
+	editWWSD : function() {
+		var editParameterContainer = $("editparameters");
+		var editResultContainer = $("editresults");
+		if (editParameterContainer == null) {
+			return;
+		}
+
+		this.editMode = true;		
+		var editParameters = editParameterContainer.firstChild.nodeValue
+				.split(";");
+		editParameters.pop();
+		var ps2Parameters = "todo:handle exceptions";
+		var parametersUpdate = new Array();
+
+		for (i = 0; i < editParameters.length; i += 4) {
+			var o = new Object();
+			o["alias"] = editParameters[i];
+			ps2Parameters += ";" + editParameters[i + 1];
+			o["optional"] = editParameters[i + 2];
+			o["defaultValue"] = editParameters[i + 3];
+
+			parametersUpdate.push(o);
+		}
+		this.processStep2Do(ps2Parameters, true);
+		this.updateParameters(parametersUpdate);
+
+		var editResults = editResultContainer.firstChild.nodeValue.split(";");
+		editResults.pop();
+		var ps3Results = "todo:handle exceptions";
+		var resultsUpdate = new Array();
+
+		for (i = 0; i < editResults.length; i += 2) {
+			var o = new Object();
+			o["alias"] = editResults[i];
+			ps3Results += ";" + editResults[i + 1];
+			resultsUpdate.push(o);
+		}
+		this.processStep3Do(ps3Results, true);
+		this.updateResults(resultsUpdate);
+
+	},
+
+	updateParameters : function(updates) {
+		for (i = 0; i < updates.length; i++) {
+			if (updates[i]["alias"] != "##") {
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+			}
+			if (updates[i]["optional"] == "true") {
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+			}
+			if (updates[i]["defaultValue"] != "##") {
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+			}
+		}
+	},
+
+	updateResults : function(updates) {
+		for (i = 0; i < updates.length; i++) {
+			if (updates[i]["alias"] != "##") {
+				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+			}
+		}
 	}
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
+
+Event.observe(window, 'load', webServiceSpecial.editWWSD
+		.bindAsEventListener(webServiceSpecial));

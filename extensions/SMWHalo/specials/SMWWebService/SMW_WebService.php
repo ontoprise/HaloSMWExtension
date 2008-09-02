@@ -913,7 +913,7 @@ class WebService {
 		if($this->mParsedParameters != null){
 			foreach($this->mParsedParameters->children() as $child){
 				$value = "".$child["defaultValue"];
-				if($specParameters["".$child["name"]]){
+				if(array_key_exists("".$child["name"], $specParameters)){
 					$value = $specParameters["".$child["name"]];
 				}
 				$this->getPathSteps("".$child["path"], $value);

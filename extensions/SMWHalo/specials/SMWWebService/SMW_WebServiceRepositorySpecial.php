@@ -37,7 +37,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 	public function __construct() {
 		parent::__construct('WebServicerepository');
 	}
-	
+
 	/**
 	 * this methods constructs the special page webservice repository
 	 *
@@ -48,27 +48,27 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$wgOut->setPageTitle("Web Service Repository");
 
 		global $wgCookiePrefix;
-	    
+		 
 		$allowed = false;
 		global $wgUser;
 		$user = $wgUser;
 		if($user != null){
-	    	$groupsOfUser = $user->getGroups();
-	    	foreach($groupsOfUser as $key => $group) {
-	    		if($group == SMW_WS_SYSOP){
-	    			$allowed = true;
-	    		}
-	    	}
-	    }
-	    
+			$groupsOfUser = $user->getGroups();
+			foreach($groupsOfUser as $key => $group) {
+				if($group == SMW_WS_SYSOP){
+					$allowed = true;
+				}
+			}
+		}
+		 
 		$html = "";
-		
-		
-	    global $smwgHaloIP;
+
+
+		global $smwgHaloIP;
 		require_once($smwgHaloIP . '/specials/SMWWebService/SMW_WSStorage.php');
 
 		$webServices = WSStorage::getDatabase()->getWebServices();
-		ksort($webServices); 
+		ksort($webServices);
 
 		$html .= "<h2><span class=\"mw-headline\">Available Wiki Web Service Definitions</span></h2>";
 
@@ -82,11 +82,14 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$wsUrl = Title::newFromID($ws->getArticleID())->getInternalURL();
 			$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
 			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
-		
+
 			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
-			$oldestUpdate = $cacheResults[0]["lastUpdate"];
-			if(strlen($oldestUpdate) > 0){
-				$oldestUpdate = wfTimestamp(TS_DB, $oldestUpdate);
+			$oldestUpdate = "";
+			if(count($cacheResults) >0){
+				$oldestUpdate = $cacheResults[0]["lastUpdate"];
+				if(strlen($oldestUpdate) > 0){
+					$oldestUpdate = wfTimestamp(TS_DB, $oldestUpdate);
+				}
 			}
 
 			$latestUpdate = "";
@@ -99,14 +102,14 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 					}
 				}
 			}
-			
+
 			$html .= "<td>".$oldestUpdate.$latestUpdate."</td>";
-				
+
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
 				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">Update</button>";
 				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">Updating</div></td>";
-				
+
 				if($ws->getConfirmationStatus() != "true"){
 					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
 				} else {

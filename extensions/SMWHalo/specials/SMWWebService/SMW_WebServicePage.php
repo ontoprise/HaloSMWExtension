@@ -141,7 +141,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$nav = $this->getNavigationLinks('WWSArticleResults', $this->mArticles,
 		                                 $this->mFromArticle, $this->mUntilArticle,
 		                                 'fromarticle', 'untilarticle');
-		$r .= '<a name="WWSArticleResults"></a>' . "<div id=\"mw-pages\">\n";
+		                                 $r .= '<a name="WWSArticleResults"></a>' . "<div id=\"mw-pages\">\n";
 		$r .= '<h2>' . wfMsg('smw_wws_articles_header',$ti) . "</h2>\n";
 		$r .= wfMsg('smw_wws_articlecount', min($this->limit, count($this->mArticles))) . "\n";
 		$r .= $nav;
@@ -159,6 +159,9 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$r .= $nav;
 		$r .= $this->shortList( $this->mProperties, $this->mPropertiesStartChar, $this->mUntilProperty) . "\n</div>";
 		$r .= $nav;
+		
+		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();
+		$r .= '<a href="'.$url.'"><b>'.wfMsg('smw_wws_edit_in_gui').'</b></a>';
 		
 		wfProfileOut( __METHOD__ . ' (SMW)');
 		return $r;

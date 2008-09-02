@@ -20,7 +20,6 @@ global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_IWebServiceClient.php");
 
 define('WWS_WSDL_NS', 'http://schemas.xmlsoap.org/wsdl/');
-define('WWS_WSDL_NS', 'http://schemas.xmlsoap.org/wsdl/');
 define('WWS_SOAP_NS', 'http://schemas.xmlsoap.org/wsdl/soap/');
 define('WWS_XSD_NS', 'http://www.w3.org/2001/XMLSchema');
 define('WWS_SOAPENC_NS', 'http://schemas.xmlsoap.org/soap/encoding/');
@@ -39,7 +38,7 @@ class SMWSoapClient implements IWebServiceClient {
 
 	private $mURI;		  // string: the URI of the web service
 	private $mClient;	  // SoapClient: an instance of the soap client
-	private $mOperations; // array(string=>array(varname,type)): The names of all operations
+	private $mOperations = array(); // array(string=>array(varname,type)): The names of all operations
 	private $mWsdl;		  // SimpleXMLElement: The content of the service's WSDL
 	private $mTypes;	  // array(string=>string): A mapping from the name of a type's
 	//     field to its type.
@@ -132,7 +131,7 @@ class SMWSoapClient implements IWebServiceClient {
 		if ($pos) {
 			$typename = substr($typename, $pos+1);
 		}
-		return $this->mTypes[$typename] !== null;
+		return array_key_exists($typename, $this->mTypes);
 
 	}
 
@@ -221,15 +220,15 @@ class SMWSoapClient implements IWebServiceClient {
 				$retType = $matches[1];
 				$fname = $matches[2];
 				$params = $matches[3];
-				if(!$this->mOperations[$fname]){
-					$this->mOperations[$fname] = array($retType);
-					if ($params) {
-						$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
-						for ($i = 0; $i < $numParam; ++$i) {
-							$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
+				if(!array_key_exists($fname, $this->mOperations)){
+						$this->mOperations[$fname] = array($retType);
+						if ($params) {
+							$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
+							for ($i = 0; $i < $numParam; ++$i) {
+								$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
+							}
 						}
 					}
-				}
 			}
 		}
 
@@ -240,7 +239,7 @@ class SMWSoapClient implements IWebServiceClient {
 				$fields = $matches[2];
 				$numFields = preg_match_all("/\s*(\b.*?)\s+([^;]*);/",$fields, $fList);
 				$add = true;
-				if($this->mTypes[$tname]){
+				if(array_key_exists($tname, $this->mTypes)){
 					$this->duplicates[$tname] = $tname;
 				}
 				for ($i = 0; $i < $numFields; ++$i) {
@@ -258,7 +257,7 @@ class SMWSoapClient implements IWebServiceClient {
 
 		foreach($this->mTypes as $typeN => $typeD){
 			foreach($typeD as $typeName => $typeDef){
-				if($this->duplicates[$typeDef]){
+				if(array_key_exists($typeDef, $this->duplicates)){
 					//$temp = $this->mTypes[$typeN][$typeName];
 					unset($this->mTypes[$typeN][$typeName]);
 					//$typeName = $typeName."##duplicate";

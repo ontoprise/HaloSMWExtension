@@ -246,13 +246,13 @@ function formatWSResult($wsFormat, $wsResults = null){
 		} else if(is_array($wsResult)){
 			foreach($wsResult as $subKey => $subWsResult){
 				$k++;
-				if(is_string($subWsResult)){
-				} else {
-					$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true);
+				if(is_string($subWsResult) || is_numeric($subWsResult)){
+				} else if($subWsResult != ""){
+					$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true).$subKey;
 				}
 			}	
 		} else {
-			$wsResult[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true);
+			$wsResult[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true).$key;
 		}
 	}
 	

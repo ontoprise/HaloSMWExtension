@@ -188,8 +188,8 @@ class WSStorageSQL {
 			$row->method, $row->authentication_type, $row->authentication_login, 
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
-			$row->updateDelay, $row->span_of_life,
-			$rwow->expires_after_update == 'true',
+			$row->update_delay, $row->span_of_life,
+			$row->expires_after_update == 'true',
 			$row->confirmed);
 		}
 		$db->freeResult($res);
@@ -820,7 +820,7 @@ class WSStorageSQL {
 			$row->method, $row->authentication_type, $row->authentication_login, 
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
-			$row->updateDelay, $row->span_of_life,
+			$row->update_delay, $row->span_of_life,
 			$row->expires_after_update == 'true',
 			$row->confirmed);
 				
