@@ -77,7 +77,8 @@ var SMW_PRP_CHECK_EMPTY_VIE = // valid if empty
 var SMW_PRP_NO_EMPTY_SELECTION =
 	'smwCheckEmpty="empty' +
 	'? (color:red, showMessage:SELECTION_MUST_NOT_BE_EMPTY, valid:false) ' +
-	': (color:white, hideMessage, valid:true)"';		
+	': (color:white, hideMessage, valid:true)"';
+	
 
 var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_TYPE'), 'prp-add-type-lnk'],
 				 			 ['propToolBar.addRange()', gLanguage.getMessage('ADD_RANGE'), 'prp-add-range-lnk']];
@@ -576,6 +577,14 @@ attrTypeChanged: function(target) {
 		
 		this.isNAry = attrType == 'n-ary';
 		this.isRelation = attrType.toLowerCase() == 'page';
+		
+		if (this.isNAry && this.numOfParams == 0) {
+			gSTBEventActions.performSingleAction('showmessage', 'NARY_ADD_TYPES', $('prp-attr-type'));
+			gSTBEventActions.performSingleAction('valid', 'false', $('prp-attr-type'));
+		} else {
+			gSTBEventActions.performSingleAction('hidemessage', '', $('prp-attr-type'));
+		}
+		
 	}
 },
 
@@ -660,36 +669,43 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 enableWidgets: function() {
 	var tb = propToolBar.toolbarContainer;
 	if (propToolBar.isRelation && !propToolBar.isNAry) {
-		$("prp-range").enable();
-		$("prp-inverse-of").enable();
-		$("prp-transitive").enable();
-		$("prp-symmetric").enable();
+		tb.show('prp-range', true);
+//		tb.show('prp-range-msg', true);
+		tb.show("prp-inverse-of", true);
+		tb.show("prp-transitive", true);
+		tb.show("prp-symmetric", true);
 	} else {
-		$("prp-range").disable();
-		$("prp-inverse-of").disable();
-		$("prp-transitive").disable();
-		$("prp-symmetric").disable();
+		tb.show('prp-range', false);
+		tb.show('prp-range-msg', false);
+		tb.show("prp-inverse-of", false);
+		tb.show("prp-transitive", false);
+		tb.show("prp-symmetric", false);
 	}
 	
 	if (propToolBar.isNAry) {
 		$('prp-add-type-lnk').show();
 		$('prp-add-range-lnk').show();
-		$('prp-min-card').disable();
-		$('prp-max-card').disable();
+		
+		tb.show('prp-min-card', false);
+		tb.show('prp-max-card', false);
 	} else {
 		$('prp-add-type-lnk').hide();
 		$('prp-add-range-lnk').hide();
-		$('prp-min-card').enable();
-		$('prp-max-card').enable();
+		
+		tb.show('prp-min-card', true);
+		tb.show('prp-max-card', true);
 	}
 	
 	for (var i = 0; i < propToolBar.prpNAry; i++) {
-		var obj = $('prp-nary-'+i);
+		var obj = 'prp-nary-'+i;
+		var msg = 'prp-nary-'+i+'-msg';
 		if (obj) {
 			if (propToolBar.isNAry) {
-				obj.enable();
+				tb.show(obj, true);
+//				tb.show(msg, true);
 			} else {
-				obj.disable();
+				tb.show(obj, false);
+				tb.show(msg, false);
 			}	
 		}
 	}
