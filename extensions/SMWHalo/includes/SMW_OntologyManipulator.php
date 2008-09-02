@@ -82,7 +82,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	$user = User::newFromName($user);
 	$result = true;
 	wfRunHooks('userCan', array($title, $user, "edit", &$result));
-	if ($result == false) {
+	if (isset($result) && $result == false) {
 		return "false,denied,$title";
 	}
 	
@@ -189,7 +189,7 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 	$user = User::newFromName($user);
 	$result = true;
 	wfRunHooks('userCan', array($title, $user, "edit", &$result));
-	if ($result == false) {
+	if (isset($result) && $result == false) {
 		return "false,denied,$title";
 	}
 	
@@ -472,7 +472,7 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 	$user = User::newFromName($user);
 	$result = true;
 	wfRunHooks('userCan', array($titleObj, $user, "delete", &$result));
-	if ($result == false) {
+	if (isset($result) && $result == false) {
 		return "denied";
 	}	
 	
@@ -501,7 +501,7 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	$user = User::newFromName($user);
 	$result = true;
 	wfRunHooks('userCan', array($titleObj, $user, "move", &$result));
-	if ($result == false) {
+	if (isset($result) && $result == false) {
 		return "denied";
 	}
 	
