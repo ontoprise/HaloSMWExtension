@@ -244,7 +244,7 @@ class SMWFactbox {
 		
 		wfLoadExtensionMessages('SemanticMediaWiki');
 
-		foreach(SMWFactbox::$semdata->getProperties() as $key => $property) {
+		foreach(SMWFactbox::$semdata->getProperties(true) as $key => $property) {
 			if ($property instanceof Title) {
 				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[ ]/u','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
 				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
