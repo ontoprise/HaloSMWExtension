@@ -231,6 +231,7 @@ createContextMenu: function(contextMenuContainer, value, repr) {
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name','');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', '',
@@ -314,6 +315,7 @@ newItem: function() {
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name','');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', 
 							 SMW_REL_CHECK_EMPTY_NEV +
@@ -325,6 +327,7 @@ newItem: function() {
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	tb.setInputValue('rel-show','');
 	
 	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
@@ -638,6 +641,7 @@ newRelation: function() {
 						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('rel-range-0', '');
 	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
 	
 	var links = [['relToolBar.addRangeInput()',gLanguage.getMessage('ADD_RANGE')],
@@ -678,6 +682,7 @@ addRangeInput:function() {
 						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('rel-range-'+i, '');
 	tb.insert('rel-range-'+i,
 	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
 	tb.finishCreation();
@@ -1017,6 +1022,7 @@ getselectedItem: function(selindex) {
 		}
 
 		var valueInputs = new Array();
+		var inputNames = new Array();
 		for (var i = 0; i < relation.getArity()-1; i++) {
 			var parName = (parameterNames.length > i) 
 							? parameterNames[i]
@@ -1036,6 +1042,7 @@ getselectedItem: function(selindex) {
 			valueInputs.push(obj);
 			obj = tb.createText('rel-value-'+i+'-msg', '', '', true);
 			valueInputs.push(obj);
+			inputNames.push(['rel-value-'+i,relation.getSplitValues()[i]]);
 		}
 		tb.append(tb.createInput('rel-name', 
 								 gLanguage.getMessage('PROPERTY'), '', '', 
@@ -1051,6 +1058,9 @@ getselectedItem: function(selindex) {
 			tb.append(renameAll);
 		}
 		tb.append(valueInputs);
+		for (var i = 0; i < inputNames.length; i++) {
+			tb.setInputValue(inputNames[i][0],inputNames[i][1]);
+		}
 		
 		// In the Advanced Annotation Mode the representation can not be changed
 		var repr = relation.getRepresentation(); 

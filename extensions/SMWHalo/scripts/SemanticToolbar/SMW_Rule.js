@@ -139,6 +139,7 @@ createRule: function() {
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
+	tb.setInputValue('rule-name','');
 	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createDropDown('rule-type', gLanguage.getMessage('RULE_TYPE'), 
@@ -230,6 +231,7 @@ editRule: function(selindex) {
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
+	tb.setInputValue('rule-name','');
 	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 			
 	var links = [['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]

@@ -518,7 +518,7 @@ addRange: function() {
                  			 SMW_PRP_CHECK_EMPTY +
                  			 SMW_PRP_HINT_CATEGORY,
                  			 true));
-                 			 
+    tb.setInputValue('prp-nary-' + this.prpNAry,'');
 	tb.insert('prp-nary-' + this.prpNAry,
 	          tb.createText('prp-nary-' + this.prpNAry + '-msg', '', '' , true));
 
