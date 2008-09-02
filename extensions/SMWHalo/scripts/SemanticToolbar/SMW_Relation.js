@@ -197,8 +197,11 @@ createToolbar: function(attributes) {
  * @param string value (optional)
  * 		The default value for the property. If it is not given, the current 
  * 		selection of the wiki text parser is used.
+ * @param string repr (optional)
+ * 		The default representation for the property. If it is not given, the current 
+ * 		selection of the wiki text parser is used.
  */
-createContextMenu: function(contextMenuContainer, value) {
+createContextMenu: function(contextMenuContainer, value, repr) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
@@ -209,10 +212,13 @@ createContextMenu: function(contextMenuContainer, value) {
     this.wtp.initialize();
 	this.currentAction = "annotate";
 
+	var valueEditable = false;
 	if (!value) {
 		value = this.wtp.getSelection(true);
 		//replace newlines by spaces
 		value = value.replace(/\n/,' ');
+		repr = value;
+		valueEditable = true;
 	}
 	
 	/*STARTLOG*/
@@ -226,14 +232,16 @@ createContextMenu: function(contextMenuContainer, value) {
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), value, '', 
+	
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', '',
 							 SMW_REL_CHECK_EMPTY_NEV + 
 							 SMW_REL_HINT_INSTANCE +
 							 SMW_REL_VALID_PROPERTY_VALUE,
 	                         true));
+	tb.setInputValue('rel-value-0', value);
+		                         
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
-	var repr = value;
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
 	tb.setInputValue('rel-show', repr);	                         
 	
@@ -244,7 +252,15 @@ createContextMenu: function(contextMenuContainer, value) {
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
 	tb.finishCreation();
-	$('relation-content-table-rel-show').hide();
+	
+	if (wgAction == 'annotate') {
+		$('rel-show').disable();
+		if (!valueEditable) {
+			$('rel-value-0').disable();
+		}
+	}
+	
+//	$('relation-content-table-rel-show').hide();
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
@@ -899,6 +915,7 @@ newPart: function() {
 	tb.finishCreation();
 	if (wgAction == 'annotate') {
 		$('rel-show').disable();
+		$('rel-value-0').disable();
 	}
 	
 	gSTBEventActions.initialCheck($("relation-content-box"));
@@ -1067,6 +1084,7 @@ getselectedItem: function(selindex) {
 		tb.finishCreation();
 		if (wgAction == 'annotate') {
 			$('rel-show').disable();
+			$('rel-value-0').disable();
 		}
 		gSTBEventActions.initialCheck($("relation-content-box"));
 
