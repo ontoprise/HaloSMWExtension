@@ -101,7 +101,7 @@ SemanticNotifications.prototype = {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
 				// success
-				if (request.responseText == 'true') {
+				if (request.responseText.indexOf("true") >= 0) {
 					this.getAllNotifications();
 					// disable button and name input
 					$('sn-notification-name').disable();
@@ -159,7 +159,7 @@ SemanticNotifications.prototype = {
 				success = request.responseText.substring(0, pos);
 				var res = request.responseText.substr(pos+1);
 				$('sn-previewbox').innerHTML = res;
-				if (success == 'true') {
+				if (success.indexOf('true')>= 0) {
 					this.previewOK = true;
 					$('sn-notification-name').enable();
 					$('sn-notification-name').focus();
@@ -294,7 +294,7 @@ SemanticNotifications.prototype = {
 		function ajaxResponseDeleteNotification(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-				if (request.responseText == "true") {
+				if (request.responseText.indexOf("true") >= 0) {
 					this.getAllNotifications();
 				}
 			} else {

@@ -61,12 +61,12 @@ function smwf_sn_AddNotification($name, $userName, $query, $updateInterval) {
 		// A new notification has to be created => check the limits
 		$numNot = SemanticNotificationManager::getNumberOfNotificationsOfUser($userName);
 		$limits = SemanticNotificationManager::getUserLimitations($userName);
-		if ($numNot >= $limits[notifications]) {
+		if ($numNot >= $limits['notifications']) {
 			global $wgExtensionMessagesFiles;
 			$wgExtensionMessagesFiles['SemanticNotification'] = $smwgHaloIP . '/specials/SMWSemanticNotifications/SMW_SemanticNotificationMessages.php';
 			wfLoadExtensionMessages('SemanticNotification');
 			
-			return wfMsg('smw_sn_notification_limit', $limits[notifications]);
+			return wfMsg('smw_sn_notification_limit', $limits['notifications']);
 		}
 		$sn = new SemanticNotification($name, $userName, $query, $updateInterval);
 	} else {
