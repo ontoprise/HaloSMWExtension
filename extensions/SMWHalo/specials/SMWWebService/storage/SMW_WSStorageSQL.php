@@ -902,6 +902,30 @@ class WSStorageSQL {
 		}
 		return $result;
 	}
+	
+/**
+	 * get all web service usages
+	 *
+	 * @param string $wsId
+	 * @return array
+	 */
+	function getWSUsages($wsId){
+		$db =& wfGetDB( DB_SLAVE );
+		$result = array();
+		$tbn = $db->tableName('smw_ws_articles');
+
+		$sql = "SELECT DISTINCT articles.param_set_id FROM ".$tbn. " articles 
+		WHERE articles.web_service_id = \"".$wsId."\"";
+			
+		$res = $db->query($sql);
+
+		$result = array();
+
+		while($row = $db->fetchObject($res)){
+			$result[] = array("paramSetId" => $row->param_set_id);
+		}
+		return $result;
+	}
 }
 
 ?>

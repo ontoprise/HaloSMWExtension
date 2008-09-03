@@ -62,7 +62,9 @@ class WSUpdateBot extends GardeningBot {
 	}
 
 	public function run($paramArray, $isAsync, $delay) {
+		//echo("bot started");
 		if($paramArray["WS_WSID"] != null){
+			//echo("bot started");
 			$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 			$this->setNumberOfTasks(1);
 			$ws = WebService::newFromID($paramArray["WS_WSID"]);
@@ -101,7 +103,7 @@ class WSUpdateBot extends GardeningBot {
 	 */
 	private function updateWSProperty($ws, $all){
 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
-		
+
 		$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
 
 		if(sizeof($props) > 0){
@@ -145,22 +147,22 @@ class WSUpdateBot extends GardeningBot {
 					$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
 
 					$goon = true;
-					
+
 					$errorMessages = $ws->getErrorMessages();
 					if(is_string($response) || sizeof($errorMessages) > 0){
 						$log->addGardeningIssueAboutValue(
 						$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
 						Title::newFromText($ws->getName()), 0);
 						$goon = false;
-					} 
-					
+					}
+
 					if($goon) {
 						WSStorage::getDatabase()->storeCacheEntry(
-							$ws->getArticleID(),
-							$prop["paramSetId"],
-							serialize($response),
-							wfTimeStamp(TS_MW, wfTime()),
-							wfTimeStamp(TS_MW, wfTime()));
+						$ws->getArticleID(),
+						$prop["paramSetId"],
+						serialize($response),
+						wfTimeStamp(TS_MW, wfTime()),
+						wfTimeStamp(TS_MW, wfTime()));
 
 						//update the smw-storage
 						$response = $ws->getCallResultParts($response, array($prop["resultSpec"]));
@@ -214,18 +216,69 @@ class WSUpdateBot extends GardeningBot {
 
 						smwfGetStore()->updateData($smwData, false);
 						$updatedEntries += 1;
-					} 
+					}
 				}
 				$this->worked(1);
 			}
 			if($updatedEntries > 0){
 				$log->addGardeningIssueAboutValue(
-					$this->id, SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES,
-					Title::newFromText($ws->getName()), $updatedEntries);
+				$this->id, SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES,
+				Title::newFromText($ws->getName()), $updatedEntries);
 			}
 		} else {
 			$this->addSubTask(1);
 			$this->worked(1);
+		}
+
+		// update cache results that are not used as a property
+		// triggered when the user presses the update button
+		// in the special page Web Service Repository
+		if($all){
+			$articles = WSStorage::getDatabase()->getWSUsages($ws->getArticleID());
+			
+			$updatedEntries = 0;
+			foreach($articles as $article){
+				$exists = false;
+				foreach($props as $prop){
+					if($props["paramSetId"] == $article["paramSetId"]){
+						$exists = true;
+						break;
+					}
+				}
+				
+				if($exists){
+					continue;
+				}
+				
+				if($updatedEntries > 0){
+					sleep($ws->getUpdateDelay());
+				}
+
+				$parameters = WSStorage::getDatabase()->getParameters($article["paramSetId"]);
+				$parameters = $ws->initializeCallParameters($parameters);
+
+				$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
+
+				$goon = true;
+					
+				$errorMessages = $ws->getErrorMessages();
+				if(is_string($response) || sizeof($errorMessages) > 0){
+					$log->addGardeningIssueAboutValue(
+					$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
+					Title::newFromText($ws->getName()), 0);
+					$goon = false;
+				}
+					
+				if($goon) {
+					WSStorage::getDatabase()->storeCacheEntry(
+					$ws->getArticleID(),
+					$article["paramSetId"],
+					serialize($response),
+					wfTimeStamp(TS_MW, wfTime()),
+					wfTimeStamp(TS_MW, wfTime()));
+				}
+				$updatedEntries += 1;
+			}
 		}
 	}
 }
