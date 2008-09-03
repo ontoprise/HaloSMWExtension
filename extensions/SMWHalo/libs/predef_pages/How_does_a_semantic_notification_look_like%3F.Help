@@ -1,0 +1,13 @@
+{{Helppage
+|question=How does a semantic notification look like?
+|answer=The email shows the changed result set of a query. 
+|audience=End User
+|component=semantic MediaWiki
+|discourseState=Main:view
+}}
+
+
+Semantic notification e-mails are sent, when the result set of a query has changed. These changes are detected by the semantic notification bot. 
+Figure 1 shows an example of a notification e-mail. A color scheme in the email is used to reflect the kind of change.
+
+[[Image:REQ_SN_7_001.png|center|thumb|716px|Figure 1: An example of a notification e-mail.]]

@@ -1,0 +1,21 @@
+{{Helppage
+|question=How can bots be started from the command line?
+|answer= Use the script SMW_startBot.php.
+|audience=Administrator
+|component=semantic MediaWiki
+|discourseState=Help:view
+}}
+
+A gardening bot can now be started from the commandline, not only by using the GUI. This is especially useful if timer mechanisms of the OS should be used to start bots. (e.g. cron-jobs under linux)
+
+The usage is (assuming that php.exe is in your path variable)
+
+<pre>
+php SMW_startBot.php -b <name of bot> -p <parameters>
+</pre>
+where <parameters> is a quoted string of key/value pairs separated by comma.
+
+''Example'':
+<pre>
+php SMW_startBot.php -b smw_exportontologybot -p "GARD_EO_NAMESPACE=http://sementicwiki.org, GARD_EO_ONLYSCHEMA=1"
+</pre>

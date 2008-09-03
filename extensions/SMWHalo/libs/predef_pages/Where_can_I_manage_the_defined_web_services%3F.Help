@@ -1,0 +1,21 @@
+{{Helppage
+|question=Where can I manage the defined web services?
+|answer=Use the special page "WebService Repository". 
+|audience=Administrator
+|component=semantic MediaWiki
+|discourseState=Main:view
+}}
+
+=== Access to external data with Web Services ===
+The Halo Web Service extension allows you to call external Web Services and to integrate the results of those calls directly into your wiki articles. In order to use an external Web Service you first have to define a WWSD (Wiki Web Service Definition), which describes how this Web Service can be used. After that you can call this Web Service and display its result within a wiki article.
+
+=== Special:WebService Repository ===
+The special page ''Special:WebService Repository'' shown in Figure 1 gives you an overview of all WWSDs that you have defined in your wiki. In addition you can update all data you have integrated into your wiki articles with a Web Service call. Furthermore, you are able to confirm new WWSDs so that they can be used in wiki articles. In order to update and confirm Web Services you have to login as a Wiki Sysop.
+
+[[Image:web service repository docu.png|thumb|838px|center|'''Figure 1''': The special page Web Service repository.]]
+
+=== Updating the results of a Web Service call ===
+Results of Web Service calls are automatically updated according to the Display Policy and the Query Policy you have specified in your WWSD. In addition you are able to do manual updates on this special page. The second column in the table in Figure 1 shows you when the results of a Web Service were last updated. If a Web Service is used several times in the wiki, it is possible that some results have been updated earlier than others due to the Display Policy. That is the reason why for some Web Services an oldest and a latest update date is shown. If you decide to update the results of a Web Service, you have to press the update button and all results of this Web Service will be updated.
+
+=== Confirming a WWSD ===
+If a new WWSD is created or an existing one is edited, this Web Service can only be called one time. After that it is not allowed to use this Web Service again until a Wiki Sysop has reviewed and confirmed the WWSD. If you want to allow users of the wiki to use a Web Service you have to press the confirm button. After that users are allowed to use the Web Service as often as they like. WWSDs that already have been confirmed are shown with a "confirmed" label.

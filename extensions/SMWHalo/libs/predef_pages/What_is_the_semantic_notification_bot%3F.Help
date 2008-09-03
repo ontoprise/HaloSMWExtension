@@ -1,0 +1,31 @@
+{{Helppage
+|question=What is the semantic notification bot?
+|answer=The bot sends semantic notifications if the results of a predefined query have changed.
+|audience=Administrator
+|component=semantic MediaWiki
+|discourseState=Main:view
+}}
+
+
+==Introduction==
+The semantic notification bot
+* reads all notification requests of all users
+* executes the queries
+* compares the new results with the previous results
+* stores the latest results in the DB and
+* sends the notifications for changed semantic annotations
+
+The bot can be started as a scheduled task as described in the software documentation or manually via the page ''Special:Gardening''.
+
+==Starting the bot manually==
+
+To start the semantic notification bot manually, go to the page ''Special:Gardening'', click ''Semantic Notifications'' in the list of bots and finally click the button ''Run bot'' (Figure 1). The bot appears in the list of started bots.
+
+[[Image:REQ_SN_8_001.png|center|thumb|828px|Figure 1: Start the semantic notification bot manually.]]
+
+The status of the bot is displayed in the list of bot activities (see image below). 
+
+[[Image:REQ_SN_8_002.png|center|thumb|828px|The semantic notification bot appears in the list of bot activities.]]
+
+When the bot is finished, its log can be accessed by following the ''Log'' link. The log shows all processed semantic notifications (see image below).
+[[Image:REQ_SN_8_003.png|center|thumb|614px|The log of the bot's last execution.]]
