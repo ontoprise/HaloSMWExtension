@@ -408,7 +408,8 @@
  		foreach ($bot->getParameters() as $paramObject) {
 	 		// do not validate boolean parameters, since Prototype does not serialize them when deactivated
  			if ($paramObject instanceof GardeningParamBoolean) continue; 
- 			$ok = $paramObject->validate($paramValues[$paramObject->getID()]);
+ 			$valueToValidate = array_key_exists($paramObject->getID(), $paramValues) ? $paramValues[$paramObject->getID()] : NULL;
+            $ok = $paramObject->validate($valueToValidate);
  			if (gettype($ok) == 'string') { // error
  				$lastFailure = $paramObject->getID().":".$ok;
  			} 

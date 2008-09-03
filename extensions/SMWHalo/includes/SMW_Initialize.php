@@ -31,9 +31,6 @@ $smwgProcessedAnnotations = null;
 $wgCustomVariables = array('CURRENTUSER');
 global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 
-if ($smwgEnableWikiWebServices) {
-	require_once($smwgHaloIP. '/specials/SMWWebService/SMW_WebServiceManager.php');
-}
 if (!defined('SMW_NS_WEB_SERVICE') 
     && (!isset($smwgEnableWikiWebServices) || $smwgEnableWikiWebServices === false)) {
 	// Suppress warnings if web services are not enabled.
@@ -83,6 +80,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 	$wgAutoloadClasses['SMWFullSemanticData']            = $smwgHaloIP . '/includes/SMW_FullSemanticData.php';
     $wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
+    $wgAutoloadClasses['WebServiceManager'] = $smwgHaloIP. '/specials/SMWWebService/SMW_WebServiceManager.php';
     if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
 		SMWQueryProcessor::$formats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
 		SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter';
