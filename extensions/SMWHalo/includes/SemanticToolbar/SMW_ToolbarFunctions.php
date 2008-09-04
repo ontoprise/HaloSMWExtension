@@ -27,7 +27,8 @@ function smwf_tb_GetHelp($namespace, $action){
 	
 	$tb_store = SMWToolbarStorage::getToolbarStorage();
 	$helppages = $tb_store->getHelppages($namespace, $action);
-
+	$discourseState = $namespace . ":" . $action;
+	
 	foreach($helppages as $id){
 		$questions = $tb_store->getQuestions($id);
 		//get questions
@@ -36,7 +37,7 @@ function smwf_tb_GetHelp($namespace, $action){
 			$results = true;
 			$wikiTitle = Title::newFromText($questions[0], NS_HELP);
 	
-			if($description == wfMsg('smw_csh_newquestion')){
+			if($questions[2] == wfMsg('smw_csh_newquestion')){
 				$html .= '<a href="' . $wikiTitle->getFullURL();
 				$html .= '?action=edit" class="new';
 				$html .= '" ';
