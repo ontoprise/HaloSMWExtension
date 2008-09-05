@@ -70,7 +70,7 @@ function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
 function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
-	global $mediaWiki, $smwgEnableFlogicRules;
+	global $mediaWiki, $smwgRuleRewriter, $smwgEnableFlogicRules;
 
 	$smwgMasterGeneralStore = NULL;
     
