@@ -70,7 +70,7 @@ function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
 function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
-	global $mediaWiki;
+	global $mediaWiki, $smwgEnableFlogicRules;
 
 	$smwgMasterGeneralStore = NULL;
     
@@ -166,6 +166,13 @@ function smwgHaloSetupExtension() {
        $wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
        
     }
+    
+    // register flogic rule rewriter if flogic rules are enabled
+    if (isset($smwgEnableFlogicRules) && $smwgEnableFlogicRules === true) {
+    	require_once('rules/SMW_FlogicRuleRewriter.php');
+        $smwgRuleRewriter = new FlogicRuleRewriter();
+    }
+    
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 
