@@ -1298,7 +1298,7 @@ DefineWebServiceSpecial.prototype = {
 
 					openBracketPos = alias.lastIndexOf("[");
 					if (openBracketPos > 0) {
-						alias = alias.substr(0, openBracketPos - 1);
+						alias = alias.substr(0, openBracketPos);
 					}
 
 					var dotPos = alias.lastIndexOf(".");
@@ -1350,6 +1350,10 @@ DefineWebServiceSpecial.prototype = {
 				var openBracketPos = alias.lastIndexOf("(");
 				if (openBracketPos != -1) {
 					alias = alias.substr(0, openBracketPos - 1);
+				}
+				var openBracketPos = alias.lastIndexOf("[");
+				if (openBracketPos != -1) {
+					alias = alias.substr(0, openBracketPos);
 				}
 
 				if (alias.length == 0) {
@@ -1529,7 +1533,6 @@ DefineWebServiceSpecial.prototype = {
 							this.preparedPathSteps[i + m][r]["arrayIndex"] = (this.preparedPathSteps[i
 									+ m][r]["arrayIndex"] * 1) + 1;
 						}
-
 					} // both
 					else if (pathSteps[r].childNodes.length == 5) {
 						pathSteps[r].firstChild.id = "step3-expand-" + newI
@@ -1838,6 +1841,15 @@ DefineWebServiceSpecial.prototype = {
 
 						pathSteps[r].childNodes[3].firstChild.i = newI;
 						pathSteps[r].childNodes[3].firstChild.k = r;
+						
+						if (pathSteps[r].childNodes[3].firstChild.addA == null) {
+							var el = this.addRemoveResultPart
+									.bindAsEventListener(this);
+							Event.observe(
+									pathSteps[r].childNodes[3].firstChild,
+									"click", el);
+						}
+						
 						if (r <= k) {
 							pathSteps[r].childNodes[3].firstChild.src = wgScriptPath + "/extensions/SMWHalo/skins/webservices/delete.png";
 
@@ -1860,7 +1872,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].childNodes[2].id = "step4-arrayinput-"
 								+ newI + "-" + r;
 
-						pathSteps[r].childNodes[4].i = newI;
+						pathSteps[r].childNodes[4].firstChild.i = newI;
 						pathSteps[r].childNodes[4].firstChild.k = r;
 
 						if (pathSteps[r].childNodes[4].firstChild.addA == null) {
