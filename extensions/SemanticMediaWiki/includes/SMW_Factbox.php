@@ -281,19 +281,19 @@ class SMWFactbox {
 					if (strpos($pv, 'smwttinline') === FALSE) {
 						// No tooltip present yet => add our own tooltip
 						global $wgContLang;
-						/*$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
+						$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
 						$link .= '?i='.SMWFactbox::$semdata->getSubject()->getTitle()->getPrefixedDBkey();
 						$link .= '&p='.$property->getPrefixedDBkey();
 						$link .= '&v='.urlencode($propvalue->getWikiValue());
-						$link .= '&mode=property';*/ // needed for explanation link
+						$link .= '&mode=property'; // needed for explanation link
 
-//						$linker = new Linker();
-						//$l = $linker->makeKnownLink('xyz123', " ");
-						//$link = str_ireplace('xyz123', $link, $l);
+						$linker = new Linker();
+						$l = $linker->makeKnownLink('xyz123', " ");
+						$link = str_ireplace('xyz123', $link, $l);
 
 						$pv = '<span class="smwttinline"><u>' . $pv . '</u><span class="smwttcontent">' . $tooltip . '</span>'.
-						      '</span>&nbsp;';
-							  //.'<span class="smwexplanation">'.$link.'</span>';
+						      '</span>&nbsp;'
+							  .'<span class="smwexplanation">'.$link.'</span>';
 					}
 				}
 				$text .= $pv . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
