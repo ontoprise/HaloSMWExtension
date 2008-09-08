@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:tns="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" name="ExplanationEndpointService">
+ 
+  <message name="query">
+    <part name="arg0" type="xsd:string" />
+    <part name="arg1" type="xsd:string" />
+
+    <part name="arg2" type="xsd:string"></part>
+    <part name="arg3" type="xsd:string"></part>
+  </message>
+  <message name="explainFloQueryResponse">
+    <part name="return" type="xsd:string" />
+  </message>
+  <message name="MalformedQuery">
+    <part name="fault" element="xsd:string" />
+  </message>
+  <message name="QueryRequestRefused">
+    <part name="fault" element="xsd:string" />
+
+  </message>
+  <message name="getTripleStoreStatus">
+    <part name="arg0" type="xsd:string" />
+    <part name="arg1" type="xsd:string"></part>
+  </message>
+  <message name="explainQueryResponse">
+    <part name="return" type="xsd:string" />
+  </message>
+  <portType name="ExplanationEndpoint">
+    <operation name="explainFloQuery" parameterOrder="arg0 arg1">
+
+      <input message="tns:query" />
+      <output message="tns:explainFloQueryResponse" />
+      <fault name="MalformedQuery" message="tns:MalformedQuery" />
+      <fault name="QueryRequestRefused" message="tns:QueryRequestRefused" />
+    </operation>
+    <operation name="explainQuery" parameterOrder="arg0">
+      <input message="tns:getTripleStoreStatus" />
+      <output message="tns:explainQueryResponse" />
+    </operation>
+
+  </portType>
+  <binding name="ExplanationEndpointPortBinding"
+  	type="tns:ExplanationEndpoint">
+
+  	<soap:binding style="rpc"
+  		transport="http://schemas.xmlsoap.org/soap/http" />
+  	<operation name="explainFloQuery">
+
+  		<soap:operation
+  			soapAction="http://explanation.flogic.triplestore.smwplus.ontoprise.com/explainFloQuery" />
+  		<input>
+
+  			<soap:body use="literal"
+  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
+  		</input>
+  		<output>
+
+  			<soap:body use="literal"
+  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
+  		</output>
+  		<fault name="MalformedQuery">
+
+  			<soap:fault use="literal" name="MalformedQuery" />
+  		</fault>
+  		<fault name="QueryRequestRefused">
+
+  			<soap:fault use="literal" name="QueryRequestRefused" />
+  		</fault>
+  	</operation>
+
+  	<operation name="explainQuery">
+
+  		<soap:operation
+  			soapAction="http://explanation.flogic.triplestore.smwplus.ontoprise.com/explainQuery" />
+  		<input>
+
+  			<soap:body use="literal"
+  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
+  		</input>
+  		<output>
+
+  			<soap:body use="literal"
+  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
+  		</output>
+  	</operation>
+
+  </binding>
+  <service name="ExplanationEndpointService">
+    <port name="ExplanationEndpointPort" binding="tns:ExplanationEndpointPortBinding">
+      <soap:address location="http://{{explanation-endpoint}}/explain" />
+    </port>
+  </service>
+</definitions>
