@@ -124,7 +124,7 @@ PropertyChain.prototype = {
 		xml += '<property>'
 			+ '<subject>X1</subject>'
 			+ '<name>'
-			+ wgTitle
+			+ wgTitle.replace(/ /g, '_')
 			+ '</name>'
 			+ '<variable>'
 			+ "X" + (this.chainCount+1)
@@ -134,12 +134,13 @@ PropertyChain.prototype = {
 			  
 		xml += '<body>';
 		for (var i = 0; i < this.chainCount; i++) {
+			var prop = $("pc-chain-input-"+i).value.replace(/ /g, '_');
 			xml += '<property>'
 				+ '<subject>'
 				+ 'X'+(i+1)
 				+ '</subject>'
 				+ '<name>'
-				+ $("pc-chain-input-"+i).value
+				+ prop
 				+ '</name>'
 				+ '<variable>'
 				+ 'X'+(i+2)
