@@ -48,7 +48,7 @@ abstract class SMWAbstractRuleObject {
 		$_ruleobject = $ruleObject->rule;
 		// fetch rule
 		if ($_ruleobject !== NULL) {
-			if ($_ruleobject->rule->_error !== NULL) {
+			if (isset($_ruleobject->rule->_error)) {
 				echo $_ruleobject->rule->_error;
 				return;
 			} else {
