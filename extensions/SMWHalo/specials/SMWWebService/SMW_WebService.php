@@ -1525,7 +1525,7 @@ class WebService {
 							$tAPath .= "[].".substr($path, strlen($aPath.".".$pathStep));
 						}
 
-						if(!$aPaths[$tAPath]){
+						if(!array_key_exists($tAPath, $aPaths)){
 							$aPaths[$tAPath] = array();
 						}
 

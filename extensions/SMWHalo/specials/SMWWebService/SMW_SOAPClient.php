@@ -233,6 +233,7 @@ class SMWSoapClient implements IWebServiceClient {
 		}
 
 		$this->mTypes = array();
+		
 		foreach ($types as $t) {
 			if (preg_match("/\s*struct\s*(\b.*?)\s*\{([^}]*)\}/", $t, $matches)) {
 				$tname = $matches[1];
@@ -470,7 +471,7 @@ class SMWSoapClient implements IWebServiceClient {
 	 * @return boolean
 	 */
 	public function isExistingType($typeName){
-		if($this->mTypes[$typeName]){
+		if(array_key_exists($typeName, $this->mTypes)){
 			return(true);
 		}
 		return false;
