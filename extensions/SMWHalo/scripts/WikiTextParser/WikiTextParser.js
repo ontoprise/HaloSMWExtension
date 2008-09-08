@@ -809,27 +809,22 @@ WikiTextParser.prototype = {
 						break;
 					}
 					currentPos = findings[0]+1;
+					bracketStart = -1;
 					if (findings[1] == "[[") {
 						// opening bracket found
 						bracketStart = findings[0];
 						bracketCount++;
 						state = 1;
 					} else if (findings[1] == "<nowiki>") {
-						// <nowiki> found
-						bracketStart = -1;
 						state = 2;
 					} else if (findings[1] == "<pre>") {
-						// <pre> found
-						bracketStart = -1;
 						state = 5;
+					} else if (findings[1] == "<rule") {
+						state = 6;
 					} else if (findings[1] == "<ask") {
-						// <ask> found
-						bracketStart = -1;
 						askCount++;
 						state = 3;
 					} else if (findings[1] == "{{#ask:") {
-						// {{#ask: found
-						bracketStart = -1;
 						state = 4;
 					}
 					break;
