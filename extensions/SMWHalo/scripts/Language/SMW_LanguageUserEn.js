@@ -317,5 +317,10 @@ var wgUserLanguageStrings = {
 	'smw_ti_attributes'		: '<b>Available attributes in this data source</b><br/>The following attributes can be extracted from data source defined:',
 	'smw_ti_articles1'		: '<b>Articles to be imported from this data source</b><br/>The following ',
 	'smw_ti_noa'			: 'articleName',
-	'smw_ti_articles2'		: ' articles will be generated in the wiki:'
+	'smw_ti_articles2'		: ' articles will be generated in the wiki:',
+
+	'PC_enter_prop'		: 'Enter property',
+	'PC_headline'		: 'The value of the property $1 of $2 is $3, if',
+	'PC_DERIVE_BY'		: 'Derive property $1 by a property chaining rule'
+	
 };
