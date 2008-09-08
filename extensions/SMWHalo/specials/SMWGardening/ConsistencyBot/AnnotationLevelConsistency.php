@@ -495,8 +495,9 @@ class AnnotationLevelConsistency {
 			foreach($values as $v) {
 				if ($v->getUnit() != '') {
 					$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
-					if (count($type) == 0 || $type[0]->isBuiltIn()) continue;
-					$typeTitle = Title::newFromText($type[0]->getXSDValue(), SMW_NS_TYPE);
+					$firstType = reset($type); 
+					if (count($type) == 0 || $firstType->isBuiltIn()) continue;
+					$typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
 					$conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
 					$si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
 					$correct_unit = false;
@@ -535,8 +536,9 @@ class AnnotationLevelConsistency {
 
 	public function checkUnitsForProperty($property) {
 		$type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
-		if (count($type) == 0 || $type[0]->isBuiltIn()) return;
-		$typeTitle = Title::newFromText($type[0]->getXSDValue(), SMW_NS_TYPE);
+		$firstType = reset($type); 
+		if (count($type) == 0 || $firstType->isBuiltIn()) return;
+		$typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
 		$subjects = smwfGetStore()->getAllPropertySubjects($property);
 		foreach($subjects as $s) {
 			$values = smwfGetStore()->getPropertyValues($s->getTitle(), $property);
@@ -585,8 +587,8 @@ class AnnotationLevelConsistency {
 	 */
 	private function checkForMissingParams(array & $subjects, $property) {
 		$type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
-			
-		if (count($type) == 0 || $type[0]->isUnary()) return;
+		$firstType = reset($type);	
+		if (count($type) == 0 || $firstType->isUnary()) return;
 		foreach($subjects as $subject) {
 			$values = smwfGetStore()->getPropertyValues($subject, $property);
 			foreach($values as $v) {

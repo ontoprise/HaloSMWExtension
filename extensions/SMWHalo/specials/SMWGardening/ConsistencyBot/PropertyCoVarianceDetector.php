@@ -209,8 +209,8 @@ class PropertyCoVarianceDetector {
 	private function checkDomainAndRangeCovariance($p) {
 		$type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
 
-
-		if (count($type) == 0 || $type[0]->getXSDValue() == '_wpg' || $type[0]->getXSDValue() == '__nry') {
+        $firstType = reset($type);
+		if (count($type) == 0 || $firstType->getXSDValue() == '_wpg' || $firstType->getXSDValue() == '__nry') {
 			// default property (type wikipage), explicitly defined wikipage or nary property
 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
 
@@ -224,10 +224,10 @@ class PropertyCoVarianceDetector {
 				$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
 			}
 
-			if (count($type) > 0 && $type[0]->getXSDValue() == '__nry') {
+			if (count($type) > 0 && $firstType->getXSDValue() == '__nry') {
 				// n-ary relation
 				// only complain about missing range if it contains at least one Type:Page
-				if ($this->containsPageType($type[0]) && !$this->containsRange($domainRangeAnnotations)) {
+				if ($this->containsPageType($firstType) && !$this->containsRange($domainRangeAnnotations)) {
 					// no range
 					$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_DEFINED, $p);
 				}
