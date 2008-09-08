@@ -112,3 +112,10 @@ top:0px;
 left:0px;
 display:none;
 }
+
+#bodyContent span.smwexplanation a{
+ padding-right: 16px;
+ margin-right: 2px;
+ color: #888888;
+ background: url(lightbulb.png) center right no-repeat;
+}
