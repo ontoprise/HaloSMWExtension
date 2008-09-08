@@ -201,7 +201,6 @@ PropertyChain.prototype = {
 	
 	editChain : function(ruleAnnotation) {
 		var ruleText = ruleAnnotation.getRuleText();
-		alert(ruleText);
 		this.annotation = ruleAnnotation;
 		sajax_do_call('smwf_sr_ParseRule',
 		 	[this.ruleName, ruleText],
