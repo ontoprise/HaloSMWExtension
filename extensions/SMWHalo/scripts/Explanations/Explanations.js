@@ -20,7 +20,10 @@ trigger:function(){
 		}
 		// If all inputs set: trigger explanation
 		var path = wgArticlePath.replace(/\$1/g, wgPageName);
-		var url = wgServer + path + "?mode=property&i=" + ins + "&p=" + prop + "&v=" + val;
+		var concat = "?";
+		if (path.indexOf("?") != -1)
+			concat = "&";
+		var url = wgServer + path + concat + "mode=property&i=" + ins + "&p=" + prop + "&v=" + val;
 		window.location.href=url;
 	} else {
 		var ins = escape($("instance1").value.strip());
