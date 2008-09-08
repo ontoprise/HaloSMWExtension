@@ -78,10 +78,12 @@ var SMW_PRP_NO_EMPTY_SELECTION =
 	'smwCheckEmpty="empty' +
 	'? (color:red, showMessage:SELECTION_MUST_NOT_BE_EMPTY, valid:false) ' +
 	': (color:white, hideMessage, valid:true)"';
+
+var SMW_PRP_TYPE_CHANGED =
+	'smwChanged="(call:propToolBar.propTypeChanged)"';
 	
 
-var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_TYPE'), 'prp-add-type-lnk'],
-				 			 ['propToolBar.addRange()', gLanguage.getMessage('ADD_RANGE'), 'prp-add-range-lnk']];
+var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_TYPE'), 'prp-add-type-lnk']];
 		
 var PRP_APPLY_LINK =
 	[['propToolBar.apply()', 'Apply', 'prop-confirm', gLanguage.getMessage('INVALID_VALUES'), 'prop-invalid'],
@@ -98,9 +100,8 @@ initialize: function() {
 	this.toolbarContainer = null;
 	this.pendingIndicator = null;
 	this.isRelation = true;
-	this.isNAry = false;
-	this.numOfParams = 0;
-	this.prpNAry = 0;
+	this.numOfParams = 0;	// number of relation parameters (for n-aries) 
+	this.prpNAry = 0;		// DOM-ID-Index for relation parameters
 	this.hasDuplicates = false;
 },
 
@@ -203,12 +204,14 @@ createContent: function() {
 	if (type) {
 		type = type[0].getValue();
 		// remove the prefix "Type:" and lower the case of the first character
-		type = type.charAt(5).toLowerCase() + type.substring(6);
-	
+		var typeNs = gLanguage.getMessage('TYPE_NS');
+		var l = typeNs.length;
+		type = type.charAt(l).toLowerCase() + type.substring(l+1);
 	} else {
-		type = "page";
+		type = gLanguage.getMessage('TYPE_PAGE_WONS');
+		type = type.charAt(0).toLowerCase() + type.substring(1);
 	}
-	this.isRelation = (type.toLowerCase() == "page");
+	this.isRelation = (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase());
 	
 	if (domain == null) {
 		domain = "";
@@ -267,16 +270,59 @@ createContent: function() {
 	tb.setInputValue('prp-domain',domain);	                         
 	                         
 	tb.append(tb.createText('prp-domain-msg', '', '' , true));
+	
+	this.prpNAry = 0;
+	this.numOfParams = 0;
+	var types = this.wtp.getRelation(HAS_TYPE);
+	if (types) {
+		types = types[0];
+		types = types.getSplitValues();
+	} else {
+		// no type definition given => default is Type:Page
+		types = [gLanguage.getMessage("TYPE_PAGE")];
+	}
 
-	tb.append(tb.createInput('prp-range', gLanguage.getMessage('RANGE'), '', '',
-	                         SMW_PRP_CHECK_CATEGORY + 
-	                         SMW_PRP_VALID_CATEGORY_NAME +
-	                         SMW_PRP_CHECK_EMPTY_WIE + 
-	                         SMW_PRP_HINT_CATEGORY,
-	                         true));
-	tb.setInputValue('prp-range',range);	                         
-	                         
-	tb.append(tb.createText('prp-range-msg', '', '' , true));
+	var ranges = this.wtp.getRelation(RANGE_HINT);
+	
+	var rc = 0;
+	for (var i = 0, num = types.length; i < num; ++i) {
+		
+		var t = types[i];
+		if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
+			t = t.substring(gLanguage.getMessage('TYPE_NS').length);
+		}	
+		tb.append(this.createTypeSelector("prp-type-" + i, 
+		                                  "prpNaryType"+i, t,
+		                                  "propToolBar.removeType('prp-type-" + i + "')",
+		                                  SMW_PRP_NO_EMPTY_SELECTION+
+		                                  SMW_PRP_TYPE_CHANGED));
+		var r = "";
+		var isPage = false;
+		if (types[i] == gLanguage.getMessage('TYPE_PAGE')) {
+			if (ranges && rc < ranges.length) {
+				r = ranges[rc++].getSplitValues()[1];
+			}
+			// trim
+			r = r.replace(/^\s*(.*?)\s*$/,"$1");
+			
+			if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
+				r = r.substring(gLanguage.getMessage('CATEGORY_NS').length);
+			}
+			isPage = true;
+		}
+		tb.append(tb.createInput('prp-range-' + i, gLanguage.getMessage('RANGE'), 
+								 '', '',
+                     			 SMW_PRP_CHECK_CATEGORY + 
+                     			 SMW_PRP_VALID_CATEGORY_NAME +
+                     			 SMW_PRP_CHECK_EMPTY_WIE +
+	                 			 SMW_PRP_HINT_CATEGORY,
+                     			 isPage));
+		tb.setInputValue('prp-range-' + i, r);	                         
+		tb.append(tb.createText('prp-range-' + i + '-msg', '', '' , isPage));
+                    			 
+		this.prpNAry++;
+		this.numOfParams++;
+	}
 
 	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), '', '',
 	                         SMW_PRP_CHECK_PROPERTY +
@@ -288,10 +334,6 @@ createContent: function() {
 	                         
 	tb.append(tb.createText('prp-inverse-of-msg', '', '' , true));
 
-	tb.append(this.createTypeSelector("prp-attr-type", "prpSelection", false, 
-									  type, '', 
-									  'smwChanged="(call:propToolBar.attrTypeChanged,call:propToolBar.enableWidgets)"' +
-									  SMW_PRP_NO_EMPTY_SELECTION));
 	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), '', '', 
 	                         SMW_PRP_CHECK_MAX_CARD, true, false));
 	tb.setInputValue('prp-min-card',minCard);	                         
@@ -304,60 +346,6 @@ createContent: function() {
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
 
-	this.prpNAry = 0;
-	this.numOfParams = 0;
-	this.isNAry = false;
-	var types = this.wtp.getRelation(HAS_TYPE);
-	if (types) {
-		types = types[0];
-		this.isNAry = (type.indexOf(';') > 0);
-	}
-	
-	if (this.isNAry) {
-		types = types.getSplitValues();
-	
-		var ranges = this.wtp.getRelation(RANGE_HINT);
-		
-		var rc = 0;
-		for (var i = 0, num = types.length; i < num; ++i) {
-			if (types[i] == gLanguage.getMessage('TYPE_PAGE')) {
-				var r = "";
-				if (ranges && rc < ranges.length) {
-					r = ranges[rc++].getSplitValues()[1];
-				}
-				// trim
-				r = r.replace(/^\s*(.*?)\s*$/,"$1");
-				
-				if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
-					r = r.substring(9);
-				}
-				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), '', 
-				                         'propToolBar.removeRangeOrType(\'prp-nary-' + i + '\')',
-	                         			 SMW_PRP_CHECK_CATEGORY + 
-	                         			 SMW_PRP_VALID_CATEGORY_NAME +
-	                         			 SMW_PRP_CHECK_EMPTY +
-			                 			 SMW_PRP_HINT_CATEGORY,
-	                         			 true));
-				tb.setInputValue('prp-nary-' + i, r);	                         
-	                         			 
-				tb.append(tb.createText('prp-nary-' + i + '-msg', '', '' , true));
-				this.prpNAry++;
-				this.numOfParams++;
-			} else {
-				var t = types[i];
-				if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
-					t = t.substring(5);
-					tb.append(this.createTypeSelector("prp-nary-" + i, 
-					                                  "prpNaryType"+i, true, t,
-					                                  "propToolBar.removeRangeOrType('prp-nary-" + i + "')",
-					                                  SMW_PRP_NO_EMPTY_SELECTION));
-					
-					this.prpNAry++;
-					this.numOfParams++;
-				}
-			}
-		}
-	}
 	
 	tb.append(tb.createLink('prp-change-links', PRP_NARY_CHANGE_LINKS, '', true));
 	tb.append(tb.createLink('prp-links', PRP_APPLY_LINK, '', true));
@@ -488,15 +476,56 @@ hasAnnotationChanged: function(relations, categories) {
 	return changed;
 },
 
+propTypeChanged: function(target) {
+	var target = $(target);
+	
+	var typeIdx = target.id.substring(9);
+	var rangeId = "prp-range-"+typeIdx;
+	
+	var attrType = target[target.selectedIndex].text;
+	
+	var isPage = attrType == gLanguage.getMessage('TYPE_PAGE_WONS');
+	var tb = propToolBar.toolbarContainer;
+	tb.show(rangeId, isPage);
+	if (!isPage) {
+		tb.show(rangeId+'-msg', false);
+	}
+	
+	this.isRelation = (this.numOfParams == 1) ? isPage : false;  
+	gSTBEventActions.initialCheck($("properties-content-box"));
+	this.enableWidgets();
+
+},
+
+
 addType: function() {
-	var insertAfter = (this.numOfParams == 0) 
-						? 'prp-symmetric'
-						: "prp-nary-" + (this.prpNAry-1) + '-msg';
+	var tb = this.toolbarContainer;
+	var insertAfter = (this.prpNAry==0) ? 'prp-domain-msg' 
+							 : $('prp-range-'+(this.prpNAry-1)+'-msg') 
+							 	? 'prp-range-'+(this.prpNAry-1)+'-msg'
+							 	: 'prp-range-'+(this.prpNAry-1);
+	
+	
 	this.toolbarContainer.insert(insertAfter,
-			  this.createTypeSelector("prp-nary-" + this.prpNAry, 
-	                                  "prpNaryType"+this.prpNAry, true, "",
-	                                  "propToolBar.removeRangeOrType('prp-nary-" + this.prpNAry + "')",
-	                                  SMW_PRP_NO_EMPTY_SELECTION));
+			  this.createTypeSelector("prp-type-" + this.prpNAry, 
+	                                  "prpNaryType"+this.prpNAry, 
+	                                  gLanguage.getMessage('TYPE_PAGE_WONS'),
+	                                  "propToolBar.removeType('prp-type-" + this.prpNAry + "')",
+	                                  SMW_PRP_NO_EMPTY_SELECTION+
+	                                  SMW_PRP_TYPE_CHANGED));
+
+	tb.insert("prp-type-" + this.prpNAry,
+			  tb.createInput('prp-range-' + this.prpNAry, gLanguage.getMessage('RANGE'), 
+			  				 "", '',
+                 			 SMW_PRP_CHECK_CATEGORY +
+                 			 SMW_PRP_VALID_CATEGORY_NAME + 
+                 			 SMW_PRP_CHECK_EMPTY_WIE +
+                 			 SMW_PRP_HINT_CATEGORY,
+                 			 true));
+    tb.setInputValue('prp-range-' + this.prpNAry,'');
+	tb.insert('prp-range-' + this.prpNAry,
+	          tb.createText('prp-range-' + this.prpNAry + '-msg', '', '' , true));
+
 	this.prpNAry++;
 	this.numOfParams++;
 	this.toolbarContainer.finishCreation();
@@ -505,90 +534,35 @@ addType: function() {
 		
 },
 
-addRange: function() {
-	var insertAfter = (this.numOfParams == 0) 
-						? 'prp-symmetric'
-						: "prp-nary-" + (this.prpNAry-1) + '-msg';
-	var tb = this.toolbarContainer;
-	tb.insert(insertAfter,
-			  tb.createInput('prp-nary-' + this.prpNAry, gLanguage.getMessage('RANGE'), "", 
-	                         'propToolBar.removeRangeOrType(\'prp-nary-' + this.prpNAry + '\')',
-                 			 SMW_PRP_CHECK_CATEGORY +
-                 			 SMW_PRP_VALID_CATEGORY_NAME + 
-                 			 SMW_PRP_CHECK_EMPTY +
-                 			 SMW_PRP_HINT_CATEGORY,
-                 			 true));
-    tb.setInputValue('prp-nary-' + this.prpNAry,'');
-	tb.insert('prp-nary-' + this.prpNAry,
-	          tb.createText('prp-nary-' + this.prpNAry + '-msg', '', '' , true));
-
-	this.prpNAry++;
-	this.numOfParams++;
-	this.toolbarContainer.finishCreation();
-	this.enableWidgets();
-	gSTBEventActions.initialCheck($("properties-content-box"));
-	
-},
-
-removeRangeOrType: function(domID) {
+removeType: function(domID) {
 	
 	this.toolbarContainer.remove(domID)
 	this.toolbarContainer.remove(domID+'-msg');
+	domID = domID.replace(/type/, 'range');
+	this.toolbarContainer.remove(domID)
+	this.toolbarContainer.remove(domID+'-msg');
+	
 	this.numOfParams--;
-	if (domID == 'prp-nary-'+(this.prpNAry-1)) {
+	if (domID == 'prp-range-'+(this.prpNAry-1)) {
 		while (this.prpNAry > 0) {
 			--this.prpNAry;
-			if ($('prp-nary-'+ this.prpNAry)) {
+			if ($('prp-type-'+ this.prpNAry)) {
 				this.prpNAry++;
 				break;
 			}
 		}
 	}
-	if (this.numOfParams == 0) {
-		this.prpNAry = 0;
-		this.isRelation = true;
-		this.isNAry = false;
-		var selector = $('prp-attr-type');
-		var options = selector.options;
-		for (var i = 0; i < options.length; i++) {
-			if (options[i].value.toLowerCase() == 'page') {
-				selector.selectedIndex = i;
-				break;
-			}
-		}
-		this.enableWidgets();
+	if (this.numOfParams == 1) {
+		var selector = $('prp-type-'+(this.prpNAry*1-1));
+		var type = selector[selector.selectedIndex].text;
+		this.isRelation = type == gLanguage.getMessage('TYPE_PAGE_WONS');
 	}
 	this.toolbarContainer.finishCreation();
 	this.enableWidgets();
 	gSTBEventActions.initialCheck($("properties-content-box"));
 },
 
-/**
- * This method is called, when the type of the property has been changed. It
- * sets the flag <isNAry>.
- * @param string target
- * 		ID of the element, on which the change event occurred.
- */
-attrTypeChanged: function(target) {
-	target = $(target);
-	if (target.id == 'prp-attr-type') {
-		var selector = $('prp-attr-type');
-		var attrType = selector[selector.selectedIndex].text;
-		
-		this.isNAry = attrType == 'n-ary';
-		this.isRelation = attrType.toLowerCase() == 'page';
-		
-		if (this.isNAry && this.numOfParams == 0) {
-			gSTBEventActions.performSingleAction('showmessage', 'NARY_ADD_TYPES', $('prp-attr-type'));
-			gSTBEventActions.performSingleAction('valid', 'false', $('prp-attr-type'));
-		} else {
-			gSTBEventActions.performSingleAction('hidemessage', '', $('prp-attr-type'));
-		}
-		
-	}
-},
-
-createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes) {
+createTypeSelector: function(id, name, type, deleteAction, attributes) {
 	var closure = function() {
 		
 		var origTypeString = type;
@@ -601,11 +575,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 		var typeFound = false;
 		var builtinTypes = gDataTypes.getBuiltinTypes();
 		var userTypes = gDataTypes.getUserDefinedTypes();
-		var allTypes = builtinTypes.concat([""],
-											onlyTypes ? [] 
-											          : [gLanguage.getMessage('PAGE_TYPE'), 
-											             gLanguage.getMessage('NARY_TYPE'),""],
-											userTypes);
+		var allTypes = builtinTypes.concat([""], userTypes);
 		
 		var selection = $(id);
 		if (selection) {
@@ -630,7 +600,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 				}
 			}
 		}
-		if (type && type != gLanguage.getMessage('NARY_TYPE') && !typeFound) {
+		if (type && !typeFound) {
 			if (selection) {
 				selection.options[i] = new Option(origTypeString, origTypeString, true, true);
 			}
@@ -645,6 +615,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 		propToolBar.toolbarContainer.finishCreation();
 		return [allTypes, selIdx];
 	};
+	
 	var sel = [[gLanguage.getMessage('RETRIEVING_DATATYPES')],0];
 	if (gDataTypes.getUserDefinedTypes() == null 
 	    || gDataTypes.getBuiltinTypes() == null) {
@@ -668,48 +639,15 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 
 enableWidgets: function() {
 	var tb = propToolBar.toolbarContainer;
-	if (propToolBar.isRelation && !propToolBar.isNAry) {
-		tb.show('prp-range', true);
-//		tb.show('prp-range-msg', true);
-		tb.show("prp-inverse-of", true);
-		tb.show("prp-transitive", true);
-		tb.show("prp-symmetric", true);
-	} else {
-		tb.show('prp-range', false);
-		tb.show('prp-range-msg', false);
-		tb.show("prp-inverse-of", false);
-		tb.show("prp-transitive", false);
-		tb.show("prp-symmetric", false);
-	}
+
+	var isnary = propToolBar.numOfParams > 1;
 	
-	if (propToolBar.isNAry) {
-		$('prp-add-type-lnk').show();
-		$('prp-add-range-lnk').show();
-		
-		tb.show('prp-min-card', false);
-		tb.show('prp-max-card', false);
-	} else {
-		$('prp-add-type-lnk').hide();
-		$('prp-add-range-lnk').hide();
-		
-		tb.show('prp-min-card', true);
-		tb.show('prp-max-card', true);
-	}
+	tb.show("prp-inverse-of", propToolBar.isRelation && !isnary);
+	tb.show("prp-transitive", propToolBar.isRelation && !isnary);
+	tb.show("prp-symmetric", propToolBar.isRelation && !isnary);
 	
-	for (var i = 0; i < propToolBar.prpNAry; i++) {
-		var obj = 'prp-nary-'+i;
-		var msg = 'prp-nary-'+i+'-msg';
-		if (obj) {
-			if (propToolBar.isNAry) {
-				tb.show(obj, true);
-//				tb.show(msg, true);
-			} else {
-				tb.show(obj, false);
-				tb.show(msg, false);
-			}	
-		}
-	}
-	
+	tb.show('prp-min-card', !isnary);
+	tb.show('prp-max-card', !isnary);
 },
 
 cancel: function(){
@@ -722,9 +660,6 @@ cancel: function(){
 apply: function() {
 	this.wtp.initialize();
 	var domain   = $("prp-domain").value;
-	var range    = this.isRelation ? $("prp-range").value : null;
-	var selector = $('prp-attr-type');
-	var attrType = selector[selector.selectedIndex].text;
 	var inverse  = this.isRelation ? $("prp-inverse-of").value : null;
 	var minCard  = this.isNAry ? null : $("prp-min-card").value;
 	var maxCard  = this.isNAry ? null : $("prp-max-card").value;
@@ -732,17 +667,11 @@ apply: function() {
 	var symmetric  = this.isRelation ? $("prp-symmetric") : null;
 
 	domain   = (domain   != null && domain   != "") ? gLanguage.getMessage('CATEGORY_NS')+domain : null;
-	range    = (range    != null && range    != "") ? gLanguage.getMessage('CATEGORY_NS')+range : null;
-	attrType = (attrType != null && attrType != "") ? gLanguage.getMessage('TYPE_NS')+attrType : null;
 	inverse  = (inverse  != null && inverse  != "") ? gLanguage.getMessage('PROPERTY_NS')+inverse : null;
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
-	var domainRange = ((domain == null) ? "" : domain) + 
-	                  ((range == null)  ? "" : "; "+range)
-
 	var domainRangeAnno = this.wtp.getRelation(DOMAIN_HINT);
-	var attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
 	var maxCardAnno = this.wtp.getRelation(MAX_CARDINALITY);
 	var minCardAnno = this.wtp.getRelation(MIN_CARDINALITY);
 	var inverseAnno = this.wtp.getRelation(INVERSE_OF);
@@ -752,26 +681,6 @@ apply: function() {
 	
 	
 	// change existing annotations
-	if (domainRangeAnno != null) {
-		if (domain == null && range == null) {
-			domainRangeAnno[0].remove("");
-		} else {
-			domainRangeAnno[0].changeValue(domainRange);
-		}
-		if (!this.isNAry) {
-			// not an n-ary => remove all further range hints
-			for (var i = 1, num = domainRangeAnno.length; i < num; i++) {
-				domainRangeAnno[i].remove("");
-			}
-		}
-	} 
-	if (attrTypeAnno != null) {
-		if (attrType == null) {
-			attrTypeAnno[0].remove("");
-		} else {
-			attrTypeAnno[0].changeValue(attrType);
-		}
-	} 
 	if (maxCardAnno != null) {
 		if (maxCard == null) {
 			maxCardAnno[0].remove("");
@@ -801,12 +710,6 @@ apply: function() {
 	}
 	
 	// append new annotations
-	if (domainRangeAnno == null && domainRange != null && domainRange != '') {
-		this.wtp.addRelation(DOMAIN_HINT, domainRange, null, true);
-	} 
-	if (attrTypeAnno == null && attrType != null) {
-		this.wtp.addRelation(HAS_TYPE, attrType, null, true);
-	}
 	if (maxCardAnno == null && maxCard != null) {
 		this.wtp.addRelation(MAX_CARDINALITY, maxCard, null, true);
 	}
@@ -823,45 +726,47 @@ apply: function() {
 		this.wtp.addCategory(SYMMETRICAL_RELATION, true);
 	}
 	
-	if (this.isNAry) {
-		// Handle the definition of n-ary relations
-		// First, remove all range hints
-		rangeAnno = this.wtp.getRelation(RANGE_HINT);
-		if (rangeAnno) {
-			for (var i = 0, num = rangeAnno.length; i < num; i++) {
-				rangeAnno[i].remove("");
+	// Handle the definition of (n-ary) relations
+	// First, remove all domain/range hints
+	rangeAnno = this.wtp.getRelation(RANGE_HINT);
+	if (rangeAnno) {
+		for (var i = 0, num = rangeAnno.length; i < num; i++) {
+			rangeAnno[i].remove("");
+		}
+	}
+	
+	// Create new domain/range hints.
+	var typeString = "";
+	for (var i = 0; i < this.prpNAry; i++) {
+		var obj = $('prp-type-'+i);
+		if (obj) {
+			var type = obj[obj.selectedIndex].text;
+			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase()) {
+				// Page found
+				var range = $('prp-range-'+i).value;
+				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
+				r = ((domain == null) ? "" : domain) + "; " + r;
+				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
+				this.wtp.addRelation(RANGE_HINT, r, null, true);
+			} else {
+				// type is not Page
+				typeString += gLanguage.getMessage('TYPE_NS') + type + ";";
 			}
 		}
-		
-		// Create new range hints.
-		var typeString = "";
-		for (var i = 0; i < this.prpNAry; i++) {
-			var obj = $('prp-nary-'+i);
-			if (obj) {
-				if (obj.tagName && obj.tagName == "SELECT") {
-					// Type found
-					typeString += gLanguage.getMessage('TYPE_NS') + obj.value + ";";
-				} else {
-					// Page found
-					var r = gLanguage.getMessage('CATEGORY_NS')+obj.value;
-					r = ((domain == null) ? "" : domain) + "; " + r;
-					typeString += gLanguage.getMessage('TYPE_PAGE')+';';
-					this.wtp.addRelation(RANGE_HINT, r, null, true);
-				}
-			}
+	}
+	
+	// add the (n-ary) type definition
+	attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
+	if (typeString != "") {
+		// remove final semi-colon
+		typeString = typeString.substring(0, typeString.length-1);
+		if (attrTypeAnno != null) {
+			attrTypeAnno[0].changeValue(typeString);
+		} else {			
+			this.wtp.addRelation(HAS_TYPE, typeString, null, true);
 		}
-		
-		// add the n-ary type definition
-		if (typeString != "") {
-			// remove final semi-colon
-			typeString = typeString.substring(0, typeString.length-1);
-			attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
-			if (attrTypeAnno != null) {
-				attrTypeAnno[0].changeValue(typeString);
-			} else {			
-				this.wtp.addRelation(HAS_TYPE, typeString, null, true);
-			}
-		}
+	} else {
+		attrTypeAnno[0].remove("");
 	}
 	
 	this.createContent();

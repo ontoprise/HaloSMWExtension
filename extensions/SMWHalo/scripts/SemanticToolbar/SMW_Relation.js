@@ -97,7 +97,9 @@ var SMW_REL_HINT_PROPERTY =
 
 var SMW_REL_HINT_INSTANCE =
 	'typeHint="'+ SMW_INSTANCE_NS + '" position="fixed"';
-	
+
+var SMW_REL_TYPE_CHANGED =
+	'smwChanged="(call:relToolBar.relTypeChanged)"';
 
 RelationToolBar.prototype = {
 
@@ -635,18 +637,10 @@ newRelation: function() {
 	                         true));
 	tb.setInputValue('rel-domain', domain);	                         
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
-	
-	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', 
-							 "relToolBar.removeRangeOrType('rel-range-0')", 
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
-	                         true));
-	tb.setInputValue('rel-range-0', '');
-	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
-	
-	var links = [['relToolBar.addRangeInput()',gLanguage.getMessage('ADD_RANGE')],
-			     ['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]
-			    ];
+
+	this.addTypeInput();
+		
+	var links = [['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]];
 	tb.append(tb.createLink('rel-add-links', links, '', true));		
 			
 	links = [['relToolBar.createNewRelation()',
@@ -665,30 +659,6 @@ newRelation: function() {
 
 },
 
-addRangeInput:function() {
-	var i = 0;
-	while($('rel-range-'+i) != null) {
-		i++;
-	}
-	var tb = this.toolbarContainer;
-	var insertAfter = (i==0) ? 'rel-domain-msg' 
-							 : $('rel-range-'+(i-1)+'-msg') 
-							 	? 'rel-range-'+(i-1)+'-msg'
-							 	: 'rel-range-'+(i-1);
-	
-	tb.insert(insertAfter,
-			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', 
-                             "relToolBar.removeRangeOrType('rel-range-"+i+"')",
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
-	                         true));
-	tb.setInputValue('rel-range-'+i, '');
-	tb.insert('rel-range-'+i,
-	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
-	tb.finishCreation();
-	gSTBEventActions.initialCheck($("relation-content-box"));
-},
-
 addTypeInput:function() {
 	var i = 0;
 	while($('rel-range-'+i) != null) {
@@ -700,15 +670,29 @@ addTypeInput:function() {
 							 	? 'rel-range-'+(i-1)+'-msg'
 							 	: 'rel-range-'+(i-1);
 	
+	var datatypes = this.getDatatypeOptions();
+	var page = gLanguage.getMessage('TYPE_PAGE_WONS');
+	var pIdx = datatypes.indexOf(page);
 	tb.insert(insertAfter,
-			  tb.createDropDown('rel-range-'+i, gLanguage.getMessage('TYPE'), 
+			  tb.createDropDown('rel-type-'+i, gLanguage.getMessage('TYPE'), 
 	                            this.getDatatypeOptions(), 
-	                            "relToolBar.removeRangeOrType('rel-range-"+i+"')",
-	                            0, 
-	                            'isAttributeType="true" ' + 
-	                            SMW_REL_NO_EMPTY_SELECTION, true));
+	                            "relToolBar.removeType('rel-type-"+i+"')",
+	                            pIdx, 
+	                            SMW_REL_NO_EMPTY_SELECTION +
+	                            SMW_REL_TYPE_CHANGED, true));
+	var msgID = 'rel-type-'+i+'-msg';                           
+	tb.insert('rel-type-'+i,
+	          tb.createText(msgID, gLanguage.getMessage('ENTER_TYPE'), '' , true));
+
+	tb.insert(msgID,
+			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', '',
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
+	                         true));
+	tb.setInputValue('rel-range-'+i, '');
 	tb.insert('rel-range-'+i,
-	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_TYPE'), '' , true));
+	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
+	          
 	tb.finishCreation();
 	gSTBEventActions.initialCheck($("relation-content-box"));
 },
@@ -721,20 +705,25 @@ getDatatypeOptions: function() {
 	return options;
 },
 
-removeRangeOrType: function(id) {
-	var rangeOrTypeInput = $(id);
-	if (rangeOrTypeInput != null) {
+removeType: function(id) {
+	var typeInput = $(id);
+	if (typeInput != null) {
 		var tb = this.toolbarContainer;
-		var rowsAfterRemoved = rangeOrTypeInput.parentNode.parentNode.nextSibling;
+		var rowsAfterRemoved = typeInput.parentNode.parentNode.nextSibling;
 
 		// get ID of range input to be removed.
-		var idOfValueInput = rangeOrTypeInput.getAttribute('id');
+		var idOfValueInput = typeInput.getAttribute('id');
 		var i = parseInt(idOfValueInput.substr(idOfValueInput.length-1, idOfValueInput.length));
 
 		// remove it
 		tb.remove(id);
 		if ($(id+'-msg')) {
 			tb.remove(id+'-msg');
+		}
+		var rid = id.replace(/type/, 'range');
+		tb.remove(rid);
+		if ($(rid+'-msg')) {
+			tb.remove(rid+'-msg');
 		}
 		
 		// remove gap from IDs
@@ -753,12 +742,37 @@ removeRangeOrType: function(id) {
 			if ((obj = $(id + i + '-msg'))) {
 				tb.changeID(obj, id + (i-1) + '-msg');
 			}
+			var rid = id.replace(/type/, 'range');
+			obj = $(rid + i);
+			tb.changeID(obj, rid + (i-1));
+			if ((obj = $(rid + i + '-msg'))) {
+				tb.changeID(obj, rid + (i-1) + '-msg');
+			}
+			
 		}
 		tb.finishCreation();
 		gSTBEventActions.initialCheck($("relation-content-box"));
 
 	}
 
+},
+
+relTypeChanged: function(target) {
+	var target = $(target);
+	
+	var typeIdx = target.id.substring(9);
+	var rangeId = "rel-range-"+typeIdx;
+	
+	var attrType = target[target.selectedIndex].text;
+	
+	var isPage = attrType == gLanguage.getMessage('TYPE_PAGE_WONS');
+	var tb = relToolBar.toolbarContainer;
+	tb.show(rangeId, isPage);
+	if (!isPage) {
+		tb.show(rangeId+'-msg', false);
+	}
+	gSTBEventActions.initialCheck($("relation-content-box"));
+	
 },
 
 createNewRelation: function() {
@@ -773,10 +787,10 @@ createNewRelation: function() {
 
 	// get all ranges and types
 	var rangesAndTypes = new Array();
-	while($('rel-range-'+i) != null) {
-		if ($('rel-range-'+i).getAttribute("isAttributeType") == "true") {
-			var obj = $('rel-range-'+i);
-			var value = obj.options[obj.selectedIndex].text;
+	while($('rel-type-'+i) != null) {
+		var obj = $('rel-type-'+i);
+		var value = obj.options[obj.selectedIndex].text;
+		if (value != gLanguage.getMessage('TYPE_PAGE_WONS')) {
 			rangesAndTypes.push(gLanguage.getMessage('TYPE_NS')+value); // add as type
 		} else {
 			var range = $('rel-range-'+i).value;
@@ -789,7 +803,7 @@ createNewRelation: function() {
 	/*STARTLOG*/
 	var signature = "";
 	for (i = 0; i < rangesAndTypes.length; i++) {
-		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : "Type:Page";
+		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : gLanguage.getMessage('TYPE_PAGE');
 		if (i < rangesAndTypes.length-1) {
 			signature += ', ';
 		}

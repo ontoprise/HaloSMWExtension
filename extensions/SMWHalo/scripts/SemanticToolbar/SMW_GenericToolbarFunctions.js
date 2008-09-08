@@ -489,10 +489,12 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		var elem;
 		for (var i = 0, len = children.length; i < len; ++i) {
 			elem = children[i];
+			if (!elem.visible()) {
+				continue;
+			}
 			var oldValue = elem.getAttribute("smwOldValue");
 			if (!oldValue || oldValue != elem.value) {
 				// content if input field did change => perform check
-
 				if (this.checkIfEmpty(elem) == false
 					&& this.handleValidValue(elem)) {
 					this.handleCheck(elem);
@@ -687,6 +689,18 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			var allValid = true;
 			for (var i = 0, len = children.length; i < len; ++i) {
 				var elem = children[i];
+				var e = elem;
+				var visible = true;
+				while (e != parentDiv) {
+					if (!e.visible()) {
+						visible = false;
+						break;
+					}
+					e = e.up();
+				}
+				if (visible == false) {
+					continue;
+				}
 				var valid = elem.getAttribute("smwValid");
 				if (valid) {
 					if (valid == "false") {
