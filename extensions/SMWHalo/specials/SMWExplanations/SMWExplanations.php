@@ -89,7 +89,7 @@ IMG;
 		<td style="display:$pdisplay" id="propertyrow">
 		$article: <input id="instance" class="wickEnabled" type="text" value="$i" typehint="0"/>&nbsp;&nbsp;
 		$property: <input id="property" class="wickEnabled" type="text" value="$p" typehint="102"/>&nbsp;&nbsp;
-		$value: <input id="value" class="wickEnabled" type="text" value="$v" $pdisabled/>&nbsp;&nbsp;
+		$value: <input id="value" class="wickEnabled" type="text" value="$v"/>&nbsp;&nbsp;
 		$imgstring<br/></td></tr><tr><td>
 		<input type="radio" name="SelectExplanationType" value="Explain category assignment" onclick="explanation.radioChecked()" id="ccheck" $cchecked/></td><td>$explainCat&nbsp;&nbsp;&nbsp;</td>
 		<td style="display:$cdisplay" id="categoryrow">
@@ -186,7 +186,7 @@ END;
 			$_client = new SoapClient("$wgServer$wgScript?action=get_explanation");          
 	 		$explanation = $_client->explainFloQuery($smwgNamespace, $query);
 			
-	 		if($expanation == "-1"){
+	 		if($explanation == "-1"){
 	 			$explanation = "No explanation could be provided. Please check if all inputs are correct.";
 	 		}
 			return $explanation;
