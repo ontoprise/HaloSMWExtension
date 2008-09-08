@@ -61,22 +61,22 @@ abstract class SMWAbstractRuleObject {
 	public function setRule($rule) {
 
 		// set axiomId
-		if ($rule->_axiomId !== NULL) {
+		if (isset($rule->_axiomId)) {
 			$this->_axiomId = $rule->_axiomId;
 		}
 
 		// set ontologyId
-		if ($rule->_ontologyId !== NULL) {
+		if (isset($rule->_ontologyId)) {
 			$this->_ontologyId = $rule->_ontologyId;
 		}
 
 		// fetch head of rule
-		if ($rule->head !== NULL) {
+		if (isset($rule->head)) {
 			$this->_head = $this->setLiteral($rule->head);
 		}
 
 		// fetch body of rule
-		if ($rule->body !== NULL) {
+		if (isset($rule->body)) {
 			$bodyargs = array();
 			if (!is_array($rule->body)) {
 				$rule->body = array($rule->body);
@@ -88,7 +88,7 @@ abstract class SMWAbstractRuleObject {
 		}
 
 		// fetch bound variables
-		if ($rule->boundVariables !== NULL) {
+		if (isset($rule->boundVariables)) {
 			$boundvars = array();
 			foreach ($rule->boundVariables as $boundval) {
 				array_push($boundvars, $this->setVariable($boundval));
@@ -97,7 +97,7 @@ abstract class SMWAbstractRuleObject {
 		}
 
 		// fetch free variables
-		if ($rule->freevariables !== NULL) {
+		if (isset($rule->freevariables)) {
 			$this->_freeVars = $this->setVariable($rule->freevariables);
 		}
 	}
