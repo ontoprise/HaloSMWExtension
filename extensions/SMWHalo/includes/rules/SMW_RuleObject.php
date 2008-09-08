@@ -332,7 +332,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		global $smwgNamespace; 
 		$flogic = "";
 		$count = 0;
-		for ($x = 0; $x <= sizeof($stack); $x++)
+		for ($x = 0; $x < sizeof($stack); $x++)
 		{
 			// fetch type token
 		    $typetoken = $stack[$x];
