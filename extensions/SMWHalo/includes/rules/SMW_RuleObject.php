@@ -56,7 +56,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						if ($bndvars[$j][1] == "const" && $bndvars[$j][0] == $formula[$i]) {
 							$formula[$i] = $bndvars[$j][2];
 							$element = array_search($bndvars[$j][0], $variables);
-							if ($element) {
+							if ($element !== FALSE) {
 								unset($variables[$element]);						
 							}
 						}
