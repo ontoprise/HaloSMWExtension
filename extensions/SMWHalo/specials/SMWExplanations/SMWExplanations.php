@@ -107,15 +107,8 @@ END;
 		$isRelation = true;
 		// Check if its a page property (relation) or attribute
 		if($propertyTitle->exists()){
-			$p = $propertyTitle->getDBkey();
-			$dbr =& wfGetDB( DB_SLAVE );
-			$smw_specialprops = $dbr->tableName('smw_specialprops');
-			$res = $dbr->query('SELECT * FROM ' . $smw_specialprops . ' WHERE subject_title = "'. $p .'" AND property_id = 1');
-			while ( $row = $dbr->fetchObject( $res ) ) {
-				if ($row->value_string != "_wpg")
-					$isRelation = false;
-			}
-			$dbr->freeResult( $res );
+			$typearr = smwfGetStore()->getSpecialValues($propertyTitle, SMW_SP_HAS_TYPE);
+			$isRelation = ((count($typearr) == 1) && $typearr[0]->getXSDValue() == "_wpg");
 		}
 
 		$p = str_replace(" ", "_", $p);
