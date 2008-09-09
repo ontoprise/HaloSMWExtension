@@ -411,13 +411,9 @@ class WebService {
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 
-
+	
 		}
-
-		$this->createWSClient();
-		$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
-		$this->initializeCallParameters($specParameters);
-
+		
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
@@ -429,6 +425,10 @@ class WebService {
 					$response = unserialize($cacheResult["result"]);
 				}
 			} else {
+				$this->createWSClient();
+				$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
+				$this->initializeCallParameters($specParameters);
+				
 				$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 					
 				if(is_string($response)){
@@ -641,7 +641,7 @@ class WebService {
 		}
 		// collect the interesting parts of the result
 		foreach ($paths as $p) {
-			$result = array_merge($result, $this->getResultParts($response, $p, $selects));
+			$result = array_merge($result, $this->getResultParts($response, $p));
 		}
 		return $result;
 	}

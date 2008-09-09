@@ -37,13 +37,18 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
-// Add a hook to initialise the magic word for the {{ ws:}} Syntax Parser
+ 
+//Add a hook to initialise the magic word for the {{ ws:}} Syntax Parser
 $wgHooks['LanguageGetMagic'][] = 'webServiceUsage_Magic';
 
 // used to delete unused parameter sets that are no longer referred
 // and web services that are no longer used in this article.
 $wgHooks['ArticleSaveComplete'][] = 'detectEditedWSUsages';
 $wgHooks['ArticleDelete'][] = 'detectDeletedWSUsages';
+
+// to handle action=purge
+$wgHooks['OutputPageBeforeHTML'][] = 'handlePurge';
+
 
 // necessary for finding possible ws-property-pairs before they are processed
 // by the responsible parsers
@@ -128,7 +133,9 @@ function webServiceUsage_Render( &$parser) {
 
 	smwfRequireHeadItem(SMW_HEADER_STYLE);
 
-	global $wgsmwRememberedWSUsages;
+	global $wgsmwRememberedWSUsages, $purgePage;
+	$purgePage = true;
+	
 	$parameters = func_get_args();
 
 	// the name of the ws must be the first parameter of the parser function
@@ -177,7 +184,6 @@ function webServiceUsage_Render( &$parser) {
 		}
 		
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
-		
 		
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
@@ -246,7 +252,6 @@ function formatWSResult($wsFormat, $wsResults = null){
 		if(is_string($wsResult)){
 		} else if(is_array($wsResult)){
 			foreach($wsResult as $subKey => $subWsResult){
-				$k++;
 				if(is_string($subWsResult) || is_numeric($subWsResult)){
 				} else if($subWsResult != ""){
 					$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true).$subKey;
@@ -297,6 +302,8 @@ function detectDeletedWSUsages(&$article, &$user, $reason){
  *
  */
 function detectEditedWSUsages(&$article, &$user, &$text){
+//function detectEditedWSUsages(&$parser, &$text){
+	//$articleId  = $parser->getTitle()->getArticleID();
 	$articleId  = $article->getID();
 	if($articleId != null){
 		detectRemovedWebServiceUsages($articleId);
@@ -304,6 +311,17 @@ function detectEditedWSUsages(&$article, &$user, &$text){
 	return true;
 }
 
+/*
+ * save properties in the factbox if action=purge
+ */
+function handlePurge(&$out, &$text){
+	global $purgePage;
+	if($purgePage){
+		SMWFactbox::storeData(true);
+	}
+	$purgePage = false; 
+	return true;
+}
 
 /**
  * this function detects parameter sets that are no longer referred and
@@ -315,7 +333,8 @@ function detectEditedWSUsages(&$article, &$user, &$text){
  */
 function detectRemovedWebServiceUsages($articleId){
 	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
-	global $wgsmwRememberedWSUsages;
+	global $wgsmwRememberedWSUsages, $purgePage;
+	$purgePage = false;
 	$rememberedWSUsages = $wgsmwRememberedWSUsages;
 
 	foreach($oldWSUsages as $oldWSUsage){

@@ -42,7 +42,7 @@ class WebServiceCache {
 	 * @param string $parameterSetId
 	 */
 	public static function removeWSParameterPair($webServiceId, $parameterSetId){
-		if(sizeof(WSStorage::getDatabase()->getUsedWSParameterSetPairs($wsPageId, $parameterSetId)) == 0){
+		if(sizeof(WSStorage::getDatabase()->getUsedWSParameterSetPairs($webServiceId, $parameterSetId)) == 0){
 			$wsResult = WSStorage::getDatabase()->removeWSEntryFromCache($webServiceId, $parameterSetId);
 		}
 	}
