@@ -106,6 +106,7 @@ END;
 
 		$isRelation = true;
 		// Check if its a page property (relation) or attribute
+		$p = $propertyTitle->getDBkey();
 		if($propertyTitle->exists()){
 			$typearr = smwfGetStore()->getSpecialValues($propertyTitle, SMW_SP_HAS_TYPE);
 			$isRelation = ((count($typearr) == 1) && $typearr[0]->getXSDValue() == "_wpg");
