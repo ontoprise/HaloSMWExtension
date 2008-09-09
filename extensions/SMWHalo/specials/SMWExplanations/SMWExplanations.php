@@ -109,7 +109,8 @@ END;
 		$p = $propertyTitle->getDBkey();
 		if($propertyTitle->exists()){
 			$typearr = smwfGetStore()->getSpecialValues($propertyTitle, SMW_SP_HAS_TYPE);
-			$isRelation = ((count($typearr) == 1) && $typearr[0]->getXSDValue() == "_wpg");
+			print(count($typearr));
+			$isRelation = count($typearr) == 0 ? 1 : (count($typearr) == 1) && ($typearr[0]->getXSDValue() == "_wpg");
 		}
 
 		$p = str_replace(" ", "_", $p);
