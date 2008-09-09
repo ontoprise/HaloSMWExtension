@@ -139,6 +139,12 @@ Note: SMW+ should also work without these patches. The consequence is:
 
     - You can't rename categories
     - Updating the auto-completion mode in your prferences might not get reflected without re-starting the browser.
+
+
+==Only for the SimpleRules-Extensions==
+The simple rules extension that uses OntoBroker as triple store needs a Java 
+Virtual Machine. The version of this JVM must be at least 1.6.06. V 1.6.01
+throws errors when explanations are used. 
      
 == Contact ==
 
