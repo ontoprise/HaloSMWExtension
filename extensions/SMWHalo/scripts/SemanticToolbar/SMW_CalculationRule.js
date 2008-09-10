@@ -35,7 +35,8 @@ initialize: function(ruleName, ruleType) {
 	this.pendingIndicator = null;
 	this.variableSpec = '';
 	this.annotation = null;
-	
+	this.formulaValid = false;
+	this.checkRuleTimer = null;	
 },
 
 /**
@@ -56,12 +57,35 @@ editRule: function(ruleAnnotation) {
 		this.annotation = ruleAnnotation;
 		var ruleText = ruleAnnotation.getAnnotation();
 		var rule = FormulaRuleParser.parseRule(ruleText);
+		if (rule == false) {
+			// The rule is erroneous => create a UI without predefined rule
+			rule = undefined;
+		}
 		this.createUI(rule);
 		$('variablesDiv').show();
+		
+		function ajaxResponseCheckFormula(request) {
+			if (request.status == 200) {
+				// success
+				var result = request.responseText;
+				var variables = result.split(',');
+				if (variables[0] != 'error' 
+				    && !(variables.size() == 2 && variables[1] == '')) {
+					// the formula is valid
+					this.formulaValid = true;
+				} else {
+					this.editFormula();
+				}
+			}
+		}
+		sajax_do_call('smwf_sr_ParseFormula', 
+		          [$('sr-formula').value], 
+		          ajaxResponseCheckFormula.bind(this));
+		          
+		
 	}
 	
 },
-
 
 /**
  * Cancels editing or creating the rule. Closes the rule edit part of the UI and
@@ -74,6 +98,9 @@ cancel: function() {
 	if ($('createRuleContent')) {
 		$('createRuleContent').remove();
 	}
+	if (this.checkRuleTimer) {
+		this.checkRuleTimer.stop();
+	} 
 		
 },
 
@@ -101,9 +128,27 @@ createUI: function(parsedRule) {
 		new Insertion.After('contenttabposdiv', opHelp);
 	}	
 	
+	if (parsedRule == undefined) {
+		$('sr-save-rule-btn').disable();
+	}
 	Event.observe('sr-save-rule-btn', 'click', 
 			      smwhgCreateCalculationRule.saveRule.bindAsEventListener(smwhgCreateCalculationRule));
-	
+			      
+	this.checkRuleTimer = new PeriodicalExecuter(function(pe) {
+			var saveRuleBtn = $('sr-save-rule-btn');
+			if (saveRuleBtn) {
+				var disabled = saveRuleBtn.disabled;
+				if (smwhgCreateCalculationRule.checkRule()) {
+					if (disabled) {
+						saveRuleBtn.disabled = false;
+					}
+				} else {
+					if (!disabled) {
+						saveRuleBtn.disabled = true;
+					}
+				}
+			}
+		}, 0.5);			      
 },
 
 
@@ -473,6 +518,7 @@ editFormula: function() {
 	$('variableInput').innerHTML = "";
 	var html = this.defineFormulaHTML(new FormulaRule($('sr-formula').value));
 	$('confirmedFormulaDiv').replace(html);
+	this.formulaValid = false;
 },
 
 /**
@@ -551,6 +597,8 @@ checkFormula: function(formula) {
 				$('formulaErrorMsg').innerHTML = gLanguage.getMessage('SR_NO_VARIABLE');
 				$('formulaErrorMsgDiv').show();
 			} else {
+				// the formula is valid
+				this.formulaValid = true;
 				var rule = new FormulaRule(formula);
 				var varArray = new Array();
 				for (var i = 1; i < variables.size(); ++i) {
@@ -623,6 +671,10 @@ saveRule: function(event) {
 	};
 
 	var xml = this.serializeRule();
+
+	if (this.checkRuleTimer) {
+		this.checkRuleTimer.stop();
+	} 
 
 	this.showPendingIndicator($('sr-save-rule-btn'));
 	
@@ -705,6 +757,44 @@ serializeRule: function() {
 	xml += '</formula></SimpleRule>';
 	
 	return xml;
+	
+},
+
+/**
+ * @private 
+ * 
+ * Checks, if the rule in its current state in the UI is valid, i.e. if a 
+ * formula is given and if the variables or constants are properly defined.
+ * 
+ * @return boolean
+ * 	true, if the rule is valid and
+ * 	false otherwise
+ */
+checkRule: function() {
+	
+	// check formula
+	if (!this.formulaValid) {
+		return false;
+	}
+	
+	// check variables
+	var vi = $('variableInput');
+	var radios = vi.getElementsBySelector('[type="radio"]');
+	for (var i = 0, n = radios.size(); i < n; ++i) {
+		var r = radios[i];
+		if (r.checked) {
+			var inputId = r.id.replace(/-radio-/, '-input-');
+			var value = $(inputId).value;
+			if (value == '' 
+			    || value == gLanguage.getMessage('SR_ENTER_VALUE')
+			    || value == gLanguage.getMessage('SR_ENTER_PROPERTY')) {
+				// invalid 
+				return false;
+			}
+		}
+	}
+	
+	return true;
 	
 }
 
@@ -793,6 +883,8 @@ parseRule: function(ruleText) {
 				value: parts[2]
 			}
 			varArray.push(v);
+		} else if (varspec != ''){
+			return false;
 		}
 	}
 	rule.setVariables(varArray);
