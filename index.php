@@ -129,7 +129,7 @@ if ($action == 'get_eqi') {
     fclose($handle);
     global $smwgExplanationEndpoint;
     if (isset($smwgExplanationEndpoint)) echo str_replace("{{explanation-endpoint}}", $smwgExplanationEndpoint, $contents); 
-        else echo "No FLogic endpoint defined! Set \$smwgExplanationEndpoint in your LocalSettings.php. E.g.: \$smwgExplanationEndpoint = \"localhost:8080\"";
+        else echo "No Explanation endpoint defined! Set \$smwgExplanationEndpoint in your LocalSettings.php. E.g.: \$smwgExplanationEndpoint = \"localhost:8080\"";
     exit;
 }
 
