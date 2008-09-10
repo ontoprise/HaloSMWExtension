@@ -432,13 +432,18 @@ class SMWFormulaParser {
 
 		$currToken = $tokens[$startToken++];
 		if ($currToken != '(') {
-			$this->setError(SR_FP_EXPECTED_OB, $tokens, $nextToken-1);
+			$this->setError(SR_FP_EXPECTED_OB, $tokens, $startToken-1);
 			return array(false, $startToken-1);
 		}
 		
 		list($success, $nextToken) = $this->parseExpr($tokens, $startToken);
 		if (!$success) {
 			return array(false, $nextToken);
+		}
+		
+		if ($nextToken >= count($tokens)) {
+			$this->setError(SR_FP_EXPECTED_CB, $tokens, $nextToken);
+			return array(false, $nextToken+1);
 		}
 		
 		$currToken = $tokens[$nextToken++];
@@ -463,7 +468,11 @@ class SMWFormulaParser {
 		$msgID = $this->mErrorMessages[$errorID];
 		$this->mErrorCode = $errorID;
 		$formula = '';
-		for ($i = 0; $i <= $currToken; ++$i) {
+		$n = $currToken;
+		if (count($tokens) < $n) {
+			$n = count($tokens);
+		}
+		for ($i = 0; $i < $n; ++$i) {
 			$formula .= $tokens[$i];
 		}
 		$this->mErrorMsg = wfMsg($msgID, $formula);
