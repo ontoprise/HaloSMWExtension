@@ -430,7 +430,7 @@ class WebService {
 				$this->initializeCallParameters($specParameters);
 				
 				$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
-					
+				
 				if(is_string($response)){
 					if($cacheResult == null){
 						$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
@@ -935,7 +935,7 @@ class WebService {
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
 			if($this->getReturnPartBracketValue($walkedParameters[$i]) === false){
-				if(!$temp[$walkedParameters[$i]]){
+				if(!array_key_exists($walkedParameters[$i], $temp)){
 					$temp[$walkedParameters[$i]] = array();
 				}
 				$temp = &$temp[$walkedParameters[$i]];
@@ -1120,8 +1120,8 @@ class WebService {
 			for ($i = 1; $i < $numParam; ++$i) {
 				$pName = $wsdlParams[$i][0];
 				$pType = $wsdlParams[$i][1];
-				//$names = array_merge($names, $this->flattenParam($pName, $pType));
-				$names = array_merge($names, $this->getFlatParameters($pName, $pType, false));
+				$names = array_merge($names, $this->flattenParam($pName, $pType));
+				//$names = array_merge($names, $this->getFlatParameters($pName, $pType, false));
 			}
 			// find elements that lead to overflows (e.g. potentially endless lists)
 			foreach ($names as $idx=>$name) {
@@ -1251,8 +1251,8 @@ class WebService {
 		if ($wsdlResult != null) {
 			// Collect the components of the result
 			$rType = $wsdlResult[0];
-			//$names = $this->flattenParam("", $rType);
-			$names = $this->getFlatParameters("", $rType, true);
+			$names = $this->flattenParam("", $rType);
+			//$names = $this->getFlatParameters("", $rType, true);
 
 			// examine parameters
 			// find elements that lead to overflows (e.g. potentially endless lists)
@@ -1339,7 +1339,7 @@ class WebService {
 				if (in_array($type, $typePath)) {
 					// stop recursion
 					$flatParams[] = $fname."##overflow##";
-					break;
+					continue;
 				}
 				$typePath[] = $type;
 				$names = $this->flattenParam($fname, $type, $typePath);

@@ -37,7 +37,7 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WebService.php");
 
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
- 
+
 //Add a hook to initialise the magic word for the {{ ws:}} Syntax Parser
 $wgHooks['LanguageGetMagic'][] = 'webServiceUsage_Magic';
 
@@ -135,7 +135,7 @@ function webServiceUsage_Render( &$parser) {
 
 	global $wgsmwRememberedWSUsages, $purgePage;
 	$purgePage = true;
-	
+
 	$parameters = func_get_args();
 
 	// the name of the ws must be the first parameter of the parser function
@@ -170,7 +170,7 @@ function webServiceUsage_Render( &$parser) {
 			}
 		}
 	}
-	
+
 	if(count($wsReturnValues) > 1 && $propertyName != null){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
 	}
@@ -179,12 +179,13 @@ function webServiceUsage_Render( &$parser) {
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
+		
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
-		
+
 		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
-		
+
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
 			if(!sizeof($propertyName)){
@@ -256,12 +257,12 @@ function formatWSResult($wsFormat, $wsResults = null){
 				} else if($subWsResult != ""){
 					$wsResults[$key][$subKey] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($subWsResult, true).$subKey;
 				}
-			}	
+			}
 		} else {
 			$wsResult[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true).$key;
 		}
 	}
-	
+
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
 		return $printer->getWikiText(getReadyToPrintResult($wsResults));
@@ -302,7 +303,7 @@ function detectDeletedWSUsages(&$article, &$user, $reason){
  *
  */
 function detectEditedWSUsages(&$article, &$user, &$text){
-//function detectEditedWSUsages(&$parser, &$text){
+	//function detectEditedWSUsages(&$parser, &$text){
 	//$articleId  = $parser->getTitle()->getArticleID();
 	$articleId  = $article->getID();
 	if($articleId != null){
@@ -319,7 +320,7 @@ function handlePurge(&$out, &$text){
 	if($purgePage){
 		SMWFactbox::storeData(true);
 	}
-	$purgePage = false; 
+	$purgePage = false;
 	return true;
 }
 
