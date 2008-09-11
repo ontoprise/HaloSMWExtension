@@ -359,7 +359,7 @@ class WSStorageSQL {
 			} else {
 				$whereConstruct.= "(";
 			}
-			$whereConstruct.= "(parameters.name='".mysql_escape_string($name)."' AND parameters.value='".mysql_escape_string($value)."')";
+			$whereConstruct.= "(parameters.name='".mysql_real_escape_string($name)."' AND parameters.value='".mysql_real_escape_string($value)."')";
 			$i++;
 		}
 		$whereConstruct.= ") AND parameters.param_set_id in ".
