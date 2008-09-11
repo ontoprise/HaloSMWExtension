@@ -359,7 +359,7 @@ class WSStorageSQL {
 			} else {
 				$whereConstruct.= "(";
 			}
-			$whereConstruct.= "(parameters.name='".$name."' AND parameters.value='".$value."')";
+			$whereConstruct.= "(parameters.name='".mysql_escape_string($name)."' AND parameters.value='".mysql_escape_string($value)."')";
 			$i++;
 		}
 		$whereConstruct.= ") AND parameters.param_set_id in ".
@@ -756,7 +756,7 @@ class WSStorageSQL {
 						'last_update' => $db->timestamp(),
 						'last_access' => $db->timestamp()));
 		} catch (Exception $e) {
-			echo $e->getMessage();
+			//echo $e->getMessage();
 			return false;
 		}
 	}
