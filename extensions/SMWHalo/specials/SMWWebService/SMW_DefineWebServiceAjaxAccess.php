@@ -42,9 +42,12 @@ require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WSDLArrayDetector.php');
  * @param string $uri uri of a wsdl
  * @return string with "-,"-separated list of method-names provided by the wwsd
  */
+global $wsClient;
 
 function smwf_ws_processStep1($uri){
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);	
+	global $wsClient;
+	
+	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
 	if(is_array($wsClient)){
 		return "false";
 	} else {
@@ -62,8 +65,9 @@ function smwf_ws_processStep1($uri){
  * 			for this method
  */
 function smwf_ws_processStep2($uri, $methodName){
-	//$this->error();
+	global $wsClient;
 	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
+	
 	$rawParameters = $wsClient->getOperation($methodName);
 	$parameters = array();
 	$numParam = count($rawParameters);
@@ -103,21 +107,22 @@ function smwf_ws_processStep3($uri, $methodName){
  * @param string $wwsd the wwsd which was created
  * @return string error/ok signals if the wwsd could be validated
  */
-function smwf_ws_processStep6($name, $wwsd){
-	$ws = WebService::newFromWWSD($name, $wwsd);
-	if(is_array($ws)){
-		return implode(";", $ws);
-	} else {
-		$res = $ws->validateWithWSDL();
-		//TS		if(is_array($res)){
-		//			return implode(";", $res);
-		//		}
-		$res = $ws->store();
-		if(!$res){
-			return "error";
+function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
+
+	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
+	if($editResult[0]){
+		$ws = WebService::newFromWWSD($name, $wwsd);
+		if(is_array($ws)){
+			return "isa ".implode(";", $ws);
+		} else {
+			//$res = $ws->validateWithWSDL();
+			$res = $ws->store();
+			if(!$res){
+				return "error";
+			}
+			return smwf_om_TouchArticle("webservice:".$name);
 		}
-		return "ok";
-	}
+	} else return "false done";
 }
 
 class DefineWebServiceSpecialAjaxAccess{
@@ -127,11 +132,12 @@ class DefineWebServiceSpecialAjaxAccess{
 	 * @param string $uri uri of the wsdl
 	 * @return ws-client
 	 */
+	
 	public static function createWSClient($uri) {
 		// include the correct client
 		global $smwgHaloIP;
 
-		$wsClient;
+		//$wsClient;
 
 		try {
 			//todo: also allow other protocols
@@ -211,7 +217,7 @@ class DefineWebServiceSpecialAjaxAccess{
 				if (in_array($type, $typePath)) {
 					// stop recursion
 					$flatParams[] = $fname."##overflow##";
-					break;
+					continue;
 				}
 				$typePath[] = $type;
 				$names = DefineWebServiceSpecialAjaxAccess::flattenParam($wsClient, $fname, $type, $typePath);
