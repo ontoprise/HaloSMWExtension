@@ -454,7 +454,7 @@ class DALReadCSV implements IDAL {
 			                          	
 	}
 	
-		/**
+	/**
 	 * Generates the XML description of all terms in the data source that match 
 	 * the input policy.
 	 * @param string $dataSourceSpec
@@ -498,7 +498,13 @@ class DALReadCSV implements IDAL {
 
 		$indexMap = array();
 		foreach ($this->csvContent[0] as $idx => $prop) {
-			$indexMap[trim($prop)] = $idx;
+			$p = trim($prop);
+			if (strtolower($p) == 'articlename') {
+				$p = 'articleName';
+			} else if (strtolower($p) == 'importset') {
+				$p = 'ImportSet';
+			}
+			$indexMap[$p] = $idx;
 		}
 		$articleIdx = $indexMap['articleName'];
 		if ($articleIdx === null) {
@@ -506,8 +512,10 @@ class DALReadCSV implements IDAL {
 		           wfMsg('smw_ti_no_article_names', $filename).
 		           DAL_CVS_RET_ERR_END;
 		}
-		$impSetIdx = $indexMap['ImportSet'];
 		
+		$impSetIdx = array_key_exists('ImportSet', $indexMap)
+						? $indexMap['ImportSet']
+						: null;
 		
 		for ($i = 1; $i < $len; ++$i) {
 			$impSet = ($impSetIdx === null) ? null
