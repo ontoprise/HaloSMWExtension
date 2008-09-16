@@ -534,9 +534,13 @@ class DALReadCSV implements IDAL {
 					foreach ($props as $prop) {
 						$idx = $indexMap[$prop];
 						if ($idx != null) {
-							$terms .= "<".$prop.">";
-							$terms .= htmlspecialchars(trim($this->csvContent[$i][$idx]));
-							$terms .= "</".$prop.">\n";
+							$value = htmlspecialchars(trim($this->csvContent[$i][$idx]));
+							if (strlen($value) > 0) {
+								// The property is only written, if it exists.
+								$terms .= "<".$prop.">";
+								$terms .= $value;
+								$terms .= "</".$prop.">\n";
+							}
 						}
 					}
 					$terms .= "</term>\n";
