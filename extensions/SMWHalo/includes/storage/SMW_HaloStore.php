@@ -28,7 +28,7 @@ class SMWHaloStore extends SMWSQLStore {
         wfProfileOut("SMWHaloStore::updateData (SMW)");
     }
 
-    function setup($verbose = true) {
+function setup($verbose = true) {
         parent::setup($verbose);
         global $wgDBtype;
         $this->reportProgress("Altering tables for SMW+ if necessary ...\n\n",$verbose);
@@ -37,19 +37,19 @@ class SMWHaloStore extends SMWSQLStore {
             return;
         }
         $db =& wfGetDB( DB_MASTER );
-        extract( $db->tableNames('smw_rels2', 'smw_atts2') );
+        extract( $db->tableNames('smw_relations', 'smw_attributes') );
         
-        if (!$this->isColumnPresent($smw_rels2, 'rating')) {    
-            $this->reportProgress("Altering $smw_rels2...\n",$verbose);
+        if (!$this->isColumnPresent(smw_relations, 'rating')) {    
+            $this->reportProgress("Altering smw_relations...\n",$verbose);
             $this->reportProgress("\t... adding column rating\n",$verbose);
-            $db->query("ALTER TABLE $smw_rels2 ADD `rating` INT(8) FIRST", 'SMWHaloStore::setupTable');
+            $db->query("ALTER TABLE smw_relations ADD `rating` INT(8) FIRST", 'SMWHaloStore::setupTable');
             $this->reportProgress("done \n",$verbose);
         }
         
-        if (!$this->isColumnPresent($smw_atts2, 'rating')) {  
-            $this->reportProgress("Altering $smw_atts2...\n",$verbose);
+        if (!$this->isColumnPresent(smw_attributes, 'rating')) {  
+            $this->reportProgress("Altering smw_attributes...\n",$verbose);
             $this->reportProgress("\t... adding column rating\n",$verbose);
-            $db->query("ALTER TABLE $smw_atts2 ADD `rating` INT(8) FIRST", 'SMWHaloStore::setupTable');
+            $db->query("ALTER TABLE smw_attributes ADD `rating` INT(8) FIRST", 'SMWHaloStore::setupTable');
             $this->reportProgress("done \n",$verbose);
         }
         

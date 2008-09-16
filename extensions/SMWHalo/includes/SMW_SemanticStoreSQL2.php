@@ -36,7 +36,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
         $page = $db->tableName('page');
         
             
-        $res = $db->query('SELECT s.smw_title AS subject_title FROM '.$smw_ids.' o JOIN '.$smw_subs2.' sub ON o.smw_id = sub.s_id JOIN '.$smw_ids.' s ON s.smw_id = sub.o_id '.
+        $res = $db->query('SELECT s.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
         ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()));
          
         $result = array();
@@ -59,7 +59,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
         $page = $db->tableName('page');
         
             
-        $res = $db->query('SELECT o.smw_title AS subject_title FROM '.$smw_ids.' o JOIN '.$smw_subs2.' sub ON o.smw_id = sub.s_id JOIN '.$smw_ids.' s ON s.smw_id = sub.o_id '.
+        $res = $db->query('SELECT o.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
         ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND s.smw_title = ' . $db->addQuotes($attribute->getDBkey()));
          
         $result = array();
@@ -328,21 +328,6 @@ public function getDistinctUnits(Title $type) {
         }
         
         $db->freeResult($res);
-        
-        $res2 = $db->query('SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title FROM '.$smw_spec2.' s ' .
-                                    'JOIN '.$smw_rels2.' r ON CONTAINS(s.value_string, '.$db->addQuotes($type->getDBkey()).') AND s.s_id = r.p_id ' .
-                                    'JOIN '.$smw_ids.' i ON i.smw_id = r.s_id' .
-                                    'JOIN '.$smw_ids.' i2 ON i.smw_id = r.p_id' .
-                          'WHERE value_unit = '.$db->addQuotes($unit));
-        
-        
-        if($db->numRows( $res2 ) > 0) {
-            while($row = $db->fetchObject($res2)) {
-                $result[] = array(Title::newFromText($row->subject_title, $row->subject_namespace), Title::newFromText($row->attribute_title, SMW_NS_PROPERTY));
-            }
-        }
-        
-        $db->freeResult($res2);
         
         return $result;
     }

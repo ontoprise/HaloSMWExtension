@@ -292,8 +292,9 @@ GeneralXMLTools.getNodeById = function (node, id) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if (node.contentType != null && node.contentType == "text/xml") {
-		  nodeWithID = node.documentElement.ownerDocument.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+		  nodeWithID = xmlDOM.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
 	      nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
 		}
@@ -342,8 +343,9 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodesWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if (node.contentType != null && node.contentType == "text/xml") {
-            nodesWithID = node.documentElement.ownerDocument.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
+		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+			var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+            nodesWithID = xmlDOM.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
             nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null);
 		}
