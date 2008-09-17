@@ -1,0 +1,195 @@
+/*
+** MediaWiki 'monobook' style sheet for CSS2-capable browsers.
+** Copyright Gabriel Wicke - http://wikidev.net/
+** License: GPL (http://www.gnu.org/copyleft/gpl.html)
+**
+** Loosely based on http://www.positioniseverything.net/ordered-floats.html by Big John
+** and the Plone 2.0 styles, see http://plone.org/ (Alexander Limi,Joe Geldart & Tom Croucher,
+** Michael Zeltner and Geir B�kholt)
+** All you guys rock :)
+*/
+
+/**
+ * Stylesheet for screen/projection.  All rules not marked media-specific are
+ * shared with handheld.css and should be updated in tandem.  The rules can't
+ * be in the same file because old browsers like IE5 won't obey @media rules.
+ *
+ * Rules that are screen/projection-specific are marked with commented-out
+ * @media rules and indentation.
+ */
+
+
+/**
+ * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
+ * When the day comes, it can be moved to a *real* common.css.
+ */
+.mw-plusminus-null { color: #aaa; }
+.texvc { direction: ltr; unicode-bidi: embed; }
+/* Stop floats from intruding into edit area in previews */
+#toolbar, #wpTextbox1 { clear: both; }
+
+/**
+* Here is OntoSkin specific stuff
+*/
+
+/**
+* Head
+*/
+#smwf_head{
+	position: relative;
+	background: #4b595c;
+	height: 85px;
+	border-bottom: 5px solid #F5AC3E;
+}
+
+#p-personal {
+	float: right;
+	position: absolute;
+	text-align: right;
+	top: 10px;
+	right: 15px;
+}
+
+#p-personal a {
+	color: #F5AC3E;
+	list-style: none;
+	margin-right: 0.5em;	
+}
+
+.searchButton {
+	background-color: #F5AC3E;
+	color: #FFF;
+	border-style: groove;
+}
+
+#search {
+	float: right;
+	position: absolute;
+	bottom: 10px;
+	right: 	15px;
+}
+
+/**
+* naviblock
+*/
+#smwf_catlinkblock{
+	background: #fcf4c6 url(navigationblockbg.png) scroll repeat-x;
+	height: 100px;
+}
+
+/**
+* breadcrumbs
+*/
+
+#smwf_breadcrumbs{
+	background-color: #CAE385;
+	border: 5px solid #CAE385;
+}
+
+/**
+* tab block
+*/
+
+
+#smwf_tabblock{
+	position: relative;
+	background-color: #707E81;
+	height: 2.2em;
+}
+#smwf_tabcontainer{
+	position: absolute;
+	left: 200px;
+}
+
+.smwf_tabs{
+	float: left;
+	border-right: 1px dotted #FFF;
+	margin-right: 1em;
+	margin-top: 0.8em;
+	height:	1.4em;
+}
+
+.smwf_tabs a{
+	text-transform: lowercase;
+	color: #FFF;
+	text-decoration: none;
+	margin-top:5px;
+	margin-left:5px;
+	margin-right:5px; 
+}
+
+.selected{
+	float: left;
+	background-color: #FFF;
+	border-right: none;
+	margin-right: 0.5em;
+	margin-top: 0.8em;
+	height: 1.4em;
+}
+
+.selected a{
+	text-transform: lowercase;
+	color: #707E81;
+	text-decoration: none;
+	margin-top:5px;
+	margin-left:5px;
+	margin-right:5px; 
+}
+
+/**
+* main block
+*/
+
+#smwf_mainblock{
+}
+
+/**
+* navi block
+*/
+
+#smwf_naviblock{
+	width: 200px;
+	float: left;
+}
+
+/**
+* page block
+*/
+
+#smwf_pageblock{
+	margin-left: 220px;
+}
+
+#smwf_pageblock h1,#smwf_pageblock h2,#smwf_pageblock h3,#smwf_pageblock h4,#smwf_pageblock h5,#smwf_pageblock h6 {
+	color: black;
+	background: none;
+	font-weight: normal;
+	border-bottom: 1px solid #aaa;
+}
+
+.printfooter{
+	display: none;
+}
+
+/**
+* footer block
+*/
+
+#smwf_footerblock{
+	border-top: 2px solid #F5AC3E;
+	clear: both;
+	border-bottom: 2px solid #F5AC3E;
+}
+
+#footer{
+	margin: 10px;
+}
+
+.gardeningissue {
+	color:#FF0000;
+	font-size:90%;
+}
+.gardeningissue_notify {
+	color:#FF9602;
+	font-size:90%;
+}
