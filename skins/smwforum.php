@@ -129,7 +129,11 @@
 <!-- Page content -->
  	<div id="globalWrapper">
  		<!-- Header -->
- 		<div id="smwf_head">
+ 		<div id="smwf_head"> 				
+ 				<div id="smwf_headline">
+ 				<div id="smwf_headline1">SMW+&nbsp;User&nbsp;Forum</div> 
+ 				<div id="smwf_headline2">For&nbsp;commercial&nbsp;&&nbsp;production</div>
+ 				</div>
  				<!-- Personalbar -->
  				<div id="p-personal">
 							<?php foreach($this->data['personal_urls'] as $key => $item) { ?>
@@ -156,8 +160,8 @@
  		<div id="smwf_catlinkblock">
 		</div>
 		
-		<div id="smwf_breadcrumbs">
-			<div id="breadcrumbs">
+		<div id="smwf_breadcrump">
+			<div id="breadcrump">
 			</div>
 		</div>
 		<!-- page tab block -->
@@ -169,7 +173,7 @@
 					 	<a href="<?php echo htmlspecialchars($tab['href']) ?>"<?php echo $skin->tooltipAndAccesskey('ca-'.$key) ?>><?php
 					 echo htmlspecialchars($tab['text']) ?></a></div>
 					<?php			 } ?>
-			</div>		
+			</div>
 		</div>
 		
 		
@@ -180,68 +184,73 @@
 			<div id="smwf_naviblock">
 				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
 				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<h5><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h5>
-					<div class='pBody'>
-						<ul>
+					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><h1><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h1></div>
+					<div id="navigationlist" class="smwf_navilist">
 							<?php foreach($cont as $key => $val) { ?>
-							<li id="<?php echo Sanitizer::escapeId($val['id'])?>"<?php if ( $val['active'] ) { ?> class="active" <?php }?>>
+							<div class="smwf_naviitem" id="<?php echo Sanitizer::escapeId($val['id'])?>"<?php if ( $val['active'] ) { ?> class="active" <?php }?>>						
 							<a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?>
-							</a></li>
+							</a></div>
 							<?php } wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$this ) ); ?>
-						</ul>
 					</div>
 				</div>
 				<?php } ?>
+				<div id='smwf_browser'>
+					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')"><h1>Browser</h1></div>
+					<div id="smwf_browserview">						
+						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
+						$webcode .= $treeview; ?>
+					</div>
+				</div>
 				
-				<?php wfRunHooks( 'OntoSkinTemplateToolboxEnd', array( &$this ) ); ?>
-						
-				<div class="portlet" id="p-tb">
-					<h5><?php $this->msg('toolbox') ?></h5>
-					<div class="pBody">
-						<ul>
+				<div id="smwf_toolbox">
+					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><h1><?php $this->msg('toolbox') ?></h1></div>
+					<div id="toolboxlist" class="smwf_navilist">
 							<?php if($this->data['notspecialpage']) { ?>
-							<li id="t-whatlinkshere"><a href="<?php
+							<div class="smwf_naviitem" id="t-whatlinkshere"><a href="<?php
 							echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
+							?>"<?php echo $skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></div>
 							<?php	if( $this->data['nav_urls']['recentchangeslinked'] ) { ?>
-							<li id="t-recentchangeslinked"><a href="<?php
+							<div class="smwf_naviitem" id="t-recentchangeslinked"><a href="<?php
 							echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></li>
+							?>"<?php echo $skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></div>
 							<?php 		}
 							}
 							if(isset($this->data['nav_urls']['trackbacklink'])) { ?>
-							<li id="t-trackbacklink"><a href="<?php
+							<div class="smwf_naviitem" id="t-trackbacklink"><a href="<?php
 							echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?></a></li>
+							?>"<?php echo $skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?></a></div>
 							<?php 	}
 							if($this->data['feeds']) { ?>
-							<li id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
+							<div class="smwf_naviitem" id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
 							?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
 							echo htmlspecialchars($feed['href']) ?>"<?php echo $skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
-							<?php } ?></li><?php
+							<?php } ?></div><?php
 							}
 							global $wgTitle;
 		
 							foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'smw_editwysiwyg', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {						
 								if($this->data['nav_urls'][$special]) {
-									?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
-									?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?></a></li>
+									?><div class="smwf_naviitem" id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
+									?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?></a></div>
 							<?php		}
 							}
 							if(!empty($this->data['nav_urls']['print']['href'])) { ?>
-									<li id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
-									?>"<?php echo $skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?></a></li><?php
+									<div class="smwf_naviitem" id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
+									?>"<?php echo $skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?></a></div><?php
 							}
 
 							if(!empty($this->data['nav_urls']['permalink']['href'])) { ?>
-							<li id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?></a></li><?php
+							<div class="smwf_naviitem" id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
+							?>"<?php echo $skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?></a></div><?php
 							} elseif ($this->data['nav_urls']['permalink']['href'] === '') { ?>
-							<li id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></li><?php
+							<div class="smwf_naviitem" id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div><?php
 							}
 							?>
-						</ul>
 					</div>
+				<php? wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$navEnd ) );
+				if($navEnd != ""){
+   				$htmlcode .= $sep . $navEnd;}
+   				?>
 				</div>
 				
 			</div>
@@ -297,6 +306,14 @@
 									<a name="top" id="top"></a>
 									<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
 									<h1 class="firstHeading"><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
+									<div id="smwf_socialbookmarks">
+										<!-- delicious -->
+										<a href="http://delicious.com/save" onclick="window.open('http://delicious.com/save?v=5&amp;noui&amp;jump=close&amp;url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title), 'delicious','toolbar=no,width=550,height=550'); return false;"><img src="http://static.delicious.com/img/delicious.small.gif" height="10" width="10" alt="Delicious" /></a>						
+										<!-- Mr.  Wong -->
+										<a href="http://www.mister-wong.de/add_url/" onClick="location.href=&quot;http://www.mister-wong.de/index.php?action=addurl&amp;bm_url=&quot;+encodeURIComponent(location.href)+&quot;&amp;bm_description=&quot;+encodeURIComponent(document.title);return false" title="Diese Seite zu Mister Wong hinzufügen" target="_top"><img src="http://www.mister-wong.de/img/buttons/logo16.gif" alt="Diese Seite zu Mister Wong hinzufügen" border="0" /></a>
+										<!-- digg -->
+										<a href="http://digg.com/"><img src="http://digg.com/img/badges/16x16-digg-guy.png" width="16" height="16" alt="Digg!" /></a>
+									</div>
 									<div id="bodyContent">
 										<h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
 										<div id="contentSub"><?php $this->html('subtitle') ?></div>
@@ -327,8 +344,7 @@
 							<?php 	}
 							if($this->data['copyrightico']) { ?>
 							<div id="f-copyrightico"><?php $this->html('copyrightico') ?></div>
-							<?php	} ?>
-							<ul id="f-list">
+							<?php	} ?>						
 							<?php // Generate additional footer links
 								$footerlinks = array(
 								'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
@@ -336,10 +352,9 @@
 								);
 								foreach( $footerlinks as $aLink ) {
 								if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
-								?><li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
+								?><div class="footerlinks" id="<?php echo$aLink?>"><?php $this->html($aLink) ?></div>
 								<?php 		}
-								}?>
-							</ul>
+								}?>							
 				</div>
 			</div>
 	</div>
@@ -352,11 +367,21 @@
 
 	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftycube.js"></script>
 	<script type="text/javascript">
-		//alert('moo');
 		window.onload=function(){
 		    //Setting of all elemtents with round corners 
 			Nifty("div.selected","top fixed-height");
+			Nifty("div.smwf_navihead","normal");
+			Nifty("div.smwf_naviitem","normal");
 		}
+		
+		function switchVisibility(container) {
+			var visible = $(container).visible();
+			if ( visible ) {	
+				$(container).hide();
+			} else {
+				$(container).show();
+		}
+	}
 	</script>
 
 <?php $this->html('reporttime') ?>
