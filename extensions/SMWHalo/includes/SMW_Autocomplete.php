@@ -445,8 +445,10 @@ class TemplateReader {
 	public static function formatTemplateParameters($template) {
 		$result = "\n";
 		$parameters = TemplateReader::getParameters($template);
-		foreach($parameters as $p) {
-			$result .= !is_numeric($p) ? "|".$p."=\n" : "|\n";
+		
+		foreach($parameters as $param) {
+			list($paramName, $defaultValue) = $param;
+			$result .= !is_numeric($paramName) ? "|".$paramName."=$defaultValue\n" : "|\n";
 		}
 		return $result;
 	} 
@@ -459,11 +461,14 @@ class TemplateReader {
 		$content = $rev->getText();
 		$matches = array();
 		$parameters = array();
-		preg_match_all("/\{\{\{([^\}\|]*)\}\}\}/", $content, $matches);
+		preg_match_all("/\{\{\{([^\}]*)\}\}\}/", $content, $matches);
 		for($i = 0, $n = count($matches[1]); $i < $n; $i++) {
-			$parameters[] = $matches[1][$i];
+			$param = $matches[1][$i];
+			if (!array_key_exists($param,$parameters)) {
+			     $parameters[$param] = explode("|",$param);
+			}
 		}
-		return array_unique($parameters);
+		return $parameters;
 	}
 	
 	
