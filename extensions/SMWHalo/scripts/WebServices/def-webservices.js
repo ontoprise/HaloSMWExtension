@@ -226,13 +226,6 @@ DefineWebServiceSpecial.prototype = {
 					tO["value"] = steps[k];
 				}
 
-				if (tO["value"] == "Request") {
-					tO["value"] = "Request[]";
-				}
-				if (tO["value"] == "body") {
-					tO["value"] = "body[]";
-				}
-
 				tO["i"] = "null";
 				tO["k"] = "null";
 				tO["arrayIndex"] = "null";
@@ -625,13 +618,6 @@ DefineWebServiceSpecial.prototype = {
 					tO["overflow"] = true;
 				} else {
 					tO["value"] = steps[k];
-				}
-
-				if (tO["value"] == "Items") {
-					tO["value"] = "Items[]";
-				}
-				if (tO["value"] == "CorrectedQuery") {
-					tO["value"] = "CorrectedQuery[]";
 				}
 
 				tO["i"] = "null";
