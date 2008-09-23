@@ -67,6 +67,7 @@ class TreeGenerator {
 	 */
 	private function dumpTree($tree, &$result, $maxDepth, $redirectPage, $displayProperty, $hchar='*') {
 		if ($maxDepth === NULL || $maxDepth >= 0) {
+			if ($maxDepth !== NULL) $maxDepth--;
 			foreach($tree->children as $n) {
 				if ($displayProperty == NULL) {
 					$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
@@ -78,7 +79,6 @@ class TreeGenerator {
 						$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
 					}
 				}
-				if ($maxDepth !== NULL) $maxDepth--;
 				$this->dumpTree($n, $result, $maxDepth, $redirectPage, $displayProperty, $hchar.'*');
 			}
 		} else if ($maxDepth < 0 && $redirectPage !== NULL) {

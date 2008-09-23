@@ -101,10 +101,15 @@ class TreeView5 {
  
         # Reformat tree rows for matching in ParserAfterStrip
         $text = preg_replace('/(?<=\\*)\\s*\\[\\[Image:(.+?)\\]\\]/',"{$this->uniq}3$1{$this->uniq}4",$text);
-        $text = preg_replace_callback('/^(\\*+)(.*?)$/m',array($this,'formatRow'),$text);
- 
-        return $text;
+        //FIX KK: parse each row separately to prevent memory overflows in PHP regexp lib
+        $rows = explode("\n", $text);
+        $newtext = "";
+        foreach($rows as $row) {
+            preg_match('/^(\\*+)(.*?)$/m', $row, $m);
+            $newtext .= "\x7f1{$this->uniq}\x7f{$this->id}\x7f".(strlen($m[1])-1)."\x7f$m[2]\x7f2{$this->uniq}\n";
         }
+        return $newtext;
+   }
  
  
     /**

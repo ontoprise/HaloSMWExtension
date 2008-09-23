@@ -63,6 +63,7 @@ remarks in the section "Notes on Upgrading" below!
       $wgUseAjax = true;
       include_once('extensions/SMWHalo/includes/SMW_Initialize.php'); 
       enableSMWHalo();
+      $phpInterpreter = "<path to PHP executable>";
       
 (4) In your wiki, log in as a user with admin status and go to the page
     "Special:SMWAdmin" to do the final setup steps.
