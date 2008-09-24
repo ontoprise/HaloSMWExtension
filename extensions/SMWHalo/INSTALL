@@ -65,11 +65,15 @@ remarks in the section "Notes on Upgrading" below!
       enableSMWHalo();
       $phpInterpreter = "<path to PHP executable>";
       
-(4) In your wiki, log in as a user with admin status and go to the page
+(4) If you want to use the 'ExportOntologyBot' you have to create a directory
+    'wikiexport' in extensions/SMWHalo. The directory must have write access for
+    the user which runs Apache (or simply for all if possible).
+      
+(5) In your wiki, log in as a user with admin status and go to the page
     "Special:SMWAdmin" to do the final setup steps.
     Press "Initialise or upgrade tables" to finalize installation
     
-(5) If you are also installing the extension package for SMW+, please refer to
+(6) If you are also installing the extension package for SMW+, please refer to
     the install file delivered with the extension package zip file.
 
 
