@@ -102,24 +102,30 @@ class ExternalQueryInterface {
 	function answerASK($rawquery, $format = "xml") {
         
 		// add desired query printer (SPARQL-XML)
-		SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter';
-
-		// add query as first rawparam
-		$paramPos = strpos($rawquery, "|");
-		$rawparams[] = $paramPos === false ? $rawquery : substr($rawquery, 0, $paramPos);
-		if ($paramPos !== false) {
-			// add other params
-			$ps = explode("|", substr($rawquery, $paramPos + 1));
-			foreach ($ps as $param) {
-				$param = trim($param);
-				$rawparams[] = $param;
-			}
-		}
-		// parse params and answer query
-		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-		$params['format'] = $format;
-		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_HTML, SMWQueryProcessor::SPECIAL_PAGE);
-
+         if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
+            SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter'; // overwrite SMW printer
+          
+        } else { // registration since SMW 1.3.*
+            global $smwgResultFormats;
+            $smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+        }
+        
+        // add query as first rawparam
+        $paramPos = strpos($rawquery, "|");
+        $rawparams[] = $paramPos === false ? $rawquery : substr($rawquery, 0, $paramPos);
+        if ($paramPos !== false) {
+            // add other params
+            $ps = explode("|", substr($rawquery, $paramPos + 1));
+            foreach ($ps as $param) {
+                $param = trim($param);
+                $rawparams[] = $param;
+            }
+        }
+    
+        // parse params and answer query
+        SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+        $params['format'] = $format;
+        return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts);
 
 			
 	}
