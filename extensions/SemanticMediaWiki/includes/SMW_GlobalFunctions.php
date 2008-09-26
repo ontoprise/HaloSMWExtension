@@ -14,7 +14,7 @@
  * @defgroup SMW Semantic MediaWiki
  */
 
-define('SMW_VERSION','1.3b-SVN');
+define('SMW_VERSION','1.3');
 
 // constants for special properties, used for datatype assignment and storage
 define('SMW_SP_HAS_TYPE',1);
@@ -30,8 +30,7 @@ define('SMW_SP_SUBPROPERTY_OF',17);
 define('SMW_SP_SUBCLASS_OF',18);
 define('SMW_SP_CONCEPT_DESC',19);
 
-// old names, will be removed *two* releases after given version
-// SMW 1.1.2
+/** @deprecated This constant will be removed in SMW 1.4. Use SMW_SP_INSTANCE_OF or SMW_SP_SUBCLASS_OF as appropriate. */
 define('SMW_SP_HAS_CATEGORY',4); // name specific for categories, use "instance of" to distinguish from future explicit "subclass of"
 
 // constants for displaying the factbox
@@ -53,6 +52,11 @@ define('SMW_NAMESPACE_QUERY', 8);    // [[User:+]] etc.
 define('SMW_CONJUNCTION_QUERY', 16); // any conjunctions
 define('SMW_DISJUNCTION_QUERY', 32); // any disjunctions (OR, ||)
 define('SMW_ANY_QUERY', 0xFFFFFFFF);  // subsumes all other options
+
+// constants for defining which concepts to show only if cached
+define('CONCEPT_CACHE_ALL', 4); //show concept elements anywhere only if cached
+define('CONCEPT_CACHE_HARD',1); //show without cache if concept is not harder than permitted inline queries
+define('CONCEPT_CACHE_NONE',0); //show all concepts even without any cache
 
 // constants for identifying javascripts as used in smwfRequireHeadItem
 define('SMW_HEADER_TIMELINE', 1);
@@ -86,7 +90,7 @@ $smwgHeadItems = array();
  * does not adhere to the naming conventions.
  */
 function enableSemantics($namespace = '', $complete = false) {
-	global $smwgIP, $smwgNamespace, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses;
+	global $smwgIP, $smwgNamespace, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
 	// it is not needed in many cases.
@@ -99,6 +103,9 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgHooks['LanguageGetMagic'][] = 'smwfAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Messages.php'; // register messages (requires MW=>1.11)
 
+	// Register special pages aliases file
+	$wgExtensionAliasesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Aliases.php';
+
 	///// Set up autoloading
 	///// All classes registered for autoloading here should be tagged with this information:
 	///// Add "@note AUTOLOADED" to their class documentation. This avoids useless includes.
@@ -108,6 +115,7 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgAutoloadClasses['SMWOrderedListPage']        = $smwgIP . '/includes/articlepages/SMW_OrderedListPage.php';
 	$wgAutoloadClasses['SMWTypePage']               = $smwgIP . '/includes/articlepages/SMW_TypePage.php';
 	$wgAutoloadClasses['SMWPropertyPage']           = $smwgIP . '/includes/articlepages/SMW_PropertyPage.php';
+	$wgAutoloadClasses['SMWConceptPage']            = $smwgIP . '/includes/articlepages/SMW_ConceptPage.php';
 	//// printers
 	$wgAutoloadClasses['SMWResultPrinter']          = $smwgIP . '/includes/SMW_QueryPrinter.php';
 	$wgAutoloadClasses['SMWTableResultPrinter']     = $smwgIP . '/includes/SMW_QP_Table.php';
@@ -208,7 +216,7 @@ function enableSemantics($namespace = '', $complete = false) {
  */
 function smwfSetupExtension() {
 	wfProfileIn('smwfSetupExtension (SMW)');
-	global $smwgIP, $smwgStoreActive, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode;
+	global $smwgIP, $smwgStoreActive, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink;
 
 	/**
 	* Setting this to false prevents any new data from being stored in
@@ -255,6 +263,13 @@ function smwfSetupExtension() {
 			$wgParser->_unstub();
 		}
 		smwfRegisterParserFunctions( $wgParser );
+	}
+	if ($smwgToolboxBrowseLink) {
+		if (version_compare($wgVersion,'1.13','>')) {
+			$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfShowBrowseLink'; // introduced only in 1.13
+		} else {
+			$wgHooks['MonoBookTemplateToolboxEnd'][] = 'smwfShowBrowseLink';
+		}
 	}
 
 	///// credits (see "Special:Version") /////
@@ -344,30 +359,27 @@ function smwfProcessConceptParserFunction(&$parser) {
 	// process input:
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
-	$concept_input = array_shift( $params ); // use first parameter as concept (query) string
+	$concept_input = str_replace(array('&gt;','&lt;'),array('>','<'),array_shift( $params )); // use first parameter as concept (query) string
+	/// NOTE: the str_replace above is required in MediaWiki 1.11, but not in MediaWiki 1.14
 	$query = SMWQueryProcessor::createQuery($concept_input, array('limit' => 20, 'format' => 'list'), SMWQueryProcessor::CONCEPT_DESC);
 	$concept_text = $query->getDescription()->getQueryString();
 	$concept_docu = array_shift( $params ); // second parameter, if any, might be a description
 
 	$dv = SMWDataValueFactory::newSpecialValue(SMW_SP_CONCEPT_DESC);
-	$dv->setValues($concept_text, $concept_docu);
+	$dv->setValues($concept_text, $concept_docu, $query->getDescription()->getQueryFeatures(), $query->getDescription()->getSize(), $query->getDescription()->getDepth());
 	if (SMWFactbox::$semdata !== NULL) {
 		SMWFactbox::$semdata->addSpecialValue(SMW_SP_CONCEPT_DESC,$dv);
 	}
 
 	// display concept box:
 	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $title->getPrefixedText(), 'rdflink');
-	$qresult = smwfGetStore()->getQueryResult($query);
-	$printer = SMWQueryProcessor::getResultPrinter('list', SMWQueryProcessor::CONCEPT_DESC, $qresult);
-	$printer->setShowErrors(false);
-	$resultlink = $printer->getResult($qresult, array('sep' => ',_'), SMW_OUTPUT_WIKI);
 	smwfRequireHeadItem(SMW_HEADER_STYLE);
+
 	$result = '<div class="smwfact"><span class="smwfactboxhead">' . wfMsgForContent('smw_concept_description',$title->getText()) .
 	          (count($query->getErrors())>0?' ' . smwfEncodeMessages($query->getErrors()):'') .
 	          '</span>' . '<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' . '<br />' .
 	          ($concept_docu?"<p>$concept_docu</p>":'') .
-	          '<pre>' . str_replace('[', '&#x005B;', $concept_text) . "</pre>\n" .
-	          $resultlink . '</div>';
+	          '<pre>' . str_replace('[', '&#x005B;', $concept_text) . "</pre>\n</div>";
 	return $result;
 }
 
@@ -379,6 +391,21 @@ function smwfProcessInfoParserFunction(&$parser) {
 	array_shift( $params ); // we already know the $parser ...
 	$content = array_shift( $params ); // use only first parameter, ignore rest (may get meaning later)
 	return smwfEncodeMessages(array($content), 'info');
+}
+
+/**
+ * Add a link to the toobox to view the properties of the current page in Special:Browse.
+ * The links has the CSS id "t-smwbrowselink" so that it can be skinned or hidden with all
+ * standard mechanisms (also by individual users with custom CSS).
+ */
+function smwfShowBrowseLink($skintemplate) {
+	if($skintemplate->data['isarticle']) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		$browselink = SMWInfolink::newBrowsingLink(wfMsg('smw_browselink'),
+		               $skintemplate->data['titleprefixeddbkey'],false);
+    	echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
+    }
+    return true;
 }
 
 /**********************************************/
@@ -561,10 +588,10 @@ function smwfAddHTMLHeadersOutput(&$out) {
 		if (!empty($smwgContLang)) { return; }
 		wfProfileIn('smwfInitContentLanguage (SMW)');
 
+		$smwContLangFile = 'SMW_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
 		$smwContLangClass = 'SMWLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-
-		if (file_exists($smwgIP . '/languages/'. $smwContLangClass . '.php')) {
-			include_once( $smwgIP . '/languages/'. $smwContLangClass . '.php' );
+		if (file_exists($smwgIP . '/languages/'. $smwContLangFile . '.php')) {
+			include_once( $smwgIP . '/languages/'. $smwContLangFile . '.php' );
 		}
 
 		// fallback if language not supported

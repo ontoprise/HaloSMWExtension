@@ -18,13 +18,20 @@
  */
 class SMWSpecialBrowse extends SpecialPage {
 
-	static public $incomingvaluescount = 8; /// int How  many incoming values should be asked for
-	static public $incomingpropertiescount = 21; /// int  How many incoming properties should be asked for 
-	private $subject = null; /// SMWDataValue  Topic of this page
-	private $articletext = ""; /// Text to be set in the query form 
-	private $showoutgoing = true; /// bool  To display outgoing values?
-	private $showincoming = false; /// bool  To display incoming values?
-	private $offset = 0; /// int  At which incoming property are we currently?
+	/// int How  many incoming values should be asked for
+	static public $incomingvaluescount = 8;
+	/// int  How many incoming properties should be asked for
+	static public $incomingpropertiescount = 21;
+	/// SMWDataValue  Topic of this page
+	private $subject = null;
+	/// Text to be set in the query form
+	private $articletext = "";
+	/// bool  To display outgoing values?
+	private $showoutgoing = true;
+	/// bool  To display incoming values?
+	private $showincoming = false;
+	/// int  At which incoming property are we currently?
+	private $offset = 0;
 
 	/**
 	 * Constructor
@@ -65,13 +72,14 @@ class SMWSpecialBrowse extends SpecialPage {
 			$this->offset = intval($offsettext);
 		}
 		$dir = $wgRequest->getVal( 'dir' );
-		if (($dir == 'both')||($dir == 'in')) $this->showincoming = true;
-		if ($dir == 'in') $this->showoutgoing = false; 		
 		global $smwgBrowseShowAll;
 		if ($smwgBrowseShowAll) {
 			$this->showoutgoing = true;
 			$this->showincoming = true;
 		}
+		if (($dir == 'both')||($dir == 'in')) $this->showincoming = true;
+		if ($dir == 'in') $this->showoutgoing = false; 		
+		if ($dir == 'out') $this->showincoming = false; 		
 		
 		$wgOut->addHTML($this->displayBrowse());
 	}
@@ -128,14 +136,33 @@ class SMWSpecialBrowse extends SpecialPage {
 		if ($left) $inv = "";
 		$html  = "<table class=\"smwb-" . $inv . "factbox\" cellpadding=\"0\" cellspacing=\"0\">\n";
 		$properties = $data->getProperties();
-		if (count($properties) == 0) {
-			$html .= "<tr class=\"smwb-propvalue\"><th> &nbsp; </th><td><em>" . wfMsg('smw_result_noresults') . "</em></td></th></table>\n";
-		} else foreach ($properties as $property) {
+		$noresult = true;
+		 foreach ($properties as $property) {
+			$displayline= false;
 			if ($property instanceof Title) {
-				// display property
-				$head  = "<th>\n";
-				$head .= $skin->makeLinkObj($property, $this->getPropertyLabel($property, $incoming)) . "\n"; // TODO: Replace makeLinkObj with link as soon as we drop MW1.12 compatibility
-				$head .= "</th>\n";
+				$proptext = $skin->makeLinkObj($property, $this->getPropertyLabel($property, $incoming)) . "\n"; // @todo Replace makeLinkObj with link as soon as we drop MW1.12 compatibility
+				$displayline = true;
+				$special = false;
+			} else {
+				$special = true;
+				global $smwgContLang;
+				$proptext = $smwgContLang->findSpecialPropertyLabel( $property );
+				if ($proptext != '') {
+					$p = Title::newFromText($proptext, SMW_NS_PROPERTY);
+					$proptext = $skin->makeLinkObj($p, $this->unbreak($proptext));
+					$displayline = true;
+				}
+				if (SMW_SP_INSTANCE_OF == $property) {
+					$proptext = $skin->specialLink( 'Categories' );
+					$displayline = true;
+				}
+				if (SMW_SP_REDIRECTS_TO == $property) {
+					$proptext = $skin->specialLink( 'Listredirects', 'isredirect' );
+					$displayline = true;
+				}
+			}
+			if ($displayline) {
+				$head  = "<th>" . $proptext . "</th>\n";
 				
 				// display value
 				$body  = "<td>\n";
@@ -148,7 +175,10 @@ class SMWSpecialBrowse extends SpecialPage {
 						$body .= '<a href="' . $skin->makeSpecialUrl('SearchByProperty', 'property=' . urlencode($property->getPrefixedText()) . '&value=' . urlencode($data->getSubject()->getLongWikiText())) . '">' . wfMsg("smw_browse_more") . "</a>\n";
 					} else {
 						$body .= "<span class=\"smwb-" . $inv . "value\">";
-						$body .= $this->displayValue($property, $value, $incoming);
+						if ($special)
+							$body .= $this->displaySpecialValue($property, $value, $incoming);
+						else 
+							$body .= $this->displayValue($property, $value, $incoming);
 						$body .= "</span>";
 					}
 					$count--;
@@ -164,10 +194,18 @@ class SMWSpecialBrowse extends SpecialPage {
 					$html .= $body; $html .= $head;
 				}
 				$html .= "</tr>\n";
-			} else {
-				// TODO Special property, Categories, Instances?
+				$noresult = false;
 			}
 		} // end foreach properties
+		if ($noresult) {
+			if ($incoming)
+				$noresulttext = wfMsg('smw_browse_no_incoming');
+			else
+				$noresulttext = wfMsg('smw_browse_no_outgoing');
+			
+			$html .= "<tr class=\"smwb-propvalue\"><th> &nbsp; </th><td><em>" . $noresulttext . "</em></td></th></table>\n";
+		}
+		
 		$html .= "</table>\n";
 		return $html;
 	}
@@ -193,18 +231,39 @@ class SMWSpecialBrowse extends SpecialPage {
 				$html .= $value->getInfolinkText(SMW_OUTPUT_HTML, $skin);
 		return $html; 
 	}
+
+	/**
+	 * Displays a value for a special property, including all relevant links (browse and search by property)
+	 * 
+	 * @param[in] $property int  A constant representing the special value
+	 * @param[in] $value SMWDataValue  The actual value
+	 * @param[in] $incoming bool  If this is an incoming or outgoing link
+	 * @return string  HTML with the link to the article, browse, and search pages
+	 */
+	private function displaySpecialValue($property, SMWDataValue $value, $incoming) {
+		global $wgUser;
+		$skin = $wgUser->getSkin();
+		$html = $value->getLongHTMLText($skin);
+		if ($value->getTypeID() == '_wpg')
+			$html .= "&nbsp;" . SMWInfolink::newBrowsingLink('+',$value->getLongWikiText())->getHTML($skin);
+		else
+			$html .= $value->getInfolinkText(SMW_OUTPUT_HTML, $skin);
+		return $html; 
+	}
 	
+
 	/**
 	 * Displays the subject that is currently being browsed to.
 	 * 
 	 * @return A string containing the HTML with the subject line
 	 */
 	 private function displayHead() {
-	 	global $wgUser;
+	 	global $wgUser, $wgOut;
 	 	$skin = $wgUser->getSkin();
+		$wgOut->setHTMLTitle($this->subject->getTitle());
 		$html  = "<table class=\"smwb-factbox\" cellpadding=\"0\" cellspacing=\"0\">\n";
 		$html .= "<tr class=\"smwb-title\"><td colspan=\"2\">\n";
-		$html .= $skin->makeLinkObj($this->subject->getTitle()) . "\n"; // TODO: Replace makeLinkObj with link as soon as we drop MW1.12 compatibility
+		$html .= $skin->makeLinkObj($this->subject->getTitle()) . "\n"; // @todo Replace makeLinkObj with link as soon as we drop MW1.12 compatibility
 		$html .= "</td></tr>\n";
 		$html .= "</table>\n";
 		return $html;
@@ -216,15 +275,13 @@ class SMWSpecialBrowse extends SpecialPage {
 	 * @return string  HTMl with the center bar
 	 */
 	private function displayCenter() {
-		$html  = "<table class=\"smwb-factbox\" cellpadding=\"0\" cellspacing=\"0\">\n";
+		$html  = "<a name=\"smw_browse_incoming\"></a>\n";
+		$html .= "<table class=\"smwb-factbox\" cellpadding=\"0\" cellspacing=\"0\">\n";
 		$html .= "<tr class=\"smwb-center\"><td colspan=\"2\">\n";
-		global $smwgBrowseShowAll;
-		if (!$smwgBrowseShowAll) {
-			if ($this->showincoming) {
-				$html .= $this->linkhere(wfMsg('smw_browse_hide_incoming'), true, false, 0); 
-			} else {
-				$html .= $this->linkhere(wfMsg('smw_browse_show_incoming'), true, true, $this->offset);
-			}
+		if ($this->showincoming) {
+			$html .= $this->linkhere(wfMsg('smw_browse_hide_incoming'), true, false, 0); 
+		} else {
+			$html .= $this->linkhere(wfMsg('smw_browse_show_incoming'), true, true, $this->offset);
 		}
 		$html .= "&nbsp;\n";
 		$html .= "</td></tr>\n";
@@ -281,7 +338,9 @@ class SMWSpecialBrowse extends SpecialPage {
 		$dir = 'in';
 		if ($out) $dir = 'out';
 		if ($in && $out) $dir = 'both';
-		return '<a href="' . htmlspecialchars($skin->makeSpecialUrl('Browse', 'offset=' . $offset . '&dir=' . $dir . '&article=' . urlencode($this->subject->getLongWikiText()) ))  . '">' . $text . '</a>';
+		$frag = "";
+		if ($text == wfMsg('smw_browse_show_incoming')) $frag = "#smw_browse_incoming";
+		return '<a href="' . htmlspecialchars($skin->makeSpecialUrl('Browse', 'offset=' . $offset . '&dir=' . $dir . '&article=' . urlencode($this->subject->getLongWikiText()) ))  . $frag . '">' . $text . '</a>';
 	}
 	
 	/**
@@ -307,7 +366,6 @@ class SMWSpecialBrowse extends SpecialPage {
 			foreach ($values as $value) {
 				$indata->addPropertyObjectValue($property, $value);
 			}
-			// TODO Special properties?
 		}
 		return array($indata, $more);
 	}
@@ -367,4 +425,3 @@ class SMWSpecialBrowse extends SpecialPage {
 	}
 
 }
-

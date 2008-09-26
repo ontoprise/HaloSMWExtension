@@ -70,9 +70,9 @@ class SMWFactbox {
 				$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
 				$dv->setValues($title->getDBkey(), $title->getNamespace());
 				///NOTE: HALO patch (begin)
-				global $smwgSemanticDataClass;
-				SMWFactbox::$semdata = isset($smwgSemanticDataClass) ? new $smwgSemanticDataClass($dv) : new SMWSemanticData($dv); // reset data
-				///NOTE: HALO patch (end)
+                global $smwgSemanticDataClass;
+                SMWFactbox::$semdata = isset($smwgSemanticDataClass) ? new $smwgSemanticDataClass($dv) : new SMWSemanticData($dv); // reset data
+                ///NOTE: HALO patch (end)
 				SMWFactbox::$m_printed = false;
 			}
 			// store non-empty existing data, just in case we need it later again
@@ -244,7 +244,7 @@ class SMWFactbox {
 		
 		wfLoadExtensionMessages('SemanticMediaWiki');
 
-		foreach(SMWFactbox::$semdata->getProperties(true) as $key => $property) {
+		foreach(SMWFactbox::$semdata->getProperties(true) as $key => $property) { //Note: Halo Patch (true parameter)
 			if ($property instanceof Title) {
 				$text .= '<tr><td class="smwpropname">[[' . $property->getPrefixedText() . '|' . preg_replace('/[ ]/u','&nbsp;',$property->getText(),2) . ']] </td><td class="smwprops">';
 				// TODO: the preg_replace is a kind of hack to ensure that the left column does not get too narrow; maybe we can find something nicer later
@@ -270,34 +270,34 @@ class SMWFactbox {
 				}
 				$i+=1;
 				///NOTE: HALO patch begin
-				$pv = $propvalue->getLongWikiText(true);
+                $pv = $propvalue->getLongWikiText(true);
 
-				if ($propvalue->isDerived()) {
-					// derived properties are rendered in italics with underline
-					// and a tooltip
-					$tooltip = wfMsgForContent('smw_derived_property');	
-					$pv = "''".$pv."''"; // add italics
-					smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
-					if (strpos($pv, 'smwttinline') === FALSE) {
-						// No tooltip present yet => add our own tooltip
-						global $wgContLang;
-						$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
-						$link .= '?i='.SMWFactbox::$semdata->getSubject()->getTitle()->getPrefixedDBkey();
-						$link .= '&p='.$property->getPrefixedDBkey();
-						$link .= '&v='.urlencode($propvalue->getWikiValue());
-						$link .= '&mode=property'; // needed for explanation link
+                if ($propvalue->isDerived()) {
+                    // derived properties are rendered in italics with underline
+                    // and a tooltip
+                    $tooltip = wfMsgForContent('smw_derived_property'); 
+                    $pv = "''".$pv."''"; // add italics
+                    smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+                    if (strpos($pv, 'smwttinline') === FALSE) {
+                        // No tooltip present yet => add our own tooltip
+                        global $wgContLang;
+                        $link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
+                        $link .= '?i='.SMWFactbox::$semdata->getSubject()->getTitle()->getPrefixedDBkey();
+                        $link .= '&p='.$property->getPrefixedDBkey();
+                        $link .= '&v='.urlencode($propvalue->getWikiValue());
+                        $link .= '&mode=property'; // needed for explanation link
 
-						$linker = new Linker();
-						$l = $linker->makeKnownLink('xyz123', " ");
-						$link = str_ireplace('xyz123', $link, $l);
+                        $linker = new Linker();
+                        $l = $linker->makeKnownLink('xyz123', " ");
+                        $link = str_ireplace('xyz123', $link, $l);
 
-						$pv = '<span class="smwttinline"><u>' . $pv . '</u><span class="smwttcontent">' . $tooltip . '</span>'.
-						      '</span>&nbsp;'
-							  .'<span class="smwexplanation">'.$link.'</span>';
-					}
-				}
-				$text .= $pv . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
-				///NOTE: HALO patch end
+                        $pv = '<span class="smwttinline"><u>' . $pv . '</u><span class="smwttcontent">' . $tooltip . '</span>'.
+                              '</span>&nbsp;'
+                              .'<span class="smwexplanation">'.$link.'</span>';
+                    }
+                }
+                $text .= $pv . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
+                ///NOTE: HALO patch end
 			}
 			$text .= '</td></tr>';
 		}

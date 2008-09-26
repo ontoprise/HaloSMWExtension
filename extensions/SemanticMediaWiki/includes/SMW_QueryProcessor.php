@@ -76,7 +76,7 @@ class SMWQueryProcessor {
 			$desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
 		}
 
-		$query = new SMWQuery($desc, ($context != SMWQueryProcessor::SPECIAL_PAGE));
+		$query = new SMWQuery($desc, ($context != SMWQueryProcessor::SPECIAL_PAGE), ($context == SMWQueryProcessor::CONCEPT_DESC));
 		$query->setQueryString($querystring);
 		$query->setExtraPrintouts($extraprintouts);
 		$query->addErrors($qp->getErrors()); // keep parsing errors for later output
@@ -225,14 +225,19 @@ class SMWQueryProcessor {
 	 * Process and answer a query as given by a string and an array of parameters 
 	 * as is typically produced by the <ask> parser hook. The result is formatted
 	 * according to the specified $outputformat. The parameter $context defines in 
-	 * what context the query is used, which affects ceretain general settings.
+	 * what context the query is used, which affects certain general settings.
 	 */
 	static public function getResultFromHookParams($querystring, $params, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY) {
-		global $wgTitle;
+		global $wgParser;
+		$title = $wgParser->getTitle();
+		if ($title === NULL) { // try that in emergency, needed in 1.11 in Special:Ask
+			global $wgTitle;
+			$title = $wgTitle;
+		}
 		// Take care at least of some templates -- for better template support use #ask
 		$parser = new Parser();
 		$parserOptions = new ParserOptions();
-		$parser->startExternalParse( $wgTitle, $parserOptions, OT_HTML );
+		$parser->startExternalParse( $title, $parserOptions, OT_HTML );
 		$querystring = $parser->transformMsg( $querystring, $parserOptions );
 		return SMWQueryProcessor::getResultFromQueryString($querystring, $params, array(), $outputmode, $context);
 	}
@@ -407,7 +412,7 @@ class SMWQueryParser {
 	/**
 	 * Compute an SMWDescription for current part of a query, which should
 	 * be a standalone query (the main query or a subquery enclosed within
-	 * "<q>...</q>". Recursively calls similar methods and returns NULL upon error.
+	 * "\<q\>...\</q\>". Recursively calls similar methods and returns NULL upon error.
 	 * 
 	 * The call-by-ref parameter $setNS is a boolean. Its input specifies whether
 	 * the query should set the current default namespace if no namespace restrictions

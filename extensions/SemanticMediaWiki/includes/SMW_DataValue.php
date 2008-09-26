@@ -32,7 +32,6 @@ abstract class SMWDataValue {
 
 	private $m_hasssearchlink;        /// used to control the addition of the standard search link
 	private $m_hasservicelinks;       /// used to control service link creation
-
 	private $m_isderived = false;    /// True, if the value of the property is derived by a rule ///NOTE: HALO patch
 
 	public function SMWDataValue($typeid) {
@@ -62,7 +61,8 @@ abstract class SMWDataValue {
 		// e.g. math. In general, we are not prepared to handle such content properly, and we
 		// also have no means of obtaining the user input at this point. Hence the assignement
 		// just fails.
-		if (strpos($value,"\x7f") === false) {
+		// Note: \x07 was used in MediaWiki 1.11.0, \x7f is used now
+		if ((strpos($value,"\x7f") === false) && (strpos($value,"\x07") === false)) {
 			$this->parseUserValue($value); // may set caption if not set yet, depending on datavalue
 			$this->m_isset = true;
 		} else {
@@ -91,7 +91,23 @@ abstract class SMWDataValue {
 		$this->m_isset = true;
 		wfProfileOut('SMWDataValue::setXSDValue (SMW)');
 	}
-
+    
+    /**
+     * Return TRUE if a value was derived by a rule.
+     * @NOTE: HALO patch
+     */
+    public function isDerived() {
+        return $this->m_isderived;
+    }
+    
+    /**
+     * Sets the value as being derived or not.
+     * @NOTE: HALO patch
+     */
+    public function setDerived($derived) {
+        $this->m_isderived = $derived;
+    }
+    
 	/**
 	 * Set the property to which this value refers. Used to generate search links and
 	 * to find custom settings that relate to the property.
@@ -403,22 +419,6 @@ abstract class SMWDataValue {
 	public function isValid() {
 		$this->unstub();
 		return ( (count($this->m_errors) == 0) && $this->m_isset );
-	}
-
-	/**
-	 * Return TRUE if a value was derived by a rule.
-	 * @NOTE: HALO patch
-	 */
-	public function isDerived() {
-		return $this->m_isderived;
-	}
-	
-	/**
-	 * Sets the value as being derived or not.
-	 * @NOTE: HALO patch
-	 */
-	public function setDerived($derived) {
-		$this->m_isderived = $derived;
 	}
 
 	/**
