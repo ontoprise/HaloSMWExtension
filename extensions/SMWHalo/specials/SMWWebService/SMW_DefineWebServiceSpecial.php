@@ -432,6 +432,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		
 		$mergedParameters = array();
 		
+		
+		//todo: handle overflows
 		foreach($wsdlParameters as $wsdlParameter){
 			$wsdlParameterSteps = explode(".", $wsdlParameter);
 
@@ -442,16 +444,21 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				if(count($wsdlParameterSteps) != count($wwsdParameterSteps)){
 					continue;
 				}
+				
 				for($k=0; $k < count($wsdlParameterSteps); $k++){
 					$dupPos = strpos($wsdlParameterSteps[$k], "##duplicate");
+					$overflowPos = strpos($wsdlParameterSteps[$k], "##overflow");
 					$bracketPos = strpos($wwsdParameterSteps[$k], "[");
 
 					$wwsdParameterStep = $wwsdParameterSteps[$k];
-					if($bracketPos){
+					if($bracketPos){ 	
 						$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
 					}
 					if(strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
 						$matchedPath .= ".".$wwsdParameterSteps[$k];
+						if($overflowPos){
+							$matchedPath .= "##overflow##";
+						}
 						if($dupPos){
 							$matchedPath .= "##duplicate";
 						}

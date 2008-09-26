@@ -2366,9 +2366,14 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		this.editMode = true;
-		var editParameters = editParameterContainer.firstChild.nodeValue
-				.split(";");
+		
+		var editParametersText = "";
+		for(i = 0; i < editParameterContainer.childNodes.length; i++){
+			editParametersText += editParameterContainer.childNodes[i].nodeValue;
+		}
+		var editParameters = editParametersText.split(";");
 		editParameters.pop();
+		
 		var ps2Parameters = "todo:handle exceptions";
 		var parametersUpdate = new Array();
 
@@ -2384,7 +2389,11 @@ DefineWebServiceSpecial.prototype = {
 		this.processStep2Do(ps2Parameters, true);
 		this.updateParameters(parametersUpdate);
 
-		var editResults = editResultContainer.firstChild.nodeValue.split(";");
+		var editResultsText = "";
+		for(i = 0; i < editResultContainer.childNodes.length; i++){
+			editResultsText += editResultContainer.childNodes[i].nodeValue;
+		}
+		var editResults = editResultsText.split(";");
 		editResults.pop();
 		var ps3Results = "todo:handle exceptions";
 		var resultsUpdate = new Array();
