@@ -499,6 +499,7 @@ class DALReadCSV implements IDAL {
 		$indexMap = array();
 		foreach ($this->csvContent[0] as $idx => $prop) {
 			$p = trim($prop);
+			$p = preg_replace("/ +/", "__SPACE__", $p);
 			if (strtolower($p) == 'articlename') {
 				$p = 'articleName';
 			} else if (strtolower($p) == 'importset') {
@@ -520,6 +521,9 @@ class DALReadCSV implements IDAL {
 		for ($i = 1; $i < $len; ++$i) {
 			$impSet = ($impSetIdx === null) ? null
 			                                : $this->csvContent[$i][$impSetIdx];
+			if (!array_key_exists($i, $this->csvContent) || !array_key_exists($articleIdx, $this->csvContent[$i])) {                                
+				continue;
+			}
 			$term = $this->csvContent[$i][$articleIdx];
 			if ($this->termMatchesRules($impSet, $term, 
 			                            $importSets, $policy)) {
@@ -532,6 +536,7 @@ class DALReadCSV implements IDAL {
 					// add all requested properties
 					$props = &$policy['properties'];
 					foreach ($props as $prop) {
+						$prop = preg_replace("/ +/", "__SPACE__", $prop);
 						$idx = $indexMap[$prop];
 						if ($idx != null) {
 							$value = htmlspecialchars(trim($this->csvContent[$i][$idx]));
