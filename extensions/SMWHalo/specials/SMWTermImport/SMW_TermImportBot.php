@@ -375,6 +375,7 @@ class TermImportBot extends GardeningBot {
 						$numParam = count($parameters);
 						for ($i = 0; $i < $numParam; ++$i) {
 							$p = trim($parameters[$i]);
+							$p = preg_replace("/ +/", "__SPACE__", $p);
 							if (!$term[strtoupper($p)]) {
 								// the parameter is not present 
 								// => skip the whole content of the mapping
@@ -392,7 +393,9 @@ class TermImportBot extends GardeningBot {
 					// replace the parameters in the result string by their actual
 					// values
 					foreach ($parameters as $p) {
-						$v = $term[strtoupper($p)][0]['value'];
+						$p = trim($p);
+						$p_blank = preg_replace("/ +/", "__SPACE__", $p);
+						$v = $term[strtoupper($p_blank)][0]['value'];
 						$p = '{{{'.$p.'}}}';
 						$r = str_replace($p, $v, $r);
 					}
@@ -428,6 +431,7 @@ class TermImportBot extends GardeningBot {
 		$anno = '';
 		$namespace = '';
 		
+		//edit! referenzen, wenn nicht null. sonst direkter zugriff
 		$isCat     = &$term['ISCATEGORY'];
 		$isProp    = &$term['ISPROPERTY'];
 		$cat       = &$term['ISOFCATEGORY'];
