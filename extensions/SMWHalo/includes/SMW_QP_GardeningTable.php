@@ -73,7 +73,7 @@ class SMWGardeningTableResultPrinter extends SMWResultPrinter {
 					}
 				}
 				while ( ($object = $field->getNextObject()) !== false ) {
-					if($firstcol){ //save gardening issues for the article of the current row
+					if ($firstcol && $object instanceof SMWWikiPageValue) { //save gardening issues for the article of the current row
 						$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, SMW_CONSISTENCY_BOT_BASE + 3, $object->getTitle(), NULL, NULL);
 					}
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
