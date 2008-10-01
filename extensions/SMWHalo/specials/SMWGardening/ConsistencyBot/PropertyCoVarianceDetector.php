@@ -299,16 +299,16 @@ class PropertyCoVarianceDetector {
             $domRanVal = $dra->getDVs();
             $domain = reset($domRanVal);
             $range = next($domRanVal);
-            $domainCat = $domain !== false ? $domain->getTitle() : NULL;
-            $rangeCat  = $range !== false ? $range->getTitle() : NULL;
+            $domainCat = $domain !== false && $domain !== NULL ? $domain->getTitle() : NULL;
+            $rangeCat  = $range !== false && $range !== NULL ? $range->getTitle() : NULL;
 
             foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
                 $domRanValOfSuperProperty = $drosp->getDVs();
                 
                 $domainOfSuperProperty = reset($domRanValOfSuperProperty);
                 $rangeOfSuperProperty = next($domRanValOfSuperProperty);
-                $domainCatOfSuperProperty = $domainOfSuperProperty !== false ? $domainOfSuperProperty->getTitle() : NULL;
-                $rangeCatOfSuperProperty  = $rangeOfSuperProperty !== false ? $rangeOfSuperProperty->getTitle() : NULL;
+                $domainCatOfSuperProperty = $domainOfSuperProperty !== false && $domainOfSuperProperty !== NULL ? $domainOfSuperProperty->getTitle() : NULL;
+                $rangeCatOfSuperProperty  = $rangeOfSuperProperty !== false && $rangeOfSuperProperty !== NULL ? $rangeOfSuperProperty->getTitle() : NULL;
                 if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
 
                     $domainCovariant = $rangeCovariant = false;
