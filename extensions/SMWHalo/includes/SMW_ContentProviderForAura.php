@@ -63,9 +63,9 @@ function smwf_ca_GetFTSearchResultsFor($searchstring = '', $limit = 20) {
   global $wgUser;
 
   $searchPage = new FulltextSearch( $wgUser, $limit );
-  return $searchPage->getResults( $searchstring );
+  
+  return "<html><head></head><body>" . $searchPage->getResults( $searchstring ) . "</body></html>";
 }
-
 /**
  * fetches the categories a given wiki page belongs to
  */
