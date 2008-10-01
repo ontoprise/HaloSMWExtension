@@ -76,7 +76,8 @@
 				// Suppress warnings to prevent notices about missing indexes in $this->data
 				wfSuppressWarnings();
 				
-?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="<?php $this->text('xhtmldefaultnamespace') ?>" <?php
 	foreach($this->data['xhtmlnamespaces'] as $tag => $ns) {
 		?>xmlns:<?php echo "{$tag}=\"{$ns}\" ";
@@ -132,7 +133,7 @@
  		<div id="smwf_head"> 				
  				<div id="smwf_headline">
  				<div id="smwf_headline1">SMW+&nbsp;User&nbsp;Forum</div> 
- 				<div id="smwf_headline2">For&nbsp;commercial&nbsp;&&nbsp;production</div>
+ 				<div id="smwf_headline2">For&nbsp;commercial&nbsp;&nbsp;production</div>
  				</div>
  				<!-- Personalbar -->
  				<div id="p-personal">
@@ -161,18 +162,25 @@
 		</div>
 		
 		<div id="smwf_breadcrump">
-			<div id="breadcrump">
-			</div>
+			<table id="smwf_breadcrump_table"><tr><td>
+				<div id="breadcrump">
+				</div>
+			</td></tr></table>
 		</div>
 		<!-- page tab block -->
 		<div id="smwf_tabblock">
 			<div id="smwf_tabcontainer">
+					<table><tr>
 					<?php			foreach($this->data['content_actions'] as $key => $tab) { ?>
-				 	<div id="ca-<?php echo Sanitizer::escapeId($key) ?>" class="smwf_tabs <?php
-					 if($tab['class']) { echo htmlspecialchars($tab['class']);}?>">
-					 	<a href="<?php echo htmlspecialchars($tab['href']) ?>"<?php echo $skin->tooltipAndAccesskey('ca-'.$key) ?>><?php
-					 echo htmlspecialchars($tab['text']) ?></a></div>
+				 	<td>
+				 		<div id="ca-<?php echo Sanitizer::escapeId($key) ?>" class="smwf_tabs <?php
+					 	if($tab['class']) { echo htmlspecialchars($tab['class']);}?>">
+					 		<a href="<?php echo htmlspecialchars($tab['href']) ?>"<?php echo $skin->tooltipAndAccesskey('ca-'.$key) ?>><?php
+					 	echo htmlspecialchars($tab['text']) ?></a>
+					 	</div>
+					 </td>
 					<?php			 } ?>
+					</tr></table>
 			</div>
 		</div>
 		
@@ -184,18 +192,22 @@
 			<div id="smwf_naviblock">
 				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
 				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><h1><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h1></div>
+					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><p><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></p></div>
 					<div id="navigationlist" class="smwf_navilist">
+							<table class="naviitemtable">
 							<?php foreach($cont as $key => $val) { ?>
+							<tr><td>
 							<div class="smwf_naviitem" id="<?php echo Sanitizer::escapeId($val['id'])?>"<?php if ( $val['active'] ) { ?> class="active" <?php }?>>						
 							<a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?>
 							</a></div>
+							</td></tr>
 							<?php } wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$this ) ); ?>
+							</table>
 					</div>
 				</div>
 				<?php } ?>
 				<div id='smwf_browser'>
-					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')"><h1>Browser</h1></div>
+					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')"><p>Browser</p></div>
 					<div id="smwf_browserview">						
 						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
 						$webcode .= $treeview; ?>
@@ -203,51 +215,77 @@
 				</div>
 				
 				<div id="smwf_toolbox">
-					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><h1><?php $this->msg('toolbox') ?></h1></div>
+					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><p><?php $this->msg('toolbox') ?></p></div>
 					<div id="toolboxlist" class="smwf_navilist">
+							<table class="naviitemtable">
+							
 							<?php if($this->data['notspecialpage']) { ?>
-							<div class="smwf_naviitem" id="t-whatlinkshere"><a href="<?php
-							echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></div>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-whatlinkshere"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
+								?>"<?php echo $skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?>
+								</a></div>
+							</td></tr>
+							
 							<?php	if( $this->data['nav_urls']['recentchangeslinked'] ) { ?>
-							<div class="smwf_naviitem" id="t-recentchangeslinked"><a href="<?php
-							echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></div>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-recentchangeslinked"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
+								?>"<?php echo $skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?>
+								</a></div>
+							</td></tr>	
 							<?php 		}
 							}
 							if(isset($this->data['nav_urls']['trackbacklink'])) { ?>
-							<div class="smwf_naviitem" id="t-trackbacklink"><a href="<?php
-							echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?></a></div>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-trackbacklink"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
+								?>"<?php echo $skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?>
+								</a></div>
+							</td></tr>
 							<?php 	}
 							if($this->data['feeds']) { ?>
-							<div class="smwf_naviitem" id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
-							?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
-							echo htmlspecialchars($feed['href']) ?>"<?php echo $skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
-							<?php } ?></div><?php
-							}
+							<tr><td>
+								<div class="smwf_naviitem" id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
+								?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
+								echo htmlspecialchars($feed['href']) ?>"<?php echo $skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
+								<?php } ?>
+								</div>
+							</td></tr>
+							<?php }
 							global $wgTitle;
 		
 							foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'smw_editwysiwyg', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {						
-								if($this->data['nav_urls'][$special]) {
-									?><div class="smwf_naviitem" id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
-									?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?></a></div>
+								if($this->data['nav_urls'][$special]) {?>
+									<tr><td>
+										<div class="smwf_naviitem" id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
+										?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?>
+										</a></div>
+									</td></tr>
 							<?php		}
 							}
 							if(!empty($this->data['nav_urls']['print']['href'])) { ?>
-									<div class="smwf_naviitem" id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
-									?>"<?php echo $skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?></a></div><?php
-							}
-
+									<tr><td>
+										<div class="smwf_naviitem" id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
+										?>"<?php echo $skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?>
+										</a></div>
+									</td></tr>
+							<?php }
 							if(!empty($this->data['nav_urls']['permalink']['href'])) { ?>
-							<div class="smwf_naviitem" id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
-							?>"<?php echo $skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?></a></div><?php
+								<tr><td>
+									<div class="smwf_naviitem" id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
+									?>"<?php echo $skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?>
+									</a></div>
+								</td></tr>
+							<?php
 							} elseif ($this->data['nav_urls']['permalink']['href'] === '') { ?>
-							<div class="smwf_naviitem" id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div><?php
-							}
-							?>
+								<tr><td>
+									<div class="smwf_naviitem" id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div>
+								</td></tr>	
+							<?php } ?>
+							</table>
 					</div>
-				<php? wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$navEnd ) );
+				<?php wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( $navEnd ) );
 				if($navEnd != ""){
    				$htmlcode .= $sep . $navEnd;}
    				?>
@@ -267,7 +305,7 @@
 							<!--This contenttabposdiv div is just a workaround for a position bug in ie and has no further function-->
 							<div id="contenttabposdiv">
 							<table id="contenttab">
-				
+							  <tr>
 								<td id="contentcol1">
 				
 								<!--<div id="clearfloat">-->
@@ -295,6 +333,7 @@
 					            
 					            <!--</div>-->
 					            </td>
+					            </tr>
 					        </table>
 							</div>	
 							<?php
@@ -369,9 +408,9 @@
 	<script type="text/javascript">
 		window.onload=function(){
 		    //Setting of all elemtents with round corners 
-			Nifty("div.selected","top fixed-height");
-			Nifty("div.smwf_navihead","normal");
-			Nifty("div.smwf_naviitem","normal");
+			Nifty("div.selected","top transparent");
+			Nifty("div.smwf_navihead","normal fixed-height");
+			Nifty("div.smwf_naviitem","normal fixed-height");
 		}
 		
 		function switchVisibility(container) {

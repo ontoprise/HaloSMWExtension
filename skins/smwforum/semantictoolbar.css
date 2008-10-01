@@ -64,6 +64,7 @@ triggered by the nested floats. It should not be removed
     cursor: move;
     position: relative;
     z-index: 5;
+    height: 100%;
 }
 
 .div-marker{
@@ -84,6 +85,7 @@ triggered by the nested floats. It should not be removed
 .generic_content{
     margin-left: 3px;
     margin-right: 3px;
+    font-size: larger;
  }
 
 .generic_headline{

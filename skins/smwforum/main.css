@@ -32,6 +32,19 @@
 * Here is OntoSkin specific stuff
 */
 
+
+/**
+* Global
+*/
+
+.mediawiki{
+	font-family: sans-serif;
+}
+
+.mediawiki a img{
+	border-width: 0px;
+}
+
 /**
 * Head
 */
@@ -69,6 +82,7 @@
 	text-align: right;
 	top: 10px;
 	right: 15px;
+	font-size: smaller;
 }
 
 #p-personal a {
@@ -105,17 +119,21 @@
 
 #smwf_breadcrump{
 	background-color: #CAE385;
-	height: 2.5em;
+}
+
+#smwf_breadcrump_table{
+	width: 100%;
+	background-color: #CAE385;
 }
 
 #breadcrump{
 	background-color: #CAE385;
 }
-
+/*
 #breadcrump ul{
 	float: left;
 }
-
+*/
 #breadcrump li{
 	list-style-type: none;
 	background-color: #CAE385;
@@ -125,6 +143,7 @@
 }
 
 #breadcrump li a{
+	color: #4b595c;
 	text-decoration: none;
 }
 
@@ -134,6 +153,7 @@
 
 
 #smwf_tabblock{
+	clear: both;
 	position: relative;
 	background-color: #707E81;
 	height: 2.2em;
@@ -143,8 +163,9 @@
 	left: 200px;
 }
 
+
+
 .smwf_tabs{
-	float: left;
 	border-right: 1px dotted #FFF;
 	margin-right: 1em;
 	margin-top: 0.8em;
@@ -159,9 +180,7 @@
 	margin-left:5px;
 	margin-right:5px; 
 }
-
 .selected{
-	float: left;
 	background-color: #FFF;
 	border-right: none;
 	margin-right: 0.5em;
@@ -177,6 +196,7 @@
 	margin-left:5px;
 	margin-right:5px; 
 }
+
 
 /**
 * main block
@@ -199,18 +219,22 @@
 	margin-top: 5px;
 }
 
-.smwf_navihead h1{
+.smwf_navihead p{
 	font-size: small;
-	margin-left: 1em
+	margin-left: 1em;
+	font-weight: 900;
+}
+
+.naviitemtable{
+	width: 100%;
 }
 
 .smwf_naviitem{
 	background-color: #F0F0F0;
-	margin-bottom:1px;
-	
 }
 
 .smwf_naviitem a{
+	position: relative;
 	color: #4B595C;
 	text-decoration: none;
 	margin-left: 5px;
@@ -221,7 +245,16 @@
 }
 
 #smwf_browserview{
+	margin-top: 5px;
 	border: 2px solid #F0F0F0;
+}
+
+#smwf_browserview a{
+	color: #4B595C;
+}
+
+#smwf_browserview .dTreeNode{
+	font-size: smaller;
 }
 
 /**
@@ -243,10 +276,12 @@
 }
 
 #smwf_pageblock a{
-	color: #4B595C;
+	color: #F5AC3E;
 	text-decoration: none;
-	font-weight: bold;
-	font-size: smaller;
+}
+
+#smwf_pageblock a:hover{
+	text-decoration: underline;
 }
 
 #smwf_pageblock ul a{
@@ -291,7 +326,13 @@
 }
 
 #contentSub{
-	display: none;
+	position: relative;
+	font-size: smaller;
+	text-align: right;
+}
+
+#contentSub a{
+	font-size: small;
 }
 
 #jump-to-nav{
@@ -301,6 +342,32 @@
 .editsection{
 	float: right;
 	font-size: smaller;
+}
+
+/**
+* My Preferences
+*/
+
+#preftoc {
+	float: left;
+	margin-right: 10px;
+}
+
+#preftoc .selected{
+	font-weight: bold;
+	margin: 0px;
+}
+
+#preftoc .selected a{
+	margin: 0px;
+	text-transform: none;
+}
+
+#prefcontrol{
+	border: 1px solid #777;
+	padding: 5px;
+	clear: left;
+	margin: 5px;
 }
 
 /**
