@@ -51,7 +51,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         continue;
     } // -p => Parameters
     if ($arg == '-p') {
-        $userId = next($argv);
+        $bot_params = next($argv);
         continue;
     }
     
@@ -92,7 +92,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWWebService/S
     global $smwgGardeningBotDelay, $wgContLang;
     $gl = SMWGardeningLog::getGardeningLogAccess();
     try {
-    	$taskid = $gl->addGardeningTask($botID); 
+        $taskid = $gl->addGardeningTask($botID); 
         $bot->setTaskID($taskid);
         // initialize term signal socket (for abortion)
         $bot->initializeTermSignal($taskid);
@@ -104,8 +104,9 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWWebService/S
         //  2. Replace {{percantage}} by %
         //  3. decode URL
         //  4. convert string of the form (key=value,)* to a hash array
-        $paramString = urldecode(str_replace("{{apos}}", "\"", implode($params,"")));
+        $paramString = urldecode(str_replace("{{apos}}", "\"", $bot_params));
         $parameters = GardeningBot::convertParamStringToArray($paramString); 
+       
         $log = $bot->run($parameters, true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
         
         @socket_close($bot->getTermSignalSocket());

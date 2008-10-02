@@ -615,13 +615,22 @@ class AnnotationLevelConsistency {
 
 
         $result = false;
-        for($i = 0, $n = count($domainRange); $i < $n; $i++) {
-            if ($domain_cov_results != NULL && !$domain_cov_results[$i]) continue;
-            $domRanVal = $domainRange[$i];
+        
+        for($domRanVal = reset($domainRange), $dvr = reset($domain_cov_results); $domRanVal !== false && $dvr !== false;) {
+            
+            if ($domain_cov_results != NULL && !$dvr) {
+                $dvr = next($domain_cov_results);
+                continue;
+            }
+            $dvr = next($domain_cov_results);
+            
             $rangeCorrect = false;
             $dvs = $domRanVal->getDVs();
-
-            $rangeCat  = $dvs[1] != NULL ? $dvs[1]->getTitle() : NULL;
+            $domRanVal = next($domainRange);
+            
+            $domain = reset($dvs);
+            $range = next($dvs);
+            $rangeCat  = $range != NULL && $range !== false ? $range->getTitle() : NULL;
 
 
             if ($rangeCat == NULL) {
@@ -637,6 +646,7 @@ class AnnotationLevelConsistency {
             }
 
             $result |= $rangeCorrect;
+            
         }
         return $result;
     }

@@ -111,7 +111,8 @@ if ($bot != null) {
 		// 	3. decode URL
 		//  4. convert string of the form (key=value,)* to a hash array
 		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
-		@socket_close($bot->getTermSignalSocket());
+		global $smwgAbortBotPortRange;
+        if (isset($smwgAbortBotPortRange)) @socket_close($bot->getTermSignalSocket());
 			
 		if ($bot->isAborted()) {
 			print "\n - Bot was aborted by user! - \n";
@@ -119,6 +120,7 @@ if ($bot != null) {
 		}
 		echo $log;
 		if ($log != NULL && $log != '') {
+			// FIXME: link creation must be generalized
 			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$wgServer$wgScript/".$glp->getNsText().":".$glp->getText()."?bot=$botID ".$glp->getText()."]");
 			$log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";

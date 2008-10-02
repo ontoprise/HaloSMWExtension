@@ -57,8 +57,8 @@ array_shift($params); // get rid of path
 $db = wfGetDB(DB_SLAVE);
 $res = $db->select($db->tableName('smw_gardeningissues'), '*', array('bot_id'=>$botID));
 if (!file_exists($logPath."/$botID.log")) {
-	echo "\n\nNo saved log at '$logPath/$botID.log'.\n";
-	die();
+    echo "\n\nNo saved log at '$logPath/$botID.log'.\n";
+    die();
 }
 $handle = fopen($logPath."/$botID.log","rb");
 echo "\nRead from input file: ".$logPath."/$botID.log"."\n";
@@ -72,6 +72,7 @@ fclose($handle);
 // load current log and compare to saved log
 // determines all issues which appear in current log but not in saved log
 echo "\nCompare results...";
+$current_log = array();
 if($db->numRows( $res ) > 0) {
     while($row = $db->fetchObject($res)) {
         $gi_type = $row->gi_type == NULL ? "NULL" : $row->gi_type;
@@ -81,8 +82,8 @@ if($db->numRows( $res ) > 0) {
         $valueint = $row->valueint == NULL ? "NULL" : $row->valueint;
         $line = "$gi_type|$p1_id|$p2_id|$value|$valueint";
         if (!in_array($line, $saved_log)) {
-        	echo "Saved log does not contain: $line\n";
-        	$issuesFound = true;
+            echo "Saved log does not contain: $line\n";
+            $issuesFound = true;
         }
         $current_log[] = $line;
         
@@ -93,8 +94,8 @@ $db->freeResult($res);
 // determines issues which appear in saved log but not in current log
 $diff = array_diff($saved_log, $current_log);
 foreach($diff as $d) {
-	echo "Saved log does contains additionally: $line\n";
-	$issuesFound = true;
+    echo "Saved log contains additionally: $line\n";
+    $issuesFound = true;
 }
 
 echo "done!\n";

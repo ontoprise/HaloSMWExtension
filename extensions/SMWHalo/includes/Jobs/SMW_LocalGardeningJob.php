@@ -92,7 +92,7 @@ class SMW_LocalGardeningJob extends Job {
         
         // check issues
         foreach($properties as $property) {
-			print "Checking domain property: '".$property->getText()."'\n";
+			//print "Checking domain property: '".$property->getText()."'\n";
 			$subjects = array();
 			foreach (smwfGetStore()->getAllPropertySubjects($property) as $dv) {
 				$subjects[] = $dv->getTitle();

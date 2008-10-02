@@ -107,7 +107,7 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 				if ($frgs === false) {
 					$indicesToReplace[$i] = "";
 				} else {
-					$indicesToReplace[$i] = (count($frgs) == 1) ? trim($frgs[0]) : implode("; ", trim($frgs));
+					$indicesToReplace[$i] = (count($frgs) == 1) ? trim($frgs[0]) : trim(implode("; ", $frgs));
 				}
 			}
 		}

@@ -727,33 +727,34 @@ function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
  * Called when an article has been moved.
  */
 function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
-		$store = smwfGetStore();
+        $store = smwfGetStore();
+        
+        $jobs = array();
+        $titlesToUpdate = $oldtitle->getLinksTo();
+        $params[] = $oldtitle->getText();
+        $params[] = $newtitle->getText();
 
-		$titlesToUpdate = $oldtitle->getLinksTo();
-		$params[] = $oldtitle->getText();
-		$params[] = $newtitle->getText();
+        $fullparams[] = $oldtitle->getPrefixedText();
+        $fullparams[] = $newtitle->getPrefixedText();
 
-		$fullparams[] = $oldtitle->getPrefixedText();
-		$fullparams[] = $newtitle->getPrefixedText();
+        foreach ($titlesToUpdate as $uptitle) {
+            if ($uptitle !== NULL) $jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
+        }
 
-		foreach ($titlesToUpdate as $uptitle) {
-			$jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
-		}
+        if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
+            $wikipagesToUpdate = $store->getAllPropertySubjects( $oldtitle );
+            foreach ($wikipagesToUpdate as $dv)
+                if ($dv->getTitle() !== NULL) $jobs[] = new SMW_UpdatePropertiesAfterMoveJob($dv->getTitle(), $params);
+        }
 
-		if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
-			$wikipagesToUpdate = $store->getAllPropertySubjects( $oldtitle );
-			foreach ($wikipagesToUpdate as $dv)
-				$jobs[] = new SMW_UpdatePropertiesAfterMoveJob($dv->getTitle(), $params);
-		}
+        if ($oldtitle->getNamespace()==NS_CATEGORY) {
+            $wikipagesToUpdate = smwfGetSemanticStore()->getDirectInstances($oldtitle);
+            foreach ($wikipagesToUpdate as $inst)
+                if ($inst !== NULL) $jobs[] = new SMW_UpdateCategoriesAfterMoveJob($inst, $params);
+        }
 
-		if ($oldtitle->getNamespace()==NS_CATEGORY) {
-			$wikipagesToUpdate = smwfGetSemanticStore()->getDirectInstances($oldtitle);
-			foreach ($wikipagesToUpdate as $dv)
-				$jobs[] = new SMW_UpdateCategoriesAfterMoveJob($dv->getTitle(), $params);
-		}
-
-		Job :: batchInsert($jobs);
-		return true;
+        Job :: batchInsert($jobs);
+        return true;
 }
 
 /**
