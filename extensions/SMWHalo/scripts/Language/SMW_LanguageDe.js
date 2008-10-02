@@ -8,8 +8,8 @@ var wgContLanguageStrings = {
 	'CATEGORY_NS'             : "Kategorie:",	// namespace identifier with colon
 	'PROPERTY_NS'             : "Attribut:",	// namespace identifier with colon
 	'TEMPLATE_NS'             : "Vorlage:",		// namespace identifier with colon
-	'TYPE_NS'                 : 'Typ:', 		// namespace identifier with colon
+	'TYPE_NS'                 : 'Datentyp:', 		// namespace identifier with colon
 	'WEBSERVICE_NS'           : 'WebService:',  //namespace identifier with colon
-	'TYPE_PAGE'               : "Typ:Seite",	// type identifier
+	'TYPE_PAGE'               : "Datentyp:Seite",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Seite"			// type identifier without namespace
 }
