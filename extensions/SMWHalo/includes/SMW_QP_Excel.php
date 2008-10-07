@@ -69,7 +69,7 @@ class SMWExcelResultPrinter extends SMWResultPrinter {
 				
 					$result .= $text;
 				}
-				$result .= $tt;
+				
 				$result .= "</td>\n";
 				$firstcol = false;
 				$act_column ++;

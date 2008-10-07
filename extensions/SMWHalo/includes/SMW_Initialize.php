@@ -1396,7 +1396,11 @@ function smwfExtDeleteOutput(& $article, & $output) {
 function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
     global $smwgIP, $smwgNamespace, $smwgRuleRewriter, $smwgEnableFlogicRules;
     include_once($smwgIP . '/includes/SMW_Factbox.php');
-        
+
+    if (SMWFactbox::$semdata === NULL) {
+        return true; // do nothing, if SMWFactbox::$semdata is not set.
+    }
+    
     // parse categories:
     $categoryLinkPattern = '/\[\[               # Beginning of the link
                             category:           # category link (case insensitive!)

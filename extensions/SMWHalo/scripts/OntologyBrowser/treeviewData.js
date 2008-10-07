@@ -275,42 +275,46 @@ filterBrowseCategories: function(title) {
 },
 
 filterBrowseInstances: function(title) {
-	// initialize with given instance
-   	 function filterBrowsingInstanceCallback(request) {
-   	 	OB_instance_pendingIndicator.hide();
-	 	var instanceDIV = $("instanceList");
-	 	if (instanceDIV.firstChild) {
-	 		GeneralBrowserTools.purge(instanceDIV.firstChild);
-			instanceDIV.removeChild(instanceDIV.firstChild);
-		}
-		var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
-		
-		// if only one instance found -> fetch annotations too
-		if (xmlFragmentInstanceList.firstChild.childNodes.length == 1) {
-			var instance = xmlFragmentInstanceList.firstChild.firstChild;
-			OB_relatt_pendingIndicator.show();
-			sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instance.getAttribute("title")], getAnnotationsCallback);
-		}
-		dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
-	  	transformer.transformResultToHTML(request,instanceDIV, true);
-	 }
-	 
-	 function getAnnotationsCallback(request) {
-	 	OB_relatt_pendingIndicator.hide();
-	 	var relattDIV = $("relattributes");
-	  	if (relattDIV.firstChild) {
-	  		GeneralBrowserTools.purge(relattDIV.firstChild);
-			relattDIV.removeChild(relattDIV.firstChild);
-		}
-		var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
-		dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
-	  	transformer.transformResultToHTML(request,relattDIV);
-	  	if (OB_bd.isGecko) {
-	  		// FF needs repasting for chemical formulas and equations because FF's XSLT processor does not know 'disable-output-encoding' switch. IE does.
-	  		// thus, repaste markup on all elements marked with a 'chemFoEq' attribute
-	  		GeneralBrowserTools.repasteMarkup("chemFoEq");
-	  	}
-	 }
+    // initialize with given instance
+     function filterBrowsingInstanceCallback(request) {
+        OB_instance_pendingIndicator.hide();
+        var instanceDIV = $("instanceList");
+        if (instanceDIV.firstChild) {
+            GeneralBrowserTools.purge(instanceDIV.firstChild);
+            instanceDIV.removeChild(instanceDIV.firstChild);
+        }
+        var xmlFragmentInstanceList = GeneralXMLTools.createDocumentFromString(request.responseText);
+        
+        // if only one instance found -> fetch annotations too
+        if (xmlFragmentInstanceList.firstChild.childNodes.length == 1) {
+            var instance = xmlFragmentInstanceList.firstChild.firstChild;
+            OB_relatt_pendingIndicator.show();
+            sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instance.getAttribute("title")], getAnnotationsCallback);
+        }
+        dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+        selectionProvider.fireBeforeRefresh();
+        transformer.transformResultToHTML(request,instanceDIV, true);
+        selectionProvider.fireRefresh();
+     }
+     
+     function getAnnotationsCallback(request) {
+        OB_relatt_pendingIndicator.hide();
+        var relattDIV = $("relattributes");
+        if (relattDIV.firstChild) {
+            GeneralBrowserTools.purge(relattDIV.firstChild);
+            relattDIV.removeChild(relattDIV.firstChild);
+        }
+        var xmlFragmentPropertyList = GeneralXMLTools.createDocumentFromString(request.responseText);
+        dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+        selectionProvider.fireBeforeRefresh();
+        transformer.transformResultToHTML(request,relattDIV);
+        selectionProvider.fireRefresh();
+        if (OB_bd.isGecko) {
+            // FF needs repasting for chemical formulas and equations because FF's XSLT processor does not know 'disable-output-encoding' switch. IE does.
+            // thus, repaste markup on all elements marked with a 'chemFoEq' attribute
+            GeneralBrowserTools.repasteMarkup("chemFoEq");
+        }
+     }
 	 
 	 OB_instance_pendingIndicator.show();
 	

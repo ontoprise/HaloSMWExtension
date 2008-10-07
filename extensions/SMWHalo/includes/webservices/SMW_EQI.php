@@ -125,7 +125,7 @@ class ExternalQueryInterface {
         // parse params and answer query
         SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
         $params['format'] = $format;
-        return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts);
+        return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 
 			
 	}

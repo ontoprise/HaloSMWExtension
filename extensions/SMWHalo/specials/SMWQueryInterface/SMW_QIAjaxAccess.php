@@ -85,9 +85,27 @@ function smwf_qi_QIAccess($method, $params) {
 	else if($method == "getQueryResult"){
 		$result="null";
 		if ($smwgQEnabled) {
-			$params = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
-			//$result = applyQueryHighlighting($p_array[0], $params);
-			$result = SMWQueryProcessor::getResultFromHookParams($p_array[0],$params,SMW_OUTPUT_HTML);
+			// read fix parameters from QI GUI
+            $fixparams = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
+                        
+            // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
+            $paramPos = strpos($p_array[0], "|");
+            $rawparams[] = $paramPos === false ? $p_array[0] : substr($p_array[0], 0, $paramPos);
+            if ($paramPos !== false) {
+                // add other params
+                $ps = explode("|", substr($p_array[0], $paramPos + 1));
+                foreach ($ps as $param) {
+                    $param = trim($param);
+                    $rawparams[] = $param;
+                }
+            }
+        
+            // parse params and answer query
+            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+            // merge fix parameters from GUI, they always overwrite others
+            $params = array_merge($params, $fixparams);
+            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_HTML);
+            
 			// add target="_new" for all links
 			$pattern = "|<a|i";
 			$result = preg_replace($pattern, '<a target="_new"', $result);

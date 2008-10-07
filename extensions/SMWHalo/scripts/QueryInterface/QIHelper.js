@@ -153,7 +153,8 @@ previewQuery:function(){
 	this.pendingElement.show();
 
 	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
-		var ask = this.recurseQuery(0); // Get full ask syntax
+		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
+		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
 		var params = ask + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
@@ -313,7 +314,7 @@ recurseQuery:function(id, type){
 	}
 	else {
 		if(type == "parser"){
-			var tmptext = this.queries[id].getAskText();
+			var tmptext = this.queries[id].getParserAsk();
 			for(var i=0; i<sq.length; i++){
 				var regex = null;
 				eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID
@@ -321,7 +322,7 @@ recurseQuery:function(id, type){
 			}
 			return tmptext;
 		} else {
-			var tmptext = this.queries[id].getParserAsk();
+			var tmptext = this.queries[id].getAskText();
 			for(var i=0; i<sq.length; i++){
 				var regex = null;
 				eval('regex = /Subquery:' + sq[i] + ':/g'); //search for all Subquery tags and extract the ID

@@ -129,14 +129,15 @@ class PropertyCoVarianceDetector {
             }
 
             // check for correct value
-            if ($this->isCardinalityValue($minCard[0]->getXSDValue()) !== true) {
+            $minCardDV = reset($minCard);
+            if ($this->isCardinalityValue($minCardDV->getXSDValue()) !== true) {
 
-                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MINCARD_VALUE, $a, $minCard[0]->getXSDValue());
+                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MINCARD_VALUE, $a, $minCardDV->getXSDValue());
 
             }
             // read min cards
 
-            $minCardValue = $minCard[0]->getXSDValue() + 0;
+            $minCardValue = intval($minCardDV->getXSDValue());
             $minCardValueOfParent = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
 
             $minCardCOVTest = $this->checkMinCardinalityForCovariance($minCardValue, $minCardValueOfParent);
@@ -175,13 +176,14 @@ class PropertyCoVarianceDetector {
 
             }
             // check for correct value format
-            if ($this->isCardinalityValue($maxCard[0]->getXSDValue()) !== true) {
-                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MAXCARD_VALUE, $a, $maxCard[0]->getXSDValue());
+            $maxCardDV = reset($maxCard);
+            if ($this->isCardinalityValue($maxCardDV->getXSDValue()) !== true) {
+                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_WRONG_MAXCARD_VALUE, $a, $maxCardDV->getXSDValue());
 
             }
             // check for co-variance with parent
 
-            $maxCardValue = $maxCard[0]->getXSDValue() + 0;
+            $maxCardValue = intval($maxCardDV->getXSDValue());
             $maxCardValueOfParent = $this->cc_store->getMaxCardinalityOfSuperProperty($this->propertyGraph, $a);
 
             $maxCardCOVTest = $this->checkMaxCardinalityForCovariance($maxCardValue, $maxCardValueOfParent);

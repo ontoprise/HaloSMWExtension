@@ -44,7 +44,10 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 echo "Parse arguments...";
 
 $params = array();
+$noLog = false;
+$bot_params = "";
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
+    
     //-b => BotID
     if ($arg == '-b') {
         $botID = next($argv);
@@ -54,7 +57,10 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         $bot_params = next($argv);
         continue;
     }
-    
+    if ($arg == '-nolog') {
+        $noLog = true;
+        continue;
+    }
     $params[] = $arg;
 }
 
@@ -122,6 +128,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWWebService/S
         }
         
         // mark as finished
+        if ($noLog) $log = NULL;
         $title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
         if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
         
@@ -130,7 +137,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWWebService/S
         $log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
         $log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
         echo $log;
-        
+        if ($noLog) $log = NULL;
         $title = $gl->markGardeningTaskAsFinished($taskid, $log);
         if ($title != NULL) {
             echo "\nLog saved at: ".$title->getLocalURL();
