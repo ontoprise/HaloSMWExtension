@@ -49,10 +49,10 @@ Breadcrump.prototype = {
             show = show.replace("_", " ");
             
             // add item 
-            html += '<li><a href="'+wgServer+wgScript+'/'+encodeURIComponent(b)+'">'+show+' &gt; </a>'; 
+            html += '<a href="'+wgServer+wgScript+'/'+encodeURIComponent(b)+'">'+show+' &gt; </a>'; 
         });
         var bc_div = $('breadcrump');
-        if (bc_div != null) bc_div.innerHTML = "<ul>"+html+"</ul>";
+        if (bc_div != null) bc_div.innerHTML = html;
     }
 }
 var smwhg_breadcrump = new Breadcrump(5);

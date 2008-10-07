@@ -1632,6 +1632,14 @@ p.mw-ipb-conveniencelinks {
 	font-size:90%;
 }
 
+#breadcrump{
+	float: right;
+}
+
+#breadcrump a{
+	margin-right: 10px;
+}
+
 #contentSliderHandle {
 cursor:move;
 position:relative;

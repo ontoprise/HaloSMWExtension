@@ -152,7 +152,7 @@
 							if( isset( $this->data['search'] ) ) {
 							?> value="<?php $this->text('search') ?>"<?php } ?> />
 						<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>" />
-						<!--<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" /> -->
+						<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
 			    	</form>
 			    </div>
 					
@@ -192,7 +192,9 @@
 			<div id="smwf_naviblock">
 				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
 				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><p><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></p></div>
+					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
 					<div id="navigationlist" class="smwf_navilist">
 							<table class="naviitemtable">
 							<?php foreach($cont as $key => $val) { ?>
@@ -201,21 +203,20 @@
 							<a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?>
 							</a></div>
 							</td></tr>
-							<?php } wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( &$this ) ); ?>
+							<?php } ?>						
+							
+								
+							<?php wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( $this ) ); ?>		
+								
+													
 							</table>
 					</div>
 				</div>
-				<?php } ?>
-				<div id='smwf_browser'>
-					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')"><p>Browser</p></div>
-					<div id="smwf_browserview">						
-						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
-						$webcode .= $treeview; ?>
-					</div>
-				</div>
-				
+				<?php } ?>				
 				<div id="smwf_toolbox">
-					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><p><?php $this->msg('toolbox') ?></p></div>
+					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><?php $this->msg('toolbox') ?>
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
 					<div id="toolboxlist" class="smwf_navilist">
 							<table class="naviitemtable">
 							
@@ -282,19 +283,30 @@
 								<tr><td>
 									<div class="smwf_naviitem" id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div>
 								</td></tr>	
-							<?php } ?>
+							<?php } ?>							
+							
+								
+							<?php wfRunHooks( 'OntoSkinTemplateToolboxEnd', array( &$this ) ); ?>		
+								
+							
+							
 							</table>
 					</div>
-				<?php wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( $navEnd ) );
-				if($navEnd != ""){
-   				$htmlcode .= $sep . $navEnd;}
-   				?>
+				</div>
+				<div id='smwf_browser'>
+					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')">Browser
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
+					<div id="smwf_browserview">						
+						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
+						$webcode .= $treeview; ?>
+					</div>
 				</div>
 				
 			</div>
 			
 			<!-- right side	page -->
-			<div id="smwf_pageblock">
+			<div id="smwf_pageblock" class="smwf_pageblock">
 				<div id="content">
 					<?php 	global $wgRequest,$wgTitle;
 				
@@ -352,6 +364,21 @@
 										<a href="http://www.mister-wong.de/add_url/" onClick="location.href=&quot;http://www.mister-wong.de/index.php?action=addurl&amp;bm_url=&quot;+encodeURIComponent(location.href)+&quot;&amp;bm_description=&quot;+encodeURIComponent(document.title);return false" title="Diese Seite zu Mister Wong hinzufügen" target="_top"><img src="http://www.mister-wong.de/img/buttons/logo16.gif" alt="Diese Seite zu Mister Wong hinzufügen" border="0" /></a>
 										<!-- digg -->
 										<a href="http://digg.com/"><img src="http://digg.com/img/badges/16x16-digg-guy.png" width="16" height="16" alt="Digg!" /></a>
+										<!-- google -->
+										<!--<img src="http://google.com/favicon.ico"/>-->
+										<!--<a href="javascript:void(document.location='http://www.google.com/bookmarks/mark?op=edit&bkmk='+escape(document.location))">
+											<b>G</b>
+										</a>-->									
+										<!-- Technorati -->
+										<!--<img src="http://technorati.com/favicon.ico"/>-->
+										<!--<a href="javascript:void(document.location='http://technorati.com/faves?add='+escape(document.location))">
+											<b>T</b>
+										</a>-->
+										<!-- Facebook -->
+										<!--<img src="http://facebook.com/favicon.ico"/>-->
+										<!--<a href="javascript:void(document.location='http://www.facebook.com/sharer.php?u='+escape(document.location))">
+											<b>F</b>
+										</a>-->																									
 									</div>
 									<div id="bodyContent">
 										<h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
@@ -409,8 +436,10 @@
 		window.onload=function(){
 		    //Setting of all elemtents with round corners 
 			Nifty("div.selected","top transparent");
-			Nifty("div.smwf_navihead","normal fixed-height");
-			Nifty("div.smwf_naviitem","normal fixed-height");
+			Nifty("div.smwf_navihead","normal");
+			//Nifty("div.smwf_naviitem","normal");
+			Nifty("div.darkround","normal");
+			Nifty("div.round","big");
 		}
 		
 		function switchVisibility(container) {

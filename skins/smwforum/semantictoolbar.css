@@ -169,6 +169,14 @@ a.plusminus:hover{
     position: relative;
 }
 
+#ontomenuanchor a{
+	color: #00D;
+}
+
+#ontomenuanchor a:hover{
+	text-decoration: underline;
+}
+
 #innercontent {
     position: relative;
     z-index: 2;
