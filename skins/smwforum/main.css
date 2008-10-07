@@ -54,28 +54,14 @@
 	background: #4b595c;
 	height: 85px;
 	border-bottom: 5px solid #F5AC3E;
+	padding-left: 10px;
+	padding-top: 10px;
 }
 
-#smwf_headline{
-	float:left;
-	color: #FFF;
-	margin-left: 20px;
-}
-
-#smwf_headline1{
-	position: absolute;
-	top: 1em;
-	font-weight: bolder;
-	font-size: large;
-}
-
-#smwf_headline2{
-	position: absolute;
-	top: 2.5em;
-	font-weight: bold;
-	font-size: small;
+#smwf_logo{
 	
 }
+
 #p-personal {
 	float: right;
 	position: absolute;

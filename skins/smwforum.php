@@ -131,9 +131,10 @@
  	<div id="globalWrapper">
  		<!-- Header -->
  		<div id="smwf_head"> 				
- 				<div id="smwf_headline">
- 				<div id="smwf_headline1">SMW+&nbsp;User&nbsp;Forum</div> 
- 				<div id="smwf_headline2">For&nbsp;commercial&nbsp;&nbsp;production</div>
+ 				<div id="smwf_logo">
+ 					<a <?php
+					?>href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
+					echo $skin->tooltipAndAccesskey('n-mainpage') ?>><img src="<?php $this->text('logopath') ?>"/></a>
  				</div>
  				<!-- Personalbar -->
  				<div id="p-personal">
