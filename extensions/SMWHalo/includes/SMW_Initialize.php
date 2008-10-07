@@ -1316,17 +1316,13 @@ function smwfCreateLinks($name) {
 		$query = str_replace("{{{PAGE_TITLE_WNS}}}", $wgTitle->getDBkey(), $query);
 		$page_title = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $page_title);
 	
-		//Check if ontoskin is available
+		//Check if ontoskin is available else return code for new skins
 		global $wgUser;
-		if(!method_exists($wgUser->getSkin(),'isSemantic')){
-			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
-		} else {
-			if($wgUser->getSkin()->isSemantic() != true){
+			if($wgUser->getSkin() == 'ontoskin'){
 				$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
 			} else {
 				$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></div></td></tr>';	
 			}
-		}
 	}
 	return $result;
 }
