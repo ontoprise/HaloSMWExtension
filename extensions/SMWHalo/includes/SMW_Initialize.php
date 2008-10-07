@@ -1315,7 +1315,18 @@ function smwfCreateLinks($name) {
 		$query = str_replace("{{{PAGE_NS}}}", $wgTitle->getNsText(), $query);
 		$query = str_replace("{{{PAGE_TITLE_WNS}}}", $wgTitle->getDBkey(), $query);
 		$page_title = str_replace("{{{PAGE_TITLE}}}", $wgTitle->getPrefixedDBkey(), $page_title);
-		$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+	
+		//Check if ontoskin is available
+		global $wgUser;
+		if(!method_exists($wgUser->getSkin(),'isSemantic')){
+			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+		} else {
+			if($wgUser->getSkin()->isSemantic() != true){
+				$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+			} else {
+				$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></div></td></tr>';	
+			}
+		}
 	}
 	return $result;
 }
