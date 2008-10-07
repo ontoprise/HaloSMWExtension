@@ -401,6 +401,7 @@
 	clear: both;
 	border-bottom: 2px solid #67666B;
 	height: 3.5em;
+	margin-top: 10px;
 }
 
 #f-poweredbyico{
@@ -448,23 +449,23 @@
 */
 
 
-.round_head{
+.blueround_head{
 	background: #def0f4;
 }
 
-.round{
-	background: #def0f4 url(Sticki_newsbox_backgr.gif) 0 0 repeat-x;
+.blueround{
+	background: #FFF url(Sticki_newsbox_backgr.gif) 0 0 repeat-x;
 	font-size: x-small;
 	margin-top: -10px;
 }
 
-.round a{
-	color: #CAE385;
+.blueround a{
+	color: #67666B;
 	font-weight: bold;
 	font-size: medium; 
 }
 
-.round li{
+.blueround li{
 	margin-top: 10px;
 }
 
@@ -483,7 +484,7 @@
 }
 
 .smwforumtable .smwtable th a{
-	color: #707E81;
+	color: #67666B;
 }
 
 .smwforumtable .smwtable td{

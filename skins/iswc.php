@@ -193,10 +193,10 @@
 			<div id="smwf_naviblock">
 				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
 				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<div class="smwf_navihead" onclick="switchVisibility('navigationlist')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
+					<div class="smwf_navihead" onclick="switchVisibility('navigationlist-<?php echo $bar ?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
 					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
 					</div>
-					<div id="navigationlist" class="smwf_navilist">
+					<div id="navigationlist-<?php echo $bar ?>" class="smwf_navilist">
 							<table class="naviitemtable">
 							<?php foreach($cont as $key => $val) { ?>
 							<tr><td>
@@ -418,7 +418,7 @@
 			Nifty("div.selected","top transparent");
 			Nifty("div.smwf_navihead","normal");
 			//Nifty("div.smwf_naviitem","normal");
-			Nifty("div.round_head","top");
+			Nifty("div.blueround_head","top");
 			Nifty("div.round","big");
 		}
 		
