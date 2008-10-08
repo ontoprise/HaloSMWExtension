@@ -1138,10 +1138,10 @@ var OBGlobalActionListener = Class.create();
 OBGlobalActionListener.prototype = {
 	initialize: function() {
 		this.activeTreeName = 'categoryTree';
-		var inputs = document.getElementsByTagName("input");
-		new Form.Element.Observer(inputs[1], 0.5, this.filterTree.bindAsEventListener(this));
-		new Form.Element.Observer(inputs[2], 0.5, this.filterInstances.bindAsEventListener(this));
-		new Form.Element.Observer(inputs[3], 0.5, this.filterProperties.bindAsEventListener(this));
+		
+		new Form.Element.Observer($("treeFilter"), 0.5, this.filterTree.bindAsEventListener(this));
+        new Form.Element.Observer($("instanceFilter"), 0.5, this.filterInstances.bindAsEventListener(this));
+        new Form.Element.Observer($("propertyFilter"), 0.5, this.filterProperties.bindAsEventListener(this));
 		
 		// make sure that OntologyBrowser Filter search gets focus if a key is pressed
 		Event.observe(document, 'keydown', function(event) { 
@@ -1411,8 +1411,8 @@ OBGlobalActionListener.prototype = {
 	 if (!force && event["keyCode"] != 13 ) {
 	 	return;
 	 }
-	 var inputs = document.getElementsByTagName("input");
-	 var hint = inputs[0].value;
+	 var filterBrowserInput = $("FilterBrowserInput");
+     var hint = filterBrowserInput.value;
 	 
 	 if (hint.length <= 1) {
 	 	alert(gLanguage.getMessage('ENTER_MORE_LETTERS'));

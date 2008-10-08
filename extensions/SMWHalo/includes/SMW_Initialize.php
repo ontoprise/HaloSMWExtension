@@ -1199,7 +1199,7 @@ function smwTIAddHTMLHeader(&$out){
 
 	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":TermImport");
 	smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":TermImport");
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TermImport/termimport.js', "all", -1, NS_SPECIAL.":TermImport");
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/TermImport/termImport.js', "all", -1, NS_SPECIAL.":TermImport");
 
 	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":TermImport");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");

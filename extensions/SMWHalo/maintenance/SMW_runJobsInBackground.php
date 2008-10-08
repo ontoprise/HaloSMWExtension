@@ -37,7 +37,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
  $mediaWikiLocation = dirname(__FILE__) . '/../../..';
  require_once "$mediaWikiLocation/maintenance/commandLine.inc";
  
- $rate = $options['r'];
+ $rate = array_key_exists('r', $options) ? $options['r'] : NULL;
 
  if (!is_numeric($rate) || $rate > 1) {
  	$rate = 0.5; // 0.5 jobs/second is default rate

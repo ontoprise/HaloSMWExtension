@@ -616,17 +616,15 @@ class AnnotationLevelConsistency {
 
         $result = false;
         
-        for($domRanVal = reset($domainRange), $dvr = reset($domain_cov_results); $domRanVal !== false && $dvr !== false;) {
+        for($domRanVal = reset($domainRange), $dvr = reset($domain_cov_results); $domRanVal !== false && $dvr !== false;$dvr = next($domain_cov_results), $domRanVal = next($domainRange) ) {
             
             if ($domain_cov_results != NULL && !$dvr) {
-                $dvr = next($domain_cov_results);
+                
                 continue;
             }
-            $dvr = next($domain_cov_results);
-            
+                
             $rangeCorrect = false;
             $dvs = $domRanVal->getDVs();
-            $domRanVal = next($domainRange);
             
             $domain = reset($dvs);
             $range = next($dvs);
@@ -650,6 +648,7 @@ class AnnotationLevelConsistency {
         }
         return $result;
     }
+    
 
     /**
      * Checks weather subject matches a domain/range pair.
