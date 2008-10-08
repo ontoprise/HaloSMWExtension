@@ -289,7 +289,7 @@
 }
 
 .smwf_pageblock a{
-	color: #67666B;
+	color: #0091A6;
 	text-decoration: none;
 }
 
@@ -327,7 +327,7 @@
 }
 
 #toc a{
-	color: #000;
+	color: #0091A6;
 }
 
 
@@ -489,4 +489,12 @@
 
 .smwforumtable .smwtable td{
 	border-bottom: 1px solid #F0F0F0;
+}
+
+#smwf_pageblock .smwtable{
+	background-color: #E6E6E6;
+}
+
+#smwf_pageblock .smwtable th{
+	background-color: #E6E6E6;
 }
