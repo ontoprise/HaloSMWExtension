@@ -718,7 +718,7 @@ class ExportOntologyBot extends GardeningBot {
  * about exporting. Instead there's a textual log.
  * */
 define('SMW_EXPORTONTOLOGY_BOT_BASE', 1100);
-
+require_once ($smwgHaloIP . '/specials/SMWGardening/SMW_GardeningIssues.php');
 class ExportOntologyBotFilter extends GardeningIssueFilter {
 
 	public function __construct() {

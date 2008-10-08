@@ -3,6 +3,7 @@
  *
  * @author Joerg Heizmann
  */
+global $smwgHaloIP;
 
  require_once('SMW_CombinedSearch.php');
  require_once('SpecialSearch.php');
@@ -64,7 +65,7 @@ function smwf_ca_GetFTSearchResultsFor($searchstring = '', $limit = 20) {
 
   $searchPage = new FulltextSearch( $wgUser, $limit );
   
-  return "<html><head></head><body>" . $searchPage->getResults( $searchstring ) . "</body></html>";
+  return $searchPage->getResults( $searchstring );
 }
 /**
  * fetches the categories a given wiki page belongs to

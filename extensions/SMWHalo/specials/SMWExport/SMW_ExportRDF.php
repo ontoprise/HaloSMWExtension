@@ -2,19 +2,14 @@
 /*
  * Created on 20.09.2007
  *
- * Author: kai
+ * Author: Joerg
  */
 
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
+ 
+global $IP, $smwgIP, $smwgHaloIP;
 
-global $IP, $smwgIP;
-require_once( "$IP/includes/SpecialPage.php" );
-require_once( "$smwgIP/specials/Export/SMW_SpecialOWLExport.php");
-
-// replace SMW RDF-Export SpecialPage with advanced HALO RDF-Export SpecialPage.
-SpecialPage::removePage('ExportRDF');
-SpecialPage::addPage(new SpecialPage('ExportRDF','',true,'doSpecialExportRDF',false));
-//smwfInitUserMessages();
+require_once ($smwgHaloIP . '/specials/SMWGardening/Bots/SMW_ExportOntologyBot.php');
 
 function getPageAsRDF($page = '') {
 	global $wgOut, $wgRequest, $wgUser, $smwgAllowRecursiveExport, $smwgExportBacklinks, $smwgExportAll;
@@ -71,519 +66,448 @@ function getPageAsRDF($page = '') {
 		if ('' == $date) $date = $wgRequest->getVal( 'date' );
 
 		$exp = new ExportRDFHalo();
-		if ('' != $date) $exp->setDate($date);
-		return $exp->getPage($page,$recursive,$backlinks);
+		return $exp->getPage($page);
 	}
 }
 
-
-/**
- * Data class for holding all (special) data needed to export an articles
- * subject. Keeps data needed to generate type and URIs, as well as other
- * special property values.
- */
-class SMWExportTitleHalo extends OWLExport {
-	//@TODO: some of those members can be made local
-
-	// Values for special properties, see SMW_Settings.php for documentation.
-	// Each value may be missing if not set or not relevant
-	public $has_type = false;
-	public $has_uri = false; // TODO not used right now
-	public $ext_nsid = false;
-	public $ext_section = false;
-	// relevant title values, mandatory
-	public $title;
-	public $title_text;
-	public $title_namespace;
-	public $title_id;
-	public $title_fragment;
-	public $title_prefurl;
-	public $title_dbkey;
-	public $modifier = '';
-	public $value; // the title as a datavalue
-	// details about URIs for export
-	public $ns_uri = false;
-	public $short_uri;
-	public $long_uri;
-	public $label;
-	// key for hashing
-	public $hashkey;
-	// flags for controlling export
-	public $is_individual;
-	public $exists;
-
-	/**
-	 * Initialise the data for a given article title object, using the
-	 * provided DB handler.
-	 */
-	public function SMWExportTitleHalo($title, $export, $modifier = '') {
-		$this->title = $title;
-		$this->title_text = $title->getText();
-		$this->title_id = $title->getArticleID();
-		$this->title_namespace = $title->getNamespace();
-		$this->title_fragment = $title->getFragment();
-		$this->title_prefurl = $title->getPrefixedURL();
-		$this->title_dbkey = $title->getDBKey();
-		$this->value = 	SMWDataValueFactory::newTypeIDValue('_wpg', $title->getPrefixedText());
-		$this->hashkey = $this->title_prefurl . ' ' . $modifier; // must agree with keys generated elsewhere in this code!
-		$this->modifier = $modifier;
-		if ($modifier != '') $modifier = '#' . $modifier;
-
-		$this->is_individual = ( ($this->title_namespace !== SMW_NS_PROPERTY) && ($this->title_namespace !== NS_CATEGORY) );
-		$this->exists = $title->exists();
-
-		if ($this->exists) {
-			if ($title->getNamespace() == SMW_NS_PROPERTY) {
-				$a = $export->store->getSpecialValues( $title, SMW_SP_HAS_TYPE );
-				if (count($a)>0) $this->has_type = $a[0];
-			}
-			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_BASEURI );
-			if (count($a)>0) $this->ns_uri = end($a)->getXSDValue();
-			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_NSID );
-			if (count($a)>0) $this->ext_nsid = end($a)->getXSDValue();
-			$a = $export->store->getSpecialValues( $title, SMW_SP_EXT_SECTION );
-			if (count($a)>0) $this->ext_section = end($a)->getXSDValue();
-		}
-
-		// Calculate URIs and label
-		global $wgContLang;
-		$ns_text = $wgContLang->getNsText($this->title_namespace);
-		if ($ns_text!='') {
-			$ns_text .= ':';
-		}
-
-		if ($this->ns_uri === false) { //no external URI
-			$this->ns_uri = ExportRDFHalo::makeXMLExportId(urlencode(str_replace(' ', '_', $ns_text)));
-			$baseXML = ExportRDFHalo::makeXMLExportId(urlencode(str_replace(' ', '_', $this->title_text . $modifier)));
-			switch ($this->title_namespace) {
-				case SMW_NS_PROPERTY:
-					$xmlprefix = 'property:';
-					$xmlent = '&property;';
-					break;
-				default:
-					$xmlprefix = 'wiki:';
-					$xmlent = '&wiki;';
-					$baseXML = $this->ns_uri . $baseXML;
-					$this->ns_uri = '';
-					break;
-			}
-			$this->long_uri = $xmlent . $baseXML;
-			if (in_array(mb_substr($baseXML,0,1), array('-','0','1','2','3','4','5','6','7','8','9'))) { // illegal as first char in XML
-				$this->short_uri = 'wiki:' . $this->ns_uri . $baseXML;
-			} else {
-				$this->short_uri = $xmlprefix . $baseXML;
-			}
-		} else { // external URI known
-			$this->long_uri = $this->ns_uri . $this->ext_section;
-			$this->short_uri = $this->ext_nsid . ':' . $this->ext_section;
-		}
-		if ($this->is_individual) {
-			$this->label = $ns_text . $this->title_text;
-		} else {
-			$this->label = $this->title_text;
-		}
-		//$this->label = $this->title_text; // we show the namespace prefixes in most specials in our wiki, so this should also be done by external (re)users (mak)
-		//TODO: should we make an exception for schema elements (Category, Attriubte, ...) where the prefix is clear from the context? At least namespaces like User: seem to be essential for understanding.
-		if ($this->modifier != '') $this->label .= " ($this->modifier)";
-		$this->label = smwfXMLContentEncode($this->label);
-	}
-}
 
 /**
  * Class for encapsulating the methods for RDF export.
  */
-class ExportRDFHalo extends OWLExport {
+class ExportRDFHalo {
+	
+	private $LINE_FEED = "\n";
+ 	private $namespace = 'http://www.halowiki.org';
+ 	private $page;
+ 		
+ 	public function getPage($page) {
+ 		$this->page = Title::newFromText($page);
+ 		// fetch articleId
+ 		$this->page->getArticleId();
+ 		$pageexport = $this->writeHeader();
+ 		$pageexport .= $this->exportProperties();
+ 		$pageexport .= $this->exportCategories();
+ 		$pageexport .= $this->exportInstance();
+ 		$pageexport .= $this->writeFooter();
+ 		return $pageexport;
+ 	} 		
 
-	/**#@+
-	 * @access private
-	 */
+ 	private function writeHeader() {
+ 		$header = '<!DOCTYPE owl ['.$this->LINE_FEED;
+   		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >'.$this->LINE_FEED;
+   		$header .=	'<!ENTITY a  "'.$this->namespace.'#" >'.$this->LINE_FEED;
+   		$header .=	'<!ENTITY prop  "'.$this->namespace.'/property#" >'.$this->LINE_FEED;
+   		$header .=	'<!ENTITY cat  "'.$this->namespace.'/category#" > ]>'.$this->LINE_FEED;
+		$header .=	'<rdf:RDF'.$this->LINE_FEED;
+    	$header .=	'xmlns:a   ="&a;"'.$this->LINE_FEED;
+    	$header .=	'xmlns:cat ="&cat;"'.$this->LINE_FEED;
+		$header .=	'xmlns:prop ="&prop;"'.$this->LINE_FEED;				
+    	$header .=	'xmlns:owl ="http://www.w3.org/2002/07/owl#"'.$this->LINE_FEED;
+		$header .=	'xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"'.$this->LINE_FEED;
+		$header .=	'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">'.$this->LINE_FEED;
+		$header .=	'<owl:Ontology rdf:about="'.$this->namespace.'">'.$this->LINE_FEED;
+		$header .=	'	<rdfs:comment>HaloWiki Export</rdfs:comment>'.$this->LINE_FEED;
+		$header .=	'	<rdfs:label>HaloWiki Ontology</rdfs:label>'.$this->LINE_FEED;
+		$header .=	'</owl:Ontology>'.$this->LINE_FEED;
+		return $header;
+ 	}
+ 	
+ 	private function writeFooter() {
+ 		$footer = '</rdf:RDF>'.$this->LINE_FEED;
+ 		return $footer;
+ 	}
+ 	
+ 	/**
+ 	 * Exports categories
+ 	 * 
+ 	 * @param $filehandle handle for a text file.
+ 	 */
+ 	private function exportCategories() {
+ 		// obtain complete number of categories
+ 		$db =& wfGetDB( DB_SLAVE );
+ 		
+ 		$rootCategories = smwfGetSemanticStore()->getCategoriesForInstance($this->page);
+ 	 		
+ 		// generate default root concept
+ 		$owl = '<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
+		$owl .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.$this->LINE_FEED;
+		$owl .= '</owl:Class>'.$this->LINE_FEED;
 
-	const MAX_CACHE_SIZE = 5000; // do not let cache arrays get larger than this
-	const CACHE_BACKJUMP = 500;  // kill this many cached entries if limit is reached,
-	                             // avoids too much array copying; <= MAX_CACHE_SIZE!
-
-	/**
-	 * An array that keeps track of the elements for which we still need to
-	 * write auxilliary definitions.
-	 */
-	private $element_queue;
-
-	/**
-	 * An array that keeps track of the elements which have been exported already
-	 */
-	private $element_done;
-
-	/**
-	 * Date used to filter the export. If a page has not been changed since that
-	 * date it will not be exported
-	 */
-	private $date;
-
-	/**
-	 * Array of additional namespaces (abbreviation => URI), flushed on
-	 * closing the current namespace tag. Since we export RDF in a streamed
-	 * way, it is not always possible to embed additional namespaces into
-	 * the RDF-tag which might have been sent to the client already. But we
-	 * wait with printing the current Description so that extra namespaces
-	 * from this array can still be printed (note that you never know which
-	 * extra namespaces you encounter during export).
-	 */
-	private $extra_namespaces;
-
-	/**
-	 * Array of namespaces that have been declared globally already. Contains
-	 * entries of format 'namespace abbreviation' => true, assuming that the
-	 * same abbreviation always refers to the same URI (i.e. you cannot import
-	 * something as rdf:bla if you do not want rdf to be the standard
-	 * namespace that is already given in every RDF export).
-	 */
-	private $global_namespaces;
-
-	/**
-	 * Array of references to the SWIVT schema. Will be added at the end of the
-	 * export.
-	 */
-	private $schema_refs;
-
-	/**
-	 * Unprinted XML is composed from the strings $pre_ns_buffer and $post_ns_buffer.
-	 * The split between the two is such that one can append additional namespace
-	 * declarations to $pre_ns_buffer so that they affect all current elements. The
-	 * buffers are flushed during output in order to achieve "streaming" RDF export
-	 * for larger files.
-	 */
-	private $pre_ns_buffer;
-
-	/**
-	 * See documentation for OWLExport::pre_ns_buffer.
-	 */
-	private $post_ns_buffer;
-
-	/**
-	 * Boolean that is true as long as nothing was flushed yet. Indicates that
-	 * extra namespaces can still become global.
-	 */
-	private $first_flush;
-
-	/**
-	 * Integer that counts down the number of objects we still process before
-	 * doing the first flush. Aggregating some output before flushing is useful
-	 * to get more namespaces global. Flushing will only happen if $delay_flush
-	 * is 0.
-	 */
-	private $delay_flush;
-
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		$this->element_queue = array();
-		$this->element_done = array();
-		$this->schema_refs = array();
-		$this->date = '';
-	}
-
-
-	/* Functions for exporting RDF */
-
-	protected function printHeader() {
-		global $wgContLang;
-
-		$this->pre_ns_buffer .=
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
-			"<!DOCTYPE rdf:RDF[\n" .
-			"\t<!ENTITY rdf '"   . SMWExporter::expandURI('&rdf;')   .  "'>\n" .
-			"\t<!ENTITY rdfs '"  . SMWExporter::expandURI('&rdfs;')  .  "'>\n" .
-			"\t<!ENTITY owl '"   . SMWExporter::expandURI('&owl;')   .  "'>\n" .
-			"\t<!ENTITY swivt '" . SMWExporter::expandURI('&swivt;') .  "'>\n" .
-			"\t<!ENTITY property '" . SMWExporter::expandURI('&property;') .  "/'>\n" .
-			"\t<!ENTITY wikiurl '" . SMWExporter::expandURI('&wikiurl;') .  "'>\n" .
-			// A note on "wiki": this namespace is crucial as a fallback when it would be illegal to start e.g. with a number. In this case, one can always use wiki:... followed by "_" and possibly some namespace, since _ is legal as a first character.
-			"\t<!ENTITY wiki '"  . SMWExporter::expandURI('&wiki;') .  "'>\n" .
-			"]>\n\n" .
-			"<rdf:RDF\n" .
-			"\txmlns:rdf=\"&rdf;\"\n" .
-			"\txmlns:rdfs=\"&rdfs;\"\n" .
-			"\txmlns:owl =\"&owl;\"\n" .
-			"\txmlns:swivt=\"&swivt;\"\n" .
-			"\txmlns:wiki=\"&wiki;\"\n" .
-			"\txmlns:wikiurl=\"&wikiurl;\"\n" .
-			"\txmlns:property=\"&property;\"";
-		$this->global_namespaces = array('rdf'=>true, 'rdfs'=>true, 'owl'=>true, 'swivt'=>true, 'wiki'=>true, 'property'=>true, 'wikiurl'=>true);
-
-		$this->post_ns_buffer .=
-			">\n\t<!-- Ontology header -->\n" .
-			"\t<owl:Ontology rdf:about=\"\">\n" .
-			"\t\t<swivt:creationDate rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">" . date(DATE_W3C) . "</swivt:creationDate>\n" .
-			"\t\t<owl:imports rdf:resource=\"http://semantic-mediawiki.org/swivt/1.0\" />\n" .
-			"\t</owl:Ontology>\n" .
-			"\t<!-- exported page data -->\n";
-		$this->addSchemaRef( "page", "owl:AnnotationProperty" );
-		$this->addSchemaRef( "creationDate", "owl:AnnotationProperty" );
-		$this->addSchemaRef( "Subject", "owl:Class" );
-	}
-
-	/**
-	 * Prints the footer. Prints also all open schema-references.
-	 * No schema-references can be added after printing the footer.
-	 */
-	protected function printFooter() {
-		$this->post_ns_buffer .= "\t<!-- References to the SWiVT Ontology, see http://semantic-mediawiki.org/swivt/ -->\n";
-		foreach ($this->schema_refs as $name => $type ) {
-			$this->post_ns_buffer .=
-				"\t<$type rdf:about=\"&swivt;$name\">\n" .
-				"\t\t<rdfs:isDefinedBy rdf:resource=\"http://semantic-mediawiki.org/swivt/1.0\"/>\n" .
-				"\t</$type>\n";
-		}
-		$this->post_ns_buffer .= "\t<!-- Created by Semantic MediaWiki, http://semantic-mediawiki.org -->\n";
-		$this->post_ns_buffer .= '</rdf:RDF>';
-	}
-
-	/**
-	 * Serialise the given semantic data.
-	 */
-	protected function printExpData(/*SMWExpData*/ $data) {
-		$type = $data->extractMainType()->getSubject()->getQName();
-		if ('' == $this->pre_ns_buffer) { // start new ns block
-			$this->pre_ns_buffer .= "\t<$type";
-		} else {
-			$this->post_ns_buffer .= "\t<$type";
-		}
-		if ( ($data->getSubject() instanceof SMWExpLiteral) || ($data->getSubject() instanceof SMWExpResource) ) {
-			 $this->post_ns_buffer .= ' rdf:about="' . $data->getSubject()->getName() . '"';
-		} // else: blank node
-		$this->post_ns_buffer .= ">\n";
-
-		foreach ($data->getProperties() as $property) {
-			$this->queueElement($property);
-			foreach ($data->getValues($property) as $value) {
-				$this->post_ns_buffer .= "\t\t<" . $property->getQName();
-				$this->addExtraNamespace($property->getNamespaceID(),$property->getNamespace());
-				$object = $value->getSubject();
-				if ($object instanceof SMWExpLiteral) {
-					if ($object->getDatatype() != '') {
-						$this->post_ns_buffer .= ' rdf:datatype="' . $object->getDatatype() . '"';
-					}
-					$this->post_ns_buffer .= '>' .
-					     str_replace(array('&', '>', '<'), array('&amp;', '&gt;', '&lt;'), $object->getName()) .
-					     '</' . $property->getQName() . ">\n";
-				} else { // bnode or resource, may have subdescriptions
-					if (count($value->getProperties()) > 0) {
-						$this->post_ns_buffer .= ">\n";
-						$this->printExpData($value);
-						$this->post_ns_buffer .= "\t\t</" . $property->getQName() . ">\n";
-					} else {
-						if ($object instanceof SMWExpResource) {
-							$this->post_ns_buffer .= ' rdf:resource="' . $object->getName() . '"';
-							$this->queueElement($object); // queue only non-explicated resources
+ 		foreach($rootCategories as $rc) {
+ 			if (smwfGetSemanticStore()->transitiveCat->equals($rc) 
+ 					|| smwfGetSemanticStore()->symetricalCat->equals($rc)) {
+ 						// ignore builtin categories
+ 						continue;
+ 			}
+ 			
+ 			// export root categories
+ 			$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($rc->getDBkey()).'">'.$this->LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rc->getText()).'</rdfs:label>'.$this->LINE_FEED;
+			$owl .= '	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />'.$this->LINE_FEED;
+ 		    // export redirects
+            $redirects = smwfGetSemanticStore()->getRedirectPages($rc);
+            foreach($redirects as $r) {
+                $owl .= "\t".'<owl:equivalentClass rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
+            }
+			$owl .= '</owl:Class>'.$this->LINE_FEED;
+			$visitedNodes = array();
+			
+			$owl .= $this->exportSubcategories($rc, $visitedNodes);
+ 		}
+		return $owl; 		
+ 	}
+ 	
+ 	  	
+ 	/**
+ 	 * Exports all instances. 
+ 	 * Instances without categories will be added to DefaultRootConcept
+ 	 * 
+ 	 * @param $filehandle handle for a text file.
+ 	 */
+ 	private function exportInstance() {
+ 					
+ 		// define member categories. If there is no, put it to DefaultRootConcept by default
+ 		$categories = smwfGetSemanticStore()->getCategoriesForInstance($this->page);
+ 		$owl = '<owl:Thing rdf:about="&a;'.ExportOntologyBot::makeXMLAttributeContent($this->page->getDBkey()).'">'.$this->LINE_FEED;
+ 		if (count($categories) == 0) {
+ 			$owl .= '	<rdf:type rdf:resource="&cat;DefaultRootConcept"/>'.$this->LINE_FEED;
+ 		} else {
+ 			foreach($categories as $category) {
+ 				$owl .= '	<rdf:type rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($category->getDBkey()).'"/>'.$this->LINE_FEED;
+ 			}
+ 		}
+ 		$properties = smwfGetStore()->getProperties($this->page);
+ 		
+ 		// export property values (aka annotations)
+ 		foreach($properties as $p) {
+ 			// create valid xml export ID for property. If no exists, skip it.
+ 			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getDBkey());
+ 			if ($propertyLocal == NULL) continue;
+ 			$values = smwfGetStore()->getPropertyValues($this->page, $p);
+ 			foreach($values as $smwValue) {
+ 				// export WikiPage value as ObjectProperty
+				if ($smwValue instanceof SMWWikiPageValue) {
+					$target = $smwValue->getTitle();
+																		
+						if ($target!=NULL) {
+							$owl .= '	<prop:'.$propertyLocal.' rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($target->getDBkey()).'"/>'.$this->LINE_FEED;
 						}
-						$this->post_ns_buffer .= "/>\n";
-					}
+					
+	 			} else { // and all others as datatype properties (including n-aries)
+	 										
+						if ($smwValue->getUnit() != NULL && $smwValue->getUnit() != '') {
+							// special handling for units
+							$owl .= $this->exportSI($p, $smwValue);
+						} else {
+		 					$xsdType = $this->mapWikiTypeToXSD[$smwValue->getTypeID()] == NULL ? 'string' : $this->mapWikiTypeToXSD[$smwValue->getTypeID()];
+		 					$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
+		 					$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.$this->LINE_FEED;
+						}
+					
+	 			}
+ 			}
+ 		}
+ 		// export redirects
+ 		$redirects = smwfGetSemanticStore()->getRedirectPages($this->page);
+ 		foreach($redirects as $r) {
+ 			$owl .= "\t".'<owl:sameAs rdf:resource="&a;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
+ 		}
+ 		
+ 		$owl .= '</owl:Thing>'.$this->LINE_FEED;
+ 		return $owl;
+	 		
+ 	}
+ 	
+ 	/**
+ 	 * Exports all properties with their
+ 	 *  1. Domain and Type/Range (also multiple domains/ranges)
+ 	 *  2. Cardinality (min/max)
+ 	 *  3. Symmetry and Transitivity
+ 	 *  4. Inverse relations
+ 	 *  5. Super properties
+ 	 */
+ 	private function exportProperties() {
+ 		
+ 		$properties = smwfGetStore()->getProperties($this->page);
+ 		
+ 		$exportetprops = "";
+ 		
+ 		foreach($properties as $rp) {
+ 						
+ 			if (smwfGetSemanticStore()->domainRangeHintRelation->equals($rp) 
+ 					|| smwfGetSemanticStore()->minCard->equals($rp) 
+ 					|| smwfGetSemanticStore()->maxCard->equals($rp)
+ 					|| smwfGetSemanticStore()->inverseOf->equals($rp)) {
+ 						// ignore builtin properties
+ 						continue;
+ 			}
+ 			
+ 			// obtain cardinalities
+ 			$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCard);
+ 			if ($maxCards != NULL || count($maxCards) > 0) {
+ 				$maxCard = intval($maxCards[0]->getXSDValue());
+ 				
+ 			} else {
+ 				$maxCard = NULL;
+ 			}
+ 			
+ 			$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCard);
+ 			if ($minCards != NULL || count($minCards) > 0) {
+ 				$minCard = intval($minCards[0]->getXSDValue());
+ 				
+ 			} else {
+ 				$minCard = NULL;
+ 			}
+ 			
+ 			// obtain direct super properties
+ 			$directSuperProperties = smwfGetSemanticStore()->getDirectSuperProperties($rp);
+ 			
+ 			// decide what to export by reading property type
+ 			$type = smwfGetStore()->getSpecialValues($rp, SMW_SP_HAS_TYPE);
+ 			if ($type == NULL || count($type) == 0) {
+ 				// default type: binary relation
+ 				$firstType = '_wpg';
+ 			} else {
+ 				$firstType = $type[0]->getXSDValue();
+ 			}
+ 			
+ 			if ($firstType == '_wpg') {
+ 				// wikipage properties will be exported as ObjectProperties
+ 				$owl = $this->exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard);
+ 			} else { //TODO: how to handle n-aries? for the moment export them as string attributes
+ 				$owl = $this->exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard);
+ 			}
+ 			$exportetprops .= $owl;
+ 		}
+ 		return $exportetprops;
+ 	}
+ 	
+ 	
+ 	private function exportSubcategories($superCategory, array & $visitedNodes) {
+ 		$directSubcategories = smwfGetSemanticStore()->getDirectSubCategories($superCategory);
+ 		array_push($visitedNodes, $superCategory->getArticleID());
+ 		$owl = "";
+ 		foreach($directSubcategories as $c) {
+ 		
+ 			if (in_array($c->getArticleID(), $visitedNodes)) {
+ 				array_pop($visitedNodes);
+ 				return;
+ 			}
+ 			$directSuperCategories = smwfGetSemanticStore()->getDirectSuperCategories($c);
+ 			
+ 			$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($c->getDBkey()).'">'.$this->LINE_FEED;
+			$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($c->getText()).'</rdfs:label>'.$this->LINE_FEED;
+			foreach($directSuperCategories as $sc) {
+				$owl .= '	<rdfs:subClassOf rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($sc->getDBkey()).'" />'.$this->LINE_FEED;
+			}
+ 		    // export redirects
+            $redirects = smwfGetSemanticStore()->getRedirectPages($c);
+            foreach($redirects as $r) {
+                $owl .= "\t".'<owl:equivalentClass rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
+            }
+			$owl .= '</owl:Class>'.$this->LINE_FEED;	
+
+			
+			// depth-first in category tree
+			$this->exportSubcategories($c, $visitedNodes);
+ 		}
+ 		array_pop($visitedNodes);
+ 		return $owl;
+ 	}
+ 	
+ 	
+ 	
+ 	private function exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard) {
+ 		$xsdType = $this->mapWikiTypeToXSD[$firstType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$firstType];
+ 		
+ 		// export as subproperty 	
+		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.$this->LINE_FEED;
+		$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rp->getText()).'</rdfs:label>'.$this->LINE_FEED;
+		foreach($directSuperProperties as $dsp) {
+ 			$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.$this->LINE_FEED;
+ 		}
+ 	    // export redirects
+        $redirects = smwfGetSemanticStore()->getRedirectPages($rp);
+        foreach($redirects as $r) {
+            $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
+        }
+ 		$owl .= '</owl:DatatypeProperty>'.$this->LINE_FEED;
+ 		
+ 		// read all domains/ranges
+ 		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
+ 		if ($domainRange == NULL || count($domainRange) == 0) {
+ 			// if no domainRange annotation exists, export as property of DefaultRootConcept
+			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
+			$owl .= '		<rdfs:subClassOf>'.$this->LINE_FEED;
+			$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+			$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.$this->LINE_FEED;
+			$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.$this->LINE_FEED;
+			$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+			$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+			if ($maxCard != NULL) {
+				$owl .= $this->exportMaxCard($rp, $maxCard);
+			}
+			if ($minCard != NULL) {
+				$owl .= $this->exportMinCard($rp, $minCard);
+			}
+			$owl .= '</owl:Class>'.$this->LINE_FEED;
+ 		} else {
+	 			
+	 		foreach($domainRange as $dr) {
+		 		$dvs = $dr->getDVs();
+		 		$domain = $dvs[0] != NULL ? $dvs[0]->getTitle()->getDBkey() : "";
+		 		if ($domain == NULL) continue;
+		 		$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
+			
+				$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.$this->LINE_FEED;
+				$owl .= '		<rdfs:subClassOf>'.$this->LINE_FEED;
+				$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+				$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.$this->LINE_FEED;
+				$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.$this->LINE_FEED;
+				$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+				$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+				if ($maxCard != NULL) {
+					$owl .= $this->exportMaxCard($rp, $maxCard);
 				}
-			}
-		}
-		$this->post_ns_buffer .= "\t</" . $type . ">\n";
-	}
-
-	/**
-	 * Print the triples associated to a specific page, and references those needed.
-	 * They get printed in the printFooter-function.
-	 *
-	 * @param SMWExportTitle $et The Exporttitle wrapping the page to be exported
-	 * @param boolean $fullexport If all the triples of the page should be exported, or just
-	 *                            a definition of the given title.
-	 * $return nothing
-	 */
-	protected function printObject(/*SMWSmallTitle*/ $st, $fullexport=true, $backlinks = false) {
-		if (array_key_exists($st->getHash(), $this->element_done)) return; // do not export twice
-
-		$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$value->setValues($st->dbkey, $st->namespace);
-		$title = $value->getTitle();
-		if ( $this->date !== '' ) { // check date restriction if given
-			$rev = Revision::getTimeStampFromID($title->getLatestRevID());
-			if ($rev < $this->date) return;
-		}
-
-		if ($fullexport) {
-			$filter = false;
-		} else { // retrieve only some core special properties
-			$filter = array(SMW_SP_HAS_URI, SMW_SP_HAS_TYPE, SMW_SP_EXT_BASEURI);
-		}
-		$data = SMWExporter::makeExportData(smwfGetStore()->getSemanticData($title, $filter), $st->modifier);
-
-		$this->printExpData($data); // serialise
-		$this->markAsDone($st);
-
-		// possibly add backlinks
-		if ( ($fullexport) && ($backlinks) ) {
-			wfProfileIn("RDF::PrintPages::GetBacklinks");
-			$inRels = smwfGetStore()->getInProperties($value);
-			foreach ($inRels as $inRel) {
-				$inSubs = smwfGetStore()->getPropertySubjects( $inRel, $value );
-				foreach($inSubs as $inSub) {
-					$stb = new SMWSmallTitle();
-					$stb->dbkey = $inSub->getDBKey();
-					$stb->namespace = $inSub->getNamespace();
-					if (!array_key_exists($stb->getHash(), $this->element_done)) {
-						$semdata = smwfGetStore()->getSemanticData($inSub, array(SMW_SP_HAS_URI, SMW_SP_HAS_TYPE, SMW_SP_EXT_BASEURI));
-						$semdata->addPropertyObjectValue($inRel, $value);
-						$data = SMWExporter::makeExportData($semdata);
-						$this->printExpData($data);
-					}
+				if ($minCard != NULL) {
+					$owl .= $this->exportMinCard($rp, $minCard);
 				}
-			}
-			if ( NS_CATEGORY === $title->getNamespace() ) { // also print elements of categories
-				$instances = smwfGetStore()->getSpecialSubjects( SMW_SP_HAS_CATEGORY, $title );
-				foreach($instances as $instance) {
-					$stb = new SMWSmallTitle();
-					$stb->dbkey = $instance->getDBKey();
-					$stb->namespace = $instance->getNamespace();
-					if (!array_key_exists($stb->getHash(), $this->element_done)) {
-						$semdata = smwfGetStore()->getSemanticData($instance, array(SMW_SP_HAS_URI, SMW_SP_HAS_TYPE, SMW_SP_EXT_BASEURI));
-						$semdata->addSpecialValue(SMW_SP_HAS_CATEGORY, $value);
-						$data = SMWExporter::makeExportData($semdata);
-						$this->printExpData($data);
+				$owl .= '</owl:Class>'.$this->LINE_FEED;
+	 		}
+	 				
+ 		}
+		return $owl;
+ 	}
+ 	
+ 	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
+ 				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOf);
+ 				
+ 				// export as symmetrical property
+ 				$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.$this->LINE_FEED;
+ 				$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rp->getText()).'</rdfs:label>'.$this->LINE_FEED;
+ 				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->symetricalCat)) {
+ 					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>'.$this->LINE_FEED;
+ 				}
+ 				// export as transitive property
+ 				if ($this->checkIfMemberOfCategory($rp, smwfGetSemanticStore()->transitiveCat)) {
+ 					$owl .= '	<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>'.$this->LINE_FEED;
+ 				}
+ 				
+ 				// export as subproperty
+ 				foreach($directSuperProperties as $dsp) {
+ 					$owl .= '	<rdfs:subPropertyOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($dsp->getDBkey()).'"/>'.$this->LINE_FEED;
+ 				}
+ 				
+ 				// export as inverse property
+ 				foreach($inverseRelations as $inv) {
+ 					if (!($inv instanceof SMWWikiPageValue)) continue;
+ 					$owl .= '	<owl:inverseOf rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($inv->getTitle()->getDBkey()).'"/>'.$this->LINE_FEED;
+ 				}
+ 				
+ 	            // export redirects
+	            $redirects = smwfGetSemanticStore()->getRedirectPages($rp);
+	            foreach($redirects as $r) {
+	                $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
+	            }
+ 				$owl .= '</owl:ObjectProperty>'.$this->LINE_FEED;
+ 				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
+ 				if ($domainRange == NULL || count($domainRange) == 0) {
+ 					// if no domainRange annotation exists, export as property of DefaultRootConcept
+			 				$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
+			 				$owl .= '		<rdfs:subClassOf>'.$this->LINE_FEED;
+			 				$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.$this->LINE_FEED;
+							$owl .= '               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />'.$this->LINE_FEED;
+							$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+							$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+							if ($maxCard != NULL) {
+								$owl .= $this->exportMaxCard($rp, $maxCard);
+							}
+							if ($minCard != NULL) {
+								$owl .= $this->exportMinCard($rp, $minCard);
+							}
+							$owl .= '</owl:Class>'.$this->LINE_FEED;
+ 				} else {
+	 				
+	 				
+	 					foreach($domainRange as $dr) {
+		 					$dvs = $dr->getDVs();
+		 					$domain = $dvs[0] != NULL ? $dvs[0]->getTitle()->getDBkey() : "";
+		 					if ($domain == NULL) continue;
+		 					$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getDBkey() : "";
+		 				
+			 				$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.$this->LINE_FEED;
+			 				$owl .= '		<rdfs:subClassOf>'.$this->LINE_FEED;
+			 				$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+							$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'" />'.$this->LINE_FEED;
+							if ($range != '') $owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.$this->LINE_FEED;
+							$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+							$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+							if ($maxCard != NULL) {
+								$owl .= $this->exportMaxCard($rp, $maxCard);
+							}
+							if ($minCard != NULL) {
+								$owl .= $this->exportMinCard($rp, $minCard);
+							}
+							$owl .= '</owl:Class>'.$this->LINE_FEED;
+	 					}
+	 				
+ 				}
+				return $owl;
+ 	}
+ 	
+ 	private function exportMinCard($property, $minCard) {
+ 		$owl = '		<rdfs:subClassOf>'.$this->LINE_FEED;
+		$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getDBkey()).'" />'.$this->LINE_FEED;
+		$owl .= '				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.$this->LINE_FEED;
+		$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+		$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+		return $owl;
+ 	}
+ 	
+ 	private function exportMaxCard($property, $maxCard) {
+ 		$owl = '		<rdfs:subClassOf>'.$this->LINE_FEED;
+		$owl .= '			<owl:Restriction>'.$this->LINE_FEED; 
+		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getDBkey()).'" />'.$this->LINE_FEED;
+		$owl .= '				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.$this->LINE_FEED;
+		$owl .= '			</owl:Restriction>'.$this->LINE_FEED;
+		$owl .= '		</rdfs:subClassOf>'.$this->LINE_FEED;
+		return $owl;
+ 	}
+ 	
+ 	/**
+ 	 * Checks if $title is member of $category
+ 	 */
+ 	private function checkIfMemberOfCategory($title, $category) {
+ 		$db =& wfGetDB( DB_SLAVE );
+ 		$res = $db->selectRow($db->tableName('categorylinks'), 'cl_to', array('cl_from'=>$title->getArticleID(), 'cl_to'=>$category->getDBkey()));
+ 		return $res !== false;
+ 	}
+ 	
+ 	private function exportSI($pt, $value) {
+ 		if ( $value->isNumeric() ) {
+			$dtid = &smwfGetStore()->getSpecialValues($pt, SMW_SP_HAS_TYPE);
+			$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
+			$conv = array();
+			if ($dttitle !== NULL)
+				$conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
+			if ( !empty($conv) ) {
+				$dv = SMWDataValueFactory::newPropertyValue($pt->getPrefixedText(), $value->getXSDValue() . " " . $value->getUnit());
+					list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);
+					$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
+					if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
+						return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ' rdf:datatype="&xsd;float">' . 
+										smwfXMLContentEncode($dv->getXSDValue()) . 
+								'</prop:' . ExportOntologyBot::makeXMLExportId($pt->getDBkey()) . ">\n";
 					}
-				}
-			}
-			wfProfileOut("RDF::PrintPages::GetBacklinks");
-		}
-	}
 
-	/**
-	 * Add an extra namespace that was encountered during output. The method
-	 * checks whether the required namespace is available globally and adds
-	 * it to the list of extra_namesapce otherwise.
-	 */
-	public function addExtraNamespace($nsshort,$nsuri) {
-		if (!array_key_exists($nsshort,$this->global_namespaces)) {
-			$this->extra_namespaces[$nsshort] = $nsuri;
-		}
-	}
-
-	/**
-	 * Adds a reference to the SWIVT schema. This will make sure that at the end of the page,
-	 * all required schema references will be defined and point to the appropriate ontology.
-	 *
-	 * @param string $name The fragmend identifier of the entity to be referenced.
-	 *                     The SWIVT namespace is added.
-	 * @param string $type The type of the referenced identifier, i.e. is it an annotation
-	 *                     property, an object property, a class, etc. Should be given as a QName
-	 *                     (i.e. in the form "owl:Class", etc.)
-	 */
-	public function addSchemaRef( $name,  $type ) {
-		if (!array_key_exists($name, $this->schema_refs))
-			$this->schema_refs[$name] = $type;
-	}
-
-	/**
-	 * Add a given SMWExpResource to the export queue if needed.
-	 */
-	public function queueElement($element) {
-		if ( !($element instanceof SMWExpResource) ) return; // only Resources are queued
-		$title = $element->getDataValue();
-		if ($title instanceof SMWWikiPageValue) {
-			$spt = new SMWSmallTitle();
-			$title = $title->getTitle();
-			$spt->dbkey = $title->getDBKey();
-			$spt->namespace = $title->getNamespace();
-			$spt->modifier = $element->getModifier();
-			if ( !array_key_exists($spt->getHash(), $this->element_done) ) {
-				$this->element_queue[$spt->getHash()] = $spt;
 			}
 		}
-	}
-
-	/**
-	 * Mark an article as done while making sure that the cache used for this
-	 * stays reasonably small. Input is given as an SMWExportArticle object.
-	 */
-	protected function markAsDone($st) {
-		if ( count($this->element_done) >= OWLExport::MAX_CACHE_SIZE ) {
-			$this->element_done = array_slice( $this->element_done,
-										OWLExport::CACHE_BACKJUMP,
-										OWLExport::MAX_CACHE_SIZE - OWLExport::CACHE_BACKJUMP,
-										true );
-		}
-		$this->element_done[$st->getHash()] = $st; //mark title as done
-		unset($this->element_queue[$st->getHash()]); //make sure it is not in the queue
-	}
-
-	/**
-	 * This function checks whether some article fits into a given namespace restriction.
-	 * FALSE means "no restriction," non-negative restictions require to check whether
-	 * the given number equals the given namespace. A restriction of -1 requires the
-	 * namespace to be different from Category:, Relation:, Attribute:, and Type:.
-	 */
-	static public function fitsNsRestriction($res, $ns) {
-		if ($res === false) return true;
-		if ($res >= 0) return ( $res == $ns );
-		return ( ($res != NS_CATEGORY) && ($res != SMW_NS_PROPERTY) && ($res != SMW_NS_TYPE) );
-	}
-
-	public function getPage($page,$recursive,$backlinks) {
-		wfProfileIn("RDF::PrintPages");
-
-		$linkCache =& LinkCache::singleton();
-		$this->pre_ns_buffer = '';
-		$this->post_ns_buffer = '';
-		$this->first_flush = true;
-		$this->delay_flush = 10; //flush only after (fully) printing 11 objects
-		$this->extra_namespaces = array();
-
-		$this->printHeader(); // also inits global namespaces
-
-		wfProfileIn("RDF::PrintPages::PrepareQueue");
-		// transform pages into queued export titles
-		$cur_queue = array();
-		$title = Title::newFromText($page);
-		if (NULL === $title) continue; //invalid title name given
-		$st = new SMWSmallTitle();
-		$st->dbkey = $title->getDBKey();
-		$st->namespace = $title->getNamespace();
-		$cur_queue[] = $st;
-
-		wfProfileOut("RDF::PrintPages::PrepareQueue");
-
-		while (count($cur_queue) > 0) {
-			// first, print all selected pages
-			foreach ( $cur_queue as $st) {
-				wfProfileIn("RDF::PrintPages::PrintOne");
-				$this->printObject($st, true, $backlinks);
-				wfProfileOut("RDF::PrintPages::PrintOne");
-				if ($this->delay_flush > 0) $this->delay_flush--;
-			}
-			// prepare array for next iteration
-			$cur_queue = array();
-			if (1 == $recursion) {
-				$cur_queue = $this->element_queue + $cur_queue; // make sure the array is *dublicated* instead of copying its ref
-				$this->element_queue = array();
-			}
-			$linkCache->clear();
-		}
-
-		// for pages not processed recursively, print at least basic declarations
-		wfProfileIn("RDF::PrintPages::Auxilliary");
-		$this->date = ''; // no date restriction for the rest!
-		if (!empty($this->element_queue)) {
-			if ( '' != $this->pre_ns_buffer ) {
-				$this->post_ns_buffer .= "\t<!-- auxilliary definitions -->\n";
-			} else {
-				print "\t<!-- auxilliary definitions -->\n"; // just print this comment, so that later outputs still find the empty pre_ns_buffer!
-			}
-			while (!empty($this->element_queue)) {
-				$st = array_pop($this->element_queue);
-				$this->printObject($st,false,false);
-			}
-		}
-		wfProfileOut("RDF::PrintPages::Auxilliary");
-		$this->printFooter();
-//		$this->flushBuffers(true);
-		return $this->pre_ns_buffer . $this->post_ns_buffer;
-	}
-
-	// Converts the given value to the SI unit value based, and also
+		return '';
+ 	}
+ 	
+ 	// Converts the given value to the SI unit value based, and also
 	// returns the name of the unit. Inputs are the value in the standard
 	// unit (a float) and the conversion spec string from the corresponds
 	// to SI special attribute.
@@ -639,6 +563,49 @@ class ExportRDFHalo extends OWLExport {
 			return array(0, '');
 		}
 	}
+	
+	
+	
+	/** 
+	 *  This function transforms a string that can be used as an XML-ID. 
+	 */
+	static function makeXMLExportId($element) {
+		// make sure it starts with a letter or underscore (necessary for valid XML)
+	    if (preg_match('/^[A-z_].*/', $element) === 0) {
+            $element = "_".$element;
+        }
+        // replace some chars which must not appear in element names
+	   $element = str_replace( array('"','#','&',"'",'+','%',')','('),
+		                    array('-22','-23','-26','-27','-2B','-','-29','-28'),
+		                    $element);
+		return preg_match('/^[A-z_][\d\w_-]*$/', $element) > 0 ? $element : NULL;
+	}
 
-}
+	/** 
+     *  This function transforms a string that can be used as an XML attribute value. 
+     * 
+     *  @param $attribute value
+     *  @param $matchElementID true if value should be escaped same way as element name
+     */
+	static function makeXMLAttributeContent($attribute, $matchElementID = true) {
+		if ($matchElementID) {
+			// make sure it starts with a letter or underscore (to match the element names)
+			if (preg_match('/^[A-z_].*/', $attribute) === 0) {
+				$attribute = "_".$attribute;
+			}
+			// this chars may appear in attribute values, but they have to match element names
+			$attribute = str_replace( array('"','#','&',"'",'+','%',')','('),
+	                            array('-22', '-23','-26','-27','-2B','-','-29','-28'),
+	                            $attribute);
+	        return $attribute;
+	        
+		} else {
+			// " must be escaped in attribute values
+			return str_replace( array('"'),
+                               array('&quot;'),
+                               $attribute);
+		}
+	}
+ 	
+ }	
 ?>
