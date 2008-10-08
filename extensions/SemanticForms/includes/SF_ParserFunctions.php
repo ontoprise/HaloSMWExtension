@@ -2,7 +2,8 @@
 /**
  * Parser functions for Semantic Forms.
  *
- * Three parser functions are defined: 'forminput', 'formlink' and 'arraymap'.
+ * Four parser functions are defined: 'forminput', 'formlink', 'arraymap'
+ * and 'arraymaptemplate'.
  *
  * 'forminput' is called as:
  *
@@ -49,12 +50,12 @@
  *
  * 'arraymap' is called as:
  *
- * {{#arraymap:value|delimiter|var|new_value|new_delimiter}}
+ * {{#arraymap:value|delimiter|var|formula|new_delimiter}}
  *
  * This function applies the same transformation to every section of a
  * delimited string; each such section, as dictated by the 'delimiter'
  * value, is given the same transformation that the 'var' string is
- * given in 'new_value'. Finally, the transformed strings are joined
+ * given in 'formula'. Finally, the transformed strings are joined
  * together using the 'new_delimiter' string. Both 'delimiter' and
  * 'new_delimiter' default to commas.
  *
@@ -62,17 +63,56 @@
  * 'Has color' around each element in the list, you could call the
  * following:
  *
- * {#arraymap:blue;red;yellow|;|x|[[Has color:=x]]|;}}
+ * {{#arraymap:blue;red;yellow|;|x|[[Has color::x]]|;}}
+ *
+ *
+ * 'arraymaptemplate' is called as:
+ *
+ * {{#arraymaptemplate:value|template|delimiter|new_delimiter}}
+ *
+ * This function makes the same template call for every section of a
+ * delimited string; each such section, as dictated by the 'delimiter'
+ * value, is passed as a first parameter to the template specified.
+ * Finally, the transformed strings are joined together using the
+ * 'new_delimiter' string. Both 'delimiter' and 'new_delimiter'
+ * default to commas.
+ *
+ * Example: to take a semicolon-delimited list, and call a template
+ * named 'Beautify' on each element in the list, you could call the
+ * following:
+ *
+ * {{#arraymaptemplate:blue;red;yellow|Beautify|;|;}}
  *
  * @author Yaron Koren
+ * @author Sergey Chernyshev
+ * @author Daniel Friesen
+ * @author Barry Welch
  */
 
 
 function sfgParserFunctions () {
-	global $wgParser;
-	$wgParser->setFunctionHook('forminput', 'sfRenderFormInput');
-	$wgParser->setFunctionHook('formlink', 'sfRenderFormLink');
-	$wgParser->setFunctionHook('arraymap', 'sfRenderArrayMap');
+	global $wgHooks, $wgParser;
+	if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
+		$wgHooks['ParserFirstCallInit'][] = 'sfgRegisterParser';
+	} else {
+		if ( class_exists( 'StubObject' ) && !StubObject::isRealObject( $wgParser ) ) {
+			$wgParser->_unstub();
+		}
+		sfgRegisterParser( $wgParser );
+	}
+}
+
+function sfgRegisterParser( &$parser ) {
+	$parser->setFunctionHook('forminput', 'sfRenderFormInput');
+	$parser->setFunctionHook('formlink', 'sfRenderFormLink');
+	if( defined( get_class( $parser ) . '::SFH_OBJECT_ARGS' ) ) {
+		$parser->setFunctionHook('arraymap', 'sfRenderArrayMapObj', SFH_OBJECT_ARGS);
+		$parser->setFunctionHook('arraymaptemplate', 'sfRenderArrayMapTemplateObj', SFH_OBJECT_ARGS);
+	} else {
+		$parser->setFunctionHook('arraymap', 'sfRenderArrayMap');
+		$parser->setFunctionHook('arraymaptemplate', 'sfRenderArrayMapTemplate');
+	}
+	return true;
 }
 
 function sffLanguageGetMagic( &$magicWords, $langCode = "en" ) {
@@ -81,6 +121,7 @@ function sffLanguageGetMagic( &$magicWords, $langCode = "en" ) {
 		$magicWords['forminput']	= array ( 0, 'forminput' );
 		$magicWords['formlink']		= array ( 0, 'formlink' );
 		$magicWords['arraymap']		= array ( 0, 'arraymap' );
+		$magicWords['arraymaptemplate']	= array ( 0, 'arraymaptemplate' );
 	}
 	return true;
 }
@@ -88,17 +129,17 @@ function sffLanguageGetMagic( &$magicWords, $langCode = "en" ) {
 function sfRenderFormLink (&$parser, $inFormName = '', $inLinkStr = '', $inLinkType='', $inQueryStr = '') {
 	$ad = SpecialPage::getPage('AddData');
 	$link_url = $ad->getTitle()->getLocalURL() . "/$inFormName";
+	$link_url = str_replace(' ', '_', $link_url);
 	if ($inQueryStr != '') {
 		$link_url .= (strstr($link_url, '?')) ? '&' : '?';
 		$link_url .= $inQueryStr;
 	}
-	$link_url = str_replace(' ', '_', $link_url);
 	if ($inLinkType == 'button') {
 		$str = "<form><input type=\"button\" value=\"$inLinkStr\" onclick=\"window.location.href='$link_url'\"></form>";
 	} else {
 		$str = "<a href=\"$link_url\">$inLinkStr</a>";
 	}
-	return array($str, 'noparse' => 'true', 'isHTML' => 'true');
+	return array($str, 'noparse' => true, 'isHTML' => true);
 }
 
 function sfRenderFormInput (&$parser, $inFormName = '', $inSize = '25', $inValue = '', $inButtonStr = '', $inQueryStr = '') {
@@ -128,30 +169,98 @@ END;
 		$val = (isset($subcomponents[1])) ? $subcomponents[1] : '';
 		$str .= '			<input type="hidden" name="' . $key . '" value="' . $val . '">' . "\n";
 	}
+	wfLoadExtensionMessages('SemanticForms');
 	$button_str = ($inButtonStr != '') ? $inButtonStr : wfMsg('addoreditdata');
 	$str .= <<<END
 			<input type="submit" value="$button_str"></p>
 			</form>
 END;
-	return array($str, 'noparse' => 'true', 'isHTML' => 'true');
+	return array($str, 'noparse' => true, 'isHTML' => true);
 }
 
 /**
- * {{#arraymap:value|delimiter|var|new_value|new_delimiter}}
+ * {{#arraymap:value|delimiter|var|formula|new_delimiter}}
  */
-function sfRenderArrayMap ( &$parser, $value = '', $delimiter = ',', $var = 'x', $new_value = '', $new_delimiter = ', ' ) {
-	$ret = "";
-	$values_array = explode($delimiter, $value);
-	foreach ($values_array as $i => $cur_value) {
-		if ($i > 0)
-			$ret .= $new_delimiter;
+function sfRenderArrayMap( &$parser, $value = '', $delimiter = ',', $var = 'x', $formula = 'x', $new_delimiter = ', ' ) {
+	$values_array = explode($parser->mStripState->unstripNoWiki($delimiter), $value);
+	$results = array();
+	foreach ($values_array as $cur_value) {
+		$cur_value = trim($cur_value);
 		// ignore a value if it's null
 		if ('' != $cur_value) {
 			// remove whitespaces
-			$ret .= str_replace($var, trim($cur_value), $new_value);
+			$results[] = str_replace($var, $cur_value, $formula);
 		}
 	}
-	return $ret;
+	return implode($new_delimiter, $results);
 }
 
-?>
+/**
+ * SFH_OBJ_ARGS
+ * {{#arraymap:value|delimiter|var|formula|new_delimiter}}
+ */
+function sfRenderArrayMapObj( &$parser, $frame, $args ) {
+	# Set variables
+	$value         = isset($args[0]) ? trim($frame->expand($args[0])) : '';
+	$delimiter     = isset($args[1]) ? trim($frame->expand($args[1])) : ',';
+	$var           = isset($args[2]) ? trim($frame->expand($args[2], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES)) : 'x';
+	$formula       = isset($args[3]) ? $args[3] : 'x';
+	$new_delimiter = isset($args[4]) ? trim($frame->expand($args[4])) : ', ';
+	# Unstrip some
+	$delimiter = $parser->mStripState->unstripNoWiki($delimiter);
+	
+	$values_array = explode($delimiter, $value);
+	$results_array = array();
+	foreach( $values_array as $old_value ) {
+		$old_value = trim($old_value);
+		if( $old_value == '' ) continue;
+		$result_value = $frame->expand($formula, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES);
+		$result_value  = str_replace($var, $old_value, $result_value);
+		$result_value  = $parser->preprocessToDom($result_value, $frame->isTemplate() ? Parser::PTD_FOR_INCLUSION : 0);
+		$results_array[] = trim($frame->expand($result_value));
+	}
+	return implode($new_delimiter, $results_array);
+}
+
+/**
+ * {{#arraymaptemplate:value|template|delimiter|new_delimiter}}
+ */
+function sfRenderArrayMapTemplate( &$parser, $value = '', $template = '', $delimiter = ',', $new_delimiter = ', ' ) {
+	$values_array = explode($parser->mStripState->unstripNoWiki($delimiter), $value);
+	$results = array();
+	$template = trim($template);
+	foreach ($values_array as $cur_value) {
+		$cur_value = trim($cur_value);
+		// ignore a value if it's null
+		if ('' != $cur_value) {
+			// remove whitespaces
+			$results[] = '{{'.$template.'|'.$cur_value.'}}';
+		}
+	}
+	return array(implode($new_delimiter, $results), 'noparse' => false, 'isHTML' => false);
+}
+
+/**
+ * SFH_OBJ_ARGS
+ * {{#arraymaptemplate:value|template|delimiter|new_delimiter}}
+ */
+function sfRenderArrayMapTemplateObj( &$parser, $frame, $args ) {
+	# Set variables
+	$value         = isset($args[0]) ? trim($frame->expand($args[0])) : '';
+	$template      = isset($args[1]) ? trim($frame->expand($args[1])) : '';
+	$delimiter     = isset($args[2]) ? trim($frame->expand($args[2])) : ',';
+	$new_delimiter = isset($args[3]) ? trim($frame->expand($args[3])) : ', ';
+	# Unstrip some
+	$delimiter = $parser->mStripState->unstripNoWiki($delimiter);
+	
+	$values_array = explode($delimiter, $value);
+	$results_array = array();
+	foreach( $values_array as $old_value ) {
+		$old_value = trim($old_value);
+		if( $old_value == '' ) continue;
+		$results_array[] = $parser->replaceVariables(
+			implode('', $frame->virtualBracketedImplode( '{{', '|', '}}',
+				$template, '1='.$old_value )), $frame);
+	}
+	return implode($new_delimiter, $results_array);
+}

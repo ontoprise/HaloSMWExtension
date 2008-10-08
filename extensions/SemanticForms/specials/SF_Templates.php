@@ -7,10 +7,23 @@
 
 if (!defined('MEDIAWIKI')) die();
 
-global $IP;
-require_once( "$IP/includes/SpecialPage.php" );
+class SFTemplates extends SpecialPage {
 
-SpecialPage::addPage( new SpecialPage('Templates','',true,'doSpecialTemplates',false) );
+	/**
+	 * Constructor
+	 */
+	function SFTemplates() {
+		SpecialPage::SpecialPage('Templates');
+		wfLoadExtensionMessages('SemanticForms');
+	}
+
+	function execute() {
+		$this->setHeaders();
+		list( $limit, $offset ) = wfCheckLimits();
+		$rep = new TemplatesPage();
+		return $rep->doQuery( $offset, $limit );
+	}
+}
 
 class TemplatesPage extends QueryPage {
 	function getName() {
@@ -23,6 +36,9 @@ class TemplatesPage extends QueryPage {
 
 	function getPageHeader() {
 		global $wgUser;
+		
+		wfLoadExtensionMessages('SemanticForms');
+		
 		$sk = $wgUser->getSkin();
 		$ct = SpecialPage::getPage('CreateTemplate');
 		$create_template_link = $sk->makeKnownLinkObj($ct->getTitle(), $ct->getDescription());
@@ -45,7 +61,7 @@ class TemplatesPage extends QueryPage {
 			page_title as value
 			FROM $page
 			WHERE page_namespace = {$NStemp}";
-               }
+	}
 
 	function sortDescending() {
 		return false;
@@ -64,6 +80,7 @@ class TemplatesPage extends QueryPage {
 	}
 
 	function formatResult($skin, $result) {
+		wfLoadExtensionMessages('SemanticForms');
 		$title = Title::makeTitle( NS_TEMPLATE, $result->value );
 		$text = $skin->makeLinkObj( $title, $title->getText() );
 		$category = $this->getCategoryDefinedByTemplate(new Article($title));
@@ -71,10 +88,4 @@ class TemplatesPage extends QueryPage {
 			$text .= ' ' . wfMsg('sf_templates_definescat') . ' ' . sffLinkText(NS_CATEGORY, $category);
 		return $text;
 	}
-}
-
-function doSpecialTemplates() {
-	list( $limit, $offset ) = wfCheckLimits();
-	$rep = new TemplatesPage();
-	return $rep->doQuery( $offset, $limit );
 }

@@ -4,14 +4,28 @@
  *
  * @author Yaron Koren
  */
-require_once( $sfgIP . "/includes/SF_FormPrinter.inc" );
 
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
 if (!defined('MEDIAWIKI')) die();
 
-global $IP;
-require_once( "$IP/includes/SpecialPage.php" );
+class SFEditData extends SpecialPage {
 
-SpecialPage::addPage( new SpecialPage('EditData','',true,'doSpecialEditData',false) );
+	/**
+	 * Constructor
+	 */
+	function SFEditData() {
+		SpecialPage::SpecialPage('EditData');
+		wfLoadExtensionMessages('SemanticForms');
+	}
+
+	function execute($query = '') {
+		$this->setHeaders();
+		doSpecialEditData($query);
+	}
+}
 
 function doSpecialEditData($query = '') {
 	global $wgRequest;
@@ -29,38 +43,10 @@ function doSpecialEditData($query = '') {
 	printEditForm($form_name, $target_name);
 }
 
-global $wgHooks;
-$wgHooks[ 'UnknownAction' ][] = 'sffEmbeddedEditForm';
-
-/**
- * The function called if we're in index.php (as opposed to one of the special
- * pages)
- */
-function sffEmbeddedEditForm($action, $article) {
-	// for some reason, the code calling the 'UnknownAction' hook wants
-	// "true" if the hook failed, and "false" otherwise... this is
-	// probably a bug, but we'll just work with it
-	if ($action != 'formedit') {
-		return true;
-	}
-
-	$form_name = sffGetFormForArticle($article);
-	if ($form_name == '') {
-		return true;
-	}
-
-	$target_title = $article->getTitle();
-	$target_name = sffTitleString($target_title);
-	if ($target_title->exists()) {
-		printEditForm($form_name, $target_name);
-	} else {
-		printAddForm($form_name, $target_name, array());
-	}
-	return false;
-}
-
 function printEditForm($form_name, $target_name) {
-	global $wgOut, $wgRequest, $sfgScriptPath, $sfgFormPrinter, $sfgYUIBase;
+	global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $sfgYUIBase;
+
+	wfLoadExtensionMessages('SemanticForms');
 
 	$javascript_text = "";
 	// get contents of form definition file
@@ -103,7 +89,8 @@ function printEditForm($form_name, $target_name) {
 		list ($form_text, $javascript_text, $data_text, $form_page_title) =
 			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $is_text_source, $edit_content, $page_title);
 		if ($form_submitted) {
-			$text = sffPrintRedirectForm($target_title, $data_text, $wgRequest->getVal('wpSummary'), $save_page, $preview_page, $diff_page, $wgRequest->getCheck('wpMinoredit'), $wgRequest->getCheck('wpWatchthis'));
+			$wgOut->setArticleBodyOnly( true );
+			$text = sffPrintRedirectForm($target_title, $data_text, $wgRequest->getVal('wpSummary'), $save_page, $preview_page, $diff_page, $wgRequest->getCheck('wpMinoredit'), $wgRequest->getCheck('wpWatchthis'), $wgRequest->getVal('wpStarttime'), $wgRequest->getVal('wpEdittime'));
 		} else {
 			// override the default title for this page if
 			// a title was specified in the form
@@ -137,6 +124,12 @@ END;
 		'media' => "screen, projection",
 		'href' => $sfgScriptPath . '/skins/SF_yui_autocompletion.css'
 	));
+	$wgOut->addLink( array(
+		'rel' => 'stylesheet',
+		'type' => 'text/css',
+		'media' => "screen, projection",
+		'href' => $sfgScriptPath . '/skins/floatbox.css'
+	));
 	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'yahoo/yahoo-min.js"></script>' . "\n");
 	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'dom/dom-min.js"></script>' . "\n");
 	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'event/event-min.js"></script>' . "\n");
@@ -145,6 +138,11 @@ END;
 	$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'json/json-min.js"></script>' . "\n");
 	$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
 	$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
+	$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
+	global $wgFCKEditorDir;
+	if ($wgFCKEditorDir)
+		$wgOut->addScript('<script type="text/javascript" src="' . "$wgScriptPath/$wgFCKEditorDir" . '/fckeditor.js"></script>' . "\n");
 	$wgOut->addScript('		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
+	$wgOut->setRobotPolicy( 'noindex,nofollow' );
 	$wgOut->addHTML($text);
 }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
 
 ###
 # This is the path to your installation of Semantic Forms as
@@ -32,9 +37,9 @@ require_once('SF_GlobalFunctions.php');
 # than 150.
 ##
 if (!isset($sfgNamespaceIndex)) {
-        sffInitNamespaces(150);
+	sffInitNamespaces(150);
 } else {
-        sffInitNamespaces();
+	sffInitNamespaces();
 }
 
 ###
@@ -55,6 +60,12 @@ $sfgMaxAutocompleteValues = 1000;
 ###
 $sfgRenameEditTabs = false;
 $wgGroupPermissions['*'    ]['viewedittab']   = true;
+$wgAvailableRights[] = 'viewedittab';
+
+###
+# Permission to edit form fields defined as 'restricted'
+###
+$wgGroupPermissions['sysop']['editrestrictedfields'] = true;
 
 ###
 # List separator character
@@ -63,9 +74,18 @@ $sfgListSeparator = ",";
 
 ###
 # The base URL for all YUI Javascript files - to store the YUI library
-# locally, download it and change this to the URL of the local
-# installation's 'build' directory.
+# locally, download it (from http://developer.yahoo.com/yui/) and change this
+# value to the URL of the local installation's 'build' directory.
 ###
-$sfgYUIBase = "http://yui.yahooapis.com/2.5.1/build/";
+$sfgYUIBase = "http://yui.yahooapis.com/2.5.2/build/";
 
-?>
+###
+# Extend the edit form from the internal EditPage class rather than using a
+# special page and hacking things up.
+# 
+# @note This is experimental and requires updates to EditPage which I have only
+#       added into MediaWiki 1.14a
+###
+$sfgUseFormEditPage = false;//version_compare( $wgVersion, '1.14alpha', '>=' );
+
+

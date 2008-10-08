@@ -6,10 +6,11 @@
  * @author Yaron Koren
  */
 
-require_once ("$IP/includes/api/ApiBase.php");
-
-global $wgAPIModules;
-$wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
+/**
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
 
 /**
  * @addtogroup API
@@ -26,22 +27,31 @@ class SFAutocompleteAPI extends ApiBase {
 		$params = $this->extractRequestParams();
 		$substr = $params['substr'];
 		$namespace = str_replace(' ', '_', $params['namespace']);
+		$property = str_replace(' ', '_', $params['property']);
 		$relation = str_replace(' ', '_', $params['relation']);
 		$attribute = str_replace(' ', '_', $params['attribute']);
 		$category = str_replace(' ', '_', $params['category']);
+		$concept = str_replace(' ', '_', $params['concept']);
 		$limit = $params['limit'];
 
 		if (strlen($substr) == 0)
 		{
 			$this->dieUsage("The substring must be specified", 'param_substr');
 		}
-		if ($relation != '') {
-			$data = sffGetAllPagesForProperty_0_7(true, $relation, $substr);
+		if ($property != '') {
+			$data = sffGetAllValuesForProperty_1_2($property, $substr);
+		} elseif ($relation != '') {
+			$data = sffGetAllValuesForProperty_orig(true, $relation, $substr);
 		} elseif ($attribute != '') {
-			$data = sffGetAllPagesForProperty_0_7(false, $attribute, $substr);
+			$data = sffGetAllValuesForProperty_orig(false, $attribute, $substr);
 		} elseif ($category != '') {
 			$data = sffGetAllPagesForCategory($category, 3, $substr);
+		} elseif ($concept != '') {
+			$data = sffGetAllPagesForConcept($concept, $substr);
 		} elseif ($namespace != '') {
+			// special handling for main (blank) namespace
+			if ($namespace == 'main')
+				$namespace = '';
 			$data = sffGetAllPagesForNamespace($namespace, $substr);
 		} else {
 			$date = array();
@@ -67,18 +77,22 @@ class SFAutocompleteAPI extends ApiBase {
 				ApiBase :: PARAM_MAX2 => ApiBase :: LIMIT_BIG2
 			),
 			'substr' => null,
+			'property' => null,
 			'relation' => null,
 			'attribute' => null,
 			'category' => null,
+			'concept' => null,
 		);
 	}
 
 	protected function getParamDescription() {
 		return array (
 			'substr' => 'Search substring',
+			'property' => 'Property for which to search values',
 			'relation' => 'Relation for which to search values',
 			'attribute' => 'Attribute for which to search values',
 			'category' => 'Category for which to search values',
+			'concept' => 'Concept for which to search values',
 			'namespace' => 'Namespace for which to search values',
 			'limit' => 'Limit how many entries to return',
 		);
@@ -91,7 +105,7 @@ class SFAutocompleteAPI extends ApiBase {
 	protected function getExamples() {
 		return array (
 			'api.php?action=sfautocomplete&substr=te',
-			'api.php?action=sfautocomplete&substr=te&relation=Has_author',
+			'api.php?action=sfautocomplete&substr=te&property=Has_author',
 			'api.php?action=sfautocomplete&substr=te&attribute=Has_color',
 		);
 	}
