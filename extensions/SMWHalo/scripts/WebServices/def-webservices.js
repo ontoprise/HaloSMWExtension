@@ -1110,7 +1110,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep6CallBack : function(request) {
-		if (request.responseText == "false" || this.editMode == true) {
+		if (request.responseText.indexOf("false") >= 0 || this.editMode == true) {
 			var wsName = $("step6-name").value;
 			// sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
 			// wgUserName, this.wwsd + this.wsSyntax, "" ],
@@ -1134,7 +1134,7 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep6CallBack1 : function(request) {
-		if (request.responseText == "true") {
+		if (request.responseText.indexOf("true") >= 0) {
 			var container = $("step7-container").cloneNode(false);
 			$("step7-container").id = "old-step7-container";
 			$("old-step7-container").parentNode.insertBefore(container,
