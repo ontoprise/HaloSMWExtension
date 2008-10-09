@@ -311,7 +311,7 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
 
 
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateJob.php');
+
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
