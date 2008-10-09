@@ -160,8 +160,13 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$r .= $this->shortList( $this->mProperties, $this->mPropertiesStartChar, $this->mUntilProperty) . "\n</div>";
 		$r .= $nav;
 		
-		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();
-		$r .= '<a href="'.$url.'"><b>'.wfMsg('smw_wws_edit_in_gui').'</b></a>';
+		global $wgArticlePath;
+		if(strpos($wgArticlePath, "?") > 0){
+			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."&wwsdId=".$this->getTitle()->getArticleID();		
+		} else {
+			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();
+		}
+			$r .= '<a href="'.$url.'"><b>'.wfMsg('smw_wws_edit_in_gui').'</b></a>';
 		
 		wfProfileOut( __METHOD__ . ' (SMW)');
 		return $r;
