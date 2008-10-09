@@ -512,7 +512,7 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
 	} else if (smwf_om_IsRedirect($newTitleObj)) { // target is redirect, so delete first
-		smwf_om_DeleteArticle($newTitleObj->getPrefixedText(),"redirectrename");
+		smwf_om_DeleteArticle($newTitleObj->getPrefixedText(),"redirectrename", "Target is redirect");
 		$success = $titleObj->moveTo($newTitleObj, true, $reason);
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;

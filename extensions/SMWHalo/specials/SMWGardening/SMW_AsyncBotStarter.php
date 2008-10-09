@@ -74,7 +74,7 @@ require_once("Bots/SMW_AnomaliesBot.php");
 require_once("Bots/SMW_ImportOntologyBot.php");
 require_once("Bots/SMW_ExportOntologyBot.php");
 require_once("Bots/SMW_CheckReferentialIntegrityBot.php");
-require_once("Bots/SMW_GlossaryBot.php");
+
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
@@ -119,101 +119,31 @@ if ($bot != null) {
 			die();
 		}
 		echo $log;
-		if ($log != NULL && $log != '') {
-			// FIXME: link creation must be generalized
-			$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
-			$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$wgServer$wgScript/".$glp->getNsText().":".$glp->getText()."?bot=$botID ".$glp->getText()."]");
-			$log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
-		}
-			
-		// mark as finished
-		$title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
-		if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
-			
-	} catch(Exception $e) {
+	    if ($log != NULL && $log != '') {
+            // create link to GardeningLog
+            $glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
+            if (stripos($wgArticlePath, "?title") !== false) {
+                $gl_url = trim($wgServer) . str_replace("\$1", $glp->getPrefixedDBkey(), $wgArticlePath)."&bot=".$botID;
+            } else {
+                $gl_url = trim($wgServer) . str_replace("\$1", $glp->getPrefixedDBkey(), $wgArticlePath)."?bot=".$botID;
+            }
+            $log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$gl_url ".$glp->getText()."]");
+            
+        }
+            
+        // mark task as finished
+        $title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+        if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
+            
+    } catch(Exception $e) {
 
-		$log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
-		$log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
-		echo $log;
+        $log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
+        $log .= "\n[[".$glp->getPrefixedText()."]]";
+        echo $log;
 
-		$title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
-		if ($title != NULL) echo "\nLog saved at: ".$title->getLocalURL();
-	}
-}
-
-/**
- * @deprecated
- * Unescapes string which are escaped by escapeShellCmd(...)
- *
- * @param arbitrary string
- * @return string
- */
-function unescapeShellArgument($arg) {
-	$a = str_replace("2F", "/", $arg);
-	$a = str_replace("3A", ":", $a);
-	$a = str_replace("\\;", ";", $a);
-	$a = str_replace("\\#", "#", $a);
-	$a = str_replace("\\&", "&", $a);
-	$a = str_replace("\\`", "`", $a);
-	$a = str_replace("\\|", "|", $a);
-	$a = str_replace("\\*", "*", $a);
-	$a = str_replace("\\?", "?", $a);
-	$a = str_replace("\\~", "~", $a);
-	$a = str_replace("\\<", "<", $a);
-	$a = str_replace("\\>", ">", $a);
-	$a = str_replace("\\^", "^", $a);
-	$a = str_replace("\\(", "(", $a);
-	$a = str_replace("\\)", ")", $a);
-	$a = str_replace("\\[", "[", $a);
-	$a = str_replace("\\]", "]", $a);
-	$a = str_replace("\\{", "{", $a);
-	$a = str_replace("\\}", "}", $a);
-	$a = str_replace('\$', '$', $a);
-	$a = str_replace("\\\\", "\\", $a);
-	$a = str_replace("\\,", ",", $a);
-	$a = str_replace("\\,", ",", $a);
-	$a = str_replace("\\,", ",", $a);
-	$a = str_replace("\\'", "'", $a);
-	$a = str_replace("\\\"", "\"", $a);
-	return $a;
-}
-
-// get user email to send a message to him.
-/*$userEmail = getEmailFromUserId($userId);
-
-if ($smtpServerIP && $userEmail != null && $userEmail != '') {
-// send email when finished.
-echo "Sending email to: ".$userEmail;
-sendmail($userEmail, $bot);
-}*/
-
-/**
- * Sends a mail to $to using server $smtpServerIP as SMTP server
- * $bot is the bot which has finished.
- */
-function sendmail($to, $bot) {
-	$header = "From: $to" . "\r\n" .
-   	"Reply-To: $to" . "\r\n" .
-   	"X-Mailer: PHP/" . phpversion();
-	 
-	mail($to, $bot->getLabel()." has finished", wfMsg('smw_autogen_mail'), $header);
-
-}
-
-/**
- * Returns user email from user id.
- */
-function getEmailFromUserId($userId) {
-	$db =& wfGetDB( DB_MASTER );
-	$res = $db->select( $db->tableName('user'),
-		                    'user_email',
-		                    'user_id = '.$db->addQuotes($userId), 'SMW::getEmailFromUserId', NULL );
-	if($db->numRows( $res ) > 0) {
-		$row = $db->fetchObject($res);
-		return $row->user_email;
-
-	}
-	return NULL;
+        $title = SMWGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+        if ($title != NULL) echo "\nLog saved at: ".$title->getLocalURL();
+    }
 }
 
 ?>

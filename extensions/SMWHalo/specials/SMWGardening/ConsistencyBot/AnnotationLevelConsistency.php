@@ -149,7 +149,7 @@ class AnnotationLevelConsistency {
 
                     $explodedValues = $target->getDVs();
                     $explodedTypes = explode(";", $target->getDVTypeIDs());
-                    //print_r($explodedTypes);
+                    
                     //get all range instances and check if their categories are subcategories of the range categories.
                     for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
                         if ($explodedValues[$i] == NULL) {
@@ -510,8 +510,7 @@ class AnnotationLevelConsistency {
                         // remove linear factory, then split the units separted by comma
                         $unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
                         $units = explode(",", $unitString);
-                        print_r($units);
-                        print $v->getUnit();
+                       
                         foreach($units as $u) {
                             $correct_unit |= $v->getUnit() == trim($u);
                         }
@@ -556,8 +555,7 @@ class AnnotationLevelConsistency {
                         // remove linear factory, then split the units separted by comma
                         $unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
                         $units = explode(",", $unitString);
-                        print_r($units);
-                        print $v->getUnit();
+                       
                         foreach($units as $u) {
                             $correct_unit |= $v->getUnit() == trim($u);
                         }

@@ -65,6 +65,10 @@ remarks in the section "Notes on Upgrading" below!
       enableSMWHalo();
       $phpInterpreter = "<path to PHP executable>";
       
+      please change:
+       
+      $wgDefaultSkin='ontoskin';
+      
 (4) If you want to use the 'ExportOntologyBot' you have to create a directory
     'wikiexport' in extensions/SMWHalo. The directory must have write access for
     the user which runs Apache (or simply for all if possible).
