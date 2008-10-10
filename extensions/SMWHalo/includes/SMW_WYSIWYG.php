@@ -8,8 +8,10 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 global $wgHooks;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
 
-if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
-    require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
+if (array_key_exists('mode', $_REQUEST) || (array_key_exists('action', $_REQUEST) && array_key_exists('rs', $_REQUEST))) {
+    if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
+        require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
+    }
 }
 /**
  * Adds an action that refreshes the article, i.e. it purges the article from
