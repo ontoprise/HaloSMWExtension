@@ -1,8 +1,8 @@
-[[Semantic MediaWiki+ 1.2 Extension package]]
+[[Semantic MediaWiki+ 1.3.1 Extension package]]
 
 Install instructions for the latest version of Semantic MediaWiki+ (SMW+) Extension package are also online:
 
- http://wiki.ontoprise.de/ontoprisewiki/index.php/SMW%2B1.2/Installation-Extensions
+ http://wiki.ontoprise.de/ontoprisewiki/index.php/Install_SMW%2B_Extension_Package
 
 
 Contents:
@@ -27,13 +27,13 @@ the authors.
 
 == Requirements ==
 
-*Semantic MediaWiki+ 1.2
+*Semantic MediaWiki+ 1.2 or 1.3 or 1.3.1
 
 
 == Installation ==
 
 
-(1) Extract the archive smw+-1.2-ext.zip to directory "[wikipath]"
+(1) Extract the archive smw+-1.x.x.-ext.zip to directory "[wikipath]"
     We abbreviate "[wikipath]/extensions/SMWHalo" as "[SMW+_path]" below.
 
     

@@ -1,9 +1,14 @@
-[[Semantic MediaWiki+ 1.2.1]]
+[[Semantic MediaWiki+ 1.3.1]]
 
 Install instructions for the latest version of Semantic MediaWiki+ (SMW+) are also online:
 
- http://wiki.ontoprise.de/ontoprisewiki/index.php/SMW%2B1.2/Installation
+ http://wiki.ontoprise.de/ontoprisewiki/index.php/SMW%2B_1.3.1_Installation
 
+For further customizing your installation, take a look at:
+
+ http://wiki.ontoprise.de/ontoprisewiki/index.php/Customising_SMW%2B
+ 
+ 
 For install instructions and further information on Semantic MediaWiki, please visit
  
  http://semantic-mediawiki.org/wiki/Help:Administrator_manual
@@ -31,7 +36,7 @@ the authors.
 == Requirements ==
 
 * MediaWiki 1.12 (for 1.13 read section below) 
-* Semantic MediaWiki 1.2.1 or greater
+* Semantic MediaWiki 1.3.x
 * PHP 5.x or greater installed and working
 * MySQL >= 4.0.14 (version required by MediaWiki)
 
@@ -41,7 +46,7 @@ the authors.
 If you upgrade an existing installation of SMW+, also read the
 remarks in the section "Notes on Upgrading" below!
 
-(1) Extract the archive smwplus-1.2.1.zip to obtain the directory "extensions" 
+(1) Extract the archive smwplus-1.3.zip to obtain the directory "extensions" 
     which contains all relevant files. Copy this directory to "[wikipath]"
     (or extract/download it to this place).
     We abbreviate "[wikipath]/extensions/SMWHalo" as "[SMW+_path]" below.
@@ -120,15 +125,17 @@ http://wiki.ontoprise.de/ontoprisewiki/index.php/Customising_SMW%2B
 
 == Notes on Upgrading ==
 
-=== Upgrading from SMW+ 1.0 and SMW+ 1.1 ===
+=== Upgrading from SMW+ 1.0, SMW+ 1.1 and SMW+ 1.2 ===
 
 In order to create new tables and update old ones, you should go to 
 Special:SMWAdmin and execute "Update/Initialize tables" once.
 
 
 ==Only for MediaWiki 1.13 (!) ==
+Note: We DO NOT recommend using MW 1.13 with SMW+ at this time. There were some 
+errors reported in the last weeks. It's not completely compatible yet.
 
-You have to apply the following patches manually:
+If you want to use it though, you have to apply the following patches manually:
 
 (1) includes/Namespace.php
 
@@ -148,12 +155,6 @@ Note: SMW+ should also work without these patches. The consequence is:
 
     - You can't rename categories
     - Updating the auto-completion mode in your prferences might not get reflected without re-starting the browser.
-
-
-==Only for the SimpleRules-Extensions==
-The simple rules extension that uses OntoBroker as triple store needs a Java 
-Virtual Machine. The version of this JVM must be at least 1.6.06. V 1.6.01
-throws errors when explanations are used. 
      
 == Contact ==
 
