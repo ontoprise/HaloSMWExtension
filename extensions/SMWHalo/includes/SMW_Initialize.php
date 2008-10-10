@@ -189,6 +189,7 @@ function smwgHaloSetupExtension() {
 		global $smwgEnableWikiWebServices, $smwgEnableSemanticNotifications;
 		if ($smwgEnableWikiWebServices) {
 			// Initialize the Wiki Web Service Extension
+			require_once($smwgHaloIP. '/specials/SMWWebService/SMW_WebServiceManager.php');
 			WebServiceManager::initWikiWebServiceExtension();
 
 		}
