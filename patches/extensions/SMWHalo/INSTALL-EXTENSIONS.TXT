@@ -43,42 +43,42 @@ the authors.
            
 (4) Add the following extensions of your choice:
     
-  *Upload converter:
+  #Upload converter:
     $smwgEnableUploadConverter = true;
       
-  *WYSIWYG:
+  #WYSIWYG:
     require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
-      
-  *TreeView 
+   
+  #TreeView 
     require_once('extensions/Treeview/Treeview5.php');
   
-  *Access Control Lists
+  #Access Control Lists
     require_once('extensions/PermissionACL/PermissionACL.php');
   
-  *Semantic Calendar
+  #Semantic Calendar
     include_once('extensions/SemanticCalendar/includes/SC_Settings.php');
   
   For further documentation to Semantic Calendar, take a look at: http://www.mediawiki.org/wiki/Extension:Semantic_Calendar
   
-  *SemanticForms
+  #SemanticForms
     $sfgNamespaceIndex = 150;
     include_once('extensions/SemanticForms/includes/SF_Settings.php');
   
     For further documentation of Semantic Forms, take a look at: http://www.mediawiki.org/wiki/Semantic_Forms
   
-  *Glossary
+  #Glossary
     include_once('extensions/Glossary/Glossary.php');
   
-  *Variables
+  #Variables
     include_once('extensions/Variables/Variables.php');
   
-  *StringFunctions
+  #StringFunctions
     include_once('extensions/StringFunctions/StringFunctions.php');
   
-  *DynamicPageList
+  #DynamicPageList
     include_once('extensions/DynamicPageList/DynamicPageList.php');
   
-  *ParserFunctions
+  #ParserFunctions
     include_once('extensions/ParserFunctions/ParserFunctions.php');
 
 === Testing your Installation ===
