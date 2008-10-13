@@ -1,6 +1,6 @@
 <?php
   ini_set("soap.wsdl_cache_enabled", "0"); 
-  $client = new SoapClient("http://localhost/develwiki/index.php?action=get_eqi");
+  $client = new SoapClient("http://localhost/develwiki/index.php?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_eqi");
   $query="[[Category:GardeningLog]]";
  // $query="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX cat: <http://wiki/cats#> PREFIX prop: <http://wiki/props#> SELECT ?x WHERE { ?x rdf:type cat:Functional_group.  ?x prop:hasName ?x. FILTER ?y >= 34 }";
   try {

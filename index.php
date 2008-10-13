@@ -73,66 +73,6 @@ if ( $wgUseAjax && $action == 'ajax' ) {
 	exit;
 }
 
-#
-# Handle webservice call
-#
-if ($action == 'wsmethod' ) {
-    require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_Webservices.php' );
-    $mediaWiki->restInPeace( $wgLoadBalancer );
-    exit;
-}
-
-#
-# Handle 'quick query' call
-# (answers URL-encoded ASK queries formatted as table in HTML)
-#
-if ($action == 'query') {
-	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	echo query($wgRequest->getVal( 'querytext' ), "exceltable");
-	$mediaWiki->restInPeace( $wgLoadBalancer );
-	exit;
-}
-
-#
-# Returns WSDL file for wiki webservices
-#
-if ($action == 'get_eqi') {
-    $wsdl = "extensions/SMWHalo/includes/webservices/eqi.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    
-    echo str_replace("{{wiki-path}}", $_SERVER['SERVER_ADDR'].":".$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'], $contents);
-    exit;
-} else if ($action == 'get_sparql') {
-    $wsdl = "extensions/SMWHalo/includes/webservices/sparql.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    global $smwgSPARQLEndpoint;
-    if (isset($smwgSPARQLEndpoint)) echo str_replace("{{sparql-endpoint}}", $smwgSPARQLEndpoint, $contents); 
-        else echo "No SPARQL endpoint defined! Set \$smwgSPARQLEndpoint in your LocalSettings.php. E.g.: \$smwgSPARQLEndpoint = \"localhost:8080\"";
-    exit;
-} else if ($action == 'get_flogic') {
-    $wsdl = "extensions/SMWHalo/includes/webservices/flogic.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    global $smwgFlogicEndpoint;
-    if (isset($smwgFlogicEndpoint)) echo str_replace("{{flogic-endpoint}}", $smwgFlogicEndpoint, $contents); 
-        else echo "No FLogic endpoint defined! Set \$smwgFlogicEndpoint in your LocalSettings.php. E.g.: \$smwgFlogicEndpoint = \"localhost:8080\"";
-    exit;
-} else if ($action == 'get_explanation') {
-    $wsdl = "extensions/SMWHalo/includes/webservices/explanation.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    global $smwgExplanationEndpoint;
-    if (isset($smwgExplanationEndpoint)) echo str_replace("{{explanation-endpoint}}", $smwgExplanationEndpoint, $contents); 
-        else echo "No Explanation endpoint defined! Set \$smwgExplanationEndpoint in your LocalSettings.php. E.g.: \$smwgExplanationEndpoint = \"localhost:8080\"";
-    exit;
-}
-
 wfProfileOut( 'main-misc-setup' );
 
 # Setting global variables in mediaWiki

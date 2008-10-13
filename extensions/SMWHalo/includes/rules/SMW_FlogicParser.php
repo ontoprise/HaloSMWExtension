@@ -37,7 +37,7 @@ class SMWFlogicParser {
             self::$instance = new self;
 
             ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-            self::$_client = new SoapClient("$wgServer$wgScript?action=get_flogic");
+            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_flogic");
         }
         return self::$instance;
     }

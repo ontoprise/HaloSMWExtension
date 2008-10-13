@@ -178,7 +178,7 @@ END;
 		try {
 			global $wgServer, $wgScript, $smwgNamespace;
 			ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$_client = new SoapClient("$wgServer$wgScript?action=get_explanation");          
+			$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_explanation");          
 	 		$explanation = $_client->explainFloQuery($smwgNamespace, $query);
 			
 	 		if($explanation == "-1"){

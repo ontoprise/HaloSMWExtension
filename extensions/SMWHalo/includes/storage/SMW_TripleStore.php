@@ -331,7 +331,7 @@ class SMWTripleStore extends SMWStore {
 		if ($query instanceof SMWSPARQLQuery) {
 			
 			ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwfGetSPARQLWebservice");
+			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql");
 			
 			try {
 				global $smwgNamespace;

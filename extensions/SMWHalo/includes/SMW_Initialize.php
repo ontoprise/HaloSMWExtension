@@ -71,7 +71,7 @@ function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $smwgRuleRewriter, $smwgEnableFlogicRules;
-
+   
 	$smwgMasterGeneralStore = NULL;
     
 	// Autoloading. Use it for everything! No include_once or require_once please!
@@ -91,6 +91,17 @@ function smwgHaloSetupExtension() {
 		$smwgResultFormats['table'] = 'SMWGardeningTableResultPrinter'; // overwrite SMW printer
 		$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	}
+	
+    #
+    # Handle webservice calls.
+    #   wsmethod URL parameter indicates a SOAP webservice call. All such calls are handeled by 
+    #   /webservices/SMW_Webservices.php
+    #
+	if ($_REQUEST['action'] == 'wsmethod' ) {
+        global $IP;
+        require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_Webservices.php' );
+        exit; // stop immediately
+    }
 	
 	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
@@ -246,6 +257,9 @@ function smwgHaloSetupExtension() {
 			case '_sr_' : smwfHaloInitMessages();
 				require_once($smwgHaloIP . '/includes/rules/SMW_RulesAjax.php');
 				break;
+			case '_ws_' :  smwfHaloInitMessages();
+			    require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
+                break;
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -338,9 +352,7 @@ function smwgHaloSetupExtension() {
         $wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
         
     }
-    if (isset($smwgSPARQLEndpoint)) {
-        $wgAjaxExportList[] = 'smwfGetSPARQLWebservice';
-    }
+   
 	return true;
 }
 
@@ -365,19 +377,6 @@ function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
     }
 }
 
-/**
- * Returns WSDL of SPARQL webservice
- *
- * @return wsdl string
- */
-function smwfGetSPARQLWebservice() {
-    global $smwgHaloIP, $smwgSPARQLEndpoint;
-    $wsdl = "$smwgHaloIP/includes/webservices/sparql.wsdl";
-    $handle = fopen($wsdl, "rb");
-    $contents = fread ($handle, filesize ($wsdl));
-    fclose($handle);
-    return str_replace("{{sparql-endpoint}}", $smwgSPARQLEndpoint, $contents); 
-}
 
 function smwfHaloInitMessages() {
 	global $smwgHaloContLang, $smwgMessagesInitialized;
