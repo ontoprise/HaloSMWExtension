@@ -70,7 +70,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
     private function getStatus() {
     	global $wgServer,$wgScript,$smwgNamespace;
         ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-        $client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwfGetSPARQLWebservice", array('connection_timeout' => 4));
+        $client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('connection_timeout' => 4));
                 
           try {
                 global $smwgNamespace;
