@@ -149,6 +149,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
  	$scripts = array(
  					 'generalTools.js' => GPL_LICENSE_ONTOPRISE,
  	                 'breadcrump.js' => GPL_LICENSE_ONTOPRISE,
+ 	                 'generalGUI.js' => GPL_LICENSE_ONTOPRISE,
  	                 'contentSlider.js' => GPL_LICENSE_ONTOPRISE,
  					 'smw_logger.js' => GPL_LICENSE_ONTOPRISE,
  					 'SMW_Language.js' => GPL_LICENSE_ONTOPRISE);

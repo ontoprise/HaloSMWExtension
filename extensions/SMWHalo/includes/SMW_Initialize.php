@@ -97,7 +97,7 @@ function smwgHaloSetupExtension() {
     #   wsmethod URL parameter indicates a SOAP webservice call. All such calls are handeled by 
     #   /webservices/SMW_Webservices.php
     #
-	if ($_REQUEST['action'] == 'wsmethod' ) {
+	if (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'wsmethod' ) {
         global $IP;
         require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_Webservices.php' );
         exit; // stop immediately
@@ -598,7 +598,8 @@ function smwfHaloAddHTMLHeader(&$out) {
             
         $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/breadcrump.js');
         $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/contentSlider.js');
-
+        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/generalGUI.js');
+        
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
 
         smwfHaloAddJSLanguageScripts($jsm);
