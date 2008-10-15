@@ -162,30 +162,30 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
   */
  function buildScripts($outputFile, $scripts) {
  	 global $sourcePath, $addScriptName, $licenses;
-	 $result = readLicenseFile()."\n";
-	 echo "\n\nBilding scripts: $outputFile\n";
+	 $result = readLicenseFile()."\r\n";
+	 echo "\r\n\r\nBilding scripts: $outputFile\r\n";
 	 foreach($scripts as $s => $licenseNum) {
 	 	$filename = $sourcePath.$s;
 	 	$handle = fopen($filename, "rb");
 	 	$contents = fread ($handle, filesize ($filename));
 	 	// FIXME: ugly hack to remove purchase hint in jasob TRIAL version
-	 	//$contents = preg_replace("/\/\*([^\*]|\*[^\/])*\*\/\r\n/", "", $contents);
-	 	echo 'Add '.$filename."...\n";
+	 	//$contents = preg_replace("/\/\*([^\*]|\*[^\/])*\*\/\r\r\n/", "", $contents);
+	 	echo 'Add '.$filename."...\r\n";
 	 	if ($addScriptName) {
-	 		$result .= '// '.basename($filename)."\n";
+	 		$result .= '// '.basename($filename)."\r\n";
 	 	} else {
-	 		$result .= $contents."\n\n";
+	 		$result .= $contents."\r\n\r\n";
 	 	}
-	 	$result .= "// under ".$licenses[$licenseNum]."\n";
-	 	$result .= $contents."\n\n";
+	 	$result .= "// under ".$licenses[$licenseNum]."\r\n";
+	 	$result .= $contents."\r\n\r\n";
 	 	fclose($handle);
 	 }
 
 	 $handle = fopen($outputFile,"wb");
-	 echo "Write in output file: ".$outputFile."\n";
+	 echo "Write in output file: ".$outputFile."\r\n";
 	 fwrite($handle, $result);
 	 fclose($handle);
-	 echo "Done!\n";
+	 echo "Done!\r\n";
  }
 
  /**
