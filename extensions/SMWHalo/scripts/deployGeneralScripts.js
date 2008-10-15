@@ -2532,634 +2532,6 @@ Element.offsetSize = function (element, type) {
 }
 
 
-// STB_Framework.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-var ToolbarFramework = Class.create();
-
-var FACTCONTAINER = 0; // contains already annotated facts
-var EDITCONTAINER = 1; // contains Linklist
-var TYPECONTAINER = 2; // contains datatype selector on attribute pages
-var CATEGORYCONTAINER = 3; // contains categories
-var ATTRIBUTECONTAINER = 4; // contains attrributes
-var RELATIONCONTAINER = 5; // contains relations
-var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relations
-var CBSRCHCONTAINER = 7; // contains combined search functions
-var COMBINEDSEARCHCONTAINER = 8;
-var HELPCONTAINER = 9; // contains help
-var ANNOTATIONHINTCONTAINER = 10; // gardening hints in AAM
-var SAVEANNOTATIONSCONTAINER = 11; // save annotations in AAM
-var DBGCONTAINER = 12; // contains debug information
-var LASTCONTAINERIDX = 12;
-
-ToolbarFramework.prototype = {
-
-	/**
-	 * @public
-	 *
-	 * Constructor.
-	 */
-
-	stbconstructor : function() {
-		if (this.isToolbarAvailable()) {
-
-			// get existing cookies
-			this.getCookieTab();
-
-			// get initial tab from cookie!
-			if (this.cookiePrefTab != null) {
-				for (var i=0; i<this.cookiePrefTab.length; i++) {
-					if (this.cookiePrefTab[i] == 1) {
-						this.curtabShown = i;
-					}
-				}
-			} else {
-				this.curtabShown = 0;
-			}
-			this.isCollapsed = false;
-
-			this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
-			this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
-			this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
-
-			// create empty container (to preserve order of containers)
-
-			this.var_stb = $("semtoolbar");
-			if (this.var_stb) {
-				for(var i=0;i<=LASTCONTAINERIDX;i++) {
-					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-headline\" class=\"generic_headline\"></div>";
-					this.var_stb.innerHTML += "<div id=\"stb_cont"+i+"-content\" class=\"generic_content\"></div>";
-					$("stb_cont"+i+"-headline").hide();
-					$("stb_cont"+i+"-content").hide();
-				}
-			}
-		}
-	},
-
-	isToolbarAvailable: function () {
-		if ($("ontomenuanchor") != null) {
-			this.var_onto = $("ontomenuanchor");
-			return true;
-		}
-		return false;
-	},
-
-	initialize: function() {
-		this.contarray = new Array();
-		// tab array - how many tabs are there and which one is active?
-		this.tabarray = new Array();
-		this.tabnames = new Array("Tools", "Links to Other Pages", "Facts about this Article");
-	},
-
-	// create a new div container
-	createDivContainer : function(contnum, tabnr) {
-		// check if we need to add a new tab
-		if (this.tabarray[tabnr] == null) {
-			if (this.curtabShown == tabnr) {
-				this.tabarray[tabnr] = 1;
-			} else {
-				this.tabarray[tabnr] = 0;
-			}
-			if (this.tabarray.length > 1) {
-				this.createTabHeader();
-			} else if(wgAction == "annotate") {
-				this.frameworkForceHeader;
-				this.createForcedHeader();
-			}
-		}
-		this.contarray[contnum] = new DivContainer();
-		this.contarray[contnum].createContainer(contnum, tabnr);
-
-		if (contnum == HELPCONTAINER) {
-			if (this.cookieHelpTab != null) {
-				this.contarray[contnum].setVisibility(this.cookieHelpTab);
-			} else {
-				this.contarray[contnum].setVisibility(0);
-			}
-		} else {
-			this.contarray[contnum].setVisibility(1);
-		}
-
-		// return newly created div container
-		return this.contarray[contnum];
-	},
-	
-	
-
-	showSemanticToolbarContainer : function(container) {
-		if (container != null) {
-			if (this.contarray[container].getTab() == this.curtabShown) {
-				if (this.contarray[container].headline != null) {
-					$("stb_cont"+container+"-headline").show();
-					document.getElementById("stb_cont" + container + "-link").className='minusplus';
-				}
-				if (this.contarray[container].isVisible()) {
-					$("stb_cont"+container+"-content").show();
-				} else {
-					$("stb_cont"+container+"-content").hide();
-					document.getElementById("stb_cont" + container + "-link").className='plusminus';
-				}
-			}
-		} else {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
-					if (this.contarray[i].headline != null) {
-						$("stb_cont"+i+"-headline").show();
-						document.getElementById("stb_cont" + i + "-link").className='minusplus';
-					}
-					if (this.contarray[i].isVisible()) {
-						$("stb_cont"+i+"-content").show();
-					} else {
-						$("stb_cont"+i+"-content").hide();
-						document.getElementById("stb_cont" + i + "-link").className='plusminus';
-					}
-				}
-			}
-		}
-	},
-
-	// refresh content of container
-	contentChanged : function(contnum) {
-		// probably show container
-		this.showSemanticToolbarContainer(contnum);
-		// probably resize toolbar
-		this.resizeToolbar();
-		
-		// send show/hide container event
-		this.contarray[contnum].showContainerEvent();
-
-	},
-
-	notify : function(container) {
-	},
-
-	getDivContainer : function() {
-	},
-
-	createTabHeader : function() {
-		// is there more than one tab?! -> display inactive containers
-		var tabHeader = "";
-		if (this.tabarray.length > 1) {
-			for (var i = 0; i < (this.tabarray.length); i++)
-			{
-				if (this.curtabShown != i) {
-					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
-				} else {
-					$("activetabcontainer").update("<div id=\"expandable\"><img src=\"" + wgScriptPath + "/skins/ontoskin/expanded.gif\"></div><div id=\"tab_"+i+"\">"+this.tabnames[i]+"</div>");
-				}
-			}
-		}
-		$("tabcontainer").update(tabHeader);
-	},
-
-	createForcedHeader : function() {
-		// force to show a header - for use in annotation mode
-		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
-		$("tabcontainer").update(tabHeader);
-	},
-
-	switchTab: function(tabnr) {
-		// hide current containers in current tab
-		this.hideSemanticToolbarContainerTab(tabnr);
-
-		// set current tab to clicked one
-		this.tabarray[this.curtabShown] = 0;
-		this.tabarray[tabnr] = 1;
-		this.curtabShown = tabnr;
-		// change tab header and show new containers in tab
-		this.createTabHeader();
-		// display all containers in current tab
-		this.showSemanticToolbarContainer();
-		this.resizeToolbar();
-		this.setCookie(this.tabarray);
-		
-		// send tab change event
-		this.contarray.each(function (c) { if (c) c.showTabEvent(tabnr); });
-	},
-
-	hideSemanticToolbarContainerTab : function(tabnr) {
-		if (tabnr != null) {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
-					$("stb_cont"+i+"-headline").hide();
-					$("stb_cont"+i+"-content").hide();
-				}
-			}
-		}
-	},
-	
-	setDragging: function( dragging ){
-		this.dragging = dragging;
-	},
-	
-	collapse: function() {
-		
-		if(this.dragging==true){
-			return;
-		}
-		if (this.isCollapsed) {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && i != SAVEANNOTATIONSCONTAINER) {
-					$("stb_cont"+i+"-headline").show();
-					$("stb_cont"+i+"-content").show();
-					this.isCollapsed = false;
-				}
-			}
-		} else {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && i != SAVEANNOTATIONSCONTAINER) {
-					$("stb_cont"+i+"-headline").hide();
-					$("stb_cont"+i+"-content").hide();
-					this.isCollapsed = true;
-				}
-			}
-		}
-	},
-
-	resizeToolbar : function() {
-		// max. usable height for toolbar
-		var maxUsableHeight = this.getWindowHeight() - 150;
-		if (maxUsableHeight > 150) {
-			if ($('activetabcontainer')) {
-				maxUsableHeight -= ($('tabcontainer').scrollHeight + 10 + $('activetabcontainer').scrollHeight);
-			}
-			// calculate height of containers:
-			this.countNumOfDisplayedContainers();
-			var neededHeight = this.calculateNeededHeightOfContainers();
-			if (this.contarray[HELPCONTAINER] != null && this.contarray[HELPCONTAINER].isVisible()) {
-				maxUsableHeight -= this.contarray[HELPCONTAINER].getNeededHeight();
-			}
-
-			if (neededHeight >= maxUsableHeight) {
-				var j = this.numOfVisibleContainers;
-				maxUsableHeight -= j*22;	// substract headers
-
-				// only one container is there -> set to maxUsableHeight!
-				if ((this.numOfContainers-1) == 0) {
-					if (neededHeight > maxUsableHeight) {
-						for(var i=0;i<this.contarray.length;i++) {
-							if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
-								this.contarray[i].setContentStyle({maxHeight: maxUsableHeight + 'px'});
-							}
-						}
-					}
-				// more containers are there!
-				} else {
-					for(var i=0;i<this.contarray.length;i++) {
-						if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER && this.contarray[i].isVisible()) {
-							if (this.contarray[i].getNeededHeight() < maxUsableHeight/this.numOfVisibleContainers) {
-								this.contarray[i].setContentStyle({maxHeight: this.contarray[i].getNeededHeight() + 'px'});
-								maxUsableHeight -= this.contarray[i].getNeededHeight();
-							} else {
-								this.contarray[i].setContentStyle({maxHeight: maxUsableHeight/(this.numOfVisibleContainers) + 'px'});
-							}
-						}
-					}
-				}
-			// stb fits into available free space
-			} else {
-				for(var i=0;i<this.contarray.length;i++) {
-					if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
-						this.contarray[i].setContentStyle({maxHeight: ''});
-					}
-				}
-			}
-		}
-	},
-
-	calculateNeededHeightOfContainers : function() {
-		var j = 0;
-		for(var i=0;i<this.contarray.length;i++) {
-			if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].isVisible()) {
-				j += this.contarray[i].getNeededHeight();
-			}
-		}
-		return j;
-	},
-
-	countNumOfDisplayedContainers : function () {
-		var j = 0;
-		var d = 0;
-		if (this.contarray) {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
-					j++;
-					if (this.contarray[i].isVisible()) {
-						d++;
-					}
-				}
-			}
-		}
-		this.numOfContainers = j;
-		this.numOfVisibleContainers = d;
-	},
-
-	getWindowHeight : function() {
-	    if (window.innerHeight) {
-	        return window.innerHeight;
-	    } else {
-			//Common for IE
-	        if (window.document.documentElement && window.document.documentElement.clientHeight) {
-	            return typeof(window) == 'undefined' ? 0 : window.document.documentElement.clientHeight;
-	        } else {
-				//Fallback solution for IE, does not always return usable values
-				if (document.body && document.body.offsetHeight) {
-					return typeof(win) == 'undefined' ? 0 : document.body.offsetHeight;
-		        }
-			return 0;
-			}
-	    }
-	},
-
-	getCookieTab : function() {
-		var cookie = document.cookie;
-		var length = cookie.length-1;
-		if (cookie.charAt(length) != ";")
-			cookie += ";";
-		var a = cookie.split(";");
-
-		// walk through cookies...
-		for (var i=0; i<a.length; i++) {
-			var cookiename = this.trim(a[i].substring(0, a[i].search('=')));
-			var cookievalue = a[i].substring(a[i].search('=')+1,a[i].length);
-			if (cookiename == "stbpreftab") {
-				var cookievalue = cookievalue.split(",");
-				var retval = new Array();
-				for (var j =0; j<cookievalue.length;j++) {
-					retval[j] = parseInt(cookievalue[j]);
-				}
-				this.cookiePrefTab = retval;
-			} else if (cookiename == "stbprefhelp") {
-				this.cookieHelpTab = parseInt(cookievalue);
-			}
-		}
-	},
-
-	trim : function(string) {
-		return string.replace(/(^\s+|\s+$)/g, "");
-	},
-
-	setCookie : function(curtabpos) {
-
-		var a = new Date();
-		a = new Date(a.getTime() +1000*60*60*24*365);
-		var implode = '';
-		var first = true;
-		for (var i=0; i<curtabpos.length; i++) {
-			if (first == true)
-				first = false;
-			else
-				implode += ",";
-			implode += curtabpos[i];
-		}
-
-		document.cookie = 'stbpreftab='+implode+'; expires='+a.toGMTString()+';';
-	},
-
-	setHelpCookie : function(helpshown) {
-
-		var a = new Date();
-		a = new Date(a.getTime() +1000*60*60*24*365);
-
-		document.cookie = 'stbprefhelp='+helpshown+'; expires='+a.toGMTString()+';';
-	}
-}
-
-var stb_control = new ToolbarFramework();
-
-Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
-Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
-
-/* Resizing SemToolBar  using scriptacolus slider */
-var Slider = Class.create();
-Slider.prototype = {
-
-	initialize: function() {
-		this.sliderObj = null;
-		this.oldHeight = 0;
-		this.oldWidth  = 0;
-	},
-	//if()
-	activateResizing: function() {
-	//Check if semtoolbar is available and action is not annotate
-	if(!stb_control.isToolbarAvailable() || wgAction == 'annotate') return;
-	if(!$('slider')) return;
-	//Load image to the slider div
-	$('slider').innerHTML = '<img id="sliderHandle" src="' +
-			wgScriptPath +
-			'/extensions/SMWHalo/skins/slider.gif"/>';
-		var initialvalue = 0.65;
-		this.slide(initialvalue);
-	   //create slider after old one is removed
-	   if(this.sliderObj != null){
-	   		this.sliderObj.setDisabled();
-	   		this.sliderObj= null;
-	   }
-	   this.sliderObj = new Control.Slider('sliderHandle','slider',{
-	   	  //axis:'vertical',
-	      sliderValue:initialvalue,
-	      minimum:0.5,
-	      maximum:0.75,
-	      //range: $R(0.5,0.75),
-	      onSlide: this.slide,
-	      onChange: this.slide
-	   });
-	},
-
-	//Checks for min max and sets the content and the semtoolbar to the correct width
-	slide: function(v)
-	      {
-	      	var leftmin = 0.25; // range 0 - 1
-	   		var rightmin = 0.20; // range 0 - 1
-
-	      	 if( v < leftmin){
-	      	 	smwhg_slider.sliderObj.setValue(leftmin);
-	      	 	return;
-	      	 }
-
-	      	 if( v > 1- rightmin){
-	      	 	smwhg_slider.sliderObj.setValue(1 - rightmin);
-	      	 	return;
-	      	 }
-
-
-	 		//the 5% missing are for the slider itself
-	         var currLeftDiv = 100*v;
-	         var currRightDiv = 95 - currLeftDiv;
-
-	         $('contentcol1').style.width = currLeftDiv + "%";
-	         $('contentcol2').style.width = currRightDiv + "%";
-	         if(window.editAreaLoader){
-	         	editAreaLoader.execCommand("wpTextbox1", "update_size();");
-	         }
-	         if( typeof smwhg_marker != 'undefined' ){
-	         	smwhg_marker.markNodes();
-	         }
-
-	 },
-	 /**
-	  * Resizes the slide if window size is changed
-	  * since IE fires the resize event in much more cases than the desired
-	  * we have to do some additional checks
-	  */
-	 resizeTextbox: function(){
-	 	if( OB_bd.isIE == true){
-		 	if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
-		 		this.activateResizing();
-		 		this.oldHeight = document.documentElement.clientHeight;
-				this.oldWidth  = document.documentElement.clientWidth;
-		 	} else{
-		 		if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
-		 			alert('resize');
-		 			this.activateResizing();
-		 			this.oldHeight = window.innerHeight;
-					this.oldWidth  = window.innerWidth;
-		 		}
-		 	}
-	   }else {
-	 		this.activateResizing();
-	 	}
-	 }
-}
-var smwhg_slider = new Slider();
-Event.observe(window, 'load', smwhg_slider.activateResizing.bind(smwhg_slider));
-//Resizes the slider if window size is changed
-Event.observe(window, 'resize', smwhg_slider.resizeTextbox.bind(smwhg_slider));
-
-// STB_Divcontainer.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-var DivContainer = Class.create();
-
-DivContainer.prototype = {
-
-
-	/**
-	 * @public
-	 *
-	 * Constructor. set container number and tab number.
-	 */
-	initialize: function() {
-		this.visibility = true;
-	},
-
-	createContainer: function(contnum, tabnr) {
-		this.contnum = contnum;
-		this.tabnr = tabnr;
-	},
-
-	/**
-	 * fire content changed event to notify the framework
-	 */
-	contentChanged : function() {
-		stb_control.contentChanged(this.getContainerNr());
-	},
-    
-    // @abstract
-    showContainerEvent: function() {
-        // no impl
-    },
-    
-    // @abstract
-    showTabEvent: function(tabnum) {
-        // no impl
-    },
-        
-	// tab
-	setTab : function(tabnr) {
-		this.tabnr = tabnr;
-	},
-
-	getTab : function() {
-		return this.tabnr;
-	},
-
-	setContainerNr : function(contnum) {
-		this.contnum = contnum;
-	},
-
-	getContainerNr : function() {
-		return this.contnum;
-	},
-
-	setVisibility : function(visibility) {
-		this.visibility = visibility;
-	},
-
-	isVisible : function() {
-		return this.visibility;
-	},
-
-	setHeadline : function(headline) {
-		this.headline = headline;
-		$("stb_cont"+this.getContainerNr()+"-headline").update("<div style=\"cursor:pointer;cursor:hand;\" onclick=\"stb_control.contarray["+this.getContainerNr()+"].switchVisibility()\"><a id=\"stb_cont" + this.getContainerNr() + "-link\" class=\"minusplus\" href=\"javascript:void(0)\">&nbsp;</a>" + headline);
-	},
-
-	setContent : function(content) {
-		this.content = content;
-		$("stb_cont"+this.getContainerNr()+"-content").update(content);
-	},
-
-	setContentStyle : function(style) {
-		$("stb_cont"+this.getContainerNr()+"-content").setStyle(style);
-	},
-
-	switchVisibility : function(container) {
-		if (this.isVisible()) {
-			if (this.getContainerNr() == HELPCONTAINER) {
-				stb_control.setHelpCookie(0);
-			}
-			this.setVisibility(0);
-		} else {
-			if (this.getContainerNr() == HELPCONTAINER) {
-				stb_control.setHelpCookie(1);
-			}
-			this.setVisibility(1);
-		}
-		// inform framework to hide
-		stb_control.contentChanged(this.getContainerNr());
-	},
-
-	getVisibleHeight : function() {
-		return $('stb_cont'+this.getContainerNr()+"-content").offsetHeight;
-	},
-
-	getNeededHeight : function() {
-		return $('stb_cont'+this.getContainerNr()+"-content").scrollHeight;
-	}
-}
-
-
 // wick.js
 // under WICK-License; Copyright (c) 2004, Christopher T. Holland
  /*
@@ -5371,6 +4743,75 @@ WtpLink.prototype = Object.extend(new WtpAnnotation(), {
 	
 });
 
+/**
+ * Class for simples rules - derived from WtpAnnotation
+ * 
+ * Stores
+ * - the name of the rule
+ * - the host language
+ * - the type of the rule
+ * - the text of the rule
+ * 
+ */
+var WtpRule = Class.create();
+WtpRule.prototype = Object.extend(new WtpAnnotation(), {
+	
+	/**
+	 * @public
+	 * @see constructor of WtpRule
+	 */
+	initialize: function(annotation, start, end, wtp, 
+	                     name, hostlanguage, type, ruleText) {
+		this.WtpAnnotation(annotation, start, end, wtp, "");
+		this.WtpRule(name, hostlanguage, type, ruleText);
+	},
+
+	/**
+	 * @private - called by <initialize>
+	 * 
+	 * Constructor.
+	 * 
+	 * @param string name
+	 * 		Name of the rule
+	 * @param string hostlanguage
+	 * 		Host language e.g. FLogic
+	 * @param string type
+	 * 		Type of the rule e.g. Definition, Calculation
+	 * @param string ruleText
+	 * 		Text of the rule
+	 * 
+	 */
+	WtpRule: function(name, hostlanguage, type, ruleText) {
+		this.name = name;
+		this.hostlanguage = hostlanguage;
+		this.type = type;
+		this.ruleText = ruleText;
+	},
+
+	/**
+	 * @public
+	 * 
+	 * Replaces a rule in the wiki text.
+	 * 
+	 * @param string newRule The complete definition of the new rule
+	 */
+	changeRule: function(newRule) {
+		this.replaceAnnotation(newRule);
+	},
+	
+	/**
+	 * @public
+	 * 
+	 * @return string
+	 * 		Returns the text of the rule e.g. the FLogic.
+	 */
+	getRuleText: function() {
+		return this.ruleText;
+	}
+	
+	
+});
+
 
 
 // WikiTextParser.js
@@ -5556,6 +4997,7 @@ WikiTextParser.prototype = {
 		this.relations  = null;
 		this.categories  = null;
 		this.links  = null;
+		this.rules  = null;
 		this.error = WTP_NO_ERROR;
 	},
 	
@@ -5676,6 +5118,46 @@ WikiTextParser.prototype = {
 
 		return this.links;
 	},
+
+	/**
+	 * @public
+	 *
+	 * Returns the rule with the given name or null if it is not present.
+	 *
+	 * @return WtpRule The rule's definitions.
+	 */
+	getRule: function(name) {
+		if (this.rules == null) {
+			this.parseAnnotations();
+		}
+		var matching = new Array();
+
+		for (var i = 0, num = this.rules.length; i < num; ++i) {
+			var rule = this.rules[i];
+			if (this.equalWikiName(rule.getName(), name)) {
+				return rule;
+			}
+		}
+		return null;
+	},
+
+
+	/**
+	 * @public
+	 *
+	 * Returns an array that contains the rules, that are annotated in
+	 * the current wiki text. Rules within templates are not considered.
+	 *
+	 * @return array(WtpRule) An array of rule definitions.
+	 */
+	getRules: function() {
+		if (this.rules == null) {
+			this.parseAnnotations();
+		}
+
+		return this.rules;
+	},
+
 
 	addTextChangedHook: function(hookFnc) {
 		this.textChangedHooks.push(hookFnc);
@@ -6117,6 +5599,7 @@ WikiTextParser.prototype = {
 		this.relations  = new Array();
 		this.categories = new Array();
 		this.links      = new Array();
+		this.rules      = new Array();
 		this.error = WTP_NO_ERROR;
 
 		// Parsing-States
@@ -6126,6 +5609,7 @@ WikiTextParser.prototype = {
 		// 3 - find <ask> or </ask>
 		// 4 - find {{#ask:
 		// 5 - find <pre> or </pre>
+		// 6 - find <rule or </rule>
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var askCount = 0;  	  // Number of open <ask>-statements
@@ -6135,35 +5619,30 @@ WikiTextParser.prototype = {
 		while (parsing) {
 			switch (state) {
 				case 0:
-					// Search for "[[", "<nowiki>", <pre> or <ask>
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "{{#ask:"]);
+					// Search for "[[", "<nowiki>", <pre>, <rule or <ask
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
 						break;
 					}
 					currentPos = findings[0]+1;
+					bracketStart = -1;
 					if (findings[1] == "[[") {
 						// opening bracket found
 						bracketStart = findings[0];
 						bracketCount++;
 						state = 1;
 					} else if (findings[1] == "<nowiki>") {
-						// <nowiki> found
-						bracketStart = -1;
 						state = 2;
 					} else if (findings[1] == "<pre>") {
-						// <pre> found
-						bracketStart = -1;
 						state = 5;
+					} else if (findings[1] == "<rule") {
+						state = 6;
 					} else if (findings[1] == "<ask") {
-						// <ask> found
-						bracketStart = -1;
 						askCount++;
 						state = 3;
 					} else if (findings[1] == "{{#ask:") {
-						// {{#ask: found
-						bracketStart = -1;
 						state = 4;
 					}
 					break;
@@ -6253,6 +5732,25 @@ WikiTextParser.prototype = {
 					// opening <pre> is closed
 					state = 0;
 					break;
+				case 6:
+					// we are within a <rule>-block
+					// => search for </rule>
+					var findings = this.findFirstOf(currentPos, ["</rule>"]);
+					if (findings[1] == null) {
+						// nothing found
+						parsing = false;
+						break;
+					}
+					var start = currentPos-1;
+					var end = findings[0]+7;
+					var rule = this.parseRule(this.text.substring(start, end), start, end);
+					if (rule != null) {
+						this.rules.push(rule);
+					}
+					currentPos = end;
+					// opening <rule> is closed
+					state = 0;
+					break;
 			}
 		}
 		if (bracketCount != 0) {
@@ -6321,6 +5819,40 @@ WikiTextParser.prototype = {
 		}
 		return currentPos;
 	},
+	
+	/**
+	 * @private
+	 * 
+	 * Parses the rule that is given in <ruleTxt>.
+	 * 
+	 * @param string ruleTxt
+	 * 		Definition of the rule
+	 * @param int start
+	 * 		Start index of the rule in the wiki text
+	 * @param int ent
+	 * 		End index of the rule in the wiki text
+	 * 
+	 * @return WtpRule
+	 * 		A rule object or <null> if parsing failed.
+	 * 
+	 */
+	 parseRule: function(ruleTxt, start, end) {
+		var hl = ruleTxt.match(/.*hostlanguage\s*=\s*"(.*?)"/);
+		var rulename = ruleTxt.match(/.*name\s*=\s*"(.*?)"/);
+		var type = ruleTxt.match(/.*type\s*=\s*"(.*?)"/);
+		var rule = ruleTxt.match(/<rule(?:.|\s)*?>((.|\s)*?)<\/rule>/m);
+		
+		if (hl && rulename && type && rule) {
+			hl = hl[1];
+			rulename = rulename[1];
+			type = type[1];
+			rule = rule[1];
+			return new WtpRule(ruleTxt, start, end, this, rulename, hl, type, rule);
+		} else {
+			return null;
+		} 
+		
+	 },
 	
 	/**
 	 * @private
@@ -7442,6 +6974,11 @@ createList: function(list,id) {
   			divlist += '<a id="rel-menu-has-part" href="javascript:relToolBar.newPart()" class="menulink">'+gLanguage.getMessage('MHAS_PART')+'</a>';
   			divlist += '</div>';
 	  		break;
+		case "rules":
+			divlist ='<div id="' + id +'-tools">';
+			divlist += '<a id="rules-menu-annotate" href="javascript:ruleToolBar.createRule()" class="menulink">'+gLanguage.getMessage('CREATE')+'</a>';
+			divlist += '</div>';
+	 		break;
 	}
   	divlist += "<div id=\"" + id +"-itemlist\"><table id=\"" + id +"-table\">";
 
@@ -7488,7 +7025,12 @@ createList: function(list,id) {
 	  			fn = "catToolBar.getselectedItem(" + i + ")";
 	  			firstValue = list[i].getValue ? list[i].getValue().escapeHTML(): "";
 	  			prefix = gLanguage.getMessage('CATEGORY_NS');
-	 			 break
+	 			break
+			case "rules":
+	  			fn = "ruleToolBar.editRule(" + i + ")";
+	  			firstValue = "";
+	  			prefix = '';
+	 			break
 			case "relation":
 	  			fn = "relToolBar.getselectedItem(" + i + ")";
 	  			prefix = gLanguage.getMessage('PROPERTY_NS');
@@ -7526,8 +7068,12 @@ createList: function(list,id) {
 		var elemName;
 		//shortName.length > maxlen2 ? maxlen2 = shortName.length : "";
 		//Construct the link
-		elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
-		elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
+		if (id == 'rules') {
+			elemName = list[i].getName().escapeHTML();
+		} else {
+			elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
+			elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
+		}
 		divlist += 	"<tr>" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
 					elemName + 
@@ -7865,10 +7411,12 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		var elem;
 		for (var i = 0, len = children.length; i < len; ++i) {
 			elem = children[i];
+			if (!elem.visible()) {
+				continue;
+			}
 			var oldValue = elem.getAttribute("smwOldValue");
 			if (!oldValue || oldValue != elem.value) {
 				// content if input field did change => perform check
-
 				if (this.checkIfEmpty(elem) == false
 					&& this.handleValidValue(elem)) {
 					this.handleCheck(elem);
@@ -8063,6 +7611,18 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			var allValid = true;
 			for (var i = 0, len = children.length; i < len; ++i) {
 				var elem = children[i];
+				var e = elem;
+				var visible = true;
+				while (e != parentDiv) {
+					if (!e.visible()) {
+						visible = false;
+						break;
+					}
+					e = e.up();
+				}
+				if (visible == false) {
+					continue;
+				}
 				var valid = elem.getAttribute("smwValid");
 				if (valid) {
 					if (valid == "false") {
@@ -8294,9 +7854,12 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 						var value = element.value;
 						msg = msg.replace(/\$c/g,value);
 						var tbc = smw_ctbHandler.findContainer(msgElem);
+						var visible = tbc.isVisible(element.id);
 						tbc.replace(msgElem.id,
 						            tbc.createText(msgElem.id, msg, '' , true));
-						tbc.show(msgElem.id, true);
+					 	// Show the message, if the corresponding element is
+					 	// visible.
+					 	tbc.show(msgElem.id, visible);
 					}
 				}
 				break;
@@ -9067,6 +8630,26 @@ show: function(id, visibility){
 },
 
 /**
+ * @public
+ * 
+ * Checks, if the element with the given id is visible.
+ * @param string id
+ * 		The id of the element whose visibility is checked.
+ * 
+ * @return bool
+ * 		true, if the element is visible and
+ * 		false otherwise
+ */
+ isVisible: function(id) {
+	var obj = $(this.id + '-table-' + id);
+	if (!obj) {
+		obj = $(id);
+	}
+	return (obj) ? obj.visible() : false;
+ 	
+ },
+ 
+/**
  * This function must be called after the last element has been added or after
  * the container has been modified.
  */
@@ -9112,7 +8695,7 @@ release: function() {
  */
 setInputValue: function(id,presetvalue){
 	if (OB_bd.isIE) {
-		var parentwidth = $(id).getOffsetParent().getWidth();
+		var parentwidth = $(id).getWidth();
 		$(id).value = presetvalue;
 		$(id).setStyle({width: parentwidth + "px"});
 	} else {
@@ -9798,12 +9381,13 @@ createContextMenu: function(contextMenuContainer) {
 	/*ENDLOG*/
 
 	tb.append(tb.createInput('cat-name', 
-							 gLanguage.getMessage('CATEGORY'), selection, '',
+							 gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
 	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
@@ -9883,12 +9467,13 @@ newItem: function() {
 		                        '' , true));
 	}
 	tb.append(tb.createInput('cat-name', 
-							 gLanguage.getMessage('CATEGORY'), selection, '',
+							 gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY_CREATE +
 	                         SMW_CAT_CHECK_EMPTY_CM +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
 	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
@@ -9920,11 +9505,12 @@ CreateSubSup: function() {
 	var tb = this.createToolbar(SMW_CAT_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_CAT'), '' , true));
 	tb.append(tb.createInput('cat-subsuper', gLanguage.getMessage('CATEGORY'),
-	                         selection, '',
+	                         '', '',
 	                         SMW_CAT_SUB_SUPER_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-subsuper',selection);	                         
 	tb.append(tb.createText('cat-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createLink('cat-make-sub-link', 
@@ -10069,12 +9655,13 @@ newCategory: function() {
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CREATE_NEW_CATEGORY'), '' , true));
 	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), 
-							 selection, '',
+							 '', '',
 	                         SMW_CAT_CHECK_CATEGORY_IIE +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 		
 	var links = [['catToolBar.createNewCategory()',gLanguage.getMessage('CREATE'), 'cat-confirm', 
@@ -10122,12 +9709,14 @@ getselectedItem: function(selindex) {
 	var tb = this.createToolbar(SMW_CAT_ALL_VALID);	
 	tb.append(tb.createText('cat-help-msg', gLanguage.getMessage('CHANGE_ANNO_OF_CAT'), '' , true));
 	
-	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), annotatedElements[selindex].getName(), '',
+	tb.append(tb.createInput('cat-name', gLanguage.getMessage('CATEGORY'), '', '',
 	                         SMW_CAT_CHECK_CATEGORY +
 	                         SMW_CAT_CHECK_EMPTY +
 	                         SMW_CAT_VALID_CATEGORY_NAME +
 	                         SMW_CAT_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('cat-name',annotatedElements[selindex].getName());	                         
+	                         
 	tb.append(tb.createText('cat-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 		
 	var links = [['catToolBar.changeItem(' + selindex +')', gLanguage.getMessage('CHANGE'), 'cat-confirm', 
@@ -10252,7 +9841,9 @@ var SMW_REL_HINT_PROPERTY =
 
 var SMW_REL_HINT_INSTANCE =
 	'typeHint="'+ SMW_INSTANCE_NS + '" position="fixed"';
-	
+
+var SMW_REL_TYPE_CHANGED =
+	'smwChanged="(call:relToolBar.relTypeChanged)"';
 
 RelationToolBar.prototype = {
 
@@ -10352,8 +9943,11 @@ createToolbar: function(attributes) {
  * @param string value (optional)
  * 		The default value for the property. If it is not given, the current 
  * 		selection of the wiki text parser is used.
+ * @param string repr (optional)
+ * 		The default representation for the property. If it is not given, the current 
+ * 		selection of the wiki text parser is used.
  */
-createContextMenu: function(contextMenuContainer, value) {
+createContextMenu: function(contextMenuContainer, value, repr) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
@@ -10364,10 +9958,13 @@ createContextMenu: function(contextMenuContainer, value) {
     this.wtp.initialize();
 	this.currentAction = "annotate";
 
+	var valueEditable = false;
 	if (!value) {
 		value = this.wtp.getSelection(true);
 		//replace newlines by spaces
 		value = value.replace(/\n/,' ');
+		repr = value;
+		valueEditable = true;
 	}
 	
 	/*STARTLOG*/
@@ -10380,16 +9977,20 @@ createContextMenu: function(contextMenuContainer, value) {
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name','');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), value, '', 
+	
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', '',
 							 SMW_REL_CHECK_EMPTY_NEV + 
 							 SMW_REL_HINT_INSTANCE +
 							 SMW_REL_VALID_PROPERTY_VALUE,
 	                         true));
+	tb.setInputValue('rel-value-0', value);
+		                         
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
-	var repr = value;
-	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	tb.setInputValue('rel-show', repr);	                         
 	
 	var links = [['relToolBar.addItem()',
 	              gLanguage.getMessage('ADD'), 'rel-confirm', 
@@ -10398,7 +9999,15 @@ createContextMenu: function(contextMenuContainer, value) {
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
 	tb.finishCreation();
-	$('relation-content-table-rel-show').hide();
+	
+	if (wgAction == 'annotate') {
+		$('rel-show').disable();
+		if (!valueEditable) {
+			$('rel-value-0').disable();
+		}
+	}
+	
+//	$('relation-content-table-rel-show').hide();
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
@@ -10452,15 +10061,19 @@ newItem: function() {
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name','');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), selection, '', 
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', 
 							 SMW_REL_CHECK_EMPTY_NEV +
 							 SMW_REL_HINT_INSTANCE +
 							 SMW_REL_VALID_PROPERTY_VALUE,
 	                         true));
+	tb.setInputValue('rel-value-0', selection);	                         
+	                         
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
+	tb.setInputValue('rel-show','');
 	
 	var links = [['relToolBar.addItem()',gLanguage.getMessage('ADD'), 'rel-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
@@ -10546,11 +10159,13 @@ updateNewItem: function(request) {
 				? oldValues[i]
 				: '');
 		tb.insert(insertAfter,
-				  tb.createInput('rel-value-'+ i, parameterNames[i], value, '', 
+				  tb.createInput('rel-value-'+ i, parameterNames[i], '', '', 
 								 SMW_REL_CHECK_EMPTY_NEV +
 							     SMW_REL_VALID_PROPERTY_VALUE + 
 								 (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : ""),
 		                         true));
+		tb.setInputValue('rel-value-'+ i, value);    
+		                         
 		tb.insert('rel-value-'+ i,
 				  tb.createText('rel-value-'+i+'-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 		selection = "";
@@ -10574,12 +10189,13 @@ CreateSubSup: function() {
 	var tb = this.createToolbar(SMW_REL_SUB_SUPER_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('DEFINE_SUB_SUPER_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-subsuper', 
-							 gLanguage.getMessage('PROPERTY'), selection, '',
+							 gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_SUB_SUPER_CHECK_PROPERTY +
 	                         SMW_REL_CHECK_EMPTY +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-subsuper', selection);	                         
 	tb.append(tb.createText('rel-subsuper-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createLink('rel-make-sub-link', 
@@ -10748,32 +10364,27 @@ newRelation: function() {
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-name', 
-							 gLanguage.getMessage('PROPERTY'), selection, '',
+							 gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_IIE +
 	                         SMW_REL_CHECK_EMPTY+
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
+	tb.setInputValue('rel-name', selection);	                         
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
-	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), domain, '', 
+	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), '', '', 
 						     SMW_REL_CHECK_CATEGORY +
 						     SMW_REL_VALID_CATEGORY_NAME + 
 						     SMW_REL_CHECK_EMPTY_WIE +
 						     SMW_REL_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('rel-domain', domain);	                         
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
-	
-	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', 
-							 "relToolBar.removeRangeOrType('rel-range-0')", 
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
-	                         true));
-	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
-	
-	var links = [['relToolBar.addRangeInput()',gLanguage.getMessage('ADD_RANGE')],
-			     ['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]
-			    ];
+
+	this.addTypeInput();
+		
+	var links = [['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]];
 	tb.append(tb.createLink('rel-add-links', links, '', true));		
 			
 	links = [['relToolBar.createNewRelation()',
@@ -10792,29 +10403,6 @@ newRelation: function() {
 
 },
 
-addRangeInput:function() {
-	var i = 0;
-	while($('rel-range-'+i) != null) {
-		i++;
-	}
-	var tb = this.toolbarContainer;
-	var insertAfter = (i==0) ? 'rel-domain-msg' 
-							 : $('rel-range-'+(i-1)+'-msg') 
-							 	? 'rel-range-'+(i-1)+'-msg'
-							 	: 'rel-range-'+(i-1);
-	
-	tb.insert(insertAfter,
-			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', 
-                             "relToolBar.removeRangeOrType('rel-range-"+i+"')",
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
-	                         true));
-	tb.insert('rel-range-'+i,
-	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
-	tb.finishCreation();
-	gSTBEventActions.initialCheck($("relation-content-box"));
-},
-
 addTypeInput:function() {
 	var i = 0;
 	while($('rel-range-'+i) != null) {
@@ -10826,15 +10414,29 @@ addTypeInput:function() {
 							 	? 'rel-range-'+(i-1)+'-msg'
 							 	: 'rel-range-'+(i-1);
 	
+	var datatypes = this.getDatatypeOptions();
+	var page = gLanguage.getMessage('TYPE_PAGE_WONS');
+	var pIdx = datatypes.indexOf(page);
 	tb.insert(insertAfter,
-			  tb.createDropDown('rel-range-'+i, gLanguage.getMessage('TYPE'), 
+			  tb.createDropDown('rel-type-'+i, gLanguage.getMessage('TYPE'), 
 	                            this.getDatatypeOptions(), 
-	                            "relToolBar.removeRangeOrType('rel-range-"+i+"')",
-	                            0, 
-	                            'isAttributeType="true" ' + 
-	                            SMW_REL_NO_EMPTY_SELECTION, true));
+	                            "relToolBar.removeType('rel-type-"+i+"')",
+	                            pIdx, 
+	                            SMW_REL_NO_EMPTY_SELECTION +
+	                            SMW_REL_TYPE_CHANGED, true));
+	var msgID = 'rel-type-'+i+'-msg';                           
+	tb.insert('rel-type-'+i,
+	          tb.createText(msgID, gLanguage.getMessage('ENTER_TYPE'), '' , true));
+
+	tb.insert(msgID,
+			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', '',
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
+	                         true));
+	tb.setInputValue('rel-range-'+i, '');
 	tb.insert('rel-range-'+i,
-	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_TYPE'), '' , true));
+	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
+	          
 	tb.finishCreation();
 	gSTBEventActions.initialCheck($("relation-content-box"));
 },
@@ -10847,20 +10449,25 @@ getDatatypeOptions: function() {
 	return options;
 },
 
-removeRangeOrType: function(id) {
-	var rangeOrTypeInput = $(id);
-	if (rangeOrTypeInput != null) {
+removeType: function(id) {
+	var typeInput = $(id);
+	if (typeInput != null) {
 		var tb = this.toolbarContainer;
-		var rowsAfterRemoved = rangeOrTypeInput.parentNode.parentNode.nextSibling;
+		var rowsAfterRemoved = typeInput.parentNode.parentNode.nextSibling;
 
 		// get ID of range input to be removed.
-		var idOfValueInput = rangeOrTypeInput.getAttribute('id');
+		var idOfValueInput = typeInput.getAttribute('id');
 		var i = parseInt(idOfValueInput.substr(idOfValueInput.length-1, idOfValueInput.length));
 
 		// remove it
 		tb.remove(id);
 		if ($(id+'-msg')) {
 			tb.remove(id+'-msg');
+		}
+		var rid = id.replace(/type/, 'range');
+		tb.remove(rid);
+		if ($(rid+'-msg')) {
+			tb.remove(rid+'-msg');
 		}
 		
 		// remove gap from IDs
@@ -10879,12 +10486,37 @@ removeRangeOrType: function(id) {
 			if ((obj = $(id + i + '-msg'))) {
 				tb.changeID(obj, id + (i-1) + '-msg');
 			}
+			var rid = id.replace(/type/, 'range');
+			obj = $(rid + i);
+			tb.changeID(obj, rid + (i-1));
+			if ((obj = $(rid + i + '-msg'))) {
+				tb.changeID(obj, rid + (i-1) + '-msg');
+			}
+			
 		}
 		tb.finishCreation();
 		gSTBEventActions.initialCheck($("relation-content-box"));
 
 	}
 
+},
+
+relTypeChanged: function(target) {
+	var target = $(target);
+	
+	var typeIdx = target.id.substring(9);
+	var rangeId = "rel-range-"+typeIdx;
+	
+	var attrType = target[target.selectedIndex].text;
+	
+	var isPage = attrType == gLanguage.getMessage('TYPE_PAGE_WONS');
+	var tb = relToolBar.toolbarContainer;
+	tb.show(rangeId, isPage);
+	if (!isPage) {
+		tb.show(rangeId+'-msg', false);
+	}
+	gSTBEventActions.initialCheck($("relation-content-box"));
+	
 },
 
 createNewRelation: function() {
@@ -10899,10 +10531,10 @@ createNewRelation: function() {
 
 	// get all ranges and types
 	var rangesAndTypes = new Array();
-	while($('rel-range-'+i) != null) {
-		if ($('rel-range-'+i).getAttribute("isAttributeType") == "true") {
-			var obj = $('rel-range-'+i);
-			var value = obj.options[obj.selectedIndex].text;
+	while($('rel-type-'+i) != null) {
+		var obj = $('rel-type-'+i);
+		var value = obj.options[obj.selectedIndex].text;
+		if (value != gLanguage.getMessage('TYPE_PAGE_WONS')) {
 			rangesAndTypes.push(gLanguage.getMessage('TYPE_NS')+value); // add as type
 		} else {
 			var range = $('rel-range-'+i).value;
@@ -10915,7 +10547,7 @@ createNewRelation: function() {
 	/*STARTLOG*/
 	var signature = "";
 	for (i = 0; i < rangesAndTypes.length; i++) {
-		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : "Type:Page";
+		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : gLanguage.getMessage('TYPE_PAGE');
 		if (i < rangesAndTypes.length-1) {
 			signature += ', ';
 		}
@@ -11024,16 +10656,19 @@ newPart: function() {
 							 SMW_REL_CHECK_PART_OF_RADIO, true));
 	
 	tb.append(tb.createInput('rel-name', 
-							 gLanguage.getMessage('OBJECT'), selection, '',
+							 gLanguage.getMessage('OBJECT'), '', '',
 	                         SMW_REL_CHECK_EMPTY_NEV +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_INSTANCE,
 	                         true));
+	tb.setInputValue('rel-name', selection);	                         
+	                         
 	tb.append(tb.createText('rel-name-msg', '', '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), 
-	                         (wgAction == 'annotate') ? selection : '',
-	                         '', '', true));
+	                         '', '', '', true));
+	tb.setInputValue('rel-show', (wgAction == 'annotate') ? selection : '');	                         
+	                         
 	var links = [['relToolBar.addPartOfRelation()',gLanguage.getMessage('ADD'), 'rel-confirm', 
 	                                               gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
 				 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
@@ -11043,6 +10678,7 @@ newPart: function() {
 	tb.finishCreation();
 	if (wgAction == 'annotate') {
 		$('rel-show').disable();
+		$('rel-value-0').disable();
 	}
 	
 	gSTBEventActions.initialCheck($("relation-content-box"));
@@ -11144,6 +10780,7 @@ getselectedItem: function(selindex) {
 		}
 
 		var valueInputs = new Array();
+		var inputNames = new Array();
 		for (var i = 0; i < relation.getArity()-1; i++) {
 			var parName = (parameterNames.length > i) 
 							? parameterNames[i]
@@ -11159,22 +10796,29 @@ getselectedItem: function(selindex) {
 									 typeCheck +
 							 		 SMW_REL_VALID_PROPERTY_VALUE +
 									 (parName == "Page" ? SMW_REL_HINT_INSTANCE : "") ,true);
+
 			valueInputs.push(obj);
 			obj = tb.createText('rel-value-'+i+'-msg', '', '', true);
 			valueInputs.push(obj);
+			inputNames.push(['rel-value-'+i,relation.getSplitValues()[i]]);
 		}
 		tb.append(tb.createInput('rel-name', 
-								 gLanguage.getMessage('PROPERTY'), relation.getName(), '', 
+								 gLanguage.getMessage('PROPERTY'), '', '', 
 								 SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
 		 						 SMW_REL_CHECK_EMPTY +
 		                         SMW_REL_VALID_PROPERTY_NAME +
 		 						 SMW_REL_HINT_PROPERTY,
 		 						 true));
+		tb.setInputValue('rel-name', relation.getName());	                         
+		 						 
 		tb.append(tb.createText('rel-name-msg', '', '' , true));
 		if (renameAll !='') {
 			tb.append(renameAll);
 		}
 		tb.append(valueInputs);
+		for (var i = 0; i < inputNames.length; i++) {
+			tb.setInputValue(inputNames[i][0],inputNames[i][1]);
+		}
 		
 		// In the Advanced Annotation Mode the representation can not be changed
 		var repr = relation.getRepresentation(); 
@@ -11196,6 +10840,7 @@ getselectedItem: function(selindex) {
 			}
 		}
 		tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), repr, '', '', true));
+		tb.setInputValue('rel-show', repr);	                         
 
 		var links = [['relToolBar.changeItem('+selindex+')',gLanguage.getMessage('CHANGE'), 'rel-confirm', 
 		                                                    gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
@@ -11207,6 +10852,7 @@ getselectedItem: function(selindex) {
 		tb.finishCreation();
 		if (wgAction == 'annotate') {
 			$('rel-show').disable();
+			$('rel-value-0').disable();
 		}
 		gSTBEventActions.initialCheck($("relation-content-box"));
 
@@ -11225,6 +10871,2323 @@ getselectedItem: function(selindex) {
 var relToolBar = new RelationToolBar();
 Event.observe(window, 'load', relToolBar.callme.bindAsEventListener(relToolBar));
 
+
+
+// SMW_Rule.js
+// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+var RuleToolBar = Class.create();
+
+var SMW_RULE_VALID_RULE_NAME =
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+		'? (color: white, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:RULE_NAME_TOO_LONG, valid:false)" ';
+
+var SMW_RULE_CHECK_EMPTY = 
+	'smwCheckEmpty="empty' +
+		'? (color:red, showMessage:MUST_NOT_BE_EMPTY, valid:false) ' +
+		': (color:white, hideMessage)"';
+
+var SMW_RULE_NO_EMPTY_SELECTION =
+	'smwCheckEmpty="empty' +
+	'? (color:red, showMessage:SELECTION_MUST_NOT_BE_EMPTY, valid:false) ' +
+	': (color:white, hideMessage, valid:true)"';		
+
+var SMW_RULE_ALL_VALID =	
+	'smwAllValid="allValid ' +
+ 		'? (show:rule-confirm, hide:rule-invalid) ' +
+ 		': (show:rule-invalid, hide:rule-confirm)"';
+ 		
+
+RuleToolBar.prototype = {
+
+initialize: function() {
+	this.genTB = new GenericToolBar();
+	this.toolbarContainer = null;
+	this.showList = true;
+	this.currentAction = "";
+	this.typeMap = []; // Maps from the language dependent name of a rule type
+					   // to the internal name
+	this.currentEditObj = null;
+},
+
+showToolbar: function(){
+	this.rulescontainer.setHeadline(gLanguage.getMessage('RULE_RULES'));
+	if (wgAction == 'edit') {
+		// Create a wiki text parser for the edit mode. In annotation mode,
+		// the mode's own parser is used.
+		this.wtp = new WikiTextParser();
+	}
+	
+	this.fillList(true);
+
+},
+
+callme: function(event){
+	if((wgAction == "edit" || wgAction == "annotate")
+	    && stb_control.isToolbarAvailable() 
+	    && (wgNamespaceNumber == 14 || wgNamespaceNumber == 102)){
+		this.rulescontainer = stb_control.createDivContainer(RULESCONTAINER, 0);
+		this.showToolbar();		
+	}
+},
+
+
+fillList: function(forceShowList) {
+
+	if (forceShowList == true) {
+		this.showList = true;
+	}
+	if (!this.showList) {
+		return;
+	}
+	if (this.wtp) {
+		this.wtp.initialize();
+		this.rulescontainer.setContent(this.genTB.createList(this.wtp.getRules(),"rules"));
+		this.rulescontainer.contentChanged();
+	}
+},
+
+
+cancel: function(){
+	
+	if (this.currentEditObj != null) {
+		this.currentEditObj.cancel();
+	}
+	
+	/*STARTLOG*/
+    smwhgLogger.log("","STB-Rules",this.currentAction+"_canceled");
+	/*ENDLOG*/
+	this.currentAction = "";
+	
+	this.toolbarContainer.hideSandglass();
+	this.toolbarContainer.release();
+	this.toolbarContainer = null;
+	this.fillList(true);
+},
+
+/**
+ * Creates a new toolbar for the rules container with the standard menu.
+ * Further elements can be added to the toolbar. Call <finishCreation> after the
+ * last element has been added.
+ * 
+ * @param string attributes
+ * 		Attributes for the new container
+ * @return 
+ * 		A new toolbar container
+ */
+createToolbar: function(attributes) {
+	if (this.toolbarContainer) {
+		this.toolbarContainer.release();
+	}
+	
+	this.toolbarContainer = new ContainerToolBar('rules-content',1200,this.rulescontainer);
+	var tb = this.toolbarContainer;
+	tb.createContainerBody(attributes);
+	return tb;
+},
+
+createRule: function() {
+
+	this.currentAction = "create rule";
+
+	/*STARTLOG*/
+    smwhgLogger.log('',"STB-Rules","create_clicked");
+	/*ENDLOG*/
+	
+	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
+	tb.append(tb.createText('rule-help_msg', gLanguage.getMessage('RULE_CREATE'), '' , true));
+	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
+	                         SMW_RULE_CHECK_EMPTY +
+	                         SMW_RULE_VALID_RULE_NAME,
+	                         true));
+	tb.setInputValue('rule-name','');
+	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+	
+	tb.append(tb.createDropDown('rule-type', gLanguage.getMessage('RULE_TYPE'), 
+	                            this.getRuleTypes(), 
+	                            0,0, 
+	                            SMW_RULE_NO_EMPTY_SELECTION, true));
+		
+	var links = [['ruleToolBar.doCreateRule()',gLanguage.getMessage('CREATE'), 'rule-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rule-invalid'],
+				 ['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+				];
+	
+	tb.append(tb.createLink('rule-links', links, '', true));
+				
+	tb.finishCreation();
+	gSTBEventActions.initialCheck($("rules-content-box"));
+	
+	//Sets Focus on first Element
+	setTimeout("$('rule-name').focus();",50);
+},
+
+/**
+ * Called from the UI if a new rule should be created or an existing rule should
+ * be edited.
+ * 
+ * @param WtpRule rule
+ * 		If this parameter is defined, the given rule will be edited. Otherwise
+ * 		a new rule will be created.
+ */
+doCreateRule: function(rule) {
+	var rt = $('rule-type');
+	rt = rt.options[rt.selectedIndex].text;
+
+	for (var i = 0; i < this.typeMap.length; i += 2) {
+		if (this.typeMap[i] == rt) {
+			rt = this.typeMap[i+1];
+			break;
+		}
+	}
+	
+	$('rule-confirm').hide();
+	$('rule-type').disable();
+	
+	if (rt == gLanguage.getMessage('RULE_TYPE_DEFINITION')) {
+		// Create/edit a definition rule for categories or properties
+		var cr = new CategoryRule($('rule-name').value, rt);
+		this.currentEditObj = cr;
+		cr.createRule();
+	} else if (rt == gLanguage.getMessage('RULE_TYPE_CALCULATION')) {
+		// Create/edit a calculation rule for properties
+		var cr = new CalculationRule($('rule-name').value, rt);
+		this.currentEditObj = cr;
+		cr.editRule();
+	} else if (rt == gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
+		// Create/edit a definition rule for properties
+		var pcr = new PropertyChain($('rule-name').value, rt);
+		this.currentEditObj = pcr;
+		pcr.createChain();
+	}
+},
+
+editRule: function(selindex) {
+
+	this.showList = false;
+	this.currentAction = "edit rule";
+	this.wtp.initialize();
+
+	var rules = this.wtp.getRules();
+	if (   selindex == null
+	    || selindex < 0
+	    || selindex >= rules.length) {
+		// Invalid index
+		return;
+	}
+
+	/*STARTLOG*/
+    smwhgLogger.log('',"STB-Rules","edit_clicked");
+	/*ENDLOG*/
+
+	var rule = rules[selindex];
+	var ruleName = rule.name;
+	var pos = ruleName.lastIndexOf('#');
+	if (pos != -1) {
+		ruleName = ruleName.substr(pos+1);
+	}
+	
+	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
+	tb.append(tb.createText('rule-help_msg', gLanguage.getMessage('RULE_EDIT'), '' , true));
+	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
+	                         SMW_RULE_CHECK_EMPTY +
+	                         SMW_RULE_VALID_RULE_NAME,
+	                         true));
+	tb.setInputValue('rule-name', ruleName);
+	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+			
+	var links = [['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+				];
+	
+	tb.append(tb.createLink('rule-links', links, '', true));
+				
+	tb.finishCreation();
+	gSTBEventActions.initialCheck($("rules-content-box"));
+	
+	//Sets Focus on first Element
+	setTimeout("$('rule-name').focus();",50);
+
+	for (var i = 0; i < this.typeMap.length; i += 2) {
+		if (this.typeMap[i] == rule.type) {
+			rule.type = this.typeMap[i+1];
+			break;
+		}
+	}
+	if (rule.type == gLanguage.getMessage('RULE_TYPE_DEFINITION')) {
+		// Edit a definition rule for categories of properties
+		var cr = new CategoryRule(ruleName, rule.type);
+		this.currentEditObj = cr;
+		cr.editRule(rule);
+	} else if (rule.type == gLanguage.getMessage('RULE_TYPE_CALCULATION')) {
+		// Edit a calculation rule for properties
+		var cr = new CalculationRule(ruleName, rule.type);
+		this.currentEditObj = cr;
+		cr.editRule(rule);
+	} else if (rule.type == gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
+		// Edit a property chaining rule
+		var pcr = new PropertyChain(ruleName, rule.type);
+		this.currentEditObj = pcr;
+		pcr.editChain(rule);
+	} 	
+
+},
+
+deleteRule: function() {
+
+	this.showList = false;
+	this.currentAction = "delete rule";
+
+	/*STARTLOG*/
+    smwhgLogger.log('',"STB-Rules","delete_clicked");
+	/*ENDLOG*/
+	
+},
+
+getRuleTypes: function() {
+	switch (wgNamespaceNumber) {
+		case 14: // Category
+			this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition"];
+			return [gLanguage.getMessage('RULE_TYPE_DEFINITION')];
+		case 102: //properties
+			var hasType = gLanguage.getMessage('PC_HAS_TYPE');
+			var page = gLanguage.getMessage('TYPE_PAGE').toLowerCase();
+			var type = this.wtp.getRelation(hasType);
+			if (type) {
+				type = type[0].getValue().toLowerCase();
+			}
+			if (type == null || type == page) {
+				// object property
+				this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
+				                gLanguage.getMessage('RULE_TYPE_PROP_CHAINING'), 'Property chaining'];
+				return [gLanguage.getMessage('RULE_TYPE_DEFINITION'),
+				        gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')];
+			} else {
+				// data type property
+				this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
+				                gLanguage.getMessage('RULE_TYPE_CALCULATION'), 'Calculation'];
+				return [gLanguage.getMessage('RULE_TYPE_DEFINITION'),
+				        gLanguage.getMessage('RULE_TYPE_CALCULATION')];
+			}
+	}
+	return [];
+}
+
+
+};// End of Class
+
+var ruleToolBar = new RuleToolBar();
+Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
+
+
+
+// SMW_CategoryRule.js
+// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+var CategoryRule = Class.create();
+
+ 		
+
+CategoryRule.prototype = {
+
+
+/**
+ * Constructor
+ * @param string ruleName
+ * 		Name of the rule
+ * @param string ruleType
+ * 		Type of the rule e.g. Calculation, Property Chaining, Deduction, Mapping
+ */
+initialize: function(ruleName, ruleType) {
+	this.ruleName = ruleName;
+	this.ruleType = ruleType;
+	smwhgCreateDefinitionRule = this;
+	this.numParts  = 0; // The number of parts the  rule consists of.
+	this.variables = 1; // number of variables
+	this.pendingIndicator = null;
+	this.annotation = null;
+	
+},
+
+/**
+ * Creates the initial user interface of the simple rules editor.
+ */
+createRule: function() {
+	// hide the wiki text editor
+	var bodyContent = $('bodyContent');
+	bodyContent.hide();
+	var html;
+	
+	var headText = this.createHeadHTML(1, wgCanonicalNamespace, wgTitle);
+	
+	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
+	catOrProp = catOrProp.replace(/\$2/g, '</a>');
+	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
+	catOrProp = catOrProp.replace(/\$4/g, '</a>');
+	catOrProp = 
+'				<div id="bodyPart0">' +
+					catOrProp +
+'				</div>';
+				
+	html = this.getHTMLRuleFramework(headText, catOrProp);
+
+	new Insertion.After(bodyContent, html);
+	
+	Event.observe('sr-save-rule-btn', 'click', 
+			      smwhgCreateDefinitionRule.saveRule.bindAsEventListener(smwhgCreateDefinitionRule));
+	if ($('sr-head-value-selector')) {			      
+		Event.observe('sr-head-value-selector', 'change', 
+				      smwhgCreateDefinitionRule.propValueChanged.bindAsEventListener());
+	}
+	$('sr-save-rule-btn').disable();
+	
+},
+
+/**
+ * Creates the HTML for the head of a rule for categories or properties. The 
+ * type of the head (category or property) depends on the namespace of the
+ * current page.
+ * 
+ * @param string varIdx
+ * 		Index of the variable in the head
+ * @param string catOrProp
+ * 		The language dependent name for categories or properties
+ * @param string title
+ * 		Name of the category or property
+ */
+createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
+	if (wgNamespaceNumber == 14) {
+		// Head for categories
+		var headText = gLanguage.getMessage('SR_CAT_HEAD_TEXT');
+		headText = headText.replace(/\$1/g, '<span class="rules-variable">X<sub>'+varIdx+'</sub> </span>');
+		headText = headText.replace(/\$2/g, catOrProp);
+		headText = headText.replace(/\$3/g, '<span class="rules-category">' + title + '</span>');
+		return headText;
+	} else if (wgNamespaceNumber == 102) {
+		// Head for properties
+		var headText = gLanguage.getMessage('SR_PROP_HEAD_TEXT');
+		headText = headText.replace(/\$1/g, '<span class="rules-variable">X<sub>'+varIdx+'</sub> </span>');
+		headText = headText.replace(/\$2/g, '<span class="rules-category">' + title + '</span>');
+		var propHTML =
+			'&nbsp;' +
+			this.createVariableSelector("sr-head-value-selector", gLanguage.getMessage('SR_SIMPLE_VALUE'),"X2") +
+			'&nbsp;' +
+			'<input type="text" value="" id="sr-prop-head-value" style="display:none" />' +
+			'&nbsp;';		
+		headText = headText.replace(/\$3/g, propHTML);
+		this.variables = 2;
+		return headText;
+		
+	}	
+},
+
+/**
+ * Returns the HTML structure of the rule interface consisting of a head, body
+ * and preview part.
+ * 
+ * @param string headText
+ * 		HTML-content of the head part
+ * @param string bodyText
+ * 		HTML-content of the body part
+ */
+getHTMLRuleFramework: function(headText, bodyText) {	
+	var derive = gLanguage.getMessage('SR_DERIVE_BY');
+	derive = derive.replace(/\$1/g, wgCanonicalNamespace);
+	derive = derive.replace(/\$2/g, '<span class="rules-category">'+wgTitle+'</span>');
+	html = 
+'<div id="createRuleContent" class="rules-complete-content">' +
+	derive +
+'	<div id="headBodyDiv" style="padding-top:5px">' +
+'		<div id="headDiv" class="rules-frame" style="border-bottom:0px">' +
+'			<div id="headTitle" class="rules-title">' +
+				gLanguage.getMessage('SR_HEAD') +
+'			</div>' +
+'			<div id="headContent" class="rules-content">' +
+				headText +
+'			</div>' +
+'		</div>' +
+'		<div id="bodyDiv" class="rules-frame">' +
+'			<div id="bodyTitle" class="rules-title">' +
+				gLanguage.getMessage('SR_BODY') +
+'			</div>' +
+'			<div id="ruleBodyContent" class="rules-content">' +
+				bodyText +
+'			</div>' +
+'		</div>' +
+'		<div style="height:20px"></div>' +
+'		<div id="implicationsDiv" class="rules-frame">' +
+'			<div id="implicationsTitle" class="rules-title" style="width:auto;">' +
+				gLanguage.getMessage('SR_RULE_IMPLIES') +
+'			</div>' +
+'			<div id="implicationsContent" class="rules-content">' +
+'			</div>' +
+'		</div>' +
+'	</div>' +
+'	<div style="height:20px"></div>' +
+'   <input type="submit" accesskey="s" value="' +
+		gLanguage.getMessage('SR_SAVE_RULE') +
+		'" name="sr-save-rule-btn" id="sr-save-rule-btn"/>' +
+'</div>';
+
+	return html;
+},
+
+/**
+ * Edits the rule with the given rule text.
+ * 
+ * @param WtpRule rule
+ * 		The annotation object of the rule
+ */
+editRule: function(ruleAnnotation) {
+	
+	function ajaxResponseParseRule(request) {
+		this.hidePendingIndicator();			
+		if (request.status == 200) {
+			// success
+			var xml = request.responseText;
+			if (xml == 'false') {
+				//TODO
+				return;
+			}
+			// create the user interface
+			this.createUIForRule(xml);
+		} else {
+		}
+	};
+
+	this.showPendingIndicator($('rule-name'));
+	this.annotation = ruleAnnotation;
+	var ruleText = ruleAnnotation.getRuleText();
+	sajax_do_call('smwf_sr_ParseRule', 
+	          [this.ruleName, ruleText], 
+	          ajaxResponseParseRule.bind(this));
+	
+},
+
+
+/**
+ * Cancels editing or creating the rule. Closes the rule edit part of the UI and
+ * reopens the wiki text edit part.
+ *  
+ */
+cancel: function() {
+	
+	$('bodyContent').show();
+	if ($('createRuleContent')) {
+		$('createRuleContent').remove();
+	}
+		
+},
+
+/**
+ * Creates the user interface for the rule that is given in the XML format.
+ * 
+ * @param string ruleXML
+ * 		Description of the rule in XML
+ */
+createUIForRule: function(ruleXML) {
+	// hide the wiki text editor
+	var bodyContent = $('bodyContent');
+	bodyContent.hide();
+	
+	var rule = GeneralXMLTools.createDocumentFromString(ruleXML);
+	
+	var head = rule.getElementsByTagName("head")[0].childNodes;
+	var body = rule.getElementsByTagName("body")[0].childNodes;
+	
+	this.variables = 1;
+	
+	var headHTML = '';
+	for (var i = 0, n = head.length; i < n; i++) {
+		var headLit = head[i]; 
+		if (headLit.nodeType == 1) {
+			// skip text nodes
+			headHTML += this.getHTMLForLiteral(headLit, true, 888888);
+		}
+	}
+	
+	var bodyHTML = '';
+	this.numParts = 0;
+	for (var i = 0, n = body.length; i < n; i++) {
+		var bodyLit = body[i]; 
+		if (bodyLit.nodeType == 1) {
+			// skip text nodes
+			bodyHTML += this.getHTMLForLiteral(bodyLit, false, this.numParts);
+	    	bodyHTML +=
+				'<div id="AND' + this.numParts + '">' +
+					'<b>' +
+					gLanguage.getMessage('SR_AND') +
+					'</b>' +
+				'</div>';
+		    this.numParts++;
+		}
+	}
+	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
+	catOrProp = catOrProp.replace(/\$2/g, '</a>');
+	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
+	catOrProp = catOrProp.replace(/\$4/g, '</a>');
+	bodyHTML += 
+		'<div id="bodyPart'+this.numParts+'">' +
+			catOrProp +
+		'</div>';
+	
+	html = this.getHTMLRuleFramework(headHTML, bodyHTML);
+
+	new Insertion.After(bodyContent, html);
+	
+	Event.observe('sr-save-rule-btn', 'click', 
+			      smwhgCreateDefinitionRule.saveRule.bindAsEventListener(smwhgCreateDefinitionRule));
+	if ($('sr-head-value-selector')) {			      
+		Event.observe('sr-head-value-selector', 'change', 
+				      smwhgCreateDefinitionRule.propValueChanged.bindAsEventListener());
+	}
+		
+},
+
+/**
+ * Assembles the HTML for a literal of a rule. The literal is passed as a DOM
+ * node.
+ * 
+ * @param DOMnode literal
+ * 		Literal of a rule (a category or a property)
+ * @param bool isHead
+ * 		If <true>, HTML code the head of the rule generated.
+ *
+ * @return string
+ * 		HTML code that represents the literal
+ * 
+ */
+getHTMLForLiteral: function(literal, isHead, partID) {
+	var html = '';
+	switch (literal.tagName) {
+		case 'category':
+			var catName = literal.getElementsByTagName('name')[0].firstChild.nodeValue;
+			var subject = literal.getElementsByTagName('subject')[0].firstChild.nodeValue;
+			var varIdx = subject.match(/X(\d+)/);
+			if (varIdx[1]*1 > this.variables) {
+				this.variables = varIdx[1]*1;
+			}
+
+			if (isHead) {
+				html = this.createHeadHTML(varIdx[1], wgCanonicalNamespace, catName);
+			} else {
+				html =	
+	'<div id="bodyPart' + partID + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		'<span id="var_' + partID + '" ' +
+			'varname="' + subject + '" ' +
+			'class="rules-variable">' +
+		'X<sub>' + varIdx[1] + '</sub>' + 
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		'&nbsp;' +
+		'<span id="cat_' + partID + '" ' +
+			'catname="' + escape(catName) + '" ' +
+			'class="rules-category">' +
+		catName +
+		'</span>&nbsp;' +
+		'<span id="buttons_' + partID + '">' +
+			'<a href="javascript:smwhgCreateDefinitionRule.editCategoryCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
+			'</a>' +
+			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
+			'</a>' +
+		'</span>' + 		
+	'</div>';
+			}
+			break;
+		case 'property':
+			var propName = literal.getElementsByTagName('name')[0].firstChild.nodeValue;
+			var subject = literal.getElementsByTagName('subject')[0].firstChild.nodeValue;
+			var subjIdx = subject.match(/X(\d+)/);
+			if (subjIdx[1]*1 > this.variables) {
+				this.variables = subjIdx[1]*1;
+			}
+			
+			var valueHTML;
+			var variable = literal.getElementsByTagName('variable');
+			if (variable.length) {
+				variable = variable[0].firstChild.nodeValue;
+				var varIdx = variable.match(/X(\d+)/);
+				if (varIdx[1]*1 > this.variables) {
+					this.variables = varIdx[1]*1;
+				}
+				valueHTML = '<span class="rules-variable" ' + 
+								'id="value_' + partID + '" ' +
+								'propvalue="' + escape(variable) + '"' +
+								'proptype="variable"' +
+								'>' +
+								'X<sub>' + varIdx[1] + '</sub>' + 
+							'</span>';
+			}
+			var value = literal.getElementsByTagName('value');
+			if (value.length) {
+				value = value[0].firstChild.nodeValue;
+				var valueInfo = 
+				valueHTML = '<span class="rules-category"' + 
+								'id="value_' + partID + '" ' +
+								'propvalue="' + escape(value) + '"' +
+								'proptype="value"' +							
+								'>' +
+								value + 
+							'</span>';
+			}
+			
+			var html =	
+'<div id="bodyPart' + partID + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		'<span id="var_' + partID + '" ' +
+			'varname="' + subject + '" ' +
+			'class="rules-variable">' +
+			'X<sub>' + subjIdx[1] + '</sub>' + 
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_HAVE_PROP') +
+		'&nbsp;' +
+		'<span id="prop_' + partID + '" ' +
+			'propname="' + propName + '" ' +
+			'class="rules-category">' +
+		propName +
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_WITH_VALUE') +
+		'&nbsp;' +
+		valueHTML + 
+		'&nbsp;' +
+		'<span id="buttons_' + partID + '">' +
+			'<a href="javascript:smwhgCreateDefinitionRule.editPropertyCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
+			'</a>' +
+			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
+			'</a>' +
+		'</span>' +
+'</div>';
+			
+			break;
+	}
+	return html;
+},
+
+/**
+ * Creates the section of the user interface where a category condition can be
+ * defined.
+ */
+memberOfCategory: function() {
+	
+	$('sr-save-rule-btn').disable();
+	
+	var id = 'bodyPart'+this.numParts;
+	var currPart = $('bodyPart'+this.numParts);
+	
+	var html;
+	html = 
+'<div id="bodyPart' + this.numParts + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		this.createVariableSelector('sr-variable-selector',null,"X1") +
+		'&nbsp;' +
+		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		'&nbsp;' +
+		'<input type="text" value="" id="sr-cat-name" class="wickEnabled" />' +
+		'&nbsp;' +
+		'<a href="javascript:smwhgCreateDefinitionRule.showCategoryCondition(' + this.numParts + ',false)">' +
+			'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"/>' +
+		'</a>' +
+'</div>';
+
+	currPart.replace(html);
+},
+
+/**
+ * Replaces the display of a category condition by the editable user interface.
+ * 
+ * @param int partID
+ * 		Index of the part of the rule.
+ */
+editCategoryCondition: function(partID) {
+	
+	$('ruleBodyContent').hide();
+	$('sr-save-rule-btn').disable();
+	
+	this.showButtons(false);
+	
+	var elem = $('var_'+partID);
+	if (elem) {
+		var val = elem.readAttribute('varname');
+		elem.replace(this.createVariableSelector('sr-variable-selector', null, val));
+	}
+	elem = $('cat_'+partID);
+	if (elem) {
+		var val = unescape(elem.readAttribute('catname'));
+		elem.replace('<input type="text" value="" id="sr-cat-name" class="wickEnabled" />');
+		$("sr-cat-name").value = val;
+	}
+	elem = $('buttons_'+partID);
+	if (elem) {
+		new Insertion.After(elem,
+			'<a href="javascript:smwhgCreateDefinitionRule.showCategoryCondition('+ partID +',true)">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"/>' +
+			'</a>');
+		elem.remove();
+	}
+
+	$('ruleBodyContent').show();
+},
+
+/**
+ * After a category condition has been defined, it is displayed in a simplified
+ * format without input fields etc. The section for defining the next condition
+ * is added if <update> is 'false'. 
+ * 
+ * @param int partID 
+ * 		ID of the part where the category condition is added
+ * @param bool update
+ * 		If <true>, the current part is updated. The next condition will not be 
+ * 		appended.
+ */
+showCategoryCondition: function(partID, update) {
+	var category = $('sr-cat-name').value;
+	if (category.length == 0) {
+		return;
+	}
+	
+	$('ruleBodyContent').hide();
+	$('sr-save-rule-btn').enable();
+	
+	var variable = $('sr-variable-selector');
+	variable = variable.options[variable.selectedIndex].text;
+	
+	var varIdx = variable.substr(1) * 1;
+	
+	if (varIdx > this.variables) {
+		this.variables = varIdx;
+	}
+	
+	var id = 'bodyPart'+partID;
+	var currPart = $('bodyPart'+partID);
+
+	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
+	catOrProp = catOrProp.replace(/\$2/g, '</a>');
+	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
+	catOrProp = catOrProp.replace(/\$4/g, '</a>');
+
+	var html;
+
+	html =	
+'<div id="bodyPart' + partID + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		'<span id="var_' + partID + '" ' +
+			'varname="' + variable + '" ' +
+			'class="rules-variable">' +
+		'X<sub>' + varIdx + '</sub>' + 
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		'&nbsp;' +
+		'<span id="cat_' + partID + '" ' +
+			'catname="' + escape(category) + '" ' +
+			'class="rules-category">' +
+		category +
+		'</span>&nbsp;' +
+		'<span id="buttons_' + partID + '">' +
+			'<a href="javascript:smwhgCreateDefinitionRule.editCategoryCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
+			'</a>' +
+			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
+			'</a>' +
+		'</span>' + 		
+'</div>';
+
+	if (!update) {
+		html +=
+'<div id="AND' + partID + '">' +
+	'<b>' +
+	gLanguage.getMessage('SR_AND') +
+	'</b>' +
+'</div>';
+
+		++this.numParts;
+		html +=
+'<div id="bodyPart' + this.numParts + '">' +
+	catOrProp +
+'</div>';
+	}
+	
+	currPart.replace(html);
+	
+	this.showButtons(true);
+	$('ruleBodyContent').show();
+	
+},
+
+/**
+ * Creates the section of the user interface where a property condition can be
+ * defined.
+ */
+memberOfProperty: function() {
+	
+	$('sr-save-rule-btn').disable();
+	
+	var id = 'bodyPart'+this.numParts;
+	var currPart = $('bodyPart'+this.numParts);
+	
+	var html;
+	html = 
+'<div id="bodyPart' + this.numParts + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		this.createVariableSelector("sr-variable-selector", null, "X1") +
+		'&nbsp;' +
+		gLanguage.getMessage('SR_HAVE_PROP') +
+		'&nbsp;' +
+		'<input type="text" value="" id="sr-prop-name" class="wickEnabled" />' +
+		'&nbsp;' +
+		gLanguage.getMessage('SR_WITH_VALUE') +
+		'&nbsp;' +
+		this.createVariableSelector("sr-value-selector", gLanguage.getMessage('SR_SIMPLE_VALUE'),"X1") +
+		'&nbsp;' +
+		'<input type="text" value="" id="sr-prop-value" style="display:none" />' +
+		'&nbsp;' +
+		
+		'<a href="javascript:smwhgCreateDefinitionRule.showPropertyCondition('+this.numParts+',false)">' +
+			'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"/>' +
+		'</a>' +
+'</div>';
+
+	currPart.replace(html);
+	
+	Event.observe('sr-value-selector', 'change', 
+			      smwhgCreateDefinitionRule.propValueChanged.bindAsEventListener());
+	
+},
+
+/**
+ * Replaces the display of a property condition by the editable user interface.
+ * 
+ * @param int partID
+ * 		Index of the part of the rule.
+ */
+editPropertyCondition: function(partID) {
+	
+	$('ruleBodyContent').hide();
+	$('sr-save-rule-btn').disable();
+	this.showButtons(false);
+	
+	var elem = $('var_'+partID);
+	if (elem) {
+		var val = elem.readAttribute('varname');
+		elem.replace(this.createVariableSelector('sr-variable-selector', null, val));
+	}
+	elem = $('prop_'+partID);
+	if (elem) {
+		var val = unescape(elem.readAttribute('propname'));
+		elem.replace('<input type="text" value="" id="sr-prop-name" class="wickEnabled" />');
+		$("sr-prop-name").value = val;
+	}
+	elem = $('value_'+partID);
+	if (elem) {
+		var val = unescape(elem.readAttribute('propvalue'));
+		var type = unescape(elem.readAttribute('proptype'));
+		var select = (type == 'variable') ? val : gLanguage.getMessage('SR_SIMPLE_VALUE');
+		var html = this.createVariableSelector("sr-value-selector", 
+		                                       gLanguage.getMessage('SR_SIMPLE_VALUE'),select);
+		html += '<input type="text" value="" id="sr-prop-value" style="display:none"/>';
+		elem.replace(html);
+		if (type == 'value') {
+			$("sr-prop-value").value = val;
+			$("sr-prop-value").show();
+		}
+		Event.observe('sr-value-selector', 'change', 
+				      smwhgCreateDefinitionRule.propValueChanged.bindAsEventListener());
+		
+	}
+	
+	elem = $('buttons_'+partID);
+	if (elem) {
+		new Insertion.After(elem,
+			'<a href="javascript:smwhgCreateDefinitionRule.showPropertyCondition('+ partID +',true)">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"/>' +
+			'</a>');
+		elem.remove();
+	}
+	$('ruleBodyContent').show();
+	
+},
+
+/**
+ * This event function is called, when the value of the value selector for
+ * property values has been changed.
+ * If the value of a property is a variable, the input field for simple values
+ * is hidden, otherwise it is shown. 
+ * 
+ * @param s selectorID
+ * 		DOM-ID of the selector
+ */
+ propValueChanged: function(event) {
+ 	var val = event.target.options[event.target.selectedIndex].text;
+
+ 	var input = (event.target.id == 'sr-value-selector') 
+	 				? $('sr-prop-value')
+	 				: $('sr-prop-head-value');
+ 	if (val == gLanguage.getMessage('SR_SIMPLE_VALUE')) {
+ 		input.show();
+ 	} else {
+ 		input.hide();
+ 	}
+ },
+
+/**
+ * After a property condition has been defined, it is displayed in a simplified
+ * format without input fields etc. The section for defining the next condition
+ * is added if <update> is 'false'. 
+ * 
+ * @param int partID 
+ * 		ID of the part where the category condition is added
+ * @param bool update
+ * 		If <true>, the current part is updated. The next condition will not be 
+ * 		appended.
+ */
+ showPropertyCondition: function(partID, update) {
+	var variable = $('sr-variable-selector')
+	variable = variable.options[variable.selectedIndex].text;
+	
+	var property = $('sr-prop-name').value;
+	var vsv = $('sr-value-selector');
+	vsv = vsv.options[vsv.selectedIndex].text;
+	
+	var valueIsVariable = vsv != gLanguage.getMessage('SR_SIMPLE_VALUE');
+	var value = (valueIsVariable) ? vsv 
+	                              : $('sr-prop-value').value;
+
+	if (property.length == 0) {
+		// The name of the property must not be empty
+		return;
+	}
+	if (!valueIsVariable && value.length == 0) {
+		// The value of the property must not be empty if it is not a variable
+		return;
+	}
+	$('ruleBodyContent').hide();
+	$('sr-save-rule-btn').enable();
+
+	var varIdx = variable.substr(1) * 1;
+	
+	if (varIdx > this.variables) {
+		this.variables = varIdx;
+	}
+	
+	var id = 'bodyPart'+partID;
+	var currPart = $('bodyPart'+partID);
+
+	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
+	catOrProp = catOrProp.replace(/\$2/g, '</a>');
+	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
+	catOrProp = catOrProp.replace(/\$4/g, '</a>');
+
+	var valueHTML;
+	var escapedValue = escape(value);
+	
+	var valueInfo = 'id="value_' + partID + '" ' +
+			'propvalue="' + escapedValue + '"' +
+			'proptype="' + (valueIsVariable ? 'variable"' : 'value"');
+	
+	if (valueIsVariable) {
+		var vi = value.substr(1) * 1;
+		valueHTML = '<span class="rules-variable" ' + valueInfo + '>' +
+						'X<sub>' + vi + '</sub>' + 
+					'</span>';
+		if (vi > this.variables) {
+			this.variables = vi;
+		}
+					
+	} else {
+		valueHTML = '<span class="rules-category"' + valueInfo + '>' +
+						value + 
+					'</span>';
+	}
+					
+	var html;
+
+	html =	
+'<div id="bodyPart' + partID + '">' +
+	gLanguage.getMessage('SR_ALL_ARTICLES') +
+		'&nbsp;' +
+		'<span id="var_' + partID + '" ' +
+			'varname="' + variable + '" ' +
+			'class="rules-variable">' +
+			'X<sub>' + varIdx + '</sub>' + 
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_HAVE_PROP') +
+		'&nbsp;' +
+		'<span id="prop_' + partID + '" ' +
+			'propname="' + property + '" ' +
+			'class="rules-category">' +
+		property +
+		'</span>&nbsp;' +
+		gLanguage.getMessage('SR_WITH_VALUE') +
+		'&nbsp;' +
+		valueHTML + 
+		'&nbsp;' +
+		'<span id="buttons_' + partID + '">' +
+			'<a href="javascript:smwhgCreateDefinitionRule.editPropertyCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
+			'</a>' +
+			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
+				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
+			'</a>' +
+		'</span>' +
+'</div>';
+
+	if (!update) {
+		html +=
+'<div id="AND' + partID + '">' +
+	'<b>' +
+	gLanguage.getMessage('SR_AND') +
+	'</b>' +
+'</div>';
+
+		++this.numParts;
+	html +=
+'<div id="bodyPart' + this.numParts + '">' +
+	catOrProp +
+'</div>';
+	}			
+	
+	currPart.replace(html);
+	
+	this.showButtons(true);
+	$('ruleBodyContent').show();
+	
+},
+
+/**
+ * Retrieves the conditions from the user interface, creates a rule and saves it.
+ */
+saveRule: function(event) {
+
+	function ajaxResponseAddRule(request) {
+		this.hidePendingIndicator();			
+		if (request.status == 200) {
+			// success
+
+			if ($('rule-name')) {
+				this.ruleName = $('rule-name').value;
+			}			
+			
+			var ruleText = 
+				"\n\n" +
+				'<rule hostlanguage="f-logic" ' +
+				      'name="' + this.ruleName + '" ' +
+				      'type="' + this.ruleType + '">' + "\n" +
+				request.responseText +
+				"\n</rule>\n";
+			 	
+			// hide the rule editor GUI
+			$('createRuleContent').remove();
+			
+			// show normal wiki text editor GUI
+			$('bodyContent').show();
+			
+			if (this.annotation) {
+				// update an existing annotation
+				this.annotation.replaceAnnotation(ruleText); 
+			} else {
+				// append the text to the edit field
+				var ei = new SMWEditInterface();
+				ei.setValue(ei.getValue() + ruleText);
+			}
+			ruleToolBar.fillList(true);
+						 	
+		} else {
+		}
+	};
+
+	var xml = this.serializeRule();
+
+	this.showPendingIndicator($('sr-save-rule-btn'));
+	
+	sajax_do_call('smwf_sr_AddRule', 
+	          [this.ruleName, xml], 
+	          ajaxResponseAddRule.bind(this));
+	
+},
+
+/**
+ * Removes the condition with the given ID.
+ * 
+ * @param int partID
+ * 		Index of the condition to be removed
+ */
+ removeCondition: function(partID) {
+ 	if ($('bodyPart'+partID)) {
+ 		$('bodyPart'+partID).remove();
+ 	}
+ 	if ($('AND'+partID)) {
+ 		$('AND'+partID).remove();
+ 	}
+ },
+
+/**
+ * Creates the HTML-code for the variable selector.
+ * 
+ * @param string id
+ * 		ID of the selector
+ * @param string option
+ * 		One additional option that is appended
+ * @param string select
+ * 		If this item occurrs in the list of options, it will be selected.
+ */
+createVariableSelector: function(id, option, select) {
+	var html =
+		'<select id ="' + id + '">';
+	
+	for (var i = 1; i <= this.variables + 1; ++i) {
+		var variable = 'X'+i;
+		if (select == variable) {
+			variable = 'selected="selected">' + variable;
+		} else {
+			variable = '>' + variable;
+		}
+		html += '<option ' + variable + '</option>';
+	}
+	if (option != undefined && option != null) {
+		html += (select == option) 
+					? '<option selected="selected">' + option + '</option>'
+					: '<option>' + option + '</option>';
+	}	
+	html +=		
+		'</select>';
+		
+	return html;
+	
+},
+
+/**
+ * Shows or hides the edit and delete buttons to the right of a condition.
+ * 
+ * @param bool show
+ * 		If <true>, buttons are shown, otherwise they are hidden.
+ */
+showButtons: function(show) {
+	for (var i = 0; i < this.numParts; ++i) {
+		var b = $('buttons_'+i);
+		if (b) {
+			if (show) {
+				b.show();
+			} else {
+				b.hide();
+			}
+		}
+	}
+},
+
+/*
+ * Shows the pending indicator on the element with the DOM-ID <onElement>
+ * 
+ * @param string onElement
+ * 			DOM-ID if the element over which the indicator appears
+ */
+showPendingIndicator: function(onElement) {
+	this.hidePendingIndicator();
+	this.pendingIndicator = new OBPendingIndicator($(onElement));
+	this.pendingIndicator.show();
+},
+
+/*
+ * Hides the pending indicator.
+ */
+hidePendingIndicator: function() {
+	if (this.pendingIndicator != null) {
+		this.pendingIndicator.hide();
+		this.pendingIndicator = null;
+	}
+},
+
+/**
+ * Creates an XML representation of the current rule.
+ */
+serializeRule: function() {
+	
+	var xml;
+	
+	var title = wgTitle.replace(/ /g,'_');
+	
+	xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+		  '<SimpleRule>';
+	
+	// serialize head
+	xml += '<head>';
+	if (wgNamespaceNumber == 14) {
+		// create a category rule
+		xml += '<category>' +
+				'<name>' +
+					title +
+				'</name>' +
+				'<subject>X1</subject>' +
+				'</category>';
+	} else if (wgNamespaceNumber == 102) {
+		// create a property rule
+		xml += '<property>' +
+				'<subject>X1</subject>' +
+				'<name>' +
+					title +
+				'</name>';
+		
+		var isVariable = false;
+		var value = '';
+		var val = $('value_888888');
+		if (val) {
+			isVariable = (val.readAttribute('proptype') == 'variable');
+			value = val.readAttribute('propvalue');
+		} else {
+			var val = $('sr-head-value-selector').value;
+			isVariable = (val != gLanguage.getMessage('SR_SIMPLE_VALUE'));
+			value = isVariable 
+						? val
+						: $('sr-prop-head-value').value;
+		}
+		
+		if (isVariable) {
+			xml += '<variable>'+value+'</variable>';
+	 	} else {
+		 	xml += '<value>'+value+'</value>';
+	 	}
+		xml += '</property>';
+		
+	}
+	
+	xml += '</head>';
+		  
+	// serialize body
+	xml += '<body>';
+	for (var i = 0; i < this.numParts; ++i) {
+		var subject = $('var_'+i);
+		if (!subject) {
+			// a gap in the rule parts
+			continue;
+		}
+		subject = '<subject>'+subject.readAttribute('varname')+'</subject>';
+		var cat = $('cat_'+i);
+		if (cat) {
+			var catName = unescape(cat.readAttribute('catname'));
+			catName = catName.replace(/ /g, '_');
+			// variable belongs to a category
+			xml += '<category>' +
+					'<name>' +
+						catName +
+					'</name>' +
+					subject +
+					'</category>';
+		}
+		var prop = $('prop_'+i);
+		if (prop) {
+			// variable belongs to a property
+			xml += '<property>' +
+					subject +
+					'<name>' +
+						unescape(prop.readAttribute('propname')).replace(/ /g, '_') +
+					'</name>';
+			var value = $('value_'+i);
+			if (value.readAttribute('proptype') == 'variable') {
+				xml += '<variable>'+value.readAttribute('propvalue')+'</variable>';
+			} else {
+				xml += '<value>'+value.readAttribute('propvalue')+'</value>';
+			}
+			xml += '</property>';
+		}
+	}
+		  
+	xml += '</body></SimpleRule>';
+	
+	return xml;
+	
+},
+
+/**
+ * Checks if the rule that is currently presented in the UI is valid i.e. if
+ * all variables are transitively connected to X1 via a property.
+ * 
+ */
+checkRule: function() {
+	
+	var variables = []; // Array of all variables in the rule
+	var connections = []; // Array of all connected variables e.g. [[X1, X2], [X2, X3]]
+	for (var i = 0; i < this.numParts; ++i) {
+		var subject = $('var_'+i);
+		if (!subject) {
+			// a gap in the rule parts
+			continue;
+		}
+		subject = subject.readAttribute('varname');
+		if (variables.indexOf(subject) == -1) {
+			variables.push(subject);
+		}
+		var prop = $('prop_'+i);
+		if (prop) {
+			// variable belongs to a property
+			var value = $('value_'+i);
+			if (value.readAttribute('proptype') == 'variable') {
+				var object = value.readAttribute('propvalue');
+				connections.push([subject, object]);
+			}
+		}
+	}
+	
+	// build transitive connections
+	while (true) {
+		var connAdded = false;
+		for (var i = 0, n = connections.length; i < n; ++i) {
+			var currSubj = connections[i][0];
+			
+			//TODOs
+		}
+	}
+}
+
+
+
+};// End of Class
+
+var smwhgCreateDefinitionRule = null;
+
+
+// SMW_CalculationRule.js
+// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+var CalculationRule = Class.create();
+
+ 		
+
+CalculationRule.prototype = {
+
+
+/**
+ * Constructor
+ * @param string ruleName
+ * 		Name of the rule
+ * @param string ruleType
+ * 		Type of the rule e.g. Calculation, Property Chaining, Deduction, Mapping
+ */
+initialize: function(ruleName, ruleType) {
+	this.ruleName = ruleName;
+	this.ruleType = ruleType;
+	smwhgCreateCalculationRule = this;
+	this.pendingIndicator = null;
+	this.variableSpec = '';
+	this.annotation = null;
+	this.formulaValid = false;
+	this.checkRuleTimer = null;	
+},
+
+/**
+ * @public
+ * 
+ * Creates the initial user interface of the calculation rules editor.
+ * 
+ * @param string ruleText
+ * 		If this parameter is defined, an existing rule will be edited otherwise
+ * 		a new rule will be created.
+ */
+editRule: function(ruleAnnotation) {
+	
+	if (ruleAnnotation == undefined) {
+		this.createUI();
+	} else {
+		// parse the rule text
+		this.annotation = ruleAnnotation;
+		var ruleText = ruleAnnotation.getAnnotation();
+		var rule = FormulaRuleParser.parseRule(ruleText);
+		if (rule == false) {
+			// The rule is erroneous => create a UI without predefined rule
+			rule = undefined;
+		}
+		this.createUI(rule);
+		$('variablesDiv').show();
+		
+		function ajaxResponseCheckFormula(request) {
+			if (request.status == 200) {
+				// success
+				var result = request.responseText;
+				var variables = result.split(',');
+				if (variables[0] != 'error' 
+				    && !(variables.size() == 2 && variables[1] == '')) {
+					// the formula is valid
+					this.formulaValid = true;
+				} else {
+					this.editFormula();
+				}
+			}
+		}
+		sajax_do_call('smwf_sr_ParseFormula', 
+		          [$('sr-formula').value], 
+		          ajaxResponseCheckFormula.bind(this));
+		          
+		
+	}
+	
+},
+
+/**
+ * Cancels editing or creating the rule. Closes the rule edit part of the UI and
+ * reopens the wiki text edit part.
+ *  
+ */
+cancel: function() {
+	
+	$('bodyContent').show();
+	if ($('createRuleContent')) {
+		$('createRuleContent').remove();
+	}
+	if (this.checkRuleTimer) {
+		this.checkRuleTimer.stop();
+	} 
+		
+},
+
+/**
+ * @private
+ * 
+ * Creates the initial user interface of the calculation rules editor.
+ * 
+ * @param FormulaRule parsedRule
+ * 		If this parameter is defined, it contains a representation of the parsed
+ * 		rule that defines the content of the GUI.
+ */
+createUI: function(parsedRule) {
+	// hide the wiki text editor
+	var bodyContent = $('bodyContent');
+	bodyContent.hide();
+	var html;
+					
+	html = this.getHTMLRuleFramework(parsedRule);
+
+	new Insertion.After(bodyContent, html);
+	
+	var opHelp = this.operatorHelpHTML();
+	if (!$('sr-calc-op-help')) {
+		new Insertion.After('contenttabposdiv', opHelp);
+	}	
+	
+	if (parsedRule == undefined) {
+		$('sr-save-rule-btn').disable();
+	}
+	Event.observe('sr-save-rule-btn', 'click', 
+			      smwhgCreateCalculationRule.saveRule.bindAsEventListener(smwhgCreateCalculationRule));
+			      
+	this.checkRuleTimer = new PeriodicalExecuter(function(pe) {
+			var saveRuleBtn = $('sr-save-rule-btn');
+			if (saveRuleBtn) {
+				var disabled = saveRuleBtn.disabled;
+				if (smwhgCreateCalculationRule.checkRule()) {
+					if (disabled) {
+						saveRuleBtn.disabled = false;
+					}
+				} else {
+					if (!disabled) {
+						saveRuleBtn.disabled = true;
+					}
+				}
+			}
+		}, 0.5);			      
+},
+
+
+/**
+ * Returns the HTML structure of the rule interface consisting of the formula 
+ * part, the variable definition area and the preview area.
+ * 
+ * @param FormulaRule parsedRule
+ * 		If defined, it contains the parsed representation of the rule for the
+ * 		initial GUI.
+ */
+getHTMLRuleFramework: function(parsedRule) {	
+	var derive = gLanguage.getMessage('SR_DERIVE_BY');
+	derive = derive.replace(/\$1/g, wgCanonicalNamespace);
+	derive = derive.replace(/\$2/g, '<span class="rules-category">'+wgTitle+'</span>');
+	
+	var defFormulaHTML   = (parsedRule == undefined)
+								? this.defineFormulaHTML(parsedRule)
+								: this.confirmedFormulaHTML(parsedRule);
+	var defVariablesHTML = this.defineVariablesHTML(parsedRule);
+	var previewHTML      = this.previewHTML();
+	
+	html = 
+'<div id="createRuleContent" class="rules-complete-content">' +
+'	<div id="headBodyDiv" style="padding-top:5px">' +
+		defFormulaHTML +
+		defVariablesHTML +
+		previewHTML +
+'	   <input type="submit" accesskey="s" value="' +
+			gLanguage.getMessage('SR_SAVE_RULE') +
+'			" name="sr-save-rule-btn" id="sr-save-rule-btn"/>' +
+'	</div>' +
+'</div>';
+	return html;
+},
+
+/**
+ * @private
+ * 
+ * This function returns the HTML of the upper part of the GUI where the formula
+ * is entered. This part allows editing the formula. 
+ * 
+ * @param FormulaRule parsedRule
+ * 		If defined, it contains the parsed representation of the rule for the
+ * 		initial GUI.
+ */
+defineFormulaHTML: function(parsedRule) {
+	
+	var formulaResult = wgTitle;
+	var initialFormula = (parsedRule == undefined) ? '' : parsedRule.getFormula();
+	var enterFormula = gLanguage.getMessage('SR_ENTER_FORMULA');
+	enterFormula = enterFormula.replace(/\$1/g, formulaResult);
+	 
+	var html = 
+'<div id="formulaDiv" class="rules-frame">' +
+'	<div id="formulaIntro" class="rules-content">' +
+		enterFormula +
+'	</div>' +
+'	<div id="formulaInput" class="rules-content">' +
+		formulaResult + '&nbsp;=&nbsp;' + 
+'		<input type="text" style="width:60%" ' +
+'				value="'+initialFormula+'" id="sr-formula" />' +
+'		&nbsp;' +
+'		<img id="sr-op-help-img"' +
+'			 src="' + wgScriptPath + '/extensions/SMWHalo/skins/help.gif"' +
+'			 onmouseover="smwhgCreateCalculationRule.showOpHelp(true)"' +
+'			 onmouseout="smwhgCreateCalculationRule.showOpHelp(false)"' +
+'		/>' +
+'	</div>' +
+'	<div id="formulaErrorMsgDiv" class="rules-content rules-err-msg" style="display:none">' +
+'		<span id="formulaErrorMsg" />' +
+'	</div>' +
+'	<div id="formulaSubmit" class="rules-content">' +
+'		<a href="javascript:smwhgCreateCalculationRule.submitFormula()">' +
+			gLanguage.getMessage('SR_SUBMIT') +
+'		</a>' +
+'	</div>' +
+'</div>';
+
+	return html;
+},
+
+/**
+ * @private
+ * 
+ * This function returns the HTML of the upper part of the GUI where the formula
+ * has already been confirmed. This part no longer allows editing the formula. 
+ * 
+ * @param FormulaRule parsedRule
+ * 		Contains the parsed representation of the rule with the definition of
+ * 		the formula.
+ */
+confirmedFormulaHTML: function(parsedRule) {
+	
+	var formulaResult = wgTitle;
+	var initialFormula = parsedRule.getFormula();
+	var syntaxChecked = gLanguage.getMessage('SR_SYNTAX_CHECKED');
+	var edit = gLanguage.getMessage('SR_EDIT_FORMULA');
+	 
+	var html = 
+'<div id="confirmedFormulaDiv" class="rules-frame" style="border-bottom:0px">' +
+'	<div id="confFormulaInput" class="rules-content">' +
+		formulaResult + '&nbsp;=&nbsp;' + 
+'		<input type="text" style="width:50%"' +
+'			value="'+initialFormula+'" id="sr-formula" readonly="readonly" />' +
+'		&nbsp;' +
+'		<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/checkmark.png"/>' +
+		syntaxChecked +
+'		&nbsp;' +
+'		<span style="position:absolute; right:1em">' +		
+'			<a href="javascript:smwhgCreateCalculationRule.editFormula()">' +
+				edit +
+'			</a>' +
+'		</span>' +
+'	</div>' +
+'</div>';
+
+	return html;
+},
+
+/**
+ * @private
+ * 
+ * This function returns the HTML of the middle part of the GUI where the variables
+ * are specified. This part is initially invisible.
+ * 
+ * @param FormulaRule parsedRule
+ * 		If defined, it contains the parsed representation of the rule for the
+ * 		initial GUI.
+ */
+defineVariablesHTML: function(parsedRule) {
+	var specifyVariables = gLanguage.getMessage('SR_SPECIFY_VARIABLES');
+
+	var html =
+'<div id="variablesDiv" class="rules-frame" style="display:none">' +
+'	<div id="variableIntro" class="rules-content">' +
+		specifyVariables +
+'	</div>' +
+'	<div id="variableInput">' +
+	this.allVariableSpecificationsHTML(parsedRule) +
+'	</div>' +
+'</div>';
+	
+	return html;
+},
+
+/**
+ * @private
+ * 
+ * This function returns the HTML for the specification of all variables in
+ * the given rule.
+ * 
+ * @param FormulaRule parsedRule
+ * 		Contains the parsed representation of the rule for the
+ * 		initial GUI.
+ * 
+ * @return string
+ * 		HTML for all variable specifications
+ */
+allVariableSpecificationsHTML: function(parsedRule) {
+	
+	if (parsedRule == undefined) {
+		return "";
+	}
+	var variables = parsedRule.getVariables();
+	
+	var html =
+		'<div class="rules-content">' +
+		'	<table style="overflow:hidden; border-color:#aaaaaa" rules="groups" cellpadding="10">';
+			
+	for (var i = 0, n = variables.length; i < n; ++i) {
+		v = variables[i];
+		html += this.variableSpecificationHTML(v.name, v.type, v.value);
+	}
+	
+	html += '</table></div>';
+	
+	return html;
+}, 
+
+/**
+ * @private
+ * 
+ * This function returns the HTML for the specification of one variable.
+ * 
+ * @param string variable
+ * 		The name of the variable
+ * @param string type
+ * 		The type of the variable (i.e. 'prop' or 'const')
+ * @param string value
+ * 		Depending in the type this is the name of the property or the value
+ * 		of the constant.
+ * 
+ * @return string
+ * 		The HTML that allows editing the variable's specification.
+ * 
+ */
+ variableSpecificationHTML: function(variable, type, value) {
+ 	var varDef = '<span class="calc-rule-variable">'+variable+ '</span>' +
+ 	             " " + gLanguage.getMessage('SR_IS_A');
+ 	var propValue = gLanguage.getMessage('SR_PROPERTY_VALUE');
+ 	var absTerm   = gLanguage.getMessage('SR_ABSOLUTE_TERM');
+ 	var radioName = 'sr-radio-'+variable;
+ 	
+ 	// Initialize variables for type 'prop'
+ 	var propChecked = 'checked="checked"';
+ 	var termChecked = '';
+ 	var propInputVisible = '';
+ 	var termInputVisible = 'style="display:none"';
+ 	var property = value;
+ 	var term = gLanguage.getMessage('SR_ENTER_VALUE');
+ 	
+ 	if (type == 'const') {
+ 		// Change variables for type 'const'
+	 	propChecked = '';
+	 	termChecked = 'checked="checked"';
+	 	propInputVisible = 'style="display:none"';
+	 	termInputVisible = '';
+	 	property = gLanguage.getMessage('SR_ENTER_PROPERTY');
+	 	term = value;
+ 	}
+ 	
+ 	if (value == undefined || value == '') {
+ 		property = gLanguage.getMessage('SR_ENTER_PROPERTY');
+ 		term = gLanguage.getMessage('SR_ENTER_VALUE');
+ 	}
+ 	
+ 	var html =
+'	<tbody>' +
+'		<tr>' +
+'			<td>' + varDef + '</td>' +
+'			<td>' +
+'				<input type="radio" ' +
+'                      id="sr-radio-prop-'+variable+'"' +
+'                      name="'+radioName+'"'+
+'                      onchange="smwhgCreateCalculationRule.radioChanged(this.id)"' +
+'					   varname="'+variable+'"'+
+'					   value="property" '+propChecked+'>' + 
+				propValue + 
+           '</td>' +
+'			<td><input type="text" value="'+property+'"'+
+'					   id="sr-input-prop-'+variable+'"' +
+					   propInputVisible +
+'					   class="wickEnabled" ' +
+'					   onfocus="smwhgCreateCalculationRule.inputFocus(this)"' +
+'					   typeHint="'+SMW_PROPERTY_NS+'">' +
+           '</td>' +
+'		</tr>' +
+'		<tr>' +
+'			<td></td>' +
+'			<td>' +
+'				<input type="radio" ' +
+'                      id="sr-radio-term-'+variable+'"' +
+'                      name="'+radioName+'"'+
+'                      onchange="smwhgCreateCalculationRule.radioChanged(this.id)"'+
+'					   varname="'+variable+'"'+
+'                      value="term" '+termChecked+'>' + 
+				absTerm + 
+			'</td>' +
+'			<td><input type="text" value="'+term+'"'+
+					   termInputVisible +
+'					   onfocus="smwhgCreateCalculationRule.inputFocus(this)"' +
+'					   id="sr-input-term-'+variable+'"' +
+'				>' +
+           '</td>' +
+'		</tr>' +
+'	</tbody>';
+
+	return html;
+},
+
+/**
+ * Returns the HTML of the help box that shows all available operators.
+ */
+operatorHelpHTML: function() {
+	
+	var html =
+'<div id="sr-calc-op-help" style="position:absolute; top:100px; left:100px; z-index:2; display:none; ">' +
+'<table id="sr-calc-op-help-table" border="1" rules="groups">' +
+'  <thead class="sr-calc-op-help-table-head">' +
+'    <tr>' +
+'      <th colspan="4">' + gLanguage.getMessage("SR_OP_HELP_ENTER") + '</th>' +
+'    </tr>' +
+'  </thead>' +
+'  <tbody>' +
+'    <tr>' +
+'      <td>+</td><td>' + gLanguage.getMessage("SR_OP_ADDITION") + '</td>' +
+'      <td>sqrt()</td><td>' + gLanguage.getMessage("SR_OP_SQUARE_ROOT") + '</td>' +
+'    </tr>' +
+'    <tr>' +
+'      <td>-</td><td>' + gLanguage.getMessage("SR_OP_SUBTRACTION") + '</td>' +
+'      <td>^</td><td>' + gLanguage.getMessage("SR_OP_EXPONENTIATE") + '</td>' +
+'    </tr>' + 
+'    <tr>' +
+'      <td>*</td><td>' + gLanguage.getMessage("SR_OP_MULTIPLY") + '</td>' +
+'      <td>sin()</td><td>' + gLanguage.getMessage("SR_OP_SINE") + '</td>' +
+'    </tr>' +
+'    <tr>' +
+'      <td>/</td><td>' + gLanguage.getMessage("SR_OP_DIVIDE") + '</td>' +
+'      <td>cos()</td><td>' + gLanguage.getMessage("SR_OP_COSINE") + '</td>' +
+'    </tr>' +
+'    <tr>' + 
+'      <td>%</td><td>' + gLanguage.getMessage("SR_OP_MODULO") + '</td>' +
+'      <td>tan()</td><td>' + gLanguage.getMessage("SR_OP_TANGENT") + '</td>' +
+'    </tr>' +
+'  </tbody>' +
+'</table>' +
+'</div>';	 
+	return html;
+},
+
+
+/**
+ * Callback function for the focus event of the input fields of the variable 
+ * specification. If the field contains the initial text like "Enter a property...",
+ * the input field is cleared.
+ *   
+ */
+inputFocus: function(object) {
+	if (object.value == gLanguage.getMessage('SR_ENTER_VALUE')
+	    || object.value == gLanguage.getMessage('SR_ENTER_PROPERTY')) {
+		object.value = '';
+	}
+},
+
+/**
+ * @private
+ * 
+ * This function returns the HTML of the lower part of the GUI where the 
+ * preview for the rule is rendered.
+ * 
+ */
+previewHTML: function() {
+	
+	var html =
+'<div id="implicationsDiv" class="rules-frame" style="display:none">' +
+'	<div id="implicationsTitle" class="rules-title" style="width:auto;">' +
+		gLanguage.getMessage('SR_DERIVED_FACTS') +
+'	</div>' +
+'	<div id="implicationsContent" class="rules-content">' +
+'	</div>' +
+'</div>';
+
+	return html;
+	
+},
+
+/**
+ * @public
+ * 
+ * Callback function for the "Submit..." link. The input area of the formula
+ * is replaced with the confirmed formula if the formula is syntactically 
+ * correct. The definition area for variables is opened.
+ */
+submitFormula: function() {
+	if ($('formulaDiv')) {
+		var formula = $('sr-formula').value;
+		this.checkFormula(formula);
+	}	
+},
+
+/**
+ * Closes the variables section and reopens the formula editor.
+ */
+editFormula: function() {
+	$('variablesDiv').hide();
+	$('variableInput').innerHTML = "";
+	var html = this.defineFormulaHTML(new FormulaRule($('sr-formula').value));
+	$('confirmedFormulaDiv').replace(html);
+	this.formulaValid = false;
+},
+
+/**
+ * @public
+ * 
+ * Shows or hides the operator help box.
+ * 
+ * @param bool doShow
+ * 		
+ */
+showOpHelp: function(doShow) {
+	var help = $('sr-calc-op-help');
+	if ($('sr-calc-op-help')) {
+		var helpImg = $('sr-op-help-img');
+		var l = ""+(helpImg.x-help.getWidth()+20)+"px";
+		var t = ""+(helpImg.y + 45)+"px";
+		help.setStyle({left:l, top:t});
+		if (doShow) {
+			$('sr-calc-op-help').show();
+		} else {
+			$('sr-calc-op-help').hide();
+		}
+	}
+},
+
+/**
+ * The radio button in a variable specification has been changed. The corresponding
+ * input field is shown and the other is hidden. 
+ */
+radioChanged: function(radioID) {
+	var inputID = radioID.replace(/-radio-/,'-input-');
+	var radio = $(radioID);
+	$(inputID).show();
+	$(inputID).focus();
+	
+	if ($(inputID).value == '') {
+		// The input field is empty => show the request to enter something
+		$(inputID).value = (inputID.indexOf('-input-prop-') > 0)
+				? gLanguage.getMessage('SR_ENTER_PROPERTY')
+				: gLanguage.getMessage('SR_ENTER_VALUE');
+		$(inputID).select();
+	}
+		
+	if (inputID.indexOf('-input-prop-') > 0) {
+		inputID = inputID.replace(/-input-prop-/,'-input-term-');
+	} else {
+		inputID = inputID.replace(/-input-term-/,'-input-prop-');
+	}
+	$(inputID).hide();
+	
+},
+
+/**
+ * @private
+ * 
+ * Checks if the formula is syntactically correct. If it is, the part for specifying
+ * variables is opened, otherwise an error message is shown. 
+ * 
+ * @param string formula
+ * 		The formula to be checked
+ */
+checkFormula: function(formula) {
+	
+	function ajaxResponseParseFormula(request) {
+		this.hidePendingIndicator();			
+		if (request.status == 200) {
+			// success
+			var result = request.responseText;
+			var variables = result.split(',');
+			if (variables[0] == 'error') {
+				// The formula is erroneous
+				$('formulaErrorMsg').innerHTML = result.substr(6);
+				$('formulaErrorMsgDiv').show();
+			} else if (variables.size() == 2 && variables[1] == '') {
+				// There is no variable in the formula
+				$('formulaErrorMsg').innerHTML = gLanguage.getMessage('SR_NO_VARIABLE');
+				$('formulaErrorMsgDiv').show();
+			} else {
+				// the formula is valid
+				this.formulaValid = true;
+				var rule = new FormulaRule(formula);
+				var varArray = new Array();
+				for (var i = 1; i < variables.size(); ++i) {
+					varArray.push({name: variables[i]});
+				}
+				rule.setVariables(varArray);
+				confFormula = this.confirmedFormulaHTML(rule);
+				$('formulaDiv').replace(confFormula);
+				
+				var varSpec = this.allVariableSpecificationsHTML(rule);
+				$('variableInput').innerHTML = varSpec;
+				$('variablesDiv').show();
+			}
+		} else {
+		}
+	};
+
+	this.showPendingIndicator($('sr-formula'));
+	
+	sajax_do_call('smwf_sr_ParseFormula', 
+	          [formula], 
+	          ajaxResponseParseFormula.bind(this));
+
+	return false;
+},
+
+/**
+ * @private
+ * 
+ * Retrieves the conditions from the user interface, creates a rule and saves it.
+ */
+saveRule: function(event) {
+
+	function ajaxResponseAddRule(request) {
+		this.hidePendingIndicator();			
+		if (request.status == 200) {
+			// success
+
+			if ($('rule-name')) {
+				this.ruleName = $('rule-name').value;
+			}			
+			var ruleText = 
+				"\n\n" +
+				'<rule hostlanguage="f-logic" ' +
+				      'name="'+this.ruleName+'" ' +
+				      'type="' + this.ruleType + '" ' +
+				      'formula="'+$('sr-formula').value+'" ' +
+				      'variableSpec="'+this.variableSpec+'">' + "\n" +
+				request.responseText +
+				"\n</rule>\n";
+			 	
+			// hide the rule editor GUI
+			$('createRuleContent').remove();
+			
+			// show normal wiki text editor GUI
+			$('bodyContent').show();
+			
+			if (this.annotation) {
+				// update an existing annotation
+				this.annotation.replaceAnnotation(ruleText); 
+			} else {
+				// append the text to the edit field
+				var ei = new SMWEditInterface();
+				ei.setValue(ei.getValue() + ruleText);
+			}
+			ruleToolBar.fillList(true);
+						 	
+		} else {
+		}
+	};
+
+	var xml = this.serializeRule();
+
+	if (this.checkRuleTimer) {
+		this.checkRuleTimer.stop();
+	} 
+
+	this.showPendingIndicator($('sr-save-rule-btn'));
+	
+	sajax_do_call('smwf_sr_AddRule', 
+	          [this.ruleName, xml], 
+	          ajaxResponseAddRule.bind(this));
+	
+},
+
+
+
+/**
+ * @private
+ * 
+ * Shows the pending indicator on the element with the DOM-ID <onElement>
+ * 
+ * @param string onElement
+ * 			DOM-ID if the element over which the indicator appears
+ */
+showPendingIndicator: function(onElement) {
+	this.hidePendingIndicator();
+	this.pendingIndicator = new OBPendingIndicator($(onElement));
+	this.pendingIndicator.show();
+},
+
+/**
+ * @private
+ * 
+ * Hides the pending indicator.
+ */
+hidePendingIndicator: function() {
+	if (this.pendingIndicator != null) {
+		this.pendingIndicator.hide();
+		this.pendingIndicator = null;
+	}
+},
+
+/**
+ * @private 
+ * 
+ * Creates an XML representation of the current rule.
+ */
+serializeRule: function() {
+	
+	var xml;
+	
+	this.variableSpec = '';
+	xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+		  '<SimpleRule>';
+		  
+	// serialize property and formula
+	xml += '<formula>' +
+				'<property>'+wgTitle.replace(/ /g,'_')+'</property>' +
+				'<expr>' +
+					$('sr-formula').value +
+				'</expr>';
+			  
+	// serialize variables
+	var vi = $('variableInput');
+	var radios = vi.getElementsBySelector('[type="radio"]');
+	for (var i = 0, n = radios.size(); i < n; ++i) {
+		var r = radios[i];
+		if (r.checked) {
+			xml += '<variable>';
+			var varname = r.readAttribute('varname');
+			xml += '<name>'+varname+'</name>';
+			this.variableSpec += varname + '#';
+			var inputId = r.id.replace(/-radio-/, '-input-');
+			var value = $(inputId).value;
+			if (r.id.indexOf('-radio-prop-') > 0) {
+				xml += '<property>' + value + '</property>';
+				this.variableSpec += 'prop#' + value + ';';
+			} else {
+				xml += '<constant>' + value + '</constant>';
+				this.variableSpec += 'const#' + value + ';';
+			}
+			xml += '</variable>';
+		}
+	}
+	xml += '</formula></SimpleRule>';
+	
+	return xml;
+	
+},
+
+/**
+ * @private 
+ * 
+ * Checks, if the rule in its current state in the UI is valid, i.e. if a 
+ * formula is given and if the variables or constants are properly defined.
+ * 
+ * @return boolean
+ * 	true, if the rule is valid and
+ * 	false otherwise
+ */
+checkRule: function() {
+	
+	// check formula
+	if (!this.formulaValid) {
+		return false;
+	}
+	
+	// check variables
+	var vi = $('variableInput');
+	var radios = vi.getElementsBySelector('[type="radio"]');
+	for (var i = 0, n = radios.size(); i < n; ++i) {
+		var r = radios[i];
+		if (r.checked) {
+			var inputId = r.id.replace(/-radio-/, '-input-');
+			var value = $(inputId).value;
+			if (value == '' 
+			    || value == gLanguage.getMessage('SR_ENTER_VALUE')
+			    || value == gLanguage.getMessage('SR_ENTER_PROPERTY')) {
+				// invalid 
+				return false;
+			}
+		}
+	}
+	
+	return true;
+	
+}
+
+};// End of Class
+
+var FormulaRule = Class.create();
+
+FormulaRule.prototype = {
+	
+/**
+ * Constructor
+ * @param string formula
+ * 		The formula
+ */
+initialize: function(formula) {
+	this.formula = formula;
+	this.variables = null;
+},
+
+getFormula: function() {
+	return this.formula;
+},
+
+/**
+ * Sets the variables of the rule. 
+ * 
+ * @param array<{name,type,value}> variables
+ * 		An array of variable definitions. A definition is an object with the
+ * 		fields name, type and value.
+ */
+setVariables: function(variables) {
+	this.variables = variables;
+},
+
+getVariables: function() {
+	return this.variables;
+}
+
+}; // End of class FormulaRule
+
+var FormulaRuleParser = {
+	
+/**
+ * A calculation rule in the wiki text starts with the rule element (<rule ...>).
+ * This element has a formula- and a variableSpec-attribute. These attributes
+ * are used to create a formula rule object of type (FormulaRule).
+ * 
+ * @param string ruleText
+ * 		The text of the rule beginning with the <rule> element
+ * 
+ * @return bool/FormulaRule
+ * 		false, if the rule element does not contain a valid formula of variables or a
+ * 		FormulaRule, if the specification is correct.
+ */	
+parseRule: function(ruleText) {
+	var ruleSpec = ruleText.match(/(<rule.*?>)/)
+	if (ruleSpec.size() != 2) {
+		return false;
+	}
+	ruleSpec = ruleSpec[1];
+	
+	var formula = ruleSpec.match(/formula\s*=\s*\"(.*?)\"/);
+	if (formula.size() != 2) {
+		return false;
+	}
+	formula = formula[1];
+	
+	var rule = new FormulaRule(formula);
+	
+	var variables = ruleSpec.match(/variableSpec\s*=\s*\"(.*?)\"/);
+	if (variables.size() != 2) {
+		return false;
+	}
+	variables = variables[1];
+	varArray = new Array();
+
+	var vars = variables.split(/;/);
+	
+	for (var i = 0, n = vars.size(); i < n; ++i) {
+		var varspec = vars[i];
+		var parts = varspec.split(/#/);
+		if (parts.size() == 3) {
+			var v = {
+				name: parts[0],
+				type: parts[1],
+				value: parts[2]
+			}
+			varArray.push(v);
+		} else if (varspec != ''){
+			return false;
+		}
+	}
+	rule.setVariables(varArray);
+	
+	return rule;
+}
+	
+};
+
+
+//  
+var smwhgCreateCalculationRule = null;
 
 
 // SMW_Properties.js
@@ -11308,10 +13271,13 @@ var SMW_PRP_CHECK_EMPTY_VIE = // valid if empty
 var SMW_PRP_NO_EMPTY_SELECTION =
 	'smwCheckEmpty="empty' +
 	'? (color:red, showMessage:SELECTION_MUST_NOT_BE_EMPTY, valid:false) ' +
-	': (color:white, hideMessage, valid:true)"';		
+	': (color:white, hideMessage, valid:true)"';
 
-var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_TYPE'), 'prp-add-type-lnk'],
-				 			 ['propToolBar.addRange()', gLanguage.getMessage('ADD_RANGE'), 'prp-add-range-lnk']];
+var SMW_PRP_TYPE_CHANGED =
+	'smwChanged="(call:propToolBar.propTypeChanged)"';
+	
+
+var PRP_NARY_CHANGE_LINKS = [['propToolBar.addType()',gLanguage.getMessage('ADD_TYPE'), 'prp-add-type-lnk']];
 		
 var PRP_APPLY_LINK =
 	[['propToolBar.apply()', 'Apply', 'prop-confirm', gLanguage.getMessage('INVALID_VALUES'), 'prop-invalid'],
@@ -11328,9 +13294,8 @@ initialize: function() {
 	this.toolbarContainer = null;
 	this.pendingIndicator = null;
 	this.isRelation = true;
-	this.isNAry = false;
-	this.numOfParams = 0;
-	this.prpNAry = 0;
+	this.numOfParams = 0;	// number of relation parameters (for n-aries) 
+	this.prpNAry = 0;		// DOM-ID-Index for relation parameters
 	this.hasDuplicates = false;
 },
 
@@ -11433,12 +13398,14 @@ createContent: function() {
 	if (type) {
 		type = type[0].getValue();
 		// remove the prefix "Type:" and lower the case of the first character
-		type = type.charAt(5).toLowerCase() + type.substring(6);
-	
+		var typeNs = gLanguage.getMessage('TYPE_NS');
+		var l = typeNs.length;
+		type = type.charAt(l).toLowerCase() + type.substring(l+1);
 	} else {
-		type = "page";
+		type = gLanguage.getMessage('TYPE_PAGE_WONS');
+		type = type.charAt(0).toLowerCase() + type.substring(1);
 	}
-	this.isRelation = (type.toLowerCase() == "page");
+	this.isRelation = (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase());
 	
 	if (domain == null) {
 		domain = "";
@@ -11488,95 +13455,91 @@ createContent: function() {
 	symmetric = (symmetric != null) ? "checked" : "";
 
 	var tb = this.toolbarContainer;
-	tb.append(tb.createInput('prp-domain', gLanguage.getMessage('DOMAIN'), domain, '',
+	tb.append(tb.createInput('prp-domain', gLanguage.getMessage('DOMAIN'), '', '',
 	                         SMW_PRP_CHECK_CATEGORY + 
 	                         SMW_PRP_VALID_CATEGORY_NAME +
 	                         SMW_PRP_CHECK_EMPTY_WIE + 
 	                         SMW_PRP_HINT_CATEGORY,
 	                         true));
+	tb.setInputValue('prp-domain',domain);	                         
+	                         
 	tb.append(tb.createText('prp-domain-msg', '', '' , true));
+	
+	this.prpNAry = 0;
+	this.numOfParams = 0;
+	var types = this.wtp.getRelation(HAS_TYPE);
+	if (types) {
+		types = types[0];
+		types = types.getSplitValues();
+	} else {
+		// no type definition given => default is Type:Page
+		types = [gLanguage.getMessage("TYPE_PAGE")];
+	}
 
-	tb.append(tb.createInput('prp-range', gLanguage.getMessage('RANGE'), range, '',
-	                         SMW_PRP_CHECK_CATEGORY + 
-	                         SMW_PRP_VALID_CATEGORY_NAME +
-	                         SMW_PRP_CHECK_EMPTY_WIE + 
-	                         SMW_PRP_HINT_CATEGORY,
-	                         true));
-	tb.append(tb.createText('prp-range-msg', '', '' , true));
+	var ranges = this.wtp.getRelation(RANGE_HINT);
+	
+	var rc = 0;
+	for (var i = 0, num = types.length; i < num; ++i) {
+		
+		var t = types[i];
+		if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
+			t = t.substring(gLanguage.getMessage('TYPE_NS').length);
+		}	
+		tb.append(this.createTypeSelector("prp-type-" + i, 
+		                                  "prpNaryType"+i, t,
+		                                  "propToolBar.removeType('prp-type-" + i + "')",
+		                                  SMW_PRP_NO_EMPTY_SELECTION+
+		                                  SMW_PRP_TYPE_CHANGED));
+		var r = "";
+		var isPage = false;
+		if (types[i] == gLanguage.getMessage('TYPE_PAGE')) {
+			if (ranges && rc < ranges.length) {
+				r = ranges[rc++].getSplitValues()[1];
+			}
+			// trim
+			r = r.replace(/^\s*(.*?)\s*$/,"$1");
+			
+			if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
+				r = r.substring(gLanguage.getMessage('CATEGORY_NS').length);
+			}
+			isPage = true;
+		}
+		tb.append(tb.createInput('prp-range-' + i, gLanguage.getMessage('RANGE'), 
+								 '', '',
+                     			 SMW_PRP_CHECK_CATEGORY + 
+                     			 SMW_PRP_VALID_CATEGORY_NAME +
+                     			 SMW_PRP_CHECK_EMPTY_WIE +
+	                 			 SMW_PRP_HINT_CATEGORY,
+                     			 isPage));
+		tb.setInputValue('prp-range-' + i, r);	                         
+		tb.append(tb.createText('prp-range-' + i + '-msg', '', '' , isPage));
+                    			 
+		this.prpNAry++;
+		this.numOfParams++;
+	}
 
-	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), inverse, '',
+	tb.append(tb.createInput('prp-inverse-of', gLanguage.getMessage('INVERSE_OF'), '', '',
 	                         SMW_PRP_CHECK_PROPERTY +
 	                         SMW_PRP_VALID_PROPERTY_NAME +
 	                         SMW_PRP_HINT_PROPERTY+
 	                         SMW_PRP_CHECK_EMPTY_VIE,
 	                         true));
+	tb.setInputValue('prp-inverse-of',inverse);	                         
+	                         
 	tb.append(tb.createText('prp-inverse-of-msg', '', '' , true));
 
-	tb.append(this.createTypeSelector("prp-attr-type", "prpSelection", false, 
-									  type, '', 
-									  'smwChanged="(call:propToolBar.attrTypeChanged,call:propToolBar.enableWidgets)"' +
-									  SMW_PRP_NO_EMPTY_SELECTION));
-	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), minCard, '', 
+	tb.append(tb.createInput('prp-min-card', gLanguage.getMessage('MIN_CARD'), '', '', 
 	                         SMW_PRP_CHECK_MAX_CARD, true, false));
+	tb.setInputValue('prp-min-card',minCard);	                         
+	                         
 	tb.append(tb.createText('prp-min-card-msg', '', '' , true));
-	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), maxCard, '', 
+	tb.append(tb.createInput('prp-max-card', gLanguage.getMessage('MAX_CARD'), '', '', 
 	                         SMW_PRP_CHECK_MAX_CARD, true, false));
+	tb.setInputValue('prp-max-card',maxCard);	                         
 	tb.append(tb.createText('prp-max-card-msg', '', '' , true));
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
 
-	this.prpNAry = 0;
-	this.numOfParams = 0;
-	this.isNAry = false;
-	var types = this.wtp.getRelation(HAS_TYPE);
-	if (types) {
-		types = types[0];
-		this.isNAry = (type.indexOf(';') > 0);
-	}
-	
-	if (this.isNAry) {
-		types = types.getSplitValues();
-	
-		var ranges = this.wtp.getRelation(RANGE_HINT);
-		
-		var rc = 0;
-		for (var i = 0, num = types.length; i < num; ++i) {
-			if (types[i] == gLanguage.getMessage('TYPE_PAGE')) {
-				var r = "";
-				if (ranges && rc < ranges.length) {
-					r = ranges[rc++].getSplitValues()[1];
-				}
-				// trim
-				r = r.replace(/^\s*(.*?)\s*$/,"$1");
-				
-				if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
-					r = r.substring(9);
-				}
-				tb.append(tb.createInput('prp-nary-' + i, gLanguage.getMessage('RANGE'), r, 
-				                         'propToolBar.removeRangeOrType(\'prp-nary-' + i + '\')',
-	                         			 SMW_PRP_CHECK_CATEGORY + 
-	                         			 SMW_PRP_VALID_CATEGORY_NAME +
-	                         			 SMW_PRP_CHECK_EMPTY +
-			                 			 SMW_PRP_HINT_CATEGORY,
-	                         			 true));
-				tb.append(tb.createText('prp-nary-' + i + '-msg', '', '' , true));
-				this.prpNAry++;
-				this.numOfParams++;
-			} else {
-				var t = types[i];
-				if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
-					t = t.substring(5);
-					tb.append(this.createTypeSelector("prp-nary-" + i, 
-					                                  "prpNaryType"+i, true, t,
-					                                  "propToolBar.removeRangeOrType('prp-nary-" + i + "')",
-					                                  SMW_PRP_NO_EMPTY_SELECTION));
-					
-					this.prpNAry++;
-					this.numOfParams++;
-				}
-			}
-		}
-	}
 	
 	tb.append(tb.createLink('prp-change-links', PRP_NARY_CHANGE_LINKS, '', true));
 	tb.append(tb.createLink('prp-links', PRP_APPLY_LINK, '', true));
@@ -11707,15 +13670,56 @@ hasAnnotationChanged: function(relations, categories) {
 	return changed;
 },
 
+propTypeChanged: function(target) {
+	var target = $(target);
+	
+	var typeIdx = target.id.substring(9);
+	var rangeId = "prp-range-"+typeIdx;
+	
+	var attrType = target[target.selectedIndex].text;
+	
+	var isPage = attrType == gLanguage.getMessage('TYPE_PAGE_WONS');
+	var tb = propToolBar.toolbarContainer;
+	tb.show(rangeId, isPage);
+	if (!isPage) {
+		tb.show(rangeId+'-msg', false);
+	}
+	
+	this.isRelation = (this.numOfParams == 1) ? isPage : false;  
+	gSTBEventActions.initialCheck($("properties-content-box"));
+	this.enableWidgets();
+
+},
+
+
 addType: function() {
-	var insertAfter = (this.numOfParams == 0) 
-						? 'prp-symmetric'
-						: "prp-nary-" + (this.prpNAry-1) + '-msg';
+	var tb = this.toolbarContainer;
+	var insertAfter = (this.prpNAry==0) ? 'prp-domain-msg' 
+							 : $('prp-range-'+(this.prpNAry-1)+'-msg') 
+							 	? 'prp-range-'+(this.prpNAry-1)+'-msg'
+							 	: 'prp-range-'+(this.prpNAry-1);
+	
+	
 	this.toolbarContainer.insert(insertAfter,
-			  this.createTypeSelector("prp-nary-" + this.prpNAry, 
-	                                  "prpNaryType"+this.prpNAry, true, "",
-	                                  "propToolBar.removeRangeOrType('prp-nary-" + this.prpNAry + "')",
-	                                  SMW_PRP_NO_EMPTY_SELECTION));
+			  this.createTypeSelector("prp-type-" + this.prpNAry, 
+	                                  "prpNaryType"+this.prpNAry, 
+	                                  gLanguage.getMessage('TYPE_PAGE_WONS'),
+	                                  "propToolBar.removeType('prp-type-" + this.prpNAry + "')",
+	                                  SMW_PRP_NO_EMPTY_SELECTION+
+	                                  SMW_PRP_TYPE_CHANGED));
+
+	tb.insert("prp-type-" + this.prpNAry,
+			  tb.createInput('prp-range-' + this.prpNAry, gLanguage.getMessage('RANGE'), 
+			  				 "", '',
+                 			 SMW_PRP_CHECK_CATEGORY +
+                 			 SMW_PRP_VALID_CATEGORY_NAME + 
+                 			 SMW_PRP_CHECK_EMPTY_WIE +
+                 			 SMW_PRP_HINT_CATEGORY,
+                 			 true));
+    tb.setInputValue('prp-range-' + this.prpNAry,'');
+	tb.insert('prp-range-' + this.prpNAry,
+	          tb.createText('prp-range-' + this.prpNAry + '-msg', '', '' , true));
+
 	this.prpNAry++;
 	this.numOfParams++;
 	this.toolbarContainer.finishCreation();
@@ -11724,81 +13728,35 @@ addType: function() {
 		
 },
 
-addRange: function() {
-	var insertAfter = (this.numOfParams == 0) 
-						? 'prp-symmetric'
-						: "prp-nary-" + (this.prpNAry-1) + '-msg';
-	var tb = this.toolbarContainer;
-	tb.insert(insertAfter,
-			  tb.createInput('prp-nary-' + this.prpNAry, gLanguage.getMessage('RANGE'), "", 
-	                         'propToolBar.removeRangeOrType(\'prp-nary-' + this.prpNAry + '\')',
-                 			 SMW_PRP_CHECK_CATEGORY +
-                 			 SMW_PRP_VALID_CATEGORY_NAME + 
-                 			 SMW_PRP_CHECK_EMPTY +
-                 			 SMW_PRP_HINT_CATEGORY,
-                 			 true));
-	tb.insert('prp-nary-' + this.prpNAry,
-	          tb.createText('prp-nary-' + this.prpNAry + '-msg', '', '' , true));
-
-	this.prpNAry++;
-	this.numOfParams++;
-	this.toolbarContainer.finishCreation();
-	this.enableWidgets();
-	gSTBEventActions.initialCheck($("properties-content-box"));
-	
-},
-
-removeRangeOrType: function(domID) {
+removeType: function(domID) {
 	
 	this.toolbarContainer.remove(domID)
 	this.toolbarContainer.remove(domID+'-msg');
+	domID = domID.replace(/type/, 'range');
+	this.toolbarContainer.remove(domID)
+	this.toolbarContainer.remove(domID+'-msg');
+	
 	this.numOfParams--;
-	if (domID == 'prp-nary-'+(this.prpNAry-1)) {
+	if (domID == 'prp-range-'+(this.prpNAry-1)) {
 		while (this.prpNAry > 0) {
 			--this.prpNAry;
-			if ($('prp-nary-'+ this.prpNAry)) {
+			if ($('prp-type-'+ this.prpNAry)) {
 				this.prpNAry++;
 				break;
 			}
 		}
 	}
-	if (this.numOfParams == 0) {
-		this.prpNAry = 0;
-		this.isRelation = true;
-		this.isNAry = false;
-		var selector = $('prp-attr-type');
-		var options = selector.options;
-		for (var i = 0; i < options.length; i++) {
-			if (options[i].value.toLowerCase() == 'page') {
-				selector.selectedIndex = i;
-				break;
-			}
-		}
-		this.enableWidgets();
+	if (this.numOfParams == 1) {
+		var selector = $('prp-type-'+(this.prpNAry*1-1));
+		var type = selector[selector.selectedIndex].text;
+		this.isRelation = type == gLanguage.getMessage('TYPE_PAGE_WONS');
 	}
 	this.toolbarContainer.finishCreation();
 	this.enableWidgets();
 	gSTBEventActions.initialCheck($("properties-content-box"));
 },
 
-/**
- * This method is called, when the type of the property has been changed. It
- * sets the flag <isNAry>.
- * @param string target
- * 		ID of the element, on which the change event occurred.
- */
-attrTypeChanged: function(target) {
-	target = $(target);
-	if (target.id == 'prp-attr-type') {
-		var selector = $('prp-attr-type');
-		var attrType = selector[selector.selectedIndex].text;
-		
-		this.isNAry = attrType == 'n-ary';
-		this.isRelation = attrType.toLowerCase() == 'page';
-	}
-},
-
-createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes) {
+createTypeSelector: function(id, name, type, deleteAction, attributes) {
 	var closure = function() {
 		
 		var origTypeString = type;
@@ -11811,11 +13769,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 		var typeFound = false;
 		var builtinTypes = gDataTypes.getBuiltinTypes();
 		var userTypes = gDataTypes.getUserDefinedTypes();
-		var allTypes = builtinTypes.concat([""],
-											onlyTypes ? [] 
-											          : [gLanguage.getMessage('PAGE_TYPE'), 
-											             gLanguage.getMessage('NARY_TYPE'),""],
-											userTypes);
+		var allTypes = builtinTypes.concat([""], userTypes);
 		
 		var selection = $(id);
 		if (selection) {
@@ -11840,7 +13794,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 				}
 			}
 		}
-		if (type && type != gLanguage.getMessage('NARY_TYPE') && !typeFound) {
+		if (type && !typeFound) {
 			if (selection) {
 				selection.options[i] = new Option(origTypeString, origTypeString, true, true);
 			}
@@ -11855,6 +13809,7 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 		propToolBar.toolbarContainer.finishCreation();
 		return [allTypes, selIdx];
 	};
+	
 	var sel = [[gLanguage.getMessage('RETRIEVING_DATATYPES')],0];
 	if (gDataTypes.getUserDefinedTypes() == null 
 	    || gDataTypes.getBuiltinTypes() == null) {
@@ -11878,41 +13833,15 @@ createTypeSelector: function(id, name, onlyTypes, type, deleteAction, attributes
 
 enableWidgets: function() {
 	var tb = propToolBar.toolbarContainer;
-	if (propToolBar.isRelation && !propToolBar.isNAry) {
-		$("prp-range").enable();
-		$("prp-inverse-of").enable();
-		$("prp-transitive").enable();
-		$("prp-symmetric").enable();
-	} else {
-		$("prp-range").disable();
-		$("prp-inverse-of").disable();
-		$("prp-transitive").disable();
-		$("prp-symmetric").disable();
-	}
+
+	var isnary = propToolBar.numOfParams > 1;
 	
-	if (propToolBar.isNAry) {
-		$('prp-add-type-lnk').show();
-		$('prp-add-range-lnk').show();
-		$('prp-min-card').disable();
-		$('prp-max-card').disable();
-	} else {
-		$('prp-add-type-lnk').hide();
-		$('prp-add-range-lnk').hide();
-		$('prp-min-card').enable();
-		$('prp-max-card').enable();
-	}
+	tb.show("prp-inverse-of", propToolBar.isRelation && !isnary);
+	tb.show("prp-transitive", propToolBar.isRelation && !isnary);
+	tb.show("prp-symmetric", propToolBar.isRelation && !isnary);
 	
-	for (var i = 0; i < propToolBar.prpNAry; i++) {
-		var obj = $('prp-nary-'+i);
-		if (obj) {
-			if (propToolBar.isNAry) {
-				obj.enable();
-			} else {
-				obj.disable();
-			}	
-		}
-	}
-	
+	tb.show('prp-min-card', !isnary);
+	tb.show('prp-max-card', !isnary);
 },
 
 cancel: function(){
@@ -11925,9 +13854,6 @@ cancel: function(){
 apply: function() {
 	this.wtp.initialize();
 	var domain   = $("prp-domain").value;
-	var range    = this.isRelation ? $("prp-range").value : null;
-	var selector = $('prp-attr-type');
-	var attrType = selector[selector.selectedIndex].text;
 	var inverse  = this.isRelation ? $("prp-inverse-of").value : null;
 	var minCard  = this.isNAry ? null : $("prp-min-card").value;
 	var maxCard  = this.isNAry ? null : $("prp-max-card").value;
@@ -11935,17 +13861,11 @@ apply: function() {
 	var symmetric  = this.isRelation ? $("prp-symmetric") : null;
 
 	domain   = (domain   != null && domain   != "") ? gLanguage.getMessage('CATEGORY_NS')+domain : null;
-	range    = (range    != null && range    != "") ? gLanguage.getMessage('CATEGORY_NS')+range : null;
-	attrType = (attrType != null && attrType != "") ? gLanguage.getMessage('TYPE_NS')+attrType : null;
 	inverse  = (inverse  != null && inverse  != "") ? gLanguage.getMessage('PROPERTY_NS')+inverse : null;
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
-	var domainRange = ((domain == null) ? "" : domain) + 
-	                  ((range == null)  ? "" : "; "+range)
-
 	var domainRangeAnno = this.wtp.getRelation(DOMAIN_HINT);
-	var attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
 	var maxCardAnno = this.wtp.getRelation(MAX_CARDINALITY);
 	var minCardAnno = this.wtp.getRelation(MIN_CARDINALITY);
 	var inverseAnno = this.wtp.getRelation(INVERSE_OF);
@@ -11955,26 +13875,6 @@ apply: function() {
 	
 	
 	// change existing annotations
-	if (domainRangeAnno != null) {
-		if (domain == null && range == null) {
-			domainRangeAnno[0].remove("");
-		} else {
-			domainRangeAnno[0].changeValue(domainRange);
-		}
-		if (!this.isNAry) {
-			// not an n-ary => remove all further range hints
-			for (var i = 1, num = domainRangeAnno.length; i < num; i++) {
-				domainRangeAnno[i].remove("");
-			}
-		}
-	} 
-	if (attrTypeAnno != null) {
-		if (attrType == null) {
-			attrTypeAnno[0].remove("");
-		} else {
-			attrTypeAnno[0].changeValue(attrType);
-		}
-	} 
 	if (maxCardAnno != null) {
 		if (maxCard == null) {
 			maxCardAnno[0].remove("");
@@ -12004,12 +13904,6 @@ apply: function() {
 	}
 	
 	// append new annotations
-	if (domainRangeAnno == null && domainRange != null && domainRange != '') {
-		this.wtp.addRelation(DOMAIN_HINT, domainRange, null, true);
-	} 
-	if (attrTypeAnno == null && attrType != null) {
-		this.wtp.addRelation(HAS_TYPE, attrType, null, true);
-	}
 	if (maxCardAnno == null && maxCard != null) {
 		this.wtp.addRelation(MAX_CARDINALITY, maxCard, null, true);
 	}
@@ -12026,45 +13920,47 @@ apply: function() {
 		this.wtp.addCategory(SYMMETRICAL_RELATION, true);
 	}
 	
-	if (this.isNAry) {
-		// Handle the definition of n-ary relations
-		// First, remove all range hints
-		rangeAnno = this.wtp.getRelation(RANGE_HINT);
-		if (rangeAnno) {
-			for (var i = 0, num = rangeAnno.length; i < num; i++) {
-				rangeAnno[i].remove("");
+	// Handle the definition of (n-ary) relations
+	// First, remove all domain/range hints
+	rangeAnno = this.wtp.getRelation(RANGE_HINT);
+	if (rangeAnno) {
+		for (var i = 0, num = rangeAnno.length; i < num; i++) {
+			rangeAnno[i].remove("");
+		}
+	}
+	
+	// Create new domain/range hints.
+	var typeString = "";
+	for (var i = 0; i < this.prpNAry; i++) {
+		var obj = $('prp-type-'+i);
+		if (obj) {
+			var type = obj[obj.selectedIndex].text;
+			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase()) {
+				// Page found
+				var range = $('prp-range-'+i).value;
+				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
+				r = ((domain == null) ? "" : domain) + "; " + r;
+				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
+				this.wtp.addRelation(RANGE_HINT, r, null, true);
+			} else {
+				// type is not Page
+				typeString += gLanguage.getMessage('TYPE_NS') + type + ";";
 			}
 		}
-		
-		// Create new range hints.
-		var typeString = "";
-		for (var i = 0; i < this.prpNAry; i++) {
-			var obj = $('prp-nary-'+i);
-			if (obj) {
-				if (obj.tagName && obj.tagName == "SELECT") {
-					// Type found
-					typeString += gLanguage.getMessage('TYPE_NS') + obj.value + ";";
-				} else {
-					// Page found
-					var r = gLanguage.getMessage('CATEGORY_NS')+obj.value;
-					r = ((domain == null) ? "" : domain) + "; " + r;
-					typeString += gLanguage.getMessage('TYPE_PAGE')+';';
-					this.wtp.addRelation(RANGE_HINT, r, null, true);
-				}
-			}
+	}
+	
+	// add the (n-ary) type definition
+	attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
+	if (typeString != "") {
+		// remove final semi-colon
+		typeString = typeString.substring(0, typeString.length-1);
+		if (attrTypeAnno != null) {
+			attrTypeAnno[0].changeValue(typeString);
+		} else {			
+			this.wtp.addRelation(HAS_TYPE, typeString, null, true);
 		}
-		
-		// add the n-ary type definition
-		if (typeString != "") {
-			// remove final semi-colon
-			typeString = typeString.substring(0, typeString.length-1);
-			attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
-			if (attrTypeAnno != null) {
-				attrTypeAnno[0].changeValue(typeString);
-			} else {			
-				this.wtp.addRelation(HAS_TYPE, typeString, null, true);
-			}
-		}
+	} else {
+		attrTypeAnno[0].remove("");
 	}
 	
 	this.createContent();
@@ -12177,6 +14073,9 @@ RefreshSemanticToolBar.prototype = {
 		}
 		if(window.relToolBar){
 			relToolBar.fillList()
+		}
+		if(window.ruleToolBar){
+			ruleToolBar.fillList()
 		}
 
 		if(window.propToolBar){
@@ -12948,426 +14847,6 @@ CombinedSearchContributor.prototype = {
 // when registerContributor is executed.
 var csContributor = new CombinedSearchContributor();
 Event.observe(window, 'load', csContributor.registerContributor.bind(csContributor));
-
-
-
-
-// SMWEditInterface.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*
-* This interface provides basic functionality for the wiki edit mode.
-* As the syntax highlighted EditArea can be switched off, programs do
-* not know if they have to use the access methods of a html textarea
-* or of the JS EditArea. This interface provides basic methods for
-* textareas / EditArea and decides which ones to use.
-* The abstraction works for both Mozilla and IE browsers.
-* @author Markus Nitsche, 2007
-*/
-
-
-var editAreaName = "wpTextbox1";
-
-var SMWEditInterface = Class.create();
-SMWEditInterface.prototype ={
-
-	initialize: function() {
-		this.editAreaName = "wpTextbox1";
-		// IE loses the selection in the text area if it loses the focus
-		// the current selection (range) has to be stored for later operations
-		this.currentRange = null;
-
-	},
-
-	focus: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			$(editAreaName).focus();
-		} 
-	},
-
-	setSelectionRange: function(start, end){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
-			if (document.selection  && !is_gecko) {
-				var rng = SMWEditArea.createTextRange();
-				var text = rng.text;
-				var offset = 0;
-				for (var i = 0; i < start; i++) {
-					if (text.charAt(i) == '\n') {
-						offset++;
-					}
-				}
-				rng.collapse();
-				rng.moveStart('character',start-offset);
-				rng.moveEnd('character',end-start);
-				rng.select();
-				rng.scrollIntoView();
-			} else  {
-				// Mozilla
-				SMWEditArea.selectionStart = start;
-				SMWEditArea.selectionEnd = end;
-				SMWEditArea.caretPos = start;
-			}
-		} 
-	},
-
-	/*
-	 * If the current selection is within an annotation (i.e. within [[...]])
-	 * and only spaces are between the selection an the brackets,
-	 * the selection is enlarged to comprise the brackets. 
-	 * Otherwise the selection is trimmed i.e. spaces at the beginning and
-	 * the end are skipped.
-	 */
-	selectCompleteAnnotation: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
-			var found = false;
-			if (document.selection  && !is_gecko) {
-				var rng = document.selection.createRange();
-				var moved = 1;
-				rng.moveStart('character',-1);
-				while (rng.text.charAt(0) == ' '
-				       && rng.moveStart('character',-1) != 0) {
-					moved++;
-				}
-				while (rng.text.charAt(0) == '['
-				       && rng.moveStart('character',-1) != 0) {
-					moved++;
-					found = true;
-				}
-				if (found) {
-					// brackets found => move the start of the selection					
-					rng.moveStart('character', 1);
-				} else {
-					// skip all spaces at the beginning of the selection
-					rng.moveStart('character', moved);
-					while (rng.text.charAt(0) == ' '
-						   && rng.moveStart('character',1) != 0) {
-					}
-				}
-
-				found = false;
-				moved = 1;
-				rng.moveEnd('character',1);
-				while (rng.text.charAt(rng.text.length-1) == ' '
-				       && rng.moveEnd('character',1) != 0) {
-					moved++;
-				}
-				while (rng.text.charAt(rng.text.length-1) == ']'
-				       && rng.moveEnd('character',1) != 0) {
-					moved++;
-					found = true;
-				}
-				if (found) {
-					// brackets found => move the end of the selection					
-					rng.moveEnd('character', -1);
-				} else {
-					// skip all spaces at the end of the selection
-					rng.moveEnd('character', -moved);
-					while (rng.text.charAt(rng.text.length-1) == ' '
-						   && rng.moveEnd('character',-1) != 0) {
-					}
-				}
-				this.currentRange = rng.duplicate();
-				rng.select();
-			} else  {
-				// Search for opening brackets at the beginning of the selection
-				var start = SMWEditArea.selectionStart-1;
-				while (start >= 0 && SMWEditArea.value.charAt(start) == ' ') {
-					--start;
-				}
-				while (start >= 0 && SMWEditArea.value.charAt(start) == '[') {
-					--start;
-					found = true;
-				}
-				start++;
-				if (!found) {
-					// no brackets found => skip all spaces at the beginning
-					start = SMWEditArea.selectionStart;
-					while (start < SMWEditArea.value.length
-					       && SMWEditArea.value.charAt(start) == ' ') {
-						++start;
-					}
-				}
-				found = false;
-				// Search for closing brackets at the end of the selection
-				var end = SMWEditArea.selectionEnd;
-				while (end < SMWEditArea.value.length
-				       && SMWEditArea.value.charAt(end) == ' ') {
-					++end;
-				}
-				while (end < SMWEditArea.value.length
-				       && SMWEditArea.value.charAt(end) == ']') {
-					++end;
-					found = true;
-				}
-				if (!found) {
-					// no brackets found => skip all spaces at the end
-					end = SMWEditArea.selectionEnd-1;
-					while (end >= 0 && SMWEditArea.value.charAt(end) == ' ') {
-						--end;
-					}
-					++end;
-				}
-				this.setSelectionRange(start,end);
-			}
-		}
-	},
-	
-	getSelectedText: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
-			if (document.selection  && !is_gecko) {
-				// IE - store the current range
-				var range = document.selection.createRange();
-				var theSelection = range.text;
-				if (theSelection != "") {
-					this.currentRange = range;
-				}
-				return theSelection;
-			} else if(SMWEditArea.selectionStart || SMWEditArea.selectionStart == '0') {
-				// Mozilla
-				var startPos = SMWEditArea.selectionStart;
-				var endPos = SMWEditArea.selectionEnd;
-				if (endPos != startPos) {
-					return (SMWEditArea.value).substring(startPos, endPos);
-				}
-				return "";
-			}
-		} 
-		return "";
-	},
-
-	setSelectedText: function(text){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-			SMWEditArea = $(editAreaName);
-			if (document.selection  && !is_gecko) {
-				// IE
-				var theSelection = document.selection.createRange().text;
-				if (theSelection == "" && this.currentRange) {
-					// currently nothing is selected, but a range has been
-					// stored => select the former range
-					this.currentRange.select();
-				}
-				theSelection = document.selection.createRange().text;
-				theSelection=text;
-				SMWEditArea.focus();
-				if (theSelection.charAt(theSelection.length - 1) == " ") { // exclude ending space char, if any
-					theSelection = theSelection.substring(0, theSelection.length - 1);
-					document.selection.createRange().text = theSelection + " ";
-				} else {
-					document.selection.createRange().text = theSelection;
-				}
-			} else if(SMWEditArea.selectionStart || SMWEditArea.selectionStart == '0') {
-				// Mozilla
-				var replaced = false;
-				var startPos = SMWEditArea.selectionStart;
-				var endPos = SMWEditArea.selectionEnd;
-				if (endPos-startPos) {
-					replaced = true;
-				}
-				var scrollTop = SMWEditArea.scrollTop;
-				var theSelection = (SMWEditArea.value).substring(startPos, endPos);
-		//		if (!myText) {
-				var myText=text;
-		//		}
-				var subst;
-				if (myText.charAt(myText.length - 1) == " ") { // exclude ending space char, if any
-					subst = myText.substring(0, (myText.length - 1)) + " ";
-				} else {
-					subst = myText;
-				}
-				SMWEditArea.value = SMWEditArea.value.substring(0, startPos) + subst +
-					SMWEditArea.value.substring(endPos, SMWEditArea.value.length);
-				SMWEditArea.focus();
-				//set new selection
-				SMWEditArea.selectionStart = startPos;
-				SMWEditArea.selectionEnd = startPos + myText.length;
-				SMWEditArea.scrollTop = scrollTop;
-			// All other browsers get no toolbar.
-			// There was previously support for a crippled "help"
-			// bar, but that caused more problems than it solved.
-			}
-			// reposition cursor if possible
-			if (SMWEditArea.createTextRange) {
-				SMWEditArea.caretPos = document.selection.createRange().duplicate();
-			}
-		} 
-	},
-
-	getValue: function(){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
-			return $(editAreaName).value;
-		return "";
-	},
-
-	setValue: function(text){
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none')
-			$(editAreaName).value = text;
-	},
-
-	getTextBeforeCursor: function() {
-		if ( $(editAreaName) && $(editAreaName).getStyle('display')!='none'){
-	        if (OB_bd.isIE) {
-				var selection_range = document.selection.createRange();
-
-				var selection_rangeWhole = document.selection.createRange();
-				selection_rangeWhole.moveToElementText(this.siw.inputBox);
-
-				selection_range.setEndPoint("StartToStart", selection_rangeWhole);
-				return selection_range.text;
-			} else if (OB_bd.isGecko) {
-				var start = this.siw.inputBox.selectionStart;
-				return this.siw.inputBox.value.substring(0, start);
-			}
-		} 
-         // cannot return anything
-        return "";
-    }
-};
-
-// obSemToolContribution.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/*
- * obSemToolContribution.js
- * Author: KK
- * Ontoprise 2007
- *
- * Contributions from OntologyBrowser for Semantic Toolbar
- */
-
-
-var OBSemanticToolbarContributor = Class.create();
-OBSemanticToolbarContributor.prototype = {
-	initialize: function() {
-
-		this.textArea = null; // will be initialized properly in registerContributor method.
-		this.l1 = this.selectionListener.bindAsEventListener(this);
-		this.l2 = this.selectionListener.bindAsEventListener(this);
-		this.l3 = this.selectionListener.bindAsEventListener(this);
-		this.editInterface = null;
-		if(!document.gEditInterface)
-			gEditInterface = new SMWEditInterface();
-	},
-
-	/**
-	 * Register the contributor and puts a button in the semantic toolbar.
-	 */
-	registerContributor: function() {
-		if (!stb_control.isToolbarAvailable() || wgAction != 'edit') return;
-		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
-		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
-
-		this.comsrchontainer.setContent(this.getOBLink(false));
-		this.comsrchontainer.contentChanged();
-
-		// register standard wiki edit textarea (advanced editor registers by itself)
-		this.activateTextArea("wpTextbox1");
-
-	},
-
-
-	activateTextArea: function(id) {
-		if (this.textArea) {
-			Event.stopObserving(this.textArea, 'select', this.l1);
-			Event.stopObserving(this.textArea, 'mouseup', this.l2);
-			Event.stopObserving(this.textArea, 'keyup', this.l3);
-		}
-		this.textArea = $(id);
-		if (this.textArea) {
-			Event.observe(this.textArea, 'select', this.l1);
-			Event.observe(this.textArea, 'mouseup', this.l2);
-			Event.observe(this.textArea, 'keyup', this.l3);
-			// intially disabled
-			//if ($("openEntityInOB") != null) Field.disable("openEntityInOB");
-			this.comsrchontainer.setContent(this.getOBLink(false));
-			this.comsrchontainer.contentChanged();
-		}
-	},
-
-	/**
-	 * Called when the selection changes
-	 */
-	selectionListener: function(event) {
-		if ($("openEntityInOB") == null) return;
-		//if (!GeneralBrowserTools.isTextSelected(this.textArea)) {
-		if (gEditInterface.getSelectedText().length == 0){
-			// unselected
-			this.comsrchontainer.setContent(this.getOBLink(false));
-			this.comsrchontainer.contentChanged();
-			//Field.disable("openEntityInOB");
-			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('MARK_A_WORD');
-			gEditInterface.focus();
-		} else {
-			// selected
-			this.comsrchontainer.setContent(this.getOBLink(true));
-			this.comsrchontainer.contentChanged();
-			//Field.enable("openEntityInOB");
-			//$("openEntityInOB").innerHTML = "" + gLanguage.getMessage('OPEN_IN_OB');
-			gEditInterface.focus();
-		}
-	},
-
-	/**
-	 * Navigates to the OntologyBrowser with ns and title
-	 */
-	navigateToOB: function(path) {
-		//var selectedText = GeneralBrowserTools.getSelectedText(this.textArea);
-		var selectedText = gEditInterface.getSelectedText();
-		if (selectedText == '') {
-			return;
-		}
-		var localURL = selectedText.split(":");
-		if (localURL.length == 1) {
-			// no namespace
-			var queryString = 'searchTerm='+encodeURI(localURL[0]);
-		} else {
-			var queryString = 'ns='+localURL[0]+'&title='+encodeURI(localURL[1]);
-		}
-
-		smwhgLogger.log(selectedText, "STB-OB", "clicked");
-		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
-		window.open(wgServer + ontoBrowserSpecialPage, "");
-	},
-
-	getOBLink: function(active) {
-		if (active) {
-			return '<a ' +
-				'id="openEntityInOB" class="menulink"' +
-				'href="javascript:obContributor.navigateToOB(\''+gLanguage.getMessage('NS_SPECIAL')+":"+gLanguage.getMessage('OB_ID')+'\')">' +
-				gLanguage.getMessage('OPEN_IN_OB') +
-				'</a>';
-		} else {
-			return '<span ' +
-				'id="openEntityInOB">' +
-				gLanguage.getMessage('MARK_A_WORD') +
-				'</span>';
-		}
-	}
-
-
-}
-
-// create instance of contributor and register on load event so that the complete document is available
-// when registerContributor is executed.
-var obContributor = new OBSemanticToolbarContributor();
-Event.observe(window, 'load', obContributor.registerContributor.bind(obContributor));
 
 
 
@@ -14546,11 +16025,9 @@ AdvancedAnnotation.prototype = {
 			this.contextMenu.remove;
 		}
 		this.contextMenu = new ContextMenuFramework();
-		var annoName = anno.getRepresentation();
-		if (!annoName) {
-			annoName = anno.getName();
-		}
-		relToolBar.createContextMenu(this.contextMenu, annoName);
+		var annoRepr = anno.getRepresentation();
+		var annoName = anno.getName();
+		relToolBar.createContextMenu(this.contextMenu, annoName, annoRepr);
 
  		var vo = wrapper.viewportOffset();
 		this.contextMenu.setPosition(vo[0], vo[1]+20);
@@ -15278,7 +16755,7 @@ SemanticNotifications.prototype = {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
 				// success
-				if (request.responseText == 'true') {
+				if (request.responseText.indexOf("true") >= 0) {
 					this.getAllNotifications();
 					// disable button and name input
 					$('sn-notification-name').disable();
@@ -15336,7 +16813,7 @@ SemanticNotifications.prototype = {
 				success = request.responseText.substring(0, pos);
 				var res = request.responseText.substr(pos+1);
 				$('sn-previewbox').innerHTML = res;
-				if (success == 'true') {
+				if (success.indexOf('true')>= 0) {
 					this.previewOK = true;
 					$('sn-notification-name').enable();
 					$('sn-notification-name').focus();
@@ -15471,7 +16948,7 @@ SemanticNotifications.prototype = {
 		function ajaxResponseDeleteNotification(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-				if (request.responseText == "true") {
+				if (request.responseText.indexOf("true") >= 0) {
 					this.getAllNotifications();
 				}
 			} else {
@@ -15589,7 +17066,7 @@ SemanticNotifications.create = function() {
 	// Check, if semantic notifications are enabled (user logged in with valid 
 	// email address). If not, the complete UI is disabled.
 	var qt = $('sn-querytext');
-	var enabled = qt.readAttribute('snenabled');
+	var enabled = (qt != null) && qt.readAttribute('snenabled');
 	if (enabled == 'true') {
 		// enable the user interface
 		smwhgSemanticNotifications = new SemanticNotifications();

@@ -445,8 +445,9 @@ GeneralXMLTools.getNodeById = function (node, id) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if (node.contentType != null && node.contentType == "text/xml") {
-		  nodeWithID = node.documentElement.ownerDocument.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+		  nodeWithID = xmlDOM.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
 	      nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
 		}
@@ -495,8 +496,9 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodesWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if (node.contentType != null && node.contentType == "text/xml") {
-            nodesWithID = node.documentElement.ownerDocument.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
+		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+			var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+            nodesWithID = xmlDOM.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
             nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null);
 		}
@@ -737,14 +739,72 @@ Breadcrump.prototype = {
             show = show.replace("_", " ");
             
             // add item 
-            html += '<li><a href="'+wgServer+wgScript+'/'+b+'">'+show+' &gt; </a>'; 
+            html += '<a href="'+wgServer+wgScript+'/'+encodeURIComponent(b)+'">'+show+' &gt; </a>'; 
         });
         var bc_div = $('breadcrump');
-        if (bc_div != null) bc_div.innerHTML = "<ul>"+html+"</ul>";
+        if (bc_div != null) bc_div.innerHTML = html;
     }
 }
 var smwhg_breadcrump = new Breadcrump(5);
 Event.observe(window, 'load', smwhg_breadcrump.update.bind(smwhg_breadcrump));
+
+// generalGUI.js
+// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
+/*  Copyright 2008, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* 
+*   Contains general GUI functions
+*/
+var GeneralGUI = Class.create();
+GeneralGUI.prototype = {
+    initialize: function() {
+        this.closedContainers = GeneralBrowserTools.getCookieObject("smwNavigationContainers");
+        if (this.closedContainers == null) this.closedContainers = new Object();
+    },
+    
+    switchVisibilityWithState: function(id) {
+    	if ($(id).visible()) {
+    		this.closedContainers[id] = true;
+    	} else {
+    		this.closedContainers[id] = false;
+    	}
+    	GeneralBrowserTools.setCookieObject("smwNavigationContainers", this.closedContainers);
+    	this.switchVisibility(id);
+    },
+    
+    update: function() {
+    	for (var id in this.closedContainers) {
+    		if (this.closedContainers[id] == true) {
+    			this.switchVisibility(id);
+    		}
+    	}
+    },
+    
+    switchVisibility: function(container) {
+        var visible = $(container).visible();
+        if ( visible ) {    
+            $(container).hide();
+        } else {
+            $(container).show();
+        }
+    }
+   
+}
+var smwhg_generalGUI = new GeneralGUI();
+Event.observe(window, 'load', smwhg_generalGUI.update.bind(smwhg_generalGUI));
 
 // contentSlider.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
