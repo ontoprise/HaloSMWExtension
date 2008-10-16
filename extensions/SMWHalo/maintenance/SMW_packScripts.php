@@ -160,32 +160,40 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
  /**
   * Build one script file consisting of all scripts given in $scripts array.
   */
- function buildScripts($outputFile, $scripts) {
- 	 global $sourcePath, $addScriptName, $licenses;
-	 $result = readLicenseFile()."\r\n";
-	 echo "\r\n\r\nBilding scripts: $outputFile\r\n";
-	 foreach($scripts as $s => $licenseNum) {
-	 	$filename = $sourcePath.$s;
-	 	$handle = fopen($filename, "rb");
-	 	$contents = fread ($handle, filesize ($filename));
-	 	// FIXME: ugly hack to remove purchase hint in jasob TRIAL version
-	 	//$contents = preg_replace("/\/\*([^\*]|\*[^\/])*\*\/\r\r\n/", "", $contents);
-	 	echo 'Add '.$filename."...\r\n";
-	 	if ($addScriptName) {
-	 		$result .= '// '.basename($filename)."\r\n";
-	 	} else {
-	 		$result .= $contents."\r\n\r\n";
-	 	}
-	 	$result .= "// under ".$licenses[$licenseNum]."\r\n";
-	 	$result .= $contents."\r\n\r\n";
-	 	fclose($handle);
-	 }
+function buildScripts($outputFile, $scripts) {
+     global $sourcePath, $addScriptName, $licenses;
+     $result = readLicenseFile()."\r\n";
+     
+     // make sure line endings are consistent (SVN!)
+     $result = str_replace("\n", "\r\n", $result);
+     $result = str_replace("\r\r\n", "\r\n", $result);
+     echo "\r\n\r\nBilding scripts: $outputFile\r\n";
+     foreach($scripts as $s => $licenseNum) {
+        $filename = $sourcePath.$s;
+        $handle = fopen($filename, "rb");
+        $contents = fread ($handle, filesize ($filename));
+        
+        // make sure line endings are consistent (SVN!)
+        $contents = str_replace("\n", "\r\n", $contents);
+        $contents = str_replace("\r\r\n", "\r\n", $contents);
+        // FIXME: ugly hack to remove purchase hint in jasob TRIAL version
+        //$contents = preg_replace("/\/\*([^\*]|\*[^\/])*\*\/\r\r\n/", "", $contents);
+        echo 'Add '.$filename."...\r\n";
+        if ($addScriptName) {
+            $result .= '// '.basename($filename)."\r\n";
+        } else {
+            $result .= $contents."\r\n\r\n";
+        }
+        $result .= "// under ".$licenses[$licenseNum]."\r\n";
+        $result .= $contents."\r\n\r\n";
+        fclose($handle);
+     }
 
-	 $handle = fopen($outputFile,"wb");
-	 echo "Write in output file: ".$outputFile."\r\n";
-	 fwrite($handle, $result);
-	 fclose($handle);
-	 echo "Done!\r\n";
+     $handle = fopen($outputFile,"wb");
+     echo "Write in output file: ".$outputFile."\r\n";
+     fwrite($handle, $result);
+     fclose($handle);
+     echo "Done!\r\n";
  }
 
  /**
