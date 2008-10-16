@@ -388,7 +388,7 @@ class SMWTripleStore extends SMWStore {
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgNamespace>"); // drop may fail. don't worry
 			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgNamespace>");
-			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://$wgDBuser:$wgDBpassword@$wgDBserver/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore#$wgDBprefix INTO <$smwgNamespace>");
+			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore#".urlencode($wgDBprefix)." INTO <$smwgNamespace>");
 			$con->disconnect();
 		} catch(Exception $e) {
 				
