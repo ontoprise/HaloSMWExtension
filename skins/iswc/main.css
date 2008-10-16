@@ -445,7 +445,7 @@
 
 /**
 * CSS for Infoboxes in the wikipages
-* just add a div to your page with class="darkround"
+* just add a div to your page with class="blueround_head" above content and class="blueround" surrounding the content  
 */
 
 
@@ -471,25 +471,9 @@
 
 /**
 * CSS for inline queries in table format
-* just add a div to your page with class="darkround"
+* just add a div to your page around content with class="darkround"
 */
 
-.smwforumtable .smwtable{
-	background: none;
-}
-
-.smwforumtable .smwtable th{
-	background: none;
-	border-bottom: 3px solid #F0F0F0;
-}
-
-.smwforumtable .smwtable th a{
-	color: #67666B;
-}
-
-.smwforumtable .smwtable td{
-	border-bottom: 1px solid #F0F0F0;
-}
 
 #smwf_pageblock .smwtable{
 	background-color: #E6E6E6;
@@ -497,4 +481,25 @@
 
 #smwf_pageblock .smwtable th{
 	background-color: #E6E6E6;
+}
+
+#smwf_pageblock .smwfooter td{
+	background-color: #FFF;
+}
+
+#smwf_pageblock .smwforumtable .smwtable{
+	background: none;
+}
+
+#smwf_pageblock .smwforumtable .smwtable th{
+	background: none;
+	border-bottom: 3px solid #F0F0F0;
+}
+
+#smwf_pageblock .smwforumtable .smwtable th a{
+	color: #67666B;
+}
+
+#smwf_pageblock .smwforumtable .smwtable td{
+	border-bottom: 1px solid #F0F0F0;
 }
