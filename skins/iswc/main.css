@@ -151,8 +151,7 @@
 	margin-right: 1em;
 	margin-top: 0.1em;
 	height:	1.4em;
-	white-space: nowrap;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 .smwf_tabs a{
@@ -166,6 +165,7 @@
 	margin-right:5px; 
 	padding-left: 10px;
 	padding-right: 10px;
+	white-space: nowrap;
 }
 .selected{
 	background-color: #FFF;
