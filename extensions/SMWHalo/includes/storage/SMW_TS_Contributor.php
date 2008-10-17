@@ -50,7 +50,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
 					
 					// insert RDFS
-					$triplesFromHook[] = array($data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
+					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
 				    foreach($typeValues as $value) {
                         if ($value->getXSDValue() !== false) {
                         	$typeID = $value->getXSDValue();
