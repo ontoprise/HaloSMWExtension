@@ -1053,10 +1053,21 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$smw_relations = $db->tableName('smw_relations');
 		$smw_nary = $db->tableName('smw_nary');
 		if ($unrated) $where = 'WHERE rating IS NULL'; else $where = 'WHERE rating IS NOT NULL';
- 		$res = $db->select($smw_attributes, array('subject_title', 'attribute_title', 'value_xsd'), array('rating' => NULL), 'SMW:getAnnotationsWithoutRating', array('ORDER BY' => 'RAND()', 'LIMIT' => $limit));
+		
+		 // get random offsets
+        $offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_attributes ");
+        $offset_row = $db->fetchObject( $offset_result );
+        $offsetAtt = $offset_row->offset;
+        $db->freeResult($offset_result);
+    
+        $offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_relations ");
+        $offset_row = $db->fetchObject( $offset_result );
+        $offsetRel = $offset_row->offset;
+        $db->freeResult($offset_result);
+        
  		$res = $db->query('(SELECT subject_title AS subject, attribute_title AS predicate, value_xsd AS object FROM '.$smw_attributes. ' '.$where.') ' .
  							'UNION ' .
- 						   '(SELECT subject_title AS subject, relation_title AS predicate, object_title AS object FROM '.$smw_relations.' '.$where.') ORDER BY RAND() LIMIT '.$limit);
+ 						   '(SELECT subject_title AS subject, relation_title AS predicate, object_title AS object FROM '.$smw_relations.' '.$where.') OFFSET '.$offsetAtt+$offsetRel.' LIMIT '.$limit);
  		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {

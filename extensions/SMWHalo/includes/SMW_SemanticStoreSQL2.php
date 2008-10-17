@@ -397,9 +397,20 @@ public function getDistinctUnits(Title $type) {
         
         if ($unrated) $where = 'WHERE rating IS NULL'; else $where = 'WHERE rating IS NOT NULL';
         
+        // get random offsets
+        $offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_atts2 ");
+		$offset_row = $db->fetchObject( $offset_result );
+		$offsetAtt = $offset_row->offset;
+		$db->freeResult($offset_result);
+	
+		$offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_rels2 ");
+        $offset_row = $db->fetchObject( $offset_result );
+        $offsetRel = $offset_row->offset;
+        $db->freeResult($offset_result);
+
         $res = $db->query('(SELECT i.smw_title AS subject, i2.smw_title AS predicate, value_xsd AS object FROM '.$smw_atts2. ' JOIN '.$smw_ids.' i ON s_id=i.smw_id JOIN '.$smw_ids.' i2 ON p_id=i2.smw_id '. $where.') ' .
                             'UNION ' .
-                           '(SELECT i.smw_title AS subject, i2.smw_title AS predicate, i3.smw_title AS object FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON s_id=i.smw_id JOIN '.$smw_ids.' i2 ON p_id=i2.smw_id JOIN '.$smw_ids.' i3 ON o_id=i3.smw_id '. $where.' AND i.smw_iw != ":smw") ORDER BY RAND() LIMIT '.$limit);
+                           '(SELECT i.smw_title AS subject, i2.smw_title AS predicate, i3.smw_title AS object FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON s_id=i.smw_id JOIN '.$smw_ids.' i2 ON p_id=i2.smw_id JOIN '.$smw_ids.' i3 ON o_id=i3.smw_id '. $where.' AND i.smw_iw != ":smw") OFFSET '.$offsetAtt+$offsetRel.' LIMIT '.$limit);
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
