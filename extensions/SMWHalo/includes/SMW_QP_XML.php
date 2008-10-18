@@ -55,6 +55,8 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
                 while ( ($object = $field->getNextObject()) !== false ) {
                     if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
                         $text = $object->getTitle()->getPrefixedText();
+                    } else if ($object->getTypeID() == '_dat') {
+                        $text = $object->getXSDValue();
                     } else {
                         if ($object->isNumeric()) { // does this have any effect?
                             $text = $object->getNumericValue();
