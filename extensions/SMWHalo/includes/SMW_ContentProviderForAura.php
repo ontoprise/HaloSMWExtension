@@ -14,6 +14,7 @@ global $smwgHaloIP;
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ca_GetCombinedSearchResultsFor';
+$wgAjaxExportList[] = 'smwf_ca_GetSemanticSearchResultsFor';
 $wgAjaxExportList[] = 'smwf_ca_GetFactboxContentFor';
 $wgAjaxExportList[] = 'smwf_ca_GetFTSearchResultsFor';
 $wgAjaxExportList[] = 'smwf_ca_GetCategoriesFor';
@@ -45,6 +46,31 @@ function smwf_ca_GetCombinedSearchResultsFor($searchstring) {
    }
 
    return $resultHTML;
+
+}
+
+function smwf_ca_GetSemanticSearchResultsFor($searchstring) {
+
+	$smwreqo = new SMWRequestOptions();
+	$smwreqo->offset = 0;
+	$smwreqp->isCaseSensitive = false;
+	$smwreqo->addStringCondition($searchstring, SMWStringCondition::STRCOND_MID);
+	// SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN
+	$results = smwfGetSemanticStore()->getPages(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN), $smwreqo, true);
+	
+	$returnstring = "";
+	
+	foreach ($results as $res) {
+		if ($res instanceof Title) {
+			$returnstring .= "<resultentry>";
+			$returnstring .= "<title>" . $res->getText() . "</title>";
+			$returnstring .= "<url>" . $res->getFullURL() . "</url>";
+			$returnstring .= "<ns>" . $res->getNamespace() . "</ns>";
+			$returnstring .= "</resultentry>";			
+		}
+	}
+
+   return $returnstring;
 
 }
 
