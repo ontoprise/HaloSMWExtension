@@ -52,7 +52,7 @@
 #smwf_head{
 	position: relative;
 	background: #4b595c;
-	height: 85px;
+	height: 105px;
 	border-bottom: 5px solid #F5AC3E;
 	padding-left: 10px;
 	padding-top: 10px;
@@ -195,14 +195,15 @@
 #smwf_naviblock{
 	width: 200px;
 	float: left;
+	background-color: #F0F0F0;
 }
 
 .smwf_navihead{
-	background-color: #707E81;
+	background: #FFF url(Sticki_nav_backgr.gif) bottom repeat-x;
 	margin-top: 5px;
 	padding: 5px;
 	padding-left: 15px;
-	color: #FFF;
+	color: #acc85f;
 	font-weight: bold;
 	position: relative;
 }
@@ -225,23 +226,21 @@
 
 .smwf_naviitem{
 	background-color: #F0F0F0;
+	width: 100;
+	border-bottom: 1px solid #FFF;
+	padding-left: 5px;
 }
 
 .smwf_naviitem a{
 	position: relative;
-	color: #4B595C;
-	text-decoration: none;
-	margin-left: 5px;
-	border-left: 1px solid #4B595C;
-	padding-left: 5px;
+	color: #4b595c;
+	text-decoration: none;	
 	font-weight: bold;
 	font-size: smaller;
 }
 
 #smwf_browserview{
-	margin-top: 5px;
-	margin-bottom: 5px;
-	border: 2px solid #F0F0F0;
+
 }
 
 #smwf_browserview a{
@@ -255,6 +254,11 @@
 
 #smwf_browserview .dTreeNode img{
 
+}
+
+#smwf_browserview .Treeview5{
+	width: 190px;
+	margin-left: 5px;
 }
 
 #maintree{
@@ -296,7 +300,7 @@
 }
 
 #smwf_pageblock h1,#smwf_pageblock h2,#smwf_pageblock h3,#smwf_pageblock h4,#smwf_pageblock h5,#smwf_pageblock h6 {
-	color:  #F5AC3E;
+	color:  #4b595c;
 	background: none;
 	font-weight: bold;
 	font-size: normal;
@@ -304,12 +308,12 @@
 
 #smwf_pageblock h1{
 	font-size: x-large;
-	border-bottom: 1px solid #F5AC3E;
+	border-bottom: 1px solid #4b595c;
 }
 
 #smwf_pageblock h2{
 	font-size: large;
-	border-bottom: 1px solid #F5AC3E;
+	border-bottom: 1px solid #4b595c;
 }
 
 .printfooter{
