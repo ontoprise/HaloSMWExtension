@@ -49,7 +49,9 @@ Breadcrump.prototype = {
             show = show.replace("_", " ");
             
             // add item 
-            html += '<a href="'+wgServer+wgScript+'/'+encodeURIComponent(b)+'">'+show+' &gt; </a>'; 
+            var encURI = encodeURIComponent(b);
+            encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
+            html += '<a href="'+wgServer+wgScript+'/'+encURI+'">'+show+' &gt; </a>'; 
         });
         var bc_div = $('breadcrump');
         if (bc_div != null) bc_div.innerHTML = html;
