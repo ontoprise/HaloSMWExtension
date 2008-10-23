@@ -33,13 +33,17 @@ xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore2.php %OUTPUT_DIR%\ex
 REM Patches for MW
 xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
 xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
+xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
 
 REM ontoskin
-xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
 xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
 xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 
+REM ontoskin2
+xcopy ..\..\..\skins\ontoskin2 %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
+xcopy ..\..\..\skins\OntoSkin2.deps.php %OUTPUT_DIR%\skins /Y
+xcopy ..\..\..\skins\OntoSkin2.php %OUTPUT_DIR%\skins /Y
 
 
 REM Pack SMWHalo Extension

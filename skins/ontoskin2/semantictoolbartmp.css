@@ -1,0 +1,889 @@
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/* CSS for SemanticToolbar */
+
+
+/*The following css and the table it is belonging to is just a workaround for a nasty bug
+triggered by the nested floats. It should not be removed
+    contenttab has only 97%+1%+1%=99% because firefox will show a non scrollable scrollbar width 100%*/
+    #contenttab {
+        width: 97%;
+        margin: 1%
+    }
+
+    #contentcol1 {
+        width: 70%;
+        vertical-align: top;
+    }
+    #contentcol2 {
+        width: 30%;
+        vertical-align: top;
+    }
+
+/* overwrites some design flaws in the original main.css */
+
+    #content {
+        margin: 2.8em 0 0 12.2em;
+        padding: 0px;
+        position: relative;
+        z-index: 2;
+    }
+
+    #wpTextbox1{
+        word-break: break-all;
+    }
+
+/*  Slider
+    Problem: Slider should be behind content but slider handle should be in front of
+    Solution:   set positiv z-index for innercontent
+                set greater positiv z-index for sliderhandle
+                and leave z-index for slider blank!
+                */
+#slider {
+    width: 100%;
+    position: absolute;
+    top: 25px;
+    /*for Debug: background-color: #00FF00; */
+}
+
+#sliderHandle {
+    cursor: move;
+    position: relative;
+    z-index: 5;
+}
+
+.div-marker{
+        background-color: #5555FF;
+        border-style: solid;
+        border-width: 3px;
+        border-color: #0000AA;
+        position: absolute;
+        opacity: 0.7;
+        filter: alpha(opacity=70);
+ }
+
+.icon-marker{
+        z-index: 10;
+        position: absolute;
+ }
+
+.generic_content{
+    margin-left: 3px;
+    margin-right: 3px;
+ }
+
+.generic_headline{
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+#tabcontainer {
+    width: auto;
+    margin-bottom: 10px;
+}
+
+#activetabcontainer {
+    width: auto;
+}
+
+#expandable {
+    float: left;
+    margin-left: 5px;
+    margin-top: 4px;
+    margin-right: 5px;
+}
+a.minusplus{
+    background-image:url(images/minus.gif);
+    float:left;
+    height:12px;
+    margin-right:4px;
+    margin-top:3px;
+    overflow:hidden;
+    width:12px;
+}
+a.minusplus:hover{
+    background-image:url(images/minus-act.gif);
+}
+
+a.plusminus{
+    float:left;
+    height:12px;
+    margin-right:4px;
+    margin-top:3px;
+    overflow:hidden;
+    width:12px;
+}
+.plusminus{
+    background-image:url(images/plus.gif);
+}
+a.plusminus:hover{
+    background-image:url(images/plus-act.gif);
+}
+
+#tab_0{
+    background-color: #C0C0C0;
+    border: 1px solid #C0C0C0;
+    font-weight: bold;
+}
+
+#tab_1{
+    background-color: #C0C0C0;
+    border: 1px solid #C0C0C0;
+    font-weight: bold;
+}
+
+#tab_2{
+    background-color: #C0C0C0;
+    border: 1px solid #C0C0C0;
+    font-weight: bold;
+}
+
+#curtab{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    font-weight: bold;
+}
+
+#ontomenuanchor{
+    margin-top: 10px;
+    max-height: 80%;
+    width: 100%;
+    z-index: 10;
+    /*overflow: auto;*/
+    position: relative;
+}
+
+#innercontent {
+    position: relative;
+    z-index: 2;
+    overflow: auto;
+    width: 100%;
+}
+
+
+#semtoolbar{
+    padding-top: 1px;
+    padding-bottom: 3px;
+    border: 1px solid #C0C0C0;
+    background-color: #DDDDDD;
+}
+
+.input{
+    width: 70px;
+    border: 1px solid #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #333333;
+}
+
+#articlecontainer{
+    position: absolute;
+    top: 45px;
+    left: 165px;
+    width: auto;
+    border: 1px solid #CDCDCD;
+    font-size: 12px;
+}
+#article{
+    margin-right: 12px;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+#annotation-toolbox{
+    width: 200px;
+    color: #666666;
+    border: 1px solid #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #333333;
+}
+
+#anno{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 11px;
+}
+
+#stb_cont10-content{
+    background-color: #FFFFCC;
+    border: 1px solid #E6E600;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height:13px;
+    font-size: 11px;
+    overflow: auto;
+}
+#help a{
+    cursor:pointer;
+}
+#morehelp{
+    text-align: right;
+    font-size: 10px;
+}
+#stb_cont8-headline{
+    background-color: #74DD82;
+    border: 1px solid #74DD82;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    margin-top: 3px;
+}
+#stb_cont8-content{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    overflow: auto;
+    font-size: 11px;
+    /*border-bottom: 1px solid #74DD82;*/
+}
+
+#stb_cont9-content{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height:13px;
+    font-size: 11px;
+    overflow: auto;
+}
+
+#csFoundEntities{
+    line-height:15px;
+}
+
+
+.cbsrch-table {
+    background-color: #B5EDBC;
+    width: 100%;
+}
+.cbsrch-table td{
+    border-bottom: 1px dashed #74DD82;
+}
+#queryPlaceholder .cbsrch-table {
+   
+    width:90%;
+   
+    font-weight: normal;
+}
+#queryPlaceholder .cbsrch-table td{
+    border-bottom: 1px dashed #C0C0C0;
+}
+
+#stb_cont99-content{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: auto;
+}
+
+#stb_cont1-content{
+    overflow:auto;
+    font-size: 11px;
+}
+#typecont{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    max-height:600px;
+    overflow:auto;
+    font-size: 11px;
+}
+#freshfacts{
+    background-color: #B5EDBC;
+    border: 1px solid #74DD82;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 11px;
+}
+#anno-headline{
+    background-color: #74DD82;
+    font-weight: bold;
+    color: #FFF;
+    padding-top: 1px;
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+}
+#stb_cont9-headline{
+    background-color: #74DD82;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+    margin-top: 3px;
+}
+#stb_cont99-headline{
+    background-color: #74DD82;
+    font-weight: bold;
+    color: #FFF;
+    padding-top: 1px;
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+    margin-top: 3px;
+}
+#stb_cont1-headline{
+/*  background-color: #74DD82;
+    font-weight: bold;
+    color: #FFF;
+    padding-top: 1px;
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+    margin-top: 3px; */
+}
+#typecont-headline{
+    background-color: #74DD82;
+    font-weight: bold;
+    color: #FFF;
+    padding-top: 1px;
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+    margin-top: 3px;
+}
+#stb_cont10-headline{
+    background-color: #E6E600;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #E6E600;
+    margin-top: 3px;
+}
+#freshfacts-headline{
+    background-color: #74DD82;
+    font-weight: bold;
+    color: #FFFFFF;
+/*  margin-top: 10px; */
+    padding-top: 1px;
+    padding-left: 3px;
+    border: 1px solid #74DD82;
+    margin-top: 3px;
+}
+
+#factsAttributes-headline{
+    background-color: #ffff91;
+    padding-left:5px;
+}
+
+#factsAttributes-body {
+    background-color: #ffffd1;
+}
+
+#factsAttributes-bodycontent {
+    margin-left:10px;
+    margin-right:0px;
+}
+
+
+#factsRelations-headline{
+    margin-top: 10px;
+    background-color: #ff91ff;
+    padding-left:5px;
+}
+
+#factsRelations-body {
+    background-color: #ffd1ff;
+}
+
+#factsRelations-bodycontent {
+    margin-left:10px;
+    margin-right:0px;
+}
+
+
+#factsCategories-headline{
+    margin-top: 10px;
+    background-color: #9193ff;
+    padding-left:5px;
+}
+
+#factsCategories-body {
+    background-color: #d1d2ff;
+}
+
+#factsCategories-bodycontent {
+    margin-left:10px;
+    margin-right:0px;
+}
+
+/* Highlights in the edit box */
+.hlattribute{
+    width: 70px;
+    border: 1px solid #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #333333;
+}
+
+.linktable{
+    background: #DDD;
+    font-size:11px;
+    font-family: monospace;
+    width:100%;
+    line-height: 1.4em;
+}
+
+table.linktable tr.linktable-row td{
+        border-bottom: 1px dashed #C0C0C0;
+}
+
+/* General Settings for Cat/Atr/Rel-Container */
+a.menulink{
+    border-right: 1px solid #999;
+    padding: 0px 3px 0px 3px;
+}
+/* consistent length for all attribute inputboxes and textareas */
+.general-forms{
+    width: 125px;
+}
+
+.general-forms-slim{
+    width: 105px;
+}
+
+/* Category Container */
+#stb_cont3-headline{
+    background-color: #064df3;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #064df3;
+    margin-top: 3px;
+}
+
+#stb_cont3-content{
+    border: 1px solid #064df3;
+    background-color: #94b0f3;
+    overflow: auto;
+    font-size: 11px;
+}
+
+#category-table{
+    background-color: #94b0f3;
+    width: 100%;
+}
+
+#category-tools{
+    border-bottom: 1px solid #888888;
+}
+
+.category-col1{
+    border-bottom: 1px dashed #888888;
+    vertical-align: top;
+}
+
+.category-col2{
+}
+
+.category-col3{
+    border-bottom: 1px dashed #888888;
+    text-align: right;
+    vertical-align: top;
+    width: 20%;
+}
+
+/* Attribute Container */
+#stb_cont4-headline{
+    background-color: #ff9602;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #ff9602;
+    margin-top: 3px;
+}
+
+#stb_cont4-content{
+    background-color: #ffcd87;
+    border: 1px solid #ff9602;
+    overflow: auto;
+    font-size: 11px;
+}
+
+
+
+
+#attribute-table{
+    background-color: #ffcd87;
+    width: 100%;
+}
+#attribute-itemlist{
+    width: 100%;
+}
+
+#attribute-tools{
+    border-bottom: thin solid #888888;
+}
+.attribute-col1{
+    border-bottom: 1px dotted #888888;
+    border-right: 1px dashed #888888;
+    vertical-align: top;
+}
+
+.attribute-col2{
+    border-bottom: 1px dotted #888888;
+    vertical-align: top;
+}
+
+.attribute-col3{
+    border-bottom: 1px dotted #888888;
+    text-align: right;
+    vertical-align: top;
+}
+
+/* Relation Container */
+#stb_cont5-headline{
+    background-color: #ff9602;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #ff9602;
+    margin-top: 3px;
+}
+#stb_cont5-content{
+    background-color: #ffcd87;
+    border: 1px solid #ff9602;
+    overflow: auto;
+    font-size: 11px;
+}
+#relation-table{
+    background-color: #ffcd87;
+    table-layout:fixed;
+    width:100%;
+    overflow:hidden;
+    word-wrap:break-word;
+}
+
+#relation-tools{
+    border-bottom: 1px solid #888888;
+    width: Inherit;
+}
+
+.relation-col1{
+    border-bottom: 1px dotted #888888;
+    border-right: 1px dashed #888888;
+    vertical-align: top;
+    width:60%;
+    overflow: hidden;
+}
+
+.relation-col2{
+    border-bottom: 1px dotted #888888;
+    vertical-align: top;
+    overflow: hidden;
+    width:30%;
+}
+
+.relation-col3{
+    border-bottom: 1px dotted #888888;
+    text-align: right;
+    vertical-align: top;
+    width:10%;
+}
+
+/* Properties Container */
+#stb_cont6-headline{
+    background-color: #BB4DBB;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #BB4DBB;
+    margin-top: 3px;
+}
+
+#stb_cont6-content{
+    border: 1px solid #554d55;
+    background-color: #BB4DBB;
+    overflow: auto;
+    font-size: 11px;
+}
+
+#properties-table{
+    background-color: #ddbddd;
+    width: 100%;
+}
+
+#properties-tools{
+    border-bottom: 1px solid #888888;
+}
+
+.properties-col1{
+    border-bottom: 1px dashed #888888;
+    vertical-align: top;
+}
+
+.properties-col3{
+    border-bottom: 1px dashed #888888;
+    text-align: right;
+    vertical-align: top;
+}
+
+
+/* Save annotations Container */
+#stb_cont12-headline{
+    background-color: #ee2222;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #ee2222;
+    margin-top: 3px;
+}
+
+#stb_cont12-content{
+    border: 1px solid #ee2222;
+    background-color: #ee8888;
+    overflow: auto;
+    font-size: 11px;
+}
+
+#saveannotations-table{
+    background-color: #ee8888;
+    width: 100%;
+}
+
+.saveannotations-innertable{
+    background-color: #ee8888;
+    width: 100%;
+}
+
+#saveannotations-tools{
+    border-bottom: 1px solid #888888;
+}
+
+.saveannotations-col1{
+    border-bottom: 1px dashed #888888;
+    vertical-align: top;
+}
+
+.saveannotations-col2{
+}
+
+.saveannotations-col3{
+    border-bottom: 1px dashed #888888;
+    text-align: right;
+    vertical-align: top;
+    width: 20%;
+}
+
+/* Annotation hint Container */
+#stb_cont11-headline{
+    background-color: #557844;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #557844;
+    margin-top: 3px;
+}
+
+#stb_cont11-content{
+    border: 1px solid #557844;
+    background-color: #6CA252;
+    overflow: auto;
+    font-size: 11px;
+}
+
+#annotationhint-table{
+    background-color: #6CA252;
+    width: 100%;
+}
+
+#annotationhint-tools{
+    border-bottom: 1px solid #888888;
+}
+
+.annotationhint-col1{
+    border-bottom: 1px dashed #888888;
+    vertical-align: top;
+}
+
+.annotationhint-col2{
+}
+
+.annotationhint-col3{
+    border-bottom: 1px dashed #888888;
+    text-align: right;
+    vertical-align: top;
+    width: 20%;
+}
+
+/* Rule Container */
+#stb_cont7-headline{
+	background-color: #9a3334;
+	font-weight: bold;
+	color: #FFF;
+	padding-left: 3px;
+	border: 1px solid #9a3334;
+	margin-top: 3px;
+}
+
+#stb_cont7-content{
+	border: 1px solid #9a3334;
+	background-color: #f1e5e5;
+	overflow: auto;
+	font-size: 11px;
+}
+/* css for Containerframework
+ *
+ * if an element has different classes defining the same style
+ * the last class defined in this css-file will dominate
+ *
+ */
+/* input */
+.stb-table{
+    width: 100%;
+}
+
+
+/* input */
+.stb-input{
+    margin-right: 5%;
+    width: 90%;
+}
+.stb-delinput{
+    margin-right: 5%;
+    width: 95%;
+}
+
+.stb-input-col1{
+    width: 30%;
+}
+
+.stb-input-col2{
+    text-align: right;
+}
+
+.stb-input-col3{
+    width: 20px;
+    text-align: right;
+}
+
+/*dropdown*/
+.stb-select{
+    width: 95%;
+    margin-right: 5%;
+}
+.stb-delselect
+{
+    width: 95%;
+    margin-right: 5%;
+}
+.stb-select-col1{
+    width: 30%;
+}
+
+.stb-select-col2{
+    text-align: right;
+}
+
+.stb-select-col3{
+    width: 20px;
+    text-align: right;
+}
+
+/* link-table*/
+.ln-tr-0{
+    width: 100%;
+}
+.ln-td-0-0{
+    width: 100%;
+}
+.ln-tr-1{
+    width: 100%;
+}
+.ln-td-1-0{
+    width: 50%;
+}
+.ln-td-1-1{
+    width: 50%;
+}
+.ln-tr-2{
+    width: 100%;
+}
+.ln-td-2-0{
+    width: 33%;
+}
+.ln-td-2-1{
+    width: 33%;
+}
+.ln-td-2-2{
+    width: 34%;
+}
+
+/* background-colors*/
+.category-content-table{
+    background-color: #94b0f3;
+}
+.relation-content-table{
+    background-color: #ffcd87;
+}
+
+.properties-content-table{
+    background-color: #ddbddd;
+}
+
+.saveannotations-content-table{
+    background-color: #ee8888;
+}
+
+.annotationhint-content-table{
+	background-color: #88ee88;
+}
+
+#rules-table{
+	background-color: #f1e5e5;
+	width: 100%;
+}
+
+.rules-content-table{
+	background-color: #f1e5e5;
+}
+
+.rules-col1{
+	border-bottom: 1px dashed #888888;
+	vertical-align: top;
+}
+
+.rules-col2{
+}
+
+.rules-col3{
+	border-bottom: 1px dashed #888888;
+	text-align: right;
+	vertical-align: top;
+	width: 20%;
+}
