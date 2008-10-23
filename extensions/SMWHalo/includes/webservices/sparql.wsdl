@@ -67,7 +67,7 @@
   </binding>
   <service name="SparqlEndpointService">
     <port name="SPARQLEndpointPort" binding="tns:SPARQLEndpointPortBinding">
-      <soap:address location="http://{{sparql-endpoint}}/sparql" />
+      <soap:address location="http://{{webservice-endpoint}}/sparql" />
     </port>
   </service>
 </definitions>

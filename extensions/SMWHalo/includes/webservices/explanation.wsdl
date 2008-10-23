@@ -90,7 +90,7 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://expla
   </binding>
   <service name="ExplanationEndpointService">
     <port name="ExplanationEndpointPort" binding="tns:ExplanationEndpointPortBinding">
-      <soap:address location="http://{{explanation-endpoint}}/explain" />
+      <soap:address location="http://{{webservice-endpoint}}/explain" />
     </port>
   </service>
 </definitions>

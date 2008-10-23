@@ -31,13 +31,13 @@ class SMWFlogicParser {
 
 	// implicitly set localhost if no messagebroker was defined.
     static public function getInstance() {
-    	global $wgServer, $wgScript;
+    	global $wgServer, $wgScript,$smwgWebserviceUser, $smwgWebServicePassword;
 
         if (self::$instance === NULL) {
             self::$instance = new self;
 
             ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_flogic");
+            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_flogic", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
         }
         return self::$instance;
     }

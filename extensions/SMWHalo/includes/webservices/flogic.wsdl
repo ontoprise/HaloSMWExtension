@@ -131,7 +131,7 @@ name="FlogicParserImplService">
 </binding>
 <service name="FlogicParserImplService">
 <port name="FlogicParserServicePort" binding="tns:FlogicParserServicePortBinding">
-<soap:address location="http://{{flogic-endpoint}}/flogic" />
+<soap:address location="http://{{webservice-endpoint}}/flogic" />
 </port>
 </service>
 </definitions>

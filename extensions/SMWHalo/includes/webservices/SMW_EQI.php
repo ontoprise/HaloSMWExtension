@@ -137,8 +137,8 @@ class ExternalQueryInterface {
 	 * @return SPARQL XML string
 	 */
 	function answerSPARQL($rawQuery) {
-		global $wgServer, $wgScript;
-		$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql");
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword;
+		$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
 
 		try {
 			global $smwgNamespace;
