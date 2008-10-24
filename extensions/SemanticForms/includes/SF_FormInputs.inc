@@ -383,6 +383,8 @@ END;
     } elseif ($semantic_field_name != '') {
       $autocomplete_values = SFFormInputs::createAutocompleteValuesArray(str_replace(' ', '_', $semantic_field_name), $autocomplete_field_type);
       $autocomplete_string = "[['" . implode("'], ['", $autocomplete_values) . "']]";
+      // replace any newlines in the string, just to avoid breaking the Javascript
+      $autocomplete_string = str_replace("\n", ' ', $autocomplete_string);
       $javascript_text .= "autocompletestrings['$options_str_key'] = $autocomplete_string;\n";
     }
     if ($cur_value) {
@@ -405,6 +407,7 @@ END;
       if ((array_key_exists('is_relation', $other_args) && $other_args['is_relation'] == true) ||
           array_key_exists('autocomplete', $other_args) ||
           array_key_exists('autocomplete on', $other_args) ||
+          array_key_exists('autocomplete on property', $other_args) ||
           array_key_exists('autocomplete on category', $other_args) ||
           array_key_exists('autocomplete on concept', $other_args) ||
           array_key_exists('autocomplete on namespace', $other_args) ||

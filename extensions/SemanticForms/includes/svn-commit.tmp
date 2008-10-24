@@ -1,0 +1,5 @@
+Improved PHP, HTML and Javascript validation of dates, added support for
+'radiobutton' input type, made more usable for sites without SMW installed
+--This line, and those below, will be ignored--
+
+M    SF_FormPrinter.inc
