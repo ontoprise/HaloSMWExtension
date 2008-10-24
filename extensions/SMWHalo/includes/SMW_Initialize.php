@@ -347,7 +347,7 @@ function smwgHaloSetupExtension() {
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
 			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://ontoworld.org/wiki/Halo_Extension View feature description.]');
 	
-    global $smwgSPARQLEndpoint, $wgAjaxExportList, $smwgMessageBroker;
+    global $smwgMessageBroker;
     if (isset($smwgMessageBroker)) {
         $wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
         

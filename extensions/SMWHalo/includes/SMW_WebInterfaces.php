@@ -24,8 +24,8 @@ function smwf_ws_getWSDL($wsdlID) {
 		$handle = fopen($wsdl, "rb");
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
-
-		return str_replace("{{wiki-path}}", $_SERVER['SERVER_ADDR'].":".$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'], $contents);
+        global $wgServer, $wgScript;
+		return str_replace("{{wiki-path}}", $wgServer.$wgScript, $contents);
 		
 	} else if ($wsdlID == 'get_sparql') {
 		$wsdl = "extensions/SMWHalo/includes/webservices/sparql.wsdl";
@@ -33,7 +33,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) echo str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	} else if ($wsdlID == 'get_flogic') {
@@ -42,7 +42,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) echo str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	} else if ($wsdlID == 'get_explanation') {
@@ -51,7 +51,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) echo str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	}

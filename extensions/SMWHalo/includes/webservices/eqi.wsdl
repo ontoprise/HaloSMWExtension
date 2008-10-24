@@ -47,7 +47,7 @@ transport="http://schemas.xmlsoap.org/soap/http" />
   </documentation> 
   <port name="com.ontoprise.semanticwiki.EQIPort"
   binding="tns:com.ontoprise.semanticwiki.EQIBinding">
-    <soap:address location="http://{{wiki-path}}?action=wsmethod" /> 
+    <soap:address location="{{wiki-path}}?action=wsmethod" /> 
   </port>
 </service>
 </definitions>

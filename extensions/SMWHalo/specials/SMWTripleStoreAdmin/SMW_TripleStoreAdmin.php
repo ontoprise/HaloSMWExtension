@@ -37,8 +37,8 @@ class SMWTripleStoreAdmin extends SpecialPage {
         	// if no connection could be created
         	$html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_couldnotconnect')."</div>".wfMsg('smw_tsa_addtoconfig').
         	"<pre>\$smwgMessageBroker  = &lt;IP of messagebroker&gt;\n".
-        	"\$smwgSPARQLEndpoint = &lt;IP and port of SPARQL endpoint&gt;\n\nExample:\n\n\$smwgMessageBroker  = \"localhost\";\n".
-            "\$smwgSPARQLEndpoint = \"localhost:8080\";</pre>";
+        	"\$smwgWebserviceEndpoint = &lt;IP and port of SPARQL endpoint&gt;\n\nExample:\n\n\$smwgMessageBroker  = \"localhost\";\n".
+            "\$smwgWebserviceEndpoint = \"localhost:8080\";</pre>";
         	$wgOut->addHTML($html);
         	return;
         }

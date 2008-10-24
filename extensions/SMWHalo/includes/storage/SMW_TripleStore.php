@@ -27,7 +27,7 @@ require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
  * Configuration in LocalSettings.php:
  * 
  *  $smwgMessageBroker: The name or IP of the message broker
- *  $smwgSPARQLEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
+ *  $smwgWebserviceEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
  *
  * @author: Kai
  */

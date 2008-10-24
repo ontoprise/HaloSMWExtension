@@ -13,7 +13,7 @@ function query($rawQuery, $format = "xml") {
 	require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
 	require_once "$mediaWikiLocation/SMWHalo/includes/SMW_QP_XML.php";
 
-	global $smwgSPARQLEndpoint;
+	global $smwgWebserviceEndpoint;
 	$eqi = new ExternalQueryInterface();
 	// use heuristic to optimize parsing order
 	if (stripos($rawQuery, "SELECT") !== false) {
@@ -30,7 +30,7 @@ function query($rawQuery, $format = "xml") {
 		$parser = new SparqlParser();
 		try {
 			$query = $parser->parse($rawQuery);
-			if (isset($smwgSPARQLEndpoint)) {
+			if (isset($smwgWebserviceEndpoint)) {
 				return $eqi->answerSPARQL($rawQuery);
 			} else {
 				// try to convert to ASK
@@ -138,6 +138,7 @@ class ExternalQueryInterface {
 	 */
 	function answerSPARQL($rawQuery) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword;
+			
 		$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
 
 		try {
