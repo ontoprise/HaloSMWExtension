@@ -54,7 +54,7 @@ function smwf_cs_Dispatcher($searchString) {
 
 function smwf_cs_AskForAttributeValues($parts) {
     // try to find $parts as attribute values
-    global $wgServer, $wgScriptPath, $wgScript;
+   
     $cs = new CombinedSearch();
     $parts = explode(",", $parts);
     $htmlResult = "<div class=\"cbsrch-content\">";
@@ -65,9 +65,9 @@ function smwf_cs_AskForAttributeValues($parts) {
         $htmlResult .= "<table class=\"cbsrch-table\">";
         foreach($titlesAndValues as $tav) {
             list($title, $attribute, $value) = $tav;
-                
-            $htmlResult .= "<tr><td><a href=\"$wgServer$wgScript/".$title->getPrefixedDBkey()."\">".$title->getText()."</a></td>" .
-                                   "<td><a href=\"$wgServer$wgScript/".$attribute->getPrefixedDBkey()."\">".$attribute->getText()."</a></td>" .
+           
+            $htmlResult .= "<tr><td><a href=\"".$title->getFullURL()."\">".$title->getText()."</a></td>" .
+                                   "<td><a href=\"".$attribute->getFullURL()."\">".$attribute->getText()."</a></td>" .
                                    "<td>$value</td></tr>";
         }
         $htmlResult .= "</table>";
@@ -184,13 +184,13 @@ class CombinedSearch {
 
             $page_exists = $page->exists() ? "" : "new";
             $resultHTML .= "<td><img src=\"".CombinedSearchHelper::getImageReference($page)."\"></td>";
-            $resultHTML .= "<td><a class=\"navlink $page_exists\" href=\"$wgServer$wgScript/$pageTitleUnescaped\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
+            $resultHTML .= "<td><a class=\"navlink $page_exists\" href=\"".$page->getFullURL()."\" title=\"".wfMsg('smw_cs_openpage')."\">".$page->getText()."</a></td>";
 
             // show OB link
             if ($page->getNamespace() != NS_TEMPLATE && $page->getNamespace() != SMW_NS_TYPE) {
-
-                $resultHTML .= "<td><a class=\"navlink\" href=\"$wgServer$wgScript/".$wgContLang->getNsText(NS_SPECIAL).":".wfMsg('ontologybrowser')."?ns=".$page->getNsText().
-                "&entitytitle=".urlencode($page->getDBkey())."\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\">".
+                $ob_spage = Title::newFromText($wgContLang->getNsText(NS_SPECIAL).":".wfMsg('ontologybrowser'));
+                $resultHTML .= "<td><a class=\"navlink\" href=\"".$ob_spage->getFullURL("ns=".$page->getNsText().
+                "&entitytitle=".urlencode($page->getDBkey()))."\" title=\"".wfMsg('smw_cs_openpage_in_ob')."\">".
                 "<img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/ontobrowser.gif\"/></a></td>";
             } else {
                 // do NOT show OB link for templates, because it makes no sense.
@@ -198,7 +198,7 @@ class CombinedSearch {
             }
 
             // show edit link
-            $resultHTML .= "<td><a class=\"navlink\" href=\"$wgServer$wgScript/$pageTitleUnescaped?action=edit\">".
+            $resultHTML .= "<td><a class=\"navlink\" href=\"".$page->getFullURL("action=edit")."\">".
             "<img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/edit.gif\" title=\"".wfMsg('smw_cs_openpage_in_editmode')."\"/></a></td>";
             $resultHTML .= "</tr>";
 
@@ -219,7 +219,7 @@ class CombinedSearch {
      * 2. Pose some simple ASK query proposal depending of the found entities.
      */
     public function getFurtherQueriesAsHTML($entities, $searchTerms) {
-        global $wgServer, $wgScriptPath, $wgContLang, $wgScript;
+        global $wgContLang;
         $htmlResult = "<div class=\"cbsrch-content\">";
 
         // combination category/instance <-> attribute/relation
@@ -252,8 +252,9 @@ class CombinedSearch {
                         /*STARTLOG*/
                         smwLog($askQuery,"CS","produced_factlist");
                         /*ENDLOG*/
-                        $htmlResult .= "<td><a class=\"askButton\" href=\"$wgServer$wgScript/".$wgContLang->getNsText(NS_SPECIAL).":Ask?title=".
-                        urlencode("".$wgContLang->getNsText(NS_SPECIAL).":Ask")."&query=".urlencode($askQuery)."&order=ASC\">".wfMsg('smw_cs_ask')."</a></td>";
+                        $ask_spage = Title::newFromText($wgContLang->getNsText(NS_SPECIAL).":Ask");
+                        $htmlResult .= "<td><a class=\"askButton\" href=\"".$ask_spage->getFullURL("title=".
+                        $ask_spage->getPrefixedDBkey()."&query=".urlencode($askQuery)."&order=ASC")."\">".wfMsg('smw_cs_ask')."</a></td>";
                         $htmlResult .= "</tr>";
                     }
                 }

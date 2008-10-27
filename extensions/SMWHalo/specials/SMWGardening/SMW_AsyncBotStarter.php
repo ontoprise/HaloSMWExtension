@@ -122,12 +122,7 @@ if ($bot != null) {
 	    if ($log != NULL && $log != '') {
             // create link to GardeningLog
             $glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
-            if (stripos($wgArticlePath, "?title") !== false) {
-                $gl_url = trim($wgServer) . str_replace("\$1", $glp->getPrefixedDBkey(), $wgArticlePath)."&bot=".$botID;
-            } else {
-                $gl_url = trim($wgServer) . str_replace("\$1", $glp->getPrefixedDBkey(), $wgArticlePath)."?bot=".$botID;
-            }
-            $log .= "\n\n".wfMsg('smw_gardeninglog_link', "[$gl_url ".$glp->getText()."]");
+            $log .= "\n\n".wfMsg('smw_gardeninglog_link', "[".$glp->getFullURL("bot=$botID")." ".$glp->getText()."]");
             
         }
             
