@@ -413,7 +413,11 @@
 
 	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftycube.js"></script>
 	<script type="text/javascript">
+		var smwgoldStartup = window.onload; 
 		window.onload=function(){
+			if (typeof smwgoldStartup == 'function'){
+		    	smwgoldStartup();
+		    }
 		    //Setting of all elemtents with round corners 
 			Nifty("div.selected","top transparent");
 			Nifty("div.smwf_navihead","normal");

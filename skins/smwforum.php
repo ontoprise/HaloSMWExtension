@@ -365,6 +365,8 @@
 										<a href="http://www.mister-wong.de/add_url/" onClick="location.href=&quot;http://www.mister-wong.de/index.php?action=addurl&amp;bm_url=&quot;+encodeURIComponent(location.href)+&quot;&amp;bm_description=&quot;+encodeURIComponent(document.title);return false" title="Diese Seite zu Mister Wong hinzufügen" target="_top"><img src="http://www.mister-wong.de/img/buttons/logo16.gif" alt="Diese Seite zu Mister Wong hinzufügen" border="0" /></a>
 										<!-- digg -->
 										<a href="http://digg.com/"><img src="http://digg.com/img/badges/16x16-digg-guy.png" width="16" height="16" alt="Digg!" /></a>
+										<!-- LinkArena -->
+										<a href="http://linkarena.com/bookmarks/addlink/?url=URL&title=TITEL&desc=BESCHREIBUNG&tags=TAGS"> <img src="http://linkarena.com/linkarena.ico" style="border: 0;width:16px;height:16px;margin-right: 6px;" /></a>
 										<!-- google -->
 										<!--<img src="http://google.com/favicon.ico"/>-->
 										<!--<a href="javascript:void(document.location='http://www.google.com/bookmarks/mark?op=edit&bkmk='+escape(document.location))">
@@ -424,17 +426,22 @@
 								}?>							
 				</div>
 			</div>
+			<?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
 	</div>
 
 
 	
-<?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+
 
 <!-- Nifty cube for round corners -->
 
 	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftycube.js"></script>
 	<script type="text/javascript">
+		var smwgoldStartup = window.onload; 
 		window.onload=function(){
+			if (typeof smwgoldStartup == 'function'){
+		    	smwgoldStartup();
+		    }
 		    //Setting of all elemtents with round corners 
 			Nifty("div.selected","top transparent");
 			Nifty("div.smwf_navihead","normal");

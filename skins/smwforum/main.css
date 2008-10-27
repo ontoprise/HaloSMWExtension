@@ -196,6 +196,7 @@
 	width: 200px;
 	float: left;
 	background-color: #F0F0F0;
+	margin-bottom: 10px;
 }
 
 .smwf_navihead{
@@ -248,6 +249,10 @@
 	vertical-align: middle;
 }
 
+#smwf_browserview .dtree .clip{
+	overflow-x: auto; 
+}
+
 #smwf_browserview .dTreeNode{
 	font-size: smaller;
 }
@@ -281,6 +286,7 @@
 #smwf_pageblock{
 	position: relative;
 	margin-left: 220px;
+	margin-bottom: 10px;
 }
 
 #smwf_pageblock ul{
@@ -307,12 +313,12 @@
 }
 
 #smwf_pageblock h1{
-	font-size: x-large;
+	font-size: xx-large;
 	border-bottom: 1px solid #4b595c;
 }
 
 #smwf_pageblock h2{
-	font-size: large;
+	font-size: x-large;
 	border-bottom: 1px solid #4b595c;
 }
 
@@ -400,6 +406,7 @@
 	clear: both;
 	border-bottom: 2px solid #F5AC3E;
 	height: 3.5em;
+	margin-top: 20px;
 }
 
 #f-poweredbyico{
@@ -466,19 +473,31 @@
 * just add a div to your page with class="darkround"
 */
 
-.smwforumtable .smwtable{
+#smwf_pageblock .smwtable{
+	background-color: #E6E6E6;
+}
+
+#smwf_pageblock .smwtable th{
+	background-color: #E6E6E6;
+}
+
+#smwf_pageblock .smwfooter td{
+	background-color: #FFF;
+}
+
+#smwf_pageblock .smwforumtable .smwtable{
 	background: none;
 }
 
-.smwforumtable .smwtable th{
+#smwf_pageblock .smwforumtable .smwtable th{
 	background: none;
 	border-bottom: 3px solid #F0F0F0;
 }
 
-.smwforumtable .smwtable th a{
+#smwf_pageblock .smwforumtable .smwtable th a{
 	color: #707E81;
 }
 
-.smwforumtable .smwtable td{
+#smwf_pageblock .smwforumtable .smwtable td{
 	border-bottom: 1px solid #F0F0F0;
 }
