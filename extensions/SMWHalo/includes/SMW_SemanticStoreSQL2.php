@@ -119,7 +119,12 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
             $maxDepth--;
 
             // get next supercategory level
-            $db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_title = cl_to WHERE page_namespace = '.NS_CATEGORY.' AND cl_from IN (SELECT * FROM smw_ob_properties_sub))');
+            $db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT s1.smw_id AS category FROM '.$categorylinks.
+                                                                ' JOIN '.$page.' p ON p.page_title = cl_to '.
+                                                                ' JOIN '.$smw_ids.' s1 ON p.page_title = s1.smw_title AND p.page_namespace = s1.smw_namespace '.
+                                                                ' JOIN '.$page.' p2 ON cl_from = p2.page_id '.
+                                                                ' JOIN '.$smw_ids.' s2 ON p2.page_title = s2.smw_title AND p2.page_namespace = s2.smw_namespace '.
+                                                                ' WHERE p.page_namespace = '.NS_CATEGORY.' AND s2.smw_id IN (SELECT * FROM smw_ob_properties_sub))');
 
             // insert direct properties of current supercategory level
             $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
