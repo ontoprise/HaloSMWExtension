@@ -42,9 +42,10 @@ class SMWOntologyBrowserXMLGenerator {
 			continue;
 		}
 		$title_esc = htmlspecialchars($t->getDBkey()); 
+		$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		$result = $result."<conceptTreeElement title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues</conceptTreeElement>";
+		$result = $result."<conceptTreeElement title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues</conceptTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) {
@@ -86,13 +87,14 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 			$instanceTitle = $instanceTitle->getTitle();
 		}
 		$titleEscaped = htmlspecialchars($instanceTitle->getDBkey()); 
+		$titleURLEscaped = htmlspecialchars(self::urlescape($instanceTitle->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instanceTitle);
  		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
  		if ($instWithCat && $t[1] != NULL) {
  			$categoryTitle = htmlspecialchars($t[1]->getDBkey());
- 			$result = $result."<instance title=\"".$titleEscaped."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
+ 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
  		} else {
- 			$result = $result."<instance title=\"".$titleEscaped."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+ 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
  		}
 		$count++;
 	}
@@ -131,9 +133,10 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
 			continue;
 		}
 		$title = htmlspecialchars($t->getDBkey());
+		$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		$result = $result."<propertyTreeElement title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues</propertyTreeElement>";
+		$result = $result."<propertyTreeElement title_url=\"$titleURLEscaped\" title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues</propertyTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) { 
@@ -162,7 +165,8 @@ public static function encapsulateAsAnnotationList(array & $propertyAnnotations,
 	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
 	$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);	
 	$instanceTitleEscaped = htmlspecialchars($instance->getDBkey()); 
-	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title=\"$instanceTitleEscaped\"/>" : "<annotationsList>".$result."</annotationsList>";
+	$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
+	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\"/>" : "<annotationsList>".$result."</annotationsList>";
 }
 
 
@@ -233,10 +237,11 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 		$isSymetricalText = $isMemberOfSymCat ? "isSymetrical=\"true\"" : "";
 		$isTransitiveText = $isMemberOfTransCat ? "isTransitive=\"true\"" : "";
 		$title_esc = htmlspecialchars($title->getDBkey());
+		$titleURLEscaped = htmlspecialchars(self::urlescape($title->getDBkey()));
 		$numberofUsage = smwfGetSemanticStore()->getNumberOfUsage($title);
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';	
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		return "<property title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
+		return "<property title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
 					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>".
 					$content.$gi_issues.
 				"</property>";
@@ -294,21 +299,23 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 			}
 			$repasteMarker = $isFormula || $needRepaste ? "chemFoEq=\"true\"" : "";
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
+			$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
  	 		SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$multiProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
+			$multiProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 	
 		} else if ($smwValue instanceof SMWWikiPageValue) { // relation
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
+			$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
  	 		SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 			$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getTitle()->getPrefixedDBkey()."</param>$gi_issues</annotation>";
+			$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getTitle()->getPrefixedDBkey()."</param>$gi_issues</annotation>";
 			
 		} else if ($smwValue != NULL){ // normal attribute
 			if ($smwValue->getTypeID() == '_che') {
@@ -329,11 +336,12 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
+			$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
  	 		SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$singleProperties .= "<annotation title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
+			$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
 		}
 		$count++;
 	}
@@ -354,5 +362,16 @@ private static function isPredefined($t) {
 		|| ($t->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey()) 
 		|| ($t->getDBkey()== smwfGetSemanticStore()->symetricalCat->getDBkey()); 
 } 	
+
+/**
+ * Encode URL, but do not escape slashes (/) 
+ *
+ * @param unknown_type $url
+ * @return unknown
+ */
+private static function urlescape($url) {
+	$url_esc = urlencode($url);
+	return str_replace("%2F", "/", $url_esc);
+}
 }
 ?>
