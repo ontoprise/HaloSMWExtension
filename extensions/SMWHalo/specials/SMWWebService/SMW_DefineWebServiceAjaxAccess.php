@@ -35,6 +35,7 @@ $wgAjaxExportList[] = 'smwf_ws_processStep6';
 global $smwgHaloIP;
 require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WebService.php');
 require_once($smwgHaloIP.'/specials/SMWWebService/SMW_WSDLArrayDetector.php');
+require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
 
 /**
  * this method is called after step 1 (specifying uri)

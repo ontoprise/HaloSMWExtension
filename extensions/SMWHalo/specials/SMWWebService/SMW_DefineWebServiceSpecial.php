@@ -362,7 +362,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$url = Title::makeTitleSafe(NS_SPECIAL, "webservicerepository")->getInternalURL();
 		$html .= "<div id=\"step7-container\"></div>";
 		$html .= "<br><br>";
-		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a></span>";
+		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a> You can now go on and define another WWSD.</span>";
 		$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgHaloScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
 		$html .= "</div>";
 
