@@ -193,7 +193,7 @@
 			<div id="smwf_naviblock">
 				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
 				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<div class="smwf_navihead" onclick="switchVisibility('navigationlist-<?php echo $bar ?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('navigationlist-<?php echo $bar ?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
 					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
 					</div>
 					<div id="navigationlist-<?php echo $bar ?>" class="smwf_navilist">
@@ -215,7 +215,7 @@
 				</div>
 				<?php } ?>				
 				<div id="smwf_toolbox">
-					<div class="smwf_navihead" onclick="switchVisibility('toolboxlist')"><?php $this->msg('toolbox') ?>
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('toolboxlist')"><?php $this->msg('toolbox') ?>
 					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
 					</div>
 					<div id="toolboxlist" class="smwf_navilist">
@@ -295,7 +295,7 @@
 					</div>
 				</div>
 				<div id='smwf_browser'>
-					<div class="smwf_navihead" onclick="switchVisibility('smwf_browserview')">Browser
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_browserview')">Browser
 					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
 					</div>
 					<div id="smwf_browserview">						
