@@ -645,6 +645,11 @@ function smwfHaloAddHTMLHeader(&$out) {
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js', "annotate");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Rule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Rule.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_CategoryRule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_CalculationRule.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_PropertyChain.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
