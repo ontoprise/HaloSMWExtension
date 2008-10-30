@@ -39,7 +39,7 @@ class ACLSpecialPage extends SpecialPage {
         $i = 0;
         if (isset($wgPermissionACL)) {
             foreach($wgPermissionACL as $pm) {
-                $group = $pm['group'];
+                $group = @$pm['group'];
                 $groupText = $group == NULL ? "-" : $group;
                 
                 $user = array_key_exists('user',$pm) ? $pm['user'] : NULL;
@@ -173,6 +173,17 @@ class ACLSpecialPage extends SpecialPage {
 		}
 		return false;
 	}
+	
+ /**
+  * Makes a shallow copy of the given source array.
+  */
+	private static function array_clone(& $src) {
+	 	$dst = array();
+	 	foreach($src as $e) {
+	 		$dst[] = $e;
+	 	}
+	 	return $dst;
+	 }
 }
 
 
