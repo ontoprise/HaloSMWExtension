@@ -29,7 +29,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 /**
- * @addtogroup API
+ * @ingroup API
  */
 class ApiFormatTxt extends ApiFormatBase {
 
@@ -56,4 +56,3 @@ class ApiFormatTxt extends ApiFormatBase {
 		return __CLASS__ . ': $Id$';
 	}
 }
-

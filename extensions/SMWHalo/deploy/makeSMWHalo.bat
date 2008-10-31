@@ -12,8 +12,8 @@ REM Create directories
 
 :CREATEDIRS
 mkdir %OUTPUT_DIR%
-mkdir %OUTPUT_DIR%\skins\common
 mkdir %OUTPUT_DIR%\skins\ontoskin
+mkdir %OUTPUT_DIR%\skins\ontoskin2
 mkdir %OUTPUT_DIR%\includes
 
 mkdir %OUTPUT_DIR%\extensions\SMWHalo
@@ -31,9 +31,10 @@ xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore.php %OUTPUT_DIR%\ext
 xcopy ..\..\SemanticMediaWiki\includes\storage\SMW_SQLStore2.php %OUTPUT_DIR%\extensions\SemanticMediaWiki\includes\storage /Y
 
 REM Patches for MW
-xcopy ..\..\..\includes\User.php %OUTPUT_DIR%\includes /Y
-xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
-xcopy ..\..\..\skins\common\ajax.js %OUTPUT_DIR%\skins\common /Y
+REM shoule be removed:
+REM xcopy ..\..\..\includes\Namespace.php %OUTPUT_DIR%\includes /Y
+
+REM Additional skins
 
 REM ontoskin
 xcopy ..\..\..\skins\ontoskin %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y

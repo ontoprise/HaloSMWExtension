@@ -31,7 +31,7 @@ class SMWFullSemanticData extends SMWSemanticData {
     public function setRules($rules) {
     	foreach ($rules as $ruleid => $ruletext) {
     		// check if ruleId already exists - if so, do not add rule again to parsed array
-	    	if ($this->rules[$ruleid] === NULL) {
+	    	if (!array_key_exists($ruleid, $this->rules)) {
 	    		$this->rules[$ruleid] = $ruletext;
 	    	}
     	}

@@ -30,8 +30,8 @@ if (!defined('MEDIAWIKI')) {
 
 /**
  * This is a simple class to handle action=help
- * 
- * @addtogroup API
+ *
+ * @ingroup API
  */
 class ApiHelp extends ApiBase {
 
@@ -60,4 +60,3 @@ class ApiHelp extends ApiBase {
 		return __CLASS__ . ': $Id$';
 	}
 }
-

@@ -70,9 +70,9 @@ smwfInitNamespaces();
 # __HIDEFACTBOX__ can be used to control Factbox display for individual pages. 
 # Other options for this setting include:
 ##
-//$smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
+$smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
 //$smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
-$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
+//$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
 //$smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
 ##
 

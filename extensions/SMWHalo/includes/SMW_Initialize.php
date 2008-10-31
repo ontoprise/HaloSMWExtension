@@ -164,7 +164,7 @@ function smwgHaloSetupExtension() {
 
 	// autocompletion option registration
 	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
-	$wgHooks['SetUserDefinedCookies'][] = 'smwfSetUserDefinedCookies';
+	$wgHooks['UserSaveSettings'][] = 'smwfSetUserDefinedCookies';
 
 	//parser function for multiple template annotations
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
@@ -580,7 +580,7 @@ function smwfHaloAddHTMLHeader(&$out) {
      * */
     if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
         
-        
+        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajax.js');
         $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
         $jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
             
@@ -1228,9 +1228,9 @@ function smwfAutoCompletionToggles(&$extraToggles) {
 	return true;
 }
 
-function smwfSetUserDefinedCookies(&$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure) {
-	global $wgUser,$wgScriptPath;
-	$triggerMode = $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
+function smwfSetUserDefinedCookies(& $user) {
+	global $wgScriptPath;
+	$triggerMode = $user->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
 	setcookie("AC_mode", $triggerMode, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
 	return true;
 }

@@ -29,7 +29,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 /**
- * @addtogroup API
+ * @ingroup API
  */
 class ApiFormatJson extends ApiFormatBase {
 
@@ -54,7 +54,7 @@ class ApiFormatJson extends ApiFormatBase {
 		$params = $this->extractRequestParams();
 		$callback = $params['callback'];
 		if(!is_null($callback)) {
-			$prefix = ereg_replace("[^_A-Za-z0-9]", "", $callback ) . "(";
+			$prefix = preg_replace("/[^][.\\'\\\"_A-Za-z0-9]/", "", $callback ) . "(";
 			$suffix = ")";
 		}
 
@@ -89,4 +89,3 @@ class ApiFormatJson extends ApiFormatBase {
 		return __CLASS__ . ': $Id$';
 	}
 }
-
