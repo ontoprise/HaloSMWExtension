@@ -149,7 +149,7 @@
  		$triplesNum = $this->model->size();
  		$oneCent = $triplesNum / 100;
  		$this->setNumberOfTasks(5);
- 		
+ 		$this->wikiStatements = array();
  		// translate categories
  		$this->addSubTask(1);
  		print "\nTranslate categories...";

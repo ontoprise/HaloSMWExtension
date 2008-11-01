@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://management.triplestore.smwplus.ontoprise.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://management.triplestore.smwplus.ontoprise.com/" name="ManagementEndpoint">
+ 
+ 
+  <message name="getTripleStoreStatus">
+    <part name="arg0" type="xsd:string" />
+  </message>
+  <message name="getTripleStoreStatusResponse">
+    <part name="return" type="xsd:string" />
+  </message>
+  <portType name="ManagementEndpoint">
+    
+    <operation name="getTripleStoreStatus" parameterOrder="arg0">
+      <input message="tns:getTripleStoreStatus" />
+      <output message="tns:getTripleStoreStatusResponse" />
+    </operation>
+
+  </portType>
+  <binding name="ManagementEndpointPortBinding" type="tns:ManagementEndpoint">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    
+    <operation name="getTripleStoreStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://management.triplestore.smwplus.ontoprise.com/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://management.triplestore.smwplus.ontoprise.com/" />
+      </output>
+    </operation>
+
+  </binding>
+  <service name="ManagementEndpointService">
+    <port name="ManagementEndpointPort" binding="tns:ManagementEndpointPortBinding">
+      <soap:address location="http://{{webservice-endpoint}}/manage" />
+    </port>
+  </service>
+</definitions>

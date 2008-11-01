@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
-xmlns:tns="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" 
+xmlns:tns="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" 
 xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" name="ExplanationEndpointService">
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" name="ExplanationEndpointService">
  
   <message name="query">
     <part name="arg0" type="xsd:string" />
@@ -11,7 +11,7 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://expla
     <part name="arg2" type="xsd:string"></part>
     <part name="arg3" type="xsd:string"></part>
   </message>
-  <message name="explainFloQueryResponse">
+  <message name="explainResponse">
     <part name="return" type="xsd:string" />
   </message>
   <message name="MalformedQuery">
@@ -29,10 +29,10 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://expla
     <part name="return" type="xsd:string" />
   </message>
   <portType name="ExplanationEndpoint">
-    <operation name="explainFloQuery" parameterOrder="arg0 arg1">
+    <operation name="explain" parameterOrder="arg0 arg1">
 
       <input message="tns:query" />
-      <output message="tns:explainFloQueryResponse" />
+      <output message="tns:explainResponse" />
       <fault name="MalformedQuery" message="tns:MalformedQuery" />
       <fault name="QueryRequestRefused" message="tns:QueryRequestRefused" />
     </operation>
@@ -43,49 +43,49 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://expla
 
   </portType>
   <binding name="ExplanationEndpointPortBinding"
-  	type="tns:ExplanationEndpoint">
+    type="tns:ExplanationEndpoint">
 
-  	<soap:binding style="rpc"
-  		transport="http://schemas.xmlsoap.org/soap/http" />
-  	<operation name="explainFloQuery">
+    <soap:binding style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="explain">
 
-  		<soap:operation
-  			soapAction="http://explanation.flogic.triplestore.smwplus.ontoprise.com/explainFloQuery" />
-  		<input>
+        <soap:operation
+            soapAction="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/explain" />
+        <input>
 
-  			<soap:body use="literal"
-  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
-  		</input>
-  		<output>
+            <soap:body use="literal"
+                namespace="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" />
+        </input>
+        <output>
 
-  			<soap:body use="literal"
-  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
-  		</output>
-  		<fault name="MalformedQuery">
+            <soap:body use="literal"
+                namespace="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" />
+        </output>
+        <fault name="MalformedQuery">
 
-  			<soap:fault use="literal" name="MalformedQuery" />
-  		</fault>
-  		<fault name="QueryRequestRefused">
+            <soap:fault use="literal" name="MalformedQuery" />
+        </fault>
+        <fault name="QueryRequestRefused">
 
-  			<soap:fault use="literal" name="QueryRequestRefused" />
-  		</fault>
-  	</operation>
+            <soap:fault use="literal" name="QueryRequestRefused" />
+        </fault>
+    </operation>
 
-  	<operation name="explainQuery">
+    <operation name="explainQuery">
 
-  		<soap:operation
-  			soapAction="http://explanation.flogic.triplestore.smwplus.ontoprise.com/explainQuery" />
-  		<input>
+        <soap:operation
+            soapAction="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/explainQuery" />
+        <input>
 
-  			<soap:body use="literal"
-  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
-  		</input>
-  		<output>
+            <soap:body use="literal"
+                namespace="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" />
+        </input>
+        <output>
 
-  			<soap:body use="literal"
-  				namespace="http://explanation.flogic.triplestore.smwplus.ontoprise.com/" />
-  		</output>
-  	</operation>
+            <soap:body use="literal"
+                namespace="http://explanation.ontobroker.drivers.triplestore.smwplus.ontoprise.com/" />
+        </output>
+    </operation>
 
   </binding>
   <service name="ExplanationEndpointService">

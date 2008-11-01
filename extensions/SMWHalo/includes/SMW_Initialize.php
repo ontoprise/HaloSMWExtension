@@ -580,7 +580,7 @@ function smwfHaloAddHTMLHeader(&$out) {
      * */
     if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
         
-        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajax.js');
+        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
         $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
         $jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
             

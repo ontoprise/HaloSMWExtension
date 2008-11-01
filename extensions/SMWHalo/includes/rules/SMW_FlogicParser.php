@@ -70,7 +70,7 @@ class SMWFlogicParser {
 		
 		$parseflogicinput = str_replace("|", "", $parseflogicinput); 
 			
-		$_parsedstring = self::$_client->parseFlogic($parseflogicinput);
+		$_parsedstring = self::$_client->parseRule($parseflogicinput);
 
 		$_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);

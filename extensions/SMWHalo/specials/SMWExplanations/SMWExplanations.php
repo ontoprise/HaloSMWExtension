@@ -179,7 +179,7 @@ END;
 			global $wgServer, $wgScript, $smwgNamespace, $smwgWebserviceUser, $smwgWebServicePassword;
 			ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_explanation", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));          
-	 		$explanation = $_client->explainFloQuery($smwgNamespace, $query);
+	 		$explanation = $_client->explain($smwgNamespace, $query);
 			
 	 		if($explanation == "-1"){
 	 			$explanation = "No explanation could be provided. Please check if all inputs are correct.";
