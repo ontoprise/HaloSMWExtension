@@ -6,8 +6,8 @@
 global $smwgHaloIP;
 
  require_once('SMW_CombinedSearch.php');
- require_once('SpecialSearch.php');
- require_once('SpecialCategories.php');
+ require_once('specials/SpecialSearch.php');
+ require_once('specials/SpecialCategories.php');
  require_once($smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
 // Register AJAX functions
