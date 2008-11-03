@@ -1795,6 +1795,7 @@ function SSLAuth( &$user ) {
 	global $wgLDAPSSLUsername;
 	global $wgUser;
 	global $wgAuth;
+	global $IP;
 
 	$wgAuth->printDebug( "Entering SSLAuth.", NONSENSITIVE );
 
@@ -1847,7 +1848,7 @@ function SSLAuth( &$user ) {
 	$wgAuth->printDebug( "User does not exist in local database; creating.", NONSENSITIVE );
 
 	//Require SpecialUserlogin so that we can get a loginForm
-	require_once( 'specials/SpecialUserlogin.php' );
+	require_once( $IP.'/includes/specials/SpecialUserlogin.php' );
 
 	//This section contains a silly hack for MW
 	global $wgLang;
