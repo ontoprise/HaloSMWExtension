@@ -3,11 +3,11 @@
  *
  * @author Joerg Heizmann
  */
-global $smwgHaloIP;
+global $smwgHaloIP, $IP;
 
  require_once('SMW_CombinedSearch.php');
- require_once('specials/SpecialSearch.php');
- require_once('specials/SpecialCategories.php');
+ require_once($IP.'/includes/specials/SpecialSearch.php');
+ require_once($IP.'/includes/specials/SpecialCategories.php');
  require_once($smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
 // Register AJAX functions
