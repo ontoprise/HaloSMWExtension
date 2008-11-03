@@ -1847,7 +1847,7 @@ function SSLAuth( &$user ) {
 	$wgAuth->printDebug( "User does not exist in local database; creating.", NONSENSITIVE );
 
 	//Require SpecialUserlogin so that we can get a loginForm
-	require_once( 'SpecialUserlogin.php' );
+	require_once( 'specials/SpecialUserlogin.php' );
 
 	//This section contains a silly hack for MW
 	global $wgLang;
