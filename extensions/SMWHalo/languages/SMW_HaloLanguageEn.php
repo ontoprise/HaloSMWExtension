@@ -615,13 +615,6 @@ clicking the big arrows between the columns.',
     'smw_deletepage_linkstopage'=> 'Pages with links to that page',
     'smw_deletepage_prev' => 'Prev',
     'smw_deletepage_next' => 'Next',
-
-	// Glossary
-	'smw_gloss_no_description' => '"$1" is annotated as glossary term but has no description yet.',
-	'smw_gard_glossarybothelp' => 'This bot highlights all terms that belong to the glossary in all articles that belong to the category "ShowGlossary".',
-	'smw_glossarybot' => 'Update glossary highlighting',
-	'smw_gloss_annotated_glossary' => 'Glossary terms found and annotated in article "$1".',
-	
 	
     // Triple Store Admin
     'tsa' => 'Triple store administration',
@@ -673,8 +666,7 @@ clicking the big arrows between the columns.',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
-	SMW_SSP_IS_EQUAL_TO => 'Is equal to',
-	SMW_SSP_GLOSSARY => 'glossary'
+	SMW_SSP_IS_EQUAL_TO => 'Is equal to'
 	);
 
 	var $smwSpecialCategories = array (
@@ -685,8 +677,7 @@ clicking the big arrows between the columns.',
 	var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemical formula',
 	'smw_hdt_chemical_equation' => 'Chemical equation',
-	'smw_hdt_mathematical_equation' => 'Mathematical equation',
-	'smw_hdt_glossary' => 'Glossary Term',
+	'smw_hdt_mathematical_equation' => 'Mathematical equation'
 	);
 
 	protected $smwHaloNamespaces = array(
