@@ -14,7 +14,6 @@ define('SMW_SSP_HAS_MAX_CARD', 2);
 define('SMW_SSP_HAS_MIN_CARD', 3);
 define('SMW_SSP_IS_INVERSE_OF', 4);
 define('SMW_SSP_IS_EQUAL_TO', 5);
-define('SMW_SSP_GLOSSARY', 6);
 
 // constants for special categories
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
@@ -405,9 +404,6 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
 	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
 	$smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
-	$wgAutoloadClasses['SMWGlossaryTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_Glossary.php';
-	SMWDataValueFactory::registerDatatype('_glo', 'SMWGlossaryTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_glossary'));
 	 
 	return true;
 }
