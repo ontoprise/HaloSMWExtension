@@ -372,7 +372,7 @@ DefineWebServiceSpecial.prototype = {
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = wgScriptPath
-										+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+										+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 								expandIMG.i = i;
 								expandIMG.k = k;
 								var el = this.paramPathStepClick
@@ -406,7 +406,7 @@ DefineWebServiceSpecial.prototype = {
 						expandPathStep = document.createElement("span");
 						expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+								+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 						expandPathStep.appendChild(expandIMG);
 						paramPathStep.insertBefore(expandPathStep,
 								paramPathStep.firstChild);
@@ -760,7 +760,7 @@ DefineWebServiceSpecial.prototype = {
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = wgScriptPath
-										+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+										+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 								expandIMG.i = i;
 								expandIMG.k = k;
 								var el = this.resultPathStepClick
@@ -793,7 +793,7 @@ DefineWebServiceSpecial.prototype = {
 						var expandPathStep = document.createElement("span");
 						var expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+								+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 						expandPathStep.appendChild(expandIMG);
 						resultPathStep.insertBefore(expandPathStep,
 								resultPathStep.firstChild);
@@ -1452,7 +1452,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].firstChild.firstChild.k = r;
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Plus.gif") {
+									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 								pathSteps[r].firstChild.expanded = false;
 							} else {
@@ -1515,7 +1515,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].firstChild.firstChild.k = r;
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src
-									.indexOf("Plus.gif") != -1) {
+									.indexOf("plus.gif") != -1) {
 								pathSteps[r].firstChild.firstChild.expand = true;
 								pathSteps[r].firstChild.expanded = false;
 							} else {
@@ -1800,7 +1800,7 @@ DefineWebServiceSpecial.prototype = {
 
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Plus.gif") {
+									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 								pathSteps[r].firstChild.expanded = false;
 							} else {
@@ -1885,7 +1885,7 @@ DefineWebServiceSpecial.prototype = {
 								+ "/extensions/SMWHalo/skins/webservices/delete.gif";
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Plus.gif") {
+									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 							} else {
 								pathSteps[r].firstChild.firstChild.expand = false;
@@ -2067,7 +2067,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step3-paramRow-" + i).rowIndex;
 
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/Minus.gif";
+				+ "/extensions/SMWHalo/skins/webservices/minus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = true;
 
 		var goon = true;
@@ -2134,7 +2134,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step3-paramRow-" + i).rowIndex;
 
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+				+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = false;
 
 		for ( var m = k * 1 + 1; m < this.preparedPathSteps[i].length; m++) {
@@ -2196,7 +2196,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step4-resultRow-" + i).rowIndex;
 
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/Minus.gif";
+				+ "/extensions/SMWHalo/skins/webservices/minus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "true";
 
 		var goon = true;
@@ -2260,7 +2260,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step4-resultRow-" + i).rowIndex;
 
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/Plus.gif";
+				+ "/extensions/SMWHalo/skins/webservices/plus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "false";
 		for ( var m = k + 1; m < this.preparedRPathSteps[i].length; m++) {
 			this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[m].style.visibility = "hidden";
