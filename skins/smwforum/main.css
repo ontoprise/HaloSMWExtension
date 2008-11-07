@@ -371,6 +371,10 @@
 		color: #00D;
 }
 
+textarea{
+	width: 97%;
+}
+
 /**
 * My Preferences
 */
