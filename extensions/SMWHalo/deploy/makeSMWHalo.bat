@@ -42,7 +42,7 @@ xcopy ..\..\..\skins\OntoSkin.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin.php %OUTPUT_DIR%\skins /Y
 
 REM ontoskin2
-xcopy ..\..\..\skins\ontoskin2 %OUTPUT_DIR%\skins\ontoskin /S /EXCLUDE:excludeForHalo.dat /Y
+xcopy ..\..\..\skins\ontoskin2 %OUTPUT_DIR%\skins\ontoskin2 /S /EXCLUDE:excludeForHalo.dat /Y
 xcopy ..\..\..\skins\OntoSkin2.deps.php %OUTPUT_DIR%\skins /Y
 xcopy ..\..\..\skins\OntoSkin2.php %OUTPUT_DIR%\skins /Y
 
