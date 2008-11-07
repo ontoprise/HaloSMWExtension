@@ -250,7 +250,7 @@
 }
 
 #smwf_browserview .dtree .clip{
-	overflow-x: auto; 
+	overflow: visible; 
 }
 
 #smwf_browserview .dTreeNode{
@@ -266,8 +266,8 @@
 	margin-left: 5px;
 }
 
-#maintree{
-	overflow-x: auto;
+#maintree .dtree{
+	overflow: auto;
 }
 
 #OntoSkinTemplateNavigationEnd{

@@ -151,6 +151,7 @@
 	margin-right: 1em;
 	margin-top: 0.1em;
 	height:	1.4em;
+	/* overflow: hidden; */
 }
 
 .smwf_tabs a{
@@ -158,11 +159,13 @@
 	color: #FFF;
 	font-size: small;
 	text-decoration: none;
+	background-color: #0091a6;
 	margin-top:5px;
 	margin-left:5px;
 	margin-right:5px; 
 	padding-left: 10px;
 	padding-right: 10px;
+	white-space: nowrap;
 }
 .selected{
 	background-color: #FFF;
@@ -178,7 +181,8 @@
 	text-decoration: none;
 	margin-top:5px;
 	margin-left:5px;
-	margin-right:5px; 
+	margin-right:5px;
+	background-color: #FFF; 
 }
 
 
@@ -240,11 +244,6 @@
 	font-size: smaller;
 }
 
-textarea {
-    width: 97%;
-    /* padding: .1em; */
-}
-
 #smwf_browserview{
 
 }
@@ -267,8 +266,25 @@ textarea {
 	margin-left: 5px;
 }
 
-#maintree{
-	overflow-x: auto;
+#smwf_browserview .dtree .clip{
+	overflow: visible; 
+}
+
+#smwf_browserview .dTreeNode{
+	font-size: smaller;
+}
+
+#smwf_browserview .dTreeNode img{
+
+}
+
+#smwf_browserview .Treeview5{
+	width: 190px;
+	margin-left: 5px;
+}
+
+#maintree .dtree{
+	overflow: auto;
 }
 
 #OntoSkinTemplateNavigationEnd{
@@ -371,6 +387,10 @@ textarea {
 		color: #00D;
 }
 
+textarea{
+	width: 97%;
+}
+
 /**
 * My Preferences
 */
@@ -450,7 +470,7 @@ textarea {
 
 /**
 * CSS for Infoboxes in the wikipages
-* just add a div to your page with class="darkround"
+* just add a div to your page with class="blueround_head" above content and class="blueround" surrounding the content  
 */
 
 
@@ -459,9 +479,10 @@ textarea {
 }
 
 .blueround{
-	background: #FFF url(Sticki_newsbox_backgr.gif) 0 0 repeat-x;
+	background: transparent url(Sticki_newsbox_backgr.gif) 0 0 repeat-x;
 	font-size: x-small;
-	margin-top: -10px;
+	padding: 10px;
+	margin-top: 5px;
 }
 
 .blueround a{
@@ -476,25 +497,9 @@ textarea {
 
 /**
 * CSS for inline queries in table format
-* just add a div to your page with class="darkround"
+* just add a div to your page around content with class="darkround"
 */
 
-.smwforumtable .smwtable{
-	background: none;
-}
-
-.smwforumtable .smwtable th{
-	background: none;
-	border-bottom: 3px solid #F0F0F0;
-}
-
-.smwforumtable .smwtable th a{
-	color: #67666B;
-}
-
-.smwforumtable .smwtable td{
-	border-bottom: 1px solid #F0F0F0;
-}
 
 #smwf_pageblock .smwtable{
 	background-color: #E6E6E6;
@@ -502,4 +507,25 @@ textarea {
 
 #smwf_pageblock .smwtable th{
 	background-color: #E6E6E6;
+}
+
+#smwf_pageblock .smwfooter td{
+	background-color: #FFF;
+}
+
+#smwf_pageblock .smwforumtable .smwtable{
+	background: none;
+}
+
+#smwf_pageblock .smwforumtable .smwtable th{
+	background: none;
+	border-bottom: 3px solid #F0F0F0;
+}
+
+#smwf_pageblock .smwforumtable .smwtable th a{
+	color: #67666B;
+}
+
+#smwf_pageblock .smwforumtable .smwtable td{
+	border-bottom: 1px solid #F0F0F0;
 }
