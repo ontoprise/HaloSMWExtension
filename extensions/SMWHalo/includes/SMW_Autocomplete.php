@@ -236,7 +236,8 @@ class AutoCompletionRequester {
  	    			$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
  	    		
  	    			$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeRelation);
+ 	    			$domainRangeDV = SMWPropertyValue::makeUserProperty($domainRangeRelation);
+ 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeDV);
  	    				    			
  	    			$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
  	    			
@@ -545,15 +546,18 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$substring = str_replace("_", " ",$substring);
 		
 		// get all types of a property (normally 1)
-		$types = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+		$conversionFactorDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR);
+		$conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		foreach($types as $t) {
 			if ($t->isBuiltIn()) continue; // ignore builtin types, because they have no unit
 			$subtypes = explode(";", $t->getXSDValue());
 			foreach($subtypes as $st) {
 				// get all units registered for a given type
 				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
-				$units = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
-				$units_si = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
+				$units = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
+				$units_si = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
 				$all_units = array_merge($all_units, $units, $units_si);
 			}
 		}
@@ -586,7 +590,8 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	}
 	
 	public function getPossibleValues(Title $property) {
-		$poss_values = smwfGetStore()->getSpecialValues($property, SMW_SP_POSSIBLE_VALUE);
+		$possibleValueDV = SMWPropertyValue::makeProperty(SMW_SP_POSSIBLE_VALUE);
+		$poss_values = smwfGetStore()->getPropertyValues($property, $possibleValueDV);
 		$result = array();
 		foreach($poss_values as $v) {
 			$result[] = $v->getXSDValue();
@@ -828,14 +833,14 @@ public function getPropertyWithType($match, $typeLabel) {
         $page = $db->tableName('page');
         $result = array();
         $typeID = SMWDataValueFactory::findTypeID($typeLabel);
-        
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
         $res = $db->query('(SELECT i2.smw_title AS title FROM '.$smw_ids.' i2 '.
-					           'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.sp_id = '.SMW_SP_HAS_TYPE.' '.
+					           'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
 					           'JOIN '.$smw_ids.' i ON s1.value_string = i.smw_title AND i.smw_namespace = '.SMW_NS_TYPE.' '.
 					           'JOIN '.$smw_spec2.' s2 ON s2.s_id = i.smw_id AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
 					           'WHERE i2.smw_namespace = '.SMW_NS_PROPERTY.' AND UPPER(i2.smw_title) LIKE UPPER(' . $db->addQuotes("%$match%").'))'.
 					        ' UNION (SELECT smw_title AS title FROM smw_ids i '.
-					           'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.sp_id = '.SMW_SP_HAS_TYPE.' '.
+					           'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
 					           'WHERE UPPER(i.smw_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
 					           'UPPER(s1.value_string) = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
 					        'LIMIT '.SMW_AC_MAX_RESULTS);

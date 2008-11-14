@@ -16,8 +16,9 @@ include_once($smwgIP . '/languages/SMW_Language.php');
 
 /**
  * English language labels for important SMW labels (namespaces, datatypes,...).
- * 
+ *
  * @author Markus Krötzsch
+ * @ingroup SMWLanguage
  * @ingroup Language
  */
 class SMWLanguageEn extends SMWLanguage {
@@ -46,18 +47,19 @@ protected $m_DatatypeAliases = array(
 
 protected $m_SpecialProperties = array(
 	//always start upper-case
-	SMW_SP_HAS_TYPE  => 'Has type',
-	SMW_SP_HAS_URI   => 'Equivalent URI',
-	SMW_SP_SUBPROPERTY_OF => 'Subproperty of',
-	SMW_SP_DISPLAY_UNITS => 'Display units',
-	SMW_SP_IMPORTED_FROM => 'Imported from',
-	SMW_SP_CONVERSION_FACTOR => 'Corresponds to',
-	SMW_SP_SERVICE_LINK => 'Provides service',
-	SMW_SP_POSSIBLE_VALUE => 'Allows value'
+	'_TYPE' => 'Has type',
+	'_URI'  => 'Equivalent URI',
+	'_SUBP' => 'Subproperty of',
+	'_UNIT' => 'Display units',
+	'_IMPO' => 'Imported from',
+	'_CONV' => 'Corresponds to',
+	'_SERV' => 'Provides service',
+	'_PVAL' => 'Allows value',
+	'_MDAT' => 'Modification date'
 );
 
 protected $m_SpecialPropertyAliases = array(
-	'Display unit' => SMW_SP_DISPLAY_UNITS
+	'Display unit' => '_UNIT'
 );
 
 protected $m_Namespaces = array(
@@ -70,6 +72,12 @@ protected $m_Namespaces = array(
 	SMW_NS_CONCEPT        => 'Concept',
 	SMW_NS_CONCEPT_TALK   => 'Concept_talk'
 );
+
+protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_MDY,SMW_DMY,SMW_YMD,SMW_YDM));
+
+protected $m_months = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+
+protected $m_monthsshort = array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 
 }
 

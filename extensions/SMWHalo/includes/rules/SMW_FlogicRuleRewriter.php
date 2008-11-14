@@ -76,8 +76,9 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$predicate = $match[2];
 		$object = $match[3];
 		$literalpredicate = false;
-			
-		$types = smwfGetStore()->getSpecialValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), SMW_SP_HAS_TYPE);
+
+		$predicateDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+		$types = smwfGetStore()->getPropertyValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), $predicateDV);
 		
 		if (!in_array($subject, $this->variables)) {
 			$subject = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($subject);

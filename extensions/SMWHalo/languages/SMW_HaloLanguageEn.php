@@ -657,7 +657,7 @@ clicking the big arrows between the columns.',
 
 	protected $smwSpecialProperties = array(
 	//always start upper-case
-	SMW_SP_CONVERSION_FACTOR_SI => 'Corresponds to SI'
+	SMW_SP_CONVERSION_FACTOR_SI => array('_num', 'Corresponds to SI')
 	);
 
 

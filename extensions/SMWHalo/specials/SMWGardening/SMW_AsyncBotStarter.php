@@ -131,8 +131,8 @@ if ($bot != null) {
         if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
             
     } catch(Exception $e) {
-
-        $log = 'Something bad happened during execution of "'.$botID.'": '.$e->getMessage();
+        $glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
+        $log = "\n\nSomething bad happened during execution of '".$botID."': ".$e->getMessage();
         $log .= "\n[[".$glp->getPrefixedText()."]]";
         echo $log;
 

@@ -81,7 +81,7 @@ class AnnotationLevelConsistency {
 
             // get annotation subjects for the property.
             $subjects = array();
-            $allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p);
+            $allPropertySubjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($p->getText()));
             foreach ($allPropertySubjects as $dv) {
                 $subjects[] = $dv->getTitle();
             };
@@ -94,7 +94,8 @@ class AnnotationLevelConsistency {
 
     public function checkPropertyAnnotations(& $subjects, $property) {
         // get domain and range categories of property
-        $domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintRelation);
+        $domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+        $domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeHintRelationDV);
 
 
         if (empty($domainRangeAnnotations)) {
@@ -127,7 +128,8 @@ class AnnotationLevelConsistency {
             }
 
             // get property value for a given instance
-            $relationTargets = smwfGetStore()->getPropertyValues($subject, $property);
+            $propertyDV = SMWPropertyValue::makeUserProperty($property->getText());
+            $relationTargets = smwfGetStore()->getPropertyValues($subject, $propertyDV);
 
             foreach($relationTargets as $target) {
 
@@ -233,7 +235,8 @@ class AnnotationLevelConsistency {
 
     public function checkAnnotationCardinalities($a) {
         // get minimum cardinality
-        $minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
+        $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+        $minCardArray = smwfGetStore()->getPropertyValues($a, $minCardDV);
 
         if (empty($minCardArray)) {
             // if it does not exist, get minimum cardinality from superproperty
@@ -244,7 +247,8 @@ class AnnotationLevelConsistency {
         }
 
         // get maximum cardinality
-        $maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
+        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+        $maxCardsArray = smwfGetStore()->getPropertyValues($a, $maxCardDV);
 
         if (empty($maxCardsArray)) {
             // if it does not exist, get maximum cardinality from superproperty
@@ -296,7 +300,8 @@ class AnnotationLevelConsistency {
         }
             
         // get domains
-        $domainRangeAnnotations = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainRangeHintRelation);
+        $domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+        $domainRangeAnnotations = smwfGetStore()->getPropertyValues($a, $domainRangeHintRelationDV);
 
         if (empty($domainRangeAnnotations)) {
             // if there are no domain categories defined, this check can not be applied.
@@ -329,10 +334,11 @@ class AnnotationLevelConsistency {
     public function checkAnnotationCardinalitiesForInstance($instance, array & $domainProperties) {
 
         $properties = smwfGetStore()->getProperties($instance);
-
+        $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
         foreach($properties as $a) {
             // get minimum cardinality
-            $minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
+            $minCardArray = smwfGetStore()->getPropertyValues($a, $minCardDV);
 
             if (empty($minCardArray)) {
                 // if it does not exist, get minimum cardinality from superproperty
@@ -343,7 +349,7 @@ class AnnotationLevelConsistency {
             }
 
             // get maximum cardinality
-            $maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
+            $maxCardsArray = smwfGetStore()->getPropertyValues($a, $maxCardDV);
 
             if (empty($maxCardsArray)) {
                 // if it does not exist, get maximum cardinality from superproperty
@@ -361,7 +367,8 @@ class AnnotationLevelConsistency {
 
             // get all instances which have instantiated properties (including subproperties) of $a
             // and the number of these annotations for each for instance
-            $result = smwfGetStore()->getPropertyValues($instance, $a);
+            $aDV = SMWPropertyValue::makeUserProperty($a->getText());
+            $result = smwfGetStore()->getPropertyValues($instance, $aDV);
 
             // compare actual number of appearances to minCard and maxCard and log errors if necessary
 
@@ -390,7 +397,7 @@ class AnnotationLevelConsistency {
         foreach($domainProperties as $domainProperty) {
 
             // get minimum cardinality
-            $minCardArray = smwfGetStore()->getPropertyValues($domainProperty, smwfGetSemanticStore()->minCard);
+            $minCardArray = smwfGetStore()->getPropertyValues($domainProperty, $minCardDV);
 
             if (empty($minCardArray)) {
                 // if it does not exist, get minimum cardinality from superproperty
@@ -404,8 +411,8 @@ class AnnotationLevelConsistency {
                 // default case: no check needed, so skip it.
                 continue;
             }
-
-            $num = count(smwfGetStore()->getPropertyValues($instance, $domainProperty));
+            $domainPropertyDV = SMWPropertyValue::makeUserProperty($domainProperty->getText());
+            $num = count(smwfGetStore()->getPropertyValues($instance, $domainPropertyDV));
 
             if ($num == 0) {
 
@@ -446,8 +453,10 @@ class AnnotationLevelConsistency {
             $units = smwfGetSemanticStore()->getDistinctUnits($type);
             
             // get all *defined* units for a given datatype
-            $conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR);
-            $si_conversion_factors = smwfGetStore()->getSpecialValues($type, SMW_SP_CONVERSION_FACTOR_SI);
+            $conversionFactorDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR);
+            $conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+            $conversion_factors = smwfGetStore()->getPropertyValues($type, $conversionFactorDV);
+            $si_conversion_factors = smwfGetStore()->getPropertyValues($type, $conversionFactorSIDV);
             
             // match used units against defined a log if there's a mismatch
             foreach($units as $unit) {
@@ -490,18 +499,22 @@ class AnnotationLevelConsistency {
     } 
 
     public function checkUnitForInstance($instance) {
-            
+        
+    	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+    	$conversionFactorDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR);
+        $conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
         $properties = smwfGetStore()->getProperties($instance);
         foreach($properties as $p) {
-            $values = smwfGetStore()->getPropertyValues($instance, $p);
+        	$pDV = SMWPropertyValue::makeUserProperty($p->getText());
+            $values = smwfGetStore()->getPropertyValues($instance, $pDV);
             foreach($values as $v) {
                 if ($v->getUnit() != '') {
-                    $type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
+                    $type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
                     $firstType = reset($type); 
                     if (count($type) == 0 || $firstType->isBuiltIn()) continue;
                     $typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
-                    $conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
-                    $si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
+                    $conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
+                    $si_conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
                     $correct_unit = false;
 
                     // check if a unit matches
@@ -536,17 +549,21 @@ class AnnotationLevelConsistency {
     }
 
     public function checkUnitsForProperty($property) {
-        $type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+    	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+    	$conversionFactorDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR);
+        $conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+        $type = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
         $firstType = reset($type); 
         if (count($type) == 0 || $firstType->isBuiltIn()) return;
         $typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
-        $subjects = smwfGetStore()->getAllPropertySubjects($property);
+        $subjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getText()));
         foreach($subjects as $s) {
-            $values = smwfGetStore()->getPropertyValues($s->getTitle(), $property);
+        	$propertyDV = SMWPropertyValue::makeUserProperty($property->getText());
+            $values = smwfGetStore()->getPropertyValues($s->getTitle(), $propertyDV);
             foreach($values as $v) {
                 if ($v->getUnit() != '') {
-                    $conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR);
-                    $si_conversion_factors = smwfGetStore()->getSpecialValues($typeTitle, SMW_SP_CONVERSION_FACTOR_SI);
+                    $conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
+                    $si_conversion_factors = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
                     $correct_unit = false;
 
                     // check if a unit matches
@@ -586,11 +603,13 @@ class AnnotationLevelConsistency {
      * @param $property n-ary property
      */
     private function checkForMissingParams(array & $subjects, $property) {
-        $type = smwfGetStore()->getSpecialValues($property, SMW_SP_HAS_TYPE);
+    	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+        $type = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
         $firstType = reset($type);  
         if (count($type) == 0 || $firstType->isUnary()) return;
         foreach($subjects as $subject) {
-            $values = smwfGetStore()->getPropertyValues($subject, $property);
+        	$propertyDV = SMWPropertyValue::makeUserProperty($property->getText());
+            $values = smwfGetStore()->getPropertyValues($subject, $propertyDV);
             foreach($values as $v) {
                 if ($v instanceof SMWNAryValue) { // n-ary relation
 

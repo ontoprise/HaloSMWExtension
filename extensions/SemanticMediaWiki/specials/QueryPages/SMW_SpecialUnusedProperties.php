@@ -11,14 +11,19 @@
 
 
 function smwfDoSpecialUnusedProperties() {
+	global $wgOut;
 	wfProfileIn('smwfDoSpecialUnusedProperties (SMW)');
 	list( $limit, $offset ) = wfCheckLimits();
 	$rep = new SMWUnusedPropertiesPage();
 	$result = $rep->doQuery( $offset, $limit );
+	SMWOutputs::commitToOutputPage($wgOut); // make sure locally collected output data is pushed to the output!
 	wfProfileOut('smwfDoSpecialUnusedProperties (SMW)');
 	return $result;
 }
 
+/**
+ * @ingroup SMW
+ */
 class SMWUnusedPropertiesPage extends SMWQueryPage {
 
 	function getName() {
@@ -41,21 +46,21 @@ class SMWUnusedPropertiesPage extends SMWQueryPage {
 
 	function formatResult( $skin, $result ) {
 		global $wgLang, $wgExtraNamespaces;
-		$proplink = $skin->makeKnownLinkObj( $result, $result->getText() );
-		$types = smwfGetStore()->getSpecialValues($result, SMW_SP_HAS_TYPE);
+		$proplink = $skin->makeKnownLinkObj( $result->getWikiPageValue()->getTitle(), $result->getWikiValue() );
+		$types = smwfGetStore()->getPropertyValues($result->getWikiPageValue(), SMWPropertyValue::makeProperty('_TYPE')); // TODO: do not bypass SMWDataValueFactory!
 		$errors = array();
 		wfLoadExtensionMessages('SemanticMediaWiki');
 		if (count($types) >= 1) {
 			$typestring = current($types)->getLongHTMLText($skin);
 		} else {
-			$type = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE);
+			$type = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty('_TYPE'));
 			$type->setXSDValue('_wpg');
 			$typestring = $type->getLongHTMLText($skin);
 			$errors[] = wfMsg('smw_propertylackstype', $type->getLongHTMLText());
 		}
 		return wfMsg('smw_unusedproperty_template', $proplink, $typestring) . ' ' . smwfEncodeMessages($errors);
 	}
-	
+
 	function getResults($requestoptions) {
 		return smwfGetStore()->getUnusedPropertiesSpecial($requestoptions);
 	}

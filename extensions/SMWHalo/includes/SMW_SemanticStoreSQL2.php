@@ -159,12 +159,13 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
         } else {
             $domainAndRangeID = $domainAndRange->smw_id;
         }
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
         $resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id'. 
                              ' GROUP BY property ORDER BY property');
         $resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id'. 
                              ' GROUP BY property ORDER BY property');
         $resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_spec2.' ON smw_id = s_id'. 
-                             ' WHERE sp_id = '.SMW_SP_HAS_TYPE.' GROUP BY property ORDER BY property');
+                             ' WHERE p_id = '.$hasTypePropertyID.' GROUP BY property ORDER BY property');
         $resSymCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
         $resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
@@ -300,8 +301,9 @@ public function getDistinctUnits(Title $type) {
         $smw_rels2 = $db->tableName('smw_rels2');
         $smw_ids = $db->tableName('smw_ids');
         $smw_spec2 = $db->tableName('smw_spec2');
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
         
-        $res = $db->query(  'SELECT DISTINCT a.value_unit FROM '.$smw_atts2.' a JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.sp_id = '.SMW_SP_HAS_TYPE.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()));
+        $res = $db->query(  'SELECT DISTINCT a.value_unit FROM '.$smw_atts2.' a JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.p_id = '.$hasTypePropertyID.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()));
                                     
         
         $result = array();
@@ -323,7 +325,8 @@ public function getDistinctUnits(Title $type) {
         $smw_spec2 = $db->tableName('smw_spec2');
         
         $result = array();
-        $res = $db->query('SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title FROM '.$smw_ids.' i JOIN '.$smw_atts2.' a ON i.smw_id = a.s_id JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.sp_id = '.SMW_SP_HAS_TYPE.' JOIN '.$smw_ids.' i2 ON i2.smw_id = a.p_id '.
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+        $res = $db->query('SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title FROM '.$smw_ids.' i JOIN '.$smw_atts2.' a ON i.smw_id = a.s_id JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.p_id = '.$hasTypePropertyID.' JOIN '.$smw_ids.' i2 ON i2.smw_id = a.p_id '.
                             ' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).' AND a.value_unit = '.$db->addQuotes($unit));
         
         if($db->numRows( $res ) > 0) {

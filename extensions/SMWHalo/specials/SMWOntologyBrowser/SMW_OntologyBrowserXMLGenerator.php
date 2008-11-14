@@ -159,7 +159,8 @@ public static function encapsulateAsAnnotationList(array & $propertyAnnotations,
 	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($propertyAnnotations as $a) {
 		list($property, $values) = $a;
-		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $property, $values);
+		$propertyTitle = Title::newFromText($property->getXSDValue(), SMW_NS_PROPERTY);
+		$result .= SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotation($instance, $propertyTitle, $values);
 	}
 	// get low cardinality issues and "highlight" missing annotations. This is an exception because missing annotations do not exist.
 	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
@@ -221,7 +222,7 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 			}
 		} else {
 			// it must be an attribute or n-ary relation otherwise.
-			$v = SMWDataValueFactory::newSpecialValue(SMW_SP_HAS_TYPE);
+			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
 			$v->setXSDValue($type);
 			$typesOfAttributeAsString = $v->getTypeLabels();
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {

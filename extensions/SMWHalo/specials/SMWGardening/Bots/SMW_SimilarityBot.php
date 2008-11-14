@@ -675,8 +675,9 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedDomainCategories(Title $title1, Title $title2) {
-		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintRelation);
-		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintRelation);
+		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+		$domRange1 = smwfGetStore()->getPropertyValues($title1, $domainRangeHintRelationDV);
+		$domRange2 = smwfGetStore()->getPropertyValues($title2, $domainRangeHintRelationDV);
 
 		$result = array();
 		foreach($domRange1 as $dr1) {
@@ -697,8 +698,9 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedRangeCategories(Title $title1, Title $title2) {
-		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintRelation);
-		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintRelation);
+		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+		$domRange1 = smwfGetStore()->getPropertyValues($title1, $domainRangeHintRelationDV);
+		$domRange2 = smwfGetStore()->getPropertyValues($title2, $domainRangeHintRelationDV);
 
 		$result = array();
 		foreach($domRange1 as $dr1) {
@@ -719,9 +721,10 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedTypes(Title $title1, Title $title2) {
-		 
-		$values1 = smwfGetStore()->getSpecialValues($title1, SMW_SP_HAS_TYPE);
-		$values2 = smwfGetStore()->getSpecialValues($title1, SMW_SP_HAS_TYPE);
+
+		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+		$values1 = smwfGetStore()->getPropertyValues($title1, $hasTypeDV);
+		$values2 = smwfGetStore()->getPropertyValues($title1, $hasTypeDV);
 
 		$result = array();
 		// ignore several types

@@ -105,8 +105,7 @@ class PropertyCoVarianceDetector {
         $this->checkMaxCardinality($p);
         $this->checkDomainAndRangeCovariance($p);
         $this->checkTypeEquality($p);
-        //$this->checkRangeCovariance($a);
-        //$this->checkSymTransCovariance($p);
+        
     }
 
     /**
@@ -115,9 +114,10 @@ class PropertyCoVarianceDetector {
     private function checkMinCardinality($a) {
 
 
-
-        $minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCard);
-
+        $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+      
+        $minCard = smwfGetStore()->getPropertyValues($a, $minCardDV);
+       
         if (!empty($minCard)) {
             // otherwise check min cardinality of parent for co-variance.
 
@@ -157,6 +157,7 @@ class PropertyCoVarianceDetector {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), constant($minCardCOVTest), $a);
             }
         }
+       
     }
 
     /**
@@ -165,8 +166,8 @@ class PropertyCoVarianceDetector {
     private function checkMaxCardinality($a) {
 
 
-
-        $maxCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCard);
+        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+        $maxCard = smwfGetStore()->getPropertyValues($a, $maxCardDV);
 
         if (!empty($maxCard)) {
             // check for doubles
@@ -209,12 +210,14 @@ class PropertyCoVarianceDetector {
      * Check domain co-variance. Does also check if there are domains and/or range defined at all.
      */
     private function checkDomainAndRangeCovariance($p) {
-        $type = smwfGetStore()->getSpecialValues($p, SMW_SP_HAS_TYPE);
-
+    	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+        $type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
+      
+        $domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
         $firstType = reset($type);
         if (count($type) == 0 || $firstType->getXSDValue() == '_wpg' || $firstType->getXSDValue() == '__nry') {
             // default property (type wikipage), explicitly defined wikipage or nary property
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, $domainRangeHintRelationDV);
 
             if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
@@ -258,7 +261,7 @@ class PropertyCoVarianceDetector {
             }
         } else {
             // attribute
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintRelation);
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, $domainRangeHintRelationDV);
 
             if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
@@ -360,8 +363,8 @@ class PropertyCoVarianceDetector {
     private function checkTypeEquality($a) {
         global $smwgContLang;
 
-
-        $types = smwfGetStore()->getSpecialValues($a, SMW_SP_HAS_TYPE);
+        $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+        $types = smwfGetStore()->getPropertyValues($a, $hasTypeDV);
         if (empty($types)) {
             $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_DEFINED, $a, count($types));
         } else {

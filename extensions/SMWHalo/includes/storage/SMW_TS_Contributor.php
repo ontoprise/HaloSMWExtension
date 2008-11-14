@@ -12,20 +12,28 @@
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
 
-
+    if (!($property instanceof SMWPropertyValue)) {
+    	// error. should not happen
+    	trigger_error("Triple store update: property is not SMWPropertyValue");
+    	return true;
+    }
+    
 	// check if it is a property with special semantics
 	// check for 'has domain, range' and 'is inverse of' and 'has type'
 	// 'has min cardinality' and 'has max cardinality are read implictly when processing 'has domain and range'
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
-	if ($property instanceof Title && smwfGetSemanticStore()->domainRangeHintRelation->equals($property)) {
+	
+	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getXSDValue()) {
     
 		foreach($propertyValueArray as $domRange) {
 			if (count($domRange->getDVs()) == 2) {
 				$dvs = $domRange->getDVs();
 				if ($dvs[0] != NULL && $dvs[1] != NULL && $dvs[0]->isValid() && $dvs[1]->isValid()) { // domain and range
-					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCard);
-					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
+					$minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+					$maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+					$minCard = $data->getPropertyValues($minCardDV);
+					$maxCard = $data->getPropertyValues($maxCardDV);
 					
 					// insert RDFS
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
@@ -45,9 +53,11 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
 					}
 				} elseif ($dvs[0] != NULL && $dvs[0]->isValid()) { // only domain
-					$typeValues = $data->getPropertyValues(SMW_SP_HAS_TYPE);
-					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCard);
-					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
+					$typeValues = $data->getPropertyValues(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+					$minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+					$maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+					$minCard = $data->getPropertyValues($minCardDV);
+					$maxCard = $data->getPropertyValues($maxCardDV);
 					
 					// insert RDFS
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
@@ -77,28 +87,33 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					}
 				}
 			}
+			
 		}
-	} elseif ($property instanceof Title && smwfGetSemanticStore()->inverseOf->equals($property)) {
+	} elseif (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getXSDValue()) {
 		foreach($propertyValueArray as $inverseProps) {
 			if (count($propertyValueArray) == 1) {
 				$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "owl:inverseOf", "prop:".$inverseProps->getDBkey());
 			}
 		}
-	} elseif ($property instanceof Title && smwfGetSemanticStore()->minCard->equals($property)) {
+	} elseif (smwfGetSemanticStore()->minCard->getDBkey() == $property->getXSDValue()) {
 		// do nothing
 		$triplesFromHook = false;
-	} elseif ($property instanceof Title && smwfGetSemanticStore()->maxCard->equals($property)) {
+	} elseif (smwfGetSemanticStore()->maxCard->getDBkey() == $property->getXSDValue()) {
 		// do nothing
 		$triplesFromHook = false;
-	} elseif ($property === SMW_SP_HAS_TYPE) {
+	} elseif ($property->getPropertyID() == SMW_SP_HAS_TYPE) {
 
 		// serialize type only if there is no domain and range annotation
-		$domRanges = $data->getPropertyValues(smwfGetSemanticStore()->domainRangeHintRelation);
-		if (count($domRanges) == 0) {
+		$domainRangeDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+		$minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+		$domRanges = $data->getPropertyValues($domainRangeDV);
+		
+		if (count($domRanges) == 0) { // insert only if domain and range annotation does not exist
 
 			// insert OWL restrictions
-			$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCard);
-			$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCard);
+			$minCard = $data->getPropertyValues($minCardDV);
+			$maxCard = $data->getPropertyValues($maxCardDV);
 			$triplesFromHook[] = array("cat:DefaultRootCategory", "rdfs:subClassOf", "_:1");
 			$triplesFromHook[] = array("_:1", "owl:Restriction", "_:2");
 			$triplesFromHook[] = array("_:2", "owl:onProperty", "prop:".$data->getSubject()->getDBkey());

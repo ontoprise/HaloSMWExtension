@@ -81,7 +81,7 @@ class SMW_LocalGardeningJob extends Job {
     	
     	// clear issues which will be checked
         foreach($properties as $property) {
-	    	$subjects = smwfGetStore()->getAllPropertySubjects($property);
+	    	$subjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getText()));
 	    	foreach($subjects as $s) {
 	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_DOMAIN_VALUE, NULL,$s->getTitle(), $property);
 	    		$gi_store->clearGardeningIssues('smw_consistencybot', SMW_GARDISSUE_WRONG_TARGET_VALUE, NULL,$s->getTitle(), $property);
@@ -94,7 +94,7 @@ class SMW_LocalGardeningJob extends Job {
         foreach($properties as $property) {
 			//print "Checking domain property: '".$property->getText()."'\n";
 			$subjects = array();
-			foreach (smwfGetStore()->getAllPropertySubjects($property) as $dv) {
+			foreach (smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getText())) as $dv) {
 				$subjects[] = $dv->getTitle();
 			};
 			$this->annot_checker->checkPropertyAnnotations($subjects, $property);
@@ -106,7 +106,7 @@ class SMW_LocalGardeningJob extends Job {
     	
 	    // clear all issues which will be checked
     	foreach($properties as $property) {
-	        $subjects = smwfGetStore()->getAllPropertySubjects($property);
+	        $subjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getText()));
 	        foreach($subjects as $s) {
 	            $gi_store->clearGardeningIssues('smw_consistencybot', NULL, SMW_CONSISTENCY_BOT_BASE, $property);
 	            $gi_store->clearGardeningIssues('smw_consistencybot', NULL, SMW_CONSISTENCY_BOT_BASE + 1, $property);
@@ -131,7 +131,7 @@ class SMW_LocalGardeningJob extends Job {
     	// check issues
     	foreach($properties as $property) {
     		$subjects = array();
-			foreach (smwfGetStore()->getAllPropertySubjects($property) as $dv) {
+			foreach (smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($property->getText())) as $dv) {
 				$subjects[] = $dv->getTitle();
 			};
         

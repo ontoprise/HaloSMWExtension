@@ -11,6 +11,7 @@
  * part of the former functionality of SMWInlineQuery (everything related to
  * output formatting and the correspoding parameters) and is subclassed by concrete
  * printers that provide the main formatting functionality.
+ * @ingroup SMWQuery
  */
 abstract class SMWResultPrinter {
 
@@ -156,6 +157,7 @@ abstract class SMWResultPrinter {
 					$popt->setEditSection(false);
 					$pout = $wgParser->parse($result . '__NOTOC__', $wgTitle, $popt);
 					/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
+					SMWOutputs::requireFromParserOutput($pout);
 					$result = $pout->getText();
 				}
 			} else {

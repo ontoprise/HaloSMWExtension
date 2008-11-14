@@ -183,7 +183,8 @@ class ExportRDFHalo {
  			// create valid xml export ID for property. If no exists, skip it.
  			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getDBkey());
  			if ($propertyLocal == NULL) continue;
- 			$values = smwfGetStore()->getPropertyValues($this->page, $p);
+ 			$pDV = SMWPropertyValue::makeUserProperty($p);
+ 			$values = smwfGetStore()->getPropertyValues($this->page, $pDV);
  			foreach($values as $smwValue) {
  				// export WikiPage value as ObjectProperty
 				if ($smwValue instanceof SMWWikiPageValue) {
@@ -243,7 +244,8 @@ class ExportRDFHalo {
  			}
  			
  			// obtain cardinalities
- 			$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCard);
+ 			$maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+ 			$maxCards = smwfGetStore()->getPropertyValues($rp, $maxCardDV);
  			if ($maxCards != NULL || count($maxCards) > 0) {
  				$maxCard = intval($maxCards[0]->getXSDValue());
  				
@@ -251,7 +253,8 @@ class ExportRDFHalo {
  				$maxCard = NULL;
  			}
  			
- 			$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCard);
+ 			$minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+ 			$minCards = smwfGetStore()->getPropertyValues($rp, $minCardDV);
  			if ($minCards != NULL || count($minCards) > 0) {
  				$minCard = intval($minCards[0]->getXSDValue());
  				
@@ -263,7 +266,8 @@ class ExportRDFHalo {
  			$directSuperProperties = smwfGetSemanticStore()->getDirectSuperProperties($rp);
  			
  			// decide what to export by reading property type
- 			$type = smwfGetStore()->getSpecialValues($rp, SMW_SP_HAS_TYPE);
+ 			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+ 			$type = smwfGetStore()->getPropertyValues($rp, $hasTypeDV);
  			if ($type == NULL || count($type) == 0) {
  				// default type: binary relation
  				$firstType = '_wpg';
@@ -334,7 +338,8 @@ class ExportRDFHalo {
  		$owl .= '</owl:DatatypeProperty>'.$this->LINE_FEED;
  		
  		// read all domains/ranges
- 		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
+ 		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+ 		$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
  		if ($domainRange == NULL || count($domainRange) == 0) {
  			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
@@ -380,7 +385,8 @@ class ExportRDFHalo {
  	}
  	
  	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
- 				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOf);
+ 		        $inverseOfDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->inverseOf->getText());
+ 				$inverseRelations = smwfGetStore()->getPropertyValues($rp, $inverseOfDV);
  				
  				// export as symmetrical property
  				$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.$this->LINE_FEED;
@@ -410,7 +416,8 @@ class ExportRDFHalo {
 	                $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
 	            }
  				$owl .= '</owl:ObjectProperty>'.$this->LINE_FEED;
- 				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
+ 				$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+ 				$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
  				if ($domainRange == NULL || count($domainRange) == 0) {
  					// if no domainRange annotation exists, export as property of DefaultRootConcept
 			 				$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
@@ -487,11 +494,13 @@ class ExportRDFHalo {
  	
  	private function exportSI($pt, $value) {
  		if ( $value->isNumeric() ) {
-			$dtid = &smwfGetStore()->getSpecialValues($pt, SMW_SP_HAS_TYPE);
+ 			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+ 			$conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+			$dtid = &smwfGetStore()->getPropertyValues($pt, $hasTypeDV);
 			$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
 			$conv = array();
 			if ($dttitle !== NULL)
-				$conv = &smwfGetStore()->getSpecialValues($dttitle, SMW_SP_CONVERSION_FACTOR_SI);
+				$conv = &smwfGetStore()->getPropertyValues($dttitle, $conversionFactorSIDV);
 			if ( !empty($conv) ) {
 				$dv = SMWDataValueFactory::newPropertyValue($pt->getPrefixedText(), $value->getXSDValue() . " " . $value->getUnit());
 					list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]);

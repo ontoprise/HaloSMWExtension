@@ -153,8 +153,10 @@ for ($id = $start; $id <= $end; $id++) {
 	if ( smwfIsSemanticsProcessed($title->getNamespace()) ) {
 		$revision = Revision::newFromTitle( $title );
 		if ( $revision === NULL ) continue;
-		$wgParser->parse($revision->getText(), $title, $options, true, true, $revision->getID());
-		SMWFactbox::storeData(true);
+		$output = $wgParser->parse($revision->getText(), $title, $options, true, true, $revision->getID());
+		SMWParseData::storeData($output, $title, false);
+		/// NOTE: Like SMWUpdateJob, this only updates the stored data, not the records related to page display
+		/// (such as the parser cache).
 		// sleep to be nice to the server
 		if ( ($delay !== false) && (($num_files+1) % 100 === 0) ) {
 			usleep($delay);

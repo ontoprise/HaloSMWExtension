@@ -16,7 +16,7 @@
  * parameters.
  *
  * Some code adapted from CategoryPage.php
- * @note AUTOLOADED
+ * @ingroup SMW
  */
 abstract class SMWOrderedListPage extends Article {
 
@@ -53,6 +53,7 @@ abstract class SMWOrderedListPage extends Article {
 		$this->until = $wgRequest->getVal( 'until' );
 		if ($this->initParameters()) {
 			$wgOut->addHTML( $this->getHTML() );
+			SMWOutputs::commitToOutputPage($wgOut); // Flush required CSS to output
 		}
 		wfProfileOut( __METHOD__ . ' (SMW)');
 	}
@@ -154,10 +155,7 @@ abstract class SMWOrderedListPage extends Article {
 	 * Like Article's getTitle(), but returning a suitable SMWWikiPageValue
 	 */
 	protected function getDataValue() {
-		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$t = $this->getTitle();
-		$dv->setValues($t->getDBkey(), $t->getNamespace());
-		return $dv;
+		return SMWWikiPageValue::makePageFromTitle($this->getTitle());
 	}
 
 	/**

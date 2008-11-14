@@ -8,16 +8,15 @@
  *  3. redirects
  *
  */
-class SMWFullSemanticData extends SMWSemanticData {
+class SMWFullSemanticData {
 
     protected $categories;
     protected $rules = array();
     protected $redirects;
-	private   $isDerived = false;
-	private	  $derivedPropertiesAdded = false;
 	
-    public function __construct($dv) {
-        parent::__construct($dv);
+    private $derivedProperties;
+
+    public function __construct() {
         $this->categories = array();
         $this->rules = array();
         $this->redirects = array();
@@ -52,22 +51,23 @@ class SMWFullSemanticData extends SMWSemanticData {
     public function getRedirects() {
          return $this->redirects;
     }
+    
+    public function getDerivedProperties() {
+    	return $this->derivedProperties;
+    }
 	
 	/**
 	 * Get the array of all properties that have stored values.
 	 */
- 	private function addDerivedProperties() {
+ 	public function addDerivedProperties(SMWSemanticData $semData) {
  		
- 		if ($this->derivedPropertiesAdded) {
- 			return; 
- 		}
- 		$this->derivedPropertiesAdded = true;
+ 	
  		
 		global $smwgIP, $smwgHaloIP, $smwgNamespace;
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
         require_once($smwgHaloIP . '/includes/storage/SMW_TripleStore.php');
         
-        $subject = $this->subject->getDBkey();
+        $subject = $semData->getSubject()->getDBkey();
         
 		$inst = $smwgNamespace.SMWTripleStore::$INST_NS_SUFFIX;
 //		$queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
@@ -96,7 +96,7 @@ class SMWFullSemanticData extends SMWSemanticData {
             }
         }
 		
-        $this->isDerived = false;
+       
         for ($i = 0; $i < count($propVal); $i += 2) {
         	if (!($propVal[$i] instanceof Title)) {
         		// The name of the property must be a title object
@@ -107,58 +107,25 @@ class SMWFullSemanticData extends SMWSemanticData {
         	$valueRep = ($value instanceof Title) ? $value->getText() : $value;
         	
         	// does the property already exist?
-        	$values = $this->getPropertyValues($propName);
-        	$this->isDerived = true;
+        	$values = $semData->getPropertyValues($propName);
+        	$isDerived = true;
         	foreach ($values as $v) {
         		$wv = $v->getWikiValue();
         		if ($wv == $valueRep) {
-        			$this->isDerived = false;
+        			$isDerived = false;
         			break;
         		}
         	}
-        	if ($this->isDerived) {
+        	if ($isDerived) {
         		$this->hasprops = true;
-        		SMWFactbox::addProperty($propName, $value, false, true);
+        		$derivedProperties[] = array($propName, $value, false, true);
         	}
         }
-        $this->isDerived = false;
+        
         
 	}
 
-	/**
-	 * Return true if there are any properties.
-	 */
-	public function hasProperties() {
-		if (!$this->hasprops) {
-			//$this->addDerivedProperties(); //Due to a bug in SMW 
-//              SMWFactbox::printFactbox() is called too often and fact boxes with
-// 				derived properties are even generated in edit mode. So, showing
-//				derives properties works by now only if there is at least on normal property.
-		}
-		return $this->hasprops;
-	}
-	
-	public function getProperties($withDerived = false) {
-		if ($withDerived) {
-			$this->addDerivedProperties();
-		}
-		return parent::getProperties();
-	}
-	
-	public function addPropertyObjectValue(Title $property, /*SMWDataValue*/ $value) {
-		if ($this->isDerived) {
-			$value->setDerived(true);
-		}
-		parent::addPropertyObjectValue($property, $value);
-		
-	}
-	
-	public function addPropertyValue($propertyname, /*SMWDataValue*/ $value) {
-		if ($this->isDerived) {
-			$value->setDerived(true);
-		}
-		parent::addPropertyValue($propertyname, $value);
-	}
+
 	
 	
 

@@ -107,7 +107,8 @@ function smwf_cs_SearchForTriples($searchString) {
         if ($e->getNamespace() == NS_MAIN) {
 
             foreach($properties as $a) {
-                $values = smwfGetStore()->getPropertyValues($e, $a);
+            	$aDV = SMWPropertyValue::makeUserProperty($a);
+                $values = smwfGetStore()->getPropertyValues($e, $aDV);
                 if (count($values) > 0) {
                     $tripleFound = true;
                     /*STARTLOG*/
@@ -132,8 +133,8 @@ function smwf_cs_SearchForTriples($searchString) {
     // show property value subjects (if some exist)
     foreach($parts as $term) {
         foreach($properties as $a) {
-            $value = SMWDataValueFactory::newPropertyObjectValue($a, $term);
-            $subjects = smwfGetStore()->getPropertySubjects($a, $value);
+            $value = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeUserProperty($a), $term);
+            $subjects = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($a), $value);
             if (count($subjects) > 0) {
                 $tripleFound = true;
                 /*STARTLOG*/

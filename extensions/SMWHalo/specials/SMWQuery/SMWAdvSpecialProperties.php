@@ -154,7 +154,8 @@ class SMWPropertiesPage extends SMWQueryPage {
             $attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
             
             $store = smwfGetStore();
-            $typeValues = $store->getSpecialValues($attrtitle, SMW_SP_HAS_TYPE);
+            $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+            $typeValues = $store->getPropertyValues($attrtitle, $hasTypeDV);
             
             $typelink = array();            
             foreach($typeValues as $tv) {
@@ -186,8 +187,8 @@ class SMWPropertiesPage extends SMWQueryPage {
                 $errors[] = wfMsg('smw_propertylackspage');
             }
             $attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
-            
-            $typetitle = smwfGetStore()->getSpecialValues($attrtitle, SMW_SP_HAS_TYPE);
+            $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+            $typetitle = smwfGetStore()->getPropertyValues($attrtitle, $hasTypeDV);
             if (count($typetitle) == 0) {
                 $typelink = "Page"; // default
             } else { 
@@ -331,10 +332,10 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
         $smw_spec2 = $db->tableName('smw_spec2');
         $smw_atts2 = $db->tableName('smw_atts2');     
         $page = $db->tableName('page');
-   
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
         return "SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value, 
                         i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_atts2 a 
-                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.sp_id=".SMW_SP_HAS_TYPE." 
+                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=".$hasTypePropertyID." 
                         JOIN $smw_ids i ON i.smw_id = a.p_id
                         JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace  
                 GROUP BY i.smw_title, s.value_string";

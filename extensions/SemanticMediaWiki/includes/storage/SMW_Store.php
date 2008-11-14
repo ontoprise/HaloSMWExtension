@@ -18,7 +18,7 @@
  * Small data container class for describing filtering conditions on the string
  * label of some entity. States that a given string should either be prefix, postfix,
  * or some arbitrary part of labels.
- * @note AUTOLOADED
+ * @ingroup SMWStore
  */
 class SMWStringCondition {
 	const STRCOND_PRE = 0;
@@ -48,7 +48,7 @@ class SMWStringCondition {
  * to their more complex structure.
  * Options that should not be used or where default values should be used
  * can be left as initialised.
- * @note AUTOLOADED
+ * @ingroup SMWStore
  */
 class SMWRequestOptions {
 	/**
@@ -114,6 +114,7 @@ class SMWRequestOptions {
  * semantic store. Besides the relevant interface, this class provides default
  * implementations for some optional methods, which inform the caller that
  * these methods are not implemented.
+ * @ingroup SMWStore
  */
 abstract class SMWStore {
 
@@ -123,29 +124,15 @@ abstract class SMWStore {
 	 * Retrieve all data stored about the given subject and return it as a
 	 * SMWSemanticData container. There are no options: it just returns all
 	 * available data as shown in the page's Factbox.
-	 * $filter is an array of strings that are datatype IDs or special
-	 * property ids. If given, the function will only retreive values for 
-	 * these properties/properties of this type.
+	 * $filter is an array of strings that are datatype IDs. If given, the
+	 * function will only retreive values for these properties/properties of
+	 * this type.
 	 *
-	 * Note: there is currently no guarantee that the store does not retrieve
-	 * more data than requested when a filter is used. Filtering just ensures that
+	 * @note There is no guarantee that the store does not retrieve more data
+	 * than requested when a filter is used. Filtering just ensures that
 	 * only necessary requests are made, i.e. it improves performance.
 	 */
 	abstract function getSemanticData($subject, $filter = false);
-
-	/**
-	 * Get an array of all special values stored for the given subject and special property
-	 * (identified as usual by an integer constant). The result is an array which may contain
-	 * different kinds of contents depending on the special property that was requested.
-	 */
-	abstract function getSpecialValues(Title $subject, $specialprop, $requestoptions = NULL);
-
-	/**
-	 * Get an array of all pages that have a certain special value for a given special property
-	 * (identified as usual by an integer constant). The result is an array of SMWWikiPageValue
-	 * objects. The type of the input value depends on the kind of special property that was requested.
-	 */
-	abstract function getSpecialSubjects($specialprop, SMWDataValue $value, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all property values stored for the given subject and property. The result
@@ -155,31 +142,34 @@ abstract class SMWStore {
 	 *
 	 * If called with $subject == NULL, all values for the given property are returned.
 	 */
-	abstract function getPropertyValues($subject, $property, $requestoptions = NULL, $outputformat = '');
+	abstract function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '');
 
 	/**
 	 * Get an array of all subjects that have the given value for the given property. The
 	 * result is an array of SMWWikiPageValue objects. If NULL is given as a value, all subjects having
 	 * that property are returned.
 	 */
-	abstract function getPropertySubjects(Title $property, $value, $requestoptions = NULL);
+	abstract function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all subjects that have some value for the given property. The
 	 * result is an array of SMWWikiPageValue objects.
 	 */
-	abstract function getAllPropertySubjects(Title $property, $requestoptions = NULL);
+	abstract function getAllPropertySubjects(SMWPropertyValue $property, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all properties for which the given subject has some value. The result is an
-	 * array of Title objects.
+	 * array of SMWPropertyValue objects.
+	 * @param $subject Title or SMWWikiPageValue denoting the subject
+	 * @param $requestoptions SMWRequestOptions optionally defining further options
 	 */
-	abstract function getProperties(Title $subject, $requestoptions = NULL);
+	abstract function getProperties($subject, $requestoptions = NULL);
 
 	/**
 	 * Get an array of all properties for which there is some subject that relates to the given value.
-	 * The result is an array of Title objects.
-	 * This function might be implemented partially so that only values of type Page (_wpg) are supported.
+	 * The result is an array of SMWWikiPageValue objects.
+	 * @note In some stores, this function might be implemented partially so that only values of type Page
+	 * (_wpg) are supported.
 	 */
 	abstract function getInProperties(SMWDataValue $object, $requestoptions = NULL);
 
@@ -195,22 +185,17 @@ abstract class SMWStore {
 
 	/**
 	 * Update the semantic data stored for some individual. The data is given
-	 * as a SMWSemData object, which contains all semantic data for one particular
-	 * subject. The boolean $newpage specifies whether the page is stored for the
-	 * first time or not; its correct value is esential to keep stores consistent.
+	 * as a SMWSemanticData object, which contains all semantic data for one particular
+	 * subject.
 	 */
-	abstract function updateData(SMWSemanticData $data, $newpage);
+	abstract function updateData(SMWSemanticData $data);
 
 	/**
-	 * Clear all semantic data specified for some page. $newpage works like for
-	 * SMWStore::updateData() -- if $newpage is set, nothing is really cleared
-	 * but the id of the page might be used internally by the store.
+	 * Clear all semantic data specified for some page.
 	 */
-	function clearData(Title $subject, $newpage) {
-		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$dv->setValues($subject->getDBkey(), $subject->getNamespace());
-		$emptydata = new SMWSemanticData($dv);
-		$this->updateData($emptydata, $newpage);
+	function clearData(Title $subject) {
+		$emptydata = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($subject));
+		$this->updateData($emptydata);
 	}
 
 	/**
@@ -289,5 +274,3 @@ abstract class SMWStore {
 	abstract function drop($verbose = true);
 
 }
-
-

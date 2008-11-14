@@ -25,7 +25,9 @@ function smwf_qi_QIAccess($method, $params) {
 		           	  		 '</relationSchema>';
 				return $relSchema;
 			}
-			$type = smwfGetStore()->getSpecialValues($relationTitle, SMW_SP_HAS_TYPE);
+			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+			$possibleValueDV = SMWPropertyValue::makeProperty(SMW_SP_POSSIBLE_VALUE);
+			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
 	
 			// if no 'has type' annotation => normal binary relation
 			if (count($type) == 0) {
@@ -45,7 +47,7 @@ function smwf_qi_QIAccess($method, $params) {
 			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
 			   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
 			   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
-			   			$pvalues = smwfGetStore()->getSpecialValues($relationTitle, SMW_SP_POSSIBLE_VALUE);
+			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
 			   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
 			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';

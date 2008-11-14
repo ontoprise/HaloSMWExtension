@@ -12,7 +12,7 @@
  * clean way. The class provides methods for creating source code for
  * realising them in wiki or html contexts.
  *
- * @note AUTOLOAD
+ * @ingroup SMW
  */
 class SMWInfolink {
 	private $m_target;      // the actual link target
@@ -122,7 +122,7 @@ class SMWInfolink {
 	 */
 	public function getText($outputformat, $linker = NULL) {
 		if ($this->m_style !== false) {
-			smwfRequireHeadItem(SMW_HEADER_STYLE); // make SMW styles available
+			SMWOutputs::requireHeadItem(SMW_HEADER_STYLE); // make SMW styles available
 			$start = "<span class=\"$this->m_style\">";
 			$end = '</span>';
 		} else {

@@ -11,7 +11,6 @@
  * This special page for MediaWiki implements a customisable form for
  * executing queries outside of articles.
  *
- * @note AUTOLOAD
  * @ingroup SMWSpecialPage
  * @ingroup SpecialPage
  */
@@ -35,6 +34,7 @@ class SMWAskPage extends SpecialPage {
 		wfProfileIn('doSpecialAsk (SMW)');
 		if ( ($wgRequest->getVal( 'query' ) != '') ) { // old processing
 			$this->executeSimpleAsk();
+			SMWOutputs::commitToOutputPage($wgOut); // make sure locally collected output data is pushed to the output!
 			wfProfileOut('doSpecialAsk (SMW)');
 			return;
 		}
@@ -44,6 +44,7 @@ class SMWAskPage extends SpecialPage {
 			$this->extractQueryParameters($p);
 			$this->makeHTMLResult();
 		}
+		SMWOutputs::commitToOutputPage($wgOut); // make sure locally collected output data is pushed to the output!
 		wfProfileOut('doSpecialAsk (SMW)');
 	}
 
@@ -177,7 +178,7 @@ class SMWAskPage extends SpecialPage {
 					$this->m_params[$titlekey] = $concept->getText();
 				}
 				if ( !isset($this->m_params[$desckey]) ) {
-					$dv = end(smwfGetStore()->getSpecialValues($concept, SMW_SP_CONCEPT_DESC));
+					$dv = end(smwfGetStore()->getPropertyValues(SMWWikiPageValue::makePageFromTitle($concept), SMWPropertyValue::makeProperty('_CONC')));
 					if ($dv instanceof SMWConceptValue) {
 						$this->m_params[$desckey] = $dv->getDocu();
 					}

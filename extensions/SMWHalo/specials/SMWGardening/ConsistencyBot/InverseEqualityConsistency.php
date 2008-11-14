@@ -27,7 +27,7 @@
  		$inverseRelations = $this->cc_store->getInverseRelations();
  		$totalWork = count($inverseRelations);
  		$this->bot->addSubTask($totalWork);
- 		
+ 		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
  		foreach($inverseRelations as $r) {
  			if ($this->delay > 0) {
  				if ($this->bot->isAborted()) break;
@@ -40,8 +40,8 @@
  			
  			
  			list($s, $t) = $r;
- 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintRelation);
- 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintRelation);
+ 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, $domainRangeHintRelationDV);
+ 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, $domainRangeHintRelationDV);
  			
  			if (count($domainAndRangeOfSource) == 0) {
  				continue;
@@ -78,7 +78,7 @@
  	
  	public function checkEqualToRelations() {
  		$equalToRelations = $this->cc_store->getEqualToRelations();
- 		
+ 		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
  		$this->bot->addSubTask(count($equalToRelations));
  		foreach($equalToRelations as $r) {
  			$this->bot->worked(1);
@@ -89,8 +89,8 @@
  				
  				continue;
  			} else if ($s->getNamespace() == SMW_NS_PROPERTY) {
- 				$s_type = smwfGetStore()->getSpecialValues($s, SMW_SP_HAS_TYPE);
- 				$t_type = smwfGetStore()->getSpecialValues($t, SMW_SP_HAS_TYPE);
+ 				$s_type = smwfGetStore()->getPropertyValues($s, $hasTypeDV);
+ 				$t_type = smwfGetStore()->getPropertyValues($t, $hasTypeDV);
  				if (count($s_type) == 0 && count($t_type) == 0) {
  					// both have wiki page type. this is ok.
  					continue;

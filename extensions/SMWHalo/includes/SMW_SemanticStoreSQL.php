@@ -577,14 +577,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	}
 	
 	
-	// can return directs, but it is not used anywhere		
-	/*function getDirectPropertiesByCategory(Title $categoryTitle, $requestoptions = NULL) {
-		$dv_container = SMWDataValueFactory::newTypeIDValue('__nry');
-		$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-  		$dv->setValues($categoryTitle->getDBKey(), $categoryTitle->getNamespace());
-  		$dv_container->setDVs(array($dv, NULL));
-		return smwfGetStore()->getPropertySubjects($this->domainRangeHintRelation, $dv_container, NULL, 0);
-	}*/
+	
 	
 	function getPropertiesWithDomain(Title $category) {
 		return $this->getNarySubjects($category, 0);
@@ -622,7 +615,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	 	$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
  	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeRelation, $reqfilter);
+ 	 	$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty($domainRangeRelation);
+ 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeHintRelationDV, $reqfilter);
  	    $result = array();
  	    foreach($categories as $value) {
  	    	$dvs = $value->getDVs();

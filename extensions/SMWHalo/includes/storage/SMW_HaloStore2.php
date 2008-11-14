@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * HaloStore which is compatible to SMWSQLStore2
  *
@@ -9,11 +10,11 @@ class SMWHaloStore2 extends SMWSQLStore2 {
     /**
      * Modified to store ratings.
      */
-    function updateData(SMWSemanticData $data, $newpage) {
+    function updateData(SMWSemanticData $data) {
         wfProfileIn("SMWHaloStore::updateData (SMW)");
         
         $annotations = smwfGetSemanticStore()->getRatedAnnotations($data->getSubject());
-        parent::updateData($data, $newpage);
+        parent::updateData($data);
         if ($annotations !== NULL) {
             foreach($annotations as $pa) {
                 smwfGetSemanticStore()->rateAnnotation($data->getSubject()->getDBkey(), $pa[0], $pa[1], $pa[2] );

@@ -15,11 +15,11 @@ class SMWHaloStore extends SMWSQLStore {
     /**
      * Modified to store ratings.
      */
-    function updateData(SMWSemanticData $data, $newpage) {
+    function updateData(SMWSemanticData $data) {
         wfProfileIn("SMWHaloStore::updateData (SMW)");
         $dbkey = $data->getSubject()->getDBkey();
         $annotations = smwfGetSemanticStore()->getRatedAnnotations($dbkey);
-        parent::updateData($data, $newpage);
+        parent::updateData($data);
         if ($annotations !== NULL) {
             foreach($annotations as $pa) {
                 smwfGetSemanticStore()->rateAnnotation($dbkey, $pa[0], $pa[1], $pa[2] );

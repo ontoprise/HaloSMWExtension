@@ -10,7 +10,7 @@
  *
  * @author Denny Vrandecic
  * @author Markus Krötzsch
- * @note AUTOLOADED
+ * @ingroup SMWQuery
  */
 class SMWRSSResultPrinter extends SMWResultPrinter {
 	protected $m_title = '';
@@ -116,15 +116,15 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			}
 
 			foreach ($res->getPrintRequests() as $printout) {
-				if ((strtolower($printout->getLabel()) == "date") && ($printout->getTypeID() == "_dat")) {
-					$link->setParameter($printout->getTitle()->getText(),'sort');
+				if (($printout->getMode() == SMWPrintRequest::PRINT_PROP) && (strtolower($printout->getLabel()) == "date") && ($printout->getTypeID() == "_dat")) {
+					$link->setParameter($printout->getData()->getWikiValue(),'sort');
 					$link->setParameter('DESC','order');
 				}
 			}
 
 			$result .= $link->getText($outputmode,$this->mLinker);
 			$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
-			smwfRequireHeadItem('rss' . $smwgIQRunningNumber, '<link rel="alternate" type="application/rss+xml" title="' . $this->m_title . '" href="' . $link->getURL() . '" />');
+			SMWOutputs::requireHeadItem('rss' . $smwgIQRunningNumber, '<link rel="alternate" type="application/rss+xml" title="' . $this->m_title . '" href="' . $link->getURL() . '" />');
 		}
 
 		return $result;
@@ -137,6 +137,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
  * Represents a single entry, or item, in an RSS feed. Useful since those items are iterated more
  * than once when serialising RSS.
  * @todo This code still needs cleanup, it's a mess.
+ * @ingroup SMWQuery
  */
 class SMWRSSItem {
 

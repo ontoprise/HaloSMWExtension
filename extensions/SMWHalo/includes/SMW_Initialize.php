@@ -20,7 +20,7 @@ define('SMW_SC_TRANSITIVE_RELATIONS', 0);
 define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 
 // constants for special properties, used for datatype assignment and storage
-define('SMW_SP_CONVERSION_FACTOR_SI', 1000);
+define('SMW_SP_CONVERSION_FACTOR_SI', '___cfsi');
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
@@ -74,7 +74,8 @@ function smwgHaloSetupExtension() {
 	$smwgMasterGeneralStore = NULL;
     
 	// Autoloading. Use it for everything! No include_once or require_once please!
-	$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
+	
+	//$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 	$wgAutoloadClasses['SMWGardeningTableResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_GardeningTable.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
@@ -106,6 +107,11 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
+	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
+	global $smwgWebserviceEndpoint;
+	if (isset($smwgWebserviceEndpoint)) {
+	   $wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
+	}
 	
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
@@ -382,10 +388,15 @@ function smwfHaloInitMessages() {
 	if (isset($smwgMessagesInitialized)) return; // prevent double init
 	smwfHaloInitContentMessages();
 	smwfHaloInitUserMessages(); // lazy init for ajax calls
+    $smwgMessagesInitialized = true;
+	
+}
 
+function smwfInitSpecialPropertyOfSMWHalo() {
+	global $smwgHaloContLang;
 	// add additional special properties to SMW
-	$smwgHaloContLang->registerSpecialProperties();
-	$smwgMessagesInitialized = true;
+    $smwgHaloContLang->registerSpecialProperties();
+    return true;
 }
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
@@ -744,7 +755,8 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
         }
 
         if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
-            $wikipagesToUpdate = $store->getAllPropertySubjects( $oldtitle );
+        	
+            $wikipagesToUpdate = $store->getAllPropertySubjects( SMWPropertyValue::makeUserProperty($oldtitle->getText()) );
             foreach ($wikipagesToUpdate as $dv)
                 if ($dv->getTitle() !== NULL) $jobs[] = new SMW_UpdatePropertiesAfterMoveJob($dv->getTitle(), $params);
         }
@@ -1405,11 +1417,9 @@ function smwfExtDeleteOutput(& $article, & $output) {
 function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
     global $smwgIP, $smwgNamespace, $smwgRuleRewriter, $smwgEnableFlogicRules;
     include_once($smwgIP . '/includes/SMW_Factbox.php');
-
-    if (SMWFactbox::$semdata === NULL || !(SMWFactbox::$semdata instanceof SMWFullSemanticData)) {
-        return true; // do nothing, if SMWFactbox::$semdata is not set.
-    }
-    
+   
+    SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
+       
     // parse categories:
     $categoryLinkPattern = '/\[\[               # Beginning of the link
                             category:           # category link (case insensitive!)
@@ -1473,10 +1483,21 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
         }
     }
 
-    SMWFactbox::$semdata->setCategories($categories);
-    SMWFactbox::$semdata->setRules($rules);
-    SMWFactbox::$semdata->setRedirects($redirects);
+    SMWTripleStore::$fullSemanticData->setCategories($categories);
+    SMWTripleStore::$fullSemanticData->setRules($rules);
+    SMWTripleStore::$fullSemanticData->setRedirects($redirects);
     return true;
+}
+
+function smwfAddDerivedFacts(& $text, $semdata) {
+	if (SMWTripleStore::$fullSemanticData === NULL) { 
+	   return true;
+	}
+	
+	SMWTripleStore::$fullSemanticData->addDerivedProperties($semdata);
+    $derivedFacts = SMWTripleStore::$fullSemanticData->getDerivedProperties();
+	//TODO: Thomas: display derived facts
+	return true;
 }
 
 

@@ -14,7 +14,7 @@ define('SMW_URI_MODE_ANNOURI',4);
  *
  * @author Nikolas Iwan
  * @author Markus Krötzsch
- * @note AUTOLOADED
+ * @ingroup SMWDataValues
  * @bug Correctly create safe HTML and Wiki text.
  */
 class SMWURIValue extends SMWDataValue {
@@ -33,10 +33,10 @@ class SMWURIValue extends SMWDataValue {
 			case '_anu':
 				$this->m_mode = SMW_URI_MODE_ANNOURI;
 				break;
-			case '_uri': case '_url': default:
+			case '_uri': case '_url': case '__spu': default:
 				$this->m_mode = SMW_URI_MODE_URI;
 				break;
-		}	
+		}
 	}
 
 	protected function parseUserValue($value) {

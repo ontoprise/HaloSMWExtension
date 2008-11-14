@@ -76,9 +76,55 @@ $aliases['de'] = array(
 	'WantedProperties' => array( 'Gewünschte Attribute' ),
 );
 
+/** Finnish (Suomi) */
+$aliases['fi'] = array(
+	'Ask' => array( 'Kysy' ),
+	'Browse' => array( 'Selaa' ),
+);
+
+/** Upper Sorbian (Hornjoserbsce) */
+$aliases['hsb'] = array(
+	'Ask' => array( 'Semantiske pytanje' ),
+	'Browse' => array( 'Přepytać' ),
+	'ExportRDF' => array( 'RDF eksportować' ),
+	'PageProperty' => array( 'Kajkosć strony' ),
+	'Properties' => array( 'Kajkosće' ),
+	'SearchByProperty' => array( 'Pytanje po kajkosći' ),
+	'SemanticStatistics' => array( 'Semantiska statistika' ),
+	'Types' => array( 'Typy' ),
+	'UnusedProperties' => array( 'Njewužiwane kajkosće' ),
+	'WantedProperties' => array( 'Falowace kajkosće' ),
+);
+
+/** Khmer (ភាសាខ្មែរ) */
+$aliases['km'] = array(
+	'Browse' => array( 'រាវរក' ),
+	'Properties' => array( 'លក្ខណៈ' ),
+	'Types' => array( 'ប្រភេទ' ),
+);
+
 /** Luxembourgish (Lëtzebuergesch) */
 $aliases['lb'] = array(
 	'Ask' => array( 'Froen' ),
+	'ExportRDF' => array( 'RDF exportéieren' ),
+	'PageProperty' => array( 'Säiten-Eegeschaften' ),
+	'Properties' => array( 'Eegeschaften' ),
+	'SemanticStatistics' => array( 'Semantesch Statistiken' ),
+	'Types' => array( 'Datentypen' ),
+	'UnusedProperties' => array( 'Netbenotzen Eegeschaften' ),
+	'WantedProperties' => array( 'Gewënschten Eegeschaften' ),
+);
+
+/** Nedersaksisch (Nedersaksisch) */
+$aliases['nds-nl'] = array(
+	'Browse' => array( 'Bekieken' ),
+	'ExportRDF' => array( 'RDF_uutvoeren' ),
+	'PageProperty' => array( 'Pagina-eigenschap' ),
+	'SMWAdmin' => array( 'SMW-beheer' ),
+	'SearchByProperty' => array( 'Op_eigenschap_zeuken' ),
+	'SemanticStatistics' => array( 'Semantische_staotestieken' ),
+	'UnusedProperties' => array( 'Ongebruken_eigenschappen' ),
+	'WantedProperties' => array( 'Gewunste_eigenschappen' ),
 );
 
 /** Dutch (Nederlands) */
@@ -94,5 +140,18 @@ $aliases['nl'] = array(
 	'Types' => array( 'Typen' ),
 	'UnusedProperties' => array( 'OngebruikteEigenschappen' ),
 	'WantedProperties' => array( 'GewensteEigenschappen' ),
+);
+
+/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬) */
+$aliases['no'] = array(
+	'Ask' => array( 'Spør' ),
+	'ExportRDF' => array( 'Eksporter RDF' ),
+	'PageProperty' => array( 'Sideegenskaper' ),
+	'Properties' => array( 'Egenskaper' ),
+	'SearchByProperty' => array( 'Søk etter egenskap' ),
+	'SemanticStatistics' => array( 'Semantisk statistikk' ),
+	'Types' => array( 'Typer' ),
+	'UnusedProperties' => array( 'Ubrukte egenskaper' ),
+	'WantedProperties' => array( 'Ønskede egenskaper' ),
 );
 

@@ -11,6 +11,7 @@
 /**
  * Implementation of MediaWiki's Article that shows additional information on
  * Concept: pages. Very simliar to CategoryPage.
+ * @ingroup SMW
  */
 class SMWConceptPage extends SMWOrderedListPage {
 	protected $m_errors;
@@ -33,14 +34,12 @@ class SMWConceptPage extends SMWOrderedListPage {
 
 		$desc = new SMWConceptDescription($this->mTitle);
 		if ($this->from != '') {
-			$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$dv->setValues($this->from, NS_MAIN, false, '', $this->from); // make a dummy wiki page as boundary
+			$dv = SMWWikiPageValue::makePage($this->from, NS_MAIN); // make a dummy wiki page as boundary
 			$fromdesc = new SMWValueDescription($dv, SMW_CMP_GEQ);
 			$desc = new SMWConjunction(array($desc,$fromdesc));
 			$order = 'ASC';
 		} elseif ($this->until != '') {
-			$dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$dv->setValues($this->until, NS_MAIN, false, '', $this->until); // make a dummy wiki page as boundary
+			$dv = SMWWikiPageValue::makePage($this->until, NS_MAIN); // make a dummy wiki page as boundary
 			$fromdesc = new SMWValueDescription($dv, SMW_CMP_LEQ);
 			$neqdesc = new SMWValueDescription($dv, SMW_CMP_NEQ); // do not include boundary in this case
 			$desc = new SMWConjunction(array($desc,$fromdesc,$neqdesc));
@@ -78,7 +77,7 @@ class SMWConceptPage extends SMWOrderedListPage {
 		$r .= '<a name="SMWResults"></a>' . $nav . "<div id=\"mw-pages\">\n";
 
 		$r .= '<h2>' . wfMsg('smw_concept_header',$ti) . "</h2>\n";
-		$r .= wfMsg('smw_conceptarticlecount', min($this->limit, count($this->articles))) . smwfEncodeMessages($this->m_errors) .  "\n";
+		$r .= wfMsgExt('smw_conceptarticlecount', array( 'parsemag' ), min($this->limit, count($this->articles))) . smwfEncodeMessages($this->m_errors) .  "\n";
 
 		$r .= $this->formatList();
 		$r .= "\n</div>" . $nav;

@@ -385,7 +385,8 @@ function smwf_om_RelationSchemaData($relationName) {
 
 	// get type definition (if it exists)
 	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-	$type = smwfGetStore()->getSpecialValues($relationTitle, SMW_SP_HAS_TYPE);
+	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+	$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
 
 	// if no 'has type' annotation => normal binary relation
 	if (count($type) == 0) {
@@ -411,8 +412,9 @@ function smwf_om_RelationSchemaData($relationName) {
 	   			// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
 	   			if ($typeValues[$i] instanceof SMWWikiPageValue) {
 
-	   				$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
-	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeHintRelation);
+	   				
+	   				$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
+	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeHintRelationDV);
 	   				if (count($rangeHints) > 0) {
 	   					$dvs = $rangeHints->getDVs();
 	   					if ($dvs[1] !== NULL) {

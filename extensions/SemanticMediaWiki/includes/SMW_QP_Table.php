@@ -9,13 +9,13 @@
 /**
  * New implementation of SMW's printer for result tables.
  *
- * @note AUTOLOADED
+ * @ingroup SMWQuery
  */
 class SMWTableResultPrinter extends SMWResultPrinter {
 
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
-		smwfRequireHeadItem(SMW_HEADER_SORTTABLE);
+		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
 		// print header
 		if ('broadtable' == $this->mFormat)
