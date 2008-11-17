@@ -29,6 +29,7 @@ protected $smwContentMessages = array(
     'smw_derived_property'  => 'Das ist ein abgeleitetes Property.',
     'smw_sparql_disabled'=> 'Keine SPARQL-Unterstützung aktiviert.',
 	'smw_viewinOB' => 'Im Ontology-Browser öffnen',
+    'smw_wysiwyg' => 'WYSIWYG',
 
 	'smw_att_head' => 'Attribute',
 	'smw_rel_head' => 'Relationen zu anderen Seiten',
