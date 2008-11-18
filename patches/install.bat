@@ -1,7 +1,6 @@
 @ECHO OFF
 IF %1 == mime CALL:mime
 IF %1 == wysiwyg CALL:wysiwyg
-IF %1 == delmove CALL:delmove
 REM Add additional patches here
 
 IF %1 == all goto all
@@ -10,13 +9,9 @@ goto:eof
 :all
 CALL:mime
 CALL:wysiwyg
-CALL:delmove
-
 REM Add additional patches here
 
-
 goto:eof
-
 
 :mime
 echo Installing patches for MIME-Type extension
@@ -49,6 +44,8 @@ xcopy includes\parser\Parser_OldPP.php ..\includes\parser /Y
 xcopy includes\parser\Parser.php ..\includes\parser /Y
 xcopy extensions\* ..\extensions /S /Y /EXCLUDE:exclude.dat
 xcopy skins\* ..\skins /S /Y
+echo Installing patch for Delete/Move extension
+xcopy includes\specials\SpecialMovepage.php ..\includes\specials /Y
 echo ----------------------------------------------------------------------
 echo Add "include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php')" to your LocalSettings.php;
 goto:eof
@@ -61,11 +58,3 @@ xcopy includes\Sanitizer.php ..\includes /Y
 echo -----------------------------------------------------------------------
 echo Add "include_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php')" to your LocalSettings.php;
 goto:eof
-
-:delmove
-echo Installing patches for Delete/Move extension
-xcopy includes\Article.php ..\includes /Y
-xcopy includes\specials\SpecialMovepage.php ..\includes\specials /Y
-
-goto:eof
-
