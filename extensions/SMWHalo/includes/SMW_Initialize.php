@@ -195,7 +195,7 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
-	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
+	
 	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 
 	// register message system (not for ajax, only by demand)
