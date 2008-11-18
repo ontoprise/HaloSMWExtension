@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 */
 
 require_once $IP . "/includes/GlobalFunctions.php";
-require_once $IP . "/includes/ParserOptions.php";
+require_once $IP . "/includes/parser/ParserOptions.php";
 require_once $IP . "/includes/EditPage.php";
 
 if (version_compare("1.12", $wgVersion, "<")) {
-    require_once $IP . "/includes/Parser_OldPP.php";
+    require_once $IP . "/includes/parser/Parser_OldPP.php";
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "mw12/FCKeditorParser_OldPP.body.php";
 }
 else {
