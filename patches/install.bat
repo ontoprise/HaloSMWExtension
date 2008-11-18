@@ -65,7 +65,7 @@ goto:eof
 :delmove
 echo Installing patches for Delete/Move extension
 xcopy includes\Article.php ..\includes /Y
-xcopy includes\SpecialMovepage.php ..\includes /Y
+xcopy includes\specials\SpecialMovepage.php ..\includes\specials /Y
 
 goto:eof
 
