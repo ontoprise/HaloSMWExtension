@@ -488,14 +488,14 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
     
     private function _getDomainsAndRangesOfSuperProperty(& $inheritanceGraph, $p, & $visitedNodes) {
         $results = array();
-        $domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+        
         $propertyID = $p->getArticleID();
         array_push($visitedNodes, $propertyID);
         $superProperties = GraphHelper::searchInSortedGraph($inheritanceGraph, $propertyID);
         if ($superProperties == null) return $results;
         foreach($superProperties as $sp) {
             $spTitle = Title::newFromID($sp->to);
-            $domainRangeCategories = smwfGetStore()->getPropertyValues($spTitle, $domainRangeHintRelationDV);
+            $domainRangeCategories = smwfGetStore()->getPropertyValues($spTitle, smwfGetSemanticStore()->domainRangeHintProp);
             if (count($domainRangeCategories) > 0) {
                 return $domainRangeCategories;
             } else {
@@ -518,14 +518,14 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
     
     private function _getMinCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
         $results = array(CARDINALITY_MIN);
-        $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+        
         $attributeID = $a->getArticleID();
         array_push($visitedNodes, $attributeID);
         $superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
         if ($superAttributes == null) return $results;
         foreach($superAttributes as $sa) {
             $saTitle = Title::newFromID($sa->to);
-            $minCards = smwfGetStore()->getPropertyValues($saTitle, $minCardDV);
+            $minCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->minCardProp);
             if (count($minCards) > 0) {
                 
                 return array($minCards[0]->getXSDValue() + 0);
@@ -549,14 +549,14 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
     
     private function _getMaxCardinalityOfSuperProperty(& $inheritanceGraph, $a, & $visitedNodes) {
         $results = array(CARDINALITY_UNLIMITED);
-        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
+        
         $attributeID = $a->getArticleID();
         array_push($visitedNodes, $attributeID);
         $superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
         if ($superAttributes == null) return $results;
         foreach($superAttributes as $sa) {
             $saTitle = Title::newFromID($sa->to);
-            $maxCards = smwfGetStore()->getPropertyValues($saTitle, $maxCardDV);
+            $maxCards = smwfGetStore()->getPropertyValues($saTitle, smwfGetSemanticStore()->maxCardProp);
             if (count($maxCards) > 0) {
                 
                 return array($maxCards[0]->getXSDValue() + 0);

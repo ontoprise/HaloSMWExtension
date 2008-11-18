@@ -111,7 +111,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[1] + 0;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
- 		$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getText()),  $reqfilter);
+ 		$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter);
  		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $p_array[1] + 0, $p_array[2] + 0);
  	} else if ($method == 'getCategoryForInstance') {

@@ -24,13 +24,14 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		global $smwgHaloContLang;
 		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
+		
 		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
-	
 		$minCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
 		$maxCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
 		$transitiveCat = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
 		$symetricalCat = Title::newFromText($smwSpecialCategories[SMW_SC_SYMMETRICAL_RELATIONS], NS_CATEGORY);
 		$inverseOf = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_IS_INVERSE_OF], SMW_NS_PROPERTY);
+		
 		parent::SMWSemanticStore($domainRangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat, $inverseOf);
 	}
 	
@@ -615,8 +616,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	 	$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
  	 	$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	 	$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty($domainRangeRelation);
- 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, $domainRangeHintRelationDV, $reqfilter);
+ 	 	
+ 	    $categories = smwfGetStore()->getPropertyValues($propertyTitle, smwfGetSemanticStore()->domainRangeHintProp, $reqfilter);
  	    $result = array();
  	    foreach($categories as $value) {
  	    	$dvs = $value->getDVs();

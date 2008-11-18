@@ -114,9 +114,9 @@ class PropertyCoVarianceDetector {
     private function checkMinCardinality($a) {
 
 
-        $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
+        
       
-        $minCard = smwfGetStore()->getPropertyValues($a, $minCardDV);
+        $minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
        
         if (!empty($minCard)) {
             // otherwise check min cardinality of parent for co-variance.
@@ -166,8 +166,8 @@ class PropertyCoVarianceDetector {
     private function checkMaxCardinality($a) {
 
 
-        $maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
-        $maxCard = smwfGetStore()->getPropertyValues($a, $maxCardDV);
+        
+        $maxCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCardProp);
 
         if (!empty($maxCard)) {
             // check for doubles
@@ -213,11 +213,11 @@ class PropertyCoVarianceDetector {
     	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
         $type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
       
-        $domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+        
         $firstType = reset($type);
         if (count($type) == 0 || $firstType->getXSDValue() == '_wpg' || $firstType->getXSDValue() == '__nry') {
             // default property (type wikipage), explicitly defined wikipage or nary property
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, $domainRangeHintRelationDV);
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintProp);
 
             if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
@@ -261,7 +261,7 @@ class PropertyCoVarianceDetector {
             }
         } else {
             // attribute
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, $domainRangeHintRelationDV);
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintProp);
 
             if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);

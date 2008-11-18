@@ -413,8 +413,8 @@ function smwf_om_RelationSchemaData($relationName) {
 	   			if ($typeValues[$i] instanceof SMWWikiPageValue) {
 
 	   				
-	   				$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeHintRelationDV);
+	   				
+	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, smwfGetSemanticStore()->domainRangeHintProp);
 	   				if (count($rangeHints) > 0) {
 	   					$dvs = $rangeHints->getDVs();
 	   					if ($dvs[1] !== NULL) {

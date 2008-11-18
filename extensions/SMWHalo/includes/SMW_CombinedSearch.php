@@ -107,7 +107,7 @@ function smwf_cs_SearchForTriples($searchString) {
         if ($e->getNamespace() == NS_MAIN) {
 
             foreach($properties as $a) {
-            	$aDV = SMWPropertyValue::makeUserProperty($a);
+            	$aDV = SMWPropertyValue::makeUserProperty($a->getDBkey());
                 $values = smwfGetStore()->getPropertyValues($e, $aDV);
                 if (count($values) > 0) {
                     $tripleFound = true;
@@ -133,8 +133,8 @@ function smwf_cs_SearchForTriples($searchString) {
     // show property value subjects (if some exist)
     foreach($parts as $term) {
         foreach($properties as $a) {
-            $value = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeUserProperty($a), $term);
-            $subjects = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($a), $value);
+            $value = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeUserProperty($a->getDBkey()), $term);
+            $subjects = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($a->getDBkey()), $value);
             if (count($subjects) > 0) {
                 $tripleFound = true;
                 /*STARTLOG*/
@@ -534,7 +534,8 @@ class CombinedSearchStorageSQL2 extends CombinedSearchStorageSQL {
         $res = $db->query('SELECT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title, value_xsd FROM '.$smw_atts2.
         ' JOIN '.$smw_ids.' i ON i.smw_id = s_id '.
         ' JOIN '.$smw_ids.' i2 ON i2.smw_id = p_id '.
-        'WHERE '.$sql );
+        'WHERE '.$sql . ' AND i.smw_iw = ""'); // FIXME: do not exclude n-ary
+ 
             
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {

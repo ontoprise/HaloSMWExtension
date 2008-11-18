@@ -235,9 +235,8 @@ class AutoCompletionRequester {
  	    	
  	    			$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
  	    		
- 	    			$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
- 	    			$domainRangeDV = SMWPropertyValue::makeUserProperty($domainRangeRelation);
- 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeDV);
+ 	    			
+ 	    			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
  	    				    			
  	    			$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
  	    			

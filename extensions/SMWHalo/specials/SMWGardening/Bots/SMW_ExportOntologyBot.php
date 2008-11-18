@@ -337,16 +337,16 @@ class ExportOntologyBot extends GardeningBot {
 				}
 
 				// obtain cardinalities
-				$maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
-				$maxCards = smwfGetStore()->getPropertyValues($rp, $maxCardDV);
+				
+				$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCardProp);
 				if ($maxCards != NULL || count($maxCards) > 0) {
 					$maxCard = intval($maxCards[0]->getXSDValue());
 
 				} else {
 					$maxCard = NULL;
 				}
-                $minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
-				$minCards = smwfGetStore()->getPropertyValues($rp, $minCardDV);
+                
+				$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCardProp);
 				if ($minCards != NULL || count($minCards) > 0) {
 					$minCard = intval($minCards[0]->getXSDValue());
 
@@ -444,8 +444,8 @@ class ExportOntologyBot extends GardeningBot {
 		$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
 			
 		// read all domains/ranges
-		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
-		$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
+		
+		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintProp);
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;
@@ -491,8 +491,8 @@ class ExportOntologyBot extends GardeningBot {
 	}
 
 	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
-		$inverseOfDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->inverseOf->getText());
-		$inverseRelations = smwfGetStore()->getPropertyValues($rp, $inverseOfDV);
+		
+		$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOfProp);
 			
 		// export as symmetrical property
 		$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'">'.LINE_FEED;
@@ -522,8 +522,8 @@ class ExportOntologyBot extends GardeningBot {
 			$owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL()).'"/>'.LINE_FEED;
 		}
 		$owl .= '</owl:ObjectProperty>'.LINE_FEED;
-		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
-		$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
+		
+		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintProp);
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.LINE_FEED;

@@ -27,7 +27,7 @@
  		$inverseRelations = $this->cc_store->getInverseRelations();
  		$totalWork = count($inverseRelations);
  		$this->bot->addSubTask($totalWork);
- 		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
+ 		
  		foreach($inverseRelations as $r) {
  			if ($this->delay > 0) {
  				if ($this->bot->isAborted()) break;
@@ -40,8 +40,8 @@
  			
  			
  			list($s, $t) = $r;
- 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, $domainRangeHintRelationDV);
- 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, $domainRangeHintRelationDV);
+ 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintProp);
+ 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintProp);
  			
  			if (count($domainAndRangeOfSource) == 0) {
  				continue;

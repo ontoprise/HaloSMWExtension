@@ -675,9 +675,9 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedDomainCategories(Title $title1, Title $title2) {
-		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
-		$domRange1 = smwfGetStore()->getPropertyValues($title1, $domainRangeHintRelationDV);
-		$domRange2 = smwfGetStore()->getPropertyValues($title2, $domainRangeHintRelationDV);
+		
+		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintProp);
+		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintProp);
 
 		$result = array();
 		foreach($domRange1 as $dr1) {
@@ -698,9 +698,9 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedRangeCategories(Title $title1, Title $title2) {
-		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
-		$domRange1 = smwfGetStore()->getPropertyValues($title1, $domainRangeHintRelationDV);
-		$domRange2 = smwfGetStore()->getPropertyValues($title2, $domainRangeHintRelationDV);
+		
+		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintProp);
+		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintProp);
 
 		$result = array();
 		foreach($domRange1 as $dr1) {

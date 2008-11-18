@@ -183,7 +183,7 @@ class ExportRDFHalo {
  			// create valid xml export ID for property. If no exists, skip it.
  			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getDBkey());
  			if ($propertyLocal == NULL) continue;
- 			$pDV = SMWPropertyValue::makeUserProperty($p);
+ 			$pDV = SMWPropertyValue::makeUserProperty($p->getDBkey());
  			$values = smwfGetStore()->getPropertyValues($this->page, $pDV);
  			foreach($values as $smwValue) {
  				// export WikiPage value as ObjectProperty
@@ -244,8 +244,8 @@ class ExportRDFHalo {
  			}
  			
  			// obtain cardinalities
- 			$maxCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->maxCard->getText());
- 			$maxCards = smwfGetStore()->getPropertyValues($rp, $maxCardDV);
+ 			
+ 			$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCardProp);
  			if ($maxCards != NULL || count($maxCards) > 0) {
  				$maxCard = intval($maxCards[0]->getXSDValue());
  				
@@ -253,8 +253,8 @@ class ExportRDFHalo {
  				$maxCard = NULL;
  			}
  			
- 			$minCardDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->minCard->getText());
- 			$minCards = smwfGetStore()->getPropertyValues($rp, $minCardDV);
+ 			
+ 			$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCardProp);
  			if ($minCards != NULL || count($minCards) > 0) {
  				$minCard = intval($minCards[0]->getXSDValue());
  				
@@ -338,8 +338,8 @@ class ExportRDFHalo {
  		$owl .= '</owl:DatatypeProperty>'.$this->LINE_FEED;
  		
  		// read all domains/ranges
- 		$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
- 		$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
+ 		
+ 		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintRelation);
  		if ($domainRange == NULL || count($domainRange) == 0) {
  			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;
@@ -385,8 +385,8 @@ class ExportRDFHalo {
  	}
  	
  	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
- 		        $inverseOfDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->inverseOf->getText());
- 				$inverseRelations = smwfGetStore()->getPropertyValues($rp, $inverseOfDV);
+ 		        
+ 				$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOfProp);
  				
  				// export as symmetrical property
  				$owl = '<owl:ObjectProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getDBkey()).'">'.$this->LINE_FEED;
@@ -416,8 +416,8 @@ class ExportRDFHalo {
 	                $owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getDBkey()).'"/>'.$this->LINE_FEED;
 	            }
  				$owl .= '</owl:ObjectProperty>'.$this->LINE_FEED;
- 				$domainRangeHintRelationDV = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
- 				$domainRange = smwfGetStore()->getPropertyValues($rp, $domainRangeHintRelationDV);
+ 				
+ 				$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintProp);
  				if ($domainRange == NULL || count($domainRange) == 0) {
  					// if no domainRange annotation exists, export as property of DefaultRootConcept
 			 				$owl .= '	<owl:Class rdf:about="&cat;DefaultRootConcept">'.$this->LINE_FEED;

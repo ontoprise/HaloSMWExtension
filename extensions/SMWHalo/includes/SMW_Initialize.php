@@ -48,7 +48,7 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  * 
  * @param String $store SMWHaloStore (old) or SMWHaloStore2 (new). Uses old by default.
  */
-function enableSMWHalo($store = 'SMWHaloStore', $tripleStore = NULL) {
+function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL) {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore, $smwgSemanticDataClass, $wgHooks;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
@@ -756,7 +756,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 
         if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
         	
-            $wikipagesToUpdate = $store->getAllPropertySubjects( SMWPropertyValue::makeUserProperty($oldtitle->getText()) );
+            $wikipagesToUpdate = $store->getAllPropertySubjects( SMWPropertyValue::makeUserProperty($oldtitle->getDBkey()));
             foreach ($wikipagesToUpdate as $dv)
                 if ($dv->getTitle() !== NULL) $jobs[] = new SMW_UpdatePropertiesAfterMoveJob($dv->getTitle(), $params);
         }

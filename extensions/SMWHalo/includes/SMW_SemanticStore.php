@@ -41,6 +41,15 @@
 	public $symetricalCat;
 	
 	public $inverseOf;
+	
+	/**
+	 * SMWPropertyValue version of properties above 
+	 */
+	public $domainRangeHintProp;
+	public $minCardProp;
+	public $maxCardProp;
+	public $inverseOfProp;
+	
 	/**
 	 * Must be called from derived class to initialize the member variables.
 	 */
@@ -54,6 +63,12 @@
 		$this->transitiveCat = $transitiveCat;
 		$this->symetricalCat = $symetricalCat;
 		$this->inverseOf = $inverseOf;
+		
+		$this->domainRangeHintProp = SMWPropertyValue::makeUserProperty($this->domainRangeHintRelation->getDBkey());
+        $this->minCardProp = SMWPropertyValue::makeUserProperty($this->minCard->getDBkey());
+        $this->maxCardProp = SMWPropertyValue::makeUserProperty($this->maxCard->getDBkey());
+        $this->inverseOfProp = SMWPropertyValue::makeUserProperty($this->inverseOf->getDBkey());
+        
 	}
  	
  	/**
