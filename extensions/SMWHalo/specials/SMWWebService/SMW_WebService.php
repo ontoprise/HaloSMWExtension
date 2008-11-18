@@ -429,7 +429,12 @@ class WebService {
 				$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
 				$this->initializeCallParameters($specParameters);
 				
-				$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
+				if($this->mWSClient){
+					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
+				} else {
+					//todo: provide meaningful error message
+					$response = "error";
+				}
 				
 				if(is_string($response)){
 					if($cacheResult == null){

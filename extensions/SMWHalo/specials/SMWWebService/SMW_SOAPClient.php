@@ -205,8 +205,8 @@ class SMWSoapClient implements IWebServiceClient {
 		ini_set("soap.wsdl_cache_enabled", "0");
 
 		$this->duplicates = array();
-		$this->mClient = new SoapClient($this->mURI);
-
+		$this->mClient = @ new SoapClient($this->mURI);
+		
 		try {
 			$functions = $this->mClient->__getFunctions();
 			$types = $this->mClient->__getTypes();
