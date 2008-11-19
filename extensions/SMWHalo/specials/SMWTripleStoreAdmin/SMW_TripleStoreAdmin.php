@@ -27,7 +27,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
         if ($wgRequest->getVal('init') != NULL) {
         	// after init
         	smwfGetStore()->setup(false);
-        	$html .= $wgUser->getSkin()->makeKnownLinkObj(Title::newFromText("Special:TSA"), wfMsg('smw_tsa_waitsoemtime'));
+        	$html .= $wgUser->getSkin()->makeKnownLinkObj(Title::newFromText("TSA", NS_SPECIAL), wfMsg('smw_tsa_waitsoemtime'));
             $wgOut->addHTML($html);
             return;
         }
@@ -57,7 +57,8 @@ class SMWTripleStoreAdmin extends SpecialPage {
         	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', $smwgMessageBroker)."</div>";
         } else {
         	 $html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_notinitalized')."</div>".wfMsg('smw_tsa_pressthebutton');
-        	 $html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/></form>";
+        	 $tsaPage = Title::newFromText("TSA", NS_SPECIAL);
+        	 $html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
         }
         $wgOut->addHTML($html);
     }
