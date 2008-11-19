@@ -19,8 +19,8 @@ class SFTemplateField {
 
 	function newWithValues($name, $label) {
 		$f = new SFTemplateField();
-		$f->field_name = str_replace('\\', '', $name);
-		$f->label = str_replace('\\', '', $label);
+		$f->field_name = trim(str_replace('\\', '', $name));
+		$f->label = trim(str_replace('\\', '', $label));
 		return $f;
 	}
 
@@ -29,15 +29,22 @@ class SFTemplateField {
 		if ($proptitle === NULL)
 			return;
 		$store = smwfGetStore();
-		$types = $store->getSpecialValues($proptitle, SMW_SP_HAS_TYPE);
+		if (class_exists('SMWPropertyValue')) {
+			$types = $store->getPropertyValues($proptitle, SMWPropertyValue::makeUserProperty("Has type"));
+			// this returns an array of objects
+			$allowed_values = $store->getPropertyValues($proptitle, SMWPropertyValue::makeUserProperty("Allows value"));
+		} else {
+			$types = $store->getSpecialValues($proptitle, SMW_SP_HAS_TYPE);
+			// this returns an array of objects
+			$allowed_values = $store->getSpecialValues($proptitle, SMW_SP_POSSIBLE_VALUE);
+		}
 		// TODO - need handling for the case of more than one type
 		if (count($types) > 0)
 			$this->field_type = $types[0]->getWikiValue();
 
-		// this returns an array of objects
-		$SMW_values = smwfGetStore()->getSpecialValues($proptitle, SMW_SP_POSSIBLE_VALUE);
-		foreach ($SMW_values as $value) {
-			$this->possible_values[] = $value->getXSDValue();
+		foreach ($allowed_values as $value) {
+			// HTML-unencode each value
+			$this->possible_values[] = html_entity_decode($value->getXSDValue());
 		}
 		// HACK - if there were any possible values, set the field
 		// type to be 'enumeration', regardless of what the actual type is

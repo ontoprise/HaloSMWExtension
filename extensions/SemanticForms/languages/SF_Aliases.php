@@ -54,9 +54,50 @@ $aliases['arz'] = array(
 	'UploadWindow' => array( 'نافذة_الرفع' ),
 );
 
+/** Breton (Brezhoneg) */
+$aliases['br'] = array(
+	'Templates' => array( 'Patromoù' ),
+);
+
+/** Spanish (Español) */
+$aliases['es'] = array(
+	'Templates' => array( 'Plantillas' ),
+);
+
 /** Persian (فارسی) */
 $aliases['fa'] = array(
+	'AddData' => array( 'افزودن_داده' ),
+	'AddPage' => array( 'افزودن_صفحه' ),
+	'CreateCategory' => array( 'ایجاد_رده' ),
+	'CreateForm' => array( 'ایجاد_فرم' ),
+	'CreateProperty' => array( 'ایجاد_صفت' ),
+	'CreateTemplate' => array( 'ایجاد_الگو' ),
+	'EditData' => array( 'ویرایش_داده' ),
+	'Forms' => array( 'فرم‌ها' ),
 	'Templates' => array( 'الگوها' ),
+	'UploadWindow' => array( 'پنجره_بارگذاری' ),
+);
+
+/** Galician (Galego) */
+$aliases['gl'] = array(
+	'Forms' => array( 'Formularios' ),
+	'Templates' => array( 'Modelos' ),
+);
+
+/** Upper Sorbian (Hornjoserbsce) */
+$aliases['hsb'] = array(
+	'Forms' => array( 'Formulary' ),
+	'Templates' => array( 'Předłohi' ),
+);
+
+/** Khmer (ភាសាខ្មែរ) */
+$aliases['km'] = array(
+	'AddData' => array( 'បន្ថែមទិន្នន័យ' ),
+	'AddPage' => array( 'បន្ថែមទំព័រ' ),
+	'CreateCategory' => array( 'បង្កើតចំនាត់ថ្នាក់ក្រុម' ),
+	'CreateTemplate' => array( 'បង្កើតទំព័រគំរូ' ),
+	'EditData' => array( 'កែប្រែទិន្នន័យ' ),
+	'Templates' => array( 'ទំព័រគំរូ' ),
 );
 
 /** Luxembourgish (Lëtzebuergesch) */
@@ -111,5 +152,21 @@ $aliases['no'] = array(
 	'Forms' => array( 'Skjemaer' ),
 	'Templates' => array( 'Maler' ),
 	'UploadWindow' => array( 'Opplastingsvindu' ),
+);
+
+/** Occitan (Occitan) */
+$aliases['oc'] = array(
+	'AddPage' => array( 'Apondre una pagina', 'ApondrePagina' ),
+	'CreateCategory' => array( 'Crear una categoria', 'CrearCategoria' ),
+	'CreateForm' => array( 'Crear un formulari', 'CrearFormulari' ),
+	'CreateProperty' => array( 'Crear una proprietat', 'CrearProprietat' ),
+	'CreateTemplate' => array( 'Crear un modèl', 'CrearModèl' ),
+	'Forms' => array( 'Formularis' ),
+	'Templates' => array( 'Modèls' ),
+);
+
+/** Romanian (Română) */
+$aliases['ro'] = array(
+	'Templates' => array( 'Formate' ),
 );
 

@@ -143,14 +143,6 @@ $messages['qqq'] = array(
 	'sf_form_freetextlabel' => '{{Identical|Free text}}',
 );
 
-/** Eastern Mari (Олык Марий)
- * @author Сай
- */
-$messages['mhr'] = array(
-	'sf_createtemplate_deletefield' => 'Шӧраш',
-	'sf_createform_inputtypedefault' => '(ойлыде)',
-);
-
 /** Niuean (ko e vagahau Niuē)
  * @author Jose77
  */
@@ -569,13 +561,127 @@ $messages['bn'] = array(
 	'sf_createtemplate_deletefield' => 'মুছে ফেলা হোক',
 );
 
+/** Bosnian (Bosanski)
+ * @author CERminator
+ */
+$messages['bs'] = array(
+	'sf_createproperty_propname' => 'Naziv:',
+	'sf_createtemplate_deletefield' => 'Obriši',
+	'sf_createform_inputtypedefault' => '(standardno)',
+	'sf_createform_add' => 'Dodaj',
+	'sf_createcategory_name' => 'Naziv:',
+	'sf_editdata_remove' => 'Ukloni',
+);
+
 /** Catalan (Català)
+ * @author Dvdgmz
  * @author SMP
  */
 $messages['ca'] = array(
+	'specialpages-group-sf_group' => 'Semantic Forms',
+	'createproperty' => 'Crear una propietat',
+	'sf_createproperty_allowedvalsinput' => 'Si vols que aquest camp permeti només alguns valors específics, introdueix la llista de valors permesos, separats per comes (si un valor conté una coma, substitueix-la per "\\,"):',
+	'sf_createproperty_propname' => 'Nom:',
+	'sf_createproperty_proptype' => 'Tipus:',
+	'templates' => 'Plantilles',
+	'sf_templates_docu' => 'Les següents plantilles existeixen en el wiki.',
+	'sf_templates_definescat' => 'Definir categoria:',
+	'createtemplate' => 'Crear una plantilla',
+	'sf_createtemplate_namelabel' => 'Nom de la plantilla:',
+	'sf_createtemplate_categorylabel' => 'Categoria definida mitjançant la plantilla (opcional):',
+	'sf_createtemplate_templatefields' => 'Camps de la plantilla',
+	'sf_createtemplate_fieldsdesc' => "Per disposar dels camps en aquesta plantilla no és necessari posar els noms dels camps, simplement introdueix el número d'índex de cada camp (per exemple: 1, 2, 3, etc.) com a denominació de cadascun d'ells, en lloc del seu nom real.",
+	'sf_createtemplate_fieldname' => 'Nom del camp:',
+	'sf_createtemplate_displaylabel' => 'Mostrar etiqueta:',
+	'sf_createtemplate_semanticproperty' => 'Propietat semàntica:',
+	'sf_createtemplate_fieldislist' => 'Aquest camp pot suportar una llista de valors, separats per comes',
+	'sf_createtemplate_aggregation' => 'Agregació',
+	'sf_createtemplate_aggregationdesc' => 'Per crear una llista, a qualsevol pàgina que utilitzi aquesta plantilla, de tots els articles que tenen alguna propietat apuntant a aquesta pàgina, especifica la propietat adequada a continuació:',
+	'sf_createtemplate_aggregationlabel' => 'Títol del llistat:',
+	'sf_createtemplate_outputformat' => 'Format de sortida:',
+	'sf_createtemplate_standardformat' => 'Estàndard',
+	'sf_createtemplate_infoboxformat' => 'Infocaixa a la dreta',
+	'sf_createtemplate_addfield' => 'Afegir camp',
+	'sf_createtemplate_deletefield' => 'Esborrar',
+	'sf_createtemplate_addtemplatebeforesave' => "Per poder guardar-lo has d'afegir com a mínim una plantilla a aquest formulari.",
+	'forms' => 'Formularis',
+	'sf_forms_docu' => 'Els formularis següents ja existeixen al wiki.',
+	'createform' => 'Crear un formulari',
+	'sf_createform_nameinput' => 'Nom del Formulari (per convenció, dóna nom al formulari després de la plantilla principal que aquest omple)',
 	'sf_createform_template' => 'Plantilla:',
+	'sf_createform_templatelabelinput' => 'Etiqueta de la plantilla (opcional):',
+	'sf_createform_allowmultiple' => "Permet múltiples (o cap) instàncies d'aquesta plantilla en la pàgina a crear",
+	'sf_createform_field' => 'Camp:',
+	'sf_createform_fieldattr' => "Aquest camp defineix l'atribut $1, de tipus $2",
+	'sf_createform_fieldattrlist' => "El camp defineix una llista d'elements que tenen l'atribut $1, de tipus $2",
+	'sf_createform_fieldattrunknowntype' => "Aquest camp defineix l'atribut $1, del que no s'ha especificat la tipologia",
+	'sf_createform_fieldrel' => 'Aquest camp defineix la relació $1',
+	'sf_createform_fieldrellist' => "Aquest camp defineix una llista d'elements que tenen la relació $1",
+	'sf_createform_fieldprop' => 'Aquest camp defineix la propietat $1, de tipus $2',
+	'sf_createform_fieldproplist' => "Aquest camp defineix una llista d'elements que tenen la propietat $1, de tipus $2",
+	'sf_createform_fieldpropunknowntype' => "Aquest camp defineix la propietat $1, de la qual no s'ha especificat la tipologia",
+	'sf_createform_inputtype' => "Tipus d'entrada:",
+	'sf_createform_inputtypedefault' => '(per defecte)',
+	'sf_createform_formlabel' => 'Etiqueta de formulari:',
 	'sf_createform_hidden' => 'Amagat',
+	'sf_createform_restricted' => 'Restringit (només els usuaris sysop, administradors, poden modificar-lo)',
+	'sf_createform_mandatory' => 'Obligat omplir',
+	'sf_createform_removetemplate' => 'Esborrar plantilla',
+	'sf_createform_addtemplate' => 'Afegir plantilla:',
+	'sf_createform_beforetemplate' => 'Plantilla anterior:',
+	'sf_createform_atend' => 'Al final',
+	'sf_createform_add' => 'Afegir',
+	'sf_createform_choosefield' => 'Escull un camp per afegir',
+	'createcategory' => 'Crear una categoria',
+	'sf_createcategory_name' => 'Nom:',
+	'sf_createcategory_defaultform' => 'Formulari per defecte:',
+	'sf_createcategory_makesubcategory' => "Fes que aquesta sigui una sub-categoria d'una altra categoria (opcional):",
+	'addpage' => 'Afegir pàgina via formulari',
+	'sf_addpage_badform' => "Error: no s'ha trobat una pàgina de formulari a $1",
+	'sf_addpage_docu' => "Introdueix el nom de la pàgina aquí, per ser editada amb el formulari '$1'.
+Si aquesta pàgina ja existeix, se t'obrirà el formulari per editar-la.
+Si no, se t'obrirà el formulari per afegir una pàgina nova.",
+	'sf_addpage_noform_docu' => "Introdueix aquí el nom de la pàgina i selecciona un formulari per editar-la.
+Si aquesta pàgina ja existeix, se t'obrirà el formulari per editar-la.
+Si no, se t'obrirà el formulari per afegir una pàgina nova.",
+	'addoreditdata' => 'Afegir o editar',
+	'adddata' => 'Afegir dades',
+	'sf_adddata_title' => 'Afegir $1: $2',
+	'sf_adddata_badurl' => "Aquesta és la pàgina per afegir dades. Has d'especificar tant el nom del formulari com la pàgina de destí a la URL; ha de ser quelcom similar a 'Special:AddData?form=&lt;nom formulari&gt;&target=&lt;pàgina destí&gt;', o bé 'Special:AddData/&lt;nom formulari&gt;/&lt;pàgina destí&gt;'.",
+	'sf_adddata_altforms' => 'Alternativament pots afegir aquesta pàgina amb un dels formularis següents:',
+	'sf_adddata_altformsonly' => 'Sisplau, selecciona un formulari entre els següents per crear aquesta pàgina:',
+	'editdata' => 'Editar dades',
+	'sf_formedit' => 'Editar via formulari',
+	'sf_viewform' => 'Veure el formulari',
+	'sf_editsource' => 'Editar font',
+	'sf_editdata_title' => 'Editar $1: $2',
+	'sf_editdata_badurl' => "Aquesta és la pàgina per editar dades. Has d'especificar tant el nom d'un formulari com el de la pàgina de destí en la URL; ha de ser quelcom similar a 'Special:EditData?form=&lt;nom formulari&gt;&target=&lt;pàgina destí&gt;', or  'Special:EditData/&lt;nom formulari&gt;/&lt;pàgina destí&gt;'.",
+	'sf_editdata_formwarning' => 'Atenció: Aquesta pàgina <a href="$1">ja existeix</a>, però no fa servir aquest formulari.',
+	'sf_editdata_remove' => 'Esborrar',
+	'sf_editdata_addanother' => 'Afegir-ne un altre',
 	'sf_editdata_none' => 'Cap',
+	'sf_formerrors_header' => 'Hi ha hagut errors en les teves entrades al formulari; veure a continuació',
+	'sf_blank_error' => 'no es pot deixar en blanc',
+	'sf_bad_url_error' => "ha de tenir un format de URL correcte, començant per 'http'",
+	'sf_bad_email_error' => "ha de tenir un format vàlid d'adreça de correu electrònic",
+	'sf_bad_number_error' => 'ha de ser un nombre vàlid',
+	'sf_bad_integer_error' => 'ha de ser un nombre enter',
+	'sf_bad_date_error' => 'ha de ser una data vàlida',
+	'uploadwindow' => 'Finestra de càrrega',
+	'sf_property_isattribute' => 'Aquest és un atribut de tipus $1.',
+	'sf_property_isproperty' => 'Aquesta és una propietat del tipus $1.',
+	'sf_property_allowedvals' => 'Els valors permesos per aquesta propietat són:',
+	'sf_property_isrelation' => 'Això és una relació.',
+	'sf_template_docu' => "Aquesta és la plantilla '$1'.
+Que ha de ser cridada en el format següent:",
+	'sf_template_docufooter' => 'Edita la pàgina per veure el text de la plantilla.',
+	'sf_form_docu' => "Aquest és el formulari '$1'.
+Per afegir una pàgina amb aquest formulari, entra el nom de la pàgina a continuació;
+si la pàgina amb aquest nom ja existís, s'obrirà un formulari per editar-la.",
+	'sf_form_freetextlabel' => 'Text lliure',
+	'sf_category_hasdefaultform' => 'Aquesta categoria fa servir el formulari $1.',
+	'sf_category_desc' => 'Aquesta és la categoria $1.',
+	'sf_blank_namespace' => 'Principal',
 );
 
 /** Czech (Česky)
@@ -827,6 +933,7 @@ $messages['eo'] = array(
 
 /** Spanish (Español)
  * @author Cmitnick
+ * @author Dvdgmz
  * @author Jatrobat
  * @author Sanbec
  */
@@ -842,13 +949,13 @@ $messages['es'] = array(
 	'sf_createtemplate_namelabel' => 'Nombre de la Plantilla:',
 	'sf_createtemplate_categorylabel' => 'Categoría definida por la plantilla (opcional):',
 	'sf_createtemplate_templatefields' => 'Campos de la Plantilla',
-	'sf_createtemplate_fieldsdesc' => 'Para tener los campos en esta plantilla no se requiere más los nombres de los campos, simplemente ingresa el índice de cada campo ( Por ejemplo 1, 2, 3, etc. ) como el nombre, en vez de un nombre actual.',
+	'sf_createtemplate_fieldsdesc' => 'Para obtener los campos en esta plantilla ya no hace falta especificar los nombres de los campos, simplemente ingresa el índice de cada campo (por ejemplo 1, 2, 3, etc.) para referirte a él, en vez de su nombre real.',
 	'sf_createtemplate_fieldname' => 'Nombre del Campo:',
 	'sf_createtemplate_displaylabel' => 'Mostrar etiqueta:',
 	'sf_createtemplate_semanticproperty' => 'Propiedad semántica:',
 	'sf_createtemplate_fieldislist' => 'Este campo puede soportar una lista de valores, separados por comas',
 	'sf_createtemplate_aggregation' => 'Agregación',
-	'sf_createtemplate_aggregationdesc' => 'Para enlistar, en cualquier página usando este template, todos los artículos que tienen una cierta propiedad apuntando a esa página, especificar la propiedad apropiada a continuación:',
+	'sf_createtemplate_aggregationdesc' => 'Para crear, en cualquier página con esta plantilla, una lista de todos los artículos que tengan una cierta propiedad que apunte a esa página, especifica esa propiedad a continuación:',
 	'sf_createtemplate_aggregationlabel' => 'Título para la lista:',
 	'sf_createtemplate_outputformat' => 'Formato de salida:',
 	'sf_createtemplate_standardformat' => 'Estándar',
@@ -915,6 +1022,7 @@ $messages['es'] = array(
 	'sf_bad_number_error' => 'debe ser un número válido',
 	'sf_bad_integer_error' => 'debe ser un entero válido',
 	'sf_bad_date_error' => 'debe ser una fecha válida',
+	'uploadwindow' => 'Ventana para subir archivos',
 	'sf_property_isattribute' => 'Este es un atributo de tipo $1.',
 	'sf_property_isproperty' => 'Esta es una propiedad de tipo $1.',
 	'sf_property_allowedvals' => 'Los valores permitidos para este atributo o propiedad son:',
@@ -1358,6 +1466,15 @@ $messages['gl'] = array(
  */
 $messages['got'] = array(
 	'sf_createtemplate_deletefield' => 'Taíran',
+);
+
+/** Ancient Greek (Ἀρχαία ἑλληνικὴ)
+ * @author Omnipaedista
+ */
+$messages['grc'] = array(
+	'sf_createproperty_propname' => 'Ὄνομα:',
+	'sf_createproperty_proptype' => 'Τύπος:',
+	'templates' => 'Πρότυπα',
 );
 
 /** Gujarati (ગુજરાતી)
@@ -1807,9 +1924,12 @@ $messages['id'] = array(
 	'sf_editdata_none' => 'Tidak ada',
 );
 
-/** Icelandic (Íslenska) */
+/** Icelandic (Íslenska)
+ * @author S.Örvarr.S
+ */
 $messages['is'] = array(
 	'sf_createproperty_propname' => 'Nafn:',
+	'sf_createtemplate_standardformat' => 'Staðlað',
 	'sf_createcategory_name' => 'Nafn:',
 );
 
@@ -1915,6 +2035,13 @@ $messages['km'] = array(
 	'sf_bad_email_error' => 'ទំរង់អាស័យដ្ឋានអ៊ីមែវល៍ មិនត្រឹមត្រូវ',
 	'sf_template_docufooter' => 'កែប្រែទំព័រ ដើម្បីឃើញ អត្ថបទ នៃគំរូខ្នាត ។',
 	'sf_category_hasdefaultform' => 'ចំណាត់ក្រុមនេះ ប្រើប្រាស់បែបបទ $1 ។',
+);
+
+/** Krio (Krio)
+ * @author Jose77
+ */
+$messages['kri'] = array(
+	'sf_createtemplate_deletefield' => 'Dilit',
 );
 
 /** Kinaray-a (Kinaray-a)
@@ -2108,6 +2235,14 @@ Jeigu puslapis tokiu vardu jau egzistuoja, šia forma galėsite jį redaguoti.',
 	'sf_blank_namespace' => 'Pagrindinis',
 );
 
+/** Eastern Mari (Олык Марий)
+ * @author Сай
+ */
+$messages['mhr'] = array(
+	'sf_createtemplate_deletefield' => 'Шӧраш',
+	'sf_createform_inputtypedefault' => '(ойлыде)',
+);
+
 /** Malayalam (മലയാളം)
  * @author Shijualex
  */
@@ -2281,7 +2416,14 @@ $messages['mr'] = array(
  */
 $messages['myv'] = array(
 	'sf_createproperty_propname' => 'Лемезэ:',
+	'sf_createtemplate_deletefield' => 'Нардамс',
+	'sf_createform_template' => 'Лопа парцунось:',
+	'sf_createform_field' => 'Паксясь:',
+	'sf_createform_hidden' => 'Кекшезь',
+	'sf_createform_add' => 'Поладомс',
+	'createcategory' => 'Шкамс категория',
 	'sf_createcategory_name' => 'Лемезэ:',
+	'sf_editsource' => 'Витнемс-петнемс лисьмапрянзо',
 	'sf_editdata_remove' => 'Нардык',
 );
 
@@ -2605,7 +2747,7 @@ $messages['oc'] = array(
 	'addpage' => 'Apondre una pagina amb un formulari',
 	'sf_addpage_badform' => 'Error : cap de pagina de formulari es pas estada trobada sus $1.',
 	'sf_addpage_docu' => "Picatz aicí lo nom de la pagina destinada a èsser editada amb lo formulari « $1 ». Se aquesta pagina existís ja, seretz dirigit cap al formulari per l'editar. Dins lo cas contrari, seretz redirigit cap a lo que permet de l'apondre.",
-	'sf_addpage_noform_docu' => "Picatz aicí lo nom de la pagina puèi seleccionatz lo formulari amb loqual serà editada. Se aquesta pagina existís ja, seretz dirigit cap al formulari per l'editar. Dins lo cas contrari, seretz redirigit cap a lo que permet de l'apondre.",
+	'sf_addpage_noform_docu' => "Picatz aicí lo nom de la pagina puèi seleccionatz lo formulari amb lo qual serà editada. S'aquesta pagina existís ja, seretz dirigit cap al formulari per l'editar. Dins lo cas contrari, seretz redirigit cap a lo que permet de l'apondre.",
 	'addoreditdata' => 'Modificar o apondre de donadas',
 	'adddata' => 'Apondre de donadas',
 	'sf_adddata_title' => 'Apondre $1 : $2',
@@ -3608,7 +3750,7 @@ $messages['yi'] = array(
 	'sf_createtemplate_namelabel' => 'מוסטער נאמען:',
 );
 
-/** ‪Mainland Chinese‬ (‪中文(中国大陆)‬)
+/** Chinese (China) (‪中文(中国大陆)‬)
  * @author Roc Michael <roc.no1@gmail.com>
  */
 $messages['zh-cn'] = array(
@@ -3706,7 +3848,7 @@ $messages['zh-cn'] = array(
 	'sf_blank_namespace' => '主',
 );
 
-/** Taiwan Chinese (‪中文(台灣)‬)
+/** Chinese (Taiwan) (‪中文(台灣)‬)
  * @author Roc michael
  */
 $messages['zh-tw'] = array(

@@ -9,7 +9,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define('SF_VERSION','1.3.4');
+define('SF_VERSION','1.3.6');
 
 $wgExtensionCredits['specialpage'][]= array(
 	'name' => 'Semantic Forms',
@@ -32,6 +32,7 @@ $wgHooks['LanguageGetMagic'][] = 'sffLanguageGetMagic';
 $wgHooks['BrokenLink'][] = 'sffSetBrokenLink_1_13';
 $wgHooks['LinkEnd'][] = 'sffSetBrokenLink';
 $wgHooks['UnknownAction'][] = 'sffEmbeddedEditForm';
+$wgHooks['smwInitProperties'][] = 'sffInitProperties';
 
 $wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
 
@@ -186,6 +187,12 @@ function sffInitUserLanguage($langcode) {
 /***** other global helpers               *****/
 /**********************************************/
 
+function sffInitProperties() {
+	SMWPropertyValue::registerProperty('_SF_DF', '__spf', 'Has default form', true);
+	SMWPropertyValue::registerProperty('_SF_AF', '__spf', 'Has alternate form', true);
+	return true;
+}
+
 /**
  * Creates HTML linking to a wiki page
  */
@@ -282,6 +289,27 @@ END;
 }
 
 /**
+ * A helper function to generate a property object given its name, since
+ * the class for properties changed from Title to SMWPropertyValue in SMW 1.4
+ */
+function sffCreateProperty($property_name) {
+	if (class_exists('SMWPropertyValue'))
+		return SMWPropertyValue::makeProperty($property_name);
+	else
+		return Title::newFromText($property_name, SMW_NS_PROPERTY);
+}
+
+/**
+ * In the same spirit as sffCreateProperty
+ */
+function sffGetPropertyName($property) {
+	if ($property instanceof Title)
+		return $property->getText();
+	else // $property instanceof SMWPropertyValue
+		return $property->getWikiValue();
+}
+
+/**
  * Gets the default form specified, if any, for a specific page
  * (which should be a category, relation, or namespace page)
  */
@@ -292,9 +320,23 @@ function sffGetDefaultForm($page_title, $page_namespace) {
 	global $sfgContLang;
 	$store = smwfGetStore();
 	$title = Title::newFromText($page_title, $page_namespace);
+	// we can do this easily if we're using SMW 1.4 or higher
+	if (class_exists('SMWPropertyValue')) {
+		$default_form_property = SMWPropertyValue::makeProperty('_SF_DF');
+		$res = $store->getPropertyValues($title, $default_form_property);
+		// make sure it's in the form namespace
+		if (isset($res[0]) && ($res[0]->getNamespace() == SF_NS_FORM)) {
+			$form_name = $res[0]->getTitle()->getText();
+			return $form_name;
+		} else {
+			return null;
+		}
+	}
+
+	// otherwise, it's a bit more complex
 	$sf_props = $sfgContLang->getSpecialPropertiesArray();
 	$default_form_property = str_replace(' ', '_', $sf_props[SF_SP_HAS_DEFAULT_FORM]);
-	$property = Title::newFromText($default_form_property, SMW_NS_PROPERTY);
+	$property = sffCreateProperty($default_form_property);
 	$res = $store->getPropertyValues($title, $property);
 	if (isset($res[0]) && ($res[0] instanceof SMWWikiPageValue || $res[0] instanceof Title)) {
 		// make sure it's in the form namespace
@@ -308,7 +350,7 @@ function sffGetDefaultForm($page_title, $page_namespace) {
 	$sf_props_aliases = $sfgContLang->getSpecialPropertyAliases();
 	foreach ($sf_props_aliases as $alias => $prop_code) {
 		if ($prop_code == SF_SP_HAS_DEFAULT_FORM) {
-			$property = Title::newFromText($alias, SMW_NS_PROPERTY);
+			$property = sffCreateProperty($alias);
 			$res = $store->getPropertyValues($title, $property);
 			if (isset($res[0]) && ($res[0] instanceof SMWWikiPageValue || $res[0] instanceof Title)) {
 				// make sure it's in the form namespace
@@ -328,14 +370,30 @@ function sffGetDefaultForm($page_title, $page_namespace) {
  */
 function sffGetAlternateForms($page_title, $page_namespace) {
 	if ($page_title == NULL)
-		return null;
+		return array();
 
 	global $sfgContLang;
 	$store = smwfGetStore();
 	$title = Title::newFromText($page_title, $page_namespace);
+	// we can do this easily if we're using SMW 1.4 or higher
+	if (class_exists('SMWPropertyValue')) {
+		$alternate_form_property = SMWPropertyValue::makeProperty('_SF_AF');
+		$res = $store->getPropertyValues($title, $alternate_form_property);
+		// there could be multiple alternate forms
+		$form_names = array();
+		foreach ($res as $wiki_page_value) {
+			// make sure it's in the form namespace
+			if ($wiki_page_value->getNamespace() == SF_NS_FORM) {
+				$form_names[] = $wiki_page_value->getTitle()->getText();
+			}
+		}
+		return $form_names;
+	}
+
+	// otherwise, it's a bit more complex
 	$sf_props = $sfgContLang->getSpecialPropertiesArray();
 	$alternate_form_property = str_replace(' ', '_', $sf_props[SF_SP_HAS_ALTERNATE_FORM]);
-	$property = Title::newFromText($alternate_form_property, SMW_NS_PROPERTY);
+	$property = sffCreateProperty($alternate_form_property);
 	$prop_vals = $store->getPropertyValues($title, $property);
 	$form_names = array();
 	foreach ($prop_vals as $prop_val) {
@@ -347,7 +405,7 @@ function sffGetAlternateForms($page_title, $page_namespace) {
 	}
 	// try the English version too, if this isn't in English
 	if ($alternate_form_property != "Has_alternate_form") {
-		$property = Title::newFromText("Has_alternate_form", SMW_NS_PROPERTY);
+		$property = sffCreateProperty("Has_alternate_form");
 		$prop_vals = $store->getPropertyValues($title, $property);
 		foreach ($prop_vals as $prop_val) {
 			if (($prop_val instanceof SMWWikiPageValue || $prop_val instanceof Title)
@@ -376,7 +434,7 @@ function sffGetAddDataLinkForPage($target_page_title, $page_title, $page_namespa
 	else
 		$add_data_url = $ad->getTitle()->getLocalURL() . "/" . sffTitleURLString($target_page_title);
 	foreach ($alt_forms as $i => $alt_form) {
-		$add_data_url .= ($i == 0) ? "?" : "&";
+		$add_data_url .= (strpos($add_data_url, "?")) ? "&" : "?";
 		$add_data_url .= "alt_form[$i]=$alt_form";
 	}
 	return $add_data_url;
@@ -416,7 +474,8 @@ function sffAddDataLink($title) {
 	$value = SMWDataValueFactory::newTypeIDValue('_wpg', $title_text);
 	$incoming_properties = $store->getInProperties($value);
 	foreach ($incoming_properties as $property) {
-		if ($add_data_link = sffGetAddDataLinkForPage($title, $property->getText(), SMW_NS_PROPERTY)) {
+		$property_title = sffGetPropertyName($property);
+		if ($add_data_link = sffGetAddDataLinkForPage($title, $property_title, SMW_NS_PROPERTY)) {
 			return $add_data_link;
 		}
 	}
@@ -623,7 +682,7 @@ function sffGetAllValuesForProperty_1_2($property_name, $substring = null) {
 	if ($substring != null) {
 		$requestoptions->addStringCondition($substring, SMWStringCondition::STRCOND_PRE);
 	}
-	$property = Title::newFromText($property_name, SMW_NS_PROPERTY);
+	$property = sffCreateProperty($property_name);
 	$data_values = $store->getPropertyValues(null, $property, $requestoptions);
 	$values = array();
 	foreach ($data_values as $dv) {
@@ -813,12 +872,12 @@ function sffGetAllProperties() {
 	$options->limit = 10000;
 	$used_properties = smwfGetStore()->getPropertiesSpecial($options);
 	foreach ($used_properties as $property) {
-		$property_name = $property[0]->getText();
+		$property_name = sffGetPropertyName($property[0]);
 		$all_properties[$property_name . "::"] = $property_name;
 	}
 	$unused_properties = smwfGetStore()->getUnusedPropertiesSpecial($options);
 	foreach ($unused_properties as $property) {
-		$property_name = $property->getText();
+		$property_name = sffGetPropertyName($property);
 		$all_properties[$property_name . "::"] = $property_name;
 	}
 

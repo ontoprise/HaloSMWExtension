@@ -157,7 +157,8 @@ END;
       $possible_values = array(); 
     foreach ($possible_values as $possible_value) {
       $text .= "  <option value=\"$possible_value\"";
-      if ($possible_value == $cur_value) {$text .= " selected=\"selected\""; }
+      if ($possible_value == htmlentities($cur_value))
+        $text .= " selected=\"selected\"";
       $text .= ">$possible_value</option>\n";
     }
     $text .=<<<END
