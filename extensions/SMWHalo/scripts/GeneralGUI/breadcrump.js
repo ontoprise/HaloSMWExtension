@@ -18,7 +18,7 @@ Breadcrump.prototype = {
             breadcrumpArray = [breadcrump];
         } else {
             // parse breadcrump and add new title
-            breadcrumpArray = breadcrump.split(",");
+            breadcrumpArray = breadcrump.split(" ");
             // do not add doubles
             if (breadcrumpArray[breadcrumpArray.length-1] != wgPageName) {
                 breadcrumpArray.push(wgPageName);
@@ -29,7 +29,7 @@ Breadcrump.prototype = {
             //serialize breadcrump
             breadcrump = "";
             for (var i = 0; i < breadcrumpArray.length-1; i++) {
-                breadcrump += breadcrumpArray[i]+",";
+                breadcrump += breadcrumpArray[i]+" ";
             }
             breadcrump += breadcrumpArray[breadcrumpArray.length-1];
                 
