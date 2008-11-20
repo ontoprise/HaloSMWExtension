@@ -17,17 +17,46 @@ class SMWExplanations extends SpecialPage {
 /*
  * Overloaded function that is resopnsible for the creation of the Special Page
  */
-	public function execute() {
+	public function execute($query) {
 
 		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 		$wgOut->setPageTitle(wfMsg('smw_explanations'));
-		
-		//get request parameters
-		$instance = $wgRequest->getVal( 'i' );
-		$property = $wgRequest->getVal( 'p' );
-		$value = $wgRequest->getVal( 'v' );
-		$category = $wgRequest->getVal( 'c' );
-		$mode = $wgRequest->getVal('mode');
+
+		$split = array();
+		if (isset($query)) {
+			$split = preg_split('/(\/i:|\/p:|\/v:|\/c:|\/mode:)/', '/'.$query, -1, 
+			                    PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		}
+		if (count($split) > 0) {
+			// Parameters passed in the form /i:<subject>/p:<property>...
+			for ($i = 0; $i < count($split); $i+=2) {
+				switch ($split[$i]) {
+					case '/i:': 
+						$instance = $split[$i+1];
+						break;
+					case '/p:': 
+						$property = $split[$i+1];
+						break;
+					case '/v:': 
+						$value = $split[$i+1];
+						break;
+					case '/c:': 
+						$category = $split[$i+1];
+						break;
+					case '/mode:': 
+						$mode = $split[$i+1];
+						break;
+				}
+			}
+		} else {
+			// parameters passed in the form ?i=<subject>&p=<property>...
+			//get request parameters
+			$instance = $wgRequest->getVal( 'i' );
+			$property = $wgRequest->getVal( 'p' );
+			$value = $wgRequest->getVal( 'v' );
+			$category = $wgRequest->getVal( 'c' );
+			$mode = $wgRequest->getVal('mode');
+		}
 		$html = "";
 		
 		if($mode == "category"){
