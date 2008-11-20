@@ -556,8 +556,12 @@ protected $smwUserMessages = array(
 	'smw_expl_img' => 'Erklärung anfordern',
 	'smw_expl_explain_category' => 'Erklärung für Kategoriezuordnung:',
 	'smw_expl_explain_property' => 'Erklärung für Propertyzuordnung:',
-	'smw_expl_error' => 'Leider gab es einen Fehler während der Auswertung der Erklärung:'
-    
+	'smw_expl_error' => 'Leider gab es einen Fehler während der Auswertung der Erklärung:',
+
+	
+	// Derived facts
+	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1'
+	
 );
 
 protected $smwSpecialProperties = array(

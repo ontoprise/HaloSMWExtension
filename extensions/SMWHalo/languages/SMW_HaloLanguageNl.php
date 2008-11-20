@@ -554,6 +554,10 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
 	'smw_srf_missing_operator' => 'Expected an operator near $1',
 
+	
+	// Derived facts
+	'smw_df_derived_facts_about' => 'Derived facts about $1'
+
 );
 
 

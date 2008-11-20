@@ -649,8 +649,10 @@ clicking the big arrows between the columns.',
 	'smw_expl_img' => 'Trigger explanation',
 	'smw_expl_explain_category' => 'Explain category assignment:',
 	'smw_expl_explain_property' => 'Explain property assignment:',
-	'smw_expl_error' => 'Unfortunately, some error occured during the request for the explanation:'
+	'smw_expl_error' => 'Unfortunately, some error occured during the request for the explanation:',
 	
+	// Derived facts
+	'smw_df_derived_facts_about' => 'Derived facts about $1'
 
 	);
 
