@@ -14,8 +14,6 @@ class SMWFullSemanticData {
     protected $rules = array();
     protected $redirects;
 	
-    private $derivedProperties;
-
     public function __construct() {
         $this->categories = array();
         $this->rules = array();
@@ -51,21 +49,21 @@ class SMWFullSemanticData {
     public function getRedirects() {
          return $this->redirects;
     }
-    
-    public function getDerivedProperties() {
-    	return $this->derivedProperties;
-    }
-	
+    	
 	/**
-	 * Get the array of all properties that have stored values.
+	 * Get derived properties.
+	 * @param SMWSemanticData $semData
+	 * 		Annotated facts of an article
+	 * @return SMWSemanticData
+	 * 		Derived facts of the article
 	 */
- 	public function addDerivedProperties(SMWSemanticData $semData) {
- 		
- 	
+ 	public static function getDerivedProperties(SMWSemanticData $semData) {
  		
 		global $smwgIP, $smwgHaloIP, $smwgNamespace;
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
         require_once($smwgHaloIP . '/includes/storage/SMW_TripleStore.php');
+
+        $derivedProperties = new SMWSemanticData($semData->getSubject());
         
         $subject = $semData->getSubject()->getDBkey();
         
@@ -73,13 +71,17 @@ class SMWFullSemanticData {
 //		$queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		$queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		
+		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, new ParserOptions());
 		$res = smwfGetStore()->getQueryResult($q);
 		
 		$propVal = array();
         while ( $row = $res->getNext() ) {
+        	$i = 0;
             foreach ($row as $field) {
                 while ( ($object = $field->getNextObject()) !== false ) {
+                	$propVal[] = $object;
+/*
                     if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
                         $text = $object->getTitle()->getText();
                         $propVal[] = $object->getTitle();
@@ -92,42 +94,53 @@ class SMWFullSemanticData {
                         	$propVal[] = $text;
                         }
                     }
+*/
                 }
             }
         }
 		
        
         for ($i = 0; $i < count($propVal); $i += 2) {
-        	if (!($propVal[$i] instanceof Title)) {
+        	if ($propVal[$i]->getTypeID() != '_wpg') {
         		// The name of the property must be a title object
         		continue;
         	}
-        	$propName = $propVal[$i]->getText();
+        	$propName = $propVal[$i]->getTitle()->getText();
         	$value = $propVal[$i+1];
-        	$valueRep = ($value instanceof Title) ? $value->getText() : $value;
+//        	$valueRep = ($value instanceof Title) ? $value->getText() : $value;
         	
         	// does the property already exist?
-        	$values = $semData->getPropertyValues($propName);
+        	$prop = SMWPropertyValue::makeUserProperty($propName);
+        	$values = $semData->getPropertyValues($prop);
         	$isDerived = true;
+        	$val = null;
         	foreach ($values as $v) {
-        		$wv = $v->getWikiValue();
-        		if ($wv == $valueRep) {
-        			$isDerived = false;
-        			break;
+        		if ($value->getTypeID() == '_wpg') {
+        			if ($value->getTitle()->getText() == $v->getTitle()->getText()) {
+	        			$isDerived = false;
+	        			break;
+        			}
+        		} else {
+					if ($value->isNumeric()) {
+		        		if ($value->getNumericValue() == $v->getNumericValue()) {
+		        			$isDerived = false;
+		        			break;
+		        		}
+		        	} else {
+		        		if ($value->getXSDValue() == $v->getXSDValue()) {
+		        			$isDerived = false;
+		        			break;
+		        		}
+		        	}
         		}
         	}
         	if ($isDerived) {
-        		$this->hasprops = true;
-        		$derivedProperties[] = array($propName, $value, false, true);
+				$property = SMWPropertyValue::makeUserProperty($propName);
+        		$derivedProperties->addPropertyObjectValue($property, $value);
         	}
         }
-        
-        
+        return $derivedProperties;
 	}
-
-
-	
-	
 
 }
 

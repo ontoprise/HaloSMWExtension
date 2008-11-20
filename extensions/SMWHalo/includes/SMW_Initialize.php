@@ -195,6 +195,7 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+//	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	
 	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 
@@ -566,6 +567,7 @@ function smwfHaloAddHTMLHeader(&$out) {
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "edit");
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "annotate");
+    $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css');
     //Remove before check in
     //print $wgStylePath.'/'.$skin->getSkinName().'/semantictoolbar.css';
     //die;
@@ -1490,13 +1492,65 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 }
 
 function smwfAddDerivedFacts(& $text, $semdata) {
-	if (SMWTripleStore::$fullSemanticData === NULL) { 
-	   return true;
-	}
 	
-	SMWTripleStore::$fullSemanticData->addDerivedProperties($semdata);
-    $derivedFacts = SMWTripleStore::$fullSemanticData->getDerivedProperties();
-	//TODO: Thomas: display derived facts
+	global $wgContLang;
+	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
+   
+	
+	$text .= '<div class="smwfact">' .
+				'<span class="smwfactboxhead">' . 
+					wfMsg('smw_df_derived_facts_about', 
+					      $derivedFacts->getSubject()->getText()) . 
+				'</span>' .
+				'<table class="smwfacttable">' . "\n";
+		
+	foreach($derivedFacts->getProperties() as $property) {
+		if (!$property->isShown()) { // showing this is not desired, hide
+			continue;
+		} elseif ($property->isUserDefined()) { // user defined property
+			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
+			$text .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
+		} elseif ($property->isVisible()) { // predefined property
+			$text .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
+		} else { // predefined, internal property
+			continue;
+		}
+
+		$propvalues = $derivedFacts->getPropertyValues($property);
+		$l = count($propvalues);
+		$i=0;
+		foreach ($propvalues as $propvalue) {
+			if ($i!=0) {
+				if ($i>$l-2) {
+					$text .= wfMsgForContent('smw_finallistconjunct') . ' ';
+				} else {
+					$text .= ', ';
+				}
+			}
+			$i+=1;
+
+			// encode the parameters in the links as 
+			//Special:Explanations/i:<subject>/p:<property>/v:<value>/mode:property
+			//The form ?i=...&p=... is no longer possible, as the fact box is now created
+			// as wikitext and special chars in links are encoded. 
+			$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
+			$link .= '/i:'.$derivedFacts->getSubject()->getTitle()->getPrefixedDBkey();
+			$link .= '/p:'.$property->getWikiPageValue()->getTitle()->getPrefixedDBkey();
+			$link .= '/v:'.urlencode($propvalue->getWikiValue());
+			$link .= '/mode:property';
+						
+			$propRep = $propvalue->getLongWikiText(true) .
+			      '&nbsp;'.
+				  '<span class="smwexplanation">[['.$link.'|+]]</span>';
+			
+			$text .= $propRep;
+			
+		}
+		$text .= '</td></tr>';
+	}
+	$text .= '</table></div>';
+    
 	return true;
 }
 
