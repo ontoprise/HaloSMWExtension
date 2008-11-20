@@ -556,14 +556,14 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 	
 	// Derived facts
-	'smw_df_derived_facts_about' => 'Derived facts about $1'
+	'smw_df_derived_facts_about' => 'Afgeleide feiten $1'
 
 );
 
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	SMW_SP_CONVERSION_FACTOR_SI => 'Komt overeen met SI'
+	"___cfsi" => 'Komt overeen met SI'
 );
 
 

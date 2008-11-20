@@ -106,10 +106,12 @@ class SMWQueryProcessor {
 			$orders = explode( ',', $params['order'] );
 			foreach ($orders as $key => $order) { // normalise
 				$order = strtolower(trim($order));
-				if ( ('descending' != $order) && ('reverse' != $order) && ('desc' != $order) ) {
-					$orders[$key] = 'ASC';
-				} else {
+				if ( ('descending' == $order) || ('reverse' == $order) || ('desc' == $order) ) {
 					$orders[$key] = 'DESC';
+				} elseif ( ('random' == $order) || ('rand' == $order) ) {
+					$orders[$key] = 'RAND()';
+				} else {
+					$orders[$key] = 'ASC';
 				}
 			}
 		} else {
@@ -135,6 +137,10 @@ class SMWQueryProcessor {
 			if (current($orders) !== false) { // sort key remaining, apply to page name
 				$query->sortkeys[''] = current($orders);
 			}
+		} elseif ($format == 'rss') { // unsorted RSS: use *descending* default order
+			///TODO: the default sort field should be "modification date" (now it is the title, but 
+			///likely to be overwritten by printouts with label "date").
+			$query->sortkeys[''] = (current($orders) != false)?current($orders):'DESC';
 		} else { // sort by page title (main column) by default
 			$query->sortkeys[''] = (current($orders) != false)?current($orders):'ASC';
 		} // TODO: check and report if there are further order statements?

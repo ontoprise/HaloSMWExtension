@@ -78,7 +78,7 @@
  	
  	public function checkEqualToRelations() {
  		$equalToRelations = $this->cc_store->getEqualToRelations();
- 		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+ 		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
  		$this->bot->addSubTask(count($equalToRelations));
  		foreach($equalToRelations as $r) {
  			$this->bot->worked(1);

@@ -197,17 +197,17 @@ class AutoCompletionRequester {
 		// special handling for special relations
 		
  	    	global $smwgContLang, $smwgHaloContLang, $smwgSemanticAC, $wgLang;
- 	    	$specialProperties = $smwgContLang->getSpecialPropertiesArray();
+ 	    	$specialProperties = $smwgContLang->getPropertyLabels();
  	    	$specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
  	    		
  	    	// special properties
- 	    	if (stripos(strtolower($userContext), strtolower($specialProperties[SMW_SP_SUBPROPERTY_OF])) > 0) {
+ 	    	if (stripos(strtolower($userContext), strtolower($specialProperties["_SUBP"])) > 0) {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
  	    	} else if (stripos(strtolower($userContext), strtolower($specialSchemaProperties[SMW_SSP_IS_INVERSE_OF])) > 0) {
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY));
  	    		return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
- 	    	} else if (stripos(strtolower($userContext),strtolower($specialProperties[SMW_SP_HAS_TYPE])) > 0) { 
+ 	    	} else if (stripos(strtolower($userContext),strtolower($specialProperties["_TYPE"])) > 0) { 
  	    		// has type relation. First check for user types
  	    		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_TYPE));
  	    		// then check builtin types 
@@ -298,16 +298,16 @@ class AutoCompletionRequester {
  	    	// special handling for special relations
  	    	$specialMatches = array(); // keeps matches of special relations
  	    	global $smwgContLang;
- 	    	$specialProperties = $smwgContLang->getSpecialPropertiesArray();
+ 	    	$specialProperties = $smwgContLang->getPropertyLabels();
  	    	if (stripos(strtolower($wgLang->getNsText(NS_CATEGORY)), strtolower($match)) !== false) {
  	    		$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText(NS_CATEGORY)), NS_CATEGORY);
  	    	}
- 	    	if (stripos(strtolower($specialProperties[SMW_SP_SUBPROPERTY_OF]), preg_replace("/_/", " ", strtolower($match))) !== false) {
-	 	    	$specialMatches[] = Title::newFromText($specialProperties[SMW_SP_SUBPROPERTY_OF], SMW_NS_PROPERTY);
+ 	    	if (stripos(strtolower($specialProperties["_SUBP"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
+	 	    	$specialMatches[] = Title::newFromText($specialProperties["_SUBP"], SMW_NS_PROPERTY);
  	    	}
  	    	
- 	    	if (stripos(strtolower($specialProperties[SMW_SP_HAS_TYPE]), preg_replace("/_/", " ", strtolower($match))) !== false) {
- 	    		$specialMatches[] = Title::newFromText($specialProperties[SMW_SP_HAS_TYPE], SMW_NS_PROPERTY);
+ 	    	if (stripos(strtolower($specialProperties["_TYPE"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
+ 	    		$specialMatches[] = Title::newFromText($specialProperties["_TYPE"], SMW_NS_PROPERTY);
  	    	}
  	    		// make sure the special relations come first
  	    	$pages = array_merge($specialMatches, $pages);
@@ -545,9 +545,9 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$substring = str_replace("_", " ",$substring);
 		
 		// get all types of a property (normally 1)
-		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
-		$conversionFactorDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR);
-		$conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
+		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		foreach($types as $t) {
 			if ($t->isBuiltIn()) continue; // ignore builtin types, because they have no unit
@@ -589,7 +589,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 	}
 	
 	public function getPossibleValues(Title $property) {
-		$possibleValueDV = SMWPropertyValue::makeProperty(SMW_SP_POSSIBLE_VALUE);
+		$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
 		$poss_values = smwfGetStore()->getPropertyValues($property, $possibleValueDV);
 		$result = array();
 		foreach($poss_values as $v) {
@@ -650,7 +650,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		                    ' AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
 		                    ') UNION DISTINCT ' .
 		                    '(SELECT page_title AS title FROM '.$smw_specialprops.' JOIN '.$page.' ON subject_id = page_id' .
-		                    ' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '.SMW_SP_HAS_TYPE.' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
+		                    ' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND property_id = '."_TYPE".' AND UPPER(value_string) = UPPER('.$db->addQuotes($typeID).'))' .
 		                    '  LIMIT '.SMW_AC_MAX_RESULTS);
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -832,7 +832,7 @@ public function getPropertyWithType($match, $typeLabel) {
         $page = $db->tableName('page');
         $result = array();
         $typeID = SMWDataValueFactory::findTypeID($typeLabel);
-        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
         $res = $db->query('(SELECT i2.smw_title AS title FROM '.$smw_ids.' i2 '.
 					           'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
 					           'JOIN '.$smw_ids.' i ON s1.value_string = i.smw_title AND i.smw_namespace = '.SMW_NS_TYPE.' '.

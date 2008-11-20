@@ -19,8 +19,6 @@ define('SMW_SSP_IS_EQUAL_TO', 5);
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
 define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 
-// constants for special properties, used for datatype assignment and storage
-define('SMW_SP_CONVERSION_FACTOR_SI', '___cfsi');
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
@@ -195,7 +193,6 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
-//	$wgJobClasses['SMW_UpdateJob'] = 'SMW_UpdateJob';
 	
 	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 
@@ -415,7 +412,7 @@ function smwfHaloInitDatatypes() {
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
 	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
 	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
-	$smwgHaloContLang->getSpecialPropertyLabel(SMW_SP_CONVERSION_FACTOR_SI));
+	$smwgHaloContLang->getSpecialPropertyLabel("___cfsi"));
 	 
 	return true;
 }
@@ -732,7 +729,7 @@ function smwfHaloAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $p
  * the special type "_siu" (SI-Units), if requested.
  */
 function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
-	if ($typeID == SMW_SP_CONVERSION_FACTOR_SI) {
+	if ($typeID == "___cfsi") {
 		$result = SMWDataValueFactory::newTypeIDValue('_siu', $value, $caption);
 	}
 	return true;

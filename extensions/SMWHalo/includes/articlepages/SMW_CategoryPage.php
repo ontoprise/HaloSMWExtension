@@ -210,7 +210,7 @@ class SMWCategoryViewer extends CategoryViewer {
 		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
 		$relationDV = SMWPropertyValue::makeProperty($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-		$hastypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);                                         
+		$hastypeDV = SMWPropertyValue::makeProperty("_TYPE");                                         
 		foreach ($properties as $prop) {
 			if (!$prop) {
 				// $prop may be undefined

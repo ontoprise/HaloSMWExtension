@@ -154,7 +154,7 @@ class SMWPropertiesPage extends SMWQueryPage {
             $attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
             
             $store = smwfGetStore();
-            $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+            $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
             $typeValues = $store->getPropertyValues($attrtitle, $hasTypeDV);
             
             $typelink = array();            
@@ -187,7 +187,7 @@ class SMWPropertiesPage extends SMWQueryPage {
                 $errors[] = wfMsg('smw_propertylackspage');
             }
             $attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
-            $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+            $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
             $typetitle = smwfGetStore()->getPropertyValues($attrtitle, $hasTypeDV);
             if (count($typetitle) == 0) {
                 $typelink = "Page"; // default
@@ -249,7 +249,7 @@ class AdvPropertySearchStorageSQL extends AdvPropertySearchStorage {
         return "SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value, 
                         a.attribute_title as title, COUNT(*) as count, '-1' as obns
                 FROM $specialprops s JOIN $pages p ON p.page_id=s.subject_id 
-                JOIN $attributes a ON a.attribute_title=p.page_title AND s.property_id=".SMW_SP_HAS_TYPE."
+                JOIN $attributes a ON a.attribute_title=p.page_title AND s.property_id="."_TYPE"."
                 GROUP BY a.attribute_title, s.value_string";
     }
     
@@ -332,7 +332,7 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
         $smw_spec2 = $db->tableName('smw_spec2');
         $smw_atts2 = $db->tableName('smw_atts2');     
         $page = $db->tableName('page');
-        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
         return "SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value, 
                         i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_atts2 a 
                         JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=".$hasTypePropertyID." 
@@ -414,7 +414,7 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
         // REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' matches all n-ary properties in special property table. Is there a better way?
         return "SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value, 
                         i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_rels2 a 
-                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.sp_id=".SMW_SP_HAS_TYPE." AND s.value_string REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' 
+                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.sp_id="."_TYPE"." AND s.value_string REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' 
                         JOIN $smw_ids i ON i.smw_id = a.p_id
                         JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace  
                 GROUP BY i.smw_title, s.value_string";

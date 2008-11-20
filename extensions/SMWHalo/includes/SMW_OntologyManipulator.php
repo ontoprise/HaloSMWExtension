@@ -108,7 +108,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
                                     "SMW_SP_HAS_TYPE");
 
 		// Some optional text is given
-		$sp = $smwgContLang->getSpecialPropertiesArray();
+		$sp = $smwgContLang->getPropertyLabels();
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
 		$num = count($supportedConstants);
@@ -276,7 +276,7 @@ function smwf_om_ExistsArticle($title) {
 	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
 	
 	global $smwgContLang, $smwgHaloContLang;
-	$specialProps = $smwgContLang->getSpecialPropertiesArray();
+	$specialProps = $smwgContLang->getPropertyLabels();
 	foreach ($specialProps as $prop) {
 		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
 		if ($title == $prop) {
@@ -335,7 +335,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
 	
 	global $smwgContLang, $smwgHaloContLang;
-	$specialProps = $smwgContLang->getSpecialPropertiesArray();
+	$specialProps = $smwgContLang->getPropertyLabels();
 	foreach ($specialProps as $prop) {
 		$prop = strtolower ( substr ( $prop , 0 , 1 ) ) . substr ( $prop , 1 ) ;
 		if ($title == $prop) {
@@ -385,7 +385,7 @@ function smwf_om_RelationSchemaData($relationName) {
 
 	// get type definition (if it exists)
 	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 	$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
 
 	// if no 'has type' annotation => normal binary relation
@@ -606,16 +606,16 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 	
 	global $smwgContLang,$wgParser;
  	$options = new ParserOptions();
-	$sp = $smwgContLang->getSpecialPropertiesArray();
+	$sp = $smwgContLang->getPropertyLabels();
 	
 	if ($newSuperProperty == NULL || $newSuperProperty == 'null') {
-		$newText = preg_replace("/\[\[\s*".$sp[SMW_SP_SUBPROPERTY_OF]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "", $text);
+		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "", $text);
 	} else if ($draggedOnRootLevel) {
 		// dragged property was on root level
-		$newText .= $text."\n[[".$sp[SMW_SP_SUBPROPERTY_OF]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
+		$newText .= $text."\n[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]";
 	} else {
 		// replace on article $draggedProperty [[Subproperty of::$oldSuperProperty]] with [[Subproperty of::$newSuperProperty]]
-		$newText = preg_replace("/\[\[\s*".$sp[SMW_SP_SUBPROPERTY_OF]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "[[".$sp[SMW_SP_SUBPROPERTY_OF]."::".$newSuperPropertyTitle->getPrefixedText()."]]", $text);
+		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]", $text);
 	}
 	
 	// save article

@@ -222,7 +222,7 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 			}
 		} else {
 			// it must be an attribute or n-ary relation otherwise.
-			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+			$v = SMWDataValueFactory::newPropertyObjectValue(SMWPropertyValue::makeProperty("_TYPE"));
 			$v->setXSDValue($type);
 			$typesOfAttributeAsString = $v->getTypeLabels();
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {

@@ -61,6 +61,14 @@ $aliases['arz'] = array(
 	'WantedProperties' => array( 'خصائص_مطلوبة' ),
 );
 
+/** Breton (Brezhoneg) */
+$aliases['br'] = array(
+	'Ask' => array( 'Goulenn' ),
+	'Browse' => array( 'Furchal' ),
+	'Properties' => array( 'Perzhioù' ),
+	'Types' => array( 'Seurtoù' ),
+);
+
 /** German (Deutsch) */
 $aliases['de'] = array(
 	'Ask' => array( 'Semantische Suche' ),
@@ -80,6 +88,11 @@ $aliases['de'] = array(
 $aliases['fi'] = array(
 	'Ask' => array( 'Kysy' ),
 	'Browse' => array( 'Selaa' ),
+);
+
+/** Galician (Galego) */
+$aliases['gl'] = array(
+	'Types' => array( 'Tipos' ),
 );
 
 /** Upper Sorbian (Hornjoserbsce) */
@@ -153,5 +166,19 @@ $aliases['no'] = array(
 	'Types' => array( 'Typer' ),
 	'UnusedProperties' => array( 'Ubrukte egenskaper' ),
 	'WantedProperties' => array( 'Ønskede egenskaper' ),
+);
+
+/** Occitan (Occitan) */
+$aliases['oc'] = array(
+	'Browse' => array( 'Percórrer' ),
+	'Properties' => array( 'Proprietats' ),
+	'Types' => array( 'Tipes' ),
+	'UnusedProperties' => array( 'Proprietats inutilizadas', 'ProprietatsInutilizadas' ),
+	'WantedProperties' => array( 'Proprietats demandadas', 'ProprietatsDemandadas' ),
+);
+
+/** Romanian (Română) */
+$aliases['ro'] = array(
+	'Browse' => array( 'Răsfoieşte' ),
 );
 

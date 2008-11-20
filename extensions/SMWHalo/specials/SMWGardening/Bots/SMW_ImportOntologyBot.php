@@ -446,7 +446,7 @@
 	private function createPropertiesFromCategory($st, $superClass, & $statements) {
 		global $smwgContLang,$smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
- 		$sp = $smwgContLang->getSpecialPropertiesArray();
+ 		$sp = $smwgContLang->getPropertyLabels();
  		
 		$it2 = $this->model->findAsIterator($superClass, OWL::ON_PROPERTY(), NULL);
 		if ($it2->hasNext()) {
@@ -490,10 +490,10 @@
 			
 		
 			if ((ImportOntologyBot::isXMLSchemaType($range->getURI()))) { 
-				 $s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::".$rangeCategoryTitle->getPrefixedText()."]]\n";
+				 $s2['WIKI'][] = "[[".$sp["_TYPE"]."::".$rangeCategoryTitle->getPrefixedText()."]]\n";
 				 $s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."]]\n";
 			} else {
-				$s2['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::Type:Page]]\n";
+				$s2['WIKI'][] = "[[".$sp["_TYPE"]."::Type:Page]]\n";
 				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."; ".$rangeCategoryTitle->getPrefixedText()."]]\n";
 			}
 			
@@ -611,7 +611,7 @@
 		$statements = array();
 		global $smwgContLang, $smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
- 		$sp = $smwgContLang->getSpecialPropertiesArray();
+ 		$sp = $smwgContLang->getPropertyLabels();
  		
 		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
@@ -641,7 +641,7 @@
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$label = ImportOntologyBot::mapXSDTypesToWikiTypes($label);
-			$s['WIKI'][] = "[[".$sp[SMW_SP_HAS_TYPE]."::" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
+			$s['WIKI'][] = "[[".$sp["_TYPE"]."::" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
 		}
 		
 		$statements[] = $s;

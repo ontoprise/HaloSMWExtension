@@ -199,6 +199,11 @@ class SMWTestStore extends SMWStore {
 		return true;
 	}
 
+	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
+		$index = -1;
+		return 1;
+	}
+
 
 ///// Private methods /////
 

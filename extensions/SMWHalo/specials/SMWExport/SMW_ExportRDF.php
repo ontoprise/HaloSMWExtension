@@ -266,7 +266,7 @@ class ExportRDFHalo {
  			$directSuperProperties = smwfGetSemanticStore()->getDirectSuperProperties($rp);
  			
  			// decide what to export by reading property type
- 			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+ 			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
  			$type = smwfGetStore()->getPropertyValues($rp, $hasTypeDV);
  			if ($type == NULL || count($type) == 0) {
  				// default type: binary relation
@@ -494,8 +494,8 @@ class ExportRDFHalo {
  	
  	private function exportSI($pt, $value) {
  		if ( $value->isNumeric() ) {
- 			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
- 			$conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+ 			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+ 			$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 			$dtid = &smwfGetStore()->getPropertyValues($pt, $hasTypeDV);
 			$dttitle = Title::newFromText($dtid[0]->getWikiValue(), SMW_NS_TYPE);
 			$conv = array();

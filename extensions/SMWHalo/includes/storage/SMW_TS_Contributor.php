@@ -51,7 +51,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 						$triplesFromHook[] = array("_:2", "owl:minCardinality", "\"".$value->getXSDValue()."\"");
 					}
 				} elseif ($dvs[0] != NULL && $dvs[0]->isValid()) { // only domain
-					$typeValues = $data->getPropertyValues(SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE));
+					$typeValues = $data->getPropertyValues(SMWPropertyValue::makeProperty("_TYPE"));
 					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCardProp);
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCardProp);
 					
@@ -97,7 +97,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	} elseif (smwfGetSemanticStore()->maxCard->getDBkey() == $property->getXSDValue()) {
 		// do nothing
 		$triplesFromHook = false;
-	} elseif ($property->getPropertyID() == SMW_SP_HAS_TYPE) {
+	} elseif ($property->getPropertyID() == "_TYPE") {
 
 		// serialize type only if there is no domain and range annotation
 		$domRanges = $data->getPropertyValues(smwfGetSemanticStore()->domainRangeHintProp);

@@ -566,7 +566,7 @@ protected $smwUserMessages = array(
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	SMW_SP_CONVERSION_FACTOR_SI => 'Entspricht SI'
+	"___cfsi" => 'Entspricht SI'
 );
 
 

@@ -452,10 +452,10 @@ class TermImportBot extends GardeningBot {
 			$anno .= '[['.$wgLang->getNsText(NS_CATEGORY).':'.$subCatOf[0]['value']."]]\n";
 		}
 		if ($subPropOf) {
-			$specialProperties = $smwgContLang->getSpecialPropertiesArray();
+			$specialProperties = $smwgContLang->getPropertyLabels();
 			
 			$namespace = $wgLang->getNsText(SMW_NS_PROPERTY).':'; 
-			$anno .= '[['.$specialProperties[SMW_SP_SUBPROPERTY_OF].':'
+			$anno .= '[['.$specialProperties["_SUBP"].':'
 			         .$wgLang->getNsText(SMW_NS_PROPERTY).':'.$subPropOf[0]['value']."]]\n";
 		}
 		

@@ -101,10 +101,15 @@ class PropertyCoVarianceDetector {
     }
 
     public function checkPropertyForCovariance($p) {
+    	
         $this->checkMinCardinality($p);
+       
         $this->checkMaxCardinality($p);
+    
         $this->checkDomainAndRangeCovariance($p);
+        
         $this->checkTypeEquality($p);
+       
         
     }
 
@@ -115,9 +120,9 @@ class PropertyCoVarianceDetector {
 
 
         
-      
+     
         $minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
-       
+      
         if (!empty($minCard)) {
             // otherwise check min cardinality of parent for co-variance.
 
@@ -210,7 +215,7 @@ class PropertyCoVarianceDetector {
      * Check domain co-variance. Does also check if there are domains and/or range defined at all.
      */
     private function checkDomainAndRangeCovariance($p) {
-    	$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+    	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
         $type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
       
         
@@ -363,7 +368,7 @@ class PropertyCoVarianceDetector {
     private function checkTypeEquality($a) {
         global $smwgContLang;
 
-        $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+        $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
         $types = smwfGetStore()->getPropertyValues($a, $hasTypeDV);
         if (empty($types)) {
             $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_DEFINED, $a, count($types));

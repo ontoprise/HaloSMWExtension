@@ -423,7 +423,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
 							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->maxCard->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$db->tableName('smw_specialprops').
-							 ' ON subject_id = id WHERE property_id = '.SMW_SP_HAS_TYPE. '  GROUP BY property ORDER BY property');
+							 ' ON subject_id = id WHERE property_id = '."_TYPE". '  GROUP BY property ORDER BY property');
 		$resSymCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
 							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
@@ -810,7 +810,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$smw_specialprops = $db->tableName('smw_specialprops');
 		$page = $db->tableName('page');
 	 	
-		$res = $db->query(	'(SELECT DISTINCT a.value_unit FROM '.$smw_attributes.' a JOIN '.$page.' p ON p.page_title = a.attribute_title AND p.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_specialprops.' s ON p.page_id = s.subject_id AND s.property_id = '.SMW_SP_HAS_TYPE.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).') '.
+		$res = $db->query(	'(SELECT DISTINCT a.value_unit FROM '.$smw_attributes.' a JOIN '.$page.' p ON p.page_title = a.attribute_title AND p.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_specialprops.' s ON p.page_id = s.subject_id AND s.property_id = '."_TYPE".' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).') '.
 						 ' UNION ' .
 					 		'(SELECT DISTINCT value_unit FROM '.$smw_specialprops.' s JOIN '.$page.' p ON s.subject_id=p.page_id ' .
 					 				'JOIN '.$smw_nary.' n ON LOCATE('.$db->addQuotes($type->getDBkey()).', s.value_string) > 0 AND p.page_title=n.attribute_title ' .
@@ -836,7 +836,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 	$page = $db->tableName('page');
 	 	
 		$result = array();
-		$res = $db->query('SELECT DISTINCT a.subject_title, a.subject_namespace, a.attribute_title FROM '.$smw_specialprops.' s JOIN '.$page.' p ON p.page_id = s.subject_id JOIN '.$smw_attributes.' a ON a.attribute_title = p.page_title AND s.property_id = '.SMW_SP_HAS_TYPE.
+		$res = $db->query('SELECT DISTINCT a.subject_title, a.subject_namespace, a.attribute_title FROM '.$smw_specialprops.' s JOIN '.$page.' p ON p.page_id = s.subject_id JOIN '.$smw_attributes.' a ON a.attribute_title = p.page_title AND s.property_id = '."_TYPE".
 							' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).' AND a.value_unit = '.$db->addQuotes($unit));
 		
 		if($db->numRows( $res ) > 0) {

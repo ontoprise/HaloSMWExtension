@@ -14,21 +14,7 @@
  * @defgroup SMW Semantic MediaWiki
  */
 
-define('SMW_VERSION','1.4d-SVN');
-
-// constants for special properties, used for datatype assignment and storage
-define('SMW_SP_HAS_TYPE','_TYPE');
-define('SMW_SP_HAS_URI','_URI');
-define('SMW_SP_INSTANCE_OF','_INST');
-define('SMW_SP_DISPLAY_UNITS', '_UNIT');
-define('SMW_SP_IMPORTED_FROM','_IMPO');
-define('SMW_SP_CONVERSION_FACTOR', '_CONV');
-define('SMW_SP_SERVICE_LINK', '_SERV');
-define('SMW_SP_POSSIBLE_VALUE', '_PVAL');
-define('SMW_SP_REDIRECTS_TO', '_REDI');
-define('SMW_SP_SUBPROPERTY_OF','_SUBP');
-define('SMW_SP_SUBCLASS_OF','_SUBC');
-define('SMW_SP_CONCEPT_DESC','_CONC');
+define('SMW_VERSION','1.4e-SVN');
 
 // constants for displaying the factbox
 define('SMW_FACTBOX_HIDDEN', 1);
@@ -84,6 +70,7 @@ define('SMW_MY',97);    //Month-Year
 define('SMW_YM',76);    //Year-Month
 define('SMW_Y',9);      //Year
 define('SMW_YEAR',1);   //an entered digit can be a year
+define('SMW_DAY',2);   //an entered digit can be a year
 define('SMW_MONTH',4);  //an entered digit can be a month
 define('SMW_DAY_MONTH_YEAR',7); //an entered digit can be a day, month or year
 define('SMW_DAY_YEAR',3); //an entered digit can be either a month or a year
@@ -237,7 +224,7 @@ function enableSemantics($namespace = '', $complete = false) {
  */
 function smwfSetupExtension() {
 	wfProfileIn('smwfSetupExtension (SMW)');
-	global $smwgIP, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink;
+	global $smwgIP, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink, $smwgMW_1_14;
 
 	$smwgMasterStore = NULL;
 	$smwgIQRunningNumber = 0;
@@ -272,8 +259,10 @@ function smwfSetupExtension() {
 	}
 	if (version_compare($wgVersion,'1.14alpha','>=')) {
 		$wgHooks['SkinAfterContent'][] = 'SMWFactbox::onSkinAfterContent'; // draw Factbox below categories
+		$smwgMW_1_14 = true; // assume latest 1.14 API
 	} else {
 		$wgHooks['OutputPageBeforeHTML'][] = 'SMWFactbox::onOutputPageBeforeHTML'; // draw Factbox right below page content
+		$smwgMW_1_14 = false; // assume <= 1.13 API
 	}
 
 	///// credits (see "Special:Version") /////
@@ -334,7 +323,9 @@ function smwfShowBrowseLink($skintemplate) {
 		define('SMW_NS_PROPERTY_TALK',  $smwgNamespaceIndex+3);
 		define('SMW_NS_TYPE',           $smwgNamespaceIndex+4);
 		define('SMW_NS_TYPE_TALK',      $smwgNamespaceIndex+5);
-		// 106 and 107 are occupied by the Semantic Forms
+		// 106 and 107 are occupied by the Semantic Forms, we define them here to offer some (easy but useful) support to SF
+		define('SF_NS_FORM',            $smwgNamespaceIndex+6);
+		define('SF_NS_FORM_TALK',       $smwgNamespaceIndex+7);
 		define('SMW_NS_CONCEPT',        $smwgNamespaceIndex+8);
 		define('SMW_NS_CONCEPT_TALK',   $smwgNamespaceIndex+9);
 

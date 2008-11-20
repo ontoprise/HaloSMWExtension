@@ -117,6 +117,7 @@ class SMWDataValueFactory {
 			'_wpg'  => 'SMWWikiPageValue', // Page type
 			'_wpp'  => 'SMWWikiPageValue', // Property page type TODO: make available to user space
 			'_wpc'  => 'SMWWikiPageValue', // Category page type TODO: make available to user space
+			'_wpf'  => 'SMWWikiPageValue', // Form page type for Semantic Forms
 			'_num'  => 'SMWNumberValue', // Number type
 			'_tem'  => 'SMWTemperatureValue', // Temperature type
 			'_dat'  => 'SMWTimeValue', // Time type
@@ -129,13 +130,14 @@ class SMWDataValueFactory {
 			'__spu' => 'SMWURIValue', // Special uri type
 			'__sup' => 'SMWWikiPageValue', // Special subproperty type
 			'__suc' => 'SMWWikiPageValue', // Special subcategory type
+			'__spf' => 'SMWWikiPageValue', // Special Form page type for Semantic Forms
 			'__sin' => 'SMWWikiPageValue', // Special instance of type
 			'__red' => 'SMWWikiPageValue', // Special redirect type
 			'__lin' => 'SMWLinearValue', // Special linear unit conversion type
 			'__nry' => 'SMWNAryValue', // Special multi-valued type
 			'__err' => 'SMWErrorValue', // Special error type
 			'__imp' => 'SMWImportValue', // Special import vocabulary type
-			'__pro' => 'SMWPropertyValue', // Property type (pssobly predefined, no always based on a page)
+			'__pro' => 'SMWPropertyValue', // Property type (possibly predefined, no always based on a page)
 		);
 
 		wfRunHooks( 'smwInitDatatypes' );

@@ -722,7 +722,7 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 
 	public function getSharedTypes(Title $title1, Title $title2) {
 
-		$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 		$values1 = smwfGetStore()->getPropertyValues($title1, $hasTypeDV);
 		$values2 = smwfGetStore()->getPropertyValues($title1, $hasTypeDV);
 

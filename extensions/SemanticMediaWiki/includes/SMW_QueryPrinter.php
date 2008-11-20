@@ -55,8 +55,11 @@ abstract class SMWResultPrinter {
 	 * parameter for further parser functions. Use only if required.
 	 */
 	protected $hasTemplates = false;
-
-	private static $mRecursionDepth = 0; // increment while expanding templates inserted during printout; stop expansion at some point
+	/// Incremented while expanding templates inserted during printout; stop expansion at some point
+	private static $mRecursionDepth = 0;
+	/// This public variable can be set to higher values to allow more recursion; do this at your own risk!
+	/// This can be set in LocalSettings.php, but only after enableSemantics().
+	public static $maxRecursionDepth = 2;
 
 	/**
 	 * Constructor. The parameter $format is a format string
@@ -92,7 +95,9 @@ abstract class SMWResultPrinter {
 	 * and wiki text is requested, then we may return wiki text with sub-queries to the caller. If the
 	 * caller parses this (which is likely) then this will again call us in parse-context and all recursion
 	 * checks catch. Only the first level of parsing is done outside and thus not counted. Thus you
-	 * effectively can get down to level 3.
+	 * effectively can get down to level 3. The basic maximal depth of 2 can be changed by setting the
+	 * variable SMWResultPrinter::$maxRecursionDepth (in LocalSettings.php, after enableSemantics()).
+	 * Do this at your own risk.
 	 */
 	public function getResult($results, $params, $outputmode) {
 		global $wgParser;
@@ -132,7 +137,7 @@ abstract class SMWResultPrinter {
 		if ( (!$this->isHTML) && ($this->hasTemplates) ) { // preprocess embedded templates if needed
 			if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
 				SMWResultPrinter::$mRecursionDepth++;
-				if (SMWResultPrinter::$mRecursionDepth <= 2) { // restrict recursion
+				if (SMWResultPrinter::$mRecursionDepth <= SMWResultPrinter::$maxRecursionDepth) { // restrict recursion
 					$result = '[[SMW::off]]' . $wgParser->replaceVariables($result) . '[[SMW::on]]';
 				} else {
 					$result = ''; /// TODO: explain problem (too much recursive parses)
@@ -148,7 +153,7 @@ abstract class SMWResultPrinter {
 		} elseif ( (!$this->isHTML) && ($outputmode == SMW_OUTPUT_HTML) ) {
 			SMWResultPrinter::$mRecursionDepth++;
 			// check whether we are in an existing parse, or if we should start a new parse for $wgTitle
-			if (SMWResultPrinter::$mRecursionDepth <= 2) { // retrict recursion
+			if (SMWResultPrinter::$mRecursionDepth <= SMWResultPrinter::$maxRecursionDepth) { // retrict recursion
 				if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
 					$result = $wgParser->recursiveTagParse($result);
 				} else {
@@ -306,32 +311,6 @@ abstract class SMWResultPrinter {
 	 */
 	protected function linkFurtherResults($results) {
 		return ($this->mInline && $results->hasFurtherResults() && ($this->mSearchlabel !== ''));
-	}
-
-
-	/**
-	 * @deprecated Use SMWResultPrinter::getResult() in SMW >1.0.  This method will last be available in SMW 1.3 and vanish thereafter.
-	 */
-	public function getResultHTML($results, $params) {
-		return $this->getResult($results,$params,SMW_OUTPUT_HTML);
-	}
-
-	/**
-	 * Return HTML version of serialised results.
-	 * @deprecated Use SMWResultPrinter::getResultText() since SMW >1.0.  This method will last be available in SMW 1.3 and vanish thereafter.
-	 */
-	protected function getHTML($res) {
-		return $this->getResultText($res,SMW_OUTPUT_HTML);
-	}
-
-	/**
-	 * Generate a link to further results of the given query, using syntactic encoding
-	 * as appropriate for $outputmode.
-	 * @deprecated Since SMW>1.1 this function no longer does anything interesting. Intelligence moved to SMWInfolink. Directly use the code of this method instead of calling it!  This method will last be available in SMW 1.3 and vanish thereafter.
-	 */
-	protected function getFurtherResultsLink($outputmode, $res, $label) {
-		$link = $res->getQueryLink($label);
-		return $link->getText($outputmode,$this->mLinker);
 	}
 
 }

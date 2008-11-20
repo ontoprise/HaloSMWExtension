@@ -25,8 +25,8 @@ function smwf_qi_QIAccess($method, $params) {
 		           	  		 '</relationSchema>';
 				return $relSchema;
 			}
-			$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
-			$possibleValueDV = SMWPropertyValue::makeProperty(SMW_SP_POSSIBLE_VALUE);
+			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+			$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
 			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
 	
 			// if no 'has type' annotation => normal binary relation

@@ -44,7 +44,17 @@ class SMWAdmin extends SpecialPage {
 		}
 
 		$this->setHeaders();
-		
+
+		/**** Get status of refresh job, if any ****/
+		$dbr =& wfGetDB( DB_SLAVE );
+		$row = $dbr->selectRow( 'job', '*', array( 'job_cmd' => 'SMWRefreshJob' ), __METHOD__ );
+		if ($row !== false) { // similar to Job::pop_type, but without deleting the job
+			$title = Title::makeTitleSafe( $row->job_namespace, $row->job_title);
+			$refreshjob = Job::factory( $row->job_cmd, $title, Job::extractBlob( $row->job_params ), $row->job_id );
+		} else {
+			$refreshjob = NULL;
+		}
+
 		/**** Execute actions if any ****/
 
 		$action = $wgRequest->getText( 'action' );
@@ -59,71 +69,93 @@ class SMWAdmin extends SpecialPage {
 				wfRunHooks('smwInitializeTables');
 				print '</pre></p>';
 				if ($result === true) {
-					print '<p><b>The storage engine was set up successfully.</b></p>';
+					print '<p><b>' . wfMsg('smw_smwadmin_setupsuccess') . "</b></p>\n";
 				}
 				$returntitle = Title::makeTitle(NS_SPECIAL, 'SMWAdmin');
-				print '<p> Return to <a href="' . htmlspecialchars($returntitle->getFullURL()) . '">Special:SMWAdmin</a></p>';
+				print '<p> ' . wfMsg('smw_smwadmin_return', '<a href="' . htmlspecialchars($returntitle->getFullURL()) . '">Special:SMWAdmin</a>') . "</p>\n";
 				print '</body></html>';
 				ob_flush();
 				flush();
 				return;
 			}
-		} elseif ($smwgAdminRefreshStore && ($action=='refreshstore')) { // not accessible via UI yet, testing
-			$dbw =& wfGetDB( DB_MASTER );
-			// delete existing iteration jobs
-			$dbw->delete( 'job', array( 'job_cmd' => 'SMWRefreshJob' ), __METHOD__ );
-			$affected = $dbw->affectedRows();
-			$warning = ($affected > 0)?' Existing refresh jobs were stopped when the new job was created; please be patient to let refreshing finish or use the MediaWiki script runJobs.php to finish all jobs at once.':'';
-			// and make a new one
-			$title = Title::makeTitle(NS_SPECIAL, 'SMWAdmin');
-			$newjob = new SMWRefreshJob($title, array('spos'=>1));
-			$newjob->insert();
-			$wgOut->addHTML("<p>Added new job for refreshing the semantic data. All stored data will be rebuilt or repaired where needed.$warning</p>");
+		} elseif ($smwgAdminRefreshStore && ($action=='refreshstore')) { // managing refresh jobs for the store
+			$sure = $wgRequest->getText( 'rfsure' );
+			if ($sure == 'yes') {
+				if ($refreshjob === NULL) { // careful, there might be race conditions here
+					$title = Title::makeTitle(NS_SPECIAL, 'SMWAdmin');
+					$newjob = new SMWRefreshJob($title, array('spos'=>1, 'prog'=>0, 'rc'=>2));
+					$newjob->insert();
+					$wgOut->addHTML('<p>' . wfMsg('smw_smwadmin_updatestarted') . '</p>');
+				} else {
+					$wgOut->addHTML('<p>' . wfMsg('smw_smwadmin_updatenotstarted') . '</p>');
+				}
+			} elseif ($sure == 'stop') {
+				$dbw =& wfGetDB( DB_MASTER );
+				// delete (all) existing iteration jobs
+				$dbw->delete( 'job', array( 'job_cmd' => 'SMWRefreshJob' ), __METHOD__ );
+				$wgOut->addHTML('<p>' . wfMsg('smw_smwadmin_updatestopped') . '</p>');
+			} else {
+				$wgOut->addHTML('<p>' . wfMsg('smw_smwadmin_updatenotstopped') . '</p>');
+			}
 			return;
 		}
 
 		/**** Normal output ****/
 
-		$html = '<p>This special page helps you during installation and upgrade of 
-					<a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>. Remember to backup valuable data before 
-					executing administrative functions.</p>' . "\n";
+		$html = '<p>' . wfMsg('smw_smwadmin_docu') . "</p>\n";
 		// creating tables and converting contents from older versions
 		$html .= '<form name="buildtables" action="" method="POST">' . "\n" .
 				'<input type="hidden" name="action" value="updatetables" />' . "\n";
-		$html .= '<h2>Preparing database for Semantic MediaWiki</h2>' . "\n" .
-				'<p>Semantic MediaWiki requires some minor extensions to the MediaWiki database in 
-				order to store the semantic data. The below function ensures that your database is
-				set up properly. The changes made in this step do not affect the rest of the 
-				MediaWiki database, and can easily be undone if desired. This setup function
-				can be executed multiple times without doing any harm, but it is needed only once on
-				installation or upgrade.<p/>' . "\n";
-		$html .= '<p>If the operation fails with obscure SQL errors, the database user employed 
-				by your wiki (check your LocalSettings.php) probably does not have sufficient 
-				permissions. Either grant this user additional persmissions to create and delete 
-				tables, or temporarily enter the login of your database root in LocalSettings.php.<p/>' .
-				"\n" . '<input type="hidden" name="udsure" value="yes"/>' .
-				'<input type="submit" value="Initialise or upgrade tables"/></form>' . "\n";
+		$html .= '<br /><h2>' . wfMsg('smw_smwadmin_db') . "</h2>\n" .
+				'<p>' . wfMsg('smw_smwadmin_dbdocu') . "</p>\n";
+		$html .= '<p>' . wfMsg('smw_smwadmin_permissionswarn') . "</p>\n" .
+				'<input type="hidden" name="udsure" value="yes"/>' .
+				'<input type="submit" value="' . wfMsg('smw_smwadmin_dbbutton') . '"/></form>' . "\n";
 
-		$html .= '<h2>Announce your wiki</h2>' . "\n" . 
-				'<p>SMW has a web service for announcing new semantic wiki sites. This is used to maintain a list of public sites that use SMW, mainly to help the <a href="http://semantic-mediawiki.org/wiki/SMW_Project">SMW project</a> to get an overview of typical uses of SMW. See the SMW homepage for <a href="http://semantic-mediawiki.org/wiki/Registry">further information about this service.</a>' .
-				'<p>Press the following button to submit your wiki URL to that service. The service will not register wikis that are not publicly accessible, and it will only store publicly accessible information.</p>
-				 <form name="announcewiki" action="http://semantic-mediawiki.org/wiki/Special:SMWRegistry" method="GET">' .
+		$html .= '<br /><h2>' . wfMsg('smw_smwadmin_announce') . "</h2>\n" .
+				'<p>' . wfMsg('smw_smwadmin_announcedocu') . "</p>\n" . 
+				'<p>' . wfMsg('smw_smwadmin_announcebutton') . "</p>\n" . 
+				 '<form name="announcewiki" action="http://semantic-mediawiki.org/wiki/Special:SMWRegistry" method="GET">' .
 				 '<input type="hidden" name="url" value="' . SMWExporter::expandURI('&wikiurl;') . '" />' .
 				 '<input type="hidden" name="return" value="Special:SMWAdmin" />' .
 				 '<input type="submit" value="Announce wiki"/></form>' . "\n";
 
-		$html .= '<h2>Getting support</h2>' . "\n" . 
-				'<p>Various resources might help you in case of problems:</p>
-				<ul>
-				<li> If you experience problems with your installation, start by checking the guidelines in the <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL file</a>.</li>
-				<li>The complete user documentation to Semantic MediaWiki is at <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.</li>
-				<li>Bugs can be reported to <a href="http://bugzilla.wikimedia.org/">MediaZilla</a>.</li>
-				<li>If you have further questions or suggestions, join the discussion on <a href="mailto:semediawiki-user@lists.sourceforge.net">semediawiki-user@lists.sourceforge.net</a>.</li>
-				<ul/>' . "\n";
+		$html .= '<br /><h2>' . wfMsg('smw_smwadmin_datarefresh') . "</h2>\n" .
+				'<p>' . wfMsg('smw_smwadmin_datarefreshdocu') . "</p>\n";
+		if ($refreshjob !== NULL) {
+			$prog = $refreshjob->getProgress();
+			$html .= '<p>' . wfMsg('smw_smwadmin_datarefreshprogress') . "</p>\n" .
+			'<p><div style="float: left; background: #DDDDDD; border: 1px solid grey; width: 300px; "><div style="background: #AAF; width: ' .
+				round($prog*300) . 'px; height: 20px; "> </div></div> &nbsp;' . round($prog*100,4) . '%</p><br /><br />';
+			if ($smwgAdminRefreshStore) {
+				$html .=
+				'<form name="refreshwiki" action="" method="POST">' .
+				'<input type="hidden" name="action" value="refreshstore" />' .
+				'<input type="submit" value="' . wfMsg('smw_smwadmin_datarefreshstop') . '"/> ' .
+				' <input type="checkbox" name="rfsure" value="stop"/> ' . wfMsg('smw_smwadmin_datarefreshstopconfirm') .
+				'</form>' . "\n";
+			}
+		} elseif ($smwgAdminRefreshStore) {
+			$html .=
+				'<form name="refreshwiki" action="" method="POST">' .
+				'<input type="hidden" name="action" value="refreshstore" />' .
+				'<input type="hidden" name="rfsure" value="yes"/>' .
+				'<input type="submit" value="' . wfMsg('smw_smwadmin_datarefreshbutton') . '"/>' .
+				'</form>' . "\n";
+		}
+
+
+		$html .= '<br /><h2>' . wfMsg('smw_smwadmin_support') . "</h2>\n" . 
+				'<p>' . wfMsg('smw_smwadmin_supportdocu') . "</p>\n" .
+				"<ul>\n" . 
+				'<li>' . wfMsg('smw_smwadmin_installfile') . "</li>\n" .
+				'<li>' . wfMsg('smw_smwadmin_smwhomepage') . "</li>\n" .
+				'<li>' . wfMsg('smw_smwadmin_mediazilla') . "</li>\n" .
+				'<li>' . wfMsg('smw_smwadmin_questions') . "</li>\n" .
+				"</ul>\n";
 
 		$wgOut->addHTML($html);
 	}
 
 }
-
 

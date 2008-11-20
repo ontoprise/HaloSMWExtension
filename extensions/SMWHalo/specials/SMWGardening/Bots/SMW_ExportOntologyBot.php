@@ -358,7 +358,7 @@ class ExportOntologyBot extends GardeningBot {
 				$directSuperProperties = smwfGetSemanticStore()->getDirectSuperProperties($rp);
 
 				// decide what to export by reading property type
-				$hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+				$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 				$type = smwfGetStore()->getPropertyValues($rp, $hasTypeDV);
 				if ($type == NULL || count($type) == 0) {
 					// default type: binary relation
@@ -604,7 +604,7 @@ class ExportOntologyBot extends GardeningBot {
 
 	private function exportSI($pt, $value) {
 		if ( $value->isNumeric() ) {
-			$conversionFactorSIDV = SMWPropertyValue::makeProperty(SMW_SP_CONVERSION_FACTOR_SI);
+			$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 			$dttitle = Title::newFromText($pt->getTypesValue()->getXSDValue(), SMW_NS_TYPE);
 			$conv = array();
 			if ($dttitle !== NULL)

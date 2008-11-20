@@ -585,7 +585,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         array_push($visitedNodes, $attributeID);
         $superAttributes = GraphHelper::searchInSortedGraph($inheritanceGraph, $attributeID);
         if ($superAttributes == null) return $results;
-        $hasTypeDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+        $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
         foreach($superAttributes as $sa) {
             $saTitle = Title::newFromID($sa->to);
             $types = smwfGetStore()->getPropertyValues($saTitle, $hasTypeDV);

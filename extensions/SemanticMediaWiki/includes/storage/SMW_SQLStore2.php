@@ -65,7 +65,9 @@ class SMWSQLStore2 extends SMWStore {
 		'_REDI' => 15,
 		'_SUBP' => 17,
 		'_SUBC' => 18,
-		'_CONC' => 19
+		'_CONC' => 19,
+		'_SF_DF' => 20, // Semantic Form's default form property
+		'_SF_AF' => 21  // Semantic Form's alternate form property
 	);
 
 	/// This array defines how various datatypes should be handled internally. This
@@ -84,6 +86,7 @@ class SMWSQLStore2 extends SMWStore {
 		'_wpg'  => SMW_SQL2_RELS2, // Page type
 		'_wpp'  => SMW_SQL2_RELS2, // Property page type
 		'_wpc'  => SMW_SQL2_RELS2, // Category page type
+		'_wpf'  => SMW_SQL2_RELS2, // Form page type (for Semantic Forms)
 		'_num'  => SMW_SQL2_ATTS2, // Number type
 		'_tem'  => SMW_SQL2_ATTS2, // Temperature type
 		'_dat'  => SMW_SQL2_ATTS2, // Time type
@@ -96,6 +99,7 @@ class SMWSQLStore2 extends SMWStore {
 		'__spu' => SMW_SQL2_SPEC2, // Special uri type
 		'__sup' => SMW_SQL2_SUBS2, // Special subproperty type
 		'__suc' => SMW_SQL2_SUBS2, // Special subcategory type
+		'__spf' => SMW_SQL2_SPEC2, // Special form type (for Semantic Forms)
 		'__sin' => SMW_SQL2_INST2, // Special instance of type
 		'__red' => SMW_SQL2_REDI2, // Special redirect type
 		'__lin' => SMW_SQL2_SPEC2, // Special linear unit conversion type
@@ -230,8 +234,9 @@ class SMWSQLStore2 extends SMWStore {
 					$pid = array_search($row->p_id, SMWSQLStore2::$special_ids);
 					if ($pid != false) {
 						$property = SMWPropertyValue::makeProperty($pid);
-					} else { // this should be rare (only if some extension uses properties of "special" types
-						$proprow = $db->selectRow('smw_ids', array('smw_title'), array('smw_id' => $row->id), 'SMW::getSemanticData');
+					} else { // this should be rare (only if some extension uses properties of "special" types)
+						$proprow = $db->selectRow('smw_ids', array('smw_title'), array('smw_id' => $row->p_id), 'SMW::getSemanticData');
+						/// TODO: $proprow may be false (inconsistent DB but anyway); maybe check and be gentle in some way
 						$property = SMWPropertyValue::makeProperty($proprow->smw_title);
 					}
 					$dv = SMWDataValueFactory::newPropertyObjectValue($property);
@@ -840,7 +845,7 @@ class SMWSQLStore2 extends SMWStore {
 		wfProfileIn("SMWSQLStore2::changeTitle (SMW)");
 		///NOTE: this function ignores the given MediaWiki IDs (this store has its own IDs)
 		///NOTE: this function assumes input titles to be local (no interwiki). Anything else would be too gross.
-		$sid_c = $this->getSMWPageID($oldtitle->getDBKkey(),$oldtitle->getNamespace(),'');
+		$sid_c = $this->getSMWPageID($oldtitle->getDBkey(),$oldtitle->getNamespace(),'');
 		$sid = $this->getSMWPageID($oldtitle->getDBkey(),$oldtitle->getNamespace(),'',false);
 		$tid_c = $this->getSMWPageID($newtitle->getDBkey(),$newtitle->getNamespace(),'');
 		$tid = $this->getSMWPageID($newtitle->getDBkey(),$newtitle->getNamespace(),'',false);
@@ -1195,6 +1200,61 @@ class SMWSQLStore2 extends SMWStore {
 		}
 		$this->reportProgress("All data removed successfully.\n",$verbose);
 		return true;
+	}
+
+	public function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
+		$updatejobs = array();
+		$emptyrange = true; // was nothing found in this run?
+
+		// update by MediaWiki page id --> make sure we get all pages
+		$tids = array();
+		for ($i = $index; $i < $index + $count; $i++) { // array of ids
+			$tids[] = $i;
+		}
+		$titles = Title::newFromIDs($tids);
+		foreach ($titles as $title) {
+			if ( ($namespaces == false) || (in_array($title->getNamespace(),$namespaces)) ) {
+				$updatejobs[] = new SMWUpdateJob($title);
+				$emptyrange = false;
+			}
+		}
+
+		// update by internal SMW id --> make sure we get all objects in SMW
+		$db =& wfGetDB( DB_SLAVE );
+		$res = $db->select('smw_ids', array('smw_id', 'smw_title','smw_namespace','smw_iw'),
+		                   "smw_id >= $index AND smw_id < " . $db->addQuotes($index+$count), __METHOD__);
+		foreach ($res as $row) {
+			$emptyrange = false; // note this even if no jobs were created
+			if ( ($namespaces != false) && (!in_array($row->smw_namespace,$namespaces)) ) continue;
+			if ( ($row->smw_iw == '') || ($row->smw_iw == SMW_SQL2_SMWREDIIW) ) { // objects representing pages in the wiki, even special pages
+				// TODO: special treament of redirects needed, since the store will not act on redirects that did not change according to its records
+				$title = Title::makeTitle($row->smw_namespace, $row->smw_title);
+				if ( !$title->exists() ) {
+					$updatejobs[] = new SMWUpdateJob($title);
+				}
+			} elseif ($row->smw_iw{0} != ':') { // refresh all "normal" interwiki pages by just clearing their content
+				$this->deleteSemanticData(SMWWikiPageValue::makePage($row->smw_namespace, $row->smw_title, '', $row->smw_iw));
+			}
+		}
+		$db->freeResult($res);
+
+		if ($usejobs) {
+			Job::batchInsert($updatejobs);
+		} else {
+			foreach ($updatejobs as $job) {
+				$job->run();
+			}
+		}
+		$nextpos = $index + $count;
+		if ($emptyrange) { // nothing found, check if there will be more pages later on
+			$next1 = $db->selectField('page', 'page_id', "page_id >= $nextpos", __METHOD__, array('ORDER BY' => "page_id ASC"));
+			$next2 = $db->selectField('smw_ids', 'smw_id', "smw_id >= $nextpos", __METHOD__, array('ORDER BY' => "smw_id ASC"));
+			$nextpos = ( ($next2 != 0) && ($next2<$next1) )?$next2:$next1;
+		}
+		$max1 = $db->selectField('page', 'MAX(page_id)', '', __METHOD__);
+		$max2 = $db->selectField('smw_ids', 'MAX(smw_id)', '', __METHOD__);
+		$index = $nextpos?$nextpos:-1;
+		return ($index>0) ? $index/max($max1,$max2) : 1;
 	}
 
 

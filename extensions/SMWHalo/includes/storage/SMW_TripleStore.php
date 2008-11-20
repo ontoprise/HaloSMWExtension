@@ -161,16 +161,16 @@ class SMWTripleStore extends SMWStore {
 			}
 
 			// handle properties with special semantics
-			if ($property->getPropertyID() == SMW_SP_HAS_TYPE) {
+			if ($property->getPropertyID() == "_TYPE") {
 				// ingore. handeled by SMW_TS_Contributor
 				continue;
-			} if ($property->getPropertyID() == SMW_SP_INSTANCE_OF) {
+			} if ($property->getPropertyID() == "_INST") {
 				// ingore. handeled by category section below
 				continue;
-			}if ($property->getPropertyID() == SMW_SP_SUBCLASS_OF) {
+			}if ($property->getPropertyID() == "_SUBC") {
 				// ingore. handeled by category section below
 				continue;
-			} elseif ($property->getPropertyID() == SMW_SP_SUBPROPERTY_OF) {
+			} elseif ($property->getPropertyID() == "_SUBP") {
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 					foreach($propertyValueArray as $value) {
 						$triples[] = array("prop:".$subject->getDBkey(), "rdfs:subPropertyOf", "prop:".$value->getDBkey());
@@ -409,6 +409,10 @@ class SMWTripleStore extends SMWStore {
 		} catch(Exception $e) {
 
 		}
+	}
+	
+	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
+		$this->smwstore->refreshData($index, $count, $namespaces, $usejobs);
 	}
 
 

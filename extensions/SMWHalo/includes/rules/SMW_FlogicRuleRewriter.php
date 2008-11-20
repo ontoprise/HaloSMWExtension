@@ -77,7 +77,7 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$object = $match[3];
 		$literalpredicate = false;
 
-		$predicateDV = SMWPropertyValue::makeProperty(SMW_SP_HAS_TYPE);
+		$predicateDV = SMWPropertyValue::makeProperty("_TYPE");
 		$types = smwfGetStore()->getPropertyValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), $predicateDV);
 		
 		if (!in_array($subject, $this->variables)) {
