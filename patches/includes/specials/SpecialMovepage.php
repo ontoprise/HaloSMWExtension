@@ -252,6 +252,7 @@ class MovePageForm {
 			Xml::closeElement( 'form' ) .
 			"\n"
 		);
+		$ot = Title::newFromURL($oldTitle);
 		wfRunHooks('ExtDeleteOutput', array(new Article($ot), &$output));
 		$wgOut->addHTML( $output );
 		$this->showLogFragment( $this->oldTitle, $wgOut );
