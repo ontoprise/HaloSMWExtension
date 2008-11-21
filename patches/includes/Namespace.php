@@ -54,7 +54,7 @@ class MWNamespace {
 	public static function isMovable( $index ) {
 		global $wgAllowImageMoving;
 		// AdditionalMIMETypes:		
-		return !( $index < NS_MAIN || (!self::isImage($index) && !$wgAllowImageMoving) || $index == NS_CATEGORY );
+		return !( $index < NS_MAIN || (self::isImage($index) && !$wgAllowImageMoving) || $index == NS_CATEGORY );
 	}
 
 	/**
