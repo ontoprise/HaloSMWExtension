@@ -755,7 +755,7 @@ class SMWQueryParser {
 									$chunk = ']]';
 								}
 							} else {
-								$printlabel = $property->getShortWikiText();
+								$printlabel = $property->getText();
 							}
 							if ($chunk == ']]') {
 								return new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $printlabel, $property, $printmodifier);

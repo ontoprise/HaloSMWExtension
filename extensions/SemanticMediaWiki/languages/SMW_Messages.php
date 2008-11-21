@@ -89,7 +89,7 @@ If the problem does not go away after some time, ask your site administrator to 
 	'smw_service_online_maps' => " Find&nbsp;online&nbsp;maps|http://tools.wikimedia.de/~magnus/geo/geohack.php?params=\$9_\$7_\$10_\$8\n Google&nbsp;maps|http://maps.google.com/maps?ll=\$11\$9,\$12\$10&spn=0.1,0.1&t=k\n Mapquest|http://www.mapquest.com/maps/map.adp?searchtype=address&formtype=latlong&latlongtype=degrees&latdeg=\$11\$1&latmin=\$3&latsec=\$5&longdeg=\$12\$2&longmin=\$4&longsec=\$6&zoom=6",
 
 	// Messages for datetime parsing
-	'smw_nodatetime' => 'The date "$1" was not understood (support for dates is still experimental).',
+	'smw_nodatetime' => 'The date "$1" was not understood.',
 
 	// Errors and notices related to queries
 	'smw_toomanyclosing'    => 'There appear to be too many occurrences of "$1" in the query.',
@@ -298,7 +298,7 @@ Estimated progress of current update:',
 	'smw_smwadmin_supportdocu' => 'Various resources might help you in case of problems:',
 	'smw_smwadmin_installfile' => 'If you experience problems with your installation, start by checking the guidelines in the <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL file</a>.',
 	'smw_smwadmin_smwhomepage' => 'The complete user documentation to Semantic MediaWiki is at <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.',
-	'smw_smwadmin_mediazilla' => 'Bugs can be reported to <a href="http://bugzilla.wikimedia.org/">MediaZilla</a>.',
+	'smw_smwadmin_mediazilla' => 'Bugs can be reported to <a href="https://bugzilla.wikimedia.org/">MediaZilla</a>.',
 	'smw_smwadmin_questions' => 'If you have further questions or suggestions, join the discussion on <a href="mailto:semediawiki-user@lists.sourceforge.net">semediawiki-user@lists.sourceforge.net</a>.'
 );
 
@@ -893,7 +893,7 @@ $messages['cs'] = array(
 	'smw_abb_west' => 'Z',
 	'smw_label_latitude' => 'Zeměpisná šířka:',
 	'smw_label_longitude' => 'Zeměpisná délka:',
-	'smw_nodatetime' => 'Datum "$1" nedává smysl. Podpora datumů je stále experimentální.',
+	'smw_nodatetime' => 'Datum "$1" nedává smysl.',
 	'smw_toomanyclosing' => 'Dotazovaný řetězec „$1“ má příliš mnoho výskytů.',
 	'smw_noclosingbrackets' => 'Užití „<nowiki>[[</nowiki>” ve vašem dotazu nebylo ukončeno odpovídajícími „]]”.',
 	'smw_misplacedsymbol' => 'Symbol „$1“ byl užitý na místě, kde nemá význam.',
@@ -1056,7 +1056,7 @@ $messages['de'] = array(
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'Breite:',
 	'smw_label_longitude' => 'Länge:',
-	'smw_nodatetime' => 'Das Datum „$1“ wurde nicht verstanden. Die Unterstützung von Kalenderdaten ist zur Zeit noch experimentell.',
+	'smw_nodatetime' => 'Das Datum „$1“ wurde nicht verstanden.',
 	'smw_toomanyclosing' => 'In der Anfrage kommen zu viele „$1“ vor.',
 	'smw_noclosingbrackets' => 'Ein Vorkommen von „<nowiki>[[</nowiki>“ in der Anfrage wurde nicht durch ein entsprechendes „]]“ abgeschlossen.',
 	'smw_misplacedsymbol' => 'Das Symbol „$1“ wurde an einer Stelle verwendet, wo es keinen Sinn macht.',
@@ -1208,7 +1208,7 @@ $messages['eo'] = array(
 	'smw_abb_west' => 'U',
 	'smw_label_latitude' => 'Latitudo:',
 	'smw_label_longitude' => 'Longitudo:',
-	'smw_nodatetime' => 'La dato "$1" ne estis komprenita (subteno por datoj ankoraŭ estas eksperimenta).',
+	'smw_nodatetime' => 'La dato "$1" ne estis komprenita.',
 	'smw_badtitle' => 'Bedaŭrinde, "$1" ne estas valida paĝa titolo.',
 	'smw_propvalueproblem' => 'La valuto de eco "$1" ne estis komprenita.',
 	'exportrdf' => 'Eksportu paĝojn al RDF',
@@ -1293,7 +1293,7 @@ $messages['es'] = array(
 	'smw_abb_west' => 'O',
 	'smw_label_latitude' => 'Latitud :',
 	'smw_label_longitude' => 'Longitud :',
-	'smw_nodatetime' => 'La fecha "$1" no ha sido comprendida. El soporte de datos de calendario son todavía experimentales.',
+	'smw_nodatetime' => 'La fecha "$1" no ha sido comprendida.',
 	'smw_devel_warning' => 'Esta función está aún en desarrollo y quizá aun no sea operativa. Es quizá recomendable hacer una copia de seguridad del wiki antes de utilizar esta función.',
 	'smw_type_header' => 'Atributos de tipo “$1”',
 	'smw_typearticlecount' => 'Mostrando $1 atributos usando este tipo.',
@@ -1362,7 +1362,7 @@ $messages['fi'] = array(
 	'smw_abb_west' => 'Länt.',
 	'smw_label_latitude' => 'Korkeusaste:',
 	'smw_label_longitude' => 'Pituuspiiri:',
-	'smw_nodatetime' => 'Päiväystä ”$1” ei tunnistettu. Päiväysmuotojen tuki on vielä kokeiluasteella.',
+	'smw_nodatetime' => 'Päiväystä ”$1” ei tunnistettu.',
 	'smw_emptysubquery' => 'Jollakin alikyselyllä ei ole kelvollista ehtoa.',
 	'smw_badtitle' => '”$1” ei ole kelvollinen sivun nimi.',
 	'smw_devel_warning' => 'Tämä ominaisuutta kehitetään aktiivisesti, eikä välttämättä ole kaikin osin toimiva. Varmuuskopioi tietosi ennen käyttöä.',
@@ -1445,7 +1445,7 @@ $messages['fr'] = array(
 	'smw_abb_west' => 'O',
 	'smw_label_latitude' => 'Latitude :',
 	'smw_label_longitude' => 'Longitude :',
-	'smw_nodatetime' => 'La date "$1" n\'a pas été comprise. Le support des données calendaires est encore expérimental.',
+	'smw_nodatetime' => 'La date "$1" n\'a pas été comprise.',
 	'smw_toomanyclosing' => "Il semble y avoir trop d'occurences de “$1” dans la requête.",
 	'smw_noclosingbrackets' => "Certains “[[” dans votre requête n'ont pas été clos par des “]]” correspondants.",
 	'smw_misplacedsymbol' => "Le symbole “$1” a été utilisé à un endroit où il n'est pas utile.",
@@ -1558,6 +1558,50 @@ Certaines des propriétés existantes peuvent faire être <a href="$6">inutilis�
 	'smw_result_results' => 'Résultats',
 	'smw_result_noresults' => 'Désolé, aucun résultat.',
 	'smwadmin' => 'Fonctions administrateur pour Semantic MediaWiki',
+	'smw_smwadmin_settingup' => 'Install le stockage pour Semantic MediaWiki',
+	'smw_smwadmin_setupsuccess' => 'Le moteur de stockage a été installé avec succès.',
+	'smw_smwadmin_return' => 'Revenir vers $1',
+	'smw_smwadmin_updatestarted' => 'Un nouveau processus pour le rafraichissement de semantic data a commencé.
+Toutes les données stockées seront reconstruites voire réparées si nécessaire.
+Vous pouvez suivre la progression de la mise à jour sur cette page spéciale.',
+	'smw_smwadmin_updatenotstarted' => 'Un processus de mise à jour est déjà en cours d’exécution.
+Ne pas en créer un autre.',
+	'smw_smwadmin_updatestopped' => 'Tous les processus de mise à jour ont été arrêtés.',
+	'smw_smwadmin_updatenotstopped' => 'Par arrêter le processus en cours de mise à jour, vous devez cocher la case pour indiquer que vous en être vraiment sûr.',
+	'smw_smwadmin_docu' => 'Cette page spéciale vous aide pendant l’installation et la mise à niveau de <a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>.
+N’oubliez pas de sauvegarder les données avant les fonctions d’administration du site.',
+	'smw_smwadmin_db' => 'Installation et mise à niveau de la base de donnée',
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki requiert plusieurs extensions pour la base de donnée MediaWiki en ordre pour stocker les données de sémantique.
+La fonction ci-dessous s’assure que votre base donnée a été proprement installée.
+Les modifications faites lors de cette étape n’affecteront pas le reste de la base de donnée Mediawiki, et peut être défaite à volonté.
+Cette fonction d’installation peut être lancée plusieurs fois sans causer le moindre dégats, mais une seule installation ou mise à niveau est nécessaire.',
+	'smw_smwadmin_permissionswarn' => 'Si l’opération échoue avec des erreurs SQL, l’utilisateur de la base donnée utilisée par votre wiki, (regarder votre LocalSettings.php) risque probablement de ne pas avoir les permissions suffisantes.
+Il faut soit permettre à cet utilisateur de disposer des permissions pour créer et supprimer les tables, soit entrer temporairement la connection en root à votre base de données dans le LocalSettings.php, soit utiliser le script de maintenance <tt>SMW_setup.php</tt> lequel peut utiliser les accréditations de AdminSettings.php.',
+	'smw_smwadmin_dbbutton' => 'Initialise les tables de mise à niveau',
+	'smw_smwadmin_announce' => 'Annoncer votre wiki',
+	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki dispose d’un service internet pour annoncer des nouveaux sites wiki sémantiques.
+Ceci est utilisé pour maintenir une liste des sites publiques utilisant Semantic MediaWiki, principalement pour aider <a href="http://semantic-mediawiki.org/wiki/SMW_Project">le projet Semantic MediaWiki</a> afin d’obtenir une vue d’ensemble des usages typiques de celui-ci.
+Voyez la page d’accueil de Semantic MediaWiki <a href="http://semantic-mediawiki.org/wiki/Registry">de plus amples information concernant ce service</a>.',
+	'smw_smwadmin_announcebutton' => 'Appuyer sur le bouton suivant pour soumettre l’adresse internet de votre wiki à ce service.
+Le service n’enregistrera pas les wiki qui ne sont pas accessibles au public, et il ne stockera uniquement les informations publiquement accessibles.',
+	'smw_smwadmin_datarefresh' => 'Réparation et mise à niveau des données',
+	'smw_smwadmin_datarefreshdocu' => 'Il est possible de restaurer toutes les données Semantic MediaWiki basées sur les contenus courants de ce wiki.
+Ceci peut être utile pour réparer des données cassées ou pour rafraichir les données si le format interne a changé lors des remises à niveau.
+La mise à jour est exécutée page par page et se sera pas achevée immédiatement.
+La page suivante affiche si une mise à jour est en cours d’exécution et vous permet de commencer ou d’arrêter celles-ci (à moins que cette fonctionnalié soit désactivée par l’administrateur du site).',
+	'smw_smwadmin_datarefreshprogress' => 'Une mise à jour est en cours d’exécution.</b>
+C’est normal qu’une mise à jour ne progresse lentement depuis qu’il rafraichit uniquement les données dans petits tronçons à chaque fois qu’un utilisateur accède au wiki.
+Pour terminer cette mise à jour plus rapidement, vous pouvez invoquer le script de maintenance Mediawiki <tt>runJobs.php</tt> (utiliser l’option <tt>--maxjobs 1000</tt> pour restreindre le nombre des mises à jours par script lancé).
+Progression estimée de la mise à jour actuelle :',
+	'smw_smwadmin_datarefreshbutton' => 'Commencer la mise à jour des données',
+	'smw_smwadmin_datarefreshstop' => 'Arrêter cette mise à jour',
+	'smw_smwadmin_datarefreshstopconfirm' => 'Oui, j’en suis sûr.',
+	'smw_smwadmin_support' => 'Obtention d’un support',
+	'smw_smwadmin_supportdocu' => 'Diverses ressources pourraient vous aider en cas de problèmes :',
+	'smw_smwadmin_installfile' => 'Si vous expérimentez des problème avec votre installation, commencer par regarder le guide en ligne dans le <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">fichier INSTALL</a>.',
+	'smw_smwadmin_smwhomepage' => 'La documentation complète de l’utilisateur de Semantic MediaWiki se trouve sur <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.',
+	'smw_smwadmin_mediazilla' => 'Les bogues peuvent être soumis sur <a href="https://bugzilla.wikimedia.org/">MediaZilla</a>.',
+	'smw_smwadmin_questions' => 'Vous avez d’autres questions ou des suggestion, rejoignez la discussion sur <a href="mailto:semediawiki-user@lists.sourceforge.net">semediawiki-user@lists.sourceforge.net</a>.',
 );
 
 /** Western Frisian (Frysk)
@@ -1619,7 +1663,7 @@ $messages['gl'] = array(
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'Latitude:',
 	'smw_label_longitude' => 'Lonxitude:',
-	'smw_nodatetime' => 'A data “$1” non foi entendida (o soporte para as datas aínda é experimental).',
+	'smw_nodatetime' => 'A data “$1” non foi entendida.',
 	'smw_toomanyclosing' => 'Parece que hai demasiados acontecementos de “$1” na pregunta.',
 	'smw_noclosingbrackets' => 'Algún uso de “<nowiki>[[</nowiki>” na súa pregunta non foi pechado polo seu “]]” correspondente.',
 	'smw_misplacedsymbol' => 'O símbolo “$1” foi usado nun lugar no que non era útil.',
@@ -1746,6 +1790,7 @@ Por favor, insira ambas, a páxina e mais a propiedade.',
 	'smw_smwadmin_datarefreshstop' => 'Deter esta actualización',
 	'smw_smwadmin_datarefreshstopconfirm' => 'Si, estou seguro.',
 	'smw_smwadmin_support' => 'Obtendo asistencia',
+	'smw_smwadmin_mediazilla' => 'Pode informar dos erros en <a href="https://bugzilla.wikimedia.org/">MediaZilla</a>.',
 );
 
 /** Ancient Greek (Ἀρχαία ἑλληνικὴ)
@@ -1937,7 +1982,7 @@ $messages['ia'] = array(
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'Latitude:',
 	'smw_label_longitude' => 'Longitude:',
-	'smw_nodatetime' => 'Le data "$1" non esseva comprendite (le supporto pro datas es ancora experimental).',
+	'smw_nodatetime' => 'Le data "$1" non esseva comprendite.',
 	'smw_toomanyclosing' => 'Il pare haber troppo de occurrentias de "$1" in le consulta.',
 	'smw_noclosingbrackets' => 'Alcun uso de "<nowiki>[[</nowiki>" in tu consulta non esseva claudite per un correspondente "]]".',
 	'smw_misplacedsymbol' => 'Le symbolo "$1" esseva usate in un loco ubi illo non es utile.',
@@ -2126,7 +2171,7 @@ $messages['it'] = array(
 	'smw_abb_west' => 'O',
 	'smw_label_latitude' => 'Latitudine:',
 	'smw_label_longitude' => 'Longitudine:',
-	'smw_nodatetime' => 'Non &egrave; stato possibile comprendere la data “$1” (il supporto per le date &egrave; ancora sperimentale).',
+	'smw_nodatetime' => 'Non &egrave; stato possibile comprendere la data “$1”.',
 	'smw_toomanyclosing' => "Sembrano esserci troppe ripetizioni di “$1” all'interno della query.",
 	'smw_noclosingbrackets' => 'Alcune "<nowiki>[[</nowiki>" all\'interno della query non sono state chiuse con le corrispondenti "]]".',
 	'smw_misplacedsymbol' => 'Il simbolo “$1” &grave; stato usato in un punto in cui &egrave; inutile.',
@@ -2283,7 +2328,7 @@ $messages['jv'] = array(
 	'smw_abb_west' => 'Kln',
 	'smw_label_latitude' => 'Latituda:',
 	'smw_label_longitude' => 'Longituda:',
-	'smw_nodatetime' => 'Tanggal “$1” ora dimangertèni (pasengkuyungan kanggo tanggal isih ing tahapan èkspèrimèntal).',
+	'smw_nodatetime' => 'Tanggal “$1” ora dimangertèni.',
 	'smw_toomanyclosing' => 'Katoné ana kakèhan “$1” sajroning kwéri.',
 	'smw_noclosingbrackets' => 'Sawetara panrapan “<nowiki>[[</nowiki>” ing kwéri panjenengan ora ditutup déning “]]” sing cocog.',
 	'smw_misplacedsymbol' => 'Simbul “$1” dienggo ing sawijining panggonan sing ora miguna.',
@@ -2463,7 +2508,7 @@ $messages['ko'] = array(
 	'smw_abb_west' => '서부',
 	'smw_label_latitude' => '위도:',
 	'smw_label_longitude' => '경도:',
-	'smw_nodatetime' => '의 날짜 “$1” 는 이해할 수 없다. 날짜는 아직 실험 단계에 대한 지원을합니다.',
+	'smw_nodatetime' => '의 날짜 “$1” 는 이해할 수 없다.',
 	'smw_toomanyclosing' => '이 쿼리에서 사용하는 표현이 “$1” 너무 많은 시간입니다.',
 	'smw_noclosingbrackets' => '일부의 사용 "[[" 검색어에 의해 폐쇄되지 않았습니다 매칭 "]]".',
 	'smw_misplacedsymbol' => '의 상징 "$1" 이전에 사용하는 장소에 유용 않다.',
@@ -2650,6 +2695,9 @@ $messages['lb'] = array(
 	'smw_result_next' => 'Nächst',
 	'smw_result_results' => 'Resultater',
 	'smw_result_noresults' => 'Pardon, et gouf näischt fonnt.',
+	'smw_smwadmin_return' => 'Zréck op $1',
+	'smw_smwadmin_datarefreshstop' => 'Dësn Update stoppen',
+	'smw_smwadmin_datarefreshstopconfirm' => 'Jo, ech si sécher.',
 );
 
 /** Malayalam (മലയാളം)
@@ -2745,7 +2793,7 @@ $messages['mr'] = array(
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'अक्षांश:',
 	'smw_label_longitude' => 'रेखांश:',
-	'smw_nodatetime' => '“$1” हा दिनांक समजला नाही (दिनांक प्रकार अजूनही प्रायोगिक अवस्थेत आहेत).',
+	'smw_nodatetime' => '“$1” हा दिनांक समजला नाही.',
 	'smw_toomanyclosing' => 'या पृच्छेमध्ये “$1” खूप ठिकाणी आलेले आहे.',
 	'smw_noclosingbrackets' => 'तुमच्या पृच्छेत कुठेतरी वापरलेले “<nowiki>[[</nowiki>” हे योग्य अशा जुळणार्‍या “]]” ने बंद केलेले नाही.',
 	'smw_misplacedsymbol' => '“$1” चिन्ह जिथे उपयोगी नाही अशा ठिकाणी वापरलेले आहे.',
@@ -2942,7 +2990,7 @@ Als het probleem over enige tijd nog niet verholpen is, vraag de beheerder dan o
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'Breedte:',
 	'smw_label_longitude' => 'Lengte:',
-	'smw_nodatetime' => 'De datum “$1” werd niet begrepen (ondersteuning voor datums is nog experimenteel).',
+	'smw_nodatetime' => 'De datum “$1” werd niet begrepen.',
 	'smw_toomanyclosing' => '“$1” lijkt te vaak voor te komen in de zoekopdracht.',
 	'smw_noclosingbrackets' => 'In uw zoekopdracht is het gebruik van “<nowiki>[[</nowiki>” niet gesloten door een bijbehorende “]]”.',
 	'smw_misplacedsymbol' => 'Het symbool “$1” is gebruikt op een plaats waar het niet gebruikt hoort te worden.',
@@ -3095,7 +3143,7 @@ Geschatte voortgang van de huidige taak:",
 	'smw_smwadmin_supportdocu' => 'Een aantal bronnen kunnen u ondersteunen als u problemen ondervindt:',
 	'smw_smwadmin_installfile' => 'Als u problemen ondervindt bij uw installatie, controleer dan de richlijnen in het bestand <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">INSTALL</a>.',
 	'smw_smwadmin_smwhomepage' => 'De volledige gebruikersdocumentatie voor Semantic MediaWiki is te vinden op <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.',
-	'smw_smwadmin_mediazilla' => 'Bugs en suggesties kunt u rapporteren in <a href="http://bugzilla.wikimedia.org/">MediaZilla</a>.',
+	'smw_smwadmin_mediazilla' => 'Bugs en suggesties kunt u rapporteren in <a href="https://bugzilla.wikimedia.org/">MediaZilla</a>.',
 	'smw_smwadmin_questions' => 'Als u verdere vragen of suggesties hebt, neem dan deel aan het overleg op <a href="mailto:semediawiki-user@lists.sourceforge.net">semediawiki-user@lists.sourceforge.net</a>.',
 );
 
@@ -3149,7 +3197,7 @@ $messages['no'] = array(
 	'smw_abb_west' => 'V',
 	'smw_label_latitude' => 'Breddegrad:',
 	'smw_label_longitude' => 'Lengdegrad:',
-	'smw_nodatetime' => 'Datoen «$1» ble ikke forstått (støtte for datoer er fortsatt eksperimentelt).',
+	'smw_nodatetime' => 'Datoen «$1» ble ikke forstått.',
 	'smw_toomanyclosing' => '«$1» opptrer for mange ganger i spørringen.',
 	'smw_noclosingbrackets' => 'Bruken av «<nowiki>[[</nowiki>» i spørringen din ble ikke stengt av «]]».',
 	'smw_misplacedsymbol' => 'Symbolet «$1» ble brukt på et sted hvor det ikke er nyttig.',
@@ -3315,7 +3363,7 @@ $messages['oc'] = array(
 	'smw_abb_west' => 'O',
 	'smw_label_latitude' => 'Latitud :',
 	'smw_label_longitude' => 'Longitud :',
-	'smw_nodatetime' => 'La data "$1" es pas estada compresa. Lo supòrt de las donadas calendaras es encara experimental.',
+	'smw_nodatetime' => 'La data "$1" es pas estada compresa.',
 	'smw_toomanyclosing' => "Sembla que i a tròp d'ocuréncias de “$1” dins la requèsta.",
 	'smw_noclosingbrackets' => "D'unes “<nowiki>[[</nowiki>” dins vòstra requèsta son pas estats clauses per de “]]” correspondents.",
 	'smw_misplacedsymbol' => 'Lo simbòl “$1” es estat utilizat a un endrech ont es pas util.',
@@ -3468,7 +3516,7 @@ $messages['pl'] = array(
 	'smw_abb_west' => 'W',
 	'smw_label_latitude' => 'Długość:',
 	'smw_label_longitude' => 'Szerokość:',
-	'smw_nodatetime' => 'Data "$1" nie została zrozumiana. Wsparcie dla dat jest jednak wciąż w fazie eksperymentalnej.',
+	'smw_nodatetime' => 'Data "$1" nie została zrozumiana.',
 	'smw_misplacedsymbol' => 'Symbolu „$1” użyto w niewłaściwym miejscu.',
 	'smw_badtitle' => '„$1” nie jest prawidłowym tytułem strony.',
 	'smw_propvalueproblem' => 'Wartość "$1" nie została rozpoznana.',
@@ -3600,7 +3648,7 @@ $messages['pt'] = array(
 	'smw_abb_west' => 'O',
 	'smw_label_latitude' => 'Latitude:',
 	'smw_label_longitude' => 'Longitude:',
-	'smw_nodatetime' => 'A data “$1” não foi compreendida (o suporte de datas ainda é experimental).',
+	'smw_nodatetime' => 'A data “$1” não foi compreendida.',
 	'smw_toomanyclosing' => 'Parece haver demasiadas ocorrências de “$1” na pesquisa.',
 	'smw_noclosingbrackets' => 'Um uso de “<nowiki>[[</nowiki>” na sua pesquisa não foi fechada por um “]]” correspondente.',
 	'smw_misplacedsymbol' => 'O símbolo “$1” foi usado num sítio onde não é útil.',
@@ -3789,7 +3837,7 @@ $messages['ru'] = array(
 	'smw_abb_west' => 'З',
 	'smw_label_latitude' => 'Широта:',
 	'smw_label_longitude' => 'Долгота:',
-	'smw_nodatetime' => 'Дата "$1" не распознана (поддержка дат находится в разработке).',
+	'smw_nodatetime' => 'Дата "$1" не распознана.',
 	'smw_toomanyclosing' => 'Ошибка: Слишком много вхождений “$1” в данном запросе.',
 	'smw_noclosingbrackets' => 'Открывающаяся пара скобок «<nowiki>[[</nowiki>» не была закрыта парой соответствующих ей закрывающих скобок «]]» в данном запросе.',
 	'smw_misplacedsymbol' => 'Ошибка: Использование символа “$1” в данном месте лишено смысла.',
@@ -3954,7 +4002,7 @@ $messages['sk'] = array(
 	'smw_abb_west' => 'Z',
 	'smw_label_latitude' => 'Zemepisná šírka:',
 	'smw_label_longitude' => 'Zemepisná dĺžka:',
-	'smw_nodatetime' => 'Nevedel som interpretovať dátum "$1". Ale podpora dátumov je stále v experimentálno štádiu.',
+	'smw_nodatetime' => 'Nevedel som interpretovať dátum "$1".',
 	'smw_toomanyclosing' => 'Zdá sa, že požiadavka obsahuje príliš mnoho výskytov „$1“.',
 	'smw_noclosingbrackets' => 'Niektoré použitie „<nowiki>[[</nowiki>” vo vašej požiadavke nebolo ukončené zodpovedajúcim „]]”.',
 	'smw_misplacedsymbol' => 'Symbol „$1“ bol použitý na mieste, kde nemá význam.',
@@ -4069,6 +4117,50 @@ Prosím, zadajte stránku aj vlastnosť.',
 	'smw_result_results' => 'Výsledky',
 	'smw_result_noresults' => 'Prepáčte, žiadne výsledky.',
 	'smwadmin' => 'Správcovské funkcie Semantic MediaWiki',
+	'smw_smwadmin_settingup' => 'Nastavenie úložiska pre Semantic MediaWiki',
+	'smw_smwadmin_setupsuccess' => 'Úložisko bolo úspešne nastavené.',
+	'smw_smwadmin_return' => 'Späť na $1',
+	'smw_smwadmin_updatestarted' => 'Začal sa nový proces aktualizácie sémantických údajov.
+Všetky uložené údaje budú znova zostavené alebo opravené tam, kde je to potrebné.
+Na tejto špeciálnej stránke môžete sledovať priebeh aktualizácie.',
+	'smw_smwadmin_updatenotstarted' => 'Už beží proces aktualizácie.
+Nespustí sa ďalší.',
+	'smw_smwadmin_updatestopped' => 'Všetky bežiace procesy aktualizácie boli zastavené.',
+	'smw_smwadmin_updatenotstopped' => 'Bežiaci proces aktualizácie môžete zastaviť označením zaškrtávacieho poľa, čím potvrdíte, že ste si naozaj istý.',
+	'smw_smwadmin_docu' => 'Táto špeciálna stránka vám pomôže počas inštalácie a aktualizácie <a href="http://semantic-mediawiki.org">Semantic MediaWiki</a>.
+Pamätajte na zálohovanie dôležitých údajov pred vykonávaním správcovských funkcií.',
+	'smw_smwadmin_db' => 'Inštalácia a aktualizácia databázy',
+	'smw_smwadmin_dbdocu' => 'Semantic MediaWiki vyžaduje niektoré rozšírenia databázy MediaWiki, aby molo ukladať sémantické údaje.
+Funkcia nižšie zabezpečuje správne nastavenie databázy.
+Zmeny vykonané v tomto kroku neovplyvňujú zvyšok databázy MediaWiki a ak je to potrebné, je ich možno jednoducho vrátiť.
+Túto funkcia nastavenia možno vykonať viacnásobne bez akejkoľvek ujmy, ale je potrebná iba raz počas inštalácie či aktualizácie.',
+	'smw_smwadmin_permissionswarn' => 'Ak táto operácia zlyhá na chybách SQL, používateľ databázy, ktorého využíva vaša wiki (pozrite sa do LocalSettings.php) pravdepodobne nemá dostatočné privilégiá.
+Buď udeľte tomuto používateľovi ďalšie privilégiá na vytváranie a mazanie tabuliek, dočasne zadajte prihlasovacie údaje používateľa root databázy do LocalSettings.php alebo použite skript na údržbu t>SMW_setup.php</tt>, ktorý dokáže využiť oprávnenia z AdminSettings.php.',
+	'smw_smwadmin_dbbutton' => 'Inicializovať alebo aktualizovať tabuľky',
+	'smw_smwadmin_announce' => 'Oznámiť vašu wiki',
+	'smw_smwadmin_announcedocu' => 'Semantic MediaWiki má webovú službu na oznamovanie nových sémantických wiki lokalít.
+Tým pomáha  udržiavať zoznam verejných lokalít používajúcich Semantic MediaWiki. najmä aby pomohla <a href="http://semantic-mediawiki.org/wiki/SMW_Project">projektu Semantic MediaWiki</a> získať prehľad typických využití Semantic MediaWiki.
+ďalšie informácie o tejto službe nájdete na <a href="http://semantic-mediawiki.org/wiki/Registry">domovskej stránke Semantic MediaWiki</a>.',
+	'smw_smwadmin_announcebutton' => 'Stlačením nasledovného tlačidla odošlete URL vašej wiki tejto službe.
+Služba nebude registrovať wiki, ktoré nie sú verejne prístupné a bude ukladať iba verejne dostupné informácie.',
+	'smw_smwadmin_datarefresh' => 'Oprava a aktualizácia dát',
+	'smw_smwadmin_datarefreshdocu' => 'Je možné obnoviť všetky údaje Semantic MediaWiki na základe aktuálneho obsahu wiki.
+To sa hodí na opravu poškodených údajov alebo obnovu údajov ak sa pri aktualizácii softvéru zmenil vnútorný formát ukladania údajov.
+Aktualizáciu je možné spustiť na špeciálnej stránke a nebude dokočená okamžite.
+Tu sa zobrazuje priebeh aktualizácie a môžete tu spustiť alebo zastaviť aktualizácie (ak túto funkciu správca nevypol).',
+	'smw_smwadmin_datarefreshprogress' => 'Aktualizácia už prebieha.</b>
+Je normálne, že aktualizácie prebieha pomaly, pretože obnovuje údaje iba po malých kúskoch naraz, keď používateľ zobrazí stránku wiki.
+Rýchlejšie dokončenie tejto aktualizácie môžete dosiahnuť vyvolaním údržbového skriptu MediaWiki <tt>runJobs.php</tt> (použite voľbu <tt>--maxjobs 1000</tt> na obmedzenie počtu aktualizácii v jednej dávke).
+Odhadovaný priebeh aktualizácie:',
+	'smw_smwadmin_datarefreshbutton' => 'Spustiť aktualizáciu údajov',
+	'smw_smwadmin_datarefreshstop' => 'Zastaviť túto aktualizáciu',
+	'smw_smwadmin_datarefreshstopconfirm' => 'Áno, som si istý.',
+	'smw_smwadmin_support' => 'Ako získať podporu',
+	'smw_smwadmin_supportdocu' => 'V prípade problémov vám môžu pomôcť rozličné zdroje:',
+	'smw_smwadmin_installfile' => 'Ak budete mať s inštaláciou problém, začnite kontrolou smerníc <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticMediaWiki/INSTALL">v súbore INSTALL</a>.',
+	'smw_smwadmin_smwhomepage' => 'Úplná používateľská dokumentácia Semantic MediaWiki sa nachádza na <b><a href="http://semantic-mediawiki.org">semantic-mediawiki.org</a></b>.',
+	'smw_smwadmin_mediazilla' => 'Chyby môžete oznamovať v systéme <a href="https://bugzilla.wikimedia.org/">MediaZilla</a>.',
+	'smw_smwadmin_questions' => 'Ak máte ďalšie otázky alebo návrhy, zapojte sa do konferencie <a href="mailto:semediawiki-user@lists.sourceforge.net">semediawiki-user@lists.sourceforge.net</a>.',
 );
 
 /** Swedish (Svenska)
@@ -4127,7 +4219,7 @@ $messages['sv'] = array(
 	'smw_abb_west' => 'V',
 	'smw_label_latitude' => 'Latitud:',
 	'smw_label_longitude' => 'Longitud:',
-	'smw_nodatetime' => 'Datumet "$1" förståddes inte (stöd för datum är fortsatt experimentellt).',
+	'smw_nodatetime' => 'Datumet "$1" förståddes inte.',
 	'smw_toomanyclosing' => '"$1" uppträder för många gånger i efterfrågningen.',
 	'smw_noclosingbrackets' => 'Användningen av "<nowiki>[[</nowiki>" i din efterfrågning stängdes inte av "]]".',
 	'smw_misplacedsymbol' => 'Symbolen "$1" användes på en plats där den inte är användbar.',
@@ -4330,7 +4422,7 @@ $messages['vi'] = array(
 	'smw_abb_west' => 'T',
 	'smw_label_latitude' => 'Vĩ độ:',
 	'smw_label_longitude' => 'Kinh độ:',
-	'smw_nodatetime' => 'Không hiểu ngày “$1” (hỗ trợ ngày tháng vẫn còn đang thử nghiệm).',
+	'smw_nodatetime' => 'Không hiểu ngày “$1”.',
 	'smw_toomanyclosing' => 'Dường có quá nhiều lần xuất hiện “$1” trong câu truy vấn.',
 	'smw_noclosingbrackets' => 'Lần sử dụng “<nowiki>[[</nowiki>” nào đó trong câu truy vấn của bạn không được đóng bằng “]]”.',
 	'smw_misplacedsymbol' => 'Ký hiệu “$1” được dùng tại nơi nó không hữu ích.',
