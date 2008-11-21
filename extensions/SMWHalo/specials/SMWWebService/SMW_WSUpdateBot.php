@@ -176,7 +176,7 @@ class WSUpdateBot extends GardeningBot {
 						$subject = Title::newFromID($prop["pageId"]);
 						$smwData = smwfGetStore()->getSemanticData($subject);
 
-						//echo(" 4: ".$prop["propertyName"]);
+						echo(" 4: ".$prop["propertyName"]);
 
 						$smwProps = $smwData->getProperties();
 

@@ -131,7 +131,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  */
 function webServiceUsage_Render( &$parser) {
 
-	smwfRequireHeadItem(SMW_HEADER_STYLE);
+	//smwfRequireHeadItem(SMW_HEADER_STYLE);
 
 	global $wgsmwRememberedWSUsages, $purgePage;
 	$purgePage = true;
@@ -179,7 +179,7 @@ function webServiceUsage_Render( &$parser) {
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
-		
+
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
@@ -318,7 +318,7 @@ function detectEditedWSUsages(&$article, &$user, &$text){
 function handlePurge(&$out, &$text){
 	global $purgePage;
 	if($purgePage){
-		SMWFactbox::storeData(true);
+		//SMWFactbox::storeData(true);
 	}
 	$purgePage = false;
 	return true;
@@ -359,7 +359,10 @@ function detectRemovedWebServiceUsages($articleId){
 	}
 
 	if($rememberedWSUsages != null){
-		$smwProperties = SMWFactbox::$semdata->getProperties();
+		$subject = Title::newFromID($articleId);
+		$smwData = smwfGetStore()->getSemanticData($subject);
+		$smwProperties = $smwData->getProperties();
+
 		foreach($rememberedWSUsages as $rememberedWSUsage){
 			if($smwProperties[$rememberedWSUsage[2]] != null){
 				WSStorage::getDatabase()->addWSProperty(
@@ -371,6 +374,7 @@ function detectRemovedWebServiceUsages($articleId){
 			}
 		}
 	}
+
 	$wsProperties = WSStorage::getDatabase()->getWSPropertiesUsedInArticle($articleId);
 
 	foreach($wsProperties as $wsProperty){
@@ -392,6 +396,7 @@ function detectRemovedWebServiceUsages($articleId){
 			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
 		}
 	}
+
 	return true;
 }
 

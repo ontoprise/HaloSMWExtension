@@ -407,7 +407,7 @@ class WebService {
 			if(($this->mDisplayPolicy == 0) ||
 			(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
 			< ($this->getDisplayPolicy()*60))){
-				$response = unserialize($cacheResult["result"]);
+				$response = @ unserialize($cacheResult["result"]);
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 
@@ -1387,6 +1387,7 @@ class WebService {
 		if($this->mParsedParameters != null){
 			foreach($this->mParsedParameters->children() as $child){
 				if("".$child["optional"] == "false" && "".$child["defaultValue"] == null){
+					$exists = false;
 					foreach($specifiedParameters as $pName => $pValue){
 						if("".$child["name"] == $pName){
 							$exists = true;
