@@ -54,5 +54,5 @@ includes/Wiki.php
 
 
 the two basic ideas:
-- checking the wanted by using the file extension and the new array defined in LocalSettings.php.
-- checking if the actual namespaces fits one of the wanted (new) image-namespaces. 
+- checking the wanted Namespace by using the file extension and the new array defined in LocalSettings.php.
+- checking if the actual namespace fits one of the wanted (new) image-namespaces. 
