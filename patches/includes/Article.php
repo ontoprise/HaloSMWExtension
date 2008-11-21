@@ -3125,9 +3125,7 @@ class Article {
 		}
 		# Images
 		// AdditionalMIMETypes - one row change
-//		if( $this->getTitle()->getNamespace() == NS_IMAGE )
 //		if( $title->getNamespace() == NS_IMAGE ) {
-		if( Namespace::isImage( $this->getTitle()->getNamespace() ) )
 		if( Namespace::isImage( $title->getNamespace() ) ) {
 			$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 			$update->doUpdate();
