@@ -115,11 +115,19 @@ class SMWFullSemanticData {
         	$isDerived = true;
         	$val = null;
         	foreach ($values as $v) {
-        		if ($value->getTypeID() == '_wpg') {
-        			if ($value->getTitle()->getText() == $v->getTitle()->getText()) {
+        		if ($value->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
+        			$vt1 = $value->getTitle();
+        			$vt2 = $v->getTitle();
+        			if (isset($vt1) 
+        			    && isset($vt2)
+        			    && $vt1->getText() == $vt2->getText()) {
 	        			$isDerived = false;
 	        			break;
         			}
+        		} else if ($value->getTypeID() == '_wpg' && $v->getTypeID() != '_wpg') {
+        			// how can this happen?
+        			$isDerived = false;
+        			break;
         		} else {
 					if ($value->isNumeric()) {
 		        		if ($value->getNumericValue() == $v->getNumericValue()) {
