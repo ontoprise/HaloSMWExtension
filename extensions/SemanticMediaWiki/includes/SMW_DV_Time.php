@@ -10,23 +10,29 @@
  * refers to by common conventions. For export, times are given without timezone
  * information. However, time offsets to that local time are supported (see below).
  *
+ * Dates can be given in many formats, using numbers, month names, and abbreviated
+ * month names. The preferred interpretation of ambiguous dates ("1 2 2008" or even
+ * "1 2 3 BC") is controlled by the language file, as is the local naming of months.
+ * English month names are always supported. Currently, the additions "AM", "PM", "BC",
+ * and "AD" are supported, but not localised to other languages.
+ *
  * There is currently no support for different calendar models or conversion between
  * them. All dates are supposed to refer to Gregorian calendar (or its extension to
  * the past, the proleptic Gregorian claendar). Attention: this may change in future
  * versions, and historical dates may be treated as Julian calendar dates in certain
  * ranges. Consider historical dates to be experimental.
  *
- * It is able to handle dates accross history with full precision for storing, and
+ * It is able to handle dates across history with full precision for storing, and
  * substantial precision for sorting and querying. The range of supported past dates
  * should encompass the Beginning of Time according to most of today's theories. The
  * range of supported future dates is limited more strictly, but it does also allow
  * year numbers in the order of 10^9.
  *
  * Years before common era (aka BC) can be denoted using "BC" in a date. The internal
- * nummeric date model supports the year 0, and considers it to be the same as "1 BC".
+ * numeric date model supports the year 0, and considers it to be the same as "1 BC".
  * The year "0 BC" is accepted to refer to the same year, but its use is discouraged.
  * According to this convention, e.g., the year "-100" is the same as "101 BC". This
- * convention agrees with ISO 6801 and the remarks in XML Schema Datatypes 2nd Edition,
+ * convention agrees with ISO 6801 and the remarks in XML Schema Datatypes 2nd Edition
  * (the latter uses a different convention that disallows year 0, but it explicitly
  * endorses the ISO convention and announces the future use of this in XML).
  * Note that the implementation currently does not support the specification of negative
@@ -34,7 +40,7 @@
  *
  * The implementation notices and stores whether parts of a date/time have been
  * omitted (as in "2008" or "May 2007"). For all exporting and sorting purposes,
- * incomplete dates are completed wiht defaults (usually using the earliest possible
+ * incomplete dates are completed with defaults (usually using the earliest possible
  * time, i.e. interpreting "2008" as "Jan 1 2008 00:00:00"). But the information
  * on what was unspecified is kept internally for improving behaviour e.g. for
  * outputs (defaults are not printed when querying for a value). Functions are
@@ -42,7 +48,16 @@
  * getTimeString), and those can also be used to find out what was unspecified.
  *
  * Time offests are supported (e.g. "1 1 2008 12:00-2:00"). As explained above, those
- * refer to the local time.
+ * refer to the local time. Time offsets take leap years into account, e.g. the date
+ * "Feb 28 2004 23:00+2:00" is equivalent to "29 February 2004 01:00:00", while
+ * "Feb 28 1900 23:00+2:00" is equivalent to "1 March 1900 01:00:00".
+ *
+ * @todo Add support for different calendar models (mainly requires to settle how this
+ * should be specified in various languages).
+ * @todo Internationalise the treatment of AD, BC, PM, AM. Add more formats (p.m. or BCE).
+ * @todo Try to reuse more of MediaWiki's records, e.g. to obtain month names or to
+ * format dates. The problem is that MW is based on SIO timestamps that don't extend to
+ * very ancient or future dates, and that MW uses PHP functions that are bound to UNIX time.
  *
  * @author Fabian Howahl
  * @author Markus Krötzsch
@@ -244,7 +259,7 @@ class SMWTimeValue extends SMWDataValue {
 		list($this->m_year,$this->m_month,$this->m_day) = explode('/',$date,3);
 		$this->makePrintoutValue();
 		$this->m_caption = $this->m_printvalue;
-		$this->m_wikivalue = $value;
+		$this->m_wikivalue = $this->m_printvalue;
 	}
 
 	public function getShortWikiText($linked = NULL) {
@@ -357,13 +372,15 @@ class SMWTimeValue extends SMWDataValue {
 	 * If the date was not fully specified, then the function will use defaults for the omitted values.
 	 * The boolean parameter $mindefault controls if those defaults are chosen minimally. If false, then
 	 * the latest possible value will be chosen instead.
+	 *
+	 * @note This function may return year numbers with less or more than 4 digits.
 	 */
 	public function getXMLSchemaDate($mindefault = true) {
 		if ($this->isValid()) {
 			if ($mindefault) {
-				return $this->m_year.'-'.$this->normalizeValue($this->getMonth()).'-'.$this->normalizeValue($this->getDay()).'T'.$this->getTimeString();
+				return number_format($this->m_year, 0, '.', '').'-'.$this->normalizeValue($this->getMonth()).'-'.$this->normalizeValue($this->getDay()).'T'.$this->getTimeString();
 			} else {
-				return $this->m_year.'-'.$this->normalizeValue($this->getMonth(12)).'-'.$this->normalizeValue($this->getDay(31)).'T'.$this->getTimeString('23:59:59');
+				return number_format($this->m_year, 0, '.', '').'-'.$this->normalizeValue($this->getMonth(12)).'-'.$this->normalizeValue($this->getDay(31)).'T'.$this->getTimeString('23:59:59');
 			}
 		} else {
 			return false;
@@ -379,9 +396,9 @@ class SMWTimeValue extends SMWDataValue {
 		if ($this->m_printvalue === false) {
 			//MediaWiki date function is not applicable any more (no support for BC Dates)
 			if ($this->m_year > 0) {
-				$this->m_printvalue = $this->m_year;
+				$this->m_printvalue = number_format($this->m_year, 0, '.', ''); // note: there should be no digits after the comma anyway
 			} else {
-				$this->m_printvalue = -($this->m_year-1) . ' BC';
+				$this->m_printvalue = number_format(-($this->m_year-1), 0, '.', '') . ' BC'; // note: there should be no digits after the comma anyway
 			}
 			if ($this->m_month) {
 				$this->m_printvalue =  $smwgContLang->getMonthLabel($this->m_month) . " " . $this->m_printvalue;
