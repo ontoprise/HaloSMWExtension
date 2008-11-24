@@ -10,16 +10,6 @@ Please extract files to /HaloSMWExtension and add the following row to your Loca
 include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
 
 ---
-@ToDo: clearify if the physical storage location for particular mime-types can be determined
-such that videos are saved on server x and images on server y:
-
-Well, it´s quite simple to save ALL files on another server than the wiki-server.
-If you want to do that just:
-Replace the variables in LocalSettings $IP in $wgUploadDirectory with "\\\Server\upload_directory" 
-and $wgScriptPath in $wgUploadPath with "http://www.Server.xx/upload_directory". 
-Both variables have to point to the same physical directory!
-
----
 
 summary of changed files:
 
