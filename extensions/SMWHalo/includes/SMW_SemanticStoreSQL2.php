@@ -152,17 +152,16 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
         $smw_atts2 = $db->tableName('smw_atts2');
         $smw_ids = $db->tableName('smw_ids');
         $smw_spec2 = $db->tableName('smw_spec2');
-        
-        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => $this->domainRangeHintRelation->getDBkey()) );
-        if ($domainAndRange == NULL) {
-            $domainAndRangeID = -1; // does never exist
-        } else {
-            $domainAndRangeID = $domainAndRange->smw_id;
-        }
+       
+        // set SMW IDs
+        $domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->domainRangeHintRelation->getDBkey()));
+        $minCardID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->minCard->getDBkey()));
+        $maxCardID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->maxCard->getDBkey()));
         $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
-        $resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id'. 
+        
+        $resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id AND p_id ='.$minCardID. 
                              ' GROUP BY property ORDER BY property');
-        $resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id'. 
+        $resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id AND p_id ='.$maxCardID. 
                              ' GROUP BY property ORDER BY property');
         $resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_spec2.' ON smw_id = s_id'. 
                              ' WHERE p_id = '.$hasTypePropertyID.' GROUP BY property ORDER BY property');

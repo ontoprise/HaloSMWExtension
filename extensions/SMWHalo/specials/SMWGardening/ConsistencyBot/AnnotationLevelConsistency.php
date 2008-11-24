@@ -81,7 +81,9 @@ class AnnotationLevelConsistency {
 
 				// get annotation subjects for the property.
 				$subjects = array();
-				$allPropertySubjects = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($p->getDBkey()));
+				$p_DV = SMWPropertyValue::makeUserProperty($p->getDBkey());
+				if (!$p_DV->isUserDefined()) continue;
+				$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV);
 				foreach ($allPropertySubjects as $dv) {
 					$subjects[] = $dv->getTitle();
 				};
