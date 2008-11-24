@@ -2449,7 +2449,7 @@ class Title {
 		if ( Namespace::isImage( $this->getNamespace() )  ) {
 			$file = wfLocalFile( $this );
 			if( $file->exists() ) {
-				if ( Namespace::isImage( $nt->getNamespace() )  ) {
+				if ( !Namespace::isImage( $nt->getNamespace() )  ) {
 					$errors[] = array('imagenocrossnamespace');
 				}
 				if( $nt->getText() != wfStripIllegalFilenameChars( $nt->getText() ) ) {
