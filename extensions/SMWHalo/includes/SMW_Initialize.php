@@ -564,7 +564,7 @@ function smwfHaloAddHTMLHeader(&$out) {
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "edit");
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "annotate");
-    $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css');
+    $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/lightbulb.css');
     //Remove before check in
     //print $wgStylePath.'/'.$skin->getSkinName().'/semantictoolbar.css';
     //die;
