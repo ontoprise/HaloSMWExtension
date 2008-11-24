@@ -261,8 +261,8 @@ HTML;
 								array('format' => 'snxml', 
 								      'sort' => $sortvars,
 									  'limit' => $smwgQMaxLimit), 
-								SMW_OUTPUT_HTML);
-		
+								SMW_OUTPUT_FILE);
+										
 	}
 	
 	/**
