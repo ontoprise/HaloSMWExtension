@@ -64,7 +64,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$instance = Title::newFromText($p_array[0]);
  		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
  		foreach($properties as $a) { 
- 			if (!$a->isVisible()) continue;
+ 			if (!$a->isShown() || !$a->isVisible()) continue;
  			$values = smwfGetStore()->getPropertyValues($instance, $a);
  			$propertyAnnotations[] = array($a, $values); 
  		}
