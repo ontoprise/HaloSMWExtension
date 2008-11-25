@@ -168,10 +168,13 @@ class SMW_LocalGardeningJob extends Job {
                
         // domain/range check
         foreach($properties as $property) {
-            $this->annot_checker->checkPropertyAnnotations($subjects, $property);
+        	if (!$property->isUserDefined()) continue;
+        	$propertyTitle = Title::newFromDBkey($property->getXSDValue(), SMW_NS_PROPERTY);
+        	
+            $this->annot_checker->checkPropertyAnnotations($subjects, $propertyTitle);
             
         }
-        
+        print "Halo---\n";
         // cardinality check
         $this->annot_checker->checkAnnotationCardinalitiesForInstance($instance, $domainProperties);
         

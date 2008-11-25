@@ -339,7 +339,8 @@ class AnnotationLevelConsistency {
 
 		foreach($properties as $a) {
 			// get minimum cardinality
-			$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
+			$aTitle = Title::newFromDBkey($a->getXSDValue(), SMW_NS_PROPERTY);
+			$minCardArray = smwfGetStore()->getPropertyValues($aTitle, smwfGetSemanticStore()->minCardProp);
 
 			if (empty($minCardArray)) {
 				// if it does not exist, get minimum cardinality from superproperty
@@ -350,7 +351,7 @@ class AnnotationLevelConsistency {
 			}
 
 			// get maximum cardinality
-			$maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCardProp);
+			$maxCardsArray = smwfGetStore()->getPropertyValues($aTitle, smwfGetSemanticStore()->maxCardProp);
 
 			if (empty($maxCardsArray)) {
 				// if it does not exist, get maximum cardinality from superproperty
@@ -368,8 +369,7 @@ class AnnotationLevelConsistency {
 
 			// get all instances which have instantiated properties (including subproperties) of $a
 			// and the number of these annotations for each for instance
-			$aDV = SMWPropertyValue::makeUserProperty($a->getDBkey());
-			$result = smwfGetStore()->getPropertyValues($instance, $aDV);
+			$result = smwfGetStore()->getPropertyValues($instance, $a);
 
 			// compare actual number of appearances to minCard and maxCard and log errors if necessary
 
@@ -378,17 +378,17 @@ class AnnotationLevelConsistency {
 
 			// less than allowed?
 			if ($numOfInstProps < $minCards) {
-				if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $a)) {
+				if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, NULL, $subject, $aTitle)) {
 
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $a, $minCards - $numOfInstProps);
+					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_LOW_CARD, $subject, $aTitle, $minCards - $numOfInstProps);
 				}
 			}
 
 			// too many than allowed?
 			if ($numOfInstProps > $maxCards) {
-				if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $a)) {
+				if (!$this->gi_store->existsGardeningIssue($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, NULL, $subject, $aTitle)) {
 
-					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $a, $numOfInstProps - $maxCards);
+					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_TOO_HIGH_CARD, $subject, $aTitle, $numOfInstProps - $maxCards);
 				}
 			}
 
@@ -506,11 +506,11 @@ class AnnotationLevelConsistency {
 		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 		$properties = smwfGetStore()->getProperties($instance);
 		foreach($properties as $p) {
-			$pDV = SMWPropertyValue::makeUserProperty($p->getDBkey());
-			$values = smwfGetStore()->getPropertyValues($instance, $pDV);
+			$pTitle = Title::newFromDBkey($p->getXSDValue(), SMW_NS_PROPERTY);
+			$values = smwfGetStore()->getPropertyValues($instance, $p);
 			foreach($values as $v) {
 				if ($v->getUnit() != '') {
-					$type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
+					$type = smwfGetStore()->getPropertyValues($pTitle, $hasTypeDV);
 					$firstType = reset($type);
 					if (count($type) == 0 || $firstType->isBuiltIn()) continue;
 					$typeTitle = Title::newFromText($firstType->getXSDValue(), SMW_NS_TYPE);
@@ -541,7 +541,7 @@ class AnnotationLevelConsistency {
 						}
 					}
 					if (!$correct_unit) {
-						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $instance, $p, $v->getUnit());
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_UNIT, $instance, $pTitle, $v->getUnit());
 					}
 				}
 			}
