@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '1.3-for-SMW-1.3');
+define('SMW_HALO_VERSION', '1.4-for-SMW-1.4');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -67,7 +67,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL) {
 function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
-	global $mediaWiki, $smwgRuleRewriter, $smwgEnableFlogicRules;
+	global $mediaWiki, $smwgRuleRewriter, $smwgEnableFlogicRules, $wgSpecialPageGroups;
    
 	$smwgMasterGeneralStore = NULL;
     
@@ -282,46 +282,55 @@ function smwgHaloSetupExtension() {
 		// Register new or overwrite existing special pages
 		$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
 		$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
-
+        $wgSpecialPageGroups['OntologyBrowser'] = 'smwplus_group';
+        
 		$wgAutoloadClasses['SMWGardening'] = $smwgHaloIP . '/specials/SMWGardening/SMW_Gardening.php';
 		$wgSpecialPages['Gardening'] = array('SMWGardening');
-
+        $wgSpecialPageGroups['Gardening'] = 'smwplus_group';
 
 
 		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
 		$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
-
+        $wgSpecialPageGroups['ContextSensitiveHelp'] = 'smwplus_group';
+  
 		$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
 		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
-
+        $wgSpecialPageGroups['QueryInterface'] = 'smwplus_group';
 		
 		$wgAutoloadClasses['SMWExplanations'] = $smwgHaloIP . '/specials/SMWExplanations/SMWExplanations.php';
 		$wgSpecialPages['Explanations'] = array('SMWExplanations');
+		$wgSpecialPageGroups['Explanations'] = 'smwplus_group';
 		
 		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
-
+        $wgSpecialPageGroups['Properties'] = 'smwplus_group';
 		//KK: Deactivate Halo RDFExport. It is too buggy
 		//$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
 		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $smwgHaloIP . '/specials/SMWGardening/SMW_GardeningLogPage.php');
-
+        $wgSpecialPageGroups['GardeningLog'] = 'smwplus_group';
+        
 		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $smwgHaloIP . '/specials/SMWFindWork/SMW_FindWork.php');
+        $wgSpecialPageGroups['FindWork'] = 'smwplus_group';
 
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
+        $wgSpecialPageGroups['TermImport'] = 'smwplus_group';
         
 		if (isset($smwgMessageBroker)) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 	        $wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
+	        $wgSpecialPageGroups['TSA'] = 'smwplus_group';
 		}
 		
 		global $smwgEnableWikiWebServices;
 		if ($smwgEnableWikiWebServices) {
 			$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRepositorySpecial.php';
 			$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceRepositorySpecial');
-
+            $wgSpecialPageGroups['WebServiceRepository'] = 'smwplus_group';
+            
 			$wgAutoloadClasses['SMWDefineWebServiceSpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_DefineWebServiceSpecial.php';
 			$wgSpecialPages['DefineWebService'] = array('SMWDefineWebServiceSpecial');
+			$wgSpecialPageGroups['DefineWebService'] = 'smwplus_group';
 		}
 	}
 
@@ -785,7 +794,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
     function smwfHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
     	// -- LocalGardening --
     	global $smwgLocalGardening;
-    	if (isset($smwgLocalGardening) && $smwgLocalGardening == true) {
+    	if (isset($smwgLocalGardening) && $smwgLocalGardening == true && ($flags & EDIT_FORCE_BOT === 0)) {
 	        $gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
 	        Job :: batchInsert($gard_jobs);
     	}

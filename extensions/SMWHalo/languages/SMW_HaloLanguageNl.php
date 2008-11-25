@@ -68,6 +68,7 @@ protected $smwContentMessages = array(
 
 
 protected $smwUserMessages = array(
+    'specialpages-group-smwplus_group' => 'Semantic Mediawiki+',
 	'smw_devel_warning' => 'Dit feature wordt momenteel ontwikkeld, en is mogelijk niet volledig functioneel. Sla je gegevens op vooraleer je het gebruikt.',
 	// Messages for pages of types, relations, and attributes
 
