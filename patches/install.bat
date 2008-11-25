@@ -46,6 +46,7 @@ xcopy extensions\* ..\extensions /S /Y /EXCLUDE:exclude.dat
 xcopy skins\* ..\skins /S /Y
 echo Installing patch for Delete/Move extension
 xcopy includes\specials\SpecialMovepage.php ..\includes\specials /Y
+xcopy includes\FileDeleteForm.php ..\includes\FileDeleteForm.php /Y
 echo ----------------------------------------------------------------------
 echo Add "include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php')" to your LocalSettings.php;
 goto:eof
