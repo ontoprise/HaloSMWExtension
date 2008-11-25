@@ -593,7 +593,7 @@ class UploadForm {
 	 * Returns an empty string if there is no warning
 	 */
 	static function getExistsWarning( $file ) {
-		global $wgUser, $wgContLang;
+		global $wgUser, $wgContLang, $wgNamespaceByExtension;
 		// Check for uppercase extension. We allow these filenames but check if an image
 		// with lowercase extension exists already
 		$warning = '';
@@ -609,14 +609,25 @@ class UploadForm {
 		}
 
 		$sk = $wgUser->getSkin();
-
+		
+		$my_ns = NS_IMAGE;
+		if ( isset( $rawExtension ) )
+			if ( isset( $wgNamespaceByExtension[$rawExtension] ) ) {
+				$my_ns = $wgNamespaceByExtension[$rawExtension];
+				$file->title->mNamespace = $my_ns;
+			}
+		// end AdditionalMIMETypes
+		
 		if ( $rawExtension != $file->getExtension() ) {
 			// We're not using the normalized form of the extension.
 			// Normal form is lowercase, using most common of alternate
 			// extensions (eg 'jpg' rather than 'JPEG').
 			//
 			// Check for another file using the normalized form...
-			$nt_lc = Title::makeTitle( NS_IMAGE, $partname . '.' . $file->getExtension() );
+			
+			//$nt_lc = Title::makeTitle( NS_IMAGE, $partname . '.' . $file->getExtension() );
+			
+			$nt_lc = Title::makeTitle( $my_ns, $partname . '.' . $file->getExtension() );
 			$file_lc = wfLocalFile( $nt_lc );
 		} else {
 			$file_lc = false;
