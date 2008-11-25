@@ -85,7 +85,7 @@ if($db->numRows( $res ) > 0) {
             echo "Saved log does not contain: $line\n";
             $issuesFound = true;
         }
-        $current_log[] = $line;
+        $current_log[] = trim($line);
         
     }
 }
@@ -93,8 +93,9 @@ $db->freeResult($res);
 
 // determines issues which appear in saved log but not in current log
 $diff = array_diff($saved_log, $current_log);
+
 foreach($diff as $d) {
-    echo "Saved log contains additionally: $line\n";
+    echo "Saved log contains additionally: $d\n";
     $issuesFound = true;
 }
 
