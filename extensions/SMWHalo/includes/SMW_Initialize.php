@@ -1501,7 +1501,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	
 	global $wgContLang;
 	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
-   
+	$derivedFactsFound = false;   
 	
 	$text .= '<div class="smwfact">' .
 				'<span class="smwfactboxhead">' . 
@@ -1527,6 +1527,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 		$l = count($propvalues);
 		$i=0;
 		foreach ($propvalues as $propvalue) {
+			$derivedFactsFound = true;   
+			
 			if ($i!=0) {
 				if ($i>$l-2) {
 					$text .= wfMsgForContent('smw_finallistconjunct') . ' ';
@@ -1557,6 +1559,9 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	}
 	$text .= '</table></div>';
     
+	if (!$derivedFactsFound) {
+		$text = '';
+	}
 	return true;
 }
 
