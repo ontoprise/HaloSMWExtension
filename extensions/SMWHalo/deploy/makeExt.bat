@@ -2,6 +2,8 @@
 
 REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 
+SET VERSION="1.4"
+
 set OUTPUT_DIR=c:\temp\halosmw_ext
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
 
@@ -55,8 +57,8 @@ xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\..\patches\extensions\SMWHalo %OUTPUT_DIR%\extensions\SMWHalo /Y /S /EXCLUDE:excludeForExt.dat
 
 cd bin
-IF EXIST smwplus-1.3-ext.zip del smwplus-1.3-ext.zip
-7z.exe a -tzip smwplus-1.3-ext.zip %OUTPUT_DIR%\*
+IF EXIST smwplus-%VERSION%-ext.zip del smwplus-%VERSION%-ext.zip
+7z.exe a -tzip smwplus-%VERSION%-ext.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files
