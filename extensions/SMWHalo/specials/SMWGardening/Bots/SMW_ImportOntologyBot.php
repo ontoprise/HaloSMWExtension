@@ -266,7 +266,7 @@
 			$text = implode("\n", $wikiMarkup);
 			$newArticle = new Article($title);
 			$newArticle->insertNewArticle( $text, wfMsg( 'smw_oi_importedfromontology' ), FALSE, FALSE, FALSE, FALSE );
-			SMWFactbox::storeData($newArticle->getTitle(), smwfIsSemanticsProcessed($newArticle->getTitle()->getNamespace()));
+			
 		}
  	}
  	

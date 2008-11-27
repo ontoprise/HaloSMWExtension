@@ -37,8 +37,7 @@ function query($rawQuery, $format = "xml") {
 				try {
 
 					$ask = $eqi->transformSPARQLToASK($query);
-					return $ask;
-					//return $eqi->answerASK($ask);
+					return $eqi->answerASK($ask);
 				} catch(Exception $e) {
 					return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
 				}

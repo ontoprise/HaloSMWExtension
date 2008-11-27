@@ -1,4 +1,10 @@
 <?php
+/**
+ * This converter is EXPERIMENTAL! 
+ * 
+ * TODO: change old ASK syntax to new.
+ *
+ */
  class SMWSPARQLTransformer {
 
     private $sparqlAST;
