@@ -164,13 +164,16 @@ class SMWTripleStore extends SMWStore {
 			if ($property->getPropertyID() == "_TYPE") {
 				// ingore. handeled by SMW_TS_Contributor
 				continue;
-			} if ($property->getPropertyID() == "_INST") {
+			} elseif ($property->getPropertyID() == "_INST") {
 				// ingore. handeled by category section below
 				continue;
-			}if ($property->getPropertyID() == "_SUBC") {
+			} elseif ($property->getPropertyID() == "_SUBC") {
 				// ingore. handeled by category section below
 				continue;
-			} elseif ($property->getPropertyID() == "_SUBP") {
+			} elseif ($property->getPropertyID() == "_REDI") {
+                // ingore. handeled by redirect section below
+                continue;
+            } elseif ($property->getPropertyID() == "_SUBP") {
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 					foreach($propertyValueArray as $value) {
 						$triples[] = array("prop:".$subject->getDBkey(), "rdfs:subPropertyOf", "prop:".$value->getDBkey());
@@ -198,8 +201,7 @@ class SMWTripleStore extends SMWStore {
 							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"unit_(".$value->getXSDValue().",".$value->getUnit().")\"");
 						} else {
 							if ($value->getXSDValue() != NULL) {
-
-								$triples[] = array($subj_ns.":".$data->getSubject()->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"");
+                              	$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"");
 							} else if ($value->getNumericValue() != NULL) {
 								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"");
 							}
