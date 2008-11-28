@@ -170,6 +170,7 @@ class WikiTypeToXSD {
 			case '_str' : return 'xsd:string';
 			case '_num' : return 'xsd:float';
 			case '_boo' : return 'xsd:boolean';
+			case '_dat' : return 'xsd:dateTime';
 			case '_wpg' : return 'cat:DefaultRootCategory';
 			default: return 'xsd:unit';
 		}

@@ -186,7 +186,7 @@ class SMWTripleStore extends SMWStore {
 			foreach($propertyValueArray as $value) {
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
-						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"");
+						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg') {
 						$obj_ns = $this->getNSPrefix($value->getNamespace());
@@ -198,12 +198,13 @@ class SMWTripleStore extends SMWStore {
 					} else {
 							
 						if ($value->getUnit() != '') {
-							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"unit_(".$value->getXSDValue().",".$value->getUnit().")\"");
+							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
 						} else {
 							if ($value->getXSDValue() != NULL) {
-                              	$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"");
+								$xsdType = WikiTypeToXSD::getXSDType($property->getTypeID());
+                              	$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
 							} else if ($value->getNumericValue() != NULL) {
-								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"");
+								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:float");
 							}
 						}
 							
