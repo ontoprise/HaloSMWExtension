@@ -38,7 +38,9 @@ class SMWTripleStoreAdmin extends SpecialPage {
         	$html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_couldnotconnect')."</div>".wfMsg('smw_tsa_addtoconfig').
         	"<pre>\$smwgMessageBroker  = &lt;IP of messagebroker&gt;\n".
         	"\$smwgWebserviceEndpoint = &lt;IP and port of SPARQL endpoint&gt;\n\nExample:\n\n\$smwgMessageBroker  = \"localhost\";\n".
-            "\$smwgWebserviceEndpoint = \"localhost:8080\";</pre>";
+            "\$smwgWebserviceEndpoint = \"localhost:8080\";</pre>".
+            wfMsg('smw_tsa_addtoconfig2')." <pre>enableSMWHalo('SMWHaloStore2', 'SMWTripleStore');</pre>".
+        	wfMsg('smw_tsa_addtoconfig3')." <pre>enabaleSemantics('http://mywiki', true);</pre>";
         	$wgOut->addHTML($html);
         	return;
         }
