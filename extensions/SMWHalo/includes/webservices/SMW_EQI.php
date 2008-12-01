@@ -29,13 +29,14 @@ function query($rawQuery, $format = "xml") {
 
 		$parser = new SparqlParser();
 		try {
-			$query = $parser->parse($rawQuery);
+						
+			
 			if (isset($smwgWebserviceEndpoint)) {
 				return $eqi->answerSPARQL($rawQuery);
 			} else {
 				// try to convert to ASK
 				try {
-
+                    $query = $parser->parse($rawQuery);
 					$ask = $eqi->transformSPARQLToASK($query);
 					return $eqi->answerASK($ask);
 				} catch(Exception $e) {
