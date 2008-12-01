@@ -42,7 +42,7 @@ class TreeView5 {
     var $images   = '';      # internal JS to update dTree images
     var $useLines = true;    # internal variable determining whether to render connector lines
     var $args     = array(); # args for each tree
- 
+   
     /**
      * Constructor
      */
@@ -98,7 +98,8 @@ class TreeView5 {
         $this->args[$this->id] = $args;
         
         $this->class = isset($args['class']) ? $args['class'] : "dtree";
- 
+        $this->args[$this->id."class"] = $this->class;
+        
         # Reformat tree rows for matching in ParserAfterStrip
         $text = preg_replace('/(?<=\\*)\\s*\\[\\[Image:(.+?)\\]\\]/',"{$this->uniq}3$1{$this->uniq}4",$text);
         //FIX KK: parse each row separately to prevent memory overflows in PHP regexp lib
@@ -164,6 +165,7 @@ class TreeView5 {
                 $node++;
                 list($id,$depth,$icon,$item,$start) = $info;
                 $args = $this->args[$id];
+                $class = $this->args[$id."class"];
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
                 $end  = $node == count($rows) || $rows[$node][4];
                 $add  = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
@@ -194,7 +196,7 @@ class TreeView5 {
                         <div class='Treeview5' id='$id'>
                             <script type=\"$wgJsMimeType\">
                                 // TreeView{$this->version}
-                                tree = new dTree('{$this->uniqname}$id', '{$this->class}');
+                                tree = new dTree('{$this->uniqname}$id', '$class');
                                 for (i in tree.icon) tree.icon[i] = '{$this->baseUrl}/'+tree.icon[i];{$this->images}
                                 tree.config.useLines = {$this->useLines};
                                 $add
