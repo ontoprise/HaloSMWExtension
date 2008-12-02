@@ -564,7 +564,7 @@ class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
         
         // read attributes
         $res = $db->query('SELECT DISTINCT smw_title FROM '.$smw_ids.' a LEFT JOIN '.$page.' p ON a.smw_title=p.page_title AND a.smw_iw != ":smw" AND a.smw_namespace = '.SMW_NS_PROPERTY.
-                                ' AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL AND a.smw_iw != ":smw"'.$sqlOptions);
+                                ' AND p.page_namespace = '.SMW_NS_PROPERTY.' WHERE p.page_title IS NULL AND a.smw_iw = ""'.$sqlOptions);
         
         $result = array();
         if($db->numRows( $res ) > 0) {

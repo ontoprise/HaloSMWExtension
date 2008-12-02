@@ -71,7 +71,7 @@ fclose($handle);
 
 // load current log and compare to saved log
 // determines all issues which appear in current log but not in saved log
-echo "\nCompare results...";
+echo "\nCompare results...\n";
 $current_log = array();
 if($db->numRows( $res ) > 0) {
     while($row = $db->fetchObject($res)) {
