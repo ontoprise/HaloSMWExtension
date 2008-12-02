@@ -75,4 +75,4 @@ WebServiceRepositorySpecial.prototype = {
 	}	
 }	
 
-webServiceSpecial = new WebServiceRepositorySpecial();
+webServiceRepSpecial = new WebServiceRepositorySpecial();
