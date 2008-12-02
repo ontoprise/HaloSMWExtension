@@ -27,6 +27,7 @@ xcopy includes\Linker.php ..\includes /Y
 xcopy includes\Namespace.php ..\includes /Y
 xcopy includes\Title.php ..\includes /Y
 xcopy includes\Wiki.php ..\includes /Y
+xcopy includes\mime.types ..\includes /Y
 xcopy includes\specials\SpecialFileDuplicateSearch.php ..\includes\specials /Y
 xcopy includes\specials\SpecialFilePath.php ..\includes\specials /Y
 xcopy includes\specials\SpecialImagelist.php ..\includes\specials /Y
