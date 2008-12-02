@@ -238,7 +238,6 @@ class OntoSkinTemplate extends QuickTemplate {
 	
 	
 	<script type="<?php $this->text('jsmimetype') ?>"> if (window.isMSIE55) fixalpha(); </script>
-<!-- Insert here -->
 <?php 
 		$sidebar = $this->data['sidebar'];		
 		if ( !isset( $sidebar['SEARCH'] ) ) $sidebar['SEARCH'] = true;
@@ -420,8 +419,8 @@ class OntoSkinTemplate extends QuickTemplate {
 		<?php			} 
 			$result=array();
 			wfRunHooks( 'OntoSkinTemplateNavigationEnd', array(&$this, &$result));
-			foreach($result as $toolboxlink){
-				echo '<li>'.$toolboxlink.'</li>';
+			foreach($result as $templatelink){
+				echo '<li>'.$templatelink.'</li>';
 			} 
 		
 		?>

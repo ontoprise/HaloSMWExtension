@@ -61,6 +61,7 @@
 		 * @addtogroup Skins
 		 */
 		class OntoSkin2Template extends QuickTemplate {
+			var $skin;
 			/**
 			 * Template filter callback for iswc skin.
 			 * Takes an associative array of data set from a SkinTemplate-based
@@ -71,8 +72,7 @@
 			 */
 			function execute() {
 				global $wgUser;
-				$skin = $wgUser->getSkin();
-		
+				$this->skin = $skin = $this->data['skin'];		
 				// Suppress warnings to prevent notices about missing indexes in $this->data
 				wfSuppressWarnings();
 				
@@ -191,118 +191,26 @@
 			
 			<!--  left side menu  -->
 			<div id="smwf_naviblock">
-				<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
-				<div id='navigation'<?php echo $skin->tooltip('p-'.$bar) ?>>
-					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('navigationlist-<?php echo $bar ?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
-					</div>
-					<div id="navigationlist-<?php echo $bar ?>" class="smwf_navilist">
-							<table class="naviitemtable">
-							<?php foreach($cont as $key => $val) { ?>
-							<tr><td>
-							<div class="smwf_naviitem" id="<?php echo Sanitizer::escapeId($val['id'])?>"<?php if ( $val['active'] ) { ?> class="active" <?php }?>>						
-							<a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?>
-							</a></div>
-							</td></tr>
-							<?php } ?>						
-							
-								
-							<?php wfRunHooks( 'OntoSkinTemplateNavigationEnd', array( $this ) ); ?>		
-								
-													
-							</table>
-					</div>
-				</div>
-				<?php } ?>				
-				<div id="smwf_toolbox">
-					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('toolboxlist')"><?php $this->msg('toolbox') ?>
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
-					</div>
-					<div id="toolboxlist" class="smwf_navilist">
-							<table class="naviitemtable">
-							
-							<?php if($this->data['notspecialpage']) { ?>
-							<tr><td>
-								<div class="smwf_naviitem" id="t-whatlinkshere"><a href="<?php
-								echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
-								?>"<?php echo $skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?>
-								</a></div>
-							</td></tr>
-							
-							<?php	if( $this->data['nav_urls']['recentchangeslinked'] ) { ?>
-							<tr><td>
-								<div class="smwf_naviitem" id="t-recentchangeslinked"><a href="<?php
-								echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
-								?>"<?php echo $skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?>
-								</a></div>
-							</td></tr>	
-							<?php 		}
-							}
-							if(isset($this->data['nav_urls']['trackbacklink'])) { ?>
-							<tr><td>
-								<div class="smwf_naviitem" id="t-trackbacklink"><a href="<?php
-								echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
-								?>"<?php echo $skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?>
-								</a></div>
-							</td></tr>
-							<?php 	}
-							if($this->data['feeds']) { ?>
-							<tr><td>
-								<div class="smwf_naviitem" id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
-								?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
-								echo htmlspecialchars($feed['href']) ?>"<?php echo $skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
-								<?php } ?>
-								</div>
-							</td></tr>
-							<?php }
-							global $wgTitle;
-		
-							foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'smw_editwysiwyg', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {						
-								if($this->data['nav_urls'][$special]) {?>
-									<tr><td>
-										<div class="smwf_naviitem" id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
-										?>"<?php echo $skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?>
-										</a></div>
-									</td></tr>
-							<?php		}
-							}
-							if(!empty($this->data['nav_urls']['print']['href'])) { ?>
-									<tr><td>
-										<div class="smwf_naviitem" id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
-										?>"<?php echo $skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?>
-										</a></div>
-									</td></tr>
-							<?php }
-							if(!empty($this->data['nav_urls']['permalink']['href'])) { ?>
-								<tr><td>
-									<div class="smwf_naviitem" id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
-									?>"<?php echo $skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?>
-									</a></div>
-								</td></tr>
-							<?php
-							} elseif ($this->data['nav_urls']['permalink']['href'] === '') { ?>
-								<tr><td>
-									<div class="smwf_naviitem" id="t-ispermalink"<?php echo $skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div>
-								</td></tr>	
-							<?php } ?>							
-							
-								
-							<?php wfRunHooks( 'OntoSkinTemplateToolboxEnd', array( &$this ) ); ?>		
-								
-							
-							
-							</table>
-					</div>
-				</div>
-				<!-- <div id='smwf_browser'>
-					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_browserview')">Browser
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
-					</div>
-					<div id="smwf_browserview">						
-						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
-						$webcode .= $treeview; ?>
-					</div>
-				</div> -->
+				<?php 
+					$sidebar = $this->data['sidebar'];		
+					if ( !isset( $sidebar['SEARCH'] ) ) $sidebar['SEARCH'] = true;
+					if ( !isset( $sidebar['TOOLBOX'] ) ) $sidebar['TOOLBOX'] = true;
+					if ( !isset( $sidebar['LANGUAGES'] ) ) $sidebar['LANGUAGES'] = true;
+					if ( !isset( $sidebar['TREEVIEW'] ) ) $sidebar['TREEVIEW'] = true;
+					foreach ($sidebar as $boxName => $cont) {
+						if ( $boxName == 'SEARCH' ) {
+							//$this->searchBox();
+						} elseif ( $boxName == 'TOOLBOX' ) {
+							$this->toolbox();
+						} elseif ( $boxName == 'LANGUAGES' ) {
+							$this->languageBox();
+						} elseif ( $boxName == 'TREEVIEW' ) {
+							$this->treeviewBox();
+						} else {
+							$this->customBox( $boxName, $cont );
+						}
+					}
+				?>
 				
 			</div>
 			
@@ -446,5 +354,176 @@
 <?php
 	wfRestoreWarnings();
 	} // end of execute() method
+/*************************************************************************************************/
+	function searchBox() {
+	?>
+				<div id="search">
+					<form action="<?php $this->text('searchaction') ?>" id="searchform">
+						<input id="searchInput" pasteNS="true" class="wickEnabled" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
+							if( isset( $this->data['search'] ) ) {
+							?> value="<?php $this->text('search') ?>"<?php } ?> />
+						<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>" />
+						<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
+			    	</form>
+			    </div>
+	<?php
+	}
+
+	/*************************************************************************************************/
+	function toolbox() {
+		?>
+		<div id="smwf_toolbox">
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('toolboxlist')"><?php $this->msg('toolbox') ?>
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
+					<div id="toolboxlist" class="smwf_navilist">
+							<table class="naviitemtable">
+							
+							<?php if($this->data['notspecialpage']) { ?>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-whatlinkshere"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
+								?>"<?php echo $this->skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?>
+								</a></div>
+							</td></tr>
+							
+							<?php	if( $this->data['nav_urls']['recentchangeslinked'] ) { ?>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-recentchangeslinked"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
+								?>"<?php echo $this->skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?>
+						2		</a></div>
+							</td></tr>	
+							<?php 		}
+							}
+							if(isset($this->data['nav_urls']['trackbacklink'])) { ?>
+							<tr><td>
+								<div class="smwf_naviitem" id="t-trackbacklink"><a href="<?php
+								echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
+								?>"<?php echo $this->skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?>
+								</a></div>
+							</td></tr>
+							<?php 	}
+							if($this->data['feeds']) { ?>
+							<tr><td>
+								<div class="smwf_naviitem" id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
+								?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
+								echo htmlspecialchars($feed['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
+								<?php } ?>
+								</div>
+							</td></tr>
+							<?php }
+							global $wgTitle;
+		
+							foreach( array('contributions', 'blockip', 'emailuser', 'upload', 'specialpages', 'ontologybrowser', 'smw_viewinOB', 'smw_editwysiwyg', 'gardening', 'gardeninglog', 'findwork', 'queryinterface', 'smw_ti_termimport') as $special ) {						
+								if($this->data['nav_urls'][$special]) {?>
+									<tr><td>
+										<div class="smwf_naviitem" id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
+										?>"<?php echo $this->skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?>
+										</a></div>
+									</td></tr>
+							<?php		}
+							}
+							if(!empty($this->data['nav_urls']['print']['href'])) { ?>
+									<tr><td>
+										<div class="smwf_naviitem" id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
+										?>"<?php echo $this->skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?>
+										</a></div>
+									</td></tr>
+							<?php }
+							if(!empty($this->data['nav_urls']['permalink']['href'])) { ?>
+								<tr><td>
+									<div class="smwf_naviitem" id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
+									?>"<?php echo $this->skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?>
+									</a></div>
+								</td></tr>
+							<?php
+							} elseif ($this->data['nav_urls']['permalink']['href'] === '') { ?>
+								<tr><td>
+									<div class="smwf_naviitem" id="t-ispermalink"<?php echo $this->skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div>
+								</td></tr>	
+							<?php } ?>
+							<tr><td>
+								<ul> <?php
+							 			wfRunHooks( 'MonoBookTemplateToolboxEnd', array( &$this ) );
+										wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this ) );
+								?> </ul>
+							</td></tr><?php
+							$result=array();
+							wfRunHooks( 'OntoSkinTemplateToolboxEnd', array(&$this, &$result));
+							foreach($result as $toolboxlink){
+								echo '<tr><td>'.$toolboxlink.'</td></tr>';
+							} ?>							
+							</table>
+					</div>
+				</div>
+	<?php	
+	}
+
+	/*************************************************************************************************/
+	function languageBox() { 
+		if( $this->data['language_urls'] ) {?>
+		<div id='smwf_language'>
+			<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_languageview')"><?php $this->msg('otherlanguages')?>
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+			</div>
+			<div id="smwf_languageview">						
+				<table class="naviitemtable">
+					<?php	foreach($this->data['language_urls'] as $langlink) { ?>
+					<tr><td><?php
+					?><a href="<?php echo htmlspecialchars($langlink['href']) ?>"><?php echo $langlink['text'] ?></a>
+					</td></tr>
+					<?php		} ?>
+				</table>			
+						
+			</div>
+		</div>
+		
+		<?php
+			}
+	}
+	/*************************************************************************************************/
+	function treeviewBox() { ?>
+		<div id='smwf_browser'>
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_browserview')">Browser
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
+					<div id="smwf_browserview">						
+						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
+						$webcode .= $treeview; ?>
+					</div>
+		</div>
+		  
+	<?php }
+
+	/*************************************************************************************************/
+	function customBox( $bar, $cont ) {
+		?>
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('navigationlist')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
+					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					</div>
+					<div id="navigationlist" class="smwf_navilist">
+							<table class="naviitemtable">
+							<?php foreach($cont as $key => $val) { ?>
+							<tr><td>
+							<div class="smwf_naviitem" id="<?php echo Sanitizer::escapeId($val['id'])?>"<?php if ( $val['active'] ) { ?> class="active" <?php }?>>						
+							<a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?>
+							</a></div>
+							</td></tr>
+							<?php }						
+							$result=array();
+							wfRunHooks( 'OntoSkinTemplateNavigationEnd', array(&$this, &$result));
+							foreach($result as $templatelink){
+								echo '<tr><td>'.$templatelink.'</tr></td>';
+							} 								
+							?>		
+								
+													
+							</table>
+					</div>
+				
+		<?php 
+	}
+	
 } // end of class
 ?>
