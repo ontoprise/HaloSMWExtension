@@ -1281,7 +1281,7 @@ AutoCompleter.prototype = {
         Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
         container.appendChild(f);
         
-	    var acMessage = document.createElement("span");
+	    var acMessage = document.createElement("div");
 	    Element.addClassName(acMessage, "acMessage");
         if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
 	        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
