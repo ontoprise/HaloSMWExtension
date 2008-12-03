@@ -51,7 +51,7 @@ class TreeGenerator {
 		$startLevel = array_key_exists('level', $genTreeParameters) ? $genTreeParameters['level'] : 1;
 		$hchar = "";
 		for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
-		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty, $hchar);
+		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, SMWPropertyValue::makeUserProperty($displayProperty->getDBkey()), $hchar);
 		return $result;
 	}
 
