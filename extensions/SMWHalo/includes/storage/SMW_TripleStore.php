@@ -588,15 +588,22 @@ class SMWTripleStore extends SMWStore {
 			}
 		}
 
-       
-		// generate PrintRequests for all other variables
+      
+		// generate PrintRequests for all bindings (if they do not exist already)
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
 		foreach ($bindings as $b) {
 			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
 			$var_index++;
+			
+			// if no mainlabel, do not create a printrequest for X (instance variable for ASK-converted queries)
+			if ($query->mainLabelMissing && $var_name == "X") {
+				 continue;
+			}
 			// do not generate new PrintRequest if already given
-			if ($this->containsPrintRequest($var_name, $print_requests, $query->fromASK)) continue;
+			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
+			
+			// otherwise create one
 			if (stripos($b, self::$CAT_NS) === 0) {
 				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_CATEGORY));
 			} else if (stripos($b, self::$PROP_NS) === 0) {
@@ -609,7 +616,7 @@ class SMWTripleStore extends SMWStore {
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
- 
+     
 		// Query result object
 		$queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
    
@@ -617,41 +624,44 @@ class SMWTripleStore extends SMWStore {
 		// iterate result rows and add an SMWResultArray object for each field
 		foreach ($results as $r) {
 			$row = array();
-			$index = 0;
+			$columnIndex = 0; // column = n-th XML binding node 
+			$pr_index = 0; // Printrequest index
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
 					
-				$var_name = ucfirst((string) $children[$index]->attributes()->name);
-
+				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
+                if ($query->mainLabelMissing && $var_name == "X") {
+                    $columnIndex++;
+                	continue;
+                }
 				// category result
 				if (stripos($b, self::$CAT_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$CAT_NS)), NS_CATEGORY);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$index]);
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
 
 					// property result
 				} else if (stripos($b, self::$PROP_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$PROP_NS)), SMW_NS_PROPERTY);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$index]);
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
 
 					// instance result
 				} else if (stripos($b, self::$INST_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$INST_NS)), NS_MAIN);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title, NS_MAIN, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$index]);
-
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
 
 					// property value result
 				} else {
 					$literal = $this->unquote($b);
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array(SMWDataValueFactory::newPropertyValue($var_name, $literal)), $prs[$index]);
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array(SMWDataValueFactory::newPropertyValue($var_name, $literal)), $prs[$pr_index]);
 				}
-				$index++;
-
+				$columnIndex++;
+                $pr_index++;
 			}
 	
 			$queryResult->addRow($row);
@@ -715,10 +725,10 @@ class SMWTripleStore extends SMWStore {
 	 * @param array $prqs
 	 * @return boolean
 	 */
-	private function containsPrintRequest($var_name, array & $prqs, $fromASK) {
+	private function containsPrintRequest($var_name, array & $prqs, & $query) {
         $contains = false;
 		foreach($prqs as $po) {
-			if ($fromASK && $po->getData() == NULL && $var_name == 'X') {
+			if ($query->fromASK && $po->getData() == NULL && $var_name == 'X') {
 				return true;
 			}
 			if ($po->getData() != NULL) {

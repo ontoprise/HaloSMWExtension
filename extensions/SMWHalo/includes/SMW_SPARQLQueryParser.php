@@ -8,7 +8,20 @@ require_once ( $smwgIP . '/includes/storage/SMW_Description.php');
 
 
 class SMWSPARQLQuery extends SMWQuery {
+	
+	/**
+	 * True, if query was converted from ASK
+	 *
+	 * @var boolean
+	 */
 	public $fromASK = false;
+	
+	/**
+	 * True if mainlabel is missing
+	 *
+	 * @var boolean
+	 */
+	public $mainLabelMissing = false;
 	
 	public function __construct($desc, $inline) {
 		parent::__construct($desc, $inline);

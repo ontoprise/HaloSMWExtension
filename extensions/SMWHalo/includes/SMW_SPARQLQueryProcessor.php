@@ -150,6 +150,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 
 		$query = new SMWSPARQLQuery($desc, true);
 		$query->fromASK = strpos($querystring, 'SELECT') === false;
+		$query->mainLabelMissing = $mainlabel == '-';
 		$query->setQueryString($querystring);
 		$query->setExtraPrintouts($extraprintouts);
 		$query->addErrors($qp->getErrors());
