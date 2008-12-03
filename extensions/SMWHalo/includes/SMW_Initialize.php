@@ -152,6 +152,7 @@ function smwgHaloSetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwFWAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwSNAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwTIAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwPRAddHTMLHeader';
 
 	}
 	// Register parser hooks for advanced annotation mode
@@ -1057,6 +1058,26 @@ function smwOBAddHTMLHeader(&$out) {
 	return true;
 }
 
+function smwPRAddHTMLHeader(&$out) {
+    global $wgTitle;
+    if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+
+    global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+
+    $jsm = SMWResourceManager::SINGLETON();
+
+    if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+        $jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":Properties");
+    } else {
+        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Properties");
+        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":Properties");
+        
+    }
+
+    $jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":Properties");
+
+    return true;
+}
 
 
 // Gardening scripts callback
