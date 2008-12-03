@@ -10,6 +10,9 @@ require_once ( $smwgIP . '/includes/storage/SMW_Description.php');
 class SMWSPARQLQuery extends SMWQuery {
 	public $fromASK = false;
 	
+	public function __construct($desc, $inline) {
+		parent::__construct($desc, $inline);
+	}
 }
 
 class SMWSPARQLQueryParser extends SMWQueryParser {

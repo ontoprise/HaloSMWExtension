@@ -330,7 +330,7 @@ class SMWTripleStore extends SMWStore {
 
 	function getQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword;
-
+    
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
 
@@ -343,8 +343,10 @@ class SMWTripleStore extends SMWStore {
 					// SPARQL, attach common prefixes
 					$response = $client->query(self::$ALL_PREFIXES.$query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
 				} else {
+					
 					// do not attach anything
 					$response = $client->query($query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
+					
 				}
 
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
@@ -543,7 +545,7 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-
+     
 		$index = 0;
 		if ($query->fromASK) {
 
@@ -551,8 +553,8 @@ class SMWTripleStore extends SMWStore {
 			// x variable is handeled specially as main variable
 			foreach($print_requests as $pr) {
 
-				$title = $pr->getTitle();
-				if ($title == NULL) { // main column
+				$data = $pr->getData();
+				if ($data == NULL) { // main column
 
 					if (in_array('x', $variableSet)) { // x is missing for INSTANCE queries
 						$mapPRTOColumns['X'] = $index;
@@ -562,7 +564,8 @@ class SMWTripleStore extends SMWStore {
 
 				} else  {
 					// make sure that variables get truncated for SPARQL compatibility when used with ASK.
-					preg_match("/[A-Z][\\w_]*/", $title->getDBkey(), $matches);
+					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					preg_match("/[A-Z][\\w_]*/", $label, $matches);
 					$mapPRTOColumns[$matches[0]] = $index;
 					$prs[] = $pr;
 					$index++;
@@ -574,17 +577,18 @@ class SMWTripleStore extends SMWStore {
 			// native SPARQL query
 			foreach($print_requests as $pr) {
 
-				$title = $pr->getTitle();
-				if ($title != NULL) {
-					$mapPRTOColumns[$title->getDBkey()] = $index;
+				$data = $pr->getData();
+				if ($data != NULL) {
+					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					$mapPRTOColumns[$label] = $index;
 					$prs[] = $pr;
 					$index++;
-				}
+				} 
 
 			}
 		}
 
-
+       
 		// generate PrintRequests for all other variables
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
@@ -594,21 +598,21 @@ class SMWTripleStore extends SMWStore {
 			// do not generate new PrintRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query->fromASK)) continue;
 			if (stripos($b, self::$CAT_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, NS_CATEGORY));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_CATEGORY));
 			} else if (stripos($b, self::$PROP_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), SMWPropertyValue::makeUserProperty($var_name, SMW_NS_PROPERTY));
 			} else if (stripos($b, self::$INST_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, NS_MAIN));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_MAIN));
 			} else {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $var_name, Title::newFromText($var_name, SMW_NS_PROPERTY));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), SMWPropertyValue::makeUserProperty($var_name, SMW_NS_PROPERTY));
 			}
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
-
+ 
 		// Query result object
 		$queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
-
+   
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 		foreach ($results as $r) {
@@ -644,16 +648,15 @@ class SMWTripleStore extends SMWStore {
 					// property value result
 				} else {
 					$literal = $this->unquote($b);
-					$typeID = is_numeric($literal) ? "_num" : "_str"; //TODO: other types??
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array(SMWDataValueFactory::newTypeIDValue($typeID, $literal)), $prs[$index]);
-
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array(SMWDataValueFactory::newPropertyValue($var_name, $literal)), $prs[$index]);
 				}
 				$index++;
 
 			}
+	
 			$queryResult->addRow($row);
 		}
-			
+		
 		return $queryResult;
 	}
 
@@ -669,10 +672,12 @@ class SMWTripleStore extends SMWStore {
 		$first = true;
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
-			if ($printout->getTitle() == NULL) {
+			if ($printout->getData() == NULL) {
 				$result .= "?=".$printout->getLabel();
-			} else {
-				$result .= "?".$printout->getTitle()->getDBkey()."=".$printout->getLabel();
+			} else if ($printout->getData() instanceof Title) {
+				$result .= "?".$printout->getData()->getDBkey()."=".$printout->getLabel();
+			} else if ($printout->getData() instanceof SMWPropertyValue ) {
+				$result .= "?".$printout->getData()->getXSDValue()."=".$printout->getLabel();
 			}
 			$first = false;
 		}
@@ -711,17 +716,18 @@ class SMWTripleStore extends SMWStore {
 	 * @return boolean
 	 */
 	private function containsPrintRequest($var_name, array & $prqs, $fromASK) {
-
+        $contains = false;
 		foreach($prqs as $po) {
-			if ($fromASK && $po->getTitle() == NULL && $var_name == 'X') {
+			if ($fromASK && $po->getData() == NULL && $var_name == 'X') {
 				return true;
 			}
-			if ($po->getTitle() != NULL && $po->getTitle()->getDBkey() == $var_name) {
-				return true;
+			if ($po->getData() != NULL) {
+				$label = $po->getData() instanceof Title ? $po->getData()->getDBkey() : $po->getData()->getXSDValue();
+			    $contains |= strtolower($label) == strtolower($var_name);
 			}
 
 		}
-		return false;
+		return $contains;
 	}
 }
 
