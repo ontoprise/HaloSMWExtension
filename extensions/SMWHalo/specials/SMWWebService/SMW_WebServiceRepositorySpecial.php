@@ -107,11 +107,11 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
-				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">Update</button>";
+				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">Update</button>";
 				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">Updating</div></td>";
 
 				if($ws->getConfirmationStatus() != "true"){
-					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
 				} else {
 					$html .= "<td>confirmed</td></tr>";
 				}
