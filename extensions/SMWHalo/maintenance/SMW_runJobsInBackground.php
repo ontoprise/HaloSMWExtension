@@ -61,7 +61,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 								
 		// determine the most lagged slave
 		// if $lag == -1, there's no slave.
-		list( $host, $lag ) = $wgLoadBalancer->getMaxLag();
+		list( $host, $lag ) = LBFactory::singleton()->getMainLB()->getMaxLag();
 		if ($lag == -1) {
 			// make sleeping time adaptive to database load.
 			$runningThreads = smwfGetNumOfRunningThreads($dbw);
