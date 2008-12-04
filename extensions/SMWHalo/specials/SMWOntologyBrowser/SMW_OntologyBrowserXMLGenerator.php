@@ -370,7 +370,7 @@ private static function isPredefined($t) {
  * @param unknown_type $url
  * @return unknown
  */
-private static function urlescape($url) {
+public static function urlescape($url) {
 	$url_esc = urlencode($url);
 	return str_replace("%2F", "/", $url_esc);
 }

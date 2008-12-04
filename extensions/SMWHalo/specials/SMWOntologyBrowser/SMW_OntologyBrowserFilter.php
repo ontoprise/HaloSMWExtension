@@ -92,10 +92,11 @@
  	 	$count = 0;
  	 	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  	 	foreach($foundInstances as $instance) {
- 	 		$title_esc = htmlspecialchars($instance->getDBkey()); 
+ 	 		$title_esc = htmlspecialchars($instance->getDBkey());
+ 	 		$titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($instance->getDBkey()));  
  	 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instance);
  			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
- 	 		$result .= "<instance title=\"".$title_esc."\" id=\"ID_$id$count\">$gi_issues</instance>";
+ 	 		$result .= "<instance title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_$id$count\">$gi_issues</instance>";
  	 		$count++;
  	 	}
 	 	return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';
@@ -332,10 +333,11 @@
  		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($this->children as $title => $treeObject) {
  			$isExpanded = count($treeObject->children) == 0 ? "false" : "true";
- 			$title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey()); 
+ 			$title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey());
+ 			$titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($treeObject->getTitle()->getDBkey())); 
  			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $treeObject->getTitle());
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$result .= "<$type title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
+			$result .= "<$type title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"$type.gif\" id=\"ID_$id$count\" expanded=\"$isExpanded\">";
 			$result .= $gi_issues;
  			$result .= $treeObject->serializeAsXML($type);
  			$result .= "</$type>";
