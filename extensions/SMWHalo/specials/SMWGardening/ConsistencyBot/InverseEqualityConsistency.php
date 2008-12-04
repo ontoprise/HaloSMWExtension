@@ -96,7 +96,7 @@
  					continue;
  				}
  				if (count($s_type) > 0 && count($t_type) > 0) {
- 					if ($s_type[0]->getXSDValue() != $t_type[0]->getXSDValue()) {
+ 					if (reset($s_type)->getXSDValue() != reset($t_type)->getXSDValue()) {
  						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_TYPE, $s, $t);
  						
  					}
