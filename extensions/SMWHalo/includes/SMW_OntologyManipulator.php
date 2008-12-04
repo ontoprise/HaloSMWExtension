@@ -101,11 +101,11 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	}
 
 	if (!empty($optionalText)) {
-		$supportedConstants = array("SMW_SP_SUBPROPERTY_OF",
+		$supportedConstants = array("_SUBP",
                                     "SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT",
                                     "SMW_SSP_HAS_MAX_CARD",
                                     "SMW_SSP_HAS_MIN_CARD",
-                                    "SMW_SP_HAS_TYPE");
+                                    "_TYPE");
 
 		// Some optional text is given
 		$sp = $smwgContLang->getPropertyLabels();
@@ -120,8 +120,8 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
  				$langString = "Unsupported constant";
  				if (strpos($constant, "SMW_SSP_") !== false) {
  					$langString = $ssp[constant($constant)];
- 				} else if (strpos($constant, "SMW_SP_") !== false) {
- 					$langString = $sp[constant($constant)];
+ 				} else {
+ 					$langString = $sp[$constant];
  				}
  				$optionalText = str_replace($constant,
  				                            $langString,

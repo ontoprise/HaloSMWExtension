@@ -737,6 +737,7 @@ apply: function() {
 	
 	// Create new domain/range hints.
 	var typeString = "";
+	var domainAdded = false;
 	for (var i = 0; i < this.prpNAry; i++) {
 		var obj = $('prp-type-'+i);
 		if (obj) {
@@ -748,11 +749,18 @@ apply: function() {
 				r = ((domain == null) ? "" : domain) + "; " + r;
 				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
 				this.wtp.addRelation(RANGE_HINT, r, null, true);
+				domainAdded = true;
 			} else {
 				// type is not Page
 				typeString += gLanguage.getMessage('TYPE_NS') + type + ";";
 			}
 		}
+	}
+	
+	if (!domainAdded && domain != null) {
+		// A domain is given but it has not been added yet, as the property has
+		// no range.
+		this.wtp.addRelation(RANGE_HINT, domain + "; ", null, true);
 	}
 	
 	// add the (n-ary) type definition

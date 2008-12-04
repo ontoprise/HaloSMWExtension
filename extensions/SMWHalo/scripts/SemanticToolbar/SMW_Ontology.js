@@ -209,7 +209,7 @@ OntologyModifier.prototype = {
 			schema += "\n[[SMW_SSP_HAS_DOMAIN_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domain+"]]";
 		}
 		if (type != null && type != "") {
-			schema += "\n[[SMW_SP_HAS_TYPE::"+gLanguage.getMessage('TYPE_NS')+type+"]]";
+			schema += "\n[[_TYPE::"+gLanguage.getMessage('TYPE_NS')+type+"]]";
 		}
 		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
@@ -240,7 +240,7 @@ OntologyModifier.prototype = {
 		var domainHintWritten = false;
 		if (ranges != null) {
 			if (ranges.length >= 1) {
-				var rangeStr = "\n[[SMW_SP_HAS_TYPE:="
+				var rangeStr = "\n[[_TYPE::"
 				for(var i = 0, n = ranges.length; i < n; i++) {
 					if (ranges[i].indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
 						rangeStr += ranges[i];
@@ -316,7 +316,7 @@ OntologyModifier.prototype = {
 			this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 							 initialContent, 
 							 schemaProp + 
-							 "\n[[SMW_SP_SUBPROPERTY_OF::"+wgPageName+"]]",
+							 "\n[[_SUBP::"+wgPageName+"]]",
 							 gLanguage.getMessage('CREATE_SUB_PROPERTY'), 
 							 openNewArticle);
 			
