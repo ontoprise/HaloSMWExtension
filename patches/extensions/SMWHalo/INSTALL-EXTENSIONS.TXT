@@ -2,7 +2,7 @@
 
 Install instructions for the latest version of Semantic MediaWiki+ (SMW+) Extension package are also online:
 
- http://wiki.ontoprise.de/ontoprisewiki/index.php/Install_SMW%2B_Extension_Package
+ http://smwforum.ontoprise.com/smwforum/index.php/SMW%2B_Extension_Package
 
 
 Contents:
