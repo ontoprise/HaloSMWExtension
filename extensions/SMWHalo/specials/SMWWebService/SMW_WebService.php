@@ -877,7 +877,7 @@ class WebService {
 			$objName = $matches[1];
 			$arrayIdx = $matches[2];
 		}
-		$obj = $resultSet->$objName;
+		$obj = @ $resultSet->$objName;
 
 		if (is_array($obj)) {
 			// Handle an array
