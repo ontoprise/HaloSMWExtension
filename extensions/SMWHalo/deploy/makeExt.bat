@@ -21,7 +21,6 @@ mkdir %OUTPUT_DIR%\extensions\FCKeditor
 mkdir %OUTPUT_DIR%\extensions\Lockdown
 mkdir %OUTPUT_DIR%\extensions\ParserFunctions
 mkdir %OUTPUT_DIR%\extensions\PermissionACL
-mkdir %OUTPUT_DIR%\extensions\SemanticCalendar
 mkdir %OUTPUT_DIR%\extensions\SemanticForms
 mkdir %OUTPUT_DIR%\extensions\StringFunctions
 mkdir %OUTPUT_DIR%\extensions\Treeview
@@ -33,7 +32,7 @@ mkdir %OUTPUT_DIR%\extensions\SMWHalo\bin
 mkdir %OUTPUT_DIR%\extensions\SMWHalo\specials\SMWUploadConverter
 
 REM patch files
-xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /Y /EXCLUDE:excludeForExt.dat
+xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /S /Y /EXCLUDE:excludeForExt.dat
 xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
@@ -43,7 +42,6 @@ xcopy ..\..\FCKeditor %OUTPUT_DIR%\extensions\FCKeditor /S /EXCLUDE:excludeForEx
 xcopy ..\..\Lockdown %OUTPUT_DIR%\extensions\Lockdown /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\ParserFunctions %OUTPUT_DIR%\extensions\ParserFunctions /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\PermissionACL %OUTPUT_DIR%\extensions\PermissionACL /S /EXCLUDE:excludeForExt.dat /Y
-xcopy ..\..\SemanticCalendar %OUTPUT_DIR%\extensions\SemanticCalendar /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\SemanticForms %OUTPUT_DIR%\extensions\SemanticForms /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\StringFunctions %OUTPUT_DIR%\extensions\StringFunctions /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\Treeview %OUTPUT_DIR%\extensions\Treeview /S /EXCLUDE:excludeForExt.dat /Y
