@@ -46,12 +46,12 @@ class TreeGenerator {
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
-		if ($maxDepth > 0) $redirectPage = Title::newFromText($genTreeParameters['redirectPage']);
+		$redirectPage = ($maxDepth > 0) ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY) : NULL;
 		$startLevel = array_key_exists('level', $genTreeParameters) ? $genTreeParameters['level'] : 1;
 		$hchar = "";
 		for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
-		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, SMWPropertyValue::makeUserProperty($displayProperty->getDBkey()), $hchar);
+		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty !== NULL ? SMWPropertyValue::makeUserProperty($displayProperty->getDBkey()) : NULL, $hchar);
 		return $result;
 	}
 
