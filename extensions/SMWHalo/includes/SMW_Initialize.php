@@ -570,6 +570,13 @@ function smwfDBSupportsFunction($lib) {
 function smwfHaloAddHTMLHeader(&$out) {
     global $wgStylePath,$wgUser, $wgDefaultSkin;
     global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
+    global $wgOut, $smwgEnableFlogicRules;
+    
+    $rulesEnabled = isset($smwgEnableFlogicRules) 
+    					? (($smwgEnableFlogicRules) ? 'true' : 'false')
+    					: 'false';
+    					
+    $wgOut->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.'</script>'."\n");
 
     $skin = $wgUser->getSkin();
     $skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
