@@ -14,7 +14,7 @@ Breadcrump.prototype = {
         var breadcrump = GeneralBrowserTools.getCookie("breadcrump");
         var breadcrumpArray;
         if (breadcrump == null) {
-            breadcrump = wgTitle;
+            breadcrump = wgPageName;
             breadcrumpArray = [breadcrump];
         } else {
             // parse breadcrump and add new title
@@ -46,7 +46,7 @@ Breadcrump.prototype = {
             // remove namespace and replace underscore by whitespace
             var title = b.split(":");
             var show = title.length == 2 ? title[1] : title[0];
-            show = show.replace("_", " ");
+            show = show.replace(/_/g, " ");
             
             // add item 
             var encURI = encodeURIComponent(b);
