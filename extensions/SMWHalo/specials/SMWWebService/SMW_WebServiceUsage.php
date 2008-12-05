@@ -450,7 +450,7 @@ function getReadyToPrintResult($result){
 				$niceResult[$i][] = $title;
 			} else {
 				$keys = array_keys($values);
-				$niceResult[$i][] = $values[$keys[$i-1]];
+				$niceResult[$i][] = @ $values[$keys[$i-1]];
 			}
 		}
 	}
