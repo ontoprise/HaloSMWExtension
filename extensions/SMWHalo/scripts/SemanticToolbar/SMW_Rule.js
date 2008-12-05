@@ -313,6 +313,8 @@ getRuleTypes: function() {
 
 };// End of Class
 
-var ruleToolBar = new RuleToolBar();
-Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
+if (smwgEnableFlogicRules) {
+	var ruleToolBar = new RuleToolBar();
+	Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
+}
 
