@@ -1,4 +1,4 @@
-[[Semantic MediaWiki+ 1.3.1]]
+[[Semantic MediaWiki+ 1.4]]
 
 Install instructions for the latest version of Semantic MediaWiki+ (SMW+) are also online:
 
@@ -35,8 +35,8 @@ the authors.
 
 == Requirements ==
 
-* MediaWiki 1.12 (for 1.13 read section below) 
-* Semantic MediaWiki 1.3.x
+* MediaWiki 1.13 
+* Semantic MediaWiki 1.4.x
 * PHP 5.x or greater installed and working
 * MySQL >= 4.0.14 (version required by MediaWiki)
 
@@ -46,24 +46,12 @@ the authors.
 If you upgrade an existing installation of SMW+, also read the
 remarks in the section "Notes on Upgrading" below!
 
-(1) Extract the archive smwplus-1.3.zip to obtain the directory "extensions" 
+(1) Extract the archive smwplus-1.4.zip to obtain the directory "extensions" 
     which contains all relevant files. Copy this directory to "[wikipath]"
     (or extract/download it to this place).
     We abbreviate "[wikipath]/extensions/SMWHalo" as "[SMW+_path]" below.
 
-(2) Some files of MediaWiki will be overwritten.
-
-    Note: MW 1.13 users MUST NOT overwrite Namespaces.php and User.php
-    
-    Please confirm when asked:
-
-    [wikipath]\includes\Namespaces.php
-    [wikipath]\includes\User.php
-    [wikipath]\skins\common\ajax.js
-    [wikipath]\index.php
-
-    
-(3) Edit [wikipath]\LocalSettings.php and add:
+(2) Edit [wikipath]\LocalSettings.php and add:
 
       $wgUseAjax = true;
       include_once('extensions/SMWHalo/includes/SMW_Initialize.php'); 
@@ -74,15 +62,20 @@ remarks in the section "Notes on Upgrading" below!
        
       $wgDefaultSkin='ontoskin';
       
-(4) If you want to use the 'ExportOntologyBot' you have to create a directory
-    'wikiexport' in extensions/SMWHalo. The directory must have write access for
-    the user which runs Apache (or simply for all if possible).
-      
-(5) In your wiki, log in as a user with admin status and go to the page
+(3) In your wiki, log in as a user with admin status and go to the page
     "Special:SMWAdmin" to do the final setup steps.
     Press "Initialise or upgrade tables" to finalize installation
     
-(6) If you are also installing the extension package for SMW+, please refer to
+(4) OPTIONAL: If you want to use the 'ExportOntologyBot' you have to create a directory
+    'wikiexport' in extensions/SMWHalo. The directory must have write access for
+    the user which runs Apache (or simply for all if possible).
+    
+(5) OPTIONAL: If you want to be able to rename categories, you have to remove (or uncomment) the 
+    following code in [wikipath]\includes\Namespaces.php in function 'isMovable'
+    
+        || $index == NS_CATEGORY
+      
+(6) OPTIONAL: If you are also installing the extension package for SMW+, please refer to
     the install file delivered with the extension package zip file.
 
 
@@ -125,37 +118,13 @@ http://wiki.ontoprise.de/ontoprisewiki/index.php/Customising_SMW%2B
 
 == Notes on Upgrading ==
 
-=== Upgrading from SMW+ 1.0, SMW+ 1.1 and SMW+ 1.2 ===
+=== Upgrading from SMW+ 1.0, SMW+ 1.1, SMW+ 1.2 and SMW+ 1.3 ===
 
 In order to create new tables and update old ones, you should go to 
 Special:SMWAdmin and execute "Update/Initialize tables" once.
 
+Then run extensions/SemanticMediawiki/maintenance/SMW_refreshData.php
 
-==Only for MediaWiki 1.13 (!) ==
-Note: We DO NOT recommend using MW 1.13 with SMW+ at this time. There were some 
-errors reported in the last weeks. It's not completely compatible yet.
-
-If you want to use it though, you have to apply the following patches manually:
-
-(1) includes/Namespace.php
-
-    Replace function isMoveable by:
-    
-    public static function isMovable( $index ) {
-            return !( $index < NS_MAIN || $index == NS_IMAGE  /*|| $index == NS_CATEGORY */);
-    }
-
-(2) includes/User.php
-
-    Add this line as last line in function setCookies(...)
-    
-    wfRunHooks( 'SetUserDefinedCookies', array( &$wgCookiePrefix, &$exp, &$wgCookiePath, &$wgCookieDomain, &$wgCookieSecure ) );
-
-Note: SMW+ should also work without these patches. The consequence is:
-
-    - You can't rename categories
-    - Updating the auto-completion mode in your prferences might not get reflected without re-starting the browser.
-     
 == Contact ==
 
 http://sourceforge.net/projects/halo-extension
