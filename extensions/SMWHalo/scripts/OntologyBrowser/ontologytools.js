@@ -494,7 +494,7 @@ OBOntologyModifier.prototype = {
             selectionProvider.fireRefresh();
         }
         articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')+subPropertyTitle, '',   
-                                "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]",
+                                "\n[[_SUBP::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]",
                              gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(superPropertyID));
     },
     
@@ -520,7 +520,7 @@ OBOntologyModifier.prototype = {
         }
         
         var superPropertyTitle = GeneralXMLTools.getNodeById(dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode.getAttribute('title');
-        var content = superPropertyTitle != null ? "\n[[SMW_SP_SUBPROPERTY_OF::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]" : "";
+        var content = superPropertyTitle != null ? "\n[[_SUBP::"+gLanguage.getMessage('PROPERTY_NS')+superPropertyTitle+"]]" : "";
         articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')+newPropertyTitle, '',   
                                content,
                              gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this), $(sibligPropertyID));
@@ -586,7 +586,7 @@ OBOntologyModifier.prototype = {
                 rangeCategories.push(rangeOrTypes[i]);
             }
         }
-        content += "\n[[SMW_SP_HAS_TYPE::"+rangeTypeStr+"]]";
+        content += "\n[[_TYPE::"+rangeTypeStr+"]]";
         rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"; "+gLanguage.getMessage('CATEGORY_NS')+c+"]]" });
         if (rangeCategories.length == 0) {
             content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"]]";
@@ -644,7 +644,9 @@ OBOntologyModifier.prototype = {
      */
     createCategoryNode: function(subCategoryTitle) {
         this.count++;
-        return '<conceptTreeElement title="'+subCategoryTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
+        var categoryTitle_esc = encodeURIComponent(subCategoryTitle);
+        categoryTitle_esc = categoryTitle_esc.replace(/%2F/g, "/");
+        return '<conceptTreeElement title_url="'+categoryTitle_esc+'" title="'+subCategoryTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
     },
     
     /**
@@ -654,7 +656,9 @@ OBOntologyModifier.prototype = {
      */
     createPropertyNode: function(subPropertyTitle) {
         this.count++;
-        return '<propertyTreeElement title="'+subPropertyTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
+        var propertyTitle_esc = encodeURIComponent(subPropertyTitle);
+        propertyTitle_esc = propertyTitle_esc.replace(/%2F/g, "/");
+        return '<propertyTreeElement title_url="'+propertyTitle_esc+'" title="'+subPropertyTitle+'" id="ID_'+(this.date.getTime()+this.count)+'" isLeaf="true" expanded="true"/>';
     },
     
     /**
@@ -675,7 +679,9 @@ OBOntologyModifier.prototype = {
         }
         minCard = minCard == '' ? '0' : minCard;
         maxCard = maxCard == '' ? '*' : maxCard;
-        return '<property title="'+propertyTitle+'" minCard="'+minCard+'" maxCard="'+maxCard+'">'+rangeTypes+'</property>';
+        var propertyTitle_esc = encodeURIComponent(propertyTitle);
+        propertyTitle_esc = propertyTitle_esc.replace(/%2F/g, "/");
+        return '<property title_url="'+propertyTitle_esc+'" title="'+propertyTitle+'" minCard="'+minCard+'" maxCard="'+maxCard+'">'+rangeTypes+'</property>';
     },
     
     /**

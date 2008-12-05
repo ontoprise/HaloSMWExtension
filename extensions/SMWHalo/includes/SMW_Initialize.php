@@ -48,6 +48,10 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  */
 function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL) {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore, $smwgSemanticDataClass, $wgHooks;
+	if ($store == 'SMWHaloStore') {
+		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
+		die();
+	}
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store; 
@@ -73,7 +77,6 @@ function smwgHaloSetupExtension() {
     
 	// Autoloading. Use it for everything! No include_once or require_once please!
 	
-	//$wgAutoloadClasses['SMWHaloStore'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore.php';
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 	$wgAutoloadClasses['SMWGardeningTableResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_GardeningTable.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
