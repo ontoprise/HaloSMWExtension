@@ -88,20 +88,6 @@
  				$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_ENTITY, $s, $t);
  				
  				continue;
- 			} else if ($s->getNamespace() == SMW_NS_PROPERTY) {
- 				$s_type = smwfGetStore()->getPropertyValues($s, $hasTypeDV);
- 				$t_type = smwfGetStore()->getPropertyValues($t, $hasTypeDV);
- 				if (count($s_type) == 0 && count($t_type) == 0) {
- 					// both have wiki page type. this is ok.
- 					continue;
- 				}
- 				if (count($s_type) > 0 && count($t_type) > 0) {
- 					if (reset($s_type)->getXSDValue() != reset($t_type)->getXSDValue()) {
- 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_INCOMPATIBLE_TYPE, $s, $t);
- 						
- 					}
- 				}
- 				//TODO: check compatibility of domains/ranges/cardinality
  			} 
  			
  			
