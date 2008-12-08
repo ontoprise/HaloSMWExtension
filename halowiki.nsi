@@ -53,7 +53,7 @@
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create XAMPP shortcuts (if installed)"
 !define MUI_FINISHPAGE_SHOWREADME_CHECKED
 
-!define MUI_FINISHPAGE_TEXT "The installation was successful! If you installed XAMPP, you'll find some new icons on your desktop. \
+!define MUI_FINISHPAGE_TEXT "The installation or update was successful! If you made a new installation you may add some shortcuts on the desktop to start/stop you wiki easily. \
 Please open the main page by clicking on '${PRODUCT} ${VERSION} Main Page'."
 !define MUI_FINISHPAGE_LINK "Visit the ontoprise website for the latest news"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://www.ontoprise.com/"
@@ -106,7 +106,14 @@ Page custom showWikiCustomize checkWikiCustomize
 
 !insertmacro MUI_PAGE_INSTFILES
 ;!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForSkype
+;!insertmacro MUI_PAGE_FINISH
+
+;!undef MUI_PAGE_CUSTOMFUNCTION_SHOW
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW FinishPageShow
 !insertmacro MUI_PAGE_FINISH
+
+
+
 
 ; Language ------------------------------
 
@@ -135,8 +142,7 @@ Var WIKINAME
 Var WIKILOGO 
 Var WIKILANG 
 Var WIKISKIN 
-Var CSH 
-Var INSTHELP
+
 
 ; Helper
 Var CHOOSEDIRTEXT
@@ -179,7 +185,7 @@ Section "XAMPP" xampp
   SetOutPath "$INSTDIR"
   CreateDirectory "$INSTDIR"
   !ifndef NOFILES
-  	File /r /x CVS ..\xampp\*
+  	File /r /x .svn ..\xampp\*
   !endif
   
 SectionEnd
@@ -197,7 +203,7 @@ Section "-CopyInstaller"
      CreateDirectory "$INSTDIR\installer"
   ${EndIf}
   !ifndef NOFILES
-    File /r /x CVS /x *.exe /x *.nsi ..\SMWPlusInstaller\*
+    File /r /x .svn /x *.exe /x *.nsi ..\SMWPlusInstaller\*
     ${If} $0 == 1
     CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main Page.lnk" "http://localhost/mediawiki/index.php" \
     "" "$INSTDIR\htdocs\mediawiki\installer\images\smwplus_32.ico" 0
@@ -238,7 +244,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   ${If} $0 == 1 
 	 IntOp $INSTALLTYPE 0 + 1
   ${Else}
-  	IfFileExists $INSTDIR\extensions\SMWHalo\*.* 0 notexistsSMWPlus
+  	IfFileExists $INSTDIR\htdocs\mediawiki\extensions\SMWHalo\*.* 0 notexistsSMWPlus
     	
    	IntOp $INSTALLTYPE 0 + 0
    	goto copyfiles
@@ -252,7 +258,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   
   copyfiles:
 	  !ifndef NOFILES
-	    	File /r /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi *
+	    	File /r /x .svn /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi *
       !endif  
    
   ;configure:
@@ -265,28 +271,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
 	 
 SectionEnd
 
-Section "ACL - Access Control Lists" acl
-  SectionIn 1 RO
-  DetailPrint "Configure ACL extension"
-  SectionGetFlags ${xampp} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  
-  ${If} $0 == 1
-  	
-  	SetOutPath "$INSTDIR\htdocs\mediawiki"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-  	
-  ${Else}
- 	SetOutPath "$INSTDIR"
- 	
-    StrCpy $MEDIAWIKIDIR "$INSTDIR"
-  ${EndIf}
-  
-  ; change config file
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importACL=1 ls=LocalSettings.php'
-  
-SectionEnd
+
 
 Section "Semantic Forms" semforms
   SectionIn 1 RO
@@ -358,10 +343,10 @@ SectionGroupEnd
 
 
 ;Languages (english)
-LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP if you don't have Apache and stuff. No other software is required."
+LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP contains the server infrastructure."
 LangString DESC_smwplus ${LANG_ENGLISH} "${PRODUCT} ${VERSION}"
 
-LangString DESC_acl ${LANG_ENGLISH} "Access Control Lists allow restricting wiki access for groups by excluding namespaces and wiki operations."
+
 LangString DESC_semforms ${LANG_ENGLISH} "Semantic Forms ease the annotation process by providing a simple interface."
 LangString DESC_treeview ${LANG_ENGLISH} "The Treeview extension allows a hierarchical displaying of content or links."
 LangString DESC_wysiwyg ${LANG_ENGLISH} "The WYSIWYG extension allows editing with a Word-like comfortable editor."
@@ -380,7 +365,7 @@ LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "If Windows Firewall complains
 	!insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
 	!insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
   
-    !insertmacro MUI_DESCRIPTION_TEXT ${acl} $(DESC_acl)
+    
 	
     !insertmacro MUI_DESCRIPTION_TEXT ${semforms} $(DESC_semforms)
     !insertmacro MUI_DESCRIPTION_TEXT ${treeview} $(DESC_treeview)
@@ -425,27 +410,7 @@ Function checkForApacheAndMySQL
  out:
 FunctionEnd
 
-Function waitForApacheAndMySQL
-   IntOp $2 0 + 10
- checkagain:
-   Sleep 1000
-   FindProcDLL::FindProc "apache.exe"
-   IntOp $0 0 + $R0
-   FindProcDLL::FindProc "mysqld.exe"
-   IntOp $1 0 + $R0
-   FindProcDLL::FindProc "mysqld-nt.exe"
-   IntOp $1 $1 + $R0
-   ${If} $0 == 0
-   ${OrIf} $1 == 0
-    IntOp $2 $2 - 1
-    IntCmp $2 0 notfound
-    goto checkagain
-   ${EndIf}
-   goto out
- notfound:
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(COULD_NOT_START_SERVERS)
- out:
-FunctionEnd
+
 
 
 
@@ -512,23 +477,23 @@ FunctionEnd
 
 
 Function changeConfigForSMWPlusUpdate
-	ReadINIStr $PHP "$INSTDIR\php\php.exe" "Field 2" "state"
+	
 	CALL checkForApacheAndMySQL
 	; update MediaWiki
 	DetailPrint "Update MediaWiki database"
-	nsExec::ExecToLog '"$PHP" "$INSTDIR\maintenance\update.php"'
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\maintenance\update.php"'
 	
 	; update SMW tables
 	DetailPrint "Update SMW tables"
-	nsExec::ExecToLog '"$PHP" "$INSTDIR\maintenance\SMW_setup.php"'
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SemanticMediaWiki\maintenance\SMW_setup.php"'
 	
 	; update SMW+ data
 	DetailPrint "Refresh semantic data"
-	nsExec::ExecToLog '"$PHP" "$INSTDIR\extensions\SMWHalo\maintenance\SMW_refresh.php"'
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SemanticMediaWiki\maintenance\SMW_refreshData.php"'
 	
 	; run job queue
 	DetailPrint "Run job queue"
-	nsExec::ExecToLog '"$PHP" "$INSTDIR\maintenance\runJobs.php"'
+	nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\maintenance\runJobs.php"'
 	
 	DetailPrint "Config customizations"
 	CALL configCustomizationsForUpdate
@@ -547,8 +512,7 @@ Function configCustomizationsForNew
 	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
 	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
 	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
-	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 9" "state"
-	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
+	
 	
 	${If} $WIKINAME == ""
 		StrCpy $WIKINAME "MyWiki"
@@ -567,14 +531,7 @@ Function configCustomizationsForNew
 	    StrCpy $WIKILANG "en"
 	    ${Break}
 	${EndSwitch}
-	${Switch} $CSH
-		${Case} 1
-			StrCpy $CSH "true"
-		${Break}
-		${Case} 0
-			StrCpy $CSH "false"
-		${Break}
-	${EndSwitch}
+	
 	
 	IfFileExists $WIKILOGO 0 logo_not_exists
 		CopyFiles $WIKILOGO $INSTDIR\htdocs\mediawiki
@@ -587,18 +544,9 @@ Function configCustomizationsForNew
 		${GetFileName} $WIKILOGO $R0
 		nsExec::ExecToLog ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
 		wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
-		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
+		smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
 	
-	${If} $INSTHELP == 1
-		DetailPrint "Installing helppages"
-		DetailPrint "Starting XAMPP"
-		SetOutPath "$INSTDIR"
-		Exec "$INSTDIR\xampp_start.exe"
-		CALL waitForApacheAndMySQL
-        MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
-		SetOutPath "$INSTDIR\htdocs\mediawiki"
-		nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
-	${EndIf} 
+	
 FunctionEnd
 
 
@@ -609,8 +557,7 @@ Function configCustomizationsForUpdate
 	ReadINIStr $WIKILOGO "$PLUGINSDIR\wikicustomize.ini" "Field 4" "state"
 	ReadINIStr $WIKILANG "$PLUGINSDIR\wikicustomize.ini" "Field 6" "state"
 	ReadINIStr $WIKISKIN "$PLUGINSDIR\wikicustomize.ini" "Field 8" "state"
-	ReadINIStr $CSH "$PLUGINSDIR\wikicustomize.ini" "Field 9" "state"
-	ReadINIStr $INSTHELP "$PLUGINSDIR\wikicustomize.ini" "Field 10" "state"
+	
 	
 	${If} $WIKINAME == ""
 		StrCpy $WIKINAME "__notset__"
@@ -629,14 +576,7 @@ Function configCustomizationsForUpdate
 	    StrCpy $WIKILANG "__notset__"
 	    ${Break}
 	${EndSwitch}
-	${Switch} $CSH
-		${Case} 1
-			StrCpy $CSH "true"
-		${Break}
-		${Case} 0
-			StrCpy $CSH "false"
-		${Break}
-	${EndSwitch}
+	
 	
 	IfFileExists $WIKILOGO 0 logo_not_exists
 		CopyFiles $WIKILOGO $INSTDIR
@@ -648,13 +588,9 @@ Function configCustomizationsForUpdate
 	updateLocalSettings:
 		nsExec::ExecToLog '"$PHP" "$INSTDIR\installer\changeLS.php" \
 		wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
-		smwgAllowNewHelpQuestions=$CSH ls=LocalSettings.php'
+		smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
 	
-	${If} $INSTHELP == 1
-		DetailPrint "Installing helppages"
-        		
-		nsExec::ExecToLog '"$PHP" "$INSTDIR\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
-	${EndIf} 
+	
 FunctionEnd
 
 Function checkForSkype
@@ -693,6 +629,19 @@ Function createXAMPPShortcuts
     ExecShell open "$INSTDIR\MYWIKI_NOTES"
   ${EndIf}
   
+FunctionEnd
+
+Function FinishPageShow
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  
+  ${If} $0 == 0
+ 
+    GetDlgItem $R0 $mui.FinishPage 1203
+    ShowWindow $R0 ${SW_HIDE}
+    GetDlgItem $R0 $mui.FinishPage 1204
+    ShowWindow $R0 ${SW_HIDE}
+  ${Endif}
 FunctionEnd
 ; Uninstaller
 
