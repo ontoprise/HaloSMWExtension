@@ -305,7 +305,7 @@ class OntoSkinTemplate extends QuickTemplate {
 		<h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
 		<div id="searchBody" class="pBody">
 			<form action="<?php $this->text('searchaction') ?>" id="searchform"><div>
-				<input id="searchInput" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
+				<input id="searchInput" pasteNS="true" class="wickEnabled" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
 					if( isset( $this->data['search'] ) ) {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
 				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />&nbsp;
