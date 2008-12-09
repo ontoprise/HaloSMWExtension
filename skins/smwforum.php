@@ -374,7 +374,7 @@
 /*************************************************************************************************/
 	function searchBox() {
 	?>
-				<div id="search">
+				<div id="smwf_search">
 					<form action="<?php $this->text('searchaction') ?>" id="searchform">
 						<input id="searchInput" pasteNS="true" class="wickEnabled" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
 							if( isset( $this->data['search'] ) ) {
