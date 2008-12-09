@@ -52,10 +52,12 @@
 #smwf_head{
 	position: relative;
 	background: #4b595c;
-	height: 105px;
+	min-height: 105px;
+	max-height: 135px;
 	border-bottom: 5px solid #F5AC3E;
 	padding-left: 10px;
 	padding-top: 10px;
+	overflow: hidden;
 }
 
 #smwf_logo{
@@ -399,6 +401,24 @@ textarea{
 	padding: 5px;
 	clear: left;
 	margin: 5px;
+}
+
+.center * {
+margin-left:auto;
+margin-right:auto;
+}
+
+.center {
+	width: 100%;
+	text-align: center;
+}
+
+dt {
+	font-weight:bold;
+}
+
+dd {
+	margin-left:2em;
 }
 
 /**
