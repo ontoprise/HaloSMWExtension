@@ -152,7 +152,8 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
         $smw_atts2 = $db->tableName('smw_atts2');
         $smw_ids = $db->tableName('smw_ids');
         $smw_spec2 = $db->tableName('smw_spec2');
-       
+        $smw_rels2 = $db->tableName('smw_rels2');
+        
         // set SMW IDs
         $domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->domainRangeHintRelation->getDBkey()));
         $minCardID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->minCard->getDBkey()));
@@ -169,7 +170,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
         $resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
-        $resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN smw_rels2 n ON id = n.s_id JOIN smw_rels2 m ON n.o_id = m.s_id JOIN smw_ids r ON m.o_id = r.smw_id JOIN smw_ids s ON m.p_id = s.smw_id
+        $resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN '.$smw_rels2.' n ON id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id
                      WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 1 GROUP BY property ORDER BY property');
                            
         // rewrite result as array
