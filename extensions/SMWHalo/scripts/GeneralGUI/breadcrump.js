@@ -48,10 +48,17 @@ Breadcrump.prototype = {
             var show = title.length == 2 ? title[1] : title[0];
             show = show.replace(/_/g, " ");
             
-            // add item 
-            var encURI = encodeURIComponent(b);
-            encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
-            html += '<a href="'+wgServer+wgScript+'/'+encURI+'">'+show+' &gt; </a>'; 
+            // add item
+             var encURI = encodeURIComponent(b);
+            if (wgArticlePath.indexOf('?title=') != -1) {
+            	encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
+            	var articlePath = wgArticlePath.replace("$1", encURI);
+            }  else {
+           	    encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
+           	    encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
+            	var articlePath = wgArticlePath.replace("$1", encURI);
+            }
+            html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>'; 
         });
         var bc_div = $('breadcrump');
         if (bc_div != null) bc_div.innerHTML = html;
