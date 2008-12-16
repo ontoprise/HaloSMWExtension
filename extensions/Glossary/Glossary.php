@@ -34,7 +34,7 @@ $wgExtensionCredits['parserhook'][] = array(
 $wgExtensionFunctions[] = 'glossarySetup';
 function glossarySetup() {
   global $wgOut, $wgScriptPath;
-  //$wgOut->addHTML("<script type='text/javascript' src='$wgScriptPath/extensions/tooltip/wz_tooltip.js'></script>");
+  $wgOut->addHTML("<script type='text/javascript' src='$wgScriptPath/extensions/SemanticMediaWiki/skins/SMW_tooltip.js'></script>");
 }
 
 $wgHooks['ParserBeforeTidy'][] = 'glossaryParser';
@@ -87,7 +87,7 @@ function glossaryParseThisNode($doc, $node, $term, $definition) {
     $texts = preg_split('/\b('.preg_quote($term).'s?)\b/iu', $node->textContent, -1, PREG_SPLIT_DELIM_CAPTURE);
     if (count($texts) > 1) {
       if (!$tooltipsIncluded) {
-      	smwfRequireHeadItem(SMW_HEADER_TOOLTIP);
+      	SMWOutputs::requireHeadItem(SMW_HEADER_TOOLTIP);
       }
       $container = $doc->createElement('span');
       for ($x = 0; $x < count($texts); $x++) {
