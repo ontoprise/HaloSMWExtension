@@ -254,8 +254,7 @@ class CombinedSearch {
                         smwLog($askQuery,"CS","produced_factlist");
                         /*ENDLOG*/
                         $ask_spage = Title::newFromText($wgContLang->getNsText(NS_SPECIAL).":Ask");
-                        $htmlResult .= "<td><a class=\"askButton\" href=\"".$ask_spage->getFullURL("title=".
-                        $ask_spage->getPrefixedDBkey()."&query=".urlencode($askQuery)."&order=ASC")."\">".wfMsg('smw_cs_ask')."</a></td>";
+                        $htmlResult .= "<td><a class=\"askButton\" href=\"".$ask_spage->getFullURL("q=".urlencode($askQuery)."&order=ASC")."\">".wfMsg('smw_cs_ask')."</a></td>";
                         $htmlResult .= "</tr>";
                     }
                 }
