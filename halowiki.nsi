@@ -22,6 +22,7 @@
 
 ; --- The following definitions are meant to be changed ---
 
+!define PRODUCTPATH "SMWPLUS"
 !define PRODUCT "SMW+"
 !define PRODUCT_CAPTION "SMW+"
 !define VERSION "1.4"
@@ -81,7 +82,7 @@ BGGradient 000000 95F5E2 FFFFFF
 InstallColors FF8080 000030
 ;XPStyle on
 ComponentText "" "" " "
-InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCT}\"
+InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCTPATH}\"
 DirText $CHOOSEDIRTEXT "" "" ""	
 CheckBitmap "..\SMWPlusInstaller\images\classic-cross.bmp"
 BrandingText "ontoprise GmbH 2008 - wiki.ontoprise.de - Build: ${BUILD_ID}"
@@ -214,11 +215,12 @@ SectionEnd
 SectionGroup "${PRODUCT} ${VERSION}" 
 Section "${PRODUCT} ${VERSION} core" smwplus
   SectionIn 1 2 RO
-  
+  SectionGetFlags ${xampp} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == 0 
   ; check for AdminSettings.php
-  IfFileExists $INSTDIR\LocalSettings.php 0 setpath
-  	tryagain:
-  	IfFileExists $INSTDIR\AdminSettings.php 0 as_noexists
+    tryagain:
+  	IfFileExists $INSTDIR\htdocs\mediawiki\AdminSettings.php 0 as_noexists
   		goto setpath
   		as_noexists:
   			MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. \
@@ -226,19 +228,12 @@ Section "${PRODUCT} ${VERSION} core" smwplus
 			goto tryagain
 			
   setpath:
-  
-  ; Set output path 
-  SectionGetFlags ${xampp} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  
-  ${If} $0 == 1
-  	; XAMPP section did already install SMWPlus
-  	SetOutPath "$INSTDIR\htdocs\mediawiki"
-  	CreateDirectory "$INSTDIR\htdocs\mediawiki"
-  ${Else}
- 	SetOutPath "$INSTDIR"
-  	CreateDirectory "$INSTDIR"
   ${EndIf}
+  ; Set output path 
+  
+  
+  SetOutPath "$INSTDIR\htdocs\mediawiki"
+  CreateDirectory "$INSTDIR\htdocs\mediawiki"
   
   ; Copy files and config 
   ${If} $0 == 1 
@@ -410,7 +405,27 @@ Function checkForApacheAndMySQL
  out:
 FunctionEnd
 
-
+Function waitForApacheAndMySQL
+   IntOp $2 0 + 10
+ checkagain:
+   Sleep 1000
+   FindProcDLL::FindProc "apache.exe"
+   IntOp $0 0 + $R0
+   FindProcDLL::FindProc "mysqld.exe"
+   IntOp $1 0 + $R0
+   FindProcDLL::FindProc "mysqld-nt.exe"
+   IntOp $1 $1 + $R0
+   ${If} $0 == 0
+   ${OrIf} $1 == 0
+    IntOp $2 $2 - 1
+    IntCmp $2 0 notfound
+    goto checkagain
+   ${EndIf}
+   goto out
+ notfound:
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(COULD_NOT_START_SERVERS)
+ out:
+FunctionEnd
 
 
 
@@ -518,7 +533,7 @@ Function configCustomizationsForNew
 		StrCpy $WIKINAME "MyWiki"
 	${EndIf}
 	${If} $WIKISKIN == ""
-		StrCpy $WIKISKIN "ontoskin"
+		StrCpy $WIKISKIN "ontoskin2"
 	${EndIf}
 	${Switch} $WIKILANG
 	  ${Case} 'English'
@@ -546,7 +561,14 @@ Function configCustomizationsForNew
 		wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
 		smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
 	
-	
+	DetailPrint "Installing helppages"
+        DetailPrint "Starting XAMPP"
+        SetOutPath "$INSTDIR"
+        Exec "$INSTDIR\xampp_start.exe"
+        CALL waitForApacheAndMySQL
+        MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
+        SetOutPath "$INSTDIR\htdocs\mediawiki"
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
 FunctionEnd
 
 
@@ -622,6 +644,8 @@ FunctionEnd
 Function createXAMPPShortcuts
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
+  
+  SetOutPath "$INSTDIR"
   ; Only with XAMPP installation
   ${If} $0 == 1
     CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
