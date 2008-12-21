@@ -183,9 +183,12 @@ include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
 
+$wgGroupPermissions['darkmatter']['*'] = true;
+$wgGroupPermissions['gardener']['*'] = true;
 
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
+        NS_MAIN => true,
         NS_DOCUMENT => true,
         NS_PDF => true
 );
