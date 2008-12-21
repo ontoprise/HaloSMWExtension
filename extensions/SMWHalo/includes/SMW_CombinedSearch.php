@@ -249,12 +249,13 @@ class CombinedSearch {
                         //show ASK query link
                         $htmlResult .= "<tr>";
                         $htmlResult .= "<td>".wfMsg('smw_cs_aksfor_allinstances_with_annotation',$e->getText(), $c->getText())."</td>";
-                        $askQuery = "[[".$e->getPrefixedText()."]]|?".$c->getText();
+                        $askQuery = "[[".$e->getPrefixedText()."]]";
+                        $printOut = $c->getText();
                         /*STARTLOG*/
                         smwLog($askQuery,"CS","produced_factlist");
                         /*ENDLOG*/
                         $ask_spage = Title::newFromText($wgContLang->getNsText(NS_SPECIAL).":Ask");
-                        $htmlResult .= "<td><a class=\"askButton\" href=\"".$ask_spage->getFullURL("q=".urlencode($askQuery)."&order=ASC")."\">".wfMsg('smw_cs_ask')."</a></td>";
+                        $htmlResult .= "<td><a class=\"askButton\" href=\"".$ask_spage->getFullURL("q=".urlencode($askQuery)."&po=".urlencode($printOut)."&order=ASC")."\">".wfMsg('smw_cs_ask')."</a></td>";
                         $htmlResult .= "</tr>";
                     }
                 }
