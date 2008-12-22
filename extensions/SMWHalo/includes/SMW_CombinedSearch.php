@@ -249,7 +249,7 @@ class CombinedSearch {
                         //show ASK query link
                         $htmlResult .= "<tr>";
                         $htmlResult .= "<td>".wfMsg('smw_cs_aksfor_allinstances_with_annotation',$e->getText(), $c->getText())."</td>";
-                        $askQuery = "[[".$e->getPrefixedText()."]]";
+                        $askQuery = "[[".$e->getPrefixedText()."]][[".$c->getText()."::+]]";
                         $printOut = $c->getText();
                         /*STARTLOG*/
                         smwLog($askQuery,"CS","produced_factlist");
