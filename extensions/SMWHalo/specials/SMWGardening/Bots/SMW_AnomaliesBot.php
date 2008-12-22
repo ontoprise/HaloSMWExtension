@@ -26,7 +26,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	
  	function AnomaliesBot() {
  		parent::GardeningBot("smw_anomaliesbot");
- 		$this->globalLog = "== ".wfMsg('smw_gard_anomalylog')."! ==\n\n";
+ 		$this->globalLog = NULL;
  		$this->store = $this->getAnomalyStore();
  	}
  	
@@ -141,6 +141,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
        	}
        	
        	if (array_key_exists('CATEGORY_LEAF_DELETE', $paramArray)) {
+       		$this->globalLog = "== ".wfMsg('smw_gard_anomalylog')."! ==\n\n";
        		echo "\nRemoving category leaves...\n";
        		if ($paramArray['CATEGORY_RESTRICTION'] == '') {
        			$deletedCategories = array();
