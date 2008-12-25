@@ -76,7 +76,8 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $reqfilter);
+ 		$onlyDirect = $p_array[1] == "true";
+ 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $reqfilter);
  		
  	 	return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
  		

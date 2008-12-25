@@ -410,11 +410,11 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
         $smw_spec2 = $db->tableName('smw_spec2');
         $smw_rels2 = $db->tableName('smw_rels2');     
         $page = $db->tableName('page');
-        
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
         // REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' matches all n-ary properties in special property table. Is there a better way?
         return "SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value, 
                         i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_rels2 a 
-                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.sp_id="."_TYPE"." AND s.value_string REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' 
+                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=$hasTypePropertyID AND s.value_string REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' 
                         JOIN $smw_ids i ON i.smw_id = a.p_id
                         JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace  
                 GROUP BY i.smw_title, s.value_string";

@@ -4,24 +4,35 @@
  *
  * Author: kai
  */
- 
- class DBHelper {
- 	
- 	
- 	/**
+
+class SMWAdvRequestOptions extends SMWRequestOptions {
+	
+	/**
+	 * If true, all string constraints will be OR'ed instead of AND'ed.
+	 * Default is false.
+	 *
+	 * @var boolean
+	 */
+    public $disjunctiveStrings = false;
+}
+
+class DBHelper {
+
+
+	/**
 	 * Make sure the table of the given name has the given fields, provided
 	 * as an array with entries fieldname => typeparams. typeparams should be
 	 * in a normalised form and order to match to existing values.
 	 *
 	 * The function returns an array that includes all columns that have been
-	 * changed. For each such column, the array contains an entry 
+	 * changed. For each such column, the array contains an entry
 	 * columnname => action, where action is one of 'up', 'new', or 'del'
-	 * If the table was already fine or was created completely anew, an empty 
+	 * If the table was already fine or was created completely anew, an empty
 	 * array is returned (assuming that both cases require no action).
 	 *
 	 * NOTE: the function partly ignores the order in which fields are set up.
 	 * Only if the type of some field changes will its order be adjusted explicitly.
-	 * 
+	 *
 	 * @param string $primaryKeys
 	 * 		This optional string specifies the primary keys if there is more
 	 * 		than one. This is a comma separated list of column names. The primary
@@ -91,7 +102,7 @@
 			return $result;
 		}
 	}
-	
+
 	/**
 	 * Make sure that each of the column descriptions in the given array is indexed by *one* index
 	 * in the given DB table.
@@ -141,7 +152,7 @@
 		ob_flush();
 		flush();
 	}
-	
+
 	/**
 	 * Transform input parameters into a suitable array of SQL options.
 	 * The parameter $valuecol defines the string name of the column to which
@@ -162,7 +173,7 @@
 		}
 		return $sql_options;
 	}
-	
+
 	public static function getSQLOptionsAsString($requestoptions, $valuecol = NULL) {
 		$options = DBHelper::getSQLOptions($requestoptions,$valuecol);
 		$limit = array_key_exists('LIMIT', $options) && is_numeric($options['LIMIT'])? 'LIMIT '.$options['LIMIT'] : '';
@@ -179,7 +190,7 @@
 	 * @param $valuecol name of SQL column to which conditions apply
 	 * @param $labelcol name of SQL column to which string conditions apply, if any
 	 */
-	 public static function getSQLConditions($requestoptions, $valuecol, $labelcol = NULL) {
+	public static function getSQLConditions($requestoptions, $valuecol, $labelcol = NULL) {
 		$sql_conds = '';
 		if ($requestoptions !== NULL) {
 			$db =& wfGetDB( DB_SLAVE ); // TODO: use slave?
@@ -199,7 +210,12 @@
 				}
 				$sql_conds .= ' AND ' . mysql_real_escape_string($valuecol) . $op . $db->addQuotes($requestoptions->boundary);
 			}
+			$operator = isset($requestoptions->disjunctiveStrings) && $requestoptions->disjunctiveStrings === true ? ' OR ' : ' AND ';
+			$neutral = isset($requestoptions->disjunctiveStrings) && $requestoptions->disjunctiveStrings === true ? ' FALSE ' : ' TRUE ';
 			if ($labelcol !== NULL) { // apply string conditions
+
+				$sql_conds .= ' AND ( ';
+                
 				foreach ($requestoptions->getStringConditions() as $strcond) {
 					$string = str_replace(array('_', ' '), array('\_', '\_'), $strcond->string);
 					switch ($strcond->condition) {
@@ -213,17 +229,27 @@
 							$string = '%' . $string . '%';
 							break;
 					}
-					if ($requestoptions->isCaseSensitive) { 
-						$sql_conds .= ' AND ' . mysql_real_escape_string($labelcol) . ' LIKE ' . $db->addQuotes($string);
+					if ($requestoptions->isCaseSensitive) {
+						$sql_conds .=  mysql_real_escape_string($labelcol) . ' LIKE ' . $db->addQuotes($string). $operator;
 					} else {
-						$sql_conds .= ' AND UPPER(' . mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).')';
+						$sql_conds .= ' UPPER(' . mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).') '.$operator;
 					}
 				}
+				$sql_conds .= ' '.$neutral.' ) ';
 			}
 		}
 		return $sql_conds;
 	}
-	
+
+	/**
+	 * Returns sql conditions of $requestoptions in an Array.
+	 * Warning! Does not support SMWAdvRequestOptions
+	 *
+	 * @param SMWRequestOptions $requestoptions
+	 * @param string  $valuecol
+	 * @param string $labelcol
+	 * @return array
+	 */
 	public static function getSQLConditionsAsArray($requestoptions, $valuecol, $labelcol = NULL) {
 		$sql_conds = array();
 		if ($requestoptions !== NULL) {
@@ -264,5 +290,5 @@
 		}
 		return $sql_conds;
 	}
- }
+}
 ?>

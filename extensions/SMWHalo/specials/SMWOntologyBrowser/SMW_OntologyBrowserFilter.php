@@ -28,9 +28,9 @@
  	 */
  	 function filterForCategories($categoryHints) {
  	 	
- 	 	$reqfilter = new SMWRequestOptions();
+ 	 	$reqfilter = new SMWAdvRequestOptions();
  	 	$reqfilter->sort = true;
- 	 	
+ 	 	$reqfilter->disjunctiveStrings = true;
  	 	if (count($categoryHints) == 0) {
  	 		return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_categories')."\"/>";
  	 	}
@@ -118,9 +118,9 @@
  	 * @return xml string (attribute tree)
  	 */
  	 function filterForPropertyTree($propertyHints) {
- 	 	$reqfilter = new SMWRequestOptions();
+ 	 	$reqfilter = new SMWAdvRequestOptions();
  	 	$reqfilter->sort = true;
- 		//$reqfilter->limit = MAX_RESULTS;
+        $reqfilter->disjunctiveStrings = true;
  		
  		if (count($propertyHints) == 0) {
  			return "<result isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_attributes')."\"/>";

@@ -100,7 +100,8 @@ class SMW_OntologyBrowser extends SpecialPage {
 				
 		<!-- Relation/Attribute Annotation level hook -->
 		<div id=\"relattributesContainer\"><span class=\"OB-header\">
-			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
+			<span style=\"float:left\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span>
+			<span style=\"float: left;margin-left:30px; font-size:10px\"><input type=\"checkbox\" id=\"directPropertySwitch\"/>".wfMsg('smw_ob_onlyDirect')."</input></span><span id=\"relattValues\" style=\"float:right;text-align:right;\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"float:right;text-align:right;display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
 			".($showMenuBar ? "<span class=\"menuBar menuBarProperties\" id=\"menuBarProperties\"><a style=\"margin-left:5px;\" onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span></a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
 			<span class=\"OB-filters\" style=\"margin-left:5px;\"><span style=\"float:left;margin-right:5px;margin-top:5px;\">".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\" style=\"display: block; width: 60%; float:left;margin-top:5px;\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\" style=\"margin-top:5px;\">".wfMsg('smw_ob_filter')."</button></span>		

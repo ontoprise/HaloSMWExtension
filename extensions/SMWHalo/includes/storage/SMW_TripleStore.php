@@ -429,12 +429,13 @@ class SMWTripleStore extends SMWStore {
 	 * @param boolean $verbose
 	 */
 	private function createTables($verbose) {
-		require("SMW_DBHelper.php");
+		global $smwgHaloIP;
+        require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
 		$db =& wfGetDB( DB_MASTER );
 
 		$ruleTableName = $db->tableName('smw_rules');
 		// create rule table
-		SMWDBHelper::setupTable($ruleTableName,
+		DBHelper::setupTable($ruleTableName,
 		array('subject_id'    => 'INT(8) UNSIGNED NOT NULL',
                             'rule_id'       => 'VARCHAR(255) binary NOT NULL',
                             'rule_text'      => 'TEXT NOT NULL'), $db, $verbose);
@@ -451,7 +452,7 @@ class SMWTripleStore extends SMWStore {
 		$ruleTableName = $db->tableName('smw_rules');
 
 		$db->query("DROP TABLE $ruleTableName", 'SMWTripleStore::dropTables');
-		SMWDBHelper::reportProgress(" ... dropped table $ruleTableName.\n", $verbose);
+		DBHelper::reportProgress(" ... dropped table $ruleTableName.\n", $verbose);
 
 	}
 

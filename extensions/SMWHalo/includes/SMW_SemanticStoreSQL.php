@@ -370,10 +370,10 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	}
 	
 	
-	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $requestoptions = NULL) {
+	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_SLAVE ); 
 		$page = $db->tableName('page');
-		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db);
+		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect);
 		
 		$res = $db->query( 'SELECT DISTINCT property FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,'property')); 
 	

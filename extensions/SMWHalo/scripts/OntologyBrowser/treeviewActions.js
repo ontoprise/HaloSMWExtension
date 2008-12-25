@@ -622,7 +622,8 @@ select: function (event, node, categoryID, categoryName) {
 	 }
 	 if (OB_RIGHT_ARROW == 0) {
 	 	OB_relatt_pendingIndicator.show();
-	 	dataAccess.getProperties(categoryName, callbackOnCategorySelect2);
+	 	var onlyDirect = $('directPropertySwitch').checked;
+	 	dataAccess.getProperties(categoryName, onlyDirect, callbackOnCategorySelect2);
 	 }
 	
 	}
