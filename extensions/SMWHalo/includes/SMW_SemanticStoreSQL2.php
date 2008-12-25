@@ -87,7 +87,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.', inherited SET(\'no\', \'yes\') NOT NULL )
                     TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category INT(8) NOT NULL)
@@ -107,7 +107,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		} else {
 			$categoryID = $category->smw_id;
 		}
-		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, \'no\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
                      ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 0 AND r.smw_id = '.$categoryID.')');
 
 
@@ -128,7 +128,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
                                                                 ' WHERE p.page_namespace = '.NS_CATEGORY.' AND s2.smw_id IN (SELECT * FROM smw_ob_properties_sub))');
 
 				// insert direct properties of current supercategory level
-				$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+				$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property,  \'yes\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
                      ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 0 AND r.smw_id IN (SELECT * FROM smw_ob_properties_super))');
 
 
@@ -183,7 +183,8 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$rowSymCat = $db->fetchObject($resSymCats);
 		$rowTransCats = $db->fetchObject($resTransCats);
 		$rowRanges = $db->fetchObject($resRanges);
-		foreach($properties as $p) {
+		foreach($properties as $props) {
+			 list($p, $inherited) = $props;
 			$minCard = CARDINALITY_MIN;
 			if ($rowMinCard != NULL && $rowMinCard->property == $p->getDBkey()) {
 				$minCard = $rowMinCard->minCard;
@@ -215,7 +216,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 				$range = $rowRanges->rangeinst;
 				$rowRanges = $db->fetchObject($resRanges);
 			}
-			$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range);
+			$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range, $inherited);
 
 		}
 		$db->freeResult($resMinCard);

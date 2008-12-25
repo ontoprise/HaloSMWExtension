@@ -168,7 +168,11 @@ class DBHelper {
 				$sql_options['OFFSET'] = $requestoptions->offset;
 			}
 			if ( ($valuecol !== NULL) && ($requestoptions->sort) ) {
-				$sql_options['ORDER BY'] = $requestoptions->ascending ? mysql_real_escape_string($valuecol) : mysql_real_escape_string($valuecol) . ' DESC';
+				if (is_array($valuecol)) {
+					$sql_options['ORDER BY'] = $requestoptions->ascending ? mysql_real_escape_string(implode(",",$valuecol)) : mysql_real_escape_string(implode(",",$valuecol)) . ' DESC';
+				} else {
+				    $sql_options['ORDER BY'] = $requestoptions->ascending ? mysql_real_escape_string($valuecol) : mysql_real_escape_string($valuecol) . ' DESC';
+				}
 			}
 		}
 		return $sql_options;

@@ -375,12 +375,12 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$page = $db->tableName('page');
 		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect);
 		
-		$res = $db->query( 'SELECT DISTINCT property FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,'property')); 
+		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property'))); 
 	
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inherited == 'yes' ? true : false);
 				 
 			}
 		}
@@ -439,7 +439,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$rowSymCat = $db->fetchObject($resSymCats);
 		$rowTransCats = $db->fetchObject($resTransCats);
 		$rowRanges = $db->fetchObject($resRanges);
-		foreach($properties as $p) {
+		foreach($properties as $props) {
+			    list($p, $inherited) = $props;
 				$minCard = CARDINALITY_MIN;
 				if ($rowMinCard != NULL && $rowMinCard->property == $p->getDBkey()) {
 					$minCard = $rowMinCard->minCard;
@@ -471,7 +472,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 					$range = $rowRanges->rangeinst;
 					$rowRanges = $db->fetchObject($resRanges);
 				}
-				$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range);
+				$result[] = array($p, $minCard, $maxCard, $type, $symCat, $transCat, $range, $inherited);
 			
 		}
 		$db->freeResult($resMinCard);

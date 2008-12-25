@@ -213,6 +213,7 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 		$isMemberOfSymCat = $schemaData[4];
 		$isMemberOfTransCat = $schemaData[5];
 		$range = $schemaData[6];
+		$inherited = $schemaData[7] == true ? "inherited=\"true\"" : "";
 		
 		if ($type == '_wpg') { // binary relation?
 			if ($range == NULL) {
@@ -233,6 +234,7 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 		}
 		
 		// generate attribute strings
+		
 		$maxCardText = $maxCardinality != CARDINALITY_UNLIMITED ? "maxCard=\"".$maxCardinality."\"" : "maxCard=\"*\"";
 		$minCardText = $minCardinality != CARDINALITY_MIN ? "minCard=\"".$minCardinality."\"" : "minCard=\"0\"";
 		$isSymetricalText = $isMemberOfSymCat ? "isSymetrical=\"true\"" : "";
@@ -243,7 +245,7 @@ private static function encapsulateAsProperty(array & $schemaData, $count, array
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';	
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
 		return "<property title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
-					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt>".
+					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt $inherited>".
 					$content.$gi_issues.
 				"</property>";
 	
