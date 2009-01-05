@@ -7,11 +7,15 @@
   <message name="getTripleStoreStatusResponse">
     <part name="return" type="xsd:string" />
   </message>
+   <message name="ManagementException">
+    <part name="fault" element="xsd:string" />
+  </message>
   <portType name="ManagementEndpoint">
     
     <operation name="getTripleStoreStatus" parameterOrder="arg0">
       <input message="tns:getTripleStoreStatus" />
       <output message="tns:getTripleStoreStatusResponse" />
+       <fault name="ManagementException" message="tns:ManagementException" />
     </operation>
 
   </portType>
@@ -26,6 +30,9 @@
       <output>
         <soap:body use="literal" namespace="http://management.triplestore.smwplus.ontoprise.com/" />
       </output>
+      <fault name="ManagementException">
+        <soap:fault name="ManagementException" use="literal" />
+      </fault>
     </operation>
 
   </binding>
