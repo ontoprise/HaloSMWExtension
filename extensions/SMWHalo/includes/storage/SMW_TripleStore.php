@@ -143,9 +143,7 @@ class SMWTripleStore extends SMWStore {
 			
 		$triples = array();
 
-
-
-		$subject = $data->getSubject();// instanceof SMWPropertyValue ? $data->getSubject()->getWikiPageValue() : $data->getSubject();
+		$subject = $data->getSubject();
 		$subj_ns = $this->getNSPrefix($subject->getNamespace());
 		if ($subj_ns == NULL) return;
 			
@@ -387,14 +385,15 @@ class SMWTripleStore extends SMWStore {
 
 		$this->createTables($verbose);
 
-		global $smwgMessageBroker, $smwgNamespace, $wgDBtype, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore;
+		global $smwgMessageBroker, $smwgNamespace, $wgDBtype, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema;
+		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgNamespace>"); // drop may fail. don't worry
 			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgNamespace>");
-			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore#".urlencode($wgDBprefix)." INTO <$smwgNamespace>");
+			$con->send("/topic/WIKI.TS.UPDATE", "LOAD $wgDBtype://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgNamespace>");
 			$con->disconnect();
 		} catch(Exception $e) {
 

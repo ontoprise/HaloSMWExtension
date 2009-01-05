@@ -179,10 +179,12 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
 
     // add triple store hooks if necessary
-    global $smwgMessageBroker;
+    global $smwgMessageBroker,$smwgIgnoreSchema;
     if (isset($smwgMessageBroker)) {
        require_once('storage/SMW_TS_Contributor.php');
-       $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
+       if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
+        $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
+       }
        $wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
        
     }
