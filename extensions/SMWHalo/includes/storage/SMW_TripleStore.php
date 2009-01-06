@@ -556,8 +556,8 @@ class SMWTripleStore extends SMWStore {
 				$data = $pr->getData();
 				if ($data == NULL) { // main column
 
-					if (in_array('x', $variableSet)) { // x is missing for INSTANCE queries
-						$mapPRTOColumns['X'] = $index;
+					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
+						$mapPRTOColumns['_X_'] = $index;
 						$prs[] = $pr;
 						$index++;
 					}
@@ -596,8 +596,8 @@ class SMWTripleStore extends SMWStore {
 			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
 			$var_index++;
 			
-			// if no mainlabel, do not create a printrequest for X (instance variable for ASK-converted queries)
-			if ($query->mainLabelMissing && $var_name == "X") {
+			// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
+			if ($query->mainLabelMissing && $var_name == "_X_") {
 				 continue;
 			}
 			// do not generate new PrintRequest if already given
@@ -630,7 +630,7 @@ class SMWTripleStore extends SMWStore {
 			foreach ($children->binding as $b) {
 					
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-                if ($query->mainLabelMissing && $var_name == "X") {
+                if ($query->mainLabelMissing && $var_name == "_X_") {
                     $columnIndex++;
                 	continue;
                 }
@@ -728,7 +728,7 @@ class SMWTripleStore extends SMWStore {
 	private function containsPrintRequest($var_name, array & $prqs, & $query) {
         $contains = false;
 		foreach($prqs as $po) {
-			if ($query->fromASK && $po->getData() == NULL && $var_name == 'X') {
+			if ($query->fromASK && $po->getData() == NULL && $var_name == '_X_') {
 				return true;
 			}
 			if ($po->getData() != NULL) {
