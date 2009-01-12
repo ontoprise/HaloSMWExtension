@@ -1,0 +1,27 @@
+To take advantage of all features of SMW+, you need to adjust your user preferences. SMW+ provides the following two additional options:
+<ul>
+<li><b>OntoSkin.</b> OntoSkin is the default custom graphical appearance that enables all features of SMW+.</li> 
+<li><b>Auto-triggered auto-completion.</b> Auto-completion involves SMW+ predicting a word or phrase you have begun to type in a given context (e.g., the search box). Enabling this option means that auto-completion will be started automatically whenever you start typing. If you disable it, you must trigger auto-completion manually by pressing Ctrl+Alt+spacebar (Ctrl+spacebar using Internet Explorer). For more information, see [[Help:Autocompletion|Autocompletion]].</li>
+</ul>
+
+These options are located on different tabs of the special page Preferences. To change your preferences, proceed as follows:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Log in to SMW+.<br>
+<div style="font-weight:normal;">Log in to SMW+ using your login credentials.</div></li>
+<li>Open the special page Preferences.<br>
+<div style="font-weight:normal;">Open the page <tt>Special:Preferences</tt> by clicking on the<br>
+My Preferences link in the upper right.</div></li>
+<li>Go to the Skin tab.<br>
+<div style="font-weight:normal;">Select OntoSkin, which is the default skin of SMW+.</div></li>
+<li>(Optional) Go to the Misc tab.<br>
+<div style="font-weight:normal;">Select Auto-triggered auto-completion.</div></li>
+<li>Click Save.<br>
+<div style="font-weight:normal;">Your changes will be saved.</div></li>
+</ol>
+</div>
+<hr>
+<b>Note &ndash;</b> For more information on MediaWiki preferences, see the 
+[http://www.mediawiki.org/wiki/Help:Preferences Preferences Help] on the MediaWiki Web site.
+<hr>
+

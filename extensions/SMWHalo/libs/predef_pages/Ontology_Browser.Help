@@ -1,0 +1,32 @@
+The Ontology Browser gives a quick and detailed overview of the wiki's ontology. It allows users to navigate
+through the concept and property hierarchy and to inspect instances and their annotations.
+
+The Ontology Browser consists of three basic panels:
+<ul>
+<li><b>[[Help:Category_Tree|Category Tree]].</b> This panel shows the category hierarchy. Categories are an editing feature of MediaWiki. They are used as universal "tags" for articles, describing that the article belongs to a certain group of articles. In SMW+, categories represent the notion of <em>Concept</em> as used in the world of ontologies. This panel also displays the property tree.</li>
+<li><b>[[Help:Instances_Panel|Instances Panel]].</b> The Instances panel shows all instances of the recently selected category/property. Instances are the basic objects of the ontology. In SMW+, they are represented by individual articles.</li>  
+<li><b>[[Help:Properties_Panel|Properties Panel]].</b> This panel shows all properties associated with the recently selected instance. Properties are the basic way in which categories and instances can be related to one another.</li> 
+</ul>
+
+What is being displayed in these panels can be changed by the following widgets.
+<ul>
+<li><b>Filter Browsing.</b> By using the Filter Browsing widget you can apply case-insensitive substring matching,
+that is, only those entities are being displayed that match your input. In addition, by pressing Ctrl+Q you can invoke
+autocomplete.
+</li>
+<li><b>Reset.</b> Clicking this button will reset your current selection.</li> 
+<li><b>Hide Instances.</b> Clicking this button will completely hide the Instances panel.</li>
+</ul>
+<p>In addition, each panel has its own filter that provides case-insensitive substring matching, that is, 
+it controls which entities are being displayed depending on your input. All entities are displayed in 
+alphabetical order.</p>
+<p><b>Navigation Flow</b></p>
+<p>By clicking the big gray arrows between the panels you can change the navigation direction. For example,
+if you change the direction of the arrow located between the Category Tree and the Instances panel to the left,
+all categories of the selected instance are shown. Likewise, if you change the direction of the arrow located 
+between the Instances panel and the Properties panel to the left, all articles are shown that contain an 
+annotation for the property selected. In addition, the Category Tree will show its domain category.</p>
+<hr>
+<b>Tip &ndash;</b> This is especially useful when using Filter Browsing, because in this case the panels
+are not related to each other. All types of entities will be searched independently only by substring matching.
+<hr>

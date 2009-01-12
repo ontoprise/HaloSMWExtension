@@ -1,0 +1,94 @@
+__NOTOC__
+The Query Interface is a graphical tool that supports you in building queries that can be used to retrieve knowledge from the wiki. The basic way of writing queries is by using so-called inline queries, which use the parser function <tt>#ask</tt>. However, inline queries have a somewhat complex syntax. The graphical user interface enables you to easily compose your own queries.
+
+The query interface is implemented as a special page and is accessed on the page <tt>Special:QueryInterface</tt>. When accessing this page, you will see the Query Interface in its initial state. 
+[[Image:Query_interface.png|none|thumb|800px|Query Interface]]
+The Query Interface consists of the following panels:
+
+* '''Query Tree.''' The Query Tree consists of a breadcrumb navigation and a tree graph. The breadcrumb navigation shows where you are in the structure of your current query. The tree shows the structure of the query and allows you to navigate through it by clicking the single items.
+* '''Query Builder.''' With the Query Builder you can assemble the query by simply clicking its components.
+* '''Help.''' The Help panel provides useful help topics.
+* '''Table Column Preview.''' This panel gives you a preview of the columns which will appear in the result table. 
+* '''Query Layout Manager.''' This panel enables you to define the layout of the query result.
+* '''Button Bar.''' The button bar contains a number of buttons that offer immediate access to many operations.
+** '''Preview Results.''' Opens a dialog box showing the query result. The dialog box depends on the layout settings of the Query Layout Manager.
+** '''Copy to clipboard.''' This button will copy the query code to the clipboard. This will always work for Internet Explorer. If you use Firefox, there might be a security warning popping up. Depending on your local security settings, this operation might not be available at all.
+** '''Show full query.''' This button opens a dialog box showing the query code. You can copy and paste this code into any article you like. 
+** '''Reset Query.''' This button will reset the current query and all of its subqueries.
+
+== Usage ==
+
+For instructions how to use the Query Interface, see [[Help:Creating_Queries_Using_the_Query_Interface|Creating Queries Using the Query Interface]].
+
+== Printout Options of the Query Layout Manager ==
+
+This section provides a short overview of the Query Layout Manager and its printout options.
+
+<table border="0" cellpadding="3" style="background-color:#FFFFFF;" width="50%" summary="Parameters of the generateTree Parser Function">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="3"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">Option</th>
+	<th style="text-align:left;">Allowed Values</th>
+        <th style="text-align:left;">Description</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="3"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Format</td>
+	<td style="vertical-align:top;"><tt>table</tt>, <tt>broad table</tt>, <tt>bullet list</tt>, <tt>ordered list</tt>, <tt>list</tt>, <tt>template</tt>, <tt>count</tt>, <tt>rss</tt> </td>
+        <td style="vertical-align:top;">Defines the output format of the query. <tt>Count</tt> means that only the number of results is displayed.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Sort by</td>
+	<td style="vertical-align:top;">All columns that are shown in the result</td>
+        <td style="vertical-align:top;">Defines which column of the result table should be used to sort the results.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Order</td>
+	<td style="vertical-align:top;"><tt>ascending</tt>, <tt>descending</tt> </td>
+        <td style="vertical-align:top;">Ascending or descending order.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Link</td>
+	<td style="vertical-align:top;"><tt>all</tt>, <tt>subject</tt>, <tt>none</tt></td>
+        <td style="vertical-align:top;">Defines which parts of the result should be linked. <tt>Subject</tt> means only the first column is linked to the corresponding page.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Limit</td>
+	<td style="vertical-align:top;">Number</td>
+        <td style="vertical-align:top;">The maximum number of results shown. If there are more results, a link for a full result list will be provided automatically.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Headers</td>
+	<td style="vertical-align:top;">Show</td>
+        <td style="vertical-align:top;">Defines if the headers of the table are shown.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Intro</td>
+	<td style="vertical-align:top;">Plain text</td>
+        <td style="vertical-align:top;">Text that appears before the results are displayed.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Mainlabel</td>
+	<td style="vertical-align:top;">Plain text</td>
+        <td style="vertical-align:top;">Label of the first column of the result table.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Default</td>
+	<td style="vertical-align:top;">Plain text</td>
+        <td style="vertical-align:top;">If, for any reason, the query returns no results, this will be printed instead.</td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="3"></th>
+   </tr>
+</table>
+For more information, see [http://semantic-mediawiki.org/wiki/Help:Inline_queries Inline Queries] at the Semantic Mediawiki Web site.
+
+== Additional Information ==
+
+Whenever you add a category, instance, or property in the Query Builder they are connected by conjunction (Boolean operator <tt>AND</tt>). This means that all restrictions have to be true in order to appear in the result table. However, sometimes it is necessary to use a disjunction (Boolean operator <tt>OR</tt>). This can be achieved by using the green plus sign next to an input field.
+[[Image:Query_interface_add_category_boolean_OR.png|none|thumb|600px|Adding a Disjunction]]
+The screenshot above shows an example of a disjunction. This query will return all articles that are either in the category Book OR in the category Movie. If you add one category Movie and one category Book independently, conjunction is applied and the query would return only articles that are in both categories.

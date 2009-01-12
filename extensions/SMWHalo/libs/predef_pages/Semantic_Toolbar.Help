@@ -1,0 +1,27 @@
+The Semantic Toolbar contains tools for annotating text and becomes available when you select one of the following page tabs:
+<ul>
+<li><b>annotate.</b> On this page tab, which is introduced by SMW+, you can annotate an article without the need to directly edit the source text.</li>
+<li><b>edit.</b> On this page tab you can annotate the source text of an article.</li>
+</ul>
+The page tabs are displayed at the top of the article to the right of the site logo (if using the default OntoSkin skin). These tabs allow you to perform actions or view pages that are related to the current article. The available default actions include: viewing, editing, and discussing the current article. The specific tabs displayed on your pages depend on whether or not you are logged into the wiki and whether you have administrator privileges on the wiki.
+[[Image:Page_tabs.png|none|frame|Available Page Tabs for Users with Administrator Privileges]]
+
+The Semantic Toolbar shows the current annotations of the text and is updated regularly when the text changes. With the Semantic Toolbar you can annotate text, modify annotations, create new categories and properties and establish <em>part-of</em> relations.
+[[Image:Semantic_toolbar.png|none|frame|Semantic Toolbar]]
+
+The Semantic Toolbar consists of the following two main panels:
+
+<ul>
+<li><b>Links to Other Pages.</b> This panel shows a list of all pages the current article is linked to.</li>
+<li><b>Tools.</b> This panel contains all tools for annotating articles as well as other useful tools:
+<ul style="list-style type: circle;">
+<li><b>Categories.</b> The panel for adding or creating a category annotation.</li>
+<li><b>Properties.</b> The panel for adding or creating a property annotation.</li>
+<li><b>Property Characteristics.</b> The panel for editing the characteristics of a property (only available if the page you are editing is a property).</li>
+<li><b>Ontology Browser.</b> Allows you to open the article in the [[Help:Ontology_Browser|Ontology Browser]].</li>
+<li><b>Help.</b> Shows [[Help:Context_Sensitive_Help|context sensitive help]].</li>
+<li><b>Annotation Hints.</b> Shows useful annotation hints that were detected by the various [[Help:Maintenance|maintenance]] tools.</li>
+</ul>
+</li>
+</ul>
+For more information on how to use the Semantic Toolbar, see [[Help:Using_the_Advanced_Annotation_Mode|Using the Advanced Annotation Mode]].

@@ -1,0 +1,41 @@
+To add a help topic to the Context Sensitive Help, proceed as follows:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the Semantic Toolbar.<br>
+<div style="font-weight:normal;">On an arbitrary page, either open the Edit or Annotate page tab.<br>
+The Semantic Toolbar appears.
+</div></li>
+<li>Select the Help panel.<br>
+<div style="font-weight:normal;">Select the Help panel of the Semantic Toolbar.<br><br>
+[[Image:Semantic_toolbar_help_panel.png]]<br><br></div></li>
+<li>Add a help topic.<br>
+<div style="font-weight:normal;">Click 'Add your own question'.<br><br>
+[[Image:Semantic_toolbar_help_panel_adding_question.png]]<br><br>
+</div></li>
+<li>Commit your changes.<br>
+<div style="font-weight:normal;">Click Send.<br>
+In the confirmation dialog box, click OK. A topic of the same name will be added to the wiki.<br><br>
+[[Image:Semantic_toolbar_help_panel_question_added.png]]<br><br>
+</div></li>
+<li>Open the help topic.<br>
+<div style="font-weight:normal;">Navigate to the help topic.<br>
+A new browser window/tab opens.<br><br>
+[[Image:Context_sensitive_help_topic.png]]<br><br>
+</div></li>
+<li>Complete the help topic.<br>
+<div style="font-weight:normal;">Click the help topic's Edit page tab at the top of the page and enter appropriate information.<br><br>
+[[Image:Context_sensitive_help_editing_topic.png]]<br><br>
+</div></li>
+<li>Save your changes.<br>
+<div style="font-weight:normal;">Once you are done with editing the help topic, click 'Save page'.<br>
+Your changes will be saved.<br><br>
+[[Image:Context_sensitive_help_topic_edited.png]]<br><br>
+</div></li>
+<li>Test the help topic.<br>
+<div style="font-weight:normal;">The help topic with the annotation <tt>discourseState::Main:edit</tt> should be available in the Semantic Toolbar<br>
+whenever you edit a page of the namespace <tt>Main</tt>.</div></li>
+</ol>
+</div>
+
+
+

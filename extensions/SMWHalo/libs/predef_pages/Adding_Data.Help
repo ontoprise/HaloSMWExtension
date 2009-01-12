@@ -1,0 +1,100 @@
+__NOTOC__
+You can now add data to your wiki by using the forms for book pages and author pages.
+For example, to add a book page to the wiki, proceed as follows:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the form for book pages.<br>
+<div style="font-weight:normal;">Go to the page <tt>Form:Book</tt>.</div></li>
+<li>Enter a book title.<br>
+<div style="font-weight:normal;">In the text box, enter a book title and click Add or Edit.<br>
+This will check whether a page with the same name exists.<br>
+The special page <tt>Special:AddData/Book/&lt;Book Title&gt;</tt> appears.<br><br>
+[[Image:Semantic_forms_add_book.png|none|thumb|500px|Add Book Dialog Box]]
+</div><br></li>
+<li>Fill out the form.<br>
+<div style="font-weight:normal;">Enter appropriate information.</div></li>
+<li>Save the form.<br>
+<div style="font-weight:normal;">Click Save Page. The page tab will appear.<br><br>
+[[Image:Semantic_forms_sample_book_page.png|none|frame|Book Page "Artificial Intelligence"]]
+</div></li>
+</ol>
+</div>
+
+The book page now contains red links to its authors, indicating that these pages do not exist yet. If you follow a red link, you will create the author page. However, this red link does not point to the form for author pages you have just created. For this to work you need to adjust the file <tt>$IP/includes/Linker.php</tt>. The code to be changed depends on your MediaWiki version.
+
+If you use MediaWiki 1.13, locate the code around line 370:
+<pre>
+if( $nt->getNamespace() == NS_SPECIAL ) {
+&nbsp;&nbsp;&nbsp;&nbsp;$q = $query;
+} else if ( '' == $query ) {
+&nbsp;&nbsp;&nbsp;&nbsp;$q = 'action=edit&amp;redlink=1';
+} else {
+&nbsp;&nbsp;&nbsp;&nbsp;$q = 'action=edit&amp;redlink=1&amp;'.$query;
+}
+$u = $nt->escapeLocalURL( $q );
+</pre>
+
+Change it to:
+
+<pre>
+# special patch for Semantic Forms - see if a default form
+# exists for this title, and, if so, link to the form for
+# adding this page, instead of the regular Edit page
+$u = sffAddDataLink($nt);
+if( $nt->getNamespace() == NS_SPECIAL ) {
+&nbsp;&nbsp;&nbsp;&nbsp;$q = $query;
+&nbsp;&nbsp;&nbsp;&nbsp;$u = $nt->escapeLocalURL( $q );
+} else if ('' == $u ) {
+&nbsp;&nbsp;&nbsp;&nbsp;if ( '' == $query ) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$q = 'action=edit';
+&nbsp;&nbsp;&nbsp;&nbsp;} else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$q = 'action=edit&amp;'.$query;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;$u = $nt->escapeLocalURL( $q );
+}
+</pre>
+ 
+In addition, add the following line to the <tt>WasWrittenBy</tt> property page: 
+
+<pre>
+[[Has default form::Form:Author]].
+</pre>
+
+This will change the red link to point to the form for author pages.
+<hr>
+<b>Note &ndash;</b> You may need to refresh the book page for the right link to appear.
+<hr>
+
+You can then add a few authors, either through these links or on the form page <tt>Form:Author</tt> directly.
+Each created author's page will show a list of the books you've saved that have that person as the author.
+
+<hr>
+<b>Tip &ndash;</b> You can add links to the sidebar for easy adding and viewing. In addition, you can add links 
+to the forms to make it easy to add new ones, and links to the "Books" and "Authors" categories to be able to see
+the full list of either one at a glance.
+<hr>
+
+If you want to include a form into another page, you can use the <tt>#forminput</tt> parser function.
+
+<pre>
+{{#forminput:form_name|size|value|button_text|query_string}}
+</pre>   
+ 
+Adding this parser function to any page will include a text box letting you specify a title for adding or editing
+a page. By default, this text box is included in every form created by the <tt>CreateForm</tt> page. Here are the parameters
+of the <tt>#forminput</tt> parser function:
+
+* '''form_name.''' The name of the form to be used. If it is left blank, a drop-down list will appear, letting you choose among all existing forms.
+* '''size.''' The size of the text box (default is 25).
+* '''value.''' The starting value of the input (default is <tt>blank</tt>).
+* '''button_text.''' The text that will appear on the Submit button.
+* '''query_string.''' The set of values you want to pass to the form.<br>It should look like a typical URL query string consisting of the template name, a variable, and a value.<br>An example would be <tt>Book[year]=1980</tt>. Note that multiple values are allowed (separated by ampersands).
+
+For example, suppose you add the following call to any wiki page:
+
+<pre>
+{{#forminput:Book|25||Submit book|Book[year]=1980&amp;Book[genre]=Science}}
+</pre>
+
+Then, the form will have the fields <tt>year</tt> and <tt>genre</tt> already filled out.
+[[Image:Semantic_forms_add_book_query.png|none|thumb|500px|Add Book Dialog Box]]

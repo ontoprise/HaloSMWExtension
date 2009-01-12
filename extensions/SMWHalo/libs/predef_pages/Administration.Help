@@ -1,0 +1,7 @@
+SMW+ has a number of features that help you administrate the wiki, most notably in controlling the access to the wiki.
+
+* '''[[Help:Access Control Lists|Access Control Lists]].''' A way to restrict access to specific namespaces, pages, and categories based on user group or user name.
+* '''[[Help:LDAP Authentication|LDAP Authentication]].''' Provides LDAP authentication for the wiki.
+* '''[[Help:Semantic_Notifications|Semantic Notifications]].''' Notification messages sent after annotation changes.
+* '''[[Help:Vocabulary_Import|Vocabulary Import]].''' Import and transformation of external terms into wiki articles.
+* '''[[Help:Web Service Integration|Web Service Integration]].''' Integrating Web Services into the wiki.

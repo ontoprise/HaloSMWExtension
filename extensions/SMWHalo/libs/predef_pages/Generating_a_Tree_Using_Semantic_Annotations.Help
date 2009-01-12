@@ -1,0 +1,77 @@
+With SMW+ it is possible to generate a tree automatically by using semantic annotations. For this purpose, SMW+ implements the parser function <tt><nowiki>#generateTree</nowiki></tt>, which can either be used stand-alone or in combination with the regular <tt><nowiki>#tree</nowiki></tt> parser function.
+
+The parser function <tt><nowiki>#generateTree</nowiki></tt> can be used with the following parameters:
+
+<table border="0" cellpadding="5" style="background-color:#FFFFFF;" width="50%" summary="Parameters of the generateTree Parser Function">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">Parameter</th>
+	<th style="text-align:left;">Description</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>property</tt> *</td>
+	<td style="vertical-align:top;">The property used to build the tree.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>category</tt></td>
+	<td style="vertical-align:top;">Filters to only those pages which are in the given category (not transitive).</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>start</tt></td>
+	<td style="vertical-align:top;">Starts with this page as root node.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>display</tt></td>
+	<td style="vertical-align:top;">Shows the value of a given property instead of the title (if annotated on the page, otherwise the title).</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>maxDepth</tt></td>
+	<td style="vertical-align:top;">Only show tree to a maximum depth.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>redirectPage</tt></td>
+	<td style="vertical-align:top;">If there are more levels than specified in maxDepth, ellipsis points (...) are shown redirecting to the specified page.
+	This page should show the whole tree without depth restriction.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>level</tt></td>
+	<td style="vertical-align:top;">Start level for the tree. For example, if you want to combine two trees you can start both on level 2 and define a parent node manually.</td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+   </tr>
+</table>
+
+Note that parameters marked with an asterisk (*) are required.
+
+=== Usage ===
+
+Syntax of the <tt><nowiki>#generateTree</nowiki></tt> parser function:
+
+<pre>
+ {{#generateTree:property=<binary property>|category=<category>|start=<root page>}}
+</pre>
+This creates a tree of pages connected by <tt><binary property></tt>. Parameters are separated by pipes.
+
+=== Examples ===
+
+Example of a stand-alone tree using <tt><nowiki>#generateTree</nowiki></tt>:
+
+<pre>
+{{#generateTree:property=Uses component|category=Procedure|start=Toolbox}}
+</pre>
+[[Image:Treeview_standalone.png|none|frame|Stand-alone tree]]
+
+Example of a tree using <tt>#generateTree</tt> in combination with the <tt><nowiki>#tree</nowiki></tt> parser function:
+
+<pre>
+{{#tree:
+&nbsp;&nbsp;{{#generateTree:property=Uses component|category=Procedure|start=Toolbox}}
+}}
+</pre>
+[[Image:Treeview_combination.png|none|frame|Tree in combination with the <tt><nowiki>#tree</nowiki></tt> parser function]]

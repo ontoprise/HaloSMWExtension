@@ -1,0 +1,73 @@
+__NOTOC__
+The semantic data of your wiki can be exported into an external file. SMW+ provides two different methods to export that data:
+
+* Export into the OWL format using a bot of the [[Help:Gardening|Gardening]] tool suite
+* Export into the OWL/RDF format via the special page <tt>Special:ExportRDF</tt>
+
+== Export Using the Gardening Tool Suite ==
+
+To export semantic data using the gardening bot, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Go to the Gardening tool suite.<br>
+<div style="font-weight:normal;">Go to the special page <tt>Special:Gardening</tt>.</div></li>
+<li>Select the gardening bot.<br>
+<div style="font-weight:normal;">Select 'Export Ontology' from the list of gardening bots.</div></li>
+<li>Specify a namespace.<br>
+<div style="font-weight:normal;">The URI you enter here will become the <tt>rdf:about</tt> value of the ontology header<br>
+(e.g., <tt><nowiki><owl:Ontology rdf:about="http://www.halowiki.org"></nowiki></tt>).</div></li>
+<li>(Optional) Export only schema.<br>
+<div style="font-weight:normal;">Selecting this check means that no instances will be exported, but only schema information.</div></li>
+<li>Start the Gardening bot.<br>
+<div style="font-weight:normal;">Click 'Run Bot'. The Gardening bot will be started.</div></li>
+<li>Open the Gardening log.<br>
+<div style="font-weight:normal;">When the export process is finished, follow the link to the Gardening log.</div></li>
+<li>Download the ontology.<br>
+<div style="font-weight:normal;">The gardening log provides a download link to the exported ontology.<br>
+Note that exported ontologies are stored in the directory<br>
+<tt>$IP/extensions/SMWHalo/wikiexport</tt>.</div></li>
+<li>(Optional) Check the ontology.<br>
+<div style="font-weight:normal;">Open the ontology with an ontology authoring tool such as ontoprise's OntoStudio<br>
+and check whether the export was successful.</div></li>
+</ol>
+</div>
+
+== Export via the Special Page ExportRDF ==
+
+Based on the user's semantic annotations of articles, SMW+ generates machine-readable documents in OWL/RDF format, that can be accessed via the special page <tt>Special:ExportRDF</tt>. Moreover, there is a maintenance script for automatically generating complete exports of all semantic data. This article explains how annotations are formally interpreted in the OWL ontology language, and how a suitable RDF serialisation is generated.
+
+=== Using the Export Functionality ===
+
+Users can easily access the generated RDF via the page <tt>Special:ExportRDF</tt> by entering a list of articles into the input field. The export will contain one OWL/RDF specification with various description blocks for exported elements. In addition to the requested articles, the export will also contain basic declarations for any further elements (such as mentioned instances, properties, and classes). There are two settings that further influence the set of exported articles:
+
+* '''Recursive export.''' Every article usually has relations to various other articles. Normally, those other articles are just declared briefly such that tools can find further RDF specifications for them if desired. By enabling recursive export, all information about the encountered objects will be exported right away. Since this process is continued for all further objects, this option can lead to large results.
+
+* '''Backlinks.''' The RDF data model is based on directed graphs. When exporting an article, one usually exports only the statements within which the corresponding element occurs as a subject, and the exported document does not include incoming links. This restricts RDF browsers, since they cannot access all elements that have some relationship to something without retrieving the whole RDF first. For this reason, one can enable the export of backlinks. All articles that have relations to any of the exported articles then will also be exported.
+
+The server administrator can restrict the availability of the above options, and can set default values cases where no parameters can be given (see below). The reason is that the above options, especially in combination, can easily lead to the export of major parts of the wiki in RDF, which might overly impair the performance of large sites.
+
+In addition to the form at <tt>Special:ExportRDF</tt>, one can also retrieve RDF by calling appropriate URLs directly. This is suitable for linking to RDF specifications directly. In its basic form, this is achieved by appending a (URL encoded version of an) article name to the URL of the export service. For instance, one can link to
+
+ http://wiki.ontoworld.org/index.php/Special:ExportRDF/ESWC2006
+
+to get this RDF directly. Alternatively, the article name can also be specified as a GET parameter "page" within the URL, e.g.
+
+ http://wiki.ontoworld.org/index.php?title=Special:ExportRDF&page=ESWC2006
+
+==== Additional GET Parameters ====
+
+In addition to title and page, ExportRDF has additional GET (query string) parameters.
+* Backlinks can be enabled or disabled by setting "backlinks" to 1 or 0, respectively.
+* Recursive export can be enabled or disabled by setting "recursive" to 1 or 0. 
+Both settings will be ignored if disabled by the administrator. If no settings are given, site-wide default values apply.
+
+The default Content-Type of ExportRDF's output is <tt>application/xml</tt> (with charset=UTF-8).
+Content-Type of <tt>application/rdf+xml</tt> can be set by adding the "xmlmime=rdf" GET parameter;
+some processing tools require this RDF mimetype to process the output.
+
+=== Exporting all data ===
+
+In addition to the wiki's <tt>Special:ExportRDF</tt> function, there is also a maintenance script that allows you to export all of the wiki's semantic data at once. The script is called <tt>SMW_dumpRDF.php</tt> and can be found in the <tt>maintenance</tt> directory of the Semantic MediaWiki extension (e.g., <tt>$IP/extensions/SemanticMediaWiki/maintenance/</tt>). This directory also contains a README file that describes how to install maintenance scripts in your local MediaWiki installation.
+
+The script <tt>SMW_dumpRDF.php</tt> can generate full exports, or it can be restricted to certain elements of the schema, e.g. to export only the category hierarchy or only the attributes with their types. Details are described in the <tt>SMW_dumpRDF.php</tt> script itself.

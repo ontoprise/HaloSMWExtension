@@ -1,0 +1,10 @@
+Semantic Forms provide a convenient way to add semantic data to your wiki by using special forms. Technically
+speaking, Semantic Forms is an extension to MediaWiki, meant to work in conjunction with Semantic MediaWiki,
+that allows for the creation of forms to add and edit pages that contain templates, which themselves hold semantic data.
+
+They provide a user-friendly interface for wikis whose semantic data is well-structured, with the goal of 
+allowing users to contribute data without having to know any wiki markup, semantic or otherwise.
+
+[[Image:Semantic_forms_add_book.png|none|thumb|600px|Semantic Form for Adding Book Pages]]
+
+For information on how to create a semantic form, see [[Help:Creating_Semantic_Forms|Creating Semantic Forms]].

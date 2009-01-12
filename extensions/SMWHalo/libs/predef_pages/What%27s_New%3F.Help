@@ -1,0 +1,15 @@
+__NOTOC__
+SMW+ 1.4 is basically a maintenance and compatibility update. SMW+ now provides full compatibility to the following software applications: 
+
+* Semantic MediaWiki 1.4
+* MediaWiki 1.13
+
+'''New Features'''
+
+* Improved Windows Installer (for updating from SMW+ 1.3.1 to 1.4)
+* New built-in ontology (project management ontology)
+* New default skin (OntoSkin2)
+
+'''Changed Features'''
+
+* The extension Semantic Calendar is obsolete and has been replaced by the <tt>Calendar</tt> format in the extension [http://semantic-mediawiki.org/wiki/Help:Semantic_Result_Formats Semantic Result Formats].

@@ -1,0 +1,4 @@
+SMW+ has a number of general usability features that improve the interaction with the wiki:
+
+* '''[[Help:Autocompletion|Autocompletion]].''' Autocompletion is a feature provided by SMW+ that enables certain widgets to show a dropdown list of possible completions when you start typing.
+* '''[[Help:Context Sensitive Help|Context Sensitive Help]].''' The Context Sensitive Help is a kind of online help available in the [[Help:Semantic Toolbar|Semantic Toolbar]]. It is obtained from a specific point in the state of editing, providing help for the situation that is associated with that state.

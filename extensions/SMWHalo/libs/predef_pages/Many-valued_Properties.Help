@@ -1,0 +1,35 @@
+__NOTOC__
+A many-valued property (also called ''n-ary property'') maps between a subject and two or more values. This is distinct from the most common type of property, a binary property which maps between a single subject and a single value. A many-valued property cannot be split up into separate properties, because the set of values that it groups are all interconnected in some way.
+
+In SMW+ you can specify that a property takes multiple values by listing more than one type in the property's <tt>has type</tt> statement, separated by ';' (semicolons).
+
+For example, the property <tt>Employment</tt> includes an employer, job title, start date and end date; it can thus be specified as follows:
+
+<tt><nowiki>[[has type::Page; String; Date; Date]]</nowiki></tt>
+
+In articles you can add this property, specifying any subset of those four values, again separated by ';' (semicolons). You can use ' "" ' (two double quotation marks) or ' ? ' (question mark) for omitted values.
+
+The first value appears normally, while the remaining ones appear within parentheses, separated by commas.
+
+== Many-valued Properties in Semantic Search ==
+
+You can search on many-valued properties similarly to other properties. As with any property, you can use the ' + ' wildcard to select all pages with some value for a many-valued property, for example:
+
+<tt><nowiki>{{#ask: [[Employment::+]] }}</nowiki></tt>
+
+To find pages that match a particular value for any of the parts of a many-valued property, just list the values to match, separated by semicolons.
+
+If you don't care about the value of one of the datatypes, use ' ? ' to match any value for it including omitted. You can also use comparators (such as ' ! ' for 'not', ' < ' for 'less than or equal to', etc.) for each of the datatype's values. For more information, see [http://semantic-mediawiki.org/wiki/Help:Semantic_search#Comparators Comparators] at the Semantic MediaWiki Web site.
+
+For example, the following query selects values for the property <tt>Employment</tt> with any value for the employer string, where the title string is not "professorship", the start date is before 1951, and with any value for end date.
+
+<tt><nowiki>{{#ask: [[Employment:: ?; !professorship; <1950-12-31; ?]] }}</nowiki></tt>
+
+== Limitations ==
+
+For many-valued properties the following limitations apply:
+
+* You cannot use the special property <tt>Allows value</tt> to limit the values of any element of a many-valued property.
+* You cannot use the special property <tt>Display units</tt> to control how a specific element appears.
+* You cannot set the layout of the values; they will always appear as a comma-separated list.
+* You cannot create a timeline query of many-valued properties.

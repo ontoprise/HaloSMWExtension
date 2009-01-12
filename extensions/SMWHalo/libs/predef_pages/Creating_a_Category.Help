@@ -1,0 +1,38 @@
+You need to create two categories, one for books and one for authors. To create the category for books pages,
+proceed as follows:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the Create a Category dialog box.<br>
+<div style="font-weight:normal;">Go to the special page <tt>Special:CreateCategory</tt>.</div></li>
+<li>Specify a category name.<br>
+<div style="font-weight:normal;">Enter "Book" into the Name text box.</div></li>
+<li>Specify a default form.<br>
+<div style="font-weight:normal;">Select <tt>Book</tt> from the Default Form list.</div></li>
+<li>(Optional) Make the category a subcategory.<br>
+<div style="font-weight:normal;">Select a category from the list.<br><br>
+[[Image:Semantic_forms_create_category.png|frame|none|Create a Category Dialog Box]]
+</div><br></li>
+<li>Save the category.<br>
+<div style="font-weight:normal;">Click Save Page. The category page tab will appear.<br><br>
+[[Image:Semantic_forms_category_created.png|frame|none|Category Page Tab]]
+</div></li>
+</ol>
+</div>
+
+
+Repeat the steps above to create the form for author pages:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the Create a Category dialog box.<br>
+<div style="font-weight:normal;">Go to the special page <tt>Special:CreateCategory</tt>.</div></li>
+<li>Specify a category name.<br>
+<div style="font-weight:normal;">Enter "Author" into the Name text box.</div></li>
+<li>Specify a default form.<br>
+<div style="font-weight:normal;">Select <tt>Author</tt> from the Default Form list.</div></li>
+<li>(Optional) Make the category a subcategory.<br>
+<div style="font-weight:normal;">Select a category from the list.</div></li>
+<li>Save the category.<br>
+<div style="font-weight:normal;">Click Save Page. The category page tab will appear.</div></li>
+</ol>
+</div>
+Proceed with [[Help:Adding Data|Adding Data]].

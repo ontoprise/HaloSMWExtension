@@ -1,0 +1,42 @@
+__NOTOC__
+Treeview is a graphical user interface that presents a hierarchical view of categories and articles contained in the wiki. Treeviews can be included in articles with the parser function <tt>#tree</tt>. 
+
+The tree is formatted with the typical MediaWiki syntax for unordered lists using the asterisk character. First-level items with one asterisk are rendered as root nodes of the tree. If an item has subitems, it is displayed as a folder, otherwise as a file. If you want the nodes to be hyperlinks to other pages in the wiki, use the wiki syntax for internal links employing square brackets.
+
+For example:
+<pre>
+{{#tree:id=navtree|
+* [[Root1]]
+** Subitem 1-1
+** Subitem 1-2
+*** Subitem 1-2-1
+** Subitem 1-3
+* Root2
+}}
+</pre>
+[[Image:Treeview.png|none|frame|Treeview]]
+
+For more information, see the documentation of the [http://www.mediawiki.org/wiki/Extension:TreeAndMenu TreeAndMenu] extension. Note that the TreeAndMenu extension is the successor of the Treeview5 extension, which is shipped with SMW+ by default.
+<hr>
+<b>Tip &ndash;</b> The tree on the page <tt>MediaWiki:NavTree</tt> controls the appearance of the Navigation box in the sidebar, which is displayed on the left edge of the page.
+<hr>
+
+=== Extension to the Tree Parser Function ===
+
+The tree parser function also supports the <tt>class</tt> attribute. It changes the class attribute of the root node. Currently supported is <tt>dtreestatic</tt> for a tree with a fixed height (20em). If the content grows bigger, vertical scrollbars appear.
+<hr>
+<b>Note &ndash;</b> All trees which are placed in the Navigation box should use the <tt>dtreestatic</tt> class attribute.
+<hr>
+
+=== Examples ===
+
+Example of a tree using the class attribute <tt>dtreestatic</tt> and the parser function <tt>#generateTree</tt>:
+
+<pre>
+{{#tree:class=dtreestatic|
+&nbsp;&nbsp;{{#generateTree:property=Uses component|category=Procedure|start=Toolbox}}
+}}
+</pre>
+[[Image:Treeview_dtreestatic.png|none|frame|Treeview Using Class <tt>dtreestatic</tt>]]
+
+For more information on the parser function <tt>#generateTree</tt>, see [[Help:Generating_a_Tree_Using_Semantic_Annotations|Generating a Tree Using Semantic Annotations]].

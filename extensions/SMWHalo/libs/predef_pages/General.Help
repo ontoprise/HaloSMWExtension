@@ -1,0 +1,14 @@
+SMW+ is an enterprise semantic wiki distributed by [http://www.ontoprise.com ontoprise GmbH]. Technically speaking, it is a ready-to-use and preconfigured bundle of MediaWiki extensions, most notably 
+[http://sourceforge.net/projects/semediawiki/ Semantic MediaWiki] and [http://sourceforge.net/projects/halo-extension/ Halo Extension]. SMW+ is designed to leverage the hidden knowledge often locked up in unstructured content. It combines the collaborative authoring approach of a wiki with proven semantic technology.
+
+SMW+ is a bundle of the following MediaWiki extensions:
+
+* '''Halo.''' An extension developed and distributed by ontoprise GmbH. It increases the ease of use of features provided by the Semantic MediaWiki extension.
+* '''Semantic Mediawiki.''' A set of semantic extentions to the popular open source wiki platform MediaWiki that helps to search, organize, tag, browse, evaluate, and share the wiki's content.
+* '''Semantic Forms.''' Allows users to add and edit data using forms. It is heavily tied in with the Semantic MediaWiki extension, and is meant to be used for structured data that has semantic markup.
+* '''FCK-Editor.''' A WYSIWYG Editor for MediaWiki.
+* '''Glossary.''' Allows wiki authors to define a list of acronyms and their definitions on a special page. Whenever an acronym is found, it will be highlighted and moving the pointer over it will show supplementary information.
+* '''PermissionACL.''' Offers a way to restrict access to specific namespaces, pages, and categories based on user group or user name.
+* '''Treeview5.''' Allows users to represent hierarchical structures in a graphical form.
+* '''LDAPAuthentication.''' Allows user authentication via the Lightweight Directory Access Protocol LDAP.
+* '''Supplementary extensions.''' Other useful extensions such as ParserFunctions, StringFunctions, Variables, Cite, etc.

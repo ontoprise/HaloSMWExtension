@@ -1,0 +1,4 @@
+SMW+ provides LDAP authentication and some authorization functionality for MediaWiki. "LDAP" stands for ''Lightweight Directory Access Protocol'', which is an application protocol for querying and modifying directory services running over TCP/IP.
+<hr>
+<b>Note &ndash;</b> In SMW+, LDAP authentication is implemented by the LDAP Authentication MediaWiki extension. For more information, see the [http://www.mediawiki.org/wiki/Extension:LDAP_Authentication LDAP Authentication Web site].
+<hr>

@@ -1,0 +1,62 @@
+As already mentioned, SMW+ can be installed in two different ways. If you are going to use the installer, follow the instructions below. On the other hand, if you are technically adept and want to install all components manually, see [http://smwforum.ontoprise.com/smwforum/index.php/Manual_SMW%2B_Installation Manual SMW+ Installation] at the SMW+ User Forum.
+
+To install SMW+, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Start the installation wizard.<br>
+<div style="font-weight:normal;">Double-click the executable or select Open from the executable's shortcut menu.<br>
+The welcome screen of the SMW+ installation wizard appears.<br>
+This wizard will guide you through the installation process of SMW+.<br>
+To proceed with the installation, click Next.</div></li>
+<li>Accept the license agreement.<br>
+<div style="font-weight:normal;">Read the license agreement carefully. If you accept the conditions of the agreement,<br>
+click I Agree. If you do not accept the conditions of the agreement, click Cancel.<br>
+This will abort the installation process.</div></li>
+<li>Select the installation type.<br>
+<div style="font-weight:normal;">Three installation types are available:
+<ul>
+<li><b>New (with XAMPP).</b> Choose this installation type if you are installing SMW+ for the first time.</li>
+<li><b>New/Update (without XAMPP).</b> Choose this installation type to update an existing installation.<br>
+It is assumed that XAMPP is installed on your computer.</li>
+<li><b>Custom.</b> Choose this installation type to individually select the components to be installed.</li>
+</ul>
+</div>
+</li>
+<li>Choose the installation directory.<br>
+<div style="font-weight:normal;">The wizard proposes an installation directory.<br>
+This directory will contain all files and third party components needed to operate SMW+.<br>
+Click Browse to choose a different installation directory.<br>
+Proceed by clicking Next.</div></li>
+<li>Customize wiki settings.<br>
+<div style="font-weight:normal;">You can customize the following wiki settings:
+<ul>
+<li><b>Wiki name.</b> Enter a name for the wiki. This name will be displayed in the title bar of the browser when opening SMW+.</li>
+<li><b>Wiki logo.</b> Choose a logo for the wiki. This logo will be displayed in the upper left corner of the user interface.</li>
+<li><b>Language.</b> Choose the content language of the wiki.
+<hr><b>Note &ndash;</b> Currently, only English is available as the wiki's content language.<hr></li>
+<li><b>Skin.</b> A skin allows the customization of the layout of your wiki.<br>
+SMW+ is shipped with a predefined skin called <em>ontoskin</em>.</li>
+</ul>
+</div></li>
+<li>Click Install.<br>
+<div style="font-weight:normal;">SMW+ will be installed.
+<hr><b>Note &ndash;</b> The installer will install the Apache HTTP Server and the MySQL database which both need access to various ports.<br>
+Windows may ask you if it should block these programs. In order to operate SMW+ it is necessary to unblock these programs.<hr></div></li>
+<li>Finish the installation.<br>
+<div style="font-weight:normal;">The installation was successful once the wizard shows the message "Completing the SMW+ Version 1.x Setup Wizard".<br>
+It is recommended that you select the check box Start XAMPP. This will start XAMPP automatically after<br>
+the installation is completed. Click Finish to close the installation wizard.
+</div></li>
+<li>(Optional) Test your installation.<br>
+<div style="font-weight:normal;">The following shortcuts have been installed on your desktop:
+<ul>
+<li><b>SMW+ Start.</b> Double-clicking this shortcut will start XAMPP.</li>
+<li><b>SMW+ Stop.</b> Double-clicking this shortcut will stop XAMPP.</li>
+<li><b>SMW+ Main Page.</b> Double-clicking this shortcut will direct the browser to the wiki's start page.</li>
+</ul>
+Double-click the SMW+ Main Page shortcut. The installation was successful if your browser opens the start page of SMW+.<br>
+If the browser shows an empty page, XAMPP might not be running. To start XAMPP, double-click the SMW+ Start shortcut. 
+</div></li>
+</ol>
+</div>

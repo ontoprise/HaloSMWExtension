@@ -1,0 +1,127 @@
+__NOTOC__
+The Gardening tool suite of SMW+ is a set of programs that allow you to improve the quality of your wiki.
+
+[[Image:Gardening_toolbox.png|none|thumb|600px|Gardening Toolbox]]
+
+What tools a user is allowed to use depends on his group membership. Three groups are predefined:
+* '''darkmatter.''' The ordinary wiki user. A user of this group can only access read-only bots, which do not cause too much database load.
+* '''gardener.''' A special wiki user whose main task is to keep the data consistent. A user of this group is allowed to use all tools.
+* '''sysop.''' The wiki administrator. A user of this group is allowed to use all tools.
+
+The Gardening tool suite is available on the special page <tt>Special:Gardening</tt> and consists of the following tools:
+
+<table border="0" cellpadding="3" style="background-color:#FFFFFF;" width="60%" summary="Parameters of the generateTree Parser Function">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">Bot</th>
+	<th style="text-align:left;">Description</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Check Wiki Consistency</td>
+	<td style="vertical-align:top;">Searching for loops in the taxonomy as well as for properties without domain and range. In addition, it checks the correct usage of properties according to domain and range information as well as cardinality errors.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Materialize Template Content</td>
+	<td style="vertical-align:top;">Updating pages that have their annotations via templates. This information must be materialized so that the annotations will be included in the results of [[Help:Inline_Queries|inline queries.]]</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Find Undefined Entities</td>
+	<td style="vertical-align:top;">Searching for categories and properties that are used within the wiki but which are not defined (i.e., which are implicitly defined by a category link but which do not exist as an article). This bot also searches for instances that have no category assigned.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Find Pages Without Annotations</td>
+	<td style="vertical-align:top;">Finding pages that have no annotation whatsoever.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Find Anomalies</td>
+	<td style="vertical-align:top;">Finding empty categories (i.e., categories that contain neither subcategories nor instances) and subcategory number anomalies (i.e., categories with only one or more than eight subcategories).</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Import an Ontology</td>
+	<td style="vertical-align:top;">[[Help:Ontology_Import|Importing OWL ontology files]].</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Export Ontology</td>
+	<td style="vertical-align:top;">Exporting the wiki ontology into the OWL format.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Check Referential Integrity</td>
+	<td style="vertical-align:top;">Checking the integrity of links to external resources.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;">Import Terms of a Vocabulary</td>
+	<td style="vertical-align:top;">Importing an external vocabulary.</td>
+    </tr>
+<tr>
+	<td style="vertical-align:top;">Semantic Notifications</td>
+	<td style="vertical-align:top;">Sending notifications if the result sets of watched queries have changed.</td>
+    </tr>
+<tr>
+	<td style="vertical-align:top;">Clean the Web Service Cache</td>
+	<td style="vertical-align:top;">Removing cached web service results that are outdated.</td>
+    </tr>
+<tr>
+	<td style="vertical-align:top;">Update the Web Service Cache</td>
+	<td style="vertical-align:top;">Updating the web service cache.</td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+   </tr>
+<caption style="caption-side: bottom; width: auto; text-align: left;" align="bottom">Bots of the Gardening Tool Suite</caption>
+</table>
+
+
+== Current/Recent Bot Activities ==
+
+Once you have started one of the gardening bots, the Current/Recent Bot Activities panel appears showing the progress status of the currently running bot as well as information about recently run bots. 
+
+[[Image:Gardening_current_bot_activities.png|none|thumb|600px|Current/Recent Bot Activities Panel]]
+
+The results of each run are shown in the corresponding log.
+
+== Gardening Logs ==
+
+Each gardening log contains a list of wiki pages the bot has identified as being problematic. Clicking on the info icon <span style="position: relative; bottom: 2px;">[[Image:Gardening_info_icon.png]]</span> will expand the item showing an explanation why this page constitutes an issue that should be fixed.  
+
+[[Image:Gardening_log.png|none|thumb|600px|Gardening Log]]
+
+A button at the bottom of the page allows you to expand or collapse all issues at once.
+
+== Issue Types ==
+
+Various gardening logs can be filtered for different issue types.
+
+For example, once you have run the 'Check Wiki Consistency bot', the gardening log can be filtered for the following issues types:
+
+* Covariance problems
+* Incomplete schema
+* Doubles
+* Wrong/missing values
+* Incompatible Entities
+* Cycles
+
+A log of the 'Find Undefined Entities' bot can be filtered for the following issue types:
+
+* Instances without categories
+* Undefined properties
+* Undefined categories
+* Undefined relation targets
+
+A log of the 'Find Anomalies' bot can be filtered for the following issue types:
+
+* Category leaves
+* Subcategory anomaly
+
+A log of the 'Import Terms of a Vacabulary' bot can be filtered for the following issue types:
+
+* Imported articles
+* Updated articles
+* Import system errors
+* Skipped updates
+
+In addition, all logs can be filtered by a simple substring matching. Then only these pages will be displayed that match your input in the Contains text box.

@@ -1,0 +1,135 @@
+__NOTOC__
+In MediaWiki users can watch pages, that is, they get a notification email if the watched page has been changed by someone else.
+
+In SMW+ users can also be notified when semantic annotations have changed. A notification is triggered when the result set of a query changes. This task is accomplished by a special bot of the [[Help:Gardening|Gardening]] tool suite.
+
+== Enabling Semantic Notifications ==
+
+Semantic notifications are enabled in <tt>LocalSettings.php</tt>. The variable <tt><nowiki>$smwgEnableSemanticNotifications</nowiki></tt> must be set to true before <tt><nowiki>enableSMWHalo()</nowiki></tt> is called:
+<pre>
+<nowiki>$smwgEnableSemanticNotifications = true;</nowiki>
+</pre>
+
+To be able to receive notification emails, you must have specified a valid email address in your [[Help:Preferences|Preferences]]. Otherwise you are not allowed to enter queries on the special page <tt>Special:SemanticNotifications</tt>.
+
+== Semantic Notifications User Interface ==
+
+SMW+ has a special user interface for building notification queries. To access this user interface, visit the special page <tt>Special:SemanticNotifications</tt>.
+
+[[Image:Semantic_notifications.png|none|thumb|600px|Semantic Notifications User Interface]]
+
+From this user interface the [[Help:Query_Interface|Query Interface]] can be invoked to create a query for the notification. The Query Interface will pass the query text to the special page <tt>Special:SemanticNotifications</tt>. To achieve this, the cookie <tt>NOTIFICATION_QUERY</tt> is set by the Query Interface before the browser shows <tt>Special:SemanticNotifications</tt>. This page then checks if the cookie is available, sets its content as query and deletes the cookie.
+<hr>
+'''Note &ndash;''' For this to work cookies must be allowed by the browser.
+<hr>
+Once you have created your query in the Query Interface, click the button 'Insert as notification'. The special page <tt>Special:SemanticNotifications</tt> appears again and now contains the query you have just created. You can test the query by clicking the button 'Show Preview'. The query results will be displayed in the lower panel.
+
+[[Image:Semantic_notifications_query_results.png|none|thumb|600px|Query and Query Results in the Semantic Notifications User Interface]]
+
+Finally, fill in a time interval and a name for the notification query and click 'Add notification'. The notification query will be copied into the My Notifications panel on the right. If an annotation is changed or a new annotation is added to the wiki causing a change of the result set of this particular query, you will receive a notification email about this change at the given interval. 
+ 
+== The Semantic Notifications Bot ==
+
+All tasks related to semantic notifications are carried out by the Semantic Notifications bot of the [[Help:Gardening|Gardening]] tool suite. This bot performs the following tasks:
+
+* Reads all notification requests of all users
+* Executes the queries
+* Compares the new results with the previous results (see XML structure)
+* Stores the latest results in the DB
+* Sends the notifications for changed semantic annotations
+* Considers the configuration settings
+
+The Semantic Notifications bot is a PHP script that should be executed at regular intervals. For that purpose you can use special programs that execute commands or scripts automatically at a specified time/date such as Windows' time-based scheduling service ''Scheduled Tasks''. To open Scheduled Tasks, go to Start >> All Programs >> Accessories >> System Tools >> Scheduled Tasks.
+
+To create a scheduled task, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Start the Scheduled Task Wizard.<br>
+<div style="font-weight:normal;">Double click 'Add Scheduled Task' to start the Scheduled Task Wizard.<br>
+Click Next in the first dialog box.</div></li>
+<li>Select the file to be scheduled.<br>
+<div style="font-weight:normal;">Click Browse and select the folder and file that you want to schedule<br>
+(e.g., <tt>C:\Programme\PHP\php.exe</tt>), then click Open.</div></li>
+<li>Choose a name.<br>
+<div style="font-weight:normal;">Choose a name for the task (e.g., Semantic Notification Bot) and choose Daily as the interval.</div></li>
+<li>Specify day and time.<br>
+<div style="font-weight:normal;">Click Next, specify the information about the day and time to run the task, then click Next.</div></li>
+<li>Specify access credentials.<br>
+<div style="font-weight:normal;">Type in the name and password of the user who is associated with this task.<br>
+Make sure that you choose a user with sufficient permissions to run the program.<br>
+By default, the wizard selects the name of the user who is currently logged in.</div></li>
+<li>Finish the wizard.<br>
+<div style="font-weight:normal;">Click Next, then click Finish after you have verified your settings.</div></li>
+<li>Adjust execution settings.<br>
+<div style="font-weight:normal;">The task appears in the list of Scheduled Tasks. Open its properties.<br>
+In the Task tab you have to change the fields Execute and 'Execute in' (adapt to your own paths):</div>
+<ol style="list-style-type:lower-alpha;">
+<li>Change the Execute field.<br>
+<div style="font-weight:normal;">For example:<br>
+<tt>C:\Programme\PHP\php.exe SMW_startBot.php -b smw_semanticnotificationbot</tt></div></li>
+<li>Change the 'Execute in' field.<br>
+<div style="font-weight:normal;">For example:<br> 
+<tt>C:\Programme\MediaWiki\HaloSMWExtension\extensions\SMWHalo\maintenance</tt></div></li>
+</ol>
+</li>
+<li>Save you changes.<br>
+<div style="font-weight:normal;">Click OK to save your changes.</div></li>
+</ol>
+</div>
+The Semantic Notifications bot will now run at the given time/date.
+
+== Configuration ==
+
+The database for semantic notifications can quickly grow when many users are watching many queries with large result sets. Another problem besides the size of the database is the bot that handles the notifications. It can slow down the system considerably as it has to evaluate all queries of all users and compare the different versions of the result sets.
+
+To avoid these problems, the wiki's administrator can limit the extent of semantic notifications by three measures. In <tt>SMW_SemanticNotificationSettings.php</tt> the following restrictions can be specified at user and user group level:
+
+* Number of semantic notification per user or user group. The value for a user group overwrites the general one for users.
+* Size of the result set in the DB (in bytes). The quality of the notification message will be affected by this restriction.
+* Minimal update interval (in days). The Semantic Notifications bot checks for changes at the given interval. 
+
+'''Example:'''
+
+(The complete path to the configuration file is:<br>
+<tt>$IP/extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationSettings.php</tt>)
+
+<pre>
+<nowiki>
+$GLOBALS['smwgSemanticNotificationLimits'] = array(
+    "allUsers" => array(
+        "notifications" => 2, 
+        "size" => 10000, 
+        "min interval" => 7),
+    "group Sysop" => array(
+        "notifications" => 10, 
+        "size" => 100000, 
+        "min interval" => 3),
+    "group Gardener" => array(
+        "notifications" => 100, 
+        "size" => 1000000,
+        "min interval" => 1)
+);
+</nowiki>
+</pre>
+
+In this example, all users that are not members of the groups Sysop and Gardener can define two notifications, the result set for each can have a size of up to 10,000 bytes and the Semantic Notifications bot checks for changes every seven days. 
+
+Users in the group Sysop have 10 notifications at their disposal with a size of up to 100,000 bytes in each result set and a minimum update interval of three days. 
+
+Users that belong to several groups get the maximum of all notifications and size and the minimum of the min interval. So a Sysop who is also a Gardener has 100 notifications with a size of up to 1,000,000 bytes for each one and receives a notification email every day.
+
+== Notification Messages ==
+
+Semantic notifications can only be sent if the user's email address is available. The Semantic Notifications bot will check at certain intervals if notification emails need to be sent due to changes in the semantic annotations.
+
+A notification email contains the following information:
+
+* Name of the user
+* Name of the notification
+* Query of the notification
+* A table of changed rows from the result set
+** Values of added annotations
+** Values of removed annotations
+** Values of changed annotations (old and new value) 
+* A link to the definition of the notification in the wiki

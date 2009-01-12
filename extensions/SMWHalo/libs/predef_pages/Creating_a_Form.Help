@@ -1,0 +1,38 @@
+You need to create two forms, one for books and one for authors. To create the form for books pages,
+proceed as follows:
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the Create a Form dialog box.<br>
+<div style="font-weight:normal;">Go to the special page <tt>Special:CreateForm</tt>.</div></li>
+<li>Specify a form name.<br>
+<div style="font-weight:normal;">Enter "Book" into the Form Name text box.</div></li>
+<li>Specify a template.<br>
+<div style="font-weight:normal;">Select <tt>Book</tt> from the Add Template list.<br><br>
+[[Image:Semantic_forms_create_form.png|frame|none|Create a Form Dialog Box Prior to Adding a Template]]
+</div><br></li>
+<li>Add the template.<br>
+<div style="font-weight:normal;">Click Add. The template will be included into the form.<br>
+You do not need to further customize the form.</div></li>
+<li>Save the form.<br>
+<div style="font-weight:normal;">Click Save Page. The form page tab will appear.<br><br>
+[[Image:Semantic_forms_form_created.png|frame|none|Form Page Tab]]
+</div></li>
+</ol>
+</div>
+<p>Repeat the steps above to create the form for author pages:</p>
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Open the Create a Form dialog box.<br>
+<div style="font-weight:normal;">Go to the special page <tt>Special:CreateForm</tt>.</div></li>
+<li>Specify a form name.<br>
+<div style="font-weight:normal;">Enter "Author" into the Form Name text box.</div></li>
+<li>Specify a template.<br>
+<div style="font-weight:normal;">Select <tt>Author</tt> from the Add Template list.</div></li>
+<li>Add the template.<br>
+<div style="font-weight:normal;">Click Add. The template will be included into the form.<br>
+You do not need to further customize the form.</div></li>
+<li>Save the form.<br>
+<div style="font-weight:normal;">Click Save Page. The form page tab will appear.</div></li>
+</ol>
+</div>
+Proceed with [[Help:Creating a Category|Creating a Category]].
