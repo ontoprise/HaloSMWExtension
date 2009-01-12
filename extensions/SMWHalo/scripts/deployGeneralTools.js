@@ -967,10 +967,17 @@ Breadcrump.prototype = {
             var show = title.length == 2 ? title[1] : title[0];
             show = show.replace(/_/g, " ");
             
-            // add item 
-            var encURI = encodeURIComponent(b);
-            encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
-            html += '<a href="'+wgServer+wgScript+'/'+encURI+'">'+show+' &gt; </a>'; 
+            // add item
+             var encURI = encodeURIComponent(b);
+            if (wgArticlePath.indexOf('?title=') != -1) {
+            	encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
+            	var articlePath = wgArticlePath.replace("$1", encURI);
+            }  else {
+           	    encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
+           	    encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
+            	var articlePath = wgArticlePath.replace("$1", encURI);
+            }
+            html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>'; 
         });
         var bc_div = $('breadcrump');
         if (bc_div != null) bc_div.innerHTML = html;
@@ -1108,14 +1115,14 @@ ContentSlider.prototype = {
             $('p-cactions').style.marginLeft = (windowWidth*(v-iv)) - sliderSmooth +"px";
             $('content').style.marginLeft = currMarginDiv - sliderSmooth + "px";
            
-           // change width of Treeviews of class 'dtreestatic'
+           // change width of divs of class 'dtreestatic' below main_navtree
+           // and of main_navtree itself.
            var sliderWidth = this.sliderWidth;
-           $$('div.dtreestatic').each(function(s) { 
+           $$('#main_navtree div.dtreestatic').each(function(s) { 
                 s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
            });
-           $$('div.Treeview5').each(function(s) { 
-                s.style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
-           });
+           $('main_navtree').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           
            
            // change sidebars
            $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";

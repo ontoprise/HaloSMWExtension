@@ -67,14 +67,14 @@ ContentSlider.prototype = {
             $('p-cactions').style.marginLeft = (windowWidth*(v-iv)) - sliderSmooth +"px";
             $('content').style.marginLeft = currMarginDiv - sliderSmooth + "px";
            
-           // change width of Treeviews of class 'dtreestatic'
+           // change width of divs of class 'dtreestatic' below main_navtree
+           // and of main_navtree itself.
            var sliderWidth = this.sliderWidth;
-           $$('div.dtreestatic').each(function(s) { 
+           $$('#main_navtree div.dtreestatic').each(function(s) { 
                 s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
            });
-           $$('div.Treeview5').each(function(s) { 
-                s.style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
-           });
+           $('main_navtree').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           
            
            // change sidebars
            $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
