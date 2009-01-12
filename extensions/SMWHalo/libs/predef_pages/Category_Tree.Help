@@ -7,7 +7,7 @@ Once you have selected a category in the Category Tree, the panels of the Ontolo
 <ul>
 <li>The selected category will be highlighted with a gray background.</li>
 <li>The Instance panel shows all instances that belong to this category in alphabetical order. Inherited instances, that is, instances that actually belong to a subcategory, are displayed in italics. In addition, the subcategory is displayed in angle backets.</li>
-<li>Entities for which the gardening bot (see [[Help:Checking_Consistency|Check Wiki Consistency]]) has determined a problem are displayed in an orange boldface font along with a small warning icon [[Image:Warning_icon.png]]. Clicking the icon opens a dialog box indicating the origin of the problem. A typical example is when an instance of the selected category lacks an annotation that is required by the schema definition.</li>
+<li>Entities for which the gardening bot has determined a problem are displayed in an orange boldface font along with a small warning icon [[Image:Warning_icon.png]]. Clicking the icon opens a dialog box indicating the origin of the problem. A typical example is when an instance of the selected category lacks an annotation that is required by the schema definition.</li>
 <li>The Properties panel shows the properties that have specified the selected category as their domain.</li> 
 </ul>
 [[Image:Ontology_browser.png|none|frame|Ontology Browser]]
