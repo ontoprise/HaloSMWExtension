@@ -33,7 +33,7 @@ The default setting is 0.</div></li>
 The default setting is unlimited.</div></li>
 <li>(Optional) Choose a type.<br>
 <div style="font-weight:normal;">Click Add Type. A new text box appears where you can choose a type.<br>
-For more information on types, see [[Help:Property_Types|Property Types]].<br>
+For more information on types, see [[Help:Properties_and_Types|Property Types]].<br>
 The default setting is <tt>Type:Page</tt>, which is used for properties whose<br>
 value is an article in the wiki.</div></li>
 <li>(Optional) Choose a range.<br>
