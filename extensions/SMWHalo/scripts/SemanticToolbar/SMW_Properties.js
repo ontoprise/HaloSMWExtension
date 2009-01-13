@@ -16,7 +16,6 @@
 */
 var DOMAIN_HINT = "has domain and range";
 var RANGE_HINT  = "has domain and range";
-var HAS_TYPE = "has type";
 var MAX_CARDINALITY = "Has max cardinality";
 var MIN_CARDINALITY = "Has min cardinality";
 var INVERSE_OF = "Is inverse of";
@@ -138,7 +137,7 @@ createContent: function() {
 	}
 	this.wtp.initialize();
 	
-	var type    = this.wtp.getRelation(HAS_TYPE);
+	var type    = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
 	var domain  = this.wtp.getRelation(DOMAIN_HINT);
 	var range   = this.wtp.getRelation(RANGE_HINT);
 	var maxCard = this.wtp.getRelation(MAX_CARDINALITY);
@@ -221,7 +220,7 @@ createContent: function() {
 		domain = domain.replace(/^\s*(.*?)\s*$/,"$1");
 		if (domain.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
 			// Strip the category-keyword
-			domain = domain.substring(9);
+			domain = domain.substring(gLanguage.getMessage('CATEGORY_NS').length);
 		}
 	}
 	if (range == null) {
@@ -232,7 +231,7 @@ createContent: function() {
 			// trim
 			range = range.replace(/^\s*(.*?)\s*$/,"$1");
 			if (range.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
-				range = range.substring(9);
+				range = range.substring(gLanguage.getMessage('CATEGORY_NS').length);
 			}
 		} else {
 			//range = range[0].getValue();
@@ -254,7 +253,7 @@ createContent: function() {
 	} else {
 		inverse = inverse[0].getValue();
 		if (inverse.indexOf(gLanguage.getMessage('PROPERTY_NS')) == 0) {
-			inverse = inverse.substring(9);
+			inverse = inverse.substring(gLanguage.getMessage('PROPERTY_NS').length);
 		}
 	}
 	transitive = (transitive != null) ? "checked" : "";
@@ -273,7 +272,7 @@ createContent: function() {
 	
 	this.prpNAry = 0;
 	this.numOfParams = 0;
-	var types = this.wtp.getRelation(HAS_TYPE);
+	var types = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
 	if (types) {
 		types = types[0];
 		types = types.getSplitValues();
@@ -302,13 +301,15 @@ createContent: function() {
 			if (ranges && rc < ranges.length) {
 				r = ranges[rc++].getSplitValues()[1];
 			}
-			// trim
-			r = r.replace(/^\s*(.*?)\s*$/,"$1");
-			
-			if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
-				r = r.substring(gLanguage.getMessage('CATEGORY_NS').length);
+			if (r != undefined) {
+				// trim
+				r = r.replace(/^\s*(.*?)\s*$/,"$1");
+				
+				if (r.indexOf(gLanguage.getMessage('CATEGORY_NS')) == 0) {
+					r = r.substring(gLanguage.getMessage('CATEGORY_NS').length);
+				}
+				isPage = true;
 			}
-			isPage = true;
 		}
 		tb.append(tb.createInput('prp-range-' + i, gLanguage.getMessage('RANGE'), 
 								 '', '',
@@ -479,7 +480,7 @@ hasAnnotationChanged: function(relations, categories) {
 propTypeChanged: function(target) {
 	var target = $(target);
 	
-	var typeIdx = target.id.substring(9);
+	var typeIdx = target.id.substring(gLanguage.getMessage('PROPERTY_NS').length);
 	var rangeId = "prp-range-"+typeIdx;
 	
 	var attrType = target[target.selectedIndex].text;
@@ -764,14 +765,14 @@ apply: function() {
 	}
 	
 	// add the (n-ary) type definition
-	attrTypeAnno = this.wtp.getRelation(HAS_TYPE);
+	attrTypeAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
 	if (typeString != "") {
 		// remove final semi-colon
 		typeString = typeString.substring(0, typeString.length-1);
 		if (attrTypeAnno != null) {
 			attrTypeAnno[0].changeValue(typeString);
 		} else {			
-			this.wtp.addRelation(HAS_TYPE, typeString, null, true);
+			this.wtp.addRelation(gLanguage.getMessage('HAS_TYPE'), typeString, null, true);
 		}
 	} else {
 		attrTypeAnno[0].remove("");
