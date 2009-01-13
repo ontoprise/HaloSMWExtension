@@ -26,5 +26,8 @@ var wgContLanguageStrings = {
 	'TYPE_NS'                 : 'Type:', 		//namespace identifier with colon
 	'WEBSERVICE_NS'           : 'WebService:',  //namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
-	'TYPE_PAGE_WONS'		  : "Page"			// type identifier without namespace
+	'TYPE_PAGE_WONS'		  : "Page",			// type identifier without namespace
+	
+	'HAS_TYPE'				  : "has type"		// Special property for definition of data type
+	
 }
