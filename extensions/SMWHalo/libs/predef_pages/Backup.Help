@@ -1,0 +1,30 @@
+__NOTOC__
+As with all such systems, it is important to make regular backups of the data in your wiki. This page provides an overview of the backup process for a typical MediaWiki wiki; you will probably want to devise your own backup scripts or schedule to suit the size of your wiki and your individual needs.
+
+== Overview ==
+
+MediaWiki stores important data in two places:
+
+* '''Database.''' Pages and their contents, users and their preferences, metadata, search index, etc.
+* '''File System.''' Software configuration files, custom skins, extensions, images (including deleted images), etc.
+
+<hr>
+<b>Tip &ndash;</b>
+Consider making the Wiki read-only before creating the backup. This makes sure all parts of your backup are consistent. For more information, see the documentation of [http://www.mediawiki.org/wiki/Manual:$wgReadOnly $wgReadOnly] on the MediaWiki Web site.
+<hr> 
+
+== Database ==
+
+Most of the critical data in the wiki is stored in the database, which is typically straightforward to back up. When using the MySQL backend (default), various utilities are available to assist with "dumping" the database into a file, that is, generating a script file which can be used to recreate the database and all data in it from scratch if needed.
+
+For example, the [http://dev.mysql.com/doc/refman/5.0/en/mysqldump.html MySQL dump tool] is a command-line application which can produce a dump file given the name of the database(s) to back up. Behavior can be altered using standard parameters which will customize the output file format, for example, setting the character encoding. 
+
+Windows users might use the MySQL Administrator of the [http://dev.mysql.com/downloads/gui-tools/5.0.html MySQL GUI Tools], which is a program for performing administrative operations. This includes configuring, monitoring and starting and stopping a MySQL server, managing users and connections, performing backups, and a number of other administrative tasks. For more information, see the [http://dev.mysql.com/doc/administrator/en/index.html MySQL Administrator Manual].  
+
+== File System ==
+
+MediaWiki stores other components of the wiki in the file system where this is more appropriate than insertion into the database, for example, site configuration files (<tt>LocalSettings.php</tt>, <tt>AdminSettings.php</tt>), image files (including deleted images, thumbnails and rendered math and SVG images, if applicable), skin customizations, extension files, etc.
+
+The best method to back these up is to place them into an archive file, such as a <tt>.tar</tt> or <tt>.zip</tt> file, which can then be compressed if desired. On Windows, applications such as WinZip can be used if preferred.
+
+For more information on creating backups, see the [http://www.mediawiki.org/wiki/Backup Backup help page] on the MediaWiki Web site.
