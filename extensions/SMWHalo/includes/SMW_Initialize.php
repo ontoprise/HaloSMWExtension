@@ -595,7 +595,7 @@ function smwfHaloAddHTMLHeader(&$out) {
     $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Rules/rules.css', "edit");
     $jsm->addCSSIf($smwgHaloScriptPath . '/skins/SemanticNotifications/semanticnotification.css', "all", -1, NS_SPECIAL.":SemanticNotifications");
-    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
+//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
     // serialize the css
     $jsm->serializeCSS($out);
