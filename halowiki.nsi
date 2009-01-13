@@ -196,13 +196,8 @@ Section "-CopyInstaller"
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   
-  ${If} $0 == 1
-     SetOutPath "$INSTDIR\htdocs\mediawiki\installer"
-     CreateDirectory "$INSTDIR\htdocs\mediawiki\installer"
-  ${Else}
-     SetOutPath "$INSTDIR\installer"
-     CreateDirectory "$INSTDIR\installer"
-  ${EndIf}
+  SetOutPath "$INSTDIR\htdocs\mediawiki\installer"
+  CreateDirectory "$INSTDIR\htdocs\mediawiki\installer"
   !ifndef NOFILES
     File /r /x .svn /x *.exe /x *.nsi ..\SMWPlusInstaller\*
     ${If} $0 == 1
@@ -210,6 +205,21 @@ Section "-CopyInstaller"
     "" "$INSTDIR\htdocs\mediawiki\installer\images\smwplus_32.ico" 0
     ${EndIf}
   !endif
+SectionEnd
+
+Section "Online Help" ohelp
+    SectionIn 1 2 3
+    SectionGetFlags ${xampp} $0
+    IntOp $0 $0 & ${SF_SELECTED}
+    
+    SetOutPath "$INSTDIR\help"
+    CreateDirectory "$INSTDIR\help"
+    !ifndef NOFILES
+        File /r ..\com.ontoprise.smwplus.help\compiled\*
+        ${If} $0 == 1
+            CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Help.lnk" "$INSTDIR\help\Help.exe"
+        ${EndIf}
+    !endif
 SectionEnd
 
 SectionGroup "${PRODUCT} ${VERSION}" 
@@ -274,17 +284,9 @@ Section "Semantic Forms" semforms
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   
-  ${If} $0 == 1
-    
-    SetOutPath "$INSTDIR\htdocs\mediawiki"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-    
-  ${Else}
-    SetOutPath "$INSTDIR"
-   
-    StrCpy $MEDIAWIKIDIR "$INSTDIR"
-  ${EndIf}
+  SetOutPath "$INSTDIR\htdocs\mediawiki"
+  StrCpy $PHP "$INSTDIR\php\php.exe"
+  StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importSemForms=1 ls=LocalSettings.php'
@@ -296,17 +298,9 @@ Section "Treeview" treeview
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   
-  ${If} $0 == 1
-    
-    SetOutPath "$INSTDIR\htdocs\mediawiki"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-    
-  ${Else}
-    SetOutPath "$INSTDIR"
-   
-    StrCpy $MEDIAWIKIDIR "$INSTDIR"
-  ${EndIf}
+  SetOutPath "$INSTDIR\htdocs\mediawiki"
+  StrCpy $PHP "$INSTDIR\php\php.exe"
+  StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importTreeview=1 ls=LocalSettings.php'
@@ -318,17 +312,9 @@ Section "WYSIWYG" wysiwyg
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   
-  ${If} $0 == 1
-    
-    SetOutPath "$INSTDIR\htdocs\mediawiki"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-    
-  ${Else}
-    SetOutPath "$INSTDIR"
-   
-    StrCpy $MEDIAWIKIDIR "$INSTDIR"
-  ${EndIf}
+  SetOutPath "$INSTDIR\htdocs\mediawiki"
+  StrCpy $PHP "$INSTDIR\php\php.exe"
+  StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importWYSIWYG=1 ls=LocalSettings.php'
@@ -340,7 +326,7 @@ SectionGroupEnd
 ;Languages (english)
 LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP contains the server infrastructure."
 LangString DESC_smwplus ${LANG_ENGLISH} "${PRODUCT} ${VERSION}"
-
+LangString DESC_ohelp ${LANG_ENGLISH} "Eclipse-based online help."
 
 LangString DESC_semforms ${LANG_ENGLISH} "Semantic Forms ease the annotation process by providing a simple interface."
 LangString DESC_treeview ${LANG_ENGLISH} "The Treeview extension allows a hierarchical displaying of content or links."
@@ -359,9 +345,7 @@ LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "If Windows Firewall complains
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
 	!insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
-  
-    
-	
+    !insertmacro MUI_DESCRIPTION_TEXT ${ohelp} $(DESC_ohelp)
     !insertmacro MUI_DESCRIPTION_TEXT ${semforms} $(DESC_semforms)
     !insertmacro MUI_DESCRIPTION_TEXT ${treeview} $(DESC_treeview)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
@@ -612,7 +596,15 @@ Function configCustomizationsForUpdate
 		wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
 		smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
 	
-	
+	DetailPrint "Updating helppages"
+        DetailPrint "Starting XAMPP"
+        SetOutPath "$INSTDIR"
+        Exec "$INSTDIR\xampp_start.exe"
+        CALL waitForApacheAndMySQL
+        MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
+        SetOutPath "$INSTDIR\htdocs\mediawiki"
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --removehelppages'
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
 FunctionEnd
 
 Function checkForSkype
