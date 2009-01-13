@@ -1,4 +1,62 @@
+__NOTOC__
 SMW+ provides LDAP authentication and some authorization functionality for MediaWiki. "LDAP" stands for ''Lightweight Directory Access Protocol'', which is an application protocol for querying and modifying directory services running over TCP/IP.
 <hr>
 <b>Note &ndash;</b> In SMW+, LDAP authentication is implemented by the LDAP Authentication MediaWiki extension. For more information, see the [http://www.mediawiki.org/wiki/Extension:LDAP_Authentication LDAP Authentication Web site].
 <hr>
+LDAP is commonly used as a central authentication service by many applications. Since there is an LDAP extension for MediaWiki, wiki users can also be authenticated by an LDAP server. It is possible to manage only users or both users and groups on an LDAP server. Additionally, you can use the LDAP server together with the normal authentication mechanism of MediaWiki during a migration process.
+
+== Basic Authentication ==
+
+The basic authentication mode verifies only users in the wiki, but not groups. Groups are managed in the wiki manner, not at the LDAP server. To use that mode, you have to add some lines to your <tt>LocalSettings.php</tt>:
+<pre>
+require_once('extensions/LdapAuthentication.php');
+$wgAuth = new LdapAuthenticationPlugin();
+$wgLDAPDomainNames = array(   // (1)
+  'Ontoprise'
+);
+$wgLDAPServerNames = array(   // (2)
+  'Ontoprise' => 'localhost'
+);
+$wgLDAPSearchStrings = array( // (3)
+  'Ontoprise' => 'uid=USER-NAME,ou=Users,dc=example,dc=com'
+);
+$wgLDAPUseLocal = false;      // (4)
+$wgLDAPEncryptionType = array( "Ontoprise"=> "tcl"); // (5)
+$wgLDAPOptions['no_url'] = true; // (6)
+$wgLDAPOptions['port'] = 10389;  // (7)
+$wgMinimalPasswordLength = 1;    // (8)
+</pre>
+
+Explanations:
+
+(1) Domain used to log in (arbitrary name)
+
+(2) LDAP server name
+
+(3) Query string which identifies a user. The variable <tt>USER-NAME</tt> is replaced by the actual user name.
+
+(4) Use only LDAP for auth or local DB too. Good for transitional purposes if not all users are already registered at the LDAP server. 
+
+(5) Server encryption protocol: SSL or TCL 
+
+(6) Do not put the protocol name <tt>ldap://</tt> before the server name. Some servers do not accept that (e.g., Apache Directory)
+
+(7) Server port of LDAP service
+
+(8) Minimal length of password
+
+== Advanced Authentication ==
+
+The advanced authentication allows to handle the groups at the LDAP server too. It needs some additional settings:
+*'''Required groups'''. All fully qualified names of required groups, for example:
+:<pre>$wgLDAPRequiredGroups['Ontoprise'] = array("cn=sysop,ou=groups,dc=example,dc=com","cn=gardener,ou=groups,dc=example,dc=com");</pre>
+*'''Group Base DN'''. Base DN of groups:
+:<pre>$wgLDAPGroupBaseDNs['Ontoprise'] = "ou=groups,dc=example,dc=com";</pre>
+*'''Group object'''. Objectclass of <tt>$wgLDAPGroupAttribute</tt>:
+:<pre>$wgLDAPGroupObjectclass['Ontoprise'] = "groupOfUniqueNames";</pre>
+*'''Group attribute'''. Attribute which links to group members (users):
+:<pre>$wgLDAPGroupAttribute['Ontoprise'] = "uniquemember";</pre>
+*'''Group attribute value'''. Template for target of <tt>$wgLDAPGroupAttribute</tt> (replace <tt>USER-NAME</tt> by actual user name):
+:<pre>$wgLDAPGroupAttributeValue['Ontoprise'] = "uid=USER-NAME,ou=users";</pre>
+*'''Group name attribute''': Name of attribute of group name:
+:<pre>$wgLDAPGroupNameAttribute['Ontoprise'] = "cn";</pre>
