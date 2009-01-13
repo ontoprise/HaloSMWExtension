@@ -1121,7 +1121,8 @@ ContentSlider.prototype = {
            $$('#main_navtree div.dtreestatic').each(function(s) { 
                 s.style.width = windowWidth*v+sliderWidth-7- sliderSmooth +"px";
            });
-           $('main_navtree').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           var main_navTree = $('main_navtree');
+           if (main_navTree != null) main_navTree.style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            
            
            // change sidebars
