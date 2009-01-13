@@ -43,11 +43,13 @@ class SMWTripleStore extends SMWStore {
 	protected static $CAT_NS;
 	protected static $PROP_NS;
 	protected static $INST_NS;
+	protected static $TYPE_NS;
 
 	// general namespace suffixes for different namespaces
 	public static $CAT_NS_SUFFIX = "/category#";
 	public static $PROP_NS_SUFFIX = "/property#";
 	public static $INST_NS_SUFFIX = "/a#";
+	public static $TYPE_NS_SUFFIX = "/type#";
 
 	// SPARQL-PREFIX statement with all namespaces
 	protected static $ALL_PREFIXES;
@@ -65,9 +67,10 @@ class SMWTripleStore extends SMWStore {
 		self::$CAT_NS = $smwgNamespace.self::$CAT_NS_SUFFIX;
 		self::$PROP_NS = $smwgNamespace.self::$PROP_NS_SUFFIX;
 		self::$INST_NS = $smwgNamespace.self::$INST_NS_SUFFIX;
+		self::$TYPE_NS = $smwgNamespace.self::$TYPE_NS_SUFFIX;
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
-		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> ';
+		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> ';
 	}
 
 
@@ -482,6 +485,7 @@ class SMWTripleStore extends SMWStore {
 		if ($namespace == SMW_NS_PROPERTY) return "prop";
 		elseif ($namespace == NS_CATEGORY) return "cat";
 		elseif ($namespace == NS_MAIN) return "a";
+		elseif ($namespace == SMW_NS_TYPE) return "type";
 		else return NULL;
 	}
 
@@ -658,7 +662,13 @@ class SMWTripleStore extends SMWStore {
 					// property value result
 				} else {
 					$literal = $this->unquote($b);
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array(SMWDataValueFactory::newPropertyValue($var_name, $literal)), $prs[$pr_index]);
+					$value = SMWDataValueFactory::newPropertyValue($var_name);
+					if ($value->getTypeID() == '_dat') { // exception for dateTime
+					   $value->setXSDValue(utf8_decode($literal));
+					} else {
+						$value->setUserValue(utf8_decode($literal));
+					}
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($value), $prs[$pr_index]);
 				}
 				$columnIndex++;
                 $pr_index++;
