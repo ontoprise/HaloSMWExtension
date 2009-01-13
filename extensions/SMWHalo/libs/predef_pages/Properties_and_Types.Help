@@ -16,7 +16,7 @@ SMW+ has a number of special properties such as <tt>Property:has type</tt>. Rega
 == Datatypes and Units of Measurement ==
 
 Using different types, properties can be used to describe very different kinds of values. A complete list of available types is available from the special page <tt><nowiki>Special:Types</nowiki></tt>. Basic types include:
-* <tt>Type:String</tt> &ndash; Text strings
+* <tt>Type:String</tt> &ndash; Text strings (limited to 255 characters)
 * <tt>Type:Number</tt> &ndash; Integer and decimal numbers with optional exponent
 * <tt>Type:Page</tt> &ndash; Links to pages (the default)
 These can be used creatively for very different purposes. For instance, properties of type string can be used for encoding phone numbers (which could contain non-numeric symbols).
