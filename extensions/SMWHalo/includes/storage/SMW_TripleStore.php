@@ -513,6 +513,17 @@ class SMWTripleStore extends SMWStore {
 		}
 		return $trimed_lit;
 	}
+	
+	/**
+	 * Removes type hint, e.g. "....."^^xsd:type gets to "....."
+	 *
+	 * @param string $literal
+	 * @return string
+	 */
+	private function removeXSDType($literal) {
+		$pos = strpos($literal, "^^");
+		return $pos !== false ? substr($literal, 0, $pos) : $literal;
+	}
 
 	/**
 	 * Parses a SPARQL XML-Result and returns an SMWQueryResult.
@@ -661,7 +672,7 @@ class SMWTripleStore extends SMWStore {
 
 					// property value result
 				} else {
-					$literal = $this->unquote($b);
+					$literal = $this->unquote($this->removeXSDType($b));
 					$value = SMWDataValueFactory::newPropertyValue($var_name);
 					if ($value->getTypeID() == '_dat') { // exception for dateTime
 					   $value->setXSDValue(utf8_decode($literal));
