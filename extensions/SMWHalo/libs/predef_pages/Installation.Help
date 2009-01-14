@@ -54,6 +54,7 @@ the installation is completed. Click Finish to close the installation wizard.
 <li><b>SMW+ Start.</b> Double-clicking this shortcut will start XAMPP.</li>
 <li><b>SMW+ Stop.</b> Double-clicking this shortcut will stop XAMPP.</li>
 <li><b>SMW+ Main Page.</b> Double-clicking this shortcut will direct the browser to the wiki's start page.</li>
+<li><b>SMW+ Help.</b> Double-clicking this shortcut will open the Eclipse-based online help.</li>
 </ul>
 Double-click the SMW+ Main Page shortcut. The installation was successful if your browser opens the start page of SMW+.<br>
 If the browser shows an empty page, XAMPP might not be running. To start XAMPP, double-click the SMW+ Start shortcut. 
