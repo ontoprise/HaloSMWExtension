@@ -570,7 +570,7 @@ protected $smwUserMessages = array(
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	"___cfsi" => 'Entspricht SI'
+	"___cfsi" => array('_siu', 'Entspricht SI')
 );
 
 

@@ -564,7 +564,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	"___cfsi" => 'Komt overeen met SI'
+	"___cfsi" => array('_siu', 'Komt overeen met SI')
 );
 
 

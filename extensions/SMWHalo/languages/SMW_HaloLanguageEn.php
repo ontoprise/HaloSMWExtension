@@ -662,7 +662,7 @@ clicking the big arrows between the columns.',
 
 	protected $smwSpecialProperties = array(
 	//always start upper-case
-	"___cfsi" => array('_num', 'Corresponds to SI')
+	"___cfsi" => array('_siu', 'Corresponds to SI')
 	);
 
 

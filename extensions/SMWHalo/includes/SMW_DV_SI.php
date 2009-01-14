@@ -47,6 +47,7 @@ class SMWSIUnitTypeHandler extends SMWDataValue {
 	 */
 	public function SMWSIUnitTypeHandler($typeid) {
 		SMWDataValue::__construct($typeid);
+		wfLoadExtensionMessages('SemanticMediaWiki');
 	}
 
     /**
