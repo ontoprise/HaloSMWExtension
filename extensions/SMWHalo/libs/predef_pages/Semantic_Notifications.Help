@@ -7,7 +7,11 @@ In SMW+ users can also be notified when semantic annotations have changed. A not
 
 Semantic notifications are enabled in <tt>LocalSettings.php</tt>. The variable <tt><nowiki>$smwgEnableSemanticNotifications</nowiki></tt> must be set to true before <tt><nowiki>enableSMWHalo()</nowiki></tt> is called:
 <pre>
-<nowiki>$smwgEnableSemanticNotifications = true;</nowiki>
+$smwgEnableSemanticNotifications = true;
+</pre>
+In addition, you need to set a compatibility mode:
+<pre>
+$smwgSMWBetaCompatible = true;  // Needed for '*' in Ask-queries
 </pre>
 
 To be able to receive notification emails, you must have specified a valid email address in your [[Help:Preferences|Preferences]]. Otherwise you are not allowed to enter queries on the special page <tt>Special:SemanticNotifications</tt>.
@@ -39,11 +43,15 @@ From this user interface the [[Help:Query_Interface|Query Interface]] can be inv
 <hr>
 '''Note &ndash;''' For this to work cookies must be allowed by the browser.
 <hr>
-Once you have created your query in the Query Interface, click the button 'Insert as notification'. The special page <tt>Special:SemanticNotifications</tt> appears again and now contains the query you have just created. You can test the query by clicking the button 'Show Preview'. The query results will be displayed in the lower panel.
+Once you have created your query in the Query Interface, click the button 'Insert as notification'. The special page <tt>Special:SemanticNotifications</tt> appears again and now contains the query you have just created. Test the query by clicking the button 'Show Preview'. The query results will be displayed in the lower panel. This will activate the two text boxes at the bottom of the page.
 
 [[Image:Semantic_notifications_query_results.png|none|thumb|600px|Query and Query Results in the Semantic Notifications User Interface]]
 
-Finally, fill in a time interval and a name for the notification query and click 'Add notification'. The notification query will be copied into the My Notifications panel on the right. If an annotation is changed or a new annotation is added to the wiki causing a change of the result set of this particular query, you will receive a notification email about this change at the given interval. 
+Finally, fill in a time interval and a name for the notification query and click 'Add notification'. The notification query will be copied into the My Notifications panel on the right.
+
+[[Image:My_notifications.png|none|frame|My Notifications Panel]]
+
+If an annotation is changed or a new annotation is added to the wiki causing a change of the result set of this particular query, you will receive a notification email about this change at the given interval. 
  
 == The Semantic Notifications Bot ==
 
@@ -149,4 +157,6 @@ A notification email contains the following information:
 ** Values of added annotations
 ** Values of removed annotations
 ** Values of changed annotations (old and new value) 
-* A link to the definition of the notification in the wiki
+* A link to the special page <tt>Special:SemanticNotifications</tt>
+
+[[Image:Semantic_notification_email.png|none|thumb|600px|Sample Notification Email]]
