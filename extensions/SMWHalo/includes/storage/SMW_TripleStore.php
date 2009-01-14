@@ -163,7 +163,7 @@ class SMWTripleStore extends SMWStore {
 
 			// handle properties with special semantics
 			if ($property->getPropertyID() == "_TYPE") {
-				// ingore. handeled by SMW_TS_Contributor
+				// ingore. handeled by SMW_TS_SchemaContributor or SMW_TS_SimpleContributor
 				continue;
 			} elseif ($property->getPropertyID() == "_INST") {
 				// ingore. handeled by category section below
@@ -183,7 +183,9 @@ class SMWTripleStore extends SMWStore {
 				}
 				continue;
 			}
-
+            
+			// there are other special properties which need not to be handled special
+			// so they can be handled by the default machanism:
 			foreach($propertyValueArray as $value) {
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {

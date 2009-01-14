@@ -1,5 +1,8 @@
 <?php
 /**
+ * Schema contributor tries to add all schema information from the wiki
+ * Warning: may created complex models.
+ * 
  * Called when property annotations get updated in a triple store.
  *
  * @param $semData All semantic data (for context)
@@ -12,31 +15,31 @@
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
 
-    if (!($property instanceof SMWPropertyValue)) {
-    	// error. should not happen
-    	trigger_error("Triple store update: property is not SMWPropertyValue");
-    	return true;
-    }
-    
+	if (!($property instanceof SMWPropertyValue)) {
+		// error. should not happen
+		trigger_error("Triple store update: property is not SMWPropertyValue");
+		return true;
+	}
+
 	// check if it is a property with special semantics
 	// check for 'has domain, range' and 'is inverse of' and 'has type'
 	// 'has min cardinality' and 'has max cardinality are read implictly when processing 'has domain and range'
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
-	
+
 	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getXSDValue()) {
-    
+
 		foreach($propertyValueArray as $domRange) {
 			if (count($domRange->getDVs()) == 2) {
 				$dvs = $domRange->getDVs();
 				if ($dvs[0] != NULL && $dvs[1] != NULL && $dvs[0]->isValid() && $dvs[1]->isValid()) { // domain and range
 					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCardProp);
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCardProp);
-					
+						
 					// insert RDFS
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:range", "cat:".$dvs[1]->getDBkey());
-					
+						
 					// insert OWL
 					$triplesFromHook[] = array("cat:".$dvs[0]->getDBkey(), "rdfs:subClassOf", "_:1");
 					$triplesFromHook[] = array("_:1", "owl:Restriction", "_:2");
@@ -54,16 +57,16 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					$typeValues = $data->getPropertyValues(SMWPropertyValue::makeProperty("_TYPE"));
 					$minCard = $data->getPropertyValues(smwfGetSemanticStore()->minCardProp);
 					$maxCard = $data->getPropertyValues(smwfGetSemanticStore()->maxCardProp);
-					
+						
 					// insert RDFS
 					$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:domain", "cat:".$dvs[0]->getDBkey());
-				    foreach($typeValues as $value) {
-                        if ($value->getXSDValue() !== false) {
-                        	$typeID = $value->getXSDValue();
-                            if ($typeID != '_wpg') $triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:range", WikiTypeToXSD::getXSDType($typeID));
-                        }
-                    }
-                    
+					foreach($typeValues as $value) {
+						if ($value->getXSDValue() !== false) {
+							$typeID = $value->getXSDValue();
+							if ($typeID != '_wpg') $triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:range", WikiTypeToXSD::getXSDType($typeID));
+						}
+					}
+
 					// insert OWL
 					$triplesFromHook[] = array("cat:".$dvs[0]->getDBkey(), "rdfs:subClassOf", "_:1");
 					$triplesFromHook[] = array("_:1", "owl:Restriction", "_:2");
@@ -83,7 +86,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 					}
 				}
 			}
-			
+				
 		}
 	} elseif (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getXSDValue()) {
 		foreach($propertyValueArray as $inverseProps) {
@@ -101,7 +104,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 
 		// serialize type only if there is no domain and range annotation
 		$domRanges = $data->getPropertyValues(smwfGetSemanticStore()->domainRangeHintProp);
-		
+
 		if (count($domRanges) == 0) { // insert only if domain and range annotation does not exist
 
 			// insert OWL restrictions
@@ -112,7 +115,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 			$triplesFromHook[] = array("_:2", "owl:onProperty", "prop:".$data->getSubject()->getDBkey());
 			foreach($propertyValueArray as $value) {
 				if ($value->getXSDValue() !== false) {
-					$typeID = $value->getXSDValue();	
+					$typeID = $value->getXSDValue();
 					$triplesFromHook[] = array("_:2", "owl:allValuesFrom", WikiTypeToXSD::getXSDType($typeID));
 				}
 			}
@@ -132,6 +135,14 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 				if ($typeID != '_wpg') $triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "rdfs:range", WikiTypeToXSD::getXSDType($typeID));
 					
 			}
+		}
+		// insert Has type
+		foreach($propertyValueArray as $value) {
+			$typeID = $value->getXSDValue();
+			if ($typeID != '_wpg') {
+				$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "Has_type", WikiTypeToXSD::getXSDType($typeID));
+			}
+
 		}
 	}
 	return true;

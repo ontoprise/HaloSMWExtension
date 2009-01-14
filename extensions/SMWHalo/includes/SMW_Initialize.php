@@ -181,9 +181,12 @@ function smwgHaloSetupExtension() {
     // add triple store hooks if necessary
     global $smwgMessageBroker,$smwgIgnoreSchema;
     if (isset($smwgMessageBroker)) {
-       require_once('storage/SMW_TS_Contributor.php');
        if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
-        $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
+	        require_once('storage/SMW_TS_SchemaContributor.php');
+	        $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
+       } else {
+	       	require_once('storage/SMW_TS_SimpleContributor.php');
+	        $wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
        }
        $wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
        
