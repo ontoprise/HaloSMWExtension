@@ -12,6 +12,23 @@ Semantic notifications are enabled in <tt>LocalSettings.php</tt>. The variable <
 
 To be able to receive notification emails, you must have specified a valid email address in your [[Help:Preferences|Preferences]]. Otherwise you are not allowed to enter queries on the special page <tt>Special:SemanticNotifications</tt>.
 
+== Requirements ==
+
+For semantic notifications to work, several configuration settings need to be set in <tt>LocalSettings.php</tt>:
+
+* '''General Email Functionality.''' Set to true to enable basic email features.
+:<pre>$wgEnableEmail      = true; </pre>
+* '''(Optional) SMTP Settings.''' For using a direct (authenticated) SMTP server connection, you need to fill an array. Set to false (the default value) to use the built-in PHP <tt>mail()</tt> function.
+:<pre>$wgSMTP = array(
+: 'host'     => "smtp.example.com",
+: 'IDHost'   => "domain for MessageID",
+: 'port'     => 25,
+: 'auth'     => true,
+: 'username' => "my_user_name",
+: 'password' => "my_password"
+:);
+</pre>
+
 == Semantic Notifications User Interface ==
 
 SMW+ has a special user interface for building notification queries. To access this user interface, visit the special page <tt>Special:SemanticNotifications</tt>.
