@@ -32,7 +32,7 @@ var SMW_PRP_CHECK_MAX_CARD =
 	'smwValid="propToolBar.checkMaxCard"';
 
 var SMW_PRP_VALID_CATEGORY_NAME =
-	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 
@@ -47,7 +47,7 @@ var SMW_PRP_CHECK_PROPERTY =
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
 
 var SMW_PRP_VALID_PROPERTY_NAME =
-	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
