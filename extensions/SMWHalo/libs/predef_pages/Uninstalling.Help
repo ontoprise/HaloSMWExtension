@@ -14,5 +14,5 @@ The SMW+ installation directory is self-contained, that is, it constitutes a com
 </div>
 <hr>
 <b>Note &ndash;</b> If you want to keep your wiki articles, you need to save the directory 
-<tt>{Installation Directory}\SMW+\mysql\data</tt> prior to deleting SMW+.
+<tt>C:\Programme\Ontoprise\SMWPLUS\mysql\data\</tt> prior to deleting SMW+.
 <hr>
