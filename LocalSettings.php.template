@@ -90,8 +90,8 @@ $wgMemCachedServers = array();
 ## is writable, then set this to true:
 $wgEnableUploads=true;
 $wgUseImageResize      = true;
-$wgUseImageMagick = true;
-$wgImageMagickConvertCommand = "C:\Programme\ImageMagick-6.3.2-Q16\convert";
+#$wgUseImageMagick = true;
+#$wgImageMagickConvertCommand = "C:\Programme\ImageMagick-6.3.2-Q16\convert";
 $wgUseAjax=true;
 
 ## If you want to use image uploads under safe mode,
