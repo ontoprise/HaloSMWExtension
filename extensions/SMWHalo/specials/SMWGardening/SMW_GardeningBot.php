@@ -304,12 +304,14 @@
  		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
  			
  			//FIXME: $runCommand must allow whitespaces in paths too
+ 			global $smwgBotLogFile;
+ 			if (!isset($smwgBotLogFile)) $smwgBotLogFile = "/dev/null";
  			$runCommand = "$phpInterpreter -q $IP/SMWGardening/SMW_AsyncBotStarter.php"; 
  			if ($runAsync) { 
  				//TODO: test async code for linux. 
  				//low prio 
  				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
-  	 			$nullResult = `$runCommand > /dev/null &`;
+  	 			$nullResult = `$runCommand > $smwgBotLogFile &`;
   	 			
   	 		
  			} else { // run sync

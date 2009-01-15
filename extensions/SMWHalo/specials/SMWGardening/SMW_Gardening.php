@@ -60,19 +60,30 @@ class SMWGardening extends SpecialPage {
 	}
 	
 	static function getGardeningLogTable() {
-		global $wgServer,$wgScript;
+		global $wgServer,$wgScript, $wgArticlePath;
 		$html = "<table width=\"100%\" class=\"smwtable\"><tr><th>User</th><th>Action</th><th>Start-Time</th><th>End-Time</th><th>Log</th><th>Progress</th><th>State</th></tr>";
 		$gardeningLog = SMWGardeningLog::getGardeningLogAccess()->getGardeningLogAsTable();
 		if ($gardeningLog == null || !is_array($gardeningLog)) {
 			return $gardeningLog;
 		}
+		$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 		foreach ($gardeningLog as $row) {
 			$html .= "<tr>";
 			for ($i=0; $i < count($row)-1;$i++) {
 				
 					
 				if ($i == 4 && $row[3] != null) {
-					$html .= "<td><a href=\"".$wgServer.$wgScript."/".$row[$i]."\">Log</a></td>";
+					// check if it points to log page or GardeningLog
+					// FIXME: clean up: GardeningLog links should be simply empty
+					$parts = explode("?bot=", $row[$i]);
+					if (count($parts) == 2) { // GardeningLog 
+						$botID = $parts[1];
+						$html .= "<td><a href=\"".$glp->getFullURL("bot=$botID")."\">Log</a></td>";
+					} else { // log page
+						$logPage = Title::newFromText($parts[0]);
+						$html .= "<td><a href=\"".$logPage->getFullURL()."\">Log</a></td>";
+					}
+					
 				} else if ($i == 1) {
 					$html .= "<td>".wfMsg($row[$i])."</td>";
 				 } else if ($i == 5) {

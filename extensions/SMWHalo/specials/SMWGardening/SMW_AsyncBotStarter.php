@@ -54,6 +54,10 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	$params[] = $arg;
 }
 
+if (!isset($botID)) {
+	print "No bot set! Use option -b. Abort.\n";
+    exit();
+}
 // include commandLine script which provides some basic
 // methodes for maintenance scripts
 $mediaWikiLocation = dirname(__FILE__) . '/../../../..';
