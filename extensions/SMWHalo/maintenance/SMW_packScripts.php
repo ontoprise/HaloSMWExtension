@@ -87,6 +87,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 	 				  'SMW_Rule.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_CategoryRule.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_CalculationRule.js' => GPL_LICENSE_ONTOPRISE,
+	 				  'SMW_PropertyChain.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Properties.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_DragAndResize.js' => GPL_LICENSE_ONTOPRISE,
