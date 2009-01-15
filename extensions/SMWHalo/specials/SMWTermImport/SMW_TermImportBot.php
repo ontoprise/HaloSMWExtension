@@ -199,10 +199,23 @@ class TermImportBot extends GardeningBot {
 			return $result;
 		}
 		
+		// Count number of terms to import for the progress bar
+		$nextElem = 0;
+		$numTerms = 0;
+		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
+			++$numTerms;
+		}
+		echo "Number of terms: $numTerms \n";
+		
+		$this->setNumberOfTasks(1);
+		$this->addSubTask($numTerms);
+		
 		$nextElem = 0;
 		$noErrors = true;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
 			$caResult = $this->createArticle($term['TERM'][0]['value'], $mp, $cp);
+			$this->worked(1);
+			
 			if ($caResult !== true) {
 				$noErrors = false;
 			}
