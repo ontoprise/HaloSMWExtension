@@ -5,3 +5,4 @@ SMW+ has a number of features that help you administrate the wiki, most notably 
 * '''[[Help:Semantic_Notifications|Semantic Notifications]].''' Notification messages sent after annotation changes.
 * '''[[Help:Vocabulary_Import|Vocabulary Import]].''' Import and transformation of external terms into wiki articles.
 * '''[[Help:Web Service Integration|Web Service Integration]].''' Integrating Web Services into the wiki.
+* '''[[Help:Backup|Backup]].''' Make a copy of your wiki that may be used to restore the original after a data loss event.
