@@ -36,6 +36,7 @@ class ExportOntologyBot extends GardeningBot {
 		$this->mapWikiTypeToXSD['_str'] = 'string';
 		$this->mapWikiTypeToXSD['_num'] = 'float';
 		$this->mapWikiTypeToXSD['_boo'] = 'boolean';
+		$this->mapWikiTypeToXSD['_dat'] = 'dateTime';
 			
 		$this->mapWikiTypeToXSD['_int'] = 'integer'; // deprecated
 		$this->mapWikiTypeToXSD['_flt'] = 'float'; // deprecated
@@ -610,13 +611,13 @@ class ExportOntologyBot extends GardeningBot {
 			if ($dttitle !== NULL)
 			$conv = &smwfGetStore()->getPropertyValues($dttitle, $conversionFactorSIDV);
 			if ( !empty($conv) ) {
-				$dv = SMWDataValueFactory::newPropertyValue($pt->getPrefixedText(), $value->getXSDValue() . " " . $value->getUnit());
+				$dv = SMWDataValueFactory::newPropertyValue($pt->getXSDValue(), $value->getXSDValue() . " " . $value->getUnit());
 				list($sivalue, $siunit) = $this->convertToSI($dv->getNumericValue(), $conv[0]->getXSDValue());
 				$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 				if ($dv->getXSDValue() != null && $dv->getXSDValue() != '') {
-					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getPartialURL()) . ' rdf:datatype="&xsd;float">' .
+					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId($pt->getXSDValue()) . ' rdf:datatype="&xsd;float">' .
 					smwfXMLContentEncode($dv->getXSDValue()) .
-								'</prop:' . ExportOntologyBot::makeXMLExportId($pt->getPartialURL()) . ">\n";
+								'</prop:' . ExportOntologyBot::makeXMLExportId($pt->getXSDValue()) . ">\n";
 				}
 
 			}
