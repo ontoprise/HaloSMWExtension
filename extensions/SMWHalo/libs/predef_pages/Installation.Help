@@ -36,7 +36,7 @@ Proceed by clicking Next.</div></li>
 <li><b>Language.</b> Choose the content language of the wiki.
 <hr><b>Note &ndash;</b> Currently, only English is available as the wiki's content language.<hr></li>
 <li><b>Skin.</b> A skin allows the customization of the layout of your wiki.<br>
-SMW+ is shipped with a predefined skin called <em>ontoskin</em>.</li>
+SMW+ ships with two predefined skins, <em>ontoskin</em> and <em>ontoskin2</em>.</li>
 </ul>
 </div></li>
 <li>Click Install.<br>
