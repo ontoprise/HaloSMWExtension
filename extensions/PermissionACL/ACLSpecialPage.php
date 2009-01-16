@@ -81,6 +81,8 @@ class ACLSpecialPage extends SpecialPage {
         
         
         $allgroups = self::array_clone(User::getAllGroups());
+        $allgroups[] = 'user';
+        $allgroups[] = 'autoconfirmed';
         sort($allgroups);
         $allnamespaces = self::array_clone($wgContLang->getNamespaces());
         sort($allnamespaces);
