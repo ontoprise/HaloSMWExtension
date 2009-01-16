@@ -78,7 +78,16 @@ remarks in the section "Notes on Upgrading" below!
 (6) OPTIONAL: If you are also installing the extension package for SMW+, please refer to
     the install file delivered with the extension package zip file.
 
+=== Installing Help ===
 
+To install the online help, you must run the PHP script SMW_setup.php, which is located in the 
+$IP/extensions/SMWHalo/maintenance/ directory. Simply execute the script with the --helppages option.
+
+	php SMW_setup.php --helppages
+
+This will install all help pages into the Help namespace.
+
+ 
 === Testing your Installation ===
 
 If you are uncertain that everything went well, you can do some testing steps to
