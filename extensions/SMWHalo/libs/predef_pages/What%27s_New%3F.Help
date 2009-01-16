@@ -7,7 +7,7 @@ SMW+ 1.4 is basically a maintenance and compatibility update. SMW+ now provides 
 '''New Features'''
 
 * Improved Windows Installer (for updating from SMW+ 1.3.1 to 1.4)
-* New built-in ontology (project management ontology)
+* New built-in ontology (teamwork ontology)
 * New default skin (OntoSkin2)
 
 '''Changed Features'''
