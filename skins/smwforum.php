@@ -516,10 +516,10 @@
 	/*************************************************************************************************/
 	function customBox( $bar, $cont ) {
 		?>
-					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('navigationlist')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
+					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('<?php echo $bar?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
 					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
 					</div>
-					<div id="navigationlist" class="smwf_navilist">
+					<div id="<?php echo $bar?>" class="smwf_navilist">
 							<table class="naviitemtable">
 							<?php foreach($cont as $key => $val) { ?>
 							<tr><td>
