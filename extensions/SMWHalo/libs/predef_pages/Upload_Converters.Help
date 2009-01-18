@@ -3,7 +3,7 @@ Files in different formats (also known as MIME types) can be uploaded to the wik
 
 == Enabling Upload Converters ==
 
-To enable the upload converters, add the following line to <tt>LocalSettings.php</tt>
+To enable the upload converters, add the following line to <tt>LocalSettings.php</tt>:
 <pre>
 $smwgEnableUploadConverter = true;
 </pre>
