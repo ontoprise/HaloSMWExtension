@@ -1,0 +1,61 @@
+__NOTOC__
+Files in different formats (also known as MIME types) can be uploaded to the wiki. However, the contents of these documents are unavailable for the full text search of the wiki. To amend this, SMW+ incorporates two so-called upload converters for Microsoft Word and PDF files that extract the bare text from these document types and copy it into the articles that host the original documents. That way the documents' contents become searchable. 
+
+== Enabling Upload Converters ==
+
+To enable the upload converters, add the following line to <tt>LocalSettings.php</tt>
+<pre>
+$smwgEnableUploadConverter = true;
+</pre>
+Note that this statement must precede the <tt>SMW_Initialize.php</tt> call.
+
+== File Size Limitations ==
+
+The limits for file uploads are controlled by PHP configuration directives. By default, PHP allows uploaded files to be no more than 2MB large. If you want to upload even larger files, change in the configuration file <tt>php.ini</tt> the <tt>post_max_size</tt> and <tt>upload_max_filesize</tt> parameters (this may require root access to the server).
+<hr>
+<b>Note &ndash;</b> You may need to restart Apache after altering your PHP or web server configuration.
+<hr>
+Your web server may impose further limits on the size of files allowed for upload. For Apache, one of the relevant settings is <tt>LimitRequestBody</tt>.
+
+MediaWiki itself issues a warning if you try to upload files larger than what is specified by the <tt>$wgUploadSizeWarning</tt> option. This is independent of the hard limit imposed by PHP. The following values are example settings:
+<pre>
+post_max_size = 160M
+upload_max_filesize = 160M
+memory_limit = 320M
+</pre>
+
+== Uploading Documents ==
+
+To upload a document, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Go to the file upload page.<br>
+<div style="font-weight:normal;">Click 'Upload file' in the toolbox.
+[[Image:Upload_converter_toolbox.png|frame|none]]
+</div></li>
+<li>Choose a document.<br>
+<div style="font-weight:normal;">Choose a document for upload (a PDF document in our case).
+[[Image:Upload_converter_file_upload_dialog.png|none|thumb|600px]]
+</div></li>
+<li>Upload the document.<br>
+<div style="font-weight:normal;">A warning may inform you that the file is too large (in that case, change you PHP settings as described above).<br>
+Each uploaded file is represented by a hosting page.<br>
+Once you have uploaded a PDF or Microsoft Word document, its textual content is added to the hosting page.
+[[Image:Upload_converter_hosting_page.png|none|thumb|600px]]
+</div></li>
+<li>Perform a full text search.<br>
+<div style="font-weight:normal;">To perform a full text search for the contents of the documents, enter an appropriate key word in the search box and click Search.
+[[Image:Upload_converter_search_box.png|none|frame]]
+Your search will probably fail because by default only the namespace <tt>Main</tt> is being searched.<br>
+However, newly uploaded Microsoft Word and PDF documents are placed in the namespaces <tt>Document</tt> and <tt>PDF</tt>, respectively. 
+</div></li>
+<li>Repeat the search.<br>
+<div style="font-weight:normal;">Include the <tt>PDF</tt> namespace in your search options and search again.
+[[Image:Upload_converter_no_search_results.png|none|thumb|600px]]
+</div></li>
+</ol>
+</div>
+
+The link to the hosting page of the uploaded document was found and is now included in the result list.
+[[Image:Upload_converter_result_list.png|none|frame|Result List]]
