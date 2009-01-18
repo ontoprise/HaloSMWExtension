@@ -42,7 +42,7 @@ To upload a document, proceed as follows:
 <div style="font-weight:normal;">A warning may inform you that the file is too large (in that case, change you PHP settings as described above).<br>
 Each uploaded file is represented by a hosting page.<br>
 Once you have uploaded a PDF or Microsoft Word document, its textual content is added to the hosting page.
-[[Image:Upload_converter_hosting_page.png|none|thumb|600px]]
+[[Image:Upload_converter_hosting_page.png|none|frame]]
 </div></li>
 <li>Perform a full text search.<br>
 <div style="font-weight:normal;">To perform a full text search for the contents of the documents, enter an appropriate key word in the search box and click Search.
@@ -52,7 +52,7 @@ However, newly uploaded Microsoft Word and PDF documents are placed in the names
 </div></li>
 <li>Repeat the search.<br>
 <div style="font-weight:normal;">Include the <tt>PDF</tt> namespace in your search options and search again.
-[[Image:Upload_converter_no_search_results.png|none|thumb|600px]]
+[[Image:Upload_converter_no_search_results.png|none|frame]]
 </div></li>
 </ol>
 </div>
