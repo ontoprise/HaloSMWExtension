@@ -19,6 +19,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgHaloIP;
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_IWebServiceClient.php");
+require_once("$smwgHaloIP/specials/SMWWebService/SMW_XPathProcessor.php");
 
 /**
  * Instances of this class describe a web service.
@@ -411,9 +412,9 @@ class WebService {
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
 
-	
+
 		}
-		
+
 		// get the result from a call to a webservice if there
 		// was no appropriate result in the cache
 		if(!$response){
@@ -428,14 +429,14 @@ class WebService {
 				$this->createWSClient();
 				$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
 				$this->initializeCallParameters($specParameters);
-				
+
 				if($this->mWSClient){
 					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 				} else {
 					//todo: provide meaningful error message
 					$response = "error";
 				}
-				
+
 				if(is_string($response)){
 					if($cacheResult == null){
 						$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
@@ -599,12 +600,13 @@ class WebService {
 	 * This methods returns these parts of the ws-response
 	 * that are of interrest
 	 *
-	 * @param $response the response of the webservice
-	 * @param array $resultParts the parts of the result that are of interrest
+	 * @param $response the response of the web service call
+	 * @param string[] $resultParts : aliases of the requested result parts
 	 * @return array the result of interrest
 	 */
 	public function getCallResultParts($response, $resultParts){
 		$results = array();
+
 		foreach ($resultParts as $rp) {
 			$parts = explode(".", $rp);
 			$rdef = $this->getResultDefinition($parts[0]);
@@ -622,6 +624,21 @@ class WebService {
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1], $selectedPath);
 			}
+				
+			//start evaluate xpath attribute
+			$xpath = $this->getXPathForAlias($parts[1], $rdef);
+				
+			if($xpath != null){
+				$tempResult = $results[$parts[1]];
+				$newTempResult = array();
+				foreach($tempResult as $tR){
+					$xpathProcessor = new XPathProcessor($tR);
+					$newTempResult = array_merge($newTempResult, $xpathProcessor->evaluateQuery($xpath));
+				}
+				$results[$parts[1]] = $newTempResult;
+			}
+				
+			//end evaluate xpath attribute
 		}
 		return $results;
 	}
@@ -1581,6 +1598,17 @@ class WebService {
 		}
 
 		return $arrayDetector->mergePaths($flatParams, $adParameters);
+	}
+
+	// todo: describe method
+	private function getXPathForAlias($alias, $resultDef) {
+		foreach ($resultDef->part as $part) {
+			if ($alias == ''.$part['name']) {
+				return ''.$part['xpath'];
+			}
+		}
+		return null;
+
 	}
 }
 
