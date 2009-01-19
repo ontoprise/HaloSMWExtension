@@ -192,6 +192,7 @@
 			$statement = $it->next();
 			$subject = $statement->getSubject();
 			$s = $this->createAttributeStatements($subject);
+			//if (!is_array($s)) { print_r($s);die(); }
 			$this->wikiStatements = array_merge($this->wikiStatements, $s);
 			$triplesNum--;
 		}
@@ -615,7 +616,7 @@
  		
 		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
-		if ($st == NULL) return; // Could not create a title, next please
+		if ($st == NULL) return $statements; // Could not create a title, next please
 
 		$s = array();
 		$s['NS'] = SMW_NS_PROPERTY;
