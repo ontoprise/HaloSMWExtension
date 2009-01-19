@@ -48,7 +48,7 @@ class XPathProcessor {
 
 		foreach ($nodes AS $node) {
 			$this->domXPath->registerNamespace($node->localName, $node->nodeValue);
-			echo($node->localName."\t\t".$node->nodeValue."\n");
+			//echo($node->localName."\t\t".$node->nodeValue."\n");
 		}
 	}
 

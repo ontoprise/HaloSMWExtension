@@ -46,7 +46,7 @@ abstract class WebServiceResultPrinter{
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	abstract public function getWikiText($wsResult);
+	abstract public function getWikiText($wsTemplate, $wsResult);
 
 }
 ?>

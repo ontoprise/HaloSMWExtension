@@ -62,6 +62,8 @@ $wgAutoloadClasses['WebServiceListResultPrinter'] = $smwgHaloIP.'/specials/SMWWe
 $wgAutoloadClasses['WebServiceUlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPUl.php';
 $wgAutoloadClasses['WebServiceOlResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPOl.php';
 $wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTable.php';
+$wgAutoloadClasses['WebServiceTemplateResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTemplate.php';
+$wgAutoloadClasses['WebServiceTransposedResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTransposed.php';
 
 
 /*
@@ -150,6 +152,7 @@ function webServiceUsage_Render( &$parser) {
 	$wsParameters = array();
 	$wsReturnValues = array();
 	$wsFormat = "";
+	$wsTemplate = "";
 	$propertyName = null;
 
 	// determine the kind of the remaining parameters and get
@@ -160,7 +163,9 @@ function webServiceUsage_Render( &$parser) {
 			$wsReturnValues[getSpecifiedParameterName(substr($parameters[$i], 1, strlen($parameters[$i])))] = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 7) == "_format"){
 			$wsFormat = getSpecifiedParameterValue($parameter);
-		} else if (substr($parameter,0, 9) == "_property"){
+		} else if (substr($parameter,0, 9) == "_template"){
+			$wsTemplate = getSpecifiedParameterValue($parameter);
+		}else if (substr($parameter,0, 9) == "_property"){
 			$propertyName = getSpecifiedParameterValue($parameter);
 			//$propertyName = $parameter;
 		} else {
@@ -184,7 +189,7 @@ function webServiceUsage_Render( &$parser) {
 			$wsFormat = "list";
 		}
 
-		$wsFormattedResult = formatWSResult($wsFormat, $wsResults);
+		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsResults);
 
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
@@ -195,6 +200,9 @@ function webServiceUsage_Render( &$parser) {
 
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
+		
+		//SMWOutputs::commitToParser($parser);
+		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);
@@ -243,7 +251,7 @@ function getSpecifiedParameterName($parameter){
  * @return string
  * 		the formatted result
  */
-function formatWSResult($wsFormat, $wsResults = null){
+function formatWSResult($wsFormat, $wsTemplate, $wsResults = null){
 	if(is_string($wsResults)){
 		return smwfEncodeMessages(array($wsResults));
 	}
@@ -265,19 +273,25 @@ function formatWSResult($wsFormat, $wsResults = null){
 
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText(getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "list"){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText(getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "ol"){
 		$printer = WebServiceOlResultPrinter::getInstance();
-		return $printer->getWikiText(getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "ul"){
 		$printer = WebServiceUlResultPrinter::getInstance();
-		return $printer->getWikiText(getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "table"){
 		$printer = WebServiceTableResultPrinter::getInstance();
-		return $printer->getWikiText(getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+	} else if($wsFormat == "template"){
+		$printer = WebServiceTemplateResultPrinter::getInstance();
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+	} else if($wsFormat == "transposed"){
+		$printer = WebServiceTransposedResultPrinter::getInstance();
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	}
 }
 
