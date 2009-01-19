@@ -40,16 +40,18 @@ if (!isset($smwgDefaultCollation)) {
 	$smwgDefaultCollation = "latin1_bin"; // default collation
 }
 
-if (array_key_exists("removehelppages", $options)) {
-	smwfRemoveHelppages();
+$removeHelpPages = array_key_exists("removehelppages", $options);
+$installHelpPages = array_key_exists("helppages", $options);
+
+if (!$removeHelpPages && !$installHelpPages) {
+	print "Syntax: php SMW_setup [--helppages] | [--removehelppages]\n";
 	die();
 }
 
-print "\nSetup database for HALO extension...";
-smwfHaloInitializeTables(false);
-
-
-$installHelpPages = array_key_exists("helppages", $options);
+if ($removeHelpPages) {
+	smwfRemoveHelppages();
+	die();
+}
 
 if ($installHelpPages) {
 	DBHelper::reportProgress("\nImport delivered pages...",true);
@@ -58,7 +60,7 @@ if ($installHelpPages) {
 	smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 12, 'Help' );
 	smwfInstallHelppages($smwgHaloIP.'/libs/predef_pages', 104, 'Type' );
 	DBHelper::reportProgress("\n\nAll pages imported!\n",true);
-
+    die();
 };
 
 /**
