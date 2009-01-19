@@ -48,19 +48,30 @@ class WebServiceUlResultPrinter extends WebServiceResultPrinter {
 		return self::$instance;
 	}
 
-	
+
 	/**
-	 * get web service usage result as wikitext 
+	 * get web service usage result as wikitext
 	 *
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($wsResult){
-		
-		$return.= "<ul>"; 
+	public function getWikiText($template, $wsResult){
+
+		$return = "<ul>";
 		for($i = 1; $i<sizeof($wsResult);$i++){
-			$return.= "<li>";	
-			$return.= implode(", ", $wsResult[$i]);
+			$return.= "<li>";
+				
+			if($template != ""){
+				// a template was defined when the ws was called
+				$return .= "{{".$template."";
+				$k = 1;
+				foreach($wsResult[$i] as $wsR){
+					$return .= "|".$k++."=".$wsR;
+				}
+				$return .= "}}";
+			} else {
+				$return.= implode(", ", $wsResult[$i]);
+			}
 			$return.= "</li>";
 		}
 		$return.= "</ul>";

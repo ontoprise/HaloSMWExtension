@@ -54,15 +54,23 @@ class WebServiceListResultPrinter extends WebServiceResultPrinter {
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($wsResult){
+	public function getWikiText($template, $wsResult){
 		$return = "";
 		for($i = 1; $i<sizeof($wsResult);$i++){
 			if($i != 1){
 				$return.= ", ";
 			}
-			//return print_r($wsResult[$i], true);
-			$return.= implode(", ", $wsResult[$i]);
-			//$return.= print_r($wsResult[$i], true);
+			if($template != ""){
+				// a template was defined when the ws was called
+				$return .= "{{".$template."";
+				$k = 1;
+				foreach($wsResult[$i] as $wsR){
+					$return .= "|".$k++."=".$wsR;
+				}
+				$return .= "}}";
+			} else {
+				$return.= implode(", ", $wsResult[$i]);
+			}
 		}
 		return $return;
 	}
