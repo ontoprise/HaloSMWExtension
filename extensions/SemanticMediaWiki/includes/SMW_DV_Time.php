@@ -76,7 +76,7 @@ class SMWTimeValue extends SMWDataValue {
 	protected $m_timeoffset; //contains offset (e.g. timezone) 
 	protected $m_timeannotation; //contains am or pm
 	// The following are constant (array-valued constants are not supported, hence the decalration as variable):
-	protected $m_months = array("January", "February", "March", "April" , "May" , "June" , "Juli" , "August" , "September" , "October" , "November" , "December");
+	protected $m_months = array("January", "February", "March", "April" , "May" , "June" , "July" , "August" , "September" , "October" , "November" , "December");
 	protected $m_monthsshort = array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 	protected $m_formats = array( SMW_Y => array('year'), SMW_YM => array('year','month'), SMW_MY => array('month','year'), SMW_YDM => array('year','day','month'), SMW_YMD => array('year','month','day'), SMW_DMY => array('day','month','year'), SMW_MDY => array('month','day','year'));
 	protected $m_daysofmonths = array ( 1 => 31, 2 => 28, 3 => 31, 4 => 30, 5 => 31, 6 => 30, 7 => 31, 8 => 31, 9 => 30, 10 => 31, 11 => 30, 12 => 31 );
@@ -94,6 +94,7 @@ class SMWTimeValue extends SMWDataValue {
 		$this->m_timepm = false;
 		$this->m_timeannotation = false;
 
+		$value = trim($value); // ignore whitespace
 		$this->m_wikivalue = $value;
 		$filteredvalue = $value; //value without time definition and further abbreviations like PM or BC
 
@@ -178,7 +179,7 @@ class SMWTimeValue extends SMWDataValue {
 				$i = 0;
 				foreach ($this->m_formats[$format] as $globalvar) { // map format digits to internal variables
 					$globalvar = 'm_'.$globalvar; // (for searching this file) this is one of: m_year, m_month, m_day
-					if (!$this->$globalvar) $this->$globalvar = $array[$i];
+					if (!$this->$globalvar) $this->$globalvar = intval($array[$i]);
 					$i++;
 				}
 				$found = true;
@@ -224,7 +225,7 @@ class SMWTimeValue extends SMWDataValue {
 		global $smwgContLang;
 		if(!is_numeric($digit)){ //check for alphanumeric day or month value
 			if(preg_match("/[0-3]?[0-9](st|nd|rd|th)/u", $digit)) { //look for day value terminated by st/nd/th
-				$this->m_day = substr($digit,0,strlen($digit)-2); //remove st/nd/th
+				$this->m_day = intval(substr($digit,0,strlen($digit)-2)); //remove st/nd/th
 				return SMW_DAY;
 			}
 			$monthnumber = $smwgContLang->findMonth($digit);
@@ -243,9 +244,9 @@ class SMWTimeValue extends SMWDataValue {
 				return SMW_MONTH;
 			}
 			return 0;
-		} elseif ($digit >= 1 && $digit <= 12) { //number can be a month, a day or a year	(111)		
+		} elseif (intval($digit) >= 1 && intval($digit) <= 12) { //number can be a month, a day or a year	(111)
 			return SMW_DAY_MONTH_YEAR;
-		} elseif (($digit >= 1 && $digit <= 31)) { //number can be a day or a year (011) 
+		} elseif ((intval($digit) >= 1 && intval($digit) <= 31)) { //number can be a day or a year (011)
 			return SMW_DAY_YEAR;
 		} elseif (is_numeric($digit)) { //number can just be a year (011)
 			return SMW_YEAR;
@@ -256,7 +257,10 @@ class SMWTimeValue extends SMWDataValue {
 
 	protected function parseXSDValue($value, $unit) {
 		list($date,$this->m_time) = explode('T',$value,2);
-		list($this->m_year,$this->m_month,$this->m_day) = explode('/',$date,3);
+		$d = explode('/',$date,3);
+		if (count($d)==3) list($this->m_year,$this->m_month,$this->m_day) = $d;
+		elseif (count($d)==2) list($this->m_year,$this->m_month) = $d;
+		elseif (count($d)==1) list($this->m_year) = $d;
 		$this->makePrintoutValue();
 		$this->m_caption = $this->m_printvalue;
 		$this->m_wikivalue = $this->m_printvalue;

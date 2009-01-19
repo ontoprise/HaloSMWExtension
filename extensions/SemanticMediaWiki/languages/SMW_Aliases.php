@@ -95,6 +95,21 @@ $aliases['gl'] = array(
 	'Types' => array( 'Tipos' ),
 );
 
+/** Swiss German (Alemannisch) */
+$aliases['gsw'] = array(
+	'Ask' => array( 'Semantischi Suech' ),
+	'Browse' => array( 'Browse' ),
+	'ExportRDF' => array( 'Exportier ADF' ),
+	'PageProperty' => array( 'Syteattribut' ),
+	'Properties' => array( 'Attribut' ),
+	'SMWAdmin' => array( 'SMW-Yyrichtig' ),
+	'SearchByProperty' => array( 'Suech no Attribut' ),
+	'SemanticStatistics' => array( 'Semantischi Statischtik' ),
+	'Types' => array( 'Datetype' ),
+	'UnusedProperties' => array( 'Verwaisti Attribut' ),
+	'WantedProperties' => array( 'Gwinschti Attribut' ),
+);
+
 /** Upper Sorbian (Hornjoserbsce) */
 $aliases['hsb'] = array(
 	'Ask' => array( 'Semantiske pytanje' ),
@@ -107,6 +122,18 @@ $aliases['hsb'] = array(
 	'Types' => array( 'Typy' ),
 	'UnusedProperties' => array( 'Njewužiwane kajkosće' ),
 	'WantedProperties' => array( 'Falowace kajkosće' ),
+);
+
+/** Hungarian (Magyar) */
+$aliases['hu'] = array(
+	'Ask' => array( 'Kérdez' ),
+	'Browse' => array( 'Böngészés' ),
+	'Properties' => array( 'Tulajdonságok' ),
+	'SemanticStatistics' => array( 'Szemantikus statisztika' ),
+	'Types' => array( 'Típusok' ),
+	'URIResolver' => array( 'URI-feloldó' ),
+	'UnusedProperties' => array( 'Nem használt tulajdonságok' ),
+	'WantedProperties' => array( 'Keresett tulajdonságok' ),
 );
 
 /** Khmer (ភាសាខ្មែរ) */
@@ -180,5 +207,12 @@ $aliases['oc'] = array(
 /** Romanian (Română) */
 $aliases['ro'] = array(
 	'Browse' => array( 'Răsfoieşte' ),
+);
+
+/** Swahili (Kiswahili) */
+$aliases['sw'] = array(
+	'Ask' => array( 'Uliza' ),
+	'Browse' => array( 'Fungua' ),
+	'Types' => array( 'Aina' ),
 );
 

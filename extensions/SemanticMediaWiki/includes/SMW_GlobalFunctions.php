@@ -14,7 +14,7 @@
  * @defgroup SMW Semantic MediaWiki
  */
 
-define('SMW_VERSION','1.4.0');
+define('SMW_VERSION','1.4.1');
 
 // constants for displaying the factbox
 define('SMW_FACTBOX_HIDDEN', 1);
@@ -98,6 +98,8 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgExtensionFunctions[] = 'smwfSetupExtension';
 	$wgHooks['LanguageGetMagic'][] = 'smwfAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Messages.php'; // register messages (requires MW=>1.11)
+
+	$wgHooks['ParserTestTables'][] = 'smwfOnParserTestTables';
 
 	// Register special pages aliases file
 	$wgExtensionAliasesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Aliases.php';
@@ -191,7 +193,7 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgAutoloadClasses['SMWAdmin']                  = $smwgIP . '/specials/SMWAdmin/SMW_SpecialSMWAdmin.php';
 	$wgSpecialPages['SMWAdmin']                     = array('SMWAdmin');
 	$wgSpecialPageGroups['SMWAdmin']                = 'smw_group';
-	
+
 	// suboptimal special pages using the SMWSpecialPage wrapper class:
 	$wgAutoloadClasses['SMWSpecialPage']            = $smwgIP . '/includes/SMW_SpecialPage.php';
 	$wgSpecialPages['Properties']                   = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgIP . '/specials/QueryPages/SMW_SpecialProperties.php');
@@ -219,7 +221,7 @@ function enableSemantics($namespace = '', $complete = false) {
  * Do the actual intialisation of the extension. This is just a delayed init that makes sure
  * MediaWiki is set up properly before we add our stuff.
  *
- * The main things this function does are: register all hooks, set up extension credits, and 
+ * The main things this function does are: register all hooks, set up extension credits, and
  * init some globals that are not for configuration settings.
  */
 function smwfSetupExtension() {
@@ -285,6 +287,16 @@ function smwfOnArticleFromTitle(&$title, &$article){
 	} elseif ( $title->getNamespace() == SMW_NS_CONCEPT ) {
 		$article = new SMWConceptPage($title);
 	}
+	return true;
+}
+
+/**
+ * Register tables to be added to temporary tables for parser tests
+ */
+function smwfOnParserTestTables( &$tables ){
+	$tables[] = 'smw_ids';
+	$tables[] = 'smw_redi2';
+	$tables[] = 'smw_atts2';
 	return true;
 }
 
@@ -495,7 +507,7 @@ function smwfShowBrowseLink($skintemplate) {
 	function smwfNumberFormat($value, $decplaces=3) {
 		wfLoadExtensionMessages('SemanticMediaWiki');
 		$decseparator = wfMsgForContent('smw_decseparator');
-	
+
 		// If number is a trillion or more, then switch to scientific
 		// notation. If number is less than 0.0000001 (i.e. twice decplaces),
 		// then switch to scientific notation. Otherwise print number
