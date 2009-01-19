@@ -840,5 +840,46 @@ class SMWRuleStore {
 	}
 }
 
+class WikiTypeToXSD {
+
+    /**
+     * Map primitve types or units to XSD values
+     *
+     * @param unknown_type $wikiTypeID
+     * @return unknown
+     */
+    public static function getXSDType($wikiTypeID) {
+        switch($wikiTypeID) {
+        	
+        	// direct supported types
+            case '_str' : return 'xsd:string';
+            case '_txt' : return 'xsd:string';
+            case '_num' : return 'xsd:float';
+            case '_boo' : return 'xsd:boolean';
+            case '_dat' : return 'xsd:dateTime';
+            
+            // not supported by TS. Take xsd:string
+            case '_geo' : 
+            case '_cod' :
+            case '_ema' :
+            case '_uri' :
+            case '_anu' : return 'xsd:string'; 
+            
+            // single unit type in SMW
+            case '_tem' : return 'xsd:unit';
+            
+            //only relevant for schema import
+            case '_wpc' :
+            case '_wpf' :
+            case '_wpp' :
+            case '_wpg' : return 'cat:DefaultRootCategory';
+
+            // unknown type => assume unit 
+            default: return 'xsd:unit';
+        }
+
+    }
+}
+
 
 ?>

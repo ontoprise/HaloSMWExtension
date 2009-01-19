@@ -62,24 +62,5 @@ function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
 }
 
 
-class WikiTypeToXSD {
 
-	/**
-	 * Map primitve types or units to XSD values
-	 *
-	 * @param unknown_type $wikiTypeID
-	 * @return unknown
-	 */
-	public static function getXSDType($wikiTypeID) {
-		switch($wikiTypeID) {
-			case '_str' : return 'xsd:string';
-			case '_num' : return 'xsd:float';
-			case '_boo' : return 'xsd:boolean';
-			case '_dat' : return 'xsd:dateTime';
-			case '_wpg' : return 'cat:DefaultRootCategory';
-			default: return 'xsd:unit';
-		}
-
-	}
-}
 ?>
