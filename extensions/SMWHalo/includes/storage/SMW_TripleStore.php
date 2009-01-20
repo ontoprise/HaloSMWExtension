@@ -874,8 +874,14 @@ class WikiTypeToXSD {
             case '_wpp' :
             case '_wpg' : return 'cat:DefaultRootCategory';
 
-            // unknown type => assume unit 
-            default: return 'xsd:unit';
+            // unknown or composite type 
+            default:
+            	// if builtin (starts with _) then regard it as string
+            	if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
+            	// if n-ary, regard it as string
+            	if (preg_match('\w+(;\w+)+', $wikiTypeID) !== false) return "xsd:string";
+            	// otherwise assume a unit
+                return 'xsd:unit';
         }
 
     }
