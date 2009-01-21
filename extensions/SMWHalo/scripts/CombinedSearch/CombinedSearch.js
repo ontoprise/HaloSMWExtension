@@ -124,6 +124,7 @@ CombinedSearchContributor.prototype = {
 // create instance of contributor and register on load event so that the complete document is available
 // when registerContributor is executed.
 var csContributor = new CombinedSearchContributor();
-Event.observe(window, 'load', csContributor.registerContributor.bind(csContributor));
+var csLoadObserver = csContributor.registerContributor.bind(csContributor);
+Event.observe(window, 'load', csLoadObserver);
 
 
