@@ -703,6 +703,7 @@ class SMWTripleStore extends SMWStore {
 	private function serializeParams($query) {
 		$result = "";
 		$first = true;
+		
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
@@ -710,7 +711,8 @@ class SMWTripleStore extends SMWStore {
 			} else if ($printout->getData() instanceof Title) {
 				$result .= "?".$printout->getData()->getDBkey()."=".$printout->getLabel();
 			} else if ($printout->getData() instanceof SMWPropertyValue ) {
-				$result .= "?".$printout->getData()->getXSDValue()."=".$printout->getLabel();
+				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
+				$result .= "?".$printout->getData()->getXSDValue().$outputFormat."=".$printout->getLabel();
 			}
 			$first = false;
 		}
