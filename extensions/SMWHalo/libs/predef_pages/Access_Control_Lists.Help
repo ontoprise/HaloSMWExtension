@@ -42,7 +42,7 @@ The first three rule elements can be one of the following:
 * Array of values
 * Wildcard (represented by the asterisk character ' * ') 
 
-== Examples ==
+== Basic Examples ==
 
 The following rules are typical examples of access restrictions to your wiki: 
 
@@ -76,3 +76,7 @@ More examples can be found on the [http://www.mediawiki.org/wiki/Extension:Permi
 <hr>
 <b>Note &ndash;</b> By adding the first rule to the ACL, a whitelist setting is added that holds an array of page names that all users are allowed to view, regardless of their group permissions. This setting enables even unregistered users to view certain key pages, in particular the login page, the logout page, and the reset password page.
 <hr>
+
+== Use Cases ==
+
+Comprehensive documentation to typical use cases for access control lists is available in the [http://smwforum.ontoprise.com/smwforum/index.php/Access_Control_Lists SMW+ User Forum].
