@@ -1,0 +1,11 @@
+#us_refineresults {
+	height: 40px;
+	width:97%;
+	border: 1px solid #AAAAAA;
+}
+
+#us_searchresults {
+    height: 600px;
+    width:97%;
+    border: 1px solid #AAAAAA;
+}
