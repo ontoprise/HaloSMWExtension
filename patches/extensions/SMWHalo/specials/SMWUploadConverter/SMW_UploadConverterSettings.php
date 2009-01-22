@@ -27,5 +27,5 @@ global $smwgHaloIP;
 // Definition of converters for various mime types.
 $smwgUploadConverter = array(
 	'application/pdf' => "$smwgHaloIP/bin/xpdf/pdftotext.exe -enc UTF-8 -layout {infile} {outfile}",
-	'application/msword' => 'antiword.exe -m cp850.txt "{infile}" > "{outfile}"'
+	'application/msword' => $smwgHaloIP.'/bin/antiword/antiword.exe -m cp850.txt "{infile}" > "{outfile}"'
 );
