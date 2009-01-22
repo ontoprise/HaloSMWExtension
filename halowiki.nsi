@@ -263,7 +263,11 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   
   copyfiles:
 	  !ifndef NOFILES
-	    	File /r /x .svn /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi *
+            
+            File /r /x .svn /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi *
+            File /oname=extensions\SMWHalo\bin\xpdf\pdftotext.exe extensions\SMWHalo\bin\xpdf\pdftotext.exe
+            File /oname=extensions\SMWHalo\bin\antiword\antiword.exe extensions\SMWHalo\bin\antiword\antiword.exe
+            
       !endif  
    
   ;configure:
@@ -548,7 +552,7 @@ Function configCustomizationsForNew
 	DetailPrint "Installing helppages"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
-        Exec "$INSTDIR\xampp_start.exe"
+        Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
         SetOutPath "$INSTDIR\htdocs\mediawiki"
@@ -599,7 +603,7 @@ Function configCustomizationsForUpdate
 	DetailPrint "Updating helppages"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
-        Exec "$INSTDIR\xampp_start.exe"
+        Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
         SetOutPath "$INSTDIR\htdocs\mediawiki"
@@ -628,7 +632,7 @@ Function startXAMPP
        ${AndIf} $1 == 0
         CALL checkForSkype
         SetOutPath "$INSTDIR"
-        Exec "$INSTDIR\xampp_start.exe"
+        Exec "$INSTDIR\xampp_start.bat"
        ${EndIf}
     ${EndIf}
 FunctionEnd
@@ -640,7 +644,7 @@ Function createXAMPPShortcuts
   SetOutPath "$INSTDIR"
   ; Only with XAMPP installation
   ${If} $0 == 1
-    CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.exe"
+    CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Start.lnk" "$INSTDIR\xampp_start.bat"
     CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Stop.lnk" "$INSTDIR\xampp_stop.exe"
     ExecShell open "$INSTDIR\MYWIKI_NOTES"
   ${EndIf}

@@ -162,6 +162,7 @@ $phpInterpreter="{{xamp-install}}/php/php.exe";
 $smwgOWLFullExport = true;
 
 $smwgEnableWikiWebServices = true;
+$smwgEnableUploadConverter = true;
 
 require_once( "{$IP}/extensions/Cite.php" );
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
