@@ -54,10 +54,10 @@ class USSpecialPage extends SpecialPage {
     	$searchEngine = new LuceneSearch();
     	$searchSet = $searchEngine->searchText($fulltext);
     	$print .= print_r($searchSet, true);
-//    	die();
+        $resultSet = array();
     	$result = $searchSet->next();
     	while($result !== false) {
-    		$print .= print_r($result, true);
+    		//$resultSet[] = Uni
     		$result = $searchSet->next();
     	}
     	return $print;
