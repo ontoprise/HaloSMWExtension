@@ -78,7 +78,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 					$querystring .= $param;
 				} else {
 					$parts = explode('=',$param,2);
-					if (count($parts) >= 2) {
+					if (count($parts) == 2 && in_array($parts[0], array('mainlabel', 'sort', 'order', 'default', 'format', 'offset', 'limit', 'headers', 'link', 'intro', 'searchlabel'))) {
 						$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
 					} else {
 						$querystring .= $param;
