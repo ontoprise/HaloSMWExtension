@@ -2,7 +2,7 @@
 define('US_SYNOMYM_EXP', 0);
 define('US_SYNOMYM_BROAD_EXP', 1);
 define('US_SYNOMYM_NARROW_EXP', 2);
-define('US_SYNOMYM_EXP', 0);
+
 
 /**
  * Query Expander augments search terms according to a given (SKOS-)ontology. It
@@ -17,18 +17,23 @@ define('US_SYNOMYM_EXP', 0);
 class QueryExpander {
 
     // SKOS terms
-	private final static $LABEL = 'us_skos_preferedLabel';
-	private final static $SYNONYM = 'us_skos_altLabel';
-	private final static $HIDDEN = 'us_skos_hiddenLabel';
-	private final static $BROADER = 'us_skos_broader';
-	private final static $NARROWER = 'us_skos_narrower';
-	private final static $DESCRIPTION = 'us_skos_description';
-	private final static $EXAMPLE = 'us_skos_example';
-	private final static $TERM = 'us_skos_term';
+	private  static $LABEL = 'us_skos_preferedLabel';
+	private  static $SYNONYM = 'us_skos_altLabel';
+	private  static $HIDDEN = 'us_skos_hiddenLabel';
+	private  static $BROADER = 'us_skos_broader';
+	private  static $NARROWER = 'us_skos_narrower';
+	private  static $DESCRIPTION = 'us_skos_description';
+	private  static $EXAMPLE = 'us_skos_example';
+	private  static $TERM = 'us_skos_term';
     
+	private $terms;
 	
 	public function __construct() {
-
+        $this->terms = array();
+	}
+	
+	public function getTerms() {
+		return $this->terms;
 	}
 
 	/**
@@ -43,38 +48,43 @@ class QueryExpander {
 		// split terms at whitespaces unless they are quoted
 		preg_match_all('/([^\s]+|"[^"]+")+/', $terms, $matches);
         
+		$this->terms = self::parseTerms($terms);
 		$query = array();
-		foreach($matches[0] as $term) {
+		foreach($this->terms as $term) {
+			
 			$title = Title::newFromText($term);
 			if ($title->exists()) {
-				$values = $this->getSKOSPropertyValues($title, $mode);
+				$values = array($term);
+				$values = array_merge($values, $this->getSKOSPropertyValues($title, $mode));
 				$query[]= self::opTerms($values, "OR");
 				continue;
 			} 
 
 			$title = Title::newFromText($term, NS_CATEGORY);
 			if ($title->exists()) {
-				$subcategories = smwfGetSemanticStore()->getDirectSubCategories();
-				$categoryQuery .= self::opTerms($subcategories, "OR");
+				
+				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
+				$categoryQuery = self::opTerms($subcategories, "OR");
 				$values = $this->getSKOSPropertyValues($title, $mode);
-				$skos_query .= self::opTerms($values, "OR");
-				$query[]= self::opTerms(array($categoryQuery, $skos_query), "AND");
+				$skos_query = self::opTerms($values, "OR");
+				$query[]= self::opTerms(array($term, $categoryQuery, $skos_query), "OR");
 				continue;
 			}
 
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title->exists()) {
-				$subproperties = smwfGetSemanticStore()->getDirectSubProperties();
-				$propertyQuery .= self::opTerms($subproperties, "OR");
+				$subproperties = smwfGetSemanticStore()->getDirectSubProperties($title);
+				$propertyQuery = self::opTerms($subproperties, "OR");
 				$values = $this->getSKOSPropertyValues($title, $mode);
-				$skos_query .= self::opTerms($values, "OR");
-				$query[]= self::opTerms(array($propertyQuery, $skos_query), "AND");
+				$skos_query = self::opTerms($values, "OR");
+				$query[]= self::opTerms(array($term, $propertyQuery, $skos_query), "OR");
 				continue;
 			}
 
 			$title = Title::newFromText($term, NS_TEMPLATE);
 			if ($title->exists()) {
-				$values = $this->getSKOSPropertyValues($title, $mode);
+				$values = array($term);
+				$values = array_merge($values, $this->getSKOSPropertyValues($title, $mode));
 				$query[]= self::opTerms($values, "OR");
 				continue;
 			}
@@ -82,7 +92,7 @@ class QueryExpander {
 			// title does not exist as instance, category, property or template
 			// so check if it appears in the SKOS ontology
 			$titles = $this->lookupSKOS($term, $mode);
-			$query[]= self::opTerms($titles, "OR");
+			$query[]= self::opTerms(array_merge(array($term), $titles), "OR");
 		}
 		$totalQuery = self::opTerms($query, "AND");
 		return $totalQuery;
@@ -93,30 +103,31 @@ class QueryExpander {
 		switch($mode) {
 			case US_SYNOMYM_EXP:
 				$prop = SMWPropertyValue::makeUserProperty(wfMsg(self::$LABEL));
-				$values = smwfGetStore()->getPropertyValue($title, $prop);
+				$values = smwfGetStore()->getPropertyValues($title, $prop);
 				$result = array_merge($result, $values);
 
 				$prop = SMWPropertyValue::makeUserProperty(wfMsg(self::$SYNONYM));
-				$values = smwfGetStore()->getPropertyValue($title, $prop);
+				$values = smwfGetStore()->getPropertyValues($title, $prop);
 				$result = array_merge($result, $values);
 
 				$prop = SMWPropertyValue::makeUserProperty(wfMsg(self::$HIDDEN));
-				$values = smwfGetStore()->getPropertyValue($title, $prop);
+				$values = smwfGetStore()->getPropertyValues($title, $prop);
 				$result = array_merge($result, $values);
 				break;
 
 			case US_SYNOMYM_BROAD_EXP:
 				$prop = SMWPropertyValue::makeUserProperty(wfMsg(self::$BROADER));
-				$values = smwfGetStore()->getPropertyValue($title, $prop);
+				$values = smwfGetStore()->getPropertyValues($title, $prop);
 				$result = array_merge($result, $values);
 				break;
 
 			case US_SYNOMYM_NARROW_EXP:
 				$prop = SMWPropertyValue::makeUserProperty(wfMsg(self::$NARROWER));
-				$values = smwfGetStore()->getPropertyValue($title, $prop);
+				$values = smwfGetStore()->getPropertyValues($title, $prop);
 				$result = array_merge($result, $values);
 				break;
 		}
+		return $result;
 	}
 	
 	private function lookupSKOS($term, $mode) {
@@ -138,6 +149,7 @@ class QueryExpander {
                 $titles = smwfGetStore()->getPropertySubjects($prop, NULL, $requestoptions);
                 $result = array_merge($result, $titles);
 		}
+		return $result;
 	}
     
 	/**
@@ -147,20 +159,40 @@ class QueryExpander {
 	 * @param string $operator
 	 * @return string
 	 */
-	private static function opTerms(array & $terms, $operator) {
+	private static function opTerms(array $terms, $operator) {
 		$i = 0;
+		$connectedParts = 0; // number of _actually_ connected $terms
 		$result = "";
 		foreach($terms as $t) {
 			if ($t instanceof Title) {
 				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".$t->getText();
+				$connectedParts++;
 			} else if ($t instanceof SMWPropertyValue ) {
 				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
-			} else if (is_string($t)) {
+				$connectedParts++;
+			} else if (is_string($t) && strlen($t) > 0) {
 				if ($i === 0) $result .= $t; else $result .= " $operator ".$t;
+				$connectedParts++;
 			}
 			$i++;
 		}
-		return "(".$result.")";
+		return $connectedParts <= 1 ? $result : "(".$result.")";
+	}
+	
+	public static function parseTerms($termString) {
+		$terms = array();
+	    // split terms at whitespaces unless they are quoted
+        preg_match_all('/([^\s"]+|"[^"]+")+/', $termString, $matches);
+                
+        foreach($matches[0] as $term) {
+            // unquote if necessary
+            if (substr($term, 0, 1) == '"' && substr($term, strlen($term)-1, 1) == '"') {
+                $term = substr($term, 1, strlen($term)-2);
+                $term = str_replace(' ','_',$term);
+            }
+            $terms[] = $term;
+        }
+        return $terms;
 	}
 }
 

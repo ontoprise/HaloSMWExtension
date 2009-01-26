@@ -9,8 +9,7 @@ class LuceneSearch extends SearchEngine {
 	 * @access public
 	 */
 	function searchText( $term ) {
-		return LuceneSearchSet::newFromQuery( 'suggest',
-                $term, $this->namespaces, $this->limit, $this->offset );
+		
 		return LuceneSearchSet::newFromQuery( isset($this->related)? 'related' : 'search',
 				$term, $this->namespaces, $this->limit, $this->offset );
 	   
@@ -351,7 +350,7 @@ class LuceneResult extends SearchResult {
 	}
 
 	function getScore() {
-		return null; // lucene scores are meaningless to the user... 
+		return $this->mScore; // lucene scores are meaningless to the user... 
 	}
 	
 	function getTitleSnippet($terms){				

@@ -1,11 +1,32 @@
+#us_didyoumean {
+	width: 97%;
+	 
+}
+
 #us_refineresults {
-	height: 40px;
+	height: 20px;
 	width:97%;
-	border: 1px solid #AAAAAA;
+	padding: 5px;
+
+	margin-bottom: 2px;
+}
+
+#us_refineresults .us_refinelinks {
+	margin: 3px;
 }
 
 #us_searchresults {
     height: 600px;
+    padding: 5px;
     width:97%;
-    border: 1px solid #AAAAAA;
+    
+}
+
+.us_search_result_link{
+	margin: 6px;
+}
+
+.us_search_result .snippet {
+	font-size: 80%;
+	margin-left: 10px;
 }

@@ -45,11 +45,17 @@ function wfUSAddHeader(& $out) {
 function wfUSSetupExtension() {
     global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath;
     wfUSInitMessages();
-    $dir = 'extensions/UnifiedSearch/MWSearch';
+    $dir = 'extensions/UnifiedSearch/';
+    global $smwgHaloIP;
+    $wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
     $wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
-    $wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch_body.php';
-    $wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch_body.php';
-    $wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch_body.php';
+    $wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
+    $wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
+    $wgAutoloadClasses['WikiTitleSearch'] = $dir . 'WikiTitleSearch.php';
+    $wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
+    $wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
+    $wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
+    $wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
     $wgSpecialPages['Search'] = array('USSpecialPage');
     return true;
 }
