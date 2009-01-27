@@ -28,6 +28,13 @@ var wgContLanguageStrings = {
 	'TYPE_PAGE'               : "Type:Page",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Page",			// type identifier without namespace
 	
-	'HAS_TYPE'				  : "has type"		// Special property for definition of data type
+	'HAS_TYPE'				  : "has type",		// Special property for definition of data type
+	'DOMAIN_HINT'			  : "has domain and range",
+	'RANGE_HINT'			  : "has domain and range",
+	'MAX_CARDINALITY'		  : "Has max cardinality",
+	'MIN_CARDINALITY'		  : "Has min cardinality",
+	'IS_INVERSE_OF'			  : "Is inverse of",
+	'TRANSITIVE_RELATION'	  : "Transitive properties",
+	'SYMMETRICAL_RELATION'	  : "Symmetrical properties"
 	
 }
