@@ -442,10 +442,10 @@ OntologyModifier.prototype = {
 	getSchemaProperties : function() {
 		var wtp = new WikiTextParser();
 		var props = new Array();
-		props.push(wtp.getRelation(HAS_TYPE));
-		props.push(wtp.getRelation(DOMAIN_HINT));
-		props.push(wtp.getRelation(MAX_CARDINALITY));
-		props.push(wtp.getRelation(MIN_CARDINALITY));
+		props.push(wtp.getRelation(gLanguage.getMessage('HAS_TYPE')));
+		props.push(wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT')));
+		props.push(wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY')));
+		props.push(wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY')));
 		
 		var schemaAnnotations = "";
 		for (var typeIdx = 0, nt = props.length; typeIdx < nt; ++typeIdx) {
@@ -457,8 +457,8 @@ OntologyModifier.prototype = {
 				}
 			}
 		}
-		var transitive = wtp.getCategory(TRANSITIVE_RELATION);
-		var symmetric = wtp.getCategory(SYMMETRICAL_RELATION);
+		var transitive = wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+		var symmetric = wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 		
 		if (transitive) {
 			schemaAnnotations += transitive.getAnnotation() + "\n";

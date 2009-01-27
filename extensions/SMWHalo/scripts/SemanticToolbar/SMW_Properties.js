@@ -14,13 +14,6 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var DOMAIN_HINT = "has domain and range";
-var RANGE_HINT  = "has domain and range";
-var MAX_CARDINALITY = "Has max cardinality";
-var MIN_CARDINALITY = "Has min cardinality";
-var INVERSE_OF = "Is inverse of";
-var TRANSITIVE_RELATION = "Transitive properties";
-var SYMMETRICAL_RELATION = "Symmetrical properties";
 
 var SMW_PRP_ALL_VALID =	
 	'smwAllValid="allValid ' +
@@ -138,14 +131,14 @@ createContent: function() {
 	this.wtp.initialize();
 	
 	var type    = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
-	var domain  = this.wtp.getRelation(DOMAIN_HINT);
-	var range   = this.wtp.getRelation(RANGE_HINT);
-	var maxCard = this.wtp.getRelation(MAX_CARDINALITY);
-	var minCard = this.wtp.getRelation(MIN_CARDINALITY);
-	var inverse = this.wtp.getRelation(INVERSE_OF);
+	var domain  = this.wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT'));
+	var range   = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
+	var maxCard = this.wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY'));
+	var minCard = this.wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY'));
+	var inverse = this.wtp.getRelation(gLanguage.getMessage('IS_INVERSE_OF'));
 	  
-	var transitive = this.wtp.getCategory(TRANSITIVE_RELATION);
-	var symmetric = this.wtp.getCategory(SYMMETRICAL_RELATION);
+	var transitive = this.wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+	var symmetric = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 
 	// Check if some property characteristic are given several times
 	var duplicatesFound = false;
@@ -281,7 +274,7 @@ createContent: function() {
 		types = [gLanguage.getMessage("TYPE_PAGE")];
 	}
 
-	var ranges = this.wtp.getRelation(RANGE_HINT);
+	var ranges = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
 	
 	var rc = 0;
 	for (var i = 0, num = types.length; i < num; ++i) {
@@ -672,13 +665,13 @@ apply: function() {
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
-	var domainRangeAnno = this.wtp.getRelation(DOMAIN_HINT);
-	var maxCardAnno = this.wtp.getRelation(MAX_CARDINALITY);
-	var minCardAnno = this.wtp.getRelation(MIN_CARDINALITY);
-	var inverseAnno = this.wtp.getRelation(INVERSE_OF);
+	var domainRangeAnno = this.wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT'));
+	var maxCardAnno = this.wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY'));
+	var minCardAnno = this.wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY'));
+	var inverseAnno = this.wtp.getRelation(gLanguage.getMessage('IS_INVERSE_OF'));
 	  
-	var transitiveAnno = this.wtp.getCategory(TRANSITIVE_RELATION);
-	var symmetricAnno = this.wtp.getCategory(SYMMETRICAL_RELATION);
+	var transitiveAnno = this.wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+	var symmetricAnno = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 	
 	
 	// change existing annotations
@@ -712,24 +705,24 @@ apply: function() {
 	
 	// append new annotations
 	if (maxCardAnno == null && maxCard != null) {
-		this.wtp.addRelation(MAX_CARDINALITY, maxCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MAX_CARDINALITY'), maxCard, null, true);
 	}
 	if (minCardAnno == null && minCard != null) {
-		this.wtp.addRelation(MIN_CARDINALITY, minCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MIN_CARDINALITY'), minCard, null, true);
 	}
 	if (inverseAnno == null && inverse != null) {
-		this.wtp.addRelation(INVERSE_OF, inverse, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('IS_INVERSE_OF'), inverse, null, true);
 	}
 	if (transitive != null && transitive.down('input').checked && transitiveAnno == null) {
-		this.wtp.addCategory(TRANSITIVE_RELATION, true);
+		this.wtp.addCategory(gLanguage.getMessage('TRANSITIVE_RELATION'), true);
 	}
 	if (symmetric != null && symmetric.down('input').checked && symmetricAnno == null) {
-		this.wtp.addCategory(SYMMETRICAL_RELATION, true);
+		this.wtp.addCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'), true);
 	}
 	
 	// Handle the definition of (n-ary) relations
 	// First, remove all domain/range hints
-	rangeAnno = this.wtp.getRelation(RANGE_HINT);
+	rangeAnno = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
 	if (rangeAnno) {
 		for (var i = 0, num = rangeAnno.length; i < num; i++) {
 			rangeAnno[i].remove("");
@@ -749,7 +742,7 @@ apply: function() {
 				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
 				r = ((domain == null) ? "" : domain) + "; " + r;
 				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
-				this.wtp.addRelation(RANGE_HINT, r, null, true);
+				this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), r, null, true);
 				domainAdded = true;
 			} else {
 				// type is not Page
@@ -761,7 +754,7 @@ apply: function() {
 	if (!domainAdded && domain != null) {
 		// A domain is given but it has not been added yet, as the property has
 		// no range.
-		this.wtp.addRelation(RANGE_HINT, domain + "; ", null, true);
+		this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), domain + "; ", null, true);
 	}
 	
 	// add the (n-ary) type definition
