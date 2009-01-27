@@ -356,7 +356,10 @@ class SMWTripleStore extends SMWStore {
 
 
 			} catch(Exception $e) {
-				return new SMWQueryResult(array(), $query, false);
+//				var_dump($e);
+				$sqr = new SMWQueryResult(array(), $query, false);
+				$sqr->addErrors(array($e->getMessage()));
+				return $sqr;
 			}
 			return $queryResult;
 
