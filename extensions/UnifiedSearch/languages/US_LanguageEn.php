@@ -11,7 +11,19 @@ class US_LanguageEn {
 									    'us_skos_term' => 'Term');
     
     public $us_userMessages = array (
+        'us_search' => 'General search',
+        'us_page_does_not_exist' => 'This page does not exist. Would you like to create the $1?',
+        'us_page' => 'page',
+        'us_refinesearch' => 'Refine search',
+        'us_browse_next' => 'next',
+        'us_browse_prev' => 'prev',
+        'us_results' => 'Results',
     
+        'us_article' => 'Article',
+        'us_all' => 'All',
+        'us_category' => 'Categories',
+        'us_property' => 'Properties',
+        'us_template' => 'Templates'
        
     );
 }
