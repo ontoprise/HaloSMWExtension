@@ -680,7 +680,7 @@ class SMWTripleStore extends SMWStore {
 					$literal = $this->unquote($this->removeXSDType($b));
 					$value = SMWDataValueFactory::newPropertyValue($var_name);
 					if ($value->getTypeID() == '_dat') { // exception for dateTime
-					   $value->setXSDValue(utf8_decode($literal));
+					   if ($literal != '') $value->setXSDValue(utf8_decode($literal));
 					} else {
 						$value->setUserValue(utf8_decode($literal));
 					}
