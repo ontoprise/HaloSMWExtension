@@ -1551,7 +1551,12 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	foreach($derivedFacts->getProperties() as $property) {
 		if (!$property->isShown()) { // showing this is not desired, hide
 			continue;
-		} elseif ($property->isUserDefined()) { // user defined property
+		} 
+		if (stripos($property->getShortWikiText(), 'http://www.w3.org/') === 0) {
+			// Special property with W3C namespace
+			continue;
+		}
+		if ($property->isUserDefined()) { // user defined property
 			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
 			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
 			$text .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
