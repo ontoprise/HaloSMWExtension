@@ -78,6 +78,11 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$literalpredicate = false;
 
 		$predicateDV = SMWPropertyValue::makeProperty("_TYPE");
+		
+		$prop = SMWPropertyValue::makeUserProperty($predicate);
+		$typeID = $prop->getTypeID();
+		$xsdType = WikiTypeToXSD::getXSDType($typeID);		
+		
 		$types = smwfGetStore()->getPropertyValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), $predicateDV);
 		
 		if (!in_array($subject, $this->variables)) {
@@ -114,15 +119,15 @@ class FlogicRuleRewriter extends RuleRewriter {
 						// probably a unit
 						$object = $parts[0] . ", '" . $parts[1] . "'"; 
 					} else {
-					   $object = is_numeric($object) ? $object.",''" : "\"$object\",''";
+					   $object = is_numeric($object) ? $object.",\"$xsdType\"" : "\"$object\",''";
 					}
 					
 				} else {
-					$object .= ",''";
+					$object .= ",\"$xsdType\"";
 				}
 			}
 		}
-		
+		$stmt = ($literalpredicate ? "attl_" : "attr_")."($subject, $predicate, $object)@\"{{wiki-name}}\""."\n";
 		return ($literalpredicate ? "attl_" : "attr_")."($subject, $predicate, $object)@\"{{wiki-name}}\"";
 	}
 
@@ -136,6 +141,12 @@ class FlogicRuleRewriter extends RuleRewriter {
 		
 		$instance = $match[1];
 		$category = $match[2];
+		
+		// Make sure an xsd-type is not recognized as category.
+		$xsdPos = strrpos($instance,'xsd');
+		if ($xsdPos == strlen($instance)-3) {
+			return $match[0];
+		}
       
 		if (!in_array($instance, $this->variables)) {
 			$instance = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($instance);
