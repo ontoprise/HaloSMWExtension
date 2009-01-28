@@ -12,7 +12,7 @@ class US_LanguageDe {
     
     public $us_userMessages = array (
         'us_search' => 'Allgemeine Suche',
-        'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. Wollen Sie die $1 erzeugen',
+        'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. Wollen Sie die $1 erzeugen?',
         'us_page' => 'Seite',
         'us_refinesearch' => 'Suche einschr&auml;nken',
         'us_browse_next' => 'n&auml;chste',
@@ -23,7 +23,11 @@ class US_LanguageDe {
 	    'us_all' => 'Alle',
 	    'us_category' => 'Kategorien',
 	    'us_property' => 'Attribute',
-        'us_template' => 'Vorlage'
+        'us_template' => 'Vorlage',
+    
+        'us_totalfulltextnum' => 'Gesamtzahl Volltextergebnisse',
+        'us_totaltitlenum' => 'Gesamtzahl Titel',
+        'us_didyoumean' => 'Meinten Sie'
     );
 }
 ?>

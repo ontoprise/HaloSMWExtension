@@ -48,11 +48,12 @@ function wfUSSetupExtension() {
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
+	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
-	$wgAutoloadClasses['WikiTitleSearch'] = $dir . 'WikiTitleSearch.php';
+	
 	$wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';

@@ -23,7 +23,11 @@ class US_LanguageEn {
         'us_all' => 'All',
         'us_category' => 'Categories',
         'us_property' => 'Properties',
-        'us_template' => 'Templates'
+        'us_template' => 'Templates',
+    
+        'us_totalfulltextnum' => 'Total fulltext results',
+        'us_totaltitlenum' => 'Total title results',
+        'us_didyoumean' => 'Did you mean'
        
     );
 }

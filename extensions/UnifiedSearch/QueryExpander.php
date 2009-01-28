@@ -33,24 +33,20 @@ class QueryExpander {
 	 * @return string
 	 */
 	public static function expand($terms, $mode = 0) {
-				       
-		
+	
 		$query = array();
 		foreach($terms as $term) {
-			
 			$title = Title::newFromText($term);
 			if ($title->exists()) {
 
 				$values = array($term);
 				$values = array_merge($values, self::getSKOSPropertyValues($title, $mode));
 				$query[]= self::opTerms($values, "OR");
-				
-				continue;
+								
 			} 
 
 			$title = Title::newFromText($term, NS_CATEGORY);
 			if ($title->exists()) {
-				
 				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
 				$categoryQuery = self::opTerms($subcategories, "OR");
 				$values = self::getSKOSPropertyValues($title, $mode);
@@ -137,6 +133,7 @@ class QueryExpander {
                 $titles = smwfGetStore()->getPropertySubjects(SKOSVocabulary::$HIDDEN, NULL, $requestoptions);
                 $result = array_merge($result, $titles);
 		}
+		
 		return $result;
 	}
     
