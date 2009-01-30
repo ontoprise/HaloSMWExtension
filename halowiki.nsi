@@ -11,7 +11,7 @@
 */
 
 ;Without files (compiles much faster, for debugging)
-;!define NOFILES
+!define NOFILES
  
 ;--------------------------------
 !include "MUI2.nsh"
@@ -101,9 +101,11 @@ RequestExecutionLevel admin
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW initComponentsPage
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForNeededProcess
 !insertmacro MUI_PAGE_COMPONENTS
-Page custom showWikiCustomize checkWikiCustomize 
+
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
-!insertmacro MUI_PAGE_DIRECTORY 
+!insertmacro MUI_PAGE_DIRECTORY
+ 
+Page custom showWikiCustomize checkWikiCustomize 
 
 !insertmacro MUI_PAGE_INSTFILES
 ;!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForSkype
@@ -343,7 +345,7 @@ LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to 
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
 LangString START_SERVERS ${LANG_ENGLISH} "Please start Apache and MySQL"
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
-LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "If Windows Firewall complains, unblock the two processes. Then continue."
+LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "If Windows Firewall complains, unblock Apache and MySQL processes. Then continue."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -435,7 +437,7 @@ Function showWikiCustomize
 FunctionEnd
 
 Function checkWikiCustomize
-   
+  CALL checkForSkype
 FunctionEnd
 
 
@@ -614,7 +616,10 @@ FunctionEnd
 Function checkForSkype
     FindProcDLL::FindProc "Skype.exe"
     ${If} $R0 == 1
-        MessageBox MB_OK "Seems that Skype is running. Please close it or change its config, so that it does not block TCP port 80."
+        MessageBox MB_OKCANCEL  "Seems that Skype is running. Please close it or change its config, so that it does not block TCP port 80." IDOK ok IDABORT abortinstaller 
+        abortInstaller:
+            Abort
+        ok:
     ${EndIf}
 FunctionEnd
 
