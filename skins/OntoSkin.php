@@ -304,15 +304,24 @@ class OntoSkinTemplate extends QuickTemplate {
 	<div id="p-search" class="portlet">
 		<h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
 		<div id="searchBody" class="pBody">
+		
 			<form action="<?php $this->text('searchaction') ?>" id="searchform"><div>
+			    
 				<input id="searchInput" pasteNS="true" class="wickEnabled" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
 					if( isset( $this->data['search'] ) ) {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
 				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />&nbsp;
 				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
+				<?php global $wgExtensionCredits; if (array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+					echo '<input type="radio" name="tolerance" id="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>';
+					echo '<input type="radio" name="tolerance" id="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>';
+					echo '<input type="radio" name="tolerance" id="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>';
+				} ?>
 			</div></form>
+		
 		</div>
 	</div>
+	
 <?php
 	}
 
