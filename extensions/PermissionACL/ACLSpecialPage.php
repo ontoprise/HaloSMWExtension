@@ -74,7 +74,7 @@ class ACLSpecialPage extends SpecialPage {
         }
         $html .= "</table></form>";
         $html .= "<input type=\"button\" name=\"delete_$i\" value=\"".wfMsg('smw_acl_remove')."\" onclick=\"acl.removeRule()\"/>";
-        $whitelistText = isset($wgWhitelistRead) && is_array($wgWhitelistRead) ? implode(",",array_slice($wgWhitelistRead, 5)) : "";
+        $whitelistText = isset($wgWhitelistRead) && is_array($wgWhitelistRead) ? implode(",",array_slice($wgWhitelistRead, 3)) : "";
         $superusersText = isset($wgPermissionACL_Superuser)  && is_array($wgPermissionACL_Superuser) ? implode(",",$wgPermissionACL_Superuser) : "";
         $html .= "<p>".wfMsg('smw_acl_whitelist').":<br><input id=\"whitelist\" type=\"text\" size=\"50\" name=\"whitelist\" value=\"".$whitelistText."\"/></p>";
         $html .= "<p>".wfMsg('smw_acl_superusers').":<br> <input id=\"superusers\" type=\"text\" size=\"50\" name=\"superusers\" value=\"".$superusersText."\"/></p>";
