@@ -38,7 +38,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 		$res = $db->query('SELECT s.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
         ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' '.$sqlOptions);
-		 
+			
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -61,7 +61,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 		$res = $db->query('SELECT o.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
         ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND s.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' '.$sqlOptions);
-		 
+			
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -173,7 +173,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN '.$smw_rels2.' n ON id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id
                      WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 1 GROUP BY property ORDER BY property');
-		 
+			
 		// rewrite result as array
 		$result = array();
 
@@ -184,7 +184,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$rowTransCats = $db->fetchObject($resTransCats);
 		$rowRanges = $db->fetchObject($resRanges);
 		foreach($properties as $props) {
-			 list($p, $inherited) = $props;
+			list($p, $inherited) = $props;
 			$minCard = CARDINALITY_MIN;
 			if ($rowMinCard != NULL && $rowMinCard->property == $p->getDBkey()) {
 				$minCard = $rowMinCard->minCard;
@@ -240,7 +240,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$smw_ids = $db->tableName('smw_ids');
 			$res = $db->query('SELECT COUNT(s_id) AS numOfSubjects FROM '.$smw_atts2.' s JOIN '.$smw_ids.' ON p_id = smw_id WHERE smw_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY smw_title ' .
                               ' UNION SELECT COUNT(s_id) AS numOfSubjects FROM '.$smw_rels2.' s JOIN '.$smw_ids.' ON p_id = smw_id WHERE smw_title = '.$db->addQuotes($title->getDBKey()).' GROUP BY smw_title');
-			 
+
 		}
 		if($db->numRows( $res ) > 0) {
 			$row = $db->fetchObject($res);
@@ -361,10 +361,12 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 				$db->update($smw_atts2, array('rating' => (is_numeric($res->rating) ? $res->rating : 0) + $rating), array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'value_xsd' => $object));
 			} else {
 				$object = $db->selectRow($smw_ids, 'smw_id', array('smw_title' => $object));
-				$res = $db->selectRow($smw_rels2, 'rating', array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'o_id' => $object->smw_id));
+				if ($object !== false) {
+					$res = $db->selectRow($smw_rels2, 'rating', array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'o_id' => $object->smw_id));
 
-				if ($res !== false && $subject !== false && $predicate !== false && $object !== false) {
-					$db->update($smw_rels2, array('rating' => (is_numeric($res->rating) ? $res->rating : 0) + $rating), array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'o_id' => $object->smw_id));
+					if ($res !== false && $subject !== false && $predicate !== false && $object !== false) {
+						$db->update($smw_rels2, array('rating' => (is_numeric($res->rating) ? $res->rating : 0) + $rating), array('s_id' => $subject->smw_id, 'p_id' => $predicate->smw_id, 'o_id' => $object->smw_id));
+					}
 				}
 			}
 		}
@@ -376,7 +378,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
-		 
+			
 
 		$res = $db->query('SELECT i.smw_title AS attribute_title, value_xsd, rating FROM '.$smw_atts2.' JOIN '.$smw_ids.' i ON p_id = i.smw_id JOIN '.$smw_ids.' i2 ON s_id = i2.smw_id WHERE i2.smw_title = '.$db->addQuotes($subject->getDBkey()).' AND i2.smw_namespace = '.$subject->getNamespace());
 		$res2 = $db->query('SELECT i.smw_title AS relation_title, i2.smw_title AS object_title, rating FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON p_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title = '.$db->addQuotes($subject->getDBkey()).' AND i2.smw_namespace = '.$subject->getNamespace());
@@ -417,7 +419,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$offset_row = $db->fetchObject( $offset_result );
 		$offsetRel = $offset_row->offset;
 		$db->freeResult($offset_result);
-		 
+			
 		$res = $db->query('(SELECT i.smw_title AS subject, i2.smw_title AS predicate, value_xsd AS object FROM '.$smw_atts2. ' JOIN '.$smw_ids.' i ON s_id=i.smw_id JOIN '.$smw_ids.' i2 ON p_id=i2.smw_id '. $where.') ' .
                             'UNION ' .
                            '(SELECT i.smw_title AS subject, i2.smw_title AS predicate, i3.smw_title AS object FROM '.$smw_rels2.' JOIN '.$smw_ids.' i ON s_id=i.smw_id JOIN '.$smw_ids.' i2 ON p_id=i2.smw_id JOIN '.$smw_ids.' i3 ON o_id=i3.smw_id '. $where.' AND i.smw_iw != ":smw") LIMIT '.$limit.' OFFSET '.($offsetAtt+$offsetRel));
