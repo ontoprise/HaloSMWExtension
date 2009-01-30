@@ -1,8 +1,4 @@
 <?php
-define('US_SYNOMYM_EXP', 0);
-define('US_SYNOMYM_BROAD_EXP', 1);
-define('US_SYNOMYM_NARROW_EXP', 2);
-
 
 /**
  * Query Expander augments search terms according to a given (SKOS-)ontology. It
@@ -16,14 +12,11 @@ define('US_SYNOMYM_NARROW_EXP', 2);
  */
 class QueryExpander {
 
-       
-	
 	
 	public function __construct() {
        
 	}
-	
-	
+		
 
 	/**
 	 * Expands a search term according to specified mode.
@@ -33,51 +26,51 @@ class QueryExpander {
 	 * @return string
 	 */
 	public static function expand($terms, $mode = 0) {
-	
+	    
+		if ($mode == US_EXACTMATCH) {
+			// do not expand, just use the given terms
+			return self::opTerms($terms, "AND");
+		}
 		$query = array();
 		foreach($terms as $term) {
-			$title = Title::newFromText($term);
-			if ($title->exists()) {
-
-				$values = array($term);
-				$values = array_merge($values, self::getSKOSPropertyValues($title, $mode));
-				$query[]= self::opTerms($values, "OR");
-								
-			} 
+			$found = false;
 
 			$title = Title::newFromText($term, NS_CATEGORY);
 			if ($title->exists()) {
 				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
-				$categoryQuery = self::opTerms($subcategories, "OR");
-				$values = self::getSKOSPropertyValues($title, $mode);
-				$skos_query = self::opTerms($values, "OR");
-				$query[]= self::opTerms(array($term, $categoryQuery, $skos_query), "OR");
-				continue;
+				$skos_values = self::getSKOSPropertyValues($title, $mode);
+				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values), "OR");
+				$found = true;
 			}
-
+			
+            $title = Title::newFromText($term);
+            if ($title->exists()) {
+        
+                $skos_values = self::getSKOSPropertyValues($title, $mode);
+                $skos_subjects = self::lookupSKOS($term, $mode);
+                $query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values), "OR");
+                $found = true;
+            } 
+            
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title->exists()) {
-				$subproperties = smwfGetSemanticStore()->getDirectSubProperties($title);
-				$propertyQuery = self::opTerms($subproperties, "OR");
-				$values = self::getSKOSPropertyValues($title, $mode);
-				$skos_query = self::opTerms($values, "OR");
-				$query[]= self::opTerms(array($term, $propertyQuery, $skos_query), "OR");
-				continue;
+				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : NULL;
+				$skos_values = self::getSKOSPropertyValues($title, $mode);
+				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values), "OR");
+				$found = true;
 			}
 
 			$title = Title::newFromText($term, NS_TEMPLATE);
 			if ($title->exists()) {
 				$values = array($term);
-				$values = array_merge($values, self::getSKOSPropertyValues($title, $mode));
+				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : NULL;
 				$query[]= self::opTerms($values, "OR");
-				continue;
+				$found = true;
 			}
-
-			// title does not exist as instance, category, property or template
-			// so check if it appears in the SKOS ontology
-			$titles = self::lookupSKOS($term, $mode);
-			$query[]= self::opTerms(array_merge(array($term), $titles), "OR");
+			
+		    if (!$found) $query[] = $term;
 		}
+		
 		$totalQuery = self::opTerms($query, "AND");
 		return $totalQuery;
 	}
@@ -85,7 +78,16 @@ class QueryExpander {
 	private static function getSKOSPropertyValues($title, $mode) {
 		$result = array();
 		switch($mode) {
-			case US_SYNOMYM_EXP:
+			
+			case US_HIGH_TOLERANCE:
+                
+                $values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$BROADER);
+                $result = array_merge($result, $values);
+                $values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$NARROWER);
+                $result = array_merge($result, $values);
+			
+                                
+			case US_LOWTOLERANCE:
 				
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$LABEL);
 				$result = array_merge($result, $values);
@@ -99,17 +101,6 @@ class QueryExpander {
 				$result = array_merge($result, $values);
 				break;
 
-			case US_SYNOMYM_BROAD_EXP:
-				
-				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$BROADER);
-				$result = array_merge($result, $values);
-				break;
-
-			case US_SYNOMYM_NARROW_EXP:
-				
-				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$NARROWER);
-				$result = array_merge($result, $values);
-				break;
 		}
 		return $result;
 	}
@@ -117,7 +108,8 @@ class QueryExpander {
 	private static function lookupSKOS($term, $mode) {
 		$result = array();
 		switch($mode) {
-            case US_SYNOMYM_EXP:
+			case US_HIGH_TOLERANCE:
+            case US_LOWTOLERANCE:
             	$requestoptions = new SMWRequestOptions();
             	$requestoptions->addStringCondition($term, SMWStringCondition::STRCOND_MID);
             	
@@ -149,6 +141,7 @@ class QueryExpander {
 		$connectedParts = 0; // number of _actually_ connected $terms
 		$result = "";
 		foreach($terms as $t) {
+			if ($t == NULL) continue;
 			if ($t instanceof Title) {
 				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".$t->getText();
 				$connectedParts++;
@@ -156,6 +149,9 @@ class QueryExpander {
 				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
 				$connectedParts++;
 			} else if ($t instanceof SMWStringValue ) {
+                if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+                $connectedParts++;
+            } else if ($t instanceof SMWWikiPageValue ) {
                 if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
                 $connectedParts++;
             } else if (is_string($t) && strlen($t) > 0) {

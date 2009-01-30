@@ -6,7 +6,7 @@ abstract class USStore {
 	 * Lookup page titles in $namespaces
 	 *
 	 */
-	public abstract function lookUpTitlesByText($termString, array $namespaces, $disjunctive = false, $limit=10, $offset=0);
+	public abstract function lookUpTitles($terms, array $namespaces, $disjunctive = false, $limit=10, $offset=0, $mode = 0);
 
 	
         

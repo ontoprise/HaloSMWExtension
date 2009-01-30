@@ -5,8 +5,11 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die(1);
 }
 
+define('US_HIGH_TOLERANCE', 0);
+define('US_LOWTOLERANCE', 1);
+define('US_EXACTMATCH', 2);
 
-$wgExtensionCredits['other'][] = array(
+$wgExtensionCredits['unifiedsearch'][] = array(
         'name' => 'Unified search',
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
@@ -44,7 +47,8 @@ function wfUSAddHeader(& $out) {
  */
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks;
-	wfUSInitMessages();
+	wfUSInitUserMessages();
+	wfUSInitContentMessages();
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
@@ -53,7 +57,7 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
-	
+
 	$wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
@@ -67,12 +71,12 @@ function wfUSSetupExtension() {
 /**
  * Registers ACL messages.
  */
-function wfUSInitMessages() {
-	global $wgMessageCache, $wgLang;
+function wfUSInitUserMessages() {
+	global $wgMessageCache, $wgLang, $IP;
 
 	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
-	if (file_exists('extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
+	if (file_exists($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
 		include_once('extensions/UnifiedSearch/languages/'. $usLangClass . '.php' );
 	}
 	// fallback if language not supported
@@ -83,7 +87,25 @@ function wfUSInitMessages() {
 		$aclgHaloLang = new $usLangClass();
 	}
 	$wgMessageCache->addMessages($aclgHaloLang->us_userMessages, $wgLang->getCode());
-	$wgMessageCache->addMessages($aclgHaloLang->us_contentMessages, $wgLang->getCode());
+
+
+}
+
+function wfUSInitContentMessages() {
+	global $wgMessageCache, $wgLanguageCode, $IP;
+	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLanguageCode) );
+	if (file_exists($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
+		include_once($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php' );
+	}
+	// fallback if language not supported
+	if ( !class_exists($usLangClass)) {
+		include_once('extensions/UnifiedSearch/languages/US_LanguageEn.php' );
+		$aclgHaloLang = new US_LanguageEn();
+	} else {
+		$aclgHaloLang = new $usLangClass();
+	}
+
+	$wgMessageCache->addMessages($aclgHaloLang->us_contentMessages, $wgLanguageCode);
 
 }
 
@@ -92,24 +114,27 @@ function wfUSInitMessages() {
  *
  */
 function wfUSInitializeTables() {
-	global $smwgContLang;
-    $verbose = true;
+	global $smwgContLang, $smwgHaloContLang;
+	$verbose = true;
 	DBHelper::reportProgress("Creating predefined SKOS properties...\n",$verbose);
-	foreach(SKOSVocabulary::$ALL as $page) {
+	foreach(SKOSVocabulary::$ALL as $id => $page) {
 		if ($page instanceof Title) {
 			$t = $page;
 			$name = $t->getText();
+			$text = "";
 		} else if ($page instanceof SMWPropertyValue) {
 			$t = Title::newFromText($page->getXSDValue(), SMW_NS_PROPERTY);
 			$name = $t->getText();
+			$propertyLabels = $smwgContLang->getPropertyLabels();
+            $namespaces = $smwgContLang->getNamespaces();
+            $datatypeLabels = $smwgContLang->getDatatypeLabels();
+            $haloSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+            $text = "\n\n[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels[SKOSVocabulary::$TYPES[$id]]."]]";
+            $text .= "\n\n[[".$haloSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".SKOSVocabulary::$ALL['us_skos_term']->getPrefixedText()."]]";
 		}
-		
+
 		$article = new Article($t);
 		if (!$t->exists()) {
-			$propertyLabels = $smwgContLang->getPropertyLabels();
-			$namespaces = $smwgContLang->getNamespaces();
-			$datatypeLabels = $smwgContLang->getDatatypeLabels();
-			$text = "\n\n[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_str"]."]]";
 			$article->insertNewArticle($text, "", false, false);
 			DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
 		} else {

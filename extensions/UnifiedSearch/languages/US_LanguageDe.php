@@ -4,7 +4,7 @@ class US_LanguageDe {
     public $us_contentMessages = array('us_skos_preferedLabel' => 'Bezeichnung',
                                         'us_skos_altLabel' => 'Auch bekannt als',
                                         'us_skos_hiddenLabel' => 'Selten benannt als',
-                                        'us_skos_broader' => 'Oberberiff',
+                                        'us_skos_broader' => 'Oberbegriff',
                                         'us_skos_narrower' => 'Spezialisierung',
                                         'us_skos_description' => 'Beschreibung',
                                         'us_skos_example' => 'Beispiel',
@@ -21,13 +21,16 @@ class US_LanguageDe {
     
 	    'us_article' => 'Artikel',
 	    'us_all' => 'Alle',
-	    'us_category' => 'Kategorien',
-	    'us_property' => 'Attribute',
-        'us_template' => 'Vorlage',
+	   
     
         'us_totalfulltextnum' => 'Gesamtzahl Volltextergebnisse',
         'us_totaltitlenum' => 'Gesamtzahl Titel',
-        'us_didyoumean' => 'Meinten Sie'
+        'us_didyoumean' => 'Meinten Sie',
+        'us_showdescription' => 'Zeige Beschreibung',
+        
+        'us_tolerantsearch' => 'tolerant',
+        'us_semitolerantsearch' => 'mittel',
+        'us_exactsearch' => 'exakt'
     );
 }
 ?>

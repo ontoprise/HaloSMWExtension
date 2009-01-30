@@ -10,12 +10,12 @@ global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
 
 function array_clone(& $src) {
-    $dst = array();
-    foreach($src as $e) {
-        $dst[] = $e;
-    }
-    return $dst;
- }
+	$dst = array();
+	foreach($src as $e) {
+		$dst[] = $e;
+	}
+	return $dst;
+}
 
 /*
  * Called when gardening request in sent in wiki
@@ -49,18 +49,19 @@ class USSpecialPage extends SpecialPage {
 		}
 
 		$limit =  $wgRequest->getVal('limit') !== NULL ? $wgRequest->getVal('limit') : 20;
-		$offset =  $wgRequest->getVal('offset') !== NULL ? $wgRequest->getVal('offset') : 0;
-        $ft_offset = $wgRequest->getVal('ft_offset') !== NULL ? explode(",", $wgRequest->getVal('ft_offset')) : array(0);
-        
+
+		$ft_offset = $wgRequest->getVal('ft_offset') !== NULL ? explode(",", $wgRequest->getVal('ft_offset')) : array(0);
+		$ti_offset = $wgRequest->getVal('ti_offset') !== NULL ? explode(",", $wgRequest->getVal('ti_offset')) : array(0);
+
 		$newpage = Title::newFromText($search);
 
 
 		$searchPage = SpecialPage::getTitleFor("Search");
 		# Otherwise show special search page
-		list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset) = $this->doSearch($limit, $offset, $ft_offset);
+		list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset, $next_ti_offset) = $this->doSearch($limit, $ti_offset, $ft_offset);
 		$numOfResults = count($searchResults);
 		$suggestion = $searchSet != NULL ? $searchSet->getSuggestionQuery() : NULL;
-
+        #$suggestion = "auto";
 		$html = "";
 		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
 		$wgOut->setPageTitle(wfMsg('us_search'));
@@ -72,136 +73,168 @@ class USSpecialPage extends SpecialPage {
 		// refine elements
 
 		$noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true");
-		$refineInstancesURL = $searchPage->getFullURL("search=$search&fulltext=true&restrict=0");
-		$refineCategories = $searchPage->getFullURL("search=$search&fulltext=true&restrict=14");
-		$refineProperties = $searchPage->getFullURL("search=$search&fulltext=true&restrict=102");
-		$refineTemplates = $searchPage->getFullURL("search=$search&fulltext=true&restrict=10");
+		$refineInstancesURL = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_MAIN);
+		$refineCategories = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_CATEGORY);
+		$refineProperties = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".SMW_NS_PROPERTY);
+		$refineTemplates = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_TEMPLATE);
+		$refineDocument = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_DOCUMENT);
+		$refineAudio = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_AUDIO);
+		$refineVideo = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_VIDEO);
+		$refinePDF = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_PDF);
 
 		$totalFTHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
 		$html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalfulltextnum').': <b>'.$totalFTHits.'</b>, '.wfMsg('us_totaltitlenum').': <b>'.$totalNumTitle.'</b></div>';
-        $html .='<div id="us_refineresults">'.wfMsg('us_refinesearch').': '.
-                '<a class="us_refinelinks" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>, '.
-                '<a class="us_refinelinks" href="'.$refineInstancesURL.'">'.wfMsg('us_article').'</a>,'.
-                '<a class="us_refinelinks" href="'.$refineCategories.'">'.wfMsg('us_category').'</a>,'.
-                '<a class="us_refinelinks" href="'.$refineProperties.'">'.wfMsg('us_property').'</a>,'.
-                '<a class="us_refinelinks" href="'.$refineTemplates.'">'.wfMsg('us_template').'</a>';
-              
-        $html .= '</div>';
+		
+		global $wgContLang;
+		$html .='<div id="us_refineresults">'.wfMsg('us_refinesearch').': '.
+                '<a class="us_refinelinks" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a> | '.
+                '<a class="us_refinelinks" href="'.$refineInstancesURL.'">'.wfMsg('us_article').'</a> | '.
+                '<a class="us_refinelinks" href="'.$refineCategories.'">'.$wgContLang->getNsText(NS_CATEGORY).'</a> | '.
+                '<a class="us_refinelinks" href="'.$refineProperties.'">'.$wgContLang->getNsText(SMW_NS_PROPERTY).'</a> | '.
+                '<a class="us_refinelinks" href="'.$refineTemplates.'">'.$wgContLang->getNsText(NS_TEMPLATE).'</a> | '.
+		        '<a class="us_refinelinks" href="'.$refineDocument.'">'.$wgContLang->getNsText(NS_DOCUMENT).'</a> | '.
+				'<a class="us_refinelinks" href="'.$refineAudio.'">'.$wgContLang->getNsText(NS_AUDIO).'</a> | '.
+				'<a class="us_refinelinks" href="'.$refineVideo.'">'.$wgContLang->getNsText(NS_VIDEO).'</a> | '.
+				'<a class="us_refinelinks" href="'.$refinePDF.'">'.$wgContLang->getNsText(NS_PDF).'</a>';
+		 
+		$html .= '</div>';
 		// browsing
 		$ft_offset_next = array_clone($ft_offset);
-		$ft_offset_next[] = $next_ft_offset;
+		$ft_offset_next[] = end($ft_offset) + $next_ft_offset;
 		$ft_offset_prev = array_clone($ft_offset);
 		$ft_offset_prev = count($ft_offset_prev) > 1 ? array_slice($ft_offset_prev, 0, count($ft_offset_prev)-1) : $ft_offset_prev;
-		
-		$next = $this->createBrowsingLink($search, $offset+$limit, $ft_offset_next, $limit, wfMsg('us_browse_next'));
-		$previous = $this->createBrowsingLink($search,$offset-$limit >= 0 ? $offset-$limit : 0, $ft_offset_prev, $limit, wfMsg('us_browse_prev'));
-		$limit20 = $this->createBrowsingLink($search,$offset, $ft_offset, 20 );
-		$limit50 = $this->createBrowsingLink($search,$offset, $ft_offset, 50);
-		$limit100 = $this->createBrowsingLink($search,$offset, $ft_offset, 100);
-		$limit250 = $this->createBrowsingLink($search,$offset, $ft_offset, 250);
-		$limit500 = $this->createBrowsingLink($search,$offset, $ft_offset, 500);
 
-		if ($offset == 0) {
-			$html .= "<div id=\"us_browsing\">(".wfMsg('us_browse_prev').") ($next) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
+		$ti_offset_next = array_clone($ti_offset);
+		$ti_offset_next[] = end($ti_offset) + $next_ti_offset;
+		$ti_offset_prev = array_clone($ti_offset);
+		$ti_offset_prev = count($ti_offset_prev) > 1 ? array_slice($ti_offset_prev, 0, count($ti_offset_prev)-1) : $ti_offset_prev;
+
+		$next = $this->createBrowsingLink($search, $ti_offset_next, $ft_offset_next, $limit, wfMsg('us_browse_next'));
+		$previous = $this->createBrowsingLink($search,$ti_offset_prev, $ft_offset_prev, $limit, wfMsg('us_browse_prev'));
+		$limit20 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 20 );
+		$limit50 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 50);
+		$limit100 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 100);
+		$limit250 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 250);
+		$limit500 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 500);
+
+		$nextButton =  (count($searchResults) < $limit) ? wfMsg('us_browse_next') : $next;
+		$prevButton = (end($ft_offset) == 0 && end($ti_offset) == 0) ? wfMsg('us_browse_prev') : $previous; 
+		if (end($ft_offset) == 0 && end($ti_offset) == 0) {
+			$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
 		} else {
-			$html .= "<div id=\"us_browsing\">($previous) ($next) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
+			
+			$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
 		}
-     
-		$html .= "<h2>".wfMsg('us_results')."  ".($offset+1)." - ".($offset+$numOfResults)." </h2>";
-        
+			
+		$html .= "<h2>".wfMsg('us_results')."</h2>";
+
 		// search results
 		$html .= '<div id="us_searchresults">';
-		
+
 		$html .= UnifiedSearchResultPrinter::serialize($searchResults);
 		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}
 
-	private function createBrowsingLink($search, $offset, $ft_offset, $limit, $text="") {
+	private function createBrowsingLink($search, $ti_offset, $ft_offset, $limit, $text="") {
 		$searchPage = SpecialPage::getTitleFor("Search");
-		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset&ft_offset=".implode(",", $ft_offset)).'">'.$text." ".$limit.'</a>';
+		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&ti_offset=".implode(",", $ti_offset)."&ft_offset=".implode(",", $ft_offset)).'">'.$text." ".$limit.'</a>';
 
 	}
 
-	private function doSearch($limit, $offset, $ft_offset) {
+	private function doSearch($limit, $ti_offset, $ft_offset) {
 		global $wgRequest;
-	  
+			
 		// initialize vars
 		$search = $wgRequest->getVal('search');
 		$restrictNS = $wgRequest->getVal('restrict');
-        $tolerance = $wgRequest->getVal('tolerance');
-        
+		$tolerance = $wgRequest->getVal('tolerance');
+
 		$titleSearchSet = array();
 		$skosTitleSearchSet = array();
 
-		$exactQuery = false;
+		$exactQuery = true; // assume exact query without expansion
+
 		$allNamespaces = array(NS_MAIN, NS_CATEGORY, SMW_NS_PROPERTY, NS_TEMPLATE);
 
 		// expand query
 		$terms = self::parseTerms($search);
-				 
-		// if query contains boolean operators do not use title search
-		if (self::exactQuery($terms, $search)) {
-			// exact lucene query. Do not expand. No title search
-            $exactQuery = true;
 			
+		$lastTIOffset = end($ti_offset);
+		$totalNum = 0;
+		// if query contains boolean operators do not use title search
+		if (!self::exactQuery($terms, $search)) {
+			
+			$exactQuery = false;
+			$expandedSearch = QueryExpander::expand($terms, $tolerance);
+			list($titleSearchSet, $totalNum) = USStore::getStore()->lookUpTitles($terms,
+			$restrictNS !== NULL ? array($restrictNS) : $allNamespaces, false, $limit , $lastTIOffset, $tolerance );
 		} else {
-			$expandedSearch = QueryExpander::expand($terms);
-            list($titleSearchSet, $totalNum) = USStore::getStore()->lookUpTitlesByText($terms,
-            $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, false, $limit/2 , $offset/2 );
-            if (count($titleSearchSet) == 0) {
-                list($titleSearchSet, $totalNum) = USStore::getStore()->lookUpTitlesByText($terms,
-                $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, true, $limit/2 , $offset/2 );
-            }
-
-            $skosTitleSearchSet = USStore::getStore()->lookupTitleBySKOS($terms,
-            $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit/2 , $offset/2  );
+			$removedOperators = array();
+			foreach($terms as $t) {
+				if (strtolower($t) != 'and' && strtolower($t) != 'or' && strtolower($t) != 'not') {
+					$removedOperators[] = $t;
+				}
+			}
+			$terms = $removedOperators;
 		}
-        
-		
+
+
 		// query lucene server
 		switch($restrictNS) {
 			case SMW_NS_PROPERTY: $ns_ft = "[".SMW_NS_PROPERTY."]:"; break;
 			case NS_CATEGORY: $ns_ft = "[".NS_CATEGORY."]:"; break;
 			case NS_TEMPLATE: $ns_ft = "[".NS_TEMPLATE."]:"; break;
-			case NS_MAIN: 
+			case NS_MAIN:
 			default: $ns_ft = "";
 		}
-		
+
 		// add title matches
 		$resultSet = array();
-        $resultSet = array_merge($resultSet, self::mergeTitlesUnique($titleSearchSet, $skosTitleSearchSet));
-        
-		$titleNum = count($resultSet);
-		$lastOffset = end($ft_offset);
-		
+
+		$lastFTOffset = end($ft_offset);
+
 		$searchSet = LuceneSearchSet::newFromQuery( 'search', $ns_ft .
-		($exactQuery ? $search : $expandedSearch), $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit - $titleNum, $lastOffset);
+		($exactQuery ? $search : $expandedSearch), $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit, $lastFTOffset);
 
-
-		$suggestion = NULL; // did you mean
-
-		// build results
+		//Did you mean?
+		$suggestion = NULL;
 		if ($searchSet!=NULL) {
 			$suggestion = $searchSet->getSuggestionQuery();
-		 $result = $searchSet->next();
-		 while($result !== false) {
-		 	if (!$result->isMissingRevision()) {
-		 		$resultSet[] = UnifiedSearchResult::newFromLuceneResult($result, $terms);
-		 	}
-		 	$result = $searchSet->next();
-		 }
 		}
 
-		
-		
+		// build results
+		$i = 1;
+		$j = 1;
+		$first = reset($titleSearchSet);
+		if ($first !== false) $resultSet[] = $first;
+		$c = $limit;
+		while ($i+$j <= $limit && $c > 0) {
+
+			$nextFulltext = $searchSet !== NULL ? $searchSet->next() : NULL;
+			if ($nextFulltext != NULL && !$nextFulltext->isMissingRevision()) {
+				$resultSet[] = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $terms);
+				$i++;
+			}
+			if ($i+$j > $limit) break;
+            $nextTitle = next($titleSearchSet);
+			if ($nextTitle !== false) {
+			     $resultSet[] = $nextTitle;
+			     $j++;
+			}
+			
+            $c--;
+
+		}
+
+
 		// sort results by score
 		UnifiedSearchResult::sortByScore($resultSet);
 
 		// serialize result table
-		return array($resultSet, $searchSet, $totalNum, $limit - $titleNum);
+		return array($resultSet, $searchSet, $totalNum, $i, $j);
 	}
-	
+
 	/**
 	 * Returns true if the $terms contain boolean operators or $search contains namespace prefixes
 	 *
@@ -211,7 +244,7 @@ class USSpecialPage extends SpecialPage {
 	private static function exactQuery($terms, $search) {
 		return in_array('and', $terms) || in_array('or', $terms) || in_array('not', $terms) || preg_match('/\[\d+\]:/', $search) !== 0;
 	}
-	
+
 	/**
 	 * Merges two titles arrays and filters doubles
 	 *
@@ -234,7 +267,7 @@ class USSpecialPage extends SpecialPage {
 	public static function parseTerms($termString) {
 		$terms = array();
 		// split terms at whitespaces unless they are quoted
-		preg_match_all('/([^\s"]+|"[^"]+")+/', $termString, $matches);
+		preg_match_all('/([^\s"\(\)]+|"[^"\(\)]+")+/', $termString, $matches);
 
 		foreach($matches[0] as $term) {
 			// unquote if necessary

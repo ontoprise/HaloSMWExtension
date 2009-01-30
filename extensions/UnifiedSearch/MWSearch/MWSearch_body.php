@@ -446,6 +446,18 @@ class LuceneSearchSet extends SearchResultSet {
 		}
 		
 		$enctext = rawurlencode( trim( $query ) );
+		
+		// XXX: reset umlaute and sharp s
+		$enctext = str_replace("%E3%BC","ü", $enctext);
+		$enctext = str_replace("%E3%A4","ä", $enctext);
+		$enctext = str_replace("%E3%B6","ö", $enctext);
+		
+		$enctext = str_replace("%E3%84","Ä", $enctext);
+		$enctext = str_replace("%E3%96","Ö", $enctext);
+		$enctext = str_replace("%E3%9C","Ü", $enctext);
+		
+		$enctext = str_replace("%E3%FF","ß", $enctext);
+		
 		$searchUrl = "http://$host:$wgLucenePort/$method/$wgDBname/$enctext?" .
 			wfArrayToCGI( array(
 				'namespaces' => implode( ',', $namespaces ),

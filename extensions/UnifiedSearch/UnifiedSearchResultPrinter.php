@@ -7,14 +7,21 @@ class UnifiedSearchResult {
 	private $title;
 	private $snippet;
 	private $score;
+	
+	private $fullTextResult;
 
 	private $description;
 	private $examples;
 
-	public function __construct($title, $score, $snippet = NULL) {
+	public function __construct($title, $score, $fullTextResult, $snippet = NULL) {
 		$this->title = $title;
 		$this->score = $score;
+		$this->fullTextResult = $fullTextResult;
 		$this->snippet = $snippet;
+	}
+	
+	public function isFulltextResult() {
+		return $this->fullTextResult;
 	}
 
 	public function getTitle() {
@@ -31,26 +38,26 @@ class UnifiedSearchResult {
 
 	public function getDescription() {
 		if ($this->description == NULL) {
-			$descProperty = SMWPropertyValue::makeUserProperty(wfMsg(QueryExpander::$DESCRIPTION));
-			$this->description = reset(smwfGetStore()->getPropertyValues($this->title, $descProperty));
+			
+			$this->description = reset(smwfGetStore()->getPropertyValues($this->title, SKOSVocabulary::$DESCRIPTION));
 		}
-		return $description;
+		return $this->description;
 	}
 
 	public function getExamples() {
 		if ($this->examples == NULL) {
-			$examplesProperty = SMWPropertyValue::makeUserProperty(wfMsg(QueryExpander::$EXAMPLE));
-			$this->examples = smwfGetStore()->getPropertyValues($this->title, $descProperty);
+			
+			$this->examples = smwfGetStore()->getPropertyValues($this->title, SKOSVocabulary::$EXAMPLE);
 		}
 		return $this->examples;
 	}
 	
 	public static function newFromLuceneResult(LuceneResult $lc, array & $terms) {
-		return new UnifiedSearchResult($lc->getTitle(), $lc->getScore(), $lc->getTextSnippet($terms));
+		return new UnifiedSearchResult($lc->getTitle(), $lc->getScore(), true, $lc->getTextSnippet($terms));
 	}
 	
     public static function newFromWikiTitleResult(Title $title, $score) {
-        return new UnifiedSearchResult($title, $score);
+        return new UnifiedSearchResult($title, $score, false);
     }
     
     public static function sortByScore(array & $searchResults) {
@@ -78,11 +85,44 @@ class UnifiedSearchResultPrinter {
         foreach($entries as $e) {
         	$html .= '<tr class="us_resultrow"><td>';
         	$html .= '<div class="us_search_result">';
-        	$html .= '<li><img src="'.self::getImageURI($e->getTitle()).'"/>';
+        	// Categories
+        	$categories = smwfGetSemanticStore()->getCategoriesForInstance($e->getTitle());
+        	
+        	$image = ($e->isFulltextResult() && count($categories) == 0) ? "fulltext.gif" : self::getImageFromNamespace($e);
+        	
+        	$html .= '<li><img src="'.self::getImageURI($image).'"/>';
         	$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
-        	$html .= '[Score: '.$e->getScore()."]";
+        	$score = $e->getScore() * 5;
+        	if ($score > 5) { 
+        	   $score = 6;
+        	   $bar = "green-bar.gif";
+        	} else if ($score > 2 && $score < 5) {
+        	    $bar = "yellow-bar.gif";
+        	} else if ($score < 2) {
+                $bar = "red-bar.gif";
+            }
+        	$html .= '[';
+        	for($i = 0; $i < $score; $i++) {
+        		$html .= '<img src="'.self::getImageURI($bar).'"/>';
+        	}
+        	$html .= ']';
+            if (count($categories) > 0) {
+                $html .= '<div class="snippet">liegt in Kategorie: ';
+                for($i = 0, $n = count($categories); $i < $n; $i++) {
+                	$sep = $i < $n-1 ? " | " : "";
+                    $html .= '<a href="'.$categories[$i]->getFullURL().'">'.$categories[$i]->getText().'</a>'.$sep;
+                }
+            $html .= '</div>';
+            }       	
         	if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
-        	$html .= '</div>';
+        	
+        	// Description
+        	/*$desc = $e->getDescription();
+        	if ($desc !== false) {
+        	   $html .= '<a title="'.wfMsg('us_showdescription').'"><img onclick="smwhg_unifiedsearch.showDescription(\''.$e->getTitle()->getDBkey().'\')" style="margin-left:10px;" src="'.self::getImageURI("info.gif").'"/></a>';
+        	   $html .= '<div class="us_description" id="'.$e->getTitle()->getDBkey().'" style="margin-left:10px;display: none;">'.$desc->getXSDValue().'</div>';
+        	}
+        	$html .= '</div>';*/
         	
         	$html .= '</td></tr>';
         }
@@ -90,17 +130,27 @@ class UnifiedSearchResultPrinter {
 		return $html;
 	}
 	
-    private static function getImageURI(Title $page) {
+    private static function getImageURI($imageName) {
         global $wgServer, $wgScriptPath;
         $imagePath = "$wgServer$wgScriptPath/extensions/UnifiedSearch/skin/images/";
-        switch($page->getNamespace()) {
-            case NS_MAIN: { $imagePath .= "instance.gif"; break; }
-            case NS_CATEGORY: { $imagePath .= "concept.gif"; break; }
-            case NS_TEMPLATE: { $imagePath .= "template.gif"; break; }
-            case SMW_NS_PROPERTY: { $imagePath .= "property.gif"; break; }
-            case SMW_NS_TYPE: { $imagePath .= "template.gif"; break; }
-        }
+        
+        $imagePath .= $imageName;
+        
         return $imagePath;
+    }
+    
+    
+    
+    private static function getImageFromNamespace($result) {
+    	
+        switch($result->getTitle()->getNamespace()) {
+            case NS_MAIN: { $image = "instance.gif"; break; }
+            case NS_CATEGORY: { $image = "concept.gif"; break; }
+            case NS_TEMPLATE: { $image = "template.gif"; break; }
+            case SMW_NS_PROPERTY: { $image = "property.gif"; break; }
+            case SMW_NS_TYPE: { $image = "template.gif"; break; }
+        }
+        return $image;
     }
 }
 ?>
