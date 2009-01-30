@@ -19,7 +19,7 @@ Here we ask for all articles that belong to the category <tt>City</tt>. The temp
 ** {{{1}}}
 </includeonly>
 </pre>
-The tree will be then be rendered as depicted in the following figure:
+The tree will then be rendered as depicted in the following figure:
 [[Image:Treeview_and_inline_queries.png|none|frame|Tree Driven by an Inline Query]]
 
 For more information on inline queries, see [[Help:Inline_Queries|Inline Queries]] or the documentation on the 
