@@ -5,13 +5,22 @@ for <tt><nowiki>#ask</nowiki></tt> is as follows:
 
 The following example shows how to use an inline query in combination with the <tt><nowiki>#tree</nowiki></tt> parser function:
 <pre>
-{{#tree:id=main_navtree|root=Content|class=dtreestatic|
-*Projects
-{{#ask:[[Category:Project]]|format=template|template=Querytree2}}
+{{#tree:id=test|root=Locations|
+*Cities
+{{#ask:[[Category:City]]||format=template|template=Querytree}}
 }}
 </pre>
-Here we ask for all articles that belong to the category Project using the output format <tt>template</tt>.
+<hr>
+'''Note &ndash;''' Notice that only the format <tt>template</tt> can be combined with inline queries.
+<hr> 
+Here we ask for all articles that belong to the category <tt>City</tt>. The template <tt>Querytree</tt> simply contains a formatting instruction for second-level bullet points and the parameter <tt><nowiki>{{{1}}}</nowiki></tt>, which refers to the first printout statement.
+<pre>
+<includeonly>
+** {{{1}}}
+</includeonly>
+</pre>
+The tree will be then be rendered as depicted in the following figure:
+[[Image:Treeview_and_inline_queries.png|none|frame|Tree Driven by an Inline Query]]
 
 For more information on inline queries, see [[Help:Inline_Queries|Inline Queries]] or the documentation on the 
 [http://semantic-mediawiki.org/wiki/Help:Inline_queries Semantic MediaWiki] Web site.
-
