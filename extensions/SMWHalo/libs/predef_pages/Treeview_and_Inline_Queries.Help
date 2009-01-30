@@ -12,6 +12,6 @@ The following example shows how to use an inline query in combination with the <
 </pre>
 Here we ask for all articles that belong to the category Project using the output format <tt>template</tt>.
 
-For more information on inline queries, see [[Help:Inline_Queries|Inline Queries]] or the documentation at the 
+For more information on inline queries, see [[Help:Inline_Queries|Inline Queries]] or the documentation on the 
 [http://semantic-mediawiki.org/wiki/Help:Inline_queries Semantic MediaWiki] Web site.
 
