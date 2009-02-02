@@ -13,6 +13,9 @@ define('TREEVIEW5_VERSION','5.1.10, 2008-04-15');
 
 require_once('TreeGenerator.php');
 
+// file for responding to Ajax calls
+require_once('getTree.php');
+
 # Set any unset images to default titles
 if (!isset($wgTreeViewImages) || !is_array($wgTreeViewImages)) $wgTreeViewImages = array();
  
@@ -35,7 +38,7 @@ class TreeView5 {
  
     var $version  = TREEVIEW5_VERSION;
     var $uniq     = '';      # uniq part of all tree id's
-        var $uniqname = 'tv';    # input name for uniqid
+    var $uniqname = 'tv';    # input name for uniqid
     var $id       = '';      # id for specific tree
     var $baseDir  = '';      # internal absolute path to treeview directory
     var $baseUrl  = '';      # external URL to treeview directory (relative to domain)
@@ -86,19 +89,36 @@ class TreeView5 {
      * Expand #tree parser-functions (reformats tree rows for matching later) and store args
      */
     public function expandTree(&$parser) {
+        global $wgServer, $wgScriptPath;
  
         # Store args for this tree for later use
         $args = array();
-        foreach (func_get_args() as $arg) if (!is_object($arg)) {
-            if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
+        foreach (func_get_args() as $arg) {
+            if (!is_object($arg)) {
+              writeDebug("hier: ".$arg);
+                if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
             }
- 
+        }
         # Create a unique id for this tree or use id supplied in args and store args wrt id
         $this->id = isset($args['id']) ? $args['id'] : uniqid('');
         $this->args[$this->id] = $args;
         
         $this->class = isset($args['class']) ? $args['class'] : "dtree";
         $this->args[$this->id."class"] = $this->class;
+
+        # Check if the treeGenerator passed some values encapsulated in the tree
+        if (strpos($text, "\x7f") !== false) {
+            $text = substr($text, 1);
+            $myParams = substr($text, 0, strpos($text, "\x7f"));
+            $text = substr($text, strlen($myParams) + 1);
+            parse_str($myParams, $params);
+            $this->args[$this->id."smwSetup"] =
+                (isset($params['dynamic']) && $params['dynamic'] == 1)
+                ? "setupSmw('".$wgServer.$wgScriptPath."', '".$params['property']."'".
+                	(isset($params['display']) ? ", '".$params['display']."');" : ");")
+                : NULL;
+        }
+        
         
         # Reformat tree rows for matching in ParserAfterStrip
         $text = preg_replace('/(?<=\\*)\\s*\\[\\[Image:(.+?)\\]\\]/',"{$this->uniq}3$1{$this->uniq}4",$text);
@@ -107,7 +127,7 @@ class TreeView5 {
         $newtext = "";
         foreach($rows as $row) {
             preg_match('/^(\\*+)(.*?)$/m', $row, $m);
-            $newtext .= "\x7f1{$this->uniq}\x7f{$this->id}\x7f".(strlen($m[1])-1)."\x7f$m[2]\x7f2{$this->uniq}\n";
+            $newtext .= $this->formatRow($m)."\n";
         }
         return $newtext;
    }
@@ -122,8 +142,7 @@ class TreeView5 {
      */
     private function formatRow($m) {
         return "\x7f1{$this->uniq}\x7f{$this->id}\x7f".(strlen($m[1])-1)."\x7f$m[2]\x7f2{$this->uniq}";
-        }
- 
+    }
  
     /**
      * Called after parser has finished (ParserAfterTidy) so all transcluded parts can be assembled into final trees
@@ -131,7 +150,7 @@ class TreeView5 {
     public function renderTree(&$parser, &$text) {
         global $wgJsMimeType;
         $u = $this->uniq;
- 
+
         # Determine which trees are sub trees
         # - there should be a more robust way to do this,
         #   it's just based on the fact that all sub-tree's have a minus preceding their row data
@@ -166,6 +185,7 @@ class TreeView5 {
                 list($id,$depth,$icon,$item,$start) = $info;
                 $args = $this->args[$id];
                 $class = $this->args[$id."class"];
+                $smwSetup = isset($this->args[$id."smwSetup"]) ? $this->args[$id."smwSetup"] : NULL;
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
                 $end  = $node == count($rows) || $rows[$node][4];
                 $add  = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
@@ -201,6 +221,7 @@ class TreeView5 {
                                 tree.config.useLines = {$this->useLines};
                                 $add
                                 {$this->uniqname}$id = tree;
+                                ".(($smwSetup) ? $this->uniqname.$id.".".$smwSetup : "")."
                                 $nodes
                                 document.getElementById('$id').innerHTML = {$this->uniqname}$id.toString();
                             </script>
