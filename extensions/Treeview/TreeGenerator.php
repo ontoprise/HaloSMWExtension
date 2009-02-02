@@ -6,6 +6,7 @@ $wgHooks['LanguageGetMagic'][] = 'wfTreeGeneratorLanguageGetMagic';
 define ('GENERATE_TREE_PF', 'generateTree');
 
 class TreeGenerator {
+    private $json;
 
 	/**
 	 * Register parser function for tree generation
@@ -23,7 +24,7 @@ class TreeGenerator {
 	 * @param unknown_type $parser
 	 * @return String Wiki-Tree
 	 */
-	public function generateTree(&$parser){
+	public function generateTree(&$parser) {
 		global $wgUser;
 		$params = func_get_args();
 		array_shift( $params ); // we already know the $parser ...
@@ -42,51 +43,42 @@ class TreeGenerator {
 			$categoryName = NULL;
 		}
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
-		$result = "";
+		$displayProperty = array_key_exists('display', $genTreeParameters)
+		                   ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY)
+		                   : NULL;
 		$tv_store = TreeviewStorage::getTreeviewStorage();
-		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
+		
+		// setup some settings
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		$redirectPage = ($maxDepth > 0) ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
-		$displayProperty = array_key_exists('display', $genTreeParameters) ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY) : NULL;
-		$startLevel = array_key_exists('level', $genTreeParameters) ? $genTreeParameters['level'] : 1;
-		$hchar = "";
-		for($i = 0; $i < $startLevel; $i++) $hchar .= '*';
-		$this->dumpTree($tree, $result, $maxDepth, $redirectPage, $displayProperty !== NULL ? SMWPropertyValue::makeUserProperty($displayProperty->getDBkey()) : NULL, $hchar);
-		return $result;
-	}
-
-	/**
-	 * Recursive tree generator function.
-	 *
-	 * @param TreeNode $tree
-	 * @param String $result
-	 * @param int $maxDepth
-	 * @param Title $redirectPage
-	 * @param Title $displayProperty
-	 * @param String $hchar
-	 */
-	private function dumpTree($tree, &$result, $maxDepth, $redirectPage, $displayProperty, $hchar='*') {
-		if ($maxDepth === NULL || $maxDepth >= 0) {
-			if ($maxDepth !== NULL) $maxDepth--;
-			foreach($tree->children as $n) {
-				if ($displayProperty == NULL) {
-					$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
-				} else {
-					$smwValues = smwfGetStore()->getPropertyValues($n->title, $displayProperty);
-					if (count($smwValues) > 0) {
-						$result .= $hchar."[[".$n->title->getPrefixedText()."|".$smwValues[0]->getXSDValue()."]]\n";
-					} else {
-						$result .= $hchar."[[".$n->title->getPrefixedText()."]]\n";
-					}
-				}
-				$this->dumpTree($n, $result, $maxDepth, $redirectPage, $displayProperty, $hchar.'*');
-			}
-		} else if ($maxDepth < 0 && $redirectPage !== NULL) {
-			$result .= $hchar."[[".$redirectPage->getPrefixedText()."|...]]\n";
+		// check for dynamic expansion via Ajax
+		if (array_key_exists('dynamic', $genTreeParameters) && $genTreeParameters['dynamic'] == 1) {
+		    $useAjaxExpansion = 1;
+		    // set maxlevel depth to 1 if it is not set
+		    if (!$mayDepth) $maxDepth = 1;
+	    } else {
+	        $useAjaxExpansion = NULL;
+	    }
+	    
+        // start level of tree
+		$hchar = array_key_exists('level', $genTreeParameters)
+		         ? str_repeat("*", $genTreeParameters['level']) : "*";
+		$tv_store->setup($maxDepth, $redirectPage, $displayProperty, $hchar, $this->json);
+		
+		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
+		
+		// check if we have to return certain parameter with the result set
+		if (!$this->json && $useAjaxExpansion) {
+		    $returnPrefix= "\x7f"."dynamic=1&property=".$genTreeParameters['property']."&";
+		    if ($displayProperty) $returnPrefix .= "display=".$genTreeParameters['display']."&";
+		    return $returnPrefix."\x7f".$tree;
 		}
+		return $tree;
 	}
-
-
+	
+    public function setJson() {
+        $this->json = true;
+    }
 }
 
 abstract class TreeviewStorage {
@@ -114,193 +106,621 @@ abstract class TreeviewStorage {
                 case ('SMWHaloStore2'):
                     self::$store = new TreeviewStorageSQL2();
                     break;
-                case ('SMWHaloStore'): default:
-                    self::$store = new TreeviewStorageSQL();
-                    break;
             }
         }
         return self::$store;
     }
 }
 
-class TreeviewStorageSQL extends TreeviewStorage {
+class TreeviewStorageSQL2 extends TreeviewStorage {
+  
+    private $category;
+    private $start;
+    private $maxDepth;
+    private $redirectPage;
+    private $displayProperty;
+    private $hchar;
+    private $json;
+
+    // for the conditions above here we only store
+    // the smw_id of the corresponding object
+    private $smw_relation_id;
+    private $smw_category_id;
+    private $smw_start_id;
+  
+    public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput) {
+        $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
+        $this->redirectPage = $redirectPage;
+        $this->displayProperty = $displayProperty;
+        $this->hchar = $hchar;
+        $this->json = $jsonOutput;
+    }
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
-		$db =& wfGetDB( DB_MASTER );
-		$smw_relations = $db->tableName('smw_relations');
-		$page = $db->tableName('page');
-		$categorylinks = $db->tableName('categorylinks');
-		 
-		$tree = new TreeNode();
-		$treelevel = &$tree->children;
 
-		$categoryConstraint = "";
-		$categoryConstraintWhere = "";
-		if ($category != NULL) {
-			$categoryConstraint = " JOIN $page ON r1.object_namespace = page_namespace AND r1.object_title = page_title JOIN $categorylinks ON page_id = cl_from";
-			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
-		}
-		if ($start == NULL) {
-			// query for root pages
-			$res = $db->query('SELECT r1.object_namespace AS ns, r1.object_title AS title FROM '.$smw_relations.' r1 '.$categoryConstraint.' WHERE r1.relation_title='.$db->addQuotes($relation->getDBkey()).$categoryConstraintWhere.
-                       ' AND NOT EXISTS (SELECT r2.subject_id FROM '.$smw_relations.' r2 WHERE r1.object_title=r2.subject_title AND r1.object_namespace = r2.object_namespace AND r2.relation_title = '.$db->addQuotes($relation->getDBkey()).') GROUP BY ns,title');
-			if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-					$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
-				}
-			}
-			$db->freeResult($res);
-		} else {
-			$treelevel[] = new TreeNode($start);
-		}
-		$visitedNodes = array();
-		foreach($treelevel as $n) {
-			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
-		}
-		return $tree;
-	}
-
-	/**
-	 * Returns hierrachy of Titles connected by given relation.
-	 *
-	 * @param Title $relation
-	 * @param Title $category
-	 * @param TreeNode $node Current node
-	 * @param Array of String $visitedNodes
-	 */
-	private function _getHierarchyByRelation(Title $relation, $category, & $node, & $visitedNodes) {
-		$db =& wfGetDB( DB_MASTER );
-		$smw_relations = $db->tableName('smw_relations');
-		$categorylinks = $db->tableName('categorylinks');
-		if (in_array($node->title->getDBkey().$node->title->getNamespace(), $visitedNodes)) {
-			return;
-		}
-		$categoryConstraint = "";
-		$categoryConstraintWhere = "";
-		if ($category != NULL) {
-			$categoryConstraint = " JOIN $categorylinks ON subject_id = cl_from";
-			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
-		}
-		$visitedNodes[] = $node->title->getDBkey().$node->title->getNamespace();
-		$treelevel = &$node->children;
-		// query for root pages
-		$res = $db->query('SELECT r1.subject_namespace AS ns, r1.subject_title AS title FROM '.$smw_relations.' r1 '.$categoryConstraint.' WHERE r1.relation_title='.$db->addQuotes($relation->getDBkey()).
-                   ' AND r1.object_title='.$db->addQuotes($node->title->getDBkey()).' AND r1.object_namespace = '.$node->title->getNamespace().$categoryConstraintWhere);
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
-			}
-		}
-		$db->freeResult($res);
-		foreach($treelevel as $n) {
-			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
-		}
-		array_pop($visitedNodes);
-	}
-}
-
-class TreeviewStorageSQL2 extends TreeviewStorageSQL {
-	
-	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
+		$this->category= $category;
+		$this->start= $start;
+	  
+	    // relation must be set -> we fetch here the smw_id of the requested relation
+		if (! $this->getRelationId($relation)) return "";
+		// if category is set, we will fetch the id of the category
+		if (($category) && (! $this->getCategoryId($category))) return "";
+				
 		$db =& wfGetDB( DB_MASTER );
 		$smw_rels2 = $db->tableName('smw_rels2');
-        $smw_ids = $db->tableName('smw_ids');
-        $page = $db->tableName('page');
-        $categorylinks = $db->tableName('categorylinks');
-		 
-		$tree = new TreeNode();
-		$treelevel = &$tree->children;
 
-		$categoryConstraint = "";
-		$categoryConstraintWhere = "";
-		if ($category != NULL) {
-			$categoryConstraint = " JOIN $page ON i3.smw_title = page_title AND i3.smw_namespace = page_namespace JOIN $categorylinks ON page_id = cl_from ";
-			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
-		}
-		if ($start == NULL) {
-			// query for root pages
-			$res = $db->query('SELECT i.smw_namespace AS ns, i.smw_title AS title '.
-			                 'FROM '.$smw_rels2.' r '.
-			                 'JOIN '.$smw_ids.' i ON r.o_id = i.smw_id '.
-			                 'JOIN '.$smw_ids.' i2 ON r.p_id = i2.smw_id '.
-			                 'JOIN '.$smw_ids.' i3 ON r.s_id = i3.smw_id '.$categoryConstraint.
-			                 'WHERE i2.smw_title='.$db->addQuotes($relation->getDBkey()).$categoryConstraintWhere.
-                             ' AND NOT EXISTS (SELECT s_id FROM '.$smw_rels2.' r2 JOIN '.$smw_ids.' i4 ON r2.p_id = i4.smw_id WHERE r.o_id=r2.s_id AND i4.smw_title = '.$db->addQuotes($relation->getDBkey()).') GROUP BY ns,title');
-			if($db->numRows( $res ) > 0) {
-				while($row = $db->fetchObject($res)) {
-					$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
-				}
-			}
-			$db->freeResult($res);
-		} else {
-			$treelevel[] = new TreeNode($start);
-		}
-		$visitedNodes = array();
-		foreach($treelevel as $n) {
-			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
-		}
-		return $tree;
-	}
-
-	/**
-	 * Returns hierrachy of Titles connected by given relation.
-	 *
-	 * @param Title $relation
-	 * @param Title $category
-	 * @param TreeNode $node Current node
-	 * @param Array of String $visitedNodes
-	 */
-	private function _getHierarchyByRelation(Title $relation, $category, & $node, & $visitedNodes) {
-		$db =& wfGetDB( DB_MASTER );
-		$smw_rels2 = $db->tableName('smw_rels2');
-		$smw_ids = $db->tableName('smw_ids');
-		$page = $db->tableName('page');
-		$categorylinks = $db->tableName('categorylinks');
-		if (in_array($node->title->getDBkey().$node->title->getNamespace(), $visitedNodes)) {
-			return;
-		}
-		$categoryConstraint = "";
-		$categoryConstraintWhere = "";
-		if ($category != NULL) {
-			$categoryConstraint = " JOIN $page ON i3.smw_title = page_title AND i3.smw_namespace = page_namespace JOIN $categorylinks ON page_id = cl_from";
-			$categoryConstraintWhere = " AND cl_to =".$db->addQuotes($category->getDBkey());
-		}
-		$visitedNodes[] = $node->title->getDBkey().$node->title->getNamespace();
-		$treelevel = &$node->children;
-		// query for root pages
-		$query = 'SELECT i3.smw_namespace AS ns, i3.smw_title AS title '.
-                             'FROM '.$smw_rels2.' r '.
-                             'JOIN '.$smw_ids.' i ON r.o_id = i.smw_id '.
-                             'JOIN '.$smw_ids.' i2 ON r.p_id = i2.smw_id '.
-                             'JOIN '.$smw_ids.' i3 ON r.s_id = i3.smw_id '.$categoryConstraint.
-                             ' WHERE i2.smw_title='.$db->addQuotes($relation->getDBkey()).' AND i.smw_title = '.$db->addQuotes($node->title->getDBkey()).' AND i.smw_namespace = '.$node->title->getNamespace().$categoryConstraintWhere;
-		$res = $db->query($query);
+		// match all triples that are of the requested relation
+		$query = "SELECT s_id, o_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id;
 		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$treelevel[] = new TreeNode(Title::newFromText($row->title, $row->ns));
-			}
+		if ($start != NULL) {
+		    $smw_id = $this->getSmwIdByTitle($start, NS_MAIN);
+		    if (!$smw_id)
+		        return $this->hchar."[[".$start->getDBKey()."]]\n";
+		    $query.= " AND o_id = ".$smw_id;  
 		}
+		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
+		    $query.= " AND o_id NOT in (SELECT s_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id.")";
+		}    
+		$res = $db->query($query);
+		$elementProperties= array();
+		$sIds = array();
+		while ($row = $db->fetchObject($res)) {
+			if (!isset($sIds[$row->s_id]))
+				$sIds[$row->s_id]= array($row->o_id);
+			else
+				$sIds[$row->s_id][]= $row->o_id;
+			// merge all id's into one list to fetch title, links or a
+			// certain property of these pages later only once
+			if (!isset($elementProperties[$row->s_id]))
+			    $elementProperties[$row->s_id]= array();
+			if (!isset($elementProperties[$row->o_id]))
+			    $elementProperties[$row->o_id]= array();
+		}
+		// fetcj propeties of that smw_ids found (both s_id and o_id)
+		$this->getElementProperties($elementProperties);
+		$treeList = $this->generateTreeDeepFirstSearch($sIds, $elementProperties);
+        if ($this->json)
+            return $this->formatTreeToJson($treeList, $elementProperties);
+		return $this->formatTreeToText($treeList, $elementProperties);
+	}
+	
+	/**
+	 * Get names of node elements (which is smw_sortkey in table smw_ids)
+	 *  
+	 * @param array &$dataArr which is data[smw_id]= smw_sortkey
+	 */
+	private function getElementProperties(&$dataArr) {
+	    $db =& wfGetDB( DB_MASTER );
+	    $smw_ids = $db->tableName('smw_ids');
+	    $smw_inst2 = $db->tableName('smw_inst2');
+	    $limit = 50;   // fetch only that many items at once from the db
+	    $i = 0;        // counter when building query to add only limit elements to one query where clause
+	    $pos = 0;      // counter when building query to check when all elements have been fetched
+	    $sizeOfData = count($dataArr);  // size of $dataArr
+	    // query for title, link and category for each smw_id
+	    $query1= "SELECT s.smw_id as smw_id, s.smw_sortkey as title, s.smw_title as link, a.o_id as category ".
+	             "FROM $smw_ids s, $smw_inst2 a ".
+	             "WHERE s.smw_id in (%s) and s.smw_id = a.s_id";
+	    // query for fetching title and link for each smw_id indepentend of category for those
+	    // pages that have anotations that do not lead to an existing page 
+	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link ".
+	             "FROM $smw_ids WHERE smw_id in (%s)";
+	    // query for fetching a certain property value for each page (in case the page has this property)
+	    $query3= "SELECT ";
+	    $query_add = ""; // list of ids
+	    foreach (array_keys($dataArr) as $id) {
+	        $i++;
+	        $pos++;
+	        $query_add.= $id.",";
+	        if ($i == $limit || $pos == $sizeOfData) {
+	            $query_add = substr($query_add, 0, -1);
+	            $res = $db->query(sprintf($query1, $query_add));
+	            $fids = array_flip(explode(",", $query_add));
+	            while ($row = $db->fetchObject($res)) {
+	                unset($fids[$row->smw_id]);
+	                $dataArr[$row->smw_id]= array($row->title, $row->category, $row->link);
+	                // add property value if choosen
+	                if ($this->displayProperty) {
+	                    $smwValues = smwfGetStore()->getPropertyValues($n->title, $this->displayProperty);
+	                    if (count($smwValues) > 0) 
+						    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
+	                }
+	                // if a start position is choosen, check if we have it 
+	                if ($this->start && $this->start->getDBkey() == $row->title)
+	                    $this->smw_start_id = $row->smw_id;
+	            }
+	            $db->freeResult($res);
+	            
+	            // if we had less results than ids in where clause, fetch the rest with query2
+	            if (count($fids) > 0) {
+	                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
+	                while ($row = $db->fetchObject($res)) {
+	                    $dataArr[$row->smw_id]= array($row->title, NULL, $row->link);
+	                    // add property value if choosen    
+	                    if ($this->displayProperty) {
+	                        $smwValues = smwfGetStore()->getPropertyValues($n->title, $this->displayProperty);
+	                        if (count($smwValues) > 0) 
+    						    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
+    	                }
+	                    
+	                    // if a start position is choosen, check if we have it 
+	                    if ($this->start && $this->start->getDBkey() == $row->title)
+	                        $this->smw_start_id = $row->smw_id;                    
+	                }
+	            }
+	            // if we have already that many elements processed as are in sIds
+	            // then we are done and quit the loop here.
+	            if ($pos == $sizeOfData)
+	                break;
+	            // otherwise flush variables for next query
+	            $i = 0;  
+	            $query_add = "";
+	        }
+	    }
+	}
+
+	/**
+	 * Fetch a smw_id by it's title. This function is generic for
+	 * fetching smw_ids of categories, properties and pages.
+	 *
+	 * @param Title $title object of element (category, property ...)
+	 * @param integer $ns namespace of element
+	 * @return integer $smw_id or NULL on failure
+	 */
+	private function getSmwIdByTitle(Title &$title, $ns) {
+		$db =& wfGetDB( DB_MASTER );
+		$smw_ids = $db->tableName('smw_ids');
+		$query = "SELECT smw_id FROM $smw_ids WHERE ".
+		         "smw_title = ".$db->addQuotes($title->getDBKey()).
+		         " AND smw_namespace = ".$ns;
+		$res = $db->query($query);
+		$s = $db->fetchObject($res);
 		$db->freeResult($res);
-		foreach($treelevel as $n) {
-			$this->_getHierarchyByRelation($relation, $category, $n, $visitedNodes);
+		if (!$s)
+			return NULL;
+		return $s->smw_id;
+	}
+	
+	/**
+	 * Get smw_id of property for which relations are searched in triples
+	 * and stores this id in smw_relation_id
+	 *
+	 * @param Title $relation
+	 * @return Boolean true on success or false on error
+	 */
+	private function getRelationId(Title &$relation) {
+		if ($smw_id = $this->getSmwIdByTitle($relation, SMW_NS_PROPERTY)) {
+		    $this->smw_relation_id = $smw_id;
+		    return true;
 		}
-		array_pop($visitedNodes);
+		return false;
+	}
+
+	/**
+	 * Get smw_id of category for which tree is started to create
+	 * and stores this id in smw_category_id
+	 *
+	 * @param Title $category
+	 * @return Boolean true on success or false on error
+	 */
+	private function getCategoryId(Title $category) {
+		if ($smw_id = $this->getSmwIdByTitle($category, NS_CATEGORY)) {
+		    $this->smw_category_id = $smw_id;
+		    return true;
+		}
+		return false;	  
+	}
+
+	/**
+	 * get all root categories. These do not have any parents, hence
+	 * are not defined in the sIds array. If an entry node is defined by
+	 * the parameter start, then this is the only root category. The
+	 * result is an array of the smw_id of the root element(s)
+	 *
+	 * @param array &$sIds list of subjects with key = s_id, value = array(parents)
+	 * @param array &$elementProperties list of elements with key = smw_id, value = name
+	 * @return array $rootCats list of element ids of the root category
+	 */
+	private function getRootCategories(&$sIds, &$elementProperties) {
+	    $rootCats = array();
+	    foreach (array_keys($elementProperties) as $id) {
+ 		    if (!isset($sIds[$id]))
+		        $rootCats[]= $id;
+	    }
+	    return $rootCats;
+	}
+	
+	/**
+	 * Create a list of elements ordered hierarchical. This list ist stored in an
+	 * array. Each element represents one item. The item has an id (smw_ids.smw_id)
+	 * and a depth (level in hierarchy).
+	 * An element proceding another is either a parent (depth is one number less) or
+	 * a sibling (same depth). The input is taken from the function getHierarchyByRelation
+	 * that fetches a list of relations from the db.
+	 * While traversing the list of fetched elements from the db, this list is reduced by
+	 * each element which has been processed. This reduces memory usage and runing time
+	 * when iterating over the array.
+	 *
+	 * @param array &$sIds list of subjects with key = s_id, value = array(parents)
+	 * @param array &$elementProperties list of elements with key = smw_id, values as array
+	 * @return array $tree list of elements ordered hierarchical as array(smw_id, depth)
+	 */
+	private function generateTreeDeepFirstSearch(&$sIds, &$elementProperties) {
+	    $tree = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
+	    $findSubTree = array();    // stack for elements that have several parents
+	    	    
+	    // save here all root categories
+	    if ($this->smw_start_id)
+	        $rootCats= array($this->smw_start_id);
+	    else
+	        $rootCats = $this->getRootCategories($sIds, $elementProperties);
+	    	    
+	    // now search for all elements below a root category and create
+	    // one list of entries in hierarchic order
+	    foreach ($rootCats as &$id) {
+		    $depth = 1;                    // current depth of element, start by one (root)            
+    		
+		    $e = array($id, $depth);
+		    $tree->insertTail($e);  // add current root to tree
+    		
+    		// if a category is set and the root node is already from this category,
+    		// don't traverse the tree further more downwards.
+        	if (($this->smw_category_id) &&
+        	    ($this->smw_category_id == $elementProperties[$id][1]))
+        	    continue;
+        	    
+        	$parents[] = $id;              // add current root as parent to stack 
+
+        	// get last parent of stack to look for it's children
+	        while ($currParent = end($parents)) {
+	            foreach (array_keys($sIds) as $s_id) {
+	              
+                    // check all elements to look for nodes that habe the current parent
+       		    	foreach (array_keys($sIds[$s_id]) as $item) {
+       		    	  
+       		    	    // add redirect page if it is set and maxdepth is reached
+       		    	    if ($this->redirectPage && $this->maxDepth && 
+       		    	        $this->maxDepth == $depth) {
+       		    	        // make sure to add only one redirect page for all children
+       		    	        // of the current node
+       		    	        $last = $tree->getLast();
+       		    	        if ($last[0] != -1) {
+       		    	            $e = array(-1, $depth + 1);
+                                $tree->insertTail($e);
+       		    	        }
+                            continue 2;
+                        }
+       		    	  
+       		    	    if ($sIds[$s_id][$item] == $currParent) {
+       		    	         		    	      
+	                        // stop descending any further in this subtree IF:
+       		    	        // - a category is set and the parent matches this category but
+	                        //   not this child OR
+	                        // - maxDepth is set and already reached 
+	                        // (TODO check if unset this node is really ok)
+             		    	if ($this->smw_category_id &&
+             		    	    ($this->smw_category_id == $elementProperties[$currParent][1]) &&
+             		    	    ($this->smw_category_id != $elementProperties[$s_id][1]) ||
+             		    	    ($this->maxDepth && $this->maxDepth == $depth)) {
+                                unset($sIds[$s_id]);
+             		    	    continue 2;
+             		    	}
+             		    	
+             		    	// increase depth by one and add element to tree
+           				    $depth++;
+           				    $e = array($s_id, $depth);
+    		            	$tree->insertTail($e);
+
+    		            	// If this element was already processed but exists several
+	    	            	// times, findSubTree contains the number of additional parents.
+               				// The subtree was created at the first time of occurence
+           	    			// The children must now be copied to the current position.
+           		    		// Then continue with next sibling.
+		                	if (isset($findSubTree[$s_id])) {
+           				        $this->addSubTree($tree);
+		            	        $occurence= count($findSubTree[$s_id]);
+               				    if ($occurence == 1)
+    		                		unset($findSubTree[$s_id]);
+	    		                else
+		    		                $findSubTree[$s_id]--;
+			                    continue 2;
+			                }
+               				// The element is traversed the first time, remember current id
+    		            	// as parent and look for children. Also if this element has
+	    		            // several parents itself, add the id and number of occurences
+		    	            // (besides this one) to the list findSubTree. If the element is
+			                // traversed again as a child of another parent, then the subtree
+			                // which will be composed now can be copied at the new position.
+   				            // Then continue with next iteration one level down. 
+    			            else { 
+   	    			            $parents[] = $s_id;
+		    	                unset($sIds[$s_id][$item]);
+			                    if (count($sIds[$s_id]) == 0) {
+				                    unset($sIds[$s_id]);
+			                    } else {
+			                        if (!isset($findSubTree[$s_id]))
+				                        $findSubTree[$s_id]= count($sIds[$s_id]);
+   				                }
+    			                continue 3; 
+	    		            }
+		                }
+		            }
+	            }
+       		    // all children of the current parent have been traversed.
+        	    // Continue now one level above (with the sibling of the current parent)
+	            array_pop($parents);
+	            $depth--;
+   		    }
+	    }
+	    return $tree;
+	}
+	
+	/**
+	 * Takes the tree created by function getTreeFirstDepthSearch. The last element
+	 * might be already in the tree with another parent. It's children must be copied
+	 * to the end below the second instance of that element, ad children must be ajusted
+	 * to the current depth.
+	 *
+	 * @param array &$tree list of elements ordered hierarchical as array(smw_id, depth)
+	 */
+	function addSubTree(&$tree) {
+        $subtree = new ChainedList();
+	    $last= $tree->getLast();
+	    if (! $last) return;
+	    $tree->rewind();
+	    while ($item = $tree->getCurrent()) {
+	        $tree->next();
+    		if ($item[0] == $last[0]) {
+	    	    $depth = $item[1];          // remember depth found element
+		        $diff= $last[1] - $depth;   // calulate difference to current depth
+		        while ($item = $tree->getCurrent()) {
+		            $tree->next();
+			        if ($item[1] > $depth) {
+			            $e = array($item[0], $item[1] + $diff);
+			            $subtree->insertTail($e);
+			        }
+        			else {
+        			    $tree->forward();
+        			    $tree->insertTreeBehind($subtree);
+	        		    return;
+        			}
+		        }
+		    }
+	    }
+	}
+
+	/**
+     * Formats the list of elements from an array to the final ascii output
+     * that can be used by the wiki parser. Input is the previously generated
+     * tree as elements of an array. To save memory the tree array is reduced
+     * by it's elements as soon as they are converted to an ascii string.
+     *
+     * @param ChainedList &$treeList of elements array(smw_id, depth) that
+     * 					  are ordered hierarchical
+     * @param array 	  &$elementProperties list of elements consisting of:
+     *					  key = smw_id, array(title, link, [property value])
+     * @return string	  $tree 
+     */
+	function formatTreeToText(&$treeList, &$elementProperties) {
+	    if ($this->redirectPage)
+	        $elementProperties[-1] = 
+	            array($this->redirectPage->getDBkey()."|...", NULL);
+	    $fillchar = $this->hchar{0};
+	    $prefix = substr($this->hchar, 1);
+	    $treeList->rewind();
+	    while ($item = $treeList->getCurrent()) {
+	        $treeList->next();
+		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[["
+		            .(isset($elementProperties[$item[0]][3])
+		             ? $elementProperties[$item[0]][0]."|".$elementProperties[$item[0]][3]
+		             : $elementProperties[$item[0]][0])
+		            ."]]\n";
+		    unset($item);
+	    }
+	    unset($treeList);
+	    return $tree;
+	}
+    /**
+     * works the same as function formatTreeToText() except that no string
+     * is returned but an array of elements as associative arrays. This is
+     * later used to be converted into a json compatible string that can be
+     * easily parsed by javascript.
+     *
+     * @param ChainedList &$treeList of elements array(smw_id, depth) that
+     * 					  are ordered hierarchical
+     * @param array 	  &$elementProperties list of elements consisting of:
+     *					  key = smw_id, array(title, link, [property value])
+     * @return array	  $tree of elements as an asoc array (name, link) 
+     */
+	function formatTreeToJson(&$treeList, &$elementProperties) {
+	    $tree = array();
+	    if ($this->redirectPage)
+	        $elementProperties[-1] = 
+	            array("...", NULL, $this->redirectPage->getDBkey());
+	    $treeList->rewind();
+	    while ($item = $treeList->getNext()) {
+		    $tree[]= array(
+		      'name' => isset($elementProperties[$item[0]][3]) 
+		                ? $elementProperties[$item[0]][3]
+		                : $elementProperties[$item[0]][0],
+		      'link' => $elementProperties[$item[0]][2],
+		    );
+		    unset($item);
+	    }
+	    unset($treeList);
+	    return $tree;
 	}
 }
 /**
- * Helper class for representing a Tree of Titles.
- *
+ * Class for storing one element in a chain.
+ * Each element has a pointer to the predecessor
+ * and the successor and another pointer to
+ * the element data itself
  */
-class TreeNode {
 
-	public function __construct($title = NULL) {
-		$this->title = $title;
-		$this->children = array();
-	}
-	public $title;
-	public $children;
-}
+class ListItem { 
+    public $_data; 
+    public $_prev; 
+    public $_next; 
+
+    public function __construct(&$item) { 
+        $this->_prev = $this->_next = NULL; 
+        $this->_data = $item; 
+    } 
+} 
+/**
+ * Class for storing a list of elements. List
+ * elements are of the type ListItem. This
+ * class provides access to the elements stored
+ * in the list. 
+ */
+class ChainedList { 
+ 
+    private $_head = NULL; 
+    private $_tail = NULL; 
+    private $_current = NULL;
+    
+    public function rewind() {
+        $this->_current = $this->_head;
+    }
+
+    public function forward() {
+        $this->_current = $this->_tail;
+    }
+    
+    public function next() {
+        $this->_current = $this->_current->_next;
+    }
+    
+    public function prev() {
+        $this->_current = $this->_current->_prev;
+    }
+    
+    public function getFirst() { 
+        if (!$this->_head) 
+            return NULL; 
+        $this->_current = $this->_head; 
+        return $this->_current->_data; 
+    } 
+
+    public function getLast() { 
+        if (!$this->_tail) 
+            return NULL; 
+        $this->_current = $this->_tail; 
+        return $this->_current->_data; 
+    } 
+
+    public function getNext() { 
+        if (!$this->_current) 
+            return NULL; 
+        $this->_current = $this->_current->_next; 
+        if (!$this->_current) 
+            return NULL; 
+        return $this->_current->_data; 
+    } 
+
+    public function getPrev() { 
+        if (!$this->_current) 
+            return NULL; 
+        $this->_current = $this->_current->_prev; 
+        if (!$this->_current) 
+            return NULL; 
+        return $this->_current->_data; 
+    } 
+
+    public function getCurrent() {
+        if (!$this->_current)
+            return NULL;
+        return $this->_current->_data;
+    }
+    
+    public function insertBefore(&$item) { 
+        $tmp = new ListItem($item); 
+
+        /* add to head if no current element */ 
+        if (!$this->_current) { 
+            $this->_current = $this->_head; 
+        } 
+        /* list empty? */ 
+        if (!$this->_current) { 
+            $this->_head = $this->_tail = $tmp; 
+            $tmp->_prev = $tmp->_next = NULL; 
+        } else { 
+            $tmp->_prev = $this->_current->_prev; 
+            $tmp->_next = $this->_current; 
+            $this->_current->_prev = $tmp; 
+
+            if ($tmp->_prev)	/* is there a proceeding element? */ 
+                $tmp->_prev->_next = $tmp; 
+            else   /* nothing proceeding - set head to first element */ 
+                $this->_head = $tmp; 
+        } 
+        $this->_current = $tmp; 
+        return TRUE; 
+    }
+    
+    public function insertBehind(&$item) { 
+        $tmp = new ListItem($item); 
+
+        /* add at the top if there is no current element */ 
+        if (!$this->_current) { 
+            $this->_current = $this->_tail; 
+        } 
+        /* list empty? */ 
+        if (!$this->_current) { 
+            $this->_head = $this->_tail = $tmp; 
+            $tmp->_prev = $tmp->_next = NULL; 
+        } else { 
+            $tmp->_prev = $this->_current; 
+            $tmp->_next = $this->_current->_next; 
+            $this->_current->_next = $tmp; 
+
+            /* is there a proceeding element? */ 
+            if ($tmp->_next)
+                $tmp->_next->_prev = $tmp; 
+            else {   /* no procedor - set current element to head */ 
+                $this->_tail = $tmp; 
+                $tmp->_next = NULL; 
+            } 
+        } 
+        $this->_current = $tmp; 
+        return TRUE; 
+    } 
+
+    public function insertTreeBehind(&$tree) {
+    	/* list to insert is empty? */
+    	if (!$tree->_head)
+    		return NULL;
+    
+    	/* add at the top if there is no current element */
+        if (!$this->_current) { 
+            $this->_current = $this->_head; 
+        }
+        /* list empty? */
+        if (!$this->_current) {
+        	$this->_head = $tree->_head;
+        	$this->_tail = $tree->_tail;
+        } else {
+            $tree->_head->_prev = $this->_current;
+        	$tree->_tail->_next = $this->_current->_next;
+        	$this->_current->_next = $tree->_head;
+            if (!$tree->_tail->_next)
+                $this->_tail = $tree->_tail;
+        }
+        $this->_current = $tree->_head;
+        return TRUE;
+    }
+    
+    public function insertHead(&$item) { 
+        $this->_current = $this->_head; 
+        return $this->insertBefore($item); 
+    } 
+
+    public function insertTail(&$item) { 
+        $this->_current = $this->_tail; 
+        return $this->insertBehind($item); 
+    } 
+} 
 
 function wfTreeGeneratorLanguageGetMagic(&$magicWords,$langCode = 0) {
 	$magicWords[GENERATE_TREE_PF] = array( 0, GENERATE_TREE_PF );
