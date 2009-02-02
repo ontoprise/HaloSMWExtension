@@ -95,7 +95,6 @@ class TreeView5 {
         $args = array();
         foreach (func_get_args() as $arg) {
             if (!is_object($arg)) {
-              writeDebug("hier: ".$arg);
                 if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
             }
         }
@@ -155,7 +154,7 @@ class TreeView5 {
         # - there should be a more robust way to do this,
         #   it's just based on the fact that all sub-tree's have a minus preceding their row data
         if (!preg_match_all("/\x7f\x7f1$u\x7f(.+?)\x7f/",$text,$subs)) $subs = array(1 => array());
- 
+
         # Extract all the formatted tree rows in the page and if any, replace with dTree JavaScript
         if (preg_match_all("/\x7f1$u\x7f(.+?)\x7f([0-9]+)\x7f({$u}3(.+?){$u}4)?(.*?)(?=\x7f[12]$u)/",$text,$matches,PREG_SET_ORDER)) {
             # PASS-1: build $rows array containing depth, and tree start/end information
