@@ -7,7 +7,13 @@
 | copyright messages are intact.                    |
 |                                                   |
 | Updated: 17.04.2003                               |
+| Additonal changes on Feb. 2009 by Ontoprise.      |
+| This version will probably work only with the     |
+| SMW+ extension for Mediawiki.                     |
 |--------------------------------------------------*/
+
+var httpRequest;
+var cachedData = [];
 
 // Node object
 function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
@@ -25,36 +31,77 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this._hc = false;
 	this._ai = 0;
 	this._p;
+	this._complete = false;
 };
+
+Node.prototype.serialize = function() {
+	var str;
+	str =
+		((this.id) ? this.id : "") + "|" + 
+		((this.pid) ? this.pid : "") + "|" + 
+		((this.name) ? this.name : "") + "|" + 
+		((this.url) ? this.url : "") + "|" +
+		((this.title) ? this.title : "") + "|" +
+		((this.target) ? this.target : "") + "|" +
+		((this.icon) ? this.icon : "") + "|" +
+		((this.iconOpen) ? this.iconOpen : "") + "|" +
+		((this._io) ? "1" : "0") + "|" +
+		((this._is) ? "1" : "0") + "|" +
+		((this._ls) ? "1" : "0") + "|" +
+		((this._hc) ? "1" : "0") + "|" +
+		((this._ai) ? this._ai : "") + "|" +
+		((this._complete) ? "1" : "0");
+	return str;
+}
+
+Node.prototype.unserialize = function(str) {
+	var nVar = str.split('|');
+	if (nVar.length != 14) return;
+    this.id = nVar[0];
+    this.pid = nVar[1];
+    this.name = nVar[2];
+    this.url = nVar[3];
+    this.title = nVar[4];
+    this.target = nVar[5];
+    this.icon = nVar[6];
+    this.iconOpen = nVar[7];
+	this._io = (nVar[8] == 1) ? true : false;
+	this._is = (nVar[9] == 1) ? true : false;
+	this._ls = (nVar[10] == 1) ? true : false;
+	this._hc = (nVar[11] == 1) ? true : false;
+	this._ai = nVar[12];
+	this._complete = (nVar[13] == 1) ? true : false;
+	return true;
+}
 
 // Tree object
 function dTree(objName, className) {
 	this.config = {
-		target					: null,
+		target				: null,
 		folderLinks			: true,
 		useSelection		: true,
 		useCookies			: true,
-		useLines				: true,
-		useIcons				: true,
+		useLines			: true,
+		useIcons			: true,
 		useStatusText		: false,
-		closeSameLevel	: false,
-		inOrder					: false
+		closeSameLevel		: false,
+		inOrder				: false
 	}
 	this.icon = {
 		root				: 'img/base.gif',
-		folder			: 'img/folder.gif',
-		folderOpen	: 'img/folderopen.gif',
+		folder				: 'img/folder.gif',
+		folderOpen			: 'img/folderopen.gif',
 		node				: 'img/page.gif',
 		empty				: 'img/empty.gif',
 		line				: 'img/line.gif',
 		join				: 'img/join.gif',
-		joinBottom	: 'img/joinbottom.gif',
+		joinBottom			: 'img/joinbottom.gif',
 		plus				: 'img/plus.gif',
-		plusBottom	: 'img/plusbottom.gif',
+		plusBottom			: 'img/plusbottom.gif',
 		minus				: 'img/minus.gif',
-		minusBottom	: 'img/minusbottom.gif',
-		nlPlus			: 'img/nolines_plus.gif',
-		nlMinus			: 'img/nolines_minus.gif'
+		minusBottom			: 'img/minusbottom.gif',
+		nlPlus				: 'img/nolines_plus.gif',
+		nlMinus				: 'img/nolines_minus.gif'
 	};
 	this.obj = objName;
 	this.aNodes = [];
@@ -64,6 +111,17 @@ function dTree(objName, className) {
 	this.selectedFound = false;
 	this.completed = false;
 	this.className = className;
+	this.smwAjaxUrl = null;
+};
+
+// setup for smw+
+dTree.prototype.setupSmw = function(url, relation, display) {
+	this.smwAjaxUrl = url;
+	if (url.substr(-1) != "/") this.smwAjaxUrl += "/";
+	this.smwAjaxUrl += 'index.php?action=ajax&rs=smw_treeview_getTree&rsargs[]=p%3D'
+			 		+ escape(relation);
+	if (display) this.smwAjaxUrl += '%26d%3D' + escape(display); 
+	this.smwAjaxUrl += '%26s%3D';
 };
 
 // Adds a new node to the node array
@@ -88,7 +146,10 @@ dTree.prototype.toString = function() {
        str = '<div class="'+this.className+'">\n';
     }
 	if (document.getElementById) {
-		if (this.config.useCookies) this.selectedNode = this.getSelected();
+		if (this.config.useCookies) {
+			this.selectedNode = this.getSelected();
+			if (this.smwAjaxUrl) this.readAjaxTreeCache();
+		}
 		str += this.addNode(this.root);
 	} else str += 'Browser not supported.';
 	str += '</div>';
@@ -128,10 +189,13 @@ dTree.prototype.node = function(node, nodeId) {
 	var str = '<div class="dTreeNode" style="white-space:nowrap;">' + this.indent(node, nodeId);
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
-		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
+		node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
 		if (this.root.id == node.pid) {
 			node.icon = this.icon.root;
 			node.iconOpen = this.icon.root;
+		} else if (this.smwAjaxUrl && !node._complete) {
+			node.icon = this.icon.folder;
+			node.iconOpen = this.icon.folderOpen;
 		}
 		str += '<img id="i' + this.obj + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
 	}
@@ -144,10 +208,14 @@ dTree.prototype.node = function(node, nodeId) {
 			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
 		str += '>';
 	}
-	else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
+	//else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
+	else if ((!this.config.folderLinks || !node.url) && 
+	         (node._hc || (this.smwAjaxUrl && !node._complete)) && 
+	         (node.pid != this.root.id))
 		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');" class="node">';
 	str += node.name;
-	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';
+	if (node.url || ((!this.config.folderLinks || !node.url) && 
+	                (node._hc || (this.smwAjaxUrl && !node._complete)))) str += '</a>';
 	str += '</div>';
 	if (node._hc) {
 		str += '<div id="d' + this.obj + nodeId + '" class="clip" style="display:' + ((this.root.id == node.pid || node._io) ? 'block' : 'none') + ';">';
@@ -165,7 +233,7 @@ dTree.prototype.indent = function(node, nodeId) {
 		for (var n=0; n<this.aIndent.length; n++)
 			str += '<img src="' + ( (this.aIndent[n] == 1 && this.config.useLines) ? this.icon.line : this.icon.empty ) + '" alt="" />';
 		(node._ls) ? this.aIndent.push(0) : this.aIndent.push(1);
-		if (node._hc) {
+		if (node._hc || (this.smwAjaxUrl && !node._complete)) {
 			str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"><img id="j' + this.obj + nodeId + '" src="';
 			if (!this.config.useLines) str += (node._io) ? this.icon.nlMinus : this.icon.nlPlus;
 			else str += ( (node._io) ? ((node._ls && this.config.useLines) ? this.icon.minusBottom : this.icon.minus) : ((node._ls && this.config.useLines) ? this.icon.plusBottom : this.icon.plus ) );
@@ -213,8 +281,46 @@ dTree.prototype.o = function(id) {
 	var cn = this.aNodes[id];
 	this.nodeStatus(!cn._io, id, cn._ls);
 	cn._io = !cn._io;
+	if (!cn._complete && this.smwAjaxUrl && cn._io) this.loadNextLevel(id);
 	if (this.config.closeSameLevel) this.closeLevel(cn);
 	if (this.config.useCookies) this.updateCookie();
+};
+
+// fetch children for a node
+dTree.prototype.loadNextLevel = function(id) {
+	if (this.aNodes[id]._hc) {
+		this.aNodes[id]._complete = true;
+		return;
+	}
+	var token = this.obj + "_" + id;
+	cachedData[cachedData.length] = new Array(token, this);
+	var start = this.aNodes[id].name.replace(/.*>(.*?)<.*/,"$1");
+    this.getHttpRequest(start, token);
+};
+
+// start http request for Ajax call
+dTree.prototype.getHttpRequest = function(start, token) {
+    httpRequest = null;     
+    // Mozilla, Safari and other browsers
+    if (window.XMLHttpRequest) { 
+        httpRequest = new XMLHttpRequest(); 
+    } 
+    // IE 
+    else if (window.ActiveXObject) {
+    	try {
+            httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+            try {
+                httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+        }
+    }
+    
+    if (!httpRequest) return;
+        
+    httpRequest.onreadystatechange = parseHttpResponse
+    httpRequest.open("GET", this.smwAjaxUrl + start + "%26t%3D" + token, true); 
+	httpRequest.send(null);
 };
 
 // Open or close all nodes
@@ -281,7 +387,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 	eJoin.src = (this.config.useLines)?
 	((status)?((bottom)?this.icon.minusBottom:this.icon.minus):((bottom)?this.icon.plusBottom:this.icon.plus)):
 	((status)?this.icon.nlMinus:this.icon.nlPlus);
-	eDiv.style.display = (status) ? 'block': 'none';
+	if (eDiv) eDiv.style.display = (status) ? 'block': 'none';
 };
 
 
@@ -291,6 +397,7 @@ dTree.prototype.clearCookie = function() {
 	var yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
 	this.setCookie('co'+this.obj, 'cookieValue', yesterday);
 	this.setCookie('cs'+this.obj, 'cookieValue', yesterday);
+	this.setCookie('ca'+this.obj, 'cookieValue', yesterday);
 };
 
 // [Cookie] Sets value in a cookie
@@ -336,6 +443,64 @@ dTree.prototype.isOpen = function(id) {
 	return false;
 };
 
+// Read nodes from cookie that were fetched by an ajax call before
+dTree.prototype.readAjaxTreeCache = function() {
+	var data = this.getCookie('ca' + this.obj);
+	if (data == '') return;
+	var snodes = this.extractSdataFromCookie(data); 
+	for (var n = 0; n < snodes.length; n++) {
+		var cn = new Node();
+		if (cn.unserialize(snodes[n])) {
+			var modified = false;
+			for (var i = 0; i < this.aNodes.length; i++) {
+				if (this.aNodes[i].id == cn.id) {
+					this.aNodes[i]._hc = cn._hc;
+					this.aNodes[i]._complete = cn._complete;
+					modified = true;
+					break;
+				}
+			}
+			if (!modified) this.aNodes[this.aNodes.length] = cn;
+		}
+	}
+}
+
+// Update cookie data with information from recently expanded nodes
+dTree.prototype.updateAjaxTreeCache = function(nstr) {
+   	var ostr = this.getCookie('ca' + this.obj);   	
+	if (ostr == '') {
+		this.setCookie('ca' + this.obj, nstr);
+		return;
+	}
+   	var oNodes = this.extractSdataFromCookie(ostr);
+   	var nNodes = this.extractSdataFromCookie(nstr);
+   	var newSdata = '';
+	for (var i = 0; i < oNodes.length; i++) {
+		var found = false;
+		for (var j = 0; j < nNodes.length; j++) {
+			if (oNodes[i].substr(0, 10) == nNodes[j].substr(0, 10)) {
+				newSdata += '{[' + nNodes[j] + ']}';
+				nNodes.splice(j, 1);
+				found = true;
+				break;
+			}
+		}
+		if (!found) newSdata += '{[' + oNodes[i] + ']}';
+	}
+	for (var j = 0; j < nNodes.length; j++) {
+		newSdata += '{[' + nNodes[j] + ']}';
+	}
+   	this.setCookie('ca' + this.obj, newSdata);
+}
+
+dTree.prototype.extractSdataFromCookie = function(str) {
+	var arr = str.split(']}{[');
+	arr[0] = arr[0].substr(2);
+	arr[arr.length - 1] = arr[arr.length - 1]
+	arr[arr.length - 1] = arr[arr.length - 1].substr(0, arr[arr.length - 1].length - 2); 
+	return arr;
+}
+
 // If Push and pop is not implemented by the browser
 if (!Array.prototype.push) {
 	Array.prototype.push = function array_push() {
@@ -350,4 +515,56 @@ if (!Array.prototype.pop) {
 		this.length = Math.max(this.length-1,0);
 		return lastElement;
 	}
+};
+
+// parse reponse of Ajax call
+parseHttpResponse = function() {
+	var result;
+	var resObj;
+	var dTree;
+
+	if (httpRequest.readyState == 4 && httpRequest.status == 200) 
+    	result = httpRequest.responseText;
+    else
+    	return;
+    	
+    resObj = !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(result.replace(/"(\\.|[^"\\])*"/g, ''))) 
+             && eval('(' + result + ')');
+    if (resObj.result != 'success' || !resObj.token) return;
+	
+	var parentId = resObj.token.substr(resObj.token.lastIndexOf("_")+1);
+
+	if (!parentId || !parentId.match(/^\d+$/))
+		return;
+
+	for (var i = 0; i < cachedData.length; i++) {
+		if (cachedData[i][0] == resObj.token) {
+			dTree = cachedData[i][1];
+			cachedData.splice(i, 1);
+			break;
+		}
+	} 
+	if (!dTree) return;
+	    
+    var noc = resObj.treelist.length;
+    var url = dTree.smwAjaxUrl.substr(0, dTree.smwAjaxUrl.lastIndexOf("/")) + '/index.php/';
+    
+    if (noc > 0) dTree.aNodes[parentId]._hc = true;
+    dTree.aNodes[parentId]._complete = true;
+    
+    var newSerialData = '{[' + dTree.aNodes[parentId].serialize() + ']}';
+    for (var i = 0; i < noc; i++) {
+    	var str = '<a href=\"' + url + resObj.treelist[i].link +'\" title=\"';
+    	str += resObj.treelist[i].name + '\">' + resObj.treelist[i].name + '</a>';
+    	dTree.add(dTree.aNodes.length, dTree.aNodes[parentId].id, str);
+    	newSerialData += '{[' + dTree.aNodes[dTree.aNodes.length - 1].serialize() + ']}';
+    }
+    var toggleCookies = dTree.config.useCookies;
+    if (dTree.config.useCookies) {
+    	dTree.updateCookie();
+    	dTree.updateAjaxTreeCache(newSerialData);
+    	dTree.config.useCookies = false;
+    }
+    document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
+    if (toggleCookies) dTree.config.useCookies = true;
 };
