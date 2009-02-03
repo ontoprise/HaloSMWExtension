@@ -114,16 +114,14 @@ abstract class TreeviewStorage {
 
 class TreeviewStorageSQL2 extends TreeviewStorage {
   
-    private $category;
-    private $start;
     private $maxDepth;
     private $redirectPage;
     private $displayProperty;
     private $hchar;
     private $json;
 
-    // for the conditions above here we only store
-    // the smw_id of the corresponding object
+    // for the conditions, that can be used for generating the
+    // tree, the smw_id will be fetched and stored here
     private $smw_relation_id;
     private $smw_category_id;
     private $smw_start_id;
@@ -137,29 +135,34 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     }
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
-
-		$this->category= $category;
-		$this->start= $start;
 	  
+		$db =& wfGetDB( DB_MASTER );
+		$categoryConstraintTable;
+		$categoryConstraintWhere;
+		
 	    // relation must be set -> we fetch here the smw_id of the requested relation
 		if (! $this->getRelationId($relation)) return "";
 		// if category is set, we will fetch the id of the category
-		if (($category) && (! $this->getCategoryId($category))) return "";
+		if ($category) {
+		    if (! $this->getCategoryId($category)) return "";
+		    $smw_inst2 = $db->tableName('smw_inst2');
+		    $categoryConstraintTable = ",$smw_inst2 i ";
+		    $categoryConstraintWhere = " AND i.o_id = ".$this->smw_category_id." AND r.o_id = i.s_id";    
+		}
 				
-		$db =& wfGetDB( DB_MASTER );
 		$smw_rels2 = $db->tableName('smw_rels2');
 
 		// match all triples that are of the requested relation
-		$query = "SELECT s_id, o_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id;
+		$query = "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
+		         ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere;
 		
-		if ($start != NULL) {
-		    $smw_id = $this->getSmwIdByTitle($start, NS_MAIN);
-		    if (!$smw_id)
+		if ($start) {
+		    if (!$this->getStartId($start))
 		        return $this->hchar."[[".$start->getDBKey()."]]\n";
-		    $query.= " AND o_id = ".$smw_id;  
+		    $query.= " AND r.o_id = ".$this->smw_start_id;  
 		}
 		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
-		    $query.= " AND o_id NOT in (SELECT s_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id.")";
+		    $query.= " AND r.o_id NOT in (SELECT s_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id.")";
 		}    
 		$res = $db->query($query);
 		$elementProperties= array();
@@ -185,9 +188,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	}
 	
 	/**
-	 * Get names of node elements (which is smw_sortkey in table smw_ids)
+	 * Get title, category and other detailed information of node elements.
+	 * The smw_id will be the key. Each value consists of an array itself
+	 * that stores (smw_sortkey, category, smw_title [,property value])
+	 * The property value is set only if the given property exists for that
+	 * node and if it's supposed to be displayed in the tree afterwards.
 	 *  
-	 * @param array &$dataArr which is data[smw_id]= smw_sortkey
+	 * @param array &$dataArr which is data[smw_id]= array(data)
 	 */
 	private function getElementProperties(&$dataArr) {
 	    $db =& wfGetDB( DB_MASTER );
@@ -205,8 +212,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    // pages that have anotations that do not lead to an existing page 
 	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link ".
 	             "FROM $smw_ids WHERE smw_id in (%s)";
-	    // query for fetching a certain property value for each page (in case the page has this property)
-	    $query3= "SELECT ";
 	    $query_add = ""; // list of ids
 	    foreach (array_keys($dataArr) as $id) {
 	        $i++;
@@ -219,15 +224,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            while ($row = $db->fetchObject($res)) {
 	                unset($fids[$row->smw_id]);
 	                $dataArr[$row->smw_id]= array($row->title, $row->category, $row->link);
-	                // add property value if choosen
-	                if ($this->displayProperty) {
-	                    $smwValues = smwfGetStore()->getPropertyValues($n->title, $this->displayProperty);
-	                    if (count($smwValues) > 0) 
-						    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
-	                }
-	                // if a start position is choosen, check if we have it 
-	                if ($this->start && $this->start->getDBkey() == $row->title)
-	                    $this->smw_start_id = $row->smw_id;
+                    $this->postProcessingForElement($dataArr, $row);
 	            }
 	            $db->freeResult($res);
 	            
@@ -236,17 +233,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
 	                while ($row = $db->fetchObject($res)) {
 	                    $dataArr[$row->smw_id]= array($row->title, NULL, $row->link);
-	                    // add property value if choosen    
-	                    if ($this->displayProperty) {
-	                        $smwValues = smwfGetStore()->getPropertyValues($n->title, $this->displayProperty);
-	                        if (count($smwValues) > 0) 
-    						    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
-    	                }
-	                    
-	                    // if a start position is choosen, check if we have it 
-	                    if ($this->start && $this->start->getDBkey() == $row->title)
-	                        $this->smw_start_id = $row->smw_id;                    
+	                    $this->postProcessingForElement($dataArr, $row);
 	                }
+	                $db->freeResult($res);
 	            }
 	            // if we have already that many elements processed as are in sIds
 	            // then we are done and quit the loop here.
@@ -259,6 +248,24 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    }
 	}
 
+	/**
+	 * Receiving a smw_id from the database can origin from various queries.
+	 * To fetch details for an element or set some member variables based on
+	 * the configuration, this is the same for all elements. These post
+	 * processing is done here after the raw data is received from the db.  
+	 *
+	 * @param array &$dataArr which is data[smw_id]= array(data)
+	 * @param Database row Object &$row
+	 */
+	function postProcessingForElement(&$dataArr, &$row) {
+	    // add property value if choosen    
+	    if ($this->displayProperty) {
+	        $smwValues = smwfGetStore()->getPropertyValues($row->title, $this->displayProperty);
+	        if (count($smwValues) > 0) 
+    		    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
+    	    }
+	}
+	
 	/**
 	 * Fetch a smw_id by it's title. This function is generic for
 	 * fetching smw_ids of categories, properties and pages.
@@ -289,10 +296,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return Boolean true on success or false on error
 	 */
 	private function getRelationId(Title &$relation) {
-		if ($smw_id = $this->getSmwIdByTitle($relation, SMW_NS_PROPERTY)) {
-		    $this->smw_relation_id = $smw_id;
+		if ($this->smw_relation_id = $this->getSmwIdByTitle($relation, SMW_NS_PROPERTY)) 
 		    return true;
-		}
 		return false;
 	}
 
@@ -304,18 +309,28 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return Boolean true on success or false on error
 	 */
 	private function getCategoryId(Title $category) {
-		if ($smw_id = $this->getSmwIdByTitle($category, NS_CATEGORY)) {
-		    $this->smw_category_id = $smw_id;
+		if ($this->smw_category_id = $this->getSmwIdByTitle($category, NS_CATEGORY))
 		    return true;
-		}
 		return false;	  
 	}
 
 	/**
+	 * Get smw_id of article which is defined in start
+	 * and stores this id in smw_start_id
+	 *
+	 * @param Title $start
+	 * @return Boolean true on success or false on error
+	 */	
+	private function getStartId(Title $start) {
+		if ($this->smw_start_id = $this->getSmwIdByTitle($start, NS_MAIN))
+		    return true;
+		return false;	  
+	}
+	
+	/**
 	 * get all root categories. These do not have any parents, hence
-	 * are not defined in the sIds array. If an entry node is defined by
-	 * the parameter start, then this is the only root category. The
-	 * result is an array of the smw_id of the root element(s)
+	 * are not defined in the sIds array. The result is an array of
+	 * the smw_id of root element(s).
 	 *
 	 * @param array &$sIds list of subjects with key = s_id, value = array(parents)
 	 * @param array &$elementProperties list of elements with key = smw_id, value = name
@@ -363,12 +378,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    $e = array($id, $depth);
 		    $tree->insertTail($e);  // add current root to tree
     		
-    		// if a category is set and the root node is already from this category,
-    		// don't traverse the tree further more downwards.
-        	if (($this->smw_category_id) &&
-        	    ($this->smw_category_id == $elementProperties[$id][1]))
-        	    continue;
-        	    
         	$parents[] = $id;              // add current root as parent to stack 
 
         	// get last parent of stack to look for it's children
