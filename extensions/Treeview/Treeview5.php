@@ -149,14 +149,31 @@ class TreeView5 {
     public function renderTree(&$parser, &$text) {
         global $wgJsMimeType;
         $u = $this->uniq;
-
-        # Determine which trees are sub trees
-        # - there should be a more robust way to do this,
-        #   it's just based on the fact that all sub-tree's have a minus preceding their row data
-        if (!preg_match_all("/\x7f\x7f1$u\x7f(.+?)\x7f/",$text,$subs)) $subs = array(1 => array());
-
-        # Extract all the formatted tree rows in the page and if any, replace with dTree JavaScript
-        if (preg_match_all("/\x7f1$u\x7f(.+?)\x7f([0-9]+)\x7f({$u}3(.+?){$u}4)?(.*?)(?=\x7f[12]$u)/",$text,$matches,PREG_SET_ORDER)) {
+        
+        # first, split text into single lines to have a smaller amount to do a regex matching with
+        $subs = array();
+        $matches = array();
+        $lines = explode("\n", $text);
+        $cnt= 0;
+        foreach ($lines as $line) {
+           # Extract all the formatted tree rows in the page 
+           if (preg_match_all("/\x7f1$u\x7f(.+?)\x7f([0-9]+)\x7f({$u}3(.+?){$u}4)?(.*?)(?=\x7f[12]$u)/",$line,$lineMatch,PREG_SET_ORDER)) {
+         	   foreach ($lineMatch as &$item)
+                   $matches[]= $item;
+           }
+           # Determine which trees are sub trees
+           # it's based on the fact that all sub-tree's have a minus preceding their row data
+           if (preg_match_all("/\x7f\x7f1$u\x7f(.+?)\x7f/",$text,$lineMatch)) {
+               foreach ($lineMatch as &$item)
+                   $subs[]= $item;
+           }
+           $cnt++;
+        }
+        // if there are no subtrees found, initialize the array as below
+        if (count($subs) == 0) $subs = array(1 => array());
+        
+        # Use extracted tree rows in the page and if any, replace with dTree JavaScript
+        if (count($matches) > 0) {
             # PASS-1: build $rows array containing depth, and tree start/end information
             $rows   = array();
             $depths = array('' => 0); # depth of each tree root
@@ -227,13 +244,22 @@ class TreeView5 {
                         </div>
                         $bottom
                         ";
-                    $text  = preg_replace("/\x7f1$u\x7f$id\x7f.+?$/m",$tree,$text,1); # replace first occurence of this trees root-id
+                    foreach (array_keys($lines) as $i) {
+                    	$newLine = preg_replace("/\x7f1$u\x7f$id\x7f.+?$/",$tree,$lines[$i],1); # replace first occurence of this trees root-id
+                    	if (($newLine !== false) && ($lines[$i] != $newLine)) {
+                    		$lines[$i]= $newLine;
+                    		break;
+                    	}
+                    }
                     $nodes = '';
                 }
             }
         }
- 
-        $text = preg_replace("/\x7f1$u\x7f.+?[\\r\\n]+/m",'',$text); # Remove all unreplaced row information
+        foreach (array_keys($lines) as $i) {
+        	if (preg_match("/\x7f1$u\x7f.+?$/",$lines[$i])) # Remove all unreplaced row information
+        		unset($lines[$i]);
+        }
+ 		$text = implode("\n", $lines);
         return true;
     }
  
