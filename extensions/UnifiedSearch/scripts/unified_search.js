@@ -1,3 +1,10 @@
+/**
+ * @author: Kai Kühn
+ * 
+ * Created on: 27.01.2009
+ * 
+ */
+ 
 // deactivate combined search if necessary
 var csLoadObserver;
 if (csLoadObserver != null) Event.stopObserving(window, 'load', csLoadObserver);

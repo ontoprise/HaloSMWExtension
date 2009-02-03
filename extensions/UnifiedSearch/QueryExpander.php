@@ -9,14 +9,11 @@
  *  Gets expanded to:
  *   (Shifting gear OR Automatic gear) AND (V8 engine OR V10 engine OR V8 motor OR V10 motor)
  *
+ *  @author: Kai Kühn
+ *
+ * Created on: 27.01.2009
  */
 class QueryExpander {
-
-	
-	public function __construct() {
-       
-	}
-		
 
 	/**
 	 * Expands a search term according to specified mode.
@@ -26,7 +23,7 @@ class QueryExpander {
 	 * @return string
 	 */
 	public static function expand($terms, $mode = 0) {
-	    
+	  
 		if ($mode == US_EXACTMATCH) {
 			// do not expand, just use the given terms
 			return self::opTerms($terms, "AND");
@@ -42,16 +39,17 @@ class QueryExpander {
 				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values), "OR");
 				$found = true;
 			}
-			
-            $title = Title::newFromText($term);
-            if ($title->exists()) {
-        
-                $skos_values = self::getSKOSPropertyValues($title, $mode);
-                $skos_subjects = self::lookupSKOS($term, $mode);
-                $query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values), "OR");
-                $found = true;
-            } 
-            
+				
+			$title = Title::newFromText($term);
+			if ($title->exists()) {
+
+				$skos_values = self::getSKOSPropertyValues($title, $mode);
+				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+				
+				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values), "OR");
+				$found = true;
+			}
+
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title->exists()) {
 				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : NULL;
@@ -67,10 +65,18 @@ class QueryExpander {
 				$query[]= self::opTerms($values, "OR");
 				$found = true;
 			}
-			
-		    if (!$found) $query[] = $term;
+				
+			if (!$found) {
+				// do not look in SKOS ontology if term has less than 3 chars
+				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+				
+                
+				//echo print_r($skos_subjects, true);
+				$query[]= self::opTerms(array_merge(array($term),$skos_subjects), "OR");
+				 
+			}
 		}
-		
+
 		$totalQuery = self::opTerms($query, "AND");
 		return $totalQuery;
 	}
@@ -78,25 +84,25 @@ class QueryExpander {
 	private static function getSKOSPropertyValues($title, $mode) {
 		$result = array();
 		switch($mode) {
-			
-			case US_HIGH_TOLERANCE:
-                
-                $values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$BROADER);
-                $result = array_merge($result, $values);
-                $values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$NARROWER);
-                $result = array_merge($result, $values);
-			
-                                
-			case US_LOWTOLERANCE:
 				
+			case US_HIGH_TOLERANCE:
+
+				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$BROADER);
+				$result = array_merge($result, $values);
+				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$NARROWER);
+				$result = array_merge($result, $values);
+					
+
+			case US_LOWTOLERANCE:
+
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$LABEL);
 				$result = array_merge($result, $values);
 
-				
+
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$SYNONYM);
 				$result = array_merge($result, $values);
 
-				
+
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$HIDDEN);
 				$result = array_merge($result, $values);
 				break;
@@ -104,31 +110,27 @@ class QueryExpander {
 		}
 		return $result;
 	}
-	
+
 	private static function lookupSKOS($term, $mode) {
 		$result = array();
+		$requestoptions = new SMWAdvRequestOptions();
+		$requestoptions->isCaseSensitive = false;
+		$requestoptions->addStringCondition($term, SMWStringCondition::STRCOND_MID);
 		switch($mode) {
 			case US_HIGH_TOLERANCE:
-            case US_LOWTOLERANCE:
-            	$requestoptions = new SMWRequestOptions();
-            	$requestoptions->addStringCondition($term, SMWStringCondition::STRCOND_MID);
-            	
-            	
-            	$titles = smwfGetStore()->getPropertySubjects(SKOSVocabulary::$LABEL, NULL, $requestoptions);
-            	$result = array_merge($result, $titles);
-            	
-            	
-                $titles = smwfGetStore()->getPropertySubjects(SKOSVocabulary::$SYNONYM, NULL, $requestoptions);
-                $result = array_merge($result, $titles);
-                
-               
-                $titles = smwfGetStore()->getPropertySubjects(SKOSVocabulary::$HIDDEN, NULL, $requestoptions);
-                $result = array_merge($result, $titles);
+				$result = USStore::getStore()->getPropertySubjects(array(SKOSVocabulary::$LABEL,SKOSVocabulary::$SYNONYM ,
+				SKOSVocabulary::$HIDDEN, SKOSVocabulary::$BROADER, SKOSVocabulary::$NARROWER), array(), $requestoptions);
+				break;
+			case US_LOWTOLERANCE:
+
+				$result = USStore::getStore()->getPropertySubjects(array(SKOSVocabulary::$LABEL,SKOSVocabulary::$SYNONYM ,
+				SKOSVocabulary::$HIDDEN), array(), $requestoptions);
+				break;
 		}
-		
+
 		return $result;
 	}
-    
+
 	/**
 	 * Connects terms by the specified operator.
 	 *
@@ -149,12 +151,12 @@ class QueryExpander {
 				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
 				$connectedParts++;
 			} else if ($t instanceof SMWStringValue ) {
-                if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
-                $connectedParts++;
-            } else if ($t instanceof SMWWikiPageValue ) {
-                if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
-                $connectedParts++;
-            } else if (is_string($t) && strlen($t) > 0) {
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+				$connectedParts++;
+			} else if ($t instanceof SMWWikiPageValue ) {
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+				$connectedParts++;
+			} else if (is_string($t) && strlen($t) > 0) {
 				if ($i === 0) $result .= $t; else $result .= " $operator ".$t;
 				$connectedParts++;
 			}
@@ -162,8 +164,8 @@ class QueryExpander {
 		}
 		return $connectedParts <= 1 ? $result : "(".$result.")";
 	}
-	
-	
+
+
 }
 
 ?>

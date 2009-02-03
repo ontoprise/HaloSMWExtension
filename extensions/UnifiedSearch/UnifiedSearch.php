@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @author: Kai Kühn
+ * 
+ * Created on: 27.01.2009
+ */
 if( !defined( 'MEDIAWIKI' ) ) {
 	echo("This file is an extension to the MediaWiki software and cannot be used standalone.\n");
 	die(1);
@@ -13,7 +17,7 @@ $wgExtensionCredits['unifiedsearch'][] = array(
         'name' => 'Unified search',
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
-        'description' => 'Unifies the search using a lucene backend',
+        'description' => 'Combining a Lucene backend with a title search',
 );
 
 global $wgExtensionFunctions, $wgHooks;
@@ -46,25 +50,30 @@ function wfUSAddHeader(& $out) {
  * @return unknown
  */
 function wfUSSetupExtension() {
-	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks;
+	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups;
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
+	$wgAutoloadClasses['SMWStore2Adv'] = $dir . 'storage/SMW_Store2Adv.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
+	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'UnifiedSearchStatistics.php';
 
 	$wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
+	
+	$wgSpecialPages['UnifiedSearchStatistics'] = array('SMWSpecialPage','UnifiedSearchStatistics', 'smwfDoSpecialUSSearch', $dir . 'UnifiedSearchStatistics.php');
+    //$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
+    
 	$wgSpecialPages['Search'] = array('USSpecialPage');
-	$wgHooks['smwInitializeTables'][] = 'wfUSInitializeTables';
-
+	
 	return true;
 }
 
@@ -113,10 +122,20 @@ function wfUSInitContentMessages() {
  * Creates necessary ontology elements (SKOS)
  *
  */
+function wfUSInitialize() {
+	wfUSInitializeSKOSOntology();
+	wfUSInitializeTables();
+	return true;
+}
+
 function wfUSInitializeTables() {
+	USStore::getStore()->setup(true);
+}
+
+function wfUSInitializeSKOSOntology() {
 	global $smwgContLang, $smwgHaloContLang;
 	$verbose = true;
-	DBHelper::reportProgress("Creating predefined SKOS properties...\n",$verbose);
+	print ("Creating predefined SKOS properties...\n");
 	foreach(SKOSVocabulary::$ALL as $id => $page) {
 		if ($page instanceof Title) {
 			$t = $page;
@@ -126,25 +145,24 @@ function wfUSInitializeTables() {
 			$t = Title::newFromText($page->getXSDValue(), SMW_NS_PROPERTY);
 			$name = $t->getText();
 			$propertyLabels = $smwgContLang->getPropertyLabels();
-            $namespaces = $smwgContLang->getNamespaces();
-            $datatypeLabels = $smwgContLang->getDatatypeLabels();
-            $haloSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-            $text = "\n\n[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels[SKOSVocabulary::$TYPES[$id]]."]]";
-            $text .= "\n\n[[".$haloSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".SKOSVocabulary::$ALL['us_skos_term']->getPrefixedText()."]]";
+			$namespaces = $smwgContLang->getNamespaces();
+			$datatypeLabels = $smwgContLang->getDatatypeLabels();
+			$haloSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+			$text = "\n\n[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels[SKOSVocabulary::$TYPES[$id]]."]]";
+			$text .= "\n\n[[".$haloSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".SKOSVocabulary::$ALL['us_skos_term']->getPrefixedText()."]]";
 		}
 
 		$article = new Article($t);
 		if (!$t->exists()) {
 			$article->insertNewArticle($text, "", false, false);
-			DBHelper::reportProgress("   ... Create page ".$t->getNsText().":".$t->getText()."...\n",$verbose);
+			print ("   ... Create page ".$t->getNsText().":".$t->getText()."...\n");
 		} else {
 			// save article again. Necessary when storage implementation has switched.
 			$rev = Revision::newFromTitle($t);
 			$article->doEdit($rev->getRawText(), $rev->getRawComment(), EDIT_UPDATE | EDIT_FORCE_BOT);
-			DBHelper::reportProgress("   ... re-saved page ".$t->getNsText().":".$t->getText().".\n",$verbose);
+			print ("   ... re-saved page ".$t->getNsText().":".$t->getText().".\n");
 		}
 	}
-	return true;
 }
 
 ?>

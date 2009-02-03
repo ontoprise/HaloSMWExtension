@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author: Kai Kühn
+ * 
+ * Created on: 27.01.2009
+ *
+ */
 class SKOSVocabulary {
 	
 	 // SKOS terms

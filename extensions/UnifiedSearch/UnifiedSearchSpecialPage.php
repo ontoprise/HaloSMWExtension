@@ -1,8 +1,8 @@
 <?php
 /*
- * Created on 12.03.2007
+ * Created on 28.01.2009
  *
- * Author: kai
+ * @author: Kai Kühn
  */
 if (!defined('MEDIAWIKI')) die();
 
@@ -18,7 +18,7 @@ function array_clone(& $src) {
 }
 
 /*
- * Called when gardening request in sent in wiki
+ * Replaces the MW Search special page
  */
 
 class USSpecialPage extends SpecialPage {
@@ -47,7 +47,7 @@ class USSpecialPage extends SpecialPage {
 				return;
 			}
 		}
-
+        
 		$limit =  $wgRequest->getVal('limit') !== NULL ? $wgRequest->getVal('limit') : 20;
 
 		$ft_offset = $wgRequest->getVal('ft_offset') !== NULL ? explode(",", $wgRequest->getVal('ft_offset')) : array(0);
@@ -57,21 +57,32 @@ class USSpecialPage extends SpecialPage {
 
 
 		$searchPage = SpecialPage::getTitleFor("Search");
-		# Otherwise show special search page
+		
+		// do search 
 		list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset, $next_ti_offset) = $this->doSearch($limit, $ti_offset, $ft_offset);
+		
+		// save results for statistics
+		USStore::getStore()->addSearchTry($search, $searchSet->numRows() + $totalNumTitle);
+		
 		$numOfResults = count($searchResults);
 		$suggestion = $searchSet != NULL ? $searchSet->getSuggestionQuery() : NULL;
-        #$suggestion = "auto";
+		if ($suggestion != NULL) {
+			
+		     $suggestion = str_replace('_', ' ', $suggestion);
+			
+		}
+       
+		// serialize HTML
 		$html = "";
 		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
 		$wgOut->setPageTitle(wfMsg('us_search'));
 		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
 		if ($newpage !== NULL) {
 			$newLink = '<a class="new" href="'.$newpage->getFullURL('action=edit').'">'.wfMsg('us_page').'</a>';
-			$html .= wfMsg('us_page_does_not_exist', $newLink);
+			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
-		// refine elements
-
+		
+		// refine links
 		$noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true");
 		$refineInstancesURL = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_MAIN);
 		$refineCategories = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_CATEGORY);
@@ -98,6 +109,7 @@ class USSpecialPage extends SpecialPage {
 				'<a class="us_refinelinks" href="'.$refinePDF.'">'.$wgContLang->getNsText(NS_PDF).'</a>';
 		 
 		$html .= '</div>';
+		
 		// browsing
 		$ft_offset_next = array_clone($ft_offset);
 		$ft_offset_next[] = end($ft_offset) + $next_ft_offset;
@@ -125,8 +137,13 @@ class USSpecialPage extends SpecialPage {
 			
 			$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
 		}
-			
-		$html .= "<h2>".wfMsg('us_results')."</h2>";
+
+		// heading
+		if (count($searchResults) > 0) {
+		  $html .= "<h2>".wfMsg('us_results')."</h2>";
+		} else {
+			$html .= "<h2>".wfMsg('us_noresults')."</h2>";
+		}
 
 		// search results
 		$html .= '<div id="us_searchresults">';
@@ -138,7 +155,8 @@ class USSpecialPage extends SpecialPage {
 
 	private function createBrowsingLink($search, $ti_offset, $ft_offset, $limit, $text="") {
 		$searchPage = SpecialPage::getTitleFor("Search");
-		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&ti_offset=".implode(",", $ti_offset)."&ft_offset=".implode(",", $ft_offset)).'">'.$text." ".$limit.'</a>';
+		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&ti_offset=".implode(",", $ti_offset).
+		                                           "&ft_offset=".implode(",", $ft_offset)).'">'.$text." ".$limit.'</a>';
 
 	}
 
@@ -154,22 +172,27 @@ class USSpecialPage extends SpecialPage {
 		$skosTitleSearchSet = array();
 
 		$exactQuery = true; // assume exact query without expansion
-
-		$allNamespaces = array(NS_MAIN, NS_CATEGORY, SMW_NS_PROPERTY, NS_TEMPLATE);
+        
+		// all = default namespaces
+		$allNamespaces = array(NS_MAIN, NS_CATEGORY, SMW_NS_PROPERTY, NS_TEMPLATE, NS_AUDIO, NS_PDF, NS_DOCUMENT, NS_VIDEO);
 
 		// expand query
 		$terms = self::parseTerms($search);
 			
 		$lastTIOffset = end($ti_offset);
-		$totalNum = 0;
-		// if query contains boolean operators do not use title search
-		if (!self::exactQuery($terms, $search)) {
-			
+		$totalTitleNum = 0;
+		
+		// if query contains boolean operators, consider as as user-defined
+		// and do not use title search and pass search string unchanged to Lucene
+		if (!self::userDefinedSearch($terms, $search)) {
+			// non user-defined
 			$exactQuery = false;
 			$expandedSearch = QueryExpander::expand($terms, $tolerance);
-			list($titleSearchSet, $totalNum) = USStore::getStore()->lookUpTitles($terms,
+			list($titleSearchSet, $totalTitleNum) = USStore::getStore()->lookUpTitles($terms,
 			$restrictNS !== NULL ? array($restrictNS) : $allNamespaces, false, $limit , $lastTIOffset, $tolerance );
 		} else {
+			// user defined
+			// remove syntax elements in term list
 			$removedOperators = array();
 			foreach($terms as $t) {
 				if (strtolower($t) != 'and' && strtolower($t) != 'or' && strtolower($t) != 'not') {
@@ -196,8 +219,14 @@ class USSpecialPage extends SpecialPage {
 
 		$searchSet = LuceneSearchSet::newFromQuery( 'search', $ns_ft .
 		($exactQuery ? $search : $expandedSearch), $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit, $lastFTOffset);
-
-		//Did you mean?
+        
+		// remove remaining syntax elements from term array for highlightinh
+		for($i = 0; $i < count($terms); $i++) {
+			$terms[$i] = str_replace('~', '', $terms[$i]); // remove unsharp search hint
+			$terms[$i] = preg_replace('/\[\d+\]:/', '', $terms[$i]); // remove namespace hint
+		}
+		
+		//check for 'Did you mean?' proposal
 		$suggestion = NULL;
 		if ($searchSet!=NULL) {
 			$suggestion = $searchSet->getSuggestionQuery();
@@ -213,7 +242,10 @@ class USSpecialPage extends SpecialPage {
 
 			$nextFulltext = $searchSet !== NULL ? $searchSet->next() : NULL;
 			if ($nextFulltext != NULL && !$nextFulltext->isMissingRevision()) {
-				$resultSet[] = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $terms);
+				$lr = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $terms);
+				$lr->setWordCount($nextFulltext->getWordCount());
+				$lr->setTimeStamp($nextFulltext->getTimestamp());
+				$resultSet[] = $lr;
 				$i++;
 			}
 			if ($i+$j > $limit) break;
@@ -231,39 +263,32 @@ class USSpecialPage extends SpecialPage {
 		// sort results by score
 		UnifiedSearchResult::sortByScore($resultSet);
 
-		// serialize result table
-		return array($resultSet, $searchSet, $totalNum, $i, $j);
+		// result tuple consisting of result set, lucene searchset, total number of title matches 
+		// and offsets of fulltext and title search
+		return array($resultSet, $searchSet, $totalTitleNum, $i, $j);
 	}
 
 	/**
 	 * Returns true if the $terms contain boolean operators or $search contains namespace prefixes
 	 *
-	 * @param unknown_type $queryString
-	 * @return unknown
+	 * @param string $queryString
+	 * @return boolean
 	 */
-	private static function exactQuery($terms, $search) {
-		return in_array('and', $terms) || in_array('or', $terms) || in_array('not', $terms) || preg_match('/\[\d+\]:/', $search) !== 0;
+	private static function userDefinedSearch($terms, $search) {
+		return in_array('and', $terms) 
+		          || in_array('or', $terms) 
+		          || in_array('not', $terms) 
+		          || preg_match('/\[\d+\]:/', $search) !== 0;
 	}
 
+	
 	/**
-	 * Merges two titles arrays and filters doubles
+	 * Splits a search string on whitespaces considering that
+	 * quoted terms may contain significant whitespaces.
 	 *
-	 * @param array $titles1
-	 * @param array $titles2
-	 * @return unknown
+	 * @param string $termString
+	 * @return array of string
 	 */
-	private static function mergeTitlesUnique(array $titles1, array $titles2) {
-		$result = array();
-		foreach($titles2 as $t2) {
-			$found = false;
-			foreach($titles1 as $t1) {
-				if ($t2->getTitle()->equals($t1->getTitle())) { $found=true; break; }
-			}
-			if (!$found) $result[] = $t2;
-		}
-		return array_merge($titles1, $result);
-	}
-
 	public static function parseTerms($termString) {
 		$terms = array();
 		// split terms at whitespaces unless they are quoted
@@ -275,9 +300,8 @@ class USSpecialPage extends SpecialPage {
 				$term = substr($term, 1, strlen($term)-2);
 				$term = str_replace(' ','_',$term);
 			}
-			// remove namespace hint
-			$term = preg_replace('/\[\d+\]:/', '', $term);
-			$terms[] = strtolower($term);
+									
+			$terms[] = $term;//strtolower($term);
 		}
 		return $terms;
 	}

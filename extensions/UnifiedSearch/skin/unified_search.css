@@ -1,6 +1,6 @@
 #us_didyoumean {
 	width: 97%;
-	 
+	margin-bottom: 10px; 
 }
 
 #us_refineresults {
@@ -10,6 +10,10 @@
     padding: 5px;
 	
 	
+}
+
+#us_newpage {
+	margin-bottom: 10px;
 }
 
 #us_refineresults .us_refinelinks {

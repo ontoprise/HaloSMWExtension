@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author: Kai Kühn
+ * 
+ * Created on: 27.01.2009
+ *
+ */
 class US_LanguageEn {
     
     public $us_contentMessages = array('us_skos_preferedLabel' => 'Label',
@@ -18,6 +24,7 @@ class US_LanguageEn {
         'us_browse_next' => 'next',
         'us_browse_prev' => 'prev',
         'us_results' => 'Results',
+        'us_noresults' => 'No results',
     
         'us_article' => 'Article',
         'us_all' => 'All',
@@ -26,11 +33,18 @@ class US_LanguageEn {
         'us_totalfulltextnum' => 'Total fulltext results',
         'us_totaltitlenum' => 'Total title results',
         'us_didyoumean' => 'Did you mean',
-        'us_showdescription' => 'Zeige Beschreibung',
+        'us_showdescription' => 'Show description',
     
         'us_tolerantsearch' => 'tolerant',
 	    'us_semitolerantsearch' => 'semi-tolerant',
-	    'us_exactsearch' => 'exact'
+	    'us_exactsearch' => 'exact',
+    
+        'unifiedsearchstatistics' => 'Unified Search Statistics',
+        'us_statistics_docu' => 'Statistical information about search matches',
+        'us_search_asc'=> 'Ascending',
+        'us_search_desc' => 'Descending',
+        'us_search_hits'=> 'Hits',
+        'us_search_tries' => 'Tries'
     );
 }
 ?>
