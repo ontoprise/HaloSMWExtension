@@ -1,3 +1,4 @@
+__NOTOC__
 SMW+ includes a simple query language for semantic search, so that you can directly request certain information from the wiki. Inline queries dynamically include query results into pages.
 
 The basic way of writing an inline query is to use the parser function <tt>#ask</tt>. The query string and any printout statements are directly given as parameters, as  illustrated in the following example:
@@ -37,8 +38,122 @@ This will display the population of Berlin. The function otherwise works like an
 
 Here the equals sign assigns another label for displaying the property, and this label is empty. Without this, the result would display "Population:" before the actual number.
 
-
-
 '''Online References'''
 
-The entire documentation of inline queries is available from the [http://semantic-mediawiki.org/wiki/Help:Inline_queries Semantic Mediawiki] Web site.
+The entire documentation of inline queries is available on the [http://semantic-mediawiki.org/wiki/Help:Inline_queries Semantic Mediawiki] Web site.
+
+== Additional Result Format ==
+
+The inline query parameter <tt>format</tt> determines how the results of a query are displayed in the article. By default, this the <tt>table</tt> format. In addition to the standard result formats of the Semantic MediaWiki extension, SMW+ introduces the result format <tt>aggregation</tt>. This new format allows you to aggregate query results. You can compute the sum, the average, the minimum, the maximum, and the median of number-based property values.
+
+<table border="0" cellpadding="3" style="background-color:#FFFFFF;" width="50%" summary="Parameters of the result format aggregation">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">Parameter</th>
+	<th style="text-align:left;">Description</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>sum</tt></td>
+	<td style="vertical-align:top;">Calculates the sum of all property values.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>avg</tt></td>
+	<td style="vertical-align:top;">Calculates the average of all property values</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>median</tt></td>
+	<td style="vertical-align:top;">Calculates the median of all property values.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>min</tt></td>
+	<td style="vertical-align:top;">Displays the minimum value of all property values.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>max</tt></td>
+	<td style="vertical-align:top;">Displayed the maximum value of all property values.</td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
+   </tr>
+<caption style="caption-side: bottom; width: auto; text-align: left;">Parameters of the Inline Query Result Format <tt>aggregation</tt>.</caption>
+</table>
+
+=== Examples ===
+
+Suppose your wiki has a category <tt>Event</tt> to which the property <tt>HasDuration</tt> can be applied. If you need information about the entire duration of your events, you could use the following inline query: 
+<pre>
+{{#ask: [[Category:Event]]
+| ?HasDuration = sum
+| format = aggregation
+}}
+</pre>
+This inline query will then return a simple number that represents the sum of all values of the property <tt>HasDuration</tt>.
+
+[[Image:Inline_query_format_type_aggregation_1.png|none|frame|Inline Query with Format Type <tt>aggregation</tt> Computing a Sum]]
+
+The parameters of the result format <tt>aggregation</tt> can be combined. For example, if you want to know the minimum and the maximum value of a certain property, you could write:
+
+<pre>
+{{#ask: [[Category:Event]]
+| ?HasDuration = min, max
+| format = aggregation
+}}
+</pre>
+This query will return two comma-separated numbers &mdash; one for the minimum value and one for the maximum value.
+
+[[Image:Inline_query_format_type_aggregation_2.png|none|frame|Inline Query with Format Type <tt>aggregation</tt> Returning Min/Max Values]]
+
+You can also define a template which will then be used for formatting the aggregated results of the inline query.
+
+<pre>
+{{#ask: [[Category:Event]]
+| ?HasDuration = min, max
+| format = aggregation
+| template = EventQuery
+}}
+</pre>
+
+In the template <tt>EventQuery</tt> you could write:
+
+<pre>
+The shortest meeting takes {{{1}}} and the longest meeting takes {{{2}}}.
+</pre>
+
+This will be rendered in the article as "The shortest meeting takes 0.25 hrs and the longest meeting takes 3 hrs."
+
+=== Switching Units ===
+
+In the examples above we have made use of the custom unit <tt>hrs</tt> (hours), which we defined on a page of the namespace <tt>Type</tt> using the <tt>Corresponds to</tt> property. The very simple definition of this unit is as follows:
+
+<pre>
+[[Corresponds to::1 hrs]]
+[[Corresponds to::60 min]]
+</pre>
+
+Whenever the time unit <tt>min</tt> (minutes) is discovered, it will be converted into hours using this definition. However, you can specify which unit should be displayed by appending the unit to the printout statement using a hash character (#) as delimiter.
+
+[[Image:Inline_query_format_type_aggregation_4.png|none|frame|Inline Query with Format Type <tt>aggregation</tt> Specifying the Unit]]
+
+The result of the computation will then be displayed in minutes instead of hours. 
+
+For more information, see [http://semantic-mediawiki.org/wiki/Help:Custom_units Custom Units] on the Semantic MediaWiki Web site.
+
+=== Many-valued Properties ===
+
+The aggregation format can also be used along with [[Help:Many-valued_Properties|many-valued properties]]. For example, suppose that each event has the two-valued property <tt>TimeSpent</tt>, which requires two values to be set, one for the duration and one for the preparation time. We could then write the query as follows:
+
+<pre>
+{{#ask: [[Category:Event]]
+| ?TimeSpent = sum(0), sum(1)
+| format = aggregation 
+}}
+</pre>
+
+This query will return two comma-separated numbers &mdash; one for the total duration and one for the total preparation time. Note that you need to specify to which value you are referring to in the printout statement. This is done by appending a number in parentheses to the aggregation parameter: "(0)" refers to the first value of the many-valued property, "(1)" to the second value, and so on. In the example above, <tt>sum(0)</tt> refers to the duration value and <tt>sum(1)</tt> to the preparation time.
+
+[[Image:Inline_query_format_type_aggregation_3.png|none|frame|Inline Query with Format Type <tt>aggregation</tt> Evaluating a Many-valued Property]]
