@@ -75,7 +75,7 @@ The inline query parameter <tt>format</tt> determines how the results of a query
     </tr>
     <tr>
 	<td style="vertical-align:top;"><tt>max</tt></td>
-	<td style="vertical-align:top;">Displayed the maximum value of all property values.</td>
+	<td style="vertical-align:top;">Displays the maximum value of all property values.</td>
     </tr>
     <tr>
 	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="2"></th>
