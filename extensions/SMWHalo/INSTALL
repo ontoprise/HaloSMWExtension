@@ -52,8 +52,11 @@ remarks in the section "Notes on Upgrading" below.
 (2) Edit $IP/LocalSettings.php and add:
 
       $wgUseAjax = true;
-      include_once('extensions/SMWHalo/includes/SMW_Initialize.php'); 
-      enableSMWHalo();
+      include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
+      enableSemantics('example.org');
+      include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+      enableSMWHalo('SMWHaloStore2');
+
       $phpInterpreter = "<path to PHP executable>";
       
       please change:
