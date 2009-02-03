@@ -26,7 +26,13 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	// and therefore ignored.
 	$allProperties = $data->getProperties();
 
-	if ($property->getPropertyID() == "_TYPE") {
+	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getXSDValue()) {
+        foreach($propertyValueArray as $inverseProps) {
+            if (count($propertyValueArray) == 1) {
+                $triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "owl:inverseOf", "prop:".$inverseProps->getDBkey());
+            }
+        }
+    } elseif ($property->getPropertyID() == "_TYPE") {
 
 		 
 		// insert RDFS range/domain
