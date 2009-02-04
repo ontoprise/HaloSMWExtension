@@ -275,11 +275,27 @@ class USStoreSQL extends USStore {
         $page = $db->tableName('page');
         $categorylinks = $db->tableName('categorylinks');
         
-        $res = $db->query('SELECT cl_to FROM '.$page.' JOIN '.$categorylinks.' WHERE cl_from = page_id AND page_title = '.$db->addQuotes($title->getDBkey()));
+        $res = $db->query('SELECT cl_to FROM '.$page.' JOIN '.$categorylinks.' WHERE cl_from = page_id AND page_title = '.$db->addQuotes($title->getDBkey()). ' AND page_namespace = '.$title->getNamespace());
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
                 $result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
+    
+    public function getRedirects($title) {
+        $db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $redirects = $db->tableName('redirect');
+        
+        $res = $db->query('SELECT rd_title, rd_namespace FROM '.$page.' JOIN '.$redirects.' WHERE rd_from = page_id AND page_title = '.$db->addQuotes($title->getDBkey()). ' AND page_namespace = '.$title->getNamespace());
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = Title::newFromText($row->rd_title, $row->rd_namespace);
             }
         }
         $db->freeResult($res);

@@ -130,7 +130,7 @@ class UnifiedSearchResultPrinter {
 			}
 			$html .= ']';
 			if (count($categories) > 0) {
-				$html .= '<div class="metadata">liegt in Kategorie: ';
+				$html .= '<div class="metadata">'.wfMsg('us_isincat').': ';
 				for($i = 0, $n = count($categories); $i < $n; $i++) {
 					$sep = $i < $n-1 ? " | " : "";
 					$html .= '<a href="'.$categories[$i]->getFullURL().'">'.$categories[$i]->getText().'</a>'.$sep;
@@ -154,7 +154,7 @@ class UnifiedSearchResultPrinter {
 		return $html;
 	}
 
-	private static function getImageURI($imageName) {
+	public static function getImageURI($imageName) {
 		global $wgServer, $wgScriptPath;
 		$imagePath = "$wgServer$wgScriptPath/extensions/UnifiedSearch/skin/images/";
 

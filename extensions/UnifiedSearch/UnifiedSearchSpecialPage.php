@@ -69,7 +69,7 @@ class USSpecialPage extends SpecialPage {
 		if (trim($search) != '') {
 		    list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset, $next_ti_offset) = $this->doSearch($limit, $ti_offset, $ft_offset);
 			// save results for statistics
-			USStore::getStore()->addSearchTry($search, $searchSet->numRows() + $totalNumTitle);
+			if ($searchSet !== NULL) USStore::getStore()->addSearchTry($search, $searchSet->numRows() + $totalNumTitle);
 		} else {
 			// initialize when searchstring is empty
 			$searchResults = array();
@@ -92,6 +92,7 @@ class USSpecialPage extends SpecialPage {
        
 		// serialize HTML
     	$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="60" name="search">'.
+    	    '<input type="submit" name="search" value="'.wfMsg('us_searchbutton').'">'.
 			'<input type="radio" name="tolerance" class="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>'.
@@ -119,16 +120,18 @@ class USSpecialPage extends SpecialPage {
 		$html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalfulltextnum').': <b>'.$totalFTHits.'</b>, '.wfMsg('us_totaltitlenum').': <b>'.$totalNumTitle.'</b></div>';
 		
 		global $wgContLang;
+		$restrictNS = $wgRequest->getVal('restrict');
+		$restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
 		$html .='<div id="us_refineresults">'.wfMsg('us_refinesearch').': '.
-                '<a class="us_refinelinks" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a> | '.
-                '<a class="us_refinelinks" href="'.$refineInstancesURL.'">'.wfMsg('us_article').'</a> | '.
-                '<a class="us_refinelinks" href="'.$refineCategories.'">'.$wgContLang->getNsText(NS_CATEGORY).'</a> | '.
-                '<a class="us_refinelinks" href="'.$refineProperties.'">'.$wgContLang->getNsText(SMW_NS_PROPERTY).'</a> | '.
-                '<a class="us_refinelinks" href="'.$refineTemplates.'">'.$wgContLang->getNsText(NS_TEMPLATE).'</a> | '.
-		        '<a class="us_refinelinks" href="'.$refineDocument.'">'.$wgContLang->getNsText(NS_DOCUMENT).'</a> | '.
-				'<a class="us_refinelinks" href="'.$refineAudio.'">'.$wgContLang->getNsText(NS_AUDIO).'</a> | '.
-				'<a class="us_refinelinks" href="'.$refineVideo.'">'.$wgContLang->getNsText(NS_VIDEO).'</a> | '.
-				'<a class="us_refinelinks" href="'.$refinePDF.'">'.$wgContLang->getNsText(NS_PDF).'</a>';
+                '<a class="us_refinelinks" href="'.$noRefineURL.'">'.$this->highlight(wfMsg('us_all'), NULL, $restrictNS).'</a> | '.
+                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("instance.gif" ).'"/><a class="us_refinelinks" href="'.$refineInstancesURL.'">'.$this->highlight(wfMsg('us_article'),NS_MAIN, $restrictNS).'</a> | '.
+                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("concept.gif" ).'"/><a class="us_refinelinks" href="'.$refineCategories.'">'.$this->highlight($wgContLang->getNsText(NS_CATEGORY), NS_CATEGORY, $restrictNS).'</a> | '.
+                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("property.gif" ).'"/><a class="us_refinelinks" href="'.$refineProperties.'">'.$this->highlight($wgContLang->getNsText(SMW_NS_PROPERTY), SMW_NS_PROPERTY, $restrictNS).'</a> | '.
+                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("template.gif" ).'"/><a class="us_refinelinks" href="'.$refineTemplates.'">'.$this->highlight($wgContLang->getNsText(NS_TEMPLATE), NS_TEMPLATE, $restrictNS).'</a> | '.
+		        '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("doc.gif" ).'"/><a class="us_refinelinks" href="'.$refineDocument.'">'.$this->highlight($wgContLang->getNsText(NS_DOCUMENT), NS_DOCUMENT, $restrictNS).'</a> | '.
+				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("" ).'"/><a class="us_refinelinks" href="'.$refineAudio.'">'.$this->highlight($wgContLang->getNsText(NS_AUDIO), NS_AUDIO, $restrictNS).'</a> | '.
+				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("" ).'"/><a class="us_refinelinks" href="'.$refineVideo.'">'.$this->highlight($wgContLang->getNsText(NS_VIDEO), NS_VIDEO, $restrictNS).'</a> | '.
+				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("pdf.gif" ).'"/><a class="us_refinelinks" href="'.$refinePDF.'">'.$this->highlight($wgContLang->getNsText(NS_PDF), NS_PDF, $restrictNS).'</a>';
 		 
 		$html .= '</div>';
 		
@@ -151,7 +154,7 @@ class USSpecialPage extends SpecialPage {
 		$limit250 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 250);
 		$limit500 = $this->createBrowsingLink($search,$ti_offset, $ft_offset, 500);
 
-		$nextButton =  (count($searchResults) < $limit) ? wfMsg('us_browse_next') : $next;
+		$nextButton =  (count($searchResults) == 0) ? wfMsg('us_browse_next') : $next;
 		$prevButton = (end($ft_offset) == 0 && end($ti_offset) == 0) ? wfMsg('us_browse_prev') : $previous; 
 		if (end($ft_offset) == 0 && end($ti_offset) == 0) {
 			$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
@@ -173,6 +176,10 @@ class USSpecialPage extends SpecialPage {
 		$html .= UnifiedSearchResultPrinter::serialize($searchResults);
 		$html .= '</div>';
 		$wgOut->addHTML($html);
+	}
+	
+	private function highlight($term, $exp_ns, $act_ns) {
+		return $exp_ns === $act_ns ? '<b>'.$term.'</b>' : $term;
 	}
 
 	private function createBrowsingLink($search, $ti_offset, $ft_offset, $limit, $text="") {

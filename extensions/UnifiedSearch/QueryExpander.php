@@ -23,7 +23,7 @@ class QueryExpander {
 	 * @return string
 	 */
 	public static function expand($terms, $mode = 0) {
-	  
+		 
 		if ($mode == US_EXACTMATCH) {
 			// do not expand, just use the given terms
 			return self::opTerms($terms, "AND");
@@ -36,25 +36,40 @@ class QueryExpander {
 			if ($title->exists()) {
 				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
-				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values), "OR");
+				$redirects = USStore::getStore()->getRedirects($title);
+				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values, $redirects), "OR");
 				$found = true;
 			}
-				
+
 			$title = Title::newFromText($term);
 			if ($title->exists()) {
 
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
-				
-				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values), "OR");
+				$redirects = USStore::getStore()->getRedirects($title);
+				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 				$found = true;
+			}
+				
+			$extraNamespace = array(NS_PDF, NS_DOCUMENT, NS_AUDIO, NS_VIDEO);
+			foreach($extraNamespace as $ns) {
+				$title = Title::newFromText($term, $ns);
+				if ($title->exists()) {
+
+					$skos_values = self::getSKOSPropertyValues($title, $mode);
+					$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+					$redirects = USStore::getStore()->getRedirects($title);
+					$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
+					$found = true;
+				}
 			}
 
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title->exists()) {
 				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : NULL;
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
-				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values), "OR");
+				$redirects = USStore::getStore()->getRedirects($title);
+				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values, $redirects), "OR");
 				$found = true;
 			}
 
@@ -62,18 +77,18 @@ class QueryExpander {
 			if ($title->exists()) {
 				$values = array($term);
 				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : NULL;
+
 				$query[]= self::opTerms($values, "OR");
 				$found = true;
 			}
-				
+
 			if (!$found) {
 				// do not look in SKOS ontology if term has less than 3 chars
 				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
-				
-                
+
 				//echo print_r($skos_subjects, true);
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects), "OR");
-				 
+					
 			}
 		}
 
@@ -84,7 +99,7 @@ class QueryExpander {
 	private static function getSKOSPropertyValues($title, $mode) {
 		$result = array();
 		switch($mode) {
-				
+
 			case US_HIGH_TOLERANCE:
 
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$BROADER);

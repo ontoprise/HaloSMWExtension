@@ -27,6 +27,8 @@ class US_LanguageDe {
         'us_noresults' => 'Keine Suchtreffer',
         'us_searchfield' => 'Suche',
 	    'us_lastchanged'=> 'Zuletzt ge&auml;ndert',
+	    'us_isincat' => 'liegt in Kategorie',
+	    'us_searchbutton' => 'Suche',
 	
 	    'us_article' => 'Artikel',
 	    'us_all' => 'Alle',
