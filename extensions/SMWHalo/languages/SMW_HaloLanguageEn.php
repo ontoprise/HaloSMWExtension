@@ -490,7 +490,7 @@ clicking the big arrows between the columns.',
 	'smw_ti_selectDAM' => 'Please select a DAM',
 	'smw_ti_firstselectTLM' => 'first select TLM',
 	'smw_ti_selectImport' => 'Please choose one of the available import sets:&nbsp;&nbsp;',
-	'smw_ti_inputpolicy' => 'With the input policy, you can define which information should be importet, using regular expressions (<a href="http://www.opengroup.org/onlinepubs/007908799/xbd/re.html" target="_blank">help</a>). 
+	'smw_ti_inputpolicy' => 'With the input policy, you can define which information should be imported, using regular expressions (<a href="http://www.opengroup.org/onlinepubs/007908799/xbd/re.html" target="_blank">help</a>). 
 							For example, use "^Em.*" in order to import only data sets that start with "Em". 
 							If no input policy is chosen, all data will be imported.',
 	'smw_ti_define_inputpolicy' => 'Please define an input policy:',
