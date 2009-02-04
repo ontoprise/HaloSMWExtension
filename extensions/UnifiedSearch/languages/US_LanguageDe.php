@@ -25,7 +25,9 @@ class US_LanguageDe {
         'us_browse_prev' => 'vorherige',
         'us_results' => 'Ergebnisse',
         'us_noresults' => 'Keine Suchtreffer',
-
+        'us_searchfield' => 'Suche',
+	    'us_lastchanged'=> 'Zuletzt ge&auml;ndert',
+	
 	    'us_article' => 'Artikel',
 	    'us_all' => 'Alle',
 

@@ -25,6 +25,8 @@ class US_LanguageEn {
         'us_browse_prev' => 'prev',
         'us_results' => 'Results',
         'us_noresults' => 'No results',
+        'us_searchfield' => 'Search for',
+        'us_lastchanged'=> 'Last changed',
     
         'us_article' => 'Article',
         'us_all' => 'All',
@@ -45,6 +47,8 @@ class US_LanguageEn {
         'us_search_desc' => 'Descending',
         'us_search_hits'=> 'Hits',
         'us_search_tries' => 'Tries'
+        
+        
     );
 }
 ?>

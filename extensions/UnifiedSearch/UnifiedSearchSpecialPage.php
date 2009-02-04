@@ -46,6 +46,13 @@ class USSpecialPage extends SpecialPage {
 				$wgOut->redirect( $t->getFullURL() );
 				return;
 			}
+			
+			# If just the case is wrong, jump right there.
+		    $t = USStore::getStore()->getSingleTitle($search);
+            if (!is_null( $t ) ) {
+                $wgOut->redirect( $t->getFullURL() );
+                return;
+            }
 		}
         
 		$limit =  $wgRequest->getVal('limit') !== NULL ? $wgRequest->getVal('limit') : 20;
@@ -59,12 +66,23 @@ class USSpecialPage extends SpecialPage {
 		$searchPage = SpecialPage::getTitleFor("Search");
 		
 		// do search 
-		list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset, $next_ti_offset) = $this->doSearch($limit, $ti_offset, $ft_offset);
+		if (trim($search) != '') {
+		    list($searchResults,$searchSet, $totalNumTitle, $next_ft_offset, $next_ti_offset) = $this->doSearch($limit, $ti_offset, $ft_offset);
+			// save results for statistics
+			USStore::getStore()->addSearchTry($search, $searchSet->numRows() + $totalNumTitle);
+		} else {
+			// initialize when searchstring is empty
+			$searchResults = array();
+			$searchSet = NULL;
+			$totalNumTitle = 0;
+			$next_ft_offset = 0;
+			$next_ti_offset = 0;
+		}
 		
-		// save results for statistics
-		USStore::getStore()->addSearchTry($search, $searchSet->numRows() + $totalNumTitle);
 		
 		$numOfResults = count($searchResults);
+		
+		// suggestion (Did you mean?)
 		$suggestion = $searchSet != NULL ? $searchSet->getSuggestionQuery() : NULL;
 		if ($suggestion != NULL) {
 			
@@ -73,11 +91,15 @@ class USSpecialPage extends SpecialPage {
 		}
        
 		// serialize HTML
-		$html = "";
+    	$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="60" name="search">'.
+			'<input type="radio" name="tolerance" class="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>'.
+			'<input type="radio" name="tolerance" class="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>'.
+			'<input type="radio" name="tolerance" class="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>'.
+		'</form>';
 		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
 		$wgOut->setPageTitle(wfMsg('us_search'));
 		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
-		if ($newpage !== NULL) {
+		if ($newpage !== NULL && !$newpage->exists()) {
 			$newLink = '<a class="new" href="'.$newpage->getFullURL('action=edit').'">'.wfMsg('us_page').'</a>';
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
@@ -167,7 +189,8 @@ class USSpecialPage extends SpecialPage {
 		$search = $wgRequest->getVal('search');
 		$restrictNS = $wgRequest->getVal('restrict');
 		$tolerance = $wgRequest->getVal('tolerance');
-
+        $tolerance = $tolerance == NULL ? 0 : $tolerance;
+		
 		$titleSearchSet = array();
 		$skosTitleSearchSet = array();
 
@@ -184,6 +207,7 @@ class USSpecialPage extends SpecialPage {
 		
 		// if query contains boolean operators, consider as as user-defined
 		// and do not use title search and pass search string unchanged to Lucene
+		
 		if (!self::userDefinedSearch($terms, $search)) {
 			// non user-defined
 			$exactQuery = false;
@@ -200,6 +224,7 @@ class USSpecialPage extends SpecialPage {
 				}
 			}
 			$terms = $removedOperators;
+			
 		}
 
 
@@ -275,10 +300,14 @@ class USSpecialPage extends SpecialPage {
 	 * @return boolean
 	 */
 	private static function userDefinedSearch($terms, $search) {
-		return in_array('and', $terms) 
-		          || in_array('or', $terms) 
-		          || in_array('not', $terms) 
-		          || preg_match('/\[\d+\]:/', $search) !== 0;
+		foreach($terms as $term) {
+			$term = strtolower($term);
+			if ($term == 'and' || $term == 'or' || $term == 'not') {
+				return true;
+			}
+		}
+		return preg_match('/\[\d+\]:/', $search) !== 0;
+		
 	}
 
 	

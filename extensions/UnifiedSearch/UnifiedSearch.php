@@ -47,7 +47,7 @@ function wfUSAddHeader(& $out) {
 /**
  * Initializes PermissionACL extension
  *
- * @return unknown
+ * @return 
  */
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups;
@@ -57,7 +57,7 @@ function wfUSSetupExtension() {
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-	$wgAutoloadClasses['SMWStore2Adv'] = $dir . 'storage/SMW_Store2Adv.php';
+	
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';

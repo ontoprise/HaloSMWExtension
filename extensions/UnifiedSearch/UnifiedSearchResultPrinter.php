@@ -106,19 +106,19 @@ class UnifiedSearchResultPrinter {
 			$html .= '<tr class="us_resultrow"><td>';
 			$html .= '<div class="us_search_result">';
 			// Categories
-			$categories = smwfGetSemanticStore()->getCategoriesForInstance($e->getTitle());
+			$categories = USStore::getStore()->getCategories($e->getTitle()); 
 			 
-			$image = ($e->isFulltextResult() && count($categories) == 0) ? "fulltext.gif" : self::getImageFromNamespace($e);
-			 
-			$html .= '<li><img src="'.self::getImageURI($image).'"/>';
+					 
+			$html .= '<li><img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
+			if ($e->isFulltextResult()) $html.= '<img style="margin-left: 6px;" src="'.self::getImageURI("fulltext.gif" ).'"/>';
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$score = $e->getScore() * 5;
-			if ($score > 5) {
+			if ($score >= 5) {
 				$score = 6;
 				$bar = "green-bar.gif";
-			} else if ($score > 2 && $score < 5) {
+			} else if ($score >= 2 && $score < 5) {
 				$bar = "yellow-bar.gif";
-			} else if ($score < 2) {
+			} else if ($score >= 1 && $score < 2) {
 				$bar = "red-bar.gif";
 			} else {
 				$score = 1;
@@ -130,14 +130,14 @@ class UnifiedSearchResultPrinter {
 			}
 			$html .= ']';
 			if (count($categories) > 0) {
-				$html .= '<div class="snippet">liegt in Kategorie: ';
+				$html .= '<div class="metadata">liegt in Kategorie: ';
 				for($i = 0, $n = count($categories); $i < $n; $i++) {
 					$sep = $i < $n-1 ? " | " : "";
 					$html .= '<a href="'.$categories[$i]->getFullURL().'">'.$categories[$i]->getText().'</a>'.$sep;
 				}
 				$html .= '</div>';
 			}
-		    //$html .= '<div class="snippet">Last changed: '.$e->getTimeStamp().'</div>';
+		    $html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
 			
 			// Description
@@ -177,6 +177,22 @@ class UnifiedSearchResultPrinter {
 			case NS_PDF: { $image = "pdf.gif"; break; }
 		}
 		return $image;
+	}
+	
+	private static function formatdate($timestamp) {
+		$year = substr($timestamp,0,4);
+		$month = substr($timestamp,4,2);
+		$day = substr($timestamp,6,2);
+		$hour = substr($timestamp,8,2);
+		$min = substr($timestamp,10,2);
+		$sec = substr($timestamp,12,2);
+		
+		global $wgLang;
+		switch($wgLang->getCode()) {
+			case "de": return "$day-$month-$year $hour:$min:$sec";
+			case "en": return "$year-$month-$day $hour:$min:$sec";
+			default: return "$year-$month-$day $hour:$min:$sec";
+		}
 	}
 }
 ?>

@@ -32,19 +32,6 @@ abstract class USStore {
         return self::$STORE;
     }
     
-    public static function &getSMWStore() {
-        global $IP, $smwgBaseStore;
-        if (self::$SMW_STORE == NULL) {
-            if ($smwgBaseStore != 'SMWHaloStore' && $smwgBaseStore != 'SMWHaloStore2') {
-                trigger_error("The store '$smwgBaseStore' is not implemented for the HALO extension. Please use 'SMWHaloStore2'.");
-            } elseif ($smwgBaseStore == 'SMWHaloStore2') {
-                
-                self::$SMW_STORE = new SMWStore2Adv();
-            }  else {
-                trigger_error("The store '$smwgBaseStore' is deprecated. You must use 'SMWHaloStore2'.");
-            }
-        }
-        return self::$SMW_STORE;
-    }
+    
 }
 ?>

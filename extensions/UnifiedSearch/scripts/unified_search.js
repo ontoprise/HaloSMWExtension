@@ -33,12 +33,15 @@ ToleranceSelector.prototype = {
     	var initialValue = GeneralBrowserTools.getCookie("tolerance-slider");
     	if (initialValue == null) initialValue = 0;    
     	if (initialValue == 0) {
-    		$('tolerantsearch').checked = true;
+    		$$('.tolerantsearch').each(function(e) { e.checked = true });
     	} else if (initialValue == 1) {
-            $('semitolerantsearch').checked = true;
+            $$('.semitolerantsearch').each(function(e) { e.checked = true });
         } else if (initialValue == 2) {
-            $('exactsearch').checked = true;
+            $$('.exactsearch').each(function(e) { e.checked = true });
         }
+        var us_searchfield = $('us_searchfield');
+        var mw_searchfield = $('searchInput');
+        if (us_searchfield && mw_searchfield) us_searchfield.value = mw_searchfield.value;
     },
     
     onClick: function(v) {

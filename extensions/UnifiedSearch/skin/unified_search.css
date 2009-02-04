@@ -12,6 +12,9 @@
 	
 }
 
+#us_searchform {
+	margin-bottom: 10px;
+}
 #us_newpage {
 	margin-bottom: 10px;
 }
@@ -34,6 +37,11 @@
 .us_search_result .snippet {
 	font-size: 80%;
 	margin-left: 10px;
+}
+
+.us_search_result .metadata {
+    font-size: 90%;
+    margin-left: 10px;
 }
 
 #us_browsing {

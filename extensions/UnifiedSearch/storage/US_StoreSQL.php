@@ -45,14 +45,17 @@ class USStoreSQL extends USStore {
 			}
 		}
 		$db->freeResult($res);
-
-		$query = 'SELECT page_title, page_namespace, SUM(score) AS totalscore FROM title_matches GROUP BY page_title, page_namespace ORDER BY totalscore DESC LIMIT '.$limit.' OFFSET '.$offset;
+        
+		$page = $db->tableName('page');
+		$query = 'SELECT t.page_title, t.page_namespace, SUM(score) AS totalscore, page_touched FROM title_matches t LEFT JOIN '.$page.' p ON p.page_title = t.page_title AND p.page_namespace = t.page_namespace GROUP BY t.page_title, t.page_namespace ORDER BY totalscore DESC LIMIT '.$limit.' OFFSET '.$offset;
 		$result = array();
 		$res = $db->query($query );
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				$title = Title::newFromText($row->page_title, $row->page_namespace);
-				$result[] = UnifiedSearchResult::newFromWikiTitleResult($title, $row->totalscore);
+				$usr = UnifiedSearchResult::newFromWikiTitleResult($title, $row->totalscore);
+				$usr->setTimeStamp($row->page_touched);
+				$result[] = $usr;
 			}
 		}
 		$db->freeResult($res);
@@ -247,7 +250,41 @@ class USStoreSQL extends USStore {
         return $result;
 	}
 	
+	public function getSingleTitle($term) {
+		$db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $term = mysql_real_escape_string(strtoupper(str_replace(" ", "_", $term)));
+        $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));
+        $numRows = $db->numRows($res);
+        if ($numRows > 1) {
+        	$db->freeResult($res);
+        	return NULL;
+        }
+        if ($numRows == 1) {
+            $row = $db->fetchObject($res);
+        	$title = Title::newFromText($row->page_title, $row->page_namespace);
+	        $db->freeResult($res);
+	        return $title;
+        }
+        $db->freeResult($res);
+        return NULL; 
+	}
 	
+    public function getCategories($title) {
+        $db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        
+        $res = $db->query('SELECT cl_to FROM '.$page.' JOIN '.$categorylinks.' WHERE cl_from = page_id AND page_title = '.$db->addQuotes($title->getDBkey()));
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+    }
 
 	/**
 	 * Adds (or updates) a new search statistic with given hits.
