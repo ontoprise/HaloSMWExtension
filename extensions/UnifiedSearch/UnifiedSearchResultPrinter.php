@@ -58,7 +58,7 @@ class UnifiedSearchResult {
 
 	public function getDescription() {
 		if ($this->description == NULL) {
-				
+
 			$this->description = reset(smwfGetStore()->getPropertyValues($this->title, SKOSVocabulary::$DESCRIPTION));
 		}
 		return $this->description;
@@ -66,7 +66,7 @@ class UnifiedSearchResult {
 
 	public function getExamples() {
 		if ($this->examples == NULL) {
-				
+
 			$this->examples = smwfGetStore()->getPropertyValues($this->title, SKOSVocabulary::$EXAMPLE);
 		}
 		return $this->examples;
@@ -94,24 +94,33 @@ class UnifiedSearchResult {
 }
 
 class UnifiedSearchResultPrinter {
-
+	
 	/**
 	 * Creates a result table
 	 *
 	 * @param array $entries
 	 */
-	public static function serialize(array & $entries) {
+	public static function serialize(array & $entries, $terms) {
+		global $wgServer, $wgScript;
+		
+		$termsarray = split(' ', $terms);
+		// GreyBox
+		for ($i = 0; $i < count($termsarray); $i++) {
+			$args .= "&rsargs[]=" . $termsarray[$i] . "";
+		}
+		// GreyBox
 		$html = '<table id="us_queryresults">';
 		foreach($entries as $e) {
 			$html .= '<tr class="us_resultrow"><td>';
 			$html .= '<div class="us_search_result">';
 			// Categories
-			$categories = USStore::getStore()->getCategories($e->getTitle()); 
-			 
-					 
+			$categories = USStore::getStore()->getCategories($e->getTitle());
+
+
 			$html .= '<li><img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
 			if ($e->isFulltextResult()) $html.= '<img style="margin-left: 6px;" src="'.self::getImageURI("fulltext.gif" ).'"/>';
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
+			$html .= '<span class="searchprev"><a rel="gb_page_center[]" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
 			$score = $e->getScore() * 5;
 			if ($score >= 5) {
 				$score = 6;
@@ -137,9 +146,9 @@ class UnifiedSearchResultPrinter {
 				}
 				$html .= '</div>';
 			}
-		    $html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
+			$html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
-			
+				
 			// Description
 			/*$desc = $e->getDescription();
 			 if ($desc !== false) {
@@ -147,7 +156,7 @@ class UnifiedSearchResultPrinter {
 			 $html .= '<div class="us_description" id="'.$e->getTitle()->getDBkey().'" style="margin-left:10px;display: none;">'.$desc->getXSDValue().'</div>';
 			 }
 			 $html .= '</div>';*/
-			 
+
 			$html .= '</td></tr>';
 		}
 		$html .= '</table>';
@@ -166,7 +175,7 @@ class UnifiedSearchResultPrinter {
 
 
 	private static function getImageFromNamespace($result) {
-		 
+			
 		switch($result->getTitle()->getNamespace()) {
 			case NS_MAIN: { $image = "instance.gif"; break; }
 			case NS_CATEGORY: { $image = "concept.gif"; break; }
@@ -178,7 +187,7 @@ class UnifiedSearchResultPrinter {
 		}
 		return $image;
 	}
-	
+
 	private static function formatdate($timestamp) {
 		$year = substr($timestamp,0,4);
 		$month = substr($timestamp,4,2);
@@ -186,7 +195,7 @@ class UnifiedSearchResultPrinter {
 		$hour = substr($timestamp,8,2);
 		$min = substr($timestamp,10,2);
 		$sec = substr($timestamp,12,2);
-		
+
 		global $wgLang;
 		switch($wgLang->getCode()) {
 			case "de": return "$day-$month-$year $hour:$min:$sec";

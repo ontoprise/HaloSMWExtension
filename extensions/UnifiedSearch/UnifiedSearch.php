@@ -20,7 +20,8 @@ $wgExtensionCredits['unifiedsearch'][] = array(
         'description' => 'Combining a Lucene backend with a title search',
 );
 
-global $wgExtensionFunctions, $wgHooks;
+global $wgExtensionFunctions, $wgHooks, $wgAjaxExportList;;
+$wgAjaxExportList[] = 'smwf_ca_GetHTMLBody';
 
 // use SMW_AddScripts hook from SMWHalo to make sure that Prototype is available.
 $wgHooks['SMW_AddScripts'][]='wfUSAddHeader';
@@ -33,21 +34,35 @@ $wgExtensionFunctions[] = 'wfUSSetupExtension';
  * @return unknown
  */
 function wfUSAddHeader(& $out) {
-	global $wgScriptPath;
+	global $wgScriptPath, $wgServer;
+	
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
-                    return true;
+    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
+
+    // add GreyBox
+	$out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_styles.css'
+                    ));
+    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/";</script>'."\n");	                    
+    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');	   
+    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
+    // add GreyBox  
+    return true;
 }
 
 /**
  * Initializes PermissionACL extension
  *
- * @return 
+ * @return unknown
  */
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups;
@@ -57,7 +72,7 @@ function wfUSSetupExtension() {
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-	
+	$wgAutoloadClasses['SMWStore2Adv'] = $dir . 'storage/SMW_Store2Adv.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
@@ -164,5 +179,52 @@ function wfUSInitializeSKOSOntology() {
 		}
 	}
 }
+
+/**
+ * Get HTML body of wiki article 
+ * Ajax callback function
+ */
+function smwf_ca_GetHTMLBody($page) {
+	global $smwgHaloScriptPath, $wgStylePath, $wgUser, $wgDefaultSkin;
+	global $wgServer;
+	
+	$color = array("#00FF00", "#00FFFF", "#FFFF00");
+	$wgDefaultColor = "#00FF00";
+	
+	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
+	$opt = ParserOptions::newFromUser($wgUser);	
+	$title = Title::newFromText($page);
+	$revision = Revision::newFromTitle($title );
+	if ($revision) {
+		$article = new Article($title);
+		$out = $psr->parse($revision->getText(),$wgTitle,$opt,true,true);		
+	} else {
+		return null;
+	}
+	
+	$skin = $wgUser->getSkin();
+	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
+
+	// add main.css
+	$head = '<head>';
+	$head .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
+	$head .= '<style type="text/css" media="screen,projection"> @import "'. $wgStylePath .'/'. $skinName .'/main.css?164";</style>';
+	$head .= '</head>';
+	
+	$htmlcontent = $out->getText();
+	
+	// highlight search terms
+	$numargs = func_num_args();
+	$arg_list = func_get_args();
+	if ($numargs > 1) {
+		for ($i = 1; $i < $numargs; $i++) {
+			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor; 
+			$htmlcontent = str_ireplace($arg_list[$i], "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>", $htmlcontent); 			
+		}
+	}
+	
+	return $head.$htmlcontent;	
+}
+
 
 ?>
