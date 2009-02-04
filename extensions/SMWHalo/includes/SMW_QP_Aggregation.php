@@ -105,8 +105,8 @@ class SMWAggregationResultPrinter extends SMWResultPrinter {
 							} else if ($numValue = $this->isNumeric($dv->getShortWikiText(SMW_OUTPUT_WIKI))){
 								$dvs[$colCount]["values"][] = $numValue;
 							}
+							$dvs[$colCount]["dv"] = $dv;
 						}
-						$dvs[$colCount]["dv"] = $dv;
 						$colCount+=1;
 					}
 				} else {
