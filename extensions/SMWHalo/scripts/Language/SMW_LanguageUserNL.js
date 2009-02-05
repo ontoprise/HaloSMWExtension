@@ -102,7 +102,7 @@ var wgUserLanguageStrings = {
 	'CATEGORY'                : "Categorie:",	//also used as namespace identifier with colon
 	'PROPERTY'                : "Eigenschap:",	//also used as namespace identifier with colon
 	'TEMPLATE'                : "Template:",	//also used as namespace identifier with colon
-	'TYPE_PAGE'               : "Type:Pagina",	// type identifier
+	
 	'PAGE_TYPE'               : "pagina",		// name of the page data type
 	'NARY_TYPE'               : "n-tellige",       // name of the n-ary data type
 	'SPECIFY_PROPERTY'		  : "Specifieer deze eigenschap.",

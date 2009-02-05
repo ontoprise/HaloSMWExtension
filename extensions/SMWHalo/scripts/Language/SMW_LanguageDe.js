@@ -29,12 +29,12 @@ var wgContLanguageStrings = {
 	'TYPE_PAGE_WONS'		  : "Seite",			// type identifier without namespace
 	
 	'HAS_TYPE'				  : "Hat Datentyp",		// Special property for definition of data type
-	'DOMAIN_HINT'			  : "has domain and range",
-	'RANGE_HINT'			  : "has domain and range",
-	'MAX_CARDINALITY'		  : "Has max cardinality",
-	'MIN_CARDINALITY'		  : "Has min cardinality",
-	'IS_INVERSE_OF'			  : "Is inverse of",
-	'TRANSITIVE_RELATION'	  : "Transitive properties",
-	'SYMMETRICAL_RELATION'	  : "Symmetrical properties"
+	'DOMAIN_HINT'			  : "Hat Domain und Range",
+	'RANGE_HINT'			  : "Hat Domain und Range",
+	'MAX_CARDINALITY'		  : "Hat max Kardinalität",
+	'MIN_CARDINALITY'		  : "Hat min Kardinalität",
+	'IS_INVERSE_OF'			  : "Ist invers zu",
+	'TRANSITIVE_RELATION'	  : "Transitive Attribute",
+	'SYMMETRICAL_RELATION'	  : "Symmetrische Attribute"
 	
 }

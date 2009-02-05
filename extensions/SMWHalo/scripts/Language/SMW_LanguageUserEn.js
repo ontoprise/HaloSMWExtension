@@ -261,7 +261,6 @@ var wgUserLanguageStrings = {
 	'PROPERTY'                : "Property:",
 	'TEMPLATE'                : "Template:",	
 	'TYPE'                    : 'Type:',
-	'TYPE_PAGE'               : "Type:Page",
 
 	// Simple rules
 	
