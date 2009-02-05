@@ -173,7 +173,7 @@ class USSpecialPage extends SpecialPage {
 		// search results
 		$html .= '<div id="us_searchresults">';
 
-		$html .= UnifiedSearchResultPrinter::serialize($searchResults);
+		$html .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
 		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}

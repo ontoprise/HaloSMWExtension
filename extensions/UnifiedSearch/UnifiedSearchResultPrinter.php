@@ -100,7 +100,7 @@ class UnifiedSearchResultPrinter {
 	 *
 	 * @param array $entries
 	 */
-	public static function serialize(array & $entries, $terms) {
+	public static function serialize(array & $entries, & $terms) {
 		global $wgServer, $wgScript;
 		
 		$termsarray = split(' ', $terms);
