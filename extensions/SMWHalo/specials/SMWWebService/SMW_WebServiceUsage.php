@@ -184,19 +184,19 @@ function webServiceUsage_Render( &$parser) {
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
-
+		
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
 
-		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsResults);
-
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
 			if(!sizeof($propertyName)){
-				$wsFormattedResult .= smwfEncodeMessages($errorMessages);
+				$wsFormattedResult = smwfEncodeMessages($errorMessages);
 			}
+			return $wsFormattedResult;
 		}
+		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsResults);
 
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
@@ -465,6 +465,7 @@ function getReadyToPrintResult($result){
 			} else {
 				$keys = array_keys($values);
 				$niceResult[$i][] = @ $values[$keys[$i-1]];
+				//$niceResult[$i][] = @ strip_tags($values[$keys[$i-1]]);
 			}
 		}
 	}

@@ -68,8 +68,8 @@ class WebServiceCache {
 
 			$tempPropertyValues = array();
 			foreach($smwProps as $smwProp){
-				$tempPropertyValues[$smwProp->getText()] =
-				$smwData->getPropertyValues($smwProp);
+				$tempPropertyValues[$smwProp->getWikiValue()] =
+					$smwData->getPropertyValues($smwProp);
 			}
 
 			$smwData->clear();
@@ -78,7 +78,7 @@ class WebServiceCache {
 				if(count($cacheResult)>0){
 					foreach($values as $value){
 						$content = $value->getXSDValue();
-						
+							
 						if(strtolower($key) != strtolower($prop["propertyName"])
 								&& strtolower($content) != strtolower($cacheResult)){
 							$smwData->addPropertyValue($key, $content);		

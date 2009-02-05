@@ -161,6 +161,7 @@ class SMWSoapClient implements IWebServiceClient {
 
 	/**
 	 * Calls the web service
+	 * todo: add documentation
 	 *
 	 */
 	public function call($operationName, $parameters) {
@@ -170,7 +171,8 @@ class SMWSoapClient implements IWebServiceClient {
 		if($this->mAuthenticationType == "http"){
 			$this->mClient = new SoapClient($this->mURI,
 			array("login" => $this->mAuthenticationLogin,
-				"password" => $this->mAuthenticationPassword));
+				"password" => $this->mAuthenticationPassword,
+				"trace" => true));
 		} else {
 			$this->mClient = new SoapClient($this->mURI);
 		}
@@ -181,10 +183,14 @@ class SMWSoapClient implements IWebServiceClient {
 			} else {
 				$response = $this->mClient->$operationName($parameters);
 			}
-			//return print_r($response, true);
 		} catch(Exception $e) {
-			//return "_ws-error: ".print_r($e, true);
 			return print_r($e, true) . $this->mClient->__getLastResponse();
+		}
+		
+		//construct xml-result if the old dot-syntax is not used
+		global $smwgWSOldDotSyntax;
+		if(!$smwgWSOldDotSyntax){
+			$response = array($this->constructXML($response, $this->mOperations[$operationName][0]));
 		}
 		return $response;
 	}
@@ -206,7 +212,7 @@ class SMWSoapClient implements IWebServiceClient {
 
 		$this->duplicates = array();
 		$this->mClient = @ new SoapClient($this->mURI);
-		
+
 		try {
 			$functions = $this->mClient->__getFunctions();
 			$types = $this->mClient->__getTypes();
@@ -221,19 +227,19 @@ class SMWSoapClient implements IWebServiceClient {
 				$fname = $matches[2];
 				$params = $matches[3];
 				if(!array_key_exists($fname, $this->mOperations)){
-						$this->mOperations[$fname] = array($retType);
-						if ($params) {
-							$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
-							for ($i = 0; $i < $numParam; ++$i) {
-								$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
-							}
+					$this->mOperations[$fname] = array($retType);
+					if ($params) {
+						$numParam = preg_match_all("/\s*(.+?)\s+\\$([^ ,]+)(\s|,)*/",$params, $pList);
+						for ($i = 0; $i < $numParam; ++$i) {
+							$this->mOperations[$fname][] = array($pList[2][$i], $pList[1][$i]);
 						}
 					}
+				}
 			}
 		}
 
 		$this->mTypes = array();
-		
+
 		foreach ($types as $t) {
 			if (preg_match("/\s*struct\s*(\b.*?)\s*\{([^}]*)\}/", $t, $matches)) {
 				$tname = $matches[1];
@@ -473,6 +479,38 @@ class SMWSoapClient implements IWebServiceClient {
 	public function isExistingType($typeName){
 		if(array_key_exists($typeName, $this->mTypes)){
 			return(true);
+		}
+		return false;
+	}
+
+	private function constructXML($result, $tagName){
+		$xmlString = "";
+		if(is_array($result) || is_object($result)){
+			if(!$this->is_vector($result)){
+				foreach($result as $k=>$v){
+					$xmlString .= $this->constructXML($v, $tagName);
+				}
+			} else {
+				$xmlString .= "<".$tagName.">";
+				foreach($result as $k=>$v){
+					$xmlString .= $this->constructXML($v, $k);
+				}
+				$xmlString .= "</".$tagName.">";
+			}
+		} else {
+			$xmlString = $xmlString .= "<".$tagName."><![CDATA['".$result."']]></".$tagName.">";;
+		}
+		return $xmlString;
+	}
+
+	private function is_vector( &$array ) {
+		if (empty($array) ) {
+			return false;
+		}
+		$next = 0;
+		foreach ( $array as $k => $v ) {
+			if ( $k !== $next ) return true;
+			$next++;
 		}
 		return false;
 	}

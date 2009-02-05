@@ -116,7 +116,7 @@ function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 		if(is_array($ws)){
 			return "isa ".implode(";", $ws);
 		} else {
-			//$res = $ws->validateWithWSDL();
+			//$res = $ws->validateWWSD();
 			$res = $ws->store();
 			if(!$res){
 				return "error";

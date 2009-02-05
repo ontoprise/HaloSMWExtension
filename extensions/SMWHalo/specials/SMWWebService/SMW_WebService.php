@@ -21,6 +21,9 @@ require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSStorage.php");
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_IWebServiceClient.php");
 require_once("$smwgHaloIP/specials/SMWWebService/SMW_XPathProcessor.php");
 
+global $smwgWSOldDotSyntax;
+$smwgWSOldDotSyntax = true;
+
 /**
  * Instances of this class describe a web service.
  *
@@ -356,17 +359,20 @@ class WebService {
 	 * 		array of error messages otherwise
 	 *
 	 */
-	public function validateWithWSDL() {
-
-
+	public function validateWWSD() {
 		$msg = $this->createWSClient();
 		if ($msg === true) {
 			// client successfully created
 			$msg = array();
 		} else {
-			return $msg;
+			return $msg[0];
 		}
 
+		//no further validation is necessary if this is
+		//a restful web service
+		if(strtolower($this->mProtocol) == "rest"){
+			return true;
+		}
 
 		// Check, if the method exists
 		$op = $this->mWSClient->getOperation($this->mMethod);
@@ -411,8 +417,6 @@ class WebService {
 				$response = @ unserialize($cacheResult["result"]);
 				WSStorage::getDatabase()->updateCacheLastAccess($this->mArticleID, $parameterSetId);
 			}
-
-
 		}
 
 		// get the result from a call to a webservice if there
@@ -439,12 +443,12 @@ class WebService {
 
 				if(is_string($response)){
 					if($cacheResult == null){
-						$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
-						return "";
+						//$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
+						$this->mCallErrorMessages[] = $response;
+						return $response;
 					} else {
-						$this->mCallErrorMessages[] =
-						wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
-						$response = unserialize($cacheResult["result"]);
+						//$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
+						$this->mCallErrorMessages[] = $response;
 					}
 				} else {
 					WSStorage::getDatabase()->storeCacheEntry(
@@ -457,8 +461,13 @@ class WebService {
 			}
 		}
 
-		$result = $this->getCallResultParts($response, $resultParts);
-
+		global $smwgWSOldDotSyntax;
+		if($smwgWSOldDotSyntax){
+			$result = $this->odtGetCallResultParts($response, $resultParts);
+		} else {
+			$result = $this->getCallResultParts($response[0], $resultParts);
+		}
+			
 		$ws = $this->mArticleID;
 		if($this->getConfirmationStatus() == "false"){
 			$this->mConfirmationStatus = once;
@@ -604,7 +613,7 @@ class WebService {
 	 * @param string[] $resultParts : aliases of the requested result parts
 	 * @return array the result of interrest
 	 */
-	public function getCallResultParts($response, $resultParts){
+	public function odtGetCallResultParts($response, $resultParts){
 		$results = array();
 
 		foreach ($resultParts as $rp) {
@@ -612,35 +621,58 @@ class WebService {
 			$rdef = $this->getResultDefinition($parts[0]);
 
 			// find all selected paths on the resulti
-			$selectedPath = $this->getSelectedPaths($response, $rdef);
+			//$selectedPath = $this->getSelectedPaths($response, $rdef);
+			$selectedPath = array();
 
 			if (count($parts) == 1) {
 				// There is only the name of the result with no parts
 				// => return all parts of the result
 				foreach ($rdef->part as $part) {
 					$part = ''.$part['name'];
-					$results[$part] = $this->getResults($response, $rdef, $part, $selectedPath);
+					$results[$part] = $this->odtGetResults($response, $rdef, $part, $selectedPath);
 				}
 			} else {
-				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1], $selectedPath);
+				$results[$parts[1]] = $this->odtGetResults($response, $rdef, $parts[1], $selectedPath);
 			}
-				
-			//start evaluate xpath attribute
-			$xpath = $this->getXPathForAlias($parts[1], $rdef);
-				
-			if($xpath != null){
-				$tempResult = $results[$parts[1]];
-				$newTempResult = array();
-				foreach($tempResult as $tR){
-					$xpathProcessor = new XPathProcessor($tR);
-					$newTempResult = array_merge($newTempResult, $xpathProcessor->evaluateQuery($xpath));
-				}
-				$results[$parts[1]] = $newTempResult;
-			}
-				
-			//end evaluate xpath attribute
 		}
 		return $results;
+	}
+
+	public function getCallResultParts($response, $resultParts){
+		$results = array();
+
+		foreach ($resultParts as $rp) {
+			$parts = explode(".", $rp);
+			$rdef = $this->getResultDefinition($parts[0]);
+
+			if (count($parts) == 1) { //complete result is requested
+				foreach ($rdef->part as $part) {
+					$part = ''.$part['name'];
+					$results[$part] = $this->getResults($response, $rdef, $part);
+					$results[$parts[1]] = $this->evaluateXPathAttribute(
+					$rdef, $part, $results[$parts[1]]);
+				}
+			} else {
+				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
+				$results[$parts[1]] = $this->evaluateXPathAttribute(
+				$rdef, $parts[1], $results[$parts[1]]);
+			}
+		}
+		return $results;
+	}
+
+	private function evaluateXPathAttribute($rdef, $alias, $value){
+		$xpath = $this->getXPathForAlias($alias, $rdef);
+
+		if($xpath != null){
+			$newValue = array();
+			foreach($value as $v){
+				$xpathProcessor = new XPathProcessor($v);
+				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($xpath));
+			}
+			$value = $newValue;
+		}
+		return $value;
 	}
 
 
@@ -652,20 +684,33 @@ class WebService {
 	 * @param SimpleXMLElement $resultDef
 	 * @param string $alias
 	 */
-	private function getResults($response, $resultDef, $alias, $selectedPaths) {
+	private function odtGetResults($response, $resultDef, $alias, $selectedPaths) {
 		$path = $this->getPathForAlias($alias, $resultDef);
 
-		$paths = $this->matchSelectedPath($path, $selectedPaths);
+		//$paths = $this->matchSelectedPath($path, $selectedPaths);
+		$paths = array($path);
 
 		$result = array();
 		if (count($paths) == 0) {
 			return $result;
 		}
+
 		// collect the interesting parts of the result
 		foreach ($paths as $p) {
-			$result = array_merge($result, $this->getResultParts($response, $p));
+			$result = array_merge($result, $this->odtGetResultParts($response, $p));
 		}
 		return $result;
+	}
+
+	private function getResults($response, $resultDef, $alias) {
+		$path = $this->getPathForAlias($alias, $resultDef);
+
+		if (empty($path)) {
+			return array($response);
+		}
+
+		$xpathProcessor = new XPathProcessor($response);
+		return $xpathProcessor->evaluateQuery($path);
 	}
 
 	/**
@@ -680,7 +725,7 @@ class WebService {
 	 * 		An array of paths, where variable indices are decorated with concrete
 	 *      numbers e.g. AnElement[a]=5.value
 	 */
-	private function getSelectedPaths($response, $resultDef) {
+	private function odtGetSelectedPaths($response, $resultDef) {
 		$s = $resultDef->select;
 		$num = count($s);
 		if ($num == 0) {
@@ -694,7 +739,7 @@ class WebService {
 			$sel = array(explode('.', ''.$select['object']),
 			                   ''.$select['value']);
 			$selPaths = array();
-			$this->doApplySelects($response, $sel, 0, $selPaths);
+			$this->odtDoApplySelects($response, $sel, 0, $selPaths);
 			$selectedPaths[] = $selPaths;
 		}
 
@@ -815,7 +860,7 @@ class WebService {
 	 * @param int $partIdx
 	 * 		The index of part of the selection path to consider.
 	 */
-	private function doApplySelects(&$selectedResults, &$selects, $partIdx,
+	private function odtDoApplySelects(&$selectedResults, &$selects, $partIdx,
 	&$selectedPaths, $currPath = '') {
 		$parts = &$selects[0];
 		if ($partIdx >= count($parts)) {
@@ -840,7 +885,7 @@ class WebService {
 				foreach ($sr as $srpart) {
 					// Process all members of the array
 					$pathTail2 = ($hasIndex) ? '='.$i : '';
-					$this->doApplySelects($srpart, $selects, $partIdx+1,
+					$this->odtDoApplySelects($srpart, $selects, $partIdx+1,
 					$selectedPaths, $currPath.$pathTail.$pathTail2);
 					++$i;
 				}
@@ -862,7 +907,7 @@ class WebService {
 						$selectedPaths[] = array($p, $indices);
 					}
 				} else {
-					$this->doApplySelects($sr, $selects, $partIdx+1,
+					$this->odtDoApplySelects($sr, $selects, $partIdx+1,
 					$selectedPaths, $currPath.$pathTail);
 				}
 			}
@@ -875,7 +920,7 @@ class WebService {
 	 * @param Object $resultSet
 	 * @param string $path
 	 */
-	private function getResultParts($resultSet, $path) {
+	private function odtGetResultParts($resultSet, $path) {
 		if (empty($path)) {
 			return array($resultSet);
 		}
@@ -900,15 +945,15 @@ class WebService {
 			// Handle an array
 			if ($arrayIdx != null) {
 				// Collect the result at the specified array index
-				$result = array_merge($result, $this->getResultParts($obj[$arrayIdx*1], $path));
+				$result = array_merge($result, $this->odtGetResultParts($obj[$arrayIdx*1], $path));
 			} else {
 				for ($i = 0, $n = count($obj); $i < $n; ++$i) {
-					$result = array_merge($result, $this->getResultParts($obj[$i], $path));
+					$result = array_merge($result, $this->odtGetResultParts($obj[$i], $path));
 				}
 			}
 		} else {
 			// a simple object
-			$result = array_merge($result, $this->getResultParts($obj, $path));
+			$result = array_merge($result, $this->odtGetResultParts($obj, $path));
 		}
 		return $result;
 	}
@@ -952,7 +997,20 @@ class WebService {
 	 * @param string $value the value of the call parameter with the given path
 	 */
 	private function getPathSteps($path, $value){
-		$walkedParameters = explode(".", $path);
+		global $smwgWSOldDotSyntax;
+		if($smwgWSOldDotSyntax){
+			$walkedParameters = explode(".", $path);
+		} else {
+			$walkedParameters = explode("/", $path);
+			$temp = array();
+			for($i=0; $i < count($walkedParameters);$i++){
+				if($walkedParameters[$i] != ""){
+					$temp[] = $walkedParameters[$i];
+				}
+			}
+			$walkedParameters = $temp;
+		}
+
 		$temp = &$this->mCallParameters;
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
@@ -1077,11 +1135,11 @@ class WebService {
 				$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 			} catch (Exception $e) {
 				// The wwsd is erroneous
+				$this->mWSClient = null;
 				return array(wfMsg("smw_wws_invalid_wwsd"));
 			}
 		}
 		return true;
-
 	}
 
 	/**
@@ -1133,47 +1191,47 @@ class WebService {
 		}
 
 		// Check if there is an alias for every parameter of the WSDL.
-		$wsdlParams = $this->mWSClient->getOperation($this->mMethod);
-		if ($wsdlParams != null) {
-			// examine parameters
-			$names = array();
-			// Collect the components of all parameters
-			$numParam = count($wsdlParams);
-			for ($i = 1; $i < $numParam; ++$i) {
-				$pName = $wsdlParams[$i][0];
-				$pType = $wsdlParams[$i][1];
-				$names = array_merge($names, $this->flattenParam($pName, $pType));
-				//$names = array_merge($names, $this->getFlatParameters($pName, $pType, false));
-			}
-			// find elements that lead to overflows (e.g. potentially endless lists)
-			foreach ($names as $idx=>$name) {
-				$pos = strpos($name, '##overflow##');
-				if ($pos) {
-					$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
-					unset($names[$idx]);
-				}
-			}
-			// find undefined parameters
-			foreach($wwsdPaths as $key => $path){
-				$pathSteps = explode(".", $path);
-				for($z=0; $z < sizeof($pathSteps); $z++){
-					if(!($this->getReturnPartBracketValue($pathSteps[$z]) === false)){
-						$pathSteps[$z] = $this->getReturnPartPathStep($pathSteps[$z])."[]";
-					}
-				}
-				$wwsdPaths[$key] = implode(".", $pathSteps);
-			}
-			$inWsdl = array_diff($names, $wwsdPaths);
-			foreach ($inWsdl as $p) {
-				$msg[] = wfMsg('smw_wwsd_undefined_param', $p);
-			}
-			// find obsolete parameters
-			$inWwsd = array_diff($wwsdPaths, $names);
-			foreach ($inWwsd as $p) {
-				$p = array_search($p, $wwsdPaths);
-				$msg[] = wfMsg('smw_wwsd_obsolete_param', $p);
-			}
-		}
+		// $wsdlParams = $this->mWSClient->getOperation($this->mMethod);
+		// if ($wsdlParams != null) {
+		// examine parameters
+		// $names = array();
+		// Collect the components of all parameters
+		// $numParam = count($wsdlParams);
+		// for ($i = 1; $i < $numParam; ++$i) {
+		//	$pName = $wsdlParams[$i][0];
+		//	$pType = $wsdlParams[$i][1];
+		//	$names = array_merge($names, $this->flattenParam($pName, $pType));
+		//$names = array_merge($names, $this->getFlatParameters($pName, $pType, false));
+		//}
+		// find elements that lead to overflows (e.g. potentially endless lists)
+		//foreach ($names as $idx=>$name) {
+		//	$pos = strpos($name, '##overflow##');
+		//	if ($pos) {
+		//		$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
+		//		unset($names[$idx]);
+		//	}
+		//}
+		// find undefined parameters
+		//foreach($wwsdPaths as $key => $path){
+		//	$pathSteps = explode(".", $path);
+		//	for($z=0; $z < sizeof($pathSteps); $z++){
+		//		if(!($this->getReturnPartBracketValue($pathSteps[$z]) === false)){
+		//			$pathSteps[$z] = $this->getReturnPartPathStep($pathSteps[$z])."[]";
+		//		}
+		//	}
+		//	$wwsdPaths[$key] = implode(".", $pathSteps);
+		//}
+		//$inWsdl = array_diff($names, $wwsdPaths);
+		//foreach ($inWsdl as $p) {
+		//	$msg[] = wfMsg('smw_wwsd_undefined_param', $p);
+		//}
+		// find obsolete parameters
+		//$inWwsd = array_diff($wwsdPaths, $names);
+		//foreach ($inWwsd as $p) {
+		//	$p = array_search($p, $wwsdPaths);
+		//	$msg[] = wfMsg('smw_wwsd_obsolete_param', $p);
+		//}
+		//}
 		return count($msg) == 0 ? true : $msg;
 	}
 
@@ -1217,13 +1275,6 @@ class WebService {
 						continue;
 					}
 					$path = (string) $part->attributes()->path;
-					if ($path == null) {
-						// this throws an error also if the result path is an empty string
-						// which is ok
-						//						// result part has no path
-						//						$msg[] = wfMsg('smw_wws_result_part_without_path', $pName, $rName);
-						//						continue;
-					}
 					if (array_key_exists($pName, $pNames)) {
 						if ($pNames[$pName]++ == 1) {
 							$msg[] = wfMsg('smw_wws_duplicate_result_part', $pName, $rName);
@@ -1269,41 +1320,41 @@ class WebService {
 		}
 
 		// Check if there is a result in the WSDL for each alias.
-		$wsdlResult = $this->mWSClient->getOperation($this->mMethod);
-		if ($wsdlResult != null) {
-			// Collect the components of the result
-			$rType = $wsdlResult[0];
-			$names = $this->flattenParam("", $rType);
-			//$names = $this->getFlatParameters("", $rType, true);
-
-			// examine parameters
-			// find elements that lead to overflows (e.g. potentially endless lists)
-			foreach ($names as $idx=>$name) {
-				$pos = strpos($name, '##overflow##');
-				if ($pos) {
-					$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
-					unset($names[$idx]);
-				}
-			}
-			// find undefined results
-
-			// this is a quick fix in order to allow brackets in result parts
-			foreach($wwsdPaths as $key => $path){
-				$pathSteps = explode(".", $path);
-				for($z=0; $z < sizeof($pathSteps); $z++){
-					if(!($this->getReturnPartBracketValue($pathSteps[$z]) === false)){
-						$pathSteps[$z] = $this->getReturnPartPathStep($pathSteps[$z])."[]";
-					}
-				}
-				$wwsdPaths[$key] = implode(".", $pathSteps);
-			}
-
-			$inWwsd = array_diff($wwsdPaths, $names);
-			foreach ($inWwsd as $r) {
-				$r = array_search($r, $wwsdPaths);
-				$msg[] = wfMsg('smw_wwsd_undefined_result', $r);
-			}
-		}
+		//		$wsdlResult = $this->mWSClient->getOperation($this->mMethod);
+		//		if ($wsdlResult != null) {
+		//			// Collect the components of the result
+		//			$rType = $wsdlResult[0];
+		//			$names = $this->flattenParam("", $rType);
+		//			//$names = $this->getFlatParameters("", $rType, true);
+		//
+		//			// examine parameters
+		//			// find elements that lead to overflows (e.g. potentially endless lists)
+		//			foreach ($names as $idx=>$name) {
+		//				$pos = strpos($name, '##overflow##');
+		//				if ($pos) {
+		//					$msg[] = wfMsg('smw_wwsd_overflow', substr($name, 0, $pos));
+		//					unset($names[$idx]);
+		//				}
+		//			}
+		//			// find undefined results
+		//
+		//			// this is a quick fix in order to allow brackets in result parts
+		//			foreach($wwsdPaths as $key => $path){
+		//				$pathSteps = explode(".", $path);
+		//				for($z=0; $z < sizeof($pathSteps); $z++){
+		//					if(!($this->getReturnPartBracketValue($pathSteps[$z]) === false)){
+		//						$pathSteps[$z] = $this->getReturnPartPathStep($pathSteps[$z])."[]";
+		//					}
+		//				}
+		//				$wwsdPaths[$key] = implode(".", $pathSteps);
+		//			}
+		//
+		//			$inWwsd = array_diff($wwsdPaths, $names);
+		//			foreach ($inWwsd as $r) {
+		//				$r = array_search($r, $wwsdPaths);
+		//				$msg[] = wfMsg('smw_wwsd_undefined_result', $r);
+		//			}
+		//		}
 		return count($msg) == 0 ? true : $msg;
 	}
 
@@ -1583,22 +1634,22 @@ class WebService {
 
 	//todo:check if separated from other ws-types
 	//todo: document this
-	function getFlatParameters($name, $type, $result=false, &$typePath=null){
-		$flatParams = $this->flattenParam($name, $type, $typePath);
-
-		//todo: what if soap but no wsdl available
-
-		$arrayDetector = new WSDLArrayDetector($this->mURI);
-			
-		//todo: is type correct here?
-		$adParameters = $arrayDetector->getArrayPaths($type, $name);
-
-		if($result){
-			$adParameters = $arrayDetector->cleanResultParts($adParameters);
-		}
-
-		return $arrayDetector->mergePaths($flatParams, $adParameters);
-	}
+	//	function getFlatParameters($name, $type, $result=false, &$typePath=null){
+	//		$flatParams = $this->flattenParam($name, $type, $typePath);
+	//
+	//		//todo: what if soap but no wsdl available
+	//
+	//		$arrayDetector = new WSDLArrayDetector($this->mURI);
+	//
+	//		//todo: is type correct here?
+	//		$adParameters = $arrayDetector->getArrayPaths($type, $name);
+	//
+	//		if($result){
+	//			$adParameters = $arrayDetector->cleanResultParts($adParameters);
+	//		}
+	//
+	//		return $arrayDetector->mergePaths($flatParams, $adParameters);
+	//	}
 
 	// todo: describe method
 	private function getXPathForAlias($alias, $resultDef) {

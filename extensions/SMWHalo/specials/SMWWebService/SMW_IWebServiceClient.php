@@ -25,6 +25,8 @@
  */
 interface IWebServiceClient {
 	
+	//todo: i have outcommented methods that are not available for RESTful web services
+	
 	//--- Public functions ---
 	
 	/**
@@ -33,7 +35,7 @@ interface IWebServiceClient {
 	 * @return array<string>
 	 * 		Names of all available operations.
 	 */
-	public function getOperations();
+	//public function getOperations();
 
 	/**
 	 * Returns the definition of an operation of the web service with its 
@@ -53,7 +55,7 @@ interface IWebServiceClient {
 	 *      2: (param2, TypeOfParam2)
 	 *    
 	 */
-	public function getOperation($opName);
+	//public function getOperation($opName);
 	
 	
 	/**
@@ -66,7 +68,7 @@ interface IWebServiceClient {
 	 * 		<true>, if the type is defined in the WSDL
 	 * 		<false> otherwise.
 	 */
-	public function isCustomType($typename);
+	//public function isCustomType($typename);
 	
 	/**
 	 * Tries to find the definitions of types in the WSDL.
@@ -81,7 +83,7 @@ interface IWebServiceClient {
 	 *      <null> is returned.
 	 * 
 	 */
-	public function getTypeDefinition($typename);
+	//public function getTypeDefinition($typename);
 	
 	/**
 	 * Calls the web service
