@@ -105,6 +105,7 @@ class UnifiedSearchResultPrinter {
 		
 		$termsarray = split(' ', $terms);
 		// GreyBox
+		$args = "";
 		for ($i = 0; $i < count($termsarray); $i++) {
 			$args .= "&rsargs[]=" . $termsarray[$i] . "";
 		}

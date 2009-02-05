@@ -66,7 +66,7 @@ class QueryExpander {
 
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title->exists()) {
-				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : NULL;
+				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : array();
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
 				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values, $redirects), "OR");
@@ -76,7 +76,7 @@ class QueryExpander {
 			$title = Title::newFromText($term, NS_TEMPLATE);
 			if ($title->exists()) {
 				$values = array($term);
-				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : NULL;
+				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : array();
 
 				$query[]= self::opTerms($values, "OR");
 				$found = true;

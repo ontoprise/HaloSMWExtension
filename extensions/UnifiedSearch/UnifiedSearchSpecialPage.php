@@ -92,7 +92,8 @@ class USSpecialPage extends SpecialPage {
        
 		// serialize HTML
     	$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="60" name="search">'.
-    	    '<input type="submit" name="search" value="'.wfMsg('us_searchbutton').'">'.
+    	    '<input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'">'.
+    	    '<input type="hidden" name="fulltext" value="true">'.
 			'<input type="radio" name="tolerance" class="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>'.
@@ -220,7 +221,8 @@ class USSpecialPage extends SpecialPage {
 			$exactQuery = false;
 			$expandedSearch = QueryExpander::expand($terms, $tolerance);
 			list($titleSearchSet, $totalTitleNum) = USStore::getStore()->lookUpTitles($terms,
-			$restrictNS !== NULL ? array($restrictNS) : $allNamespaces, false, $limit , $lastTIOffset, $tolerance );
+			$restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit , $lastTIOffset, $tolerance );
+			
 		} else {
 			// user defined
 			// remove syntax elements in term list

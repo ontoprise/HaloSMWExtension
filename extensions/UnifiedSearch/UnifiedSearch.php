@@ -186,7 +186,7 @@ function wfUSInitializeSKOSOntology() {
  */
 function smwf_ca_GetHTMLBody($page) {
 	global $smwgHaloScriptPath, $wgStylePath, $wgUser, $wgDefaultSkin;
-	global $wgServer;
+	global $wgServer, $wgParser;
 	
 	$color = array("#00FF00", "#00FFFF", "#FFFF00");
 	$wgDefaultColor = "#00FF00";
