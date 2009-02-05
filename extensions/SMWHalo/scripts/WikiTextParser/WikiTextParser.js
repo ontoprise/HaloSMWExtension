@@ -1053,7 +1053,13 @@ WikiTextParser.prototype = {
 	 */
 	createAnnotation : function(annotation, start, end) {
 		var relRE  = /\[\[\s*(:?)([^:]*)(::|:=)([\s\S\n\r]*)\]\]/;
-		var catRE  = /\[\[\s*[C|c]ategory:([\s\S\n\r]*)\]\]/;
+		var catNS = gLanguage.getMessage('CATEGORY_NS');
+		catNS = '['+catNS.charAt(0).toLowerCase() +
+		        '|'+catNS.charAt(0).toUpperCase() +
+		        ']'+catNS.substring(1);
+		var catRE = '\\[\\[\\s*'+catNS+'([\\s\\S\\n\\r]*)\\]\\]';
+		catRE = new RegExp(catRE);
+//		var catRE  = /\[\[\s*[C|c]ategory:([\s\S\n\r]*)\]\]/;
 
 		var relation = annotation.match(relRE);
 		if (relation) {
