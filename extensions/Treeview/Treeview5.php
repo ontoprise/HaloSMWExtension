@@ -98,6 +98,7 @@ class TreeView5 {
                 if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
             }
         }
+        
         # Create a unique id for this tree or use id supplied in args and store args wrt id
         $this->id = isset($args['id']) ? $args['id'] : uniqid('');
         $this->args[$this->id] = $args;
@@ -106,19 +107,23 @@ class TreeView5 {
         $this->args[$this->id."class"] = $this->class;
 
         # Check if the treeGenerator passed some values encapsulated in the tree
-        if (strpos($text, "\x7f") !== false) {
-            $text = substr($text, 1);
-            $myParams = substr($text, 0, strpos($text, "\x7f"));
-            $text = substr($text, strlen($myParams) + 1);
-            parse_str($myParams, $params);
-            $this->args[$this->id."smwSetup"] =
-                (isset($params['dynamic']) && $params['dynamic'] == 1)
-                ? "setupSmw('".$wgServer.$wgScriptPath."', '".$params['property']."'".
-                	(isset($params['display']) ? ", '".$params['display']."');" : ");")
-                : NULL;
+        $lines = explode("\n",$text);
+        $text= "";
+        foreach ($lines as $line) {
+            if ((strpos($line, "\x7f") !== false) && // do string check first before doing a regex eval (faster)
+	            (preg_match('/\\x7f(.*?)\\x7f(\*+)(.*)$/', $line, $matches))) {
+	    	    parse_str($matches[1], $params);
+                if (isset($params['dynamic']) && $params['dynamic'] == 1) {
+            	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
+            	    $text.= $matches[2]."*".
+                	    	"addSmwData(%s, '".$params['property']."'".(isset($params['display']) ? ", '".$params['display']."');" : ");")."\n".
+                            $matches[2].$matches[3]."\n";
+                }
+		        else $text.= $line."\n";
+    	    }
+	        else $text.= $line."\n";
+	        array_shift($lines);
         }
-        
-        
         # Reformat tree rows for matching in ParserAfterStrip
         $text = preg_replace('/(?<=\\*)\\s*\\[\\[Image:(.+?)\\]\\]/',"{$this->uniq}3$1{$this->uniq}4",$text);
         //FIX KK: parse each row separately to prevent memory overflows in PHP regexp lib
@@ -154,7 +159,6 @@ class TreeView5 {
         $subs = array();
         $matches = array();
         $lines = explode("\n", $text);
-        $cnt= 0;
         foreach ($lines as $line) {
            # Extract all the formatted tree rows in the page 
            if (preg_match_all("/\x7f1$u\x7f(.+?)\x7f([0-9]+)\x7f({$u}3(.+?){$u}4)?(.*?)(?=\x7f[12]$u)/",$line,$lineMatch,PREG_SET_ORDER)) {
@@ -167,11 +171,10 @@ class TreeView5 {
                foreach ($lineMatch as &$item)
                    $subs[]= $item;
            }
-           $cnt++;
         }
+        
         // if there are no subtrees found, initialize the array as below
         if (count($subs) == 0) $subs = array(1 => array());
-        
         # Use extracted tree rows in the page and if any, replace with dTree JavaScript
         if (count($matches) > 0) {
             # PASS-1: build $rows array containing depth, and tree start/end information
@@ -196,25 +199,31 @@ class TreeView5 {
             $parents = array(); # parent node for each depth
             $last    = -1;
             $nodes   = '';
-            foreach ($rows as $node => $info) {
+            $node = 0;
+            while ($info = array_shift($rows)) {
                 $node++;
                 list($id,$depth,$icon,$item,$start) = $info;
                 $args = $this->args[$id];
                 $class = $this->args[$id."class"];
-                $smwSetup = isset($this->args[$id."smwSetup"]) ? $this->args[$id."smwSetup"] : NULL;
+                $smwUrl = isset($this->args[$id."SmwUrl"]) ? $this->uniqname.$id.".".$this->args[$id."SmwUrl"] : NULL;
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
-                $end  = $node == count($rows) || $rows[$node][4];
+                $end  = (count($rows) == 0) || $rows[0][4]; // start flag of next node
                 $add  = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
- 
+
                 # Append the dTree JS to add a node for this row
-                if ($depth > $last) $parents[$depth] = $node-1;
-                $parent = $parents[$depth];
-                $last   = $depth;
-                $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
- 
+                if (strpos($item, "addSmwData(") !== false ) {
+                    $node--;
+                    $nodes .= "{$this->uniqname}$id.".trim(sprintf(stripcslashes($item), $node))."\n";
+                } else {
+                    if ($depth > $last) $parents[$depth] = $node - 1;
+                    $parent = $parents[$depth];
+                    $last   = $depth;
+                    $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
+                }
+
                 # Last row of current root-tree, surround nodes dtree JS and div etc
+                
                 if ($end) {
- 
                     # Open all and close all links
                     $top = $bottom = $root = '';
  
@@ -237,7 +246,7 @@ class TreeView5 {
                                 tree.config.useLines = {$this->useLines};
                                 $add
                                 {$this->uniqname}$id = tree;
-                                ".(($smwSetup) ? $this->uniqname.$id.".".$smwSetup : "")."
+                                $smwUrl
                                 $nodes
                                 document.getElementById('$id').innerHTML = {$this->uniqname}$id.toString();
                             </script>
@@ -252,6 +261,7 @@ class TreeView5 {
                     	}
                     }
                     $nodes = '';
+                    $node= 0;
                 }
             }
         }
@@ -262,9 +272,8 @@ class TreeView5 {
  		$text = implode("\n", $lines);
         return true;
     }
- 
 }
- 
+
  
 /**
  * Called from $wgExtensionFunctions array when initialising extensions

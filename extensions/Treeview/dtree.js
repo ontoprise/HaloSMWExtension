@@ -32,6 +32,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this._ai = 0;
 	this._p;
 	this._complete = false;
+	this._smwSetup;
 };
 
 Node.prototype.serialize = function() {
@@ -74,6 +75,20 @@ Node.prototype.unserialize = function(str) {
 	return true;
 }
 
+// SMW Data object (for relation and display)
+function SmwData(id, relation, display) {
+	this.id = id;
+	this.relation = relation;
+	this.display = display;
+}
+
+SmwData.prototype.getUrlParams = function() {
+	var str = 'p%3D' + escape(this.relation);
+	if (this.display) str += '%26d%3D' + escape(this.display); 
+	str += '%26';
+	return str;
+}
+
 // Tree object
 function dTree(objName, className) {
 	this.config = {
@@ -106,6 +121,7 @@ function dTree(objName, className) {
 	this.obj = objName;
 	this.aNodes = [];
 	this.aIndent = [];
+	this.aSmw = [];
 	this.root = new Node(-1);
 	this.selectedNode = null;
 	this.selectedFound = false;
@@ -115,19 +131,42 @@ function dTree(objName, className) {
 };
 
 // setup for smw+
-dTree.prototype.setupSmw = function(url, relation, display) {
+dTree.prototype.setupSmwUrl = function(url) {
 	this.smwAjaxUrl = url;
 	if (url.substr(-1) != "/") this.smwAjaxUrl += "/";
-	this.smwAjaxUrl += 'index.php?action=ajax&rs=smw_treeview_getTree&rsargs[]=p%3D'
-			 		+ escape(relation);
-	if (display) this.smwAjaxUrl += '%26d%3D' + escape(display); 
-	this.smwAjaxUrl += '%26s%3D';
+	this.smwAjaxUrl += 'index.php?action=ajax&rs=smw_treeview_getTree&rsargs[]=';
 };
 
 // Adds a new node to the node array
 dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open);
 };
+
+// Add a smw setup for a specific node
+dTree.prototype.addSmwData = function(id, relation, display) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, display);
+};
+
+// Get Smw url params for a specific node
+dTree.prototype.getSmwData = function(id) {
+	if (this.aSmw.length == 0) return "";
+	while(id >= 0) {
+		var cn = this.aNodes[id];
+		for (var i = 0; i < this.aSmw.length; i++) {
+			if (cn.id == this.aSmw[i].id) {
+				return this.aSmw[i].getUrlParams();
+			}
+		}
+		if (id == this.root.id) return "";
+		id = cn.pid;
+	}
+	return "";
+}
+
+dTree.prototype.isDynamicNode = function(id) {
+	var str = this.getSmwData(id); 
+	return (str.length == 0) ? false : true;
+}
 
 // Open/close all nodes
 dTree.prototype.openAll = function() {
@@ -193,7 +232,7 @@ dTree.prototype.node = function(node, nodeId) {
 		if (this.root.id == node.pid) {
 			node.icon = this.icon.root;
 			node.iconOpen = this.icon.root;
-		} else if (this.smwAjaxUrl && !node._complete) {
+		} else if (this.isDynamicNode(nodeId) && !node._complete) {
 			node.icon = this.icon.folder;
 			node.iconOpen = this.icon.folderOpen;
 		}
@@ -210,12 +249,12 @@ dTree.prototype.node = function(node, nodeId) {
 	}
 	//else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
 	else if ((!this.config.folderLinks || !node.url) && 
-	         (node._hc || (this.smwAjaxUrl && !node._complete)) && 
+	         (node._hc || (this.isDynamicNode(nodeId) && !node._complete)) && 
 	         (node.pid != this.root.id))
 		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');" class="node">';
 	str += node.name;
 	if (node.url || ((!this.config.folderLinks || !node.url) && 
-	                (node._hc || (this.smwAjaxUrl && !node._complete)))) str += '</a>';
+	                (node._hc || (this.isDynamicNode(nodeId) && !node._complete)))) str += '</a>';
 	str += '</div>';
 	if (node._hc) {
 		str += '<div id="d' + this.obj + nodeId + '" class="clip" style="display:' + ((this.root.id == node.pid || node._io) ? 'block' : 'none') + ';">';
@@ -233,7 +272,7 @@ dTree.prototype.indent = function(node, nodeId) {
 		for (var n=0; n<this.aIndent.length; n++)
 			str += '<img src="' + ( (this.aIndent[n] == 1 && this.config.useLines) ? this.icon.line : this.icon.empty ) + '" alt="" />';
 		(node._ls) ? this.aIndent.push(0) : this.aIndent.push(1);
-		if (node._hc || (this.smwAjaxUrl && !node._complete)) {
+		if (node._hc || (this.isDynamicNode(nodeId) && !node._complete)) {
 			str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"><img id="j' + this.obj + nodeId + '" src="';
 			if (!this.config.useLines) str += (node._io) ? this.icon.nlMinus : this.icon.nlPlus;
 			else str += ( (node._io) ? ((node._ls && this.config.useLines) ? this.icon.minusBottom : this.icon.minus) : ((node._ls && this.config.useLines) ? this.icon.plusBottom : this.icon.plus ) );
@@ -281,7 +320,7 @@ dTree.prototype.o = function(id) {
 	var cn = this.aNodes[id];
 	this.nodeStatus(!cn._io, id, cn._ls);
 	cn._io = !cn._io;
-	if (!cn._complete && this.smwAjaxUrl && cn._io) this.loadNextLevel(id);
+	if (!cn._complete && this.isDynamicNode(id) && cn._io) this.loadNextLevel(id);
 	if (this.config.closeSameLevel) this.closeLevel(cn);
 	if (this.config.useCookies) this.updateCookie();
 };
@@ -292,14 +331,17 @@ dTree.prototype.loadNextLevel = function(id) {
 		this.aNodes[id]._complete = true;
 		return;
 	}
+	
+	var params = this.getSmwData(id);
 	var token = this.obj + "_" + id;
 	cachedData[cachedData.length] = new Array(token, this);
-	var start = this.aNodes[id].name.replace(/.*>(.*?)<.*/,"$1");
-    this.getHttpRequest(start, token);
+	params += 's%3D' + this.aNodes[id].name.replace(/.*>(.*?)<.*/,"$1");
+	params += '%26t%3D' + token; 
+    this.getHttpRequest(params);
 };
 
 // start http request for Ajax call
-dTree.prototype.getHttpRequest = function(start, token) {
+dTree.prototype.getHttpRequest = function(params) {
     httpRequest = null;     
     // Mozilla, Safari and other browsers
     if (window.XMLHttpRequest) { 
@@ -317,9 +359,9 @@ dTree.prototype.getHttpRequest = function(start, token) {
     }
     
     if (!httpRequest) return;
-        
+
     httpRequest.onreadystatechange = parseHttpResponse
-    httpRequest.open("GET", this.smwAjaxUrl + start + "%26t%3D" + token, true); 
+    httpRequest.open("GET", this.smwAjaxUrl + params, true); 
 	httpRequest.send(null);
 };
 
