@@ -14,7 +14,7 @@ class USStoreSQL extends USStore {
 	 * Returns title matches ordered by their score
 	 *
 	 * @param array of string $terms Terms the user entered (unquoted, no special syntax, may contain significant whitespaces)
-	 * @param array $namespaces Namespace indexes 
+	 * @param array $namespaces Namespace indexes
 	 * @param unknown_type $limit Limit of matches
 	 * @param unknown_type $offset Offset of matches
 	 * @param unknown_type $tolerance tolerance level (0 = tolerant, 1 = semi-tolerant, 2 = exact)
@@ -80,13 +80,7 @@ class USStoreSQL extends USStore {
 	private function lookUpTitlesByText($terms, array $namespaces, $disjunctiveStrings) {
 
 		// get titles containing all terms (case-insensitive)
-		$requestoptions = new SMWAdvRequestOptions();
 
-		$requestoptions->isCaseSensitive = false;
-		$requestoptions->disjunctiveStrings = false;
-		foreach($terms as $term) {
-			$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
-		}
 
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
@@ -103,7 +97,7 @@ class USStoreSQL extends USStore {
 			$sql = 'true';
 		}
 
-		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+
 
 
 		$query = array();
@@ -112,11 +106,26 @@ class USStoreSQL extends USStore {
 		$page = $db->tableName('page');
 
 		if ($disjunctiveStrings) {
-			foreach($requestoptions->getStringConditions() as $cond) {
-				$length = strlen($cond->string);
+			foreach($terms as $term) {
+				$requestoptions = new SMWAdvRequestOptions();
+
+				$requestoptions->isCaseSensitive = false;
+
+				$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
+				$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+				$length = strlen($term);
 				$query[] = 'SELECT page_title, page_namespace, '.$length.'/LENGTH(page_title) AS score FROM '.$page.' WHERE '.$sql.' ORDER BY score DESC  ';
 			}
+
 		} else {
+			foreach($terms as $term) {
+				$requestoptions = new SMWAdvRequestOptions();
+
+				$requestoptions->isCaseSensitive = false;
+
+				$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
+			}
+			$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 			foreach($requestoptions->getStringConditions() as $cond) {
 				$length += strlen($cond->string);
 			}
@@ -130,13 +139,11 @@ class USStoreSQL extends USStore {
 
 	private function lookupTitleBySKOS($terms, array $namespaces, $mode = 0, $disjunctive = false) {
 
-			
-		$requestoptions = new SMWAdvRequestOptions();
-		$requestoptions->isCaseSensitive=false;
-		$requestoptions->disjunctiveStrings = false;
-
 		if ($disjunctive) {
 			foreach($terms as $term) {
+				$requestoptions = new SMWAdvRequestOptions();
+				$requestoptions->isCaseSensitive=false;
+				$requestoptions->disjunctiveStrings = false;
 				$length = strlen($term);
 				$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
 				$results = array();
@@ -152,6 +159,9 @@ class USStoreSQL extends USStore {
 				}
 			}
 		} else {
+			$requestoptions = new SMWAdvRequestOptions();
+			$requestoptions->isCaseSensitive=false;
+			$requestoptions->disjunctiveStrings = false;
 			$length = 0;
 			foreach($terms as $term) {
 				$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
@@ -199,10 +209,10 @@ class USStoreSQL extends USStore {
 
 
 		$titleConstraint1 = DBHelper::getSQLConditions($requestoptions,'r.value_xsd','r.value_xsd');
-			
+
 		$query = 'SELECT s.smw_title AS title, s.smw_namespace AS ns, '.$length.'/LENGTH(value_xsd) AS score FROM '.
 		$smw_ids.' s JOIN '.$smw_atts2.' r ON s.smw_id = s_id WHERE '.$namespaces.' AND ('.$propertyIDConstraint.') '.$titleConstraint1;
-			
+
 		return $query;
 	}
 
@@ -231,10 +241,10 @@ class USStoreSQL extends USStore {
 
 
 		$titleConstraint2 = DBHelper::getSQLConditions($requestoptions,'o.smw_title','o.smw_title');
-			
+
 		$query = 'SELECT s.smw_title AS title, s.smw_namespace AS ns, '.$length.'/LENGTH(o.smw_title) AS score FROM smw_rels2 r '.
               'JOIN smw_ids s ON r.s_id = s.smw_id JOIN smw_ids o ON r.o_id = o.smw_id WHERE ('.$propertyIDConstraint.')  '.$titleConstraint2;
-			
+
 		return $query;
 	}
 
@@ -260,7 +270,7 @@ class USStoreSQL extends USStore {
 			$p_id = smwfGetStore()->getSMWPropertyID($p);
 			$propertyIDConstraint .= ' OR r.p_id = '.$p_id;
 		}
-			
+
 		$length = 0;
 		foreach($requestoptions->getStringConditions() as $cond) {
 			$length += strlen($cond->string);
@@ -283,7 +293,7 @@ class USStoreSQL extends USStore {
 		$db->freeResult($res);
 		return $result;
 	}
-    
+
 	/**
 	 * Returns a title if it matches the given term as single title.
 	 * Case-insensitive
@@ -310,7 +320,7 @@ class USStoreSQL extends USStore {
 		$db->freeResult($res);
 		return NULL;
 	}
-    
+
 	/**
 	 * Gets all categories the given title is member of.
 	 *
@@ -334,11 +344,11 @@ class USStoreSQL extends USStore {
 	}
 
 	/**
-     * Gets all redirects which point to the given title.
-     *
-     * @param Title $title
-     * @return array of Title
-     */
+	 * Gets all redirects which point to the given title.
+	 *
+	 * @param Title $title
+	 * @return array of Title
+	 */
 	public function getRedirects($title) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
