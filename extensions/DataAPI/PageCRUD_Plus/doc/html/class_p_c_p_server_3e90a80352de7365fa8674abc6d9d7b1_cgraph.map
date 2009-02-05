@@ -1,0 +1,5 @@
+<area shape="rect" href="$class_p_c_p_server.html#91ff7abe4a01957bfd1acf24ec42dc8c" title="PCPServer::updatePage" alt="" coords="261,33,461,63">
+<area shape="rect" href="$class_p_c_p_server.html#15a2d7e34cd4d8e24781fc248eab2137" title="PCPServer::getEditToken" alt="" coords="509,59,717,88">
+<area shape="rect" href="$class_p_c_p_util.html#1df633fb0ef74ffc3797ed87f69c922f" title="PCPUtil::replaceInHash" alt="" coords="767,5,959,35">
+<area shape="rect" href="$class_p_c_p_server.html#4d8531c73a7efd375eddfa5c755cb25a" title="PCPServer::setCookies" alt="" coords="767,59,959,88">
+<area shape="rect" href="$class_p_c_p_util.html#e9fc80eaeb79becdfbfffd5c5b8d09ef" title="PCPUtil::trimFirstTitle" alt="" coords="775,112,951,141">
