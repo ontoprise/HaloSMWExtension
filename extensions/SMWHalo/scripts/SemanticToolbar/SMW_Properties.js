@@ -435,23 +435,30 @@ hasAnnotationChanged: function(relations, categories) {
 	var changed = false;
 	if (!this.relValues) {
 		changed = true;
-		this.relValues = new Array(relations.length);
 		this.catValues = new Array(categories.length);
+		this.relValues = new Array();
 	}
+	relValues = new Array();
 	
 	// check properties that are defined as relation
+	var k = 0;
 	for (var i = 0; i < relations.length; i++) {
-		if (!relations[i] && this.relValues[i]) {
-			// annotation has been removed
-			changed = true;
-			this.relValues[i] = null;
-		} else if (relations[i]) {
-			// there is an annotation
-			var value = relations[i][0].annotation;
-			if (this.relValues[i] != value) {
-				// and it has changed
-				this.relValues[i] = value;
-				changed = true;
+		var subrelations = relations[i];
+		if (subrelations != null) {
+			for (var j = 0; j < subrelations.length; ++j) {
+				if (!subrelations[j] && this.relValues[k]) {
+					// annotation has been removed
+					changed = true;
+				} else if (subrelations[j]) {
+					// there is an annotation
+					var value = subrelations[j].annotation;
+					if (this.relValues[k] != value) {
+						// and it has changed
+						changed = true;
+					}
+					relValues.push(value);
+				}
+				++k;
 			}
 		}
 	}
@@ -467,6 +474,8 @@ hasAnnotationChanged: function(relations, categories) {
 			changed = true;
 		}
 	}
+	
+	this.relValues = relValues;
 	return changed;
 },
 
@@ -736,17 +745,17 @@ apply: function() {
 		var obj = $('prp-type-'+i);
 		if (obj) {
 			var type = obj[obj.selectedIndex].text;
-			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase()) {
+			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS',"cont").toLowerCase()) {
 				// Page found
 				var range = $('prp-range-'+i).value;
 				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
 				r = ((domain == null) ? "" : domain) + "; " + r;
-				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
+				typeString += gLanguage.getMessage('TYPE_PAGE',"cont")+';';
 				this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), r, null, true);
 				domainAdded = true;
 			} else {
 				// type is not Page
-				typeString += gLanguage.getMessage('TYPE_NS') + type + ";";
+				typeString += gLanguage.getMessage('TYPE_NS', "cont") + type + ";";
 			}
 		}
 	}
