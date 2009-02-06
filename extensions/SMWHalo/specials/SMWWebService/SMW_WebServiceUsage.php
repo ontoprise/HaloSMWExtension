@@ -64,6 +64,7 @@ $wgAutoloadClasses['WebServiceOlResultPrinter'] = $smwgHaloIP . '/specials/SMWWe
 $wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTable.php';
 $wgAutoloadClasses['WebServiceTemplateResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTemplate.php';
 $wgAutoloadClasses['WebServiceTransposedResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTransposed.php';
+$wgAutoloadClasses['WebServiceTIXMLResultPrinter'] = $smwgHaloIP . '/specials/SMWWebService/resultprinters/SMW_WebServiceRPTIXML.php';
 
 
 /*
@@ -291,6 +292,9 @@ function formatWSResult($wsFormat, $wsTemplate, $wsResults = null){
 		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	} else if($wsFormat == "transposed"){
 		$printer = WebServiceTransposedResultPrinter::getInstance();
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+	} else if($wsFormat == "tixml"){
+		$printer = WebServiceTIXMLResultPrinter::getInstance();
 		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
 	}
 }
