@@ -183,7 +183,7 @@ class TreeView5 {
             $rootId   = '';            # the id of the current root-tree (used as tree id in PASS2)
             $lastId = '';
             $lastDepth = 0;
-            foreach ($matches as $match) {
+            while ($match = array_shift($matches)) {
                 list(,$id,$depth,,$icon,$item) = $match;
                 $start = false;
                 if ($id != $lastId) {

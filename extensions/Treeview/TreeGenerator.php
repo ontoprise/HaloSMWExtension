@@ -47,12 +47,12 @@ class TreeGenerator {
 		                   ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY)
 		                   : NULL;
 		$tv_store = TreeviewStorage::getTreeviewStorage();
-		
+
 		// setup some settings
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		$redirectPage = ($maxDepth > 0) ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		// check for dynamic expansion via Ajax
-		if (array_key_exists('dynamic', $genTreeParameters) && $genTreeParameters['dynamic'] == 1) {
+		if (array_key_exists('dynamic', $genTreeParameters)) {
 		    $useAjaxExpansion = 1;
 		    // set maxlevel depth to 1 if it is not set
 		    if (!$mayDepth) $maxDepth = 1;
@@ -179,7 +179,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			if (!isset($elementProperties[$row->o_id]))
 			    $elementProperties[$row->o_id]= array();
 		}
-		// fetcj propeties of that smw_ids found (both s_id and o_id)
+		if (count($sIds) == 0) return;
+
+		// fetch propeties of that smw_ids found (both s_id and o_id)
 		$this->getElementProperties($elementProperties);
 		$treeList = $this->generateTreeDeepFirstSearch($sIds, $elementProperties);
         if ($this->json)
@@ -363,7 +365,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	private function generateTreeDeepFirstSearch(&$sIds, &$elementProperties) {
 	    $tree = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
 	    $findSubTree = array();    // stack for elements that have several parents
-	    	    
+
 	    // save here all root categories
 	    if ($this->smw_start_id)
 	        $rootCats= array($this->smw_start_id);
@@ -383,10 +385,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         	// get last parent of stack to look for it's children
 	        while ($currParent = end($parents)) {
 	            foreach (array_keys($sIds) as $s_id) {
-	              
-                    // check all elements to look for nodes that habe the current parent
+                    // check all elements to look for nodes that have the current parent
        		    	foreach (array_keys($sIds[$s_id]) as $item) {
-       		    	  
+
        		    	    // add redirect page if it is set and maxdepth is reached
        		    	    if ($this->redirectPage && $this->maxDepth && 
        		    	        $this->maxDepth == $depth) {
@@ -401,8 +402,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
                         }
        		    	  
        		    	    if ($sIds[$s_id][$item] == $currParent) {
-       		    	         		    	      
-	                        // stop descending any further in this subtree IF:
+
+       		    	        // stop descending any further in this subtree IF:
        		    	        // - a category is set and the parent matches this category but
 	                        //   not this child OR
 	                        // - maxDepth is set and already reached 
@@ -425,8 +426,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
                				// The subtree was created at the first time of occurence
            	    			// The children must now be copied to the current position.
            		    		// Then continue with next sibling.
-		                	if (isset($findSubTree[$s_id])) {
+    		            	if (isset($findSubTree[$s_id])) {
            				        $this->addSubTree($tree);
+           				        $depth--;
 		            	        $occurence= count($findSubTree[$s_id]);
                				    if ($occurence == 1)
     		                		unset($findSubTree[$s_id]);
@@ -434,6 +436,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    		                $findSubTree[$s_id]--;
 			                    continue 2;
 			                }
+
                				// The element is traversed the first time, remember current id
     		            	// as parent and look for children. Also if this element has
 	    		            // several parents itself, add the id and number of occurences
