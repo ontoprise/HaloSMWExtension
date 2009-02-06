@@ -650,12 +650,12 @@ class WebService {
 					$part = ''.$part['name'];
 					$results[$part] = $this->getResults($response, $rdef, $part);
 					$results[$parts[1]] = $this->evaluateXPathAttribute(
-					$rdef, $part, $results[$parts[1]]);
+						$rdef, $part, $results[$parts[1]]);
 				}
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				$results[$parts[1]] = $this->evaluateXPathAttribute(
-				$rdef, $parts[1], $results[$parts[1]]);
+					$rdef, $parts[1], $results[$parts[1]]);
 			}
 		}
 		return $results;
@@ -710,7 +710,12 @@ class WebService {
 		}
 
 		$xpathProcessor = new XPathProcessor($response);
-		return $xpathProcessor->evaluateQuery($path);
+		
+		$xpR = $xpathProcessor->evaluateQuery($path);
+		for($i=0; $i < count($xpR); $i++){
+			$xpR[$i] = str_replace("####CDATAEND####", "]]>", $xpR[$i]);
+		}
+		return $xpR;
 	}
 
 	/**

@@ -498,7 +498,8 @@ class SMWSoapClient implements IWebServiceClient {
 				$xmlString .= "</".$tagName.">";
 			}
 		} else {
-			$xmlString = $xmlString .= "<".$tagName."><![CDATA['".$result."']]></".$tagName.">";;
+			$result = str_replace("]]>", "####CDATAEND####", $result);
+			$xmlString = $xmlString .= "<".$tagName."><![CDATA[".$result."]]></".$tagName.">";;
 		}
 		return $xmlString;
 	}
