@@ -46,6 +46,7 @@ Node.prototype.serialize = function() {
 		var content= this.name.replace(/.*>(.*?)<.*/,"$1");
 		link = link.replace(/\./, "%2E");
 		content = content.replace(/\./, "%2E");
+		content = content.replace(/ /, "_");
 		str += (link == content) ? link + "." : link + "." + content;
 		str += ".";
 	} else  str += "..";
@@ -65,6 +66,7 @@ Node.prototype.unserialize = function(str) {
     this.pid = nVar[1];
     link = nVar[2].replace(/%2E/i, ".");
     content = (nVar[3]) ? nVar[3].replace(/%2E/i, ".") : link;
+    content = content.replace(/_/, " ");
     this.name = '<a href=\"' + url + link + '\">' + content + '</a>';
 	this._hc = (nVar[4] == 1) ? true : false;
 	this._complete = (nVar[5] == 1) ? true : false;
