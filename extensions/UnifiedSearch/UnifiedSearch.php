@@ -1,7 +1,7 @@
 <?php
 /**
  * @author: Kai Kühn
- * 
+ *
  * Created on: 27.01.2009
  */
 if( !defined( 'MEDIAWIKI' ) ) {
@@ -35,28 +35,28 @@ $wgExtensionFunctions[] = 'wfUSSetupExtension';
  */
 function wfUSAddHeader(& $out) {
 	global $wgScriptPath, $wgServer;
-	
+
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
 
-    // add GreyBox
-	$out->addLink(array(
+                    // add GreyBox
+                    $out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_styles.css'
                     ));
-    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/";</script>'."\n");	                    
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');	   
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
-    // add GreyBox  
-    return true;
+                    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/";</script>'."\n");
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
+                    // add GreyBox
+                    return true;
 }
 
 /**
@@ -65,14 +65,15 @@ function wfUSAddHeader(& $out) {
  * @return unknown
  */
 function wfUSSetupExtension() {
-	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups;
+	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups,
+	       $usgAllNamespaces;
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-	$wgAutoloadClasses['SMWStore2Adv'] = $dir . 'storage/SMW_Store2Adv.php';
+
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
@@ -83,12 +84,26 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
-	
+
 	$wgSpecialPages['UnifiedSearchStatistics'] = array('SMWSpecialPage','UnifiedSearchStatistics', 'smwfDoSpecialUSSearch', $dir . 'UnifiedSearchStatistics.php');
-    //$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
-    
+	//$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
+
 	$wgSpecialPages['Search'] = array('USSpecialPage');
-	
+
+	// use default namespaces unless explicitly specified
+	if (!isset($usgAllNamespaces)) {
+		$usgAllNamespaces = array(NS_MAIN => "instance.gif",
+		                          NS_CATEGORY => "concept.gif", 
+		                          SMW_NS_PROPERTY => "property.gif", 
+		                          NS_TEMPLATE => "template.gif",
+		                          NS_HELP => "help.jpg");
+
+		// check Multimedia namespaces from MIME-type extension and add if existing
+		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "audio.jpg";
+		if (defined("NS_VIDEO")) $usgAllNamespaces[NS_VIDEO] = "video.jpg";
+		if (defined("NS_PDF")) $usgAllNamespaces[NS_PDF] = "pdf.gif";
+		if (defined("NS_DOCUMENT")) $usgAllNamespaces[NS_DOCUMENT] = "doc.gif";
+	}
 	return true;
 }
 
@@ -181,27 +196,27 @@ function wfUSInitializeSKOSOntology() {
 }
 
 /**
- * Get HTML body of wiki article 
+ * Get HTML body of wiki article
  * Ajax callback function
  */
 function smwf_ca_GetHTMLBody($page) {
 	global $smwgHaloScriptPath, $wgStylePath, $wgUser, $wgDefaultSkin;
 	global $wgServer, $wgParser;
-	
+
 	$color = array("#00FF00", "#00FFFF", "#FFFF00");
 	$wgDefaultColor = "#00FF00";
-	
+
 	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
-	$opt = ParserOptions::newFromUser($wgUser);	
+	$opt = ParserOptions::newFromUser($wgUser);
 	$title = Title::newFromText($page);
 	$revision = Revision::newFromTitle($title );
 	if ($revision) {
 		$article = new Article($title);
-		$out = $psr->parse($revision->getText(),$wgTitle,$opt,true,true);		
+		$out = $psr->parse($revision->getText(),$wgTitle,$opt,true,true);
 	} else {
 		return null;
 	}
-	
+
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
 
@@ -210,20 +225,20 @@ function smwf_ca_GetHTMLBody($page) {
 	$head .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
 	$head .= '<style type="text/css" media="screen,projection"> @import "'. $wgStylePath .'/'. $skinName .'/main.css?164";</style>';
 	$head .= '</head>';
-	
+
 	$htmlcontent = $out->getText();
-	
+
 	// highlight search terms
 	$numargs = func_num_args();
 	$arg_list = func_get_args();
 	if ($numargs > 1) {
 		for ($i = 1; $i < $numargs; $i++) {
-			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor; 
-			$htmlcontent = str_ireplace($arg_list[$i], "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>", $htmlcontent); 			
+			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor;
+			$htmlcontent = str_ireplace($arg_list[$i], "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>", $htmlcontent);
 		}
 	}
-	
-	return $head.$htmlcontent;	
+
+	return $head.$htmlcontent;
 }
 
 

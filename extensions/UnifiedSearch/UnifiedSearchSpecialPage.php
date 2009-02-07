@@ -91,50 +91,56 @@ class USSpecialPage extends SpecialPage {
 		}
        
 		// serialize HTML
-    	$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="60" name="search">'.
+    	$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="30" name="search">'.
     	    '<input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'">'.
     	    '<input type="hidden" name="fulltext" value="true">'.
 			'<input type="radio" name="tolerance" class="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>'.
 			'<input type="radio" name="tolerance" class="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>'.
 		'</form>';
-		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
-		$wgOut->setPageTitle(wfMsg('us_search'));
-		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
+    	
+    	
+		// new link
 		if ($newpage !== NULL && !$newpage->exists()) {
 			$newLink = '<a class="new" href="'.$newpage->getFullURL('action=edit').'">'.wfMsg('us_page').'</a>';
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
 		
 		// refine links
-		$noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true");
-		$refineInstancesURL = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_MAIN);
-		$refineCategories = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_CATEGORY);
-		$refineProperties = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".SMW_NS_PROPERTY);
-		$refineTemplates = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_TEMPLATE);
-		$refineDocument = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_DOCUMENT);
-		$refineAudio = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_AUDIO);
-		$refineVideo = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_VIDEO);
-		$refinePDF = $searchPage->getFullURL("search=$search&fulltext=true&restrict=".NS_PDF);
-
-		$totalFTHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
-		$html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalfulltextnum').': <b>'.$totalFTHits.'</b>, '.wfMsg('us_totaltitlenum').': <b>'.$totalNumTitle.'</b></div>';
+		$tolerance = $wgRequest->getVal('tolerance');
+        $tolerance = $tolerance == NULL ? 0 : $tolerance;
+		$noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true&tolerance=$tolerance");
+		
+		global $usgAllNamespaces;
+		$namespaceFilterURLs = array();
+		foreach($usgAllNamespaces as $ns => $img) {
+			$namespaceFilterURLs[] = $searchPage->getFullURL("search=$search&fulltext=true&restrict=$ns&tolerance=$tolerance");
+		}
+		
 		
 		global $wgContLang;
 		$restrictNS = $wgRequest->getVal('restrict');
 		$restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
-		$html .='<div id="us_refineresults">'.wfMsg('us_refinesearch').': '.
-                '<a class="us_refinelinks" href="'.$noRefineURL.'">'.$this->highlight(wfMsg('us_all'), NULL, $restrictNS).'</a> | '.
-                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("instance.gif" ).'"/><a class="us_refinelinks" href="'.$refineInstancesURL.'">'.$this->highlight(wfMsg('us_article'),NS_MAIN, $restrictNS).'</a> | '.
-                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("concept.gif" ).'"/><a class="us_refinelinks" href="'.$refineCategories.'">'.$this->highlight($wgContLang->getNsText(NS_CATEGORY), NS_CATEGORY, $restrictNS).'</a> | '.
-                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("property.gif" ).'"/><a class="us_refinelinks" href="'.$refineProperties.'">'.$this->highlight($wgContLang->getNsText(SMW_NS_PROPERTY), SMW_NS_PROPERTY, $restrictNS).'</a> | '.
-                '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("template.gif" ).'"/><a class="us_refinelinks" href="'.$refineTemplates.'">'.$this->highlight($wgContLang->getNsText(NS_TEMPLATE), NS_TEMPLATE, $restrictNS).'</a> | '.
-		        '<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("doc.gif" ).'"/><a class="us_refinelinks" href="'.$refineDocument.'">'.$this->highlight($wgContLang->getNsText(NS_DOCUMENT), NS_DOCUMENT, $restrictNS).'</a> | '.
-				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("" ).'"/><a class="us_refinelinks" href="'.$refineAudio.'">'.$this->highlight($wgContLang->getNsText(NS_AUDIO), NS_AUDIO, $restrictNS).'</a> | '.
-				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("" ).'"/><a class="us_refinelinks" href="'.$refineVideo.'">'.$this->highlight($wgContLang->getNsText(NS_VIDEO), NS_VIDEO, $restrictNS).'</a> | '.
-				'<img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI("pdf.gif" ).'"/><a class="us_refinelinks" href="'.$refinePDF.'">'.$this->highlight($wgContLang->getNsText(NS_PDF), NS_PDF, $restrictNS).'</a>';
-		 
-		$html .= '</div>';
+		$html .= wfMsg('us_refinesearch');
+		$html .='<div id="us_refineresults"><table>';
+        $row =  '<td><a class="us_refinelinks" href="'.$noRefineURL.'">'.$this->highlight(wfMsg('us_all'), NULL, $restrictNS).'</a>';
+		
+		$nsURL = reset($namespaceFilterURLs);
+		$c = 1;
+		
+	    foreach($usgAllNamespaces as $ns => $img) {
+	        if ($c > 0 && $c % 5 == 0) {
+	        	$html .= '<tr>'.$row.'</tr>';
+                $row = "";
+            }
+	    	
+	    	$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
+            $row .= '<td><img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="us_refinelinks" href="'.$nsURL.'">'.$this->highlight($nsName,$ns, $restrictNS).'</a></td>';
+            $nsURL = next($namespaceFilterURLs);
+            $c++;
+        }
+        $html .= '<tr>'.$row.'</tr>';    
+		$html .= '</table></div>';
 		
 		// browsing
 		$ft_offset_next = array_clone($ft_offset);
@@ -164,13 +170,22 @@ class USSpecialPage extends SpecialPage {
 			$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
 		}
 
+		$totalFTHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
+        $html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalresults').': <b>'.($totalFTHits+$totalNumTitle).'</b></div>';
+        
+        
 		// heading
 		if (count($searchResults) > 0) {
 		  $html .= "<h2>".wfMsg('us_results')."</h2>";
 		} else {
 			$html .= "<h2>".wfMsg('us_noresults')."</h2>";
 		}
-
+        
+		// Did you mean
+        $didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
+        $wgOut->setPageTitle(wfMsg('us_search'));
+        $html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
+        
 		// search results
 		$html .= '<div id="us_searchresults">';
 
@@ -191,7 +206,7 @@ class USSpecialPage extends SpecialPage {
 	}
 
 	private function doSearch($limit, $ti_offset, $ft_offset) {
-		global $wgRequest;
+		global $wgRequest, $usgAllNamespaces;
 			
 		// initialize vars
 		$search = $wgRequest->getVal('search');
@@ -204,8 +219,7 @@ class USSpecialPage extends SpecialPage {
 
 		$exactQuery = true; // assume exact query without expansion
         
-		// all = default namespaces
-		$allNamespaces = array(NS_MAIN, NS_CATEGORY, SMW_NS_PROPERTY, NS_TEMPLATE, NS_AUDIO, NS_PDF, NS_DOCUMENT, NS_VIDEO);
+		
 
 		// expand query
 		$terms = self::parseTerms($search);
@@ -221,7 +235,7 @@ class USSpecialPage extends SpecialPage {
 			$exactQuery = false;
 			$expandedSearch = QueryExpander::expand($terms, $tolerance);
 			list($titleSearchSet, $totalTitleNum) = USStore::getStore()->lookUpTitles($terms,
-			$restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit , $lastTIOffset, $tolerance );
+			$restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit , $lastTIOffset, $tolerance );
 			
 		} else {
 			// user defined
@@ -252,7 +266,8 @@ class USSpecialPage extends SpecialPage {
 		$lastFTOffset = end($ft_offset);
 
 		$searchSet = LuceneSearchSet::newFromQuery( 'search', $ns_ft .
-		($exactQuery ? $search : $expandedSearch), $restrictNS !== NULL ? array($restrictNS) : $allNamespaces, $limit, $lastFTOffset);
+		($exactQuery ? $search : $expandedSearch), $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $lastFTOffset);
+		
         
 		// remove remaining syntax elements from term array for highlightinh
 		for($i = 0; $i < count($terms); $i++) {

@@ -30,11 +30,11 @@ class US_LanguageEn {
         'us_searchbutton' => 'Go',
         'us_isincat' => 'is in category',
         'us_article' => 'Article',
-        'us_all' => 'All',
+        'us_all' => 'No filter',
        
     
-        'us_totalfulltextnum' => 'Total fulltext results',
-        'us_totaltitlenum' => 'Total title results',
+        'us_totalresults' => 'Total results',
+       
         'us_didyoumean' => 'Did you mean',
         'us_showdescription' => 'Show description',
     

@@ -31,11 +31,11 @@ class US_LanguageDe {
 	    'us_searchbutton' => 'Suche',
 	
 	    'us_article' => 'Artikel',
-	    'us_all' => 'Alle',
+	    'us_all' => 'Kein Filter',
 
 
-        'us_totalfulltextnum' => 'Gesamtzahl Volltextergebnisse',
-        'us_totaltitlenum' => 'Gesamtzahl Titel',
+        'us_totalresults' => 'Gesamtzahl Ergebnisse',
+       
         'us_didyoumean' => 'Meinten Sie',
         'us_showdescription' => 'Zeige Beschreibung',
 

@@ -21,6 +21,7 @@ class USStoreSQL extends USStore {
 	 * @return array of Title
 	 */
 	public function lookUpTitles($terms, array $namespaces, $limit=10, $offset=0, $tolerance = 0) {
+		
 		$db =& wfGetDB( DB_SLAVE );
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE title_matches (page_title VARCHAR(255), page_namespace INTEGER, score DOUBLE)
@@ -28,6 +29,7 @@ class USStoreSQL extends USStore {
 
 		if ($tolerance == US_EXACTMATCH) {
 			$queries = $this->lookUpTitlesByText($terms, $namespaces, false); // add all matches with all terms matching
+			
 			foreach($queries as $q) $db->query('INSERT INTO title_matches ('.$q.')');
 		}
 
@@ -84,21 +86,21 @@ class USStoreSQL extends USStore {
 
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
-		$sql = "";
+		$namespaceConst = "";
 		if ($namespaces != NULL) {
-			$sql .= '(';
+			$namespaceConst .= '(';
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
-				if ($i > 0) $sql .= ' OR ';
-				$sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
+				if ($i > 0) $namespaceConst .= ' OR ';
+				$namespaceConst .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
 			}
-			if (count($namespaces) == 0) $sql .= 'true';
-			$sql .= ') ';
+			if (count($namespaces) == 0) $namespaceConst .= 'true';
+			$namespaceConst .= ') ';
 		} else  {
-			$sql = 'true';
+			$namespaceConst = 'true';
 		}
 
 
-
+        
 
 		$query = array();
 
@@ -107,6 +109,7 @@ class USStoreSQL extends USStore {
 
 		if ($disjunctiveStrings) {
 			foreach($terms as $term) {
+				$sql = $namespaceConst;
 				$requestoptions = new SMWAdvRequestOptions();
 
 				$requestoptions->isCaseSensitive = false;
@@ -118,17 +121,17 @@ class USStoreSQL extends USStore {
 			}
 
 		} else {
+			$sql = $namespaceConst;
 			foreach($terms as $term) {
 				$requestoptions = new SMWAdvRequestOptions();
 
 				$requestoptions->isCaseSensitive = false;
 
 				$requestoptions->addStringCondition(str_replace(" ","_",$term), SMWStringCondition::STRCOND_MID);
+				$length += strlen($term);
 			}
 			$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-			foreach($requestoptions->getStringConditions() as $cond) {
-				$length += strlen($cond->string);
-			}
+			
 			$query[] = 'SELECT page_title, page_namespace, '.$length.'/LENGTH(page_title) AS score FROM '.$page.' WHERE '.$sql.' ORDER BY score DESC  ';
 		}
 
@@ -243,7 +246,7 @@ class USStoreSQL extends USStore {
 		$titleConstraint2 = DBHelper::getSQLConditions($requestoptions,'o.smw_title','o.smw_title');
 
 		$query = 'SELECT s.smw_title AS title, s.smw_namespace AS ns, '.$length.'/LENGTH(o.smw_title) AS score FROM smw_rels2 r '.
-              'JOIN smw_ids s ON r.s_id = s.smw_id JOIN smw_ids o ON r.o_id = o.smw_id WHERE ('.$propertyIDConstraint.')  '.$titleConstraint2;
+              'JOIN smw_ids s ON r.s_id = s.smw_id JOIN smw_ids o ON r.o_id = o.smw_id WHERE '.$namespaces.' AND ('.$propertyIDConstraint.')  '.$titleConstraint2;
 
 		return $query;
 	}

@@ -12,6 +12,13 @@
 	
 }
 
+#us_refineresults td {
+    
+    width:15%;
+     
+    
+}
+
 #us_searchform {
 	margin-bottom: 10px;
 }
@@ -42,6 +49,13 @@
 .us_search_result .metadata {
     font-size: 90%;
     margin-left: 10px;
+    color:darkgreen;
+}
+
+.us_search_result .category {
+    font-size: 90%;
+    margin-left: 10px;
+  
 }
 
 #us_browsing {
@@ -53,3 +67,4 @@
 	padding:10px;
 	margin: 5px;
 }
+
