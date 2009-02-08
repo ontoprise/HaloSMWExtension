@@ -9,12 +9,7 @@ abstract class USStore {
 	
     private static $STORE;
     private static $SMW_STORE;
-	/**
-	 * Lookup page titles in $namespaces
-	 *
-	 */
-	public abstract function lookUpTitles($terms, array $namespaces, $limit=10, $offset=0, $mode = 0);
-
+	
 	
         
     public static function &getStore() {

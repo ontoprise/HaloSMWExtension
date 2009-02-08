@@ -22,8 +22,8 @@ class QueryExpander {
 	 * @param Enum $mode
 	 * @return string
 	 */
-	public static function expand($terms, $mode = 0) {
-		 
+	public static function expandForFulltext($terms, $mode = 0) {
+			
 		if ($mode == US_EXACTMATCH) {
 			// do not expand, just use the given terms
 			return self::opTerms($terms, "AND");
@@ -45,19 +45,19 @@ class QueryExpander {
 			if ($title->exists()) {
 
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
-				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 				$found = true;
 			}
-				
+
 			$extraNamespace = array(NS_PDF, NS_DOCUMENT, NS_AUDIO, NS_VIDEO);
 			foreach($extraNamespace as $ns) {
 				$title = Title::newFromText($term, $ns);
 				if ($title->exists()) {
 
 					$skos_values = self::getSKOSPropertyValues($title, $mode);
-					$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+					$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
 					$redirects = USStore::getStore()->getRedirects($title);
 					$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 					$found = true;
@@ -84,7 +84,7 @@ class QueryExpander {
 
 			if (!$found) {
 				// do not look in SKOS ontology if term has less than 3 chars
-				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOS($term, $mode);
+				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
 
 				//echo print_r($skos_subjects, true);
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects), "OR");
@@ -126,7 +126,7 @@ class QueryExpander {
 		return $result;
 	}
 
-	private static function lookupSKOS($term, $mode) {
+	private static function lookupSKOSForFulltext($term, $mode) {
 		$result = array();
 		$requestoptions = new SMWAdvRequestOptions();
 		$requestoptions->isCaseSensitive = false;
@@ -147,6 +147,58 @@ class QueryExpander {
 	}
 
 	/**
+	 * Returns articles which are subjects from SKOS properties
+	 *
+	 * @param array of string $terms Terms the user entered (unquoted, no special syntax, may contain significant whitespaces)
+	 * @param array $namespaces Namespace indexes
+	 * @param unknown_type $limit Limit of matches
+	 * @param unknown_type $offset Offset of matches
+	 * @param unknown_type $tolerance tolerance level (0 = tolerant, 1 = semi-tolerant, 2 = exact)
+	 * @return array of Title
+	 */
+	public function expandForTitles($terms, array $namespaces, $limit=10, $offset=0, $tolerance = 0) {
+
+		$db =& wfGetDB( DB_SLAVE );
+		// create virtual tables
+		$requestoptions = new SMWAdvRequestOptions();
+		$requestoptions->isCaseSensitive = false;
+		
+		$termsAnded = self::opTerms($terms, "AND");
+		if ($tolerance == US_EXACTMATCH) {
+
+			
+            
+		}
+
+		if ($tolerance == US_LOWTOLERANCE) {
+			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN);
+			$requestoptions->disjunctiveStrings = false;
+			foreach($terms as $t) {
+				$t = str_replace(" ", "_", $t);
+				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
+			}
+			$subjects = USStore::getStore()->getPropertySubjects($properties, $namespaces, $requestoptions); // add all matches with all terms matching
+			$subjectTerms = self::opTerms($subjects, "OR");
+			
+		}
+
+		if ($tolerance == US_HIGH_TOLERANCE) {
+			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN, SKOSVocabulary::$BROADER, SKOSVocabulary::$NARROWER);
+			$requestoptions->disjunctiveStrings = true;
+			foreach($terms as $t) {
+				$t = str_replace(" ", "_", $t);
+				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
+			}
+			$subjects = USStore::getStore()->getPropertySubjects($properties, $namespaces, $requestoptions); // add all matches with all terms matching
+			$subjectTerms = self::opTerms($subjects, "OR");
+		}
+
+
+		$totalQuery = self::opTerms(array($termsAnded, $subjectTerms), "OR");
+		return $totalQuery;
+	}
+
+	/**
 	 * Connects terms by the specified operator.
 	 *
 	 * @param array $terms Can be titles, property values or strings
@@ -160,19 +212,19 @@ class QueryExpander {
 		foreach($terms as $t) {
 			if ($t == NULL) continue;
 			if ($t instanceof Title) {
-				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".$t->getText();
+				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
 				$connectedParts++;
 			} else if ($t instanceof SMWPropertyValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if ($t instanceof SMWStringValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if ($t instanceof SMWWikiPageValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".$t->getXSDValue();
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if (is_string($t) && strlen($t) > 0) {
-				if ($i === 0) $result .= $t; else $result .= " $operator ".$t;
+				if ($i === 0) $result .= $t; else $result .= " $operator ".self::quoteIfNecessary($t);
 				$connectedParts++;
 			}
 			$i++;
@@ -180,7 +232,9 @@ class QueryExpander {
 		return $connectedParts <= 1 ? $result : "(".$result.")";
 	}
 
-
+    private static function quoteIfNecessary($str) {
+    	return strpos($str, " ") !== false ? "\"$str\"" : $str;
+    }
 }
 
 ?>
