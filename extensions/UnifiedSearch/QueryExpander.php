@@ -151,29 +151,29 @@ class QueryExpander {
 	 *
 	 * @param array of string $terms Terms the user entered (unquoted, no special syntax, may contain significant whitespaces)
 	 * @param array $namespaces Namespace indexes
-	 * @param unknown_type $limit Limit of matches
-	 * @param unknown_type $offset Offset of matches
-	 * @param unknown_type $tolerance tolerance level (0 = tolerant, 1 = semi-tolerant, 2 = exact)
+	 * @param int $tolerance tolerance level (0 = tolerant, 1 = semi-tolerant, 2 = exact)
+	 * @param int $limit Limit of matches in SKOS ontology
 	 * @return array of Title
 	 */
-	public function expandForTitles($terms, array $namespaces, $limit=10, $offset=0, $tolerance = 0) {
+	public function expandForTitles($terms, array $namespaces, $tolerance = 0, $limit=10) {
 
 		$db =& wfGetDB( DB_SLAVE );
 		// create virtual tables
 		$requestoptions = new SMWAdvRequestOptions();
 		$requestoptions->isCaseSensitive = false;
+		$requestoptions->limit = $limit;
 		
 		$termsAnded = self::opTerms($terms, "AND");
 		if ($tolerance == US_EXACTMATCH) {
-
-			
-            
+            $subjectTerms = array();
+	        
 		}
 
 		if ($tolerance == US_LOWTOLERANCE) {
 			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN);
 			$requestoptions->disjunctiveStrings = false;
 			foreach($terms as $t) {
+				if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
 				$t = str_replace(" ", "_", $t);
 				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
 			}
@@ -186,6 +186,7 @@ class QueryExpander {
 			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN, SKOSVocabulary::$BROADER, SKOSVocabulary::$NARROWER);
 			$requestoptions->disjunctiveStrings = true;
 			foreach($terms as $t) {
+				if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
 				$t = str_replace(" ", "_", $t);
 				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
 			}
@@ -233,7 +234,8 @@ class QueryExpander {
 	}
 
     private static function quoteIfNecessary($str) {
-    	return strpos($str, " ") !== false ? "\"$str\"" : $str;
+    	$containsOperators = strpos($str, " AND ") || strpos($str, " OR ");
+    	return !$containsOperators && strpos($str, " ") !== false ? "\"$str\"" : $str;
     }
 }
 

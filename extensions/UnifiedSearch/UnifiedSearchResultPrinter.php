@@ -119,26 +119,10 @@ class UnifiedSearchResultPrinter {
 
 
 			$html .= '<li><img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
-			if ($e->isFulltextResult()) $html.= '<img style="margin-left: 6px;" src="'.self::getImageURI("fulltext.gif" ).'"/>';
+			//if ($e->isFulltextResult()) $html.= '<img style="margin-left: 6px;" src="'.self::getImageURI("fulltext.gif" ).'"/>';
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$html .= '<span class="searchprev"><a rel="gb_page_center[]" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
-			/*$score = $e->getScore() * 5;
-			if ($score >= 5) {
-				$score = 6;
-				$bar = "green-bar.gif";
-			} else if ($score >= 2 && $score < 5) {
-				$bar = "yellow-bar.gif";
-			} else if ($score >= 1 && $score < 2) {
-				$bar = "red-bar.gif";
-			} else {
-				$score = 1;
-				$bar = "red-bar.gif";
-			}
-			$html .= '[';
-			for($i = 0; $i < $score; $i++) {
-				$html .= '<img src="'.self::getImageURI($bar).'"/>';
-			}
-			$html .= ']';*/
+			
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
 				for($i = 0, $n = count($categories); $i < $n; $i++) {
@@ -147,8 +131,8 @@ class UnifiedSearchResultPrinter {
 				}
 				$html .= '</div>';
 			}
-			$html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
+			$html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 				
 			// Description
 			/*$desc = $e->getDescription();

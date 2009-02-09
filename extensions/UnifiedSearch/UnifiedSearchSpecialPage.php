@@ -74,7 +74,7 @@ class USSpecialPage extends SpecialPage {
 			// initialize when searchstring is empty
 			$searchResults = array();
 			$searchSet = NULL;
-				
+
 		}
 
 
@@ -89,12 +89,12 @@ class USSpecialPage extends SpecialPage {
 		}
 			
 		// serialize HTML
-		$html = wfMsg('us_searchfield').': <form id="us_searchform"><input id="us_searchfield" type="text" size="30" name="search">'.
-    	    '<input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'">'.
-    	    '<input type="hidden" name="fulltext" value="true">'.
-			'<input type="radio" name="tolerance" class="tolerantsearch" onclick="smwhg_toleranceselector.onClick(0)" value="0">'.wfMsg('us_tolerantsearch').'</input>'.
-			'<input type="radio" name="tolerance" class="semitolerantsearch" onclick="smwhg_toleranceselector.onClick(1)" value="1">'.wfMsg('us_semitolerantsearch').'</input>'.
-			'<input type="radio" name="tolerance" class="exactsearch" onclick="smwhg_toleranceselector.onClick(2)" value="2">'.wfMsg('us_exactsearch').'</input>'.
+		$html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr><tr><td><input id="us_searchfield" type="text" size="30" name="search"></td>'.
+    	    '<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()"><option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
+            '<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
+            '<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
+    	    '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"><input type="hidden" name="fulltext" value="true"></td></tr></table>'.
+
 		'</form>';
 			
 			
@@ -121,7 +121,8 @@ class USSpecialPage extends SpecialPage {
 		$restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
 		$html .= wfMsg('us_refinesearch');
 		$html .='<div id="us_refineresults"><table>';
-		$row =  '<td><a class="us_refinelinks" href="'.$noRefineURL.'">'.$this->highlight(wfMsg('us_all'), NULL, $restrictNS).'</a>';
+		$highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
+		$row =  '<td><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
 
 		$nsURL = reset($namespaceFilterURLs);
 		$c = 1;
@@ -133,16 +134,19 @@ class USSpecialPage extends SpecialPage {
 			}
 
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
-			$row .= '<td><img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="us_refinelinks" href="'.$nsURL.'">'.$this->highlight($nsName,$ns, $restrictNS).'</a></td>';
+			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
+			$row .= '<td><img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.'</a></td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
 		}
 		$html .= '<tr>'.$row.'</tr>';
 		$html .= '</table></div>';
 
+
+		$totalHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
+		//$html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalresults').': <b>'.($totalHits).'</b></div>';
+
 		// browsing
-
-
 		$next = $this->createBrowsingLink($search, $offset + $limit, $limit, wfMsg('us_browse_next'));
 		$previous = $this->createBrowsingLink($search,$offset - $limit, $limit, wfMsg('us_browse_prev'));
 		$limit20 = $this->createBrowsingLink($search,$offset,  20 );
@@ -154,37 +158,41 @@ class USSpecialPage extends SpecialPage {
 		$nextButton =  (count($searchResults) < $limit) ? wfMsg('us_browse_next') : $next;
 		$prevButton = ($offset == 0) ? wfMsg('us_browse_prev') : $previous;
 
-		$html .= "<div id=\"us_browsing\">($prevButton) ($nextButton) ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</div>";
-
-
-
-
-		$totalHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
-		$html .= '<div style="float:right;padding-top:7px;margin-right:30px;">'.wfMsg('us_totalresults').': <b>'.($totalHits).'</b></div>';
-
-
-		// heading
 		if (count($searchResults) > 0) {
-			$html .= "<h2>".wfMsg('us_results')."</h2>";
-		} else {
-			$html .= "<h2>".wfMsg('us_noresults')."</h2>";
+			$html .= "<table id=\"us_browsing\"><tr><td>".(intval($offset/$limit)+1)." von ".(intval($totalHits/$limit)+1)."</td>";
+			$html .= "<td style=\"text-align: center;\">($prevButton) ($nextButton)</td>";
+			$html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
 		}
-
 		// Did you mean
 		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
 		$wgOut->setPageTitle(wfMsg('us_search'));
 		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
 
-		// search results
-		$html .= '<div id="us_searchresults">';
+		if (count($searchResults) == 0) {
+			$html .= wfMsg('us_noresults_text', $search);
+		}
 
-		$html .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
-		$html .= '</div>';
+		// search results
+			
+		// heading
+		if (count($searchResults) > 0) {
+			$html .= '<div id="us_searchresults">';
+			$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
+			$html .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
+			$html .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
+			$html .= '</div>';
+		} 
+
+		if (count($searchResults) > 0) {
+			$html .= "<table id=\"us_browsing\"><tr><td>".(intval($offset/$limit)+1)." von ".(intval($totalHits/$limit)+1)."</td>";
+			$html .= "<td style=\"text-align: center;\">($prevButton) ($nextButton)</td>";
+			$html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
+		}
 		$wgOut->addHTML($html);
 	}
 
-	private function highlight($term, $exp_ns, $act_ns) {
-		return $exp_ns === $act_ns ? '<b>'.$term.'</b>' : $term;
+	private function highlight($exp_ns, $act_ns) {
+		return $exp_ns === $act_ns;
 	}
 
 	private function createBrowsingLink($search, $offset, $limit, $text="") {
@@ -209,19 +217,19 @@ class USSpecialPage extends SpecialPage {
 			
 
 		// query lucene server
-	
+
 		// if query contains boolean operators, consider as as user-defined
 		// and do not use title search and pass search string unchanged to Lucene
 
 		if (!self::userDefinedSearch($terms, $search)) {
 			// non user-defined
-			$defaultPattern = 'contents:($1) OR title:($2)';	
+			$defaultPattern = 'contents:($1) OR title:($2)';
 			$expandedFTSearch = QueryExpander::expandForFulltext($terms, $tolerance);
-			$expandedTitles = QueryExpander::expandForTitles($terms, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset, $tolerance);
+			$expandedTitles = QueryExpander::expandForTitles($terms, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $tolerance);
 			$defaultPattern = str_replace('$1', $expandedFTSearch, $defaultPattern);
 			$defaultPattern = str_replace('$2', $expandedTitles, $defaultPattern);
 			$searchSet = LuceneSearchSet::newFromQuery( 'raw', 	$defaultPattern, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset);
-            
+
 			if ($searchSet->getTotalHits() == 0) {
 				$searchSet = LuceneSearchSet::newFromQuery( 'suggest',  $search, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset);
 			}
@@ -300,7 +308,7 @@ class USSpecialPage extends SpecialPage {
 				return true;
 			}
 		}
-		
+
 		return preg_match('/\[\d+\]:/', $search) !== 0 || strpos($search, '~') !== false;
 
 	}
