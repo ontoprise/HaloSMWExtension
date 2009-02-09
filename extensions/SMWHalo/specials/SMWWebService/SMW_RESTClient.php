@@ -72,6 +72,7 @@ class SMWRestClient implements IWebServiceClient {
 			foreach($parameters as $key => $value){
 				if($first){
 					$uri .= "?".$key."=".urlencode($value);
+					$first=false;
 				} else {
 					$uri .= "&".$key."=".urlencode($value);
 				}
