@@ -67,7 +67,7 @@ Click Add. The property will be displayed in the Query Tree panel.
 The Main Query will be displayed.</div></li>
 <li>Specify query layout.<br>
 <div style="font-weight:normal;">In the Query Layout Manager, change the printout parameters.<br>
-For more information on these parameters, see the table below.</div></li>
+For more information on these parameters, see [[Help:Query_Interface|Query Interface]].</div></li>
 <li>Preview results.<br>
 <div style="font-weight:normal;">On the button bar, click Preview Results.<br>
 A dialog box appears showing the results of the query.
