@@ -18,17 +18,25 @@ class US_LanguageDe {
 
 	public $us_userMessages = array (
         'us_search' => 'Allgemeine Suche',
-        'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. Wollen Sie die $1 erzeugen?',
-        'us_page' => 'Seite',
+	    'us_tolerance'=> 'Toleranz',
+        'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. $1',
+        'us_page' => 'Klicken Sie hier, um die Seite zu erstellen.',
         'us_refinesearch' => 'Suche einschr&auml;nken',
         'us_browse_next' => 'n&auml;chste',
         'us_browse_prev' => 'vorherige',
         'us_results' => 'Ergebnisse',
         'us_noresults' => 'Keine Suchtreffer',
+	    'us_noresults_text' => 'Es wurden <b>keine</b> mit ihrer Suchanfrage - <i>$1</i> - <b>&uuml;bereinstimmenden Treffer</b> gefunden. 
+	               <br><br>Vorschl&auml;ge: <ul>
+	               <li>Probieren Sie einen andere Suchbegriffe.</li>
+	               <li>Probieren Sie allgemeinere Suchbegriffe.</li>
+	               <li>Vergewissen Sie sich dass Sie alle W&ouml;rter richtig geschrieben haben.</li></ul>',
+	   'us_resultinfo' => '$1 bis $2 von $3 f&uuml;r <i>$4</i>',
         'us_searchfield' => 'Suche',
 	    'us_lastchanged'=> 'Zuletzt ge&auml;ndert',
 	    'us_isincat' => 'liegt in Kategorie',
 	    'us_searchbutton' => 'Suche',
+	'us_entries_per_page' => 'Eintr&auml;ge pro Seite',
 	
 	    'us_article' => 'Artikel',
 	    'us_all' => 'Kein Filter',

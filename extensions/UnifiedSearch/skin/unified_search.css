@@ -1,6 +1,7 @@
 #us_didyoumean {
 	width: 97%;
 	margin-bottom: 10px; 
+	margin-top: 10px; 
 }
 
 #us_refineresults {
@@ -27,14 +28,27 @@
 }
 
 #us_refineresults .us_refinelinks {
-	margin: 3px;
+	padding: 3px;
+}
+
+#us_refineresults .us_refinelinks_highlighted {
+	padding: 3px;
+	background-color: #00A;
+	color:white;
+	font-weight: bold;
 }
 
 #us_searchresults {
-    height: 600px;
+    border: 2px solid #000;
     padding: 5px;
     width:97%;
-    
+    list-style-type: none;
+}
+
+#us_resultinfo {
+	border-bottom: 1px solid;
+	margin: 5px;
+	font-weight: bold;
 }
 
 .us_search_result_link{
@@ -59,7 +73,8 @@
 }
 
 #us_browsing {
-	margin-top: 10px;
+    margin-top: 10px;
+    width: 98%;
 }
 
 .us_description {
