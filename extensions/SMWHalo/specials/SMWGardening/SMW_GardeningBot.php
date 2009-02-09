@@ -80,6 +80,16 @@
  	public abstract function getLabel();
  	
  	/**
+ 	 * True, if the bot is visible to the user (default).
+ 	 * False, if it is used only internally.
+ 	 *
+ 	 * @return boolean
+ 	 */
+ 	public function isVisible() {
+ 		return true;
+ 	}
+ 	
+ 	/**
  	 * Returns array of user group names which may
  	 * use this bot.
  	 * 

@@ -45,6 +45,10 @@ class TermImportBot extends GardeningBot {
 	public function allowedForUserGroups() {
 		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
 	}
+	
+    public function isVisible() {
+        return false;
+    }
 
 	/**
 	 * Returns an array of parameter objects

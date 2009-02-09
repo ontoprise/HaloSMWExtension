@@ -110,6 +110,10 @@ class SMWGardening extends SpecialPage {
 		 		continue; // do not add this bot, because the user must not access it.
 		 	}
 		 	
+		 	if (!$bot->isVisible()) {
+		 		continue;
+		 	}
+		 	
 		 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 		 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
 		 				   "<img src=\"$wgServer$wgScriptPath/extensions/SMWHalo/skins/Gardening/".$botID."_image.png\"/><a>" .$bot->getLabel()."</a>" .
