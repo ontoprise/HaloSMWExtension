@@ -109,6 +109,9 @@ function smwgHaloSetupExtension() {
         exit; // stop immediately
     }
 	
+    global $smwgUseCombinedSearch;
+    $smwgUseCombinedSearch =(!array_key_exists('unifiedsearch', $wgExtensionCredits));
+    
 	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
@@ -578,7 +581,7 @@ function smwfDBSupportsFunction($lib) {
 function smwfHaloAddHTMLHeader(&$out) {
     global $wgStylePath,$wgUser, $wgDefaultSkin;
     global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
-    global $wgOut, $smwgEnableFlogicRules;
+    global $wgOut, $smwgEnableFlogicRules, $smwgUseCombinedSearch;
     
     $rulesEnabled = isset($smwgEnableFlogicRules) 
     					? (($smwgEnableFlogicRules) ? 'true' : 'false')
@@ -590,8 +593,8 @@ function smwfHaloAddHTMLHeader(&$out) {
     $skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
     $jsm = SMWResourceManager::SINGLETON();
     $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
-    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
-    $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
+    if ($smwgUseCombinedSearch) $jsm->addCSSIf($smwgHaloScriptPath . '/skins/CombinedSearch/CombinedSearch.css', "all", -1, NS_SPECIAL.":".wfMsg('search'));
+    if ($smwgUseCombinedSearch) $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "all", -1, NS_SPECIAL.":".wfMsg('search') );
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "edit");
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/semantictoolbar.css', "annotate");
     $jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/lightbulb.css');
@@ -645,19 +648,19 @@ function smwfHaloAddHTMLHeader(&$out) {
 
         $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "annotate");
             
-        $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
+        if ($smwgUseCombinedSearch) $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
 
         $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "edit");
 
         $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "annotate");
             
-        $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
+        if ($smwgUseCombinedSearch) $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
 
         $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Autocompletion/wick.js');
 
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Help.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Help.js', "annotate");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Help.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
+        if ($smwgUseCombinedSearch) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Help.js', "all", -1, NS_SPECIAL.":".wfMsg('search'));
 
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "annotate");
@@ -693,7 +696,7 @@ function smwfHaloAddHTMLHeader(&$out) {
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "annotate");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.js', "view", -1, NS_SPECIAL.":".wfMsg('search'));
+        if ($smwgUseCombinedSearch) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/CombinedSearch/CombinedSearch.js', "view", -1, NS_SPECIAL.":".wfMsg('search'));
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
         $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "edit");
         $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
