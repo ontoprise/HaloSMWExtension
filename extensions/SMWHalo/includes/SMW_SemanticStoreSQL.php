@@ -401,7 +401,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				// do not check for redirect, because it's done it the query
-				$properties[] = Title::newFromText($row->property, SMW_NS_PROPERTY);
+				$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), false);
 			}
 		}
 		$db->freeResult($res);
