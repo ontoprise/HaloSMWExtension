@@ -11,10 +11,10 @@ class US_LanguageDe {
                                         'us_skos_altLabel' => 'Auch bekannt als',
                                         'us_skos_hiddenLabel' => 'Selten benannt als',
                                         'us_skos_broader' => 'Oberbegriff',
-                                        'us_skos_narrower' => 'Spezialisierung',
-                                        'us_skos_description' => 'Beschreibung',
+                                        'us_skos_narrower' => 'Unterbegriff',
+                                        'us_skos_description' => 'Definition',
                                         'us_skos_example' => 'Beispiel',
-                                        'us_skos_term' => 'Begriff');
+                                        'us_skos_term' => 'Term');
 
 	public $us_userMessages = array (
         'us_search' => 'Allgemeine Suche',
