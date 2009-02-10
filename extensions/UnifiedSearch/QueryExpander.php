@@ -50,8 +50,9 @@ class QueryExpander {
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 				$found = true;
 			}
-
-			$extraNamespace = array(NS_PDF, NS_DOCUMENT, NS_AUDIO, NS_VIDEO);
+            
+			global $usgAllNamespaces;
+			$extraNamespace = array_diff($usgAllNamespaces, array(NS_MAIN, SMW_NS_PROPERTY, NS_TEMPLATE, NS_CATEGORY));
 			foreach($extraNamespace as $ns) {
 				$title = Title::newFromText($term, $ns);
 				if ($title->exists()) {
