@@ -96,7 +96,7 @@ function wfUSSetupExtension() {
 		                          NS_CATEGORY => "concept.gif", 
 		                          SMW_NS_PROPERTY => "property.gif", 
 		                          NS_TEMPLATE => "template.gif",
-		                          NS_HELP => "help.jpg");
+		                          NS_HELP => "help.png");
 
 		// check Multimedia namespaces from MIME-type extension and add if existing
 		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "audio.jpg";
