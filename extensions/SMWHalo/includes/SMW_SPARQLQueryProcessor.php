@@ -78,7 +78,9 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 					$querystring .= $param;
 				} else {
 					$parts = explode('=',$param,2);
-					if (count($parts) == 2 && in_array($parts[0], array('mainlabel', 'sort', 'order', 'default', 'format', 'offset', 'limit', 'headers', 'link', 'intro', 'searchlabel'))) {
+					$knownOption = in_array($parts[0], array('template', 'mainlabel', 'sort', 'order', 'default', 'format', 'offset', 'limit', 'headers', 'link', 'intro', 'searchlabel'));
+					$probablyOption = preg_match('/\w+/', $parts[0]) !== false && strlen($parts[0]) < 15; // probably an option if alphanumeric and less than 15 chars.
+					if (count($parts) == 2 && ($knownOption || $probablyOption)) {
 						$params[strtolower(trim($parts[0]))] = $parts[1]; // don't trim here, some params care for " "
 					} else {
 						$querystring .= $param;
