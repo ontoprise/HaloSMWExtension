@@ -19,6 +19,8 @@ function smwfDoSpecialUSSearch() {
  *
  */
 class UnifiedSearchStatistics extends QueryPage {
+	
+	
 	function getName() {
 		return "UnifiedSearchStatistics";
 	}
@@ -35,6 +37,7 @@ class UnifiedSearchStatistics extends QueryPage {
 		$html .= "<form action=\"".$specialAttPage->getFullURL()."\">";
 		$html .= '<input type="hidden" name="title" value="' . $specialAttPage->getPrefixedText() . '"/>';
 		// type of property
+		$html .= "<table><tr><td style=\"text-align: right\">".wfMsg('us_sort_for')."</td><td>";
 		$html .=    "<select name=\"type\">";
 		$i = 0;
 		foreach($typeOptions as $option) {
@@ -46,7 +49,8 @@ class UnifiedSearchStatistics extends QueryPage {
 			$i++;
 		}
 		$html .=    "</select>";
-
+		$html .= "</td><td></td><tr><td style=\"text-align: right\">".wfMsg('us_order_for')."</td>";
+        $html .= "<td>";
 		// sort options
 		$html .=    "<select name=\"sort\">";
 		$i = 0;
@@ -59,8 +63,8 @@ class UnifiedSearchStatistics extends QueryPage {
 			$i++;
 		}
 		$html .=    "</select>";
-
-		$html .=    "<input type=\"submit\" value=\" Go \">";
+        $html .= "</td><td><input type=\"submit\" value=\" ".wfMsg('us_go_button')." \"></td></tr></table>";
+		
 		$html .= "</form>";
 		return $html;
 	}
@@ -78,10 +82,19 @@ class UnifiedSearchStatistics extends QueryPage {
 		return USStore::getStore()->getSearchTries($limit, $offset, $minMax, $sortFor);
 	}
 
+	function openList($offset) {
+		return "<div id=\"us_statistics_results\"><table border=\"1\" cellspacing=\"0\"><tr><th style=\"background-color: #CCC;\">".wfMsg('us_search_term')."</th><th>".wfMsg('us_search_tries')."</th><th>".wfMsg('us_search_hits')."</th></tr>";
+	}
+
+	function closeList() {
+		return "</table></div>";
+	}
 	function formatResult($skin, $r) {
 		list($searchterm, $tries, $hits) = $r;
-		return $searchterm.' (<i>'.wfMsg('us_search_tries').'</i>: <b>'.$tries.'</b>, <i>'.wfMsg('us_search_hits').'</i>: <b>'.$hits.'</b>)';
+		return "<tr><td>$searchterm</td><td>$tries</td><td>$hits</td></tr>";
+		
 	}
+	
 
 	/**
 	 * Clear the cache and save new results
@@ -141,7 +154,7 @@ class UnifiedSearchStatistics extends QueryPage {
 			foreach ($res as $r) {
 				$format = $this->formatResult( $sk, $r );
 				if ( $format ) {
-					$s[] = $this->listoutput ? $format : "<li>{$format}</li>\n";
+					$s[] = $format;
 				}
 			}
 

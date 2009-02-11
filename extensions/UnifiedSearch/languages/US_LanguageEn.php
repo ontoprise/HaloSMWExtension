@@ -53,8 +53,12 @@ class US_LanguageEn {
         'us_statistics_docu' => 'Statistical information about search matches',
         'us_search_asc'=> 'Ascending',
         'us_search_desc' => 'Descending',
+        'us_search_term'=>'Search term',
         'us_search_hits'=> 'Hits',
-        'us_search_tries' => 'Tries'
+        'us_search_tries' => 'Tries',
+        'us_go_button' => 'Go',
+	    'us_sort_for'=>'Sort for',
+	    'us_order_for'=>'Order'
         
         
     );

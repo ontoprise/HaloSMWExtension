@@ -14,10 +14,32 @@
 }
 
 #us_refineresults td {
-    
     width:15%;
-     
-    
+}
+
+#us_statistics_results th {
+	background-color: #CCC;
+}
+
+
+#us_statistics_results tr :first-child {
+    background-color: #FFFFFF;
+    padding: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    vertical-align: top;
+    width: 300px;
+}
+
+#us_statistics_results td {
+    background-color: #FFFFFF;
+    padding: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    vertical-align: top;
+    width: 100px;
 }
 
 #us_searchform {

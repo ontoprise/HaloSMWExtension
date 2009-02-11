@@ -50,14 +50,18 @@ class US_LanguageDe {
         'us_tolerantsearch' => 'tolerant',
         'us_semitolerantsearch' => 'mittel',
         'us_exactsearch' => 'exakt',
-        'unifiedsearchstatistics' => 'Unified Search Statistics',
+        'unifiedsearchstatistics' => 'Statistik Allgemeine Suche',
         'us_statistics_docu' => 'Statistische Informationen &uuml;ber Suchtreffer. 
-						        Damit k&ouml;nnen sie z.B. Suchterme identifizieren, die h&auml;ufig benutzt, 
+						        <br>Damit k&ouml;nnen sie z.B. Suchterme identifizieren, die h&auml;ufig benutzt, 
 						        aber wenig oder keine Treffer erzielen.',
         'us_search_asc'=> 'Aufsteigend',
         'us_search_desc' => 'Absteigend',
+	    'us_search_term'=>'Suchbegriff',
         'us_search_hits'=> 'Treffer',
-        'us_search_tries' => 'Versuche'
+        'us_search_tries' => 'Versuche',
+	    'us_go_button' => 'Ok',
+	    'us_sort_for'=>'Sortieren nach',
+        'us_order_for'=>'Reihenfolge'
         );
 }
 ?>
