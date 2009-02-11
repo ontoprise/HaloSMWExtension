@@ -15,6 +15,10 @@
 
 var httpRequest;
 var cachedData = [];
+var doingRefresh;
+var refreshOpenNodes = [];
+var refreshRootNodes = [];
+var refreshDtree;
 
 // Node object
 function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
@@ -33,6 +37,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this._ai = 0;
 	this._p;
 	this._complete = false;
+	this._refresh = -1;
 };
 
 Node.prototype.serialize = function() {
@@ -42,11 +47,11 @@ Node.prototype.serialize = function() {
 		((this.pid) ? this.pid : "") + ".";
 		
 	if (this.name) {
-		var link = this.name.replace(/.*href=(.*?\/)*(.*?)" .*/, "$2");
+		var link = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 		var content= this.name.replace(/.*>(.*?)<.*/,"$1");
-		link = link.replace(/\./, "%2E");
-		content = content.replace(/\./, "%2E");
-		content = content.replace(/ /, "_");
+		link = link.replace(/\./g, "%2E");
+		content = content.replace(/\./g, "%2E");
+		content = content.replace(/ /g, "_");
 		str += (link == content) ? link + "." : link + "." + content;
 		str += ".";
 	} else  str += "..";
@@ -65,26 +70,60 @@ Node.prototype.unserialize = function(str) {
     this.id = nVar[0];
     this.pid = nVar[1];
     link = nVar[2].replace(/%2E/i, ".");
-    content = (nVar[3]) ? nVar[3].replace(/%2E/i, ".") : link;
-    content = content.replace(/_/, " ");
-    this.name = '<a href=\"' + url + link + '\">' + content + '</a>';
+    content = (nVar[3]) ? nVar[3].replace(/%2E/gi, ".") : link;
+    content = content.replace(/_/g, " ");
+    this.name = '<a href=\"' + url + link + '\" title=\"' + content + '\">' + content + '</a>';
 	this._hc = (nVar[4] == 1) ? true : false;
 	this._complete = (nVar[5] == 1) ? true : false;
 	return true;
 }
 
 // SMW Data object (for relation and display)
-function SmwData(id, relation, display) {
+function SmwData(id, relation, category, display) {
 	this.id = id;
 	this.relation = relation;
+	this.category = category;
 	this.display = display;
 }
 
 SmwData.prototype.getUrlParams = function() {
 	var str = 'p%3D' + escape(this.relation);
+	if (this.category) str += '%26c%3D' + escape(this.category);
 	if (this.display) str += '%26d%3D' + escape(this.display); 
 	str += '%26';
 	return str;
+}
+
+// Object for managing parents for different node levels
+function Parents() {
+	// 2 dim array [x,y] where x contains elements and 
+	// y = 1 => depth, y = 2 => node id
+	this.data = [];
+}
+
+// set a parent for a certain depth
+Parents.prototype.set = function(depth, node) {
+	var size = this.data.length;
+	var set;
+	for (var i = 0; i < size; i++) {
+		if (this.data[i][0] == depth) {
+			this.data[i][1] = node;
+			set = true;
+		}
+	}
+	if (!set) this.data[size] = [depth, node];
+}
+
+// get a parent for a certain depth
+Parents.prototype.get = function(depth) {
+	var i = 0;
+	var size = this.data.length;
+	for (var i = 0; i < this.data.length; i++) {
+		if (this.data[i][0] == depth) {
+			return this.data[i][1];
+		}
+	}
+	return; 
 }
 
 // Tree object
@@ -98,7 +137,8 @@ function dTree(objName, className) {
 		useIcons			: true,
 		useStatusText		: false,
 		closeSameLevel		: false,
-		inOrder				: false
+		inOrder				: false,
+		refresh             : false
 	}
 	this.icon = {
 		root				: 'img/base.gif',
@@ -147,23 +187,162 @@ dTree.prototype.addSmwData = function(id, relation, display) {
 
 // Get Smw url params for a specific node
 dTree.prototype.getSmwData = function(id) {
-	if (this.aSmw.length == 0) return "";
+	var index = this.getSmwDataIndex(id); 
+	return (index >= 0) ? this.aSmw[index].getUrlParams() : "";
+}
+
+// return index of aSmw for a dynamic node smw settings
+dTree.prototype.getSmwDataIndex = function(id) {
+	if (this.aSmw.length == 0) return;
 	while(id >= 0) {
 		var cn = this.aNodes[id];
 		for (var i = 0; i < this.aSmw.length; i++) {
 			if (cn.id == this.aSmw[i].id) {
-				return this.aSmw[i].getUrlParams();
+				return i;
 			}
 		}
-		if (id == this.root.id) return "";
+		if (id == this.root.id) return;
 		id = cn.pid;
 	}
-	return "";
+	return;
 }
 
+// check if a node is created dynamically, important for mixed trees
 dTree.prototype.isDynamicNode = function(id) {
-	var str = this.getSmwData(id); 
-	return (str.length == 0) ? false : true;
+	return (this.getSmwDataIndex(id) >= 0) ? true : false;
+}
+
+// refresh the trees dynamic nodes
+dTree.prototype.refresh = function() {
+
+	// flush cache vars although this shouldn't be neccessary
+	refreshOpenNodes = new Array();
+    refreshRootNodes = new Array();
+
+	// get all dynamic root nodes
+	for (var i = 0; i < this.aSmw.length; i++)
+		refreshRootNodes.push(this.aSmw[i].id);
+
+	// these nodes will be fetched automatically and must
+	// marked as to be refreshed
+	var rFstCh = new Array();	// nodes one level below root
+		
+	// traverse through nodes and check, if the nodem must be
+	// refreshed (_refresh = 1) or will just remain as it is (_refresh = 0)
+	for (var i = 0; i < this.aNodes.length; i++) {
+		var add = false;
+		// dynamic root node
+		if (refreshRootNodes.indexOf(i) > -1)
+			add = true;
+		// first child of a dynamic root node - will be fetched
+		// automatically by this.loadFirstLevel(rootNodeId)
+		else if (refreshRootNodes.indexOf(this.aNodes[i].pid) > -1) {
+			rFstCh.push(i);			
+			add = true;
+		}
+		// second child of a dynamic root node - will be fetched
+		// automatically by this.loadFirstLevel(rootNodeId)
+		else if (rFstCh.indexOf(this.aNodes[i].pid) > -1)
+			add = true;
+			
+		// check dynamic nodes that are at least two levels below
+		// the dynamic root nodes
+		if (this.isDynamicNode(i) &&
+			(refreshRootNodes.indexOf(i) == -1) &&
+			(rFstCh.indexOf(i) == -1)) {
+			// if the node is open, check for children
+			if (this.aNodes[i]._io) {
+				refreshOpenNodes.push(i);
+				add = true;
+			}
+			// if the node is a child from an open node,
+			// it will be refreshed automatically, mark it for refresh
+			else if (this.aNodes[this.aNodes[i].pid]._io) {
+				add = true;
+			}
+		}
+		// if the node is marked as being refreshed, reset some variables
+		// to the initial values and set _refresh to 1
+		if (add) {
+			this.aNodes[i]._hc = false;
+			this.aNodes[i]._complete = false;
+			this.aNodes[i]._refresh = 1;
+		}
+		// static nodes must be distinguished from new nodes therefore
+		// set _refresh from -1 to 0.
+		else this.aNodes[i]._refresh = 0;
+	}
+	
+	if (refreshRootNodes.length == 0 && refreshOpenNodes.length == 0)
+		return;
+
+	// lock variable
+	doingRefresh = true;
+	document.getElementById(this.obj.substr(2)).innerHTML = "Updating tree, please wait...";
+	
+	// now start with the first dynamic root node, the rest follows
+	// in handleResponseRefresh() triggered by the http requests.
+	drn = refreshRootNodes.shift();
+	if (drn != null) this.loadFirstLevel(drn, 'r');
+	else doingRefresh = false;
+}
+
+// removes a node by eleminating the element of the array and shifting
+// all other elements so that array index equals node id
+// if the node has children, these are removed as well
+dTree.prototype.removeNode = function(id) {
+	// does the node have any children?
+	if (this.aNodes[id]._hc == true) {
+		for (i = id + 1; i < this.aNodes.length; i++) {
+			if (this.aNodes[i].pid == id) {
+				this.removeNode(i);
+			}	
+		}
+	}
+	// remember parent of node to remove
+	var cParent = this.aNodes[id].pid;
+	// move all references one position to the left
+	for (var i = id + 1; i < this.aNodes.length; i++) {
+		if (this.aNodes[i].id > id) this.aNodes[i].id--;
+		if (this.aNodes[i].pid > id) this.aNodes[i].pid--;
+	} 
+	// and remove node now from array
+	this.aNodes.splice(id, 1);
+	// update references to nodes in smw data
+	for (var i = 0; i < this.aSmw.length; i++) {
+		if (this.aSmw[i].id > id) this.aSmw[i].id --;
+	}
+	// check removed node had siblings, if not
+	// ajust _hc of parent
+	this.aNodes[cParent]._hc = false;
+	for (var i = 0; i < this.aNodes.length; i++) {
+		if (this.aNodes[i].pid == cParent) {
+			this.aNodes[cParent]._hc = true;
+			break;
+		}
+	}
+	
+	// update cookie information
+	this.updateCookie(); // open nodes
+	// selected node
+	if (this.selectedNode != null && this.selectedNode > id)
+		this.s(this.selectedNode - 1);
+	// ajax tree cache
+   	var ostr = this.getCookie('ca' + this.obj);   	
+	if (ostr != '') {
+		var oNodes = this.extractSdataFromCookie(ostr);
+	   	var newSdata = '';
+		for (var i = 0; i < oNodes.length; i++) {
+			cn = new Node();
+			cn.unserialize(oNodes[i]);
+			if (cn.id == id)
+				continue;
+			if (cn.id > id) cn.id = cn.id - 1;
+			if (cn.pid > id) cn.pid = cn.pid - 1;
+			newSdata += '{' + cn.serialize() + '}';
+		}
+	   	this.setCookie('ca' + this.obj, newSdata);
+	}
 }
 
 // Open/close all nodes
@@ -223,7 +402,9 @@ dTree.prototype.addNode = function(pNode) {
 
 // Creates the node icon, url and text
 dTree.prototype.node = function(node, nodeId) {
-	var str = '<div class="dTreeNode" style="white-space:nowrap;">' + this.indent(node, nodeId);
+	var str = '<div class="dTreeNode" style="white-space:nowrap;">';
+	if (this.root.id == node.pid && this.config.refresh) str += '<a href="javascript: ' + this.obj + '.refresh();" title="refresh">';
+	str += this.indent(node, nodeId);
 	if (this.config.useIcons) {
 		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
 		node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
@@ -235,7 +416,10 @@ dTree.prototype.node = function(node, nodeId) {
 			node.iconOpen = this.icon.folderOpen;
 		}
 		str += '<img id="i' + this.obj + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
+	} else {
+		str += 'refresh';
 	}
+	if (this.root.id == node.pid && this.config.refresh) str += '</a>';
 	if (node.url) {
 		str += '<a id="s' + this.obj + nodeId + '" class="' + ((this.config.useSelection) ? ((node._is ? 'nodeSel' : 'node')) : 'node') + '" href="' + node.url + '"';
 		if (node.title) str += ' title="' + node.title + '"';
@@ -245,7 +429,6 @@ dTree.prototype.node = function(node, nodeId) {
 			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
 		str += '>';
 	}
-	//else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
 	else if ((!this.config.folderLinks || !node.url) && 
 	         (node._hc || (this.isDynamicNode(nodeId) && !node._complete)) && 
 	         (node.pid != this.root.id))
@@ -318,13 +501,13 @@ dTree.prototype.o = function(id) {
 	var cn = this.aNodes[id];
 	this.nodeStatus(!cn._io, id, cn._ls);
 	cn._io = !cn._io;
-	if (!cn._complete && this.isDynamicNode(id) && cn._io) this.loadNextLevel(id);
+	if (!cn._complete && this.isDynamicNode(id) && cn._io) this.loadNextLevel(id, 'o');
 	if (this.config.closeSameLevel) this.closeLevel(cn);
 	if (this.config.useCookies) this.updateCookie();
 };
 
 // fetch children for a node
-dTree.prototype.loadNextLevel = function(id) {
+dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	if (this.aNodes[id]._hc) {
 		this.aNodes[id]._complete = true;
 		return;
@@ -332,15 +515,35 @@ dTree.prototype.loadNextLevel = function(id) {
 	
 	var params = this.getSmwData(id);
 	var token = this.obj + "_" + id;
-	cachedData[cachedData.length] = new Array(token, this);
-	params += 's%3D' + this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)" .*/, "$2");
+	if (refreshDtree && refreshDtree.obj == this.obj)
+		cachedData[cachedData.length] = new Array(token, refreshDtree);
+	else 
+		cachedData[cachedData.length] = new Array(token, this);
+	params += 's%3D' + this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 	params += '%26t%3D' + token; 
-    this.getHttpRequest(params);
+    this.getHttpRequest(params, callBackMethod);
 };
 
+// load first level (needed for refresh)
+dTree.prototype.loadFirstLevel = function(id) {
+	var params = this.getSmwData(id);
+	var token = this.obj + "_" + id;
+	if (refreshDtree && refreshDtree.obj == this.obj)
+		cachedData[cachedData.length] = new Array(token, refreshDtree);
+	else
+		cachedData[cachedData.length] = new Array(token, this);
+
+	params += '%26t%3D' + token;
+	this.getHttpRequest(params, 'r');
+}
+
 // start http request for Ajax call
-dTree.prototype.getHttpRequest = function(params) {
-    httpRequest = null;     
+dTree.prototype.getHttpRequest = function(params, callBackMethod) {
+    // if an old http request is still runing, don't start a new one
+    // also a tree refresh needs several requests, these have priority
+    if ((doingRefresh && (callBackMethod == "o")) || httpRequest)
+    	return;  
+
     // Mozilla, Safari and other browsers
     if (window.XMLHttpRequest) { 
         httpRequest = new XMLHttpRequest(); 
@@ -357,9 +560,12 @@ dTree.prototype.getHttpRequest = function(params) {
     }
     
     if (!httpRequest) return;
-
-    httpRequest.onreadystatechange = parseHttpResponse
-    httpRequest.open("GET", this.smwAjaxUrl + params, true); 
+    
+    if (callBackMethod == "o") httpRequest.onreadystatechange = handleResponseOpen;
+    else if(callBackMethod == "r") httpRequest.onreadystatechange = handleResponseRefresh;
+    else return;
+    
+    httpRequest.open("GET", this.smwAjaxUrl + params); 
 	httpRequest.send(null);
 };
 
@@ -521,7 +727,9 @@ dTree.prototype.updateAjaxTreeCache = function(nstr) {
 	for (var i = 0; i < oNodes.length; i++) {
 		var found = false;
 		for (var j = 0; j < nNodes.length; j++) {
-			if (oNodes[i].substr(0, 10) == nNodes[j].substr(0, 10)) {
+			var o = oNodes[i].split('.');
+			var n = nNodes[j].split('.');
+			if (o[0] == n[0] && o[1] == n[1]) {
 				newSdata += '{' + nNodes[j] + '}';
 				nNodes.splice(j, 1);
 				found = true;
@@ -560,16 +768,18 @@ if (!Array.prototype.pop) {
 	}
 };
 
-// parse reponse of Ajax call
+// parse reponse of Ajax call when fetching
+// children of a certain node
 parseHttpResponse = function() {
 	var result;
 	var resObj;
 	var dTree;
 
-	if (httpRequest.readyState == 4 && httpRequest.status == 200) 
+	if (httpRequest.readyState == 4 && httpRequest.status == 200) { 
     	result = httpRequest.responseText;
-    else
-    	return;
+    	httpRequest = null;
+    }
+    else return;
     	
     resObj = !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(result.replace(/"(\\.|[^"\\])*"/g, ''))) 
              && eval('(' + result + ')');
@@ -588,20 +798,34 @@ parseHttpResponse = function() {
 		}
 	} 
 	if (!dTree) return;
-	
+
     var noc = (resObj.treelist) ? resObj.treelist.length : 0;
     var url = dTree.smwAjaxUrl.substr(0, dTree.smwAjaxUrl.lastIndexOf("/")) + '/index.php/';
     
+    return new Array (parentId, dTree, resObj.treelist, noc, url);    
+}
+
+handleResponseOpen = function() {
+	var responseArr = parseHttpResponse();
+	if (!responseArr) return;
+
+	var parentId = responseArr[0];		
+	var dTree    = responseArr[1];
+	var treelist = responseArr[2];
+	var noc      = responseArr[3];
+	var url      = responseArr[4];
+
     if (noc > 0) dTree.aNodes[parentId]._hc = true;
     dTree.aNodes[parentId]._complete = true;
-    
+
     var newSerialData = '{' + dTree.aNodes[parentId].serialize() + '}';
     for (var i = 0; i < noc; i++) {
-    	var str = '<a href=\"' + url + resObj.treelist[i].link +'\" title=\"';
-    	str += resObj.treelist[i].name + '\">' + resObj.treelist[i].name + '</a>';
-    	dTree.add(dTree.aNodes.length, dTree.aNodes[parentId].id, str);
+    	var str = '<a href=\"' + url + treelist[i].link +'\" title=\"';
+    	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
+    	dTree.add(dTree.aNodes.length, parentId, str);
     	newSerialData += '{' + dTree.aNodes[dTree.aNodes.length - 1].serialize() + '}';
     }
+
     var toggleCookies = dTree.config.useCookies;
     if (dTree.config.useCookies) {
     	dTree.updateCookie();
@@ -611,3 +835,113 @@ parseHttpResponse = function() {
     document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
     if (toggleCookies) dTree.config.useCookies = true;
 };
+
+handleResponseRefresh = function() {
+	var responseArr = parseHttpResponse();
+	if (!responseArr) return;
+	
+	var parentId = responseArr[0];		
+	var dTree    = responseArr[1];
+	var treelist = responseArr[2];
+	var noc      = responseArr[3];
+	var url      = responseArr[4];
+
+    var parents = new Parents();
+    var lastDepth;
+
+    if (noc > 0) {
+    	dTree.aNodes[parentId]._hc = true;
+    	parents.set(treelist[0].depth, parentId);
+    	lastDepth = treelist[0].depth;
+    }
+    dTree.aNodes[parentId]._complete = true;
+
+	var found;
+	var foundParents = new Array();
+    for (var i = 0; i < noc; i++) {
+    	// build comlete name (i.e. link to item)
+    	var str = '<a href=\"' + url + treelist[i].link +'\" title=\"';
+    	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
+
+    	// evaluate current parent
+    	if (treelist[i].depth > lastDepth)
+    		parents.set(treelist[i].depth, found);
+   		var cParent = parents.get(treelist[i].depth);
+   		if (foundParents.indexOf(cParent) == -1) foundParents.push(cParent);
+   		lastDepth = treelist[i].depth;
+   		
+   		// search if this node already exists
+   		found = null;
+   		for (var k = 0; k < dTree.aNodes.length; k++) {
+   			var cName = dTree.aNodes[k].name.replace(/.*>(.*?)<.*/,"$1");
+   			if (dTree.aNodes[k].pid == cParent && cName == treelist[i].name &&
+   				(dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
+   				found = k;
+   				dTree.aNodes[k]._refresh = 0;
+   			}
+   		}
+   		if (!found) { 
+   			found = dTree.aNodes.length;
+    		dTree.add(found, cParent, str);
+    		dTree.aNodes[found]._refresh = 2;
+    	}
+    }
+
+	// search for old nodes that are not there anymore
+	for (var j = 0; j < foundParents.length; j++) {
+		for (var k = 0; k < dTree.aNodes.length; k++) {
+			if (dTree.aNodes[k].pid == foundParents[j] && dTree.aNodes[k]._refresh == 1) {
+				dTree.aNodes[k]._refresh = 3;
+			}
+		}
+	}
+
+	// safe current changes in dTree to current instance of object
+	refreshDtree = dTree;
+	 
+	// check if there are other dynamic root nodes to fetch
+	var drn = refreshRootNodes.shift();
+	if (drn != null) {
+		dTtree.loadFirstLevel(drn);
+		return;
+	}
+	
+	// fetch child nodes
+	var cn = refreshOpenNodes.shift();
+	if (cn != null) {
+		dTree.loadNextLevel(cn, 'r');
+		return;
+	}
+	
+	// all dynamic nodes are retrieved, write cookie of new gained nodes
+	var newSerialData = '';
+	for (var i = 0; i < dTree.aNodes.length; i++) {
+		if (dTree.aNodes[i]._refresh == 2) {
+			newSerialData += '{' + dTree.aNodes[i].serialize() + '}';
+		}
+	}
+
+	// update cookies with new information
+    var toggleCookies = dTree.config.useCookies;
+    if (dTree.config.useCookies) {
+    	dTree.updateCookie();
+    	dTree.updateAjaxTreeCache(newSerialData);
+    	dTree.config.useCookies = false;
+    }
+    // remove old nodes (also from cookies) and set refresh flag to intial value
+	for (var i = 0; i < dTree.aNodes.length; i++) {
+		if (dTree.aNodes[i]._refresh == 3) {
+			dTree.removeNode(i);
+			i--;
+		} else dTree.aNodes[i]._refresh = -1;
+	}
+        
+    // write tree and enable cookies again
+    document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
+    if (toggleCookies) dTree.config.useCookies = true;
+	// unlock
+	doingRefresh = false;
+	refreshDtree = null;
+}
+
+ 

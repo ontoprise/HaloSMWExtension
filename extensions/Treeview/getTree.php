@@ -15,10 +15,14 @@ function smw_treeview_getTree($input) {
 
   parse_str($input, $req);
   $relation = (isset($req['p'])) ? 'property='.$req['p'] : NULL;
-  $category = NULL;
+  $category = (isset($req['c'])) ? 'category='.$req['c'] : NULL;
   $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
-  $maxDepth = 1;
+  
+  // fetch on depth only
+  $maxDepth = 'maxDepth=1';
+  
+  // these are not needed for Ajax calls
   $redirectPage = NULL;
   $level = NULL;
   
@@ -27,6 +31,13 @@ function smw_treeview_getTree($input) {
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage, $level);
   
+  // if start is set, then remove the first element, as this is
+  // the one provided in start
+  if ($start) {
+      if (is_array($res)) array_shift($res);
+      else $res = array();
+  }
+                                     
   $return['treelist'] = $res;
   $return['result'] = 'success';
   if (isset($req['t'])) $return['token']= $req['t'];

@@ -115,9 +115,14 @@ class TreeView5 {
 	    	    parse_str($matches[1], $params);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
+            	    $addSmwData = "addSmwData(%s, '".$params['property']."',";
+            	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
+            	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."');" : "null);"; 
             	    $text.= $matches[2]."*".
-                	    	"addSmwData(%s, '".$params['property']."'".(isset($params['display']) ? ", '".$params['display']."');" : ");")."\n".
+                	    	$addSmwData."\n".
                             $matches[2].$matches[3]."\n";
+                    if (isset($params['refresh']) && $params['refresh'] == 1)
+                        $this->args[$this->id."refresh"] = true;
                 }
 		        else $text.= $line."\n";
     	    }
@@ -205,10 +210,11 @@ class TreeView5 {
                 list($id,$depth,$icon,$item,$start) = $info;
                 $args = $this->args[$id];
                 $class = $this->args[$id."class"];
-                $smwUrl = isset($this->args[$id."SmwUrl"]) ? $this->uniqname.$id.".".$this->args[$id."SmwUrl"] : NULL;
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
-                $end  = (count($rows) == 0) || $rows[0][4]; // start flag of next node
-                $add  = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
+                $smwUrl  = isset($this->args[$id."SmwUrl"]) ? $this->uniqname.$id.".".$this->args[$id."SmwUrl"] : NULL;
+                $end     = (count($rows) == 0) || $rows[0][4]; // start flag of next node
+                $refresh = isset($this->args[$id."refresh"]) ? "tree.config.refresh = true;" : '';
+                $add     = isset($args['root']) ? "tree.add(0,-1,'".$args['root']."');" : '';
 
                 # Append the dTree JS to add a node for this row
                 if (strpos($item, "addSmwData(") !== false ) {
@@ -244,6 +250,7 @@ class TreeView5 {
                                 tree = new dTree('{$this->uniqname}$id', '$class');
                                 for (i in tree.icon) tree.icon[i] = '{$this->baseUrl}/'+tree.icon[i];{$this->images}
                                 tree.config.useLines = {$this->useLines};
+                                $refresh
                                 $add
                                 {$this->uniqname}$id = tree;
                                 $smwUrl

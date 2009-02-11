@@ -55,12 +55,12 @@ class TreeGenerator {
 		if (array_key_exists('dynamic', $genTreeParameters)) {
 		    $useAjaxExpansion = 1;
 		    // set maxlevel depth to 1 if it is not set
-		    if (!$mayDepth) $maxDepth = 1;
+		    if (!$maxDepth) $maxDepth = 1;
 	    } else {
 	        $useAjaxExpansion = NULL;
 	    }
-	    
-        // start level of tree
+
+	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
 		$tv_store->setup($maxDepth, $redirectPage, $displayProperty, $hchar, $this->json);
@@ -70,7 +70,9 @@ class TreeGenerator {
 		// check if we have to return certain parameter with the result set
 		if (!$this->json && $useAjaxExpansion) {
 		    $returnPrefix= "\x7f"."dynamic=1&property=".$genTreeParameters['property']."&";
+		    if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
 		    if ($displayProperty) $returnPrefix .= "display=".$genTreeParameters['display']."&";
+		    if ($genTreeParameters['refresh']) $returnPrefix .= "refresh=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;
@@ -141,10 +143,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$categoryConstraintWhere;
 		
 	    // relation must be set -> we fetch here the smw_id of the requested relation
-		if (! $this->getRelationId($relation)) return "";
+		if (! $this->getRelationId($relation)) return ($this->json) ? array() : "";
 		// if category is set, we will fetch the id of the category
 		if ($category) {
-		    if (! $this->getCategoryId($category)) return "";
+		    if (! $this->getCategoryId($category)) return ($this->json) ? array() : "";
 		    $smw_inst2 = $db->tableName('smw_inst2');
 		    $categoryConstraintTable = ",$smw_inst2 i ";
 		    $categoryConstraintWhere = " AND i.o_id = ".$this->smw_category_id." AND r.o_id = i.s_id";    
@@ -158,7 +160,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		
 		if ($start) {
 		    if (!$this->getStartId($start))
-		        return $this->hchar."[[".$start->getDBKey()."]]\n";
+		        return ($this->json)
+		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
+		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 		    $query.= " AND r.o_id = ".$this->smw_start_id;  
 		}
 		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
@@ -550,12 +554,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	        $elementProperties[-1] = 
 	            array("...", NULL, $this->redirectPage->getDBkey());
 	    $treeList->rewind();
-	    while ($item = $treeList->getNext()) {
+	    while ($item = $treeList->getCurrent()) {
+	        $treeList->next();
 		    $tree[]= array(
 		      'name' => isset($elementProperties[$item[0]][3]) 
 		                ? $elementProperties[$item[0]][3]
 		                : $elementProperties[$item[0]][0],
 		      'link' => $elementProperties[$item[0]][2],
+		      'depth' => $item[1],
 		    );
 		    unset($item);
 	    }
