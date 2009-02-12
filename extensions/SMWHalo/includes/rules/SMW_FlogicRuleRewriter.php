@@ -44,7 +44,13 @@ class FlogicRuleRewriter extends RuleRewriter {
 		// replace placeholder for namespace
 		$ruletext = str_replace("{{wiki-name}}", $smwgNamespace, $ruletext);
 		$ruletext = str_replace("|", "", $ruletext);
-		
+
+		$ruletext = str_replace('"xsd:string"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
+		$ruletext = str_replace('"xsd:float"', '"http://www.w3.org/2001/XMLSchema#"#float', $ruletext);
+		$ruletext = str_replace('"xsd:boolean"', '"http://www.w3.org/2001/XMLSchema#"#boolean', $ruletext);
+		$ruletext = str_replace('"xsd:dateTime"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
+		$ruletext = str_replace('"xsd:unit"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
+
 		return $ruletext;
 	}
     
