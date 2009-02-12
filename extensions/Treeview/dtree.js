@@ -855,38 +855,45 @@ handleResponseRefresh = function() {
     	lastDepth = treelist[0].depth;
     }
     dTree.aNodes[parentId]._complete = true;
+    
 
 	var found;
 	var foundParents = new Array();
-    for (var i = 0; i < noc; i++) {
+	var cn;
+	while (cn = treelist.shift()) {
     	// build comlete name (i.e. link to item)
-    	var str = '<a href=\"' + url + treelist[i].link +'\" title=\"';
-    	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
+    	var str = '<a href=\"' + url + cn.link +'\" title=\"';
+    	str += cn.name + '\">' + cn.name + '</a>';
 
     	// evaluate current parent
-    	if (treelist[i].depth > lastDepth)
-    		parents.set(treelist[i].depth, found);
-   		var cParent = parents.get(treelist[i].depth);
+    	if (cn.depth > lastDepth)
+    		parents.set(cn.depth, found);
+   		var cParent = parents.get(cn.depth);
    		if (foundParents.indexOf(cParent) == -1) foundParents.push(cParent);
-   		lastDepth = treelist[i].depth;
+   		lastDepth = cn.depth;
    		
    		// search if this node already exists
    		found = null;
    		for (var k = 0; k < dTree.aNodes.length; k++) {
-   			var cName = dTree.aNodes[k].name.replace(/.*>(.*?)<.*/,"$1");
-   			if (dTree.aNodes[k].pid == cParent && cName == treelist[i].name &&
+   			var cName = dTree.aNodes[k].name.replace(/.*>(.*?)<.*/, "$1");
+   			if (dTree.aNodes[k].pid == cParent && cName == cn.name &&
    				(dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
    				found = k;
    				dTree.aNodes[k]._refresh = 0;
    			}
    		}
-   		if (!found) { 
+   		if (!found) {
    			found = dTree.aNodes.length;
     		dTree.add(found, cParent, str);
     		dTree.aNodes[found]._refresh = 2;
+    		for (var i = 0; i < found; i++) {
+    			if (dTree.aNodes[i].pid == cParent) {
+    				dTree.aNodes[i]._ls = false;
+    			}
+    		}
     	}
     }
-
+	
 	// search for old nodes that are not there anymore
 	for (var j = 0; j < foundParents.length; j++) {
 		for (var k = 0; k < dTree.aNodes.length; k++) {
