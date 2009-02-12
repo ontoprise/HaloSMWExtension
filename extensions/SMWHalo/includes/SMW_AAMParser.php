@@ -38,7 +38,8 @@ class SMWH_AAMParser {
 	
 	// States of the template parsers state machine
 	// Each state consists of these elements:
-	// 0 - Top of the template stack (t = template, p = template parameter, e = empty)
+	// 0 - Top of the template stack (t = template, pf = parser function, 
+	//                                p = template parameter, e = empty)
 	// 1 - Input token
 	// 2 - Type of page (n=normal, t=template) 
 	// 3 - Action:
@@ -83,6 +84,7 @@ class SMWH_AAMParser {
 		// state 4
 		array(
 			array('t','}','*','pop'),
+			array('pf','}','*','pop'),
 			array('p','}','*',5),
 			array('e','*','*','wc'),
 		),
@@ -113,6 +115,7 @@ class SMWH_AAMParser {
 		array(
 			array('*','|','*','wc'),
 			array('*','{','*',1),
+			array('pf','*','*','wc'),
 			array('*',"\n",'*',9),
 			array('*','}','*',10),
 //			array('*','[[','*','at'),
@@ -421,70 +424,80 @@ class SMWH_AAMParser {
 	 */
 	public function highlightAnnotations(&$wikiText)
 	{
-		// add intermediate tags to annotations
-		$parts = preg_split('/(\[\[)|(::)|(:=)|(\]\])/sm', $wikiText, -1, 
-		                    PREG_SPLIT_DELIM_CAPTURE |
+	
+		$text= "";
+		$parts = preg_split('/(\{wikiTextOffset=\d* obj="annotation"\}\s*\[\[(?:[^\]]*)\]\])/sm', $wikiText, -1, 
+							PREG_SPLIT_DELIM_CAPTURE |
 		                    PREG_SPLIT_NO_EMPTY);
-		
-		$braceCount = 0;
-		$isLink = true;
-		$braceContent = "";
-		$text = "";
-		$count = 0;
+		                    
+        $count = 0;
         foreach ($parts as $part) {
-        	switch ($part) {
-        		case '[[':
-        			$braceCount++;
-        			$braceContent .= $part;
-        			if ($braceCount == 1) {
-        				$isLink = true;
-        			}
-        			break;
-        		case ':=':
-        		case '::':
-        			if ($braceCount == 0) {
-        				$text .= $part;
-        			} else {
-        				if ($braceCount == 1) {
-        					$isLink = false;
-	        			}
-        				$braceContent .= $part;
-        			}
-        			break;
-        		case ']]':
-        			--$braceCount;
-       				$braceContent .= $part;
-       				$short = strlen($braceContent) < 41;
-        			if ($braceCount == 0) {
-        				if ($this->checkIgnoreAnnotation($braceContent)) {
-        					$text .= $braceContent;
-        				} else {
-	        				if ($isLink) {
-	        					$text .= ($short) 
-	        								? '{shortlinkstart'.++$count.'}'.$braceContent.'{shortlinkend}'
-	        								: '{linkstart'.++$count.'}'.$braceContent.'{linkend}';
-	        				} else {
-	        					$text .= ($short) 
-	        								? '{shortannostart'.++$count.'}'.$braceContent.'{shortannoend}'
-	        								: '{annostart'.++$count.'}'.$braceContent.'{annoend}';
-	        				}
-        				}
-	        			$braceContent = "";
-        			}
-        			if ($braceCount < 0) {
-        				// this should never occur (malformed wiki text)
-        				$braceCount = 0;
-        				$text .= $braceContent;
-	        			$braceContent = "";
-        			}
-        			break;
-        		default:
-        			if ($braceCount == 0) {
-        				$text .= $part;
-        			} else {
-        				$braceContent .= $part;
-        			}
-        	}
+			$anno = preg_split('/(\{wikiTextOffset=\d* obj="annotation"\}\s*)/sm', $part, -1, 
+								PREG_SPLIT_DELIM_CAPTURE |
+			                    PREG_SPLIT_NO_EMPTY);
+			$text .= $anno[0];
+			if (isset($anno[1])) {
+				
+				// add intermediate tags to annotations
+				$annoparts = preg_split('/(\[\[)|(::)|(:=)|(\]\])/sm', $anno[1], -1, 
+				                    PREG_SPLIT_DELIM_CAPTURE |
+				                    PREG_SPLIT_NO_EMPTY);
+				
+				$braceCount = 0;
+				$isLink = true;
+				$braceContent = "";
+		        foreach ($annoparts as $ap) {
+		        	switch ($ap) {
+		        		case '[[':
+		        			$braceCount++;
+		        			$braceContent .= $ap;
+		        			if ($braceCount == 1) {
+		        				$isLink = true;
+		        			}
+		        			break;
+		        		case ':=':
+		        		case '::':
+	        				if ($braceCount == 1) {
+	        					$isLink = false;
+		        			}
+	        				$braceContent .= $ap;
+		        			break;
+		        		case ']]':
+		        			--$braceCount;
+		       				$braceContent .= $ap;
+		       				$short = strlen($braceContent) < 41;
+		        			if ($braceCount == 0) {
+		        				if ($this->checkIgnoreAnnotation($braceContent)) {
+		        					$text .= $braceContent;
+		        				} else {
+			        				if ($isLink) {
+			        					$text .= ($short) 
+			        								? '{shortlinkstart'.++$count.'}'.$braceContent.'{shortlinkend}'
+			        								: '{linkstart'.++$count.'}'.$braceContent.'{linkend}';
+			        				} else {
+			        					$text .= ($short) 
+			        								? '{shortannostart'.++$count.'}'.$braceContent.'{shortannoend}'
+			        								: '{annostart'.++$count.'}'.$braceContent.'{annoend}';
+			        				}
+		        				}
+			        			$braceContent = "";
+		        			}
+		        			if ($braceCount < 0) {
+		        				// this should never occur (malformed wiki text)
+		        				$braceCount = 0;
+		        				$text .= $braceContent;
+			        			$braceContent = "";
+		        			}
+		        			break;
+		        		default:
+		        			if ($braceCount == 0) {
+		        				$text .= $ap;
+		        			} else {
+		        				$braceContent .= $ap;
+		        			}
+		        	}
+		        }
+			}
         }
 		return $text;
 	}
@@ -677,7 +690,7 @@ class SMWH_AAMParser {
 		$templateName = "";
 		$bracesDropped = false;
 		$result = null;
-		
+				
 		while ($i < $numTokens) {
 			$token = $tokens[$i];
 			$tmplDescr = $this->processTemplateToken($token, $currentlyParsing);		
@@ -700,7 +713,19 @@ class SMWH_AAMParser {
 					// a template has started. 
 					// $tmplDescr[1] contains its name
 					$templateName = $tmplDescr[1];
-					$result = $this->parseTemplate($tokens, $i+1, 't');
+					
+					// Check if the "template" is a parser function
+					$parserFunctionFound = false;
+					global $wgParser;
+					$parserFunctions = $wgParser->mFunctionHooks;
+					if (preg_match('/\s*#([^:]*):\s*/',$templateName, $matches) == 1) {
+						$name = $matches[1];
+						if (array_key_exists($name, $parserFunctions)) {
+							$parserFunctionFound = true;	
+						}
+					}
+
+					$result = $this->parseTemplate($tokens, $i+1, $parserFunctionFound ? 'pf' : 't');
 					if ($result[0] == 't') {
 						$end = $result[3]+1;
 						$lookahead = ($end<$numTokens) ? $tokens[$end] : null;
@@ -830,7 +855,7 @@ class SMWH_AAMParser {
 					return array('p');
 				case 'pop':
 					// end of template (parameter) found
-					return array($currentlyParsing == 't' ? 'et' : 'ep');
+					return array($currentlyParsing == 't' || $currentlyParsing == 'pf' ? 'et' : 'ep');
 				case 'db':
 					// drop one opening brace at the beginning, go to state in field 4
 					return array('db');
