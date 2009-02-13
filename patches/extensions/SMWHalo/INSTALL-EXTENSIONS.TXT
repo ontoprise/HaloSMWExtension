@@ -49,7 +49,7 @@ the authors.
   #WYSIWYG:
     require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
    
-  #TreeView 
+  #Semantic Treeview 
     require_once('extensions/Treeview/Treeview5.php');
   
   #Access Control Lists
