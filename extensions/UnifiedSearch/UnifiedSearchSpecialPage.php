@@ -181,7 +181,7 @@ class USSpecialPage extends SpecialPage {
 			$html .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
 			$html .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
 			$html .= '</div>';
-		} 
+		}
 
 		if (count($searchResults) > 0) {
 			$html .= "<table id=\"us_browsing\"><tr><td>".(intval($offset/$limit)+1)." von ".(intval($totalHits/$limit)+1)."</td>";
@@ -221,17 +221,25 @@ class USSpecialPage extends SpecialPage {
 		// if query contains boolean operators, consider as as user-defined
 		// and do not use title search and pass search string unchanged to Lucene
 
+		$namespacesToSearch = $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces);
 		if (!self::userDefinedSearch($terms, $search)) {
 			// non user-defined
-			$defaultPattern = 'contents:($1) OR title:($2)';
+			$contentTitleSearchPattern = 'contents:($1) OR title:($2)';
 			$expandedFTSearch = QueryExpander::expandForFulltext($terms, $tolerance);
-			$expandedTitles = QueryExpander::expandForTitles($terms, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $tolerance);
-			$defaultPattern = str_replace('$1', $expandedFTSearch, $defaultPattern);
-			$defaultPattern = str_replace('$2', $expandedTitles, $defaultPattern);
-			$searchSet = LuceneSearchSet::newFromQuery( 'raw', 	$defaultPattern, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset);
+			$expandedTitles = QueryExpander::expandForTitles($terms, $namespacesToSearch , $tolerance);
+			$contentTitleSearchPattern = str_replace('$1', $expandedFTSearch, $contentTitleSearchPattern);
+			$contentTitleSearchPattern = str_replace('$2', $expandedTitles, $contentTitleSearchPattern);
+			$searchSet = LuceneSearchSet::newFromQuery( 'raw', 	$contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
 
 			if ($searchSet->getTotalHits() == 0) {
-				$searchSet = LuceneSearchSet::newFromQuery( 'suggest',  $search, $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset);
+				// use enhanced lucene search method with SKOS expansion for fulltext
+				$searchSet = LuceneSearchSet::newFromQuery( 'search',  $expandedFTSearch, $namespacesToSearch, $limit, $offset);
+			}
+
+			global $wgLuceneSearchVersion;
+			if ($searchSet->getTotalHits() == 0 && $wgLuceneSearchVersion >= 2.1) {
+				// try at least a suggestion
+				$searchSet = LuceneSearchSet::newFromQuery( 'suggest',  $search, $namespacesToSearch, $limit, $offset);
 			}
 		} else {
 			// user defined
@@ -244,8 +252,7 @@ class USSpecialPage extends SpecialPage {
 			}
 			$terms = $removedOperators;
 
-			$searchSet = LuceneSearchSet::newFromQuery( 'search',
-			$search , $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces), $limit, $offset);
+			$searchSet = LuceneSearchSet::newFromQuery( 'search', $search , $namespacesToSearch, $limit, $offset);
 
 		}
 
@@ -278,7 +285,7 @@ class USSpecialPage extends SpecialPage {
 
 		while ($nextFulltext !== false) {
 
-			if ($nextFulltext != false && !$nextFulltext->isMissingRevision()) {
+			if ($nextFulltext != false ) {
 				$lr = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $terms);
 				$lr->setWordCount($nextFulltext->getWordCount());
 				$lr->setTimeStamp($nextFulltext->getTimestamp());
@@ -302,6 +309,8 @@ class USSpecialPage extends SpecialPage {
 	 * @return boolean
 	 */
 	private static function userDefinedSearch($terms, $search) {
+		
+		// check for boolean operators
 		foreach($terms as $term) {
 			$term = strtolower($term);
 			if ($term == 'and' || $term == 'or' || $term == 'not') {
@@ -309,7 +318,11 @@ class USSpecialPage extends SpecialPage {
 			}
 		}
 
-		return preg_match('/\[\d+\]:/', $search) !== 0 || strpos($search, '~') !== false;
+		 // check for special lucene syntax
+		return preg_match('/\[\d+\]:/', $search) !== 0  // namespace prefix, e.g.  [12]:
+				|| strpos($search, '~') !== false       // unsharp
+				|| strpos($search, '*') !== false       // wildcard * (any number of chars)
+				|| strpos($search, '?') !== false;      // wildcard ? (one char)
 
 	}
 

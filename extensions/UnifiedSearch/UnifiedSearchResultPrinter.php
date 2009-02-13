@@ -73,7 +73,7 @@ class UnifiedSearchResult {
 	}
 
 	public static function newFromLuceneResult(LuceneResult $lc, array & $terms) {
-		return new UnifiedSearchResult($lc->getTitle(), $lc->getScore(), true, $lc->getTextSnippet($terms));
+		return new UnifiedSearchResult($lc->getTitle(), $lc->getScore(), true, !$lc->isMissingRevision() ? $lc->getTextSnippet($terms) : NULL);
 	}
 
 	public static function newFromWikiTitleResult(Title $title, $score) {
