@@ -21,7 +21,6 @@ function smw_treeview_getTree($input) {
   
   // fetch on depth only
   $maxDepth = 'maxDepth=1';
-  
   // these are not needed for Ajax calls
   $redirectPage = NULL;
   $level = NULL;

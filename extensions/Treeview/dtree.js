@@ -7,6 +7,7 @@
 | copyright messages are intact.                    |
 |                                                   |
 | Updated: 17.04.2003                               |
+|                                                   |
 | Additonal changes on Feb. 2009 by Ontoprise.      |
 | This version will work with the Semantic Treeview |
 | extension only - which is part of SMW+ for        |
@@ -15,7 +16,6 @@
 
 var httpRequest;
 var cachedData = [];
-var doingRefresh;
 var refreshOpenNodes = [];
 var refreshRootNodes = [];
 var refreshDtree;
@@ -276,15 +276,17 @@ dTree.prototype.refresh = function() {
 	if (refreshRootNodes.length == 0 && refreshOpenNodes.length == 0)
 		return;
 
-	// lock variable
-	doingRefresh = true;
 	document.getElementById(this.obj.substr(2)).innerHTML = "Updating tree, please wait...";
 	
 	// now start with the first dynamic root node, the rest follows
 	// in handleResponseRefresh() triggered by the http requests.
+	// set refreshDtree to true, later the dtree object is stored there
+	// this variable is used for locking.
 	drn = refreshRootNodes.shift();
-	if (drn != null) this.loadFirstLevel(drn, 'r');
-	else doingRefresh = false;
+	if (drn != null) {
+		refreshDtree = true;
+		this.loadFirstLevel(drn, 'r');
+	}
 }
 
 // removes a node by eleminating the element of the array and shifting
@@ -519,7 +521,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		cachedData[cachedData.length] = new Array(token, refreshDtree);
 	else 
 		cachedData[cachedData.length] = new Array(token, this);
-	params += 's%3D' + this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+	params += 's%3D' + escape(this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2"));
 	params += '%26t%3D' + token; 
     this.getHttpRequest(params, callBackMethod);
 };
@@ -541,7 +543,7 @@ dTree.prototype.loadFirstLevel = function(id) {
 dTree.prototype.getHttpRequest = function(params, callBackMethod) {
     // if an old http request is still runing, don't start a new one
     // also a tree refresh needs several requests, these have priority
-    if ((doingRefresh && (callBackMethod == "o")) || httpRequest)
+    if ((refreshDtree && (callBackMethod == "o")) || httpRequest)
     	return;  
 
     // Mozilla, Safari and other browsers
@@ -564,7 +566,7 @@ dTree.prototype.getHttpRequest = function(params, callBackMethod) {
     if (callBackMethod == "o") httpRequest.onreadystatechange = handleResponseOpen;
     else if(callBackMethod == "r") httpRequest.onreadystatechange = handleResponseRefresh;
     else return;
-    
+
     httpRequest.open("GET", this.smwAjaxUrl + params); 
 	httpRequest.send(null);
 };
@@ -854,6 +856,7 @@ handleResponseRefresh = function() {
     	parents.set(treelist[0].depth, parentId);
     	lastDepth = treelist[0].depth;
     }
+    else treelist = [];
     dTree.aNodes[parentId]._complete = true;
     
 
@@ -898,7 +901,8 @@ handleResponseRefresh = function() {
 	for (var j = 0; j < foundParents.length; j++) {
 		for (var k = 0; k < dTree.aNodes.length; k++) {
 			if (dTree.aNodes[k].pid == foundParents[j] && dTree.aNodes[k]._refresh == 1) {
-				dTree.aNodes[k]._refresh = 3;
+				dTree.removeNode(k);
+				k--;
 			}
 		}
 	}
@@ -925,6 +929,7 @@ handleResponseRefresh = function() {
 	for (var i = 0; i < dTree.aNodes.length; i++) {
 		if (dTree.aNodes[i]._refresh == 2) {
 			newSerialData += '{' + dTree.aNodes[i].serialize() + '}';
+			dTree.aNodes[i]._refresh = -1;
 		}
 	}
 
@@ -935,20 +940,11 @@ handleResponseRefresh = function() {
     	dTree.updateAjaxTreeCache(newSerialData);
     	dTree.config.useCookies = false;
     }
-    // remove old nodes (also from cookies) and set refresh flag to intial value
-	for (var i = 0; i < dTree.aNodes.length; i++) {
-		if (dTree.aNodes[i]._refresh == 3) {
-			dTree.removeNode(i);
-			i--;
-		} else dTree.aNodes[i]._refresh = -1;
-	}
         
     // write tree and enable cookies again
     document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
     if (toggleCookies) dTree.config.useCookies = true;
+
 	// unlock
-	doingRefresh = false;
 	refreshDtree = null;
 }
-
- 

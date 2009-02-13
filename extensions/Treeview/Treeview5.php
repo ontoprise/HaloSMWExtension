@@ -9,7 +9,7 @@
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
  
-define('TREEVIEW5_VERSION','5.1.10, 2008-04-15');
+define('SEMANTIC_TREEVIEW_VERSION','1.0');
 
 require_once('TreeGenerator.php');
 
@@ -19,24 +19,25 @@ require_once('getTree.php');
 # Set any unset images to default titles
 if (!isset($wgTreeViewImages) || !is_array($wgTreeViewImages)) $wgTreeViewImages = array();
  
-$wgTreeView5Magic              = "tree"; # the parser-function name for trees
+$wgTreeViewMagic               = "tree"; # the parser-function name for trees
 $wgTreeViewShowLines           = false;  # whether to render the dotted lines joining nodes
-$wgExtensionFunctions[]        = 'wfSetupTreeView5';
-$wgHooks['LanguageGetMagic'][] = 'wfTreeView5LanguageGetMagic';
+$wgExtensionFunctions[]        = 'wfSetupTreeView';
+$wgHooks['LanguageGetMagic'][] = 'wfTreeViewLanguageGetMagic';
  
 $wgExtensionCredits['parserhook'][] = array(
-    'name'        => 'Treeview5',
-    'author'      => '[http://www.organicdesign.co.nz/nad Nad], [http://www.organicdesign.co.nz/User:Sven Sven]',
-    'url'         => 'http://www.mediawiki.org/wiki/Extension:Treeview',
-    'description' => 'Extends the wiki parser to allow bullet and numbered lists to work with recursion and optionally
-                        allows these to be rendered as collapsible trees using the free
-                        [http://www.destroydrop.com/javascripts/tree dTree] JavaScript tree menu.',
-    'version'     => TREEVIEW5_VERSION
+    'name'        => 'Semantic Treeview',
+    'author'      => 'based on the work of [http://www.organicdesign.co.nz/nad Nad], improved by [http://www.ontoprise.de Ontoprise]',
+    'url'         => 'http://smwforum.ontoprise.com/smwforum/index.php/Semantic_Treeview',
+    'description' => 'Improved version of the Mediawiki extension [http://www.mediawiki.org/wiki/Extension:Treeview Treeview].'.
+    				 ' Extends the wiki parser to allow bullet and numbered lists to work with recursion and optionally'.
+                     ' allows these to be rendered as collapsible trees using the free'.
+                     ' [http://www.destroydrop.com/javascripts/tree dTree] JavaScript tree menu.',
+    'version'     => SEMANTIC_TREEVIEW_VERSION
     );
  
-class TreeView5 {
+class SemanticTreeview {
  
-    var $version  = TREEVIEW5_VERSION;
+    var $version  = SEMANTIC_TREEVIEW_VERSION;
     var $uniq     = '';      # uniq part of all tree id's
     var $uniqname = 'tv';    # input name for uniqid
     var $id       = '';      # id for specific tree
@@ -51,10 +52,10 @@ class TreeView5 {
      */
     function __construct() {
         global $wgOut,$wgHooks,$wgParser,$wgScriptPath,$wgJsMimeType,
-            $wgTreeView5Magic,$wgTreeViewImages,$wgTreeViewShowLines;
+            $wgTreeViewMagic,$wgTreeViewImages,$wgTreeViewShowLines;
  
         # Add hooks
-        $wgParser->setFunctionHook($wgTreeView5Magic,array($this,'expandTree'));
+        $wgParser->setFunctionHook($wgTreeViewMagic,array($this,'expandTree'));
         $wgHooks['ParserAfterTidy'][] = array($this,'renderTree');
  
         # Update general tree paths and properties
@@ -75,7 +76,7 @@ class TreeView5 {
             }
  
         # Add link to output to load dtree.js script
-        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Treeview5 --></script>\n");
+        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview --></script>\n");
         $wgOut->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
@@ -244,7 +245,7 @@ class TreeView5 {
                     # Build tree JS
                     $tree = "
                         $top
-                        <div class='Treeview5' id='$id'>
+                        <div class='SemanticTreeview' id='$id'>
                             <script type=\"$wgJsMimeType\">
                                 // TreeView{$this->version}
                                 tree = new dTree('{$this->uniqname}$id', '$class');
@@ -285,20 +286,20 @@ class TreeView5 {
 /**
  * Called from $wgExtensionFunctions array when initialising extensions
  */
-function wfSetupTreeView5() {
-    global $wgTreeView5;
+function wfSetupTreeView() {
+    global $wgTreeView;
      // register tree generator
     new TreeGenerator();
-    $wgTreeView5 = new TreeView5();
+    $wgTreeView = new SemanticTreeview();
     }
  
  
 /**
  * Needed in MediaWiki >1.8.0 for magic word hooks to work properly
  */
-function wfTreeView5LanguageGetMagic(&$magicWords,$langCode = 0) {
-    global $wgTreeView5Magic;
-    $magicWords[$wgTreeView5Magic] = array($langCode,$wgTreeView5Magic);
+function wfTreeViewLanguageGetMagic(&$magicWords,$langCode = 0) {
+    global $wgTreeViewMagic;
+    $magicWords[$wgTreeViewMagic] = array($langCode,$wgTreeViewMagic);
     $magicWords['generateTree']  = array( 0, 'generateTree' );
     return true;
     }

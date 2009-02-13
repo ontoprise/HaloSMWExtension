@@ -13,7 +13,7 @@ class TreeGenerator {
 	 *
 	 */
 	public function __construct() {
-		global $wgTreeView5Magic, $wgParser;
+		global $wgTreeViewMagic, $wgParser;
 		$wgParser->setFunctionHook( GENERATE_TREE_PF, array($this,'generateTree'));
 
 	}
@@ -529,7 +529,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[["
 		            .(isset($elementProperties[$item[0]][3])
 		             ? $elementProperties[$item[0]][0]."|".$elementProperties[$item[0]][3]
-		             : $elementProperties[$item[0]][0])
+		             : ( $elementProperties[$item[0]][0] != str_replace("_", " ", $elementProperties[$item[0]][2]))
+		               ? $elementProperties[$item[0]][2]."|".$elementProperties[$item[0]][0]
+		               : $elementProperties[$item[0]][0] )
 		            ."]]\n";
 		    unset($item);
 	    }
