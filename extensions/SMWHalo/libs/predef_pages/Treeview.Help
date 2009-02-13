@@ -16,7 +16,7 @@ For example:
 </pre>
 [[Image:Treeview.png|none|frame|Treeview]]
 
-For more information, see the documentation of the [http://www.mediawiki.org/wiki/Extension:TreeAndMenu TreeAndMenu] extension. Note that the TreeAndMenu extension is the successor of the Treeview5 extension, which is shipped with SMW+ by default.
+For more information, see the documentation of the [http://smwforum.ontoprise.com/smwforum/index.php/Semantic_Treeview Semantic Treeview] extension. Note that the TreeAndMenu extension is the successor of the Treeview5 extension. Semantic Treeview is based on Treeview5 and shipped with SMW+ by default.
 <hr>
 <b>Tip &ndash;</b> The tree on the page <tt>MediaWiki:NavTree</tt> controls the appearance of the Navigation box in the sidebar, which is displayed on the left edge of the page.
 <hr>
