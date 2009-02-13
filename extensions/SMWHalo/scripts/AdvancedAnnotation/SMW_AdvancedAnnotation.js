@@ -294,7 +294,7 @@ AdvancedAnnotation.prototype = {
 					case 'nowiki': msgId = 'WTP_NOT_IN_NOWIKI'; break;
 					case 'template': msgId = 'WTP_NOT_IN_TEMPLATE'; break;
 					case 'annotation': msgId = 'WTP_NOT_IN_ANNOTATION'; break;
-					case 'ask': msgId = 'WTP_NOT_IN_QUERY'; break;
+					case 'query': msgId = 'WTP_NOT_IN_QUERY'; break;
 					case 'pre': msgId = 'WTP_NOT_IN_PREFORMATTED'; break;
 				}
 				msg = gLanguage.getMessage(msgId);
@@ -443,7 +443,7 @@ AdvancedAnnotation.prototype = {
 			var obj = node.getAttribute('obj');
 			if (obj === 'pre'
 //				|| obj === 'annotation'
-			    || obj === 'ask'
+			    || obj === 'query'
 			    || obj === 'nowiki'
 //			    || obj === 'newline'
 			    || obj === 'template') {

@@ -244,13 +244,23 @@ class SMWH_AAMParser {
 				// $tmplDescr[2]: start index of the template
 				// $tmplDescr[3]: end index of the template
 				// $tmplDescr[4]: content
-				if ($tmplDescr[1] == '#ask:') {
+
+// Possible check for parser function. Currently comment, because it is not important
+// for the user to know if something is a template or a parser function.
+//				global $wgParser;
+//				$parserFunctions = $wgParser->mFunctionHooks;
+				$name = $tmplDescr[1];
+				if (preg_match('/\s*#?([^:]*):\s*/', $name, $matches) == 1) {
+					$name = $matches[1];
+				}
+				
+				if ($name == 'ask' || $name == 'sparql') {
 					// special handling of ask-template
-					$markedText .= "\t{wikiTextOffset=".$pos.' obj="ask"}'
+					$markedText .= "\t{wikiTextOffset=".$pos.' obj="query"}'
 					               ."\n".$tmplDescr[4]."\n";
 				} else {
 					$markedText .= "\n".'{wikiTextOffset='.$pos
-					               .' template="'.$tmplDescr[1].'"'
+					               .' template="'.$name.'"'
 				                   .' id="tmplt'.$id.'"}'."\n".$tmplDescr[4]
 					               ."\n".'{templateend:tmplt'.$id.'}'."\n";
 					$id++;
@@ -322,7 +332,7 @@ class SMWH_AAMParser {
 							               || ($part0{0} == '}')
 							               || ($part0{0} == '|');
 							$obj = 'text';
-							if (strpos($part0, '<ask') === 0) $obj = 'ask';
+							if (strpos($part0, '<ask') === 0) $obj = 'query';
 							else if (strpos($part0, '<nowiki>') === 0) $obj = 'nowiki';
 							else if (strpos($part0, '<pre>') === 0) $obj = 'pre';
 							
