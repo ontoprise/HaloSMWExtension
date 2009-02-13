@@ -102,7 +102,7 @@ class SMWTripleStore extends SMWStore {
 	function getInProperties(SMWDataValue $object, $requestoptions = NULL) {
 		return $this->smwstore->getInProperties($object, $requestoptions);
 	}
-	
+
 	function getSMWPropertyID(SMWPropertyValue $property) {
 		return $this->smwstore->getSMWPropertyID($property);
 	}
@@ -172,9 +172,9 @@ class SMWTripleStore extends SMWStore {
 				// ingore. handeled by category section below
 				continue;
 			} elseif ($property->getPropertyID() == "_REDI") {
-                // ingore. handeled by redirect section below
-                continue;
-            } elseif ($property->getPropertyID() == "_SUBP") {
+				// ingore. handeled by redirect section below
+				continue;
+			} elseif ($property->getPropertyID() == "_SUBP") {
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 					foreach($propertyValueArray as $value) {
 						$triples[] = array("prop:".$subject->getDBkey(), "rdfs:subPropertyOf", "prop:".$value->getDBkey());
@@ -183,7 +183,7 @@ class SMWTripleStore extends SMWStore {
 				}
 				continue;
 			}
-            
+
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
 			foreach($propertyValueArray as $value) {
@@ -205,7 +205,7 @@ class SMWTripleStore extends SMWStore {
 						} else {
 							if ($value->getXSDValue() != NULL) {
 								$xsdType = WikiTypeToXSD::getXSDType($property->getTypeID());
-                              	$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
+								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
 							} else if ($value->getNumericValue() != NULL) {
 								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:float");
 							}
@@ -333,7 +333,7 @@ class SMWTripleStore extends SMWStore {
 
 	function getQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword;
-    
+
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
 
@@ -346,17 +346,17 @@ class SMWTripleStore extends SMWStore {
 					// SPARQL, attach common prefixes
 					$response = $client->query(self::$ALL_PREFIXES.$query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
 				} else {
-					
+
 					// do not attach anything
 					$response = $client->query($query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
-					
+
 				}
 
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
 			} catch(Exception $e) {
-//				var_dump($e);
+				//				var_dump($e);
 				$sqr = new SMWQueryResult(array(), $query, false);
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
@@ -422,7 +422,7 @@ class SMWTripleStore extends SMWStore {
 
 		}
 	}
-	
+
 	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
 		$this->smwstore->refreshData($index, $count, $namespaces, $usejobs);
 	}
@@ -437,7 +437,7 @@ class SMWTripleStore extends SMWStore {
 	 */
 	private function createTables($verbose) {
 		global $smwgHaloIP;
-        require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
+		require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
 		$db =& wfGetDB( DB_MASTER );
 
 		$ruleTableName = $db->tableName('smw_rules');
@@ -518,7 +518,7 @@ class SMWTripleStore extends SMWStore {
 		}
 		return $trimed_lit;
 	}
-	
+
 	/**
 	 * Removes type hint, e.g. "....."^^xsd:type gets to "....."
 	 *
@@ -565,7 +565,7 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-     
+			
 		$index = 0;
 		if ($query->fromASK) {
 
@@ -603,26 +603,26 @@ class SMWTripleStore extends SMWStore {
 					$mapPRTOColumns[$label] = $index;
 					$prs[] = $pr;
 					$index++;
-				} 
+				}
 
 			}
 		}
 
-      
+
 		// generate PrintRequests for all bindings (if they do not exist already)
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
 		foreach ($bindings as $b) {
 			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
 			$var_index++;
-			
+
 			// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
 			if ($query->mainLabelMissing && $var_name == "_X_") {
-				 continue;
+				continue;
 			}
 			// do not generate new PrintRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
-			
+
 			// otherwise create one
 			if (stripos($b, self::$CAT_NS) === 0) {
 				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_CATEGORY));
@@ -636,24 +636,24 @@ class SMWTripleStore extends SMWStore {
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
-     
+			
 		// Query result object
 		$queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
-   
+			
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 		foreach ($results as $r) {
 			$row = array();
-			$columnIndex = 0; // column = n-th XML binding node 
+			$columnIndex = 0; // column = n-th XML binding node
 			$pr_index = 0; // Printrequest index
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
 					
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-                if ($query->mainLabelMissing && $var_name == "_X_") {
-                    $columnIndex++;
-                	continue;
-                }
+				if ($query->mainLabelMissing && $var_name == "_X_") {
+					$columnIndex++;
+					continue;
+				}
 				// category result
 				if (stripos($b, self::$CAT_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$CAT_NS)), NS_CATEGORY);
@@ -670,29 +670,42 @@ class SMWTripleStore extends SMWStore {
 
 					// instance result
 				} else if (stripos($b, self::$INST_NS) === 0) {
-					$title = Title::newFromText(substr($b, strlen(self::$INST_NS)), NS_MAIN);
-					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					$v->setValues($title, NS_MAIN, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
-
+					
+					$allValues = array();
+					$multiValue = explode("|", $b);
+					
+					foreach($multiValue as $sv) {
+						$title = Title::newFromText(substr($sv, strlen(self::$INST_NS)), NS_MAIN);
+						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+						$v->setValues($title, NS_MAIN, $title->getArticleID());
+						$allValues[] = $v;
+						
+					}
+				
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray($allValues, $prs[$pr_index]);
 					// property value result
 				} else {
-					$literal = $this->unquote($this->removeXSDType($b));
-					$value = SMWDataValueFactory::newPropertyValue($var_name);
-					if ($value->getTypeID() == '_dat') { // exception for dateTime
-					   if ($literal != '') $value->setXSDValue(utf8_decode($literal));
-					} else {
-						$value->setUserValue(utf8_decode($literal));
+					$allValues = array();
+					$multiValue = explode("|", $b);
+					foreach($multiValue as $sv) {
+						$literal = $this->unquote($this->removeXSDType($sv));
+						$value = SMWDataValueFactory::newPropertyValue($var_name);
+						if ($value->getTypeID() == '_dat') { // exception for dateTime
+							if ($literal != '') $value->setXSDValue(utf8_decode($literal));
+						} else {
+							$value->setUserValue(utf8_decode($literal));
+						}
+						$allValues[] = $value;
 					}
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($value), $prs[$pr_index]);
+					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray($allValues, $prs[$pr_index]);
 				}
 				$columnIndex++;
-                $pr_index++;
+				$pr_index++;
 			}
-	
+
 			$queryResult->addRow($row);
 		}
-		
+
 		return $queryResult;
 	}
 
@@ -706,7 +719,7 @@ class SMWTripleStore extends SMWStore {
 	private function serializeParams($query) {
 		$result = "";
 		$first = true;
-		
+
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
@@ -754,14 +767,14 @@ class SMWTripleStore extends SMWStore {
 	 * @return boolean
 	 */
 	private function containsPrintRequest($var_name, array & $prqs, & $query) {
-        $contains = false;
+		$contains = false;
 		foreach($prqs as $po) {
 			if ($query->fromASK && $po->getData() == NULL && $var_name == '_X_') {
 				return true;
 			}
 			if ($po->getData() != NULL) {
 				$label = $po->getData() instanceof Title ? $po->getData()->getDBkey() : $po->getData()->getXSDValue();
-			    $contains |= strtolower($label) == strtolower($var_name);
+				$contains |= strtolower($label) == strtolower($var_name);
 			}
 
 		}
@@ -847,49 +860,49 @@ class SMWRuleStore {
 
 class WikiTypeToXSD {
 
-    /**
-     * Map primitve types or units to XSD values
-     *
-     * @param unknown_type $wikiTypeID
-     * @return unknown
-     */
-    public static function getXSDType($wikiTypeID) {
-        switch($wikiTypeID) {
-        	
-        	// direct supported types
-            case '_str' : return 'xsd:string';
-            case '_txt' : return 'xsd:string';
-            case '_num' : return 'xsd:float';
-            case '_boo' : return 'xsd:boolean';
-            case '_dat' : return 'xsd:dateTime';
-            
-            // not supported by TS. Take xsd:string
-            case '_geo' : 
-            case '_cod' :
-            case '_ema' :
-            case '_uri' :
-            case '_anu' : return 'xsd:string'; 
-            
-            // single unit type in SMW
-            case '_tem' : return 'xsd:unit';
-            
-            //only relevant for schema import
-            case '_wpc' :
-            case '_wpf' :
-            case '_wpp' :
-            case '_wpg' : return 'cat:DefaultRootCategory';
+	/**
+	 * Map primitve types or units to XSD values
+	 *
+	 * @param unknown_type $wikiTypeID
+	 * @return unknown
+	 */
+	public static function getXSDType($wikiTypeID) {
+		switch($wikiTypeID) {
 
-            // unknown or composite type 
-            default:
-            	// if builtin (starts with _) then regard it as string
-            	if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
-            	// if n-ary, regard it as string
-            	if (preg_match('\w+(;\w+)+', $wikiTypeID) !== false) return "xsd:string";
-            	// otherwise assume a unit
-                return 'xsd:unit';
-        }
+			// direct supported types
+			case '_str' : return 'xsd:string';
+			case '_txt' : return 'xsd:string';
+			case '_num' : return 'xsd:float';
+			case '_boo' : return 'xsd:boolean';
+			case '_dat' : return 'xsd:dateTime';
 
-    }
+			// not supported by TS. Take xsd:string
+			case '_geo' :
+			case '_cod' :
+			case '_ema' :
+			case '_uri' :
+			case '_anu' : return 'xsd:string';
+
+			// single unit type in SMW
+			case '_tem' : return 'xsd:unit';
+
+			//only relevant for schema import
+			case '_wpc' :
+			case '_wpf' :
+			case '_wpp' :
+			case '_wpg' : return 'cat:DefaultRootCategory';
+
+			// unknown or composite type
+			default:
+				// if builtin (starts with _) then regard it as string
+				if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
+				// if n-ary, regard it as string
+				if (preg_match('\w+(;\w+)+', $wikiTypeID) !== false) return "xsd:string";
+				// otherwise assume a unit
+				return 'xsd:unit';
+		}
+
+	}
 }
 
 
