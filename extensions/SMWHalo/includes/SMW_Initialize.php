@@ -1539,7 +1539,8 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 }
 
 function smwfAddDerivedFacts(& $text, $semdata) {
-	
+
+	wfLoadExtensionMessages('SemanticMediaWiki');
 	global $wgContLang;
 	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
 	$derivedFactsFound = false;   
