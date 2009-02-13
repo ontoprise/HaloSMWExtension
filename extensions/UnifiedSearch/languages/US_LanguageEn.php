@@ -58,8 +58,8 @@ class US_LanguageEn {
         'us_search_tries' => 'Tries',
         'us_go_button' => 'Go',
 	    'us_sort_for'=>'Sort for',
-	    'us_order_for'=>'Order'
-        
+	    'us_order_for'=>'Order',
+		'us_termsappear' => 'These terms appear in this page'	            
         
     );
 }

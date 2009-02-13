@@ -196,16 +196,19 @@ function wfUSInitializeSKOSOntology() {
 }
 
 /**
- * Get HTML body of wiki article
+ * Get HTML body of wiki article and highlight terms if provided
  * Ajax callback function
  */
 function smwf_ca_GetHTMLBody($page) {
 	global $smwgHaloScriptPath, $wgStylePath, $wgUser, $wgDefaultSkin;
-	global $wgServer, $wgParser;
+	global $wgServer, $wgTitle, $wgParser;
 
+	// add colors for colorization of more terms
 	$color = array("#00FF00", "#00FFFF", "#FFFF00");
+	// set standard color for terms >count($color) terms.
 	$wgDefaultColor = "#00FF00";
 
+	// fetch MediaWiki page 
 	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
 	$opt = ParserOptions::newFromUser($wgUser);
 	$title = Title::newFromText($page);
@@ -216,29 +219,41 @@ function smwf_ca_GetHTMLBody($page) {
 	} else {
 		return null;
 	}
-
+	
+	// fetch current skin
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
 
-	// add main.css
+	// add main.css to later shown html page
 	$head = '<head>';
 	$head .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
 	$head .= '<style type="text/css" media="screen,projection"> @import "'. $wgStylePath .'/'. $skinName .'/main.css?164";</style>';
 	$head .= '</head>';
-
+	
+	// fetch main HTML content of page
 	$htmlcontent = $out->getText();
 
-	// highlight search terms
+	// add search term highlighting header to shown HTML page
+	$header = '<div style="border: 1px solid rgb(153, 153, 153); margin: -1px -1px 0pt; padding: 0pt; background: rgb(255, 255, 255) none repeat scroll 0% 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">';
+	$header .= '<div style="border: 1px solid rgb(153, 153, 153); margin: 12px; padding: 8px; background: rgb(221, 221, 221) none repeat scroll 0% 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(0, 0, 0); font-weight: normal; text-align: left;">';
+	$header .= wfMsg('us_termsappear').": ";
+	
+	// finally highlight search terms but leave links as they are 
 	$numargs = func_num_args();
 	$arg_list = func_get_args();
 	if ($numargs > 1) {
-		for ($i = 1; $i < $numargs; $i++) {
+		for ($i = 1; $i < $numargs; $i++) {			
 			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor;
-			$htmlcontent = str_ireplace($arg_list[$i], "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>", $htmlcontent);
+			$replacement_phrase = "<span style=\'background-color: ". $currcolor . ";\'>".$arg_list[$i]."</span>";
+			$header .= "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>&nbsp;";
+			$htmlcontent = preg_replace("/(>|^)([^<]+)(?=<|$)/iesx", "'\\1'.str_ireplace('$arg_list[$i]',
+'$replacement_phrase', '\\2')", $htmlcontent);
 		}
 	}
+	// add closing <divs> to term header
+	$header .= "</div></div>";
 
-	return $head.$htmlcontent;
+	return $head.$header.$htmlcontent;
 }
 
 
