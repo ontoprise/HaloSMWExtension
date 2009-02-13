@@ -245,7 +245,7 @@ class SemanticTreeview {
                     # Build tree JS
                     $tree = "
                         $top
-                        <div class='SemanticTreeview' id='$id'>
+                        <div class='Treeview' id='$id'>
                             <script type=\"$wgJsMimeType\">
                                 // TreeView{$this->version}
                                 tree = new dTree('{$this->uniqname}$id', '$class');
