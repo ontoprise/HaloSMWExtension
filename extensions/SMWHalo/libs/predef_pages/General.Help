@@ -9,6 +9,6 @@ SMW+ is a bundle of the following MediaWiki extensions:
 * '''FCK-Editor.''' A WYSIWYG Editor for MediaWiki.
 * '''Glossary.''' Allows wiki authors to define a list of acronyms and their definitions on a special page. Whenever an acronym is found, it will be highlighted and moving the pointer over it will show supplementary information.
 * '''PermissionACL.''' Offers a way to restrict access to specific namespaces, pages, and categories based on user group or user name.
-* '''Treeview5.''' Allows users to represent hierarchical structures in a graphical form.
+* '''Semantic Treeview.''' Allows users to represent hierarchical structures in a graphical form.
 * '''LDAPAuthentication.''' Allows user authentication via the Lightweight Directory Access Protocol LDAP.
 * '''Supplementary extensions.''' Other useful extensions such as ParserFunctions, StringFunctions, Variables, Cite, etc.
