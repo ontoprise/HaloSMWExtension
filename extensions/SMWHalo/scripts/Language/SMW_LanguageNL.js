@@ -24,7 +24,6 @@ var wgContLanguageStrings = {
 	'PROPERTY_NS'             : "Property:",	//namespace identifier with colon
 	'TEMPLATE_NS'             : "Template:",	//namespace identifier with colon	
 	'TYPE_NS'                 : 'Type:', 		//namespace identifier with colon
-	'WEBSERVICE_NS'           : 'WebService:',  //namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Pagina",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Pagina",			// type identifier without namespace
 	
