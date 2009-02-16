@@ -1,0 +1,45 @@
+@CHARSET "ISO-8859-1";
+
+.OuterLeftIndent{
+	padding-left: 40px;
+}
+
+.OKButton{
+	padding-left: 15px;
+	cursor: pointer;
+}
+
+.Marker{
+	padding-right: 15px;
+	cursor: pointer;
+}
+
+.HeadlineDelimiter{
+	padding-left: 10px;
+	padding-right: 10px;	
+}
+
+.StepDiv{
+	padding-bottom: 25px;
+}
+
+.HelpDiv{
+	padding-top: 75px;
+}
+
+.ActualMenueStep{
+	color: #000000;
+	font-weight: bold;
+}
+
+.TodoMenueStep{
+	color: #000000;
+	font-weight: normal;
+}
+
+.DoneMenueStep{
+	color: #7f7f7f;
+	font-weight: bold;
+}
+
+
