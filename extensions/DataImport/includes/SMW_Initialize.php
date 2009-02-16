@@ -138,7 +138,7 @@ function smwfDIInitContentLanguage($langcode) {
 }
 
 /**
- * Registers SMW Halo User messages.
+ * Registers Data Import extension User messages.
  */
 function smwfDIInitUserMessages() {
 	global $wgMessageCache, $smwgDIContLang, $wgLanguageCode;

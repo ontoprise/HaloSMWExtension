@@ -1,13 +1,13 @@
 /*  Copyright 2008-2009, ontoprise GmbH
 *   Author: Benjamin Langguth
-*   This file is part of the halo-Extension.
+*   This file is part of the Data Import-Extension.
 *
-*   The halo-Extension is free software; you can redistribute it and/or modify
+*   The Data Import-Extension is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
 *   the Free Software Foundation; either version 3 of the License, or
 *   (at your option) any later version.
 *
-*   The halo-Extension is distributed in the hope that it will be useful,
+*   The Data Import-Extension is distributed in the hope that it will be useful,
 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 *   GNU General Public License for more details.
@@ -414,7 +414,7 @@ TermImportPage.prototype = {
 			$('articles').innerHTML = article_response;
 			$('extras-bottom').style.display = "inline";
 			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
-				"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
+				"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";
 		}
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
