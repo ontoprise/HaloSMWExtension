@@ -181,8 +181,8 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 };
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, display) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, display);
+dTree.prototype.addSmwData = function(id, relation, category, display) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display);
 };
 
 // Get Smw url params for a specific node
