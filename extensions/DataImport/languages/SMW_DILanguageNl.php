@@ -51,6 +51,11 @@ protected $smwUserMessages = array(
 	'smw_ti_import_errors' => 'Some terms were not properly imported. Please see the Gardening Log!',
 	'smw_ti_import_successful' => 'All terms were successfully imported.',
 
+	'smw_gardissue_ti_class_added_article' => 'Imported articles',
+	'smw_gardissue_ti_class_updated_article' => 'Updated articles',
+	'smw_gardissue_ti_class_system_error' => 'Import system errors',
+	'smw_gardissue_ti_class_update_skipped' => 'Skipped updates',
+
 	/* Messages for the wiki web services */
 	'smw_wws_articles_header' => 'Pages using the web service "$1"',
 	'smw_wws_properties_header' => 'Properties that are set by "$1"',
