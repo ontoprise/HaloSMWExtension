@@ -23,13 +23,14 @@ require_once("Bots/SMW_CheckReferentialIntegrityBot.php");
 
 
 global $smwgHaloIP;
-require_once("$smwgHaloIP/specials/SMWTermImport/SMW_TermImportBot.php");
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
 
-global $smwgEnableWikiWebServices;
-if ($smwgEnableWikiWebServices) {
-	require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSCacheBot.php");
-	require_once("$smwgHaloIP/specials/SMWWebService/SMW_WSUpdateBot.php");
+global $smwgEnableDataImportExtension;
+if ($smwgEnableDataImportExtension) {
+	global $smwgDIIP;
+	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
+	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
+	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 }
 
 
