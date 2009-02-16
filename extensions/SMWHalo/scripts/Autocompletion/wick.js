@@ -469,7 +469,7 @@ AutoCompleter.prototype = {
 				if (posStyle == null || posStyle == 'absolute') {
 					Element.setStyle(this.siw.floater, { position: 'absolute'});
 					x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
-                	y = y - Position.page($("globalWrapper"))[1] - Position.realOffset($("globalWrapper"))[1];
+                	y = y;
 				} else if (posStyle == 'fixed') {
                 	Element.setStyle(this.siw.floater, { position: 'fixed'});
                 	                	
@@ -477,12 +477,12 @@ AutoCompleter.prototype = {
 				
 				// read alignment flag and set position accordingly
 				var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
+				var globalWrapper = $("globalWrapper");
 				if (alignment == null || alignment == 'left') {
                 	this.siw.floater.style.left = x + "px";
                 	this.siw.floater.style.top = y + "px";
 				} else {
-					var globalWrapperWidth = $("globalWrapper");
-					this.siw.floater.style.right = (globalWrapperWidth.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+					this.siw.floater.style.right = (globalWrapper.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
                 	this.siw.floater.style.top = y + "px";
 				}
             } else {

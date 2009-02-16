@@ -46,12 +46,14 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  * 
  * @param String $store SMWHaloStore (old) or SMWHaloStore2 (new). Uses old by default.
  */
-function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL) {
-	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore, $smwgSemanticDataClass, $wgHooks;
+function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleStoreGraph = NULL) {
+	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore, 
+	       $smwgSemanticDataClass, $wgHooks, $smwgTripleStoreGraph;
 	if ($store == 'SMWHaloStore') {
 		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
 		die();
 	}
+	$smwgTripleStoreGraph = $tripleStoreGraph;
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store; 
@@ -1464,7 +1466,7 @@ function smwfExtDeleteOutput(& $article, & $output) {
  *  2. rules (optional)
  */
 function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-    global $smwgIP, $smwgNamespace, $smwgRuleRewriter, $smwgEnableFlogicRules;
+    global $smwgIP, $smwgTripleStoreGraph, $smwgRuleRewriter, $smwgEnableFlogicRules;
     include_once($smwgIP . '/includes/SMW_Factbox.php');
    
     SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
@@ -1507,7 +1509,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
             for ($j = 0; $j < count($matchesheader[0]); $j++) {
                 if (trim($matchesheader[1][$j]) == 'name') {
                     $name = $matchesheader[2][$j];
-                    $name = $smwgNamespace . "/" . $name;
+                    $name = $smwgTripleStoreGraph . "/" . $name;
                     $ruletext = str_replace("&lt;","<", $ruletext);
                     $ruletext = str_replace("&gt;",">", $ruletext);
                     $rules[$name] = $smwgRuleRewriter != NULL ? $smwgRuleRewriter->rewrite($ruletext) : $ruletext;

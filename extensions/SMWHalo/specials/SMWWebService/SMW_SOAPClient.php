@@ -165,7 +165,8 @@ class SMWSoapClient implements IWebServiceClient {
 	 *
 	 */
 	public function call($operationName, $parameters) {
-		//ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
+		global $smwgDeployVersion;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
 			
 		//todo: define a statix value somewhere
 		if($this->mAuthenticationType == "http"){
@@ -208,7 +209,8 @@ class SMWSoapClient implements IWebServiceClient {
 	 * 		<false> otherwise
 	 */
 	private function getWSDL() {
-		ini_set("soap.wsdl_cache_enabled", "0");
+		global $smwgDeployVersion;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");
 
 		$this->duplicates = array();
 		$this->mClient = @ new SoapClient($this->mURI);

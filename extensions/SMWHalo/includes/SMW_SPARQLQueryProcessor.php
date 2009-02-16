@@ -31,10 +31,9 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 				$propparts = explode('#',$parts[0],2);
 				if (trim($propparts[0]) == '') { // print "this"
 					$printmode = SMWPrintRequest::PRINT_THIS;
-					if (count($parts) == 1) { // no label found, use empty label
-						$parts[] = '';
-					}
-					$title = NULL;
+					$label = ''; // default
+                    $title = NULL;
+                    $data = NULL;
 				} elseif ($wgContLang->getNsText(NS_CATEGORY) == ucfirst(trim($propparts[0]))) { // print categories
 					$title = NULL;
 					$printmode = SMWPrintRequest::PRINT_CATS;
@@ -71,6 +70,9 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 				if (count($propparts) == 1) { // no outputformat found, leave empty
 					$propparts[] = '';
 				}
+			if (count($parts) > 1) { // label found, use this instead of default
+                    $label = trim($parts[1]);
+                }
 				$printouts[] = new SMWPrintRequest($printmode, $label, $data, trim($propparts[1]));
 			} else { // parameter or query
 				// FIX:KK special handling for SPARQL queries here
@@ -146,7 +148,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 		) && ($mainlabel != '-')
 		)
 		) {
-
+           
 			$desc->prependPrintRequest(new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $mainlabel));
 		}
 

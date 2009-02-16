@@ -130,7 +130,7 @@ END;
 	}
 	
 	function getPropertyExplanationQuery($i, $p, $v){
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		$propertyTitle = Title::newFromText($p, SMW_NS_PROPERTY);
 
 		$isRelation = true;
@@ -144,7 +144,7 @@ END;
 		}
 
 		$p = str_replace(" ", "_", $p);
-		$p = '"' . $smwgNamespace . '/property#"#' . $p;
+		$p = '"' . $smwgTripleStoreGraph . '/property#"#' . $p;
 		
 		if($isRelation){
 			$valueTitle = Title::newFromText($v);
@@ -152,16 +152,16 @@ END;
 				$ns = $valueTitle->getNamespace();
 				switch($ns){
 					case NS_CATEGORY:
-						$v = '"' . $smwgNamespace . '/category#"#' . $valueTitle->getDBkey();
+						$v = '"' . $smwgTripleStoreGraph . '/category#"#' . $valueTitle->getDBkey();
 						break;
 					case SMW_NS_PROPERTY:
-						$v = '"' . $smwgNamespace . '/property#"#' . $valueTitle->getDBkey();
+						$v = '"' . $smwgTripleStoreGraph . '/property#"#' . $valueTitle->getDBkey();
 						break;
 					default:
-						$v = '"' . $smwgNamespace . '/a#"#' . $valueTitle->getDBkey();
+						$v = '"' . $smwgTripleStoreGraph . '/a#"#' . $valueTitle->getDBkey();
 				}
 			} else {
-				$v = '"' . $smwgNamespace . '/a#"#' . $v;
+				$v = '"' . $smwgTripleStoreGraph . '/a#"#' . $v;
 			}
 		} else {
 			if(!is_numeric($v))
@@ -173,16 +173,16 @@ END;
 			$ns = $instanceTitle->getNamespace();
 			switch($ns){
 				case NS_CATEGORY:
-					$i = '"' . $smwgNamespace . '/category#"#' . $instanceTitle->getDBkey();
+					$i = '"' . $smwgTripleStoreGraph . '/category#"#' . $instanceTitle->getDBkey();
 					break;
 				case SMW_NS_PROPERTY:
-					$i = '"' . $smwgNamespace . '/property#"#' . $instanceTitle->getDBkey();
+					$i = '"' . $smwgTripleStoreGraph . '/property#"#' . $instanceTitle->getDBkey();
 					break;
 				default:
-					$i = '"' . $smwgNamespace . '/a#"#' . $instanceTitle->getDBkey();
+					$i = '"' . $smwgTripleStoreGraph . '/a#"#' . $instanceTitle->getDBkey();
 			}
 		} else {
-			$i = '"' . $smwgNamespace . '/a#"#' . $i;
+			$i = '"' . $smwgTripleStoreGraph . '/a#"#' . $i;
 		}
 	
 		$query = "FORALL X,Y <- " . ($isRelation?("attr_(X, $p, Y) "):("attl_(X, $p, Y, \"\") ")) .  "AND equal(X,$i) AND equal(Y,$v).;explain";
@@ -190,7 +190,7 @@ END;
 	}
 	
 	function getCategoryExplanationQuery($i, $c){
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		$category = Title::newFromText($c, NS_CATEGORY);
 		$instance = Title::newFromText($i);
 		if ($category->exists())
@@ -200,16 +200,16 @@ END;
 		$category = str_replace(" ", "_", $category);
 		$instance = str_replace(" ", "_", $instance);
 	
-		$query = 'FORALL X <- isa_(X, "' . $smwgNamespace . '/category#"#' . $c .') AND equal(X,"' . $smwgNamespace . '/a#"#' . $instance . ').;explain';
+		$query = 'FORALL X <- isa_(X, "' . $smwgTripleStoreGraph . '/category#"#' . $c .') AND equal(X,"' . $smwgTripleStoreGraph . '/a#"#' . $instance . ').;explain';
 		return $query;
 	}
 	
 	function getExplanationForQuery($query){
 		try {
-			global $wgServer, $wgScript, $smwgNamespace, $smwgWebserviceUser, $smwgWebServicePassword;
-			ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+			global $wgServer, $wgScript, $smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
+			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_explanation", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));          
-	 		$explanation = $_client->explain($smwgNamespace, $query);
+	 		$explanation = $_client->explain($smwgTripleStoreGraph, $query);
 			
 	 		if($explanation == "-1"){
 	 			$explanation = "No explanation could be provided. Please check if all inputs are correct.";

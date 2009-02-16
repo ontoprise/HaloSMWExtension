@@ -77,16 +77,16 @@ if (!defined('MEDIAWIKI')) die();
 	}
 
 	public function getNamespace() {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		if (sizeof($this->_arguments)>1) {
 			return $this->_arguments[0];
 		} else {
-			return $smwgNamespace;
+			return $smwgTripleStoreGraph;
 		}
 	}
 
 	public function getFullQualifiedName() {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		if ($this->_arity == 0) {
 			return $this->_arguments;
 		} else {
@@ -97,7 +97,7 @@ if (!defined('MEDIAWIKI')) die();
 					return '"' . $this->_arguments[0] . '#"' . $this->_arguments[1];
 				}
 			} else {
-				return $smwgNamespace . $this->_arguments[0];
+				return $smwgTripleStoreGraph . $this->_arguments[0];
 			}
 		}
 	}

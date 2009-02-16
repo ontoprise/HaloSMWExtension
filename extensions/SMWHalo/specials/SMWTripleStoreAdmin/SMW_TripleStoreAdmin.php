@@ -71,12 +71,12 @@ class SMWTripleStoreAdmin extends SpecialPage {
      * @return String (HTML)
      */
     private function getStatus() {
-    	global $wgServer,$wgScript,$smwgNamespace, $smwgWebserviceUser, $smwgWebServicePassword;
-        ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+    	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
+        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
         $client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
           try {
-                global $smwgNamespace;
-                $statusJSON = $client->getTripleStoreStatus($smwgNamespace);
+                global $smwgTripleStoreGraph;
+                $statusJSON = $client->getTripleStoreStatus($smwgTripleStoreGraph);
                 $json = new Services_JSON();
                 $status = $json->decode($statusJSON);
 

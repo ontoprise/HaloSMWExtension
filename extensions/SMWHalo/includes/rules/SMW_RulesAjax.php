@@ -51,7 +51,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		return $e->getMessage();
 	}
 	
-	global $smwgHaloIP, $smwgNamespace;
+	global $smwgHaloIP, $smwgTripleStoreGraph;
 	require_once "$smwgHaloIP/includes/rules/SMW_RuleObject.php";
 	
 	if ($xml->formula) {
@@ -90,7 +90,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		$boundVars[(string)$head->category->subject] = $subject;
 		$headLit = new SMWLiteral(new SMWPredicateSymbol(P_ISA, 2), 
 		                          array($subject,
-		                                new SMWTerm(array($smwgNamespace.'/category', 
+		                                new SMWTerm(array($smwgTripleStoreGraph.'/category', 
 		                                                  $head->category->name), 2, false)));
 		$rule->setHead($headLit);
 	} else if ($head->property) {
@@ -107,7 +107,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		$boundVars[(string)$head->property->subject] = $subject;
 		$headLit = new SMWLiteral(new SMWPredicateSymbol(P_ATTRIBUTE, 2), 
 		                          array($subject,
-		                                new SMWTerm(array($smwgNamespace.'/property',
+		                                new SMWTerm(array($smwgTripleStoreGraph.'/property',
 		                   		                          $head->property->name), 2, false),
 		                         		$object));
 		$rule->setHead($headLit);
@@ -122,7 +122,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		$boundVars[(string)$cat->subject] = $subject;
 		$bodyLit = new SMWLiteral(new SMWPredicateSymbol(P_ISA, 2), 
 		                          array($subject,
-		                                new SMWTerm(array($smwgNamespace.'/category', 
+		                                new SMWTerm(array($smwgTripleStoreGraph.'/category', 
 		                                                  $cat->name), 2, false)));
 		$bodyLits[] = $bodyLit;
 	}
@@ -132,7 +132,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		$subject = new SMWVariable($prop->subject);
 		$boundVars[(string)$prop->subject] = $subject;
 		
-		$rel = new SMWTerm(array($smwgNamespace.'/property', 
+		$rel = new SMWTerm(array($smwgTripleStoreGraph.'/property', 
 		                         $prop->name), 2, false);
 		                         		                         
 		$object = null;

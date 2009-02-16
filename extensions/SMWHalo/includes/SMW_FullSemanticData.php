@@ -59,7 +59,7 @@ class SMWFullSemanticData {
 	 */
  	public static function getDerivedProperties(SMWSemanticData $semData) {
  		
-		global $smwgIP, $smwgHaloIP, $smwgNamespace;
+		global $smwgIP, $smwgHaloIP, $smwgTripleStoreGraph;
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
         require_once($smwgHaloIP . '/includes/storage/SMW_TripleStore.php');
 
@@ -67,7 +67,7 @@ class SMWFullSemanticData {
         
         $subject = $semData->getSubject()->getDBkey();
         
-		$inst = $smwgNamespace.SMWTripleStore::$INST_NS_SUFFIX;
+		$inst = $smwgTripleStoreGraph.SMWTripleStore::$INST_NS_SUFFIX;
 //		$queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		$queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
 		

@@ -63,11 +63,11 @@ class SMWTripleStore extends SMWStore {
 	function __construct() {
 		global $smwgDefaultStore, $smwgBaseStore;
 		$this->smwstore = new $smwgBaseStore;
-		global $smwgNamespace;
-		self::$CAT_NS = $smwgNamespace.self::$CAT_NS_SUFFIX;
-		self::$PROP_NS = $smwgNamespace.self::$PROP_NS_SUFFIX;
-		self::$INST_NS = $smwgNamespace.self::$INST_NS_SUFFIX;
-		self::$TYPE_NS = $smwgNamespace.self::$TYPE_NS_SUFFIX;
+		global $smwgTripleStoreGraph;
+		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
+		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
+		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
+		self::$TYPE_NS = $smwgTripleStoreGraph.self::$TYPE_NS_SUFFIX;
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
 		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> ';
@@ -120,19 +120,19 @@ class SMWTripleStore extends SMWStore {
 			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
 		}
-		global $smwgMessageBroker, $smwgNamespace;
+		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgNamespace> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-			 $con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgNamespace> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
+			 $con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
+					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>");
 				}
 			}
 			$con->disconnect();
@@ -270,26 +270,26 @@ class SMWTripleStore extends SMWStore {
 		}
 			
 		// connect to MessageBroker and send commands
-		global $smwgMessageBroker, $smwgNamespace;
+		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgNamespace> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
-				$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgNamespace> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
+				$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
 			}
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."INSERT INTO <$smwgNamespace> { ".$this->implodeTriples($triples)." }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }");
 
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgNamespace>");
+					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>");
 				}
 				// ...and add new
 				foreach($new_rules as $ruleID => $ruleText) {
-					$con->send("/topic/WIKI.TS.UPDATE", "INSERT RULE $ruleID INTO <$smwgNamespace> : \"".$this->escapeQuotes($ruleText)."\"");
+					$con->send("/topic/WIKI.TS.UPDATE", "INSERT RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"");
 				}
 			}
 			$con->disconnect();
@@ -315,14 +315,14 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		// update triple store
-		global $smwgMessageBroker, $smwgNamespace;
+		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgNamespace> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }");
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgNamespace> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }");
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgNamespace> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }");
+			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }");
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -332,23 +332,23 @@ class SMWTripleStore extends SMWStore {
 	///// Query answering /////
 
 	function getQueryResult(SMWQuery $query) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
 
-			ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
 
 			try {
-				global $smwgNamespace;
+				global $smwgTripleStoreGraph;
 				if (stripos(trim($query->getQueryString()), 'SELECT') === 0 || stripos(trim($query->getQueryString()), 'PREFIX') === 0) {
 					// SPARQL, attach common prefixes
-					$response = $client->query(self::$ALL_PREFIXES.$query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
+					$response = $client->query(self::$ALL_PREFIXES.$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 				} else {
 
 					// do not attach anything
-					$response = $client->query($query->getQueryString(), $smwgNamespace, $this->serializeParams($query));
+					$response = $client->query($query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 
 				}
 
@@ -393,15 +393,15 @@ class SMWTripleStore extends SMWStore {
 
 		$this->createTables($verbose);
 
-		global $smwgMessageBroker, $smwgNamespace, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema;
+		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema;
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgNamespace>"); // drop may fail. don't worry
-			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgNamespace>");
-			$con->send("/topic/WIKI.TS.UPDATE", "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgNamespace>");
+			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgTripleStoreGraph>"); // drop may fail. don't worry
+			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgTripleStoreGraph>");
+			$con->send("/topic/WIKI.TS.UPDATE", "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>");
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -411,12 +411,12 @@ class SMWTripleStore extends SMWStore {
 	function drop($verbose = true) {
 		$this->smwstore->drop($verbose);
 
-		global $smwgMessageBroker, $smwgNamespace;
+		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new StompConnection("tcp://$smwgMessageBroker:61613");
 
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgNamespace>");
+			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgTripleStoreGraph>");
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -565,7 +565,7 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-			
+	    $hasMainColumn = false;
 		$index = 0;
 		if ($query->fromASK) {
 
@@ -575,7 +575,7 @@ class SMWTripleStore extends SMWStore {
 
 				$data = $pr->getData();
 				if ($data == NULL) { // main column
-
+                    $hasMainColumn = true;
 					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
 						$mapPRTOColumns['_X_'] = $index;
 						$prs[] = $pr;
@@ -608,7 +608,7 @@ class SMWTripleStore extends SMWStore {
 			}
 		}
 
-
+ 
 		// generate PrintRequests for all bindings (if they do not exist already)
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
@@ -636,7 +636,7 @@ class SMWTripleStore extends SMWStore {
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
-			
+		
 		// Query result object
 		$queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
 			
@@ -645,31 +645,34 @@ class SMWTripleStore extends SMWStore {
 		foreach ($results as $r) {
 			$row = array();
 			$columnIndex = 0; // column = n-th XML binding node
-			$pr_index = 0; // Printrequest index
+			
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
 					
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-				if ($query->mainLabelMissing && $var_name == "_X_") {
+				if (!$hasMainColumn && $var_name == '_X_') {
+					
 					$columnIndex++;
 					continue;
 				}
+				$resultColumn = $mapPRTOColumns[$var_name];
 				// category result
 				if (stripos($b, self::$CAT_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$CAT_NS)), NS_CATEGORY);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
+					$row[$resultColumn] = new SMWResultArray(array($v), $prs[$resultColumn]);
 
 					// property result
 				} else if (stripos($b, self::$PROP_NS) === 0) {
 					$title = Title::newFromText(substr($b, strlen(self::$PROP_NS)), SMW_NS_PROPERTY);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray(array($v), $prs[$pr_index]);
+					$row[$resultColumn] = new SMWResultArray(array($v), $prs[$resultColumn]);
 
 					// instance result
 				} else if (stripos($b, self::$INST_NS) === 0) {
+					
 					
 					$allValues = array();
 					$multiValue = explode("|", $b);
@@ -681,8 +684,9 @@ class SMWTripleStore extends SMWStore {
 						$allValues[] = $v;
 						
 					}
-				
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray($allValues, $prs[$pr_index]);
+				 
+					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
+					 
 					// property value result
 				} else {
 					$allValues = array();
@@ -697,15 +701,16 @@ class SMWTripleStore extends SMWStore {
 						}
 						$allValues[] = $value;
 					}
-					$row[$mapPRTOColumns[$var_name]] = new SMWResultArray($allValues, $prs[$pr_index]);
+					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
+					
 				}
 				$columnIndex++;
-				$pr_index++;
+				
 			}
-
+ 
+            ksort($row);
 			$queryResult->addRow($row);
 		}
-
 		return $queryResult;
 	}
 
@@ -780,6 +785,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		return $contains;
 	}
+	
+	
 }
 
 /**

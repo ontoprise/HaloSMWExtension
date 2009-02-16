@@ -142,8 +142,8 @@ class ExternalQueryInterface {
 		$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
 
 		try {
-			global $smwgNamespace;
-			$response = $client->query($rawQuery, $smwgNamespace);
+			global $smwgTripleStoreGraph;
+			$response = $client->query($rawQuery, $smwgTripleStoreGraph);
 			return $response;
 
 		} catch(Exception $e) {

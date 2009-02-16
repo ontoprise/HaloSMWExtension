@@ -27,10 +27,10 @@ class FlogicRuleRewriter extends RuleRewriter {
     public static $INST_NS_SUFFIX = "/a#";
     
 	public function rewrite($ruletext) {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		
 		// replace namespace in order not to disturb rule rewriting
-        $ruletext = str_replace($smwgNamespace, "{{wiki-name}}", $ruletext);
+        $ruletext = str_replace($smwgTripleStoreGraph, "{{wiki-name}}", $ruletext);
         
 		$this->variables = $this->getVariables($ruletext);
         
@@ -42,7 +42,7 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$ruletext = preg_replace_callback("/([^\\s:]+):([^\\s.]+)/", array('FlogicRuleRewriter', 'replaceCatStmt'), $ruletext);
 		
 		// replace placeholder for namespace
-		$ruletext = str_replace("{{wiki-name}}", $smwgNamespace, $ruletext);
+		$ruletext = str_replace("{{wiki-name}}", $smwgTripleStoreGraph, $ruletext);
 		$ruletext = str_replace("|", "", $ruletext);
 
 		$ruletext = str_replace('"xsd:string"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);

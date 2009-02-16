@@ -71,7 +71,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
        	$evalflogic = $ruleobject->parseMathRuleArray($formula);
     		    	
     	// create rule head and always include result variable.
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		$flogicstring = "FORALL _XRES, _RESULT";
  	
 		// fetch bound variables
@@ -107,9 +107,9 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		
 		// add result
 		if ($variableassignments !== "") {
-			$variableassignments .= " AND evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgNamespace . "\" AND ";
+			$variableassignments .= " AND evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgTripleStoreGraph . "\" AND ";
 		} else {
-			$variableassignments .= " evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgNamespace . "\" AND ";
+			$variableassignments .= " evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgTripleStoreGraph . "\" AND ";
 		}
 		
 		// fetch rule head
@@ -125,8 +125,8 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	 */
     
 	public function getFlogicString() {
-		global $smwgNamespace;
-		$flogicstring = 'RULE "' . $smwgNamespace . '#"#' . $this->getAxiomId() . ": ";
+		global $smwgTripleStoreGraph;
+		$flogicstring = 'RULE "' . $smwgTripleStoreGraph . '#"#' . $this->getAxiomId() . ": ";
 		return $flogicstring . $this->getPureFlogic(); 		
 	}
 	
@@ -135,7 +135,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	}
         
 	private function getPureFlogic() {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		$flogicstring = "FORALL ";
 
 		// fetch bound variables
@@ -175,13 +175,13 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	 */
 
 	public function getExplanationRule() {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
         // we will insert the header later
     	$queryId = "0"; //$NON-NLS-1$
         $header = "FORALL I, "; //$NON-NLS-1$
 		$result = "";
 
-		$result .= "explain_(" . $queryId . ", I, S) <- I:Instantiation[ruleid->>" . $smwgNamespace . '#"#' . $this->getAxiomId() . "; variables ->> {";
+		$result .= "explain_(" . $queryId . ", I, S) <- I:Instantiation[ruleid->>" . $smwgTripleStoreGraph . '#"#' . $this->getAxiomId() . "; variables ->> {";
 
 		// build variable declarations for bound variables
 		$_usedvars = $this->getBoundVariables();
@@ -329,7 +329,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	
 	// flogic-mathematic functions helpers	
 	private function parseMathRuleArray($stack) {
-		global $smwgNamespace; 
+		global $smwgTripleStoreGraph; 
 		$flogic = "";
 		$count = 0;
 		for ($x = 0; $x < sizeof($stack); $x++)
@@ -356,7 +356,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		    	$var2 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);				    	
 		    	  		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgNamespace . "\"";
+		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";
 			    break;
 			case $this->tokentypes[3]:
 			    if ($count > 0) {
@@ -366,7 +366,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				$var1 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);		
 				
-		    	$flogic .= $this->evalUnary($var1, $valuetoken, $boundvar) . "@\"" . $smwgNamespace . "\"";		
+		    	$flogic .= $this->evalUnary($var1, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";		
 			    break;
 			case $this->tokentypes[4]:
 			    if ($count > 0) {
@@ -376,7 +376,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		    	$var1 = array_pop($this->numarray);
 		    	$var2 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgNamespace . "\"";	
+		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";	
 			    break;
 			}
 		}
@@ -399,10 +399,10 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	}
 	
 	private function createPropertyAssignment($intvariable, $prop, $variable) {
-		global $smwgNamespace;
+		global $smwgTripleStoreGraph;
 		$f = array();
 		array_push($f, new SMWVariable($intvariable));
-		array_push($f, new SMWTerm(array($smwgNamespace.'/property', $prop), 2, false));
+		array_push($f, new SMWTerm(array($smwgTripleStoreGraph.'/property', $prop), 2, false));
 		array_push($f, new SMWVariable($variable));
 		return $f;				
 	}
