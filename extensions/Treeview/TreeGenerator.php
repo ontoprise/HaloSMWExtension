@@ -131,7 +131,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput) {
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
         $this->redirectPage = $redirectPage;
-        $this->displayProperty = $displayProperty;
+        $this->displayProperty = ($displayProperty != NULL)
+                                 ? SMWPropertyValue::makeUserProperty($displayProperty->getDBkey())
+                                 : NULL;
         $this->hchar = $hchar;
         $this->json = $jsonOutput;
     }
@@ -211,12 +213,12 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $pos = 0;      // counter when building query to check when all elements have been fetched
 	    $sizeOfData = count($dataArr);  // size of $dataArr
 	    // query for title, link and category for each smw_id
-	    $query1= "SELECT s.smw_id as smw_id, s.smw_sortkey as title, s.smw_title as link, a.o_id as category ".
+	    $query1= "SELECT s.smw_id as smw_id, s.smw_sortkey as title, s.smw_title as link, s.smw_namespace as ns, a.o_id as category ".
 	             "FROM $smw_ids s, $smw_inst2 a ".
 	             "WHERE s.smw_id in (%s) and s.smw_id = a.s_id";
 	    // query for fetching title and link for each smw_id indepentend of category for those
 	    // pages that have anotations that do not lead to an existing page 
-	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link ".
+	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link, s.smw_namespace as ns ".
 	             "FROM $smw_ids WHERE smw_id in (%s)";
 	    $query_add = ""; // list of ids
 	    foreach (array_keys($dataArr) as $id) {
@@ -266,10 +268,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	function postProcessingForElement(&$dataArr, &$row) {
 	    // add property value if choosen    
 	    if ($this->displayProperty) {
-	        $smwValues = smwfGetStore()->getPropertyValues($row->title, $this->displayProperty);
+	        $title = Title::newFromText($row->title, $row->ns);
+	        $smwValues = smwfGetStore()->getPropertyValues($title, $this->displayProperty);
 	        if (count($smwValues) > 0) 
-    		    $dataArr[$row->smw_id][] = $smwValues[0]->getXSDValue();
-    	    }
+    		    $dataArr[$row->smw_id][] = str_replace("_", " ", $smwValues[0]->getXSDValue());
+    	}
 	}
 	
 	/**
@@ -526,13 +529,16 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $treeList->rewind();
 	    while ($item = $treeList->getCurrent()) {
 	        $treeList->next();
-		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[["
-		            .(isset($elementProperties[$item[0]][3])
-		             ? $elementProperties[$item[0]][0]."|".$elementProperties[$item[0]][3]
-		             : ( $elementProperties[$item[0]][0] != str_replace("_", " ", $elementProperties[$item[0]][2]))
-		               ? $elementProperties[$item[0]][2]."|".$elementProperties[$item[0]][0]
-		               : $elementProperties[$item[0]][0] )
-		            ."]]\n";
+		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[[";
+		    if (isset($elementProperties[$item[0]][3]))
+		        $tree.= $elementProperties[$item[0]][0]."|".$elementProperties[$item[0]][3];
+		    else {
+		         if ($elementProperties[$item[0]][0] != str_replace("_", " ", $elementProperties[$item[0]][2]))
+		             $tree.= $elementProperties[$item[0]][2]."|".$elementProperties[$item[0]][0];
+		         else
+		             $tree.= $elementProperties[$item[0]][0];
+		    }
+		    $tree.= "]]\n";
 		    unset($item);
 	    }
 	    unset($treeList);
