@@ -140,7 +140,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 	  
-		$db =& wfGetDB( DB_MASTER );
+	  	$db;
 		$categoryConstraintTable;
 		$categoryConstraintWhere;
 		
@@ -149,11 +149,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// if category is set, we will fetch the id of the category
 		if ($category) {
 		    if (! $this->getCategoryId($category)) return ($this->json) ? array() : "";
+		    if (!$db) $db =& wfGetDB( DB_MASTER );
 		    $smw_inst2 = $db->tableName('smw_inst2');
 		    $categoryConstraintTable = ",$smw_inst2 i ";
 		    $categoryConstraintWhere = " AND i.o_id = ".$this->smw_category_id." AND r.o_id = i.s_id";    
 		}
-				
+		
+		if (!$db) $db =& wfGetDB( DB_MASTER );		
 		$smw_rels2 = $db->tableName('smw_rels2');
 
 		// match all triples that are of the requested relation
@@ -284,7 +286,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return integer $smw_id or NULL on failure
 	 */
 	private function getSmwIdByTitle(Title &$title, $ns) {
-		$db =& wfGetDB( DB_MASTER );
+		static $db;
+		if (!$db) $db =& wfGetDB( DB_MASTER );
 		$smw_ids = $db->tableName('smw_ids');
 		$query = "SELECT smw_id FROM $smw_ids WHERE ".
 		         "smw_title = ".$db->addQuotes($title->getDBKey()).
@@ -539,7 +542,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		             $tree.= $elementProperties[$item[0]][0];
 		    }
 		    $tree.= "]]\n";
-		    unset($item);
 	    }
 	    unset($treeList);
 	    return $tree;
