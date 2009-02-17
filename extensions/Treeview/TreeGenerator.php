@@ -218,7 +218,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	             "WHERE s.smw_id in (%s) and s.smw_id = a.s_id";
 	    // query for fetching title and link for each smw_id indepentend of category for those
 	    // pages that have anotations that do not lead to an existing page 
-	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link, s.smw_namespace as ns ".
+	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link, smw_namespace as ns ".
 	             "FROM $smw_ids WHERE smw_id in (%s)";
 	    $query_add = ""; // list of ids
 	    foreach (array_keys($dataArr) as $id) {
