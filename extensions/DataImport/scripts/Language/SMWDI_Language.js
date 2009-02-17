@@ -29,7 +29,7 @@ var DILanguage = Class.create();
  * This class provides language dependent strings for an identifier.
  * 
  */
-Language.prototype = {
+DILanguage.prototype = {
 
 	/**
 	 * @public
