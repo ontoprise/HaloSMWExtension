@@ -171,6 +171,9 @@ function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 	
 	// content language file
 	$lng = '/scripts/Language/SMWDI_Language';
+	
+	$jsm->addScriptIf($smwgDIScriptPath . $lng.".js", $mode, $namespace, $pages);
+	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($smwgDIScriptPath . $lng)) {
