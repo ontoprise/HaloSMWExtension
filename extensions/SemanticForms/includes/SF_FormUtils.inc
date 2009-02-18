@@ -10,7 +10,7 @@
 
 class SFFormUtils {
 
-	function chooserJavascript() {
+	static function chooserJavascript() {
 		$javascript_text = <<<END
 <script type="text/javascript">/* <![CDATA[ */
 
@@ -63,7 +63,11 @@ END;
 		return $javascript_text;
 	}
 
-	function validationJavascript() {
+	/**
+	 * All the Javascript calls to validate both the type of each
+	 * form field and their presence, for mandatory fields
+	 */
+	static function validationJavascript() {
 		global $sfgJSValidationCalls;
 
 		$form_errors_header = wfMsg('sf_formerrors_header');
@@ -234,7 +238,7 @@ END;
 		return $javascript_text;
 	}
 
-	function instancesJavascript($using_choosers) {
+	static function instancesJavascript($using_choosers) {
 		$remove_text = wfMsg('sf_editdata_remove');
 		$javascript_text =<<<END
 
@@ -314,7 +318,7 @@ END;
 		return $javascript_text;
 	}
 
-	function autocompletionJavascript() {
+	static function autocompletionJavascript() {
 		global $wgScriptPath;
 
 		$javascript_text =<<<END
@@ -386,7 +390,7 @@ END;
 		return $javascript_text;
 	}
 
-	function hiddenFieldHTML($input_name, $cur_value) {
+	static function hiddenFieldHTML($input_name, $cur_value) {
 		$text =<<<END
 	<input type="hidden" name="$input_name" value="$cur_value" />
 
@@ -394,7 +398,40 @@ END;
 		return $text;
 	}
 
-	function summaryInputHTML($is_disabled, $label = null) {
+	/**
+	 * Add a hidden input for each field in the template call that's
+	 * not handled by the form itself
+	 */
+	static function unhandledFieldsHTML($template_contents) {
+		$text = "";
+		foreach ($template_contents as $key => $value) {
+			if ($key != '' && !is_numeric($key)) {
+				$text .=<<<END
+	<input type="hidden" name="_unhandled_$key" value="$value" />
+
+END;
+			}
+		}
+		return $text;
+	}
+
+	/**
+	 * Add unhandled fields back into the template call that the form
+	 * generates, so that editing with a form will have no effect on them
+	 */
+	static function addUnhandledFields() {
+		global $wgRequest;
+		$additional_template_text = "";
+		foreach ($wgRequest->getValues() as $key => $value) {
+			if (substr($key, 0, 11) == '_unhandled_') {
+				$field_name = substr($key, 11);
+				$additional_template_text .= "|$field_name=$value\n";
+			}
+		}
+		return $additional_template_text;
+	}
+
+	static function summaryInputHTML($is_disabled, $label = null) {
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
@@ -409,7 +446,7 @@ END;
 		return $text;
 	}
 
-	function minorEditInputHTML($is_disabled, $label = null) {
+	static function minorEditInputHTML($is_disabled, $label = null) {
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
@@ -426,8 +463,8 @@ END;
 		return $text;
 	}
 
-	function watchInputHTML($is_disabled, $label = null) {
-		global $sfgTabIndex, $wgUser;
+	static function watchInputHTML($is_disabled, $label = null) {
+		global $sfgTabIndex, $wgUser, $wgTitle;
 
 		$sfgTabIndex++;
 		$checked_text = "";
@@ -437,10 +474,10 @@ END;
 		if ($wgUser->getOption('watchdefault')) {
 			# Watch all edits
 			$checked_text = "checked";
-		} elseif ($wgUser->getOption('watchcreations') && !$this->mPageTitle->exists() ) {
+		} elseif ($wgUser->getOption('watchcreations') && !$wgTitle->exists() ) {
 			# Watch creations
 			$checked_text = "checked";
-		} elseif ($this->mPageTitle->userIsWatching()) {
+		} elseif ($wgTitle->userIsWatching()) {
 			# Already watched
 			$checked_text = "checked";
 		}
@@ -456,7 +493,7 @@ END;
 		return $text;
 	}
 
-	function saveButtonHTML($is_disabled, $label = null) {
+	static function saveButtonHTML($is_disabled, $label = null) {
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
@@ -477,7 +514,7 @@ END;
 		return $text;
 	}
 
-	function showPreviewButtonHTML($is_disabled, $label = null) {
+	static function showPreviewButtonHTML($is_disabled, $label = null) {
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
@@ -498,7 +535,7 @@ END;
 		return $text;
 	}
 
-	function showChangesButtonHTML($is_disabled, $label = null) {
+	static function showChangesButtonHTML($is_disabled, $label = null) {
 		global $sfgTabIndex;
 
 		$sfgTabIndex++;
@@ -519,22 +556,22 @@ END;
 		return $text;
 	}
 
-	function cancelLinkHTML($is_disabled, $label = null) {
-		global $wgUser;
+	static function cancelLinkHTML($is_disabled, $label = null) {
+		global $wgUser, $wgTitle;
 
 		$sk = $wgUser->getSkin();
 		if ($label == null)
 			$label = wfMsgExt('cancel', array('parseinline'));
-		if ($this->mPageTitle == null)
+		if ($wgTitle == null)
 			$cancel = '';
 		else
-			$cancel = $sk->makeKnownLink( $this->mPageTitle->getPrefixedText(), $label);
+			$cancel = $sk->makeKnownLink( $wgTitle->getPrefixedText(), $label);
 		$text = "		<span class='editHelp'>$cancel</span>\n";
 		return $text;
 	}
 
 	// Much of this function is based on MediaWiki's EditPage::showEditForm()
-	function formBottom($is_disabled) {
+	static function formBottom($is_disabled) {
 		global $wgUser;
 
 		$summary_text = SFFormUtils::summaryInputHTML($is_disabled);
@@ -570,7 +607,7 @@ END;
 	}
 
 	// based on MediaWiki's EditPage::getPreloadedText()
-	function getPreloadedText($preload) {
+	static function getPreloadedText($preload) {
 		if ( $preload === '' ) {
 			return '';
 		} else {
@@ -589,7 +626,24 @@ END;
 		}
 	} 
 
-	function getShowFCKEditor() {
+	static function getMonthNames() {
+		return array(
+			wfMsgForContent('january'),
+			wfMsgForContent('february'),
+			wfMsgForContent('march'),
+			wfMsgForContent('april'),
+			wfMsgForContent('may'),
+			wfMsgForContent('june'),
+			wfMsgForContent('july'),
+			wfMsgForContent('august'),
+			wfMsgForContent('september'),
+			wfMsgForContent('october'),
+			wfMsgForContent('november'),
+			wfMsgForContent('december')
+		);
+	}
+
+	static function getShowFCKEditor() {
 		global $wgUser;
 
 		$showFCKEditor = 0;
@@ -614,7 +668,7 @@ END;
 		return $showFCKEditor;
 	}
 
-	function prepareTextForFCK($text) {
+	static function prepareTextForFCK($text) {
 		global $wgTitle;
 
 		$options = new FCKeditorParserOptions();
@@ -625,7 +679,7 @@ END;
 		return $text;
 	}
 
-	function mainFCKJavascript($showFCKEditor) {
+	static function mainFCKJavascript($showFCKEditor) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
 
 		$newWinMsg = wfMsg('rich_editor_new_window');
@@ -852,7 +906,7 @@ END;
 		return $javascript_text;
 	}
 
-	function FCKToggleJavascript() {
+	static function FCKToggleJavascript() {
 		//add toggle link and handler
 		$javascript_text = <<<END
 
@@ -940,7 +994,7 @@ END;
 		return $javascript_text;
 	}
 
-	function FCKPopupJavascript() {
+	static function FCKPopupJavascript() {
 		$javascript_text = <<<END
 
 function FCKeditor_OpenPopup(jsID, textareaID)

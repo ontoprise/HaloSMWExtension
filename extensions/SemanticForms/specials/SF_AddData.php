@@ -16,7 +16,7 @@ class SFAddData extends SpecialPage {
 		wfLoadExtensionMessages('SemanticForms');
 	}
 
-	function execute($query = '') {
+	function execute($query) {
 		global $wgRequest;
 
 		$this->setHeaders();
@@ -32,22 +32,21 @@ class SFAddData extends SpecialPage {
 
 		$alt_forms = $wgRequest->getArray('alt_form');
 
-		printAddForm($form_name, $target_name, $alt_forms);
+		self::printAddForm($form_name, $target_name, $alt_forms);
 	}
-}
 
-function printAltFormsList($alt_forms, $target_name) {
-	$text = "";
-	$ad = SpecialPage::getPage('AddData');
-	$i = 0;
-	foreach ($alt_forms as $alt_form) {
-		if ($i++ > 0) { $text .= ", "; }
-		$text .= '<a href="' . $ad->getTitle()->getFullURL() . "/" . $alt_form . "/" . $target_name . '">' . str_replace('_', ' ', $alt_form) . "</a>";
+	static function printAltFormsList($alt_forms, $target_name) {
+		$text = "";
+		$ad = SpecialPage::getPage('AddData');
+		$i = 0;
+		foreach ($alt_forms as $alt_form) {
+			if ($i++ > 0) { $text .= ", "; }
+			$text .= '<a href="' . $ad->getTitle()->getFullURL() . "/" . $alt_form . "/" . $target_name . '">' . str_replace('_', ' ', $alt_form) . "</a>";
+		}
+		return $text;
 	}
-	return $text;
-}
 
-function printAddForm($form_name, $target_name, $alt_forms) {
+static function printAddForm($form_name, $target_name, $alt_forms) {
 	global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $sfgYUIBase;
 
 	wfLoadExtensionMessages('SemanticForms');
@@ -64,7 +63,7 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 		return;
 	} elseif ($target_name == '') {
 		// parse the form to see if it has a 'page name' value set
-		$form_title = Title::newFromText($form_name, SF_NS_FORM);
+		$form_title = Title::makeTitleSafe(SF_NS_FORM, $form_name);
 		$form_article = new Article($form_title);
 		$form_definition = $form_article->getContent();
 		$form_definition = StringUtils::delimiterReplace('<noinclude>', '</noinclude>', '', $form_definition);
@@ -77,7 +76,7 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 		}
 	}
 
-	$form_title = Title::newFromText($form_name, SF_NS_FORM);
+	$form_title = Title::makeTitleSafe(SF_NS_FORM, $form_name);
 
 	if ($target_name != '') {
 		$target_title = Title::newFromText($target_name);
@@ -100,10 +99,10 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 		else {
 			if (count($alt_forms) > 0) {
 				$text .= '<div class="infoMessage">' . wfMsg('sf_adddata_altformsonly') . ' ';
-				$text .= printAltFormsList($alt_forms, $form_name);
+				$text .= self::printAltFormsList($alt_forms, $form_name);
 				$text .= "</div>\n";
 			} else
-				$text = '<p class="error">' . wfMsg('sf_addpage_badform', sffLinkText(SF_NS_FORM, $form_name)) . ".</p>\n";
+				$text = '<p class="error">' . wfMsg('sf_addpage_badform', SFUtils::linkText(SF_NS_FORM, $form_name)) . ".</p>\n";
 		}
 	} elseif ($target_name == '' && $page_name_formula == '') {
 		$text = '<p class="error">' . wfMsg('sf_adddata_badurl') . "</p>\n";
@@ -116,9 +115,15 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 		$diff_page = $wgRequest->getCheck('wpDiff');
 		$form_submitted = ($save_page || $preview_page || $diff_page);
 		// get 'preload' query value, if it exists
-		if (!$form_submitted && $wgRequest->getCheck('preload')) {
-			$page_is_source = true;
-			$page_contents = SFFormUtils::getPreloadedText($wgRequest->getVal('preload'));
+		if (! $form_submitted) {
+			if ($wgRequest->getCheck('preload')) {
+				$page_is_source = true;
+				$page_contents = SFFormUtils::getPreloadedText($wgRequest->getVal('preload'));
+			} else {
+				// let other extensions preload the page, if they want
+				wfRunHooks('sfEditFormPreloadText', array(&$page_contents, $target_title, $form_title));
+				$page_is_source = ($page_contents != null);
+			}
 		} else {
 			$page_is_source = false;
 			$page_contents = null;
@@ -165,7 +170,7 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 				}
 			}
 			$wgOut->setArticleBodyOnly( true );
-			$text = sffPrintRedirectForm($target_title, $data_text, $wgRequest->getVal('wpSummary'), $save_page, $preview_page, $diff_page, $wgRequest->getCheck('wpMinoredit'), $wgRequest->getCheck('wpWatchthis'), $wgRequest->getVal('wpStarttime'), $wgRequest->getVal('wpEdittime'));
+			$text = SFUtils::printRedirectForm($target_title, $data_text, $wgRequest->getVal('wpSummary'), $save_page, $preview_page, $diff_page, $wgRequest->getCheck('wpMinoredit'), $wgRequest->getCheck('wpWatchthis'), $wgRequest->getVal('wpStarttime'), $wgRequest->getVal('wpEdittime'));
 		} else {
 			// override the default title for this page if
 			// a title was specified in the form
@@ -179,7 +184,7 @@ function printAddForm($form_name, $target_name, $alt_forms) {
 			$text = "";
 			if (count($alt_forms) > 0) {
 				$text .= '<div class="infoMessage">' . wfMsg('sf_adddata_altforms') . ' ';
-				$text .= printAltFormsList($alt_forms, $target_name);
+				$text .= self::printAltFormsList($alt_forms, $target_name);
 				$text .= "</div>\n";
 			}
 			$text .=<<<END
@@ -189,47 +194,10 @@ END;
 			$text .= $form_text;
 		}
 	}
-	$mainCssUrl = $sfgScriptPath . '/skins/SF_main.css';
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen, projection",
-		'href' => $mainCssUrl
-	));
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen, projection",
-		'href' => $sfgYUIBase . "autocomplete/assets/skins/sam/autocomplete.css"
-	));
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen, projection",
-		'href' => $sfgScriptPath . '/skins/SF_yui_autocompletion.css'
-	));
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen, projection",
-		'href' => $sfgScriptPath . '/skins/floatbox.css'
-	));
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'yahoo/yahoo-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'dom/dom-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'event/event-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'get/get-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'connection/connection-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgYUIBase . 'json/json-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'datasource/datasource-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
-	$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
-
-        global $wgFCKEditorDir;
-        if ($wgFCKEditorDir)
-                $wgOut->addScript('<script type="text/javascript" src="' . "$wgScriptPath/$wgFCKEditorDir" . '/fckeditor.js"></script>' . "\n");
+	SFUtils::addJavascriptAndCSS();
 	if (! empty($javascript_text))
 		$wgOut->addScript('		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
-	$wgOut->addMeta('robots','noindex,nofollow');
 	$wgOut->addHTML($text);
+}
+
 }

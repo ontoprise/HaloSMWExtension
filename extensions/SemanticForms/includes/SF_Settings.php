@@ -1,7 +1,6 @@
 <?php
 /**
- * Protect against register_globals vulnerabilities.
- * This line must be present before any global variable is referenced.
+ * Default settings for Semantic Forms
  */
 if (!defined('MEDIAWIKI')) die();
 
@@ -88,4 +87,7 @@ $sfgYUIBase = "http://yui.yahooapis.com/2.6.0/build/";
 ###
 $sfgUseFormEditPage = false;//version_compare( $wgVersion, '1.14alpha', '>=' );
 
-
+###
+# Use 24-hour time format in forms, e.g. 15:30 instead of 3:30 PM
+###
+$sfg24HourTime = false;
