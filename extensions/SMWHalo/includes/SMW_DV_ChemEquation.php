@@ -67,7 +67,17 @@ class SMWChemicalEquationTypeHandler extends SMWDataValue {
 		return true;
 
 	}
-
+	
+    protected function parseDBkeys($args) {
+        $this->parseUserValue($args[0]);
+        
+    }
+    
+    public function getDBkeys() {
+        $this->unstub();
+        return array($this->m_xsdValue);
+    }
+    
 	protected function parseXSDValue($value, $unit) {
 		$this->setUserValue($value);
 	}
