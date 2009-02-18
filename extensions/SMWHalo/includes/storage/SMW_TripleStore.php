@@ -204,7 +204,7 @@ class SMWTripleStore extends SMWStore {
 							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
 						} else {
 							if ($value->getXSDValue() != NULL) {
-								$xsdType = WikiTypeToXSD::getXSDType($property->getTypeID());
+								$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
 								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
 							} else if ($value->getNumericValue() != NULL) {
 								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:float");

@@ -18,10 +18,16 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 
 	protected function readParameters($params,$outputmode) {
 		SMWResultPrinter::readParameters($params,$outputmode);
-		if (array_key_exists('rsstitle', $this->m_params)) {
+		if (array_key_exists('title', $this->m_params)) {
+			$this->m_title = trim($this->m_params['title']);
+		// for backward compatibiliy
+		} elseif (array_key_exists('rsstitle', $this->m_params)) {
 			$this->m_title = trim($this->m_params['rsstitle']);
 		}
-		if (array_key_exists('rssdescription', $this->m_params)) {
+		if (array_key_exists('description', $this->m_params)) {
+			$this->m_description = trim($this->m_params['description']);
+		// for backward compatibiliy
+		} elseif (array_key_exists('rssdescription', $this->m_params)) {
 			$this->m_description = trim($this->m_params['rssdescription']);
 		}
 	}
@@ -33,13 +39,13 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $smwgRSSEnabled, $wgRequest;
 		$result = '';
-		wfLoadExtensionMessages('SemanticMediaWiki');
 		if ($outputmode == SMW_OUTPUT_FILE) { // make RSS feed
 			if (!$smwgRSSEnabled) return '';
 			if ($this->m_title == '') {
 				$this->m_title = $wgSitename;
 			}
 			if ($this->m_description == '') {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$this->m_description = wfMsg('smw_rss_description', $wgSitename);
 			}
 
@@ -99,15 +105,16 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			if ($this->getSearchLabel($outputmode)) {
 				$label = $this->getSearchLabel($outputmode);
 			} else {
+				wfLoadExtensionMessages('SemanticMediaWiki');
 				$label = wfMsgForContent('smw_rss_link');
 			}
 			$link = $res->getQueryLink($label);
 			$link->setParameter('rss','format');
 			if ($this->m_title !== '') {
-				$link->setParameter($this->m_title,'rsstitle');
+				$link->setParameter($this->m_title,'title');
 			}
 			if ($this->m_description !== '') {
-				$link->setParameter($this->m_description,'rssdescription');
+				$link->setParameter($this->m_description,'description');
 			}
 			if (array_key_exists('limit', $this->m_params)) {
 				$link->setParameter($this->m_params['limit'],'limit');
@@ -188,7 +195,7 @@ class SMWRSSItem {
 	public function uri() {
 		return $this->uri;
 	}
-	
+
 	/**
 	 * Creates the RSS output for the single item.
 	 */
@@ -225,7 +232,7 @@ class SMWRSSItem {
 	 */
 	private function clean($t) {
 		return trim(smwfXMLContentEncode($t));
-		//return trim(str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), strip_tags(html_entity_decode($t, null, 'UTF-8')))); 
+		//return trim(str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), strip_tags(html_entity_decode($t, null, 'UTF-8'))));
 	}
 }
 

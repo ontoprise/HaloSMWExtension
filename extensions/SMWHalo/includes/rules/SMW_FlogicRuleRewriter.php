@@ -86,7 +86,7 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$predicateDV = SMWPropertyValue::makeProperty("_TYPE");
 		
 		$prop = SMWPropertyValue::makeUserProperty($predicate);
-		$typeID = $prop->getTypeID();
+		$typeID = $prop->getPropertyTypeID();
 		$xsdType = WikiTypeToXSD::getXSDType($typeID);		
 		
 		$types = smwfGetStore()->getPropertyValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), $predicateDV);
