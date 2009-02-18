@@ -7,14 +7,15 @@
 #us_refineresults {
 	
 	width:97%;
-	border: 2px solid #000;
+	border: 2px solid #AAA;
     padding: 5px;
 	
 	
 }
 
-#us_refineresults td {
-    width:15%;
+#us_refineresults .filtercolumn {
+    width:100px;
+    padding-left: 15px;
 }
 
 #us_statistics_results th {
@@ -55,42 +56,48 @@
 
 #us_refineresults .us_refinelinks_highlighted {
 	padding: 3px;
-	background-color: #00A;
+	background-color: #666;
 	color:white;
 	font-weight: bold;
 }
 
 #us_searchresults {
-    border: 2px solid #000;
+    border: 2px solid #AAA;
     padding: 5px;
     width:97%;
     list-style-type: none;
 }
 
+#us_searchresults .searchmatch {
+	color:black;
+	font-weight: bold;
+}
+
 #us_resultinfo {
 	border-bottom: 1px solid;
 	margin: 5px;
-	font-weight: bold;
+	
 }
 
 .us_search_result_link{
 	margin: 6px;
+	font-weight: bold;
 }
 
 .us_search_result .snippet {
-	font-size: 80%;
-	margin-left: 10px;
+	font-size: 90%;
+	margin-left: 25px;
 }
 
 .us_search_result .metadata {
     font-size: 90%;
-    margin-left: 10px;
+    margin-left: 25px;
     color:darkgreen;
 }
 
 .us_search_result .category {
     font-size: 90%;
-    margin-left: 10px;
+    margin-left: 25px;
   
 }
 

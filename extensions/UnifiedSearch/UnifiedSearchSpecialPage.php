@@ -100,7 +100,7 @@ class USSpecialPage extends SpecialPage {
 			
 		// new link
 		if ($newpage !== NULL && !$newpage->exists()) {
-			$newLink = '<a class="new" href="'.$newpage->getFullURL('action=edit').'">'.wfMsg('us_page').'</a>';
+			$newLink = '<a class="new" href="'.$newpage->getFullURL('action=edit').'">'.wfMsg('us_clicktocreate').'</a>';
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
 
@@ -120,25 +120,26 @@ class USSpecialPage extends SpecialPage {
 		$restrictNS = $wgRequest->getVal('restrict');
 		$restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
 		$html .= wfMsg('us_refinesearch');
-		$html .='<div id="us_refineresults"><table>';
+		$html .='<div id="us_refineresults"><table cellspacing="0">';
 		$highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
-		$row =  '<td><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
+		$row =  '<td rowspan="2" width="100"><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
 
 		$nsURL = reset($namespaceFilterURLs);
-		$c = 1;
+		$c = 0;
 
 		foreach($usgAllNamespaces as $ns => $img) {
 			if ($c > 0 && $c % 5 == 0) {
 				$html .= '<tr>'.$row.'</tr>';
 				$row = "";
 			}
-
+            if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
-			$row .= '<td><img style="margin-bottom: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.'</a></td>';
+			$row .= '<td class="filtercolumn" '.$style.'><img style="margin: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.'</a></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
 		}
+		while ($c % 5 > 0) { $row .= '<td '.$style.'></td>'; $c++; }
 		$html .= '<tr>'.$row.'</tr>';
 		$html .= '</table></div>';
 
@@ -149,18 +150,18 @@ class USSpecialPage extends SpecialPage {
 		// browsing
 		$next = $this->createBrowsingLink($search, $offset + $limit, $limit, wfMsg('us_browse_next'));
 		$previous = $this->createBrowsingLink($search,$offset - $limit, $limit, wfMsg('us_browse_prev'));
-		$limit20 = $this->createBrowsingLink($search,$offset,  20 );
-		$limit50 = $this->createBrowsingLink($search,$offset,  50);
-		$limit100 = $this->createBrowsingLink($search,$offset,  100);
-		$limit250 = $this->createBrowsingLink($search,$offset, 250);
-		$limit500 = $this->createBrowsingLink($search,$offset, 500);
+		$limit20 = $this->createLimitLink($search,$offset,  20, $limit );
+		$limit50 = $this->createLimitLink($search,$offset,  50, $limit);
+		$limit100 = $this->createLimitLink($search,$offset,  100, $limit);
+		$limit250 = $this->createLimitLink($search,$offset, 250, $limit);
+		$limit500 = $this->createLimitLink($search,$offset, 500, $limit);
 
 		$nextButton =  (count($searchResults) < $limit) ? wfMsg('us_browse_next') : $next;
 		$prevButton = ($offset == 0) ? wfMsg('us_browse_prev') : $previous;
 
 		if (count($searchResults) > 0) {
-			$html .= "<table id=\"us_browsing\"><tr><td>".(intval($offset/$limit)+1)." von ".(intval($totalHits/$limit)+1)."</td>";
-			$html .= "<td style=\"text-align: center;\">($prevButton) ($nextButton)</td>";
+			$html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
+			$html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
 			$html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
 		}
 		// Did you mean
@@ -184,7 +185,7 @@ class USSpecialPage extends SpecialPage {
 		}
 
 		if (count($searchResults) > 0) {
-			$html .= "<table id=\"us_browsing\"><tr><td>".(intval($offset/$limit)+1)." von ".(intval($totalHits/$limit)+1)."</td>";
+			$html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
 			$html .= "<td style=\"text-align: center;\">($prevButton) ($nextButton)</td>";
 			$html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
 		}
@@ -198,8 +199,13 @@ class USSpecialPage extends SpecialPage {
 	private function createBrowsingLink($search, $offset, $limit, $text="") {
 		$searchPage = SpecialPage::getTitleFor("Search");
 		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$text." ".$limit.'</a>';
-
 	}
+	
+	private function createLimitLink($search, $offset, $limit, $currentLimit) {
+        $searchPage = SpecialPage::getTitleFor("Search");
+        $limit = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
+        return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$limit.'</a>';
+    }
 
 	private function doSearch($limit, $offset) {
 		global $wgRequest, $usgAllNamespaces;

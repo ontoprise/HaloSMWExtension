@@ -129,6 +129,31 @@ class USStoreSQL extends USStore {
 		$db->freeResult($res);
 		return $result;
 	}
+	
+	public function getPageTitles($terms) {
+		$db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+       
+        $requestoptions = new SMWAdvRequestOptions();
+        $requestoptions->isCaseSensitive = false;
+        $requestoptions->limit = 50;
+        $requestoptions->disjunctiveStrings = true;
+	    foreach($terms as $t) {
+             if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
+             $t = str_replace(" ", "_", $t);
+             $requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
+        }
+        $sql = DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+        $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE TRUE '.$sql);
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = Title::newFromText($row->page_title, $row->page_namespace);
+            }
+        }
+        $db->freeResult($res);
+        return $result;
+	}
 
 	/**
 	 * Adds (or updates) a new search statistic with given hits.

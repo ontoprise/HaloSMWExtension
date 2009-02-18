@@ -14,7 +14,7 @@ define('US_LOWTOLERANCE', 1);
 define('US_EXACTMATCH', 2);
 
 $wgExtensionCredits['unifiedsearch'][] = array(
-        'name' => 'Unified search',
+        'name' => 'Semantic Retrieval extension',
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Combining a Lucene backend with a title search',
@@ -92,17 +92,17 @@ function wfUSSetupExtension() {
 
 	// use default namespaces unless explicitly specified
 	if (!isset($usgAllNamespaces)) {
-		$usgAllNamespaces = array(NS_MAIN => "instance.gif",
-		                          NS_CATEGORY => "concept.gif", 
-		                          SMW_NS_PROPERTY => "property.gif", 
-		                          NS_TEMPLATE => "template.gif",
-		                          NS_HELP => "help.png");
+		$usgAllNamespaces = array(NS_MAIN => "smw_plus_instances_icon_16x16.png",
+		                          NS_CATEGORY => "smw_plus_category_icon_16x16.png", 
+		                          SMW_NS_PROPERTY => "smw_plus_property_icon_16x16.png", 
+		                          NS_TEMPLATE => "smw_plus_template_icon_16x16.png",
+		                          NS_HELP => "smw_plus_help_icon_16x16.png");
 
 		// check Multimedia namespaces from MIME-type extension and add if existing
-		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "audio.jpg";
-		if (defined("NS_VIDEO")) $usgAllNamespaces[NS_VIDEO] = "video.jpg";
-		if (defined("NS_PDF")) $usgAllNamespaces[NS_PDF] = "pdf.gif";
-		if (defined("NS_DOCUMENT")) $usgAllNamespaces[NS_DOCUMENT] = "doc.gif";
+		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "smw_plus_music_icon_16x16.png";
+		if (defined("NS_VIDEO")) $usgAllNamespaces[NS_VIDEO] = "smw_plus_video_icon_16x16.png";
+		if (defined("NS_PDF")) $usgAllNamespaces[NS_PDF] = "smw_plus_pdf_icon_16x16.png";
+		if (defined("NS_DOCUMENT")) $usgAllNamespaces[NS_DOCUMENT] = "smw_plus_document_icon_16x16.png";
 	}
 	return true;
 }

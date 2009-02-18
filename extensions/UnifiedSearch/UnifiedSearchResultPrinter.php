@@ -118,10 +118,10 @@ class UnifiedSearchResultPrinter {
 			$categories = USStore::getStore()->getCategories($e->getTitle());
 
 
-			$html .= '<li><img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
-			//if ($e->isFulltextResult()) $html.= '<img style="margin-left: 6px;" src="'.self::getImageURI("fulltext.gif" ).'"/>';
+			
+			$html .= '<li><span class="searchprev"><a rel="gb_page_center[]" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
-			$html .= '<span class="searchprev"><a rel="gb_page_center[]" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
+			$html .= '<img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
 			
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
@@ -162,13 +162,16 @@ class UnifiedSearchResultPrinter {
 	private static function getImageFromNamespace($result) {
 			
 		switch($result->getTitle()->getNamespace()) {
-			case NS_MAIN: { $image = "instance.gif"; break; }
-			case NS_CATEGORY: { $image = "concept.gif"; break; }
-			case NS_TEMPLATE: { $image = "template.gif"; break; }
-			case SMW_NS_PROPERTY: { $image = "property.gif"; break; }
-			case SMW_NS_TYPE: { $image = "template.gif"; break; }
-			case NS_DOCUMENT: { $image = "doc.gif"; break; }
-			case NS_PDF: { $image = "pdf.gif"; break; }
+			case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
+			case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
+			case NS_TEMPLATE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+			case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
+			case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+			case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
+			case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
+			case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
+		    case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
+            case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
 		}
 		return $image;
 	}

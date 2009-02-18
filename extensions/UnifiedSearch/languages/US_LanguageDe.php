@@ -20,18 +20,19 @@ class US_LanguageDe {
         'us_search' => 'Allgemeine Suche',
 	    'us_tolerance'=> 'Toleranz',
         'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. $1',
-        'us_page' => 'Klicken Sie hier, um die Seite zu erstellen.',
+        'us_clicktocreate' => 'Klicken Sie hier, um die Seite zu erstellen.',
         'us_refinesearch' => 'Suche einschr&auml;nken',
         'us_browse_next' => 'n&auml;chste',
         'us_browse_prev' => 'vorherige',
-        'us_results' => 'Ergebnisse',
+        'us_results' => '<b>Ergebnisse</b>',
         'us_noresults' => 'Keine Suchtreffer',
 	    'us_noresults_text' => 'Es wurden <b>keine</b> mit ihrer Suchanfrage - <i>$1</i> - <b>&uuml;bereinstimmenden Treffer</b> gefunden. 
 	               <br><br>Vorschl&auml;ge: <ul>
 	               <li>Probieren Sie einen andere Suchbegriffe.</li>
 	               <li>Probieren Sie allgemeinere Suchbegriffe.</li>
 	               <li>Vergewissen Sie sich dass Sie alle W&ouml;rter richtig geschrieben haben.</li></ul>',
-	   'us_resultinfo' => '$1 bis $2 von $3 f&uuml;r <i>$4</i>',
+	   'us_resultinfo' => '<b>$1</b> - <b>$2</b> von <b>$3</b> f&uuml;r <b>$4</b>',
+	   'us_page' => 'Seite',
         'us_searchfield' => 'Suche',
 	    'us_lastchanged'=> 'Zuletzt ge&auml;ndert',
 	    'us_isincat' => 'liegt in Kategorie',
