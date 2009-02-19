@@ -118,7 +118,9 @@ class SemanticTreeview {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
             	    $addSmwData = "addSmwData(%s, '".$params['property']."',";
             	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
-            	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."');" : "null);"; 
+            	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
+            	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
+					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth'].");" : "null);";	
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n".
                             $matches[2].$matches[3]."\n";

@@ -54,8 +54,6 @@ class TreeGenerator {
 		// check for dynamic expansion via Ajax
 		if (array_key_exists('dynamic', $genTreeParameters)) {
 		    $useAjaxExpansion = 1;
-		    // set maxlevel depth to 1 if it is not set
-		    if (!$maxDepth) $maxDepth = 1;
 	    } else {
 	        $useAjaxExpansion = NULL;
 	    }
@@ -63,15 +61,17 @@ class TreeGenerator {
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
-		$tv_store->setup($maxDepth, $redirectPage, $displayProperty, $hchar, $this->json);
+		$tv_store->setup(($useAjaxExpansion) ? 1 : $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
-		
+
 		// check if we have to return certain parameter with the result set
 		if (!$this->json && $useAjaxExpansion) {
 		    $returnPrefix= "\x7f"."dynamic=1&property=".$genTreeParameters['property']."&";
 		    if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
 		    if ($displayProperty) $returnPrefix .= "display=".$genTreeParameters['display']."&";
+			if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
+		    if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
 		    if ($genTreeParameters['refresh']) $returnPrefix .= "refresh=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
@@ -99,8 +99,8 @@ abstract class TreeviewStorage {
     public static function getTreeviewStorage() {
         global $smwgHaloIP;
         if (self::$store == NULL) {
-            global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
+            global $smwgBaseStore;
+            switch ($smwgBaseStore) {
                 case (SMW_STORE_TESTING):
                     self::$store = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');
@@ -171,7 +171,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
 		    $query.= " AND r.o_id NOT in (SELECT s_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id.")";
-		}    
+		}
+
 		$res = $db->query($query);
 		$elementProperties= array();
 		$sIds = array();
@@ -292,6 +293,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$query = "SELECT smw_id FROM $smw_ids WHERE ".
 		         "smw_title = ".$db->addQuotes($title->getDBKey()).
 		         " AND smw_namespace = ".$ns;
+
 		$res = $db->query($query);
 		$s = $db->fetchObject($res);
 		$db->freeResult($res);

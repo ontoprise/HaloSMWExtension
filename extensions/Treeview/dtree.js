@@ -1,7 +1,7 @@
 /*--------------------------------------------------|
 | dTree 2.05 | www.destroydrop.com/javascript/tree/ |
 |---------------------------------------------------|
-| Copyright (c) 2002-2003 Geir Landrö               |
+| Copyright (c) 2002-2003 Geir Landrï¿½               |
 |                                                   |
 | This script can be used freely as long as all     |
 | copyright messages are intact.                    |
@@ -79,17 +79,20 @@ Node.prototype.unserialize = function(str) {
 }
 
 // SMW Data object (for relation and display)
-function SmwData(id, relation, category, display) {
+function SmwData(id, relation, category, display, start, maxDepth) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
 	this.display = display;
+	this.start = start;
+	this.maxDepth = maxDepth;
 }
 
-SmwData.prototype.getUrlParams = function() {
-	var str = 'p%3D' + escape(this.relation);
-	if (this.category) str += '%26c%3D' + escape(this.category);
-	if (this.display) str += '%26d%3D' + escape(this.display); 
+SmwData.prototype.getUrlParams = function(withStart) {
+	var str = 'p%3D' + URLEncode(this.relation);
+	if (this.category) str += '%26c%3D' + URLEncode(this.category);
+	if (this.display) str += '%26d%3D' + URLEncode(this.display);
+	if (withStart && this.start) str += '%26s%3D' + URLEncode(this.start); 
 	str += '%26';
 	return str;
 }
@@ -181,14 +184,14 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 };
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth);
 };
 
 // Get Smw url params for a specific node
-dTree.prototype.getSmwData = function(id) {
+dTree.prototype.getSmwData = function(id, withStart) {
 	var index = this.getSmwDataIndex(id); 
-	return (index >= 0) ? this.aSmw[index].getUrlParams() : "";
+	return (index >= 0) ? this.aSmw[index].getUrlParams(withStart) : "";
 }
 
 // return index of aSmw for a dynamic node smw settings
@@ -210,6 +213,23 @@ dTree.prototype.getSmwDataIndex = function(id) {
 // check if a node is created dynamically, important for mixed trees
 dTree.prototype.isDynamicNode = function(id) {
 	return (this.getSmwDataIndex(id) >= 0) ? true : false;
+}
+
+// check, if a node has the maximum depth level (set in parameter maxDepth)
+dTree.prototype.isMaxDepth = function(id) {
+	var smwIdx = this.getSmwDataIndex(id);
+	if (smwIdx == null) return false;
+	var maxDepth = this.aSmw[smwIdx].maxDepth + 2; // correct number to be compatible with rest
+	if (! maxDepth) return false;
+	var depth = 1;
+	var cParent = this.aNodes[id].pid;
+	while (cParent != -1) {
+		depth++;
+		cParent = this.aNodes[cParent].pid;
+		if (depth == maxDepth) return true;
+	}
+	if (depth == maxDepth) return true;
+	return false;
 }
 
 // refresh the trees dynamic nodes
@@ -521,14 +541,15 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		cachedData[cachedData.length] = new Array(token, refreshDtree);
 	else 
 		cachedData[cachedData.length] = new Array(token, this);
-	params += 's%3D' + escape(this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2"));
+	
+	params += 's%3D' + URLEncode(this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2"));
 	params += '%26t%3D' + token; 
     this.getHttpRequest(params, callBackMethod);
 };
 
 // load first level (needed for refresh)
 dTree.prototype.loadFirstLevel = function(id) {
-	var params = this.getSmwData(id);
+	var params = this.getSmwData(id, true);
 	var token = this.obj + "_" + id;
 	if (refreshDtree && refreshDtree.obj == this.obj)
 		cachedData[cachedData.length] = new Array(token, refreshDtree);
@@ -819,13 +840,18 @@ handleResponseOpen = function() {
 
     if (noc > 0) dTree.aNodes[parentId]._hc = true;
     dTree.aNodes[parentId]._complete = true;
-
+    
     var newSerialData = '{' + dTree.aNodes[parentId].serialize() + '}';
     for (var i = 0; i < noc; i++) {
     	var str = '<a href=\"' + url + treelist[i].link +'\" title=\"';
     	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
-    	dTree.add(dTree.aNodes.length, parentId, str);
-    	newSerialData += '{' + dTree.aNodes[dTree.aNodes.length - 1].serialize() + '}';
+    	var newId = dTree.aNodes.length; 
+    	dTree.add(newId, parentId, str);
+    	if (dTree.isMaxDepth(newId)) {
+    		dTree.aNodes[newId]._hc = false;
+    		dTree.aNodes[newId]._complete = true;
+    	}
+    	newSerialData += '{' + dTree.aNodes[newId].serialize() + '}';
     }
 
     var toggleCookies = dTree.config.useCookies;
@@ -885,7 +911,7 @@ handleResponseRefresh = function() {
    				dTree.aNodes[k]._refresh = 0;
    			}
    		}
-   		if (!found) {
+   		if (found == null) {
    			found = dTree.aNodes.length;
     		dTree.add(found, cParent, str);
     		dTree.aNodes[found]._refresh = 2;
@@ -895,6 +921,11 @@ handleResponseRefresh = function() {
     			}
     		}
     	}
+    	if (dTree.isMaxDepth(found)) {
+    		dTree.aNodes[found]._hc = false;
+    		dTree.aNodes[found]._complete = true;
+    	}
+    	
     }
 	
 	// search for old nodes that are not there anymore
@@ -948,3 +979,41 @@ handleResponseRefresh = function() {
 	// unlock
 	refreshDtree = null;
 }
+
+URLEncode = function (str) {
+    // Copyright & Source: http://kevin.vanzonneveld.net
+                             
+    var histogram = {}, tmp_arr = [];
+    var ret = str.toString();
+    
+    var replacer = function(search, replace, str) {
+        var tmp_arr = [];
+        tmp_arr = str.split(search);
+        return tmp_arr.join(replace);
+    };
+    
+    // The histogram is identical to the one in urldecode.
+    histogram["'"]   = '%27';
+    histogram['(']   = '%28';
+    histogram[')']   = '%29';
+    histogram['*']   = '%2A';
+    histogram['~']   = '%7E';
+    histogram['!']   = '%21';
+    histogram['%20'] = '+';
+    
+    // Begin with encodeURIComponent, which most resembles PHP's encoding functions
+    ret = encodeURIComponent(ret);
+    
+    for (search in histogram) {
+        replace = histogram[search];
+        ret = replacer(search, replace, ret) // Custom replace. No regexing
+    }
+    
+    // Uppercase for full PHP compatibility
+    return ret.replace(/(\%([a-z0-9]{2}))/g, function(full, m1, m2) {
+        return "%"+m2.toUpperCase();
+    });
+    
+    return ret;
+}
+
