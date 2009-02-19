@@ -476,7 +476,7 @@ protected $smwUserMessages = array(
     'smw_tsa_pressthebutton' => 'Bitte den Knopf unten drücken.',
     'smw_tsa_addtoconfig' => 'Bitte fügen Sie folgende Zeilen in die LocalSettings.php ein und prüfen Sie ob der Triple store connector läuft.',
     'smw_tsa_addtoconfig2' => 'Stellen Sie sicher, dass der Triplestore-Treiber aktiviert ist. Wenn nötig, ändern Sie den Aufruf von enableSMWHalo zu: ',
-    'smw_tsa_addtoconfig3' => 'Stellen Sie ebenso sicher, dass die Wiki-URL valide ist. Sie darf außerdem kein Hash (#) enthalten. Wenn nötig, ändern Sie den Aufruf von enableSemantics z.B. zu ',
+    'smw_tsa_addtoconfig3' => 'Stellen Sie ebenso sicher, dass die Graph-URL (letzter Parameter von enableSMWHalo) valide ist. Sie darf außerdem kein Hash (#) enthalten.',
     
     'smw_tsa_driverinfo' => 'Treiberinformation',
     'smw_tsa_status' => 'Status',
