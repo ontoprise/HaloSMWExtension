@@ -25,7 +25,7 @@ return s.custom(_5.from,_5.to);
 },fadeOut:function(_7,_8){
 _8=_8||{};
 if(!_8.from){
-_8.from=0.4;
+_8.from=1;
 }
 if(!_8.to){
 _8.to=0;

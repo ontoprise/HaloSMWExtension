@@ -233,11 +233,6 @@ function smwf_ca_GetHTMLBody($page) {
 	// fetch main HTML content of page
 	$htmlcontent = $out->getText();
 
-	// add search term highlighting header to shown HTML page
-	$header = '<div style="border: 1px solid rgb(153, 153, 153); margin: -1px -1px 0pt; padding: 0pt; background: rgb(255, 255, 255) none repeat scroll 0% 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">';
-	$header .= '<div style="border: 1px solid rgb(153, 153, 153); margin: 12px; padding: 8px; background: rgb(221, 221, 221) none repeat scroll 0% 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(0, 0, 0); font-weight: normal; text-align: left;">';
-	$header .= wfMsg('us_termsappear').": ";
-	
 	// finally highlight search terms but leave links as they are 
 	$numargs = func_num_args();
 	$arg_list = func_get_args();
@@ -245,15 +240,12 @@ function smwf_ca_GetHTMLBody($page) {
 		for ($i = 1; $i < $numargs; $i++) {			
 			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor;
 			$replacement_phrase = "<span style=\'background-color: ". $currcolor . ";\'>".$arg_list[$i]."</span>";
-			$header .= "<span style='background-color: ". $currcolor . ";'>".$arg_list[$i]."</span>&nbsp;";
 			$htmlcontent = preg_replace("/(>|^)([^<]+)(?=<|$)/iesx", "'\\1'.str_ireplace('$arg_list[$i]',
 '$replacement_phrase', '\\2')", $htmlcontent);
 		}
 	}
-	// add closing <divs> to term header
-	$header .= "</div></div>";
 
-	return $head.$header.$htmlcontent;
+	return $head.$htmlcontent;
 }
 
 

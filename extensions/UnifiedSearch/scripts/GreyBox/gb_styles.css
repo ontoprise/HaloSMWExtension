@@ -11,17 +11,80 @@
 #GB_window {
     left: 0;
     top: 0;
-    font-size: 1px;
+    background-color: #fff;
+/*    font-size: 1px; */
+    border: 1px solid #888;
     position: absolute;
     overflow: visible;
     z-index: 150;
 }
 
+#GB_navStatus {
+	background-color: #777;
+	font-color: #000;
+	float: left;
+	margin-top: 5px;
+	margin-left: 15px;
+}
+
 #GB_window .content {
     width: auto;
-    margin: 0;
-    padding: 0;
+    margin: 5px;
+    padding: 0px;
+    border: 1px solid #ccc;
 }
+
+#GB_window .outer {
+    width: auto;
+    background-color: #fff;
+    margin: 10px;
+    padding: 0px;
+}
+
+#gb_header_halo2 {
+    width: auto;
+    background-color: #777;
+    font-size: 16px;
+    color: #fff;
+    margin-top: 5px;
+    padding: 0px;
+    height: 30px;
+}
+
+#gb_header_halo1 {
+    height: 30px;
+    border: 1px solid #ccc;    
+    background-color: #fff;
+}
+
+#gb_header_halo1_inner {
+	float:right;
+	margin-right: 10px;
+	margin-top: 5px;
+	font-size: 14px;
+	color: red;
+}
+
+#gb_header_halo1_inner_close{
+	margin-top: 10px;
+}
+
+
+#gb_footer_halo {
+    height: 25px;    
+    background-color: #fff;
+    margin: 0px;
+    padding: 0px;
+}
+
+#gb_header_halo3 {
+    width: auto;
+    height: 20px;
+    margin: 10px;
+    background-color: #fff;
+    padding: 0px;
+}
+
 
 #GB_frame {
     border: 0;
@@ -31,6 +94,39 @@
     white-space: nowrap;
 }
 
+#GB_caption {
+	margin-left: 10px;
+	margin-top: 10px;
+	width: 100%;
+	font-size: 14px;
+}
+
+#GB_rightcaption {
+	margin-right: 10px;
+	width: auto;
+	float:right;
+	font-size: 14px;
+}
+
+#GB_maximize {
+	float: right;
+}
+
+#bodyContent span.searchprev a{
+	padding-right: 16px;
+	margin-right: 2px;
+	color: #888888;
+	background: url(searchgray_iconsmall.png) center right no-repeat;
+}
+
+#bodyContent span.searchprev a:hover{
+	text-decoration: none;
+	color: #0000FF;
+	padding-right: 18px;
+	margin-right: 0px;
+	background: url(search_icon.png) center right no-repeat;
+}
+
 
 .GB_Gallery {
     margin: 0 22px 0 22px;
@@ -38,15 +134,15 @@
 
 .GB_Gallery .content {
     background-color: #fff;
-    border: 3px solid #ddd;
+/*    border: 3px solid #ddd; */
 }
 
 .GB_header {
-    top: 10px;
+    top: 0px;
     left: 0;
     margin: 0;
     z-index: 500;
-    position: absolute;
+    position: relative;
     border-bottom: 2px solid #555;
     border-top: 2px solid #555;
 }
@@ -86,7 +182,6 @@
 
 
 #GB_middle {
-    color: #eee;
 }
 
 #GB_middle img {
@@ -99,17 +194,21 @@
 }
 
 #GB_middle .left {
-    padding-right: 10px;
+	float: left;
+	font-size: 14px;
+    margin-left: 10px;
 }
 
 #GB_middle .right {
-    padding-left: 10px;
+	float:right;
+	font-size: 14px;	
+    margin-right: 10px;
 }
 
 
 .GB_Window .content {
     background-color: #fff;
-    border: 3px solid #ccc;
+/*    border: 3px solid #ccc; */
     border-top: none;
 }
 
@@ -142,21 +241,6 @@
 .GB_Window .close img {
     cursor: pointer;
     padding: 0 3px 0 0;
-}
-
-#bodyContent span.searchprev a{
-	padding-right: 16px;
-	margin-right: 2px;
-	color: #888888;
-	background: url(searchgray_iconsmall.png) center right no-repeat;
-}
-
-#bodyContent span.searchprev a:hover{
-	text-decoration: none;
-	color: #0000FF;
-	padding-right: 18px;
-	margin-right: 0px;
-	background: url(search_icon.png) center right no-repeat;
 }
 
 .GB_Window .on { border-bottom: 1px solid #333; }

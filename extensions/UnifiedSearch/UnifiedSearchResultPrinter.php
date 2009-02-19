@@ -106,8 +106,10 @@ class UnifiedSearchResultPrinter {
 		$termsarray = split(' ', $terms);
 		// GreyBox
 		$args = "";
+		$args_prev = "";
 		for ($i = 0; $i < count($termsarray); $i++) {
 			$args .= "&rsargs[]=" . $termsarray[$i] . "";
+			$args_prev .= $termsarray[$i] . " ";
 		}
 		// GreyBox
 		$html = '<table id="us_queryresults">';
@@ -116,10 +118,8 @@ class UnifiedSearchResultPrinter {
 			$html .= '<div class="us_search_result">';
 			// Categories
 			$categories = USStore::getStore()->getCategories($e->getTitle());
-
-
-			
-			$html .= '<li><span class="searchprev"><a rel="gb_page_center[]" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
+	
+			$html .= '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$html .= '<img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
 			
@@ -134,14 +134,6 @@ class UnifiedSearchResultPrinter {
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
 			$html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 				
-			// Description
-			/*$desc = $e->getDescription();
-			 if ($desc !== false) {
-			 $html .= '<a title="'.wfMsg('us_showdescription').'"><img onclick="smwhg_unifiedsearch.showDescription(\''.$e->getTitle()->getDBkey().'\')" style="margin-left:10px;" src="'.self::getImageURI("info.gif").'"/></a>';
-			 $html .= '<div class="us_description" id="'.$e->getTitle()->getDBkey().'" style="margin-left:10px;display: none;">'.$desc->getXSDValue().'</div>';
-			 }
-			 $html .= '</div>';*/
-
 			$html .= '</td></tr>';
 		}
 		$html .= '</table>';
