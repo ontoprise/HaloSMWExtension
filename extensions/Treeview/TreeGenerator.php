@@ -155,7 +155,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    if (!$db) $db =& wfGetDB( DB_MASTER );
 		    $smw_inst2 = $db->tableName('smw_inst2');
 		    $categoryConstraintTable = ",$smw_inst2 i ";
-		    $categoryConstraintWhere = " AND i.o_id = ".$this->smw_category_id." AND r.o_id = i.s_id";    
+		    $categoryConstraintWhere = " AND i.o_id = ".$this->smw_category_id." AND r.o_id = i.s_id";
 		}
 		
 		if (!$db) $db =& wfGetDB( DB_MASTER );		
@@ -164,7 +164,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// match all triples that are of the requested relation
 		$query = "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
 		         ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere;
-		
+
 		if ($start) {
 		    if (!$this->getStartId($start))
 		        return ($this->json)
@@ -173,7 +173,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    $query.= " AND r.o_id = ".$this->smw_start_id;  
 		}
 		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
-		    $query.= " AND r.o_id NOT in (SELECT s_id FROM $smw_rels2 WHERE p_id = ".$this->smw_relation_id.")";
+		    $query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
+		    		 " WHERE p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 
 		$res = $db->query($query);
