@@ -1,11 +1,11 @@
 <?php
-// $Id$
 /**
-* MediaWiki Treeview Extension
-* - See http://www.mediawiki.org/wiki/Extension:Tree_view for installation and usage details
+* MediaWiki Semantic Treeview Extension
+* - See http://smwforum.ontoprise.com/smwforum/index.php/Semantic_Treeview for installation and usage details
 * - Licenced under LGPL (http://www.gnu.org/copyleft/lesser.html)
-* - Author:  http://www.organicdesign.co.nz/nad
-* - Started: (Version5) 2007-10-24
+* - Author:  based on Treeview5 by http://www.organicdesign.co.nz/nad
+*            improved by Ontoprise
+* - Started: (Version 1.0) $Id$
 */
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
