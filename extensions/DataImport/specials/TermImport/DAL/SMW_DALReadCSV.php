@@ -366,7 +366,7 @@ class DALReadCSV implements IDAL {
 	 */
 	private function parseImportSets(&$importSets) {
     	global $smwgDIIP;
-		require_once($smwgDIIP . '/extensions/TermImport/specials/TermImport/SMW_XMLParser.php');
+		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 
 		$parser = new XMLParser($importSets);
 		$result = $parser->parse();
@@ -536,9 +536,9 @@ class DALReadCSV implements IDAL {
 					// add all requested properties
 					$props = &$policy['properties'];
 					foreach ($props as $prop) {
-						$prop = preg_replace("/ +/", "__SPACE__", $prop);
+						$prop = "".preg_replace("/ +/", "__SPACE__", $prop);
 						$idx = $indexMap[$prop];
-						if ($idx != null) {
+						if ($idx !== null) {
 							$value = htmlspecialchars(trim($this->csvContent[$i][$idx]));
 							if (strlen($value) > 0) {
 								// The property is only written, if it exists.
