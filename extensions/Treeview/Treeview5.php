@@ -1,4 +1,5 @@
 <?php
+// $Id$
 /**
 * MediaWiki Treeview Extension
 * - See http://www.mediawiki.org/wiki/Extension:Tree_view for installation and usage details

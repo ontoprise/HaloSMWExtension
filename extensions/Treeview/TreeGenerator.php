@@ -1,4 +1,7 @@
 <?php
+
+// $Id$
+
 global $wgHooks;
 $wgHooks['LanguageGetMagic'][] = 'wfTreeGeneratorLanguageGetMagic';
 
