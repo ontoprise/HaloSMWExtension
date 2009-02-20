@@ -13,6 +13,7 @@
 | extension only - which is part of SMW+ for        |
 | Mediawiki.                                        |
 |--------------------------------------------------*/
+// $Id$
 
 var httpRequest;
 var cachedData = [];
@@ -38,6 +39,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this._p;
 	this._complete = false;
 	this._refresh = -1;
+	this._smwIdx = null;
 };
 
 Node.prototype.serialize = function() {
@@ -197,14 +199,15 @@ dTree.prototype.getSmwData = function(id, withStart) {
 // return index of aSmw for a dynamic node smw settings
 dTree.prototype.getSmwDataIndex = function(id) {
 	if (this.aSmw.length == 0) return;
-	while(id >= 0) {
+	while(id > this.root.id) {
 		var cn = this.aNodes[id];
+		if (cn._smwIdx != null) return cn._smwIdx;
 		for (var i = 0; i < this.aSmw.length; i++) {
 			if (cn.id == this.aSmw[i].id) {
+				this.aNodes[id]._smwIdx = i;
 				return i;
 			}
 		}
-		if (id == this.root.id) return;
 		id = cn.pid;
 	}
 	return;
@@ -219,8 +222,9 @@ dTree.prototype.isDynamicNode = function(id) {
 dTree.prototype.isMaxDepth = function(id) {
 	var smwIdx = this.getSmwDataIndex(id);
 	if (smwIdx == null) return false;
-	var maxDepth = this.aSmw[smwIdx].maxDepth + 2; // correct number to be compatible with rest
+	var maxDepth = this.aSmw[smwIdx].maxDepth;
 	if (! maxDepth) return false;
+	else  maxDepth = maxDepth + 2; // correct number to be compatible with rest
 	var depth = 1;
 	var cParent = this.aNodes[id].pid;
 	while (cParent != -1) {
@@ -550,12 +554,12 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 // load first level (needed for refresh)
 dTree.prototype.loadFirstLevel = function(id) {
 	var params = this.getSmwData(id, true);
+	params += 'r%3D1%26';
 	var token = this.obj + "_" + id;
-	if (refreshDtree && refreshDtree.obj == this.obj)
+	if (refreshDtree && refreshDtree.obj == this.obj) 
 		cachedData[cachedData.length] = new Array(token, refreshDtree);
-	else
+	else 
 		cachedData[cachedData.length] = new Array(token, this);
-
 	params += '%26t%3D' + token;
 	this.getHttpRequest(params, 'r');
 }
@@ -885,7 +889,6 @@ handleResponseRefresh = function() {
     else treelist = [];
     dTree.aNodes[parentId]._complete = true;
     
-
 	var found;
 	var foundParents = new Array();
 	var cn;
@@ -944,7 +947,7 @@ handleResponseRefresh = function() {
 	// check if there are other dynamic root nodes to fetch
 	var drn = refreshRootNodes.shift();
 	if (drn != null) {
-		dTtree.loadFirstLevel(drn);
+		dTree.loadFirstLevel(drn);
 		return;
 	}
 	
