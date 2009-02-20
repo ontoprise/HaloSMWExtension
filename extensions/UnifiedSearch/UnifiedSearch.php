@@ -96,7 +96,8 @@ function wfUSSetupExtension() {
 		                          NS_CATEGORY => "smw_plus_category_icon_16x16.png", 
 		                          SMW_NS_PROPERTY => "smw_plus_property_icon_16x16.png", 
 		                          NS_TEMPLATE => "smw_plus_template_icon_16x16.png",
-		                          NS_HELP => "smw_plus_help_icon_16x16.png");
+		                          NS_HELP => "smw_plus_help_icon_16x16.png",
+		                          NS_IMAGE => "smw_plus_image_icon_16x16.png");
 
 		// check Multimedia namespaces from MIME-type extension and add if existing
 		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "smw_plus_music_icon_16x16.png";

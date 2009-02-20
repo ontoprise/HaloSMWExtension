@@ -33,6 +33,7 @@ class QueryExpander {
 			$found = false;
 
 			$title = Title::newFromText($term, NS_CATEGORY);
+			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
@@ -41,6 +42,7 @@ class QueryExpander {
 				$found = true;
 			}
 			$title = Title::newFromText($term);
+			if ($title == NULL) continue;
 			if ($title->exists()) {
 
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
@@ -55,6 +57,7 @@ class QueryExpander {
 
 			foreach($extraNamespace as $ns) {
 				$title = Title::newFromText($term, $ns);
+				if ($title == NULL) continue;
 				if ($title->exists()) {
 
 					$skos_values = self::getSKOSPropertyValues($title, $mode);
@@ -66,6 +69,7 @@ class QueryExpander {
 			}
 
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
+			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : array();
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
@@ -75,6 +79,7 @@ class QueryExpander {
 			}
 
 			$title = Title::newFromText($term, NS_TEMPLATE);
+			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$values = array($term);
 				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : array();

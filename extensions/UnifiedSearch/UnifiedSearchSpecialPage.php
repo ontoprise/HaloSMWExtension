@@ -36,22 +36,22 @@ class USSpecialPage extends SpecialPage {
 		$fulltext = $wgRequest->getVal( 'fulltext', '' );
 		if ($fulltext == NULL) {
 			# If the string cannot be used to create a title
-			if( is_null( $t ) ){
-				return; //TODO: return something
-			}
+			if(! is_null( $t ) ){
 
-			# If there's an exact or very near match, jump right there.
-			$t = SearchEngine::getNearMatch( $search );
-			if( !is_null( $t ) ) {
-				$wgOut->redirect( $t->getFullURL() );
-				return;
-			}
 
-			# If just the case is wrong, jump right there.
-			$t = USStore::getStore()->getSingleTitle($search);
-			if (!is_null( $t ) ) {
-				$wgOut->redirect( $t->getFullURL() );
-				return;
+				# If there's an exact or very near match, jump right there.
+				$t = SearchEngine::getNearMatch( $search );
+				if( !is_null( $t ) ) {
+					$wgOut->redirect( $t->getFullURL() );
+					return;
+				}
+
+				# If just the case is wrong, jump right there.
+				$t = USStore::getStore()->getSingleTitle($search);
+				if (!is_null( $t ) ) {
+					$wgOut->redirect( $t->getFullURL() );
+					return;
+				}
 			}
 		}
 
@@ -132,14 +132,14 @@ class USSpecialPage extends SpecialPage {
 				$html .= '<tr>'.$row.'</tr>';
 				$row = "";
 			}
-            if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
+			if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
 			$row .= '<td class="filtercolumn" '.$style.'><img style="margin: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.'</a></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
 		}
-		while ($c % 5 > 0) { $row .= '<td '.$style.'></td>'; $c++; }
+		while ($c % 5 > 0) { $row .= '<td '.$style.'></td><td '.$style.'></td>'; $c++; }
 		$html .= '<tr>'.$row.'</tr>';
 		$html .= '</table></div>';
 
@@ -200,12 +200,12 @@ class USSpecialPage extends SpecialPage {
 		$searchPage = SpecialPage::getTitleFor("Search");
 		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$text." ".$limit.'</a>';
 	}
-	
+
 	private function createLimitLink($search, $offset, $limit, $currentLimit) {
-        $searchPage = SpecialPage::getTitleFor("Search");
-        $limit = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
-        return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$limit.'</a>';
-    }
+		$searchPage = SpecialPage::getTitleFor("Search");
+		$limit = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
+		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$limit.'</a>';
+	}
 
 	private function doSearch($limit, $offset) {
 		global $wgRequest, $usgAllNamespaces;
@@ -237,13 +237,13 @@ class USSpecialPage extends SpecialPage {
 			$contentTitleSearchPattern = str_replace('$2', $expandedTitles, $contentTitleSearchPattern);
 			$searchSet = LuceneSearchSet::newFromQuery( 'raw', 	$contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
 
-			if ($searchSet->getTotalHits() == 0) {
+			if ($searchSet == NULL || $searchSet->getTotalHits() == 0) {
 				// use enhanced lucene search method with SKOS expansion for fulltext
 				$searchSet = LuceneSearchSet::newFromQuery( 'search',  $expandedFTSearch, $namespacesToSearch, $limit, $offset);
 			}
 
 			global $wgLuceneSearchVersion;
-			if ($searchSet->getTotalHits() == 0 && $wgLuceneSearchVersion >= 2.1) {
+			if (($searchSet == NULL || $searchSet->getTotalHits() == 0) && $wgLuceneSearchVersion >= 2.1) {
 				// try at least a suggestion
 				$searchSet = LuceneSearchSet::newFromQuery( 'suggest',  $search, $namespacesToSearch, $limit, $offset);
 			}
@@ -258,8 +258,11 @@ class USSpecialPage extends SpecialPage {
 			}
 			$terms = $removedOperators;
 
-			$searchSet = LuceneSearchSet::newFromQuery( 'search', $search , $namespacesToSearch, $limit, $offset);
-
+			$searchSet = LuceneSearchSet::newFromQuery( 'raw', $search , $namespacesToSearch, $limit, $offset);
+			if ($searchSet == NULL || $searchSet->getTotalHits() == 0) {
+				// use enhanced lucene search method with SKOS expansion for fulltext
+				$searchSet = LuceneSearchSet::newFromQuery( 'search',  $search , $namespacesToSearch, $limit, $offset);
+			}
 		}
 
 		// add matches
@@ -276,6 +279,9 @@ class USSpecialPage extends SpecialPage {
 		// remove remaining syntax elements from term array for highlightinh
 		for($i = 0; $i < count($terms); $i++) {
 			$terms[$i] = str_replace('~', '', $terms[$i]); // remove unsharp search hint
+			$terms[$i] = str_replace('*', '', $terms[$i]); 
+            $terms[$i] = str_replace('-', '', $terms[$i]);
+            $terms[$i] = str_replace('?', '', $terms[$i]);  
 			$terms[$i] = preg_replace('/\[\d+\]:/', '', $terms[$i]); // remove namespace hint
 		}
 
@@ -315,20 +321,25 @@ class USSpecialPage extends SpecialPage {
 	 * @return boolean
 	 */
 	private static function userDefinedSearch($terms, $search) {
-		
+
 		// check for boolean operators
 		foreach($terms as $term) {
 			$term = strtolower($term);
 			if ($term == 'and' || $term == 'or' || $term == 'not') {
 				return true;
 			}
+			if (substr($term,0,1) == '-') {
+				return true;
+			}
 		}
 
-		 // check for special lucene syntax
-		return preg_match('/\[\d+\]:/', $search) !== 0  // namespace prefix, e.g.  [12]:
-				|| strpos($search, '~') !== false       // unsharp
-				|| strpos($search, '*') !== false       // wildcard * (any number of chars)
-				|| strpos($search, '?') !== false;      // wildcard ? (one char)
+		// check for special lucene syntax
+		$fieldSyntax = preg_match('/\w+\s*:\s*{[^}]+}|\w+\s*:\s*\[[^]]+\]/', $search) !== 0;
+		$namespaceSyntax = preg_match('/\[\d+\]:/', $search) !== 0;
+		return $namespaceSyntax || $fieldSyntax  // namespace prefix, e.g.  [12]:
+		|| strpos($search, '~') !== false       // unsharp
+		|| strpos($search, '*') !== false       // wildcard * (any number of chars)
+		|| strpos($search, '?') !== false;      // wildcard ? (one char)
 
 	}
 
@@ -349,7 +360,7 @@ class USSpecialPage extends SpecialPage {
 			// unquote if necessary
 			if (substr($term, 0, 1) == '"' && substr($term, strlen($term)-1, 1) == '"') {
 				$term = substr($term, 1, strlen($term)-2);
-				$term = str_replace(' ','_',$term);
+				
 			}
 
 			$terms[] = $term;//strtolower($term);
