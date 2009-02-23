@@ -160,6 +160,7 @@ class UnifiedSearchResultPrinter {
 			case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
 			case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
 			case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
+		    case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
 			case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
 			case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
 		    case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
