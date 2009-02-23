@@ -211,7 +211,10 @@
 				<div id="content">
 					<?php 	global $wgRequest,$wgTitle;
 				
-							if ($wgRequest->getText('action') == "edit" || $wgRequest->getText('action') == "annotate" || ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search')))
+							global $wgExtensionCredits; if (!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+                               $useCombinedSearch = ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search'));
+                            }
+                            if ($wgRequest->getText('action') == "edit" || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
 							{ ?>
 							<div id="slider">	
 							</div>
