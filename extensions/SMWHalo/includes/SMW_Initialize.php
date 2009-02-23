@@ -1470,25 +1470,29 @@ function smwfExtDeleteOutput(& $article, & $output) {
  *  2. rules (optional)
  */
 function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-	global $smwgIP, $smwgTripleStoreGraph, $smwgRuleRewriter, $smwgEnableFlogicRules;
-	include_once($smwgIP . '/includes/SMW_Factbox.php');
+    global $smwgIP, $smwgTripleStoreGraph, $smwgRuleRewriter, $smwgEnableFlogicRules;
+    global $wgContLang;
+    include_once($smwgIP . '/includes/SMW_Factbox.php');
+   
+    SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
 
-	SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
-
-	// parse categories:
-	$categoryLinkPattern = '/\[\[               # Beginning of the link
-                            category:           # category link (case insensitive!)
-                            ([^]]+)               # category
-                            \]\]                # End of link
+    $categoryText = $wgContLang->getNsText(NS_CATEGORY);
+    // parse categories:
+    $categoryLinkPattern = '/\[\[\s*                   # Beginning of the link
+                            '.$categoryText.'\s*:      # category link (case insensitive!)
+                            ([^\[\]]*)                 # category
+                            \]\]                       # End of link
                             /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
-	$categories = array();
-	$matches = array();
-	preg_match_all($categoryLinkPattern, $text, $matches);
-	if (isset($matches[1])) {
-		foreach($matches[1] as $m) {
-			$categories[] = Title::newFromText($m, NS_CATEGORY);
-		}
-	}
+    $categories = array();
+    $matches = array();
+    preg_match_all($categoryLinkPattern, $text, $matches);
+    if (isset($matches[1])) {
+        foreach($matches[1] as $m) {
+            $labelIndex = strpos($m, '|');
+            $m = $labelIndex !== false ? substr($m, 0, $labelIndex) : $m;
+            $categories[] = Title::newFromText(trim($m), NS_CATEGORY);
+        }
+    }
 
 	// rules
 	// meant to be a hash map $ruleID => $ruleText,

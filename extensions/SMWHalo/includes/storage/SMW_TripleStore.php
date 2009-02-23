@@ -658,17 +658,29 @@ class SMWTripleStore extends SMWStore {
 				$resultColumn = $mapPRTOColumns[$var_name];
 				// category result
 				if (stripos($b, self::$CAT_NS) === 0) {
-					$title = Title::newFromText(substr($b, strlen(self::$CAT_NS)), NS_CATEGORY);
-					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
-					$row[$resultColumn] = new SMWResultArray(array($v), $prs[$resultColumn]);
+					$allValues = array();
+                    $multiValue = explode("|", $b);
+                    
+                    foreach($multiValue as $sv) {
+						$title = Title::newFromText(substr($sv, strlen(self::$CAT_NS)), NS_CATEGORY);
+						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+						$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
+						$allValues[] = $v;
+                    }
+					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
 
 					// property result
 				} else if (stripos($b, self::$PROP_NS) === 0) {
-					$title = Title::newFromText(substr($b, strlen(self::$PROP_NS)), SMW_NS_PROPERTY);
-					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
-					$row[$resultColumn] = new SMWResultArray(array($v), $prs[$resultColumn]);
+					$allValues = array();
+                    $multiValue = explode("|", $b);
+                    
+                    foreach($multiValue as $sv) {
+						$title = Title::newFromText(substr($sv, strlen(self::$PROP_NS)), SMW_NS_PROPERTY);
+						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+						$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
+						$allValues[] = $v;
+                    }
+					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
 
 					// instance result
 				} else if (stripos($b, self::$INST_NS) === 0) {
