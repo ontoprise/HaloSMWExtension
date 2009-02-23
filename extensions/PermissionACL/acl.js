@@ -64,7 +64,7 @@ ACL.prototype = {
 		var whitelist = $('whitelist').value;
 		var superusers = $('superusers').value;
 		if (acl_rules.length == 0) {
-			alert("empty rules set should bot be updated.");
+			alert("Empty rules set should not be updated.");
 			return;
 		}
 		sajax_do_call('smwf_al_updateACLs', [acl_rules.toJSON(), whitelist, superusers], this.updateDone.bind(this));
