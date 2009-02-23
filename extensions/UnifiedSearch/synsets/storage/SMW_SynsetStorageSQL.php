@@ -57,17 +57,22 @@ class SynsetStorageSQL implements ISynsetStorage{
 	 * @return Array<Array<String>>
 	 */
 	public function getSynsets($term) {
-		$query = "SELECT synset_id FROM ".$this->smw_synsets." WHERE term=\"".$term."\"";
+		$term = utf8_decode($term);
+		
+		$query = "SELECT synset_id FROM ".$this->smw_synsets." WHERE term=".$this->db->addQuotes($term);
 		$res = $this->db->query($query );
-
+		
 		$result = array();
 		while($row = $this->db->fetchObject($res)) {
 			$synsetId = $row->synset_id;
 			$query = "SELECT term FROM ".$this->smw_synsets." WHERE synset_id=".$synsetId;
-			$res = $this->db->query($query );
+			
+			$res2 = $this->db->query($query );
 			$resultTerms = array();
-			while($row = $this->db->fetchObject($res)) {
-				$resultTerms[] = $row->term;
+			while($row2 = $this->db->fetchObject($res2)) {
+				if(utf8_encode($term) != utf8_encode($row2->term)){
+					$resultTerms[] = utf8_encode($row2->term);
+				}
 			}
 			$result[] = $resultTerms;
 		}

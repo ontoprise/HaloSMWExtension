@@ -22,8 +22,7 @@ class SynsetInitialiserEn implements ISynsetInitialiser {
 		global $IP;
 		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
 		$synsetStorage = new SynsetStorageSQL();
-		$synsetStorage->setup(false);
-
+		
 		$fr = fopen ($IP.'/extensions/UnifiedSearch/synsets/initialiser/wn_s_en.pl', 'r' );
 
 		$count = 0;
@@ -70,6 +69,7 @@ class SynsetInitialiserEn implements ISynsetInitialiser {
 		$synsetStorage->importSQLDump($fr);
 		fclose($fr);
 	}
+		
 }
 
 ?>

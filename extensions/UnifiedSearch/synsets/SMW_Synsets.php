@@ -5,6 +5,8 @@
  * Author: ingo
  */
 
+global $IP;
+require_once($IP."/extensions/UnifiedSearch/synsets/SMW_SynsetParserFunction.php");
 
 /*
  * This class provides access to the synset functionality

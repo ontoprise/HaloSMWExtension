@@ -22,8 +22,7 @@ class SynsetInitialiserDe implements ISynsetInitialiser {
 		global $IP;
 		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
 		$synsetStorage = new SynsetStorageSQL();
-		$synsetStorage->setup(false);
-
+		
 		$fr = fopen ($IP.'/extensions/UnifiedSearch/synsets/initialiser/thesaurus.txt', 'r' );
 
 		$synsetId = 0;
@@ -38,6 +37,7 @@ class SynsetInitialiserDe implements ISynsetInitialiser {
 				
 			$syns = explode(";", $line);
 			foreach($syns as $synonym){
+				$synonym = trim($synonym);
 				if(strlen($synonym) > 0){
 					$synsetStorage->addTerm($synonym, $synsetId);
 				}
