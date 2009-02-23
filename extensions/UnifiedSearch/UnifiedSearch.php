@@ -27,6 +27,12 @@ $wgAjaxExportList[] = 'smwf_ca_GetHTMLBody';
 $wgHooks['SMW_AddScripts'][]='wfUSAddHeader';
 $wgExtensionFunctions[] = 'wfUSSetupExtension';
 
+//synsets
+$wgHooks['smwInitializeTables'][] = 'smwfSynsetsInitializeTables';
+global $IP;
+require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+
+
 /**
  * Add javascripts and css files
  *
@@ -247,6 +253,17 @@ function smwf_ca_GetHTMLBody($page) {
 	}
 
 	return $head.$htmlcontent;
+}
+
+/*
+ * Creates or updates additional tables needed by the Synsets functions.
+ * Called from SMW when admin re-initializes tables
+ */
+function smwfSynsetsInitializeTables() {
+	$s = new Synsets();
+	$s->setup();
+
+	return true;
 }
 
 
