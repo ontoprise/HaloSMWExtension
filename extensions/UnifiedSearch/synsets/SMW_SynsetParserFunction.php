@@ -41,6 +41,7 @@ function synsetPF_Render( &$parser) {
 	
 	$result = "";
 	
+	$nFirst = false;
 	foreach($synonyms as $s){
 		if($nFirst){
 			$result .= ", "; 	
