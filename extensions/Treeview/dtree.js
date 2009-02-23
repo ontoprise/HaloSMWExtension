@@ -383,7 +383,7 @@ dTree.prototype.closeAll = function() {
 dTree.prototype.toString = function() {
 	var str;
     if (this.className == 'dtreestatic') {
-       str = '<h5><label>'+gLanguage.getMessage('smw_stv_browse')+'</label></h5><div class="'+this.className+'">\n';
+       str = '<div class="'+this.className+'">\n';
     } else {
        str = '<div class="'+this.className+'">\n';
     }
