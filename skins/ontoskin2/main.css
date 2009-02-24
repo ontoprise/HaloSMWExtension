@@ -52,11 +52,11 @@
 #smwf_head{
 	position: relative;
 	background: #FFF;
-	min-height: 105px;
 	max-height: 135px;
 	border-bottom: 5px solid #67666b;
 	padding-left: 10px;
 	padding-top: 10px;
+	padding-bottom: 5px;
 	overflow: hidden;
 }
 
@@ -93,7 +93,7 @@
 #smwf_search {
 	float: right;
 	position: absolute;
-	bottom: 10px;
+	bottom: 5px;
 	right: 	15px;
 }
 
