@@ -134,7 +134,7 @@ class OntoSkinTemplate extends QuickTemplate {
 	        global $wgExtensionCredits; if (!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
 	        	$useCombinedSearch = ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search'));
 	        }
-			if ($wgRequest->getText('action') == "edit" || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
+			if (($wgRequest->getText('action') == "edit" && !($wgRequest->getText('mode') == "wysiwyg")) || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
 			{ ?>
 			<div id="slider">	
 			</div>
