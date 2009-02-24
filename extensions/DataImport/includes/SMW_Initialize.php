@@ -10,9 +10,10 @@ if ( !defined( 'SMW_HALO_VERSION' ) ) die;
 
 define('SMW_DI_VERSION', '1.4-for-SMW-1.4');
 
-global $smwgDIIP; 
+global $smwgDIIP, $wgHooks; 
 $smwgDIIP = $IP . '/extensions/DataImport';
 $smwgDIScriptPath = $wgScriptPath . '/extensions/DataImport';
+$wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
 
 /**
  * Configures Data Import Extension for initialization.
@@ -89,8 +90,13 @@ function smwfDISetupExtension() {
 	}
 
 	//for initializing web service database tables
-	$wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
+	//$wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
 
+	
+	//load the Gardening Bots
+	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
+	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
+	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 	return true;
 }
 
@@ -98,7 +104,6 @@ function smwfDISetupExtension() {
  * Creates or updates additional tables needed by the Data Import extension.
  * Called from SMW when admin re-initializes tables
  */
-//todo: how to tell smw to also call this method
 function smwfDIInitializeTables() {
 	global $smwgDIIP;
 	require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceManager.php');
