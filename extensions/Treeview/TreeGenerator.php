@@ -75,7 +75,7 @@ class TreeGenerator {
 		    if ($displayProperty) $returnPrefix .= "display=".$genTreeParameters['display']."&";
 			if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
 		    if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
-		    if ($genTreeParameters['refresh']) $returnPrefix .= "refresh=1&";
+		    if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;
@@ -143,9 +143,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 	  
-	  	$db;
-		$categoryConstraintTable;
-		$categoryConstraintWhere;
+	  	$db = NULL;
+		$categoryConstraintTable = '';
+		$categoryConstraintWhere = '';
 		
 	    // relation must be set -> we fetch here the smw_id of the requested relation
 		if (! $this->getRelationId($relation)) return ($this->json) ? array() : "";
@@ -530,6 +530,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * @return string	  $tree 
      */
 	function formatTreeToText(&$treeList, &$elementProperties) {
+		$tree = '';
 	    if ($this->redirectPage)
 	        $elementProperties[-1] = 
 	            array($this->redirectPage->getDBkey()."|...", NULL);

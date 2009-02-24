@@ -140,7 +140,7 @@ class SemanticTreeview {
         $newtext = "";
         foreach($rows as $row) {
             preg_match('/^(\\*+)(.*?)$/m', $row, $m);
-            $newtext .= $this->formatRow($m)."\n";
+           	$newtext .= $this->formatRow($m)."\n";
         }
         return $newtext;
    }
@@ -154,7 +154,14 @@ class SemanticTreeview {
      *         may be used (even if parser-cache disabled) this also means that tree id's may be repeated
      */
     private function formatRow($m) {
-        return "\x7f1{$this->uniq}\x7f{$this->id}\x7f".(strlen($m[1])-1)."\x7f$m[2]\x7f2{$this->uniq}";
+    	if (count($m) > 0) {
+    		$m1 = strlen($m[1]) -1;
+    		$m2 = $m[2];
+    	} else {
+    		$m1 = 0;
+    		$m2 = '';
+    	}
+        return "\x7f1{$this->uniq}\x7f{$this->id}\x7f{$m1}\x7f{$m2}\x7f2{$this->uniq}";
     }
  
     /**
