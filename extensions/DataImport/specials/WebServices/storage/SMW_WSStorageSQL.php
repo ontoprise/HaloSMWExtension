@@ -79,7 +79,7 @@ class WSStorageSQL {
 		DBHelper::setupTable($cacheTable, array(
 				  'web_service_id'  =>  'INT(8) UNSIGNED NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'result'          =>  'TEXT NOT NULL' ,
+				  'result'          =>  'LONGTEXT NOT NULL' ,
 				  'last_update'    	=>  'VARCHAR(14) NOT NULL' ,
 				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id');
