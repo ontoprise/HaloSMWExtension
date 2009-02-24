@@ -546,7 +546,11 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	else 
 		cachedData[cachedData.length] = new Array(token, this);
 	
-	params += 's%3D' + URLEncode(this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2"));
+	// fetch name from link i.e. href attribute in a tag
+	var name = this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+	if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
+		name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
+	params += 's%3D' + URLEncode(name);
 	params += '%26t%3D' + token; 
     this.getHttpRequest(params, callBackMethod);
 };
@@ -807,7 +811,7 @@ parseHttpResponse = function() {
     	httpRequest = null;
     }
     else return;
-    	
+
     resObj = !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(result.replace(/"(\\.|[^"\\])*"/g, ''))) 
              && eval('(' + result + ')');
     if (resObj.result != 'success' || !resObj.token) return;
@@ -869,6 +873,7 @@ handleResponseOpen = function() {
 };
 
 handleResponseRefresh = function() {
+
 	var responseArr = parseHttpResponse();
 	if (!responseArr) return;
 	

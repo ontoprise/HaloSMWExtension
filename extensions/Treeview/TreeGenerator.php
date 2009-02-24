@@ -53,7 +53,8 @@ class TreeGenerator {
 
 		// setup some settings
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
-		$redirectPage = ($maxDepth > 0) ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
+		$redirectPage = (($maxDepth > 0) &&  isset($genTreeParameters['redirectPage']))
+		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		// check for dynamic expansion via Ajax
 		if (array_key_exists('dynamic', $genTreeParameters)) {
 		    $useAjaxExpansion = 1;
