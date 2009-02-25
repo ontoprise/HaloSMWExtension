@@ -67,11 +67,11 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step1").className = "ActualMenueStep";
 			$("menue-step2").className = "TodoMenueStep";
 
-			$("step1-help").style.display = "";
-			$("step2-help").style.display = "none";
+			//$("step1-help").style.display = "";
+			//$("step2-help").style.display = "none";
 
-			$("step1-img").style.visibility = "visible";
-			$("step2-img").style.visibility = "hidden";
+			//$("step1-img").style.visibility = "visible";
+			//$("step2-img").style.visibility = "hidden";
 
 			$("step1-error").style.display = "";
 
@@ -107,11 +107,11 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step1").className = "DoneMenueStep";
 			$("menue-step2").className = "ActualMenueStep";
 
-			$("step1-help").style.display = "none";
-			$("step2-help").style.display = "";
+			//$("step1-help").style.display = "none";
+			//$("step2-help").style.display = "";
 
-			$("step1-img").style.visibility = "hidden";
-			$("step2-img").style.visibility = "visible";
+			//$("step1-img").style.visibility = "hidden";
+			//$("step2-img").style.visibility = "visible";
 
 			$("step1-error").style.display = "none";
 		}
@@ -127,15 +127,15 @@ DefineWebServiceSpecial.prototype = {
 		$("menue-step5").className = "TodoMenueStep";
 		$("menue-step6").className = "TodoMenueStep";
 
-		$("step3-help").style.display = "none";
-		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "none";
+		//$("step3-help").style.display = "none";
+		//$("step4-help").style.display = "none";
+		//$("step5-help").style.display = "none";
+		//$("step6-help").style.display = "none";
 
-		$("step3-img").style.visibility = "hidden";
-		$("step4-img").style.visibility = "hidden";
-		$("step5-img").style.visibility = "hidden";
-		$("step6-img").style.visibility = "hidden";
+		//$("step3-img").style.visibility = "hidden";
+		//$("step4-img").style.visibility = "hidden";
+		//$("step5-img").style.visibility = "hidden";
+		//$("step6-img").style.visibility = "hidden";
 
 		$("step2a-error").style.display = "none";
 		$("step2b-error").style.display = "none";
@@ -191,7 +191,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			if (!edit) {
 				$("step3").style.display = "";
-				$("step2-img").style.visibility = "hidden";
+				//$("step2-img").style.visibility = "hidden";
 				$("step3-parameters").style.display = "none";
 				$("step3-go-img").style.display = "none";
 				this.processStep3();
@@ -200,7 +200,7 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			// todo: find better solution
 			if (!edit) {
-				$("step2-img").style.visibility = "visible";
+				//$("step2-img").style.visibility = "visible";
 				$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
 				$("step3-parameters").style.display = "";
 				$("step3-go-img").style.display = "";
@@ -247,11 +247,11 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step2").className = "ActualMenueStep";
 			$("menue-step3").className = "TodoMenueStep";
 
-			$("step2-help").style.display = "";
-			$("step3-help").style.display = "none";
+			//$("step2-help").style.display = "";
+			//$("step3-help").style.display = "none";
 
 			$("step2-img").style.visibility = "visible";
-			$("step3-img").style.visibility = "hidden";
+			//$("step3-img").style.visibility = "hidden";
 
 			$("errors").style.display = "";
 			$("step2a-error").style.display = "none";
@@ -513,11 +513,11 @@ DefineWebServiceSpecial.prototype = {
 				$("menue-step2").className = "DoneMenueStep";
 				$("menue-step3").className = "ActualMenueStep";
 
-				$("step2-help").style.display = "none";
-				$("step3-help").style.display = "";
+				//$("step2-help").style.display = "none";
+				//$("step3-help").style.display = "";
 
-				$("step2-img").style.visibility = "hidden";
-				$("step3-img").style.visibility = "visible";
+				//$("step2-img").style.visibility = "hidden";
+				//$("step3-img").style.visibility = "visible";
 
 				$("step2a-error").style.display = "none";
 				$("step2b-error").style.display = "none";
@@ -536,13 +536,13 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step5").className = "TodoMenueStep";
 			$("menue-step6").className = "TodoMenueStep";
 
-			$("step4-help").style.display = "none";
-			$("step5-help").style.display = "none";
-			$("step6-help").style.display = "none";
+			//$("step4-help").style.display = "none";
+			//$("step5-help").style.display = "none";
+			//$("step6-help").style.display = "none";
 
-			$("step4-img").style.visibility = "hidden";
-			$("step5-img").style.visibility = "hidden";
-			$("step6-img").style.visibility = "hidden";
+			//$("step4-img").style.visibility = "hidden";
+			//$("step5-img").style.visibility = "hidden";
+			//$("step6-img").style.visibility = "hidden";
 
 			$("step3-error").style.display = "none";
 			$("step4-error").style.display = "none";
@@ -840,11 +840,11 @@ DefineWebServiceSpecial.prototype = {
 					$("menue-step4").className = "ActualMenueStep";
 				}
 
-				$("step3-help").style.display = "none";
-				$("step4-help").style.display = "";
+				//$("step3-help").style.display = "none";
+				//$("step4-help").style.display = "";
 
-				$("step3-img").style.visibility = "hidden";
-				$("step4-img").style.visibility = "visible";
+				//$("step3-img").style.visibility = "hidden";
+				//$("step4-img").style.visibility = "visible";
 
 				$("step3-error").style.display = "none";
 				$("errors").style.display = "none";
@@ -876,10 +876,10 @@ DefineWebServiceSpecial.prototype = {
 
 		$("menue-step4").className = "DoneMenueStep";
 		$("menue-step5").className = "ActualMenueStep";
-		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "";
-		$("step4-img").style.visibility = "hidden";
-		$("step5-img").style.visibility = "visible";
+		//$("step4-help").style.display = "none";
+		//$("step5-help").style.display = "";
+		//$("step4-img").style.visibility = "hidden";
+		//$("step5-img").style.visibility = "visible";
 
 		$("step5-display-once").checked = true;
 		$("step5-display-days").value = "";
@@ -912,10 +912,10 @@ DefineWebServiceSpecial.prototype = {
 		$("menue-step5").className = "DoneMenueStep";
 		$("menue-step6").className = "ActualMenueStep";
 
-		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "";
-		$("step5-img").style.visibility = "hidden";
-		$("step6-img").style.visibility = "visible";
+		//$("step5-help").style.display = "none";
+		//$("step6-help").style.display = "";
+		//$("step5-img").style.visibility = "hidden";
+		//$("step6-img").style.visibility = "visible";
 		$("step6-name").value = "";
 	},
 
@@ -958,9 +958,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 					var path = "";
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
-						var pathStep = "";
+						var pathStep = "//";
+						
 						if (k > 0) {
-							pathStep += ".";
+							pathStep = "/";
 						}
 						pathStep += this.preparedPathSteps[i][k]["value"];
 						if (pathStep.lastIndexOf("(") > 0) {
@@ -974,7 +975,7 @@ DefineWebServiceSpecial.prototype = {
 							pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
 							pathStep += "]";
 						}
-						if (pathStep != ".") {
+						if (pathStep != "/" && pathStep != "//") {
 							path += pathStep;
 						}
 					}
@@ -990,10 +991,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 					var rPath = "";
 					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
-						var rPathStep = "";
+						var rPathStep = "//";
 
 						if (k > 1) {
-							rPathStep += ".";
+							rPathStep = "/";
 						}
 						rPathStep += this.preparedRPathSteps[i][k]["value"];
 
@@ -1008,7 +1009,7 @@ DefineWebServiceSpecial.prototype = {
 							rPathStep += $("step4-arrayinput-" + i + "-" + k).value;
 							rPathStep += "]";
 						}
-						if (rPathStep != ".") {
+						if (rPathStep != "/" && rPathStep != "//") {
 							rPath += rPathStep;
 						}
 					}
@@ -1203,9 +1204,9 @@ DefineWebServiceSpecial.prototype = {
 			$("step4").style.display = "none";
 			$("step5").style.display = "none";
 			$("step6").style.display = "none";
-			$("step6-help").style.display = "none";
-			$("menue").style.display = "none";
-			$("help").style.display = "none";
+			//$("step6-help").style.display = "none";
+			//$("menue").style.display = "none";
+			//$("help").style.display = "none";
 
 			this.hidePendingIndicator();
 		} else {
@@ -1224,7 +1225,7 @@ DefineWebServiceSpecial.prototype = {
 	processStep7 : function(request) {
 		this.step = "step1";
 		$("step1-img").style.visibility = "visible";
-		$("step1-help").style.display = "";
+		//$("step1-help").style.display = "";
 		$("step7").style.display = "none";
 		$("menue").style.display = "";
 		$("menue-step2").style.fontWeight = "normal";
@@ -2340,22 +2341,23 @@ DefineWebServiceSpecial.prototype = {
 	 * appears
 	 */
 	showPendingIndicator : function(onElement) {
-		this.hidePendingIndicator();
-		$(onElement + "-img").style.visibility = "hidden";
-		this.pendingIndicator = new OBPendingIndicator($(onElement));
-		this.pendingIndicator.show();
-		this.pendingIndicator.onElement = onElement;
+		//this.hidePendingIndicator();
+		//$(onElement + "-img").style.visibility = "hidden";
+		//this.pendingIndicator = new OBPendingIndicator($(onElement));
+		//this.pendingIndicator.show();
+		//this.pendingIndicator.onElement = onElement;
 	},
 
 	/*
 	 * Hides the pending indicator.
 	 */
 	hidePendingIndicator : function() {
-		if (this.pendingIndicator != null) {
-			$(this.pendingIndicator.onElement + "-img").style.visibility = "visible";
-			this.pendingIndicator.hide();
-			this.pendingIndicator = null;
-		}
+		// if (this.pendingIndicator != null) {
+		// $(this.pendingIndicator.onElement + "-img").style.visibility =
+		// "visible";
+		// this.pendingIndicator.hide();
+		// this.pendingIndicator = null;
+		//		}
 	},
 
 	editWWSD : function() {
@@ -2429,6 +2431,16 @@ DefineWebServiceSpecial.prototype = {
 				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
 			}
 		}
+	},
+	
+	displayHelp : function(id){
+		$("step"+id+"-help").style.display = "";
+		$("step"+id+"-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.hideHelp("+id+")";
+	},
+	
+	hideHelp : function(id){
+		$("step"+id+"-help").style.display = "none";
+		$("step"+id+"-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.displayHelp("+id+")";
 	}
 }
 
