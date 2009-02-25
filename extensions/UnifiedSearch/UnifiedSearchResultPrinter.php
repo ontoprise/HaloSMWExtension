@@ -150,7 +150,7 @@ class UnifiedSearchResultPrinter {
 
 	// adds preview to result depending on namespace
 	private static function addPreview($e, $args, $args_prev) {	
-		if ($e->getTitle()->getNamespace() == NS_AUDIO || $e->getTitle()->getNamespace() == NS_VIDEO || $e->getTitle()->getNamespace() == NS_IMAGE) {
+		if ($e->getTitle()->getNamespace() == NS_AUDIO || $e->getTitle()->getNamespace() == NS_VIDEO || $e->getTitle()->getNamespace() == NS_IMAGE || $e->getTitle()->getNamespace() == NS_DOCUMENT) {
 			return '<li><span class="nosearchprev"></span>';
 		}
 		global $wgServer, $wgScript;			
