@@ -49,14 +49,18 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
  			if ($typeHint == null || $typeHint == 'null') {
  				// if no $typeHint defined, search for (nearly) all pages.
- 	    		$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, SMW_NS_WEB_SERVICE));
+ 	    		$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
+                if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
+                $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
  	    		
  			} else {
  				// otherwise use type hint 
  				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
  				if (empty($pages)) {
  					// fallback to standard search
- 					$pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE, SMW_NS_WEB_SERVICE));
+ 					$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
+                    if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
+                    $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
  				}
  				
  			}
