@@ -81,20 +81,32 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		if(!$editwwsd){
 			$html .= "<br>";
 			$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
-			$html .= "<img id=\"step1-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s1-intro");
-			$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"50\" maxlength=\"300\" value=\"\"/>";
-			$html .= "<sup style=\"color: darkred\"><b>*</b></sup>";
-
-			$html .= "<span id=\"step1-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step1-go-img\" onclick=\"webServiceSpecial.processStep1()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
-			$html .= "<br>";
+			//$html .= "<img id=\"step1-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s1-intro");
+			$html .= "<img id=\"step1-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			$html .= wfMsg("smw_wws_s1-uri");
+			$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"\"/>";
+			
+			$html .= "<div id=\"step1-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s1-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"Next\" onclick=\"webServiceSpecial.processStep1()\">";
+			
+			//todo: text von button in language file
+			//todo: edit gui anpasse
+			//todo: pending indicator
+			//$html .= "<span id=\"step1-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step1-go-img\" onclick=\"webServiceSpecial.processStep1()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
+			//$html .= "<br>";
 			$html .= "</div>";
 		} else {
 			$html .= "<br>";
 			$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
-			$html .= "<img id=\"step1-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\" style=\"visibility: hidden\"></img>";
+			//$html .= "<img id=\"step1-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\" style=\"visibility: hidden\"></img>";
 			$html .= wfMsg("smw_wws_s1-intro");
 			$html .= "<input readonly id=\"step1-uri\" type=\"text\" size=\"50\" maxlength=\"300\" value=\"".$wwsd->getURI()."\"/>";
 			$html .= "<sup style=\"color: darkred\"><b>*</b></sup>";
@@ -110,14 +122,28 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		//2. Specify method
 		if(!$editwwsd){
 			$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: none\">";
-			$html .= "<img class=\"Marker\" id=\"step2-img\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s2-intro");;
+			//$html .= "<img class=\"Marker\" id=\"step2-img\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s2-intro");
+			$html .= "<img id=\"step2-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			$html .= wfMsg("smw_wws_s2-method");
+			
+			
+			//$html .= wfMsg("smw_wws_s2-intro");;
 			$html .= "<select id=\"step2-methods\" size=\"1\">";
 			$html .= "</select>";
-			$html .= "<span id=\"step2-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step2-go-img\" onclick=\"webServiceSpecial.processStep2()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
-			$html .= "<br>";
+			
+			$html .= "<div id=\"step2-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s2-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step2-go-img\" value=\"Next\" onclick=\"webServiceSpecial.processStep2()\">";
+			
+			//$html .= "<span id=\"step2-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step2-go-img\" onclick=\"webServiceSpecial.processStep2()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
+			//$html .= "<br>";
 			$html .= "</div>";
 		} else {
 			$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: block\">";
@@ -137,16 +163,29 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		//3. Define Parameters
 		if(!$editwwsd){
 			$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: none\">";
-			$html .= "<img class=\"Marker\" id=\"step3-img\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s3-intro");
+			//$html .= "<img class=\"Marker\" id=\"step3-img\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s3-intro");
+			$html .= "<img id=\"step3-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			
+			//$html .= wfMsg("smw_wws_s2-intro");;
+			
+			//$html .= wfMsg("smw_wws_s3-intro");
 			$html .= "<div id=\"step3-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 			$html .= wfMsg("smw_wws_duplicate");
 			$html .= "</div>";
 			$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
 
-			$html .= "<span id=\"step3-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step3-go-img\" onclick=\"webServiceSpecial.processStep3()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
+			$html .= "<div id=\"step3-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s3-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step3-go-img\" value=\"Next\" onclick=\"webServiceSpecial.processStep3()\">";
+			
+			//$html .= "<span id=\"step3-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step3-go-img\" onclick=\"webServiceSpecial.processStep3()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
 			$html .= "</div>";
 		} else {
 			$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: block\">";
@@ -167,16 +206,28 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		// 4. Define Results
 		if(!$editwwsd){
 			$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: none\">";
-			$html .= "<img id=\"step4-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s4-intro");
+			
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s4-intro");
+			$html .= "<img id=\"step4-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			
+			
+			//$html .= "<img id=\"step4-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			//$html .= wfMsg("smw_wws_s4-intro");
 			$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 			$html .= wfMsg("smw_wws_duplicate");
 			$html .= "</div>";
 			$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
 
-			$html .= "<span id=\"step4-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step4-go-img\" onclick=\"webServiceSpecial.processStep4()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
+			$html .= "<div id=\"step4-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s4-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" value=\"Next\" onclick=\"webServiceSpecial.processStep4()\">";
+			//$html .= "<span id=\"step4-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step4-go-img\" onclick=\"webServiceSpecial.processStep4()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
 			$html .= "</div>";
 		} else {
 			$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: block\">";
@@ -196,14 +247,17 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		// 5. Define updatae policy
 		if(!$editwwsd){
 			$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: none\" >";
-			$html .= "<img id=\"step5-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s5-intro");
+			//$html .= "<img id=\"step5-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s5-intro");
+			$html .= "<img id=\"step5-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(5)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			//$html .= wfMsg("smw_wws_s5-intro");
 
 			$html .= "<table id=\"step5-policies\">";
 
-			$html .= "<tr><td><span class=\"OuterLeftIndent\">Display policy: </span></td>";
+			$html .= "<tr><td><span>Display policy: </span></td>";
 			$html .= "<td><input id=\"step5-display-once\" checked=\"true\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-display-once')\" type=\"radio\" name=\"step5-display\" value=\"once\">Once</input>";
-			$html .= "<span class=\"OuterLeftIndent\"><input id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
+			$html .= "<span><input id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
 
 			$html .= "<td><input type=\"text\" id=\"step5-display-days\" onfocus=\"webServiceSpecial.selectRadio('step5-display-max')\" size=\"7\" maxlength=\"10\" />";
 			$html .= "<span> days </span>";
@@ -213,9 +267,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$html .= "<span> minutes </span>";
 			$html .= "</td></tr>";
 
-			$html .= "<tr><td><span class=\"OuterLeftIndent\">Query policy: </span></td>";
+			$html .= "<tr><td><span>Query policy: </span></td>";
 			$html .= "<td><input id=\"step5-query-once\" checked=\"true\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-query-once')\" type=\"radio\" name=\"step5-query\" value=\"once\">Once</input>";
-			$html .= "<span class=\"OuterLeftIndent\"><input id=\"step5-query-max\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
+			$html .= "<span><input id=\"step5-query-max\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
 
 			$html .= "<td><input type=\"text\" id=\"step5-query-days\" onfocus=\"webServiceSpecial.selectRadio('step5-query-max')\" size=\"7\" maxlength=\"10\" />";
 			$html .= "<span> days </span>";
@@ -232,15 +286,23 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 			$html .= "<tr></tr>";
 
-			$html .= "<tr><td><span class=\"OuterLeftIndent\"> Span of life (in days): </span></td>";
+			$html .= "<tr><td><span> Span of life (in days): </span></td>";
 			$html .= "<td><input type=\"text\" id=\"step5-spanoflife\" text\" size=\"7\" maxlength=\"10\" /></td>";
 			$html .= "<td><span> Expires after update: </span>";
 			$html .= "<input id=\"step5-expires-yes\" checked=\"true\" type=\"radio\" name=\"step5-expires\" value=\"once\">Yes</input>";
 			$html .= "<input id=\"step5-expires-no\" type=\"radio\" name=\"step5-expires\" value=\"\">No</input>";
-			$html .= "<span id=\"step5-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step5-go-img\" onclick=\"webServiceSpecial.processStep5()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
+			//$html .= "<span id=\"step5-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step5-go-img\" onclick=\"webServiceSpecial.processStep5()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
 			$html .= "</td></tr></table>";
+			
+			$html .= "<div id=\"step5-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s5-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step5-go-img\" value=\"Next\" onclick=\"webServiceSpecial.processStep5()\">";
+			
 			$html .= "</div>";
 		} else {
 			$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: block\" >";
@@ -249,10 +311,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 			$html .= "<table id=\"step5-policies\">";
 
-			$html .= "<tr><td><span class=\"OuterLeftIndent\">Display policy: </span></td>";
+			$html .= "<tr><td><span>Display policy: </span></td>";
 			if($wwsd->getDisplayPolicy() == 0){
 				$html .= "<td><input id=\"step5-display-once\" checked=\"true\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-display-once')\" type=\"radio\" name=\"step5-display\" value=\"once\">Once</input>";
-				$html .= "<span class=\"OuterLeftIndent\"><input id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
+				$html .= "<span><input id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
 
 				$html .= "<td><input type=\"text\" id=\"step5-display-days\" onfocus=\"webServiceSpecial.selectRadio('step5-display-max')\" size=\"7\" maxlength=\"10\" />";
 				$html .= "<span> days </span>";
@@ -262,7 +324,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				$html .= "<span> minutes </span></td>";
 			} else {
 				$html .= "<td><input id=\"step5-display-once\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-display-once')\" type=\"radio\" name=\"step5-display\" value=\"once\">Once</input>";
-				$html .= "<span class=\"OuterLeftIndent\"><input checked=\"true\" id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
+				$html .= "<span><input checked=\"true\" id=\"step5-display-max\" type=\"radio\" name=\"step5-display\" value=\"\">MaxAge</input></span></td>";
 
 				$html .= "<td><input type=\"text\" id=\"step5-display-days\" onfocus=\"webServiceSpecial.selectRadio('step5-display-max')\" size=\"7\" maxlength=\"10\" />";
 				$html .= "<span> days </span>";
@@ -274,9 +336,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$html .= "</tr>";
 
 			if($wwsd->getQueryPolicy() == 0){
-				$html .= "<tr><td><span class=\"OuterLeftIndent\">Query policy: </span></td>";
+				$html .= "<tr><td><span>Query policy: </span></td>";
 				$html .= "<td><input id=\"step5-query-once\" checked=\"true\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-query-once')\" type=\"radio\" name=\"step5-query\" value=\"once\">Once</input>";
-				$html .= "<span class=\"OuterLeftIndent\"><input id=\"step5-query-max\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
+				$html .= "<span><input id=\"step5-query-max\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
 
 				$html .= "<td><input type=\"text\" id=\"step5-query-days\" onfocus=\"webServiceSpecial.selectRadio('step5-query-max')\" size=\"7\" maxlength=\"10\" />";
 				$html .= "<span> days </span>";
@@ -285,9 +347,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				$html .= "<input type=\"text\" id=\"step5-query-minutes\" size=\"7\" onfocus=\"webServiceSpecial.selectRadio('step5-query-max')\" maxlength=\"10\" />";
 				$html .= "<span> minutes </span></td>";
 			} else {
-				$html .= "<tr><td><span class=\"OuterLeftIndent\">Query policy: </span></td>";
+				$html .= "<tr><td><span>Query policy: </span></td>";
 				$html .= "<td><input id=\"step5-query-once\" onfocus=\"webServiceSpecial.selectRadioOnce('step5-query-once')\" type=\"radio\" name=\"step5-query\" value=\"once\">Once</input>";
-				$html .= "<span class=\"OuterLeftIndent\"><input id=\"step5-query-max\" checked=\"true\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
+				$html .= "<span><input id=\"step5-query-max\" checked=\"true\" type=\"radio\" name=\"step5-query\" value=\"\">MaxAge</input></span></td>";
 
 				$html .= "<td><input type=\"text\" id=\"step5-query-days\" onfocus=\"webServiceSpecial.selectRadio('step5-query-max')\" size=\"7\" maxlength=\"10\" />";
 				$html .= "<span> days </span>";
@@ -305,7 +367,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 			$html .= "<tr></tr>";
 
-			$html .= "<tr><td><span class=\"OuterLeftIndent\"> Span of life (in days): </span></td>";
+			$html .= "<tr><td><span> Span of life (in days): </span></td>";
 			$html .= "<td><input type=\"text\" id=\"step5-spanoflife\" text\" size=\"7\" maxlength=\"10\" value=\"".$wwsd->getSpanOfLife()."\"/></td>";
 			$html .= "<td><span> Expires after update: </span>";
 			if($wwsd->doesExpireAfterUpdate()){
@@ -325,16 +387,28 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		// 6. Specify name
 		if(!$editwwsd){
 			$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"display: none\">";
-			$html .= "<img id=\"step6-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
-			$html .= wfMsg("smw_wws_s6-intro");
+//			$html .= "<img id=\"step6-img\" class=\"Marker\" src=\"".$smwgDIScriptPath."/skins/webservices/pfeil_rechts.gif\" class=\"OKButton\"></img>";
+			//$html .= wfMsg("smw_wws_s6-intro");
+			
+			$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s6-intro");
+			$html .= "<img id=\"step6-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(6)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>"; 
+			$html .= "</p>";
+			
+			$html .= wfMsg("smw_wws_s6-name");
 			$html .= "<input id=\"step6-name\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step6')\" size=\"50\" maxlength=\"300\"/>";
-			$html .= "<sup style=\"color: darkred\"><b>*</b></sup>";
-			$html .= "<br>";
-			$html .= "Save and Finish";
-			$html .= "<span id=\"step6-go\" class=\"OKButton\">";
-			$html .= "<img id=\"step6-go-img\" onclick=\"webServiceSpecial.processStep6()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
-			$html .= "</span>";
-			$html .= "<br>";
+			//$html .= "<sup style=\"color: darkred\"><b>*</b></sup>";
+			
+			//$html .= "<br>";
+			//$html .= "<span id=\"step6-go\" class=\"OKButton\">";
+			//$html .= "<img id=\"step6-go-img\" onclick=\"webServiceSpecial.processStep6()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" ></img>";
+			//$html .= "</span>";
+			
+			$html .= "<div id=\"step6-help\" style=\"display:none\">";
+			$html .= "<h4>Help</h4>";
+			$html .= "<div>".wfMsg("smw_wws_s6-help")."</div>";
+			$html .= "</div>";
+			
+			$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step6-go-img\" value=\"Save\" onclick=\"webServiceSpecial.processStep6()\">";
 			$html .= "</div>";
 		} else {
 			$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"display: block\">";
@@ -363,7 +437,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step7-container\"></div>";
 		$html .= "<br><br>";
 		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a> You can now go on and define another WWSD.</span>";
-		$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
+		//$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
+		$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step7-go-img\" value=\"New\" onclick=\"webServiceSpecial.processStep7()\">";
 		$html .= "</div>";
 
 
@@ -385,7 +460,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 
 		if(!$editwwsd){	// Help
-			$html .= "<div id=\"help\" class=\"HelpDiv\">";
+			$html .= "<div id=\"help\" class=\"HelpDiv\" style=\"display:none\">";
 			$html .= "<h2>Help</h2>";
 			$html .= "<div id=\"step1-help\">".wfMsg("smw_wws_s1-help")."</div>";
 			$html .= "<div id=\"step2-help\" style=\"display: none\">".wfMsg("smw_wws_s2-help")."</div>";
