@@ -101,7 +101,6 @@ class UnifiedSearchResultPrinter {
 	 * @param array $entries
 	 */
 	public static function serialize(array & $entries, & $terms) {
-		global $wgServer, $wgScript;
 		
 		$termsarray = split(' ', $terms);
 		// GreyBox
@@ -118,9 +117,9 @@ class UnifiedSearchResultPrinter {
 			$html .= '<div class="us_search_result">';
 			// Categories
 			$categories = USStore::getStore()->getCategories($e->getTitle());
-	
-			$html .= '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
-			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
+
+			$html .= self::addPreview($e, $args, $args_prev);
+			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';			 			
 			$html .= '<img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
 			
 			if (count($categories) > 0) {
@@ -149,7 +148,14 @@ class UnifiedSearchResultPrinter {
 		return $imagePath;
 	}
 
-
+	// adds preview to result depending on namespace
+	private static function addPreview($e, $args, $args_prev) {	
+		if ($e->getTitle()->getNamespace() == NS_AUDIO || $e->getTitle()->getNamespace() == NS_VIDEO || $e->getTitle()->getNamespace() == NS_IMAGE) {
+			return '<li><span class="nosearchprev"></span>';
+		}
+		global $wgServer, $wgScript;			
+		return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
+	}
 
 	private static function getImageFromNamespace($result) {
 			

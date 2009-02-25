@@ -1,4 +1,3 @@
-/* Last-Modified: 28/06/06 00:08:22 */
 #GB_overlay {
     background-color: #000;
     position: absolute;
@@ -117,6 +116,12 @@
 	margin-right: 2px;
 	color: #888888;
 	background: url(searchgray_iconsmall.png) center right no-repeat;
+}
+
+#bodyContent span.nosearchprev {
+	padding-right: 16px;
+	margin-right: 2px;
+	color: #888888;
 }
 
 #bodyContent span.searchprev a:hover{
