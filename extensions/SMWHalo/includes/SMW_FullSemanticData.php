@@ -73,80 +73,81 @@ class SMWFullSemanticData {
 		
 		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, new ParserOptions());
-		$res = smwfGetStore()->getQueryResult($q);
+		$res = smwfGetStore()->getQueryResult($q); // SMWQueryResult
 		
 		$propVal = array();
-        while ( $row = $res->getNext() ) {
-        	$i = 0;
-            foreach ($row as $field) {
-                while ( ($object = $field->getNextObject()) !== false ) {
-                	$propVal[] = $object;
-/*
-                    if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
-                        $text = $object->getTitle()->getText();
-                        $propVal[] = $object->getTitle();
-                    } else {
-                        if ($object->isNumeric()) { // does this have any effect?
-                            $text = $object->getNumericValue();
-                        	$propVal[] = $text;
-                        } else {
-                            $text = $object->getXSDValue();
-                        	$propVal[] = $text;
-                        }
-                    }
-*/
-                }
-            }
-        }
+		while ( $row = $res->getNext() ) { //$row: SMWResultArray[]
+			$i = 0;
+			$valuesForProperty = array();
+			$key = false;
+			if (count($row) == 2) {
+				$properties = array();
+				$values = array();
+				// There may be several properties with the same values
+				$p = $row[0];
+				while ( ($object = $p->getNextObject()) !== false ) {
+					$properties[] = $object->getDBkey();
+				}
+				// Retrieve the values of the properties
+				$v = $row[1];
+				while ( ($object = $v->getNextObject()) !== false ) {
+					$values[] = $object;
+				}
+			}
+			
+			foreach ($properties as $p) {
+				if (array_key_exists($p, $propVal)) {
+					// The same property may appear several times
+					$propVal[$p] = array_merge($values, $propVal[$p]);
+				} else {
+					$propVal[$p] = $values;
+				}
+			}
+		}
 		
-       
-        for ($i = 0; $i < count($propVal); $i += 2) {
-        	if ($propVal[$i]->getTypeID() != '_wpg') {
-        		// The name of the property must be a title object
-        		continue;
-        	}
-        	$propName = $propVal[$i]->getTitle()->getText();
-        	$value = $propVal[$i+1];
-//        	$valueRep = ($value instanceof Title) ? $value->getText() : $value;
-        	
+		// Check is a property is derived or directly annotated
+        foreach ($propVal as $propName => $derivedValues) {
+      	
         	// does the property already exist?
         	$prop = SMWPropertyValue::makeUserProperty($propName);
         	$values = $semData->getPropertyValues($prop);
-        	$isDerived = true;
-        	$val = null;
-        	foreach ($values as $v) {
-        		if ($value->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
-        			$vt1 = $value->getTitle();
-        			$vt2 = $v->getTitle();
-        			if (isset($vt1) 
-        			    && isset($vt2)
-        			    && $vt1->getText() == $vt2->getText()) {
+        	foreach ($derivedValues as $dv) {
+	        	$isDerived = true;
+	        	$val = null;
+	        	foreach ($values as $v) {
+	        		if ($dv->getTypeID() == '_wpg' && $v->getTypeID() == '_wpg') {
+	        			$vt1 = $dv->getTitle();
+	        			$vt2 = $v->getTitle();
+	        			if (isset($vt1) 
+	        			    && isset($vt2)
+	        			    && $vt1->getText() == $vt2->getText()) {
+		        			$isDerived = false;
+		        			break;
+	        			}
+	        		} else if ($dv->getTypeID() == '_wpg' && $v->getTypeID() != '_wpg') {
+	        			// how can this happen?
 	        			$isDerived = false;
 	        			break;
-        			}
-        		} else if ($value->getTypeID() == '_wpg' && $v->getTypeID() != '_wpg') {
-        			// how can this happen?
-        			$isDerived = false;
-        			break;
-        		} else {
-					if ($value->isNumeric()) {
-		        		if ($value->getNumericValue() == $v->getNumericValue()) {
-		        			$isDerived = false;
-		        			break;
-		        		}
-		        	} else {
-		        		if ($value->getXSDValue() == $v->getXSDValue()) {
-		        			$isDerived = false;
-		        			break;
-		        		}
-		        	}
-        		}
+	        		} else {
+						if ($dv->isNumeric()) {
+			        		if ($dv->getNumericValue() == $v->getNumericValue()) {
+			        			$isDerived = false;
+			        			break;
+			        		}
+			        	} else {
+			        		if ($dv->getXSDValue() == $v->getXSDValue()) {
+			        			$isDerived = false;
+			        			break;
+			        		}
+			        	}
+	        		}
+	        	}
+	        	if ($isDerived) {
+					$property = SMWPropertyValue::makeUserProperty($propName);
+	        		$derivedProperties->addPropertyObjectValue($property, $dv);
+	        	}
         	}
-        	if ($isDerived) {
-				$property = SMWPropertyValue::makeUserProperty($propName);
-        		$derivedProperties->addPropertyObjectValue($property, $value);
-        	}
-        }
+        }        
         return $derivedProperties;
 	}
 
