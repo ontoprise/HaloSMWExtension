@@ -547,6 +547,15 @@ class UploadWindowForm {
 			// fill in or append to the field in original form, and
 			// close the window
 			$basename = str_replace('_', ' ', $basename);
+			
+			//Begin DaMO!
+			$target = $this->mLocalFile->title->getPrefixedText();;
+			$myQuery = "uploadForm/" . $target;
+
+			$form_add= new SFEditData();
+			$form_add_test = $form_add->execute($myQuery);
+			//End DaMO
+						
 			$output = '	<script type="text/javascript">' . "\n";
 			if ($this->mDelimiter == null) {
 				$output .=<<<END
@@ -575,6 +584,8 @@ END;
 END;
 			}
 			$output .=<<<END
+		//submit the new editform!
+		document.editform.submit();
 		parent.fb.end();
 	</script>
 
@@ -1001,22 +1012,23 @@ wgAjaxLicensePreview = {$alp};
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
 
 		$wgOut->addHTML( <<<EOT
-	<form id='upload' method='post' enctype='multipart/form-data' action="$action">
+	<form id='upload' name='upload_form' method='post' enctype='multipart/form-data' action="$action">
 		<table border='0'>
 		<tr>
 	  {$this->uploadFormTextTop}
-			<td align='$align1' valign='top'><label for='wpUploadFile'>{$sourcefilename}:</label></td>
+			<td align='$align1' valign='top'><label for='wpUploadFile'>{$sourcefilename}</label></td>
 			<td align='$align2'>
 				{$filename_form}
 			</td>
 		</tr>
 		<tr>
-			<td align='$align1'><label for='wpDestFile'>{$destfilename}:</label></td>
+			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 					value="$encDestName" $destOnkeyup />
 			</td>
 		</tr>
+		<!--
 		<tr>
 			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
 			<td align='$align2'>
@@ -1024,7 +1036,7 @@ wgAjaxLicensePreview = {$alp};
 					cols='{$cols}'{$ew}>$encComment</textarea>
 		{$this->uploadFormTextAfterSummary}
 			</td>
-		</tr>
+		</tr>-->
 		<tr>
 EOT
 		);
@@ -1067,21 +1079,21 @@ EOT
 					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
 					  value=\"$uploadsource\" size='40' /></td>
 			</tr>
-			<tr>
+			<!--<tr>-->
 		");
 		}
 
 		$wgOut->addHTML( "
-		<td></td>
+		<!--<td></td>
 		<td>
 			<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
 			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' $warningChecked/>
 			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
 		</td>
-	</tr>
+	</tr>-->
 	$warningRow
-	<tr>
+	<tr style='display:none'>
 		<td></td>
 		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
 	</tr>
@@ -1099,6 +1111,13 @@ EOT
 	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
 	</form>" );
+		
+//	
+	$wgOut->addHTML("Semantic Form:\n<table><tr><td>");
+	$form_add= new SFAddData();
+	//maybe we need a generic name for the target here...
+	$form_add_test = $form_add->execute( 'uploadForm/upload_test_DaMO' );
+	$wgOut->addHTML("</td><td valign='middle'><input type=\"button\" value=\"save me!\" onclick=\"damo_getInputs()\"/></td></tr></table>");
 	}
 
 	/* -------------------------------------------------------------- */
@@ -1561,5 +1580,12 @@ EOT
 			}
 		}
 		return $pageText;
+	}
+	
+	function writeSFForUpload() {
+		
+		$new_formname = $this->mLocalFile->title->getPrefixedText();
+		
+		
 	}
 }
