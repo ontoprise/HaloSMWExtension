@@ -381,7 +381,7 @@ function sajax_do_call(func_name, args, target, type) {
 // generalTools.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
 /*  Copyright 2007, ontoprise GmbH
-*   Author: Kai Kühn
+*   Author: Kai Kï¿½hn
 *   This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -1129,6 +1129,7 @@ ContentSlider.prototype = {
            $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            $('p-search').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            $('p-tb').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           $('p-treeview').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            
            document.cookie = "cp-slider="+v+"; path="+wgScript;
            this.savedPos = v;
