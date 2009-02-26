@@ -46,9 +46,11 @@ class TreeGenerator {
 			$categoryName = NULL;
 		}
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
-		$displayProperty = array_key_exists('display', $genTreeParameters)
+		/*$displayProperty = array_key_exists('display', $genTreeParameters)
 		                   ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY)
 		                   : NULL;
+		                   */
+		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
 
@@ -104,13 +106,17 @@ abstract class TreeviewStorage {
     public static function getTreeviewStorage() {
         global $smwgHaloIP;
         if (self::$store == NULL) {
-            global $smwgBaseStore;
-            switch ($smwgBaseStore) {
+            global $smwgDefaultStore;
+            switch ($smwgDefaultStore) {
                 case (SMW_STORE_TESTING):
                     self::$store = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');
                     break;
-                case ('SMWHaloStore2'):
+                case ('SMWHaloStore'):
+                	self::$store = null; // not supported anymore
+                    trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
+                    break;
+                default:
                     self::$store = new TreeviewStorageSQL2();
                     break;
             }
@@ -141,9 +147,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput) {
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
         $this->redirectPage = $redirectPage;
-        $this->displayProperty = ($displayProperty != NULL)
+        /*$this->displayProperty = ($displayProperty != NULL)
                                  ? SMWPropertyValue::makeUserProperty($displayProperty->getDBkey())
-                                 : NULL;
+                                 : NULL;*/
+        $this->displayProperty = $displayProperty;
         $this->hchar = $hchar;
         $this->json = $jsonOutput;
         
@@ -233,7 +240,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * The property value is set only if the given property exists for that
 	 * node and if it's supposed to be displayed in the tree afterwards.
 	 * 
-	 * @param array &$dataArr which is data[smw_id]= array(data)
 	 */
 	private function getElementProperties() {
 	    $db =& wfGetDB( DB_SLAVE );
@@ -299,19 +305,23 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * the configuration, this is the same for all elements. These post
 	 * processing is done here after the raw data is received from the db.  
 	 *
-	 * @param array &$dataArr which is data[smw_id]= array(data)
 	 * @param Database row Object &$row
 	 */
 	function postProcessingForElement(&$row) {
+		static $prop;
 	    // add property value if choosen    
 	    if ($this->displayProperty) {
 	        $title = Title::newFromText($row->title, $row->ns);
-	        $smwValues = smwfGetStore()->getPropertyValues($title, $this->displayProperty);
-	        if (count($smwValues) > 0) {
-	        	$propValue = str_replace("_", " ", $smwValues[0]->getDbKeys());
-    		    if (strlen(trim($propValue[0])) > 0) $this->elementProperties[$row->smw_id][] = $propValue[0];
+	        if ($prop == NULL) {	        
+	        	$pname = Title::newFromText($this->displayProperty, SMW_NS_PROPERTY);
+	        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
 	        }
-    	}
+ 			$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
+ 		    if (count($smwValues) > 0) {
+	        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
+    		    if (strlen(trim($propValue)) > 0) $this->elementProperties[$row->smw_id][] = $propValue;
+ 		    }
+	    } 		
 	}
 	
 	/**
@@ -400,8 +410,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    	foreach (array_keys($this->sIds) as $id) {
 	    		foreach ($this->sIds[$id] as $item) {
 	    			if (!isset($this->sIds[$item]) &&			// parent doesn' exist
-	    				isset($this->elementProperties[$id]) &&	// cur node exists in props -> correct cat
-	    				 !in_array($id, $rootCats))				// ad is not yet a root
+	    				isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
+	    				 !in_array($item, $rootCats))			// and parent is not yet a root
 	    				$rootCats[]= $id;
 	    		}
 	    	}
@@ -420,9 +430,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * each element which has been processed. This reduces memory usage and runing time
 	 * when iterating over the array.
 	 *
-	 * @param array &$sIds list of subjects with key = s_id, value = array(parents)
-	 * @param array &$elementProperties list of elements with key = smw_id, values as array
-	 * @return array $tree list of elements ordered hierarchical as array(smw_id, depth)
 	 */
 	private function generateTreeDeepFirstSearch() {
 	    
@@ -534,7 +541,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * to the end below the second instance of that element, ad children must be ajusted
 	 * to the current depth.
 	 *
-	 * @param array &$tree list of elements ordered hierarchical as array(smw_id, depth)
 	 */
 	function addSubTree() {
         $subtree = new ChainedList();
@@ -568,11 +574,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * tree as elements of an array. To save memory the tree array is reduced
      * by it's elements as soon as they are converted to an ascii string.
      *
-     * @param ChainedList &$treeList of elements array(smw_id, depth) that
-     * 					  are ordered hierarchical
-     * @param array 	  &$elementProperties list of elements consisting of:
-     *					  key = smw_id, array(title, link, [property value])
-     * @return string	  $tree 
+     * @return string	  $tree that can be used by the parser function #tree 
      */
 	function formatTreeToText() {
 		$tree = '';
@@ -600,21 +602,12 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    return $tree;
 	}
 	
-	private function buildTreeString($item, $prefix, $fillchar) {
-			return $tree;
-	}
-	
-	
     /**
      * works the same as function formatTreeToText() except that no string
      * is returned but an array of elements as associative arrays. This is
      * later used to be converted into a json compatible string that can be
      * easily parsed by javascript.
      *
-     * @param ChainedList &$treeList of elements array(smw_id, depth) that
-     * 					  are ordered hierarchical
-     * @param array 	  &$elementProperties list of elements consisting of:
-     *					  key = smw_id, array(title, link, [property value])
      * @return array	  $tree of elements as an asoc array (name, link) 
      */
 	function formatTreeToJson() {
