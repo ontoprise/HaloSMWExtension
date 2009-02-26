@@ -127,6 +127,7 @@ END;
 		$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
+		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/damo.js"></script>' . "\n");
 		if ($wgFCKEditorDir)
 			$wgOut->addScript('<script type="text/javascript" src="' . "$wgScriptPath/$wgFCKEditorDir" . '/fckeditor.js"></script>' . "\n");
 		$wgOut->addMeta('robots','noindex,nofollow');
