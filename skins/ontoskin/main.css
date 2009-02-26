@@ -822,11 +822,6 @@ input.searchButton {
 	text-align: center;
 }
 
-#p-treeviewsmwf_browserview .Treeview{
-	width: 190px;
-	margin-left: 5px;
-}
-
 #p-treeview .dtreestatic {
 	font-size: 95%;    	
 	color: #666;
