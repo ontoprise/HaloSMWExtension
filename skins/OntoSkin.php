@@ -414,8 +414,13 @@ class OntoSkinTemplate extends QuickTemplate {
 			}
 	}
 	/*************************************************************************************************/
-	function treeviewBox() {
-		  wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$this ) );
+	function treeviewBox() { ?>
+		<div id="p-treeview" class="portlet">
+		  <div class="pBody">
+		    <?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$this ) ); ?>
+		  </div>
+		</div>
+	<?php
 	}
 
 	/*************************************************************************************************/
