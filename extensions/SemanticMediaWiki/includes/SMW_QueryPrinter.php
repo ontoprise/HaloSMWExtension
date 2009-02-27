@@ -105,6 +105,7 @@ abstract class SMWResultPrinter {
 	 */
 	public function getResult($results, $params, $outputmode) {
 		global $wgParser;
+
 		$this->isHTML = false;
 		$this->hasTemplates = false;
 		$this->readParameters($params,$outputmode);
@@ -131,13 +132,14 @@ abstract class SMWResultPrinter {
 				return $result;
 			}
 		}
-
 		// Get output from printer:
 		$result = $this->getResultText($results,$outputmode);
+
 		if ($outputmode == SMW_OUTPUT_FILE) { // just return result in file mode
 			return $result;
 		}
 		$result .= $this->getErrorString($results); // append errors
+
 		if ( (!$this->isHTML) && ($this->hasTemplates) ) { // preprocess embedded templates if needed
 			if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
 				SMWResultPrinter::$mRecursionDepth++;
@@ -158,17 +160,7 @@ abstract class SMWResultPrinter {
 			SMWResultPrinter::$mRecursionDepth++;
 			// check whether we are in an existing parse, or if we should start a new parse for $wgTitle
 			if (SMWResultPrinter::$mRecursionDepth <= SMWResultPrinter::$maxRecursionDepth) { // retrict recursion
-				if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
-					$result = $wgParser->recursiveTagParse($result);
-				} else {
-					global $wgTitle;
-					$popt = new ParserOptions();
-					$popt->setEditSection(false);
-					$pout = $wgParser->parse($result . '__NOTOC__', $wgTitle, $popt);
-					/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
-					SMWOutputs::requireFromParserOutput($pout);
-					$result = $pout->getText();
-				}
+				$result = $this->callParser4PartialText($result . '__NOTOC__');
 			} else {
 				$result = ''; /// TODO: explain problem (too much recursive parses)
 			}
@@ -177,8 +169,7 @@ abstract class SMWResultPrinter {
 
 		if ( ($this->mIntro) && ($results->getCount() > 0) ) {
 			if ($outputmode == SMW_OUTPUT_HTML) {
-				global $wgParser;
-				$result = $wgParser->recursiveTagParse($this->mIntro) . $result;
+				$result = $this->callParser4PartialText($this->mIntro) . $result;
 			} else {
 				$result = $this->mIntro . $result;
 			}
@@ -186,15 +177,39 @@ abstract class SMWResultPrinter {
 
 		if ( ($this->mOutro) && ($results->getCount() > 0) ) {
 			if ($outputmode == SMW_OUTPUT_HTML) {
-				global $wgParser;
-				$result = $result . $wgParser->recursiveTagParse($this->mOutro);
+				$result = $result . $this->callParser4PartialText($this->mOutro);
 			} else {
 				$result = $result . $this->mOutro;
 			}
 		}
-
 		return $result;
 	}
+
+	/**
+	 * Uses the global parser to transform some wiki text. Unfortunately the parser
+	 * may not completely initialized at some locations. Therefore this function is
+	 * used where the parsing must be done in getResult().
+	 * This is the result of bugfix for #10494
+	 * 
+	 * @param  string wikitext
+	 * @return string html
+	 */
+	private function callParser4PartialText($text) {
+		global $wgParser;
+		if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
+			$result = $wgParser->recursiveTagParse($text);
+		} else {
+			global $wgTitle;
+			$popt = new ParserOptions();
+			$popt->setEditSection(false);
+			$pout = $wgParser->parse($text, $wgTitle, $popt);
+			/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
+			SMWOutputs::requireFromParserOutput($pout);
+			$result = $pout->getText();
+		}
+		return $result;
+	}
+
 
 	/**
 	 * Read an array of parameter values given as key-value-pairs and
