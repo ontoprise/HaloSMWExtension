@@ -50,7 +50,7 @@ the authors.
     require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
    
   #Semantic Treeview 
-    require_once('extensions/Treeview/Treeview5.php');
+    require_once('extensions/Treeview/Treeview.php');
   
   #Access Control Lists
     require_once('extensions/PermissionACL/PermissionACL.php');
