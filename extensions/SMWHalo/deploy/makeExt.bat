@@ -2,7 +2,7 @@
 
 REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 
-SET VERSION="1.4"
+SET VERSION="1.5"
 
 set OUTPUT_DIR=c:\temp\halosmw_ext
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
@@ -15,6 +15,7 @@ REM Create directories
 :CREATEDIRS
 mkdir %OUTPUT_DIR%
 mkdir %OUTPUT_DIR%\extensions
+mkdir %OUTPUT_DIR%\extensions\DataAPI
 mkdir %OUTPUT_DIR%\extensions\DynamicPageList
 mkdir %OUTPUT_DIR%\extensions\Glossary
 mkdir %OUTPUT_DIR%\extensions\FCKeditor
@@ -36,6 +37,7 @@ xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /S /Y /EXCLUDE:excludeForE
 xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
+xcopy ..\..\DataAPI %OUTPUT_DIR%\extensions\DataAPI /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\Glossary %OUTPUT_DIR%\extensions\Glossary /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\FCKeditor %OUTPUT_DIR%\extensions\FCKeditor /S /EXCLUDE:excludeForExt.dat /Y
@@ -55,8 +57,8 @@ xcopy ..\..\Quicktime.php %OUTPUT_DIR%\extensions /Y
 xcopy ..\..\..\patches\extensions\SMWHalo %OUTPUT_DIR%\extensions\SMWHalo /Y /S /EXCLUDE:excludeForExt.dat
 
 cd bin
-IF EXIST smwplus-%VERSION%-ext.zip del smwplus-%VERSION%-ext.zip
-7z.exe a -tzip smwplus-%VERSION%-ext.zip %OUTPUT_DIR%\*
+IF EXIST smwhalo-%VERSION%-ext.zip del smwhalo-%VERSION%-ext.zip
+7z.exe a -tzip smwhalo-%VERSION%-ext.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

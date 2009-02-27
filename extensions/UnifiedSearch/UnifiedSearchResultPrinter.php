@@ -117,10 +117,11 @@ class UnifiedSearchResultPrinter {
 			$html .= '<div class="us_search_result">';
 			// Categories
 			$categories = USStore::getStore()->getCategories($e->getTitle());
-
-			$html .= self::addPreview($e, $args, $args_prev);
-			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';			 			
-			$html .= '<img src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
+	
+			$html .= self::addPreview($e, $args, $args_prev);			
+			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
+			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());                      
+            $html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
 			
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';

@@ -30,6 +30,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getXSDValue()) {
 
 		foreach($propertyValueArray as $domRange) {
+			if (!$domRange instanceof SMWNAryValue) continue; // occurs if 'has domain and range' is not n-ary
 			if (count($domRange->getDVs()) == 2) {
 				$dvs = $domRange->getDVs();
 				if ($dvs[0] != NULL && $dvs[1] != NULL && $dvs[0]->isValid() && $dvs[1]->isValid()) { // domain and range

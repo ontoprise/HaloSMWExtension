@@ -165,7 +165,37 @@ class SMWTripleStore extends SMWStore {
 			if ($property->getPropertyID() == "_TYPE") {
 				// ingore. handeled by SMW_TS_SchemaContributor or SMW_TS_SimpleContributor
 				continue;
-			} elseif ($property->getPropertyID() == "_INST") {
+			} elseif ($property->getPropertyID() == "_CONV") {
+                // ingore. handeled by category section below
+                global $smwgContLang;
+                $specialProperties = $smwgContLang->getPropertyLabels();
+                $conversionPropertyLabel = str_replace(" ","_",$specialProperties['_CONV']);
+				if ( $subject->getNamespace() == SMW_NS_TYPE ) {
+				    foreach($propertyValueArray as $value) {
+				    	// parse conversion annotation format
+				    	$measures = explode(",", $value->getXSDValue());
+				    	
+				    	// parse linear factor followed by (first) unit
+				    	$firstMeasure = reset($measures);
+				    	$indexOfWhitespace = strpos($firstMeasure, " ");
+				    	if ($indexOfWhitespace === false) continue; // not a valid measure, ignore
+				    	$factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
+				    	$unit = trim(substr($firstMeasure, $indexOfWhitespace));
+				    	$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor $unit\"");
+				    	
+				    	// add all aliases for this conversion factor using the same factor
+				    	$nextMeasure = next($measures);
+				    	while($nextMeasure !== false) {
+                            $triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor ".trim($nextMeasure)."\"");
+				    		$nextMeasure = next($measures);
+				    	}
+				    	
+                    }
+				}
+                continue;
+            }
+			
+			elseif ($property->getPropertyID() == "_INST") {
 				// ingore. handeled by category section below
 				continue;
 			} elseif ($property->getPropertyID() == "_SUBC") {

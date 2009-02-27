@@ -72,7 +72,7 @@ $wgDBserver         = "localhost";
 $wgDBname           = "semwiki";
 $wgDBuser           = "root";
 $wgDBpassword       = "m8nix";
-$wgDBport           = "5432";
+$wgDBport           = "3306";
 $wgDBprefix         = "";
 
 # Schemas for Postgres

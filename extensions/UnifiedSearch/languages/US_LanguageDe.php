@@ -17,7 +17,7 @@ class US_LanguageDe {
                                         'us_skos_term' => 'Term');
 
 	public $us_userMessages = array (
-        'us_search' => 'Allgemeine Suche',
+        'us_search' => 'Erweiterte Suche',
 	    'us_tolerance'=> 'Toleranz',
         'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. $1',
         'us_clicktocreate' => 'Klicken Sie hier, um die Seite zu erstellen.',
@@ -26,7 +26,8 @@ class US_LanguageDe {
         'us_browse_prev' => 'vorherige',
         'us_results' => '<b>Ergebnisse</b>',
         'us_noresults' => 'Keine Suchtreffer',
-	    'us_noresults_text' => 'Es wurden <b>keine</b> mit ihrer Suchanfrage - <i>$1</i> - <b>&uuml;bereinstimmenden Treffer</b> gefunden. 
+	    'us_search_tooltip_refine' => 'Filtern nach $1',
+	    'us_noresults_text' => 'Es wurden <b>keine</b> mit ihrer Suchanfrage - <b>$1</b> - <b>&uuml;bereinstimmenden Treffer</b> gefunden. 
 	               <br><br>Vorschl&auml;ge: <ul>
 	               <li>Probieren Sie einen andere Suchbegriffe.</li>
 	               <li>Probieren Sie allgemeinere Suchbegriffe.</li>

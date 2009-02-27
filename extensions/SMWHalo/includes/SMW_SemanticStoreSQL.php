@@ -238,7 +238,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$sqlCond = DBHelper::getSQLConditions($requestoptions, 'instance', 'instance');
 		
 		if ($withCategories) {
-		  $res = $db->query('SELECT instance, category FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
+		  $res = $db->query('SELECT DISTINCT instance, category FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
 		} else {
 		  $res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
 		}

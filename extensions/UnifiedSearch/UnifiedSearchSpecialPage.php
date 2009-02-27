@@ -135,7 +135,9 @@ class USSpecialPage extends SpecialPage {
 			if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
-			$row .= '<td class="filtercolumn" '.$style.'><img style="margin: 6px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.'</a></td><td '.$style.'>|</td>';
+			$row .= '<td class="filtercolumn" '.$style.'><div style="margin: 6px;"><img alt="'.wfMsg('us_search_tooltip_refine', $nsName).'" title="'.wfMsg('us_search_tooltip_refine', $nsName).
+                     '" style="margin-bottom: 3px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="margin-left: 6px;" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
+                     '</a></div></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
 		}
@@ -186,7 +188,7 @@ class USSpecialPage extends SpecialPage {
 
 		if (count($searchResults) > 0) {
 			$html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
-			$html .= "<td style=\"text-align: center;\">($prevButton) ($nextButton)</td>";
+			$html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
 			$html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
 		}
 		$wgOut->addHTML($html);
@@ -279,7 +281,8 @@ class USSpecialPage extends SpecialPage {
 		// remove remaining syntax elements from term array for highlightinh
 		for($i = 0; $i < count($terms); $i++) {
 			$terms[$i] = str_replace('~', '', $terms[$i]); // remove unsharp search hint
-			$terms[$i] = str_replace('*', '', $terms[$i]); 
+			$terms[$i] = str_replace('*', '', $terms[$i]);
+			$terms[$i] = str_replace('+', '', $terms[$i]);  
             $terms[$i] = str_replace('-', '', $terms[$i]);
             $terms[$i] = str_replace('?', '', $terms[$i]);  
 			$terms[$i] = preg_replace('/\[\d+\]:/', '', $terms[$i]); // remove namespace hint
@@ -328,9 +331,9 @@ class USSpecialPage extends SpecialPage {
 			if ($term == 'and' || $term == 'or' || $term == 'not') {
 				return true;
 			}
-			if (substr($term,0,1) == '-') {
-				return true;
-			}
+		    if (substr($term,0,1) == '-' || substr($term,0,1) == '+') {
+                return true;
+            }
 		}
 
 		// check for special lucene syntax

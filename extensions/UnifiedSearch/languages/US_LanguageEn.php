@@ -17,7 +17,7 @@ class US_LanguageEn {
 									    'us_skos_term' => 'Term');
     
     public $us_userMessages = array (
-        'us_search' => 'General search',
+        'us_search' => 'Enhanced Retrieval',
         'us_tolerance'=> 'Tolerance',
         'us_page_does_not_exist' => 'This page does not exist. $1',
         'us_clicktocreate' => 'Click here to create the page.',
@@ -26,7 +26,8 @@ class US_LanguageEn {
         'us_browse_prev' => 'prev',
         'us_results' => '<b>Results</b>',
         'us_noresults' => 'No results',
-        'us_noresults_text' => 'There are <b>no</b> results which match your search terms: <i>$1</i>  
+        'us_search_tooltip_refine' => 'Refine for $1',
+        'us_noresults_text' => 'There are <b>no</b> results which match your search terms: <b>$1</b>  
                    <br><br>Proposals: <ul>
                    <li>Try other search terms.</li>
                    <li>Try search terms which are more general.</li>

@@ -24,7 +24,7 @@ global $wgExtensionFunctions, $wgHooks, $wgAjaxExportList;;
 $wgAjaxExportList[] = 'smwf_ca_GetHTMLBody';
 
 // use SMW_AddScripts hook from SMWHalo to make sure that Prototype is available.
-$wgHooks['SMW_AddScripts'][]='wfUSAddHeader';
+
 $wgExtensionFunctions[] = 'wfUSSetupExtension';
 
 //synsets
@@ -49,7 +49,9 @@ function wfUSAddHeader(& $out) {
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
-
+                    if (!defined("SMW_HALO_VERSION")) {
+                        $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
+                    }
                     // add GreyBox
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
@@ -73,11 +75,12 @@ function wfUSAddHeader(& $out) {
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups,
 	       $usgAllNamespaces;
+    $wgHooks['BeforePageDisplay'][]='wfUSAddHeader';	       
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
-	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_DBHelper.php';
+	$wgAutoloadClasses['USDBHelper'] = $dir . 'storage/US_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
 
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';

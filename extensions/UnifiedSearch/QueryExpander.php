@@ -35,7 +35,7 @@ class QueryExpander {
 			$title = Title::newFromText($term, NS_CATEGORY);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
-				$subcategories = smwfGetSemanticStore()->getDirectSubCategories($title);
+				$subcategories = USStore::getStore()->getDirectSubCategories($title);
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
 				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values, $redirects), "OR");
@@ -71,7 +71,7 @@ class QueryExpander {
 			$title = Title::newFromText($term, SMW_NS_PROPERTY);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
-				$subproperties = $mode == US_HIGH_TOLERANCE ? smwfGetSemanticStore()->getDirectSubProperties($title) : array();
+				$subproperties = $mode == US_HIGH_TOLERANCE ? USStore::getStore()->getDirectSubProperties($title) : array();
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
 				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values, $redirects), "OR");
@@ -134,7 +134,7 @@ class QueryExpander {
 
 	private static function lookupSKOSForFulltext($term, $mode) {
 		$result = array();
-		$requestoptions = new SMWAdvRequestOptions();
+		$requestoptions = new SMWRequestOptions();
 		$requestoptions->isCaseSensitive = false;
 		$requestoptions->addStringCondition($term, SMWStringCondition::STRCOND_MID);
 		switch($mode) {
@@ -165,7 +165,7 @@ class QueryExpander {
 
 		$db =& wfGetDB( DB_SLAVE );
 		// create virtual tables
-		$requestoptions = new SMWAdvRequestOptions();
+		$requestoptions = new SMWRequestOptions();
 		$requestoptions->isCaseSensitive = false;
 		$requestoptions->limit = $limit;
 
