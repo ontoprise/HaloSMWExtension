@@ -37,7 +37,7 @@ function doSpecialUploadWindow() {
 	global $wgRequest, $wgOut, $wgUser, $wgServer;
 	global $wgScript, $wgJsMimeType, $wgStylePath, $wgStyleVersion;
 	global $wgContLang, $wgLanguageCode, $wgXhtmlDefaultNamespace, $wgXhtmlNamespaces;
-	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
+	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview, $wgScriptPath, $sfgYUIBase;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
@@ -67,6 +67,28 @@ wgScript="{$wgScript}"
 wgAjaxUploadDestCheck = {$adc};
 wgAjaxLicensePreview = {$alp};
 wgUploadAutoFill = {$autofill};
+//DaMO StyleSheet Hack!
+var headID = document.getElementsByTagName("head")[0];         
+var cssNode = document.createElement('link');
+cssNode.type = 'text/css';
+cssNode.rel = 'stylesheet';
+cssNode.href = "{$wgScriptPath}" + '/extensions/SemanticForms/skins/SF_yui_autocompletion.css';
+cssNode.media = 'screen, projection';
+headID.appendChild(cssNode);
+
+var cssNode = document.createElement('link');
+cssNode.type = 'text/css';
+cssNode.rel = 'stylesheet';
+cssNode.href = "{$sfgYUIBase}" + '/autocomplete/assets/skins/sam/autocomplete.css';
+cssNode.media = 'screen, projection';
+headID.appendChild(cssNode);
+
+var cssNode = document.createElement('link');
+cssNode.type = 'text/css';
+cssNode.rel = 'stylesheet';
+cssNode.href = "{$wgScriptPath}" + '/extensions/SemanticForms/skins/SF_main.css';
+cssNode.media = 'screen, projection';
+headID.appendChild(cssNode);
 </script>
 
 END;
@@ -551,11 +573,13 @@ class UploadWindowForm {
 			//Begin DaMO!
 			$target = $this->mLocalFile->title->getPrefixedText();;
 			$myQuery = "uploadForm/" . $target;
-
+			//set wpSave to true
+			global $wgRequest;
+			$wgRequest->data["wpSave"]="true";
 			$form_add= new SFEditData();
 			$form_add_test = $form_add->execute($myQuery);
 			//End DaMO
-						
+									
 			$output = '	<script type="text/javascript">' . "\n";
 			if ($this->mDelimiter == null) {
 				$output .=<<<END
@@ -1112,12 +1136,13 @@ EOT
 	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
 	</form>" );
 		
-//	
-	$wgOut->addHTML("Semantic Form:\n<table><tr><td>");
-	$form_add= new SFAddData();
-	//maybe we need a generic name for the target here...
-	$form_add_test = $form_add->execute( 'uploadForm/upload_test_DaMO' );
-	$wgOut->addHTML("</td><td valign='middle'><input type=\"button\" value=\"save me!\" onclick=\"damo_getInputs()\"/></td></tr></table>");
+//		
+		$wgOut->addHTML("<div id=\"contentSub\"></div>");
+		$wgOut->addHTML("Semantic Form:\n<table><tr><td>");
+		$form_add= new SFAddData();
+		//maybe we need a generic name for the target here...
+		$form_add_test = $form_add->execute( 'uploadForm/upload_test_DaMO5' );
+		$wgOut->addHTML("</td></tr><tr><td><input type=\"button\" value=\"save me!\" onclick=\"damo_getInputs()\"/></td></tr></table>");
 	}
 
 	/* -------------------------------------------------------------- */
