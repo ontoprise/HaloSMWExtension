@@ -65,8 +65,14 @@ Node.prototype.serialize = function() {
 }
 
 Node.prototype.unserialize = function(str) {
-	var url = wgServer + wgScript + '/index.php/';
-	
+	var url = wgServer + wgScript;
+
+	// if page is purged, the path might contain the index.php already
+	if (! url.match(/index.php(\/?)$/i))
+		url += '/index.php/';
+	else if (url.substr(-1) != "/")
+		url += '/';
+		
 	var nVar = str.split('.');
 	if (nVar.length != 6) return;
     this.id = nVar[0];
