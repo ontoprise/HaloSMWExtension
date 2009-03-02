@@ -95,6 +95,7 @@ class SemanticTreeview {
  
         # Store args for this tree for later use
         $args = array();
+        $text = "";
         foreach (func_get_args() as $arg) {
             if (!is_object($arg)) {
                 if (preg_match('/^(\\w+?)\\s*=\\s*(.+)$/s',$arg,$m)) $args[$m[1]] = $m[2]; else $text = $arg;
