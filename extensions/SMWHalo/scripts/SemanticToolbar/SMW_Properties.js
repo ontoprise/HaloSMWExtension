@@ -340,6 +340,7 @@ createContent: function() {
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
 
+	tb.append(tb.createText('prp-no_ts_reasoning-msg', '', '' , false));
 	
 	tb.append(tb.createLink('prp-change-links', PRP_NARY_CHANGE_LINKS, '', true));
 	tb.append(tb.createLink('prp-links', PRP_APPLY_LINK, '', true));
@@ -347,6 +348,53 @@ createContent: function() {
 	tb.finishCreation();
 	this.enableWidgets();
 	gSTBEventActions.initialCheck($("properties-content-box"));
+	
+	sajax_do_call('smwf_tb_getTripleStoreStatus', [], showTriplestoreFeatures.bind(this));
+	
+	function showTriplestoreFeatures(request) {
+		if (request.status != 200) {
+			return;
+		}
+
+		if (request.responseText == 'false') {
+			msg = [gLanguage.getMessage('PC_INVERSE'), 
+				   gLanguage.getMessage('PC_TRANSITIVE'),
+				   gLanguage.getMessage('PC_SYMMETRICAL')];
+		} else {
+			var tsFeatures = request.responseText.evalJSON();
+			var msg = [];
+			if (tsFeatures.INVERSE !== true) {
+				msg.push(gLanguage.getMessage('PC_INVERSE'));
+			}
+			if (tsFeatures.TRANSITIVE !== true) {
+				msg.push(gLanguage.getMessage('PC_TRANSITIVE'));
+			}
+			if (tsFeatures.SYMETRICAL !== true) {
+				msg.push(gLanguage.getMessage('PC_SYMMETRICAL'));
+			}
+		}
+		if (msg.size() == 0) {
+			msg = ''; 
+		} else {
+			if (msg.size() == 3) {
+				msg = msg[0]+', '+msg[1]+' '+gLanguage.getMessage('PC_AND')+' '+msg[2];
+			} else if (msg.size() == 2) {
+				msg = msg[0]+' '+gLanguage.getMessage('PC_AND')+' '+msg[1];
+			} else if (msg.size() == 1) {
+				msg = msg[0];
+			}
+			msg = gLanguage.getMessage('PC_UNSUPPORTED').replace(/\$1/g, msg);
+		} 
+		var msgElem = $('prp-no_ts_reasoning-msg');
+		if (msgElem) {
+			var tbc = smw_ctbHandler.findContainer(msgElem);
+			var visible = tbc.isVisible(msgElem.id);
+			tbc.replace(msgElem.id,
+			            tbc.createText(msgElem.id, msg, '' , true));
+		 	tbc.show(msgElem.id, visible);
+		}
+		
+	}
 	//Sets Focus on first Element
 //	setTimeout("$('prp-domain').focus();",50);
     
@@ -651,6 +699,9 @@ enableWidgets: function() {
 	
 	tb.show('prp-min-card', !isnary);
 	tb.show('prp-max-card', !isnary);
+	
+	tb.show("prp-no_ts_reasoning-msg", propToolBar.isRelation && !isnary);
+	
 },
 
 cancel: function(){
