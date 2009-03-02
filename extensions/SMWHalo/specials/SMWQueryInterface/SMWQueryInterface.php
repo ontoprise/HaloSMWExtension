@@ -105,8 +105,8 @@ class SMWQueryInterface extends SpecialPage {
 							Order:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_order') . '\')">
 							<select id="layout_order">
-							<option>ascending</option>
-							<option>descending</option>
+							<option value="ascending">ascending</option>
+							<option value="descending">descending</option>
 							</select>
 						</td>
 					</tr>
@@ -115,9 +115,9 @@ class SMWQueryInterface extends SpecialPage {
 							Link:
 						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_link') . '\')">
 							<select id="layout_link">
-							<option>all</option>
-							<option>subject</option>
-							<option>none</option>
+							<option value="all">all</option>
+							<option value="subject">subject</option>
+							<option value="none">none</option>
 							</select>
 						</td>
 						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_limit') . '\')">
