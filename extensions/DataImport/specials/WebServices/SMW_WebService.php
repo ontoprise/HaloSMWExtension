@@ -1378,6 +1378,8 @@ class WebService {
 	 * 		The fields of the type are added to this name, separated by a dot.
 	 * @param string $type
 	 * 		The name of an XSD base type or a type defined in the WSDL.
+	 * @param SoapClient $wsClient
+	 * 		
 	 * @param array<string> $typePath
 	 * 		This array contains all types that were encountered in the recursion.
 	 * 		To avoid an inifinite loop, the recursion stops if $type is already
@@ -1386,31 +1388,40 @@ class WebService {
 	 * 		All resulting paths. If a path causes an endless recursion, the
 	 * 		keyword ##overflow## is appended to the path.
 	 */
-	private function flattenParam($name, $type, &$typePath=null) {
+	public static function flattenParam($name, $type, $wsClient, &$typePath=null) {
+		//I made this method public and static and also
+		//added the parameter $wsClient so that it is accessible
+		//via the ajax interface		
+		
+		//add initial xpath root
+		if(strpos($name, "/") === false){
+			$name = "//".$name;
+		}
+		
 		$flatParams = array();
 		
-		if (!$this->mWSClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
+		if (!$wsClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
 			// $type is a simple type
 			$flatParams[] = $name;
 			return $flatParams;
 		}
 
 		if (substr($type,0, 7) == "ArrayOf") {
-			if (!$this->mWSClient->isCustomType(substr($type, 7))) {
-				$flatParams[] = $name."[]";
+			if ($wsClient->isCustomType(substr($type, 7))) {
+				$flatParams[] = $name."[*]";
 				return $flatParams;
 			}
 		}
 
-		$tp = $this->mWSClient->getTypeDefinition($type);
+		$tp = $wsClient->getTypeDefinition($type);
 		foreach ($tp as $var => $type) {
 			if(substr($type,0, 7) == "ArrayOf"){
 				$type = substr($type, 7);
-				$fname = empty($name) ? $var."[]" : $name.'.'.$var."[]";
+				$fname = empty($name) ? $var."[*]" : $name.'/'.$var."[*]";
 			} else {
-				$fname = empty($name) ? $var : $name.'.'.$var;
+				$fname = empty($name) ? $var : $name.'/'.$var;
 			}
-			if ($this->mWSClient->isCustomType($type)) {
+			if ($wsClient->isCustomType($type)) {
 				if (!$typePath) {
 					$typePath = array();
 				}
@@ -1420,7 +1431,7 @@ class WebService {
 					continue;
 				}
 				$typePath[] = $type;
-				$names = $this->flattenParam($fname, $type, $typePath);
+				$names = WebService::flattenParam($fname, $type, $wsClient, $typePath);
 				$flatParams = array_merge($flatParams,$names);
 				array_pop($typePath);
 			} else {

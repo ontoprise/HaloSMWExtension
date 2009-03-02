@@ -123,7 +123,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 			$method = "<option>".$wwsd->getMethod()."</option>";
 		
-			if($wwsd->getDisplayPolicy > 0){
+			if($wwsd->getDisplayPolicy() > 0){
 				$displayOnce = "";
 				$displayMax = "checked=\"true\"";
 				$displayMinutes = " value=\"".$wwsd->getDisplayPolicy()."\"";
@@ -381,34 +381,38 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$wsdlParameters = array();
 		if($result){
-			$wsdlParameters = DefineWebServiceSpecialAjaxAccess::getFlatParameters($wwsd->getURI(), $wsClient,"", $rawParameters[0]);
+			$wsdlParameters = WebService::flattenParam("", $rawParameters[0], $wsClient);
 		} else {
 			//todo: handle no params
 			$numParam = count($rawParameters);
 			for ($i = 1; $i < $numParam; $i++) {
 				$pName = $rawParameters[$i][0];
 				$pType = $rawParameters[$i][1];
-				$tempFlat = DefineWebServiceSpecialAjaxAccess::getFlatParameters($wwsd->getURI(), $wsClient, $pName, $pType);
+				$tempFlat = WebService::flattenParam($pName, $pType, $wsClient);
 				$wsdlParameters = array_merge($wsdlParameters , $tempFlat);
 			}
 		}
-
+		
 		$mergedParameters = array();
-
 
 		//todo: handle overflows
 		foreach($wsdlParameters as $wsdlParameter){
-			$wsdlParameterSteps = explode(".", $wsdlParameter);
+			$wsdlParameterSteps = explode("/", $wsdlParameter);
 
-			$matchedPath = "";
+			$matchedPath = "//";
 			$a = array();
 			for($i=0; $i < count($wwsdParameters); $i++){
-				$wwsdParameterSteps = explode(".", $wwsdParameters[$i]["path"]);
+				$wwsdParameterSteps = explode("/", $wwsdParameters[$i]["path"]);
 				if(count($wsdlParameterSteps) != count($wwsdParameterSteps)){
 					continue;
 				}
 
 				for($k=0; $k < count($wsdlParameterSteps); $k++){
+					if($wsdlParameterSteps[$k] == "" 
+							&& $wwsdParameterSteps[$k] == ""){
+						continue;
+					}
+					
 					$dupPos = strpos($wsdlParameterSteps[$k], "##duplicate");
 					$overflowPos = strpos($wsdlParameterSteps[$k], "##overflow");
 					$bracketPos = strpos($wwsdParameterSteps[$k], "[");
@@ -418,7 +422,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
 					}
 					if(strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
-						$matchedPath .= ".".$wwsdParameterSteps[$k];
+						$matchedPath .= "/".$wwsdParameterSteps[$k];
 						if($overflowPos){
 							$matchedPath .= "##overflow##";
 						}
@@ -430,7 +434,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						break;
 					}
 				}
-				if(strlen($matchedPath) > 0){
+				if(strlen($matchedPath) > 0 && $matchedPath != "//"){
 					$a["name"] = $wwsdParameters[$i]["name"]."";
 					$a["path"] = substr($matchedPath, 1);
 					if(!$result){
@@ -447,7 +451,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					break;
 				}
 			}
-			if(strlen($matchedPath) == 0){
+			if($matchedPath == "//" || strlen($matchedPath) == 0){
 				$a["path"] = $wsdlParameter;
 				$a["name"] = "##";
 				if(!$result){
@@ -455,6 +459,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					$a["defaultValue"] = "##";
 				}
 			}
+			
+			
 			$mergedParameters[$a["path"]] = $a;
 		}
 
@@ -479,7 +485,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		if($result){
-			$html .= "<span id=\"editresults\" style=\"display: none\">";
+			$html .= "<span id=\"editresults\" style=\"\">";
 		} else {
 			$html .= "<span id=\"editparameters\" style=\"display: none\">";
 		}

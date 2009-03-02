@@ -74,16 +74,16 @@ function smwf_ws_processStep2($uri, $methodName){
 	$numParam = count($rawParameters);
 	if($numParam == 1){
 		if($rawParameters[0][0] == 0){
-			return "todo:handle noparams;";
+			return "##no params required##";
 		}
 	}
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		$tempFlat = DefineWebServiceSpecialAjaxAccess::getFlatParameters($uri, $wsClient, $pName, $pType);
+		$tempFlat = WebService::flattenParam($pName, $pType, $wsClient, $typePath);
 		$parameters = array_merge($parameters , $tempFlat);
 	}
-	return "todo:handle exceptions;".implode(";", $parameters);
+	return "##handle exceptions##;".implode(";", $parameters);
 }
 
 /**
@@ -97,7 +97,8 @@ function smwf_ws_processStep2($uri, $methodName){
 function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
-	$flatResult = DefineWebServiceSpecialAjaxAccess::getFlatParameters($uri, $wsClient ,"", $rawResult[0]);
+	$flatResult = WebService::flattenParam("", $rawResult[0], $wsClient, $typePath);
+	
 	return "todo:handle exceptions;".implode(";", $flatResult);
 }
 
@@ -156,81 +157,6 @@ class DefineWebServiceSpecialAjaxAccess{
 		return $wsClient;
 	}
 
-
-
-	/**
-	 * Takes all parts of the given type and appends its fields to the given name.
-	 * This happend recursively down to builtin types.
-	 * Example:
-	 * $name = point
-	 * $type = Point (with the fields x and y)
-	 * result:
-	 *    - point.x
-	 *    - point.y
-	 *
-	 * @param SMWSoapClient $wsClient
-	 * 		a properly initialized soapclient for accessing the wsdl
-	 * @param string $name
-	 * 		The fields of the type are added to this name, separated by a dot.
-	 * @param string $type
-	 * 		The name of an XSD base type or a type defined in the WSDL.
-	 * @param array<string> $typePath
-	 * 		This array contains all types that were encountered in the recursion.
-	 * 		To avoid an inifinite loop, the recursion stops if $type is already
-	 * 		in the $typePath. This parameter is omitted in the top level call.
-	 * @return array<string>
-	 * 		All resulting paths. If a path causes an endless recursion, the
-	 * 		keyword ##overflow## is appended to the path.
-	 */
-	public static function flattenParam($wsClient, $name, $type, &$typePath=null) {
-		//todo: this method was copied from SMW_WebService.php -> refactor
-		$flatParams = array();
-
-		if (!$wsClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
-			// $type is a simple type
-			$flatParams[] = $name;
-			return $flatParams;
-		}
-
-		if (substr($type,0, 7) == "ArrayOf") {
-			if (!$wsClient->isCustomType(substr($type, 7))) {
-				$flatParams[] = $name."[]";
-				return $flatParams;
-			}
-		}
-
-		$tp = $wsClient->getTypeDefinition($type);
-		foreach ($tp as $var => $type) {
-			if(substr($type,0, 7) == "ArrayOf"){
-				if($wsClient->isExistingType($type)){
-					$fname = empty($name) ? $var : $name.'.'.$var;
-				} else {
-					$type = substr($type, 7);
-					$fname = empty($name) ? $var."[]" : $name.'.'.$var."[]";
-				}
-			} else {
-				$fname = empty($name) ? $var : $name.'.'.$var;
-			}
-			if ($wsClient->isCustomType($type)) {
-				if (!$typePath) {
-					$typePath = array();
-				}
-				if (in_array($type, $typePath)) {
-					// stop recursion
-					$flatParams[] = $fname."##overflow##";
-					continue;
-				}
-				$typePath[] = $type;
-				$names = DefineWebServiceSpecialAjaxAccess::flattenParam($wsClient, $fname, $type, $typePath);
-				$flatParams = array_merge($flatParams,$names);
-				array_pop($typePath);
-			} else {
-				$flatParams[] = $fname.=" (".$type.")";
-			}
-		}
-		return $flatParams;
-	}
-
 	/**
 	 *
 	 *
@@ -261,8 +187,8 @@ class DefineWebServiceSpecialAjaxAccess{
 	 * 		All resulting paths. If a path causes an endless recursion, the
 	 * 		keyword ##overflow## is appended to the path.
 	 */
-	public static function getFlatParameters($uri, $wsClient, $name, $type, &$typePath=null){
-		$flatParams = DefineWebServiceSpecialAjaxAccess::flattenParam($wsClient, $name, $type, $typePath);
+	//public static function getFlatParameters($uri, $wsClient, $name, $type, &$typePath=null){
+	//	$flatParams = WebService::flattenParam($name, $type, $wsClient, $typePath);
 
 		//$arrayDetector = new WSDLArrayDetector($uri);
 
@@ -272,9 +198,9 @@ class DefineWebServiceSpecialAjaxAccess{
 		//	$adParameters = $arrayDetector->cleanResultParts($adParameters);
 		//}
 
-		return $flatParams;
+	//	return $flatParams;
 		//return $arrayDetector->mergePaths($flatParams, $adParameters);
-	}
+	//}
 }
 
 ?>
