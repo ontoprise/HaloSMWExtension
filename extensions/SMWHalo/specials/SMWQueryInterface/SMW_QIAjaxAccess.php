@@ -106,8 +106,8 @@ function smwf_qi_QIAccess($method, $params) {
             SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
             // merge fix parameters from GUI, they always overwrite others
             $params = array_merge($params, $fixparams);
-            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_HTML);
-            
+            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            $result = parseWikiText($result);
 			// add target="_new" for all links
 			$pattern = "|<a|i";
 			$result = preg_replace($pattern, '<a target="_new"', $result);
@@ -168,5 +168,29 @@ function smwf_qi_QIAccess($method, $params) {
 	else {
 		return "false";
 	}
+}
+
+/**
+ * function content copied from SMWResultPrinter::getResult(). Using the constant
+ * SMW_OUTPUT_HTML doesn't always work. Details see bug #10494
+ * 
+ * @param string  wikitext
+ * @return string html
+ */
+function parseWikiText($text) {
+	global $wgParser;
+            
+   	if ( ($wgParser->getTitle() instanceof Title) && ($wgParser->getOptions() instanceof ParserOptions) ) {
+		$result = $wgParser->recursiveTagParse($text);
+	} else {
+		global $wgTitle;
+		$popt = new ParserOptions();
+		$popt->setEditSection(false);
+		$pout = $wgParser->parse($text . '__NOTOC__', $wgTitle, $popt);
+		/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
+		SMWOutputs::requireFromParserOutput($pout);
+		$result = $pout->getText();
+	}
+    return $result;           
 }
 ?>
