@@ -152,10 +152,10 @@ class UnifiedSearchResultPrinter {
 	// adds preview to result depending on namespace
 	private static function addPreview($e, $args, $args_prev) {	
 		if ($e->getTitle()->getNamespace() == NS_AUDIO || $e->getTitle()->getNamespace() == NS_VIDEO || $e->getTitle()->getNamespace() == NS_IMAGE || $e->getTitle()->getNamespace() == NS_DOCUMENT) {
-			return '<li><span class="nosearchprev"></span>';
+			return '<li><span class="nosearchprev">&nbsp;</span>';
 		}
 		global $wgServer, $wgScript;			
-		return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'"></a></span>';			
+		return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';			
 	}
 
 	private static function getImageFromNamespace($result) {
