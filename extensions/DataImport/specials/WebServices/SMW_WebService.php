@@ -1388,8 +1388,7 @@ class WebService {
 	 */
 	private function flattenParam($name, $type, &$typePath=null) {
 		$flatParams = array();
-
-
+		
 		if (!$this->mWSClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
 			// $type is a simple type
 			$flatParams[] = $name;
