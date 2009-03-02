@@ -72,19 +72,19 @@ function damo_getInputs(){
 	}
 		
 	//simulate a submitted SF
-   	var el = document.createElement("input");
+   	/*var el = document.createElement("input");
    	el.type = "hidden";
    	el.name = "wpSave";
    	el.value = "true";
-   	form.appendChild(el);
+   	form.appendChild(el);*/
 				
 	//set this because the source is a query, not a page!!!
 	var el = document.createElement("input");
    	el.type = "hidden";
    	el.name = "query";
    	el.value = "true";
-   	form.appendChild(el);
- 
+   	form.appendChild(el); 	
+   	
 	//submit the upload form
 	document.upload_form.wpUpload.click();
 }
