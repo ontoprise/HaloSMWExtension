@@ -108,6 +108,11 @@ var wgUserLanguageStrings = {
 	'PC_MAX_CARD'			  : "hat max Kardinalität",
 	'PC_MIN_CARD'			  : "hat min Kardinalität",
 	'PC_INVERSE_OF'			  : "ist invers zu", 
+	'PC_INVERSE'			  : "inverse", 
+	'PC_TRANSITIVE'			  : "transitive", 
+	'PC_SYMMETRICAL'		  : "symmetrische", 
+	'PC_AND'			 	  : "und ", 
+	'PC_UNSUPPORTED'		  : "Dieses Wiki unterstützt keine $1 Attribute.",
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotieren Sie eine Kategorie.',

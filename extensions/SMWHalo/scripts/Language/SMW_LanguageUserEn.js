@@ -111,6 +111,12 @@ var wgUserLanguageStrings = {
 	'PC_MAX_CARD'			  : "Has max cardinality",
 	'PC_MIN_CARD'			  : "Has min cardinality",
 	'PC_INVERSE_OF'			  : "Is inverse of", 
+	'PC_INVERSE'			  : "inverse", 
+	'PC_TRANSITIVE'			  : "transitive", 
+	'PC_SYMMETRICAL'		  : "symmetrical", 
+	'PC_AND'			 	  : "and", 
+	'PC_UNSUPPORTED'		  : "This wiki does not support $1 properties.",
+	
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Annotate a category.',
@@ -309,6 +315,15 @@ var wgUserLanguageStrings = {
 	'SN_DELETE'               : 'Do you really want to delete the notification "$1"?',
 	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'The update interval is invalid. The smallest possible value is $1.',
 	
+	//Term Import
+	'smw_ti_sourceinfo'		: 'The following Information is needed in order to start the Import',
+	'smw_ti_source'			: 'Source',
+	'smw_ti_edit'			: 'edit',
+	'smw_ti_attributes'		: '<b>Available attributes in this data source</b><br/>The following attributes can be extracted from data source defined:',
+	'smw_ti_articles1'		: '<b>Articles to be imported from this data source</b><br/>The following ',
+	'smw_ti_noa'			: 'articleName',
+	'smw_ti_articles2'		: ' articles will be generated in the wiki:',
+
 	'PC_enter_prop'		: 'Enter property',
 	'PC_headline'		: 'The value of the property $1 of $2 is $3, if',
 	'PC_DERIVE_BY'		: 'Derive property $1 by a property chaining rule'

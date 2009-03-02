@@ -111,6 +111,11 @@ var wgUserLanguageStrings = {
 	'PC_MAX_CARD'			  : "Heeft max kardinaliteit",
 	'PC_MIN_CARD'			  : "Heeft min kardinaliteit",
 	'PC_INVERSE_OF'			  : "Is het omgekeerde van", 
+	'PC_INVERSE'			  : "inverse", 
+	'PC_TRANSITIVE'			  : "transitive", 
+	'PC_SYMMETRICAL'		  : "symmetrical", 
+	'PC_AND'			 	  : "and", 
+	'PC_UNSUPPORTED'		  : "This wiki does not support $1 properties.",
 
 	// Category toolbar
 	'ANNOTATE_CATEGORY'       : 'Aantekeningen maken voor een categorie.',
