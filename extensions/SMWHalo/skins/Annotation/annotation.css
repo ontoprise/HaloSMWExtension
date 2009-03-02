@@ -60,6 +60,7 @@
 	padding-left: 3px;
 	border: 1px solid #ff9602;
 	margin-top: 3px;
+	cursor: pointer;
 }
 #cmPropertyContent{
 	background-color: #ffcd87;
@@ -75,6 +76,7 @@
 	padding-left: 3px;
 	border: 1px solid #064df3;
 	margin-top: 3px;
+	cursor: pointer;
 }
 
 #cmCategoryContent{
