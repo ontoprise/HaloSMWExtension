@@ -1558,8 +1558,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 
 	$text .= '<div class="smwfact">' .
 				'<span class="smwfactboxhead">' . 
-	wfMsg('smw_df_derived_facts_about',
-	$derivedFacts->getSubject()->getText()) .
+					wfMsg('smw_df_derived_facts_about', 
+					      $derivedFacts->getSubject()->getText()) . 
 				'</span>' .
 				'<table class="smwfacttable">' . "\n";
 
@@ -1606,7 +1606,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 			$link .= '/v:'.urlencode($propvalue->getWikiValue());
 			$link .= '/mode:property';
 
-			$propRep = $propvalue->getLongWikiText(true) .
+			$propRep = $propvalue->getLongWikiText($property->getPropertyTypeID() == "_wpg") .
 			      '&nbsp;'.
 				  '<span class="smwexplanation">[['.$link.'|+]]</span>';
 
