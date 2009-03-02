@@ -317,8 +317,8 @@ class SMWToolbarStorageSQL extends SMWToolbarStorage {
 class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 	public function getHelppages($namespace, $action) {
 		$helppages = array();
-		$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
 		$db =& wfGetDB( DB_SLAVE );
+		$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$page = $db->tableName('page');
