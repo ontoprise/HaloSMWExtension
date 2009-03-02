@@ -174,7 +174,8 @@ DefineWebServiceSpecial.prototype = {
 
 		this.preparedPathSteps = new Array();
 
-		if (wsParameters[0] == "todo:handle noparams") {
+		if (wsParameters[0] == "##no params required##") {
+			// todo: use language file
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			if (!edit) {
 				$("step3").style.display = "";
@@ -184,9 +185,7 @@ DefineWebServiceSpecial.prototype = {
 			}
 			return;
 		} else {
-			// todo: find better solution
 			if (!edit) {
-				$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
 				$("step3-parameters").style.display = "";
 				$("step3-go-img").style.display = "";
 			}
@@ -194,9 +193,17 @@ DefineWebServiceSpecial.prototype = {
 
 		var duplicate = false;
 		for ( var i = 1; i < wsParameters.length; i++) {
-			var steps = wsParameters[i].split(".");
+			var steps = wsParameters[i].split("/");
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
+				if (steps[k].length == 0) {
+					s1 = steps.slice(0, k);
+					s2 = steps.slice(k + 1, steps.length);
+					steps = s1.concat(s2);
+					k -= 1;
+					continue;
+				}
+
 				var tO = new Object();
 				if (steps[k].indexOf("##duplicate") > -1) {
 					tO["value"] = steps[k].substr(0, steps[k]
@@ -225,9 +232,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step3-duplicates").style.display = "";
 		}
 
-		if (wsParameters[0] != "todo:handle exceptions") {
+		if (wsParameters[0] != "##handle exceptions##") {
 			this.step = "step2";
-			// step3").style.display = "none";
 
 			$("menue-step2").className = "ActualMenueStep";
 			$("menue-step3").className = "TodoMenueStep";
@@ -238,6 +244,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
 
+			// todo:werden die errors richtig angezeigt?
 			if (overflow) {
 				$("step2b-error").style.display = "";
 			} else {
@@ -262,7 +269,7 @@ DefineWebServiceSpecial.prototype = {
 			var treeView = false;
 			var aTreeRoot = false;
 
-			for (i = 0; i < wsParameters.length; i++) {
+			for (i = 0; i < this.preparedPathSteps.length; i++) {
 				treeView = false;
 				aTreeRoot = false;
 				var paramRow = document.createElement("tr");
@@ -273,13 +280,12 @@ DefineWebServiceSpecial.prototype = {
 				paramRow.appendChild(paramTD0);
 
 				var paramPath = document.createElement("div");
-				var dotSteps = wsParameters[i].split(".");
 
 				paramTD0.appendChild(paramPath);
 				paramPath.id = "s3-path" + i;
 				paramPath.className = "OuterLeftIndent";
 
-				for (k = 0; k < dotSteps.length; k++) {
+				for (k = 0; k < this.preparedPathSteps[i].length; k++) {
 					var treeViewK = -1;
 					var aTreeRootK = -1;
 
@@ -583,9 +589,17 @@ DefineWebServiceSpecial.prototype = {
 			} else {
 				wsResults[i] = "result";
 			}
-			var steps = wsResults[i].split(".");
+			var steps = wsResults[i].split("/");
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
+				if (steps[k].length == 0) {
+					s1 = steps.slice(0, k);
+					s2 = steps.slice(k + 1, steps.length);
+					steps = s1.concat(s2);
+					k -= 1;
+					continue;
+				}
+
 				var tO = new Object();
 				if (steps[k].indexOf("##duplicate") > -1) {
 					if (steps[k].indexOf("[]") > -1) {
@@ -690,14 +704,18 @@ DefineWebServiceSpecial.prototype = {
 						resultPathStep.firstChild.nodeValue = this.preparedRPathSteps[i][k]["value"]
 								.substr(0,
 										this.preparedRPathSteps[i][k]["value"]
-												.indexOf("]"));
+												.indexOf("[") + 1);
 						var pathIndexInput = document.createElement("input");
 						pathIndexInput.type = "text";
 						pathIndexInput.size = "1";
 						pathIndexInput.maxLength = "5";
 						pathIndexInput.style.width = "7px";
 						pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
-						pathIndexInput.value = "";
+						pathIndexInput.value = this.preparedRPathSteps[i][k]["value"]
+								.substr(this.preparedRPathSteps[i][k]["value"]
+										.indexOf("[") + 1,
+										this.preparedRPathSteps[i][k]["value"]
+												.indexOf("]"));
 
 						pathIndexInput.i = i;
 						pathIndexInput.k = k;
@@ -1104,7 +1122,7 @@ DefineWebServiceSpecial.prototype = {
 
 			this.wsSyntax = wsSyntax;
 			wsSyntax = "\n== Syntax for using the WWSD in an article==";
-			wsSyntax += this.wsSyntax; 
+			wsSyntax += this.wsSyntax;
 
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack.bind(this));
@@ -2108,6 +2126,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 				if (visible) {
+
 					this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedPathSteps[i][m]["i"] != "null") {
 						if ($("step3-expand-" + i + "-" + m).expanded) {
@@ -2381,6 +2400,10 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	editWWSD : function() {
+		if (this.editMode) {
+			return;
+		}
+
 		var editParameterContainer = $("editparameters");
 		var editResultContainer = $("editresults");
 		if (editParameterContainer == null) {
@@ -2393,10 +2416,11 @@ DefineWebServiceSpecial.prototype = {
 		for (i = 0; i < editParameterContainer.childNodes.length; i++) {
 			editParametersText += editParameterContainer.childNodes[i].nodeValue;
 		}
+
 		var editParameters = editParametersText.split(";");
 		editParameters.pop();
 
-		var ps2Parameters = "todo:handle exceptions";
+		var ps2Parameters = "##handle exceptions##";
 		var parametersUpdate = new Array();
 
 		for (i = 0; i < editParameters.length; i += 4) {
@@ -2408,6 +2432,7 @@ DefineWebServiceSpecial.prototype = {
 
 			parametersUpdate.push(o);
 		}
+
 		this.processStep2Do(ps2Parameters, true);
 		this.updateParameters(parametersUpdate);
 
@@ -2434,13 +2459,14 @@ DefineWebServiceSpecial.prototype = {
 	updateParameters : function(updates) {
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
 			if (updates[i]["optional"] == "true") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked = true;
 			}
 			if (updates[i]["defaultValue"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value = updates[i]["defaultValue"];
 			}
 		}
 	},
@@ -2448,7 +2474,8 @@ DefineWebServiceSpecial.prototype = {
 	updateResults : function(updates) {
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = "true";
+				this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
 		}
 	},
