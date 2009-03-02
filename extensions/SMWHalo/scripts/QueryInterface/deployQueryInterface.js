@@ -1977,10 +1977,10 @@ adaptDialogueToProperty:function(request){
 				this.propIsEnum = true;
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
-				var option = '<select id="input3" style="width:100%">'; //create html for option box
+				var option = '<select id="input3">'; //create html for option box
 				for(var i = 0; i < possibleValues.length; i++){
 					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
-					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
+					option += '<option value="' + possibleValues[i] + '" style="width: 100%">' + possibleValues[i] + '</option>';
 				}
 				option += "</select>";
 				$('dialoguecontent').rows[3].cells[2].innerHTML = option;
