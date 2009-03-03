@@ -1866,9 +1866,9 @@ addDialogueInput:function(){
 
 		cell = newrow.insertCell(2);
 		if(this.propIsEnum){ // if enumeration, a select box is used instead of a text input field
-			var tmphtml = '<select id="input' + this.activeInputs + '" style="width:100%">';
+			var tmphtml = '<select id="input' + this.activeInputs + '">';
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + this.enumValues[i] + '">' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + this.enumValues[i] + '" style="width:100%">' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			cell.innerHTML = tmphtml;
@@ -2099,10 +2099,10 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration())
 			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
-			var tmphtml = '<select id="input3" style="width:100%">';
+			var tmphtml = '<select id="input3">';
 			this.enumValues = prop.getEnumValues();
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
+				tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
@@ -2119,10 +2119,10 @@ loadPropertyDialogue:function(id){
 			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
+				var tmphtml = '<select id="input' + (i+2) + '">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
-					tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
+					tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+3].cells[2].innerHTML = tmphtml;
