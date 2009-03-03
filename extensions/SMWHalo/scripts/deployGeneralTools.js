@@ -1129,7 +1129,7 @@ ContentSlider.prototype = {
            $('p-navigation').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            $('p-search').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            $('p-tb').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
-           $('p-treeview').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
+           if ($('p-treeview')) $('p-treeview').style.width = windowWidth*v+sliderWidth-5- sliderSmooth +"px";
            
            document.cookie = "cp-slider="+v+"; path="+wgScript;
            this.savedPos = v;

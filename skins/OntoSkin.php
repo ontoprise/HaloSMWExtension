@@ -414,7 +414,9 @@ class OntoSkinTemplate extends QuickTemplate {
 			}
 	}
 	/*************************************************************************************************/
-	function treeviewBox() { ?>
+	function treeviewBox() { 
+		$nav_title = Title::newFromText('NavTree', NS_MEDIAWIKI);
+		if (!$nav_title->exists()) return;	?>
 		<div id="p-treeview" class="portlet">
 		  <div class="pBody">
 		    <?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$this ) ); ?>
