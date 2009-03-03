@@ -2072,7 +2072,7 @@ loadPropertyDialogue:function(id){
 	var prop = this.activeQuery.getPropertyGroup(id);
 	var vals = prop.getValues();
 	this.proparity = prop.getArity();
-
+	
 	$('input0').value = unescapeQueryHTML(prop.getName()); //fill input filed with name
 	$('input1').checked = prop.isShown(); //check box if appropriate
 	$('input2').checked = prop.mustBeSet();
@@ -2112,7 +2112,7 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				$('input' + (i+2)).value = unescapeQueryHTML(vals[i][2]);
+				$('input' + (i+3)).value = unescapeQueryHTML(vals[i][2]);
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
