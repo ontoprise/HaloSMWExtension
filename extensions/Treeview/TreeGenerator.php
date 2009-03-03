@@ -279,14 +279,21 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $db->freeResult($res);
 	            
 	            // if we had less results than ids in where clause, fetch the rest with query2
-	            // this needs only be done, if no category is defined where the nodes must belong to 
-	            if (count($fids) > 0 && $this->smw_category_id == NULL) {
-	                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
-	                while ($row = $db->fetchObject($res)) {
-	                    $this->elementProperties[$row->smw_id]= array($row->title, NULL, $row->link);
-	                    $this->postProcessingForElement($row);
-	                }
-	                $db->freeResult($res);
+	            // this needs only be done, if no category is defined where the nodes must belong to
+	            // however if a category is defined, the remaining sIds do not belong to the category,
+	            // therefore delete them 
+	            if (count($fids) > 0) {
+	            	if ($this->smw_category_id != NULL) {
+	            		foreach (array_keys($fids) as $id) unset($this->elementProperties[$id]);
+	            	}
+	            	else {
+		                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
+		                while ($row = $db->fetchObject($res)) {
+	    	                $this->elementProperties[$row->smw_id]= array($row->title, NULL, $row->link);
+	        	            $this->postProcessingForElement($row);
+	            	    }
+	                	$db->freeResult($res);
+	            	}
 	            }
 	            // if we have already that many elements processed as are in sIds
 	            // then we are done and quit the loop here.
@@ -411,7 +418,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    		foreach ($this->sIds[$id] as $item) {
 	    			if (!isset($this->sIds[$item]) &&			// parent doesn' exist
 	    				isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
-	    				 !in_array($item, $rootCats))			// and parent is not yet a root
+	    				 !in_array($item, $rootCats) &&			// and parent is not yet a root
+	    				 !in_array($id, $rootCats)) 			// node itself is not yet a root
 	    				$rootCats[]= $id;
 	    		}
 	    	}
