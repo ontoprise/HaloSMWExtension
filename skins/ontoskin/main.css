@@ -822,14 +822,14 @@ input.searchButton {
 	text-align: center;
 }
 
-#p-treeview .dtreestatic {
+#navtree.Treeview {
 	font-size: 95%;    	
 	color: #666;
 	white-space: nowrap;
-	overview: scroll;
 	background-color: white;
 	border: none;
 	display: inline;
+	overflow: auto;
 }
 
 /*
