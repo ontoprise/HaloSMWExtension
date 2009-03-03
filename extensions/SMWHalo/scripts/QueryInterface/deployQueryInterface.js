@@ -2384,7 +2384,7 @@ copyToClipboard:function(){
 		    smwhgLogger.log("Copy query to clipboard","QI","query_copied");
 		}
 		/*ENDLOG*/
-		var text = this.getFullAsk();
+		var text = this.getFullParserAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
 			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
