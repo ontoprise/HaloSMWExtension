@@ -89,18 +89,18 @@ function smwf_qi_QIAccess($method, $params) {
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
             $fixparams = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
-                        
+
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
-            $paramPos = strpos($p_array[0], "|");
-            $rawparams[] = $paramPos === false ? $p_array[0] : substr($p_array[0], 0, $paramPos);
-            if ($paramPos !== false) {
-                // add other params
-                $ps = explode("|", substr($p_array[0], $paramPos + 1));
-                foreach ($ps as $param) {
-                    $param = trim($param);
-                    $rawparams[] = $param;
-                }
-            }
+            $ps = preg_split('/[^\|]{1}\|{1}(?!\|)/s', $p_array[0]);  
+            if (count($ps) > 1) {
+            	// last char of query condition is missing (matched with [^\|]{1}) therefore copy from original
+            	$rawparams[] = trim(substr($p_array[0], 0, strlen($ps[0]) + 1));
+            	array_shift($ps); // remove the query condition
+                // add other params for formating etc.
+                foreach ($ps as $param) 
+                    $rawparams[] = trim($param);
+            } // no single pipe found, no params specified in query
+            else $rawparams[] = trim($p_array[0]);	
         
             // parse params and answer query
             SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);

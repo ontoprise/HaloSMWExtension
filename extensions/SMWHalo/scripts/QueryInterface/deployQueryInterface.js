@@ -2453,7 +2453,7 @@ showFullAsk:function(type, toggle){
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
 	if(type == "parser")
-		ask = ask.replace(/\|/g, "\n|");
+	    ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 	$('fullAskText').value = ask;
 },
 
