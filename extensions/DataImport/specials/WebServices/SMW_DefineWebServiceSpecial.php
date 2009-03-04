@@ -329,7 +329,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		//todo:use language file
 		//7. show #ws-usage
-		$html .= "<div id=\"step7\" style=\"\">";
+		$html .= "<div id=\"step7\" style=\"display: none\">";
 		$html .= "<span>Your WebService \"";
 		$html .= "<span id=\"step7-name\"></span>";
 		$html .= "\" has been successfully created. In order to include this WebService into a page, please use the following syntax:</span>";
