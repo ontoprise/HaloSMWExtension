@@ -1,0 +1,47 @@
+__NOTOC__
+The search box of SMW+ has two search buttons, labeled Go and Search. The search button produces traditional search results (hits), while Go jumps directly to articles (pressing Enter is the same as clicking Go). If your search text exactly matches the title of an article, the Go button brings you directly to that article, rather than displaying a page of search results. If there is no exact match to your search text, then you will see a search results page as if you had clicked Search.
+
+Enter some text in SMW+'s search box, click Search, and a page of search results appears: links to wiki articles matching your search text. But instead of the well-known distinction in ''Page title matches'' and ''Page text matches'', the search of SMW+ only knows one result type, displaying the most relevant hits at the top of the list according to their rank.  
+
+To increase the quality of user search results, SMW+ invokes a [[Help:Query_Expansion|query expansion]] by including basic concepts of the SKOS ontology. This query expansion enables the wiki search to find synonyms of words and searching for the synonyms as well. 
+
+The search of SMW+ has three search tolerance levels (to invoke a query expansion, you must set the search tolerance level to tolerant or semi-tolerant): 
+
+* '''Exact.''' The search keyword will be searched as is without any query expansion.
+* '''Semi-tolerant.''' This invokes a query expansion to include synonyms. Articles are synonyms if they are related to each other via redirects. A redirect is an alternative title for an article. For example, if your wiki has an article called <tt>Cat</tt>, you can create a redirect called <tt>Felidae</tt> that redirects to the <tt>Cat</tt> article. Redirects help to organize your wiki by making articles findable under different names. In addition, regarded as synonymous are strings that are related to the term in question by the properties <tt>Also known as</tt> and <tt>Rarely labeled as</tt>.
+* '''Tolerant.''' In addition to synonyms this tolerance level will also consider narrower and broader terms, which are modeled by using the properties <tt>Narrower_term</tt> and <tt>Broader_terms</tt>. If the term denotes an a category, the query gets expanded to include the term's child categories (subcategories) and parent categories (supercategories). Likewise, if the term denotes a property, the query gets expanded to include the term's sub- and superproperties.
+
+
+<hr>
+<b>Note &ndash;</b> If you enter a search term that makes use of a subset of the [[Help:Apache_Lucene_Query_Parser_Syntax|Lucene query parser syntax]] (Boolean operators such as <tt>AND</tt>, the fuzzy search operator "~", square and curly brackets for specifying range searches), it is assumed that you are an advanced user, which means that the tolerance level will be ignored and that the search term will exactly be used as entered, that is, no query expansion will be invoked.
+<hr>
+
+If your search terms don't exactly match an article's title, the search results page asks you if you want to create that article. A failed search produces the following message: "This page does not exist. Click here to create the page." By clicking the link you will be led to the MediaWiki edit page to create the article.
+
+== Filtering of Search Results ==
+
+If your search returned to many hits, you can limit the search to the following article types:
+
+* Article &ndash; Regular wiki articles.
+* Category &ndash; Regular wiki categories.
+* Property &ndash; Wiki articles, located in the <tt>Property</tt> namespace, devoted to your properties as introduced by the Semantic MediaWiki extension.
+* Template &ndash; Regular wiki templates.
+* Help &ndash; Wiki articles, located in the <tt>Help</tt> namespace.
+* Image &ndash; Wiki articles, located in the <tt>Image</tt> namespace, devoted to your image files.
+* Audio &ndash; Wiki articles, located in the <tt>Audio</tt> namespace, devoted to your audio files.
+* Video &ndash; Wiki articles, located in the <tt>Video</tt> namespace, devoted to your video files.
+* PDF &ndash; Wiki articles, located in the <tt>PDF</tt> namespace, devoted to your converted PDF files (more more information, see [[Help:Upload_Converters|Upload Converters]]).
+* Document &ndash; Wiki articles, located in the <tt>Document</tt> namespace, devoted to your converted Microsoft Word files (more more information, see [[Help:Upload_Converters|Upload Converters]]).
+Simply click on the article type in the 'Refine Search' box above the search results. The result list changes accordingly and only shows those results that belong to the selected article type.
+
+== Article Preview ==
+
+Clicking the magnifying glass icon right next to the article name in the search result list will open a preview of the article with the search terms highlighted. Since this preview is based on AJAX technology it does not conflict with pop-up blockers.
+
+== Search Statistics ==
+
+The search of SMW+ includes a special page <tt>Special:UnifiedSearchStatistics</tt> that shows basic search statistics. This special page displays how often a particular search term was entered (tries) and how many hits were found. Both hits and tries can be sorted in ascending and descending order. 
+
+<hr>
+<b>Tip &ndash;</b> By sorting tries in descending order you can determine which search terms were entered most. You can use this information as a guidance how to improve the quality of your wiki by adding articles that reflect users' search behavior.
+<hr>

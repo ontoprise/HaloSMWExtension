@@ -7,7 +7,13 @@ proceed as follows:
 <li>Specify a category name.<br>
 <div style="font-weight:normal;">Enter "Book" into the Name text box.</div></li>
 <li>Specify a default form.<br>
-<div style="font-weight:normal;">Select <tt>Book</tt> from the Default Form list.</div></li>
+<div style="font-weight:normal;">Select <tt>Book</tt> from the Default Form list.<br>
+By specifying a default form, each article that was created by using this form<br>
+can be edited via the page tab 'edit with form'.
+
+You can also use wikitext for specifying a default form.<br>
+Simply add <tt><nowiki>[[</nowiki>Has_default_form::<i>form-name</i><nowiki>]]</nowiki></tt> to the category page.
+</div></li>
 <li>(Optional) Make the category a subcategory.<br>
 <div style="font-weight:normal;">Select a category from the list.<br><br>
 [[Image:Semantic_forms_create_category.png|frame|none|Create a Category Dialog Box]]
@@ -18,8 +24,6 @@ proceed as follows:
 </div></li>
 </ol>
 </div>
-
-
 Repeat the steps above to create the form for author pages:
 <div style="font-weight:bold; line-height: 2;">
 <ol>

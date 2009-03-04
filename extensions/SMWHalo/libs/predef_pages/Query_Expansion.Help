@@ -1,0 +1,94 @@
+__NOTOC__
+To increase the quality of user search results, SMW+ invokes a query expansion by including basic concepts of the SKOS ontology. This query expansion enables the wiki search to find synonyms of words and searching for the synonyms as well.
+
+Simple Knowledge Organisation Systems (SKOS) is a family of formal languages designed for the representation of thesauri, classification schemes, taxonomies, subject-heading systems, or any other type of structured controlled vocabulary. SKOS is built upon RDF and RDFS, and its main objective is to enable easy publication of controlled structured vocabularies for the Semantic Web.
+
+The following table gives an overview of the incorporated SKOS resources and their SMW+ counterparts.  
+
+<table border="0" cellpadding="3" style="background-color:#FFFFFF;" width="50%" summary="Mapping of SKOS and SMW+ Resources">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">SKOS Resource</th>
+	<th style="text-align:left;">SMW+ Resource</th>
+        <th style="text-align:left;">Property Type</th>
+        <th style="text-align:left;">Label in Form</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:Concept</tt></td>
+	<td style="vertical-align:top;"><tt>Category:Term</tt></td>
+        <td style="vertical-align:top;">n.a.</td>
+        <td style="vertical-align:top;">n.a.</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:altLabel</tt></td>
+	<td style="vertical-align:top;"><tt>Property:Also_known_as</tt></td>
+        <td style="vertical-align:top;"><tt>String</tt></td>
+        <td style="vertical-align:top;">also known as</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:hiddenLabel</tt> </td>
+	<td style="vertical-align:top;"><tt>Property:Rarely_labeled_as</tt></td>
+        <td style="vertical-align:top;"><tt>String</tt></td>
+        <td style="vertical-align:top;">rarely labeled as</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:broader</tt> </td>
+	<td style="vertical-align:top;"><tt>Property:Broader_term</tt></td>
+        <td style="vertical-align:top;"><tt>Page</tt></td>
+        <td style="vertical-align:top;">broader term</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:narrower</tt></td>
+	<td style="vertical-align:top;"><tt>Property:Narrower_term</tt></td>
+        <td style="vertical-align:top;"><tt>Page</tt></td>
+        <td style="vertical-align:top;">narrower term</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:definition</tt></td>
+	<td style="vertical-align:top;"><tt>Property:Definition</tt></td>
+        <td style="vertical-align:top;"><tt>Text</tt></td>
+        <td style="vertical-align:top;">definition</td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>skos:example</tt></td>
+	<td style="vertical-align:top;"><tt>Property:Example</tt></td>
+        <td style="vertical-align:top;"><tt>Page</tt></td>
+        <td style="vertical-align:top;">example</td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+   </tr>
+<caption style="caption-side: bottom; width: auto; text-align: left;">Mapping of SKOS and SMW+ Resources</caption>
+</table>
+
+The following section provides a short explanation of the SKOS resources that are included in SMW+.
+
+; <tt>Category:Term</tt> : The fundamental element of the vocabulary that underlies most knowledge organization systems.
+
+; <tt>Property:Also_known_as</tt> : Used to provide a string denoting a synonym of the term, that is, a different label but with identical or very similar meaning.
+
+; <tt>Property:Rarely_labeled_as</tt> : Used to provide a string denoting a rarely used synonym of the term. This property can be used where you would like that synonym to be accessible to search operations, but would not like that synonym to be visible otherwise. You may, for example, enter misspelled words when trying to find a relevant term. If the misspelled query can be matched against the rarely used or "hidden" label, you will be able to find the relevant term, but this label won't otherwise be visible.
+
+; <tt>Property:Broader_term</tt> : Used to assert a direct hierarchical link to another article. A triple <tt>&lt;A&gt;&lt;Broader_term&gt;&lt;B&gt;</tt> asserts that <tt>B</tt>, the object of the triple, is a broader concept than <tt>A</tt>, the subject of the triple (e.g., <tt><Car><Broader_term><Vehicle></tt>) .
+
+; <tt>Property:Narrower_term</tt> : Used to assert a direct hierarchical link to another article. A triple <tt>&lt;C&gt;&lt;Narrower_term&gt;&lt;D&gt;</tt> asserts that <tt>D</tt>, the object of the triple, is a narrower concept than <tt>C</tt>, the subject of the triple (e.g., <tt><Vehicle><Narrower_term><Car></tt>). 
+
+; <tt>Property:Definition</tt> : Used to provide a complete explanation of the intended meaning of the term.
+
+; <tt>Property:Example</tt> : Used to link to another article that supplies an example of the use of the term.
+
+== Providing Vocabulary Information Using Semantic Forms ==
+
+SMW+ has a special feature that helps you adding vocabulary information to the wiki. This is achieved by the [[Help:Semantic_Forms|semantic form]] <tt>Form:Term</tt>. Using this form you can easily add information about synonyms, rarely used synonyms, broader terms, and narrower terms to the concept in question. Notice that each concept added to the wiki by using this form will become a member of the category <tt>Term</tt>.
+
+[[Image:Semantic_form_add_term.png|none|frame|Semantic Form <tt>Term</tt>]]
+
+
+<hr>
+<b>Note &ndash;</b> In a new installation of SMW+, the semantic form and its corresponding template will be installed by default. If you update an existing installation, you must import both the semantic form and the template by hand. For this purpose, go to the special page <tt>Special:Import</tt> and import the file <tt>$IP/extensions/UnifiedSearch/languages/SKOS_English.xml</tt> or its German counterpart, respectively.
+<hr>

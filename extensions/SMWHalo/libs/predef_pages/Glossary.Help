@@ -18,6 +18,7 @@
 ; Semantic annotation : In SMW+, semantic annotations are special markup elements which allow editors to provide "hints" to computer programs on how to interpret some piece of information given in the wiki.
 ; Semantic Forms : A free extension of MediaWiki that allows users to add and edit data using forms. It is heavily tied in with the Semantic MediaWiki extension, and is meant to be used for structured data that has semantic markup. 
 ; Semantic MediaWiki : Semantic MediaWiki (SMW) is a free extension of MediaWiki &mdash; the wiki-system powering Wikipedia &mdash; that helps to search, organize, tag, browse, evaluate, and share the wiki's content.
+; SKOS : Simple Knowledge Organisation Systems (SKOS) is a family of formal languages designed for representation of thesauri, classification schemes, taxonomies, subject-heading systems, or any other type of structured controlled vocabulary. 
 ; SMW+ : A ready-to-use and preconfigured bundle of MediaWiki extensions, most notably Semantic MediaWiki and Halo Extension.
 ; SPARQL : SPARQL is an RDF query language; its name is a recursive acronym that stands for ''SPARQL Protocol and RDF Query Language''. It is standardized by the RDF Data Access Working Group (DAWG) of the W3C.
 ; Template : A standard wiki page whose content is designed to be transcluded (embedded) inside other pages.

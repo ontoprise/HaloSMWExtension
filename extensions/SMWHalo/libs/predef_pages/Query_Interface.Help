@@ -38,7 +38,7 @@ This section provides a short overview of the Query Layout Manager and its print
     </tr>
     <tr>
 	<td style="vertical-align:top;">Format</td>
-	<td style="vertical-align:top;"><tt>table</tt>, <tt>broad table</tt>, <tt>bullet list</tt>, <tt>ordered list</tt>, <tt>list</tt>, <tt>template</tt>, <tt>count</tt>, <tt>rss</tt>, <tt>aggregation</tt> </td>
+	<td style="vertical-align:top;"><tt>table</tt>, <tt>broad table</tt>, <tt>bullet list</tt>, <tt>ordered list</tt>, <tt>list</tt>, <tt>template</tt>, <tt>count</tt>, <tt>rss</tt></td>
         <td style="vertical-align:top;">Defines the output format of the query. <tt>Count</tt> means that only the number of results is displayed.</td>
     </tr>
     <tr>

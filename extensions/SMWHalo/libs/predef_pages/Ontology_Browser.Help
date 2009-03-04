@@ -1,5 +1,5 @@
-The Ontology Browser gives a quick and detailed overview of the wiki's ontology. It allows users to navigate
-through the concept and property hierarchy and to inspect instances and their annotations.
+__NOTOC__
+The Ontology Browser gives a quick and detailed overview of the wiki's ontology. It allows you to navigate through the concept and property hierarchy of the wiki and to inspect instances and their annotations. As an additional feature it also provides basic editing capabilities such as adding categories or renaming resources. 
 
 The Ontology Browser consists of three basic panels:
 <ul>

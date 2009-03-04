@@ -1,18 +1,14 @@
+__NOTOC__
 To uninstall SMW+, proceed as follows:
 
 <div style="font-weight:bold; line-height: 2;">
 <ol>
 <li>Stop XAMPP.<br>
-<div style="font-weight:normal;">In case XAMPP is running, stop it by double-clicking the Stop XAMPP shortcut.<br>
+<div style="font-weight:normal;">In case XAMPP is running, stop it by selecting Start > SMW+ > Stop SMW+.<br>
 This will stop the Apache HTTP Server and the MySQL database.</div></li>
-<li>Remove the installation directory.<br>
-<div style="font-weight:normal;">Go to the installation directory and remove it from the system.<br>
-The SMW+ installation directory is self-contained, that is, it constitutes a complete and independent unit with no relations to units outside of it.</div></li>
-<li>(Optional) Delete SMW+ shortcuts.<br>
-<div style="font-weight:normal;">Go to the desktop and delete the SMW+ shortcuts.</div></li>
+<li>Uninstall SMW+.<br>
+<div style="font-weight:normal;">Select Start > SMW+ > Uninstall.<br>
+SMW+ will be removed from the system.</div></li>
 </ol>
 </div>
-<hr>
-<b>Note &ndash;</b> If you want to keep your wiki articles, you need to save the directory 
-<tt>C:\Programme\Ontoprise\SMWPLUS\mysql\data\</tt> prior to deleting SMW+.
-<hr>
+

@@ -3,7 +3,7 @@ A convenient method for the storage and retrieval of Resource Description Framew
 
 SMW+ provides connectors to the following triple stores:
 
-* [http://www.ontoprise.de/index.php?id=268 OntoBroker Triple Store Connector] (Contact Ontoprise) 
+* [http://www.ontoprise.de/en/home/about-us/contact/ OntoBroker Triple Store Connector] (Contact Ontoprise) 
 * [http://downloads.sourceforge.net/halo-extension/ Jena Triple Store Connector] (Download from SourceForge)
 
 == Requirements ==
@@ -22,7 +22,7 @@ To install the triple store connector, proceed as follows:
 <li>Start the triple store connector.<br>
 <div style="font-weight:normal;">Open a command-line interface and start the connector with the following option:
 
-<tt>C:\ts-connector-jena-0.4><b>start-triplestore jena</b></tt>
+<tt>C:\ts-connector-jena><b>start-triplestore jena</b></tt>
 
 This starts a triple store connector with embedded message broker and a SPARQL endpoint on localhost.<br>
 It has started properly if you see a command prompt waiting for commands. Try to enter <tt>help</tt>.<br>
@@ -31,23 +31,19 @@ take a look at <tt>config/jena.properties</tt> and set <tt>DB_TYPE=MySQL</tt>.<b
 Note that you must have installed a MySQL database. Finally, change your DB credentials in this configuration file.
 </div></li>
 <li>Change your wiki settings.<br>
-<div style="font-weight:normal;">Suppose that the triple store runs on localhost.
-Then, add the following lines to your <tt>LocalSettings.php</tt> (SMW+ 1.4.x):
+<div style="font-weight:normal;">Depending on the used storage layer, change the <tt>enableSMWHalo</tt> call to:
+<pre>
+enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://halowiki');
+</pre>
+The string "<nowiki>http://halowiki</nowiki>" is used to uniquely identify the wiki in the triple store.<br>
+Basically any value is possible, but make sure that it does <em>not</em> contain a hash character (#).<br>
+If no value is specified, "<nowiki>http://mywiki</nowiki>" will be used as default.
+
+In addition, add the following lines to your <tt>LocalSettings.php</tt> (supposed that the triple store runs on localhost, otherwise use the IP address):
 <pre>
 $smwgMessageBroker = "localhost";
 $smwgWebserviceEndpoint = "localhost:8080"; 
 </pre>
-Depending on the used storage layer, change the <tt>enableSMWHalo</tt> call to:
-<pre>
-enableSMWHalo('SMWHaloStore2', 'SMWTripleStore');
-</pre>
-It works with both the old and the new storage layer, although the new one is recommended.
-
-Change the <tt>enableSemantics</tt> call to
-<pre>
-enableSemantics('http://mywiki', true);
-</pre> 
-The URL <tt><nowiki>http://mywiki</nowiki></tt> should be replaced by the server name (or IP address). This string is only used as a globally unique name for identifying the wiki's exported data on the Semantic Web, and a valid server name works very well for that purpose. There is no need to worry if a wiki has more than one server name - just pick one. Basically any URL is possible, only make sure that the URL does <em>not</em> contain a hash character (#). In addition, set <tt>true</tt> as second parameter.
 </div></li>
 <li>(Optional) Provide webserver access credentials.<br>
 <div style="font-weight:normal;">If you have a webserver access restriction set (e.g., <tt>.htaccess</tt>), you must add a pair of valid credentials:
@@ -73,17 +69,17 @@ $smwgWebservicePassword = "password";
 <li>Start the triple store connector.<br>
 <div style="font-weight:normal;">Open a command-line interface and start the triple store connector with the <tt>console</tt> option:
 
-<tt>C:\ts-connector-jena-0.4><b>start-triplestore jena console</b></tt>
+<tt>C:\ts-connector-jena><b>start-triplestore jena console</b></tt>
 
 [[Image:Triple_store_connector_console.png|none|thumb|300px|Triple Store Connector]] 
 </div></li>
 <li>Check if your wiki was imported properly.<br>
 <div style="font-weight:normal;">Execute the following two commands on the console:
   
-<tt>C:\ts-connector-jena-0.4><b>SET GRAPH <nowiki>http://mywiki</nowiki></b></tt><br>
-<tt>C:\ts-connector-jena-0.4><b>SHOW ALL</b></tt>
+<tt>C:\ts-connector-jena><b>SET GRAPH <nowiki>http://halowiki</nowiki></b></tt><br>
+<tt>C:\ts-connector-jena><b>SHOW ALL</b></tt>
 
-Use the URL you have specified in the enableSemantics call.
+Use the URL you have specified in the <tt>enableSMWHalo</tt> call.
     
 You should see all triples of your wiki.
 
@@ -128,7 +124,7 @@ In case you get the error message "Connection refused", the triple store connect
 
 The triple store connector has a debugging console. It can be activated by using the <tt>console</tt> option at startup.
 
-<tt>C:\ts-connector-jena-0.4><b>start-triplestore jena console</b></tt>
+<tt>C:\ts-connector-jena><b>start-triplestore jena console</b></tt>
 
 There are many commands available for creating graphs, inserting facts, and starting queries (SPARQL+ASK). For a complete overview of all commands, enter <tt>help</tt> on the console prompt.
 
@@ -163,17 +159,17 @@ The following prefixes are predefined and do not need to be specified manually i
     </tr>
     <tr>
 	<td><tt>cat</tt></td>
-	<td><tt><nowiki><http://mywiki/category#></nowiki></tt></td>
+	<td><tt><nowiki><http://halowiki/category#></nowiki></tt></td>
         <td>Categories</td>
     </tr>
     <tr>
 	<td><tt>prop</tt></td>
-	<td><tt><nowiki><http://mywiki/property#></nowiki></tt></td>
+	<td><tt><nowiki><http://halowiki/property#></nowiki></tt></td>
         <td>Properties</td>
     </tr>
     <tr>
         <td><tt>a</tt></td>
-	<td><tt><nowiki><http://mywiki/a#></nowiki></tt></td>
+	<td><tt><nowiki><http://halowiki/a#></nowiki></tt></td>
         <td>Articles / Instances</td>
     </tr>
     <tr>

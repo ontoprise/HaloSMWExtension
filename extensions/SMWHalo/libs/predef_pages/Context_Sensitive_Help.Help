@@ -21,7 +21,7 @@ If there are any help topics available, they will be shown in the Help area of t
 
 == Help Topic Markup ==
 
-A help topic can have an arbitrary name but must be placed in the <tt>Help:</tt> namespace.
+A help topic can have an arbitrary name but must be placed in the <tt>Help</tt> namespace.
 
 Each help topic needs to be annotated with three mandatory properties in order to be displayed in the CSH framework:
 

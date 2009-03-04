@@ -1,3 +1,4 @@
+__NOTOC__
 SMW+ is an enterprise semantic wiki distributed by [http://www.ontoprise.com ontoprise GmbH]. Technically speaking, it is a ready-to-use and preconfigured bundle of MediaWiki extensions, most notably 
 [http://sourceforge.net/projects/semediawiki/ Semantic MediaWiki] and [http://sourceforge.net/projects/halo-extension/ Halo Extension]. SMW+ is designed to leverage the hidden knowledge often locked up in unstructured content. It combines the collaborative authoring approach of a wiki with proven semantic technology.
 
@@ -11,4 +12,6 @@ SMW+ is a bundle of the following MediaWiki extensions:
 * '''PermissionACL.''' Offers a way to restrict access to specific namespaces, pages, and categories based on user group or user name.
 * '''Semantic Treeview.''' Allows users to represent hierarchical structures in a graphical form.
 * '''LDAPAuthentication.''' Allows user authentication via the Lightweight Directory Access Protocol LDAP.
+* '''Enhanced Retrieval.''' (Sometimes referred to as <i>UnifiedSearch</i>) Integration of the Lucene search server.
 * '''Supplementary extensions.''' Other useful extensions such as ParserFunctions, StringFunctions, Variables, Cite, etc.
+
