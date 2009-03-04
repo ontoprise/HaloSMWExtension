@@ -1,0 +1,178 @@
+__NOTOC__
+For SMW+, enabling the Lucene search is a configuration option in the Windows Installer. Choose the [[Help:Installation|installation]] type Custom and select the check box 'Lucene search'. This will install Lucene as a Windows service called <i>LuceneWiki</i>. Once the installation is finished, start the Lucene server by selecting 
+Start > SMW+ > SMW+ Start Lucene.
+
+Once the service is installed, it can be managed by launching Services from the Windows Control Panel >> Administrative Tools or typing "Services.msc" in the Run command on Start menu.
+
+[[Image:Windows_services.png|frame|none|Management Console 'Services']]
+
+
+<hr>
+<b>Note &ndash;</b> To update the Lucene search index, execute the batch file <tt>rebuildIndex.bat</tt>, which is located in the Lucene directory 
+(e.g., <tt>C:\Program Files\ontoprise\SMWPLUS\lucene\</tt>).
+<hr>
+
+For Linux, see the instructions at http://www.mediawiki.org/wiki/Extension:Lucene-search
+
+If you use the Semantic MediaWiki extension and the Halo extension under Windows, follow the instructions given below. 
+
+To enable the Lucene search, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<!-- 1 -->
+<li>Download the Lucene archive.<br>
+<div style="font-weight:normal;">Download the Lucene archive <tt>lucene-server-2.1.zip</tt> from the [http://sourceforge.net/project/showfiles.php?group_id=207513 SourceForge] repository and<br>extract the ZIP archive in a directory of your choice (in the following referred to as <tt><pathtolucenefolder></tt>).
+</div></li>
+<!-- 2 -->
+<li>Configure Lucene settings.<br>
+<div style="font-weight:normal;">The following configuration files are relevant:
+* <tt><pathtolucenefolder>/lsearch.conf</tt> (for path names)
+* <tt><pathtolucenefolder>/global.conf</tt> (for index settings)
+* <tt><pathtolucenefolder>/log4j.properties</tt> (for logging settings)
+</div>
+<ol style="list-style-type:lower-alpha;">
+<!-- a -->
+<li>Configure the file <tt>lsearch.conf</tt>.<br>
+<div style="font-weight:normal;">Copy the file <tt>lsearch.conf.template</tt> to <tt>lsearch.conf</tt> and configure the following parameters:
+* <tt>MWConfig.global</tt> &ndash; The URL of the global configuration file.
+* <tt>MWConfig.lib</tt> &ndash; The path to the lib directory.
+* <tt>Indexes.path</tt> &ndash; The path where you want the daemon to store the indexes.
+* <tt>Localization.url</tt> &ndash; The URL of the MediaWiki message files.
+* <tt>Logging.logconfig</tt> &ndash; The path to the log4j configuration file.
+
+Sample configuration file:
+
+<pre>
+MWConfig.global=file:///Program Files/Lucene-server/global.conf
+MWConfig.lib=/Program Files/Lucene-server/lib
+Indexes.path=/Program Files/Lucene-server/index
+Localization.url=file:///Program Files/Ontoprise/SMWPLUS/htdocs/HaloSMWExtension/languages/messages
+Logging.logconfig=/Program Files/Lucene-server/log4j.properties
+</pre>
+</div>
+</li>
+<!-- b -->
+<li>Configure the file <tt>global.conf</tt>.<br>
+<div style="font-weight:normal;">Copy the file <tt>global.conf.template</tt> to <tt>global.conf</tt> and configure the following sections:
+* <tt>[Database]</tt> &ndash; The database name as specified in <tt>$wgDBname</tt> of your <tt>LocalSettings.php</tt> file.
+* <tt>[Search-Group]</tt> &ndash; Mapping of your server hostname to the database that's being searched and indexed.
+* <tt>[Index]</tt> &ndash; Mapping of your server hostname to the indexes.
+* <tt>[Index-Path]</tt> &ndash; The path to the Lucene index (directory will be created if it does not exist).
+
+As hostname, use your IP address, not "localhost". 
+
+Sample configuration file:
+
+<pre>
+[Database]
+semwiki_en : (single) (spell,4,2) (language,de) (warmup,10) (prefix) (title_ngram) 
+
+[Search-Group]
+10.0.0.250 : semwiki_en.prefix
+10.0.0.250 : semwiki_en.title_ngram
+10.0.0.250 : semwiki_en.spell
+10.0.0.250 : semwiki_en
+
+[Index]
+10.0.0.250 : semwiki_en.prefix
+10.0.0.250 : semwiki_en.title_ngram
+10.0.0.250 : semwiki_en.spell
+10.0.0.250 : semwiki_en
+
+[Index-Path]
+<default> : /mwsearch
+10.0.0.250 : mwsearch2
+</pre>
+The options <tt>(single)</tt> and <tt>(language,en)</tt> declare that the database is a single (nondistributed) index and that it should use English as its default language, and thus use English stemming.<br>The option <tt>(warmup,10)</tt> instructs Lucene to apply 10 queries to the index when an updated version is fetched to warm it up.<br>This enables smooth transition in performance and ensures that the indexes are always well cached and buffered.<br>Using the option <tt>(spell,4,2)</tt> activates Lucene's spell checker, which enables a "did you mean" suggestion facility.
+</div>
+</li>
+</ol>
+</li>
+<!-- 3 -->
+<li>Configure batch file <tt>installAsService.bat</tt>.<br>
+<div style="font-weight:normal;">Copy the file <tt>installAsService.bat.template</tt> to <tt>installAsService.bat</tt> and make the following settings:</div>
+<ol style="list-style-type:lower-alpha;">
+<!-- a -->
+<li>Set <tt>JAVA_HOME</tt>.<br>
+<div style="font-weight:normal;">Set the variable <tt>JAVA_HOME</tt> to your Java installation directory.<br>
+For example:
+<pre>
+set JAVA_HOME=C:\Program Files\Java\jre1.6.0_07
+</pre>
+</div></li>
+<!-- b -->
+<li>Enter an IP address.<br>
+<div style="font-weight:normal;">Replace the "<tt><nowiki>{{IP}}</nowiki></tt>" in <tt><nowiki>-Djava.rmi.server.hostname={{IP}}</nowiki></tt> by your host's IP address.<br>
+For example:
+<pre>
+-Djava.rmi.server.hostname=10.0.0.250
+</pre>
+</div></li>
+</ol>
+</li>
+<!-- 4 -->
+<li>Configure batch file <tt>rebuildIndexManually.bat</tt>.<br>
+<div style="font-weight:normal;">The following parameters need to be configured:
+* <tt>PHP_PATH</tt> &ndash; The path of your PHP interpreter.
+* <tt>WIKI_PATH</tt> &ndash; The path of the MediaWiki root directory.
+* <tt>LUCENE_PATH</tt> &ndash; The path of your Lucene installation directory.
+* <tt>DATABASE</tt> &ndash; The database name as specified in <tt>$wgDBname</tt> of your <tt>LocalSettings.php</tt> file.
+Sample configuration file:
+<pre>
+SET PHP_PATH=C:\Program Files\Ontoprise\SMWPLUS\php\php.exe
+SET WIKI_PATH=C:\Program Files\Ontoprise\SMWPLUS\htdocs\mediawiki
+SET LUCENE_PATH=C:\Program Files\Ontoprise\SMWPLUS\Lucene-server
+SET DATABASE=semwiki_en
+</pre>
+</div></li>
+<!-- 5 -->
+<li>Download and install the Enhanced Retrieval extension.<br>
+<div style="font-weight:normal;">Download the Enhanced Retrieval extension <tt>enhanced-retrieval-1.0.zip</tt> from the [http://sourceforge.net/project/showfiles.php?group_id=207513 SourceForge] repository and extract the ZIP archive into MediaWiki's root directory.<br>The Enhanced Retrieval extension will thus be installed in the directory <tt>$IP/extensions/UnifiedSearch</tt>.  
+</div></li>
+<!-- 6 -->
+<li>Edit MediaWiki configuration file.<br>
+<div style="font-weight:normal;">Add the following settings to your <tt>LocalSettings.php</tt> and adjust the hostname:
+<pre>
+$wgSearchType = 'LuceneSearch';
+$wgLuceneHost = '<hostname>';
+$wgLucenePort = 8123;
+$wgLuceneSearchVersion = 2.1;
+require_once("extensions/UnifiedSearch/UnifiedSearch.php");
+</pre>
+Here, "localhost" is allowed as hostname.
+</div></li>
+<!-- 7 -->
+<li>(Optional) Install the SMW+ extension package.<br>
+<div style="font-weight:normal;">Download and install the SMW+ extension package from the [http://sourceforge.net/project/showfiles.php?group_id=207513 SourceForge] repository.<br>
+For more information, see [http://smwforum.ontoprise.com/smwforum/index.php/SMW%2B_Extension_Package SMW+ Extension Package] in the SMW+ User Forum.<br>
+If you want to include audio, video, and PDF files in your wiki, enable at least the <tt>SMW_MIME_settings</tt>.<br> 
+<pre>
+include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
+</pre>
+</div></li>
+<!-- 8 -->
+<li>Update the database.<br>
+<div style="font-weight:normal;">Open a command-line interface and go to the <tt>$IP/extensions/UnifiedSearch/maintenance/</tt> directory of your wiki.<br>
+There, run the following command:
+<pre>
+php setup.php
+</pre>
+The database will be updated by categories and properties used for query expansions.
+</div></li>
+<!-- 9 -->
+<li>Start the Lucene server.<br>
+<div style="font-weight:normal;">In the Lucene installation directory, execute the batch file <tt>installAsService.bat</tt>.<br>
+This will start Lucene as a Windows service called <i>LuceneWiki</i>.
+<hr>
+<b>Note &ndash;</b> Once the service is installed, it can be managed by launching Services from the Windows Control Panel >> Administrative Tools or typing "Services.msc" in the Run command on Start menu. 
+<hr>
+</div></li>
+<!-- 10 -->
+<li>Create the Lucene search index.<br>
+<div style="font-weight:normal;">In the Lucene installation directory, execute the batch file <tt>rebuildIndexManually.bat</tt>.<br>
+This will create the Lucene search index.
+</div></li>
+</ol>
+</div>
+Update the index at regular intervals to make sure that new content becomes searchable without much delay.

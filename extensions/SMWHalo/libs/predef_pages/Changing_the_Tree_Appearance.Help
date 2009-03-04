@@ -1,0 +1,124 @@
+__NOTOC__
+The appearance of the tree can be changed in the configuration file <tt>LocalSettings.php</tt>. After including the Semantic Treeview extension, you can choose whether the tree should be rendered using dotted lines (by default set to <tt>false</tt>). In addition, you can select the icons to be used in the tree by specifying the variable <tt>$wgTreeViewImages</tt> for various tree elements.
+<pre>
+$wgTreeViewShowLines = true;
+$wgTreeViewImages['folder'] = "<imagepath>"; // (e.g., "$wgScriptPath/images/0/05/folder.gif")
+</pre>
+The following tree elements can be customized:
+
+<table border="0" cellpadding="3" style="background-color:#FFFFFF;" width="60%" summary="Parameters and Default Images Controlling the Tree Appearance">
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+    </tr>
+    <tr>
+	<th style="text-align:left;">Parameter</th>
+	<th style="text-align:left;">Description</th>
+	<th style="text-align:left;">Default Image</th>
+        <th style="text-align:left;">Path</th>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>root</tt></td>
+	<td style="vertical-align:top;">Top-level node of the tree</td>
+        <td style="vertical-align:top;">[[Image:Base.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/base.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>folder</tt></td>
+	<td style="vertical-align:top;">Folder icon (closed)</td>
+        <td style="vertical-align:top;">[[Image:Folder.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/folder.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>folderOpen</tt></td>
+	<td style="vertical-align:top;">Folder icon (open)</td>
+        <td style="vertical-align:top;">[[Image:Folderopen.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/folderopen.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>node</tt></td>
+	<td style="vertical-align:top;">Page icon (no further subfolders)</td>
+        <td style="vertical-align:top;">[[Image:Page.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/page.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>empty</tt></td>
+	<td style="vertical-align:top;">Transparent placeholder for indenting</td>
+        <td style="vertical-align:top;">[[Image:Empty.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/empty.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>line</tt></td>
+	<td style="vertical-align:top;">Vertical dotted line</td>
+        <td style="vertical-align:top;">[[Image:Line.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/line.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>join</tt></td>
+	<td style="vertical-align:top;">Vertical dotted line with branch</td>
+        <td style="vertical-align:top;">[[Image:Join.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/join.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>joinBottom</tt></td>
+	<td style="vertical-align:top;">Dotted line (bottom)</td>
+        <td style="vertical-align:top;">[[Image:Joinbottom.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/joinbottom.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>plus</tt></td>
+	<td style="vertical-align:top;">Plus icon for expanding a folder</td>
+        <td style="vertical-align:top;">[[Image:Plus.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/plus.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>plusBottom</tt></td>
+	<td style="vertical-align:top;">Plus icon (bottom) </td>
+        <td style="vertical-align:top;">[[Image:Plusbottom.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/plusbottom.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>minus</tt></td>
+	<td style="vertical-align:top;">Minus icon for collapsing a folder</td>
+        <td style="vertical-align:top;">[[Image:Minus.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/minus.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>minusbottom</tt></td>
+	<td style="vertical-align:top;">Minus icon (bottom)</td>
+        <td style="vertical-align:top;">[[Image:Minusbottom.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/minusbottom.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>nlPlus</tt></td>
+	<td style="vertical-align:top;">Plus icon without a dotted line </td>
+        <td style="vertical-align:top;">[[Image:Nolines_plus.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/nolines_plus.gif</tt></td>
+    </tr>
+    <tr>
+	<td style="vertical-align:top;"><tt>nlMinus</tt></td>
+	<td style="vertical-align:top;">Minus icon without a dotted line </td>
+        <td style="vertical-align:top;">[[Image:Nolines_minus.gif]]</td>
+        <td style="vertical-align:top;"><tt>$IP/extensions/Treeview/img/nolines_minus.gif</tt></td>
+    </tr>
+    <tr>
+	<th style="border-top-width:1px; border-top-style:solid; border-top-color:#000;" colspan="4"></th>
+   </tr>
+<caption style="caption-side: bottom; width: auto; text-align: left;">Parameters and Default Images Controlling the Tree Appearance</caption>
+</table>
+
+
+For example, by using the following configuration, the SMW+ manual tree would be rendered as follows:
+<pre>
+require_once('extensions/Treeview/Treeview.php');
+$wgTreeViewImages['root'] = "$wgScriptPath/images/e/e1/Eclipse_root.png";
+$wgTreeViewImages['folder'] = "$wgScriptPath/images/7/7b/Eclipse_folder.png";
+$wgTreeViewImages['folderOpen'] = "$wgScriptPath/images/7/7b/Eclipse_folder.png";
+$wgTreeViewImages['node'] = "$wgScriptPath/images/e/eb/Eclipse_leaf.png";
+$wgTreeViewShowLines = true;
+</pre>
+
+[[Image:Tree_using_alternative_icons.png|frame|none|Tree Using Alternative Icons]]
+

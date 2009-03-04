@@ -1,0 +1,68 @@
+__NOTOC__
+'''Semantic Result Formats''' is an extension to Semantic MediaWiki that bundles a number of further result formats for [[Help:Inline_Queries|inline queries]]. The individual formats can be added to the installation independently.
+
+Currently, the following formats are included:
+* Average format
+* Calendar format
+* Eventline format
+* Exhibit format
+* Googlebar format
+* Googlepie format
+* Graph format
+* Max format
+* Min format
+* Ploticus format
+* Process format
+* Sum format
+* ICalendar format
+* Timeline format
+* VCard format
+
+For more information on how to use these formats, see [http://semantic-mediawiki.org/wiki/Semantic_Result_Formats Semantic Result Formats] on the Semantic MediaWiki Web site. 
+
+== Download ==
+
+Semantic Result Formats can be obtained in three ways:
+* Download via the [http://www.mediawiki.org/wiki/Special:ExtensionDistributor MediaWiki Extensions downloader]: choose ''SemanticResultFormats''
+* Download from [https://sourceforge.net/project/showfiles.php?group_id=147937&package_id=300446&release_id=660173 SourceForge]
+* Directly from the SVN using the following command inside your extensions folder:
+
+ svn checkout http://svn.wikimedia.org/svnroot/mediawiki/trunk/extensions/SemanticResultFormats/
+
+== Installation ==
+
+In order to include the default available result formats, simply add the following line to your <tt>LocalSettings.php</tt>:
+
+ require_once("$IP/extensions/SemanticResultFormats/SRF_Settings.php");
+
+If nothing else is added, the following formats will be enabled: <tt>icalendar</tt>, <tt>vcard</tt>, <tt>calendar</tt>, <tt>calendar</tt>, <tt>timeline</tt>, <tt>eventline</tt>, <tt>sum</tt>, <tt>average</tt>, <tt>min</tt>, and <tt>max</tt>. You can extend this list by modifying the configuration array <tt><nowiki>$srfgFormats</nowiki></tt> in <tt>LocalSettings.php</tt>:
+
+ $srfgFormats[] = 'googlebar';
+
+Alternatively, you can override the set of formats entirely with a call like this:
+
+ $srfgFormats = array('calendar', 'timeline');
+
+There are some formats that you may not want to include because they may not follow certain policies within your wiki; the formats <tt>googlebar</tt> and <tt>googlepie</tt>, for instance, send data to external web services for rendering, which may be considered a data leak.
+
+== Example ==
+
+In the example below the wiki has three articles devoted to team meetings, which are categorized as <tt>Events</tt> and to which the property <tt>HasDuration</tt> was applied. If you need information about the entire length of time of your events, you could use the following inline query: 
+<pre>
+{{#ask: [[Category:Event]]
+| ?HasDuration
+| format = sum
+}}
+</pre>
+This inline query will then return a simple number that represents the total amount (sum) of all values as configured for the property <tt>HasDuration</tt>.
+
+[[Image:Semantic_result_formats_example.png|none|frame|Inline Query Using the Semantic Result Format <tt>sum</tt>]]
+
+In the example above we have made use of the custom unit <tt>hrs</tt> (hours), which we defined as a customized datatype on a page of the namespace <tt>Type</tt> using the <tt>Corresponds to</tt> property. The very simple definition of this unit is as follows:
+<pre>
+[[Corresponds to::1 hrs]]
+[[Corresponds to::60 min]]
+</pre>
+Then we defined the property <tt>HasDuration</tt> as being of this customized type. Whenever the time unit <tt>min</tt> (minutes) is found, it will be converted into hours using this definition. So even if the duration time of the team meetings is specified in minutes, the query result is given in hours.
+
+For more information, see [http://semantic-mediawiki.org/wiki/Help:Custom_units Custom Units] on the Semantic MediaWiki Web site.
