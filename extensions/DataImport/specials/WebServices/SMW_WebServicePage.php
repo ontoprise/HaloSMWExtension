@@ -166,7 +166,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		} else {
 			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();
 		}
-			$r .= '<a href="'.$url.'"><b>'.wfMsg('smw_wws_edit_in_gui').'</b></a>';
+			$r .= '<a href="'.$url.'"><p><b>'.wfMsg('smw_wws_edit_in_gui').'</b></p></a>';
 		
 		wfProfileOut( __METHOD__ . ' (SMW)');
 		return $r;

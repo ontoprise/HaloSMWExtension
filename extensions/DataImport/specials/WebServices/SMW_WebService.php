@@ -1417,9 +1417,9 @@ class WebService {
 		foreach ($tp as $var => $type) {
 			if(substr($type,0, 7) == "ArrayOf"){
 				$type = substr($type, 7);
-				$fname = empty($name) ? $var."[*]" : $name.'/'.$var."[*]";
+				$fname = ($name == "//") ? "//".$var."[*]" : $name.'/'.$var."[*]";
 			} else {
-				$fname = empty($name) ? $var : $name.'/'.$var;
+				$fname = ($name == "//") ? "//".$var : $name.'/'.$var;
 			}
 			if ($wsClient->isCustomType($type)) {
 				if (!$typePath) {

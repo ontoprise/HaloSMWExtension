@@ -66,7 +66,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$fClass = "";
 			$rClass = " class=\"DoneMenueStep\" ";
 		}
-		$html .= "<span id=\"menue\">";
+		$html .= "<span id=\"breadcrumb-menue\">";
 		$html .= "<span id=\"menue-step1\" ".$fClass.$rClass.": bold\">".wfMsg("smw_wws_s1-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step2\" ".$rClass.">".wfMsg("smw_wws_s2-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step3\" ".$rClass.">".wfMsg("smw_wws_s3-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
@@ -89,9 +89,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$noauth = " checked=\"true\" ";
 		$username = "";
 		$password = "";
-		
+
 		$method = "";
-		
+
 		$displayOnce = "checked=\"true\"";
 		$displayMax = "";
 		$displayMinutes = "";
@@ -102,9 +102,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$spanOfLife = "";
 		$expires = "";
 		$expiresno = " checked=\"true\" ";
-		
+
 		$name = "";
-		
+
 		if($editwwsd){
 			$visible = "";
 
@@ -122,32 +122,32 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$password = $wwsd->getAuthenticationPassword();
 
 			$method = "<option>".$wwsd->getMethod()."</option>";
-		
+
 			if($wwsd->getDisplayPolicy() > 0){
 				$displayOnce = "";
 				$displayMax = "checked=\"true\"";
 				$displayMinutes = " value=\"".$wwsd->getDisplayPolicy()."\"";
 			}
-			
+
 			if($wwsd->getQueryPolicy() > 0){
 				$queryOnce = "";
 				$queryMax = "checked=\"true\"";
 				$queryMinutes = " value=\"".$wwsd->getQueryPolicy()."\"";
 			}
-			
+
 			if($wwsd->getUpdateDelay() > 0){
 				$delayValue = " value=\"".$wwsd->getUpdateDelay()."\"";;
 			}
-			
+
 			if($wwsd->getSpanOfLife() > 0){
 				$spanOfLife = "value=\"".$wwsd->getSpanOfLife()."\"";
 			}
-			
+
 			if($wwsd->doesExpireAfterUpdate()){
 				$expires = " checked=\"true\" ";
 				$expiresno = "";
 			}
-			
+
 			$name = "value=\"".substr($wwsd->getName(), 11)."\"";
 		}
 
@@ -242,7 +242,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 
@@ -252,7 +252,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</span>";
 
 		$html .= "</div>";
-		
+
 		// 5. Define updatae policy
 		$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"".$visible."\" >";
 		$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s5-intro");
@@ -308,7 +308,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</span>";
 
 		$html .= "</div>";
-		
+
 		// 6. Specify name
 		$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"".$visible."\">";
 		$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s6-intro");
@@ -326,10 +326,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</span>";
 
 		$html .= "</div>";
-		
+
 		//todo:use language file
 		//7. show #ws-usage
-		$html .= "<div id=\"step7\" style=\"display: none\">";
+		$html .= "<div id=\"step7\" style=\"\">";
 		$html .= "<span>Your WebService \"";
 		$html .= "<span id=\"step7-name\"></span>";
 		$html .= "\" has been successfully created. In order to include this WebService into a page, please use the following syntax:</span>";
@@ -339,7 +339,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<br><br>";
 		$html .= "<span>Your WebService will from now on be available in <a href=\"".$url."\">the list of available WebServices.</a> You can now go on and define another WWSD.</span>";
 		//$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
-		$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step7-go-img\" value=\"New\" onclick=\"webServiceSpecial.processStep7()\">";
+		$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step7-go-img\" value=\"New\" onclick=\"webServiceSpecial.processStep7()\"/>";
 		$html .= "</div>";
 
 
@@ -374,7 +374,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		} else {
 			$wwsdParameters = new SimpleXMLElement("<p>".$wwsd->getParameters()."</p>");
 		}
-		
+
 		$wwsdParameters = $wwsdParameters->children();
 
 		$rawParameters = $wsClient->getOperation($wwsd->getMethod());
@@ -392,34 +392,39 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				$wsdlParameters = array_merge($wsdlParameters , $tempFlat);
 			}
 		}
-		
+
 		$mergedParameters = array();
+		$unsetwwsdParameters = array();
 
 		//todo: handle overflows
 		foreach($wsdlParameters as $wsdlParameter){
 			$wsdlParameterSteps = explode("/", $wsdlParameter);
 
-			$matchedPath = "//";
-			$a = array();
-			for($i=0; $i < count($wwsdParameters); $i++){
-				$wwsdParameterSteps = explode("/", $wwsdParameters[$i]["path"]);
+			$found = false;
+
+			foreach($wwsdParameters as $key => $wwsdParameter){
+				$matchedPath = "//";
+				$wwsdParameterSteps = explode("/", $wwsdParameter["path"]);
+
 				if(count($wsdlParameterSteps) != count($wwsdParameterSteps)){
 					continue;
 				}
 
 				for($k=0; $k < count($wsdlParameterSteps); $k++){
-					if($wsdlParameterSteps[$k] == "" 
-							&& $wwsdParameterSteps[$k] == ""){
+					if($wsdlParameterSteps[$k] == ""
+					&& $wwsdParameterSteps[$k] == ""){
 						continue;
 					}
-					
+						
 					$dupPos = strpos($wsdlParameterSteps[$k], "##duplicate");
 					$overflowPos = strpos($wsdlParameterSteps[$k], "##overflow");
 					$bracketPos = strpos($wwsdParameterSteps[$k], "[");
 
 					$wwsdParameterStep = $wwsdParameterSteps[$k];
-					if($bracketPos){
+
+					if($bracketPos > 0){
 						$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
+						$dupPos = $dupPos."-";
 					}
 					if(strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
 						$matchedPath .= "/".$wwsdParameterSteps[$k];
@@ -435,11 +440,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					}
 				}
 				if(strlen($matchedPath) > 0 && $matchedPath != "//"){
-					$a["name"] = $wwsdParameters[$i]["name"]."";
+					$a = array();
+					$a["name"] = $wwsdParameter["name"]."";
 					$a["path"] = substr($matchedPath, 1);
 					if(!$result){
-						$a["defaultValue"] = $wwsdParameters[$i]["defaultValue"]."";
-						$a["optional"] = $wwsdParameters[$i]["optional"]."";
+						$a["defaultValue"] = $wwsdParameter["defaultValue"]."";
+						$a["optional"] = $wwsdParameter["optional"]."";
 						if(strlen($a["optional"]) == 0){
 							$a["optional"] = "##";
 						}
@@ -447,38 +453,42 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 							$a["defaultValue"] = "##";
 						}
 					}
-					unset($wwsdParameters[$i]);
-					break;
+					$unsetwwsdParameters[$wwsdParameter["path"].""] = true;
+					$mergedParameters[$a["path"]] = $a;
+					$found = true;
+					continue;
 				}
 			}
-			if($matchedPath == "//" || strlen($matchedPath) == 0){
+			if(!$found){
+				$a = array();
 				$a["path"] = $wsdlParameter;
 				$a["name"] = "##";
 				if(!$result){
 					$a["optional"] = "##";
 					$a["defaultValue"] = "##";
 				}
+				$mergedParameters[$a["path"]] = $a;
 			}
-			
-			
-			$mergedParameters[$a["path"]] = $a;
 		}
 
 		foreach($wwsdParameters as $wsParameter){
-			$o = array();
-			$o["name"] = $wsParameter["name"]."";
-			$o["path"] = $wsParameter["path"]."";
-			if(!$result){
-				$o["defaultValue"] = $wsParameter["defaultValue"]."";
-				$o["optional"] = $wsParameter["optional"]."";
-				if(strlen($o["optional"]) == 0){
-					$o["optional"] = "##";
+			if(!array_key_exists($wsParameter["path"]."", $unsetwwsdParameters)){
+				$o = array();
+				$o["name"] = $wsParameter["name"]."";
+				$o["path"] = "//wwsd/".$wsParameter["path"]."";
+
+				if(!$result){
+					$o["defaultValue"] = $wsParameter["defaultValue"]."";
+					$o["optional"] = $wsParameter["optional"]."";
+					if(strlen($o["optional"]) == 0){
+						$o["optional"] = "##";
+					}
+					if(strlen($o["defaultValue"]) == 0){
+						$o["defaultValue"] = "##";
+					}
 				}
-				if(strlen($o["defaultValue"]) == 0){
-					$o["defaultValue"] = "##";
-				}
+				$mergedParameters[$o["path"]] = $o;
 			}
-			$mergedParameters[$o["path"]] = $o;
 		}
 		ksort($mergedParameters);
 
@@ -494,10 +504,19 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$html .= $mergedParameter["name"].";";
 			$html .= $mergedParameter["path"].";";
 			if(!$result){
-				$html .= $mergedParameter["optional"].";";
-				$html .= $mergedParameter["defaultValue"].";";
+				if(array_key_exists("optional", $mergedParameter)){
+					$html .= $mergedParameter["optional"].";";
+				} else {
+					$html .= "##;";
+				}
+				if(array_key_exists("defaultValue", $mergedParameter)){
+					$html .= $mergedParameter["defaultValue"].";";
+				} else {
+					$html .= "##;";
+				}
 			}
 		}
+		
 		$html .= "</span>";
 		return $html;
 	}
