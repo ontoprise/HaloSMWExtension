@@ -1,5 +1,4 @@
-/*  This file is part of the Data Import-Extension.
- *
+/*
  *   The Data Import-Extension is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or
@@ -297,7 +296,7 @@ DefineWebServiceSpecial.prototype = {
 
 					var paramPathText = "";
 					if (k > 0) {
-						paramPathText += ".";
+						paramPathText += "/";
 					}
 					paramPathText += this.preparedPathSteps[i][k]["value"];
 					paramPathTextNode = document.createTextNode(paramPathText);
@@ -343,7 +342,7 @@ DefineWebServiceSpecial.prototype = {
 					if (i < wsParameters.length - 1) {
 						if (this.preparedPathSteps[i + 1][k] != null) {
 							if (this.preparedPathSteps[i][k]["value"] == this.preparedPathSteps[i + 1][k]["value"]
-									|| this.preparedPathSteps[i][k]["value"] == "."
+									|| this.preparedPathSteps[i][k]["value"] == "/"
 											+ this.preparedPathSteps[i + 1][k]["value"]) {
 								this.preparedPathSteps[i][k]["i"] = i + 1;
 								this.preparedPathSteps[i][k]["k"] = k;
@@ -378,7 +377,7 @@ DefineWebServiceSpecial.prototype = {
 
 					if (i > 0) {
 						if (this.preparedPathSteps[i - 1][k] != null) {
-							if (this.preparedPathSteps[i][k]["value"] == "."
+							if (this.preparedPathSteps[i][k]["value"] == "/"
 									+ this.preparedPathSteps[i - 1][k]["value"]
 									|| this.preparedPathSteps[i][k]["value"] == this.preparedPathSteps[i - 1][k]["value"]) {
 								paramPathStep.style.visibility = "hidden";
@@ -585,7 +584,7 @@ DefineWebServiceSpecial.prototype = {
 		var duplicate = false;
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
-				wsResults[i] = "result." + wsResults[i];
+				wsResults[i] = "result/" + wsResults[i];
 			} else {
 				wsResults[i] = "result";
 			}
@@ -602,20 +601,13 @@ DefineWebServiceSpecial.prototype = {
 
 				var tO = new Object();
 				if (steps[k].indexOf("##duplicate") > -1) {
-					if (steps[k].indexOf("[]") > -1) {
-						tO["value"] = steps[k].substr(0, steps[k]
-								.indexOf("##duplicate"))
-								+ "[]";
-					} else {
-						tO["value"] = steps[k].substr(0, steps[k]
-								.indexOf("##duplicate"));
-					}
+					tO["value"] = steps[k].substr(0, steps[k]
+							.indexOf("##duplicate"));
 					tO["duplicate"] = true;
 					duplicate = true;
 				} else if (steps[k].indexOf("##overflow") > -1) {
 					tO["value"] = steps[k].substr(0, steps[k]
-							.indexOf("##overflow"))
-							+ "[]";
+							.indexOf("##overflow"));
 					tO["overflow"] = true;
 				} else {
 					tO["value"] = steps[k];
@@ -688,7 +680,7 @@ DefineWebServiceSpecial.prototype = {
 
 					var resultPathText = "";
 					if (k > 0) {
-						resultPathText += ".";
+						resultPathText += "/";
 					}
 					resultPathText += this.preparedRPathSteps[i][k]["value"];
 					var resultPathTextNode = document
@@ -707,15 +699,22 @@ DefineWebServiceSpecial.prototype = {
 												.indexOf("[") + 1);
 						var pathIndexInput = document.createElement("input");
 						pathIndexInput.type = "text";
-						pathIndexInput.size = "1";
+						pathIndexInput.size = "2";
 						pathIndexInput.maxLength = "5";
-						pathIndexInput.style.width = "7px";
+						pathIndexInput.style.width = "14px";
 						pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
 						pathIndexInput.value = this.preparedRPathSteps[i][k]["value"]
-								.substr(this.preparedRPathSteps[i][k]["value"]
-										.indexOf("[") + 1,
+								.substr(
 										this.preparedRPathSteps[i][k]["value"]
-												.indexOf("]"));
+												.indexOf("[") + 1,
+										this.preparedRPathSteps[i][k]["value"]
+												.indexOf("]")
+												- 1
+												- this.preparedRPathSteps[i][k]["value"]
+														.indexOf("["));
+
+						alert("item: " + this.preparedRPathSteps[i][k]["value"]);
+						alert(pathIndexInput.value);
 
 						pathIndexInput.i = i;
 						pathIndexInput.k = k;
@@ -748,8 +747,8 @@ DefineWebServiceSpecial.prototype = {
 
 					if (i < this.preparedRPathSteps.length - 1) {
 						if (this.preparedRPathSteps[i + 1][k] != null) {
-							if (resultPathText == this.preparedRPathSteps[i + 1][k]["value"]
-									|| resultPathText == "."
+							if (this.preparedRPathSteps[i][k]["value"] == this.preparedRPathSteps[i + 1][k]["value"]
+									|| this.preparedRPathSteps[i][k]["value"] == "/"
 											+ this.preparedRPathSteps[i + 1][k]["value"]) {
 								this.preparedRPathSteps[i][k]["i"] = i + 1;
 								this.preparedRPathSteps[i][k]["k"] = k;
@@ -787,9 +786,9 @@ DefineWebServiceSpecial.prototype = {
 
 					if (i > 0) {
 						if (this.preparedRPathSteps[i - 1][k] != null) {
-							if (resultPathText == "."
+							if (this.preparedRPathSteps[i][k]["value"] == "/"
 									+ this.preparedRPathSteps[i - 1][k]["value"]
-									|| resultPathText == this.preparedRPathSteps[i - 1][k]["value"]) {
+									|| this.preparedRPathSteps[i][k]["value"] == this.preparedRPathSteps[i - 1][k]["value"]) {
 								resultPathStep.style.visibility = "hidden";
 								this.preparedRPathSteps[i][k]["arrayIndexRoot"] = false;
 								treeView = true;
@@ -837,6 +836,22 @@ DefineWebServiceSpecial.prototype = {
 
 				if (aTreeRoot || treeView) {
 					resultTD2.style.visibility = "hidden";
+				}
+
+				var resultTD3 = document.createElement("td");
+				resultTD3.id = "step4-resultTD3-" + i;
+				resultRow.appendChild(resultTD3);
+
+				var subPathButton = document.createElement("input");
+				subPathButton.id = "s4-add-subpath" + i;
+				subPathButton.type = "button";
+				subPathButton.value = "Add subpath";
+				subPathButton.setAttribute("onclick",
+						"webServiceSpecial.addSubPath(" + i + ")");
+				resultTD3.appendChild(subPathButton);
+
+				if (aTreeRoot || treeView) {
+					resultTD3.style.visibility = "hidden";
 				}
 
 				if (treeView) {
@@ -1007,9 +1022,11 @@ DefineWebServiceSpecial.prototype = {
 			}
 			result += "<result name=\"result\" >\n";
 
+			var offset = 0;
 			for (i = 0; i < this.preparedRPathSteps.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked != true) {
+					if (this.resultContainer.firstChild.childNodes[offset + i
+							+ 1].childNodes[1].firstChild.checked != true) {
 						continue;
 					}
 					var rPath = "";
@@ -1038,10 +1055,31 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 					result += "<part name=\""
-							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value
+							+ this.resultContainer.firstChild.childNodes[offset
+									+ i + 1].childNodes[2].firstChild.value
 							+ "\" ";
-					result += " path=\"" + rPath + "\" />\n";
+					result += " path=\"" + rPath + "\"";
 
+					var offs = this.resultContainer.firstChild.childNodes[offset
+							+ i + 1].subPathOffset;
+					if (offs != null) {
+						for (o = 0; o < offs; o++) {
+							if (!this.resultContainer.firstChild.childNodes[offset
+									+ i + 1 + o + 1].removed) {
+								if (this.resultContainer.firstChild.childNodes[offset
+										+ i + 1 + o + 1].childNodes[0].childNodes[1].value == "xpath") {
+									result += " xpath=\"";
+								} else {
+									result += " json=\"";
+								}
+								result += this.resultContainer.firstChild.childNodes[offset
+										+ i + 1 + o + 1].childNodes[1].childNodes[0].value;
+								result += "\"";
+							}
+						}
+						offset += offs;
+					}
+					result += " />\n";
 				}
 			}
 			result += "</result>\n";
@@ -1108,14 +1146,23 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			results = this.preparedRPathSteps;
+			var offset = 0;
 			for (i = 0; i < results.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked != true) {
+					if (this.resultContainer.firstChild.childNodes[offset + i
+							+ 1].childNodes[1].firstChild.checked != true) {
 						continue;
 					}
 					wsSyntax += "| ?result."
-							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value
+							+ this.resultContainer.firstChild.childNodes[offset
+									+ i + 1].childNodes[2].firstChild.value
 							+ "\n";
+
+					var o = this.resultContainer.firstChild.childNodes[offset
+							+ i + 1].subPathOffset;
+					if (o != null) {
+						offset += o;
+					}
 				}
 			}
 			wsSyntax += "}}";
@@ -1162,7 +1209,7 @@ DefineWebServiceSpecial.prototype = {
 	processStep6CallBack1 : function(request) {
 		if (request.responseText.indexOf("true") >= 0) {
 			var container = $("step7-container").cloneNode(false);
-			$("menue").style.display = "none";
+			$("breadcrumb-menue").style.display = "none";
 			$("step7-container").id = "old-step7-container";
 			$("old-step7-container").parentNode.insertBefore(container,
 					$("old-step7-container"));
@@ -1199,18 +1246,26 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			var results = this.preparedRPathSteps;
+			var offset = 0;
 			for (i = 0; i < results.length; i++) {
 				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked != true) {
+					if (this.resultContainer.firstChild.childNodes[offset + i
+							+ 1].childNodes[1].firstChild.checked != true) {
 						continue;
 					}
 					rowDiv = document.createElement("div");
 					rowDiv.className = "OuterLeftIndent";
-					rowText = document
-							.createTextNode("| ?result."
-									+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value);
+					rowText = document.createTextNode("| ?result."
+							+ this.resultContainer.firstChild.childNodes[offset
+									+ i + 1].childNodes[2].firstChild.value);
 					rowDiv.appendChild(rowText);
 					step7Container.appendChild(rowDiv);
+
+					var o = this.resultContainer.firstChild.childNodes[offset
+							+ i + 1].subPathOffset;
+					if (o != null) {
+						offset += o;
+					}
 				}
 			}
 
@@ -1231,8 +1286,6 @@ DefineWebServiceSpecial.prototype = {
 			$("step5").style.display = "none";
 			$("step6").style.display = "none";
 			this.hideHelp(6);
-			// $("menue").style.display = "none";
-			// $("help").style.display = "none";
 
 			this.hidePendingIndicator();
 		} else {
@@ -1251,7 +1304,7 @@ DefineWebServiceSpecial.prototype = {
 	processStep7 : function(request) {
 		this.step = "step1";
 		$("step7").style.display = "none";
-		$("menue").style.display = "";
+		$("breadcrumb-menue").style.display = "";
 		$("menue-step1").className = "ActualMenueStep";
 		$("menue-step2").className = "TodoMenueStep";
 		$("menue-step3").className = "TodoMenueStep";
@@ -1259,7 +1312,6 @@ DefineWebServiceSpecial.prototype = {
 		$("menue-step5").className = "TodoMenueStep";
 		$("menue-step6").className = "TodoMenueStep";
 
-		$("menue").style.display = "";
 		$("step1").style.display = "";
 		$("step1-uri").value = "";
 		$("step1-uri").value = "";
@@ -1302,7 +1354,7 @@ DefineWebServiceSpecial.prototype = {
 						alias = alias.substr(0, openBracketPos);
 					}
 
-					var dotPos = alias.lastIndexOf(".");
+					var dotPos = alias.lastIndexOf("/");
 					alias = alias.substr(dotPos + 1);
 				}
 
@@ -2243,7 +2295,8 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			var display = true;
 			var complete = true;
-			r = r + 1; // $("step4-resultRow-" + i).rowIndex;
+			r = r + 1;
+
 			for ( var m = k * 1 + 1; m < this.preparedRPathSteps[i].length; m++) {
 				var visible = true;
 				if (i > 0) {
@@ -2268,13 +2321,31 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 			}
+
+			var offset = this.resultContainer.childNodes[0].childNodes[r].subPathOffset;
+
 			if (display) {
 				this.resultContainer.childNodes[0].childNodes[r].style.display = "";
 
 				if (complete) {
 					this.resultContainer.childNodes[0].childNodes[r].childNodes[1].style.visibility = "visible";
 					this.resultContainer.childNodes[0].childNodes[r].childNodes[2].style.visibility = "visible";
+					this.resultContainer.childNodes[0].childNodes[r].childNodes[3].style.visibility = "visible";
+
+					if (offset != null) {
+						for (o = 0; o < offset; o++) {
+							if (!this.resultContainer.childNodes[0].childNodes[r
+									+ o + 1].removed) {
+								this.resultContainer.childNodes[0].childNodes[r
+										+ o + 1].style.display = "";
+							}
+						}
+					}
 				}
+			}
+
+			if (offset != null) {
+				r += offset;
 			}
 
 			if (this.preparedRPathSteps[i][k]["i"] != "null") {
@@ -2313,7 +2384,7 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			i = i * 1;
 			k = k * 1;
-			r = r + 1;// $("step4-resultRow-" + i).rowIndex;
+			r = r + 1;
 
 			if (!root) {
 				this.resultContainer.childNodes[0].childNodes[r].style.display = "none";
@@ -2322,7 +2393,15 @@ DefineWebServiceSpecial.prototype = {
 
 			this.resultContainer.childNodes[0].childNodes[r].childNodes[1].style.visibility = "hidden";
 			this.resultContainer.childNodes[0].childNodes[r].childNodes[2].style.visibility = "hidden";
+			this.resultContainer.childNodes[0].childNodes[r].childNodes[3].style.visibility = "hidden";
 
+			var offset = this.resultContainer.childNodes[0].childNodes[r].subPathOffset;
+			if (offset != null) {
+				for (o = 0; o < offset; o++) {
+					this.resultContainer.childNodes[0].childNodes[r + o + 1].style.display = "none";
+				}
+				r += offset;
+			}
 			if (this.preparedRPathSteps[i][k]["i"] != "null") {
 				var iTemp = this.preparedRPathSteps[i][k]["i"];
 				k = this.preparedRPathSteps[i][k]["k"];
@@ -2453,7 +2532,6 @@ DefineWebServiceSpecial.prototype = {
 		}
 		this.processStep3Do(ps3Results, true);
 		this.updateResults(resultsUpdate);
-
 	},
 
 	updateParameters : function(updates) {
@@ -2498,7 +2576,73 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			$("step1-auth-box").style.display = "none";
 		}
+	},
+
+	addSubPath : function(id) {
+		if ($("step4-resultRow-" + id).subPathOffset == null) {
+			$("step4-resultRow-" + id).subPathOffset = 1;
+		} else {
+			$("step4-resultRow-" + id).subPathOffset += 1;
+		}
+
+		var sid = $("step4-resultRow-" + id).subPathOffset;
+
+		var subPathRow = document.createElement("tr");
+		subPathRow.id = "step4-resultRow-sb-" + id + "-" + sid;
+
+		var td0 = document.createElement("td");
+		td0.setAttribute("align", "right");
+
+		var formatLabel = document.createTextNode("format: ");
+		td0.appendChild(formatLabel);
+
+		var format = document.createElement("select");
+		format.id = "step4-format-" + id + "-" + sid;
+
+		var xpathOption = document.createElement("option");
+		var xpathOptName = document.createTextNode("xpath");
+		xpathOption.appendChild(xpathOptName);
+		xpathOption.value = "xpath";
+		format.appendChild(xpathOption);
+
+		var jsonOption = document.createElement("option");
+		var jsonOptName = document.createTextNode("json");
+		jsonOption.appendChild(jsonOptName);
+		jsonOption.value = "json";
+		format.appendChild(jsonOption);
+
+		td0.appendChild(format);
+		subPathRow.appendChild(td0);
+
+		var td1 = document.createElement("td");
+		td1.setAttribute("colspan", "2");
+
+		var subPathInput = document.createElement("input");
+		subPathInput.id = "step4-subpath-" + id + "-" + sid;
+
+		td1.appendChild(subPathInput);
+		subPathRow.appendChild(td1);
+
+		var td2 = document.createElement("td");
+
+		var removeButton = document.createElement("input");
+		removeButton.type = "button";
+		removeButton.value = "Remove subpath";
+		removeButton.setAttribute("onclick", "webServiceSpecial.removeSubPath("
+				+ id + "," + sid + ")");
+
+		td2.appendChild(removeButton);
+		subPathRow.appendChild(td2);
+
+		this.resultContainer.childNodes[0].insertBefore(subPathRow,
+				$("step4-resultRow-" + id).nextSibling);
+	},
+
+	removeSubPath : function(id, sid) {
+		$("step4-resultRow-sb-" + id + "-" + sid).style.display = "none";
+		$("step4-resultRow-sb-" + id + "-" + sid).removed = true;
 	}
+
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
