@@ -495,7 +495,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		if($result){
-			$html .= "<span id=\"editresults\" style=\"\">";
+			$html .= "<span id=\"editresults\" style=\"display: none\">";
 		} else {
 			$html .= "<span id=\"editparameters\" style=\"display: none\">";
 		}
