@@ -1,0 +1,102 @@
+__NOTOC__
+Apache Lucene provides a rich query language through the query parser, a lexer which interprets a string into a Lucene query. A query is broken up into terms and operators. Multiple terms can be combined together with Boolean operators to form a more complex query. There are two types of terms that are supported: single terms and phrases. A single term is a single word such as "test" or "apache". A phrase is a group of words surrounded by double quotes such as "apache jakarta".
+ 
+== Term Modifiers ==
+
+Lucene supports modifying query terms to provide a wide range of searching options.
+
+=== Wildcard Searches ===
+
+Lucene supports multiple character wildcard searches within single terms. Wildcard searches broaden searches to retrieve items containing various possible spellings of words. To perform a multiple character wildcard search, use the "*" symbol. For example, to search for "test", "tests" or "tester", you can use the search:
+
+ test*
+
+You can also use the wildcard searches in the middle of a term.
+
+ te*t
+
+<hr>
+<b>Note &ndash;</b> You cannot use a "*" symbol as the first character of a search.
+<hr>
+
+=== Fuzzy Searches ===
+
+Lucene supports fuzzy searches based on the Levenshtein Distance, or Edit Distance algorithm. To do a fuzzy search, use the tilde "~" symbol at the end of a single word term. For example, to search for a term similar in spelling to "roam", use the fuzzy search:
+
+ roam~
+
+This search will find terms such as "foam" and "roams".
+
+== Boolean Operators ==
+
+Boolean operators allow terms to be combined through logic operators. Lucene supports AND, "+", OR, NOT and "-" as Boolean operators.
+
+<hr>
+<b>Note &ndash;</b> Boolean operators must be ALL CAPS.
+<hr>
+
+The OR operator is the default conjunction operator. This means that if there is no Boolean operator between two terms, the OR operator is used. The OR operator links two terms and finds a matching document if either of the terms exist in a document. This is equivalent to a union using sets. The symbol "||" can be used in place of the word OR.
+
+To search for documents that contain either "apache" or "jakarta" use the query:
+
+ apache jakarta
+
+or
+
+ apache OR jakarta
+
+=== The Boolean Operator AND ===
+
+The AND operator matches documents where both terms exist anywhere in the text of a single document. This is equivalent to an intersection using sets. The symbol "&&" can be used in place of the word AND.
+
+To search for documents that contain "apache" and "Lucene" use the query:
+
+ apache AND Lucene
+
+=== The Boolean Operator + ===
+
+The "+" or required operator requires that the term after the "+" symbol exist somewhere in a the field of a single document.
+
+To search for documents that must contain "jakarta" and may contain "lucene" use the query:
+
+ +jakarta lucene
+
+=== The Boolean Operator NOT ===
+
+The NOT operator excludes documents that contain the term after NOT. The symbol "!" can be used in place of the word NOT.
+
+To search for documents that contain "apache" but not "Lucene" use the query:
+
+ apache NOT Lucene
+
+<hr>
+<b>Note &ndash;</b> The NOT operator cannot be used with just one term. For example, the following search will return no results: <tt>NOT jakarta</tt>
+<hr>
+
+=== The Boolean Operator - ===
+
+The "-" or prohibit operator excludes documents that contain the term after the "-" symbol.
+
+To search for documents that contain "apache" but not "Lucene" use the query:
+
+ apache -Lucene
+
+== Grouping ==
+
+Lucene supports using parentheses to group clauses to form subqueries. This can be very useful if you want to control the boolean logic for a query.
+
+To search for either "jakarta" or "apache" and "website" use the query:
+
+ (jakarta OR apache) AND website
+
+This eliminates any confusion and makes sure you that website must exist and either term jakarta or apache may exist.
+
+== Escaping Special Characters ==
+
+Lucene supports escaping special characters that are part of the query syntax. These are the special characters that need to be escaped:
+
+ + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+
+To escape these character, use the "\" before the character. For example, to search for "(1+1):2" use the query:
+
+ \(1\+1\)\:2
