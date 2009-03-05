@@ -1,6 +1,8 @@
 __NOTOC__
 To increase the quality of user search results, SMW+ invokes a query expansion by including basic concepts of the SKOS ontology. This query expansion enables the wiki search to find synonyms of words and searching for the synonyms as well.
-
+<hr>
+<b>Note &ndash;</b> Notice that for invoking query expansion the search tolerance level must be set to <tt>Semi-tolerant</tt> or <tt>Tolerant</tt>.
+<hr>
 Simple Knowledge Organisation Systems (SKOS) is a family of formal languages designed for the representation of thesauri, classification schemes, taxonomies, subject-heading systems, or any other type of structured controlled vocabulary. SKOS is built upon RDF and RDFS, and its main objective is to enable easy publication of controlled structured vocabularies for the Semantic Web.
 
 The following table gives an overview of the incorporated SKOS resources and their SMW+ counterparts.  
