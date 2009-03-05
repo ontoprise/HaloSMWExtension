@@ -68,6 +68,10 @@
     list-style-type: none;
 }
 
+#us_queryresults {
+	border-spacing: 10px;
+}
+
 #us_searchresults .searchmatch {
     color:black;
     font-weight: bold;
