@@ -6,15 +6,14 @@
  * @param string $lang Language code
  * @return array
  */
-function efVariablesWords( $lang ) {
+function efDebugTemplateWords( $lang ) {
         $words = array();
  
         /**
          * English
          */
         $words['en'] = array(
-                'var'          => array( 0, 'var' ),
-                'vardefine'    => array( 0, 'vardefine' ),
+                'debugTemplate'          => array( 0, 'debugTemplate' )
         );
  
         # English is used as a fallback, and the English synonyms are
