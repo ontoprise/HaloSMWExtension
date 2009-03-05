@@ -4,6 +4,7 @@
 var csLoadObserver;
 if (csLoadObserver != null) Event.stopObserving(window, 'load', csLoadObserver);
 
+ 
 var UnifiedSearch = Class.create();
 UnifiedSearch.prototype = {
     initialize: function() {
@@ -13,7 +14,23 @@ UnifiedSearch.prototype = {
     showDescription: function(title) {
         var div = $(title);
         if (!div.visible()) div.show(); else div.hide();
+    },
+    
+    getCookie: function (name) {
+    var value=null;
+    if(document.cookie != "") {
+      var kk=document.cookie.indexOf(name+"=");
+      if(kk >= 0) {
+        kk=kk+name.length+1;
+        var ll=document.cookie.indexOf(";", kk);
+        if(ll < 0)ll=document.cookie.length;
+        value=document.cookie.substring(kk, ll);
+        value=unescape(value); 
+      }
     }
+    return value;
+  }
+ 
 }
 
 
@@ -25,7 +42,7 @@ ToleranceSelector.prototype = {
     },
     
     activate: function() {
-        var initialValue = GeneralBrowserTools.getCookie("tolerance-slider");
+        var initialValue = smwhg_unifiedsearch.getCookie("tolerance-slider");
         if (initialValue == null) initialValue = 0; 
         
         // set tolerance selector
@@ -43,8 +60,8 @@ ToleranceSelector.prototype = {
     
       
     onChange: function(v) {
-    	
-    	// read new tolerance selection and stores in a cookie
+        
+        // read new tolerance selection and stores in a cookie
         var toleranceSelector = $('toleranceSelector');   
         var selectedIndex = toleranceSelector.selectedIndex;
         var cookieText = "tolerance-slider="+selectedIndex+"; path="+wgScript;

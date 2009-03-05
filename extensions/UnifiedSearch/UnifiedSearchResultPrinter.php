@@ -101,7 +101,7 @@ class UnifiedSearchResultPrinter {
 	 * @param array $entries
 	 */
 	public static function serialize(array & $entries, & $terms) {
-		
+		global $wgContLang;
 		$termsarray = split(' ', $terms);
 		// GreyBox
 		$args = "";
@@ -132,7 +132,7 @@ class UnifiedSearchResultPrinter {
 				$html .= '</div>';
 			}
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
-			$html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
+			if ($e->getTimeStamp() > 0) $html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
 				
 			$html .= '</td></tr>';
 		}
@@ -151,29 +151,44 @@ class UnifiedSearchResultPrinter {
 
 	// adds preview to result depending on namespace
 	private static function addPreview($e, $args, $args_prev) {	
-		if ($e->getTitle()->getNamespace() == NS_AUDIO || $e->getTitle()->getNamespace() == NS_VIDEO || $e->getTitle()->getNamespace() == NS_IMAGE || $e->getTitle()->getNamespace() == NS_DOCUMENT) {
-			return '<li><span class="nosearchprev">&nbsp;</span>';
-		}
-		global $wgServer, $wgScript;			
-		return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() . $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';			
+	    global $wgServer, $wgScript;  
+        switch($e->getTitle()->getNamespace()) {
+            case NS_MAIN:
+            case NS_CATEGORY:
+            case NS_TEMPLATE:
+            case SMW_NS_PROPERTY:
+            case SMW_NS_TYPE:
+            case NS_HELP:
+            case NS_IMAGE:
+              return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
+                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle() .
+                               $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';           
+            default:
+              return '<li><span class="nosearchprev">&nbsp;</span>';        
+        }			
 	}
 
 	private static function getImageFromNamespace($result) {
-			
-		switch($result->getTitle()->getNamespace()) {
-			case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
-			case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
-			case NS_TEMPLATE: { $image = "smw_plus_template_icon_16x16.png"; break; }
-			case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
-			case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
-			case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
-		    case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
-			case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
-			case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
-		    case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
-            case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
-		}
-		return $image;
+		$image = "";  
+        switch($result->getTitle()->getNamespace()) {
+            case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
+            case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
+            case NS_TEMPLATE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+            case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
+            case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+            case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
+            case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
+        }
+        // if MIME type extension is installed
+        if (defined("NS_DOCUMENT") && defined("NS_PDF") && defined("NS_AUDIO") && defined("NS_VIDEO")) {
+            switch($result->getTitle()->getNamespace()) {
+                case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
+                case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
+                case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
+                case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
+            }
+        }
+        return $image;
 	}
 
 	private static function formatdate($timestamp) {

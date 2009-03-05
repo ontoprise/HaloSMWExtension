@@ -14,7 +14,7 @@ define('US_LOWTOLERANCE', 1);
 define('US_EXACTMATCH', 2);
 
 $wgExtensionCredits['unifiedsearch'][] = array(
-        'name' => 'Semantic Retrieval extension',
+        'name' => 'Enhanced Retrieval extension',
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Combining a Lucene backend with a title search',
@@ -48,10 +48,10 @@ function wfUSAddHeader(& $out) {
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
                     if (!defined("SMW_HALO_VERSION")) {
                         $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
                     }
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
                     // add GreyBox
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
@@ -75,6 +75,7 @@ function wfUSAddHeader(& $out) {
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups,
 	       $usgAllNamespaces;
+    if (!isset($wgAdvancedSearchHighlighting)) $wgAdvancedSearchHighlighting = true;	       
     $wgHooks['BeforePageDisplay'][]='wfUSAddHeader';	       
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
@@ -162,10 +163,10 @@ function wfUSInitContentMessages() {
  * Creates necessary ontology elements (SKOS)
  *
  */
-function wfUSInitialize() {
-	wfUSInitializeSKOSOntology();
-	wfUSInitializeTables();
-	return true;
+function wfUSInitialize($onlyTables) {
+    if (!$onlyTables) wfUSInitializeSKOSOntology();
+    wfUSInitializeTables();
+    return true;
 }
 
 function wfUSInitializeTables() {

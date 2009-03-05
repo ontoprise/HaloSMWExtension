@@ -1,0 +1,26 @@
+Installation instructions
+-------------------------
+
+Requirements: 
+    MediaWiki 1.13 or higher
+    SMW 1.4.2 
+    Lucene server 2.0 or 2.1 (the version deployed on SMWHalo's page on sourceforge runs on Windows too!)
+
+Run:
+php {wiki-path}/extensions/UnifiedSearch/maintenance/setup.php
+
+Then add to your LocalSettings.php:
+
+---
+$wgSearchType = 'LuceneSearch';
+$wgLuceneHost = 'localhost';
+$wgLucenePort = 8123;
+$wgLuceneSearchVersion = 2.1; 
+require_once("extensions/UnifiedSearch/UnifiedSearch.php");
+---
+
+Run the LuceneServer
+
+That's it.
+
+

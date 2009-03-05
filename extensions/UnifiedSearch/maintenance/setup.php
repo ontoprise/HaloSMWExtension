@@ -14,8 +14,16 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
-print "\nSetup database for Unified search.\n\n";
 
-wfUSInitialize();
+$help = array_key_exists('h', $options);
+if ($help) {
+    echo "\nUsage: php setup.php [ -t create only tables ] [ -h This help ]\n";
+    die();
+}
+
+$onlyTables = array_key_exists('t', $options);
+
+print "\nSetup database for Unified search.\n\n";
+wfUSInitialize($onlyTables);
 
 ?>

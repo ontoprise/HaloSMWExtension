@@ -36,7 +36,7 @@ class US_LanguageEn {
         'us_page' => 'Page',
         'us_searchfield' => 'Search for',
         'us_lastchanged'=> 'Last changed',
-        'us_searchbutton' => 'Go',
+        'us_searchbutton' => 'Search',
         'us_isincat' => 'is in category',
         'us_article' => 'Article',
         'us_all' => 'No filter',

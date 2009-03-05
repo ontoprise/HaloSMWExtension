@@ -1,25 +1,25 @@
 #us_didyoumean {
-	width: 97%;
-	margin-bottom: 10px; 
-	margin-top: 10px; 
+    width: 97%;
+    margin-bottom: 10px; 
+    margin-top: 10px; 
 }
 
 #us_refineresults {
-	
-	width:97%;
-	border: 2px solid #AAA;
+    
+    width:97%;
+    border: 2px solid #AAA;
     padding: 5px;
-	
-	
+    
+    
 }
 
 #us_refineresults .filtercolumn {
-    width:100px;
+    
     padding-left: 15px;
 }
 
 #us_statistics_results th {
-	background-color: #CCC;
+    background-color: #CCC;
 }
 
 
@@ -44,21 +44,21 @@
 }
 
 #us_searchform {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 #us_newpage {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 #us_refineresults .us_refinelinks {
-	padding: 3px;
+    padding: 3px;
 }
 
 #us_refineresults .us_refinelinks_highlighted {
-	padding: 3px;
-	background-color: #666;
-	color:white;
-	font-weight: bold;
+    padding: 3px;
+    background-color: #666;
+    color:white;
+    font-weight: bold;
 }
 
 #us_searchresults {
@@ -69,24 +69,24 @@
 }
 
 #us_searchresults .searchmatch {
-	color:black;
-	font-weight: bold;
+    color:black;
+    font-weight: bold;
 }
 
 #us_resultinfo {
-	border-bottom: 1px solid;
-	margin: 5px;
-	
+    border-bottom: 1px solid;
+    margin: 5px;
+    
 }
 
 .us_search_result_link{
-	margin: 6px;
-	font-weight: bold;
+    margin: 6px;
+    font-weight: bold;
 }
 
 .us_search_result .snippet {
-	font-size: 90%;
-	margin-left: 25px;
+    font-size: 90%;
+    margin-left: 25px;
 }
 
 .us_search_result .metadata {
@@ -107,8 +107,8 @@
 }
 
 .us_description {
-	border: 2px solid #AAA;
-	padding:10px;
-	margin: 5px;
+    border: 2px solid #AAA;
+    padding:10px;
+    margin: 5px;
 }
 

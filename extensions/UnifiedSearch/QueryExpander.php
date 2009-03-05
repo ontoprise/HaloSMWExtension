@@ -23,7 +23,7 @@ class QueryExpander {
 	 * @return string
 	 */
 	public static function expandForFulltext($terms, $mode = 0) {
-			
+
 		if ($mode == US_EXACTMATCH) {
 			// do not expand, just use the given terms
 			return self::opTerms($terms, "AND");
@@ -32,7 +32,10 @@ class QueryExpander {
 		foreach($terms as $term) {
 			$found = false;
 
-			$title = Title::newFromText($term, NS_CATEGORY);
+			$unq_term = self::unQuoteIfNecessary($term);
+
+
+			$title = Title::newFromText($unq_term, NS_CATEGORY);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subcategories = USStore::getStore()->getDirectSubCategories($title);
@@ -41,12 +44,13 @@ class QueryExpander {
 				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values, $redirects), "OR");
 				$found = true;
 			}
-			$title = Title::newFromText($term);
+
+			$title = Title::newFromText($unq_term);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
-				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
+				$skos_subjects = strlen($unq_term) < 3 ? array() : self::lookupSKOSForFulltext($unq_term, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 				$found = true;
@@ -54,21 +58,20 @@ class QueryExpander {
 
 			global $usgAllNamespaces;
 			$extraNamespace = array_diff(array_keys($usgAllNamespaces), array(NS_MAIN, SMW_NS_PROPERTY, NS_TEMPLATE, NS_CATEGORY, NS_HELP));
-
 			foreach($extraNamespace as $ns) {
-				$title = Title::newFromText($term, $ns);
+				$title = Title::newFromText($unq_term, $ns);
 				if ($title == NULL) continue;
 				if ($title->exists()) {
 
 					$skos_values = self::getSKOSPropertyValues($title, $mode);
-					$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
+					$skos_subjects = strlen($unq_term) < 3 ? array() : self::lookupSKOSForFulltext($unq_term, $mode);
 					$redirects = USStore::getStore()->getRedirects($title);
 					$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
 					$found = true;
 				}
 			}
 
-			$title = Title::newFromText($term, SMW_NS_PROPERTY);
+			$title = Title::newFromText($unq_term, SMW_NS_PROPERTY);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subproperties = $mode == US_HIGH_TOLERANCE ? USStore::getStore()->getDirectSubProperties($title) : array();
@@ -78,7 +81,7 @@ class QueryExpander {
 				$found = true;
 			}
 
-			$title = Title::newFromText($term, NS_TEMPLATE);
+			$title = Title::newFromText($unq_term, NS_TEMPLATE);
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$values = array($term);
@@ -90,11 +93,11 @@ class QueryExpander {
 
 			if (!$found) {
 				// do not look in SKOS ontology if term has less than 3 chars
-				$skos_subjects = strlen($term) < 3 ? array() : self::lookupSKOSForFulltext($term, $mode);
+				$skos_subjects = strlen($unq_term) < 3 ? array() : self::lookupSKOSForFulltext($unq_term, $mode);
 
 				//echo print_r($skos_subjects, true);
 				$query[]= self::opTerms(array_merge(array($term),$skos_subjects), "OR");
-					
+
 			}
 		}
 
@@ -112,7 +115,7 @@ class QueryExpander {
 				$result = array_merge($result, $values);
 				$values = smwfGetStore()->getPropertyValues($title, SKOSVocabulary::$NARROWER);
 				$result = array_merge($result, $values);
-					
+
 
 			case US_LOWTOLERANCE:
 
@@ -172,28 +175,30 @@ class QueryExpander {
 		$termsAnded = self::opTerms($terms, "AND");
 		if ($tolerance == US_EXACTMATCH) {
 			$subjectTerms = array();
-			 
+
 		}
 
 		if ($tolerance == US_LOWTOLERANCE) {
 			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN);
 			$requestoptions->disjunctiveStrings = false;
 			foreach($terms as $t) {
-				if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
-				$t = str_replace(" ", "_", $t);
+				$unq_term = self::unQuoteIfNecessary($t);
+				if (strlen($unq_term) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
+				$t = str_replace(" ", "_", $unq_term);
 				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
 			}
 			$subjects = USStore::getStore()->getPropertySubjects($properties, $namespaces, $requestoptions); // add all matches with all terms matching
 			$subjectTerms = self::opTerms($subjects, "OR");
-				
+
 		}
 
 		if ($tolerance == US_HIGH_TOLERANCE) {
 			$properties = array(SKOSVocabulary::$LABEL, SKOSVocabulary::$SYNONYM, SKOSVocabulary::$HIDDEN, SKOSVocabulary::$BROADER, SKOSVocabulary::$NARROWER);
 			$requestoptions->disjunctiveStrings = true;
 			foreach($terms as $t) {
-				if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
-				$t = str_replace(" ", "_", $t);
+				$unq_term = self::unQuoteIfNecessary($t);
+				if (strlen($unq_term) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
+				$t = str_replace(" ", "_", $unq_term);
 				$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
 			}
 			$subjects = USStore::getStore()->getPropertySubjects($properties, $namespaces, $requestoptions); // add all matches with all terms matching
@@ -205,16 +210,64 @@ class QueryExpander {
 		return $totalQuery;
 	}
 
+	/**
+	 * Connects terms by the specified operator.
+	 *
+	 * @param array $terms Can be titles, property values or strings
+	 * @param string $operator
+	 * @return string
+	 */
+	private static function opTerms(array $terms, $operator) {
+		$i = 0;
+		$connectedParts = 0; // number of _actually_ connected $terms
+		$result = "";
+		foreach($terms as $t) {
+			if ($t == NULL) continue;
+			if ($t instanceof Title) {
+				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
+				$connectedParts++;
+			} else if ($t instanceof SMWPropertyValue ) {
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				$connectedParts++;
+			} else if ($t instanceof SMWStringValue ) {
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				$connectedParts++;
+			} else if ($t instanceof SMWWikiPageValue ) {
+				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				$connectedParts++;
+			} else if (is_string($t) && strlen($t) > 0) {
+				if ($i === 0) $result .= $t; else $result .= " $operator ".self::quoteIfNecessary($t);
+				$connectedParts++;
+			}
+			$i++;
+		}
+		return $connectedParts <= 1 ? $result : "(".$result.")";
+	}
+
+	private static function quoteIfNecessary($str) {
+		$containsOperators = strpos($str, " AND ") || strpos($str, " OR ");
+		$isQuoted = (substr($str, 0, 1) == '"' && substr($str, strlen($str)-1, 1) == '"');
+		return !$containsOperators && !$isQuoted && strpos($str, " ") !== false ? "\"$str\"" : $str;
+	}
+
+	private static function unQuoteIfNecessary($term) {
+		if (substr($term, 0, 1) == '"' && substr($term, strlen($term)-1, 1) == '"') {
+			return substr($term, 1, strlen($term)-2);
+
+		}
+		return $term;
+	}
+
 	public function findAggregatedTerms($terms) {
 		$titles = USStore::getStore()->getPageTitles($terms);
-		
+
 		$sm = new SmithWaterman();
 		$seqB = implode(' ', $terms);
 		$maximums = array();
 		foreach($titles as $seqA) {
-			
+
 			$matches = $sm->getBestMatches(strtolower($seqA->getText()), $seqB);
-			
+
 			if (count($matches) > 0) {
 				$m = trim(reset($matches));
 				if (!array_key_exists($m, $maximums)) $maximums[$m] = 1; else $maximums[$m]++;
@@ -223,45 +276,6 @@ class QueryExpander {
 		}
 		return $maximums;
 	}
+}
 
-		/**
-		 * Connects terms by the specified operator.
-		 *
-		 * @param array $terms Can be titles, property values or strings
-		 * @param string $operator
-		 * @return string
-		 */
-		private static function opTerms(array $terms, $operator) {
-			$i = 0;
-			$connectedParts = 0; // number of _actually_ connected $terms
-			$result = "";
-			foreach($terms as $t) {
-				if ($t == NULL) continue;
-				if ($t instanceof Title) {
-					if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
-					$connectedParts++;
-				} else if ($t instanceof SMWPropertyValue ) {
-					if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
-					$connectedParts++;
-				} else if ($t instanceof SMWStringValue ) {
-					if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
-					$connectedParts++;
-				} else if ($t instanceof SMWWikiPageValue ) {
-					if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
-					$connectedParts++;
-				} else if (is_string($t) && strlen($t) > 0) {
-					if ($i === 0) $result .= $t; else $result .= " $operator ".self::quoteIfNecessary($t);
-					$connectedParts++;
-				}
-				$i++;
-			}
-			return $connectedParts <= 1 ? $result : "(".$result.")";
-		}
-
-		private static function quoteIfNecessary($str) {
-			$containsOperators = strpos($str, " AND ") || strpos($str, " OR ");
-			return !$containsOperators && strpos($str, " ") !== false ? "\"$str\"" : $str;
-		}
-	}
-
-	?>
+?>
