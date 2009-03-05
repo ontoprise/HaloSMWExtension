@@ -90,5 +90,5 @@ SMW+ has a special feature that helps you adding vocabulary information to the w
 
 
 <hr>
-<b>Note &ndash;</b> In a new installation of SMW+, the semantic form and its corresponding template will be installed by default. If you update an existing installation, you must import both the semantic form and the template by hand. For this purpose, go to the special page <tt>Special:Import</tt> and import the file <tt>$IP/extensions/UnifiedSearch/languages/SKOS_English.xml</tt> or its German counterpart, respectively.
+<b>Note &ndash;</b> In a new installation of SMW+, the semantic form and its corresponding template will be installed by default. However, if you update an existing installation, you must import both the semantic form and the template by hand. For this purpose, go to the special page <tt>Special:Import</tt> and import the file <tt>$IP/extensions/UnifiedSearch/languages/SKOS_English.xml</tt> or its German counterpart, respectively. Note that importing is restricted to WikiSysops. 
 <hr>
