@@ -7,9 +7,9 @@ To increase the quality of user search results, SMW+ invokes a [[Help:Query_Expa
 
 The search of SMW+ has three search tolerance levels (to invoke a query expansion, you must set the search tolerance level to tolerant or semi-tolerant): 
 
-* '''Exact.''' The search keyword will be searched as is without any query expansion.
-* '''Semi-tolerant.''' This invokes a query expansion to include synonyms. Articles are synonyms if they are related to each other via redirects. A redirect is an alternative title for an article. For example, if your wiki has an article called <tt>Cat</tt>, you can create a redirect called <tt>Felidae</tt> that redirects to the <tt>Cat</tt> article. Redirects help to organize your wiki by making articles findable under different names. In addition, regarded as synonymous are strings that are related to the term in question by the properties <tt>Also known as</tt> and <tt>Rarely labeled as</tt>.
-* '''Tolerant.''' In addition to synonyms this tolerance level will also consider narrower and broader terms, which are modeled by using the properties <tt>Narrower_term</tt> and <tt>Broader_terms</tt>. If the term denotes an a category, the query gets expanded to include the term's child categories (subcategories) and parent categories (supercategories). Likewise, if the term denotes a property, the query gets expanded to include the term's sub- and superproperties.
+* '''Exact.''' The keyword will be searched as is without any query expansion.
+* '''Semi-tolerant.''' This invokes a query expansion to include synonyms. Articles are synonyms if they are related to each other via redirects. A redirect is an alternative title for an article. For example, if your wiki has an article called <tt>Cat</tt>, you can create a redirect called <tt>Felidae</tt> that redirects to the <tt>Cat</tt> article. Redirects help to organize your wiki by making articles findable under different names. In addition, words that are related to the term in question by the properties <tt>Also known as</tt> and <tt>Rarely labeled as</tt> are regarded as synonyms. 
+* '''Tolerant.''' In addition to synonyms, this tolerance level also considers narrower and broader terms, which are modeled by using the properties <tt>Narrower_term</tt> and <tt>Broader_terms</tt>. If the term denotes a category, the query gets expanded to include the term's child categories (subcategories) and parent categories (supercategories). Likewise, if the term denotes a property, the query gets expanded to include the term's sub- and superproperties.
 
 
 <hr>
