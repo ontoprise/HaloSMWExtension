@@ -292,13 +292,6 @@ class USSpecialPage extends SpecialPage {
 
             if ($nextFulltext != false ) {
                 $lr = UnifiedSearchResult::newFromLuceneResult($nextFulltext, $cleanTerms);
-                if (!$nextFulltext->isMissingRevision()) {
-                    $lr->setWordCount($nextFulltext->getWordCount());
-                    $lr->setTimeStamp($nextFulltext->getTimestamp());
-                } else {
-                    $lr->setWordCount(0);
-                    $lr->setTimeStamp(0);
-                }
                 $resultSet[] = $lr;
             
             }

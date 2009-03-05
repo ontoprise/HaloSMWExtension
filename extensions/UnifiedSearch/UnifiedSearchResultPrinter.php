@@ -5,54 +5,40 @@
  * @author: Kai Kühn
  */
 class UnifiedSearchResult {
-	private $title;
-	private $snippet;
-	private $score;
-	private $wordCount;
-	private $timeStamp;
-
-	private $fullTextResult;
-
+	
+	// wrapped luceneResult
+	private $luceneResult;
+	
+	// clean terms to highlight (i.e. no syntax elements)
+    private $terms;
+    
 	private $description;
 	private $examples;
 
-	public function __construct($title, $score, $fullTextResult, $snippet = NULL) {
-		$this->title = $title;
-		$this->score = $score;
-		$this->fullTextResult = $fullTextResult;
-		$this->snippet = $snippet;
-	}
-
-	public function isFulltextResult() {
-		return $this->fullTextResult;
+	public function __construct($luceneResult, $terms) {
+		$this->luceneResult = $luceneResult;
+		$this->terms = $terms;
 	}
 
 	public function getTitle() {
-		return $this->title;
+		return $this->luceneResult->getTitle();
 	}
 
 	public function getScore() {
-		return $this->score;
+		return $this->luceneResult->getScore();
 	}
 
 	public function getSnippet() {
-		return $this->snippet;
-	}
-
-	public function setWordCount($wordCount) {
-		$this->wordCount = $wordCount;
+		return !$this->luceneResult->isMissingRevision() ? 
+		      $this->luceneResult->getTextSnippet($this->terms) : NULL;
 	}
 
 	public function getWordCount() {
-		return $this->wordCount;
-	}
-
-	public function setTimeStamp($timeStamp) {
-		$this->timeStamp = $timeStamp;
+		return !$this->luceneResult->isMissingRevision() ? $this->luceneResult->getWordCount() : 0;
 	}
 
 	public function getTimeStamp() {
-		return $this->timeStamp;
+		return !$this->luceneResult->isMissingRevision() ? $this->luceneResult->getTimeStamp() : 0;
 	}
 
 
@@ -73,24 +59,9 @@ class UnifiedSearchResult {
 	}
 
 	public static function newFromLuceneResult(LuceneResult $lc, array & $terms) {
-		return new UnifiedSearchResult($lc->getTitle(), $lc->getScore(), true, !$lc->isMissingRevision() ? $lc->getTextSnippet($terms) : NULL);
+		return new UnifiedSearchResult($lc, $terms);
 	}
 
-	public static function newFromWikiTitleResult(Title $title, $score) {
-		return new UnifiedSearchResult($title, $score, false);
-	}
-
-	public static function sortByScore(array & $searchResults) {
-		for($i = 0, $n=count($searchResults); $i < $n; $i++) {
-			for($j = 0, $m=count($searchResults)-1; $j < $m; $j++) {
-				if ($searchResults[$j]->getScore() < $searchResults[$j+1]->getScore()) {
-					$temp = $searchResults[$j+1];
-					$searchResults[$j+1] = $searchResults[$j];
-					$searchResults[$j] = $temp;
-				}
-			}
-		}
-	}
 }
 
 class UnifiedSearchResultPrinter {
@@ -180,7 +151,7 @@ class UnifiedSearchResultPrinter {
             case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
         }
         // if MIME type extension is installed
-        if (defined("NS_DOCUMENT") && defined("NS_PDF") && defined("NS_AUDIO") && defined("NS_VIDEO")) {
+        if (defined("MIME_TYPE_EXTENSION")) {
             switch($result->getTitle()->getNamespace()) {
                 case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
                 case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
