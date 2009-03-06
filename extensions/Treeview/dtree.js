@@ -219,6 +219,19 @@ dTree.prototype.getSmwDataIndex = function(id) {
 	return;
 }
 
+// check if a node has children (regardless of _hc if the depth is 1,
+// dynamic expansion is set and the tree is drawn the first time, we
+// should draw leafes imediately as we already no that a dynamic
+// expansion will not make sence for leafes there.
+dTree.prototype.checkForChildren = function(id) {
+	for (var i = id + 1; i < this.aNodes.length; i++ ) {
+		if (this.aNodes[i].pid == id) return true;
+	}
+	this.aNodes[id]._hc = false;
+	this.aNodes[id]._complete = true;
+	return false;
+} 
+
 // check if a node is created dynamically, important for mixed trees
 dTree.prototype.isDynamicNode = function(id) {
 	return (this.getSmwDataIndex(id) >= 0) ? true : false;
@@ -436,9 +449,11 @@ dTree.prototype.addNode = function(pNode) {
 dTree.prototype.node = function(node, nodeId) {
 	var str = '<div class="dTreeNode" style="white-space:nowrap;">';
 	if (this.root.id == node.pid && this.config.refresh) str += '<a href="javascript: ' + this.obj + '.refresh();" title="refresh">';
+	if (this.aIndent.length == 0 && this.root.id != node.pid && this.isDynamicNode(nodeId))
+		this.checkForChildren(node.id);
 	str += this.indent(node, nodeId);
 	if (this.config.useIcons) {
-		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : ((node._hc) ? this.icon.folder : this.icon.node);
+		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : (node._hc) ? this.icon.folder : this.icon.node;
 		node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
 		if (this.root.id == node.pid) {
 			node.icon = this.icon.root;
