@@ -88,7 +88,7 @@ The following section provides a short explanation of the SKOS resources that ar
 
 SMW+ has a special feature that helps you adding vocabulary information to the wiki. This is achieved by the [[Help:Semantic_Forms|semantic form]] <tt>Form:Term</tt>. Using this form you can easily add information about synonyms, rarely used synonyms, broader terms, and narrower terms to the concept in question. Notice that each concept added to the wiki by using this form will become a member of the category <tt>Term</tt>.
 
-[[Image:Semantic_form_add_term.png|none|frame|Semantic Form <tt>Term</tt>]]
+[[Image:Semantic_form_add_term.png|none|thumb|600px|Semantic Form <tt>Term</tt>]]
 
 
 <hr>
