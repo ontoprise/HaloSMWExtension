@@ -230,7 +230,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->getElementProperties();
 		
 		// if start is set but not found in element properties, then it doesn't belong to the desired subset
-		if ($start && !isset($this->elementProperties[$this->smw_start_id])) return;
+		if ($start && !isset($this->elementProperties[$this->smw_start_id]) && $start != wfMsg("mainpage")) return;
 		
 		$treeList = $this->generateTreeDeepFirstSearch();
         if ($this->json)
