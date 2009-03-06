@@ -1,3 +1,4 @@
+__NOTOC__
 As already mentioned, SMW+ can be installed in two different ways. If you are going to use the installer, follow the instructions below. On the other hand, if you are technically adept and want to install all components manually, see [http://smwforum.ontoprise.com/smwforum/index.php/Manual_SMW%2B_Installation Manual SMW+ Installation] at the SMW+ User Forum.
 
 To install SMW+, proceed as follows:
@@ -16,9 +17,14 @@ This will abort the installation process.</div></li>
 <li>Select the installation type.<br>
 <div style="font-weight:normal;">Three installation types are available:
 <ul>
-<li><b>New (with XAMPP).</b> Choose this installation type if you are installing SMW+ for the first time.</li>
-<li><b>New/Update (without XAMPP).</b> Choose this installation type to update an existing installation.<br>
-It is assumed that XAMPP is installed on your computer.</li>
+<li><b>New.</b> Choose this installation type if you are installing SMW+ for the first time.</li>
+<li><b>Update.</b> Choose this installation type to update an existing installation.<br>
+It is assumed that XAMPP is installed on your computer.
+<hr>
+<b>Note &ndash;</b> It is recommended to disable the triple store connector support in your <tt>LocalSettings.php</tt> (if applicable) prior to updating SMW+.<br>
+Otherwise the process of refreshing SMW data will take disproportionately long.
+<hr> 
+</li>
 <li><b>Custom.</b> Choose this installation type to individually select the components to be installed.</li>
 </ul>
 </div>
