@@ -196,16 +196,17 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$query = "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
 		         ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere;
 
-		if ($start) {
-		    if (!$this->getStartId($start))
-		        return ($this->json)
+		if ($start && (!$this->getStartId($start)))
+			return ($this->json)
 		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
-		    $query.= " AND r.o_id = ".$this->smw_start_id;  
-		}
-		elseif ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
-		    $query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
-		    		 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
+		
+		if ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
+			if ($start)
+				$query.= " AND r.o_id = ".$this->smw_start_id;
+			else
+		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
+		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 		$query.= $categoryConstraintGroupBy;
 		$res = $db->query($query);
@@ -224,9 +225,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		$db->freeResult($res);
 		if (count($this->sIds) == 0) return;
-
-		// fetch propeties of that smw_ids found (both s_id and o_id)
+				
+		// fetch properties of that smw_ids found (both s_id and o_id)
 		$this->getElementProperties();
+		
+		// if start is set but not found in element properties, then it doesn't belong to the desired subset
+		if ($start && !isset($this->elementProperties[$this->smw_start_id])) return;
+		
 		$treeList = $this->generateTreeDeepFirstSearch();
         if ($this->json)
             return $this->formatTreeToJson();
