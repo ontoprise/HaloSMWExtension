@@ -1659,3 +1659,8 @@ z-index:5;
 #contentslider{
 	height: 1.9em;
 }
+
+/* God-damned hack for the crappy layout */
+.os-suggest {
+	font-size: 127%;
+}

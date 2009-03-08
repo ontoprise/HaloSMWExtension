@@ -519,6 +519,13 @@ dd {
 	margin-top: 10px;
 }
 
+/* MWSuggest
+
+God-damned hack for the crappy layout */
+.os-suggest {
+	font-size: 127%;
+}
+
 /**
 * CSS for inline queries in table format
 * just add a div to your page around content with class="darkround"
