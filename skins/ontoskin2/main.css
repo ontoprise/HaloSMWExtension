@@ -52,6 +52,7 @@
 #smwf_head{
 	position: relative;
 	background: #FFF;
+	min-height: 50px;
 	max-height: 135px;
 	border-bottom: 5px solid #67666b;
 	padding-left: 10px;
@@ -95,6 +96,7 @@
 	position: absolute;
 	bottom: 5px;
 	right: 	15px;
+	height: 25px;
 }
 
 /**
