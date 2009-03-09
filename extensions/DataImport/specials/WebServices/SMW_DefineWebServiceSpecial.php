@@ -78,6 +78,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 
 		$visible = "display:none";
+		$showButton = "";
 
 		$soap = "";
 		$rest = " checked=\"true\" ";
@@ -107,6 +108,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		if($editwwsd){
 			$visible = "";
+			$showButton = "display: none";
 
 			if($wwsd->getProtocol() == "SOAP"){
 				$soap = " checked=\"true\" ";
@@ -154,7 +156,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		// 1. Specify URI
 		$html .= "<br>";
 		$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
-		$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s1-intro");
+		$html .= "<p id=\"step1-head\" class=\"step-headline\">".wfMsg("smw_wws_s1-intro");
 		$html .= "<img id=\"step1-help-img\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
@@ -182,7 +184,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step1-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep1()\">";
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep1()\" style=\"".$showButton."\">";
 		$html .= "</span>";
 
 		//todo: edit gui anpassen
@@ -206,7 +208,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			
 		$html .= "<br/>";
 		$html .= "<span id=\"step2-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step2-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep2()\">";
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step2-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" style=\"".$showButton."\" onclick=\"webServiceSpecial.processStep2()\">";
 		$html .= "</span>";
 			
 		$html .= "</div>";
@@ -227,7 +229,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step3-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep3()\">";
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step3-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep3()\">";
 		$html .= "</span>";
 
 		$html .= "</div>";
@@ -242,13 +244,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep4()\">";
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep4()\">";
 		$html .= "</span>";
 
 		$html .= "</div>";
@@ -304,7 +306,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step5-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step5-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep5()\">";
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step5-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep5()\">";
 		$html .= "</span>";
 
 		$html .= "</div>";
@@ -359,8 +361,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</div>";
 
 		if($editwwsd){
-			$html .= $this->getMergedParameters($wwsd, false);
-			$html .= $this->getMergedParameters($wwsd, true);
+			if($wwsd->getProtocol() == "SOAP"){
+				$html .= $this->getMergedParameters($wwsd, false);
+				$html .= $this->getMergedParameters($wwsd, true);
+			} else if($wwsd->getProtocol() == "REST"){
+				$html .= $this->getRESTMergedParameters($wwsd, false);
+				$html .= $this->getRESTMergedParameters($wwsd, true);
+			}
 		}
 
 		$wgOut->addHTML($html);
@@ -415,7 +422,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					&& $wwsdParameterSteps[$k] == ""){
 						continue;
 					}
-						
+
 					$dupPos = strpos($wsdlParameterSteps[$k], "##duplicate");
 					$overflowPos = strpos($wsdlParameterSteps[$k], "##overflow");
 					$bracketPos = strpos($wwsdParameterSteps[$k], "[");
@@ -446,10 +453,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					if(!$result){
 						$a["defaultValue"] = $wwsdParameter["defaultValue"]."";
 						$a["optional"] = $wwsdParameter["optional"]."";
-						if(strlen($a["optional"]) == 0){
+						if(strlen($a["optional"]."") == 0){
 							$a["optional"] = "##";
 						}
-						if(strlen($a["defaultValue"]) == 0){
+						if(strlen($a["defaultValue"]."") == 0){
 							$a["defaultValue"] = "##";
 						}
 					}
@@ -480,10 +487,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				if(!$result){
 					$o["defaultValue"] = $wsParameter["defaultValue"]."";
 					$o["optional"] = $wsParameter["optional"]."";
-					if(strlen($o["optional"]) == 0){
+					if(strlen($o["optional"]."") == 0){
 						$o["optional"] = "##";
 					}
-					if(strlen($o["defaultValue"]) == 0){
+					if(strlen($o["defaultValue"]."") == 0){
 						$o["defaultValue"] = "##";
 					}
 				}
@@ -500,6 +507,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$html .= "<span id=\"editparameters\" style=\"display: none\">";
 		}
 
+		$html .= "soap;";
 		foreach($mergedParameters as $mergedParameter){
 			$html .= $mergedParameter["name"].";";
 			$html .= $mergedParameter["path"].";";
@@ -516,7 +524,56 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				}
 			}
 		}
-		
+
+		$html .= "</span>";
+		return $html;
+	}
+
+	private function getRESTMergedParameters($wwsd, $result){
+		if($result){
+			$wwsdParameters = new SimpleXMLElement($wwsd->getResult());
+		} else {
+			$wwsdParameters = new SimpleXMLElement("<p>".$wwsd->getParameters()."</p>");
+		}
+
+		$wwsdParameters = $wwsdParameters->children();
+
+		$html = "";
+		if($result){
+			$html .= "<span id=\"editresults\" style=\"display:none\">";
+		} else {
+			$html .= "<span id=\"editparameters\" style=\"display:none\">";
+		}
+
+		$html .= "rest;";
+		foreach($wwsdParameters as $key => $wwsdParameter){
+			$html .= $wwsdParameter["name"].";";
+			if(!$result){
+				$html .= $wwsdParameter["path"].";";
+				if(strlen($wwsdParameter["optional"]."") > 0){
+					$html .= $wwsdParameter["optional"].";";
+				} else {
+					$html .= "##;";
+				}
+				if(strlen($wwsdParameter["defaultValue"]."") > 0){
+					$html .= $wwsdParameter["defaultValue"].";";
+				} else {
+					$html .= "##;";
+				}
+			} else {
+				if(strlen($wwsdParameter["xpath"]."") > 0){
+					$html .= "xpath;";
+					$html .= $wwsdParameter["xpath"].";";
+				} else if(strlen($wwsdParameter["json"]."") > 0){
+					$html .= "json;";
+					$html .= $wwsdParameter["json"].";";
+				} else {
+					$html .= "##;";
+					$html .= "##;";
+				}
+			}
+		}
+
 		$html .= "</span>";
 		return $html;
 	}
