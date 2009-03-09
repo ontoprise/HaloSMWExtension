@@ -1,5 +1,5 @@
 __NOTOC__
-To increase the quality of user search results, SMW+ invokes a query expansion by including basic concepts of the SKOS ontology. This query expansion enables the wiki search to find synonyms of words and searching for the synonyms as well.
+<noinclude>To increase the quality of user search results, SMW+ invokes a query expansion by including basic concepts of the SKOS ontology. This query expansion enables the wiki search to find synonyms of words and searching for the synonyms as well.
 <hr>
 <b>Note &ndash;</b> Notice that for invoking query expansion the search tolerance level must be set to <tt>Semi-tolerant</tt> or <tt>Tolerant</tt>.
 <hr>
@@ -85,8 +85,7 @@ The following section provides a short explanation of the SKOS resources that ar
 ; <tt>Property:Example</tt> : Used to link to another article that supplies an example of the use of the term.
 
 == Providing Vocabulary Information Using Semantic Forms ==
-
-SMW+ has a special feature that helps you adding vocabulary information to the wiki. This is achieved by the [[Help:Semantic_Forms|semantic form]] <tt>Form:Term</tt>. Using this form you can easily add information about synonyms, rarely used synonyms, broader terms, and narrower terms to the concept in question. Notice that each concept added to the wiki by using this form will become a member of the category <tt>Term</tt>.
+</noinclude>SMW+ has a special feature that helps you adding terminology and vocabulary information to the wiki. This is achieved by the [[Help:Semantic_Forms|semantic form]] <tt>Form:Term</tt>. Using this form you can easily add information about synonyms, rarely used synonyms, broader terms, and narrower terms to the concept in question. Notice that each concept added to the wiki by using this form will become a member of the category <tt>Term</tt>.
 
 [[Image:Semantic_form_add_term.png|none|thumb|600px|Semantic Form <tt>Term</tt>]]
 
