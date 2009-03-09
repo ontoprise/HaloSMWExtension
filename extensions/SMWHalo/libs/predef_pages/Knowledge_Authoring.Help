@@ -1,6 +1,9 @@
+__NOTOC__
 SMW+ has a number of knowledge authoring features that facilitate the development of knowledge by enabling you
 to easily add semantic data to the wiki:
 
 * '''[[Help:Semantic Toolbar|Semantic Toolbar]].''' A special toolbar that makes it easy for you to use the semantic features of the wiki when editing or annotating an article.
 * '''[[Help:Advanced Annotation Mode|Advanced Annotation Mode]].''' A mode for adding annotations to a page without the need to edit the wiki text source directly.
+* '''[[Help:Ontology_Browser|Ontology Browser]].''' Intuitive browsing of the wiki's class taxonomy, semantic properties, and instances plus basic editing features. 
 * '''[[Help:Semantic Forms|Semantic Forms]].''' A feature that allows you to create forms for adding and editing pages that use templates to store semantic data.
+* '''[[Help:Terminology_Management|Terminology Management]].''' Inbuilt meta-data elements (SKOS) and semantic forms that enable you to create vocabularies in SMW+.
