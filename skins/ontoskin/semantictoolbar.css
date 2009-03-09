@@ -66,6 +66,9 @@ triggered by the nested floats. It should not be removed
     cursor: move;
     position: relative;
     z-index: 5;
+    height: 24px;
+    width: 24px;
+    background-color: transparent;
 }
 
 .div-marker{
