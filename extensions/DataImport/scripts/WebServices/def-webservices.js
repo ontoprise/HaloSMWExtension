@@ -1,5 +1,4 @@
-/*
- *   The Data Import-Extension is free software; you can redistribute it and/or modify
+/*   The Data Import-Extension is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
@@ -35,11 +34,11 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep1 : function() {
-		if (this.step != "step1") {
-			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
-			if (check == false) {
-				return;
-			}
+		$("step2-methods").removeAttribute("onclick");
+		
+		if ($("step1-protocol-rest").checked) {
+			this.processStep1REST();
+			return;
 		}
 
 		this.showPendingIndicator("step1-go");
@@ -59,20 +58,24 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep1CallBack : function(request) {
 		var wsMethods = request.responseText.split(";");
-		if (wsMethods[0] != "todo:handle exceptions") {
-			// hide or display widgets of other steps
+		if (wsMethods[0].indexOf("todo:handle exceptions") == -1) {
 			$("step2").style.display = "none";
-
 			$("menue-step1").className = "ActualMenueStep";
 			$("menue-step2").className = "TodoMenueStep";
-
-			this.hideHelp(2)
-
+			this.hideHelp(2);
 			$("step1-error").style.display = "";
-
 			this.step = "step1";
 			$("errors").style.display = "";
 		} else {
+			$("step1-protocol-rest").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step1-uri").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
+			if (!this.editMode) {
+				$("step1-go-img").style.display = "none";
+				$("step2-go-img").style.display = "";
+			}
+
 			wsMethods.shift();
 			$("errors").style.display = "none";
 			$("step1-error").style.display = "none";
@@ -87,7 +90,6 @@ DefineWebServiceSpecial.prototype = {
 			existingOptions.id = "step2-methods";
 
 			// fill the widget for step2 with content
-
 			for (i = 0; i < wsMethods.length; i++) {
 				var option = document.createElement("option");
 				var mName = document.createTextNode(wsMethods[i]);
@@ -98,12 +100,9 @@ DefineWebServiceSpecial.prototype = {
 
 			// hide or display widgets of other steps
 			$("step2").style.display = "";
-
 			$("menue-step1").className = "DoneMenueStep";
 			$("menue-step2").className = "ActualMenueStep";
-
 			this.hideHelp(1);
-
 			$("step1-error").style.display = "none";
 		}
 
@@ -118,6 +117,7 @@ DefineWebServiceSpecial.prototype = {
 		$("menue-step5").className = "TodoMenueStep";
 		$("menue-step6").className = "TodoMenueStep";
 
+		this.hideHelp(2);
 		this.hideHelp(3);
 		this.hideHelp(4);
 		this.hideHelp(5);
@@ -140,6 +140,11 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep2 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep2REST();
+			return;
+		}
+
 		if (this.step != "step2") {
 			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
 			if (check == false) {
@@ -171,16 +176,23 @@ DefineWebServiceSpecial.prototype = {
 	processStep2Do : function(parameterString, edit) {
 		var wsParameters = parameterString.split(";");
 
-		this.preparedPathSteps = new Array();
+		if (!this.editMode) {
+			$("step2-go-img").style.display = "none";
+			$("step3-go-img").style.display = "";
+		}
+		
+		$("step2-methods").setAttribute("onclick",
+			"webServiceSpecial.confirmStep2Change()");
 
+		this.preparedPathSteps = new Array();
 		if (wsParameters[0] == "##no params required##") {
-			// todo: use language file
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			if (!edit) {
 				$("step3").style.display = "";
 				$("step3-parameters").style.display = "none";
 				$("step3-go-img").style.display = "none";
 				this.processStep3();
+
 			}
 			return;
 		} else {
@@ -252,6 +264,10 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsParameters.shift();
 			// clear widgets of step 3
+			// prepare table for rest parameters
+			$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "";
+			$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
+			
 			var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step3-parameters").childNodes[0]
@@ -554,6 +570,11 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep3 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep3REST();
+			return;
+		}
+
 		this.generateParameterAliases(false);
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
@@ -578,6 +599,11 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep3Do : function(resultsString, edit) {
 		var wsResults = resultsString.split(";");
+
+		if (!this.editMode) {
+			$("step3-go-img").style.display = "none";
+			$("step4-go-img").style.display = "";
+		}
 
 		this.preparedRPathSteps = new Array();
 
@@ -636,7 +662,14 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsResults.shift();
 			// clear widgets of step 4
-
+			$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "none";
+			
+			
+			
 			var tempHead = $("step4-results").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step4-results").childNodes[0].cloneNode(false);
@@ -712,9 +745,6 @@ DefineWebServiceSpecial.prototype = {
 												- 1
 												- this.preparedRPathSteps[i][k]["value"]
 														.indexOf("["));
-
-						alert("item: " + this.preparedRPathSteps[i][k]["value"]);
-						alert(pathIndexInput.value);
 
 						pathIndexInput.i = i;
 						pathIndexInput.k = k;
@@ -903,6 +933,14 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep4 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep4REST();
+			return;
+		}
+
+		$("step4-go-img").style.display = "none";
+		$("step5-go-img").style.display = "";
+
 		this.showPendingIndicator("step4-go");
 		// hide or display widgets of other steps
 		this.generateResultAliases();
@@ -936,6 +974,14 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep5 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep5REST();
+			return;
+		}
+
+		$("step5-go-img").style.display = "none";
+		$("step6-go-img").style.display = "";
+
 		// hide or display widgets of other steps
 		$("step6").style.display = "";
 
@@ -951,6 +997,11 @@ DefineWebServiceSpecial.prototype = {
 	 * called after step 6 specify ws-name this method constructs the wwsd
 	 */
 	processStep6 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep6REST();
+			return;
+		}
+
 		this.showPendingIndicator("step6-go");
 		if ($("step6-name").value.length > 0) {
 			$("errors").style.display = "none";
@@ -959,6 +1010,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step6c-error").style.display = "none";
 
 			var result = "<WebService>\n";
+			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value;
 
 			var uri = $("step1-uri").value;
 			result += "<uri name=\"" + uri + "\" />\n";
@@ -983,12 +1035,17 @@ DefineWebServiceSpecial.prototype = {
 					if ($("s3-use" + i).checked != true) {
 						continue;
 					}
-					result += "<parameter name=\"" + $("s3-alias" + i).value
-							+ "\" ";
-					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked;
+
+					var name = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value;
+					result += "<parameter name=\"" + name + "\" ";
+
+					wsSyntax += "| " + name
+							+ " = [Please enter a value here]\n";
+
+					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked;
 					result += " optional=\"" + optional + "\" ";
 
-					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value;
+					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value;
 					if (defaultValue != "") {
 						if (defaultValue != "") {
 							result += " defaultValue=\"" + defaultValue + "\" ";
@@ -1020,6 +1077,7 @@ DefineWebServiceSpecial.prototype = {
 					result += " path=\"" + path + "\" />\n";
 				}
 			}
+
 			result += "<result name=\"result\" >\n";
 
 			var offset = 0;
@@ -1029,6 +1087,7 @@ DefineWebServiceSpecial.prototype = {
 							+ 1].childNodes[1].firstChild.checked != true) {
 						continue;
 					}
+
 					var rPath = "";
 					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
 						var rPathStep = "//";
@@ -1054,10 +1113,12 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 
-					result += "<part name=\""
-							+ this.resultContainer.firstChild.childNodes[offset
-									+ i + 1].childNodes[2].firstChild.value
-							+ "\" ";
+					var name = this.resultContainer.firstChild.childNodes[offset
+							+ i + 1].childNodes[2].firstChild.value;
+					result += "<part name=\"" + name + "\" ";
+
+					wsSyntax += "| ?result." + name + "\n";
+
 					result += " path=\"" + rPath + "\"";
 
 					var offs = this.resultContainer.firstChild.childNodes[offset
@@ -1084,92 +1145,15 @@ DefineWebServiceSpecial.prototype = {
 			}
 			result += "</result>\n";
 
-			result += "<displayPolicy>\n"
-			if ($("step5-display-once").checked == true) {
-				result += "<once/>\n";
-			} else {
-				result += "<maxAge value=\"";
-				var minutes = 0;
-				minutes += $("step5-display-days").value * 60 * 24;
-				minutes += $("step5-display-hours").value * 60;
-				minutes += $("step5-display-minutes").value * 1;
-				result += minutes;
-				result += "\"></maxAge>\n";
-			}
-			result += "</displayPolicy>\n"
+			result += this.createWWSDPolicyPart();
 
-			result += "<queryPolicy>\n"
-			if ($("step5-query-once").checked == true) {
-				result += "<once/>\n";
-			} else {
-				result += "<maxAge value=\"";
-				minutes = 0;
-				minutes += $("step5-query-days").value * 60 * 24;
-				minutes += $("step5-query-hours").value * 60;
-				minutes += $("step5-query-minutes").value * 1;
-				result += minutes;
-				result += "\"></maxAge>\n";
-			}
-			var delay = $("step5-delay").value;
-			if (delay.length == 0) {
-				delay = 0;
-			}
-			result += "<delay value=\"" + delay + "\"/>\n";
-			result += "</queryPolicy>\n"
-			result += "<spanOfLife value=\""
-					+ (0 + $("step5-spanoflife").value * 1);
-			if ($("step5-expires-yes").checked) {
-				result += "\" expiresAfterUpdate=\"true\" />\n";
-			} else {
-				result += "\" expiresAfterUpdate=\"false\" />\n";
-			}
 			result += "</WebService>";
+
 			this.wwsd = result;
 			var wsName = $("step6-name").value;
 
-			// the three additional "#" tell the ws-syntax processor not to
-			// process
-			// this ws-syntax
-			var wsSyntax = "";
-			wsSyntax += "\n<nowiki>{{#ws: " + $("step6-name").value
-					+ "</nowiki>\n";
-			parameters = this.preparedPathSteps;
-			for (i = 0; i < parameters.length; i++) {
-				if (this.preparedPathSteps[i] != "null") {
-					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked != true) {
-						continue;
-					}
-					wsSyntax += "| "
-							+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value
-							+ " = [Please enter a value here]\n";
-				}
-			}
-
-			results = this.preparedRPathSteps;
-			var offset = 0;
-			for (i = 0; i < results.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[offset + i
-							+ 1].childNodes[1].firstChild.checked != true) {
-						continue;
-					}
-					wsSyntax += "| ?result."
-							+ this.resultContainer.firstChild.childNodes[offset
-									+ i + 1].childNodes[2].firstChild.value
-							+ "\n";
-
-					var o = this.resultContainer.firstChild.childNodes[offset
-							+ i + 1].subPathOffset;
-					if (o != null) {
-						offset += o;
-					}
-				}
-			}
-			wsSyntax += "}}";
-
+			wsSyntax += "}}</pre>";
 			this.wsSyntax = wsSyntax;
-			wsSyntax = "\n== Syntax for using the WWSD in an article==";
-			wsSyntax += this.wsSyntax;
 
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
 					this.processStep6CallBack.bind(this));
@@ -1185,12 +1169,12 @@ DefineWebServiceSpecial.prototype = {
 	processStep6CallBack : function(request) {
 		if (request.responseText.indexOf("false") >= 0 || this.editMode == true) {
 			var wsName = $("step6-name").value;
-			// sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
-			// wgUserName, this.wwsd + this.wsSyntax, "" ],
-			// this.processStep6CallBack1.bind(this));
-			var wsName = $("step6-name").value;
+
+			wsSyntax = "\n== Syntax for using the WWSD in an article==";
+			wsSyntax += this.wsSyntax;
+
 			sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd,
-					wgUserName, this.wsSyntax ], this.processStep6CallBack1
+					wgUserName, wsSyntax ], this.processStep6CallBack1
 					.bind(this));
 		} else {
 			$("errors").style.display = "";
@@ -1208,8 +1192,9 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep6CallBack1 : function(request) {
 		if (request.responseText.indexOf("true") >= 0) {
-			var container = $("step7-container").cloneNode(false);
 			$("breadcrumb-menue").style.display = "none";
+
+			var container = $("step7-container").cloneNode(false);
 			$("step7-container").id = "old-step7-container";
 			$("old-step7-container").parentNode.insertBefore(container,
 					$("old-step7-container"));
@@ -1223,55 +1208,10 @@ DefineWebServiceSpecial.prototype = {
 			$("step7-name").appendChild(wsNameText);
 
 			var rowDiv = document.createElement("div");
-			var rowText = document.createTextNode("{{#ws: "
-					+ $("step6-name").value);
-			rowDiv.appendChild(rowText);
-			step7Container.appendChild(rowDiv);
+			this.wsSyntax = this.wsSyntax.replace(/<pre>/g, "");
+			this.wsSyntax = this.wsSyntax.replace(/<\/pre>/g, "");
+			rowDiv.innerHTML = this.wsSyntax.replace(/\n/g, "<br/>");
 
-			var parameters = this.preparedPathSteps;
-			for (i = 0; i < parameters.length; i++) {
-				if (this.preparedPathSteps[i] != "null") {
-					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked != true) {
-						continue;
-					}
-					rowDiv = document.createElement("div");
-					rowDiv.className = "OuterLeftIndent";
-					rowText = document
-							.createTextNode("| "
-									+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value
-									+ " = [Please enter a value here]");
-					rowDiv.appendChild(rowText);
-					step7Container.appendChild(rowDiv);
-				}
-			}
-
-			var results = this.preparedRPathSteps;
-			var offset = 0;
-			for (i = 0; i < results.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[offset + i
-							+ 1].childNodes[1].firstChild.checked != true) {
-						continue;
-					}
-					rowDiv = document.createElement("div");
-					rowDiv.className = "OuterLeftIndent";
-					rowText = document.createTextNode("| ?result."
-							+ this.resultContainer.firstChild.childNodes[offset
-									+ i + 1].childNodes[2].firstChild.value);
-					rowDiv.appendChild(rowText);
-					step7Container.appendChild(rowDiv);
-
-					var o = this.resultContainer.firstChild.childNodes[offset
-							+ i + 1].subPathOffset;
-					if (o != null) {
-						offset += o;
-					}
-				}
-			}
-
-			rowDiv = document.createElement("div");
-			rowText = document.createTextNode("}}");
-			rowDiv.appendChild(rowText);
 			step7Container.appendChild(rowDiv);
 
 			var parentOf = $("step7-container").parentNode;
@@ -1319,6 +1259,18 @@ DefineWebServiceSpecial.prototype = {
 		$("step1-auth-no").checked = "true";
 		$("step1-username").value = "";
 		$("step1-password").value = "";
+		$("step1-go-img").style.display = "";
+		
+		$("step1-protocol-soap").removeAttribute("onclick");
+		$("step1-protocol-rest").removeAttribute("onclick");
+		$("step1-uri").removeAttribute("onclick");
+		
+		$("step2").style.display = "none";
+		$("step3").style.display = "none";
+		$("step4").style.display = "none";
+		$("step5").style.display = "none";
+		$("step6").style.display = "none";
+		
 
 	},
 
@@ -2479,59 +2431,103 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	editWWSD : function() {
-		if (this.editMode) {
-			return;
-		}
-
 		var editParameterContainer = $("editparameters");
-		var editResultContainer = $("editresults");
 		if (editParameterContainer == null) {
 			return;
 		}
+		
+		if ($("editparameters").processed) {
+			return;
+		}
+
+		var editResultContainer = $("editresults");
 
 		this.editMode = true;
+		//necessary so that this method will not be called twice
+		$("editparameters").processed = true;
 
-		var editParametersText = "";
-		for (i = 0; i < editParameterContainer.childNodes.length; i++) {
-			editParametersText += editParameterContainer.childNodes[i].nodeValue;
+		var editParameters = "";
+
+		// this is necessary because firefox splits up long divs into several
+		// ones
+		for ( var i = 0; i < editParameterContainer.childNodes.length; i++) {
+			editParameters += editParameterContainer.childNodes[i].nodeValue;
 		}
-
-		var editParameters = editParametersText.split(";");
+		editParameters = editParameters.split(";");
 		editParameters.pop();
 
-		var ps2Parameters = "##handle exceptions##";
-		var parametersUpdate = new Array();
+		var protocol = editParameters.shift();
+		if (protocol == "soap") {
+			var ps2Parameters = "##handle exceptions##";
+			var parametersUpdate = new Array();
 
-		for (i = 0; i < editParameters.length; i += 4) {
-			var o = new Object();
-			o["alias"] = editParameters[i];
-			ps2Parameters += ";" + editParameters[i + 1];
-			o["optional"] = editParameters[i + 2];
-			o["defaultValue"] = editParameters[i + 3];
-
-			parametersUpdate.push(o);
+			for (i = 0; i < editParameters.length; i += 4) {
+				var o = new Object();
+				o["alias"] = editParameters[i];
+				ps2Parameters += ";" + editParameters[i + 1];
+				o["optional"] = editParameters[i + 2];
+				o["defaultValue"] = editParameters[i + 3];
+				parametersUpdate.push(o);
+			}
+			this.processStep2Do(ps2Parameters, true);
+			this.updateParameters(parametersUpdate);
+		} else {
+			var parametersUpdate = new Array();
+			for (i = 0; i < editParameters.length; i += 4) {
+				var o = new Object();
+				o["alias"] = editParameters[i+1];
+				o["path"] = editParameters[i];
+				o["optional"] = editParameters[i + 2];
+				o["defaultValue"] = editParameters[i + 3];
+				parametersUpdate.push(o);
+			}
+			this.processStep2REST();
+			this.updateParametersREST(parametersUpdate);
 		}
 
-		this.processStep2Do(ps2Parameters, true);
-		this.updateParameters(parametersUpdate);
-
-		var editResultsText = "";
-		for (i = 0; i < editResultContainer.childNodes.length; i++) {
-			editResultsText += editResultContainer.childNodes[i].nodeValue;
+		var editResults = "";
+		for ( var i = 0; i < editResultContainer.childNodes.length; i++) {
+			editResults += editResultContainer.childNodes[i].nodeValue;
 		}
-		var editResults = editResultsText.split(";");
+		editResults = editResults.split(";");
 		editResults.pop();
-		var ps3Results = "todo:handle exceptions";
-		var resultsUpdate = new Array();
+		editResults.shift();
 
-		for (i = 0; i < editResults.length; i += 2) {
-			var o = new Object();
-			o["alias"] = editResults[i];
-			ps3Results += ";" + editResults[i + 1];
-			resultsUpdate.push(o);
+		if (protocol == "soap") {
+			var ps3Results = "todo:handle exceptions";
+			var resultsUpdate = new Array();
+			for (i = 0; i < editResults.length; i += 2) {
+				var o = new Object();
+				o["alias"] = editResults[i];
+				ps3Results += ";" + editResults[i + 1];
+				resultsUpdate.push(o);
+			}
+			this.processStep3Do(ps3Results, true);
+			this.updateResults(resultsUpdate);
+		} else {
+			var resultsUpdate = new Array();
+			for (i = 0; i < editResults.length; i += 3) {
+				var o = new Object();
+				o["alias"] = editResults[i];
+				o["format"] = editResults[i + 1];
+				o["path"] = editResults[i + 2];
+				resultsUpdate.push(o);
+			}
+			this.processStep3REST();
+			this.updateResultsREST(resultsUpdate);
 		}
-		this.processStep3Do(ps3Results, true);
-		this.updateResults(resultsUpdate);
+		
+		if (protocol == "soap") {
+			$("step1-protocol-rest").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step1-uri").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step2-methods").setAttribute("onclick",
+					"webServiceSpecial.confirmStep2Change()");
+		} else {
+			$("step1-protocol-soap").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
+		}
 	},
 
 	updateParameters : function(updates) {
@@ -2641,8 +2637,514 @@ DefineWebServiceSpecial.prototype = {
 	removeSubPath : function(id, sid) {
 		$("step4-resultRow-sb-" + id + "-" + sid).style.display = "none";
 		$("step4-resultRow-sb-" + id + "-" + sid).removed = true;
+	},
+
+	processStep1REST : function() {
+		$("step1-protocol-soap").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"soap\")");
+		
+		$("step2").style.display = "";
+		$("menue-step1").className = "DoneMenueStep";
+		$("menue-step2").className = "ActualMenueStep";
+		this.hideHelp(1);
+		$("step1-go-img").style.display = "none";
+		$("step2-go-img").style.display = "";
+
+		var existingOptions = $("step2-methods").cloneNode(false);
+		$("step2-methods").id = "old-step2-methods";
+		$("old-step2-methods").parentNode.insertBefore(existingOptions,
+				document.getElementById("old-step2-methods"));
+		$("old-step2-methods").parentNode.removeChild($("old-step2-methods"));
+		existingOptions.id = "step2-methods";
+
+		var option = document.createElement("option");
+		var mName = document.createTextNode("get");
+		option.appendChild(mName);
+		option.value = "get";
+		$("step2-methods").appendChild(option);
+
+		option = document.createElement("option");
+		mName = document.createTextNode("post");
+		option.appendChild(mName);
+		option.value = "post";
+		$("step2-methods").appendChild(option);
+	},
+
+	processStep2REST : function() {
+		$("step3").style.display = "";
+		$("menue-step2").className = "DoneMenueStep";
+		$("menue-step3").className = "ActualMenueStep";
+		this.hideHelp(2);
+		$("step2-go-img").style.display = "none";
+
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue = "Path:";
+		$("step3-parameters").childNodes[0].childNodes[0]
+				.removeChild($("step3-parameters").childNodes[0].childNodes[0].childNodes[1]);
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[1]
+				.removeChild($("step3-parameters").childNodes[0].childNodes[0].childNodes[1].childNodes[1]);
+
+		this.appendRESTParameter();
+	},
+
+	appendRESTParameter : function() {
+		var id = $("step3-parameters").childNodes[0].childNodes.length;
+
+		var row = document.createElement("tr");
+
+		// add name-input
+		var td = document.createElement("td");
+		var input = document.createElement("input");
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add alias-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// create optional
+		td = document.createElement("td");
+		if (navigator.appName.indexOf("Explorer") != -1) {
+			input = document
+					.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+							+ id + "\">");
+		} else {
+			input = document.createElement("input");
+			input.type = "radio";
+			input.name = "s3-optional-radio" + id;
+		}
+		input.value = "yes";
+		td.appendChild(input);
+		var text = document.createTextNode("Yes");
+		td.appendChild(text);
+
+		if (navigator.appName.indexOf("Explorer") != -1) {
+			input = document
+					.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+							+ id + "\">");
+		} else {
+			input = document.createElement("input");
+			input.type = "radio";
+			input.name = "s3-optional-radio" + id;
+		}
+		input.value = "no";
+		input.checked = true;
+		td.appendChild(input);
+		text = document.createTextNode("No");
+		td.appendChild(text);
+		row.appendChild(td);
+
+		// add default-value-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add default-value-input
+		td = document.createElement("td");
+		var select = document.createElement("select");
+
+		var option = document.createElement("option");
+		text = document.createTextNode("Add parameter");
+		option.appendChild(text);
+		option.value = "Add parameter";
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode("Remove parameter");
+		option.appendChild(text);
+		option.value = "Remove parameter";
+		select.appendChild(option);
+
+		td.appendChild(select);
+
+		input = document.createElement("input");
+		input.type = "button";
+		input.value = "OK";
+		input.setAttribute("onclick",
+				"webServiceSpecial.processRESTParameterButton(" + id + ")");
+		td.appendChild(input);
+
+		row.appendChild(td);
+
+		$("step3-parameters").childNodes[0].appendChild(row);
+	},
+
+	processRESTParameterButton : function(id) {
+		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
+		var action = select.value;
+
+		if (action == "Add parameter") {
+			this.appendRESTParameter();
+		} else if (action == "Remove parameter") {
+			$("step3-parameters").childNodes[0].childNodes[id].removed = true;
+			$("step3-parameters").childNodes[0].childNodes[id].style.display = "none";
+		}
+	},
+
+	processStep2REST : function() {
+		if(!this.editMode){
+			$("step3").style.display = "";
+			$("menue-step2").className = "DoneMenueStep";
+			$("menue-step3").className = "ActualMenueStep";
+			this.hideHelp(2);
+			$("step2-go-img").style.display = "none";
+			$("step3-go-img").style.display = "";
+		}
+		
+		// clear widgets of step 3
+		var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step3-parameters").childNodes[0].cloneNode(false);
+		$("step3-parameters").removeChild($("step3-parameters").childNodes[0]);
+		$("step3-parameters").appendChild(tempTable);
+		$("step3-parameters").childNodes[0].appendChild(tempHead);
+
+		// prepare table for rest parameters
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
+		
+		// todo: remove this
+		this.appendRESTParameter();
+	},
+
+	appendRESTResultPart : function() {
+		var id = $("step4-results").childNodes[0].childNodes.length;
+
+		var row = document.createElement("tr");
+
+		// add alias-input
+		var td = document.createElement("td");
+		var input = document.createElement("input");
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add format-input
+		td = document.createElement("td");
+		var select = document.createElement("select");
+
+		var option = document.createElement("option");
+		text = document.createTextNode("xpath");
+		option.appendChild(text);
+		option.value = "xpath";
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode("json");
+		option.appendChild(text);
+		option.value = "json";
+		select.appendChild(option);
+
+		td.appendChild(select);
+		row.appendChild(td);
+
+		// add subpath-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add additional buttons
+		td = document.createElement("td");
+		select = document.createElement("select");
+
+		option = document.createElement("option");
+		text = document.createTextNode("Add result part");
+		option.appendChild(text);
+		option.value = "Add result part";
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode("Remove result part");
+		option.appendChild(text);
+		option.value = "Remove result part";
+		select.appendChild(option);
+
+		td.appendChild(select);
+
+		input = document.createElement("input");
+		input.type = "button";
+		input.value = "OK";
+		input.setAttribute("onclick",
+				"webServiceSpecial.processRESTResultPartButton(" + id + ")");
+		td.appendChild(input);
+
+		row.appendChild(td);
+
+		$("step4-results").childNodes[0].appendChild(row);
+	},
+
+	processStep3REST : function() {
+		if(!this.editMode){
+			$("step4").style.display = "";
+			$("menue-step3").className = "DoneMenueStep";
+			$("menue-step4").className = "ActualMenueStep";
+			this.hideHelp(3);
+			$("step3-go-img").style.display = "none";
+			$("step4-go-img").style.display = "";
+		}
+
+		var tempHead = $("step4-results").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step4-results").childNodes[0].cloneNode(false);
+		$("step4-results").removeChild($("step4-results").childNodes[0]);
+		$("step4-results").appendChild(tempTable);
+		$("step4-results").childNodes[0].appendChild(tempHead);
+
+		// prepare table for rest result parts
+			$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "";
+		
+		this.appendRESTResultPart();
+	},
+
+	processRESTResultPartButton : function(id) {
+		var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
+		var action = select.value;
+
+		if (action == "Add result part") {
+			this.appendRESTResultPart();
+		} else if (action == "Remove result part") {
+			$("step4-results").childNodes[0].childNodes[id].removed = true;
+			$("step4-results").childNodes[0].childNodes[id].style.display = "none";
+		}
+	},
+	processStep4REST : function() {
+		$("step5").style.display = "";
+		$("menue-step4").className = "DoneMenueStep";
+		$("menue-step5").className = "ActualMenueStep";
+		this.hideHelp(4);
+		$("step4-go-img").style.display = "none";
+		$("step5-go-img").style.display = "";
+
+		$("step5-display-once").checked = true;
+		$("step5-display-days").value = "";
+		$("step5-display-hours").value = "";
+		$("step5-display-minutes").value = "";
+
+		$("step5-query-once").checked = true;
+		$("step5-query-days").value = "";
+		$("step5-query-hours").value = "";
+		$("step5-query-minutes").value = "";
+		$("step5-delay").value = "";
+
+		$("step5-spanoflife").value = "";
+		$("step5-expires-yes").checked = true;
+	},
+
+	processStep5REST : function() {
+		$("step6").style.display = "";
+		$("menue-step5").className = "DoneMenueStep";
+		$("menue-step6").className = "ActualMenueStep";
+		this.hideHelp(5);
+		$("step5-go-img").style.display = "none";
+		$("step6-go-img").style.display = "";
+
+		$("step6-name").value = "";
+	},
+
+	processStep6REST : function() {
+		this.showPendingIndicator("step6-go");
+
+		if ($("step6-name").value.length > 0) {
+			// todo: sind hier andere error messages als bei soap nötig?
+	$("errors").style.display = "none";
+	$("step6-error").style.display = "none";
+	$("step6b-error").style.display = "none";
+	$("step6c-error").style.display = "none";
+
+	var result = "<WebService>\n";
+
+	var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
+	result += "<uri name=\"" + $("step1-uri").value + "\" />\n";
+
+	result += "<protocol>REST</protocol>\n";
+
+	if ($("step1-auth-yes").checked) {
+		result += "<authentication type=\"http\" login=\""
+				+ $("step1-username").value + "\" password=\""
+				+ $("step1-password").value + "\"/>\n";
 	}
 
+	result += "<method name=\"" + $("step2-methods").value + "\" />\n";
+
+	var parameterTable = $("step3-parameters").childNodes[0];
+	for ( var i = 1; i < parameterTable.childNodes.length; i++) {
+		if (parameterTable.childNodes[i].removed == true) {
+			continue;
+		}
+
+		var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
+		if (alias == "") {
+			alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+		}
+		result += "<parameter name=\"" + alias + "\" ";
+
+		wsSyntax += "| " + alias + " = [Please enter a value here]\n";
+
+		var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
+		result += " optional=\"" + optional + "\" ";
+
+		var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
+		if (defaultValue != "") {
+			result += " defaultValue=\"" + defaultValue + "\" ";
+		}
+		result += " path=\""
+				+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value
+				+ "\"/>\n";
+	}
+
+	result += "<result name=\"result\" >\n";
+	//
+	var resultTable = $("step4-results").childNodes[0];
+	for (i = 1; i < resultTable.childNodes.length; i++) {
+		if (resultTable.childNodes[i].removed) {
+			continue;
+		}
+
+		var name = resultTable.childNodes[i].childNodes[0].firstChild.value;
+				result += "<part name=\"" + name + "\" ";
+
+				wsSyntax += "| ?result." + name + "\n";
+
+				result += resultTable.childNodes[i].childNodes[1].firstChild.value
+						+ "=\"";
+				result += resultTable.childNodes[i].childNodes[2].firstChild.value
+						+ "\"/>\n";
+
+			}
+			result += "</result>\n";
+
+			result += this.createWWSDPolicyPart();
+
+			result += "</WebService>";
+			this.wwsd = result;
+
+			var wsName = $("step6-name").value;
+
+			wsSyntax += "}}\n</pre>";
+			this.wsSyntax = wsSyntax;
+			wsSyntax = "\n== Syntax for using the WWSD in an article==";
+			wsSyntax += this.wsSyntax;
+
+			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
+					this.processStep6CallBack.bind(this));
+		} else {
+			$("errors").style.display = "";
+			$("step6-error").style.display = "";
+			$("step6b-error").style.display = "none";
+			$("step6c-error").style.display = "none";
+			this.hidePendingIndicator("step6-go");
+		}
+	},
+
+	createWWSDPolicyPart : function() {
+		var result = "";
+		result += "<displayPolicy>\n";
+		if ($("step5-display-once").checked == true) {
+			result += "<once/>\n";
+		} else {
+			result += "<maxAge value=\"";
+			var minutes = 0;
+			minutes += $("step5-display-days").value * 60 * 24;
+			minutes += $("step5-display-hours").value * 60;
+			minutes += $("step5-display-minutes").value * 1;
+			result += minutes;
+			result += "\"></maxAge>\n";
+		}
+		result += "</displayPolicy>\n"
+
+		result += "<queryPolicy>\n"
+		if ($("step5-query-once").checked == true) {
+			result += "<once/>\n";
+		} else {
+			result += "<maxAge value=\"";
+			minutes = 0;
+			minutes += $("step5-query-days").value * 60 * 24;
+			minutes += $("step5-query-hours").value * 60;
+			minutes += $("step5-query-minutes").value * 1;
+			result += minutes;
+			result += "\"></maxAge>\n";
+		}
+		var delay = $("step5-delay").value;
+		if (delay.length == 0) {
+			delay = 0;
+		}
+		result += "<delay value=\"" + delay + "\"/>\n";
+		result += "</queryPolicy>\n"
+		result += "<spanOfLife value=\""
+				+ (0 + $("step5-spanoflife").value * 1);
+		if ($("step5-expires-yes").checked) {
+			result += "\" expiresAfterUpdate=\"true\" />\n";
+		} else {
+			result += "\" expiresAfterUpdate=\"false\" />\n";
+		}
+		return result;
+	},
+
+	updateParametersREST : function(updates) {
+		for (i = 0; i < updates.length; i++) {
+			this.appendRESTParameter();
+			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["path"];
+			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+			if (updates[i]["optional"] == "true") {
+				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+			}
+			if (updates[i]["defaultValue"] != "##") {
+				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+			}
+		}
+	},
+	
+	updateResultsREST : function(updates) {
+		for (i = 0; i < updates.length; i++) {
+			this.appendRESTResultPart();
+			$("step4-results").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["alias"];
+			$("step4-results").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["format"];
+			if(updates[i]["path"] != "##"){
+				$("step4-results").firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["path"];
+			}
+		}
+	},
+	
+	confirmStep1Change : function(protocol){
+		check = confirm("If you proceed, all input you already gave in the subsequent steps will be lost!");
+		if (check == false) {
+			if(protocol == "soap"){
+				$("step1-protocol-rest").checked = true;
+			} else {
+				$("step1-protocol-soap").checked = true;
+			}
+			
+			$("step1-uri").blur();
+			return;
+			
+		}
+		
+		this.processStep7();
+		if(protocol == "soap"){
+			$("step1-protocol-soap").checked = true;
+		}
+	},
+	
+	confirmStep2Change : function() {
+		check = confirm("If you proceed, all input you already gave in the subsequent steps will be lost!");
+		if (check == false) {
+			$("step2-methods").blur();
+			return;
+		}
+		$("step2").style.display = "none";
+		$("step3").style.display = "none";
+		$("step4").style.display = "none";
+		$("step5").style.display = "none";
+		$("step6").style.display = "none";
+		$("step1-go-img").style.display = "";
+		this.processStep1();
+	}
 }
 
 webServiceSpecial = new DefineWebServiceSpecial();
