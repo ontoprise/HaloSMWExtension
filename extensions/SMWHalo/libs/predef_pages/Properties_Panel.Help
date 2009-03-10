@@ -40,7 +40,7 @@ value is an article in the wiki.</div></li>
 <div style="font-weight:normal;">Click Add Range. A new text box appears where you can choose a range.<br>
 You can only choose a category that already exists. Autocomplete can assist<br>
 you in selecting a category. If you don't have auto-triggered auto-completion<br>
-enabled (see [[Help:Preferences|Preferences]]), press Ctrl+Alt+spacebar to start autocomplete.</div></li>
+enabled (see [[Help:SMW+_Preferences|Preferences]]), press Ctrl+Alt+spacebar to start autocomplete.</div></li>
 <li>Create the property.<br>
 <div style="font-weight:normal;">You can only create the property if your input is valid.<br>
 As long as your input is invalid, the Create button is grayed out.<br>

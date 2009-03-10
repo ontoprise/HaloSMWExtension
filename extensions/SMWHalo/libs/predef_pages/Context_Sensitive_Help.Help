@@ -6,7 +6,7 @@ The Context Sensitive Help (CSH) is a question-answer type of user assistance li
 
 To use the context sensitive help, the following requirements must be met:
 
-* Select OntoSkin or OntoSkin2 as default skin in your [[Help:Preferences|Preferences]].
+* Select OntoSkin or OntoSkin2 as default skin in your [[Help:SMW+_Preferences|Preferences]].
 * Add the following line to your <tt>LocalSettings.php</tt>:<br><tt><nowiki>$smwgAllowNewHelpQuestions = true;</nowiki></tt>
 
 Setting this variable to true means that all users are allowed to add new help topics to the help system. They can do this by clicking the link 'Ask your own question' on any page provided the [[Help:Semantic_Toolbar|Semantic Toolbar]] is available. If you set the variable to false, no help topics can be added. The existent questions, however, can still be accessed and edited.
