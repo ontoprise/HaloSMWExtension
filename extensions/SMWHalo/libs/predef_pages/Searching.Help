@@ -22,3 +22,5 @@ If you click the Search button without filling in anything, you will be taken to
 You may find it useful to restrict a search to pages within a particular [[Help:Namespaces|namespace]] (e.g., only search within the User pages). Select the namespaces you require for this search. 
 
 By default only the [[Help:Namespaces|namespaces]] specified in your [[Help:Preferences|preferences]] will be searched.  Logged-in users can change their preferences to specify the namespaces they want to search by default. This can be done by selecting and deselecting boxes in the Search section of user preferences.
+
+[[Category:MediaWiki Help Topic]]

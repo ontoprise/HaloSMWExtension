@@ -1,0 +1,77 @@
+__NOTOC__
+When viewing any page on a MediaWiki wiki, you'll find three main navigation elements:
+* '''Sidebar.''' The sidebar on the left gives you access to important pages in the wiki such as 'Related changes' or 'Upload file'.
+* '''Page Tabs.''' At the top of the page are links (often called ''tabs'') which relate to the page currently displayed: its associated discussion page, the version history, and&mdash;most notably&mdash;the edit link.
+* '''User Links.''' In the top right corner you'll find user links; as an anonymous user, you'll see a link to create an account or log in (they are the same page). As a logged-in user you have a collection of personal links, including ones to your user page and [[Help:Preferences|preferences]].
+ 
+== Sidebar ==
+
+The sidebar is displayed on the left edge of the page below the site logo (if using the default <tt>MonoBook</tt> skin). This sidebar gives you access to important pages in the wiki such as Recent changes or Upload file. 
+[[Image:M-en-sidebar.png|frame|right|Example Sidebar]]
+
+=== Navigation ===
+
+Clicking on the logo brings you back to the main page of the wiki. The links in the navigation section just below will take you to important pages of the wiki. These links can be configured by site administrators.
+<hr>
+<b>Tip &ndash;</b> You can customize the navigation links by editing <tt>MediaWiki:Sidebar</tt>. Some entries call for separate <tt>MediaWiki:</tt> pages. For example, to change the automatic link to the <tt>Main_Page</tt> you would change <tt>MediaWiki:Mainpage</tt> (target page) and <tt>MediaWiki:Mainpage-description</tt> (displayed text). You can find a list of such pages via <tt>Special:Allmessages</tt>. For more information, see [http://www.mediawiki.org/wiki/Manual:Interface/Sidebar Manual:Interface/Sidebar] on the MediaWiki Web site.
+<hr>
+
+=== Toolbox ===
+The toolbox contains a selection of links which change depending on what type of page you are viewing.
+
+On all pages (except special pages):
+; What links here : This link takes you to a special page that lists the pages on this wiki which contain a link to the current page. This is helpful when you are looking for pages of related information. The ''What links here'' information can also be useful when you are refactoring wiki pages and need to check whether links to this page are still relevant after changes in the current page.
+; Related changes : This tool lists all recent changes in the pages linked to from the current page. Recent changes to all relevant template pages are included in the resulting page list. The 'Hide minor edits' option that can be set in the user [[Help:Preferences|preferences]] applies, among other things, to Related Changes.
+
+On all pages (including special pages):
+
+; Upload file : This link leads to a special page that allows logged-in users to upload images and other files to the wiki. Uploaded files can be linked from or embedded in wiki pages. This is not displayed if file uploading has been disabled or not enabled in the first place.
+:Uploading files, viewing files on the server, including them in wiki pages and managing the uploaded files is discussed in the [[Help:Managing Files|managing files]] section of this manual.
+; Special pages : This tool lists the MediaWiki special pages. In MediaWiki terminology, a special page is one that presents information about the Wiki and/or allows access to administration activities for the wiki. For example, a list of users registered with the wiki, statistics about the wiki such as the number of pages and number of page edits, system logs, a list of orphaned pages, and so on. These special pages are commonly generated when the special page is loaded rather than being stored in the wiki database.
+:The function and use of the default special pages can be found in the [[Help:Special_Pages|special pages]] section of this manual.
+
+<hr>
+<b>Tip &ndash;</b> To enable file uploading someone with access to the MediaWiki installation files needs to edit the <tt>LocalSettings.php</tt> file and uncomment or add the option <tt>$wgEnableUploads = true;</tt>. Uploaded files will be stored in the images folder specified by the <tt>$wgUploadPath</tt> variable in the <tt>LocalSettings.php</tt>. This directory must be writable if file uploads is enabled. The [http://www.mediawiki.org/wiki/Manual:LocalSettings.php#Upload_location upload location] and [http://www.mediawiki.org/wiki/Manual:LocalSettings.php#Image_uploads image uploads] settings are described in more detail on the [http://www.mediawiki.org/wiki/Manual:LocalSettings.php LocalSettings.php] page.
+<hr>
+
+== Page Tabs ==
+
+The page tabs are displayed at the top of the article to the right of the site logo (if using the default <tt>MonoBook</tt> skin). These tabs allow you to perform actions or view pages that are related to the current article. The available default actions include: viewing, editing, and discussing the current article. The specific tabs displayed on your pages depend on whether or not you are logged into the wiki and whether you have sysop (administrator) privileges on the wiki. On special pages only the namespace tab is displayed.
+
+[[Image:M-en-pagetabs.png|frame|none|Default Page Tabs at the Top of the Page]]
+
+Default for all users:
+
+; [[Help:Namespaces|namespace]] : Namespaces divide the wiki into major sections (article, help, special page, template, user page, etc.).
+; discussion : Every article has an associated discussion page where visitors can write comments.
+; edit : The page tab where articles can be modified by users (may read 'view source' if anonymous editing is disabled, the page is in the <tt>MediaWiki</tt> namespace, or the page is protected).
+; history : MediaWiki keeps track of every edit made to every article. By clicking the page tab labeled 'history' on any article page you can see who edited the article, when they did it, and what changes they made.
+
+Extra tabs for logged-in users:
+
+; move : Rename the article.
+; watch : Be alerted when the article changes.
+
+Extra tabs for sysops:
+
+; protect : MediaWiki has a limited form of access control to articles, called ''protection''. 
+; delete : To delete an article, click the page tab labeled 'delete'. The delete page appears where you can provide a reason for the deletion. 
+
+Administrators can add or remove tabs by using JavaScript or installing extensions, so the tabs you see may be different depending on which wiki you are using.
+
+== User Links ==
+
+The user links are displayed at the top far right of the article (if using the default <tt>MonoBook</tt> skin). These tabs allow the logged-in user to view and edit their user page and wiki preferences. Additionally, the user links allow the user to quickly access their contributions to the wiki and logout.
+
+[[Image:M-en-userlinks.png|frame|none|Default User links at the Top Right of the Page]]
+
+For anonymous users the user links is replaced by a link to the wiki login page or, if enabled, a link to your IP address and your IP address's talk page.
+
+; <username> : This links to your user page which is where you can put information about yourself, store bits of information you want to remember or whatever else you fancy.
+; my talk : This links to your discussion page, where people can leave messages for you.
+; my preferences : Allows you to change your personal site preferences.
+; my watchlist : A list of all pages that you are watching. Pages can be added to this list by clicking 'watch' at the top of the page.
+; my contributions : A list of all contributions you have made to the wiki.
+; log out : Click this link to log out of the wiki.
+
+[[Category:MediaWiki Help Topic]]
