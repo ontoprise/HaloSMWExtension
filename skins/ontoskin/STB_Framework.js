@@ -26,11 +26,12 @@ var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relati
 var RULESCONTAINER = 7; // contains rules
 var CBSRCHCONTAINER = 8; // contains combined search functions
 var COMBINEDSEARCHCONTAINER = 9;
-var HELPCONTAINER = 10; // contains help
-var ANNOTATIONHINTCONTAINER = 11; // gardening hints in AAM
-var SAVEANNOTATIONSCONTAINER = 12; // save annotations in AAM
-var DBGCONTAINER = 13; // contains debug information
-var LASTCONTAINERIDX = 13;
+var WEBSERVICECONTAINER = 10;
+var HELPCONTAINER = 11; // contains help
+var ANNOTATIONHINTCONTAINER = 12; // gardening hints in AAM
+var SAVEANNOTATIONSCONTAINER = 13; // save annotations in AAM
+var DBGCONTAINER = 14; // contains debug information
+var LASTCONTAINERIDX = 14;
 
 ToolbarFramework.prototype = {
 
