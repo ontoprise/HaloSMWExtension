@@ -31,7 +31,7 @@ There are three default options. Four tildes are standard (full signature). Typi
 
 If you edit without logging in, your IP address will take the place of a username. Usernames and IP addresses are also stored in page histories as a record of who wrote what, so others can always verify signatures.
 
-The common format to type a signature – two hyphens (or a dash) followed by four tildes (<tt>-- '''<nowiki>~~~~</nowiki>'''</tt>) – is derived from the computer network Usenet, where two hyphens mark a signature block. The actual signature string, the tildes, automatically get substituted with username (linked to the appropriate user page) and timestamp (time/date), when you save a signed edit. This helps other users to follow the chronological order of discussions, and to identify the author of a particular comment. 
+The common format to type a signature is two hyphens (or a dash) followed by four tildes (<tt>-- '''<nowiki>~~~~</nowiki>'''</tt>), which is derived from the computer network Usenet, where two hyphens mark a signature block. The actual signature string, the tildes, automatically get substituted with username (linked to the appropriate user page) and timestamp (time/date), when you save a signed edit. This helps other users to follow the chronological order of discussions, and to identify the author of a particular comment. 
 
 If you don't find the tilde on your keyboard, you can use the signature button [[Image:Button sig.png|text-bottom|link=|sigunature button]] of the default edit toolbar as a typing aid.
 
