@@ -3,10 +3,10 @@ You can format your text using wiki markup. This consists of normal characters s
 
 == Text Formatting Markup ==
 
-{| class="wikitable"
-! style="width:15%" |Description
-! style="width:45%" |You type
-! style="width:40%" |You get
+{| border="1" cellpadding="5" style="background:#F9F9F9 none repeat scroll 0 0; border:1px solid #AAAAAA; border-collapse:collapse; empty-cells:show; margin:1em 1em 1em 0;"
+! style="width:15%; background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | Description 
+! style="width:45%; background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | You type
+! style="width:40%; background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | You get
 |-
 ! colspan="3" align="center" | character formatting - ''applies anywhere''
 |-
@@ -181,10 +181,10 @@ MediaWiki ignores normal line breaks. To start a new paragraph, leave an empty l
 
 Some HTML tags are allowed in MediaWiki, for example <tt><nowiki><code></nowiki></tt>, <tt><nowiki><div></nowiki></tt>, <tt><nowiki><span></nowiki></tt> and <tt><nowiki><font></nowiki></tt>. These apply anywhere you insert them.
 
-{| class="wikitable"
-!Description
-!You type
-!You get
+{| border="1" cellpadding="5" style="background:#F9F9F9 none repeat scroll 0 0; border:1px solid #AAAAAA; border-collapse:collapse; empty-cells:show; margin:1em 1em 1em 0;"
+! style="background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | Description 
+! style="background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | You type
+! style="background:#8DA7D6 none repeat scroll 0 0; text-align:center;" | You get
 |-
 |Fixed width text
 |
