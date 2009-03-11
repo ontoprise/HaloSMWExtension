@@ -36,15 +36,15 @@ var SMW_AC_AUTO_TRIGGERING_TIME = 800;
 var SMW_AJAX_AC = 1;
 
 function autoCompletionsOptions(request) { 
-	autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
-	document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
+    autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
+    document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
 }
 
 var AutoCompleter = Class.create();
 AutoCompleter.prototype = {
     initialize: function() {
-    	
-    	  // current input box of last AC request
+        
+          // current input box of last AC request
         this.currentInputBox;
 
          // type hint (for INPUTs)
@@ -96,12 +96,12 @@ AutoCompleter.prototype = {
         
         this.currentIESelection = null;
          // Get preference options
-		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
-		if (AC_mode == null) {
-			sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
-		} else {
-			this.autoTriggering = (AC_mode == 'auto');
-		}
+        var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
+        if (AC_mode == null) {
+            sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
+        } else {
+            this.autoTriggering = (AC_mode == 'auto');
+        }
     },
 
      /* Cancels event propagation */
@@ -165,12 +165,12 @@ AutoCompleter.prototype = {
         var eL = this.getEventElement(e);
 
         var upEl = eL.className.indexOf("wickEnabled") >= 0 ? eL : undefined;
-		
+        
         var kc = e["keyCode"];
-		var isFloaterVisible = (this.siw && this.siw.floater.style.visibility == 'visible');
-		
-		// remember old cursor position (only IE)
-		if (OB_bd.isIE) this.currentIESelection = document.selection.createRange();
+        var isFloaterVisible = (this.siw && this.siw.floater.style.visibility == 'visible');
+        
+        // remember old cursor position (only IE)
+        if (OB_bd.isIE) this.currentIESelection = document.selection.createRange();
         if (isFloaterVisible && this.siw && ((kc == 13) || (kc == 9))) {
             this.siw.selectingSomething = true;
 
@@ -181,14 +181,14 @@ AutoCompleter.prototype = {
         } else if (upEl && (kc != 38) && (kc != 40) && (kc != 37) && (kc != 39) && (kc != 13) && (kc != 27)) {
             if (!this.siw || (this.siw && !this.siw.selectingSomething)) {
               if ((e["ctrlKey"] && (kc == 32)) || isFloaterVisible) {
-              	if (OB_bd.isIE && !isFloaterVisible && !e["altKey"]) {
-              		// only relevant to IE. removes the whitespace which is pasted when pressing Ctrl+Space
-              		var userInput = this.getUserInputToMatch();
-              		var selection_range = document.selection.createRange();
-            		selection_range.moveStart("character", -userInput.length-1);
-            		selection_range.text = userInput.substr(0, userInput.length-1);
-            		selection_range.collapse(false);
-              	}
+                if (OB_bd.isIE && !isFloaterVisible && !e["altKey"]) {
+                    // only relevant to IE. removes the whitespace which is pasted when pressing Ctrl+Space
+                    var userInput = this.getUserInputToMatch();
+                    var selection_range = document.selection.createRange();
+                    selection_range.moveStart("character", -userInput.length-1);
+                    selection_range.text = userInput.substr(0, userInput.length-1);
+                    selection_range.collapse(false);
+                }
                 if (!this.siw) this.siw = new SmartInputWindow();
                 this.siw.inputBox = upEl;
                 this.currentInputBox = upEl;
@@ -224,12 +224,12 @@ AutoCompleter.prototype = {
                     }
                  // uncomment the following else statement to activate auto-triggering
                 } else if (this.autoTriggering) {
-                	if (kc==17 || kc==18) return; //ignore Ctrt/Alt when pressed without any key
-                	if (!this.siw) this.siw = new SmartInputWindow();
-                	this.siw.inputBox = upEl;
-                	this.currentInputBox = upEl;
-                	 // get type hint 
-                	this.typeHint = this.siw.inputBox.getAttribute("typeHint");
+                    if (kc==17 || kc==18) return; //ignore Ctrt/Alt when pressed without any key
+                    if (!this.siw) this.siw = new SmartInputWindow();
+                    this.siw.inputBox = upEl;
+                    this.currentInputBox = upEl;
+                     // get type hint 
+                    this.typeHint = this.siw.inputBox.getAttribute("typeHint");
                 
                     if (GeneralBrowserTools.isTextSelected(this.siw.inputBox)) {
                          // do not trigger auto AC when something is selected.
@@ -268,7 +268,7 @@ AutoCompleter.prototype = {
                 }
             }
         } else if (kc == 27) { // escape pressed -> hide floater
-        	 this.hideSmartInputFloater();
+             this.hideSmartInputFloater();
              this.freezeEvent(e);
               this.resetCursorinIE();
         } else if (this.siw && this.siw.inputBox) {
@@ -289,7 +289,7 @@ AutoCompleter.prototype = {
              return;
             }
 
-             // if something went wrong, abort here and hide floater	
+             // if something went wrong, abort here and hide floater    
             if (request.status != 200) {
                  //alert("Error: " + request.status + " " + request.statusText + ": " + request.responseText);
                 this.hideSmartInputFloater();
@@ -310,11 +310,11 @@ AutoCompleter.prototype = {
             if (this.collection.length > 0) {
                 AC_matchCache.addLookup(userContext + userInputToMatch, this.collection, typeHint);
             }
-			
+            
              // process match results
             this.processSmartInput(inputBox, userInputToMatch);
         }
-		this.notMoved = true;
+        this.notMoved = true;
         this.ignorePending = false;
 
          // check if AC result for current user input is in cache
@@ -345,7 +345,7 @@ AutoCompleter.prototype = {
     handleKeyDown: function(event) {
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
-		
+        
         if (this.siw && (kc = e["keyCode"])) {
 
             if (kc == 40 && this.siw.floater.style.visibility == 'visible') {
@@ -368,8 +368,8 @@ AutoCompleter.prototype = {
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
             } else if (kc == 27) {
-            	ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
-            	smwhgLogger.log("", "AC", "close_without_selection");
+                ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
+                smwhgLogger.log("", "AC", "close_without_selection");
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
                 this.resetCursorinIE();
@@ -398,14 +398,14 @@ AutoCompleter.prototype = {
         var eL2 = this.getEventElement(e2);
         this.mousePressed = false;
 
- 		if (this.siw && this.siw.selectingSomething) {
- 			this.resetCursorinIE();
+        if (this.siw && this.siw.selectingSomething) {
+            this.resetCursorinIE();
             this.selectFromMouseClick();
-			
+            
         }
     },  //handleClick()
     handleMouseOver: function(event) {
-    	if (this.notMoved) return;
+        if (this.notMoved) return;
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
 
@@ -436,8 +436,8 @@ AutoCompleter.prototype = {
         }
     },
     handleMouseMove: function(event) {
-    	this.notMoved = false;
-    	if (OB_bd.isIE) return;
+        this.notMoved = false;
+        if (OB_bd.isIE) return;
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
 
@@ -463,43 +463,45 @@ AutoCompleter.prototype = {
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
 
                 if (!OB_bd.isGecko && !OB_bd.isIE) y += 10;
-				
-				// read position flag and set it: fixed and absolute is possible
-				var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
-				if (posStyle == null || posStyle == 'absolute') {
-					Element.setStyle(this.siw.floater, { position: 'absolute'});
-					x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
-                	y = y;
-				} else if (posStyle == 'fixed') {
-                	Element.setStyle(this.siw.floater, { position: 'fixed'});
-                	                	
-				}
-				
-				// read alignment flag and set position accordingly
-				var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
-				var globalWrapper = $("globalWrapper");
-				if (alignment == null || alignment == 'left') {
-                	this.siw.floater.style.left = x + "px";
-                	this.siw.floater.style.top = y + "px";
-				} else {
-					this.siw.floater.style.right = (globalWrapper.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
-                	this.siw.floater.style.top = y + "px";
-				}
+                
+                // read position flag and set it: fixed and absolute is possible
+                var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
+                if (posStyle == null || posStyle == 'absolute') {
+                    Element.setStyle(this.siw.floater, { position: 'absolute'});
+                    x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
+                    y = y;
+                } else if (posStyle == 'fixed') {
+                    Element.setStyle(this.siw.floater, { position: 'fixed'});
+                                        
+                }
+                
+                // read alignment flag and set position accordingly
+                var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
+                var globalWrapper = $("globalWrapper");
+                if (alignment == null || alignment == 'left') {
+                    this.siw.floater.style.left = x + "px";
+                    this.siw.floater.style.top = y + "px";
+                } else {
+                    this.siw.floater.style.right = (globalWrapper.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+                    this.siw.floater.style.top = y + "px";
+                }
             } else {
-            	if (!this.siw.inputBox) return;
+                if (!this.siw.inputBox) return;
                  //you may
                  //do additional things for your custom floater
                  //beyond setting display and visibility
                 var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
                  // Browser dependant! only IE ------------------------
-                if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
+                 
+                 // the following does not work with different skins - deactivated
+                /*if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
                     // put floater at cursor position
                     // method to calculate floater pos is slightly different in advanced editor
                    
-					var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
+                    var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
                     var posY = this.findElementPosY(textarea);
-                    var posX = this.findElementPosX(textarea);
-					
+                    var posX = Position.page(textarea)[0];//this.findElementPosX(textarea);
+                    alert(posY +" : "+ posX);
                     textarea.focus();
                     var textScrollTop = textarea.scrollTop;
                     var documentScrollPos = document.documentElement.scrollTop;
@@ -508,39 +510,33 @@ AutoCompleter.prototype = {
                     selection_range.collapse(true);
                     
                     if (advancedEditor) {
-                    	var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-                    	this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                       	this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+                        this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                        this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
                     }  else {                 
-	                    this.siw.floater.style.left = selection_range.boundingLeft - posX;
-	                    this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-	                    this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                        this.siw.floater.style.left = selection_range.boundingLeft - posX;
+                        this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+                        this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                        var left = selection_range.boundingLeft - posX;
+                        alert("Left:"+left);
                     }
                  // only IE -------------------------
 
-                }
+                }*/
 
-                if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
+                if ((OB_bd.isGecko || OB_bd.isIE) && this.siw.inputBox.tagName == 'TEXTAREA') {
                      //TODO: remove the absolute values to the width/height specified in css
 
                     var x = GeneralBrowserTools.getCookie("this.AC_userDefinedX");
                     var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
 
-					
+                    
                     if (x != null && y != null) { // If position cookie defined, use it. 
                         this.siw.floater.style.left = x + "px";
                         this.siw.floater.style.top = y + "px";
                     } else { // Otherwise use standard position: Left bottom corner.
-                    	if (advancedEditor) {
-                    		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-                    		this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                       		this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-                    	} else {
-                    		this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
-                       		this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160) + "px";
-                    	}
-                    	
-                       
+                        this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
+                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160) + "px";
                     }
                 }
             }
@@ -550,16 +546,16 @@ AutoCompleter.prototype = {
             this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
-	
-	/**
-	 * Resets cursor and sets scroll pos to cursor pos. (in IE)
-	 */
-	resetCursorinIE: function() {
-		if (!OB_bd.isIE) return;
-		this.currentIESelection.scrollIntoView(true);
-		this.currentIESelection.collapse(false);
-		this.currentIESelection.select();
-	},
+    
+    /**
+     * Resets cursor and sets scroll pos to cursor pos. (in IE)
+     */
+    resetCursorinIE: function() {
+        if (!OB_bd.isIE) return;
+        this.currentIESelection.scrollIntoView(true);
+        this.currentIESelection.collapse(false);
+        this.currentIESelection.select();
+    },
      /**
      * Shows small graphic indicating an AJAX call.
      */
@@ -567,9 +563,9 @@ AutoCompleter.prototype = {
         var pending = $("pendingAjaxIndicator");
 
         if (!this.siw) this.siw = new SmartInputWindow();
- 		var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
- 		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
- 		
+        var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
+        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+        
          // Browser dependant! only IE ------------------------
         if (OB_bd.isIE && inputBox.tagName == 'TEXTAREA') {
              // put floater at cursor position
@@ -583,12 +579,12 @@ AutoCompleter.prototype = {
             selection_range.collapse(true);
             
             if (advancedEditor) {
-            	pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
                 pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
             } else {
-            	pending.style.left = selection_range.boundingLeft - posX
-            	pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-			}
+                pending.style.left = selection_range.boundingLeft - posX
+                pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+            }
          // only IE -------------------------
 
         }
@@ -599,26 +595,26 @@ AutoCompleter.prototype = {
             var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
 
             if (x != null && y != null) {
-            	
+                
                 var posY = this.findElementPosY(advancedEditor ? iFrameOfAdvEditor : inputBox);
                 var posX = this.findElementPosX(advancedEditor ? iFrameOfAdvEditor : inputBox);
 
                 pending.style.left = (parseInt(x) + posX) + "px";
                 pending.style.top = (parseInt(y) + posY) + "px";
             } else {
-            	if (advancedEditor) {
-            		pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                	pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-            	} else {
-                	pending.style.left = (this.findElementPosX(inputBox) + inputBox.offsetWidth - 360) + "px";
-                	pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
-            	}
+                if (advancedEditor) {
+                    pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                    pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                } else {
+                    pending.style.left = (this.findElementPosX(inputBox) + inputBox.offsetWidth - 360) + "px";
+                    pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
+                }
             }
         }
         
         // set pending indicator for input field
         if (inputBox.tagName != 'TEXTAREA') {
-        	pending.style.left = (Position.cumulativeOffset(inputBox)[0]) + "px";
+            pending.style.left = (Position.cumulativeOffset(inputBox)[0]) + "px";
             pending.style.top = (Position.cumulativeOffset(inputBox)[1]) + "px";
         }
 
@@ -678,8 +674,8 @@ AutoCompleter.prototype = {
         } else this.hideSmartInputFloater();
     },                                                                                                 //this.processSmartInput()
     simplify: function(s) { 
-    	var nopipe = s.indexOf("|") != -1 ? s.substring(0, s.indexOf("|")).strip() : s; // strip everthing after a pipe
-    	return nopipe.replace(/^[ \s\f\t\n\r]+/, '').replace(/[ \s\f\t\n\r]+$/, ''); 
+        var nopipe = s.indexOf("|") != -1 ? s.substring(0, s.indexOf("|")).strip() : s; // strip everthing after a pipe
+        return nopipe.replace(/^[ \s\f\t\n\r]+/, '').replace(/[ \s\f\t\n\r]+$/, ''); 
     },  //this.simplify
 
      /*
@@ -740,14 +736,14 @@ AutoCompleter.prototype = {
     */
     getTextBeforeCursor: function() {
         if (OB_bd.isIE) {
-        //	debugger;
-        /*	var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
-        	if (advancedEditor) {
-        		var textbeforeCursor = editAreaLoader.getValue("wpTextbox1").substring(0, editAreaLoader.getSelectionRange("wpTextbox1")["start"]);
-        		return textbeforeCursor;
-        	} else {*/
+        //  debugger;
+        /*  var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
+            if (advancedEditor) {
+                var textbeforeCursor = editAreaLoader.getValue("wpTextbox1").substring(0, editAreaLoader.getSelectionRange("wpTextbox1")["start"]);
+                return textbeforeCursor;
+            } else {*/
 
-        	this.siw.inputBox.focus();
+            this.siw.inputBox.focus();
             var selection_range = document.selection.createRange();
             var selection_rangeWhole = document.selection.createRange();
             selection_rangeWhole.moveToElementText(this.siw.inputBox);
@@ -755,7 +751,7 @@ AutoCompleter.prototype = {
             selection_range.setEndPoint("StartToStart", selection_rangeWhole);
             
             return selection_range.text;
-        //	}
+        //  }
         } else if (OB_bd.isGecko) {
             var start = this.siw.inputBox.selectionStart;
             return this.siw.inputBox.value.substring(0, start);
@@ -769,7 +765,7 @@ AutoCompleter.prototype = {
     * Returns all text right from cursor.
     */
     getTextAfterCursor: function() {
-    	if (OB_bd.isIE) {
+        if (OB_bd.isIE) {
             var selection_range = document.selection.createRange();
 
             var selection_rangeWhole = document.selection.createRange();
@@ -788,7 +784,7 @@ AutoCompleter.prototype = {
     
     getUserInputBase: function() {
         var s = this.siw.inputBox.value;
-       	var lastComma = s.lastIndexOf(";");
+        var lastComma = s.lastIndexOf(";");
         return s.substr(0, lastComma+1);
     },  //this.getUserInputBase()
     highlightMatches: function(userInput) {
@@ -803,8 +799,8 @@ AutoCompleter.prototype = {
         var re2m = new RegExp("([ \"\>\<\-]+)(" + userInput + ")", "i");
         var re1 = new RegExp("([ \"\}\{\-]*)(" + userInput + ")", "gi");
         var re2 = new RegExp("([ \"\}\{\-]+)(" + userInput + ")", "gi");
-		var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
-		
+        var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
+        
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
             var displayMatches = (j < this.siw.MAX_MATCHES);
             var entry = pointerToCollectionToUse[i];
@@ -914,7 +910,7 @@ AutoCompleter.prototype = {
         this.activateCurrentSmartInputMatch();
          //this.siw.inputBox.focus();
         this.siw.inputBox.focus();
-		this.siw.inputBox.blur();
+        this.siw.inputBox.blur();
         this.hideSmartInputFloater();
     },  //this.selectFromMouseClick
     getIndexFromElement: function(o) {
@@ -991,7 +987,7 @@ AutoCompleter.prototype = {
             this.insertTerm(addedValue, baseValue, this.siw.matchCollection[selIndex].getType());
             this.ignorePending = true;
         } else {
-        	smwhgLogger.log("", "AC", "close_without_selection");
+            smwhgLogger.log("", "AC", "close_without_selection");
         }
     },  //this.activateCurrentSmartInputMatch
     insertTerm: function(addedValue, baseValue, type) {
@@ -1002,37 +998,37 @@ AutoCompleter.prototype = {
 
         if (this.siw.customFloater) {
             if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) 
-            	&& !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
+                && !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
                 addedValue += "]]";
             } else if (type == SMW_PROPERTY_NS) {
                 addedValue += "::";
             } else if (type == SMW_INSTANCE_NS) {
-            	if (!userContext.match(/|(\s|\r|\n)*$/)) { 
-            		addedValue += "]]"; // add only if instance is no template parameter
-            	}
+                if (!userContext.match(/|(\s|\r|\n)*$/)) { 
+                    addedValue += "]]"; // add only if instance is no template parameter
+                }
              }else if (addedValue.match(/category/i)) {
                 addedValue += ":";
             }
         }
-		
-		
+        
+        
         if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
             this.siw.inputBox.focus();
             
             // set old cursor position
             this.currentIESelection.collapse(false);
-			this.currentIESelection.select();
+            this.currentIESelection.select();
             var userInput = this.getUserInputToMatch();
-			
-			if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-            	userInput = this.removeNumberFromMeasure(userInput);
+            
+            if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
+                userInput = this.removeNumberFromMeasure(userInput);
             }
              // get TextRanges with text before and after user input
              // which is to be matched.
              // e.g. [[category:De]] would return:
              // range1 = [[category:
              // range2 = ]]      
-			
+            
             var selection_range = document.selection.createRange();
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = addedValue;
@@ -1046,7 +1042,7 @@ AutoCompleter.prototype = {
             var userInput = this.getUserInputToMatch();
             
             if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-            	userInput = this.removeNumberFromMeasure(userInput);
+                userInput = this.removeNumberFromMeasure(userInput);
             }
              // save scroll position
             var scrollTop = this.siw.inputBox.scrollTop;
@@ -1071,18 +1067,18 @@ AutoCompleter.prototype = {
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
-        	var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
+            var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
             var theString = (baseValue ? baseValue : "") + addedValue;
-        	if (pasteNS != null) {
-        		switch(type) {
-        			
-        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
-        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
-        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
-        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
-        			case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
-        		}
-        	}
+            if (pasteNS != null) {
+                switch(type) {
+                    
+                    case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
+                    case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
+                    case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
+                    case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
+                    case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
+                }
+            }
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
@@ -1094,13 +1090,13 @@ AutoCompleter.prototype = {
      *  If that is the case, remove number from userinput
      */
     removeNumberFromMeasure: function(measure) {
-    	var result = measure;
-    	
-	    var matches = result.match(/[+-]?\d+(\.\d+([eE][+-]?\d*)?)?_+/gi);
-	    if (matches) {
-	       	result = result.substr(matches[0].length);
-	    }
-	    return result;
+        var result = measure;
+        
+        var matches = result.match(/[+-]?\d+(\.\d+([eE][+-]?\d*)?)?_+/gi);
+        if (matches) {
+            result = result.substr(matches[0].length);
+        }
+        return result;
     },
 
 
@@ -1123,10 +1119,10 @@ AutoCompleter.prototype = {
         AC_matchCache = new MatchCache();
         
         // register inputs
-		this.registerAllInputs();
-		
-		// register textareas
-		this.textAreas = new Array();
+        this.registerAllInputs();
+        
+        // register textareas
+        this.textAreas = new Array();
         var y = 0;
          // copy all wickEnabled textareas
         if (texts) {
@@ -1161,16 +1157,16 @@ AutoCompleter.prototype = {
         Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
     },  //registerSmartInputListeners
 
-	/**
-	 * Register all INPUT tags on page.
-	 */
-	registerAllInputs: function() {
-		
+    /**
+     * Register all INPUT tags on page.
+     */
+    registerAllInputs: function() {
+        
         var inputs = document.getElementsByTagName("input");
         this.allInputs = new Array();
         var x = 0;
         var z = 0;
-		var c = null;
+        var c = null;
          // copy all wickEnabled inputs
         if (inputs) {
             while (inputs[x]) {
@@ -1183,58 +1179,58 @@ AutoCompleter.prototype = {
                 x++;
             }  //
         }
-		 for (i = 0; i < this.allInputs.length; i++) {
+         for (i = 0; i < this.allInputs.length; i++) {
             if ((c = this.allInputs[i][0].className) && (c.indexOf("wickEnabled") != -1)) {
                 this.allInputs[i][0].setAttribute("autocomplete", "OFF");
                 this.allInputs[i][1] = this.handleBlur.bindAsEventListener(this);
                 Event.observe(this.allInputs[i][0], "blur",  this.allInputs[i][1]);
-	        }
+            }
         }  //loop thru inputs
-	},
-	
-	/**
-	 * Deregister all INPUT tags on page.
-	 */
-	deregisterAllInputs: function() {
-		if (this.allInputs != null) {
-			 for (i = 0; i < this.allInputs.length; i++) {
+    },
+    
+    /**
+     * Deregister all INPUT tags on page.
+     */
+    deregisterAllInputs: function() {
+        if (this.allInputs != null) {
+             for (i = 0; i < this.allInputs.length; i++) {
                 Event.stopObserving(this.allInputs[i][0], "blur",  this.allInputs[i][1]);
-        	 }  //loop thru inputs
-		}
-	},
-	/**
-	 * Register an additional textarea in another iframe for Auto-Completion
-	 * 
-	 * @param textAreaID TextArea which will be registered. 
+             }  //loop thru inputs
+        }
+    },
+    /**
+     * Register an additional textarea in another iframe for Auto-Completion
+     * 
+     * @param textAreaID TextArea which will be registered. 
      * @param iFrame One of window.frames[ID]. 
-	 */
-	registerTextArea: function(textAreaID, iFrame) {
-	
+     */
+    registerTextArea: function(textAreaID, iFrame) {
+    
         if (iFrame && textAreaID) {
-        	var textArea = iFrame.document.getElementById(textAreaID);
-        	if (textArea) {
-        		if (this.textAreas.indexOf(textArea) != -1) {
-        			return; // do not register twice
-        		}
-            	this.textAreas.push(textArea);
-            	
-            	var iFrameDocument = iFrame.document;
-        		// register events
-       			Event.observe(iFrameDocument, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
-       			Event.observe(iFrameDocument, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
-       			Event.observe(iFrameDocument, "mouseup", this.handleClick.bindAsEventListener(this), false);
+            var textArea = iFrame.document.getElementById(textAreaID);
+            if (textArea) {
+                if (this.textAreas.indexOf(textArea) != -1) {
+                    return; // do not register twice
+                }
+                this.textAreas.push(textArea);
+                
+                var iFrameDocument = iFrame.document;
+                // register events
+                Event.observe(iFrameDocument, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
+                Event.observe(iFrameDocument, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
+                Event.observe(iFrameDocument, "mouseup", this.handleClick.bindAsEventListener(this), false);
 
-	        	if (OB_bd.isGecko) {	
-   		        	 // needed for draggable floater in FF
-   	   		     	Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
-   			     	Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
-   			 	}
+                if (OB_bd.isGecko) {    
+                     // needed for draggable floater in FF
+                    Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
+                    Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
+                }
 
-	        	Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
-        	}
+                Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
+            }
         }
        
-	},
+    },
      // ------- Create HTML containers and elements --------------
 
      /*
@@ -1281,14 +1277,14 @@ AutoCompleter.prototype = {
         Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
         container.appendChild(f);
         
-	    var acMessage = document.createElement("div");
-	    Element.addClassName(acMessage, "acMessage");
+        var acMessage = document.createElement("div");
+        Element.addClassName(acMessage, "acMessage");
         if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
-	        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
+            acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
         } else {
-        	acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
+            acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
         }
-	    container.appendChild(acMessage);
+        container.appendChild(acMessage);
         this.AC_idCounter++;
     },
 
@@ -1385,7 +1381,7 @@ function SmartInputMatch(cleanValue, value, type) {
             return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
         } else if (_type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-        	return "<img src=\"" + wgServer + wgScriptPath
+            return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/enum.gif\">";
         }
 
@@ -1414,49 +1410,49 @@ function MatchCache() {
      //TODO: would be nice to implement a better cache replace strategy
     this.addLookup = function(matchText, matches, typeHint) {
         if (matchText == "" || matchText == null) return;
-		
-		if (typeHint == null) {
-			// use general cache
-			if (generalCache.keys().length == MAX_CACHE) {
-            	generalCache.remove(generalCache.keys()[nextToReplace]);
-            	nextToReplace++;
+        
+        if (typeHint == null) {
+            // use general cache
+            if (generalCache.keys().length == MAX_CACHE) {
+                generalCache.remove(generalCache.keys()[nextToReplace]);
+                nextToReplace++;
 
-            	if (nextToReplace == MAX_CACHE) {
-              	  nextToReplace = 0;
-            	}
-       	 	}
+                if (nextToReplace == MAX_CACHE) {
+                  nextToReplace = 0;
+                }
+            }
 
-        	generalCache[matchText] = matches;
-		} else {
-			// use typeFiltered cache
-			var cache = typeFilteredCache[parseInt(typeHint)];
-			if (!cache) return;
-			if (cache.keys().length == MAX_CACHE) {
-            	cache.remove(cache.keys()[nextToReplace]);
-            	nextToReplace++;
+            generalCache[matchText] = matches;
+        } else {
+            // use typeFiltered cache
+            var cache = typeFilteredCache[parseInt(typeHint)];
+            if (!cache) return;
+            if (cache.keys().length == MAX_CACHE) {
+                cache.remove(cache.keys()[nextToReplace]);
+                nextToReplace++;
 
-            	if (nextToReplace == MAX_CACHE) {
-              	  nextToReplace = 0;
-            	}
-       	 	}
+                if (nextToReplace == MAX_CACHE) {
+                  nextToReplace = 0;
+                }
+            }
 
-        	cache[matchText] = matches;
-		}
+            cache[matchText] = matches;
+        }
       
     }
 
     this.getLookup = function(matchText, typeHint) {
-    	if (typeHint == null) {
-    		// use general cache
-        	if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
-           	 	return generalCache[matchText];
-        	}
-    	} else {
-    		// use typeFiltered cache
-    		var cache = typeFilteredCache[parseInt(typeHint)];
-			if (!cache) return null;
-			return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
-    	}
+        if (typeHint == null) {
+            // use general cache
+            if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
+                return generalCache[matchText];
+            }
+        } else {
+            // use typeFiltered cache
+            var cache = typeFilteredCache[parseInt(typeHint)];
+            if (!cache) return null;
+            return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
+        }
 
         return null;  // lookup failed
     }
