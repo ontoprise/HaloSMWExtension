@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:tns="http://sparulendpoint.triplestore.smwplus.ontoprise.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://sparulendpoint.triplestore.smwplus.ontoprise.com/" name="sparulEndpointService">
+
+  <message name="update">
+    <part name="arg0" type="xsd:string" />
+   
+  </message>
+  <message name="updateResponse"/>
+  
+  <message name="TripleStoreException">
+    <part name="fault" element="tns:TripleStoreException" />
+  </message>
+ 
+  <portType name="sparulEndpoint">
+    <operation name="update" parameterOrder="arg0 arg1 arg2">
+
+      <input message="tns:update" />
+      <output message="tns:updateResponse" />
+      <fault name="TripleStoreException" message="tns:TripleStoreException" />
+     
+    </operation>
+   
+
+  </portType>
+  <binding name="sparulEndpointPortBinding" type="tns:sparulEndpoint">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <operation name="update">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://sparulendpoint.triplestore.smwplus.ontoprise.com/" />
+      </input>
+      <output>
+
+        <soap:body use="literal" namespace="http://sparulendpoint.triplestore.smwplus.ontoprise.com/" />
+      </output>
+      <fault name="TripleStoreException">
+        <soap:fault name="TripleStoreException" use="literal" />
+      </fault>
+     
+    </operation>
+
+    
+
+  </binding>
+  <service name="sparulEndpointService">
+    <port name="sparulEndpointPort" binding="tns:sparulEndpointPortBinding">
+      <soap:address location="http://{{webservice-endpoint}}/sparul" />
+    </port>
+  </service>
+</definitions>

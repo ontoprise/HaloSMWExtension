@@ -36,7 +36,16 @@ function smwf_ws_getWSDL($wsdlID) {
 		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
-	}  else if ($wsdlID == 'get_manage') {
+	}  else if ($wsdlID == 'get_sparul') {
+        $wsdl = "extensions/SMWHalo/includes/webservices/sparul.wsdl";
+        $handle = fopen($wsdl, "rb");
+        $contents = fread ($handle, filesize ($wsdl));
+        fclose($handle);
+        global $smwgWebserviceEndpoint;
+        if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+        else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
+        exit;
+    }  else if ($wsdlID == 'get_manage') {
         $wsdl = "extensions/SMWHalo/includes/webservices/manage.wsdl";
         $handle = fopen($wsdl, "rb");
         $contents = fread ($handle, filesize ($wsdl));
