@@ -207,30 +207,31 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		return $result;
 	}
 	
-	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
-		
-		$db =& wfGetDB( DB_SLAVE ); 
-		$page = $db->tableName('page');
-		$categorylinks = $db->tableName('categorylinks');
-		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from AND p2.page_is_redirect = 0 AND cl_to = p2.page_title'.
-			DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
+    function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL) {
+        
+        $db =& wfGetDB( DB_SLAVE ); 
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        $sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from '.
+            DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
-		$res = $db->select( array($page.' p1', $categorylinks, $page.' p2'), 
-		                    'DISTINCT cl_to',
-		                    $sql, 'SMW::getCategoriesForInstance',  DBHelper::getSQLOptions($requestoptions,'cl_to'));
-		// rewrite result as array
-		$result = array();
-		
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
-				
-			}
-		}
-		$db->freeResult($res);
+        $res = $db->select( array($page.' p1', $categorylinks), 
+                            'DISTINCT cl_to',
+                            $sql, 'SMW::getCategoriesForInstance',  DBHelper::getSQLOptions($requestoptions,'cl_to'));
+        // rewrite result as array
+        $result = array();
+        
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $title = Title::newFromText($row->cl_to, NS_CATEGORY);
+                if (!$title->isRedirect()) $result[] = $title;
+                
+            }
+        }
+        $db->freeResult($res);
 
-		return $result;
-	}
+        return $result;
+    }
 	
 	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
 		$db =& wfGetDB( DB_SLAVE ); 
