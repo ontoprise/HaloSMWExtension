@@ -35,5 +35,5 @@ Simply click the blue arrow to the left of the page name and timestamp to expand
 <b>Note &ndash;</b> You may want to add important pages in your wiki to <tt>MediaWiki:Recentchangestext</tt>, the intro shown at <tt>Special:RecentChanges</tt>.
 <hr>
 
-[[Category:MediaWiki Help Topic]]
+[[Category:MediaWiki Help Topic|Tracking Changes]]
 

@@ -31,4 +31,5 @@ Don't forget to setup redirects when you create a page. If you think another per
 
 Normally a new wiki page can be edited by other people. However, a sysop could 'protect' the page, if desired, to prevent normal users from editing it.
 
-[[Category:MediaWiki Help Topic]]
+[[Category:MediaWiki Help Topic|Starting New Pages]]
+

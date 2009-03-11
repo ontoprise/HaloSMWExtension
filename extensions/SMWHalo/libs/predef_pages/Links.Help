@@ -148,4 +148,4 @@ Interlanguage links behave similar to interwiki links, except that they are list
 If you want to make the interlanguage link to appear in the content of the page, you can add a colon before the language prefix (e.g., <tt><nowiki>[[:en:Sunflower]]</nowiki></tt>).
 
 
-[[Category:MediaWiki Help Topic]]
+[[Category:MediaWiki Help Topic|Links]]
