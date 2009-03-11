@@ -7,6 +7,7 @@ $wgFileExtensions = array_merge($wgFileExtensions, array(
 // 'rtf', 'mp2', 'ott' + 'stw' (OpenOfficeTextvorlage)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
 
+define('MIME_TYPE_EXTENSION');
 define('NS_DOCUMENT', 120);
 define('NS_DOCUMENT_TALK', 121);
 define('NS_AUDIO', 122);

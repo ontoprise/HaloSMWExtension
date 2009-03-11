@@ -83,7 +83,7 @@ function wfUSSetupExtension() {
 	global $smwgHaloIP;
 	$wgAutoloadClasses['USDBHelper'] = $dir . 'storage/US_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-
+    $wgAutoloadClasses['SmithWaterman'] = $dir . 'SmithWaterman.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';

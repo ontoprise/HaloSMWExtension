@@ -164,7 +164,7 @@ class QueryExpander {
 	 * @param int $limit Limit of matches in SKOS ontology
 	 * @return array of Title
 	 */
-	public function expandForTitles($terms, array $namespaces, $tolerance = 0, $limit=10) {
+	public static function expandForTitles($terms, array $namespaces, $tolerance = 0, $limit=10) {
 
 		$db =& wfGetDB( DB_SLAVE );
 		// create virtual tables
@@ -217,26 +217,26 @@ class QueryExpander {
 	 * @param string $operator
 	 * @return string
 	 */
-	private static function opTerms(array $terms, $operator) {
+	public static function opTerms(array $terms, $operator) {
 		$i = 0;
 		$connectedParts = 0; // number of _actually_ connected $terms
 		$result = "";
 		foreach($terms as $t) {
 			if ($t == NULL) continue;
 			if ($t instanceof Title) {
-				if ($i === 0) $result .= $t->getText(); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
+				if ($i === 0) $result .= self::quoteIfNecessary($t->getText()); else $result .= " $operator ".self::quoteIfNecessary($t->getText());
 				$connectedParts++;
 			} else if ($t instanceof SMWPropertyValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				if ($i === 0) $result .= self::quoteIfNecessary($t->getXSDValue()); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if ($t instanceof SMWStringValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				if ($i === 0) $result .= self::quoteIfNecessary($t->getXSDValue()); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if ($t instanceof SMWWikiPageValue ) {
-				if ($i === 0) $result .= $t->getXSDValue(); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
+				if ($i === 0) $result .= self::quoteIfNecessary($t->getXSDValue()); else $result .= " $operator ".self::quoteIfNecessary($t->getXSDValue());
 				$connectedParts++;
 			} else if (is_string($t) && strlen($t) > 0) {
-				if ($i === 0) $result .= $t; else $result .= " $operator ".self::quoteIfNecessary($t);
+				if ($i === 0) $result .= self::quoteIfNecessary($t); else $result .= " $operator ".self::quoteIfNecessary($t);
 				$connectedParts++;
 			}
 			$i++;
@@ -257,8 +257,17 @@ class QueryExpander {
 		}
 		return $term;
 	}
-
-	public function findAggregatedTerms($terms) {
+    
+	/**
+	 * Determines which terms are aggregated terms, ie. which belong together.
+	 * 
+	 * Returns a value for each terms how often it appears in the set of
+	 * best matches. 
+	 *
+	 * @param array of strings $terms
+	 * @return hash array (string => int)
+	 */
+	public static function findAggregatedTerms($terms) {
 		$titles = USStore::getStore()->getPageTitles($terms);
 
 		$sm = new SmithWaterman();
@@ -272,7 +281,7 @@ class QueryExpander {
 				$m = trim(reset($matches));
 				if (!array_key_exists($m, $maximums)) $maximums[$m] = 1; else $maximums[$m]++;
 			}
-			//if ($max != '' && !in_array($max, $maximums)) $maximums[] = $max;
+			
 		}
 		return $maximums;
 	}

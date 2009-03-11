@@ -2,6 +2,9 @@
 
 /**
  * Implementation of Smith-Waterman algorithm.
+ * Calculates the best matching sequence of two strings.
+ * 
+ * Author: Kai
  *
  */
 class SmithWaterman {
@@ -20,6 +23,13 @@ class SmithWaterman {
 
 	private $Matrix;
 
+	/**
+	 * Creates a Smith-Waterman algorithm object with the given init parameters 
+	 *
+	 * @param int $gapPanelty
+	 * @param int $mismatchPanelty
+	 * @param int $matchPanelty
+	 */
 	public function __construct($gapPanelty = -1, $mismatchPanelty = -1, $matchPanelty = 2) {
 
 		$this->gapPanelty = $gapPanelty;
@@ -45,7 +55,14 @@ class SmithWaterman {
 		$i++;
 		}
 		}*/
-
+    
+	/**
+	 * Returns am array of best matches.
+	 *
+	 * @param string $seqA
+	 * @param string $seqB
+	 * @return array of string
+	 */
 	public function getBestMatches($seqA, $seqB) {
 		$this->seqA = $seqA;
 		$this->seqB = $seqB;
@@ -147,29 +164,5 @@ class SmithWaterman {
 
 
 }
-
-$mediaWikiLocation = dirname(__FILE__) . '/../..';
-require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
-
-$qe = new QueryExpander();
-$terms = array('phasen','modell', 'portal');
-$maxs = $qe->findAggregatedTerms($terms);
-$occ = array();
-foreach($maxs as $m => $score) {
-	foreach($terms as $t) {
-        if (stripos($m, $t) !== false) {
-        	if (!array_key_exists($m, $occ)) {
-        		$occ[$m] = 0;
-        	} else {
-                $occ[$m]++;
-        	}
-        }
-	}
-}
-foreach($occ as $t => $score) {
-    if ($score > 0) print("[".$t."] $score");
-}
-
 
 ?>
