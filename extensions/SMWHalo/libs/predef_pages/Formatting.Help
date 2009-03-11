@@ -1,0 +1,234 @@
+__NOTOC__
+You can format your text using wiki markup. This consists of normal characters such as asterisks, single quotes or equation marks which have a special function in the wiki, sometimes depending on their position. For example, to format a word in italic, you include it in two single quotes (e.g., <tt><nowiki>''not''</nowiki></tt>, which will be rendered as "''not''").
+
+== Text Formatting Markup ==
+
+{| class="wikitable"
+! style="width:15%" |Description
+! style="width:45%" |You type
+! style="width:40%" |You get
+|-
+! colspan="3" align="center" | character formatting - ''applies anywhere''
+|-
+|Italic text
+|<pre>''italic''</pre>
+|''italic''
+|-
+| Bold text
+|<pre>'''bold'''</pre>
+|'''bold'''
+|-
+| Bold and italic
+|<pre>'''''bold & italic'''''</pre>
+|'''''bold & italic'''''
+|-
+|Escape wiki markup
+|
+<pre>&lt;nowiki>no ''markup''</nowiki></pre>
+|<nowiki>no ''markup''</nowiki>
+|-
+! colspan="3" align="center" | section formatting - ''only at the beginning of the line''
+|-
+|Headings of different levels 
+|
+<pre>=level 1=
+==level 2==
+===level 3===
+====level 4====
+=====level 5=====
+======level 6======</pre>
+An article with four or more headings will automatically create a [http://en.wikipedia.org/wiki/Wikipedia:Section#Table_of_contents_.28TOC.29 table of contents].
+
+Use of a level 1 heading is '''''highly discouraged''''' as it appears with the same formatting and size as the page title, which can be confusing.
+|
+<!-- little hack to prevent TOC viewing -->
+<div style="font-size: 188%; margin: 0; padding-top: .5em; padding-bottom: .17em; border-bottom: 1px solid #aaa;">Level 1</div>
+<div style="font-size: 150%; margin: 0; padding-top: .5em; padding-bottom: .17em; border-bottom: 1px solid #aaa;">Level 2</div>
+<div style="font-size: 132%; border-bottom: none; font-weight: bold;">Level 3</div>
+<div style="font-size: 100%; border-bottom: none; font-weight: bold;">Level 4</div>
+<div style="font-size: 86%; border-bottom: none; font-weight: bold;">Level 5</div>
+<div style="font-size: 80%; border-bottom: none; font-weight: bold;">Level 6</div>
+|-
+|Horizontal rule
+|
+<pre>----</pre>
+|
+----
+|-
+|Bullet list
+|
+<pre>
+* one
+* two
+* three
+** three point one
+** three point two
+</pre>
+Inserting a blank line will end the first list and start another.
+|
+* one
+* two
+* three
+** three point one
+** three point two
+|-
+|Numbered list
+|
+<pre>
+# one
+# two<br />spanning several lines<br />without breaking the numbering
+# three
+## three point one
+## three point two
+</pre>
+|
+# one
+# two<br />spanning several lines<br />without breaking the numbering
+# three
+## three point one
+## three point two
+|-
+|Definition list
+|
+<pre>
+;item 1
+:definition 1
+;item 2
+:definition 2-1
+:definition 2-2
+</pre>
+|
+;item 1
+:definition 1
+;item 2
+:definition 2-1
+:definition 2-2
+|-
+| Adopting definition list to indent text
+|
+<pre>:Single indent
+::Double indent
+:::::Multiple indent</pre>
+This adoption may be controversial from the viewpoint of accessibility.
+|
+:Single indent
+::Double indent
+:::::Multiple indent
+|-
+| Mixture of different types of list
+|
+<pre>
+# one
+# two
+#* two point one
+#* two point two
+# three
+#; three def one
+#: three item one
+# four
+#: four item one
+#: this rather looks like the continuation of # four
+#: and thus often used instead of <br />
+;item 1
+:* definition 1-1
+:* definition 1-2
+:
+;item 2
+:# definition 2-1
+:# definition 2-2
+</pre>
+The usage of <code>#:</code> and  <code>*:</code> for breaking a line within an item may also be controversial.
+|
+# one
+# two
+#* two point one
+#* two point two
+# three
+#; three def one
+#: three item one
+# four
+#: four item one
+#: this rather looks like the continuation of <code># four</code>
+#: and thus often used instead of <code><nowiki><br /></nowiki></code>
+;item 1
+:* definition 1-1
+:* definition 1-2
+:
+;item 2
+:# definition 2-1
+:# definition 2-2
+|-
+|-
+|Preformatted text
+|
+<pre>
+ preformatted text is done with
+ a '''space''' at the 
+ ''beginning'' of the line
+</pre>
+This way of preformatting only applies to section formatting, and character formatting markups are still effective.
+|
+ preformatted text is done with
+ a '''space''' at the 
+ ''beginning'' of the line
+|}
+
+== Paragraphs ==
+
+MediaWiki ignores normal line breaks. To start a new paragraph, leave an empty line. You can force a line break within a paragraph with the HTML tags <tt><nowiki><br /></nowiki></tt> or <tt><nowiki><br></nowiki></tt>.
+
+== HTML ==
+
+Some HTML tags are allowed in MediaWiki, for example <tt><nowiki><code></nowiki></tt>, <tt><nowiki><div></nowiki></tt>, <tt><nowiki><span></nowiki></tt> and <tt><nowiki><font></nowiki></tt>. These apply anywhere you insert them.
+
+{| class="wikitable"
+!Description
+!You type
+!You get
+|-
+|Fixed width text
+|
+<pre><tt>Fixed width text</tt></pre>
+|
+<tt>Fixed width text</tt>
+|-
+|Blockquotes
+|
+<pre>
+text text text text text text text text text text text text
+text text text text text text text text text text text text
+<blockquote>  quote quote quote quote quote quote </blockquote>
+text text text text text text text text text text text text
+</pre>
+|
+text text text text text text text text text text text text
+text text text text text text text text text text text text
+<blockquote>  quote quote quote quote quote quote </blockquote>
+text text text text text text text text text text text text
+|-
+|Comment
+|
+<pre><!--This is comment--></pre>
+|
+<!--This is comment-->
+|-
+|Completely preformatted text
+|
+<pre><pre>this way, all markups are '''ignored'''&lt;/pre></pre>
+|
+<pre>
+this way, all markups are '''ignored'''</pre>
+|}
+
+<hr>
+<b>Note &ndash;</b> If you trust your users you can allow full HTML by setting <tt>$wgRawHtml = true;</tt> in <tt>LocalSettings.php</tt>.
+<hr>
+
+== Other Formatting ==
+
+Beyond the text formatting markup shown above, here are some other formatting references:
+* [[Help:Links|Links]]
+* [[Help:Images|Images]]
+* [[Help:Tables|Tables]]
+
+[[Category:MediaWiki Help Topic]]
