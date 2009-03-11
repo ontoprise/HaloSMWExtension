@@ -121,9 +121,13 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
-	global $smwgWebserviceEndpoint;
+
+	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
 	if (isset($smwgWebserviceEndpoint)) {
-		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
+		if ($smwgShowDerivedFacts === true 
+		    || strtolower($wgRequest->getVal("showDerived", "false")) === 'true') {
+			$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
+		}
 	}
 
 	// Remove the existing smwfSaveHook and replace it with the
