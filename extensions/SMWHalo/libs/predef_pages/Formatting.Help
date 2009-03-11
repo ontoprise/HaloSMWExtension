@@ -37,9 +37,9 @@ You can format your text using wiki markup. This consists of normal characters s
 ====level 4====
 =====level 5=====
 ======level 6======</pre>
-An article with four or more headings will automatically create a [http://en.wikipedia.org/wiki/Wikipedia:Section#Table_of_contents_.28TOC.29 table of contents].
+An article with four or more headings will automatically create a table of contents.
 
-Use of a level 1 heading is '''''highly discouraged''''' as it appears with the same formatting and size as the page title, which can be confusing.
+Use of a level 1 heading is ''highly discouraged'' as it appears with the same formatting and size as the page title, which can be confusing.
 |
 <!-- little hack to prevent TOC viewing -->
 <div style="font-size: 188%; margin: 0; padding-top: .5em; padding-bottom: .17em; border-bottom: 1px solid #aaa;">Level 1</div>
