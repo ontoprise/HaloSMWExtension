@@ -34,6 +34,8 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceRepositoryAjaxAccess.
 
 require_once("$smwgDIIP/specials/WebServices/SMW_DefineWebServiceAjaxAccess.php");
 
+require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
+
 
 ###
 # If you already have custom namespaces on your site, insert

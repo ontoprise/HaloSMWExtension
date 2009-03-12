@@ -134,16 +134,22 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  * 		the rendered wikitext
  */
 function webServiceUsage_Render( &$parser) {
-	//smwfRequireHeadItem(SMW_HEADER_STYLE);
+	$parameters = func_get_args();
+	return webServiceUsage_processCall($parser, $parameters);
+}
 
+function webservice_getPreview($wsName, $parameters){
+	return webServiceUsage_processCall($wsName, $parameters, true);
+}
+
+//todo:solve problem that parser is sometimes a parser and sometimes an article name
+function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	global $wgsmwRememberedWSUsages, $purgePage;
 	$purgePage = true;
 
-	$parameters = func_get_args();
-
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-
+	
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_wwsd_not_existing', $wsName)));
@@ -161,7 +167,7 @@ function webServiceUsage_Render( &$parser) {
 	for($i=2; $i < sizeof($parameters); $i++){
 		$parameter = trim($parameters[$i]);
 		if($parameter{0} == "?"){
-			$wsReturnValues[getSpecifiedParameterName(substr($parameters[$i], 1, strlen($parameters[$i])))] = getSpecifiedParameterValue($parameter);
+			$wsReturnValues[getSpecifiedParameterName(substr($parameter, 1, strlen($parameter)))] = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 7) == "_format"){
 			$wsFormat = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 9) == "_template"){
@@ -176,7 +182,7 @@ function webServiceUsage_Render( &$parser) {
 			}
 		}
 	}
-
+	
 	if(count($wsReturnValues) > 1 && $propertyName != null){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
 	}
@@ -199,16 +205,37 @@ function webServiceUsage_Render( &$parser) {
 		}
 		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsResults);
 
-		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $parser->getTitle()->getArticleID());
+		if(!$preview){
+			$articleId = $parser->getTitle()->getArticleID();
+		} else {
+			$t = Title::makeTitleSafe(0, $parser);
+			$articleId = $t->getArticleID();
+		}
+		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
 		
-		//SMWOutputs::commitToParser($parser);
+		
+		if($preview){
+			global $wgParser;
+			$t = Title::makeTitleSafe(0, $parser);
+			$parser = $wgParser;
+			$popts = new ParserOptions();
+			$parser->startExternalParse($t, $popts, Parser::OT_HTML);
+			
+			$wsFormattedResult = $parser->internalParse($wsFormattedResult);
+			$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
+			return $wsFormattedResult;
+		}
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
+		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		return $wsFormattedResult;
+		
+		
 	} else {
 		return smwfEncodeMessages($messages);
 	}
 }
+
 /**
  * determines if a value is specified by the parameter
  * by an equality sign
@@ -475,6 +502,8 @@ function getReadyToPrintResult($result){
 	}
 	return $niceResult;
 }
+
+
 
 
 

@@ -159,7 +159,9 @@ protected $smwUserMessages = array(
 	'smw_ws_updatebot_callerror' => 'Beim Updaten der Cache Einträge für diesen Web Service ist ein Fehler aufgetreten',
 	'smw_ws_updatebot_confirmation' => 'Es war nicht möglich die Cache Einträge für diesen Web Service zu aktualisieren, da dieser zuvor aktiviert werden muss.',
 	'smw_wsgui_nextbutton' => 'Weiter',
-	'smw_wsgui_savebutton' => 'Speichern'
+	'smw_wsgui_savebutton' => 'Speichern',
+
+	'usewebservice' => 'Benutze Web Service',
 );
 
 protected $smwDINamespaces = array(

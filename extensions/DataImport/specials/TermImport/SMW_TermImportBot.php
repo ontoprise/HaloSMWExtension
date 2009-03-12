@@ -65,7 +65,6 @@ class TermImportBot extends GardeningBot {
 		$result = "";
 		
 		$filename = $paramArray["settings"];
-		echo($filename);
 		$settings = file_get_contents($filename);
 		//unlink($filename);
 		
@@ -115,7 +114,8 @@ class TermImportBot extends GardeningBot {
 		require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
 		$wil = new WIL();
 		$tlModules = $wil->getTLModules();
-	
+		
+		echo("\n wil connected");
 		$res = $wil->connectTL($tlModule[0], $tlModules);
 		if (stripos($res, '<value>true</value>') === false) {
 			return "Connecting the transport layer module $tlModule[0] failed.";
@@ -130,10 +130,10 @@ class TermImportBot extends GardeningBot {
 		$importSets = $parser->serializeElement(array('ImportSets'));
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
 		
+		echo("\n get Terms");
 		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
 		
-		$temp = print_r($terms, true);
-		//echo($temp);
+		echo("\n Terms in place");
 		
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
 		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
@@ -168,6 +168,8 @@ class TermImportBot extends GardeningBot {
 		global $smwgDIIP;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 		
+		echo("\n start creating articles");
+		
 		$parser = new XMLParser($mappingPolicy);
 		$result = $parser->parse();
 		if ($result !== TRUE) {
@@ -197,9 +199,13 @@ class TermImportBot extends GardeningBot {
 		$cp = $cp[0];
 		$cp = strtolower($cp) == 'true' ? true : false;
 		
+		echo("\n create xml parser");
 		$parser = new XMLParser($terms);
+		echo("\n parse xml");
 		$result = $parser->parse();
+		echo("\n xml parsed");
 		if ($result !== TRUE) {
+			echo("\n".$result."was not true");
 			return $result;
 		}
 		
@@ -208,6 +214,7 @@ class TermImportBot extends GardeningBot {
 		$numTerms = 0;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
 			++$numTerms;
+			echo("\n".$numTerms);
 		}
 		echo "Number of terms: $numTerms \n";
 		

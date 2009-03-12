@@ -49,6 +49,8 @@ function smwfDISetupExtension() {
 		$wgHooks['BeforePageDisplay'][]='smwDITIAddHTMLHeader';
 	}
 	
+	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
+	
 	smwfDIInitMessages();
 	WebServiceManager::registerWWSNamespaces();
 
@@ -61,11 +63,13 @@ function smwfDISetupExtension() {
 		switch($method_prefix) {
 			case '_ti_' : require_once($smwgDIIP . '/specials/TermImport/SMW_CL.php');
 			break;
+			case '_wsu_' : require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
+			break;
 			case '_ws_' :  require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositoryAjaxAccess.php');
 				require_once($smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceAjaxAccess.php');
 				break;
-		} //todo: check WebServiceManager also requires the ajax methods
-		//todo:check if this is necessary
+		} 
+				
 	} else { // otherwise register special pages
 		WebServiceManager::initWikiWebServiceExtension();
 		
@@ -81,6 +85,10 @@ function smwfDISetupExtension() {
 		$wgAutoloadClasses['SMWDefineWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceSpecial.php';
 		$wgSpecialPages['DefineWebService'] = array('SMWDefineWebServiceSpecial');
 		$wgSpecialPageGroups['DefineWebService'] = 'di_group';
+		
+		$wgAutoloadClasses['SMWUseWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_UseWebServiceSpecial.php';
+		$wgSpecialPages['UseWebService'] = array('SMWUseWebServiceSpecial');
+		$wgSpecialPageGroups['UseWebService'] = 'di_group';
 
 		// Register Credits
 		$wgExtensionCredits['parserhook'][]=array('name'=>'Data&nbsp;Import&nbsp;Extension', 'version'=>SMW_DI_VERSION,
@@ -214,10 +222,11 @@ function smwDIWSAddHTMLHeader(&$out) {
 
 	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/webservices-rep.js', "all", -1, array(NS_SPECIAL.":WebServiceRepository"));
 	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/def-webservices.js', "all", -1, array(NS_SPECIAL.":DefineWebService"));
+	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js', "all", -1, array(NS_SPECIAL.":UseWebService"));
 
 	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository"));
 	
-	$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, NS_SPECIAL.":DefineWebService");
+	$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
 
 	$jsm->serializeScripts($out);
 	$jsm->serializeCSS($out);
@@ -246,6 +255,20 @@ function smwDITIAddHTMLHeader(&$out){
 
 	return true;
 }
+
+
+function smwDITBAddHTMLHeader(&$out){
+	global $smwgDIScriptPath;
+
+	$jsm = SMWResourceManager::SINGLETON();
+
+	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/semantic-toolbar-container.js' , "edit");
+
+	$jsm->serializeScripts($out);
+	
+	return true;
+}
+
 
 function smwfDIGetAjaxMethodPrefix() {
 	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);

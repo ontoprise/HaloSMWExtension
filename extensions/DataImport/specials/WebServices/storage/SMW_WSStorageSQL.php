@@ -92,9 +92,8 @@ class WSStorageSQL {
 		DBHelper::setupTable($paramTable, array(
 				  'name'		    =>  'VARCHAR(255) NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'value'      	    =>  'VARCHAR(255) NOT NULL'), $db, $verbose);
+				  'value'      	    =>  'LONGTEXT NOT NULL'), $db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-
 
 		// create properties table
 		DBHelper::reportProgress("   ... Creating properties table \n",$verbose);

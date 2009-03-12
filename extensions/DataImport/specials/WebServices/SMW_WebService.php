@@ -471,7 +471,7 @@ class WebService {
 			
 		$ws = $this->mArticleID;
 		if($this->getConfirmationStatus() == "false"){
-			$this->mConfirmationStatus = once;
+			$this->mConfirmationStatus = "once";
 			WSStorage::getDatabase()->setWWSDConfirmationStatus($this->mArticleID, "once");
 		}
 

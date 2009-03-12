@@ -159,7 +159,9 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ws_updatebot_callerror' => 'An error occured while updating the cache entries of this Web Service',
 	'smw_ws_updatebot_confirmation' => 'It was not possible to update results of this Web Service due to a missing confirmation of the WWSD',
 	'smw_wsgui_nextbutton' => 'Next',
-	'smw_wsgui_savebutton' => 'Save'
+	'smw_wsgui_savebutton' => 'Save',
+	
+	'usewebservice' => 'Use Web Service',
 	);
 
 	protected $smwDINamespaces = array(
