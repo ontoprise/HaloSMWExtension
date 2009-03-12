@@ -9,9 +9,9 @@ Templates are standard wiki pages whose content is designed to be "transcluded" 
 
 Templates are wiki pages which can be used in other pages in three ways:
 
-*<tt><nowiki>{{Name}}</nowiki></tt> "transcludes" (i.e., includes a copy of) the content of the template (stored in the page <nowiki>[[Template:Name]]</nowiki>) whenever the page containing the template transclusion is fetched and displayed; i.e. if the template is later changed, the displayed transcluding page will automatically change too
-*<tt><nowiki>{{subst:Name}}</nowiki></tt> replaces that string with the contents of the template, in the source of the transcluding page, when you save that page; the copy of the template contents can then be edited normally (and separately from the original in the template page).<hr><b>Note &ndash;</b> Do not use this if you are looking to continually propagate changes from the source template to the page(s) that references it.<hr>
-*<tt><nowiki>{{msgnw:Name}}</nowiki></tt> includes the template in a form that displays it as raw wiki syntax (the way <tt><nowiki>&lt;nowiki&gt;</nowiki></tt> does) when the page containing it is fetched
+*<tt><nowiki>{{Name}}</nowiki></tt> "transcludes" (i.e., includes a copy of) the content of the template (stored in the page <nowiki>[[Template:Name]]</nowiki>) whenever the page containing the template transclusion is fetched and displayed.<br>If the template is later changed, the displayed transcluding page will automatically change too.
+*<tt><nowiki>{{subst:Name}}</nowiki></tt> replaces that string with the contents of the template, in the source of the transcluding page, when you save that page.<br>The copy of the template contents can then be edited normally (and separately from the original in the template page).<hr><b>Note &ndash;</b> Do not use this if you are looking to continually propagate changes from the source template to the page(s) that references it.<hr>
+*<tt><nowiki>{{msgnw:Name}}</nowiki></tt> includes the template in a form that displays it as raw wiki syntax (the way <tt><nowiki>&lt;nowiki&gt;</nowiki></tt> does) when the page containing it is fetched.
 
 In fact, an ordinary wiki page can also be used as a template, simply by specifying the namespace it resides in, so:
 
@@ -24,6 +24,7 @@ If no such namespace exists, the full title is assumed to be a template:
 *<tt><nowiki>{{Foo:Bar}}</nowiki></tt> includes <tt><nowiki>[[Template:Foo:Bar]]</nowiki></tt>
 
 === Parameters ===
+
 <div style="float:right; margin:8px;">
 {| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;
 |-
@@ -66,7 +67,7 @@ hugs, {{{signature}}}</small>
 </div>
 |}
 </div>
-You can define parameters in templates either numbered as <tt><nowiki>{{{1}}}</nowiki></tt> or named <tt><nowiki>{{{param}}}</nowiki></tt>.  
+You can define parameters in templates either numbered as "<tt><nowiki>{{{1}}}</nowiki></tt>" or named "<tt><nowiki>{{{param}}}</nowiki></tt>".  
 
 '''Example:''' You want a little thank you note you can put on the talk page of other users. It will contain a reason and your signature. You could create <tt><nowiki>[[Template:Thankyou]]</nowiki></tt> to enter your text, as in the example in the table.
 
