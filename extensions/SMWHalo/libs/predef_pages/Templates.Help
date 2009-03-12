@@ -3,7 +3,7 @@ If you have standard texts you want to include on several pages, the MediaWiki t
 
 == Creating Templates ==
 
-Templates are standard wiki pages whose content is designed to be "transcluded" (embedded) inside other pages. Templates follow a convention that the name is prefixed with "<tt>Template:</tt>", assigning it to that namespace. Therefore you can create them like any other wiki page.
+Templates are standard wiki pages whose content is designed to be "transcluded" (embedded) inside other pages. Templates follow a convention that the name is prefixed with "<tt>Template:</tt>", assigning it to that namespace. Therefore you can create them like any other wiki page (see also [[Help:Starting_New_Pages|Starting New Pages]]).
 
 == Usage ==
 
