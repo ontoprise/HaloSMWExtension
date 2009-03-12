@@ -1,0 +1,10 @@
+__NOTOC__
+Clicking on the 'my preferences' link in the upper right while logged in. Then click on the Skin button to change your skin. You can also preview the skin by clicking Preview next to each skin.
+
+You can make changes to the current skin's stylesheet file (CSS) by creating a subpage of your userpage, "User:Yourname/monobook.css" for example. This requires your site admin to have enabled this feature. If it is, you will see advice text at the top of your custom CSS page about clearing your browser's cache.
+
+<hr>
+<b>Tip &ndash;</b> To enable this feature, you have to set [http://www.mediawiki.org/wiki/Manual:%24wgAllowUserCss $wgAllowUserCss] to true in your <tt>LocalSettings.php</tt>. 
+<hr>
+
+[[Category:MediaWiki Help Topic|Skins]]
