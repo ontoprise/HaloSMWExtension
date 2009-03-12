@@ -1,0 +1,18 @@
+__NOTOC__
+Special pages are pages that are created by the software on demand. They are located in their own [[Help:Namespaces|namespace]] <tt>Special:</tt> and are not editable directly as other pages. 
+
+Some special pages depend on the [[Help:Preferences|preferences]] that have been set by a user (e.g., the number of titles which is displayed on a user's [[Help:Watchlist|watchlist]]).
+
+== List of Special Pages ==
+
+Clicking the link 'Special pages' from the toolbox on the left hand panel will take you to a list of all special pages on a wiki. Some special pages can be "transcluded".
+
+* [[Special:NewImages|New images]] (includable)
+* [[Special:NewPages|New pages]] (includable)
+* [[Special:RandomPage|Random page]]
+* [[Special:RecentChanges|Recent changes]] (includable)
+* [[Special:Watchlist|Watchlist]]
+* ...
+
+
+[[Category:MediaWiki Help Topic|Special Pages]]
