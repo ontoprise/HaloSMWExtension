@@ -1,0 +1,26 @@
+__NOTOC__
+Normal users cannot permanently delete wiki articles. This is a deliberate design feature, and is an important part of why wikis work. Every kind of editing operation can be reverted by any other user, and that includes resurrecting deleted content. It doesn't cause significant wasted space; and with nothing but a 'delete' label, the page is effectively deleted anyway.
+
+Sysop users are able to delete a page semi-permanently. Typically sysops might look for delete labels, and do a proper delete on these pages, after a period of time. If for some reason you need a page to be deleted more quickly than that, you will need to contact a sysop to request this.
+
+== When Not to Delete a Page ==
+
+Typically you would delete a page if the contents are entirely inappropriate and do not match the purposes of the Wiki. In other situations, you would take a less extreme course of action, for example:
+
+* The page should have a different title (see also [[Help:Renaming_Pages|Renaming Pages]]).
+* The contents should have been placed on a different page. Add the contents to the other page, and then supply a redirect (see also [[Help:Redirects|Redirects]]).
+* The contents are already on a different page. Delete the duplicate content and leave a redirect. That way, the page title, which made sense to somebody, will helpfully redirect to the information.
+* The page is out-of-date. Re-word sentences to be in the past tense, to make the page an historical record. Alternatively, label the information as out-of-date, with a warning notice.
+
+An actual delete is generally necessary only if the title of the page is inappropriate. In other situations, a merge and redirect is more appropriate.
+
+== Proposing Changes ==
+
+Deciding on appropriate content/page titles can be a difficult aspect of Wiki organization, and one which can often provoke debates. If the merge or deletion you have in mind is one which might cause upset, you should propose the change first. Do this by leaving a note to give your reasons on the [[Help:Talk_Pages|talk page]]. You might also establish a system for labeling the page with a delete/merge proposal template, to make everybody aware of your intentions.
+
+== Unlinking a Page ==
+
+The 'What links here' toolbox feature will tell you which other Wiki pages link to the current page. Always use this feature to check before proceeding with deleting. These related pages will need to be edited for their links to reflect the change.
+
+
+[[Category:MediaWiki Help Topic|Deleting Pages]]
