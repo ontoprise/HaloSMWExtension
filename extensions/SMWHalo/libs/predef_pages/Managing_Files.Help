@@ -1,0 +1,42 @@
+__NOTOC__
+If file uploads are enabled, you can upload certain types of files to the wiki. This is particularly useful for uploading images, which you want to place on an article, but you can also upload other types of files.
+
+== Uploading Files ==
+
+To upload a file, proceed as follows:
+
+<div style="font-weight:bold; line-height: 2;">
+<ol>
+<li>Prepare the file for upload.<br>
+<div style="font-weight:normal;">Make sure the file is exactly as you want it.</div></li>
+<li>Click 'Upload file'.<br>
+<div style="font-weight:normal;">In the [[Help:Navigation#Sidebar|sidebar]], under 'toolbox', click 'Upload file'.</div></li>
+<li>Click Browse.<br>
+<div style="font-weight:normal;">Click Browse next to the 'Source filename' text box to locate the file on your computer (the name of the button depends on your web browser).</div></li>
+<li>(Optional) Change the destination filename.<br>
+<div style="font-weight:normal;">Change the 'Destination filename' to something descriptive, if necessary.</div></li>
+<li>(Optional) Fill in the summary.<br>
+<div style="font-weight:normal;">Fill in a descriptive summary, if necessary.</div></li>
+<li>Click 'Upload file'.<br>
+<div style="font-weight:normal;">Click the 'Upload file' button.</div></li>
+</ol>
+</div>
+If it is a large file, you may need to wait several seconds for the upload to complete.
+
+== Using Images and File Description Pages ==
+
+After you've uploaded a file, you can use it in an article, with some special wiki syntax to create the link (for more information, see [[Help:Images|Images]]).
+
+Your file gets its very own file description page within the <tt>Image</tt> [[Help:Namespaces|namespace]] of the wiki. You should edit this page to provide more information about the file. For example, many public wiki projects are quite sensitive to copyright issues, and so you should explain where you got the file from, and what its copyright status is, on the description page. Any other useful descriptive notes could also be added there.
+
+== List of Files in the Wiki ==
+
+There are a number of special pages to help you view and manage files which have been uploaded. Go to 'Special pages' (in the toolbox on the left) and then see the following pages:
+
+* [[Special:NewImages|Gallery of new files]] &ndash; If you just uploaded one, you will see it here.  
+* [[Special:ImageList|File list]] &ndash; Shows all of the files.
+* [[Special:UnusedImages|Unused files]] &ndash; Helps you track down files which might not be needed.
+
+For details of the other information available here, see [[Help:Special_Pages|Special Pages]].
+
+[[Category:MediaWiki Help Topic|Upload]]
