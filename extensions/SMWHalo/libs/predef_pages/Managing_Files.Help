@@ -25,7 +25,7 @@ If it is a large file, you may need to wait several seconds for the upload to co
 
 == Using Images and File Description Pages ==
 
-After you've uploaded a file, you can use it in an article, with some special wiki syntax to create the link (for more information, see [[Help:Images|Images]]).
+After you have uploaded a file, you can use it in an article, with some special wiki syntax to create the link (for more information, see [[Help:Images|Images]]).
 
 Your file gets its very own file description page within the <tt>Image</tt> [[Help:Namespaces|namespace]] of the wiki. You should edit this page to provide more information about the file. For example, many public wiki projects are quite sensitive to copyright issues, and so you should explain where you got the file from, and what its copyright status is, on the description page. Any other useful descriptive notes could also be added there.
 
@@ -40,3 +40,4 @@ There are a number of special pages to help you view and manage files which have
 For details of the other information available here, see [[Help:Special_Pages|Special Pages]].
 
 [[Category:MediaWiki Help Topic|Upload]]
+

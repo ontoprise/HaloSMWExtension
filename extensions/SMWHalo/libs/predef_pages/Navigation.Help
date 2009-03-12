@@ -1,8 +1,8 @@
 __NOTOC__
 When viewing any page on a MediaWiki wiki, you'll find three main navigation elements:
-* '''Sidebar.''' The sidebar on the left gives you access to important pages in the wiki such as 'Related changes' or 'Upload file'.
-* '''Page Tabs.''' At the top of the page are links (often called ''tabs'') which relate to the page currently displayed: its associated discussion page, the version history, and&mdash;most notably&mdash;the edit link.
-* '''User Links.''' In the top right corner you'll find user links; as an anonymous user, you'll see a link to create an account or log in (they are the same page). As a logged-in user you have a collection of personal links, including ones to your user page and [[Help:Preferences|preferences]].
+* '''[[#Sidebar|Sidebar]] &ndash;''' The sidebar on the left gives you access to important pages in the wiki such as 'Related changes' or 'Upload file'.
+* '''[[#Page Tabs|Page tabs]] &ndash;''' At the top of the page are links (often called ''tabs'') which relate to the page currently displayed: its associated discussion page, the version history, and&mdash;most notably&mdash;the edit link.
+* '''[[#User Links|User links]] &ndash;''' In the top right corner you'll find user links; as an anonymous user, you'll see a link to create an account or log in (they are the same page). As a logged-in user you have a collection of personal links, including ones to your user page and [[Help:Preferences|preferences]].
  
 == Sidebar ==
 

@@ -4,15 +4,15 @@ Redirects are used to forward users from one page name to another. They can be u
 == Creating Redirects ==
 
 You may [[Help:Starting_New_Pages|start a new page]] with the name you want to direct from. You can also use an existing page that you are making inactive as a page by going to that page and using the 'edit' tab at the top. In either case, you will be inserting the following code at the very first text position of the edit window for the page:
-<pre>
-<nowiki>#REDIRECT [[</nowiki>PAGENAME<nowiki>]]</nowiki>
-</pre>
+
+ <nowiki>#REDIRECT [[</nowiki>PAGENAME<nowiki>]]</nowiki>
+
 where "<tt>PAGENAME</tt>" is the name of the destination page. The word "redirect" is not case-sensitive, but there must be no space between the "#" symbol. Any text before the code will disable the code and prevent a redirect. Any text or regular content code after the redirect code will be ignored (and should be deleted from an existing page). However, to put or keep the current page name listed in a Category, the usual tag for that category is entered or kept on a line after the redirect code entry.
 
 You should use the 'Show preview' button below the Edit window, or Alt-P, to check that you have entered the correct destination page name. The preview page will not look like the resulting redirect page, it will look like a numbered list, with the destination page in blue:
-<pre>  
-1. REDIRECT  <span style="color:blue">PAGENAME</span>
-</pre>
+  
+ 1. REDIRECT  <span style="color:blue">PAGENAME</span>
+
 If the pagename as you typed it is not a valid page, it will show in red. Until there is a valid destination page, you should not make the redirect.
 
 == Viewing Redirects ==
@@ -42,3 +42,4 @@ To prevent a page that redirects to a category from appearing in the category, p
 
 
 [[Category:MediaWiki Help Topic|Redirects]]
+

@@ -5,7 +5,7 @@ __NOTOC__
 The quickest way to find information in MediaWiki is to look it up directly. On the left side of your screen there is a search box with two buttons under it labeled Go and Search. 
 
 Put your keyword in the searchbox.
-* '''Go.''' (Or ''Enter'' on keyboard) will take you automatically to the article, if it exists.
+* '''Go.''' (Or pressing Enter on keyboard) will take you automatically to the article, if it exists.
 * '''Search.''' Will search the text of all pages on the wiki (with some restrictions, see below).
 
 If you clicked Search, or you clicked Go and the page you were looking for did not exist, you will be presented with a list of articles that matched your search criteria (or a message that no matches were found).  
@@ -19,9 +19,10 @@ A search results page displays two types of results:
 
 If you click the Search button without filling in anything, you will be taken to <tt>Special:Search</tt> which gives you extra searching options (also available from any search results list).
 
-You may find it useful to restrict a search to pages within a particular [[Help:Namespaces|namespace]] (e.g., only search within the User pages). Select the namespaces you require for this search. 
+You may find it useful to restrict a search to pages within a particular [[Help:Namespaces|namespace]] (e.g., only search within the user pages). Select the namespaces you require for this search. 
 
 By default only the [[Help:Namespaces|namespaces]] specified in your [[Help:Preferences|preferences]] will be searched.  Logged-in users can change their preferences to specify the namespaces they want to search by default. This can be done by selecting and deselecting boxes in the Search section of user preferences.
 
 [[Category:MediaWiki Help Topic|Searching]]
+
 

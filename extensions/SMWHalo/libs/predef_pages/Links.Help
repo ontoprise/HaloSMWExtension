@@ -1,10 +1,10 @@
 __NOTOC__
 MediaWiki articles are filled with links to other articles in the same wiki or to external resources.
 There are four sorts of links in MediaWiki: 
-* '''Internal links.''' Links to other pages in the same wiki.
-* '''External links.''' Links to other websites.
-* '''Interwiki links.''' Links to other websites registered to the wiki in advance.
-* '''Interlanguage links.''' Links to other websites registered as other language versions of the wiki.
+* '''[[#Internal Links|Internal links]] &ndash;''' Links to other pages in the same wiki.
+* '''[[#External Links|External links]] &ndash;''' Links to other websites.
+* '''[[#Interwiki Links|Interwiki links]] &ndash;''' Links to other websites registered to the wiki in advance.
+* '''[[#Interlanguage Links|Interlanguage links]] &ndash;''' Links to other websites registered as other language versions of the wiki.
 For more information on these link types, see below.
 
 == Internal Links ==
@@ -131,13 +131,13 @@ To avoid that effect, put the URL between &lt;nowiki&gt; tags as in:
 
 == Interwiki Links ==
 
-Interwiki links are links with the internal link markup to a website registered in advance. For example, you can link to the Sunflower article on http://en.wikipedia.org by typing <tt><nowiki>[[wikipedia:Sunflower]]</nowiki></tt>, which will result in a link [[wikipedia:Sunflower]]. This is because <tt><nowiki>http://en.wikipedia.org/wiki/</nowiki></tt> is registered to your wiki by default with the prefix of <tt>wikipedia</tt> (note that this link may not work properly, if the admin of your wiki has changed the setting).
+Interwiki links are links with the internal link markup to a website registered in advance. For example, you can link to the Sunflower article on http://en.wikipedia.org by typing "<tt><nowiki>[[wikipedia:Sunflower]]</nowiki></tt>", which will result in a link [[wikipedia:Sunflower]]. This is because <tt><nowiki>http://en.wikipedia.org/wiki/</nowiki></tt> is registered to your wiki by default with the prefix of <tt>wikipedia</tt> (note that this link may not work properly, if the admin of your wiki has changed the setting).
 
 Similar to internal page links, you can create piped links, with alternate link label (e.g., <tt><nowiki>[[wikipedia:Sunflower|big yellow flower]]</nowiki></tt>.
 
 Basically this is an abbreviation for longer URLs. A very similar link could be created as a normal external link by typing <tt><nowiki>[http://en.wikipedia.org/wiki/Sunflower Sunflower]</nowiki></tt>, but interwiki links allow you to type out an easy and compact link, almost as if you are linking to a page on your own wiki.
 
-For more information on the management of interwiki links, see [http://www.mediawiki.org/wiki/Manual:Interwiki Manual:Interwiki] on the MediaWiki Web site.
+For more information on the management of interwiki links, see [http://www.mediawiki.org/wiki/Manual:Interwiki Interwiki] on the MediaWiki Web site.
 
 == Interlanguage Links ==
 

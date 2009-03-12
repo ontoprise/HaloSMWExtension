@@ -1,15 +1,17 @@
 __NOTOC__
-Clicking on the 'my preferences' link in the upper right while logged in allows you to change your preferences. You will be presented with the User profile section, as well as a bar of tabs across the top for changing other types of settings.
+Clicking on the 'my preferences' link in the upper right while logged in allows you to change your preferences. You will be presented with the User profile section, as well as a bar of tabs across the top for changing other types of settings. For SMW+ specific preferences, see [[Help:SMW+_Preferences|SMW+ Preferences]].
 
 == User Profile ==
 
 === User Profile ===
+
+The 'User profile' section includes the following configuration settings:
 * '''Username &ndash;''' Your user name. Only bureaucrats can change your username, and the wiki must also have the [http://www.mediawiki.org/wiki/Extension:Renameuser Renameuser extension] installed.
 * '''User ID &ndash;''' A number assigned to your account when you created it (for example, if your number is 42 you are the 42nd user to sign up at this particular wiki). This number is used for internal purposes.
 * '''Number of edits &ndash;''' How many edits you have made. Not all wikis will have this.
 * '''Real name &ndash;''' If provided, this will be used for attribution (rather than using your username). Providing your real name is entirely optional. Some wikis do not have this option.
 * '''E-mail &ndash;''' Your email address, if you have supplied one. You can also change or remove your address here.
-* '''Nickname &ndash;''' When you sign your name (using <tt><nowiki>~~~~</nowiki></tt>), what you enter here will be used at the start instead of a simple link to your user page. By default, anything you enter here will be wrapped with <tt><nowiki>[[ ]]</nowiki></tt>; if you want to use special linking, enable ''Raw signatures (without automatic link)''.
+* '''Nickname &ndash;''' When you sign your name (using <tt><nowiki>~~~~</nowiki></tt>), what you enter here will be used at the start instead of a simple link to your user page. By default, anything you enter here will be wrapped with <tt><nowiki>[[ ]]</nowiki></tt>; if you want to use special linking, enable 'Raw signatures (without automatic link)'.
 * '''Language &ndash;''' This controls what language the interface is displayed in.  MediaWiki's default interface includes localizations for all supported languages, but this is not necessarily the case with extensions or custom skins. Page text will ''not'' be translated, nor will templates (unless the templates integrate text localization).
 
 === Change Password ===
@@ -90,7 +92,7 @@ Setting to control the behavior of the [[Help:Watchlist|watchlist]]. Most of the
 Default settings for searches including how many results to display and how much context to show for each result. Check the boxes next to the namespaces which you want to show up, the first time that you search for something.  You can override this when doing an actual search, by checking or unchecking the boxes at the bottom of the search results screen.
 
 <hr>
-<b>Tip &ndash;</b> To change the namespace default preferences for new users (or users who haven't changed their preferences yet), see the documentation of the configuration setting [http://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault $wgNamespacesToBeSearchedDefault] on the MediaWiki Web site.
+<b>Tip &ndash;</b> To change the namespace default preferences for new users (or users who haven't changed their preferences yet), see the [http://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault documentation] of the configuration setting <tt>$wgNamespacesToBeSearchedDefault</tt> on the MediaWiki Web site.
 <hr>
 
 == Misc ==
