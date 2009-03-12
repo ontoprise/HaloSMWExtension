@@ -10,8 +10,7 @@ These options are located on different tabs of the special page Preferences. To 
 <li>Log in to SMW+.<br>
 <div style="font-weight:normal;">Log in to SMW+ using your login credentials.</div></li>
 <li>Open the special page Preferences.<br>
-<div style="font-weight:normal;">Open the page <tt>Special:Preferences</tt> by clicking on the<br>
-My Preferences link in the upper right.</div></li>
+<div style="font-weight:normal;">Open the page <tt>Special:Preferences</tt> by clicking on the 'my preferences' link in the upper right.</div></li>
 <li>Go to the Skin tab.<br>
 <div style="font-weight:normal;">Select OntoSkin2, which is the default skin of SMW+.<br>
 Alternatively, select OntoSkin, which resembles the default MediaWiki skin MonoBook.</div></li>
@@ -21,8 +20,6 @@ Alternatively, select OntoSkin, which resembles the default MediaWiki skin MonoB
 <div style="font-weight:normal;">Your changes will be saved.</div></li>
 </ol>
 </div>
-<hr>
-<b>Note &ndash;</b> For more information on MediaWiki preferences, see the 
-[http://www.mediawiki.org/wiki/Help:Preferences Preferences Help] on the MediaWiki Web site.
-<hr>
+For more information on MediaWiki preferences, see [[Help:Preferences|Preferences]].
+
 
