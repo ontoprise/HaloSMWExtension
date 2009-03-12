@@ -1,0 +1,654 @@
+__NOTOC__
+Magic words are strings of text that MediaWiki associates with a return value or function, such as time, site details, or page names. This page is about usage of standard magic words; for a technical reference, see [http://www.mediawiki.org/wiki/Manual:Magic_words Magic Words] on the MediaWiki Web site.
+
+There are three general types of magic words:
+*'''[[#Behavior Switches|Behavior switches]] &ndash;''' These are uppercase words surrounded by double underscores (e.g., "<tt>__FOO__</tt>").
+*'''[[#Variables|Variables]] &ndash;''' These are uppercase words surrounded by double braces (e.g., <tt><nowiki>{{FOO}}</nowiki></tt>). As such, they look a lot like [[Help:Templates|templates]].
+*'''[[#Parser Functions|Parser functions]] &ndash;''' These take parameters and are either of the form <tt><nowiki>{{foo:...}}</nowiki></tt> or <tt><nowiki>{{#foo:...}}</nowiki></tt>.
+
+Page-dependent magic words will affect or return data about the current page, even if the word is added through a transcluded template or included system message.
+
+== Behavior Switches ==
+
+A behavior switch controls the layout or behavior of the page and can often be used to specify desired omissions and inclusions in the content.
+
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Word
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+|bgcolor="#8DA7D6" color="black" colspan="3"| '''Table of contents'''
+|-
+| <nowiki>__NOTOC__</nowiki>
+| Hides the table of contents (TOC).
+|
+|-
+|<nowiki>__FORCETOC__</nowiki>
+| Forces the table of content to appear at its normal position (above the first header).
+|
+|-
+| <nowiki>__TOC__</nowiki>
+| Places a table of contents at the word's current position (overriding <nowiki>__NOTOC__</nowiki>). If this is used multiple times, the table of contents will appear at the first word's position.
+|
+|-
+|bgcolor="#8DA7D6" color="black" colspan="3"| '''Editing'''
+|-
+| <nowiki>__NOEDITSECTION__</nowiki>
+| Hides the section edit links beside headings.
+|
+|-
+| <nowiki>__NEWSECTIONLINK__</nowiki>
+| Adds a link ([[MediaWiki:Addsection|"+" by default]]) beside the "edit" tab for adding a new section on a non-talk page.
+| 1.7+
+|-
+| <nowiki>__NONEWSECTIONLINK__</nowiki>
+| Removes the link beside the "edit" tab on pages in talk namespaces.
+| 1.15+
+|-
+|bgcolor="#8DA7D6" color="black" colspan="3"| '''Categories'''
+|-
+| <nowiki>__NOGALLERY__</nowiki>
+| Used on a category page, replaces thumbnails in the category view with normal links.
+| 1.7+
+|-
+| <nowiki>__HIDDENCAT__</nowiki>
+| Used on a category page, hides the category from the lists of categories in its members and parent categories (there is an option in the [[Help:Preferences|user preferences]] to show them).
+| 1.13+
+|-
+|bgcolor="#8DA7D6" color="black" colspan="3"| '''Language conversion'''
+|-
+| <nowiki>__NOCONTENTCONVERT__</nowiki><br /><nowiki>__NOCC__</nowiki>
+| On wikis with language variants, don't perform any content language conversion (character and phase) in article display; for example, only show Chinese (zh) instead of variants like zh_cn, zh_tw, zh_sg, or zh_hk.
+|
+|-
+| <nowiki>__NOTITLECONVERT__</nowiki><br /><nowiki>__NOTC__</nowiki>
+| On wikis with language variants, don't perform language conversion on the title (all other content is converted).
+| 
+|-
+|bgcolor="#8DA7D6" color="black" colspan="3"| '''Other'''
+|-
+| <nowiki>__START__</nowiki>
+| No effect.
+|
+|-
+| <nowiki>__END__</nowiki>
+| Explicitly marks the end of the article, to prevent MediaWiki from removing trailing whitespace.
+|
+|-
+|  <nowiki>__INDEX__</nowiki>
+| Tell search engines to index the page (overrides <tt>$wgArticleRobotPolicies</tt>, but not <tt>robots.txt</tt>).
+| 1.14+
+|- 
+|  <nowiki>__NOINDEX__</nowiki>
+| Tell search engines not to index the page (ie, do not list in search engines' results).
+| 1.14+
+|-
+|  <nowiki>__STATICREDIRECT__</nowiki>
+| On redirect pages, don't allow MediaWiki to automatically update the link when someone moves a page and checks "Update any redirects that point to the original title".
+| 1.13+
+|}
+
+== Variables == 
+
+Variables return information about the current page, wiki, or date. Their syntax is similar to [[Help:Templates|templates]]. If a template name conflicts with a variable, the variable will be used (so to transclude the template <tt>{{ns:10}}:PAGENAME</tt> you would need to write<tt><nowiki>{{</nowiki>{{ns:10}}:PAGENAME<nowiki>}}</nowiki></tt>). In some cases, adding parameters will force the parser to treat a variable as a template; for example, <tt><nowiki>{{CURRENTDAYNAME|x}}</nowiki></tt> transcludes <tt>{{ns:10}}:CURRENTDAYNAME</tt>.
+
+=== Date and Time ===
+
+The following variables return the current date and time according to the user's timezone [[Special:Preferences|preferences]], defaulting to the UTC timezone.
+
+Due to MediaWiki and browser caching, these variables frequently show when the page was cached rather than the current time.
+
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Year'''
+|-
+| <tt><nowiki>{{CURRENTYEAR}}</nowiki></tt>
+| {{CURRENTYEAR}}
+| Year
+|
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Month'''
+|-
+| <tt><nowiki>{{CURRENTMONTH}}</nowiki></tt> 
+| {{CURRENTMONTH}}
+| Month (zero-padded number)
+|
+|-
+| <tt><nowiki>{{CURRENTMONTHNAME}}</nowiki></tt>
+| {{CURRENTMONTHNAME}}
+| Month (name)
+|
+|-
+| <tt><nowiki>{{CURRENTMONTHNAMEGEN}}</nowiki></tt>
+| {{CURRENTMONTHNAMEGEN}}
+| Month ([http://en.wikipedia.org/wiki/genitive genitive form])
+|
+|-
+| <tt><nowiki>{{CURRENTMONTHABBREV}}</nowiki></tt>
+| {{CURRENTMONTHABBREV}}
+| Month (abbreviation)
+| 1.5+
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Day'''
+|-
+| <tt><nowiki>{{CURRENTDAY}}</nowiki></tt>
+| {{CURRENTDAY}}
+| Day of the month (unpadded number)
+|
+|-
+| <tt><nowiki>{{CURRENTDAY2}}</nowiki></tt>
+| {{CURRENTDAY2}}
+| Day of the month (zero-padded number)
+| 1.6+
+|-
+| <tt><nowiki>{{CURRENTDOW}}</nowiki></tt>
+| {{CURRENTDOW}}
+| Day of the week (unpadded number)
+|
+|-
+| <tt><nowiki>{{CURRENTDAYNAME}}</nowiki></tt>
+| {{CURRENTDAYNAME}}
+| Day of the week (name)
+|
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Time'''
+|-
+| <tt><nowiki>{{CURRENTTIME}}</nowiki></tt>
+| {{CURRENTTIME}}
+| Time (24-hour HH:mm format)
+|
+|-
+| <tt><nowiki>{{CURRENTHOUR}}</nowiki></tt>
+| {{CURRENTHOUR}}
+| Hour (24-hour zero-padded number)
+|
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Other'''
+|-
+| <tt><nowiki>{{CURRENTWEEK}}</nowiki></tt>
+| {{CURRENTWEEK}}
+| Week (number)
+|
+|-
+| <tt><nowiki>{{CURRENTTIMESTAMP}}</nowiki></tt>
+| {{CURRENTTIMESTAMP}}
+| YYYYMMDDHHmmss timestamp
+| 1.7+
+|}
+
+The following variables do the same as the above, but using the site's local timezone instead of user preferences and UTC:
+* <tt><nowiki>{{LOCALYEAR}}</nowiki></tt>
+* <tt><nowiki>{{LOCALMONTH}}</nowiki></tt>
+* <tt><nowiki>{{LOCALMONTHNAME}}</nowiki></tt>
+* <tt><nowiki>{{LOCALMONTHNAMEGEN}}</nowiki></tt>
+* <tt><nowiki>{{LOCALMONTHABBREV}}</nowiki></tt>
+* <tt><nowiki>{{LOCALDAY}}</nowiki></tt>
+* <tt><nowiki>{{LOCALDAY2}}</nowiki></tt>
+* <tt><nowiki>{{LOCALDOW}}</nowiki></tt>
+* <tt><nowiki>{{LOCALDAYNAME}}</nowiki></tt>
+* <tt><nowiki>{{LOCALTIME}}</nowiki></tt>
+* <tt><nowiki>{{LOCALHOUR}}</nowiki></tt>
+* <tt><nowiki>{{LOCALWEEK}}</nowiki></tt>
+* <tt><nowiki>{{LOCALTIMESTAMP}}</nowiki></tt>
+
+
+:''For more thorough time formatting, you may want to install [http://www.mediawiki.org/wiki/Extension:ParserFunctions ParserFunctions] to use the <tt>#time</tt> parser function.''
+
+=== Technical Metadata ===
+
+Revision variables return data about the latest edit to the current page, even if viewing an older version of the page.
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Site'''
+|-
+| <tt><nowiki>{{SITENAME}}</nowiki></tt>
+| {{SITENAME}}
+| The wiki's site name (<tt>$wgSitename</tt>).
+|
+|-
+| <tt><nowiki>{{SERVER}}</nowiki></tt>
+| {{SERVER}}
+| domain URL (<tt>$wgServer</tt>)
+|
+|-
+| <tt><nowiki>{{SERVERNAME}}</nowiki></tt>
+| {{SERVERNAME}}
+| domain name (<tt>$wgServerName</tt>)
+|
+|-
+| <tt><nowiki>{{DIRMARK}}</nowiki></tt><br /><tt><nowiki>{{DIRECTIONMARK}}</nowiki></tt>
+| {{DIRMARK}}<br />{{DIRECTIONMARK}}
+| Outputs a unicode-directional mark that matches the wiki's default language's direction (<tt>&amp;lrm;</tt> on left-to-right wikis, <tt>&amp;rlm;</tt> on right-to-left wikis), useful in text with multi-directional text.
+| 1.7+
+|-
+| <tt><nowiki>{{SCRIPTPATH}}</nowiki></tt>
+| {{SCRIPTPATH}}
+| relative script path (<tt>$wgScriptPath</tt>)
+|
+|-
+| <tt><nowiki>{{CURRENTVERSION}}</nowiki></tt>
+| {{CURRENTVERSION}}
+| The wiki's MediaWiki version.
+| 1.7+
+|-
+| <tt><nowiki>{{CONTENTLANGUAGE}}</nowiki></tt>
+| {{CONTENTLANGUAGE}}
+| The wiki's default interface language (<tt>$wgLanguageCode</tt>)
+| 1.7+
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Latest revision to current page'''
+|-
+| <tt><nowiki>{{REVISIONID}}</nowiki></tt>
+| {{REVISIONID}}
+| Unique ID
+| 1.5+
+|-
+| <tt><nowiki>{{REVISIONDAY}}</nowiki></tt>
+| {{REVISIONDAY}}
+| Day edit was made (unpadded number)
+| 1.8+
+|-
+| <tt><nowiki>{{REVISIONDAY2}}</nowiki></tt>
+| {{REVISIONDAY2}}
+| Day edit was made (zero-padded number)
+| 1.8+
+|-
+| <tt><nowiki>{{REVISIONMONTH}}</nowiki></tt>
+| {{REVISIONMONTH}}
+| Month edit was made (unpadded number)
+| 1.8+
+|-
+| <tt><nowiki>{{REVISIONYEAR}}</nowiki></tt>
+| {{REVISIONYEAR}}
+| Year edit was made
+| 1.8+
+|-
+| <tt><nowiki>{{REVISIONTIMESTAMP}}</nowiki></tt>
+| {{REVISIONTIMESTAMP}}
+| Timestamp as of time of edit
+| 1.8+
+|-
+| <tt><nowiki>{{REVISIONUSER}}</nowiki></tt>
+| <nowiki>{{REVISIONUSER}}</nowiki>
+| The username of the user who made the most recent edit to the page.
+| 1.15+
+|-
+| <tt><nowiki>{{PAGESIZE:</nowiki>''page name''<nowiki>}}</nowiki></tt>
+| {{PAGESIZE:Help:Magic_words}}
+| Returns the byte size of the specified page.
+| 1.13+
+|-
+| <tt><nowiki>{{PROTECTIONLEVEL:</nowiki>''action''<nowiki>}}</nowiki></tt>
+| protection level
+| Outputs the protection level (e.g. 'autoconfirm', 'sysop') for a given action (e.g. 'edit', 'move') on the current page or an empty string if not protected.
+| 1.15+
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Affects page content'''
+|-
+| <tt><nowiki>{{DISPLAYTITLE:</nowiki>''title''<nowiki>}}</nowiki></tt>
+|
+| Format the current page's title header. The value must be equivalent to the default title: only capitalization changes and replacing spaces with underscores. It can be disabled or enabled by <tt>$wgAllowDisplayTitle</tt>; disabled by default before 1.10+, enabled by default thereafter.
+| 1.7+
+|-
+| <tt><nowiki>{{DEFAULTSORT:</nowiki>''sortkey''<nowiki>}}</nowiki></tt>
+|
+| Used on a categorized page, sets a default [[Help:Categories|category sort key]].
+| 1.10+
+|}
+
+===Statistics===
+
+Numbers returned by these variables normally contain separators (commas or spaces, depending on the local language), but can return raw numbers with the ":R" flag (for example, <tt><nowiki>{{NUMBEROFPAGES}}</nowiki></tt> &rarr; {{NUMBEROFPAGES}} and <tt><nowiki>{{NUMBEROFPAGES:R}}</nowiki></tt> &rarr; {{NUMBEROFPAGES:R}}). Use "|R" for magic words that require a parameter like PAGESINCATEGORY (for example <tt><nowiki>{{PAGESINCATEGORY:Help}}</nowiki></tt> and <tt><nowiki>{{PAGESINCATEGORY:Help|R}}</nowiki></tt>).
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+|bgcolor="#8DA7D6" color="black" colspan="4"| '''Entire wiki'''
+|-
+| <tt><nowiki>{{NUMBEROFPAGES}}</nowiki></tt>
+| {{NUMBEROFPAGES}}
+| Number of wiki pages.
+| 1.7+
+|-
+| <tt><nowiki>{{NUMBEROFARTICLES}}</nowiki></tt>
+| {{NUMBEROFARTICLES}}
+| Number of pages in main namespace.
+|
+|-
+| <tt><nowiki>{{NUMBEROFFILES}}</nowiki></tt>
+| {{NUMBEROFFILES}}
+| Number of uploaded files.
+| 1.5+
+|-
+| <tt><nowiki>{{NUMBEROFEDITS}}</nowiki></tt>
+| {{NUMBEROFEDITS}}
+| Number of page edits.
+| 1.10+
+|-
+| <tt><nowiki>{{NUMBEROFVIEWS}}</nowiki></tt>
+| <nowiki>{{NUMBEROFVIEWS}}</nowiki>
+| Number of page views. Usually useless on a wiki using caching.
+| 1.14+
+|-
+| <tt><nowiki>{{NUMBEROFUSERS}}</nowiki></tt>
+| {{NUMBEROFUSERS}}
+| Number of registered users.
+| 1.7+
+|-
+| <tt><nowiki>{{NUMBEROFADMINS}}</nowiki></tt>
+| {{NUMBEROFADMINS}}
+| Number of users in the ''sysop'' group.
+| 1.7+
+|-
+| <tt><nowiki>{{NUMBEROFACTIVEUSERS}}</nowiki></tt>
+| <nowiki>{{NUMBEROFACTIVEUSERS}}</nowiki>
+| Number of active users, based on the critera used in [[Special:Statistics]].
+| 1.15+
+|-
+| <tt><nowiki>{{PAGESINCATEGORY:</nowiki>''categoryname''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{PAGESINCAT:Help}}</nowiki></tt>
+| {{PAGESINCATEGORY:Help}}<br />{{PAGESINCAT:Help}}
+| Number of pages in the given [[Help:Categories|category]] (replace "Help" with the relevant category name).
+| 1.13+
+|-
+| <tt><nowiki>{{NUMBERINGROUP:</nowiki>''groupname''<nowiki>}}</nowiki></tt>
+| <nowiki>{{NUMBERINGROUP:bureaucrat}}</nowiki> <br /><nowiki>({{NUMBERINGROUP:bureaucrat}} used here)</nowiki>
+| Number of users in a specific group.
+| 1.14+
+|-
+| <tt><nowiki>{{PAGESINNS:</nowiki>''index''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{PAGESINNAMESPACE:</nowiki>''index''<nowiki>}}</nowiki></tt>
+| ''not enabled''
+| Number of pages in the given [[Help:Namespaces|namespace]] (replace 2 with the relevant namespace index). E.g. <tt><nowiki>{{PAGESINNAMESPACE:</nowiki>''14''<nowiki>}}</nowiki></tt> equals the number of categories. <!-- {{NUMBEROFCATEGORIES}} --> Disabled by default, enable with <tt>$wgAllowSlowParserFunctions</tt>.
+| 1.7+
+|}
+
+==== Page Names ====
+
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+| <tt><nowiki>{{FULLPAGENAME}}</nowiki></tt>
+| {{FULLPAGENAME}}
+| Namespace and page title.
+| 1.6+
+|-
+| <tt><nowiki>{{PAGENAME}}</nowiki></tt>
+| {{PAGENAME}}
+| Page title.
+|
+|-
+| <tt><nowiki>{{BASEPAGENAME}}</nowiki></tt>
+| {{BASEPAGENAME}}
+| Page title excluding the current [[Help:Subpages|subpage]] and namespace ("Title" on "Title/foo").
+| 1.7+
+|-
+| <tt><nowiki>{{SUBPAGENAME}}</nowiki></tt>
+| {{SUBPAGENAME}}
+| The [[Help:Subpages|subpage]] title ("foo" on "Title/foo").
+| 1.6+
+|-
+| <tt><nowiki>{{SUBJECTPAGENAME}}</nowiki></tt>
+| {{SUBJECTPAGENAME}}
+| The namespace and title of the associated content page.
+| 1.7+
+|-
+| <tt><nowiki>{{TALKPAGENAME}}</nowiki></tt>
+| {{TALKPAGENAME}}
+| The namespace and title of the associated talk page.
+| 1.7+
+|}
+
+The following are URL-encoded equivalents:
+* <tt><nowiki>{{FULLPAGENAMEE}}</nowiki></tt>
+* <tt><nowiki>{{PAGENAMEE}}</nowiki></tt>
+* <tt><nowiki>{{BASEPAGENAMEE}}</nowiki></tt>
+* <tt><nowiki>{{SUBPAGENAMEE}}</nowiki></tt>
+* <tt><nowiki>{{SUBJECTPAGENAMEE}}</nowiki></tt>
+* <tt><nowiki>{{TALKPAGENAMEE}}</nowiki></tt>
+
+As of 1.15+, these can all take a parameter, allowing specification of the page to be operated on, instead of just the current page:
+* <tt><nowiki>{{PAGENAME:Template:Main Page}}</nowiki></tt> -> <tt><nowiki>{{PAGENAME:Template:Main Page}}</nowiki></tt>
+
+==== Namespaces ====
+
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+| <tt><nowiki>{{NAMESPACE}}</nowiki></tt>
+| {{NAMESPACE}}
+| Namespace (name)
+|
+|-
+| <tt><nowiki>{{SUBJECTSPACE}}</nowiki></tt><br /><tt><nowiki>{{ARTICLESPACE}}</nowiki></tt>
+| {{SUBJECTSPACE}}<br />{{ARTICLESPACE}}
+| Name of the associated content namespace
+| 1.7+
+|-
+| <tt><nowiki>{{TALKSPACE}}</nowiki></tt>
+| {{TALKSPACE}}
+| Name of the associated talk namespace
+| 1.7+
+|}
+
+The following are URL-encoded equivalents:
+* <tt><nowiki>{{NAMESPACEE}}</nowiki></tt>
+* <tt><nowiki>{{SUBJECTSPACEE}}</nowiki></tt>
+* <tt><nowiki>{{TALKSPACEE}}</nowiki></tt>
+
+As of 1.15+, these can all take a parameter, specifying the property should be returned for a given title instead of the current page:
+* <tt><nowiki>{{NAMESPACE:Template:Main Page}}</nowiki></tt> -> <tt><nowiki>{{NAMESPACE:Template:Main Page}}</nowiki></tt>
+
+[[Category:MediaWiki Help Topic|Magic Words]]
+
+==Parser Functions==
+
+Parser functions are very similar to variables, but take one or more parameters (technically, any magic word that takes a parameter is a parser function), and the name is usually prefixed with a hash to distingush them from possible templates)
+
+This page only describes parser functions that are integral to the MediaWiki software. Other parser functions may be added by MediaWiki extensions such as the ParserFunctions extension.
+
+=== URL Data ===
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+!bgcolor="#A7C1F2"| Variable
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Versions
+|-
+| <tt><nowiki>{{localurl:</nowiki>''page name''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{localurl:</nowiki>''page name''<nowiki>|</nowiki>''query string''<nowiki>}}</nowiki></tt>
+| {{localurl:page name}}<br />{{localurl:page name|query string}}
+| The relative path to the title.
+|
+|-
+| <tt><nowiki>{{fullurl:</nowiki>''page name''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{fullurl:</nowiki>''page name''<nowiki>|</nowiki>''query_string''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{fullurl:</nowiki>''interwiki:remote page name''<nowiki>|</nowiki>''query_string''<nowiki>}}</nowiki></tt>
+| {{fullurl:page name}}<br />{{fullurl:page name|query_string}}
+| The absolute path to the title. This will also resolve Interwiki prefixes.
+| 1.5+
+|-
+| <tt><nowiki>{{filepath:</nowiki>''file name''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{filepath:file name|nowiki}}</nowiki></tt>
+| {{filepath:Wiki.png}}<br />{{filepath:Wiki.png}}
+| The absolute URL to a media file.
+| 1.12+
+|-
+| <tt><nowiki>{{urlencode:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| <tt>{{urlencode:x y z}}</tt>
+| The input encoded for use in URLs.
+| 1.7+
+|-
+| <tt><nowiki>{{anchorencode:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| <tt>{{anchorencode:x y z}}</tt>
+| The input encoded for use in URL section anchors (after the '#' symbol in a URL).
+| 1.8+
+|}
+
+=== Namespaces ===
+
+"<tt><nowiki>{{ns:}}</nowiki></tt>" returns the localized name for the [[Help:Namespaces|namespace]] with that index.
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+|-
+! bgcolor="#8DA7D6" color="black" colspan="2" width="50%" | Content namespaces
+! rowspan="11" |
+! bgcolor="#8DA7D6" color="black" colspan="2" width=%50%" | Talk namespaces
+|-
+!bgcolor="#A7C1F2"| Usage
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Usage
+!bgcolor="#A7C1F2"| Output
+|-
+| <tt><nowiki>{{ns:-2}}</nowiki></tt> or <tt><nowiki>{{ns:Media}}</nowiki></tt>
+| {{ns:-2}}
+| <tt><nowiki>{{ns:-1}}</nowiki></tt> or <tt><nowiki>{{ns:Special}}</nowiki></tt>
+| {{ns:-1}}
+|-
+| <tt><nowiki>{{ns:0}}</nowiki></tt>
+| {{ns:0}}
+| <tt><nowiki>{{ns:1}}</nowiki></tt> or <tt><nowiki>{{ns:Talk}}</nowiki></tt>
+| {{ns:1}}
+|-
+| <tt><nowiki>{{ns:2}}</nowiki></tt> or <tt><nowiki>{{ns:User}}</nowiki></tt>
+| {{ns:2}}
+| <tt><nowiki>{{ns:3}}</nowiki></tt> or <tt><nowiki>{{ns:User talk}}</nowiki></tt>
+| {{ns:3}}
+|-
+| <tt><nowiki>{{ns:4}}</nowiki></tt> or <tt><nowiki>{{ns:Project}}</nowiki></tt>
+| {{ns:4}}
+| <tt><nowiki>{{ns:5}}</nowiki></tt> or <tt><nowiki>{{ns:Project talk}}</nowiki></tt>
+| {{ns:5}}
+|-
+| <tt><nowiki>{{ns:6}}</nowiki></tt> or <tt><nowiki>{{ns:File}}</nowiki></tt> or <tt><nowiki>{{ns:Image}}</nowiki></tt>
+| {{ns:6}}
+| <tt><nowiki>{{ns:7}}</nowiki></tt> or <tt><nowiki>{{ns:File talk}}</nowiki></tt> or <tt><nowiki>{{ns:Image talk}}</nowiki></tt>
+| {{ns:7}}
+|-
+| <tt><nowiki>{{ns:8}}</nowiki></tt> or <tt><nowiki>{{ns:MediaWiki}}</nowiki></tt>
+| {{ns:8}}
+| <tt><nowiki>{{ns:9}}</nowiki></tt> or <tt><nowiki>{{ns:MediaWiki talk}}</nowiki></tt>
+| {{ns:9}}
+|-
+| <tt><nowiki>{{ns:10}}</nowiki></tt> or <tt><nowiki>{{ns:Template}}</nowiki></tt>
+| {{ns:10}}
+| <tt><nowiki>{{ns:11}}</nowiki></tt> or <tt><nowiki>{{ns:Template talk}}</nowiki></tt>
+| {{ns:11}}
+|-
+| <tt><nowiki>{{ns:12}}</nowiki></tt> or <tt><nowiki>{{ns:Help}}</nowiki></tt>
+| {{ns:12}}
+| <tt><nowiki>{{ns:13}}</nowiki></tt> or <tt><nowiki>{{ns:Help talk}}</nowiki></tt>
+| {{ns:13}}
+|-
+| <tt><nowiki>{{ns:14}}</nowiki></tt> or <tt><nowiki>{{ns:Category}}</nowiki></tt>
+| {{ns:14}}
+| <tt><nowiki>{{ns:15}}</nowiki></tt> or <tt><nowiki>{{ns:Category talk}}</nowiki></tt>
+| {{ns:15}}
+|}
+
+===Formatting===
+
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+!bgcolor="#A7C1F2"| Usage
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Version
+|-
+|-
+| <tt><nowiki>{{lc:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| {{lc:TeXt tRaNsFoRm}}
+| The lowercase input.
+| 1.5+
+|-
+| <tt><nowiki>{{lcfirst:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| {{lcfirst:TeXt tRaNsFoRm}}
+| The input with the first character lowercase.
+| 1.5+
+|-
+| <tt><nowiki>{{uc:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| {{uc:TeXt tRaNsFoRm}}
+| The uppercase input.
+| 1.5+
+|-
+| <tt><nowiki>{{ucfirst:</nowiki>''string''<nowiki>}}</nowiki></tt>
+| {{ucfirst:TeXt tRaNsFoRm}}
+| The input with the first character uppercase.
+| 1.5+
+|-
+| <tt><nowiki>{{formatnum:</nowiki>''unformatted number''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{formatnum:</nowiki>''formatted number''<nowiki>|R}}</nowiki></tt>
+| {{formatnum:-987654321.654321}}<br />{{formatnum:-987,654,321.654321|R}}
+| The input with decimal and decimal group separators, and localized digit script, according to the wiki's default locale. the <tt><nowiki>|</nowiki>R</tt> parameter can be used to unformat a number, for use in mathmatical situations.
+| 1.7+
+|-
+| <tt><nowiki>{{padleft:xyz|</nowiki>''number''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{padleft:xyz|</nowiki>''number''<nowiki>|</nowiki>''separator''<nowiki>}}</nowiki></tt>
+| {{padleft:xyz|5}}<br />{{padleft:xyz|5|_}}
+| Inserts a string of padding characters (character chosen in third parameter; default '0') of a specified length (second paramater) next to a chosen base character or variable (first parameter). The final digits or characters in the base replace the final characters in the padding; ie. <nowiki>{{padleft:44|3|0}}</nowiki> produces {{padleft:44|3}}.<br />
+| 1.8+
+|-
+| <tt><nowiki>{{padright:xyz|</nowiki>''number''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{padright:xyz|</nowiki>''number''<nowiki>|</nowiki>''separator''<nowiki>}}</nowiki></tt>
+| {{padright:xyz|5}}<br />{{padright:xyz|5|_}}
+| Identical to padleft, but adds padding characters to the right side.
+|-
+| <tt><nowiki>{{plural:2|</nowiki>''is''<nowiki>|</nowiki>''are''<nowiki>}}</nowiki></tt>
+| {{plural:2|is|are}}
+| Outputs the correct given pluralization form (parameters except first) depending on the count (first parameter). Plural transformations are used for languages like Russian based on "count mod 10".
+|-
+| <tt><nowiki>{{grammar:N|</nowiki>''noun''<nowiki>}}</nowiki></tt>
+| {{grammar:N|noun}}
+| 
+Outputs 
+the correct inflected form of the given word 
+described by the inflection code after the colon 
+(language-dependent).  
+Grammar transformations 
+are used for inflected languages like Polish.  
+| 1.7+
+|}
+
+===Miscellaneous===
+{| border="2" width="100%" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;"
+!bgcolor="#A7C1F2"| Usage
+!bgcolor="#A7C1F2"| Output
+!bgcolor="#A7C1F2"| Description
+!bgcolor="#A7C1F2"| Version
+|-
+| <tt><nowiki>{{int:</nowiki>''message name''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{int:</nowiki>edit<nowiki>}}</nowiki></tt>
+| <tt>{{int:edit}}</tt> <br />(''depends on user language'')
+| Internationalizes (translates) the given '''int'''erface (MediaWiki namespace) message into the user language. ''Note that this can damage/confuse cache consistency.''
+| 
+|-
+| <tt><nowiki>{{#language:</nowiki>''language code''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{#language:de}}</nowiki></tt>
+| {{#language:language code}}<br />{{#language:de}}
+| The native name for the given language code.
+| 1.7+
+|-
+| <tt><nowiki>{{#special:</nowiki>''special page name''<nowiki>}}</nowiki><br /><br /><nowiki>{{#special:Special:UserLogin}}</nowiki></tt>
+| {{#special:special page name}}<br />{{#special:userlogin}}
+| The localized name for the given canonical Special: page.
+| 1.9+
+|-
+| <tt><nowiki>{{#tag:</nowiki>''tagname''<nowiki>}}</nowiki></tt><br /><tt><nowiki>{{#tag:</nowiki>''tagname''<br><nowiki>|</nowiki>''tag content''<br><nowiki>|</nowiki>''parameter=value''<br /><nowiki>|</nowiki>''parameter2=value''<br /><nowiki>}}</nowiki></tt>
+| ''(depends on parser tag)''
+| Alias for XML-style parser or extension tags, but parsing wiki code. Attribute values can be passed as parameter values ('<tt><nowiki><tagname attribute="value"></nowiki></tt>' &rarr; '<tt><nowiki>{{#tag:tagname|attribute=value}}</nowiki></tt>'), and inner content as an unnamed parameter ('<tt><nowiki><tagname>content</tagname></nowiki></tt>' &rarr; '<tt><nowiki>{{#tag:tagname|content}}</nowiki></tt>').
+| 1.12+
+|-
+| <tt><nowiki>{{GENDER:</nowiki>''username''<br /><nowiki>|</nowiki>''return text if user is male''<br /><nowiki>|</nowiki>''return text if user is female''<br /><nowiki>|</nowiki>''return text if user hasn't defined their gender''<nowiki>}}</nowiki></tt>
+| ''(depends on the named user's gender)''
+| A switch for the gender set in [[Special:Preferences]]
+| 1.15+
+|}
