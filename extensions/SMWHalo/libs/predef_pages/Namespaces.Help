@@ -1,0 +1,167 @@
+__NOTOC__
+Pages on a MediaWiki wiki are grouped into collections called "namespaces", which differentiate between the purpose of the pages at a high level. Pages in certain namespaces can also have special properties or behave differently when they interact with other pages.  
+
+Namespaces are indicated in page titles by prefixing the page name with "<tt>NAMESPACE:</tt>", so the prefix "<tt>Help:</tt>" indicates that the page is in the <tt>Help</tt> namespace. Note, however, that colons and prefixes can also appear in page titles without indicating a namespace: The page "Foo:Software" is a page located in the <tt>Main</tt> namespace because the namespace "Foo" does not exist. Similarly, the page "Help:Foo:Software" is in the <tt>Help</tt> namespace.
+
+== Standard Namespaces ==
+
+The standard MediaWiki installation has sixteen namespaces which can contain user-generated content; there are also two special namespaces which contain pages created 'on the fly' by the MediaWiki software.  The standard namespaces are organised in pairs, with each pair containing a 'subject namespace' and a 'discussion namespace'.  The namespaces are numbered from zero such that all subject namespaces have even indices, and all talk namespaces have odd indices.
+
+====-2: {{ns:-2}}====
+
+This namespace is an alias used for direct linking to media files: the link [[{{ns:-2}}:Wiki.png]] links to just the image rather than the image description page, which would be [[:{{ns:6}}:Wiki.png]]. 
+
+====-1: {{ns:-1}}====
+
+This namespace is used to group [[Help:Special_Pages|special pages]], reports and interfaces that are generated 'on demand' by MediaWiki and which are not directly editable.  It is not possible to create pages in this namespace except by modifying or extending the MediaWiki software.
+
+====0: (Main)====
+
+Namespace zero is the 'null' namespace, commonly called the "main namespace" or "mainspace".  This namespace typically contains the bulk of the content pages in a wiki. This namespace generally has no special properties.
+
+====1: {{ns:1}}====
+
+The "Talk" namespace is the discussion namespace attached to the mainspace.  It has no special properties.
+
+====2: {{ns:2}}====
+
+Each user has a corresponding page in the {{ns:2}} namespace, which is linked to from edit histories, watchlists, recent changes, etc; wherever an individual user is uniquely identified. This page, and subpages of it, can be used by users to record information about themselves or to test and draft new content.  Pages of the form "<tt style="whitespace:nowrap">{{ns:2}}:''UserName''/Foo'''.js'''</tt>" or "<tt style="whitespace:nowrap">{{ns:2}}:''UserName''/Foo'''.css'''</tt>" can only be edited by the user themselves or by administrators.
+
+====3: {{ns:3}}====
+
+This namespace is the talkspace associated with the {{ns:2}} namespace. Pages in this namespace are mainly used to leave messages for particular users or inform them of discussions that may be of interest to them. To facilitate this, when a page "{{ns:3}}:UserName" is edited, whenever the user 'UserName' loads a page, a notice is displayed at the top of the page informing them of the edit:
+<div class="usermessage plainlinks">You have [[{{ns:3}}:UserName|<span style="color:#002bb8">{{MediaWiki:newmessageslink}}</span>]] ([{{fullurl:{{ns:3}}:UserName&diff=cur}} <span style="color:#002bb8">{{MediaWiki:newmessagesdifflink}}</span>]).</div>
+
+This notice continues to appear until the user loads their user talk page to read the message. 
+
+====4: {{ns:4}}====
+
+This is a content namespace that is normally used for meta-discussions related to the operation and development of the wiki. It has no special properties.
+
+====5: {{ns:5}}====
+
+This is a talk namespace that is normally used for discussions related to the associated content pages.  It has no special properties.
+
+====6: {{ns:6}}====
+
+The {{ns:6}} namespace is used to store metadata for images, videos, sound files and other media accessed via the {{ns:-2}} namespace.  Each file has a corresponding page in the {{ns:6}} namespace which is often used to hold licensing data. Linking directly to a page in this namespace instead includes the media file inline in the page (see [[Help:Images|Images]] for more details of this link syntax). To create an internal link to the file page, you need to add a colon to the front of the namespace: <tt><nowiki>[[:</nowiki>{{ns:6}}<nowiki>:Wiki.png]]</nowiki></tt>.
+
+====7: {{ns:7}}====
+
+This is a talk namespace that is normally used for discussions related to the associated media files.  It has no special properties.
+
+====8: {{ns:8}}====
+
+The MediaWiki namespace is used to hold system messages and other important content. For instance, the page [[{{ns:8}}:Edit]] contains the text that fills the "{{MediaWiki:Edit}}" tab at the top of every page.  If that page exists, it overrides the default content, which is "edit this page". Similarly, [[{{ns:8}}:Common.css]] is the system message which holds the [[wikipedia:Cascading Style Sheets|CSS]] code that is loaded for all users for each page. It has the special property that the entire namespace is fully protected and can only be edited by administrators.
+
+====9: {{ns:9}}====
+
+This is a talk namespace that is normally used for discussions related to the associated system messages.  It has no special properties.
+
+====10: {{ns:10}}====
+
+The {{ns:10}} namespace is used to hold [[Help:Templates|templates]], blocks of text or wikicode that are intended to be transcluded in several other pages.  To facilitate this it has the special property that it is the ''default'' namespace for transclusions: the wikicode <tt style="white-space:nowrap"><nowiki>{{Foo}}</nowiki></tt> is equivalent to <tt style="white-space:nowrap"><nowiki>{{</nowiki>'''{{ns:10}}:'''<nowiki>Foo}}</nowiki></tt>. 
+
+====11: {{ns:11}}====
+
+This is a talk namespace that is normally used for discussions related to the associated template pages.  It has no special properties.
+
+====12: {{ns:12}}====
+
+The {{ns:12}} namespace is usually used to hold help files, instructions and 'how-to' guides.  It has no special properties.
+
+====13: {{ns:13}}====
+
+This is a talk namespace that is normally used for discussions related to the associated help pages.  It has no special properties.
+
+====14: {{ns:14}}====
+
+The {{ns:14}} namespace contains [[Help:Categories|categories]], dynamic lists of other pages.  To facilitate this, linking ''directly'' to a category page does not output an inline link, but instead includes the page into the associated category page.  So the code <tt style="white-space:nowrap"><nowiki>[[</nowiki>{{ns:14}}<nowiki>:Help]]</nowiki></tt> causes a category link to appear at the bottom of the page (at the bottom in the box marked "{{MediaWiki:Pagecategories}}"). Clicking on that link takes you to the category page, where this page is visible in the category list.  To create an inline link to a category page, you need to add a colon to the front of the namespace: <tt style="white-space:nowrap"><nowiki>[[:</nowiki>{{ns:14}}<nowiki>:Help]]</nowiki></tt> (see [[Help:Categories|Categories]] for more details on category link syntax).
+
+====15: {{ns:15}}====
+
+This is a talk namespace that is normally used for discussions related to the associated category pages.  It has no special properties.
+
+==Localization==
+
+=== Renaming Namespaces ===
+{| border="2" width="0" cellspacing="4" cellpadding="3" rules="all" style="margin:1em 1em 1em 0; border:solid 1px #AAAAAA; border-collapse:collapse;empty-cells:show;float:right;
+|-
+! bgcolor="#A7C1F2"|Canonical name
+! bgcolor="#A7C1F2"|Localised name
+|-
+| Media          || {{ns:-2}}
+|-
+| Special        || {{ns:-1}}
+|-
+|(Main)          || {{ns:0}}
+|-
+| Talk           || {{ns:1}}
+|-
+| User           || {{ns:2}}
+|-
+| User talk      || {{ns:3}}
+|-
+| Project        || {{ns:4}}
+|-
+| Project talk   || {{ns:5}}
+|-
+| File           || {{ns:6}}
+|-
+| File talk      || {{ns:7}}
+|-
+| MediaWiki      || {{ns:8}}
+|-
+| MediaWiki talk || {{ns:9}}
+|-
+| Template       || {{ns:10}}
+|-
+| Template talk  || {{ns:11}}
+|-
+| Help           || {{ns:12}}
+|-
+| Help talk      || {{ns:13}}
+|-
+| Category       || {{ns:14}}
+|-
+| Category talk  || {{ns:15}}
+|}
+
+Namespace names can be translated into languages other than english and individual namespaces can be renamed, as set by a wiki's system admins.  These names are known as the 'localised' namespace names. However, all namespaces have a 'canonical name', the original english name which will work on any installation of MediaWiki. So linking to "User:Foo" will always locate the user page for the user foo, whether the wiki is in French (where the localized name would be "Utilisateur:Foo") or German ("Benutzer:Foo"). The Canonical namespace names are given in the table to the right along with their localized names on this wiki. 
+
+=== Namespace Aliases ===
+
+On some wikis there are also namespace aliases: alternative names that will also be resolved to the localized names. For instance, a wiki might define "T" as an alias for {{ns:10}}, such that typing "T:Foo" is equivalent to "{{ns:10}}:Foo", saving a few characters and seconds.  By default, "Image" is an alias for "File", so <tt style="white-space:nowrap;"><nowiki>[[Image:Wiki.png]]</nowiki></tt> is equivalent to <tt style="white-space:nowrap;"><nowiki>[[</nowiki>File<nowiki>:Wiki.png]]</nowiki></tt>.
+
+=== Custom Namespaces ===
+
+Some wikis may wish to organize their content in ways that do not fit into this standard set of namespaces.  A wiki may define additional namespaces to facilitate this; these namespaces behave exactly like normal namespaces, and generally have indices greater than or equal to 100. These custom namespaces generally have no special properties.
+See [http://www.mediawiki.org/wiki/Manual:Using_custom_namespaces Using Custom Namespaces] on the MediaWiki Web site for more information.
+
+== Identifying Namespaces ==
+
+There are a number of ways by which the namespace of a particular page can be identified:
+
+* '''Magic Words &ndash;''' The [[Help:Magic_Words|magic word]] "<tt><nowiki>{{NAMESPACE}}</nowiki></tt>" returns the value of the namespace the page is in.
+* '''Javascript &ndash;''' The javascript variable <tt>wgCanonicalNamespace</tt> contains the full namespace name.  The variable <tt>wgNamespaceNumber</tt> contains the numerical index of the namespace.
+* '''CSS &ndash;''' The <tt><nowiki><body></nowiki></tt> tag of the HTML page output is given two CSS classes that vary by namespace: A class <tt>ns-#</tt>, where # is the index of the namespace, and <tt>ns-XXX</tt>, where XXX is "<tt>subject</tt>" for all content namespaces, "<tt>special</tt>" for pages in the {{ns:-1}} namespace, and "<tt>talk</tt>" for talk namespaces. So CSS code such as the following can be used to change the appearance of an object based on its namespace:
+
+<pre>
+.ns-subject a {   /* All links on content pages to be green. */
+    color: #00FF00;
+}
+.ns-talk a {      /* Links on talk pages to be blue. */
+    color: #0000FF;
+}
+.ns-3 a {         /* and links on user talk pages to be red */
+    color: #FF0000;
+}
+</pre>
+
+* '''API &ndash;''' You can get a complete list of all the namespaces used on your wiki from the API. For example, open the following URL in your browser: 
+<pre>
+http:/localhost/mediawiki/api.php?action=query&meta=siteinfo&siprop=namespaces
+</pre>
+The browser will return an XML document showing a list of all namespaces used on your wiki. 
+
+[[Category:MediaWiki Help Topic|Namespaces]]
