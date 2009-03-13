@@ -1,5 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" name="SparqlEndpointService">
- 
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:tns="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/" name="SparqlEndpointService">
+ <xs:schema version="1.0" targetNamespace="http://sparqlendpoint.triplestore.smwplus.ontoprise.com/">
+<xs:element name="MalformedQuery" type="tns:MalformedQuery"/>
+<xs:element name="QueryRequestRefused" type="tns:QueryRequestRefused"/>
+−
+<xs:complexType name="MalformedQuery">
+−
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+−
+<xs:complexType name="QueryRequestRefused">
+−
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
   <message name="query">
     <part name="arg0" type="xsd:string" />
     <part name="arg1" type="xsd:string" />
@@ -9,10 +26,10 @@
     <part name="return" type="xsd:string" />
   </message>
   <message name="MalformedQuery">
-    <part name="fault" element="xsd:string" />
+    <part name="fault" element="tns:MalformedQuery" />
   </message>
   <message name="QueryRequestRefused">
-    <part name="fault" element="xsd:string" />
+    <part name="fault" element="tns:QueryRequestRefused" />
 
   </message>
   <message name="getTripleStoreStatus">
