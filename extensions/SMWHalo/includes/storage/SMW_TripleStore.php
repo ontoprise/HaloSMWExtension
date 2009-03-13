@@ -123,18 +123,19 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new TSConnection();
-
-			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
+            $sparulCommands = array();
+			$sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-			 $con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
+			 $sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>");
+					 $sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
 				}
 			}
+			$con->connect();
+			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -303,25 +304,26 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new TSConnection();
-
-			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }");
+            $sparulCommands = array();
+			$sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
-				$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }");
+				$sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }");
+			$sparulCommands[] =  self::$ALL_PREFIXES."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					$con->send("/topic/WIKI.TS.UPDATE", "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>");
+					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
 				}
 				// ...and add new
 				foreach($new_rules as $ruleID => $ruleText) {
-					$con->send("/topic/WIKI.TS.UPDATE", "INSERT RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"");
+					$sparulCommands[] = "INSERT RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"";
 				}
 			}
+			$con->connect();
+			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 			// print something??
@@ -349,10 +351,12 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = new TSConnection();
 
+			$sparulCommands = array();
+			$sparulCommands[] = self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
+			$sparulCommands[] = self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }");
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }");
-			$con->send("/topic/WIKI.TS.UPDATE", self::$ALL_PREFIXES."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }");
+			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -427,11 +431,12 @@ class SMWTripleStore extends SMWStore {
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
 			$con = new TSConnection();
-
+            $sparulCommands = array();
+			$sparulCommands[] = "DROP <$smwgTripleStoreGraph>"; // drop may fail. don't worry
+			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
+			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgTripleStoreGraph>"); // drop may fail. don't worry
-			$con->send("/topic/WIKI.TS.UPDATE", "CREATE <$smwgTripleStoreGraph>");
-			$con->send("/topic/WIKI.TS.UPDATE", "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>");
+			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -1010,18 +1015,17 @@ class TSConnection {
 				$this->con->send($topic, $commands);
 				return;
 			}
-			foreach($commands as $c) {
-				$this->con->send($topic, $c);
-			}
+			$this->con->send($topic, implode("\n",$commands));
+			
 		} else {
 			// ignore topic
 		    if (!is_array($commands)) {
                 $this->con->update($commands);
                 return;
             }
-			foreach($commands as $c) {
-				$this->con->update($c);
-			}
+			
+		    $this->con->update(implode("\n",$commands));
+			
 		}
 	}
 }
