@@ -251,6 +251,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * 
 	 */
 	private function getElementProperties() {
+		global $wgContLang;
+		
 	    $db =& wfGetDB( DB_SLAVE );
 	    $smw_ids = $db->tableName('smw_ids');
 	    $smw_inst2 = $db->tableName('smw_inst2');
@@ -276,8 +278,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $fids = array_flip(explode(",", $query_add));
 	            while ($row = $db->fetchObject($res)) {
 	                unset($fids[$row->smw_id]);
+	                $nsText = $wgContLang->getNsText($row->ns);
+	                $link = ((strlen($nsText) > 0) ? "$nsText:" : "").$row->link;
 	                if (is_null($this->smw_category_id) || $this->smw_category_id == $row->category) {
-	               		$this->elementProperties[$row->smw_id]= array($row->title, $row->category, $row->link);
+	               		$this->elementProperties[$row->smw_id]= array($row->title, $row->category, $link);
                    		$this->postProcessingForElement($row);
 	                }
                    	else {
@@ -298,7 +302,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            	else {
 		                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
 		                while ($row = $db->fetchObject($res)) {
-	    	                $this->elementProperties[$row->smw_id]= array($row->title, NULL, $row->link);
+			                $nsText = $wgContLang->getNsText($row->ns);
+	    		            $link = ((strlen($nsText) > 0) ? "$nsText:" : "").$row->link;
+	    	                $this->elementProperties[$row->smw_id]= array($row->title, NULL, $link);
 	        	            $this->postProcessingForElement($row);
 	            	    }
 	                	$db->freeResult($res);
