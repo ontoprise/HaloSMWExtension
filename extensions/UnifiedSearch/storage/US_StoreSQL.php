@@ -100,16 +100,29 @@ class USStoreSQL extends USStore {
 
 	/**
 	 * Returns a title if it matches the given term as single title.
-	 * Case-insensitive
+	 * Case-insensitive. If the MySQL editdistance lib is installed it
+	 * uses Jaro-Winkler metric to determine matches.
 	 *
 	 * @param string $term
 	 * @return Title
 	 */
-	public function getSingleTitle($term) {
+	public function getSingleTitle($term, $ns = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$term = mysql_real_escape_string(strtoupper(str_replace(" ", "_", $term)));
-		$res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));
+		
+		if ($ns !== NULL) {
+			$namespaceCond = " AND page_namespace = ".$ns;
+		} else {
+			$namespaceCond = "";
+		}
+		global $smwgUseEditDistance;
+		if (isset($smwgUseEditDistance) && $smwgUseEditDistance === true) {
+		  $res = $db->query('SELECT page_title, page_namespace, JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).') AS score FROM '.$page.
+		                      ' WHERE JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).") > 0.90 $namespaceCond ORDER BY score DESC");
+		} else {
+		  $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));	
+		}
 		$numRows = $db->numRows($res);
 		if ($numRows > 1) {
 			$db->freeResult($res);

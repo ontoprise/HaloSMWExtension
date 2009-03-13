@@ -14,7 +14,25 @@
  * Created on: 27.01.2009
  */
 class QueryExpander {
-
+    
+	/**
+	 * Retrieves an title object by first exact matching and then
+	 * near-matching (if edit distance functions are available)
+	 *
+	 * @param string $term
+	 * @param integer $ns
+	 * @return Title
+	 */
+	private static function getNearTitle($term, $ns) {
+		global $smwgUseEditDistance;
+		$title = Title::newFromText($term, $ns);
+		$exactMatch = true;
+		if (!$title->exists() && $smwgUseEditDistance) {
+			$title = USStore::getStore()->getSingleTitle($term, $ns);
+			$exactMatch = false;
+		}
+		return array($title, $exactMatch);
+	}
 	/**
 	 * Expands a search term according to specified mode.
 	 *
@@ -34,58 +52,78 @@ class QueryExpander {
 
 			$unq_term = self::unQuoteIfNecessary($term);
 
-
-			$title = Title::newFromText($unq_term, NS_CATEGORY);
+            $corrections = array();    
+			list($title,$exactMatch) = self::getNearTitle($unq_term, NS_CATEGORY);
+			if (!$exactMatch && $title !== NULL) {
+				$corrections[] = $title->getText();
+			}
+			
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subcategories = USStore::getStore()->getDirectSubCategories($title);
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
-				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values, $redirects), "OR");
+				$query[]= self::opTerms(array_merge(array($term), $subcategories, $skos_values, $redirects, $corrections), "OR");
 				$found = true;
 			}
-
-			$title = Title::newFromText($unq_term);
+            
+			$corrections = array();   
+		    list($title,$exactMatch) = self::getNearTitle($unq_term, NS_MAIN);
+            if (!$exactMatch && $title !== NULL) {
+                $corrections[] = $title->getText();
+            }
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$skos_subjects = strlen($unq_term) < 3 ? array() : self::lookupSKOSForFulltext($unq_term, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
-				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
+				$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects, $corrections), "OR");
 				$found = true;
 			}
 
 			global $usgAllNamespaces;
 			$extraNamespace = array_diff(array_keys($usgAllNamespaces), array(NS_MAIN, SMW_NS_PROPERTY, NS_TEMPLATE, NS_CATEGORY, NS_HELP));
 			foreach($extraNamespace as $ns) {
-				$title = Title::newFromText($unq_term, $ns);
+				$corrections = array();   
+				list($title,$exactMatch) = self::getNearTitle($unq_term, $ns);
+	            if (!$exactMatch && $title !== NULL) {
+	                $corrections[] = $title->getText();
+	            }
 				if ($title == NULL) continue;
 				if ($title->exists()) {
 
 					$skos_values = self::getSKOSPropertyValues($title, $mode);
 					$skos_subjects = strlen($unq_term) < 3 ? array() : self::lookupSKOSForFulltext($unq_term, $mode);
 					$redirects = USStore::getStore()->getRedirects($title);
-					$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects), "OR");
+					$query[]= self::opTerms(array_merge(array($term),$skos_subjects, $skos_values, $redirects, $corrections), "OR");
 					$found = true;
 				}
 			}
-
-			$title = Title::newFromText($unq_term, SMW_NS_PROPERTY);
+            
+			$corrections = array();   
+		    list($title,$exactMatch) = self::getNearTitle($unq_term, SMW_NS_PROPERTY);
+                if (!$exactMatch && $title !== NULL) {
+                    $corrections[] = $title->getText();
+            }
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$subproperties = $mode == US_HIGH_TOLERANCE ? USStore::getStore()->getDirectSubProperties($title) : array();
 				$skos_values = self::getSKOSPropertyValues($title, $mode);
 				$redirects = USStore::getStore()->getRedirects($title);
-				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values, $redirects), "OR");
+				$query[]= self::opTerms(array_merge(array($term), $subproperties, $skos_values, $redirects, $corrections), "OR");
 				$found = true;
 			}
-
-			$title = Title::newFromText($unq_term, NS_TEMPLATE);
+            
+			$corrections = array();   
+		    list($title,$exactMatch) = self::getNearTitle($unq_term, NS_TEMPLATE);
+                if (!$exactMatch && $title !== NULL) {
+                    $corrections[] = $title->getText();
+            }
 			if ($title == NULL) continue;
 			if ($title->exists()) {
 				$values = array($term);
-				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode)) : array();
+				$values = $mode == US_HIGH_TOLERANCE ? array_merge($values, self::getSKOSPropertyValues($title, $mode), $corrections) : array();
 
 				$query[]= self::opTerms($values, "OR");
 				$found = true;

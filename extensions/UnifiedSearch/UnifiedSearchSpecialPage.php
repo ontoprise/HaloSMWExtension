@@ -238,13 +238,18 @@ class USSpecialPage extends SpecialPage {
             $contentTitleSearchPattern = 'contents:($1$4) OR title:($2$3)';
             $expandedFTSearch = QueryExpander::expandForFulltext($terms, $tolerance);
             $expandedTitles = QueryExpander::expandForTitles($terms, $namespacesToSearch , $tolerance);
-             //echo print_r(QueryExpander::findAggregatedTerms($terms), true);die();
+             
+            // find aggregated term, ie. terms which may be actually one term.
             $aggregatedTerms = QueryExpander::opTerms(array_keys(QueryExpander::findAggregatedTerms($terms)), "OR");
           
             $contentTitleSearchPattern = str_replace('$1', $expandedFTSearch, $contentTitleSearchPattern);
             $contentTitleSearchPattern = str_replace('$2', $expandedTitles, $contentTitleSearchPattern);
-            $contentTitleSearchPattern = str_replace('$3', $aggregatedTerms == '' ? '' : ' OR '.$aggregatedTerms, $contentTitleSearchPattern);
-            $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : ' OR '.$aggregatedTerms, $contentTitleSearchPattern);
+            
+            // add agregated search terms
+            $contentTitleSearchPattern = str_replace('$3', $aggregatedTerms == '' ? '' : $expandedTitles == '' ? $aggregatedTerms : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : $expandedFTSearch == '' ? $aggregatedTerms : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            
+            // start search in raw mode
             $searchSet = LuceneSearchSet::newFromQuery( 'raw',  $contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
 
             if ($searchSet == NULL || $searchSet->getTotalHits() == 0) {
