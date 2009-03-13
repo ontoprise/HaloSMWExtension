@@ -404,7 +404,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return Boolean true on success or false on error
 	 */	
 	private function getStartId(Title $start) {
-		if ($this->smw_start_id = $this->getSmwIdByTitle($start, NS_MAIN))
+		if ($this->smw_start_id = $this->getSmwIdByTitle($start, $start->getNamespace()))
 		    return true;
 		return false;	  
 	}
