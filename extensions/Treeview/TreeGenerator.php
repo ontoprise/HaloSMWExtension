@@ -228,6 +228,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				
 		// fetch properties of that smw_ids found (both s_id and o_id)
 		$this->getElementProperties();
+		
+		$this->sortElements();
 
 		// if start is set but not found in element properties, then it doesn't belong to the desired subset
 		// make an exception for the main page as this normaly doesn't belong to any category nor as any properties set
@@ -439,7 +441,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    		}
 	    	}
 	    }
-	    return $rootCats;
+	    return $this->sortElements($rootCats);
 	}
 	
 	/**
@@ -565,7 +567,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * to the current depth.
 	 *
 	 */
-	function addSubTree() {
+	private function addSubTree() {
         $subtree = new ChainedList();
 	    $last= $this->treeList->getLast();
 	    if (! $last) return;
@@ -599,7 +601,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      *
      * @return string	  $tree that can be used by the parser function #tree 
      */
-	function formatTreeToText() {
+	private function formatTreeToText() {
 		$tree = '';
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
@@ -633,7 +635,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      *
      * @return array	  $tree of elements as an asoc array (name, link) 
      */
-	function formatTreeToJson() {
+	private function formatTreeToJson() {
 	    $tree = array();
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
@@ -653,7 +655,53 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $this->treeList = NULL;
 	    return $tree;
 	}
+	
+	/**
+	 * Sorts an array by some search criteria. The array to sort can be an array
+	 * with smw_ids as done for root categories -> see: getRootCategories() as
+	 * well for the member variable $sIds in general.
+	 * The values to sort for are used by reading the appropriate fields of the
+	 * member variable $elementProperties.
+	 * Sorting is possible by the following criteria:
+	 * - alphabetically by the node name
+	 * 
+	 * @access private
+	 * @param  array $values (optional) array with smw_ids
+	 * @return mixed if $values is given, it's ids are returned in sort order
+	 * 				 otherwise true is returned and $sIds are sorted afterwards
+	 */
+	private function sortElements($values = NULL) {
+		$orderBy = 1; // at the moment sorting only by node name 
+		
+		// build the array for sorting, keys must be strings so that the do not get new assigned 
+		$sortArr = array();
+		$sortIds = is_array($values) ? $values : array_keys($this->elementProperties);
+		foreach ($sortIds as $id) {
+			// fetch sort values for new item
+			if ($orderBy == 1)
+				$sortArr[$id] = isset($this->elementProperties[$id][3])
+				               ? strtoupper($this->elementProperties[$id][3])
+			    	           : strtoupper($this->elementProperties[$id][0]);
+		}
+		// sort the array now
+		asort($sortArr, SORT_STRING);
+		
+		// if we had an array to sort in parameter, return the keys of the sorted array
+		if (is_array($values))
+			return array_keys($sortArr);
+		
+		// otherwise rebuild the sIds array with the sorted keys
+		$oldSids = $this->sIds;
+		$this->sIds = array();	
+		foreach (array_keys($sortArr) as $id) {
+			if (isset($oldSids[$id])) $this->sIds[$id]= $oldSids[$id];
+		}
+		return true;					   
+	}
+	
 }
+
+
 /**
  * Class for storing one element in a chain.
  * Each element has a pointer to the predecessor
