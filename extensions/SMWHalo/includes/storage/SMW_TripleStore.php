@@ -978,7 +978,7 @@ class TSConnection {
 	public function connect() {
 		global $smwgMessageBroker, $smwgDeployVersion;
 
-		if ($smwgMessageBroker != 'none') {
+		if (isset($smwgMessageBroker)) {
 			$this->con = new StompConnection("tcp://$smwgMessageBroker:61613");
 			$this->con->connect();
 		} else {
@@ -995,7 +995,7 @@ class TSConnection {
 	 */
 	public function disconnect() {
 		global $smwgMessageBroker;
-		if ($smwgMessageBroker != 'none') {
+		if (isset($smwgMessageBroker)) {
 			$this->con->disconnect();
 		} else {
 			// do nothing
@@ -1010,7 +1010,7 @@ class TSConnection {
 	 */
 	public function send($topic, $commands) {
 		global $smwgMessageBroker;
-		if ($smwgMessageBroker != 'none') {
+		if (isset($smwgMessageBroker)) {
 			if (!is_array($commands)) {
 				$this->con->send($topic, $commands);
 				return;

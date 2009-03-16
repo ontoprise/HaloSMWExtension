@@ -21,7 +21,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
     }
     
     public function execute() {
-        global $wgRequest, $wgOut, $smwgMessageBroker, $wgUser, $smwgEnableFlogicRules;
+        global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableFlogicRules;
         $wgOut->setPageTitle(wfMsg('tsa'));
         $html = "";
         if ($wgRequest->getVal('init') != NULL) {
@@ -56,7 +56,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
         
         $html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
         if ($status->isInitialized == true) {
-        	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', $smwgMessageBroker)."</div>";
+        	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', $smwgWebserviceEndpoint)."</div>";
         } else {
         	 $html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_notinitalized')."</div>".wfMsg('smw_tsa_pressthebutton');
         	 $tsaPage = Title::newFromText("TSA", NS_SPECIAL);

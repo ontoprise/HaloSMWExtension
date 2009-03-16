@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '1.4-for-SMW-1.4');
+define('SMW_HALO_VERSION', '1.4.3-for-SMW-1.4.x');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);
@@ -193,8 +193,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterCommaAnnotation';
 
 	// add triple store hooks if necessary
-	global $smwgMessageBroker,$smwgIgnoreSchema;
-	if (isset($smwgMessageBroker)) {
+	global $smwgWebserviceEndpoint,$smwgIgnoreSchema;
+	if (isset($smwgWebserviceEndpoint)) {
 		if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
 			require_once('storage/SMW_TS_SchemaContributor.php');
 			$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
@@ -342,7 +342,7 @@ function smwgHaloSetupExtension() {
 		//$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 		//$wgSpecialPageGroups['TermImport'] = 'smwplus_group';
 
-		if (isset($smwgMessageBroker)) {
+		if (isset($smwgWebserviceEndpoint)) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
@@ -380,13 +380,13 @@ function smwgHaloSetupExtension() {
 
 
 	// Register Credits
-	$wgExtensionCredits['parserhook'][]= array('name'=>'SMW+&nbsp;Extension', 'version'=>SMW_HALO_VERSION,
+	$wgExtensionCredits['parserhook'][]= array('name'=>'SMWHalo&nbsp;Extension', 'version'=>SMW_HALO_VERSION,
 			'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Maintained by [http://www.ontoprise.de Ontoprise].", 
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
-			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://ontoworld.org/wiki/Halo_Extension View feature description.]');
+			'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/SMW%2B_v1.4.2 View feature description.]');
 
-	global $smwgMessageBroker;
-	if (isset($smwgMessageBroker)) {
+	global $smwgWebserviceEndpoint;
+	if (isset($smwgWebserviceEndpoint)) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 
 	}
@@ -405,8 +405,8 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
  * The {{#sparql }} parser function processing part.
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
-	global $smwgMessageBroker;
-	if (isset($smwgMessageBroker)) {
+	global $smwgWebserviceEndpoint;
+	if (isset($smwgWebserviceEndpoint)) {
 		$params = func_get_args();
 		array_shift( $params ); // we already know the $parser ...
 		return SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
