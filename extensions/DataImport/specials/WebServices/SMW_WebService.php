@@ -22,7 +22,6 @@ require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_XPathProcessor.php");
 
 global $smwgWSOldDotSyntax;
-//$smwgWSOldDotSyntax = true;
 
 /**
  * Instances of this class describe a web service.
@@ -438,8 +437,7 @@ class WebService {
 				if($this->mWSClient){
 					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 				} else {
-					//todo: provide meaningful error message
-					$response = "error";
+					$response = "strange error";
 				}
 
 				if(is_string($response)){
@@ -1648,26 +1646,6 @@ class WebService {
 		return $ok;
 	}
 
-	//todo:check if separated from other ws-types
-	//todo: document this
-	//	function getFlatParameters($name, $type, $result=false, &$typePath=null){
-	//		$flatParams = $this->flattenParam($name, $type, $typePath);
-	//
-	//		//todo: what if soap but no wsdl available
-	//
-	//		$arrayDetector = new WSDLArrayDetector($this->mURI);
-	//
-	//		//todo: is type correct here?
-	//		$adParameters = $arrayDetector->getArrayPaths($type, $name);
-	//
-	//		if($result){
-	//			$adParameters = $arrayDetector->cleanResultParts($adParameters);
-	//		}
-	//
-	//		return $arrayDetector->mergePaths($flatParams, $adParameters);
-	//	}
-
-	// todo: describe method
 	private function getXPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
 			if ($alias == ''.$part['name']) {

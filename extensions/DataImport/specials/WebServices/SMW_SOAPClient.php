@@ -42,9 +42,9 @@ class SMWSoapClient implements IWebServiceClient {
 	private $mWsdl;		  // SimpleXMLElement: The content of the service's WSDL
 	private $mTypes;	  // array(string=>string): A mapping from the name of a type's
 	//     field to its type.
-	private $mAuthenticationType; //todo:describe
-	private $mAuthenticationLogin; //todo:describe
-	private $mAuthenticationPassword; //todo:describe
+	private $mAuthenticationType;
+	private $mAuthenticationLogin;
+	private $mAuthenticationPassword;
 
 	private $duplicates;
 	private $wsdl;
@@ -161,13 +161,10 @@ class SMWSoapClient implements IWebServiceClient {
 
 	/**
 	 * Calls the web service
-	 * todo: add documentation
-	 *
 	 */
 	public function call($operationName, $parameters) {
 		//ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
 			
-		//todo: define a statix value somewhere
 		if($this->mAuthenticationType == "http"){
 			$this->mClient = new SoapClient($this->mURI,
 			array("login" => $this->mAuthenticationLogin,

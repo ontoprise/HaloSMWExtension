@@ -29,9 +29,9 @@ class SMWRestClient implements IWebServiceClient {
 
 	private $mURI;		  // string: the URI of the web service
 
-	private $mAuthenticationType; //todo:describe
-	private $mAuthenticationLogin; //todo:describe
-	private $mAuthenticationPassword; //todo:describe
+	private $mAuthenticationType;
+	private $mAuthenticationLogin;
+	private $mAuthenticationPassword;
 
 	/**
 	 * Constructor
@@ -61,10 +61,15 @@ class SMWRestClient implements IWebServiceClient {
 	 * Calls the web service
 	 *
 	 * @param string $operationName : post or get
-	 * @param string [] $parameters : todo: add documentation
+	 * @param string [] $parameters : parameters for the web service call
 	 */
 	public function call($operationName, $parameters) {
 		$uri = $this->mURI;
+		
+		if(array_key_exists("__rest__uri", $parameters)){
+			$uri .= $parameters["__rest__uri"];
+			unset($parameters["__rest__uri"]);
+		}
 
 		if(strtolower($operationName) == "get"){
 			$params = array('http' => array('method' => 'GET'));
@@ -78,29 +83,71 @@ class SMWRestClient implements IWebServiceClient {
 				}
 			}
 		} else if (strtolower($operationName) == "post"){
-			$data = http_build_query($parameters);
-			$params = array('http' => array('method' => 'POST', 'content' => $data));
+			if(array_key_exists("__post__separator", $parameters)){
+				$separator = $parameters["__post__separator"];
+				unset($parameters["__post__separator"]);
+			} else {
+				$separator = "&";
+			}
+			
+			if(array_key_exists("__post__separator", $parameters)){
+				$separator = $parameters["__post__separator"];
+				unset($parameters["__post__separator"]);
+			} else {
+				$separator = "&";
+			}
+			
+			if(array_key_exists("__post__content_type", $parameters)){
+				$contentType = $parameters["__post__content_type"];
+				unset($parameters["__post__content_type"]);
+			} else {
+				$contentType = "application/x-www-form-urlencoded";
+			}
+			
+			if(array_key_exists("__post__user_agent", $parameters)){
+				$userAgent = $parameters["__post__user_agent"];
+				unset($parameters["__post__user_agent"]);
+			} else {
+				$userAgent = "smw data import extension";
+			}
+			
+			$data = "";
+			$first = true;
+			foreach ($parameters as $key => $value){
+				if(!$first){
+					$data .= $separator;
+				}
+				$data .= urlencode($key)."=".urlencode($value);
+				$first = false;
+			}
+			
+			$params = array('http' => array(
+    			'method' => 'POST',
+    			'content-type' => $contentType,
+    			'content-length' =>strlen($data),
+				'user_agent' => $userAgent,
+				'content' => $data
+    		));
 		} else {
 			return "unknown method name";
 		}
-
+		
 		$ctx = stream_context_create($params);
-		$fp = fopen($uri, 'rb', true, $ctx);
-
-		print_r($fp, true);
-
+		
+		$fp = fopen($uri, 'rb', false, $ctx);
+		
 		if (!$fp) {
-			return "It was not possible to connect to ".$uri.". Reason: ".$php_errormsg;
+			return wfMsg('smw_wws_client_connect_failure').$uri.". Reason: ".$php_errormsg;
 		}
 
-		$response = @stream_get_contents($fp);
+		$response = stream_get_contents($fp);
 		if ($response === false) {
-			return "It was not possible to connect to ".$uri.". Reason: ".$php_errormsg;
+			//todo:language file
+			return wfMsg('smw_wws_client_connect_failure').$uri.". Reason: ".$php_errormsg;
 		}
 
 		return array($response);
 	}
-
 }
 
 ?>

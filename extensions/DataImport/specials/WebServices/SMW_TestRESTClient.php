@@ -5,12 +5,10 @@ $smwgDIIP = "D:/devel/workspace-wtp/HaloSMWExtensionSVN/extensions/DataImport";
 
 require_once("SMW_RESTClient.php");
 
-$pass = urlencode("f#dg#d");
+$client = new SMWRestClient("http://api.opencalais.com/enlighten/rest", "","","");
 
-$client = new SMWRestClient("http://phpwebservices.blogspot.com/feeds/posts/default?alt=rss", "","","");
+$result = $client->call("post", array("licenseID" => "y3x8744tt2ev6rybpt8xpxnx", "content" => "This is another test.", "__post__separator" => "#########"));
 
-$result = $client->call("get", array());
-
-echo($result);
+print_r("result:\n".$result);
 
 ?>
