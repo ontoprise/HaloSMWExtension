@@ -2,7 +2,7 @@
 
 REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 
-SET VERSION="1.4"
+SET VERSION="1.4.3"
 
 set OUTPUT_DIR=c:\temp\halosmw
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
@@ -45,8 +45,8 @@ xcopy ..\..\..\skins\OntoSkin2.php %OUTPUT_DIR%\skins /Y
 REM Pack SMWHalo Extension
 
 cd bin
-IF EXIST smwplus-%VERSION%.zip del smwplus-%VERSION%.zip
-7z.exe a -tzip smwplus-%VERSION%.zip %OUTPUT_DIR%\*
+IF EXIST smwhalo-%VERSION%.zip del smwhalo-%VERSION%.zip
+7z.exe a -tzip smwhalo-%VERSION%.zip %OUTPUT_DIR%\*
 cd..
 
 REM Remove temp files

@@ -2,7 +2,7 @@
 
 REM Windows batch file for creating SMW Halo deploy version with SMW/MW patches
 
-SET VERSION="1.5"
+SET VERSION="1.4.3"
 
 set OUTPUT_DIR=c:\temp\halosmw_ext
 IF NOT EXIST %OUTPUT_DIR% goto CREATEDIRS
@@ -26,6 +26,8 @@ mkdir %OUTPUT_DIR%\extensions\SemanticForms
 mkdir %OUTPUT_DIR%\extensions\StringFunctions
 mkdir %OUTPUT_DIR%\extensions\Treeview
 mkdir %OUTPUT_DIR%\extensions\Variables
+mkdir %OUTPUT_DIR%\extensions\DebugTemplate
+mkdir %OUTPUT_DIR%\extensions\URLArguments
 mkdir %OUTPUT_DIR%\includes
 mkdir %OUTPUT_DIR%\skins
 mkdir %OUTPUT_DIR%\extensions\SMWHalo\includes
@@ -37,6 +39,8 @@ xcopy ..\..\..\patches\includes %OUTPUT_DIR%\includes /S /Y /EXCLUDE:excludeForE
 xcopy ..\..\..\patches\skins %OUTPUT_DIR%\skins /S /Y /EXCLUDE:excludeForExt.dat
 
 REM copy extensions
+xcopy ..\..\DebugTemplate %OUTPUT_DIR%\extensions\DebugTemplate /S /EXCLUDE:excludeForExt.dat /Y
+xcopy ..\..\URLArguments %OUTPUT_DIR%\extensions\URLArguments /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\DataAPI %OUTPUT_DIR%\extensions\DataAPI /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\DynamicPageList %OUTPUT_DIR%\extensions\DynamicPageList /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\Glossary %OUTPUT_DIR%\extensions\Glossary /S /EXCLUDE:excludeForExt.dat /Y
