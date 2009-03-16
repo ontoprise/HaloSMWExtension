@@ -162,6 +162,8 @@ protected $smwUserMessages = array(
 	'smw_wsgui_savebutton' => 'Speichern',
 
 	'usewebservice' => 'Benutze Web Service',
+
+'smw_wws_client_connect_failure' => 'Es war nicht möglich, eine Verbindung herzustellen zu: ',
 );
 
 protected $smwDINamespaces = array(

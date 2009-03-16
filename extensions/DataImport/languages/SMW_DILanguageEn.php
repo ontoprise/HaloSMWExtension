@@ -162,6 +162,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wsgui_savebutton' => 'Save',
 	
 	'usewebservice' => 'Use Web Service',
+	
+	'smw_wws_client_connect_failure' => 'It was not possible to connect to ',
 	);
 
 	protected $smwDINamespaces = array(
