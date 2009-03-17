@@ -203,4 +203,4 @@ For example:
 {{#sparql: [[category:Book]][[WasWrittenBy::+]]|?WasWrittenBy=Author|limit=10  }}
 </pre>
 
-For more information on queries that make use of the <tt>#ask</tt> parser function, see [[Help:Inline_Queries|Inline Queries]].
+For more information on queries that make use of the <tt>#ask</tt> parser function, see [[Help:Inline_queries|Inline Queries]].

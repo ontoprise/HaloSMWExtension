@@ -1,5 +1,5 @@
 __NOTOC__
-You can use the <tt><nowiki>#tree</nowiki></tt> parser function in combination with so-called [[Help:Inline_Queries|inline queries]], which dynamically include query results into pages. The basic way of writing an inline query is to use the parser function <tt><nowiki>#ask</nowiki></tt>. In inline queries, the query string, any printout statements, and the output format are directly given as parameters. The general syntax
+You can use the <tt><nowiki>#tree</nowiki></tt> parser function in combination with so-called [[Help:Inline_queries|inline queries]], which dynamically include query results into pages. The basic way of writing an inline query is to use the parser function <tt><nowiki>#ask</nowiki></tt>. In inline queries, the query string, any printout statements, and the output format are directly given as parameters. The general syntax
 for <tt><nowiki>#ask</nowiki></tt> is as follows:
 <pre>
 {{#ask: <argument 1>|<argument 2>|...}}
@@ -24,5 +24,4 @@ Here we ask for all articles that belong to the category <tt>City</tt>. The temp
 The tree will then be rendered as depicted in the following figure:
 [[Image:Treeview_and_inline_queries.png|none|frame|Tree Driven by an Inline Query]]
 
-For more information on inline queries, see [[Help:Inline_Queries|Inline Queries]] or the documentation on the 
-[http://semantic-mediawiki.org/wiki/Help:Inline_queries Semantic MediaWiki] Web site.
+For more information, see [[Help:Inline_queries|Inline Queries]].

@@ -1,5 +1,5 @@
 __NOTOC__
-'''Semantic Result Formats''' is an extension to Semantic MediaWiki that bundles a number of further result formats for [[Help:Inline_Queries|inline queries]]. The individual formats can be added to the installation independently.
+'''Semantic Result Formats''' is an extension to Semantic MediaWiki that bundles a number of further result formats for [[Help:Inline_queries|inline queries]]. The individual formats can be added to the installation independently.
 
 Currently, the following formats are included:
 * Average format
@@ -65,4 +65,6 @@ In the example above we have made use of the custom unit <tt>hrs</tt> (hours), w
 </pre>
 Then we defined the property <tt>HasDuration</tt> as being of this customized type. Whenever the time unit <tt>min</tt> (minutes) is found, it will be converted into hours using this definition. So even if the duration time of the team meetings is specified in minutes, the query result is given in hours.
 
-For more information, see [http://semantic-mediawiki.org/wiki/Help:Custom_units Custom Units] on the Semantic MediaWiki Web site.
+For more information, see [[Help:Custom_units|Custom Units]].
+
+[[Category:Semantic MediaWiki Help Topic|Semantic Result Formats]]

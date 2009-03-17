@@ -27,7 +27,7 @@ The Gardening tool suite is available on the special page <tt>Special:Gardening<
     </tr>
     <tr>
 	<td style="vertical-align:top;">Materialize Template Content</td>
-	<td style="vertical-align:top;">Updating pages that have their annotations via templates. This information must be materialized so that the annotations will be included in the results of [[Help:Inline_Queries|inline queries.]]</td>
+	<td style="vertical-align:top;">Updating pages that have their annotations via templates. This information must be materialized so that the annotations will be included in the results of [[Help:Inline_queries|inline queries.]]</td>
     </tr>
     <tr>
 	<td style="vertical-align:top;">Find Undefined Entities</td>
