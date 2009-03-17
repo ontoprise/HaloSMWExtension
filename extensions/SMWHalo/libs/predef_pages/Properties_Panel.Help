@@ -1,3 +1,4 @@
+__NOTOC__
 The Properties panels shows all properties of an instance as well as their corresponding values.
 
 You can navigate to each property by clicking the link "(open)" behind the property name. In addition, if a value for a property is missing, you can directly jump to the Edit tab of the corresponding property article. However, if an instance does not have yet any property annotated, you can add one. Following the link "(add some)" will bring you to the Annotate tab of the instance's article.
@@ -33,7 +34,7 @@ The default setting is 0.</div></li>
 The default setting is unlimited.</div></li>
 <li>(Optional) Choose a type.<br>
 <div style="font-weight:normal;">Click Add Type. A new text box appears where you can choose a type.<br>
-For more information on types, see [[Help:Properties_and_Types|Property Types]].<br>
+For more information on types, see [[Help:Properties_and_types|Property Types]].<br>
 The default setting is <tt>Type:Page</tt>, which is used for properties whose<br>
 value is an article in the wiki.</div></li>
 <li>(Optional) Choose a range.<br>
