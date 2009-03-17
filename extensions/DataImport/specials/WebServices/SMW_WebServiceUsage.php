@@ -160,6 +160,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsReturnValues = array();
 	$wsFormat = "";
 	$wsTemplate = "";
+	$wsStripTags = "false";
 	$propertyName = null;
 
 	// determine the kind of the remaining parameters and get
@@ -172,7 +173,9 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			$wsFormat = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 9) == "_template"){
 			$wsTemplate = getSpecifiedParameterValue($parameter);
-		}else if (substr($parameter,0, 9) == "_property"){
+		} else if (substr($parameter,0, 10) == "_striptags"){
+			$wsStripTags = str_replace(",", "", getSpecifiedParameterValue($parameter));
+		} else if (substr($parameter,0, 9) == "_property"){
 			$propertyName = getSpecifiedParameterValue($parameter);
 			//$propertyName = $parameter;
 		} else {
@@ -203,7 +206,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 			return $wsFormattedResult;
 		}
-		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsResults);
+		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults);
 
 		if(!$preview){
 			$articleId = $parser->getTitle()->getArticleID();
@@ -279,7 +282,7 @@ function getSpecifiedParameterName($parameter){
  * @return string
  * 		the formatted result
  */
-function formatWSResult($wsFormat, $wsTemplate, $wsResults = null){
+function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null){
 	if(is_string($wsResults)){
 		return smwfEncodeMessages(array($wsResults));
 	}
@@ -301,28 +304,28 @@ function formatWSResult($wsFormat, $wsTemplate, $wsResults = null){
 
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "list"){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "ol"){
 		$printer = WebServiceOlResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "ul"){
 		$printer = WebServiceUlResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "table"){
 		$printer = WebServiceTableResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "template"){
 		$printer = WebServiceTemplateResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "transposed"){
 		$printer = WebServiceTransposedResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	} else if($wsFormat == "tixml"){
 		$printer = WebServiceTIXMLResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
 	}
 }
 
@@ -473,7 +476,7 @@ function getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId){
  * @param array $result
  * @return array
  */
-function getReadyToPrintResult($result){
+function getReadyToPrintResult($result, $wsStripTags){
 	$niceResult = array();
 	$size = 0;
 	foreach($result as $title => $values){
@@ -495,8 +498,12 @@ function getReadyToPrintResult($result){
 				$niceResult[$i][] = $title;
 			} else {
 				$keys = array_keys($values);
-				$niceResult[$i][] = @ $values[$keys[$i-1]];
-				//$niceResult[$i][] = @ strip_tags($values[$keys[$i-1]]);
+				if($wsStripTags === "false"){
+					$niceResult[$i][] = @ $values[$keys[$i-1]];
+				} else {
+					$niceResult[$i][] = @ strip_tags($values[$keys[$i-1]], $wsStripTags);
+				}
+				
 			}
 		}
 	}
