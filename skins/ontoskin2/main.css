@@ -284,6 +284,10 @@
 	margin-right: 5px;
 }
 
+#smwf_browserview .dtree{
+	overflow-x: auto;
+}
+
 #maintree .dtree{
 	overflow: auto;
 }
