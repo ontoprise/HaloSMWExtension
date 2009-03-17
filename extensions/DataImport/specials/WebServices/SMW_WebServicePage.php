@@ -92,14 +92,15 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$articleIDs = WSStorage::getDatabase()
 		                ->getWSArticles($this->getTitle()->getArticleID(), $options);
 		$this->mArticles = Title::newFromIDs($articleIDs);
+		
 		if ($reverse) {
 			$this->mArticles = array_reverse($this->mArticles);
 		}
-
+		
 		foreach ($this->mArticles as $title) {
 			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
 		}
-
+		
 		// ask for the list of properties that use the web service
 		$options = new SMWRequestOptions();
 		$options->limit = $this->limit + 1;

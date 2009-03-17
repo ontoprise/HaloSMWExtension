@@ -24,5 +24,6 @@
 
 // Pages in the namespace WebService list the articles that use a the web service.
 // This value limits the number of displayed articles.
+global $smwgWWSArticleLimit;
 $smwgWWSArticleLimit = 25;
 ?>
