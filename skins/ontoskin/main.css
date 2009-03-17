@@ -822,7 +822,7 @@ input.searchButton {
 	text-align: center;
 }
 
-#navtree.Treeview {
+#navtree .Treeview {
 	font-size: 95%;    	
 	color: #666;
 	white-space: nowrap;
@@ -830,6 +830,14 @@ input.searchButton {
 	border: none;
 	display: inline;
 	overflow: auto;
+}
+
+#p-treeview .dtree .clip{
+	overflow: visible;
+}
+
+#p-treeview .dtree{
+	overflow-x: auto;
 }
 
 /*
