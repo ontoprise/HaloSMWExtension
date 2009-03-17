@@ -1,0 +1,51 @@
+__NOTOC__
+Semantic MediaWiki provides various simple interfaces for browsing the data of the wiki, which should often be very simple to use.
+
+== The Factbox ==
+
+The factbox is a box at the bottom of wiki pages which summarizes the semantic data that was [[Help:Editing_Semantic_Data|entered]] into the page. This also helps editors to check whether Semantic MediaWiki actually "understood" the supplied information as intended. Users can read the Factbox for getting a quick overview, and for using its links to further information. Note that the Factbox might be switched off by the site administrator, as some wikis do not wish to show the added information on each page.
+
+Factboxes show information in two columns: the left column displays the ''property'' that some information belongs to (e.g. ''population''), while the right column shows the value of that property (e.g. ''3,410,000''). Each property name is a link to the property's article in the wiki, where one can normally find more information about a property's meaning and usage. 
+Annotations in the Factbox usually provide links to involved wiki pages, and for properties that support [Help:Custom units|units of measurement]], the Factbox also shows converted values in other units.
+
+The icon [[Image:search_icon.png]] next to each property value links to a simple search at [[Special:SearchByProperty]] (see below). For example, if an article contains the annotation <nowiki>[[is located in::Germany]]</nowiki> then its Factbox links to a search listing all pages with the same annotation (i.e. everything located in Germany). Similarly, the header of the Factbox shows an icon [[Image:browse_icon.png]] that links to a simple semantic [[Special:Browse|browser]] for the given page (see below).
+
+The Factbox may also show an icon [[Image:Service links icon.png]] that when clicked links to external web services that provide more information about a property value. For example, a property for specifying geographic coordinates might link to online mapping services that provide aerial images and maps of the chosen location. Wiki administrators can choose the links that each property displays; see [[Help:Service links]] for details on how to do it.
+
+Special properties, i.e. built-in properties that are relevant to SMW, are displayed in italics and show a tooltip when hovering the mouse over them (requires JavaScript). This emphasises their special meaning and helps editors to spot errors.
+
+Finally, the factbox contains a link to retrieve the Factbox contents in the machine-readable OWL/RDF format as explained in the [[Help:Semantic Web|section on Semantic Web technologies in SMW]].
+
+Editors can put the magic words <tt>__NOFACTBOX__</tt>  and <tt>__SHOWFACTBOX__</tt> on any page to hide or display (if nonempty) the Factbox on any page, independently of the global wiki configuration.
+
+== Semantic Browsing ==
+
+[[Special:Browse]] offers a simple browsing interface for the computer-readable data of Semantic MediaWiki. Users start by entering the name of a page. The special then displays all semantic properties of that page (similar to the content of the Factbox), and all semantic links that lead to that page. By clicking on the icon [[Image:browse_icon.png]], the user can browse to another article. For a more detailed description and some configuration settings, see [[Help:Browse]].
+
+== Simple search interfaces ==
+
+Semantic MediaWiki provides a number of very simple search forms that allow users to find specific information. These search features are accessed in various special pages:
+
+* [[Special:SearchByProperty]] has a simple search form for finding ''semantic backlinks''. Users enter a property name and target value. The search returns a list of all pages that have that property with that value. If you search for a property of a numeric type, and there are only few results, nearest results will be shown as well. This can be switched off by setting <tt>$smwgSearchByPropertyFuzzy</tt> to ''false'' in your local settings. This service is directly accessible through the [[Image:search_icon.png]] link within the Factbox or the [[Help:Browse|browse page]].
+* [[Special:PageProperty]] displays all values some page has for some property. Users enter a page and a property name. The search displays a list of all values of the property on that page. If Factboxes are enabled in the wiki, the same information can also be read off the Factbox of the page.
+
+== Viewing all properties, types, and values ==
+
+Each property has an own page in the Property namespace, similar to the category pages in MediaWiki's Category namespace. These property pages show all pages using the property together with the property's value(s) on that page, possibly with service links
+
+Besides the links in the Factbox and the normal MediaWiki search, there are also special ways of finding properties of a wiki:
+
+* [[Special:Properties]] lists properties that appear in annotations ordered by the frequency of their usage. Most frequently used properties are displayed on top.
+* [[Special:UnusedProperties]] lists property pages that are ''not'' in any annotations. This may indicate that a property was abandonded and should be deleted.
+* [[Special:WantedProperties]] lists properties that are used but do not have a descriptive page. This is not desirable, since users then cannot find any documentation on such properties, so that confusion may arise regarding their proper use.
+* [[Special:Types]] lists the available datatypes for properties. See [[Help:Editing_Semantic_Data|Editing]] for an introduction into datatypes and their relevance in SMW.
+
+These special pages are particularly useful for wiki gardeners and editors, since they give some overview of how properties are used in the wiki.
+
+These approaches all search for semantic properties of pages. To simply view existing pages about properties, categories, and types, ''even if unused or garbled'', use MediaWiki's [[Special:Allpages]] to display all pages within these namespaces.
+
+== External tool support ==
+
+Semantic MediaWiki makes semantic knowledge available to external tools via its [[Help:RDF export|OWL/RDF export]], and it therefore is possible to write external tools that implement further advanced browsing and searching functionality. Currently, many tools that work on RDF output are not very user-friendly yet, but the supplied data format RDF is easy to process and could be integrated in much more elaborate web or desktop applications. For more information, there is a [[Help:Reuse|list of tools]] that have been tested with Semantic MediaWiki so far. Feel free to add your own tool there as well.
+
+[[Category:Semantic MediaWiki Help Topic|Browsing Interfaces]]

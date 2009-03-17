@@ -1,0 +1,19 @@
+__NOTOC__
+Although Semantic MediaWiki is designed to be used without additional technical background knowledge, it is closely related to well-known Semantic Web technologies. These technologies enable the wiki to share its knowledge with external applications by encoding it into the standard OWL/RDF format. Below is an overview of some related resources. These should be instructive for those who are familiar with semantic technologies or who wish to implement tools that use Semantic MediaWiki's RDF export.
+
+== RDF export ==
+The explicit semantic content of Semantic MediaWiki is formally interpreted in the [http://ontoworld.org/wiki/OWL_DL OWL DL] ontology language, and is made available in OWL/RDF format. For further details on the exported format, see [[Help:RDF export|RDF Export]].
+
+== Reusing vocabulary from external ontologies ==
+Normally, all statements in the wiki refer to concepts and properties defined in the wiki, but it is also possible to directly use vocabulary from other sources. E.g. this wiki imports a number of [http://ontoworld.org/wiki/FOAF FOAF] elements for use within the wiki. A detailed description of how to use this feature is given in the article on [[Help:import vocabulary|vocabulary import]].
+
+== Importing ontologies ==
+Users with administrator status are allowed to import data from OWL DL ontologies into the wiki. This function is suitable for bootstrapping a wiki with existing semantic knowledge, so that articles about relevant topics are already available and include some basic annotations. Naturally, the import function cannot create sophisticated human-readable texts or import complex ontological statements that are otherwise not representable within the wiki. However, one can achieve good results in populating a wiki with a great number of articles. For further details, see [[Help:Ontology_Import|Ontology Import]].
+
+== SPARQL query service ==
+The site can be configured to provide a SPARQL endpoint that enables expressive querying against the wiki's content. The wiki is primarily used for authoring "ABox" statements (i.e. simple facts concerning given individuals in contrast to complex schema information). For more information, see the [http://semantic-mediawiki.org/wiki/Help:SPARQL_endpoint SPARQL endpoint documentation] on the Semantic MediaWiki Web site.
+
+== External reuse ==
+Tools that can process OWL/RDF in a meaningful way (including many RDF tools), can also be used with Semantic MediaWiki. The help page [[Help:Reuse|Reuse]] lists a number of applications that have been tested with the wiki's output on one site or the other.
+
+[[Category:Semantic MediaWiki Help Topic|Semantic Web]]

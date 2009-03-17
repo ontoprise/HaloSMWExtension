@@ -1,0 +1,110 @@
+__NOTOC__
+Semantic MediaWiki can provide links to online services when printing certain data in the [[Help:Browsing_interfaces#The_Factbox|factbox]] and in property pages. For example, when an article contains a geographic coordinate, it is useful to provide links to online mapping services so that users can retrieve a map of that location with one click. Another example is to provide a link to an online currency converter for financial amounts. This page explains how you can add such features to a semantic wiki (without writing PHP code to support a new datatype).
+
+== Service links for properties==
+
+The information for additional links to online services in the factbox is associated with the [[Help:Properties_and_types|property]] used. For example, the property <tt>Property:Coordinates</tt> will show various links to online maps when it appears in the factbox, whereas other properties that also use <tt>Type:Geographic coordinate</tt> might not show this. This is crucial in many applications, since the datatype alone usually does not say much about the type of link. For example a property "IMDb number" might be used for a movie's id number at [[wikipedia:IMDb|IMDb]], but not every property of <tt>Type:Number</tt> should display a link to IMDb.
+
+To make a property display service links, add the special property <tt>Property:Provides service</tt> on its page. For example, the article "<tt>Property:Coordinates</tt>" might include the annotation
+
+ <nowiki>[[provides service::online maps]]</nowiki>
+
+Here, "online maps" is the name of a set of service links provided by the wiki. The next section explains how you specify these service links.
+
+After you specify that a property provides service links, its property values in the factbox and on the property's own page will show an icon [[Image:Service links icon.png]] that displays the service links when clicked.
+
+== Providing service links ==
+In a nutshell, a wiki administrator puts the text specifying the appearance of service links in a special message article in the "MediaWiki" namespace named <tt>MediaWiki:Smw service ''service name''</tt>.
+Continuing our example for <tt>Property:Coordinates</tt>, the text for <tt><nowiki>[[provides service::online maps]]</nowiki></tt>
+is in the message article <tt>MediaWiki:Smw service online maps</tt>.
+
+Normally only users that have ''sysop'' (administrator) privileges in the wiki can add or edit pages in the MediaWiki namespace, hence only they can modify service links.
+This is a reasonable restriction for most wikis: since service links may appear in thousands of factboxes, they need to be trusted. 
+Adding or modifying services should usually be discussed among many users before an administrator puts the change into practice.
+
+All users, however, are free to associate properties with available services as described above.
+
+=== The Mediawiki:Smw_service_''service_name'' format ===
+
+If you look at <tt>MediaWiki:Smw service online maps</tt>, though the message might be hard to read due to the long lines, its format essentially is as follows:
+
+<pre>
+ label|http://someurl.com
+ label text2|http://anotherurl.org
+ ...
+</pre>
+
+Every line contains one service link. The ''label'' is the text that users will see in the service link pop-up. After the pipe symbol '|' is the ''URL'' that the link will lead to.
+
+In most cases, you want to provide information from the property value in the link.  For example, a link to an online map service has to include the coordinates to display, and a link to a movie web site will have to include the ID of the movie.  Since the exact data values are not known in advance, you use placeholders of the form ''$1'', ''$2'', ''$3'', &hellip; in the URL.  For example, the message text for a service link to IMDb could be:
+
+ <nowiki>IMDb|http://www.imdb.com/title/tt$1/</nowiki>
+
+When SMW displays the service links for a property value, it substitutes the property value's information for these placeholders.  In this IMDB example, a movie ID of Type:Number will replace $1 with the numeric value, and voilà, the service link for a movie links to its information on IMDB!
+
+Since service links are typically perceived as "trusted resources," administrators must take care when formulating links, keeping in mind that users can accidentally or maliciously pass arbitrary URL-encoded strings to service link URLs in the place holders.
+
+=== Information passed for each placeholder ===
+
+The number and contents of the parameters that replace ''$1'', ''$2'', ''$3'', &hellip; depend on the [[Help:Properties_and_types#Datatypes|datatype]] of the property.
+For instance, a simple integer property replaces $1 with its value, whereas a geographic coordinate provides parameters for latitude, longitude, direction, and much more. In most cases, $1 is the most relevant parameter that just provides a URL-safe string version of the property value.
+
+<!-- these from the comments in the PHP source code for each DataValue's getServiceLinkParams() -->
+; <tt><nowiki>Type:Page</nowiki></tt>
+: $1: URL-encoded article name (no namespace), with underscores replaced by spaces
+
+; <tt><nowiki>Type:Number</nowiki></tt> (and types with custom units)
+: $1: numerical value in English punctuation
+: $2: integer version of value, in English punctuation
+: $3: ''From SMW version 1.1 onwards'' unit, if any.
+
+; <tt><nowiki>Type:String</nowiki></tt> (but not <tt><nowiki>Type:Text</nowiki></tt>)
+: $1: URL-encoded string
+
+; <tt><nowiki>Type:URL, Type:Annotation URI</nowiki></tt> and <tt><nowiki>Type:Email</nowiki></tt>
+: $1: URL-encoded value of the URL(includes <tt>mailto:</tt> for <tt>Type:Email</tt>)
+
+; <tt><nowiki>Type:Geographic coordinate</nowiki></tt>
+: $1: latitude integer degrees
+: $2: longitude integer degrees
+: $3: latitude integer minutes
+: $4: longitude integer minutes
+: $5: latitude integer seconds
+: $6: longitude integer seconds,
+: $7: latitude direction string (N or S)
+: $8: longitude direction string (W or E)
+: $9: latitude in decimal degrees
+: $10: longitude in decimal degrees
+: $11: sign (- if south) for latitude
+: $12: sign (- if west) for longitude
+
+Since geographic coordinates are so complicated, SMW includes a default message for <tt>MediaWiki:Smw service online maps</tt> &mdash; just add "<tt><nowiki>[[Provides service:online maps]]</nowiki></tt>" to any properties you have of <tt>Type:Geographic coordinate</tt>.
+
+The other datatypes do not support service links.
+
+[[Category:Semantic MediaWiki Help Topic|Service Links]]
+
+=== Display of Property:Provides_service ===
+
+When adding a service links to a property with the special property <tt>Property:provides service</tt>, the property page's factbox should display a link to the message article for the service.
+
+== Extended example ==
+
+To illustrate the whole process of creating and using a new service, we provide an extended example, also implemented on ontoworld.org. Articles about Semantic Web vocabularies such as [http://ontoworld.org/wiki/FOAF FOAF] contain information about the vocabulary's "namespace" and the online service [http://ontoworld.org/wiki/Swoogle Swoogle] allows users to search for background information on such namespaces. Our goal thus is to add a new "Swoogle service" to the [http://ontoworld.org/wiki/Property:Namespace Property:Namespace] that is used on the vocabularies articles.
+
+As a first step, we edit the article [http://ontoworld.org/wiki/Property:Namespace Property:Namespace] and add the line
+
+<pre>
+As an additional service, this property provides a 
+[[provides service::Swoogle lookup]] of the entered namespace.
+</pre>
+
+After saving, the factbox shows a link to the (still non-existing) service [http://ontoworld.org/wiki/MediaWiki:smw_service_Swoogle_lookup Swoogle lookup]. Clicking this link, an administrator gets a new edit field, into which she enters
+
+ <nowiki>Swoogle lookup|http://swoogle.umbc.edu/index.php?option=com_frontpage&service=digest&queryType=digest_ns&searchString=$1</nowiki>
+
+The link was retrieved by using Swoogle and replacing the search string (at the end of the link) with the parameter "$1".
+
+After those changes are saved, the new service is fully functional, and each page that uses [http://ontoworld.org/wiki/Property:Namespace Property:Namespace] will show a suitable link to Swoogle. Some articles will still show the old version, if they are retrieved from cache, but after the next edit or purge, all articles will display the links as expected.
+
+[[Category:Semantic MediaWiki Help Topic|Service Links]]
