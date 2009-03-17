@@ -180,6 +180,8 @@
 			</div>
 		</div>
 		
+		<!-- div for inserting slider to resize menu and content -->
+		<div id="mainslider"></div>
 		
 		<!-- Main block with menu on the left side and page on the right side -->
 		<div id="smwf_mainblock">
@@ -314,6 +316,10 @@
 
 	
 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+
+<!-- slider script for resizing page and menu -->
+
+	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/slider.js"></script>
 
 <!-- Nifty cube for round corners -->
 

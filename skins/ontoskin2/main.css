@@ -173,7 +173,7 @@
 	padding-right: 10px;
 	white-space: nowrap;
 }
-.selected{
+#smwf_tabblock .selected{
 	background-color: #FFF;
 	border-right: none;
 	margin-right: 0.5em;
@@ -181,7 +181,7 @@
 	height: 1.4em;
 }
 
-.selected a{
+#smwf_tabblock .selected a{
 	text-transform: lowercase;
 	color: #707e81;
 	text-decoration: none;
@@ -267,11 +267,6 @@
 
 }
 
-#smwf_browserview .Treeview{
-	width: 190px;
-	margin-left: 5px;
-}
-
 #smwf_browserview .dtree .clip{
 	overflow: visible; 
 }
@@ -285,8 +280,8 @@
 }
 
 #smwf_browserview .Treeview{
-	width: 190px;
 	margin-left: 5px;
+	margin-right: 5px;
 }
 
 #maintree .dtree{
