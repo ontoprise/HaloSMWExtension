@@ -24,3 +24,5 @@ The MediaWiki extension Halo has the following special properties:
 ; <tt><nowiki>Property:Has max cardinality</nowiki></tt> : A constraint that specifies how many distinct values a property can take at most. For example, if a max cardinality of 1 is stated on a property, then any instance that is annotated with this property must be related to at most one individual by that property.   
 ; <tt><nowiki>Property:Has min cardinality</nowiki></tt> : A constraint that specifies how many distinct values a property must take at least. For example, if a min cardinality of 1 is stated on a property, then any instance that is annotated with this property must be related to at least one individual by that property. This is another way of saying that the property is required to have a value for all instances it applies to. 
 ; <tt><nowiki>Property:Is equal to</nowiki></tt> : Used to state that two entities are the same.
+
+[[Category:Semantic MediaWiki Help Topic|Special Properties]]

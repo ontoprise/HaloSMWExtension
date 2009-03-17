@@ -33,3 +33,5 @@ For many-valued properties the following limitations apply:
 * You cannot use the special property <tt>Display units</tt> to control how a specific element appears.
 * You cannot set the layout of the values; they will always appear as a comma-separated list.
 * You cannot create a timeline query of many-valued properties.
+
+[[Category:Semantic MediaWiki Help Topic|Many-valued Properties]]
