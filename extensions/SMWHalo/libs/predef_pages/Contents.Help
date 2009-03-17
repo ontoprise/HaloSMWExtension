@@ -3,7 +3,7 @@
 <hr>
 
 
-{{#tree:id=help_contents|root=SMW+ Help|
+{{#tree:id=smwplus_help_contents|root=SMW+ Help|
 * [[Help:What's New?|What's New?]]
 * [[Help:General|General]]
 ** [[Help:Download|Download]]
@@ -18,7 +18,7 @@
 **** [[Help:About_Annotations|About Annotations]]
 **** [[Help:Using_the_Advanced_Annotation_Mode|Using the Advanced Annotation Mode]]
 **** [[Help:Alternative_Ways_of_Annotating_Articles|Alternative Ways of Annotating Articles]]
-**** [[Help:Properties_and_Types|Properties and Types]]
+**** [[Help:Properties_and_types|Properties and Types]]
 **** [[Help:Many-valued_Properties|Many-valued Properties]]
 **** [[Help:Special_Properties|Special Properties]]
 *** [[Help:Ontology_Browser|Ontology Browser]]
@@ -36,7 +36,7 @@
 ** [[Help:Knowledge_Retrieval|Knowledge Retrieval]]
 *** [[Help:Query_Interface|Query Interface]]
 **** [[Help:Creating_Queries_Using_the_Query_Interface|Creating Queries Using the Query Interface]]
-*** [[Help:Inline_Queries|Inline Queries]]
+*** [[Help:Inline_queries|Inline Queries]]
 *** [[Help:Semantic_Treeview|Semantic Treeview]]
 **** [[Help:Static_Trees|Static Trees]]
 **** [[Help:Trees_Using_Inline_Queries|Trees Using Inline Queries]]
@@ -72,6 +72,29 @@
 * [[Help:Online_References|Online References]]
 * [[Help:Glossary|Glossary]]
 }}
+
+{{#tree:id=smw_help_contents|root=Semantic Mediawiki Help|
+* [[Help:Introduction to Semantic MediaWiki|Introduction]]
+* [[Help:Browsing interfaces|Browsing Interfaces]]
+* [[Help:Semantic search|Semantic Search]]
+** [[Help:Selecting pages|Selecting Pages]]
+** [[Help:Displaying information|Displaying Information]]
+** [[Help:Concepts|Concepts]]
+** [[Help:Inline queries|Inline Queries]]
+** [[Help:Inferencing|Inferencing]]
+* [[Help:Editing Semantic Data|Editing]]
+** [[Help:Properties and types|Properties and Types]]
+*** [[Help:Many-valued Properties|Many-valued Properties]]
+*** [[Help:Special_Properties|Special Properties]]
+** [[Help:Custom units|Custom Units]]
+** [[Help:Semantic templates|Semantic Templates]]
+** [[Help:Service links|Service Links]]
+* [[Help:Semantic Web|Semantic Web]]
+** [[Help:RDF export|RDF export]]
+** [[Help:Reuse|Reuse]]
+** [[Help:Import vocabulary|Import Vocabulary]]
+}}
+
 {{#tree:id=mw_help_contents|root=MediaWiki Help|
 * [[Help:Reading|Reading]]
 ** [[Help:Navigation|Navigation]]

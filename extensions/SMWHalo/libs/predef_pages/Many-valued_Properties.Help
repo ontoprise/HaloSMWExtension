@@ -19,7 +19,7 @@ You can search on many-valued properties similarly to other properties. As with 
 
 To find pages that match a particular value for any of the parts of a many-valued property, just list the values to match, separated by semicolons.
 
-If you don't care about the value of one of the datatypes, use ' ? ' to match any value for it including omitted. You can also use comparators (such as ' ! ' for 'not', ' < ' for 'less than or equal to', etc.) for each of the datatype's values. For more information, see [http://semantic-mediawiki.org/wiki/Help:Semantic_search#Comparators Comparators] at the Semantic MediaWiki Web site.
+If you don't care about the value of one of the datatypes, use ' ? ' to match any value for it including omitted. You can also use comparators (such as ' ! ' for 'not', ' < ' for 'less than or equal to', etc.) for each of the datatype's values. For more information, see [http://semantic-mediawiki.org/wiki/Help:Semantic_search#Comparators Comparators] on the Semantic MediaWiki Web site.
 
 For example, the following query selects values for the property <tt>Employment</tt> with any value for the employer string, where the title string is not "professorship", the start date is before 1951, and with any value for end date.
 

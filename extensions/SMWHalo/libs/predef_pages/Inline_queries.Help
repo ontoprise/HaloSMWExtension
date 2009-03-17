@@ -5,7 +5,7 @@ Inline queries are similar to other semantic search features, and can also be re
 
 == Introduction to #ask ==
 
-The basic way of writing an inline query is to use the parser function <tt>#ask</tt>. The query string (see [[Help:Selecting pages|selecting pages]] for syntax) and any [[Help:Displaying information|printout statements]] are directly given as parameter, like in the following example:
+The basic way of writing an inline query is to use the parser function <tt>#ask</tt>. The query string (see [[Help:Selecting pages|Selecting Pages]] for syntax) and any [[Help:Displaying information|printout statements]] are directly given as parameter, like in the following example:
 
 <pre><nowiki>
 {{#ask: [[Category:City]] [[located in::Germany]] 
@@ -64,10 +64,10 @@ This will produce the following output:
 
 SMW implements a wide variety of output formats for inline queries, and allows you to futher control results display using a MediaWiki template. The parameter <tt>format</tt> is one of the most important parameters for selecting the appearance of query results and will be explained in more detail below. The following table gives an overview of common parameters that can be used in basically all queries:
 
-{| class="smwtable"
-! Parameter
-! Possible values
-! Description
+{| border="1" cellpadding="2" style="text-align:left; border:1px solid #EEEEEE; border-collapse:collapse; empty-cells:show; margin:1em 1em 1em 0;"
+! style="background-color:#EEEEEE;" | Parameter
+! style="background-color:#EEEEEE;" | Possible values
+! style="background-color:#EEEEEE;" | Description
 |-
 | <tt>format</tt>
 | a format name (see below)
@@ -83,11 +83,11 @@ SMW implements a wide variety of output formats for inline queries, and allows y
 |-
 | <tt>sort</tt>
 | property name or a list of property names separated by ,
-| name of properties to use for sorting queries (see [[Help:Selecting pages]])
+| name of properties to use for sorting queries (see [[Help:Selecting pages|Selecting Pages]])
 |-
 | <tt>order</tt>
 | <tt>ascending</tt>/<tt>asc</tt>, <tt>descending</tt>/<tt>desc</tt>/<tt>reverse</tt>, or a list of those if more than one property is used for sorting
-| defines how results should be ordered, only applicable if <tt>sort</tt> is used, <tt>ascending</tt> is the default (see [[Help:Selecting pages]])
+| defines how results should be ordered, only applicable if <tt>sort</tt> is used, <tt>ascending</tt> is the default (see [[Help:Selecting pages|Selecting Pages]])
 |-
 | <tt>headers</tt>
 | <tt>show</tt>, <tt>hide</tt>
@@ -179,7 +179,7 @@ Using default texts for queries is also a good habit in general, since it may ha
 
 === Sorting results ===
 
-It has been explained in [[Help:Selecting pages]] that query results can be ordered by one or more properties. As explained there, [[Special:Ask]] has additional input fields to specify sort properties and ordering. In inline queries, sort properties are defined with the parameter <tt>sort</tt>, and the order can be set with the parameter <tt>order</tt>. The value of <tt>order</tt> should be <tt>ascending</tt> or <tt>descending</tt>, or one of the short forms "asc" and "desc", or "reverse". An example is the following query for the three largest cities in Germany:
+It has been explained in [[Help:Selecting pages|Selecting Pages]] that query results can be ordered by one or more properties. As explained there, [[Special:Ask]] has additional input fields to specify sort properties and ordering. In inline queries, sort properties are defined with the parameter <tt>sort</tt>, and the order can be set with the parameter <tt>order</tt>. The value of <tt>order</tt> should be <tt>ascending</tt> or <tt>descending</tt>, or one of the short forms "asc" and "desc", or "reverse". An example is the following query for the three largest cities in Germany:
 
 <pre>{{#ask: [[Category:City]] [[Located in::Germany]]
  | ?Population
@@ -188,7 +188,7 @@ It has been explained in [[Help:Selecting pages]] that query results can be orde
  | limit=3
 }}</pre>
 
-As explained in [[Help:Selecting pages]], sorting conditions may impose restrictions on the set of query results. In the above case, only German cities that have a value for population are considered. If more than one property is used for sorting, the parameters <tt>sort</tt> and <tt>order</tt> can be set to lists of property names and orders, repsectively, separated by commas. The following is an example:
+As explained in [[Help:Selecting pages|Selecting Pages]], sorting conditions may impose restrictions on the set of query results. In the above case, only German cities that have a value for population are considered. If more than one property is used for sorting, the parameters <tt>sort</tt> and <tt>order</tt> can be set to lists of property names and orders, repsectively, separated by commas. The following is an example:
 
 <pre>{{#ask: [[Category:City]] [[Located in::Germany]]
  | ?State
@@ -203,7 +203,7 @@ This query would return all German cities for which a state and population was s
 
 Queries that return more than just the selected articles (e.g. the population in the above example) will display labels that describe the various output fields. By default, the label just displays the name of the requested property, or the text "Category" if categories are displayed. Labels for properties normally display as a link to the respective pages in the Property: namespace.
 
-In the table format, the labels appear as column headers. In other formats, the labels might appear right before the output fields. The texts used for these labels can be controlled as explained in [[Help:Displaying information]], using the equality symbol after printouts. Example:
+In the table format, the labels appear as column headers. In other formats, the labels might appear right before the output fields. The texts used for these labels can be controlled as explained in [[Help:Displaying information|Displaying Information]], using the equality symbol after printouts. Example:
 
 <pre>{{#ask: [[Category:City]]
  |?Population=
@@ -251,10 +251,10 @@ This results in the table:
 
 The parameter <tt>format</tt> determines how the results of a query are displayed in the article. If it is omitted, all queries are displayed as tables (format <tt>table</tt>), unless there would be only one column, in which case the results are displayed as a comma-separated list (format <tt>list</tt>). In addition to the formats provided by SMW, the extension [[Help:Semantic Result Formats|Semantic Result Formats]] can provide additional formats. The following formats are available in SMW by default:
 
-{| class="smwtable"
-! Format
-! Description
-! Additional parameters (usually optional)
+{| border="1" cellpadding="2" style="text-align:left; border:1px solid #EEEEEE; border-collapse:collapse; empty-cells:show; margin:1em 1em 1em 0;"
+! style="background-color:#EEEEEE;" | Format
+! style="background-color:#EEEEEE;" | Description
+! style="background-color:#EEEEEE;" | Additional parameters (usually optional)
 |-
 | <tt>list</tt>
 | Comma-separated list, with additional outputs shown in parentheses
@@ -358,7 +358,7 @@ The following queries illustrate the effect of this template:
 
 '''Result:''' [[Image:Inline query example 6.png|frame|none|Example of an Inline Query]]
 
-In the above example you can see how the template ignores any header labels specified in the query such as "Size in km²". Yet the values the template displays do use the units specified in <tt>?Area'''#km²'''=Size in km²</tt>, and will similarly respect all given display formats (see [[Help:Displaying information]]).
+In the above example you can see how the template ignores any header labels specified in the query such as "Size in km²". Yet the values the template displays do use the units specified in <tt>?Area'''#km²'''=Size in km²</tt>, and will similarly respect all given display formats (see [[Help:Displaying information|Displaying Information]]).
 
 Below is a similar query sorted by population that uses <tt>format=ol</tt> to produce a numbered list.
 

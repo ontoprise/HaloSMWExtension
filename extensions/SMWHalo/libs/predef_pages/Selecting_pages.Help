@@ -46,7 +46,7 @@ With numeric values, you often want to select pages with property values within 
 
  <nowiki>[[Category:Actor]] [[height::>6 ft]] [[height::<7 ft]]</nowiki>
 
-asks for all actors that are between 6 feet and and 7 feet tall. Note that this takes advantage of the automatic unit conversion: even if the height of the actor was set with <nowiki>[[height::195cm]]</nowiki> it would be recognized as a correct answer (provided that the datatype for height understands both units, see [[Help:custom units]]). Note that the comparator means greater/less than ''or equal'' &ndash; the equality symbol <tt>=</tt> is not needed.
+asks for all actors that are between 6 feet and and 7 feet tall. Note that this takes advantage of the automatic unit conversion: even if the height of the actor was set with <nowiki>[[height::195cm]]</nowiki> it would be recognized as a correct answer (provided that the datatype for height understands both units, see [[Help:Custom_units|Custom Units]]). Note that the comparator means greater/less than ''or equal'' &ndash; the equality symbol <tt>=</tt> is not needed.
 
 Such range conditions on property values are mostly relevant if values can be ordered in a natural way. For example, it makes sense to ask <nowiki>[[start date::>May 6 2006]]</nowiki> but is is not really helpful to say <nowiki>[[homepage URL::>http://www.somewhere.org]]</nowiki>.
 

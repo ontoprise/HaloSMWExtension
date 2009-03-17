@@ -3,7 +3,7 @@ It is possible to store [[Help:Semantic search|queries]] in Semantic MediaWiki o
 
 == Creating a concept ==
 
-A concept is a page in the Concept: namespace that is always described by a semantic query, as explained in [[Help:Semantic search]]. For example, the h[ttp://semanticweb.org/wiki/Concept:Semantic_Web_events_2008 Concept:Semantic Web events 2008] describes certain events in 2008. Its concept page contains the following text to do that:
+A concept is a page in the Concept: namespace that is always described by a semantic query, as explained in [[Help:Semantic search|Semantic Search]]. For example, the [http://semanticweb.org/wiki/Concept:Semantic_Web_events_2008 Concept:Semantic Web events 2008] describes certain events in 2008. Its concept page contains the following text to do that:
 
 <pre><nowiki>
 {{#concept:  [[Category:Event]] [[start date::> Jan 1 2008]] [[start date::< Dec 31 2008]] 
