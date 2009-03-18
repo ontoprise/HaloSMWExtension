@@ -213,7 +213,7 @@ class SMWTripleStore extends SMWStore {
 
 				}
 				continue;
-			}
+			} 
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
@@ -427,14 +427,14 @@ class SMWTripleStore extends SMWStore {
 
 		$this->createTables($verbose);
 
-		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema;
+		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
 			$con = new TSConnection();
             $sparulCommands = array();
 			$sparulCommands[] = "DROP <$smwgTripleStoreGraph>"; // drop may fail. don't worry
 			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
-			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
+			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();

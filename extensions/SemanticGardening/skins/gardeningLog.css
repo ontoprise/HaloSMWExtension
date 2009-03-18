@@ -1,0 +1,8 @@
+.gardeningLogPageBox {
+	margin-left: 20px;
+	background-color: #DDD;
+}
+
+.clickable {
+	cursor: pointer; cursor: hand;
+}

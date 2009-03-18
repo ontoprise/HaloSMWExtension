@@ -12,7 +12,12 @@ global $smwgHaloIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ob_OntologyBrowserAccess';
 $wgAjaxExportList[] = 'smwf_ob_PreviewRefactoring';
 
-require_once($smwgHaloIP . "/specials/SMWGardening/SMW_Gardening.php");
+if (defined("SGA_GARDENING_EXTENSION")) {
+	global $sgagIP;
+    require_once($sgagIP . "/includes/SGA_Gardening.php");
+} else {
+	require_once("SMW_GardeningIssueStoreDummy.php");
+}
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 require_once("SMW_OntologyBrowserFilter.php" );
  

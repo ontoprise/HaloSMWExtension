@@ -18,10 +18,10 @@
  *  Author: Thomas Schweitzer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $smwgHaloIP;
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
+global $sgagIP;
+require_once("$sgagIP/includes/SGA_GardeningBot.php");
+require_once("$sgagIP/includes/SGA_GardeningIssues.php");
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
 /**
  * This bot imports terms of an external vocabulary.
@@ -253,7 +253,7 @@ class TermImportBot extends GardeningBot {
 	 * 		error message, otherwise.
 	 */
 	private function createArticle(&$term, $mappingPolicy, $overwriteExistingArticle) {
- 		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+ 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$title = $term['ARTICLENAME'];
 		if (is_array($title)) {
@@ -559,7 +559,7 @@ class TermImportBotFilter extends GardeningIssueFilter {
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
 
-		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_termimportbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

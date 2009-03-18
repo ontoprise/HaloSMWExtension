@@ -102,6 +102,7 @@ function smwfDISetupExtension() {
 
 	
 	//load the Gardening Bots
+	
 	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");

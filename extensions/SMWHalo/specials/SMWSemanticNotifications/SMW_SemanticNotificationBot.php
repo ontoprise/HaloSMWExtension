@@ -18,10 +18,14 @@
  *  Author: Thomas Schweitzer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $smwgHaloIP, $wgExtensionMessagesFiles;
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
+if ( !defined('SGA_GARDENING_EXTENSION')) {
+	trigger_error("Semantic Notification requires Semantic Gardening extension. Please install.");
+	die();
+}
+global $sgagIP, $wgExtensionMessagesFiles;
+require_once("$sgagIP/includes/SGA_GardeningBot.php");
+require_once("$sgagIP/includes/SGA_GardeningIssues.php");
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotification.php");
 
@@ -68,7 +72,7 @@ class SemanticNotificationBot extends GardeningBot {
 		echo "...started!\n";
 		$result = "";
 
-		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		
 		$notifications = SemanticNotificationManager::getAllNotifications();
 		
@@ -157,7 +161,7 @@ class SemanticNotificationBotFilter extends GardeningIssueFilter {
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
 
-		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_semanticnotificationbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

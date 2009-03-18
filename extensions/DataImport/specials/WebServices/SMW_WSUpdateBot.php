@@ -17,10 +17,10 @@
  *  @author: Ingo Steinbauer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $smwgHaloIP;
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningIssues.php");
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_ParameterObjects.php");
+global $sgagIP;
+require_once("$sgagIP/includes/SGA_GardeningBot.php");
+require_once("$sgagIP/includes/SGA_GardeningIssues.php");
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
 
 
@@ -65,7 +65,7 @@ class WSUpdateBot extends GardeningBot {
 		//echo("bot started");
 		if($paramArray["WS_WSID"] != null){
 			//echo("bot started");
-			$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+			$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 			$this->setNumberOfTasks(1);
 			$ws = WebService::newFromID($paramArray["WS_WSID"]);
 			$this->updateWSProperty($ws, true);
@@ -81,7 +81,7 @@ class WSUpdateBot extends GardeningBot {
 	 *
 	 */
 	private function updateAllWSProperties(){
-		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		$webServices = WSStorage::getDatabase()->getWebservices();
 		$this->setNumberOfTasks(sizeof($webServices));
 		foreach($webServices as $ws){
@@ -102,7 +102,7 @@ class WSUpdateBot extends GardeningBot {
 	 *
 	 */
 	private function updateWSProperty($ws, $all){
-		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
 
@@ -331,7 +331,7 @@ class WSUpdateBotFilter extends GardeningIssueFilter {
 	private function getGardeningIssueContainerForTitle($options, $request, $title) {
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
-		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_wscachebot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

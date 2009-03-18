@@ -19,8 +19,8 @@
  *  @author: Ingo Steinbauer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $smwgHaloIP;
-require_once("$smwgHaloIP/specials/SMWGardening/SMW_GardeningBot.php");
+global $sgagIP;
+require_once("$sgagIP/includes/SGA_GardeningBot.php");
 
 
 /**
@@ -82,7 +82,7 @@ class WSCacheBot extends GardeningBot {
 	 * @param webservice $ws
 	 */
 	private function cleanWSCacheEntries($ws){
-		$log = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		if($ws->getSpanOfLife() != "0"){
 			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
@@ -220,7 +220,7 @@ class WSCacheBotFilter extends GardeningIssueFilter {
 	private function getGardeningIssueContainerForTitle($options, $request, $title) {
 		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
-		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_wscachebot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);

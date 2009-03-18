@@ -122,7 +122,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
  	buildScripts($outputFile, $scripts);
  }
 
- if ($argv[1] == 'Gardening' || $buildAll) { // scripts which are only loaded on Gardening Special page
+ /*if ($argv[1] == 'Gardening' || $buildAll) { // scripts which are only loaded on Gardening Special page
  	$outputFile = $mediaWikiLocation.'/scripts/Gardening/deployGardening.js';
 
  	// scripts which will be packed in one JS file (in this order!)
@@ -130,7 +130,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
  					 'effects.js' => MIT_LICENSE_SCRIPTACULOUS,
 					 'gardening.js' => GPL_LICENSE_ONTOPRISE);
  	buildScripts($outputFile, $scripts);
- }
+ }*/
 
  if ($argv[1] == 'QueryInterface' || $buildAll) { // scripts which are only loaded on QueryInterface Special page
  	$outputFile = $mediaWikiLocation.'/scripts/QueryInterface/deployQueryInterface.js';

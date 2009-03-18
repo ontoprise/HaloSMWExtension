@@ -25,7 +25,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 // Include the settings file for the configuration of the Web Service extension.
 global $smwgHaloIP;
-
+require_once($smwgHaloIP. '/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php');
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationSettings.php");
 require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SNAjax.php");
 
