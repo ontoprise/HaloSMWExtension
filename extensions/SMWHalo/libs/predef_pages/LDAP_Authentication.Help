@@ -60,3 +60,7 @@ The advanced authentication allows to handle the groups at the LDAP server too. 
 :<pre>$wgLDAPGroupAttributeValue['Ontoprise'] = "uid=USER-NAME,ou=users";</pre>
 *'''Group name attribute''': Name of attribute of group name:
 :<pre>$wgLDAPGroupNameAttribute['Ontoprise'] = "cn";</pre>
+
+
+[[Category:SMW+ Help Topic|LDAP Authentication]]
+[[SubsectionOf::Help:Administration| ]]

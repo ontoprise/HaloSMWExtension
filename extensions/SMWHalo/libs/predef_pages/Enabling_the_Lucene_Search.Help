@@ -176,3 +176,6 @@ This will create the Lucene search index.
 </ol>
 </div>
 Update the index at regular intervals to make sure that new content becomes searchable without much delay.
+
+[[Category:SMW+ Help Topic|Enabling the Lucene Search]]
+[[SubsectionOf::Help:Lucene_Search| ]]

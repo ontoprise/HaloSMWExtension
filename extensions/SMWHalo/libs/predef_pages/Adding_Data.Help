@@ -98,3 +98,7 @@ For example, suppose you add the following call to any wiki page:
 
 Then, the form will have the fields <tt>year</tt> and <tt>genre</tt> already filled out.
 [[Image:Semantic_forms_add_book_query.png|none|thumb|500px|Add Book Dialog Box]]
+
+
+[[Category:SMW+ Help Topic|Adding Data]]
+[[SubsectionOf::Help:Creating_Semantic_Forms| ]]

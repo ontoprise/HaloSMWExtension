@@ -10,3 +10,7 @@ If you prefer a ready-to-use and user-friendly installation program, please down
 <b>Note &ndash;</b> Notice that this version makes use of the cross-platform web server package XAMPP, which consists mainly of the Apache HTTP Server, MySQL database, and various script interpreters.
 <hr>
 Alternatively, you can download the SMW Halo extension package from the SourceForge repository. This open source version, however, requires some technical expertise as you have to install SMW+ manually. In addition, this package requires all necessary components such as the Apache HTTP server or the MySQL database to be preinstalled on your system.
+
+
+[[Category:SMW+ Help Topic|Download]]
+[[SubsectionOf::Help:General| ]]

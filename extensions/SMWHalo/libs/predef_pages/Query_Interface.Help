@@ -92,3 +92,7 @@ For more information, see [http://semantic-mediawiki.org/wiki/Help:Inline_querie
 Whenever you add a category, instance, or property in the Query Builder they are connected by conjunction (Boolean operator <tt>AND</tt>). This means that all restrictions have to be true in order to appear in the result table. However, sometimes it is necessary to use a disjunction (Boolean operator <tt>OR</tt>). This can be achieved by using the green plus sign next to an input field.
 [[Image:Query_interface_add_category_boolean_OR.png|none|thumb|600px|Adding a Disjunction]]
 The screenshot above shows an example of a disjunction. This query will return all articles that are either in the category Book OR in the category Movie. If you add one category Movie and one category Book independently, conjunction is applied and the query would return only articles that are in both categories.
+
+
+[[Category:SMW+ Help Topic|Query Interface]]
+[[SubsectionOf::Help:Knowledge_Retrieval| ]]

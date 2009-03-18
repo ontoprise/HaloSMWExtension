@@ -204,3 +204,6 @@ For example:
 </pre>
 
 For more information on queries that make use of the <tt>#ask</tt> parser function, see [[Help:Inline_queries|Inline Queries]].
+
+[[Category:SMW+ Help Topic|Triple Store Connector]]
+[[SubsectionOf::Help:Knowledge_Retrieval| ]]

@@ -71,3 +71,6 @@ some processing tools require this RDF mimetype to process the output.
 In addition to the wiki's <tt>Special:ExportRDF</tt> function, there is also a maintenance script that allows you to export all of the wiki's semantic data at once. The script is called <tt>SMW_dumpRDF.php</tt> and can be found in the <tt>maintenance</tt> directory of the Semantic MediaWiki extension (e.g., <tt>$IP/extensions/SemanticMediaWiki/maintenance/</tt>). This directory also contains a README file that describes how to install maintenance scripts in your local MediaWiki installation.
 
 The script <tt>SMW_dumpRDF.php</tt> can generate full exports, or it can be restricted to certain elements of the schema, e.g. to export only the category hierarchy or only the attributes with their types. Details are described in the <tt>SMW_dumpRDF.php</tt> script itself.
+
+[[Category:SMW+ Help Topic|Ontology Export]]
+[[SubsectionOf::Help:Ontology_Management| ]]

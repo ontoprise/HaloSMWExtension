@@ -176,3 +176,4 @@ It is not possible to use a subquery to obtain a list of properties that is then
 SMW currently does not support queries for the values of any of SMW's built-in [[Help:Special_Properties|Special properties]] such as "Has type", "Allows value" or "Equivalent URI".
 
 [[Category:Semantic MediaWiki Help Topic|Selecting Pages]]
+[[SubsectionOf::Help:Semantic_search| ]]

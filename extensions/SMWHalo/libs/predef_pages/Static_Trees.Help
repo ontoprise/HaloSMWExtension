@@ -22,3 +22,6 @@ The tree parser function also supports the <tt>class</tt> attribute. It changes 
 <hr>
 <b>Note &ndash;</b> All trees which are placed in the Navigation box should use the <tt>dtreestatic</tt> class attribute.
 <hr>
+
+[[Category:SMW+ Help Topic|Static Trees]]
+[[SubsectionOf::Help:Semantic_Treeview| ]]

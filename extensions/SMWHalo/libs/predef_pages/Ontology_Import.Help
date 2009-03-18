@@ -36,3 +36,6 @@ For more information, see the [http://www4.wiwiss.fu-berlin.de/bizer/rdfapi/ RAP
 <div style="font-weight:normal;">Go to the special page <tt>Special:OntologyBrowser</tt> and check<br /> whether the semantic data of the ontology is available.</div></li>
 </ol>
 </div>
+
+[[Category:SMW+ Help Topic|Ontology Import]]
+[[SubsectionOf::Help:Ontology_Management| ]]

@@ -82,3 +82,6 @@ Example of a tree using <tt>#generateTree</tt> in combination with the <tt><nowi
 }}
 </pre>
 [[Image:Treeview_combination.png|none|frame|Tree in Combination with the <tt><nowiki>#tree</nowiki></tt> Parser Function]]
+
+[[Category:SMW+ Help Topic|Trees Using Semantic Annotations]]
+[[SubsectionOf::Help:Semantic_Treeview| ]]

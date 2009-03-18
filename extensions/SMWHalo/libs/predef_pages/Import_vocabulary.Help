@@ -65,3 +65,4 @@ After this, there is a line that declares each vocabulary element that can be re
 It can easily happen that some existing article of the wiki should be modified to represent (another) imported concept. For example, a wiki community that already uses a category "Person" might decide to map this category to "foaf:Person" in the future. Luckily, this is not a problem. '''Import statements in existing articles can be changed at any point in time without requiring additional updates in the wiki.''' The exported RDF will immediately be modified accordingly. Of course, in the case of properties, the datatype should usually not be changed without updating also the articles that use this property. This is mildly related to importing since an "imported from" declaration for properties will also define the datatype.
 
 [[Category:Semantic MediaWiki Help Topic|Import Vocabulary]]
+[[SubsectionOf::Help:Semantic_Web| ]]

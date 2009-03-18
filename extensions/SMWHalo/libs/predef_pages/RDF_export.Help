@@ -52,3 +52,4 @@ MediaWiki category relations are exported using existing RDF/RDFS properties.  I
 There are many usages of MediaWiki categories that conflict with these semantics.  For example, the article "Urban decay" might be in category <tt>City</tt>, but it is not a city.  And "<tt>Category:City museums</tt>" might be in category <tt>City</tt>, but city museums are not cities.
 
 [[Category:Semantic MediaWiki Help Topic|RDF Export]]
+[[SubsectionOf::Help:Semantic_Web| ]]

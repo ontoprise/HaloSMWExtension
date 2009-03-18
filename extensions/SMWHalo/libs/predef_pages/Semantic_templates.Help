@@ -81,3 +81,4 @@ When an annotation tag is added to a template, then on a page that already inclu
 A [[Help:Inline queries|query]] in a template is possible, and it can contain <nowiki>{{PAGENAME}}</nowiki>, see e.g. [http://ontoworld.org/wiki/Template:Ask Template:Ask]. However, a query with a template parameter only works with substitution, and cannot be used in computations, see [http://ontoworld.org/wiki/Property:Weekday_number Property:Weekday_number] &mdash; ''this limitation may no longer be true with SMW 1.0 when using <nowiki>{{#ask:}}</nowiki> function syntax''.
 
 [[Category:Semantic MediaWiki Help Topic|Semantic Templates]]
+[[SubsectionOf::Help:Editing_Semantic_Data| ]]

@@ -8,3 +8,7 @@ The following topics are included in this section:
 * '''[[Help:Semantic_Treeview|Semantic Treeview]].''' Representing hierarchical structures in a graphical form.
 * '''[[Help:Semantic_Result_Formats|Semantic Result Formats]].''' An extension to Semantic MediaWiki that bundles a number of result formats for inline queries. 
 * '''[[Help:Triple Store Connector|Triple Store Connector]].''' Interface to various triple stores &ndash; enables SPARQL queries.
+
+
+[[Category:SMW+ Help Topic|Knowledge Retrieval]]
+[[SubsectionOf::Help:Main_Features| ]]

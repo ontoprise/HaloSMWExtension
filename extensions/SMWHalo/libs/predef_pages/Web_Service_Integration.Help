@@ -79,3 +79,7 @@ To create another WWSD, simply click the <span style="position: relative; bottom
 In some cases, if array types for Web Service calls are not defined by extending the array type defined in the Soap v1.1 encoding schema (as proposed in the WSDL 1.1 specification), the GUI will not be able to determine the correct characteristics of these types. In this case you will have to read the documentation of the Web Service and modify the textual representation of the WWSD which was created by the GUI on your own.
 
 Some Web Services like the Amazon Web Service define a huge amount of parameters and result part types for their Web Service. This leads to a very slow behavior of the steps 3 and 4. Even if the GUI seems to freeze in these cases, please do not worry and wait a few seconds until the background processes have finished.
+
+
+[[Category:SMW+ Help Topic|Web Service Integration]]
+[[SubsectionOf::Help:Administration| ]]

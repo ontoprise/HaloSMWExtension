@@ -28,3 +28,6 @@ MediaWiki stores other components of the wiki in the file system where this is m
 The best method to back these up is to place them into an archive file, such as a <tt>.tar</tt> or <tt>.zip</tt> file, which can then be compressed if desired. On Windows, applications such as WinZip can be used if preferred.
 
 For more information on creating backups, see the [http://www.mediawiki.org/wiki/Backup Backup help page] on the MediaWiki Web site.
+
+[[Category:SMW+ Help Topic|Backup]]
+[[SubsectionOf::Help:Administration| ]]

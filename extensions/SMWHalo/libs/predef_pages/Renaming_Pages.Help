@@ -21,3 +21,4 @@ As with all wiki editing, a move operation can be reversed (by any user). To rev
 The page title "B" will still be left behind, as a redirect from "B" to "A". Any user can remove the redirect and propose that the page be deleted. However the final deletion will require sysop privileges (see also [[Help:Deleting_Pages|Deleting Pages]]).
 
 [[Category:MediaWiki Help Topic|Renaming Pages]]
+[[SubsectionOf::Help:Advanced_Editing| ]]

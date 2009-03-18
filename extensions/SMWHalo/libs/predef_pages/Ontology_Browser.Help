@@ -1,5 +1,5 @@
 __NOTOC__
-The Ontology Browser gives a quick and detailed overview of the wiki's ontology. It allows you to navigate through the concept and property hierarchy of the wiki and to inspect instances and their annotations. As an additional feature it also provides basic editing capabilities such as adding categories or renaming of resources. 
+The Ontology Browser gives a quick and detailed overview of the wiki's ontology. It allows you to navigate through the concept and property hierarchy of the wiki and to inspect instances and their annotations. As an additional feature it also provides basic editing capabilities such as adding categories or renaming resources. 
 
 The Ontology Browser consists of three basic panels:
 <ul>
@@ -30,3 +30,7 @@ annotation for the property selected. In addition, the Category Tree will show i
 <b>Tip &ndash;</b> This is especially useful when using Filter Browsing, because in this case the panels
 are not related to each other. All types of entities will be searched independently only by substring matching.
 <hr>
+
+
+[[Category:SMW+ Help Topic|Ontology Browser]]
+[[SubsectionOf::Help:Knowledge_Authoring| ]]

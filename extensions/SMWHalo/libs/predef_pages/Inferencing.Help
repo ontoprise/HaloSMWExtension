@@ -55,3 +55,4 @@ It sometimes happens that ambitious contributors in a wiki will create propertie
 Even if properties that sound like the above are introduced, and even if these are [[Help:Import vocabulary|linked]] to well-known properties in ontology languages such as OWL, RDFS, SKOS, etc., SMW will not use these annotations to perform smarter queries. To prevent confusion, it is suggested to not use names that resemble established notions in existing ontology languages, or at least to clearly document this limitation on the property pages.
 
 [[Category:Semantic MediaWiki Help Topic|Inferencing]]
+[[SubsectionOf::Help:Semantic_search| ]]

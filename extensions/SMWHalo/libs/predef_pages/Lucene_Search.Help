@@ -4,3 +4,7 @@ SMW+ incorporates Apache Lucene, a high-performance text search engine library w
 * [[Help:Searching_for_Articles|Searching for Articles]]
 * [[Help:Query_Expansion|Query Expansion]]
 * [[Help:Apache_Lucene_Query_Parser_Syntax|Lucene Query Parser Syntax]]
+
+
+[[Category:SMW+ Help Topic|Lucene Search]]
+[[SubsectionOf::Help:Search| ]]

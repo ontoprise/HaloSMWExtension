@@ -165,3 +165,4 @@ http:/localhost/mediawiki/api.php?action=query&meta=siteinfo&siprop=namespaces
 The browser will return an XML document showing a list of all namespaces used on your wiki. 
 
 [[Category:MediaWiki Help Topic|Namespaces]]
+[[SubsectionOf::Help:Advanced_Editing| ]]

@@ -404,3 +404,6 @@ Templates may also include other parser functions such as conditionals and even 
 * [http://korrekt.org/page/Publications Publications on korrekt.org]: all lists on this page are created with templated queries. Conditionals (<tt>#if</tt> and <tt>#ifeq</tt>) are used to change the format of a result depending on its publication type and provided data (majorpublications have bold-faced titles).
 
 [[Category:Semantic MediaWiki Help Topic|Inline Queries]]
+[[Category:SMW+ Help Topic|Inline Queries]]
+[[SubsectionOf::Help:Knowledge_Retrieval| ]]
+[[SubsectionOf::Help:Semantic_search| ]]

@@ -27,3 +27,4 @@ Note that this would look almost the same if we would have a category called "Se
 SMW's [[Help:inline queries|inline queries]] may also use concepts, and in some cases even the concept description is used to beautify an output. Concept descriptions are also included in SMW's [[Help:RDF export|RDF export]] in form of OWL class descriptions, so that other Semantic Web tools can download and reuse the concept descriptions.
 
 [[Category:Semantic MediaWiki Help Topic|Concepts]]
+[[SubsectionOf::Help:Semantic_search| ]]

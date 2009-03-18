@@ -43,4 +43,5 @@ $wgNamespacesWithSubpages = array_fill(0, 200, true);
 This assumes you have no more than 200 namespaces.
 
 
-[[Category:MediaWiki Help Wiki|Subpages]]
+[[Category:MediaWiki Help Topic|Subpages]]
+[[SubsectionOf::Help:Advanced_Editing| ]]

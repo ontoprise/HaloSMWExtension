@@ -152,3 +152,6 @@ where the four values are the country, the count of the presidency, the start da
 We mentioned the special property <tt>Has type</tt> that you use to tell SMW the datatype of a property.  SMW has other predefined special properties that have special meaning (even if you do not create property pages for them in your wiki).  You ''cannot'' use these names for your own properties, but you can use them in browsing and querying interfaces just like all other properties. For more information, see [[Help:Special_Properties|Special Properties]].
 
 [[Category:Semantic MediaWiki Help Topic|Properties and Types]]
+[[Category:SMW+ Help Topic|Properties and Types]]
+[[SubsectionOf::Help:Advanced_Annotation_Mode| ]]
+[[SubsectionOf::Help:Editing_Semantic_Data| ]]

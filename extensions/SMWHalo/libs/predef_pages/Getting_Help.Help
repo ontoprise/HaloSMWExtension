@@ -5,10 +5,9 @@ php SMW_setup.php --helppages
 </nowiki></pre>
 This will install all help pages into the <tt>Help</tt> namespace.
 
-As already mentioned, SMW+ is a bundle of the MediaWiki software plus additional extensions. The help of SMW+ does not cover all features of the MediaWiki software that might be of interest and therefore assumes that you have at least some basic experience with MediaWiki. Unfortunately, MediaWiki itself comes with no help. However, sufficient user documentation is available at the [http://www.mediawiki.org/wiki/Help:Contents MediaWiki Web site]. If you don't want to look up all help topics online, you can copy the public domain help pages from <tt>http://www.mediawiki.org/wiki/Help:Contents</tt> into your wiki's <tt>Help</tt> namespace. To accomplish this, visit the help page [http://www.mediawiki.org/wiki/Help:Copying Copying] and follow the instructions given there. Note that this method isn't perfect, as not all help pages are in the <tt>Help</tt> namespace, and some images are missing. But by browsing the imported pages, you will see what else to export and import.
-
-<hr>
-'''Warning &ndash;''' Back up the wiki, since this procedure will overwrite existing help pages with the same names.
-<hr>
+As already mentioned, SMW+ is a bundle of the MediaWiki software plus additional extensions. The help of SMW+ does not cover all features of the MediaWiki software that might be of interest and therefore assumes that you have at least some basic experience with MediaWiki. Additional user documentation is available on the [http://www.mediawiki.org/wiki/Help:Contents MediaWiki Web site].
 
 For more information on SMW+ and its included MediaWiki extensions, visit the [http://smwforum.ontoprise.com/smwforum/index.php SMW+ User Forum], which contains comprehensive documentation to a variety of topics.
+
+[[Category:SMW+ Help Topic|Getting Help]]
+[[SubsectionOf::Help:General| ]]

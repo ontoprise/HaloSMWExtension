@@ -20,3 +20,6 @@ For author pages, there is no need to create a property for the name, since the 
 * '''Country of Origin.''' Create a property <tt>HasCountryOfOrigin</tt> of type <tt>String</tt>.
 :[[Image:Semantic_forms_create_property.png|frame|none|Create a Property Dialog Box]]
 Proceed with [[Help:Creating a Template|Creating a Template]].
+
+[[Category:SMW+ Help Topic|Figuring out the Data Structure]]
+[[SubsectionOf::Help:Creating_Semantic_Forms| ]]

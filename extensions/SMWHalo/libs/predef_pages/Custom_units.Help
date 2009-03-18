@@ -1,3 +1,6 @@
+__NOTOC__
+This page explains ways that pages can have more control over the display and conversion of units. Units can be used for properties of type <tt>Number</tt>, and make annotation more flexible: everybody can view and enter data in his or her preferred unit without restricting mutual understanding. For example, some people might prefer a distance given in "miles" over one given in "km". In other cases, it might not be suitable to display a distance in "km" if "microns" are more appropriate. 
+
 == Custom types with unit conversions ==
 SMW has built-in support for some types that can handle units (e.g. <tt>Type:Temperature</tt>), but many more can easily be added. Types that support units can accept, convert, and display values in several different units. You can see this in the factbox of articles like "[http://ontoworld.org/wiki/Berlin Berlin]", where the area is given in multiple units.
 
@@ -41,3 +44,20 @@ Note that you can only specify a proportional conversion factor, a multiplier. S
 SMW does not allow specifying customized non-proportional units in the wiki. One workaround for this is to use  <tt>Type:Number</tt> which also ''accepts'' unit strings after a given number. The type does not know how to convert between those values, but it still recognizes the unit and will be able to distinguish different units. If all users of a certain exotic type agree on using the same unit, the functionality would be similar to having real unit support. If someone still uses another unit, then the given value will at least not be confused with values in other units.
 
 A more elaborate way of fixing the situation is to write a small script that implements the required conversion. It is not difficult to extend SMW in this fashion, and one could simply copy and adjust the code for Type:Temperature (which is below 70 lines, including comments). Upon implementing such a custom type, properties that needed to use Type:Number can be changed to the new type without any negative effects on existing articles. When confronted with unsupported units, custom types will still behave like simple number datatypes.
+
+== Customizing the display of units ==
+
+Through the use of floating-point numbers, a single type can support a broad range of units. For example, a single length type can easily support both light years and nanometers. However, if someone uses a property "Elevation" to specify the height of a mountain, then it would hardly be useful to display this value in light years or nanometers.
+
+SMW allows you to specify which units a property should display from all the units its type supports. This information is specific to the property : two properties can both use <tt>Type:Length</tt> while still having different appearances in the wiki. If no preferences on display are given, a property will display all of its type's units, with the main unit (the one with conversion factor 1) first.
+
+To specify custom display units, add the special property <tt>display units</tt> to the property's page, mentioning each unit you want displayed separated by commas. For example, the page "<tt>Property:Height</tt>" could contain the statements:
+
+ <nowiki>[[display units::km,ft,miles]]</nowiki>
+
+This results in the factbox displaying only those three units for values of the property Height, even though its <tt>Type:Length</tt> might support a dozen other units. Similarly, the tooltip for each such value will show those conversions. This customization works for all properties that use types with unit support, no matter whether the type was customized or built-in.
+
+If you change the first display unit, consider displaying the type's "Standard Unit" to users as one of the other display units, since SMW still converts values to the standard unit when storing them.
+
+[[Category:Semantic MediaWiki Help Topic|Custom Units]]
+[[SubsectionOf::Help:Editing_Semantic_Data| ]]

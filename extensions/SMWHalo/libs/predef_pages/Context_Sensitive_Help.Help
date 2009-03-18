@@ -34,3 +34,6 @@ If the help topic was created out of the CSH framework, the property <tt>questio
 == Finding Help Topics ==
 
 To find relevant help topics, you can not only look up the help in the Semantic Toolbar, but you can also access the special page <tt>Special:ContextSensitiveHelp</tt>. This page shows all available help topics. You can use filters for namespaces, actions, and categories to narrow down your search. The special page will then show all help topics that match your selection. For example, if you want to see all help topics that are related to editing a page of the namespace <tt>Main</tt>, you could select <tt>Main</tt> from the Page Type list and <tt>edit</tt> from the Action list. After clicking Go, all relevant help topics will be displayed.
+
+[[Category:SMW+ Help Topic|Context Sensitive Help]]
+[[SubsectionOf::Help:Usability| ]]

@@ -6,3 +6,6 @@ SMW+ has a number of features to deal with external ontologies, most notably dat
 The data described by an OWL ontology is interpreted as a set of individuals (also known as ''instances'') and a set of property assertions which relate these individuals to each other. An OWL ontology consists of a set of axioms which place constraints on sets of individuals (called ''classes'') and the types of relationships permitted between them. These axioms provide semantics by allowing systems to infer additional information based on the data explicitly provided. 
 
 A full introduction to the expressive power of the OWL language(s) is provided in the W3C's [http://www.w3.org/TR/owl-guide/ OWL Guide].
+
+[[Category:SMW+ Help Topic|Ontology Management]]
+[[SubsectionOf::Help:Main_Features| ]]

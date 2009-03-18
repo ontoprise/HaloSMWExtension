@@ -58,3 +58,4 @@ For printouts of the form <tt>?Category:Actor</tt>, the display format can be us
 This will show the text "an actor" for all pages that are actors, and the text "not an actor" otherwise. This can, for example, also be used in combination with small images to display icons for certain categories.
 
 [[Category:Semantic MediaWiki Help Topic|Displaying Information]]
+[[SubsectionOf::Help:Semantic_search| ]]

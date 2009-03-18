@@ -7,3 +7,7 @@ to easily add semantic data to the wiki:
 * '''[[Help:Ontology_Browser|Ontology Browser]].''' Intuitive browsing of the wiki's class taxonomy, semantic properties, and instances plus basic editing features. 
 * '''[[Help:Semantic Forms|Semantic Forms]].''' A feature that allows you to create forms for adding and editing pages that use templates to store semantic data.
 * '''[[Help:Terminology_Management|Terminology Management]].''' Inbuilt meta-data elements (SKOS) and semantic forms that enable you to create vocabularies in SMW+.
+
+
+[[Category:SMW+ Help Topic|Knowledge Authoring]]
+[[SubsectionOf::Help:Main_Features| ]]

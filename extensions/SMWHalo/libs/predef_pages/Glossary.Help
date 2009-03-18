@@ -24,3 +24,5 @@
 ; Template : A standard wiki page whose content is designed to be transcluded (embedded) inside other pages.
 ; Triple : A subject-predicate-object expression in Resource Description Framework (RDF).
 ; Triplestore : A triplestore is a purpose-built database for the storage and retrieval of Resource Description Framework (RDF) metadata.
+
+[[Category:SMW+ Help Topic|Glossary]]

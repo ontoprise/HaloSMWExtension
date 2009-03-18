@@ -15,3 +15,5 @@ SMW+ is a bundle of the following MediaWiki extensions:
 * '''Enhanced Retrieval.''' (Sometimes referred to as <i>UnifiedSearch</i>) Integration of the Lucene search server.
 * '''Supplementary extensions.''' Other useful extensions such as ParserFunctions, StringFunctions, Variables, Cite, etc.
 
+[[Category:SMW+ Help Topic|General]]
+

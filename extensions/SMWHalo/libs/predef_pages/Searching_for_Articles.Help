@@ -45,3 +45,6 @@ The search of SMW+ includes a special page <tt>Special:UnifiedSearchStatistics</
 <hr>
 <b>Tip &ndash;</b> By sorting tries in descending order you can determine which search terms were entered most. You can use this information as a guidance how to improve the quality of your wiki by adding articles that reflect users' search behavior.
 <hr>
+
+[[Category:SMW+ Help Topic|Searching for Articles]]
+[[SubsectionOf::Help:Lucene_Search| ]]

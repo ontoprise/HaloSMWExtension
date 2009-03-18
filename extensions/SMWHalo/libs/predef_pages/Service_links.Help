@@ -108,3 +108,4 @@ The link was retrieved by using Swoogle and replacing the search string (at the 
 After those changes are saved, the new service is fully functional, and each page that uses [http://ontoworld.org/wiki/Property:Namespace Property:Namespace] will show a suitable link to Swoogle. Some articles will still show the old version, if they are retrieved from cache, but after the next edit or purge, all articles will display the links as expected.
 
 [[Category:Semantic MediaWiki Help Topic|Service Links]]
+[[SubsectionOf::Help:Editing_Semantic_Data| ]]

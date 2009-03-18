@@ -47,3 +47,6 @@ Clicking the link 'Search for property values that match your search' will open 
 
 If a category and a property were found, you can ask for all instances which have an annotation for that property. For example, if you enter the search term "Book published", SMW+ will create a query that returns all books and their publishing year. Clicking on Show will lead you to the special page <tt>Special:Ask</tt> where the query will be executed.
 [[Image:Combined_search_simple_query.png|frame|none|Simple Query]]
+
+[[Category:SMW+ Help Topic|Combined Search]]
+[[SubsectionOf::Help:Search| ]]

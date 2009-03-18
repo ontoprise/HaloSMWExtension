@@ -100,3 +100,6 @@ Lucene supports escaping special characters that are part of the query syntax. T
 To escape these character, use the "\" before the character. For example, to search for "(1+1):2" use the query:
 
  \(1\+1\)\:2
+
+[[Category:SMW+ Help Topic|Apache Lucene Query Parser Syntax]]
+[[SubsectionOf::Help:Lucene_Search| ]]
