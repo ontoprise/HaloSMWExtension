@@ -59,6 +59,7 @@ class USStoreSQL extends USStore {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_atts2 = $db->tableName('smw_atts2');
+		$smw_rels2 = $db->tableName('smw_rels2');
 
 		$namespaces = "";
 		if ($namespace != NULL) {
@@ -84,7 +85,7 @@ class USStoreSQL extends USStore {
 		$query = '(SELECT s.smw_title AS title, s.smw_namespace AS ns FROM '.
 		$smw_ids.' s JOIN '.$smw_atts2.' r ON s.smw_id = s_id WHERE '.$namespaces.' AND ('.$propertyIDConstraint.') '.$titleConstraint1.')'.
 		'UNION '.
-		'(SELECT s.smw_title AS title, s.smw_namespace AS ns FROM smw_rels2 r '.
+		'(SELECT s.smw_title AS title, s.smw_namespace AS ns FROM '.$smw_rels2.' r '.
 		      'JOIN smw_ids s ON r.s_id = s.smw_id JOIN smw_ids o ON r.o_id = o.smw_id WHERE ('.$propertyIDConstraint.')  '.$titleConstraint2.') LIMIT 5';
 
 		$res = $db->query($query );
