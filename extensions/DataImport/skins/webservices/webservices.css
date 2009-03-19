@@ -28,18 +28,18 @@
 }
 
 .ActualMenueStep{
-	color: #000000;
+	color: white;
 	font-weight: bold;
+	line-height: 3em;
 }
 
 .TodoMenueStep{
-	color: #000000;
+	color: white;
 	font-weight: normal;
 }
 
 .DoneMenueStep{
-	color: #7f7f7f;
-	font-weight: bold;
+	color: white;
 }
 
 .step-headline{
