@@ -81,10 +81,11 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 				}
 			}
 		} else {
-						
-		   $res = $db->query( '(SELECT page_title AS title, page_namespace AS ns FROM page WHERE '.$sql.' AND page_is_redirect = 0) ' .
+		   $page = $db->tableName('page');		
+		   $redirect = $db->tableName('redirect');   
+		   $res = $db->query( '(SELECT page_title AS title, page_namespace AS ns FROM '.$page.' WHERE '.$sql.' AND page_is_redirect = 0) ' .
 		   					'UNION DISTINCT ' .
-		   					  '(SELECT rd_title AS title, rd_namespace AS ns FROM page JOIN redirect ON page_id = rd_from WHERE '.$sql.' AND page_is_redirect = 1)  '.
+		   					  '(SELECT rd_title AS title, rd_namespace AS ns FROM '.$page.' JOIN '.$redirect.' ON page_id = rd_from WHERE '.$sql.' AND page_is_redirect = 1)  '.
 		   					 DBHelper::getSQLOptionsAsString($requestoptions,'ns'));
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -498,6 +499,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		}
 		
 		$page = $db->tableName('page');
+		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
@@ -506,7 +508,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$db->query('INSERT INTO smw_ob_properties (SELECT page_id, page_title FROM '.$page.' WHERE page_is_redirect = 0 AND page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')'); 
 		$sql = DBHelper::getSQLConditions($requestoptions,'p1.page_title','p1.page_title');
 		// add targets of matching redirects
-		$db->query('INSERT INTO smw_ob_properties (SELECT p2.page_id, p2.page_title FROM page p1 JOIN redirect ON p1.page_id = rd_from JOIN page p2 ON p2.page_title = rd_title AND p2.page_namespace = rd_namespace WHERE p1.page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');             
+		$db->query('INSERT INTO smw_ob_properties (SELECT p2.page_id, p2.page_title FROM '.$page.' p1 JOIN '.$redirect.' ON p1.page_id = rd_from JOIN '.$page.' p2 ON p2.page_title = rd_title AND p2.page_namespace = rd_namespace WHERE p1.page_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');             
 	}
 	/**
 	 * Creates 'smw_ob_properties' and fills it with all properties (including inherited)
