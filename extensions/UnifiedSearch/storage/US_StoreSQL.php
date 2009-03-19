@@ -3,7 +3,7 @@
 require_once('US_Store.php');
 
 /**
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Created on: 27.01.2009
  *
@@ -86,7 +86,7 @@ class USStoreSQL extends USStore {
 		$smw_ids.' s JOIN '.$smw_atts2.' r ON s.smw_id = s_id WHERE '.$namespaces.' AND ('.$propertyIDConstraint.') '.$titleConstraint1.')'.
 		'UNION '.
 		'(SELECT s.smw_title AS title, s.smw_namespace AS ns FROM '.$smw_rels2.' r '.
-		      'JOIN smw_ids s ON r.s_id = s.smw_id JOIN smw_ids o ON r.o_id = o.smw_id WHERE ('.$propertyIDConstraint.')  '.$titleConstraint2.') LIMIT 5';
+		      'JOIN '.$smw_ids.' s ON r.s_id = s.smw_id JOIN '.$smw_ids.' o ON r.o_id = o.smw_id WHERE ('.$propertyIDConstraint.')  '.$titleConstraint2.') LIMIT 5';
 
 		$res = $db->query($query );
 		$result = array();
