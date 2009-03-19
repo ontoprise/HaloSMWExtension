@@ -60,20 +60,20 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		//0. menue
 		$html .= "<div id=\"menue\">";
 
-		$fClass = " class=\"ActualMenueStep\ ";
-		$rClass = "";
+		$fClass = " class=\"ActualMenueStep\" ";
+		$rClass = " class=\"TodoMenueStep\" ";
 		if($editwwsd){
-			$fClass = "";
+			$fClass = " class=\"TodoMenueStep\" ";
 			$rClass = " class=\"DoneMenueStep\" ";
 		}
-		$html .= "<span id=\"breadcrumb-menue\">";
-		$html .= "<span id=\"menue-step1\" ".$fClass.$rClass.": bold\">".wfMsg("smw_wws_s1-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<div id=\"breadcrumb-menue\" style=\"white-space: nowrap; background-color: grey; display: table; background-color: #8d8d8d; width: 100%; padding-left:12px; border-width: 1px; border-style: solid; border-color: #5d5d5d\">";
+		$html .= "<span id=\"menue-step1\" ".$fClass.$rClass.">".wfMsg("smw_wws_s1-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step2\" ".$rClass.">".wfMsg("smw_wws_s2-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step3\" ".$rClass.">".wfMsg("smw_wws_s3-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step4\"".$rClass.">".wfMsg("smw_wws_s4-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step5\"".$rClass.">".wfMsg("smw_wws_s5-menue")."<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step6\"".$rClass.">".wfMsg("smw_wws_s6-menue")."</span>";
-		$html .= "</span>";
+		$html .= "</div>";
 
 
 
@@ -187,7 +187,6 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep1()\" style=\"".$showButton."\">";
 		$html .= "</span>";
 
-		//todo: edit gui anpassen
 		$html .= "</div>";
 
 
@@ -223,7 +222,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step3-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
+		
+		$html .= "<div id=\"step3-rest-intro\" style=\"display:none\"></div>";
+		
+		$html .= "<table style=\"width: 100%\" id=\"step3-parameters\"><tr><th>Path:</th><th>Use: <input type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\" onclick=\"webServiceSpecial.useParameters()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
 
@@ -244,7 +246,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use:</th><th>Alias: <span style=\"cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
+		
+		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
+		
+		$html .= "<table id=\"step4-results\" style=\"width: 100%\"><tr><th>Path:</th><th>Use: <input type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\" onclick=\"webServiceSpecial.useResults()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 
@@ -347,8 +352,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 
 		//errors
-		$html .= "<div id=\"errors\" class=\"StepDiv\" style=\"display: none\">";
-		$html .= "<h2>Error</h2>";
+		$html .= "<div id=\"errors\" class=\"StepDiv\" style=\"display: none; border-width: 1px; border-color: red; border-style: solid; padding-left: 5px; padding-right: 5px\">";
+		$html .= "<h2 style=\"color: red\">Error</h2>";
 		$html .= "<div id=\"step1-error\" style=\"display: none\">".wfMsg("smw_wws_s1-error")."</div>";
 		$html .= "<div id=\"step2a-error\" style=\"display: none\">".wfMsg("smw_wws_s2a-error")."</div>";
 		$html .= "<div id=\"step2b-error\" style=\"display: none\">".wfMsg("smw_wws_s2b-error")."</div>";
