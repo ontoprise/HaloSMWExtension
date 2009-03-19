@@ -693,9 +693,9 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		            
 		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
-					' WHERE r.nary_pos = '.$nary_pos.' AND n.attribute_title = '. $db->addQuotes(smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()). ' AND r.object_title IN (SELECT cl_to FROM categorylinks WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND UPPER(n.subject_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') AND p.page_is_redirect = 0)');
+					' WHERE r.nary_pos = '.$nary_pos.' AND n.attribute_title = '. $db->addQuotes(smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()). ' AND r.object_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND UPPER(n.subject_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').') AND p.page_is_redirect = 0)');
 	
-		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_id AS category FROM categorylinks JOIN page ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');    
+		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');    
 		
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
 		// maximum iteration length is maximum category tree depth.
@@ -894,10 +894,10 @@ public function getPropertyWithType($match, $typeLabel) {
         }
         
         $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM categorylinks WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         
       
-        $db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_id AS category FROM categorylinks JOIN page ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');    
+        $db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_id AS category FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');    
         
         $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
         // maximum iteration length is maximum category tree depth.
