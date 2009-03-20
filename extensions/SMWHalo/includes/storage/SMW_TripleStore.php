@@ -1012,19 +1012,22 @@ class TSConnection {
 		global $smwgMessageBroker;
 		if (isset($smwgMessageBroker)) {
 			if (!is_array($commands)) {
-				$this->con->send($topic, $commands);
+				$enc_commands = mb_convert_encoding($commands, "UTF-8");
+				$this->con->send($topic, $enc_commands);
 				return;
 			}
-			$this->con->send($topic, implode("\n",$commands));
+			$enc_commands = mb_convert_encoding(implode("\n",$commands), "UTF-8");
+			$this->con->send($topic, $enc_commands);
 			
 		} else {
 			// ignore topic
 		    if (!is_array($commands)) {
-                $this->con->update($commands);
+		    	$enc_commands = mb_convert_encoding($commands, "UTF-8");
+                $this->con->update($enc_commands);
                 return;
             }
-			
-		    $this->con->update(implode("\n",$commands));
+			$enc_commands = mb_convert_encoding(implode("\n",$commands), "UTF-8");
+		    $this->con->update($enc_commands);
 			
 		}
 	}
