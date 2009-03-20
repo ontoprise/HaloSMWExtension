@@ -1406,7 +1406,8 @@ class WebService {
 
 		if (substr($type,0, 7) == "ArrayOf") {
 			if ($wsClient->isCustomType(substr($type, 7))) {
-				$flatParams[] = $name."[*]";
+				//$flatParams[] = $name."[*]";
+				$flatParams[] = $name;
 				return $flatParams;
 			}
 		}
@@ -1415,7 +1416,8 @@ class WebService {
 		foreach ($tp as $var => $type) {
 			if(substr($type,0, 7) == "ArrayOf"){
 				$type = substr($type, 7);
-				$fname = ($name == "//") ? "//".$var."[*]" : $name.'/'.$var."[*]";
+				//$fname = ($name == "//") ? "//".$var."[*]" : $name.'/'.$var."[*]";
+				$fname = ($name == "//") ? "//".$var : $name.'/'.$var;
 			} else {
 				$fname = ($name == "//") ? "//".$var : $name.'/'.$var;
 			}

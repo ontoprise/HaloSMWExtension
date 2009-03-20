@@ -1028,7 +1028,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step6c-error").style.display = "none";
 
 			var result = "<WebService>\n";
-			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value;
+			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value+"\n";
 
 			var uri = $("step1-uri").value;
 			result += "<uri name=\"" + uri + "\" />\n";
@@ -1081,13 +1081,14 @@ DefineWebServiceSpecial.prototype = {
 							pathStep = pathStep.substr(0, pathStep
 									.lastIndexOf("(") - 1);
 						}
-						if (pathStep.lastIndexOf("[") > 0) {
-							pathStep = pathStep.substring(0, pathStep
-									.lastIndexOf("["));
-							pathStep += "[";
-							pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
-							pathStep += "]";
-						}
+						
+						// if (pathStep.lastIndexOf("[") > 0) {
+						//  pathStep = pathStep.substring(0, pathStep
+						// .lastIndexOf("["));
+						// pathStep += "[";
+						// pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
+						// pathStep += "]";
+// }
 						if (pathStep != "/" && pathStep != "//") {
 							path += pathStep;
 						}
@@ -1097,69 +1098,53 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			result += "<result name=\"result\" >\n";
-
+			var rPath = "";
 			var offset = 0;
-			for (i = 0; i < this.preparedRPathSteps.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[offset + i
-							+ 1].childNodes[1].firstChild.checked != true) {
-						continue;
+			for (i = 1; i < this.resultContainer.firstChild.childNodes.length; i++) {
+				// only required for arays
+				// if (this.preparedRPathSteps[i] != "null") {
+				// process subpaths
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].childNodes[0].type != "checkbox") {
+					if (!this.resultContainer.firstChild.childNodes[i].removed) {
+						var name = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
+						result += "<part name=\"" + name + "\" ";
+						wsSyntax += "| ?result." + name + "\n";
+						
+						if(rPath == ""){
+							rPath = this.getRPath(i-2-offset);
+						}
+						
+						result += " path=\"" + rPath + "\"";
+
+						if (this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[1].value == "xpath") {
+							result += " xpath=\"";
+						} else {
+							result += " json=\"";
+						}
+						result += this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value; 
+						result += "\"/>\n";
 					}
-
-					var rPath = "";
-					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
-						var rPathStep = "//";
-
-						if (k > 1) {
-							rPathStep = "/";
-						}
-						rPathStep += this.preparedRPathSteps[i][k]["value"];
-
-						if (rPathStep.lastIndexOf("(") > 0) {
-							rPathStep = rPathStep.substr(0, rPathStep
-									.lastIndexOf("(") - 1);
-						}
-						if (rPathStep.lastIndexOf("[") > 0) {
-							rPathStep = rPathStep.substring(0, rPathStep
-									.lastIndexOf("["));
-							rPathStep += "[";
-							rPathStep += $("step4-arrayinput-" + i + "-" + k).value;
-							rPathStep += "]";
-						}
-						if (rPathStep != "/" && rPathStep != "//") {
-							rPath += rPathStep;
-						}
-					}
-
-					var name = this.resultContainer.firstChild.childNodes[offset
-							+ i + 1].childNodes[2].firstChild.value;
-					result += "<part name=\"" + name + "\" ";
-
-					wsSyntax += "| ?result." + name + "\n";
-
-					result += " path=\"" + rPath + "\"";
-
-					var offs = this.resultContainer.firstChild.childNodes[offset
-							+ i + 1].subPathOffset;
-					if (offs != null) {
-						for (o = 0; o < offs; o++) {
-							if (!this.resultContainer.firstChild.childNodes[offset
-									+ i + 1 + o + 1].removed) {
-								if (this.resultContainer.firstChild.childNodes[offset
-										+ i + 1 + o + 1].childNodes[0].childNodes[1].value == "xpath") {
-									result += " xpath=\"";
-								} else {
-									result += " json=\"";
-								}
-								result += this.resultContainer.firstChild.childNodes[offset
-										+ i + 1 + o + 1].childNodes[1].childNodes[0].value;
-								result += "\"";
-							}
-						}
-						offset += offs;
-					}
-					result += " />\n";
+					offset += 1;
+					continue;
 				}
+
+				// process normal result parts
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.checked != true) {
+					rPath = "";
+					continue;
+				}
+
+				rPath = this.getRPath(i - 1 - offset);
+
+				var name = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
+				result += "<part name=\"" + name + "\" ";
+
+				wsSyntax += "| ?result." + name + "\n";
+
+				result += " path=\"" + rPath + "\"";
+
+				result += " />\n";
+				// }
 			}
 			result += "</result>\n";
 
@@ -1352,58 +1337,67 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	generateResultAliases : function(createAll) {
-		var resultsCount = this.preparedRPathSteps.length;
+		//var resultsCount = this.preparedRPathSteps.length;
 		var offset = 0;
 		var aliases = new Array();
 		var aliasesObject = new Object();
 
-		for (i = 0; i < resultsCount; i++) {
-			if (this.preparedRPathSteps[i] != "null") {
-				if (this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.checked != true) {
+		var lastAlias = "";
+		for (i = 1; i < this.resultContainer.firstChild.childNodes.length; i++) {
+			var isSubPath = false;
+			if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.type != "checkbox") {
+				isSubPath = true;
+				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
+
+				if (alias.length == 0) {
+					alias = lastAlias;
+				}
+
+				if (alias.length == 0) {
+					alias = this.preparedRPathSteps[i - 2 - offset][this.preparedRPathSteps[i
+							- 2 - offset].length - 1]["value"];
+				}
+				offset += 1;
+			} else {
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.checked != true) {
+					lastAlias = "";
 					continue;
 				}
-				var alias = this.resultContainer.firstChild.childNodes[i + 1
-						- offset].childNodes[2].firstChild.value;
-
+				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
 				if (alias.length == 0) {
-					alias = this.preparedRPathSteps[i][this.preparedRPathSteps[i].length - 1]["value"];
+					alias = this.preparedRPathSteps[i -1 - offset][this.preparedRPathSteps[i
+							- 1 - offset].length - 1]["value"];
 				}
-				if (alias == "]") {
-					alias = "";
-				}
-				var openBracketPos = alias.lastIndexOf("(");
-				if (openBracketPos != -1) {
-					alias = alias.substr(0, openBracketPos - 1);
-				}
-				var openBracketPos = alias.lastIndexOf("[");
-				if (openBracketPos != -1) {
-					alias = alias.substr(0, openBracketPos);
-				}
-
-				if (alias.length == 0) {
-					alias = "result";
-				}
-
-				var goon = true;
-				var aliasTemp = alias;
-				var k = 0;
-
-				while (goon) {
-					if (aliasesObject[aliasTemp] != 1) {
-						goon = false;
-						alias = aliasTemp;
-						aliasesObject[alias] = 1;
-					} else {
-						aliasTemp = alias + "-" + k;
-						k++;
-					}
-				}
-
-				this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = alias;
-				aliases.push(alias);
-			} else {
-				offset += 1;
 			}
+
+			if (alias.length == 0) {
+				alias = "result";
+			}
+
+			var goon = true;
+			var aliasTemp = alias;
+			var k = 0;
+
+			while (goon) {
+				if (aliasesObject[aliasTemp] != 1) {
+					goon = false;
+					alias = aliasTemp;
+					aliasesObject[alias] = 1;
+				} else {
+					aliasTemp = alias + "-" + k;
+					k++;
+				}
+			}
+
+			lastAlias = alias;
+
+			if(isSubPath){
+				this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value = alias;
+			}
+			else {
+				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
+			}
+			aliases.push(alias);
 		}
 	},
 
@@ -3255,6 +3249,35 @@ DefineWebServiceSpecial.prototype = {
 			}
 			//offset += this.resultContainer.firstChild.childNodes[offset + i + 1].subPathOffset;
 		}
+	},
+	
+	getRPath : function(i){
+		var rPath = "";
+		for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
+			var rPathStep = "//";
+
+			if (k > 1) {
+				rPathStep = "/";
+			}
+			rPathStep += this.preparedRPathSteps[i][k]["value"];
+
+			if (rPathStep.lastIndexOf("(") > 0) {
+				rPathStep = rPathStep.substr(0, rPathStep
+						.lastIndexOf("(") - 1);
+			}
+			// if (rPathStep.lastIndexOf("[") > 0) {
+			// rPathStep = rPathStep.substring(0, rPathStep
+			// .lastIndexOf("["));
+			// rPathStep += "[";
+			// rPathStep += $("step4-arrayinput-" + i + "-" + k).value;
+			// rPathStep += "]";
+			// }
+			if (rPathStep != "/" && rPathStep != "//") {
+				rPath += rPathStep;
+			}
+		}
+		
+		return rPath;
 	}
 }
 
