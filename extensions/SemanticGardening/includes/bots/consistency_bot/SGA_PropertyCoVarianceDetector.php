@@ -10,9 +10,7 @@ global $smwgHaloIP;
 require_once("SGA_GraphEdge.php");
 require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
 
-// default cardinalities
-define('CARDINALITY_MIN',0);
-define('CARDINALITY_UNLIMITED', 2147483647); // MAXINT
+
 
 
 class PropertyCoVarianceDetector {

@@ -19,6 +19,10 @@ define('SMW_SSP_IS_EQUAL_TO', 5);
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
 define('SMW_SC_SYMMETRICAL_RELATIONS', 1);
 
+// default cardinalities
+define('CARDINALITY_MIN',0);
+define('CARDINALITY_UNLIMITED', 2147483647); // MAXINT
+
 
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
