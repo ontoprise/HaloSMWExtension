@@ -2,6 +2,7 @@
 # Provides WSDLs for external interfaces
 
 $wgAjaxExportList[] = 'smwf_ws_callEQI';
+$wgAjaxExportList[] = 'smwf_ws_callEQIXML';
 $wgAjaxExportList[] = 'smwf_ws_getWSDL';
 
 
@@ -13,6 +14,13 @@ function smwf_ws_callEQI($query) {
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
 	return query($query, "exceltable");
+}
+
+# same as smwf_ws_callEQI except that XML is returned
+function smwf_ws_callEQIXML($query) {
+ global $IP;
+ require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+ return query($query, "xml");
 }
 
 #
