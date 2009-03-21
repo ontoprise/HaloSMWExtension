@@ -430,14 +430,14 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 					$dupPos = strpos($wsdlParameterSteps[$k], "##duplicate");
 					$overflowPos = strpos($wsdlParameterSteps[$k], "##overflow");
-					$bracketPos = strpos($wwsdParameterSteps[$k], "[");
+					//$bracketPos = strpos($wwsdParameterSteps[$k], "[");
 
 					$wwsdParameterStep = $wwsdParameterSteps[$k];
 
-					if($bracketPos > 0){
-						$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
-						$dupPos = $dupPos."-";
-					}
+					//if($bracketPos > 0){
+					//	$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
+					//	$dupPos = $dupPos."-";
+					//}
 					if(strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
 						$matchedPath .= "/".$wwsdParameterSteps[$k];
 						if($overflowPos){
@@ -464,9 +464,19 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						if(strlen($a["defaultValue"]."") == 0){
 							$a["defaultValue"] = "##";
 						}
+						$mergedParameters[$a["path"]] = $a;
+					} else {
+						$a["xpath"] = $wwsdParameter["xpath"]."";
+						$a["json"] = $wwsdParameter["json"]."";
+						if(strlen($a["xpath"]."") == 0){
+							$a["xpath"] = "##";
+						}
+						if(strlen($a["json"]."") == 0){
+							$a["json"] = "##";
+						}
+						$mergedParameters[$a["path"].$a["json"].$a["xpath"]] = $a;
 					}
 					$unsetwwsdParameters[$wwsdParameter["path"].""] = true;
-					$mergedParameters[$a["path"]] = $a;
 					$found = true;
 					continue;
 				}
@@ -478,8 +488,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				if(!$result){
 					$a["optional"] = "##";
 					$a["defaultValue"] = "##";
+					$mergedParameters[$a["path"]] = $a;
+				} else {
+					$a["xpath"] = "##";
+					$a["json"] = "##";
+					$mergedParameters[$a["path"].$a["json"].$a["xpath"]] = $a;
 				}
-				$mergedParameters[$a["path"]] = $a;
 			}
 		}
 
@@ -487,7 +501,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			if(!array_key_exists($wsParameter["path"]."", $unsetwwsdParameters)){
 				$o = array();
 				$o["name"] = $wsParameter["name"]."";
-				$o["path"] = "//wwsd/".$wsParameter["path"]."";
+				$o["path"] = "##unmatched".$wsParameter["path"]."";
 
 				if(!$result){
 					$o["defaultValue"] = $wsParameter["defaultValue"]."";
@@ -498,13 +512,24 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					if(strlen($o["defaultValue"]."") == 0){
 						$o["defaultValue"] = "##";
 					}
+					$mergedParameters[$o["path"]] = $o;
+				} else {
+					$o["json"] = $wsParameter["json"]."";
+					$o["xpath"] = $wsParameter["xpath"]."";
+					if(strlen($o["json"]."") == 0){
+						$o["json"] = "##";
+					}
+					if(strlen($o["xpath"]."") == 0){
+						$o["xpath"] = "##";
+					}
+					$mergedParameters[$o["path"].$o["json"].$o["xpath"]] = $o;
 				}
-				$mergedParameters[$o["path"]] = $o;
 			}
 		}
 		ksort($mergedParameters);
-
-
+		
+		
+		
 		$html = "";
 		if($result){
 			$html .= "<span id=\"editresults\" style=\"display: none\">";
@@ -527,6 +552,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				} else {
 					$html .= "##;";
 				}
+			} else {
+				$html .= $mergedParameter["xpath"].";";
+				$html .= $mergedParameter["json"].";";
 			}
 		}
 
