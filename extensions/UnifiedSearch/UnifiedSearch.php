@@ -8,16 +8,18 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	echo("This file is an extension to the MediaWiki software and cannot be used standalone.\n");
 	die(1);
 }
+define('US_SEARCH_EXTENSION_VERSION', '1.1');
 
 define('US_HIGH_TOLERANCE', 0);
 define('US_LOWTOLERANCE', 1);
 define('US_EXACTMATCH', 2);
 
+
 $wgExtensionCredits['unifiedsearch'][] = array(
-        'name' => 'Enhanced Retrieval extension',
+        'name' => 'Enhanced Retrieval extension v'.US_SEARCH_EXTENSION_VERSION,
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
-        'description' => 'Combining a Lucene backend with a title search',
+        'description' => 'Provides access to a Lucene backend.',
 );
 
 global $wgExtensionFunctions, $wgHooks, $wgAjaxExportList;;
@@ -89,7 +91,10 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'UnifiedSearchStatistics.php';
-
+    
+	if (file_exists($dir . 'SKOSExpander.php')) {
+	   $wgAutoloadClasses['SKOSExpander'] = $dir . 'SKOSExpander.php';
+	}
 	$wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
@@ -164,7 +169,10 @@ function wfUSInitContentMessages() {
  *
  */
 function wfUSInitialize($onlyTables) {
-    if (!$onlyTables) wfUSInitializeSKOSOntology();
+	global $usgSKOSExpansion;
+    if (!$onlyTables && isset($usgSKOSExpansion) && $usgSKOSExpansion === true) {
+    	wfUSInitializeSKOSOntology();
+    }
     wfUSInitializeTables();
     return true;
 }

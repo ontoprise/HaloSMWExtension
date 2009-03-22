@@ -17,8 +17,15 @@ mkdir %OUTPUT_DIR%\extensions\UnifiedSearch
 
 REM copy files
 
+
+IF %1 == nongpl goto nongpl
+xcopy ..\* %OUTPUT_DIR%\extensions\UnifiedSearch /S /EXCLUDE:excludeSKOS.dat /Y
+goto pack
+
+:nongpl
 xcopy ..\* %OUTPUT_DIR%\extensions\UnifiedSearch /S /EXCLUDE:exclude.dat /Y
 
+:pack
 REM Pack Search Extension
 
 cd bin

@@ -236,9 +236,15 @@ class USSpecialPage extends SpecialPage {
         if (!self::userDefinedSearch($terms, $search)) {
             // non user-defined
             $contentTitleSearchPattern = 'contents:($1$4) OR title:($2$3)';
-            $expandedFTSearch = QueryExpander::expandForFulltext($terms, $tolerance);
-            $expandedTitles = QueryExpander::expandForTitles($terms, $namespacesToSearch , $tolerance);
-             
+            
+            if (isset($usgSKOSExpansion) && $usgSKOSExpansion === true) {
+                $expandedFTSearch = SKOSExpander::expandForFulltext($terms, $tolerance);
+                $expandedTitles = SKOSExpander::expandForTitles($terms, $namespacesToSearch , $tolerance);
+            } else {
+            	 $expandedFTSearch = '';
+                $expandedTitles = '';
+            }
+            
             // find aggregated term, ie. terms which may be actually one term.
             $aggregatedTerms = QueryExpander::opTerms(array_keys(QueryExpander::findAggregatedTerms($terms)), "OR");
           
