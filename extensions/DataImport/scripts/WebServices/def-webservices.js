@@ -1019,7 +1019,10 @@ DefineWebServiceSpecial.prototype = {
 			this.processStep6REST();
 			return;
 		}
-
+		
+		this.generateParameterAliases(false);
+		this.generateResultAliases(false);
+		
 		this.showPendingIndicator("step6-go");
 		if ($("step6-name").value.length > 0) {
 			$("errors").style.display = "none";
@@ -1048,54 +1051,54 @@ DefineWebServiceSpecial.prototype = {
 			var method = $("step2-methods").value;
 			result += "<method name=\"" + method + "\" />\n";
 
-//			for ( var i = 0; i < this.parameterContainer.firstChild.childNodes.length; i++) {
-//				if (this.preparedPathSteps[i] != "null") {
-//					if ($("s3-use" + i).checked != true) {
-//						continue;
-//					}
-//
-//					var name = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value;
-//					result += "<parameter name=\"" + name + "\" ";
-//
-//					wsSyntax += "| " + name
-//							+ " = [Please enter a value here]\n";
-//
-//					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked;
-//					result += " optional=\"" + optional + "\" ";
-//
-//					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value;
-//					if (defaultValue != "") {
-//						if (defaultValue != "") {
-//							result += " defaultValue=\"" + defaultValue + "\" ";
-//						}
-//					}
-//					var path = "";
-//					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
-//						var pathStep = "//";
-//
-//						if (k > 0) {
-//							pathStep = "/";
-//						}
-//						pathStep += this.preparedPathSteps[i][k]["value"];
-//						if (pathStep.lastIndexOf("(") > 0) {
-//							pathStep = pathStep.substr(0, pathStep
-//									.lastIndexOf("(") - 1);
-//						}
-//						
-//						// if (pathStep.lastIndexOf("[") > 0) {
-//						//  pathStep = pathStep.substring(0, pathStep
-//						// .lastIndexOf("["));
-//						// pathStep += "[";
-//						// pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
-//						// pathStep += "]";
-//// }
-//						if (pathStep != "/" && pathStep != "//") {
-//							path += pathStep;
-//						}
-//					}
-//					result += " path=\"" + path + "\" />\n";
-//				}
-//			}
+			for ( var i = 0; i < this.preparedPathSteps.length; i++) {
+				if (this.preparedPathSteps[i] != "null") {
+					if ($("s3-use" + i).checked != true) {
+						continue;
+					}
+
+					var name = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value;
+					result += "<parameter name=\"" + name + "\" ";
+
+					wsSyntax += "| " + name
+							+ " = [Please enter a value here]\n";
+
+					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked;
+					result += " optional=\"" + optional + "\" ";
+
+					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value;
+					if (defaultValue != "") {
+						if (defaultValue != "") {
+							result += " defaultValue=\"" + defaultValue + "\" ";
+						}
+					}
+					var path = "";
+					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
+						var pathStep = "//";
+
+						if (k > 0) {
+							pathStep = "/";
+						}
+						pathStep += this.preparedPathSteps[i][k]["value"];
+						if (pathStep.lastIndexOf("(") > 0) {
+							pathStep = pathStep.substr(0, pathStep
+									.lastIndexOf("(") - 1);
+						}
+						
+						// if (pathStep.lastIndexOf("[") > 0) {
+						//  pathStep = pathStep.substring(0, pathStep
+						// .lastIndexOf("["));
+						// pathStep += "[";
+						// pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
+						// pathStep += "]";
+// }
+						if (pathStep != "/" && pathStep != "//") {
+							path += pathStep;
+						}
+					}
+					result += " path=\"" + path + "\" />\n";
+				}
+			}
 
 			result += "<result name=\"result\" >\n";
 			var rPath = "";
@@ -1260,6 +1263,8 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep7 : function(request) {
+		this.editMode = false;
+		
 		this.step = "step1";
 		$("step7").style.display = "none";
 		$("breadcrumb-menue").style.display = "";
@@ -1352,14 +1357,19 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	generateResultAliases : function(createAll) {
-		//var resultsCount = this.preparedRPathSteps.length;
 		var offset = 0;
 		var aliases = new Array();
 		var aliasesObject = new Object();
-
+		var manualResultPart = false;
 		var lastAlias = "";
 		for (i = 1; i < this.resultContainer.firstChild.childNodes.length; i++) {
 			var isSubPath = false;
+			if (this.resultContainer.firstChild.childNodes[i].id == "step4-separatorRow") {
+				i += 1;
+				offset = 0;
+				manualResultPart = true;
+				continue;
+			}
 			if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.type != "checkbox") {
 				isSubPath = true;
 				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
@@ -1369,8 +1379,12 @@ DefineWebServiceSpecial.prototype = {
 				}
 
 				if (alias.length == 0) {
-					alias = this.preparedRPathSteps[i - 2 - offset][this.preparedRPathSteps[i
-							- 2 - offset].length - 1]["value"];
+					if(manualResultPart){
+						alias = "alias";
+					} else {
+						alias = this.preparedRPathSteps[i - 2 - offset][this.preparedRPathSteps[i
+						                                                                        - 2 - offset].length - 1]["value"];
+					}
 				}
 				offset += 1;
 			} else {
@@ -1380,8 +1394,12 @@ DefineWebServiceSpecial.prototype = {
 				}
 				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
 				if (alias.length == 0) {
-					alias = this.preparedRPathSteps[i -1 - offset][this.preparedRPathSteps[i
-							- 1 - offset].length - 1]["value"];
+					if(manualResultPart){
+						alias = "alias";
+					} else {
+						alias = this.preparedRPathSteps[i -1 - offset][this.preparedRPathSteps[i
+						                                                                       - 1 - offset].length - 1]["value"];
+					}
 				}
 			}
 
@@ -1404,13 +1422,12 @@ DefineWebServiceSpecial.prototype = {
 				}
 			}
 
-			lastAlias = alias;
-
 			if(isSubPath){
 				this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value = alias;
 			}
 			else {
 				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
+				lastAlias = alias;
 			}
 			aliases.push(alias);
 		}
@@ -3343,6 +3360,7 @@ DefineWebServiceSpecial.prototype = {
 		var rows = this.resultContainer.firstChild.childNodes.length;
 		var offset = 0;
 		var rememberedNormalRPs = new Array();
+		var rememberedPath = "";
 		for ( var i = 0; i < rParts.length; i++) {
 			rParts[i]["path"] = rParts[i]["path"].substring(11, rParts[i]["path"].length);
 			var subPath = false;

@@ -63,7 +63,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$fClass = " class=\"ActualMenueStep\" ";
 		$rClass = " class=\"TodoMenueStep\" ";
 		if($editwwsd){
-			$fClass = " class=\"TodoMenueStep\" ";
+			$fClass = " class=\"DoneMenueStep\" ";
 			$rClass = " class=\"DoneMenueStep\" ";
 		}
 		$html .= "<div id=\"breadcrumb-menue\" style=\"white-space: nowrap; background-color: grey; display: table; background-color: #8d8d8d; width: 100%; padding-left:12px; border-width: 1px; border-style: solid; border-color: #5d5d5d\">";
@@ -249,7 +249,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		
 		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
 		
-		$html .= "<table id=\"step4-results\"><tr><th>Path:</th><th>Use: <input type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\" onclick=\"webServiceSpecial.useResults()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">Path:</th><th>Use: <input type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\" onclick=\"webServiceSpecial.useResults()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 
@@ -501,7 +501,11 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			if(!array_key_exists($wsParameter["path"]."", $unsetwwsdParameters)){
 				$o = array();
 				$o["name"] = $wsParameter["name"]."";
-				$o["path"] = "##unmatched".$wsParameter["path"]."";
+				if($result){
+					$o["path"] = "##unmatched".$wsParameter["path"]."";
+				} else {
+					$o["path"] = $wsParameter["path"]."";
+				}
 
 				if(!$result){
 					$o["defaultValue"] = $wsParameter["defaultValue"]."";

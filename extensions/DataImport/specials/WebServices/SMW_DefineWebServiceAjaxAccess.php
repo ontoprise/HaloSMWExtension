@@ -111,7 +111,8 @@ function smwf_ws_processStep3($uri, $methodName){
  */
 function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 
-	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
+	//$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
+	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd, ""));
 	if($editResult[0]){
 		$ws = WebService::newFromWWSD($name, $wwsd);
 		if(is_array($ws)){

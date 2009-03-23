@@ -36,10 +36,12 @@
 .TodoMenueStep{
 	color: white;
 	font-weight: normal;
+	line-height: 3em;
 }
 
 .DoneMenueStep{
 	color: white;
+	line-height: 3em;
 }
 
 .step-headline{
