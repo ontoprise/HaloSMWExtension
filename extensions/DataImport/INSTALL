@@ -1,1 +1,27 @@
-TODO: Ingo
+Installation instructions
+-------------------------
+
+Requirements: 
+    MediaWiki 1.13 or higher
+    SMW 1.4.2 
+    Halo extension 1.4.3
+    Semantic Gardening extension 1.0
+	
+
+1) Add to your LocalSettings.php: (After the Halo and the 
+Semantic Gardening extensions were initialised)
+---
+include_once('extensions/DataImport/includes/DI_Initialize.php');
+enableDataImportExtension();
+---
+
+2) Login as WikiSysop, go to the special page "Special:SMWAdmin" and 
+run the "Initialise or update tables" script.
+
+3) That's it.
+
+Notice: If you already used a prior version of the Web Service extension, 
+then you have to replace the dots in the path-attributes of your existing
+WWSDs by slashes, so that the paths are conform to the XPath syntax.
+
+
