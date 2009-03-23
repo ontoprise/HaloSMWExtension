@@ -12,7 +12,6 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  require_once( "$smwgIP/includes/SMW_DV_WikiPage.php" );
  require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
  require_once  "$smwgHaloIP/includes/SMW_DBHelper.php";
- require_once( "SMW_GraphHelper.php");
  require_once( "SMW_SemanticStore.php");
 
  // max depth of category graph
@@ -1002,78 +1001,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			DBHelper::reportProgress("   ... done!\n",$verbose);
 	}
 	
-	public function rateAnnotation($subject, $predicate, $object, $rating) {
-		$db =& wfGetDB( DB_MASTER );
-		
-		$smw_attributes = $db->tableName('smw_attributes');
-		$smw_relations = $db->tableName('smw_relations');
- 		
-		$res = $db->selectRow($smw_attributes, 'rating', array('subject_title' => $subject, 'attribute_title' => $predicate, 'value_xsd' => $object));
-		if ($res !== false) {
-			$db->update($smw_attributes, array('rating' => (is_numeric($res) ? $res : 0) + $rating), array('subject_title' => $subject, 'attribute_title' => $predicate, 'value_xsd' => $object));
-		} else {
-			$res = $db->selectRow($smw_relations, 'rating', array('subject_title' => $subject, 'relation_title' => $predicate, 'object_title' => $object));
-			if ($res !== false) {
-				$db->update($smw_relations, array('rating' => (is_numeric($res) ? $res : 0) + $rating), array('subject_title' => $subject, 'relation_title' => $predicate, 'object_title' => $object));
-			}  
-		}
-	}
 	
-	public function getRatedAnnotations($subject) {
-		$db =& wfGetDB( DB_SLAVE );
-		
-		$smw_attributes = $db->tableName('smw_attributes');
-		$smw_relations = $db->tableName('smw_relations');
- 		
-		$res = $db->select($smw_attributes, array('attribute_title', 'value_xsd', 'rating'), array('subject_title' => $subject));
-		$res2 = $db->select($smw_relations, array('relation_title', 'object_title', 'rating'), array('subject_title' => $subject));
-		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				
-				$result[] = array($row->attribute_title, $row->value_xsd, $row->rating);
-			}
-		}
-		if($db->numRows( $res2 ) > 0) {
-			while($row = $db->fetchObject($res2)) {
-				$result[] = array($row->relation_title, $row->object_title, $row->rating);
-			}
-		}
-		$db->freeResult($res);
-		$db->freeResult($res2);
-		return $result;
-	}
-	
-	public function getAnnotationsForRating($limit, $unrated = true) {
- 		$db =& wfGetDB( DB_SLAVE );
- 		$smw_attributes = $db->tableName('smw_attributes');		
-		$smw_relations = $db->tableName('smw_relations');
-		$smw_nary = $db->tableName('smw_nary');
-		if ($unrated) $where = 'WHERE rating IS NULL'; else $where = 'WHERE rating IS NOT NULL';
-		
-		 // get random offsets
-        $offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_attributes ");
-        $offset_row = $db->fetchObject( $offset_result );
-        $offsetAtt = $offset_row->offset;
-        $db->freeResult($offset_result);
-    
-        $offset_result = $db->query( " SELECT FLOOR(RAND() * COUNT(*)) AS offset FROM $smw_relations ");
-        $offset_row = $db->fetchObject( $offset_result );
-        $offsetRel = $offset_row->offset;
-        $db->freeResult($offset_result);
-        
- 		$res = $db->query('(SELECT subject_title AS subject, attribute_title AS predicate, value_xsd AS object FROM '.$smw_attributes. ' '.$where.') ' .
- 							'UNION ' .
- 						   '(SELECT subject_title AS subject, relation_title AS predicate, object_title AS object FROM '.$smw_relations.' '.$where.') OFFSET '.$offsetAtt+$offsetRel.' LIMIT '.$limit);
- 		$result = array();
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$result[] = array($row->subject, $row->predicate, $row->object);
-			}
-		}
-		$db->freeResult($res);
-		return $result;
- 	}
  	
  	public function replaceRedirectAnnotations($verbose = false) {
  		

@@ -12,7 +12,7 @@ global $smwgHaloIP, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ob_OntologyBrowserAccess';
 $wgAjaxExportList[] = 'smwf_ob_PreviewRefactoring';
 
-if (defined("SGA_GARDENING_EXTENSION")) {
+if (defined("SGA_GARDENING_EXTENSION_VERSION")) {
 	global $sgagIP;
     require_once($sgagIP . "/includes/SGA_Gardening.php");
 } else {

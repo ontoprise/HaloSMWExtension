@@ -18,7 +18,7 @@
  *  Author: Thomas Schweitzer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-if ( !defined('SGA_GARDENING_EXTENSION')) {
+if ( !defined('SGA_GARDENING_EXTENSION_VERSION')) {
 	trigger_error("Semantic Notification requires Semantic Gardening extension. Please install.");
 	die();
 }

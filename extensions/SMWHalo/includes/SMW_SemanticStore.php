@@ -278,32 +278,6 @@
  	 */
  	public abstract function getAnnotationsWithUnit(Title $type, $unit);
  	
- 	/**
- 	 * Returns all annotations tuples ($property, $value, $rating) of $subject.
- 	 * 
- 	 * @param $subject (DBkey) 
- 	 */
- 	public abstract function getRatedAnnotations($subject);
- 	
- 	/**
- 	 * Returns an array of $limit annotations (non-nary) which are not yet rated.
- 	 * 
- 	 * @param $limit integer
- 	 * @return array of titles (subject, predicate, objectOrValue)
- 	 */
- 	public abstract function getAnnotationsForRating($limit);
- 	// Methods which modifies the database
- 	
- 	/**
- 	 * Rate annotation specified by $subject, $predicate, $object
- 	 * 
- 	 * @param $subject (DBkey)
- 	 * @param $predicate (DBkey)
- 	 * @param $object (DBkey)
- 	 * @param $rating Integer (positive or negative)
- 	 * 
- 	 */
- 	public abstract function rateAnnotation($subject, $predicate, $object, $rating);
  	
  	
  	/**
