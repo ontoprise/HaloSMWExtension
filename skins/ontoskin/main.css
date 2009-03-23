@@ -132,6 +132,7 @@ h1, h2, h3, h4, h5, h6 {
 	padding-top: .5em;
 	padding-bottom: .17em;
 	border-bottom: 1px solid #aaa;
+	display: inline-block;
 }
 h1 { font-size: 188%; }
 h1 .editsection { font-size: 53%; }
@@ -239,6 +240,7 @@ pre {
 	color: black;
 	background-color: #f9f9f9;
 	line-height: 1.1em;
+	display: inline-block;
 }
 
 /*

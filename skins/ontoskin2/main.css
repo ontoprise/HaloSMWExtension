@@ -331,6 +331,7 @@
 	background: none;
 	font-weight: bold;
 	font-size: normal;
+	display: inline-block;
 }
 
 #smwf_pageblock h1{
@@ -341,6 +342,10 @@
 #smwf_pageblock h2{
 	font-size: large;
 	border-bottom: 1px solid #4B595C;
+}
+
+#smwf_pageblock pre{
+	display: inline-block;
 }
 
 .printfooter{
