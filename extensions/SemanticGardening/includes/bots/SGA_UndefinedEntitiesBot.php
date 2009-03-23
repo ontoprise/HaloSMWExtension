@@ -227,7 +227,7 @@ class UndefinedEntitiesDetector {
 	}
 
 	private function getUndefinedEntitiesStorage() {
-		global $smwgHaloIP;
+		
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
@@ -358,7 +358,7 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 			
 			
 		$db =& wfGetDB( DB_SLAVE );
-		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+		$sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
         $smw_attributes = $db->tableName('smw_attributes');
         $smw_relations = $db->tableName('smw_relations');
         $smw_nary = $db->tableName('smw_nary');
@@ -436,7 +436,7 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
         $categorylinks = $db->tableName('categorylinks');
        
 		
-		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+		$sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
 		$res = $db->query('SELECT DISTINCT cl_to FROM '.$categorylinks.' c LEFT JOIN '.$page.' p ON c.cl_to=p.page_title AND p.page_namespace = '.NS_CATEGORY.
 		                      ' WHERE p.page_title IS NULL '.$sqlOptions);
 
@@ -485,7 +485,7 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
         $smw_nary_relations = $db->tableName('smw_nary_relations');
      
 		
-		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+		$sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
 		$res = $db->query('SELECT DISTINCT object_title FROM '.$smw_relations.' r LEFT JOIN '.$page.' p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL UNION DISTINCT ' .
 				'SELECT DISTINCT object_title FROM '.$smw_nary_relations.' r LEFT JOIN '.$page.' p ON r.object_title=p.page_title AND p.page_namespace = '.NS_MAIN.' WHERE p.page_title IS NULL '.$sqlOptions);
 
@@ -534,7 +534,7 @@ class UndefinedEntitiesStorageSQL extends UndefinedEntitiesStorage {
 		$page = $db->tableName('page');
         $categorylinks = $db->tableName('categorylinks');
         
-		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+		$sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
 		$res = $db->query('SELECT DISTINCT page_title FROM '.$page.' p LEFT JOIN '.$categorylinks.' c ON c.cl_from=p.page_id WHERE c.cl_from IS NULL AND page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' '.$sqlOptions);
 
 
@@ -558,7 +558,7 @@ class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
             
             
         $db =& wfGetDB( DB_SLAVE );
-        $sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+        $sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
         $smw_ids = $db->tableName('smw_ids');
         $page = $db->tableName('page');
         
@@ -617,7 +617,7 @@ class UndefinedEntitiesStorageSQL2 extends UndefinedEntitiesStorageSQL {
         $smw_rels2 = $db->tableName('smw_rels2');
         $page = $db->tableName('page');
         
-        $sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
+        $sqlOptions = SGADBHelper::getSQLOptionsAsString($requestoptions);
         
         $res = $db->query('SELECT DISTINCT o.smw_title AS object_title, o.smw_namespace AS object_namespace'.
                             ' FROM '.$smw_rels2.

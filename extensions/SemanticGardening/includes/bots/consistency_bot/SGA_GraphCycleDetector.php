@@ -10,8 +10,8 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 require_once("SGA_GraphEdge.php"); 
-global $smwgHaloIP;
-require_once("$smwgHaloIP/includes/SMW_GraphHelper.php"); 
+global $sgagIP;
+require_once("$sgagIP/includes/SGA_GraphHelper.php"); 
 
 class GraphCycleDetector {
     

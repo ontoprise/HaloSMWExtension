@@ -8,9 +8,10 @@
  */
  if ( !defined( 'MEDIAWIKI' ) ) die;
  
- global $sgagIP, $smwgHaloIP;
+ global $sgagIP;
  require_once $sgagIP . '/includes/SGA_GardeningIssues.php';
- require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
+ require_once($sgagIP . '/includes/SGA_DBHelper.php');
+ 
  
  
  
@@ -30,7 +31,7 @@
 			}
 		
 			// create relation table
-			DBHelper::setupTable($smw_gardening_issues, array(
+			SGADBHelper::setupTable($smw_gardening_issues, array(
 				  'bot_id'			=>  'VARCHAR(32) NOT NULL '.$collation,
 				  'gi_type'      	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'gi_class'      	=>  'INT(8) UNSIGNED NOT NULL' ,
@@ -44,7 +45,7 @@
 				  'valueint'		=>	'INTEGER',
 				  'modified'		=>  'ENUM(\'y\', \'n\') DEFAULT \'n\' NOT NULL'), $db, $verbose);
 
-			DBHelper::reportProgress("   ... done!\n",$verbose);
+			SGADBHelper::reportProgress("   ... done!\n",$verbose);
  	}
  	
  	public function clearGardeningIssues($bot_id = NULL, $gi_type = NULL, $gi_class = NULL, Title $t1 = NULL, Title $t2 = NULL) {
@@ -180,7 +181,7 @@
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, SGADBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('gi_type', 'p1_namespace', 'p1_title', 'p2_namespace', 'p2_title', 'value', 'valueint', 'modified'), $sqlCond , 'SGAGardeningIssue::getGardeningIssuesForPairs', $sqlOptions );
@@ -260,7 +261,7 @@
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, SGADBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  	   
  		$result = array();
@@ -326,7 +327,7 @@
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, SGADBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace'), $sqlCond , 'SGAGardeningIssue::getDistinctTitles', $sqlOptions );
@@ -391,7 +392,7 @@
  			}
  		}
  		if ($options != NULL) { 
- 			$sqlCond = array_merge($sqlCond, DBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
+ 			$sqlCond = array_merge($sqlCond, SGADBHelper::getSQLConditionsAsArray($options, NULL, 'p1_title'));
  		}
  		$result = array();
  		$res = $db->select($db->tableName('smw_gardeningissues'), array('p1_title', 'p1_namespace', 'p2_title', 'p2_namespace'), $sqlCond , 'SGAGardeningIssue::getDistinctTitlePairs', $sqlOptions );

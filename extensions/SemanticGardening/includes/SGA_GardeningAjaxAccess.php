@@ -34,9 +34,9 @@ $wgAjaxExportList[] = 'smwf_ga_LaunchDedicatedGardeningBot';
  * @return $taskid ID of task.
  */
 function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
-	global $smwgDedicatedGardeningMachine;
+	global $sgagDedicatedGardeningMachine;
 
-	if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
+	if (!isset($sgagDedicatedGardeningMachine) || $sgagDedicatedGardeningMachine == 'localhost' || $sgagDedicatedGardeningMachine == '127.0.0.1') {
 		global $wgUser;
 		$user = NULL;
 		if ($wgUser !== NULL) {
@@ -68,7 +68,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 		$passwordBlob = smwfGetPasswordBlob($userID);
 		if($passwordBlob != NULL) {
 			$matches = array();
-			$result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot&rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob), array('timeout' => 5));
+			$result = http_get("http://$sgagDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_LaunchGardeningBot&rsargs[]=$botID&rsargs[]=".urlencode($params)."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob), array('timeout' => 5));
 
 			preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
 			if (isset($matches[1])) {
@@ -89,8 +89,8 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
  * @param $taskid ID of task.
  */
 function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
-	global $smwgDedicatedGardeningMachine;
-	if (!isset($smwgDedicatedGardeningMachine) || $smwgDedicatedGardeningMachine == 'localhost' || $smwgDedicatedGardeningMachine == '127.0.0.1') {
+	global $sgagDedicatedGardeningMachine;
+	if (!isset($sgagDedicatedGardeningMachine) || $sgagDedicatedGardeningMachine == 'localhost' || $sgagDedicatedGardeningMachine == '127.0.0.1') {
 
 		$user = NULL;
 		if ($user_id != NULL) {
@@ -120,7 +120,7 @@ function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 		$passwordBlob = smwfGetPasswordBlob($userID);
 		if($passwordBlob != NULL) {
 			$matches = array();
-			$result = http_get("http://$smwgDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_CancelGardeningBot&rsargs[]=".$taskid."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob));
+			$result = http_get("http://$sgagDedicatedGardeningMachine$wgScript?action=ajax&rs=smwf_ga_CancelGardeningBot&rsargs[]=".$taskid."&rsargs[]=".$userID."&rsargs[]=".urlencode($passwordBlob));
 
 			preg_match('/Content-Length:\s*(\d+)/', $result, $matches);
 			if (isset($matches[1])) {
@@ -261,7 +261,7 @@ function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor
 		$issues[$b] = $gardeningAccess->getGardeningIssues($b, $giType, $giClass, $t, $sortfor, NULL);
 	}
 
-	global $smwgHaloContLang;
+	
 	$result = '<gardeningIssues title="'.$title.'">';
 	foreach ($issues as $bot => $issueArray) {
 		$botTitle = wfMsg($bot);

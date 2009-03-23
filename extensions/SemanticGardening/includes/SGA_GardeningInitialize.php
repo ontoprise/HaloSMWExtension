@@ -1,16 +1,27 @@
 <?php
 
-define('SGA_GARDENING_EXTENSION', "1.0");
+define('SGA_GARDENING_EXTENSION_VERSION', "1.0");
 
 // register initialize function
 global $wgExtensionFunctions, $sgagIP, $IP;
 $wgExtensionFunctions[] = 'sgagGardeningSetupExtension';
 $sgagIP = $IP."/extensions/SemanticGardening";
 
+$wgExtensionCredits['semanticgardening'][] = array(
+        'name' => 'Semantic Gardening extension v'.SGA_GARDENING_EXTENSION_VERSION,
+        'author' => 'Kai Kühn',
+        'url' => 'http://sourceforge.net/projects/halo-extension/',
+        'description' => 'Gardening keeps your wiki clean and consistent and is a basis for '.
+            'several other features like term import, webservice import or semantic notifications.',
+);
+
 function sgagGardeningSetupExtension() {
 
 	global $wgAutoloadClasses, $wgHooks, $sgagIP;
 
+	$wgHooks['smwhaloBeforeUpdateData'][] = 'sgagBeforeUpdateData';
+	$wgHooks['smwhaloAfterUpdateData'][] = 'sgagAfterUpdateData';
+	
 	$wgHooks['BeforePageDisplay'][]='sgafGAAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='sgaFWAddHTMLHeader';
 	$wgHooks['ArticleSaveComplete'][] = 'sgafHaloSaveHook'; // gardening update (SMW does the storing)
@@ -43,11 +54,11 @@ function sgagGardeningSetupExtension() {
 		switch($method_prefix) {
 
 			case '_ga_' :
-			require_once($sgagIP . '/includes/SGA_GardeningAjaxAccess.php');
-			break;
-            case '_fw_' : 
-            require_once($sgagIP . '/includes/findwork/SGA_FindWorkAjaxAccess.php');
-            break;
+				require_once($sgagIP . '/includes/SGA_GardeningAjaxAccess.php');
+				break;
+			case '_fw_' :
+				require_once($sgagIP . '/includes/findwork/SGA_FindWorkAjaxAccess.php');
+				break;
 		}
 	} else {
 		global $wgSpecialPages, $wgSpecialPageGroups;
@@ -57,14 +68,31 @@ function sgagGardeningSetupExtension() {
 
 		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $sgagIP . '/includes/SGA_GardeningLogPage.php');
 		$wgSpecialPageGroups['GardeningLog'] = 'smwplus_group';
-		
+
 		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $sgagIP . '/includes/findwork/SGA_FindWork.php');
-        $wgSpecialPageGroups['FindWork'] = 'smwplus_group';
+		$wgSpecialPageGroups['FindWork'] = 'smwplus_group';
 
 	}
 	require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
 	return true;
 }
+
+function sgagBeforeUpdateData(& $data) {
+	global $sgagCurrentAnnotationsToUpdate;
+	$sgagCurrentAnnotationsToUpdate = SMWSuggestStatistics::getStore()->getRatedAnnotations($data->getSubject());
+	return true;
+}
+
+function sgagAfterUpdateData(& $data) {
+	global $sgagCurrentAnnotationsToUpdate;
+	if ($sgagCurrentAnnotationsToUpdate !== NULL) {
+		foreach($sgagCurrentAnnotationsToUpdate as $pa) {
+			SMWSuggestStatistics::getStore()->rateAnnotation($data->getSubject()->getDBkey(), $pa[0], $pa[1], $pa[2] );
+		}
+	}
+	return true;
+}
+
 
 function sgafGardeningInitMessages() {
 	global $sgagMessagesInitialized;
@@ -79,7 +107,7 @@ function sgafGardeningInitMessages() {
  * Registers ACL messages.
  */
 function wfGAInitUserMessages() {
-	
+
 	global $wgMessageCache, $wgLang, $sgagIP;
 
 	$usLangClass = 'SGA_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
@@ -132,7 +160,7 @@ function wfGAInitContentMessages() {
  */
 function sgafHaloPreSaveHook(&$article, &$user, &$text, &$summary, $minor, $watch, $sectionanchor, &$flags) {
 	// -- LocalGardening --
-	
+
 	global $sgagLocalGardening;
 	if (isset($sgagLocalGardening) && $sgagLocalGardening == true && (($flags & EDIT_FORCE_BOT) === 0)) {
 		$gard_jobs[] = new SMW_LocalGardeningJob($article->getTitle(), "save");
@@ -193,35 +221,35 @@ function sgafGAAddHTMLHeader(&$out) {
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardening.css'
                     ));
-    $out->addLink(array(
+                    $out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardeningLog.css'
                     ));
                      
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/gardening.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/gardening.js"></script>');
 
                      
-    return true;
+                    return true;
 }
 
 // FindWork page callback
 // includes necessary script and css files.
 function sgaFWAddHTMLHeader(& $out) {
-    global $wgTitle;
-    if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
-    
-    global $wgScriptPath;
-    $out->addLink(array(
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+
+	global $wgScriptPath;
+	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/findwork.css'
                     ));
                      
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/findwork.js"></script>');
-    return true;
+                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/findwork.js"></script>');
+                    return true;
 }
 
 function sgafGetAjaxMethodPrefix() {

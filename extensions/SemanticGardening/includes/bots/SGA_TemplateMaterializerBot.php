@@ -104,7 +104,7 @@ class TemplateMaterializerBot extends GardeningBot {
 	}
 
 	private function getTemplateMaterializerStore() {
-		global $smwgHaloIP;
+		
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
@@ -205,7 +205,7 @@ class TemplateMaterializerStorageSQL extends TemplateMaterializerStorage {
 
 		$res = $db->select( array($db->tableName('templatelinks'),$db->tableName('page')) ,
 		                    'DISTINCT page_title',
-		$sql, 'SMW::getPagesUsingTemplates', DBHelper::getSQLOptions($requestoptions) );
+		$sql, 'SMW::getPagesUsingTemplates', SGADBHelper::getSQLOptions($requestoptions) );
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {

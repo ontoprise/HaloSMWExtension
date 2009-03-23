@@ -95,7 +95,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWSemanticNoti
  if ($bot != null) { 
     echo ("Starting bot: $botID\n");
     
-    global $smwgGardeningBotDelay, $wgContLang;
+    global $sgagGardeningBotDelay, $wgContLang;
     $gl = SGAGardeningLog::getGardeningLogAccess();
     try {
         $taskid = $gl->addGardeningTask($botID); 
@@ -113,7 +113,7 @@ require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWSemanticNoti
         $paramString = urldecode(str_replace("{{apos}}", "\"", $bot_params));
         $parameters = GardeningBot::convertParamStringToArray($paramString); 
        
-        $log = $bot->run($parameters, true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
+        $log = $bot->run($parameters, true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
         
         @socket_close($bot->getTermSignalSocket());
         

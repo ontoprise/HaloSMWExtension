@@ -8,8 +8,9 @@
  */
  if ( !defined( 'MEDIAWIKI' ) ) die;
  
- global $smwgHaloIP;
- require_once $smwgHaloIP . '/includes/SMW_DBHelper.php';
+ global $sgagIP;
+ require_once($sgagIP . '/includes/SGA_DBHelper.php');
+ 
  
  class SGAGardeningLogSQL extends SGAGardeningLog {
  	
@@ -32,7 +33,7 @@
 			}
 		
 			// create relation table
-			DBHelper::setupTable($smw_gardening, array(
+			SGADBHelper::setupTable($smw_gardening, array(
 				  'id'				=>	'INT(8) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
 				  'user'      		=>  'VARCHAR(255) '.$collation.' NOT NULL' ,
 				  'gardeningbot'	=>	'VARCHAR(255) '.$collation.' NOT NULL' ,
@@ -46,17 +47,17 @@
 
 
 			// create GardeningLog category
-			DBHelper::reportProgress("Setting up GardeningLog category ...\n",$verbose);
+			SGADBHelper::reportProgress("Setting up GardeningLog category ...\n",$verbose);
 			$gardeningLogCategoryTitle = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
  			$gardeningLogCategory = new Article($gardeningLogCategoryTitle);
  			if (!$gardeningLogCategory->exists()) {
  				$gardeningLogCategory->insertNewArticle(wfMsg('smw_gardening_log_exp'), wfMsg('smw_gardening_log_exp'), false, false);
  			}
- 			DBHelper::reportProgress("   ... GardeningLog category created.\n",$verbose);
+ 			SGADBHelper::reportProgress("   ... GardeningLog category created.\n",$verbose);
 
 
  			// fetch all user IDs and add group SMW_GARD_ALL_USERS
- 			DBHelper::reportProgress("Add exsiting users to gardening groups ...\n",$verbose);
+ 			SGADBHelper::reportProgress("Add exsiting users to gardening groups ...\n",$verbose);
 			$res = $db->select( $db->tableName('user'),
 		             array('user_id'),
 		             array(),
@@ -81,7 +82,7 @@
 				}
 			}
 			$db->freeResult($res);
-			DBHelper::reportProgress("   ... done!\n",$verbose);
+			SGADBHelper::reportProgress("   ... done!\n",$verbose);
 	}
  	/**
  	 * Returns the complete gardening log as a 2-dimensional array.

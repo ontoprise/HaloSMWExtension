@@ -41,8 +41,8 @@ class ExportOntologyBot extends GardeningBot {
 		$this->mapWikiTypeToXSD['_int'] = 'integer'; // deprecated
 		$this->mapWikiTypeToXSD['_flt'] = 'float'; // deprecated
 			
-		global $smwgGardeningBotDelay;
-		$this->delay = isset($smwgGardeningBotDelay) && is_numeric($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0;
+		global $sgagGardeningBotDelay;
+		$this->delay = isset($sgagGardeningBotDelay) && is_numeric($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0;
 		$this->limit = 100;
 	}
 

@@ -81,7 +81,7 @@ class MissingAnnotationsBot extends GardeningBot {
 	}
 
 	private function getMissingAnnotationsStore() {
-		global $smwgHaloIP;
+		
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {

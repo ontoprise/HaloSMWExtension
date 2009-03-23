@@ -6,9 +6,9 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-global $smwgHaloIP;
+global $sgagIP;
 require_once("SGA_GraphEdge.php");
-require_once("$smwgHaloIP/includes/SMW_GraphHelper.php");
+require_once("$sgagIP/includes/SGA_GraphHelper.php");
 
 class AnnotationLevelConsistency {
 

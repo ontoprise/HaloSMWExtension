@@ -1,0 +1,41 @@
+Installation instructions for Semantic Gardening extension v1.0
+---------------------------------------------------------------
+
+Requirements: 
+=============
+
+    MediaWiki 1.13 or higher
+    SMW 1.4.2
+    SMWHalo 1.4.3 
+
+Installation:
+=============
+   
+Run:
+php {wiki-path}/extensions/SemanticGardening/maintenance/setup.php
+
+Then add to your LocalSettings.php after you initialized SMWHalo:
+
+$phpInterpreter="<path to php executable>";
+require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
+
+Options:
+========
+
+1.
+$sgagGardeningBotDelay=<time in ms>
+Enforces a delay to diminish the server load. 
+
+2.
+$sgagLocalGardening=true;  
+Enables local gardening. That creates gardening jobs when a page has been saved.
+
+3.
+$sgagDedicatedGardeningMachine="<host or IP>";
+Specify a dedicated machine for the gardening bots.
+
+4. (for debugging)
+Keeps the cmd console open on Windows after the bot has terminated.
+$sgagKeepGardeningConsole=true;
+
+

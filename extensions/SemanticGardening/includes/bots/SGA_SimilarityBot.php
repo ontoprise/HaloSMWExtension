@@ -531,7 +531,7 @@ abstract class SimilarityBotStorage {
 	public abstract function getSharedTypes(Title $title1, Title $title2);
 
 	public static function getSimilarityStorage() {
-		global $smwgHaloIP;
+	
 		if (self::$store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {

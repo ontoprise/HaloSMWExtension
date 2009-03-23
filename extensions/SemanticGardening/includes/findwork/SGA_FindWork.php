@@ -11,7 +11,7 @@ define('SMW_FINDWORK_NUMBEROF_RATINGS', 5); // will be doubled (rated and unrate
  
 global $sgagIP;
 include_once( "$sgagIP/includes/SGA_GardeningBot.php" );
-
+include_once( "$sgagIP/includes/findwork/SGA_SuggestStatistics.php" );
 
 function smwfDoSpecialFindWorkPage() {
 	wfProfileIn('smwfDoSpecialFindWorkPage (SMW Halo)');
@@ -27,21 +27,7 @@ function smwfDoSpecialFindWorkPage() {
 	private $store;
 	
 	public function __construct() {
-		global $smwgBaseStore, $sgagIP, $wgUser;
-		switch ($smwgBaseStore) {
-			case (SMW_STORE_TESTING):
-				$this->store = null; // not implemented yet
-				trigger_error('Testing stores not implemented for HALO extension.');
-			break;
-			case ('SMWHaloStore2'): default:
-                require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL2.php');
-                $this->store = new SMWSuggestStatisticsSQL2();
-            break;
-			case ('SMWHaloStore'): default:
-				require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL.php');
-				$this->store = new SMWSuggestStatisticsSQL();
-			break;
-		}
+		$this->store = SMWSuggestStatistics::getStore();
 		
 		$this->workFields = array(  wfMsg('smw_findwork_select')."...", 
 								 	wfMsg('smw_findwork_generalconsistencyissues'),
@@ -109,8 +95,8 @@ function smwfDoSpecialFindWorkPage() {
 		$html .= '<form id="ratingform"><table id="rateannotations" border="0" cellspacing="0" rowspacing="0">';
 		
 		// get some rated and unrated annotations
-		$annotations = smwfGetSemanticStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
-		$annotations = array_merge(smwfGetSemanticStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, false), $annotations);
+		$annotations = SMWSuggestStatistics::getStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
+		$annotations = array_merge(SMWSuggestStatistics::getStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, false), $annotations);
 		$i = 0;
 		foreach($annotations as $a) {
 			$html .= '<tr id="annotation'.$i.'">';

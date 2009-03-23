@@ -79,17 +79,6 @@ require_once("bots/SGA_ImportOntologyBot.php");
 require_once("bots/SGA_ExportOntologyBot.php");
 require_once("bots/SGA_CheckReferentialIntegrityBot.php");
 
-//global $smwgHaloIP;
-//require_once("$smwgHaloIP/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
-
-//global $smwgEnableDataImportExtension;
-//if ($smwgEnableDataImportExtension) {
-//	global $smwgDIIP;
-//	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
-//	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
-//	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
-//}
-
 require_once("SGA_GardeningLog.php");
 
 
@@ -103,7 +92,7 @@ $bot = $registeredBots[$botID];
 if ($bot != null) {
 	echo ("Starting bot: $botID\n");
 	// run bot
-	global $smwgGardeningBotDelay, $wgContLang;
+	global $sgagGardeningBotDelay, $wgContLang;
 	try {
 		$bot->setTaskID($taskid);
 		// initialize term signal socket
@@ -115,7 +104,7 @@ if ($bot != null) {
 		// 	2. Replace {{percantage}} by %
 		// 	3. decode URL
 		//  4. convert string of the form (key=value,)* to a hash array
-		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($smwgGardeningBotDelay) ? $smwgGardeningBotDelay : 0);
+		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
 		global $smwgAbortBotPortRange;
         if (isset($smwgAbortBotPortRange)) @socket_close($bot->getTermSignalSocket());
 			

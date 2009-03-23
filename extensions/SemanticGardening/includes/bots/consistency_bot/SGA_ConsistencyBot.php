@@ -457,7 +457,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
     public abstract function translateToTitle(& $cycle);
     
     public static function getConsistencyStorage() {
-        global $smwgHaloIP;
+       
         if (self::$store == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
@@ -676,7 +676,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         
         $res = $db->select(  array($db->tableName('smw_relations')), 
                             array('subject_title', 'object_title'),
-                            $sql, 'SMW::getInverseRelations', DBHelper::getSQLOptions($requestoptions));
+                            $sql, 'SMW::getInverseRelations', SGADBHelper::getSQLOptions($requestoptions));
                             
         
         $result = array();
@@ -698,7 +698,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         
         $res = $db->select(  array($db->tableName('redirect'), $db->tableName('page')), 
                             array('rd_namespace','rd_title', 'page_namespace', 'page_title'),
-                            $sql, 'SMW::getEqualToRelations', DBHelper::getSQLOptions($requestoptions));
+                            $sql, 'SMW::getEqualToRelations', SGADBHelper::getSQLOptions($requestoptions));
                             
         
         $result = array();
@@ -960,7 +960,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
         ' JOIN '.$smw_ids.' i ON s_id = i.smw_id' 
         .' JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id' 
         .' JOIN '.$smw_ids.' i3 ON p_id = i3.smw_id' 
-        .' WHERE i3.smw_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()).' AND i3.smw_namespace = '.SMW_NS_PROPERTY.' '.DBHelper::getSQLOptionsAsString($requestoptions));
+        .' WHERE i3.smw_title = '.$db->addQuotes(smwfGetSemanticStore()->inverseOf->getDBkey()).' AND i3.smw_namespace = '.SMW_NS_PROPERTY.' '.SGADBHelper::getSQLOptionsAsString($requestoptions));
         
         
         $result = array();

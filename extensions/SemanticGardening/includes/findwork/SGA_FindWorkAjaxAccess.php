@@ -7,12 +7,12 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
- global $wgAjaxExportList, $smwgHaloIP;
+ global $wgAjaxExportList;
  
  $wgAjaxExportList[] = 'smwf_fw_SendAnnotationRatings';
 
  if (!class_exists('Services_JSON')) {
-    require_once($smwgHaloIP . '/includes/JSON.php');
+    require_once($sgagIP . '/includes/JSON.php');
  }
  
  /**
@@ -27,7 +27,7 @@ function smwf_fw_SendAnnotationRatings($json) {
    	$ratings = $jsonservice->decode($json);
 	foreach($ratings as $r) {
 		list($subject, $predicate, $object, $rating) = $r;
-		smwfGetSemanticStore()->rateAnnotation(trim($subject),
+		SMWSuggestStatistics::getStore()->rateAnnotation(trim($subject),
 											   trim($predicate), 
 											   trim($object),
 											   intval($rating));

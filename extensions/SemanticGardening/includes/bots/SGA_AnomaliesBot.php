@@ -173,7 +173,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  	}
  	
  	private function getAnomalyStore() {
- 		global $smwgHaloIP;
+ 		
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
