@@ -17,7 +17,39 @@
  // defines a port range (100 ports) beginning with 5000 by default
  // can be configured in LocalSettings.php by setting $smwgAbortBotPortRange
  define('ABORT_BOT_PORT_RANGE', 5000);
- 
+
+/**
+ * This function imports all bots in the given directory. A file is consider
+ * as a bot if it contains a the string 'Bot' in its filename.
+ *
+ * @param string $botDir
+ */
+function sgagImportBots($botDir) {
+    $handle = @opendir($botDir);
+    if (!$handle) {
+        trigger_error("\nDirectory '$botDir' could not be opened.\n");
+    }
+
+    while ( ($entry = readdir($handle)) !== false ){
+        if ($entry[0] == '.'){
+            continue;
+        }
+
+        if (is_dir($botDir."/".$entry)) {
+            // Unterverzeichnis
+            sgagImportBots($botDir."/".$entry);
+
+        } else{
+             
+            if (strpos($botDir.$entry, "Bot") !== false) {
+                
+                require_once($botDir."/".$entry);
+                 
+            }
+        }
+    }
+}
+
  abstract class GardeningBot {
  	
  	/**

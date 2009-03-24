@@ -67,17 +67,11 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 global $wgServer, $wgScriptPath, $wgScript;
 $wgServer = $servername;
 
-// include bots
 require_once( $sgagIP . '/includes/SGA_GardeningBot.php');
-require_once("bots/consistency_bot/SGA_ConsistencyBot.php");
-require_once("bots/SGA_SimilarityBot.php");
-require_once("bots/SGA_TemplateMaterializerBot.php");
-require_once("bots/SGA_UndefinedEntitiesBot.php");
-require_once("bots/SGA_MissingAnnotationsBot.php");
-require_once("bots/SGA_AnomaliesBot.php");
-require_once("bots/SGA_ImportOntologyBot.php");
-require_once("bots/SGA_ExportOntologyBot.php");
-require_once("bots/SGA_CheckReferentialIntegrityBot.php");
+
+// include bots
+sgagImportBots("$sgagIP/includes/bots");
+
 
 require_once("SGA_GardeningLog.php");
 

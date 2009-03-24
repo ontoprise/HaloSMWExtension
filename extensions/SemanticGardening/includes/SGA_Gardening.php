@@ -9,15 +9,17 @@
 sgafGardeningInitMessages();
 
 require_once("SGA_GardeningBot.php");
-require_once("bots/consistency_bot/SGA_ConsistencyBot.php");
-require_once("bots/SGA_SimilarityBot.php");
-require_once("bots/SGA_TemplateMaterializerBot.php");
-require_once("bots/SGA_UndefinedEntitiesBot.php");
-require_once("bots/SGA_MissingAnnotationsBot.php");
-require_once("bots/SGA_AnomaliesBot.php");
-require_once("bots/SGA_ImportOntologyBot.php");
-require_once("bots/SGA_ExportOntologyBot.php");
-require_once("bots/SGA_CheckReferentialIntegrityBot.php");
+
+
+
+global $sgagIP;
+require_once( $sgagIP . '/includes/SGA_GardeningBot.php');
+require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
+
+// import bots
+sgagImportBots("$sgagIP/includes/bots");
+
 
 
 

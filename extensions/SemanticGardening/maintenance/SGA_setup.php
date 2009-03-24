@@ -1,6 +1,6 @@
 <?php
 /**
- * Setup database for Unified search extension.
+ * Setup database for Semantic Gardening extension.
  * 
  * @author: Kai Kühn
  * 

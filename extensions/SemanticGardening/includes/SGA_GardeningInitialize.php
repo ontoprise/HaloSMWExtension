@@ -7,9 +7,9 @@ global $wgExtensionFunctions, $sgagIP, $IP;
 $wgExtensionFunctions[] = 'sgagGardeningSetupExtension';
 $sgagIP = $IP."/extensions/SemanticGardening";
 
-$wgExtensionCredits['semanticgardening'][] = array(
+$wgExtensionCredits['other'][] = array(
         'name' => 'Semantic Gardening extension v'.SGA_GARDENING_EXTENSION_VERSION,
-        'author' => 'Kai Kühn',
+        'author' => 'Kai K&uuml;hn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Gardening keeps your wiki clean and consistent and is a basis for '.
             'several other features like term import, webservice import or semantic notifications.',
@@ -27,6 +27,8 @@ function sgagGardeningSetupExtension() {
 	$wgHooks['ArticleSaveComplete'][] = 'sgafHaloSaveHook'; // gardening update (SMW does the storing)
 	$wgHooks['ArticleDelete'][] = 'sgafHaloPreDeleteHook';
 	$wgHooks['ArticleSave'][] = 'sgafHaloPreSaveHook';
+	
+	$wgAutoloadClasses['SMWSuggestStatistics'] = $sgagIP . '/includes/findwork/SGA_SuggestStatistics.php';
 	$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/includes/SGA_Gardening.php';
 	$wgAutoloadClasses['SGAGardeningTableResultPrinter'] = $sgagIP . '/includes/SGA_QP_GardeningTable.php';
 	if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*

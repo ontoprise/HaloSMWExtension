@@ -69,16 +69,13 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
  
 // include bots
 require_once( $mediaWikiLocation . '/extensions/SemanticGardening/includes/SGA_GardeningBot.php');
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/consistency_bot/SGA_ConsistencyBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_SimilarityBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_TemplateMaterializerBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_UndefinedEntitiesBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_MissingAnnotationsBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_AnomaliesBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_ImportOntologyBot.php");
-require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/bots/SGA_ExportOntologyBot.php");
+require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
+
+// import bots
+sgagImportBots("$sgagIP/includes/bots");
 require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/SGA_GardeningLog.php");
-require_once( $mediaWikiLocation . "/extensions/SMWHalo/specials/SMWSemanticNotifications/SMW_SemanticNotificationBot.php");
+
 
 // All other bots must register themselves automatically.
 // The default bots in the gardening extension do not because of performace.
