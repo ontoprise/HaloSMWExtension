@@ -173,6 +173,9 @@ enableSemantics('localhost:8080');
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo();
 
+#Semantic Gardening
+include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
+
 include("extensions/DynamicPageList/DynamicPageList.php");
 require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
 

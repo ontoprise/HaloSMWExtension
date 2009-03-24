@@ -15,7 +15,7 @@ define('US_LOWTOLERANCE', 1);
 define('US_EXACTMATCH', 2);
 
 
-$wgExtensionCredits['unifiedsearch'][] = array(
+$wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension v'.US_SEARCH_EXTENSION_VERSION,
         'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
