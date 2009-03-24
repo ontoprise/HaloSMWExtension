@@ -2933,6 +2933,7 @@ DefineWebServiceSpecial.prototype = {
 		
 		// todo: remove this
 		this.appendRESTParameter();
+		$("step3-parameters").childNodes[0].childNodes[1].removed = true;
 	},
 
 	appendRESTResultPart : function() {
@@ -3016,13 +3017,44 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step4-rest-intro").style.display = "";
 		if ($("step4-rest-intro").childNodes.length <= 0) {
+			var span = document.createElement("span");
+			var text = document.createTextNode("Use complete result as result part: ");
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+			
+			var input = document.createElement("input");
+			input.type = "checkbox";
+			//input.style.marginLeft = "40px";
+			$("step4-rest-intro").appendChild(input);
+			
+			span = document.createElement("span");
+			text = document.createTextNode("Alias: ");
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+			
+			var input = document.createElement("input");
+			input.width = 25;
+			input.value = "complete";
+			$("step4-rest-intro").appendChild(input);
+			
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+			
+			
 			var button = document.createElement("input");
 			button.setAttribute("type", "button");
 			button.setAttribute("value", "Add result parts");
 			button.setAttribute("onclick",
 					"webServiceSpecial.displayRestResultsTable()");
 			$("step4-rest-intro").appendChild(button);
+		} else {
+			$("step4-rest-intro").childNodes[1].checked = false;
+			$("step4-rest-intro").childNodes[3].value = "complete";
 		}
+		
+		$("step4-rest-intro").childNodes[6].style.display = "";
 
 		$("step4-results").style.display = "none";
 		var tempHead = $("step4-results").childNodes[0].childNodes[0]
@@ -3040,6 +3072,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "";
 		
 		this.appendRESTResultPart();
+		$("step4-results").childNodes[0].childNodes[1].removed = true;
 	},
 
 	processRESTResultPartButton : function(id) {
@@ -3060,7 +3093,7 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			if (remove) {
-				$("step4-rest-intro").style.display = "";
+				$("step4-rest-intro").childNodes[6].style.display = "";
 				$("step4-results").style.display = "none";
 			}
 		}
@@ -3155,7 +3188,13 @@ DefineWebServiceSpecial.prototype = {
 	}
 
 	result += "<result name=\"result\" >\n";
-	//
+	
+	if($("step4-rest-intro").childNodes[1].checked){
+		var name = $("step4-rest-intro").childNodes[3].value;
+		result += "<part name=\"" + name + "\" path=\"\"/>\n";
+		wsSyntax += "| ?result." + name + "\n";
+	}
+	
 	var resultTable = $("step4-results").childNodes[0];
 	for (i = 1; i < resultTable.childNodes.length; i++) {
 		if (resultTable.childNodes[i].removed) {
@@ -3269,14 +3308,29 @@ DefineWebServiceSpecial.prototype = {
 			this.displayRestResultsTable(false);
 			$("step4-results").firstChild.removeChild($("step4-results").firstChild.childNodes[1]);
 		}
-		
+		var offset = 0;
+		var pathAdded = false;
 		for (i = 0; i < updates.length; i++) {
-			this.appendRESTResultPart();
-			$("step4-results").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["alias"];
-			$("step4-results").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["format"];
-			if(updates[i]["path"] != "##"){
-				$("step4-results").firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["path"];
+			if(updates[i]["format"] != "##"){
+				this.appendRESTResultPart();
+				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[0].firstChild.value = updates[i]["alias"];
+				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = updates[i]["format"];
+				if(updates[i]["path"] != "##"){
+					$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = updates[i]["path"];
+				}
+				pathAdded = true;
+			} else {
+				offset += 1;
+				$("step4-rest-intro").childNodes[1].checked = true;
+				$("step4-rest-intro").childNodes[3].value = updates[i]["alias"];
 			}
+		}
+		
+		//only complete results were added 
+		// and the table has to be hidden again
+		if(!pathAdded){
+			$("step4-rest-intro").childNodes[6].style.display = "";
+			$("step4-results").style.display = "none";
 		}
 	},
 	
@@ -3318,12 +3372,18 @@ DefineWebServiceSpecial.prototype = {
 	displayRestParameterTable : function(){
 		$("step3-rest-intro").style.display = "none";
 		$("step3-parameters").style.display = "";
+		if($("step3-parameters").childNodes[0].childNodes[1] == null){
+			this.appendRESTParameter();
+		}
 		$("step3-parameters").childNodes[0].childNodes[1].style.display = "";
 		$("step3-parameters").childNodes[0].childNodes[1].removed = false;
 	},
 	
 	displayRestResultsTable : function(){
-		$("step4-rest-intro").style.display = "none";
+		$("step4-rest-intro").childNodes[6].style.display = "none";
+		if($("step4-results").childNodes[0].childNodes[1] == null){
+			this.appendRESTResultPart();
+		}
 		$("step4-results").style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].removed = false;
