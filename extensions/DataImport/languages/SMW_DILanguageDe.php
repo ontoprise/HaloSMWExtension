@@ -1,20 +1,20 @@
 <?php
 /*  Copyright 2007, ontoprise GmbH
-*  This file is part of the Data Import-Extension.
-*
-*   The Data Import-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The Data Import-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the Data Import-Extension.
+ *
+ *   The Data Import-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The Data Import-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * @author Markus KrÃ¶tzsch
  */
@@ -24,9 +24,9 @@ include_once($smwgDIIP . '/languages/SMW_DILanguage.php');
 
 class SMW_DILanguageDe extends SMW_DILanguage {
 
-protected $smwUserMessages = array(
+	protected $smwUserMessages = array(
     'specialpages-group-di_group' => 'Data Import',
-	
+
 	/* Messages of the Thesaurus Import */
 	'smw_ti_welcome' => 'Bitte wähle zuerst ein Transport Layer Module (TLM) und danach ein Data Access Module (DAM) aus:',
 	'smw_ti_selectDAM' => 'Bitte wähle ein DAM aus.',
@@ -164,17 +164,30 @@ protected $smwUserMessages = array(
 	'usewebservice' => 'Benutze Web Service',
 
 'smw_wws_client_connect_failure' => 'Es war nicht möglich, eine Verbindung herzustellen zu: ',
-);
 
-protected $smwDINamespaces = array(
+'smw_wws_s2-REST-help' => '<h4>Help</h4>Now you have to decide if you like to use the HTTP-<b>get</b> or the HTTP-<b>post</b> method for calling the web service. (In most cases choosing HTTP-get is appropriate.) ',
+	'smw_wws_s3-REST-help' => '<h4>Help</h4>Now you have to define the parameters which will be used for calling the web service. At first you have to enter the <b>path</b> of the parameter. If you do not enter a path for a parameter, then this parameter will not be included into the WWSD. After that you can enter an <b>alias</b> for the parameter which later will be used to address the parameter when calling the web service in a Wiki article. If you do not provide an explicit alias, then the parameter path will be used as alias. You also can specify if a parameter will be <b>optional</b> when users later call the web service. If a parameter is not optional, then users will receive an error message if they call the web service without passing a value for that parameter. At last you can define a <b>default value</b> for a parameter. This default value will be used if a parameter is not optional and if no value for that parameter was passed to the web service call.',
+	'smw_wws_s4-REST-help' => '<h4>RESTful web services return a string as their result. This string can be a simple text or it can contain information encoded in a format like JSON or XML. Now you have to define which parts of this result users can display in Wiki articles.  At first you have to enter an <b>alias</b> for each result part. This alias will later be used to address the result part when the web service is used in an article. If you do not specify an alias, then a random one will be created. Now you have to define if the path you like to use for extracting result parts has the JSON or the XPath <b>format</b>. (Note: The Data import extension supports only the XPath format at the moment.)  Now you can enter the <b>path</b> which will be used to extract the result part from the complete result.',
+	'smw_wws_help-button-tooltip' => 'Display or hide help.',
+	'smw_wws_selectall-tooltip' => 'Select or deselect all.',
+	'smw_wws_autogenerate-alias-tooltip' => 'Autogenerate aliases.',
+
+	'smw_wsuse_s1-help' => '<h4>Help</h4>This special page allows you to create the #ws-syntax for calling a web service from within a Wiki article. At first you have to choose one of the <b>available web services</b> in the dropdown-menu above.',
+	'smw_wsuse_s2-help' => '<h4>Help</h4>Now you have to choose which of the parameters displayed in the table above you like to use when calling the web service. If you like to use a parameter, then you have to activate the checkbox in the <b>use</b>-column of the parameter. Parameters that are not optional are activated by default. If you like to use a parameter, then you have to provide a <b>value</b> for that parameter. Some parameters provide <b>default values</b>. If you like to use a default value instead of providing your own value for the parameter, then you have to activate the checkbox in front of the default value.',
+	'smw_wsuse_s3-help' => '<h4>Help</h4>Now you have to choose which result parts you like to display in your Wiki article. Please activate the checkbox in the <b>use</b>-column of each result part you like to display.',
+	'smw_wsuse_s4-help' => '<h4>Help</h4>Here you can choose which <b>format</b> you like to use for displaying the web service result in your Wiki article.  Some formats also allow you to specify a <b>template</b> which will be used for formatting the rows of the result.',
+	'smw_wsuse_s5-help' => '<h4>Help</h4>In the last step you have three possibilities. You can view a <b>preview</b> of the web service result or you can display the <b>#ws-syntax</b> which was created by the GUI. If you navigated to this GUI from the semantic toolbar while you were editing an article then you can directly go back and the #ws-syntax will be automatically <b>added</b> into the editor.',
+	);
+
+	protected $smwDINamespaces = array(
 	SMW_NS_WEB_SERVICE       => 'WebService',
 	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
-);
+	);
 
-protected $smwDINamespaceAliases = array(
+	protected $smwDINamespaceAliases = array(
 	'WebService'       => SMW_NS_WEB_SERVICE,
 	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
-);
+	);
 
 }
 

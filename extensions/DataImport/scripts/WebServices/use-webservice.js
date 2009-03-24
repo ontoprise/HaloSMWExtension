@@ -42,7 +42,7 @@ UseWebService.prototype = {
 		$("step1-webservice").setAttribute("onchange" , "useWSSpecial.confirmWSChange()");
 		
 		parameters.pop();
-
+		
 		$("step1-go-img").style.display = "none";
 		$("step2-go-img").style.display = "";
 
@@ -77,36 +77,61 @@ UseWebService.prototype = {
 			row.appendChild(td);
 
 			td = document.createElement("td");
+			td.style.textAlign = "right";
 			input = document.createElement("input");
 			input.type = "checkbox";
 			if (parameters[i + 1] == "false" || parameters[i + 1] == "") {
 				input.checked = true;
-				//todo: make readonly
+				input.disabled = "true";
+				td.appendChild(input);
+				
 			} else {
 				input.checked = false;
+				td.appendChild(input);
 			}
-			td.appendChild(input);
 			row.appendChild(td);
 
 			td = document.createElement("td");
 			input = document.createElement("input");
+			input.size = "70";
 			td.appendChild(input);
 			row.appendChild(td);
 
 			td = document.createElement("td");
 			input = document.createElement("input");
 			input.type = "checkbox";
-			td.appendChild(input);
-			input = document.createElement("span");
-			text = document.createTextNode(parameters[i + 2]);
-			input.appendChild(text);
-			td.appendChild(input);
+			input.style.marginRight = "8px";
+			if(parameters[i + 2] != ""){
+				td.appendChild(input);
+				input = document.createElement("span");
+				text = document.createTextNode(parameters[i + 2]);
+				input.appendChild(text);
+				td.appendChild(input);
+			} else {
+				input.checked = false;
+				input.disabled = true;
+				td.appendChild(input);
+				
+				input = document.createElement("input");
+				input.value = "Not available";
+				input.disabled = true;
+				input.style.borderWidth = "0px";
+				td.appendChild(input);
+			}
 			row.appendChild(td);
-
 			$("step2-parameters").childNodes[0].appendChild(row);
 		}
-
+		
 		this.hidePendingIndicator();
+		
+		if(parameters.length == 0){
+			$("step2-noparameters").style.display = "";
+			$("step2-parameters").style.display = "none";
+			this.processStep2();
+		} else {
+			$("step2-noparameters").style.display = "none";
+			$("step2-parameters").style.display = "";
+		}
 	},
 
 	processStep2 : function() {
@@ -149,6 +174,8 @@ UseWebService.prototype = {
 			row.appendChild(td);
 
 			td = document.createElement("td");
+			td.style.textAlign = "right";
+			$("step3-use").checked = true;
 			input = document.createElement("input");
 			input.type = "checkbox";
 			input.checked = true;
@@ -159,6 +186,15 @@ UseWebService.prototype = {
 		}
 
 		this.hidePendingIndicator();
+		
+		if(results.length == 0){
+			$("step3-results").style.display = "none";
+			$("step3-noresults").style.display = "";
+			this.processStep3();
+		} else {
+			$("step3-results").style.display = "";
+			$("step3-noresults").style.display = "none";
+		}
 	},
 
 	processStep3 : function() {
@@ -177,6 +213,7 @@ UseWebService.prototype = {
 
 	processStep4 : function() {
 		$("step4-go-img").style.display = "none";
+		$("step5-preview").style.display = "";
 
 		$("step5").style.display = "";
 
@@ -186,7 +223,13 @@ UseWebService.prototype = {
 		this.hideHelpAll();
 
 		var params = document.URL.split("?");
-		params = params[1].split("&");
+		if(params[1] != null){
+			params = params[1].split("&");
+		} else {
+			params = "";
+		}
+		
+		
 		this.url = "";
 		for ( var i = 0; i < params.length; i++) {
 			if (params[i].indexOf("url") == 0) {
@@ -269,9 +312,14 @@ UseWebService.prototype = {
 		for ( var i = 1; i < parameters.childNodes.length; i++) {
 			if (parameters.childNodes[i].childNodes[1].childNodes[0].checked) {
 				wsSyn += "\n| "
-						+ parameters.childNodes[i].childNodes[0].childNodes[0].childNodes[0].nodeValue;
-				wsSyn += " = "
+					+ parameters.childNodes[i].childNodes[0].childNodes[0].childNodes[0].nodeValue;
+				if(parameters.childNodes[i].childNodes[3].childNodes[0].checked){
+					wsSyn += " = "
+						+ parameters.childNodes[i].childNodes[3].childNodes[1].childNodes[0].nodeValue;
+				} else {
+					wsSyn += " = "
 						+ parameters.childNodes[i].childNodes[2].childNodes[0].value;
+				}
 			}
 		}
 
@@ -295,15 +343,19 @@ UseWebService.prototype = {
 	},
 	
 	getPreview : function() {
-		//this.showPendingIndicator("step1-go");
+		this.showPendingIndicator("step5-preview-button");
 
 		sajax_do_call("smwf_wsu_getPreview", [ this.createWSSyn() ],
 				this.getPreviewCallBack.bind(this));
 	},
 
 	getPreviewCallBack : function(request) {
-		$("step5-preview").innerHTML = request.responseText;
 		$("step5-preview").style.display = "";
+		var response = request.responseText
+		response = response.replace(/warning.png/g, "<b>Warning: </b>");
+		$("step5-preview").innerHTML = response;
+		$("step5-preview").style.display = "";
+		this.hidePendingIndicator();
 	},
 	
 	confirmWSChange : function(){
@@ -313,8 +365,38 @@ UseWebService.prototype = {
 		} else {
 			$("step1-webservice").value = this.webService;
 		}
-	}
+	},
 	
+	useParameters : function() {
+		var checked = false;
+		if ($("step2-use").checked) {
+			checked = true;
+		}
+		
+		var parameters = $("step2-parameters").childNodes[0];
+		for ( var i = 1; i < parameters.childNodes.length; i++) {
+			if(!parameters.childNodes[i].childNodes[1].childNodes[0].disabled){
+				parameters.childNodes[i].childNodes[1].childNodes[0].checked = checked;
+			}
+		}
+	},
+
+	useResults : function() {
+		var checked = false;
+		if ($("step3-use").checked) {
+			checked = true;
+		}
+
+		var results = $("step3-results").childNodes[0];
+		for ( var i = 1; i < results.childNodes.length; i++) {
+			results.childNodes[i].childNodes[1].childNodes[0].checked = checked;
+		}
+	},
+	
+	displayWSSyntax : function (){
+		$("step5-preview").style.display = "";
+		$("step5-preview").innerHTML = this.createWSSyn().replace(/\n/g, "<br/>");	
+	}
 };
 
 var useWSSpecial = new UseWebService();

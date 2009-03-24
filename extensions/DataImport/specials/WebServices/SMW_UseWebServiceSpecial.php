@@ -59,7 +59,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		global $smwgDIIP, $smwgDIScriptPath;
 
 		$html = "";
-		$html .= "<div id=\"menue\">";
+		$html .= "<div id=\"menue\" class=\"BreadCrumpContainer\">";
 		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">1. Choose web service<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">2. Define parameters<span class=\"HeadlineDelimiter\"></span></span>";
 		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">3. Choose result parts<span class=\"HeadlineDelimiter\"></span></span>";
@@ -80,7 +80,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= $ws."</select>";
 		$html .= "</p>";
 			
-		$html .= "<div id=\"step1-help\" style=\"display:none\">".wfMsg("smw_wws_s1-help")."</div>";
+		$html .= "<div id=\"step1-help\" style=\"display:none\">".wfMsg("smw_wsuse_s1-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step1-go\" class=\"OKButton\">";
@@ -98,9 +98,10 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step2-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step2-parameters\"><tr><th>Alias:</th><th>Use:</th><th>Value:</th><th>Use default value</th></tr></table>";
-
-		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
+		$html .= "<table id=\"step2-parameters\"><tr><th>Alias:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\" onclick=\"useWSSpecial.useParameters()\"/></th><th>Value:</th><th>Use default value:</th></tr></table>";
+		$html .= "<div id=\"step2-noparameters\">This web service does not require any parameters.</div>";
+		
+		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step2-go\" class=\"OKButton\">";
@@ -116,9 +117,10 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step3-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step3-results\"><tr><th>Alias:</th><th>Use:</th></tr></table>";
+		$html .= "<table id=\"step3-results\"><tr><th>Alias:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\" onclick=\"useWSSpecial.useResults()\"/></th></tr></table>";
+		$html .= "<div id=\"step3-noresults\">This web service does not provide any result parts.</div>";
 
-		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
+		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
@@ -152,7 +154,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 
 		//todo:separator???
 
-		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s1-help")."</div>";
+		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
@@ -169,14 +171,14 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 			
 		$html .= "<p>";
-		$html .= "<input type=\"button\" onclick=\"useWSSpecial.getPreview()\" value=\"Display preview\"></input>";
-		$html .= "<input type=\"button\" onclick=\"useWSSpecial.copyToClipboard()\" value=\"Copy call to clipboard\"></input>";
+		$html .= "<span id=\"step5-preview-button\"><input type=\"button\" onclick=\"useWSSpecial.getPreview()\" value=\"Display preview\" id=\"step5-preview-button-img\"></input></span>";
+		$html .= "<input type=\"button\" onclick=\"useWSSpecial.displayWSSyntax()\" value=\"Display #ws-syntax\"></input>";
 		$html .= "<input type=\"button\" onclick=\"useWSSpecial.addToArticle()\" value=\"Add call to <articlename>\" id=\"step5-add\" style=\"display: none\"></input>";
 		$html .= "</p>";
 
-		$html .= "<div id=\"step5-help\" style=\"display:none\">".wfMsg("smw_wws_s1-help")."</div>";
+		$html .= "<div id=\"step5-help\" style=\"display:none\">".wfMsg("smw_wsuse_s5-help")."</div>";
 
-		$html .= "<div id=\"step5-preview\"></div>";
+		$html .= "<div id=\"step5-preview\" style=\"display: none; border-width: 2px; border-style: solid; border-color: #5d5d5d\"></div>";
 
 		$html .= "</div>";
 

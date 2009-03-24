@@ -4,6 +4,17 @@
 	padding-left: 40px;
 }
 
+.BreadCrumpContainer{
+	white-space: nowrap; 
+	display: table; 
+	background-color: #8d8d8d; 
+	width: 100%; 
+	padding-left:12px;
+	border-width: 1px; 
+	border-style: solid; 
+	border-color: #5d5d5d
+}
+
 .OKButton{
 	margin-top: 15px;
 	cursor: pointer;

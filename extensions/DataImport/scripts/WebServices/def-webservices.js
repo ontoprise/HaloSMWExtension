@@ -894,6 +894,8 @@ DefineWebServiceSpecial.prototype = {
 				subPathButton.id = "s4-add-subpath" + i;
 				subPathButton.type = "button";
 				subPathButton.value = "Add subpath";
+				subPathButton.style.cursor = "pointer";
+				subPathButton.style.cursor = "pointer";
 				subPathButton.setAttribute("onclick",
 						"webServiceSpecial.addSubPath(" + i + ")");
 				resultTD3.appendChild(subPathButton);
@@ -1213,6 +1215,8 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep6CallBack1 : function(request) {
 		if (request.responseText.indexOf("true") >= 0) {
+			window.location.hash = '#top';
+
 			$("breadcrumb-menue").style.display = "none";
 
 			var container = $("step7-container").cloneNode(false);
@@ -1293,6 +1297,13 @@ DefineWebServiceSpecial.prototype = {
 		$("step4").style.display = "none";
 		$("step5").style.display = "none";
 		$("step6").style.display = "none";
+		
+		this.hideHelp(1);
+		this.hideHelp(2);
+		this.hideHelp(3);
+		this.hideHelp(4);
+		this.hideHelp(5);
+		this.hideHelp(6);
 		
 
 	},
@@ -2625,13 +2636,23 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	displayHelp : function(id) {
-		$("step" + id + "-help").style.display = "";
+		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+			$("step" + id + "-rest-help").style.display = "";
+		} else {
+			$("step" + id + "-help").style.display = "";
+		}
+		
 		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.hideHelp("
 				+ id + ")";
 	},
 
 	hideHelp : function(id) {
+		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+			$("step" + id + "-rest-help").style.display = "none";
+		} 
+
 		$("step" + id + "-help").style.display = "none";
+		
 		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.displayHelp("
 				+ id + ")";
 	},
@@ -2672,11 +2693,11 @@ DefineWebServiceSpecial.prototype = {
 		xpathOption.value = "xpath";
 		format.appendChild(xpathOption);
 
-		var jsonOption = document.createElement("option");
-		var jsonOptName = document.createTextNode("json");
-		jsonOption.appendChild(jsonOptName);
-		jsonOption.value = "json";
-		format.appendChild(jsonOption);
+		// var jsonOption = document.createElement("option");
+		// var jsonOptName = document.createTextNode("json");
+		// jsonOption.appendChild(jsonOptName);
+		// jsonOption.value = "json";
+		// format.appendChild(jsonOption);
 		
 		td0.appendChild(format);
 		
@@ -2704,6 +2725,7 @@ DefineWebServiceSpecial.prototype = {
 		removeButton.value = "Remove subpath";
 		removeButton.setAttribute("onclick", "webServiceSpecial.removeSubPath("
 				+ id + "," + sid + ")");
+		removeButton.style.cursor = "pointer";
 
 		td3.appendChild(removeButton);
 		subPathRow.appendChild(td3);
@@ -2772,12 +2794,14 @@ DefineWebServiceSpecial.prototype = {
 		// add name-input
 		var td = document.createElement("td");
 		var input = document.createElement("input");
+		input.size = "25";
 		td.appendChild(input);
 		row.appendChild(td);
 
 		// add alias-input
 		td = document.createElement("td");
 		input = document.createElement("input");
+		input.size = "25";
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -2816,6 +2840,7 @@ DefineWebServiceSpecial.prototype = {
 		// add default-value-input
 		td = document.createElement("td");
 		input = document.createElement("input");
+		input.size = "25";
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -2840,6 +2865,7 @@ DefineWebServiceSpecial.prototype = {
 		input = document.createElement("input");
 		input.type = "button";
 		input.value = "OK";
+		input.style.cursor = "pointer";
 		input.setAttribute("onclick",
 				"webServiceSpecial.processRESTParameterButton(" + id + ")");
 		td.appendChild(input);
@@ -2917,6 +2943,7 @@ DefineWebServiceSpecial.prototype = {
 		// add alias-input
 		var td = document.createElement("td");
 		var input = document.createElement("input");
+		input.size = "25";
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -2930,11 +2957,11 @@ DefineWebServiceSpecial.prototype = {
 		option.value = "xpath";
 		select.appendChild(option);
 
-		option = document.createElement("option");
-		text = document.createTextNode("json");
-		option.appendChild(text);
-		option.value = "json";
-		select.appendChild(option);
+		// option = document.createElement("option");
+		// text = document.createTextNode("json");
+		// option.appendChild(text);
+		// option.value = "json";
+		// select.appendChild(option);
 
 		td.appendChild(select);
 		row.appendChild(td);
@@ -2942,6 +2969,7 @@ DefineWebServiceSpecial.prototype = {
 		// add subpath-input
 		td = document.createElement("td");
 		input = document.createElement("input");
+		input.size = "70";
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -2968,6 +2996,7 @@ DefineWebServiceSpecial.prototype = {
 		input.value = "OK";
 		input.setAttribute("onclick",
 				"webServiceSpecial.processRESTResultPartButton(" + id + ")");
+		input.style.cursor = "pointer";
 		td.appendChild(input);
 
 		row.appendChild(td);
@@ -3101,6 +3130,10 @@ DefineWebServiceSpecial.prototype = {
 			continue;
 		}
 
+		if(parameterTable.childNodes[i].childNodes[0].childNodes[0].value == ""){
+			continue;
+		}
+		
 		var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
 		if (alias == "") {
 			alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
@@ -3130,7 +3163,10 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		var name = resultTable.childNodes[i].childNodes[0].firstChild.value;
-				result += "<part name=\"" + name + "\" ";
+		if(name == ""){
+			name = "alias-" + i;
+		}
+		result += "<part name=\"" + name + "\" ";
 
 				wsSyntax += "| ?result." + name + "\n";
 
@@ -3210,6 +3246,11 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	updateParametersREST : function(updates) {
+		if(updates.length > 0){
+			this.displayRestParameterTable(false);
+			$("step3-parameters").firstChild.removeChild($("step3-parameters").firstChild.childNodes[1]);
+		}
+		
 		for (i = 0; i < updates.length; i++) {
 			this.appendRESTParameter();
 			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["path"];
@@ -3224,6 +3265,11 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	updateResultsREST : function(updates) {
+		if(updates.length > 0){
+			this.displayRestResultsTable(false);
+			$("step4-results").firstChild.removeChild($("step4-results").firstChild.childNodes[1]);
+		}
+		
 		for (i = 0; i < updates.length; i++) {
 			this.appendRESTResultPart();
 			$("step4-results").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["alias"];
@@ -3428,6 +3474,7 @@ DefineWebServiceSpecial.prototype = {
 				subPathButton.value = "Add subpath";
 				subPathButton.setAttribute("onclick", "webServiceSpecial.addSubPath("
 						+ (rows + i) + ")");
+				subPathButton.style.cursor = "pointer";
 				resultTD4.appendChild(subPathButton);
 
 				this.resultContainer.firstChild.appendChild(row);
