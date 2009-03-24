@@ -123,7 +123,7 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new TSConnection();
-            $sparulCommands = array();
+			$sparulCommands = array();
 			$sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 			 $sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
@@ -131,7 +131,7 @@ class SMWTripleStore extends SMWStore {
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
-					 $sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
+					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
 				}
 			}
 			$con->connect();
@@ -175,7 +175,7 @@ class SMWTripleStore extends SMWStore {
 					foreach($propertyValueArray as $value) {
 						// parse conversion annotation format
 						$measures = explode(",", $value->getXSDValue());
-						 
+							
 						// parse linear factor followed by (first) unit
 						$firstMeasure = reset($measures);
 						$indexOfWhitespace = strpos($firstMeasure, " ");
@@ -183,19 +183,19 @@ class SMWTripleStore extends SMWStore {
 						$factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
 						$unit = trim(substr($firstMeasure, $indexOfWhitespace));
 						$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor $unit\"");
-						 
+							
 						// add all aliases for this conversion factor using the same factor
 						$nextMeasure = next($measures);
 						while($nextMeasure !== false) {
 							$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor ".trim($nextMeasure)."\"");
 							$nextMeasure = next($measures);
 						}
-						 
+							
 					}
 				}
 				continue;
 			}
-				
+
 			elseif ($property->getPropertyID() == "_INST") {
 				// ingore. handeled by category section below
 				continue;
@@ -213,7 +213,7 @@ class SMWTripleStore extends SMWStore {
 
 				}
 				continue;
-			} 
+			}
 
 			// there are other special properties which need not to be handled special
 			// so they can be handled by the default machanism:
@@ -304,7 +304,7 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
 			$con = new TSConnection();
-            $sparulCommands = array();
+			$sparulCommands = array();
 			$sparulCommands[] = self::$ALL_PREFIXES."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
@@ -431,7 +431,7 @@ class SMWTripleStore extends SMWStore {
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
 			$con = new TSConnection();
-            $sparulCommands = array();
+			$sparulCommands = array();
 			$sparulCommands[] = "DROP <$smwgTripleStoreGraph>"; // drop may fail. don't worry
 			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
 			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
@@ -553,6 +553,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		return $trimed_lit;
 	}
+	
+   
 
 	/**
 	 * Removes type hint, e.g. "....."^^xsd:type gets to "....."
@@ -680,13 +682,13 @@ class SMWTripleStore extends SMWStore {
 		foreach ($results as $r) {
 			$row = array();
 			$columnIndex = 0; // column = n-th XML binding node
-				
+
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
 					
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
 				if (!$hasMainColumn && $var_name == '_X_') {
-						
+
 					$columnIndex++;
 					continue;
 				}
@@ -697,7 +699,8 @@ class SMWTripleStore extends SMWStore {
 					$multiValue = explode("|", $b);
 
 					foreach($multiValue as $sv) {
-						$title = Title::newFromText(utf8_decode(substr($sv, strlen(self::$CAT_NS))), NS_CATEGORY);
+						$local = substr($sv, strlen(self::$CAT_NS));
+						$title = Title::newFromText(utf8_decode($local), NS_CATEGORY);
 						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 						$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
 						$allValues[] = $v;
@@ -710,7 +713,8 @@ class SMWTripleStore extends SMWStore {
 					$multiValue = explode("|", $b);
 
 					foreach($multiValue as $sv) {
-						$title = Title::newFromText(utf8_decode(substr($sv, strlen(self::$PROP_NS))), SMW_NS_PROPERTY);
+						$local = substr($sv, strlen(self::$PROP_NS));
+						$title = Title::newFromText(utf8_decode($local), SMW_NS_PROPERTY);
 						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 						$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
 						$allValues[] = $v;
@@ -719,19 +723,20 @@ class SMWTripleStore extends SMWStore {
 
 					// instance result
 				} else if (stripos($b, self::$INST_NS) === 0) {
-						
-						
+
+
 					$allValues = array();
 					$multiValue = explode("|", $b);
-						
+
 					foreach($multiValue as $sv) {
-						$title = Title::newFromText(utf8_decode(substr($sv, strlen(self::$INST_NS))), NS_MAIN);
+						$local = substr($sv, strlen(self::$INST_NS));
+						$title = Title::newFromText(utf8_decode($local), NS_MAIN);
 						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 						$v->setValues($title, NS_MAIN, $title->getArticleID());
 						$allValues[] = $v;
 
 					}
-						
+
 					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
 
 					// property value result
@@ -749,7 +754,7 @@ class SMWTripleStore extends SMWStore {
 						$allValues[] = $value;
 					}
 					$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
-						
+
 				}
 				$columnIndex++;
 
@@ -962,7 +967,7 @@ class WikiTypeToXSD {
 /**
  * Provides an abstraction for the connection to the triple store.
  * Currently, two connector types are supported:
- * 
+ *
  *  1. MessageBroker
  *  2. Webservice
  *
@@ -970,7 +975,7 @@ class WikiTypeToXSD {
 class TSConnection {
 
 	private $con;
-	
+
 	/**
 	 * Connects to the triplestore
 	 *
@@ -985,10 +990,10 @@ class TSConnection {
 			global $smwgWebserviceUser, $smwgWebServicePassword, $wgServer, $wgScript;
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
-				
+
 		}
 	}
-    
+
 	/**
 	 * Disconnects
 	 *
@@ -1001,7 +1006,7 @@ class TSConnection {
 			// do nothing
 		}
 	}
-    
+
 	/**
 	 * Sends SPARUL commands
 	 *
@@ -1009,28 +1014,32 @@ class TSConnection {
 	 * @param string or array of strings $commands
 	 */
 	public function send($topic, $commands) {
-		global $smwgMessageBroker;
+		global $smwgMessageBroker, $smwgTSEncodeUTF8;
 		if (isset($smwgMessageBroker)) {
 			if (!is_array($commands)) {
-				$enc_commands = mb_convert_encoding($commands, "UTF-8");
+				$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commands) : $commands;
 				$this->con->send($topic, $enc_commands);
 				return;
 			}
-			$enc_commands = mb_convert_encoding(implode("\n",$commands), "UTF-8");
+			$commandStr = implode("\n",$commands);
+			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
 			$this->con->send($topic, $enc_commands);
-			
+				
 		} else {
 			// ignore topic
-		    if (!is_array($commands)) {
-		    	$enc_commands = mb_convert_encoding($commands, "UTF-8");
-                $this->con->update($enc_commands);
-                return;
-            }
-			$enc_commands = mb_convert_encoding(implode("\n",$commands), "UTF-8");
-		    $this->con->update($enc_commands);
-			
+			if (!is_array($commands)) {
+				$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commands) : $commands;
+				$this->con->update($enc_commands);
+				return;
+			}
+			$commandStr = implode("\n",$commands);
+			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
+			$this->con->update($enc_commands);
+				
 		}
 	}
+
+
 }
 
 
