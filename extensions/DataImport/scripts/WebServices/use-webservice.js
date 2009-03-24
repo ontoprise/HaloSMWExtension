@@ -213,7 +213,7 @@ UseWebService.prototype = {
 
 	processStep4 : function() {
 		$("step4-go-img").style.display = "none";
-		$("step5-preview").style.display = "";
+		$("step5-preview").style.display = "none";
 
 		$("step5").style.display = "";
 

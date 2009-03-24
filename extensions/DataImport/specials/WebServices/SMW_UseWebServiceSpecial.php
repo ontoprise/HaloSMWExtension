@@ -47,14 +47,20 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$webServices = WSStorage::getDatabase()->getWebServices();
 		ksort($webServices);
 		$ws = "";
+		
+		//todo:use language file
+		$wgOut->setPageTitle("Use Web Service");
+		
+		if(count($webServices) == 0){
+			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL();
+			$html = "No Wiki Web Service Definitions are available yet. Please go to the special page <a href=\"".$url."\">Special:DefineWebService</a> and define some first.";
+			$wgOut->addHTML($html);
+			return;
+		}
+		
 		foreach($webServices as $w){
 			$ws .= "<option>".substr($w->getName(),11, strlen($w->getName()))."</option>";
 		}
-
-
-		//todo:use language file
-		$wgOut->setPageTitle("Use Web Service");
-
 
 		global $smwgDIIP, $smwgDIScriptPath;
 

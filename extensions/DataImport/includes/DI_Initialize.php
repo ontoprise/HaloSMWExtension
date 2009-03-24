@@ -259,13 +259,12 @@ function smwDITIAddHTMLHeader(&$out){
 
 
 function smwDITBAddHTMLHeader(&$out){
-	global $smwgDIScriptPath;
-
-	$jsm = SMWResourceManager::SINGLETON();
-
-	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/semantic-toolbar-container.js' , "edit");
-
-	$jsm->serializeScripts($out);
+	global $smwgDIScriptPath, $wgRequest;
+	
+	$action = $wgRequest->getVal('action');
+	if ($action == 'edit') {
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
+	}
 	
 	return true;
 }
