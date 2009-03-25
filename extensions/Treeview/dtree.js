@@ -78,7 +78,7 @@ Node.prototype.unserialize = function(str) {
     this.id = nVar[0];
     this.pid = nVar[1];
     link = nVar[2].replace(/%2E/i, ".");
-    content = (nVar[3]) ? nVar[3].replace(/%2E/gi, ".") : link;
+    var content = (nVar[3]) ? nVar[3].replace(/%2E/gi, ".") : link;
     content = content.replace(/_/g, " ");
     this.name = '<a href=\"' + url + link + '\" title=\"' + content + '\">' + content + '</a>';
 	this._hc = (nVar[4] == 1) ? true : false;
