@@ -294,7 +294,8 @@ dTree.prototype.refresh = function() {
 			(refreshRootNodes.indexOf(i) == -1) &&
 			(rFstCh.indexOf(i) == -1)) {
 			// if the node is open, check for children
-			if (this.aNodes[i]._io) {
+			// if node is completed, it might be a node without children, this has been checked
+			if (this.aNodes[i]._io || this.aNodes[i]._complete) {
 				refreshOpenNodes.push(i);
 				add = true;
 			}
