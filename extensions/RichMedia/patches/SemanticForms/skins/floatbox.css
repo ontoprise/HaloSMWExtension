@@ -1,0 +1,383 @@
+/* Floatbox v3.24 */
+/* December 01, 2008 */
+
+#fbOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-width: 0;
+	margin: 0;
+	padding: 0;
+}
+
+/* overlay color */
+div.fbOverlay_black { background-color: #000; }
+div.fbOverlay_white {background-color: #000; }
+div.fbOverlay_blue { background-color: #0b183b; }
+div.fbOverlay_yellow { background-color: #752; }
+div.fbOverlay_red { background-color: #280000; }
+div.fbOverlay_custom { background-color: #1b2642; }
+
+#fbBox {
+	position: absolute;
+	border-style: solid;
+	border-width: 0;
+	margin: 0;
+	padding: 0;
+}
+div.fbBox_black {
+	border-color: #888;  /* outerBorder color */
+	background-color: #000;  /* main floatbox color */
+}
+div.fbBox_white {
+	border-color: #888;
+	background-color: #fff;
+}
+div.fbBox_blue {
+	border-color: #4060a8;
+	background-color: #0b183b;
+}
+div.fbBox_yellow {
+	border-color: #680c0c;
+	background-color: #ed9;
+}
+div.fbBox_red {
+	border-color: #945848;
+	background-color: #580808;
+}
+div.fbBox_custom {
+	border-color: #da7b4d;
+	background-color: #eed39e;
+}
+
+#fbBox div, #fbBox a, #fbBox img, #fbBox iframe {
+	border-width: 0;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	-moz-outline: none;  /* for older Netscape, doesn't validate, remove if you like */
+}
+#fbBox a {
+	background: url(graphics/blank.gif);
+	zoom: 1;
+}
+
+#fbZoomDiv, a.fbPopup img, #fbBox #fbIndexLinks img {
+	position: absolute;
+	left: 0;
+	top: -9999px;
+	/* border-width is set in js code */
+	border-style: solid;
+	border-color: black;
+	margin: 0;
+	padding: 0;
+}
+
+#fbBox #fbLoader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	min-width: 100%;
+	min-height: 100%;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+/* animated 'loading' graphic */
+#fbBox .fbLoader_black { background-image: url(graphics/loading_black.gif); }
+#fbBox .fbLoader_white { background-image: url(graphics/loading_white.gif); }
+#fbBox .fbLoader_blue { background-image: url(graphics/loading_black.gif); }
+#fbBox .fbLoader_yellow { background-image: url(graphics/loading_white.gif); }
+#fbBox .fbLoader_red { background-image: url(graphics/loading_black_small.gif); }
+#fbBox .fbLoader_custom { background-image: url(graphics/loading_black_small.gif); }
+
+#fbBox #fbShadowTop, #fbShadowRight, #fbBox #fbShadowBottom, #fbBox #fbShadowLeft, #fbBox #fbShadowCorner {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
+}
+
+#fbBox #fbShadowTop { background-position: top left; }
+#fbBox .fbShadowTop_halo8 { background-image: url(graphics/shadowTop_halo8.png); }
+#fbBox .fbShadowTop_halo12 { background-image: url(graphics/shadowTop_halo12.png); }
+#fbBox .fbShadowTop_halo16 { background-image: url(graphics/shadowTop_halo16.png); }
+#fbBox .fbShadowTop_halo24 { background-image: url(graphics/shadowTop_halo24.png); }
+
+#fbBox #fbShadowRight { background-position: top right; }
+#fbBox .fbShadowRight_drop8 { background-image: url(graphics/shadowRight_drop8.png); }
+#fbBox .fbShadowRight_drop12 { background-image: url(graphics/shadowRight_drop12.png); }
+#fbBox .fbShadowRight_drop16 { background-image: url(graphics/shadowRight_drop16.png); }
+#fbBox .fbShadowRight_drop24 { background-image: url(graphics/shadowRight_drop24.png); }
+#fbBox .fbShadowRight_halo8 { background-image: url(graphics/shadowRight_halo8.png); }
+#fbBox .fbShadowRight_halo12 { background-image: url(graphics/shadowRight_halo12.png); }
+#fbBox .fbShadowRight_halo16 { background-image: url(graphics/shadowRight_halo16.png); }
+#fbBox .fbShadowRight_halo24 { background-image: url(graphics/shadowRight_halo24.png); }
+
+#fbBox #fbShadowBottom { background-position: bottom right; }  /* overridden in code for drop shadow */
+#fbBox .fbShadowBottom_drop8 { background-image: url(graphics/shadowBottom_drop8.png); }
+#fbBox .fbShadowBottom_drop12 { background-image: url(graphics/shadowBottom_drop12.png); }
+#fbBox .fbShadowBottom_drop16 { background-image: url(graphics/shadowBottom_drop16.png); }
+#fbBox .fbShadowBottom_drop24 { background-image: url(graphics/shadowBottom_drop24.png); }
+#fbBox .fbShadowBottom_halo8 { background-image: url(graphics/shadowBottom_halo8.png); }
+#fbBox .fbShadowBottom_halo12 { background-image: url(graphics/shadowBottom_halo12.png); }
+#fbBox .fbShadowBottom_halo16 { background-image: url(graphics/shadowBottom_halo16.png); }
+#fbBox .fbShadowBottom_halo24 { background-image: url(graphics/shadowBottom_halo24.png); }
+
+#fbBox #fbShadowLeft { background-position: bottom left; }
+#fbBox .fbShadowLeft_halo8 { background-image: url(graphics/shadowLeft_halo8.png); }
+#fbBox .fbShadowLeft_halo12 { background-image: url(graphics/shadowLeft_halo12.png); }
+#fbBox .fbShadowLeft_halo16 { background-image: url(graphics/shadowLeft_halo16.png); }
+#fbBox .fbShadowLeft_halo24 { background-image: url(graphics/shadowLeft_halo24.png); }
+
+#fbBox #fbShadowCorner { background-position: bottom right; }
+#fbBox .fbShadowCorner_drop8 { background-image: url(graphics/shadowCorner_drop8.png); }
+#fbBox .fbShadowCorner_drop12 { background-image: url(graphics/shadowCorner_drop12.png); }
+#fbBox .fbShadowCorner_drop16 { background-image: url(graphics/shadowCorner_drop16.png); }
+#fbBox .fbShadowCorner_drop24 { background-image: url(graphics/shadowCorner_drop24.png); }
+
+#fbBox #fbCanvas {
+	position: relative;  /* won't fade in ie6 if absolute */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#fbBox #fbMainDiv, #fbBox #fbInfoPanel, #fbBox #fbControlPanel {
+	position: absolute;
+	border-style: solid;
+	overflow: hidden;
+}
+#fbBox #fbMainDiv {
+	background-color: #fff;
+}
+
+/* innerBorder color */
+#fbBox .fbMainDiv_black { border-color: #ccc; }
+#fbBox .fbMainDiv_white { border-color: #000; }
+#fbBox .fbMainDiv_blue { border-color: #aaa8be; }
+#fbBox .fbMainDiv_yellow { border-color: #700; }
+#fbBox .fbMainDiv_red { border-color: #b64; }
+#fbBox .fbMainDiv_custom { border-color: #b64; }
+
+#fbBox #fbResizer {
+	position: absolute;
+	width: 25px;  /* = dimensions of the resize button (see note below) */
+	height: 25px;
+	left: 0;
+	top: 0;
+}
+/* resize button graphic */
+#fbBox .fbResizer_black { background-image: url(graphics/resize_black.gif); }
+#fbBox .fbResizer_white { background-image: url(graphics/resize_white.gif); }
+#fbBox .fbResizer_blue { background-image: url(graphics/resize_blue.gif); }
+#fbBox .fbResizer_yellow { background-image: url(graphics/resize_yellow.gif); }
+#fbBox .fbResizer_red { background-image: url(graphics/resize_red.gif); }
+#fbBox .fbResizer_custom { background-image: url(graphics/resize_red.gif); }
+/* note: if you want the smaller resize button, change #fbResizer width and height to 19px
+   and also add "_small" to the resize gif name (e.g., graphics/resize_black_small.gif) */
+
+#fbBox #fbLeftNav, #fbBox #fbRightNav {
+	position: absolute;
+	height: 100%;
+}
+#fbBox #fbLeftNav, #fbBox #fbOverlayPrev {
+	left: 0;
+}
+#fbBox #fbRightNav, #fbBox #fbOverlayNext {
+	right: 0;
+}
+
+#fbBox #fbOverlayPrev, #fbBox #fbOverlayNext {
+	position: absolute;
+	width: 49px;  /* = dimensions of the upper prev and next graphics */
+	height: 23px;
+	background-repeat: no-repeat;
+}
+
+/* on-mouse-over upper nav prev graphic */
+#fbBox .fbOverlayPrev_black { background-image: url(graphics/prev_upr_black.gif); }
+#fbBox .fbOverlayPrev_white { background-image: url(graphics/prev_upr_white.gif); }
+#fbBox .fbOverlayPrev_blue { background-image: url(graphics/prev_upr_blue.gif); }
+#fbBox .fbOverlayPrev_yellow { background-image: url(graphics/prev_upr_yellow.gif); }
+#fbBox .fbOverlayPrev_red { background-image: url(graphics/prev_upr_red.gif); }
+#fbBox .fbOverlayPrev_custom { background-image: url(graphics/prev_upr_blue.gif); }
+
+/* on-mouse-over upper nav next graphic */
+#fbBox .fbOverlayNext_black { background-image: url(graphics/next_upr_black.gif); }
+#fbBox .fbOverlayNext_white { background-image: url(graphics/next_upr_white.gif); }
+#fbBox .fbOverlayNext_blue { background-image: url(graphics/next_upr_blue.gif); }
+#fbBox .fbOverlayNext_yellow { background-image: url(graphics/next_upr_yellow.gif); }
+#fbBox .fbOverlayNext_red { background-image: url(graphics/next_upr_red.gif); }
+#fbBox .fbOverlayNext_custom { background-image: url(graphics/next_upr_blue.gif); }
+
+#fbBox #fbInfoPanel {
+	line-height: 1.25em;
+	/* caption and info link text */
+  	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+#fbBox #fbCaption {
+	cursor: default;
+}
+
+#fbBox #fbInfoLink, #fbBox #fbPrintLink {
+	padding-bottom: .1em;
+}
+
+#fbBox #fbItemNumber {
+	font-size: 10px;  /* 'image x of y' text */
+	white-space: nowrap;
+	cursor: default;
+}
+
+/* 'image x of y' and indexLinks color */
+#fbBox .fbItemNumber_black, #fbBox #fbIndexLinks.fbIndexLinks_black, #fbBox #fbIndexLinks.fbIndexLinks_black a:link, #fbBox #fbIndexLinks.fbIndexLinks_black a:visited { color: #aaa; }
+#fbBox .fbItemNumber_white, #fbBox #fbIndexLinks.fbIndexLinks_white, #fbBox #fbIndexLinks.fbIndexLinks_white a:link, #fbBox #fbIndexLinks.fbIndexLinks_white a:visited { color: #666; }
+#fbBox .fbItemNumber_blue, #fbBox #fbIndexLinks.fbIndexLinks_blue, #fbBox #fbIndexLinks.fbIndexLinks_blue a:link, #fbBox #fbIndexLinks.fbIndexLinks_blue a:visited { color: #aaa8be; }
+#fbBox .fbItemNumber_yellow, #fbBox #fbIndexLinks.fbIndexLinks_yellow, #fbBox #fbIndexLinks.fbIndexLinks_yellow a:link, #fbBox #fbIndexLinks.fbIndexLinks_yellow a:visited { color: #700; }
+#fbBox .fbItemNumber_red, #fbBox #fbIndexLinks.fbIndexLinks_red, #fbBox #fbIndexLinks.fbIndexLinks_red a:link, #fbBox #fbIndexLinks.fbIndexLinks_red a:visited { color: #ca8; }
+#fbBox .fbItemNumber_custom, #fbBox #fbIndexLinks.fbIndexLinks_custom, #fbBox #fbIndexLinks.fbIndexLinks_custom a:link, #fbBox #fbIndexLinks.fbIndexLinks_custom a:visited { color: #965f74; }
+
+/* caption, infoLink, printLink, & indexLinks:hover color */
+#fbBox .fbInfoPanel_black, #fbBox .fbInfoPanel_black a:link, #fbBox .fbInfoPanel_black a:visited, #fbBox #fbIndexLinks.fbIndexLinks_black a:hover { color: #d7d7d7; }
+#fbBox .fbInfoPanel_white, #fbBox .fbInfoPanel_white a:link, #fbBox .fbInfoPanel_white a:visited, #fbBox #fbIndexLinks.fbIndexLinks_white a:hover { color: #000; }
+#fbBox .fbInfoPanel_blue, #fbBox .fbInfoPanel_blue a:link, #fbBox .fbInfoPanel_blue a:visited, #fbBox #fbIndexLinks.fbIndexLinks_blue a:hover { color: #aaa8be; }
+#fbBox .fbInfoPanel_yellow, #fbBox .fbInfoPanel_yellow a:link, #fbBox .fbInfoPanel_yellow a:visited, #fbBox #fbIndexLinks.fbIndexLinks_yellow a:hover { color: #700; }
+#fbBox .fbInfoPanel_red, #fbBox .fbInfoPanel_red a:link, #fbBox .fbInfoPanel_red a:visited, #fbBox #fbIndexLinks.fbIndexLinks_red a:hover { color: #ec9; }
+#fbBox .fbInfoPanel_custom, #fbBox .fbInfoPanel_custom a:link, #fbBox .fbInfoPanel_custom a:visited, #fbBox #fbIndexLinks.fbIndexLinks_custom a:hover { color: #735; }
+
+#fbBox #fbControls {
+	height: 14px;  /* height of control widget graphics - they should all be the same */
+	font-size: 1px;
+}
+
+#fbBox #fbNavControls {
+	width: 88px;  /* sum of lowerprev and lowernext widths */
+	height: 14px;  /* height of 1 sprite panel in lowerprev and lowernext graphics */
+}
+
+#fbBox #fbPrev {
+	float: left;
+	width: 44px;  /* = dimensions of the lower nav 'prev' graphic */
+	height: 14px;
+	background-repeat: no-repeat;
+}
+
+/* lower nav 'prev' graphic */
+#fbBox .fbPrev_black { background-image: url(graphics/prev_lwr_black.gif); }
+#fbBox .fbPrev_white { background-image: url(graphics/prev_lwr_white.gif); }
+#fbBox .fbPrev_blue { background-image: url(graphics/prev_lwr_blue.gif); }
+#fbBox .fbPrev_yellow { background-image: url(graphics/prev_lwr_yellow.gif); }
+#fbBox .fbPrev_red { background-image: url(graphics/prev_lwr_red.gif); }
+#fbBox .fbPrev_custom { background-image: url(graphics/prev_lwr_yellow.gif); }
+
+/* lower nav greyed-out 'prev' graphic */
+#fbBox .fbPrev_black_off { background-image: url(graphics/prev_lwr_off_black.gif); }
+#fbBox .fbPrev_white_off { background-image: url(graphics/prev_lwr_off_white.gif); }
+#fbBox .fbPrev_blue_off { background-image: url(graphics/prev_lwr_off_blue.gif); }
+#fbBox .fbPrev_yellow_off { background-image: url(graphics/prev_lwr_off_yellow.gif); }
+#fbBox .fbPrev_red_off { background-image: url(graphics/prev_lwr_off_red.gif); }
+#fbBox .fbPrev_custom_off { background-image: url(graphics/prev_lwr_off_yellow.gif); }
+
+#fbBox #fbNext {
+	float: right;
+	width: 44px;  /* = dimensions of the lower nav 'next' graphic */
+	height: 14px;
+	background-repeat: no-repeat;
+}
+
+/* lower nav 'next' graphic */
+#fbBox .fbNext_black { background-image: url(graphics/next_lwr_black.gif); }
+#fbBox .fbNext_white { background-image: url(graphics/next_lwr_white.gif); }
+#fbBox .fbNext_blue { background-image: url(graphics/next_lwr_blue.gif); }
+#fbBox .fbNext_yellow { background-image: url(graphics/next_lwr_yellow.gif); }
+#fbBox .fbNext_red { background-image: url(graphics/next_lwr_red.gif); }
+#fbBox .fbNext_custom { background-image: url(graphics/next_lwr_yellow.gif); }
+
+/* lower nav greyed-out 'next' graphic */
+#fbBox .fbNext_black_off { background-image: url(graphics/next_lwr_off_black.gif); }
+#fbBox .fbNext_white_off { background-image: url(graphics/next_lwr_off_white.gif); }
+#fbBox .fbNext_blue_off { background-image: url(graphics/next_lwr_off_blue.gif); }
+#fbBox .fbNext_yellow_off { background-image: url(graphics/next_lwr_off_yellow.gif); }
+#fbBox .fbNext_red_off { background-image: url(graphics/next_lwr_off_red.gif); }
+#fbBox .fbNext_custom_off { background-image: url(graphics/next_lwr_off_yellow.gif); }
+
+#fbBox #fbPlay, #fbBox #fbPause {
+	position: absolute;
+	background-repeat: no-repeat;
+}
+
+#fbBox #fbPlayPause, #fbBox #fbPlay, #fbBox #fbPause {
+	width: 46px;  /* = dimensions of the 'play' and 'pause' graphics (they need to be the same size) */
+	height: 14px;
+	text-align: justify;
+}
+
+/* 'play' and 'pause' graphics */
+#fbBox .fbPlay_black { background-image: url(graphics/play_black.gif); }
+#fbBox .fbPlay_white { background-image: url(graphics/play_white.gif); }
+#fbBox .fbPlay_blue { background-image: url(graphics/play_blue.gif); }
+#fbBox .fbPlay_yellow { background-image: url(graphics/play_yellow.gif); }
+#fbBox .fbPlay_red { background-image: url(graphics/play_red.gif); }
+#fbBox .fbPlay_custom { background-image: url(graphics/play_yellow.gif); }
+#fbBox .fbPause_black { background-image: url(graphics/pause_black.gif); }
+#fbBox .fbPause_white { background-image: url(graphics/pause_white.gif); }
+#fbBox .fbPause_blue { background-image: url(graphics/pause_blue.gif); }
+#fbBox .fbPause_yellow { background-image: url(graphics/pause_yellow.gif); }
+#fbBox .fbPause_red { background-image: url(graphics/pause_red.gif); }
+#fbBox .fbPause_custom { background-image: url(graphics/pause_yellow.gif); }
+
+#fbBox #fbClose {
+	width: 46px;  /* = dimensions of the 'close' graphic */
+	height: 14px;
+	background-repeat: no-repeat;
+}
+
+/* 'close' graphic */
+#fbBox .fbClose_black { background-image: url(graphics/close_black.gif); }
+#fbBox .fbClose_white { background-image: url(graphics/close_white.gif); }
+#fbBox .fbClose_blue { background-image: url(graphics/close_blue.gif); }
+#fbBox .fbClose_yellow { background-image: url(graphics/close_yellow.gif); }
+#fbBox .fbClose_red { background-image: url(graphics/close_red.gif); }
+#fbBox .fbClose_custom { background-image: url(graphics/close_yellow.gif); }
+
+#fbBox #fbIndexLinks {
+	clear: both;
+	font-size: 11px;
+	cursor: default;
+}
+#fbBox #fbIndexLinks a:hover {
+	font-weight: bold;
+}
+
+/* posLeft, posCenter & posRight are dynamically assigned classes that allow layout of the info and control panels depending on which side they're on */
+/* info panel */
+#fbInfoPanel.posCenter, #fbInfoDiv.posCenter, #fbIndexLinks.posCenter {
+	margin: 0 auto;
+}
+#fbInfoPanel.posRight, #fbInfoDiv.posRight, #fbIndexLinks.posRight {
+	float: right;
+}
+#fbInfoPanel.posLeft, #fbInfoDiv.posLeft, #fbIndexLinks.posLeft {
+	float: left;
+}
+/* control panel */
+#fbControlPanel.posRight, #fbControls.posRight, #fbClose.posRight, #fbSubControls.posRight, #fbNavControls.posLeft, #fbPlayPause.posLeft {
+	float: right;
+}
+#fbControlPanel.posLeft, #fbControls.posLeft, #fbClose.posLeft, #fbSubControls.posLeft, #fbNavControls.posRight, #fbPlayPause.posRight {
+	float: left;
+}
+/* IE6 wants these, maybe for layout? */
+#fbSubControls, #fbClose, #fbIndexLinks, #fbPlayPause, #fbNavControls {
+	float: left;
+}
