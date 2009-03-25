@@ -12,7 +12,7 @@ Installation:
 =============
    
 Run:
-php {wiki-path}/extensions/SemanticGardening/maintenance/setup.php
+php {wiki-path}/extensions/SemanticGardening/maintenance/SGA_setup.php
 
 Then add to your LocalSettings.php after you initialized SMWHalo:
 

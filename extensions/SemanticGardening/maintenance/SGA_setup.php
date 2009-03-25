@@ -14,14 +14,14 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+$sgagIP = $mediaWikiLocation . '/extensions/SemanticGardening';
 
 sgafInitializeTables();
 
 function sgafInitializeTables() {
     
-    global $sgagIP;
     require_once('../includes/SGA_Gardening.php');
-    include_once( "$sgagIP/includes/findwork/SGA_SuggestStatistics.php" );
+    include_once( "../includes/findwork/SGA_SuggestStatistics.php" );
     
     SGAGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
     SGAGardeningLog::getGardeningLogAccess()->setup(true);

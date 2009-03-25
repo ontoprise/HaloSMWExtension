@@ -6,7 +6,8 @@
  */
  if (!defined('MEDIAWIKI')) die();
 
-sgafGardeningInitMessages();
+if (function_exists("sgafGardeningInitMessages"))
+  sgafGardeningInitMessages();
 
 require_once("SGA_GardeningBot.php");
 
