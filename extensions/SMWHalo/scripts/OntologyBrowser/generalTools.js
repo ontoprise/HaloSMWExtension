@@ -113,6 +113,7 @@ GeneralBrowserTools.purge = function (d) {
     if (a) {
         l = a.length;
         for (i = 0; i < l; i += 1) {
+        	if (!a[i]) continue;
             n = a[i].name;
             if (typeof d[n] === 'function') {
                 d[n] = null;

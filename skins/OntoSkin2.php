@@ -216,7 +216,7 @@
 				<div id="content">
 					<?php 	global $wgRequest,$wgTitle;
 					
-							global $wgExtensionCredits; if (!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+							global $wgExtensionCredits; if (!defined('US_SEARCH_EXTENSION_VERSION')) {
                                $useCombinedSearch = ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search'));
                             }
                             if (($wgRequest->getText('action') == "edit" && !($wgRequest->getText('mode') == "wysiwyg")) || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
@@ -366,11 +366,11 @@
 						<input id="searchInput" pasteNS="true" class="wickEnabled" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
 							if( isset( $this->data['search'] ) ) {
 							?> value="<?php $this->text('search') ?>"<?php } ?> />
-						<?php global $wgExtensionCredits; if (true) { //if (!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+						<?php global $wgExtensionCredits; if (true) {
                            echo '<input type="submit" name="go" class="searchButton" id="searchGoButton" value="'.wfMsg('searcharticle').'" '.$this->skin->tooltipAndAccesskey( 'search-go' ).' />&nbsp';
                         } ?>
 						<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
-						<?php global $wgExtensionCredits; if (array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+						<?php global $wgExtensionCredits; if (defined('US_SEARCH_EXTENSION_VERSION')) {
 		                    echo '<input type="hidden" id="toleranceLevel" name="tolerance" value="0"></input>';
 		                } ?>
 			    	</form>

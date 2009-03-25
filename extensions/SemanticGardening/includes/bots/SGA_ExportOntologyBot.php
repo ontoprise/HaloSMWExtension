@@ -80,7 +80,7 @@ class ExportOntologyBot extends GardeningBot {
 		echo "\nStart export...";
 			
 		// create output directory and generate output filename
-		$smwhalodir = __FILE__."/../../../../";
+		$smwhalodir = __FILE__."/../../../";
         $wikiexportDir = $smwhalodir."/wikiexport";
 		if (!file_exists($wikiexportDir)) mkdir($wikiexportDir);
 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
@@ -134,7 +134,7 @@ class ExportOntologyBot extends GardeningBot {
 
 		// create download link
 		global $wgServer, $wgScriptPath;
-		$downloadLink = wfMsg('smw_gard_export_download', "[".$wgServer.$wgScriptPath."/extensions/SMWHalo/wikiexport/$outputFile ".wfMsg('smw_gard_export_here')."]");
+		$downloadLink = wfMsg('smw_gard_export_download', "[".$wgServer.$wgScriptPath."/extensions/SemanticGardening/wikiexport/$outputFile ".wfMsg('smw_gard_export_here')."]");
 			
 		return "\n\n".$downloadLink."\n\n";
 	}

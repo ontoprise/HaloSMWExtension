@@ -238,7 +238,7 @@ class SMWTripleStore extends SMWStore {
 								$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
 								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
 							} else if ($value->getNumericValue() != NULL) {
-								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:float");
+								$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:double");
 							}
 						}
 							
@@ -931,7 +931,7 @@ class WikiTypeToXSD {
 			// direct supported types
 			case '_str' : return 'xsd:string';
 			case '_txt' : return 'xsd:string';
-			case '_num' : return 'xsd:float';
+			case '_num' : return 'xsd:double';
 			case '_boo' : return 'xsd:boolean';
 			case '_dat' : return 'xsd:dateTime';
 

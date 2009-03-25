@@ -36,7 +36,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$result .= "<categoryPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
 		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
@@ -79,7 +79,7 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 		$result .= "<instancePartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($instances as $t) { 
 		$instWithCat = is_array($t);
 		$instanceTitle =  $instWithCat ?  $t[0] : $t;
@@ -127,7 +127,7 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
 		$result .= "<propertyPartition id=\"ID_$id$count\" partitionNum=\"$partitionNum\" length=\"$limit\" hideNextArrow=\"true\"/>";
 	}
 	$count++;
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($titles as $t) { 
 		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
@@ -156,7 +156,7 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
  */
 public static function encapsulateAsAnnotationList(array & $propertyAnnotations, Title $instance) {
 	$result = "";
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($propertyAnnotations as $a) {
 		list($property, $values) = $a;
 		$propertyTitle = Title::newFromText($property->getXSDValue(), SMW_NS_PROPERTY);
@@ -182,7 +182,7 @@ public static function encapsulateAsPropertyList(array & $properties) {
 	
 	$count = 0;
 	$propertiesXML = "";
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($properties as $t) {
 			$directIssues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t[0]);
  			$propertiesXML .= SMWOntologyBrowserXMLGenerator::encapsulateAsProperty($t, $count, $directIssues);
@@ -267,7 +267,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 	$multiProperties = "";
 	$isFormula = false;
 	$chemistryParser = new ChemEqParser();
-	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($smwValues as $smwValue) {
 		if ($smwValue instanceof SMWNAryValue) { // n-ary property
 		

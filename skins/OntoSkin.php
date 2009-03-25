@@ -134,7 +134,7 @@ class OntoSkinTemplate extends QuickTemplate {
 		 <div id="contentslider"></div>
 	<div id="content">
 	<?php 	global $wgRequest,$wgTitle;
-	        global $wgExtensionCredits; if (!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+	        global $wgExtensionCredits; if (!defined('US_SEARCH_EXTENSION_VERSION')) {
 	        	$useCombinedSearch = ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search'));
 	        }
 			if (($wgRequest->getText('action') == "edit" && !($wgRequest->getText('mode') == "wysiwyg")) || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
@@ -321,7 +321,7 @@ class OntoSkinTemplate extends QuickTemplate {
                    
                 } ?>
 				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
-				<?php global $wgExtensionCredits; if (array_key_exists('unifiedsearch', $wgExtensionCredits)) {
+				<?php global $wgExtensionCredits; if (defined('US_SEARCH_EXTENSION_VERSION')) {
 					echo '<input type="hidden" id="toleranceLevel" name="tolerance" value="0"></input>';
 					
 				} ?>

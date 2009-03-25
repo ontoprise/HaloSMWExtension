@@ -90,7 +90,7 @@
  	 	$result = "";
  	 	$id = uniqid (rand());
  	 	$count = 0;
- 	 	$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+ 	 	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
  	 	foreach($foundInstances as $instance) {
  	 		$title_esc = htmlspecialchars($instance->getDBkey());
  	 		$titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($instance->getDBkey()));  
@@ -330,7 +330,7 @@
  		$id = uniqid (rand());
 		$count = 0;		
  		$result = "";
- 		$gi_store = SMWGardeningIssuesAccess::getGardeningIssuesAccess();
+ 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
  		foreach($this->children as $title => $treeObject) {
  			$isExpanded = count($treeObject->children) == 0 ? "false" : "true";
  			$title_esc = htmlspecialchars($treeObject->getTitle()->getDBkey());

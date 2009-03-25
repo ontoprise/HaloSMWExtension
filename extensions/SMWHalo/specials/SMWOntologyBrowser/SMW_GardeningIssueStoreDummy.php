@@ -4,7 +4,7 @@
  * without gardening extension. 
  *
  */
-class SMWGardeningIssuesAccess {
+class SGAGardeningIssuesAccess {
     
     static $gi_interface;
    
@@ -47,7 +47,7 @@ class SMWGardeningIssuesAccess {
 
     public static function getGardeningIssuesAccess() {
     	if (self::$gi_interface == NULL) {
-    		self::$gi_interface = new SMWGardeningIssuesAccess();
+    		self::$gi_interface = new SGAGardeningIssuesAccess();
     	}
         return self::$gi_interface;
     }
