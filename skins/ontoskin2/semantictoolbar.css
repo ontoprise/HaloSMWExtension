@@ -238,8 +238,8 @@ a.plusminus:hover{
 }
 
 #stb_cont10-content{
-    background-color: #FFFFCC;
-    border: 1px solid #E6E600;
+    background-color: #e0d8f1;
+    border: 1px solid #603aab;
     padding-right: 5px;
     padding-left: 5px;
     padding-top: 5px;
@@ -381,7 +381,7 @@ a.plusminus:hover{
     margin-top: 3px;
 }
 #stb_cont10-headline{
-    background-color: #E6E600;
+    background-color: #603aab;
     font-weight: bold;
     color: #FFF;
 /*  padding-top: 1px; */
