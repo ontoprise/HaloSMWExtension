@@ -90,13 +90,6 @@ class SMWRestClient implements IWebServiceClient {
 				$separator = "&";
 			}
 			
-			if(array_key_exists("__post__separator", $parameters)){
-				$separator = $parameters["__post__separator"];
-				unset($parameters["__post__separator"]);
-			} else {
-				$separator = "&";
-			}
-			
 			if(array_key_exists("__post__content_type", $parameters)){
 				$contentType = $parameters["__post__content_type"];
 				unset($parameters["__post__content_type"]);
