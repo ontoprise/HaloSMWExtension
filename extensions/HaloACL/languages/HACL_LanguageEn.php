@@ -38,6 +38,8 @@ class HACLLanguageEn extends HACLLanguage {
 		HACL_NS_ACL_TALK  => 'ACL_talk'
 	);
 
+	protected $mPermissionDeniedPage = "Permission denied";
+	
 }
 
 

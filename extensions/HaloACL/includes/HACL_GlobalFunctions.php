@@ -88,7 +88,7 @@ function haclfSetupExtension() {
 */
 	       
 	//--- credits (see "Special:Version") ---
-	$wgExtensionCredits['parserhook'][]= array(
+	$wgExtensionCredits['other'][]= array(
 		'name'=>'HaloACL', 
 		'version'=>HACL_HALOACL_VERSION, 
 		'author'=>"Thomas Schweitzer", 

@@ -25,6 +25,7 @@ abstract class HACLLanguage {
 	// the special message arrays ...
 	protected $mNamespaces;
 	protected $mNamespaceAliases = array();
+	protected $mPermissionDeniedPage;
 
 
 	/**
@@ -40,6 +41,16 @@ abstract class HACLLanguage {
 	public function getNamespaceAliases() {
 		return $this->mNamespaceAliases;
 	}
+	
+	/**
+	 * Returns the name of the page that informs the user, that access to
+	 * a requested page is denied. A page with this name must be created in the 
+	 * wiki.
+	 */
+	public function getPermissionDeniedPage() {
+		return $this->mPermissionDeniedPage;
+	}
+	
 }
 
 

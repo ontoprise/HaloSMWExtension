@@ -47,8 +47,17 @@ $haclgIP = $IP . '/extensions/HaloACL';
 # web. Change it if required ($wgScriptPath is the path to the base directory
 # of your wiki). No final slash.
 ##
-$haclgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
+$haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 
+###
+# Set this variable to false to disable the patch that checks all titles
+# for accessibility. Unfortunately, the Title-object does not check if an article
+# can be accessed. A patch adds this functionality and checks every title that is 
+# created. If a title can not be accessed, a replacement title called "Permission
+# denied" is returned. This is the best and securest way of protecting an article,
+# however, it slows down things a bit.
+##
+$haclgEnableTitleCheck = true;
 
 # load global functions
 require_once('HACL_GlobalFunctions.php');

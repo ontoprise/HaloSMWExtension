@@ -37,6 +37,9 @@ class HACLLanguageDe extends HACLLanguage {
 		HACL_NS_ACL       => 'Rechte',
 		HACL_NS_ACL_TALK  => 'Rechte_Diskussion'
 	);
+	
+	protected $mPermissionDeniedPage = "Zugriff verweigert";
+	
 
 }
 
