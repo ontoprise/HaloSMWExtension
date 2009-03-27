@@ -226,9 +226,9 @@ SemanticNotifications.prototype = {
   					this.notifications.push(n);
   					html += "<tr><td>"+n+"</td>";
   					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+n+'\')">';
-  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
+  					html += '<img src="'+wgScriptPath+'/extensions/SemanticNotifications/skins/images/edit.gif" /></a></td>'; 
   					html += '<td><a href="javascript:smwhgSemanticNotifications.deleteNotification(\''+n+'\')">';
-  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/delete.png" /></a></td>'; 
+  					html += '<img src="'+wgScriptPath+'/extensions/SemanticNotifications/skins/images/delete.png" /></a></td>'; 
 					html += "</tr>";
 				}
 				html += "</table>";
