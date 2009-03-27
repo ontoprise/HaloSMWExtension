@@ -20,22 +20,15 @@ class SMWQueryInterface extends SpecialPage {
  */
 	public function execute() {
 
-		global $wgRequest, $wgOut, $smwgHaloScriptPath, $smwgEnableSemanticNotifications;
+		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 
 		$wgOut->setPageTitle(wfMsg('smw_queryinterface'));
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 		
-		$insertNotification = $smwgEnableSemanticNotifications 
-			? '<button id="qi-insert-notification-btn" '.
-			           'class="btn" onclick="qihelper.insertAsNotification()" 
-			           onmouseover="this.className=\'btn btnhov\'; 
-			           Tip(\'' . wfMsg('smw_qi_tt_insertNotification') . '\')" 
-			           onmouseout="this.className=\'btn\'" ' . 
-						'specialpage="'.urlencode(SpecialPage::getTitleFor('SemanticNotifications')->getFullURL()).'">'.
-						wfMsg('smw_qi_insertNotification') . 
-			   '</button>'
-			: "";			   
+		
+		wfRunHooks("QI_AddButtons", array (&$buttons));
+		
 
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
@@ -179,7 +172,7 @@ class SMWQueryInterface extends SpecialPage {
 						//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 						'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_preview') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
 						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
-						$insertNotification.
+						$buttons.
 						'<button class="btn" onclick="qihelper.showFullAsk(\'parser\', true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
 						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>';

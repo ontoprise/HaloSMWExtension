@@ -306,11 +306,6 @@ var wgUserLanguageStrings = {
 	'SR_OP_MODULO'		: 'Rest',
 	'SR_OP_TANGENT'		: 'Tangens',
 	
-	// Semantic notifications
-	'SN_OVERWRITE_EXISTING'   : 'Die Benachrichtigung "$1" existiert bereits. Möchten Sie sie wirklich überschreiben?',
-	'SN_DELETE'               : 'Möchten Sie die Benachrichtigung "$1" wirklich löschen?',
-	'SMW_SN_INVALID_UPDATE_INTERVAL' : 'Das Aktualisierungsinterval ist ungültig. Der kleinste zulässige Wert ist $1.',
-
 	'PC_enter_prop'		: 'Geben Sie ein Property ein.',
 	'PC_headline'		: 'Der Wert des Properties $1 von $2 ist $3, falls',
 	'PC_DERIVE_BY'		: 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.'	
