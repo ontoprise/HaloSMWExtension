@@ -227,10 +227,17 @@ function smwDIWSAddHTMLHeader(&$out) {
 
 	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository"));
 	
-	$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
+	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
 
+	$out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $smwgDIScriptPath . '/skins/webservices/webservices.css'
+                    ));
+	
 	$jsm->serializeScripts($out);
-	$jsm->serializeCSS($out);
+	//$jsm->serializeCSS($out);
 	
 	return true;
 }
@@ -249,10 +256,17 @@ function smwDITIAddHTMLHeader(&$out){
 
 	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":TermImport"));
 	
-	$jsm->addCSSIf($smwgDIScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");
+	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");
+	
+	$out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $smwgDIScriptPath . '/skins/TermImport/termimport.css'
+                    ));
 	
 	$jsm->serializeScripts($out);
-	$jsm->serializeCSS($out);
+	//$jsm->serializeCSS($out);
 
 	return true;
 }
