@@ -23,7 +23,7 @@ class ExtDebugTemplate {
  }
  
 function wfSetupDebugTemplate() {
-    global $wgParser, $wgMessageCache, $wgExtDebugTemplate, $wgMessageCache, $wgHooks;
+    global $wgParser, $wgExtDebugTemplate, $wgHooks;
  
     $wgExtDebugTemplate = new ExtDebugTemplate;
  
