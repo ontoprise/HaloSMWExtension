@@ -1076,7 +1076,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 					var path = "";
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
-						var pathStep = "//";
+						var pathStep = "/";
 
 						if (k > 0) {
 							pathStep = "/";
@@ -2618,7 +2618,10 @@ DefineWebServiceSpecial.prototype = {
 				if(updates[i]["json"] != "##" || updates[i]["xpath"] != "##"){
 					offset += 1;
 					this.addSubPath(i - offset);
-					this.resultContainer.firstChild.childNodes[i + 1].style.display = "none";
+					
+					if($("step4-resultRow-" + (i - offset)).firstChild.firstChild.lastChild.style.visibility == "hidden"){
+						this.resultContainer.firstChild.childNodes[i + 1].style.display = "none";
+					}
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
 					if(updates[i]["json"] != "##"){
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[1].value = "json";
@@ -2909,6 +2912,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step3-go-img").style.display = "";
 		}
 		
+		$("step3-duplicates").style.display ="none";
+		
 		// clear widgets of step 3
 		var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 				.cloneNode(true);
@@ -3015,6 +3020,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-go-img").style.display = "";
 		}
 
+		$("step4-duplicates").style.display ="none";
+		
 		$("step4-rest-intro").style.display = "";
 		if ($("step4-rest-intro").childNodes.length <= 0) {
 			var span = document.createElement("span");
@@ -3563,6 +3570,12 @@ DefineWebServiceSpecial.prototype = {
 		for(i=0; i < rememberedNormalRPs.length; i++){
 			var nextSibling = $("step4-resultRow-" + rememberedNormalRPs[i + 1]);
 			$("step4-resultRow-" + rememberedNormalRPs[i]).tempNextSibling = nextSibling;
+		}
+		
+		//remove placegolder if no rows were added
+		if(rows == this.resultContainer.firstChild.childNodes.length){
+			this.resultContainer.firstChild.childNodes[rows-1].style.display = "none";
+			this.resultContainer.firstChild.childNodes[rows-2].style.display = "none";
 		}
 	}
 }

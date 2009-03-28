@@ -413,12 +413,20 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		//todo: handle overflows
 		foreach($wsdlParameters as $wsdlParameter){
+			if(!$result){
+				$wsdlParameter = substr($wsdlParameter, 1);
+			}
+			
 			$wsdlParameterSteps = explode("/", $wsdlParameter);
 
 			$found = false;
 
 			foreach($wwsdParameters as $key => $wwsdParameter){
-				$matchedPath = "//";
+				if(!$result){
+					$matchedPath = "/";
+				} else {
+					$matchedPath = "//";
+				}
 				$wwsdParameterSteps = explode("/", $wwsdParameter["path"]);
 
 				if(count($wsdlParameterSteps) != count($wwsdParameterSteps)){
@@ -455,6 +463,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					}
 				}
 				if(strlen($matchedPath) > 0 && $matchedPath != "//"){
+					$found = true;
 					$a = array();
 					$a["name"] = $wwsdParameter["name"]."";
 					$a["path"] = substr($matchedPath, 1);
@@ -471,6 +480,11 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					} else {
 						$a["xpath"] = $wwsdParameter["xpath"]."";
 						$a["json"] = $wwsdParameter["json"]."";
+						if(strlen($a["xpath"]."") > 0 || strlen($a["json"]."") > 0){
+							if(!array_key_exists($a["path"]."####",$mergedParameters)){
+								$found = false;
+							}
+						}
 						if(strlen($a["xpath"]."") == 0){
 							$a["xpath"] = "##";
 						}
@@ -480,7 +494,6 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						$mergedParameters[$a["path"].$a["json"].$a["xpath"]] = $a;
 					}
 					$unsetwwsdParameters[$wwsdParameter["path"].""] = true;
-					$found = true;
 					continue;
 				}
 			}
