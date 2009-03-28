@@ -59,7 +59,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		}
 		
 		foreach($webServices as $w){
-			$ws .= "<option>".substr($w->getName(),11, strlen($w->getName()))."</option>";
+			$ws .= "<option value=\"".substr($w->getName(),11, strlen($w->getName()))."\">".substr($w->getName(),11, strlen($w->getName()))."</option>";
 		}
 
 		global $smwgDIIP, $smwgDIScriptPath;
@@ -104,7 +104,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step2-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step2-parameters\"><tr><th>Alias:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\" onclick=\"useWSSpecial.useParameters()\"/></th><th>Value:</th><th>Use default value:</th></tr></table>";
+		$html .= "<table id=\"step2-parameters\"><tr><th>Alias:</th><th>Use: <span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>Value:</th><th>Use default value:</th></tr></table>";
 		$html .= "<div id=\"step2-noparameters\">This web service does not require any parameters.</div>";
 		
 		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
@@ -123,7 +123,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step3-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step3-results\"><tr><th>Alias:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\" onclick=\"useWSSpecial.useResults()\"/></th></tr></table>";
+		$html .= "<table id=\"step3-results\"><tr><th>Alias:</th><th>Use: <span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
 		$html .= "<div id=\"step3-noresults\">This web service does not provide any result parts.</div>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
@@ -144,13 +144,13 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 			
 		$html .= "<p>Available formats: ";
 		$html .= "<select id=\"step4-format\" size=\"1\" onchange=\"useWSSpecial.updateStep4Widgets()\">";
-		$html .= "<option>list</option>";
-		$html .= "<option>ol</option>";
-		$html .= "<option>ul</option>";
-		$html .= "<option>table</option>";
-		$html .= "<option>template</option>";
-		$html .= "<option>tixml</option>";
-		$html .= "<option>transposed</option>";
+		$html .= "<option value=\"list\">list</option>";
+		$html .= "<option value=\"ol\">ol</option>";
+		$html .= "<option value=\"ul\">ul</option>";
+		$html .= "<option value=\"table\">table</option>";
+		$html .= "<option value=\"template\">template</option>";
+		$html .= "<option value=\"tixml\">tixml</option>";
+		$html .= "<optionvalue=\"transposed\">transposed</option>";
 		$html .= "</select>";
 		$html .= "</p>";
 

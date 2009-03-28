@@ -226,7 +226,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		
 		$html .= "<div id=\"step3-rest-intro\" style=\"display:none\"></div>";
 		
-		$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\" onclick=\"webServiceSpecial.useParameters()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
+		$html .= "<table id=\"step3-parameters\"><tr><th>Path:</th><th>Use: <span onclick=\"webServiceSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Optional:</th><th>Default value:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";
@@ -251,7 +251,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		
 		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
 		
-		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">Path:</th><th>Use: <input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\" onclick=\"webServiceSpecial.useResults()\"/></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">Path:</th><th>Use: <span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\"/></span></th><th>Alias: <span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>Format:</th><th>Path:</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
