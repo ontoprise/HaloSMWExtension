@@ -150,7 +150,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<option value=\"table\">table</option>";
 		$html .= "<option value=\"template\">template</option>";
 		$html .= "<option value=\"tixml\">tixml</option>";
-		$html .= "<optionvalue=\"transposed\">transposed</option>";
+		$html .= "<option value=\"transposed\">transposed</option>";
 		$html .= "</select>";
 		$html .= "</p>";
 

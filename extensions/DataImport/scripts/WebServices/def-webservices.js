@@ -913,7 +913,7 @@ DefineWebServiceSpecial.prototype = {
 			var parent = $("step4-results").parentNode;
 			parent.removeChild($("step4-results"));
 			var parent = $("step4");
-			parent.insertBefore(this.resultContainer, parent.childNodes[2]);
+			parent.insertBefore(this.resultContainer, parent.childNodes[3]);
 
 			this.resultContainer = $("step4-results");
 

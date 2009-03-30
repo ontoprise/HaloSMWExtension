@@ -449,7 +449,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					//	$wwsdParameterStep = substr($wwsdParameterStep, 0, $bracketPos);
 					//	$dupPos = $dupPos."-";
 					//}
-					if(strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
+					if(@ strpos($wsdlParameterSteps[$k], $wwsdParameterStep) === 0){
 						$matchedPath .= "/".$wwsdParameterSteps[$k];
 						if($overflowPos){
 							$matchedPath .= "##overflow##";
