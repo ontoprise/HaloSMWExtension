@@ -75,9 +75,15 @@ WebServiceToolBar.prototype = {
 		var startPos = $("wpTextbox1").selectionStart;
 		var endPos = $("wpTextbox1").selectionEnd;
 		url += "?url=" + escape(document.URL);
+		//handle two subsequent add ws-syntax
+		var pos = url.indexOf("&wsSyn");
+		if(pos > 0){
+			url = url.substring(0, pos);
+		}
+		
 		url += "&wsSyn=" + escape("&ws& test") + "&wsSynS=" + startPos + "&wsSynE=" + endPos;
+		$("wpSave").click();
 		window.location.href = url;
-		//todo: handle two subsequent ws-adds -> the url contains several parameters
 	}
 	
 	
