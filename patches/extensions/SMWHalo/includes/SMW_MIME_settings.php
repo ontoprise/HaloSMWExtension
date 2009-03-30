@@ -7,7 +7,6 @@ $wgFileExtensions = array_merge($wgFileExtensions, array(
 // 'rtf', 'mp2', 'ott' + 'stw' (OpenOfficeTextvorlage)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
 
-define('MIME_TYPE_EXTENSION');
 define('NS_DOCUMENT', 120);
 define('NS_DOCUMENT_TALK', 121);
 define('NS_AUDIO', 122);
@@ -17,6 +16,7 @@ define('NS_VIDEO_TALK', 125);
 define('NS_PDF', 126);
 define('NS_PDF_TALK', 127);
 
+global $wgExtraNamespaces;
 $wgExtraNamespaces = $wgExtraNamespaces +
 	array(NS_DOCUMENT => 'Document',
 	    NS_DOCUMENT_TALK => 'Document_talk',
@@ -27,7 +27,8 @@ $wgExtraNamespaces = $wgExtraNamespaces +
 	    NS_PDF => 'Pdf',
 	    NS_PDF_TALK => 'Pdf_talk',
 	    );
-
+	    
+global $wgNamespaceAliases;
 $wgNamespaceAliases = $wgNamespaceAliases + 
 	array('Document' => NS_DOCUMENT,
 		'Document_talk' => NS_DOCUMENT_TALK,
@@ -62,7 +63,28 @@ $wgNamespaceByExtension =
 		'odp' => NS_DOCUMENT,
 		'odg' => NS_DOCUMENT,
 		'odf' => NS_DOCUMENT,
-		'sxw' => NS_DOCUMENT
+		'sxw' => NS_DOCUMENT,
+		'svg' => NS_IMAGE,
+		'owl' => NS_IMAGE
 	);
+	
+//We want semantic data in this namespaces!
+global $smwgNamespacesWithSemanticLinks;
+$smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks + 
+	array( 
+		NS_DOCUMENT => true,
+	 	NS_AUDIO => true,
+	    NS_VIDEO => true,
+		NS_PDF	=> true
+	);
+//and we want them to be searched!
+global $smwgQDefaultNamespaces;
+if (!$smwgQDefaultNamespaces) {
+	$smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE, NS_HELP, NS_DOCUMENT, NS_AUDIO, NS_VIDEO, NS_PDF);
+}
+else {
+	$smwgQDefaultNamespaces = $smwgQDefaultNamespaces + 
+		array(NS_MAIN, NS_IMAGE,NS_HELP,NS_DOCUMENT, NS_AUDIO, NS_VIDEO, NS_PDF);
+}
 // end AdditionalMIMETypes
 ?>
