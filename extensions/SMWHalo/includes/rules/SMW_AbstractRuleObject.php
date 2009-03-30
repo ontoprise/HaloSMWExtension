@@ -90,8 +90,12 @@ abstract class SMWAbstractRuleObject {
 		// fetch bound variables
 		if (isset($rule->boundVariables)) {
 			$boundvars = array();
-			foreach ($rule->boundVariables as $boundval) {
-				array_push($boundvars, $this->setVariable($boundval));
+			if (is_array($rule->boundVariables)) {
+				foreach ($rule->boundVariables as $boundval) {
+					array_push($boundvars, $this->setVariable($boundval));
+				}
+			} else {
+				array_push($boundvars, $this->setVariable($rule->boundVariables));
 			}
 			$this->_boundVars = $boundvars;
 		}
