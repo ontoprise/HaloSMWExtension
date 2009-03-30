@@ -1142,8 +1142,8 @@ END;
 
     // add form bottom, if no custom "standard inputs" have been defined
     //DaMO hier eingreifen wegen standard inputs!
-    global $smwgRMUploadTemplateName;
-    if ( $query_template_name != $smwgRMUploadTemplateName ) {
+    global $smwgRMFormByNamespace;
+    if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
     	if (! $this->standardInputsIncluded)
       		$form_text .= SFFormUtils::formBottom($form_is_disabled);
     }
