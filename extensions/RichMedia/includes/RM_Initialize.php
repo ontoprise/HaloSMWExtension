@@ -14,9 +14,17 @@ global $smwgRMIP, $wgHooks;
 $smwgRMIP = $IP . '/extensions/RichMedia';
 $smwgRMScriptPath = $wgScriptPath . '/extensions/RichMedia';
 
-global $smwgRMUploadTemplateName, $smwgRMUploadFormName;
-$smwgRMUploadTemplateName = 'UploadTemplate';
-$smwgRMUploadFormName = 'UploadForm';
+include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
+global $smwgRMFormByNamespace;
+
+$smwgRMFormByNamespace = array(
+	NS_IMAGE => 'RMImage',
+	NS_PDF => 'RMPdf',
+	NS_DOCUMENT => 'RMDocument',
+	NS_AUDIO => 'RMAudio',
+	NS_VIDEO => 'RMVideo',
+	'RMUpload' => 'RMUpload'
+);
 
 /**
  * Configures Rich Media Extension for initialization.
@@ -99,22 +107,7 @@ function smwRMFormAddHTMLHeader(&$out){
 	
 	//add the scripts for Semantic Forms
 	SFUtils::addJavascriptAndCSS();
-	
-	$javascript = <<<END
-		<script type="text/javascript">
-		
-		function addWpDestFile(){
-			var myWpDestFile = document.getElementById("myWpDestFile").value;
-			var myLink = document.getElementById("link_id");
-			var myHref = myLink.href;
-			myLink.href = myHref+"&wpDestFile="+myWpDestFile;
-			fb.loadAnchor(myLink);
-			return true;
-		}
-	</script>
-END;
-	$wgOut->addHTML( $javascript );
-	
+	$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");	
 	$jsm = SMWResourceManager::SINGLETON();
 	//css file:
 	$jsm->addCSSIf($smwgRMScriptPath . '/skins/richmedia.css');

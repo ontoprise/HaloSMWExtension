@@ -9,7 +9,7 @@ class RMForm {
 		$input_name = "myWpDestFile";
 		$className="";
 		$html =<<<END
-		<form onsubmit=\"addWpDestFile();return false\">
+		<form onsubmit="addWpDestFile()">
 		<table><tr><td>
 		<input id="$input_id" name="$input_name" type="text" value="" size="$size" class="$className" /></td>
 END;
@@ -21,8 +21,9 @@ END;
 		$query_string .= "&sfDelimiter=$delimiter";
 		global $wgRequest;
 		$article_title = $wgRequest->getText('title');
-		global $smwgRMUploadTemplateName;
-		$query_string .= "&".$smwgRMUploadTemplateName."[RelatedArticles]=".$article_title;
+		global $smwgRMFormByNamespace;
+		$smwgRMUploadName = $smwgRMFormByNamespace['RMUpload'];
+		$query_string .= "&".$smwgRMUploadName."[RelatedArticles]=".$article_title;
 		$upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
 		
 		$upload_label = wfMsg('upload');
