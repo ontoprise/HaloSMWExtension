@@ -578,25 +578,26 @@ class UploadWindowForm {
 			
 			// begin Rich Media Changes
 			$target = $this->mLocalFile->title->getPrefixedText();;
-			global $smwgRMUploadFormName, $smwgRMUploadTemplateName;
-			$myQuery = $smwgRMUploadFormName . "/" . $target;
-			
+			global $smwgRMFormByNamespace;
+			$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];			
 			#TODO: automatic entries for the form!
 			global $wgRequest;
-			
-			// automatic settings:
-			// set Filename (don't trust the "default=now" setting of the form)
-			$wgRequest->data["$smwgRMUploadTemplateName"]['Filename'] = $target;
-			// set UploadDate
+			// set Filename
+			$wgRequest->data["$rMUploadFormName"]['Filename'] = $target;
+			// set UploadDate (don't trust the "default=now" setting of the form)
 			$uploadDateString = $this->mLocalFile->getTimestamp();
 			$uploadYear = substr($uploadDateString, 0, 4);
 			$uploadMonth = substr($uploadDateString, 4, 2);
 			$uploadDay = substr($uploadDateString, 6, 2);
-			$wgRequest->data["$smwgRMUploadTemplateName"]['UploadDate']['year'] = $uploadYear;
-			$wgRequest->data["$smwgRMUploadTemplateName"]['UploadDate']['month'] = $uploadMonth;
-			$wgRequest->data["$smwgRMUploadTemplateName"]['UploadDate']['day'] = $uploadDay;
+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['year'] = $uploadYear;
+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['month'] = $uploadMonth;
+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;
 			// set anything else?
 			
+			//set the desired destination form
+			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()]; 
+			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
+			$myQuery = $rMDestFormName . "/" . $target;
 			//set wpSave to true
 			$wgRequest->data["wpSave"]="true";
 			$form_add= new SFEditData();
@@ -627,7 +628,7 @@ EOT
 						);
 				}*/
 			
-			$uploadImageDescLink = wfMsg('smw_rm_uploadsuccessmessage1', $imagesDescLink);
+			$uploadImageDescLink = wfMsg('smw_rm_uploadsuccessmessage1', $imageDescLink);
 			$uploadImageRawLink = wfMsg('smw_rm_uploadsuccessmessage2', $imgLinkParserOutput->mText);
 			
 			$uploadSuccessMessage = "<div><b>$uploadImageDescLink</b></div>$uploadImageRawLink";
@@ -1040,9 +1041,12 @@ wgAjaxLicensePreview = {$alp};
 			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
 			  "<span class='error'>{$msg}</span>\n" );
 		}
-		global $smwgRMUploadTemplateName;
-		$uploadTemplateArray = $wgRequest->getArray($smwgRMUploadTemplateName);
-
+		global $smwgRMFormByNamespace;
+		$rmUploadName = $smwgRMFormByNamespace['RMUpload'];
+		$uploadTemplateArray = $wgRequest->getArray($rmUploadName);
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%; text-align:center;">' );
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadheadline' ) );
+		$wgOut->addHTML( '</div>' );
 		$wgOut->addHTML( '<div id="smw_rm_uploadtext" style="width:100%; text-align:center;">' );
 		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext', $uploadTemplateArray['RelatedArticles'] ) );
 		$wgOut->addHTML( '</div>' );
@@ -1074,9 +1078,42 @@ wgAjaxLicensePreview = {$alp};
 		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
 		#end max file size
 		
-		$wgOut->addHTML( '<div id="upload-size-types">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_size_types', $wgLang->formatSize( $val2 ) , implode( $wgFileExtensions, $delim ) ) );
+		$wgOut->addHTML( '<div id="upload-size">' );
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_size', $wgLang->formatSize( $val2 ) )); 
 		$wgOut->addHTML( '</div>' );
+		$wgOut->addHTML( '<div id="upload-perm-types">' );
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_permtypes' ));
+		//sort file types!
+		global $wgNamespaceByExtension;
+		$extCat = array(
+			NS_IMAGE => array(),
+			NS_PDF=> array(),
+			NS_DOCUMENT => array(),
+			NS_AUDIO => array(),
+			NS_VIDEO => array()
+		);
+		foreach ($wgFileExtensions as $ext) {
+			if (array_key_exists($ext, $wgNamespaceByExtension)) {
+				if (array_key_exists($wgNamespaceByExtension[$ext],$extCat)) {
+					array_push($extCat[$wgNamespaceByExtension[$ext]],$ext);
+				}
+				else {
+					$wgOut->addWikiText(wfMsgNoTrans( 'smw_rm_upload_error_ext_ns', $ext));
+				}
+			}
+			else {
+				$wgOut->addWikiText(wfMsgNoTrans( 'smw_rm_upload_error_ext_ns', $ext));
+			}
+//			if (isset($extCat[$wgNamespaceByExtension[$ext]]))
+//				$extCat[$wgNamespaceByExtension[$ext]] .= $ext;
+		}
+		$wgOut->addHTML('<ul>');
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode( $extCat[NS_DOCUMENT],$delim ) ));
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_type_image', implode( $extCat[NS_IMAGE],$delim ) ));
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_type_audio', implode( $extCat[NS_AUDIO],$delim ) ));
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_type_video', implode( $extCat[NS_VIDEO],$delim ) ));
+		//implode( $wgFileExtensions, $delim ) ;
+		$wgOut->addHTML( '</ul></div>' );
 		
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
 		$destfilename = wfMsgHtml( 'destfilename' );
@@ -1251,11 +1288,10 @@ EOT
 		
 		//$wgOut->addHTML("<table><tr><td><input type=\"button\" value=\"load div!\" onclick=\"parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink'));\"/>");
 		
-		$wgRequest->data["$smwgRMUploadTemplateName"]['Uploader'] = $wgUser->getName();
+		$wgRequest->data["$rmUploadName"]['Uploader'] = $wgUser->getName();
 		$form_add= new SFAddData();
 		//maybe we need a generic name for the target here...
-		global $smwgRMUploadFormName;
-		$form_add_test = $form_add->execute( $smwgRMUploadFormName . '/upload_test_DaMO6' );
+		$form_add_test = $form_add->execute( $rmUploadName . '/upload_test_DaMO6' );
 		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input  type=\"button\" value=\"$saveButtonText\" onclick=\"rm_getInputs()\"/></td></tr></table>");
 	}
