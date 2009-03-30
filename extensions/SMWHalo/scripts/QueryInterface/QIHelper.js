@@ -399,13 +399,33 @@ newPropertyDialogue:function(reset){
 	for (var i=0, n=$('dialoguecontent').rows.length; i<n; i++)
 		$('dialoguecontent').deleteRow(0);
 	
+	constraintstring = "";
+	// fetch category constraints:
+	var cats = this.activeQuery.categories; //get the category group
+	if (cats != null) {
+		for(var i=0, n = cats.length; i<n; i++) {
+			catconstraint = cats[i];
+			if (i>0) {
+				constraintstring += ",";
+			}			
+			for (var j=0, m = catconstraint.length; j<m; j++) {
+				orconstraint = catconstraint[j];
+				if (j>0) {
+					constraintstring += "|";
+				}
+				constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont')+orconstraint;
+			}
+		
+		}
+	}
+	
 	var newrow = $('dialoguecontent').insertRow(-1); // First row: input for property name
 	var cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
 	cell = newrow.insertCell(1);
 	cell.style.textAlign = "left";
 	cell.setAttribute("colSpan",2);
-	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
+	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
 	newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox for display option
 	cell = newrow.insertCell(0);
