@@ -36,7 +36,7 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
   * 
   * Returns: xml representation with titles and type of entities.
   */
- function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint) {
+ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $typeHint, $options='') {
  	global $smwgSemanticAC, $wgLang;
  	
 	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
@@ -44,75 +44,110 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  	$userInputToMatch = AutoCompletionRequester::removeCommonNamespaces($userInputToMatch); 
  	// remove whitespaces from user input and replace with underscores
  	$userInputToMatch = str_replace(" ","_",$userInputToMatch);
+
+ 	// check for constraint specific autocompletion (show only properties with certain constraints)
+ 	// syntax: array consisting of Categories (and) ORed categories concatenated by "|" 
+ 	// e.g. "Category:Person", "Category:Car|Category:Boat"
  	
- 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
- 			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
- 			if ($typeHint == null || $typeHint == 'null') {
- 				// if no $typeHint defined, search for (nearly) all pages.
- 	    		$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
-                if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
-                $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
- 	    		
- 			} else {
- 				// otherwise use type hint 
- 				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
- 				if (empty($pages)) {
- 					// fallback to standard search
- 					$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
-                    if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
-                    $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
- 				}
- 				
- 			}
- 			$result = AutoCompletionRequester::encapsulateAsXML($pages);
- 	    	AutoCompletionRequester::logResult($result, $articleName);
- 	    	return $result;
- 	} else if (stripos($userContext, "[[") === 0){  
- 		// semantic context
- 		// decide according to context which autocompletion is appropriate
- 	   
- 	    // ------------------------	
- 	    // 1. category case
- 	    // ------------------------	
- 	    if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) { 
- 	    	$result = AutoCompletionRequester::getCategoryProposals($userInputToMatch);
- 	    	AutoCompletionRequester::logResult($result, $articleName);
- 	    	return $result;
- 	    }
- 	     
- 	    // ------------------------------------------------
- 	    // 2./3. property target case / property value case
- 	    // ------------------------------------------------	
- 	    else if (stripos($userContext,":=") > 0 || stripos($userContext,"::") > 0) {
- 	    	
- 	    	$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
- 	    	
- 	    	$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
- 	    	 	    	
- 	    	// if there is a unit or possible values, show them. Otherwise show instances.
- 	    	$result = $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
- 	    	AutoCompletionRequester::logResult($result, $articleName);
- 	    	return $result;
- 	 	    
- 	     	    	
- 	    // --------------------------------
- 	    // 4.property name case
- 	    // --------------------------------	
- 	    } else {
- 	    	$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
- 	    	AutoCompletionRequester::logResult($result, $articleName);
- 	    	return $result;
- 	    	
- 	    }
- 
- 	} else if (stripos($userContext, "{{") === 0) {  
- 		// template context
- 		$result = AutoCompletionRequester::getTemplateProposals($userContext, $userInputToMatch);
- 		AutoCompletionRequester::logResult($result, $articleName);
- 	    return $result;
+ 	if ($options != '') {
+ 		$options_arr = explode(",", $options);
  		
- 	}
-  	
+ 		foreach ($options_arr as $constraint) {
+ 			$pages_or = array();
+ 			
+ 			$constraint_or = explode("|", $constraint);
+ 			// check "or-constraints" 			
+ 			foreach ($constraint_or as $or_constraint) {
+ 				$title = Title::newFromText($or_constraint);
+ 				$infpages = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($title, false);
+ 				foreach ($infpages as $page) {
+	 				if (strlen($userInputToMatch) > 0) {
+	 					if (stripos($page[0]->getText(), $userInputToMatch) !== false) {
+		 					array_push($pages_or, $page[0]);
+						}
+	 				} else {
+	 					array_push($pages_or, $page[0]);
+	 				}
+ 				}
+ 			}
+ 			
+ 			if (empty($pages_and)) {
+ 				$pages_and = $pages_or;
+ 			} else {
+ 				$pages_and = $results;
+ 			}
+ 			$results = array_intersect($pages_or, $pages_and);
+ 		}
+ 		$result = AutoCompletionRequester::encapsulateAsXML($results);
+	 	AutoCompletionRequester::logResult($result, $articleName);
+	 	return $result;
+ 	} else {
+	 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
+	 			// no context: that means only non-semantic AC is possible. Maybe a typeHint is specified
+	 			if ($typeHint == null || $typeHint == 'null') {
+	 				// if no $typeHint defined, search for (nearly) all pages.
+	 	    		$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
+	                if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
+	                $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
+	 	    		
+	 			} else {
+	 				// otherwise use type hint 
+	 				$pages = AutoCompletionRequester::getTypeHintProposals($userInputToMatch, $typeHint);
+	 				if (empty($pages)) {
+	 					// fallback to standard search
+	 					$nsToSearch = array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE);
+	                    if (defined("SMW_NS_WEB_SERVICE")) $nsToSearch[] = SMW_NS_WEB_SERVICE;
+	                    $pages = smwfGetAutoCompletionStore()->getPages($userInputToMatch, $nsToSearch);
+	 				} 			
+	 			}
+	 			$result = AutoCompletionRequester::encapsulateAsXML($pages);
+	 	    	return $result;
+	 	} else if (stripos($userContext, "[[") === 0){  
+	 		// semantic context
+	 		// decide according to context which autocompletion is appropriate
+	 	   
+	 	    // ------------------------	
+	 	    // 1. category case
+	 	    // ------------------------	
+	 	    if (stripos(strtolower($userContext), strtolower($wgLang->getNsText(NS_CATEGORY)).":") > 0) { 
+	 	    	$result = AutoCompletionRequester::getCategoryProposals($userInputToMatch);
+	 	    	AutoCompletionRequester::logResult($result, $articleName);
+	 	    	return $result;
+	 	    }
+	 	     
+	 	    // ------------------------------------------------
+	 	    // 2./3. property target case / property value case
+	 	    // ------------------------------------------------	
+	 	    else if (stripos($userContext,":=") > 0 || stripos($userContext,"::") > 0) {
+	 	    	
+	 	    	$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
+	 	    	
+	 	    	$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
+	 	    	 	    	
+	 	    	// if there is a unit or possible values, show them. Otherwise show instances.
+	 	    	$result = $attributeValues != SMW_AC_NORESULT ? $attributeValues : $propertyTargets;
+	 	    	AutoCompletionRequester::logResult($result, $articleName);
+	 	    	return $result;
+	 	 	    
+	 	     	    	
+	 	    // --------------------------------
+	 	    // 4.property name case
+	 	    // --------------------------------	
+	 	    } else {
+	 	    	$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
+	 	    	AutoCompletionRequester::logResult($result, $articleName);
+	 	    	return $result;
+	 	    	
+	 	    }
+	 
+	 	} else if (stripos($userContext, "{{") === 0) {  
+	 		// template context
+	 		$result = AutoCompletionRequester::getTemplateProposals($userContext, $userInputToMatch);
+	 		AutoCompletionRequester::logResult($result, $articleName);
+	 	    return $result;
+	 			 	
+	 	}
+ 	}  	
  }
  
 
@@ -585,8 +620,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 				} else {
 					preg_match($measure, $su, $matches);
 					if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
-				}
-					
+				}					
 			}
 		}
 		return array_unique($result);	// make sure all units appear only once.

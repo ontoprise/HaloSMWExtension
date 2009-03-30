@@ -49,6 +49,9 @@ AutoCompleter.prototype = {
 
          // type hint (for INPUTs)
         this.typeHint;
+        
+        // constraints
+        this.constraints;
 
          // current userInput of last AC request
         this.userInputToMatch = null;
@@ -195,6 +198,9 @@ AutoCompleter.prototype = {
                  // get type hint 
                 this.typeHint = this.siw.inputBox.getAttribute("typeHint");
 
+                // get constraint 
+                this.constraints = this.siw.inputBox.getAttribute("constraints");
+
 
                      // Ctrl+Alt+Space was pressed
                      // get user input which is to be matched
@@ -215,7 +221,7 @@ AutoCompleter.prototype = {
                          // runs AC after 900ms have elapsed. That means user can enter several chars 
                          // without causing a AJAX call after each, but only after the last.
                         this.timer = window.setTimeout(
-                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint)",
+                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
                                          SMW_AC_MANUAL_TRIGGERING_TIME);
                     } else {
                          // if userinputToMatch is empty --> hide floater
@@ -231,6 +237,9 @@ AutoCompleter.prototype = {
                      // get type hint 
                     this.typeHint = this.siw.inputBox.getAttribute("typeHint");
                 
+                    // get constraints
+                    this.constraints = this.siw.inputBox.getAttribute("constraints");
+                    
                     if (GeneralBrowserTools.isTextSelected(this.siw.inputBox)) {
                          // do not trigger auto AC when something is selected.
                         this.hideSmartInputFloater();
@@ -252,7 +261,7 @@ AutoCompleter.prototype = {
                              // runs AC after 900ms have elapsed. That means user can enter several chars 
                              // without causing a AJAX call after each, but only after the last.
                             this.timer = window.setTimeout(
-                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint)",
+                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
                                              SMW_AC_AUTO_TRIGGERING_TIME);
                         } else {
                              // if userinputToMatch is empty --> hide floater
@@ -280,7 +289,7 @@ AutoCompleter.prototype = {
     },  //handleKeyPress()
 
      // used to run AC after a certain peroid of time has elapsed
-    timedAC: function(userInputToMatch, userContext, inputBox, typeHint) {
+    timedAC: function(userInputToMatch, userContext, inputBox, typeHint, constraints) {
         function userInputToMatchResult(request) {
             this.hidePendingAJAXIndicator();
 
@@ -319,17 +328,18 @@ AutoCompleter.prototype = {
 
          // check if AC result for current user input is in cache
         var cacheResult = AC_matchCache.getLookup(userContext + userInputToMatch, typeHint);
-
         if (cacheResult == null) {  // if no request it
             if (userInputToMatch == null) return;
 
             this.showPendingAJAXIndicator(inputBox);
             this.resetCursorinIE();
+    
             sajax_do_call('smwf_ac_AutoCompletionDispatcher', [
                 wgTitle,
                 userInputToMatch,
                 userContext,
-                typeHint
+                typeHint,
+                constraints
             ], userInputToMatchResult.bind(this), SMW_AJAX_AC);
         } else {  // if yes, use it from cache.
             this.collection = cacheResult;
