@@ -679,7 +679,8 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "none";
 			
-			
+	
+			$("step4-rest-intro").style.display = "none";
 			
 			var tempHead = $("step4-results").childNodes[0].childNodes[0]
 					.cloneNode(true);
