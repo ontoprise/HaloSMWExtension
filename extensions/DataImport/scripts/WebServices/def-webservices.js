@@ -2744,6 +2744,17 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep1REST : function() {
+		$("step1-error").style.display = "none";
+		$("step2a-error").style.display = "none";
+		$("step2b-error").style.display = "none";
+		$("step3-error").style.display = "none";
+		$("step4-error").style.display = "none";
+		$("step5-error").style.display = "none";
+		$("step6-error").style.display = "none";
+		$("step6b-error").style.display = "none";
+		$("step6c-error").style.display = "none";
+
+		
 		$("step1-protocol-soap").setAttribute("onclick",
 				"webServiceSpecial.confirmStep1Change(\"soap\")");
 		
