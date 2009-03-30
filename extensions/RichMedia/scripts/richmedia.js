@@ -15,7 +15,14 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+function addWpDestFile(){
+			var myWpDestFile = document.getElementById("myWpDestFile").value;
+			var myLink = document.getElementById("link_id");
+			var myHref = myLink.href;
+			myLink.href = myHref+"&wpDestFile="+myWpDestFile;
+			fb.loadAnchor(myLink);
+			return true;
+}
 function rm_getInputs(){
 	//validate the form fields!
 	var error = validate_all();
