@@ -142,6 +142,7 @@ AdvancedAnnotation.prototype = {
 			this.focusOffset -= off2;
 			this.selectionContext = this.getSelectionContext();
 			this.performAnnotation(event);
+ 
 		}
 	},
 	
@@ -634,7 +635,9 @@ AdvancedAnnotation.prototype = {
 				}
 			}
 			
-						
+			// Clear the selection. Otherwise, in IE8, the whole document will
+			// be selected.
+			document.selection.empty();
 			txt = {anchorNode: startNode, 
 			       focusNode: endNode, 
 			       anchorOffset: anchorOffset,
