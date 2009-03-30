@@ -49,7 +49,7 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  	// syntax: array consisting of Categories (and) ORed categories concatenated by "|" 
  	// e.g. "Category:Person", "Category:Car|Category:Boat"
  	
- 	if ($options != '') {
+ 	if ($options != '' | $options != null) {
  		$options_arr = explode(",", $options);
  		
  		foreach ($options_arr as $constraint) {

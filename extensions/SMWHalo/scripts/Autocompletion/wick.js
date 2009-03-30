@@ -199,8 +199,7 @@ AutoCompleter.prototype = {
                 this.typeHint = this.siw.inputBox.getAttribute("typeHint");
 
                 // get constraint 
-                this.constraints = this.siw.inputBox.getAttribute("constraints");
-
+                this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
 
                      // Ctrl+Alt+Space was pressed
                      // get user input which is to be matched
