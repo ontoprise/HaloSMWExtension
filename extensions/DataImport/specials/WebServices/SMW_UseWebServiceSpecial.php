@@ -78,7 +78,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<br>";
 		$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
 		$html .= "<p id=\"step1-head\" class=\"step-headline\">".wfMsg('smw_wwsu_menue-s1');
-		$html .= "<img id=\"step1-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+		$html .= "<img id=\"step1-help-img\" class=\"help-image\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" onclick=\"useWSSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
 		$html .= "<p>"	.wfMsg('smw_wwsu_availablews');
@@ -101,7 +101,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: none\">";
 
 		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s2');
-		$html .= "<img id=\"step2-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+		$html .= "<img id=\"step2-help-img\" class=\"help-image\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" onclick=\"useWSSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
 		$html .= "<table id=\"step2-parameters\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>".wfMsg('smw_wwsu_value')."</th><th>".wfMsg('smw_wwsu_defaultvalue')."</th></tr></table>";
@@ -120,7 +120,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: none\">";
 
 		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s3');
-		$html .= "<img id=\"step3-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+		$html .= "<img id=\"step3-help-img\" class=\"help-image\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
 		$html .= "<table id=\"step3-results\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
@@ -139,7 +139,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<br>";
 		$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s4');
-		$html .= "<img id=\"step4-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+		$html .= "<img id=\"step4-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
 		$html .= "<p>".wfMsg('smw_wwsu_availableformats');
@@ -173,7 +173,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<br>";
 		$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s5');
-		$html .= "<img id=\"step5-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(5)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+		$html .= "<img id=\"step5-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(5)\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
 		$html .= "<p>";
