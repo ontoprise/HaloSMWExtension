@@ -1044,11 +1044,11 @@ wgAjaxLicensePreview = {$alp};
 		global $smwgRMFormByNamespace;
 		$rmUploadName = $smwgRMFormByNamespace['RMUpload'];
 		$uploadTemplateArray = $wgRequest->getArray($rmUploadName);
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%; text-align:center;">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadheadline' ) );
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
+		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
 		$wgOut->addHTML( '</div>' );
 		$wgOut->addHTML( '<div id="smw_rm_uploadtext" style="width:100%; text-align:center;">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext', $uploadTemplateArray['RelatedArticles'] ) );
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext', $uploadTemplateArray['RelatedArticles'] ));
 		$wgOut->addHTML( '</div>' );
 		
 		# Print a list of allowed file extensions, if so configured.  We ignore
