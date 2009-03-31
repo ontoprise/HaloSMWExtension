@@ -2744,6 +2744,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep1REST : function() {
+		$("errors").style.display = "none";
 		$("step1-error").style.display = "none";
 		$("step2a-error").style.display = "none";
 		$("step2b-error").style.display = "none";
@@ -3154,7 +3155,7 @@ DefineWebServiceSpecial.prototype = {
 		this.showPendingIndicator("step6-go");
 
 		if ($("step6-name").value.length > 0) {
-			// todo: sind hier andere error messages als bei soap nötig?
+			// todo: sind hier andere error messages als bei soap nï¿½tig?
 	$("errors").style.display = "none";
 	$("step6-error").style.display = "none";
 	$("step6b-error").style.display = "none";
