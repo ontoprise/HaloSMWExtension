@@ -1,0 +1,37 @@
+Installation instructions for Semantic Notification extension v1.0
+---------------------------------------------------------------
+
+Requirements: 
+=============
+
+    MediaWiki 1.13 or higher
+    SMW 1.4.2
+    SMWHalo 1.4.3
+    Semantic Gardening 1.0
+
+Installation:
+=============
+
+Copy the folder "SemanticNotifications" into the folder "extensions" of your 
+MediaWiki installation.
+Then add to your LocalSettings.php after you initialized SMWHalo and 
+Semantic Gardening:
+
+include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
+enableSemanticNotifications(); 
+
+Specify your email settings for sending the notification mails:
+
+$wgSMTP = array(
+ 'host'     => "the host of your e-mail provider",
+ 'IDHost'   => "domain for MessageID",
+ 'port'     => 25,
+ 'auth'     => true, 
+ 'username' => "your user name",
+ 'password' => "your password"
+);
+
+Options:
+========
+
+
