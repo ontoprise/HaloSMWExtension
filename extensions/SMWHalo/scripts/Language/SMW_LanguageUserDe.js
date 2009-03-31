@@ -308,5 +308,7 @@ var wgUserLanguageStrings = {
 	
 	'PC_enter_prop'		: 'Geben Sie ein Property ein.',
 	'PC_headline'		: 'Der Wert des Properties $1 von $2 ist $3, falls',
-	'PC_DERIVE_BY'		: 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.'	
+	'PC_DERIVE_BY'		: 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.',
+	
+	'smw_wwsu_addwscall'			:	'Web Service Aufruf hinzufügen'
 };

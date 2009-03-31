@@ -275,5 +275,7 @@ var wgUserLanguageStrings = {
 	'WTP_NOT_IN_ANNOTATION'		  : "'$1' is deel van een aantekening.\nEr kunnen geen aantekeningen gemaakt worden.",
 	'WTP_NOT_IN_QUERY'            : "'$1' is deel van een query.\nEr kunnen geen aantekeningen gemaakt worden.",
 	'WTP_NOT_IN_PREFORMATTED'	  : "'$1' is deel van een voorgeformatteerde tekst.\nEr kunnen geen aantekeningen gemaakt worden.",
-	'WTP_SELECTION_OVER_FORMATS'  : "De selectie omvat verschillende formaten:\n$1"
+	'WTP_SELECTION_OVER_FORMATS'  : "De selectie omvat verschillende formaten:\n$1",
+
+	'smw_wwsu_addwscall'			:	'Add web service call'
 };
