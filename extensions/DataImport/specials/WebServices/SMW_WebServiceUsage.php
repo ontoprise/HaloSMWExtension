@@ -127,7 +127,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
 }
 
 /**
- * Parses the {{ ws: }} syntax and returns the resulting wikitext
+ * Simply calls webServiceUsage_processCall
  *
  * @param $parser
  * @return string
@@ -138,11 +138,25 @@ function webServiceUsage_Render( &$parser) {
 	return webServiceUsage_processCall($parser, $parameters);
 }
 
-function webservice_getPreview($wsName, $parameters){
-	return webServiceUsage_processCall($wsName, $parameters, true);
+/**
+ * Simply calls webServiceUsage_processCall
+ *
+ * @param $parameters : 
+ * 
+ * @return string
+ * 		the rendered wikitext
+ */
+function webservice_getPreview($articleName, $parameters){
+	return webServiceUsage_processCall($articleName, $parameters, true);
 }
 
-//todo:solve problem that parser is sometimes a parser and sometimes an article name
+/**
+ * Parses the {{ ws: }} syntax and returns the resulting wikitext
+ *
+ * @param $parser
+ * @return string
+ * 		the rendered wikitext
+ */
 function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	global $wgsmwRememberedWSUsages, $purgePage;
 	$purgePage = true;
@@ -211,8 +225,11 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		if(!$preview){
 			$articleId = $parser->getTitle()->getArticleID();
 		} else {
-			$t = Title::makeTitleSafe(0, $parser);
-			$articleId = $t->getArticleID();
+			$articleId = 0;
+			if(strlen($parser) >0){
+				$t = Title::makeTitleSafe(0, $parser);
+				$articleId = $t->getArticleID();
+			}
 		}
 		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
 		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));

@@ -240,12 +240,15 @@ UseWebService.prototype = {
 				wsSynE = params[i];
 			}
 		}
+		
+		this.title = "";
 
 		if (this.url.length > 0) {
 			params = this.url.split("&");
 			for(i=0; i < params.length; i++){
-				if(params[i].indexOf("title=") == 0){
-					
+				if(params[i].indexOf("?title=") > 0){
+					var title = params[i].substring(params[i].indexOf("?title=")+7);
+					this.title = title;
 				}
 			}
 			this.url += "&" + wsSynS;
@@ -345,7 +348,7 @@ UseWebService.prototype = {
 	getPreview : function() {
 		this.showPendingIndicator("step5-preview-button");
 
-		sajax_do_call("smwf_wsu_getPreview", [ this.createWSSyn() ],
+		sajax_do_call("smwf_wsu_getPreview", [ this.title, this.createWSSyn() ],
 				this.getPreviewCallBack.bind(this));
 	},
 

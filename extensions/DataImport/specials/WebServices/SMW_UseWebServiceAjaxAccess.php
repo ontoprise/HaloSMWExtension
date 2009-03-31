@@ -81,7 +81,7 @@ function smwf_wsu_processStep2($name){
 
 }
 
-function smwf_wsu_getPreview($wsSyn){
+function smwf_wsu_getPreview($articleName, $wsSyn){
 	global $smwgDIIP;
 	require_once($smwgDIIP.'/specials/WebServices/SMW_WebServiceUsage.php');
 	
@@ -92,12 +92,11 @@ function smwf_wsu_getPreview($wsSyn){
 	
 	$parameters = array();
 	$parameters[] = "dummy";
-	$temp = substr($wsSyn[0], 6);
 	$parameters[] = substr($wsSyn[0], 6);
 	for($i=1; $i < count($wsSyn); $i++){
 		$parameters[] = $wsSyn[$i];
 	}
-	return webservice_getPreview("BookSearchTest", $parameters);	
+	return webservice_getPreview($articleName, $parameters);	
 }
 
 ?>
