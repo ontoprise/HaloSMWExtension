@@ -1141,7 +1141,7 @@ END;
     $form_text = str_replace('{{{choosers}}}', $chooser_text, $form_text);
 
     // add form bottom, if no custom "standard inputs" have been defined
-    //DaMO hier eingreifen wegen standard inputs!
+    //Rich media extension: get the upload form name and do not display standard inputs for that
     global $smwgRMFormByNamespace;
     if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
     	if (! $this->standardInputsIncluded)
