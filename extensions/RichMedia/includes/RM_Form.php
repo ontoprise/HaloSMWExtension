@@ -26,7 +26,7 @@ END;
 		$query_string .= "&".$smwgRMUploadName."[RelatedArticles]=".$article_title;
 		$upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
 		
-		$upload_label = wfMsg('upload');
+		$upload_label = wfMsg('smw_rm_uploadheadline');
 		$buttonText = wfMsg('smw_rm_formbuttontext');
 		$html .= " <td><a id=\"link_id\" href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:520\"></a>
 		<input type=\"submit\" onclick=\"addWpDestFile(); return false;\" value=\"$buttonText\"/></td>";
