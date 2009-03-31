@@ -31,6 +31,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the SemanticNotifications extension. It is not a valid entry point.\n" );
 }
 
+if ( !defined( 'SGA_GARDENING_EXTENSION_VERSION' ) ) {
+	die( "The extension 'Semantic Notifications' requires the extension ". 
+	     "'Semantic Gardening'.\n".
+	     "Please read 'extensions/SemanticNotifications/INSTALL' for further information.\n" );
+}
+
 define('SN_SEMANTIC_NOTIFICATIONS_VERSION', '1.0');
 
 // constant for special schema properties
