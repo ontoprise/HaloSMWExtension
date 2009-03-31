@@ -70,13 +70,13 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$webServices = WSStorage::getDatabase()->getWebServices();
 		ksort($webServices);
 
-		$html .= "<h2><span class=\"mw-headline\">Available Wiki Web Service Definitions</span></h2>";
+		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_wwsr_intro')."</span></h2>";
 
 		if($allowed){
-			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th><th>Update</th><th>Confirm</th></tr>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th>".wfMsg('smw_wwsr_update')."</th><th>".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
-			$html .= "<p>If you do not see the buttons for updating and confirming WebServices, you might not be logged in or you do not have any rights to use these functions.</p>";
-			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>Name</th><th>Last Updates</th></tr>";
+			$html .= "<p>".wfMsg('smw_wwsr_noconfirm')."</p>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
 		}
 		foreach($webServices as $ws){
 			$wsUrl = Title::newFromID($ws->getArticleID())->getInternalURL();
@@ -107,13 +107,13 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
-				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">Update</button>";
-				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">Updating</div></td>";
+				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
+				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">".wfMsg('smw_wwsr_updating')."</div></td>";
 
 				if($ws->getConfirmationStatus() != "true"){
-					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">Confirm</button></td></tr>";
+					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
 				} else {
-					$html .= "<td>confirmed</td></tr>";
+					$html .= "<td>".wfMsg('smw_wwsr_confirmed')."</td></tr>";
 				}
 			} else {
 				$html .= "</tr>";

@@ -181,7 +181,7 @@ function smwfDIInitUserMessages() {
  * Add appropriate JS language script
  */
 function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-	global $wgLanguageCode, $smwgDIScriptPath, $wgUser;
+	global $wgLanguageCode, $smwgDIScriptPath, $wgUser, $smwgDIIP;
 	
 	// content language file
 	$lng = '/scripts/Language/SMWDI_Language';
@@ -190,7 +190,7 @@ function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($smwgDIScriptPath . $lng)) {
+		if (file_exists($smwgDIIP . $lng)) {
 			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
 			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageEn.js', $mode, $namespace, $pages);
@@ -203,7 +203,8 @@ function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 	$lng = '/scripts/Language/SMWDI_Language';
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($smwgDIScriptPath . $lng)) {
+		//$temp = $smwgDIScriptPath . $lng;
+		if (file_exists($smwgDIIP . $lng)) {
 			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
 			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageUserEn.js', $mode, $namespace, $pages);
@@ -225,7 +226,7 @@ function smwDIWSAddHTMLHeader(&$out) {
 	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/def-webservices.js', "all", -1, array(NS_SPECIAL.":DefineWebService"));
 	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js', "all", -1, array(NS_SPECIAL.":UseWebService"));
 
-	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository"));
+	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
 	
 	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
 

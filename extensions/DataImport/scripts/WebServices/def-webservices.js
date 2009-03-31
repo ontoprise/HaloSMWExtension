@@ -146,7 +146,7 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		if (this.step != "step2") {
-			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
+			check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 			if (check == false) {
 				return;
 			}
@@ -467,11 +467,11 @@ DefineWebServiceSpecial.prototype = {
 					optionalRadio1.name = "s3-optional-radio" + i;
 				}
 				optionalRadio1.id = "s3-optional-true" + i;
-				optionalRadio1.value = "yes";
+				optionalRadio1.value = diLanguage.getMessage('smw_wws_yes');
 				paramTD2.appendChild(optionalRadio1);
 
 				var optionalRadio1Span = document.createElement("span");
-				var optionalRadio1TextY = document.createTextNode("Yes");
+				var optionalRadio1TextY = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
 				optionalRadio1Span.appendChild(optionalRadio1TextY);
 				paramTD2.appendChild(optionalRadio1Span);
 
@@ -491,7 +491,7 @@ DefineWebServiceSpecial.prototype = {
 				paramTD2.appendChild(optionalRadio2);
 
 				var optionalRadio2Span = document.createElement("span");
-				var optionalRadio2TextN = document.createTextNode("No");
+				var optionalRadio2TextN = document.createTextNode(diLanguage.getMessage('smw_wws_no'));
 				optionalRadio2Span.appendChild(optionalRadio2TextN);
 				paramTD2.appendChild(optionalRadio2Span);
 
@@ -894,7 +894,7 @@ DefineWebServiceSpecial.prototype = {
 				var subPathButton = document.createElement("input");
 				subPathButton.id = "s4-add-subpath" + i;
 				subPathButton.type = "button";
-				subPathButton.value = "Add subpath";
+				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
 				subPathButton.style.cursor = "pointer";
 				subPathButton.style.cursor = "pointer";
 				subPathButton.setAttribute("onclick",
@@ -2662,7 +2662,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	showAuthenticationBox : function(what) {
-		if (what == "yes") {
+		if (what == diLanguage.getMessage('smw_wws_yes')) {
 			$("step1-auth-box").style.display = "";
 		} else {
 			$("step1-auth-box").style.display = "none";
@@ -2726,7 +2726,7 @@ DefineWebServiceSpecial.prototype = {
 
 		var removeButton = document.createElement("input");
 		removeButton.type = "button";
-		removeButton.value = "Remove subpath";
+		removeButton.value = diLanguage.getMessage('smw_wws_remove_subpath');
 		removeButton.setAttribute("onclick", "webServiceSpecial.removeSubPath("
 				+ id + "," + sid + ")");
 		removeButton.style.cursor = "pointer";
@@ -2831,9 +2831,9 @@ DefineWebServiceSpecial.prototype = {
 			input.type = "radio";
 			input.name = "s3-optional-radio" + id;
 		}
-		input.value = "yes";
+		input.value = diLanguage.getMessage('smw_wws_yes');
 		td.appendChild(input);
-		var text = document.createTextNode("Yes");
+		var text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
 		td.appendChild(text);
 
 		if (navigator.appName.indexOf("Explorer") != -1) {
@@ -2845,10 +2845,10 @@ DefineWebServiceSpecial.prototype = {
 			input.type = "radio";
 			input.name = "s3-optional-radio" + id;
 		}
-		input.value = "no";
+		input.value = diLanguage.getMessage('smw_wws_no');
 		input.checked = true;
 		td.appendChild(input);
-		text = document.createTextNode("No");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
 		td.appendChild(text);
 		row.appendChild(td);
 
@@ -2864,15 +2864,15 @@ DefineWebServiceSpecial.prototype = {
 		var select = document.createElement("select");
 
 		var option = document.createElement("option");
-		text = document.createTextNode("Add parameter");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_parameter'));
 		option.appendChild(text);
-		option.value = "Add parameter";
+		option.value = diLanguage.getMessage('smw_wws_add_parameter');
 		select.appendChild(option);
 
 		option = document.createElement("option");
-		text = document.createTextNode("Remove parameter");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_parameter'));
 		option.appendChild(text);
-		option.value = "Remove parameter";
+		option.value = diLanguage.getMessage('smw_wws_remove_parameter');
 		select.appendChild(option);
 
 		td.appendChild(select);
@@ -2894,9 +2894,9 @@ DefineWebServiceSpecial.prototype = {
 		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
 		var action = select.value;
 
-		if (action == "Add parameter") {
+		if (action == diLanguage.getMessage('smw_wws_add_parameter')) {
 			this.appendRESTParameter();
-		} else if (action == "Remove parameter") {
+		} else if (action == diLanguage.getMessage('smw_wws_remove_parameter')) {
 			$("step3-parameters").childNodes[0].childNodes[id].removed = true;
 			$("step3-parameters").childNodes[0].childNodes[id].style.display = "none";
 			
@@ -2939,7 +2939,7 @@ DefineWebServiceSpecial.prototype = {
 		if($("step3-rest-intro").childNodes.length <= 0){
 			var button = document.createElement("input");
 			button.setAttribute("type", "button");
-			button.setAttribute("value", "Add parameters");
+			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_parameters'));
 			button.setAttribute("onclick", "webServiceSpecial.displayRestParameterTable()");
 			$("step3-rest-intro").appendChild(button);
 		}
@@ -2996,15 +2996,15 @@ DefineWebServiceSpecial.prototype = {
 		select = document.createElement("select");
 
 		option = document.createElement("option");
-		text = document.createTextNode("Add result part");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_resultpart'));
 		option.appendChild(text);
-		option.value = "Add result part";
+		option.value = diLanguage.getMessage('smw_wws_add_resultpart');
 		select.appendChild(option);
 
 		option = document.createElement("option");
-		text = document.createTextNode("Remove result part");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_resultpart'));
 		option.appendChild(text);
-		option.value = "Remove result part";
+		option.value = diLanguage.getMessage('smw_wws_remove_resultpart');
 		select.appendChild(option);
 
 		td.appendChild(select);
@@ -3037,17 +3037,16 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-rest-intro").style.display = "";
 		if ($("step4-rest-intro").childNodes.length <= 0) {
 			var span = document.createElement("span");
-			var text = document.createTextNode("Use complete result as result part: ");
+			var text = document.createTextNode(diLanguage.getMessage('smw_wws_use_complete'));
 			span.appendChild(text);
 			$("step4-rest-intro").appendChild(span);
 			
 			var input = document.createElement("input");
 			input.type = "checkbox";
-			//input.style.marginLeft = "40px";
 			$("step4-rest-intro").appendChild(input);
 			
 			span = document.createElement("span");
-			text = document.createTextNode("Alias: ");
+			text = document.createTextNode(diLanguage.getMessage('smw_wws_alias'));
 			span.appendChild(text);
 			$("step4-rest-intro").appendChild(span);
 			
@@ -3064,7 +3063,7 @@ DefineWebServiceSpecial.prototype = {
 			
 			var button = document.createElement("input");
 			button.setAttribute("type", "button");
-			button.setAttribute("value", "Add result parts");
+			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_resultparts'));
 			button.setAttribute("onclick",
 					"webServiceSpecial.displayRestResultsTable()");
 			$("step4-rest-intro").appendChild(button);
@@ -3098,9 +3097,9 @@ DefineWebServiceSpecial.prototype = {
 		var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
 		var action = select.value;
 
-		if (action == "Add result part") {
+		if (action == diLanguage.getMessage('smw_wws_add_resultpart')) {
 			this.appendRESTResultPart();
-		} else if (action == "Remove result part") {
+		} else if (action == diLanguage.getMessage('smw_wws_remove_resultpart')) {
 			$("step4-results").childNodes[0].childNodes[id].removed = true;
 			$("step4-results").childNodes[0].childNodes[id].style.display = "none";
 
@@ -3354,7 +3353,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	confirmStep1Change : function(protocol){
-		check = confirm("If you proceed, all input you already gave in the subsequent steps will be lost!");
+		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 		if (check == false) {
 			if(protocol == "soap"){
 				$("step1-protocol-rest").checked = true;
@@ -3374,7 +3373,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	confirmStep2Change : function() {
-		check = confirm("If you proceed, all input you already gave in the subsequent steps will be lost!");
+		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 		if (check == false) {
 			$("step2-methods").blur();
 			return;
@@ -3550,7 +3549,7 @@ DefineWebServiceSpecial.prototype = {
 				var subPathButton = document.createElement("input");
 				subPathButton.id = "s4-add-subpath" + (i + rows);
 				subPathButton.type = "button";
-				subPathButton.value = "Add subpath";
+				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
 				subPathButton.setAttribute("onclick", "webServiceSpecial.addSubPath("
 						+ (rows + i) + ")");
 				subPathButton.style.cursor = "pointer";

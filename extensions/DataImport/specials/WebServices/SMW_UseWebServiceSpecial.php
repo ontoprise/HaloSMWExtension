@@ -66,22 +66,22 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		$html .= "<div id=\"menue\" class=\"BreadCrumpContainer\">";
-		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">1. Choose web service<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">2. Define parameters<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">3. Choose result parts<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">4. Choose output format<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">5. Result</span>";
+		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">".wfMsg('smw_wwsu_menue-s1')."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s2')."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s3')."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s4')."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s5')."</span>";
 		$html .= "</div>";
 
 
 		// 1. Choose web service
 		$html .= "<br>";
 		$html .= "<div id=\"step1\" class=\"StepDiv\" style=\"display: block\">";
-		$html .= "<p id=\"step1-head\" class=\"step-headline\">1. Choose web service";
+		$html .= "<p id=\"step1-head\" class=\"step-headline\">".wfMsg('smw_wwsu_menue-s1');
 		$html .= "<img id=\"step1-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
-		$html .= "<p>Available web services: ";
+		$html .= "<p>"	.wfMsg('smw_wwsu_availablews');
 		$html .= "<select id=\"step1-webservice\" size=\"1\">";
 		$html .= $ws."</select>";
 		$html .= "</p>";
@@ -100,12 +100,12 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		//2. Define parameters
 		$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: none\">";
 
-		$html .= "<p class=\"step-headline\">2. Define parameters";
+		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s2');
 		$html .= "<img id=\"step2-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step2-parameters\"><tr><th>Alias:</th><th>Use: <span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>Value:</th><th>Use default value:</th></tr></table>";
-		$html .= "<div id=\"step2-noparameters\">This web service does not require any parameters.</div>";
+		$html .= "<table id=\"step2-parameters\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>".wfMsg('smw_wwsu_value')."</th><th>".wfMsg('smw_wwsu_defaultvalue')."</th></tr></table>";
+		$html .= "<div id=\"step2-noparameters\">".wfMsg("smw_wwsu_noparameters")."</div>";
 		
 		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
 
@@ -119,12 +119,12 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		//3. Choose result parts
 		$html .= "<div id=\"step3\" class=\"StepDiv\" style=\"display: none\">";
 
-		$html .= "<p class=\"step-headline\">3. Choose result parts";
+		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s3');
 		$html .= "<img id=\"step3-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<table id=\"step3-results\"><tr><th>Alias:</th><th>Use: <span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
-		$html .= "<div id=\"step3-noresults\">This web service does not provide any result parts.</div>";
+		$html .= "<table id=\"step3-results\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th>".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th></tr></table>";
+		$html .= "<div id=\"step3-noresults\">".wfMsg('smw_wwsu_noresults')."</div>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wsuse_s3-help")."</div>";
 
@@ -138,11 +138,11 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		// 4. Choose output format
 		$html .= "<br>";
 		$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"display: none\">";
-		$html .= "<p class=\"step-headline\">4. Choose output format";
+		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s4');
 		$html .= "<img id=\"step4-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
-		$html .= "<p>Available formats: ";
+		$html .= "<p>".wfMsg('smw_wwsu_availableformats');
 		$html .= "<select id=\"step4-format\" size=\"1\" onchange=\"useWSSpecial.updateStep4Widgets()\">";
 		$html .= "<option value=\"list\">list</option>";
 		$html .= "<option value=\"ol\">ol</option>";
@@ -172,14 +172,14 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 
 		$html .= "<br>";
 		$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: none\">";
-		$html .= "<p class=\"step-headline\">5. Result";
+		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s5');
 		$html .= "<img id=\"step5-help-img\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(5)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
 		$html .= "<p>";
-		$html .= "<span id=\"step5-preview-button\"><input type=\"button\" onclick=\"useWSSpecial.getPreview()\" value=\"Display preview\" id=\"step5-preview-button-img\"></input></span>";
-		$html .= "<input type=\"button\" onclick=\"useWSSpecial.displayWSSyntax()\" value=\"Display #ws-syntax\"></input>";
-		$html .= "<input type=\"button\" onclick=\"useWSSpecial.addToArticle()\" value=\"Add call to <articlename>\" id=\"step5-add\" style=\"display: none\"></input>";
+		$html .= "<span id=\"step5-preview-button\"><input type=\"button\" onclick=\"useWSSpecial.getPreview()\" value=\"".wfMsg('smw_wwsu_displaypreview')."\" id=\"step5-preview-button-img\"></input></span>";
+		$html .= "<input type=\"button\" onclick=\"useWSSpecial.displayWSSyntax()\" value=\"".wfMsg('smw_wwsu_displaywssyntax')."\"></input>";
+		$html .= "<input type=\"button\" onclick=\"useWSSpecial.addToArticle()\" value=\"".wfMsg('smw_wwsu_addcall')."\" id=\"step5-add\" style=\"display: none\"></input>";
 		$html .= "</p>";
 
 		$html .= "<div id=\"step5-help\" style=\"display:none\">".wfMsg("smw_wsuse_s5-help")."</div>";

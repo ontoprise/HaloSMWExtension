@@ -16,11 +16,33 @@
 */
 
 var wgUserLanguageStrings = {
-		'smw_ti_sourceinfo'		: 'The following Information is needed in order to start the Import',
-		'smw_ti_source'			: 'Source',
-		'smw_ti_edit'			: 'edit',
-		'smw_ti_attributes'		: '<b>Available attributes in this data source</b><br/>The following attributes can be extracted from data source defined:',
-		'smw_ti_articles1'		: '<b>Articles to be imported from this data source</b><br/>The following ',
-		'smw_ti_noa'			: 'articleName',
-		'smw_ti_articles2'		: ' articles will be generated in the wiki:'
+		'smw_ti_sourceinfo'			: 	'The following Information is needed in order to start the Import',
+		'smw_ti_source'				: 	'Source',
+		'smw_ti_edit'				: 	'edit',
+		'smw_ti_attributes'			: 	'<b>Available attributes in this data source</b><br/>The following attributes can be extracted from data source defined:',
+		'smw_ti_articles1'			: 	'<b>Articles to be imported from this data source</b><br/>The following ',
+		'smw_ti_noa'				: 	'articleName',
+		'smw_ti_articles2'			: 	' articles will be generated in the wiki:',
+			
+		'smw_wws_add_parameter'		:	'Add parameter',
+		'smw_wws_add_parameters'	:	'Add parameters',
+		'smw_wws_remove_parameter'	:	'Remove parameter',
+		'smw_wws_add_resultpart'	:	'Add result part',
+		'smw_wws_add_resultparts'	:	'Add result parts',
+		'smw_wws_remove_resultpart'	:	'Remove result part',
+		'smw_wws_proceed'			:	'If you proceed, all input you already gave in the subsequent steps will be lost!',
+		'smw_wws_use_complete'		:	'Use complete result as result part: ',
+		'smw_wws_alias'				:	'Alias: ',
+		'smw_wws_yes'				:	'Yes',
+		'smw_wws_no'				:	'No',
+		'smw_wws_add_subpath'		:	'Add subpath',
+		'smw_wws_remove_subpath'		:	'Remove subpath',
+		
+		'smw_wwsr_confirmed'			: 	'confirmed',
+		
+		'smw_wwsu_addcall'				:	'Add call to ',
+		'smw_wwsu_warning' 				:	'Warning: ',
+		'smw_wwsu_confirm' 				:	'If you proceed, all information you already entered will be lost',
+		
+		
 };

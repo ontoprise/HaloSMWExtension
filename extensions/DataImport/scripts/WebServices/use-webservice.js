@@ -254,7 +254,7 @@ UseWebService.prototype = {
 			var title = this.url.substr(this.url.indexOf("title=") + 6);
 			title = title.substr(0, title.indexOf("&"));
 			title = title.replace(/_/g, " ");
-			$("step5-add").value = "Add call to " + title;
+			$("step5-add").value = diLanguage.getMessage('smw_wwsu_addcall') + title;
 			$("step5-add").style.display = "";
 		}
 	},
@@ -352,14 +352,14 @@ UseWebService.prototype = {
 	getPreviewCallBack : function(request) {
 		$("step5-preview").style.display = "";
 		var response = request.responseText
-		response = response.replace(/warning.png/g, "<b>Warning: </b>");
+		response = response.replace(/warning.png/g, "<b>" + diLanguage.getMessage('smw_wwsu_warning') + "</b>");
 		$("step5-preview").innerHTML = response;
 		$("step5-preview").style.display = "";
 		this.hidePendingIndicator();
 	},
 	
 	confirmWSChange : function(){
-		var checked = confirm("If you proceed, all information you already entered will be lost");
+		var checked = confirm(diLanguage.getMessage('smw_wwsu_confirm'));
 		if(checked){
 			useWSSpecial.processStep1();
 		} else {

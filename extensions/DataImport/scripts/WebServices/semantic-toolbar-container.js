@@ -66,7 +66,7 @@ WebServiceToolBar.prototype = {
 	},
 	
 	createLinkToSpecialPage : function(){
-		var response = "<p onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">Add web service call</p>";
+		var response = "<p onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">" + gLanguage.getMessage("smw_wwsu_addwscall") + "</p>";
 		return response;	
 	},
 	
