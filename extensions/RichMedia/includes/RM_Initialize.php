@@ -43,6 +43,8 @@ function enableRichMediaExtension() {
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMFormUsage_Magic';
+	// workaround: because the script are only loaded by the parser function, when action=purge.
+	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 }
 
 /**
