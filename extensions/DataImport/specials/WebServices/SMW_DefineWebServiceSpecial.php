@@ -336,7 +336,6 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "</div>";
 
-		//todo:use language file
 		//7. show #ws-usage
 		$html .= "<div id=\"step7\" style=\"display: none\">";
 		$html .= "<span>".wfMsg('smw_wws_yourws')."\"";

@@ -153,7 +153,9 @@ function webservice_getPreview($articleName, $parameters){
 /**
  * Parses the {{ ws: }} syntax and returns the resulting wikitext
  *
- * @param $parser
+ * @param $parser : a parser object if called by mediawiki or
+ * 					a string if called by the preview function
+ * @param $preview : boolean
  * @return string
  * 		the rendered wikitext
  */
@@ -207,6 +209,13 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
+		
+		$removeParameterSetForPreview = true;
+		if(strpos($parameterSetId, "#") === 0){
+			$parameterSetId = substr($parameterSetId, 1);
+			$removeParameterSetForPreview = false; 
+		}
+		
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
 		
 		if($propertyName != null){
@@ -226,13 +235,22 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			$articleId = $parser->getTitle()->getArticleID();
 		} else {
 			$articleId = 0;
-			if(strlen($parser) >0){
+			if(strlen($parser) > 0){
 				$t = Title::makeTitleSafe(0, $parser);
 				$articleId = $t->getArticleID();
 			}
 		}
-		WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
-		$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
+		
+		//handle cache issues for previews
+		if(!$preview){
+			WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
+			$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
+		} else {
+			WebServiceCache::removeWSParameterPair($wsId, $parameterSetId);
+			if($removeParameterSetForPreview){
+				WSStorage::getDatabase()->removeParameterSet($parameterSetId);
+			}
+		}
 		
 		
 		if($preview){
@@ -346,7 +364,9 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null)
 	}
 }
 
-
+/*
+ * validates ws-usage
+ */
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$ws = WebService::newFromId($wsId);
 	$mP = $ws->validateSpecifiedParameters($wsParameters);

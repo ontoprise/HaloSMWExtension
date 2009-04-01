@@ -340,6 +340,9 @@ class WebServiceManager {
 		return false;
 	}
 
+	/*
+	 * remembers the WWSD in a static variable
+	 */
 	public static function rememberWWSD($ws){
 		self::$mOldWebservice = $ws;
 	}

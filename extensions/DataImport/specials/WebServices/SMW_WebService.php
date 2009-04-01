@@ -21,8 +21,6 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_XPathProcessor.php");
 
-global $smwgWSOldDotSyntax;
-
 /**
  * Instances of this class describe a web service.
  *
@@ -460,12 +458,7 @@ class WebService {
 			}
 		}
 
-		global $smwgWSOldDotSyntax;
-		if($smwgWSOldDotSyntax){
-			$result = $this->odtGetCallResultParts($response, $resultParts);
-		} else {
-			$result = $this->getCallResultParts($response[0], $resultParts);
-		}
+		$result = $this->getCallResultParts($response[0], $resultParts);
 			
 		$ws = $this->mArticleID;
 		if($this->getConfirmationStatus() == "false"){
@@ -481,162 +474,10 @@ class WebService {
 	 * This methods returns these parts of the ws-response
 	 * that are of interrest
 	 *
-	 * @param $response the response of the webservice
-	 * @param array $resultParts the parts of the result that are of interrest
-	 * @return array the result of interrest
-	 */
-	/*
-	 public function getCallResultParts($response, $resultParts){
-		//initialize array containing select paths and their value
-		$selects = array();
-		foreach ($this->mParsedResult as $rdef) {
-		foreach($rdef->children() as $child){
-		if ($child->getName() == 'select') {
-		//					$selects["".$rdef['name'].'.'.$child["object"]] = "".$child["value"];
-		$selects["".$child["object"]] = "".$child["value"];
-		}
-		}
-		}
-
-		//initialize array of paths and elements that are not selected in the result
-		$outselectedPaths = array();
-		foreach($selects as $path => $value){
-		$pathSteps = explode(".", $path);
-		$tempObject[""] = $response;
-		for($i=0; $i < sizeof($pathSteps); $i++){
-		if($tempObject){
-		foreach($tempObject as $key => $temp){
-		if(is_array($temp)){
-		$index = 0;
-		foreach($temp as $t){
-		$newTempObject[$key.".".$index] = $t;
-		$index += 1;
-		}
-		$i -= 1;
-		} else {
-		$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-		$newTempObject[$key.".".$pathSteps[$i]] = $temp->$niceStep;
-		if($i == (sizeof($pathSteps)-1)){
-		if($newTempObject[$key.".".$pathSteps[$i]] != $value){
-		$outselectedPaths[$key.".".$pathSteps[$i]] = false;
-		} else {
-		$outselectedPaths[$key.".".$pathSteps[$i]] = true;
-		}
-		}
-		}
-		}
-		}
-		$tempObject = $newTempObject;
-		$newTempObject = array();
-		}
-		}
-
-		//get the requested part of the result
-		$paths = array();
-		foreach($resultParts as $resultPart){
-
-		$tempObject[] = $response;
-
-		foreach ($this->mParsedResult as $rdef) {
-		$rName = "".$rdef["name"];
-		foreach($rdef->children() as $child){
-		if($rName.".".$child["name"] == $resultPart){
-		//						$paths["".$child["name"]] = $rName.'.'.$child["path"];
-		$paths["".$child["name"]] = "".$child["path"];
-		}
-		}
-		}
-		}
-
-		$result = array();
-
-		foreach($paths as $key => $path){
-		$pathSteps = explode(".", $path);
-		$tempObject = array();
-		$tempObject[""] = $response;
-		for($i=0; $i < sizeof($pathSteps); $i++){
-		$newTempObject = array();
-		if($tempObject){
-		$tempObjectCount = -1;
-		foreach($tempObject as $id => $temp){
-		$tempObjectCount += 1;
-		$falseCount = 0;
-		$trueCount = 0;
-		foreach($outselectedPaths as $k => $v){
-		if((substr($k, 0, strlen($id)) == $id)
-		&& (strlen($this->getReturnPartBracketValue($id)) > 0)
-		&& !(ctype_digit($this->getReturnPartBracketValue($id) == true))){
-		if($v){
-		$trueCount += 1;
-		} else {
-		$falseCount += 1;
-		}
-		}
-		}
-		if($trueCount > 0 || $falseCount == 0){
-		if(is_array($temp)){
-		$index = 0;
-		foreach($temp as $t){
-		$newTempObject[$id.".".$index] = $t;
-		$index +=1;
-		}
-		$i -= 1;
-		} else {
-		$niceStep = $this->getReturnPartPathStep($pathSteps[$i]);
-		if($niceStep == ""){
-		$newTempObj = $temp;
-		} else {
-		$newTempObj = $temp->$niceStep;
-		}
-		if(is_array($newTempObj) && (ctype_digit($this->getReturnPartBracketValue($pathSteps[$i])) == true)){
-		$newTempObj = $newTempObj[$this->getReturnPartBracketValue($pathSteps[$i])];
-		}
-		$newTempObject[$id.".".$pathSteps[$i]] = $newTempObj;
-		}
-		}
-		}
-		}
-		$tempObject = $newTempObject;
-		}
-		$result[$key] = $tempObject;
-		}
-
-		return $result;
-		}
-		*/
-	/**
-	 * This methods returns these parts of the ws-response
-	 * that are of interrest
-	 *
 	 * @param $response the response of the web service call
 	 * @param string[] $resultParts : aliases of the requested result parts
 	 * @return array the result of interrest
 	 */
-	public function odtGetCallResultParts($response, $resultParts){
-		$results = array();
-
-		foreach ($resultParts as $rp) {
-			$parts = explode(".", $rp);
-			$rdef = $this->getResultDefinition($parts[0]);
-
-			// find all selected paths on the resulti
-			//$selectedPath = $this->getSelectedPaths($response, $rdef);
-			$selectedPath = array();
-
-			if (count($parts) == 1) {
-				// There is only the name of the result with no parts
-				// => return all parts of the result
-				foreach ($rdef->part as $part) {
-					$part = ''.$part['name'];
-					$results[$part] = $this->odtGetResults($response, $rdef, $part, $selectedPath);
-				}
-			} else {
-				$results[$parts[1]] = $this->odtGetResults($response, $rdef, $parts[1], $selectedPath);
-			}
-		}
-		return $results;
-	}
-
 	public function getCallResultParts($response, $resultParts){
 		$results = array();
 
@@ -683,24 +524,6 @@ class WebService {
 	 * @param SimpleXMLElement $resultDef
 	 * @param string $alias
 	 */
-	private function odtGetResults($response, $resultDef, $alias, $selectedPaths) {
-		$path = $this->getPathForAlias($alias, $resultDef);
-
-		//$paths = $this->matchSelectedPath($path, $selectedPaths);
-		$paths = array($path);
-
-		$result = array();
-		if (count($paths) == 0) {
-			return $result;
-		}
-
-		// collect the interesting parts of the result
-		foreach ($paths as $p) {
-			$result = array_merge($result, $this->odtGetResultParts($response, $p));
-		}
-		return $result;
-	}
-
 	private function getResults($response, $resultDef, $alias) {
 		$path = $this->getPathForAlias($alias, $resultDef);
 
@@ -715,251 +538,6 @@ class WebService {
 			$xpR[$i] = str_replace("####CDATAEND####", "]]>", $xpR[$i]);
 		}
 		return $xpR;
-	}
-
-	/**
-	 * Removes all results from the result set that do not match the selectors
-	 * of the result definition
-	 *
-	 * @param Object $response
-	 * 		The web services response
-	 * @param SimpleXMLElement $resultDef
-	 * 		Definition of the result
-	 * @return array<string>
-	 * 		An array of paths, where variable indices are decorated with concrete
-	 *      numbers e.g. AnElement[a]=5.value
-	 */
-	private function odtGetSelectedPaths($response, $resultDef) {
-		$s = $resultDef->select;
-		$num = count($s);
-		if ($num == 0) {
-			return array();
-		}
-		$selects = array();
-		$selectedPaths = array();
-		for ($i = 0; $i < $num; ++$i) {
-			// find the paths that match the selections
-			$select = & $s[$i];
-			$sel = array(explode('.', ''.$select['object']),
-			                   ''.$select['value']);
-			$selPaths = array();
-			$this->odtDoApplySelects($response, $sel, 0, $selPaths);
-			$selectedPaths[] = $selPaths;
-		}
-
-		// Selections on the same index variable are ANDed i.e. the intersection
-		// of valid indices must be built
-		$numSelections = count($selectedPaths);
-		for ($si1 = 0; $si1 < $numSelections; ++$si1) {
-			$paths1 = $selectedPaths[$si1];
-			for ($pi = 0, $pn = count($paths1); $pi < $pn; ++$pi) {
-				$vp1 = $paths1[$pi];
-				// check the indices of one valid path against the indices of
-				// all other selections
-				for ($si2 = 0; $si2 < $numSelections; ++$si2) {
-					if ($si1 == $si2) {
-						continue;
-					}
-					$paths2 = $selectedPaths[$si2];
-					$found = true;
-					$varP1 = $vp1[1];
-					foreach ($paths2 as $vp2) {
-						if ($vp2 == null) {
-							continue;
-						}
-						$varP2 = $vp2[1];
-						// each index in $varP1 must have the same value as in $varP2
-						$found = true;
-						foreach ($varP1 as $varName => $value) {
-							if (isset($varP2[$varName]) && ($varP2[$varName] != $value)) {
-								$found = false;
-								break;
-							}
-						}
-						if ($found == true) {
-							break;
-						}
-					}
-					if ($found == false) {
-						// The selected path is invalid as another selection did
-						// not match
-						$selectedPaths[$si1][$pi] = null;
-						break;
-					}
-				}
-			}
-		}
-
-		// All invalid path are replace by <null>. Now collect all remaining
-		// paths.
-		$selPath = array();
-		foreach ($selectedPaths as $validInSelection) {
-			foreach ($validInSelection as $vp) {
-				if ($vp != null && !in_array($vp[0], $selPath)) {
-					$selPath[] = $vp[0];
-				}
-			}
-		}
-		return $selPath;
-	}
-
-	/**
-	 * Checks if a given path matches the valid paths of a selection.
-	 *
-	 * @param string $path
-	 * @param array<string> $selectedPaths
-	 *
-	 * @return array<string>
-	 * 		Valid paths, where variable indices are replaced concrete numbers
-	 */
-	private function matchSelectedPath($path, &$selectedPaths) {
-
-		if (count($selectedPaths) == 0) {
-			return array($path);
-		}
-		$pathParts = explode('.', $path);
-		$numPathParts = count($pathParts);
-		$result = array();
-
-		foreach ($selectedPaths as $sp) {
-			$processNextPath = false;
-			$spParts = explode('.', $sp);
-
-			$newPath = "";
-			for ($i = 0; $i < $numPathParts && !$processNextPath; ++$i) {
-				$pp = $pathParts[$i];
-				$spp = $spParts[$i];
-				if ($pp == $spp || !isset($spp)) {
-					$newPath .= '.'.$pp;
-					continue;
-				}
-				if (preg_match("/(.*?)\[([a-z]+)\]/", $pp, $ppMatches) == 1
-				&& preg_match("/(.*?)\[([a-z]+)\]=(\d+)/", $spp, $sppMatches)) {
-					if ($ppMatches[1] == $sppMatches[1]
-					&& $ppMatches[2] == $sppMatches[2]) {
-						$newPath .= ".".$ppMatches[1].'['.$sppMatches[3].']';
-					} else {
-						$processNextPath = true; // Paths do not match => check the next path
-					}
-				} else {
-					$newPath .= '.'.$pp;
-				}
-			}
-			// are there unbound variables in the path
-			if (!$processNextPath && preg_match("/.*?\[[a-z]\]/", $newPath) == 0) {
-				$result[] = substr($newPath,1);
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Walks recursively through the result and finds all paths to elements that
-	 * match the selection criteria.
-	 *
-	 * @param Object $selectedResults
-	 * 		The results of the web service as returned by the SOAP client.
-	 * @param array<int->array(array(string pathSteps), select-value)> $selects
-	 * 		Definition of the selections
-	 * @param int $partIdx
-	 * 		The index of part of the selection path to consider.
-	 */
-	private function odtDoApplySelects(&$selectedResults, &$selects, $partIdx,
-	&$selectedPaths, $currPath = '') {
-		$parts = &$selects[0];
-		if ($partIdx >= count($parts)) {
-			// The selection <$sel> has been fully processed
-			continue;
-		}
-		$part = $parts[$partIdx];
-		$pathTail = '.'.$part;
-		$hasIndex = false;
-		if (preg_match("/(.*?)\[([a-z])\]/", $part, $matches) == 1) {
-			// The part has an array index
-			$part = $matches[1];
-			$arrayIdx = $matches[2];
-			$hasIndex = true;
-			$pathTail = '.'.$part."[$arrayIdx]";
-		}
-
-		$sr = &$selectedResults->$part;
-		if ($sr) {
-			if (is_array($sr)) {
-				$i = 0;
-				foreach ($sr as $srpart) {
-					// Process all members of the array
-					$pathTail2 = ($hasIndex) ? '='.$i : '';
-					$this->odtDoApplySelects($srpart, $selects, $partIdx+1,
-					$selectedPaths, $currPath.$pathTail.$pathTail2);
-					++$i;
-				}
-			} else {
-				if ($partIdx == count($parts)-1) {
-					// Leaf reached => Set selection status according to the
-					// requested value.
-					if ($sr == $selects[1]) {
-						// value matches => get the array indices
-						$p = substr($currPath.$pathTail, 1);
-						$matchedIndices = array();
-						preg_match_all("/\[(.*?)\]=(\d+)/", $p, $matchedIndices);
-						$indices = array();
-						if (count($matchedIndices) == 3) {
-							for ($mi = 0, $mn = count($matchedIndices[1]); $mi < $mn; ++$mi) {
-								$indices[$matchedIndices[1][$mi]] = $matchedIndices[2][$mi];
-							}
-						}
-						$selectedPaths[] = array($p, $indices);
-					}
-				} else {
-					$this->odtDoApplySelects($sr, $selects, $partIdx+1,
-					$selectedPaths, $currPath.$pathTail);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Recursively collects all results for the given path.
-	 *
-	 * @param Object $resultSet
-	 * @param string $path
-	 */
-	private function odtGetResultParts($resultSet, $path) {
-		if (empty($path)) {
-			return array($resultSet);
-		}
-
-		$result = array();
-
-		$pathParts = explode('.', $path);
-		$part = $pathParts[0];
-		unset($pathParts[0]);
-		$path = implode('.', $pathParts);
-
-		$objName = $part;
-		$arrayIdx = null;
-		if (preg_match("/(.*?)\[(\d+|)\]/", $part, $matches) == 1) {
-			// Array specified
-			$objName = $matches[1];
-			$arrayIdx = $matches[2];
-		}
-		$obj = @ $resultSet->$objName;
-
-		if (is_array($obj)) {
-			// Handle an array
-			if ($arrayIdx != null) {
-				// Collect the result at the specified array index
-				$result = array_merge($result, $this->odtGetResultParts($obj[$arrayIdx*1], $path));
-			} else {
-				for ($i = 0, $n = count($obj); $i < $n; ++$i) {
-					$result = array_merge($result, $this->odtGetResultParts($obj[$i], $path));
-				}
-			}
-		} else {
-			// a simple object
-			$result = array_merge($result, $this->odtGetResultParts($obj, $path));
-		}
-		return $result;
 	}
 
 	private function getPathForAlias($alias, $resultDef) {
@@ -1001,20 +579,15 @@ class WebService {
 	 * @param string $value the value of the call parameter with the given path
 	 */
 	private function getPathSteps($path, $value){
-		global $smwgWSOldDotSyntax;
-		if($smwgWSOldDotSyntax){
-			$walkedParameters = explode(".", $path);
-		} else {
-			$walkedParameters = explode("/", $path);
-			$temp = array();
-			for($i=0; $i < count($walkedParameters);$i++){
-				if($walkedParameters[$i] != ""){
-					$temp[] = $walkedParameters[$i];
-				}
+		$walkedParameters = explode("/", $path);
+		$temp = array();
+		for($i=0; $i < count($walkedParameters);$i++){
+			if($walkedParameters[$i] != ""){
+				$temp[] = $walkedParameters[$i];
 			}
-			$walkedParameters = $temp;
 		}
-
+		$walkedParameters = $temp;
+		
 		$temp = &$this->mCallParameters;
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
@@ -1648,6 +1221,10 @@ class WebService {
 		return $ok;
 	}
 
+	/*
+	 * Returns the value of the xpath attribute 
+	 * of a result part with a given alias
+	 */
 	private function getXPathForAlias($alias, $resultDef) {
 		foreach ($resultDef->part as $part) {
 			if ($alias == ''.$part['name']) {

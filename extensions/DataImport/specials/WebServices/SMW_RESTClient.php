@@ -127,16 +127,15 @@ class SMWRestClient implements IWebServiceClient {
 		
 		$ctx = stream_context_create($params);
 		
-		$fp = fopen($uri, 'rb', false, $ctx);
+		$fp = @ fopen($uri, 'rb', false, $ctx);
 		
 		if (!$fp) {
-			return wfMsg('smw_wws_client_connect_failure').$uri.". Reason: ".$php_errormsg;
+			return wfMsg('smw_wws_client_connect_failure').$uri;
 		}
 
 		$response = stream_get_contents($fp);
 		if ($response === false) {
-			//todo:language file
-			return wfMsg('smw_wws_client_connect_failure').$uri.". Reason: ".$php_errormsg;
+			return wfMsg('smw_wws_client_connect_failure').$uri;
 		}
 
 		return array($response);

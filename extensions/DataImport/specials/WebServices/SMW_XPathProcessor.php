@@ -36,10 +36,8 @@ class XPathProcessor {
 	 *  	will be created
 	 */
 	function __construct($xmlString = ""){
-		// todo: add error handling for non xml strings
-
 		$domDocument = new DOMDocument();
-		$domDocument->loadXML($xmlString);
+		@ $domDocument->loadXML($xmlString);
 
 		$this->domXPath = new DOMXPath($domDocument);
 		

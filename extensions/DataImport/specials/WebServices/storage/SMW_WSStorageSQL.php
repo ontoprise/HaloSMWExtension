@@ -339,8 +339,9 @@ class WSStorageSQL {
 	 * @return string
 	 * 		the parameter set id of the new or an
 	 * 		appropriate parameter set which allready exists
+	 * 		(already existing parameterSets will start wirh "#"
+	 * 		so that they can be detected.
 	 */
-
 	public function storeParameterset($parameters){
 		if(sizeof($parameters) == 0){
 			return "0";
@@ -379,7 +380,7 @@ class WSStorageSQL {
 		} else if ($db->numRows($res) == 1){
 			// an appropriate parameter set exists
 			$row = $db->fetchObject($res);
-			$parameterSetId = $row->param_set_id;
+			$parameterSetId = "#".$row->param_set_id;
 		} else {
 			// a new parameter set has to be created
 			$parameterSetId = self::generateParameterSetId();
@@ -813,7 +814,6 @@ class WSStorageSQL {
 
 		$webServices = array();
 
-		//todo:authentification parameter hinzufuegen
 		while($row = $db->fetchObject($res)){
 			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
 			$row->method, $row->authentication_type, $row->authentication_login, 

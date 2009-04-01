@@ -137,13 +137,9 @@ class DefineWebServiceSpecialAjaxAccess{
 	 */
 	
 	public static function createWSClient($uri) {
-		// include the correct client
 		global $smwgDIIP;
 
-		//$wsClient;
-
 		try {
-			//todo: also allow other protocols
 			$mProtocol = "SOAP";
 			include_once($smwgDIIP . "/specials/WebServices/SMW_".
 			$mProtocol."Client.php");

@@ -215,7 +215,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_menue-s1' => '1. W&auml;hle Web Service',
 	'smw_wwsu_menue-s2' => '2. Definiere Parameter',
 	'smw_wwsu_menue-s3' => '3. W&auml;hle Result Parts',
-	'smw_wwsu_menue-s4' => '4. W#hle Format',
+	'smw_wwsu_menue-s4' => '4. Wähle Format',
 	'smw_wwsu_menue-s5' => '5. Ergebnis',
 	
 	'smw_wwsu_availablews' => 'Verf&uuml;gbare Web Services: ',
