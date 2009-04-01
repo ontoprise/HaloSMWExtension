@@ -6,13 +6,13 @@ Files:
 =========
 Windows =
 =========
-halowiki.dll for MySQL 4.x
-halowiki-5_x.dll for MySQL 5.x 
+halowiki.dll for MySQL 4.x (contains only editdistance, but not jarowinkler)
+halowiki-5_x.dll for MySQL 5.x (recommended)
 
 =======
 Linux =
 =======
-halowiki.so for MySQL 5.x
+halowiki.so for MySQL 5.x (recommended)
 
 TODOs:
 
@@ -21,6 +21,7 @@ TODOs:
 2.) Connect to your mysql database using the GUI-tool (e.g. the query browser) or the command line interface 
     and execute the following command: (replace the DLL's/shared object lib's name if necessary)
 
-    CREATE FUNCTION editdistance RETURNS INTEGER SONAME 'halowiki.dll';
+    CREATE FUNCTION editdistance RETURNS INTEGER SONAME 'halowiki-5_x.dll';
+    CREATE FUNCTION jarowinkler RETURNS REAL SONAME 'halowiki-5_x.dll';
 
 3.) Done.
