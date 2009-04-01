@@ -300,19 +300,22 @@ class USSpecialPage extends SpecialPage {
                 $expandedFTSearch = SKOSExpander::expandForFulltext($terms, $tolerance);
                 $expandedTitles = SKOSExpander::expandForTitles($terms, $namespacesToSearch , $tolerance);
             } else {
-            	 $expandedFTSearch = '';
-                $expandedTitles = '';
+            	$expandedFTSearch = QueryExpander::opTerms($terms, "AND");
+                $expandedTitles = QueryExpander::opTerms($terms, "AND");
             }
             
             // find aggregated term, ie. terms which may be actually one term.
-            $aggregatedTerms = QueryExpander::opTerms(array_keys(QueryExpander::findAggregatedTerms($terms)), "OR");
+            $aggregatedTerms = "";
+            if ($tolerance == US_HIGH_TOLERANCE || $tolerance == US_LOWTOLERANCE) {
+                $aggregatedTerms = QueryExpander::opTerms(array_keys(QueryExpander::findAggregatedTerms($terms)), "OR");
+            }
           
             $contentTitleSearchPattern = str_replace('$1', $expandedFTSearch, $contentTitleSearchPattern);
             $contentTitleSearchPattern = str_replace('$2', $expandedTitles, $contentTitleSearchPattern);
             
             // add agregated search terms
-            $contentTitleSearchPattern = str_replace('$3', $aggregatedTerms == '' ? '' : $expandedTitles == '' ? $aggregatedTerms : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
-            $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : $expandedFTSearch == '' ? $aggregatedTerms : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$3', $aggregatedTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
             
             // start search in raw mode
             $searchSet = LuceneSearchSet::newFromQuery( 'raw',  $contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
