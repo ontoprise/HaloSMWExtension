@@ -19,6 +19,11 @@ class SMWHaloStore2 extends SMWSQLStore2 {
         
         wfProfileOut("SMWHaloStore::updateData (SMW)");
     }
+    
+    function setup($verbose = false) {
+    	parent::setup($verbose);
+    	wfRunHooks('smwhaloAfterSetup', array($verbose));
+    }
    
 }
 ?>

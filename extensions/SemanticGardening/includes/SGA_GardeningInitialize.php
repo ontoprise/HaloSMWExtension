@@ -21,6 +21,7 @@ function sgagGardeningSetupExtension() {
 
 	$wgHooks['smwhaloBeforeUpdateData'][] = 'sgagBeforeUpdateData';
 	$wgHooks['smwhaloAfterUpdateData'][] = 'sgagAfterUpdateData';
+	$wgHooks['smwhaloAfterSetup'][] = 'sgagAfterSetup';
 	
 	$wgHooks['BeforePageDisplay'][]='sgafGAAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='sgaFWAddHTMLHeader';
@@ -92,6 +93,11 @@ function sgagAfterUpdateData(& $data) {
 			SMWSuggestStatistics::getStore()->rateAnnotation($data->getSubject()->getDBkey(), $pa[0], $pa[1], $pa[2] );
 		}
 	}
+	return true;
+}
+
+function sgagAfterSetup(& $verbose) {
+	SMWSuggestStatistics::getStore()->setup($verbose);
 	return true;
 }
 

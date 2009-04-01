@@ -891,19 +891,25 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * Creates some predefined pages
 	 */
 	protected function createPreDefinedPages($verbose) {
-		global $smwgHaloContLang;
+		global $smwgHaloContLang, $smwgContLang;
 		DBHelper::reportProgress("Creating predefined pages...\n",$verbose);
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$propertyLabels = $smwgContLang->getPropertyLabels();
+		$namespaces = $smwgContLang->getNamespaces();
+        $datatypeLabels = $smwgContLang->getDatatypeLabels();
 		foreach($ssp as $key => $value) {
 			$t = Title::newFromText($value, SMW_NS_PROPERTY);
 		    $article = new Article($t);
 			if (!$t->exists()) {
-				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT. TODO: introduce general mechanism
-					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Page; Type:Page]]", "", false, false);
+				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) { 
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
+					   $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
-					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
+					   $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MIN_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
-					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[has type::Type:Number]]", "", false, false);
+					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
+					   $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
 				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
@@ -932,10 +938,14 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	}
 	
     protected function createHelpAttributes($verbose){
+    	global $smwgContLang;
+    	$propertyLabels = $smwgContLang->getPropertyLabels();
+        $namespaces = $smwgContLang->getNamespaces();
+        $datatypeLabels = $smwgContLang->getDatatypeLabels();
         $title = Title::newFromText("Question", SMW_NS_PROPERTY);
         $article = new Article($title);
         if (!($title->exists())){
-            $articleContent = "[[has type::Type:String]]";
+            $articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_str"]."]]";
             $wgArticle = new Article( $title );
             $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
             DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
@@ -947,7 +957,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
         $title = Title::newFromText("Description", SMW_NS_PROPERTY);
         $article = new Article($title);
         if (!($title->exists())){
-            $articleContent = "[[has type::Type:Text]]";
+            $articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_txt"]."]]";
             $wgArticle = new Article( $title );
             $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
             DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
@@ -959,7 +969,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
         $title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
         $article = new Article($title);
         if (!($title->exists())){
-            $articleContent = "[[has type::Type:String]]";
+            $articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_str"]."]]";
             $wgArticle = new Article( $title );
             $wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
             DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
