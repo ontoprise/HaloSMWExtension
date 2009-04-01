@@ -204,7 +204,7 @@ class SMWSuggestStatisticsSQL2 extends SMWSuggestStatisticsSQL {
 
 	function setup($verbose = true) {
 		global $wgDBtype;
-		SGADBHelper::reportProgress("Altering tables for SMW+ if necessary ...\n\n",$verbose);
+		SGADBHelper::reportProgress("Altering tables for Semantic Gardening if necessary ...\n\n",$verbose);
 		if ($wgDBtype === 'postgres') {
 			$this->reportProgress("Postgres is not supported by SMW+",$verbose);
 			return;
@@ -227,7 +227,7 @@ class SMWSuggestStatisticsSQL2 extends SMWSuggestStatisticsSQL {
 			SGADBHelper::reportProgress("done \n",$verbose);
 		}
 
-		SGADBHelper::reportProgress("Database initialised for SMW+ successfully.\n",$verbose);
+		SGADBHelper::reportProgress("Database initialised for Semantic Gardening successfully.\n",$verbose);
 
 	}
 
