@@ -215,6 +215,26 @@ background: #FFFFFF;
 /*width:95%;*/
 }
 
+#previewlayout{
+width:100%;
+border: 1px solid #AAAAAA;
+float:left;
+margin-top: 10px;
+}
+
+#previewtitle{
+background: #DDDDDD;
+cursor:pointer;
+font-weight: bold;
+}
+
+#previewcontent{
+border-top:1px solid #AAAAAA;
+background: #FFFFFF;
+}
+
+
+
 .qlm_input{
 /*width:94%;*/
 }

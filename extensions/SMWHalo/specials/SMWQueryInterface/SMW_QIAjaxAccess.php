@@ -91,19 +91,10 @@ function smwf_qi_QIAccess($method, $params) {
             $fixparams = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
 
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
-            $ps = preg_split('/[^\|]{1}\|{1}(?!\|)/s', $p_array[0]);  
-            if (count($ps) > 1) {
-            	// last char of query condition is missing (matched with [^\|]{1}) therefore copy from original
-            	$rawparams[] = trim(substr($p_array[0], 0, strlen($ps[0]) + 1));
-            	array_shift($ps); // remove the query condition
-                // add other params for formating etc.
-                foreach ($ps as $param) 
-                    $rawparams[] = trim($param);
-            } // no single pipe found, no params specified in query
-            else $rawparams[] = trim($p_array[0]);	
-        
+            $ps = explode('|', $p_array[0]);
+                              
             // parse params and answer query
-            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+            SMWQueryProcessor::processFunctionParams($ps,$querystring,$params,$printouts);
             // merge fix parameters from GUI, they always overwrite others
             $params = array_merge($params, $fixparams);
             $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);

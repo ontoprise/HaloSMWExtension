@@ -1,4 +1,4 @@
-/** *****************************************************************************
+/*
 *  Query Interface for Semantic MediaWiki
 *  Developed by Markus Nitsche <fitsch@gmail.com>
 *
@@ -69,6 +69,34 @@ switchlayout:function(){
 },
 
 /**
+* Called whenever preview result printer needs to be updated
+*/
+updatePreview:function() {
+	// update result preview
+	if($("previewcontent").style.display == ""){
+		this.previewResultPrinter();
+	}	
+},
+
+/**
+* Called whenever preview result printer is minimized or maximized
+*/
+switchpreview:function(){
+	if($("previewcontent").style.display == "none"){
+		$("previewcontent").style.display = "";
+		$("previewtitle-link").removeClassName("plusminus");
+		$("previewtitle-link").addClassName("minusplus");
+		// update preview
+		this.previewResultPrinter();		
+	} else {
+		$("previewcontent").style.display = "none";
+		$("previewtitle-link").removeClassName("minusplus");
+		$("previewtitle-link").addClassName("plusminus");
+	}
+},
+
+
+/**
 * Performs ajax call on startup to get a list of all numeric datatypes.
 * Needed to find out if users can use operators (< and >)
 */
@@ -133,6 +161,7 @@ doReset:function(){
 	this.initialize();
 	$('shade').style.display="none";
 	$('resetdialogue').style.display="none";
+	this.updatePreview();
 },
 
 /**
@@ -175,6 +204,46 @@ previewQuery:function(){
 },
 
 /**
+* Gets all display parameters and the full ask syntax to perform an ajax call
+* which will create the result preview
+*/
+previewResultPrinter:function(){
+
+	/*STARTLOG*/
+	if(window.smwhgLogger){
+	    smwhgLogger.log("Preview Result Printer","QI","query_result_preview");
+	}
+	/*ENDLOG*/	
+	
+	if(this.pendingElement)
+		this.pendingElement.hide();
+	this.pendingElement = new OBPendingIndicator($('previewcontent'));
+	this.pendingElement.show();
+
+	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
+		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
+		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
+		var params = ask + ",";
+		params += $('layout_format').value + ',';
+		params += $('layout_link').value + ',';
+		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
+		params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
+		params += $('layout_limit').value==""?"50,":$('layout_limit').value + ',';
+		params += $('layout_label').value==""?",":$('layout_label').value + ',';
+		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
+		params += $('layout_default').value==""?',':$('layout_default').value;
+		params += $('layout_headers').checked?'show':'hide';
+		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openResultPreview.bind(this));
+	}
+	else { // query is empty
+		var request = Array();
+		request.responseText = gLanguage.getMessage('QI_EMPTY_QUERY');
+		this.openResultPreview(request);
+	}
+},
+
+
+/**
 * Displays the preview created by the server
 * @param request Request of AJAX call
 */
@@ -184,6 +253,17 @@ openPreview:function(request){
 	$('fullpreview').innerHTML = request.responseText;
 	smw_tooltipInit();
 },
+
+/**
+* Displays the preview created by the server
+* @param request Request of AJAX call
+*/
+openResultPreview:function(request){
+	this.pendingElement.hide();
+	$('previewcontent').innerHTML = request.responseText;
+	smw_tooltipInit();
+},
+
 
 /**
 * Update breadcrumb navigation on top of the query tree. The BN
@@ -845,7 +925,7 @@ deleteActivePart:function(){
 				}
 				/*ENDLOG*/
 				//recursively delete all subqueries of this one. It's id is values[0][2]
-				this.deleteSubqueries(pgroup.getValues()[0][2])
+				this.deleteSubqueries(pgroup.getValues()[0][2]);
 			}
 			this.activeQuery.removePropertyGroup(this.loadedFromId);
 			break;
@@ -853,6 +933,9 @@ deleteActivePart:function(){
 	this.emptyDialogue();
 	this.activeQuery.updateTreeXML();
 	this.updateColumnPreview();
+	
+	// update result preview
+	this.updatePreview();
 },
 
 /**
@@ -866,6 +949,9 @@ deleteSubqueries:function(id){
 		}
 	}
 	this.queries[id] = null;
+
+	// update result preview
+	this.updatePreview();
 },
 
 /**
@@ -918,6 +1004,7 @@ add:function(){
 		this.addPropertyGroup();
 	}
 	this.activeQuery.updateTreeXML();
+	this.updatePreview();
 	this.loadedFromID = null;
 },
 
@@ -1216,6 +1303,8 @@ checkFormat:function(){
 		$('templatenamefield').style.display = "none";
 		$('rssfield').style.display = "none";
 	}
+	// update result preview
+	this.updatePreview();
 }
 
 } //end class qiHelper
