@@ -9,8 +9,6 @@
     width:97%;
     border: 2px solid #AAA;
     padding: 5px;
-    
-    
 }
 
 #us_refineresults .filtercolumn {
@@ -73,6 +71,11 @@
 }
 
 #us_searchresults .searchmatch {
+    color:black;
+    font-weight: bold;
+}
+
+#us_fulltext_results .searchmatch {
     color:black;
     font-weight: bold;
 }
