@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 27.01.2009
  *
@@ -66,5 +66,11 @@ class US_LanguageDe {
         'us_order_for'=>'Reihenfolge',
 		'us_termsappear' => 'Diese Suchbegriffe sind markiert'        
         );
+
+	public $us_pathsearchMessages = array(
+		'us_pathsearch_tab_fulltext' => 'Volltext',
+		'us_pathsearch_tab_path' => 'Pfadsuche',
+		'us_pathsearch_no_results' => 'Es wurden keine Pfade zu den Suchbegriffen gefunden',
+	);        
 }
 ?>

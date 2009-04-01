@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 27.01.2009
  *
@@ -64,5 +64,12 @@ class US_LanguageEn {
 		'us_termsappear' => 'These terms appear in this page'	            
         
     );
+    
+    public $us_pathsearchMessages = array(
+		'us_pathsearch_tab_fulltext' => 'Fulltext Search',
+		'us_pathsearch_tab_path' => 'Path Search',
+		'us_pathsearch_no_results' => 'No paths were found that match your search terms',
+	);
+    
 }
 ?>
