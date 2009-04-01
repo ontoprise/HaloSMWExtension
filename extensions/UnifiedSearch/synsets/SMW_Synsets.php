@@ -89,6 +89,23 @@ class Synsets {
 
 
 	}
+	
+	public static function expandQuery($terms){
+		$synSets = new Synsets();
+		$results = array();
+		foreach($terms as $t){
+			$syns = $synSets->getSynsets($t);
+			
+			$result = array();
+			foreach($syns as $key => $value){
+				$result[$value] = true;
+			}
+			
+			$results[] = QueryExpander::opTerms(array_keys($result), "OR"); 			
+		}
+		
+		return $results;
+	}
 
 
 }

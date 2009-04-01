@@ -294,7 +294,7 @@ class USSpecialPage extends SpecialPage {
         $namespacesToSearch = $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces);
         if (!self::userDefinedSearch($terms, $search)) {
             // non user-defined
-            $contentTitleSearchPattern = 'contents:($1$4) OR title:($2$3)';
+            $contentTitleSearchPattern = 'contents:($1$4$5) OR title:($2$3$6)';
             
             if (isset($usgSKOSExpansion) && $usgSKOSExpansion === true) {
                 $expandedFTSearch = SKOSExpander::expandForFulltext($terms, $tolerance);
@@ -307,8 +307,18 @@ class USSpecialPage extends SpecialPage {
             // find aggregated term, ie. terms which may be actually one term.
             $aggregatedTerms = "";
             if ($tolerance == US_HIGH_TOLERANCE || $tolerance == US_LOWTOLERANCE) {
-                $aggregatedTerms = QueryExpander::opTerms(array_keys(QueryExpander::findAggregatedTerms($terms)), "OR");
+                $aggregatedTerms = QueryExpander::opTerms(QueryExpander::findAggregatedTerms($terms), "AND");
             }
+            
+            // find synonyms
+            // depend on usgSynsetExpansion
+            //todo: 
+            global $usgSynsetExpansion;
+            if ($usgSynsetExpansion && ($tolerance == US_HIGH_TOLERANCE || $tolerance == US_LOWTOLERANCE)) {
+            	$synonymTerms = Synsets::expandQuery($terms);
+            }
+            
+            
           
             $contentTitleSearchPattern = str_replace('$1', $expandedFTSearch, $contentTitleSearchPattern);
             $contentTitleSearchPattern = str_replace('$2', $expandedTitles, $contentTitleSearchPattern);
@@ -317,6 +327,9 @@ class USSpecialPage extends SpecialPage {
             $contentTitleSearchPattern = str_replace('$3', $aggregatedTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
             $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
             
+            // add synonyms
+            $contentTitleSearchPattern = str_replace('$5', $synonymTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$6', $synonymTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
             // start search in raw mode
             $searchSet = LuceneSearchSet::newFromQuery( 'raw',  $contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
 
