@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Created on: 27.01.2009
  */
@@ -17,12 +17,12 @@ define('US_EXACTMATCH', 2);
 
 $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension v'.US_SEARCH_EXTENSION_VERSION,
-        'author' => 'Kai Kühn',
+        'author' => 'Kai Kï¿½hn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Provides access to a Lucene backend.',
 );
 
-global $wgExtensionFunctions, $wgHooks, $wgAjaxExportList;;
+global $wgExtensionFunctions, $wgHooks, $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ca_GetHTMLBody';
 
 // use SMW_AddScripts hook from SMWHalo to make sure that Prototype is available.
@@ -34,6 +34,11 @@ $wgHooks['smwInitializeTables'][] = 'smwfSynsetsInitializeTables';
 global $IP;
 require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
 
+// enable path search if set in LocalSettings.php
+if (isset($wgUSPathSearch) && $wgUSPathSearch) {
+	require_once($IP."/extensions/UnifiedSearch/PathSearch/PathSearch.php");
+	require_once($IP."/extensions/UnifiedSearch/PathSearch/doPathSearch.php");
+}
 
 /**
  * Add javascripts and css files
@@ -277,6 +282,5 @@ function smwfSynsetsInitializeTables() {
 
 	return true;
 }
-
 
 ?>
