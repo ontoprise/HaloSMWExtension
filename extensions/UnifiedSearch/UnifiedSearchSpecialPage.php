@@ -2,7 +2,7 @@
 /*
  * Created on 28.01.2009
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  */
 if (!defined('MEDIAWIKI')) die();
 
@@ -29,7 +29,7 @@ class USSpecialPage extends SpecialPage {
     }
 
     public function execute() {
-        global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits;
+        global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits, $wgUSPathSearch;
         $search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
         $t = Title::newFromText( $search );
 
@@ -93,10 +93,12 @@ class USSpecialPage extends SpecialPage {
             '<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()"><option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
             '<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
             '<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
-            '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"><input type="hidden" name="fulltext" value="true"></td></tr></table>'.
+            '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"><input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="0"/></td></tr></table>'.
 
         '</form>';
 
+		// path search options, if the form is called directly from this page
+		$doPathSearch = $wgRequest->getVal('paths'); 
 
         // -- new page link --
         if ($newpage !== NULL && !$newpage->exists()) {
@@ -107,13 +109,13 @@ class USSpecialPage extends SpecialPage {
         // -- refine links --
         $tolerance = $wgRequest->getVal('tolerance');
         $tolerance = $tolerance == NULL ? 0 : $tolerance;
-        $noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true&tolerance=$tolerance");
+        $noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true&tolerance=$tolerance&paths=$doPathSearch");
         
         // create refine links
         global $usgAllNamespaces;
         $namespaceFilterURLs = array();
         foreach($usgAllNamespaces as $ns => $img) {
-            $namespaceFilterURLs[] = $searchPage->getFullURL("search=$search&fulltext=true&restrict=$ns&tolerance=$tolerance");
+            $namespaceFilterURLs[] = $searchPage->getFullURL("search=$search&fulltext=true&restrict=$ns&tolerance=$tolerance&paths=$doPathSearch");
         }
 
         // create refine links table 
@@ -178,16 +180,73 @@ class USSpecialPage extends SpecialPage {
             $html .= wfMsg('us_noresults_text', $search);
         }
 
-        // show search results
-        // heading
-        if (count($searchResults) > 0) {
-            $html .= '<div id="us_searchresults">';
+		// create tab with fulltext search and path search and display search results as well
+		if (count($searchResults) > 0) {
+
+        	// show full text search results
+    	    // heading
+    	    $fulltextResults = '<div id="%%__DIV_NAME__%%"%%__STYLE_DISPLAY__%%>';
             $resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
-            $html .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
-            $html .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
-            $html .= '</div>';
-        }
-        
+           	$fulltextResults .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
+       	    $fulltextResults .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
+   	        $fulltextResults .= '</div>';
+
+			// path search is enabled
+			if (isset($wgUSPathSearch) && $wgUSPathSearch) {
+				if ($searchSet != NULL)
+					$psTerms = $this->initPathSearch($search, $searchSet);
+				else
+					$psTerms = $search;
+
+				// start with html which is the same for both cases, paths have been found already or must be still searched
+				$tabBarSearchResults = '
+				    <div id="us_searchresults_tab">
+				      <table>
+			    	    <tr>
+			        	  <td width="10px" style="border-bottom: 2px solid #AAA;"> </td>
+						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(0);">
+						    '.wfMsg('us_pathsearch_tab_fulltext').'
+						  </td>
+						  <td width="10px" style="border-bottom: 2px solid #AAA;"> </td>
+						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(1);%s">
+                    	     '.wfMsg('us_pathsearch_tab_path').'
+	                      </td>
+						  <td width="100%%" style="border-bottom: 2px solid #AAA;"></td>
+						</tr>
+						<tr><td colspan="5" width="100%%" style="border: 2px solid #AAA; border-top: none;">%s</td></tr>
+		        	  </table>
+			        </div>
+			    ';
+			    
+			    // full text results will be displayed within a table below the tabs
+			    $styleDisplay = ' style="display: '.(($doPathSearch) ? 'none' : 'block').'";';
+			    $fulltextResults = str_replace("%%__DIV_NAME__%%", 'us_fulltext_results', $fulltextResults);
+			    $fulltextResults = str_replace("%%__STYLE_DISPLAY__%%", $styleDisplay, $fulltextResults);
+
+			    // if we want to do a path search, do it and prepare results as well.
+			    // Otherwise this is done via Javascript later when clicking the link 
+				if ($doPathSearch == 1) {
+					$psResultHtml = USPathSearchStart(urldecode($psTerms));
+					if (strlen($psResultHtml) == 0) $psResultHtml = wfMsg('us_pathsearch_no_results');
+					$pathResults = '<div id="us_pathsearch_results" style="display: block;">'.$psResultHtml.'</div>';
+					$html .= sprintf($tabBarSearchResults, 'font-weight: normal;',
+        	                                          'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;',
+													  '',
+													  $fulltextResults . $pathResults);
+				}
+				else {
+					$pathResults = '<div id="us_pathsearch_results" style="display: none;"></div>';
+					$html .= sprintf($tabBarSearchResults, 'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;',
+    	                                              'font-weight: normal;',
+													  ' javascript:doPathSearch(\''.$psTerms.'\');',
+													  $fulltextResults . $pathResults);
+				}
+			} 
+			// pathsearch is disabled, no tab is displayed
+			else 
+				$html .= str_replace("%%__DIV_NAME__%%", 'us_searchresults', $fulltextResults);
+		}        
+
         // browsing bar bottom
         if (count($searchResults) > 0) {
             $html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
@@ -384,6 +443,31 @@ class USSpecialPage extends SpecialPage {
         }
         return $results;
     }
+    
+    private function initPathSearch(&$search, &$searchSet) {
+    	$sterms = $this->parseTerms($search);
+		$sterms = $this->cleanTerms($sterms);
+		$scoringTerms = array();
+		foreach ($searchSet->mResults as $res) {
+			list($score, $type, $term) = explode(' ', $res);
+			foreach ($sterms as $s) {
+				if (preg_match('/^'.$s.'$/i', urldecode($term)))
+					$scoringTerms[$s] = "$term,$type";
+				else if (preg_match('/'.$s.'/i', urldecode($term)) && (!isset($scoringTerms[$s])))
+					$scoringTerms[$s] = "$term,$type";
+			}
+		}
+		$psTerms = implode(',', $scoringTerms);
+		for ($i = 0, $is = count($sterms); $i < $is; $i++) {
+			if (isset($scoringTerms[$sterms[$i]])) unset($sterms[$i]);
+		}
+		if (count($sterms) > 0)	{
+			if (strlen($psTerms) > 0) $psTerms.= ',';
+			$psTerms .= implode(',-1', $sterms).',-1'; 
+		}
+		return $psTerms;
+    }
+    
 }
 
 ?>
