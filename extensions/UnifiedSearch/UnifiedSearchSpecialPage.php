@@ -311,11 +311,11 @@ class USSpecialPage extends SpecialPage {
             }
             
             // find synonyms
-            // depend on usgSynsetExpansion
-            //todo: 
             global $usgSynsetExpansion;
-            if ($usgSynsetExpansion && ($tolerance == US_HIGH_TOLERANCE || $tolerance == US_LOWTOLERANCE)) {
-            	$synonymTerms = Synsets::expandQuery($terms);
+            if ($usgSynsetExpansion == true && ($tolerance == US_HIGH_TOLERANCE || $tolerance == US_LOWTOLERANCE)) {
+            	$synonymTerms = QueryExpander::opTerms(Synsets::expandQuery($terms), "AND");
+            } else {
+            	$synonymTerms = '';
             }
             
             
@@ -328,8 +328,9 @@ class USSpecialPage extends SpecialPage {
             $contentTitleSearchPattern = str_replace('$4', $aggregatedTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
             
             // add synonyms
-            $contentTitleSearchPattern = str_replace('$5', $synonymTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
-            $contentTitleSearchPattern = str_replace('$6', $synonymTerms == '' ? '' : (' OR '.$aggregatedTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$5', $synonymTerms == '' ? '' : (' OR '.$synonymTerms), $contentTitleSearchPattern);
+            $contentTitleSearchPattern = str_replace('$6', $synonymTerms == '' ? '' : (' OR '.$synonymTerms), $contentTitleSearchPattern);
+            
             // start search in raw mode
             $searchSet = LuceneSearchSet::newFromQuery( 'raw',  $contentTitleSearchPattern, $namespacesToSearch, $limit, $offset);
 

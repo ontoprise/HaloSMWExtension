@@ -2,7 +2,7 @@
 /**
  * Setup database for Unified search extension.
  * 
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 27.01.2009
  */
@@ -25,5 +25,12 @@ $onlyTables = array_key_exists('t', $options);
 
 print "\nSetup database for Unified search.\n\n";
 wfUSInitialize($onlyTables);
+
+//create synset tables
+print "\nSetup database for query expansion based on synsets.";
+$synsets = new Synsets();
+$synsets->setup();
+print "\n..done";
+
 
 ?>

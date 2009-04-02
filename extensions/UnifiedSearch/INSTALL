@@ -19,6 +19,12 @@ $wgLuceneSearchVersion = 2.1;
 require_once("extensions/UnifiedSearch/UnifiedSearch.php");
 ---
 
+If you like to use query expansion based on synonym sets from WordNet/OpenThesaurus, also add:
+---
+$usgSynsetExpansion = true;
+---
+
+
 Run the LuceneServer
 
 That's it.

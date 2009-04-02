@@ -90,6 +90,13 @@ class Synsets {
 
 	}
 	
+	/**
+	 * This method creates a string for query expansion based on synsets
+	 * 
+	 * @param $terms array<string> : the terms
+	 * 
+	 * @return string : additions to the query
+	 */
 	public static function expandQuery($terms){
 		$synSets = new Synsets();
 		$results = array();
@@ -98,9 +105,10 @@ class Synsets {
 			
 			$result = array();
 			foreach($syns as $key => $value){
-				$result[$value] = true;
+				foreach($value as $synonym){
+					$result[$synonym] = true;
+				}
 			}
-			
 			$results[] = QueryExpander::opTerms(array_keys($result), "OR"); 			
 		}
 		
