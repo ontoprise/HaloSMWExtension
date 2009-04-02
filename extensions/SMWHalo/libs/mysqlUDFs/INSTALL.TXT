@@ -1,4 +1,5 @@
 Installation instructions for MySQL SMW UDFs:
+
 SMW will also run *without* this enhancement, but with less functionality.
 
 Files:
