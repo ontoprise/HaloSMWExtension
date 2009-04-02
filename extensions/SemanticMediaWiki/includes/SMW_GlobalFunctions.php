@@ -310,7 +310,7 @@ function smwfShowBrowseLink($skintemplate) {
 		wfLoadExtensionMessages('SemanticMediaWiki');
 		$browselink = SMWInfolink::newBrowsingLink(wfMsg('smw_browselink'),
 		               $skintemplate->data['titleprefixeddbkey'],false);
-    	echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
+    	//echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
     }
     return true;
 }
