@@ -1,48 +1,55 @@
 Installation instructions
 -------------------------
 
-Requirements: 
+#
+#Requirements:
+# 
+
     MediaWiki 1.13
     SMW 1.4.2
     Halo extension 1.4.3
     Semantic Forms 1.5.1
-    Parser Functions version???
+    Parser Functions 
     String Functions 2.0 or higher
 	
+#
+# Installation
+#
 
-1) Add to your LocalSettings.php: (After the Halo and the 
-Semantic Forms extensions were included)
----
-include_once('extensions/RichMedia/includes/RM_Initialize.php');
-enableRichMediaExtension();
+1. Add to your LocalSettings.php: (After the Halo and the 
+   Semantic Forms extensions were included)
+   
+    ---
+    include_once('extensions/RichMedia/includes/RM_Initialize.php');
+    enableRichMediaExtension();
+    
+    $wgAllowExternalImages=true;   //This need to be set to allow the templates creating image links.
+    ---
 
-$wgAllowExternalImages=true;   //This need to be set to allow the templates creating image links.
----
+2. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.0.xml'
 
-2) Login as WikiSysop, go to the special page "Special:SMWAdmin" and 
-run the "Initialise or update tables" script.
-
-3) Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.0.xml'
-
-4) update ontology??? data upgrade or s.th. else???
-
-5) That's it.
 Now you can enter {{RMList|{{PAGENAME}}}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 
 
-Notice: If you already used a version of the MIME-Type extension, 
+#
+# Notice 
+#
+
+If you already used a version of the MIME-Type extension, 
 then be sure, that '/extensions/SMWHalo/includes/SMW_MIME_settings.php' sets the namespaces
 'Document','Pdf','Audio' and 'Video' as namespaces with semantic links.
 If that's not the case, you will have to add to this file:
----
-global $smwgNamespacesWithSemanticLinks;
-$smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks + 
-	array( 
-		NS_DOCUMENT => true,
-	 	NS_AUDIO => true,
-	    NS_VIDEO => true,
-		NS_PDF	=> true
-	);
----
+
+    ---
+    global $smwgNamespacesWithSemanticLinks;
+    $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks + 
+    	array( 
+    		NS_DOCUMENT => true,
+    	 	NS_AUDIO => true,
+    	    NS_VIDEO => true,
+    		NS_PDF	=> true
+    	);
+    ---
+    
 Otherwise it is not possible to do inline queries with articles placed in those namespaces
 and that's what is needed for the media list!
