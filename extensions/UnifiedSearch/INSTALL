@@ -24,7 +24,13 @@ If you like to use query expansion based on synonym sets from WordNet/OpenThesau
 $usgSynsetExpansion = true;
 ---
 
+If you like to use the path search for a graphical representation of the search results, also add:
 
+$wgUSPathSearch = true;
+
+This line must be inserted before the line with the require_once command. 
+
+---
 Run the LuceneServer
 
 That's it.
