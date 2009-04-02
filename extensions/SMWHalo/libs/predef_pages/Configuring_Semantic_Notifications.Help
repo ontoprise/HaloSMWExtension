@@ -1,0 +1,46 @@
+__NOTOC__
+====Enabling the Semantic Notification====
+The Semantic Notification extension is enabled in <code>LocalSettings.php</code>. The  variable <code>$smwgEnableSemanticNotifications</code> must be set <code>true</code> before the <code>enableSMWHalo()</code> is called:
+<pre>
+$smwgEnableSemanticNotifications = true;
+</pre>
+[[Enabling_the_Semantic_Notifications|Enabling Notifications]] 
+
+====Setting up the Semantic Notification Bot====
+
+The semantic notification bot is a PHP script, that shouldto be executed in regular intervals. (However, it can be started manually.) In the Windows OS this can be achieved "Scheduled Tasks". To open Scheduled Tasks, click ''Start'', click ''All Programs'', point to ''Accessories'', point to ''System Tools'', and then click ''Scheduled Tasks''.
+
+To schedule the bot as a new task:
+#Double-click ''Add Scheduled Task'' to start the Scheduled Task Wizard, and then click ''Next'' in the first dialog box.
+#Click ''Browse'', click the folder and file that you want to schedule i.e. <code>C:\Programme\XAMPP\php\php.exe</code>, and then click ''Open''.
+#Type a name for the task e.g. ''Semantic Notification Bot'', and then choose ''Daily'' 
+#Click ''Next'', specify the information about the day and time to run the task, and then click ''Next''.
+#Type the name and password of the user who is associated with this task. Make sure that you choose a user with sufficient permissions to run the program. By default, the wizard selects the name of the user who is currently logged on.
+#Click ''Next'', and then click ''Finish'' after you verify the choices that you have made.
+#The task appears in the list of ''Scheduled Tasks''. Open its properties. In the ''Task'' tab you have to change the fields ''Execute'' and ''Execute in'' (adapt to your own paths):
+::;Execute
+::: <code>C:\Programme\XAMPP\php\php.exe SMW_startBot.php -b smw_semanticnotificationbot</code>
+::;Execute in
+:::<code>C:\Programme\MediaWiki\HaloSMWExtension\extensions\SMWHalo\maintenance</code>
+
+====Setting the notification limitations====
+
+The extension can be configured in the file <code>SMW_SemanticNotificationSettings.php</code> with the following variables:
+* $GLOBALS['smwgSemanticNotificationLimits'] (see [[#Limitations|Limitations]])
+
+====Settings for sending e-mails====
+
+To be able to send notification e-mails, the e-mail settings have to be provided in <code>LocalSettings.php</code>:
+<pre>
+$wgSMTP = array(
+ 'host'     => "smtp.your-provider.com",
+ 'IDHost'   => "domain for MessageID",
+ 'port'     => 25,
+ 'auth'     => true, 
+ 'username' => "your username",
+ 'password' => "your password"
+);
+
+</pre>
+[[Category:SMW+ Help Topic|Semantic Notifications]]
+[[SubsectionOf::Help:Administration| ]]

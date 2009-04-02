@@ -1,0 +1,15 @@
+__NOTOC__
+=== How to enable the Semantic Notification ===
+# Open the file <code>LocalSettings.php</code>
+# Add the following lines to be the <code>LocalSettings.php</code>:
+<pre>
+include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
+enableSemanticNotifications(); 
+</pre>
+
+You can change the default settings of <code>SN_Initialize.php</code> before <code>enableSemanticNotifications()</code> is called.
+
+Now the implementation files are located in <code>extensions/SemanticNotifications</code>. The files are only included, if semantic notifications are enabled.
+
+[[Category:SMW+ Help Topic|Semantic Notifications]]
+[[SubsectionOf::Help:Administration| ]]
