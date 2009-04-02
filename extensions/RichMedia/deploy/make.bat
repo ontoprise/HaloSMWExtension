@@ -19,8 +19,8 @@ mkdir %OUTPUT_DIR%\extensions\SemanticForms
 REM copy files
 
 xcopy ..\* %OUTPUT_DIR%\extensions\RichMedia /S /EXCLUDE:exclude.dat /Y
-xcopy ..\patches\SemanticForms %OUTPUT_DIR%\extensions\SemanticForms /S /EXCLUDE:exclude.dat/Y
-xcopy ..\patches\skins\* %OUTPUT_DIR%\skins\* /S /EXCLUDE:exclude.dat /Y
+xcopy ..\patches\SemanticForms\* %OUTPUT_DIR%\extensions\SemanticForms /S /Y
+xcopy ..\patches\skins\* %OUTPUT_DIR%\skins\* /S  /Y
 
 echo Installing patches for MIME-Type extension
 xcopy ..\..\..\patches\includes\* %OUTPUT_DIR%\includes\ /S /EXCLUDE:exclude_mime.dat /Y

@@ -46,7 +46,7 @@ class SGADBHelper {
             if (!empty($primaryKeys)) {
                 $sql .= ", PRIMARY KEY(".$primaryKeys.")";
             }
-            $sql .= ') TYPE=innodb';
+            $sql .= ') TYPE=myisam';
             $db->query( $sql, 'SGADBHelper::setupTable' );
             SGADBHelper::reportProgress("   ... new table created\n",$verbose);
             return array();
