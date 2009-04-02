@@ -1,0 +1,191 @@
+__NOTOC__
+
+===Preconditions===
+# '''[[Enabling_the_Data_Import_Extension|Enable the Data Import Extension]]'''
+# Define a Wiki Web Service Description (WWSD) for the web service you like to use:
+* '''[[Defining_a_web_service_using_the_WWSD_syntax|manually using the Wiki Web Service Definition (WWSD) syntax]]''' 
+* '''[[Defining_a_web_service_using_GUI|using the Graphical User Interface]]'''
+
+
+
+
+
+==Manually embedding web services in articles==
+
+The web services that have been defined with the WWSD articles can be used in articles. A template syntax similar to that of <nowiki>{{#ask: }}</nowiki> is used.
+
+=== Basic syntax===
+Web service calls normally need parameters. These are specified within the definition of the call.
+
+'''Examples'''
+
+Simple call:
+<pre>
+{{#ws:weather
+|zipCode=98101
+|country=USA
+|?temperature
+}}
+</pre>
+
+The name of the web service (<code>weather</code> in the example) is specified after <code>#ws:</code>. The parameters of the service are addressed with the aliases that are defined in the WWSD. Like in templates, the actual values are simply assigned to the parameters. The alias for the result (<code>temperature</code>) is prefixed with a question mark. Its value will be returned as the result of the <code><nowiki>{{#ws: }}</nowiki></code> template.
+
+=== Default return values===
+Simple call with a '''default return value''':
+<pre>
+{{#ws:statistics
+|zipCode=98101
+|country=USA
+|?population=582174
+}}
+</pre>
+
+In this example a default value has been specified for the return value <code>population</code>.  (It overwrites the default value of the WWSD.) If the web service does not return a value, the default value is displayed. However, the value will be decorated with an exclamation mark icon with the hint, that the value is not the result of a web service call, but a default.
+
+=== Semantic properties ===
+Web services can be used like any other template. The can also be assigned to '''semantic properties''', if the type of the returned value matches the type of the property. It is not possible to use more than one of the result parts, that are defined in the WWSD, if the result of the web service is assigned to a semantic property. 
+ 
+<pre>
+[[population::{{#ws:statistics
+   |zipCode=98101
+   |country=USA
+   |?population={{{popul}}}
+  }}
+]]
+</pre>
+
+=== Result formats===
+Web services can return complex results like lists and tables. The <code>_format</code> specification determines how these results are printed. The value is one of <code>list, ol, ul, template, transposed, tixml</code> and <code>table</code>. Results that are assigned to a semantic property are always displayed in the list-format.
+
+==== List ====
+All values are printed in a comma separated list. If the result is a table of values, each row is flattened with its columns into a single list.
+
+'''Example:'''
+
+{| class="wikitable" border="1"
+|-
+| Rome
+| 30°C
+|-
+| Karlsruhe
+| 10°C
+|-
+| Seattle
+| 15°C
+|}
+'''is printed as:'''
+
+Rome, 30°C, Karlsruhe, 10°C, Seattle, 15°C
+
+==== Ol ====
+The rows of a table of results are listed in numbered rows of comma separated columns.
+
+'''Example (see table above)'''
+
+'''is printed as:'''
+
+#Rome, 30°C
+#Karlsruhe, 10°C
+#Seattle, 15°C
+
+==== Ul ====
+The rows of a table of results are listed in bulleted rows of comma separated columns.
+
+'''Example (see table above)'''
+
+'''is printed as:'''
+
+*Rome, 30°C
+*Karlsruhe, 10°C
+*Seattle, 15°C
+
+==== Table ====
+A table of results is printed as table where the names of the parts of the result (i.e. the columns; see below) are printed as table header.
+
+'''Example (see table above)'''
+
+'''is printed as:'''
+{| class="wikitable" border="1"
+|-
+!City
+!Temperature
+|-
+| Rome
+| 30°C
+|-
+| Karlsruhe
+| 10°C
+|-
+| Seattle
+| 15°C
+|}
+
+==== Transposed ====
+First the table which results from the web service call will be transposed. This means that columns become rows and vice versa. After that the results will be displayed like in the list format.
+
+'''Example (see table above)'''
+
+'''will be transposed to:'''
+{| class="wikitable" border="1"
+|-
+| Rome
+| Karlsruhe
+| Seattle
+|-
+| 30°C
+| 10°C
+| 15°C
+|}
+
+'''and then printed as:'''
+
+Rome, Karlsruhe, Seattle, 30°C, 10°C, 15°C
+
+==== Template ====
+The template format itself does nothing else than the list format except that it does not insert commas between rows of the web service result. But you can use the additional parameter <code>_template</code> to define a template which will be used to format each row of the web service result. (The <code>_template</code> parameter can also be used with the formats <code>list, ul, ol</code> and <code>transposed</code>.) 
+
+'''Example (see table above)'''
+
+'''with the #ws-syntax:'''
+<pre><nowiki>{{#ws:...</nowiki></pre>
+
+<pre><nowiki>| _format=template</nowiki></pre>
+
+<pre><nowiki>| _template=WeatherTemplate</nowiki></pre>
+
+<pre><nowiki>}}</nowiki></pre>
+
+'''and the template WeatherTemplate:'''
+<pre><nowiki>* city-name: {{{1}}} temperature: {{{2}}}</nowiki></pre>
+
+'''the result is printed as:'''
+
+* city-name: Rome temperature: 30°C
+* city-name: Karlsruhe temperature: 10°C
+* city-name: Seattle temperature: 15°C
+
+==== TIXML ====
+The tixml format displays the web service result in an xml format which can be read by the [[Term_Import | Term Import Framework]]. This way you can use the result of a web service call as input for a term import which allows you to instantiate web service results as new wiki articles.
+
+'''Example (see table above)'''
+
+'''will be printed as:'''
+
+:<pre><nowiki><?xml version='1.0'?></nowiki></pre>
+<pre><nowiki><tixml xmlns='http://www.ontoprise.de/smwplus#'></nowiki></pre>
+<pre><nowiki><columns></nowiki></pre>
+<pre><nowiki><title>city</title></nowiki></pre>
+<pre><nowiki><title>temperature</title></nowiki></pre>
+<pre><nowiki></columns></nowiki></pre>
+<pre><nowiki><row><item>Rome</item><item>30°C</item></row></nowiki></pre>
+<pre><nowiki><row><item>Karlsruhe</item><item>10°C</item></row></nowiki></pre>
+<pre><nowiki><row><item>Seattle</item><item>15°C</item></row></nowiki></pre>
+<pre><nowiki></tixmls></nowiki></pre>
+
+=== Strip HTML tags ===
+Some web service results contain HTML tags. This is especially true if you use the web service extension for displaying the content of RSS feeds. MediaWiki does not allow the usage of many HTML tags. The functionality of ignored HTML tags will not be processed but they will be displayed in the article. This often looks ugly. Therefore you can use the <code>_striptags</code> parameter to the #ws-syntax in order to strip tags that will not be processed anyway.
+
+If you don't use the <code>_striptags</code> parameter then no tags will be stripped. If you use it without any further parameters, then all tags will be stripped. But you can also use a whitelist i.e. <code>_stripTags = p, h3, h4</code> so that all tags will be stripped except those contained in the whitelist, i.e. <code>p, h3, h4</code>.
+
+[[Category:SMW+ Help Topic|Web Service]]
+[[SubsectionOf::Help:End User| ]]

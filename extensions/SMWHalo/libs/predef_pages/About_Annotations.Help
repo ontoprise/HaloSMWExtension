@@ -6,5 +6,6 @@ SMW+ provides a further means of structuring the wiki. Wiki pages contain text a
 SMW+ allows you to annotate any link or text on the page to specify its meaning. This turns links and text into so-called properties of an article. For example, from the sentence above you could create the two properties <tt>capital of</tt> and <tt>population</tt>. This leads to the annotations <tt><nowiki>[[capital of::Germany]]</nowiki></tt> and <tt><nowiki>[[population::3400000]]</nowiki></tt>. That way, information that was provided in an article already, for example that Berlin is the capital of Germany, is now given in a formal way accessible to software tools.
 
 
+
 [[Category:SMW+ Help Topic|About Annotations]]
 [[SubsectionOf::Help:Advanced_Annotation_Mode| ]]
