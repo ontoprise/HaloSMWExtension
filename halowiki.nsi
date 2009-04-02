@@ -25,8 +25,8 @@
 !define PRODUCTPATH "SMWPLUS"
 !define PRODUCT "SMW+"
 !define PRODUCT_CAPTION "SMW+"
-!define VERSION "1.4.2"
-!define BUILD_ID "421"
+!define VERSION "1.4.3"
+!define BUILD_ID "431"
 !define REQUIRED_JAVA_VERSION 16
 
 ; ----------------------------------------------------------
@@ -287,10 +287,10 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   copyfiles:
       !ifndef NOFILES
             
-            File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi *
+            File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php * 
             File /oname=extensions\SMWHalo\bin\xpdf\pdftotext.exe extensions\SMWHalo\bin\xpdf\pdftotext.exe
             File /oname=extensions\SMWHalo\bin\antiword\antiword.exe extensions\SMWHalo\bin\antiword\antiword.exe
-            
+                        
       !endif  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"

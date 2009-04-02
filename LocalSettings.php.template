@@ -163,6 +163,7 @@ $smwgOWLFullExport = true;
 
 $smwgEnableWikiWebServices = true;
 $smwgEnableUploadConverter = true;
+$smwgUseEditDistance = true;
 
 require_once( "{$IP}/extensions/Cite.php" );
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
