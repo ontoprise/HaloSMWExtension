@@ -122,7 +122,8 @@ setPosition: function(posX,posY){
 	//X-Coordinates
 	var toolbarWidth = element.scrollWidth;
 	//Check if it fits right to the coordinates
-	if( window.innerWidth - posX < toolbarWidth) {
+	var width = (window.innerWidth) ? window.innerWidth : document.body.clientWidth;
+	if( width - posX < toolbarWidth) {
 		//Check if it fits left to the coordinates
 		if( posX < toolbarWidth){
 			// if not place it on the left side of the window
@@ -131,7 +132,7 @@ setPosition: function(posX,posY){
 			
 		} else {
 			//if it fits position it left to the coordinates
-			var pos = window.innerWidth - posX;
+			var pos = width - posX;
 			element.setStyle({right: pos + 'px' });
 			element.setStyle({left: ''});
 		}
