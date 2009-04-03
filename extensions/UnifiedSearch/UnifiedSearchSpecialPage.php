@@ -59,6 +59,12 @@ class USSpecialPage extends SpecialPage {
 
         $offset = $wgRequest->getVal('offset') !== NULL ? $wgRequest->getVal('offset') : 0;
 
+		// path search options, if the form is called directly from this page
+		$doPathSearch = $wgRequest->getVal('paths');
+		
+		// fade out filter and browsing bars when doing a path search 
+		if ($doPathSearch) $opacity = 'style="-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha(Opacity=25)\'; filter: alpha(opacity=25); opacity: .25;";';
+		else $opacity='';
 
         $newpage = Title::newFromText($search);
 
@@ -93,12 +99,9 @@ class USSpecialPage extends SpecialPage {
             '<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()"><option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
             '<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
             '<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
-            '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"><input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="0"/></td></tr></table>'.
+            '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"><input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="'.$doPathSearch.'"/></td></tr></table>'.
 
         '</form>';
-
-		// path search options, if the form is called directly from this page
-		$doPathSearch = $wgRequest->getVal('paths'); 
 
         // -- new page link --
         if ($newpage !== NULL && !$newpage->exists()) {
@@ -123,7 +126,7 @@ class USSpecialPage extends SpecialPage {
         $restrictNS = $wgRequest->getVal('restrict');
         $restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
         $html .= wfMsg('us_refinesearch');
-        $html .='<div id="us_refineresults"><table cellspacing="0">';
+        $html .='<div id="us_refineresults" '.$opacity.'><table cellspacing="0">';
         $highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
         $row =  '<td rowspan="2" width="100"><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
 
@@ -166,7 +169,7 @@ class USSpecialPage extends SpecialPage {
         
         // browsing bar top
         if (count($searchResults) > 0) {
-            $html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
+            $html .= "<table id=\"us_browsing_top\" $opacity><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
             $html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
             $html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
         }
@@ -197,7 +200,7 @@ class USSpecialPage extends SpecialPage {
 					$psTerms = $this->initPathSearch($search, $searchSet);
 				else
 					$psTerms = $search;
-
+					
 				// start with html which is the same for both cases, paths have been found already or must be still searched
 				$tabBarSearchResults = '
 				    <div id="us_searchresults_tab">
@@ -248,7 +251,7 @@ class USSpecialPage extends SpecialPage {
 
         // browsing bar bottom
         if (count($searchResults) > 0) {
-            $html .= "<table id=\"us_browsing\"><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
+            $html .= "<table id=\"us_browsing_bottom\" $opacity><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
             $html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
             $html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
         }
@@ -266,8 +269,8 @@ class USSpecialPage extends SpecialPage {
 
     private function createLimitLink($search, $offset, $limit, $currentLimit) {
         $searchPage = SpecialPage::getTitleFor("Search");
-        $limit = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
-        return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$limit.'</a>';
+        $label = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
+        return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$label.'</a>';
     }
 
     private function doSearch($limit, $offset) {
