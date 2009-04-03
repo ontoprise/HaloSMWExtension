@@ -70,15 +70,7 @@ function rm_getInputs(){
    	el.type = "hidden";
    	el.name = "query";
    	el.value = "true";
-   	form.appendChild(el); 	
-   	
-   	
-   	
+
 	//submit the upload form
 	document.upload_form.wpUpload.click();
-	
-	//document.my_newlink.click();
-	//document.close();
-    //document.open();
-    //document.write('<P>');
 }
