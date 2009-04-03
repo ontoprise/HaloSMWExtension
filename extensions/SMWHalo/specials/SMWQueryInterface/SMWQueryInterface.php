@@ -25,18 +25,7 @@ class SMWQueryInterface extends SpecialPage {
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 				
 		$wgOut->setPageTitle(wfMsg('smw_queryinterface'));
-		
-		/*
-		 *             // add javascripts if necessary
-            switch ($p_array[1]) {
-            	case 'timeline': case 'eventline':
-					global $wgScriptPath;             		
-	           		$header = '<script type="text/javascript" src="' . $wgScriptPath .  '/extensions/SemanticResultFormats/Timeline/SRF_timeline.js"></script>
-					<script type="text/javascript" src="' . $wgScriptPath .  '/extensions/SemanticResultFormats/Timeline/SimileTimeline/timeline-api.js"></script>';
-            }
-
-		 */
-
+		  
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
@@ -82,10 +71,6 @@ class SMWQueryInterface extends SpecialPage {
 						'</div>' .
 						'<div id="qistatus"></div>' .
 					'</div>' .
-					'<div id="helpcontent" class="helpcontent">' .
-					'<div id="qi-help-headline"><img src="' . $smwgHaloScriptPath . '/skins/help.gif"/>Help</div>' .
-					'<div id="qi-help-content"></div>' .
-					'</div>' .
 				'</div>' .
 				'<div id="tablecolumnpreview">' .
 					'<div class="tcp_boxheader" onclick="qihelper.switchtcp()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_tcp') . '\')"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
@@ -102,7 +87,7 @@ class SMWQueryInterface extends SpecialPage {
 		
 		global $smwgResultFormats;
 		
-		$blacklist = array("rss", "csv", "json", "exceltable", "icalendar", "vcard", "calendar", "timeline", "eventline");
+		$blacklist = array("rss", "csv", "json", "exceltable", "icalendar", "vcard", "calendar", "eventline");
 		
 		$resultoptionshtml = "";
 		
