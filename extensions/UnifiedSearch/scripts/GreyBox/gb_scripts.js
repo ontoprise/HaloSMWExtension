@@ -249,7 +249,7 @@ AJS.addClass(this.g_window,"GB_Gallery");
 var _2a=AJS.DIV({"id":"gb_header_halo1_inner"});
 var _2b=AJS.DIV({"id":"gb_header_halo1_inner_close"});
 this.header1=AJS.$("gb_header_halo1");
-AJS.setHTML(_2a,"Close preview");
+AJS.setHTML(_2a,"Close");
 td_close=AJS.IMG({"class":"close","style":"float:right;margin-top:6px;margin-right:10px;z-index: 500;cursor: pointer",src:this.img_close});
 AJS.AEV(td_close,"click",GB_hide);
 AJS.ACN(this.header1,td_close,_2a);
