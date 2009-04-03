@@ -68,7 +68,7 @@ class WebServiceTIXMLResultPrinter extends WebServiceResultPrinter {
 				if($i == 0){
 					$return.= "<title>".$wsResult[$i][$k]."</title>";
 				} else {
-					$return.= "<item>".$wsResult[$i][$k]."</item>";
+					$return.= "<item>".urlendoe(htmlspecialchars($wsResult[$i][$k]))."</item>";
 				}
 			}
 			if($i == 0){

@@ -271,7 +271,7 @@ class DALReadTIXML implements IDAL {
 
 					foreach($tContent->row as $row){
 						foreach($row->item as $item){
-							$this->tixmlContent[$i][] = "".$item;
+							$this->tixmlContent[$i][] = urldecode("".$item);
 						}
 						$i++;
 					}
