@@ -41,6 +41,7 @@
  	private $details;
  	private $resultCode;
  	private $outputMethod;
+ 	private $numberOfPathsFound;
  	
  	public function __construct() {
  		$this->path = array();
@@ -56,6 +57,10 @@
 
 	public function setOutputMethod($type) {
 		$this->outputMethod = $type;
+	}
+	
+	public function numberPathsFound() {
+		return $this->numberOfPathsFound;
 	}
 
 	public function getResultAsHtml() {
@@ -165,7 +170,8 @@
 	}
 
 
-	public function doSearch($searchArr) {
+	public function doSearch($searchArr, $limit = NULL, $offset = NULL) {
+		
 		foreach ($searchArr as $term) {
 			if (is_array($term)) {
 				if ($term[1] != NULL && $term[1] > -1)
@@ -179,16 +185,27 @@
 		$nop = count($this->path); 
 		if ($nop > 1) {
 			$this->evalPath(); // find any paths
-			$this->fetchNodeDetails($this->result); // if paths found complete label names for SMW ids
+			// if paths found complete label names for SMW ids, these are needed for checking path consistency
+			$this->fetchNodeDetails($this->result); 
 			// post processing for results
+			$pathExists = array();
 			for ($i = 0, $is = count($this->result); $i < $is; $i++ ) {
 				// if the result path is terminating with a property, add categories/or pages
-				$this->completePathSpo($i, 0);
-				$this->completePathSpo($i, count($this->result[$i]) - 1);
+				$this->completePathSpo($this->result[$i], 0); // first
+				$this->completePathSpo($this->result[$i], 1); // last
 
 				// check path consistency and if there are results
-				if (! $this->checkPathConsistency($this->result[$i]))
+				if (! $this->checkPathConsistency($this->result[$i])) {
 					unset($this->result[$i]);
+					continue;
+				}
+					
+				// because of the paths filled up as spo and merging (sub) categories there might be doubles now
+				$key = implode(',', $this->result[$i]);
+				if (in_array($key, $pathExists))
+					unset($this->result[$i]);
+				else
+					$pathExists[] = $key;
 			}
 		}
 		else if ($nop == 1) { // for one path, check details of property/category/page
@@ -199,6 +216,11 @@
 		
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
+		
+		// here we limit the results. A result is a path that has at least one instance as well
+		$this->checkResultLimits($limit, $offset);
+		
+		// get node names and values for $instance
 		foreach (array_keys($this->instance) as $key)
 			$this->fetchNodeDetails($this->instance[$key], $key);
 
@@ -248,6 +270,45 @@
 	private function getBoxFooter() {
 		return "";
 	}
+
+	/**
+	 * Check limit and offset for results. Paths are removed from the result set
+	 * if the limit and offset is set and $result exceeds these limits.
+	 * 
+	 * @access private
+	 * @param  int limit of how many result sets are expected
+	 * @param  int offset from where to start
+	 */
+	private function checkResultLimits($limit, $offset) {
+		// first of all, clear all paths that do not have any
+		// instances set, as these are not shown anyway
+		foreach (array_keys($this->result) as $k) {
+			$key = implode(',', $this->result[$k]);
+			if (! isset($this->instance[$key]))
+				unset($this->result[$k]);
+		}
+		$this->numberOfPathsFound = count($this->result);
+
+		// now check offset and remove all elements before reaching element number $offset
+		if (($offset != NULL) && count($this->result) > $offset) {
+			$i = 1;
+			foreach (array_keys($this->result) as $k) {
+				unset($this->result[$k]);
+				if ($i == $offset) break;
+				$i++;
+			}
+		}
+		// if result exceeds limit, leav all below limit untouched but remove the rest.
+		if (($limit != NULL) && count($this->result) > $limit) {
+			$i = $limit + 1;
+			foreach (array_keys($this->result) as $k) {
+				$i--;
+				if ($i > 0) continue;
+				unset($this->result[$k]);
+			}
+			
+		}
+	}	
 
 	/**
 	 * Main function that takes the path member variables as start points and
@@ -445,15 +506,16 @@
 		$this->result[] = $path;
 	}
 
-	private function completePathSpo($i, $m) {
-		if (PSC_WikiData::isProperty($this->result[$i][$m])) {
-			if (PSC_WikiData::isPropertyXsdType($this->result[$i][$m]))
-				array_unshift($this->result[$i], PSC_WikiData::getPropertyXsdType($this->result[$i][$m]));
+	private function completePathSpo(&$path, $m) {
+		if ($m == 1) $m = count($path) - 1;
+		if (PSC_WikiData::isProperty($path[$m])) {
+			if (PSC_WikiData::isPropertyXsdType($path[$m]))
+				array_unshift($path, PSC_WikiData::getPropertyXsdType($path[$m]));
 			else {
-				$path = new PSC_Path($this->result[$i][$m]);
+				$psc = new PSC_Path($path[$m]);
 				$n = ($m == 0) ? 1 : $m - 1;
-				if (isset($this->result[$i][$n])) $path->addLeft($this->result[$i][$n]);
-				$next = $path->getNext();
+				if (isset($path[$n])) $psc->addLeft($path[$n]);
+				$next = $psc->getNext();
 				if (count($next) > 0) {
 					// get names for categories
 					foreach ($next as $id) {
@@ -462,14 +524,14 @@
 					}
 
 					if ($m == 0) // add new neighbour at furthermost right side
-						array_unshift($this->result[$i], implode('|', $next));
+						array_unshift($path, implode('|', $next));
 					else		 // add new neighbour at furthermost left side
-						$this->result[$i][] = implode('|', $next);
+						$path[] = implode('|', $next);
 				} else {
 					if ($m == 0) // remove furthermost left element
-						array_shift($this->result[$i]);
+						array_shift($path);
 					else         // remove furthermost right element
-						array_pop($this->result[$i]);
+						array_pop($path);
 				}
 			}
 		}

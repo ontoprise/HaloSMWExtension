@@ -4,6 +4,10 @@ var httpRequest;
 doPathSearch = function (input) {
 	// if the function was called already, html is still there and we are done
 	if (us_psc_done) return;
+    
+    // show loading image
+    document.getElementById('us_pathsearch_results').innerHTML = 
+      '<img src="' + wgServer + wgScriptPath + '/extensions/UnifiedSearch/scripts/GreyBox/indicator.gif" alt="Loading pathsearch"/>'; 
 	
 	// call backend
 	// Mozilla, Safari and other browsers
@@ -55,6 +59,9 @@ switchTabs = function(click) {
 	var tab_fulltext = tab.getElementsByTagName('td')[1];
 	var tab_path = tab.getElementsByTagName('td')[3];
 	
+	var opacity = '-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"; filter: alpha(opacity=25); opacity: .25;';
+	
+	// div for content of tabs
 	var styleTabEnabled = document.createAttribute("style");
     styleTabEnabled.nodeValue = 'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;';
 	var styleTabDisabled = document.createAttribute("style");
@@ -65,12 +72,18 @@ switchTabs = function(click) {
 		tab_path.setAttributeNode(styleTabEnabled);
 		document.getElementById('us_fulltext_results').style.display = "none";
 		tab_fulltext.setAttributeNode(styleTabDisabled);
+		document.getElementById('us_browsing_top').setAttribute('style', opacity);
+		document.getElementById('us_browsing_bottom').setAttribute('style', opacity);
+		document.getElementById('us_refineresults').setAttribute('style', opacity);
 	}
 	else {
 		document.getElementById('us_pathsearch_results').style.display = "none";
 		tab_path.setAttributeNode(styleTabDisabled);
 		document.getElementById('us_fulltext_results').style.display = "block";
 		tab_fulltext.setAttributeNode(styleTabEnabled);
+		document.getElementById('us_browsing_top').removeAttribute('style');
+		document.getElementById('us_browsing_bottom').removeAttribute('style');
+		document.getElementById('us_refineresults').removeAttribute('style');
 	}
 	document.getElementById('doPathSearch').value = click;
 }

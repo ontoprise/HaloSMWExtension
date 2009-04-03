@@ -16,7 +16,6 @@
     list-style-type: none;
 }
 
-
 #us_searchresults_tab .us_tab_label {
 	border-collapse: collapse;
 	white-space: nowrap;
@@ -123,4 +122,9 @@
 	border-bottom: 1px solid #F7F7F7;
 	width: 100%;
 	height: 50%;
+}
+
+#us_resultinfo_path {
+    border-bottom: 1px solid;
+    margin: 5px;   
 }

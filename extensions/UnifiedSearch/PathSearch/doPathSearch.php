@@ -14,23 +14,36 @@ function us_doPathSearch($input, $nojason = false) {
 	if (trim($input) == "")
 		return ($nojason) ? wfMsg('us_pathsearch_no_results') : USPathSearchJasonOutput(wfMsg('us_pathsearch_no_results'));
 	
-	if (strpos($input, ',') !== false) {
-		$params = explode(',', $input);
+	$params = explode('&', $input);
+	$search = (isset($params[0])) ? $params[0] : "";
+	$limit = (isset($params[1])) ? $params[1] : 10000;
+	$offset = (isset($params[2])) ? $params[2] : 0;
+	
+	if (strpos($search, ',') !== false) {
+		$params = explode(',', $search);
+		$search = "";
 		if (count($params) % 2 == 1) 
 			return ($nojason) ? wfMsg('us_pathsearch_no_results') : USPathSearchJasonOutput(wfMsg('us_pathsearch_no_results'));
 		$queryArr = array();
 		for ($i = 0, $is = count($params); $i < $is; $i++) {
+			$search.= $params[$i]." ";
 			$queryArr[] = array($params[$i], $params[++$i]);
 		}
+		$search = substr($search, 0, -1);
 	}
 	else {
-		$queryArr = USPathSearchEvalQueryParams($input);
+		$queryArr = USPathSearchEvalQueryParams($search);
 	}
-	
+
 	$psc = new PathSearchCore();
-	$psc->doSearch($queryArr);
+	$psc->doSearch($queryArr, $limit, $offset);
 	$psc->setOutputMethod(0);
 	$html = ($psc->getResultCode() != 0) ? wfMsg('us_pathsearch_no_results') : $psc->getResultAsHtml();
+	
+	$totalHits = $psc->numberPathsFound();
+	$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
+    $html = "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>.$html";
+	
 	return ($nojason) ? $html : USPathSearchJasonOutput($html);
 }
 
