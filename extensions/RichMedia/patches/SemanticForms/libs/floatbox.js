@@ -2423,7 +2423,8 @@ function initfb() {
 	}
 	arguments.callee.done = true;
 	if (document.compatMode === 'BackCompat') {
-		alert('Floatbox does not support quirks mode.\nPage needs to have a valid a doc type.');
+		//SF creates errors, so ignore that.
+		//alert('Floatbox does not support quirks mode.\nPage needs to have a valid a doc type.');
 		return;
 	}
 	fb = (fbWindow === 'self' ? new Floatbox() : parent.fb);
