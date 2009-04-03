@@ -1277,282 +1277,133 @@ Element.addMethods(Effect.Methods);
 
 // slider.js
 // under MIT-License; Copyright (c) 2005, 2006 Thomas Fuchs
-// script.aculo.us slider.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
-
-// Copyright (c) 2005-2007 Marty Haught, Thomas Fuchs 
-//
-// script.aculo.us is freely distributable under the terms of an MIT-style license.
-// For details, see the script.aculo.us web site: http://script.aculo.us/
-
-if (!Control) var Control = { };
-
-// options:
-//  axis: 'vertical', or 'horizontal' (default)
-//
-// callbacks:
-//  onChange(value)
-//  onSlide(value)
-Control.Slider = Class.create({
-  initialize: function(handle, track, options) {
-    var slider = this;
-    
-    if (Object.isArray(handle)) {
-      this.handles = handle.collect( function(e) { return $(e) });
-    } else {
-      this.handles = [$(handle)];
-    }
-    
-    this.track   = $(track);
-    this.options = options || { };
-
-    this.axis      = this.options.axis || 'horizontal';
-    this.increment = this.options.increment || 1;
-    this.step      = parseInt(this.options.step || '1');
-    this.range     = this.options.range || $R(0,1);
-    
-    this.value     = 0; // assure backwards compat
-    this.values    = this.handles.map( function() { return 0 });
-    this.spans     = this.options.spans ? this.options.spans.map(function(s){ return $(s) }) : false;
-    this.options.startSpan = $(this.options.startSpan || null);
-    this.options.endSpan   = $(this.options.endSpan || null);
-
-    this.restricted = this.options.restricted || false;
-
-    this.maximum   = this.options.maximum || this.range.end;
-    this.minimum   = this.options.minimum || this.range.start;
-
-    // Will be used to align the handle onto the track, if necessary
-    this.alignX = parseInt(this.options.alignX || '0');
-    this.alignY = parseInt(this.options.alignY || '0');
-    
-    this.trackLength = this.maximumOffset() - this.minimumOffset();
-
-    this.handleLength = this.isVertical() ? 
-      (this.handles[0].offsetHeight != 0 ? 
-        this.handles[0].offsetHeight : this.handles[0].style.height.replace(/px$/,"")) : 
-      (this.handles[0].offsetWidth != 0 ? this.handles[0].offsetWidth : 
-        this.handles[0].style.width.replace(/px$/,""));
-
-    this.active   = false;
-    this.dragging = false;
-    this.disabled = false;
-
-    if (this.options.disabled) this.setDisabled();
-
-    // Allowed values array
-    this.allowedValues = this.options.values ? this.options.values.sortBy(Prototype.K) : false;
-    if (this.allowedValues) {
-      this.minimum = this.allowedValues.min();
-      this.maximum = this.allowedValues.max();
-    }
-
-    this.eventMouseDown = this.startDrag.bindAsEventListener(this);
-    this.eventMouseUp   = this.endDrag.bindAsEventListener(this);
-    this.eventMouseMove = this.update.bindAsEventListener(this);
-
-    // Initialize handles in reverse (make sure first handle is active)
-    this.handles.each( function(h,i) {
-      i = slider.handles.length-1-i;
-      slider.setValue(parseFloat(
-        (Object.isArray(slider.options.sliderValue) ? 
-          slider.options.sliderValue[i] : slider.options.sliderValue) || 
-         slider.range.start), i);
-      h.makePositioned().observe("mousedown", slider.eventMouseDown);
-    });
-    
-    this.track.observe("mousedown", this.eventMouseDown);
-    document.observe("mouseup", this.eventMouseUp);
-    document.observe("mousemove", this.eventMouseMove);
-    
-    this.initialized = true;
-  },
-  dispose: function() {
-    var slider = this;    
-    Event.stopObserving(this.track, "mousedown", this.eventMouseDown);
-    Event.stopObserving(document, "mouseup", this.eventMouseUp);
-    Event.stopObserving(document, "mousemove", this.eventMouseMove);
-    this.handles.each( function(h) {
-      Event.stopObserving(h, "mousedown", slider.eventMouseDown);
-    });
-  },
-  setDisabled: function(){
-    this.disabled = true;
-  },
-  setEnabled: function(){
-    this.disabled = false;
-  },  
-  getNearestValue: function(value){
-    if (this.allowedValues){
-      if (value >= this.allowedValues.max()) return(this.allowedValues.max());
-      if (value <= this.allowedValues.min()) return(this.allowedValues.min());
-      
-      var offset = Math.abs(this.allowedValues[0] - value);
-      var newValue = this.allowedValues[0];
-      this.allowedValues.each( function(v) {
-        var currentOffset = Math.abs(v - value);
-        if (currentOffset <= offset){
-          newValue = v;
-          offset = currentOffset;
-        } 
-      });
-      return newValue;
-    }
-    if (value > this.range.end) return this.range.end;
-    if (value < this.range.start) return this.range.start;
-    return value;
-  },
-  setValue: function(sliderValue, handleIdx){
-    if (!this.active) {
-      this.activeHandleIdx = handleIdx || 0;
-      this.activeHandle    = this.handles[this.activeHandleIdx];
-      this.updateStyles();
-    }
-    handleIdx = handleIdx || this.activeHandleIdx || 0;
-    if (this.initialized && this.restricted) {
-      if ((handleIdx>0) && (sliderValue<this.values[handleIdx-1]))
-        sliderValue = this.values[handleIdx-1];
-      if ((handleIdx < (this.handles.length-1)) && (sliderValue>this.values[handleIdx+1]))
-        sliderValue = this.values[handleIdx+1];
-    }
-    sliderValue = this.getNearestValue(sliderValue);
-    this.values[handleIdx] = sliderValue;
-    this.value = this.values[0]; // assure backwards compat
-    
-    this.handles[handleIdx].style[this.isVertical() ? 'top' : 'left'] = 
-      this.translateToPx(sliderValue);
-    
-    this.drawSpans();
-    if (!this.dragging || !this.event) this.updateFinished();
-  },
-  setValueBy: function(delta, handleIdx) {
-    this.setValue(this.values[handleIdx || this.activeHandleIdx || 0] + delta, 
-      handleIdx || this.activeHandleIdx || 0);
-  },
-  translateToPx: function(value) {
-    return Math.round(
-      ((this.trackLength-this.handleLength)/(this.range.end-this.range.start)) * 
-      (value - this.range.start)) + "px";
-  },
-  translateToValue: function(offset) {
-    return ((offset/(this.trackLength-this.handleLength) * 
-      (this.range.end-this.range.start)) + this.range.start);
-  },
-  getRange: function(range) {
-    var v = this.values.sortBy(Prototype.K); 
-    range = range || 0;
-    return $R(v[range],v[range+1]);
-  },
-  minimumOffset: function(){
-    return(this.isVertical() ? this.alignY : this.alignX);
-  },
-  maximumOffset: function(){
-    return(this.isVertical() ? 
-      (this.track.offsetHeight != 0 ? this.track.offsetHeight :
-        this.track.style.height.replace(/px$/,"")) - this.alignY : 
-      (this.track.offsetWidth != 0 ? this.track.offsetWidth : 
-        this.track.style.width.replace(/px$/,"")) - this.alignX);
-  },  
-  isVertical:  function(){
-    return (this.axis == 'vertical');
-  },
-  drawSpans: function() {
-    var slider = this;
-    if (this.spans)
-      $R(0, this.spans.length-1).each(function(r) { slider.setSpan(slider.spans[r], slider.getRange(r)) });
-    if (this.options.startSpan)
-      this.setSpan(this.options.startSpan,
-        $R(0, this.values.length>1 ? this.getRange(0).min() : this.value ));
-    if (this.options.endSpan)
-      this.setSpan(this.options.endSpan, 
-        $R(this.values.length>1 ? this.getRange(this.spans.length-1).max() : this.value, this.maximum));
-  },
-  setSpan: function(span, range) {
-    if (this.isVertical()) {
-      span.style.top = this.translateToPx(range.start);
-      span.style.height = this.translateToPx(range.end - range.start + this.range.start);
-    } else {
-      span.style.left = this.translateToPx(range.start);
-      span.style.width = this.translateToPx(range.end - range.start + this.range.start);
-    }
-  },
-  updateStyles: function() {
-    this.handles.each( function(h){ Element.removeClassName(h, 'selected') });
-    Element.addClassName(this.activeHandle, 'selected');
-  },
-  startDrag: function(event) {
-    if (Event.isLeftClick(event)) {
-      if (!this.disabled){
-        this.active = true;
+/* Resizing Content window slider using scriptacolus slider */
+var MainSlider = Class.create();
+MainSlider.prototype = {
+		
+	initialize: function() {
+ 		this.sliderObj = null;
+ 		this.oldHeight = 0;
+ 		this.oldWidth  = 0;
+ 		this.savedPos = -1;
+ 	},
+ 	//if()
+ 	activateResizing: function() {
+ 	//Check if semtoolbar is available and action is not annotate
+ 	if(!$('mainslider') || wgAction == 'annotate') return;
+ 	
+ 	//Load image to the slider div
+ 		$('mainslider').innerHTML = '<img id="mainsliderHandle" src="' +
+ 			wgScriptPath +
+ 			'/skins/ontoskin2/slider.gif"/>';
         
-        var handle = Event.element(event);
-        var pointer  = [Event.pointerX(event), Event.pointerY(event)];
-        var track = handle;
-        if (track==this.track) {
-          var offsets  = Position.cumulativeOffset(this.track); 
-          this.event = event;
-          this.setValue(this.translateToValue( 
-           (this.isVertical() ? pointer[1]-offsets[1] : pointer[0]-offsets[0])-(this.handleLength/2)
-          ));
-          var offsets  = Position.cumulativeOffset(this.activeHandle);
-          this.offsetX = (pointer[0] - offsets[0]);
-          this.offsetY = (pointer[1] - offsets[1]);
+ 		var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
+        if( saved_iv != null){
+        	var initialvalue = saved_iv;
         } else {
-          // find the handle (prevents issues with Safari)
-          while((this.handles.indexOf(handle) == -1) && handle.parentNode) 
-            handle = handle.parentNode;
-            
-          if (this.handles.indexOf(handle)!=-1) {
-            this.activeHandle    = handle;
-            this.activeHandleIdx = this.handles.indexOf(this.activeHandle);
-            this.updateStyles();
-            
-            var offsets  = Position.cumulativeOffset(this.activeHandle);
-            this.offsetX = (pointer[0] - offsets[0]);
-            this.offsetY = (pointer[1] - offsets[1]);
-          }
+        	//if(this.savedPos != -1){
+        	//	var initialvalue = this.savedPos;
+        	//} 
+        	//else { 
+        		var initialvalue = 190 / $('mainslider').clientWidth;
+        	//}
         }
-      }
-      Event.stop(event);
-    }
-  },
-  update: function(event) {
-   if (this.active) {
-      if (!this.dragging) this.dragging = true;
-      this.draw(event);
-      if (Prototype.Browser.WebKit) window.scrollBy(0,0);
-      Event.stop(event);
-   }
-  },
-  draw: function(event) {
-    var pointer = [Event.pointerX(event), Event.pointerY(event)];
-    var offsets = Position.cumulativeOffset(this.track);
-    pointer[0] -= this.offsetX + offsets[0];
-    pointer[1] -= this.offsetY + offsets[1];
-    this.event = event;
-    this.setValue(this.translateToValue( this.isVertical() ? pointer[1] : pointer[0] ));
-    if (this.initialized && this.options.onSlide)
-      this.options.onSlide(this.values.length>1 ? this.values : this.value, this);
-  },
-  endDrag: function(event) {
-    if (this.active && this.dragging) {
-      this.finishDrag(event, true);
-      Event.stop(event);
-    }
-    this.active = false;
-    this.dragging = false;
-  },  
-  finishDrag: function(event, success) {
-    this.active = false;
-    this.dragging = false;
-    this.updateFinished();
-  },
-  updateFinished: function() {
-    if (this.initialized && this.options.onChange) 
-      this.options.onChange(this.values.length>1 ? this.values : this.value, this);
-    this.event = null;
-  }
-});
+        
+ 		//create slider after old one is removed
+ 		if(this.sliderObj != null){
+ 	   		this.sliderObj.setDisabled();
+ 	   		this.sliderObj= null;
+ 		}
+ 		
+ 		
+ 		var min = 160 / $('mainslider').getWidth();
+ 		var max = 1- (400 / $('mainslider').getWidth());
+ 		
+ 		//alert(min);
+ 		//alert(max);
+ 		
+ 		this.sliderObj = new Control.Slider('mainsliderHandle','mainslider',{
+ 	   	  //axis:'vertical',
+ 	      sliderValue:initialvalue,
+ 	      //minimum:min,
+ 	      //maximum:max,
+ 	      //range: $R(min,max),
+ 	      onSlide: this.slide.bind(this),
+ 	      onChange: this.slide.bind(this)
+ 		});
+ 		this.slide(initialvalue);
+ 	},
 
+ 	//Check for min max and sets the content and the semtoolbar to the correct width
+ 	slide: function(v)
+ 	      {
+ 			
+ 		     
+            // change width of divs of class 'dtreestatic' below main_navtree
+            // and of main_navtree itself.
+ 	      	var menuwidth = $('smwf_naviblock').clientWidth;
+            $$('#smwf_browserview div.dtreestatic').each(function(statictree) { 
+                 statictree.style.width = menuwidth - 30 +"px";
+            });
+
+            var totalwidth = $('mainslider').getWidth();
+            var min = 160 / totalwidth;
+     		var max = 1- (400 / totalwidth);
+            if( v < min){
+                if (this.sliderObj != null) this.sliderObj.setValue(min);
+                $('mainsliderHandle').style.left = 160; 
+                return;
+            }
+
+            if( v > max){
+                if (this.sliderObj != null) this.sliderObj.setValue(max);
+                $('mainsliderHandle').style.left = totalwidth - 400;
+                return;
+            } 
+
+ 	 		//calculate left div size and rightdiv size
+ 	      	var currLeftDiv = 100*v; //width of left menu
+ 	        var currRightDiv = currLeftDiv + 1; //margi-left of mainpage
+ 	        
+ 	       
+ 	        if(currLeftDiv != Infinity && currRightDiv != Infinity ){
+ 	        	$('smwf_naviblock').style.width = currLeftDiv + "%";
+ 	        	$('smwf_pageblock').style.marginLeft = currRightDiv + "%";
+ 	        }
+ 	         	         
+ 	        document.cookie = "cp-slider="+v+"; path="+wgScript;
+            this.savedPos = v;
+ 	 },
+ 	 /**
+ 	  * Resizes the slide if window size is changed
+ 	  * since IE fires the resize event in much more cases than the desired
+ 	  * we have to do some additional checks
+ 	  */
+ 	 resizeTextbox: function(){
+ 	 	if( OB_bd.isIE == true){
+ 		 	if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
+ 		 		this.activateResizing();
+ 		 		this.oldHeight = document.documentElement.clientHeight;
+ 				this.oldWidth  = document.documentElement.clientWidth;
+ 		 	} else{
+ 		 		if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
+ 		 			alert('resize');
+ 		 			this.activateResizing();
+ 		 			this.oldHeight = window.innerHeight;
+ 					this.oldWidth  = window.innerWidth;
+ 		 		}
+ 		 	}
+ 	   }else {
+ 	 		this.activateResizing();
+ 	 	}
+ 	 }
+    
+}
+
+var smwhg_mainslider = new MainSlider();
+Event.observe(window, 'load', smwhg_mainslider.activateResizing.bind(smwhg_mainslider));
+//Resizes the slider if window size is changed
+Event.observe(window, 'resize', smwhg_mainslider.resizeTextbox.bind(smwhg_mainslider));
 
 // dragdrop.js
 // under MIT-License; Copyright (c) 2005, 2006 Thomas Fuchs
@@ -2572,19 +2423,22 @@ var SMW_AC_AUTO_TRIGGERING_TIME = 800;
 var SMW_AJAX_AC = 1;
 
 function autoCompletionsOptions(request) { 
-	autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
-	document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
+    autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
+    document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
 }
 
 var AutoCompleter = Class.create();
 AutoCompleter.prototype = {
     initialize: function() {
-    	
-    	  // current input box of last AC request
+        
+          // current input box of last AC request
         this.currentInputBox;
 
          // type hint (for INPUTs)
         this.typeHint;
+        
+        // constraints
+        this.constraints;
 
          // current userInput of last AC request
         this.userInputToMatch = null;
@@ -2632,12 +2486,12 @@ AutoCompleter.prototype = {
         
         this.currentIESelection = null;
          // Get preference options
-		var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
-		if (AC_mode == null) {
-			sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
-		} else {
-			this.autoTriggering = (AC_mode == 'auto');
-		}
+        var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
+        if (AC_mode == null) {
+            sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
+        } else {
+            this.autoTriggering = (AC_mode == 'auto');
+        }
     },
 
      /* Cancels event propagation */
@@ -2701,12 +2555,12 @@ AutoCompleter.prototype = {
         var eL = this.getEventElement(e);
 
         var upEl = eL.className.indexOf("wickEnabled") >= 0 ? eL : undefined;
-		
+        
         var kc = e["keyCode"];
-		var isFloaterVisible = (this.siw && this.siw.floater.style.visibility == 'visible');
-		
-		// remember old cursor position (only IE)
-		if (OB_bd.isIE) this.currentIESelection = document.selection.createRange();
+        var isFloaterVisible = (this.siw && this.siw.floater.style.visibility == 'visible');
+        
+        // remember old cursor position (only IE)
+        if (OB_bd.isIE) this.currentIESelection = document.selection.createRange();
         if (isFloaterVisible && this.siw && ((kc == 13) || (kc == 9))) {
             this.siw.selectingSomething = true;
 
@@ -2717,20 +2571,22 @@ AutoCompleter.prototype = {
         } else if (upEl && (kc != 38) && (kc != 40) && (kc != 37) && (kc != 39) && (kc != 13) && (kc != 27)) {
             if (!this.siw || (this.siw && !this.siw.selectingSomething)) {
               if ((e["ctrlKey"] && (kc == 32)) || isFloaterVisible) {
-              	if (OB_bd.isIE && !isFloaterVisible && !e["altKey"]) {
-              		// only relevant to IE. removes the whitespace which is pasted when pressing Ctrl+Space
-              		var userInput = this.getUserInputToMatch();
-              		var selection_range = document.selection.createRange();
-            		selection_range.moveStart("character", -userInput.length-1);
-            		selection_range.text = userInput.substr(0, userInput.length-1);
-            		selection_range.collapse(false);
-              	}
+                if (OB_bd.isIE && !isFloaterVisible && !e["altKey"]) {
+                    // only relevant to IE. removes the whitespace which is pasted when pressing Ctrl+Space
+                    var userInput = this.getUserInputToMatch();
+                    var selection_range = document.selection.createRange();
+                    selection_range.moveStart("character", -userInput.length-1);
+                    selection_range.text = userInput.substr(0, userInput.length-1);
+                    selection_range.collapse(false);
+                }
                 if (!this.siw) this.siw = new SmartInputWindow();
                 this.siw.inputBox = upEl;
                 this.currentInputBox = upEl;
                  // get type hint 
                 this.typeHint = this.siw.inputBox.getAttribute("typeHint");
 
+                // get constraint 
+                this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
 
                      // Ctrl+Alt+Space was pressed
                      // get user input which is to be matched
@@ -2751,7 +2607,7 @@ AutoCompleter.prototype = {
                          // runs AC after 900ms have elapsed. That means user can enter several chars 
                          // without causing a AJAX call after each, but only after the last.
                         this.timer = window.setTimeout(
-                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint)",
+                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
                                          SMW_AC_MANUAL_TRIGGERING_TIME);
                     } else {
                          // if userinputToMatch is empty --> hide floater
@@ -2760,13 +2616,16 @@ AutoCompleter.prototype = {
                     }
                  // uncomment the following else statement to activate auto-triggering
                 } else if (this.autoTriggering) {
-                	if (kc==17 || kc==18) return; //ignore Ctrt/Alt when pressed without any key
-                	if (!this.siw) this.siw = new SmartInputWindow();
-                	this.siw.inputBox = upEl;
-                	this.currentInputBox = upEl;
-                	 // get type hint 
-                	this.typeHint = this.siw.inputBox.getAttribute("typeHint");
+                    if (kc==17 || kc==18) return; //ignore Ctrt/Alt when pressed without any key
+                    if (!this.siw) this.siw = new SmartInputWindow();
+                    this.siw.inputBox = upEl;
+                    this.currentInputBox = upEl;
+                     // get type hint 
+                    this.typeHint = this.siw.inputBox.getAttribute("typeHint");
                 
+                    // get constraints
+                    this.constraints = this.siw.inputBox.getAttribute("constraints");
+                    
                     if (GeneralBrowserTools.isTextSelected(this.siw.inputBox)) {
                          // do not trigger auto AC when something is selected.
                         this.hideSmartInputFloater();
@@ -2788,7 +2647,7 @@ AutoCompleter.prototype = {
                              // runs AC after 900ms have elapsed. That means user can enter several chars 
                              // without causing a AJAX call after each, but only after the last.
                             this.timer = window.setTimeout(
-                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint)",
+                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
                                              SMW_AC_AUTO_TRIGGERING_TIME);
                         } else {
                              // if userinputToMatch is empty --> hide floater
@@ -2804,7 +2663,7 @@ AutoCompleter.prototype = {
                 }
             }
         } else if (kc == 27) { // escape pressed -> hide floater
-        	 this.hideSmartInputFloater();
+             this.hideSmartInputFloater();
              this.freezeEvent(e);
               this.resetCursorinIE();
         } else if (this.siw && this.siw.inputBox) {
@@ -2816,7 +2675,7 @@ AutoCompleter.prototype = {
     },  //handleKeyPress()
 
      // used to run AC after a certain peroid of time has elapsed
-    timedAC: function(userInputToMatch, userContext, inputBox, typeHint) {
+    timedAC: function(userInputToMatch, userContext, inputBox, typeHint, constraints) {
         function userInputToMatchResult(request) {
             this.hidePendingAJAXIndicator();
 
@@ -2825,7 +2684,7 @@ AutoCompleter.prototype = {
              return;
             }
 
-             // if something went wrong, abort here and hide floater	
+             // if something went wrong, abort here and hide floater    
             if (request.status != 200) {
                  //alert("Error: " + request.status + " " + request.statusText + ": " + request.responseText);
                 this.hideSmartInputFloater();
@@ -2846,26 +2705,27 @@ AutoCompleter.prototype = {
             if (this.collection.length > 0) {
                 AC_matchCache.addLookup(userContext + userInputToMatch, this.collection, typeHint);
             }
-			
+            
              // process match results
             this.processSmartInput(inputBox, userInputToMatch);
         }
-		this.notMoved = true;
+        this.notMoved = true;
         this.ignorePending = false;
 
          // check if AC result for current user input is in cache
         var cacheResult = AC_matchCache.getLookup(userContext + userInputToMatch, typeHint);
-
         if (cacheResult == null) {  // if no request it
             if (userInputToMatch == null) return;
 
             this.showPendingAJAXIndicator(inputBox);
             this.resetCursorinIE();
+    
             sajax_do_call('smwf_ac_AutoCompletionDispatcher', [
                 wgTitle,
                 userInputToMatch,
                 userContext,
-                typeHint
+                typeHint,
+                constraints
             ], userInputToMatchResult.bind(this), SMW_AJAX_AC);
         } else {  // if yes, use it from cache.
             this.collection = cacheResult;
@@ -2881,7 +2741,7 @@ AutoCompleter.prototype = {
     handleKeyDown: function(event) {
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
-		
+        
         if (this.siw && (kc = e["keyCode"])) {
 
             if (kc == 40 && this.siw.floater.style.visibility == 'visible') {
@@ -2904,8 +2764,8 @@ AutoCompleter.prototype = {
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
             } else if (kc == 27) {
-            	ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
-            	smwhgLogger.log("", "AC", "close_without_selection");
+                ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
+                smwhgLogger.log("", "AC", "close_without_selection");
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
                 this.resetCursorinIE();
@@ -2934,14 +2794,14 @@ AutoCompleter.prototype = {
         var eL2 = this.getEventElement(e2);
         this.mousePressed = false;
 
- 		if (this.siw && this.siw.selectingSomething) {
- 			this.resetCursorinIE();
+        if (this.siw && this.siw.selectingSomething) {
+            this.resetCursorinIE();
             this.selectFromMouseClick();
-			
+            
         }
     },  //handleClick()
     handleMouseOver: function(event) {
-    	if (this.notMoved) return;
+        if (this.notMoved) return;
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
 
@@ -2972,8 +2832,8 @@ AutoCompleter.prototype = {
         }
     },
     handleMouseMove: function(event) {
-    	this.notMoved = false;
-    	if (OB_bd.isIE) return;
+        this.notMoved = false;
+        if (OB_bd.isIE) return;
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
 
@@ -2999,43 +2859,45 @@ AutoCompleter.prototype = {
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
 
                 if (!OB_bd.isGecko && !OB_bd.isIE) y += 10;
-				
-				// read position flag and set it: fixed and absolute is possible
-				var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
-				if (posStyle == null || posStyle == 'absolute') {
-					Element.setStyle(this.siw.floater, { position: 'absolute'});
-					x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
-                	y = y - Position.page($("globalWrapper"))[1] - Position.realOffset($("globalWrapper"))[1];
-				} else if (posStyle == 'fixed') {
-                	Element.setStyle(this.siw.floater, { position: 'fixed'});
-                	                	
-				}
-				
-				// read alignment flag and set position accordingly
-				var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
-				if (alignment == null || alignment == 'left') {
-                	this.siw.floater.style.left = x + "px";
-                	this.siw.floater.style.top = y + "px";
-				} else {
-					var globalWrapperWidth = $("globalWrapper");
-					this.siw.floater.style.right = (globalWrapperWidth.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
-                	this.siw.floater.style.top = y + "px";
-				}
+                
+                // read position flag and set it: fixed and absolute is possible
+                var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
+                if (posStyle == null || posStyle == 'absolute') {
+                    Element.setStyle(this.siw.floater, { position: 'absolute'});
+                    x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
+                    y = y;
+                } else if (posStyle == 'fixed') {
+                    Element.setStyle(this.siw.floater, { position: 'fixed'});
+                                        
+                }
+                
+                // read alignment flag and set position accordingly
+                var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
+                var globalWrapper = $("globalWrapper");
+                if (alignment == null || alignment == 'left') {
+                    this.siw.floater.style.left = x + "px";
+                    this.siw.floater.style.top = y + "px";
+                } else {
+                    this.siw.floater.style.right = (globalWrapper.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+                    this.siw.floater.style.top = y + "px";
+                }
             } else {
-            	if (!this.siw.inputBox) return;
+                if (!this.siw.inputBox) return;
                  //you may
                  //do additional things for your custom floater
                  //beyond setting display and visibility
                 var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
                  // Browser dependant! only IE ------------------------
-                if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
+                 
+                 // the following does not work with different skins - deactivated
+                /*if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
                     // put floater at cursor position
                     // method to calculate floater pos is slightly different in advanced editor
                    
-					var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
+                    var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
                     var posY = this.findElementPosY(textarea);
-                    var posX = this.findElementPosX(textarea);
-					
+                    var posX = Position.page(textarea)[0];//this.findElementPosX(textarea);
+                    alert(posY +" : "+ posX);
                     textarea.focus();
                     var textScrollTop = textarea.scrollTop;
                     var documentScrollPos = document.documentElement.scrollTop;
@@ -3044,39 +2906,33 @@ AutoCompleter.prototype = {
                     selection_range.collapse(true);
                     
                     if (advancedEditor) {
-                    	var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-                    	this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                       	this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+                        this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                        this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
                     }  else {                 
-	                    this.siw.floater.style.left = selection_range.boundingLeft - posX;
-	                    this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-	                    this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                        this.siw.floater.style.left = selection_range.boundingLeft - posX;
+                        this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+                        this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
+                        var left = selection_range.boundingLeft - posX;
+                        alert("Left:"+left);
                     }
                  // only IE -------------------------
 
-                }
+                }*/
 
-                if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
+                if ((OB_bd.isGecko || OB_bd.isIE) && this.siw.inputBox.tagName == 'TEXTAREA') {
                      //TODO: remove the absolute values to the width/height specified in css
 
                     var x = GeneralBrowserTools.getCookie("this.AC_userDefinedX");
                     var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
 
-					
+                    
                     if (x != null && y != null) { // If position cookie defined, use it. 
                         this.siw.floater.style.left = x + "px";
                         this.siw.floater.style.top = y + "px";
                     } else { // Otherwise use standard position: Left bottom corner.
-                    	if (advancedEditor) {
-                    		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-                    		this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                       		this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-                    	} else {
-                    		this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
-                       		this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160) + "px";
-                    	}
-                    	
-                       
+                        this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
+                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160) + "px";
                     }
                 }
             }
@@ -3086,16 +2942,16 @@ AutoCompleter.prototype = {
             this.resetCursorinIE();
         }
     },  //this.showSmartInputFloater()
-	
-	/**
-	 * Resets cursor and sets scroll pos to cursor pos. (in IE)
-	 */
-	resetCursorinIE: function() {
-		if (!OB_bd.isIE) return;
-		this.currentIESelection.scrollIntoView(true);
-		this.currentIESelection.collapse(false);
-		this.currentIESelection.select();
-	},
+    
+    /**
+     * Resets cursor and sets scroll pos to cursor pos. (in IE)
+     */
+    resetCursorinIE: function() {
+        if (!OB_bd.isIE) return;
+        this.currentIESelection.scrollIntoView(true);
+        this.currentIESelection.collapse(false);
+        this.currentIESelection.select();
+    },
      /**
      * Shows small graphic indicating an AJAX call.
      */
@@ -3103,9 +2959,9 @@ AutoCompleter.prototype = {
         var pending = $("pendingAjaxIndicator");
 
         if (!this.siw) this.siw = new SmartInputWindow();
- 		var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
- 		var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
- 		
+        var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
+        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
+        
          // Browser dependant! only IE ------------------------
         if (OB_bd.isIE && inputBox.tagName == 'TEXTAREA') {
              // put floater at cursor position
@@ -3119,12 +2975,12 @@ AutoCompleter.prototype = {
             selection_range.collapse(true);
             
             if (advancedEditor) {
-            	pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
                 pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
             } else {
-            	pending.style.left = selection_range.boundingLeft - posX
-            	pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-			}
+                pending.style.left = selection_range.boundingLeft - posX
+                pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
+            }
          // only IE -------------------------
 
         }
@@ -3135,26 +2991,26 @@ AutoCompleter.prototype = {
             var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
 
             if (x != null && y != null) {
-            	
+                
                 var posY = this.findElementPosY(advancedEditor ? iFrameOfAdvEditor : inputBox);
                 var posX = this.findElementPosX(advancedEditor ? iFrameOfAdvEditor : inputBox);
 
                 pending.style.left = (parseInt(x) + posX) + "px";
                 pending.style.top = (parseInt(y) + posY) + "px";
             } else {
-            	if (advancedEditor) {
-            		pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                	pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-            	} else {
-                	pending.style.left = (this.findElementPosX(inputBox) + inputBox.offsetWidth - 360) + "px";
-                	pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
-            	}
+                if (advancedEditor) {
+                    pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                    pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                } else {
+                    pending.style.left = (this.findElementPosX(inputBox) + inputBox.offsetWidth - 360) + "px";
+                    pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
+                }
             }
         }
         
         // set pending indicator for input field
         if (inputBox.tagName != 'TEXTAREA') {
-        	pending.style.left = (Position.cumulativeOffset(inputBox)[0]) + "px";
+            pending.style.left = (Position.cumulativeOffset(inputBox)[0]) + "px";
             pending.style.top = (Position.cumulativeOffset(inputBox)[1]) + "px";
         }
 
@@ -3214,8 +3070,8 @@ AutoCompleter.prototype = {
         } else this.hideSmartInputFloater();
     },                                                                                                 //this.processSmartInput()
     simplify: function(s) { 
-    	var nopipe = s.indexOf("|") != -1 ? s.substring(0, s.indexOf("|")).strip() : s; // strip everthing after a pipe
-    	return nopipe.replace(/^[ \s\f\t\n\r]+/, '').replace(/[ \s\f\t\n\r]+$/, ''); 
+        var nopipe = s.indexOf("|") != -1 ? s.substring(0, s.indexOf("|")).strip() : s; // strip everthing after a pipe
+        return nopipe.replace(/^[ \s\f\t\n\r]+/, '').replace(/[ \s\f\t\n\r]+$/, ''); 
     },  //this.simplify
 
      /*
@@ -3276,14 +3132,14 @@ AutoCompleter.prototype = {
     */
     getTextBeforeCursor: function() {
         if (OB_bd.isIE) {
-        //	debugger;
-        /*	var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
-        	if (advancedEditor) {
-        		var textbeforeCursor = editAreaLoader.getValue("wpTextbox1").substring(0, editAreaLoader.getSelectionRange("wpTextbox1")["start"]);
-        		return textbeforeCursor;
-        	} else {*/
+        //  debugger;
+        /*  var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
+            if (advancedEditor) {
+                var textbeforeCursor = editAreaLoader.getValue("wpTextbox1").substring(0, editAreaLoader.getSelectionRange("wpTextbox1")["start"]);
+                return textbeforeCursor;
+            } else {*/
 
-        	this.siw.inputBox.focus();
+            this.siw.inputBox.focus();
             var selection_range = document.selection.createRange();
             var selection_rangeWhole = document.selection.createRange();
             selection_rangeWhole.moveToElementText(this.siw.inputBox);
@@ -3291,7 +3147,7 @@ AutoCompleter.prototype = {
             selection_range.setEndPoint("StartToStart", selection_rangeWhole);
             
             return selection_range.text;
-        //	}
+        //  }
         } else if (OB_bd.isGecko) {
             var start = this.siw.inputBox.selectionStart;
             return this.siw.inputBox.value.substring(0, start);
@@ -3305,7 +3161,7 @@ AutoCompleter.prototype = {
     * Returns all text right from cursor.
     */
     getTextAfterCursor: function() {
-    	if (OB_bd.isIE) {
+        if (OB_bd.isIE) {
             var selection_range = document.selection.createRange();
 
             var selection_rangeWhole = document.selection.createRange();
@@ -3324,7 +3180,7 @@ AutoCompleter.prototype = {
     
     getUserInputBase: function() {
         var s = this.siw.inputBox.value;
-       	var lastComma = s.lastIndexOf(";");
+        var lastComma = s.lastIndexOf(";");
         return s.substr(0, lastComma+1);
     },  //this.getUserInputBase()
     highlightMatches: function(userInput) {
@@ -3339,8 +3195,8 @@ AutoCompleter.prototype = {
         var re2m = new RegExp("([ \"\>\<\-]+)(" + userInput + ")", "i");
         var re1 = new RegExp("([ \"\}\{\-]*)(" + userInput + ")", "gi");
         var re2 = new RegExp("([ \"\}\{\-]+)(" + userInput + ")", "gi");
-		var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
-		
+        var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
+        
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
             var displayMatches = (j < this.siw.MAX_MATCHES);
             var entry = pointerToCollectionToUse[i];
@@ -3450,7 +3306,7 @@ AutoCompleter.prototype = {
         this.activateCurrentSmartInputMatch();
          //this.siw.inputBox.focus();
         this.siw.inputBox.focus();
-		this.siw.inputBox.blur();
+        this.siw.inputBox.blur();
         this.hideSmartInputFloater();
     },  //this.selectFromMouseClick
     getIndexFromElement: function(o) {
@@ -3527,7 +3383,7 @@ AutoCompleter.prototype = {
             this.insertTerm(addedValue, baseValue, this.siw.matchCollection[selIndex].getType());
             this.ignorePending = true;
         } else {
-        	smwhgLogger.log("", "AC", "close_without_selection");
+            smwhgLogger.log("", "AC", "close_without_selection");
         }
     },  //this.activateCurrentSmartInputMatch
     insertTerm: function(addedValue, baseValue, type) {
@@ -3538,37 +3394,37 @@ AutoCompleter.prototype = {
 
         if (this.siw.customFloater) {
             if ((userContext.match(/:=/) || userContext.match(/::/) || userContext.match(/category:/i)) 
-            	&& !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
+                && !this.getTextAfterCursor().match(/^(\s|\r|\n)*\]\]|^(\s|\r|\n)*\||^(\s|\r|\n)*;/)) {
                 addedValue += "]]";
             } else if (type == SMW_PROPERTY_NS) {
                 addedValue += "::";
             } else if (type == SMW_INSTANCE_NS) {
-            	if (!userContext.match(/|(\s|\r|\n)*$/)) { 
-            		addedValue += "]]"; // add only if instance is no template parameter
-            	}
+                if (!userContext.match(/|(\s|\r|\n)*$/)) { 
+                    addedValue += "]]"; // add only if instance is no template parameter
+                }
              }else if (addedValue.match(/category/i)) {
                 addedValue += ":";
             }
         }
-		
-		
+        
+        
         if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
             this.siw.inputBox.focus();
             
             // set old cursor position
             this.currentIESelection.collapse(false);
-			this.currentIESelection.select();
+            this.currentIESelection.select();
             var userInput = this.getUserInputToMatch();
-			
-			if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-            	userInput = this.removeNumberFromMeasure(userInput);
+            
+            if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
+                userInput = this.removeNumberFromMeasure(userInput);
             }
              // get TextRanges with text before and after user input
              // which is to be matched.
              // e.g. [[category:De]] would return:
              // range1 = [[category:
              // range2 = ]]      
-			
+            
             var selection_range = document.selection.createRange();
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = addedValue;
@@ -3582,7 +3438,7 @@ AutoCompleter.prototype = {
             var userInput = this.getUserInputToMatch();
             
             if (type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-            	userInput = this.removeNumberFromMeasure(userInput);
+                userInput = this.removeNumberFromMeasure(userInput);
             }
              // save scroll position
             var scrollTop = this.siw.inputBox.scrollTop;
@@ -3607,18 +3463,18 @@ AutoCompleter.prototype = {
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
-        	var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
+            var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
             var theString = (baseValue ? baseValue : "") + addedValue;
-        	if (pasteNS != null) {
-        		switch(type) {
-        			
-        			case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
-        			case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
-        			case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
-        			case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
-        			case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
-        		}
-        	}
+            if (pasteNS != null) {
+                switch(type) {
+                    
+                    case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
+                    case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
+                    case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
+                    case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
+                    case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
+                }
+            }
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
@@ -3630,13 +3486,13 @@ AutoCompleter.prototype = {
      *  If that is the case, remove number from userinput
      */
     removeNumberFromMeasure: function(measure) {
-    	var result = measure;
-    	
-	    var matches = result.match(/[+-]?\d+(\.\d+([eE][+-]?\d*)?)?_+/gi);
-	    if (matches) {
-	       	result = result.substr(matches[0].length);
-	    }
-	    return result;
+        var result = measure;
+        
+        var matches = result.match(/[+-]?\d+(\.\d+([eE][+-]?\d*)?)?_+/gi);
+        if (matches) {
+            result = result.substr(matches[0].length);
+        }
+        return result;
     },
 
 
@@ -3659,10 +3515,10 @@ AutoCompleter.prototype = {
         AC_matchCache = new MatchCache();
         
         // register inputs
-		this.registerAllInputs();
-		
-		// register textareas
-		this.textAreas = new Array();
+        this.registerAllInputs();
+        
+        // register textareas
+        this.textAreas = new Array();
         var y = 0;
          // copy all wickEnabled textareas
         if (texts) {
@@ -3697,16 +3553,16 @@ AutoCompleter.prototype = {
         Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
     },  //registerSmartInputListeners
 
-	/**
-	 * Register all INPUT tags on page.
-	 */
-	registerAllInputs: function() {
-		
+    /**
+     * Register all INPUT tags on page.
+     */
+    registerAllInputs: function() {
+        
         var inputs = document.getElementsByTagName("input");
         this.allInputs = new Array();
         var x = 0;
         var z = 0;
-		var c = null;
+        var c = null;
          // copy all wickEnabled inputs
         if (inputs) {
             while (inputs[x]) {
@@ -3719,58 +3575,58 @@ AutoCompleter.prototype = {
                 x++;
             }  //
         }
-		 for (i = 0; i < this.allInputs.length; i++) {
+         for (i = 0; i < this.allInputs.length; i++) {
             if ((c = this.allInputs[i][0].className) && (c.indexOf("wickEnabled") != -1)) {
                 this.allInputs[i][0].setAttribute("autocomplete", "OFF");
                 this.allInputs[i][1] = this.handleBlur.bindAsEventListener(this);
                 Event.observe(this.allInputs[i][0], "blur",  this.allInputs[i][1]);
-	        }
+            }
         }  //loop thru inputs
-	},
-	
-	/**
-	 * Deregister all INPUT tags on page.
-	 */
-	deregisterAllInputs: function() {
-		if (this.allInputs != null) {
-			 for (i = 0; i < this.allInputs.length; i++) {
+    },
+    
+    /**
+     * Deregister all INPUT tags on page.
+     */
+    deregisterAllInputs: function() {
+        if (this.allInputs != null) {
+             for (i = 0; i < this.allInputs.length; i++) {
                 Event.stopObserving(this.allInputs[i][0], "blur",  this.allInputs[i][1]);
-        	 }  //loop thru inputs
-		}
-	},
-	/**
-	 * Register an additional textarea in another iframe for Auto-Completion
-	 * 
-	 * @param textAreaID TextArea which will be registered. 
+             }  //loop thru inputs
+        }
+    },
+    /**
+     * Register an additional textarea in another iframe for Auto-Completion
+     * 
+     * @param textAreaID TextArea which will be registered. 
      * @param iFrame One of window.frames[ID]. 
-	 */
-	registerTextArea: function(textAreaID, iFrame) {
-	
+     */
+    registerTextArea: function(textAreaID, iFrame) {
+    
         if (iFrame && textAreaID) {
-        	var textArea = iFrame.document.getElementById(textAreaID);
-        	if (textArea) {
-        		if (this.textAreas.indexOf(textArea) != -1) {
-        			return; // do not register twice
-        		}
-            	this.textAreas.push(textArea);
-            	
-            	var iFrameDocument = iFrame.document;
-        		// register events
-       			Event.observe(iFrameDocument, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
-       			Event.observe(iFrameDocument, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
-       			Event.observe(iFrameDocument, "mouseup", this.handleClick.bindAsEventListener(this), false);
+            var textArea = iFrame.document.getElementById(textAreaID);
+            if (textArea) {
+                if (this.textAreas.indexOf(textArea) != -1) {
+                    return; // do not register twice
+                }
+                this.textAreas.push(textArea);
+                
+                var iFrameDocument = iFrame.document;
+                // register events
+                Event.observe(iFrameDocument, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
+                Event.observe(iFrameDocument, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
+                Event.observe(iFrameDocument, "mouseup", this.handleClick.bindAsEventListener(this), false);
 
-	        	if (OB_bd.isGecko) {	
-   		        	 // needed for draggable floater in FF
-   	   		     	Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
-   			     	Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
-   			 	}
+                if (OB_bd.isGecko) {    
+                     // needed for draggable floater in FF
+                    Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
+                    Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
+                }
 
-	        	Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
-        	}
+                Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
+            }
         }
        
-	},
+    },
      // ------- Create HTML containers and elements --------------
 
      /*
@@ -3817,14 +3673,14 @@ AutoCompleter.prototype = {
         Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
         container.appendChild(f);
         
-	    var acMessage = document.createElement("div");
-	    Element.addClassName(acMessage, "acMessage");
+        var acMessage = document.createElement("div");
+        Element.addClassName(acMessage, "acMessage");
         if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
-	        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
+            acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
         } else {
-        	acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
+            acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
         }
-	    container.appendChild(acMessage);
+        container.appendChild(acMessage);
         this.AC_idCounter++;
     },
 
@@ -3921,7 +3777,7 @@ function SmartInputMatch(cleanValue, value, type) {
             return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
         } else if (_type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-        	return "<img src=\"" + wgServer + wgScriptPath
+            return "<img src=\"" + wgServer + wgScriptPath
                 + "/extensions/SMWHalo/skins/enum.gif\">";
         }
 
@@ -3950,49 +3806,49 @@ function MatchCache() {
      //TODO: would be nice to implement a better cache replace strategy
     this.addLookup = function(matchText, matches, typeHint) {
         if (matchText == "" || matchText == null) return;
-		
-		if (typeHint == null) {
-			// use general cache
-			if (generalCache.keys().length == MAX_CACHE) {
-            	generalCache.remove(generalCache.keys()[nextToReplace]);
-            	nextToReplace++;
+        
+        if (typeHint == null) {
+            // use general cache
+            if (generalCache.keys().length == MAX_CACHE) {
+                generalCache.remove(generalCache.keys()[nextToReplace]);
+                nextToReplace++;
 
-            	if (nextToReplace == MAX_CACHE) {
-              	  nextToReplace = 0;
-            	}
-       	 	}
+                if (nextToReplace == MAX_CACHE) {
+                  nextToReplace = 0;
+                }
+            }
 
-        	generalCache[matchText] = matches;
-		} else {
-			// use typeFiltered cache
-			var cache = typeFilteredCache[parseInt(typeHint)];
-			if (!cache) return;
-			if (cache.keys().length == MAX_CACHE) {
-            	cache.remove(cache.keys()[nextToReplace]);
-            	nextToReplace++;
+            generalCache[matchText] = matches;
+        } else {
+            // use typeFiltered cache
+            var cache = typeFilteredCache[parseInt(typeHint)];
+            if (!cache) return;
+            if (cache.keys().length == MAX_CACHE) {
+                cache.remove(cache.keys()[nextToReplace]);
+                nextToReplace++;
 
-            	if (nextToReplace == MAX_CACHE) {
-              	  nextToReplace = 0;
-            	}
-       	 	}
+                if (nextToReplace == MAX_CACHE) {
+                  nextToReplace = 0;
+                }
+            }
 
-        	cache[matchText] = matches;
-		}
+            cache[matchText] = matches;
+        }
       
     }
 
     this.getLookup = function(matchText, typeHint) {
-    	if (typeHint == null) {
-    		// use general cache
-        	if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
-           	 	return generalCache[matchText];
-        	}
-    	} else {
-    		// use typeFiltered cache
-    		var cache = typeFilteredCache[parseInt(typeHint)];
-			if (!cache) return null;
-			return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
-    	}
+        if (typeHint == null) {
+            // use general cache
+            if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
+                return generalCache[matchText];
+            }
+        } else {
+            // use typeFiltered cache
+            var cache = typeFilteredCache[parseInt(typeHint)];
+            if (!cache) return null;
+            return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
+        }
 
         return null;  // lookup failed
     }
@@ -5871,7 +5727,13 @@ WikiTextParser.prototype = {
 	 */
 	createAnnotation : function(annotation, start, end) {
 		var relRE  = /\[\[\s*(:?)([^:]*)(::|:=)([\s\S\n\r]*)\]\]/;
-		var catRE  = /\[\[\s*[C|c]ategory:([\s\S\n\r]*)\]\]/;
+		var catNS = gLanguage.getMessage('CATEGORY_NS');
+		catNS = '['+catNS.charAt(0).toLowerCase() +
+		        '|'+catNS.charAt(0).toUpperCase() +
+		        ']'+catNS.substring(1);
+		var catRE = '\\[\\[\\s*'+catNS+'([\\s\\S\\n\\r]*)\\]\\]';
+		catRE = new RegExp(catRE);
+//		var catRE  = /\[\[\s*[C|c]ategory:([\s\S\n\r]*)\]\]/;
 
 		var relation = annotation.match(relRE);
 		if (relation) {
@@ -6635,10 +6497,10 @@ OntologyModifier.prototype = {
 	getSchemaProperties : function() {
 		var wtp = new WikiTextParser();
 		var props = new Array();
-		props.push(wtp.getRelation(HAS_TYPE));
-		props.push(wtp.getRelation(DOMAIN_HINT));
-		props.push(wtp.getRelation(MAX_CARDINALITY));
-		props.push(wtp.getRelation(MIN_CARDINALITY));
+		props.push(wtp.getRelation(gLanguage.getMessage('HAS_TYPE')));
+		props.push(wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT')));
+		props.push(wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY')));
+		props.push(wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY')));
 		
 		var schemaAnnotations = "";
 		for (var typeIdx = 0, nt = props.length; typeIdx < nt; ++typeIdx) {
@@ -6650,8 +6512,8 @@ OntologyModifier.prototype = {
 				}
 			}
 		}
-		var transitive = wtp.getCategory(TRANSITIVE_RELATION);
-		var symmetric = wtp.getCategory(SYMMETRICAL_RELATION);
+		var transitive = wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+		var symmetric = wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 		
 		if (transitive) {
 			schemaAnnotations += transitive.getAnnotation() + "\n";
@@ -13543,13 +13405,6 @@ var smwhgPropertyChain = null;
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var DOMAIN_HINT = "has domain and range";
-var RANGE_HINT  = "has domain and range";
-var MAX_CARDINALITY = "Has max cardinality";
-var MIN_CARDINALITY = "Has min cardinality";
-var INVERSE_OF = "Is inverse of";
-var TRANSITIVE_RELATION = "Transitive properties";
-var SYMMETRICAL_RELATION = "Symmetrical properties";
 
 var SMW_PRP_ALL_VALID =	
 	'smwAllValid="allValid ' +
@@ -13561,7 +13416,7 @@ var SMW_PRP_CHECK_MAX_CARD =
 	'smwValid="propToolBar.checkMaxCard"';
 
 var SMW_PRP_VALID_CATEGORY_NAME =
-	'smwValidValue="^[<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:CATEGORY_NAME_TOO_LONG, valid:false)" ';
 
@@ -13576,7 +13431,7 @@ var SMW_PRP_CHECK_PROPERTY =
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
 
 var SMW_PRP_VALID_PROPERTY_NAME =
-	'smwValidValue="^[<>\|!&$%&\/=\?]{1,255}$: valid ' +
+	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
@@ -13667,14 +13522,14 @@ createContent: function() {
 	this.wtp.initialize();
 	
 	var type    = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
-	var domain  = this.wtp.getRelation(DOMAIN_HINT);
-	var range   = this.wtp.getRelation(RANGE_HINT);
-	var maxCard = this.wtp.getRelation(MAX_CARDINALITY);
-	var minCard = this.wtp.getRelation(MIN_CARDINALITY);
-	var inverse = this.wtp.getRelation(INVERSE_OF);
+	var domain  = this.wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT'));
+	var range   = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
+	var maxCard = this.wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY'));
+	var minCard = this.wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY'));
+	var inverse = this.wtp.getRelation(gLanguage.getMessage('IS_INVERSE_OF'));
 	  
-	var transitive = this.wtp.getCategory(TRANSITIVE_RELATION);
-	var symmetric = this.wtp.getCategory(SYMMETRICAL_RELATION);
+	var transitive = this.wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+	var symmetric = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 
 	// Check if some property characteristic are given several times
 	var duplicatesFound = false;
@@ -13810,7 +13665,7 @@ createContent: function() {
 		types = [gLanguage.getMessage("TYPE_PAGE")];
 	}
 
-	var ranges = this.wtp.getRelation(RANGE_HINT);
+	var ranges = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
 	
 	var rc = 0;
 	for (var i = 0, num = types.length; i < num; ++i) {
@@ -13876,6 +13731,7 @@ createContent: function() {
 	tb.append(tb.createCheckBox('prp-transitive', '', [gLanguage.getMessage('TRANSITIVE')], [transitive == 'checked' ? 0 : -1], 'name="transitive"', true));
 	tb.append(tb.createCheckBox('prp-symmetric', '', [gLanguage.getMessage('SYMMETRIC')], [symmetric == 'checked' ? 0 : -1], 'name="symmetric"', true));
 
+	tb.append(tb.createText('prp-no_ts_reasoning-msg', '', '' , false));
 	
 	tb.append(tb.createLink('prp-change-links', PRP_NARY_CHANGE_LINKS, '', true));
 	tb.append(tb.createLink('prp-links', PRP_APPLY_LINK, '', true));
@@ -13883,6 +13739,53 @@ createContent: function() {
 	tb.finishCreation();
 	this.enableWidgets();
 	gSTBEventActions.initialCheck($("properties-content-box"));
+	
+	sajax_do_call('smwf_tb_getTripleStoreStatus', [], showTriplestoreFeatures.bind(this));
+	
+	function showTriplestoreFeatures(request) {
+		if (request.status != 200) {
+			return;
+		}
+
+		if (request.responseText == 'false') {
+			msg = [gLanguage.getMessage('PC_INVERSE'), 
+				   gLanguage.getMessage('PC_TRANSITIVE'),
+				   gLanguage.getMessage('PC_SYMMETRICAL')];
+		} else {
+			var tsFeatures = request.responseText.evalJSON();
+			var msg = [];
+			if (tsFeatures.INVERSE !== true) {
+				msg.push(gLanguage.getMessage('PC_INVERSE'));
+			}
+			if (tsFeatures.TRANSITIVE !== true) {
+				msg.push(gLanguage.getMessage('PC_TRANSITIVE'));
+			}
+			if (tsFeatures.SYMETRICAL !== true) {
+				msg.push(gLanguage.getMessage('PC_SYMMETRICAL'));
+			}
+		}
+		if (msg.size() == 0) {
+			msg = ''; 
+		} else {
+			if (msg.size() == 3) {
+				msg = msg[0]+', '+msg[1]+' '+gLanguage.getMessage('PC_AND')+' '+msg[2];
+			} else if (msg.size() == 2) {
+				msg = msg[0]+' '+gLanguage.getMessage('PC_AND')+' '+msg[1];
+			} else if (msg.size() == 1) {
+				msg = msg[0];
+			}
+			msg = gLanguage.getMessage('PC_UNSUPPORTED').replace(/\$1/g, msg);
+		} 
+		var msgElem = $('prp-no_ts_reasoning-msg');
+		if (msgElem) {
+			var tbc = smw_ctbHandler.findContainer(msgElem);
+			var visible = tbc.isVisible(msgElem.id);
+			tbc.replace(msgElem.id,
+			            tbc.createText(msgElem.id, msg, '' , true));
+		 	tbc.show(msgElem.id, visible);
+		}
+		
+	}
 	//Sets Focus on first Element
 //	setTimeout("$('prp-domain').focus();",50);
     
@@ -13971,23 +13874,30 @@ hasAnnotationChanged: function(relations, categories) {
 	var changed = false;
 	if (!this.relValues) {
 		changed = true;
-		this.relValues = new Array(relations.length);
 		this.catValues = new Array(categories.length);
+		this.relValues = new Array();
 	}
+	relValues = new Array();
 	
 	// check properties that are defined as relation
+	var k = 0;
 	for (var i = 0; i < relations.length; i++) {
-		if (!relations[i] && this.relValues[i]) {
-			// annotation has been removed
-			changed = true;
-			this.relValues[i] = null;
-		} else if (relations[i]) {
-			// there is an annotation
-			var value = relations[i][0].annotation;
-			if (this.relValues[i] != value) {
-				// and it has changed
-				this.relValues[i] = value;
-				changed = true;
+		var subrelations = relations[i];
+		if (subrelations != null) {
+			for (var j = 0; j < subrelations.length; ++j) {
+				if (!subrelations[j] && this.relValues[k]) {
+					// annotation has been removed
+					changed = true;
+				} else if (subrelations[j]) {
+					// there is an annotation
+					var value = subrelations[j].annotation;
+					if (this.relValues[k] != value) {
+						// and it has changed
+						changed = true;
+					}
+					relValues.push(value);
+				}
+				++k;
 			}
 		}
 	}
@@ -14003,6 +13913,8 @@ hasAnnotationChanged: function(relations, categories) {
 			changed = true;
 		}
 	}
+	
+	this.relValues = relValues;
 	return changed;
 },
 
@@ -14178,6 +14090,9 @@ enableWidgets: function() {
 	
 	tb.show('prp-min-card', !isnary);
 	tb.show('prp-max-card', !isnary);
+	
+	tb.show("prp-no_ts_reasoning-msg", propToolBar.isRelation && !isnary);
+	
 },
 
 cancel: function(){
@@ -14201,13 +14116,13 @@ apply: function() {
 	minCard  = (minCard  != null && minCard  != "") ? minCard : null;
 	maxCard  = (maxCard  != null && maxCard  != "") ? maxCard : null;
 
-	var domainRangeAnno = this.wtp.getRelation(DOMAIN_HINT);
-	var maxCardAnno = this.wtp.getRelation(MAX_CARDINALITY);
-	var minCardAnno = this.wtp.getRelation(MIN_CARDINALITY);
-	var inverseAnno = this.wtp.getRelation(INVERSE_OF);
+	var domainRangeAnno = this.wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT'));
+	var maxCardAnno = this.wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY'));
+	var minCardAnno = this.wtp.getRelation(gLanguage.getMessage('MIN_CARDINALITY'));
+	var inverseAnno = this.wtp.getRelation(gLanguage.getMessage('IS_INVERSE_OF'));
 	  
-	var transitiveAnno = this.wtp.getCategory(TRANSITIVE_RELATION);
-	var symmetricAnno = this.wtp.getCategory(SYMMETRICAL_RELATION);
+	var transitiveAnno = this.wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
+	var symmetricAnno = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 	
 	
 	// change existing annotations
@@ -14241,24 +14156,24 @@ apply: function() {
 	
 	// append new annotations
 	if (maxCardAnno == null && maxCard != null) {
-		this.wtp.addRelation(MAX_CARDINALITY, maxCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MAX_CARDINALITY'), maxCard, null, true);
 	}
 	if (minCardAnno == null && minCard != null) {
-		this.wtp.addRelation(MIN_CARDINALITY, minCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MIN_CARDINALITY'), minCard, null, true);
 	}
 	if (inverseAnno == null && inverse != null) {
-		this.wtp.addRelation(INVERSE_OF, inverse, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('IS_INVERSE_OF'), inverse, null, true);
 	}
 	if (transitive != null && transitive.down('input').checked && transitiveAnno == null) {
-		this.wtp.addCategory(TRANSITIVE_RELATION, true);
+		this.wtp.addCategory(gLanguage.getMessage('TRANSITIVE_RELATION'), true);
 	}
 	if (symmetric != null && symmetric.down('input').checked && symmetricAnno == null) {
-		this.wtp.addCategory(SYMMETRICAL_RELATION, true);
+		this.wtp.addCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'), true);
 	}
 	
 	// Handle the definition of (n-ary) relations
 	// First, remove all domain/range hints
-	rangeAnno = this.wtp.getRelation(RANGE_HINT);
+	rangeAnno = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
 	if (rangeAnno) {
 		for (var i = 0, num = rangeAnno.length; i < num; i++) {
 			rangeAnno[i].remove("");
@@ -14272,17 +14187,17 @@ apply: function() {
 		var obj = $('prp-type-'+i);
 		if (obj) {
 			var type = obj[obj.selectedIndex].text;
-			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase()) {
+			if (type.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS',"cont").toLowerCase()) {
 				// Page found
 				var range = $('prp-range-'+i).value;
 				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
 				r = ((domain == null) ? "" : domain) + "; " + r;
-				typeString += gLanguage.getMessage('TYPE_PAGE')+';';
-				this.wtp.addRelation(RANGE_HINT, r, null, true);
+				typeString += gLanguage.getMessage('TYPE_PAGE',"cont")+';';
+				this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), r, null, true);
 				domainAdded = true;
 			} else {
 				// type is not Page
-				typeString += gLanguage.getMessage('TYPE_NS') + type + ";";
+				typeString += gLanguage.getMessage('TYPE_NS', "cont") + type + ";";
 			}
 		}
 	}
@@ -14290,7 +14205,7 @@ apply: function() {
 	if (!domainAdded && domain != null) {
 		// A domain is given but it has not been added yet, as the property has
 		// no range.
-		this.wtp.addRelation(RANGE_HINT, domain + "; ", null, true);
+		this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), domain + "; ", null, true);
 	}
 	
 	// add the (n-ary) type definition
@@ -14989,7 +14904,8 @@ setPosition: function(posX,posY){
 	//X-Coordinates
 	var toolbarWidth = element.scrollWidth;
 	//Check if it fits right to the coordinates
-	if( window.innerWidth - posX < toolbarWidth) {
+	var width = (window.innerWidth) ? window.innerWidth : document.body.clientWidth;
+	if( width - posX < toolbarWidth) {
 		//Check if it fits left to the coordinates
 		if( posX < toolbarWidth){
 			// if not place it on the left side of the window
@@ -14998,7 +14914,7 @@ setPosition: function(posX,posY){
 			
 		} else {
 			//if it fits position it left to the coordinates
-			var pos = window.innerWidth - posX;
+			var pos = width - posX;
 			element.setStyle({right: pos + 'px' });
 			element.setStyle({left: ''});
 		}
@@ -15190,7 +15106,8 @@ CombinedSearchContributor.prototype = {
 // create instance of contributor and register on load event so that the complete document is available
 // when registerContributor is executed.
 var csContributor = new CombinedSearchContributor();
-Event.observe(window, 'load', csContributor.registerContributor.bind(csContributor));
+var csLoadObserver = csContributor.registerContributor.bind(csContributor);
+Event.observe(window, 'load', csLoadObserver);
 
 
 
@@ -15341,6 +15258,7 @@ AdvancedAnnotation.prototype = {
 			this.focusOffset -= off2;
 			this.selectionContext = this.getSelectionContext();
 			this.performAnnotation(event);
+ 
 		}
 	},
 	
@@ -15493,7 +15411,7 @@ AdvancedAnnotation.prototype = {
 					case 'nowiki': msgId = 'WTP_NOT_IN_NOWIKI'; break;
 					case 'template': msgId = 'WTP_NOT_IN_TEMPLATE'; break;
 					case 'annotation': msgId = 'WTP_NOT_IN_ANNOTATION'; break;
-					case 'ask': msgId = 'WTP_NOT_IN_QUERY'; break;
+					case 'query': msgId = 'WTP_NOT_IN_QUERY'; break;
 					case 'pre': msgId = 'WTP_NOT_IN_PREFORMATTED'; break;
 				}
 				msg = gLanguage.getMessage(msgId);
@@ -15642,7 +15560,7 @@ AdvancedAnnotation.prototype = {
 			var obj = node.getAttribute('obj');
 			if (obj === 'pre'
 //				|| obj === 'annotation'
-			    || obj === 'ask'
+			    || obj === 'query'
 			    || obj === 'nowiki'
 //			    || obj === 'newline'
 			    || obj === 'template') {
@@ -15833,7 +15751,9 @@ AdvancedAnnotation.prototype = {
 				}
 			}
 			
-						
+			// Clear the selection. Otherwise, in IE8, the whole document will
+			// be selected.
+			document.selection.empty();
 			txt = {anchorNode: startNode, 
 			       focusNode: endNode, 
 			       anchorOffset: anchorOffset,
@@ -16994,499 +16914,14 @@ Event.observe(window, 'load', smwhgSaveAnnotations.createContainer.bindAsEventLi
 
 
 
-// SMW_SemanticNotifications.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2008, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
-* @author Thomas Schweitzer
-*/
-
-/**
- * @class SemanticNotifications
- * This class handles the events on Special:SemanticNotifications 
- * 
- */
-var SemanticNotifications = Class.create();
-
-SemanticNotifications.prototype = {
-
-	initialize: function() {
-		this.pendingIndicator = null;
-		$('sn-notification-name').disable();
-		this.enable('sn-add-notification', false);
-		this.notifications = [];	// The names of all existing notifications
-		this.queryLen = 0;
-		this.queryEdited = false;
-		this.minInterval = 1000;
-		this.initialName = $('sn-notification-name').value;
-		this.previewOK = false;
-	},
-
-	/**
-	 * Key-up and blur callback for the query text area. If the query text has 
-	 * been changed the input field for the name of the notification and the 'Add' 
-	 * button are disabled.
-	 */	
-	queryChanged: function(event) {
-		var key = event.which || event.keyCode;
-		
-		var len = $('sn-querytext').value.length;
-		if (len != this.queryLen) {
-			$('sn-notification-name').disable();
-			this.enable('sn-add-notification', false);
-			$('sn-querytext').focus();
-			this.queryEdited = true;
-			this.queryLen = len;
-		}
-		
-	},
-	
-	/**
-	 * Key-up and blur callback for the query text area. If the query text has 
-	 * been changed the input field for the name of the notification and the 'Add' 
-	 * button are disabled.
-	 */	
-	nameChanged: function(event) {
-		var key = event.which || event.keyCode;
-		var name = $('sn-notification-name').value.replace(/^\s*(.*?)\s*$/,"$1");
-		
-		if (name.length == 0) {
-			// no name given
-			this.enable('sn-add-notification', false);
-			$('sn-notification-name').focus();
-		} else {
-			this.enable('sn-add-notification', this.previewOK);
-		}
-		
-	},
-	
-	
-	/**
-	 * The user has changed the update interval. Check if the value is valid.
-	 */
-	updateIntervalChanged: function(event) {
-		var val = $('sn-update-interval').value;
-		val = parseInt(val); 
-		if (isNaN(val) || val < this.minInterval) {
-			var msg = gLanguage.getMessage('SMW_SN_INVALID_UPDATE_INTERVAL');
-			msg = msg.replace(/\$1/g, this.minInterval);
-			alert(msg);
-			val = this.minInterval;
-		}
-		$('sn-update-interval').value = val;
-	},
-	
-	/**
-	 * Adds the query to the semantic notifications of the current user.
-	 */
-	addNotification: function() {
-		
-		function ajaxResponseAddNotification(request) {
-			this.hidePendingIndicator();			
-			if (request.status == 200) {
-				// success
-				if (request.responseText.indexOf("true") >= 0) {
-					this.getAllNotifications();
-					// disable button and name input
-					$('sn-notification-name').disable();
-					this.enable('sn-add-notification', false);
-
-					// Clear input box for query text
-					$('sn-querytext').value = '';
-					$('sn-notification-name').value = '';
-					$('sn-previewbox').innerHTML = '';
-					
-					this.queryEdited = false;
-				} else {
-					alert(request.responseText);
-				}
-			} else {
-			}
-		};
-		
-	 	var e = $('sn-add-notification');
-	 	var cls = e.className;
-	 	if (cls.indexOf('btndisabled') >= 0) {
-	 		// Button is disabled
-	 		return;
-	 	}
-
-		var name =  $('sn-notification-name').value.replace(/^\s*(.*?)\s*$/,"$1");
-		
-		// does the name already exist?
-		if (this.notifications.indexOf(name) >= 0) {
-			var msg = gLanguage.getMessage('SN_OVERWRITE_EXISTING');
-			msg = msg.replace(/\$1/g, name);
-			
-			if (!confirm(msg)) {
-				return;
-			}
-		}
-		var query = $('sn-querytext').value;
-		this.showPendingIndicator(e);
-		var ui = $('sn-update-interval').value;
-		sajax_do_call('smwf_sn_AddNotification', 
-                      [name, wgUserName, query, ui], 
-                      ajaxResponseAddNotification.bind(this));
-		
-	},
-
-	/**
-	 * Shows a preview of the result set for the current query.
-	 */
-	showPreview: function() {
-
-		function ajaxResponseShowPreview(request) {
-			this.hidePendingIndicator();			
-			if (request.status == 200) {
-				var pos = request.responseText.indexOf(',');
-				success = request.responseText.substring(0, pos);
-				var res = request.responseText.substr(pos+1);
-				$('sn-previewbox').innerHTML = res;
-				if (success.indexOf('true')>= 0) {
-					this.previewOK = true;
-					$('sn-notification-name').enable();
-					$('sn-notification-name').focus();
-					if ($('sn-notification-name').value == this.initialName) {
-						$('sn-notification-name').value = '';
-						this.enable('sn-add-notification', false);
-					} else {
-						this.enable('sn-add-notification', true);
-					}
-				}
-			} else {
-				$('sn-notification-name').disable();
-				this.enable('sn-add-notification', false);
-				this.previewOK = false;
-			}
-		};
-
-	 	var e = $('sn-show-preview-btn');
-	 	var cls = e.className;
-	 	if (cls.indexOf('btndisabled') >= 0) {
-	 		// Button is disabled
-	 		return;
-	 	}
-
-		this.showPendingIndicator(e);
-		var query = $('sn-querytext').value;
-		query = this.stripQuery(query);
-		sajax_do_call('smwf_sn_ShowPreview', 
-                      [query], 
-                      ajaxResponseShowPreview.bind(this));
-		
-	},
-	
-	/**
-	 * Opens the query interface in another tab
-	 */
-	openQueryInterface: function(element) {
-		var qiPage = element.target.readAttribute('specialpage');
-		qiPage = unescape(qiPage);
-		location.href = qiPage;
-//		window.open(qiPage, '_blank');
-	},
-	
-	/**
-	 * Retrieves a list of all notifications of the current users and displays
-	 * them in the box 'My Notifications'. 
-	 */
-	getAllNotifications: function() {
-		function ajaxResponseGetAllNotifications(request) {
-			this.notifications.clear();
-			if (request.status == 200) {
-				var notifications = request.responseText.split(",");
-				var html = '<table class="sn-my-notifications-table">';
-				html += '<colgroup>'
-						+ '<col width="80%" span="1">'
-						+ '<col width="10%" span="2">'
-						+ '</colgroup>';
-				for (var i = 0; i < notifications.length; ++i) {
-					// trim
-  					n = notifications[i].replace(/^\s*(.*?)\s*$/,"$1");
-  					if (n == '') { 
-  						continue;
-  					}
-  					this.notifications.push(n);
-  					html += "<tr><td>"+n+"</td>";
-  					html += '<td><a href="javascript:smwhgSemanticNotifications.editNotification(\''+n+'\')">';
-  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/edit.gif" /></a></td>'; 
-  					html += '<td><a href="javascript:smwhgSemanticNotifications.deleteNotification(\''+n+'\')">';
-  					html += '<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/delete.png" /></a></td>'; 
-					html += "</tr>";
-				}
-				html += "</table>";
-				
-				$('sn-notifications-list').innerHTML = html;
-			} else {
-			}
-		};
-		sajax_do_call('smwf_sn_GetAllNotifications', 
-                      [wgUserName], 
-                      ajaxResponseGetAllNotifications.bind(this));
-		
-	},
-	
-	/**
-	 * Retrieves the definition of the given notification and displays the 
-	 * values for editing.
-	 * 
-	 * @param string notification
-	 * 		Name of the notification
-	 */
-	editNotification: function(notification) {
-
-		function ajaxResponseEditNotification(request) {
-			this.hidePendingIndicator();			
-			if (request.status == 200) {
-				var notification = GeneralXMLTools.createDocumentFromString(request.responseText);
-		
-				var name  = notification.documentElement.getElementsByTagName("name")[0].firstChild.data;
-				var query = notification.documentElement.getElementsByTagName("query")[0].firstChild.data;
-				var ui    = notification.documentElement.getElementsByTagName("updateInterval")[0].firstChild.data;
-				$('sn-notification-name').value = name;
-				$('sn-querytext').value = query;
-				$('sn-update-interval').value = ui;
-				$('sn-previewbox').innerHTML = '';
-				$('sn-querytext').focus();
-				this.queryLen = query.length;
-				this.queryChanged = false;
-			} else {
-			}
-		};
-
-		if (this.queryEdited) {
-			if (!confirm('The current query has been edited but not saved. Do you really want to edit another notification?')) {
-				return;
-			}
-		}
-
-		this.showPendingIndicator($('sn-notifications-list'));
-		sajax_do_call('smwf_sn_GetNotification', 
-                      [notification, wgUserName], 
-                      ajaxResponseEditNotification.bind(this));
-		
-	},
-
-	/**
-	 * Deletes the given notification in the wiki's database.
-	 * 
-	 * @param string notification
-	 * 		Name of the notification
-	 */
-	deleteNotification: function(notification) {
-		function ajaxResponseDeleteNotification(request) {
-			this.hidePendingIndicator();			
-			if (request.status == 200) {
-				if (request.responseText.indexOf("true") >= 0) {
-					this.getAllNotifications();
-				}
-			} else {
-			}
-		};
-		
-		var msg = gLanguage.getMessage('SN_DELETE');
-		msg = msg.replace(/\$1/g, notification);
-		
-		if (!confirm(msg)) {
-			return;
-		}
-		
-
-		this.showPendingIndicator($('sn-notifications-list'));
-		sajax_do_call('smwf_sn_DeleteNotification', 
-                      [notification, wgUserName], 
-                      ajaxResponseDeleteNotification.bind(this));
-		
-	},
-	
-	/*
-	 * Shows the pending indicator on the element with the DOM-ID <onElement>
-	 * 
-	 * @param string onElement
-	 * 			DOM-ID if the element over which the indicator appears
-	 */
-	showPendingIndicator: function(onElement) {
-		this.hidePendingIndicator();
-		this.pendingIndicator = new OBPendingIndicator($(onElement));
-		this.pendingIndicator.show();
-	},
-
-	/*
-	 * Hides the pending indicator.
-	 */
-	hidePendingIndicator: function() {
-		if (this.pendingIndicator != null) {
-			this.pendingIndicator.hide();
-			this.pendingIndicator = null;
-		}
-	},
-
-	/**
-	 * 
-	 */
-	 enable: function(element, enable) {
-	 	var e = $(element);
-	 	var cls = e.className;
-	 	var start = cls.indexOf('btndisabled');
-	 	if (enable) {
-	 		if (start >= 0) {
-	 			e.className = cls.substring(0, start) + cls.substring(start+11);
-	 		}
-	 	} else {
-	 		if (start == -1) {
-	 			e.className = cls + " btndisabled";
-	 		}
-	 	} 
-	 },
-	 
-	 /**
-	  * Sets the css-class 'btnhov' for the button under the mouse cursor.
-	  */
-	 btnMouseOver: function(element) {
-	 	var e = element.target;
-	 	var cls = e.className;
-	 	var start = cls.indexOf('btnhov');
- 		if (start == -1) {
- 			e.className = cls + " btnhov";
- 		}
-	 },
-
-	 /**
-	  * Removes the css-class 'btnhov' from the button that the mouse cursor
-	  * just left.
-	  */
-	 btnMouseOut: function(element) {
-	 	var e = element.target;
-	 	var cls = e.className;
-	 	var start = cls.indexOf('btnhov');
- 		if (start >= 0) {
- 			e.className = cls.substring(0, start) + cls.substring(start+6);
- 		}
-	 },
-	
-	/**
-	 * Removes the ask tags from a query
-	 */
-	stripQuery: function(query) {
-		query = query.replace(/^\s*<ask.*?>\s*(.*?)\s*<\/ask>\s*$/m,"$1");
-		
-		// strip {{ask#
-		var p = query.indexOf('{{#ask:');
-		if (p >= 0) {
-			query = query.substr(p+7);
-			p = query.indexOf('|');
-			if (p >= 0) {
-				query = query.substring(0, p);
-			} else {
-				p = query.lastIndexOf('}}');
-				if (p >= 0) {
-					query = query.substring(0, p);
-				}
-			}
-		}
-		
-		return query;
-		
-	}
-
-}
-
-SemanticNotifications.create = function() {
-	// Check, if semantic notifications are enabled (user logged in with valid 
-	// email address). If not, the complete UI is disabled.
-	var qt = $('sn-querytext');
-	var enabled = (qt != null) && qt.readAttribute('snenabled');
-	if (enabled == 'true') {
-		// enable the user interface
-		smwhgSemanticNotifications = new SemanticNotifications();
-		smwhgSemanticNotifications.minInterval = $('sn-update-interval').value;
-		
-		var addNotification = $('sn-add-notification');
-		Event.observe(addNotification, 'click', 
-				      smwhgSemanticNotifications.addNotification.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(addNotification, 'mouseover', 
-				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(addNotification, 'mouseout', 
-				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
-
-		var showPreview = $('sn-show-preview-btn');
-		Event.observe(showPreview, 'click', 
-				      smwhgSemanticNotifications.showPreview.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(showPreview, 'mouseover', 
-				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(showPreview, 'mouseout', 
-				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
-
-		var queryInterface = $('sn-query-interface-btn');
-		Event.observe(queryInterface, 'click', 
-				      smwhgSemanticNotifications.openQueryInterface.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(queryInterface, 'mouseover', 
-				      smwhgSemanticNotifications.btnMouseOver.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe(queryInterface, 'mouseout', 
-				      smwhgSemanticNotifications.btnMouseOut.bindAsEventListener(smwhgSemanticNotifications));
-
-		Event.observe('sn-querytext', 'keyup', 
-		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe('sn-querytext', 'blur', 
-		              smwhgSemanticNotifications.queryChanged.bindAsEventListener(smwhgSemanticNotifications));
-
-		Event.observe('sn-notification-name', 'keyup', 
-		              smwhgSemanticNotifications.nameChanged.bindAsEventListener(smwhgSemanticNotifications));
-		Event.observe('sn-notification-name', 'blur', 
-		              smwhgSemanticNotifications.nameChanged.bindAsEventListener(smwhgSemanticNotifications));
-
-		Event.observe('sn-update-interval', 'blur', 
-		              smwhgSemanticNotifications.updateIntervalChanged.bindAsEventListener(smwhgSemanticNotifications));
-	
-		// read a query of the query interface from the cookie
-		var query = document.cookie;
-		var start = query.indexOf('NOTIFICATION_QUERY=<snq>');
-		var end = query.indexOf('</snq>');
-		if (start >= 0 && end >= 0) {
-			// Query found
-			// remove the query from the cookie
-			document.cookie = 'NOTIFICATION_QUERY=<snq></snq>;';
-			query = query.substring(start+24, end);
-			qt.value = query;
-			
-			this.queryEdited = true;
-			this.queryLen = query.length;
-		}
-		
-		smwhgSemanticNotifications.getAllNotifications();
-		$('sn-querytext').focus();
-	}	
-}
-
-var smwhgSemanticNotifications = null;
-Event.observe(window, 'load', SemanticNotifications.create);
-
-
 // def-webservices.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  This file is part of the halo-Extension.
- *
- *   The halo-Extension is free software; you can redistribute it and/or modify
+/*   The Data Import-Extension is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   The halo-Extension is distributed in the hope that it will be useful,
+ *   The Data Import-Extension is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -17517,11 +16952,11 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep1 : function() {
-		if (this.step != "step1") {
-			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
-			if (check == false) {
-				return;
-			}
+		$("step2-methods").removeAttribute("onclick");
+		
+		if ($("step1-protocol-rest").checked) {
+			this.processStep1REST();
+			return;
 		}
 
 		this.showPendingIndicator("step1-go");
@@ -17541,24 +16976,24 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep1CallBack : function(request) {
 		var wsMethods = request.responseText.split(";");
-		if (wsMethods[0] != "todo:handle exceptions") {
-			// hide or display widgets of other steps
+		if (wsMethods[0].indexOf("todo:handle exceptions") == -1) {
 			$("step2").style.display = "none";
-
 			$("menue-step1").className = "ActualMenueStep";
 			$("menue-step2").className = "TodoMenueStep";
-
-			$("step1-help").style.display = "";
-			$("step2-help").style.display = "none";
-
-			$("step1-img").style.visibility = "visible";
-			$("step2-img").style.visibility = "hidden";
-
+			this.hideHelp(2);
 			$("step1-error").style.display = "";
-
 			this.step = "step1";
 			$("errors").style.display = "";
 		} else {
+			$("step1-protocol-rest").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step1-uri").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
+			if (!this.editMode) {
+				$("step1-go-img").style.display = "none";
+				$("step2-go-img").style.display = "";
+			}
+
 			wsMethods.shift();
 			$("errors").style.display = "none";
 			$("step1-error").style.display = "none";
@@ -17573,7 +17008,6 @@ DefineWebServiceSpecial.prototype = {
 			existingOptions.id = "step2-methods";
 
 			// fill the widget for step2 with content
-
 			for (i = 0; i < wsMethods.length; i++) {
 				var option = document.createElement("option");
 				var mName = document.createTextNode(wsMethods[i]);
@@ -17584,16 +17018,9 @@ DefineWebServiceSpecial.prototype = {
 
 			// hide or display widgets of other steps
 			$("step2").style.display = "";
-
 			$("menue-step1").className = "DoneMenueStep";
 			$("menue-step2").className = "ActualMenueStep";
-
-			$("step1-help").style.display = "none";
-			$("step2-help").style.display = "";
-
-			$("step1-img").style.visibility = "hidden";
-			$("step2-img").style.visibility = "visible";
-
+			this.hideHelp(1);
 			$("step1-error").style.display = "none";
 		}
 
@@ -17608,15 +17035,11 @@ DefineWebServiceSpecial.prototype = {
 		$("menue-step5").className = "TodoMenueStep";
 		$("menue-step6").className = "TodoMenueStep";
 
-		$("step3-help").style.display = "none";
-		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "none";
-
-		$("step3-img").style.visibility = "hidden";
-		$("step4-img").style.visibility = "hidden";
-		$("step5-img").style.visibility = "hidden";
-		$("step6-img").style.visibility = "hidden";
+		this.hideHelp(2);
+		this.hideHelp(3);
+		this.hideHelp(4);
+		this.hideHelp(5);
+		this.hideHelp(6);
 
 		$("step2a-error").style.display = "none";
 		$("step2b-error").style.display = "none";
@@ -17635,8 +17058,13 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep2 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep2REST();
+			return;
+		}
+
 		if (this.step != "step2") {
-			check = confirm("If you proceed, all input you allready gave in the subsequent steps will be lost!");
+			check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 			if (check == false) {
 				return;
 			}
@@ -17666,23 +17094,27 @@ DefineWebServiceSpecial.prototype = {
 	processStep2Do : function(parameterString, edit) {
 		var wsParameters = parameterString.split(";");
 
-		this.preparedPathSteps = new Array();
+		if (!this.editMode) {
+			$("step2-go-img").style.display = "none";
+			$("step3-go-img").style.display = "";
+		}
+		
+		$("step2-methods").setAttribute("onclick",
+			"webServiceSpecial.confirmStep2Change()");
 
-		if (wsParameters[0] == "todo:handle noparams") {
+		this.preparedPathSteps = new Array();
+		if (wsParameters[0] == "##no params required##") {
 			$("step3").childNodes[1].nodeValue = "3. This method does not ask for any parameters.";
 			if (!edit) {
 				$("step3").style.display = "";
-				$("step2-img").style.visibility = "hidden";
 				$("step3-parameters").style.display = "none";
 				$("step3-go-img").style.display = "none";
 				this.processStep3();
+
 			}
 			return;
 		} else {
-			// todo: find better solution
 			if (!edit) {
-				$("step2-img").style.visibility = "visible";
-				$("step3").childNodes[1].nodeValue = "3. The method asks for the following parameters.";
 				$("step3-parameters").style.display = "";
 				$("step3-go-img").style.display = "";
 			}
@@ -17690,9 +17122,17 @@ DefineWebServiceSpecial.prototype = {
 
 		var duplicate = false;
 		for ( var i = 1; i < wsParameters.length; i++) {
-			var steps = wsParameters[i].split(".");
+			var steps = wsParameters[i].split("/");
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
+				if (steps[k].length == 0) {
+					s1 = steps.slice(0, k);
+					s2 = steps.slice(k + 1, steps.length);
+					steps = s1.concat(s2);
+					k -= 1;
+					continue;
+				}
+
 				var tO = new Object();
 				if (steps[k].indexOf("##duplicate") > -1) {
 					tO["value"] = steps[k].substr(0, steps[k]
@@ -17721,23 +17161,19 @@ DefineWebServiceSpecial.prototype = {
 			$("step3-duplicates").style.display = "";
 		}
 
-		if (wsParameters[0] != "todo:handle exceptions") {
+		if (wsParameters[0] != "##handle exceptions##") {
 			this.step = "step2";
-			// step3").style.display = "none";
 
 			$("menue-step2").className = "ActualMenueStep";
 			$("menue-step3").className = "TodoMenueStep";
 
-			$("step2-help").style.display = "";
-			$("step3-help").style.display = "none";
-
-			$("step2-img").style.visibility = "visible";
-			$("step3-img").style.visibility = "hidden";
+			this.hideHelp(3);
 
 			$("errors").style.display = "";
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
 
+			// todo:werden die errors richtig angezeigt?
 			if (overflow) {
 				$("step2b-error").style.display = "";
 			} else {
@@ -17746,6 +17182,13 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsParameters.shift();
 			// clear widgets of step 3
+			// prepare table for rest parameters
+			$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "";
+			$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
+			
+			$("step3-rest-intro").style.display = "none";
+			$("step3-parameters").style.display = "";
+			
 			var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step3-parameters").childNodes[0]
@@ -17762,10 +17205,11 @@ DefineWebServiceSpecial.prototype = {
 			var treeView = false;
 			var aTreeRoot = false;
 
-			for (i = 0; i < wsParameters.length; i++) {
+			for (i = 0; i < this.preparedPathSteps.length; i++) {
 				treeView = false;
 				aTreeRoot = false;
 				var paramRow = document.createElement("tr");
+				paramRow.style.borderTopStyle = "solid";
 				paramRow.id = "step3-paramRow-" + i;
 
 				var paramTD0 = document.createElement("td");
@@ -17773,13 +17217,13 @@ DefineWebServiceSpecial.prototype = {
 				paramRow.appendChild(paramTD0);
 
 				var paramPath = document.createElement("div");
-				var dotSteps = wsParameters[i].split(".");
+				paramPath.style.textAlign = "left";
 
 				paramTD0.appendChild(paramPath);
 				paramPath.id = "s3-path" + i;
-				paramPath.className = "OuterLeftIndent";
+				//paramPath.className = "OuterLeftIndent";
 
-				for (k = 0; k < dotSteps.length; k++) {
+				for (k = 0; k < this.preparedPathSteps[i].length; k++) {
 					var treeViewK = -1;
 					var aTreeRootK = -1;
 
@@ -17790,9 +17234,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 					var paramPathText = "";
-					if (k > 0) {
-						paramPathText += ".";
-					}
+					//if (k > 0) {
+					//	paramPathText += "/";
+					//}
+					
 					paramPathText += this.preparedPathSteps[i][k]["value"];
 					paramPathTextNode = document.createTextNode(paramPathText);
 					if (this.preparedPathSteps[i][k]["duplicate"]) {
@@ -17801,43 +17246,45 @@ DefineWebServiceSpecial.prototype = {
 					paramPathStep.appendChild(paramPathTextNode);
 					paramPath.appendChild(paramPathStep);
 
-					if (this.preparedPathSteps[i][k]["value"].indexOf("[") > 0) {
-						paramPathStep.firstChild.nodeValue = this.preparedPathSteps[i][k]["value"]
-								.substr(0,
-										this.preparedPathSteps[i][k]["value"]
-												.indexOf("]"));
-						this.preparedPathSteps[i][k]["arrayIndex"] = 1;
-						var pathIndexSpan = document.createElement("span");
-						pathIndexSpan.id = "step3-arrayspan-" + i + "-" + k;
-						var pathIndexText = document.createTextNode("1");
-						pathIndexSpan.appendChild(pathIndexText);
-
-						paramPathStep.appendChild(pathIndexSpan);
-						pathTextEnd = document.createTextNode("]");
-						paramPathStep.appendChild(pathTextEnd);
-
-						// the add-button
-						var addButton = document.createElement("span");
-						addButton.style.cursor = "pointer";
-						var addButtonIMG = document.createElement("img");
-						addButtonIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/Add.png";
-						addButton.appendChild(addButtonIMG);
-
-						addButtonIMG.i = i;
-						addButtonIMG.k = k;
-						addButtonIMG.addA = true;
-						Event.observe(addButtonIMG, "click",
-								this.addRemoveParameter
-										.bindAsEventListener(this));
-
-						paramPathStep.appendChild(addButton);
-					}
+					// if (this.preparedPathSteps[i][k]["value"].indexOf("[") >
+					// 0) {
+					// paramPathStep.firstChild.nodeValue =
+					// this.preparedPathSteps[i][k]["value"]
+					// .substr(0,
+					// this.preparedPathSteps[i][k]["value"]
+					// .indexOf("]"));
+					// this.preparedPathSteps[i][k]["arrayIndex"] = 1;
+					// var pathIndexSpan = document.createElement("span");
+					// pathIndexSpan.id = "step3-arrayspan-" + i + "-" + k;
+					// var pathIndexText = document.createTextNode("1");
+					// pathIndexSpan.appendChild(pathIndexText);
+					//
+					// paramPathStep.appendChild(pathIndexSpan);
+					// pathTextEnd = document.createTextNode("]");
+					// paramPathStep.appendChild(pathTextEnd);
+					//
+					// // the add-button
+					// var addButton = document.createElement("span");
+					// addButton.style.cursor = "pointer";
+					// var addButtonIMG = document.createElement("img");
+					// addButtonIMG.src = wgScriptPath
+					// + "/extensions/DataImport/skins/webservices/Add.png";
+					// addButton.appendChild(addButtonIMG);
+					//
+					// addButtonIMG.i = i;
+					// addButtonIMG.k = k;
+					// addButtonIMG.addA = true;
+					// Event.observe(addButtonIMG, "click",
+					//								this.addRemoveParameter
+					//										.bindAsEventListener(this));
+					//
+					//						paramPathStep.appendChild(addButton);
+					//					}
 
 					if (i < wsParameters.length - 1) {
 						if (this.preparedPathSteps[i + 1][k] != null) {
 							if (this.preparedPathSteps[i][k]["value"] == this.preparedPathSteps[i + 1][k]["value"]
-									|| this.preparedPathSteps[i][k]["value"] == "."
+									|| this.preparedPathSteps[i][k]["value"] == "/"
 											+ this.preparedPathSteps[i + 1][k]["value"]) {
 								this.preparedPathSteps[i][k]["i"] = i + 1;
 								this.preparedPathSteps[i][k]["k"] = k;
@@ -17853,7 +17300,7 @@ DefineWebServiceSpecial.prototype = {
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = wgScriptPath
-										+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+										+ "/extensions/DataImport/skins/webservices/plus.gif";
 								expandIMG.i = i;
 								expandIMG.k = k;
 								var el = this.paramPathStepClick
@@ -17872,7 +17319,7 @@ DefineWebServiceSpecial.prototype = {
 
 					if (i > 0) {
 						if (this.preparedPathSteps[i - 1][k] != null) {
-							if (this.preparedPathSteps[i][k]["value"] == "."
+							if (this.preparedPathSteps[i][k]["value"] == "/"
 									+ this.preparedPathSteps[i - 1][k]["value"]
 									|| this.preparedPathSteps[i][k]["value"] == this.preparedPathSteps[i - 1][k]["value"]) {
 								paramPathStep.style.visibility = "hidden";
@@ -17883,15 +17330,31 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 
-					if (k == treeViewK && k != aTreeRootK) {
+					//if (k == treeViewK && k != aTreeRootK) {
+					if (k != aTreeRootK) {
 						expandPathStep = document.createElement("span");
 						expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+								+ "/extensions/DataImport/skins/webservices/seperator.gif";
+						//expandIMG.style.visibility = "hidden";
 						expandPathStep.appendChild(expandIMG);
 						paramPathStep.insertBefore(expandPathStep,
 								paramPathStep.firstChild);
 					}
+				}
+
+				var paramTD05 = document.createElement("td");
+				paramTD05.id = "step3-paramTD05-" + i;
+				paramTD05.style.textAlign = "right";
+				paramRow.appendChild(paramTD05);
+
+				var useInput = document.createElement("input");
+				useInput.id = "s3-use" + i;
+				useInput.type = "checkbox";
+				paramTD05.appendChild(useInput);
+
+				if (aTreeRoot || treeView) {
+					paramTD05.style.visibility = "hidden";
 				}
 
 				var paramTD1 = document.createElement("td");
@@ -17900,7 +17363,7 @@ DefineWebServiceSpecial.prototype = {
 
 				var aliasInput = document.createElement("input");
 				aliasInput.id = "s3-alias" + i;
-				aliasInput.size = "15";
+				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
 				paramTD1.appendChild(aliasInput);
 
@@ -17922,11 +17385,11 @@ DefineWebServiceSpecial.prototype = {
 					optionalRadio1.name = "s3-optional-radio" + i;
 				}
 				optionalRadio1.id = "s3-optional-true" + i;
-				optionalRadio1.value = "yes";
+				optionalRadio1.value = diLanguage.getMessage('smw_wws_yes');
 				paramTD2.appendChild(optionalRadio1);
 
 				var optionalRadio1Span = document.createElement("span");
-				var optionalRadio1TextY = document.createTextNode("Yes");
+				var optionalRadio1TextY = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
 				optionalRadio1Span.appendChild(optionalRadio1TextY);
 				paramTD2.appendChild(optionalRadio1Span);
 
@@ -17946,7 +17409,7 @@ DefineWebServiceSpecial.prototype = {
 				paramTD2.appendChild(optionalRadio2);
 
 				var optionalRadio2Span = document.createElement("span");
-				var optionalRadio2TextN = document.createTextNode("No");
+				var optionalRadio2TextN = document.createTextNode(diLanguage.getMessage('smw_wws_no'));
 				optionalRadio2Span.appendChild(optionalRadio2TextN);
 				paramTD2.appendChild(optionalRadio2Span);
 
@@ -17960,7 +17423,7 @@ DefineWebServiceSpecial.prototype = {
 
 				var defaultInput = document.createElement("input");
 				defaultInput.id = "s3-default" + i;
-				defaultInput.size = "15";
+				defaultInput.size = "25";
 				defaultInput.maxLength = "40";
 				paramTD3.appendChild(defaultInput);
 
@@ -17985,7 +17448,7 @@ DefineWebServiceSpecial.prototype = {
 			var parent = $("step3-parameters").parentNode;
 			parent.removeChild($("step3-parameters"));
 			var parent = $("step3");
-			parent.insertBefore(this.parameterContainer, parent.childNodes[3]);
+			parent.insertBefore(this.parameterContainer, parent.childNodes[2]);
 
 			// hide or display widgets of other steps
 			if (!edit) {
@@ -17994,16 +17457,13 @@ DefineWebServiceSpecial.prototype = {
 				$("menue-step2").className = "DoneMenueStep";
 				$("menue-step3").className = "ActualMenueStep";
 
-				$("step2-help").style.display = "none";
-				$("step3-help").style.display = "";
-
-				$("step2-img").style.visibility = "hidden";
-				$("step3-img").style.visibility = "visible";
+				this.hideHelp(2);
 
 				$("step2a-error").style.display = "none";
 				$("step2b-error").style.display = "none";
 
 				$("errors").style.display = "none";
+
 			}
 		}
 
@@ -18017,13 +17477,9 @@ DefineWebServiceSpecial.prototype = {
 			$("menue-step5").className = "TodoMenueStep";
 			$("menue-step6").className = "TodoMenueStep";
 
-			$("step4-help").style.display = "none";
-			$("step5-help").style.display = "none";
-			$("step6-help").style.display = "none";
-
-			$("step4-img").style.visibility = "hidden";
-			$("step5-img").style.visibility = "hidden";
-			$("step6-img").style.visibility = "hidden";
+			this.hideHelp(4);
+			this.hideHelp(5);
+			this.hideHelp(6);
 
 			$("step3-error").style.display = "none";
 			$("step4-error").style.display = "none";
@@ -18043,6 +17499,11 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep3 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep3REST();
+			return;
+		}
+
 		this.generateParameterAliases(false);
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
@@ -18068,34 +17529,40 @@ DefineWebServiceSpecial.prototype = {
 	processStep3Do : function(resultsString, edit) {
 		var wsResults = resultsString.split(";");
 
+		if (!this.editMode) {
+			$("step3-go-img").style.display = "none";
+			$("step4-go-img").style.display = "";
+		}
+
 		this.preparedRPathSteps = new Array();
 
 		var duplicate = false;
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
-				wsResults[i] = "result." + wsResults[i];
+				wsResults[i] = "result/" + wsResults[i];
 			} else {
 				wsResults[i] = "result";
 			}
-			var steps = wsResults[i].split(".");
+			var steps = wsResults[i].split("/");
 			var preparedPathStepsDot = new Array();
 			for ( var k = 0; k < steps.length; k++) {
+				if (steps[k].length == 0) {
+					s1 = steps.slice(0, k);
+					s2 = steps.slice(k + 1, steps.length);
+					steps = s1.concat(s2);
+					k -= 1;
+					continue;
+				}
+
 				var tO = new Object();
 				if (steps[k].indexOf("##duplicate") > -1) {
-					if (steps[k].indexOf("[]") > -1) {
-						tO["value"] = steps[k].substr(0, steps[k]
-								.indexOf("##duplicate"))
-								+ "[]";
-					} else {
-						tO["value"] = steps[k].substr(0, steps[k]
-								.indexOf("##duplicate"));
-					}
+					tO["value"] = steps[k].substr(0, steps[k]
+							.indexOf("##duplicate"));
 					tO["duplicate"] = true;
 					duplicate = true;
 				} else if (steps[k].indexOf("##overflow") > -1) {
 					tO["value"] = steps[k].substr(0, steps[k]
-							.indexOf("##overflow"))
-							+ "[]";
+							.indexOf("##overflow"));
 					tO["overflow"] = true;
 				} else {
 					tO["value"] = steps[k];
@@ -18124,7 +17591,15 @@ DefineWebServiceSpecial.prototype = {
 		} else {
 			wsResults.shift();
 			// clear widgets of step 4
-
+			$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "none";
+			
+	
+			$("step4-rest-intro").style.display = "none";
+			
 			var tempHead = $("step4-results").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step4-results").childNodes[0].cloneNode(false);
@@ -18145,6 +17620,10 @@ DefineWebServiceSpecial.prototype = {
 				var resultRow = document.createElement("tr");
 				resultRow.id = "step4-resultRow-" + i;
 
+				if (aTreeRoot || treeView) {
+					paramTD05.style.visibility = "hidden";
+				}
+
 				var resultTD1 = document.createElement("td");
 				resultTD1.id = "step4-resultTD1-" + i;
 				resultRow.appendChild(resultTD1);
@@ -18163,9 +17642,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 					var resultPathText = "";
-					if (k > 0) {
-						resultPathText += ".";
-					}
+					//if (k > 0) {
+					//	resultPathText += "/";
+					//}
+					
 					resultPathText += this.preparedRPathSteps[i][k]["value"];
 					var resultPathTextNode = document
 							.createTextNode(resultPathText);
@@ -18175,53 +17655,64 @@ DefineWebServiceSpecial.prototype = {
 					resultPathStep.appendChild(resultPathTextNode);
 					resultPath.appendChild(resultPathStep);
 
-					if (this.preparedRPathSteps[i][k]["value"].indexOf("[") > 0) {
-						// the input-field
-						resultPathStep.firstChild.nodeValue = this.preparedRPathSteps[i][k]["value"]
-								.substr(0,
-										this.preparedRPathSteps[i][k]["value"]
-												.indexOf("]"));
-						var pathIndexInput = document.createElement("input");
-						pathIndexInput.type = "text";
-						pathIndexInput.size = "1";
-						pathIndexInput.maxLength = "5";
-						pathIndexInput.style.width = "7px";
-						pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
-						pathIndexInput.value = "";
-
-						pathIndexInput.i = i;
-						pathIndexInput.k = k;
-						Event
-								.observe(pathIndexInput, "blur",
-										this.updateInputBoxes
-												.bindAsEventListener(this));
-
-						resultPathStep.appendChild(pathIndexInput);
-						pathTextEnd = document.createTextNode("]");
-						resultPathStep.appendChild(pathTextEnd);
-
-						// the add-button
-						var addButton = document.createElement("span");
-						addButton.style.cursor = "pointer";
-						var addButtonIMG = document.createElement("img");
-						addButtonIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/Add.png";
-						addButtonIMG.i = i;
-						addButtonIMG.k = k;
-						addButtonIMG.addA = true;
-						Event.observe(addButtonIMG, "click",
-								this.addRemoveResultPart
-										.bindAsEventListener(this));
-
-						addButton.appendChild(addButtonIMG);
-
-						resultPathStep.appendChild(addButton);
-					}
+					// if (this.preparedRPathSteps[i][k]["value"].indexOf("[") >
+					// 0) {
+					// // the input-field
+					// resultPathStep.firstChild.nodeValue =
+					// this.preparedRPathSteps[i][k]["value"]
+					// .substr(0,
+					// this.preparedRPathSteps[i][k]["value"]
+					// .indexOf("[") + 1);
+					// var pathIndexInput = document.createElement("input");
+					// pathIndexInput.type = "text";
+					// pathIndexInput.size = "2";
+					// pathIndexInput.maxLength = "5";
+					// pathIndexInput.style.width = "14px";
+					// pathIndexInput.id = "step4-arrayinput-" + i + "-" + k;
+					// pathIndexInput.value =
+					// this.preparedRPathSteps[i][k]["value"]
+					// .substr(
+					// this.preparedRPathSteps[i][k]["value"]
+					// .indexOf("[") + 1,
+					// this.preparedRPathSteps[i][k]["value"]
+					// .indexOf("]")
+					// - 1
+					// - this.preparedRPathSteps[i][k]["value"]
+					// .indexOf("["));
+					//
+					// pathIndexInput.i = i;
+					// pathIndexInput.k = k;
+					// Event
+					// .observe(pathIndexInput, "blur",
+					// this.updateInputBoxes
+					// .bindAsEventListener(this));
+					//
+					// resultPathStep.appendChild(pathIndexInput);
+					// pathTextEnd = document.createTextNode("]");
+					// resultPathStep.appendChild(pathTextEnd);
+					//
+					// // the add-button
+					// var addButton = document.createElement("span");
+					// addButton.style.cursor = "pointer";
+					// var addButtonIMG = document.createElement("img");
+					// addButtonIMG.src = wgScriptPath
+					// + "/extensions/DataImport/skins/webservices/Add.png";
+					// addButtonIMG.i = i;
+					// addButtonIMG.k = k;
+					// addButtonIMG.addA = true;
+					// Event.observe(addButtonIMG, "click",
+					//								this.addRemoveResultPart
+					//										.bindAsEventListener(this));
+					//
+					//						addButton.appendChild(addButtonIMG);
+					//
+					//						resultPathStep.appendChild(addButton);
+					//					}
 
 					if (i < this.preparedRPathSteps.length - 1) {
 						if (this.preparedRPathSteps[i + 1][k] != null) {
-							if (resultPathText == this.preparedRPathSteps[i + 1][k]["value"]
-									|| resultPathText == "."
+							if (this.preparedRPathSteps[i][k]["value"] == this.preparedRPathSteps[i + 1][k]["value"]
+									|| this.preparedRPathSteps[i][k]["value"] == "/"
 											+ this.preparedRPathSteps[i + 1][k]["value"]) {
 								this.preparedRPathSteps[i][k]["i"] = i + 1;
 								this.preparedRPathSteps[i][k]["k"] = k;
@@ -18241,7 +17732,7 @@ DefineWebServiceSpecial.prototype = {
 
 								var expandIMG = document.createElement("img");
 								expandIMG.src = wgScriptPath
-										+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+										+ "/extensions/DataImport/skins/webservices/plus.gif";
 								expandIMG.i = i;
 								expandIMG.k = k;
 								var el = this.resultPathStepClick
@@ -18259,9 +17750,9 @@ DefineWebServiceSpecial.prototype = {
 
 					if (i > 0) {
 						if (this.preparedRPathSteps[i - 1][k] != null) {
-							if (resultPathText == "."
+							if (this.preparedRPathSteps[i][k]["value"] == "/"
 									+ this.preparedRPathSteps[i - 1][k]["value"]
-									|| resultPathText == this.preparedRPathSteps[i - 1][k]["value"]) {
+									|| this.preparedRPathSteps[i][k]["value"] == this.preparedRPathSteps[i - 1][k]["value"]) {
 								resultPathStep.style.visibility = "hidden";
 								this.preparedRPathSteps[i][k]["arrayIndexRoot"] = false;
 								treeView = true;
@@ -18270,11 +17761,13 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 
-					if (k == treeViewK && k != aTreeRootK) {
+					//if (k == treeViewK && k != aTreeRootK) {
+					if (k != aTreeRootK) {
 						var expandPathStep = document.createElement("span");
 						var expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+								+ "/extensions/DataImport/skins/webservices/seperator.gif";
+						//expandIMG.style.visibility = "hidden";
 						expandPathStep.appendChild(expandIMG);
 						resultPathStep.insertBefore(expandPathStep,
 								resultPathStep.firstChild);
@@ -18284,18 +17777,50 @@ DefineWebServiceSpecial.prototype = {
 				resultPath.id = "s4-path" + i;
 				resultTD1.appendChild(resultPath);
 
+				var resultTD05 = document.createElement("td");
+				resultTD05.id = "step4-resultTD05-" + i;
+				resultTD05.style.textAlign = "right";
+				resultRow.appendChild(resultTD05);
+
+				var useInput = document.createElement("input");
+				useInput.id = "s4-use" + i;
+				useInput.type = "checkbox";
+				resultTD05.appendChild(useInput);
+
+				if (aTreeRoot || treeView) {
+					resultTD05.style.visibility = "hidden";
+				}
+
 				var resultTD2 = document.createElement("td");
 				resultTD2.id = "step4-resultTD2-" + i;
 				resultRow.appendChild(resultTD2);
 
 				var aliasInput = document.createElement("input");
 				aliasInput.id = "s4-alias" + i;
-				aliasInput.size = "15";
+				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
 				resultTD2.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
 					resultTD2.style.visibility = "hidden";
+				}
+
+				var resultTD3 = document.createElement("td");
+				resultTD3.id = "step4-resultTD3-" + i;
+				resultRow.appendChild(resultTD3);
+
+				var subPathButton = document.createElement("input");
+				subPathButton.id = "s4-add-subpath" + i;
+				subPathButton.type = "button";
+				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
+				subPathButton.style.cursor = "pointer";
+				subPathButton.style.cursor = "pointer";
+				subPathButton.setAttribute("onclick",
+						"webServiceSpecial.addSubPath(" + i + ")");
+				resultTD3.appendChild(subPathButton);
+
+				if (aTreeRoot || treeView) {
+					resultTD3.style.visibility = "hidden";
 				}
 
 				if (treeView) {
@@ -18321,14 +17846,11 @@ DefineWebServiceSpecial.prototype = {
 					$("menue-step4").className = "ActualMenueStep";
 				}
 
-				$("step3-help").style.display = "none";
-				$("step4-help").style.display = "";
-
-				$("step3-img").style.visibility = "hidden";
-				$("step4-img").style.visibility = "visible";
+				this.hideHelp(3);
 
 				$("step3-error").style.display = "none";
 				$("errors").style.display = "none";
+				this.generateParameterAliases();
 			}
 		}
 
@@ -18350,18 +17872,22 @@ DefineWebServiceSpecial.prototype = {
 	 * @return
 	 */
 	processStep4 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep4REST();
+			return;
+		}
+
+		$("step4-go-img").style.display = "none";
+		$("step5-go-img").style.display = "";
+
 		this.showPendingIndicator("step4-go");
 		// hide or display widgets of other steps
-		this.generateResultAliases(false);
+		this.generateResultAliases();
 		$("step5").style.display = "";
 
 		$("menue-step4").className = "DoneMenueStep";
 		$("menue-step5").className = "ActualMenueStep";
-		$("step4-help").style.display = "none";
-		$("step5-help").style.display = "";
-		$("step4-img").style.visibility = "hidden";
-		$("step5-img").style.visibility = "visible";
-
+		this.hideHelp(4);
 		$("step5-display-once").checked = true;
 		$("step5-display-days").value = "";
 		$("step5-display-hours").value = "";
@@ -18387,16 +17913,22 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep5 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep5REST();
+			return;
+		}
+
+		$("step5-go-img").style.display = "none";
+		$("step6-go-img").style.display = "";
+
 		// hide or display widgets of other steps
 		$("step6").style.display = "";
 
 		$("menue-step5").className = "DoneMenueStep";
 		$("menue-step6").className = "ActualMenueStep";
 
-		$("step5-help").style.display = "none";
-		$("step6-help").style.display = "";
-		$("step5-img").style.visibility = "hidden";
-		$("step6-img").style.visibility = "visible";
+		this.hideHelp(5);
+		this.hideHelp(6);
 		$("step6-name").value = "";
 	},
 
@@ -18404,6 +17936,14 @@ DefineWebServiceSpecial.prototype = {
 	 * called after step 6 specify ws-name this method constructs the wwsd
 	 */
 	processStep6 : function() {
+		if ($("step1-protocol-rest").checked) {
+			this.processStep6REST();
+			return;
+		}
+		
+		this.generateParameterAliases(false);
+		this.generateResultAliases(false);
+		
 		this.showPendingIndicator("step6-go");
 		if ($("step6-name").value.length > 0) {
 			$("errors").style.display = "none";
@@ -18412,26 +17952,42 @@ DefineWebServiceSpecial.prototype = {
 			$("step6c-error").style.display = "none";
 
 			var result = "<WebService>\n";
+			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value+"\n";
 
 			var uri = $("step1-uri").value;
 			result += "<uri name=\"" + uri + "\" />\n";
 
-			result += "<protocol>SOAP</protocol>\n";
+			if ($("step1-protocol-soap").checked) {
+				result += "<protocol>SOAP</protocol>\n";
+			} else {
+				result += "<protocol>REST</protocol>\n";
+			}
+
+			if ($("step1-auth-yes").checked) {
+				result += "<authentication type=\"http\" login=\""
+						+ $("step1-username").value + "\" password=\""
+						+ $("step1-password").value + "\"/>\n";
+			}
 
 			var method = $("step2-methods").value;
 			result += "<method name=\"" + method + "\" />\n";
 
 			for ( var i = 0; i < this.preparedPathSteps.length; i++) {
 				if (this.preparedPathSteps[i] != "null") {
-					if ($("s3-alias" + i).value.length == 0) {
+					if ($("s3-use" + i).checked != true) {
 						continue;
 					}
-					result += "<parameter name=\"" + $("s3-alias" + i).value
-							+ "\" ";
-					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked;
+
+					var name = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value;
+					result += "<parameter name=\"" + name + "\" ";
+
+					wsSyntax += "| " + name
+							+ " = [Please enter a value here]\n";
+
+					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked;
 					result += " optional=\"" + optional + "\" ";
 
-					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value;
+					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value;
 					if (defaultValue != "") {
 						if (defaultValue != "") {
 							result += " defaultValue=\"" + defaultValue + "\" ";
@@ -18439,144 +17995,106 @@ DefineWebServiceSpecial.prototype = {
 					}
 					var path = "";
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
-						var pathStep = "";
+						var pathStep = "/";
+
 						if (k > 0) {
-							pathStep += ".";
+							pathStep = "/";
 						}
 						pathStep += this.preparedPathSteps[i][k]["value"];
 						if (pathStep.lastIndexOf("(") > 0) {
 							pathStep = pathStep.substr(0, pathStep
 									.lastIndexOf("(") - 1);
 						}
-						if (pathStep.lastIndexOf("[") > 0) {
-							pathStep = pathStep.substring(0, pathStep
-									.lastIndexOf("["));
-							pathStep += "[";
-							pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
-							pathStep += "]";
-						}
-						if (pathStep != ".") {
+						
+						// if (pathStep.lastIndexOf("[") > 0) {
+						//  pathStep = pathStep.substring(0, pathStep
+						// .lastIndexOf("["));
+						// pathStep += "[";
+						// pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
+						// pathStep += "]";
+// }
+						if (pathStep != "/" && pathStep != "//") {
 							path += pathStep;
 						}
 					}
 					result += " path=\"" + path + "\" />\n";
 				}
 			}
+
 			result += "<result name=\"result\" >\n";
-
-			for (i = 0; i < this.preparedRPathSteps.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
-						continue;
-					}
-					var rPath = "";
-					for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
-						var rPathStep = "";
-
-						if (k > 1) {
-							rPathStep += ".";
-						}
-						rPathStep += this.preparedRPathSteps[i][k]["value"];
-
-						if (rPathStep.lastIndexOf("(") > 0) {
-							rPathStep = rPathStep.substr(0, rPathStep
-									.lastIndexOf("(") - 1);
-						}
-						if (rPathStep.lastIndexOf("[") > 0) {
-							rPathStep = rPathStep.substring(0, rPathStep
-									.lastIndexOf("["));
-							rPathStep += "[";
-							rPathStep += $("step4-arrayinput-" + i + "-" + k).value;
-							rPathStep += "]";
-						}
-						if (rPathStep != ".") {
-							rPath += rPathStep;
-						}
-					}
-
-					result += "<part name=\""
-							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-							+ "\" ";
-					result += " path=\"" + rPath + "\" />\n";
-
+			var rPath = "";
+			var offset = 0;
+			var manualResultPart = false;
+			for (i = 1; i < this.resultContainer.firstChild.childNodes.length; i++) {
+				// only required for arays
+				// if (this.preparedRPathSteps[i] != "null") {
+				// process subpaths
+				if (this.resultContainer.firstChild.childNodes[i].id == "step4-separatorRow") {
+					i += 1;
+					manualResultPart = true;
+					continue;
 				}
+				
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].childNodes[0].type != "checkbox") {
+					if (!this.resultContainer.firstChild.childNodes[i].removed) {
+						var name = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
+						result += "<part name=\"" + name + "\" ";
+						wsSyntax += "| ?result." + name + "\n";
+						
+						if(rPath == ""){
+							if(manualResultPart){
+								rPath = this.resultContainer.firstChild.childNodes[i-1].firstChild.firstChild.value;
+							} else {
+								rPath = this.getRPath(i-2-offset);
+							}
+						}
+						
+						result += " path=\"" + rPath + "\"";
+
+						if (this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[1].value == "xpath") {
+							result += " xpath=\"";
+						} else {
+							result += " json=\"";
+						}
+						result += this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value; 
+						result += "\"/>\n";
+					}
+					offset += 1;
+					continue;
+				}
+
+				// process normal result parts
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.checked != true) {
+					rPath = "";
+					continue;
+				}
+
+				if(manualResultPart){
+					rPath = this.resultContainer.firstChild.childNodes[i].firstChild.firstChild.value;
+				} else {
+					rPath = this.getRPath(i - 1 - offset);
+				}
+
+				var name = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
+				result += "<part name=\"" + name + "\" ";
+
+				wsSyntax += "| ?result." + name + "\n";
+
+				result += " path=\"" + rPath + "\"";
+
+				result += " />\n";
+				// }
 			}
 			result += "</result>\n";
 
-			result += "<displayPolicy>\n"
-			if ($("step5-display-once").checked == true) {
-				result += "<once/>\n";
-			} else {
-				result += "<maxAge value=\"";
-				var minutes = 0;
-				minutes += $("step5-display-days").value * 60 * 24;
-				minutes += $("step5-display-hours").value * 60;
-				minutes += $("step5-display-minutes").value * 1;
-				result += minutes;
-				result += "\"></maxAge>\n";
-			}
-			result += "</displayPolicy>\n"
+			result += this.createWWSDPolicyPart();
 
-			result += "<queryPolicy>\n"
-			if ($("step5-query-once").checked == true) {
-				result += "<once/>\n";
-			} else {
-				result += "<maxAge value=\"";
-				minutes = 0;
-				minutes += $("step5-query-days").value * 60 * 24;
-				minutes += $("step5-query-hours").value * 60;
-				minutes += $("step5-query-minutes").value * 1;
-				result += minutes;
-				result += "\"></maxAge>\n";
-			}
-			var delay = $("step5-delay").value;
-			if (delay.length == 0) {
-				delay = 0;
-			}
-			result += "<delay value=\"" + delay + "\"/>\n";
-			result += "</queryPolicy>\n"
-			result += "<spanOfLife value=\""
-					+ (0 + $("step5-spanoflife").value * 1);
-			if ($("step5-expires-yes").checked) {
-				result += "\" expiresAfterUpdate=\"true\" />\n";
-			} else {
-				result += "\" expiresAfterUpdate=\"false\" />\n";
-			}
 			result += "</WebService>";
+
 			this.wwsd = result;
 			var wsName = $("step6-name").value;
 
-			// the three additional "#" tell the ws-syntax processor not to
-			// process
-			// this ws-syntax
-			var wsSyntax = "\n== Syntax for using the WWSD in an article==";
-			wsSyntax += "\n<nowiki>{{#ws: " + $("step6-name").value
-					+ "</nowiki>\n";
-			parameters = this.preparedPathSteps;
-			for (i = 0; i < parameters.length; i++) {
-				if (this.preparedPathSteps[i] != "null") {
-					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
-						continue;
-					}
-					wsSyntax += "| "
-							+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-							+ " = [Please enter a value here]\n";
-				}
-			}
-
-			results = this.preparedRPathSteps;
-			for (i = 0; i < results.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
-						continue;
-					}
-					wsSyntax += "| ?result."
-							+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-							+ "\n";
-				}
-			}
-			wsSyntax += "}}";
-
+			wsSyntax += "}}</pre>";
 			this.wsSyntax = wsSyntax;
 
 			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
@@ -18593,12 +18111,12 @@ DefineWebServiceSpecial.prototype = {
 	processStep6CallBack : function(request) {
 		if (request.responseText.indexOf("false") >= 0 || this.editMode == true) {
 			var wsName = $("step6-name").value;
-			// sajax_do_call("smwf_om_EditArticle", [ "webservice:" + wsName,
-			// wgUserName, this.wwsd + this.wsSyntax, "" ],
-			// this.processStep6CallBack1.bind(this));
-			var wsName = $("step6-name").value;
+
+			wsSyntax = "\n== Syntax for using the WWSD in an article==";
+			wsSyntax += this.wsSyntax;
+
 			sajax_do_call("smwf_ws_processStep6", [ wsName, this.wwsd,
-					wgUserName, this.wsSyntax ], this.processStep6CallBack1
+					wgUserName, wsSyntax ], this.processStep6CallBack1
 					.bind(this));
 		} else {
 			$("errors").style.display = "";
@@ -18616,6 +18134,10 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep6CallBack1 : function(request) {
 		if (request.responseText.indexOf("true") >= 0) {
+			window.location.hash = '#top';
+
+			$("breadcrumb-menue").style.display = "none";
+
 			var container = $("step7-container").cloneNode(false);
 			$("step7-container").id = "old-step7-container";
 			$("old-step7-container").parentNode.insertBefore(container,
@@ -18630,47 +18152,10 @@ DefineWebServiceSpecial.prototype = {
 			$("step7-name").appendChild(wsNameText);
 
 			var rowDiv = document.createElement("div");
-			var rowText = document.createTextNode("{{#ws: "
-					+ $("step6-name").value);
-			rowDiv.appendChild(rowText);
-			step7Container.appendChild(rowDiv);
+			this.wsSyntax = this.wsSyntax.replace(/<pre>/g, "");
+			this.wsSyntax = this.wsSyntax.replace(/<\/pre>/g, "");
+			rowDiv.innerHTML = this.wsSyntax.replace(/\n/g, "<br/>");
 
-			var parameters = this.preparedPathSteps;
-			for (i = 0; i < parameters.length; i++) {
-				if (this.preparedPathSteps[i] != "null") {
-					if (this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
-						continue;
-					}
-					rowDiv = document.createElement("div");
-					rowDiv.className = "OuterLeftIndent";
-					rowText = document
-							.createTextNode("| "
-									+ this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value
-									+ " = [Please enter a value here]");
-					rowDiv.appendChild(rowText);
-					step7Container.appendChild(rowDiv);
-				}
-			}
-
-			var results = this.preparedRPathSteps;
-			for (i = 0; i < results.length; i++) {
-				if (this.preparedRPathSteps[i] != "null") {
-					if (this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value.length == 0) {
-						continue;
-					}
-					rowDiv = document.createElement("div");
-					rowDiv.className = "OuterLeftIndent";
-					rowText = document
-							.createTextNode("| ?result."
-									+ this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value);
-					rowDiv.appendChild(rowText);
-					step7Container.appendChild(rowDiv);
-				}
-			}
-
-			rowDiv = document.createElement("div");
-			rowText = document.createTextNode("}}");
-			rowDiv.appendChild(rowText);
 			step7Container.appendChild(rowDiv);
 
 			var parentOf = $("step7-container").parentNode;
@@ -18684,9 +18169,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step4").style.display = "none";
 			$("step5").style.display = "none";
 			$("step6").style.display = "none";
-			$("step6-help").style.display = "none";
-			$("menue").style.display = "none";
-			$("help").style.display = "none";
+			this.hideHelp(6);
 
 			this.hidePendingIndicator();
 		} else {
@@ -18703,19 +18186,45 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep7 : function(request) {
+		this.editMode = false;
+		
 		this.step = "step1";
-		$("step1-img").style.visibility = "visible";
-		$("step1-help").style.display = "";
 		$("step7").style.display = "none";
-		$("menue").style.display = "";
-		$("menue-step2").style.fontWeight = "normal";
-		$("menue-step3").style.fontWeight = "normal";
-		$("menue-step4").style.fontWeight = "normal";
-		$("menue-step5").style.fontWeight = "normal";
-		$("menue-step6").style.fontWeight = "normal";
-		$("help").style.display = "";
+		$("breadcrumb-menue").style.display = "";
+		$("menue-step1").className = "ActualMenueStep";
+		$("menue-step2").className = "TodoMenueStep";
+		$("menue-step3").className = "TodoMenueStep";
+		$("menue-step4").className = "TodoMenueStep";
+		$("menue-step5").className = "TodoMenueStep";
+		$("menue-step6").className = "TodoMenueStep";
+
 		$("step1").style.display = "";
-		$("step1-uri").Value = "";
+		$("step1-uri").value = "";
+		$("step1-uri").value = "";
+		$("step1-protocol-rest").checked = "true";
+		$("step1-auth-no").checked = "true";
+		$("step1-username").value = "";
+		$("step1-password").value = "";
+		$("step1-go-img").style.display = "";
+		
+		$("step1-protocol-soap").removeAttribute("onclick");
+		$("step1-protocol-rest").removeAttribute("onclick");
+		$("step1-uri").removeAttribute("onclick");
+		
+		$("step2").style.display = "none";
+		$("step3").style.display = "none";
+		$("step4").style.display = "none";
+		$("step5").style.display = "none";
+		$("step6").style.display = "none";
+		
+		this.hideHelp(1);
+		this.hideHelp(2);
+		this.hideHelp(3);
+		this.hideHelp(4);
+		this.hideHelp(5);
+		this.hideHelp(6);
+		
+
 	},
 
 	/**
@@ -18730,11 +18239,13 @@ DefineWebServiceSpecial.prototype = {
 		var offset = 0;
 		for (i = 0; i < this.preparedPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
-				var alias = this.parameterContainer.firstChild.childNodes[i + 1
-						- offset].childNodes[1].firstChild.value;
-				if (alias.length == 0 && !createAll) {
+				if (this.parameterContainer.firstChild.childNodes[i + 1
+						- offset].childNodes[1].firstChild.checked != true) {
 					continue;
 				}
+
+				var alias = this.parameterContainer.firstChild.childNodes[i + 1
+						- offset].childNodes[2].firstChild.value;
 				if (alias.length == 0) {
 					alias = this.preparedPathSteps[i][this.preparedPathSteps[i].length - 1]["value"];
 
@@ -18748,7 +18259,7 @@ DefineWebServiceSpecial.prototype = {
 						alias = alias.substr(0, openBracketPos);
 					}
 
-					var dotPos = alias.lastIndexOf(".");
+					var dotPos = alias.lastIndexOf("/");
 					alias = alias.substr(dotPos + 1);
 				}
 
@@ -18767,7 +18278,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 
-				this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = alias;
+				this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = alias;
 				aliases.push(alias);
 			} else {
 				offset += 1;
@@ -18776,57 +18287,79 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	generateResultAliases : function(createAll) {
-		var resultsCount = this.preparedRPathSteps.length;
 		var offset = 0;
 		var aliases = new Array();
 		var aliasesObject = new Object();
+		var manualResultPart = false;
+		var lastAlias = "";
+		for (i = 1; i < this.resultContainer.firstChild.childNodes.length; i++) {
+			var isSubPath = false;
+			if (this.resultContainer.firstChild.childNodes[i].id == "step4-separatorRow") {
+				i += 1;
+				offset = 0;
+				manualResultPart = true;
+				continue;
+			}
+			if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.type != "checkbox") {
+				isSubPath = true;
+				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
 
-		for (i = 0; i < resultsCount; i++) {
-			if (this.preparedRPathSteps[i] != "null") {
-				var alias = this.resultContainer.firstChild.childNodes[i + 1
-						- offset].childNodes[1].firstChild.value;
-				if (alias.length == 0 && !createAll) {
-					continue;
-				}
 				if (alias.length == 0) {
-					alias = this.preparedRPathSteps[i][this.preparedRPathSteps[i].length - 1]["value"];
-				}
-				if (alias == "]") {
-					alias = "";
-				}
-				var openBracketPos = alias.lastIndexOf("(");
-				if (openBracketPos != -1) {
-					alias = alias.substr(0, openBracketPos - 1);
-				}
-				var openBracketPos = alias.lastIndexOf("[");
-				if (openBracketPos != -1) {
-					alias = alias.substr(0, openBracketPos);
+					alias = lastAlias;
 				}
 
 				if (alias.length == 0) {
-					alias = "result";
-				}
-
-				var goon = true;
-				var aliasTemp = alias;
-				var k = 0;
-
-				while (goon) {
-					if (aliasesObject[aliasTemp] != 1) {
-						goon = false;
-						alias = aliasTemp;
-						aliasesObject[alias] = 1;
+					if(manualResultPart){
+						alias = "alias";
 					} else {
-						aliasTemp = alias + "-" + k;
-						k++;
+						alias = this.preparedRPathSteps[i - 2 - offset][this.preparedRPathSteps[i
+						                                                                        - 2 - offset].length - 1]["value"];
 					}
 				}
-
-				this.resultContainer.firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = alias;
-				aliases.push(alias);
-			} else {
 				offset += 1;
+			} else {
+				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.checked != true) {
+					lastAlias = "";
+					continue;
+				}
+				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
+				if (alias.length == 0) {
+					if(manualResultPart){
+						alias = "alias";
+					} else {
+						alias = this.preparedRPathSteps[i -1 - offset][this.preparedRPathSteps[i
+						                                                                       - 1 - offset].length - 1]["value"];
+					}
+				}
 			}
+
+			if (alias.length == 0) {
+				alias = "result";
+			}
+
+			var goon = true;
+			var aliasTemp = alias;
+			var k = 0;
+
+			while (goon) {
+				if (aliasesObject[aliasTemp] != 1) {
+					goon = false;
+					alias = aliasTemp;
+					aliasesObject[alias] = 1;
+				} else {
+					aliasTemp = alias + "-" + k;
+					k++;
+				}
+			}
+
+			if(isSubPath){
+				this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value = alias;
+			}
+			else {
+				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
+				lastAlias = alias;
+			}
+			aliases.push(alias);
 		}
 	},
 
@@ -18933,7 +18466,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].firstChild.firstChild.k = r;
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
+									+ "/extensions/DataImport/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 								pathSteps[r].firstChild.expanded = false;
 							} else {
@@ -18963,14 +18496,14 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].childNodes[3].firstChild.k = r;
 						if (r <= k) {
 							pathSteps[r].childNodes[3].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/delete.png";
+									+ "/extensions/DataImport/skins/webservices/delete.png";
 
 							pathSteps[r].childNodes[3].firstChild.addA = false;
 							pathSteps[r].childNodes[1].firstChild.nodeValue = this.preparedPathSteps[i
 									+ m][r]["arrayIndex"] + 1;
 						} else {
 							pathSteps[r].childNodes[3].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Add.png";
+									+ "/extensions/DataImport/skins/webservices/Add.png";
 
 							pathSteps[r].childNodes[3].firstChild.addA = true;
 
@@ -18987,7 +18520,7 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].firstChild.id = "step3-expand-" + newI
 								+ "-" + r;
 						pathSteps[r].firstChild.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/delete.gif";
+								+ "/extensions/DataImport/skins/webservices/delete.gif";
 
 						pathSteps[r].firstChild.firstChild.i = newI;
 						Event.stopObserving(pathSteps[r].firstChild.firstChild,
@@ -19017,7 +18550,7 @@ DefineWebServiceSpecial.prototype = {
 						}
 						if (r <= k) {
 							pathSteps[r].childNodes[4].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/delete.png";
+									+ "/extensions/DataImport/skins/webservices/delete.png";
 
 							pathSteps[r].childNodes[4].firstChild.i = newI;
 							pathSteps[r].childNodes[4].firstChild.k = r;
@@ -19028,7 +18561,7 @@ DefineWebServiceSpecial.prototype = {
 									+ m][r]["arrayIndex"] + 1;
 						} else {
 							pathSteps[r].childNodes[4].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Add.png";
+									+ "/extensions/DataImport/skins/webservices/Add.png";
 
 							pathSteps[r].childNodes[4].firstChild.i = newI;
 							pathSteps[r].childNodes[4].firstChild.k = r;
@@ -19281,7 +18814,7 @@ DefineWebServiceSpecial.prototype = {
 
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
+									+ "/extensions/DataImport/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 								pathSteps[r].firstChild.expanded = false;
 							} else {
@@ -19314,12 +18847,12 @@ DefineWebServiceSpecial.prototype = {
 
 						if (r <= k) {
 							pathSteps[r].childNodes[3].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/delete.png";
+									+ "/extensions/DataImport/skins/webservices/delete.png";
 
 							pathSteps[r].childNodes[3].firstChild.addA = false;
 						} else {
 							pathSteps[r].childNodes[3].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Add.png";
+									+ "/extensions/DataImport/skins/webservices/Add.png";
 
 							pathSteps[r].childNodes[3].firstChild.addA = true;
 						}
@@ -19348,11 +18881,11 @@ DefineWebServiceSpecial.prototype = {
 						}
 						if (r <= k) {
 							pathSteps[r].childNodes[4].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/delete.png";
+									+ "/extensions/DataImport/skins/webservices/delete.png";
 							pathSteps[r].childNodes[4].firstChild.addA = false;
 						} else {
 							pathSteps[r].childNodes[4].firstChild.src = wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/Add.png";
+									+ "/extensions/DataImport/skins/webservices/Add.png";
 
 							pathSteps[r].childNodes[4].firstChild.addA = true;
 						}
@@ -19363,10 +18896,10 @@ DefineWebServiceSpecial.prototype = {
 						pathSteps[r].firstChild.firstChild.k = r;
 
 						pathSteps[r].firstChild.src = wgScriptPath
-								+ "/extensions/SMWHalo/skins/webservices/delete.gif";
+								+ "/extensions/DataImport/skins/webservices/delete.gif";
 						if (pathSteps[r].firstChild.firstChild.expand == null) {
 							if (pathSteps[r].firstChild.firstChild.src == wgScriptPath
-									+ "/extensions/SMWHalo/skins/webservices/plus.gif") {
+									+ "/extensions/DataImport/skins/webservices/plus.gif") {
 								pathSteps[r].firstChild.firstChild.expand = true;
 							} else {
 								pathSteps[r].firstChild.firstChild.expand = false;
@@ -19548,7 +19081,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step3-paramRow-" + i).rowIndex;
 
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/minus.gif";
+				+ "/extensions/DataImport/skins/webservices/minus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = true;
 
 		var goon = true;
@@ -19571,6 +19104,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 				if (visible) {
+
 					this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedPathSteps[i][m]["i"] != "null") {
 						if ($("step3-expand-" + i + "-" + m).expanded) {
@@ -19588,6 +19122,7 @@ DefineWebServiceSpecial.prototype = {
 					this.parameterContainer.firstChild.childNodes[r].childNodes[1].style.visibility = "visible";
 					this.parameterContainer.firstChild.childNodes[r].childNodes[2].style.visibility = "visible";
 					this.parameterContainer.firstChild.childNodes[r].childNodes[3].style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[r].childNodes[4].style.visibility = "visible";
 				}
 			}
 
@@ -19615,7 +19150,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step3-paramRow-" + i).rowIndex;
 
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+				+ "/extensions/DataImport/skins/webservices/plus.gif";
 		this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[k].firstChild.expanded = false;
 
 		for ( var m = k * 1 + 1; m < this.preparedPathSteps[i].length; m++) {
@@ -19633,8 +19168,9 @@ DefineWebServiceSpecial.prototype = {
 			root = false;
 
 			this.parameterContainer.firstChild.childNodes[r].childNodes[1].style.visibility = "hidden";
-			this.parameterContainer.firstChild.childNodes[r].childNodes[2].visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[r].childNodes[2].style.visibility = "hidden";
 			this.parameterContainer.firstChild.childNodes[r].childNodes[3].style.visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[r].childNodes[4].style.visibility = "hidden";
 
 			if (this.preparedPathSteps[i][k]["i"] != "null") {
 				iTemp = this.preparedPathSteps[i][k]["i"];
@@ -19647,7 +19183,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	/**
-	 * used for the onlick event in the tree view of step 4
+	 * used for the onclick event in the tree view of step 4
 	 * 
 	 * @param event
 	 * @return
@@ -19677,7 +19213,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step4-resultRow-" + i).rowIndex;
 
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/minus.gif";
+				+ "/extensions/DataImport/skins/webservices/minus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "true";
 
 		var goon = true;
@@ -19685,7 +19221,8 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			var display = true;
 			var complete = true;
-			r = r + 1; // $("step4-resultRow-" + i).rowIndex;
+			r = r + 1;
+
 			for ( var m = k * 1 + 1; m < this.preparedRPathSteps[i].length; m++) {
 				var visible = true;
 				if (i > 0) {
@@ -19710,12 +19247,31 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 			}
+
+			var offset = this.resultContainer.childNodes[0].childNodes[r].subPathOffset;
+
 			if (display) {
 				this.resultContainer.childNodes[0].childNodes[r].style.display = "";
 
 				if (complete) {
 					this.resultContainer.childNodes[0].childNodes[r].childNodes[1].style.visibility = "visible";
+					this.resultContainer.childNodes[0].childNodes[r].childNodes[2].style.visibility = "visible";
+					this.resultContainer.childNodes[0].childNodes[r].childNodes[3].style.visibility = "visible";
+
+					if (offset != null) {
+						for (o = 0; o < offset; o++) {
+							if (!this.resultContainer.childNodes[0].childNodes[r
+									+ o + 1].removed) {
+								this.resultContainer.childNodes[0].childNodes[r
+										+ o + 1].style.display = "";
+							}
+						}
+					}
 				}
+			}
+
+			if (offset != null) {
+				r += offset;
 			}
 
 			if (this.preparedRPathSteps[i][k]["i"] != "null") {
@@ -19741,7 +19297,7 @@ DefineWebServiceSpecial.prototype = {
 		var r = $("step4-resultRow-" + i).rowIndex;
 
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].firstChild.src = wgScriptPath
-				+ "/extensions/SMWHalo/skins/webservices/plus.gif";
+				+ "/extensions/DataImport/skins/webservices/plus.gif";
 		this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[k].childNodes[0].expanded = "false";
 		for ( var m = k + 1; m < this.preparedRPathSteps[i].length; m++) {
 			this.resultContainer.childNodes[0].childNodes[r].childNodes[0].firstChild.childNodes[m].style.visibility = "hidden";
@@ -19754,7 +19310,7 @@ DefineWebServiceSpecial.prototype = {
 		while (goon) {
 			i = i * 1;
 			k = k * 1;
-			r = r + 1;// $("step4-resultRow-" + i).rowIndex;
+			r = r + 1;
 
 			if (!root) {
 				this.resultContainer.childNodes[0].childNodes[r].style.display = "none";
@@ -19762,7 +19318,16 @@ DefineWebServiceSpecial.prototype = {
 			root = false;
 
 			this.resultContainer.childNodes[0].childNodes[r].childNodes[1].style.visibility = "hidden";
+			this.resultContainer.childNodes[0].childNodes[r].childNodes[2].style.visibility = "hidden";
+			this.resultContainer.childNodes[0].childNodes[r].childNodes[3].style.visibility = "hidden";
 
+			var offset = this.resultContainer.childNodes[0].childNodes[r].subPathOffset;
+			if (offset != null) {
+				for (o = 0; o < offset; o++) {
+					this.resultContainer.childNodes[0].childNodes[r + o + 1].style.display = "none";
+				}
+				r += offset;
+			}
 			if (this.preparedRPathSteps[i][k]["i"] != "null") {
 				var iTemp = this.preparedRPathSteps[i][k]["i"];
 				k = this.preparedRPathSteps[i][k]["k"];
@@ -19841,94 +19406,1129 @@ DefineWebServiceSpecial.prototype = {
 
 	editWWSD : function() {
 		var editParameterContainer = $("editparameters");
-		var editResultContainer = $("editresults");
 		if (editParameterContainer == null) {
 			return;
 		}
+		
+		if ($("editparameters").processed) {
+			return;
+		}
+
+		var editResultContainer = $("editresults");
 
 		this.editMode = true;
-		
-		var editParametersText = "";
-		for(i = 0; i < editParameterContainer.childNodes.length; i++){
-			editParametersText += editParameterContainer.childNodes[i].nodeValue;
+		//necessary so that this method will not be called twice
+		$("editparameters").processed = true;
+
+		var editParameters = "";
+
+		// this is necessary because firefox splits up long divs into several
+		// ones
+		for ( var i = 0; i < editParameterContainer.childNodes.length; i++) {
+			editParameters += editParameterContainer.childNodes[i].nodeValue;
 		}
-		var editParameters = editParametersText.split(";");
+		editParameters = editParameters.split(";");
 		editParameters.pop();
-		
-		var ps2Parameters = "todo:handle exceptions";
-		var parametersUpdate = new Array();
 
-		for (i = 0; i < editParameters.length; i += 4) {
-			var o = new Object();
-			o["alias"] = editParameters[i];
-			ps2Parameters += ";" + editParameters[i + 1];
-			o["optional"] = editParameters[i + 2];
-			o["defaultValue"] = editParameters[i + 3];
+		var protocol = editParameters.shift();
+		if (protocol == "soap") {
+			var ps2Parameters = "##handle exceptions##";
+			var parametersUpdate = new Array();
 
-			parametersUpdate.push(o);
+			for (i = 0; i < editParameters.length; i += 4) {
+				var o = new Object();
+				o["alias"] = editParameters[i];
+				ps2Parameters += ";" + editParameters[i + 1];
+				o["optional"] = editParameters[i + 2];
+				o["defaultValue"] = editParameters[i + 3];
+				parametersUpdate.push(o);
+			}
+			this.processStep2Do(ps2Parameters, true);
+			this.updateParameters(parametersUpdate);
+		} else {
+			var parametersUpdate = new Array();
+			for (i = 0; i < editParameters.length; i += 4) {
+				var o = new Object();
+				o["alias"] = editParameters[i+1];
+				o["path"] = editParameters[i];
+				o["optional"] = editParameters[i + 2];
+				o["defaultValue"] = editParameters[i + 3];
+				parametersUpdate.push(o);
+			}
+			this.processStep2REST();
+			this.updateParametersREST(parametersUpdate);
 		}
-		this.processStep2Do(ps2Parameters, true);
-		this.updateParameters(parametersUpdate);
 
-		var editResultsText = "";
-		for(i = 0; i < editResultContainer.childNodes.length; i++){
-			editResultsText += editResultContainer.childNodes[i].nodeValue;
+		var editResults = "";
+		for ( var i = 0; i < editResultContainer.childNodes.length; i++) {
+			editResults += editResultContainer.childNodes[i].nodeValue;
 		}
-		var editResults = editResultsText.split(";");
+		editResults = editResults.split(";");
 		editResults.pop();
-		var ps3Results = "todo:handle exceptions";
-		var resultsUpdate = new Array();
+		editResults.shift();
 
-		for (i = 0; i < editResults.length; i += 2) {
-			var o = new Object();
-			o["alias"] = editResults[i];
-			ps3Results += ";" + editResults[i + 1];
-			resultsUpdate.push(o);
+		if (protocol == "soap") {
+			var ps3Results = "todo:handle exceptions";
+			var resultsUpdate = new Array();
+			var resultsUpdateUnmatched = new Array();
+			for (i = 0; i < editResults.length; i += 4) {
+				var o = new Object();
+				o["alias"] = editResults[i];
+				o["xpath"] = editResults[i+2];
+				o["json"] = editResults[i+3];
+				if(editResults[i + 1].indexOf("##unmatched") == 0){
+					o["path"] = editResults[i + 1];
+					resultsUpdateUnmatched.push(o);
+					continue;
+				}
+				if(o["json"] == "##" && o["xpath"] == "##"){
+					ps3Results += ";" + editResults[i + 1];
+				}
+				resultsUpdate.push(o);
+			}
+			this.processStep3Do(ps3Results, true);
+			this.updateResults(resultsUpdate);
+			this.updateResultsUnmatched(resultsUpdateUnmatched);
+		} else {
+			var resultsUpdate = new Array();
+			for (i = 0; i < editResults.length; i += 3) {
+				var o = new Object();
+				o["alias"] = editResults[i];
+				o["format"] = editResults[i + 1];
+				o["path"] = editResults[i + 2];
+				resultsUpdate.push(o);
+			}
+			this.processStep3REST();
+			this.updateResultsREST(resultsUpdate);
 		}
-		this.processStep3Do(ps3Results, true);
-		this.updateResults(resultsUpdate);
-
+		
+		if (protocol == "soap") {
+			$("step1-protocol-rest").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step1-uri").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step2-methods").setAttribute("onclick",
+					"webServiceSpecial.confirmStep2Change()");
+		} else {
+			$("step1-protocol-soap").setAttribute("onclick",
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
+		}
 	},
 
 	updateParameters : function(updates) {
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
 			if (updates[i]["optional"] == "true") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked = true;
 			}
 			if (updates[i]["defaultValue"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value = updates[i]["defaultValue"];
 			}
 		}
 	},
 
 	updateResults : function(updates) {
+		var offset = 0;
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+				if(updates[i]["json"] != "##" || updates[i]["xpath"] != "##"){
+					offset += 1;
+					this.addSubPath(i - offset);
+					
+					if($("step4-resultRow-" + (i - offset)).firstChild.firstChild.lastChild.style.visibility == "hidden"){
+						this.resultContainer.firstChild.childNodes[i + 1].style.display = "none";
+					}
+					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+					if(updates[i]["json"] != "##"){
+						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[1].value = "json";
+						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["json"];
+					} else {
+						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[1].value = "xpath";
+						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["xpath"];
+					}
+				} else {
+					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = "true";
+					this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
+				}
 			}
+		}
+	},
+
+	displayHelp : function(id) {
+		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+			$("step" + id + "-rest-help").style.display = "";
+		} else {
+			$("step" + id + "-help").style.display = "";
+		}
+		
+		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.hideHelp("
+				+ id + ")";
+	},
+
+	hideHelp : function(id) {
+		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+			$("step" + id + "-rest-help").style.display = "none";
+		} 
+
+		$("step" + id + "-help").style.display = "none";
+		
+		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.displayHelp("
+				+ id + ")";
+	},
+
+	showAuthenticationBox : function(what) {
+		if (what == diLanguage.getMessage('smw_wws_yes')) {
+			$("step1-auth-box").style.display = "";
+		} else {
+			$("step1-auth-box").style.display = "none";
+		}
+	},
+
+	addSubPath : function(id) {
+		if ($("step4-resultRow-" + id).subPathOffset == null) {
+			$("step4-resultRow-" + id).subPathOffset = 1;
+			$("step4-resultRow-" + id).tempNextSibling = $("step4-resultRow-" + id).nextSibling; 
+		} else {
+			$("step4-resultRow-" + id).subPathOffset += 1;
+		}
+		
+		var sid = $("step4-resultRow-" + id).subPathOffset;
+
+		var subPathRow = document.createElement("tr");
+		subPathRow.id = "step4-resultRow-sb-" + id + "-" + sid;
+
+		var td0 = document.createElement("td");
+		td0.setAttribute("colspan", "2");
+		
+		var formatLabel = document.createTextNode("format: ");
+		td0.appendChild(formatLabel);
+		
+		var format = document.createElement("select");
+		format.id = "step4-format-" + id + "-" + sid;
+
+		var xpathOption = document.createElement("option");
+		var xpathOptName = document.createTextNode("xpath");
+		xpathOption.appendChild(xpathOptName);
+		xpathOption.value = "xpath";
+		format.appendChild(xpathOption);
+
+		// var jsonOption = document.createElement("option");
+		// var jsonOptName = document.createTextNode("json");
+		// jsonOption.appendChild(jsonOptName);
+		// jsonOption.value = "json";
+		// format.appendChild(jsonOption);
+		
+		td0.appendChild(format);
+		
+		var subPathInput = document.createElement("input");
+		subPathInput.id = "step4-subpath-" + id + "-" + sid;
+		subPathInput.style.marginLeft = "15px";
+		subPathInput.style.width = "300px";
+		td0.appendChild(subPathInput);
+		
+		subPathRow.appendChild(td0);
+
+		var td2 = document.createElement("td");
+		
+		var subPathInput = document.createElement("input");
+		subPathInput.id = "step4-alias-" + id + "-" + sid;
+		subPathInput.size = "25";
+		td2.appendChild(subPathInput);
+		
+		subPathRow.appendChild(td2);
+		
+		var td3 = document.createElement("td");
+
+		var removeButton = document.createElement("input");
+		removeButton.type = "button";
+		removeButton.value = diLanguage.getMessage('smw_wws_remove_subpath');
+		removeButton.setAttribute("onclick", "webServiceSpecial.removeSubPath("
+				+ id + "," + sid + ")");
+		removeButton.style.cursor = "pointer";
+
+		td3.appendChild(removeButton);
+		subPathRow.appendChild(td3);
+
+		$("step4-results").childNodes[0].insertBefore(subPathRow,
+					$("step4-resultRow-" + id).tempNextSibling);
+	},
+
+	removeSubPath : function(id, sid) {
+		$("step4-resultRow-sb-" + id + "-" + sid).style.display = "none";
+		$("step4-resultRow-sb-" + id + "-" + sid).removed = true;
+	},
+
+	processStep1REST : function() {
+		$("errors").style.display = "none";
+		$("step1-error").style.display = "none";
+		$("step2a-error").style.display = "none";
+		$("step2b-error").style.display = "none";
+		$("step3-error").style.display = "none";
+		$("step4-error").style.display = "none";
+		$("step5-error").style.display = "none";
+		$("step6-error").style.display = "none";
+		$("step6b-error").style.display = "none";
+		$("step6c-error").style.display = "none";
+
+		
+		$("step1-protocol-soap").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"soap\")");
+		
+		$("step2").style.display = "";
+		$("menue-step1").className = "DoneMenueStep";
+		$("menue-step2").className = "ActualMenueStep";
+		this.hideHelp(1);
+		$("step1-go-img").style.display = "none";
+		$("step2-go-img").style.display = "";
+
+		var existingOptions = $("step2-methods").cloneNode(false);
+		$("step2-methods").id = "old-step2-methods";
+		$("old-step2-methods").parentNode.insertBefore(existingOptions,
+				document.getElementById("old-step2-methods"));
+		$("old-step2-methods").parentNode.removeChild($("old-step2-methods"));
+		existingOptions.id = "step2-methods";
+
+		var option = document.createElement("option");
+		var mName = document.createTextNode("get");
+		option.appendChild(mName);
+		option.value = "get";
+		$("step2-methods").appendChild(option);
+
+		option = document.createElement("option");
+		mName = document.createTextNode("post");
+		option.appendChild(mName);
+		option.value = "post";
+		$("step2-methods").appendChild(option);
+	},
+
+	processStep2REST : function() {
+		$("step3").style.display = "";
+		$("menue-step2").className = "DoneMenueStep";
+		$("menue-step3").className = "ActualMenueStep";
+		this.hideHelp(2);
+		$("step2-go-img").style.display = "none";
+
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue = "Path:";
+		$("step3-parameters").childNodes[0].childNodes[0]
+				.removeChild($("step3-parameters").childNodes[0].childNodes[0].childNodes[1]);
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[1]
+				.removeChild($("step3-parameters").childNodes[0].childNodes[0].childNodes[1].childNodes[1]);
+
+		this.appendRESTParameter();
+	},
+
+	appendRESTParameter : function() {
+		var id = $("step3-parameters").childNodes[0].childNodes.length;
+
+		var row = document.createElement("tr");
+
+		// add name-input
+		var td = document.createElement("td");
+		var input = document.createElement("input");
+		input.size = "25";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add alias-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		input.size = "25";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// create optional
+		td = document.createElement("td");
+		if (navigator.appName.indexOf("Explorer") != -1) {
+			input = document
+					.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+							+ id + "\">");
+		} else {
+			input = document.createElement("input");
+			input.type = "radio";
+			input.name = "s3-optional-radio" + id;
+		}
+		input.value = diLanguage.getMessage('smw_wws_yes');
+		td.appendChild(input);
+		var text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+		td.appendChild(text);
+
+		if (navigator.appName.indexOf("Explorer") != -1) {
+			input = document
+					.createElement("<input type=\"radio\" name=\"s3-optional-radio"
+							+ id + "\">");
+		} else {
+			input = document.createElement("input");
+			input.type = "radio";
+			input.name = "s3-optional-radio" + id;
+		}
+		input.value = diLanguage.getMessage('smw_wws_no');
+		input.checked = true;
+		td.appendChild(input);
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+		td.appendChild(text);
+		row.appendChild(td);
+
+		// add default-value-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		input.size = "25";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add default-value-input
+		td = document.createElement("td");
+		var select = document.createElement("select");
+
+		var option = document.createElement("option");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_parameter'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_add_parameter');
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_parameter'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_remove_parameter');
+		select.appendChild(option);
+
+		td.appendChild(select);
+
+		input = document.createElement("input");
+		input.type = "button";
+		input.value = "OK";
+		input.style.cursor = "pointer";
+		input.setAttribute("onclick",
+				"webServiceSpecial.processRESTParameterButton(" + id + ")");
+		td.appendChild(input);
+
+		row.appendChild(td);
+
+		$("step3-parameters").childNodes[0].appendChild(row);
+	},
+
+	processRESTParameterButton : function(id) {
+		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
+		var action = select.value;
+
+		if (action == diLanguage.getMessage('smw_wws_add_parameter')) {
+			this.appendRESTParameter();
+		} else if (action == diLanguage.getMessage('smw_wws_remove_parameter')) {
+			$("step3-parameters").childNodes[0].childNodes[id].removed = true;
+			$("step3-parameters").childNodes[0].childNodes[id].style.display = "none";
+			
+			var remove = true;
+			for(var i=1; i < $("step3-parameters").childNodes[0].childNodes.length; i++){
+				if(!$("step3-parameters").childNodes[0].childNodes[i].removed){
+					remove = false;
+				}
+			}
+			
+			if(remove){
+				$("step3-rest-intro").style.display = "";
+				$("step3-parameters").style.display = "none";
+			}
+		}
+	},
+
+	processStep2REST : function() {
+		if(!this.editMode){
+			$("step3").style.display = "";
+			$("menue-step2").className = "DoneMenueStep";
+			$("menue-step3").className = "ActualMenueStep";
+			this.hideHelp(2);
+			$("step2-go-img").style.display = "none";
+			$("step3-go-img").style.display = "";
+		}
+		
+		$("step3-duplicates").style.display ="none";
+		
+		// clear widgets of step 3
+		var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step3-parameters").childNodes[0].cloneNode(false);
+		$("step3-parameters").removeChild($("step3-parameters").childNodes[0]);
+		$("step3-parameters").appendChild(tempTable);
+		$("step3-parameters").childNodes[0].appendChild(tempHead);
+
+		// prepare table for rest parameters
+		$("step3-rest-intro").style.display = "";
+		if($("step3-rest-intro").childNodes.length <= 0){
+			var button = document.createElement("input");
+			button.setAttribute("type", "button");
+			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_parameters'));
+			button.setAttribute("onclick", "webServiceSpecial.displayRestParameterTable()");
+			$("step3-rest-intro").appendChild(button);
+		}
+		
+		$("step3-parameters").style.display = "none";
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
+		$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
+		
+		// todo: remove this
+		this.appendRESTParameter();
+		$("step3-parameters").childNodes[0].childNodes[1].removed = true;
+	},
+
+	appendRESTResultPart : function() {
+		var id = $("step4-results").childNodes[0].childNodes.length;
+
+		var row = document.createElement("tr");
+
+		// add alias-input
+		var td = document.createElement("td");
+		var input = document.createElement("input");
+		input.size = "25";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add format-input
+		td = document.createElement("td");
+		var select = document.createElement("select");
+
+		var option = document.createElement("option");
+		text = document.createTextNode("xpath");
+		option.appendChild(text);
+		option.value = "xpath";
+		select.appendChild(option);
+
+		// option = document.createElement("option");
+		// text = document.createTextNode("json");
+		// option.appendChild(text);
+		// option.value = "json";
+		// select.appendChild(option);
+
+		td.appendChild(select);
+		row.appendChild(td);
+
+		// add subpath-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		input.size = "70";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add additional buttons
+		td = document.createElement("td");
+		select = document.createElement("select");
+
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_resultpart'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_add_resultpart');
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_resultpart'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_remove_resultpart');
+		select.appendChild(option);
+
+		td.appendChild(select);
+
+		input = document.createElement("input");
+		input.type = "button";
+		input.value = "OK";
+		input.setAttribute("onclick",
+				"webServiceSpecial.processRESTResultPartButton(" + id + ")");
+		input.style.cursor = "pointer";
+		td.appendChild(input);
+
+		row.appendChild(td);
+
+		$("step4-results").childNodes[0].appendChild(row);
+	},
+
+	processStep3REST : function() {
+		if(!this.editMode){
+			$("step4").style.display = "";
+			$("menue-step3").className = "DoneMenueStep";
+			$("menue-step4").className = "ActualMenueStep";
+			this.hideHelp(3);
+			$("step3-go-img").style.display = "none";
+			$("step4-go-img").style.display = "";
+		}
+
+		$("step4-duplicates").style.display ="none";
+		
+		$("step4-rest-intro").style.display = "";
+		if ($("step4-rest-intro").childNodes.length <= 0) {
+			var span = document.createElement("span");
+			var text = document.createTextNode(diLanguage.getMessage('smw_wws_use_complete'));
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+			
+			var input = document.createElement("input");
+			input.type = "checkbox";
+			$("step4-rest-intro").appendChild(input);
+			
+			span = document.createElement("span");
+			text = document.createTextNode(diLanguage.getMessage('smw_wws_alias'));
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+			
+			var input = document.createElement("input");
+			input.width = 25;
+			input.value = "complete";
+			$("step4-rest-intro").appendChild(input);
+			
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+			
+			
+			var button = document.createElement("input");
+			button.setAttribute("type", "button");
+			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_resultparts'));
+			button.setAttribute("onclick",
+					"webServiceSpecial.displayRestResultsTable()");
+			$("step4-rest-intro").appendChild(button);
+		} else {
+			$("step4-rest-intro").childNodes[1].checked = false;
+			$("step4-rest-intro").childNodes[3].value = "complete";
+		}
+		
+		$("step4-rest-intro").childNodes[6].style.display = "";
+
+		$("step4-results").style.display = "none";
+		var tempHead = $("step4-results").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step4-results").childNodes[0].cloneNode(false);
+		$("step4-results").removeChild($("step4-results").childNodes[0]);
+		$("step4-results").appendChild(tempTable);
+		$("step4-results").childNodes[0].appendChild(tempHead);
+
+		// prepare table for rest result parts
+			$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "";
+		
+		this.appendRESTResultPart();
+		$("step4-results").childNodes[0].childNodes[1].removed = true;
+	},
+
+	processRESTResultPartButton : function(id) {
+		var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
+		var action = select.value;
+
+		if (action == diLanguage.getMessage('smw_wws_add_resultpart')) {
+			this.appendRESTResultPart();
+		} else if (action == diLanguage.getMessage('smw_wws_remove_resultpart')) {
+			$("step4-results").childNodes[0].childNodes[id].removed = true;
+			$("step4-results").childNodes[0].childNodes[id].style.display = "none";
+
+			var remove = true;
+			for ( var i = 1; i < $("step4-results").childNodes[0].childNodes.length; i++) {
+				if (!$("step4-results").childNodes[0].childNodes[i].removed) {
+					remove = false;
+				}
+			}
+
+			if (remove) {
+				$("step4-rest-intro").childNodes[6].style.display = "";
+				$("step4-results").style.display = "none";
+			}
+		}
+	},
+	processStep4REST : function() {
+		$("step5").style.display = "";
+		$("menue-step4").className = "DoneMenueStep";
+		$("menue-step5").className = "ActualMenueStep";
+		this.hideHelp(4);
+		$("step4-go-img").style.display = "none";
+		$("step5-go-img").style.display = "";
+
+		$("step5-display-once").checked = true;
+		$("step5-display-days").value = "";
+		$("step5-display-hours").value = "";
+		$("step5-display-minutes").value = "";
+
+		$("step5-query-once").checked = true;
+		$("step5-query-days").value = "";
+		$("step5-query-hours").value = "";
+		$("step5-query-minutes").value = "";
+		$("step5-delay").value = "";
+
+		$("step5-spanoflife").value = "";
+		$("step5-expires-yes").checked = true;
+	},
+
+	processStep5REST : function() {
+		$("step6").style.display = "";
+		$("menue-step5").className = "DoneMenueStep";
+		$("menue-step6").className = "ActualMenueStep";
+		this.hideHelp(5);
+		$("step5-go-img").style.display = "none";
+		$("step6-go-img").style.display = "";
+
+		$("step6-name").value = "";
+	},
+
+	processStep6REST : function() {
+		this.showPendingIndicator("step6-go");
+
+		if ($("step6-name").value.length > 0) {
+			// todo: sind hier andere error messages als bei soap n�tig?
+	$("errors").style.display = "none";
+	$("step6-error").style.display = "none";
+	$("step6b-error").style.display = "none";
+	$("step6c-error").style.display = "none";
+
+	var result = "<WebService>\n";
+
+	var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
+	result += "<uri name=\"" + $("step1-uri").value + "\" />\n";
+
+	result += "<protocol>REST</protocol>\n";
+
+	if ($("step1-auth-yes").checked) {
+		result += "<authentication type=\"http\" login=\""
+				+ $("step1-username").value + "\" password=\""
+				+ $("step1-password").value + "\"/>\n";
+	}
+
+	result += "<method name=\"" + $("step2-methods").value + "\" />\n";
+
+	var parameterTable = $("step3-parameters").childNodes[0];
+	for ( var i = 1; i < parameterTable.childNodes.length; i++) {
+		if (parameterTable.childNodes[i].removed == true) {
+			continue;
+		}
+
+		if(parameterTable.childNodes[i].childNodes[0].childNodes[0].value == ""){
+			continue;
+		}
+		
+		var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
+		if (alias == "") {
+			alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+		}
+		result += "<parameter name=\"" + alias + "\" ";
+
+		wsSyntax += "| " + alias + " = [Please enter a value here]\n";
+
+		var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
+		result += " optional=\"" + optional + "\" ";
+
+		var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
+		if (defaultValue != "") {
+			result += " defaultValue=\"" + defaultValue + "\" ";
+		}
+		result += " path=\""
+				+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value
+				+ "\"/>\n";
+	}
+
+	result += "<result name=\"result\" >\n";
+	
+	if($("step4-rest-intro").childNodes[1].checked){
+		var name = $("step4-rest-intro").childNodes[3].value;
+		result += "<part name=\"" + name + "\" path=\"\"/>\n";
+		wsSyntax += "| ?result." + name + "\n";
+	}
+	
+	var resultTable = $("step4-results").childNodes[0];
+	for (i = 1; i < resultTable.childNodes.length; i++) {
+		if (resultTable.childNodes[i].removed) {
+			continue;
+		}
+
+		var name = resultTable.childNodes[i].childNodes[0].firstChild.value;
+		if(name == ""){
+			name = "alias-" + i;
+		}
+		result += "<part name=\"" + name + "\" ";
+
+				wsSyntax += "| ?result." + name + "\n";
+
+				result += resultTable.childNodes[i].childNodes[1].firstChild.value
+						+ "=\"";
+				result += resultTable.childNodes[i].childNodes[2].firstChild.value
+						+ "\"/>\n";
+
+			}
+			result += "</result>\n";
+
+			result += this.createWWSDPolicyPart();
+
+			result += "</WebService>";
+			this.wwsd = result;
+
+			var wsName = $("step6-name").value;
+
+			wsSyntax += "}}\n</pre>";
+			this.wsSyntax = wsSyntax;
+			wsSyntax = "\n== Syntax for using the WWSD in an article==";
+			wsSyntax += this.wsSyntax;
+
+			sajax_do_call("smwf_om_ExistsArticle", [ "webservice:" + wsName ],
+					this.processStep6CallBack.bind(this));
+		} else {
+			$("errors").style.display = "";
+			$("step6-error").style.display = "";
+			$("step6b-error").style.display = "none";
+			$("step6c-error").style.display = "none";
+			this.hidePendingIndicator("step6-go");
+		}
+	},
+
+	createWWSDPolicyPart : function() {
+		var result = "";
+		result += "<displayPolicy>\n";
+		if ($("step5-display-once").checked == true) {
+			result += "<once/>\n";
+		} else {
+			result += "<maxAge value=\"";
+			var minutes = 0;
+			minutes += $("step5-display-days").value * 60 * 24;
+			minutes += $("step5-display-hours").value * 60;
+			minutes += $("step5-display-minutes").value * 1;
+			result += minutes;
+			result += "\"></maxAge>\n";
+		}
+		result += "</displayPolicy>\n"
+
+		result += "<queryPolicy>\n"
+		if ($("step5-query-once").checked == true) {
+			result += "<once/>\n";
+		} else {
+			result += "<maxAge value=\"";
+			minutes = 0;
+			minutes += $("step5-query-days").value * 60 * 24;
+			minutes += $("step5-query-hours").value * 60;
+			minutes += $("step5-query-minutes").value * 1;
+			result += minutes;
+			result += "\"></maxAge>\n";
+		}
+		var delay = $("step5-delay").value;
+		if (delay.length == 0) {
+			delay = 0;
+		}
+		result += "<delay value=\"" + delay + "\"/>\n";
+		result += "</queryPolicy>\n"
+		result += "<spanOfLife value=\""
+				+ (0 + $("step5-spanoflife").value * 1);
+		if ($("step5-expires-yes").checked) {
+			result += "\" expiresAfterUpdate=\"true\" />\n";
+		} else {
+			result += "\" expiresAfterUpdate=\"false\" />\n";
+		}
+		return result;
+	},
+
+	updateParametersREST : function(updates) {
+		if(updates.length > 0){
+			this.displayRestParameterTable(false);
+			$("step3-parameters").firstChild.removeChild($("step3-parameters").firstChild.childNodes[1]);
+		}
+		
+		for (i = 0; i < updates.length; i++) {
+			this.appendRESTParameter();
+			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["path"];
+			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+			if (updates[i]["optional"] == "true") {
+				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+			}
+			if (updates[i]["defaultValue"] != "##") {
+				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+			}
+		}
+	},
+	
+	updateResultsREST : function(updates) {
+		if(updates.length > 0){
+			this.displayRestResultsTable(false);
+			$("step4-results").firstChild.removeChild($("step4-results").firstChild.childNodes[1]);
+		}
+		var offset = 0;
+		var pathAdded = false;
+		for (i = 0; i < updates.length; i++) {
+			if(updates[i]["format"] != "##"){
+				this.appendRESTResultPart();
+				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[0].firstChild.value = updates[i]["alias"];
+				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = updates[i]["format"];
+				if(updates[i]["path"] != "##"){
+					$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = updates[i]["path"];
+				}
+				pathAdded = true;
+			} else {
+				offset += 1;
+				$("step4-rest-intro").childNodes[1].checked = true;
+				$("step4-rest-intro").childNodes[3].value = updates[i]["alias"];
+			}
+		}
+		
+		//only complete results were added 
+		// and the table has to be hidden again
+		if(!pathAdded){
+			$("step4-rest-intro").childNodes[6].style.display = "";
+			$("step4-results").style.display = "none";
+		}
+	},
+	
+	confirmStep1Change : function(protocol){
+		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
+		if (check == false) {
+			if(protocol == "soap"){
+				$("step1-protocol-rest").checked = true;
+			} else {
+				$("step1-protocol-soap").checked = true;
+			}
+			
+			$("step1-uri").blur();
+			return;
+			
+		}
+		
+		this.processStep7();
+		if(protocol == "soap"){
+			$("step1-protocol-soap").checked = true;
+		}
+	},
+	
+	confirmStep2Change : function() {
+		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
+		if (check == false) {
+			$("step2-methods").blur();
+			return;
+		}
+		$("step2").style.display = "none";
+		$("step3").style.display = "none";
+		$("step4").style.display = "none";
+		$("step5").style.display = "none";
+		$("step6").style.display = "none";
+		$("step1-go-img").style.display = "";
+		this.processStep1();
+	},
+	
+	displayRestParameterTable : function(){
+		$("step3-rest-intro").style.display = "none";
+		$("step3-parameters").style.display = "";
+		if($("step3-parameters").childNodes[0].childNodes[1] == null){
+			this.appendRESTParameter();
+		}
+		$("step3-parameters").childNodes[0].childNodes[1].style.display = "";
+		$("step3-parameters").childNodes[0].childNodes[1].removed = false;
+	},
+	
+	displayRestResultsTable : function(){
+		$("step4-rest-intro").childNodes[6].style.display = "none";
+		if($("step4-results").childNodes[0].childNodes[1] == null){
+			this.appendRESTResultPart();
+		}
+		$("step4-results").style.display = "";
+		$("step4-results").childNodes[0].childNodes[1].style.display = "";
+		$("step4-results").childNodes[0].childNodes[1].removed = false;
+	},
+	
+	useParameters : function(){
+		var checked = false;
+		if($("step3-use").checked){
+			checked = true;
+		}
+		
+		for ( var i = 0; i < this.preparedPathSteps.length; i++) {
+			if (this.preparedPathSteps[i] != "null") {
+				$("s3-use" + i).checked = checked;
+			}
+		}
+	},
+	
+	useResults : function(){
+		var checked = false;
+		if($("step4-use").checked){
+			checked = true;
+		}
+		
+		var offset = 0;
+		for ( var i = 0; i < this.preparedRPathSteps.length; i++) {
+			if (this.preparedPathSteps[i] != "null") {
+				$("s4-use" + (i + offset)).checked = checked;
+			}
+			//offset += this.resultContainer.firstChild.childNodes[offset + i + 1].subPathOffset;
+		}
+	},
+	
+	getRPath : function(i){
+		var rPath = "";
+		for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
+			var rPathStep = "//";
+
+			if (k > 1) {
+				rPathStep = "/";
+			}
+			rPathStep += this.preparedRPathSteps[i][k]["value"];
+
+			if (rPathStep.lastIndexOf("(") > 0) {
+				rPathStep = rPathStep.substr(0, rPathStep
+						.lastIndexOf("(") - 1);
+			}
+			// if (rPathStep.lastIndexOf("[") > 0) {
+			// rPathStep = rPathStep.substring(0, rPathStep
+			// .lastIndexOf("["));
+			// rPathStep += "[";
+			// rPathStep += $("step4-arrayinput-" + i + "-" + k).value;
+			// rPathStep += "]";
+			// }
+			if (rPathStep != "/" && rPathStep != "//") {
+				rPath += rPathStep;
+			}
+		}
+		
+		return rPath;
+	},
+	
+	updateResultsUnmatched : function(rParts) {
+		var sepRow = document.createElement("tr");
+		sepRow.id = "step4-separatorRow";
+		var placeHolder = document.createElement("td");
+		placeHolder.style.height = "15px";
+		placeHolder.style.borderBottomStyle = "solid";
+		placeHolder.style.borderBottomWidth = "2px";
+		placeHolder.setAttribute("colspan" , "4"); 
+		sepRow.appendChild(placeHolder);
+		this.resultContainer.firstChild.appendChild(sepRow);
+		sepRow = document.createElement("tr");
+		placeHolder = document.createElement("td");
+		placeHolder.style.height = "15px";
+		placeHolder.setAttribute("colspan" , "4"); 
+		sepRow.appendChild(placeHolder);
+		this.resultContainer.firstChild.appendChild(sepRow);
+		
+		var rows = this.resultContainer.firstChild.childNodes.length;
+		var offset = 0;
+		var rememberedNormalRPs = new Array();
+		var rememberedPath = "";
+		for ( var i = 0; i < rParts.length; i++) {
+			rParts[i]["path"] = rParts[i]["path"].substring(11, rParts[i]["path"].length);
+			var subPath = false;
+			if (rParts[i]["json"] != "##" || rParts[i]["xpath"] != "##") {
+				subPath = true;
+			}
+
+			var createRow = true;
+			var useResultPart = true;
+			if (subPath) {
+				if(rParts[i]["path"] == rememberedPath){
+					createRow = false;
+					offset += 1;
+				} else {
+					offset = 0;
+					useResultPart = false;
+				}
+					
+			} else {
+				offset = 0;
+			}
+			
+			if(createRow) {
+				rememberedNormalRPs.push(rows + i);
+				var row = document.createElement("tr");
+				row.id = "step4-resultRow-" + (rows + i);
+
+				var td1 = document.createElement("td");
+				var aliasInput = document.createElement("input");
+				aliasInput.style.width = "100%";
+				aliasInput.value = rParts[i]["path"];
+				td1.appendChild(aliasInput);
+				row.appendChild(td1);
+
+				var resultTD2 = document.createElement("td");
+				resultTD2.id = "step4-resultTD05-" + (rows + i);
+				resultTD2.style.textAlign = "right";
+				row.appendChild(resultTD2);
+				var useInput = document.createElement("input");
+				useInput.id = "s4-use" + i + rows;
+				useInput.type = "checkbox";
+				if(useResultPart){
+					useInput.checked = true;
+				}
+				resultTD2.appendChild(useInput);
+
+				var resultTD3 = document.createElement("td");
+				resultTD3.id = "step4-resultTD2-" + (i + rows);
+				row.appendChild(resultTD3);
+				var aliasInput = document.createElement("input");
+				aliasInput.id = "s4-alias" + (i + rows);
+				if(useResultPart){
+					aliasInput.value = rParts[i]["alias"];
+				}
+				aliasInput.size = "25";
+				aliasInput.maxLength = "40";
+				resultTD3.appendChild(aliasInput);
+
+				var resultTD4 = document.createElement("td");
+				resultTD4.id = "step4-resultTD3-" + (i + rows);
+				row.appendChild(resultTD4);
+				var subPathButton = document.createElement("input");
+				subPathButton.id = "s4-add-subpath" + (i + rows);
+				subPathButton.type = "button";
+				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
+				subPathButton.setAttribute("onclick", "webServiceSpecial.addSubPath("
+						+ (rows + i) + ")");
+				subPathButton.style.cursor = "pointer";
+				resultTD4.appendChild(subPathButton);
+
+				this.resultContainer.firstChild.appendChild(row);
+			}
+			
+			if(subPath){
+				this.addSubPath(rows + i - offset);
+				if(createRow){
+					rows += 1;
+					offset += 1;
+				}
+				$("step4-results").firstChild.childNodes[rows + i].childNodes[1].firstChild.value = rParts[i]["alias"];
+				if(rParts[i]["json"] != "##"){
+					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[1].value = "json";
+					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[2].value = rParts[i]["json"];
+				} else {
+					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[1].value = "xpath";
+					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[2].value = rParts[i]["xpath"];
+				}
+			}
+			
+			rememberedPath = rParts[i]["path"];
+		}
+		
+		//update next siblings
+		for(i=0; i < rememberedNormalRPs.length; i++){
+			var nextSibling = $("step4-resultRow-" + rememberedNormalRPs[i + 1]);
+			$("step4-resultRow-" + rememberedNormalRPs[i]).tempNextSibling = nextSibling;
+		}
+		
+		//remove placegolder if no rows were added
+		if(rows == this.resultContainer.firstChild.childNodes.length){
+			this.resultContainer.firstChild.childNodes[rows-1].style.display = "none";
+			this.resultContainer.firstChild.childNodes[rows-2].style.display = "none";
 		}
 	}
 }
 
-webServiceSpecial = new DefineWebServiceSpecial();
-
+var webServiceSpecial; 
+if(webServiceSpecial == undefined){
+	webServiceSpecial = new DefineWebServiceSpecial();
+}
+	
 Event.observe(window, 'load', webServiceSpecial.editWWSD
 		.bindAsEventListener(webServiceSpecial));
 
 // webservices-rep.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
 /*  Copyright 2008, ontoprise GmbH
- *  This file is part of the halo-Extension.
+ *  This file is part of the Data Import-Extension.
  *
- *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   The Data Import-Extension is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   The halo-Extension is distributed in the hope that it will be useful,
+ *   The Data Import-Extension is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -19993,7 +20593,7 @@ WebServiceRepositorySpecial.prototype = {
 	confirmWWSDCallBack : function(request) {
 		var wsId = request.responseText;
 		document.getElementById("confirmButton"+wsId).style.display = "none";
-		document.getElementById("confirmText"+wsId).childNodes[0].nodeValue = "confirmed";
+		document.getElementById("confirmText"+wsId).childNodes[0].nodeValue = diLanguage.getMessage("smw_wwsr_confirmed");
 	}	
 }	
 
@@ -20002,16 +20602,16 @@ webServiceRepSpecial = new WebServiceRepositorySpecial();
 
 // termImport.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2008, ontoprise GmbH
+/*  Copyright 2008-2009, ontoprise GmbH
 *   Author: Benjamin Langguth
-*   This file is part of the halo-Extension.
+*   This file is part of the Data Import-Extension.
 *
-*   The halo-Extension is free software; you can redistribute it and/or modify
+*   The Data Import-Extension is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
 *   the Free Software Foundation; either version 3 of the License, or
 *   (at your option) any later version.
 *
-*   The halo-Extension is distributed in the hope that it will be useful,
+*   The Data Import-Extension is distributed in the hope that it will be useful,
 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 *   GNU General Public License for more details.
@@ -20192,8 +20792,8 @@ TermImportPage.prototype = {
 		
 		//create the right input-div
 		var datasources = list.getElementsByTagName("DataSource")[0].childNodes;
-		response = "<i>" + gLanguage.getMessage('smw_ti_sourceinfo') + "</i><br><br><form id=\"source\"><Table>" +
-					gLanguage.getMessage('smw_ti_source') + "&nbsp;";
+		response = "<i>" + diLanguage.getMessage('smw_ti_sourceinfo') + "</i><br><br><form id=\"source\"><Table>" +
+					diLanguage.getMessage('smw_ti_source') + "&nbsp;";
 		
 		var fieldnumber = 0;
 		for (var i = 0, n = datasources.length; i < n; i++) {
@@ -20278,14 +20878,14 @@ TermImportPage.prototype = {
 				}
 			}
 			topcontainer += "</ul></td><td class=\"abstand\"><a style=\"cursor: pointer;\"" +
-					" onClick=\"termImportPage.getTopContainer(event, this)\">" + gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+					" onClick=\"termImportPage.getTopContainer(event, this)\">" + diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 		}
 		catch(e) {
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -20335,7 +20935,7 @@ TermImportPage.prototype = {
 			}
 			//show properties on the right side
 			var properties = list.getElementsByTagName("Properties")[0].childNodes;
-			var property_response = gLanguage.getMessage('smw_ti_attributes');
+			var property_response = diLanguage.getMessage('smw_ti_attributes');
 												
 			property_response += '<div class=\"scrolling\"><table id=\"attrib_table\" class=\'mytable\'>';
 			
@@ -20349,7 +20949,7 @@ TermImportPage.prototype = {
 						if( property_name_obj[0].firstChild.nodeValue != '') {
 							var property_name = property_name_obj[0].firstChild.nodeValue;
 							// add importset item to the list
-							if (property_name == gLanguage.getMessage('smw_ti_noa')){
+							if (property_name == diLanguage.getMessage('smw_ti_noa')){
 								property_response += "<tr><td class=\"mytd\" style=\"width:10px\"><input type=\"checkbox\" name=\"checked_properties\" value=\""+
 									property_name + "\" disabled checked></td><td class=\"mytd\">"+ property_name + "</td></tr>";
 							}
@@ -20379,8 +20979,8 @@ TermImportPage.prototype = {
 					}
 				}
 			}
-			article_response = "<div id=\"article_intro\"><table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
-					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td></tr></table></div>" + 
+			article_response = "<div id=\"article_intro\"><table><tr><td>" + diLanguage.getMessage('smw_ti_articles1') + 
+					article_count + diLanguage.getMessage('smw_ti_articles2') + "</td></tr></table></div>" + 
 					article_response + "</table></div>";
 		}
 		catch(e){
@@ -20390,7 +20990,7 @@ TermImportPage.prototype = {
 				var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 					list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 					"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-					gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+					diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 				$('summary').style.display = "inline";
 				$('summary').innerHTML = error_message;
 			
@@ -20418,7 +21018,7 @@ TermImportPage.prototype = {
 			$('articles').innerHTML = article_response;
 			$('extras-bottom').style.display = "inline";
 			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
-				"<img src=\""+wgScriptPath+"/extensions/SMWHalo/skins/TermImport/images/Accept.png\"></a>";
+				"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";
 		}
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -20496,7 +21096,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -20572,7 +21172,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -20738,7 +21338,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -20783,15 +21383,15 @@ TermImportPage.prototype = {
 				}	
 			}
 			article_response += '</table>';
-			article_intro = "<table><tr><td>" + gLanguage.getMessage('smw_ti_articles1') + 
-					article_count + gLanguage.getMessage('smw_ti_articles2') + "</td></tr></table>";			
+			article_intro = "<table><tr><td>" + diLanguage.getMessage('smw_ti_articles1') + 
+					article_count + diLanguage.getMessage('smw_ti_articles2') + "</td></tr></table>";			
 		}
 		catch(e){
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -20924,7 +21524,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				gLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		

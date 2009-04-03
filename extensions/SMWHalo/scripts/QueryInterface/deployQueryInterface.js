@@ -1368,7 +1368,7 @@ Query.prototype = {
 
 // QIHelper.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/** *****************************************************************************
+/*
 *  Query Interface for Semantic MediaWiki
 *  Developed by Markus Nitsche <fitsch@gmail.com>
 *
@@ -1439,6 +1439,34 @@ switchlayout:function(){
 },
 
 /**
+* Called whenever preview result printer needs to be updated
+*/
+updatePreview:function() {
+	// update result preview
+	if($("previewcontent").style.display == ""){
+		this.previewResultPrinter();
+	}	
+},
+
+/**
+* Called whenever preview result printer is minimized or maximized
+*/
+switchpreview:function(){
+	if($("previewcontent").style.display == "none"){
+		$("previewcontent").style.display = "";
+		$("previewtitle-link").removeClassName("plusminus");
+		$("previewtitle-link").addClassName("minusplus");
+		// update preview
+		this.previewResultPrinter();		
+	} else {
+		$("previewcontent").style.display = "none";
+		$("previewtitle-link").removeClassName("minusplus");
+		$("previewtitle-link").addClassName("plusminus");
+	}
+},
+
+
+/**
 * Performs ajax call on startup to get a list of all numeric datatypes.
 * Needed to find out if users can use operators (< and >)
 */
@@ -1503,6 +1531,7 @@ doReset:function(){
 	this.initialize();
 	$('shade').style.display="none";
 	$('resetdialogue').style.display="none";
+	this.updatePreview();
 },
 
 /**
@@ -1545,6 +1574,46 @@ previewQuery:function(){
 },
 
 /**
+* Gets all display parameters and the full ask syntax to perform an ajax call
+* which will create the result preview
+*/
+previewResultPrinter:function(){
+
+	/*STARTLOG*/
+	if(window.smwhgLogger){
+	    smwhgLogger.log("Preview Result Printer","QI","query_result_preview");
+	}
+	/*ENDLOG*/	
+	
+	if(this.pendingElement)
+		this.pendingElement.hide();
+	this.pendingElement = new OBPendingIndicator($('previewcontent'));
+	this.pendingElement.show();
+
+	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
+		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
+		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
+		var params = ask + ",";
+		params += $('layout_format').value + ',';
+		params += $('layout_link').value + ',';
+		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
+		params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
+		params += $('layout_limit').value==""?"50,":$('layout_limit').value + ',';
+		params += $('layout_label').value==""?",":$('layout_label').value + ',';
+		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
+		params += $('layout_default').value==""?',':$('layout_default').value;
+		params += $('layout_headers').checked?'show':'hide';
+		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openResultPreview.bind(this));
+	}
+	else { // query is empty
+		var request = Array();
+		request.responseText = gLanguage.getMessage('QI_EMPTY_QUERY');
+		this.openResultPreview(request);
+	}
+},
+
+
+/**
 * Displays the preview created by the server
 * @param request Request of AJAX call
 */
@@ -1554,6 +1623,17 @@ openPreview:function(request){
 	$('fullpreview').innerHTML = request.responseText;
 	smw_tooltipInit();
 },
+
+/**
+* Displays the preview created by the server
+* @param request Request of AJAX call
+*/
+openResultPreview:function(request){
+	this.pendingElement.hide();
+	$('previewcontent').innerHTML = request.responseText;
+	smw_tooltipInit();
+},
+
 
 /**
 * Update breadcrumb navigation on top of the query tree. The BN
@@ -1769,13 +1849,33 @@ newPropertyDialogue:function(reset){
 	for (var i=0, n=$('dialoguecontent').rows.length; i<n; i++)
 		$('dialoguecontent').deleteRow(0);
 	
+	constraintstring = "";
+	// fetch category constraints:
+	var cats = this.activeQuery.categories; //get the category group
+	if (cats != null) {
+		for(var i=0, n = cats.length; i<n; i++) {
+			catconstraint = cats[i];
+			if (i>0) {
+				constraintstring += ",";
+			}			
+			for (var j=0, m = catconstraint.length; j<m; j++) {
+				orconstraint = catconstraint[j];
+				if (j>0) {
+					constraintstring += "|";
+				}
+				constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont')+orconstraint;
+			}
+		
+		}
+	}
+	
 	var newrow = $('dialoguecontent').insertRow(-1); // First row: input for property name
 	var cell = newrow.insertCell(0);
 	cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
 	cell = newrow.insertCell(1);
 	cell.style.textAlign = "left";
 	cell.setAttribute("colSpan",2);
-	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
+	cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typehint="102" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
 	newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox for display option
 	cell = newrow.insertCell(0);
@@ -1866,9 +1966,9 @@ addDialogueInput:function(){
 
 		cell = newrow.insertCell(2);
 		if(this.propIsEnum){ // if enumeration, a select box is used instead of a text input field
-			var tmphtml = '<select id="input' + this.activeInputs + '">';
+			var tmphtml = '<select id="input' + this.activeInputs + '" style="width:100%">';
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + this.enumValues[i] + '" style="width:100%">' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + this.enumValues[i] + '">' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			cell.innerHTML = tmphtml;
@@ -1977,10 +2077,10 @@ adaptDialogueToProperty:function(request){
 				this.propIsEnum = true;
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
-				var option = '<select id="input3">'; //create html for option box
+				var option = '<select id="input3" style="width:100%">'; //create html for option box
 				for(var i = 0; i < possibleValues.length; i++){
 					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
-					option += '<option value="' + possibleValues[i] + '" style="width: 100%">' + possibleValues[i] + '</option>';
+					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
 				}
 				option += "</select>";
 				$('dialoguecontent').rows[3].cells[2].innerHTML = option;
@@ -2072,7 +2172,7 @@ loadPropertyDialogue:function(id){
 	var prop = this.activeQuery.getPropertyGroup(id);
 	var vals = prop.getValues();
 	this.proparity = prop.getArity();
-	
+
 	$('input0').value = unescapeQueryHTML(prop.getName()); //fill input filed with name
 	$('input1').checked = prop.isShown(); //check box if appropriate
 	$('input2').checked = prop.mustBeSet();
@@ -2099,10 +2199,10 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration())
 			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
-			var tmphtml = '<select id="input3">';
+			var tmphtml = '<select id="input3" style="width:100%">';
 			this.enumValues = prop.getEnumValues();
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
@@ -2112,17 +2212,17 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				$('input' + (i+3)).value = unescapeQueryHTML(vals[i][2]);
+				$('input' + (i+2)).value = unescapeQueryHTML(vals[i][2]);
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
 			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				var tmphtml = '<select id="input' + (i+2) + '">';
+				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
-					tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
+					tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+3].cells[2].innerHTML = tmphtml;
@@ -2195,7 +2295,7 @@ deleteActivePart:function(){
 				}
 				/*ENDLOG*/
 				//recursively delete all subqueries of this one. It's id is values[0][2]
-				this.deleteSubqueries(pgroup.getValues()[0][2])
+				this.deleteSubqueries(pgroup.getValues()[0][2]);
 			}
 			this.activeQuery.removePropertyGroup(this.loadedFromId);
 			break;
@@ -2203,6 +2303,9 @@ deleteActivePart:function(){
 	this.emptyDialogue();
 	this.activeQuery.updateTreeXML();
 	this.updateColumnPreview();
+	
+	// update result preview
+	this.updatePreview();
 },
 
 /**
@@ -2216,6 +2319,9 @@ deleteSubqueries:function(id){
 		}
 	}
 	this.queries[id] = null;
+
+	// update result preview
+	this.updatePreview();
 },
 
 /**
@@ -2268,6 +2374,7 @@ add:function(){
 		this.addPropertyGroup();
 	}
 	this.activeQuery.updateTreeXML();
+	this.updatePreview();
 	this.loadedFromID = null;
 },
 
@@ -2384,7 +2491,7 @@ copyToClipboard:function(){
 		    smwhgLogger.log("Copy query to clipboard","QI","query_copied");
 		}
 		/*ENDLOG*/
-		var text = this.getFullParserAsk();
+		var text = this.getFullAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
 			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
@@ -2453,7 +2560,7 @@ showFullAsk:function(type, toggle){
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
 	if(type == "parser")
-	    ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+		ask = ask.replace(/\|/g, "\n|");
 	$('fullAskText').value = ask;
 },
 
@@ -2566,6 +2673,8 @@ checkFormat:function(){
 		$('templatenamefield').style.display = "none";
 		$('rssfield').style.display = "none";
 	}
+	// update result preview
+	this.updatePreview();
 }
 
 } //end class qiHelper
