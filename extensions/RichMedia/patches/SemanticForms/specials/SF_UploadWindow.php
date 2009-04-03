@@ -570,6 +570,8 @@ class UploadWindowForm {
 				$wgUser->addWatch( $this->mLocalFile->getTitle() );
 				
 			}
+			//Let Hooks (especially the UploadConverter!) do their jobs
+			wfRunHooks( 'UploadComplete', array( &$this ) );
 			
 			// Semantic Forms change - output Javascript to either
 			// fill in or append to the field in original form, and
@@ -599,7 +601,10 @@ class UploadWindowForm {
 			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
 			$myQuery = $rMDestFormName . "/" . $target;
 			//set wpSave to true
-			$wgRequest->data["wpSave"]="true";
+			$wgRequest->data['wpSave']= 'true';
+			//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
+			//
+			$wgRequest->data['query'] = 'false';
 			$form_add= new SFEditData();
 			$form_add_test = $form_add->execute($myQuery);
 			
@@ -667,13 +672,11 @@ END;
 END;
 			}
 			$output .=<<<END
-		//submit the new editform!
-		document.editform.submit();
 		//attach the created upload success message to the div.
 		var uploadDiv = parent.document.getElementById("uploadsuccessdiv");
-		var uploadMessage = document.createElement("div");
-		uploadMessage.innerHTML = '$uploadSuccessMessage';
-		uploadDiv.appendChild(uploadMessage);
+		//var uploadMessage = document.createElement("div");
+		uploadDIV.innerHTML = '$uploadSuccessMessage';
+		//uploadDiv.appendChild(uploadMessage);
 		
    		//load the upload success message
 		parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink'));
@@ -681,10 +684,10 @@ END;
 	</script>
 END;
 			$wgOut->addHTML( $output );
-
+			
 			$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
 			// Success, redirect to description page
-			wfRunHooks( 'UploadComplete', array( &$img ) );
+			
 		}
 	}
 
@@ -1291,7 +1294,7 @@ EOT
 		$wgRequest->data["$rmUploadName"]['Uploader'] = $wgUser->getName();
 		$form_add= new SFAddData();
 		//maybe we need a generic name for the target here...
-		$form_add_test = $form_add->execute( $rmUploadName . '/upload_test_DaMO6' );
+		$form_add_test = $form_add->execute( $rmUploadName . '/upload_test_DaMO7' );
 		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input  type=\"button\" value=\"$saveButtonText\" onclick=\"rm_getInputs()\"/></td></tr></table>");
 	}
