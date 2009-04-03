@@ -43,7 +43,7 @@ handleResponsePsc = function() {
     if (resObj.result == NULL) return;
     
     if (resObj.result.length == 0)
-    	document.getElementById('us_pathsearch_results').innerHTML = 'No paths were found for the current search terms';
+    	document.getElementById('us_pathsearch_results').innerHTML = 'An internal error occurred.';
 	else
     	document.getElementById('us_pathsearch_results').innerHTML = resObj.result;
     
