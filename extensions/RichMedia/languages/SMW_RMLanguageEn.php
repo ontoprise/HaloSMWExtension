@@ -35,7 +35,7 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_savebuttontext' => 'Upload file and save metadata',
 	
 		'smw_rm_uploadheadline' => 'Uploading files',
-		'smw_rm_uploadtext' => 'Use this form to upload documents, images or media and to attach it to this article:<br/><b>$1.</b>',
+		'smw_rm_uploadtext' => 'Use this form to upload documents, images or media and to attach it to this article:<br/><b>$1</b>',
 		'smw_rm_upload_size' => '<b>Maximum</b> upload file size:<b> $1 </b>',
 		'smw_rm_upload_permtypes' => 'Permitted file types:',
 		'smw_rm_upload_type_image' => '<li><b>Images: </b>$1',
