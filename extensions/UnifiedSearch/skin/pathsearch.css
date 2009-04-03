@@ -8,7 +8,7 @@
 
 #us_searchresults_tab {
 	border-collapse: collapse;
-    border: 0: 
+    border: 0; 
     padding: 5px;
     padding-bottom: 0;
     padding-right: 0;
@@ -50,26 +50,27 @@
 	margin: 0;
 }
 
-#pathsearchresult .category {
+#pathsearchresult .category a:link, #pathsearchresult .category a:visited, #pathsearchresult .category a:active {
 	color: green;
 	font-weight: bold;
 	white-space: nowrap;
 }
 
-#pathsearchresult .subcategory {
+#pathsearchresult .subcategory a:link, #pathsearchresult .subcategory a:visited, #pathsearchresult .subcategory a:active {
 	color: green;
 	font-weight: bold;
 	white-space: nowrap;
 	font-size: smaller;
 }
 
-#pathsearchresult .instance {
+#pathsearchresult .instance a:link, #pathsearchresult .instance a:visited, #pathsearchresult .instance a:active {
+	color: black;
 	font-style: italic;
 	font-size: smaller;
 	white-space: nowrap;
 }
 
-#pathsearchresult .property {
+#pathsearchresult .property, #pathsearchresult .property a:link, #pathsearchresult .property a:visited, #pathsearchresult .property a:active {
 	color: blue;
 	white-space: nowrap;
 }

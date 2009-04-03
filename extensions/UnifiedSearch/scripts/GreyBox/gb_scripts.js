@@ -280,7 +280,7 @@ this.height=_31.h-80;
 }
 AJS.setWidth(this.iframe,this.width);
 AJS.setHeight(this.iframe,this.height);
-this.restorex=this.widht;
+this.restorex=this.width;
 this.restorey=this.height;
 },_setHeaderPos:function(){
 AJS.setTop(this.header1,AJS.getScrollTop()+10);

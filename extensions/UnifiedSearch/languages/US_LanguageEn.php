@@ -69,6 +69,10 @@ class US_LanguageEn {
 		'us_pathsearch_tab_fulltext' => 'Fulltext Search',
 		'us_pathsearch_tab_path' => 'Path Search',
 		'us_pathsearch_no_results' => 'No paths were found that match your search terms',
+		'us_pathsearch_show_all_results' => 'Show all results for this path (%s) ...',
+		'us_pathsearch_no_instances' => 'No results were found for the current path',
+		'us_pathsearch_error_in_path' => 'There is an error in this path',
+		'us_pathsearch_result_popup_header' => 'All results for this path',
 	);
     
 }

@@ -11,15 +11,27 @@
 
  define('PSC_SMWDATA_NAME', 0);
  define('PSC_SMWDATA_TYPE', 1);
+ define('PSC_COLTYPE_ISID', 0);
+ define('PSC_COLTYPE_ISVALUE', 1);
+ define('PSC_OUTPUT_PAGE', 0);
+ define('PSC_OUTPUT_BOX', 1);
  
  // maximum lengh of a path that is returned. If this number is odd, then the length might be
  // increased by one.
  define('PSC_MAX_PATH_LENGTH', 10);
- // to prevent any endless loops if data is in arbitary structure
+ // to prevent any endless loops in evalPath() if data is in arbitary structure
  define('PSC_MAX_LOOP_EVAL_PATH', 20);
  // how many results are supposed to be shown below the path
- define('PSC_MAX_SHOW_RESULT_LINES', 5);
+ define('PSC_MAX_SHOW_RESULT_LINES', 2);
  
+ // error codes that are saved in member variable resultCode
+ define('PSC_ERROR_INIT', -1);
+ define('PSC_ERROR_SUCCESS', 0);
+ define('PSC_ERROR_NOPATH', 1);
+ define('PSC_ERROR_NOINSTANCE', 2);
+ define('PSC_ERROR_PATHINVALID', 3);
+ define('PSC_ERROR_INVALID_TERMS', 4);
+
 
  class PathSearchCore {
  	private $query;
@@ -28,22 +40,29 @@
  	private $instance;
  	private $details;
  	private $resultCode;
+ 	private $outputMethod;
  	
  	public function __construct() {
  		$this->path = array();
  		$this->result = array();
  		$this->details = array();
  		$this->instance = array();
- 		$this->resultCode = -1;
+ 		$this->resultCode = PSC_ERROR_INIT;
  	}
 
 	public function getResultCode() {
 		return $this->resultCode;
 	}
 
+	public function setOutputMethod($type) {
+		$this->outputMethod = $type;
+	}
+
 	public function getResultAsHtml() {
+		global $wgServer, $wgScript;
 		
 		if ($this->resultCode != 0) return "";
+		if ($this->outputMethod == PSC_OUTPUT_BOX) $html = $this->getBoxHeader(); 
 		$html = '<div id="pathsearchresult"><table><tr><td>';
 		foreach ($this->result as $path) {
 
@@ -63,13 +82,13 @@
 				if ($this->smwDataGetType($ids[0]) == NS_CATEGORY) $class = "category";
 				else if ($this->isXsdType($ids[0]))	$class = "valuetype";
 				else $class = "instance";
-				$html .= '<span class="'.$class.'">'.$this->smwDataGetName($ids[0]).'</span>'."\n";
+				$html .= '<span class="'.$class.'">'.$this->smwDataGetLink($ids[0]).'</span>'."\n";
 				if (count($ids) > 1) { // display subcategories and pages within a category
 					for ($j = 1, $js = count($ids); $j < $js; $j++) {
 						if ($this->smwDataGetType($ids[$j]) == NS_CATEGORY) $class = "subcategory";
 						else if ($this->isXsdType($ids[$j])) $class = "valuetype"; 
 						else $class = "instance";
-						$html .= '<span class="'.$class.'">'.$this->smwDataGetName($ids[$j]).'</span>'."\n";
+						$html .= '<span class="'.$class.'">'.$this->smwDataGetLink($ids[$j]).'</span>'."\n";
 					} 
 				}
 				$html .= '</td>';
@@ -89,8 +108,8 @@
 				for ($i = 0; $i < $is; $i++) {
 					list($id, $direction) = explode("|", $properties[$i]);
 					$propName = ($direction == 1)
-					          ? $this->smwDataGetName($id).' &#9654;'
-					          : '&#9664; '.$this->smwDataGetName($id);
+					          ? $this->smwDataGetLink($id).' &#9654;'
+					          : '&#9664; '.$this->smwDataGetLink($id);
 					$center = '<td><table class="propSpacer"><tr><td class="propSpacerCenter"></td><td rowspan="2"><div class="property">'.$propName.'</div></td></tr><tr><td class="propSpacerCenterBottom"></td></tr></table></td>';
 					$left = '<td><table class="propSpacer"><tr><td></td><td class="propSpacerLeft"></td></tr><tr><td></td><td></td></tr></table></td>';
 					$right = '<td><table class="propSpacer"><tr><td class="propSpacerRight"></td><td></td></tr><tr><td></td><td></td></tr></table></td>';
@@ -113,10 +132,25 @@
 			}
 			
 			// now draw result values
+			$numRows = 0;
+			$numRowsTotal = count($this->instance[$key]);
+			$numRowsShowMax = ($this->outputMethod == PSC_OUTPUT_PAGE) ? PSC_MAX_SHOW_RESULT_LINES : -1;
 			foreach ($this->instance[$key] as $row) {
+				$numRows++;
+				// print row with value
 				$html .= '<tr>';
+				// print link with more results and quit loop here...
+				if ($numRows == $numRowsShowMax && $numRowsTotal > $numRows + 1) {
+					$html.= '<td colspan="'.(count($row) * 2 - 1).'">' .
+							'<a ' .
+							'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
+							'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
+                            '>'.sprintf(wfMsg('us_pathsearch_show_all_results'), $numRowsTotal).'</a></td></tr>';
+					break;
+				}
+				// print result line
 				for ($col = 0, $cols = count($row); $col < $cols; $col++) {
-					$html .= '<td style="white-space: nowrap;">'.$this->smwDataGetName($row[$col]).'</td>';
+					$html .= '<td style="white-space: nowrap;">'.$this->smwDataGetLink($row[$col]).'</td>';
 					if ($col + 1 < $cols) $html .= '<td></td>';
 				}
 				$html .= '</tr>';
@@ -124,11 +158,13 @@
 
 			$html .= '</table><br/>';
 		}
+		
 		$html .= '</td><td width="100%"></td></tr></table></div>';
+		if ($this->outputMethod == PSC_OUTPUT_BOX) $html .= $this->getBoxFooter();
 		return $html;
 	}
 
- 	
+
 	public function doSearch($searchArr) {
 		foreach ($searchArr as $term) {
 			if (is_array($term)) {
@@ -163,14 +199,55 @@
 		
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
-		foreach ($this->instance as $pathRes)
-			$this->fetchNodeDetails($pathRes);
+		foreach (array_keys($this->instance) as $key)
+			$this->fetchNodeDetails($this->instance[$key], $key);
 
-		// result may have been modified and adjusted, set correct error code if we have no results
-		if (count($this->result) > 0 && count($this->instance) > 0)
-			$this->resultCode = 0;
-		else $this->resultCode = 1;
+		// result may have been modified and adjusted, set correct error code if we have no results or no instances
+		if (count($this->result) == 0)
+			$this->errorCode = PSC_ERROR_NOPATH;
+		else if (count($this->instance) == 0)
+			$this->resultCode = PSC_ERROR_NOINSTANCE;
+		else
+			$this->resultCode = PSC_ERROR_SUCCESS;
+	}
+	
+	public function getPathDetails($path) {
+		// check if first element is no property	
+		$first = $path[0];
+		if (strlen($first) > 0 && PSC_WikiData::isProperty($first)) {
+			$this->resultCode = PSC_ERROR_PATHINVALID;
+			return;
+		}
+		// check if last element is no property
+		if (count($path) > 1) {
+			$last = $path[count($path) -1];
+			if (strlen($last) > 0 && PSC_WikiData::isProperty($last)) {
+				$this->resultCode = PSC_ERROR_PATHINVALID;
+				return;
+			}
+		}
+		// add path to result list
+		$this->result[] = $path;
+		$this->fetchNodeDetails($this->result);
+		
+		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
+		$this->getPathInstances();
+		foreach (array_keys($this->instance) as $key)
+			$this->fetchNodeDetails($this->instance[$key], $key);
+		
+		if (count($this->instance) == 0)
+			$this->resultCode = PSC_ERROR_NOINSTANCE;
+		else
+			$this->resultCode = PSC_ERROR_SUCCESS;
 	}	
+
+	private function getBoxHeader() {
+		return "";
+	}
+
+	private function getBoxFooter() {
+		return "";
+	}
 
 	/**
 	 * Main function that takes the path member variables as start points and
@@ -1006,14 +1083,22 @@
 	 * Parameter is the array where ids are in the key available, for which the information need
 	 * to be fetched. This is usually eigther $result or $instance for result paths and their
 	 * instances.
+	 * If ids for $instance is retrieved, then the key of the path is submited as well, because values
+	 * in the instances might not be smw_ids but a simple value of a property, which must remain
+	 * untouched.
 	 * 
 	 * @access private
-	 * @param &array data
+	 * @param &array  data
+	 * @param boolean $check default false
 	 */
-	private function fetchNodeDetails(&$data) {
+	private function fetchNodeDetails(&$data, $key= NULL) {
 		$ids2fetch = array();
 		for ($i = 0, $is = count($data); $i < $is; $i++) {
+			$cntNode = -1;
 			foreach ($data[$i] as $node) {
+				$cntNode++;
+				if ($key != NULL && $this->getColumnTypeForInstance($cntNode, $key) == PSC_COLTYPE_ISVALUE)
+					continue;
 				$ids = explode("|", $node);
 				foreach ($ids as $id) {
 					$name = PSC_WikiData::getNameById($id);
@@ -1023,7 +1108,7 @@
 							$this->details[$id][PSC_SMWDATA_TYPE] = SMW_NS_PROPERTY;
 						else $this->details[$id][PSC_SMWDATA_TYPE] = NS_CATEGORY;
 					}
-					else
+					else 
 						$ids2fetch[] = $id;
 				}
 			}
@@ -1042,6 +1127,63 @@
 		$db->freeResult($res);
 	}
 	
+	/**
+	 * Check column type for a row of instances. This is important when in a row
+	 * of matching instances the page name is looked up. It can happen that the
+	 * result is the value of some property. A look up in the database would fail
+	 * or even deliver the wrong value, because the id is no smw_id but the concrete
+	 * value of some property. Instance result rows are stored in the member variable
+	 * $instance which has the path string as it's first key. With this information
+	 * the corresponding path can be found in the member variable $result and the
+	 * column type of the concepts (without the properties) can be looked up.
+	 * 
+	 * @access private
+	 * @param  int    $col column number
+	 * @param  string $key of the path for $this->instance
+	 * @return int    $type of column 
+	 */
+	private function getColumnTypeForInstance($col, $key) {
+		static $colTypes;
+		
+		if (isset($colTypes[$key])) return $colTypes[$key][$col];
+		
+		foreach ($this->result as $path) {
+			if ($key == implode(',', $path)) { // path to look up is here
+				if (count($path) == 1) { // path has one element only, then it must be a page/category
+					$colTypes[$key][$col] = PSC_COLTYPE_ISID;
+					return PSC_COLTYPE_ISID;
+				}
+				list($concept, $property) = $this->splitConceptsProperties($path);
+				for ($i = 0; $i < count($property); $i++) {
+					list($prop, $dir) = explode('|', $property[$i]);
+					// xsd value must be a range, so check propery type, and set col the property is pointing to
+					if ($dir == -1) {
+						$colTypes[$key][$i] = PSC_WikiData::isPropertyXsdType($prop) ? PSC_COLTYPE_ISVALUE : PSC_COLTYPE_ISID;
+						$colTypes[$key][$i + 1] = PSC_COLTYPE_ISID;
+					}
+					else {
+						$colTypes[$key][$i] = PSC_COLTYPE_ISID;
+						$colTypes[$key][$i + 1] = PSC_WikiData::isPropertyXsdType($prop) ? PSC_COLTYPE_ISVALUE : PSC_COLTYPE_ISID;
+					}
+					
+				}
+				return $colTypes[$key][$col];
+			}
+		}
+	}
+	
+	/**
+	 * Takes one search term and the namespace (if defined) and created a start point
+	 * for finding a path. Therefore the member variable $path is filled with a new
+	 * element (object PSC_Path) that contains information about the search term. If
+	 * the type (i.e. namespace) is not defined, the term is looked up in all namespaces
+	 * and if found several times, also different paths are created.
+	 * If the term was not found in the database, no path is created.
+	 * 
+	 * @access private
+	 * @param string $term
+	 * @param int    $type default NULL 
+	 */
  	private function addPath4Term($term, $type = NULL) {
  		if ($type == NULL)
  			$types = array(NS_MAIN, SMW_NS_PROPERTY, NS_CATEGORY);
@@ -1070,11 +1212,18 @@
 	 * The type is specified when looking for the term in the database.
 	 * If the term can not be found exactly a similarity search is done. This
 	 * may lead to several results.
+	 * The type is defined by the namespace. If the namespace is a category or
+	 * property, then the result must be of this type. If the type is the main
+	 * namespace, then all entries are looked up (incl. namespace) that are no
+	 * category nor property. Like this all pages can be found that have a namespace
+	 * which is not the main namespace (e.g. help pages). This function is called from
+	 * addPath4Term().
 	 * 
 	 * @access private
-	 * @param string term contains the search term
-	 * @param int type value of namespace (can be NS_MAIN, SMW_NS_PROPERTY or NS_CATEGORY)
+	 * @param  string $term contains the search term
+	 * @param  int $type value of namespace (can be NS_MAIN, SMW_NS_PROPERTY or NS_CATEGORY)
 	 * @return array of array(smw_id, title) or NULL if nothing found
+	 * @see    addPath4Term()
 	 */
  	private function getData4Term($term, $type) {
  		$result = array();
@@ -1087,7 +1236,10 @@
  		
 		// create new title object from search term
 		$title = Title::newFromText($term, $type);
-		if ($title === NULL) return;
+		if ($title === NULL) {
+			$this->resultCode = PSC_ERROR_INVALID_TERMS;
+			return;
+		}
 		$titleQuery = strtoupper($title->getDbkey());
 		$db =& wfGetDB(DB_SLAVE);
 		$smw_ids = $db->tableName('smw_ids');
@@ -1116,14 +1268,25 @@
 			$db->freeResult($res);
 			return $result;
 		}
-		return NULL;
  	}
  	
  	private function smwDataGetName($id) {
  		if (! $this->isXsdType($id)) {
- 			return isset($this->details[$id]) ? $this->details[$id][PSC_SMWDATA_NAME] : "";
+ 			return isset($this->details[$id]) ? $this->details[$id][PSC_SMWDATA_NAME] : $id;
  		}
 		return SMWDataValueFactory::findTypeLabel($id);
+ 	}
+ 	
+ 	private function smwDataGetLink($id) {
+ 		global $wgContLang, $wgServer, $wgScriptPath;
+
+ 		if ($this->isXsdType($id)) return SMWDataValueFactory::findTypeLabel($id);
+ 		if (! isset($this->details[$id])) return $id;
+ 		$name = $this->details[$id][PSC_SMWDATA_NAME];
+ 		if ($this->details[$id][PSC_SMWDATA_TYPE] != NS_MAIN)
+ 			$link = $wgContLang->getNsText($this->details[$id][PSC_SMWDATA_TYPE]).":$name";
+ 		else $link = $name;
+ 		return '<a href="'.$wgServer.$wgScriptPath.'/index.php/'.$link.'">'.$name.'</a>';
  	}
  	
  	private function smwDataGetType($id) {

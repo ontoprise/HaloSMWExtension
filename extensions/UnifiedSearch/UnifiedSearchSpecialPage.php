@@ -226,8 +226,7 @@ class USSpecialPage extends SpecialPage {
 			    // if we want to do a path search, do it and prepare results as well.
 			    // Otherwise this is done via Javascript later when clicking the link 
 				if ($doPathSearch == 1) {
-					$psResultHtml = USPathSearchStart(urldecode($psTerms));
-					if (strlen($psResultHtml) == 0) $psResultHtml = wfMsg('us_pathsearch_no_results');
+					$psResultHtml = us_doPathSearch(urldecode($psTerms), true);
 					$pathResults = '<div id="us_pathsearch_results" style="display: block;">'.$psResultHtml.'</div>';
 					$html .= sprintf($tabBarSearchResults, 'font-weight: normal;',
         	                                          'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;',
@@ -480,7 +479,7 @@ class USSpecialPage extends SpecialPage {
 		}
 		if (count($sterms) > 0)	{
 			if (strlen($psTerms) > 0) $psTerms.= ',';
-			$psTerms .= implode(',-1', $sterms).',-1'; 
+			$psTerms .= implode(',-1,', $sterms).',-1'; 
 		}
 		return $psTerms;
     }
