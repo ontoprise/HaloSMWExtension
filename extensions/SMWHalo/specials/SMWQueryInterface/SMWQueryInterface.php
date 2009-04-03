@@ -89,7 +89,7 @@ class SMWQueryInterface extends SpecialPage {
 				'</div>' .
 				'<div id="tablecolumnpreview">' .
 					'<div class="tcp_boxheader" onclick="qihelper.switchtcp()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_tcp') . '\')"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
-					'<div id="tcp_boxcontent" class="tcp_boxcontent" style="display:none">' .
+					'<div id="tcp_boxcontent" class="tcp_boxcontent">' .
 						'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
 							'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
 						'</table></div>' .
