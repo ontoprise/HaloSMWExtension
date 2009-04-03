@@ -46,7 +46,7 @@ enableCookies:   false    ,// true|false
 cookieScope:    'site'    ,// 'site'|'folder'
 language:       'auto'    ,// 'auto'|'en'|... (see the languages folder)
 graphicsType:   'auto'    ,// 'auto'|'international'|'english'
-urlGraphics:    '/floatbox/graphics/'   ,// change this if you install in another folder
+urlGraphics:    '../skins/graphics/'   ,// change this if you install in another folder
 urlLanguages:   '/floatbox/languages/'  ,// change this if you install in another folder
 /*** </General Options> ***/
 
@@ -125,12 +125,13 @@ init: function() {
 	this.timeouts = {};
 	this.pos = {};
 	var path = this.urlGraphics;
-	this.slowZoomImg = path + 'loading_white.gif';
-	this.slowLoadImg = path + 'loading_black.gif';
-	this.iframeSrc = path + 'loading_iframe.html';
-	this.resizeUpCursor = path + 'magnify_plus.cur';
-	this.resizeDownCursor = path + 'magnify_minus.cur';
-	this.notFoundImg = path + '404.jpg';
+	var fullPath = wgScriptPath + '/extensions/SemanticForms';
+	this.slowZoomImg = fullPath + path + 'loading_white.gif';
+	this.slowLoadImg = fullPath + path + 'loading_black.gif';
+	this.iframeSrc = fullPath + path + 'loading_iframe.html';
+	this.resizeUpCursor = fullPath + path + 'magnify_plus.cur';
+	this.resizeDownCursor = fullPath + path + 'magnify_minus.cur';
+	this.notFoundImg = fullPath + path + '404.jpg';
 	var agent = navigator.userAgent,
 		version = navigator.appVersion;
 	this.mac = version.indexOf('Macintosh') !== -1;
@@ -192,7 +193,8 @@ init: function() {
 		this.strings = fb.strings;
 	}
 	this.browserLanguage = (navigator.language || navigator.userLanguage || navigator.systemLanguage || navigator.browserLanguage || 'en').substring(0, 2);
-	if (!this.isChild) {
+	//if (!this.isChild) {
+	if (false) {
 		var lang = this.language === 'auto' ? this.browserLanguage : this.language;
 		if (this.xhr) {
 			var that = this;
