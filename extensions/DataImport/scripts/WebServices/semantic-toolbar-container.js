@@ -66,7 +66,7 @@ WebServiceToolBar.prototype = {
 	},
 	
 	createLinkToSpecialPage : function(){
-		var response = "<p onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">" + gLanguage.getMessage("smw_wwsu_addwscall") + "</p>";
+		var response = "<span onmousedown=\"wsToolBar.submitEditForm()\" onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">" + gLanguage.getMessage("smw_wwsu_addwscall") + "</span>";
 		return response;	
 	},
 	
@@ -82,8 +82,18 @@ WebServiceToolBar.prototype = {
 		}
 		
 		url += "&wsSyn=" + escape("&ws& test") + "&wsSynS=" + startPos + "&wsSynE=" + endPos;
-		$("wpSave").click();
+		
 		window.location.href = url;
+	},
+	
+	submitEditForm : function(){
+		var iframe = document.createElement("iframe");
+		iframe.setAttribute("name", "response-iframe");
+		$("editform").parentNode.insertBefore(iframe, $("editform"));
+		$("editform").setAttribute("target", "response-iframe");
+		iframe.style.visibility = "none";
+		
+		$("wpSave").click();
 	}
 	
 	

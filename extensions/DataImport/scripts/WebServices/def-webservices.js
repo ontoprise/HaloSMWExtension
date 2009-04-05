@@ -2849,7 +2849,7 @@ DefineWebServiceSpecial.prototype = {
 		input.value = diLanguage.getMessage('smw_wws_no');
 		input.checked = true;
 		td.appendChild(input);
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_no'));
 		td.appendChild(text);
 		row.appendChild(td);
 
