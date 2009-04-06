@@ -595,7 +595,8 @@ class UploadWindowForm {
 			$wgRequest->data["$rMUploadFormName"]['UploadDate']['month'] = $uploadMonth;
 			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;
 			// set anything else?
-			
+			// save relatedArticles
+			$relatedArticles = $wgRequest->data["$rMUploadFormName"]['RelatedArticles'];
 			//set the desired destination form
 			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()]; 
 			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
@@ -610,37 +611,35 @@ class UploadWindowForm {
 			
 			// create the message for the successsful upload and paste it
 			// to the hidden div via JS
+			global $wgUser;
 			$sk = $wgUser->getSkin();
 			$imageDescLink = $sk->makeKnownLinkObj( $nt );
 		
-			//if ( !$this->displayImg->isSafeFile() ) {
-				$warning = wfMsgNoTrans( 'mediawarning' );
-				$imgLinkText = "<div class=\"fullMedia\">Visit <span class=\"dangerousLink\">[[Media:$basename|$basename]]</span> to view/download this file.</div>";
-				global $wgParser;
-				$options = ParserOptions::newFromUser( $wgUser );
-		
-			// Expand subst: first, then live templates...
-			$text = $wgParser->preSaveTransform( $imgLinkText, $nt, $wgUser, $options );
-			$imgLinkParserOutput = $wgParser->parse( $text, $title, $options );
-		
+			//$uploadImageRawLink = wfMsg('smw_rm_uploadsuccessmessage2', $imgLinkParserOutput->mText);
 
-				/*} else {
-					$wgOut->addWikiText( <<<EOT
-<div class="fullMedia">
-[[Media:$basename|$basename]]
-</div>
-EOT
-						);
-				}*/
+			$uploadSuccessHTML = '<div style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">';
+			$uploadSuccessHTML .= wfMsg( 'smw_rm_uploadheadline' ) . '</div><br/>';
 			
-			$uploadImageDescLink = wfMsg('smw_rm_uploadsuccessmessage1', $imageDescLink);
-			$uploadImageRawLink = wfMsg('smw_rm_uploadsuccessmessage2', $imgLinkParserOutput->mText);
+			$uploadSuccessHTML .= '<div style="width:100%;padding:0px;text-align:center;">';
+			$uploadSuccessHTML .= wfMsg( 'smw_rm_uploadsuccess_headline' ) . '</div><br/>';
 			
-			$uploadSuccessMessage = "<div><b>$uploadImageDescLink</b></div>$uploadImageRawLink";
+			$uploadSuccessHTML .= '</div style="width:100%;padding:0px;text-align:center;">';;
+			$uploadSuccessHTML .= wfMsg( 'smw_rm_uploadsuccess_message' ) . '</div><br/>';
+			
+			$uploadSuccessHTML .= '<div align="center" style="width:60%;padding:0px;text-align:center;">' .
+				'<fieldset style="border:1px solid lightgrey;line-height:1.5em;margin:1em 0;padding:0 1em 1em;">' .
+				'<legend style="font-size:95%;padding:0.5em;">&nbsp;' . wfMsg( 'smw_rm_uploadsuccess_legend' ) . '</legend>' .
+				'<span style="text-align:left;">' . wfMsg( 'smw_rm_uploadsuccess_filename', $imageDescLink ) .
+				wfMsg( 'smw_rm_uploadsuccess_articlename', $relatedArticles ) . '</span>' .
+				'</fieldset></div><br/>';
+			
+			$uploadSuccessHTML .= '</div style="width:100%;padding:0px;text-align:center;">';;
+			$uploadSuccessHTML .= wfMsg( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
+			
+
 			//parser set's a (carriage return?) new line to mText so delete that again!
-			$uploadSuccessMessage = str_replace("\r\n", "", $uploadSuccessMessage);
-			$uploadSuccessMessage = str_replace("\n", "", $uploadSuccessMessage);
-			//$uploadSuccessMessage .= "<div class=\"mediaWarning\">$warning</div>";
+			$uploadSuccessHTML = str_replace("\r\n", "", $uploadSuccessHTML);
+			$uploadSuccessHTML = str_replace("\n", "", $uploadSuccessHTML);
 			#TODO: hier weitermachen! 
 			// end Rich Media Changes
 			
@@ -673,10 +672,10 @@ END;
 			}
 			$output .=<<<END
 		//attach the created upload success message to the div.
-		var uploadDiv = parent.document.getElementById("uploadsuccessdiv");
-		//var uploadMessage = document.createElement("div");
-		uploadDIV.innerHTML = '$uploadSuccessMessage';
-		//uploadDiv.appendChild(uploadMessage);
+		var uploadDiv = top.document.getElementById("uploadsuccessdiv");
+		//alert(uploadDiv.innerHTML);
+		uploadDiv.innerHTML = '$uploadSuccessHTML';
+		//alert(uploadDiv.innerHTML);
 		
    		//load the upload success message
 		parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink'));
