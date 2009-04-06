@@ -34,9 +34,9 @@ END;
 		
 		//Used for displaying the upload successful message:
 		
-		$html .= "<div id=\"uploadsuccessdiv\" style=\"display: none; text-align:center;\"/>";
-		$uploadSuccessfullTitle = wfMsg('smw_rm_uploadsuccesfulltitle');
-		$html .= "<a id=\"uploadsuccesslink\" href=\"#uploadsuccessdiv\" title=\"$uploadSuccessfullTitle\" rel=\"iframe\" rev=\"sameBox:true\"/>";
+		$html .= "<div id=\"uploadsuccessdiv\" style=\"display: none; text-align:center;\">&nbsp;</div>";
+		//$uploadSuccessfullTitle = wfMsg('smw_rm_uploadsuccesfulltitle');
+		$html .= "<a id=\"uploadsuccesslink\" href=\"#uploadsuccessdiv\" title=\"\" rel=\"iframe\" rev=\"sameBox:true\"/>";
 		
 		return array($html, 'noparse' => true, 'isHTML' => true);
 	}
