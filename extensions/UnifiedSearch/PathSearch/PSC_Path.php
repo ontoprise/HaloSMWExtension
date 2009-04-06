@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * Holds functionality to exmine a path trough the existing Ontology of a wiki. 
+ */
 
 class PSC_Path {
 	private $startId;
@@ -9,10 +12,29 @@ class PSC_Path {
 	private $completeRight;
 	private $addPos;
 	
+	/**
+	 * creates the object to start searching a path. All parameters are optional and
+	 * can be set in create() as well.
+	 * 
+	 * @access public
+	 * @param  int    start smw_id of the start element
+	 * @param  string startName name of the element to start with (this is not
+	 *                          really needed for any functionality but there for cosmetic reasons)
+	 * @param  int    setAddPos direction in which to look for the next neighbours 0 is right, 1 is left.  
+	 */
 	public function __construct($start = NULL, $startName = "", $setAddPos = 0) {
 		$this->create($start, $startName, $setAddPos);
 	}
-	
+
+	/**
+	 * creates the start node of the path.
+	 * 
+	 * @access public
+	 * @param  int    start smw_id of the start element
+	 * @param  string startName default empty, name of the element to start with (this is not
+	 *                          really needed for any functionality but there for cosmetic reasons)
+	 * @param  int    setAddPos default 0, direction in which to look for the next neighbours 0 is right, 1 is left.  
+	 */	
 	public function create($start, $startName = "", $setAddPos = 0) {
 		$this->data = array($start);
 		$this->startId = $start;
@@ -21,7 +43,14 @@ class PSC_Path {
 		$this->completeRight = false;
 		$this->addPos = $setAddPos; // default right
 	}
-	
+
+	/**
+	 * add a node to the existing path
+	 * 
+	 * @access public
+	 * @param  int id smw_id of the node to add
+	 * @return bool true if successful or false on error
+	 */	
     public function add($id) {
     	if ($this->addPos == 0) {
     		$res = $this->addRight($id);
@@ -29,39 +58,94 @@ class PSC_Path {
     	}
    		return ($this->addLeft($id) == 0) ? true : false;
     }
-	
+    
+	/**
+	 * add a node to the existing path on the right side
+	 * 
+	 * @access public
+	 * @param  int id smw_id of the node to add
+	 * @return bool true if successful or false on error
+	 */		
 	public function addRight($id) {
 		if ($this->completeRight) return 1;
 		$this->data[] = $id;
 		return 0;
 	}
-	
+
+	/**
+	 * add a node to the existing path on the left side
+	 * 
+	 * @access public
+	 * @param  int id smw_id of the node to add
+	 * @return bool true if successful or false on error
+	 */	
 	public function addLeft($id) {
 		if ($this->completeLeft) return 1;
 		array_unshift($this->data, $id);
 		return 0;
 	}
-	
+
+	/**
+	 * checks for a node if this one exists in the path
+	 * 
+	 * @access public
+	 * @param  int id of the node to check
+	 * @return bool true if exists and false if the node doesn't exist in this path
+	 */
 	public function isInPath($id) {
 		return (array_search($id, $this->data) !== false);
 	}
 
+	/**
+	 * tells if the path is complete (i.e. no more neighbours for the ending elements
+	 * on the left and right.
+	 * 
+	 * @access public
+	 * @return bool if no node can be added anymore or false if there are still neighbours found
+	 */
 	public function isComplete() {
 		return ($this->completeLeft && $this->completeRight);
 	}
 
+	/**
+	 * returns the length of the path (i.e. the number of elements including the start node)
+	 * 
+	 * @access public
+	 * @return int length of path
+	 */
 	public function length() {
 		return count($this->data);
 	}
-	
+
+	/**
+	 * returns all nodes of the path in an array. the start node canot be identified as the furthermost
+	 * left or right node of this array.
+	 * 
+	 * @access public
+	 * @return array(int) id of nodes
+	 */	
 	public function getPath() {
 		return ($this->addPos == 0) ? $this->data : array_reverse($this->data);
 	}
 	
+	/**
+	 * returns the name of the start node. This might be an empty string if the name hasn't been set.
+	 * 
+	 * @access public
+	 * @return string node name of start node
+	 */
 	public function getStartName() {
 		return $this->startName;
 	}
 	
+	/**
+	 * chops the last added element. This function may not chop the correct node,
+	 * if the direction where to add the nodes has been altered and at both sides
+	 * there are nodes added already, so use it with care.
+	 * 
+	 * @access public
+	 * @return bool true on success or false on error
+	 */
 	public function chop() {
 		if ($this->addPos == 0 && end($this->data) != $this->startId) {
 			array_pop($this->data);
@@ -74,6 +158,12 @@ class PSC_Path {
 		return false;
 	}
 	
+	/**
+	 * returns the path from the start node up to a specified node.
+	 * 
+	 * @access public
+	 * @return array (int) id of nodes
+	 */
     public function getPartialPath($id) {
     	$result = array();
     	$pos1 = array_search($this->startId, $this->data);
@@ -84,12 +174,44 @@ class PSC_Path {
     	return array_slice($this->data, $pos2, $pos1 - $pos2 + 1);
     }
 
+	/**
+	 * returns the last element of the path. Depending on the direction this is the
+	 * furthermost left or furthermost right element.
+	 * 
+	 * @access public
+	 * @return int node id
+	 */
     public function getLast() {
 		// get current last element id in path (from left or right)
 		if ($this->addPos == 0)	return end($this->data);
 		return $this->data[0];
     }
 
+	/**
+	 * Find neighbours depending on the ontology for the last node of the path. The node is
+	 * examinded by it's type (property, category, page). Also it's checked whether the current
+	 * relation needs a domain or range (if the path contains that many nodes already).
+	 * 
+	 * Optional parameters can be set, so that pages are included as well. Normally for a property
+	 * it's check only which categories are related to that property. Single pages are not searched,
+	 * except if there is no relation with an annotated category found. If then page should not be
+	 * found at any circumstances, set this option to false to prevent finding pages at all. If the
+	 * start node is a page, properties on that page are looked up in order to start finding a path.
+	 *  
+	 * Normally it's also checked that an existing node in the path is not repeated. This can occur
+	 * if several categories have the same properties. To prevent endles loops in the path, this
+	 * option is set tu true and existing nodes are ignored as new neighbours.
+	 * 
+	 * If there are no neighbours for the current node, an empty array is returned but also internal
+	 * the node is set o be complete of that side. If there were no neighbour at one side, still
+	 * there could be neighbours looking in the other direction from the start node. This will be set,
+	 * so that the direction (adding a node) alters and that from this side the path is set to be complete.
+	 * 
+	 * @access public
+	 * @param  bool includePages default true
+	 * @param  bool checkDouble default true
+	 * @return array (int) of nodes that can be neighbours of the last node
+	 */
 	public function getNext($includePages = true, $checkDouble = true) {
 		$last = $this->getLast();
 		
@@ -180,6 +302,12 @@ class PSC_Path {
 		return $res;
 	}
 	
+	/**
+	 * alters direction of where to add nodes to the path. Also set the complete variables to tell
+	 * that a path is terminated at one side.
+	 * 
+	 * @access private
+	 */
 	private function toggleComplete() {
 		if ($this->addPos == 0) {
 			$this->completeRight = true;

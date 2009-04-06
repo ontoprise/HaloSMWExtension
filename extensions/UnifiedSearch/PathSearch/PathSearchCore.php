@@ -1,9 +1,7 @@
 <?php
+
 /*
- * Created on 06.03.2009
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
+ * Core functionality for path search
  */
  
  require_once('PSC_WikiData.php');
@@ -22,7 +20,7 @@
  // to prevent any endless loops in evalPath() if data is in arbitary structure
  define('PSC_MAX_LOOP_EVAL_PATH', 20);
  // how many results are supposed to be shown below the path
- define('PSC_MAX_SHOW_RESULT_LINES', 2);
+ define('PSC_MAX_SHOW_RESULT_LINES', 3);
  
  // error codes that are saved in member variable resultCode
  define('PSC_ERROR_INIT', -1);
