@@ -351,6 +351,8 @@ END;
       $javascript_text .= "autocompletestrings['$options_str_key'] = $autocomplete_string;\n";
     }
     if ($cur_value) {
+      // replace newlines with the literal '\n' to not break the Javascript
+      $cur_value = str_replace("\n", '\n', $cur_value);
       $text .= "document.getElementById('$input_id').value = \"$cur_value\"\n";
     }
     $text .= "/* ]]> */</script>\n";
@@ -530,22 +532,26 @@ END;
   }
 
   static function radioButtonHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args) {
-    global $sfgTabIndex;
+    global $sfgTabIndex, $sfgFieldNum;
 
     $disabled_text = ($is_disabled) ? "disabled" : "";
     $check_set = false;
-    if (! $is_mandatory) {
-      $text = '	<input type="radio" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value=""';
-      if (! $cur_value) {
-        $text .= ' checked="checked"';
-        $check_set = true;
-      }
-      $text .= " $disabled_text/> " . wfMsg('sf_editdata_none') . "\n";
-    }
+    $text = "";
     // if it's mandatory, add a span around all the radiobuttons, since
     // some browsers don't support formatting of radiobuttons
     if ($is_mandatory)
-      $text = '	<span class="mandatoryFieldsSpan">' . "\n";
+      $text .= '	<span class="mandatoryFieldsSpan">' . "\n";
+
+    // start with an initial "None" value
+    $input_id = "input_$sfgFieldNum";
+    $info_id = "info_$sfgFieldNum";
+    $text .= '	<input type="radio" id="' . $input_id . '" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value=""';
+    if (! $cur_value) {
+      $text .= ' checked="checked"';
+      $check_set = true;
+    }
+    $text .= " $disabled_text/> " . wfMsg('sf_editdata_none') . "\n";
+
     if (($possible_values = $other_args['possible_values']) == null)
       $possible_values = array(); 
     foreach ($possible_values as $i => $possible_value) {
@@ -559,6 +565,10 @@ END;
     // close span
     if ($is_mandatory)
       $text .= "	</span>";
+    $text .=<<<END
+	<span id="$info_id" class="errorMessage"></span>
+
+END;
     return array($text, null);
   }
 

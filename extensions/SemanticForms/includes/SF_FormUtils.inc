@@ -91,6 +91,19 @@ function validate_mandatory_field(field_id, info_id) {
 	}
 }
 
+// special handling for radiobuttons, because what's being checked
+// is the first radiobutton, which has value of "None"
+function validate_mandatory_radiobutton(none_button_id, info_id) {
+	none_button = document.getElementById(none_button_id);
+	if (none_button.checked) {
+		infobox = document.getElementById(info_id);
+		infobox.innerHTML = "$blank_error_str";
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function validate_mandatory_checkboxes(field_id, info_id) {
 	elems = document.getElementsByTagName("*");
 	var all_fields_unchecked = true;
@@ -439,7 +452,7 @@ END;
 			$label = wfMsg('summary');
 		$disabled_text = ($is_disabled) ? "disabled" : "";
 		$text =<<<END
-	<span id='wpSummaryLabel'><label for='wpSummary'>$label:</label></span>
+	<span id='wpSummaryLabel'><label for='wpSummary'>$label</label></span>
 	<input tabindex="$sfgTabIndex" type='text' value="" name='wpSummary' id='wpSummary' maxlength='200' size='60' $disabled_text/>
 
 END;
@@ -564,7 +577,19 @@ END;
 			$label = wfMsgExt('cancel', array('parseinline'));
 		if ($wgTitle == null)
 			$cancel = '';
-		else
+		// if this is the special 'AddData' or 'EditData' page, get
+		// the form name, and link to 'AddPage' with that form name
+		elseif (($wgTitle->getText() == 'AddData' || $wgTitle->getText() == 'EditData')
+			 && $wgTitle->getNamespace() == NS_SPECIAL) {
+			global $wgRequest;
+			$title_components = split('/', $wgRequest->data['title']);
+			if (count($title_components) >= 2) {
+				$add_page_title = Title::makeTitleSafe(NS_SPECIAL, 'AddPage');
+				$cancel = $sk->makeKnownLink($add_page_title->getPrefixedText() . '/' . $title_components[1], $label);
+			} else {
+				$cancel = '';
+			}
+		} else
 			$cancel = $sk->makeKnownLink( $wgTitle->getPrefixedText(), $label);
 		$text = "		<span class='editHelp'>$cancel</span>\n";
 		return $text;
@@ -995,6 +1020,7 @@ END;
 	}
 
 	static function FCKPopupJavascript() {
+		global $wgFCKEditorExtDir;
 		$javascript_text = <<<END
 
 function FCKeditor_OpenPopup(jsID, textareaID)

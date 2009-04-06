@@ -87,8 +87,8 @@ $aliases['fa'] = array(
 
 /** French (Français) */
 $aliases['fr'] = array(
-	'CreateCategory' => array( 'CréerCatégorie', 'Créer catégorie' ),
-	'CreateTemplate' => array( 'CréerModèle', 'Créer modèle' ),
+	'CreateCategory' => array( 'Créer catégorie', 'CréerCatégorie' ),
+	'CreateTemplate' => array( 'Créer modèle', 'CréerModèle' ),
 	'Templates' => array( 'Modèles' ),
 );
 
@@ -130,6 +130,20 @@ $aliases['hu'] = array(
 	'Forms' => array( 'Űrlapok' ),
 	'Templates' => array( 'Sablonok' ),
 	'UploadWindow' => array( 'Feltöltő ablak' ),
+);
+
+/** Interlingua (Interlingua) */
+$aliases['ia'] = array(
+	'AddData' => array( 'Adder datos' ),
+	'AddPage' => array( 'Adder pagina' ),
+	'CreateCategory' => array( 'Crear categoria' ),
+	'CreateForm' => array( 'Crear formulario' ),
+	'CreateProperty' => array( 'Crear proprietate' ),
+	'CreateTemplate' => array( 'Crear patrono' ),
+	'EditData' => array( 'Modificar datos' ),
+	'Forms' => array( 'Formularios' ),
+	'Templates' => array( 'Patronos' ),
+	'UploadWindow' => array( 'Cargar fenestra' ),
 );
 
 /** Japanese (日本語) */
@@ -285,5 +299,29 @@ $aliases['sw'] = array(
 	'Forms' => array( 'Fomu' ),
 	'Templates' => array( 'Vigezo' ),
 	'UploadWindow' => array( 'DirishalaKupakizia' ),
+);
+
+/** Tagalog (Tagalog) */
+$aliases['tl'] = array(
+	'AddData' => array( 'Idagdag ang dato' ),
+	'AddPage' => array( 'Idagdag ang pahina' ),
+	'CreateCategory' => array( 'Likhain ang kaurian' ),
+	'CreateForm' => array( 'Likhain ang pormularyo' ),
+	'CreateProperty' => array( 'Likhain ang pag-aari' ),
+	'CreateTemplate' => array( 'Likhain ang suleras' ),
+	'EditData' => array( 'Baguhin ang dato' ),
+	'Forms' => array( 'Mga pormularyo' ),
+	'Templates' => array( 'Mga suleras' ),
+	'UploadWindow' => array( 'Bintana ng pagkarga' ),
+);
+
+/** Turkish (Türkçe) */
+$aliases['tr'] = array(
+	'Templates' => array( 'Şablonlar' ),
+);
+
+/** Vèneto (Vèneto) */
+$aliases['vec'] = array(
+	'Templates' => array( 'Modèi' ),
 );
 

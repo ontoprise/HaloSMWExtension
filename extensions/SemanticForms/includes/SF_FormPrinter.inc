@@ -392,7 +392,8 @@ class SFFormPrinter {
         } elseif ($tag_title == 'end template') {
           if ($source_is_page) {
             // add any unhandled template fields in the page as hidden variables
-            $form_text .= SFFormUtils::unhandledFieldsHTML($template_contents);
+            if (isset($template_contents))
+              $form_text .= SFFormUtils::unhandledFieldsHTML($template_contents);
           }
           // remove this tag, reset some variables, and close off form HTML tag
           $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
@@ -830,8 +831,9 @@ END;
                     }
                   } elseif (($form_field->template_field->is_list && $form_field->template_field->field_type == 'enumeration' && $input_type != 'listbox') || ($input_type == 'checkboxes')) {
                     $sfgJSValidationCalls[] = "validate_mandatory_checkboxes('$input_id', '$info_id')";
-                  // if it's not a radiobutton...
-                  } elseif ($input_type != 'radiobutton' && $form_field->template_field->field_type != 'enumeration') {
+                  } elseif ($input_type == 'radiobutton') {
+                    $sfgJSValidationCalls[] = "validate_mandatory_radiobutton('$input_id', '$info_id')";
+                  } else {
                     $sfgJSValidationCalls[] = "validate_mandatory_field('$input_id', '$info_id')";
                   }
                 }
