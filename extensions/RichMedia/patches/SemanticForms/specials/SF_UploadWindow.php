@@ -671,6 +671,7 @@ END;
 END;
 			}
 			$output .=<<<END
+		document.editform.submit();
 		//attach the created upload success message to the div.
 		var uploadDiv = top.document.getElementById("uploadsuccessdiv");
 		//alert(uploadDiv.innerHTML);
