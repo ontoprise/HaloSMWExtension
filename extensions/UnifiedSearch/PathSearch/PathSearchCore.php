@@ -68,7 +68,7 @@
 		
 		if ($this->resultCode != 0) return "";
 		if ($this->outputMethod == PSC_OUTPUT_BOX) $html = $this->getBoxHeader(); 
-		$html = '<div id="pathsearchresult"><table><tr><td>';
+		$html = '<div id="pathsearchresult"><table style="border-collapse: collapse;"><tr><td>';
 		foreach ($this->result as $path) {
 
 			// check if results exist for current path
@@ -115,7 +115,7 @@
 					$propName = ($direction == 1)
 					          ? $this->smwDataGetLink($id).' &#9654;'
 					          : '&#9664; '.$this->smwDataGetLink($id);
-					$center = '<td><table class="propSpacer"><tr><td class="propSpacerCenter"></td><td rowspan="2"><div class="property">'.$propName.'</div></td></tr><tr><td class="propSpacerCenterBottom"></td></tr></table></td>';
+					$center = '<td><table class="propSpacer"><tr><td rowspan="2" width="100%"><hr style="height: 1px; color: black; background-color: black;"/></td><td rowspan="2"><div class="property">'.$propName.'</div></td></tr><tr><td class="propSpacerCenterBottom"></td></tr></table></td>';
 					$left = '<td><table class="propSpacer"><tr><td></td><td class="propSpacerLeft"></td></tr><tr><td></td><td></td></tr></table></td>';
 					$right = '<td><table class="propSpacer"><tr><td class="propSpacerRight"></td><td></td></tr><tr><td></td><td></td></tr></table></td>';
 					if ($i % 2 == 0) {

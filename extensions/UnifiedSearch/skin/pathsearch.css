@@ -1,4 +1,4 @@
-#us_searchresults_path {
+#us_pathsearch_results {
     padding: 5px;
 }
 
@@ -24,7 +24,7 @@
 }
 
 #pathsearchresult {
-	padding:0; 
+	padding:0;
 	width: 100%;
 	height: 100%;
 }
