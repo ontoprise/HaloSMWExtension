@@ -42,12 +42,16 @@ function synsetPF_Render( &$parser) {
 	$result = "";
 	
 	$nFirst = false;
-	foreach($synonyms as $s){
-		if($nFirst){
-			$result .= ", "; 	
+	foreach($synonyms as $synset){
+		foreach($synset as $syn){
+			if(strlen($syn) > 0){
+				if($nFirst){
+					$result .= ", "; 	
+				}
+				$result .= $syn;
+				$nFirst = true;
+			}
 		}
-		$result .= implode(", ",$s);
-		$nFirst = true; 
 	}
 	return $result; 
 }
