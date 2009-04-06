@@ -63,12 +63,12 @@ switchTabs = function(click) {
 	
 	// div for content of tabs
 	var styleTabEnabled = document.createAttribute("style");
-    styleTabEnabled.nodeValue = 'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;';
+    styleTabEnabled.nodeValue = 'font-weight: bold; color: black; border-top: 2px solid #FF8C00; border-left: 2px solid #AAA; border-right: 2px solid #AAA;';
 	var styleTabDisabled = document.createAttribute("style");
-    styleTabDisabled.nodeValue = 'font-weight: normal;';
+    styleTabDisabled.nodeValue = 'font-weight: normal; border: 2px solid #AAA;';
     
 	if (click == 1) { // click on tab path
-		document.getElementById('us_pathsearch_results').style.display = "block";
+		document.getElementById('us_pathsearch_results').style.display = "inline";
 		tab_path.setAttributeNode(styleTabEnabled);
 		document.getElementById('us_fulltext_results').style.display = "none";
 		tab_fulltext.setAttributeNode(styleTabDisabled);
@@ -79,7 +79,7 @@ switchTabs = function(click) {
 	else {
 		document.getElementById('us_pathsearch_results').style.display = "none";
 		tab_path.setAttributeNode(styleTabDisabled);
-		document.getElementById('us_fulltext_results').style.display = "block";
+		document.getElementById('us_fulltext_results').style.display = "inline";
 		tab_fulltext.setAttributeNode(styleTabEnabled);
 		document.getElementById('us_browsing_top').removeAttribute('style');
 		document.getElementById('us_browsing_bottom').removeAttribute('style');

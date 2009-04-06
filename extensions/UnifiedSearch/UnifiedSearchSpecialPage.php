@@ -204,25 +204,25 @@ class USSpecialPage extends SpecialPage {
 				// start with html which is the same for both cases, paths have been found already or must be still searched
 				$tabBarSearchResults = '
 				    <div id="us_searchresults_tab">
-				      <table>
+				      <table style="border-collapse: collapse; border: none; width 100%%;">
 			    	    <tr>
-			        	  <td width="10px" style="border-bottom: 2px solid #AAA;"> </td>
+			        	  <td style="border-bottom: 2px solid #AAA;"> </td>
 						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(0);">
 						    '.wfMsg('us_pathsearch_tab_fulltext').'
 						  </td>
-						  <td width="10px" style="border-bottom: 2px solid #AAA;"> </td>
+						  <td style="border-bottom: 2px solid #AAA;"> </td>
 						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(1);%s">
                     	     '.wfMsg('us_pathsearch_tab_path').'
 	                      </td>
 						  <td width="100%%" style="border-bottom: 2px solid #AAA;"></td>
 						</tr>
-						<tr><td colspan="5" width="100%%" style="border: 2px solid #AAA; border-top: none;">%s</td></tr>
+						<tr><td colspan="5" width="100%%" style="border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-bottom: 2px solid #AAA;">%s</td></tr>
 		        	  </table>
 			        </div>
 			    ';
 			    
 			    // full text results will be displayed within a table below the tabs
-			    $styleDisplay = ' style="display: '.(($doPathSearch) ? 'none' : 'block').'";';
+			    $styleDisplay = ' style="display: '.(($doPathSearch) ? 'none' : 'inline').'";';
 			    $fulltextResults = str_replace("%%__DIV_NAME__%%", 'us_fulltext_results', $fulltextResults);
 			    $fulltextResults = str_replace("%%__STYLE_DISPLAY__%%", $styleDisplay, $fulltextResults);
 
@@ -230,16 +230,16 @@ class USSpecialPage extends SpecialPage {
 			    // Otherwise this is done via Javascript later when clicking the link 
 				if ($doPathSearch == 1) {
 					$psResultHtml = us_doPathSearch(urldecode($psTerms), true);
-					$pathResults = '<div id="us_pathsearch_results" style="display: block;">'.$psResultHtml.'</div>';
-					$html .= sprintf($tabBarSearchResults, 'font-weight: normal;',
-        	                                          'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;',
+					$pathResults = '<div id="us_pathsearch_results" style="display: inline;">'.$psResultHtml.'</div>';
+					$html .= sprintf($tabBarSearchResults, 'font-weight: normal; border: 2px solid #AAA;',
+        	                                          'font-weight: bold; color: black; border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-top: #FF8C00 solid;',
 													  '',
 													  $fulltextResults . $pathResults);
 				}
 				else {
 					$pathResults = '<div id="us_pathsearch_results" style="display: none;"></div>';
-					$html .= sprintf($tabBarSearchResults, 'font-weight: bold; border-bottom: none; color: black; border-top: #FF8C00 solid;',
-    	                                              'font-weight: normal;',
+					$html .= sprintf($tabBarSearchResults, 'font-weight: bold; color: black; border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-top: #FF8C00 solid;',
+    	                                              'font-weight: normal; border: 2px solid #AAA;',
 													  ' javascript:doPathSearch(\''.$psTerms.'\');',
 													  $fulltextResults . $pathResults);
 				}

@@ -1,29 +1,20 @@
 #us_searchresults_path {
-    border: 2px solid #AAA;
-    border-top: none;
     padding: 5px;
-    width:97%;
-    list-style-type: none;
 }
 
 #us_searchresults_tab {
-	border-collapse: collapse;
-    border: 0; 
-    padding: 5px;
-    padding-bottom: 0;
-    padding-right: 0;
-    width:97%;
     list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-spacing: 0;
+    width: 98%;
 }
 
 #us_searchresults_tab .us_tab_label {
-	border-collapse: collapse;
 	white-space: nowrap;
     padding: 3px;
-    border: 2px solid #AAA;
     cursor: pointer;
-    color: #666;    
-    font-weight: normal;
+    color: #666;
 }
 
 #us_pathsearch_close {
@@ -34,10 +25,12 @@
 
 #pathsearchresult {
 	padding:0; 
+	width: 100%;
 	height: 100%;
 }
 
 #pathsearchresult .tblmain {
+	border-collapse: collapse;
 	border: 1px solid #c0c0c0;
 	background-color: #F7F7F7;
 	table-layout: auto;
