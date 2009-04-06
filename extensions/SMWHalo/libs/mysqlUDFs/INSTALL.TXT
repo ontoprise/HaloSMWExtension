@@ -12,6 +12,7 @@ libhalowiki-mysql5.dll for MySQL 5.x
 Linux =
 =======
 libhalowiki-mysql5.so for MySQL 5.x
+libhalowiki-mysql5-amd64.so for MySQL 5.x on 64bit machines
 
 TODOs:
 
