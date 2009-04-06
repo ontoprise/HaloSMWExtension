@@ -50,10 +50,12 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 //		'smw_rm_upload-prohibited'           => 'prohibited file types: <br>$1.',
 		//'smw_rm_upload-maxfilesize'          => 'Maximum $1',
 	
-		'smw_rm_uploadsuccesfulltitle' => 'Your upload was successful!',
-		'smw_rm_uploadsuccessmessage1' => 'The Upload of $1 was successful.',
-		'smw_rm_uploadsuccessmessage2' => '',
-		'smw_wws_articles_header' => 'Seiten, die den Web-Service "$1" benutzen',	
+		'smw_rm_uploadsuccess_headline' => 'Upload successful!',
+		'smw_rm_uploadsuccess_message' => 'Your selected file was successfully attached to the article.',
+		'smw_rm_uploadsuccess_legend' => 'Details',
+		'smw_rm_uploadsuccess_filename' => '<b>File:</b> $1 <br/>',
+		'smw_rm_uploadsuccess_articlename' => '<b>Attached to article:</b> $1',
+		'smw_rm_uploadsuccess_closewindow' => 'You can now close this window.',	
 	);
 
 	protected $smwRMNamespaces = array(
