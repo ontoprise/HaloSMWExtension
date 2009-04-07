@@ -23,15 +23,18 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
     }
     
     private function printVariables($printRequests, & $variables) {
-    	
-    	$synthVar = "_var";
-    	$i = 0;
+        
+        $synthVar = "_var";
+        $i = 0;
         $result = "\t<head>\n";
         foreach ($printRequests as $pr) {
-           $title = $pr->getTitle();
-           if($title instanceof Title) {
-               $result .= "\t\t<variable name=\"".$title->getText()."\"/>\n";
-               $variables[] = $title->getText();
+           $data = $pr->getData();
+           if ($data instanceof Title) {
+               $result .= "\t\t<variable name=\"".$data->getText()."\"/>\n";
+               $variables[] = $data->getText();
+           } else if ($data instanceof SMWPropertyValue) {
+               $result .= "\t\t<variable name=\"".$data->getDBkey()."\"/>\n";
+               $variables[] = $data->getDBkey();
            } else {
                $result .= "\t\t<variable name=\"".$synthVar.$i."\"/>\n";
                $variables[] = $synthVar.$i;
@@ -39,11 +42,11 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
            $i++;
         }
         $result .= "\t</head>\n";   
-        return $result;	
+        return $result; 
     }
     
     private function printResults($res, $variables) {
-    	$result = "\t<results>\n";
+        $result = "\t<results>\n";
         while ( $row = $res->getNext() ) {
             $result .= "\t\t<result>\n";
            
@@ -80,10 +83,10 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
     }
     
     private function printHeader() {
-    	return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";
+        return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";
     }
     
     private function printFooter() {
-    	return '</sparql>';
+        return '</sparql>';
     }
 }
