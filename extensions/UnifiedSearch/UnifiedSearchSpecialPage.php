@@ -59,15 +59,7 @@ class USSpecialPage extends SpecialPage {
 
         $offset = $wgRequest->getVal('offset') !== NULL ? $wgRequest->getVal('offset') : 0;
 
-		// path search options, if the form is called directly from this page
-		$doPathSearch = $wgRequest->getVal('paths');
-		
-		// fade out filter and browsing bars when doing a path search 
-		if ($doPathSearch) $opacity = 'style="-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha(Opacity=25)\'; filter: alpha(opacity=25); opacity: .25;";';
-		else $opacity='';
-
         $newpage = Title::newFromText($search);
-
 
         $searchPage = SpecialPage::getTitleFor("Search");
 
@@ -83,7 +75,6 @@ class USSpecialPage extends SpecialPage {
 
         }
 
-
         $numOfResults = count($searchResults);
 
         // -- suggestion (Did you mean?) --
@@ -93,6 +84,26 @@ class USSpecialPage extends SpecialPage {
             $suggestion = str_replace('_', ' ', $suggestion);
 
         }
+
+		// path search options, if the form is called directly from this page
+		if (isset($wgUSPathSearch) && $wgUSPathSearch)
+			$doPathSearch = $wgRequest->getVal('paths');
+		else
+			$doPathSearch = 0;
+		
+		// fade out filter and browsing bars when doing a path search
+		// therefore div us_refinesearch, us_browsing_top, us_browsing_bottom exist twice,
+		// as us_refinesearch_hide, us_browsing_top_hide, us_browsing_bottom_hide
+		// if pathsearch is done and there are search result for the normal fulltext search -> only then
+		// we acctually can do path search, the navigation elements for the full text search must be faded out. 
+		if ($doPathSearch && $numOfResults > 0) {
+			$styleShow = 'style="display: none;"';
+			$styleHide = 'style="-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha(Opacity=25)\'; filter: alpha(opacity=25); opacity: .25; display: block;"';
+		}
+		else {
+			$styleShow = 'style="display: block;"';
+			$styleHide = 'style="-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha(Opacity=25)\'; filter: alpha(opacity=25); opacity: .25; display: none;"';
+		}
 
         // -- search form --
         $html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr><tr><td><input id="us_searchfield" type="text" size="30" name="search"></td>'.
@@ -126,7 +137,8 @@ class USSpecialPage extends SpecialPage {
         $restrictNS = $wgRequest->getVal('restrict');
         $restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
         $html .= wfMsg('us_refinesearch');
-        $html .='<div id="us_refineresults" '.$opacity.'><table cellspacing="0">';
+        
+        $refineResultsHtml = '<table cellspacing="0">';
         $highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
         $row =  '<td rowspan="2" width="100"><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
 
@@ -135,7 +147,7 @@ class USSpecialPage extends SpecialPage {
 
         foreach($usgAllNamespaces as $ns => $img) {
             if ($c > 0 && $c % 5 == 0) {
-                $html .= '<tr>'.$row.'</tr>';
+                $refineResultsHtml .= '<tr>'.$row.'</tr>';
                 $row = "";
             }
             if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
@@ -150,8 +162,13 @@ class USSpecialPage extends SpecialPage {
         
         // fill complete line of refinement links
         while ($c % 5 > 0) { $row .= '<td '.$style.'></td><td '.$style.'></td>'; $c++; }
-        $html .= '<tr>'.$row.'</tr>';
-        $html .= '</table></div>';
+        $refineResultsHtml .= '<tr>'.$row.'</tr>';
+        $refineResultsHtml .= '</table></div>';
+        
+        // complete both html blocks for filter options and add them to the html
+        $refineResultsHideHtml = '<div id="us_refineresults_hide" '.$styleHide.'>'.preg_replace('/href="[^"].*?"/', '', $refineResultsHtml);
+        $refineResultsHtml = '<div id="us_refineresults" '.$styleShow.'>'.$refineResultsHtml;
+        $html.= $refineResultsHtml.$refineResultsHideHtml;
 
         $totalHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
         
@@ -168,11 +185,16 @@ class USSpecialPage extends SpecialPage {
         $prevButton = ($offset == 0) ? wfMsg('us_browse_prev') : $previous;
         
         // browsing bar top
+        $browsingBarTopHtml = "";
         if (count($searchResults) > 0) {
-            $html .= "<table id=\"us_browsing_top\" $opacity><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
-            $html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
-            $html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
+            $browsingBarTopHtml .= "<tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
+            $browsingBarTopHtml .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
+            $browsingBarTopHtml .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
         }
+        
+        $browsingBarTopHideHtml = "<table id=\"us_browsing_top_hide\" $styleHide>".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml);
+        $browsingBarTopHtml = "<table id=\"us_browsing_top\" $styleShow>".$browsingBarTopHtml;
+        $html.= $browsingBarTopHtml.$browsingBarTopHideHtml;
         
         // -- show Did you mean --
         $didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
@@ -251,9 +273,8 @@ class USSpecialPage extends SpecialPage {
 
         // browsing bar bottom
         if (count($searchResults) > 0) {
-            $html .= "<table id=\"us_browsing_bottom\" $opacity><tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
-            $html .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
-            $html .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
+	        $html.= str_replace("us_browsing_top", "us_browsing_bottom", $browsingBarTopHtml);
+    	    $html.= str_replace("us_browsing_top", "us_browsing_bottom", $browsingBarTopHideHtml);
         }
         $wgOut->addHTML($html);
     }
