@@ -50,7 +50,7 @@
 !define MUI_FINISHPAGE_RUN_FUNCTION "startLucene"
 
 
-!define MUI_FINISHPAGE_TEXT "Installation of SMW+ v1.4.2 is completed. You got some new shortcuts in the startmenu. \
+!define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You got some new shortcuts in the startmenu. \
 If you made an update you already have some of the shortcuts on the desktop and you may move them to the startmenu. The main page can be opened by clicking on '${PRODUCT} ${VERSION} Main Page'."
 !define MUI_FINISHPAGE_LINK "Visit the ontoprise website for the latest news"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://wiki.ontoprise.com/"
@@ -425,7 +425,7 @@ LangString CUSTOMIZE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set wiki name or logo"
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
-LangString START_SERVERS ${LANG_ENGLISH} "To update your installation to SMW+ 1.4.2 please start Apache web server $\nand MySQL database management system. $\nIf you have a previous installation of SMW+ on this server, then you $\nwill find a short cut on the desktop named 'SMW+ 1.x Start'. $\nDouble clicking this short cut launches Apache and MySQL."
+LangString START_SERVERS ${LANG_ENGLISH} "To update your installation to ${PRODUCT} ${VERSION} please start Apache web server $\nand MySQL database management system. $\nIf you have a previous installation of SMW+ on this server, then you $\nwill find a short cut on the desktop named 'SMW+ 1.x Start'. $\nDouble clicking this short cut launches Apache and MySQL."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
 
