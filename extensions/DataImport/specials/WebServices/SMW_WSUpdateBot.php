@@ -60,7 +60,11 @@ class WSUpdateBot extends GardeningBot {
 	public function createParameters() {
 		return array();
 	}
-
+	
+    public function getImageDirectory() {
+        return 'extensions/DataImport/skins/webservices';
+    }
+    
 	public function run($paramArray, $isAsync, $delay) {
 		//echo("bot started");
 		if($paramArray["WS_WSID"] != null){

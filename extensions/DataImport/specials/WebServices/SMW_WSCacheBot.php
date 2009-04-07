@@ -61,7 +61,10 @@ class WSCacheBot extends GardeningBot {
 		$this->cleanCompleteCache();
 		return '';
 	}
-
+	
+    public function getImageDirectory() {
+        return 'extensions/DataImport/skins/webservices';
+    }
 	/**
 	 * this method calls cleanWSCacheEntries for
 	 * each existing webservice

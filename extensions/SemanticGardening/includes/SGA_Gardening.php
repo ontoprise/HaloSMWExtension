@@ -105,10 +105,15 @@ class SGAGardening extends SpecialPage {
 		 		continue;
 		 	}
 		 	
-		 	$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
-		 				   " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
-		 				   "<img src=\"$wgServer$wgScriptPath/extensions/SemanticGardening/skins/".$botID."_image.png\"/><a>" .$bot->getLabel()."</a>" .
-		 				   "</div>";
+		 	$imageDirectory = $bot->getImageDirectory();
+            
+            // if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
+            $imageDirectory = $imageDirectory == NULL ? 'extensions/SemanticGardening/skins' : $imageDirectory;
+            
+            $htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
+                           " onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
+                           "<img src=\"$wgServer$wgScriptPath/$imageDirectory/".$botID."_image.png\"/><a>" .$bot->getLabel()."</a>" .
+                           "</div>";
 	
 		 }
 		 if ($htmlResult == '') {

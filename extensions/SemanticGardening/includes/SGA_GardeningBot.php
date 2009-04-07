@@ -111,6 +111,20 @@ function sgagImportBots($botDir) {
  	 */
  	public abstract function getLabel();
  	
+    /**
+     * Returns directory for bot icon. NULL means the icon
+     * is found in extensions/SemanticGardening/skins.
+     * 
+     * The name of the icon has to be: <bot-id>_image.png
+     * 
+     * e.g. extensions/XYZ-Extension/skins
+     *
+     * @return string
+     */
+    public function getImageDirectory() {
+        return NULL;
+    }
+    
  	/**
  	 * True, if the bot is visible to the user (default).
  	 * False, if it is used only internally.
