@@ -226,17 +226,17 @@ class USSpecialPage extends SpecialPage {
 				// start with html which is the same for both cases, paths have been found already or must be still searched
 				$tabBarSearchResults = '
 				    <div id="us_searchresults_tab">
-				      <table style="border-collapse: collapse; border: none; width 100%%;">
+				      <table style="border-collapse: collapse; width: 100%%;">
 			    	    <tr>
 			        	  <td style="border-bottom: 2px solid #AAA;"> </td>
 						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(0);">
 						    '.wfMsg('us_pathsearch_tab_fulltext').'
 						  </td>
-						  <td style="border-bottom: 2px solid #AAA;"> </td>
+						  <td style="border-bottom: 2px solid #AAA; width: 20px;"> </td>
 						  <td class="us_tab_label" style="%s" onClick="javascript:switchTabs(1);%s">
                     	     '.wfMsg('us_pathsearch_tab_path').'
 	                      </td>
-						  <td width="100%%" style="border-bottom: 2px solid #AAA;"></td>
+						  <td style="border-bottom: 2px solid #AAA; width: 100%%;"></td>
 						</tr>
 						<tr><td colspan="5" width="100%%" style="border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-bottom: 2px solid #AAA;">%s</td></tr>
 		        	  </table>

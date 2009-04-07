@@ -46,7 +46,7 @@ function us_doPathSearch($input, $nojason = false) {
 		$html = $psc->getResultAsHtml();
 		$totalHits = $psc->numberPathsFound();
 		$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
-    	$html = "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>.$html";
+    	$html = "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>$html";
 	}
 	
 	return ($nojason) ? $html : USPathSearchJasonOutput($html);

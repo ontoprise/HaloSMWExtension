@@ -62,11 +62,11 @@
 	}
 
 	public function getResultAsHtml() {
-		global $wgServer, $wgScript;
+		global $wgServer, $wgScript, $wgScriptPath;
 		
 		if ($this->resultCode != 0) return "";
 		if ($this->outputMethod == PSC_OUTPUT_BOX) $html = $this->getBoxHeader(); 
-		$html = '<div id="pathsearchresult"><table style="border-collapse: collapse;"><tr><td>';
+		$html = '<div id="pathsearchresult"><table style="border-collapse: collapse; margin: 2px;"><tr><td>';
 		foreach ($this->result as $path) {
 
 			// check if results exist for current path
@@ -75,6 +75,19 @@
 			if (! isset($this->instance[$key])) continue;
 
 			list($concepts, $properties) = $this->splitConceptsProperties($path);
+			
+			// image next to the box
+			$linkToInstances = '<a ' .
+							'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
+							'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" >__NAME__</a>';
+			$html .= '<table><tr><td valign="top">';
+			if ($this->outputMethod == PSC_OUTPUT_PAGE) {
+				$html .= str_replace('__NAME__',
+                             '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/search_icon.png" ' .
+					         'alt="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'"/>',
+					         $linkToInstances);
+			}
+			$html .= '</td><td width="100%">';
 			// draw all domains/ranges i.e. category, page
 			$html .= '<table class="tblmain"><tr>';
 			for ($i = 0, $is = count($concepts); $i < $is; $i++) {
@@ -111,9 +124,9 @@
 				for ($i = 0; $i < $is; $i++) {
 					list($id, $direction) = explode("|", $properties[$i]);
 					$propName = ($direction == 1)
-					          ? $this->smwDataGetLink($id).' &#9654;'
-					          : '&#9664; '.$this->smwDataGetLink($id);
-					$center = '<td><table class="propSpacer"><tr><td rowspan="2" width="100%"><hr style="height: 1px; color: black; background-color: black;"/></td><td rowspan="2"><div class="property">'.$propName.'</div></td></tr><tr><td class="propSpacerCenterBottom"></td></tr></table></td>';
+					          ? $this->smwDataGetLink($id).' <img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_right.png" alt="&#9654;"/>'
+					          : '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_right.png" alt="&#9664;"/> '.$this->smwDataGetLink($id);
+					$center = '<td><table class="propSpacer"><tr><td width="100%"><hr style="height: 1px; color: black; background-color: black;"/></td><td><div class="property">'.$propName.'</div></td></tr></table></td>';
 					$left = '<td><table class="propSpacer"><tr><td></td><td class="propSpacerLeft"></td></tr><tr><td></td><td></td></tr></table></td>';
 					$right = '<td><table class="propSpacer"><tr><td class="propSpacerRight"></td><td></td></tr><tr><td></td><td></td></tr></table></td>';
 					if ($i % 2 == 0) {
@@ -144,22 +157,20 @@
 				$html .= '<tr>';
 				// print link with more results and quit loop here...
 				if ($numRows == $numRowsShowMax && $numRowsTotal > $numRows + 1) {
-					$html.= '<td colspan="'.(count($row) * 2 - 1).'">' .
-							'<a ' .
-							'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
-							'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
-                            '>'.wfMsg('us_pathsearch_show_all_results', $numRowsTotal).'</a></td></tr>';
+					$html.= '<td colspan="'.(count($row) * 2 - 1).'" class="instanceValues">' .
+                            str_replace('__NAME__', wfMsg('us_pathsearch_show_all_results', $numRowsTotal), $linkToInstances).'</td></tr>';
 					break;
 				}
 				// print result line
 				for ($col = 0, $cols = count($row); $col < $cols; $col++) {
-					$html .= '<td style="white-space: nowrap;">'.$this->smwDataGetLink($row[$col]).'</td>';
-					if ($col + 1 < $cols) $html .= '<td></td>';
+					$borderTop =  ($numRows == 1) ? ' style="border-top: 1px solid #c0c0c0;"' : '';
+					$html .= '<td class="instanceValues"'.$borderTop.'>'.$this->smwDataGetLink($row[$col]).'</td>';
+					if ($col + 1 < $cols) $html .= '<td class="instanceValues"'.$borderTop.'>|</td>';
 				}
 				$html .= '</tr>';
 			}
 
-			$html .= '</table><br/>';
+			$html .= '</table></td></tr></table><br/>';
 		}
 		
 		$html .= '</td><td width="100%"></td></tr></table></div>';
