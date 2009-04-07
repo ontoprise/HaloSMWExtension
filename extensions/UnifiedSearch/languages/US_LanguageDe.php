@@ -70,10 +70,10 @@ class US_LanguageDe {
 	public $us_pathsearchMessages = array(
 		'us_pathsearch_tab_fulltext' => 'Volltext',
 		'us_pathsearch_tab_path' => 'Pfadsuche',
-		'us_pathsearch_no_results' => 'Es wurden keine Pfade zu den Suchbegriffen gefunden',
-		'us_pathsearch_show_all_results' => 'Zeige alle Ergebnisse für diesen Pfad (%s) ...',
-		'us_pathsearch_no_instances' => 'Es wurden keine Ergebnisse für den aktuellen Pfad gefunden',
-		'us_pathsearch_error_in_path' => 'Im Pfad ist ein Fehler aufgetreten',
+		'us_pathsearch_no_results' => 'Es wurden <b>keine</b> Pfade mit Ihrer Suchanfrage <b>$1</b> gefunden.',
+		'us_pathsearch_show_all_results' => 'Zeige alle Ergebnisse für diesen Pfad ($1) ...',
+		'us_pathsearch_no_instances' => 'Es wurden keine Ergebnisse für den aktuellen Pfad gefunden.',
+		'us_pathsearch_error_in_path' => 'Im Pfad ist ein Fehler aufgetreten.',
 		'us_pathsearch_result_popup_header' => 'Alle Ergebnisse für diese Pfad',
 	);        
 }

@@ -59,8 +59,6 @@ switchTabs = function(click) {
 	var tab_fulltext = tab.getElementsByTagName('td')[1];
 	var tab_path = tab.getElementsByTagName('td')[3];
 	
-	var opacity = '-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"; filter: alpha(opacity=25); opacity: .25;';
-	
 	// div for content of tabs
 	var styleTabEnabled = document.createAttribute("style");
     styleTabEnabled.nodeValue = 'font-weight: bold; color: black; border-top: 2px solid #FF8C00; border-left: 2px solid #AAA; border-right: 2px solid #AAA;';
@@ -72,18 +70,24 @@ switchTabs = function(click) {
 		tab_path.setAttributeNode(styleTabEnabled);
 		document.getElementById('us_fulltext_results').style.display = "none";
 		tab_fulltext.setAttributeNode(styleTabDisabled);
-		document.getElementById('us_browsing_top').setAttribute('style', opacity);
-		document.getElementById('us_browsing_bottom').setAttribute('style', opacity);
-		document.getElementById('us_refineresults').setAttribute('style', opacity);
+		document.getElementById('us_browsing_top').style.display = "none";
+		document.getElementById('us_browsing_bottom').style.display = "none";
+		document.getElementById('us_refineresults').style.display = "none";
+		document.getElementById('us_browsing_top_hide').style.display = "inline";
+		document.getElementById('us_browsing_bottom_hide').style.display = "inline";
+		document.getElementById('us_refineresults_hide').style.display = "block";
 	}
 	else {
 		document.getElementById('us_pathsearch_results').style.display = "none";
 		tab_path.setAttributeNode(styleTabDisabled);
 		document.getElementById('us_fulltext_results').style.display = "inline";
 		tab_fulltext.setAttributeNode(styleTabEnabled);
-		document.getElementById('us_browsing_top').removeAttribute('style');
-		document.getElementById('us_browsing_bottom').removeAttribute('style');
-		document.getElementById('us_refineresults').removeAttribute('style');
+		document.getElementById('us_browsing_top').style.display = "inline";
+		document.getElementById('us_browsing_bottom').style.display = "inline";
+		document.getElementById('us_refineresults').style.display = "block";
+		document.getElementById('us_browsing_top_hide').style.display = "none";
+		document.getElementById('us_browsing_bottom_hide').style.display = "none";
+		document.getElementById('us_refineresults_hide').style.display = "none";
 	}
 	document.getElementById('doPathSearch').value = click;
 }

@@ -4,14 +4,14 @@
     margin-top: 10px; 
 }
 
-#us_refineresults {
+#us_refineresults, #us_refineresults_hide {
     
     width:97%;
     border: 2px solid #AAA;
     padding: 5px;
 }
 
-#us_refineresults .filtercolumn {
+#us_refineresults .filtercolumn, #us_refineresults_hide .filtercolumn {
     
     padding-left: 15px;
 }
@@ -108,7 +108,7 @@
   
 }
 
-#us_browsing_top, #us_browsing_bottom {
+#us_browsing_top, #us_browsing_bottom, #us_browsing_top_hide, #us_browsing_bottom_hide {
     margin-top: 10px;
     width: 98%;
 }

@@ -148,7 +148,7 @@
 							'<a ' .
 							'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
 							'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
-                            '>'.sprintf(wfMsg('us_pathsearch_show_all_results'), $numRowsTotal).'</a></td></tr>';
+                            '>'.wfMsg('us_pathsearch_show_all_results', $numRowsTotal).'</a></td></tr>';
 					break;
 				}
 				// print result line
