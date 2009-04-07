@@ -71,8 +71,7 @@ class WSStorageSQL {
 				'authentication_password'    =>  'VARCHAR(20) NOT NULL' ),
 		$db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-
-
+		
 		// create ws value cache table
 		DBHelper::reportProgress("   ... Creating web service cache table \n",$verbose);
 		$cacheTable = $db->tableName('smw_ws_cache');
@@ -84,8 +83,11 @@ class WSStorageSQL {
 				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-
-
+		
+		$db =& wfGetDB( DB_MASTER );
+		$query = "ALTER TABLE smw_ws_cache MODIFY result LONGTEXT NOT NULL";
+		$db->query($query);
+		 
 		// create parameter table
 		DBHelper::reportProgress("   ... Creating parameter table \n",$verbose);
 		$paramTable = $db->tableName('smw_ws_parameters');
@@ -93,6 +95,10 @@ class WSStorageSQL {
 				  'name'		    =>  'VARCHAR(255) NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'value'      	    =>  'LONGTEXT NOT NULL'), $db, $verbose);
+		
+		$query = "ALTER TABLE smw_ws_parameters MODIFY value LONGTEXT NOT NULL";
+		$db->query($query);
+		
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 		// create properties table
