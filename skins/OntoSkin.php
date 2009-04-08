@@ -317,7 +317,7 @@ class OntoSkinTemplate extends QuickTemplate {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
 				<?php global $wgExtensionCredits; if (true) { //!array_key_exists('unifiedsearch', $wgExtensionCredits)) {
 					
-                   echo '<input type="submit" name="go" class="searchButton" id="searchGoButton" value="'.wfMsg('searcharticle').'" '.$this->skin->tooltipAndAccesskey( 'search-go' ).' />&nbsp';
+                   echo '<input type="submit" name="go" class="searchButton" id="searchGoButton" value="'.wfMsg('searcharticle').'" '.$this->skin->tooltipAndAccesskey( 'search-go' ).' />&nbsp;';
                    
                 } ?>
 				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
