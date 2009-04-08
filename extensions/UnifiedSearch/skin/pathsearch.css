@@ -1,7 +1,3 @@
-#us_pathsearch_results {
-    padding: 5px;
-}
-
 #us_searchresults_tab {
     list-style-type: none;
     padding: 0;
@@ -26,7 +22,7 @@
 #pathsearchresult .tblmain {
 	border-collapse: collapse;
 	border: 1px solid #c0c0c0;
-	background-color: #F7F7F7;
+	background-color: #F6F6F6;
 	table-layout: auto;
 	width: 100%;
 	height: 100%;
@@ -57,7 +53,7 @@
 }
 
 #pathsearchresult .property, #pathsearchresult .property a:link, #pathsearchresult .property a:visited, #pathsearchresult .property a:active {
-	color: blue;
+	color: black;
 	white-space: nowrap;
 }
 
@@ -75,7 +71,7 @@
 	width: 100%;
 	height: 100%;
 	empty-cells:show;
-	background-color: #F7F7F7; 
+	background-color: #F6F6F6; 
 }
 
 #pathsearchresult td.propSpacer {

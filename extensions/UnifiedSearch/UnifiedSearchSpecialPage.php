@@ -86,9 +86,11 @@ class USSpecialPage extends SpecialPage {
         }
 
 		// path search options, if the form is called directly from this page
-		if (isset($wgUSPathSearch) && $wgUSPathSearch)
+		if (isset($wgUSPathSearch) && $wgUSPathSearch) {
 			$doPathSearch = $wgRequest->getVal('paths');
-		else
+			if (strlen($doPathSearch) == 0) $doPathSearch = 0;
+    	}
+    	else
 			$doPathSearch = 0;
 		
 		// fade out filter and browsing bars when doing a path search
@@ -140,7 +142,7 @@ class USSpecialPage extends SpecialPage {
         
         $refineResultsHtml = '<table cellspacing="0">';
         $highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
-        $row =  '<td rowspan="2" width="100"><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a>';
+        $row =  '<td rowspan="2" width="100"><a class="'.$highlight.'" href="'.$noRefineURL.'">'.wfMsg('us_all').'</a></td>';
 
         $nsURL = reset($namespaceFilterURLs);
         $c = 0;
@@ -185,17 +187,16 @@ class USSpecialPage extends SpecialPage {
         $prevButton = ($offset == 0) ? wfMsg('us_browse_prev') : $previous;
         
         // browsing bar top
-        $browsingBarTopHtml = "";
         if (count($searchResults) > 0) {
+        	$browsingBarTopHtml = "";
             $browsingBarTopHtml .= "<tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
             $browsingBarTopHtml .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
             $browsingBarTopHtml .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
-        }
-        
-        $browsingBarTopHideHtml = "<table id=\"us_browsing_top_hide\" $styleHide>".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml);
-        $browsingBarTopHtml = "<table id=\"us_browsing_top\" $styleShow>".$browsingBarTopHtml;
-        $html.= $browsingBarTopHtml.$browsingBarTopHideHtml;
-        
+            $browsingBarTopHideHtml = "<table id=\"us_browsing_top_hide\" $styleHide>".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml);
+	        $browsingBarTopHtml = "<table id=\"us_browsing_top\" $styleShow>".$browsingBarTopHtml;
+    	    $html.= $browsingBarTopHtml.$browsingBarTopHideHtml;
+        }        
+
         // -- show Did you mean --
         $didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
         $wgOut->setPageTitle(wfMsg('us_search'));
@@ -244,7 +245,7 @@ class USSpecialPage extends SpecialPage {
 			    ';
 			    
 			    // full text results will be displayed within a table below the tabs
-			    $styleDisplay = ' style="display: '.(($doPathSearch) ? 'none' : 'inline').'";';
+			    $styleDisplay = ' style="display: '.(($doPathSearch) ? 'none' : 'inline').';"';
 			    $fulltextResults = str_replace("%%__DIV_NAME__%%", 'us_fulltext_results', $fulltextResults);
 			    $fulltextResults = str_replace("%%__STYLE_DISPLAY__%%", $styleDisplay, $fulltextResults);
 
