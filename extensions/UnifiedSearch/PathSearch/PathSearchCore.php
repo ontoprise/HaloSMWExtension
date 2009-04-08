@@ -191,7 +191,7 @@
 				$this->addPath4Term($term);
 		}
 		// we must have at least two nodes to find a path in between
-		$nop = count($this->path); 
+		$nop = count($this->path);
 		if ($nop > 1) {
 			$this->evalPath(); // find any paths
 			// if paths found complete label names for SMW ids, these are needed for checking path consistency
@@ -208,7 +208,11 @@
 					unset($this->result[$i]);
 					continue;
 				}
-					
+				else { // rearrange key indices incase path has been modified (this happens automatically when shifting the array)
+					$e = array_unshift($this->result[$i], "0");
+					array_shift($this->result[$i]);
+				}
+				
 				// because of the paths filled up as spo and merging (sub) categories there might be doubles now
 				$key = implode(',', $this->result[$i]);
 				if (in_array($key, $pathExists))
@@ -220,11 +224,10 @@
 		else if ($nop == 1) { // for one path, check details of property/category/page
 			$this->getDetails4Term();
 			$this->fetchNodeDetails($this->result); // if results are found complete label names for ids in path
-			$this->getNodeInstances();				// get instances for single nodes
 		}
-		
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
+		$this->getNodeInstances();
 		
 		// here we limit the results. A result is a path that has at least one instance as well
 		$this->checkResultLimits($limit, $offset);
@@ -263,6 +266,7 @@
 		
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
+		$this->getNodeInstances();
 		foreach (array_keys($this->instance) as $key)
 			$this->fetchNodeDetails($this->instance[$key], $key);
 		
@@ -580,7 +584,7 @@
 
 			// we should be able to construct a triplet now with the next two elements
 			if ($i + 2 == $is) {
-				// only onle element left, check if the current element is a category and the last
+				// only one element left, check if the current element is a category and the last
 				// element is a page, the this page is in that category.
 				if ($this->smwDataIsPage($path[$i + 1]) && ($this->smwDataGetType($subject) == NS_CATEGORY)) {
 					$path[$i].= "|".$path[$i + 1];
@@ -590,9 +594,13 @@
 					// Therefore we just adjust the pointer and check the last triplet again.
 					$i -= 2;
 					$is -= 1;
-					// remove direction from property again
-					$path[$i + 1] = substr($path[$i + 1], 0, strpos($path[$i + 1], "|"));
-					continue;
+					// if we have a property before remove direction from property again to evaluate triple
+					if (isset($path[$i + 1])) {
+						$path[$i + 1] = substr($path[$i + 1], 0, strpos($path[$i + 1], "|"));
+						continue;
+					}
+					// element doesn't exist, then maybe a category connected the two instances. We are done
+					else return true;
 				} 
 				// no category followed by a page, something went wrong and the path is broken
 				else return false;
@@ -901,6 +909,9 @@
 		// single pages as well.
 		foreach ($this->result as $path) {
 			$key = implode(',', $path);
+			
+			// if there's one single node only, these are handles in another function
+			if (count($path) == 1) continue;
 
 			// still a triplet left for fetching results
 			while (count($path) > 2) {
@@ -911,7 +922,7 @@
 				$object = $path[0];
 				
 				// check for pages in the node, pages have priority over categories because
-				// the original searh term must have been a page where the category was found for
+				// the original search term must have been a page where the category was found for
 				// and then the path was created using category information
 				$pageSubject = $this->elementHasPage($subject); 
 				$subs =  ( $pageSubject !== false ) ? array($pageSubject) : explode('|', $subject);
@@ -946,6 +957,7 @@
 					continue 2;
 			}
 		}
+		
 		// set error code if there are no results for any path found
 		if (count($this->instance) < 1) {
 			$this->resultCode = 2;
@@ -972,10 +984,11 @@
 			// are fetched with the function getPathInstances(), therefore skip these
 			if (count($path) > 1) continue;
 
-			// check if this element has a page somewhere, then we already have the (one and only) value
-			$pageId = $this->elementHasPage($path[0]);
-			if ($pageId !== false) {
-				$this->instance[$path[0]] = array(array($pageId));
+			// check if this element has page(s) somewhere, then we already have the result(s)
+			$pages = $this->elementGetPages($path[0]);
+			if (count($pages > 0)) {
+				$this->instance[$path[0]] = array();
+				foreach ($pages as $p) $this->instance[$path[0]][]= array($p);
 				continue;
 			}
 			$ids = explode('|', $path[0]);
@@ -1365,6 +1378,15 @@
  			if ($this->smwDataIsPage($i)) return $i;		
  		}
  		return false;
+ 	}
+ 	
+ 	private function elementGetPages($id) {
+ 		$ids = explode('|', $id);
+ 		$pages = array();
+ 		foreach ($ids as $i) {
+ 			if ($this->smwDataIsPage($i)) $pages[] = $i;		
+ 		}
+ 		return $pages;
  	}
  	
  	/**
