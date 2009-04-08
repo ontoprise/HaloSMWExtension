@@ -270,6 +270,8 @@
 	/**
 	 * for a category check all sub categories and further donw until the category doesn't
 	 * have any children. All categories below this top category are returned.
+	 * Fix: it's possible to create loops, therefore preventing any loops in the search of
+	 * sub categories.
 	 * 
 	 * @access public
 	 * @param  int id of category
@@ -281,7 +283,9 @@
  		for ($i = 0; $i < count($cats); $i++) {
  			$sub = self::getSubCategories($id);
  			if (count($sub) > 0) {
- 				foreach ($sub as $c) $cats[] = $c; 
+ 				foreach ($sub as $c) {
+ 					if (!in_array($c, $cats)) $cats[] = $c;
+ 				}
  			}
  		}
  		// remove subject
