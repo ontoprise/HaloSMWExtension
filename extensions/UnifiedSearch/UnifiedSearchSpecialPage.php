@@ -505,7 +505,7 @@ class USSpecialPage extends SpecialPage {
 			if (strlen($psTerms) > 0) $psTerms.= ',';
 			$psTerms .= implode(',-1,', $sterms).',-1'; 
 		}
-		return $psTerms;
+		return $psTerms.'%26'.$search;
     }
     
 }

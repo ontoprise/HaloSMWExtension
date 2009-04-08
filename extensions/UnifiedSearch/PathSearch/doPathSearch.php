@@ -16,20 +16,18 @@ function us_doPathSearch($input, $nojason = false) {
 	
 	$params = explode('&', $input);
 	$search = (isset($params[0])) ? $params[0] : "";
-	$limit = (isset($params[1])) ? $params[1] : 10000;
-	$offset = (isset($params[2])) ? $params[2] : 0;
+	$origTerms = (isset($params[1])) ? $params[1] : "";
+	$limit = (isset($params[2])) ? $params[2] : 10000;
+	$offset = (isset($params[3])) ? $params[3] : 0;
 	
 	if (strpos($search, ',') !== false) {
 		$params = explode(',', $search);
-		$search = "";
 		if (count($params) % 2 == 1) 
-			return ($nojason) ? wfMsg('us_pathsearch_no_results', trim($search)) : USPathSearchJasonOutput(wfMsg('us_pathsearch_no_results', trim($search)));
+			return ($nojason) ? wfMsg('us_pathsearch_no_results', $origTerms) : USPathSearchJasonOutput(wfMsg('us_pathsearch_no_results', $origTerms));
 		$queryArr = array();
 		for ($i = 0, $is = count($params); $i < $is; $i++) {
-			$search.= $params[$i]." ";
 			$queryArr[] = array($params[$i], $params[++$i]);
 		}
-		$search = substr($search, 0, -1);
 	}
 	else {
 		$queryArr = USPathSearchEvalQueryParams($search);
@@ -41,11 +39,11 @@ function us_doPathSearch($input, $nojason = false) {
 	
 	// no results found or something else went wrong
 	if ($psc->getResultCode() != 0)
-		$html =  wfMsg('us_pathsearch_no_results', trim($search));
+		$html =  wfMsg('us_pathsearch_no_results', $origTerms);
 	else {
 		$html = $psc->getResultAsHtml();
 		$totalHits = $psc->numberPathsFound();
-		$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
+		$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $origTerms);
     	$html = "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>$html";
 	}
 	
