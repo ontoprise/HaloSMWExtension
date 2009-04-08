@@ -1,4 +1,6 @@
 <?php
+define('MIME_TYPE_EXTENSION', "1.0");
+
 // begin AdditionalMIMETypes:
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',

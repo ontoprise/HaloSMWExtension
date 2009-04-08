@@ -319,7 +319,7 @@
 
 <!-- slider script for resizing page and menu -->
 
-	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/slider.js"></script>
+	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/sliderskin.js"></script>
 
 <!-- Nifty cube for round corners -->
 

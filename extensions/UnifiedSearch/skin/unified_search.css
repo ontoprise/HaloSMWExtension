@@ -66,10 +66,6 @@
     list-style-type: none;
 }
 
-#us_queryresults {
-	border-spacing: 10px;
-}
-
 #us_searchresults .searchmatch {
     color:black;
     font-weight: bold;
@@ -89,6 +85,10 @@
 .us_search_result_link{
     margin: 6px;
     font-weight: bold;
+}
+
+.us_search_result {
+    margin: 8px; /* needed because border-spacing does not work on IE */
 }
 
 .us_search_result .snippet {
