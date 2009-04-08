@@ -28,7 +28,7 @@ Installation instructions
 
 2. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.0.xml'
 
-Now you can enter {{RMList|{{PAGENAME}}}} to any article where you want to get a
+Now you can enter {{RMList|{{FULLPAGENAME}}}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 
 
 #
