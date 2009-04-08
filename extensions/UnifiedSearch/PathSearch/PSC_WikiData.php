@@ -49,7 +49,7 @@
 		if (self::$property == NULL) {
 			// just for faster access when building the properties, flip category names and ids
  			$cats = array();
- 			foreach (array_keys(self::$category) as $id)
+ 			foreach (array_keys(self::$category) as $id) 
  				$cats[self::$category[$id][PSC_CATEGORY_NAME]] = $id;
 			
 			self::$property = array();
@@ -441,7 +441,8 @@
  		$smw_ids = self::$db->tableName('smw_ids');
  		$category = self::$db->tableName('category');
 
- 		$query = "SELECT s.smw_id AS id, s.smw_sortkey AS name FROM $smw_ids s, $category c WHERE c.cat_title = s.smw_title AND c.cat_pages > 0";
+ 		$query = "SELECT s.smw_id AS id, s.smw_sortkey AS name FROM $smw_ids s, $category c " .
+ 				 "WHERE c.cat_title = s.smw_title AND s.smw_namespace = ".NS_CATEGORY;
  		$res = self::$db->query($query);
  		if ($res) {
  			while ($row = self::$db->fetchObject($res)) {
@@ -449,12 +450,12 @@
  			}
  		}
  		self::$db->freeResult($res);
- 	
+
  	    // sub categories	
  		$categorylinks = self::$db->tableName('categorylinks');
         $query = "SELECT s.smw_id AS id, s.smw_sortkey AS subcat, REPLACE(cl.cl_to, '_', ' ') AS cat " .
         		 "FROM $smw_ids s, $category c, $categorylinks cl " .
-        		 "WHERE c.cat_title = s.smw_title AND c.cat_title  = REPLACE(cl.cl_sortkey, ' ', '_')";
+        		 "WHERE c.cat_title = s.smw_title AND c.cat_title  = REPLACE(cl.cl_sortkey, ' ', '_') AND s.smw_namespace = ".NS_CATEGORY;
  		
  		$res = self::$db->query($query);
  		
