@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Simpson Wiki (Triple Store Connector Test)</sitename>
-    <base>http://localhost/simpson/index.php/Main_Page</base>
+    <base>http://localhost/smw143/index.php/Main_Page</base>
     <generator>MediaWiki 1.13.2</generator>
     <case>first-letter</case>
       <namespaces>
@@ -374,19 +374,19 @@ Edit the page to see the template text.
     <title>Template:RMList</title>
     <id>214</id>
     <revision>
-      <id>1110</id>
-      <timestamp>2009-03-31T10:42:57Z</timestamp>
+      <id>1461</id>
+      <timestamp>2009-04-08T11:47:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">{| border=&quot;1&quot; style=&quot;border: 1px solid black; padding: 0px; border-collapse: collapse;&quot; 
-| align=&quot;center&quot; bgcolor=&quot;#3C6EE6&quot; style=&quot;padding: 0px;&quot; | &lt;font color=&quot;white&quot;&gt;Attached documents, images and media &lt;span class=&quot;plainlinks&quot; style=&quot;color:white;textalign:right&quot;&gt;[{{fullurl:{{{1}}}|action=purge}} refresh]&lt;/span&gt;&lt;/font&gt;
-{| class=&quot;wikitable sortable&quot; border=&quot;0&quot; style=&quot;padding: 0px;&quot; 
+| align=&quot;center&quot; bgcolor=&quot;#3C6EE6&quot; style=&quot;padding-top: 5px;&quot; | &lt;span class=&quot;plainlinks&quot; style=&quot;float:right;&quot;&gt;[{{fullurl:{{{1}}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt;&lt;font color=&quot;white&quot;&gt;Attached documents, images and media&lt;/font&gt;
+{| class=&quot;wikitable sortable&quot; bgcolor=&quot;white&quot; border=&quot;0&quot; style=&quot;padding: 0px;clear:none&quot; 
 |- bgcolor=&quot;lightgrey&quot; 
-! align=&quot;center&quot; class=&quot;unsortable&quot; | Category !! Filename !! Uploaded by !! Creation date !! class=&quot;unsortable&quot; | Infos !! class=&quot;unsortable&quot; | Delete
+! align=&quot;center&quot; class=&quot;unsortable&quot; | Category !! Filename !! Uploaded by !! class=&quot;unsortable&quot; | Creation date !! class=&quot;unsortable&quot; | Infos !! class=&quot;unsortable&quot; | Delete
 |-
-{{#ask: [[Category:Media]][[HasRelatedArticles::{{{1}}}]]
+{{#ask: [[Category:Media]][[HasRelatedArticles::{{{1}}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]&lt;/q&gt;
   | ?HasFilename
   | ?HasUploader
   | ?HasCreationDate
@@ -396,7 +396,7 @@ Edit the page to see the template text.
 }}
 |}
 |- 
-| align=&quot;right&quot; style=&quot;padding: 0px;&quot; | {{#rmf: {{{1}}} }}
+| align=&quot;right&quot; | {{#rmf: {{{1}}} }}
 |}</text>
     </revision>
   </page>
@@ -404,30 +404,28 @@ Edit the page to see the template text.
     <title>Template:RMListInnerTable</title>
     <id>193</id>
     <revision>
-      <id>1101</id>
-      <timestamp>2009-03-31T10:39:56Z</timestamp>
+      <id>1462</id>
+      <timestamp>2009-04-08T11:50:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>[[Template:RMList]] moved to [[Template:RMListInnerTable]]</comment>
       <text xml:space="preserve">&lt;br/&gt;
-|- 
-| align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:Special:FilePath/{{{1}}}}} {{RMCategoryLinkIcon|{{{1}}}}}]&lt;/span&gt;
-|| &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{{2}}}]&lt;/span&gt;
-|| [[{{{3}}}]]
-|sortkey={{Date|{{{4}}}|iso}}}| {{{4}}}
-| align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;
-| align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
+|-
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:Special:FilePath/{{{1}}}}} {{RMCategoryLinkIcon|{{{1}}}}}]&lt;/span&gt;
+| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{{2}}}]&lt;/span&gt;
+| bgcolor=&quot;white&quot; | [[{{{3}}}]]
+| bgcolor=&quot;white&quot; | {{{4}}}
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;
+| bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:RMCategoryLinkIcon</title>
     <id>401</id>
     <revision>
-      <id>1100</id>
-      <timestamp>2009-03-31T10:27:57Z</timestamp>
+      <id>1418</id>
+      <timestamp>2009-04-06T15:15:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -438,12 +436,12 @@ Edit the page to see the template text.
     | 0
     |{{#pos:{{lc: {{{1}}} }}|:}}  
   }}
-  | image={{SERVER}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-  | pdf={{SERVER}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
-  | document={{SERVER}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
-  | audio={{SERVER}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
-  | video={{SERVER}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
-  | default={{SERVER}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | image={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | pdf={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
+  | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
+  | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
+  | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
+  | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
 }}</text>
     </revision>
   </page>
@@ -540,8 +538,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>379</id>
     <revision>
-      <id>960</id>
-      <timestamp>2009-03-30T09:49:04Z</timestamp>
+      <id>1206</id>
+      <timestamp>2009-04-03T12:25:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -579,6 +577,14 @@ if a page with that name already exists, you will be sent to a form to edit that
 | {{{field|RelatedArticles}}}
 |}
 {{{end template}}}
+'''Free text:'''
+
+{{{standard input|free text}}}
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
 &lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -913,77 +919,6 @@ if a page with that name already exists, you will be sent to a form to edit that
       </contributor>
       <text xml:space="preserve">[[Category:Media]]
 [[Has default form::Form:RMVideo]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Date</title>
-    <id>402</id>
-    <revision>
-      <id>996</id>
-      <timestamp>2009-03-30T11:55:46Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{#switch:none
- |{{#iferror: {{#time:Y_M_d|{{{1|}}} }} | none }} &lt;!-- #time: can't handle --&gt;
- |{{#iferror: {{#expr: {{{1|}}}+0 }}
-    |&lt;!--not a pure number--&gt;
-    |{{#ifexpr: {{{1|}}}+0 &gt; 10000000000000
-       |&lt;!-- a yyyymmddhhmmss timestamp --&gt;
-       |{{#ifeq: {{#expr:{{{1|}}}+0}} | {{{1|}}}
-          | none &lt;!-- pure number eg 123.456 --&gt;
-          | &lt;!-- assume yy-mm-dd --&gt;
-        }}
-     }}
-  }}
- |{{#switch:  {{lc:{{{2|}}}}} | none | asis=none }}
- |{{#ifexpr:  {{#time:Y|{{{1|}}} }} &lt; 1000 | none }}
- |{{#switch:  {{#time:Ynj|{{{1|}}} }}|100031|110031|130031|140031|150031=none}}
- |= {{{1|}}}&lt;!-- error or &quot;none&quot;, so no formatting --&gt;
- |&lt;!-- continue with formatting --&gt;
-  {{#ifeq:&lt;!--
-    --&gt;{{#time:Y|{{{1}}} 2008}}&lt;!--
-    --&gt;{{#iferror: {{#ifexpr: {{{1}}}&gt;10000000000000 | no }} | }}&lt;!--
-    --&gt;{{#time:Y|{{{1}}} 2004}}
-  |20082004
-  |&lt;!-- no year --&gt;
-    {{#ifeq:{{#time:d|{{{1}}} 2036}}|{{#time:d|{{{1}}} }}
-    |&lt;!-- month+day --&gt;{{#time:
-      {{#switch: {{lc: {{#ifeq:{{{3|}}}|y|L}}{{{2|}}} }}
-      | lmdy | liso | lymd      = [[:F j]]
-      | mdy  | iso  | ymd       = F j
-      | ldmy | l                = [[:j F]]
-      | #default                = j F
-      }}|{{{1}}} 2000 }}&lt;!-- default='dmy' or null or &quot;&quot; or unsupported option --&gt;
-    |&lt;!-- month only --&gt;{{#time:
-      {{#switch: {{lc: {{#ifeq:{{{3|}}}|y|L}}{{{2|}}} }}
-      | lmdy | liso | lymd 
-      | ldmy | l                = [[F]]
-      | #default                = F
-      }}|{{{1}}} 2000 }}&lt;!-- default='dmy'/'mdy'/'ymd'/'iso'/null/&quot;&quot;/unsupported opt --&gt;
-    }}
-  |&lt;!-- with year--&gt;
-    {{#if: {{#iferror:{{#time:j|2 {{{1|}}}}}|*D*|{{#iferror:{{#time:j|2000 {{{1|}}}}}|*D*| }}}}
-    |&lt;!-- day+month+year --&gt;{{#time:
-      {{#switch: {{lc: {{#ifeq:{{{3|}}}|y|L}}{{{2|}}} }}
-      | lmdy                    = [[:F j]], [[Y]]
-      | mdy                     = F j, Y
-      | liso                    = [[Y|Y-]][[F j|m-d]]&lt;!-- i.e. [[Y-m-d]] --&gt;
-      | iso                     = Y-m-d
-      | lymd                    = [[Y]] [[:F j]]
-      | ymd                     = Y F j
-      | ldmy | l                = [[:j F]] [[Y]]
-      | #default                = j F Y
-      }}|{{{1|}}} }}&lt;!-- #default='dmy' or null or &quot;&quot; or unsupported option --&gt;
-    |&lt;!-- month+year --&gt;{{#time:
-      {{#switch: {{lc: {{#ifeq:{{{3|}}}|y|L}}{{{2|}}} }}
-      | lmdy | liso | lymd | ldmy | l  = [[:F Y]]
-      | #default                = F Y
-      }}|{{{1|}}} }}&lt;!-- default='dmy'/'iso'/'mdy'/null/&quot;&quot;/unsupported option --&gt;
-    }}
-  }}    
-}}</text>
     </revision>
   </page>
 </mediawiki>
