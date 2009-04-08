@@ -67,7 +67,7 @@ class SMWRestClient implements IWebServiceClient {
 		$uri = $this->mURI;
 		
 		if(array_key_exists("__rest__uri", $parameters)){
-			$uri .= $parameters["__rest__uri"];
+			$uri .= trim(strip_tags($parameters["__rest__uri"]));
 			unset($parameters["__rest__uri"]);
 		}
 
@@ -127,7 +127,7 @@ class SMWRestClient implements IWebServiceClient {
 		
 		$ctx = stream_context_create($params);
 		
-		$fp = @ fopen($uri, 'rb', false, $ctx);
+		$fp = @ fopen($uri, 'rb', true, $ctx);
 		
 		if (!$fp) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;

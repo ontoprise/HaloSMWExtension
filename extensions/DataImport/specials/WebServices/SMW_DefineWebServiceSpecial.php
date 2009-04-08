@@ -571,9 +571,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				}
 			} else {
 				$html .= $mergedParameter["xpath"].";";
-				//todo: enable json again
 				$html .= "##;";
-				//$html .= $mergedParameter["json"].";";
+				$html .= $mergedParameter["json"].";";
 			}
 		}
 
@@ -613,14 +612,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					$html .= "##;";
 				}
 			} else {
-				//todo: enable json again
 				$html .= $wwsdParameter["name"].";";
 				if(strlen($wwsdParameter["xpath"]."") > 0){
 					$html .= "xpath;";
 					$html .= $wwsdParameter["xpath"].";";
-				// } else if(strlen($wwsdParameter["json"]."") > 0){
-				//	$html .= "json;";
-				//	$html .= $wwsdParameter["json"].";";
+				} else if(strlen($wwsdParameter["json"]."") > 0){
+					$html .= "json;";
+					$html .= $wwsdParameter["json"].";";
 				} else {
 					$html .= "##;";
 					$html .= "##;";

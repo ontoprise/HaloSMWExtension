@@ -2697,11 +2697,11 @@ DefineWebServiceSpecial.prototype = {
 		xpathOption.value = "xpath";
 		format.appendChild(xpathOption);
 
-		// var jsonOption = document.createElement("option");
-		// var jsonOptName = document.createTextNode("json");
-		// jsonOption.appendChild(jsonOptName);
-		// jsonOption.value = "json";
-		// format.appendChild(jsonOption);
+		var jsonOption = document.createElement("option");
+		var jsonOptName = document.createTextNode("json");
+		jsonOption.appendChild(jsonOptName);
+		jsonOption.value = "json";
+		format.appendChild(jsonOption);
 		
 		td0.appendChild(format);
 		
@@ -2976,11 +2976,11 @@ DefineWebServiceSpecial.prototype = {
 		option.value = "xpath";
 		select.appendChild(option);
 
-		// option = document.createElement("option");
-		// text = document.createTextNode("json");
-		// option.appendChild(text);
-		// option.value = "json";
-		// select.appendChild(option);
+		option = document.createElement("option");
+		text = document.createTextNode("json");
+		option.appendChild(text);
+		option.value = "json";
+		select.appendChild(option);
 
 		td.appendChild(select);
 		row.appendChild(td);

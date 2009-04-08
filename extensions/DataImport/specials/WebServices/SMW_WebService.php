@@ -20,6 +20,7 @@ global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_XPathProcessor.php");
+require_once("$smwgDIIP/specials/WebServices/SMW_JSONProcessor.php");
 
 /**
  * Instances of this class describe a web service.
@@ -489,26 +490,36 @@ class WebService {
 				foreach ($rdef->part as $part) {
 					$part = ''.$part['name'];
 					$results[$part] = $this->getResults($response, $rdef, $part);
-					$results[$parts[1]] = $this->evaluateXPathAttribute(
+					$results[$parts[1]] = $this->evaluateAdditionalPathAttribute(
 						$rdef, $part, $results[$parts[1]]);
 				}
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
-				$results[$parts[1]] = $this->evaluateXPathAttribute(
+				$results[$parts[1]] = $this->evaluateAdditionalPathAttribute(
 					$rdef, $parts[1], $results[$parts[1]]);
 			}
 		}
 		return $results;
 	}
 
-	private function evaluateXPathAttribute($rdef, $alias, $value){
+	private function evaluateAdditionalPathAttribute($rdef, $alias, $value){
 		$xpath = $this->getXPathForAlias($alias, $rdef);
+		$json = $this->getJSONForAlias($alias, $rdef);
 
 		if($xpath != null){
 			$newValue = array();
 			foreach($value as $v){
 				$xpathProcessor = new XPathProcessor($v);
 				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($xpath));
+			}
+			$value = $newValue;
+		} else if ($json != null){
+			$newValue = array();
+			foreach($value as $v){
+				$jsonProcessor = new JSONProcessor();
+				$xmlString = $jsonProcessor->convertJSON2XML($v);
+				$xpathProcessor = new XPathProcessor($xmlString);
+				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($json));
 			}
 			$value = $newValue;
 		}
@@ -1229,6 +1240,20 @@ class WebService {
 		foreach ($resultDef->part as $part) {
 			if ($alias == ''.$part['name']) {
 				return ''.$part['xpath'];
+			}
+		}
+		return null;
+
+	}
+	
+/*
+	 * Returns the value of the json attribute 
+	 * of a result part with a given alias
+	 */
+	private function getJSONForAlias($alias, $resultDef) {
+		foreach ($resultDef->part as $part) {
+			if ($alias == ''.$part['name']) {
+				return ''.$part['json'];
 			}
 		}
 		return null;
