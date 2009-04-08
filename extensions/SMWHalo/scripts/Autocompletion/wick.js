@@ -237,7 +237,7 @@ AutoCompleter.prototype = {
                     this.typeHint = this.siw.inputBox.getAttribute("typeHint");
                 
                     // get constraints
-                    this.constraints = this.siw.inputBox.getAttribute("constraints");
+                    this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
                     
                     if (GeneralBrowserTools.isTextSelected(this.siw.inputBox)) {
                          // do not trigger auto AC when something is selected.
