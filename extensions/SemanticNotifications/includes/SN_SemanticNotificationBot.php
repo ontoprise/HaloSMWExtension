@@ -45,7 +45,11 @@ class SemanticNotificationBot extends GardeningBot {
 	public function getLabel() {
 		return wfMsg($this->id);
 	}
-
+    
+    public function getImageDirectory() {
+        return 'extensions/SemanticNotifications/skins';
+    }
+    
 	public function allowedForUserGroups() {
 		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS);
 	}
