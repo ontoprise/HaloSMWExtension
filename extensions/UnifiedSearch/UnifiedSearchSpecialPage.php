@@ -138,7 +138,8 @@ class USSpecialPage extends SpecialPage {
         global $wgContLang;
         $restrictNS = $wgRequest->getVal('restrict');
         $restrictNS = $restrictNS === NULL ? NULL : intval($restrictNS);
-        $html .= wfMsg('us_refinesearch');
+        $html .= '<div id="us_refineresults_label" '.$styleShow.'>'.wfMsg('us_refinesearch').'</div>' .
+        		 '<div id="us_refineresults_label_hide" '.$styleHide.'>'.wfMsg('us_refinesearch').'</div>';
         
         $refineResultsHtml = '<table cellspacing="0">';
         $highlight = $this->highlight(NULL, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
@@ -192,8 +193,8 @@ class USSpecialPage extends SpecialPage {
             $browsingBarTopHtml .= "<tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
             $browsingBarTopHtml .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
             $browsingBarTopHtml .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
-            $browsingBarTopHideHtml = "<table id=\"us_browsing_top_hide\" $styleHide>".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml);
-	        $browsingBarTopHtml = "<table id=\"us_browsing_top\" $styleShow>".$browsingBarTopHtml;
+            $browsingBarTopHideHtml = "<div id=\"us_browsing_top_hide_div\" $styleHide><table id=\"us_browsing_top_hide\">".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml)."</div>";
+	        $browsingBarTopHtml = "<div id=\"us_browsing_top_div\" $styleShow><table id=\"us_browsing_top\">".$browsingBarTopHtml."</div>";
     	    $html.= $browsingBarTopHtml.$browsingBarTopHideHtml;
         }        
 
