@@ -479,7 +479,7 @@ class UploadWindowForm {
 			return $this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
 		} elseif ( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
 				($wgStrictFileExtensions && !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
-			return $this->uploadError( wfMsgExt( 'filetype-badtype', array ( 'parseinline' ), 
+			return $this->uploadError( wfMsgExt( 'filetype-banned-type', array ( 'parseinline' ), 
 				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
 		}
 
@@ -579,10 +579,9 @@ class UploadWindowForm {
 			$basename = str_replace('_', ' ', $basename);
 			
 			// begin Rich Media Changes
-			$target = $this->mLocalFile->title->getPrefixedText();;
+			$target = $this->mLocalFile->title->getPrefixedText();
 			global $smwgRMFormByNamespace;
 			$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];			
-			#TODO: automatic entries for the form!
 			global $wgRequest;
 			// set Filename
 			$wgRequest->data["$rMUploadFormName"]['Filename'] = $target;
@@ -598,7 +597,7 @@ class UploadWindowForm {
 			// save relatedArticles
 			$relatedArticles = $wgRequest->data["$rMUploadFormName"]['RelatedArticles'];
 			//set the desired destination form
-			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()]; 
+			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
 			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
 			$myQuery = $rMDestFormName . "/" . $target;
 			//set wpSave to true
@@ -679,15 +678,12 @@ END;
 		//alert(uploadDiv.innerHTML);
 		
    		//load the upload success message
-		parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink'));
+   		
+//		setTimeout(parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink')),5000);
 		//parent.fb.end();
 	</script>
 END;
 			$wgOut->addHTML( $output );
-			
-			$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
-			// Success, redirect to description page
-			
 		}
 	}
 
@@ -938,7 +934,7 @@ END;
 		$reupload = wfMsgHtml( 'reupload' );
 		$iw = wfMsgWikiHtml( 'ignorewarning' );
 		$reup = wfMsgWikiHtml( 'reuploaddesc' );
-		$titleObj = SpecialPage::getTitleFor( 'Upload' );
+		$titleObj = SpecialPage::getTitleFor( 'UploadWindow' );
 		$action = $titleObj->escapeLocalURL( 'action=submit' );
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
@@ -963,6 +959,52 @@ END;
 		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
 		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
+		<input type='hidden' name='sfUploadForm' value=\"" . htmlspecialchars( $this->mInputID ) ."\"/>"
+		);
+
+		//Beginn RichMedia
+		global $smwgRMFormByNamespace, $wgRequest;
+		$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
+
+		$rMDestForm = $wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
+			
+		//maxdepth=3 e.g. RMVideo[CreationDate][day] = 12
+		// who knows ...
+		if (is_array($rMDestForm)) {
+			//foreach FormName[x]
+			foreach ($rMDestForm as $rMFormField => $rMFormFieldValue)
+			{
+				if (is_array($rMFormFieldValue)) {
+					//foreach FormName[Date][x]
+					foreach ($rMFormFieldValue as $rMFormSubField => $rMFormSubFieldValue)
+					{
+						$wgOut->addHTML(
+								"<input type='hidden' name=\"" . 
+						$rMDestFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
+								"\" value=\"" . htmlspecialchars( $rMFormSubFieldValue ) ."\"/>" .
+								"<input type='hidden' name=\"" . 
+						$rMUploadFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
+								"\" value=\"" . htmlspecialchars( $rMFormSubFieldValue ) ."\"/>"
+								);
+
+					}
+				}
+				else {
+					$wgOut->addHTML(
+							"<input type='hidden' name=\"" . 
+					$rMDestFormName."[".$rMFormField."]" .
+							"\" value=\"" . htmlspecialchars( $rMFormFieldValue ) ."\"/>" .
+							"<input type='hidden' name=\"" . 
+					$rMUploadFormName."[".$rMFormField."]" .
+							"\" value=\"" . htmlspecialchars( $rMFormFieldValue ) ."\"/>"
+							);
+				}
+			}
+		}
+		//end RichMedia
+		
+		$wgOut->addHTML("
 	{$copyright}
 	<table border='0'>
 		<tr>
@@ -979,7 +1021,10 @@ END;
 				<td align='$align2'>$reup</td>
 			</tr>
 		</tr>
-	</table></form>\n" );
+	</table>\n" );
+	
+			
+			$wgOut->addHTML("</form>");
 	}
 
 	/**
@@ -1045,8 +1090,8 @@ wgAjaxLicensePreview = {$alp};
 			  "<span class='error'>{$msg}</span>\n" );
 		}
 		global $smwgRMFormByNamespace;
-		$rmUploadName = $smwgRMFormByNamespace['RMUpload'];
-		$uploadTemplateArray = $wgRequest->getArray($rmUploadName);
+		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
+		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
 		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
 		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
 		$wgOut->addHTML( '</div>' );
@@ -1286,15 +1331,12 @@ EOT
 	</form>" );
 		
 //		
-	#TODO:formatieren!
 		$wgOut->addHTML("<div id=\"contentSub\"></div>");
 		
-		//$wgOut->addHTML("<table><tr><td><input type=\"button\" value=\"load div!\" onclick=\"parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink'));\"/>");
-		
-		$wgRequest->data["$rmUploadName"]['Uploader'] = $wgUser->getName();
+		$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 		$form_add= new SFAddData();
 		//maybe we need a generic name for the target here...
-		$form_add_test = $form_add->execute( $rmUploadName . '/upload_test_DaMO7' );
+		$form_add_test = $form_add->execute( $rMUploadName . '/upload_test_DaMO7' );
 		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input  type=\"button\" value=\"$saveButtonText\" onclick=\"rm_getInputs()\"/></td></tr></table>");
 	}
