@@ -79,7 +79,8 @@ function displayHelp(request){
 	//No SemTB in QI, therefore special treatment
 	if(wgCanonicalSpecialPageName == "QueryInterface"){
 		if ( request.responseText != '' ){
-			$('qi-help-content').innerHTML = request.responseText;
+			// commented out since help container was removed from query interface
+//			$('qi-help-content').innerHTML = request.responseText;
 		}
 	}
 	else { //SemTB available
