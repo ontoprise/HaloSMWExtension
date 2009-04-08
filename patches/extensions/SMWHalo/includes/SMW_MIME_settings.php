@@ -77,14 +77,5 @@ $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks +
 	    NS_VIDEO => true,
 		NS_PDF	=> true
 	);
-//and we want them to be searched!
-global $smwgQDefaultNamespaces;
-if (!$smwgQDefaultNamespaces) {
-	$smwgQDefaultNamespaces = array(NS_MAIN, NS_IMAGE, NS_HELP, NS_DOCUMENT, NS_AUDIO, NS_VIDEO, NS_PDF);
-}
-else {
-	$smwgQDefaultNamespaces = $smwgQDefaultNamespaces + 
-		array(NS_MAIN, NS_IMAGE,NS_HELP,NS_DOCUMENT, NS_AUDIO, NS_VIDEO, NS_PDF);
-}
 // end AdditionalMIMETypes
 ?>
