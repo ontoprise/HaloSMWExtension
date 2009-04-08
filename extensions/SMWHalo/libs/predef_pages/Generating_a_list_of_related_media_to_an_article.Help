@@ -1,0 +1,11 @@
+__NOTOC__
+
+With the Rich Media Extension you can let the system generate a list of related media (images, documents, pdf, audio and video) to every article.
+
+Simply add the template <pre> {{RMList|{{FULLPAGENAME}}}} </pre> at the place you want the list to appear (usually the bottom of the page).
+
+As a result you get a list like this example:
+[[Image:Attached media.jpg|800px]]
+
+[[Category:SMW+ Help Topic|Media List]]
+[[SubsectionOf::Help:Media| ]]
