@@ -608,13 +608,11 @@
 				$newSub = array($subject); // just for compatiblity
 				if ($this->smwDataGetType($object) == NS_CATEGORY) {
 					$newObj = array();
-					$x0 = $this->getCategoryHierarchy($objects, $newObj);
+					$this->getCategoryHierarchy($objects, $newObj);
 				}
-				else {
+				else
 					$newObj = array($object);
-					$x0 = 0;
-				}
-				for ($x = $x0, $xs = count($objects); $x < $xs; $x++) {
+				for ($x = 0, $xs = count($objects); $x < $xs; $x++) {
 					if ($this->checkInstance($property, $objects[$x]) == 1) {
 				       $direction = -1;
 				       $newObj[] = $objects[$x];
@@ -629,13 +627,11 @@
 				if ($this->smwDataGetType($subject) == NS_CATEGORY) {
 					// build a new array of all possible subcategories/pages and check each element in a triple
 					$newSub = array();
-					$x0 = $this->getCategoryHierarchy($subjects, $newSub);
+					$this->getCategoryHierarchy($subjects, $newSub);
 				}
-				else {
+				else
 					$newSub = array($subject);
-					$x0 = 0;
-				}
-				for ($x = $x0, $xs = count($subjects); $x < $xs; $x++) {
+				for ($x = 0, $xs = count($subjects); $x < $xs; $x++) {
 					if ($this->checkInstance($property, $subjects[$x]) == 1) {
 				       $direction = 1;
 				       $newSub[] = $subjects[$x];
@@ -648,26 +644,20 @@
 			else {
 				if ($this->smwDataGetType($subject) == NS_CATEGORY) {
 					// build a new array of all possible subcategories/pages and check each element in a triple.
-					// push the top category in the path, even though there are no direct relations for that
-					// category.
 					$newSub = array();
-					$x0 = $this->getCategoryHierarchy($subjects, $newSub);
+					$this->getCategoryHierarchy($subjects, $newSub);
 				}
 				// subject is no category, then just add the element to the new array (this must be there as it
 				// was found when searching for a path.) 
-				else {
+				else
 					$newSub = array($subject);
-					$x0 = 0;
-				}
 				// do the same for the object
 				if ($this->smwDataGetType($object) == NS_CATEGORY) {
 					$newObj = array();
-					$y0 = $this->getCategoryHierarchy($objects, $newObj);
+					$this->getCategoryHierarchy($objects, $newObj);
 				}
-				else {
+				else
 					$newObj = array($object);
-					$y0 = 0;
-				}
 
 				// now step over all subjects and objects and find these categories / pages only, that really have
 				// a relation only. This will eleminate sub categories that might fit into a scheme but that don't
@@ -676,8 +666,8 @@
 				// or pages are following. Then skip the (top) category and check the rest, as the first element will
 				// be part of the relation if the other elements do. The start index for the check is defined in x0 and
 				// y0 and set by the function getCategoryHierarchy();
-				for ($x = $x0, $xs = count($subjects); $x < $xs; $x++) {
-					for ($y = $y0, $ys = count($objects); $y < $ys; $y++) {
+				for ($x = 0, $xs = count($subjects); $x < $xs; $x++) {
+					for ($y = 0, $ys = count($objects); $y < $ys; $y++) {
 						$found = $this->checkTriplet($subjects[$x], $property, $objects[$y]);
 						if ($found != 0) {
 							$direction = $found;
@@ -1110,10 +1100,8 @@
 	 * @access private
 	 * @param  array &subjects array of current subjects
 	 * @param  array &newCats  array of new categoy ids that will be in the subject but not checked.
-	 * @return int index to start checking subjects
 	 */
 	private function getCategoryHierarchy(&$subjects, &$newCats) {
-		$idxStart = count($subjects) > 1 ? 1 : 0;
 		$id = $subjects[0];
 		array_unshift($newCats, PSC_WikiData::getTopCategory($id));
 
@@ -1126,21 +1114,19 @@
 		
 		// check, if a page is included in subjects, then don't look for any subcategories
 		foreach ($subjects as $sId) {
-			if ($this->smwDataIsPage($sId)) return $idxStart;
+			if ($this->smwDataIsPage($sId)) return;
 		}
 		
 		// we got until here, no page stoped us, then get possible sub categories and add these
 		// for the subjct list to be checked.
 		$lower = PSC_WikiData::getLowestCategories($id);
 		if ($lower[0] != $id) {
-			$idxStart++;
 			foreach ($lower as $l) {
 				$this->details[$l][PSC_SMWDATA_NAME] = PSC_WikiData::getNameById($l);
 				$this->details[$l][PSC_SMWDATA_TYPE] = NS_CATEGORY;
 				$subjects[] = $l;
 			}
 		}
-		return $idxStart;
 	}
 	
 	/**
