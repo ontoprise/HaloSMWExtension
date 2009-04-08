@@ -1,0 +1,10 @@
+__NOTOC__
+
+This release introduces the semantic relation retrieval feature. This feature extends the wiki search with a path search to find structures in the RDF graph. 
+
+It supplements the title and full-text search. Generally speaking, the path search is about to find information which is not modeled as a single triple but as a series (or path) of triples. It's about finding pages identified by the search terms AND which are semantically linked. 
+
+Visit [[Using_Path_Search|Using Path Search]] for an example of use.
+
+[[Category:SMW+ Help Topic|Enhanced_Retrieval]]
+[[SubsectionOf::Help:Path_Search| ]]
