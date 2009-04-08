@@ -93,6 +93,20 @@ Whenever you add a category, instance, or property in the Query Builder they are
 [[Image:Query_interface_add_category_boolean_OR.png|none|thumb|600px|Adding a Disjunction]]
 The screenshot above shows an example of a disjunction. This query will return all articles that are either in the category Book OR in the category Movie. If you add one category Movie and one category Book independently, conjunction is applied and the query would return only articles that are in both categories.
 
+== Semantic Autocompletion ==
+
+The Query Interface now supports semantic autocompletion as well as an intermediate result preview as shown in:
+
+[[Image:query_interface_preview.jpg|500px]]
+
+'''Semantic Autocompletion'''
+This feature is built-in into the query interface. The semantic autocompletion is implicitly triggered whenever a category constraint is added to your query and you autocomplete on a property. That is, as shown in the figure above, only properties of the domain "Person" are displayed/suggested to the user. In detail, only properties that match the domain constraint "Category:Person" are displayed. When no matching properties could be found instead of showing no results a fallback to all properties happens so that the user does not benefit of the eventually added schema information and the behavior of the autocompletion is as always.
+
+A special case holds when the user added a category constrain and wants to add a property that is not annotated with this domain. Strictly taken, the semantic autocompletion wouldn't be triggered and it would never show up in the list. However, since the fallback strategy also holds for empty result sets the property will be presented to the user.
+
+'''Intermediate Result Preview'''
+The query interface now shows intermediate results when the query is being created. That is, whenever a category constraint is added/deleted, a property is added/deleted or any parameter in the Query Layout Manager are changed a refresh of the intermediate result preview is triggered.
+
 
 [[Category:SMW+ Help Topic|Query Interface]]
 [[SubsectionOf::Help:Knowledge_Retrieval| ]]

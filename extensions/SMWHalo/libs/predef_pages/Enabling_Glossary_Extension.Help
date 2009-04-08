@@ -1,0 +1,71 @@
+__NOTOC__
+
+
+== What can this extension do? ==
+
+Ever been reading a technical article with lots and lots of acronyms?  Unless you know all the terminology they are using, it can be really frustrating trying to understand what the author means.  
+
+This extension allows wiki authors to define a list of acronyms and their definitions on a special page.  Whenever that acronym is found, it will be highlighted and mousing over it will reveal the definition in a tooltip.  
+
+Additionally, using Walter Zorn's "[http://www.walterzorn.com/tooltip/tooltip_e.htm JavaScript, DHTML Tooltips" library] you can customize the appearance of the tooltips.
+
+== Usage ==
+
+By default, the page "Glossary" without a namespace will be used as the source of acronyms and their definitions. It's also possible to modify the extension to put the definitions in a protected namespace.
+
+== Installation ==
+1. Checkout the code from the svn to <pre>/extensions/Glossary/</pre>
+
+2. Add the following code to the end of your <pre>LocalSettings.php</pre>
+
+<pre>
+<source lang="php">
+require_once( "$IP/extensions/Glossary/Glossary.php" );
+</source>
+</pre>
+
+3. Create the page "Glossary"
+
+4. Add one line to this page for each acronym.  Each line should start with a ';' (semicolon), then the text to be replaced followed by a ':' (colon) followed by the text to replace it with.
+
+===Sample Glossary===
+
+<pre><nowiki>
+;FTP:File Transport Protocol
+;AAAAA:American Association Against Acronym Abuse
+;ACK:Acknowledge
+;AFAIK:As Far As I Know
+;AWGTHTGTATA:Are We Going To Have To Go Through All This Again
+;HTTP:HyperText Transfer Protocol
+</nowiki></pre>
+
+=== Parameters ===
+
+To lock down the glossary, modify the glossary.php file.
+
+Find the line:
+
+<source lang="php">
+$rev = Revision::newFromTitle(Title::makeTitle(null, 'Glossary'));
+</source>
+
+and change it to:
+
+<source lang="php">
+$rev = Revision::newFromTitle(Title::makeTitle(8, 'Glossary'));
+</source>
+
+The Glossary will now be located at:
+
+MediaWiki:Glossary
+
+'''Alternatively''' to use a different Glossary page within each namespace, change this line to:
+<pre>
+<SOURCE LANG="php">
+$rev = Revision::newFromTitle(Title::makeTitle(intval(($parser->getTitle()->getNamespace())/2)*2, 'Glossary'));
+</SOURCE>
+</pre>
+This will look at the NameSpace:Glossary page for all pages in NameSpace and NameSpace_Talk (assuming you have set any custom namespaces up following the convention of even numbers for the namespace and the following odd numbers for the corresponding talk namespaces).
+
+[[Category:SMW+ Help Topic|Glossary Extension]]
+[[SubsectionOf::Help:End User| ]]
