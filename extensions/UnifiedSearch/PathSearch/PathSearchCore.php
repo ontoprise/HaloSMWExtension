@@ -125,7 +125,7 @@
 					list($id, $direction) = explode("|", $properties[$i]);
 					$propName = ($direction == 1)
 					          ? $this->smwDataGetLink($id).' <img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_right.png" alt="&#9654;"/>'
-					          : '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_right.png" alt="&#9664;"/> '.$this->smwDataGetLink($id);
+					          : '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/skin/images/ps_arrow_left.png" alt="&#9664;"/> '.$this->smwDataGetLink($id);
 					$center = '<td><table class="propSpacer"><tr><td width="100%"><hr style="height: 1px; color: black; background-color: black;"/></td><td><div class="property">'.$propName.'</div></td></tr></table></td>';
 					$left = '<td><table class="propSpacer"><tr><td></td><td class="propSpacerLeft"></td></tr><tr><td></td><td></td></tr></table></td>';
 					$right = '<td><table class="propSpacer"><tr><td class="propSpacerRight"></td><td></td></tr><tr><td></td><td></td></tr></table></td>';
@@ -915,6 +915,7 @@
 
 			// still a triplet left for fetching results
 			while (count($path) > 2) {
+
 				// remove the following two elements from the path. The 3rd (object) is
 				// the subject in the next run
 				$subject = array_shift($path);
@@ -924,21 +925,16 @@
 				// check for pages in the node, pages have priority over categories because
 				// the original search term must have been a page where the category was found for
 				// and then the path was created using category information
-				$pageSubject = $this->elementHasPage($subject); 
-				$subs =  ( $pageSubject !== false ) ? array($pageSubject) : explode('|', $subject);
-				$pageObject = $this->elementHasPage($object); 
-				$objs = ( $pageObject !== false ) ? array($pageObject) : explode('|', $object);
+				$pages = $this->elementGetPages($subject); 
+				$subs =  ( count($pages) > 0 ) ? $pages : explode('|', $subject);
+				$pages = $this->elementGetPages($object);
+				$objs = ( count($pages) > 0 ) ? $pages : explode('|', $object);
 				
 				// save all tuples for the current subject, object (that can be several [sub]categories)
-				// if a category itself has a subcategory, then use the subcategory for the search
-				// because the page is linked with the subcategory but not the top category
+				// or pages
 				$currentTuple = array();
 				foreach ($subs as $s) {
-					if (count(PSC_WikiData::getSubcategories($s)) > 0)
-						continue;
 					foreach ($objs as $o) {
-						if (count(PSC_WikiData::getSubcategories($o)) > 0)
-							continue;
 						$currentRes = $this->getTripletResults($s, $property, $o);
 						if (count($currentRes) > 0)
 							foreach ($currentRes as $tuple) $currentTuple[] = $tuple;
@@ -947,6 +943,7 @@
 				// there were tuples, now try to add these to the previous tuples
 				if (count($currentTuple) > 0)
 					$this->addInstanceResult($currentTuple, $key);
+
 				// if the current path has no instances anymore, then this is because
 				// the different tuples of the single relations in the path didn't match
 				// each other. Even though the path may exist in theory, there are no
@@ -1041,7 +1038,6 @@
 		// result to the instance variable for this path.
 		// Otherwise get the length of the saved results to access
 		// easily the last element in each path of the result lines.
-		
 		if (isset($this->instance[$key]))
 			$length = count($this->instance[$key][0]) - 1;
 		else {
