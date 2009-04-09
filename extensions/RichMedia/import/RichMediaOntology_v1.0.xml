@@ -449,8 +449,8 @@ Edit the page to see the template text.
     <title>Form:RMUpload</title>
     <id>63</id>
     <revision>
-      <id>1112</id>
-      <timestamp>2009-03-31T10:54:35Z</timestamp>
+      <id>1532</id>
+      <timestamp>2009-04-09T06:53:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -473,14 +473,15 @@ if a page with that name already exists, you will be sent to a form to edit that
 | {{{field|Uploader|mandatory|default=current user|size=40|maxlength=40}}}
 |-
 | align=&quot;right&quot; | Copyright by:
-| {{{field|CopyrightBy|size=40|maxlenght=40}}}
+| {{{field|CopyrightBy|size=40|maxlength=40}}}
 |-
 | align=&quot;right&quot; | Creation date:
 | {{{field|CreationDate|default=now}}}
 |-
 | style=&quot;display:none&quot;| {{{field|UploadDate|mandatory|default=now}}}
 |-
-| {{{field|RelatedArticles|hidden}}}
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles|size=40|maxlength=40}}}
 |-
 | {{{field|Filename|hidden}}}
 |}
@@ -592,8 +593,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>383</id>
     <revision>
-      <id>1122</id>
-      <timestamp>2009-03-31T11:29:00Z</timestamp>
+      <id>1521</id>
+      <timestamp>2009-04-09T06:13:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
