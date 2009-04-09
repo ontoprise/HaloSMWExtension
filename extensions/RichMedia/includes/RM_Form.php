@@ -5,31 +5,30 @@ class RMForm {
 		global $wgOut;
 
 		$size = "35";
-		$input_id = "myWpDestFile";
-		$input_name = "myWpDestFile";
-		$className="";
+		$inputId = "myWpDestFile";
+		$inputName = "myWpDestFile";
 		$html =<<<END
 		<form onsubmit="addWpDestFile()">
 		<table><tr><td>
-		<input id="$input_id" name="$input_name" type="text" value="" size="$size" class="$className" /></td>
+		<input id="$inputId" name="$inputName" type="text" value="" size="$size" /></td>
 END;
 		$delimiter = "";
 
-		$upload_window_page = SpecialPage::getPage('UploadWindow');
-		$query_string = "sfInputID=$input_id";
+		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
+		$queryString = "sfInputID=$inputId";
 		if ($delimiter != null)
-		$query_string .= "&sfDelimiter=$delimiter";
+		$queryString .= "&sfDelimiter=$delimiter";
 		global $wgRequest;
-		$article_title = $wgRequest->getText('title');
+		$articleTitle = $wgRequest->getText('title');
 		global $smwgRMFormByNamespace;
-		$smwgRMUploadName = $smwgRMFormByNamespace['RMUpload'];
-		$query_string .= "&".$smwgRMUploadName."[RelatedArticles]=".$article_title;
-		$upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
+		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
+		$queryString .= "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle;
+		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 		
-		$upload_label = wfMsg('smw_rm_uploadheadline');
+		$uploadLabel = wfMsg('smw_rm_uploadheadline');
 		$buttonText = wfMsg('smw_rm_formbuttontext');
-		$html .= " <td><a id=\"link_id\" href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:520\"></a>
-		<input type=\"submit\" onclick=\"addWpDestFile(); return false;\" value=\"$buttonText\"/></td>";
+		$html .= " <td><a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:600\"></a>
+		<input type=\"submit\" value=\"$buttonText\"/></td>";
 		$html .= "</tr></table></form>";
 		
 		//Used for displaying the upload successful message:
