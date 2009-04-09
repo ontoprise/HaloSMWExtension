@@ -1,5 +1,21 @@
 __NOTOC__
-The Gardening tool suite of SMW+ is a set of programs that allow you to improve the quality of your wiki.
+
+The Gardening extension provides a compilation of bots to support the maintenance of a semantic wiki. Some bots are intended to find inconsistencies or anomalies, other are used to do long-running jobs. The Gardening extension can be installed on top the Halo extension and the bot framework. The Gardening bots are accessible via the SpecialPage of the bot framework which manages the bot execution. (For historical reasons this page is called 'Gardening')
+
+The gardening extension helps to find inconsistencies in the ontology. It can
+
+* check the wiki consistency
+* materialize template content
+* find undefined entities
+* find pages without annotations
+* find anomalies and
+* check referential integrity
+* export the wiki as OWL ontology
+* import an OWL file into the wiki 
+
+The findings are logged and displayed in the gardening log. 
+
+The Gardening Extension of SMW+ is a set of programs that allow you to improve the quality of your wiki.
 
 [[Image:Gardening_toolbox.png|none|thumb|600px|Gardening Toolbox]]
 

@@ -1,10 +1,10 @@
 __NOTOC__
 The semantic data of your wiki can be exported into an external file. SMW+ provides two different methods to export that data:
 
-* Export into the OWL format using a bot of the [[Help:Gardening|Gardening]] tool suite
+* Export into the OWL format using a bot of the [[Help:Gardening|Gardening]] extension
 * Export into the OWL/RDF format via the special page <tt>Special:ExportRDF</tt>
 
-== Export Using the Gardening Tool Suite ==
+== Export Using the Gardening Extension ==
 
 To export semantic data using the gardening bot, proceed as follows:
 
