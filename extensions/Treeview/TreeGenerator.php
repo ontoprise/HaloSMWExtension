@@ -45,11 +45,8 @@ class TreeGenerator {
 		} else {
 			$categoryName = NULL;
 		}
+
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
-		/*$displayProperty = array_key_exists('display', $genTreeParameters)
-		                   ? Title::newFromText($genTreeParameters['display'], SMW_NS_PROPERTY)
-		                   : NULL;
-		                   */
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
@@ -228,7 +225,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				
 		// fetch properties of that smw_ids found (both s_id and o_id)
 		$this->getElementProperties();
-		
+
 		$this->sortElements();
 
 		// if start is set but not found in element properties, then it doesn't belong to the desired subset
@@ -266,6 +263,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $query1= "SELECT s.smw_id as smw_id, s.smw_sortkey as title, s.smw_title as link, s.smw_namespace as ns, a.o_id as category ".
 	             "FROM $smw_ids s, $smw_inst2 a ".
 	             "WHERE s.smw_id in (%s) and s.smw_id = a.s_id";
+	    // if the tree is limited by categories, add these to the query
+	    if (! is_null($this->smw_category_id))
+	    	$query1.= " and a.o_id = ".$this->smw_category_id;
 	    // query for fetching title and link for each smw_id that has no category assigned
 	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link, smw_namespace as ns ".
 	             "FROM $smw_ids WHERE smw_id in (%s)";
