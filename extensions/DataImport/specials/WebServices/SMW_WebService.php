@@ -21,6 +21,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_XPathProcessor.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_JSONProcessor.php");
+require_once("$smwgDIIP/specials/WebServices/SMW_SubParameterProcessor.php");
 
 /**
  * Instances of this class describe a web service.
@@ -1258,6 +1259,50 @@ class WebService {
 		}
 		return null;
 
+	}
+	
+	public function validateSpecifiedSubParameters($subParameterBundle){
+		$messages[] = array();
+		
+		$parameterName = array_keys($subParameterBundle);
+		$parameterName = $parameterName[0];
+		
+		//check if parameter exists
+		$parameterDefinition = "";
+		foreach($this->mParsedParameters->children() as $child){
+			if("".$child["name"] == $parameterName){
+				$parameterDefinition = $child->asXML();
+			}
+		}
+		if($parameterDefinition == ""){
+			$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName);
+			return array($messages, null);
+		}
+		
+		$subParameters = $subParameterBundle[$parameterName];
+				
+		$subParameterProcessor = new SMWSubParameterProcessor(
+			$parameterDefinition, $subParameters);
+
+		$subParameterProcessor->getMissingSubParameters();
+
+		$missingSP = $subParameterProcessor->getMissingSubParameters();
+		foreach($missingSP as $key => $dontCare){
+			$messages[] = wfMsg('smw_wsuse_parameter_missing', "".$key);
+		}
+		
+		$unavailableSP = $subParameterProcessor->getUnavailableSubParameters();
+		foreach($unavailableSP as $key => $dontCare){
+			$messages[] = wfMsg('smw_wsuse_wrong_parameter', $key);
+		}
+		
+		if(count($messages) > 0){
+			return array($messages, array());
+		}
+		
+		$response = $subParameterProcessor->createParameterValue();
+		
+		return array(null, array($parameterName => $response));	
 	}
 }
 

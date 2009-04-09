@@ -24,8 +24,6 @@
  * @author Ingo Steinbauer
  *
  */
-
-
 class JSONProcessor {
 	
 	/*

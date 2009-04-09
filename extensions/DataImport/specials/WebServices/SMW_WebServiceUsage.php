@@ -206,7 +206,9 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
 	}
 
-	$messages = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+	$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+	$messages = $response[0];
+	$wsParameters = $response[1];
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 		
@@ -369,9 +371,33 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null)
  */
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$ws = WebService::newFromId($wsId);
+	
+	//validate subparameters and construct appropriate parameters
+	$subParameters = array();
+	foreach($wsParameters as $name => $value){
+		$name = explode(".", $name);
+		if(count($name) > 1){
+			unset($wsParameters[$name[0].".".$name[1]]);
+			$subParameters[$name[0]][$name[1]] = $value;
+		}
+	}
+	$mSP = array();
+	foreach($subParameters as $name => $value){
+		$result = $ws->validateSpecifiedSubParameters(array($name => $value));
+		$mSP = array_merge($mSP, $result[0]);
+		if(!is_null($result[1])){
+			foreach($result[1] as $key => $value){
+				$wsParameters[$key] = $value;
+			} 
+		}
+	}
+	if(count($mSP) == 0){
+		$mSP = null;
+	}
+	
 	$mP = $ws->validateSpecifiedParameters($wsParameters);
 	$mR = $ws->validateSpecifiedResults($wsReturnValues);
-	return array_merge($mP, $mR);
+	return array(array_merge($mSP, $mP, $mR), $wsParameters);
 }
 
 /*
