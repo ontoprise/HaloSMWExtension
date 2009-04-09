@@ -77,17 +77,15 @@
 			list($concepts, $properties) = $this->splitConceptsProperties($path);
 			
 			// image next to the box
-			$linkToInstances = '<a ' .
-							'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
-							'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" >__NAME__</a>';
 			$html .= '<table><tr><td valign="top">';
 			if ($this->outputMethod == PSC_OUTPUT_PAGE) {
-				$html .= str_replace('__NAME__',
-                             '<img src="'.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/search_icon.png" ' .
-					         'alt="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'"/>',
-					         $linkToInstances);
+				$html .= '<span class="searchprev"><a ' .
+						 'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
+						 'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
+						 'title="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'"></a></span>';
 			}
 			$html .= '</td><td width="100%">';
+			
 			// draw all domains/ranges i.e. category, page
 			$html .= '<table class="tblmain"><tr>';
 			for ($i = 0, $is = count($concepts); $i < $is; $i++) {
@@ -158,7 +156,11 @@
 				// print link with more results and quit loop here...
 				if ($numRows == $numRowsShowMax && $numRowsTotal > $numRows + 1) {
 					$html.= '<td colspan="'.(count($row) * 2 - 1).'" class="instanceValues">' .
-                            str_replace('__NAME__', wfMsg('us_pathsearch_show_all_results', $numRowsTotal), $linkToInstances).'</td></tr>';
+							'<a ' .
+						    'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
+						    'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
+						    'title="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'">'.
+                            wfMsg('us_pathsearch_show_all_results', $numRowsTotal).'</td></tr>';
 					break;
 				}
 				// print result line
