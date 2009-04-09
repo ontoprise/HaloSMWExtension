@@ -679,7 +679,7 @@ END;
 		
    		//load the upload success message
    		
-//		setTimeout(parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink')),5000);
+		setTimeout(parent.fb.loadAnchor(parent.document.getElementById('uploadsuccesslink')),5000);
 		//parent.fb.end();
 	</script>
 END;
@@ -958,8 +958,7 @@ END;
 		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
 		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
 		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-		<input type='hidden' name='sfUploadForm' value=\"" . htmlspecialchars( $this->mInputID ) ."\"/>"
+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
 		);
 
 		//Beginn RichMedia
@@ -981,22 +980,21 @@ END;
 					{
 						$wgOut->addHTML(
 								"<input type='hidden' name=\"" . 
-						$rMDestFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
+								$rMDestFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
 								"\" value=\"" . htmlspecialchars( $rMFormSubFieldValue ) ."\"/>" .
 								"<input type='hidden' name=\"" . 
-						$rMUploadFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
+								$rMUploadFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
 								"\" value=\"" . htmlspecialchars( $rMFormSubFieldValue ) ."\"/>"
 								);
-
 					}
 				}
 				else {
 					$wgOut->addHTML(
 							"<input type='hidden' name=\"" . 
-					$rMDestFormName."[".$rMFormField."]" .
+							$rMDestFormName."[".$rMFormField."]" .
 							"\" value=\"" . htmlspecialchars( $rMFormFieldValue ) ."\"/>" .
 							"<input type='hidden' name=\"" . 
-					$rMUploadFormName."[".$rMFormField."]" .
+							$rMUploadFormName."[".$rMFormField."]" .
 							"\" value=\"" . htmlspecialchars( $rMFormFieldValue ) ."\"/>"
 							);
 				}
@@ -1334,6 +1332,11 @@ EOT
 		$wgOut->addHTML("<div id=\"contentSub\"></div>");
 		
 		$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
+		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
+			global $wgCanonicalNamespaceNames;
+			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
+			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
+		}
 		$form_add= new SFAddData();
 		//maybe we need a generic name for the target here...
 		$form_add_test = $form_add->execute( $rMUploadName . '/upload_test_DaMO7' );
