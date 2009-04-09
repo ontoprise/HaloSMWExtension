@@ -1082,11 +1082,6 @@ wgAjaxLicensePreview = {$alp};
 		if ( $ew ) $ew = " style=\"width:100%\"";
 		else $ew = '';
 
-		if ( '' != $msg ) {
-			$sub = wfMsgHtml( 'uploaderror' );
-			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
-			  "<span class='error'>{$msg}</span>\n" );
-		}
 		global $smwgRMFormByNamespace;
 		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
 		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
@@ -1330,6 +1325,12 @@ EOT
 		
 //		
 		$wgOut->addHTML("<div id=\"contentSub\"></div>");
+		if ( '' != $msg ) {
+			$sub = wfMsgHtml( 'uploaderror' );
+			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
+			  "<span class='error'>{$msg}</span>\n" );
+		}
+		
 		
 		$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
