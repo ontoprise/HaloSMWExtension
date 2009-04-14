@@ -5,7 +5,7 @@ include_once('SMW_RuleRewriter.php');
 /**
  * FlogicRuleRewriter
  * 
- * Rewrites flogic rules to RDF predicate syntax.
+ * Rewrites flogic rules to object logic syntax.
  * 
  * Example: 
  * 
@@ -13,8 +13,8 @@ include_once('SMW_RuleRewriter.php');
  * 
  *  gets transformed into:
  * 
- * FORALL X,Y attr_(X, "http://wiki/property#"#HasFather, Y)@"http://wiki" <- attr_(Y, "http://wiki/property#"#HasChild, X)@"http://wiki" 
- *  AND isa_(Y, "http://wiki/category#"#Man.)@"http://wiki"
+ * attg_(?X, _"http://wiki/property#HasFather", ?Y) :- attg_(?Y, _"http://wiki/property#HasChild", ?X) 
+ *  AND isa_(?Y, _"http://wiki/category#Man".)"
  *
  */
 class FlogicRuleRewriter extends RuleRewriter {
@@ -43,14 +43,9 @@ class FlogicRuleRewriter extends RuleRewriter {
 		
 		// replace placeholder for namespace
 		$ruletext = str_replace("{{wiki-name}}", $smwgTripleStoreGraph, $ruletext);
-		$ruletext = str_replace("|", "", $ruletext);
-
-		$ruletext = str_replace('"xsd:string"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
-		$ruletext = str_replace('"xsd:float"', '"http://www.w3.org/2001/XMLSchema#"#float', $ruletext);
-		$ruletext = str_replace('"xsd:double"', '"http://www.w3.org/2001/XMLSchema#"#double', $ruletext);
-		$ruletext = str_replace('"xsd:boolean"', '"http://www.w3.org/2001/XMLSchema#"#boolean', $ruletext);
-		$ruletext = str_replace('"xsd:dateTime"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
-		$ruletext = str_replace('"xsd:unit"', '"http://www.w3.org/2001/XMLSchema#"#string', $ruletext);
+		$ruletext = substr($ruletext, strpos($ruletext, "|")+1);
+        $ruletext = str_replace("<-", ":-", $ruletext);
+		
 
 		return $ruletext;
 	}
@@ -82,30 +77,36 @@ class FlogicRuleRewriter extends RuleRewriter {
 		$subject = $match[1];
 		$predicate = $match[2];
 		$object = $match[3];
-		$literalpredicate = false;
+		
 
 		$predicateDV = SMWPropertyValue::makeProperty("_TYPE");
 		
 		$prop = SMWPropertyValue::makeUserProperty($predicate);
 		$typeID = $prop->getPropertyTypeID();
-		$xsdType = WikiTypeToXSD::getXSDType($typeID);		
+		$xsdType = substr(WikiTypeToXSD::getXSDType($typeID), 4); // get the parts after xsd:...		
 		
 		$types = smwfGetStore()->getPropertyValues(Title::newFromText(ucfirst($predicate), SMW_NS_PROPERTY), $predicateDV);
 		
 		if (!in_array($subject, $this->variables)) {
-			$subject = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($subject);
+			$subject = "_\"{{wiki-name}}".self::$INST_NS_SUFFIX.ucfirst($subject)."\"";
+		} else {
+			$subject = "?".$subject;
 		}
 
 		if (!in_array($predicate, $this->variables)) {
-			$predicate = "\"{{wiki-name}}".self::$PROP_NS_SUFFIX."\"#".ucfirst($predicate);
-		}
+			$predicate = "_\"{{wiki-name}}".self::$PROP_NS_SUFFIX.ucfirst($predicate)."\"";
+		} else {
+            $predicate = "?".$predicate;
+        }
 		 
 		if (count($types) == 0) {
 			// object is instance or variable
 				
 			if (!in_array(trim($object), $this->variables)) {
 				// instance
-				$object = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($object);
+				$object = "_\"{{wiki-name}}".self::$INST_NS_SUFFIX.ucfirst($object)."\"";
+			} else {
+				$object = "?".$object;
 			}
 		} else {
 			$type = $types[0]; // ignore multiple types
@@ -113,29 +114,30 @@ class FlogicRuleRewriter extends RuleRewriter {
 				// object is instance or variable
 				if (!in_array(trim($object), $this->variables)) {
 					// instance
-					$object = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($object);
+					$object = "_\"{{wiki-name}}".self::$INST_NS_SUFFIX.ucfirst($object)."\"";
 				}
 			} else {
 				
 				// object is literal or variable
-				$literalpredicate = true;
+				
 				if (!in_array(trim($object), $this->variables)) {
 					// object is literal
 					$parts = explode(" ", $object);
 					if (count($parts) == 2 && is_numeric($parts[0])) {
-						// probably a unit
-						$object = $parts[0] . ", '" . $parts[1] . "'"; 
+						// FIXME: probably a unit. Can not be expressed in ObjectLogic at the moment
+						$object = "\"".$parts[0] . " " . $parts[1]."\"^^_$xsdType";
+						
 					} else {
-					   $object = is_numeric($object) ? $object.",\"$xsdType\"" : "\"$object\",''";
+					   $object = "\"".$object."\"^^_$xsdType";
 					}
 					
 				} else {
-					$object .= ",\"$xsdType\"";
+					$object = "?".$object;
 				}
 			}
 		}
-		$stmt = ($literalpredicate ? "attl_" : "attr_")."($subject, $predicate, $object)@\"{{wiki-name}}\""."\n";
-		return ($literalpredicate ? "attl_" : "attr_")."($subject, $predicate, $object)@\"{{wiki-name}}\"";
+		$stmt = "attg_($subject, $predicate, $object)";
+		return  $stmt;
 	}
 
 	/**
@@ -156,15 +158,19 @@ class FlogicRuleRewriter extends RuleRewriter {
 		}
       
 		if (!in_array($instance, $this->variables)) {
-			$instance = "\"{{wiki-name}}".self::$INST_NS_SUFFIX."\"#".ucfirst($instance);
+			$instance = "_\"{{wiki-name}}".self::$INST_NS_SUFFIX.ucfirst($instance)."\"";
+		} else {
+			$instance = "?$instance";
 		}
 		
 		if (!in_array($category, $this->variables)) {
-			$category = "\"{{wiki-name}}".self::$CAT_NS_SUFFIX."\"#".ucfirst($category);
-		}
+			$category = "_\"{{wiki-name}}".self::$CAT_NS_SUFFIX.ucfirst($category)."\"";
+		} else {
+            $category = "?$category";
+        }
 		 
 
-		return "isa_($instance, $category)@\"{{wiki-name}}\"";
+		return "isa_($instance, $category)";
 	}
 }
 ?>
