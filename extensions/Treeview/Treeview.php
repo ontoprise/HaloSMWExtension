@@ -10,7 +10,7 @@
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
  
-define('SEMANTIC_TREEVIEW_VERSION','1.0');
+define('SEMANTIC_TREEVIEW_VERSION','1.1');
 
 require_once('TreeGenerator.php');
 
@@ -77,7 +77,7 @@ class SemanticTreeview {
             }
  
         # Add link to output to load dtree.js script
-        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview --></script>\n");
+        $wgOut->addScript("<script type=\"$wgJsMimeType\" src=\"{$this->baseUrl}/dtree.js\"><!-- Semantic Treeview ".SEMANTIC_TREEVIEW_VERSION." --></script>\n");
         $wgOut->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
@@ -118,11 +118,12 @@ class SemanticTreeview {
 	    	    parse_str($matches[1], $params);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
-            	    $addSmwData = "addSmwData(%s, '".$params['property']."',";
+            	    $addSmwData = "addSmwData(, '".$params['property']."',";
             	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
             	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
             	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
-					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth'].");" : "null);";	
+					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth'] : "null, ";
+					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."');" : "null);";	
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n".
                             $matches[2].$matches[3]."\n";
@@ -231,7 +232,7 @@ class SemanticTreeview {
                 # Append the dTree JS to add a node for this row
                 if (strpos($item, "addSmwData(") !== false ) {
                     $node--;
-                    $nodes .= "{$this->uniqname}$id.".trim(sprintf(stripcslashes($item), $node))."\n";
+                    $nodes .= "{$this->uniqname}$id.".trim(str_replace('addSmwData(,', 'addSmwData('.$node.',', stripcslashes($item)))."\n";
                 } else {
                     if ($depth > $last) $parents[$depth] = $node - 1;
                     $parent = $parents[$depth];

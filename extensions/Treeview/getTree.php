@@ -19,6 +19,7 @@ function smw_treeview_getTree($input) {
   $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $refresh = (isset($req['r'])) ? true : NULL;
+  $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
   
   // fetch on depth only
   $maxDepth = 'maxDepth=1';
@@ -29,7 +30,7 @@ function smw_treeview_getTree($input) {
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
-                                     $start, $display, $maxDepth, $redirectPage, $level);
+                                     $start, $display, $maxDepth, $redirectPage, $level, $condition);
   
   // if start is set, and refresh tree is not done
   // then remove the first element, as this is the one provided in start

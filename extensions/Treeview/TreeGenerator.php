@@ -55,6 +55,7 @@ class TreeGenerator {
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		$redirectPage = (($maxDepth > 0) &&  isset($genTreeParameters['redirectPage']))
 		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
+		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
 		if (array_key_exists('dynamic', $genTreeParameters)) {
 		    $useAjaxExpansion = 1;
@@ -65,7 +66,7 @@ class TreeGenerator {
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
-		$tv_store->setup(($useAjaxExpansion) ? 1 : $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json);
+		$tv_store->setup(($useAjaxExpansion) ? 1 : $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 
@@ -73,9 +74,10 @@ class TreeGenerator {
 		if (!$this->json && $useAjaxExpansion) {
 		    $returnPrefix= "\x7f"."dynamic=1&property=".$genTreeParameters['property']."&";
 		    if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
-		    if ($displayProperty) $returnPrefix .= "display=".$genTreeParameters['display']."&";
+		    if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
 			if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
 		    if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
+		    if ($condition) $returnPrefix .= "condition=".$condition."&";
 		    if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
@@ -135,37 +137,34 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     private $smw_relation_id;
     private $smw_category_id;
     private $smw_start_id;
+    private $smw_condition_ids;
     
     // information about the tree is stored here
    	private $elementProperties;
    	private $sIds;
     private $treeList;
-      
-    public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput) {
+
+    public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition) {
+
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
         $this->redirectPage = $redirectPage;
-        /*$this->displayProperty = ($displayProperty != NULL)
-                                 ? SMWPropertyValue::makeUserProperty($displayProperty->getDBkey())
-                                 : NULL;*/
         $this->displayProperty = $displayProperty;
         $this->hchar = $hchar;
         $this->json = $jsonOutput;
+        $this->condition = $condition;
         
-		// empty all class variables, that will store information about this tree
-		$this->elementProperties= array();
-		$this->sIds = array();
-		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
-
         $this->smw_relation_id = NULL;
      	$this->smw_category_id = NULL;
 		$this->smw_start_id = NULL;
-    }
-
-	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
-		// empty all class variables, that will store information about this tree
+		$this->smw_condition_ids = NULL;
+		
+		// empty class variables, that will store information about this generated tree
 		$this->elementProperties= array();
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
+    }
+
+	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 
 	  	$db = NULL;
 		$categoryConstraintTable = '';
@@ -174,10 +173,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$startRefine = '';
 		
 	    // relation must be set -> we fetch here the smw_id of the requested relation
-		if (! $this->getRelationId($relation)) return ($this->json) ? array() : "";
+		if (! ($this->smw_relation_id = $this->getSmwIdByTitle($relation))) return ($this->json) ? array() : "";
 		// if category is set, we will fetch the id of the category
 		if ($category) {
-		    if (! $this->getCategoryId($category)) return ($this->json) ? array() : "";
+		    if (! ($this->smw_category_id  = $this->getSmwIdByTitle($category))) return ($this->json) ? array() : "";
 		    if (!$db) $db =& wfGetDB( DB_SLAVE );
 		    $smw_inst2 = $db->tableName('smw_inst2');
 		    $categoryConstraintTable = ",$smw_inst2 i ";
@@ -193,7 +192,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$query = "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
 		         ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere;
 
-		if ($start && (!$this->getStartId($start)))
+		if ($start && (! ($this->smw_start_id = $this->getSmwIdByTitle($start))))
 			return ($this->json)
 		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
@@ -206,9 +205,17 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 		$query.= $categoryConstraintGroupBy;
+
+		// check, if there were condition for the tree.
+		if ($this->condition) $this->getCondition($this->condition);
+
 		$res = $db->query($query);
-		
 		while ($row = $db->fetchObject($res)) {
+			if (($this->condition) && 
+		        !(in_array($row->s_id, $this->smw_condition_ids) &&
+			      in_array($row->o_id, $this->smw_condition_ids))) 
+			continue;
+			
 			if (!isset($this->sIds[$row->s_id]))
 				$this->sIds[$row->s_id]= array($row->o_id);
 			else
@@ -222,10 +229,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		$db->freeResult($res);
 		if (count($this->sIds) == 0) return;
-				
-		// fetch properties of that smw_ids found (both s_id and o_id)
+
+		// fetch properties of that smw_ids found (both s_id and o_id) if there are no condtions set
 		$this->getElementProperties();
 
+		// sorting the nodes (so that the member variable sIds is in correct order) before building the tree 
 		$this->sortElements();
 
 		// if start is set but not found in element properties, then it doesn't belong to the desired subset
@@ -240,6 +248,38 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
             return $this->formatTreeToJson();
 		return $this->formatTreeToText();
 	}
+
+	private function getCondition($querystring) {
+		$fixparams = array(
+			"format" => "ul",
+		);
+		$result = SMWQueryProcessor::getResultFromQueryString($querystring, $fixparams, array(), SMW_OUTPUT_WIKI);
+
+		// the list contains some html and wiki text, we need to extract the page values
+		$result = strip_tags($result);
+
+		preg_match_all('/\[\[[^\|]+/', $result, $matches); 
+		$pages = $matches[0];
+		$smwIds = array();
+		foreach ($pages as $page) {
+			$page = substr($page, 2); // remove the "[["
+			$title = Title::newFromDBkey($page);
+			$smw_id = $this->getSmwIdByTitle($title);
+			$smwIds[] = $smw_id;
+			
+			// fill the elementProperties variable for this element. Almost all neccessary data
+			// are availabe at this point
+			$this->elementProperties[$smw_id] = array(substr($page, strpos($page, ':') + 1), null, $title->getNamespace());
+			
+			// if we want to display the value of some property instead of the page name then this
+			// post processing must be done.
+			$row->smw_id = $smw_id;
+			$row->title = $this->elementProperties[$smw_id][0];
+			$row->ns = $title->getNamespace();
+			$this->postProcessingForElement($row);
+		}
+		$this->smw_condition_ids = $smwIds;
+	}
 	
 	/**
 	 * Get title, category and other detailed information of node elements.
@@ -250,7 +290,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * 
 	 */
 	private function getElementProperties() {
-		global $wgContLang;
+		// if there are special conditions about the nodes to select, then all valid
+		// element properties have been fetched already
+		//if ($this->condition) return;
 		
 	    $db =& wfGetDB( DB_SLAVE );
 	    $smw_ids = $db->tableName('smw_ids');
@@ -267,7 +309,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    if (! is_null($this->smw_category_id))
 	    	$query1.= " and a.o_id = ".$this->smw_category_id;
 	    // query for fetching title and link for each smw_id that has no category assigned
-	    $query2= "SELECT smw_id, smw_sortkey as title, smw_title as link, smw_namespace as ns ".
+	    $query2= "SELECT smw_id, smw_sortkey as title, smw_namespace as ns ".
 	             "FROM $smw_ids WHERE smw_id in (%s)";
 	    $query_add = ""; // list of ids
 	    foreach (array_keys($this->elementProperties) as $id) {
@@ -280,10 +322,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $fids = array_flip(explode(",", $query_add));
 	            while ($row = $db->fetchObject($res)) {
 	                unset($fids[$row->smw_id]);
-	                $nsText = $wgContLang->getNsText($row->ns);
-	                $link = ((strlen($nsText) > 0) ? "$nsText:" : "").$row->link;
 	                if (is_null($this->smw_category_id) || $this->smw_category_id == $row->category) {
-	               		$this->elementProperties[$row->smw_id]= array($row->title, $row->category, $link);
+	               		$this->elementProperties[$row->smw_id]= array($row->title, $row->category, $row->ns);
                    		$this->postProcessingForElement($row);
 	                }
                    	else {
@@ -304,9 +344,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            	else {
 		                $res = $db->query(sprintf($query2, implode(",", array_keys($fids))));
 		                while ($row = $db->fetchObject($res)) {
-			                $nsText = $wgContLang->getNsText($row->ns);
-	    		            $link = ((strlen($nsText) > 0) ? "$nsText:" : "").$row->link;
-	    	                $this->elementProperties[$row->smw_id]= array($row->title, NULL, $link);
+	    	                $this->elementProperties[$row->smw_id]= array($row->title, NULL, $row->ns);
 	        	            $this->postProcessingForElement($row);
 	            	    }
 	                	$db->freeResult($res);
@@ -356,9 +394,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @param integer $ns namespace of element
 	 * @return integer $smw_id or NULL on failure
 	 */
-	private function getSmwIdByTitle(Title &$title, $ns) {
+	private function getSmwIdByTitle(Title &$title) {
 		static $db;
 		if (!$db) $db =& wfGetDB( DB_SLAVE );
+		$ns = $title->getNamespace();
 		$smw_ids = $db->tableName('smw_ids');
 		$query = "SELECT smw_id FROM $smw_ids WHERE ".
 		         "smw_title = ".$db->addQuotes($title->getDBKey()).
@@ -370,45 +409,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if (!$s)
 			return NULL;
 		return $s->smw_id;
-	}
-	
-	/**
-	 * Get smw_id of property for which relations are searched in triples
-	 * and stores this id in smw_relation_id
-	 *
-	 * @param Title $relation
-	 * @return Boolean true on success or false on error
-	 */
-	private function getRelationId(Title &$relation) {
-		if ($this->smw_relation_id = $this->getSmwIdByTitle($relation, SMW_NS_PROPERTY)) 
-		    return true;
-		return false;
-	}
-
-	/**
-	 * Get smw_id of category for which tree is started to create
-	 * and stores this id in smw_category_id
-	 *
-	 * @param Title $category
-	 * @return Boolean true on success or false on error
-	 */
-	private function getCategoryId(Title $category) {
-		if ($this->smw_category_id = $this->getSmwIdByTitle($category, NS_CATEGORY))
-		    return true;
-		return false;	  
-	}
-
-	/**
-	 * Get smw_id of article which is defined in start
-	 * and stores this id in smw_start_id
-	 *
-	 * @param Title $start
-	 * @return Boolean true on success or false on error
-	 */	
-	private function getStartId(Title $start) {
-		if ($this->smw_start_id = $this->getSmwIdByTitle($start, $start->getNamespace()))
-		    return true;
-		return false;	  
 	}
 	
 	/**
@@ -602,6 +602,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * @return string	  $tree that can be used by the parser function #tree 
      */
 	private function formatTreeToText() {
+		global $wgContLang;
+		
 		$tree = '';
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
@@ -611,12 +613,18 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $this->treeList->rewind();
 	    while ($item = $this->treeList->getCurrent()) {
 	    	$this->treeList->next();
+	    	
+	        $link = $this->elementProperties[$item[0]][0];
+	        // prefix link with namespace text
+	        if ($this->elementProperties[$item[0]][2] != NS_MAIN)
+	        	$link = $wgContLang->getNsText($this->elementProperties[$item[0]][2]).":".$link;
+
 		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[[";
 		    if (isset($this->elementProperties[$item[0]][3]))
-		        $tree.= $this->elementProperties[$item[0]][0]."|".$this->elementProperties[$item[0]][3];
+		        $tree.= $link."|".$this->elementProperties[$item[0]][3];
 		    else {
-		         if ($this->elementProperties[$item[0]][0] != str_replace("_", " ", $this->elementProperties[$item[0]][2]))
-		             $tree.= $this->elementProperties[$item[0]][2]."|".$this->elementProperties[$item[0]][0];
+		         if ($this->elementProperties[$item[0]][2] != NS_MAIN)
+		             $tree.= str_replace(' ', '_', $link)."|".$this->elementProperties[$item[0]][0];
 		         else
 		             $tree.= $this->elementProperties[$item[0]][0];
 		    }
@@ -636,6 +644,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * @return array	  $tree of elements as an asoc array (name, link) 
      */
 	private function formatTreeToJson() {
+		global $wgContLang;
+		
 	    $tree = array();
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
@@ -643,11 +653,17 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $this->treeList->rewind();
 	    while ($item = $this->treeList->getCurrent()) {
 	        $this->treeList->next();
+	        
+	        $link = $this->elementProperties[$item[0]][0];
+	        // prefix link with namespace text
+	        if ($this->elementProperties[$item[0]][2] != NS_MAIN)
+	        	$link = $wgContLang->getNsText($this->elementProperties[$item[0]][2]).":".$link;
+
 		    $tree[]= array(
 		      'name' => isset($this->elementProperties[$item[0]][3]) 
 		                ? $this->elementProperties[$item[0]][3]
 		                : $this->elementProperties[$item[0]][0],
-		      'link' => $this->elementProperties[$item[0]][2],
+		      'link' => str_replace(' ', '_', $link),
 		      'depth' => $item[1],
 		    );
 		    unset($item);

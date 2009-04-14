@@ -87,20 +87,22 @@ Node.prototype.unserialize = function(str) {
 }
 
 // SMW Data object (for relation and display)
-function SmwData(id, relation, category, display, start, maxDepth) {
+function SmwData(id, relation, category, display, start, maxDepth, conditions) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
 	this.display = display;
 	this.start = start;
 	this.maxDepth = maxDepth;
+	this.conditions = conditions;
 }
 
 SmwData.prototype.getUrlParams = function(withStart) {
 	var str = 'p%3D' + URLEncode(this.relation);
 	if (this.category) str += '%26c%3D' + URLEncode(this.category);
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
-	if (withStart && this.start) str += '%26s%3D' + URLEncode(this.start); 
+	if (withStart && this.start) str += '%26s%3D' + URLEncode(this.start);
+	if (this.conditions) str += '%26q%3D' + URLEncode(this.conditions); 
 	str += '%26';
 	return str;
 }
@@ -137,7 +139,7 @@ Parents.prototype.get = function(depth) {
 	return; 
 }
 
-// Tree object
+// Tree object, based on dtree (see copyrights at the begining of this file)
 function dTree(objName, className) {
 	this.config = {
 		target				: null,
@@ -192,8 +194,8 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 };
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, conditions) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, conditions);
 };
 
 // Get Smw url params for a specific node
