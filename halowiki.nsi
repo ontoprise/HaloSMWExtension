@@ -227,7 +227,7 @@ Section "-CopyInstaller"
   !endif
 SectionEnd
 
-Section "Online Help" ohelp
+/*Section "Online Help" ohelp
     SectionIn 1 2 3
     SectionGetFlags ${xampp} $0
     IntOp $0 $0 & ${SF_SELECTED}
@@ -242,7 +242,7 @@ Section "Online Help" ohelp
         ${EndIf}
     !endif
 SectionEnd
-
+*/
 
 
 SectionGroup "${PRODUCT} ${VERSION}" 
@@ -649,7 +649,7 @@ Function configCustomizationsForNew
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
         SetOutPath "$INSTDIR\htdocs\mediawiki"
-        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
 FunctionEnd
 
 
@@ -700,8 +700,8 @@ Function configCustomizationsForUpdate
         #CALL waitForApacheAndMySQL
         MessageBox MB_OK $(FIREWALL_COMPLAIN_INFO)
         SetOutPath "$INSTDIR\htdocs\mediawiki"
-        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --removehelppages'
-        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHalo\maintenance\SMW_setup.php" --helppages'
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --deinstall'
+        nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
 FunctionEnd
 
 Function checkForSkype
@@ -878,21 +878,13 @@ Section "Uninstall"
     
     Call un.uninstallAsWindowsService
     
-    # Delete desktop icon
-    /*Delete "$DESKTOP\Start ${PRODUCT}.lnk"
-    Delete "$DESKTOP\Stop ${PRODUCT}.lnk"
-    Delete "$DESKTOP\${PRODUCT} ${VERSION} Help.lnk"
-    Delete "$DESKTOP\${PRODUCT} ${VERSION} Main Page.lnk"
-    Delete "$DESKTOP\${PRODUCT} ${VERSION} Start Lucene.lnk"*/ 
-    
-
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
+    #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
     ;Delete start menu IF THE MENU IS EMPTY.
     StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
