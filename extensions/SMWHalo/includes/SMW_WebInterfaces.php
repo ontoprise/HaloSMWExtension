@@ -41,7 +41,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", smwfgetWebserviceEndpoint($smwgWebserviceEndpoint), $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	}  else if ($wsdlID == 'get_sparul') {
@@ -50,6 +50,7 @@ function smwf_ws_getWSDL($wsdlID) {
         $contents = fread ($handle, filesize ($wsdl));
         fclose($handle);
         global $smwgWebserviceEndpoint;
+        // NOTE: SPARUL updates on multiple endpoints make no sense, so it is assumed that there is only one endpoint. This is checked during initialization.
         if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
         else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
         exit;
@@ -59,7 +60,7 @@ function smwf_ws_getWSDL($wsdlID) {
         $contents = fread ($handle, filesize ($wsdl));
         fclose($handle);
         global $smwgWebserviceEndpoint;
-        if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+        if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", smwfgetWebserviceEndpoint($smwgWebserviceEndpoint), $contents);
         else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
         exit;
     } else if ($wsdlID == 'get_flogic') {
@@ -68,7 +69,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", smwfgetWebserviceEndpoint($smwgWebserviceEndpoint), $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	} else if ($wsdlID == 'get_explanation') {
@@ -77,9 +78,17 @@ function smwf_ws_getWSDL($wsdlID) {
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
 		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
+		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", smwfgetWebserviceEndpoint($smwgWebserviceEndpoint), $contents);
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	}
+	
+/**
+ * Returns a randomly webservice endpoint.
+ */
+function smwfgetWebserviceEndpoint($endpoints) {
+	if (!is_array($endpoints)) return $endpoints;
+	return $endpoints[mt_rand(0, count($endpoints)-1)];
+}
 }
 ?>

@@ -56,7 +56,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
         
         $html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
         if ($status->isInitialized == true) {
-        	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', $smwgWebserviceEndpoint)."</div>";
+        	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgWebserviceEndpoint) ? implode(", ", $smwgWebserviceEndpoint) : $smwgWebserviceEndpoint))."</div>";
         } else {
         	 $html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_notinitalized')."</div>".wfMsg('smw_tsa_pressthebutton');
         	 $tsaPage = Title::newFromText("TSA", NS_SPECIAL);
