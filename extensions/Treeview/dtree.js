@@ -419,6 +419,7 @@ dTree.prototype.toString = function() {
 	str += '</div>';
 	if (!this.selectedFound) this.selectedNode = null;
 	this.completed = true;
+	document.body.style.cursor = 'default';
 	return str;
 };
 
@@ -619,6 +620,8 @@ dTree.prototype.getHttpRequest = function(params, callBackMethod) {
     if (callBackMethod == "o") httpRequest.onreadystatechange = handleResponseOpen;
     else if(callBackMethod == "r") httpRequest.onreadystatechange = handleResponseRefresh;
     else return;
+    
+    document.body.style.cursor='wait';
 
     httpRequest.open("GET", this.smwAjaxUrl + params); 
 	httpRequest.send(null);
