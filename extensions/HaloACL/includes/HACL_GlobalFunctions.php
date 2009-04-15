@@ -44,17 +44,21 @@ function enableHaloACL() {
 	$wgHooks['LanguageGetMagic'][] = 'haclfAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Messages.php'; // register messages (requires MW=>1.11)
 
-
 	// Register special pages aliases file
 	$wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
 
 	///// Set up autoloading; essentially all classes should be autoloaded!
 	$wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
-
-	///// Register specials pages
-#	$wgSpecialPages['HACLManageRights']             = array('HACLManageRights');
-#	$wgSpecialPageGroups['HACLManageRights']        = 'hacl_group';
-
+	$wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
+	$wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
+	$wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
+		
+	//--- Autoloading for exception classes ---
+	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
+	$wgAutoloadClasses['HACLStorageException'] = $haclgIP . '/exceptions/HACL_StorageException.php';
+	$wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
+	
+	
 	return true;
 }
 
@@ -73,7 +77,14 @@ function haclfSetupExtension() {
 	//--- Register hooks ---
 	global $wgHooks;
 	$wgHooks['userCan'][] = 'HACLEvaluator::userCan';
-	       
+
+	wfLoadExtensionMessages('HaloACL');
+	///// Register specials pages
+	global $wgSpecialPages, $wgSpecialPageGroups;
+	$wgSpecialPages['HaloACL']      = array('HaloACLSpecial');
+	$wgSpecialPageGroups['HaloACL'] = 'hacl_group';
+
+	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
 
 /*

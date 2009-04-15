@@ -32,6 +32,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 define('HACL_HALOACL_VERSION', '0.1');
 
+define('HACL_STORE_SQL', 'HaclStoreSQL');
+
 // constant for special schema properties
 
 
@@ -58,6 +60,15 @@ $haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 # however, it slows down things a bit.
 ##
 $haclgEnableTitleCheck = true;
+
+###
+# By design several databases can be connected to HaloACL. (However, in the first
+# version there is only an implementation for MySQL.) With this variable you can
+# specify which store will actually be used.
+# Possible values:
+# - HACL_STORE_SQL
+##
+$haclgBaseStore = HACL_STORE_SQL;
 
 # load global functions
 require_once('HACL_GlobalFunctions.php');

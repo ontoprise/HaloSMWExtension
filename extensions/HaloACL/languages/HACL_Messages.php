@@ -26,6 +26,28 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-//	'smw_edithelp'          => 'Editing help on properties',
+	'haloacl' 			=> 'HaloACL',
+	'hacl_special_page' => 'HaloACL',  // Name of the special page for administration
+	'specialpages-group-hacl_group'	=> 'HaloACL',
+	'hacl_tt_initializeDatabase'	=> 'Initialize or update the database tables for HaloACL.',
+	'hacl_initializeDatabase'		=> 'Initialize database',
+	'hacl_db_setupsuccess'			=> 'Setting up the database for HaloACL was successful.',
+	'hacl_haloacl_return'			=> 'Return to '
+	
 
 );
+
+/** 
+ * German
+ */
+$messages['de'] = array(
+	'haloacl' 			=> 'HaloACL',
+	'hacl_special_page' => 'HaloACL',   // Name of the special page for administration
+	'specialpages-group-hacl_group'	=> 'HaloACL',
+	'hacl_tt_initializeDatabase'	=> 'Initialisiert oder aktualisiert die Datenbanktabellen für HaloACL.',
+	'hacl_initializeDatabase'		=> 'Datenbank initialisieren',
+	'hacl_db_setupsuccess'			=> 'Die Datenbank für HaloACL wurde erfolgreich erstellt.',
+	'hacl_haloacl_return'			=> 'Zurück zu '
+	
+);
+
