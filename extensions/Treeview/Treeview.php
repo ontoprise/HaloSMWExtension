@@ -117,6 +117,7 @@ class SemanticTreeview {
 	            (preg_match('/\\x7f(.*?)\\x7f(\*+)(.*)$/', $line, $matches))) {
 	    	    parse_str($matches[1], $params);
 	    	    if (isset($params['opento'])) $this->args[$this->id."opento"] = urlencode($params['opento']);
+	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
             	    $addSmwData = "addSmwData(, '".$params['property']."',";
@@ -124,7 +125,8 @@ class SemanticTreeview {
             	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
             	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
 					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth']."," : "null, ";
-					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."');" : "null);";	
+					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."', " : "null, ";
+					$addSmwData .= (isset($params['urlparams'])) ? "'".$params['urlparams']."');" : "null);";
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n";
                     if (isset($params['refresh']) && $params['refresh'] == 1)
@@ -238,12 +240,15 @@ class SemanticTreeview {
                     if ($depth > $last) $parents[$depth] = $node - 1;
                     $parent = $parents[$depth];
                     $last   = $depth;
-                    $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
                     if (isset($this->args[$id."opento"]) &&
-                   		preg_match('@href=\\\"([^/]*/)+([^\\\]*)\\\"@', $item, $paths)) {
-                   		if ($paths[2] == $this->args[$id."opento"])
-                   			$openTo .= "{$this->uniqname}$id.openTo($parent, false);\n";
-                   	}
+                   		(preg_match('@href=\\\"([^/]*/)+([^\\\]*)\\\"@', $item, $paths) ||
+                   		 preg_match('@(<[^>]*>)([^<]*)<@', $item, $paths)) &&
+                   		(str_replace(' ', '_', $paths[2]) == $this->args[$id."opento"]))
+                   		$openTo .= "{$this->uniqname}$id.openTo($parent, false);\n";
+                    if (isset($this->args[$id."urlparams"]) &&
+                    	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths))
+                        $item = str_replace($paths[1], $paths[1].'?'.$this->args[$id."urlparams"], $item); 
+                    $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
                 }
 
                 # Last row of current root-tree, surround nodes dtree JS and div etc

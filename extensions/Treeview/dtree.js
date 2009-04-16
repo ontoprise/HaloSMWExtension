@@ -49,11 +49,21 @@ Node.prototype.serialize = function() {
 		((this.pid) ? this.pid : "") + ".";
 		
 	if (this.name) {
+		// get pagename from href attribute
 		var link = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+		// remove any url params after the page name, in case there are any
+		if (link.indexOf('?') != -1)
+			link = link.substring(0, link.indexOf('?'));
+		// get the content from the displayed content of the anchor element a
 		var content= this.name.replace(/.*>(.*?)<.*/,"$1");
+		// encode the . as they are delimiter in the cookie value
 		link = link.replace(/\./g, "%2E");
 		content = content.replace(/\./g, "%2E");
+		// change spaces to underscores
 		content = content.replace(/ /g, "_");
+		// if page name and link name are the same (which is the case usually)
+		// add one element to the cookie as the other can be reconstructed again
+		// this safes storage in the cookie (length problem)
 		str += (link == content) ? link + "." : link + "." + content;
 		str += ".";
 	} else  str += "..";
@@ -87,24 +97,30 @@ Node.prototype.unserialize = function(str) {
 }
 
 // SMW Data object (for relation and display)
-function SmwData(id, relation, category, display, start, maxDepth, conditions) {
+function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
 	this.display = display;
 	this.start = start;
 	this.maxDepth = maxDepth;
-	this.conditions = conditions;
+	this.condition = condition;
+	this.urlparams = urlparams;
 }
 
-SmwData.prototype.getUrlParams = function(withStart) {
+SmwData.prototype.getParamsForAjaxRequest = function(withStart) {
 	var str = 'p%3D' + URLEncode(this.relation);
 	if (this.category) str += '%26c%3D' + URLEncode(this.category);
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
 	if (withStart && this.start) str += '%26s%3D' + URLEncode(this.start);
-	if (this.conditions) str += '%26q%3D' + URLEncode(this.conditions); 
+	if (this.condition) str += '%26q%3D' + URLEncode(this.condition); 
+	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
 	str += '%26';
 	return str;
+}
+
+SmwData.prototype.getUrlParams = function() {
+	return this.urlparams;
 }
 
 // Object for managing parents for different node levels
@@ -194,14 +210,20 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 };
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, conditions) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, conditions);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams);
 };
 
-// Get Smw url params for a specific node
+// Get Smw url params to make an Ajax request for a specific node 
 dTree.prototype.getSmwData = function(id, withStart) {
 	var index = this.getSmwDataIndex(id); 
-	return (index >= 0) ? this.aSmw[index].getUrlParams(withStart) : "";
+	return (index >= 0) ? this.aSmw[index].getParamsForAjaxRequest(withStart) : "";
+}
+
+// Get possible url params to add at link
+dTree.prototype.getSmwDataUrlparams = function(id) {
+	var index = this.getSmwDataIndex(id); 
+	return (index >= 0) ? this.aSmw[index].getUrlParams() : "";
 }
 
 // return index of aSmw for a dynamic node smw settings
@@ -573,8 +595,16 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	
 	// fetch name from link i.e. href attribute in a tag
 	var name = this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+	// check if the relation exists -> so the node, but if the page itself doesn't exist
+	// then there is a link that the user can create this page. Extract the pagename here
 	if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
 		name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
+	// remove any parameters, that might be trailed at the page name
+	if (name.indexOf('?') != -1)
+		name = name.substring(0, name.indexOf('?'));
+	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
+	name = name.replace(/<[^>]*>([^<]*)<.*/, "$1");
+	// add name to parameter as well as the token
 	params += 's%3D' + URLEncode(name);
 	params += '%26t%3D' + token; 
     this.getHttpRequest(params, callBackMethod);
@@ -872,13 +902,16 @@ handleResponseOpen = function() {
 	var treelist = responseArr[2];
 	var noc      = responseArr[3];
 	var url      = responseArr[4];
+	
+	var urlParams= dTree.getSmwDataUrlparams(parentId);
+	if (urlParams) urlParams = '?' + urlParams;
 
     if (noc > 0) dTree.aNodes[parentId]._hc = true;
     dTree.aNodes[parentId]._complete = true;
     
     var newSerialData = '{' + dTree.aNodes[parentId].serialize() + '}';
     for (var i = 0; i < noc; i++) {
-    	var str = '<a href=\"' + url + treelist[i].link +'\" title=\"';
+    	var str = '<a href=\"' + url + treelist[i].link + urlParams + '\" title=\"';
     	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
     	var newId = dTree.aNodes.length; 
     	dTree.add(newId, parentId, str);
@@ -910,6 +943,9 @@ handleResponseRefresh = function() {
 	var noc      = responseArr[3];
 	var url      = responseArr[4];
 
+	var urlParams= dTree.getSmwDataUrlparams(parentId);
+	if (urlParams) urlParams = '?' + urlParams;
+
     var parents = new Parents();
     var lastDepth;
 
@@ -926,7 +962,7 @@ handleResponseRefresh = function() {
 	var cn;
 	while (cn = treelist.shift()) {
     	// build comlete name (i.e. link to item)
-    	var str = '<a href=\"' + url + cn.link +'\" title=\"';
+    	var str = '<a href=\"' + url + cn.link + urlParams +'\" title=\"';
     	str += cn.name + '\">' + cn.name + '</a>';
 
     	// evaluate current parent

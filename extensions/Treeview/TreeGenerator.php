@@ -53,6 +53,8 @@ class TreeGenerator {
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
 		// parameter opento, must contain a pagename down to where the tree is opened
 		$openTo = array_key_exists('opento', $genTreeParameters) ? Title::newFromText($genTreeParameters['opento']) : NULL;
+		// parameter urlparams
+		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
 		
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
@@ -74,7 +76,7 @@ class TreeGenerator {
 
 		// check if we have to return certain parameter with the result set when the dynamic expansion
 		// is set and the page is rendered for the first two level tree.
-		if (!$this->json && ($ajaxExpansion || $tv_store->openToFound())) {
+		if (!$this->json && ($ajaxExpansion || $tv_store->openToFound() || $urlparams)) {
 		    $returnPrefix= "\x7f";
 			if ($ajaxExpansion) {			
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
@@ -87,6 +89,8 @@ class TreeGenerator {
 			}
 			if ($tv_store->openToFound() != null)
 				$returnPrefix .= "opento=".$openTo->getDbKey()."&";
+			if ($urlparams)
+				$returnPrefix .= "urlparams=".urlencode($urlparams)."&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;
@@ -453,12 +457,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		// get smw_id of that page
 		$currentId = $this->getSmwIdByTitle($this->openTo);
-		
+
 		// the page down to where the tree should be opened could not identified
 		if (is_null($currentId)) {
 			$this->openTo = null;
 			return;
 		}
+
 		// if the id is already in the node set, we are done
 		if (isset($this->elementProperties[$currentId]))
 			return;
