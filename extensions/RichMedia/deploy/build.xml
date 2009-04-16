@@ -30,11 +30,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="bin/zip/extensions/RichMedia/specials">
-			<fileset dir="../specials/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 		<copy todir="bin/zip/extensions/RichMedia/">
 			<fileset file="../*">
 				<exclude name="**/.svn, **/CVS" />
