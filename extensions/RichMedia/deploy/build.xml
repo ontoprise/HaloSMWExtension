@@ -31,7 +31,7 @@
 			</fileset>
 		</copy>
 
-		
+
 		<copy todir="bin/zip/extensions/RichMedia/">
 			<fileset file="../*">
 				<exclude name="**/.svn, **/CVS" />
@@ -41,6 +41,37 @@
 
 		<zip destfile="bin/smwhalo-richmedia-${version}.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+	</target>
+	<target depends="mimeext" name="install">
+
+		<copy todir="../../SemanticForms/" overwrite="true">
+			<fileset dir="../patches/SemanticForms/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="../../../skins/" overwrite="true">
+			<fileset dir="../patches/skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="mimeext">
+		<copy todir="../../../includes/" overwrite="true">
+			<fileset dir="../../../patches/includes/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="../../../extensions/" overwrite="true">
+			<fileset dir="../../../patches/extensions/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="../../../skins/" overwrite="true">
+			<fileset dir="../../../patches/skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+
 	</target>
 
 </project>
