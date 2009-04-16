@@ -191,7 +191,7 @@ Section "XAMPP" xampp
   SetOutPath "$INSTDIR"
   CreateDirectory "$INSTDIR"
   !ifndef NOFILES
-    File /r /x .svn /x CVS ..\..\..\Build SMWHalo Installer\workspace\XAMPP\*
+    File /r /x .svn /x CVS "..\..\..\Build SMWHalo Installer\workspace\XAMPP\*"
   !endif
   ;Store installation folder
     WriteRegStr HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}" "" $INSTDIR
