@@ -37,17 +37,23 @@ class TreeGenerator {
 			if (count($keyValue) != 2) continue;
 			$genTreeParameters[$keyValue[0]] = $keyValue[1];
 		}
+		// check property, this is the only mandatory parameter, without it we stop right away
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
+		// parameter category, if pages from a certain category (and it's subcategories) are wanted
 		if (array_key_exists('category', $genTreeParameters)) {
 			$genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
 			$categoryName = Title::newFromText($genTreeParameters['category'], NS_CATEGORY);
 		} else {
 			$categoryName = NULL;
 		}
-
+		// parameter start, shall we start from some page?
 		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
+		// parameter display, that must be the name of a property, which value is displayed instead of the default pagename
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
+		// parameter opento, must contain a pagename down to where the tree is opened
+		$openTo = array_key_exists('opento', $genTreeParameters) ? Title::newFromText($genTreeParameters['opento']) : NULL;
+		
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
 
@@ -57,28 +63,30 @@ class TreeGenerator {
 		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
-		if (array_key_exists('dynamic', $genTreeParameters)) {
-		    $useAjaxExpansion = 1;
-	    } else {
-	        $useAjaxExpansion = NULL;
-	    }
+		$ajaxExpansion = (array_key_exists('dynamic', $genTreeParameters)) ? 1 : 0;
 
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
-		$tv_store->setup(($useAjaxExpansion) ? 1 : $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition);
+		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 
-		// check if we have to return certain parameter with the result set
-		if (!$this->json && $useAjaxExpansion) {
-		    $returnPrefix= "\x7f"."dynamic=1&property=".$genTreeParameters['property']."&";
-		    if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
-		    if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
-			if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
-		    if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
-		    if ($condition) $returnPrefix .= "condition=".$condition."&";
-		    if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
+		// check if we have to return certain parameter with the result set when the dynamic expansion
+		// is set and the page is rendered for the first two level tree.
+		if (!$this->json && ($ajaxExpansion || $tv_store->openToFound())) {
+		    $returnPrefix= "\x7f";
+			if ($ajaxExpansion) {			
+				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
+		    	if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
+		    	if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
+				if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
+		    	if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
+		    	if ($condition) $returnPrefix .= "condition=".$condition."&";
+		    	if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
+			}
+			if ($tv_store->openToFound() != null)
+				$returnPrefix .= "opento=".$openTo->getDbKey()."&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;
@@ -125,12 +133,15 @@ abstract class TreeviewStorage {
 }
 
 class TreeviewStorageSQL2 extends TreeviewStorage {
-  
+
+	private $ajaxExpansion;
     private $maxDepth;
     private $redirectPage;
     private $displayProperty;
     private $hchar;
     private $json;
+    private $condition;
+    private $openTo;
 
     // for the conditions, that can be used for generating the
     // tree, the smw_id will be fetched and stored here
@@ -144,14 +155,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
    	private $sIds;
     private $treeList;
 
-    public function setup($maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition) {
-
+    public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo) {
+		$this->ajaxExpansion = $ajaxExpansion;
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
         $this->redirectPage = $redirectPage;
         $this->displayProperty = $displayProperty;
         $this->hchar = $hchar;
         $this->json = $jsonOutput;
         $this->condition = $condition;
+        $this->openTo = $openTo;
         
         $this->smw_relation_id = NULL;
      	$this->smw_category_ids = NULL;
@@ -163,6 +175,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
     }
+    
+    public function openToFound() {
+    	return ($this->openTo != null);
+    }
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 
@@ -170,7 +186,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$categoryConstraintTable = '';
 		$categoryConstraintWhere = '';
 		$categoryConstraintGroupBy = '';
-		$startRefine = '';
 		
 	    // relation must be set -> we fetch here the smw_id of the requested relation
 		if (! ($this->smw_relation_id = $this->getSmwIdByTitle($relation))) return ($this->json) ? array() : "";
@@ -198,7 +213,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 		
-		if ($this->maxDepth && $this->maxDepth == 2) { // only root and one level below
+		if ($this->ajaxExpansion || $this->maxDepth && $this->maxDepth < 3) { // only root and one level below
 			if ($start)
 				$query.= " AND r.o_id = ".$this->smw_start_id;
 			else
@@ -212,29 +227,18 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		$res = $db->query($query);
 		while ($row = $db->fetchObject($res)) {
-			if (($this->condition) && 
-		        !(in_array($row->s_id, $this->smw_condition_ids) &&
-			      in_array($row->o_id, $this->smw_condition_ids))) 
-			continue;
-			
-			if (!isset($this->sIds[$row->s_id]))
-				$this->sIds[$row->s_id]= array($row->o_id);
-			else
-				$this->sIds[$row->s_id][]= $row->o_id;
-			// merge all id's into one list to fetch title, links or a
-			// certain property of these pages later only once
-			if (!isset($this->elementProperties[$row->s_id]))
-			    $this->elementProperties[$row->s_id]= array();
-			if (!isset($this->elementProperties[$row->o_id]))
-			    $this->elementProperties[$row->o_id]= array();
+			$this->addTupleToResult($row->s_id, $row->o_id);
 		}
 		$db->freeResult($res);
 
 		if (count($this->sIds) == 0) return;
 
+		// check if the tree is supposed to be opened down to a certain node
+		if ($this->openTo) $this->getPathToOpenTo();
+
 		// fetch properties of that smw_ids found (both s_id and o_id) if there are no condtions set
 		$this->getElementProperties();
-
+		
 		// sorting the nodes (so that the member variable sIds is in correct order) before building the tree 
 		$this->sortElements();
 
@@ -439,6 +443,117 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if (!$s)
 			return NULL;
 		return $s->smw_id;
+	}
+	
+	private function getPathToOpenTo() {
+		// the node to be openend must be a ordinary page, no property nor category
+		if (in_array($this->openTo->getNamespace(), array(NS_CATEGORY, SMW_NS_PROPERTY))) {
+			$this->openTo = null;
+			return;
+		}
+		// get smw_id of that page
+		$currentId = $this->getSmwIdByTitle($this->openTo);
+		
+		// the page down to where the tree should be opened could not identified
+		if (is_null($currentId)) {
+			$this->openTo = null;
+			return;
+		}
+		// if the id is already in the node set, we are done
+		if (isset($this->elementProperties[$currentId]))
+			return;
+			
+		// if a current depth is set and no ajax expansion is used, then we are done as
+		// well because if the node is not yet in the results, any further lookup will
+		// exceed the desired maxDepth
+		if ($this->maxDepth != null && $this->ajaxExpansion == 0) {
+			$this->openTo = null;
+			return; 
+		}
+
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_inst2 = $db->tableName('smw_inst2');		
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
+
+		// remember all ids, that we will add now to find the node to open.		
+		$newIds = array();
+		
+		$maxDepth = ($this->maxDepth != null) ? $this->maxDepth : 9999;
+		$currentDepth = 2;
+		
+		while (!isset($this->sIds[$currentId]) && $currentDepth < $maxDepth) {
+			$cquery= str_replace('___CONDITION___', "AND r.s_id = ".$currentId, $query);
+			$res = $db->query($cquery);
+			if ($res && $db->affectedRows() > 0) {
+				$row = $db->fetchObject($res);
+				$this->addTupleToResult($row->s_id, $row->o_id);
+				$cParent = $row->o_id;
+				$newIds[] = $row->s_id;
+			}
+			else break;
+			$cquery = str_replace('___CONDITION___', "AND r.o_id = ".$cParent, $query);
+			$res = $db->query($cquery);
+			if ($res && $db->affectedRows() > 0) {
+				while ($row = $db->fetchObject($res)) {
+					// this is the relation how we found the parent, so skip it.
+					if ($row->s_id == $currentId) continue;
+					$this->addTupleToResult($row->s_id, $row->o_id);
+					// remember all ids that we add to sIds and elementProperties
+					$newIds[] = $row->s_id;
+				}
+			}
+			else break;
+			$currentId = $cParent;
+			$currentDepth++;
+		}
+		// current parent after some iterations of the node to open is still not
+		// in the result  found, then remove all added
+		if (!isset($this->sIds[$currentId]) && !isset($this->sIds[$cParent])) {
+			$newIds = array_uniqe($newIds);
+			foreach ($newIds as $id) {
+				unset($this->sIds[$id]);
+				unset($this->elementProperties[$id]);
+			}
+			$this->openTo = null;
+		} 
+	}
+
+	private function getQuery4Relation($smw_inst2, $smw_rels2) {
+		$categoryConstraintTable = '';
+		$categoryConstraintWhere = '';
+		$categoryConstraintGroupBy = '';
+		if (!is_null($this->smw_category_ids)) {
+
+		    $categoryConstraintTable = ",$smw_inst2 i ";
+		    $categoryConstraintWhere = " AND i.o_id in (".implode(',', $this->smw_category_ids).")".
+									    " AND (r.o_id = i.s_id OR r.s_id = i.s_id)";
+			$categoryConstraintGroupBy = " GROUP BY s_id, o_id";
+		}
+		// match triples that are of the requested relation with the current id as the object
+		return "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
+		       ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.
+			   " ___CONDITION___".$categoryConstraintGroupBy;
+	}
+
+	private function addTupleToResult($s_id, $o_id) {
+		// parametet condition was set, check if current s_id and
+		// o_id of the triple are in the allowed page list
+		if (($this->condition) && 
+		    !(in_array($s_id, $this->smw_condition_ids) &&
+		      in_array($o_id, $this->smw_condition_ids))) 
+			return;
+			
+		if (!isset($this->sIds[$s_id]))
+			$this->sIds[$s_id]= array($o_id);
+		else
+			$this->sIds[$s_id][]= $o_id;
+		// merge all id's into one list to fetch title and a
+		// certain property of these pages later only once
+		if (!isset($this->elementProperties[$s_id]))
+		    $this->elementProperties[$s_id]= array();
+		if (!isset($this->elementProperties[$o_id]))
+		    $this->elementProperties[$o_id]= array();	
 	}
 	
 	/**

@@ -116,6 +116,7 @@ class SemanticTreeview {
             if ((strpos($line, "\x7f") !== false) && // do string check first before doing a regex eval (faster)
 	            (preg_match('/\\x7f(.*?)\\x7f(\*+)(.*)$/', $line, $matches))) {
 	    	    parse_str($matches[1], $params);
+	    	    if (isset($params['opento'])) $this->args[$this->id."opento"] = urlencode($params['opento']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
             	    $addSmwData = "addSmwData(, '".$params['property']."',";
@@ -125,12 +126,11 @@ class SemanticTreeview {
 					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth']."," : "null, ";
 					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."');" : "null);";	
             	    $text.= $matches[2]."*".
-                	    	$addSmwData."\n".
-                            $matches[2].$matches[3]."\n";
+                	    	$addSmwData."\n";
                     if (isset($params['refresh']) && $params['refresh'] == 1)
                         $this->args[$this->id."refresh"] = true;
                 }
-		        else $text.= $line."\n";
+                $text.= $matches[2].$matches[3]."\n";
     	    }
 	        else $text.= $line."\n";
 	        array_shift($lines);
@@ -218,6 +218,7 @@ class SemanticTreeview {
             $last    = -1;
             $nodes   = '';
             $node = 0;
+            $openTo = '';
             while ($info = array_shift($rows)) {
                 $node++;
                 list($id,$depth,$icon,$item,$start) = $info;
@@ -238,6 +239,11 @@ class SemanticTreeview {
                     $parent = $parents[$depth];
                     $last   = $depth;
                     $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
+                    if (isset($this->args[$id."opento"]) &&
+                   		preg_match('@href=\\\"([^/]*/)+([^\\\]*)\\\"@', $item, $paths)) {
+                   		if ($paths[2] == $this->args[$id."opento"])
+                   			$openTo .= "{$this->uniqname}$id.openTo($parent, false);\n";
+                   	}
                 }
 
                 # Last row of current root-tree, surround nodes dtree JS and div etc
@@ -269,6 +275,7 @@ class SemanticTreeview {
                                 $smwUrl
                                 $nodes
                                 document.getElementById('$id').innerHTML = {$this->uniqname}$id.toString();
+                                ".((strlen($openTo) > 0) ? $openTo : "")."
                             </script>
                         </div>
                         $bottom
@@ -282,6 +289,7 @@ class SemanticTreeview {
                     }
                     $nodes = '';
                     $node= 0;
+                    $openTo = '';
                 }
             }
         }
