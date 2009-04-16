@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="SMWHalo">
+	<target name="build">
+		<delete dir="bin/zip" />
+		<mkdir dir="bin/zip" />
+
+		<!--<copy todir="bin/zip/extensions/UnifiedSearch/includes">
+			<fileset dir="../includes/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>-->
+		<copy todir="bin/zip/extensions/UnifiedSearch/languages">
+			<fileset dir="../languages/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/maintenance">
+			<fileset dir="../maintenance/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/MWSearch">
+			<fileset dir="../MWSearch/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/PathSearch">
+			<fileset dir="../PathSearch/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/scripts">
+			<fileset dir="../scripts/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/skin">
+			<fileset dir="../skin/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/storage">
+			<fileset dir="../storage/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/synsets">
+			<fileset dir="../synsets/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/UnifiedSearch/">
+			<fileset file="../*">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/*SKOSExpander*" />
+				<exclude name="**/*deploy*" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/smwhalo-search-${version}.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+	</target>
+
+</project>
