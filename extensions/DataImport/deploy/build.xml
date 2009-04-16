@@ -2,6 +2,7 @@
 <project basedir="." default="build" name="SMWHalo">
     <target name="build">
         <delete dir="bin/zip" />
+    	<delete file="bin/smwhalo-dataimport-${version}.zip" />
         <mkdir dir="bin/zip" />
 
         <copy todir="bin/zip/extensions/DataImport/config">
