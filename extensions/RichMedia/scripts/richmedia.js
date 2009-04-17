@@ -15,62 +15,93 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-function addWpDestFile(){
-			var myWpDestFile = document.getElementById("myWpDestFile").value;
-			var myLink = document.getElementById("link_id");
+
+var RichMediaPage = Class.create({
+	initialize: function() {
+		// do nothing special.
+	},
+		
+	/**
+	 * do the upload.
+	 */
+	doUpload: function() {
+		
+		var sForm = $$('form.createbox')[0]; //array
+		var destForm = $('upload');
+
+		//merge SemanticForm into UploadForm
+		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
+
+		var el = new Element('input', {
+	   				'type' : 'hidden', 
+	   				'name' : 'query', 
+	   				'value' : 'true'} )
+	   	destForm.appendChild(el);
+
+	   	var el = new Element('input', {
+	   				'type' : 'hidden', 
+	   				'name' : 'action', 
+	   				'value' : 'submit'} )
+	   	destForm.appendChild(el);
+	   	
+		destForm.submit();
+	},
+	
+	/**
+	 * A warning appeared and the user pressed 'Re-upload'. So we'll get back to the original form.
+	 * Copy the SF and click wpUpload
+	 */
+	returnToUploadWindow: function() {
+		var sForm = $$('form.createbox')[0]; //array
+		var destForm = $('uploadwarning');
+		
+		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
+	   	
+		//destForm.wpUpload.click();
+	},
+	
+	/**
+	 * A warning appeared and the user pressed 'Save file'. So we'll do the upload.
+	 * Copy the SF and click wpReUpload
+	 */
+	doReUpload: function() {
+		var sForm = $$('form.createbox')[0]; //array
+		var destForm = $('uploadwarning');
+		
+		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
+	   	
+		//destForm.wpReUpload.click();
+	},
+	
+	/**
+	* merges an array of source forms entries hidden into one destination form 
+	*/ 
+	mergeFormsToForm: function(sourceForms, destForm) {  
+  		var clone; 
+  		sourceForms.each(function(sourceForms) { 
+			$(sourceForms).getElements().each(function(formControl) { 
+				clone = formControl.cloneNode(true); 
+				clone.id = '';
+				//clone.type = 'hidden';  
+				destForm.appendChild(clone);
+	 		}); 
+  		}); 
+		return true;
+	},
+	
+	/*
+	 * Adds the destination file to the link
+	 */
+	addWpDestFile: function() {
+			var myWpDestFile = $('myWpDestFile').value;
+			var myLink = $('link_id');
 			var myHref = myLink.href;
 			myLink.href = myHref+"&wpDestFile="+myWpDestFile;
 			fb.loadAnchor(myLink);
 			return true;
-}
-function rm_getInputs(){
-	//validate the form fields!
-	var error = validate_all();
+	}
+});
 
-	if (!error) {
-		return false;
-	}
-	//SemanticForms are always in a table called 'createbox'
-	var semanticFormTable = document.getElementsByName('createbox');
-	//get all <input...> in this table
-	var inputs = semanticFormTable[0].getElementsByTagName('input');
-	
-	//2-dim array for saving the SemanticForm
-	var sf_array = new Array(2);
-	
-	var form = document.forms['upload_form'];
-	
-	for (var i = 0, n = inputs.length; i < n; i++) {
-		var input = inputs[i]; 
-		
-		if(input.nodeType == 1) {
-			var el = document.createElement("input");
-   			el.type = "hidden";
-   			el.name = input.name;
-   			el.value = input.value;
-   			form.appendChild(el);
-		}	
-	}
-	//get all <select...> in this table
-	var selects = semanticFormTable[0].getElementsByTagName('select');
-				
-	for (var i = 0, n = selects.length; i < n; i++) {
-		var select = selects[i]; 
-		
-		if(select.nodeType == 1) {
-			var el = document.createElement("input");
-   			el.type = "hidden";
-   			el.name = select.name;
-   			el.value = select.value;
-   			form.appendChild(el);
-		}	
-	}
-	//set this because the source is a query, not a page!!!
-	var el = document.createElement("input");
-   	el.type = "hidden";
-   	el.name = "query";
-   	el.value = "true";
+//------ Classes -----------
 
-	//submit the upload form
-	document.upload_form.wpUpload.click();
-}
+var richMediaPage = new RichMediaPage();
