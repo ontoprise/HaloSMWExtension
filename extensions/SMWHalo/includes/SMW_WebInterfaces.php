@@ -82,7 +82,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	}
-	
+}	
 /**
  * Returns a randomly webservice endpoint.
  */
@@ -90,5 +90,5 @@ function smwfgetWebserviceEndpoint($endpoints) {
 	if (!is_array($endpoints)) return $endpoints;
 	return $endpoints[mt_rand(0, count($endpoints)-1)];
 }
-}
+
 ?>
