@@ -323,11 +323,11 @@
 						<a style="margin-left:5px;">
 							<xsl:choose>
 							<xsl:when test="child::param[1][@notexists]">
-								<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="child::param[1]"/>?action=edit</xsl:attribute> 
+								<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="child::param[1]"/>?action=edit</xsl:attribute> 
 								<xsl:attribute name="class">annotation titleNotExists</xsl:attribute>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="child::param[1]"/></xsl:attribute> 
+								<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="child::param[1]"/></xsl:attribute> 
 								<xsl:attribute name="class">annotation</xsl:attribute>
 							</xsl:otherwise>
 							</xsl:choose>
@@ -443,12 +443,12 @@
 				<xsl:choose>
 					<xsl:when test="child::rangeType[1][@isLink]">
 						<a class="category">
-							<xsl:attribute name="onclick">categoryActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-							<xsl:value-of select="child::rangeType[1][@name]"/><xsl:value-of select="child::rangeType[1]"/>
+						    <xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="child::rangeType[1]"/>?action=edit</xsl:attribute> 
+							<xsl:value-of select="child::rangeType[1]"/>
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="child::rangeType[1][@name]"/><xsl:value-of select="child::rangeType[1]"/>
+						<xsl:value-of select="child::rangeType[1]"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				
