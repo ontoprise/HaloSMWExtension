@@ -10,7 +10,7 @@
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');
  
-define('SEMANTIC_TREEVIEW_VERSION','1.1');
+define('SEMANTIC_TREEVIEW_VERSION','1.2');
 
 require_once('TreeGenerator.php');
 

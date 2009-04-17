@@ -68,7 +68,7 @@ class TreeGenerator {
 		$ajaxExpansion = (array_key_exists('dynamic', $genTreeParameters)) ? 1 : 0;
 
 	    // start level of tree
-		$hchar = array_key_exists('level', $genTreeParameters)
+		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
 		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
 		
@@ -228,7 +228,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// check, if there were condition for the tree.
 		if ($this->condition) $this->getCondition($this->condition);
-
+		
+		// now run the query to get all relations of the desired property
 		$res = $db->query($query);
 		while ($row = $db->fetchObject($res)) {
 			$this->addTupleToResult($row->s_id, $row->o_id);
@@ -242,7 +243,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// fetch properties of that smw_ids found (both s_id and o_id) if there are no condtions set
 		$this->getElementProperties();
-		
 		// sorting the nodes (so that the member variable sIds is in correct order) before building the tree 
 		$this->sortElements();
 
@@ -314,9 +314,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * 
 	 */
 	private function getElementProperties() {
-		// if there are special conditions about the nodes to select, then all valid
-		// element properties have been fetched already
-		if ($this->condition) return;
 		
 	    $db =& wfGetDB( DB_SLAVE );
 	    $smw_ids = $db->tableName('smw_ids');
@@ -336,8 +333,12 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    }
 	    $query_add = ""; // list of ids
 	    foreach (array_keys($this->elementProperties) as $id) {
+	    	$pos++;
+	    	
+	    	// if there are special conditions, the elementProperties of some ids
+	    	// have been fetched already
+	    	if (count($this->elementProperties[$id]) > 0) continue;
 	        $i++;
-	        $pos++;
 	        $query_add.= $id.","; 
 	        if ($i == $limit || $pos == $sizeOfData) {
 	            $query_add = substr($query_add, 0, -1);
@@ -358,7 +359,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            		if (isset($this->sIds[$id])) unset($this->sIds[$id]);
 	            	}
 	            }
-	            
 	            // if we have already that many elements processed as are in sIds
 	            // then we are done and quit the loop here.
 	            if ($pos == $sizeOfData)
@@ -542,11 +542,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	}
 
 	private function addTupleToResult($s_id, $o_id) {
-		// parametet condition was set, check if current s_id and
-		// o_id of the triple are in the allowed page list
-		if (($this->condition) && 
-		    !(in_array($s_id, $this->smw_condition_ids) &&
-		      in_array($o_id, $this->smw_condition_ids))) 
+		// parametet condition was set, check if current subject
+		// (s_id) of the triple is in the allowed page list
+		if (($this->condition) && !(in_array($s_id, $this->smw_condition_ids)))
 			return;
 			
 		if (!isset($this->sIds[$s_id]))
@@ -562,14 +560,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	}
 	
 	/**
-	 * get all root categories. These do not have any parents, hence
-	 * are not defined in the sIds array. The result is an array of
-	 * the smw_id of root element(s).
-	 * If search was narrowed by a category, maybe the parents in
-	 * elementProperties have been deleted aready because they didn't
-	 * belong to the desired category. Therefore we also have to check
-	 * the sIds array, to look for elements that have a parents which
-	 * is not yet in the elementProperties anymore. Hence this element
+	 * Get all root categories. These do not have any parents, hence
+	 * are not defined as keys in the sIds array. The result is an
+	 * array of the smw_id of root element(s).
+	 * If search was narrowed by a category, maybe the parent in
+	 * elementProperties has been deleted already because the parent
+	 * didn't belong to the desired category. Therefore we also have
+	 * to check the sIds array, to look for elements that have a parents
+	 * which are not in the elementProperties anymore. Then this element
 	 * is a root node as well.
 	 *
 	 * @return array $rootCats list of element ids of the root category
@@ -580,14 +578,22 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     		if (!isset($this->sIds[$id]))
 	       		$rootCats[]= $id;
 	    }
+
 	    if (!is_null($this->smw_category_ids)) {
 	    	foreach (array_keys($this->sIds) as $id) {
+	    		$parentExists = false;
 	    		foreach ($this->sIds[$id] as $item) {
-	    			if (!isset($this->sIds[$item]) &&			// parent doesn' exist
-	    				isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
-	    				 !in_array($item, $rootCats) &&			// and parent is not yet a root
-	    				 !in_array($id, $rootCats)) 			// node itself is not yet a root
-	    				$rootCats[]= $id;
+	    			// if parent exists, current node can't be a root
+	    			if (isset($this->sIds[$item])) {
+	    				$parentExists = true;
+	    				break;
+	    			}
+	    		}
+	    		if (!$parentExists &&						// no kparent found
+	    			isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
+	    			!in_array($item, $rootCats) &&			// and parent is not yet a root
+	    			!in_array($id, $rootCats)) {			// node itself is not yet a root
+	    			$rootCats[]= $id;
 	    		}
 	    	}
 	    }
@@ -650,10 +656,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
        		    	        // stop descending any further in this subtree IF:
 	                        // - maxDepth is set and already reached 
-             		    	if ($this->maxDepth && $this->maxDepth == $depth) {
-                                unset($this->sIds[$s_id]);
+             		    	if ($this->maxDepth && $this->maxDepth == $depth)
              		    	    continue 2;
-             		    	}
              		    	
              		    	// increase depth by one and add element to tree
            				    $depth++;
@@ -668,8 +672,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     		            	if (isset($findSubTree[$s_id])) {
            				        $this->addSubTree();
            				        $depth--;
-		            	        $occurence= count($findSubTree[$s_id]);
-               				    if ($occurence == 1)
+               				    if ($findSubTree[$s_id] == 1)
     		                		unset($findSubTree[$s_id]);
 	    		                else
 		    		                $findSubTree[$s_id]--;
@@ -689,8 +692,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			                    if (count($this->sIds[$s_id]) == 0) {
 				                    unset($this->sIds[$s_id]);
 			                    } else {
-			                        if (!isset($findSubTree[$s_id]))
-				                        $findSubTree[$s_id]= count($this->sIds[$s_id]);
+			                        $findSubTree[$s_id]= count($this->sIds[$s_id]);
    				                }
     			                continue 3; 
 	    		            }
