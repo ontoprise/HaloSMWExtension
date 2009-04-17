@@ -203,32 +203,7 @@ clicking the big arrows between the columns.',
 
 	'smw_autogen_mail' => 'This is an automatically generated email. Do not reply!',
 
-	/*Message for ImportOntologyBot*/
-	'smw_gard_import_docu' => 'Imports an OWL file.',
-
-	/*Message for ExportOntologyBot*/
-	'smw_exportontologybot' => 'Export ontology',	
-	'smw_gard_export_docu' => 'This bot exports the wiki ontology in the OWL format.',
-	'smw_gard_export_enterpath' => 'Export file/path',
-	'smw_gard_export_onlyschema' => 'Export only schema',
-	'smw_gard_export_ns' => 'Export to namespace',
-	'smw_gard_export_download' => 'Export was successful! Click $1 to download the wiki export as OWL file.',
-	'smw_gard_export_here' => 'here',
-
-	/*Message for TemplateMateriazerBot*/
-	'smw_gard_templatemat_docu' => 'This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query.',
-	'smw_gard_templatemat_applytotouched' => 'Apply only to touched templates',
-	'smw_gardissue_updatearticle' => 'Article $1 was newly parsed.',
-
-	/* Messages for the TermImportBot */
-	'smw_gard_termimportbothelp' => 'This bot imports an external vocabulary.',
-
-    'smw_checkrefintegritybot' => "Check referential integrity",
-    'smw_gard_checkrefint_docu' => "This bot checks the integrity of links to external resources.",
-    'smw_gardissue_resource_not_exists' => '<a href=\"$1\">$2</a> does not exist.',
-    'smw_gardissue_resource_moved_permanantly' => '<a href=\"$1\">$2</a> was moved permanantly.',
-    'smw_gardissue_resource_not_accessible' => '<a href=\"$1\">$2</a> is not accessible for some reason.',
-    'smw_gardissue_thisresource' => "This resource",
+	
 
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Context Sensitive Help',

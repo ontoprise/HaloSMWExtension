@@ -145,7 +145,32 @@ class SGA_LanguageDe {
     'smw_gardissue_subcategory_anomaly' => '$1 hat $2 Subkategorien.',
     
     'smw_gardissue_class_category_leaves' => 'Kategorie-Blätter',
-    'smw_gardissue_class_number_anomalies' => 'Subkategorie Anomalien'
+    'smw_gardissue_class_number_anomalies' => 'Subkategorie Anomalien',
+    
+    /*Message for ImportOntologyBot*/
+    'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
+    
+    /*Message for ExportOntologyBot*/
+    'smw_exportontologybot' => 'Exportiere Ontologie',  
+    'smw_gard_export_docu' => 'Dieser Bot exportiert die Wiki-Ontologie im OWL-Format.',
+    'smw_gard_export_enterpath' => 'Exportdatei/-pfad',
+    'smw_gard_export_onlyschema' => 'Exportiere nur das Schema',
+    'smw_gard_export_ns' => 'Exportiere in Namensraum',
+    'smw_gard_export_download' => 'Der Export war erfolgreich! Klicke $1 um den Wiki-Export als OWL-Datei herunterzuladen.',
+    'smw_gard_export_here' => 'hier',
+
+    /*Message for TemplateMaterializerBot*/
+    'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
+    'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',
+    'smw_gardissue_updatearticle' => 'Artikel $1 wurde neu geparst.',
+    
+     /*Message for Check referential integrity bot*/
+      'smw_checkrefintegritybot' => "Überprüft referentielle Integrität",
+    'smw_gard_checkrefint_docu' => "Dieser Bot prüft die referentielle Integrität externer Ressourcen.",
+    'smw_gardissue_resource_not_exists' => '<a href=\"$1\">$2</a> exisitiert nicht.',
+    'smw_gardissue_resource_moved_permanantly' => '<a href=\"$1\">$2</a> wurde verschoben.',
+    'smw_gardissue_resource_not_accessible' => 'Auf <a href=\"$1\">$2</a> kann nicht zugegriffen werden.',
+    'smw_gardissue_thisresource' => "Diese Ressource"
       );
 }
 ?>

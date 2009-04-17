@@ -200,26 +200,7 @@ protected $smwUserMessages = array(
 	'smw_cs_no_triples_found' => 'Keine Tripel gefunden!',
 
 	'smw_autogen_mail' => 'Das ist eine automatisch generierte E-Mail. Nicht antworten!',
-
-	/*Message for ImportOntologyBot*/
-	'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
 	
-	/*Message for ExportOntologyBot*/
-	'smw_exportontologybot' => 'Exportiere Ontologie',	
-	'smw_gard_export_docu' => 'Dieser Bot exportiert die Wiki-Ontologie im OWL-Format.',
-	'smw_gard_export_enterpath' => 'Exportdatei/-pfad',
-	'smw_gard_export_onlyschema' => 'Exportiere nur das Schema',
-	'smw_gard_export_ns' => 'Exportiere in Namensraum',
-	'smw_gard_export_download' => 'Der Export war erfolgreich! Klicke $1 um den Wiki-Export als OWL-Datei herunterzuladen.',
-	'smw_gard_export_here' => 'hier',
-
-	/*Message for TemplateMaterializerBot*/
-	'smw_gard_templatemat_docu' => 'Dieser Bot aktualisiert alle Seiten, die Templates verwenden welche seit der letzten Materialisierung geändert wurden. Dies ist notwendig damit ASK-Queries in allen Fällen korrekte Ergebnisse liefern.',
-	'smw_gard_templatemat_applytotouched' => 'Nur geänderte Tempates berücksichtigen',
-	'smw_gardissue_updatearticle' => 'Artikel $1 wurde neu geparst.',
-
-	/* Messages for the TermImportBot */
-	'smw_gard_termimportbothelp' => 'Dieser Bot importiert ein externes Vokabular.',
 
 	/*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
