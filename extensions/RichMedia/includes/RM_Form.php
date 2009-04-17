@@ -8,7 +8,7 @@ class RMForm {
 		$inputId = "myWpDestFile";
 		$inputName = "myWpDestFile";
 		$html =<<<END
-		<form onsubmit="addWpDestFile()">
+		<form onsubmit="richMediaPage.addWpDestFile();return false;">
 		<table><tr><td>
 		<input id="$inputId" name="$inputName" type="text" value="" size="$size" /></td>
 END;
@@ -30,13 +30,7 @@ END;
 		$html .= " <td><a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:600\"></a>
 		<input type=\"submit\" value=\"$buttonText\"/></td>";
 		$html .= "</tr></table></form>";
-		
-		//Used for displaying the upload successful message:
-		
-		$html .= "<div id=\"uploadsuccessdiv\" style=\"display: none; text-align:center;\">&nbsp;</div>";
-		//$uploadSuccessfullTitle = wfMsg('smw_rm_uploadsuccesfulltitle');
-		$html .= "<a id=\"uploadsuccesslink\" href=\"#uploadsuccessdiv\" title=\"\" rel=\"iframe\" rev=\"sameBox:true\"/>";
-		
+
 		return array($html, 'noparse' => true, 'isHTML' => true);
 	}
 }
