@@ -178,6 +178,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->elementProperties= array();
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
+		$this->rootNodes = array();
     }
     
     public function openToFound() {
@@ -228,7 +229,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// check, if there were condition for the tree.
 		if ($this->condition) $this->getCondition($this->condition);
-		
+
 		// now run the query to get all relations of the desired property
 		$res = $db->query($query);
 		while ($row = $db->fetchObject($res)) {
@@ -246,9 +247,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// sorting the nodes (so that the member variable sIds is in correct order) before building the tree 
 		$this->sortElements();
 
-		// if start is set but not found in element properties, then it doesn't belong to the desired subset
+		// if:
+		// - start is set
+		// - but not found in element properties
+		// - rootNodes is empty -> no replacements for the start node
+		// then the start node doesn't belong to the desired subset and no tree is drawn but:
 		// make an exception for the main page as this normaly doesn't belong to any category nor as any properties set
-		if ($start && !isset($this->elementProperties[$this->smw_start_id])) { 
+		if ($start && !isset($this->elementProperties[$this->smw_start_id]) && count($this->rootNodes) == 0) { 
 			if ($start != wfMsg("mainpage")) return;
 			$this->elementProperties[$this->smw_start_id] = array(wfMsg("mainpage"), NULL, wfMsg("mainpage"));
 		}
@@ -542,25 +547,44 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	}
 
 	private function addTupleToResult($s_id, $o_id) {
-		// parametet condition was set, check if current subject
+		// parameter condition was set, check if current subject
 		// (s_id) of the triple is in the allowed page list
-		if (($this->condition) && !(in_array($s_id, $this->smw_condition_ids)))
+		if (($this->condition) && !in_array($s_id, $this->smw_condition_ids))
 			return;
-			
-		if (!isset($this->sIds[$s_id]))
-			$this->sIds[$s_id]= array($o_id);
-		else
-			$this->sIds[$s_id][]= $o_id;
+
+		// if parameter condition is set, but object is not in the
+		// allowed page list and s_id is not yet set, create a node without parent
+		if (($this->condition) &&
+			!in_array($o_id, $this->smw_condition_ids)) {
+			// if node doesn't exist yet, create it without parents
+			if (!isset($this->sIds[$s_id])) $this->sIds[$s_id]= array();
+			// if we had set parameter start but the node itself is outside the condition
+			// set all children of start node as root nodes. 
+			if ($this->smw_start_id &&
+				$this->smw_start_id == $o_id &&
+				!in_array($s_id, $this->rootNodes)) {
+				$this->rootNodes[] = $s_id;	
+			}
+			$o_id = null;
+		}
+		// normal handling, create subject node and add parent (object) or add
+		// additional parent
+		else {			
+			if (!isset($this->sIds[$s_id]))
+				$this->sIds[$s_id]= array($o_id);
+			else
+				$this->sIds[$s_id][]= $o_id;
+		}
 		// merge all id's into one list to fetch title and a
 		// certain property of these pages later only once
 		if (!isset($this->elementProperties[$s_id]))
 		    $this->elementProperties[$s_id]= array();
-		if (!isset($this->elementProperties[$o_id]))
+		if ($o_id && !isset($this->elementProperties[$o_id]))
 		    $this->elementProperties[$o_id]= array();	
 	}
 	
 	/**
-	 * Get all root categories. These do not have any parents, hence
+	 * Get all root nodes. These do not have any parents, hence
 	 * are not defined as keys in the sIds array. The result is an
 	 * array of the smw_id of root element(s).
 	 * If search was narrowed by a category, maybe the parent in
@@ -572,14 +596,23 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 *
 	 * @return array $rootCats list of element ids of the root category
 	 */
-	private function getRootCategories() {
-	    $rootCats = array();
+	private function getRootNodes() {
+		// start is set, but root nodes are still empty, then the desired
+		// start is within the node set and we can use it
+		if ($this->smw_start_id && count($this->rootNodes) == 0) {
+			$this->rootNodes[] = $this->smw_start_id;
+			return;
+		}
+		// add all nodes, that are are no keys of sIds array -> then these
+		// exist as object in the triple and therefore have no parents
    		foreach (array_keys($this->elementProperties) as $id) {
     		if (!isset($this->sIds[$id]))
-	       		$rootCats[]= $id;
+	       		$this->rootNodes[]= $id;
 	    }
 
-	    if (!is_null($this->smw_category_ids)) {
+		// if the node set was narrowed by a category or condition, then some
+		// parents might not exist anymore and it's children are the new roots
+	    if (!is_null($this->smw_category_ids) || !is_null($this->condition)) {
 	    	foreach (array_keys($this->sIds) as $id) {
 	    		$parentExists = false;
 	    		foreach ($this->sIds[$id] as $item) {
@@ -589,15 +622,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    				break;
 	    			}
 	    		}
-	    		if (!$parentExists &&						// no kparent found
+	    		if (!$parentExists &&						// no parent found
 	    			isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
-	    			!in_array($item, $rootCats) &&			// and parent is not yet a root
-	    			!in_array($id, $rootCats)) {			// node itself is not yet a root
-	    			$rootCats[]= $id;
+	    			!in_array($item, $this->rootNodes) &&	// and parent is not yet a root
+	    			!in_array($id, $this->rootNodes)) {		// node itself is not yet a root
+	    			$this->rootNodes[]= $id;
 	    		}
 	    	}
 	    }
-	    return $this->sortElements($rootCats);
+	    $this->rootNodes = $this->sortElements($this->rootNodes);
 	}
 	
 	/**
@@ -614,18 +647,18 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @access private
 	 */
 	private function generateTreeDeepFirstSearch() {
-	    
-	    $findSubTree = array();    // stack for elements that have several parents
-		
-	    // save here all root categories
-	    if ($this->smw_start_id)
-	        $rootCats= array($this->smw_start_id);
-	    else
-	        $rootCats = $this->getRootCategories();
+	    // stack for elements that have several parents. key is the smw_id of the node
+	    // value is the number of remaining parents, after the node has been added below
+	    // his first parent. Everytime the node is traversed again, the subtree of the
+	    // node is copied at the new position and the number of children is decreased by 1. 
+	    $findSubTree = array();
+
+		// build or complete array with root nodes.
+        $this->getRootNodes();	
 
 	    // now search for all elements below a root category and create
 	    // one list of entries in hierarchic order
-	    foreach ($rootCats as $id) {
+	    foreach ($this->rootNodes as $id) {
 		    $depth = 1;                    // current depth of element, start by one (root)            
     		
 		    $e = array($id, $depth);
@@ -825,7 +858,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	
 	/**
 	 * Sorts an array by some search criteria. The array to sort can be an array
-	 * with smw_ids as done for root categories -> see: getRootCategories() as
+	 * with smw_ids as done for root nodes -> see: getRootNodes() as
 	 * well for the member variable $sIds in general.
 	 * The values to sort for are used by reading the appropriate fields of the
 	 * member variable $elementProperties.
