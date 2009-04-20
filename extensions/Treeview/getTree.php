@@ -33,13 +33,6 @@ function smw_treeview_getTree($input) {
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams);
   
-  // if start is set, and refresh tree is not done
-  // then remove the first element, as this is the one provided in start
-  if ($start && !$refresh) {
-      if (is_array($res)) array_shift($res);
-      else $res = array();
-  }
-                                     
   $return['treelist'] = $res;
   $return['result'] = 'success';
   if (isset($req['t'])) $return['token']= $req['t'];

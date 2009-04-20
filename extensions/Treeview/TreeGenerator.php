@@ -55,6 +55,8 @@ class TreeGenerator {
 		$openTo = array_key_exists('opento', $genTreeParameters) ? Title::newFromText($genTreeParameters['opento']) : NULL;
 		// parameter urlparams
 		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
+		// parameter check
+		
 		
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
@@ -158,6 +160,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
    	private $elementProperties;
    	private $sIds;
     private $treeList;
+    private $rootNodes;
+    private $leafNodes;
 
     public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo) {
 		$this->ajaxExpansion = $ajaxExpansion;
@@ -179,6 +183,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
 		$this->rootNodes = array();
+		$this->leafNodes = array();
     }
     
     public function openToFound() {
@@ -552,19 +557,20 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if (($this->condition) && !in_array($s_id, $this->smw_condition_ids))
 			return;
 
+		// if we had set parameter start, set all children of start node as root nodes.
+		// the start node itself is excluded from the tree 
+		if ($this->smw_start_id &&
+			$this->smw_start_id == $o_id &&
+			!in_array($s_id, $this->rootNodes)) {
+			$this->rootNodes[] = $s_id;	
+		}
+
 		// if parameter condition is set, but object is not in the
 		// allowed page list and s_id is not yet set, create a node without parent
 		if (($this->condition) &&
 			!in_array($o_id, $this->smw_condition_ids)) {
 			// if node doesn't exist yet, create it without parents
 			if (!isset($this->sIds[$s_id])) $this->sIds[$s_id]= array();
-			// if we had set parameter start but the node itself is outside the condition
-			// set all children of start node as root nodes. 
-			if ($this->smw_start_id &&
-				$this->smw_start_id == $o_id &&
-				!in_array($s_id, $this->rootNodes)) {
-				$this->rootNodes[] = $s_id;	
-			}
 			$o_id = null;
 		}
 		// normal handling, create subject node and add parent (object) or add
@@ -597,12 +603,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return array $rootCats list of element ids of the root category
 	 */
 	private function getRootNodes() {
-		// start is set, but root nodes are still empty, then the desired
-		// start is within the node set and we can use it
-		if ($this->smw_start_id && count($this->rootNodes) == 0) {
-			$this->rootNodes[] = $this->smw_start_id;
+		// start is set, root nodes must have been filled alreads in
+		// function addTuple2Result()
+		if ($this->smw_start_id) {
+			$this->rootNodes = $this->sortElements($this->rootNodes);
 			return;
 		}
+		
 		// add all nodes, that are are no keys of sIds array -> then these
 		// exist as object in the triple and therefore have no parents
    		foreach (array_keys($this->elementProperties) as $id) {
@@ -614,17 +621,17 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// parents might not exist anymore and it's children are the new roots
 	    if (!is_null($this->smw_category_ids) || !is_null($this->condition)) {
 	    	foreach (array_keys($this->sIds) as $id) {
-	    		$parentExists = false;
+	    		$parentNotFound = true;
 	    		foreach ($this->sIds[$id] as $item) {
 	    			// if parent exists, current node can't be a root
 	    			if (isset($this->sIds[$item])) {
-	    				$parentExists = true;
+	    				$parentNotFound = false;
 	    				break;
 	    			}
 	    		}
-	    		if (!$parentExists &&						// no parent found
+	    		if ($parentNotFound &&						// no parent found
 	    			isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
-	    			!in_array($item, $this->rootNodes) &&	// and parent is not yet a root
+	    			count(array_intersect($this->rootNodes, $this->sIds[$id])) == 0 && // no parent is a root yet
 	    			!in_array($id, $this->rootNodes)) {		// node itself is not yet a root
 	    			$this->rootNodes[]= $id;
 	    		}
