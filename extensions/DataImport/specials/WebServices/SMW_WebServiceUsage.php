@@ -36,7 +36,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceCache.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
 
 
-global $wgExtensionFunctions, $wgHooks;  
+global $wgExtensionFunctions, $wgHooks;
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='webServiceUsage_Setup';
 
@@ -141,8 +141,8 @@ function webServiceUsage_Render( &$parser) {
 /**
  * Simply calls webServiceUsage_processCall
  *
- * @param $parameters : 
- * 
+ * @param $parameters :
+ *
  * @return string
  * 		the rendered wikitext
  */
@@ -165,7 +165,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 
 	// the name of the ws must be the first parameter of the parser function
 	$wsName = trim($parameters[1]);
-	
+
 	$ws = WebService::newFromName($wsName);
 	if(!$ws){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_wwsd_not_existing', $wsName)));
@@ -201,7 +201,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 		}
 	}
-	
+
 	if(count($wsReturnValues) > 1 && $propertyName != null){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
 	}
@@ -211,15 +211,15 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsParameters = $response[1];
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
-		
+
 		$removeParameterSetForPreview = true;
 		if(strpos($parameterSetId, "#") === 0){
 			$parameterSetId = substr($parameterSetId, 1);
-			$removeParameterSetForPreview = false; 
+			$removeParameterSetForPreview = false;
 		}
-		
+
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
-		
+
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
@@ -242,7 +242,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 				$articleId = $t->getArticleID();
 			}
 		}
-		
+
 		//handle cache issues for previews
 		if(!$preview){
 			WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
@@ -253,15 +253,15 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 				WSStorage::getDatabase()->removeParameterSet($parameterSetId);
 			}
 		}
-		
-		
+
+
 		if($preview){
 			global $wgParser;
 			$t = Title::makeTitleSafe(0, $parser);
 			$parser = $wgParser;
 			$popts = new ParserOptions();
 			$parser->startExternalParse($t, $popts, Parser::OT_HTML);
-			
+				
 			$wsFormattedResult = $parser->internalParse($wsFormattedResult);
 			$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 			return $wsFormattedResult;
@@ -269,8 +269,8 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		return $wsFormattedResult;
-		
-		
+
+
 	} else {
 		return smwfEncodeMessages($messages);
 	}
@@ -371,7 +371,7 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null)
  */
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$ws = WebService::newFromId($wsId);
-	
+
 	//validate subparameters and construct appropriate parameters
 	$subParameters = array();
 	foreach($wsParameters as $name => $value){
@@ -381,22 +381,22 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 			$subParameters[$name[0]][$name[1]] = $value;
 		}
 	}
-	$mSP = array();
-	foreach($subParameters as $name => $value){
-		$result = $ws->validateSpecifiedSubParameters(array($name => $value));
-		$mSP = array_merge($mSP, $result[0]);
-		if(!is_null($result[1])){
-			foreach($result[1] as $key => $value){
-				$wsParameters[$key] = $value;
-			} 
+
+	$result = $ws->validateSpecifiedSubParameters($subParameters);
+	$mSP = $result[0];
+	if(!is_null($result[1])){
+		foreach($result[1] as $key => $value){
+			$wsParameters[$key] = $value;
 		}
 	}
+
 	if(count($mSP) == 0){
-		$mSP = null;
+		$mSP = array();
 	}
-	
+
 	$mP = $ws->validateSpecifiedParameters($wsParameters);
 	$mR = $ws->validateSpecifiedResults($wsReturnValues);
+	
 	return array(array_merge($mSP, $mP, $mR), $wsParameters);
 }
 
@@ -566,7 +566,7 @@ function getReadyToPrintResult($result, $wsStripTags){
 				} else {
 					$niceResult[$i][] = @ trim(strip_tags($values[$keys[$i-1]], $wsStripTags));
 				}
-				
+
 			}
 		}
 	}

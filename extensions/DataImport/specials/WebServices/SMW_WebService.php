@@ -174,7 +174,7 @@ class WebService {
 	 */
 	public static function newFromName($name) {
 		$t = Title::makeTitleSafe(SMW_NS_WEB_SERVICE, $name);
-		
+
 		$id = $t->getArticleID();
 		return ($id < 0) ? null : WSStorage::getDatabase()->getWS($id);
 	}
@@ -492,12 +492,12 @@ class WebService {
 					$part = ''.$part['name'];
 					$results[$part] = $this->getResults($response, $rdef, $part);
 					$results[$parts[1]] = $this->evaluateAdditionalPathAttribute(
-						$rdef, $part, $results[$parts[1]]);
+					$rdef, $part, $results[$parts[1]]);
 				}
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				$results[$parts[1]] = $this->evaluateAdditionalPathAttribute(
-					$rdef, $parts[1], $results[$parts[1]]);
+				$rdef, $parts[1], $results[$parts[1]]);
 			}
 		}
 		return $results;
@@ -544,7 +544,7 @@ class WebService {
 		}
 
 		$xpathProcessor = new XPathProcessor($response);
-		
+
 		$xpR = $xpathProcessor->evaluateQuery($path);
 		for($i=0; $i < count($xpR); $i++){
 			$xpR[$i] = str_replace("####CDATAEND####", "]]>", $xpR[$i]);
@@ -599,7 +599,7 @@ class WebService {
 			}
 		}
 		$walkedParameters = $temp;
-		
+
 		$temp = &$this->mCallParameters;
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
@@ -962,7 +962,7 @@ class WebService {
 	 * @param string $type
 	 * 		The name of an XSD base type or a type defined in the WSDL.
 	 * @param SoapClient $wsClient
-	 * 		
+	 *
 	 * @param array<string> $typePath
 	 * 		This array contains all types that were encountered in the recursion.
 	 * 		To avoid an inifinite loop, the recursion stops if $type is already
@@ -974,15 +974,15 @@ class WebService {
 	public static function flattenParam($name, $type, $wsClient, &$typePath=null) {
 		//I made this method public and static and also
 		//added the parameter $wsClient so that it is accessible
-		//via the ajax interface		
-		
+		//via the ajax interface
+
 		//add initial xpath root
 		if(strpos($name, "/") === false){
 			$name = "//".$name;
 		}
-		
+
 		$flatParams = array();
-		
+
 		if (!$wsClient->isCustomType($type) && substr($type,0, 7) != "ArrayOf") {
 			// $type is a simple type
 			$flatParams[] = $name;
@@ -1234,7 +1234,7 @@ class WebService {
 	}
 
 	/*
-	 * Returns the value of the xpath attribute 
+	 * Returns the value of the xpath attribute
 	 * of a result part with a given alias
 	 */
 	private function getXPathForAlias($alias, $resultDef) {
@@ -1246,9 +1246,9 @@ class WebService {
 		return null;
 
 	}
-	
-/*
-	 * Returns the value of the json attribute 
+
+	/*
+	 * Returns the value of the json attribute
 	 * of a result part with a given alias
 	 */
 	private function getJSONForAlias($alias, $resultDef) {
@@ -1260,49 +1260,68 @@ class WebService {
 		return null;
 
 	}
-	
+
+	/**
+	 * Validate subparameters and fill default values
+	 * 
+	 * @param $subParameterBundle : <parameterName : <subParameterName : value>>
+	 * @return : an array which contains an array of error messages and an
+	 * 	array which contains the subparameters together with their values
+	 */
 	public function validateSpecifiedSubParameters($subParameterBundle){
-		$messages[] = array();
+		$messages = array();
 		
-		$parameterName = array_keys($subParameterBundle);
-		$parameterName = $parameterName[0];
-		
-		//check if parameter exists
-		$parameterDefinition = "";
+		// search for parameters that were not passed and add 
+		// them to the subParametersBundle, so that also their
+		// missing subparameters will be recognized
 		foreach($this->mParsedParameters->children() as $child){
-			if("".$child["name"] == $parameterName){
-				$parameterDefinition = $child->asXML();
+			$found = false;
+			foreach($subParameterBundle as $parameterName => $subParameters){
+				if("".$child["name"] == $parameterName){
+					$found = true;
+				}
+			}
+			if(!$found){
+				$subParameterBundle["".$child["name"]] = array();
 			}
 		}
-		if($parameterDefinition == ""){
-			$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName);
-			return array($messages, null);
-		}
 		
-		$subParameters = $subParameterBundle[$parameterName];
+		foreach($subParameterBundle as $parameterName => $subParameters){
+			$parameterDefinition = "";
+			foreach($this->mParsedParameters->children() as $child){
+				if("".$child["name"] == $parameterName){
+					$parameterDefinition = $child->asXML();
+				}
+			}
+			if($parameterDefinition == ""){
+				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName);
+				//handle this!!!
+				//return array($messages, null);
+			}
 				
-		$subParameterProcessor = new SMWSubParameterProcessor(
-			$parameterDefinition, $subParameters);
+			$subParameterProcessor = new SMWSubParameterProcessor(
+				$parameterDefinition, $subParameters);
 
-		$subParameterProcessor->getMissingSubParameters();
+			$subParameterProcessor->getMissingSubParameters();
 
-		$missingSP = $subParameterProcessor->getMissingSubParameters();
-		foreach($missingSP as $key => $dontCare){
-			$messages[] = wfMsg('smw_wsuse_parameter_missing', "".$key);
+			$missingSP = $subParameterProcessor->getMissingSubParameters();
+			foreach($missingSP as $key => $dontCare){
+				$messages[] = wfMsg('smw_wsuse_parameter_missing', $parameterName.".".$key);
+			}
+
+			$unavailableSP = $subParameterProcessor->getUnavailableSubParameters();
+			foreach($unavailableSP as $key => $dontCare){
+				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName.".".$key);
+			}
 		}
-		
-		$unavailableSP = $subParameterProcessor->getUnavailableSubParameters();
-		foreach($unavailableSP as $key => $dontCare){
-			$messages[] = wfMsg('smw_wsuse_wrong_parameter', $key);
-		}
-		
+
 		if(count($messages) > 0){
 			return array($messages, array());
 		}
-		
+
 		$response = $subParameterProcessor->createParameterValue();
-		
-		return array(null, array($parameterName => $response));	
+
+		return array(null, array($parameterName => $response));
 	}
 }
 
