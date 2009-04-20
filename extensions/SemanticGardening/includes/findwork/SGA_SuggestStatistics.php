@@ -93,10 +93,7 @@ abstract class SMWSuggestStatistics {
 					require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL2.php');
 					self::$store = new SMWSuggestStatisticsSQL2();
 					break;
-				case ('SMWHaloStore'): default:
-					require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL.php');
-					self::$store = new SMWSuggestStatisticsSQL();
-					break;
+				
 			}
 		}
 		return self::$store;

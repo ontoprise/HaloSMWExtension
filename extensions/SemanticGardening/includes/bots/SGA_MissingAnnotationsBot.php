@@ -93,10 +93,7 @@ class MissingAnnotationsBot extends GardeningBot {
 
 					$this->store = new MissingAnnotationStorageSQL2();
 					break;
-				case ('SMWHaloStore'): default:
-
-					$this->store = new MissingAnnotationStorageSQL();
-					break;
+				
 			}
 		}
 		return $this->store;

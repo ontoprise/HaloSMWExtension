@@ -354,7 +354,8 @@ class AnnotationSimilarity {
 	}
 }
 // instantiate once (if editdistance function is supported).
-if (smwfDBSupportsFunction('halowiki')) {
+global $smwgUseEditDistance;
+if ($smwgUseEditDistance) {
 	new SimilarityBot();
 }
 
@@ -539,12 +540,10 @@ abstract class SimilarityBotStorage {
 					self::$store = null; // not implemented yet
 					trigger_error('Testing store not implemented for HALO extension.');
 					break;
-				case ('SMWHaloStore2'):
+				case ('SMWHaloStore2'): default:
 					self::$store = new SimilarityBotStorageSQL2();
 					break;
-				case ('SMWHaloStore'): default:
-					self::$store = new SimilarityBotStorageSQL();
-					break;
+				
 			}
 		}
 		return self::$store;

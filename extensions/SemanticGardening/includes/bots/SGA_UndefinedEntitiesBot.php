@@ -239,10 +239,7 @@ class UndefinedEntitiesDetector {
 
                     $this->store = new UndefinedEntitiesStorageSQL2();
                     break;
-				case ('SMWHaloStore'): default:
-
-					$this->store = new UndefinedEntitiesStorageSQL();
-					break;
+				
 			}
 		}
 		return $this->store;

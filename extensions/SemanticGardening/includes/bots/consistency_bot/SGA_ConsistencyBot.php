@@ -465,14 +465,11 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
                     self::$store = null; // not implemented yet
                     trigger_error('Testing store not implemented for HALO extension.');
                 break;
-                case ('SMWHaloStore2'):
+                case ('SMWHaloStore2'): default:
                     
                     self::$store = new ConsistencyBotStorageSQL2();
                 break;
-                case ('SMWHaloStore'): default:
-                    
-                    self::$store = new ConsistencyBotStorageSQL();
-                break;
+               
             }
         }
         return self::$store;
@@ -1107,7 +1104,7 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
             $maxDepth--;
             
              // get next subproperty level
-            $db->query('INSERT INTO smw_cc_properties_sub (SELECT DISTINCT i.smw_title AS property FROM '.$smw_subs2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title IN (SELECT * FROM smw_cc_properties_super) AND i.smw_title NOT IN (SELECT property FROM smw_cc_propertyinst))');
+            $db->query('INSERT INTO smw_cc_properties_sub (SELECT DISTINCT i.smw_title AS property FROM '.$smw_subs2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title IN (SELECT * FROM smw_cc_properties_super) AND i.smw_id NOT IN (SELECT id FROM smw_cc_propertyinst))');
            
             // insert number of instantiated properties of current property level level
             $db->query('INSERT INTO smw_cc_propertyinst ' .

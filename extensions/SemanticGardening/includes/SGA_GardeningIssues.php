@@ -172,10 +172,7 @@ global $wgAjaxExportList;
                     require_once($sgagIP . '/includes/storage/SGA_GardeningIssuesSQL2.php');
                     SGAGardeningIssuesAccess::$gi_interface = new SGAGardeningIssuesAccessSQL2();
                 break;
-                case ('SMWHaloStore'): default:
-                    require_once($sgagIP . '/sincludes/storage/SGA_GardeningIssuesSQL.php');
-                    SGAGardeningIssuesAccess::$gi_interface = new SGAGardeningIssuesAccessSQL();
-                break;
+                
             }
         }
         return SGAGardeningIssuesAccess::$gi_interface;
