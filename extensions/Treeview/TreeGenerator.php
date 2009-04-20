@@ -227,18 +227,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// Ajax call to retrieve children from start
 			if ($start && $this->json)
 				$query.= " AND r.o_id = ".$this->smw_start_id;
-			// start is set, but initial call, we need the first two levels (children and grand children of start)
-			else if ($start)
-				$query.= " AND r.o_id IN (SELECT r.s_id FROM $smw_rels2 r $categoryConstraintTable ".
-				         " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.
-				         " AND r.o_id = ".$this->smw_start_id.") OR r.o_id = ".$this->smw_start_id;
-			// no relations that are not in the current level (i.e. the first one)
+			// initial call (no matter if start is set), we need the first two levels (children and grand children of start)
 			else
 		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
 		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 		$query.= $categoryConstraintGroupBy;
-
+		
 		// check, if there were condition for the tree.
 		if ($this->condition) $this->getCondition($this->condition);
 
