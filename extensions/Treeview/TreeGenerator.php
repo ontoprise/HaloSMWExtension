@@ -224,8 +224,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 		
 		if ($this->ajaxExpansion || $this->maxDepth && $this->maxDepth < 3) { // only root and one level below
-			if ($start)
+			// Ajax call to retrieve children from start
+			if ($start && $this->json)
 				$query.= " AND r.o_id = ".$this->smw_start_id;
+			// start is set, but initial call, we need the first two levels (children and grand children of start)
+			else if ($start)
+				$query.= " AND r.o_id IN (SELECT r.s_id FROM $smw_rels2 r $categoryConstraintTable ".
+				         " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.
+				         " AND r.o_id = ".$this->smw_start_id.") OR r.o_id = ".$this->smw_start_id;
+			// no relations that are not in the current level (i.e. the first one)
 			else
 		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
 		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
@@ -609,7 +616,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$this->rootNodes = $this->sortElements($this->rootNodes);
 			return;
 		}
-		
+
 		// add all nodes, that are are no keys of sIds array -> then these
 		// exist as object in the triple and therefore have no parents
    		foreach (array_keys($this->elementProperties) as $id) {
