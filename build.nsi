@@ -25,8 +25,8 @@
 !define PRODUCTPATH "SMWPLUS"
 !define PRODUCT "SMW+"
 !define PRODUCT_CAPTION "SMW+"
-!define VERSION "1.4.3"
-!define BUILD_ID "431"
+#!define VERSION "1.4.3" set by hudson
+#!define BUILD_ID "431" set by hudson
 !define REQUIRED_JAVA_VERSION 16
 
 ; ----------------------------------------------------------
