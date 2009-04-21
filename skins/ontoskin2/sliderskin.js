@@ -10,6 +10,7 @@ MainSlider.prototype = {
  	},
  	//if()
  	activateResizing: function() {
+ 		
  	//Check if semtoolbar is available and action is not annotate
  	if(!$('mainslider') || wgAction == 'annotate') return;
  	
@@ -19,15 +20,10 @@ MainSlider.prototype = {
  			'/skins/ontoskin2/slider.gif"/>';
         
  		var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
-        if( saved_iv != null){
+        if( saved_iv != null && !isNaN(saved_iv)){
         	var initialvalue = saved_iv;
-        } else {
-        	//if(this.savedPos != -1){
-        	//	var initialvalue = this.savedPos;
-        	//} 
-        	//else { 
-        		var initialvalue = 190 / $('mainslider').clientWidth;
-        	//}
+        } else {    
+        		var initialvalue = 190 / $('mainslider').getWidth();
         }
         
  		//create slider after old one is removed
@@ -57,12 +53,11 @@ MainSlider.prototype = {
 
  	//Check for min max and sets the content and the semtoolbar to the correct width
  	slide: function(v)
- 	      {
- 			
- 		     
+ 	      { 
+ 		
             // change width of divs of class 'dtreestatic' below main_navtree
             // and of main_navtree itself.
- 	      	var menuwidth = $('smwf_naviblock').clientWidth;
+ 	      	var menuwidth = $('smwf_naviblock').getWidth();
             $$('#smwf_browserview div.dtreestatic').each(function(statictree) { 
                  statictree.style.width = menuwidth - 30 +"px";
             });
@@ -70,13 +65,17 @@ MainSlider.prototype = {
             var totalwidth = $('mainslider').getWidth();
             var min = 160 / totalwidth;
      		var max = 1- (400 / totalwidth);
-            if( v < min){
+            
+     		
+     		if (isNaN(v) ) {
+            	v = 190 / $('mainslider').getWidth();
+            }
+     		
+     		if( v < min){
                 if (this.sliderObj != null) this.sliderObj.setValue(min);
                 $('mainsliderHandle').style.left = 160; 
                 return;
-            }
-
-            if( v > max){
+            } else if( v > max){
                 if (this.sliderObj != null) this.sliderObj.setValue(max);
                 $('mainsliderHandle').style.left = totalwidth - 400;
                 return;
@@ -87,7 +86,7 @@ MainSlider.prototype = {
  	        var currRightDiv = currLeftDiv + 1; //margi-left of mainpage
  	        
  	       
- 	        if(currLeftDiv != Infinity && currRightDiv != Infinity ){
+ 	        if(currLeftDiv != Infinity && currRightDiv != Infinity && !isNaN(currRightDiv) && !isNaN(currLeftDiv) ){
  	        	$('smwf_naviblock').style.width = currLeftDiv + "%";
  	        	$('smwf_pageblock').style.marginLeft = currRightDiv + "%";
  	        }
