@@ -330,9 +330,20 @@
 			if (typeof smwgoldStartup == 'function'){
 		    	smwgoldStartup();
 		    }
+
+			//Test for IE8 and deactivate round corners for menu
+			var navi_round = true;
+			if (navigator.appName == 'Microsoft Internet Explorer') {
+				var re = new RegExp("MSIE 8.0");
+		        if (re.exec(navigator.userAgent) != null)
+		        {
+		        	navi_round = false;
+		        }	    
+		    }
+			if(navi_round) Nifty("div.smwf_navihead","normal");
+			
 		    //Setting of all elemtents with round corners 
 			Nifty("div.selected","top transparent");
-			Nifty("div.smwf_navihead","normal");
 			//Nifty("div.smwf_naviitem","normal");
 			Nifty("div.blueround_head","top");
 			Nifty("div.round","big");
