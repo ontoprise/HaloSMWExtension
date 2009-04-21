@@ -56,6 +56,30 @@ function smwf_wsu_processStep1($name){
 		$response .= ";";
 		$response .= $param->attributes()->defaultValue;
 		$response .= ";";
+
+		$subParameterProcessor = new SMWSubParameterProcessor(
+		$param->asXML(), array());
+
+		$nonOptionalSubParameters = $subParameterProcessor->getMissingSubParameters();
+		foreach($nonOptionalSubParameters as $name => $value){
+			$response .= $param->attributes()->name.".".$name.";";
+			$response .= "false;";
+			$response .= $value.";";
+		}
+
+		$optionalSubParameters = $subParameterProcessor->getOptionalSubParameters();
+		foreach($optionalSubParameters as $name => $value){
+			$response .= $param->attributes()->name.".".$name.";";
+			$response .= "true;";
+			$response .= $value.";";
+		}
+
+		$defaultSubParameters = $subParameterProcessor->getDefaultSubParameters();
+		foreach($defaultSubParameters as $name => $value){
+			$response .= $param->attributes()->name.".".$name.";";
+			$response .= "false;";
+			$response .= $value.";";
+		}
 	}
 	return $response;
 }
@@ -84,19 +108,19 @@ function smwf_wsu_processStep2($name){
 function smwf_wsu_getPreview($articleName, $wsSyn){
 	global $smwgDIIP;
 	require_once($smwgDIIP.'/specials/WebServices/SMW_WebServiceUsage.php');
-	
+
 	$wsSyn = str_replace("\n", "", $wsSyn);
 	$wsSyn = substr($wsSyn, 0, strlen($wsSyn)-2);
-	
+
 	$wsSyn = explode("|", $wsSyn);
-	
+
 	$parameters = array();
 	$parameters[] = "dummy";
 	$parameters[] = substr($wsSyn[0], 6);
 	for($i=1; $i < count($wsSyn); $i++){
 		$parameters[] = $wsSyn[$i];
 	}
-	return webservice_getPreview($articleName, $parameters);	
+	return webservice_getPreview($articleName, $parameters);
 }
 
 ?>

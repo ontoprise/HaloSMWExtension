@@ -222,14 +222,14 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step3-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		
+
 		$html .= "<div id=\"step3-rest-intro\" style=\"display:none\"></div>";
-		
+
 		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";
-		
+
 		$html .= "<br/>";
 		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step3-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep3()\">";
@@ -247,9 +247,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
-		
+
 		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
-		
+
 		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px; cursor: pointer\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_go.png\"</img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
@@ -413,7 +413,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			if(!$result){
 				$wsdlParameter = substr($wsdlParameter, 1);
 			}
-			
+				
 			$wsdlParameterSteps = explode("/", $wsdlParameter);
 
 			$found = false;
@@ -473,6 +473,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 						if(strlen($a["defaultValue"]."") == 0){
 							$a["defaultValue"] = "##";
 						}
+						$subParameter = $this->getSubParameter($wwsdParameter);
+						if(strlen($subParameter) > 0){
+							$a["subParameter"] = $subParameter;
+						} else {
+							$a["subParameter"] = "##";
+						}
 						$mergedParameters[$a["path"]] = $a;
 					} else {
 						$a["xpath"] = $wwsdParameter["xpath"]."";
@@ -501,6 +507,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				if(!$result){
 					$a["optional"] = "##";
 					$a["defaultValue"] = "##";
+					$a["subParameter"] = "##";
+					
 					$mergedParameters[$a["path"]] = $a;
 				} else {
 					$a["xpath"] = "##";
@@ -529,6 +537,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					if(strlen($o["defaultValue"]."") == 0){
 						$o["defaultValue"] = "##";
 					}
+					$subParameter = $this->getSubParameter($wsParameter);
+					if(strlen($subParameter) > 0){
+						$a["subParameter"] = $subParameter;
+					} else {
+						$a["subParameter"] = "##";
+					}
 					$mergedParameters[$o["path"]] = $o;
 				} else {
 					$o["json"] = $wsParameter["json"]."";
@@ -544,9 +558,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			}
 		}
 		ksort($mergedParameters);
-		
-		
-		
+
+
+
 		$html = "";
 		if($result){
 			$html .= "<span id=\"editresults\" style=\"display: none\">";
@@ -569,9 +583,14 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				} else {
 					$html .= "##;";
 				}
+				if(array_key_exists("subParameter", $mergedParameter)){
+					$html .= $mergedParameter["subParameter"].";";
+				} else {
+					$html .= "##;";
+				}
+				
 			} else {
 				$html .= $mergedParameter["xpath"].";";
-				$html .= "##;";
 				$html .= $mergedParameter["json"].";";
 			}
 		}
@@ -611,6 +630,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				} else {
 					$html .= "##;";
 				}
+				$subParameter = $this->getSubParameter($wwsdParameter);
+				if(strlen($subParameter) > 0){
+					$html .= $subParameter.";";
+				} else {
+					$html .= "##;";
+				}
 			} else {
 				$html .= $wwsdParameter["name"].";";
 				if(strlen($wwsdParameter["xpath"]."") > 0){
@@ -628,6 +653,14 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "</span>";
 		return $html;
+	}
+
+	private function getSubParameter($parameter){
+		$parameterXML = $parameter->asXML();
+		$subParameterXML = substr($parameterXML, 
+			strpos($parameterXML, ">") + 1, 
+			strrpos($parameterXML, "</") - strpos($parameterXML, ">") - 1);
+		return rawurlencode($subParameterXML);
 	}
 }
 ?>

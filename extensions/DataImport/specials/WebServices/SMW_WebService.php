@@ -1044,9 +1044,11 @@ class WebService {
 		$messages = array();
 		foreach($specifiedParameters as $pName => $pValue){
 			$exists = false;
-			foreach($this->mParsedParameters->children() as $child){
-				if("".$child["name"] == $pName){
-					$exists = true;
+			if($this->mParsedParameters != null){
+				foreach($this->mParsedParameters->children() as $child){
+					if("".$child["name"] == $pName){
+						$exists = true;
+					}
 				}
 			}
 			if(!$exists){
@@ -1263,34 +1265,39 @@ class WebService {
 
 	/**
 	 * Validate subparameters and fill default values
-	 * 
+	 *
 	 * @param $subParameterBundle : <parameterName : <subParameterName : value>>
 	 * @return : an array which contains an array of error messages and an
 	 * 	array which contains the subparameters together with their values
 	 */
 	public function validateSpecifiedSubParameters($subParameterBundle){
 		$messages = array();
-		
-		// search for parameters that were not passed and add 
+		$response = array();
+
+		// search for parameters that were not passed and add
 		// them to the subParametersBundle, so that also their
 		// missing subparameters will be recognized
-		foreach($this->mParsedParameters->children() as $child){
-			$found = false;
-			foreach($subParameterBundle as $parameterName => $subParameters){
-				if("".$child["name"] == $parameterName){
-					$found = true;
+		if($this->mParsedParameters != null){
+			foreach($this->mParsedParameters->children() as $child){
+				$found = false;
+				foreach($subParameterBundle as $parameterName => $subParameters){
+					if("".$child["name"] == $parameterName){
+						$found = true;
+					}
+				}
+				if(!$found){
+					$subParameterBundle["".$child["name"]] = array();
 				}
 			}
-			if(!$found){
-				$subParameterBundle["".$child["name"]] = array();
-			}
 		}
-		
+
 		foreach($subParameterBundle as $parameterName => $subParameters){
 			$parameterDefinition = "";
-			foreach($this->mParsedParameters->children() as $child){
-				if("".$child["name"] == $parameterName){
-					$parameterDefinition = $child->asXML();
+			if($this->mParsedParameters != null){
+				foreach($this->mParsedParameters->children() as $child){
+					if("".$child["name"] == $parameterName){
+						$parameterDefinition = $child->asXML();
+					}
 				}
 			}
 			if($parameterDefinition == ""){
@@ -1298,9 +1305,9 @@ class WebService {
 				//handle this!!!
 				//return array($messages, null);
 			}
-				
+
 			$subParameterProcessor = new SMWSubParameterProcessor(
-				$parameterDefinition, $subParameters);
+			$parameterDefinition, $subParameters);
 
 			$subParameterProcessor->getMissingSubParameters();
 
@@ -1313,16 +1320,18 @@ class WebService {
 			foreach($unavailableSP as $key => $dontCare){
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName.".".$key);
 			}
+			
+			$response = array_merge($response, 
+				array($parameterName => $subParameterProcessor->createParameterValue()));
 		}
 
 		if(count($messages) > 0){
 			return array($messages, array());
 		}
 
-		$response = $subParameterProcessor->createParameterValue();
-
-		return array(null, array($parameterName => $response));
+		return array(null, $response);
 	}
+
 }
 
 ?>

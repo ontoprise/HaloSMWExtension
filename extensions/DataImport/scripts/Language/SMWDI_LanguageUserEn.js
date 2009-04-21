@@ -44,5 +44,9 @@ var wgUserLanguageStrings = {
 		'smw_wwsu_warning' 				:	'Warning: ',
 		'smw_wwsu_confirm' 				:	'If you proceed, all information you already entered will be lost',
 		
+		'smw_wws_add_subparameters'		:	'Add subparameters',
+		'smw_wws_remove_subparameters'		:	'Remove subparameters',
+		'smw_wws_subparameters'		:		'Subparameters:',
+		
 		
 };
