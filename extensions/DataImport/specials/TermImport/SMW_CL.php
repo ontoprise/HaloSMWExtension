@@ -58,7 +58,7 @@ public function execute() {
 										"<table><tr><td>" .wfMsg('smw_ti_define_inputpolicy')."</td>" . 
 										"<td><input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\"></td>" .
 										"<td><img style=\"cursor: pointer;\" onclick=\"termImportPage.getPolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Add.png\" /></td></tr>" . 
-										"<tr><td align=\"left\"><b><i>Info:</i></b></td><td align=\"right\"><input type=\"radio\" name=\"policy_type\" value=\"regex\" checked><span style=\"color:#900000;\"><u>RegEx</u></span><input type=\"radio\" name=\"policy_type\" value=\"term\">Term</span></td><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/Data Import/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
+										"<tr><td align=\"left\"><b><i>Info:</i></b></td><td align=\"right\"><input type=\"radio\" name=\"policy_type\" value=\"regex\" checked><span style=\"color:#900000;\"><u>RegEx</u></span><input type=\"radio\" name=\"policy_type\" value=\"term\">Term</span></td><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
 										"<i>" . wfMsg('smw_ti_inputpolicy') . "</i>" . 
 									"</div>" .	
 									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" .  
