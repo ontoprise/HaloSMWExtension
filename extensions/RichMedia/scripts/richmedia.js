@@ -51,7 +51,7 @@ var RichMediaPage = Class.create({
 	 * A warning appeared and the user pressed 'Re-upload' or 'Save file'.
 	 * Copy the SF
 	 */
-	copyToUploadWarninng: function() {
+	copyToUploadWarning: function() {
 		var sForm = $$('form.createbox')[0]; //array
 		var destForm = $('uploadwarning');
 		
@@ -70,6 +70,7 @@ var RichMediaPage = Class.create({
 				clone.hide();  
 				destForm.appendChild(clone);
 				//TODO: create a valid field for dates (day, month, year) -> date
+				
 	 		}); 
   		}); 
 		return true;
