@@ -27,7 +27,7 @@ END;
 		
 		$uploadLabel = wfMsg('smw_rm_uploadheadline');
 		$buttonText = wfMsg('smw_rm_formbuttontext');
-		$html .= " <td><a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:600\"></a>
+		$html .= " <td><a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a>
 		<input type=\"submit\" value=\"$buttonText\"/></td>";
 		$html .= "</tr></table></form>";
 
