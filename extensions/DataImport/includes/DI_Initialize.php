@@ -27,6 +27,9 @@ function enableDataImportExtension() {
 	//the Data Import Extension
 	$smwgEnableDataImportExtension = true;
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
+	
+	//require the materialize parser function
+	require_once("$smwgDIIP/specials/WebServices/SMW_MaterializeParserFunction.php");
 			
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 }
@@ -50,6 +53,8 @@ function smwfDISetupExtension() {
 	}
 	
 	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
+	
+	$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
 	
 	smwfDIInitMessages();
 	WebServiceManager::registerWWSNamespaces();
@@ -97,15 +102,12 @@ function smwfDISetupExtension() {
 			'description' => 'Allows to import data from a lot of different sources.');
 	}
 
-	//for initializing web service database tables
-	//$wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
-
-	
 	//load the Gardening Bots
 	
 	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
+	
 	return true;
 }
 
@@ -284,6 +286,16 @@ function smwDITBAddHTMLHeader(&$out){
 	return true;
 }
 
+function smwDIMAAddHTMLHeader(&$out){
+	global $smwgDIScriptPath, $wgRequest;
+	
+	$action = $wgRequest->getVal('action');
+	if ($action == 'edit') {
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/materialize.js\"></script>");
+	}
+	
+	return true;
+}
 
 function smwfDIGetAjaxMethodPrefix() {
 	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);

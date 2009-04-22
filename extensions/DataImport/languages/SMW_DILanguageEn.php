@@ -230,6 +230,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsu_addcall' => 'Add call to <articlename>',
 	'smw_wwsu_noresults' => 'This web service does not provide any result parts.',
 	
+	'smw_wwsm_update_msg' => 'The source has changed sinse the last materialization.',
+	
 	
 	
 	);

@@ -229,6 +229,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_displaywssyntax' => 'Zeige #ws-syntax',
 	'smw_wwsu_addcall' => 'F&uuml;ge Aufruf zu <articlename> hinzu',
 	'smw_wwsu_noresults' => 'Dieser Web Service stellt keine Result Parts zur Verf&uuml;gung',
+	
+	'smw_wwsm_update_msg' => 'Die Quelle der letzten Materialisierung wurde geändert.',
 	);
 
 	protected $smwDINamespaces = array(
