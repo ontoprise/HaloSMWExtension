@@ -75,10 +75,15 @@ class TreeGenerator {
 		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
+		
+		// remove any special chars and replace them with their html entity
+		$tree= preg_replace('/([^\d\w\s_:-\[\]\*\|])/e',"'&#'.ord('\\1').';'", $tree);
 
 		// check if we have to return certain parameter with the result set when the dynamic expansion
-		// is set and the page is rendered for the first two level tree.
-		if (!$this->json && ($ajaxExpansion || $tv_store->openToFound() || $urlparams)) {
+		// is set and the page is rendered for the first tree
+		// prefixed parameter are send like GET params in an URL encapsulated with "\x7f". In the tree parser
+		// function, these parameters are evaluated and some Javascript for the dTree is added.
+		if (!$this->json && (strlen(trim($tree)) > 0) && ($ajaxExpansion || $tv_store->openToFound() || $urlparams)) {
 		    $returnPrefix= "\x7f";
 			if ($ajaxExpansion) {			
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
@@ -233,7 +238,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 		$query.= $categoryConstraintGroupBy;
-		
+
 		// check, if there were condition for the tree.
 		if ($this->condition) $this->getCondition($this->condition);
 
