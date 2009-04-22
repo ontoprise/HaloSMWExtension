@@ -44,7 +44,8 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_upload_type_audio' => '<li><b>Audio: </b>$1',
 		'smw_rm_upload_type_video' => '<li><b>Video: </b>$1',
 		'smw_rm_upload_error_ext_ns'=> 'There is no valid Namespace defined for the file extension: $1',
-		
+		'smw_rm_uploadlegend' => 'Upload file',
+		'smw_rm_sflegend' => 'Meta information',
 //		'smw_rm_upload-permitted'            => 'permitted file types: <br>$1.',
 //		'smw_rm_upload-preferred'            => 'preferred file types: <br>$1.',
 //		'smw_rm_upload-prohibited'           => 'prohibited file types: <br>$1.',
