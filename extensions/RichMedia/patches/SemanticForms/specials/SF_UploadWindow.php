@@ -1,4 +1,5 @@
 <?php
+#TODO: merge to the new UploadForm!!!
 /**
  * SF_UploadWindow - used for uploading files from within a form
  * This class is nearly identical to MediaWiki's SpecialUpload class, with
@@ -879,6 +880,11 @@ END;
 	 */
 	function uploadError( $error ) {
 		global $wgOut;
+		
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
+		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
+		$wgOut->addHTML( '</div>' );
+		
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
 		$wgOut->addHTML( "<span class='error'>{$error}</span>\n" );
 	}
@@ -900,7 +906,12 @@ END;
 			# Couldn't save file; an error has been displayed so let's go.
 			return;
 		}
-
+		
+		#TODO: notice with relatedArticle and that everything has been saved hidden?...
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
+		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
+		$wgOut->addHTML( '</div>' );
+		
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
 		$wgOut->addHTML( "<ul class='warning'>{$warning}</ul><br />\n" );
 
@@ -942,57 +953,29 @@ END;
 
 		//$rMDestForm = $wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
 		$form_add= new SFAddData();
-		#TODO: maybe we need a generic name for the target here...
-		$form_add_test = $form_add->execute( $rMUploadFormName . '/upload_test_DaMO2' );
-/*			
-		//maxdepth=3 e.g. RMVideo[CreationDate][day] = 12
-		// who knows ...
-		if (is_array($rMDestForm)) {
-			//foreach FormName[x]
-			foreach ($rMDestForm as $rMFormField => $rMFormFieldValue)
-			{
-				if (is_array($rMFormFieldValue)) {
-					//foreach FormName[Date][x]
-					foreach ($rMFormFieldValue as $rMFormSubField => $rMFormSubFieldValue)
-					{
-						$wgOut->addHTML(
-								"<input type='hidden' name=\"" . 
-								$rMUploadFormName."[".$rMFormField."]"."[".$rMFormSubField."]".
-								"\" value=\"" . htmlspecialchars( $rMFormSubFieldValue ) ."\"/>"
-								);
-					}
-				}
-				else {
-					$wgOut->addHTML(
-							"<input type='hidden' name=\"" . 
-							$rMUploadFormName."[".$rMFormField."]" .
-							"\" value=\"" . htmlspecialchars( $rMFormFieldValue ) ."\"/>"
-							);
-				}
-			}
-		}
-		//end RichMedia
-*/
+		$wgOut->addHTML('<div style="display:none">');
+		$form_add_test = $form_add->execute( $rMUploadFormName);
+		$wgOut->addHTML('</div>');
+
 		$wgOut->addHTML("
 	{$copyright}
 	<table border='0'>
 		<tr>
 			<tr>
 				<td align='$align1'>
-					<input tabindex='2' type='submit' name='wpUpload' value=\"$save\" onClick='richMediaPage.returnToUploadWindow();'/>
+					<input tabindex='2' type='submit' name='wpUpload' value=\"$save\" onClick='richMediaPage.copyToUploadWarning();'/>
 				</td>
 				<td align='$align2'>$iw</td>
 			</tr>
 			<tr>
 				<td align='$align1'>
-					<input tabindex='2' type='submit' name='wpReUpload' value=\"{$reupload}\" onClick='richMediaPage.doReUpload();'/>
+					<input tabindex='2' type='submit' name='wpReUpload' value=\"{$reupload}\" onClick='richMediaPage.copyToUploadWarning();'/>
 				</td>
 				<td align='$align2'>$reup</td>
 			</tr>
 		</tr>
 	</table>\n" );
 	
-			
 			$wgOut->addHTML("</form>");
 	}
 
@@ -1188,9 +1171,12 @@ wgAjaxLicensePreview = {$alp};
 		$encComment = htmlspecialchars( $this->mComment );
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-
+		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
+		
 		$wgOut->addHTML( <<<EOT
-	<form id='upload' method='post' enctype='multipart/form-data' action="$action"  onSubmit='richMediaPage.doUpload();' >
+<fieldset>
+<legend>{$uploadlegend}<legend>
+	<form id='upload' method='post' enctype='multipart/form-data' action="$action" onSubmit='richMediaPage.doUpload();' >
 		<table border='0' style="width:100%; margin:0px;">
 		<tr>
 			<td style="width:30%"/>
@@ -1266,19 +1252,19 @@ EOT
 		}
 
 		$wgOut->addHTML( "
-		<!--<td></td>
+		<td></td>
 		<td>
-			<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
-			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>
+			<!--<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
+			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>-->
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' $warningChecked/>
 			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
 		</td>
-	</tr>-->
+	</tr>
 	$warningRow
-	<!--<tr style='display:none'>
+	<tr style='display:none'>
 		<td></td>
 		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
-	</tr>-->
+	</tr>
 	<tr>
 		<td></td>
 		<td align='$align2'>
@@ -1292,6 +1278,7 @@ EOT
 	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
 	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
+	</fieldset>
 	</form>" );
 		
 //		
@@ -1303,15 +1290,22 @@ EOT
 		}
 		
 		
-		$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
+		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
 			global $wgCanonicalNamespaceNames;
 			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
 			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
 		}
+		
+		$sflegend = wfMsgHtml('smw_rm_sflegend');
+		$wgOut->addHTML( "
+			<div>
+			<fieldset>
+				<legend>{$sflegend}</legend>
+		");
 		$form_add= new SFAddData();
-		#TODO: maybe we need a generic name for the target here...
-		$form_add_test = $form_add->execute( $rMUploadName . '/upload_test_DaMO2' );
+		$form_add_test = $form_add->execute( $rMUploadName );
+		$wgOut->addHTML("</fieldset></div>");
 		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 		global $smwgRMScriptPath;
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
