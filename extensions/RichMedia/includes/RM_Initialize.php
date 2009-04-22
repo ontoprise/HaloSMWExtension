@@ -33,17 +33,14 @@ $smwgRMFormByNamespace = array(
 function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
 	global $wgExtensionFunctions, $smwgRMIP, $wgHooks;
-	
-	//require the Semantic Forms!?!
-	//require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
-			
+				
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMFormUsage_Magic';
-	// workaround: because the script are only loaded by the parser function, when action=purge.
+	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
 	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 }
 
@@ -63,15 +60,14 @@ function smwfRMSetupExtension() {
 		// Do not install the extension for ajax calls
 		return;
 				
-	} else { // otherwise register special pages
-
+	} else { 
 		$wgAutoloadClasses['RMForm'] = $smwgRMIP . '/includes/RM_Form.php';	
 		
 		// Register Credits
 		$wgExtensionCredits['parserhook'][]=array('name'=>'Rich&nbsp;Media&nbsp;Extension', 'version'=>SMW_RM_VERSION,
 			'author'=>"Benjamin&nbsp;Langguth, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
 			'url'=>'https://sourceforge.net/projects/halo-extension', 
-			'description' => '...');
+			'description' => 'The Rich Media Extension provides an ontology to allow easy handling of media such as documents, images, doc, pdf etc. The ontology comprises templates and forms and examples. It enhances a one-click media upload of files and enables annotation of media in a simple way.');
 	}
 	return true;
 }
@@ -105,15 +101,18 @@ function RMFormUsage_Magic(&$magicWords, $langCode){
 }
 
 function smwRMFormAddHTMLHeader(&$out){
-	global $wgOut, $smwgRMScriptPath;
+	global $smwgRMScriptPath, $smwgHaloScriptPath, $sfgScriptPath;
 	
-	//add the scripts for Semantic Forms
-	SFUtils::addJavascriptAndCSS();
-	$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");	
 	$jsm = SMWResourceManager::SINGLETON();
-	//css file:
-	$jsm->addCSSIf($smwgRMScriptPath . '/skins/richmedia.css');
+	# Prototype needed!
+	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+	$jsm->addScriptIf($smwgRMScriptPath. '/scripts/richmedia.js');
+	# Floatbox needed!
+	$jsm->addScriptIf($sfgScriptPath .  '/libs/floatbox.js');
 	$jsm->serializeScripts($out);
+	
+	#Floatbox css file:
+	$jsm->addCSSIf($sfgScriptPath . '/skins/floatbox.css');
 	$jsm->serializeCSS($out);
 	return true;
 }
