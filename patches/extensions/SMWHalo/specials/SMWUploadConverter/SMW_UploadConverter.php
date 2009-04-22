@@ -46,7 +46,7 @@ class UploadConverter {
 		$mimeType = $file->getMimeType();
 		if (isset($smwgUploadConverter[$mimeType]))
 			$converterApp = $smwgUploadConverter[$mimeType];
-		if (!$converterApp) {
+		else {
 			// no converter specified for the mime type
 			return true;
 		}
