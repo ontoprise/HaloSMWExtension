@@ -77,7 +77,7 @@ class TreeGenerator {
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 		
 		// remove any special chars and replace them with their html entity
-		$tree= preg_replace('/([^\d\w\s_:-\[\]\*\|])/e',"'&#'.ord('\\1').';'", $tree);
+		$tree= preg_replace('/([^\d\w\s_:-\[\]\*\|\.])/e',"'&#'.ord('\\1').';'", $tree);
 
 		// check if we have to return certain parameter with the result set when the dynamic expansion
 		// is set and the page is rendered for the first tree
