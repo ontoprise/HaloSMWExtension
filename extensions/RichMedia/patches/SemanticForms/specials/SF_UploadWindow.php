@@ -907,7 +907,9 @@ END;
 			return;
 		}
 		
-		#TODO: notice with relatedArticle and that everything has been saved hidden?...
+		global $smwgRMScriptPath;
+		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
+		#TODO:reDesign for smooth :) 
 		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
 		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
 		$wgOut->addHTML( '</div>' );
@@ -946,17 +948,6 @@ END;
 		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
 		);
 
-		//Beginn RichMedia
-		global $smwgRMFormByNamespace, $wgRequest;
-		$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
-		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-
-		//$rMDestForm = $wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
-		$form_add= new SFAddData();
-		$wgOut->addHTML('<div style="display:none">');
-		$form_add_test = $form_add->execute( $rMUploadFormName);
-		$wgOut->addHTML('</div>');
-
 		$wgOut->addHTML("
 	{$copyright}
 	<table border='0'>
@@ -976,7 +967,15 @@ END;
 		</tr>
 	</table>\n" );
 	
-			$wgOut->addHTML("</form>");
+		$wgOut->addHTML("</form>");
+
+		//Beginn RichMedia
+		global $smwgRMFormByNamespace, $wgRequest;
+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
+		$form_add = new SFAddData();
+		$wgOut->addHTML('<div style="display:none">');
+		$form_add_test = $form_add->execute( $rMUploadFormName );
+		$wgOut->addHTML('</div>');
 	}
 
 	/**
@@ -1132,7 +1131,7 @@ wgAjaxLicensePreview = {$alp};
 				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
 			? 'checked="checked"'
 			: '';
-		$warningChecked = $this->mIgnoreWarning ? 'checked' : '';
+		$warningChecked = $this->mIgnoreWarning ? 'checked="checked"' : '';
 
 		// Prepare form for upload or upload/copy
 		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
