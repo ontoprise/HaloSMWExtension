@@ -22,7 +22,7 @@ END;
 		$articleTitle = $wgRequest->getText('title');
 		global $smwgRMFormByNamespace;
 		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$queryString .= "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle;
+		$queryString .= "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 		
 		$uploadLabel = wfMsg('smw_rm_uploadheadline');
