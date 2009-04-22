@@ -48,31 +48,16 @@ var RichMediaPage = Class.create({
 	},
 	
 	/**
-	 * A warning appeared and the user pressed 'Re-upload'. So we'll get back to the original form.
-	 * Copy the SF and click wpUpload
+	 * A warning appeared and the user pressed 'Re-upload' or 'Save file'.
+	 * Copy the SF
 	 */
-	returnToUploadWindow: function() {
+	copyToUploadWarninng: function() {
 		var sForm = $$('form.createbox')[0]; //array
 		var destForm = $('uploadwarning');
 		
 		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
-	   	
-		//destForm.wpUpload.click();
 	},
-	
-	/**
-	 * A warning appeared and the user pressed 'Save file'. So we'll do the upload.
-	 * Copy the SF and click wpReUpload
-	 */
-	doReUpload: function() {
-		var sForm = $$('form.createbox')[0]; //array
-		var destForm = $('uploadwarning');
 		
-		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
-	   	
-		//destForm.wpReUpload.click();
-	},
-	
 	/**
 	* merges an array of source forms entries hidden into one destination form 
 	*/ 
@@ -82,8 +67,9 @@ var RichMediaPage = Class.create({
 			$(sourceForms).getElements().each(function(formControl) { 
 				clone = formControl.cloneNode(true); 
 				clone.id = '';
-				//clone.type = 'hidden';  
+				clone.hide();  
 				destForm.appendChild(clone);
+				//TODO: create a valid field for dates (day, month, year) -> date
 	 		}); 
   		}); 
 		return true;
