@@ -289,30 +289,7 @@ clicking the big arrows between the columns.',
  	'refactorstatistics' => 'Refactor Statistics',
  	'smw_ob_link_stats' => 'Open refactor statistics',
 
-	/* SMWFindWork */
- 	'findwork' => 'Find work',
- 	'smw_findwork_docu' => 'This page suggests articles that are somehow problematic but which you might enjoy editing/correcting.',
- 	'smw_findwork_user_not_loggedin' => 'You are NOT logged in. It\'s possible to use the page anonymously, but it is far better to be logged in.', 	
- 	'smw_findwork_header' => 'The suggested articles will reflect your interests based on your edit history. If you don\'t know what to choose, click on $1. The system will then select something for you.<br /><br />If you want to work on a more specific issue you can choose one of the following: ',
- 	'smw_findwork_rateannotations' => '<h2>Evaluate annotations</h2>You can help to enhance the quality of this wiki by evaluating the quality of the following statements. Are the following statements correct?<br><br>',
- 	'smw_findwork_yes' => 'Correct.',
- 	'smw_findwork_no' => 'Wrong.',
- 	'smw_findwork_dontknow' => 'Don\'t know.',
- 	'smw_findwork_sendratings' => 'Send evaluations',
- 	'smw_findwork_getsomework' => 'Give me some Work!',
- 	'smw_findwork_show_details' => 'Show details',
- 	'smw_findwork_heresomework' => 'Here\'s some work',
-
- 	'smw_findwork_select' => 'Select',
- 	'smw_findwork_generalconsistencyissues' => 'General consistency problems',
- 	'smw_findwork_missingannotations' => 'Missing Annotations',
- 	'smw_findwork_nodomainandrange' => 'Properties without type/domain',
- 	'smw_findwork_instwithoutcat' => 'Instances without category',
- 	'smw_findwork_categoryleaf' => 'Category leafs',
- 	'smw_findwork_subcategoryanomaly' => 'Subcategory anomalies',
- 	'smw_findwork_undefinedcategory' => 'Undefined categories',
- 	'smw_findwork_undefinedproperty' => 'Undefined properties',
- 	'smw_findwork_lowratedannotations' => 'Pages with low rated annotations',
+	
 
 
 	/* Gardening Issue Highlighting in Inline Queries */
