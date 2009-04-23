@@ -85,7 +85,7 @@ class WSStorageSQL {
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 		
 		$db =& wfGetDB( DB_MASTER );
-		$query = "ALTER TABLE smw_ws_cache MODIFY result LONGTEXT NOT NULL";
+		$query = "ALTER TABLE ".$cacheTable." MODIFY result LONGTEXT NOT NULL";
 		$db->query($query);
 		 
 		// create parameter table
@@ -96,7 +96,7 @@ class WSStorageSQL {
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'value'      	    =>  'LONGTEXT NOT NULL'), $db, $verbose);
 		
-		$query = "ALTER TABLE smw_ws_parameters MODIFY value LONGTEXT NOT NULL";
+		$query = "ALTER TABLE ".$paramTable." MODIFY value LONGTEXT NOT NULL";
 		$db->query($query);
 		
 		DBHelper::reportProgress("   ... done!\n",$verbose);
@@ -180,8 +180,9 @@ class WSStorageSQL {
 	public function getWS($id) {
 		$db =& wfGetDB( DB_SLAVE );
 		$wwsd = $db->tableName('smw_ws_wwsd');
+		$page = $db->tableName('page');
 		$sql = "SELECT wwsd.*, p.page_title FROM ".$wwsd." wwsd ".
-		          "JOIN page p ON wwsd.web_service_id = p.page_id ".
+		          "JOIN ".$page." p ON wwsd.web_service_id = p.page_id ".
 		          "WHERE web_service_id = ".$id.";";
 		$ws = null;
 
@@ -245,8 +246,9 @@ class WSStorageSQL {
 	public function getWSArticles($wsPageID, SMWRequestOptions $options) {
 		$db =& wfGetDB( DB_SLAVE );
 		$atbl = $db->tableName('smw_ws_articles');
+		$page = $db->tableName('page');
 		$sql = "SELECT DISTINCT art.page_id, p.page_title FROM ".$atbl." art ".
-		          "JOIN page p ON art.page_id = p.page_id ".
+		          "JOIN ".$page." p ON art.page_id = p.page_id ".
 		          "WHERE art.web_service_id='".$wsPageID."' ";
 		$cond = DBHelper::getSQLConditions($options, 'p.page_title');
 		$opt = DBHelper::getSQLOptionsAsString($options, 'p.page_title');
@@ -316,8 +318,9 @@ class WSStorageSQL {
 	public function getWSProperties($wsPageID, SMWRequestOptions $options) {
 		$db =& wfGetDB( DB_SLAVE );
 		$ptbl = $db->tableName('smw_ws_properties');
+		$page = $db->tableName('page');
 		$sql = "SELECT DISTINCT prop.page_id, p.page_title FROM ".$ptbl." prop ".
-		          "JOIN page p ON prop.page_id = p.page_id ".
+		          "JOIN ".$page." p ON prop.page_id = p.page_id ".
 		          "WHERE prop.web_service_id='".$wsPageID."' ";
 		$cond = DBHelper::getSQLConditions($options, 'p.page_title');
 		$opt = DBHelper::getSQLOptionsAsString($options, 'p.page_title');
