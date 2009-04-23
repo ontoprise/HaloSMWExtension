@@ -196,6 +196,9 @@ require_once("extensions/SemanticResultFormats/SRF_Settings.php");
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
 
+#URL Arguments
+include_once('extensions/URLArguments/URLArguments.php');
+
 $wgGroupPermissions['darkmatter']['*'] = true;
 $wgGroupPermissions['gardener']['*'] = true;
 
