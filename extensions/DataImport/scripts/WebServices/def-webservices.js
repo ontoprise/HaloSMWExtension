@@ -3315,13 +3315,18 @@ DefineWebServiceSpecial.prototype = {
 
 			result += "<result name=\"result\" >\n";
 
+			//for alias generation
+			var rememberedAliases = new Array();
+			
 			if ($("step4-rest-intro").childNodes[1].checked) {
 				var name = $("step4-rest-intro").childNodes[3].value;
 				result += "<part name=\"" + name + "\" path=\"\"/>\n";
 				wsSyntax += "| ?result." + name + "\n";
+				rememberedAliases.push(name);				
 			}
 
 			var resultTable = $("step4-results").childNodes[0];
+			
 			for (i = 1; i < resultTable.childNodes.length; i++) {
 				if (resultTable.childNodes[i].removed) {
 					continue;
@@ -3331,6 +3336,20 @@ DefineWebServiceSpecial.prototype = {
 				if (name == "") {
 					name = "alias-" + i;
 				}
+				
+				done = false;
+				while(!done){
+					done = true;
+					for(var k=0; k < rememberedAliases.length; k++){
+						if(name == rememberedAliases[k]){
+							name = name + "-" + 1;
+							done = false;
+							break;
+						}
+					}
+				}
+				rememberedAliases.push(name);
+				
 				result += "<part name=\"" + name + "\" ";
 
 				wsSyntax += "| ?result." + name + "\n";
