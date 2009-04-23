@@ -394,12 +394,12 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$mSP = $result[0];
 	if(!is_null($result[1])){
 		foreach($result[1] as $key => $value){
-			if(!array_key_exists($key, $wsParameters)){
+			if(!array_key_exists($key, $wsParameters) && strlen($value) > 0){
 				$wsParameters[$key] = $value;
 			}
 		}
 	}
-
+	
 	if(count($mSP) == 0){
 		$mSP = array();
 	}
