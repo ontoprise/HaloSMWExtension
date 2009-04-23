@@ -1120,7 +1120,7 @@ class TSConnection {
 				$this->con->send($topic, $enc_commands);
 				return;
 			}
-			$commandStr = implode("\n",$commands);
+			$commandStr = implode("|||",$commands);
 			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
 			$this->con->send($topic, $enc_commands);
 				
@@ -1131,7 +1131,7 @@ class TSConnection {
 				$this->con->update($enc_commands);
 				return;
 			}
-			$commandStr = implode("\n",$commands);
+			$commandStr = implode("|||",$commands);
 			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
 			$this->con->update($enc_commands);
 				
