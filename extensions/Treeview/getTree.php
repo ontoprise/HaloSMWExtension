@@ -14,24 +14,31 @@ function smw_treeview_getTree($input) {
   global $wgParser;
 
   parse_str($input, $req);
+  $initOnload = (isset($req['i'])) ? true : false;
   $relation = (isset($req['p'])) ? 'property='.$req['p'] : NULL;
   $category = (isset($req['c'])) ? 'category='.$req['c'] : NULL;
   $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
-  $refresh = (isset($req['r'])) ? true : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
   $urlparams = (isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
+  $refresh = (isset($req['f'])) ? 'refresh=1' : NULL;
   
-  // fetch on depth only
-  $maxDepth = 'maxDepth=1';
-  // these are not needed for Ajax calls
-  $redirectPage = NULL;
-  $level = NULL;
+  // the following parameter depend on initOnload,
+  // if this is not set, these are not needed because an dynamic expansion will fetch
+  // the next level only. If the whole tree (or part of it) is loaded for the first time
+  // we need to check these parameter as well and treat them accordingly 
+  
+  // fetch one depth only if ajax expansion
+  $maxDepth = ($initOnload) ? (isset($req['m']) ? 'maxDepth='.$req['m'] : NULL ) : 'maxDepth=1';
+  // these are not needed for the next level on dynamic expansion
+  $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.$req['r'] : NULL;
+  $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
+  $opento = ($initOnload && isset($req['o'])) ? 'opento='.$req['o'] : NULL;
   
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
-                                     $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams);
+                                     $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams, $opento, $refresh);
   
   $return['treelist'] = $res;
   $return['result'] = 'success';

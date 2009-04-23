@@ -103,7 +103,7 @@ Node.prototype.unserialize = function(str) {
 	return true;
 }
 
-// SMW Data object (for relation and display)
+// SMW Data object (for all setup related to smw, when doing Ajax calls)
 function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams) {
 	this.id = id;
 	this.relation = relation;
@@ -201,6 +201,7 @@ function dTree(objName, className) {
 	this.completed = false;
 	this.className = className;
 	this.smwAjaxUrl = null;
+	this.callInitOnload = null;
 };
 
 // setup for smw+
@@ -350,7 +351,8 @@ dTree.prototype.refresh = function() {
 	if (refreshRootNodes.length == 0 && refreshOpenNodes.length == 0)
 		return;
 
-	document.getElementById(this.obj.substr(2)).innerHTML = "Updating tree, please wait...";
+	document.getElementById(this.obj.substr(2)).innerHTML = 
+		'<img src="' + wgServer + wgScriptPath + '/extensions/Treeview/img/ajax-loader.gif" alt="Updating tree, please wait"/>';
 	
 	// now start with the first dynamic root node, the rest follows
 	// in handleResponseRefresh() triggered by the http requests.
@@ -460,6 +462,8 @@ dTree.prototype.toString = function() {
 		}
 		str += this.addNode(this.root);
 	} else str += 'Browser not supported.';
+	if (this.callInitOnload)
+		str += '<img src="' + wgServer + wgScriptPath + '/extensions/Treeview/img/ajax-loader.gif" alt="Loading tree, please wait"/>';
 	str += '</div>';
 	if (!this.selectedFound) this.selectedNode = null;
 	this.completed = true;
@@ -609,12 +613,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	}
 	
 	var params = this.getSmwData(id);
-	var token = this.obj + "_" + id;
-	if (refreshDtree && refreshDtree.obj == this.obj)
-		cachedData[cachedData.length] = new Array(token, refreshDtree);
-	else 
-		cachedData[cachedData.length] = new Array(token, this);
-	
+
 	// fetch name from link i.e. href attribute in a tag
 	var name = this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 	// check if the relation exists -> so the node, but if the page itself doesn't exist
@@ -628,7 +627,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	name = name.replace(/<[^>]*>([^<]*)<.*/, "$1");
 	// add name to parameter as well as the token
 	params += 's%3D' + URLEncode(name);
-	params += '%26t%3D' + token; 
+	params += this.getTokenAndWriteCache(id); 
     this.getHttpRequest(params, callBackMethod);
 };
 
@@ -636,13 +635,39 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 dTree.prototype.loadFirstLevel = function(id) {
 	var params = this.getSmwData(id);
 	params += 'r%3D1%26';
+	params += this.getTokenAndWriteCache(id);
+	this.getHttpRequest(params, 'r');
+}
+
+// load the tree via Ajax when the Wiki page is loaded and parsed already
+dTree.prototype.initOnload = function(id, arg) {
+	this.callInitOnload = true;
+	var params = '';
+	var args = arg.split('&amp;');
+	for (var i = 0; i < args.length; i++) {
+		var key = args[i].substring(0, args[i].indexOf('='));
+		var value = args[i].substring(key.length + 1);
+		if (key == 'condition')
+			params += 'q';
+		else if (key == 'refresh')
+			params += 'f';
+		else
+			params += key.substring(0, 1);
+		params += '%3D' + value + '%26';
+	}
+	var token = this.getTokenAndWriteCache(id);
+	params += '%26t%3D' + token;
+	this.getHttpRequest(params, 'r');
+};
+
+// create token and add current dTree to cache
+dTree.prototype.getTokenAndWriteCache = function(id) {
 	var token = this.obj + "_" + id;
 	if (refreshDtree && refreshDtree.obj == this.obj) 
 		cachedData[cachedData.length] = new Array(token, refreshDtree);
 	else 
 		cachedData[cachedData.length] = new Array(token, this);
-	params += '%26t%3D' + token;
-	this.getHttpRequest(params, 'r');
+	return '%26t%3D' + token;
 }
 
 // start http request for Ajax call
@@ -862,6 +887,31 @@ dTree.prototype.extractSdataFromCookie = function(str) {
 	return arr;
 }
 
+// if nodes have been expanded or loaded, save new gained information in cookies
+// and write all nodes to page
+dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
+    var toggleCookies = this.config.useCookies;
+    if (! this.callInitOnload && this.config.useCookies) {
+    	this.updateCookie();
+    	this.updateAjaxTreeCache(newSerialData);
+   		this.config.useCookies = false;
+    }
+    if (this.callInitOnload) this.callInitOnload = null;
+    document.getElementById(this.obj.substr(2)).innerHTML = this.toString();
+    if (toggleCookies) this.config.useCookies = true;
+};
+
+// creates the HTML string for nodes received by an Ajax call
+dTree.prototype.getHtml4Node = function(cn, url, params) {
+	var str;
+    if (cn.link == wgPageName)
+    	str = '<strong class="selflink">' + cn.name + '</strong>';
+    else
+		str = '<a href=\"' + url + cn.link + params +'\" title=\"'
+    		+ cn.name + '\">' + cn.name + '</a>';
+	return str;
+}
+
 // If Push and pop is not implemented by the browser
 if (!Array.prototype.push) {
 	Array.prototype.push = function array_push() {
@@ -911,8 +961,10 @@ parseHttpResponse = function() {
 
     var noc = (resObj.treelist) ? resObj.treelist.length : 0;
     var url = dTree.smwAjaxUrl.substr(0, dTree.smwAjaxUrl.lastIndexOf("/")) + '/index.php/';
+	var params= dTree.getSmwDataUrlparams(parentId);
+	if (params) params = '?' + params;
     
-    return new Array (parentId, dTree, resObj.treelist, noc, url);    
+    return new Array (parentId, dTree, resObj.treelist, noc, url, params);    
 }
 
 handleResponseOpen = function() {
@@ -924,17 +976,14 @@ handleResponseOpen = function() {
 	var treelist = responseArr[2];
 	var noc      = responseArr[3];
 	var url      = responseArr[4];
+	var urlParams= responseArr[5];
 	
-	var urlParams= dTree.getSmwDataUrlparams(parentId);
-	if (urlParams) urlParams = '?' + urlParams;
-
     if (noc > 0) dTree.aNodes[parentId]._hc = true;
     dTree.aNodes[parentId]._complete = true;
     
     var newSerialData = '{' + dTree.aNodes[parentId].serialize() + '}';
     for (var i = 0; i < noc; i++) {
-    	var str = '<a href=\"' + url + treelist[i].link + urlParams + '\" title=\"';
-    	str += treelist[i].name + '\">' + treelist[i].name + '</a>';
+    	var str = dTree.getHtml4Node(treelist[i], url, urlParams);
     	var newId = dTree.aNodes.length; 
     	dTree.add(newId, parentId, str);
     	if (dTree.isMaxDepth(newId)) {
@@ -943,15 +992,7 @@ handleResponseOpen = function() {
     	}
     	newSerialData += '{' + dTree.aNodes[newId].serialize() + '}';
     }
-
-    var toggleCookies = dTree.config.useCookies;
-    if (dTree.config.useCookies) {
-    	dTree.updateCookie();
-    	dTree.updateAjaxTreeCache(newSerialData);
-    	dTree.config.useCookies = false;
-    }
-    document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
-    if (toggleCookies) dTree.config.useCookies = true;
+    dTree.saveCookiesAndDisplay(newSerialData);
 };
 
 handleResponseRefresh = function() {
@@ -964,10 +1005,8 @@ handleResponseRefresh = function() {
 	var treelist = responseArr[2];
 	var noc      = responseArr[3];
 	var url      = responseArr[4];
-
-	var urlParams= dTree.getSmwDataUrlparams(parentId);
-	if (urlParams) urlParams = '?' + urlParams;
-
+	var urlParams= responseArr[5];
+	
     var parents = new Parents();
     var lastDepth;
 
@@ -984,8 +1023,7 @@ handleResponseRefresh = function() {
 	var cn;
 	while (cn = treelist.shift()) {
     	// build comlete name (i.e. link to item)
-    	var str = '<a href=\"' + url + cn.link + urlParams +'\" title=\"';
-    	str += cn.name + '\">' + cn.name + '</a>';
+    	var str = dTree.getHtml4Node(cn, url, urlParams);
 
     	// evaluate current parent
     	if (cn.depth > lastDepth)
@@ -1058,17 +1096,8 @@ handleResponseRefresh = function() {
 	}
 
 	// update cookies with new information
-    var toggleCookies = dTree.config.useCookies;
-    if (dTree.config.useCookies) {
-    	dTree.updateCookie();
-    	dTree.updateAjaxTreeCache(newSerialData);
-    	dTree.config.useCookies = false;
-    }
-        
-    // write tree and enable cookies again
-    document.getElementById(dTree.obj.substr(2)).innerHTML = dTree.toString();
-    if (toggleCookies) dTree.config.useCookies = true;
-
+	dTree.saveCookiesAndDisplay(newSerialData);
+	
 	// unlock
 	refreshDtree = null;
 }

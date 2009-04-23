@@ -37,6 +37,16 @@ class TreeGenerator {
 			if (count($keyValue) != 2) continue;
 			$genTreeParameters[$keyValue[0]] = $keyValue[1];
 		}
+		// check if initOnload is set. Then we quit right here because the tree will be initialized
+		// by an Ajax call once the page is loaded and rendered.
+		if (array_key_exists('initOnload', $genTreeParameters)) {
+			$params = "";
+			foreach ($genTreeParameters as $k => $v) {
+				$params .= $k."=".urlencode($v)."&";
+			}
+			return "\x7finitOnload('$params')\x7f*";
+		}
+		
 		// check property, this is the only mandatory parameter, without it we stop right away
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
@@ -76,9 +86,6 @@ class TreeGenerator {
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 		
-		// remove any special chars and replace them with their html entity
-		$tree= preg_replace('/([^\d\w\s_:-\[\]\*\|\.])/e',"'&#'.ord('\\1').';'", $tree);
-
 		// check if we have to return certain parameter with the result set when the dynamic expansion
 		// is set and the page is rendered for the first tree
 		// prefixed parameter are send like GET params in an URL encapsulated with "\x7f". In the tree parser
@@ -395,8 +402,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 */
 	private function getCategoryList($category) {
 		$catIds = array();
-		$catIds[] = $this->getSmwIdByTitle($category);
-		if (count($catIds) == 0) return;
+		$cid = $this->getSmwIdByTitle($category);
+		if (is_null($cid)) return;
+		$catIds[] = $cid;
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_inst = $db->tableName('smw_inst2');
 		$smw_ids = $db->tableName('smw_ids');
@@ -436,6 +444,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
  			$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
  		    if (count($smwValues) > 0) {
 	        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
+	        	// remove any special chars and replace them with their html entity
+				$propValue = preg_replace('/([^\d\w\s_:-\[\]\*\|\.])/ie',"'&#'.ord('\\1').';'", $propValue);
     		    if (strlen(trim($propValue)) > 0) $this->elementProperties[$row->smw_id][] = $propValue;
  		    }
 	    } 		

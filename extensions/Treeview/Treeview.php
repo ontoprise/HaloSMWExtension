@@ -115,7 +115,13 @@ class SemanticTreeview {
         foreach ($lines as $line) {
             if ((strpos($line, "\x7f") !== false) && // do string check first before doing a regex eval (faster)
 	            (preg_match('/\\x7f(.*?)\\x7f(\*+)(.*)$/', $line, $matches))) {
-	    	    parse_str($matches[1], $params);
+
+	            parse_str($matches[1], $params);	            
+	            // check if initOnload is set, then skip the rest here but just replace the initOnload function
+	            if (substr($matches[1], 0, 10) == "initOnload") {
+	            	$this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
+	            	$text .= $matches[2]."*".$matches[1]."\n";
+	            }
 	    	    if (isset($params['opento'])) $this->args[$this->id."opento"] = urlencode($params['opento']);
 	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
@@ -236,6 +242,10 @@ class SemanticTreeview {
                 if (strpos($item, "addSmwData(") !== false ) {
                     $node--;
                     $nodes .= "{$this->uniqname}$id.".trim(str_replace('addSmwData(,', 'addSmwData('.$node.',', stripcslashes($item)))."\n";
+                }
+                else if (strpos($item, "initOnload(") !== false ) {
+                    $node--;
+                    $nodes .= "{$this->uniqname}$id.".trim(str_replace('initOnload(', "initOnload($node,", stripcslashes($item)))."\n";
                 } else {
                     if ($depth > $last) $parents[$depth] = $node - 1;
                     $parent = $parents[$depth];
