@@ -37,8 +37,7 @@ function smwfDoSpecialFindWorkPage() {
 								 	wfMsg('smw_findwork_categoryleaf'),
 								 	wfMsg('smw_findwork_subcategoryanomaly'), 
 								 	wfMsg('smw_findwork_undefinedcategory'),
-								 	wfMsg('smw_findwork_undefinedproperty'), 
-								 	wfMsg('smw_findwork_lowratedannotations'));
+								 	wfMsg('smw_findwork_undefinedproperty'));
 	}
 	
 		
@@ -89,37 +88,13 @@ function smwfDoSpecialFindWorkPage() {
 		return $html;
 	}
 	
-	private function getPageBottom() {
-		
-		$html = wfMsg('smw_findwork_rateannotations');
-		$html .= '<form id="ratingform"><table id="rateannotations" border="0" cellspacing="0" rowspacing="0">';
-		
-		// get some rated and unrated annotations
-		$annotations = SMWSuggestStatistics::getStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, true);
-		$annotations = array_merge(SMWSuggestStatistics::getStore()->getAnnotationsForRating(SMW_FINDWORK_NUMBEROF_RATINGS, false), $annotations);
-		$i = 0;
-		foreach($annotations as $a) {
-			$html .= '<tr id="annotation'.$i.'">';
-			$html .= '<td>'.str_replace("_", " ", $a[0]).'</td>';
-			$html .= '<td>'.str_replace("_", " ", $a[1]).'</td>';
-			$html .= '<td>'.str_replace("_", " ", $a[2]).'</td>';
-			$html .= '<td class="ratesection"><input type="radio" name="rating'.$i.'" value="1" class="yes">'.wfMsg('smw_findwork_yes').'</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="-1" class="no">'.wfMsg('smw_findwork_no').'</input>' .
-						  '<input type="radio" name="rating'.$i.'" value="0" checked="checked" class="dontknow">'.wfMsg('smw_findwork_dontknow').'</input>' .
-					 '</td>';
-			$html .= '</tr>';
-			$i++;
-		}
-		$html .= '</table></form>';
-		$html .= '<br><input type="button" name="rate" id="sendbutton" value="'.wfMsg('smw_findwork_sendratings').'" onclick="findwork.sendRatings()"/>';
-		return $html;
-	}
+	
 	
 	function doQuery( $offset, $limit, $shownavigation=true ) {
 		global $wgRequest, $wgOut;
 		if ($wgRequest->getVal('limit') == NULL) $limit = 20;
 		parent::doQuery($offset, $limit, $shownavigation);
-		$wgOut->addHTML($this->getPageBottom());
+		
 	}
 	
 	function linkParameters() {

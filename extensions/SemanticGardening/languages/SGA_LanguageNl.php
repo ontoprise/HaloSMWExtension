@@ -166,7 +166,32 @@ class SGA_LanguageNl {
     /*Message for TemplateMateriazerBot*/
     'smw_gard_templatemat_docu' => 'Deze bot actualiseert de wikipagina´s die templates gebruiken die sinds de laatste materialisering veranderd zijn. Dit is noodzakelijk om altijd juiste resultaten te krijgen van ASK queries.',
     'smw_gard_templatemat_applytotouched' => 'Enkel toepassen op veranderde templates',
-    'smw_gardissue_updatearticle' => 'Artikel $1 werd opnieuw geparsed.'
+    'smw_gardissue_updatearticle' => 'Artikel $1 werd opnieuw geparsed.',
+    
+    /* SMWFindWork */
+    'findwork' => 'Werk vinde',
+    'smw_findwork_docu' => 'Deze pagina stelt artikels voor die iet of wat problematisch zijn maar die je misschien graag zou willen aanpassen/corrigeren.',
+    'smw_findwork_user_not_loggedin' => 'Je bent NIET aangemeld. Het is mogelijk om de pagina anoniem te gebruiken, maar het is veel beter om aangemeld te zijn.',  
+    'smw_findwork_header' => 'De voorgestelde artikels reflecteren jouw interesses gebaseerd op je aanpassingsgeschiedenis. Indien je niet weet wat te kiezen, klik op $1. Het systeem zal dan in jouw plaats iets selecteren.<br /><br />Indien je aan iets specifiekers wil werken, kan je één van de volgende kiezen: ',
+    'smw_findwork_rateannotations' => '<h2>Aantekeningen evalueren</h2>Je kan helpen de kwaliteit van de wiki te verbeteren door de kwaliteit van de volgende uitspraken te evalueren. Zijn de volgende uitspraken correct?<br><br>',
+    'smw_findwork_yes' => 'Juist.',
+    'smw_findwork_no' => 'Foutief.',
+    'smw_findwork_dontknow' => 'Geen idee.',
+    'smw_findwork_sendratings' => 'Evaluaties versturen',
+    'smw_findwork_getsomework' => 'Geef me wat werk!',
+    'smw_findwork_show_details' => 'Details tonen',
+    'smw_findwork_heresomework' => 'Hier is wat werk',
+    
+    'smw_findwork_select' => 'Selecteren',
+    'smw_findwork_generalconsistencyissues' => 'Algemene consistentie problemen',
+    'smw_findwork_missingannotations' => 'Ontbrekende aantekeningen',
+    'smw_findwork_nodomainandrange' => 'Eigenschappen zonder type/domein',
+    'smw_findwork_instwithoutcat' => 'Entiteiten zonder categorie',
+    'smw_findwork_categoryleaf' => 'Categoriebladen',
+    'smw_findwork_subcategoryanomaly' => 'Subcategorie anomaliën',
+    'smw_findwork_undefinedcategory' => 'Ongedefinieerde categorieën',
+    'smw_findwork_undefinedproperty' => 'Ongedefinieerde eigenschappen'
+   
         
     );
 }

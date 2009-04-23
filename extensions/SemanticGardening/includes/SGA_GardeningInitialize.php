@@ -19,9 +19,7 @@ function sgagGardeningSetupExtension() {
 
 	global $wgAutoloadClasses, $wgHooks, $sgagIP;
 
-	$wgHooks['smwhaloBeforeUpdateData'][] = 'sgagBeforeUpdateData';
-	$wgHooks['smwhaloAfterUpdateData'][] = 'sgagAfterUpdateData';
-	$wgHooks['smwhaloAfterSetup'][] = 'sgagAfterSetup';
+	
 	
 	$wgHooks['BeforePageDisplay'][]='sgafGAAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='sgaFWAddHTMLHeader';
@@ -77,27 +75,6 @@ function sgagGardeningSetupExtension() {
 
 	}
 	require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
-	return true;
-}
-
-function sgagBeforeUpdateData(& $data) {
-	global $sgagCurrentAnnotationsToUpdate;
-	$sgagCurrentAnnotationsToUpdate = SMWSuggestStatistics::getStore()->getRatedAnnotations($data->getSubject());
-	return true;
-}
-
-function sgagAfterUpdateData(& $data) {
-	global $sgagCurrentAnnotationsToUpdate;
-	if ($sgagCurrentAnnotationsToUpdate !== NULL) {
-		foreach($sgagCurrentAnnotationsToUpdate as $pa) {
-			SMWSuggestStatistics::getStore()->rateAnnotation($data->getSubject()->getDBkey(), $pa[0], $pa[1], $pa[2] );
-		}
-	}
-	return true;
-}
-
-function sgagAfterSetup(& $verbose) {
-	SMWSuggestStatistics::getStore()->setup($verbose);
 	return true;
 }
 
