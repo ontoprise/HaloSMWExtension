@@ -15,8 +15,30 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $sgagIP = "$mediaWikiLocation/extensions/SemanticGardening";
-sgafInitializeTables();
-echo "\nDon't forget to run SemanticMediaWiki/maintenance/SMW_setup.php again now.\n";
+
+$help = array_key_exists("help", $options);
+$onlyTables = array_key_exists("onlytables", $options);
+$predefpages = array_key_exists("predefpages", $options);
+
+if ($help) {
+	echo "\nUsage: php SGA_setup.php [ --onlytables ] [ --predefpages ]\n";
+	echo "Started with no parameters installs database tables as well as predefined pages.";
+	die();
+}
+if ($onlyTables) {
+    sgafInitializeTables();
+}
+
+if ($predefpages) {
+    SGAGardeningLog::getGardeningLogAccess()->createPredefinedPages(true);
+}
+
+if (!$onlyTables && !$predefpages) {
+	 sgafInitializeTables();
+	 SGAGardeningLog::getGardeningLogAccess()->createPredefinedPages(true);
+     echo "\nThe Semantic Gardening has been successfully installed.\n";
+}
+
 
 function sgafInitializeTables() {
     
@@ -26,7 +48,7 @@ function sgafInitializeTables() {
   
     SGAGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
     SGAGardeningLog::getGardeningLogAccess()->setup(true);
-     
+    
     return true;
 }
 ?>
