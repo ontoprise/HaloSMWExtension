@@ -392,11 +392,13 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 
 	$result = $ws->validateSpecifiedSubParameters($subParameters);
 	$mSP = $result[0];
-//	if(!is_null($result[1])){
-//		foreach($result[1] as $key => $value){
-//			$wsParameters[$key] = $value;
-//		}
-//	}
+	if(!is_null($result[1])){
+		foreach($result[1] as $key => $value){
+			if(!array_key_exists($key, $wsParameters)){
+				$wsParameters[$key] = $value;
+			}
+		}
+	}
 
 	if(count($mSP) == 0){
 		$mSP = array();
