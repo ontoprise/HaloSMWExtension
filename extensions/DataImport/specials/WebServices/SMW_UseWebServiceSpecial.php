@@ -179,6 +179,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<p>";
 		$html .= "<span id=\"step5-preview-button\"><input type=\"button\" onclick=\"useWSSpecial.getPreview()\" value=\"".wfMsg('smw_wwsu_displaypreview')."\" id=\"step5-preview-button-img\"></input></span>";
 		$html .= "<input type=\"button\" onclick=\"useWSSpecial.displayWSSyntax()\" value=\"".wfMsg('smw_wwsu_displaywssyntax')."\"></input>";
+		$html .= "<input type=\"button\" onclick=\"useWSSpecial.copyToClipBoard()\" value=\"".wfMsg('smw_wwsu_copytoclipboard')."\"></input>";
 		$html .= "<input type=\"button\" onclick=\"useWSSpecial.addToArticle()\" value=\"".wfMsg('smw_wwsu_addcall')."\" id=\"step5-add\" style=\"display: none\"></input>";
 		$html .= "</p>";
 

@@ -229,6 +229,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsu_displaywssyntax' => 'Display #ws-syntax',
 	'smw_wwsu_addcall' => 'Add call to <articlename>',
 	'smw_wwsu_noresults' => 'This web service does not provide any result parts.',
+	'smw_wwsu_copytoclipboard' => 'Copy to clipboard',
 	
 	'smw_wwsm_update_msg' => 'The source has changed sinse the last materialization.',
 	

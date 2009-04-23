@@ -49,4 +49,7 @@ var wgUserLanguageStrings = {
 		'smw_wws_remove_subparameters'		:	'Subparameter entfernen',
 		'smw_wws_subparameters'		:		'Subparameter:',
 		
+		'smw_wwsu_clipboard_success'    : 'Die Query wurde in die Zwischenablage kopiert',
+		'smw_wwsu_clipboard_fail'    : 'Ihr Browser erlaubt keinen Zugriff auf die Zwischenablage\nDie #ws-Syntax konnte nicht in die Zwischenablage kopiert werden.\n Bitte verwenden Sie die Funktion "#ws-Syntax anzeigen" und kopieren Sie diese manuell.',
+		
 };

@@ -399,6 +399,52 @@ UseWebService.prototype = {
 	displayWSSyntax : function (){
 		$("step5-preview").style.display = "";
 		$("step5-preview").innerHTML = this.createWSSyn().replace(/\n/g, "<br/>");	
+	},
+	
+	copyToClipBoard : function (){
+		var text = this.createWSSyn();
+		if (window.clipboardData){ //IE
+			window.clipboardData.setData("Text", text);
+			alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+		}
+	  	else if (window.netscape) {
+			try {
+				netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
+				var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
+				if (!clip){
+					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					return;
+				}
+				
+				var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+				if (!trans){
+					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					return;
+				}
+				
+				trans.addDataFlavor('text/unicode');
+				var str = new Object();
+				var len = new Object();
+				var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+				str.data=this.createWSSyn();
+				trans.setTransferData("text/unicode",str,this.createWSSyn().length*2);
+				var clipid=Components.interfaces.nsIClipboard;
+				if (!clip){
+					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					return;
+				} 
+				
+				clip.setData(trans,null,clipid.kGlobalClipboard);
+				alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+			}
+			catch (e) {
+				alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+			}
+		}
+		else{
+			alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+		}
+		
 	}
 };
 
