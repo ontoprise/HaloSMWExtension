@@ -116,17 +116,19 @@ class SemanticTreeview {
             if ((strpos($line, "\x7f") !== false) && // do string check first before doing a regex eval (faster)
 	            (preg_match('/\\x7f(.*?)\\x7f(\*+)(.*)$/', $line, $matches))) {
 
-	            parse_str($matches[1], $params);	            
 	            // check if initOnload is set, then skip the rest here but just replace the initOnload function
 	            if (substr($matches[1], 0, 10) == "initOnload") {
 	            	$this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
 	            	$text .= $matches[2]."*".$matches[1]."\n";
+	            	$matches[1] = substr($matches[1], 12); // remove initOnload('
+	            	$matches[1] = substr($matches[1], 0, -2); // and ')'	
 	            }
+	           	parse_str($matches[1], $params);
 	    	    if (isset($params['opento'])) $this->args[$this->id."opento"] = urlencode($params['opento']);
 	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
-            	    $addSmwData = "addSmwData(, '".$params['property']."',";
+            	    $addSmwData = "addSmwData(, '".((isset($params['property'])) ? $params['property'] : '')."',";
             	    $addSmwData .= (isset($params['category'])) ? "'".$params['category']."', " : "null, ";
             	    $addSmwData .= (isset($params['display'])) ? "'".$params['display']."', " : "null, ";
             	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
