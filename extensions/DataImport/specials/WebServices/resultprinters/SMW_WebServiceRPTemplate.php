@@ -54,7 +54,7 @@ class WebServiceTemplateResultPrinter extends WebServiceResultPrinter {
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($template, $wsResult){
+	public function getWikiText($template, $wsResult, $subst){
 		$return = "";
 		for($i = 1; $i<sizeof($wsResult);$i++){
 			if($i > 1){
@@ -63,7 +63,14 @@ class WebServiceTemplateResultPrinter extends WebServiceResultPrinter {
 
 			if($template != ""){
 				// a template was defined when the ws was called
-				$return .= "{{".$template."";
+				
+				//check if substitution is necessary
+				if(!$subst){
+					$return .= "{{".$template."";
+				} else {
+					$return .= "{{subst:".$template."";
+				}
+				
 				$k = 1;
 				foreach($wsResult[$i] as $wsR){
 					$return .= "|".$k++."=".$wsR;

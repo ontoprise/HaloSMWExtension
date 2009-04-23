@@ -55,7 +55,7 @@ class WebServiceTIXMLResultPrinter extends WebServiceResultPrinter {
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($template, $wsResult){
+	public function getWikiText($template, $wsResult, $subst){
 		$return = "<?xml version='1.0'?>";
 		$return .= "<tixml xmlns='http://www.ontoprise.de/smwplus#'>";
 		for($i = 0; $i < sizeof($wsResult) ;$i++){

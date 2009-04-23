@@ -55,14 +55,21 @@ class WebServiceOlResultPrinter extends WebServiceResultPrinter {
 	 * @param unknown_type $wsResult
 	 * @return unknown
 	 */
-	public function getWikiText($template, $wsResult){
+	public function getWikiText($template, $wsResult, $subst){
 
 		$return = "<ol>";
 		for($i = 1; $i<sizeof($wsResult);$i++){
 			$return.= "<li>";
 			if($template != ""){
 				// a template was defined when the ws was called
-				$return .= "{{".$template."";
+				
+				//check if substitution is necessary
+				if(!$subst){
+					$return .= "{{".$template."";
+				} else {
+					$return .= "{{subst:".$template."";
+				}
+				
 				$k = 1;
 				foreach($wsResult[$i] as $wsR){
 					$return .= "|".$k++."=".$wsR;

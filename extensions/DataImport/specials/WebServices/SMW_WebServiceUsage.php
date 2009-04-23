@@ -231,7 +231,15 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 			return $wsFormattedResult;
 		}
-		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults);
+		
+		//add subst to templates if the parser is in the appropriate state
+		if($parser->OutputType() == 2){
+			$subst = true;
+		} else {
+			$subst = false;
+		}
+		
+		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
 
 		if(!$preview){
 			$articleId = $parser->getTitle()->getArticleID();
@@ -319,7 +327,7 @@ function getSpecifiedParameterName($parameter){
  * @return string
  * 		the formatted result
  */
-function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null){
+function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null, $subst = false){
 	if(is_string($wsResults)){
 		return smwfEncodeMessages(array($wsResults));
 	}
@@ -341,28 +349,28 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null)
 
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "list"){
 		$printer = WebServiceListResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "ol"){
 		$printer = WebServiceOlResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "ul"){
 		$printer = WebServiceUlResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "table"){
 		$printer = WebServiceTableResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "template"){
 		$printer = WebServiceTemplateResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "transposed"){
 		$printer = WebServiceTransposedResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	} else if($wsFormat == "tixml"){
 		$printer = WebServiceTIXMLResultPrinter::getInstance();
-		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags));
+		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
 	}
 }
 
@@ -384,11 +392,11 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 
 	$result = $ws->validateSpecifiedSubParameters($subParameters);
 	$mSP = $result[0];
-	if(!is_null($result[1])){
-		foreach($result[1] as $key => $value){
-			$wsParameters[$key] = $value;
-		}
-	}
+//	if(!is_null($result[1])){
+//		foreach($result[1] as $key => $value){
+//			$wsParameters[$key] = $value;
+//		}
+//	}
 
 	if(count($mSP) == 0){
 		$mSP = array();
