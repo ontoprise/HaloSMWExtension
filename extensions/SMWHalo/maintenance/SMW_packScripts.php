@@ -92,7 +92,7 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_DragAndResize.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_ContextMenu.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'CombinedSearch.js' => GPL_LICENSE_ONTOPRISE,
+	 				 
 	 				  'SMW_AdvancedAnnotation.js' => GPL_LICENSE_ONTOPRISE  ,
 	 				  'SMW_AnnotationHints.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_GardeningHints.js' => GPL_LICENSE_ONTOPRISE,

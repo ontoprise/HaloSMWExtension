@@ -216,10 +216,8 @@
 				<div id="content">
 					<?php 	global $wgRequest,$wgTitle;
 					
-							global $wgExtensionCredits; if (!defined('US_SEARCH_EXTENSION_VERSION')) {
-                               $useCombinedSearch = ($wgTitle->getPrefixedText() == $wgTitle->getNsText().":".wfMsg('search'));
-                            }
-                            if (($wgRequest->getText('action') == "edit" && !($wgRequest->getText('mode') == "wysiwyg")) || $wgRequest->getText('action') == "annotate" || $useCombinedSearch)
+							global $wgExtensionCredits; 
+                            if (($wgRequest->getText('action') == "edit" && !($wgRequest->getText('mode') == "wysiwyg")) || $wgRequest->getText('action') == "annotate")
 							{ ?>
 							<div id="slider">	
 							</div>
