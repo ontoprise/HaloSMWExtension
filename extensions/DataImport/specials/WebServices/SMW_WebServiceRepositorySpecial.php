@@ -73,7 +73,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_wwsr_intro')."</span></h2>";
 
 		if($allowed){
-			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th>".wfMsg('smw_wwsr_update')."</th><th>".wfMsg('smw_wwsr_confirm')."</th></tr>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: right\">".wfMsg('smw_wwsr_update')."</th><th style=\"text-align: right\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
 			$html .= "<p>".wfMsg('smw_wwsr_noconfirm')."</p>";
 			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
@@ -107,13 +107,13 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
-				$html .= "<td><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
+				$html .= "<td style=\"text-align: right\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
 				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">".wfMsg('smw_wwsr_updating')."</div></td>";
 
 				if($ws->getConfirmationStatus() != "true"){
-					$html .= "<td id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
+					$html .= "<td style=\"text-align: right\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
 				} else {
-					$html .= "<td>".wfMsg('smw_wwsr_confirmed')."</td></tr>";
+					$html .= "<td style=\"text-align: right\">".wfMsg('smw_wwsr_confirmed')."</td></tr>";
 				}
 			} else {
 				$html .= "</tr>";

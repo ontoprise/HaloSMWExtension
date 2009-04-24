@@ -66,10 +66,10 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		$html .= "<div id=\"menue\" class=\"BreadCrumpContainer\">";
-		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">".wfMsg('smw_wwsu_menue-s1')."<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s2')."<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s3')."<span class=\"HeadlineDelimiter\"></span></span>";
-		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s4')."<span class=\"HeadlineDelimiter\"></span></span>";
+		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">".wfMsg('smw_wwsu_menue-s1')."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s2')."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s3')."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s4')."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s5')."</span>";
 		$html .= "</div>";
 

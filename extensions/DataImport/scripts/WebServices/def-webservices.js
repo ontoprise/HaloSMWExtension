@@ -176,6 +176,8 @@ DefineWebServiceSpecial.prototype = {
 	processStep2Do : function(parameterString, edit) {
 		var wsParameters = parameterString.split(";");
 
+		this.numberOfUsedParameters = 0;
+		
 		if (!this.editMode) {
 			$("step2-go-img").style.display = "none";
 			$("step3-go-img").style.display = "";
@@ -433,6 +435,7 @@ DefineWebServiceSpecial.prototype = {
 				var useInput = document.createElement("input");
 				useInput.id = "s3-use" + i;
 				useInput.type = "checkbox";
+				useInput.setAttribute("onclick", "webServiceSpecial.useParameter(event)");
 				paramTD05.appendChild(useInput);
 
 				if (aTreeRoot || treeView) {
@@ -619,6 +622,8 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep3Do : function(resultsString, edit) {
+		this.numberOfUsedResultParts = 0;
+		
 		var wsResults = resultsString.split(";");
 
 		if (!this.editMode) {
@@ -874,6 +879,7 @@ DefineWebServiceSpecial.prototype = {
 				resultRow.appendChild(resultTD05);
 
 				var useInput = document.createElement("input");
+				useInput.setAttribute("onclick", "webServiceSpecial.useResultPart(event)");
 				useInput.id = "s4-use" + i;
 				useInput.type = "checkbox";
 				resultTD05.appendChild(useInput);
@@ -2641,6 +2647,7 @@ DefineWebServiceSpecial.prototype = {
 		var offset = 0;
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
+				this.numberOfUsedParameters += 1;
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[1].firstChild.checked = true;
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
@@ -2656,6 +2663,12 @@ DefineWebServiceSpecial.prototype = {
 				this.parameterContainer.firstChild.childNodes[i + 2 + offset].style.display = "none";
 				offset += 1;
 			}
+		}
+		
+		if(this.numberOfUsedParameters > 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
 		}
 	},
 
@@ -2679,10 +2692,17 @@ DefineWebServiceSpecial.prototype = {
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["xpath"];
 					}
 				} else {
+					this.numberOfUsedResultParts += 1;
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = "true";
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 				}
 			}
+		}
+		
+		if(this.numberOfUsedResultParts > 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
 		}
 	},
 
@@ -2784,11 +2804,27 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step4-results").childNodes[0].insertBefore(subPathRow,
 				$("step4-resultRow-" + id).tempNextSibling);
+		
+		//handle alias generate icon
+		if(this.numberOfUsedResultParts == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
+		}
+		this.numberOfUsedResultParts += 1;
 	},
 
 	removeSubPath : function(id, sid) {
 		$("step4-resultRow-sb-" + id + "-" + sid).style.display = "none";
 		$("step4-resultRow-sb-" + id + "-" + sid).removed = true;
+		
+		//handle alias generate icon
+		if(this.numberOfUsedResultParts == 1){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		}
+		this.numberOfUsedResultParts -= 1;
 	},
 
 	processStep1REST : function() {
@@ -3137,6 +3173,8 @@ DefineWebServiceSpecial.prototype = {
 
 			var input = document.createElement("input");
 			input.type = "checkbox";
+			input.style.marginLeft = "5px";
+			input.style.marginRight = "20px";
 			$("step4-rest-intro").appendChild(input);
 
 			span = document.createElement("span");
@@ -3552,8 +3590,27 @@ DefineWebServiceSpecial.prototype = {
 
 		for ( var i = 0; i < this.preparedPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
+				if($("s3-use" + i).checked != checked){
+					if(checked){
+						this.numberOfUsedParameters += 1;
+					} else {
+						this.numberOfUsedParameters -= 1;
+					}
+				}
+				
 				$("s3-use" + i).checked = checked;
 			}
+		}
+		
+		//handle alias icon
+		if(this.numberOfUsedParameters == 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-3-alias-generate-button").style.cursor = "default";
+		} else {
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
 		}
 	},
 
@@ -3566,10 +3623,27 @@ DefineWebServiceSpecial.prototype = {
 		var offset = 0;
 		for ( var i = 0; i < this.preparedRPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
+				if($("s4-use" + (i + offset)).checked != checked){
+					if(checked){
+						this.numberOfUsedResultParts += 1;
+					} else {
+						this.numberOfUsedResultParts -= 1;
+					}
+				}
+				
 				$("s4-use" + (i + offset)).checked = checked;
 			}
-			// offset += this.resultContainer.firstChild.childNodes[offset + i +
-			// 1].subPathOffset;
+		}
+		
+		//handle alias icon
+		if(this.numberOfUsedResultParts == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		} else {
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
 		}
 	},
 
@@ -3838,6 +3912,48 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step3-paramRow-" + id).parentNode
 			.removeChild($("step3-paramRow-" + id).nextSibling);
+	},
+	
+	useResultPart : function(event){
+		var node = Event.element(event);
+		var oldNumber = this.numberOfUsedResultParts;
+		
+		if(node.checked){
+			this.numberOfUsedResultParts += 1;
+		} else {
+			this.numberOfUsedResultParts -= 1;
+		}
+		
+		if(this.numberOfUsedResultParts == 0 && oldNumber == 1){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		} else if(this.numberOfUsedResultParts == 1 && oldNumber == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
+		}
+	},
+	
+	useParameter : function(event){
+		var node = Event.element(event);
+		var oldNumber = this.numberOfUsedParameters;
+		
+		if(node.checked){
+			this.numberOfUsedParameters += 1;
+		} else {
+			this.numberOfUsedParameters -= 1;
+		}
+		
+		if(this.numberOfUsedParameters == 0 && oldNumber == 1){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-3-alias-generate-button").style.cursor = "default";
+		} else if(this.numberOfUsedParameters == 1 && oldNumber == 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
+		}
 	}
 }
 
