@@ -2,7 +2,7 @@
 /**
  * Initializes the database for a HALO test scenario.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  */
 
 $mw_dir = dirname(__FILE__) . '/../../';
@@ -48,9 +48,20 @@ if (!isset($testDir)) {
 	die();
 }
 
-if (!isset($xamppDir)) {
-	echo "\nNo XAMPP dir specified. Use -x to set XAMPP dir.\n";
-	die();
+if (isWindows()) {
+	if (!isset($xamppDir)) {
+		echo "\nNo XAMPP dir specified. Use -x to set XAMPP dir.\n";
+		die();
+	}
+	$phpExe = "$xamppDir/php/php.exe";
+	$mysqlExe = "$xamppDir/mysql/bin/mysql.exe";
+} else {
+	$phpExe = exec('which php');
+	$mysqlExe = exec('which mysql');
+	if (strlen($phpExe) == 0 || strlen($mysqlExe) == 0) {
+		echo "\nNo PHP or Mysql found at your system. Please install this software.\n";
+		die();
+	}
 }
 
 echo "\nInsertings LocalSettings.php ...";
@@ -71,24 +82,28 @@ echo "\ndone!\n";
  *
  */
 function tstInitializeDatabase() {
-	global $mw_dir, $xamppDir, $testDir, $wgDBuser, $wgDBpassword;
+	global $mw_dir, $testDir, $wgDBuser, $wgDBpassword, $phpExe, $mysqlExe;
 
 	// Import empty
 	echo "\nImporting database...";
-	echo "\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"";
+	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"";
 	//exec("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
-	runProcess("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
 	echo "\ndone.\n";
 
 	// run setups
 	echo "\nRun setups...\n";
 	$handle = fopen($testDir."/runSetup.cfg", "r");
-	while(!feof($handle)) {
-		$line = fgets($handle);
-		echo "$line";
-		runProcess("\"$xamppDir/php/php.exe\" \"".$mw_dir."extensions/".$line."\"");
+	if ($handle) {
+		while(!feof($handle)) {
+			$line = fgets($handle);
+			echo "$line";
+			runProcess($phpExe." ".$mw_dir."extensions/".$line."\"");
+		}
+		fclose($handle);
+	} else {
+		echo "No configuration file runSetup.cfg found in: $testDir\nSkip it.";
 	}
-	fclose($handle);
 }
 
 /**
@@ -96,7 +111,7 @@ function tstInitializeDatabase() {
  *
  */
 function tstImportWikiPages() {
-	global $mw_dir, $xamppDir, $testDir;
+	global $mw_dir, $testDir, $phpExe;
 
 	$pagesDir = $testDir."/pages";
 	$handle = @opendir($pagesDir);
@@ -117,7 +132,7 @@ function tstImportWikiPages() {
 
 			if (strpos($entry, ".xml") !== false) {
 				echo "\nAdding: ".$entry;
-				runProcess("\"$xamppDir/php/php.exe\" \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
+				runProcess($phpExe." ".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
 					
 			}
 		}
@@ -174,6 +189,10 @@ function runProcess($runCommand) {
  * returns true/false
  */
 function isWindows() {
+	static $thisBoxRunsWindows;
+	
+	if (! is_null($thisBoxRunsWindows)) return $thisBoxRunsWindows;
+	
 	ob_start();
 	phpinfo();
 	$info = ob_get_contents();
@@ -183,9 +202,10 @@ function isWindows() {
 	//Check if it consists 'windows' as string
 	preg_match('/[Ww]indows/',$ma[1],$os);
 	if($os[0]=='' && $os[0]==null ) {
-		return false;
+		$thisBoxRunsWindows= false;
 	} else {
-		return true;
+		$thisBoxRunsWindows = true;
 	}
+	return $thisBoxRunsWindows;
 }
 ?>
