@@ -279,10 +279,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 	public function getNumberOfPropertiesForTarget(Title $target) {
 		$db =& wfGetDB( DB_SLAVE );
 		$result = 0;
-		$res = $db->select( $db->tableName('smw_relations'),
-                            'COUNT(DISTINCT relation_title) AS numOfProperties',
-		array('object_title' => $target->getDBkey()), 'SMW::getNumberOfPropertiesForTarget', array() );
-
+		
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
 		$res = $db->query('SELECT COUNT(DISTINCT s_id) AS numOfProperties FROM '.$smw_rels2.' JOIN '.$smw_ids.' ON smw_id = o_id WHERE smw_title = '.$db->addQuotes($target->getDBkey()));
