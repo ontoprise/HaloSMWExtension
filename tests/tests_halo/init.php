@@ -6,7 +6,7 @@
  */
 
 $mw_dir = dirname(__FILE__) . '/../../';
-require_once( $mw_dir.'maintenance/commandLine.inc' );
+
 
 if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	print "This script must be run from the command line\n";
@@ -68,6 +68,7 @@ echo "\nInsertings LocalSettings.php ...";
 tstInsertLocalSettings($testDir);
 echo "\ndone!\n";
 
+require_once( $mw_dir.'maintenance/commandLine.inc' );
 echo "\nInitializing database for use with MW 1.13 ...";
 tstInitializeDatabase();
 echo "\ndone!\n";
@@ -98,7 +99,7 @@ function tstInitializeDatabase() {
 		while(!feof($handle)) {
 			$line = fgets($handle);
 			echo "$line";
-			runProcess($phpExe." ".$mw_dir."extensions/".$line."\"");
+			runProcess($phpExe." \"".$mw_dir."extensions/".$line."\"");
 		}
 		fclose($handle);
 	} else {
