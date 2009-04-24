@@ -7,7 +7,6 @@
 
 $mw_dir = dirname(__FILE__) . '/../../';
 
-
 if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	print "This script must be run from the command line\n";
 	exit();
@@ -83,19 +82,18 @@ echo "\ndone!\n";
  *
  */
 function tstInitializeDatabase() {
-	global $mw_dir, $testDir, $wgDBuser, $wgDBpassword, $phpExe, $mysqlExe;
+	global $mw_dir, $testDir, $wgDBuser, $wgDBpassword, $wgDBname, $phpExe, $mysqlExe;
 
 	// Import empty
 	echo "\nImporting database...";
-	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"";
+	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword $wgDBname < '$mw_dir"."tests/tests_halo/mw13_db.sql'";
 	//exec("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword $wgDBname < '$mw_dir"."tests/tests_halo/mw13_db.sql'");
 	echo "\ndone.\n";
 
 	// run setups
 	echo "\nRun setups...\n";
-	$handle = fopen($testDir."/runSetup.cfg", "r");
-	if ($handle) {
+	if (file_exists($testDir."/runSetup.cfg") && $handle = fopen($testDir."/runSetup.cfg", "r")) {
 		while(!feof($handle)) {
 			$line = fgets($handle);
 			$prgArg = explode("|", $line);
@@ -103,6 +101,7 @@ function tstInitializeDatabase() {
 			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
 			echo "$prg $arg";
 			runProcess($phpExe." \"".$mw_dir."extensions/".$prg."\" $arg");
+
 		}
 		fclose($handle);
 	} else {
@@ -138,7 +137,6 @@ function tstImportWikiPages() {
 				echo "\nAdding: ".$entry;
 				echo "\n".$phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"";
 				runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
-					
 			}
 		}
 	}
@@ -154,19 +152,15 @@ function tstInsertLocalSettings() {
 	global $mw_dir, $testDir;
 
 	// read old LocalSettings.php
-	$handle_lstest = fopen("LocalSettingsForTest.php", "r");
-	$handle_ls = fopen($testDir."/LocalSettings.php", "r");
-	$contents_ls = fread ($handle_lstest, filesize ("LocalSettingsForTest.php"));
-	$contents_lstest = fread ($handle_ls, filesize ($testDir."/LocalSettings.php"));
+	$lstest = trim(file_get_contents("LocalSettingsForTest.php"));
+	$ls = trim(file_get_contents($testDir."/LocalSettings.php"));
+	if (! preg_match('/^<\?/', $ls)) $ls = "<?\n".$ls;
+	if (! preg_match('/\?>$/', $ls)) $ls .= "\n?>";
 
-
-	$contents_ls = str_replace( "/*USERDEFINED*/", $contents_lstest, $contents_ls);
-	fclose($handle_lstest);
-	fclose($handle_ls);
 	// write new LocalSettings.php
 	$handle = fopen($mw_dir."LocalSettings.php","wb");
 	echo "\nWrite in output file: ".$mw_dir."LocalSettings.php"."\n";
-	fwrite($handle, $contents_ls);
+	fwrite($handle, $lstest.$ls);
 	fclose($handle);
 
 }
@@ -185,7 +179,7 @@ function runProcess($runCommand) {
 		$runCommand = "cmd $clOption ".$runCommand;
 		$oExec = $wshShell->Run($runCommand, 7, true);
 	} else {
-		exec("\"$runCommand\"");
+		exec($runCommand);
 	}
 }
 
