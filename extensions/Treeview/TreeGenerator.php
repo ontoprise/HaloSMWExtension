@@ -77,7 +77,7 @@ class TreeGenerator {
 		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
-		$ajaxExpansion = (array_key_exists('dynamic', $genTreeParameters)) ? 1 : 0;
+		$ajaxExpansion = (array_key_exists('dynamic', $genTreeParameters) || $this->json) ? 1 : 0;
 
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
@@ -234,14 +234,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			return ($this->json)
 		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
-		
+
 		if ($this->ajaxExpansion || $this->maxDepth && $this->maxDepth < 3) { // only root and one level below
 			// Ajax call to retrieve children from start
 			if ($start && $this->json)
 				$query.= " AND r.o_id = ".$this->smw_start_id;
 			// initial call (no matter if start is set), we need the first two levels (children and grand children of start)
 			else
-		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 $categoryConstraintTable ".
+		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 r $categoryConstraintTable ".
 		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
 		}
 		$query.= $categoryConstraintGroupBy;

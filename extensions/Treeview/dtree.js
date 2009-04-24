@@ -613,7 +613,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	}
 	
 	var params = this.getSmwData(id);
-
+	
 	// fetch name from link i.e. href attribute in a tag
 	var name = this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 	// check if the relation exists -> so the node, but if the page itself doesn't exist
@@ -699,7 +699,6 @@ dTree.prototype.getHttpRequest = function(params, callBackMethod) {
     else return;
     
     document.body.style.cursor='wait';
-
     httpRequest.open("GET", this.smwAjaxUrl + params); 
 	httpRequest.send(null);
 };
@@ -963,6 +962,7 @@ parseHttpResponse = function() {
     var url = dTree.smwAjaxUrl.substr(0, dTree.smwAjaxUrl.lastIndexOf("/")) + '/index.php/';
 	var params= dTree.getSmwDataUrlparams(parentId);
 	if (params) params = '?' + params;
+	else params = '';
     
     return new Array (parentId, dTree, resObj.treelist, noc, url, params);    
 }

@@ -21,7 +21,6 @@ function smw_treeview_getTree($input) {
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
   $urlparams = (isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
-  $refresh = (isset($req['f'])) ? 'refresh=1' : NULL;
   
   // the following parameter depend on initOnload,
   // if this is not set, these are not needed because an dynamic expansion will fetch
@@ -38,7 +37,7 @@ function smw_treeview_getTree($input) {
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
-                                     $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams, $opento, $refresh);
+                                     $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams, $opento);
   
   $return['treelist'] = $res;
   $return['result'] = 'success';
