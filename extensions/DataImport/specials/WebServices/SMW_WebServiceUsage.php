@@ -209,6 +209,10 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	$messages = $response[0];
 	$wsParameters = $response[1];
+	
+	//$wsParameters = print_r($wsParameters, true);
+	//$wsParameters();
+	
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
 

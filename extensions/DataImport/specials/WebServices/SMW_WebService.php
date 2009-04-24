@@ -432,6 +432,7 @@ class WebService {
 			} else {
 				$this->createWSClient();
 				$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
+				
 				$this->initializeCallParameters($specParameters);
 
 				if($this->mWSClient){
@@ -576,8 +577,21 @@ class WebService {
 				$value = "".$child["defaultValue"];
 				if(array_key_exists("".$child["name"], $specParameters)){
 					$value = $specParameters["".$child["name"]];
+					$this->getPathSteps("".$child["path"], $value);
+				} else if(strtolower($this->mProtocol) != "rest"
+						&& "".$child["optional"] == "true"){
+					$found = false;
+					
+					foreach($this->mParsedParameters->children() as $pathChild){
+						if("".$pathChild["path"] == "".$child["path"] && 
+								array_key_exists("".$pathChild["name"], $specParameters)){
+							$found = true;
+						}
+					}
+					if(!$found){
+						$this->getPathSteps("".$child["path"], $value);
+					}
 				}
-				$this->getPathSteps("".$child["path"], $value);
 			}
 		}
 
@@ -599,7 +613,7 @@ class WebService {
 			}
 		}
 		$walkedParameters = $temp;
-
+		
 		$temp = &$this->mCallParameters;
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
@@ -625,6 +639,7 @@ class WebService {
 		}
 
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
+		
 	}
 
 
@@ -1321,8 +1336,12 @@ class WebService {
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName.".".$key);
 			}
 			
-			$response = array_merge($response, 
-				array($parameterName => $subParameterProcessor->createParameterValue()));
+			$computedParameterValue = $subParameterProcessor->createParameterValue();
+			if(count($subParameterProcessor->getDefaultSubParameters()) > 0
+					|| count($subParameterProcessor->getPassedSubParameters()) > 0){
+				$response = array_merge($response, 
+					array($parameterName => $subParameterProcessor->createParameterValue()));
+			}
 		}
 
 		if(count($messages) > 0){
