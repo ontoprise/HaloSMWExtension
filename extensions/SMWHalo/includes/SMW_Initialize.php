@@ -246,9 +246,7 @@ function smwgHaloSetupExtension() {
 			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 			break;
 			
-			/*case '_ca_' : smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
-			break;*/
+			
 			case '_qi_' : smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 			break;
@@ -272,7 +270,7 @@ function smwgHaloSetupExtension() {
 				smwfHaloInitMessages();
 				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
 				
-				//require_once($smwgHaloIP . '/includes/SMW_ContentProviderForAura.php');
+				
 				require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 				
 				
