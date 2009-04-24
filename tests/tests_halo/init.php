@@ -53,8 +53,8 @@ if (isWindows()) {
 		echo "\nNo XAMPP dir specified. Use -x to set XAMPP dir.\n";
 		die();
 	}
-	$phpExe = "$xamppDir/php/php.exe";
-	$mysqlExe = "$xamppDir/mysql/bin/mysql.exe";
+	$phpExe = "\"$xamppDir/php/php.exe\"";
+	$mysqlExe = "\"$xamppDir/mysql/bin/mysql.exe\"";
 } else {
 	$phpExe = exec('which php');
 	$mysqlExe = exec('which mysql');
@@ -132,7 +132,8 @@ function tstImportWikiPages() {
 
 			if (strpos($entry, ".xml") !== false) {
 				echo "\nAdding: ".$entry;
-				runProcess($phpExe." ".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
+				echo "\n".$phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"";
+				runProcess($phpExe." \"".$mw_dir."maintenance/importDump.php\" < \"".$pagesDir."/".$entry."\"");
 					
 			}
 		}
