@@ -155,7 +155,7 @@ class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 	}
 
 	function testTooLowCard() {
-		$//TODO: add test data
+		//TODO: add test data
 		$this->assertEquals(true, true);
 	}
 	function testTooHighCard() {
