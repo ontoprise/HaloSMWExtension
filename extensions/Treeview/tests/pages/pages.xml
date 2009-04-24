@@ -1,0 +1,567 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Treeview</sitename>
+    <base>http://localhost.localdomain/treeview/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Treeview</namespace>
+      <namespace key="5">Treeview talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>1</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2009-04-24T10:24:00Z</timestamp>
+      <contributor>
+        <ip>MediaWiki default</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;big&gt;'''MediaWiki has been successfully installed.'''&lt;/big&gt;
+
+Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
+
+== Getting started ==
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has domain and range</title>
+    <id>2</id>
+    <revision>
+      <id>2</id>
+      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
+
+[[Has type::Type:Page; Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has max cardinality</title>
+    <id>3</id>
+    <revision>
+      <id>3</id>
+      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has max cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has max cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has min cardinality</title>
+    <id>4</id>
+    <revision>
+      <id>4</id>
+      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has min cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has min cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is inverse of</title>
+    <id>5</id>
+    <revision>
+      <id>5</id>
+      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Is inverse of&quot;</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Is inverse of&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is equal to</title>
+    <id>6</id>
+    <revision>
+      <id>6</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Is equal to&quot;</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Is equal to&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Transitive properties</title>
+    <id>7</id>
+    <revision>
+      <id>7</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Transitive properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Symmetrical properties</title>
+    <id>8</id>
+    <revision>
+      <id>8</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Symmetrical properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Question</title>
+    <id>9</id>
+    <revision>
+      <id>9</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Description</title>
+    <id>10</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:Text]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:DiscourseState</title>
+    <id>11</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Märchen</title>
+    <id>12</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2009-04-24T11:37:42Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">Märchen (mittelhochdeutsch Maere = „Kunde, Bericht, Nachricht“) gehören zur Literaturgattung der Epik. Es handelt sich um kürzere Erzählungen, die von fabelhaften und wunderbaren Begebenheiten berichten, die teilweise frei erfunden sind, teilweise wirkliche Begebenheiten als Grundlage haben, die im Laufe der Zeit mit viel Phantasie ausgeschmückt wurden. Hierdurch unterscheiden sie sich von den Sagen. Sie finden sich zu allen Zeiten und bei allen Völkern dieser Welt. In Deutschland prägten insbesondere die Brüder Grimm den Begriff. Sie haben mündlich tradierte Märchen gesammelt und aufgeschrieben. 
+
+[[Category:Content]]
+[[hasTitle::Märchen]]
+[[Subsection of::Main Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Grimm</title>
+    <id>13</id>
+    <revision>
+      <id>14</id>
+      <timestamp>2009-04-24T11:38:42Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Die Brüder Grimm, oder die Gebrüder Grimm, Jacob (* 4. Januar 1785 in Hanau, † 20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, † 16. Dezember 1859 in Be...</comment>
+      <text xml:space="preserve">Die Brüder Grimm, oder die Gebrüder Grimm, Jacob (* 4. Januar 1785 in Hanau, † 20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, † 16. Dezember 1859 in Berlin), sind als Sprachwissenschaftler und Sammler von Märchen (Grimms Märchen) bekannt. Sie gelten gemeinsam mit Karl Lachmann und Georg Friedrich Benecke als „Gründungsväter“ der Deutschen Philologie bzw. Germanistik.
+
+[[Category:Content]]
+[[Subsection of::Märchen]]
+[[hasTitle::Gebrüder Grimm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Jacob Grimm</title>
+    <id>14</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2009-04-24T11:40:18Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Jacob Grimm ist einer der beiden Brüder Grimm  [[Category:Content]] [[Subsection of::Grimm]] [[hasTitle::Jacob Grimm]]</comment>
+      <text xml:space="preserve">Jacob Grimm ist einer der beiden Brüder Grimm
+
+[[Category:Content]]
+[[Subsection of::Grimm]]
+[[hasTitle::Jacob Grimm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wilhelm Grimm</title>
+    <id>15</id>
+    <revision>
+      <id>16</id>
+      <timestamp>2009-04-24T11:40:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Wilhelm Grimm ist einer der beiden Brüder Grimm  [[Category:Content]] [[Subsection of::Grimm]] [[hasTitle::Wilhelm Grimm]]</comment>
+      <text xml:space="preserve">Wilhelm Grimm ist einer der beiden Brüder Grimm
+
+[[Category:Content]]
+[[Subsection of::Grimm]]
+[[hasTitle::Wilhelm Grimm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Grimms Märchen</title>
+    <id>16</id>
+    <revision>
+      <id>17</id>
+      <timestamp>2009-04-24T11:42:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Die „Kinder- und Hausmärchen“ (KHM), volkstümlich „Grimms Märchen“ genannt, sind eine berühmte deutsche Anthologie von Märchen, die Jacob Ludwig Carl Grimm und sein Bruder Wil...</comment>
+      <text xml:space="preserve">Die „Kinder- und Hausmärchen“ (KHM), volkstümlich „Grimms Märchen“ genannt, sind eine berühmte deutsche Anthologie von Märchen, die Jacob Ludwig Carl Grimm und sein Bruder Wilhelm Karl Grimm, bekannt als die „Brüder Grimm“, herausgegeben haben.
+
+[[Category:Content]]
+[[Subsection of::Märchen]]
+[[hasTitle::Grimms Märchen]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Waldhaus</title>
+    <id>17</id>
+    <revision>
+      <id>18</id>
+      <timestamp>2009-04-24T11:45:02Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Das Waldhaus==  Ein Märchen der Gebrüder Grimm - KHM 169  Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines...</comment>
+      <text xml:space="preserve">==Das Waldhaus==
+
+Ein Märchen der Gebrüder Grimm - KHM 169
+
+Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines Morgens, als er wieder an seine Arbeit wollte, sagte er zu seiner Frau: &quot;Laß mir ein Mittagsbrot von dem ältesten Mädchen hinaus in den Wald bringen, ich werde sonst nicht fertig. Und damit es sich nicht verirrt&quot;, setzte er hinzu, &quot;so will ich einen Beutel mit Hirse mitnehmen und die Körner auf den Weg streuen.&quot; 
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Das Waldhaus]]
+[[KHM::169]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Blaues Licht</title>
+    <id>18</id>
+    <revision>
+      <id>22</id>
+      <timestamp>2009-04-24T11:50:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">==Das blaue Licht==
+
+Ein Märchen der Gebrüder Grimm - KHM 116
+
+
+Es war einmal ein Soldat, der hatte dem König lange Jahre treu gedient: als aber der Krieg zu Ende war und der Soldat, der vielen Wunden wegen, die er empfangen hatte, nicht weiter dienen konnte, sprach der König zu ihm 'du kannst heim gehen, ich brauche dich nicht mehr: Geld bekommst du weiter nicht, denn Lohn erhält nur der, welcher mir Dienste dafür leistet.' Da wußte der Soldat nicht, womit er sein Leben fristen sollte: ging voll Sorgen fort und ging den ganzen Tag, bis er abends in einen Wald kam. Als die Finsternis einbrach, sah er ein Licht, dem näherte er sich und kam zu einem Haus, darin wohnte eine Hexe. 'Gib mir doch ein Nachtlager und ein wenig Essen und Trinken' sprach er zu ihr, 'ich verschmachte sonst.' 'Oho!' antwortete sie, 'wer gibt einem verlaufenen Soldaten etwas? doch will ich barmherzig sein und dich aufnehmen, wenn du tust, was ich verlange.' 'Was verlangst du?, fragte der Soldat. 'Daß du mir morgen meinen Garten umgräbst.' Der Soldat willigte ein und arbeitete den folgenden Tag aus allen Kräften, konnte aber vor Abend nicht fertig werden. 'Ich sehe wohl' sprach die Hexe, 'daß du heute nicht weiter kannst: ich will dich noch eine Nacht behalten, dafür sollst du mir morgen ein Fuder Holz spalten und klein machen.' Der Soldat brauchte dazu den ganzen Tag, und abends machte ihm die Hexe den Vorschlag, noch eine Nacht zu bleiben. 'Du sollst mir morgen nur eine geringe Arbeit tun, hinter meinem Hause ist ein alter wasserleerer Brunnen, in den ist mir mein Licht gefallen, es brennt blau und verlischt nicht, das sollst du mir wieder heraufholen.' Den andern Tag führte ihn die Alte zu dem Brunnen und ließ ihn in einem Korb hinab. Er fand das blaue Licht und machte ein Zeichen, daß sie ihn wieder hinaufziehen sollte. Sie zog ihn auch in die Höhe, als er aber dem Rand nahe war, reichte sie die Hand hinab und wollte ihm das blaue Licht abnehmen. 'Nein' sagte er und merkte ihre bösen Gedanken, 'das Licht gebe ich dir nicht eher, als bis ich mit beiden Füßen auf dem Erdboden stehe.' Da geriet die Hexe in Wut, ließ ihn wieder hinab in den Brunnen fallen und ging fort. 
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Das blaue Licht]]
+[[KHM::116]]
+[[startsWith::Es war einmal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Der Wolf und die 7 Geißlein</title>
+    <id>19</id>
+    <revision>
+      <id>24</id>
+      <timestamp>2009-04-24T11:51:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">==Der Wolf und die 7 Geißlein==
+
+Ein Märchen der Gebrüder Grimm - KHM 005
+
+Es war einmal eine alte Geiß, die hatte sieben junge Geißlein, und hatte sie lieb, wie eine Mutter ihre Kinder lieb hat. Eines Tages wollte sie in den Wald gehen und Futter holen, da rief sie alle sieben herbei und sprach: “Liebe Kinder, ich will hinaus in den Wald, seid auf eurer Hut vor dem Wolf, wenn er hereinkommt, so frißt er euch mit Haut und Haar. Der Bösewicht verstellt sich oft, aber an seiner rauhen Stimme und an seinen schwarzen Füßen werdet ihr ihn gleich erkennen.” Die Geißlein sagten: “Liebe Mutter, wir wollen uns schon in acht nehmen, Ihr könnt ohne Sorge fortgehen.” Da meckerte die Alte und machte sich getrost auf den Weg. 
+
+&lt;noinclude&gt;
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Der Wolf und die 7 Geißlein]]
+[[KHM::5]]
+[[startsWith::Es war einmal]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Die 3 Schlangenblätter</title>
+    <id>20</id>
+    <revision>
+      <id>21</id>
+      <timestamp>2009-04-24T11:50:18Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Die 3 Schlangenblätter==  Ein Märchen der Gebrüder Grimm - KHM 016   Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernähren. Da sprach der Sohn 'lieber Vat...</comment>
+      <text xml:space="preserve">==Die 3 Schlangenblätter==
+
+Ein Märchen der Gebrüder Grimm - KHM 016
+
+
+Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernähren. Da sprach der Sohn 'lieber Vater, es geht Euch so kümmerlich, ich falle Euch zur Last, lieber will ich selbst fortgehen und sehen, wie ich mein Brot verdiene.' Da gab ihm der Vater seinen Segen und nahm mit großer Trauer von ihm Abschied. Zu dieser Zeit führte der König eines mächtigen Reichs Krieg, der Jüngling nahm Dienste bei ihm und zog mit ins Feld. Und als er vor den Feind kam, so ward eine Schlacht geliefert, und es war große Gefahr und regnete blaue Bohnen, daß seine Kameraden von allen Seiten niederfielen. Und als auch der Anführer blieb, so wollten die übrigen die Flucht ergreifen, aber der Jüngling trat heraus, sprach ihnen Mut zu und rief 'wir wollen unser Vaterland nicht zugrunde gehen lassen.' Da folgten ihm die andern, und er drang ein und schlug den Feind. Der König, als er hörte, daß er ihm allein den Sieg zu danken habe, erhob ihn über alle andern, gab ihm große Schätze und machte ihn zum Ersten in seinem Reich. 
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::die 3 Schlangenblätter]]
+[[KHM::16]]
+[[startsWith::Es war einmal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Frau Holle</title>
+    <id>21</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2009-04-24T11:55:00Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Frau Holle==  Ein Märchen der Gebrüder Grimm - KHM 024   Eine Witwe hatte zwei Töchter, davon war die eine schön und fleißig, die andere häßlich und faul. Sie hatte aber die häß...</comment>
+      <text xml:space="preserve">==Frau Holle==
+
+Ein Märchen der Gebrüder Grimm - KHM 024
+
+
+Eine Witwe hatte zwei Töchter, davon war die eine schön und fleißig, die andere häßlich und faul. Sie hatte aber die häßliche und faule, weil sie ihre rechte Tochter war, viel lieber, und die andere mußte alle Arbeit tun und der Aschenputtel im Hause sein. Das arme Mädchen mußte sich täglich auf die große Straße bei einem Brunnen setzen und mußte so viel spinnen, daß ihm das Blut aus den Fingern sprang. Nun trug es sich zu, daß die Spule einmal ganz blutig war, da bückte es sich damit in den Brunnen und wollte sie abwaschen; sie sprang ihm aber aus der Hand und fiel hinab.
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Frau Holle]]
+[[KHM::24]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Goldmarie</title>
+    <id>22</id>
+    <revision>
+      <id>26</id>
+      <timestamp>2009-04-24T11:56:16Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Goldmarie==  Die Goldmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Goldmarie]]</comment>
+      <text xml:space="preserve">==Goldmarie==
+
+Die Goldmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
+
+[[Category:Content]]
+[[Subsection of::Frau Holle]]
+[[hasTitle::Goldmarie]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Pechmarie</title>
+    <id>23</id>
+    <revision>
+      <id>27</id>
+      <timestamp>2009-04-24T11:56:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Pechmarie==  Die Pechmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Pechmarie]]</comment>
+      <text xml:space="preserve">==Pechmarie==
+
+Die Pechmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
+
+[[Category:Content]]
+[[Subsection of::Frau Holle]]
+[[hasTitle::Pechmarie]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Hänsel und Gretel</title>
+    <id>24</id>
+    <revision>
+      <id>28</id>
+      <timestamp>2009-04-24T11:57:59Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Hänsel und Gretel==  Ein Märchen der Gebrüder Grimm - KHM 015   Vor einem großen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das Bübchen hieß Hänsel...</comment>
+      <text xml:space="preserve">==Hänsel und Gretel==
+
+Ein Märchen der Gebrüder Grimm - KHM 015
+
+
+Vor einem großen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das Bübchen hieß Hänsel und das Mädchen Gretel. Er hatte wenig zu beißen und zu brechen, und einmal, als große Teuerung ins Land kam, konnte er das tägliche Brot nicht mehr schaffen. Wie er sich nun abends im Bette Gedanken machte und sich vor Sorgen herumwälzte, seufzte er und sprach zu seiner Frau: “Was soll aus uns werden? Wie können wir unsere armen Kinder ernähren da wir für uns selbst nichts mehr haben?” - “Weißt du was, Mann,” antwortete die Frau, “wir wollen morgen in aller Frühe die Kinder hinaus in den Wald führen, wo er am dicksten ist. Da machen wir ihnen ein Feuer an und geben jedem noch ein Stückchen Brot, dann gehen wir an unsere Arbeit und lassen sie allein. Sie finden den Weg nicht wieder nach Haus, und wir sind sie los.” - “Nein, Frau,” sagte der Mann, “das tue ich nicht; wie sollt ich’s übers Herz bringen, meine Kinder im Walde allein zu lassen! Die wilden Tiere würden bald kommen und sie zerreißen.” - “Oh, du Narr,” sagte sie, “dann müssen wir alle viere Hungers sterben, du kannst nur die Bretter für die Särge hobeln,” und ließ ihm keine Ruhe, bis er einwilligte. “Aber die armen Kinder dauern mich doch,” sagte der Mann. 
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Händel und Gretel]]
+[[KHM::15]]
+[[startsWith::Es war einmal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Rapunzel</title>
+    <id>25</id>
+    <revision>
+      <id>29</id>
+      <timestamp>2009-04-24T11:59:19Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Rapunzel==  Ein Märchen der Gebrüder Grimm - KHM 012   Es war einmal ein Mann und eine Frau, die wünschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung,...</comment>
+      <text xml:space="preserve">==Rapunzel==
+
+Ein Märchen der Gebrüder Grimm - KHM 012
+
+
+Es war einmal ein Mann und eine Frau, die wünschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung, der liebe Gott werde ihren Wunsch erfüllen.
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Rapunzel]]
+[[KHM::12]]
+[[startsWith::Es war einmal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Schneewittchen</title>
+    <id>26</id>
+    <revision>
+      <id>30</id>
+      <timestamp>2009-04-24T12:00:44Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Schneewittchen==  Ein Märchen der Gebrüder Grimm - KHM 053   Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saß eine Königin an einem Fe...</comment>
+      <text xml:space="preserve">==Schneewittchen==
+
+Ein Märchen der Gebrüder Grimm - KHM 053
+
+
+Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saß eine Königin an einem Fenster, das einen Rahmen von schwarzem Ebenholz hatte, und nähte. Und wie sie so nähte und nach dem Schnee aufblickte, stach sie sich mit der Nadel in den Finger, und es fielen drei Tropfen Blut in den Schnee. Und weil das Rote im weißen Schnee so schön aussah, dachte sie bei sich: Hätt' ich ein Kind, so weiß wie Schnee, so rot wie Blut und so schwarz wie das Holz an dem Rahmen! Bald darauf bekam sie ein Töchterlein, das war so weiß wie Schnee, so rot wie Blut und so schwarzhaarig wie Ebenholz und ward darum Schneewittchen (Schneeweißchen) genannt.
+
+[[Category:Content]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Schneewittchen]]
+[[KHM::53]]
+[[startsWith::Es war einmal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wilhelm Hauff</title>
+    <id>27</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2009-04-24T12:02:01Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Wilhelm Hauff (* 29. November 1802 in Stuttgart; † 18. November 1827 ebenda) war ein deutscher Schriftsteller der Romantik. Er war ein Hauptvertreter der Schwäbischen Dichterschule.  [[...</comment>
+      <text xml:space="preserve">Wilhelm Hauff (* 29. November 1802 in Stuttgart; † 18. November 1827 ebenda) war ein deutscher Schriftsteller der Romantik. Er war ein Hauptvertreter der Schwäbischen Dichterschule.
+
+[[Category:Content]]
+[[Subsection of::Märchen]]
+[[hasTitle::Wilhelm Hauff]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Kleiner Muck</title>
+    <id>28</id>
+    <revision>
+      <id>32</id>
+      <timestamp>2009-04-24T12:03:19Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: ==Der kleine Muck==  Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von den Verwandten fortgejagt, da er wegen seines zwergenhaften Wuchses kein Handwerk gele...</comment>
+      <text xml:space="preserve">==Der kleine Muck==
+
+Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von den Verwandten fortgejagt, da er wegen seines zwergenhaften Wuchses kein Handwerk gelernt hatte und für keine Arbeit geeignet scheint.
+
+[[Category:Content]]
+[[Subsection of::Wilhelm Hauff]]
+[[hasTitle::Der kleine Muck]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Tree1</title>
+    <id>29</id>
+    <revision>
+      <id>40</id>
+      <timestamp>2009-04-24T13:23:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">== Baum ohne Einschränkung==
+
+{{#tree:
+{{#generateTree:property=Subsection of|dynamic=1|refresh=1|}}
+}}
+
+== Baum ab Märchen==
+
+{{#tree:
+{{#generateTree:property=Subsection of|dynamic=1|initOnload=1|}}
+}}</text>
+    </revision>
+  </page>
+</mediawiki>
