@@ -98,8 +98,11 @@ function tstInitializeDatabase() {
 	if ($handle) {
 		while(!feof($handle)) {
 			$line = fgets($handle);
-			echo "$line";
-			runProcess($phpExe." \"".$mw_dir."extensions/".$line."\"");
+			$prgArg = explode("|", $line);
+			$prg = $prgArg[0];
+			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
+			echo "$prg $arg";
+			runProcess($phpExe." \"".$mw_dir."extensions/".$prg."\" $arg");
 		}
 		fclose($handle);
 	} else {
