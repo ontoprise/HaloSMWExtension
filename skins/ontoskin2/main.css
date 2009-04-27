@@ -332,6 +332,7 @@
 	font-weight: bold;
 	font-size: normal;
 	display: inline-block;
+	width: 100%;
 }
 
 #smwf_pageblock h1{
