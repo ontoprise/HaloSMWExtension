@@ -67,7 +67,6 @@ class TreeGenerator {
 		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
 		// parameter check
 		
-		
 		$tv_store = TreeviewStorage::getTreeviewStorage();
 		if (is_null($tv_store)) return "";
 
@@ -85,7 +84,7 @@ class TreeGenerator {
 		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
-		
+
 		// check if we have to return certain parameter with the result set when the dynamic expansion
 		// is set and the page is rendered for the first tree
 		// prefixed parameter are send like GET params in an URL encapsulated with "\x7f". In the tree parser
@@ -437,19 +436,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @param Database row Object &$row
 	 */
 	function postProcessingForElement(&$row) {
-		static $prop;
 	    // add property value if choosen    
 	    if ($this->displayProperty) {
 	        $title = Title::newFromText($row->title, $row->ns);
-	        if ($prop == NULL) {	        
-	        	$pname = Title::newFromText($this->displayProperty, SMW_NS_PROPERTY);
-	        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
-	        }
+        	$pname = Title::newFromText($this->displayProperty, SMW_NS_PROPERTY);
+        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
  			$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
  		    if (count($smwValues) > 0) {
 	        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
-	        	// remove any special chars and replace them with their html entity
-				$propValue = preg_replace('/([^\d\w\s_:-\[\]\*\|\.])/ie',"'&#'.ord('\\1').';'", $propValue);
     		    if (strlen(trim($propValue)) > 0) $this->elementProperties[$row->smw_id][] = $propValue;
  		    }
 	    } 		
