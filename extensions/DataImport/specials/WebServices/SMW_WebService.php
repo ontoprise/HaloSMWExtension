@@ -701,7 +701,7 @@ class WebService {
 					return false;
 				}
 			} else {
-				$val = (string) $subTree[0][0];
+				$val = (string) $subTree[0]."";
 			}
 			if ($val && $isNumeric) {
 				$val = floatval($val);
