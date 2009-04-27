@@ -74,8 +74,14 @@ WebServiceToolBar.prototype = {
 		var url = wgArticlePath.replace(/\$1/, "Special:UseWebService");
 		var startPos = $("wpTextbox1").selectionStart;
 		var endPos = $("wpTextbox1").selectionEnd;
-		url += "?url=" + escape(document.URL);
-		//handle two subsequent add ws-syntax
+		
+		//handle different url patterns
+		if(url.indexOf("?") > 0){
+			url += "&url=" + escape(document.URL);
+		} else {
+			url += "?url=" + escape(document.URL);
+		}
+			// handle two subsequent add ws-syntax
 		var pos = url.indexOf("&wsSyn");
 		if(pos > 0){
 			url = url.substring(0, pos);
