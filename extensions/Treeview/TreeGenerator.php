@@ -310,20 +310,24 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$pages = $matches[0];
 		$smwIds = array();
 		foreach ($pages as $page) {
-			$page = substr($page, 2); // remove the "[["
+			$page = substr($page, 3); // remove the "[[:"
 			$title = Title::newFromDBkey($page);
+			if (is_null($title)) continue;
 			$smw_id = $this->getSmwIdByTitle($title);
 			$smwIds[] = $smw_id;
-			
+
 			// fill the elementProperties variable for this element. Almost all neccessary data
 			// are availabe at this point
-			$this->elementProperties[$smw_id] = array(substr($page, strpos($page, ':') + 1), $title->getNamespace());
+			if (strpos($page, ":") === false)
+				$this->elementProperties[$smw_id] = array($page, $title->getNamespace());
+			else
+				$this->elementProperties[$smw_id] = array(substr($page, strpos($page, ':') +1 ), $title->getNamespace());
 			
 			// if we want to display the value of some property instead of the page name then this
 			// post processing must be done.
 			$row->smw_id = $smw_id;
 			$row->title = $this->elementProperties[$smw_id][0];
-			$row->ns = $title->getNamespace();
+			$row->ns = $this->elementProperties[$smw_id][1];
 			$this->postProcessingForElement($row);
 		}
 		$this->smw_condition_ids = $smwIds;
