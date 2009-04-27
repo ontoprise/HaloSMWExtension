@@ -915,6 +915,7 @@ END;
 		$wgOut->addHTML( '</div>' );
 		
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
+		
 		$wgOut->addHTML( "<ul class='warning'>{$warning}</ul><br />\n" );
 
 		$save = wfMsgHtml( 'savefile' );
@@ -1309,7 +1310,6 @@ EOT
 		global $smwgRMScriptPath;
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
 		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input  type=\"button\" value=\"$saveButtonText\" onclick=\"richMediaPage.doUpload()\"/></td></tr></table>");
-		$wgOut->addHTML("<form class='sf_upload_combined' method='post' enctype='multipart/form-data' action=\"$action\" />");
 	}
 
 	/* -------------------------------------------------------------- */
