@@ -63,16 +63,37 @@ var RichMediaPage = Class.create({
 	*/ 
 	mergeFormsToForm: function(sourceForms, destForm) {  
   		var clone; 
-  		sourceForms.each(function(sourceForms) { 
-			$(sourceForms).getElements().each(function(formControl) { 
-				clone = formControl.cloneNode(true); 
-				clone.id = '';
-				clone.hide();  
-				destForm.appendChild(clone);
-				//TODO: create a valid field for dates (day, month, year) -> date
+  		sourceForms.each(function(sourceForm) { 
+			sourceForm.getElements().each(function(formControl) { 
+				clone = formControl.cloneNode(true);
 				
+				/* if we find an id that contains the string 'day'
+				 * we search for the according year and month, build up a new date string 
+				 * and append this to the destForm
+				 */
+				if (clone.id.indexOf('day') > -1) {
+					var date_id = clone.id.replace('_day', ''); 
+					var dateStringValue = $(date_id + '_year').value + 
+						'/' + $(date_id + '_month').value + '/' + clone.value;
+					var dateStringName = clone.name.replace('[day]', '');
+					var el = new Element('input', {
+						'type' : 'hidden',
+						'name' : dateStringName,
+						'value' : dateStringValue } )
+						destForm.appendChild(el);
+				}
+				//We do nothing with 'year' and 'month' because it's already done in 'day'
+				else if ( (clone.id.indexOf('year') > -1 ) || ( clone.id.indexOf('month') > -1) )  {
+					//do nothing
+				}
+				// just clone and hide everything else here 
+				else {
+					clone.id = '';
+					clone.hide();  
+					destForm.appendChild(clone);
+				}
 	 		}); 
-  		}); 
+  		});
 		return true;
 	},
 	
