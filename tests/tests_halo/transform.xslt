@@ -3,13 +3,8 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" />
     
-    <xsl:template match="testsuites">
-        <testsuite>
-        <xsl:apply-templates select="testsuite/testsuite[@name]" />
-         </testsuite>
-    </xsl:template>
-    
-    <xsl:template match="testsuite">
+        
+    <xsl:template match="testsuites/testsuite">
     
         <xsl:copy>
 
@@ -28,13 +23,14 @@
             </xsl:attribute>
             <xsl:attribute name="time"><xsl:value-of select="@time" />
             </xsl:attribute>
-            <xsl:apply-templates select="testcase" /> 
+            <xsl:apply-templates select="//testcase" /> 
         </xsl:copy>
    
     </xsl:template>
     <xsl:template match="testcase">
         <xsl:copy>
-
+            <xsl:attribute name="classname"><xsl:value-of select="parent::testsuite/@name" />
+            </xsl:attribute>
             <xsl:attribute name="name"><xsl:value-of select="@name" />
             </xsl:attribute>
             <xsl:attribute name="file"><xsl:value-of select="@file" />
