@@ -106,7 +106,7 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 		$tg = new TreeGenerator;
 		$property = "property=Subsection of";
 		$maxDepth = "maxDepth=2";
-		$redirect = utf8_encode("redirect=Märchen");
+		$redirect = utf8_encode("redirectPage=Märchen");
   		$res = $tg->generateTree($wgParser, $property, $maxDepth, $redirect);
   		$res = utf8_decode($res);
 		$expected = '*[[Help:Contents|Contents]]

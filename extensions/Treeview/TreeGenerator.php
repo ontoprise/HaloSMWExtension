@@ -173,8 +173,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     private $treeList;
     private $rootNodes;
     private $leafNodes;
+    
+    private $db;
 
     public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo) {
+    	// here the options are stored, that can be set in the generateTree parser function
 		$this->ajaxExpansion = $ajaxExpansion;
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
         $this->redirectPage = $redirectPage;
@@ -183,80 +186,106 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         $this->json = $jsonOutput;
         $this->condition = $condition;
         $this->openTo = $openTo;
-        
+        // for some of the options, the smw_ids of the elements will be stored here to use them in db queries
         $this->smw_relation_id = NULL;
      	$this->smw_category_ids = NULL;
 		$this->smw_start_id = NULL;
 		$this->smw_condition_ids = NULL;
 		
-		// empty class variables, that will store information about this generated tree
+		// empty class variables, that will store information about this generated tree and also general information
 		$this->elementProperties= array();
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
 		$this->rootNodes = array();
 		$this->leafNodes = array();
+		
+		$this->db =& wfGetDB( DB_SLAVE );
     }
     
+    /**
+     * Returns true or false depending on the fact if the node down to where the tree is
+     * supposed to be opened. If this is set in the parameter openTo in the parser function
+     * the member variable will contain the name.
+     * Later from that name the smw_id is evaluated and checked wether the node is in the
+     * result nodes. If this is not the case, the member variable openTo is set to null.
+     * Based on that fact here we know if the node was found.
+     * 
+     * @access public
+     * @return Boolean found true if node is found, false otherwise  
+     */
     public function openToFound() {
     	return ($this->openTo != null);
     }
 
+	/**
+	 * Starts to fetch the triples based on a relation for creating the tree. All internal
+	 * limitations and management which nodes are needed are done here. This is the main
+	 * function that is being called from outside.
+	 * 
+	 * @access public
+	 * @param  object Title $relation
+	 * @param  object Title $category
+	 * @param  object Title $start
+	 * @return string $tree wikitext that will be parsed by the tree function.
+	 */
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
 
-	  	$db = NULL;
-		$categoryConstraintTable = '';
-		$categoryConstraintWhere = '';
-		$categoryConstraintGroupBy = '';
-		
+		$smw_rels2 = $this->db->tableName('smw_rels2');
+		$smw_inst2 = $this->db->tableName('smw_inst2');
+
+		$query ="";
+
 	    // relation must be set -> we fetch here the smw_id of the requested relation
 		if (! ($this->smw_relation_id = $this->getSmwIdByTitle($relation))) return ($this->json) ? array() : "";
+		
 		// if category is set, we will fetch the id of the category
 		if ($category) {
 			$this->getCategoryList($category);
 		    if (is_null($this->smw_category_ids)) return ($this->json) ? array() : "";
-		    if (!$db) $db =& wfGetDB( DB_SLAVE );
-		    $smw_inst2 = $db->tableName('smw_inst2');
-		    $categoryConstraintTable = ",$smw_inst2 i ";
-		    $categoryConstraintWhere = " AND i.o_id in (".implode(',', $this->smw_category_ids).")".
-									    " AND (r.o_id = i.s_id OR r.s_id = i.s_id)";
-			$categoryConstraintGroupBy = " GROUP BY s_id, o_id";
 		}
-		
-		if (!$db) $db =& wfGetDB( DB_SLAVE );		
-		$smw_rels2 = $db->tableName('smw_rels2');
 
-		// match all triples that are of the requested relation
-		$query = "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
-		         ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere;
-
+		// if start is set, fetch smw_id for start element		
 		if ($start && (! ($this->smw_start_id = $this->getSmwIdByTitle($start))))
 			return ($this->json)
 		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 
-		if ($this->ajaxExpansion || $this->maxDepth && $this->maxDepth < 3) { // only root and one level below
-			// Ajax call to retrieve children from start
-			if ($start && $this->json)
-				$query.= " AND r.o_id = ".$this->smw_start_id;
+		if ($this->ajaxExpansion && !$this->condition) {
+			// only root and one level below
+			// if start is set, retrieve all children from start
+			if ($start) {
+				$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
+				$query = str_replace('___CONDITION___', " AND r.o_id = ".$this->smw_start_id, $query);
+			}
 			// initial call (no matter if start is set), we need the first two levels (children and grand children of start)
 			else
-		    	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 r $categoryConstraintTable ".
-		    			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
+		    	$query = $this->getQuery4Relation($smw_inst2, $smw_rels2, true);
 		}
-		$query.= $categoryConstraintGroupBy;
+		else $query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
+		
+		// remove placeholder for special where part, if not done aleady
+		$query = str_replace('___CONDITION___', "", $query);
 
 		// check, if there were condition for the tree.
 		if ($this->condition) $this->getCondition($this->condition);
 
 		// now run the query to get all relations of the desired property
-		$res = $db->query($query);
-		while ($row = $db->fetchObject($res)) {
+		$res = $this->db->query($query);
+		while ($row = $this->db->fetchObject($res)) {
 			$this->addTupleToResult($row->s_id, $row->o_id);
 		}
-		$db->freeResult($res);
+		$this->db->freeResult($res);
 
 		if (count($this->sIds) == 0) return;
 
+		// if we use the Ajax expansion but building the tree for the first time 
+		// then one level further is fetched to have two levels. This is neccessary because
+		// if start is set or other limitations are set then in the first triple the object
+		// might be rejected, meaning that we have the subject only but need it's children
+		// to have at least two levels.
+		if ($this->ajaxExpansion && !$this->json)
+			$this->fetchNextLevelOfNodes();
+			
 		// check if the tree is supposed to be opened down to a certain node
 		if ($this->openTo) $this->getPathToOpenTo();
 
@@ -342,8 +371,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 */
 	private function getElementProperties() {
 		
-	    $db =& wfGetDB( DB_SLAVE );
-	    $smw_ids = $db->tableName('smw_ids');
+	    $smw_ids = $this->db->tableName('smw_ids');
 	    $limit = 50;   // fetch only that many items at once from the db
 	    $i = 0;        // counter when building query to add only limit elements to one query where clause
 	    $pos = 0;      // counter when building query to check when all elements have been fetched
@@ -354,7 +382,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	             "WHERE s.smw_id in (%s)";
 	    // if the tree is limited by categories, add these to the query
 	    if (! is_null($this->smw_category_ids)) {
-	    	$smw_inst2 = $db->tableName('smw_inst2');
+	    	$smw_inst2 = $this->db->tableName('smw_inst2');
 	    	$query = str_replace("WHERE s.smw_id", ", $smw_inst2 a WHERE s.smw_id", $query);
 	    	$query.= " AND s.smw_id = a.s_id AND a.o_id in (".implode(',', $this->smw_category_ids).")";
 	    }
@@ -370,13 +398,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	        if ($i == $limit || $pos == $sizeOfData) {
 	            $query_add = substr($query_add, 0, -1);
 	            $fids = array_flip(explode(",", $query_add));
-	            $res = $db->query(sprintf($query, $query_add));
-	            while ($row = $db->fetchObject($res)) {
+	            $res = $this->db->query(sprintf($query, $query_add));
+	            while ($row = $this->db->fetchObject($res)) {
                		$this->elementProperties[$row->smw_id]= array($row->title, $row->ns);
                		$this->postProcessingForElement($row);
                		unset($fids[$row->smw_id]);
                 }
-	            $db->freeResult($res);
+	            $this->db->freeResult($res);
 	            
 	            // if there are remaining fids then these didn't belong to the selected set of nodes
 	            // remove them from the member variables sIds and elementProperties
@@ -396,6 +424,42 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	        }
 	    }
 	}
+
+	/**
+	 * If the start parameter is set, and the dynamic expansion is used we need
+	 * the first two levels of the tree only. Therefore the first query in
+	 * getHierarchyByRelation() returns the triples of the first level as
+	 * tree nodes. That is because all children of start are fetched. Because
+	 * start itself will not be displayed in the tree, these children are root
+	 * nodes. Now we need the children of these root nodes.
+	 * 
+	 * @access private 
+	 */	
+	private function fetchNextLevelOfNodes() {
+		// get all nodes within the current smwIds variable
+		$nodes = array();
+		foreach (array_keys($this->sIds) as $cnode) {
+			foreach ($this->sIds as $parents) {
+				foreach ($parents as $pnode) {
+					if ($pnode == $cnode) continue 3;
+				}
+			}
+			$nodes[] = $cnode;
+		}
+		if (count($nodes) == 0) return;
+
+		$smw_inst2 = $this->db->tableName('smw_inst2');		
+		$smw_rels2 = $this->db->tableName('smw_rels2');
+		$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
+		$query = str_replace('___CONDITION___', ' AND r.o_id IN ('.implode(',', $nodes).')', $query);
+		$res = $this->db->query($query);
+		if ($res) {
+			while ($row = $this->db->fetchObject($res)) {
+				$this->addTupleToResult($row->s_id, $row->o_id);
+			}
+		}
+		$this->db->freeResult($res);
+	}
 	
 	/**
 	 * Get all sub categories for a given title which is supposed to be a category
@@ -408,17 +472,16 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$cid = $this->getSmwIdByTitle($category);
 		if (is_null($cid)) return;
 		$catIds[] = $cid;
-		$db =& wfGetDB( DB_SLAVE );
-		$smw_inst = $db->tableName('smw_inst2');
-		$smw_ids = $db->tableName('smw_ids');
+		$smw_inst = $this->db->tableName('smw_inst2');
+		$smw_ids = $this->db->tableName('smw_ids');
 		$query = "SELECT s.smw_id AS cat FROM $smw_ids s, $smw_inst i " .
 				 "WHERE s.smw_id = i.s_id AND i.o_id = %d AND s.smw_namespace = ".NS_CATEGORY;
 		$children = $catIds;
 		while (count($children) > 0) {
 			$currentCat = array_shift($children);
-			$res = $db->query(sprintf($query, $currentCat));
+			$res = $this->db->query(sprintf($query, $currentCat));
 			if ($res) {
-				while ($row = $db->fetchObject($res)) {
+				while ($row = $this->db->fetchObject($res)) {
 					$children[] = $row->cat;
 					$catIds[] = $row->cat;
 				}
@@ -458,17 +521,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return integer $smw_id or NULL on failure
 	 */
 	private function getSmwIdByTitle(Title &$title) {
-		static $db;
-		if (!$db) $db =& wfGetDB( DB_SLAVE );
 		$ns = $title->getNamespace();
-		$smw_ids = $db->tableName('smw_ids');
+		$smw_ids = $this->db->tableName('smw_ids');
 		$query = "SELECT smw_id FROM $smw_ids WHERE ".
-		         "smw_title = ".$db->addQuotes($title->getDBKey()).
+		         "smw_title = ".$this->db->addQuotes($title->getDBKey()).
 		         " AND smw_namespace = ".$ns;
 
-		$res = $db->query($query);
-		$s = $db->fetchObject($res);
-		$db->freeResult($res);
+		$res = $this->db->query($query);
+		$s = $this->db->fetchObject($res);
+		$this->db->freeResult($res);
 		if (!$s)
 			return NULL;
 		return $s->smw_id;
@@ -501,31 +562,37 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			return; 
 		}
 
-		$db =& wfGetDB( DB_SLAVE );
-		$smw_inst2 = $db->tableName('smw_inst2');		
-		$smw_rels2 = $db->tableName('smw_rels2');
+		$smw_inst2 = $this->db->tableName('smw_inst2');		
+		$smw_rels2 = $this->db->tableName('smw_rels2');
 		$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
 
 		// remember all ids, that we will add now to find the node to open.		
 		$newIds = array();
 		
+		// check that we do not exceed maxDepth, this is indefinite (or 9999) if not defined
 		$maxDepth = ($this->maxDepth != null) ? $this->maxDepth : 9999;
+		// current depth is 2, that is because if dynamic expansion is used, we fetch two levels
+		// only. Otherwise, all nodes are fetched and the node to open must be in the result set
+		// already. 
 		$currentDepth = 2;
 		
 		while (!isset($this->sIds[$currentId]) && $currentDepth < $maxDepth) {
+			// look for all parents (actually look for one only) of the current node to be opened 
 			$cquery= str_replace('___CONDITION___', "AND r.s_id = ".$currentId, $query);
-			$res = $db->query($cquery);
-			if ($res && $db->affectedRows() > 0) {
-				$row = $db->fetchObject($res);
+			$res = $this->db->query($cquery);
+			if ($res && $this->db->affectedRows() > 0) {
+				$row = $this->db->fetchObject($res);
 				$this->addTupleToResult($row->s_id, $row->o_id);
 				$cParent = $row->o_id;
 				$newIds[] = $row->s_id;
 			}
 			else break;
+			// if the parent was found, look for all children of that patent i.e. all
+			// siblings of the current node to open.
 			$cquery = str_replace('___CONDITION___', "AND r.o_id = ".$cParent, $query);
-			$res = $db->query($cquery);
-			if ($res && $db->affectedRows() > 0) {
-				while ($row = $db->fetchObject($res)) {
+			$res = $this->db->query($cquery);
+			if ($res && $this->db->affectedRows() > 0) {
+				while ($row = $this->db->fetchObject($res)) {
 					// this is the relation how we found the parent, so skip it.
 					if ($row->s_id == $currentId) continue;
 					$this->addTupleToResult($row->s_id, $row->o_id);
@@ -534,6 +601,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				}
 			}
 			else break;
+			// we now have the node to open, it's siblings and the parent. Step upwards,
+			// make the parent to the new node to open and repeat the process. 
 			$currentId = $cParent;
 			$currentDepth++;
 		}
@@ -549,7 +618,20 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		} 
 	}
 
-	private function getQuery4Relation($smw_inst2, $smw_rels2) {
+	/**
+	 * returns the query string that is needed to fetch triples based on a relation
+	 * for creating a tree.
+	 * If $addAjaxLimit is set, only two levels of the tree are fetched. Otherwise
+	 * all triples are fetched and hierarchy is created later in
+	 * generateTreeDeepFirstSearch().
+	 * 
+	 * @access private
+	 * @param  string $smw_inst2 name for table smw_inst2
+	 * @param  string $smw_rels2 name for table smw_rels2
+	 * @param  boolean $addAjaxLimit otional default false
+	 * @return string $query 
+	 */
+	private function getQuery4Relation($smw_inst2, $smw_rels2, $addAjaxLimit = false) {
 		$categoryConstraintTable = '';
 		$categoryConstraintWhere = '';
 		$categoryConstraintGroupBy = '';
@@ -561,11 +643,30 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$categoryConstraintGroupBy = " GROUP BY s_id, o_id";
 		}
 		// match triples that are of the requested relation with the current id as the object
-		return "SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
-		       ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.
-			   " ___CONDITION___".$categoryConstraintGroupBy;
+		$query="SELECT r.s_id as s_id, r.o_id as o_id FROM $smw_rels2 r $categoryConstraintTable"
+		       ."WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere." ___CONDITION___";
+		if ($addAjaxLimit)
+		   	$query.= " AND r.o_id NOT in (SELECT r.s_id FROM $smw_rels2 r $categoryConstraintTable ".
+		   			 " WHERE r.p_id = ".$this->smw_relation_id.$categoryConstraintWhere.")";
+		$query .= $categoryConstraintGroupBy;
+		return $query;	   
 	}
 
+	/**
+	 * takes a triple (subject and object) and adds it to the list of results. This list
+	 * is created in the array $sIds. Key is the current node (subject), values is an array
+	 * of nodes that are parent (object) of the current node.
+	 * If the subject is not in the list of condition nodes (if used) then it's skiped.
+	 * Also here the rootNodes are defined. This can be done if we use start (then the children
+	 * of start are root nodes).
+	 * Here the list of elementProperties is created as well (list of array with key) is done.
+	 * Later this array will contain the node name and namespace. This is done in
+	 * getElementProperties().
+	 * 
+	 * @access private
+	 * @param  int $s_id smw_id of the subject
+	 * @param  int $o_id smw_id of the object
+	 */
 	private function addTupleToResult($s_id, $o_id) {
 		// parameter condition was set, check if current subject
 		// (s_id) of the triple is in the allowed page list
@@ -710,8 +811,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
        		    	    if ($this->sIds[$s_id][$item] == $currParent) {
 
        		    	        // stop descending any further in this subtree IF:
-	                        // - maxDepth is set and already reached 
-             		    	if ($this->maxDepth && $this->maxDepth == $depth)
+	                        // - maxDepth is set and already reached
+	                        // - ajax is used and depth = 2 is reached 
+             		    	if ($this->maxDepth && $this->maxDepth == $depth ||
+             		    		$this->ajaxExpansion && $depth == 2)
              		    	    continue 2;
              		    	
              		    	// increase depth by one and add element to tree

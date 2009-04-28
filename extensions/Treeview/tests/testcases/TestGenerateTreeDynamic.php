@@ -41,7 +41,7 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 		$start = utf8_encode('start=Märchen');
   		$res = $tg->generateTree($wgParser, $property, $start, 'dynamic=1');
   		$res = utf8_decode($res);
-		$expected = $this->retStart.$property.$this->retEnd.'*[[Grimm]]
+		$expected = $this->retStart.$property.'&'.utf8_decode($start).$this->retEnd.'*[[Grimm]]
 **[[Jacob Grimm]]
 **[[Wilhelm Grimm]]
 *[[Grimms Märchen]]
@@ -178,6 +178,25 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 *[[Rapunzel]]
 *[[Schneewittchen]]
 *[[Waldhaus]]
+';
+		$this->assertEquals($expected, $res);
+	}
+	
+	function testTreeConditionSeveralLevels() {
+		global $wgParser;
+
+		$property = 'property=Subsection of';
+		$condition = 'condition=[[hasTitle::+]]';
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, $condition, 'dynamic=1');
+  		$res = utf8_decode($res);
+  		$expected = $this->retStart.$property.'&'.$condition.$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Märchen]]
+**[[Grimm]]
+**[[Grimms Märchen]]
+**[[Wilhelm Hauff]]
 ';
 		$this->assertEquals($expected, $res);
 	}
