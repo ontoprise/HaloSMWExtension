@@ -12,7 +12,7 @@ class HaloTests
 {
 	public static function suite()
 	{
-		$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
+		$suite = new PHPUnit_Framework_TestSuite('SMWHalo');
 
 		$suite->addTestSuite("TestSemanticStore");
 		$suite->addTestSuite("TestAutocompletionStore");

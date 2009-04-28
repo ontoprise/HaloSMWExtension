@@ -10,7 +10,7 @@ class GardeningTests
 {
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
+        $suite = new PHPUnit_Framework_TestSuite('SemanticGardening');
  
         $suite->addTestSuite("TestConsistencyBot");
         $suite->addTestSuite("TestAnomaliesBot");
