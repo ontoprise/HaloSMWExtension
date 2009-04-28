@@ -28,6 +28,13 @@ global $wgExtensionFunctions, $wgHooks;
 $wgExtensionFunctions[] = 'materializePF_Setup';
 $wgHooks['LanguageGetMagic'][] = 'materializePF_Magic';
 
+$wgHooks['ArticleSaveComplete'][] = 'materializePF_saveHook';
+$wgHooks['ArticleDelete'][] = 'materializePF_deleteHook';
+
+global $smwgDIIP;
+require_once("$smwgDIIP/specials/Materialization/SMW_HashProcessor.php");
+require_once("$smwgDIIP/specials/Materialization/SMW_MaterializationStorageAccess.php");
+
 function materializePF_Setup() {
 	global $wgParser;
 	$wgParser->setFunctionHook( 'materializePF', 'materializePF_render' );
@@ -50,6 +57,8 @@ function materializePF_render(&$parser) {
 		}
 		
 		if($parameters["update"] != "final"){
+			$parameters["call"] = str_replace("{","##mcoll##", $parameters["call"]);
+			$parameters["call"] = str_replace("}","##mcolr##", $parameters["call"]);
 			$output = "{{#materialize:".$parameters["call"]."\n";
 			$output .= "| update = ".$parameters["update"]."\n";
 			$output .= "| materialized = \n".$parameters["materialized"]; 
@@ -58,23 +67,84 @@ function materializePF_render(&$parser) {
 			$output = $parameters["materialized"];
 		}
 	} else {
+		global $wgsmwRememberedMaterializations;	
+		
+		$dbAccess = SMWMaterializationStorageAccess::getInstance();
+		$db = $dbAccess->getDatabase();
+		$pageId = $parser->getTitle()->getArticleID();
+		$callHash = SMWHashProcessor::generateHashValue($parameters["call"]);
+		$materialized = null;
+		$sourceHash = $db->getMaterializationHash($pageId, $callHash); 
+		if(!$sourceHash){
+			$materialized = trim($parser->replaceVariables($parameters["call"])); 
+			$materializationHash = SMWHashProcessor::generateHashValue(
+				$materialized);
+			$db->addMaterializationHash($pageId, $callHash, $materializationHash);	
+		} 
+		
+		$wgsmwRememberedMaterializations[$callHash] = null;
+		
+		$output = $parameters["materialized"];
 		if($parameters["update"] == "both"){
-			$output = $parameters["materialized"];
-			$materialized = $parser->replaceVariables($parameters["call"]);
-			if($output != trim($materialized)){
-				$output .= "<br/>".$materialized;
+			if($sourceHash){
+				$materialized = trim($parser->replaceVariables($parameters["call"]));
+				if(!SMWHashProcessor::isHashValueEqual(
+						SMWHashProcessor::generateHashValue($materialized), 
+						$sourceHash)){
+					$output .= "<br/>".$materialized;
+				}
 			}
 		} else if($parameters["update"] == "false"){
 			$output = $parameters["materialized"];
-			$materialized = $parser->replaceVariables($parameters["call"]);
-			if($output != trim($materialized)){
-				$output .= smwfEncodeMessages(array(wfMsg('smw_wwsm_update_msg')));
+			if($sourceHash){
+				$materialized = trim($parser->replaceVariables($parameters["call"]));
+				if(!SMWHashProcessor::isHashValueEqual(
+						SMWHashProcessor::generateHashValue($materialized), 
+						$sourceHash)){
+					$output .= smwfEncodeMessages(array(wfMsg('smw_wwsm_update_msg')));
+				}
 			}	
-		} else {
-			$output = $parameters["materialized"];
 		}
 	}
 	return $output;
+}
+
+function materializePF_saveHook(&$article, &$user, &$text){
+	$articleId  = $article->getID();
+	if($articleId != null){
+		materializePF_updateDB($articleId);
+	}
+	return true;
+}
+
+function materializePF_deleteHook(&$article, &$user, $reason){
+	$articleId  = $article->getID();
+	materializePF_updateDB($articleId);
+	return true;	
+}
+
+/**
+ * method is called in the article save complete and
+ * the delete hook. it checks for saved materializations
+ * which can be removed from the database
+ * 
+ * @param $articleId
+ */
+function materializePF_updateDB($articleId){
+	global $wgsmwRememberedMaterializations;
+	
+	$dbAccess = SMWMaterializationStorageAccess::getInstance();
+	$db = $dbAccess->getDatabase();
+	
+	$savedMaterializations = $db->getCallHashes($articleId);
+	
+	foreach($savedMaterializations as $sourceHash => $dontCare){
+		if(!array_key_exists($sourceHash, $wgsmwRememberedMaterializations)){
+			$db->deleteMaterializationHash($articleId, $sourceHash);
+		}
+	}
+	
+	
 }
 
 /**
@@ -95,6 +165,9 @@ function materializePF_getParameters($parameters){
 	}
 	$response = array();
 	$response["call"] = $parameters[1];
+	$response["call"] = str_replace("##mcoll##", "{", $response["call"]);
+	$response["call"] = str_replace("##mcolr##","}", $response["call"]);
+			
 	if($update == null){
 		$response["update"] = "false";
 	} else if(!($update === "false" || $update === "true" || 

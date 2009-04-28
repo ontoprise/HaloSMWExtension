@@ -29,7 +29,7 @@ function enableDataImportExtension() {
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
 	
 	//require the materialize parser function
-	require_once("$smwgDIIP/specials/WebServices/SMW_MaterializeParserFunction.php");
+	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
 			
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 }
@@ -119,7 +119,13 @@ function smwfDIInitializeTables() {
 	global $smwgDIIP;
 	require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceManager.php');
 	WebServiceManager::initDatabaseTables();
-
+	
+	require_once($smwgDIIP . '/specials/Materialization/SMW_MaterializationStorageAccess.php');
+	$dbAccess = SMWMaterializationStorageAccess::getInstance();
+	$db = $dbAccess->getDatabase();
+	$db->setup(true);
+	
+	
 	return true;
 }
 
@@ -291,7 +297,7 @@ function smwDIMAAddHTMLHeader(&$out){
 	
 	$action = $wgRequest->getVal('action');
 	if ($action == 'edit') {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/materialize.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/Materialization/materialize.js\"></script>");
 	}
 	
 	return true;
