@@ -49,6 +49,8 @@ interface IMaterializationStorage{
 	 *
 	 * @param string $pageId : id of the page where the materialization takes place
 	 * @param string $callHash : hash value of the call which gets materialized
+	 * 
+	 * @return string : hash value of the materialized call result or null
 	 */
 	public function getMaterializationHash($pageId, $callHash);
 	

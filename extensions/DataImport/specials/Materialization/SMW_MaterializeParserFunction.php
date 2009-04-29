@@ -67,7 +67,7 @@ function materializePF_render(&$parser) {
 			$output = $parameters["materialized"];
 		}
 	} else {
-		global $wgsmwRememberedMaterializations;	
+		global $wgsmwRememberedMaterializations;
 		
 		$dbAccess = SMWMaterializationStorageAccess::getInstance();
 		$db = $dbAccess->getDatabase();
@@ -75,12 +75,19 @@ function materializePF_render(&$parser) {
 		$callHash = SMWHashProcessor::generateHashValue($parameters["call"]);
 		$materialized = null;
 		$sourceHash = $db->getMaterializationHash($pageId, $callHash); 
-		if(!$sourceHash){
+		//todo: richtig???
+		if($sourceHash == null){
 			$materialized = trim($parser->replaceVariables($parameters["call"])); 
 			$materializationHash = SMWHashProcessor::generateHashValue(
 				$materialized);
 			$db->addMaterializationHash($pageId, $callHash, $materializationHash);	
-		} 
+		} else if ($parameters["update"] == "true"){
+			$materialized = trim($parser->replaceVariables($parameters["call"]));
+			$materializationHash = SMWHashProcessor::generateHashValue(
+				$materialized);
+			$db->deleteMaterializationHash($pageId, $callHash);	
+			$db->addMaterializationHash($pageId, $callHash, $materializationHash);
+		}
 		
 		$wgsmwRememberedMaterializations[$callHash] = null;
 		
@@ -143,7 +150,7 @@ function materializePF_updateDB($articleId){
 			$db->deleteMaterializationHash($articleId, $sourceHash);
 		}
 	}
-	
+	$wgsmwRememberedMaterializations =array();
 	
 }
 

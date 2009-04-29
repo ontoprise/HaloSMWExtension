@@ -28,6 +28,7 @@ Materialize.prototype = {
 	
 	/*
 	 * replaces "#materialize" by "subst#materialize" in the editor
+	 * also renders ##mcoll## and ##mcolr## as { respectively }
 	 */
 	callme: function() {
 		var text = $("wpTextbox1").value;

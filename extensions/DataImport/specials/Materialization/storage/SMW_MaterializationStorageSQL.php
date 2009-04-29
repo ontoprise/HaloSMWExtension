@@ -88,11 +88,12 @@ class SMWMaterializationStorageSQL implements IMaterializationStorage{
 			." AND call_hash=".$this->db->addQuotes($callHash);
 		$res = $this->db->query($query );
 		
+		
 		$row = $this->db->fetchObject($res);
-		if($row) {
+		if($row){
 			return $row->materialization_hash;
 		}
-		return false;
+		return null;
 	}
 	
 	/**
