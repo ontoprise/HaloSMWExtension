@@ -33,11 +33,13 @@ function smw_treeview_getTree($input) {
   $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.$req['r'] : NULL;
   $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
   $opento = ($initOnload && isset($req['o'])) ? 'opento='.$req['o'] : NULL;
+  $iolStatic = ($initOnload && isset($req['z'])) ? 'iolStatic=1' : NULL;
   
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
-                                     $start, $display, $maxDepth, $redirectPage, $level, $condition, $urlparams, $opento);
+                                     $start, $display, $maxDepth, $redirectPage,
+                                     $level, $condition, $urlparams, $opento, $iolStatic);
   
   $return['treelist'] = $res;
   $return['result'] = 'success';

@@ -644,6 +644,7 @@ dTree.prototype.initOnload = function(id, arg) {
 	this.callInitOnload = true;
 	var params = '';
 	var args = arg.split('&amp;');
+	var dynamic;
 	for (var i = 0; i < args.length; i++) {
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
@@ -651,10 +652,15 @@ dTree.prototype.initOnload = function(id, arg) {
 			params += 'q';
 		else if (key == 'refresh')
 			params += 'f';
+		else if (key == 'dynamic') {
+			dynamic = 1;
+			continue;
+		}
 		else
 			params += key.substring(0, 1);
 		params += '%3D' + value + '%26';
 	}
+	if (! dynamic) params += '%26z%3D1';
 	var token = this.getTokenAndWriteCache(id);
 	params += '%26t%3D' + token;
 	this.getHttpRequest(params, 'r');

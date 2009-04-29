@@ -76,7 +76,8 @@ class TreeGenerator {
 		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
-		$ajaxExpansion = (array_key_exists('dynamic', $genTreeParameters) || $this->json) ? 1 : 0;
+		$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) &&
+						 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
 
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
