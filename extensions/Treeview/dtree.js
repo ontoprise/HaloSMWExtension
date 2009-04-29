@@ -906,7 +906,7 @@ dTree.prototype.getHtml4Node = function(cn, url, params) {
     if (cn.link == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else
-		str = '<a href=\"' + url + cn.link + params +'\" title=\"'
+		str = '<a href=\"' + url + cn.link + URLDecode(params) +'\" title=\"'
     		+ cn.name + '\">' + cn.name + '</a>';
 	return str;
 }
