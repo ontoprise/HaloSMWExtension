@@ -347,6 +347,98 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeUrlparamsWithAmpersand() {
+		global $wgParser;
+		
+		$tg = new TreeGenerator;
+		$params = 'param1%3Dc%2526m%26param2%3Dcka';
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', 'start=Help:Contents', 'urlparams='.$params);
+  		$res = utf8_decode($res);
+		$expected = "\x7f".'urlparams='.urlencode($params).'&'."\x7f".'*[[Help:Glossary|Glossary]]
+*[[Help:How_to_configure_the_tree|How to configure the tree]]
+*[[Help:Wikimaster|Wikimaster]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+	function testTreeInvalidStart() {
+		global $wgParser;
+		
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', 'start=Contents');
+  		$res = utf8_decode($res);
+		$expected = '*[[Contents]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+	function testTreeOpento() {
+		global $wgParser;
+		
+		$opento = utf8_encode('opento=Grimms Märchen');
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', $opento);
+  		$res = utf8_decode($res);
+		$expected = "\x7f".str_replace(' ', '_', utf8_decode($opento)).'&'."\x7f".'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+****[[Jacob Grimm]]
+****[[Wilhelm Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Die 3 Schlangenblätter]]
+****[[Frau Holle]]
+*****[[Goldmarie]]
+*****[[Pechmarie]]
+****[[Hänsel und Gretel]]
+****[[Rapunzel]]
+****[[Schneewittchen]]
+****[[Waldhaus]]
+***[[Wilhelm Hauff]]
+****[[Kleiner Muck]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+	function testTreeOpentoPageWithNsPrefix() {
+		global $wgParser;
+		
+		$opento = utf8_encode('opento=Help:How to configure the tree');
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', $opento);
+  		$res = utf8_decode($res);
+		$expected = "\x7f".str_replace(' ', '_', utf8_decode($opento)).'&'."\x7f".'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+****[[Jacob Grimm]]
+****[[Wilhelm Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Die 3 Schlangenblätter]]
+****[[Frau Holle]]
+*****[[Goldmarie]]
+*****[[Pechmarie]]
+****[[Hänsel und Gretel]]
+****[[Rapunzel]]
+****[[Schneewittchen]]
+****[[Waldhaus]]
+***[[Wilhelm Hauff]]
+****[[Kleiner Muck]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+
 }
 
 ?>

@@ -219,6 +219,57 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeOpenTo() {
+		global $wgParser;
+		
+		$property = 'property=Subsection of';
+		$opento = utf8_encode('opento=Grimms Märchen');
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, $opento, 'dynamic=1');
+  		$res = utf8_decode($res);
+		$expected = $this->retStart.$property.'&'.str_replace(' ', '_', utf8_decode($opento)).$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+***[[Grimms Märchen]]
+***[[Wilhelm Hauff]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+	function testTreeOpenToDeeper() {
+		global $wgParser;
+		
+		$property = 'property=Subsection of';
+		$opento = 'opento=Frau Holle';
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, $opento, 'dynamic=1');
+  		$res = utf8_decode($res);
+		$expected = $this->retStart.$property.'&'.str_replace(' ', '_', $opento).$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Die 3 Schlangenblätter]]
+****[[Frau Holle]]
+****[[Hänsel und Gretel]]
+****[[Rapunzel]]
+****[[Schneewittchen]]
+****[[Waldhaus]]
+***[[Wilhelm Hauff]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
+
 
 
 }
