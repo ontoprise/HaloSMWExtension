@@ -482,20 +482,20 @@ newPropertyDialogue:function(reset){
 	constraintstring = "";
 	// fetch category constraints:
 	var cats = this.activeQuery.categories; //get the category group
+
 	if (cats != null) {
 		for(var i=0, n = cats.length; i<n; i++) {
 			catconstraint = cats[i];
-			if (i>0) {
-				constraintstring += ",";
-			}			
+			constraintstring += "[["			
 			for (var j=0, m = catconstraint.length; j<m; j++) {
-				orconstraint = catconstraint[j];
+				orconstraint = catconstraint[j];				
 				if (j>0) {
-					constraintstring += "|";
+					constraintstring += "||" + orconstraint;
+				} else {
+					constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont') + orconstraint;
 				}
-				constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont')+orconstraint;
 			}
-		
+			constraintstring += "]]";			
 		}
 	}
 	
