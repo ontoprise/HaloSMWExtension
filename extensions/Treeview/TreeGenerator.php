@@ -620,6 +620,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$currentDepth++;
 			$this->openToPath[] = $currentId;
 		}
+		
+		// add parent of last currentId to openToPath
+		foreach ($this->sIds[$currentId] as $p)
+			$this->openToPath[] = $p;
+
 		// current parent after some iterations of the node to open is still not
 		// in the result  found, then remove all added
 		if (!isset($this->sIds[$currentId]) && !isset($this->sIds[$cParent])) {
