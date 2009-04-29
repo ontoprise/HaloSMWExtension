@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<project name="testHalo" default="testAll">
+	<target name="testAll" description="runs all the tests">
+		<ant antfile="basictests.xml"/>
+	
+	</target>
+</project>

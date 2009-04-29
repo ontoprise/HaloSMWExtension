@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testBasic">
+
+	<target name="testBasic">
+
+		<webtest name="LoadMainPage">
+			<invoke url="http://localhost/mediawiki/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page"/>
+			<verifyTitle text="Main Page - Halo3wiki" />
+		  <!--<setInputField name="search" value="WebTest" />
+			<clickButton label="Search" />
+			<verifyTitle text="Search results - Halo3wiki" />-->
+		</webtest>
+
+	</target>
+</project>
