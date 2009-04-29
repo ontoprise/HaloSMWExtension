@@ -554,16 +554,19 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		// add the current node to the path for opento, this is important to break
 		// the maximum depth if the ajax expansion is used.
-		// also add the parent of this node to the path, to get the children of this
-		// node as well
 		$this->openToPath[]= $currentId;
-		foreach ($this->sIds[$currentId] as $p)
-			$this->openToPath[] = $p;
+
+		// Also add the parent of this node to the path, to get the siblings of this
+		// node as well, this is important if the node has 
+		if (isset($this->sIds[$currentId])) {
+			foreach ($this->sIds[$currentId] as $p)
+				$this->openToPath[] = $p;
+		}
 
 		// if the id is already in the node set we are done
 		if (isset($this->elementProperties[$currentId]))
 			return;
-			
+
 		// if a current depth is set and no ajax expansion is used, then we are done as
 		// well because if the node is not yet in the results, any further lookup will
 		// exceed the desired maxDepth
@@ -590,7 +593,6 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// look for all parents (actually look for one only) of the current node to be opened 
 			$cquery= str_replace('___CONDITION___', "AND r.s_id = ".$currentId, $query);
 			$res = $this->db->query($cquery);
-			var_dump($cquery, $this->db->affectedRows());
 			if ($res && $this->db->affectedRows() > 0) {
 				$row = $this->db->fetchObject($res);
 				$this->addTupleToResult($row->s_id, $row->o_id);
@@ -616,7 +618,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// make the parent to the new node to open and repeat the process. 
 			$currentId = $cParent;
 			$currentDepth++;
-			$this->opentToPath[] = $currentId;
+			$this->openToPath[] = $currentId;
 		}
 		// current parent after some iterations of the node to open is still not
 		// in the result  found, then remove all added
