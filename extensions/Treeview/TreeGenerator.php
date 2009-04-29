@@ -247,7 +247,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// if start is set, fetch smw_id for start element		
 		if ($start && (! ($this->smw_start_id = $this->getSmwIdByTitle($start))))
 			return ($this->json)
-		            ? array ("name" => $start->getDBKey(), "link" => $start->getDBKey())
+		            ? array(array ("name" => $start->getPrefixedText(), "link" => $start->getDBKey(), "depth" => 1))
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 
 		if ($this->ajaxExpansion && !$this->condition) {
