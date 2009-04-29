@@ -20,7 +20,6 @@ function smw_treeview_getTree($input) {
   $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
-  $urlparams = (isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
   
   // the following parameter depend on initOnload,
   // if this is not set, these are not needed because an dynamic expansion will fetch
@@ -30,6 +29,7 @@ function smw_treeview_getTree($input) {
   // fetch one depth only if ajax expansion
   $maxDepth = ($initOnload) ? (isset($req['m']) ? 'maxDepth='.$req['m'] : NULL ) : 'maxDepth=1';
   // these are not needed for the next level on dynamic expansion
+  $urlparams = ($initOnload && isset($req['u'])) ? 'urlparams='.$req['u'] : NULL;
   $redirectPage = ($initOnload && isset($req['r'])) ? 'redirectPage='.$req['r'] : NULL;
   $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
   $opento = ($initOnload && isset($req['o'])) ? 'opento='.$req['o'] : NULL;
