@@ -124,7 +124,12 @@ class SemanticTreeview {
 	            	$matches[1] = substr($matches[1], 0, -2); // and ')'	
 	            }
 	           	parse_str($matches[1], $params);
-	    	    if (isset($params['opento'])) $this->args[$this->id."opento"] = urlencode($params['opento']);
+	    	    if (isset($params['opento'])) {
+	    	    	$ns = substr($params['opento'], 0, strpos($params['opento'] , ':'));
+	    	    	$this->args[$this->id."opento"] = (strlen($ns) > 0)
+	    	    									? urlencode($ns).":".urlencode(substr($params['opento'], strlen($ns) + 1))
+	    	    									: urlencode($params['opento']);
+	    	    }
 	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
@@ -255,7 +260,7 @@ class SemanticTreeview {
                     if (isset($this->args[$id."opento"]) &&
                    		(preg_match('@href=\\\"([^/]*/)+([^\\\]*)\\\"@', $item, $paths) ||
                    		 preg_match('@(<[^>]*>)([^<]*)<@', $item, $paths)) &&
-                   		(str_replace(' ', '_', $paths[2]) == $this->args[$id."opento"]))
+                   		 $paths[2] == $this->args[$id."opento"])
                    		$openTo .= "{$this->uniqname}$id.openTo($parent, false);\n";
                     if (isset($this->args[$id."urlparams"]) &&
                     	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths))

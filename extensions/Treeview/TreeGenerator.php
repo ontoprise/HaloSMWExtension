@@ -101,7 +101,7 @@ class TreeGenerator {
 		    	if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
 			}
 			if ($tv_store->openToFound() != null)
-				$returnPrefix .= "opento=".$openTo->getDbKey()."&";
+				$returnPrefix .= "opento=".$openTo->getPrefixedDBkey()."&";
 			if ($urlparams)
 				$returnPrefix .= "urlparams=".urlencode($urlparams)."&";
 		    return $returnPrefix."\x7f".$tree;
@@ -160,12 +160,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     private $condition;
     private $openTo;
 
-    // for the conditions, that can be used for generating the
-    // tree, the smw_id will be fetched and stored here
+    // for the conditions and limitations that can be used for generating the
+    // tree, the smw_ids will be fetched and stored here
     private $smw_relation_id;
     private $smw_category_ids;
     private $smw_start_id;
     private $smw_condition_ids;
+    private $openToPath;
     
     // information about the tree is stored here
    	private $elementProperties;
@@ -186,11 +187,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         $this->json = $jsonOutput;
         $this->condition = $condition;
         $this->openTo = $openTo;
+        
         // for some of the options, the smw_ids of the elements will be stored here to use them in db queries
         $this->smw_relation_id = NULL;
      	$this->smw_category_ids = NULL;
 		$this->smw_start_id = NULL;
 		$this->smw_condition_ids = NULL;
+		$this->openToPath = array();
 		
 		// empty class variables, that will store information about this generated tree and also general information
 		$this->elementProperties= array();
@@ -549,8 +552,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$this->openTo = null;
 			return;
 		}
+		// add the current node to the path for opento, this is important to break
+		// the maximum depth if the ajax expansion is used.
+		// also add the parent of this node to the path, to get the children of this
+		// node as well
+		$this->openToPath[]= $currentId;
+		foreach ($this->sIds[$currentId] as $p)
+			$this->openToPath[] = $p;
 
-		// if the id is already in the node set, we are done
+		// if the id is already in the node set we are done
 		if (isset($this->elementProperties[$currentId]))
 			return;
 			
@@ -580,6 +590,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// look for all parents (actually look for one only) of the current node to be opened 
 			$cquery= str_replace('___CONDITION___', "AND r.s_id = ".$currentId, $query);
 			$res = $this->db->query($cquery);
+			var_dump($cquery, $this->db->affectedRows());
 			if ($res && $this->db->affectedRows() > 0) {
 				$row = $this->db->fetchObject($res);
 				$this->addTupleToResult($row->s_id, $row->o_id);
@@ -605,6 +616,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// make the parent to the new node to open and repeat the process. 
 			$currentId = $cParent;
 			$currentDepth++;
+			$this->opentToPath[] = $currentId;
 		}
 		// current parent after some iterations of the node to open is still not
 		// in the result  found, then remove all added
@@ -615,6 +627,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				unset($this->elementProperties[$id]);
 			}
 			$this->openTo = null;
+			$this->openToPath = array();
 		} 
 	}
 
@@ -812,10 +825,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
        		    	        // stop descending any further in this subtree IF:
 	                        // - maxDepth is set and already reached
-	                        // - ajax is used and depth = 2 is reached 
-             		    	if ($this->maxDepth && $this->maxDepth == $depth ||
-             		    		$this->ajaxExpansion && $depth == 2)
+	                        // - ajax is used and depth = 2 is reached
+	                        // - current node or parent are not in the opento path
+	                        //   (while using ajax expansion, and exceding depth beyond 2)
+             		    	if ($this->maxDepth && $this->maxDepth == $depth)
+             		    		continue 2;
+             		    	if ($this->ajaxExpansion && $depth == 2 && $this->openTo == null)
              		    	    continue 2;
+             		    	if ($this->ajaxExpansion && $depth > 1 && !in_array($s_id, $this->openToPath) && !in_array($currParent, $this->openToPath))
+             		    		continue 2;  
              		    	
              		    	// increase depth by one and add element to tree
            				    $depth++;
