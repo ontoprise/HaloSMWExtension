@@ -35,7 +35,7 @@ if ( $wgCommandLineMode ) {
 
 $wgSitename         = "Halo3wiki";
 
-$wgScriptPath       = "/develwiki";
+$wgScriptPath       = "/mediawiki";
 $wgScript           = "$wgScriptPath/index.php";
 $wgRedirectScript   = "$wgScriptPath/redirect.php";
 
@@ -140,6 +140,8 @@ array_push($wgFileExtensions, "svg");
 $wgShowExceptionDetails = true;
 
 $wgJobRunRate = 0;
+
+$smwghHaloTests=true;
 
 /*USERDEFINED*/
 

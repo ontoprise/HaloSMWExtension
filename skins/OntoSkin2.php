@@ -316,9 +316,11 @@
 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
 
 <!-- slider script for resizing page and menu -->
-
-	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/sliderskin.js"></script>
-
+<?php global $smwghHaloTests; 
+    if (!isset($smwghHaloTests)) {
+	   echo '<script type="text/javascript" src="'.htmlspecialchars( $this->data['stylepath'] ).'/'.htmlspecialchars( $this->data['stylename'] ).'/sliderskin.js"></script>';
+    }
+?>
 <!-- Nifty cube for round corners -->
 
 	<script type="text/javascript" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftycube.js"></script>
