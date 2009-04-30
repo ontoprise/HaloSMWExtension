@@ -282,10 +282,12 @@
 #smwf_browserview .Treeview{
 	margin-left: 5px;
 	margin-right: 5px;
+	border: 1px solid #0091A6;
 }
 
 #smwf_browserview .dtree{
 	overflow-x: auto;
+	height: 700px;
 }
 
 #maintree .dtree{
@@ -331,13 +333,15 @@
 	background: none;
 	font-weight: bold;
 	font-size: normal;
-	display: inline-block;
-	width: 100%;
 }
 
 #smwf_pageblock h1{
 	font-size: x-large;
 	border-bottom: 1px solid #4B595C;
+}
+
+#smwf_pageblock .firstHeading{
+	margin-top: 0px;
 }
 
 #smwf_pageblock h2{
