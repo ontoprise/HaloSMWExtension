@@ -227,14 +227,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		if($propertyName != null){
 			$wsFormat = "list";
 		}
-
-		$errorMessages = $ws->getErrorMessages();
-		if(count($errorMessages) > 0){
-			if(!sizeof($propertyName)){
-				$wsFormattedResult = smwfEncodeMessages($errorMessages);
-			}
-			return $wsFormattedResult;
-		}
 		
 		//add subst to templates if the parser is in the appropriate state
 		if($parser->OutputType() == 2){
@@ -242,9 +234,25 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		} else {
 			$subst = false;
 		}
-		
-		$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
 
+		$errorMessages = $ws->getErrorMessages();
+		if(count($errorMessages) > 0){
+			//todo:provide a better implementation
+			if(strpos($errorMessages[0], 
+					substr(wfMsg('smw_wws_client_connect_failure'),0,10)) === 0){
+				if(!is_array($wsResults)){
+					$wsFormattedResult = $wsResults." ".smwfEncodeMessages($errorMessages);
+				} else {
+					$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
+					$wsFormattedResult .= " ".smwfEncodeMessages($errorMessages);
+				}		
+			} else {
+				$wsFormattedResult = smwfEncodeMessages($errorMessages);
+			}
+		} else {
+			$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
+		}
+		
 		if(!$preview){
 			$articleId = $parser->getTitle()->getArticleID();
 		} else {
@@ -266,7 +274,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 		}
 
-
 		if($preview){
 			global $wgParser;
 			$t = Title::makeTitleSafe(0, $parser);
@@ -281,8 +288,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		return $wsFormattedResult;
-
-
 	} else {
 		return smwfEncodeMessages($messages);
 	}
@@ -535,13 +540,7 @@ function detectRemovedWebServiceUsages($articleId){
  * @return array
  */
 function getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId){
-	$returnValues = array();
-
-	foreach($wsReturnValues as $key => $value){
-		$returnValues[] = $key;
-	}
-
-	$result = $ws->call($parameterSetId, $returnValues);
+	$result = $ws->call($parameterSetId, $wsReturnValues);
 
 	return $result;
 }

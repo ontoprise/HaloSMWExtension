@@ -164,6 +164,9 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'usewebservice' => 'Use Web Service',
 	
 	'smw_wws_client_connect_failure' => 'It was not possible to connect to ',
+	'smw_wws_client_connect_failure_display_cache' => 'The last cached web service result is displayed',
+	'smw_wws_client_connect_failure_display_cache' => 'The last cached web service result is displayed.',
+	'smw_wws_client_connect_failure_display_default' => 'Default values are displayed instead of a web service result.',
 	
 	'smw_wws_s2-REST-help' => '<h4>Help</h4><br/>Now you have to decide if you like to use the HTTP-<b>get</b> or the HTTP-<b>post</b> method for calling the web service. (In most cases choosing HTTP-get is appropriate.) ',
 	'smw_wws_s3-REST-help' => '<h4>Help</h4><br/>Now you can define the parameters which will be used for calling the web service. At first you have to click on the <b>Add parameters</b> button so that the table for defining parameters will be displayed. Now you have to enter the <b>path</b> of the parameter. If you do not enter a path for a parameter, then this parameter will not be included into the WWSD. After that you can enter an <b>alias</b> for the parameter which later will be used to address the parameter when calling the web service in a Wiki article. If you do not provide an explicit alias, then the parameter path will be used as alias. You also can specify if a parameter will be <b>optional</b> when users later call the web service. If a parameter is not optional, then users will receive an error message if they call the web service without passing a value for that parameter. At last you can define a <b>default value</b> for a parameter. This default value will be used if a parameter is not optional and if no value for that parameter was passed to the web service call.',

@@ -406,6 +406,13 @@ class WebService {
 	 * @return an array that contains the result
 	 */
 	public function call($parameterSetId, $resultParts) {
+		// this is necessary due to changes for default results handling
+		$defaultReturnValues = $resultParts;
+		$resultParts = array();
+		foreach($defaultReturnValues as $key => $value){
+			$resultParts[] = $key;
+		}
+
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($this->mArticleID, $parameterSetId);
 		$response = null;
 
@@ -432,7 +439,7 @@ class WebService {
 			} else {
 				$this->createWSClient();
 				$specParameters = WSStorage::getDatabase()->getParameters($parameterSetId);
-				
+
 				$this->initializeCallParameters($specParameters);
 
 				if($this->mWSClient){
@@ -443,12 +450,16 @@ class WebService {
 
 				if(is_string($response)){
 					if($cacheResult == null){
-						//$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error');
 						$this->mCallErrorMessages[] = $response;
-						return $response;
+						$defaultValues = $this->getResultDefaultValues($defaultReturnValues);
+						if(strlen($defaultValues) > 0){
+							$this->mCallErrorMessages[] = wfMsg('smw_wws_client_connect_failure_display_default');
+						}
+						return $defaultValues;
 					} else {
-						//$this->mCallErrorMessages[] = wfMSG('smw_wsuse_getresult_error').wfMSG('smw_wsuse_old_cacheentry');
 						$this->mCallErrorMessages[] = $response;
+						$this->mCallErrorMessages[] = wfMsg('smw_wws_client_connect_failure_display_cache');
+						$response = @ unserialize($cacheResult["result"]);
 					}
 				} else {
 					WSStorage::getDatabase()->storeCacheEntry(
@@ -579,12 +590,12 @@ class WebService {
 					$value = $specParameters["".$child["name"]];
 					$this->getPathSteps("".$child["path"], $value);
 				} else if(strtolower($this->mProtocol) != "rest"
-						&& "".$child["optional"] == "true"){
+				&& "".$child["optional"] != "true"){
 					$found = false;
-					
+						
 					foreach($this->mParsedParameters->children() as $pathChild){
-						if("".$pathChild["path"] == "".$child["path"] && 
-								array_key_exists("".$pathChild["name"], $specParameters)){
+						if("".$pathChild["path"] == "".$child["path"] &&
+						array_key_exists("".$pathChild["name"], $specParameters)){
 							$found = true;
 						}
 					}
@@ -613,7 +624,7 @@ class WebService {
 			}
 		}
 		$walkedParameters = $temp;
-		
+
 		$temp = &$this->mCallParameters;
 
 		for($i=1; $i < sizeof($walkedParameters)-1; $i++){
@@ -639,7 +650,7 @@ class WebService {
 		}
 
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
-		
+
 	}
 
 
@@ -1335,12 +1346,12 @@ class WebService {
 			foreach($unavailableSP as $key => $dontCare){
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName.".".$key);
 			}
-			
+				
 			$computedParameterValue = $subParameterProcessor->createParameterValue();
 			if(count($subParameterProcessor->getDefaultSubParameters()) > 0
-					|| count($subParameterProcessor->getPassedSubParameters()) > 0){
-				$response = array_merge($response, 
-					array($parameterName => $subParameterProcessor->createParameterValue()));
+			|| count($subParameterProcessor->getPassedSubParameters()) > 0){
+				$response = array_merge($response,
+				array($parameterName => $subParameterProcessor->createParameterValue()));
 			}
 		}
 
@@ -1349,6 +1360,41 @@ class WebService {
 		}
 
 		return array(null, $response);
+	}
+
+	/**
+	 * get a comma separated list of default values for results
+	 *
+	 * @param $resultParts
+	 * @return unknown_type
+	 */
+	private function getResultDefaultValues($resultParts){
+		$response = array();
+		
+		foreach ($resultParts as $rp => $defaultValue) {
+			$parts = explode(".", $rp);
+			
+			if(count($parts) > 1 && strlen($defaultValue) > 0){
+				$response[$parts[0]] = null;
+				$response[$rp] = $defaultValue;	
+			} else {
+				if(!array_key_exists($parts[0], $response)){
+					$rdef = $this->getResultDefinition($parts[0]);
+					$defaultValue = @ "".$rdef["defaultValue"];
+					if($defaultValue != null){
+						$response[$parts[0]] = $defaultValue;
+					}
+				}
+			}
+		}
+		
+		foreach($response as $key => $value){
+			if($value == null){
+				unset($response[$key]);
+			}
+		}
+		
+		return implode(", ", $response);
 	}
 
 }
