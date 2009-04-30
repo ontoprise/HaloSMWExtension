@@ -45,22 +45,16 @@ class HACLGroupException extends HACLException {
 	// 1 - name of the group
 	// 2 - name of the user
 	const USER_CANT_MODIFY_GROUP = 2;
-
-	// An unknown user is given for a group 
-	// Parameters:
-	// 1 - name of the group
-	// 2 - name of the user
-	const UNKOWN_USER = 3;
 	
 	// An unknown group is given. It has no group ID. 
 	// Parameters:
 	// 1 - name of the group
-	const UNKOWN_GROUP = 4;
+	const UNKOWN_GROUP = 3;
 
-	// There is group for the given group ID. 
+	// There is no group for the given group ID. 
 	// Parameters:
 	// 1 - ID of the group
-	const INVALID_GROUP_ID = 5;	
+	const INVALID_GROUP_ID = 4;	
 	
 	/**
 	 * Constructor of the group exception.
@@ -70,12 +64,11 @@ class HACLGroupException extends HACLException {
 	 */
     public function __construct($code = 0) {
     	$args = func_get_args();
-    	$msg = $this->createMessage($args);
     	// initialize super class
-        parent::__construct($msg, $code);
+        parent::__construct($args);
     }
     
-    private function createMessage($args) {
+    protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
     		case self::NO_GROUP_ID:
@@ -86,9 +79,6 @@ class HACLGroupException extends HACLException {
     			break;
     		case self::USER_CANT_MODIFY_GROUP:
     			$msg = "The user $args[2] is not authorized to add or change the group $args[1].";
-    			break;
-    		case self::UNKOWN_USER:
-    			$msg = "The user $args[2] is unknown. He/She can not be used in group $args[1].";
     			break;
     		case self::UNKOWN_GROUP:
     			$msg = "The group $args[1] does not exist. There is no article that defines this group.";

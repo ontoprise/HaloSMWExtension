@@ -56,15 +56,15 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_MASTER );
 
 		$verbose = true;
-		DBHelper::reportProgress("Setting up HaloACL ...\n",$verbose);
+		HACLDBHelper::reportProgress("Setting up HaloACL ...\n",$verbose);
 
 		// halo_acl_rights:
 		//		description of each inline right
 		$table = $db->tableName('halo_acl_rights');
 
 		HACLDBHelper::setupTable($table, array(
-				'right_id' 		=> 'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
-				'actions' 		=> 'BIT(7) NOT NULL',
+				'right_id' 		=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY',
+				'actions' 		=> 'INT(8) NOT NULL',
 				'groups' 		=> 'Text',
 				'users' 		=> 'Text',
 				'description' 	=> 'Text',
@@ -133,6 +133,12 @@ class HACLStorageSQL {
 
 	}
 
+	/***************************************************************************
+	 * 
+	 * Functions for groups
+	 * 
+	 **************************************************************************/
+	
 	/**
 	 * Returns the name of the group with the ID $groupID.
 	 *
@@ -164,15 +170,8 @@ class HACLStorageSQL {
 	/**
 	 * Saves the given group in the database.
 	 *
-	 * @param string $groupName
-	 * 		Name of the group. This is identical to the name of the article 
-	 * 		that defines the group without the namespace identifier ACL:. 
-	 *     
-	 * @param array(string) $mgGroups
-	 * 		The names of all groups that can change the definition of this new group 
-	 * 	 
-	 * @param array(string) $mgUsers
-	 * 		The names of all users who can change the definition of this new group 
+	 * @param HACLGroup $group
+	 * 		This object defines the group that wil be saved.
 	 * 
 	 * @throws 
 	 * 		Exception
@@ -188,7 +187,7 @@ class HACLStorageSQL {
 				  'group_name'	=>  $group->getGroupName() ,
 				  'mg_groups'   =>  $mgGroups,
 				  'mg_users'    =>  $mgUsers));
-
+		
 	}
 	
 	/**
@@ -266,10 +265,6 @@ class HACLStorageSQL {
 	 * @param int $userID
 	 * 		The ID of the user who is added to the group.
 	 *  
-	 * @throws 
-	 * 		HACLGroupException(HACLGroupException::UNKOWN_USER)
-	 * 		HACLGroupException(HACLGroupException::USER_CANT_MODIFY_GROUP) 
-	 * 
 	 */
 	public function addUserToGroup($groupID, $userID) {
 		$db =& wfGetDB( DB_MASTER );
@@ -291,10 +286,6 @@ class HACLStorageSQL {
 	 * 		The group with this ID is added as child to the group with the ID
 	 *      $parentGroup.
 	 *  
-	 * @throws 
-	 * 		HACLGroupException(HACLGroupException::UNKOWN_USER)
-	 * 		HACLGroupException(HACLGroupException::USER_CANT_MODIFY_GROUP) 
-	 * 
 	 */
 	public function addGroupToGroup($parentGroupID, $childGroupID) {
 		$db =& wfGetDB( DB_MASTER );
@@ -400,7 +391,6 @@ class HACLStorageSQL {
 	 * 		<false>, if not
 	 *
 	 */
-	
 	public function hasGroupMember($parentID, $childID, $memberType, $recursive) {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_group_members');
@@ -473,174 +463,532 @@ class HACLStorageSQL {
 		
 	}
 	
-}
-?><!-- 
 	/**
-	 * Retrieves the definition of the notification with the name <$name> and
-	 * the user with the id or name <$user> from the database.
+	 * Deletes the group with the ID $groupID from the database. All references 
+	 * to the group in the hierarchy of groups are deleted as well.
+	 * 
+	 * However, the group is not removed from any rights, security descriptors etc.
+	 * as this would mean that articles will have to be changed.
+	 * 
+	 * 
+	 * @param int $groupID
+	 * 		ID of the group that is removed from the database.
 	 *
-	 * @param string $name
-	 * 		The unique name of the notification.
-	 * @param mixed (int, string) $user
-	 * 		The user (id or name) who owns the notification.
-	 *
-	 * @return SemanticNotification
-	 * 		If the notification exists in the database, a new object is created
-	 * 		and initialized with the database values. Otherwise <null> is returned.
 	 */
-	public function getSN($name, $user) {
-		$userID = (is_int($user)) ? $user : User::idFromName($user);
-		if (!$userID) {
-			// invalid user name
-			return null;
+	public function deleteGroup($groupID) {
+		$db =& wfGetDB( DB_MASTER );
+
+		// Delete the group from the hierarchy of groups (as parent and as child)
+		$table = $db->tableName('halo_acl_group_members');
+		$db->delete($table, array('parent_group_id' => $groupID));
+		$db->delete($table, array('child_type'	=>  'group',
+				                  'child_id '   =>  $groupID));
+		
+		// Delete the group's definition
+		$table = $db->tableName('halo_acl_groups');
+		$db->delete($table, array('group_id' => $groupID));
+		
+	}
+
+	/***************************************************************************
+	 * 
+	 * Functions for security descriptors (SD)
+	 * 
+	 **************************************************************************/
+	
+	/**
+	 * Saves the given SD in the database.
+	 *
+	 * @param HACLSecurityDescriptor $sd
+	 * 		This object defines the SD that wil be saved.
+	 * 
+	 * @throws 
+	 * 		Exception
+	 * 
+	 */
+	public function saveSD(HACLSecurityDescriptor $sd) {
+		$db =& wfGetDB( DB_MASTER );
+
+		$mgGroups = implode(',', $sd->getManageGroups());		
+		$mgUsers  = implode(',', $sd->getManageUsers());
+		$db->replace($db->tableName('halo_acl_security_descriptors'), null, array(
+					  'sd_id'       =>  $sd->getSDID() ,
+					  'pe_id'	    =>  $sd->getPEID(),
+					  'type'	    =>  $sd->getPEType(),
+					  'mr_groups'   =>  $mgGroups,
+					  'mr_users'    =>  $mgUsers));
+
+	}
+
+	/**
+	 * Adds a predefined right to a security descriptor or a predefined right.
+	 * 
+	 * The table "halo_acl_rights_hierarchy" stores the hierarchy of rights. There
+	 * is a tuple for each parent-child relationship.
+	 *
+	 * @param int $parentRightID
+	 * 		ID of the parent right or security descriptor
+	 * @param int $childRightID
+	 * 		ID of the right that is added as child 
+	 * @throws 
+	 * 		Exception
+	 * 		... on database failure
+	 */
+	public function addRightToSD($parentRightID, $childRightID) {
+		$db =& wfGetDB( DB_MASTER );
+
+		$db->replace($db->tableName('halo_acl_rights_hierarchy'), null, array(
+					  'parent_right_id' => $parentRightID,
+					  'child_id'	    => $childRightID));
+	}
+
+	/**
+	 * Adds the given inline rights to the protected elements of the given 
+	 * security descriptors.
+	 * 
+	 * The table "halo_acl_pe_rights" stores for each protected element (e.g. a
+	 * page) its type of protection and the IDs of all inline rights that are 
+	 * assigned.
+	 *
+	 * @param array<int> $inlineRights
+	 * 		This is an array of IDs of inline rights. All these rights are 
+	 * 		assigned to all given protected elements.
+	 * @param array<int> $securityDescriptors
+	 * 		This is an array of IDs of security descriptors that protect elements. 
+	 * @throws 
+	 * 		Exception
+	 * 		... on database failure
+	 */
+	public function setInlineRightsForProtectedElements($inlineRights, 
+	                                                    $securityDescriptors) {
+		$db =& wfGetDB( DB_MASTER );
+
+		foreach ($securityDescriptors as $sd) {
+			// retrieve the protected element and its type
+			$obj = $db->selectRow($db->tableName('halo_acl_security_descriptors'), 
+			                      array("pe_id","type"), array("sd_id" => $sd));
+			if (!$obj) {
+				continue;
+			}
+			foreach ($inlineRights as $ir) {
+				$db->replace($db->tableName('halo_acl_pe_rights'), null, array(
+							  'pe_id'	 =>  $obj->pe_id,
+							  'type'	 =>  $obj->type,
+							  'right_id' =>  $ir));
+			}
+		}	                                                    	
+	}
+	
+	/**
+	 * Returns the IDs of all direct inline rights of all given security
+	 * descriptor IDs. 
+	 *
+	 * @param array<int> $sdIDs
+	 * 		Array of security descriptor IDs.
+	 * 
+	 * @return array<int>
+	 * 		An array of inline right IDs without duplicates.
+	 */
+	public function getInlineRightsOfSDs($sdIDs) {
+		if (empty($sdIDs)) {
+			return array();
 		}
-
 		$db =& wfGetDB( DB_SLAVE );
-		$snt = $db->tableName('smw_sem_notification');
-		$sql = "SELECT sn.* FROM $snt sn ".
-		          "WHERE user_id = $userID AND query_name = '".$name."';";
-		$sn = null;
+		$t = $db->tableName('halo_acl_rights');
+		
+		$sql = "SELECT DISTINCT right_id FROM $t WHERE ".
+		          "origin_id in (".implode(',', $sdIDs).");";
+		$res = $db->query($sql);
+		
+		$irs = array();
+		while ($row = $db->fetchObject($res)) {
+			$irs[] = (int) $row->right_id;
+		}
+		$db->freeResult($res);
+		return $irs;
+	}
 
+	/**
+	 * Returns the IDs of all predefined rights of the given security
+	 * descriptor ID. 
+	 *
+	 * @param int $sdID
+	 * 		ID of the security descriptor.
+	 * @param bool $recursively
+	 * 		<true>: The whole hierarchy of rights is returned.
+	 * 		<false>: Only the direct rights of this SD are returned.
+	 *  
+	 * @return array<int>
+	 * 		An array of predefined right IDs without duplicates.
+	 */
+	public function getPredefinedRightsOfSD($sdID, $recursively) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_rights_hierarchy');
+		
+		$parentIDs = array($sdID);
+		$childIDs = array();
+		$exclude = array();
+		while (true) {
+			$sql = "SELECT DISTINCT child_id FROM $t WHERE ".
+			          "parent_right_id in (".implode(',', $parentIDs).");";
+			$res = $db->query($sql);
+			
+			$exclude = array_merge($exclude, $parentIDs);
+			$parentIDs = array();
+
+			while ($row = $db->fetchObject($res)) {
+				$cid = (int) $row->child_id;
+				if (!in_array($cid, $childIDs)) {
+					$childIDs[] = $cid;
+				}
+				if (!in_array($cid, $exclude)) {
+					// Add a new parent for the next level in the hierarchy
+					$parentIDs[] = $cid; 
+				}
+			}
+			$db->freeResult($res);
+			if ($db->numRows($res) == 0 || !$recursively) {
+				// No further children found
+				break;
+			}
+		}
+		return $childIDs;
+	}
+	
+	/**
+	 * Finds all (real) security descriptors that are related to the given 
+	 * predefined right. The IDs of all SDs that include this right (via the 
+	 * hierarchy of rights) are returned.
+	 * 
+	 * @param int $prID
+	 * 		IDs of the protected right
+	 *
+	 * @return array<int>
+	 * 		An array of IDs of all SD that include the PR via the hierarchy
+	 *      of PRs.
+	 */
+	public function getSDsIncludingPR($prID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_rights_hierarchy');
+		
+		$parentIDs = array();
+		$childIDs = array($prID);
+		$exclude = array();
+		while (true) {
+			$sql = "SELECT DISTINCT parent_right_id FROM $t WHERE ".
+			          "child_id in (".implode(',', $childIDs).");";
+			$res = $db->query($sql);
+			
+			$exclude = array_merge($exclude, $childIDs);
+			$childIDs = array();
+
+			while ($row = $db->fetchObject($res)) {
+				$prid = (int) $row->parent_right_id;
+				if (!in_array($prid, $parentIDs)) {
+					$parentIDs[] = $prid;
+				}
+				if (!in_array($prid, $exclude)) {
+					// Add a new child for the next level in the hierarchy
+					$childIDs[] = $prid; 
+				}
+			}
+			$db->freeResult($res);
+			if (empty($childIDs)) {
+				// No further children found
+				break;
+			}
+		}
+		
+		// $parentIDs now contains all SDs/PRs that include $prID
+		// => select only the SDs
+		
+		$sdIDs = array();
+		if (empty($parentIDs)) {
+			return $sdIDs;
+		}
+		$t = $db->tableName('halo_acl_security_descriptors');
+		$sql = "SELECT sd_id FROM $t ".
+		          "WHERE pe_id != 0 AND sd_id in (".implode(',', $parentIDs).");";
 		$res = $db->query($sql);
 
+		while ($row = $db->fetchObject($res)) {
+			$sdIDs[] = (int) $row->sd_id;
+		}
+		$db->freeResult($res);
+		
+		return $sdIDs;
+		
+	}
+		
+	/**
+	 * Retrieves the description of the SD with the ID $SDID from
+	 * the database.
+	 *
+	 * @param int $SDID
+	 * 		ID of the requested SD.
+	 * 
+	 * @return HACLGroup
+	 * 		A new SD object or <null> if there is no such SD in the 
+	 * 		database.
+	 *  
+	 */
+	public function getSDByID($SDID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_security_descriptors');
+		$sql = "SELECT * FROM $t ".
+		          "WHERE sd_id = '$SDID';";
+		$sd = null;
+
+		$res = $db->query($sql);
+		
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
-			if (is_int($user)) {
-				$u = User::newFromId($user);
-				$user = $u->getName();
-			}
-			$sn = new SemanticNotification($name, $user, $row->query_text,
-										   $row->update_interval,
-										   $row->query_result,
-										   $row->timestamp);
+			$sdID = (int)$row->sd_id;
+			$peID = (int)$row->pe_id;
+			$type   = $row->type;
+			$mgGroups = $row->mr_groups;
+			$mgUsers  = $row->mr_users;
+			$name = HACLSecurityDescriptor::nameForID($sdID);
+			$sd = new HACLSecurityDescriptor($sdID, $name, $peID, $type, $mgGroups, $mgUsers);
 		}
 		$db->freeResult($res);
-		return $sn;
 
+		return $sd;
 	}
-
+	
 	/**
-	 * Deletes the semantic notification with the name <$name> of the user <$userName>
-	 * from database.
+	 * Deletes the SD with the ID $SDID from the database. All references 
+	 * to the group in the hierarchy of groups are deleted as well.
+	 * 
+	 * However, the group is not removed from any rights, security descriptors etc.
+	 * as this would mean that articles will have to be changed.
+	 * 
+	 * 
+	 * @param int $SDID
+	 * 		ID of the SD that is removed from the database.
 	 *
-	 * @param string $name
-	 * 		The unique name of the notification.
-	 * @param string $userName
-	 * 		The user who owns the notification.
 	 */
-	public function deleteSN($name, $userName) {
-		$userID = User::idFromName($userName);
-		if (!$userID) {
-			// invalid user name
-			return "Invalid user id";
-			return null;
-		}
-
+	public function deleteSD($SDID) {
 		$db =& wfGetDB( DB_MASTER );
-		$snt = 'smw_sem_notification';
-		try {
-			$db->delete($snt, array('user_id' => $userID,
-		                            'query_name' => $name), 
-		                "SNStorage::deleteSN");
-		} catch (Exception $e) {
-			return $e->getMessage();
-		}
-		return "true";
 
-	}
-
-	/**
-	 * Returns an array of the names of all notifications of the given user.
-	 *
-	 * @param string $userName
-	 * 		Name of the user, whose notifications are requested.
-	 *
-	 * @return array<string>
-	 * 		The names of all notifications of the given user or
-	 * 		<null>, if there are none.
-	 *
-	 */
-	public static function getNotificationsOfUser($userName) {
-		$userID = User::idFromName($userName);
-		if (!$userID) {
-			// invalid user name
-			return null;
-		}
-
-		$db =& wfGetDB( DB_SLAVE );
-		$snt = $db->tableName('smw_sem_notification');
-		$sql = "SELECT sn.query_name FROM $snt sn ".
-		          "WHERE user_id = $userID;";
-		$sn = null;
+		// Delete all inline rights that are defined by the SD (and the 
+		// references to them)
+		$t = $db->tableName('halo_acl_rights');
+		$sql = "SELECT right_id FROM $t ".
+		          "WHERE origin_id = '$SDID';";
 
 		$res = $db->query($sql);
-		if ($db->numRows($res) == 0) {
-			// no notifications
-			return null;
-		}
-		$notifications = array();
+		
 		while ($row = $db->fetchObject($res)) {
-			$notifications[] = $row->query_name;
+			$this->deleteRight($row->right_id);
 		}
 		$db->freeResult($res);
-		return $notifications;
-	}
-	
-	/**
-	 * All notifications of all users i.e. the user-id/name-pairs.
-	 *
-	 * @return array<array<int,string>>
-	 * 		An array of arrays where the inner array contains the tuples of
-	 * 		user id and notification name.
-	 *
-	 */
-	public static function getAllNotifications() {
-
-		$db =& wfGetDB( DB_SLAVE );
-		$snt = $db->tableName('smw_sem_notification');
-		$sql = "SELECT sn.user_id, sn.query_name FROM $snt sn;";
-		$sn = null;
-
-		$res = $db->query($sql);
-		if ($db->numRows($res) == 0) {
-			// no notifications
-			return null;
+		
+		// Remove all inline rights from the hierarchy below $SDID from their
+		// protected elements. This may remove too many rights => the parents 
+		// of $SDID must materialize their rights again 
+		$prs = $this->getPredefinedRightsOfSD($SDID, true);
+		$irs = $this->getInlineRightsOfSDs($prs);
+		
+		$peRights = $db->tableName('halo_acl_pe_rights');
+		$secDesc = $db->tableName('halo_acl_security_descriptors');
+		if (!empty($irs)) {
+			$sds = $this->getSDsIncludingPR($SDID);
+			foreach ($sds as $sd) {
+				// retrieve the protected element and its type
+				$obj = $db->selectRow($secDesc, 
+				                      array("pe_id","type"),
+				                      array("sd_id" => $sd));
+				if (!$obj) {
+					continue;
+				}
+				
+				foreach ($irs as $ir) {
+					$db->delete($peRights, array('right_id' => $ir, 
+					                             'pe_id' => $obj->pe_id,
+					                             'type' => $obj->type));
+				}
+			}
 		}
-		$notifications = array();
+		
+		// Get all direct parents of $SDID
+		$res = $db->select('halo_acl_rights_hierarchy', 'parent_right_id', "child_id = $SDID");
+		$parents = array();
 		while ($row = $db->fetchObject($res)) {
-			$notifications[] = array((int) $row->user_id, $row->query_name);
+			$parents[] = $row->parent_right_id;
 		}
 		$db->freeResult($res);
-		return $notifications;
+				
+		// Delete the SD from the hierarchy of rights in halo_acl_rights_hierarchy
+		$table = $db->tableName('halo_acl_rights_hierarchy');
+		$db->delete($table, array('child_id' => $SDID));
+		$db->delete($table, array('parent_right_id' => $SDID));
+		
+		// Rematerialize the rights of the parents of $SDID
+		foreach ($parents as $p) {
+			$sd = HACLSecurityDescriptor::newFromID($p);
+			$sd->materializeRightsHierarchy();
+		}
+		
+		// Delete the SD from the definition of SDs in halo_acl_security_descriptors
+		$table = $db->tableName('halo_acl_security_descriptors');
+		$db->delete($table, array('sd_id' => $SDID));
+		
+		
 	}
 	
-	
+	/***************************************************************************
+	 * 
+	 * Functions for inline rights
+	 * 
+	 **************************************************************************/
+		
 	/**
-	 * Returns the number of all notifications of the given user.
+	 * Saves the given inline right in the database.
 	 *
-	 * @param string $userName
-	 * 		Name of the user, whose notifications are requested.
-	 *
+	 * @param HACLRight $right
+	 * 		This object defines the inline right that wil be saved.
+	 * 
 	 * @return int
-	 * 		Number of all notifications of the given user.
-	 *
+	 * 		The ID of an inline right is determined by the database (AUTO INCREMENT).
+	 * 		The new ID is returned.
+	 * 
+	 * @throws 
+	 * 		Exception
+	 * 
 	 */
-	public static function getNumberOfNotificationsOfUser($userName) {
-		$userID = User::idFromName($userName);
-		if (!$userID) {
-			// invalid user name
-			return null;
-		}
+	public function saveRight(HACLRight $right) {
+		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_rights');
 
+		$groups = implode(',', $right->getGroups());		
+		$users  = implode(',', $right->getUsers());
+		$rightID = $right->getRightID();
+		$setValues = array(
+					  'actions'     => $right->getActions(),
+					  'groups'	    => $groups,
+					  'users'	    => $users,
+					  'description' => $right->getDescription(),
+					  'origin_id'   => $right->getOriginID());
+		if ($rightID == -1) {
+			// right does not exist yet in the DB.
+			$db->insert($t, $setValues);
+			// retrieve the auto-incremented ID of the right
+			$rightID = $db->insertId();
+		} else {
+			$setValues['right_id'] = $rightID; 
+			$db->replace($t, null, $setValues);
+		}
+		
+		return $rightID;
+	}
+	
+	/**
+	 * Retrieves the description of the inline right with the ID $rightID from
+	 * the database.
+	 *
+	 * @param int $rightID
+	 * 		ID of the requested inline right.
+	 * 
+	 * @return HACLRight
+	 * 		A new inline right object or <null> if there is no such right in the 
+	 * 		database.
+	 *  
+	 */
+	public function getRightByID($rightID) {
 		$db =& wfGetDB( DB_SLAVE );
-		$snt = $db->tableName('smw_sem_notification');
-		$sql = "SELECT count(*) AS num FROM $snt sn ".
-		          "WHERE user_id = $userID;";
+		$t = $db->tableName('halo_acl_rights');
+		$sql = "SELECT * FROM $t ".
+		          "WHERE right_id = '$rightID';";
+		$sd = null;
+
 		$res = $db->query($sql);
-		$num = $db->fetchObject($res);
+		
+		if ($db->numRows($res) == 1) {
+			$row = $db->fetchObject($res);
+			$rightID = $row->right_id;
+			$actions = $row->actions;
+			$groups = $row->groups;
+			$users  = $row->users;
+			$description = $row->description;
+			$originID = $row->origin_id;
+			$sd = new HACLRight($actions, $groups, $users, $description, $originID);
+			$sd->setRightID($rightID);
+		}
 		$db->freeResult($res);
-		return $num->num;
+
+		return $sd;
 	}
 
+	/**
+	 * Returns the IDs of all inline rights for the protected element with the
+	 * ID $peID that have the protection type $type and match the action $actionID.
+	 *
+	 * @param int $peID
+	 * 		ID of the protected element
+	 * @param strint $type
+	 * 		Type of the protected element: One of
+	 *		HACLSecurityDescriptor::PET_PAGE
+	 * 		HACLSecurityDescriptor::PET_CATEGORY
+	 * 		HACLSecurityDescriptor::PET_NAMESPACE
+	 * 		HACLSecurityDescriptor::PET_PROPERTY
+	 *  
+	 * @param int $actionID
+	 * 		ID of the action. One of
+	 * 		HACLRight::READ
+	 * 		HACLRight::FORMEDIT
+	 * 		HACLRight::EDIT
+	 * 		HACLRight::ANNOTATE
+	 * 		HACLRight::CREATE
+	 * 		HACLRight::MOVE
+	 * 		HACLRight::DELETE;
+	 * 
+	 * @return array<int>
+	 * 		An array of IDs of rights that match the given constraints.
+	 */
+	public function getRights($peID, $type, $actionID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$rt = $db->tableName('halo_acl_rights');
+		$rpet = $db->tableName('halo_acl_pe_rights');
+		
+		$sql = "SELECT rights.right_id FROM $rt AS rights, $rpet AS pe ".
+		          "WHERE pe.pe_id = $peID AND pe.type = '$type' AND ".
+		                "rights.right_id = pe.right_id AND".
+		                "(rights.actions & $actionID) != 0;";
+		$sd = null;
+
+		$res = $db->query($sql);
+		
+		$rightIDs = array();
+		while ($row = $db->fetchObject($res)) {
+			$rightIDs[] = $row->right_id;
+		}
+		$db->freeResult($res);
+
+		return $rightIDs;
+		
+	}
+	
+	/**
+	 * Deletes the inline right with the ID $rightID from the database. All 
+	 * references to the right (from protected elements) are deleted as well.
+	 * 
+	 * @param int $rightID
+	 * 		ID of the right that is removed from the database.
+	 *
+	 */
+	public function deleteRight($rightID) {
+		$db =& wfGetDB( DB_MASTER );
+
+		// Delete the right from the definition of rights in halo_acl_rights
+		$table = $db->tableName('halo_acl_rights');
+		$db->delete($table, array('right_id' => $rightID));
+		
+		// Delete all references to the right from protected elements
+		$table = $db->tableName('halo_acl_pe_rights');
+		$db->delete($table, array('right_id' => $rightID));
+		
+	}
+	
 }
- -->
+?>

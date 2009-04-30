@@ -52,12 +52,15 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
 	$wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
 	$wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
-		
+	$wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
+	$wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
+	
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
 	$wgAutoloadClasses['HACLStorageException'] = $haclgIP . '/exceptions/HACL_StorageException.php';
 	$wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
-	
+	$wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
+	$wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
 	
 	return true;
 }
@@ -190,4 +193,49 @@ function haclfInitContentLanguage($langcode) {
 	wfProfileOut('haclfInitContentLanguage');
 }
 
+/**
+ * Returns the ID and name of the given user.
+ *
+ * @param User/string/int $user
+ * 		User-object, name of a user or ID of a user. If <null> or empty, the
+ *      currently logged in user is assumed.
+ * @return array(int,string)
+ * 		(Database-)ID of the given user and his name. For the sake of 
+ *      performance the name is not retrieved, if the ID of the user is
+ * 		passed in parameter $user.
+ * @throws 
+ * 		HACLException(HACLException::UNKOWN_USER)
+ * 			...if the user does not exist.
+ */
+function haclfGetUserID($user) {
+	$userID = 0;
+	$userName = '';
+	if (is_null($user) || empty($user)) {
+		// no user given 
+		// => the current user's ID is requested
+		global $wgUser; 
+		$userID = $wgUser->getId();
+		$userName = $wgUser->getName();
+	} else if (is_int($user) || is_numeric($user)) {
+		// user-id given
+		$userID = (int) $user;
+	} else if (is_string($user)) {
+		// name of user given
+		$u = User::newFromName($user);
+		$userID = $u->getId();
+		$userName = $user;
+	} else if (is_a($user, 'User')) {
+		// User-object given
+		$userID = $user->getId();
+		$userName = $user->getName();
+	}
+	
+	if ($userID === 0) {
+		// invalid user
+		throw new HACLException(HACLException::UNKOWN_USER,'"'.$user.'"');
+	}
+	
+	return array($userID, $userName);
+	
+}
 

@@ -17,10 +17,10 @@
 */
 
 /**
- * Insert description here
+ * Exceptions for inline rights
  * 
  * @author Thomas Schweitzer
- * Date: 02.04.2009
+ * Date: 20.04.2009
  * 
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -28,48 +28,39 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 /**
- * Base class for all exceptions of HaloACL.
+ * Exceptions for the operations on inline rights of HaloACL.
  *
  */
-class HACLException extends Exception {
+class HACLRightException extends HACLException {
 
-	// An unknown user is given for a group 
+	//--- Constants ---
+	
+	// There is no inline right with the given ID
 	// Parameters:
-	// 1 - name of the user
-	const UNKOWN_USER = 1;
+	// 1 - ID of the inline right
+	const UNKNOWN_RIGHT = 1;
+	
 	
 	/**
-	 * Constructor of the HaloACL exception.
+	 * Constructor of the SD exception.
 	 *
-	 * @param string $message
-	 * 		The error message
 	 * @param int $code
 	 * 		A user defined error code.
 	 */
-    public function __construct($args) {
-    	$code = 0;
-    	if (!is_array($args)) {
-    		$code = $args;
-    		$args = func_get_args();
-    	} else {
-    		// If the constructor is called from sub-classes, all parameters
-    		// are passed as array
-    		$code = $args[0];
-    	}
-    	$msg = $this->createMessage($args);
-    	
+    public function __construct($code = 0) {
+    	$args = func_get_args();
     	// initialize super class
-        parent::__construct($msg, $code);
+        parent::__construct($args);
     }
     
     protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
-    		case self::UNKOWN_USER:
-    			$msg = "The user $args[1] is unknown.";
+    		case self::UNKNOWN_RIGHT:
+    			$msg = "There is no inline right with the name or ID \"$args[1]\".";
     			break;
+    			
     	}
     	return $msg;
     }
-    
 }

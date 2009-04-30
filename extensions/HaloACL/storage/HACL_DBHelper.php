@@ -61,7 +61,7 @@ class HACLDBHelper {
             if (!empty($primaryKeys)) {
                 $sql .= ", PRIMARY KEY(".$primaryKeys.")";
             }
-            $sql .= ') TYPE=innodb';
+            $sql .= ') TYPE=myisam';
             $db->query( $sql, 'HACLDBHelper::setupTable' );
             HACLDBHelper::reportProgress("   ... new table created\n",$verbose);
             return array();

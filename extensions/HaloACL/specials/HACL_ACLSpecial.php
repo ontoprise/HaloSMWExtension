@@ -107,86 +107,10 @@ HTML;
 	 *
 	 */
 	private function test() {
-		try {
-			$group1 = new HACLGroup(null, "Group1", 
-			                       array(2, "Group1"),
-			                       array(3, "WikiSysop"));
-			$group1->save();
-			$group2 = new HACLGroup(null, "Group2", 
-			                       array(2, "Group2"),
-			                       array(3, "WikiSysop"));
-			$group2->save();
-			$group3 = new HACLGroup(null, "Group3", null, array("WikiSysop"));
-			$group3->save();
-			$group4 = new HACLGroup(null, "Group4", null, array("WikiSysop"));
-			$group4->save();
-			$group5 = new HACLGroup(null, "Group5", null, array("WikiSysop"));
-			$group5->save();
-			$group6 = new HACLGroup(null, "Group6", null, array("WikiSysop"));
-			$group6->save();
-			$group7 = new HACLGroup(null, "Group7", null, array("WikiSysop"));
-			$group7->save();
-			$group8 = new HACLGroup(null, "Group8", null, array("WikiSysop"));
-			$group8->save();
-			$group9 = new HACLGroup(null, "Group9", null, array("WikiSysop"));
-			$group9->save();
-			$group10 = new HACLGroup(null, "Group10", array("Group1"), array("WikiSysop"));
-			$group10->save();
-			
-			$group1->addGroup($group2);
-			$group1->addGroup($group3);
-			
-			$group2->addUser('Thomas');
-			$group2->addGroup($group4);
-
-			$group3->addGroup($group6);
-
-			$group4->addGroup($group5);
-			$group4->addGroup($group2);
-
-			$group5->addUser("Thomas");
-
-			$group6->addGroup($group2);
-			$group6->addGroup($group7);
-			
-			$group7->addUser("Thomas");
-
-			$group8->addGroup($group6);
-			
-			$group9->addGroup($group4);
-			
-			$group10->addGroup($group3, "Thomas");
-			
-			$group1->hasUserMember("WikiSysop", true);
-			
-//			$group->hasGroupMember("Group1", true);
-//			$group->hasGroupMember("Group2", true);
-//			$group->hasUserMember("Thomas", true);
-//			$group2->hasUserMember("WikiSysop", true);
-			
-//			var_dump($group->getUsers(HACLGroup::ID));
-//			var_dump($group->getUsers(HACLGroup::NAME));
-//			var_dump($group->getUsers(HACLGroup::OBJECT));
-//
-//			var_dump($group->getGroups(HACLGroup::ID));
-//			var_dump($group->getGroups(HACLGroup::NAME));
-//			var_dump($group->getGroups(HACLGroup::OBJECT));
-			
-			$group1->removeUser('Thomas');
-			$group1->removeGroup($group2);
-
-//			var_dump($group->getUsers(HACLGroup::ID));
-//			var_dump($group->getUsers(HACLGroup::NAME));
-//			var_dump($group->getUsers(HACLGroup::OBJECT));
-//			
-//			var_dump($group->getGroups(HACLGroup::ID));
-//			var_dump($group->getGroups(HACLGroup::NAME));
-//			var_dump($group->getGroups(HACLGroup::OBJECT));
-			
-			$group1 = HACLGroup::newFromName("Group1");
-		} catch (Exception $e) {
-			print($e->getMessage());
-		}
+		global $haclgIP;
+		require_once "$haclgIP/tests/testcases/TestDatabase.php";
+		$tc = new TestDatabase();
+		$tc->runTest();
 	}
 
 }

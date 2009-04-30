@@ -84,9 +84,87 @@ class HACLEvaluator {
 	 * 		true
 	 */
 	public static function userCan($title, $user, $action, &$result) {
+		
+		$articleID = $title->getArticleID();
+		$userID = $user->getId();
+		
+		// first check page rights
+		$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
+		                    $userID, $action);
+		if ($r) {
+			$result = true;
+			return true;
+		}
+		
+		// check namespace rights
+		
+		// check category rights
+		
 		return true;
 	}
 
 	
+	/**
+	 * Checks, if the given user has the right to perform the given action on
+	 * the given title. The hierarchy of categories is not considered here.
+	 *
+	 * @param int $titleID
+	 * 		ID of the protected object
+	 * @param string $peType
+	 * 		The type of the protection to check for the title. One of
+	 * 		HACLSecurityDescriptor::PET_PAGE
+	 * 		HACLSecurityDescriptor::PET_CATEGORY
+	 * 		HACLSecurityDescriptor::PET_NAMESPACE
+	 * 		HACLSecurityDescriptor::PET_PROPERTY
+	 * @param int $userID
+	 * 		ID of the user who wants to perform an action
+	 * @param string $action
+	 * 		The action, the user wants to perform. One of "read", "formedit", 
+	 *      "edit", "annotate", "create", "move" and "delete".
+	 * @return bool
+	 * 		<true>, if the user has the right to perform the action
+	 * 		<false>, otherwise
+	 */
+	public static function hasRight($titleID, $type, $userID, $action) {
+		$actionID = 0;
+		// retrieve all appropriate rights from the database
+		switch ($action) {
+			case "read":
+				$actionID = HACLRight::READ;
+				break;
+			case "formedit":
+				$actionID = HACLRight::FORMEDIT;
+				break;
+			case "edit":
+				$actionID = HACLRight::EDIT;
+				break;
+			case "annotate":
+				$actionID = HACLRight::ANNOTATE;
+				break;
+			case "create":
+				$actionID = HACLRight::CREATE;
+				break;
+			case "move":
+				$actionID = HACLRight::MOVE;
+				break;
+			case "delete":
+				$actionID = HACLRight::DELETE;
+				break;
+		}
+		$rightIDs = HACLStorage::getDatabase()->getRights($titleID, $type, $actionID);
+		
+		// Check for all rights, if they are granted for the given user
+		foreach ($rightIDs as $r) {
+			$right = HACLRight::newFromID($r);
+			if ($right->grantedForUser($userID)) {
+				return true; 
+			}
+		}
+		
+		return false;
+		
+	}
+	
 	//--- Private methods ---
+	
 }

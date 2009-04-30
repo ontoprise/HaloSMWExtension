@@ -49,12 +49,11 @@ class HACLStorageException extends HACLException {
 	 */
     public function __construct($code = 0) {
     	$args = func_get_args();
-    	$msg = $this->createMessage($args);
     	// initialize super class
-        parent::__construct($msg, $code);
+        parent::__construct($args);
     }
     
-    private function createMessage($args) {
+    protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
 //    		case self::SOME_ERROR_ID:
