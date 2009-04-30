@@ -1,0 +1,254 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/develwiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="100">Relation</namespace>
+      <namespace key="101">Relation talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+      <namespace key="300">ACL</namespace>
+      <namespace key="301">ACL talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>ACL:Category/B</title>
+    <id>42</id>
+    <revision>
+      <id>70</id>
+      <timestamp>2009-04-22T13:41:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: U1  PR: PR3</comment>
+      <text xml:space="preserve">Manage: U1
+
+PR: PR3</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/G1</title>
+    <id>36</id>
+    <revision>
+      <id>61</id>
+      <timestamp>2009-04-22T10:10:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Manage: U1
+
+Groups:Group/G2, Group/G3
+
+Users:</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/G2</title>
+    <id>37</id>
+    <revision>
+      <id>62</id>
+      <timestamp>2009-04-22T10:12:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: U1 Groups:Group/G4, Group/G5 Users:</comment>
+      <text xml:space="preserve">Manage: U1
+Groups:Group/G4, Group/G5
+Users:</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/G3</title>
+    <id>38</id>
+    <revision>
+      <id>68</id>
+      <timestamp>2009-04-22T10:57:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Manage: U1
+
+Groups:Group/G4
+
+Users:U6</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/G4</title>
+    <id>39</id>
+    <revision>
+      <id>66</id>
+      <timestamp>2009-04-22T10:14:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Manage: U1, U4, U5
+
+Group:
+
+Users:U4, U5</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/G5</title>
+    <id>40</id>
+    <revision>
+      <id>67</id>
+      <timestamp>2009-04-22T10:15:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Manage: U1,G5
+
+Groups:
+
+Users:U2,U3,U4</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Page/A</title>
+    <id>44</id>
+    <revision>
+      <id>72</id>
+      <timestamp>2009-04-22T13:43:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: G1  IR:  R1(r, G1, U1)  PR: PR1, PR2</comment>
+      <text xml:space="preserve">Manage: G1
+
+IR:
+
+R1(r, G1, U1)
+
+PR: PR1, PR2</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Right/PR1</title>
+    <id>45</id>
+    <revision>
+      <id>73</id>
+      <timestamp>2009-04-22T13:46:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: G4, G5  IR:  R1(r|ef|e|a, G4)  PR: PR2</comment>
+      <text xml:space="preserve">Manage: G4, G5
+
+IR:
+
+R1(r|ef|e|a, G4)
+
+PR: PR2</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Right/PR2</title>
+    <id>46</id>
+    <revision>
+      <id>74</id>
+      <timestamp>2009-04-22T13:47:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: U1, U2  IR:  R3(r|ef|e|d, U2)</comment>
+      <text xml:space="preserve">Manage: U1, U2
+
+IR:
+
+R3(r|ef|e|d, U2)</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Right/PR3</title>
+    <id>47</id>
+    <revision>
+      <id>75</id>
+      <timestamp>2009-04-22T13:47:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Manage: U1  PR: PR1, PR2</comment>
+      <text xml:space="preserve">Manage: U1
+
+PR: PR1, PR2</text>
+    </revision>
+  </page>
+  <page>
+    <title>A</title>
+    <id>43</id>
+    <revision>
+      <id>71</id>
+      <timestamp>2009-04-22T13:42:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: This page is protected by [[ACL:Page/A]].</comment>
+      <text xml:space="preserve">This page is protected by [[ACL:Page/A]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>B</title>
+    <id>48</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: This page is protected by [[ACL:Category/B]]  [[Category:B]]</comment>
+      <text xml:space="preserve">This page is protected by [[ACL:Category/B]]
+
+[[Category:B]]</text>
+    </revision>
+  </page>
+</mediawiki>
