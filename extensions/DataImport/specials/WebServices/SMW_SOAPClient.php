@@ -162,9 +162,7 @@ class SMWSoapClient implements IWebServiceClient {
 	/**
 	 * Calls the web service
 	 */
-	public function 	call($operationName, $parameters) {
-		return wfMsg('smw_wws_client_connect_failure').$this->mURI;
-		
+	public function call($operationName, $parameters) {
 		//ini_set("soap.wsdl_cache_enabled", "0"); // to be removed in the release version
 			
 		if($this->mAuthenticationType == "http"){
@@ -183,13 +181,14 @@ class SMWSoapClient implements IWebServiceClient {
 				$response = $this->mClient->$operationName($parameters);
 			}
 		} catch(Exception $e) {
-			//return print_r($e, true) . $this->mClient->__getLastResponse();
-			return wfMsg('smw_wws_client_connect_failure').$this->mURI;
+			return print_r($e, true) . $this->mClient->__getLastResponse();
 		}
 		
 		//construct xml-result if the old dot-syntax is not used
 		global $smwgWSOldDotSyntax;
-		$response = array($this->constructXML($response, $this->mOperations[$operationName][0]));
+		if(!$smwgWSOldDotSyntax){
+			$response = array($this->constructXML($response, $this->mOperations[$operationName][0]));
+		}
 		return $response;
 	}
 
@@ -235,7 +234,7 @@ class SMWSoapClient implements IWebServiceClient {
 				}
 			}
 		}
-		
+
 		$this->mTypes = array();
 
 		foreach ($types as $t) {
@@ -263,12 +262,75 @@ class SMWSoapClient implements IWebServiceClient {
 		foreach($this->mTypes as $typeN => $typeD){
 			foreach($typeD as $typeName => $typeDef){
 				if(array_key_exists($typeDef, $this->duplicates)){
+					//$temp = $this->mTypes[$typeN][$typeName];
 					unset($this->mTypes[$typeN][$typeName]);
+					//$typeName = $typeName."##duplicate";
 					$this->mTypes[$typeN][$typeName."##duplicate"] = $typeDef."##duplicate";
 				}
 			}
 		}
 
+
+		//		$this->mTypes = array();
+		//		foreach ($types as $t) {
+		//			if (preg_match("/\s*struct\s*(\b.*?)\s*\{([^}]*)\}/", $t, $matches)) {
+		//				$tname = $matches[1];
+		//				$fields = $matches[2];
+		//				$numFields = preg_match_all("/\s*(\b.*?)\s+([^;]*);/",$fields, $fList);
+		//				$add = true;
+		//				if($this->mTypes[$tname] || count(array_keys($this->duplicates, $tname)) > 0){
+		//					if(!$this->duplicates[$tname]){
+		//						$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
+		//						$temp = $this->mTypes[$tname];
+		//						unset($this->mTypes[$tname]);
+		//						$tname = $tname."##".(count($this->duplicates)-1);
+		//						$this->mTypes[$tname] = $temp;
+		//					} else {
+		//						foreach(array_keys($this->duplicates, $tname) as $dupType){
+		//							$found = true;
+		//							if($numFields != count($this->mTypes[$dupType])){
+		//								$found = false;
+		//							} else {
+		//								for ($i = 0; $i < $numFields; ++$i) {
+		//									if($this->mTypes[$dupType][$fList[2][$i]] != $fList[1][$i]){
+		//										$found = false;
+		//										break;
+		//									}
+		//								}
+		//							}
+		//							if($found){
+		//								$add = false;
+		//								break;
+		//							}
+		//						}
+		//						if($add){
+		//							$this->duplicates[$tname."##".count($this->duplicates)] = $tname;
+		//							$tname = $tname."##".(count($this->duplicates)-1);
+		//						}
+		//					}
+		//				}
+		//				if($add){
+		//					for ($i = 0; $i < $numFields; ++$i) {
+		//						$this->mTypes[$tname][$fList[2][$i]] = $fList[1][$i];
+		//					}
+		//				}
+		//			}
+		//
+		//		}
+
+		//		$this->wsdl = new SimpleXMLElement($this->mURI, null, true);
+		//
+		//		$namespaces = $this->wsdl->getNamespaces(true);
+		//		foreach($namespaces as $prefix => $ns){
+		//			$this->wsdl->registerXPathNamespace($prefix, $ns);
+		//			if($ns == "http://www.w3.org/2001/XMLSchema"){
+		//				$this->xs = $prefix;
+		//			}
+		//		}
+
+		//		foreach(array_unique(array_values($this->duplicates)) as $duplicate){
+		//			$this->detectTypeRelations($duplicate);
+		//		}
 
 		return true;
 	}
@@ -450,6 +512,5 @@ class SMWSoapClient implements IWebServiceClient {
 		}
 		return false;
 	}
-
 }
 ?>
