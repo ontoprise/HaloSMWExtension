@@ -368,7 +368,7 @@ getFullParserAsk:function(){
 },
 
 insertAsNotification: function() {
-	var query = this.recurseQuery(0);
+	var query = this.getFullParserAsk();
 	document.cookie = "NOTIFICATION_QUERY=<snq>"+query+"</snq>";
 	if (query != "") {
 		var snPage = $('qi-insert-notification-btn').readAttribute('specialpage');
@@ -596,9 +596,9 @@ addDialogueInput:function(){
 
 		cell = newrow.insertCell(2);
 		if(this.propIsEnum){ // if enumeration, a select box is used instead of a text input field
-			var tmphtml = '<select id="input' + this.activeInputs + '" style="width:100%">';
+			var tmphtml = '<select id="input' + this.activeInputs + '">';
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + this.enumValues[i] + '">' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + this.enumValues[i] + '" style="width:100%">' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			cell.innerHTML = tmphtml;
@@ -707,10 +707,10 @@ adaptDialogueToProperty:function(request){
 				this.propIsEnum = true;
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
-				var option = '<select id="input3" style="width:100%">'; //create html for option box
+				var option = '<select id="input3">'; //create html for option box
 				for(var i = 0; i < possibleValues.length; i++){
 					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
-					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
+					option += '<option value="' + possibleValues[i] + '" style="width:100%">' + possibleValues[i] + '</option>';
 				}
 				option += "</select>";
 				$('dialoguecontent').rows[3].cells[2].innerHTML = option;
@@ -829,10 +829,10 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration())
 			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
-			var tmphtml = '<select id="input3" style="width:100%">';
+			var tmphtml = '<select id="input3">';
 			this.enumValues = prop.getEnumValues();
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
+				tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
@@ -842,17 +842,17 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				$('input' + (i+2)).value = unescapeQueryHTML(vals[i][2]);
+				$('input' + (i+3)).value = unescapeQueryHTML(vals[i][2]);
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
 			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
+				var tmphtml = '<select id="input' + (i+2) + '">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
-					tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
+					tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+3].cells[2].innerHTML = tmphtml;
@@ -1121,7 +1121,7 @@ copyToClipboard:function(){
 		    smwhgLogger.log("Copy query to clipboard","QI","query_copied");
 		}
 		/*ENDLOG*/
-		var text = this.getFullAsk();
+		var text = this.getFullParserAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
 			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
@@ -1190,7 +1190,7 @@ showFullAsk:function(type, toggle){
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
 	if(type == "parser")
-		ask = ask.replace(/\|/g, "\n|");
+		ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 	$('fullAskText').value = ask;
 },
 

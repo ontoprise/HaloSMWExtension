@@ -464,6 +464,12 @@ SemanticNotifications.create = function() {
 			// remove the query from the cookie
 			document.cookie = 'NOTIFICATION_QUERY=<snq></snq>;';
 			query = query.substring(start+24, end);
+			// format the query nicely
+			query = query.replace(/\]\]\[\[/g, "]]\n[[");
+			query = query.replace(/>\[\[/g, ">\n[[");
+			query = query.replace(/\]\]</g, "]]\n<");
+			query = query.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+			
 			qt.value = query;
 			
 			this.queryEdited = true;
