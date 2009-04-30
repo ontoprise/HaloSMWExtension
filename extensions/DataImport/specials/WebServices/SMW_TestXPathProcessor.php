@@ -7,7 +7,7 @@ require_once("SMW_XPathProcessor.php");
 //		namespaces defined in child nodes
 //		aggregation functions
 $xpathProcessor = new XPathProcessor("<GetListItemsResponse><![CDATA[' and ends with ']]></GetListItemsResponse>");
-$result = $xpathProcessor->evaluateQuery("//Items/Item/CustomerReviews/Review[*]/Reviewer/Name");
+$result = $xpathProcessor->evaluateQuery("..Items.Item/CustomerReviews/Review[*]/Reviewer/Name");
 print_r($result); 
 
 ?>

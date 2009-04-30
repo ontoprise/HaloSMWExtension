@@ -59,7 +59,7 @@ class XPathProcessor {
 	function evaluateQuery($query){
 		$queryResults = array();
 
-		$entries = $this->domXPath->evaluate($query);
+		$entries = @ $this->domXPath->evaluate($query);
 
 		// check if the result of the query evaluation is an object
 		// or a simple string
