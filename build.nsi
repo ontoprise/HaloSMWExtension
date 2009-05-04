@@ -648,7 +648,7 @@ Function configCustomizationsForNew
         Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
-        SetOutPath "$INSTDIR\htdocs\mediawiki"
+        SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
 FunctionEnd
 
