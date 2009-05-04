@@ -1069,7 +1069,7 @@ ContentSlider.prototype = {
             '/extensions/SMWHalo/skins/slider.gif"/>';
         var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
         // 25px for the silder
-        var iv = ($("p-logo").clientWidth -  this.sliderWidth) / windowWidth;
+        var iv = ($("p-logo").getWidth() -  this.sliderWidth) / windowWidth;
         var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
         var initialvalue = saved_iv != null ? saved_iv : this.savedPos != -1 ? this.savedPos : iv;
         
@@ -1096,8 +1096,8 @@ ContentSlider.prototype = {
           {
           	
             var windowWidth = OB_bd.isIE ? document.body.offsetWidth : window.innerWidth
-            var iv = ($("p-logo").clientWidth - this.sliderWidth) / windowWidth;    
-            var currMarginDiv = windowWidth*(v-iv)+$("p-logo").clientWidth;
+            var iv = ($("p-logo").getWidth() - this.sliderWidth) / windowWidth;    
+            var currMarginDiv = windowWidth*(v-iv)+$("p-logo").getWidth();
             
             var leftmax = iv; // range 0 - 1
             var rightmax = 0.5; // range 0 - 1

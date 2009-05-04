@@ -1277,133 +1277,282 @@ Element.addMethods(Effect.Methods);
 
 // slider.js
 // under MIT-License; Copyright (c) 2005, 2006 Thomas Fuchs
-/* Resizing Content window slider using scriptacolus slider */
-var MainSlider = Class.create();
-MainSlider.prototype = {
-		
-	initialize: function() {
- 		this.sliderObj = null;
- 		this.oldHeight = 0;
- 		this.oldWidth  = 0;
- 		this.savedPos = -1;
- 	},
- 	//if()
- 	activateResizing: function() {
- 	//Check if semtoolbar is available and action is not annotate
- 	if(!$('mainslider') || wgAction == 'annotate') return;
- 	
- 	//Load image to the slider div
- 		$('mainslider').innerHTML = '<img id="mainsliderHandle" src="' +
- 			wgScriptPath +
- 			'/skins/ontoskin2/slider.gif"/>';
-        
- 		var saved_iv = GeneralBrowserTools.getCookie("cp-slider");    
-        if( saved_iv != null){
-        	var initialvalue = saved_iv;
-        } else {
-        	//if(this.savedPos != -1){
-        	//	var initialvalue = this.savedPos;
-        	//} 
-        	//else { 
-        		var initialvalue = 190 / $('mainslider').clientWidth;
-        	//}
-        }
-        
- 		//create slider after old one is removed
- 		if(this.sliderObj != null){
- 	   		this.sliderObj.setDisabled();
- 	   		this.sliderObj= null;
- 		}
- 		
- 		
- 		var min = 160 / $('mainslider').getWidth();
- 		var max = 1- (400 / $('mainslider').getWidth());
- 		
- 		//alert(min);
- 		//alert(max);
- 		
- 		this.sliderObj = new Control.Slider('mainsliderHandle','mainslider',{
- 	   	  //axis:'vertical',
- 	      sliderValue:initialvalue,
- 	      //minimum:min,
- 	      //maximum:max,
- 	      //range: $R(min,max),
- 	      onSlide: this.slide.bind(this),
- 	      onChange: this.slide.bind(this)
- 		});
- 		this.slide(initialvalue);
- 	},
+// script.aculo.us slider.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
- 	//Check for min max and sets the content and the semtoolbar to the correct width
- 	slide: function(v)
- 	      {
- 			
- 		     
-            // change width of divs of class 'dtreestatic' below main_navtree
-            // and of main_navtree itself.
- 	      	var menuwidth = $('smwf_naviblock').clientWidth;
-            $$('#smwf_browserview div.dtreestatic').each(function(statictree) { 
-                 statictree.style.width = menuwidth - 30 +"px";
-            });
+// Copyright (c) 2005-2007 Marty Haught, Thomas Fuchs 
+//
+// script.aculo.us is freely distributable under the terms of an MIT-style license.
+// For details, see the script.aculo.us web site: http://script.aculo.us/
 
-            var totalwidth = $('mainslider').getWidth();
-            var min = 160 / totalwidth;
-     		var max = 1- (400 / totalwidth);
-            if( v < min){
-                if (this.sliderObj != null) this.sliderObj.setValue(min);
-                $('mainsliderHandle').style.left = 160; 
-                return;
-            }
+if (!Control) var Control = { };
 
-            if( v > max){
-                if (this.sliderObj != null) this.sliderObj.setValue(max);
-                $('mainsliderHandle').style.left = totalwidth - 400;
-                return;
-            } 
-
- 	 		//calculate left div size and rightdiv size
- 	      	var currLeftDiv = 100*v; //width of left menu
- 	        var currRightDiv = currLeftDiv + 1; //margi-left of mainpage
- 	        
- 	       
- 	        if(currLeftDiv != Infinity && currRightDiv != Infinity ){
- 	        	$('smwf_naviblock').style.width = currLeftDiv + "%";
- 	        	$('smwf_pageblock').style.marginLeft = currRightDiv + "%";
- 	        }
- 	         	         
- 	        document.cookie = "cp-slider="+v+"; path="+wgScript;
-            this.savedPos = v;
- 	 },
- 	 /**
- 	  * Resizes the slide if window size is changed
- 	  * since IE fires the resize event in much more cases than the desired
- 	  * we have to do some additional checks
- 	  */
- 	 resizeTextbox: function(){
- 	 	if( OB_bd.isIE == true){
- 		 	if( typeof document.documentElement != 'undefined' && document.documentElement.clientHeight != this.oldHeight && document.documentElement.clientHeight != this.oldWidth ){
- 		 		this.activateResizing();
- 		 		this.oldHeight = document.documentElement.clientHeight;
- 				this.oldWidth  = document.documentElement.clientWidth;
- 		 	} else{
- 		 		if( typeof window.innerHeight != 'undefined' && window.innerHeight != this.oldHeight && window.innerWidth != this.oldWidth){
- 		 			alert('resize');
- 		 			this.activateResizing();
- 		 			this.oldHeight = window.innerHeight;
- 					this.oldWidth  = window.innerWidth;
- 		 		}
- 		 	}
- 	   }else {
- 	 		this.activateResizing();
- 	 	}
- 	 }
+// options:
+//  axis: 'vertical', or 'horizontal' (default)
+//
+// callbacks:
+//  onChange(value)
+//  onSlide(value)
+Control.Slider = Class.create({
+  initialize: function(handle, track, options) {
+    var slider = this;
     
-}
+    if (Object.isArray(handle)) {
+      this.handles = handle.collect( function(e) { return $(e) });
+    } else {
+      this.handles = [$(handle)];
+    }
+    
+    this.track   = $(track);
+    this.options = options || { };
 
-var smwhg_mainslider = new MainSlider();
-Event.observe(window, 'load', smwhg_mainslider.activateResizing.bind(smwhg_mainslider));
-//Resizes the slider if window size is changed
-Event.observe(window, 'resize', smwhg_mainslider.resizeTextbox.bind(smwhg_mainslider));
+    this.axis      = this.options.axis || 'horizontal';
+    this.increment = this.options.increment || 1;
+    this.step      = parseInt(this.options.step || '1');
+    this.range     = this.options.range || $R(0,1);
+    
+    this.value     = 0; // assure backwards compat
+    this.values    = this.handles.map( function() { return 0 });
+    this.spans     = this.options.spans ? this.options.spans.map(function(s){ return $(s) }) : false;
+    this.options.startSpan = $(this.options.startSpan || null);
+    this.options.endSpan   = $(this.options.endSpan || null);
+
+    this.restricted = this.options.restricted || false;
+
+    this.maximum   = this.options.maximum || this.range.end;
+    this.minimum   = this.options.minimum || this.range.start;
+
+    // Will be used to align the handle onto the track, if necessary
+    this.alignX = parseInt(this.options.alignX || '0');
+    this.alignY = parseInt(this.options.alignY || '0');
+    
+    this.trackLength = this.maximumOffset() - this.minimumOffset();
+
+    this.handleLength = this.isVertical() ? 
+      (this.handles[0].offsetHeight != 0 ? 
+        this.handles[0].offsetHeight : this.handles[0].style.height.replace(/px$/,"")) : 
+      (this.handles[0].offsetWidth != 0 ? this.handles[0].offsetWidth : 
+        this.handles[0].style.width.replace(/px$/,""));
+
+    this.active   = false;
+    this.dragging = false;
+    this.disabled = false;
+
+    if (this.options.disabled) this.setDisabled();
+
+    // Allowed values array
+    this.allowedValues = this.options.values ? this.options.values.sortBy(Prototype.K) : false;
+    if (this.allowedValues) {
+      this.minimum = this.allowedValues.min();
+      this.maximum = this.allowedValues.max();
+    }
+
+    this.eventMouseDown = this.startDrag.bindAsEventListener(this);
+    this.eventMouseUp   = this.endDrag.bindAsEventListener(this);
+    this.eventMouseMove = this.update.bindAsEventListener(this);
+
+    // Initialize handles in reverse (make sure first handle is active)
+    this.handles.each( function(h,i) {
+      i = slider.handles.length-1-i;
+      slider.setValue(parseFloat(
+        (Object.isArray(slider.options.sliderValue) ? 
+          slider.options.sliderValue[i] : slider.options.sliderValue) || 
+         slider.range.start), i);
+      h.makePositioned().observe("mousedown", slider.eventMouseDown);
+    });
+    
+    this.track.observe("mousedown", this.eventMouseDown);
+    document.observe("mouseup", this.eventMouseUp);
+    document.observe("mousemove", this.eventMouseMove);
+    
+    this.initialized = true;
+  },
+  dispose: function() {
+    var slider = this;    
+    Event.stopObserving(this.track, "mousedown", this.eventMouseDown);
+    Event.stopObserving(document, "mouseup", this.eventMouseUp);
+    Event.stopObserving(document, "mousemove", this.eventMouseMove);
+    this.handles.each( function(h) {
+      Event.stopObserving(h, "mousedown", slider.eventMouseDown);
+    });
+  },
+  setDisabled: function(){
+    this.disabled = true;
+  },
+  setEnabled: function(){
+    this.disabled = false;
+  },  
+  getNearestValue: function(value){
+    if (this.allowedValues){
+      if (value >= this.allowedValues.max()) return(this.allowedValues.max());
+      if (value <= this.allowedValues.min()) return(this.allowedValues.min());
+      
+      var offset = Math.abs(this.allowedValues[0] - value);
+      var newValue = this.allowedValues[0];
+      this.allowedValues.each( function(v) {
+        var currentOffset = Math.abs(v - value);
+        if (currentOffset <= offset){
+          newValue = v;
+          offset = currentOffset;
+        } 
+      });
+      return newValue;
+    }
+    if (value > this.range.end) return this.range.end;
+    if (value < this.range.start) return this.range.start;
+    return value;
+  },
+  setValue: function(sliderValue, handleIdx){
+    if (!this.active) {
+      this.activeHandleIdx = handleIdx || 0;
+      this.activeHandle    = this.handles[this.activeHandleIdx];
+      this.updateStyles();
+    }
+    handleIdx = handleIdx || this.activeHandleIdx || 0;
+    if (this.initialized && this.restricted) {
+      if ((handleIdx>0) && (sliderValue<this.values[handleIdx-1]))
+        sliderValue = this.values[handleIdx-1];
+      if ((handleIdx < (this.handles.length-1)) && (sliderValue>this.values[handleIdx+1]))
+        sliderValue = this.values[handleIdx+1];
+    }
+    sliderValue = this.getNearestValue(sliderValue);
+    this.values[handleIdx] = sliderValue;
+    this.value = this.values[0]; // assure backwards compat
+    
+    this.handles[handleIdx].style[this.isVertical() ? 'top' : 'left'] = 
+      this.translateToPx(sliderValue);
+    
+    this.drawSpans();
+    if (!this.dragging || !this.event) this.updateFinished();
+  },
+  setValueBy: function(delta, handleIdx) {
+    this.setValue(this.values[handleIdx || this.activeHandleIdx || 0] + delta, 
+      handleIdx || this.activeHandleIdx || 0);
+  },
+  translateToPx: function(value) {
+    return Math.round(
+      ((this.trackLength-this.handleLength)/(this.range.end-this.range.start)) * 
+      (value - this.range.start)) + "px";
+  },
+  translateToValue: function(offset) {
+    return ((offset/(this.trackLength-this.handleLength) * 
+      (this.range.end-this.range.start)) + this.range.start);
+  },
+  getRange: function(range) {
+    var v = this.values.sortBy(Prototype.K); 
+    range = range || 0;
+    return $R(v[range],v[range+1]);
+  },
+  minimumOffset: function(){
+    return(this.isVertical() ? this.alignY : this.alignX);
+  },
+  maximumOffset: function(){
+    return(this.isVertical() ? 
+      (this.track.offsetHeight != 0 ? this.track.offsetHeight :
+        this.track.style.height.replace(/px$/,"")) - this.alignY : 
+      (this.track.offsetWidth != 0 ? this.track.offsetWidth : 
+        this.track.style.width.replace(/px$/,"")) - this.alignX);
+  },  
+  isVertical:  function(){
+    return (this.axis == 'vertical');
+  },
+  drawSpans: function() {
+    var slider = this;
+    if (this.spans)
+      $R(0, this.spans.length-1).each(function(r) { slider.setSpan(slider.spans[r], slider.getRange(r)) });
+    if (this.options.startSpan)
+      this.setSpan(this.options.startSpan,
+        $R(0, this.values.length>1 ? this.getRange(0).min() : this.value ));
+    if (this.options.endSpan)
+      this.setSpan(this.options.endSpan, 
+        $R(this.values.length>1 ? this.getRange(this.spans.length-1).max() : this.value, this.maximum));
+  },
+  setSpan: function(span, range) {
+    if (this.isVertical()) {
+      span.style.top = this.translateToPx(range.start);
+      span.style.height = this.translateToPx(range.end - range.start + this.range.start);
+    } else {
+      span.style.left = this.translateToPx(range.start);
+      span.style.width = this.translateToPx(range.end - range.start + this.range.start);
+    }
+  },
+  updateStyles: function() {
+    this.handles.each( function(h){ Element.removeClassName(h, 'selected') });
+    Element.addClassName(this.activeHandle, 'selected');
+  },
+  startDrag: function(event) {
+    if (Event.isLeftClick(event)) {
+      if (!this.disabled){
+        this.active = true;
+        
+        var handle = Event.element(event);
+        var pointer  = [Event.pointerX(event), Event.pointerY(event)];
+        var track = handle;
+        if (track==this.track) {
+          var offsets  = Position.cumulativeOffset(this.track); 
+          this.event = event;
+          this.setValue(this.translateToValue( 
+           (this.isVertical() ? pointer[1]-offsets[1] : pointer[0]-offsets[0])-(this.handleLength/2)
+          ));
+          var offsets  = Position.cumulativeOffset(this.activeHandle);
+          this.offsetX = (pointer[0] - offsets[0]);
+          this.offsetY = (pointer[1] - offsets[1]);
+        } else {
+          // find the handle (prevents issues with Safari)
+          while((this.handles.indexOf(handle) == -1) && handle.parentNode) 
+            handle = handle.parentNode;
+            
+          if (this.handles.indexOf(handle)!=-1) {
+            this.activeHandle    = handle;
+            this.activeHandleIdx = this.handles.indexOf(this.activeHandle);
+            this.updateStyles();
+            
+            var offsets  = Position.cumulativeOffset(this.activeHandle);
+            this.offsetX = (pointer[0] - offsets[0]);
+            this.offsetY = (pointer[1] - offsets[1]);
+          }
+        }
+      }
+      Event.stop(event);
+    }
+  },
+  update: function(event) {
+   if (this.active) {
+      if (!this.dragging) this.dragging = true;
+      this.draw(event);
+      if (Prototype.Browser.WebKit) window.scrollBy(0,0);
+      Event.stop(event);
+   }
+  },
+  draw: function(event) {
+    var pointer = [Event.pointerX(event), Event.pointerY(event)];
+    var offsets = Position.cumulativeOffset(this.track);
+    pointer[0] -= this.offsetX + offsets[0];
+    pointer[1] -= this.offsetY + offsets[1];
+    this.event = event;
+    this.setValue(this.translateToValue( this.isVertical() ? pointer[1] : pointer[0] ));
+    if (this.initialized && this.options.onSlide)
+      this.options.onSlide(this.values.length>1 ? this.values : this.value, this);
+  },
+  endDrag: function(event) {
+    if (this.active && this.dragging) {
+      this.finishDrag(event, true);
+      Event.stop(event);
+    }
+    this.active = false;
+    this.dragging = false;
+  },  
+  finishDrag: function(event, success) {
+    this.active = false;
+    this.dragging = false;
+    this.updateFinished();
+  },
+  updateFinished: function() {
+    if (this.initialized && this.options.onChange) 
+      this.options.onChange(this.values.length>1 ? this.values : this.value, this);
+    this.event = null;
+  }
+});
+
 
 // dragdrop.js
 // under MIT-License; Copyright (c) 2005, 2006 Thomas Fuchs
@@ -2624,7 +2773,7 @@ AutoCompleter.prototype = {
                     this.typeHint = this.siw.inputBox.getAttribute("typeHint");
                 
                     // get constraints
-                    this.constraints = this.siw.inputBox.getAttribute("constraints");
+                    this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
                     
                     if (GeneralBrowserTools.isTextSelected(this.siw.inputBox)) {
                          // do not trigger auto AC when something is selected.
@@ -3946,7 +4095,8 @@ function displayHelp(request){
 	//No SemTB in QI, therefore special treatment
 	if(wgCanonicalSpecialPageName == "QueryInterface"){
 		if ( request.responseText != '' ){
-			$('qi-help-content').innerHTML = request.responseText;
+			// commented out since help container was removed from query interface
+//			$('qi-help-content').innerHTML = request.responseText;
 		}
 	}
 	else { //SemTB available
@@ -14978,140 +15128,6 @@ setTimeout(function() {
 },3000);
 //*/
 
-// CombinedSearch.js
-// under GPL-License; Copyright (c) 2007 Ontoprise GmbH
-/*  Copyright 2007, ontoprise GmbH
-*   Author: Kai Kühn
-*   This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-var CombinedSearchContributor = Class.create();
-CombinedSearchContributor.prototype = {
-	initialize: function() {
-		// create a query placeHolder for potential ask-queries
-		this.queryPlaceholder = document.createElement("div");
-		this.queryPlaceholder.setAttribute("id", "queryPlaceholder");
-		this.queryPlaceholder.innerHTML = gLanguage.getMessage('ADD_COMB_SEARCH_RES');
-		this.pendingElement = null;
-		this.tripleSearchPendingElement = null;
-	},
-
-	/**
-	 * Register the contribuor and puts a button in the semantic toolbar.
-	 */
-	registerContributor: function() {
-		if (!stb_control.isToolbarAvailable()) return;
-		if (wgCanonicalSpecialPageName != 'Search' || wgCanonicalNamespace != 'Special') {
-			// do only register on Special:Search
-			return;
-		}
-
-		// register CS container
-		this.comsrchontainer = stb_control.createDivContainer(COMBINEDSEARCHCONTAINER, 0);
-		this.comsrchontainer.setHeadline(gLanguage.getMessage('COMBINED_SEARCH'));
-
-		this.comsrchontainer.setContent('<div id="csFoundEntities"></div>');
-		this.comsrchontainer.contentChanged();
-
-		// register content function and notify about initial update
-
-		var searchTerm = GeneralBrowserTools.getURLParameter("search");
-
-		// do combined search and populate ST tab.
-		if ($('stb_cont8-headline') == null) return;
-		$("bodyContent").insertBefore(this.queryPlaceholder, $("bodyContent").firstChild);
-		this.pendingElement = new OBPendingIndicator($('stb_cont8-headline'));
-		this.tripleSearchPendingElement = new OBPendingIndicator($('queryPlaceholder'));
-		if (searchTerm != undefined && searchTerm.strip() != '') {
-			this.pendingElement.show();
-			sajax_do_call('smwf_cs_Dispatcher', [searchTerm], this.smwfCombinedSearchCallback.bind(this, "csFoundEntities"));
-			this.tripleSearchPendingElement.show();
-			sajax_do_call('smwf_cs_SearchForTriples', [searchTerm], this.smwfTripleSearchCallback.bind(this, "queryPlaceholder"));
-		}
-
-		// add query placeholder
-	},
-	
-	smwfTripleSearchCallback: function(containerID, request) {
-		this.tripleSearchPendingElement.hide();
-		$(containerID).innerHTML = request.responseText;
-	},
-
-	smwfCombinedSearchCallback: function(containerID, request) {
-		this.pendingElement.hide();
-		$(containerID).innerHTML = request.responseText;
-		this.comsrchontainer.contentChanged();
-	},
-
-	searchForAttributeValues: function(parts) {
-		this.pendingElement.show($('cbsrch'));
-		sajax_do_call('smwf_cs_AskForAttributeValues', [parts], this.smwfCombinedSearchCallback.bind(this, "queryPlaceholder"));
-	},
-	
-	/**
-	 * Navigates to OntologyBrowser
-	 * 
-	 * @param pageName name of page (URI encoded)
-	 * @param pageNS namespace
-	 * @param last part of path to OntologyBrowser (name of special page)
-	 */
-	navigateToOB: function(pageName, pageNS, ontoBrowserPath) {
-		queryStr = "?entitytitle="+pageName+(pageNS != "" ? "&ns="+pageNS : "");
-		var path = wgArticlePath.replace(/\$1/, ontoBrowserPath);
-		smwhgLogger.log(pageName, "CS", "entity_opened_in_ob")
-		window.open(wgServer + path + queryStr, "");
-	},
-	
-	/**
-	 * Navigates to Page
-	 * 
-	 * @param pageName name of page (URI encoded)
-	 * @param pageNS namespace
-	
-	 */
-	navigateToEntity: function(pageName, pageNS) {
-		var path = wgArticlePath.replace(/\$1/, pageNS+":"+pageName);
-		smwhgLogger.log(pageName, "CS", "entity_opened")
-		window.open(wgServer + path, "");
-	},
-	
-	/**
-	 * Navigates to Page in edit mode
-	 * 
-	 * @param pageName name of page (URI encoded)
-	 * @param pageNS namespace
-	 */
-	navigateToEdit: function(pageName, pageNS) {
-		queryStr = "?action=edit";
-		var path = wgArticlePath.replace(/\$1/, pageNS+":"+pageName);
-		smwhgLogger.log(pageName, "CS", "entity_opened_to_edit");
-		window.open(wgServer + path + queryStr, "");
-	}
-
-}
-
-// create instance of contributor and register on load event so that the complete document is available
-// when registerContributor is executed.
-var csContributor = new CombinedSearchContributor();
-var csLoadObserver = csContributor.registerContributor.bind(csContributor);
-Event.observe(window, 'load', csLoadObserver);
-
-
-
-
 // SMW_AdvancedAnnotation.js
 // under GPL-License; Copyright (c) 2007 Ontoprise GmbH
 /*  Copyright 2007, ontoprise GmbH
@@ -16953,7 +16969,7 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep1 : function() {
 		$("step2-methods").removeAttribute("onclick");
-		
+
 		if ($("step1-protocol-rest").checked) {
 			this.processStep1REST();
 			return;
@@ -16986,9 +17002,9 @@ DefineWebServiceSpecial.prototype = {
 			$("errors").style.display = "";
 		} else {
 			$("step1-protocol-rest").setAttribute("onclick",
-				"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
 			$("step1-uri").setAttribute("onclick",
-				"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
 			if (!this.editMode) {
 				$("step1-go-img").style.display = "none";
 				$("step2-go-img").style.display = "";
@@ -17094,13 +17110,15 @@ DefineWebServiceSpecial.prototype = {
 	processStep2Do : function(parameterString, edit) {
 		var wsParameters = parameterString.split(";");
 
+		this.numberOfUsedParameters = 0;
+		
 		if (!this.editMode) {
 			$("step2-go-img").style.display = "none";
 			$("step3-go-img").style.display = "";
 		}
-		
+
 		$("step2-methods").setAttribute("onclick",
-			"webServiceSpecial.confirmStep2Change()");
+				"webServiceSpecial.confirmStep2Change()");
 
 		this.preparedPathSteps = new Array();
 		if (wsParameters[0] == "##no params required##") {
@@ -17185,10 +17203,10 @@ DefineWebServiceSpecial.prototype = {
 			// prepare table for rest parameters
 			$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "";
 			$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
-			
+
 			$("step3-rest-intro").style.display = "none";
 			$("step3-parameters").style.display = "";
-			
+
 			var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step3-parameters").childNodes[0]
@@ -17221,7 +17239,7 @@ DefineWebServiceSpecial.prototype = {
 
 				paramTD0.appendChild(paramPath);
 				paramPath.id = "s3-path" + i;
-				//paramPath.className = "OuterLeftIndent";
+				// paramPath.className = "OuterLeftIndent";
 
 				for (k = 0; k < this.preparedPathSteps[i].length; k++) {
 					var treeViewK = -1;
@@ -17234,10 +17252,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 					var paramPathText = "";
-					//if (k > 0) {
-					//	paramPathText += "/";
-					//}
-					
+					// if (k > 0) {
+					// paramPathText += "/";
+					// }
+
 					paramPathText += this.preparedPathSteps[i][k]["value"];
 					paramPathTextNode = document.createTextNode(paramPathText);
 					if (this.preparedPathSteps[i][k]["duplicate"]) {
@@ -17275,11 +17293,11 @@ DefineWebServiceSpecial.prototype = {
 					// addButtonIMG.k = k;
 					// addButtonIMG.addA = true;
 					// Event.observe(addButtonIMG, "click",
-					//								this.addRemoveParameter
-					//										.bindAsEventListener(this));
+					// this.addRemoveParameter
+					// .bindAsEventListener(this));
 					//
-					//						paramPathStep.appendChild(addButton);
-					//					}
+					// paramPathStep.appendChild(addButton);
+					// }
 
 					if (i < wsParameters.length - 1) {
 						if (this.preparedPathSteps[i + 1][k] != null) {
@@ -17330,13 +17348,13 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 
-					//if (k == treeViewK && k != aTreeRootK) {
+					// if (k == treeViewK && k != aTreeRootK) {
 					if (k != aTreeRootK) {
 						expandPathStep = document.createElement("span");
 						expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
 								+ "/extensions/DataImport/skins/webservices/seperator.gif";
-						//expandIMG.style.visibility = "hidden";
+						// expandIMG.style.visibility = "hidden";
 						expandPathStep.appendChild(expandIMG);
 						paramPathStep.insertBefore(expandPathStep,
 								paramPathStep.firstChild);
@@ -17351,6 +17369,7 @@ DefineWebServiceSpecial.prototype = {
 				var useInput = document.createElement("input");
 				useInput.id = "s3-use" + i;
 				useInput.type = "checkbox";
+				useInput.setAttribute("onclick", "webServiceSpecial.useParameter(event)");
 				paramTD05.appendChild(useInput);
 
 				if (aTreeRoot || treeView) {
@@ -17389,7 +17408,8 @@ DefineWebServiceSpecial.prototype = {
 				paramTD2.appendChild(optionalRadio1);
 
 				var optionalRadio1Span = document.createElement("span");
-				var optionalRadio1TextY = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+				var optionalRadio1TextY = document.createTextNode(diLanguage
+						.getMessage('smw_wws_yes'));
 				optionalRadio1Span.appendChild(optionalRadio1TextY);
 				paramTD2.appendChild(optionalRadio1Span);
 
@@ -17409,7 +17429,8 @@ DefineWebServiceSpecial.prototype = {
 				paramTD2.appendChild(optionalRadio2);
 
 				var optionalRadio2Span = document.createElement("span");
-				var optionalRadio2TextN = document.createTextNode(diLanguage.getMessage('smw_wws_no'));
+				var optionalRadio2TextN = document.createTextNode(diLanguage
+						.getMessage('smw_wws_no'));
 				optionalRadio2Span.appendChild(optionalRadio2TextN);
 				paramTD2.appendChild(optionalRadio2Span);
 
@@ -17434,6 +17455,14 @@ DefineWebServiceSpecial.prototype = {
 				var paramTD4 = document.createElement("td");
 				paramTD4.id = "step3-paramTD4-" + i;
 				paramRow.appendChild(paramTD4);
+				
+				var addSubParameterButton = document.createElement("input");
+				addSubParameterButton.type = "button";
+				addSubParameterButton.value = 
+					diLanguage.getMessage('smw_wws_add_subparameters');
+				addSubParameterButton.setAttribute("onclick",
+						"webServiceSpecial.appendSubParameters(" + (i) + ")");
+				paramTD4.appendChild(addSubParameterButton);
 
 				if (aTreeRoot || treeView) {
 					paramTD4.style.visibility = "hidden";
@@ -17527,6 +17556,8 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep3Do : function(resultsString, edit) {
+		this.numberOfUsedResultParts = 0;
+		
 		var wsResults = resultsString.split(";");
 
 		if (!this.editMode) {
@@ -17596,10 +17627,9 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "none";
-			
-	
+
 			$("step4-rest-intro").style.display = "none";
-			
+
 			var tempHead = $("step4-results").childNodes[0].childNodes[0]
 					.cloneNode(true);
 			var tempTable = $("step4-results").childNodes[0].cloneNode(false);
@@ -17642,10 +17672,10 @@ DefineWebServiceSpecial.prototype = {
 					}
 
 					var resultPathText = "";
-					//if (k > 0) {
-					//	resultPathText += "/";
-					//}
-					
+					// if (k > 0) {
+					// resultPathText += "/";
+					// }
+
 					resultPathText += this.preparedRPathSteps[i][k]["value"];
 					var resultPathTextNode = document
 							.createTextNode(resultPathText);
@@ -17701,13 +17731,13 @@ DefineWebServiceSpecial.prototype = {
 					// addButtonIMG.k = k;
 					// addButtonIMG.addA = true;
 					// Event.observe(addButtonIMG, "click",
-					//								this.addRemoveResultPart
-					//										.bindAsEventListener(this));
+					// this.addRemoveResultPart
+					// .bindAsEventListener(this));
 					//
-					//						addButton.appendChild(addButtonIMG);
+					// addButton.appendChild(addButtonIMG);
 					//
-					//						resultPathStep.appendChild(addButton);
-					//					}
+					// resultPathStep.appendChild(addButton);
+					// }
 
 					if (i < this.preparedRPathSteps.length - 1) {
 						if (this.preparedRPathSteps[i + 1][k] != null) {
@@ -17761,13 +17791,13 @@ DefineWebServiceSpecial.prototype = {
 						}
 					}
 
-					//if (k == treeViewK && k != aTreeRootK) {
+					// if (k == treeViewK && k != aTreeRootK) {
 					if (k != aTreeRootK) {
 						var expandPathStep = document.createElement("span");
 						var expandIMG = document.createElement("img");
 						expandIMG.src = wgScriptPath
 								+ "/extensions/DataImport/skins/webservices/seperator.gif";
-						//expandIMG.style.visibility = "hidden";
+						// expandIMG.style.visibility = "hidden";
 						expandPathStep.appendChild(expandIMG);
 						resultPathStep.insertBefore(expandPathStep,
 								resultPathStep.firstChild);
@@ -17783,6 +17813,7 @@ DefineWebServiceSpecial.prototype = {
 				resultRow.appendChild(resultTD05);
 
 				var useInput = document.createElement("input");
+				useInput.setAttribute("onclick", "webServiceSpecial.useResultPart(event)");
 				useInput.id = "s4-use" + i;
 				useInput.type = "checkbox";
 				resultTD05.appendChild(useInput);
@@ -17812,7 +17843,8 @@ DefineWebServiceSpecial.prototype = {
 				var subPathButton = document.createElement("input");
 				subPathButton.id = "s4-add-subpath" + i;
 				subPathButton.type = "button";
-				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
+				subPathButton.value = diLanguage
+						.getMessage('smw_wws_add_subpath');
 				subPathButton.style.cursor = "pointer";
 				subPathButton.style.cursor = "pointer";
 				subPathButton.setAttribute("onclick",
@@ -17940,10 +17972,10 @@ DefineWebServiceSpecial.prototype = {
 			this.processStep6REST();
 			return;
 		}
-		
+
 		this.generateParameterAliases(false);
 		this.generateResultAliases(false);
-		
+
 		this.showPendingIndicator("step6-go");
 		if ($("step6-name").value.length > 0) {
 			$("errors").style.display = "none";
@@ -17952,7 +17984,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step6c-error").style.display = "none";
 
 			var result = "<WebService>\n";
-			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value+"\n";
+			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
 
 			var uri = $("step1-uri").value;
 			result += "<uri name=\"" + uri + "\" />\n";
@@ -17972,22 +18004,25 @@ DefineWebServiceSpecial.prototype = {
 			var method = $("step2-methods").value;
 			result += "<method name=\"" + method + "\" />\n";
 
+			//offset is necessary due to subparameters
+			var offset = 0;
+			
 			for ( var i = 0; i < this.preparedPathSteps.length; i++) {
 				if (this.preparedPathSteps[i] != "null") {
 					if ($("s3-use" + i).checked != true) {
 						continue;
 					}
 
-					var name = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value;
+					var name = this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[2].firstChild.value;
 					result += "<parameter name=\"" + name + "\" ";
 
 					wsSyntax += "| " + name
 							+ " = [Please enter a value here]\n";
 
-					var optional = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked;
+					var optional = this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[3].firstChild.checked;
 					result += " optional=\"" + optional + "\" ";
 
-					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value;
+					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value;
 					if (defaultValue != "") {
 						if (defaultValue != "") {
 							result += " defaultValue=\"" + defaultValue + "\" ";
@@ -18005,19 +18040,30 @@ DefineWebServiceSpecial.prototype = {
 							pathStep = pathStep.substr(0, pathStep
 									.lastIndexOf("(") - 1);
 						}
-						
+
 						// if (pathStep.lastIndexOf("[") > 0) {
-						//  pathStep = pathStep.substring(0, pathStep
+						// pathStep = pathStep.substring(0, pathStep
 						// .lastIndexOf("["));
 						// pathStep += "[";
-						// pathStep += $("step3-arrayspan-" + i + "-" + k).firstChild.nodeValue;
+						// pathStep += $("step3-arrayspan-" + i + "-" +
+						// k).firstChild.nodeValue;
 						// pathStep += "]";
-// }
+						// }
 						if (pathStep != "/" && pathStep != "//") {
 							path += pathStep;
 						}
 					}
-					result += " path=\"" + path + "\" />\n";
+					result += " path=\"" + path;
+					
+					//process subpaths
+					if(this.parameterContainer.firstChild.childNodes[i + 1 + offset].hasSubParameter){
+						result += "\">";
+						result += this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[1].childNodes[0].value;
+						result += "</parameter>\n";
+						offset += 1;
+					} else {
+						result += "\" />\n";
+					}
 				}
 			}
 
@@ -18034,21 +18080,21 @@ DefineWebServiceSpecial.prototype = {
 					manualResultPart = true;
 					continue;
 				}
-				
+
 				if (this.resultContainer.firstChild.childNodes[i].childNodes[1].childNodes[0].type != "checkbox") {
 					if (!this.resultContainer.firstChild.childNodes[i].removed) {
 						var name = this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value;
 						result += "<part name=\"" + name + "\" ";
 						wsSyntax += "| ?result." + name + "\n";
-						
-						if(rPath == ""){
-							if(manualResultPart){
-								rPath = this.resultContainer.firstChild.childNodes[i-1].firstChild.firstChild.value;
+
+						if (rPath == "") {
+							if (manualResultPart) {
+								rPath = this.resultContainer.firstChild.childNodes[i - 1].firstChild.firstChild.value;
 							} else {
-								rPath = this.getRPath(i-2-offset);
+								rPath = this.getRPath(i - 2 - offset);
 							}
 						}
-						
+
 						result += " path=\"" + rPath + "\"";
 
 						if (this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[1].value == "xpath") {
@@ -18056,7 +18102,7 @@ DefineWebServiceSpecial.prototype = {
 						} else {
 							result += " json=\"";
 						}
-						result += this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value; 
+						result += this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value;
 						result += "\"/>\n";
 					}
 					offset += 1;
@@ -18069,7 +18115,7 @@ DefineWebServiceSpecial.prototype = {
 					continue;
 				}
 
-				if(manualResultPart){
+				if (manualResultPart) {
 					rPath = this.resultContainer.firstChild.childNodes[i].firstChild.firstChild.value;
 				} else {
 					rPath = this.getRPath(i - 1 - offset);
@@ -18187,7 +18233,7 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep7 : function(request) {
 		this.editMode = false;
-		
+
 		this.step = "step1";
 		$("step7").style.display = "none";
 		$("breadcrumb-menue").style.display = "";
@@ -18206,24 +18252,23 @@ DefineWebServiceSpecial.prototype = {
 		$("step1-username").value = "";
 		$("step1-password").value = "";
 		$("step1-go-img").style.display = "";
-		
+
 		$("step1-protocol-soap").removeAttribute("onclick");
 		$("step1-protocol-rest").removeAttribute("onclick");
 		$("step1-uri").removeAttribute("onclick");
-		
+
 		$("step2").style.display = "none";
 		$("step3").style.display = "none";
 		$("step4").style.display = "none";
 		$("step5").style.display = "none";
 		$("step6").style.display = "none";
-		
+
 		this.hideHelp(1);
 		this.hideHelp(2);
 		this.hideHelp(3);
 		this.hideHelp(4);
 		this.hideHelp(5);
 		this.hideHelp(6);
-		
 
 	},
 
@@ -18280,6 +18325,11 @@ DefineWebServiceSpecial.prototype = {
 
 				this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = alias;
 				aliases.push(alias);
+				
+				//handle subparameters
+				if(this.parameterContainer.firstChild.childNodes[i + 1 - offset].hasSubParameter){
+					offset -= 1;
+				}
 			} else {
 				offset += 1;
 			}
@@ -18309,11 +18359,11 @@ DefineWebServiceSpecial.prototype = {
 				}
 
 				if (alias.length == 0) {
-					if(manualResultPart){
+					if (manualResultPart) {
 						alias = "alias";
 					} else {
 						alias = this.preparedRPathSteps[i - 2 - offset][this.preparedRPathSteps[i
-						                                                                        - 2 - offset].length - 1]["value"];
+								- 2 - offset].length - 1]["value"];
 					}
 				}
 				offset += 1;
@@ -18324,11 +18374,11 @@ DefineWebServiceSpecial.prototype = {
 				}
 				var alias = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
 				if (alias.length == 0) {
-					if(manualResultPart){
+					if (manualResultPart) {
 						alias = "alias";
 					} else {
-						alias = this.preparedRPathSteps[i -1 - offset][this.preparedRPathSteps[i
-						                                                                       - 1 - offset].length - 1]["value"];
+						alias = this.preparedRPathSteps[i - 1 - offset][this.preparedRPathSteps[i
+								- 1 - offset].length - 1]["value"];
 					}
 				}
 			}
@@ -18352,10 +18402,9 @@ DefineWebServiceSpecial.prototype = {
 				}
 			}
 
-			if(isSubPath){
+			if (isSubPath) {
 				this.resultContainer.firstChild.childNodes[i].childNodes[1].firstChild.value = alias;
-			}
-			else {
+			} else {
 				this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value = alias;
 				lastAlias = alias;
 			}
@@ -19104,7 +19153,6 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 				if (visible) {
-
 					this.parameterContainer.firstChild.childNodes[r].firstChild.firstChild.childNodes[m].style.visibility = "visible";
 					if (this.preparedPathSteps[i][m]["i"] != "null") {
 						if ($("step3-expand-" + i + "-" + m).expanded) {
@@ -19123,6 +19171,11 @@ DefineWebServiceSpecial.prototype = {
 					this.parameterContainer.firstChild.childNodes[r].childNodes[2].style.visibility = "visible";
 					this.parameterContainer.firstChild.childNodes[r].childNodes[3].style.visibility = "visible";
 					this.parameterContainer.firstChild.childNodes[r].childNodes[4].style.visibility = "visible";
+					this.parameterContainer.firstChild.childNodes[r].childNodes[5].style.visibility = "visible";
+					if(this.parameterContainer.firstChild.childNodes[r].hasSubParameter){
+						this.parameterContainer.firstChild.childNodes[r+1].style.display = "";
+						r += 1;
+					}
 				}
 			}
 
@@ -19171,6 +19224,11 @@ DefineWebServiceSpecial.prototype = {
 			this.parameterContainer.firstChild.childNodes[r].childNodes[2].style.visibility = "hidden";
 			this.parameterContainer.firstChild.childNodes[r].childNodes[3].style.visibility = "hidden";
 			this.parameterContainer.firstChild.childNodes[r].childNodes[4].style.visibility = "hidden";
+			this.parameterContainer.firstChild.childNodes[r].childNodes[5].style.visibility = "hidden";
+			if(this.parameterContainer.firstChild.childNodes[r].hasSubParameter){
+				this.parameterContainer.firstChild.childNodes[r+1].style.display = "none";
+				r += 1;
+			}
 
 			if (this.preparedPathSteps[i][k]["i"] != "null") {
 				iTemp = this.preparedPathSteps[i][k]["i"];
@@ -19409,7 +19467,7 @@ DefineWebServiceSpecial.prototype = {
 		if (editParameterContainer == null) {
 			return;
 		}
-		
+
 		if ($("editparameters").processed) {
 			return;
 		}
@@ -19417,7 +19475,7 @@ DefineWebServiceSpecial.prototype = {
 		var editResultContainer = $("editresults");
 
 		this.editMode = true;
-		//necessary so that this method will not be called twice
+		// necessary so that this method will not be called twice
 		$("editparameters").processed = true;
 
 		var editParameters = "";
@@ -19435,24 +19493,26 @@ DefineWebServiceSpecial.prototype = {
 			var ps2Parameters = "##handle exceptions##";
 			var parametersUpdate = new Array();
 
-			for (i = 0; i < editParameters.length; i += 4) {
+			for (i = 0; i < editParameters.length; i += 5) {
 				var o = new Object();
 				o["alias"] = editParameters[i];
 				ps2Parameters += ";" + editParameters[i + 1];
 				o["optional"] = editParameters[i + 2];
 				o["defaultValue"] = editParameters[i + 3];
+				o["subParameter"] = editParameters[i + 4];
 				parametersUpdate.push(o);
 			}
 			this.processStep2Do(ps2Parameters, true);
 			this.updateParameters(parametersUpdate);
 		} else {
 			var parametersUpdate = new Array();
-			for (i = 0; i < editParameters.length; i += 4) {
+			for (i = 0; i < editParameters.length; i += 5) {
 				var o = new Object();
-				o["alias"] = editParameters[i+1];
+				o["alias"] = editParameters[i + 1];
 				o["path"] = editParameters[i];
 				o["optional"] = editParameters[i + 2];
 				o["defaultValue"] = editParameters[i + 3];
+				o["subParameter"] = unescape(editParameters[i + 4]);
 				parametersUpdate.push(o);
 			}
 			this.processStep2REST();
@@ -19474,14 +19534,14 @@ DefineWebServiceSpecial.prototype = {
 			for (i = 0; i < editResults.length; i += 4) {
 				var o = new Object();
 				o["alias"] = editResults[i];
-				o["xpath"] = editResults[i+2];
-				o["json"] = editResults[i+3];
-				if(editResults[i + 1].indexOf("##unmatched") == 0){
+				o["xpath"] = editResults[i + 2];
+				o["json"] = editResults[i + 3];
+				if (editResults[i + 1].indexOf("##unmatched") == 0) {
 					o["path"] = editResults[i + 1];
 					resultsUpdateUnmatched.push(o);
 					continue;
 				}
-				if(o["json"] == "##" && o["xpath"] == "##"){
+				if (o["json"] == "##" && o["xpath"] == "##") {
 					ps3Results += ";" + editResults[i + 1];
 				}
 				resultsUpdate.push(o);
@@ -19501,7 +19561,7 @@ DefineWebServiceSpecial.prototype = {
 			this.processStep3REST();
 			this.updateResultsREST(resultsUpdate);
 		}
-		
+
 		if (protocol == "soap") {
 			$("step1-protocol-rest").setAttribute("onclick",
 					"webServiceSpecial.confirmStep1Change(\"rest\")");
@@ -19516,17 +19576,33 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	updateParameters : function(updates) {
+		
+		//offset is necessary bevause of subparameters
+		var offset = 0;
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = true;
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
+				this.numberOfUsedParameters += 1;
+				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[1].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
 			if (updates[i]["optional"] == "true") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[3].firstChild.checked = true;
+				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[3].firstChild.checked = true;
 			}
 			if (updates[i]["defaultValue"] != "##") {
-				this.parameterContainer.firstChild.childNodes[i + 1].childNodes[4].firstChild.value = updates[i]["defaultValue"];
+				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value = updates[i]["defaultValue"];
 			}
+			if (updates[i]["subParameter"] != "##") {
+				this.appendSubParameters(i);
+				this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[1].firstChild.value = updates[i]["subParameter"];
+				this.parameterContainer.firstChild.childNodes[i + 2 + offset].style.display = "none";
+				offset += 1;
+			}
+		}
+		
+		if(this.numberOfUsedParameters > 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
 		}
 	},
 
@@ -19534,15 +19610,15 @@ DefineWebServiceSpecial.prototype = {
 		var offset = 0;
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
-				if(updates[i]["json"] != "##" || updates[i]["xpath"] != "##"){
+				if (updates[i]["json"] != "##" || updates[i]["xpath"] != "##") {
 					offset += 1;
 					this.addSubPath(i - offset);
-					
-					if($("step4-resultRow-" + (i - offset)).firstChild.firstChild.lastChild.style.visibility == "hidden"){
+
+					if ($("step4-resultRow-" + (i - offset)).firstChild.firstChild.lastChild.style.visibility == "hidden") {
 						this.resultContainer.firstChild.childNodes[i + 1].style.display = "none";
 					}
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
-					if(updates[i]["json"] != "##"){
+					if (updates[i]["json"] != "##") {
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[1].value = "json";
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["json"];
 					} else {
@@ -19550,31 +19626,38 @@ DefineWebServiceSpecial.prototype = {
 						this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].childNodes[2].value = updates[i]["xpath"];
 					}
 				} else {
+					this.numberOfUsedResultParts += 1;
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = "true";
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 				}
 			}
 		}
+		
+		if(this.numberOfUsedResultParts > 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
+		}
 	},
 
 	displayHelp : function(id) {
-		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+		if ($("step1-protocol-rest").checked && 2 <= id && id <= 4) {
 			$("step" + id + "-rest-help").style.display = "";
 		} else {
 			$("step" + id + "-help").style.display = "";
 		}
-		
+
 		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.hideHelp("
 				+ id + ")";
 	},
 
 	hideHelp : function(id) {
-		if($("step1-protocol-rest").checked && 2 <= id && id <=4){
+		if ($("step1-protocol-rest").checked && 2 <= id && id <= 4) {
 			$("step" + id + "-rest-help").style.display = "none";
-		} 
+		}
 
 		$("step" + id + "-help").style.display = "none";
-		
+
 		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "webServiceSpecial.displayHelp("
 				+ id + ")";
 	},
@@ -19590,11 +19673,12 @@ DefineWebServiceSpecial.prototype = {
 	addSubPath : function(id) {
 		if ($("step4-resultRow-" + id).subPathOffset == null) {
 			$("step4-resultRow-" + id).subPathOffset = 1;
-			$("step4-resultRow-" + id).tempNextSibling = $("step4-resultRow-" + id).nextSibling; 
+			$("step4-resultRow-" + id).tempNextSibling = $("step4-resultRow-"
+					+ id).nextSibling;
 		} else {
 			$("step4-resultRow-" + id).subPathOffset += 1;
 		}
-		
+
 		var sid = $("step4-resultRow-" + id).subPathOffset;
 
 		var subPathRow = document.createElement("tr");
@@ -19602,10 +19686,10 @@ DefineWebServiceSpecial.prototype = {
 
 		var td0 = document.createElement("td");
 		td0.setAttribute("colspan", "2");
-		
+
 		var formatLabel = document.createTextNode("format: ");
 		td0.appendChild(formatLabel);
-		
+
 		var format = document.createElement("select");
 		format.id = "step4-format-" + id + "-" + sid;
 
@@ -19615,31 +19699,31 @@ DefineWebServiceSpecial.prototype = {
 		xpathOption.value = "xpath";
 		format.appendChild(xpathOption);
 
-		// var jsonOption = document.createElement("option");
-		// var jsonOptName = document.createTextNode("json");
-		// jsonOption.appendChild(jsonOptName);
-		// jsonOption.value = "json";
-		// format.appendChild(jsonOption);
-		
+		var jsonOption = document.createElement("option");
+		var jsonOptName = document.createTextNode("json");
+		jsonOption.appendChild(jsonOptName);
+		jsonOption.value = "json";
+		format.appendChild(jsonOption);
+
 		td0.appendChild(format);
-		
+
 		var subPathInput = document.createElement("input");
 		subPathInput.id = "step4-subpath-" + id + "-" + sid;
 		subPathInput.style.marginLeft = "15px";
 		subPathInput.style.width = "300px";
 		td0.appendChild(subPathInput);
-		
+
 		subPathRow.appendChild(td0);
 
 		var td2 = document.createElement("td");
-		
+
 		var subPathInput = document.createElement("input");
 		subPathInput.id = "step4-alias-" + id + "-" + sid;
 		subPathInput.size = "25";
 		td2.appendChild(subPathInput);
-		
+
 		subPathRow.appendChild(td2);
-		
+
 		var td3 = document.createElement("td");
 
 		var removeButton = document.createElement("input");
@@ -19653,12 +19737,28 @@ DefineWebServiceSpecial.prototype = {
 		subPathRow.appendChild(td3);
 
 		$("step4-results").childNodes[0].insertBefore(subPathRow,
-					$("step4-resultRow-" + id).tempNextSibling);
+				$("step4-resultRow-" + id).tempNextSibling);
+		
+		//handle alias generate icon
+		if(this.numberOfUsedResultParts == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
+		}
+		this.numberOfUsedResultParts += 1;
 	},
 
 	removeSubPath : function(id, sid) {
 		$("step4-resultRow-sb-" + id + "-" + sid).style.display = "none";
 		$("step4-resultRow-sb-" + id + "-" + sid).removed = true;
+		
+		//handle alias generate icon
+		if(this.numberOfUsedResultParts == 1){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		}
+		this.numberOfUsedResultParts -= 1;
 	},
 
 	processStep1REST : function() {
@@ -19673,10 +19773,9 @@ DefineWebServiceSpecial.prototype = {
 		$("step6b-error").style.display = "none";
 		$("step6c-error").style.display = "none";
 
-		
 		$("step1-protocol-soap").setAttribute("onclick",
 				"webServiceSpecial.confirmStep1Change(\"soap\")");
-		
+
 		$("step2").style.display = "";
 		$("menue-step1").className = "DoneMenueStep";
 		$("menue-step2").className = "ActualMenueStep";
@@ -19721,7 +19820,15 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	appendRESTParameter : function() {
-		var id = $("step3-parameters").childNodes[0].childNodes.length;
+		//for subparameter handling
+		var offset = 0;
+		for(var i = 1; i < $("step3-parameters").childNodes[0].childNodes.length; i++){
+			if($("step3-parameters").childNodes[0].childNodes[i].hasSubParameter){
+				offset += 1;
+			}
+		}
+		
+		var id = $("step3-parameters").childNodes[0].childNodes.length - offset;
 
 		var row = document.createElement("tr");
 
@@ -19752,7 +19859,8 @@ DefineWebServiceSpecial.prototype = {
 		}
 		input.value = diLanguage.getMessage('smw_wws_yes');
 		td.appendChild(input);
-		var text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+		var text = document
+				.createTextNode(diLanguage.getMessage('smw_wws_yes'));
 		td.appendChild(text);
 
 		if (navigator.appName.indexOf("Explorer") != -1) {
@@ -19767,7 +19875,7 @@ DefineWebServiceSpecial.prototype = {
 		input.value = diLanguage.getMessage('smw_wws_no');
 		input.checked = true;
 		td.appendChild(input);
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_yes'));
+		text = document.createTextNode(diLanguage.getMessage('smw_wws_no'));
 		td.appendChild(text);
 		row.appendChild(td);
 
@@ -19783,15 +19891,24 @@ DefineWebServiceSpecial.prototype = {
 		var select = document.createElement("select");
 
 		var option = document.createElement("option");
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_parameter'));
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_add_parameter'));
 		option.appendChild(text);
 		option.value = diLanguage.getMessage('smw_wws_add_parameter');
 		select.appendChild(option);
 
 		option = document.createElement("option");
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_parameter'));
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_remove_parameter'));
 		option.appendChild(text);
 		option.value = diLanguage.getMessage('smw_wws_remove_parameter');
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_add_subparameters'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_add_subparameters');
 		select.appendChild(option);
 
 		td.appendChild(select);
@@ -19810,6 +19927,18 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processRESTParameterButton : function(id) {
+		//for subparameter handlingvar offset = 0;
+		var offset = 0;
+		for(var i = 1; i < $("step3-parameters").childNodes[0].childNodes.length; i++){
+			if(i - offset == id){
+				id += offset;
+				break;
+			}
+			if($("step3-parameters").childNodes[0].childNodes[i].hasSubParameter){
+				offset += 1;
+			}
+		}
+		
 		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
 		var action = select.value;
 
@@ -19818,23 +19947,34 @@ DefineWebServiceSpecial.prototype = {
 		} else if (action == diLanguage.getMessage('smw_wws_remove_parameter')) {
 			$("step3-parameters").childNodes[0].childNodes[id].removed = true;
 			$("step3-parameters").childNodes[0].childNodes[id].style.display = "none";
+
+			if($("step3-parameters").childNodes[0].childNodes[id].hasSubParameter){
+				$("step3-parameters").childNodes[0].childNodes[id].hasSubParameter = false;
+				$("step3-parameters").childNodes[0].childNodes[id + 1].parentNode
+						.removeChild($("step3-parameters").childNodes[0].childNodes[id + 1]);
+			}
 			
 			var remove = true;
-			for(var i=1; i < $("step3-parameters").childNodes[0].childNodes.length; i++){
-				if(!$("step3-parameters").childNodes[0].childNodes[i].removed){
+			for ( var i = 1; i < $("step3-parameters").childNodes[0].childNodes.length; i++) {
+				if (!$("step3-parameters").childNodes[0].childNodes[i].removed) {
 					remove = false;
 				}
 			}
-			
-			if(remove){
+
+			if (remove) {
 				$("step3-rest-intro").style.display = "";
 				$("step3-parameters").style.display = "none";
 			}
+		} else if (action == diLanguage.getMessage('smw_wws_add_subparameters')) {
+			this.appendRESTSubParameters(id);
+		} else if (action == diLanguage
+				.getMessage('smw_wws_remove_subparameters')) {
+			this.removeRESTSubParameters(id);
 		}
 	},
 
 	processStep2REST : function() {
-		if(!this.editMode){
+		if (!this.editMode) {
 			$("step3").style.display = "";
 			$("menue-step2").className = "DoneMenueStep";
 			$("menue-step3").className = "ActualMenueStep";
@@ -19842,9 +19982,9 @@ DefineWebServiceSpecial.prototype = {
 			$("step2-go-img").style.display = "none";
 			$("step3-go-img").style.display = "";
 		}
-		
-		$("step3-duplicates").style.display ="none";
-		
+
+		$("step3-duplicates").style.display = "none";
+
 		// clear widgets of step 3
 		var tempHead = $("step3-parameters").childNodes[0].childNodes[0]
 				.cloneNode(true);
@@ -19855,18 +19995,20 @@ DefineWebServiceSpecial.prototype = {
 
 		// prepare table for rest parameters
 		$("step3-rest-intro").style.display = "";
-		if($("step3-rest-intro").childNodes.length <= 0){
+		if ($("step3-rest-intro").childNodes.length <= 0) {
 			var button = document.createElement("input");
 			button.setAttribute("type", "button");
-			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_parameters'));
-			button.setAttribute("onclick", "webServiceSpecial.displayRestParameterTable()");
+			button.setAttribute("value", diLanguage
+					.getMessage('smw_wws_add_parameters'));
+			button.setAttribute("onclick",
+					"webServiceSpecial.displayRestParameterTable()");
 			$("step3-rest-intro").appendChild(button);
 		}
-		
+
 		$("step3-parameters").style.display = "none";
 		$("step3-parameters").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
 		$("step3-parameters").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
-		
+
 		// todo: remove this
 		this.appendRESTParameter();
 		$("step3-parameters").childNodes[0].childNodes[1].removed = true;
@@ -19894,11 +20036,11 @@ DefineWebServiceSpecial.prototype = {
 		option.value = "xpath";
 		select.appendChild(option);
 
-		// option = document.createElement("option");
-		// text = document.createTextNode("json");
-		// option.appendChild(text);
-		// option.value = "json";
-		// select.appendChild(option);
+		option = document.createElement("option");
+		text = document.createTextNode("json");
+		option.appendChild(text);
+		option.value = "json";
+		select.appendChild(option);
 
 		td.appendChild(select);
 		row.appendChild(td);
@@ -19915,13 +20057,15 @@ DefineWebServiceSpecial.prototype = {
 		select = document.createElement("select");
 
 		option = document.createElement("option");
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_add_resultpart'));
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_add_resultpart'));
 		option.appendChild(text);
 		option.value = diLanguage.getMessage('smw_wws_add_resultpart');
 		select.appendChild(option);
 
 		option = document.createElement("option");
-		text = document.createTextNode(diLanguage.getMessage('smw_wws_remove_resultpart'));
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_remove_resultpart'));
 		option.appendChild(text);
 		option.value = diLanguage.getMessage('smw_wws_remove_resultpart');
 		select.appendChild(option);
@@ -19942,7 +20086,7 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	processStep3REST : function() {
-		if(!this.editMode){
+		if (!this.editMode) {
 			$("step4").style.display = "";
 			$("menue-step3").className = "DoneMenueStep";
 			$("menue-step4").className = "ActualMenueStep";
@@ -19951,38 +20095,42 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-go-img").style.display = "";
 		}
 
-		$("step4-duplicates").style.display ="none";
-		
+		$("step4-duplicates").style.display = "none";
+
 		$("step4-rest-intro").style.display = "";
 		if ($("step4-rest-intro").childNodes.length <= 0) {
 			var span = document.createElement("span");
-			var text = document.createTextNode(diLanguage.getMessage('smw_wws_use_complete'));
+			var text = document.createTextNode(diLanguage
+					.getMessage('smw_wws_use_complete'));
 			span.appendChild(text);
 			$("step4-rest-intro").appendChild(span);
-			
+
 			var input = document.createElement("input");
 			input.type = "checkbox";
+			input.style.marginLeft = "5px";
+			input.style.marginRight = "20px";
 			$("step4-rest-intro").appendChild(input);
-			
+
 			span = document.createElement("span");
-			text = document.createTextNode(diLanguage.getMessage('smw_wws_alias'));
+			text = document.createTextNode(diLanguage
+					.getMessage('smw_wws_alias'));
 			span.appendChild(text);
 			$("step4-rest-intro").appendChild(span);
-			
+
 			var input = document.createElement("input");
 			input.width = 25;
 			input.value = "complete";
 			$("step4-rest-intro").appendChild(input);
-			
+
 			var br = document.createElement("br");
 			$("step4-rest-intro").appendChild(br);
 			var br = document.createElement("br");
 			$("step4-rest-intro").appendChild(br);
-			
-			
+
 			var button = document.createElement("input");
 			button.setAttribute("type", "button");
-			button.setAttribute("value", diLanguage.getMessage('smw_wws_add_resultparts'));
+			button.setAttribute("value", diLanguage
+					.getMessage('smw_wws_add_resultparts'));
 			button.setAttribute("onclick",
 					"webServiceSpecial.displayRestResultsTable()");
 			$("step4-rest-intro").appendChild(button);
@@ -19990,7 +20138,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-rest-intro").childNodes[1].checked = false;
 			$("step4-rest-intro").childNodes[3].value = "complete";
 		}
-		
+
 		$("step4-rest-intro").childNodes[6].style.display = "";
 
 		$("step4-results").style.display = "none";
@@ -20002,12 +20150,12 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-results").childNodes[0].appendChild(tempHead);
 
 		// prepare table for rest result parts
-			$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "none";
 		$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
 		$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
 		$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
 		$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "";
-		
+
 		this.appendRESTResultPart();
 		$("step4-results").childNodes[0].childNodes[1].removed = true;
 	},
@@ -20073,76 +20221,108 @@ DefineWebServiceSpecial.prototype = {
 		this.showPendingIndicator("step6-go");
 
 		if ($("step6-name").value.length > 0) {
-			// todo: sind hier andere error messages als bei soap nï¿½tig?
-	$("errors").style.display = "none";
-	$("step6-error").style.display = "none";
-	$("step6b-error").style.display = "none";
-	$("step6c-error").style.display = "none";
+			$("errors").style.display = "none";
+			$("step6-error").style.display = "none";
+			$("step6b-error").style.display = "none";
+			$("step6c-error").style.display = "none";
 
-	var result = "<WebService>\n";
+			var result = "<WebService>\n";
 
-	var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
-	result += "<uri name=\"" + $("step1-uri").value + "\" />\n";
+			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
+			result += "<uri name=\"" + $("step1-uri").value + "\" />\n";
 
-	result += "<protocol>REST</protocol>\n";
+			result += "<protocol>REST</protocol>\n";
 
-	if ($("step1-auth-yes").checked) {
-		result += "<authentication type=\"http\" login=\""
-				+ $("step1-username").value + "\" password=\""
-				+ $("step1-password").value + "\"/>\n";
-	}
+			if ($("step1-auth-yes").checked) {
+				result += "<authentication type=\"http\" login=\""
+						+ $("step1-username").value + "\" password=\""
+						+ $("step1-password").value + "\"/>\n";
+			}
 
-	result += "<method name=\"" + $("step2-methods").value + "\" />\n";
+			result += "<method name=\"" + $("step2-methods").value + "\" />\n";
 
-	var parameterTable = $("step3-parameters").childNodes[0];
-	for ( var i = 1; i < parameterTable.childNodes.length; i++) {
-		if (parameterTable.childNodes[i].removed == true) {
-			continue;
-		}
+			var parameterTable = $("step3-parameters").childNodes[0];
+			for ( var i = 1; i < parameterTable.childNodes.length; i++) {
+				if (parameterTable.childNodes[i].removed == true) {
+					continue;
+				}
 
-		if(parameterTable.childNodes[i].childNodes[0].childNodes[0].value == ""){
-			continue;
-		}
-		
-		var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
-		if (alias == "") {
-			alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
-		}
-		result += "<parameter name=\"" + alias + "\" ";
+				if (parameterTable.childNodes[i].childNodes[0].childNodes[0].value == "") {
+					continue;
+				}
+				
+				var hasSubParameter = false;
+				if(parameterTable.childNodes[i].hasSubParameter){
+					hasSubParameter = true;
+				}
 
-		wsSyntax += "| " + alias + " = [Please enter a value here]\n";
+				var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
+				if (alias == "") {
+					alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+				}
+				result += "<parameter name=\"" + alias + "\" ";
 
-		var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
-		result += " optional=\"" + optional + "\" ";
+				wsSyntax += "| " + alias + " = [Please enter a value here]\n";
 
-		var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
-		if (defaultValue != "") {
-			result += " defaultValue=\"" + defaultValue + "\" ";
-		}
-		result += " path=\""
-				+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value
-				+ "\"/>\n";
-	}
+				var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
+				result += " optional=\"" + optional + "\" ";
 
-	result += "<result name=\"result\" >\n";
-	
-	if($("step4-rest-intro").childNodes[1].checked){
-		var name = $("step4-rest-intro").childNodes[3].value;
-		result += "<part name=\"" + name + "\" path=\"\"/>\n";
-		wsSyntax += "| ?result." + name + "\n";
-	}
-	
-	var resultTable = $("step4-results").childNodes[0];
-	for (i = 1; i < resultTable.childNodes.length; i++) {
-		if (resultTable.childNodes[i].removed) {
-			continue;
-		}
+				var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
+				if (defaultValue != "") {
+					result += " defaultValue=\"" + defaultValue + "\" ";
+				}
+				result += " path=\""
+						+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+						
+				// process subparameters
+				if(hasSubParameter){
+					result += "\">";
+					result += parameterTable.childNodes[i+1].childNodes[1].childNodes[0].value;
+					result += "</parameter>\n";
+					i += 1;
+				} else {
+					result += "\"/>\n";
+				}
+			}
 
-		var name = resultTable.childNodes[i].childNodes[0].firstChild.value;
-		if(name == ""){
-			name = "alias-" + i;
-		}
-		result += "<part name=\"" + name + "\" ";
+			result += "<result name=\"result\" >\n";
+
+			//for alias generation
+			var rememberedAliases = new Array();
+			
+			if ($("step4-rest-intro").childNodes[1].checked) {
+				var name = $("step4-rest-intro").childNodes[3].value;
+				result += "<part name=\"" + name + "\" path=\"\"/>\n";
+				wsSyntax += "| ?result." + name + "\n";
+				rememberedAliases.push(name);				
+			}
+
+			var resultTable = $("step4-results").childNodes[0];
+			
+			for (i = 1; i < resultTable.childNodes.length; i++) {
+				if (resultTable.childNodes[i].removed) {
+					continue;
+				}
+
+				var name = resultTable.childNodes[i].childNodes[0].firstChild.value;
+				if (name == "") {
+					name = "alias-" + i;
+				}
+				
+				done = false;
+				while(!done){
+					done = true;
+					for(var k=0; k < rememberedAliases.length; k++){
+						if(name == rememberedAliases[k]){
+							name = name + "-" + 1;
+							done = false;
+							break;
+						}
+					}
+				}
+				rememberedAliases.push(name);
+				
+				result += "<part name=\"" + name + "\" ";
 
 				wsSyntax += "| ?result." + name + "\n";
 
@@ -20222,37 +20402,47 @@ DefineWebServiceSpecial.prototype = {
 	},
 
 	updateParametersREST : function(updates) {
-		if(updates.length > 0){
+		if (updates.length > 0) {
 			this.displayRestParameterTable(false);
-			$("step3-parameters").firstChild.removeChild($("step3-parameters").firstChild.childNodes[1]);
+			$("step3-parameters").firstChild
+					.removeChild($("step3-parameters").firstChild.childNodes[1]);
 		}
 		
+		//for subparameter handling
+		var offset = 0;
+
 		for (i = 0; i < updates.length; i++) {
 			this.appendRESTParameter();
-			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["path"];
-			$("step3-parameters").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["alias"];
+			$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[0].firstChild.value = updates[i]["path"];
+			$("step3-parameters").firstChild.childNodes[i + 1+ offset].childNodes[1].firstChild.value = updates[i]["alias"];
 			if (updates[i]["optional"] == "true") {
-				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[2].firstChild.checked = true;
+				$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[2].firstChild.checked = true;
 			}
 			if (updates[i]["defaultValue"] != "##") {
-				$("step3-parameters").firstChild.childNodes[i + 1].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+				$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[3].firstChild.value = updates[i]["defaultValue"];
+			}
+			if(updates[i]["subParameter"] != "##") {
+				this.appendRESTSubParameters(i + 1 + offset);
+				offset += 1;
+				$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[1].firstChild.value = updates[i]["subParameter"];
 			}
 		}
 	},
-	
+
 	updateResultsREST : function(updates) {
-		if(updates.length > 0){
+		if (updates.length > 0) {
 			this.displayRestResultsTable(false);
-			$("step4-results").firstChild.removeChild($("step4-results").firstChild.childNodes[1]);
+			$("step4-results").firstChild
+					.removeChild($("step4-results").firstChild.childNodes[1]);
 		}
 		var offset = 0;
 		var pathAdded = false;
 		for (i = 0; i < updates.length; i++) {
-			if(updates[i]["format"] != "##"){
+			if (updates[i]["format"] != "##") {
 				this.appendRESTResultPart();
 				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[0].firstChild.value = updates[i]["alias"];
 				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = updates[i]["format"];
-				if(updates[i]["path"] != "##"){
+				if (updates[i]["path"] != "##") {
 					$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = updates[i]["path"];
 				}
 				pathAdded = true;
@@ -20262,35 +20452,35 @@ DefineWebServiceSpecial.prototype = {
 				$("step4-rest-intro").childNodes[3].value = updates[i]["alias"];
 			}
 		}
-		
-		//only complete results were added 
+
+		// only complete results were added
 		// and the table has to be hidden again
-		if(!pathAdded){
+		if (!pathAdded) {
 			$("step4-rest-intro").childNodes[6].style.display = "";
 			$("step4-results").style.display = "none";
 		}
 	},
-	
-	confirmStep1Change : function(protocol){
+
+	confirmStep1Change : function(protocol) {
 		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 		if (check == false) {
-			if(protocol == "soap"){
+			if (protocol == "soap") {
 				$("step1-protocol-rest").checked = true;
 			} else {
 				$("step1-protocol-soap").checked = true;
 			}
-			
+
 			$("step1-uri").blur();
 			return;
-			
+
 		}
-		
+
 		this.processStep7();
-		if(protocol == "soap"){
+		if (protocol == "soap") {
 			$("step1-protocol-soap").checked = true;
 		}
 	},
-	
+
 	confirmStep2Change : function() {
 		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 		if (check == false) {
@@ -20305,56 +20495,93 @@ DefineWebServiceSpecial.prototype = {
 		$("step1-go-img").style.display = "";
 		this.processStep1();
 	},
-	
-	displayRestParameterTable : function(){
+
+	displayRestParameterTable : function() {
 		$("step3-rest-intro").style.display = "none";
 		$("step3-parameters").style.display = "";
-		if($("step3-parameters").childNodes[0].childNodes[1] == null){
+		if ($("step3-parameters").childNodes[0].childNodes[1] == null) {
 			this.appendRESTParameter();
 		}
 		$("step3-parameters").childNodes[0].childNodes[1].style.display = "";
 		$("step3-parameters").childNodes[0].childNodes[1].removed = false;
 	},
-	
-	displayRestResultsTable : function(){
+
+	displayRestResultsTable : function() {
 		$("step4-rest-intro").childNodes[6].style.display = "none";
-		if($("step4-results").childNodes[0].childNodes[1] == null){
+		if ($("step4-results").childNodes[0].childNodes[1] == null) {
 			this.appendRESTResultPart();
 		}
 		$("step4-results").style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].removed = false;
 	},
-	
-	useParameters : function(){
+
+	useParameters : function() {
 		var checked = false;
-		if($("step3-use").checked){
+		if ($("step3-use").checked) {
 			checked = true;
 		}
-		
+
 		for ( var i = 0; i < this.preparedPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
+				if($("s3-use" + i).checked != checked){
+					if(checked){
+						this.numberOfUsedParameters += 1;
+					} else {
+						this.numberOfUsedParameters -= 1;
+					}
+				}
+				
 				$("s3-use" + i).checked = checked;
 			}
 		}
+		
+		//handle alias icon
+		if(this.numberOfUsedParameters == 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-3-alias-generate-button").style.cursor = "default";
+		} else {
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
+		}
 	},
-	
-	useResults : function(){
+
+	useResults : function() {
 		var checked = false;
-		if($("step4-use").checked){
+		if ($("step4-use").checked) {
 			checked = true;
 		}
-		
+
 		var offset = 0;
 		for ( var i = 0; i < this.preparedRPathSteps.length; i++) {
 			if (this.preparedPathSteps[i] != "null") {
+				if($("s4-use" + (i + offset)).checked != checked){
+					if(checked){
+						this.numberOfUsedResultParts += 1;
+					} else {
+						this.numberOfUsedResultParts -= 1;
+					}
+				}
+				
 				$("s4-use" + (i + offset)).checked = checked;
 			}
-			//offset += this.resultContainer.firstChild.childNodes[offset + i + 1].subPathOffset;
+		}
+		
+		//handle alias icon
+		if(this.numberOfUsedResultParts == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		} else {
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
 		}
 	},
-	
-	getRPath : function(i){
+
+	getRPath : function(i) {
 		var rPath = "";
 		for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
 			var rPathStep = "//";
@@ -20365,8 +20592,7 @@ DefineWebServiceSpecial.prototype = {
 			rPathStep += this.preparedRPathSteps[i][k]["value"];
 
 			if (rPathStep.lastIndexOf("(") > 0) {
-				rPathStep = rPathStep.substr(0, rPathStep
-						.lastIndexOf("(") - 1);
+				rPathStep = rPathStep.substr(0, rPathStep.lastIndexOf("(") - 1);
 			}
 			// if (rPathStep.lastIndexOf("[") > 0) {
 			// rPathStep = rPathStep.substring(0, rPathStep
@@ -20379,10 +20605,10 @@ DefineWebServiceSpecial.prototype = {
 				rPath += rPathStep;
 			}
 		}
-		
+
 		return rPath;
 	},
-	
+
 	updateResultsUnmatched : function(rParts) {
 		var sepRow = document.createElement("tr");
 		sepRow.id = "step4-separatorRow";
@@ -20390,22 +20616,23 @@ DefineWebServiceSpecial.prototype = {
 		placeHolder.style.height = "15px";
 		placeHolder.style.borderBottomStyle = "solid";
 		placeHolder.style.borderBottomWidth = "2px";
-		placeHolder.setAttribute("colspan" , "4"); 
+		placeHolder.setAttribute("colspan", "4");
 		sepRow.appendChild(placeHolder);
 		this.resultContainer.firstChild.appendChild(sepRow);
 		sepRow = document.createElement("tr");
 		placeHolder = document.createElement("td");
 		placeHolder.style.height = "15px";
-		placeHolder.setAttribute("colspan" , "4"); 
+		placeHolder.setAttribute("colspan", "4");
 		sepRow.appendChild(placeHolder);
 		this.resultContainer.firstChild.appendChild(sepRow);
-		
+
 		var rows = this.resultContainer.firstChild.childNodes.length;
 		var offset = 0;
 		var rememberedNormalRPs = new Array();
 		var rememberedPath = "";
 		for ( var i = 0; i < rParts.length; i++) {
-			rParts[i]["path"] = rParts[i]["path"].substring(11, rParts[i]["path"].length);
+			rParts[i]["path"] = rParts[i]["path"].substring(11,
+					rParts[i]["path"].length);
 			var subPath = false;
 			if (rParts[i]["json"] != "##" || rParts[i]["xpath"] != "##") {
 				subPath = true;
@@ -20414,19 +20641,19 @@ DefineWebServiceSpecial.prototype = {
 			var createRow = true;
 			var useResultPart = true;
 			if (subPath) {
-				if(rParts[i]["path"] == rememberedPath){
+				if (rParts[i]["path"] == rememberedPath) {
 					createRow = false;
 					offset += 1;
 				} else {
 					offset = 0;
 					useResultPart = false;
 				}
-					
+
 			} else {
 				offset = 0;
 			}
-			
-			if(createRow) {
+
+			if (createRow) {
 				rememberedNormalRPs.push(rows + i);
 				var row = document.createElement("tr");
 				row.id = "step4-resultRow-" + (rows + i);
@@ -20445,7 +20672,7 @@ DefineWebServiceSpecial.prototype = {
 				var useInput = document.createElement("input");
 				useInput.id = "s4-use" + i + rows;
 				useInput.type = "checkbox";
-				if(useResultPart){
+				if (useResultPart) {
 					useInput.checked = true;
 				}
 				resultTD2.appendChild(useInput);
@@ -20455,7 +20682,7 @@ DefineWebServiceSpecial.prototype = {
 				row.appendChild(resultTD3);
 				var aliasInput = document.createElement("input");
 				aliasInput.id = "s4-alias" + (i + rows);
-				if(useResultPart){
+				if (useResultPart) {
 					aliasInput.value = rParts[i]["alias"];
 				}
 				aliasInput.size = "25";
@@ -20468,23 +20695,24 @@ DefineWebServiceSpecial.prototype = {
 				var subPathButton = document.createElement("input");
 				subPathButton.id = "s4-add-subpath" + (i + rows);
 				subPathButton.type = "button";
-				subPathButton.value = diLanguage.getMessage('smw_wws_add_subpath');
-				subPathButton.setAttribute("onclick", "webServiceSpecial.addSubPath("
-						+ (rows + i) + ")");
+				subPathButton.value = diLanguage
+						.getMessage('smw_wws_add_subpath');
+				subPathButton.setAttribute("onclick",
+						"webServiceSpecial.addSubPath(" + (rows + i) + ")");
 				subPathButton.style.cursor = "pointer";
 				resultTD4.appendChild(subPathButton);
 
 				this.resultContainer.firstChild.appendChild(row);
 			}
-			
-			if(subPath){
+
+			if (subPath) {
 				this.addSubPath(rows + i - offset);
-				if(createRow){
+				if (createRow) {
 					rows += 1;
 					offset += 1;
 				}
 				$("step4-results").firstChild.childNodes[rows + i].childNodes[1].firstChild.value = rParts[i]["alias"];
-				if(rParts[i]["json"] != "##"){
+				if (rParts[i]["json"] != "##") {
 					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[1].value = "json";
 					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[2].value = rParts[i]["json"];
 				} else {
@@ -20492,29 +20720,182 @@ DefineWebServiceSpecial.prototype = {
 					$("step4-results").firstChild.childNodes[rows + i].childNodes[0].childNodes[2].value = rParts[i]["xpath"];
 				}
 			}
-			
+
 			rememberedPath = rParts[i]["path"];
 		}
-		
-		//update next siblings
-		for(i=0; i < rememberedNormalRPs.length; i++){
+
+		// update next siblings
+		for (i = 0; i < rememberedNormalRPs.length; i++) {
 			var nextSibling = $("step4-resultRow-" + rememberedNormalRPs[i + 1]);
 			$("step4-resultRow-" + rememberedNormalRPs[i]).tempNextSibling = nextSibling;
 		}
+
+		// remove placegolder if no rows were added
+		if (rows == this.resultContainer.firstChild.childNodes.length) {
+			this.resultContainer.firstChild.childNodes[rows - 1].style.display = "none";
+			this.resultContainer.firstChild.childNodes[rows - 2].style.display = "none";
+		}
+	},
+
+	appendRESTSubParameters : function(id) {
+//		// add remove option
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage
+			.getMessage('smw_wws_remove_subparameters'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_remove_subparameters');
+
+		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
+		select.removeChild(select.childNodes[2]);
+		select.appendChild(option);
+
+		//add subparameter row
+		$("step3-parameters").childNodes[0].childNodes[id].hasSubParameter = true;
 		
-		//remove placegolder if no rows were added
-		if(rows == this.resultContainer.firstChild.childNodes.length){
-			this.resultContainer.firstChild.childNodes[rows-1].style.display = "none";
-			this.resultContainer.firstChild.childNodes[rows-2].style.display = "none";
+		var row = document.createElement("tr");
+		var td = document.createElement("td");
+		td.style.verticalAlign = "top";
+
+		var span = document.createElement("span");
+		var text = document.createTextNode(diLanguage.getMessage('smw_wws_subparameters'));
+		span.appendChild(text);
+		td.appendChild(span);
+		row.appendChild(td);
+
+		td = document.createElement("td");
+		td.setAttribute("colspan", "4");
+		var textArea = document.createElement("textarea");
+		textArea.setAttribute("rows", "2");
+		td.appendChild(textArea);
+		row.appendChild(td);
+
+		$("step3-parameters").childNodes[0].childNodes[id].parentNode
+			.insertBefore(
+					row,
+					$("step3-parameters").childNodes[0].childNodes[id].nextSibling);
+
+	},
+	
+	removeRESTSubParameters : function(id) {
+		// add remove option
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage
+			.getMessage('smw_wws_add_subparameters'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_add_subparameters');
+
+		var select = $("step3-parameters").childNodes[0].childNodes[id].childNodes[4].childNodes[0];
+		select.removeChild(select.childNodes[2]);
+		select.appendChild(option);
+
+		//add subparameter row
+		$("step3-parameters").childNodes[0].childNodes[id].hasSubParameter = false;
+		
+		$("step3-parameters").childNodes[0].childNodes[id].parentNode
+			.removeChild($("step3-parameters").childNodes[0].childNodes[id].nextSibling);
+	},
+	
+	appendSubParameters : function(id) {
+		// add remove option
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
+			.getMessage('smw_wws_remove_subparameters');
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].setAttribute("onclick",
+				"webServiceSpecial.removeSubParameters(" + id + ")");
+		
+		//add subparameter row
+		$("step3-paramRow-" + id).hasSubParameter = true;
+		
+		var row = document.createElement("tr");
+		var td = document.createElement("td");
+		td.style.verticalAlign = "top";
+
+		var span = document.createElement("span");
+		var text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_subparameters'));
+		span.appendChild(text);
+		td.appendChild(span);
+		row.appendChild(td);
+
+		td = document.createElement("td");
+		td.setAttribute("colspan", "5");
+		var textArea = document.createElement("textarea");
+		textArea.setAttribute("rows", "2");
+		td.appendChild(textArea);
+		row.appendChild(td);
+
+		if(id == this.preparedPathSteps.length - 1){
+			$("step3-paramRow-" + id).parentNode.appendChild(row);
+		} else {
+			$("step3-paramRow-" + id).parentNode
+				.insertBefore(
+						row,
+						$("step3-paramRow-" + id).nextSibling);
+		}
+
+	},
+	
+	removeSubParameters : function(id) {
+		// add remove option
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
+			.getMessage('smw_wws_add_subparameters');
+		$("step3-paramRow-" + id).childNodes[5].childNodes[0].setAttribute("onclick",
+			"webServiceSpecial.appendSubParameters(" + id + ")");
+	
+		//add subparameter row
+		$("step3-paramRow-" + id).hasSubParameter = false;
+
+		$("step3-paramRow-" + id).parentNode
+			.removeChild($("step3-paramRow-" + id).nextSibling);
+	},
+	
+	useResultPart : function(event){
+		var node = Event.element(event);
+		var oldNumber = this.numberOfUsedResultParts;
+		
+		if(node.checked){
+			this.numberOfUsedResultParts += 1;
+		} else {
+			this.numberOfUsedResultParts -= 1;
+		}
+		
+		if(this.numberOfUsedResultParts == 0 && oldNumber == 1){
+			$("step-4-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-4-alias-generate-button").style.cursor = "default";
+		} else if(this.numberOfUsedResultParts == 1 && oldNumber == 0){
+			$("step-4-alias-generate-button").src = wgScriptPath
+			+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-4-alias-generate-button").style.cursor = "pointer";
+		}
+	},
+	
+	useParameter : function(event){
+		var node = Event.element(event);
+		var oldNumber = this.numberOfUsedParameters;
+		
+		if(node.checked){
+			this.numberOfUsedParameters += 1;
+		} else {
+			this.numberOfUsedParameters -= 1;
+		}
+		
+		if(this.numberOfUsedParameters == 0 && oldNumber == 1){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_grey.png";
+			$("step-3-alias-generate-button").style.cursor = "default";
+		} else if(this.numberOfUsedParameters == 1 && oldNumber == 0){
+			$("step-3-alias-generate-button").src = wgScriptPath
+				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
+			$("step-3-alias-generate-button").style.cursor = "pointer";
 		}
 	}
 }
 
-var webServiceSpecial; 
-if(webServiceSpecial == undefined){
+var webServiceSpecial;
+if (webServiceSpecial == undefined) {
 	webServiceSpecial = new DefineWebServiceSpecial();
 }
-	
+
 Event.observe(window, 'load', webServiceSpecial.editWWSD
 		.bindAsEventListener(webServiceSpecial));
 
