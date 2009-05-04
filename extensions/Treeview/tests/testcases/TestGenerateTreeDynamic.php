@@ -87,7 +87,7 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
   		$res = $tg->generateTree($wgParser, $property, $display, 'dynamic=3');
   		$res = utf8_decode($res);
 		$expected = $this->retStart.$property.'&'.$display.$this->retEnd.'*[[Help:Contents|About “information”]]
-**[[Help:How to configure the tree|Configure Semantic Treeview]]
+**[[Help:How_to_configure_the_tree|Configure Semantic Treeview]]
 **[[Help:Glossary|Glossary]]
 **[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
 **[[Help:Wikimaster|The \'\'Master\'\' of the \'\'\'Universe\'\'\']]

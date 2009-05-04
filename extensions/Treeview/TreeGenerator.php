@@ -172,6 +172,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     private $condition;
     private $openTo;
 
+	// sorting options
+	private $orderByProperty;
+	private $orderSequence;
+
     // for the conditions and limitations that can be used for generating the
     // tree, the smw_ids will be fetched and stored here
     private $smw_relation_id;
@@ -215,6 +219,26 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->leafNodes = array();
 		
 		$this->db =& wfGetDB( DB_SLAVE );
+    }
+
+	/**
+	 * Set a property name, if nodes are supposed to be sorted by values of this
+	 * property.
+	 * 
+	 * @access public
+	 * @param  string $property name of property
+	 */
+	public function setOrderByProperty($property) {
+		$this->orderByProperty = $property;
+	}
+    
+    /**
+     * Set order descending
+     * 
+     * @access public
+     */
+    public function setOrderDescending() {
+    	$this->orderSequence = -1;
     }
     
     /**
@@ -317,7 +341,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// make an exception for the main page as this normaly doesn't belong to any category nor as any properties set
 		if ($start && !isset($this->elementProperties[$this->smw_start_id]) && count($this->rootNodes) == 0) { 
 			if ($start != wfMsg("mainpage")) return;
-			$this->elementProperties[$this->smw_start_id] = array(wfMsg("mainpage"), NULL, wfMsg("mainpage"));
+			$this->elementProperties[$this->smw_start_id] = new ElementProperty(wfMsg("mainpage"), NULL, wfMsg("mainpage"));
 		}
 
 		$this->generateTreeDeepFirstSearch();
@@ -362,15 +386,15 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			// fill the elementProperties variable for this element. Almost all neccessary data
 			// are availabe at this point
 			if (strpos($page, ":") === false)
-				$this->elementProperties[$smw_id] = array($page, $title->getNamespace());
+				$this->elementProperties[$smw_id] = new ElementProperty($page, $title->getNamespace());
 			else
-				$this->elementProperties[$smw_id] = array(substr($page, strpos($page, ':') +1 ), $title->getNamespace());
+				$this->elementProperties[$smw_id] = new ElementProperty(substr($page, strpos($page, ':') +1 ), $title->getNamespace());
 			
 			// if we want to display the value of some property instead of the page name then this
 			// post processing must be done.
 			$row->smw_id = $smw_id;
-			$row->title = $this->elementProperties[$smw_id][0];
-			$row->ns = $this->elementProperties[$smw_id][1];
+			$row->title = $this->elementProperties[$smw_id]->getTitle();
+			$row->ns = $this->elementProperties[$smw_id]->getNs();
 			$this->postProcessingForElement($row);
 		}
 		$this->smw_condition_ids = $smwIds;
@@ -415,7 +439,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $fids = array_flip(explode(",", $query_add));
 	            $res = $this->db->query(sprintf($query, $query_add));
 	            while ($row = $this->db->fetchObject($res)) {
-               		$this->elementProperties[$row->smw_id]= array($row->title, $row->ns);
+               		$this->elementProperties[$row->smw_id]= new ElementProperty($row->title, $row->ns);
                		$this->postProcessingForElement($row);
                		unset($fids[$row->smw_id]);
                 }
@@ -513,20 +537,37 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 *
 	 * @param Database row Object &$row
 	 */
-	function postProcessingForElement(&$row) {
-	    // add property value if choosen    
+	private function postProcessingForElement(&$row) {
+	    // add property value for display    
 	    if ($this->displayProperty) {
-	        $title = Title::newFromText($row->title, $row->ns);
-        	$pname = Title::newFromText($this->displayProperty, SMW_NS_PROPERTY);
-        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
- 			$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
- 		    if (count($smwValues) > 0) {
-	        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
-    		    if (strlen(trim($propValue)) > 0) $this->elementProperties[$row->smw_id][] = $propValue;
- 		    }
+	    	$this->elementProperties[$row->smw_id]->setDisplayProperty($this->fetchPropertyValue($row->title, $row->ns, $this->displayProperty));
+	    } 	
+	    // add property value for sorting	
+	    if ($this->orderByProperty) {
+	    	$this->elementProperties[$row->smw_id]->setSortProperty($this->fetchPropertyValue($row->title, $row->ns, $this->orderByProperty));
 	    } 		
 	}
-	
+
+	/**
+	 * fetch a property value based on a property name and a page name and namespace
+	 * 
+	 * @access private
+	 * @param  string $name page name
+	 * @param  int $ns namespace
+	 * @param  string $property name of property
+	 * @return mixed property value or null
+	 */
+	private function fetchPropertyValue($name, $ns, $property) {
+        $title = Title::newFromText($name, $ns);
+       	$pname = Title::newFromText($property, SMW_NS_PROPERTY);
+       	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
+		$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
+	    if (count($smwValues) > 0) {
+        	$propValue = str_replace("_", " ", $smwValues[0]->getXSDValue());
+   		    if (strlen(trim($propValue)) > 0) return $propValue;
+	    }
+	}
+		
 	/**
 	 * Fetch a smw_id by it's title. This function is generic for
 	 * fetching smw_ids of categories, properties and pages.
@@ -944,38 +985,16 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * @return string	  $tree that can be used by the parser function #tree 
      */
 	private function formatTreeToText() {
-		global $wgContLang;
-		
 		$tree = '';
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
-	            array($this->redirectPage->getDBkey()."|...", NULL);
+	            new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
 	    $fillchar = $this->hchar{0};
 	    $prefix = substr($this->hchar, 1);
 	    $this->treeList->rewind();
 	    while ($item = $this->treeList->getCurrent()) {
 	    	$this->treeList->next();
-
-	        $link = $this->elementProperties[$item[0]][0];
-	        // prefix link with namespace text
-	        if ($this->elementProperties[$item[0]][1] != NS_MAIN)
-	        	$link = $wgContLang->getNsText($this->elementProperties[$item[0]][1]).":".$link;
-
-		    $tree.= $prefix.str_repeat($fillchar, $item[1])."[[";
-		    // parameter display was set to use some property value for node name and link it with the page
-		    if (isset($this->elementProperties[$item[0]][2]))
-		        $tree.= $link."|".$this->elementProperties[$item[0]][2];
-		    // just the page name is used for the node
-		    else {
-		    	 // if the page is in the main namespace it's sufficient to display [[page_name]] and the
-		    	 // wiki rendering will do the rest. Otherwise display [[Prefix:page_name|page_name]]
-		         if ($this->elementProperties[$item[0]][1] != NS_MAIN)
-		             $tree.= str_replace(' ', '_', $link)."|".$this->elementProperties[$item[0]][0];
-		         else
-		             $tree.= $this->elementProperties[$item[0]][0];
-		    }
-		    $tree.= "]]\n";
-
+		    $tree.= $prefix.str_repeat($fillchar, $item[1]).$this->elementProperties[$item[0]]->getWikitext()."\n";
 	    }
 	    $this->treeList = NULL;
 	    return $tree;
@@ -990,26 +1009,17 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * @return array	  $tree of elements as an asoc array (name, link) 
      */
 	private function formatTreeToJson() {
-		global $wgContLang;
-		
 	    $tree = array();
 	    if ($this->redirectPage)
 	        $this->elementProperties[-1] = 
-	            array("...", NULL, $this->redirectPage->getDBkey());
+	        	new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
 	    $this->treeList->rewind();
 	    while ($item = $this->treeList->getCurrent()) {
 	        $this->treeList->next();
 	        
-	        $link = $this->elementProperties[$item[0]][0];
-	        // prefix link with namespace text
-	        if ($this->elementProperties[$item[0]][1] != NS_MAIN)
-	        	$link = $wgContLang->getNsText($this->elementProperties[$item[0]][1]).":".$link;
-
 		    $tree[]= array(
-		      'name' => isset($this->elementProperties[$item[0]][2]) 
-		                ? $this->elementProperties[$item[0]][2]
-		                : $this->elementProperties[$item[0]][0],
-		      'link' => str_replace(' ', '_', $link),
+		      'name' => $this->elementProperties[$item[0]]->getDisplayName(),
+		      'link' => $this->elementProperties[$item[0]]->getLink(),
 		      'depth' => $item[1],
 		    );
 		    unset($item);
@@ -1033,20 +1043,19 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * 				 otherwise true is returned and $sIds are sorted afterwards
 	 */
 	private function sortElements($values = NULL) {
-		$orderBy = 1; // at the moment sorting only by node name 
-		
+ 
 		// build the array for sorting, keys must be strings so that the do not get new assigned 
 		$sortArr = array();
 		$sortIds = is_array($values) ? $values : array_keys($this->elementProperties);
 		foreach ($sortIds as $id) {
 			// fetch sort values for new item
-			if ($orderBy == 1)
-				$sortArr[$id] = isset($this->elementProperties[$id][2])
-				               ? strtoupper($this->elementProperties[$id][2])
-			    	           : strtoupper($this->elementProperties[$id][0]);
+			$sortArr[$id] = strtoupper($this->elementProperties[$id]->getSortName());
 		}
 		// sort the array now
-		asort($sortArr, SORT_STRING);
+		if ($this->orderSequence == -1) // descending
+			arsort($sortArr, SORT_STRING);
+		else  // ascending (default)
+			asort($sortArr, SORT_STRING);
 		
 		// if we had an array to sort in parameter, return the keys of the sorted array
 		if (is_array($values))
@@ -1240,6 +1249,63 @@ class ChainedList {
         return $this->insertBehind($item); 
     } 
 } 
+
+class elementProperty {
+	private $title;
+	private $ns;
+	private $displayProperty;
+	private $sortProperty;
+	
+	public function __construct($title = null, $ns = null, $displayProperty = null, $sortProperty = null) {
+		$this->title = $title;
+		$this->ns = $ns;
+		$this->displayProperty = $displayProperty;
+		$this->sortProperty = $sortProperty;
+	}
+	
+	public function getTitle() { return $this->title; }
+	public function getNs() { return $this->ns; }
+	public function getDisplayProperty() { return $this->displayProperty; }
+	public function getSortProperty() { return $this->sortProperty; }
+
+	public function setTitle($v) { $this->title = $v; }
+	public function setNs($v) { $this->ns = $v; }
+	public function setDisplayProperty($v) { $this->displayProperty = $v; }
+	public function setSortProperty($v) { $this->sortProperty = $v; }
+
+	public function getLink() {
+		global $wgContLang;
+		
+		$link = str_replace(' ', '_', $this->title);
+		// prefix link with namespace text
+		if ($this->ns != NS_MAIN)
+			$link = $wgContLang->getNsText($this->ns).":".$link;
+		return $link;
+	}
+	
+	public function getDisplayName() {
+		// parameter display was set to use some property value for node name and link it with the page
+		return ($this->displayProperty != null) ? $this->displayProperty : $this->title;
+	}
+
+	public function getSortName() {
+		// parameter sort was set to use some property value for sorting
+		return ($this->sortProperty != null) ? $this->sortProperty : $this->getDisplayName();
+	}
+
+	public function getWikitext() {
+		$link = $this->getLink();
+		// parameter display was set to use some property value for node name and link it with the page
+		if ($this->displayProperty != null)
+			return "[[".$link."|".$this->displayProperty."]]";
+	    // just the page name is used for the node
+		// if the page is in the main namespace it's sufficient to display [[page name]] and the
+		// wiki rendering will do the rest. Otherwise display [[Prefix:page_name|page name]]
+		if ($this->ns != NS_MAIN)
+			return "[[".$link."|".$this->title."]]";
+        return "[[".$this->title."]]";
+	}	
+}
 
 function wfTreeGeneratorLanguageGetMagic(&$magicWords,$langCode = 0) {
 	$magicWords[GENERATE_TREE_PF] = array( 0, GENERATE_TREE_PF );
