@@ -15,7 +15,12 @@
 |--------------------------------------------------*/
 // $Id$
 
-var httpRequest;
+
+var http = createRequestObject();
+var inCall = false;
+var callToArray = new Array();
+var returnToArray = new Array();
+
 var cachedData = [];
 var refreshOpenNodes = [];
 var refreshRootNodes = [];
@@ -627,8 +632,8 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	name = name.replace(/<[^>]*>([^<]*)<.*/, "$1");
 	// add name to parameter as well as the token
 	params += 's%3D' + URLEncode(name);
-	params += this.getTokenAndWriteCache(id); 
-    this.getHttpRequest(params, callBackMethod);
+	params += this.getTokenAndWriteCache(id);
+	sendCall(this.smwAjaxUrl + params, callBackMethod); 
 };
 
 // load first level (needed for refresh)
@@ -636,7 +641,7 @@ dTree.prototype.loadFirstLevel = function(id) {
 	var params = this.getSmwData(id);
 	params += 'r%3D1%26';
 	params += this.getTokenAndWriteCache(id);
-	this.getHttpRequest(params, 'r');
+	sendCall(this.smwAjaxUrl + params, 'r');
 }
 
 // load the tree via Ajax when the Wiki page is loaded and parsed already
@@ -663,7 +668,7 @@ dTree.prototype.initOnload = function(id, arg) {
 	if (! dynamic) params += '%26z%3D1';
 	var token = this.getTokenAndWriteCache(id);
 	params += '%26t%3D' + token;
-	this.getHttpRequest(params, 'r');
+	sendCall(this.smwAjaxUrl + params, 'r');
 };
 
 // create token and add current dTree to cache
@@ -675,39 +680,6 @@ dTree.prototype.getTokenAndWriteCache = function(id) {
 		cachedData[cachedData.length] = new Array(token, this);
 	return '%26t%3D' + token;
 }
-
-// start http request for Ajax call
-dTree.prototype.getHttpRequest = function(params, callBackMethod) {
-    // if an old http request is still runing, don't start a new one
-    // also a tree refresh needs several requests, these have priority
-    if ((refreshDtree && (callBackMethod == "o")) || httpRequest)
-    	return;  
-
-    // Mozilla, Safari and other browsers
-    if (window.XMLHttpRequest) { 
-        httpRequest = new XMLHttpRequest(); 
-    } 
-    // IE 
-    else if (window.ActiveXObject) {
-    	try {
-            httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
-            try {
-                httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
-        }
-    }
-    
-    if (!httpRequest) return;
-    
-    if (callBackMethod == "o") httpRequest.onreadystatechange = handleResponseOpen;
-    else if(callBackMethod == "r") httpRequest.onreadystatechange = handleResponseRefresh;
-    else return;
-    
-    document.body.style.cursor='wait';
-    httpRequest.open("GET", this.smwAjaxUrl + params); 
-	httpRequest.send(null);
-};
 
 // Open or close all nodes
 dTree.prototype.oAll = function(status) {
@@ -940,9 +912,9 @@ parseHttpResponse = function() {
 	var resObj;
 	var dTree;
 
-	if (httpRequest.readyState == 4 && httpRequest.status == 200) { 
-    	result = httpRequest.responseText;
-    	httpRequest = null;
+	if (http.readyState == 4 && http.status == 200) { 
+    	result = http.responseText;
+    	inCall = false;
     }
     else return;
 
@@ -983,7 +955,7 @@ handleResponseOpen = function() {
 	var noc      = responseArr[3];
 	var url      = responseArr[4];
 	var urlParams= responseArr[5];
-	
+
     if (noc > 0) dTree.aNodes[parentId]._hc = true;
     dTree.aNodes[parentId]._complete = true;
     
@@ -1107,6 +1079,64 @@ handleResponseRefresh = function() {
 	// unlock
 	refreshDtree = null;
 }
+
+// http request Object
+function createRequestObject() {
+	var reqObj;
+	// Mozilla, Safari and other browsers
+	if (window.XMLHttpRequest)
+		reqObj = new XMLHttpRequest(); 
+    // IE 
+	else if (window.ActiveXObject) {
+		try {
+			reqObj = ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				reqObj = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e) {}
+		}
+	}
+	return reqObj;
+}
+
+function sendCall(whereTo, returnTo){
+	// add the next call to the queue 
+	callToArray.push(whereTo);
+	returnToArray.push(returnTo);
+}
+
+function callQueue(){
+	// check the queue and send next call in line
+	if(!inCall && callToArray.length > 0) {
+		// do we have anything in the queue?
+		if(callToArray.length > 0) {
+			//yes, so take the first item from the whereTo and returnTo array
+			whereTo = callToArray.shift();
+			returnTo = returnToArray.shift();
+			// and send that call
+			doCall(whereTo, returnTo);
+		}
+	}
+}
+
+function doCall(whereTo, returnTo){
+	inCall = true;
+	document.body.style.cursor='wait';
+	http.open('get', whereTo);
+	if(returnTo == "r")
+		http.onreadystatechange = handleResponseRefresh;
+	else
+		http.onreadystatechange = handleResponseOpen;
+	http.send(null);
+}
+
+function hr_inCall(){
+	if(http.readyState == 4) {
+		inCall = false;
+	}
+}
+
+var queueWatcher = setInterval(callQueue, 100);
 
 function URLEncode( str ) {
     // version: 904.1412
