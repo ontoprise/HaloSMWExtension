@@ -106,7 +106,8 @@ Var MUI_TEMP
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
- 
+
+Page custom showLuceneParamters checkLuceneParameters
 Page custom showWikiCustomize checkWikiCustomize 
 
 !insertmacro MUI_PAGE_INSTFILES
@@ -157,7 +158,7 @@ Var LUCENE_AS_SERVICE
 Function ".onInit"
   InitPluginsDir
   File /oname=$PLUGINSDIR\wikicustomize.ini "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gui\wikicustomize.ini"
-
+  File /oname=$PLUGINSDIR\lucene.ini "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gui\lucene.ini"
   
 FunctionEnd
 
@@ -385,11 +386,11 @@ Section "Lucene search" lucene
         nsExec::ExecToLog 'dump.bat'
                
         ; adapt global.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=global.conf.template out=global.conf wiki-db=semwiki_en ip=true'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=global.conf.template out=global.conf wiki-db=semwiki_en ip=$IP'
         ; adapt lsearch.conf.template file
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=lsearch.conf.template out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
          ; adapt start.bat.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=start.bat.template out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=true'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=start.bat.template out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
         ; Build Lucene index
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
         
@@ -422,6 +423,8 @@ LangString DESC_wysiwyg ${LANG_ENGLISH} "The WYSIWYG extension allows editing wi
 
 LangString CUSTOMIZE_PAGE_TITLE ${LANG_ENGLISH} "Customize your wiki"
 LangString CUSTOMIZE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set wiki name or logo"
+LangString LUCENE_PAGE_TITLE ${LANG_ENGLISH} "Lucene settings"
+LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set your IP if possible"
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
@@ -433,7 +436,7 @@ LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block th
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
     !insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
-    !insertmacro MUI_DESCRIPTION_TEXT ${ohelp} $(DESC_ohelp)
+    #!insertmacro MUI_DESCRIPTION_TEXT ${ohelp} $(DESC_ohelp)
     !insertmacro MUI_DESCRIPTION_TEXT ${lucene} $(DESC_lucene)
     !insertmacro MUI_DESCRIPTION_TEXT ${semforms} $(DESC_semforms)
     !insertmacro MUI_DESCRIPTION_TEXT ${treeview} $(DESC_treeview)
@@ -522,6 +525,34 @@ FunctionEnd
 Function checkWikiCustomize
   CALL checkForSkype
 FunctionEnd
+
+Function showLuceneParamters
+    SectionGetFlags ${lucene} $0
+    IntOp $0 $0 & ${SF_SELECTED}
+    
+    ${If} $0 == 1 
+        !insertmacro MUI_HEADER_TEXT $(LUCENE_PAGE_TITLE) $(LUCENE_PAGE_SUBTITLE)
+          Push $R0
+          InstallOptions::dialog $PLUGINSDIR\lucene.ini
+          Pop $R0
+
+    ${Else}
+        Abort
+    ${EndIf}
+FunctionEnd
+
+Function checkLuceneParameters
+    ReadINIStr $IP "$PLUGINSDIR\lucene.ini" "Field 2" "state"
+    ${If} $IP == "localhost"
+    ${OrIf} $IP == "127.0.0.1"
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Not allowed. Please enter a real IP or leave it blank."
+        Abort    
+    ${EndIf}
+    ${If} $IP == ""
+        StrCpy $IP "true"
+    ${EndIf}
+FunctionEnd
+
 
 
 
@@ -784,7 +815,7 @@ Function installLuceneAsService
         StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
         
         ; create install script for windows service registration
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=installAsService.bat.template out=installAsService.bat noslash=true ip=true java_home="$JAVA_HOME"'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=installAsService.bat.template out=installAsService.bat noslash=true ip=$IP java_home="$JAVA_HOME"'
         
         ; stop lucene
         DetailPrint "Stopping lucene (if necessary)"
