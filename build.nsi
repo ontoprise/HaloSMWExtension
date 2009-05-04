@@ -798,10 +798,7 @@ Function installLuceneAsService
         DetailPrint "Register lucene as windows service"
         nsExec::ExecToLog '"$INSTDIR\lucene\installAsService.bat"'
         
-        DetailPrint "Start lucene as windows service"
-        nsExec::ExecToLog 'net start LuceneWiki'
-        
-        DetailPrint "Lucene service installed and started."
+        DetailPrint "Lucene service installed."
         StrCpy $LUCENE_AS_SERVICE "yes"
         Goto Done
         
