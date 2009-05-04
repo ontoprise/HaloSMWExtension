@@ -21,7 +21,7 @@
  * wiki.
  */
 $wgDBadminuser      = 'root';
-$wgDBadminpassword  = 'password';
+$wgDBadminpassword  = 'm8nix';
 
 /*
  * Whether to enable the profileinfo.php script.
