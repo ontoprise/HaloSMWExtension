@@ -266,7 +266,7 @@ class WebService {
 				$aParamPaths[] = "".$child["path"];
 			}
 			//$valid &= $ws->checkParameterArrayIndexes($aParamPaths, $msg);
-			$ws->checkParameterArrayIndexes($aParamPaths, $msg);
+			//$ws->checkParameterArrayIndexes($aParamPaths, $msg);
 		}
 
 		$valid &= self::getWWSDElement($parser, '/WebService/result', null, $ws->mParsedResult, false, 1, 100, $msg);

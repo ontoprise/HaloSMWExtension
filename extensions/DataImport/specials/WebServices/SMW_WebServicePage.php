@@ -163,9 +163,9 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		
 		global $wgArticlePath;
 		if(strpos($wgArticlePath, "?") > 0){
-			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."&wwsdId=".$this->getTitle()->getArticleID();		
+			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();		
 		} else {
-			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getInternalURL()."?wwsdId=".$this->getTitle()->getArticleID();
+			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
 		}
 			$r .= '<a href="'.$url.'"><br/><p><b>'.wfMsg('smw_wws_edit_in_gui').'</b></p></a>';
 		

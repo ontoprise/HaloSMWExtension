@@ -79,7 +79,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
 		}
 		foreach($webServices as $ws){
-			$wsUrl = Title::newFromID($ws->getArticleID())->getInternalURL();
+			$wsUrl = Title::newFromID($ws->getArticleID())->getFullURL();
 			$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
 			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
 
