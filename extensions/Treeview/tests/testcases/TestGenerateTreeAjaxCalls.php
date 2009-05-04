@@ -171,6 +171,37 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 		$this->checkTreelist($res->treelist, $expected);
 	}
 	
+	function testInitOnloadDynamicStart() {
+		$token = uniqid();
+		$params = array(
+			'p' => 'Subsection of',
+			'i' => 1,
+			's' => 'Märchen',
+			't' => $token,
+		);
+		$expected = array(
+			array('name' => "Grimm", 'link' => "Grimm", 'depth' => 1),
+			array('name' => "Jacob Grimm", 'link' => "Jacob_Grimm", 'depth' => 2),
+			array('name' => "Wilhelm Grimm", 'link' => "Wilhelm_Grimm", 'depth' => 2),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 1),
+			array('name' => "Blaues Licht", 'link' => "Blaues_Licht", 'depth' => 2),
+			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Geißlein", 'depth' => 2),
+			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenblätter", 'depth' => 2),
+			array('name' => "Frau Holle", 'link' => "Frau_Holle", 'depth' => 2),
+			array('name' => "Hänsel und Gretel", 'link' => "Hänsel_und_Gretel", 'depth' => 2),
+			array('name' => "Rapunzel", 'link' => "Rapunzel", 'depth' => 2),
+			array('name' => "Schneewittchen", 'link' => "Schneewittchen", 'depth' => 2),
+			array('name' => "Waldhaus", 'link' => "Waldhaus", 'depth' => 2),
+			array('name' => "Wilhelm Hauff", 'link' => "Wilhelm_Hauff", 'depth' => 1),
+			array('name' => "Kleiner Muck", 'link' => "Kleiner_Muck", 'depth' => 2),
+		);
+		$res= $this->callWiki($params);
+		$this->assertEquals($res->result, "success");
+		$this->assertEquals($res->token, $token);
+		$this->checkTreelist($res->treelist, $expected);
+		
+	}
+	
 	/**
 	 * This is the function ot for testing but for calling the wiki url and returning
 	 * the result. The result is plain text, but in a json format that Javascript and

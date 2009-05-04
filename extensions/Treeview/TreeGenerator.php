@@ -10,6 +10,7 @@ define ('GENERATE_TREE_PF', 'generateTree');
 
 class TreeGenerator {
     private $json;
+    private $loadNextLevel;
 
 	/**
 	 * Register parser function for tree generation
@@ -42,6 +43,8 @@ class TreeGenerator {
 		if (array_key_exists('initOnload', $genTreeParameters)) {
 			$params = "";
 			foreach ($genTreeParameters as $k => $v) {
+				// these parameter values are ignored therefore set them here to 1 if set
+				if ($k == "dynamic" || $k == "refresh") $v = 1;
 				$params .= $k."=".urlencode($v)."&";
 			}
 			return "\x7finitOnload('$params')\x7f*";
@@ -76,8 +79,12 @@ class TreeGenerator {
 		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
 		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
-		$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) &&
-						 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
+		// 0 = static, no ajax in use, 1 = ajax in use but (complete or partial) tree is fetched, 2 = only the next level is fetched
+		if ($this->loadNextLevel)
+			$ajaxExpansion = 2;
+		else
+			$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) &&
+							 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
 
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
@@ -90,9 +97,9 @@ class TreeGenerator {
 		// is set and the page is rendered for the first tree
 		// prefixed parameter are send like GET params in an URL encapsulated with "\x7f". In the tree parser
 		// function, these parameters are evaluated and some Javascript for the dTree is added.
-		if (!$this->json && (strlen(trim($tree)) > 0) && ($ajaxExpansion || $tv_store->openToFound() || $urlparams)) {
+		if (!$this->json && (strlen(trim($tree)) > 0) && ($ajaxExpansion > 0 || $tv_store->openToFound() || $urlparams)) {
 		    $returnPrefix= "\x7f";
-			if ($ajaxExpansion) {			
+			if ($ajaxExpansion > 0) {			
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
 		    	if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
 		    	if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
@@ -113,6 +120,10 @@ class TreeGenerator {
     public function setJson() {
         $this->json = true;
     }
+    public function setLoadNextLevel() {
+        $this->loadNextLevel = true;
+    }
+
 }
 
 abstract class TreeviewStorage {
@@ -254,14 +265,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		            ? array(array ("name" => $start->getPrefixedText(), "link" => $start->getDBKey(), "depth" => 1))
 		            : $this->hchar."[[".$start->getDBKey()."]]\n";
 
-		if ($this->ajaxExpansion && !$this->condition) {
+		if ($this->ajaxExpansion > 0 && !$this->condition) {
 			// only root and one level below
 			// if start is set, retrieve all children from start
 			if ($start) {
 				$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
 				$query = str_replace('___CONDITION___', " AND r.o_id = ".$this->smw_start_id, $query);
 			}
-			// initial call (no matter if start is set), we need the first two levels (children and grand children of start)
+			// initial call, then we need the first two levels (children and grand children of start)
 			else
 		    	$query = $this->getQuery4Relation($smw_inst2, $smw_rels2, true);
 		}
@@ -287,7 +298,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// if start is set or other limitations are set then in the first triple the object
 		// might be rejected, meaning that we have the subject only but need it's children
 		// to have at least two levels.
-		if ($this->ajaxExpansion && !$this->json)
+		if ($this->ajaxExpansion == 1)
 			$this->fetchNextLevelOfNodes();
 			
 		// check if the tree is supposed to be opened down to a certain node
@@ -838,9 +849,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	                        //   (while using ajax expansion, and exceding depth beyond 2)
              		    	if ($this->maxDepth && $this->maxDepth == $depth)
              		    		continue 2;
-             		    	if ($this->ajaxExpansion && $depth == 2 && $this->openTo == null)
+             		    	if ($this->ajaxExpansion > 0 && $depth == 2 && $this->openTo == null)
              		    	    continue 2;
-             		    	if ($this->ajaxExpansion && $depth > 1 && !in_array($s_id, $this->openToPath) && !in_array($currParent, $this->openToPath))
+             		    	if ($this->ajaxExpansion > 0 && $depth > 1 && !in_array($s_id, $this->openToPath) && !in_array($currParent, $this->openToPath))
              		    		continue 2;  
              		    	
              		    	// increase depth by one and add element to tree
