@@ -272,6 +272,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       </contributor>
       <comment>New page: Die âKinder- und HausmÃ¤rchenâ (KHM), volkstÃ¼mlich âGrimms MÃ¤rchenâ genannt, sind eine berÃ¼hmte deutsche Anthologie von MÃ¤rchen, die Jacob Ludwig Carl Grimm und sein Bruder Wil...</comment>
       <text xml:space="preserve">Die âKinder- und HausmÃ¤rchenâ (KHM), volkstÃ¼mlich âGrimms MÃ¤rchenâ genannt, sind eine berÃ¼hmte deutsche Anthologie von MÃ¤rchen, die Jacob Ludwig Carl Grimm und sein Bruder Wilhelm Karl Grimm, bekannt als die âBrÃ¼der Grimmâ, herausgegeben haben.
+== Parameter test ==
+param1: {{#arg:param1|}}
+param2: {{#arg:param2|}}
 
 [[Category:Content]]
 [[Subsection of::MÃ¤rchen]]
@@ -664,6 +667,21 @@ Check out the SMW Forum at: http://smwforum.ontoprise.com/smwforum/index.php/Sem
       <text xml:space="preserve">== Glossary ==
 
 The Glossary is supposed to contain information about terms used within a Semantic Wiki. These will be explained here briefly.
+
+[[Subsection of::Help:Contents]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Help:SMW+ 1.4.3</title>
+    <id>35</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2009-04-30T15:20:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is a description of SMW+ 1.4.3.  [[Subsection of::Help:Contents]]</comment>
+      <text xml:space="preserve">This is a description of SMW+ 1.4.3.
 
 [[Subsection of::Help:Contents]]</text>
     </revision>
