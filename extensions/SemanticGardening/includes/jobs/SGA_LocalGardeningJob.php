@@ -174,7 +174,6 @@ class SMW_LocalGardeningJob extends Job {
             $this->annot_checker->checkPropertyAnnotations($subjects, $propertyTitle);
             
         }
-        print "Halo---\n";
         // cardinality check
         $this->annot_checker->checkAnnotationCardinalitiesForInstance($instance, $domainProperties);
         
