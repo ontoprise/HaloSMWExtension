@@ -456,12 +456,7 @@ dTree.prototype.closeAll = function() {
 
 // Outputs the tree to the page
 dTree.prototype.toString = function() {
-	var str;
-    if (this.className == 'dtreestatic') {
-       str = '<div class="'+this.className+'">\n';
-    } else {
-       str = '<div class="'+this.className+'">\n';
-    }
+	var str = '<div class="'+this.className+'">\n';
 	if (document.getElementById) {
 		if (this.config.useCookies) {
 			this.selectedNode = this.getSelected();
@@ -512,7 +507,7 @@ dTree.prototype.node = function(node, nodeId) {
 		this.checkForChildren(node.id);
 	str += this.indent(node, nodeId);
 	if (this.config.useIcons) {
-		if (!node.icon) node.icon = (this.root.id == node.pid) ? this.icon.root : (node._hc) ? this.icon.folder : this.icon.node;
+		node.icon = (this.root.id == node.pid) ? this.icon.root : (node._hc) ? this.icon.folder : this.icon.node;
 		node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
 		if (this.root.id == node.pid) {
 			node.icon = this.icon.root;
@@ -620,18 +615,22 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	}
 	
 	var params = this.getSmwData(id);
+	var name = this.aNodes[id].name;
 	
-	// fetch name from link i.e. href attribute in a tag
-	var name = this.aNodes[id].name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
-	// check if the relation exists -> so the node, but if the page itself doesn't exist
-	// then there is a link that the user can create this page. Extract the pagename here
-	if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
-		name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
-	// remove any parameters, that might be trailed at the page name
-	if (name.indexOf('?') != -1)
-		name = name.substring(0, name.indexOf('?'));
 	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
-	name = name.replace(/<[^>]*>([^<]*)<.*/, "$1");
+	if (name.indexOf('<strong class=') != -1)
+		name = wgPageName;
+	else {
+		// fetch name from link i.e. href attribute in a tag
+		var name = name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+		// check if the relation exists -> so the node, but if the page itself doesn't exist
+		// then there is a link that the user can create this page. Extract the pagename here
+		if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
+			name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
+		// remove any parameters, that might be trailed at the page name
+		if (name.indexOf('?') != -1)
+			name = name.substring(0, name.indexOf('?'));
+	}
 	// add name to parameter as well as the token
 	params += 's%3D' + URLEncode(name);
 	params += this.getTokenAndWriteCache(id);
