@@ -20,7 +20,8 @@ function smw_treeview_getTree($input) {
   $start = (isset($req['s'])) ? 'start='.$req['s'] : NULL;
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
-  
+  $orderbyProperty = (isset($req['b'])) ? 'orderbyProperty='.$req['b'] : NULL;
+    
   // the following parameter depend on initOnload,
   // if this is not set, these are not needed because an dynamic expansion will fetch
   // the next level only. If the whole tree (or part of it) is loaded for the first time
@@ -40,7 +41,8 @@ function smw_treeview_getTree($input) {
   if (!$initOnload) $treeGenerator->setLoadNextLevel();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage,
-                                     $level, $condition, $urlparams, $opento, $iolStatic);
+                                     $level, $condition, $urlparams, $opento,
+                                     $iolStatic, $orderbyProperty);
   
   $return['treelist'] = $res;
   $return['result'] = 'success';

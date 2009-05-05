@@ -109,7 +109,7 @@ Node.prototype.unserialize = function(str) {
 }
 
 // SMW Data object (for all setup related to smw, when doing Ajax calls)
-function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams) {
+function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
@@ -118,6 +118,7 @@ function SmwData(id, relation, category, display, start, maxDepth, condition, ur
 	this.maxDepth = maxDepth;
 	this.condition = condition;
 	this.urlparams = urlparams;
+	this.orderbyProperty = orderbyProperty;
 }
 
 SmwData.prototype.getParamsForAjaxRequest = function() {
@@ -126,6 +127,7 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
 	if (this.condition) str += '%26q%3D' + URLEncode(this.condition); 
 	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
+	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
 	str += '%26';
 	return str;
 }
@@ -222,8 +224,8 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 };
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty);
 };
 
 // Get Smw url params to make an Ajax request for a specific node 
@@ -650,6 +652,11 @@ dTree.prototype.initOnload = function(id, arg) {
 	var params = '';
 	var args = arg.split('&amp;');
 	var dynamic;
+	// walk through the key value pairs and map each key
+	// to the corresponding key in the ajax call
+	// this is one letter only, to save space in the URI length
+	// most of the keys have a mapping to their first letter (see getTree.php
+	// for details), exceptions are handled in the if clauses
 	for (var i = 0; i < args.length; i++) {
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
@@ -657,6 +664,8 @@ dTree.prototype.initOnload = function(id, arg) {
 			params += 'q';
 		else if (key == 'refresh')
 			params += 'f';
+		else if (key == 'orderbyProperty')
+			params += 'b';
 		else if (key == 'dynamic') {
 			dynamic = 1;
 			continue;

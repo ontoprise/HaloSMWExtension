@@ -139,7 +139,8 @@ class SemanticTreeview {
             	    $addSmwData .= (isset($params['start'])) ? "'".$params['start']."', " : "null, "; 
 					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth']."," : "null, ";
 					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."', " : "null, ";
-					$addSmwData .= (isset($params['urlparams'])) ? "'".$params['urlparams']."');" : "null);";
+					$addSmwData .= (isset($params['urlparams'])) ? "'".$params['urlparams']."', " : "null, ";
+					$addSmwData .= (isset($params['orderbyProperty'])) ? "'".$params['orderbyProperty']."');" : "null);";
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n";
                     if (isset($params['refresh']) && $params['refresh'] == 1)

@@ -274,7 +274,55 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeSortbyProperty() {
+		global $wgParser;
+		
+		$property = 'property=Subsection of';
+		$orderby = 'orderbyProperty=KHM';
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, $orderby, 'dynamic=1');
+  		$res = utf8_decode($res);
+		$expected = $this->retStart.$property.'&'.$orderby.$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+';
+		$this->assertEquals($expected, $res);
+	}
 
+	function testTreeSortbyPropertyOpenTo() {
+		global $wgParser;
+		
+		$property = 'property=Subsection of';
+		$opento = 'opento=Frau Holle';
+		$orderby = 'orderbyProperty=KHM';
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, $opento, $orderby, 'dynamic=1');
+  		$res = utf8_decode($res);
+		$expected = $this->retStart.$property.'&'.$orderby.'&'.str_replace(' ', '_', $opento).$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Rapunzel]]
+****[[Hänsel und Gretel]]
+****[[Die 3 Schlangenblätter]]
+****[[Waldhaus]]
+****[[Frau Holle]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Schneewittchen]]
+***[[Wilhelm Hauff]]
+';
+		$this->assertEquals($expected, $res);
+	}
 
 
 }

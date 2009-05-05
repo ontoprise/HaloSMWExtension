@@ -446,6 +446,39 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeSortbyProperty() {
+		global $wgParser;
+		
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', 'orderbyProperty=KHM');
+  		$res = utf8_decode($res);
+		$expected = '*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+****[[Jacob Grimm]]
+****[[Wilhelm Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Rapunzel]]
+****[[Hänsel und Gretel]]
+****[[Die 3 Schlangenblätter]]
+****[[Waldhaus]]
+****[[Frau Holle]]
+*****[[Goldmarie]]
+*****[[Pechmarie]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Schneewittchen]]
+***[[Wilhelm Hauff]]
+****[[Kleiner Muck]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
 
 }
 

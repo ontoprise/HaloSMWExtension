@@ -91,6 +91,10 @@ class TreeGenerator {
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
 		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
 		
+		// order by property
+		if (array_key_exists('orderbyProperty', $genTreeParameters))
+			$tv_store->setOrderByProperty($genTreeParameters['orderbyProperty']);
+		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
 
 		// check if we have to return certain parameter with the result set when the dynamic expansion
@@ -107,6 +111,7 @@ class TreeGenerator {
 		    	if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
 		    	if ($condition) $returnPrefix .= "condition=".$condition."&";
 		    	if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
+		    	if (isset($genTreeParameters['orderbyProperty'])) $returnPrefix .= "orderbyProperty=".$genTreeParameters['orderbyProperty']."&";
 			}
 			if ($tv_store->openToFound() != null)
 				$returnPrefix .= "opento=".$openTo->getPrefixedDBkey()."&";
@@ -203,6 +208,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         $this->json = $jsonOutput;
         $this->condition = $condition;
         $this->openTo = $openTo;
+        
+        // flush sorting options, these will be set by functions setOrderByProperty() and setOrderDescending()
+        $this->orderByProperty = null;
+        $this->orderSequence = null;
         
         // for some of the options, the smw_ids of the elements will be stored here to use them in db queries
         $this->smw_relation_id = NULL;
