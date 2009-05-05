@@ -13,7 +13,14 @@ $wgAjaxExportList[] = 'smw_treeview_getTree';
 function smw_treeview_getTree($input) {
   global $wgParser;
 
-  parse_str($input, $req);
+  // fix: do not use parse_str here as this leads to errors if a value contains a decoded +
+  $req = array();
+  $args = explode('&', $input);
+  foreach ($args as $tuple) {
+  	$kv = explode('=', $tuple);
+  	if (count($kv) == 2) $req[$kv[0]] = $kv[1];
+  }
+
   $initOnload = (isset($req['i'])) ? true : false;
   $relation = (isset($req['p'])) ? 'property='.$req['p'] : NULL;
   $category = (isset($req['c'])) ? 'category='.$req['c'] : NULL;
@@ -21,7 +28,7 @@ function smw_treeview_getTree($input) {
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
   $orderbyProperty = (isset($req['b'])) ? 'orderbyProperty='.$req['b'] : NULL;
-    
+
   // the following parameter depend on initOnload,
   // if this is not set, these are not needed because an dynamic expansion will fetch
   // the next level only. If the whole tree (or part of it) is loaded for the first time
