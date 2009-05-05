@@ -188,23 +188,24 @@ function smwfDIInitUserMessages() {
 /**
  * Add appropriate JS language script
  */
-function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
+//function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
+function smwfDIAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
 	global $wgLanguageCode, $smwgDIScriptPath, $wgUser, $smwgDIIP;
 	
 	// content language file
 	$lng = '/scripts/Language/SMWDI_Language';
 	
-	$jsm->addScriptIf($smwgDIScriptPath . $lng.".js", $mode, $namespace, $pages);
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng.".js\"></script>");
 	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($smwgDIIP . $lng)) {
-			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
 		} else {
-			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageEn.js', $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js\"></script>");
 		}
 	} else {
-		$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageEn.js', $mode, $namespace, $pages);
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js\"></script>");
 	}
 
 	// user language file
@@ -213,12 +214,12 @@ function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
 		//$temp = $smwgDIScriptPath . $lng;
 		if (file_exists($smwgDIIP . $lng)) {
-			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
 		} else {
-			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageUserEn.js', $mode, $namespace, $pages);
+			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js\"></script>");
 		}
 	} else {
-		$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageUserEn.js', $mode, $namespace, $pages);
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js\"></script>");
 	}
 }
 
@@ -228,13 +229,18 @@ function smwDIWSAddHTMLHeader(&$out) {
 
 	global $smwgDIScriptPath;
 	
-	$jsm = SMWResourceManager::SINGLETON();
+	//$jsm = SMWResourceManager::SINGLETON();
 
-	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/webservices-rep.js', "all", -1, array(NS_SPECIAL.":WebServiceRepository"));
-	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/def-webservices.js', "all", -1, array(NS_SPECIAL.":DefineWebService"));
-	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js', "all", -1, array(NS_SPECIAL.":UseWebService"));
+	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/webservices-rep.js', "all", -1, array(NS_SPECIAL.":WebServiceRepository"));
+	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/def-webservices.js', "all", -1, array(NS_SPECIAL.":DefineWebService"));
+	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js', "all", -1, array(NS_SPECIAL.":UseWebService"));
 
-	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/webservices-rep.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/def-webservices.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+	
+	//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
+	smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
 	
 	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
 
@@ -245,7 +251,7 @@ function smwDIWSAddHTMLHeader(&$out) {
                     'href'  => $smwgDIScriptPath . '/skins/webservices/webservices.css'
                     ));
 	
-	$jsm->serializeScripts($out);
+	//$jsm->serializeScripts($out);
 	//$jsm->serializeCSS($out);
 	
 	return true;
@@ -259,11 +265,14 @@ function smwDITIAddHTMLHeader(&$out){
 
 	global $smwgDIScriptPath;
 
-	$jsm = SMWResourceManager::SINGLETON();
+	//$jsm = SMWResourceManager::SINGLETON();
 
-	$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/TermImport/termImport.js', "all", -1, array(NS_SPECIAL.":TermImport"));
-
-	smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":TermImport"));
+	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/TermImport/termImport.js', "all", -1, array(NS_SPECIAL.":TermImport"));
+	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/TermImport/termImport.js\"></script>");
+	
+	
+	//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":TermImport"));
+	smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":TermImport"));
 	
 	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");
 	
@@ -274,7 +283,7 @@ function smwDITIAddHTMLHeader(&$out){
                     'href'  => $smwgDIScriptPath . '/skins/TermImport/termimport.css'
                     ));
 	
-	$jsm->serializeScripts($out);
+	//$jsm->serializeScripts($out);
 	//$jsm->serializeCSS($out);
 
 	return true;
