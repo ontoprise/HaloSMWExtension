@@ -398,7 +398,7 @@ class AnnotationLevelConsistency {
 		foreach($domainProperties as $domainProperty) {
 
 			// get minimum cardinality
-			$minCardArray = smwfGetStore()->getPropertyValues($domainProperty, $minCardDV);
+			$minCardArray = smwfGetStore()->getPropertyValues($domainProperty, smwfGetSemanticStore()->minCardProp);
 
 			if (empty($minCardArray)) {
 				// if it does not exist, get minimum cardinality from superproperty

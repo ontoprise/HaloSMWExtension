@@ -5,16 +5,6 @@
  * Author: kai
  */
 
-class SMWAdvRequestOptions extends SMWRequestOptions {
-	
-	/**
-	 * If true, all string constraints will be OR'ed instead of AND'ed.
-	 * Default is false.
-	 *
-	 * @var boolean
-	 */
-    public $disjunctiveStrings = false;
-}
 
 class DBHelper {
 
