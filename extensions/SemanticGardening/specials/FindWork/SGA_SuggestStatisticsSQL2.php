@@ -2,7 +2,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $sgagIP;
-require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL.php');
+require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatisticsSQL.php');
 
 class SMWSuggestStatisticsSQL2 extends SMWSuggestStatisticsSQL {
 

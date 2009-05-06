@@ -65,7 +65,7 @@ abstract class SMWSuggestStatistics {
 					trigger_error('Testing stores not implemented for HALO extension.');
 					break;
 				case ('SMWHaloStore2'): default:
-					require_once($sgagIP . '/includes/findwork/SGA_SuggestStatisticsSQL2.php');
+					require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatisticsSQL2.php');
 					self::$store = new SMWSuggestStatisticsSQL2();
 					break;
 				

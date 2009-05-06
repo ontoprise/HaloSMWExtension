@@ -44,7 +44,7 @@ function sgafInitializeTables() {
     
     global $sgagIP;
     require_once("$sgagIP/includes/SGA_GardeningInitialize.php");
-    require_once("$sgagIP/includes/SGA_Gardening.php");
+    require_once("$sgagIP/specials/Gardening/SGA_Gardening.php");
   
     SGAGardeningIssuesAccess::getGardeningIssuesAccess()->setup(true);
     SGAGardeningLog::getGardeningLogAccess()->setup(true);

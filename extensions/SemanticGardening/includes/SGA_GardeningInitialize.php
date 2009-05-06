@@ -27,8 +27,8 @@ function sgagGardeningSetupExtension() {
 	$wgHooks['ArticleDelete'][] = 'sgafHaloPreDeleteHook';
 	$wgHooks['ArticleSave'][] = 'sgafHaloPreSaveHook';
 	
-	$wgAutoloadClasses['SMWSuggestStatistics'] = $sgagIP . '/includes/findwork/SGA_SuggestStatistics.php';
-	$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/includes/SGA_Gardening.php';
+	$wgAutoloadClasses['SMWSuggestStatistics'] = $sgagIP . '/specials/FindWork/SGA_SuggestStatistics.php';
+	$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/specials/Gardening/SGA_Gardening.php';
 	$wgAutoloadClasses['SGAGardeningTableResultPrinter'] = $sgagIP . '/includes/SGA_QP_GardeningTable.php';
 	if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
 		SMWQueryProcessor::$formats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
@@ -57,20 +57,18 @@ function sgagGardeningSetupExtension() {
 			case '_ga_' :
 				require_once($sgagIP . '/includes/SGA_GardeningAjaxAccess.php');
 				break;
-			case '_fw_' :
-				require_once($sgagIP . '/includes/findwork/SGA_FindWorkAjaxAccess.php');
-				break;
+			
 		}
 	} else {
 		global $wgSpecialPages, $wgSpecialPageGroups;
-		$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/includes/SGA_Gardening.php';
+		$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/specials/Gardening/SGA_Gardening.php';
 		$wgSpecialPages['Gardening'] = array('SGAGardening');
 		$wgSpecialPageGroups['Gardening'] = 'smwplus_group';
 
-		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $sgagIP . '/includes/SGA_GardeningLogPage.php');
+		$wgSpecialPages['GardeningLog'] = array('SMWSpecialPage','GardeningLog', 'smwfDoSpecialLogPage', $sgagIP . '/specials/GardeningLog/SGA_GardeningLogPage.php');
 		$wgSpecialPageGroups['GardeningLog'] = 'smwplus_group';
 
-		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $sgagIP . '/includes/findwork/SGA_FindWork.php');
+		$wgSpecialPages['FindWork'] = array('SMWSpecialPage','FindWork', 'smwfDoSpecialFindWorkPage', $sgagIP . '/specials/FindWork/SGA_FindWork.php');
 		$wgSpecialPageGroups['FindWork'] = 'smwplus_group';
 
 	}

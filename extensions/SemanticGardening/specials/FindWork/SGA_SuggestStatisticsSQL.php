@@ -8,10 +8,10 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
  global $sgagIP;
- require_once($sgagIP . '/includes/findwork/SGA_SuggestStatistics.php');
+ require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatistics.php');
  require_once($sgagIP . '/includes/SGA_DBHelper.php');
  
- require_once($sgagIP . '/includes/SGA_Gardening.php');
+ require_once($sgagIP . '/specials/Gardening/SGA_Gardening.php');
  
  class SMWSuggestStatisticsSQL extends SMWSuggestStatistics {
  	

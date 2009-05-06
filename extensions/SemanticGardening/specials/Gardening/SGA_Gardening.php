@@ -9,11 +9,11 @@
 if (function_exists("sgafGardeningInitMessages"))
   sgafGardeningInitMessages();
 
-require_once("SGA_GardeningBot.php");
 
 
 
 global $sgagIP;
+require_once($sgagIP. "/includes/SGA_GardeningBot.php");
 require_once( $sgagIP . '/includes/SGA_GardeningBot.php');
 require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
 require_once("$sgagIP/includes/SGA_ParameterObjects.php");

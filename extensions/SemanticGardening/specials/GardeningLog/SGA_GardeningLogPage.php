@@ -5,8 +5,8 @@
  * Author: kai
  */
 if (!defined('MEDIAWIKI')) die();
-
-require_once("SGA_Gardening.php");
+global $sgagIP;
+require_once("$sgagIP/specials/Gardening/SGA_Gardening.php");
 
 function smwfDoSpecialLogPage() {
 	wfProfileIn('smwfDoSpecialLogPage (SMW Halo)');

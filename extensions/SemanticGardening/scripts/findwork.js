@@ -22,54 +22,7 @@ FindWork.prototype = {
 		 // do nothing
 	},
 	
-	sendRatings: function() {
-		var i = 0;
-		var result = [];
-		var annotation = $('annotation'+i);
-		while (annotation != null) {
-			var subject;
-			var predicate;
-			var objectOrValue;
-			
-			if (OB_bd.isGecko) {
-				subject = annotation.firstChild.textContent;
-				predicate = annotation.firstChild.nextSibling.textContent;
-				objectOrValue = annotation.firstChild.nextSibling.nextSibling.textContent;
-			} else if (OB_bd.isIE) {
-				subject = annotation.firstChild.innerText;
-				predicate = annotation.firstChild.nextSibling.innerText;
-				objectOrValue = annotation.firstChild.nextSibling.nextSibling.innerText;
-			}
-			
-			// replace whitespaces by underscores
-			subject = subject.replace(/\s/g, "_");
-			predicate = predicate.replace(/\s/g, "_");
-			objectOrValue = objectOrValue.replace(/\s/g, "_");
-			
-			var buttons = $('ratingform').getInputs('radio', 'rating'+i);
-			var rating = this.getValueOfChecked(buttons);
-			if (rating != 0) result.push([subject, predicate, objectOrValue, rating]);
-			annotation = $('annotation' + (++i));
-		}
-		sajax_do_call('smwf_fw_SendAnnotationRatings', [result.toJSON()], this.printThankYou.bind(this));
-	},
-	
-	getValueOfChecked: function(buttons) {
-		for(var i = 0; i < buttons.length; i++) {
-			if (buttons[i].checked) return buttons[i].defaultValue;
-		}
-	},
-	
-	printThankYou: function(request) {
-		if (request.status != 200) {
-			alert('Something went wrong! Please try again!');
-			return;
-		}
-		alert(gLanguage.getMessage('FW_SEND_ANNOTATIONS') + (wgUserName ? wgUserName : gLanguage.getMessage('FW_MY_FRIEND')));
-		// disable button to prevent repeated rating
-		$('sendbutton').setAttribute("disabled", "disabled");
-	},
-	
+		
 	toggle: function(id) {
 		var div = $(id);
 		if (div.visible()) div.hide(); else div.show();
@@ -85,15 +38,3 @@ FindWork.prototype = {
 }
 
 var findwork = new FindWork();
-Event.observe(window, 'load', function() {
-	// unset correct/wrong button to dont know
-	$$('input.yes').each(function(s) {
-		 s.checked = false;
-	});
-	$$('input.no').each(function(s) { 
-		 s.checked = false;
-	});
-	$$('input.dontknow').each(function(s) {
-		  s.checked = true;
-	});
-});

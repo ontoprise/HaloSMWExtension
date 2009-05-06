@@ -11,7 +11,7 @@ define('SMW_FINDWORK_NUMBEROF_RATINGS', 5); // will be doubled (rated and unrate
  
 global $sgagIP;
 include_once( "$sgagIP/includes/SGA_GardeningBot.php" );
-include_once( "$sgagIP/includes/findwork/SGA_SuggestStatistics.php" );
+include_once( "$sgagIP/specials/FindWork/SGA_SuggestStatistics.php" );
 
 function smwfDoSpecialFindWorkPage() {
 	wfProfileIn('smwfDoSpecialFindWorkPage (SMW Halo)');
