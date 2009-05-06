@@ -99,17 +99,26 @@ function smwf_qi_QIAccess($method, $params) {
             }            
             
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
-            $ps = preg_split('/[^\|]{1}\|{1}(?!\|)/s', $p_array[0]);  
-            if (count($ps) > 1) {
-            	// last char of query condition is missing (matched with [^\|]{1}) therefore copy from original
-            	$rawparams[] = trim(substr($p_array[0], 0, strlen($ps[0]) + 1));
-            	array_shift($ps); // remove the query condition
-                // add other params for formating etc.
-                foreach ($ps as $param) 
-                    $rawparams[] = trim($param);
-            } // no single pipe found, no params specified in query
-            else $rawparams[] = trim($p_array[0]);
-
+            $pos = strpos($p_array[0], "|?");
+            if ($pos > 0) {
+            	$rawparams[] = trim(substr($p_array[0], 0, $pos));
+            	$ps = explode("|?", trim(substr($p_array[0], $pos+2)));
+	            foreach ($ps as $param) {
+	            	$rawparams[] = "?" . trim($param);
+	            }
+            } else {
+	            $ps = preg_split('/[^\|]{1}\|{1}(?!\|)/s', $p_array[0]);  
+	            if (count($ps) > 1) {
+	            	// last char of query condition is missing (matched with [^\|]{1}) therefore copy from original
+	            	$rawparams[] = trim(substr($p_array[0], 0, strlen($ps[0]) + 1));
+	            	array_shift($ps); // remove the query condition
+	                // add other params for formating etc.
+	                foreach ($ps as $param) 
+	                    $rawparams[] = trim($param);
+	            } // no single pipe found, no params specified in query
+	            else $rawparams[] = trim($p_array[0]);
+            }    
+            
             // parse params and answer query
             SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
             // merge fix parameters from GUI, they always overwrite others
