@@ -1,0 +1,33 @@
+<project default="testOB">
+
+    <target name="testOB">
+
+        <webtest name="Search in OntologyBrowser">
+            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
+            <verifyTitle text="OntologyBrowser - Halo3wiki" />
+
+            <setInputField htmlId="FilterBrowserInput" value="ca" />
+            <clickButton htmlId="filterBrowseButton" />
+            <sleep description="4s pause" seconds="4" /> 
+            <verifyXPath description="Check if the element exists" xpath="//div[@id='categoryTree']/table/tbody/tr/td/a" text="Car" />
+        </webtest>
+        
+        <webtest name="Goto property tree">
+            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
+            <verifyTitle text="OntologyBrowser - Halo3wiki" />
+
+            <clickLink htmlId="propertyTreeSwitch" />
+            <sleep description="4s pause" seconds="4" /> 
+            <verifyXPath description="Check if the element exists" xpath="//div[@id='propertyTree']/table/tbody/tr/td/a" text="Body Form" />
+        </webtest>
+        
+        <webtest name="Select category and check for instance">
+            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
+            <verifyTitle text="OntologyBrowser - Halo3wiki" />
+            <sleep description="4s pause" seconds="4" /> 
+            <clickLink xpath="//a[@title='Car']" />
+            <sleep description="4s pause" seconds="4" /> 
+            <verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
+        </webtest>
+    </target>
+</project>

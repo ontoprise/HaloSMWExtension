@@ -3,6 +3,6 @@
 <project name="testHalo" default="testAll">
 	<target name="testAll" description="runs all the tests">
 		<ant antfile="basictests.xml"/>
-	
+		<ant antfile="ontologybrowsertests.xml"/>
 	</target>
 </project>

@@ -7,12 +7,18 @@
 	<target name="testBasic">
 
 		<webtest name="LoadMainPage">
-			<invoke url="http://localhost/mediawiki/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page"/>
+			<invoke url="http://localhost/develwiki/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page" />
 			<verifyTitle text="Main Page - Halo3wiki" />
-		  <!--<setInputField name="search" value="WebTest" />
+			<!--<setInputField name="search" value="WebTest" />
 			<clickButton label="Search" />
 			<verifyTitle text="Search results - Halo3wiki" />-->
 		</webtest>
+		<webtest name="LoadOntologyBrowser">
+			<invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
+			<verifyTitle text="OntologyBrowser - Halo3wiki" />
+			<verifyXPath description="Check if the heading element exists" xpath="/html/body/div/div/div/div/h1" text="OntologyBrowser" />
 
+		</webtest>
+		
 	</target>
 </project>
