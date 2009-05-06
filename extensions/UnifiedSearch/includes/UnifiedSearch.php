@@ -90,22 +90,22 @@ function wfUSSetupExtension() {
 	global $smwgHaloIP;
 	$wgAutoloadClasses['USDBHelper'] = $dir . 'storage/US_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-    $wgAutoloadClasses['SmithWaterman'] = $dir . 'SmithWaterman.php';
-	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'SKOSVocabulary.php';
-	$wgAutoloadClasses['USSpecialPage'] = $dir . 'UnifiedSearchSpecialPage.php';
-	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'UnifiedSearchResultPrinter.php';
-	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'UnifiedSearchResultPrinter.php';
-	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'UnifiedSearchStatistics.php';
+    $wgAutoloadClasses['SmithWaterman'] = $dir . 'includes/SmithWaterman.php';
+	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'includes/SKOSVocabulary.php';
+	$wgAutoloadClasses['USSpecialPage'] = $dir . 'includes/UnifiedSearchSpecialPage.php';
+	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
+	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
+	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'includes/UnifiedSearchStatistics.php';
     
 	if (file_exists($dir . 'SKOSExpander.php')) {
-	   $wgAutoloadClasses['SKOSExpander'] = $dir . 'SKOSExpander.php';
+	   $wgAutoloadClasses['SKOSExpander'] = $dir . 'includes/SKOSExpander.php';
 	}
-	$wgAutoloadClasses['QueryExpander'] = $dir . 'QueryExpander.php';
+	$wgAutoloadClasses['QueryExpander'] = $dir . 'includes/QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
 
-	$wgSpecialPages['UnifiedSearchStatistics'] = array('SMWSpecialPage','UnifiedSearchStatistics', 'smwfDoSpecialUSSearch', $dir . 'UnifiedSearchStatistics.php');
+	$wgSpecialPages['UnifiedSearchStatistics'] = array('SMWSpecialPage','UnifiedSearchStatistics', 'smwfDoSpecialUSSearch', $dir . 'includes/UnifiedSearchStatistics.php');
 	//$wgSpecialPageGroups['UnifiedSearchStatistics'] = 'maintenance';
 
 	$wgSpecialPages['Search'] = array('USSpecialPage');

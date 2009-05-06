@@ -16,7 +16,7 @@ $wgSearchType = 'LuceneSearch';
 $wgLuceneHost = 'localhost';
 $wgLucenePort = 8123;
 $wgLuceneSearchVersion = 2.1; 
-require_once("extensions/UnifiedSearch/UnifiedSearch.php");
+require_once("extensions/UnifiedSearch/includes/UnifiedSearch.php");
 ---
 
 If you like to use query expansion based on synonym sets from WordNet/OpenThesaurus, also add:

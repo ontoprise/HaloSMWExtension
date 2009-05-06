@@ -14,7 +14,7 @@ $wgAjaxExportList[] = 'smwf_ob_PreviewRefactoring';
 
 if (defined("SGA_GARDENING_EXTENSION_VERSION")) {
 	global $sgagIP;
-    require_once($sgagIP . "/includes/SGA_Gardening.php");
+    require_once($sgagIP . "/specials/Gardening/SGA_Gardening.php");
 } else {
 	require_once("SMW_GardeningIssueStoreDummy.php");
 }
