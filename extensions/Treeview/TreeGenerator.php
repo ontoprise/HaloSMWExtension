@@ -643,7 +643,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// remember all ids, that we will add now to find the node to open.		
 		$newIds = array();
-		
+
 		// check that we do not exceed maxDepth, this is indefinite (or 9999) if not defined
 		$maxDepth = ($this->maxDepth != null) ? $this->maxDepth : 9999;
 		// current depth is 2, that is because if dynamic expansion is used, we fetch two levels
@@ -684,12 +684,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 		
 		// add parent of last currentId to openToPath
-		foreach ($this->sIds[$currentId] as $p)
-			$this->openToPath[] = $p;
-
+		if (isset($this->sIds[$currentId])) {
+			foreach ($this->sIds[$currentId] as $p)
+				$this->openToPath[] = $p;
+		}
+		
 		// current parent after some iterations of the node to open is still not
 		// in the result  found, then remove all added
-		if (!isset($this->sIds[$currentId]) && !isset($this->sIds[$cParent])) {
+		if (!isset($this->sIds[$currentId]) && isset($cParent) && !isset($this->sIds[$cParent])) {
 			$newIds = array_uniqe($newIds);
 			foreach ($newIds as $id) {
 				unset($this->sIds[$id]);
