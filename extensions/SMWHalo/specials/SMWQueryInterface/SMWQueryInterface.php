@@ -87,7 +87,7 @@ class SMWQueryInterface extends SpecialPage {
 		
 		global $smwgResultFormats;
 		
-		$blacklist = array("rss", "csv", "json", "exceltable", "icalendar", "vcard", "calendar", "eventline");
+		$blacklist = array("rss", "csv", "json", "exceltable", "icalendar", "vcard", "calendar");
 		
 		$resultoptionshtml = "";
 		
@@ -185,6 +185,16 @@ class SMWQueryInterface extends SpecialPage {
 							<input type="text" id="rssdescription">
 						</td>
 					</tr>
+					<tr id="exhibitfield" style="display:none">
+						<td>
+							View:
+						</td>
+						<td>
+							tiles <input type="checkbox" checked="checked" id="x_tiles_check" onchange="qihelper.updatePreview()"/>
+							tabular <input type="checkbox" id="x_tabular_check" onchange="qihelper.updatePreview()"/>						
+						</td>
+					</tr>
+					
 				</table>
 			</div>
 		</div>';

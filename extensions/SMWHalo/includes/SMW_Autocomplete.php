@@ -21,6 +21,7 @@ $smwhgAutoCompletionStore = null;
 global $smwgHaloIP;
 require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
 
+
  /*
   * Dispatches an auto-completion request.
   * 
@@ -50,26 +51,59 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  	// e.g. "Category:Person", "Category:Car|Category:Boat"
  		
  	if ($options != "" || $options != null) {
-		$result = SMWQueryProcessor::getResultFromQueryString($options, array('format' => 'ul'), array(), SMW_OUTPUT_WIKI);
-		
-		$result = strip_tags($result);
-		preg_match_all('/\[\[[^\|]+/', $result, $matches); 
-		$pages = $matches[0];		
-		$title[] = array();
-		
-		foreach ($pages as $page) {
-			$page = substr($page, 2); // remove the "[["
-			if (strlen($userInputToMatch) > 0) {
-	 			if (stripos($page, $userInputToMatch) !== false) {
-		 			$title[] = Title::newFromDBkey($page);
+ 		if (strncmp($options, "[[", 2) == 0) {
+			$result = SMWQueryProcessor::getResultFromQueryString($options, array('format' => 'ul'), array(), SMW_OUTPUT_WIKI);
+			
+			$result = strip_tags($result);
+			preg_match_all('/\[\[[^\|]+/', $result, $matches); 
+			$pages = $matches[0];		
+			$results[] = array();
+			
+			foreach ($pages as $page) {
+				$page = substr($page, 2); // remove the "[["
+				if (strlen($userInputToMatch) > 0) {
+		 			if (stripos($page, $userInputToMatch) !== false) {
+			 			$results[] = Title::newFromDBkey($page);
+					}
+				}
+				else {			
+					$results[] = Title::newFromDBkey($page);
 				}
 			}
-			else {			
-				$title[] = Title::newFromDBkey($page);
-			}
-		}		
-		
- 	 	$result = AutoCompletionRequester::encapsulateAsXML($title);
+ 		} else {	
+ 		
+ 			$options_arr = explode(",", $options);
+ 			$pages_and = array();
+ 		
+ 			foreach ($options_arr as $constraint) {
+	 			$pages_or = array();
+	 			
+	 			$constraint_or = explode("|", $constraint);
+	 			// check "or-constraints" 			
+	 			foreach ($constraint_or as $or_constraint) {
+	 				$title = Title::newFromText($or_constraint);
+	 				$infpages = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($title, false);
+	 				
+	 				foreach ($infpages as $page) {
+		 				if (strlen($userInputToMatch) > 0) {
+		 					if (stripos($page[0]->getText(), $userInputToMatch) !== false) {
+			 					array_push($pages_or, $page[0]);
+							}
+		 				} else {
+		 					array_push($pages_or, $page[0]);
+		 				}
+	 				}
+	 			}
+	 			
+	 			if (empty($pages_and)) {
+	 				$pages_and = $pages_or;
+	 			} else {
+	 				$pages_and = $results;
+	 			}
+	 			$results = array_intersect($pages_or, $pages_and);
+	 		}
+ 		}
+ 		$result = AutoCompletionRequester::encapsulateAsXML($results);
 	 	AutoCompletionRequester::logResult($result, $articleName);
 	 	if ($result != SMW_AC_NORESULT) {
 	 		return $result;
@@ -143,8 +177,6 @@ require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
  	}
  }
  
-
-
 /**
  * Return options
  */
@@ -467,6 +499,7 @@ class AutoCompletionRequester {
  	    			smwLog("","AC","opened", $articleName);
  	    }
  	}
+ 	
 }
 
 class TemplateReader {
@@ -969,4 +1002,5 @@ public function getPropertyWithType($match, $typeLabel) {
     }
    
 }
+
 ?>

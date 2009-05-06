@@ -89,15 +89,41 @@ function smwf_qi_QIAccess($method, $params) {
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
             $fixparams = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
-
+            
+            // read additional parameters for different result printers
+            switch ($p_array[1]) {
+            	case 'exhibit':
+            		$fixparams['views'] = $p_array[10];
+            		break;
+            	default:
+            }            
+            
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
             $ps = explode('|', $p_array[0]);
-                              
+
             // parse params and answer query
             SMWQueryProcessor::processFunctionParams($ps,$querystring,$params,$printouts);
             // merge fix parameters from GUI, they always overwrite others
             $params = array_merge($params, $fixparams);
             $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+			switch ($p_array[1]) {
+            	case 'timeline':
+            		return $result;
+            		break;
+            	case 'eventline':
+            		return $result;
+            		break;
+            	case 'googlepie':
+            		return $result[0];
+            		break;     
+            	case 'googlebar':
+            		return $result[0];
+            		break;            		
+            	case 'exhibit':
+            		return $result;
+            		break;
+            	default:            		
+            }
             $result = parseWikiText($result);
 			// add target="_new" for all links
 			$pattern = "|<a|i";

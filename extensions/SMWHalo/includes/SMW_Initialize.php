@@ -684,7 +684,19 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 
 	}
+	
+	// add result format javascripts for query interface
+	global $srfgScriptPath;
+	if ($srfgScriptPath != null || $srfgScriptPath != "") {
+		// timeline
+		$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array("-1:QueryInterface"));
+		$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js', "all", -1, array("-1:QueryInterface"));
 
+		// exhibit
+//		$jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
+//		$jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));						
+	}
+	
 	// serialize the scripts
 	$jsm->serializeScripts($out);
 	// for additinal scripts which are dependant of Halo scripts (e.g. ACL extension)

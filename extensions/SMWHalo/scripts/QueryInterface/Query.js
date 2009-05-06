@@ -210,7 +210,7 @@ Query.prototype = {
 			for(var j=0; j<this.categories[i].length; j++){
 				asktext += this.categories[i][j].unescapeHTML();
 				if(j<this.categories[i].length-1){ //add disjunction operator
-					asktext += "||" + gLanguage.getMessage('CATEGORY_NS');
+					asktext += "||";
 				}
 			}
 			asktext += "]]";
