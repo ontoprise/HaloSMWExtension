@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<project default="testBasic">
+
+	<target name="testBasic">
+
+		<webtest name="LoadGardeningPage">
+			<invoke url="http://localhost/develwiki/index.php/Special:Gardening" description="Tests if wiki responds at all by loading the main page" />
+			<verifyTitle text="Gardening - Halo3wiki" />
+			
+		</webtest>
+				
+	</target>
+</project>
