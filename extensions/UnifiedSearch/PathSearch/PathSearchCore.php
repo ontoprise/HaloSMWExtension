@@ -14,10 +14,10 @@
  define('PSC_OUTPUT_PAGE', 0);
  define('PSC_OUTPUT_BOX', 1);
  
- // maximum lengh of a path that is returned. If this number is odd, then the length might be
+ // maximum length of a path that is returned. If this number is odd, then the length might be
  // increased by one.
  define('PSC_MAX_PATH_LENGTH', 10);
- // to prevent any endless loops in evalPath() if data is in arbitary structure
+ // to prevent any endless loops in evalPath() if data is in arbitrary structure
  define('PSC_MAX_LOOP_EVAL_PATH', 20);
  // how many results are supposed to be shown below the path
  define('PSC_MAX_SHOW_RESULT_LINES', 3);
@@ -182,7 +182,7 @@
 
 
 	public function doSearch($searchArr, $limit = NULL, $offset = NULL) {
-		
+
 		foreach ($searchArr as $term) {
 			if (is_array($term)) {
 				if ($term[1] != NULL && $term[1] > -1)
@@ -227,10 +227,11 @@
 			$this->getDetails4Term();
 			$this->fetchNodeDetails($this->result); // if results are found complete label names for ids in path
 		}
+
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
 		$this->getNodeInstances();
-		
+
 		// here we limit the results. A result is a path that has at least one instance as well
 		$this->checkResultLimits($limit, $offset);
 		
@@ -250,6 +251,7 @@
 	public function getPathDetails($path) {
 		// check if first element is no property	
 		$first = $path[0];
+		var_dump($path);
 		if (strlen($first) > 0 && PSC_WikiData::isProperty($first)) {
 			$this->resultCode = PSC_ERROR_PATHINVALID;
 			return;
@@ -985,7 +987,7 @@
 
 			// check if this element has page(s) somewhere, then we already have the result(s)
 			$pages = $this->elementGetPages($path[0]);
-			if (count($pages > 0)) {
+			if (count($pages) > 0) {
 				$this->instance[$path[0]] = array();
 				foreach ($pages as $p) $this->instance[$path[0]][]= array($p);
 				continue;
@@ -1247,13 +1249,14 @@
 	 * the type (i.e. namespace) is not defined, the term is looked up in all namespaces
 	 * and if found several times, also different paths are created.
 	 * If the term was not found in the database, no path is created.
+	 * fix: be careful with namespaces. Use function ignoreNS()
 	 * 
 	 * @access private
 	 * @param string $term
 	 * @param int    $type default NULL 
 	 */
  	private function addPath4Term($term, $type = NULL) {
- 		if ($type == NULL)
+ 	    if (($type == NULL) || $this->ignoreNs($type))
  			$types = array(NS_MAIN, SMW_NS_PROPERTY, NS_CATEGORY);
  		else
  			$types = array($type);
@@ -1261,6 +1264,7 @@
  			$res = $this->getData4Term($term, $t);
  			if (is_array($res)) {
  				foreach ($res as $smwVal) {
+ 				    if ($this->ignoreNs($smwVal[2])) continue;
  					if (! isset($this->path[$smwVal[0]]))
  						$this->path[$smwVal[0]] = array();
  					$this->path[$smwVal[0]][] = new PSC_Path($smwVal[0], $smwVal[1]);
@@ -1272,7 +1276,22 @@
  				}
  			}
  		}
- 	} 	
+ 	}
+
+ 	/**
+ 	 * Ignore elements that have a certain namespace that doesn't let us assume
+ 	 * the element is an ordinary page.
+ 	 *
+ 	 * @access private
+ 	 * @param  int $id
+ 	 * @return boolean true if ignore this ns, false otherwise
+ 	 */
+ 	private function ignoreNs($id) {
+        return ((substr(MWNamespace::getCanonicalName($id), -5) == '_talk') ||
+                (in_array($id, array(NS_PROJECT, NS_TALK, NS_TEMPLATE, NS_MEDIAWIKI))))
+                ? true : false; 
+ 	}
+ 	
 
 	/**
 	 * takes a term (string) and look it up in the wiki. The term can be
