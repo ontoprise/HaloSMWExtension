@@ -133,7 +133,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wws_s2-intro' => '2. Select method',
 	'smw_wws_s2-method' => 'Select method: ',
 	'smw_wws_s3-intro' => '3. Define parameters',
-	'smw_wws_duplicate' => 'Some of the type-definitions used in this WSDL are ambiguous. Those type definitions are highlighted in red. It is strongly recommended that you review and edit them later in the textual represantation of the WWSD!',
+	'smw_wws_duplicate' => '<table><tr><td style="vertical-align: top"><b>Note:</b><td><td><b>Some</b> of the <b>type-definitions</b> used in this WSDL are <b>ambiguous</b>.<br/>Those type definitions are highlighted in <b style="color: darkred">darkred</b>.<br/>It is strongly recommended that you <b>review</b> and edit them <b>later</b> in the <b>textual represantation</b> of the WWSD.</td></tr></table><br/>',
 	'smw_wws_s4-intro' => '4. Choose result parts',
 	'smw_wws_s5-intro' => '5. Define update policy',
 	'smw_wws_s6-intro' => '6. Save WWSD',

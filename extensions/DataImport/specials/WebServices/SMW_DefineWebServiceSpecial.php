@@ -243,7 +243,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step4-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 
-		$html .= "<div id=\"step4-duplicates\" style=\"display:none\"><img src=\"".$smwgDIScriptPath."/skins/webservices/warning.png\"></img>";
+		$html .= "<div id=\"step4-duplicates\" style=\"display:none\">";
 		$html .= wfMsg("smw_wws_duplicate");
 		$html .= "</div>";
 

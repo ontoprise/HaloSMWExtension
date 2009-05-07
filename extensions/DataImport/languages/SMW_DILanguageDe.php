@@ -133,7 +133,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_s2-intro' => '2. W&auml;hle Methode',
 	'smw_wws_s2-method' => 'W&auml;hle Methode',
 	'smw_wws_s3-intro' => '3. Definiere Parameter',
-	'smw_wws_duplicate' => 'Einige Typ-Definitionen in dieser WSDL sind mehrdeutig. Diese werden rot hervorgehoben. Es wird empfohlen diese Typ-Definitionen sp&auml;ter in der textuellen Repr&auml;sentation der WWSD zu bearbeiten!',
+	'smw_wws_duplicate' => '<table><tr><td style="vertical-align: top"><b>Note:</b><td><td><b>Einige Typ-Definitionen</b> in dieser WSDL sind <b>mehrdeutig</b>.<br/> Diese werden <b style="color: darkred">dunkelrot</b> hervorgehoben.<br/> Es wird empfohlen diese Typ-Definitionen sp&auml;ter in der <b>textuellen Repr&auml;sentation</b> der WWSD zu <b>bearbeiten</b>.</td></tr></table><br/>',
 	'smw_wws_s4-intro' => '4. W&auml;hle Result Parts',
 	'smw_wws_s5-intro' => '5. Definiere Update Policy',
 	'smw_wws_s6-intro' => '6. Speichere WWSD',

@@ -334,7 +334,7 @@ DefineWebServiceSpecial.prototype = {
 					paramPathText += this.preparedPathSteps[i][k]["value"];
 					paramPathTextNode = document.createTextNode(paramPathText);
 					if (this.preparedPathSteps[i][k]["duplicate"]) {
-						paramPathStep.style.color = "red";
+						paramPathStep.style.color = "darkred";
 					}
 					paramPathStep.appendChild(paramPathTextNode);
 					paramPath.appendChild(paramPathStep);
@@ -755,7 +755,7 @@ DefineWebServiceSpecial.prototype = {
 					var resultPathTextNode = document
 							.createTextNode(resultPathText);
 					if (this.preparedRPathSteps[i][k]["duplicate"]) {
-						resultPathStep.style.color = "red";
+						resultPathStep.style.color = "darkred";
 					}
 					resultPathStep.appendChild(resultPathTextNode);
 					resultPath.appendChild(resultPathStep);
