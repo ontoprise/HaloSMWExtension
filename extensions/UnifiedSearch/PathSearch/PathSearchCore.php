@@ -251,7 +251,6 @@
 	public function getPathDetails($path) {
 		// check if first element is no property	
 		$first = $path[0];
-		var_dump($path);
 		if (strlen($first) > 0 && PSC_WikiData::isProperty($first)) {
 			$this->resultCode = PSC_ERROR_PATHINVALID;
 			return;
@@ -1256,7 +1255,7 @@
 	 * @param int    $type default NULL 
 	 */
  	private function addPath4Term($term, $type = NULL) {
- 	    if (($type == NULL) || $this->ignoreNs($type))
+ 	    if (($type == NULL) || PSC_WikiData::ignoreNs($type))
  			$types = array(NS_MAIN, SMW_NS_PROPERTY, NS_CATEGORY);
  		else
  			$types = array($type);
@@ -1264,7 +1263,7 @@
  			$res = $this->getData4Term($term, $t);
  			if (is_array($res)) {
  				foreach ($res as $smwVal) {
- 				    if ($this->ignoreNs($smwVal[2])) continue;
+ 				    if (PSC_WikiData::ignoreNs($smwVal[2])) continue;
  					if (! isset($this->path[$smwVal[0]]))
  						$this->path[$smwVal[0]] = array();
  					$this->path[$smwVal[0]][] = new PSC_Path($smwVal[0], $smwVal[1]);
@@ -1277,21 +1276,6 @@
  			}
  		}
  	}
-
- 	/**
- 	 * Ignore elements that have a certain namespace that doesn't let us assume
- 	 * the element is an ordinary page.
- 	 *
- 	 * @access private
- 	 * @param  int $id
- 	 * @return boolean true if ignore this ns, false otherwise
- 	 */
- 	private function ignoreNs($id) {
-        return ((substr(MWNamespace::getCanonicalName($id), -5) == '_talk') ||
-                (in_array($id, array(NS_PROJECT, NS_TALK, NS_TEMPLATE, NS_MEDIAWIKI))))
-                ? true : false; 
- 	}
- 	
 
 	/**
 	 * takes a term (string) and look it up in the wiki. The term can be

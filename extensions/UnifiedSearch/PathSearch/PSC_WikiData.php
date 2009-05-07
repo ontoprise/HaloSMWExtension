@@ -376,7 +376,8 @@
 		$categorylinks = $db->tableName('categorylinks');
 		
 		$query = "SELECT smw_id AS id FROM $smw_ids WHERE smw_title IN 
-				     (SELECT c.cl_to FROM $smw_ids s, $categorylinks c WHERE s.smw_id = $id AND c.cl_sortkey = s.smw_sortkey)";
+				     (SELECT c.cl_to FROM $smw_ids s, $categorylinks c WHERE s.smw_id = $id AND c.cl_sortkey = s.smw_sortkey)
+				  AND smw_namespace = ".NS_CATEGORY;
 		$res = $db->query($query);
 		if ($res) {
 			while ($row = $db->fetchObject($res)) $result[] = $row->id;
@@ -397,16 +398,39 @@
 
 		$smw_ids = $db->tableName('smw_ids');
 		$categorylinks = $db->tableName('categorylinks');
-		$query = "SELECT smw_id AS id FROM $smw_ids WHERE smw_sortkey IN
+		$query = "SELECT smw_id AS id, smw_namespace AS ns FROM $smw_ids WHERE smw_sortkey IN
 				     (SELECT c.cl_sortkey FROM $smw_ids s, $categorylinks c WHERE s.smw_id = $id AND c.cl_to = s.smw_sortkey)";
 		$res = $db->query($query);
 		if ($res) {
-			while ($row = $db->fetchObject($res)) $result[] = $row->id;
+			while ($row = $db->fetchObject($res)) {
+			    if (self::ignoreNs($row->ns)) continue;
+			    $result[] = $row->id;
+			}
 		}	
 		return $result;
-	} 	
+	}
 
- 	
+	/**
+     * Ignore elements that have a certain namespace that doesn't let us assume
+     * the element is an ordinary page.
+     *
+     * @access public
+     * @param  int $id
+     * @return boolean true if ignore this ns, false otherwise
+     */
+    public function ignoreNs($id) {
+        static $nsIgnore;
+        if ($nsIgnore == null) {
+            $nsIgnore = array(NS_PROJECT, NS_TALK, NS_TEMPLATE, NS_MEDIAWIKI);
+            if (defined(SF_NS_FORM)) $nsIgnore[] = SF_NS_FORM;
+            if (defined(SMW_NS_CONCEPT)) $nsIgnore[] = SMW_NS_CONCEPT;
+            if (defined(SMW_NS_TYPE)) $nsIgnore[] = SMW_NS_TYPE;
+        }
+        return ((substr(MWNamespace::getCanonicalName($id), -5) == '_talk') ||
+                (in_array($id, $nsIgnore))) 
+                ? true : false; 
+    }
+
  	// private functions to retrieve data from the database
 
 	/**
