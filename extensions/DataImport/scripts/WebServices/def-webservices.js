@@ -178,6 +178,8 @@ DefineWebServiceSpecial.prototype = {
 
 		this.numberOfUsedParameters = 0;
 		
+		this.firstParameterPathStep = "";
+		
 		if (!this.editMode) {
 			$("step2-go-img").style.display = "none";
 			$("step3-go-img").style.display = "";
@@ -194,7 +196,6 @@ DefineWebServiceSpecial.prototype = {
 				$("step3-parameters").style.display = "none";
 				$("step3-go-img").style.display = "none";
 				this.processStep3();
-
 			}
 			return;
 		} else {
@@ -205,10 +206,18 @@ DefineWebServiceSpecial.prototype = {
 		}
 
 		var duplicate = false;
+		
+		var steps = wsParameters[1].split("/");
+		var startK = 1;
+		if(steps.length > 1){
+			this.firstParameterPathStep = steps[1];
+			startK = 2;
+		}
+		
 		for ( var i = 1; i < wsParameters.length; i++) {
-			var steps = wsParameters[i].split("/");
+			steps = wsParameters[i].split("/");
 			var preparedPathStepsDot = new Array();
-			for ( var k = 0; k < steps.length; k++) {
+			for ( var k = startK; k < steps.length; k++) {
 				if (steps[k].length == 0) {
 					s1 = steps.slice(0, k);
 					s2 = steps.slice(k + 1, steps.length);
@@ -237,7 +246,7 @@ DefineWebServiceSpecial.prototype = {
 				tO["arrayIndexOrigin"] = null;
 				tO["arrayIndexUsers"] = new Array();
 				tO["arrayIndexRoot"] = false;
-				preparedPathStepsDot[k] = tO;
+				preparedPathStepsDot[k-startK] = tO;
 			}
 			this.preparedPathSteps[i - 1] = preparedPathStepsDot;
 		}
@@ -636,7 +645,7 @@ DefineWebServiceSpecial.prototype = {
 		var duplicate = false;
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
-				wsResults[i] = "result/" + wsResults[i];
+				wsResults[i] = wsResults[i];
 			} else {
 				wsResults[i] = "result";
 			}
@@ -840,6 +849,8 @@ DefineWebServiceSpecial.prototype = {
 								expandPathStep.style.cursor = "pointer";
 								resultPathStep.insertBefore(expandPathStep,
 										resultPathStep.firstChild);
+								
+								//do not display the first parameter path step
 							}
 						}
 					}
@@ -1098,9 +1109,10 @@ DefineWebServiceSpecial.prototype = {
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
 						var pathStep = "/";
 
-						if (k > 0) {
-							pathStep = "/";
+						if (k == 0){
+							pathStep = "/" + this.firstParameterPathStep + "/";
 						}
+						
 						pathStep += this.preparedPathSteps[i][k]["value"];
 						if (pathStep.lastIndexOf("(") > 0) {
 							pathStep = pathStep.substr(0, pathStep
@@ -3649,7 +3661,7 @@ DefineWebServiceSpecial.prototype = {
 
 	getRPath : function(i) {
 		var rPath = "";
-		for (k = 1; k < this.preparedRPathSteps[i].length; k++) {
+		for (k = 0; k < this.preparedRPathSteps[i].length; k++) {
 			var rPathStep = "//";
 
 			if (k > 1) {

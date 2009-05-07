@@ -81,6 +81,12 @@ function smwf_ws_processStep2($uri, $methodName){
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
 		$tempFlat = WebService::flattenParam($pName, $pType, $wsClient, $typePath);
+		
+		//this is necessary because the gui expects
+		//that parameter paths start with a single "/"
+		for($k=0; $k < count($tempFlat); $k++){
+			$tempFlat[$k] = substr($tempFlat[$k], 1);
+		}
 		$parameters = array_merge($parameters , $tempFlat);
 	}
 	return "##handle exceptions##;".implode(";", $parameters);

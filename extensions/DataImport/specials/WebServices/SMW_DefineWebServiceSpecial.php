@@ -570,6 +570,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "soap;";
 		foreach($mergedParameters as $mergedParameter){
 			$html .= $mergedParameter["name"].";";
+			// remove parameter paths that start with "//" 
+			
 			$html .= $mergedParameter["path"].";";
 			if(!$result){
 				if(array_key_exists("optional", $mergedParameter)){
