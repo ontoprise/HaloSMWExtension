@@ -1,33 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
 <project default="testOB">
 
-    <target name="testOB">
+	<target name="testOB">
 
-        <webtest name="Search in OntologyBrowser">
-            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
-            <verifyTitle text="OntologyBrowser - Halo3wiki" />
+		<webtest name="Search in OntologyBrowser">
+			&goToOntologyBrowser;
+			
+			<setInputField htmlId="FilterBrowserInput" value="ca" />
+			<clickButton htmlId="filterBrowseButton" />
+			<sleep description="4s pause" seconds="4" /> 
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='categoryTree']/table/tbody/tr/td/a" text="Car" />
+			</webtest>
+			
+			<webtest name="Goto property tree">
+			&goToOntologyBrowser;
+			
+			<clickLink htmlId="propertyTreeSwitch" />
+			<sleep description="4s pause" seconds="4" /> 
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='propertyTree']/table/tbody/tr/td/a" text="Body Form" />
+			</webtest>
+			
+			<webtest name="Select category and check for instance">
+			&goToOntologyBrowser;
+			<sleep description="4s pause" seconds="4" /> 
+			<clickLink xpath="//a[@title='Car']" />
+			<sleep description="4s pause" seconds="4" /> 
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
+			</webtest> 
+			
+			<webtest name="Select category, select an instance and check for annotation">
+			&goToOntologyBrowser;
+			
+			<clickLink xpath="//a[@title='Car']" />
+			<sleep description="4s pause" seconds="4" /> 
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
+			<clickLink xpath="//div[@id='instanceList']/table/tbody/tr/td/a" />
+			<sleep description="4s pause" seconds="4" /> 
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='relattributes']/table/tbody/tr/td/a" text="Has Engine" />
+			</webtest>
 
-            <setInputField htmlId="FilterBrowserInput" value="ca" />
-            <clickButton htmlId="filterBrowseButton" />
-            <sleep description="4s pause" seconds="4" /> 
-            <verifyXPath description="Check if the element exists" xpath="//div[@id='categoryTree']/table/tbody/tr/td/a" text="Car" />
-        </webtest>
-        
-        <webtest name="Goto property tree">
-            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
-            <verifyTitle text="OntologyBrowser - Halo3wiki" />
+		<webtest name="Select category and check for schema property">
+			&goToOntologyBrowser;
 
-            <clickLink htmlId="propertyTreeSwitch" />
-            <sleep description="4s pause" seconds="4" /> 
-            <verifyXPath description="Check if the element exists" xpath="//div[@id='propertyTree']/table/tbody/tr/td/a" text="Body Form" />
+			<clickLink xpath="//a[@title='Car']" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the element exists"
+				xpath="//div[@id='relattributes']/table/tbody/tr/td/a"
+				text="Body Form" />
+			<verifyXPath description="Check if the element exists"
+				xpath="//div[@id='relattributes']/table/tbody/tr[3]/td/a"
+				text="Has Engine" />
+		</webtest>
+
+		<webtest name="Create a subcategory of Car">
+			&goToLogin;
+			&goToOntologyBrowser;
+
+			<clickLink xpath="//a[@title='Car']" description="Select category car"/>
+			<sleep description="4s pause" seconds="4" />
+			<clickLink xpath="//span[@id='menuBarConceptTree']/a" description="Select create subcategory"/>
+			<setInputField htmlId="categoryTreeMenu_input_ontologytools"
+				value="Racing car" description="Enter: Racing car"/>
+			<sleep description="8s pause" seconds="8" />
+			<clickLink
+				xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create"/>
+           &goToOntologyBrowser;
+            <verifyXPath xpath="//a[@title='Racing_car']" description="Check if category appears"/>
+		</webtest>
+		
+		<webtest name="Create a category on the same level of Car">
+            &goToLogin;
+            &goToOntologyBrowser;
+
+            <clickLink xpath="//a[@title='Car']" description="Select category car"/>
+            <sleep description="4s pause" seconds="4" />
+            <clickLink xpath="//span[@id='menuBarConceptTree']/a[2]" description="Select create category on same level"/>
+            <setInputField htmlId="categoryTreeMenu_input_ontologytools"
+                value="Bike" description="Enter: Bike"/>
+            <sleep description="8s pause" seconds="8" />
+            <clickLink
+                xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create"/>
+           &goToOntologyBrowser;
+            <verifyXPath xpath="//a[@title='Bike']" description="Check if category appears"/>
         </webtest>
-        
-        <webtest name="Select category and check for instance">
-            <invoke url="http://localhost/develwiki/index.php/Special:OntologyBrowser" description="Tests if the ontology browser responds" />
-            <verifyTitle text="OntologyBrowser - Halo3wiki" />
-            <sleep description="4s pause" seconds="4" /> 
-            <clickLink xpath="//a[@title='Car']" />
-            <sleep description="4s pause" seconds="4" /> 
-            <verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
-        </webtest>
-    </target>
+	</target>
 </project>

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 
 <project name="testHalo" default="testAll">
+	<property name="wikipath" value="mediawiki"/>
+	
 	<target name="testAll" description="runs all the tests">
 		<ant antfile="basictests.xml"/>
 		<ant antfile="ontologybrowsertests.xml"/>
