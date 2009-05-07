@@ -66,6 +66,9 @@ UseWebService.prototype = {
 		$("step2-parameters").appendChild(tempTable);
 		$("step2-parameters").childNodes[0].appendChild(tempHead);
 
+		//to detect if the use all checkbox should be displayed
+		var optionalParameterExists = false;
+		
 		for ( var i = 0; i < parameters.length; i += 3) {
 			var row = document.createElement("tr");
 
@@ -86,6 +89,7 @@ UseWebService.prototype = {
 				td.appendChild(input);
 				
 			} else {
+				optionalParameterExists = true;
 				input.checked = false;
 				td.appendChild(input);
 			}
@@ -120,6 +124,10 @@ UseWebService.prototype = {
 			}
 			row.appendChild(td);
 			$("step2-parameters").childNodes[0].appendChild(row);
+		}
+		
+		if(optionalParameterExists){
+			$("step2-use-label").style.visibility = "visible";
 		}
 		
 		this.hidePendingIndicator();
