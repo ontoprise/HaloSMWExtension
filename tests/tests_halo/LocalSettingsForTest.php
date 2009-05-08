@@ -71,7 +71,7 @@ $wgDBtype           = "mysql";
 $wgDBserver         = "localhost";
 $wgDBname           = "testdb";//"bibelwiki_mw13";//vw_wiki
 $wgDBuser           = "root";
-$wgDBpassword       = "m8nix";
+$wgDBpassword       = "T9saG9MtwejYySj6";
 $wgDBport           = "3306";
 $wgDBprefix         = "";
 
