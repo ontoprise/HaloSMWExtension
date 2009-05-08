@@ -99,8 +99,11 @@ function tstInitializeDatabase() {
 			$prgArg = explode("|", $line);
 			$prg = $prgArg[0];
 			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
-			echo "$prg $arg";
-			runProcess($phpExe." \"".$mw_dir."extensions/".$prg."\" $arg");
+			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
+			$cmd = str_replace("\n", "", $cmd);
+			$cmd = str_replace("\r", "", $cmd);
+			echo "$cmd";
+			runProcess($cmd);
 
 		}
 		fclose($handle);
