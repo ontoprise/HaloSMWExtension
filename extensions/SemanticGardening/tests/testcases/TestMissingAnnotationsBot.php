@@ -6,7 +6,7 @@ class TestMissingAnnotationsBot extends PHPUnit_Framework_TestCase {
     
 
     function setUp() {
-         exec('runBots smw_missingannotationsbot -nolog -p "MA_PART_OF_NAME=,MA_CATEGORY_RESTRICTION="');
+         exec('./runBots smw_missingannotationsbot -nolog -p "MA_PART_OF_NAME=,MA_CATEGORY_RESTRICTION="');
     }
 
     function tearDown() {

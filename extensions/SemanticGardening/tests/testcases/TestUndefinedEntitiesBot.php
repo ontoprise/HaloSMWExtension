@@ -6,7 +6,7 @@ class TestUndefinedEntitiesBot extends PHPUnit_Framework_TestCase {
     
 
     function setUp() {
-         exec('runBots smw_undefinedentitiesbot');
+         exec('./runBots smw_undefinedentitiesbot');
     }
 
     function tearDown() {
