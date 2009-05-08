@@ -32,10 +32,6 @@ xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 	<rdfs:subClassOf rdf:resource="&cat;Car" />
 
 </owl:Class>
-<owl:Class rdf:about="&cat;Hybrid_car">
-	<rdfs:label xml:lang="en">Hybrid car</rdfs:label>
-	<rdfs:subClassOf rdf:resource="&cat;Electric_car" />
-</owl:Class>
 <owl:Class rdf:about="&cat;Engine">
 	<rdfs:label xml:lang="en">Engine</rdfs:label>
 	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />
