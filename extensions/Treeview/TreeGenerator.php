@@ -601,6 +601,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	}
 	
 	private function getPathToOpenTo() {
+
 		// the node to be openend must be a ordinary page, no property nor category
 		if (in_array($this->openTo->getNamespace(), array(NS_CATEGORY, SMW_NS_PROPERTY))) {
 			$this->openTo = null;
@@ -657,9 +658,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$res = $this->db->query($cquery);
 			if ($res && $this->db->affectedRows() > 0) {
 				$row = $this->db->fetchObject($res);
+				if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
+				if (!isset($this->elementProperties[$row->o_id])) $newIds[] = $row->o_id;
 				$this->addTupleToResult($row->s_id, $row->o_id);
 				$cParent = $row->o_id;
-				$newIds[] = $row->s_id;
 			}
 			else break;
 			// if the parent was found, look for all children of that patent i.e. all
@@ -670,9 +672,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				while ($row = $this->db->fetchObject($res)) {
 					// this is the relation how we found the parent, so skip it.
 					if ($row->s_id == $currentId) continue;
-					$this->addTupleToResult($row->s_id, $row->o_id);
 					// remember all ids that we add to sIds and elementProperties
-					$newIds[] = $row->s_id;
+					if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
+					$this->addTupleToResult($row->s_id, $row->o_id);
 				}
 			}
 			else break;
@@ -692,7 +694,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		// current parent after some iterations of the node to open is still not
 		// in the result  found, then remove all added
 		if (!isset($this->sIds[$currentId]) && isset($cParent) && !isset($this->sIds[$cParent])) {
-			$newIds = array_uniqe($newIds);
+			$newIds = array_unique($newIds);
 			foreach ($newIds as $id) {
 				unset($this->sIds[$id]);
 				unset($this->elementProperties[$id]);
@@ -1054,7 +1056,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * 				 otherwise true is returned and $sIds are sorted afterwards
 	 */
 	private function sortElements($values = NULL) {
- 
+
 		// build the array for sorting, keys must be strings so that the do not get new assigned 
 		$sortArr = array();
 		$sortIds = is_array($values) ? $values : array_keys($this->elementProperties);
