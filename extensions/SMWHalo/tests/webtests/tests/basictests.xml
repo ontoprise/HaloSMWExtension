@@ -15,7 +15,7 @@
 		</webtest>
 		<webtest name="LoadOntologyBrowser">
 			&goToOntologyBrowser;
-			<verifyXPath description="Check if the heading element exists" xpath="/html/body/div/div/div/div/h1" text="OntologyBrowser" />
+			<verifyXPath description="Check if the heading element exists" xpath="//h1[@class='firstHeading']" text="OntologyBrowser" />
 
 		</webtest>
 		

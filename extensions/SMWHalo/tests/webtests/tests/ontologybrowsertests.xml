@@ -66,6 +66,8 @@
 			<clickLink
 				xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create"/>
            &goToOntologyBrowser;
+			<clickLink xpath="//a[@title='Car']" description="Select category car (and show its subcategories)"/>
+			<sleep description="8s pause" seconds="8" />
             <verifyXPath xpath="//a[@title='Racing_car']" description="Check if category appears"/>
 		</webtest>
 		
@@ -82,6 +84,7 @@
             <clickLink
                 xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create"/>
            &goToOntologyBrowser;
+			
             <verifyXPath xpath="//a[@title='Bike']" description="Check if category appears"/>
         </webtest>
 	</target>
