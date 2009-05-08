@@ -5,7 +5,7 @@ class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		exec('runBots smw_consistencybot');
+		exec('./runBots smw_consistencybot');
 	}
 
 	function tearDown() {
