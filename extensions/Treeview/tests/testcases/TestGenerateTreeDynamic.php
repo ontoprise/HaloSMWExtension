@@ -324,6 +324,25 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeCheckNode() {
+		global $wgParser;
+		
+		$property = 'property=Subsection of';
+		$checkNode= 'checkNode=1';
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, $property, 'dynamic=1', $checkNode);
+  		$res = utf8_decode($res);
+		$expected = $this->retStart.$property.'&'.$checkNode.$this->retEnd.'*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]'."\x7f".'
+**[[Help:How_to_configure_the_tree|How to configure the tree]]'."\x7f".'
+**[[Help:SMW+_1.4.3|SMW+ 1.4.3]]'."\x7f".'
+**[[Help:Wikimaster|Wikimaster]]'."\x7f".'
+*[[Main Page]]
+**[[Märchen]]
+';
+		$this->assertEquals($expected, $res);
+	}
+
 
 }
 

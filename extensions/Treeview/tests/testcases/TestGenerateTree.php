@@ -479,6 +479,38 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $res);
 	}
 
+	function testTreeCheckNode() {
+		global $wgParser;
+		
+		$tg = new TreeGenerator;
+  		$res = $tg->generateTree($wgParser, 'property=Subsection of', 'checkNode=1');
+  		$res = utf8_decode($res);
+		$expected = '*[[Help:Contents|Contents]]
+**[[Help:Glossary|Glossary]]
+**[[Help:How_to_configure_the_tree|How to configure the tree]]
+**[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
+**[[Help:Wikimaster|Wikimaster]]
+*[[Main Page]]
+**[[Märchen]]
+***[[Grimm]]
+****[[Jacob Grimm]]
+****[[Wilhelm Grimm]]
+***[[Grimms Märchen]]
+****[[Blaues Licht]]
+****[[Der Wolf und die 7 Geißlein]]
+****[[Die 3 Schlangenblätter]]
+****[[Frau Holle]]
+*****[[Goldmarie]]
+*****[[Pechmarie]]
+****[[Hänsel und Gretel]]
+****[[Rapunzel]]
+****[[Schneewittchen]]
+****[[Waldhaus]]
+***[[Wilhelm Hauff]]
+****[[Kleiner Muck]]
+';
+		$this->assertEquals($expected, $res);
+	}
 
 }
 

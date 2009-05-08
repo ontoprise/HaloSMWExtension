@@ -43,10 +43,14 @@ class TreeGenerator {
 		if (array_key_exists('initOnload', $genTreeParameters)) {
 			$params = "";
 			foreach ($genTreeParameters as $k => $v) {
+				// send this parameter only if dynamic is set
+				if ($k == "checkNode") continue;
 				// these parameter values are ignored therefore set them here to 1 if set
 				if ($k == "dynamic" || $k == "refresh") $v = 1;
 				$params .= $k."=".urlencode($v)."&";
 			}
+			if (array_key_exists('dynamic', $genTreeParameters) && array_key_exists('checkNode', $genTreeParameters))
+				$params .= 'checkNode=1&';
 			return "\x7finitOnload('$params')\x7f*";
 		}
 		
@@ -86,10 +90,12 @@ class TreeGenerator {
 			$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) &&
 							 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
 
+		$checkNode = ($ajaxExpansion > 0 && array_key_exists('checkNode', $genTreeParameters)) ? true : false;
+
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
-		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo);
+		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo, $checkNode);
 		
 		// order by property
 		if (array_key_exists('orderbyProperty', $genTreeParameters))
@@ -112,6 +118,7 @@ class TreeGenerator {
 		    	if ($condition) $returnPrefix .= "condition=".$condition."&";
 		    	if (isset($genTreeParameters['refresh'])) $returnPrefix .= "refresh=1&";
 		    	if (isset($genTreeParameters['orderbyProperty'])) $returnPrefix .= "orderbyProperty=".$genTreeParameters['orderbyProperty']."&";
+		    	if (isset($genTreeParameters['checkNode'])) $returnPrefix .= "checkNode=1&";
 			}
 			if ($tv_store->openToFound() != null)
 				$returnPrefix .= "opento=".$openTo->getPrefixedDBkey()."&";
@@ -176,6 +183,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     private $json;
     private $condition;
     private $openTo;
+    private $checkNode;
 
 	// sorting options
 	private $orderByProperty;
@@ -198,7 +206,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
     
     private $db;
 
-    public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo) {
+    public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo, $checkNode) {
     	// here the options are stored, that can be set in the generateTree parser function
 		$this->ajaxExpansion = $ajaxExpansion;
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
@@ -208,6 +216,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         $this->json = $jsonOutput;
         $this->condition = $condition;
         $this->openTo = $openTo;
+        $this->checkNode = $checkNode;
         
         // flush sorting options, these will be set by functions setOrderByProperty() and setOrderDescending()
         $this->orderByProperty = null;
@@ -219,6 +228,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$this->smw_start_id = NULL;
 		$this->smw_condition_ids = NULL;
 		$this->openToPath = array();
+		$this->leafNodes = array();
 		
 		// empty class variables, that will store information about this generated tree and also general information
 		$this->elementProperties= array();
@@ -354,6 +364,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 
 		$this->generateTreeDeepFirstSearch();
+		
+		// check if leaf nodes have children
+		if ($this->checkNode) $this->checkLeafHc();
 
         if ($this->json)
             return $this->formatTreeToJson();
@@ -658,9 +671,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$res = $this->db->query($cquery);
 			if ($res && $this->db->affectedRows() > 0) {
 				$row = $this->db->fetchObject($res);
-				if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
-				if (!isset($this->elementProperties[$row->o_id])) $newIds[] = $row->o_id;
-				$this->addTupleToResult($row->s_id, $row->o_id);
+				if ($this->addTupleToResult($row->s_id, $row->o_id)) {
+					// remember all ids that we add to sIds and elementProperties
+					if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
+					if (!isset($this->elementProperties[$row->o_id])) $newIds[] = $row->o_id;
+				}
 				$cParent = $row->o_id;
 			}
 			else break;
@@ -672,9 +687,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 				while ($row = $this->db->fetchObject($res)) {
 					// this is the relation how we found the parent, so skip it.
 					if ($row->s_id == $currentId) continue;
-					// remember all ids that we add to sIds and elementProperties
-					if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
-					$this->addTupleToResult($row->s_id, $row->o_id);
+					if ($this->addTupleToResult($row->s_id, $row->o_id))
+						// remember all ids that we add to sIds and elementProperties
+						if (!isset($this->elementProperties[$row->s_id])) $newIds[] = $row->s_id;
 				}
 			}
 			else break;
@@ -752,12 +767,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @access private
 	 * @param  int $s_id smw_id of the subject
 	 * @param  int $o_id smw_id of the object
+	 * @return boolean true if result was added or false if not
 	 */
 	private function addTupleToResult($s_id, $o_id) {
 		// parameter condition was set, check if current subject
 		// (s_id) of the triple is in the allowed page list
 		if (($this->condition) && !in_array($s_id, $this->smw_condition_ids))
-			return;
+			return false;
 
 		// if we had set parameter start, set all children of start node as root nodes.
 		// the start node itself is excluded from the tree 
@@ -788,7 +804,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		if (!isset($this->elementProperties[$s_id]))
 		    $this->elementProperties[$s_id]= array();
 		if ($o_id && !isset($this->elementProperties[$o_id]))
-		    $this->elementProperties[$o_id]= array();	
+		    $this->elementProperties[$o_id]= array();
+		return true;	
 	}
 	
 	/**
@@ -1007,7 +1024,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    $this->treeList->rewind();
 	    while ($item = $this->treeList->getCurrent()) {
 	    	$this->treeList->next();
-		    $tree.= $prefix.str_repeat($fillchar, $item[1]).$this->elementProperties[$item[0]]->getWikitext()."\n";
+		    $tree.= $prefix.str_repeat($fillchar, $item[1]).$this->elementProperties[$item[0]]->getWikitext();
+		    if (in_array($item[0], $this->leafNodes)) $tree.= "\x7f";
+		    $tree .= "\n";
 	    }
 	    $this->treeList = NULL;
 	    return $tree;
@@ -1030,11 +1049,13 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    while ($item = $this->treeList->getCurrent()) {
 	        $this->treeList->next();
 	        
-		    $tree[]= array(
+		    $node= array(
 		      'name' => $this->elementProperties[$item[0]]->getDisplayName(),
-		      'link' => $this->elementProperties[$item[0]]->getLink(),
+		      'link' => urlencode($this->elementProperties[$item[0]]->getLink()),
 		      'depth' => $item[1],
 		    );
+		    if (in_array($item[0], $this->leafNodes)) $node['leaf'] = 1;
+		    $tree[] = $node;
 		    unset($item);
 	    }
 	    $this->treeList = NULL;
@@ -1081,6 +1102,51 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			if (isset($oldSids[$id])) $this->sIds[$id]= $oldSids[$id];
 		}
 		return true;					   
+	}
+	
+	private function checkLeafHc() {
+		$currentDepth = 1;			// current depth of node that's being investigated
+		$nodesToCheck = array();	// filled with ids of children, that must be checked
+	    $this->treeList->rewind();
+	    while ($item = $this->treeList->getCurrent()) {
+	    	$this->treeList->next();
+	    	// depth of current node is higher than previous node -> previous node has children
+	    	if ($item[1] > $currentDepth) {
+	    		array_pop($nodesToCheck);
+	    		$nodesToCheck[] = $item[0];
+	    	}
+    		$nodesToCheck[] = $item[0];
+    		$currentDepth = $item[1];
+	    }	    		
+	    // walk through the $nodesToCheck array and see if there already some nodes that know
+	    // that they have children
+	    for ($i = 0, $is = count($nodesToCheck); $i < $is; $i++) {
+			foreach ($this->sIds as $child) {
+				foreach ($child as $parent) {
+					if ($parent == $nodesToCheck[$i]) {
+						unset($nodesToCheck[$i]);
+						continue 3;
+					}
+				}
+			}
+		}
+		if (count($nodesToCheck) == 0) return;
+		// all remaining nodes need to be checked in the DB now		
+		$smw_inst2 = $this->db->tableName('smw_inst2');		
+		$smw_rels2 = $this->db->tableName('smw_rels2');
+		$query = $this->getQuery4Relation($smw_inst2, $smw_rels2);
+		$query = str_replace('___CONDITION___', ' AND r.o_id IN ('.implode(',', $nodesToCheck).')', $query);
+		$nodesToCheck = array_flip($nodesToCheck);
+		$res = $this->db->query($query);
+		if ($res) {
+			while ($row = $this->db->fetchObject($res)) {
+				if (($this->condition) && !in_array($row->o_id, $this->smw_condition_ids))
+					continue;
+				unset($nodesToCheck[$row->o_id]);
+			}
+		}
+		$this->db->freeResult($res);
+		$this->leafNodes = array_flip($nodesToCheck);
 	}
 	
 }

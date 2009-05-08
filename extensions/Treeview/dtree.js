@@ -109,7 +109,7 @@ Node.prototype.unserialize = function(str) {
 }
 
 // SMW Data object (for all setup related to smw, when doing Ajax calls)
-function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty) {
+function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
@@ -119,6 +119,7 @@ function SmwData(id, relation, category, display, start, maxDepth, condition, ur
 	this.condition = condition;
 	this.urlparams = urlparams;
 	this.orderbyProperty = orderbyProperty;
+	this.checkNode = checkNode;
 }
 
 SmwData.prototype.getParamsForAjaxRequest = function() {
@@ -128,6 +129,7 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	if (this.condition) str += '%26q%3D' + URLEncode(this.condition); 
 	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
 	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
+	if (this.checkNode) str += '%26n%3D1';
 	str += '%26';
 	return str;
 }
@@ -223,9 +225,17 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open);
 };
 
+// Set node as leaf that cannot be expanded anymore
+dTree.prototype.setLeaf = function(id) {
+	if (this.aNodes[id]) {
+		this.aNodes[id]._hc = false;
+		this.aNodes[id]._complete = true;
+	}
+}
+
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode);
 };
 
 // Get Smw url params to make an Ajax request for a specific node 
@@ -631,8 +641,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		if (name.indexOf('?') != -1)
 			name = name.substring(0, name.indexOf('?'));
 	}
-	// add name to parameter as well as the token
-	params += 's%3D' + URLEncode(name);
+	params += 's%3D' + name;
 	params += this.getTokenAndWriteCache(id);
 	sendCall(this.smwAjaxUrl + params, callBackMethod); 
 };
@@ -665,6 +674,8 @@ dTree.prototype.initOnload = function(id, arg) {
 			params += 'f';
 		else if (key == 'orderbyProperty')
 			params += 'b';
+		else if (key == 'checkNode')
+			params += 'n';
 		else if (key == 'dynamic') {
 			dynamic = 1;
 			continue;
@@ -972,10 +983,8 @@ handleResponseOpen = function() {
     	var str = dTree.getHtml4Node(treelist[i], url, urlParams);
     	var newId = dTree.aNodes.length; 
     	dTree.add(newId, parentId, str);
-    	if (dTree.isMaxDepth(newId)) {
-    		dTree.aNodes[newId]._hc = false;
-    		dTree.aNodes[newId]._complete = true;
-    	}
+    	if (treelist[i].leaf || dTree.isMaxDepth(newId))
+    		dTree.setLeaf(newId);
     	newSerialData += '{' + dTree.aNodes[newId].serialize() + '}';
     }
     dTree.saveCookiesAndDisplay(newSerialData);
@@ -1038,10 +1047,8 @@ handleResponseRefresh = function() {
     			}
     		}
     	}
-    	if (dTree.isMaxDepth(found)) {
-    		dTree.aNodes[found]._hc = false;
-    		dTree.aNodes[found]._complete = true;
-    	}
+    	if (cn.leaf || dTree.isMaxDepth(found))
+    		dTree.setLeaf(found);
     	
     }
 	

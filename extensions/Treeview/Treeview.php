@@ -123,7 +123,7 @@ class SemanticTreeview {
 	            	$matches[1] = substr($matches[1], 12); // remove initOnload('
 	            	$matches[1] = substr($matches[1], 0, -2); // and ')'	
 	            }
-	           	parse_str($matches[1], $params);
+	            parse_str($matches[1], $params);
 	    	    if (isset($params['opento'])) {
 	    	    	$ns = substr($params['opento'], 0, strpos($params['opento'] , ':'));
 	    	    	$this->args[$this->id."opento"] = (strlen($ns) > 0)
@@ -140,7 +140,8 @@ class SemanticTreeview {
 					$addSmwData .= (isset($params['maxDepth'])) ? $params['maxDepth']."," : "null, ";
 					$addSmwData .= (isset($params['condition'])) ? "'".urlencode($params['condition'])."', " : "null, ";
 					$addSmwData .= (isset($params['urlparams'])) ? "'".$params['urlparams']."', " : "null, ";
-					$addSmwData .= (isset($params['orderbyProperty'])) ? "'".$params['orderbyProperty']."');" : "null);";
+					$addSmwData .= (isset($params['orderbyProperty'])) ? "'".$params['orderbyProperty']."', " : "null, ";
+					$addSmwData .= (isset($params['checkNode'])) ? "1);" : "null);";
             	    $text.= $matches[2]."*".
                 	    	$addSmwData."\n";
                     if (isset($params['refresh']) && $params['refresh'] == 1)
@@ -158,7 +159,7 @@ class SemanticTreeview {
         $newtext = "";
         foreach($rows as $row) {
             preg_match('/^(\\*+)(.*?)$/m', $row, $m);
-           	$newtext .= $this->formatRow($m)."\n";
+           	$newtext .= $this->formatRow($m, $row)."\n";
         }
         return $newtext;
    }
@@ -166,20 +167,23 @@ class SemanticTreeview {
  
     /**
      * Reformat tree bullet structure recording row, depth and id in a format which is not altered by wiki-parsing
-     * - format is: 1{uniq}-{id}-{depth}-{item}-2{uniq}
+     * - format is: 1{uniq}-{id}-{depth}-{item}-{hc}-2{uniq}
      * - sequences of this format will be matched in ParserAfterTidy and converted into dTree JavaScript
      * - NOTE: we can't encode a unique row-id because if the same tree instranscluded twice a cached version
      *         may be used (even if parser-cache disabled) this also means that tree id's may be repeated
      */
-    private function formatRow($m) {
+    private function formatRow($m, $row) {
     	if (count($m) > 0) {
     		$m1 = strlen($m[1]) -1;
     		$m2 = $m[2];
+    		$m3 = (substr($row, -1) == "\x7f") ? "1" : "\x7f0";
     	} else {
     		$m1 = 0;
     		$m2 = '';
+    		$m3 = "\x7f";
     	}
-        return "\x7f1{$this->uniq}\x7f{$this->id}\x7f{$m1}\x7f{$m2}\x7f2{$this->uniq}";
+    	
+        return "\x7f1{$this->uniq}\x7f{$this->id}\x7f{$m1}\x7f{$m2}{$m3}\x7f2{$this->uniq}";
     }
  
     /**
@@ -219,12 +223,14 @@ class SemanticTreeview {
             $lastDepth = 0;
             while ($match = array_shift($matches)) {
                 list(,$id,$depth,,$icon,$item) = $match;
+                $isLeaf = substr($item, -1);
+                $item = substr($item, 0, -2);
                 $start = false;
                 if ($id != $lastId) {
                     if (!isset($depths[$id])) $depths[$id] = $depths[$lastId]+$lastDepth;
                     if ($start = $rootId != $id && !in_array($id,$subs[1])) $depths[$rootId = $id] = 0;
                 }
-                if ($item) $rows[] = array($rootId,$depth+$depths[$id],$icon,addslashes($item),$start);
+                if ($item) $rows[] = array($rootId,$depth+$depths[$id],$icon,addslashes($item),$start, $isLeaf);
                 $lastId    = $id;
                 $lastDepth = $depth;
             }
@@ -237,7 +243,7 @@ class SemanticTreeview {
             $openTo = '';
             while ($info = array_shift($rows)) {
                 $node++;
-                list($id,$depth,$icon,$item,$start) = $info;
+                list($id,$depth,$icon,$item,$start, $isLeaf) = $info;
                 $args = $this->args[$id];
                 $class = $this->args[$id."class"];
                 if (!isset($args['root'])) $args['root'] = ''; # tmp - need to handle rootless trees
@@ -267,6 +273,7 @@ class SemanticTreeview {
                     	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths))
                         $item = str_replace($paths[1], $paths[1].'?'.$this->args[$id."urlparams"], $item); 
                     $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
+                    if ($isLeaf) $nodes .= "{$this->uniqname}$id.setLeaf($node);\n";
                 }
 
                 # Last row of current root-tree, surround nodes dtree JS and div etc

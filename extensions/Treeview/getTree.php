@@ -28,6 +28,8 @@ function smw_treeview_getTree($input) {
   $display = (isset($req['d'])) ? 'display='.$req['d'] : NULL;
   $condition = (isset($req['q'])) ? 'condition='.$req['q'] : NULL;
   $orderbyProperty = (isset($req['b'])) ? 'orderbyProperty='.$req['b'] : NULL;
+  // checkNode only if dynamic expansion is used.
+  $checkNode = (!isset($req['z']) && isset($req['n'])) ? 'checkNode=1' : NULL;
 
   // the following parameter depend on initOnload,
   // if this is not set, these are not needed because an dynamic expansion will fetch
@@ -49,7 +51,7 @@ function smw_treeview_getTree($input) {
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage,
                                      $level, $condition, $urlparams, $opento,
-                                     $iolStatic, $orderbyProperty);
+                                     $iolStatic, $orderbyProperty, $checkNode);
   
   $return['treelist'] = $res;
   $return['result'] = 'success';

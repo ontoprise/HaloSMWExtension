@@ -21,7 +21,7 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 		);
 		$expected = array(
 			array('name' => "Grimm", 'link' => "Grimm", 'depth' => 1),
-			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 1),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_M%C3%A4rchen", 'depth' => 1),
 			array('name' => "Wilhelm Hauff", 'link' => "Wilhelm_Hauff", 'depth' => 1),
 		);
 		$res= $this->callWiki($params);
@@ -85,24 +85,24 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			't' => $token,
 		);
 		$expected = array(
-			array('name' => "Contents", 'link' => "Help:Contents", 'depth' => 1),
-			array('name' => "Glossary", 'link' => "Help:Glossary", 'depth' => 2),
-			array('name' => "How to configure the tree", 'link' => "Help:How_to_configure_the_tree", 'depth' => 2),
-			array('name' => "SMW+ 1.4.3", 'link' => "Help:SMW+_1.4.3", 'depth' => 2),
-			array('name' => "Wikimaster", 'link' => "Help:Wikimaster", 'depth' => 2),
+			array('name' => "Contents", 'link' => "Help%3AContents", 'depth' => 1),
+			array('name' => "Glossary", 'link' => "Help%3AGlossary", 'depth' => 2),
+			array('name' => "How to configure the tree", 'link' => "Help%3AHow_to_configure_the_tree", 'depth' => 2),
+			array('name' => "SMW+ 1.4.3", 'link' => "Help%3ASMW%2B_1.4.3", 'depth' => 2),
+			array('name' => "Wikimaster", 'link' => "Help%3AWikimaster", 'depth' => 2),
 			array('name' => "Main Page", 'link' => "Main_Page", 'depth' => 1),
-			array('name' => "Märchen", 'link' => "Märchen", 'depth' => 2),
+			array('name' => "Märchen", 'link' => "M%C3%A4rchen", 'depth' => 2),
 			array('name' => "Grimm", 'link' => "Grimm", 'depth' => 3),
 			array('name' => "Jacob Grimm", 'link' => "Jacob_Grimm", 'depth' => 4),
 			array('name' => "Wilhelm Grimm", 'link' => "Wilhelm_Grimm", 'depth' => 4),
-			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 3),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_M%C3%A4rchen", 'depth' => 3),
 			array('name' => "Blaues Licht", 'link' => "Blaues_Licht", 'depth' => 4),
-			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Geißlein", 'depth' => 4),
-			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenblätter", 'depth' => 4),
+			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Gei%C3%9Flein", 'depth' => 4),
+			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenbl%C3%A4tter", 'depth' => 4),
 			array('name' => "Frau Holle", 'link' => "Frau_Holle", 'depth' => 4),
 			array('name' => "Goldmarie", 'link' => "Goldmarie", 'depth' => 5),
 			array('name' => "Pechmarie", 'link' => "Pechmarie", 'depth' => 5),
-			array('name' => "Hänsel und Gretel", 'link' => "Hänsel_und_Gretel", 'depth' => 4),
+			array('name' => "Hänsel und Gretel", 'link' => "H%C3%A4nsel_und_Gretel", 'depth' => 4),
 			array('name' => "Rapunzel", 'link' => "Rapunzel", 'depth' => 4),
 			array('name' => "Schneewittchen", 'link' => "Schneewittchen", 'depth' => 4),
 			array('name' => "Waldhaus", 'link' => "Waldhaus", 'depth' => 4),
@@ -124,13 +124,13 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			't' => $token,
 		);
 		$expected = array(
-			array('name' => "Contents", 'link' => "Help:Contents", 'depth' => 1),
-			array('name' => "Glossary", 'link' => "Help:Glossary", 'depth' => 2),
-			array('name' => "How to configure the tree", 'link' => "Help:How_to_configure_the_tree", 'depth' => 2),
-			array('name' => "SMW+ 1.4.3", 'link' => "Help:SMW+_1.4.3", 'depth' => 2),
-			array('name' => "Wikimaster", 'link' => "Help:Wikimaster", 'depth' => 2),
+			array('name' => "Contents", 'link' => "Help%3AContents", 'depth' => 1),
+			array('name' => "Glossary", 'link' => "Help%3AGlossary", 'depth' => 2),
+			array('name' => "How to configure the tree", 'link' => "Help%3AHow_to_configure_the_tree", 'depth' => 2),
+			array('name' => "SMW+ 1.4.3", 'link' => "Help%3ASMW%2B_1.4.3", 'depth' => 2),
+			array('name' => "Wikimaster", 'link' => "Help%3AWikimaster", 'depth' => 2),
 			array('name' => "Main Page", 'link' => "Main_Page", 'depth' => 1),
-			array('name' => "Märchen", 'link' => "Märchen", 'depth' => 2),
+			array('name' => "Märchen", 'link' => "M%C3%A4rchen", 'depth' => 2),
 		);
 		$res= $this->callWiki($params);
 		$this->assertEquals($res->result, "success");
@@ -149,16 +149,16 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			't' => $token,
 		);
 		$expected = array(
-			array('name' => "Märchen", 'link' => "Märchen", 'depth' => 1),
+			array('name' => "Märchen", 'link' => "M%C3%A4rchen", 'depth' => 1),
 			array('name' => "Grimm", 'link' => "Grimm", 'depth' => 2),
 			array('name' => "Jacob Grimm", 'link' => "Jacob_Grimm", 'depth' => 3),
 			array('name' => "Wilhelm Grimm", 'link' => "Wilhelm_Grimm", 'depth' => 3),
-			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 2),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_M%C3%A4rchen", 'depth' => 2),
 			array('name' => "Blaues Licht", 'link' => "Blaues_Licht", 'depth' => 3),
-			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Geißlein", 'depth' => 3),
-			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenblätter", 'depth' => 3),
+			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Gei%C3%9Flein", 'depth' => 3),
+			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenbl%C3%A4tter", 'depth' => 3),
 			array('name' => "Frau Holle", 'link' => "Frau_Holle", 'depth' => 3),
-			array('name' => "Hänsel und Gretel", 'link' => "Hänsel_und_Gretel", 'depth' => 3),
+			array('name' => "Hänsel und Gretel", 'link' => "H%C3%A4nsel_und_Gretel", 'depth' => 3),
 			array('name' => "Rapunzel", 'link' => "Rapunzel", 'depth' => 3),
 			array('name' => "Schneewittchen", 'link' => "Schneewittchen", 'depth' => 3),
 			array('name' => "Waldhaus", 'link' => "Waldhaus", 'depth' => 3),
@@ -183,12 +183,12 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			array('name' => "Grimm", 'link' => "Grimm", 'depth' => 1),
 			array('name' => "Jacob Grimm", 'link' => "Jacob_Grimm", 'depth' => 2),
 			array('name' => "Wilhelm Grimm", 'link' => "Wilhelm_Grimm", 'depth' => 2),
-			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 1),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_M%C3%A4rchen", 'depth' => 1),
 			array('name' => "Blaues Licht", 'link' => "Blaues_Licht", 'depth' => 2),
-			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Geißlein", 'depth' => 2),
-			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenblätter", 'depth' => 2),
+			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Gei%C3%9Flein", 'depth' => 2),
+			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenbl%C3%A4tter", 'depth' => 2),
 			array('name' => "Frau Holle", 'link' => "Frau_Holle", 'depth' => 2),
-			array('name' => "Hänsel und Gretel", 'link' => "Hänsel_und_Gretel", 'depth' => 2),
+			array('name' => "Hänsel und Gretel", 'link' => "H%C3%A4nsel_und_Gretel", 'depth' => 2),
 			array('name' => "Rapunzel", 'link' => "Rapunzel", 'depth' => 2),
 			array('name' => "Schneewittchen", 'link' => "Schneewittchen", 'depth' => 2),
 			array('name' => "Waldhaus", 'link' => "Waldhaus", 'depth' => 2),
@@ -216,14 +216,14 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			array('name' => "Gebrüder Grimm", 'link' => "Grimm", 'depth' => 1),
 			array('name' => "Jacob Grimm", 'link' => "Jacob_Grimm", 'depth' => 2),
 			array('name' => "Wilhelm Grimm", 'link' => "Wilhelm_Grimm", 'depth' => 2),
-			array('name' => "Grimms Märchen", 'link' => "Grimms_Märchen", 'depth' => 1),
+			array('name' => "Grimms Märchen", 'link' => "Grimms_M%C3%A4rchen", 'depth' => 1),
 			array('name' => "Das blaue Licht", 'link' => "Blaues_Licht", 'depth' => 2),
 			array('name' => "Rapunzel", 'link' => "Rapunzel", 'depth' => 2),
-			array('name' => "Händel und Gretel", 'link' => "Hänsel_und_Gretel", 'depth' => 2),
-			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenblätter", 'depth' => 2),
+			array('name' => "Händel und Gretel", 'link' => "H%C3%A4nsel_und_Gretel", 'depth' => 2),
+			array('name' => "Die 3 Schlangenblätter", 'link' => "Die_3_Schlangenbl%C3%A4tter", 'depth' => 2),
 			array('name' => "Das Waldhaus", 'link' => "Waldhaus", 'depth' => 2),
 			array('name' => "Frau Holle", 'link' => "Frau_Holle", 'depth' => 2),
-			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Geißlein", 'depth' => 2),
+			array('name' => "Der Wolf und die 7 Geißlein", 'link' => "Der_Wolf_und_die_7_Gei%C3%9Flein", 'depth' => 2),
 			array('name' => "Schneewittchen", 'link' => "Schneewittchen", 'depth' => 2),
 			array('name' => "Wilhelm Hauff", 'link' => "Wilhelm_Hauff", 'depth' => 1),
 			array('name' => "Der kleine Muck", 'link' => "Kleiner_Muck", 'depth' => 2),
@@ -233,6 +233,30 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($res->token, $token);
 		$this->checkTreelist($res->treelist, $expected);
 	}
+
+	function testInitOnloadDynamicCheckNode() {
+		$token = uniqid();
+		$params = array(
+			'p' => 'Subsection of',
+			'i' => 1,
+			'n' => 1,
+			't' => $token,
+		);
+		$expected = array(
+			array('name' => "Contents", 'link' => "Help%3AContents", 'depth' => 1),
+			array('name' => "Glossary", 'link' => "Help%3AGlossary", 'depth' => 2, 'leaf' => 1),
+			array('name' => "How to configure the tree", 'link' => "Help%3AHow_to_configure_the_tree", 'depth' => 2, 'leaf' => 1),
+			array('name' => "SMW+ 1.4.3", 'link' => "Help%3ASMW%2B_1.4.3", 'depth' => 2, 'leaf' => 1),
+			array('name' => "Wikimaster", 'link' => "Help%3AWikimaster", 'depth' => 2, 'leaf' => 1),
+			array('name' => "Main Page", 'link' => "Main_Page", 'depth' => 1),
+			array('name' => "Märchen", 'link' => "M%C3%A4rchen", 'depth' => 2),
+		);
+		$res= $this->callWiki($params);
+		$this->assertEquals($res->result, "success");
+		$this->assertEquals($res->token, $token);
+		$this->checkTreelist($res->treelist, $expected);
+	}
+
 	
 	/**
 	 * This is the function ot for testing but for calling the wiki url and returning
@@ -272,12 +296,17 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 			$this->assertEquals($treelist[$i]->name, $expected[$i]['name']);
 			$this->assertEquals($treelist[$i]->link, $expected[$i]['link']);
 			$this->assertEquals($treelist[$i]->depth, $expected[$i]['depth']);
+			if (isset($treelist[$i]->leaf))
+				$this->assertEquals($treelist[$i]->leaf, $expected[$i]['leaf']);
 		}
 		// reverse check, based on expected
 		for ($i = 0; $i < count($expected); $i++) {
-			$this->assertEquals($treelist[$i]->name, $expected[$i]['name']);
-			$this->assertEquals($treelist[$i]->link, $expected[$i]['link']);
-			$this->assertEquals($treelist[$i]->depth, $expected[$i]['depth']);
+			$this->assertEquals($expected[$i]['name'], $treelist[$i]->name);
+			$this->assertEquals($expected[$i]['link'], $treelist[$i]->link);
+			$this->assertEquals($expected[$i]['depth'], $treelist[$i]->depth);
+			if (isset($expected['leaf']))
+				$this->assertEquals($expected[$i]['leaf'], $treelist[$i]->leaf);
+
 		}
 
 	}

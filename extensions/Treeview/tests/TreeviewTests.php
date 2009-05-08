@@ -4,6 +4,7 @@ require_once 'PHPUnit/Framework.php';
 require_once 'testcases/TestGenerateTree.php';
 require_once 'testcases/TestGenerateTreeDynamic.php';
 require_once 'testcases/TestGenerateTreeAjaxCalls.php'; 
+require_once 'testcases/TestParserfunction.php';
 
 class TreeviewTests
 {
@@ -14,6 +15,7 @@ class TreeviewTests
         $suite->addTestSuite("TestGenerateTree");
         $suite->addTestSuite("TestGenerateTreeDynamic");
  		$suite->addTestSuite("TestGenerateTreeAjaxCalls");
+ 		$suite->addTestSuite("TestParserfunction");
  		
         return $suite;
     }
