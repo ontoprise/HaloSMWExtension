@@ -2660,6 +2660,7 @@ DefineWebServiceSpecial.prototype = {
 		for (i = 0; i < updates.length; i++) {
 			if (updates[i]["alias"] != "##") {
 				this.numberOfUsedParameters += 1;
+				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[0].firstChild.lastChild.style.fontWeight = "bold";
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[1].firstChild.checked = true;
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[2].firstChild.value = updates[i]["alias"];
 			}
@@ -2705,6 +2706,7 @@ DefineWebServiceSpecial.prototype = {
 					}
 				} else {
 					this.numberOfUsedResultParts += 1;
+					this.resultContainer.firstChild.childNodes[i + 1].childNodes[0].firstChild.lastChild.style.fontWeight = "bold";
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[1].firstChild.checked = "true";
 					this.resultContainer.firstChild.childNodes[i + 1].childNodes[2].firstChild.value = updates[i]["alias"];
 				}
@@ -3605,12 +3607,18 @@ DefineWebServiceSpecial.prototype = {
 				if($("s3-use" + i).checked != checked){
 					if(checked){
 						this.numberOfUsedParameters += 1;
+						$("s3-path" + i).lastChild.style.fontWeight = "bold";
 					} else {
 						this.numberOfUsedParameters -= 1;
+						$("s3-alias" + i).value = "";
+						$("s3-path" + i).lastChild.style.fontWeight = "normal";
 					}
 				}
 				
 				$("s3-use" + i).checked = checked;
+				if(!checked){
+					
+				}
 			}
 		}
 		
@@ -3638,8 +3646,11 @@ DefineWebServiceSpecial.prototype = {
 				if($("s4-use" + (i + offset)).checked != checked){
 					if(checked){
 						this.numberOfUsedResultParts += 1;
+						$("s4-path" + i).lastChild.style.fontWeight = "bold";
 					} else {
 						this.numberOfUsedResultParts -= 1;
+						$("s4-alias" + i).value = "";
+						$("s4-path" + i).lastChild.style.fontWeight = "normal";
 					}
 				}
 				
@@ -3664,7 +3675,7 @@ DefineWebServiceSpecial.prototype = {
 		for (k = 0; k < this.preparedRPathSteps[i].length; k++) {
 			var rPathStep = "//";
 
-			if (k > 1) {
+			if (k > 0) {
 				rPathStep = "/";
 			}
 			rPathStep += this.preparedRPathSteps[i][k]["value"];
@@ -3747,12 +3758,14 @@ DefineWebServiceSpecial.prototype = {
 				resultTD2.id = "step4-resultTD05-" + (rows + i);
 				resultTD2.style.textAlign = "right";
 				row.appendChild(resultTD2);
+				
 				var useInput = document.createElement("input");
 				useInput.id = "s4-use" + i + rows;
 				useInput.type = "checkbox";
 				if (useResultPart) {
 					useInput.checked = true;
 				}
+				useInput.setAttribute("onclick", "webServiceSpecial.useResultPart(event)");
 				resultTD2.appendChild(useInput);
 
 				var resultTD3 = document.createElement("td");
@@ -3932,8 +3945,15 @@ DefineWebServiceSpecial.prototype = {
 		
 		if(node.checked){
 			this.numberOfUsedResultParts += 1;
+			if(node.parentNode.previousSibling.lastChild.nodeName != "INPUT"){
+				node.parentNode.previousSibling.lastChild.lastChild.style.fontWeight = "bold";
+			}
 		} else {
 			this.numberOfUsedResultParts -= 1;
+			node.parentNode.nextSibling.firstChild.value = "";
+			if(node.parentNode.previousSibling.lastChild.nodeName != "INPUT"){
+				node.parentNode.previousSibling.lastChild.lastChild.style.fontWeight = "normal";
+			}
 		}
 		
 		if(this.numberOfUsedResultParts == 0 && oldNumber == 1){
@@ -3953,8 +3973,11 @@ DefineWebServiceSpecial.prototype = {
 		
 		if(node.checked){
 			this.numberOfUsedParameters += 1;
+			node.parentNode.previousSibling.lastChild.lastChild.style.fontWeight = "bold";
 		} else {
 			this.numberOfUsedParameters -= 1;
+			node.parentNode.nextSibling.firstChild.value = "";
+			node.parentNode.previousSibling.lastChild.lastChild.style.fontWeight = "normal";
 		}
 		
 		if(this.numberOfUsedParameters == 0 && oldNumber == 1){
