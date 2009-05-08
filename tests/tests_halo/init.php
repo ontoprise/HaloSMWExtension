@@ -86,9 +86,9 @@ function tstInitializeDatabase() {
 
 	// Import empty
 	echo "\nImporting database...";
-	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword $wgDBname < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"";
+	echo "$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"";
 	//exec("\"$xamppDir/mysql/bin/mysql.exe\" -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
-	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword $wgDBname < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
+	runProcess("$mysqlExe -u $wgDBuser --password=$wgDBpassword < \"$mw_dir"."tests/tests_halo/mw13_db.sql\"");
 	echo "\ndone.\n";
 
 	// run setups
