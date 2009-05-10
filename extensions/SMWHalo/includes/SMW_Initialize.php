@@ -57,8 +57,8 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
 		die();
 	}
-	
-	
+
+
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 	$smwgTripleStoreGraph = $tripleStoreGraph !== NULL ? $tripleStoreGraph : 'http://mywiki';
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
@@ -82,16 +82,16 @@ function smwgHaloSetupExtension() {
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $smwgRuleRewriter, $smwgEnableFlogicRules, $wgSpecialPageGroups;
 	global $smwgWebserviceEndpoint, $smwgMessageBroker;
-    if (is_array($smwgWebserviceEndpoint) && count($smwgWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
-        trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
-        die();
-    }
+	if (is_array($smwgWebserviceEndpoint) && count($smwgWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
+		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
+		die();
+	}
 	$smwgMasterGeneralStore = NULL;
 
 	// Autoloading. Use it for everything! No include_once or require_once please!
 
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
-	
+
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
 	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
@@ -101,12 +101,12 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 
 	if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
-		
+
 		SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter';
 		SMWQueryProcessor::$formats['aggregation'] = 'SMWAggregationResultPrinter';
 	} else { // registration since SMW 1.3.*
 		global $smwgResultFormats;
-		
+
 		$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 		$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	}
@@ -122,7 +122,7 @@ function smwgHaloSetupExtension() {
 		exit; // stop immediately
 	}
 
-	
+
 
 	// register SMW hooks
 	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
@@ -132,8 +132,8 @@ function smwgHaloSetupExtension() {
 
 	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
 	if (isset($smwgWebserviceEndpoint)) {
-		if ($smwgShowDerivedFacts === true 
-		    || strtolower($wgRequest->getVal("showDerived", "false")) === 'true') {
+		if ($smwgShowDerivedFacts === true
+		|| strtolower($wgRequest->getVal("showDerived", "false")) === 'true') {
 			$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 		}
 	}
@@ -141,9 +141,9 @@ function smwgHaloSetupExtension() {
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
-	
-	
-	
+
+
+
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
 	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
@@ -172,7 +172,7 @@ function smwgHaloSetupExtension() {
 
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
-    	$wgHooks['BeforePageDisplay'][]='smwPRAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwPRAddHTMLHeader';
 
 	}
 	// Register parser hooks for advanced annotation mode
@@ -222,7 +222,7 @@ function smwgHaloSetupExtension() {
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
 
-	
+
 
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
@@ -241,12 +241,12 @@ function smwgHaloSetupExtension() {
 			case '_ac_' : smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
 			break;
-				
+
 			case '_ob_' : smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 			break;
-			
-			
+
+
 			case '_qi_' : smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
 			break;
@@ -269,11 +269,11 @@ function smwgHaloSetupExtension() {
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
 				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
-				
-				
+
+
 				require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-				
-				
+
+
 				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
 				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
@@ -286,7 +286,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
 		$wgSpecialPageGroups['OntologyBrowser'] = 'smwplus_group';
 
-		
+
 
 
 		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
@@ -303,16 +303,7 @@ function smwgHaloSetupExtension() {
 
 		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
-		//KK: Deactivate Halo RDFExport. It is too buggy
-		//$wgSpecialPages['ExportRDF'] = array('SMWSpecialPage','ExportRDF', 'doSpecialExportRDF', $smwgHaloIP . '/specials/SMWExport/SMW_ExportRDF.php');
 
-		
-
-		
-
-		//$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php';
-		//$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
-		//$wgSpecialPageGroups['TermImport'] = 'smwplus_group';
 
 		if (isset($smwgWebserviceEndpoint)) {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
@@ -320,16 +311,7 @@ function smwgHaloSetupExtension() {
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
 		}
 
-		//		global $smwgEnableWikiWebServices;
-		//		if ($smwgEnableWikiWebServices) {
-		//			$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_WebServiceRepositorySpecial.php';
-		//			$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceRepositorySpecial');
-		//			$wgSpecialPageGroups['WebServiceRepository'] = 'smwplus_group';
-		//
-		//			$wgAutoloadClasses['SMWDefineWebServiceSpecial'] = $smwgHaloIP . '/specials/SMWWebService/SMW_DefineWebServiceSpecial.php';
-		//			$wgSpecialPages['DefineWebService'] = array('SMWDefineWebServiceSpecial');
-		//			$wgSpecialPageGroups['DefineWebService'] = 'smwplus_group';
-		//		}
+
 	}
 
 	// include SMW logger (exported as ajax function but also used locally)
@@ -340,7 +322,7 @@ function smwgHaloSetupExtension() {
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
-	
+
 
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
@@ -588,7 +570,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 * */
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-      
+
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -618,13 +600,13 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "annotate");
 
-		
+
 
 		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "edit");
 
 		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "annotate");
 
-		
+
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Autocompletion/wick.js');
 
@@ -651,7 +633,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "annotate");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
@@ -666,7 +648,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "annotate");
-		
+
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
 		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
@@ -684,19 +666,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 
 	}
-	
-	// add result format javascripts for query interface
-	global $srfgScriptPath;
-	if ($srfgScriptPath != null || $srfgScriptPath != "") {
-		// timeline
-		$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array("-1:QueryInterface"));
-		$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js', "all", -1, array("-1:QueryInterface"));
 
-		// exhibit
-//		$jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
-//		$jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));						
-	}
-	
+
+
 	// serialize the scripts
 	$jsm->serializeScripts($out);
 	// for additinal scripts which are dependant of Halo scripts (e.g. ACL extension)
@@ -1077,12 +1049,34 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SemanticToolbar/SMW_Help.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		// add result format javascripts for query interface
+		global $srfgScriptPath;
+		if ($srfgScriptPath != null || $srfgScriptPath != "") {
+			// timeline
+			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
+			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
+
+			// exhibit
+			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
+			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));
+		}
 	} else {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		
+		// add result format javascripts for query interface
+		if ($srfgScriptPath != null || $srfgScriptPath != "") {
+			// timeline
+			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
+			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
+
+			// exhibit
+			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
+			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));
+		}
 	}
 	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1306,29 +1300,29 @@ function smwfExtDeleteOutput(& $article, & $output) {
  *  2. rules (optional)
  */
 function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-    global $smwgIP, $smwgTripleStoreGraph, $smwgRuleRewriter, $smwgEnableFlogicRules;
-    global $wgContLang;
-    include_once($smwgIP . '/includes/SMW_Factbox.php');
-   
-    SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
+	global $smwgIP, $smwgTripleStoreGraph, $smwgRuleRewriter, $smwgEnableFlogicRules;
+	global $wgContLang;
+	include_once($smwgIP . '/includes/SMW_Factbox.php');
 
-    $categoryText = $wgContLang->getNsText(NS_CATEGORY);
-    // parse categories:
-    $categoryLinkPattern = '/\[\[\s*                   # Beginning of the link
+	SMWTripleStore::$fullSemanticData = new SMWFullSemanticData();
+
+	$categoryText = $wgContLang->getNsText(NS_CATEGORY);
+	// parse categories:
+	$categoryLinkPattern = '/\[\[\s*                   # Beginning of the link
                             '.$categoryText.'\s*:      # category link (case insensitive!)
                             ([^\[\]]*)                 # category
                             \]\]                       # End of link
                             /ixu';              # case-insensitive, ignore whitespaces, UTF-8 compatible
-    $categories = array();
-    $matches = array();
-    preg_match_all($categoryLinkPattern, $text, $matches);
-    if (isset($matches[1])) {
-        foreach($matches[1] as $m) {
-            $labelIndex = strpos($m, '|');
-            $m = $labelIndex !== false ? substr($m, 0, $labelIndex) : $m;
-            $categories[] = Title::newFromText(trim($m), NS_CATEGORY);
-        }
-    }
+	$categories = array();
+	$matches = array();
+	preg_match_all($categoryLinkPattern, $text, $matches);
+	if (isset($matches[1])) {
+		foreach($matches[1] as $m) {
+			$labelIndex = strpos($m, '|');
+			$m = $labelIndex !== false ? substr($m, 0, $labelIndex) : $m;
+			$categories[] = Title::newFromText(trim($m), NS_CATEGORY);
+		}
+	}
 
 	// rules
 	// meant to be a hash map $ruleID => $ruleText,
@@ -1348,13 +1342,13 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			// parse header parameters
 			$ruleparamterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
 			preg_match_all($ruleparamterPattern, $header, $matchesheader);
-            
-		    $rewrite = true;
-            for ($j = 0; $j < count($matchesheader[0]); $j++) {
-                if (trim($matchesheader[1][$j]) == 'norewrite') {
-                    $rewrite = false;
-                }
-            }
+
+			$rewrite = true;
+			for ($j = 0; $j < count($matchesheader[0]); $j++) {
+				if (trim($matchesheader[1][$j]) == 'norewrite') {
+					$rewrite = false;
+				}
+			}
 			// fetch name of rule (ruleid) and put into rulearray
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
@@ -1399,8 +1393,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 
 	$text .= '<div class="smwfact">' .
 				'<span class="smwfactboxhead">' . 
-					wfMsg('smw_df_derived_facts_about', 
-					      $derivedFacts->getSubject()->getText()) . 
+	wfMsg('smw_df_derived_facts_about',
+	$derivedFacts->getSubject()->getText()) .
 				'</span>' .
 				'<table class="smwfacttable">' . "\n";
 
