@@ -229,10 +229,13 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		}
 		
 		//add subst to templates if the parser is in the appropriate state
-		if($parser->OutputType() == 2){
-			$subst = true;
-		} else {
-			$subst = false;
+		$subst = false;
+		if(!$preview){
+			if($parser->OutputType() == 2){
+				$subst = true;
+			} else {
+				$subst = false;
+			}
 		}
 
 		$errorMessages = $ws->getErrorMessages();
