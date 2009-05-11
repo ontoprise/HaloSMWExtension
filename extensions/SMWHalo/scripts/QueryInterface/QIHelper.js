@@ -5,6 +5,7 @@
 *  QIHelper.js
 *  Manages major functionalities and GUI of the Query Interface
 *  @author Markus Nitsche [fitsch@gmail.com]
+*  @author Joerg Heizmann
 */
 
 var qihelper = null;
