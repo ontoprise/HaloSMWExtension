@@ -54,8 +54,8 @@ Node.prototype.serialize = function() {
 		((this.pid) ? this.pid : "") + ".";
 		
 	if (this.name) {
-		// get pagename from href attribute
-		var link = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+		// get pagename from href attribute or selflink content
+		var link = this.getPageName();
 		// remove any url params after the page name, in case there are any
 		if (link.indexOf('?') != -1)
 			link = link.substring(0, link.indexOf('?'));
@@ -63,7 +63,6 @@ Node.prototype.serialize = function() {
 		var content= this.name.replace(/.*>(.*?)<.*/,"$1");
 		// encode the . as they are delimiter in the cookie value
 		link = link.replace(/\./g, "%2E");
-		
 		// modify the content in the same way as the link:
 		// change spaces to underscores
 		content = content.replace(/ /g, "_");
@@ -102,10 +101,33 @@ Node.prototype.unserialize = function(str) {
     var content = (nVar[3].length > 0) ? nVar[3] : link;
     content = URLDecode(content);
     content = content.replace(/_/g, " ");
-    this.name = '<a href=\"' + url + link + '\" title=\"' + content + '\">' + content + '</a>';
+    if (URLDecode(link) == wgPageName)
+    	this.name = '<strong class=\"selflink\">' + content + '</strong>';
+    else
+    	this.name = '<a href=\"' + url + link + '\" title=\"' + content + '\">' + content + '</a>';
 	this._hc = (nVar[4] == 1) ? true : false;
 	this._complete = (nVar[5] == 1) ? true : false;
 	return true;
+}
+
+// retrieve the page name from an node link (here stored in the node name)
+Node.prototype.getPageName = function() {
+	// check if variable is set
+	if (!this.name) return '';
+
+	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
+	if (this.name.indexOf('<strong class=') != -1)
+		return URLEncode(wgPageName);
+	// fetch name from link i.e. href attribute in a tag
+	var name = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+	// check if the relation exists -> so the node, but if the page itself doesn't exist
+	// then there is a link that the user can create this page. Extract the pagename here
+	if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
+		name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
+	// remove any parameters, that might be trailed at the page name
+	if (name.indexOf('?') != -1)
+		name = name.substring(0, name.indexOf('?'));
+	return name;
 }
 
 // SMW Data object (for all setup related to smw, when doing Ajax calls)
@@ -675,6 +697,10 @@ dTree.prototype.initOnload = function(id, arg) {
 	if (! dynamic) params += '%26z%3D1';
 	var token = this.getTokenAndWriteCache(id);
 	params += '%26t%3D' + token;
+	
+	// clear cookie with saved nodes that where loaded as this causes trouble otherwise
+	this.setCookie('ca'+this.obj, '');
+	
 	sendCall(this.smwAjaxUrl + params, 'r');
 	if (opento)
 	    sendCall(this.obj + '.openToName(\'' + opento +'\');', '0');
@@ -682,22 +708,7 @@ dTree.prototype.initOnload = function(id, arg) {
 
 // extract link name from node item (which is a link)
 dTree.prototype.getNameOfNode = function(id) {
-	var name = this.aNodes[id].name;
-	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
-	if (name.indexOf('<strong class=') != -1)
-		name = wgPageName;
-	else {
-		// fetch name from link i.e. href attribute in a tag
-		var name = name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
-		// check if the relation exists -> so the node, but if the page itself doesn't exist
-		// then there is a link that the user can create this page. Extract the pagename here
-		if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
-			name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
-		// remove any parameters, that might be trailed at the page name
-		if (name.indexOf('?') != -1)
-			name = name.substring(0, name.indexOf('?'));
-	}
-	return name;
+	return this.aNodes[id].getPageName();
 }
 
 // create token and add current dTree to cache
@@ -923,7 +934,8 @@ dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
 // creates the HTML string for nodes received by an Ajax call
 dTree.prototype.getHtml4Node = function(cn, url, params) {
 	var str;
-	var link = cn.link.replace('%3A', ':');
+	//var link = cn.link.replace('%3A', ':');
+	var link = URLDecode(cn.link);
     if (link == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else
@@ -1054,8 +1066,8 @@ handleResponseRefresh = function() {
    		// search if this node already exists
    		found = null;
    		for (var k = 0; k < dTree.aNodes.length; k++) {
-   			var cName = dTree.aNodes[k].name.replace(/.*>(.*?)<.*/, "$1");
-   			if (dTree.aNodes[k].pid == cParent && cName == cn.name &&
+   			var cName = dTree.aNodes[k].getPageName();
+   			if (dTree.aNodes[k].pid == cParent && cName == URLDecode(cn.link) &&
    				(dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
    				found = k;
    				dTree.aNodes[k]._refresh = 0;
