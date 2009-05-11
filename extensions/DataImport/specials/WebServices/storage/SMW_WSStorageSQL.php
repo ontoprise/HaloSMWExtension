@@ -39,7 +39,6 @@ class WSStorageSQL {
 	 * - Wiki Web Service Definition: smw_ws_wwsd
 	 * - Cache for values: smw_ws_cache
 	 * - actual parameters: smw_ws_parameters
-	 * - properties: smw_ws_properties
 	 * - articles with web services: smw_ws_articles
 	 *
 	 */
@@ -100,19 +99,6 @@ class WSStorageSQL {
 		$db->query($query);
 		
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-
-		// create properties table
-		DBHelper::reportProgress("   ... Creating properties table \n",$verbose);
-		$propTable = $db->tableName('smw_ws_properties');
-		DBHelper::setupTable($propTable, array(
-				  'property_name'     =>  'INT(8) UNSIGNED NOT NULL' ,
-				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL' ,
-				  'web_service_id'	=>  'INT(8) UNSIGNED NOT NULL',
-				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL',
-				  'result_spec'  	=>  'VARCHAR(64) NOT NULL'), 
-		$db, $verbose, 'property_name,page_id,web_service_id,param_set_id');
-		DBHelper::reportProgress("   ... done!\n",$verbose);
-
 
 		// create articles table
 		DBHelper::reportProgress("   ... Creating article table \n",$verbose);
@@ -254,7 +240,7 @@ class WSStorageSQL {
 		$opt = DBHelper::getSQLOptionsAsString($options, 'p.page_title');
 
 		$articles = array();
-
+		
 		$res = $db->query($sql.$cond.' '.$opt);
 
 		if ($db->numRows($res) > 0) {
@@ -267,78 +253,7 @@ class WSStorageSQL {
 
 	}
 
-	/**
-	 * The database stores which web services with which parameter set IDs are
-	 * used in which article. This method adds such a usage to the DB.
-	 *
-	 * @param int $propertyName
-	 * 		The unique page ID of the property.
-	 * @param int $wsPageID
-	 * 		The unique page ID of the web service's WWSD.
-	 * @param int $paramSetID
-	 * 		The unique parameter set ID.
-	 * @param int $pageID
-	 * 		The ID of the article that uses the web service for the property.
-	 * @return bool
-	 * 		<true>, if the DB entry was successfully added
-	 * 		<false>, otherwise
-	 */
-	public function addWSProperty($propertyName, $wsPageID, $paramSetID, $pageID, $resultSpec) {
-		$db =& wfGetDB( DB_MASTER );
-		try {
-			$db->delete($db->tableName('smw_ws_properties'), array(
-					  'property_name'    => $propertyName,
-					  'web_service_id' => $wsPageID,
-					  'param_set_id'   => $paramSetID,
-					  'page_id'        => $pageID,
-						'result_spec' => $resultSpec));
-			$db->insert($db->tableName('smw_ws_properties'), array(
-					  'property_name'    => $propertyName,
-					  'web_service_id' => $wsPageID,
-					  'param_set_id'   => $paramSetID,
-					  'page_id'        => $pageID,
-					'result_spec' => $resultSpec));
-		} catch (Exception $e) {
-			echo $e->getMessage();
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Retrieves the page IDs of properties that get their value from the given
-	 * web service. The IDs can be sorted for the names of the properties.
-	 *
-	 * @param string $wsPageID
-	 * 		The unique page ID of the web service's WWSD.
-	 *
-	 * @return array:
-	 * 		An array of property page ids.
-	 */
-	public function getWSProperties($wsPageID, SMWRequestOptions $options) {
-		$db =& wfGetDB( DB_SLAVE );
-		$ptbl = $db->tableName('smw_ws_properties');
-		$page = $db->tableName('page');
-		$sql = "SELECT DISTINCT prop.page_id, p.page_title FROM ".$ptbl." prop ".
-		          "JOIN ".$page." p ON prop.page_id = p.page_id ".
-		          "WHERE prop.web_service_id='".$wsPageID."' ";
-		$cond = DBHelper::getSQLConditions($options, 'p.page_title');
-		$opt = DBHelper::getSQLOptionsAsString($options, 'p.page_title');
-
-		$properties = array();
-
-		$res = $db->query($sql.$cond.' '.$opt);
-
-		if ($db->numRows($res) > 0) {
-			while ($row = $db->fetchObject($res)) {
-				$properties[] = $row->page_id;
-			}
-		}
-		$db->freeResult($res);
-		return $properties;
-
-	}
-
+	
 	/**
 	 * This function stores a new parameter set for the given
 	 * parameters if no such parameter set allready exists.
@@ -567,57 +482,6 @@ class WSStorageSQL {
 		}
 		$db->freeResult($res);
 		return $parameters;
-	}
-
-	/**
-	 * Get all properties that are used in this article
-	 *
-	 * @param string $pageId
-	 * @return boolean success
-	 */
-	public function getWSPropertiesUsedInArticle($pageId) {
-		$db =& wfGetDB( DB_SLAVE );
-		$ptb = $db->tableName('smw_ws_properties');
-		$sql = "SELECT prop.property_name, prop.web_service_id, prop.param_set_id FROM ".$ptb." prop ".
-		          "WHERE prop.page_id ='".$pageId."' ";
-
-		$properties = array();
-
-		$res = $db->query($sql);
-
-		if ($db->numRows($res) > 0) {
-			while ($row = $db->fetchObject($res)) {
-				array_push(&$properties, array($row->web_service_id, $row->param_set_id, $row->property_name));
-			}
-		}
-		$db->freeResult($res);
-		return $properties;
-	}
-
-	/**
-	 * remove a webservice-parameterset-pait that
-	 * is no longer used in the given semantic property
-	 * in the given articke
-	 *
-	 * @param string $propertyName
-	 * @param string $wsPageId
-	 * @param string $paramSetId
-	 * @param string_$pageId
-	 * @return boolean success
-	 */
-	public function removeWSProperty($propertyName, $wsPageId, $paramSetId, $pageId) {
-		$db =& wfGetDB( DB_MASTER );
-		try {
-			$db->delete($db->tableName('smw_ws_properties'), array(
-					  'property_name'    => $propertyName,
-					  'web_service_id' => $wsPageId,
-					  'param_set_id'   => $paramSetId,
-					  'page_id'        => $pageId));
-		} catch (Exception $e) {
-			echo $e->getMessage();
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -859,59 +723,6 @@ class WSStorageSQL {
 	}
 
 	/**
-	 * Get all properties that use the result of
-	 * a web service
-	 *
-	 * @return array of propertiy names
-	 */
-	function getWSPropertyNames(){
-		$db =& wfGetDB( DB_SLAVE );
-		$result = array();
-		$tbn = $db->tableName('smw_ws_properties');
-
-		$sql = "SELECT DISTINCT props.property_name FROM "
-		.$tbn. " props ORDER BY props.property_name ASC";
-			
-		$res = $db->query($sql);
-
-		$props = array();
-
-		while($row = $db->fetchObject($res)){
-			$props[] = $row->property_name;
-		}
-		
-		return $props;
-	}
-	
-	/**
-	 * get all properties that use the results of the
-	 * given webservice
-	 *
-	 * @param string $wsId
-	 * @return array
-	 */
-	function getWSPropertyUsages($wsId){
-		$db =& wfGetDB( DB_SLAVE );
-		$result = array();
-		$tbn = $db->tableName('smw_ws_properties');
-
-		$sql = "SELECT DISTINCT props.property_name, props.param_set_id, props.page_id, 
-			props.result_spec FROM ".$tbn. " props WHERE props.web_service_id = \"".$wsId."\"";
-			
-		$res = $db->query($sql);
-
-		$result = array();
-
-		while($row = $db->fetchObject($res)){
-			$result[] = array("propertyName" => $row->property_name,
-				"paramSetId" => $row->param_set_id,
-				"pageId" => $row->page_id,
-				"resultSpec" => $row->result_spec);
-		}
-		return $result;
-	}
-	
-/**
 	 * get all web service usages
 	 *
 	 * @param string $wsId

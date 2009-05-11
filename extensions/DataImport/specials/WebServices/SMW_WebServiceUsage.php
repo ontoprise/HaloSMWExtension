@@ -52,11 +52,6 @@ $wgHooks['ArticleDelete'][] = 'detectDeletedWSUsages';
 $wgHooks['OutputPageBeforeHTML'][] = 'handlePurge';
 
 
-// necessary for finding possible ws-property-pairs before they are processed
-// by the responsible parsers
-$wgHooks['ParserAfterStrip'][] = 'findWSPropertyPairs';
-
-
 global $wgAutoloadClasses;
 // needed for formatting the ws-usage result
 $wgAutoloadClasses['WebServiceListResultPrinter'] = $smwgDIIP.'/specials/WebServices/resultprinters/SMW_WebServiceRPList.php';
@@ -66,48 +61,6 @@ $wgAutoloadClasses['WebServiceTableResultPrinter'] = $smwgDIIP . '/specials/WebS
 $wgAutoloadClasses['WebServiceTemplateResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTemplate.php';
 $wgAutoloadClasses['WebServiceTransposedResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTransposed.php';
 $wgAutoloadClasses['WebServiceTIXMLResultPrinter'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_WebServiceRPTIXML.php';
-
-
-/*
- * find ws that are used in properties
- */
-function findWSPropertyPairs(&$parser, &$text){
-	$pattern = "/\[\[		# beginning of semantic attribute
-				[^]]*		# no closing squared bracket but everything else
-				::			# identifies a semantic property
-				[^]]*		# no closing squared bracket but everything else
-				\{\{
-				[^]]*		# no closing squared bracket but everything else
-				\#ws:		# beginning of webservice usage declaration
-				[^]]*		# n closing squared bracket but everything else
-				[^[]*
-				\|	
-				/xu";
-
-	$text = preg_replace_callback($pattern, "extractWSPropertyPairNames", $text);
-	return true;
-}
-
-/*
- * extract names from possible ws-property-pairs and
- * remember them for later validation
- */
-function extractWSPropertyPairNames($hits){
-	foreach ($hits as $hit){
-		$hit = trim($hit);
-		$sColPos = strPos($hit, "::");
-		$propertyName = substr($hit, 2 ,$sColPos-2);
-		$propertyName = ucfirst(trim($propertyName));
-
-		$wsColPos = strPos($hit, "#ws:");
-		$wsSPos = strPos($hit, "|", $wsColPos);
-		$wsName = substr($hit, $wsColPos+4, $wsSPos-5-$wsColPos);
-		$wsName = trim($wsName);
-
-		$hit.="_property = ".$propertyName." | ";
-		return $hit;
-	}
-}
 
 
 /**
@@ -177,8 +130,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsFormat = "";
 	$wsTemplate = "";
 	$wsStripTags = "false";
-	$propertyName = null;
-
+	
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
 	for($i=2; $i < sizeof($parameters); $i++){
@@ -191,9 +143,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			$wsTemplate = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 10) == "_striptags"){
 			$wsStripTags = str_replace(",", "", getSpecifiedParameterValue($parameter));
-		} else if (substr($parameter,0, 9) == "_property"){
-			$propertyName = getSpecifiedParameterValue($parameter);
-			//$propertyName = $parameter;
 		} else {
 			$specParam = getSpecifiedParameterValue($parameter);
 			if($specParam){
@@ -202,16 +151,9 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		}
 	}
 
-	if(count($wsReturnValues) > 1 && $propertyName != null){
-		return smwfEncodeMessages(array(wfMsg('smw_wsuse_prop_error')));
-	}
-
 	$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	$messages = $response[0];
 	$wsParameters = $response[1];
-	
-	//$wsParameters = print_r($wsParameters, true);
-	//$wsParameters();
 	
 	if(sizeof($messages) == 0){
 		$parameterSetId = WSStorage::getDatabase()->storeParameterset($wsParameters);
@@ -224,11 +166,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
 
-		if($propertyName != null){
-			$wsFormat = "list";
-		}
-		
-		//add subst to templates if the parser is in the appropriate state
+//		//add subst to templates if the parser is in the appropriate state
 		$subst = false;
 		if(!$preview){
 			if($parser->OutputType() == 2){
@@ -459,7 +397,7 @@ function handlePurge(&$out, &$text){
 
 /**
  * this function detects parameter sets that are no longer referred and
- * web services that are no longer used in this article or in a semantic property
+ * web services that are no longer used in this article
  *
  * @param string $articleId
  *
@@ -488,45 +426,6 @@ function detectRemovedWebServiceUsages($articleId){
 			if(sizeof($parameterSetIds) == 0){
 				WSStorage::getDatabase()->removeParameterSet($oldWSUsage[1]);
 			}
-		}
-	}
-
-	if($rememberedWSUsages != null){
-		$subject = Title::newFromID($articleId);
-		$smwData = smwfGetStore()->getSemanticData($subject);
-		$smwProperties = $smwData->getProperties();
-
-		foreach($rememberedWSUsages as $rememberedWSUsage){
-			if($smwProperties[$rememberedWSUsage[2]] != null){
-				WSStorage::getDatabase()->addWSProperty(
-				$rememberedWSUsage[2],
-				$rememberedWSUsage[0],
-				$rememberedWSUsage[1],
-				$articleId,
-				$rememberedWSUsage[3]);
-			}
-		}
-	}
-
-	$wsProperties = WSStorage::getDatabase()->getWSPropertiesUsedInArticle($articleId);
-
-	foreach($wsProperties as $wsProperty){
-		$deleteProperty = true;
-		if($rememberedWSUsages != null){
-			foreach($rememberedWSUsages as $rememberedWSUsage){
-				$temp1 = $rememberedWSUsage[2];
-				$temp2 = $wsProperty[2];
-
-				if($rememberedWSUsage[2] != null){
-					if (($rememberedWSUsage[0] == $wsProperty[0])
-					&& ($rememberedWSUsage[1] == $wsProperty[1])
-					&& ($rememberedWSUsage[2] == $wsProperty[2])){
-						$deleteProperty = false;
-					}}
-			}
-		}
-		if($deleteProperty){
-			WSStorage::getDatabase()->removeWSProperty($wsProperty[2], $wsProperty[0], $wsProperty[1], $articleId);
 		}
 	}
 

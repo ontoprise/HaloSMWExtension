@@ -45,11 +45,8 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	
 	private $mArticles = array();
 	private $mProperties = array();
-	private $mPropertiesStartChar = array();
 	private $mFromArticle;
 	private $mUntilArticle;
-	private $mFromProperty;
-	private $mUntilProperty;
 	
 	/**
 	 * Initialize the limits
@@ -60,8 +57,6 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		
 		$this->mFromArticle = $wgRequest->getVal( 'fromarticle' );
 		$this->mUntilArticle = $wgRequest->getVal( 'untilarticle' );		
-		$this->mFromProperty = $wgRequest->getVal( 'fromproperty' );
-		$this->mUntilProperty = $wgRequest->getVal( 'untilproperty' );		
 		return true;
 	}
 
@@ -70,7 +65,6 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	 * article that indicates further results).
 	 */
 	protected function doQuery() {
-		
 		global $wgContLang;
 		
 		// ask for the list of articles that use the web service
@@ -91,7 +85,10 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		}
 		$articleIDs = WSStorage::getDatabase()
 		                ->getWSArticles($this->getTitle()->getArticleID(), $options);
-		$this->mArticles = Title::newFromIDs($articleIDs);
+
+		foreach($articleIDs as $articleId){
+			$this->mArticles[] = Title::newFromID($articleId);
+		}
 		
 		if ($reverse) {
 			$this->mArticles = array_reverse($this->mArticles);
@@ -101,32 +98,6 @@ class SMWWebServicePage extends SMWOrderedListPage {
 			$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
 		}
 		
-		// ask for the list of properties that use the web service
-		$options = new SMWRequestOptions();
-		$options->limit = $this->limit + 1;
-		$options->sort = true;
-
-		$reverse = false;
-		if ($this->mFromProperty != '') {
-			$options->boundary = $this->mFromProperty;
-			$options->ascending = true;
-			$options->include_boundary = true;
-		} elseif ($this->mUntilProperty != '') {
-			$options->boundary = $this->mUntilProperty;
-			$options->ascending = false;
-			$options->include_boundary = false;
-			$reverse = true;
-		}
-		$articleIDs = WSStorage::getDatabase()
-		                ->getWSProperties($this->getTitle()->getArticleID(), $options);
-		$this->mProperties = Title::newFromIDs($articleIDs);
-		if ($reverse) {
-			$this->mProperties = array_reverse($this->mProperties);
-		}
-
-		foreach ($this->mProperties as $title) {
-			$this->mPropertiesStartChar[] = $wgContLang->convert( $wgContLang->firstChar( $title->getText() ) );
-		}
 	}
 
 	/**
@@ -150,24 +121,16 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$r .= $nav;
 		
 
-		// list properties
-		$nav = $this->getNavigationLinks('WWSPropertiesResults', $this->mProperties,
-		                                 $this->mFromProperty, $this->mUntilProperty,
-		                                 'fromproperty', 'untilproperty');
-		$r .= '<a name="WWSPropertiesResults"></a>' . "<div id=\"mw-pages\">\n";
-		$r .= '<h2>' . wfMsg('smw_wws_properties_header',$ti) . "</h2>\n";
-		$r .= wfMsg('smw_wws_propertyarticlecount', min($this->limit, count($this->mProperties))) . "\n";
-		$r .= $nav;
-		$r .= $this->shortList( $this->mProperties, $this->mPropertiesStartChar, $this->mUntilProperty) . "\n</div>";
-		$r .= $nav;
-		
 		global $wgArticlePath;
-		if(strpos($wgArticlePath, "?") > 0){
-			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();		
-		} else {
-			$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
+		$ws = WebService::newFromID($this->getTitle()->getArticleID());
+		if($ws != null){
+			if(strpos($wgArticlePath, "?") > 0){
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();		
+			} else {
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
+			}
+			$r .= '<a href="'.$url.'"><br/><h2><b>'.wfMsg('smw_wws_edit_in_gui').'</h2></p></a>';
 		}
-			$r .= '<a href="'.$url.'"><br/><p><b>'.wfMsg('smw_wws_edit_in_gui').'</b></p></a>';
 		
 		wfProfileOut( __METHOD__ . ' (SMW)');
 		return $r;

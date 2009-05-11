@@ -115,51 +115,6 @@ class WSCacheBot extends GardeningBot {
 					WSStorage::getDatabase()->removeWSEntryFromCache(
 					$ws->getArticleID(), $cacheResult["paramSetId"]);
 					$deletedCacheEntries += 1;
-
-					$props = WSStorage::getDatabase()->getWSPropertyUsages($ws->getArticleID());
-
-					foreach($props as $prop){
-						echo("\n 0:".$prop["propertyName"]);
-						if($prop["paramSetId"] == $cacheResult["paramSetId"]){
-							echo("\n 1:".$prop["pageId"]);
-							$subject = Title::newFromID($prop["pageId"]);
-							$smwData = smwfGetStore()->getSemanticData($subject);
-
-							$smwProps = $smwData->getProperties();
-
-							$tempPropertyValues = array();
-							foreach($smwProps as $smwProp){
-								$tempPropertyValues[$smwProp->getText()] =
-								$smwData->getPropertyValues($smwProp);
-							}
-
-							$smwData->clear();
-
-							$cacheRes = $ws->getCallResultParts
-							($cacheResult["result"], array($prop["resultSpec"]));
-							echo("\n\na: ".print_r($cacheRes, true));
-							$cacheRes = $ws->getCallResultParts
-							(unserialize($cacheResult["result"]), array($prop["resultSpec"]));
-							echo("\n\na: ".print_r($cacheRes, true));
-								
-							$cacheRes = array_pop(array_pop($cacheRes));
-								
-							foreach($tempPropertyValues as $key => $values){
-								echo("\n 2:".$key);
-								if(strtolower($key) == strtolower($prop["propertyName"])){
-									foreach($values as $value){
-										$content = $value->getXSDValue();
-										if(strtolower($content) != strtolower($cacheRes)){
-											echo("\n 7:".$content);
-											echo("\n 8:".$cacheRes);
-											$smwData->addPropertyValue($key, $value);
-										}
-									}
-								}
-							}
-							smwfGetStore()->updateData($smwData, false);
-						}
-					}
 				}
 				$this->worked(1);
 			}
@@ -173,8 +128,6 @@ class WSCacheBot extends GardeningBot {
 			$this->addSubTask(1);
 			$this->worked(1);
 		}
-
-
 	}
 }
 

@@ -250,9 +250,6 @@ class WebServiceManager {
 		 for ($i = 1900; $i < 2000; ++$i) {
 			WSStorage::getDatabase()->addWSArticle($id, 142, $i);
 			}
-			for ($i = 2000; $i < 2100; ++$i) {
-			WSStorage::getDatabase()->addWSProperty($i ,$id, 142, $i);
-			}
 			*/
 		//--- TEST
 
@@ -275,6 +272,21 @@ class WebServiceManager {
 		// related cache entries from the db
 		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
 			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
+			$options = new SMWRequestOptions();
+			$pageIds = WSStorage::getDatabase()->getWSArticles(self::$mOldWebservice->getArticleID(), $options);
+			foreach($pageIds as $articleId){
+				$usedWSs = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
+				foreach($usedWSs as $usedWS){
+					if($usedWS[0] == self::$mOldWebservice->getArticleID()){
+						WSStorage::getDatabase()->removeWSArticle(
+							self::$mOldWebservice->getArticleID(), $usedWS[1], $articleId);
+						$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($usedWS[1]);
+						if(sizeof($parameterSetIds) == 0){
+							WSStorage::getDatabase()->removeParameterSet($usedWS[1]);
+						}
+					}
+				}
+			}
 			self::$mOldWebservice->removeFromDB();
 		}
 
@@ -323,8 +335,6 @@ class WebServiceManager {
 			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
 			} else if(self::$mOldWebservice->getMethod() != $mNewWebService->getMethod()){
-				$remove = true;
-			} else if(self::$mOldWebservice->getName() != $mNewWebService->getName()){
 				$remove = true;
 			} else if(self::$mOldWebservice->getParameters() != $mNewWebService->getParameters()){
 				$remove = true;
