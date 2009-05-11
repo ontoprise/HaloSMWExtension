@@ -124,12 +124,8 @@ class SemanticTreeview {
 	            	$matches[1] = substr($matches[1], 0, -2); // and ')'	
 	            }
 	            parse_str($matches[1], $params);
-	    	    if (isset($params['opento'])) {
-	    	    	$ns = substr($params['opento'], 0, strpos($params['opento'] , ':'));
-	    	    	$this->args[$this->id."opento"] = (strlen($ns) > 0)
-	    	    									? urlencode($ns).":".urlencode(substr($params['opento'], strlen($ns) + 1))
-	    	    									: urlencode($params['opento']);
-	    	    }
+	    	    if (isset($params['opento']))
+	    	    	$this->args[$this->id."opento"] = urlencode($params['opento']);
 	    	    if (isset($params['urlparams'])) $this->args[$this->id."urlparams"] = urldecode($params['urlparams']);
                 if (isset($params['dynamic']) && $params['dynamic'] == 1) {
             	    $this->args[$this->id."SmwUrl"] = "setupSmwUrl('".$wgServer.$wgScriptPath."');";
@@ -264,11 +260,6 @@ class SemanticTreeview {
                     if ($depth > $last) $parents[$depth] = $node - 1;
                     $parent = $parents[$depth];
                     $last   = $depth;
-                    if (isset($this->args[$id."opento"]) &&
-                   		(preg_match('@href=\\\"([^/]*/)+([^\\\]*)\\\"@', $item, $paths) ||
-                   		 preg_match('@(<[^>]*>)([^<]*)<@', $item, $paths)) &&
-                   		 $paths[2] == $this->args[$id."opento"])
-                   		$openTo .= "{$this->uniqname}$id.openTo($parent, false);\n";
                     if (isset($this->args[$id."urlparams"]) &&
                     	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths))
                         $item = str_replace($paths[1], $paths[1].'?'.$this->args[$id."urlparams"], $item); 
@@ -279,6 +270,11 @@ class SemanticTreeview {
                 # Last row of current root-tree, surround nodes dtree JS and div etc
                 
                 if ($end) {
+                	// add opento command to node list if neccessarry
+                	$openTo = (isset($this->args[$id."opento"])) 
+                   		      ? "{$this->uniqname}$id.openToName('".$this->args[$id."opento"]."');\n"
+                   		      : "";
+                	
                     # Open all and close all links
                     $top = $bottom = $root = '';
  

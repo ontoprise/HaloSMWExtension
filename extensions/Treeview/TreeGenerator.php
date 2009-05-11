@@ -120,8 +120,10 @@ class TreeGenerator {
 		    	if (isset($genTreeParameters['orderbyProperty'])) $returnPrefix .= "orderbyProperty=".$genTreeParameters['orderbyProperty']."&";
 		    	if (isset($genTreeParameters['checkNode'])) $returnPrefix .= "checkNode=1&";
 			}
-			if ($tv_store->openToFound() != null)
-				$returnPrefix .= "opento=".$openTo->getPrefixedDBkey()."&";
+			if ($tv_store->openToFound() != null) {
+				$arg = $openTo->getPartialURL();
+				$returnPrefix .= "opento=".urlencode($openTo->getPrefixedDBkey())."&";
+			}
 			if ($urlparams)
 				$returnPrefix .= "urlparams=".urlencode($urlparams)."&";
 		    return $returnPrefix."\x7f".$tree;
@@ -345,7 +347,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$this->fetchNextLevelOfNodes();
 			
 		// check if the tree is supposed to be opened down to a certain node
-		if ($this->openTo) $this->getPathToOpenTo();
+		// if the next level is retrieved, we do not need to check for an open node as this node
+		// must have been fetched with the initial call already
+		if ($this->openTo && $this->ajaxExpansion < 2) $this->getPathToOpenTo();
 
 		// fetch properties of that smw_ids found (both s_id and o_id) if there are no condtions set
 		$this->getElementProperties();

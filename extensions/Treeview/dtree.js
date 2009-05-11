@@ -623,25 +623,8 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		this.aNodes[id]._complete = true;
 		return;
 	}
-	
 	var params = this.getSmwData(id);
-	var name = this.aNodes[id].name;
-	
-	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
-	if (name.indexOf('<strong class=') != -1)
-		name = wgPageName;
-	else {
-		// fetch name from link i.e. href attribute in a tag
-		var name = name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
-		// check if the relation exists -> so the node, but if the page itself doesn't exist
-		// then there is a link that the user can create this page. Extract the pagename here
-		if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
-			name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
-		// remove any parameters, that might be trailed at the page name
-		if (name.indexOf('?') != -1)
-			name = name.substring(0, name.indexOf('?'));
-	}
-	params += 's%3D' + name;
+	params += 's%3D' + this.getNameOfNode(id);
 	params += this.getTokenAndWriteCache(id);
 	sendCall(this.smwAjaxUrl + params, callBackMethod); 
 };
@@ -660,6 +643,7 @@ dTree.prototype.initOnload = function(id, arg) {
 	var params = '';
 	var args = arg.split('&amp;');
 	var dynamic;
+	var opento;
 	// walk through the key value pairs and map each key
 	// to the corresponding key in the ajax call
 	// this is one letter only, to save space in the URI length
@@ -683,12 +667,38 @@ dTree.prototype.initOnload = function(id, arg) {
 		else
 			params += key.substring(0, 1);
 		params += '%3D' + value + '%26';
+		if (key == 'opento') {
+			opento = value.replace(/\+/g, '_');
+			opento = opento.replace('%3A', ':');
+		}
 	}
 	if (! dynamic) params += '%26z%3D1';
 	var token = this.getTokenAndWriteCache(id);
 	params += '%26t%3D' + token;
 	sendCall(this.smwAjaxUrl + params, 'r');
+	if (opento)
+	    sendCall(this.obj + '.openToName(\'' + opento +'\');', '0');
 };
+
+// extract link name from node item (which is a link)
+dTree.prototype.getNameOfNode = function(id) {
+	var name = this.aNodes[id].name;
+	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
+	if (name.indexOf('<strong class=') != -1)
+		name = wgPageName;
+	else {
+		// fetch name from link i.e. href attribute in a tag
+		var name = name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
+		// check if the relation exists -> so the node, but if the page itself doesn't exist
+		// then there is a link that the user can create this page. Extract the pagename here
+		if (name.indexOf('&amp;action=edit&amp;redlink=1') != -1) // page doesn't exist
+			name = name.replace(/index.php\?title=(.*?)&amp;action=edit&amp;redlink=1/, "$1");
+		// remove any parameters, that might be trailed at the page name
+		if (name.indexOf('?') != -1)
+			name = name.substring(0, name.indexOf('?'));
+	}
+	return name;
+}
 
 // create token and add current dTree to cache
 dTree.prototype.getTokenAndWriteCache = function(id) {
@@ -730,6 +740,19 @@ dTree.prototype.openTo = function(nId, bSelect, bFirst) {
 	else if (bSelect) this._sn=cn._ai;
 	this.openTo(cn._p._ai, false, true);
 };
+
+// Opens the tree to a specified node referenced by name
+// acctually the parent of this node must be opened, because
+// this opens the level with the node itself
+dTree.prototype.openToName = function(name) {
+	name = name.replace('%3A', ':');
+	for (var i = 1; i < this.aNodes.length; i++) {
+		if (this.getNameOfNode(i) == name) {
+			this.openTo(this.aNodes[i].pid, false);
+			return;
+		}
+	}
+}
 
 // Closes all nodes on the same level as certain node
 dTree.prototype.closeLevel = function(node) {
@@ -900,10 +923,11 @@ dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
 // creates the HTML string for nodes received by an Ajax call
 dTree.prototype.getHtml4Node = function(cn, url, params) {
 	var str;
-    if (cn.link == wgPageName)
+	var link = cn.link.replace('%3A', ':');
+    if (link == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else
-		str = '<a href=\"' + url + cn.link + URLDecode(params) +'\" title=\"'
+		str = '<a href=\"' + url + link + URLDecode(params) +'\" title=\"'
     		+ cn.name + '\">' + cn.name + '</a>';
 	return str;
 }
@@ -1128,8 +1152,13 @@ function callQueue(){
 			//yes, so take the first item from the whereTo and returnTo array
 			whereTo = callToArray.shift();
 			returnTo = returnToArray.shift();
-			// and send that call
-			doCall(whereTo, returnTo);
+			// check, if the whereTo starts with http(s)://
+			if (whereTo.match(/^https?:\/\//i))
+				// and send that call
+				doCall(whereTo, returnTo);
+			else
+				// if whereTo starts not with http then this is a normal function call
+				eval(whereTo);
 		}
 	}
 }
