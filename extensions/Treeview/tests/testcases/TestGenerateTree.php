@@ -382,10 +382,11 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 		global $wgParser;
 		
 		$opento = utf8_encode('opento=Grimms Märchen');
+		$opentoExp = 'opento='.urlencode(utf8_encode('Grimms_Märchen'));
 		$tg = new TreeGenerator;
   		$res = $tg->generateTree($wgParser, 'property=Subsection of', $opento);
   		$res = utf8_decode($res);
-		$expected = "\x7f".str_replace(' ', '_', utf8_decode($opento)).'&'."\x7f".'*[[Help:Contents|Contents]]
+		$expected = "\x7f".$opentoExp.'&'."\x7f".'*[[Help:Contents|Contents]]
 **[[Help:Glossary|Glossary]]
 **[[Help:How_to_configure_the_tree|How to configure the tree]]
 **[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
@@ -415,11 +416,12 @@ class TestGenerateTree extends PHPUnit_Framework_TestCase {
 	function testTreeOpentoPageWithNsPrefix() {
 		global $wgParser;
 		
-		$opento = utf8_encode('opento=Help:How to configure the tree');
+		$opento = 'opento=Help:How to configure the tree';
+		$opentoExp = 'opento=Help%3AHow_to_configure_the_tree';
 		$tg = new TreeGenerator;
   		$res = $tg->generateTree($wgParser, 'property=Subsection of', $opento);
   		$res = utf8_decode($res);
-		$expected = "\x7f".str_replace(' ', '_', utf8_decode($opento)).'&'."\x7f".'*[[Help:Contents|Contents]]
+		$expected = "\x7f".$opentoExp.'&'."\x7f".'*[[Help:Contents|Contents]]
 **[[Help:Glossary|Glossary]]
 **[[Help:How_to_configure_the_tree|How to configure the tree]]
 **[[Help:SMW+_1.4.3|SMW+ 1.4.3]]

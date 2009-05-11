@@ -227,10 +227,11 @@ class TestGenerateTreeDynamic extends PHPUnit_Framework_TestCase {
 		
 		$property = 'property=Subsection of';
 		$opento = utf8_encode('opento=Grimms Märchen');
+		$opentoExp = 'opento='.urlencode(utf8_encode('Grimms_Märchen'));
 		$tg = new TreeGenerator;
   		$res = $tg->generateTree($wgParser, $property, $opento, 'dynamic=1');
   		$res = utf8_decode($res);
-		$expected = $this->retStart.$property.'&'.str_replace(' ', '_', utf8_decode($opento)).$this->retEnd.'*[[Help:Contents|Contents]]
+		$expected = $this->retStart.$property.'&'.$opentoExp.$this->retEnd.'*[[Help:Contents|Contents]]
 **[[Help:Glossary|Glossary]]
 **[[Help:How_to_configure_the_tree|How to configure the tree]]
 **[[Help:SMW+_1.4.3|SMW+ 1.4.3]]
