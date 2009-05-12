@@ -1,3 +1,4 @@
+<?php
 function isWindows() {
     static $thisBoxRunsWindows;
     
@@ -18,3 +19,4 @@ function isWindows() {
     }
     return $thisBoxRunsWindows;
 }
+?>
