@@ -14,7 +14,6 @@ class TreeviewTests
         $suite->addTestSuite("TestGenerateTree");
         $suite->addTestSuite("TestGenerateTreeDynamic");
  		$suite->addTestSuite("TestGenerateTreeAjaxCalls");
- 		$suite->addTestSuite("TestParserfunction");
  		
         return $suite;
     }
