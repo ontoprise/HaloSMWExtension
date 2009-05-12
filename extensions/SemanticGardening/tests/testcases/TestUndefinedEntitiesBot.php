@@ -2,11 +2,13 @@
 global $sgagIP;
 require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
 require_once '../includes/bots/SGA_UndefinedEntitiesBot.php';
+require_once 'Util.php';
 class TestUndefinedEntitiesBot extends PHPUnit_Framework_TestCase {
     
 
     function setUp() {
-         exec('./runBots smw_undefinedentitiesbot');
+    	$cd = isWindows() ? "" : "./"; 
+         exec($cd.'runBots smw_undefinedentitiesbot');
     }
 
     function tearDown() {

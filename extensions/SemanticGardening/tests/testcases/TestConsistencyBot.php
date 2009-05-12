@@ -1,11 +1,12 @@
 <?php
 require_once '../includes/bots/consistency_bot/SGA_ConsistencyBot.php';
-
+require_once 'Util.php';
 class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		exec('./runBots smw_consistencybot');
+		$cd = isWindows() ? "" : "./"; 
+		exec($cd.'runBots smw_consistencybot');
 	}
 
 	function tearDown() {

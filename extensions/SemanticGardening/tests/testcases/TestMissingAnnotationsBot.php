@@ -2,11 +2,13 @@
 global $sgagIP;
 require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
 require_once '../includes/bots/SGA_MissingAnnotationsBot.php';
+require_once 'Util.php';
 class TestMissingAnnotationsBot extends PHPUnit_Framework_TestCase {
     
 
     function setUp() {
-         exec('./runBots smw_missingannotationsbot -nolog -p "MA_PART_OF_NAME=,MA_CATEGORY_RESTRICTION="');
+    	$cd = isWindows() ? "" : "./"; 
+         exec($cd.'runBots smw_missingannotationsbot -nolog -p "MA_PART_OF_NAME=,MA_CATEGORY_RESTRICTION="');
     }
 
     function tearDown() {
