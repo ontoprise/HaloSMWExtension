@@ -583,9 +583,10 @@ Function changeConfigForFullXAMPP
         smwgKeepGardeningConsole=false smwgEnableLogging=false smwgDeployVersion=true \
         smwgSemanticAC=false smwgGardeningBotDelay=100 wgScriptPath="/mediawiki" ls=LocalSettings.php.template'
     
-    ; Activate php_gd2.dll for thumbnails
+    ; Activate php_gd2.dll for thumbnails and php_openssl.dll for SSL 
     DetailPrint "Update php.ini"
-    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\apache\bin\php.ini" on=php_gd2'
+    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\apache\bin\php.ini" on=php_gd2,php_openssl'
+    
     
     ; Make halowiki directory accessible by Apache  
     DetailPrint "Update httpd.conf"  
