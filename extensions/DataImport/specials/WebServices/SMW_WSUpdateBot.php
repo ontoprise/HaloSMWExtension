@@ -66,15 +66,29 @@ class WSUpdateBot extends GardeningBot {
 	}
 
 	public function run($paramArray, $isAsync, $delay) {
-		echo("bot started");
+		echo("bot started\n");
 		if($paramArray["WS_WSID"] != null){
 			$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-			$this->setNumberOfTasks(1);
 			$ws = WebService::newFromID($paramArray["WS_WSID"]);
-			$this->updateWSResults($ws);
+			$affectedArticles = $this->updateWSResults($ws);
+			$this->setNumberOfTasks(2);
 		} else {
-			$this->updateAllWSResults();
+			$affectedArticles = $this->updateAllWSResults();
 		}
+
+		ksort($affectedArticles);
+		
+		$affectedArticles = array_flip($affectedArticles);
+		
+		echo("\nRefreshing articles: \n");
+		
+		foreach($affectedArticles as $articleId => $dontCare){
+			echo("\t refreshing articleId: " . $articleId . "\n");
+			$title = Title::newFromID($articleId);
+			$updatejob = new SMWUpdateJob($title);
+			$updatejob->run();
+		}
+
 		echo("\nbot finished");
 		return '';
 	}
@@ -86,8 +100,9 @@ class WSUpdateBot extends GardeningBot {
 	 */
 	private function updateAllWSResults(){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		$affectedArticles = array();
 		$webServices = WSStorage::getDatabase()->getWebservices();
-		$this->setNumberOfTasks(sizeof($webServices));
+		$this->setNumberOfTasks(count($webServices) + 1);
 		foreach($webServices as $ws){
 			if($ws->getConfirmationStatus() == "once"
 			|| $ws->getConfirmationStatus() == "false"){
@@ -95,9 +110,11 @@ class WSUpdateBot extends GardeningBot {
 				$this->id, SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES,
 				Title::newFromText($ws->getName()), 0);
 			} else {
-				$this->updateWSResults($ws);
+				$affectedArticles = array_merge($affectedArticles, $this->updateWSResults($ws));
 			}
+			$this->worked(1);
 		}
+		return $affectedArticles;
 	}
 
 	/**
@@ -107,18 +124,17 @@ class WSUpdateBot extends GardeningBot {
 	 */
 	private function updateWSResults($ws){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		echo("updating " .$ws->getName() ."\n");
+		$parameterSets = WSStorage::getDatabase()->getWSUsages($ws->getArticleID());
 
-		$articles = WSStorage::getDatabase()->getWSUsages($ws->getArticleID());
-				
 		$updatedEntries = 0;
-		foreach($articles as $article){
-			if($updatedEntries > 0){
-				sleep($ws->getUpdateDelay());
-			}
-			
+		$affectedArticles = array();
+		foreach($parameterSets as $parameterSet){
+			echo("\t updating paramater set " .$parameterSet["paramSetId"] . "\n");
+
 			$cacheResult = WSStorage::getDatabase()->getResultFromCache(
-				$ws->getArticleID(), $article["paramSetId"]);
-			
+			$ws->getArticleID(), $parameterSet["paramSetId"]);
+
 			$refresh = false;
 			if(count($cacheResult) < 1){
 				$refresh = true;
@@ -126,14 +142,19 @@ class WSUpdateBot extends GardeningBot {
 			if(!$refresh){
 				if($ws->getQueryPolicy() > 0){
 					if(wfTime() - wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])
-							> ($ws->getQueryPolicy()*60)){
+					> ($ws->getQueryPolicy()*60)){
 						$refresh = true;
 					}
 				}
-			}	
-			
-			if($refresg){
-				$parameters = WSStorage::getDatabase()->getParameters($article["paramSetId"]);
+			}
+
+			if($refresh){
+				echo("\t\t update necessary\n");
+				if($updatedEntries > 0){
+					sleep($ws->getUpdateDelay());
+					echo ("\t\t sleeping " .$ws->getUpdateDelay()."\n");
+				}
+				$parameters = WSStorage::getDatabase()->getParameters($parameterSet["paramSetId"]);
 				$parameters = $ws->initializeCallParameters($parameters);
 
 				$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
@@ -144,21 +165,36 @@ class WSUpdateBot extends GardeningBot {
 				if(count($errorMessages) > 0){
 					$log->addGardeningIssueAboutValue(
 					$this->id, SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES,
-						Title::newFromText($ws->getName()), 0);
+					Title::newFromText($ws->getName()), 0);
 					$goon = false;
 				}
 					
 				if($goon) {
 					WSStorage::getDatabase()->storeCacheEntry(
-						$ws->getArticleID(),
-						$article["paramSetId"],
-						serialize($response),
-						wfTimeStamp(TS_MW, wfTime()),
-						wfTimeStamp(TS_MW, wfTime()));
+					$ws->getArticleID(),
+					$parameterSet["paramSetId"],
+					serialize($response),
+					wfTimeStamp(TS_MW, wfTime()),
+					wfTimeStamp(TS_MW, wfTime()));
+					echo("\t\t update was successfully\t");
+
+					//get articles which have to be refreshed
 				}
 			}
-			$updatedEntries += 1;
+				
+			$tempAffectedArticles = WSStorage::getDatabase()
+				->getUsedWSParameterSetPairs($ws->getArticleID(), $parameterSet["paramSetId"]);
+			
+			if($ws->getQueryPolicy() > 0){
+				if($refresh || count($tempAffectedArticles) > 1){
+					$affectedArticles = array_merge($affectedArticles, $tempAffectedArticles);
+				}
+				$updatedEntries += 1;
+			}
+
 		}
+
+		return $affectedArticles;
 	}
 }
 

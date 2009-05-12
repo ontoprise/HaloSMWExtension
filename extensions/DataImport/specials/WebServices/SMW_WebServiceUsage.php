@@ -88,6 +88,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  */
 function webServiceUsage_Render( &$parser) {
 	$parameters = func_get_args();
+	
 	return webServiceUsage_processCall($parser, $parameters);
 }
 
@@ -206,8 +207,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 
 		//handle cache issues for previews
 		if(!$preview){
-			WSStorage::getDatabase()->addWSArticle($wsId, $parameterSetId, $articleId);
-			$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, $propertyName, array_pop(array_keys($wsReturnValues)));
+			$wgsmwRememberedWSUsages[] = array($wsId, $parameterSetId, "", array_pop(array_keys($wsReturnValues)));
 		} else {
 			WebServiceCache::removeWSParameterPair($wsId, $parameterSetId);
 			if($removeParameterSetForPreview){
@@ -374,8 +374,6 @@ function detectDeletedWSUsages(&$article, &$user, $reason){
  *
  */
 function detectEditedWSUsages(&$article, &$user, &$text){
-	//function detectEditedWSUsages(&$parser, &$text){
-	//$articleId  = $parser->getTitle()->getArticleID();
 	$articleId  = $article->getID();
 	if($articleId != null){
 		detectRemovedWebServiceUsages($articleId);
@@ -388,9 +386,7 @@ function detectEditedWSUsages(&$article, &$user, &$text){
  */
 function handlePurge(&$out, &$text){
 	global $purgePage;
-	if($purgePage){
-		//SMWFactbox::storeData(true);
-	}
+	
 	$purgePage = false;
 	return true;
 }
@@ -404,11 +400,18 @@ function handlePurge(&$out, &$text){
  * @return boolean true
  */
 function detectRemovedWebServiceUsages($articleId){
-	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
 	global $wgsmwRememberedWSUsages, $purgePage;
 	$purgePage = false;
 	$rememberedWSUsages = $wgsmwRememberedWSUsages;
 
+	foreach($rememberedWSUsages as $rememberedWSUsage){
+		WSStorage::getDatabase()->addWSArticle(
+			$rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+	}
+	
+	
+	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
+	
 	foreach($oldWSUsages as $oldWSUsage){
 		$remove = true;
 		if($rememberedWSUsages != null){
