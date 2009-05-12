@@ -1,21 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHPUnit" tests="1" assertions="121" failures="1" errors="0" time="0.641207">
-    <testsuite name="TestDatabase" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestDatabase.php" tests="1" assertions="121" failures="1" errors="0" time="0.641207">
-      <testcase name="testRunTests" class="TestDatabase" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestDatabase.php" line="21" assertions="121" time="0.641207">
-        <failure type="PHPUnit_Framework_ExpectationFailedException">testRunTests(TestDatabase)
-Unexcpected exception while testing TestDatabase.php::checkRights():Test of rights failed for: B, U2, read (Testcase: TD_CR_1)
-
-Failed asserting that &lt;null&gt; is equal to &lt;boolean:true&gt;.
-Test of rights failed for: B, U2, read (Testcase: TD_CR_1)
-
-Failed asserting that &lt;boolean:false&gt; is true.
-
-C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestDatabase.php:305
-C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests\testcases\TestDatabase.php:24
-C:\Programme\MediaWiki\HaloSMWExtension\tests\tests_halo\run-test.php:6
-</failure>
-      </testcase>
-    </testsuite>
-  </testsuite>
-</testsuites>
+<?xml version="1.0"?>
+<testsuite name="HaloACL" tests="1" assertions="1" failures="0" errors="1" time="0">
+	<testcase name="generalFault" class="MyTests" time="0">
+    	<failure type="PHPUnit_Framework_ExpectationFailedException">Crashed with a fatal error
+        </failure>
+    </testcase>
+</testsuite>   
