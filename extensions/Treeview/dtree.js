@@ -117,7 +117,7 @@ Node.prototype.getPageName = function() {
 
 	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
 	if (this.name.indexOf('<strong class=') != -1)
-		return URLEncode(wgPageName);
+		return wgPageName;
 	// fetch name from link i.e. href attribute in a tag
 	var name = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 	// check if the relation exists -> so the node, but if the page itself doesn't exist
@@ -148,7 +148,7 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	var str = 'p%3D' + URLEncode(this.relation);
 	if (this.category) str += '%26c%3D' + URLEncode(this.category);
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
-	if (this.condition) str += '%26q%3D' + URLEncode(this.condition); 
+	if (this.condition) str += '%26q%3D' + this.condition; 
 	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
 	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
 	if (this.checkNode) str += '%26n%3D1';
@@ -646,7 +646,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 		return;
 	}
 	var params = this.getSmwData(id);
-	params += 's%3D' + this.getNameOfNode(id);
+	params += 's%3D' + this.aNodes[id].getPageName();
 	params += this.getTokenAndWriteCache(id);
 	sendCall(this.smwAjaxUrl + params, callBackMethod); 
 };
@@ -706,11 +706,6 @@ dTree.prototype.initOnload = function(id, arg) {
 	    sendCall(this.obj + '.openToName(\'' + opento +'\');', '0');
 };
 
-// extract link name from node item (which is a link)
-dTree.prototype.getNameOfNode = function(id) {
-	return this.aNodes[id].getPageName();
-}
-
 // create token and add current dTree to cache
 dTree.prototype.getTokenAndWriteCache = function(id) {
 	var token = this.obj + "_" + id;
@@ -757,8 +752,9 @@ dTree.prototype.openTo = function(nId, bSelect, bFirst) {
 // this opens the level with the node itself
 dTree.prototype.openToName = function(name) {
 	name = name.replace('%3A', ':');
+	name = name.replace(/\+/g, '_');
 	for (var i = 1; i < this.aNodes.length; i++) {
-		if (this.getNameOfNode(i) == name) {
+		if (this.aNodes[i].getPageName() == name) {
 			this.openTo(this.aNodes[i].pid, false);
 			return;
 		}
