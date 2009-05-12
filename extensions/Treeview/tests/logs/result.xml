@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<testsuite name="TestGenerateTree" tests="1" assertions="1" failures="0" errors="1" time="0">
+  <testcase name="generalFault" class="MyTests" time="0">
+    <failure type="PHPUnit_Framework_ExpectationFailedException">Crashed with a fatal error</failure>
+  </testcase>
+</testsuite>
