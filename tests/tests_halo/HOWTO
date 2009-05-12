@@ -1,0 +1,254 @@
+# author: Kai Kühn / Ontoprise / 2009
+
+#
+# HOWTO for automatic testing with MediaWiki
+#
+
+This document describes how to setup unit- and webtests for a MW extension. Every extension should have
+a set of tests verifying their quality. We distinguish between unit tests and webtests. Unit tests are 
+supposed to test backend functionality while webtests are testing user-interfaces. Tests in the described 
+form can be easily included in our build system, so it is highly recommended to write tests as shown here. 
+
+-------------
+Requirements
+-------------
+
+1. Software
+
+ Windows:
+     XAMPP 1.7
+     PHPUnit - can be installed via the commands:
+     
+           pear channel-discover pear.phpunit.de
+           pear install phpunit/PHPUnit
+           
+     Canoo Webtest
+    
+ Linux:
+     Apache
+     MySQL
+     PHP
+     PHPUnit
+     Canoo Webtest
+     
+2. Setup wiki
+ 
+    There must be a wiki installation on your machine. A database is not needed since it is created
+    during test setup. Neither is a LocalSettings.php necessary because it is also created by the init script.
+    However, AdminSettings.php must be created manually once containing valid credentials.
+    
+    You have to change your local copy of {{wiki-path}}/tests/tests_halo/LocalSettingsForTest.php
+    
+        - DB credentials
+        - Script path of your local installation
+        
+    DON'T COMMIT THIS OF COURSE! It's just for local testing.
+    
+--------------
+1. Unit-tests
+--------------
+
+  Unit tests are supposed to test backend functionality: storage layers, algorithms, (utility-) methods.
+
+Create a subfolder 'tests' for your extension containing the following files and directories:
+
+    a. LocalSettings.php: Includes all extensions which are necessary for your tests.
+         Note, that it does not contain a whole LocalSettings.php file but only additional extensions.
+    b. runSetup.cfg: Contains setup scripts for the included extensions.
+    c. XXX_Tests.php: GlobalTest suite for the extension. Contains all other test suites.
+    d. logs/result.xml: A pre-defined result file indicating a fatal error (see appendix)
+    e. pages/: XML-Export containing wiki pages. Name of the files is arbitrary. The pages
+                work as a basis for the tests.
+    f. testcases/: PHP-Files containing classes derived from: PHPUnit_Framework_TestCase
+
+The subfolder 'tests' serves as a place for unit- and webtests as well. 
+
+------------        
+2. Webtests
+------------
+
+   Webtests are testing GUI functionality. For example, click on a category in the ontology browser.
+
+Create a subfolder 'webtests' in the 'tests' folder
+    
+    a. definitions.xml: see tutorial
+    b. makeWebtests.xml see tutorial
+    c. /tests: XML-Files containing the webtests (some kind of testsuites)
+    d. /results: empty directory
+    e. /includes: Fragments which are referenced as external entities in the webtest description
+    d. /dtd: Is created automatically when tests are run for the first time.
+    
+#    
+# Tutorial
+#
+
+------------
+1. Unittest
+------------
+
+    a. LocalSettings.php with the following content. This intializes SMW and SMWHalo
+     ----
+        include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
+        enableSemantics('http://wiki', true);
+         
+        include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+        enableSMWHalo('SMWHaloStore2');
+     ----
+     
+    b. runSetup.cfg with the following content:
+     ----
+        SemanticMediaWiki/maintenance/SMW_setup.php
+     ----   
+    
+    c. MyTests.php
+     ----
+        require_once 'PHPUnit/Framework.php';
+ 
+        class MyTests
+        {
+            public static function suite()
+            {
+                $suite = new PHPUnit_Framework_TestSuite('SemanticGardening');
+         
+                $suite->addTestSuite("TestMySuite1");
+     
+                return $suite;
+            }
+        }
+        
+     d.
+       logs/result.xml with the following content.
+       This makes sure that if phpUnit crashes, Hudson still gets a result file to read.
+      ----
+             <testcase name="generalFault" class="MyTests" time="0">
+                <failure type="PHPUnit_Framework_ExpectationFailedException">Crashed with a fatal error
+                </failure>
+              </testcase>       
+      ----
+      
+      e. pages/ may be empty in this tutorial.
+      
+      d. testcases/MyTest1.php
+       ----
+        class TestMySuite1 extends PHPUnit_Framework_TestCase {
+    
+
+        function setUp() {
+             
+        }
+    
+        function tearDown() {
+             
+        }
+        function testMethod1() {
+            $this->assertEquals(true, true);
+        }
+       ----
+       
+ Now try to run your tests:
+ 
+    Windows:
+         
+         1. Change to {{wiki-dir}}/tests/tests_halo
+         2. Enter: php init.php -t {{tests-dir}} -x {{xampp-dir}}
+         3. Change to {{tests-dir}}
+         4. Enter: php {{wiki-dir}}/tests/tests_halo/run-test.php --log-xml logs/results.xml MyTests.php
+         
+    Linux:
+     
+         1. Change to {{wiki-dir}}/tests/tests_halo
+         2. Enter: php init.php -t {{tests-dir}}
+         3. Change to {{tests-dir}}
+         4. Enter: php {{wiki-dir}}/tests/tests_halo/run-test.php --log-xml logs/results.xml MyTests.php
+         
+         
+------------     
+2. Webtests
+------------
+
+    The webtests are based on the unit tests infrastructure. That means LocalSettings.php, initalized
+    extensions and loaded pages come from the unit test specifications.
+    
+    a. definitions.xml
+     ----
+        <project name="WebTest-projectDefinitions" basedir="." default="wt.nothing">
+       
+            <target name="wt.defineMacros" description="Defines macros and project specific Steps" unless="macroDefined">
+                <property name="macroDefined" value="true"/>
+                <echo message="Defining project macros and custom steps (if any)"/>
+        
+            </target>
+            
+            <target name="wt.nothing">
+            </target>
+   
+        </project>
+     ----   
+     
+     b. makeWebtests.xml
+       make sure to replace {{path-to-webtest}} with the path of your Webtest installation
+      ----
+        <project name="example" default="wt.full">
+    
+            <property name="webtest.home" value="{{path-to-webtest}}"/>
+        
+            <import file="definitions.xml" description="Import custom definitions (if any)"/> 
+            <import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
+            
+            <property name="wt.testInWork" value="tests/allTests.xml"/> 
+       </project>
+       
+     c. tests/allTests.xml
+      ---
+       <project name="testMyExt" default="testAll">
+        
+            <property name="wikipath" value="mediawiki"/>
+            
+            <target name="testAll" description="runs all the tests">
+                <ant antfile="myTestsuite.xml"/>
+                
+            </target>
+        </project>
+        
+        tests/myTestsuite.xml
+        ---
+        
+        <project default="testBasic">
+        
+            <target name="testBasic">
+        
+                <webtest name="LoadGardeningPage">
+                     url="http://localhost/${wikipath}/index.php?title=Special:UserLogin"
+                     description="Login into the wiki" />
+                    <setInputField htmlId="wpName1" value="WikiSysop" />
+                    <setInputField htmlId="wpPassword1" value="m8nix" />
+                    <clickButton htmlId="wpLoginattempt" />   
+
+                </webtest>
+                
+           </target>
+        </project>
+        
+       d. always empty 
+       e. may be empty here
+       f. created automatically
+ 
+ 
+       
+ Now try to run your tests:
+ 
+    Windows:
+       1. Change to {{wiki-dir}}/tests/tests_halo
+       2. Enter: php init.php -t {{tests-dir}} -x {{xampp-dir}}
+       3. Enter: webtest.bat -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       
+    Linux:
+       1. Change to {{wiki-dir}}/tests/tests_halo
+       2. Enter: php init.php -t {{tests-dir}}           
+       3. Enter: webtest.sh -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       
+    The results are placed in the 'results' folder.
+    
+    For further information about Canoo webtests, take a look at:
+        http://webtest.canoo.com/webtest/manual/WebTestHome.html
+        
