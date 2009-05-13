@@ -259,7 +259,8 @@ class ExportOntologyBot extends GardeningBot {
 	 			if ($propertyLocal == NULL) continue;
 	 			
 	 			$values = smwfGetStore()->getPropertyValues($inst, $p);
-	 			foreach($values as $smwValue) {
+	  			foreach($values as $smwValue) {
+		 			$convertDate = ($smwValue->getTypeID() == '_dat');
 	 				// export WikiPage value as ObjectProperty
 	 				if ($smwValue instanceof SMWWikiPageValue) {
 	 					$target = $smwValue->getTitle();
@@ -277,6 +278,7 @@ class ExportOntologyBot extends GardeningBot {
 								$wikiType = array_key_exists($smwValue->getTypeID(), $this->mapWikiTypeToXSD) ? $smwValue->getTypeID() : "_str";
                                 $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 								$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
+								if ($convertDate) $content = str_replace('/', "-", $content);
 								$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
 							}
 
