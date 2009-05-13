@@ -1,0 +1,298 @@
+@CHARSET "ISO-8859-1";
+
+.haclContainer {
+	width: 100%;
+	padding-bottom: 10px;
+	position: relative;
+}
+
+/* Tab section */
+#haclTabs {
+	margin-left: 4px;
+	padding-left: 5px;
+	width: auto;
+	position: relative;
+}
+
+#haclTabs ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#haclTabs li {
+	display: inline;
+	padding: 0;
+}
+
+#haclTabs a {
+	/*float: left;*/
+	text-decoration: none;
+}
+
+#haclTabs a span {
+	margin: 0 2px 0 2px;
+	padding: 4px 9px 4px 6px;
+	border: 1px solid grey;
+}
+
+#haclTabs a:hover {
+	/*background-color: darkgrey;*/
+	color: white;
+}
+
+#haclTabs a:hover span {
+	background-color: #CCC;
+	/*border-top: 2px solid white;*/
+	background-color: lightgrey;
+}
+
+#haclTabHeaderActive a span {
+	background-color: grey;
+	border-top: 2px solid orange;
+	color: #fff;
+}
+
+/* SubTab section */
+#haclSubTabs {
+	margin-left: 4px;
+	padding-left: 5px;
+	width: auto;
+	position: relative;
+}
+
+#haclSubTabs ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#haclSubTabs li {
+	display: inline;
+	padding: 0;
+}
+
+#haclSubTabs a {
+	/*float: left;*/
+	text-decoration: none;
+}
+
+#haclSubTabs a span {
+	margin: 0 2px 0 2px;
+	padding: 4px 9px 4px 6px;
+	border: 1px solid grey;
+}
+
+#haclSubTabs a:hover {
+	/*background-color: darkgrey;*/
+	color: white;
+}
+
+#haclSubTabs a:hover span {
+	background-color: #CCC;
+	/*border-top: 2px solid white;*/
+	background-color: lightgrey;
+}
+
+#haclSubTabHeaderActive a span {
+	background-color: grey;
+	border-top: 2px solid orange;
+	color: #fff;
+}
+
+/* general settings */
+
+.haclTabContent {
+	width: auto;
+	position: relative;
+	margin-top: 2px;
+	border: 1px solid grey;
+	background-color: #FFF;
+}
+
+.haclHeadline {
+	position: relative;
+	width: auto;
+	text-align: left;
+	font-size: 1.2em;
+	text-decoration: underline; 
+}
+
+.haclInfo {
+	text-align: left;	
+}
+.haclHeader {
+	position: relative;
+	width: auto;
+	padding: 3px 0 3px 10px;
+	border: 1px solid grey;
+	background-color: grey;
+	color: white;
+	font-weight: bold;
+}
+
+/*'Create standard ACL ' tab*/
+#haclCreateStACLContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 20px;
+}
+
+#haclCreateStACLGeneralContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 0; 
+}
+
+#haclCreateStACLGeneralContainer td {
+	position: relative;
+	width: auto;
+	padding: 10px 20px 10px 20px;
+}
+#haclCreateStACLRightsContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 0; 
+}
+
+/*'Create ACL default user template' tab*/
+#haclCreateDutContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 20px;
+}
+
+#haclCreateDutGeneralContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 0; 
+}
+
+#haclCreateDutGeneralContainer td {
+	position: relative;
+	width: auto;
+	padding: 10px 20px 10px 20px;
+}
+#haclCreateDutRightsContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 5px 0; 
+}
+
+.haclCreateRightButton{
+	margin: 10px 20px 10px 0;
+}
+
+.haclCreateDutRight {
+	padding: 0 0 0 10px;
+}
+.haclCreateDutRightLegend {
+	position: relative;
+	width: auto;
+	align:left;
+	padding: 0 5px 0 5px;
+}
+.haclCreateDutLegendControl {
+	position: relative;
+	width: auto;
+	align: right;
+	padding: 0 5px0 5px;
+}
+
+/* 'Mangage whitelists' tab */
+#haclWhitelistContainer {
+	position: relative;
+	width: auto;
+	padding: 5px 20px 10px 20px;
+}
+
+#haclWhitelistHeadline {
+	position: relative;
+	width: auto;
+	text-align: left;
+	font-size: 1.2em;
+	text-decoration: underline; 
+}
+
+#haclWhitelistInfo {
+	text-align: left;	
+}
+
+#haclWhitelistFilter {
+	position: relative;
+	width: 502px;
+	padding: 5px 0 5px 0;
+	align: right;
+	text-align: right;
+}
+
+#haclWhitelistPageSetContainer {
+	position: relative;
+	width: 500px;
+	height: 150px;
+	border: 1px solid grey;
+}
+
+#haclWhitelistPageSetHeader {
+	position: relative;
+	width: auto;
+	background-color: grey;
+	border-bottom: 1px solid lightgrey;
+	font-weight: bold;
+	padding: 3px 0 3px 10px;
+}
+#haclWhitelistPageSet {
+	position: relative;
+	width: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+#haclWhitelistPageSet ul {
+	margin: 0;
+	padding: 0;
+	list-style: disc;
+}
+
+#haclWhitelistPageSet li {
+	margin-left: 20px;
+	padding: 2px 0 2px 0;
+}
+#haclWhitelistPageSet a {
+	margin: 0 2px 0 0;
+	text-decoration: none;
+}
+
+#haclWhitelistPageSet a span {
+}
+
+#haclWhitelistPageSet a:hover {
+	background-color: #7E94B9;
+	color: white;
+}
+
+#haclWhitelistPageSet a:hover span {
+	background-color: #7E94B9;
+}
+
+#haclWhitelistAddPageContainer {
+	padding: 5px 0 5px 0;
+}
+#haclWhitelistPageName{
+	margin-right: 5px;
+	font-weight: bold;
+}
+#haclWhitelistPageInput {
+	margin-right: 5px;
+}
+
+.drawLine {
+	width: 95%;
+	margin: 2px;
+	padding: 0;
+	border-top: 1px solid lightgrey;
+}
+
+.marginToRight {
+	margin-right: 5px;
+}
