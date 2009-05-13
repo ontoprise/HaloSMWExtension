@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  *
@@ -62,6 +62,8 @@ FCK.InitializeBehaviors = function()
 		evt.preventDefault() ;
 		evt.stopPropagation() ;
 	}
+	
+	
 
 	this._ExecCheckCaret = function( evt )
 	{
@@ -225,7 +227,12 @@ FCK.InitializeBehaviors = function()
 	// Hooks for data object drops
 	if ( FCKBrowserInfo.IsGecko )
 	{
-		this.EditorWindow.addEventListener( 'dragdrop', this._ExecDrop, true ) ;
+		if (DndHook.DND_HOOK_ACTIVE) {
+			this.EditorWindow.addEventListener( 'dragdrop', DndHook._ExecDrop2, true ) ;
+			this.EditorWindow.addEventListener( 'dragover', DndHook._ExecDrop2dragover, true ) ;
+		} else {
+		    this.EditorWindow.addEventListener( 'dragdrop', this._ExecDrop, true ) ;
+		}
 	}
 	else if ( FCKBrowserInfo.IsSafari )
 	{
@@ -390,6 +397,8 @@ FCK.PasteAsPlainText = function()
 	this.InsertHtml( sText ) ;
 */
 }
+
+
 /*
 FCK.PasteFromWord = function()
 {

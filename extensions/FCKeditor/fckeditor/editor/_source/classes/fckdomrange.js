@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  *
@@ -139,6 +139,13 @@ FCKDomRange.prototype =
 		this.SetStart(targetElement,1) ;
 		this.SetEnd(targetElement,1) ;
 	},
+	
+	MoveToElementStartIndex : function( targetElement, index )
+    {
+    	var oRange = this._Range ;
+        oRange.setStart(targetElement,index) ;
+        oRange.setEnd(targetElement,index) ;
+    },
 
 	// Moves to the first editing point inside a element. For example, in a
 	// element tree like "<p><b><i></i></b> Text</p>", the start editing point
