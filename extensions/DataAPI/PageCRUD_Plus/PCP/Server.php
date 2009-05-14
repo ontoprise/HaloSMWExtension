@@ -22,25 +22,36 @@ class PCPServer extends PCPAny{
 	 *
 	 */
 	public function PCPServer(){
+		$this->usedUC = new PCPUserCredentials();
 	}
 
 	protected function setCookies(PCPUserCredentials $userCredentials = NULL){
-		if ($this->usedUC === NULL){
-			$this->usedUC = $userCredentials;
-		}
-		
-		if(!$this->cookiesSet){
-			// workaround: setting cookies internally
-			$_SESSION['wsUserID'] = $this->usedUC->id;
-			$_SESSION['wsUserName'] = $this->usedUC->un;
-			$_SESSION['wsToken'] = $this->usedUC->lgToken;
+		global $wgUser;
+		if ( !isset($wgUser->mName) || !$wgUser->mName){
+			if ($this->usedUC->lgToken == NULL){
+				$this->usedUC = $userCredentials;
+			}
 
-			global $wgUser;
-			$wgUser = User::newFromSession();
+			if(!$this->cookiesSet){
+				// workaround: setting cookies internally
+				$_SESSION['wsUserID'] = $this->usedUC->id;
+				$_SESSION['wsUserName'] = $this->usedUC->un;
+				$_SESSION['wsToken'] = $this->usedUC->lgToken;
+					
+				$wgUser = User::newFromSession();
+				$wgUser->load();
+				$this->usedUC->editToken = $wgUser->editToken();
 
+				$this->cookiesSet = true;
+			}
+		}else{
+			$this->usedUC->id = $wgUser->mId;
+			$this->usedUC->un = $wgUser->mName;
+			$this->usedUC->lgToken = $wgUser->mToken;
+			$this->usedUC->editToken = $wgUser->editToken();
+			
 			$this->cookiesSet = true;
-		}
-
+		}		
 	}
 
 	public function login(PCPUserCredentials $userCredentials=NULL){
@@ -49,19 +60,13 @@ class PCPServer extends PCPAny{
 		PCPUtil::replaceInHash($this->lgQuery,
 		array($userCredentials->un,
 		$userCredentials->pwd)));
-//		var_dump($__request);
-//		die;
-//global $wgUser;
-//		$wgUser = new StubUser();
-//		var_dump($wgUser);
-//		die;
-		
+
 		$__api = new ApiMain($__request);
 		$__api->execute();
 		$__result =& $__api->GetResultData();
 
 		if ($__result['login']['result']!=="Success"){
-			return NULL;
+			return $__result;
 		}else{
 			$userCredentials->id = $__result['login']['lguserid'];
 			$userCredentials->pwd = ''; // remove the password
@@ -112,7 +117,7 @@ class PCPServer extends PCPAny{
 				// each entry in the hashmap has the page ID as key
 				foreach ($__result['query']['pages'] as $__pageid => $__pageObject){
 					// get the page that has the matching title
-					if ($__result['query']['pages'][$__pageid]['title'] === $title){
+					if ($__result['query']['pages'][$__pageid]['title'] == $title){
 						$this->usedUC->editToken = $__result['query']['pages'][$__pageid]['edittoken'];
 						$this->page->pageid=$__pageid;
 						$this->page->title=$__result['query']['pages'][$__pageid]['title'];
@@ -142,8 +147,6 @@ class PCPServer extends PCPAny{
 		}
 		$this->getEditToken($userCredentials, $title);
 
-		#var_dump($this);
-
 		$__request = new FauxRequest(
 		PCPUtil::replaceInHash($this->queryCreatePage,
 		array($title,$this->usedUC->editToken, $text, $summary))
@@ -151,7 +154,7 @@ class PCPServer extends PCPAny{
 
 		$__api = new ApiMain($__request, true);
 		$__api->execute();
-		#$__result =& $__api->GetResultData();
+		
 		return $__api->GetResultData();
 	}
 
@@ -164,11 +167,6 @@ class PCPServer extends PCPAny{
 	}
 
 	public function &readPage(PCPUserCredentials $userCredentials=NULL, $title= NULL, $revisionID = NULL){
-		if($title == NULL){
-			// trigger an error?
-			#return NULL;
-			// handled by the MW API
-		}
 
 		$this->page = new PCPPage($title);
 		$this->setCookies($userCredentials);
@@ -180,14 +178,12 @@ class PCPServer extends PCPAny{
 		PCPUtil::replaceInHash($this->queryReadPage,
 		array($title))
 		);
-		
-		$__api = new ApiMain($__request, true);
-//		var_dump($this);
-//		die("readed");
-		$__api->execute();
-		
-		$__result =& $__api->GetResultData();
 
+		$__api = new ApiMain($__request, true);
+		$__api->execute();
+
+		$__result =& $__api->GetResultData();
+		
 		if (!isset($__result['query']['pages'])){
 			// error handling
 			print ("ERROR: Reading a single page failed".__FILE__);
@@ -195,7 +191,7 @@ class PCPServer extends PCPAny{
 			// there could be more than one page in the result
 			// each entry in the hashmap has the page ID as key
 			foreach ($__result['query']['pages'] as $__pageid => $__pageObject){
-				if ($__result['query']['pages'][$__pageid]['title'] === str_replace('_', ' ', $title)){
+				if ($__result['query']['pages'][$__pageid]['title'] == str_replace('_', ' ', $title)){
 					// get the page that has the matching title
 					if ($__pageid !== -1){
 						// the page exists
@@ -205,28 +201,27 @@ class PCPServer extends PCPAny{
 						$this->page->basetimestamp=$__result['query']['pages'][$__pageid]['touched'];
 						$this->page->namespace=$__result['query']['pages'][$__pageid]['ns'];
 
-						if($revisionID !==NULL){
+						if($revisionID !==NULL){							
 							foreach ($__result['query']['pages'][$__pageid]['revisions'] as $__idx => $__revision){
-								if($__revision['revid'] === $revisionID){
+								if($__revision['revid'] == $revisionID){
 									$this->page->usedrevid = $revisionID;
 									$this->page->text = $__revision['*'];
 								}
 							}
-						}else{
-							#var_dump($__result);
+						}else{							
 							$this->page->usedrevid = $__result['query']['pages'][$__pageid]['lastrevid'];
 							foreach ($__result['query']['pages'][$__pageid]['revisions'] as $__idx => $__revision){
-								if($__revision['revid'] === $this->page->lastrevid){
+								if($__revision['revid'] == $this->page->lastrevid){
 									$this->page->text = $__result['query']['pages'][$__pageid]['revisions'][$__idx]['*'];
 								}
 							}
 						}
 					}else{
-						print ("WARNING: The page $title does not exist.");
+						return NULL;
 					}
 
 				}
-			}
+			}			
 			return $this->page;
 		}
 
@@ -257,7 +252,7 @@ class PCPServer extends PCPAny{
 
 		// if md5 is not set, do not use it
 		if( $md5_hash !== NULL){
-			if ($basetimestamp === NULL)
+			if ($basetimestamp == NULL)
 			{
 				// $basetimestamp = $this->page->basetimestamp; // use the last revision
 				unset($this->queryUpdatePage['basetimestamp']);
@@ -272,8 +267,8 @@ class PCPServer extends PCPAny{
 				);
 			}
 		}else{
-			unset($this->queryUpdatePage['md5']);			
-			if ($basetimestamp === NULL)
+			unset($this->queryUpdatePage['md5']);
+			if ($basetimestamp == NULL)
 			{
 				// $basetimestamp = $this->page->basetimestamp;
 				unset($this->queryUpdatePage['basetimestamp']);
@@ -334,7 +329,7 @@ class PCPServer extends PCPAny{
 		}
 		return $__pages;
 	}
-	
+
 	public function movePage(PCPUserCredentials $userCredentials=NULL, $fromTitle=NULL, $toTitle=NULL, $movetalk=false, $noredirect=false){
 		if($fromTitle == NULL || $toTitle == NULL){
 			// trigger an error?

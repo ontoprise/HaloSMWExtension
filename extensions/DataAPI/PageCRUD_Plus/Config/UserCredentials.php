@@ -83,5 +83,23 @@ class PCPUserCredentials{
 
 		return $__xml;
 	}
+
+	/**
+	 * Converts the attributes of the object in keys of a hashmap.
+	 *
+	 *
+	 * @return array The hashmap.
+	 */
+	public function toHashmap(){
+		$__hmUc = array();
+
+		$__hmUc= array(
+		"username" => $this->un,
+		"userid" => $this->id,
+		"logintoken" => $this->lgToken,		
+		);
+
+		return $__hmUc;
+	}
 }
 ?>

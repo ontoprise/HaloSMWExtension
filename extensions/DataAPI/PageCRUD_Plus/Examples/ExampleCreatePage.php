@@ -6,7 +6,7 @@ require_once('/xampp/htdocs/wiki/includes/Webstart.php');
 $createTest = new PCPServer();
 $uc = new PCPUserCredentials("TestUser", "TestPassword");
 if ($createTest->login($uc)){	
-	echo $createTest->createPage($uc, "A test page", "Adding some content");
+	echo $createTest->createPage($uc, "Testpage", "Adding some content");
 	$createTest->logout();
 }else{
 	print ("ERROR: Testing failed!");

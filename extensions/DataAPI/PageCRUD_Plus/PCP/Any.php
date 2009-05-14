@@ -79,7 +79,7 @@ abstract class PCPAny{
 	"prop" => "info|revisions",
 	"titles" => ":0",
 	"rvprop" => "timestamp|content|ids",
-	//	"rvlimit" => "10"
+	"rvlimit" => "max"
 	);
 
 	/**
@@ -221,7 +221,7 @@ abstract class PCPAny{
 	//	}
 
 	/**
-	 * Get the edit token for a page.
+	 * Get the edit token for a page. If no page name is give, presumes that "Main Page" exists. 
 	 *
 	 * @param PCPUserCredentials $userCredentials
 	 * @param string $title

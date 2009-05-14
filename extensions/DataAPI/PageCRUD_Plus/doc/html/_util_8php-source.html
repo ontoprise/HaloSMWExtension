@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>PageCRUDPlus: C:/xampp/htdocs/mw/extensions/PageCRUD_Plus/Util/Util.php Source File</title>
+<title>PageCRUDPlus: F:/xampp/htdocs/mw/extensions/DataAPI/PageObjectModel/Util/Util.php Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -8,8 +8,7 @@
 <div class="navigation" id="top">
   <div class="tabs">
     <ul>
-      <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+      <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -31,81 +30,84 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-<h1>C:/xampp/htdocs/mw/extensions/PageCRUD_Plus/Util/Util.php</h1><a href="_util_8php.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
-<a name="l00008"></a><a class="code" href="class_p_c_p_util.html">00008</a> <span class="keyword">class </span><a class="code" href="class_p_c_p_util.html">PCPUtil</a>{
-<a name="l00016"></a><a class="code" href="class_p_c_p_util.html#1df633fb0ef74ffc3797ed87f69c922f">00016</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#1df633fb0ef74ffc3797ed87f69c922f">replaceInHash</a>($placeholders=NULL, $values=NULL){
-<a name="l00017"></a>00017                 $__idx=0;
-<a name="l00018"></a>00018                 <span class="keywordflow">foreach</span> ($values as $__value){
-<a name="l00019"></a>00019                         <span class="keywordflow">foreach</span> ($placeholders as $__phKey=&gt;$__phValue){
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021                                 <span class="keywordflow">if</span> (strpos($__phValue, <span class="stringliteral">":"</span>.$__idx)!== <span class="keyword">false</span>){
-<a name="l00022"></a>00022                                         $placeholders[$__phKey]=str_replace($__phValue, $__value,$__phValue);
-<a name="l00023"></a>00023                                 }
-<a name="l00024"></a>00024                         }
-<a name="l00025"></a>00025                         $__idx++;
-<a name="l00026"></a>00026                 }
-<a name="l00027"></a>00027                 <span class="keywordflow">return</span> $placeholders;
-<a name="l00028"></a>00028         }
-<a name="l00029"></a>00029 
-<a name="l00037"></a><a class="code" href="class_p_c_p_util.html#b6859e350a4eb36d539a9272fe69cd3c">00037</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#b6859e350a4eb36d539a9272fe69cd3c">fromURL</a>($string)
-<a name="l00038"></a>00038         {
-<a name="l00039"></a>00039                 <span class="keywordflow">return</span> str_replace(<span class="stringliteral">"_"</span>,<span class="stringliteral">" "</span>,urldecode($string));
-<a name="l00040"></a>00040         }
-<a name="l00041"></a>00041 
-<a name="l00049"></a><a class="code" href="class_p_c_p_util.html#2e63cf9e62441a293b09732e07bb13af">00049</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#2e63cf9e62441a293b09732e07bb13af">toURL</a>($string)
-<a name="l00050"></a>00050         {
-<a name="l00051"></a>00051                 <span class="keywordflow">return</span>
-<a name="l00052"></a>00052                 str_replace(<span class="stringliteral">"%2F"</span>,<span class="stringliteral">"/"</span>,
-<a name="l00053"></a>00053                 str_replace(<span class="stringliteral">"%3A"</span>,<span class="stringliteral">":"</span>,
-<a name="l00054"></a>00054                 urlencode(
-<a name="l00055"></a>00055                 str_replace(<span class="stringliteral">" "</span>,<span class="stringliteral">"_"</span>,$string)
-<a name="l00056"></a>00056                 )
-<a name="l00057"></a>00057                 )
-<a name="l00058"></a>00058                 );
-<a name="l00059"></a>00059         }
+<h1>F:/xampp/htdocs/mw/extensions/DataAPI/PageObjectModel/Util/Util.php</h1><a href="_util_8php.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
+<a name="l00006"></a><a class="code" href="class_p_o_m_util_trim_triple.html">00006</a> <span class="keyword">class </span><a class="code" href="class_p_o_m_util_trim_triple.html">POMUtilTrimTriple</a>
+<a name="l00007"></a>00007 {
+<a name="l00013"></a><a class="code" href="class_p_o_m_util_trim_triple.html#90b4c35b572d78179afc87ca77af9eb7">00013</a>         <span class="keyword">public</span> <a class="code" href="class_p_o_m_util_trim_triple.html#90b4c35b572d78179afc87ca77af9eb7">$leading_space</a>;
+<a name="l00019"></a><a class="code" href="class_p_o_m_util_trim_triple.html#57d7e2f6b9f328dc43acf56a934eb3f4">00019</a>         <span class="keyword">public</span> <a class="code" href="class_p_o_m_util_trim_triple.html#57d7e2f6b9f328dc43acf56a934eb3f4">$trimmed</a>;
+<a name="l00025"></a><a class="code" href="class_p_o_m_util_trim_triple.html#5254b65cba6990ea937c52dfeac6ea37">00025</a>         <span class="keyword">public</span> <a class="code" href="class_p_o_m_util_trim_triple.html#5254b65cba6990ea937c52dfeac6ea37">$trailing_space</a>;
+<a name="l00026"></a>00026 
+<a name="l00033"></a><a class="code" href="class_p_o_m_util_trim_triple.html#43388637771b54b42c663389cab84269">00033</a>         <span class="keyword">public</span> function <a class="code" href="class_p_o_m_util_trim_triple.html#43388637771b54b42c663389cab84269">POMUtilTrimTriple</a>($text)
+<a name="l00034"></a>00034         {
+<a name="l00035"></a>00035                 $this-&gt;trimmed = trim($text);
+<a name="l00036"></a>00036                 <span class="keywordflow">if</span> (strlen($this-&gt;trimmed) &gt; 0)
+<a name="l00037"></a>00037                 {
+<a name="l00038"></a>00038                         $this-&gt;leading_space = substr($text, 0, strpos($text, $this-&gt;trimmed));
+<a name="l00039"></a>00039                         <span class="keywordflow">if</span> (strpos($text, $this-&gt;trimmed) + strlen($this-&gt;trimmed) &lt; strlen($text))
+<a name="l00040"></a>00040                         {
+<a name="l00041"></a>00041                                 $this-&gt;trailing_space = substr($text, strpos($text, $this-&gt;trimmed) + strlen($this-&gt;trimmed));
+<a name="l00042"></a>00042                         }
+<a name="l00043"></a>00043                         <span class="keywordflow">else</span>
+<a name="l00044"></a>00044                         {
+<a name="l00045"></a>00045                                 $this-&gt;trailing_space = <span class="stringliteral">''</span>;
+<a name="l00046"></a>00046                         }
+<a name="l00047"></a>00047                 }
+<a name="l00048"></a>00048                 <span class="keywordflow">else</span>
+<a name="l00049"></a>00049                 {
+<a name="l00050"></a>00050                         $this-&gt;leading_space = <span class="stringliteral">''</span>;
+<a name="l00051"></a>00051                         $this-&gt;trailing_space = $text;
+<a name="l00052"></a>00052                 }
+<a name="l00053"></a>00053         }
+<a name="l00054"></a>00054 
+<a name="l00055"></a><a class="code" href="class_p_o_m_util_trim_triple.html#dd82df8f72dc112f2d62a117ab85e70a">00055</a>         <span class="keyword">public</span> function <a class="code" href="class_p_o_m_util_trim_triple.html#dd82df8f72dc112f2d62a117ab85e70a">toString</a>()
+<a name="l00056"></a>00056         {
+<a name="l00057"></a>00057                 <span class="keywordflow">return</span> $this-&gt;leading_space.$this-&gt;trimmed.$this-&gt;trailing_space;
+<a name="l00058"></a>00058         }
+<a name="l00059"></a>00059 }
 <a name="l00060"></a>00060 
-<a name="l00068"></a><a class="code" href="class_p_c_p_util.html#e9fc80eaeb79becdfbfffd5c5b8d09ef">00068</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#e9fc80eaeb79becdfbfffd5c5b8d09ef">trimFirstTitle</a>($title = NULL){
-<a name="l00069"></a>00069                 <span class="keywordflow">if</span> (strrpos($title , <span class="charliteral">'|'</span>)){
-<a name="l00070"></a>00070                         <span class="keywordflow">return</span> substr($title , strrpos($title , <span class="charliteral">'|'</span>) +1);
-<a name="l00071"></a>00071                 }<span class="keywordflow">else</span>{
-<a name="l00072"></a>00072                         <span class="keywordflow">return</span> $title;
-<a name="l00073"></a>00073                 }
-<a name="l00074"></a>00074         }
-<a name="l00075"></a>00075 
-<a name="l00100"></a><a class="code" href="class_p_c_p_util.html#4fa637cb63170a47bf6513ce2e02a15c">00100</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#4fa637cb63170a47bf6513ce2e02a15c">createXMLResponse</a>(<a class="code" href="_test_zend_r_e_s_t_client_8php.html#112ef069ddc0454086e3d1e6d8d55d07">$result</a>, $status = <span class="stringliteral">"success"</span>){
-<a name="l00101"></a>00101                 $__xmlString = <span class="stringliteral">''</span>;
-<a name="l00102"></a>00102                 $__xmlString =<span class="stringliteral">'&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;'</span>;
-<a name="l00103"></a>00103                 $__xmlString.=<span class="stringliteral">"\n&lt;response&gt;\n&lt;smw&gt;\n"</span>;
-<a name="l00104"></a>00104                 $__xmlString.= <a class="code" href="_test_zend_r_e_s_t_client_8php.html#112ef069ddc0454086e3d1e6d8d55d07">$result</a>;
-<a name="l00105"></a>00105                 $__xmlString.= <span class="stringliteral">"\n&lt;status&gt;$status&lt;/status&gt;"</span>;
-<a name="l00106"></a>00106                 $__xmlString.=<span class="stringliteral">"&lt;/smw&gt;\n&lt;/response&gt;"</span>;
-<a name="l00107"></a>00107                 <span class="keywordflow">return</span> $__xmlString;
+<a name="l00073"></a><a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html">00073</a> <span class="keyword">class </span><a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html">POMUtilTrimParameterValueTriple</a> <span class="keyword">extends</span> <a class="code" href="class_p_o_m_util_trim_triple.html">POMUtilTrimTriple</a>
+<a name="l00074"></a>00074 {
+<a name="l00081"></a><a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html#3f2a8bfdeb5f18758c3363243b6a651a">00081</a>         <span class="keyword">public</span> function <a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html#3f2a8bfdeb5f18758c3363243b6a651a">POMUtilTrimParameterValueTriple</a>($text)
+<a name="l00082"></a>00082         {
+<a name="l00083"></a>00083                 <span class="comment">// adds a page object reference as value of the trimmed attribute</span>
+<a name="l00084"></a>00084                 $__trimmed = trim($text);
+<a name="l00085"></a>00085                 $__pomPage = <span class="keyword">new</span> <a class="code" href="class_p_o_m_page.html">POMPage</a>(<span class="stringliteral">"temporarypage"</span>, $__trimmed);
+<a name="l00086"></a>00086                 $this-&gt;trimmed = &amp;$__pomPage;
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088                 <span class="keywordflow">if</span> (strlen($this-&gt;trimmed-&gt;toString()) &gt; 0)
+<a name="l00089"></a>00089                 {
+<a name="l00090"></a>00090                         $this-&gt;leading_space = substr($text, 0, strpos($text, $this-&gt;trimmed));
+<a name="l00091"></a>00091                         <span class="keywordflow">if</span> (strpos($text, $this-&gt;trimmed-&gt;toString()) + strlen($this-&gt;trimmed-&gt;toString()) &lt; strlen($text))
+<a name="l00092"></a>00092                         {
+<a name="l00093"></a>00093                                 $this-&gt;trailing_space = substr($text, strpos($text, $this-&gt;trimmed-&gt;toString()) + strlen($this-&gt;trimmed-&gt;toString()));
+<a name="l00094"></a>00094                         }
+<a name="l00095"></a>00095                         <span class="keywordflow">else</span>
+<a name="l00096"></a>00096                         {
+<a name="l00097"></a>00097                                 $this-&gt;trailing_space = <span class="stringliteral">''</span>;
+<a name="l00098"></a>00098                         }
+<a name="l00099"></a>00099                 }
+<a name="l00100"></a>00100                 <span class="keywordflow">else</span>
+<a name="l00101"></a>00101                 {
+<a name="l00102"></a>00102                         $this-&gt;leading_space = <span class="stringliteral">''</span>;
+<a name="l00103"></a>00103                         $this-&gt;trailing_space = $text;
+<a name="l00104"></a>00104                         <span class="comment">// add an empty POMSimpleText object to the page</span>
+<a name="l00105"></a>00105                         $this-&gt;trimmed-&gt;addElement(<span class="keyword">new</span> <a class="code" href="class_p_o_m_simple_text.html">POMSimpleText</a>(<span class="stringliteral">''</span>));
+<a name="l00106"></a>00106                 }
+<a name="l00107"></a>00107         }
 <a name="l00108"></a>00108 
-<a name="l00109"></a>00109         }
-<a name="l00116"></a><a class="code" href="class_p_c_p_util.html#f7ca0be3b3f074e6adf22506f4e1a880">00116</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#f7ca0be3b3f074e6adf22506f4e1a880">array2Object</a>($array) {
-<a name="l00117"></a>00117                 $__object = <span class="keyword">new</span> stdClass();
-<a name="l00118"></a>00118                 <span class="keywordflow">if</span> (is_array($array) &amp;&amp; count($array) &gt; 0) {
-<a name="l00119"></a>00119                         <span class="keywordflow">foreach</span> ($array as $__key=&gt;$__value) {
-<a name="l00120"></a>00120                                 $__key = strtolower(trim($__key));
-<a name="l00121"></a>00121                                 <span class="keywordflow">if</span> (!empty($__key)) {
-<a name="l00122"></a>00122                                         $__object-&gt;$__key = $__value;
-<a name="l00123"></a>00123                                 }
-<a name="l00124"></a>00124                         }
-<a name="l00125"></a>00125                 }
-<a name="l00126"></a>00126                 <span class="keywordflow">return</span> $__object;
-<a name="l00127"></a>00127         }
-<a name="l00128"></a>00128 
-<a name="l00135"></a><a class="code" href="class_p_c_p_util.html#84afb1a26c978ece9ef79d8d2b172e57">00135</a>         <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="class_p_c_p_util.html#84afb1a26c978ece9ef79d8d2b172e57">object2Array</a>($object) {
-<a name="l00136"></a>00136                 $__array = array();
-<a name="l00137"></a>00137                 <span class="keywordflow">if</span> (is_object($object)) {
-<a name="l00138"></a>00138                         $__array = get_object_vars($object);
-<a name="l00139"></a>00139                 }
-<a name="l00140"></a>00140                 <span class="keywordflow">return</span> $__array;
-<a name="l00141"></a>00141         }
-<a name="l00142"></a>00142 }
-<a name="l00143"></a>00143 ?&gt;
+<a name="l00109"></a><a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html#7e4dbb9aa9f5f8dcf9d8c8eeaf444153">00109</a>         <span class="keyword">public</span> function <a class="code" href="class_p_o_m_util_trim_parameter_value_triple.html#7e4dbb9aa9f5f8dcf9d8c8eeaf444153">toString</a>()
+<a name="l00110"></a>00110         {
+<a name="l00111"></a>00111                 <span class="keywordflow">return</span> $this-&gt;leading_space.$this-&gt;trimmed-&gt;toString().$this-&gt;trailing_space;
+<a name="l00112"></a>00112         }
+<a name="l00113"></a>00113 }
+<a name="l00114"></a><a class="code" href="class_p_o_m_url_util.html">00114</a> <span class="keyword">class </span><a class="code" href="class_p_o_m_url_util.html">POMUrlUtil</a>{
+<a name="l00121"></a><a class="code" href="class_p_o_m_url_util.html#321bf5b1aa2f9440b217e3c933c30427">00121</a>         <span class="keyword">public</span> function <a class="code" href="class_p_o_m_url_util.html#321bf5b1aa2f9440b217e3c933c30427">url_exists</a>($url) {
+<a name="l00122"></a>00122                 $hdrs = @get_headers($url);
+<a name="l00123"></a>00123                 <span class="keywordflow">return</span> is_array($hdrs) ? preg_match(<span class="stringliteral">'/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/'</span>,$hdrs[0]) : <span class="keyword">false</span>;
+<a name="l00124"></a>00124         }
+<a name="l00125"></a>00125 }
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 5 17:42:37 2009 for PageCRUDPlus by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 14 09:58:14 2009 for PageCRUDPlus by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

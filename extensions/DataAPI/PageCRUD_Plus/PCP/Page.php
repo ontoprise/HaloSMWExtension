@@ -102,9 +102,7 @@ class PCPPage{
 		'urid="'.$this->usedrevid.'" '.
 		">".
 		"<text><![CDATA[".$this->text."]]></text>".
-//		"<text>".$this->text."></text>".
 		"<summary><![CDATA[".$this->summary."]]></summary>".
-//		"<summary>".$this->summary."</summary>".
 		"</page>"
 		;
 
@@ -130,17 +128,6 @@ class PCPPage{
 		"text" => $this->text,
 		"summary" => $this->summary,
 		);
-//		'title="'.$this->title.'" '.
-//		'pageid="'.$this->pageid.'" '.
-//		'ns="'.$this->namespace.'" '.
-//		'bt="'.$this->basetimestamp.'" '.
-//		'lrid="'.$this->lastrevid.'" '.
-//		'urid="'.$this->usedrevid.'" '.
-//		">".
-//		"<text><![CDATA[".$this->text."]]></text>".
-//		"<summary><![CDATA[".$this->summary."]]></summary>".
-//		"</page>"
-//		;
 
 		return $__hmPage;
 	}
