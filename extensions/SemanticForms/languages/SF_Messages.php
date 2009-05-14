@@ -17,7 +17,7 @@ $messages['en'] = array(
 	'createproperty'                     => 'Create a property',
 	'sf_createproperty_linktoform'       => 'This property will link to pages that use the form:',
 	'sf_createproperty_allowedvalsinput' => 'If you want this property to only be allowed to have certain values, enter the list of allowed values, separated by commas (if a value contains a comma, replace it with "\,"):',
-	'sf_createproperty_propname'         => 'Name:',
+	'sf_createproperty_propname'         => 'Property name:',
 	'sf_createproperty_proptype'         => 'Type:',
 	'templates'                          => 'Templates',
 	'sf_templates_docu'                  => 'The following templates exist in the wiki.',
@@ -43,7 +43,8 @@ $messages['en'] = array(
 	'forms'                              => 'Forms',
 	'sf_forms_docu'                      => 'The following forms exist in the wiki.',
 	'createform'                         => 'Create a form',
-	'sf_createform_nameinput'            => 'Form name (convention is to name the form after the main template it populates):',
+	'sf_createform_nameinput'            => 'Form name',
+	'sf_createform_nameinputdesc'        => '(convention is to name the form after the main template it populates):',
 	'sf_createform_template'             => 'Template:',
 	'sf_createform_templatelabelinput'   => 'Template label (optional):',
 	'sf_createform_allowmultiple'        => 'Allow for multiple (or zero) instances of this template in the created page',
@@ -64,9 +65,16 @@ $messages['en'] = array(
 	'sf_createform_add'                  => 'Add',
 	'sf_createform_choosefield'          => 'Choose a field to add',
 	'createcategory'                     => 'Create a category',
-	'sf_createcategory_name'             => 'Name:',
+	'sf_createcategory_name'             => 'Category name:',
 	'sf_createcategory_defaultform'      => 'Default form:',
 	'sf_createcategory_makesubcategory'  => 'Make this a subcategory of another category (optional):',
+	'createclass'                        => 'Create a class',
+	'sf_createclass_docu'                => 'Enter all the data here to create the properties, template, form and category for a single class. For more options, use the pages $1 instead.',
+	'sf_createclass_allowedvalues'       => 'Allowed values',
+	'sf_createclass_listofvalues'        => 'List of values',
+	'sf_createclass_leavefieldblank'     => 'If the field name is the same as the property name, you can leave it blank.',
+	'sf_createclass_missingvalues'       => 'Not all required fields were filled out.',
+	'sf_createclass_success'             => 'Properties, template, form and category will be created.',
 	'addpage'                            => 'Add page with form',
 	'sf_addpage_badform'                 => 'Error: no form page was found at $1',
 	'sf_addpage_docu'                    => 'Enter the name of the page here, to be edited with the form \'$1\'.
@@ -89,6 +97,7 @@ it should look like \'Special:AddData?form=&lt;form name&gt;&target=&lt;target p
 	'sf_editdata_title'                  => 'Edit $1: $2',
 	'sf_editdata_badurl'                 => 'This is the page for editing data. You must specify both a form name and a target page in the URL;
 it should look like \'Special:EditData?form=&lt;form name&gt;&target=&lt;target page&gt;\', or  \'Special:EditData/&lt;form name&gt;/&lt;target page&gt;\'.',
+	'sf_editdata_morethanoneform'        => 'Warning: More than one default form is defined for this page.',
 	'sf_editdata_formwarning'            => 'Warning: This page <a href="$1">already exists</a>, but it does not use this form.',
 	'sf_editdata_remove'                 => 'Remove',
 	'sf_editdata_addanother'             => 'Add another',
@@ -106,7 +115,7 @@ it should look like \'Special:EditData?form=&lt;form name&gt;&target=&lt;target 
 	// content messages
 	'sf_property_isproperty'             => 'This is a property of type $1.',
 	'sf_property_linkstoform'            => 'It links to pages that use the form $1.',
-	'sf_property_allowedvals'            => 'The allowed values for this property are:',
+	'sf_property_allowedvals'            => 'The allowed {{PLURAL:$1|value for this property is|values for this property are}}:',
 	'sf_template_docu'                   => 'This is the \'$1\' template.
 It should be called in the following format:',
 	'sf_template_docufooter'             => 'Edit the page to see the template text.',
@@ -281,7 +290,7 @@ $messages['ar'] = array(
 	'uploadwindow' => 'نافذة الرفع',
 	'sf_property_isproperty' => 'هذه خاصية من نوع $1.',
 	'sf_property_linkstoform' => 'هي تصل إلى الصفحات التي تستخدم الاستمارة $1.',
-	'sf_property_allowedvals' => 'القيم المسموحة لهذه الخاصية هي:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|القيمة|القيم}} المسموح بها لهذه الخاصية هي:',
 	'sf_template_docu' => "هذا قالب '$1'.
 ينبغي استدعاؤه بالصيغة التالية:",
 	'sf_template_docufooter' => 'عدل الصفحة لرؤية نص القالب.',
@@ -574,7 +583,7 @@ $messages['be-tarask'] = array(
 	'uploadwindow' => 'Акно загрузкі',
 	'sf_property_isproperty' => 'Гэта ўласьцівасьць тыпу $1.',
 	'sf_property_linkstoform' => 'Гэта ўласьцівасьць спасылаецца на старонкі, якія выкарыстоўваюць форму $1.',
-	'sf_property_allowedvals' => 'Дазволенымі значэньнямі для гэтай уласьцівасьці зьяўляюцца:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Дазволенае значэньне|Дазволеныя значэньні}} для гэтай уласьцівасьці:',
 	'sf_template_docu' => "Гэта шаблён '$1', які павінен выклікацца наступным чынам:",
 	'sf_template_docufooter' => 'Рэдагуйце старонку, каб убачыць тэкст шаблёну.',
 	'sf_form_docu' => "Гэта форма '$1'.
@@ -666,6 +675,7 @@ $messages['bs'] = array(
 	'semanticforms-desc' => 'Obrasci za dodavanje i uređivanje semantičkih podataka',
 	'specialpages-group-sf_group' => 'Semantički obrasci',
 	'createproperty' => 'Napravi osobinu',
+	'sf_createproperty_linktoform' => 'Ovo svojstvo će voditi na stranice koje koriste obrazac:',
 	'sf_createproperty_propname' => 'Naziv:',
 	'sf_createproperty_proptype' => 'Vrsta:',
 	'templates' => 'Šabloni',
@@ -677,8 +687,11 @@ $messages['bs'] = array(
 	'sf_createtemplate_templatefields' => 'Polja šablona',
 	'sf_createtemplate_fieldname' => 'Ime polja:',
 	'sf_createtemplate_displaylabel' => 'Prikaži naljepnicu:',
+	'sf_createtemplate_semanticproperty' => 'Semantičko svojstvo:',
+	'sf_createtemplate_fieldislist' => 'Ovo polje može sadržavati spisak vrijednosti, razdvojene zarezima',
 	'sf_createtemplate_aggregationlabel' => 'Naslov za spisak:',
 	'sf_createtemplate_outputformat' => 'Izlazni format:',
+	'sf_createtemplate_standardformat' => 'Standardni',
 	'sf_createtemplate_infoboxformat' => 'Infokutija na desnoj strani',
 	'sf_createtemplate_addfield' => 'Dodaj polje',
 	'sf_createtemplate_deletefield' => 'Obriši',
@@ -687,26 +700,41 @@ $messages['bs'] = array(
 	'createform' => 'Napravi obrazac',
 	'sf_createform_template' => 'Šablon:',
 	'sf_createform_field' => 'Polje:',
+	'sf_createform_fieldprop' => 'Ovo polje definira svojstvo $1 tipa $2.',
 	'sf_createform_inputtype' => 'Tip unosa:',
 	'sf_createform_inputtypedefault' => '(standardno)',
+	'sf_createform_formlabel' => 'Naslov obrasca:',
 	'sf_createform_hidden' => 'sakrivena',
+	'sf_createform_restricted' => 'Ograničeni (samo administratori ga mogu mijenjati)',
 	'sf_createform_removetemplate' => 'Ukloni šablon',
 	'sf_createform_addtemplate' => 'Dodaj šablon:',
 	'sf_createform_beforetemplate' => 'Prije šablona:',
 	'sf_createform_atend' => 'Na kraju',
 	'sf_createform_add' => 'Dodaj',
+	'sf_createform_choosefield' => 'Izaberite polje za dodavanje',
 	'createcategory' => 'Napravi kategoriju',
 	'sf_createcategory_name' => 'Naziv:',
 	'sf_createcategory_defaultform' => 'Pretpostavljeni obrazac:',
+	'sf_createcategory_makesubcategory' => 'Učini ovo subkategorijom neke kategorije (neobavezno):',
 	'addpage' => 'Dodaj stranicu putem obrasca',
+	'sf_addpage_badform' => 'Greška: nije pronađena stranica obrasca na $1',
 	'addoreditdata' => 'Dodaj ili uredi',
 	'adddata' => 'Dodaj podatke',
 	'sf_adddata_altformsonly' => 'Molimo Vas da odaberete jedan od slijedećih obrazaca za dodavanje ovoj stranici:',
+	'editdata' => 'Uredi podatke',
+	'sf_viewform' => 'Pogledaj obrazac',
+	'sf_editdata_title' => 'Uređivanje $1: $2',
 	'sf_editdata_remove' => 'Ukloni',
 	'sf_editdata_addanother' => 'Dodaj slijedeći',
 	'sf_editdata_none' => 'ništa',
 	'sf_blank_error' => 'ne može biti prazno',
+	'sf_bad_email_error' => 'mora se navesti valjan format e-mail adrese',
 	'sf_bad_number_error' => 'mora biti validan broj',
+	'sf_bad_integer_error' => 'mora biti valjan cijeli broj',
+	'sf_bad_date_error' => 'mora biti valjan datum',
+	'sf_template_docu' => "Ovo je '$1' obrazac.
+Trebao bi se nazvati u slijedećem formatu:",
+	'sf_form_freetextlabel' => 'Slobodni tekst',
 	'sf_blank_namespace' => 'Glavno',
 );
 
@@ -717,14 +745,15 @@ $messages['bs'] = array(
 $messages['ca'] = array(
 	'semanticforms-desc' => 'Formularis per afegir i editar continguts semàntics.',
 	'specialpages-group-sf_group' => 'Semantic Forms',
-	'createproperty' => 'Crear una propietat',
-	'sf_createproperty_allowedvalsinput' => 'Si vols que aquest camp permeti només alguns valors específics, introdueix la llista de valors permesos, separats per comes (si un valor conté una coma, substitueix-la per "\\,"):',
+	'createproperty' => 'Crea una propietat',
+	'sf_createproperty_linktoform' => 'Aquesta propietat enllaçarà a pàgines que usin el formulari:',
+	'sf_createproperty_allowedvalsinput' => 'Si voleu que aquest camp permeti només alguns valors específics, introduiu la llista dels valors permesos, separats per comes (si un valor conté una coma, substituiu-la per "\\,"):',
 	'sf_createproperty_propname' => 'Nom:',
 	'sf_createproperty_proptype' => 'Tipus:',
 	'templates' => 'Plantilles',
 	'sf_templates_docu' => 'Les següents plantilles existeixen en el wiki.',
 	'sf_templates_definescat' => 'Definir categoria:',
-	'createtemplate' => 'Crear una plantilla',
+	'createtemplate' => 'Crea una plantilla',
 	'sf_createtemplate_namelabel' => 'Nom de la plantilla:',
 	'sf_createtemplate_categorylabel' => 'Categoria definida mitjançant la plantilla (opcional):',
 	'sf_createtemplate_templatefields' => 'Camps de la plantilla',
@@ -744,7 +773,7 @@ $messages['ca'] = array(
 	'sf_createtemplate_addtemplatebeforesave' => "Per poder guardar-lo has d'afegir com a mínim una plantilla a aquest formulari.",
 	'forms' => 'Formularis',
 	'sf_forms_docu' => 'Els formularis següents ja existeixen al wiki.',
-	'createform' => 'Crear un formulari',
+	'createform' => 'Crea un formulari',
 	'sf_createform_nameinput' => 'Nom del Formulari (per convenció, dóna nom al formulari després de la plantilla principal que aquest omple)',
 	'sf_createform_template' => 'Plantilla:',
 	'sf_createform_templatelabelinput' => 'Etiqueta de la plantilla (opcional):',
@@ -765,11 +794,11 @@ $messages['ca'] = array(
 	'sf_createform_atend' => 'Al final',
 	'sf_createform_add' => 'Afegir',
 	'sf_createform_choosefield' => 'Escull un camp per afegir',
-	'createcategory' => 'Crear una categoria',
+	'createcategory' => 'Crea una categoria',
 	'sf_createcategory_name' => 'Nom:',
 	'sf_createcategory_defaultform' => 'Formulari per defecte:',
 	'sf_createcategory_makesubcategory' => "Fes que aquesta sigui una sub-categoria d'una altra categoria (opcional):",
-	'addpage' => 'Afegir pàgina via formulari',
+	'addpage' => 'Afegeix pàgina via formulari',
 	'sf_addpage_badform' => "Error: no s'ha trobat una pàgina de formulari a $1",
 	'sf_addpage_docu' => "Introdueix el nom de la pàgina aquí, per ser editada amb el formulari '$1'.
 Si aquesta pàgina ja existeix, se t'obrirà el formulari per editar-la.
@@ -778,13 +807,13 @@ Si no, se t'obrirà el formulari per afegir una pàgina nova.",
 Si aquesta pàgina ja existeix, se t'obrirà el formulari per editar-la.
 Si no, se t'obrirà el formulari per afegir una pàgina nova.",
 	'addoreditdata' => 'Afegir o editar',
-	'adddata' => 'Afegir dades',
+	'adddata' => 'Afegeix dades',
 	'sf_adddata_title' => 'Afegir $1: $2',
 	'sf_adddata_badurl' => "Aquesta és la pàgina per afegir dades. Has d'especificar tant el nom del formulari com la pàgina de destí a la URL; ha de ser quelcom similar a 'Special:AddData?form=&lt;nom formulari&gt;&target=&lt;pàgina destí&gt;', o bé 'Special:AddData/&lt;nom formulari&gt;/&lt;pàgina destí&gt;'.",
 	'sf_adddata_altforms' => 'Alternativament pots afegir aquesta pàgina amb un dels formularis següents:',
-	'sf_adddata_altformsonly' => 'Sisplau, selecciona un formulari entre els següents per crear aquesta pàgina:',
-	'editdata' => 'Editar dades',
-	'sf_formedit' => 'Editar via formulari',
+	'sf_adddata_altformsonly' => 'Seleccioneu un formulari entre els següents per afegir aquesta pàgina:',
+	'editdata' => 'Edita dades',
+	'sf_formedit' => 'Edita via formulari',
 	'sf_viewform' => 'Veure el formulari',
 	'sf_editsource' => 'Editar font',
 	'sf_editdata_title' => 'Editar $1: $2',
@@ -802,6 +831,7 @@ Si no, se t'obrirà el formulari per afegir una pàgina nova.",
 	'sf_bad_date_error' => 'ha de ser una data vàlida',
 	'uploadwindow' => 'Finestra de càrrega',
 	'sf_property_isproperty' => 'Aquesta és una propietat del tipus $1.',
+	'sf_property_linkstoform' => 'Enllaça a pàgines que usen el formulari $1.',
 	'sf_property_allowedvals' => 'Els valors permesos per aquesta propietat són:',
 	'sf_template_docu' => "Aquesta és la plantilla '$1'.
 Que ha de ser cridada en el format següent:",
@@ -943,7 +973,7 @@ $messages['de'] = array(
 	'uploadwindow' => 'Upload-Fenster',
 	'sf_property_isproperty' => 'Dies ist eine Eigenschaft des Typs $1.',
 	'sf_property_linkstoform' => 'Es verlinkt zu Seiten, welche das Formular „$1“ nutzen.',
-	'sf_property_allowedvals' => 'Die möglichen Werte für diese Eigenschaft sind:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Der mögliche Wert für diese Eigenschaft ist|Die möglichen Werte für diese Eigenschaft sind}}:',
 	'sf_template_docu' => 'Dies ist die Vorlage für „$1“. Sie sollte im folgenden Format aufgerufen werden:',
 	'sf_template_docufooter' => 'Bearbeite diese Seite, um den Vorlagentext zu sehen.',
 	'sf_form_docu' => 'Gib in dieses Textfeld den Namen der Seite ein, die mit Formular „$1“ erstellt werden soll. Wenn bereits eine Seite mit diesem Namen existiert, wirst du zu einem Formular weitergeleitet, mit dem du diese Seite bearbeiten kannst.',
@@ -1076,7 +1106,7 @@ Howac buźoš se k formularoju za pśidawanje boka dalej pósrědnjaś.',
 	'uploadwindow' => 'Wokno nagraśow',
 	'sf_property_isproperty' => 'To jo kakosć typa $1.',
 	'sf_property_linkstoform' => 'Wótkazujo k bokam, kótarež wužywaju formular $1.',
-	'sf_property_allowedvals' => 'Dowólone gódnoty za toś tu kakosć su:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Dowólona gódnota za toś tu kakosć jo|Dowólonej gódnośe za toś tu kakosć stej|Dowólone gódnoty za toś tu kakosć su|Dowólone gódnoty za toś tu kakosć su}}:',
 	'sf_template_docu' => "To jo pśedłof '$1'.
 By se měł w slědujucem formaśe wuwołaś:",
 	'sf_template_docufooter' => 'Wobźěłaj bok, aby wiźeł tekst pśedłogi.',
@@ -1091,6 +1121,7 @@ jolic bok z tym mjenim južo eksistěrujo, buźoš se k formularoju dalej pósr�
 
 /** Greek (Ελληνικά)
  * @author Consta
+ * @author Crazymadlover
  * @author Omnipaedista
  */
 $messages['el'] = array(
@@ -1101,10 +1132,14 @@ $messages['el'] = array(
 	'sf_createtemplate_namelabel' => 'Όνομα προτύπου:',
 	'sf_createform_template' => 'Πρότυπο:',
 	'sf_createform_field' => 'Πεδίο:',
+	'sf_createform_hidden' => 'Κρυμμένος',
+	'sf_createform_add' => 'Προσθήκη',
 	'createcategory' => 'Δημιουργήστε μια κατηγορία',
 	'sf_createcategory_name' => 'Όνομα:',
 	'addpage' => 'Προσθέστε σελίδα με μορφή',
 	'addoreditdata' => 'Προσθέστε ή επεξεργαστείτε',
+	'sf_editdata_remove' => 'Αφαίρεση',
+	'sf_editdata_none' => 'Κανένα',
 );
 
 /** Esperanto (Esperanto)
@@ -1205,6 +1240,7 @@ $messages['es'] = array(
 	'semanticforms-desc' => 'Formularios para añadir y editar datos semánticos',
 	'specialpages-group-sf_group' => 'Formularios semánticos',
 	'createproperty' => 'Crear una propiedad',
+	'sf_createproperty_linktoform' => 'Esta propiedad vinculará a páginas que usen el formulario:',
 	'sf_createproperty_allowedvalsinput' => 'Si usted desea que esta propiedad solo permita tener ciertos valores, ingrese la lista de valores permitidos, separados por comas (si un valor contiene una coma, reemplazelo con "\\,"):',
 	'sf_createproperty_propname' => 'Nombre:',
 	'sf_createproperty_proptype' => 'Tipo:',
@@ -1285,7 +1321,8 @@ $messages['es'] = array(
 	'sf_bad_date_error' => 'debe ser una fecha válida',
 	'uploadwindow' => 'Ventana para subir archivos',
 	'sf_property_isproperty' => 'Esta es una propiedad de tipo $1.',
-	'sf_property_allowedvals' => 'Los valores permitidos para este atributo o propiedad son:',
+	'sf_property_linkstoform' => 'Vincula a páginas que usen el formulario $1.',
+	'sf_property_allowedvals' => 'Los {{PLURAL:$1|valor permitido para esta propiedad es|valores permitidos para esta propiedad son}}:',
 	'sf_template_docu' => "Este es la plantilla '$1'. Debe ser llamada en el siguiente formato:",
 	'sf_template_docufooter' => 'Editar la página para ver el texto de la plantilla.',
 	'sf_form_docu' => "Este es el formulario '$1'. Para agregar una página con este formulario, ingresar el nombre de la página a continuación; si la página con ese nombre ya existe, usted será enviado al formulario para editar esa página.",
@@ -1534,7 +1571,7 @@ $messages['fr'] = array(
 	'specialpages-group-sf_group' => 'Semantic Forms',
 	'createproperty' => 'Définir une propriété',
 	'sf_createproperty_linktoform' => 'Cette propriété liera vers les pages utilisant le formulaire :',
-	'sf_createproperty_allowedvalsinput' => "Si vous décidez que ce champ n'accepte que certaines valeurs, entrez la liste des valeurs permises, séparées par des virgules. (Si une valeur contient une virgule, remplacez-la par « \\, ») :",
+	'sf_createproperty_allowedvalsinput' => 'Si vous décidez que ce champ n’accepte que certaines valeurs, entrez la liste des valeurs permises, séparées par des virgules. (Si une valeur contient une virgule, remplacez-la par « \\, ») :',
 	'sf_createproperty_propname' => 'Nom :',
 	'sf_createproperty_proptype' => 'Type :',
 	'templates' => 'Modèles',
@@ -1546,7 +1583,7 @@ $messages['fr'] = array(
 	'sf_createtemplate_templatefields' => 'Champs de modèle',
 	'sf_createtemplate_fieldsdesc' => 'Pour un modèle qui n’utilise aucun nom pour les champs, entrez simplement son indice (exemples : 1, 2, 3, etc.) pour le nom, au lieu du nom actuel.',
 	'sf_createtemplate_fieldname' => 'Nom du champ :',
-	'sf_createtemplate_displaylabel' => "Étiquette pour l'affichage:",
+	'sf_createtemplate_displaylabel' => 'Étiquette pour l’affichage:',
 	'sf_createtemplate_semanticproperty' => 'Propriété de la sémantique :',
 	'sf_createtemplate_fieldislist' => 'Ce champ peut contenir une liste de valeurs séparées par des virgules.',
 	'sf_createtemplate_aggregation' => 'Agrégation',
@@ -1561,15 +1598,15 @@ $messages['fr'] = array(
 	'forms' => 'Formulaires',
 	'sf_forms_docu' => 'Les formulaires suivants existent dans le wiki.',
 	'createform' => 'Créer un formulaire',
-	'sf_createform_nameinput' => "Nom de formulaire (la convention est de nommer le formulaire après le modèle principal qu'il remplit) :",
+	'sf_createform_nameinput' => 'Nom de formulaire (la convention est de nommer le formulaire après le modèle principal qu’il remplit) :',
 	'sf_createform_template' => 'Modèle :',
 	'sf_createform_templatelabelinput' => 'Étiquette de modèle (facultatif) :',
 	'sf_createform_allowmultiple' => 'Permettre plusieurs (ou zéro) instances de ce modèle dans la page créée',
 	'sf_createform_field' => 'Champ :',
 	'sf_createform_fieldprop' => 'Ce champ définit la propriété $1, du type $2.',
 	'sf_createform_fieldproplist' => 'Ce champ définit une liste des éléments qui ont la propriété $1, du type $2.',
-	'sf_createform_fieldpropunknowntype' => "Ce champ définit la propriété $1, d'un type non indiqué.",
-	'sf_createform_inputtype' => "Type d'entrée :",
+	'sf_createform_fieldpropunknowntype' => 'Ce champ définit la propriété $1, d’un type non indiqué.',
+	'sf_createform_inputtype' => 'Type d’entrée :',
 	'sf_createform_inputtypedefault' => '(par défaut)',
 	'sf_createform_formlabel' => 'Étiquette dans le formulaire :',
 	'sf_createform_hidden' => 'Caché',
@@ -1584,41 +1621,45 @@ $messages['fr'] = array(
 	'createcategory' => 'Créer une catégorie',
 	'sf_createcategory_name' => 'Nom :',
 	'sf_createcategory_defaultform' => 'Formulaire par défaut :',
-	'sf_createcategory_makesubcategory' => "Crée une sous-catégorie d'une autre catégorie (facultatif) :",
+	'sf_createcategory_makesubcategory' => 'Crée une sous-catégorie d’une autre catégorie (facultatif) :',
 	'addpage' => 'Ajouter une page avec un formulaire',
-	'sf_addpage_badform' => "Erreur : aucune page de formulaire n'a été trouvée sur $1.",
-	'sf_addpage_docu' => "Entrez ici le nom de la page destinée à être éditée avec le formulaire « $1 ». Si cette page existe déjà, vous serez dirigé vers le formulaire afin de l'éditer. Dans le cas contraire, vous serez redirigé vers celui permettant de l'ajouter.",
-	'sf_addpage_noform_docu' => "Entrez ici le nom de la page puis sélectionner le formulaire avec lequel elle sera éditée. Si cette page existe déjà, vous serez dirigé vers le formulaire afin de l'éditer. Dans le cas contraire, vous serez redirigé vers celui permettant de l'ajouter.",
+	'sf_addpage_badform' => 'Erreur : aucune page de formulaire n’a été trouvée sur $1.',
+	'sf_addpage_docu' => 'Entrez ici le nom de la page destinée à être éditée avec le formulaire « $1 ». Si cette page existe déjà, vous serez dirigé vers le formulaire afin de l’éditer. Dans le cas contraire, vous serez redirigé vers celui permettant de l’ajouter.',
+	'sf_addpage_noform_docu' => 'Entrez ici le nom de la page puis sélectionner le formulaire avec lequel elle sera éditée. Si cette page existe déjà, vous serez dirigé vers le formulaire afin de l’éditer. Dans le cas contraire, vous serez redirigé vers celui permettant de l’ajouter.',
 	'addoreditdata' => 'Modifier ou ajouter des données',
 	'adddata' => 'Ajouter des données',
 	'sf_adddata_title' => 'Ajouter $1 : $2',
-	'sf_adddata_badurl' => "Ceci est la page pour ajouter les données. Il faut indiquer un nom de formulaire et une page cible dans l'URL; l'URL doit ressembler à « Special:AddData?form=&lt;nom de formulaire&gt;&target=&lt;nom de page cible&gt; » ou « Special:AddData/&lt;nom de formulaire&gt;/&lt;nom de page cible&gt; ».",
-	'sf_adddata_altforms' => "Vous pouvez, à la place, ajouter cette page avec l'un des formulaires suivants :",
-	'sf_adddata_altformsonly' => "Vous êtes prié{{GENDER:||e|(e)}} de sélectionner l'un des formulaires suivants pour ajouter cette page :",
+	'sf_adddata_badurl' => 'Ceci est la page pour ajouter les données. Il faut indiquer un nom de formulaire et une page cible dans l’URL;
+l’URL doit ressembler à « Special:AddData?form=&lt;nom de formulaire&gt;&target=&lt;nom de page cible&gt; » ou « Special:AddData/&lt;nom de formulaire&gt;/&lt;nom de page cible&gt; ».',
+	'sf_adddata_altforms' => 'Vous pouvez, à la place, ajouter cette page avec l’un des formulaires suivants :',
+	'sf_adddata_altformsonly' => 'Vous êtes prié{{GENDER:||e|(e)}} de sélectionner l’un des formulaires suivants pour ajouter cette page :',
 	'editdata' => 'Modifier les données',
 	'sf_formedit' => 'Modifier avec un formulaire',
 	'sf_viewform' => 'Voir le formulaire',
 	'sf_editsource' => 'Éditer la source',
 	'sf_editdata_title' => 'Éditer $1 : $2',
-	'sf_editdata_badurl' => "Ceci est la page pour modifier les données. Il faut indiquer un nom de formulaire et une page cible dans l'URL; l'URL doit ressembler à « Special:EditData?form=&lt;nom de formulaire&gt;&target=&lt;nom de page cible&gt; » ou « Special:EditData/&lt;nom de formulaire&gt;/&lt;nom de page cible&gt; ».",
-	'sf_editdata_formwarning' => 'Attention : cette page <a href="$1">existe déjà</a>, mais elle n\'utilise pas ce formulaire.',
+	'sf_editdata_badurl' => 'Ceci est la page pour modifier les données. Il faut indiquer un nom de formulaire et une page cible dans l’URL;
+l’URL doit ressembler à « Special:EditData?form=&lt;nom de formulaire&gt;&target=&lt;nom de page cible&gt; » ou « Special:EditData/&lt;nom de formulaire&gt;/&lt;nom de page cible&gt; ».',
+	'sf_editdata_formwarning' => 'Attention : cette page <a href="$1">existe déjà</a>, mais elle n’utilise pas ce formulaire.',
 	'sf_editdata_remove' => 'Enlever',
 	'sf_editdata_addanother' => 'Ajouter un autre',
 	'sf_editdata_none' => 'Aucune',
 	'sf_formerrors_header' => 'Il y a certaines erreurs dans le formulaire. Cf. ci-dessous.',
 	'sf_blank_error' => 'ne peut pas être blanc',
 	'sf_bad_url_error' => 'doit avoir un format URL correct, commençant par « http »',
-	'sf_bad_email_error' => "doit avoir un format correct d'adresse courriel.",
+	'sf_bad_email_error' => 'doit avoir un format correct d’adresse courriel.',
 	'sf_bad_number_error' => 'doit être un nombre valide',
 	'sf_bad_integer_error' => 'doit être un nombre entier valide',
 	'sf_bad_date_error' => 'doit être une date valide',
 	'uploadwindow' => 'Importer la fenêtre',
 	'sf_property_isproperty' => 'Ceci est une propriété du type $1.',
 	'sf_property_linkstoform' => 'Il lie vers les pages utilisant le formulaire $1.',
-	'sf_property_allowedvals' => 'Voici les valeurs autorisées pour cette propriété :',
+	'sf_property_allowedvals' => '{{PLURAL:$1|La valeur autorisée pour cette propriété est|Les valeurs autorisées pour cette propriété sont}} :',
 	'sf_template_docu' => 'Ceci est le modèle « $1 ». Il devrait être appelé selon le format suivant :',
 	'sf_template_docufooter' => 'Modifier la page pour voir le texte du modèle.',
-	'sf_form_docu' => "Ceci est le formulaire « $1 ». Pour ajouter une page avec ce formulaire, entrez son nom ci-dessous ; si elle existe déjà, vous serez dirigé vers un formulaire destiné à l'éditer.",
+	'sf_form_docu' => 'Ceci est le formulaire « $1 ».
+Pour ajouter une page avec ce formulaire, entrez son nom ci-dessous ;
+si elle existe déjà, vous serez dirigé vers un formulaire destiné à l’éditer.',
 	'sf_form_freetextlabel' => 'Texte libre',
 	'sf_category_hasdefaultform' => 'Cette catégorie utilise le formulaire « $1 ».',
 	'sf_category_desc' => 'Ceci est la catégorie « $1 ».',
@@ -1727,7 +1768,7 @@ $messages['gl'] = array(
 	'uploadwindow' => 'Cargar unha ventá',
 	'sf_property_isproperty' => 'Esta é unha propiedade de clase $1.',
 	'sf_property_linkstoform' => 'Liga con páxinas que usan o formulario $1.',
-	'sf_property_allowedvals' => 'Os valores permitidos para esta propiedade son:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|O valor permitido|Os valores permitidos}} para esta propiedade {{PLURAL:$1|é|son}}:',
 	'sf_template_docu' => "Este é o modelo '$1'. Pode ser chamado no seguinte formato:",
 	'sf_template_docufooter' => 'Editar a páxina para ver o modelo de texto.',
 	'sf_form_docu' => 'Este é o formulario "$1". Para engadir unha páxina con este formulario, introduza o nome da páxina aquí embaixo; se xa existe un nome con esa páxina enviaráselle a un formulario para editar esa páxina.',
@@ -1738,11 +1779,14 @@ $messages['gl'] = array(
 );
 
 /** Gothic
+ * @author Crazymadlover
  * @author Jocke Pirat
+ * @author Omnipaedista
  */
 $messages['got'] = array(
 	'sf_createtemplate_deletefield' => 'Taíran',
 );
+
 /** Ancient Greek (Ἀρχαία ἑλληνικὴ)
  * @author Crazymadlover
  * @author Omnipaedista
@@ -1852,7 +1896,7 @@ $messages['gsw'] = array(
 	'uploadwindow' => 'Fänschter zum Uffelade',
 	'sf_property_isproperty' => 'Des isch e Eigeschaft vum Typ $1.',
 	'sf_property_linkstoform' => 'Vergleicht zue Syte, wu s Format $1 bruuche.',
-	'sf_property_allowedvals' => 'Di erlaubte Wärt fir die Eigeschaft sin:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Dr erlaubt Wärt fir die Eigeschaft isch|Di erlaubte Wärt fir die Eigeschaft sin}}:',
 	'sf_template_docu' => 'Des isch d Vorlag fir „$1“. Si sott in däm Format ufgruefe wäre:',
 	'sf_template_docufooter' => 'Die Syte bearbeite go dr Vorlagetäxt säh.',
 	'sf_form_docu' => 'Gib in des Täxtfäld dr Name vu dr Syte yy, wu mit em Formular „$1“ soll aagleit wäre. Wänn s scho ne Syte mit däm Name het, wirsch zuen eme Formular wytergleitet, wu Du die Syte chasch aalege mit.',
@@ -2186,7 +2230,7 @@ $messages['hsb'] = array(
 	'uploadwindow' => 'Wokno nahraćow',
 	'sf_property_isproperty' => 'To je kajkosć typa $1.',
 	'sf_property_linkstoform' => 'Wotkazuje k stronam, kotrež formular $1 wužiwaja.',
-	'sf_property_allowedvals' => 'Dowolene hódnoty za tutu kajkosć su:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Dowolena hódnota za tutu kajkosć je|Dowolenej hódnoće za tutu kajkosć stej|Dowolene hódnoty za tutu kajkosć su|Dowolene hódnoty za tutu kajkosć su}}:',
 	'sf_template_docu' => "To je předłoha '$1'. Měła so w slědowacym formaće wołać:",
 	'sf_template_docufooter' => 'Wobdźěłaj tutu stronu, zo by tekst předłohi widźał.',
 	'sf_form_docu' => "To je formular '$1'. Přidaj stronu z tutym formularom, zapodaj deleka mjeno strony; jeli strona z tutym mjenom hižo eksistuje, posrědkuješ so dale k formularej, z kotrymž móžeš tutu stronu wobdźěłać.",
@@ -2380,6 +2424,7 @@ $messages['it'] = array(
 );
 
 /** Japanese (日本語)
+ * @author Aotake
  * @author Fryed-peach
  * @author Hosiryuhosi
  */
@@ -2629,6 +2674,7 @@ $messages['ksh'] = array(
 	'createproperty' => 'Donn en Eijeschaff aanlääje',
 	'sf_createproperty_propname' => 'Name:',
 	'templates' => 'Schablone',
+	'sf_templates_docu' => 'Hee di Schablone jidd_et em Wiki:',
 	'sf_templates_definescat' => 'beshtemmp de Saachjrop:',
 	'createtemplate' => 'En Schabloon aanlääje',
 	'sf_createtemplate_namelabel' => 'Dä Schabloon iere Name:',
@@ -2638,7 +2684,33 @@ $messages['ksh'] = array(
 	'sf_createform_atend' => 'Aam Engk',
 	'sf_createform_add' => 'Donn dobei',
 	'sf_createcategory_name' => 'Name:',
+	'editdata' => 'Date Änndere',
+	'sf_formedit' => 'Date övver e Fommullaa änndere',
+	'sf_viewform' => 'Dat Fommullaa aanzeije',
+	'sf_editsource' => 'Dä Quellkode Ändere',
+	'sf_editdata_title' => '$1 Ändere: $2',
+	'sf_editdata_badurl' => "Date hee is de Sigg för Date ze ändere.
+Mer moß dä ier <i lang=\"en\">URL</i> dä Name för et Fommulaa aanjevve,
+un och dä Name för de Sigg zem Ändere.
+Dat sullt esu ußsünn wieh:
+<code>{{#special:editData}}?form=''&lt;Fomullaa_Name&gt;''&target=''&lt;Sigge_Name&gt;''</code>,
+udder wi:
+<code>{{#special:editData}}/''&lt;Fomullaa_Name &gt;''/''&lt;Sigge_Name&gt;''</code>.",
+	'sf_editdata_formwarning' => 'Opjepaß: Di Sigg <a href="$1">jidd_et aldt</a>, ävver se deiht hee dat Fommulaa nit bruche.',
+	'sf_editdata_remove' => 'Fott nämme',
+	'sf_editdata_addanother' => 'Donn noch mieh dobei',
+	'sf_editdata_none' => 'Kei',
+	'sf_formerrors_header' => 'Mer han Fähler jefonge en däm, wat De enjejovve häß. Süsch doh:',
+	'sf_blank_error' => 'kam_mer nit leddisch lohße',
+	'sf_bad_url_error' => 'moß et reschteje Fomaat för en <i lang="en">URL</i> han un moß met <code>http</code> aanfange',
+	'sf_bad_email_error' => 'moß et reschteje Fomaat för en <i lang="en">e-mail</i>-Adräß hann',
+	'sf_bad_number_error' => 'moß en reschteje Zahl sin',
+	'sf_bad_integer_error' => 'moß en reschteje janze Zahl sin',
+	'sf_bad_date_error' => 'moß e reschtesch Dattum sin',
 	'uploadwindow' => 'Dat Finster för zem Huhlaade',
+	'sf_property_linkstoform' => 'Et hät ene Lengk op Sigge, di dat Fommulaa „$1“ verwende donn.',
+	'sf_property_allowedvals' => 'De müjjelesche Wääte för di Eijeschaff sin:',
+	'sf_template_docufooter' => 'Donn di Sigg zom Ändere oproofe, öm dä Schablone iere Enhalldt als Tex ze sinn ze krijje.',
 	'sf_form_freetextlabel' => 'Freije Tex',
 );
 
@@ -2665,10 +2737,12 @@ $messages['lb'] = array(
 	'sf_createtemplate_displaylabel' => 'Etiquette weisen:',
 	'sf_createtemplate_aggregationlabel' => "Titel fir d'Lëscht:",
 	'sf_createtemplate_standardformat' => 'Standard',
+	'sf_createtemplate_addfield' => 'Feld derbäisetzen',
 	'sf_createtemplate_deletefield' => 'Läschen',
 	'forms' => 'Formulairen',
 	'createform' => 'E Formulaire uleeën',
 	'sf_createform_template' => 'Schabloun:',
+	'sf_createform_field' => 'Feld:',
 	'sf_createform_inputtypedefault' => '(Standardwert)',
 	'sf_createform_hidden' => 'Verstoppt',
 	'sf_createform_restricted' => 'Gespaart (Nëmmen Administrateuren kënnen et änneren)',
@@ -2682,20 +2756,24 @@ $messages['lb'] = array(
 	'sf_createcategory_name' => 'Numm:',
 	'sf_createcategory_defaultform' => 'Standard-Formulaire:',
 	'addpage' => 'Säit mat engem Formulaire derbäisetzen',
+	'sf_addpage_badform' => 'Feeler: et gouf keng Formulaire-Säit op $1 fonnt.',
 	'addoreditdata' => 'Derbäisetzen oder änneren',
 	'adddata' => 'Donnéeën derbäisetzen',
 	'sf_adddata_title' => '$1: $2 derbäisetzen',
+	'sf_adddata_altformsonly' => 'Sicht w.e.g. e vun dëse Formulairen eraus fir dës Säit derbäizesetzen:',
 	'editdata' => 'Donnéeën änneren',
 	'sf_formedit' => 'Formulaire änneren',
 	'sf_viewform' => 'Formulaire weisen',
 	'sf_editsource' => 'Quelltext änneren',
 	'sf_editdata_title' => 'Ännert $1: $2',
+	'sf_editdata_formwarning' => 'Opgepasst: Dës Säit <a href="$1">gëtt et schonn</a>, awer si benotzt dëse Formulaire net.',
 	'sf_editdata_remove' => 'Ewech huelen',
 	'sf_editdata_addanother' => 'Nach een derbäisetzen',
 	'sf_editdata_none' => 'Keen',
 	'sf_blank_error' => 'Däerf net eidel sinn!',
 	'sf_bad_date_error' => 'muss e gëltegen Datum sinn',
 	'uploadwindow' => 'Fënster fir eropzelueden',
+	'sf_property_linkstoform' => 'Et ass mat Säite verlinkt déi de Formulaire $1 benotzen.',
 	'sf_template_docu' => "Dëst ass d''$1'-Schabloun.
 Si soll an dësem Format opgeruff ginn:",
 	'sf_template_docufooter' => "Ännert d'Säit fir den Text vun der Schabloun ze gesinn",
@@ -2999,6 +3077,7 @@ $messages['mr'] = array(
  */
 $messages['myv'] = array(
 	'sf_createproperty_propname' => 'Лемезэ:',
+	'sf_createproperty_proptype' => 'Типезэ:',
 	'sf_createtemplate_deletefield' => 'Нардамс',
 	'sf_createform_template' => 'Лопа парцунось:',
 	'sf_createform_field' => 'Паксясь:',
@@ -3136,7 +3215,7 @@ $messages['nl'] = array(
 	'uploadwindow' => 'Uploadscherm',
 	'sf_property_isproperty' => 'Dit is een eigenschap van type $1.',
 	'sf_property_linkstoform' => "Deze verwijst naar pagina's die gebruikmaken van het formulier $1.",
-	'sf_property_allowedvals' => 'De toegelaten waarden voor deze eigenschap zijn:',
+	'sf_property_allowedvals' => 'De toegelaten {{PLURAL:$1|waarde voor deze eigenschap is|waarden voor deze eigenschap zijn}}:',
 	'sf_template_docu' => "Dit is het sjabloon '$1'. Gebruik het op de volgende wijze:",
 	'sf_template_docufooter' => 'Bewerk de pagina om de sjabloontekst te bekijken.',
 	'sf_form_docu' => "Dit is het formulier '$1'. Om een pagina toe te voegen met dit formulier, typ de paginanaam hieronder in; als een pagina met die naam al bestaat, zal u het bewerkingsscherm zien en kunt u die pagina gewoon bewerken.",
@@ -3452,7 +3531,7 @@ $messages['oc'] = array(
 	'sf_property_linkstoform' => "Liga cap a las paginas qu'utilizan lo formulari $1.",
 	'sf_property_allowedvals' => 'Las valors autorizadas per aquesta proprietat son :',
 	'sf_template_docu' => 'Aquò es lo modèl « $1 ». Deuriá èsser apelat segon lo format seguent :',
-	'sf_template_docufooter' => 'Modificar la pagina per veire lo tèxt del modèl.',
+	'sf_template_docufooter' => 'Modificar la pagina per veire lo tèxte del modèl.',
 	'sf_form_docu' => "Aquò es lo formulari « $1 ». Per apondre una pagina amb aqueste formulari, picatz son nom çaijós ; se existís ja, seretz dirigit cap a un formulari destinat a l'editar.",
 	'sf_form_freetextlabel' => 'Tèxt liure',
 	'sf_category_hasdefaultform' => 'Aquesta categoria utiliza lo formulari « $1 ».',
@@ -3476,6 +3555,7 @@ $messages['os'] = array(
  * @author Sp5uhe
  */
 $messages['pl'] = array(
+	'createtemplate' => 'Utwórz szablon',
 	'sf_createtemplate_outputformat' => 'Format wyjścia:',
 	'sf_createtemplate_deletefield' => 'Usuń',
 	'sf_createform_field' => 'Pole:',
@@ -3633,6 +3713,7 @@ Ela deverá ser chamada no seguinte formato:",
 );
 
 /** Brazilian Portuguese (Português do Brasil)
+ * @author Crazymadlover
  * @author Eduardo.mps
  * @author Enqd
  * @author Leonardo Costa
@@ -3723,7 +3804,7 @@ $messages['pt-br'] = array(
 	'uploadwindow' => 'Janela de carregamento',
 	'sf_property_isproperty' => 'Esta é uma propriedade do tipo $1.',
 	'sf_property_linkstoform' => 'Liga às páginas que usam o formulário $1.',
-	'sf_property_allowedvals' => 'Os valores permitidos para este propriedade são:',
+	'sf_property_allowedvals' => 'Os {{PLURAL:$1|valor permitido para este propriedade é|valores permitidos para este propriedade são}}:',
 	'sf_template_docu' => "Esta é a '$1' predefinição. Ela deve ser chamada no seguinte formato:",
 	'sf_template_docufooter' => 'Edite a página para ver o texto da predefinição.',
 	'sf_form_docu' => "Este é o '$1' formulário. Para adicionar uma página usando esse formulário, adicione o nome da página abaixo; se já existir uma página com esse nome, você será reencaminhado para um formulário para editar essa página.",
@@ -3969,7 +4050,7 @@ $messages['sk'] = array(
 	'uploadwindow' => 'Okno nahrávania',
 	'sf_property_isproperty' => 'Toto je vlastnosť typu $1.',
 	'sf_property_linkstoform' => 'Odkazuje na stránky používajúce formulár $1.',
-	'sf_property_allowedvals' => 'Povolené hodnoty tejto vlastnosti sú:',
+	'sf_property_allowedvals' => '{{PLURAL:$1|Povolená hodnota|Povolené hodnoty}} tejto vlastnosti {{PLURAL:$1|je|sú}}:',
 	'sf_template_docu' => 'Toto je šablóna „$1“. Mala by byť volaná v nasledovnom tvare:',
 	'sf_template_docufooter' => 'Text šablóny uvidíte, keď začnete upravovať stránku.',
 	'sf_form_docu' => 'Toto je formulár „$1“. Novú stránku pomocou tohto formulára pridáte zadaním názvu stránky dolu; ak stránka s takým názvom už existuje, budete presmerovaný na formulár pre úpravu tejto stránky.',
@@ -3981,11 +4062,16 @@ $messages['sk'] = array(
 
 /** Serbian Cyrillic ekavian (ћирилица)
  * @author Sasa Stefanovic
+ * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
+	'sf_createtemplate_outputformat' => 'Излазни формат:',
 	'sf_createform_add' => 'Додај',
 	'sf_editdata_remove' => 'Уклони',
 	'sf_editdata_none' => 'Нема',
+	'sf_bad_number_error' => 'мора бити исправан број',
+	'sf_bad_integer_error' => 'мора бити исправан цели број',
+	'sf_bad_date_error' => 'мора бити исправан датум',
 );
 
 /** Seeltersk (Seeltersk)
@@ -4285,6 +4371,16 @@ $messages['tg-cyrl'] = array(
 	'sf_blank_namespace' => 'Аслӣ',
 );
 
+/** Thai (ไทย)
+ * @author Octahedron80
+ * @author Passawuth
+ */
+$messages['th'] = array(
+	'sf_createtemplate_deletefield' => 'ลบ',
+	'sf_createform_add' => 'เพิ่ม',
+	'sf_editdata_none' => 'ไม่มี',
+);
+
 /** Tagalog (Tagalog)
  * @author AnakngAraw
  */
@@ -4393,6 +4489,7 @@ kung umiiral na ang isang pahinang may ganyang pangalan, dadalhin ka patungo sa 
 );
 
 /** Turkish (Türkçe)
+ * @author Joseph
  * @author Karduelis
  */
 $messages['tr'] = array(
@@ -4423,7 +4520,7 @@ $messages['tr'] = array(
 	'sf_createform_add' => 'Ekle',
 	'sf_createcategory_name' => 'İsim:',
 	'sf_createcategory_defaultform' => 'Var sayılan form:',
-	'addpage' => 'Sayfa ekle',
+	'addpage' => 'Form ile sayfa ekle',
 	'addoreditdata' => 'Ekle veya düzelt',
 	'adddata' => 'Veri ekle',
 	'sf_editsource' => 'Kaynak düzelt',
@@ -4442,13 +4539,37 @@ $messages['uk'] = array(
 	'templates' => 'Шаблони',
 );
 
+/** Veps (Vepsan kel')
+ * @author Игорь Бродский
+ */
+$messages['vep'] = array(
+	'sf_createproperty_propname' => 'Nimi:',
+	'sf_createproperty_proptype' => 'Tip:',
+	'templates' => 'Šablonad',
+	'sf_templates_docu' => 'Wikiš om ningoižid šablonoid:',
+	'sf_templates_definescat' => 'märhapaneb kategorijan:',
+	'createtemplate' => 'Säta šablon',
+	'sf_createtemplate_namelabel' => 'Šablonan nimi:',
+	'sf_createtemplate_categorylabel' => 'Kategorii, kudamban märhapaneb šablon (opcionaližikš):',
+	'sf_createtemplate_templatefields' => 'Šablonan pöudod:',
+	'sf_createtemplate_addfield' => 'Läžata pöud',
+	'sf_createtemplate_deletefield' => 'Čuta poiš',
+	'sf_createform_hidden' => 'Peittud',
+	'sf_createform_add' => 'Ližata',
+	'editdata' => 'Redaktiruida andmused',
+	'sf_editdata_remove' => 'Čuta poiš',
+);
+
 /** Vietnamese (Tiếng Việt)
  * @author Minh Nguyen
  * @author Vinhtantran
  */
 $messages['vi'] = array(
+	'semanticforms-desc' => 'Mẫu để thêm và sửa đổi dữ liệu ngữ nghĩa',
+	'specialpages-group-sf_group' => 'Mẫu Ngữ Nghĩa',
 	'createproperty' => 'Tạo một thuộc tính',
-	'sf_createproperty_allowedvalsinput' => 'Nếu bạn muốn trường này chỉ cho phép một số giá trị nào đó, hãy nhập vào danh sách các giá trị cho phép, phân cách nhau bằng dấu phẩy (nếu một giá trị có chứa dấu phẩy, hãy thay nó bằng “\\,”):',
+	'sf_createproperty_linktoform' => 'Thuộc tính này sẽ liên kết đến các trang sử dụng mẫu:',
+	'sf_createproperty_allowedvalsinput' => 'Nếu bạn muốn thuộc tính này chỉ cho phép một số giá trị nào đó, hãy nhập vào danh sách các giá trị cho phép, phân cách nhau bằng dấu phẩy (nếu một giá trị có chứa dấu phẩy, hãy thay nó bằng “\\,”):',
 	'sf_createproperty_propname' => 'Tên:',
 	'sf_createproperty_proptype' => 'Loại:',
 	'templates' => 'Tiêu bản',
@@ -4528,6 +4649,7 @@ $messages['vi'] = array(
 	'sf_bad_date_error' => 'phải là ngày đúng',
 	'uploadwindow' => 'Cửa sổ tải',
 	'sf_property_isproperty' => 'Đây là tính chất thuộc kiểu $1.',
+	'sf_property_linkstoform' => 'Nó liên kết đến các trang sử dụng mẫu $1.',
 	'sf_property_allowedvals' => 'Giá trị cho phép của tính chất này là:',
 	'sf_template_docu' => 'Đây là tiêu bản ‘$1’. Nó nên được gọi theo định dạng sau:',
 	'sf_template_docufooter' => 'Sửa trang để xem văn bản tiêu bản.',
