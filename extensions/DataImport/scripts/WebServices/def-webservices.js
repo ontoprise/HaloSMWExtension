@@ -1136,7 +1136,10 @@ DefineWebServiceSpecial.prototype = {
 					//process subpaths
 					if(this.parameterContainer.firstChild.childNodes[i + 1 + offset].hasSubParameter){
 						result += "\">";
-						result += this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[1].childNodes[0].value;
+						alert(this.parameterContainer.firstChild.childNodes[i + 2 + offset]
+						     .firstChild.firstChild.firstChild.childNodes[1].firstChild.nodeName);
+						result += this.parameterContainer.firstChild.childNodes[i
+								+ 2 + offset].firstChild.firstChild.firstChild.childNodes[1].firstChild.value;
 						result += "</parameter>\n";
 						offset += 1;
 					} else {
@@ -2671,9 +2674,11 @@ DefineWebServiceSpecial.prototype = {
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value = updates[i]["defaultValue"];
 			}
 			if (updates[i]["subParameter"] != "##") {
+				alert("un");
 				this.appendSubParameters(i);
 				this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[1].firstChild.value = updates[i]["subParameter"];
 				this.parameterContainer.firstChild.childNodes[i + 2 + offset].style.display = "none";
+				alert("un");
 				offset += 1;
 			}
 		}
@@ -3896,30 +3901,72 @@ DefineWebServiceSpecial.prototype = {
 		//add subparameter row
 		$("step3-paramRow-" + id).hasSubParameter = true;
 		
-		var row = document.createElement("tr");
-		var td = document.createElement("td");
+		var outerRow = document.createElement("tr");
+		var outerTd = document.createElement("td");
+		outerTd.setAttribute("colspan", "5");
+		
+		var table = document.createElement("table");
+		table.style.width = "100%";
+		var row = document.createElement("row");
+		
+		td = document.createElement("td");
 		td.style.verticalAlign = "top";
+		td.style.textAlign = "right";
+		td.style.paddingLeft = "80px";
 
 		var span = document.createElement("span");
 		var text = document.createTextNode(diLanguage
 				.getMessage('smw_wws_subparameters'));
 		span.appendChild(text);
 		td.appendChild(span);
+		
+		var br = document.createElement("br");
+		td.appendChild(br);
+		
+		var inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "<![CDATA[";
+		inputButton.realValue = "<![CDATA[";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
+		inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "]]>";
+		inputButton.realValue = "]]>";
+		inputButton.style.marginLeft = "8px";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
+		br = document.createElement("br");
+		td.appendChild(br);
+		
+		inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "<subparameter.../>";
+		inputButton.realValue = "<subparameter name=\"\" optional=\"\"/>";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
 		row.appendChild(td);
 
 		td = document.createElement("td");
-		td.setAttribute("colspan", "5");
+		td.style.width = "100%";
 		var textArea = document.createElement("textarea");
-		textArea.setAttribute("rows", "2");
+		textArea.setAttribute("rows", "3");
 		td.appendChild(textArea);
 		row.appendChild(td);
+		
+		table.appendChild(row);
+		outerTd.appendChild(table);
+		outerRow.appendChild(outerTd);
 
 		if(id == this.preparedPathSteps.length - 1){
-			$("step3-paramRow-" + id).parentNode.appendChild(row);
+			$("step3-paramRow-" + id).parentNode.appendChild(outerRow);
 		} else {
 			$("step3-paramRow-" + id).parentNode
 				.insertBefore(
-						row,
+						outerRow,
 						$("step3-paramRow-" + id).nextSibling);
 		}
 
@@ -3989,6 +4036,15 @@ DefineWebServiceSpecial.prototype = {
 				+ "/extensions/DataImport/skins/webservices/Pencil_go.png";
 			$("step-3-alias-generate-button").style.cursor = "pointer";
 		}
+	},
+	
+	addSubParameterConstruct : function(event){
+		var node = Event.element(event);
+		var start = node.parentNode.nextSibling.firstChild.selectionStart;
+		var end = node.parentNode.nextSibling.firstChild.selectionEnd;
+		var text = node.parentNode.nextSibling.firstChild.value.substr(0,start) + node.realValue;
+		text = text + node.parentNode.nextSibling.firstChild.value.substr(end);
+		node.parentNode.nextSibling.firstChild.value = text;
 	}
 }
 
