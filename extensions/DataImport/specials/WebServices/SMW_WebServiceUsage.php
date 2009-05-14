@@ -88,7 +88,7 @@ function webServiceUsage_Magic( &$magicWords, $langCode ) {
  */
 function webServiceUsage_Render( &$parser) {
 	$parameters = func_get_args();
-	
+
 	return webServiceUsage_processCall($parser, $parameters);
 }
 
@@ -131,7 +131,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsFormat = "";
 	$wsTemplate = "";
 	$wsStripTags = "false";
-	
+
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
 	for($i=2; $i < sizeof($parameters); $i++){
@@ -151,7 +151,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 		}
 	}
-
+	
 	$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	$messages = $response[0];
 	$wsParameters = $response[1];
@@ -167,7 +167,6 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 
 		$wsResults = getWSResultsFromCache($ws, $wsReturnValues, $parameterSetId);
 
-//		//add subst to templates if the parser is in the appropriate state
 		$subst = false;
 		if(!$preview){
 			if($parser->OutputType() == 2){
@@ -180,21 +179,21 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
 			//todo:provide a better implementation
-			if(strpos($errorMessages[0], 
-					substr(wfMsg('smw_wws_client_connect_failure'),0,10)) === 0){
+			if(strpos($errorMessages[0],
+			substr(wfMsg('smw_wws_client_connect_failure'),0,10)) === 0){
 				if(!is_array($wsResults)){
 					$wsFormattedResult = $wsResults." ".smwfEncodeMessages($errorMessages);
 				} else {
 					$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
 					$wsFormattedResult .= " ".smwfEncodeMessages($errorMessages);
-				}		
+				}
 			} else {
 				$wsFormattedResult = smwfEncodeMessages($errorMessages);
 			}
 		} else {
 			$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
 		}
-		
+
 		if(!$preview){
 			$articleId = $parser->getTitle()->getArticleID();
 		} else {
@@ -221,13 +220,15 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			$parser = $wgParser;
 			$popts = new ParserOptions();
 			$parser->startExternalParse($t, $popts, Parser::OT_HTML);
-				
+
 			$wsFormattedResult = $parser->internalParse($wsFormattedResult);
 			$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 			return $wsFormattedResult;
 		}
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
+		//remove <p>-tag around ws-result
+		$wsFormattedResult = substr($wsFormattedResult, 3, strlen($wsFormattedResult) - 7);
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);
@@ -336,27 +337,33 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 		$name = explode(".", $name);
 		if(count($name) > 1){
 			unset($wsParameters[$name[0].".".$name[1]]);
+			if(array_key_exists($name[0], $wsParameters)){
+				unset($wsParameters[$name[0]]);
+			}
 			$subParameters[$name[0]][$name[1]] = $value;
 		}
 	}
-
+	
 	$result = $ws->validateSpecifiedSubParameters($subParameters);
 	$mSP = $result[0];
 	if(!is_null($result[1])){
 		foreach($result[1] as $key => $value){
-			if(!array_key_exists($key, $wsParameters) && strlen($value) > 0){
+			if(strlen($value) > 0){
 				$wsParameters[$key] = $value;
 			}
 		}
 	}
 	
+	$temp = print_r($wsParameters, true);
+	//$temp();
+
 	if(count($mSP) == 0){
 		$mSP = array();
 	}
 
 	$mP = $ws->validateSpecifiedParameters($wsParameters);
 	$mR = $ws->validateSpecifiedResults($wsReturnValues);
-	
+
 	return array(array_merge($mSP, $mP, $mR), $wsParameters);
 }
 
@@ -386,7 +393,7 @@ function detectEditedWSUsages(&$article, &$user, &$text){
  */
 function handlePurge(&$out, &$text){
 	global $purgePage;
-	
+
 	$purgePage = false;
 	return true;
 }
@@ -404,14 +411,16 @@ function detectRemovedWebServiceUsages($articleId){
 	$purgePage = false;
 	$rememberedWSUsages = $wgsmwRememberedWSUsages;
 
-	foreach($rememberedWSUsages as $rememberedWSUsage){
-		WSStorage::getDatabase()->addWSArticle(
+	if($rememberedWSUsages != null){
+		foreach($rememberedWSUsages as $rememberedWSUsage){
+			WSStorage::getDatabase()->addWSArticle(
 			$rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+		}
 	}
-	
-	
+
+
 	$oldWSUsages = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
-	
+
 	foreach($oldWSUsages as $oldWSUsage){
 		$remove = true;
 		if($rememberedWSUsages != null){

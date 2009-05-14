@@ -128,8 +128,6 @@ class WebService {
 				$this->mParsedResult = $r;
 			}
 		} catch (Exception $e) {
-			//	$temp = print_r($e, true);
-			//	$this->$temp();
 		}
 		$this->mDisplayPolicy = $dp;
 		$this->mQueryPolicy = $qp;
@@ -588,19 +586,20 @@ class WebService {
 				$value = "".$child["defaultValue"];
 				if(array_key_exists("".$child["name"], $specParameters)){
 					$value = $specParameters["".$child["name"]];
-					$this->getPathSteps("".$child["path"], $value);
-				} else if(strtolower($this->mProtocol) != "rest"
-				&& "".$child["optional"] != "true"){
-					$found = false;
-						
-					foreach($this->mParsedParameters->children() as $pathChild){
-						if("".$pathChild["path"] == "".$child["path"] &&
-						array_key_exists("".$pathChild["name"], $specParameters)){
-							$found = true;
+					if(strtolower($this->mProtocol) == "soap"){
+						$this->getPathStepsSoap("".$child["path"], $value);
+					} else {
+						if(array_key_exists("".$child["path"], $this->mCallParameters)){
+							$this->mCallParameters["".$child["path"]][] = $value;
+						} else {
+							$this->mCallParameters["".$child["path"]] = array($value);
 						}
 					}
-					if(!$found){
-						$this->getPathSteps("".$child["path"], $value);
+				} else if("".$child["optional"] != "true"){
+					if(strtolower($this->mProtocol) == "soap"){
+						$this->getPathStepsSoap("".$child["path"], $value);
+					} else {
+						$this->mCallParameters["".$child["path"]] = array($value);
 					}
 				}
 			}
@@ -615,7 +614,7 @@ class WebService {
 	 * @param string $path the path to the part of the ws-call object
 	 * @param string $value the value of the call parameter with the given path
 	 */
-	private function getPathSteps($path, $value){
+	private function getPathStepsSoap($path, $value){
 		$walkedParameters = explode("/", $path);
 		$temp = array();
 		for($i=0; $i < count($walkedParameters);$i++){
@@ -652,9 +651,7 @@ class WebService {
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
 
 	}
-
-
-
+	
 	//--- Private methods ---
 
 	/**

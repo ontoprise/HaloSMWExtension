@@ -328,10 +328,10 @@ class WebServiceManager {
 	 */
 	public static function detectModifiedWWSD($mNewWebService){
 		if(self::$mOldWebservice){
-			$remove = false;
 			if(!$mNewWebService){
 				return true;
 			}
+			
 			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
 			} else if(self::$mOldWebservice->getMethod() != $mNewWebService->getMethod()){
@@ -353,7 +353,7 @@ class WebServiceManager {
 	/*
 	 * remembers the WWSD in a static variable
 	 */
-	public static function rememberWWSD($ws){
+	public static function rememberWWSD(&$ws){
 		self::$mOldWebservice = $ws;
 	}
 }
@@ -378,7 +378,7 @@ function wwsdParserHook($input, $args, $parser) {
 	require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
 
 	WebServiceManager::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
-
+	
 	$attr = "";
 	foreach ($args as $k => $v) {
 		$attr .= " ". $k . '="' . $v . '"';
