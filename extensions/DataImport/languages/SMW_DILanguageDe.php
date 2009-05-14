@@ -200,7 +200,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_inseconds' => 'in Sekunden',
 	'smw_wws_indays' => 'in Tagen',
 	'smw_wws_yourws' => 'Ihr Web Service ',
-	'smw_wws_succ_created' => ' wurde erfolgreich erstellt. Um den Web Service in einem Artikel zu verwenden, benutzen Sie bitte die folgende Syntax:',
+	'smw_wws_succ_created' => ' wurde erfolgreich erstellt. Jetzt können Sie den Web Service in einem Artikel verwenden. Das ist möglich, indem Sie entweder manuell die #ws Parser Funktion oder die GUI zur Verwendung eines Web Services verwenden. Die GUI ist im Editier Modus über die Semantische Toolbar erreichbar.',
 	'smw_wws_succ_created-2' => 'Ihr Web Service wird von jetzt an in der ',
 	'smw_wws_succ_created-3' => 'Liste der verf&uuml;gbaren Web Services', 
 	'smw_wws_succ_created-4' => ' verf&uuml;gbar sein. Sie k&ouml;nnen jetzt fortfahren und eine neue WWSD f&uuml;r einen anderen Web Service erstellen.',

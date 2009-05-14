@@ -459,6 +459,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.id = "s3-alias" + i;
 				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
+				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
 				paramTD1.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -907,6 +908,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.id = "s4-alias" + i;
 				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
+				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
 				resultTD2.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -1119,14 +1121,6 @@ DefineWebServiceSpecial.prototype = {
 									.lastIndexOf("(") - 1);
 						}
 
-						// if (pathStep.lastIndexOf("[") > 0) {
-						// pathStep = pathStep.substring(0, pathStep
-						// .lastIndexOf("["));
-						// pathStep += "[";
-						// pathStep += $("step3-arrayspan-" + i + "-" +
-						// k).firstChild.nodeValue;
-						// pathStep += "]";
-						// }
 						if (pathStep != "/" && pathStep != "//") {
 							path += pathStep;
 						}
@@ -1135,12 +1129,10 @@ DefineWebServiceSpecial.prototype = {
 					
 					//process subpaths
 					if(this.parameterContainer.firstChild.childNodes[i + 1 + offset].hasSubParameter){
-						result += "\">";
-						alert(this.parameterContainer.firstChild.childNodes[i + 2 + offset]
-						     .firstChild.firstChild.firstChild.childNodes[1].firstChild.nodeName);
+						result += "\">\n";
 						result += this.parameterContainer.firstChild.childNodes[i
 								+ 2 + offset].firstChild.firstChild.firstChild.childNodes[1].firstChild.value;
-						result += "</parameter>\n";
+						result += "\n</parameter>\n";
 						offset += 1;
 					} else {
 						result += "\" />\n";
@@ -1265,30 +1257,30 @@ DefineWebServiceSpecial.prototype = {
 
 			$("breadcrumb-menue").style.display = "none";
 
-			var container = $("step7-container").cloneNode(false);
-			$("step7-container").id = "old-step7-container";
-			$("old-step7-container").parentNode.insertBefore(container,
-					$("old-step7-container"));
-			$("old-step7-container").parentNode
-					.removeChild($("old-step7-container"));
+			//var container = $("step7-container").cloneNode(false);
+			//$("step7-container").id = "old-step7-container";
+			//$("old-step7-container").parentNode.insertBefore(container,
+			//		$("old-step7-container"));
+			//$("old-step7-container").parentNode
+			//		.removeChild($("old-step7-container"));
 
-			var step7Container = $("step7-container").cloneNode(true);
+			//var step7Container = $("step7-container").cloneNode(true);
 
 			var wsNameText = document.createTextNode(document
 					.getElementById("step6-name").value);
 			$("step7-name").appendChild(wsNameText);
 
-			var rowDiv = document.createElement("div");
-			this.wsSyntax = this.wsSyntax.replace(/<pre>/g, "");
-			this.wsSyntax = this.wsSyntax.replace(/<\/pre>/g, "");
-			rowDiv.innerHTML = this.wsSyntax.replace(/\n/g, "<br/>");
-
-			step7Container.appendChild(rowDiv);
-
-			var parentOf = $("step7-container").parentNode;
-			parentOf.insertBefore(step7Container, $("step7-container"));
-			parentOf.removeChild(parentOf.childNodes[6]);
-
+			//var rowDiv = document.createElement("div");
+			//this.wsSyntax = this.wsSyntax.replace(/<pre>/g, "");
+			//this.wsSyntax = this.wsSyntax.replace(/<\/pre>/g, "");
+			//rowDiv.innerHTML = this.wsSyntax.replace(/\n/g, "<br/>");
+			//	
+			//step7Container.appendChild(rowDiv);
+			//	
+			//var parentOf = $("step7-container").parentNode;
+			//parentOf.insertBefore(step7Container, $("step7-container"));
+			//parentOf.removeChild(parentOf.childNodes[6]);
+			//	
 			$("step7").style.display = "";
 			$("step1").style.display = "none";
 			$("step2").style.display = "none";
@@ -2674,11 +2666,16 @@ DefineWebServiceSpecial.prototype = {
 				this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value = updates[i]["defaultValue"];
 			}
 			if (updates[i]["subParameter"] != "##") {
-				alert("un");
 				this.appendSubParameters(i);
-				this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[1].firstChild.value = updates[i]["subParameter"];
-				this.parameterContainer.firstChild.childNodes[i + 2 + offset].style.display = "none";
-				alert("un");
+				
+				updates[i]["subParameter"] = unescape(updates[i]["subParameter"]);
+				if(updates[i]["subParameter"].indexOf("\n") == 0){
+					updates[i]["subParameter"] = updates[i]["subParameter"].substr(1);
+				}
+				this.parameterContainer.firstChild.childNodes[i + 2 + offset].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].value = updates[i]["subParameter"];
+				if(this.parameterContainer.firstChild.childNodes[i + 1 + offset].firstChild.firstChild.lastChild.style.visibility == "hidden"){
+					this.parameterContainer.firstChild.childNodes[i + 2 + offset].style.display = "none";
+				}
 				offset += 1;
 			}
 		}
@@ -3361,9 +3358,9 @@ DefineWebServiceSpecial.prototype = {
 						
 				// process subparameters
 				if(hasSubParameter){
-					result += "\">";
-					result += parameterTable.childNodes[i+1].childNodes[1].childNodes[0].value;
-					result += "</parameter>\n";
+					result += "\">\n";
+					result += parameterTable.childNodes[i+1].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].value;
+					result += "\n</parameter>\n";
 					i += 1;
 				} else {
 					result += "\"/>\n";
@@ -3509,7 +3506,12 @@ DefineWebServiceSpecial.prototype = {
 			if(updates[i]["subParameter"] != "##") {
 				this.appendRESTSubParameters(i + 1 + offset);
 				offset += 1;
-				$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[1].firstChild.value = updates[i]["subParameter"];
+				
+				updates[i]["subParameter"] = unescape(updates[i]["subParameter"]);
+				if(updates[i]["subParameter"].indexOf("\n") == 0){
+					updates[i]["subParameter"] = updates[i]["subParameter"].substr(1);
+				}
+				$("step3-parameters").firstChild.childNodes[i + 1 + offset].childNodes[0].childNodes[0].childNodes[0].childNodes[1].firstChild.value = updates[i]["subParameter"];
 			}
 		}
 	},
@@ -3778,6 +3780,7 @@ DefineWebServiceSpecial.prototype = {
 				row.appendChild(resultTD3);
 				var aliasInput = document.createElement("input");
 				aliasInput.id = "s4-alias" + (i + rows);
+				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
 				if (useResultPart) {
 					aliasInput.value = rParts[i]["alias"];
 				}
@@ -3848,26 +3851,65 @@ DefineWebServiceSpecial.prototype = {
 		//add subparameter row
 		$("step3-parameters").childNodes[0].childNodes[id].hasSubParameter = true;
 		
-		var row = document.createElement("tr");
+		var outerRow = document.createElement("tr");
+		var outerTd = document.createElement("td");
+		outerTd.setAttribute("colspan", "5");
+		
+		var table = document.createElement("table");
+		table.style.width = "100%";
+		var row = document.createElement("row");
+		
 		var td = document.createElement("td");
 		td.style.verticalAlign = "top";
+		td.style.textAlign = "right";
+		td.style.paddingLeft = "80px";
 
 		var span = document.createElement("span");
 		var text = document.createTextNode(diLanguage.getMessage('smw_wws_subparameters'));
 		span.appendChild(text);
 		td.appendChild(span);
+		
+		var inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "<![CDATA[";
+		inputButton.realValue = "<![CDATA[";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
+		inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "]]>";
+		inputButton.realValue = "]]>";
+		inputButton.style.marginLeft = "8px";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
+		br = document.createElement("br");
+		td.appendChild(br);
+		
+		inputButton = document.createElement("input");
+		inputButton.type = "button";
+		inputButton.value = "<subparameter.../>";
+		inputButton.realValue = "<subparameter name=\"\" optional=\"\" defaultValue=\"\"/>";
+		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		td.appendChild(inputButton);
+		
 		row.appendChild(td);
 
 		td = document.createElement("td");
-		td.setAttribute("colspan", "4");
+		td.style.width = "100%";
 		var textArea = document.createElement("textarea");
 		textArea.setAttribute("rows", "2");
 		td.appendChild(textArea);
 		row.appendChild(td);
+		
+		table.appendChild(row);
+		outerTd.appendChild(table);
+		outerRow.appendChild(outerTd);
 
 		$("step3-parameters").childNodes[0].childNodes[id].parentNode
 			.insertBefore(
-					row,
+					outerRow,
 					$("step3-parameters").childNodes[0].childNodes[id].nextSibling);
 
 	},
@@ -3944,7 +3986,7 @@ DefineWebServiceSpecial.prototype = {
 		inputButton = document.createElement("input");
 		inputButton.type = "button";
 		inputButton.value = "<subparameter.../>";
-		inputButton.realValue = "<subparameter name=\"\" optional=\"\"/>";
+		inputButton.realValue = "<subparameter name=\"\" optional=\"\" defaultValue=\"\"/>";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
 		td.appendChild(inputButton);
 		
@@ -4045,7 +4087,21 @@ DefineWebServiceSpecial.prototype = {
 		var text = node.parentNode.nextSibling.firstChild.value.substr(0,start) + node.realValue;
 		text = text + node.parentNode.nextSibling.firstChild.value.substr(end);
 		node.parentNode.nextSibling.firstChild.value = text;
+	},
+	
+	handleAliasInput : function(event){
+		var node = Event.element(event);
+		if(node.value != ""){
+			if(!node.parentNode.previousSibling.firstChild.checked){
+				node.parentNode.previousSibling.firstChild.click();
+			}
+		} else {
+			if(node.parentNode.previousSibling.firstChild.checked){
+				node.parentNode.previousSibling.firstChild.click();
+			}
+		}
 	}
+		
 }
 
 var webServiceSpecial;
