@@ -1,4 +1,4 @@
-<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+                                                             <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Treeview</sitename>
     <base>http://localhost.localdomain/treeview/index.php/Main_Page</base>
@@ -197,7 +197,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     </revision>
   </page>
   <page>
-    <title>MÃ¤rchen</title>
+    <title>Märchen</title>
     <id>12</id>
     <revision>
       <id>13</id>
@@ -205,10 +205,10 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">MÃ¤rchen (mittelhochdeutsch Maere = âKunde, Bericht, Nachrichtâ) gehÃ¶ren zur Literaturgattung der Epik. Es handelt sich um kÃ¼rzere ErzÃ¤hlungen, die von fabelhaften und wunderbaren Begebenheiten berichten, die teilweise frei erfunden sind, teilweise wirkliche Begebenheiten als Grundlage haben, die im Laufe der Zeit mit viel Phantasie ausgeschmÃ¼ckt wurden. Hierdurch unterscheiden sie sich von den Sagen. Sie finden sich zu allen Zeiten und bei allen VÃ¶lkern dieser Welt. In Deutschland prÃ¤gten insbesondere die BrÃ¼der Grimm den Begriff. Sie haben mÃ¼ndlich tradierte MÃ¤rchen gesammelt und aufgeschrieben. 
+      <text xml:space="preserve">Märchen (mittelhochdeutsch Maere = „Kunde, Bericht, Nachricht“) gehören zur Literaturgattung der Epik. Es handelt sich um kürzere Erzählungen, die von fabelhaften und wunderbaren Begebenheiten berichten, die teilweise frei erfunden sind, teilweise wirkliche Begebenheiten als Grundlage haben, die im Laufe der Zeit mit viel Phantasie ausgeschmückt wurden. Hierdurch unterscheiden sie sich von den Sagen. Sie finden sich zu allen Zeiten und bei allen Völkern dieser Welt. In Deutschland prägten insbesondere die Brüder Grimm den Begriff. Sie haben mündlich tradierte Märchen gesammelt und aufgeschrieben. 
 
 [[Category:Content]]
-[[hasTitle::MÃ¤rchen]]
+[[hasTitle::Märchen]]
 [[Subsection of::Main Page]]</text>
     </revision>
   </page>
@@ -221,12 +221,12 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: Die BrÃ¼der Grimm, oder die GebrÃ¼der Grimm, Jacob (* 4. Januar 1785 in Hanau, â  20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, â  16. Dezember 1859 in Be...</comment>
-      <text xml:space="preserve">Die BrÃ¼der Grimm, oder die GebrÃ¼der Grimm, Jacob (* 4. Januar 1785 in Hanau, â  20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, â  16. Dezember 1859 in Berlin), sind als Sprachwissenschaftler und Sammler von MÃ¤rchen (Grimms MÃ¤rchen) bekannt. Sie gelten gemeinsam mit Karl Lachmann und Georg Friedrich Benecke als âGrÃ¼ndungsvÃ¤terâ der Deutschen Philologie bzw. Germanistik.
+      <comment>New page: Die Brüder Grimm, oder die Gebrüder Grimm, Jacob (* 4. Januar 1785 in Hanau, † 20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, † 16. Dezember 1859 in Be...</comment>
+      <text xml:space="preserve">Die Brüder Grimm, oder die Gebrüder Grimm, Jacob (* 4. Januar 1785 in Hanau, † 20. September 1863 in Berlin) und Wilhelm Grimm (* 24. Februar 1786 in Hanau, † 16. Dezember 1859 in Berlin), sind als Sprachwissenschaftler und Sammler von Märchen (Grimms Märchen) bekannt. Sie gelten gemeinsam mit Karl Lachmann und Georg Friedrich Benecke als „Gründungsväter“ der Deutschen Philologie bzw. Germanistik.
 
 [[Category:Content]]
-[[Subsection of::MÃ¤rchen]]
-[[hasTitle::GebrÃ¼der Grimm]]</text>
+[[Subsection of::Märchen]]
+[[hasTitle::Gebrüder Grimm]]</text>
     </revision>
   </page>
   <page>
@@ -238,7 +238,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">Jacob Grimm ist einer der beiden BrÃ¼der Grimm
+      <text xml:space="preserve">Jacob Grimm ist einer der beiden Brüder Grimm
 
 [[Category:Person]]
 [[Subsection of::Grimm]]
@@ -254,7 +254,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">Wilhelm Grimm ist einer der beiden BrÃ¼der Grimm
+      <text xml:space="preserve">Wilhelm Grimm ist einer der beiden Brüder Grimm
 
 [[Category:Person]]
 [[Subsection of::Grimm]]
@@ -262,23 +262,23 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     </revision>
   </page>
   <page>
-    <title>Grimms MÃ¤rchen</title>
+    <title>Grimms Märchen</title>
     <id>16</id>
     <revision>
-      <id>17</id>
-      <timestamp>2009-04-24T11:42:47Z</timestamp>
+      <id>61</id>
+      <timestamp>2009-04-29T10:39:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: Die âKinder- und HausmÃ¤rchenâ (KHM), volkstÃ¼mlich âGrimms MÃ¤rchenâ genannt, sind eine berÃ¼hmte deutsche Anthologie von MÃ¤rchen, die Jacob Ludwig Carl Grimm und sein Bruder Wil...</comment>
-      <text xml:space="preserve">Die âKinder- und HausmÃ¤rchenâ (KHM), volkstÃ¼mlich âGrimms MÃ¤rchenâ genannt, sind eine berÃ¼hmte deutsche Anthologie von MÃ¤rchen, die Jacob Ludwig Carl Grimm und sein Bruder Wilhelm Karl Grimm, bekannt als die âBrÃ¼der Grimmâ, herausgegeben haben.
+      <text xml:space="preserve">Die „Kinder- und Hausmärchen“ (KHM), volkstümlich „Grimms Märchen“ genannt, sind eine berühmte deutsche Anthologie von Märchen, die Jacob Ludwig Carl Grimm und sein Bruder Wilhelm Karl Grimm, bekannt als die „Brüder Grimm“, herausgegeben haben.
+
 == Parameter test ==
 param1: {{#arg:param1|}}
 param2: {{#arg:param2|}}
 
 [[Category:Content]]
-[[Subsection of::MÃ¤rchen]]
-[[hasTitle::Grimms MÃ¤rchen]]</text>
+[[Subsection of::Märchen]]
+[[hasTitle::Grimms Märchen]]</text>
     </revision>
   </page>
   <page>
@@ -290,15 +290,15 @@ param2: {{#arg:param2|}}
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Das Waldhaus==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 169  Ein armer Holzhauer lebte mit seiner Frau und drei TÃ¶chtern in einer kleinen HÃ¼tte an dem Rande eines einsamen Waldes. Eines...</comment>
+      <comment>New page: ==Das Waldhaus==  Ein Märchen der Gebrüder Grimm - KHM 169  Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines...</comment>
       <text xml:space="preserve">==Das Waldhaus==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 169
+Ein Märchen der Gebrüder Grimm - KHM 169
 
-Ein armer Holzhauer lebte mit seiner Frau und drei TÃ¶chtern in einer kleinen HÃ¼tte an dem Rande eines einsamen Waldes. Eines Morgens, als er wieder an seine Arbeit wollte, sagte er zu seiner Frau: &quot;LaÃ mir ein Mittagsbrot von dem Ã¤ltesten MÃ¤dchen hinaus in den Wald bringen, ich werde sonst nicht fertig. Und damit es sich nicht verirrt&quot;, setzte er hinzu, &quot;so will ich einen Beutel mit Hirse mitnehmen und die KÃ¶rner auf den Weg streuen.&quot; 
+Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines Morgens, als er wieder an seine Arbeit wollte, sagte er zu seiner Frau: &quot;Laß mir ein Mittagsbrot von dem ältesten Mädchen hinaus in den Wald bringen, ich werde sonst nicht fertig. Und damit es sich nicht verirrt&quot;, setzte er hinzu, &quot;so will ich einen Beutel mit Hirse mitnehmen und die Körner auf den Weg streuen.&quot; 
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
+[[Subsection of::Grimms Märchen]]
 [[hasTitle::Das Waldhaus]]
 [[KHM::169]]</text>
     </revision>
@@ -314,44 +314,45 @@ Ein armer Holzhauer lebte mit seiner Frau und drei TÃ¶chtern in einer kleinen 
       </contributor>
       <text xml:space="preserve">==Das blaue Licht==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 116
+Ein Märchen der Gebrüder Grimm - KHM 116
 
 
-Es war einmal ein Soldat, der hatte dem KÃ¶nig lange Jahre treu gedient: als aber der Krieg zu Ende war und der Soldat, der vielen Wunden wegen, die er empfangen hatte, nicht weiter dienen konnte, sprach der KÃ¶nig zu ihm 'du kannst heim gehen, ich brauche dich nicht mehr: Geld bekommst du weiter nicht, denn Lohn erhÃ¤lt nur der, welcher mir Dienste dafÃ¼r leistet.' Da wuÃte der Soldat nicht, womit er sein Leben fristen sollte: ging voll Sorgen fort und ging den ganzen Tag, bis er abends in einen Wald kam. Als die Finsternis einbrach, sah er ein Licht, dem nÃ¤herte er sich und kam zu einem Haus, darin wohnte eine Hexe. 'Gib mir doch ein Nachtlager und ein wenig Essen und Trinken' sprach er zu ihr, 'ich verschmachte sonst.' 'Oho!' antwortete sie, 'wer gibt einem verlaufenen Soldaten etwas? doch will ich barmherzig sein und dich aufnehmen, wenn du tust, was ich verlange.' 'Was verlangst du?, fragte der Soldat. 'DaÃ du mir morgen meinen Garten umgrÃ¤bst.' Der Soldat willigte ein und arbeitete den folgenden Tag aus allen KrÃ¤ften, konnte aber vor Abend nicht fertig werden. 'Ich sehe wohl' sprach die Hexe, 'daÃ du heute nicht weiter kannst: ich will dich noch eine Nacht behalten, dafÃ¼r sollst du mir morgen ein Fuder Holz spalten und klein machen.' Der Soldat brauchte dazu den ganzen Tag, und abends machte ihm die Hexe den Vorschlag, noch eine Nacht zu bleiben. 'Du sollst mir morgen nur eine geringe Arbeit tun, hinter meinem Hause ist ein alter wasserleerer Brunnen, in den ist mir mein Licht gefallen, es brennt blau und verlischt nicht, das sollst du mir wieder heraufholen.' Den andern Tag fÃ¼hrte ihn die Alte zu dem Brunnen und lieÃ ihn in einem Korb hinab. Er fand das blaue Licht und machte ein Zeichen, daÃ sie ihn wieder hinaufziehen sollte. Sie zog ihn auch in die HÃ¶he, als er aber dem Rand nahe war, reichte sie die Hand hinab und wollte ihm das blaue Licht abnehmen. 'Nein' sagte er und merkte ihre bÃ¶sen Gedanken, 'das Licht gebe ich dir nicht eher, als bis ich mit beiden FÃ¼Ãen auf dem Erdboden stehe.' Da geriet die Hexe in Wut, lieÃ ihn wieder hinab in den Brunnen fallen und ging fort. 
+Es war einmal ein Soldat, der hatte dem König lange Jahre treu gedient: als aber der Krieg zu Ende war und der Soldat, der vielen Wunden wegen, die er empfangen hatte, nicht weiter dienen konnte, sprach der König zu ihm 'du kannst heim gehen, ich brauche dich nicht mehr: Geld bekommst du weiter nicht, denn Lohn erhält nur der, welcher mir Dienste dafür leistet.' Da wußte der Soldat nicht, womit er sein Leben fristen sollte: ging voll Sorgen fort und ging den ganzen Tag, bis er abends in einen Wald kam. Als die Finsternis einbrach, sah er ein Licht, dem näherte er sich und kam zu einem Haus, darin wohnte eine Hexe. 'Gib mir doch ein Nachtlager und ein wenig Essen und Trinken' sprach er zu ihr, 'ich verschmachte sonst.' 'Oho!' antwortete sie, 'wer gibt einem verlaufenen Soldaten etwas? doch will ich barmherzig sein und dich aufnehmen, wenn du tust, was ich verlange.' 'Was verlangst du?, fragte der Soldat. 'Daß du mir morgen meinen Garten umgräbst.' Der Soldat willigte ein und arbeitete den folgenden Tag aus allen Kräften, konnte aber vor Abend nicht fertig werden. 'Ich sehe wohl' sprach die Hexe, 'daß du heute nicht weiter kannst: ich will dich noch eine Nacht behalten, dafür sollst du mir morgen ein Fuder Holz spalten und klein machen.' Der Soldat brauchte dazu den ganzen Tag, und abends machte ihm die Hexe den Vorschlag, noch eine Nacht zu bleiben. 'Du sollst mir morgen nur eine geringe Arbeit tun, hinter meinem Hause ist ein alter wasserleerer Brunnen, in den ist mir mein Licht gefallen, es brennt blau und verlischt nicht, das sollst du mir wieder heraufholen.' Den andern Tag führte ihn die Alte zu dem Brunnen und ließ ihn in einem Korb hinab. Er fand das blaue Licht und machte ein Zeichen, daß sie ihn wieder hinaufziehen sollte. Sie zog ihn auch in die Höhe, als er aber dem Rand nahe war, reichte sie die Hand hinab und wollte ihm das blaue Licht abnehmen. 'Nein' sagte er und merkte ihre bösen Gedanken, 'das Licht gebe ich dir nicht eher, als bis ich mit beiden Füßen auf dem Erdboden stehe.' Da geriet die Hexe in Wut, ließ ihn wieder hinab in den Brunnen fallen und ging fort. 
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
+[[Subsection of::Grimms Märchen]]
 [[hasTitle::Das blaue Licht]]
 [[KHM::116]]
 [[startsWith::Es war einmal]]</text>
     </revision>
   </page>
   <page>
-    <title>Der Wolf und die 7 GeiÃlein</title>
+    <title>Der Wolf und die 7 Geißlein</title>
     <id>19</id>
     <revision>
-      <id>24</id>
-      <timestamp>2009-04-24T11:51:34Z</timestamp>
+      <id>71</id>
+      <timestamp>2009-05-05T10:24:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">==Der Wolf und die 7 GeiÃlein==
+      <comment>/* Der Wolf und die 7 Geißlein */</comment>
+      <text xml:space="preserve">==Der Wolf und die 7 Geißlein==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 005
+Ein Märchen der Gebrüder Grimm - KHM 005
 
-Es war einmal eine alte GeiÃ, die hatte sieben junge GeiÃlein, und hatte sie lieb, wie eine Mutter ihre Kinder lieb hat. Eines Tages wollte sie in den Wald gehen und Futter holen, da rief sie alle sieben herbei und sprach: âLiebe Kinder, ich will hinaus in den Wald, seid auf eurer Hut vor dem Wolf, wenn er hereinkommt, so friÃt er euch mit Haut und Haar. Der BÃ¶sewicht verstellt sich oft, aber an seiner rauhen Stimme und an seinen schwarzen FÃ¼Ãen werdet ihr ihn gleich erkennen.â Die GeiÃlein sagten: âLiebe Mutter, wir wollen uns schon in acht nehmen, Ihr kÃ¶nnt ohne Sorge fortgehen.â Da meckerte die Alte und machte sich getrost auf den Weg. 
+Es war einmal eine alte Geiß, die hatte sieben junge Geißlein, und hatte sie lieb, wie eine Mutter ihre Kinder lieb hat. Eines Tages wollte sie in den Wald gehen und Futter holen, da rief sie alle sieben herbei und sprach: “Liebe Kinder, ich will hinaus in den Wald, seid auf eurer Hut vor dem Wolf, wenn er hereinkommt, so frißt er euch mit Haut und Haar. Der Bösewicht verstellt sich oft, aber an seiner rauhen Stimme und an seinen schwarzen Füßen werdet ihr ihn gleich erkennen.” Die Geißlein sagten: “Liebe Mutter, wir wollen uns schon in acht nehmen, Ihr könnt ohne Sorge fortgehen.” Da meckerte die Alte und machte sich getrost auf den Weg. 
 
 &lt;noinclude&gt;
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
-[[hasTitle::Der Wolf und die 7 GeiÃlein]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Der Wolf und die 7 Geißlein]]
 [[KHM::5]]
 [[startsWith::Es war einmal]]
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
-    <title>Die 3 SchlangenblÃ¤tter</title>
+    <title>Die 3 Schlangenblätter</title>
     <id>20</id>
     <revision>
       <id>21</id>
@@ -359,17 +360,17 @@ Es war einmal eine alte GeiÃ, die hatte sieben junge GeiÃlein, und hatte s
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Die 3 SchlangenblÃ¤tter==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 016   Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernÃ¤hren. Da sprach der Sohn 'lieber Vat...</comment>
-      <text xml:space="preserve">==Die 3 SchlangenblÃ¤tter==
+      <comment>New page: ==Die 3 Schlangenblätter==  Ein Märchen der Gebrüder Grimm - KHM 016   Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernähren. Da sprach der Sohn 'lieber Vat...</comment>
+      <text xml:space="preserve">==Die 3 Schlangenblätter==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 016
+Ein Märchen der Gebrüder Grimm - KHM 016
 
 
-Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernÃ¤hren. Da sprach der Sohn 'lieber Vater, es geht Euch so kÃ¼mmerlich, ich falle Euch zur Last, lieber will ich selbst fortgehen und sehen, wie ich mein Brot verdiene.' Da gab ihm der Vater seinen Segen und nahm mit groÃer Trauer von ihm Abschied. Zu dieser Zeit fÃ¼hrte der KÃ¶nig eines mÃ¤chtigen Reichs Krieg, der JÃ¼ngling nahm Dienste bei ihm und zog mit ins Feld. Und als er vor den Feind kam, so ward eine Schlacht geliefert, und es war groÃe Gefahr und regnete blaue Bohnen, daÃ seine Kameraden von allen Seiten niederfielen. Und als auch der AnfÃ¼hrer blieb, so wollten die Ã¼brigen die Flucht ergreifen, aber der JÃ¼ngling trat heraus, sprach ihnen Mut zu und rief 'wir wollen unser Vaterland nicht zugrunde gehen lassen.' Da folgten ihm die andern, und er drang ein und schlug den Feind. Der KÃ¶nig, als er hÃ¶rte, daÃ er ihm allein den Sieg zu danken habe, erhob ihn Ã¼ber alle andern, gab ihm groÃe SchÃ¤tze und machte ihn zum Ersten in seinem Reich. 
+Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernähren. Da sprach der Sohn 'lieber Vater, es geht Euch so kümmerlich, ich falle Euch zur Last, lieber will ich selbst fortgehen und sehen, wie ich mein Brot verdiene.' Da gab ihm der Vater seinen Segen und nahm mit großer Trauer von ihm Abschied. Zu dieser Zeit führte der König eines mächtigen Reichs Krieg, der Jüngling nahm Dienste bei ihm und zog mit ins Feld. Und als er vor den Feind kam, so ward eine Schlacht geliefert, und es war große Gefahr und regnete blaue Bohnen, daß seine Kameraden von allen Seiten niederfielen. Und als auch der Anführer blieb, so wollten die übrigen die Flucht ergreifen, aber der Jüngling trat heraus, sprach ihnen Mut zu und rief 'wir wollen unser Vaterland nicht zugrunde gehen lassen.' Da folgten ihm die andern, und er drang ein und schlug den Feind. Der König, als er hörte, daß er ihm allein den Sieg zu danken habe, erhob ihn über alle andern, gab ihm große Schätze und machte ihn zum Ersten in seinem Reich. 
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
-[[hasTitle::die 3 SchlangenblÃ¤tter]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::die 3 Schlangenblätter]]
 [[KHM::16]]
 [[startsWith::Es war einmal]]</text>
     </revision>
@@ -383,16 +384,16 @@ Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernÃ¤
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Frau Holle==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 024   Eine Witwe hatte zwei TÃ¶chter, davon war die eine schÃ¶n und fleiÃig, die andere hÃ¤Ãlich und faul. Sie hatte aber die hÃ¤Ã...</comment>
+      <comment>New page: ==Frau Holle==  Ein Märchen der Gebrüder Grimm - KHM 024   Eine Witwe hatte zwei Töchter, davon war die eine schön und fleißig, die andere häßlich und faul. Sie hatte aber die häß...</comment>
       <text xml:space="preserve">==Frau Holle==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 024
+Ein Märchen der Gebrüder Grimm - KHM 024
 
 
-Eine Witwe hatte zwei TÃ¶chter, davon war die eine schÃ¶n und fleiÃig, die andere hÃ¤Ãlich und faul. Sie hatte aber die hÃ¤Ãliche und faule, weil sie ihre rechte Tochter war, viel lieber, und die andere muÃte alle Arbeit tun und der Aschenputtel im Hause sein. Das arme MÃ¤dchen muÃte sich tÃ¤glich auf die groÃe StraÃe bei einem Brunnen setzen und muÃte so viel spinnen, daÃ ihm das Blut aus den Fingern sprang. Nun trug es sich zu, daÃ die Spule einmal ganz blutig war, da bÃ¼ckte es sich damit in den Brunnen und wollte sie abwaschen; sie sprang ihm aber aus der Hand und fiel hinab.
+Eine Witwe hatte zwei Töchter, davon war die eine schön und fleißig, die andere häßlich und faul. Sie hatte aber die häßliche und faule, weil sie ihre rechte Tochter war, viel lieber, und die andere mußte alle Arbeit tun und der Aschenputtel im Hause sein. Das arme Mädchen mußte sich täglich auf die große Straße bei einem Brunnen setzen und mußte so viel spinnen, daß ihm das Blut aus den Fingern sprang. Nun trug es sich zu, daß die Spule einmal ganz blutig war, da bückte es sich damit in den Brunnen und wollte sie abwaschen; sie sprang ihm aber aus der Hand und fiel hinab.
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
+[[Subsection of::Grimms Märchen]]
 [[hasTitle::Frau Holle]]
 [[KHM::24]]</text>
     </revision>
@@ -406,10 +407,10 @@ Eine Witwe hatte zwei TÃ¶chter, davon war die eine schÃ¶n und fleiÃig, di
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Goldmarie==  Die Goldmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Goldmarie]]</comment>
+      <comment>New page: ==Goldmarie==  Die Goldmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Goldmarie]]</comment>
       <text xml:space="preserve">==Goldmarie==
 
-Die Goldmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.
+Die Goldmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
 
 [[Category:Content]]
 [[Subsection of::Frau Holle]]
@@ -425,10 +426,10 @@ Die Goldmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Pechmarie==  Die Pechmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Pechmarie]]</comment>
+      <comment>New page: ==Pechmarie==  Die Pechmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.  [[Category:Content]] [[Subsection of::Frau Holle]] [[hasTitle::Pechmarie]]</comment>
       <text xml:space="preserve">==Pechmarie==
 
-Die Pechmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.
+Die Pechmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
 
 [[Category:Content]]
 [[Subsection of::Frau Holle]]
@@ -436,7 +437,7 @@ Die Pechmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.
     </revision>
   </page>
   <page>
-    <title>HÃ¤nsel und Gretel</title>
+    <title>Hänsel und Gretel</title>
     <id>24</id>
     <revision>
       <id>28</id>
@@ -444,17 +445,17 @@ Die Pechmarie ist eine Figur aus einem MÃ¤rchen der GebrÃ¼der Grimm.
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==HÃ¤nsel und Gretel==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 015   Vor einem groÃen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das BÃ¼bchen hieÃ HÃ¤nsel...</comment>
-      <text xml:space="preserve">==HÃ¤nsel und Gretel==
+      <comment>New page: ==Hänsel und Gretel==  Ein Märchen der Gebrüder Grimm - KHM 015   Vor einem großen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das Bübchen hieß Hänsel...</comment>
+      <text xml:space="preserve">==Hänsel und Gretel==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 015
+Ein Märchen der Gebrüder Grimm - KHM 015
 
 
-Vor einem groÃen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das BÃ¼bchen hieÃ HÃ¤nsel und das MÃ¤dchen Gretel. Er hatte wenig zu beiÃen und zu brechen, und einmal, als groÃe Teuerung ins Land kam, konnte er das tÃ¤gliche Brot nicht mehr schaffen. Wie er sich nun abends im Bette Gedanken machte und sich vor Sorgen herumwÃ¤lzte, seufzte er und sprach zu seiner Frau: âWas soll aus uns werden? Wie kÃ¶nnen wir unsere armen Kinder ernÃ¤hren da wir fÃ¼r uns selbst nichts mehr haben?â - âWeiÃt du was, Mann,â antwortete die Frau, âwir wollen morgen in aller FrÃ¼he die Kinder hinaus in den Wald fÃ¼hren, wo er am dicksten ist. Da machen wir ihnen ein Feuer an und geben jedem noch ein StÃ¼ckchen Brot, dann gehen wir an unsere Arbeit und lassen sie allein. Sie finden den Weg nicht wieder nach Haus, und wir sind sie los.â - âNein, Frau,â sagte der Mann, âdas tue ich nicht; wie sollt ichâs Ã¼bers Herz bringen, meine Kinder im Walde allein zu lassen! Die wilden Tiere wÃ¼rden bald kommen und sie zerreiÃen.â - âOh, du Narr,â sagte sie, âdann mÃ¼ssen wir alle viere Hungers sterben, du kannst nur die Bretter fÃ¼r die SÃ¤rge hobeln,â und lieÃ ihm keine Ruhe, bis er einwilligte. âAber die armen Kinder dauern mich doch,â sagte der Mann. 
+Vor einem großen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen zwei Kindern; das Bübchen hieß Hänsel und das Mädchen Gretel. Er hatte wenig zu beißen und zu brechen, und einmal, als große Teuerung ins Land kam, konnte er das tägliche Brot nicht mehr schaffen. Wie er sich nun abends im Bette Gedanken machte und sich vor Sorgen herumwälzte, seufzte er und sprach zu seiner Frau: “Was soll aus uns werden? Wie können wir unsere armen Kinder ernähren da wir für uns selbst nichts mehr haben?” - “Weißt du was, Mann,” antwortete die Frau, “wir wollen morgen in aller Frühe die Kinder hinaus in den Wald führen, wo er am dicksten ist. Da machen wir ihnen ein Feuer an und geben jedem noch ein Stückchen Brot, dann gehen wir an unsere Arbeit und lassen sie allein. Sie finden den Weg nicht wieder nach Haus, und wir sind sie los.” - “Nein, Frau,” sagte der Mann, “das tue ich nicht; wie sollt ich’s übers Herz bringen, meine Kinder im Walde allein zu lassen! Die wilden Tiere würden bald kommen und sie zerreißen.” - “Oh, du Narr,” sagte sie, “dann müssen wir alle viere Hungers sterben, du kannst nur die Bretter für die Särge hobeln,” und ließ ihm keine Ruhe, bis er einwilligte. “Aber die armen Kinder dauern mich doch,” sagte der Mann. 
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
-[[hasTitle::HÃ¤ndel und Gretel]]
+[[Subsection of::Grimms Märchen]]
+[[hasTitle::Händel und Gretel]]
 [[KHM::15]]
 [[startsWith::Es war einmal]]</text>
     </revision>
@@ -468,16 +469,16 @@ Vor einem groÃen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Rapunzel==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 012   Es war einmal ein Mann und eine Frau, die wÃ¼nschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung,...</comment>
+      <comment>New page: ==Rapunzel==  Ein Märchen der Gebrüder Grimm - KHM 012   Es war einmal ein Mann und eine Frau, die wünschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung,...</comment>
       <text xml:space="preserve">==Rapunzel==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 012
+Ein Märchen der Gebrüder Grimm - KHM 012
 
 
-Es war einmal ein Mann und eine Frau, die wÃ¼nschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung, der liebe Gott werde ihren Wunsch erfÃ¼llen.
+Es war einmal ein Mann und eine Frau, die wünschten sich schon lange vergeblich ein Kind, endlich machte sich die Frau Hoffnung, der liebe Gott werde ihren Wunsch erfüllen.
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
+[[Subsection of::Grimms Märchen]]
 [[hasTitle::Rapunzel]]
 [[KHM::12]]
 [[startsWith::Es war einmal]]</text>
@@ -492,16 +493,16 @@ Es war einmal ein Mann und eine Frau, die wÃ¼nschten sich schon lange vergebli
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: ==Schneewittchen==  Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 053   Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saÃ eine KÃ¶nigin an einem Fe...</comment>
+      <comment>New page: ==Schneewittchen==  Ein Märchen der Gebrüder Grimm - KHM 053   Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saß eine Königin an einem Fe...</comment>
       <text xml:space="preserve">==Schneewittchen==
 
-Ein MÃ¤rchen der GebrÃ¼der Grimm - KHM 053
+Ein Märchen der Gebrüder Grimm - KHM 053
 
 
-Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saÃ eine KÃ¶nigin an einem Fenster, das einen Rahmen von schwarzem Ebenholz hatte, und nÃ¤hte. Und wie sie so nÃ¤hte und nach dem Schnee aufblickte, stach sie sich mit der Nadel in den Finger, und es fielen drei Tropfen Blut in den Schnee. Und weil das Rote im weiÃen Schnee so schÃ¶n aussah, dachte sie bei sich: HÃ¤tt' ich ein Kind, so weiÃ wie Schnee, so rot wie Blut und so schwarz wie das Holz an dem Rahmen! Bald darauf bekam sie ein TÃ¶chterlein, das war so weiÃ wie Schnee, so rot wie Blut und so schwarzhaarig wie Ebenholz und ward darum Schneewittchen (SchneeweiÃchen) genannt.
+Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himmel herab. Da saß eine Königin an einem Fenster, das einen Rahmen von schwarzem Ebenholz hatte, und nähte. Und wie sie so nähte und nach dem Schnee aufblickte, stach sie sich mit der Nadel in den Finger, und es fielen drei Tropfen Blut in den Schnee. Und weil das Rote im weißen Schnee so schön aussah, dachte sie bei sich: Hätt' ich ein Kind, so weiß wie Schnee, so rot wie Blut und so schwarz wie das Holz an dem Rahmen! Bald darauf bekam sie ein Töchterlein, das war so weiß wie Schnee, so rot wie Blut und so schwarzhaarig wie Ebenholz und ward darum Schneewittchen (Schneeweißchen) genannt.
 
 [[Category:Content]]
-[[Subsection of::Grimms MÃ¤rchen]]
+[[Subsection of::Grimms Märchen]]
 [[hasTitle::Schneewittchen]]
 [[KHM::53]]
 [[startsWith::Es war einmal]]</text>
@@ -516,10 +517,10 @@ Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himm
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">Wilhelm Hauff (* 29. November 1802 in Stuttgart; â  18. November 1827 ebenda) war ein deutscher Schriftsteller der Romantik. Er war ein Hauptvertreter der SchwÃ¤bischen Dichterschule.
+      <text xml:space="preserve">Wilhelm Hauff (* 29. November 1802 in Stuttgart; † 18. November 1827 ebenda) war ein deutscher Schriftsteller der Romantik. Er war ein Hauptvertreter der Schwäbischen Dichterschule.
 
 [[Category:Person]]
-[[Subsection of::MÃ¤rchen]]
+[[Subsection of::Märchen]]
 [[hasTitle::Wilhelm Hauff]]</text>
     </revision>
   </page>
@@ -535,7 +536,7 @@ Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himm
       <comment>New page: ==Der kleine Muck==  Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von den Verwandten fortgejagt, da er wegen seines zwergenhaften Wuchses kein Handwerk gele...</comment>
       <text xml:space="preserve">==Der kleine Muck==
 
-Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von den Verwandten fortgejagt, da er wegen seines zwergenhaften Wuchses kein Handwerk gelernt hatte und fÃ¼r keine Arbeit geeignet scheint.
+Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von den Verwandten fortgejagt, da er wegen seines zwergenhaften Wuchses kein Handwerk gelernt hatte und für keine Arbeit geeignet scheint.
 
 [[Category:Content]]
 [[Subsection of::Wilhelm Hauff]]
@@ -546,22 +547,15 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Tree1</title>
     <id>29</id>
     <revision>
-      <id>51</id>
-      <timestamp>2009-04-27T09:47:00Z</timestamp>
+      <id>74</id>
+      <timestamp>2009-05-08T16:02:30Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>/* Baum ab MÃ¤rchen */</comment>
-      <text xml:space="preserve">== Baum ohne EinschrÃ¤nkung==
+      <text xml:space="preserve">== Baum ab Märchen==
 
 {{#tree:
-{{#generateTree:property=Subsection of|dynamic=1|refresh=1|}}
-}}
-
-== Baum ab MÃ¤rchen==
-
-{{#tree:
-{{#generateTree:property=Subsection of|start=MÃ¤rchen|}}
+{{#generateTree:property=Subsection of|dynamic=1|checkNode=1|opento=Frau Holle|}}
 }}</text>
     </revision>
   </page>
@@ -601,8 +595,8 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Help:Contents</title>
     <id>32</id>
     <revision>
-      <id>56</id>
-      <timestamp>2009-04-27T12:25:17Z</timestamp>
+      <id>66</id>
+      <timestamp>2009-04-30T15:22:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -611,9 +605,9 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
 * [[Help:Wikimaster|Wikimaster]]
 * [[Help:How to configure the tree|How to configure the tree]]
 * [[Help:Glossary|Glossary]]
+* [[Help:SMW+_1.4.3|SMW+ 1.4.3]]
 
-
-[[hasTitle::About âinformationâ]]</text>
+[[hasTitle::About “information”]]</text>
     </revision>
   </page>
   <page>
