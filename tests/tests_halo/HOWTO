@@ -120,10 +120,13 @@ Create a subfolder 'webtests' in the 'tests' folder
        logs/result.xml with the following content.
        This makes sure that if phpUnit crashes, Hudson still gets a result file to read.
       ----
-             <testcase name="generalFault" class="MyTests" time="0">
+            <?xml version="1.0"?>
+            <testsuite name="MyExtension" tests="1" assertions="1" failures="0" errors="1" time="0">
+              <testcase name="generalFault" class="MyTests" time="0">
                 <failure type="PHPUnit_Framework_ExpectationFailedException">Crashed with a fatal error
                 </failure>
-              </testcase>       
+              </testcase>
+            </testsuite>       
       ----
       
       e. pages/ may be empty in this tutorial.
