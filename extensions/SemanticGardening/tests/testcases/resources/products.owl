@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY kaon2 'http://kaon2.semanticweb.org/internal#'>
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY owlx 'http://www.w3.org/2003/05/owl-xml#'>
+    <!ENTITY oxml 'http://schema.ontoprise.com/oxml/core/2.1#'>
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+    <!ENTITY ruleml 'http://www.w3.org/2003/11/ruleml#'>
+    <!ENTITY swrl 'http://www.w3.org/2003/11/swrl#'>
+    <!ENTITY swrlb 'http://www.w3.org/2003/11/swrlb#'>
+    <!ENTITY swrlx 'http://www.w3.org/2003/11/swrlx#'>
+    <!ENTITY xsd 'http://www.w3.org/2001/XMLSchema#'>
+    <!ENTITY xsi 'http://www.w3.org/2001/XMLSchema-instance'>
+]>
+
+<rdf:RDF
+    xml:base="http://www.ontoprise.de#products"
+    xmlns="http://www.ontoprise.de#"
+    xmlns:a="http://www.ontoprise.de#"
+    xmlns:kaon2="http://kaon2.semanticweb.org/internal#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:owlx="http://www.w3.org/2003/05/owl-xml#"
+    xmlns:oxml="http://schema.ontoprise.com/oxml/core/2.1#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:ruleml="http://www.w3.org/2003/11/ruleml#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:swrlx="http://www.w3.org/2003/11/swrlx#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<owl:Ontology rdf:about="#products"/>
+
+<owl:ObjectProperty rdf:about="#consistsOf">
+    <owl:inverseOf rdf:resource="#belongsTo"/>
+</owl:ObjectProperty>
+
+<owl:Class rdf:about="#DocumentWriter">
+    <rdfs:subClassOf rdf:resource="#Person"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Developer">
+    <rdfs:subClassOf rdf:resource="#Person"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DocumentWriter">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#writesDocumentationFor"/>
+            <owl:allValuesFrom rdf:resource="#Component"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Person">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xsd;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Developer">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#developed"/>
+            <owl:allValuesFrom rdf:resource="#Feature"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Feature">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xsd;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#belongsTo"/>
+            <owl:allValuesFrom rdf:resource="#Component"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#uses"/>
+            <owl:allValuesFrom rdf:resource="#Technology"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Product">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xsd;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#basedOn"/>
+            <owl:allValuesFrom rdf:resource="#Technology"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasFeature"/>
+            <owl:allValuesFrom rdf:resource="#Feature"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#consistsOf"/>
+            <owl:allValuesFrom rdf:resource="#Component"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Technology">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xsd;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Component">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xsd;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#basedOn"/>
+            <owl:allValuesFrom rdf:resource="#Technology"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#consistsOf"/>
+            <owl:allValuesFrom rdf:resource="#Feature"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#belongsTo"/>
+            <owl:allValuesFrom rdf:resource="#Product"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#DocumentWriter"/>
+
+<owl:Class rdf:about="#Person"/>
+
+<owl:Class rdf:about="#Developer"/>
+
+<owl:Class rdf:about="#Feature"/>
+
+<owl:Class rdf:about="#Product"/>
+
+<owl:Class rdf:about="#Technology"/>
+
+<owl:Class rdf:about="#Component"/>
+
+<Component rdf:about="#DBSchemaImport">
+    <hasName rdf:datatype="&xsd;string">DB schema import</hasName>
+    <belongsTo rdf:resource="#OntoStudio"/>
+</Component>
+
+<Feature rdf:about="#DeployWSToTomcat">
+    <hasName rdf:datatype="&xsd;string">Deploy Webservice to Tomcat</hasName>
+    <belongsTo rdf:resource="#WebServiceExport"/>
+    <uses rdf:resource="#Java"/>
+    <uses rdf:resource="#Tomcat"/>
+</Feature>
+
+<Component rdf:about="#FileExport">
+    <hasName rdf:datatype="&xsd;string">File export</hasName>
+    <belongsTo rdf:resource="#OntoStudio"/>
+</Component>
+
+<Component rdf:about="#FileImport">
+    <hasName rdf:datatype="&xsd;string">File import</hasName>
+    <belongsTo rdf:resource="#OntoStudio"/>
+</Component>
+
+<Technology rdf:about="#JDBC">
+    <hasName rdf:datatype="&xsd;string">JDBC</hasName>
+</Technology>
+
+<Technology rdf:about="#Java">
+    <hasName rdf:datatype="&xsd;string">Java</hasName>
+</Technology>
+
+<Developer rdf:about="#MichaelGesmann">
+    <hasName rdf:datatype="&xsd;string">Michael Gesmann</hasName>
+    <developed rdf:resource="#DeployWSToTomcat"/>
+</Developer>
+
+<Developer rdf:about="#OlgaGromova">
+    <developed rdf:resource="#ReadSchemaFromDB"/>
+</Developer>
+
+<Product rdf:about="#OntoBroker">
+    <hasName rdf:datatype="&xsd;string">OntoBroker</hasName>
+</Product>
+
+<Product rdf:about="#OntoStudio">
+    <hasName rdf:datatype="&xsd;string">OntoStudio</hasName>
+</Product>
+
+<Feature rdf:about="#ReadSchemaFromDB">
+    <hasName rdf:datatype="&xsd;string">Read schema from DB</hasName>
+    <belongsTo rdf:resource="#DBSchemaImport"/>
+    <uses rdf:resource="#JDBC"/>
+    <uses rdf:resource="#Java"/>
+</Feature>
+
+<DocumentWriter rdf:about="#RobertWroblewski">
+    <hasName rdf:datatype="&xsd;string">Robert Wroblewski</hasName>
+    <writesDocumentationFor rdf:resource="#DBSchemaImport"/>
+    <writesDocumentationFor rdf:resource="#FileExport"/>
+    <writesDocumentationFor rdf:resource="#FileImport"/>
+    <writesDocumentationFor rdf:resource="#WebServiceExport"/>
+    <writesDocumentationFor rdf:resource="#WebServiceImport"/>
+</DocumentWriter>
+
+<Technology rdf:about="#Tomcat">
+    <hasName rdf:datatype="&xsd;string">Tomcat</hasName>
+</Technology>
+
+<Component rdf:about="#WebServiceExport">
+    <hasName rdf:datatype="&xsd;string">Webservice export</hasName>
+    <belongsTo rdf:resource="#OntoStudio"/>
+</Component>
+
+<Component rdf:about="#WebServiceImport">
+    <hasName rdf:datatype="&xsd;string">Webservice import</hasName>
+    <belongsTo rdf:resource="#OntoStudio"/>
+</Component>
+
+<rdfs:Datatype rdf:about="&xsd;string"/>
+
+<owl:DatatypeProperty rdf:about="#hasName"/>
+
+<owl:ObjectProperty rdf:about="#basedOn"/>
+
+<owl:ObjectProperty rdf:about="#belongsTo"/>
+
+<owl:ObjectProperty rdf:about="#developed"/>
+
+<owl:ObjectProperty rdf:about="#hasFeature"/>
+
+<owl:ObjectProperty rdf:about="#uses"/>
+
+<owl:ObjectProperty rdf:about="#writesDocumentationFor"/>
+
+</rdf:RDF>

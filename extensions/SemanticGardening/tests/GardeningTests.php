@@ -5,6 +5,7 @@ require_once 'testcases/TestConsistencyBot.php';
 require_once 'testcases/TestAnomaliesBot.php';
 require_once 'testcases/TestMissingAnnotationsBot.php';
 require_once 'testcases/TestUndefinedEntitiesBot.php';
+require_once 'testcases/TestImportOntologyBot.php';
  
 class GardeningTests
 {
@@ -16,6 +17,7 @@ class GardeningTests
         $suite->addTestSuite("TestAnomaliesBot");
         $suite->addTestSuite("TestMissingAnnotationsBot");
         $suite->addTestSuite("TestUndefinedEntitiesBot");
+        $suite->addTestSuite("TestImportOntologyBot");
  
         return $suite;
     }

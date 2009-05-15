@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY noNS 'http://schema.ontoprise.com/rdf/core/noNSdefined#'>
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY oxml 'http://schema.ontoprise.com/oxml/core/2.1#'>
+    <!ENTITY xs 'http://www.w3.org/2001/XMLSchema#'>
+    <!ENTITY xsi 'http://www.w3.org/2001/XMLSchema-instance'>
+]>
+
+<rdf:RDF
+    xml:base="http://www.ontoprise.com/ontologies/ontowebtravel#%22%22"
+    xmlns:a="http://www.ontoprise.com/ontologies/ontowebtravel#"
+    xmlns:noNS="http://schema.ontoprise.com/rdf/core/noNSdefined#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:oxml="http://schema.ontoprise.com/oxml/core/2.1#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<owl:Ontology rdf:about="#%22%22"/>
+
+<owl:Class rdf:about="#TransferVehicle">
+    <rdfs:subClassOf rdf:resource="#Vehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Vehicle">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#TransportVehicle">
+    <rdfs:subClassOf rdf:resource="#Vehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Trip">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Flight">
+    <rdfs:subClassOf rdf:resource="#Transport"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Transport">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Room">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Location">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hotel">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#RentalCar">
+    <rdfs:subClassOf rdf:resource="#TransferVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Taxi">
+    <rdfs:subClassOf rdf:resource="#TransferVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Underground">
+    <rdfs:subClassOf rdf:resource="#TransferVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#CityBus">
+    <rdfs:subClassOf rdf:resource="#TransferVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Transfer">
+    <rdfs:subClassOf rdf:resource="#Transport"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Continent">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Country">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Time">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Date">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#City">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Airport">
+    <rdfs:subClassOf rdf:resource="#Location"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Customer">
+    <rdfs:subClassOf rdf:resource="#DEFAULT_ROOT_CONCEPT"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ship">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Motorbike">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ferry">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Car">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Train">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Plane">
+    <rdfs:subClassOf rdf:resource="#TransportVehicle"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Trip">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#byCustomer"/>
+            <owl:allValuesFrom rdf:resource="#Customer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasTransports"/>
+            <owl:allValuesFrom rdf:resource="#Transport"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Flight">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasPriceFirstClass"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasPriceEconomyClass"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#usesVehicle"/>
+            <owl:allValuesFrom rdf:resource="#Plane"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasPriceBusinessClass"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Transport">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#usesVehicle"/>
+            <owl:allValuesFrom rdf:resource="#Vehicle"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDepartureTime"/>
+            <owl:allValuesFrom rdf:resource="#Time"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasArrivalTime"/>
+            <owl:allValuesFrom rdf:resource="#Time"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDepartureLocation"/>
+            <owl:allValuesFrom rdf:resource="#Location"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasArrivalLocation"/>
+            <owl:allValuesFrom rdf:resource="#Location"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDepartureDate"/>
+            <owl:allValuesFrom rdf:resource="#Date"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasArrivalDate"/>
+            <owl:allValuesFrom rdf:resource="#Date"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Room">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasInternetConnection"/>
+            <owl:allValuesFrom rdf:resource="&xs;boolean"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasTV"/>
+            <owl:allValuesFrom rdf:resource="&xs;boolean"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasBeds"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Location">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasLandmark"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#isInLocation"/>
+            <owl:allValuesFrom rdf:resource="#Location"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Hotel">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#belongsToChain"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDistanceToSkiing"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDistanceToBeach"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#areDogsAllowed"/>
+            <owl:allValuesFrom rdf:resource="&xs;boolean"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDescription"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasRoomsAvailable"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasRooms"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasCapacity"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasURL"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasPhoneNumber"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#inStreet"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasStars"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Transfer">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#usesVehicle"/>
+            <owl:allValuesFrom rdf:resource="#TransferVehicle"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Time">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#AmPm"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasMinute"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasHour"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Date">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasYear"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasMonth"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasDay"/>
+            <owl:allValuesFrom rdf:resource="&xs;integer"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#City">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasWidth"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasLength"/>
+            <owl:allValuesFrom rdf:resource="&xs;number"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Customer">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hatesVehicle"/>
+            <owl:allValuesFrom rdf:resource="#Vehicle"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasName"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Plane">
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasProducer"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasModel"/>
+            <owl:allValuesFrom rdf:resource="&xs;string"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#DEFAULT_ROOT_CONCEPT"/>
+
+<owl:Class rdf:about="#TransferVehicle"/>
+
+<owl:Class rdf:about="#Vehicle"/>
+
+<owl:Class rdf:about="#TransportVehicle"/>
+
+<owl:Class rdf:about="#Trip"/>
+
+<owl:Class rdf:about="#Flight"/>
+
+<owl:Class rdf:about="#Transport"/>
+
+<owl:Class rdf:about="#Room"/>
+
+<owl:Class rdf:about="#Location"/>
+
+<owl:Class rdf:about="#Hotel"/>
+
+<owl:Class rdf:about="#RentalCar"/>
+
+<owl:Class rdf:about="#Taxi"/>
+
+<owl:Class rdf:about="#Underground"/>
+
+<owl:Class rdf:about="#CityBus"/>
+
+<owl:Class rdf:about="#Transfer"/>
+
+<owl:Class rdf:about="#Continent"/>
+
+<owl:Class rdf:about="#Country"/>
+
+<owl:Class rdf:about="#Time"/>
+
+<owl:Class rdf:about="#Date"/>
+
+<owl:Class rdf:about="#City"/>
+
+<owl:Class rdf:about="#Airport"/>
+
+<owl:Class rdf:about="#Customer"/>
+
+<owl:Class rdf:about="#Ship"/>
+
+<owl:Class rdf:about="#Motorbike"/>
+
+<owl:Class rdf:about="#Ferry"/>
+
+<owl:Class rdf:about="#Car"/>
+
+<owl:Class rdf:about="#Train"/>
+
+<owl:Class rdf:about="#Plane"/>
+
+<a:Date rdf:about="#d1">
+    <a:hasDay rdf:datatype="&xs;unsignedInt">5</a:hasDay>
+    <a:hasMonth rdf:datatype="&xs;unsignedInt">4</a:hasMonth>
+    <a:hasYear rdf:datatype="&xs;unsignedInt">2002</a:hasYear>
+</a:Date>
+
+<a:Date rdf:about="#d2">
+    <a:hasDay rdf:datatype="&xs;unsignedInt">11</a:hasDay>
+    <a:hasMonth rdf:datatype="&xs;unsignedInt">4</a:hasMonth>
+    <a:hasYear rdf:datatype="&xs;unsignedInt">2002</a:hasYear>
+</a:Date>
+
+<a:Date rdf:about="#d3">
+    <a:hasDay rdf:datatype="&xs;unsignedInt">15</a:hasDay>
+    <a:hasMonth rdf:datatype="&xs;unsignedInt">4</a:hasMonth>
+    <a:hasYear rdf:datatype="&xs;unsignedInt">2002</a:hasYear>
+</a:Date>
+
+<a:Hotel rdf:about="#h1">
+    <a:belongsToChain rdf:datatype="&xs;string">Holiday Inn</a:belongsToChain>
+    <a:isInLocation rdf:resource="#newyork"/>
+</a:Hotel>
+
+<a:Hotel rdf:about="#h2">
+    <a:belongsToChain rdf:datatype="&xs;string">holiday inn</a:belongsToChain>
+    <a:isInLocation rdf:resource="#washington"/>
+</a:Hotel>
+
+<a:Customer rdf:about="#john">
+    <a:hasName rdf:datatype="&xs;string">John</a:hasName>
+</a:Customer>
+
+<a:City rdf:about="#madrid">
+    <a:hasName rdf:datatype="&xs;string">Madrid</a:hasName>
+</a:City>
+
+<a:City rdf:about="#newyork">
+    <a:hasLandmark rdf:datatype="&xs;string">statue of liberty</a:hasLandmark>
+    <a:hasName rdf:datatype="&xs;string">New York</a:hasName>
+</a:City>
+
+<a:Transport rdf:about="#t1">
+    <a:hasArrivalDate rdf:resource="#d1"/>
+    <a:hasArrivalLocation rdf:resource="#newyork"/>
+    <a:hasDepartureDate rdf:resource="#d1"/>
+    <a:hasDepartureLocation rdf:resource="#madrid"/>
+</a:Transport>
+
+<a:City rdf:about="#washington">
+    <a:hasName rdf:datatype="&xs;string">Washington</a:hasName>
+</a:City>
+
+<rdfs:Datatype rdf:about="&xs;boolean"/>
+
+<rdfs:Datatype rdf:about="&xs;integer"/>
+
+<rdfs:Datatype rdf:about="&xs;number"/>
+
+<rdfs:Datatype rdf:about="&xs;string"/>
+
+<owl:DatatypeProperty rdf:about="#AmPm"/>
+
+<owl:DatatypeProperty rdf:about="#areDogsAllowed"/>
+
+<owl:DatatypeProperty rdf:about="#belongsToChain"/>
+
+<owl:DatatypeProperty rdf:about="#hasBeds"/>
+
+<owl:DatatypeProperty rdf:about="#hasCapacity"/>
+
+<owl:DatatypeProperty rdf:about="#hasDay"/>
+
+<owl:DatatypeProperty rdf:about="#hasDescription"/>
+
+<owl:DatatypeProperty rdf:about="#hasDistanceToBeach"/>
+
+<owl:DatatypeProperty rdf:about="#hasDistanceToSkiing"/>
+
+<owl:DatatypeProperty rdf:about="#hasHour"/>
+
+<owl:DatatypeProperty rdf:about="#hasInternetConnection"/>
+
+<owl:DatatypeProperty rdf:about="#hasLandmark"/>
+
+<owl:DatatypeProperty rdf:about="#hasLength"/>
+
+<owl:DatatypeProperty rdf:about="#hasMinute"/>
+
+<owl:DatatypeProperty rdf:about="#hasModel"/>
+
+<owl:DatatypeProperty rdf:about="#hasMonth"/>
+
+<owl:DatatypeProperty rdf:about="#hasName"/>
+
+<owl:DatatypeProperty rdf:about="#hasPhoneNumber"/>
+
+<owl:DatatypeProperty rdf:about="#hasPriceBusinessClass"/>
+
+<owl:DatatypeProperty rdf:about="#hasPriceEconomyClass"/>
+
+<owl:DatatypeProperty rdf:about="#hasPriceFirstClass"/>
+
+<owl:DatatypeProperty rdf:about="#hasProducer"/>
+
+<owl:DatatypeProperty rdf:about="#hasRooms"/>
+
+<owl:DatatypeProperty rdf:about="#hasRoomsAvailable"/>
+
+<owl:DatatypeProperty rdf:about="#hasStars"/>
+
+<owl:DatatypeProperty rdf:about="#hasTV"/>
+
+<owl:DatatypeProperty rdf:about="#hasURL"/>
+
+<owl:DatatypeProperty rdf:about="#hasWidth"/>
+
+<owl:DatatypeProperty rdf:about="#hasYear"/>
+
+<owl:DatatypeProperty rdf:about="#inStreet"/>
+
+<owl:ObjectProperty rdf:about="#byCustomer"/>
+
+<owl:ObjectProperty rdf:about="#hasArrivalDate"/>
+
+<owl:ObjectProperty rdf:about="#hasArrivalLocation"/>
+
+<owl:ObjectProperty rdf:about="#hasArrivalTime"/>
+
+<owl:ObjectProperty rdf:about="#hasDepartureDate"/>
+
+<owl:ObjectProperty rdf:about="#hasDepartureLocation"/>
+
+<owl:ObjectProperty rdf:about="#hasDepartureTime"/>
+
+<owl:ObjectProperty rdf:about="#hasTransports"/>
+
+<owl:ObjectProperty rdf:about="#hatesVehicle"/>
+
+<owl:ObjectProperty rdf:about="#isInLocation"/>
+
+<owl:ObjectProperty rdf:about="#usesVehicle"/>
+
+</rdf:RDF>

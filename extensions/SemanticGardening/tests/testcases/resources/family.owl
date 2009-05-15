@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY family "http://www.mindswap.org/ontologies/family.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.mindswap.org/ontologies/family.owl#"
+     xml:base="http://www.mindswap.org/ontologies/family.owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:family="http://www.mindswap.org/ontologies/family.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about=""/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasAncestor -->
+
+    <owl:ObjectProperty rdf:about="#hasAncestor">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasBrother -->
+
+    <owl:ObjectProperty rdf:about="#hasBrother">
+        <rdfs:range rdf:resource="#Male"/>
+        <rdfs:subPropertyOf rdf:resource="#hasSibling"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasChild -->
+
+    <owl:ObjectProperty rdf:about="#hasChild"/>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasDaughter -->
+
+    <owl:ObjectProperty rdf:about="#hasDaughter">
+        <rdfs:range rdf:resource="#Female"/>
+        <rdfs:subPropertyOf rdf:resource="#hasChild"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasFather -->
+
+    <owl:ObjectProperty rdf:about="#hasFather">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#Male"/>
+        <rdfs:subPropertyOf rdf:resource="#hasParent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasMother -->
+
+    <owl:ObjectProperty rdf:about="#hasMother">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#Female"/>
+        <rdfs:subPropertyOf rdf:resource="#hasParent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasParent -->
+
+    <owl:ObjectProperty rdf:about="#hasParent">
+        <rdfs:subPropertyOf rdf:resource="#hasAncestor"/>
+        <owl:inverseOf rdf:resource="#hasChild"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasSibling -->
+
+    <owl:ObjectProperty rdf:about="#hasSibling">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:range rdf:resource="#Person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasSister -->
+
+    <owl:ObjectProperty rdf:about="#hasSister">
+        <rdfs:range rdf:resource="#Female"/>
+        <rdfs:subPropertyOf rdf:resource="#hasSibling"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasSon -->
+
+    <owl:ObjectProperty rdf:about="#hasSon">
+        <rdfs:range rdf:resource="#Male"/>
+        <rdfs:subPropertyOf rdf:resource="#hasChild"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasUncle -->
+
+    <owl:ObjectProperty rdf:about="#hasUncle"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#hasAge -->
+
+    <owl:DatatypeProperty rdf:about="#hasAge">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Female -->
+
+    <owl:Class rdf:about="#Female">
+        <rdfs:subClassOf rdf:resource="#Person"/>
+        <owl:disjointWith rdf:resource="#Male"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Male -->
+
+    <owl:Class rdf:about="#Male">
+        <rdfs:subClassOf rdf:resource="#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Person -->
+
+    <owl:Class rdf:about="#Person">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Female"/>
+                    <rdf:Description rdf:about="#Male"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasParent"/>
+                <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:cardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Dad -->
+
+    <Person rdf:about="#Dad">
+        <hasChild rdf:resource="#Son"/>
+        <hasSon rdf:resource="#Son"/>
+    </Person>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Daughter -->
+
+    <Person rdf:about="#Daughter"/>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Grandpa -->
+
+    <Person rdf:about="#Grandpa">
+        <hasSon rdf:resource="#Dad"/>
+    </Person>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Mom -->
+
+    <Female rdf:about="#Mom">
+        <hasChild rdf:resource="#Daughter"/>
+        <hasChild rdf:resource="#Son"/>
+    </Female>
+    
+
+
+    <!-- http://www.mindswap.org/ontologies/family.owl#Son -->
+
+    <Person rdf:about="#Son">
+        <hasSister rdf:resource="#Daughter"/>
+    </Person>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 2.2.1.1101) http://owlapi.sourceforge.net -->
+
