@@ -75,7 +75,7 @@ function enableHaloACL() {
 function haclfSetupExtension() {
 	wfProfileIn('haclfSetupExtension');
 	global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits, 
-	       $wgLanguageCode, $wgVersion;
+	       $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
 
 	//--- Register hooks ---
 	global $wgHooks;
@@ -100,7 +100,15 @@ function haclfSetupExtension() {
 		SMWParserExtensions::registerParserFunctions( $wgParser );
 	}
 */
-	       
+
+	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files (only on special page requests).
+	if (stripos($wgRequest->getRequestURL(), $spns_text.":HaloACL") !== false
+			|| stripos($wgRequest->getRequestURL(), $spns_text."%3AHaloACL") !== false) {
+		$wgHooks['BeforePageDisplay'][]='haclAddHTMLHeader';
+	}
+	
 	//--- credits (see "Special:Version") ---
 	$wgExtensionCredits['other'][]= array(
 		'name'=>'HaloACL', 
@@ -110,6 +118,37 @@ function haclfSetupExtension() {
 		'description' => 'Protect the content of your wiki.');
 
 	wfProfileOut('haclfSetupExtension');
+	return true;
+}
+
+/**
+ * Adds Javascript and CSS files
+ *
+ * @param OutputPage $out
+ * @return true
+ */
+function haclAddHTMLHeader(&$out){
+	global $wgTitle;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+
+	global $haclgHaloScriptPath;
+
+	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
+	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
+	//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
+	//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
+	//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
+	//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
+	
+	$out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
+                    ));
+
 	return true;
 }
 
