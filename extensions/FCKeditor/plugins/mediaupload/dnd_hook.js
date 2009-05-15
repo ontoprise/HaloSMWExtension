@@ -6,6 +6,7 @@
 
 var WikiFormSelectDialog = new Object() ;
 
+
 // This method opens a dialog window using the standard dialog template.
 WikiFormSelectDialog.OpenDialog = function( dialogName, width, height, customValue, parentWindow, resizable )
 {
@@ -16,10 +17,11 @@ WikiFormSelectDialog.OpenDialog = function( dialogName, width, height, customVal
     oDialogInfo.Editor = window ;
     oDialogInfo.Filename = customValue ;     // Optional
     
-    var wikipathIndex = FCKConfig.BasePath.indexOf("/extensions");
+    var wikipathIndex = FCKConfig.BasePath.indexOf("/fckeditor");
     var wikiPath = FCKConfig.BasePath.substring(0, wikipathIndex);
     
-    var sUrl = wikiPath+"/index.php/" + 'Main_Page' ;
+    //var sUrl = wikiPath+"/index.php/" + 'Main_Page' ;
+    var sUrl = wikiPath + '/plugins/mediaupload/dialogs/uploadmedia.html'
     WikiFormSelectDialog.Show( oDialogInfo, dialogName, sUrl, width, height, window.top, resizable ) ;
 }
 
