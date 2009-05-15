@@ -5,6 +5,7 @@ require_once 'testcases/TestSemanticStore.php';
 require_once 'testcases/TestAutocompletionStore.php';
 require_once 'testcases/TestRuleRewriter.php';
 require_once 'testcases/TestWikiJobs.php';
+
 require_once 'testcases/TestQueryPrinters.php';
 
 
@@ -17,8 +18,9 @@ class HaloTests
 		$suite->addTestSuite("TestSemanticStore");
 		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestRuleRewriter");
-		$suite->addTestSuite("TestWikiJobs");
 		$suite->addTestSuite("TestQueryPrinters");
+		$suite->addTestSuite("TestWikiJobs");
+		
 		 
 
 		return $suite;
