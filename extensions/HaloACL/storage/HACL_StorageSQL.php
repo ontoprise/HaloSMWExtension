@@ -78,7 +78,7 @@ class HACLStorageSQL {
 
 		HACLDBHelper::setupTable($table, array(
 				'pe_id' 	=> 'INT(8) UNSIGNED NOT NULL',
-				'type' 		=> 'ENUM(\'category\', \'page\', \'namespace\', \'property\') DEFAULT \'page\' NOT NULL',
+				'type' 		=> 'ENUM(\'category\', \'page\', \'namespace\', \'property\', \'whitelist\') DEFAULT \'page\' NOT NULL',
 				'right_id' 	=> 'INT(8) UNSIGNED NOT NULL'), 
 				$db, $verbose, "pe_id,type,right_id");				
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
@@ -125,7 +125,7 @@ class HACLStorageSQL {
 		HACLDBHelper::setupTable($table, array(
 				'parent_group_id' 	=> 'INT(8) UNSIGNED NOT NULL',
 				'child_type' 		=> 'ENUM(\'group\', \'user\') DEFAULT \'user\' NOT NULL',
-				'child_id' 			=> 'INT(8) UNSIGNED NOT NULL'),
+				'child_id' 			=> 'INT(8) NOT NULL'),
 				$db, $verbose, "parent_group_id,child_type,child_id");
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "parent_group_id, child_type, child_id");
 		
@@ -149,7 +149,7 @@ class HACLStorageSQL {
 	 * 		Name of the group with the given ID or <null> if there is no such
 	 * 		group defined in the database.
 	 */
-	public static function groupNameForID($groupID) {
+	public function groupNameForID($groupID) {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
 		$sql = "SELECT group_name FROM $gt ".
@@ -214,8 +214,9 @@ class HACLStorageSQL {
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$groupID = $row->group_id;
-			$mgGroups = $row->mg_groups;
-			$mgUsers  = $row->mg_users;
+			$mgGroups = self::strToIntArray($row->mg_groups);
+			$mgUsers  = self::strToIntArray($row->mg_users);
+			
 			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
 		}
 		$db->freeResult($res);
@@ -248,8 +249,9 @@ class HACLStorageSQL {
 			$row = $db->fetchObject($res);
 			$groupID = $row->group_id;
 			$groupName = $row->group_name;
-			$mgGroups = $row->mg_groups;
-			$mgUsers  = $row->mg_users;
+			$mgGroups = self::strToIntArray($row->mg_groups);
+			$mgUsers  = self::strToIntArray($row->mg_users);
+						
 			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
 		}
 		$db->freeResult($res);
@@ -315,6 +317,22 @@ class HACLStorageSQL {
 				  'child_id '   =>  $userID));
 		
 	}
+	
+	/**
+	 * Removes all members from the group with the ID $groupID.
+	 *
+	 * @param $groupID
+	 * 		The ID of the group from which the user is removed.  
+	 *  
+	 */
+	public function removeAllMembersFromGroup($groupID) {
+		$db =& wfGetDB( DB_MASTER );
+
+		$db->delete($db->tableName('halo_acl_group_members'), 
+		            array('parent_group_id' => $groupID));
+		
+	}
+	
 	
 	/**
 	 * Removes the group with the ID $childGroupID from the group with the ID
@@ -489,6 +507,25 @@ class HACLStorageSQL {
 		$db->delete($table, array('group_id' => $groupID));
 		
 	}
+		
+	/**
+	 * Checks if the group with the ID $groupID exists in the database.
+	 *
+	 * @param int $groupID
+	 * 		ID of the group
+	 * 
+	 * @return bool
+	 * 		<true> if the group exists
+	 * 		<false> otherwise
+	 */
+		public function groupExists($groupID) {
+		$db =& wfGetDB( DB_SLAVE );
+		
+		$obj = $db->selectRow($db->tableName('halo_acl_groups'), 
+			                  array("group_id"), array("group_id" => $groupID));
+		return ($obj !== false);
+	}
+	
 
 	/***************************************************************************
 	 * 
@@ -629,6 +666,9 @@ class HACLStorageSQL {
 		$childIDs = array();
 		$exclude = array();
 		while (true) {
+			if (empty($parentIDs)) {
+				break;
+			}
 			$sql = "SELECT DISTINCT child_id FROM $t WHERE ".
 			          "parent_right_id in (".implode(',', $parentIDs).");";
 			$res = $db->query($sql);
@@ -646,8 +686,9 @@ class HACLStorageSQL {
 					$parentIDs[] = $cid; 
 				}
 			}
+			$numRows = $db->numRows($res);
 			$db->freeResult($res);
-			if ($db->numRows($res) == 0 || !$recursively) {
+			if ($numRows == 0 || !$recursively) {
 				// No further children found
 				break;
 			}
@@ -746,8 +787,9 @@ class HACLStorageSQL {
 			$sdID = (int)$row->sd_id;
 			$peID = (int)$row->pe_id;
 			$type   = $row->type;
-			$mgGroups = $row->mr_groups;
-			$mgUsers  = $row->mr_users;
+			$mgGroups = self::strToIntArray($row->mr_groups);
+			$mgUsers  = self::strToIntArray($row->mr_users);
+			
 			$name = HACLSecurityDescriptor::nameForID($sdID);
 			$sd = new HACLSecurityDescriptor($sdID, $name, $peID, $type, $mgGroups, $mgUsers);
 		}
@@ -757,18 +799,20 @@ class HACLStorageSQL {
 	}
 	
 	/**
-	 * Deletes the SD with the ID $SDID from the database. All references 
-	 * to the group in the hierarchy of groups are deleted as well.
-	 * 
-	 * However, the group is not removed from any rights, security descriptors etc.
-	 * as this would mean that articles will have to be changed.
-	 * 
+	 * Deletes the SD with the ID $SDID from the database. The right remains as
+	 * child in the hierarchy of rights, as it is still defined as child in the
+	 * articles that define its parents.
 	 * 
 	 * @param int $SDID
 	 * 		ID of the SD that is removed from the database.
+	 * @param bool $rightsOnly
+	 * 		If <true>, only the rights that $SDID contains are deleted from
+	 * 		the hierarchy of rights, but $SDID is not removed.
+	 * 		If <false>, the complete $SDID is removed (but remains as child
+	 * 		in the hierarchy of rights).
 	 *
 	 */
-	public function deleteSD($SDID) {
+	public function deleteSD($SDID, $rightsOnly = false) {
 		$db =& wfGetDB( DB_MASTER );
 
 		// Delete all inline rights that are defined by the SD (and the 
@@ -794,6 +838,7 @@ class HACLStorageSQL {
 		$secDesc = $db->tableName('halo_acl_security_descriptors');
 		if (!empty($irs)) {
 			$sds = $this->getSDsIncludingPR($SDID);
+			$sds[] = $SDID;
 			foreach ($sds as $sd) {
 				// retrieve the protected element and its type
 				$obj = $db->selectRow($secDesc, 
@@ -821,7 +866,9 @@ class HACLStorageSQL {
 				
 		// Delete the SD from the hierarchy of rights in halo_acl_rights_hierarchy
 		$table = $db->tableName('halo_acl_rights_hierarchy');
-		$db->delete($table, array('child_id' => $SDID));
+//		if (!$rightsOnly) {
+//			$db->delete($table, array('child_id' => $SDID));
+//		}
 		$db->delete($table, array('parent_right_id' => $SDID));
 		
 		// Rematerialize the rights of the parents of $SDID
@@ -831,9 +878,10 @@ class HACLStorageSQL {
 		}
 		
 		// Delete the SD from the definition of SDs in halo_acl_security_descriptors
-		$table = $db->tableName('halo_acl_security_descriptors');
-		$db->delete($table, array('sd_id' => $SDID));
-		
+		if (!$rightsOnly) {
+			$table = $db->tableName('halo_acl_security_descriptors');
+			$db->delete($table, array('sd_id' => $SDID));
+		}
 		
 	}
 	
@@ -908,8 +956,8 @@ class HACLStorageSQL {
 			$row = $db->fetchObject($res);
 			$rightID = $row->right_id;
 			$actions = $row->actions;
-			$groups = $row->groups;
-			$users  = $row->users;
+			$groups = self::strToIntArray($row->groups);
+			$users  = self::strToIntArray($row->users);
 			$description = $row->description;
 			$originID = $row->origin_id;
 			$sd = new HACLRight($actions, $groups, $users, $description, $originID);
@@ -937,6 +985,7 @@ class HACLStorageSQL {
 	 * 		ID of the action. One of
 	 * 		HACLRight::READ
 	 * 		HACLRight::FORMEDIT
+	 * 		HACLRight::WYSIWYG
 	 * 		HACLRight::EDIT
 	 * 		HACLRight::ANNOTATE
 	 * 		HACLRight::CREATE
@@ -989,6 +1038,140 @@ class HACLStorageSQL {
 		$db->delete($table, array('right_id' => $rightID));
 		
 	}
+
+	/**
+	 * Checks if the SD with the ID $sdID exists in the database.
+	 *
+	 * @param int $sdID
+	 * 		ID of the SD
+	 * 
+	 * @return bool
+	 * 		<true> if the SD exists
+	 * 		<false> otherwise
+	 */
+	public function sdExists($sdID) {
+		$db =& wfGetDB( DB_SLAVE );
+		
+		$obj = $db->selectRow($db->tableName('halo_acl_security_descriptors'), 
+			                      array("sd_id"), array("sd_id" => $sdID));
+		return ($obj !== false);
+	}
 	
+	/**
+	 * Tries to find the ID of the security descriptor for the protected element
+	 * with the ID $peID.
+	 *
+	 * @param int $peID
+	 * 		ID of the protected element
+	 * 
+	 * @return mixed int|bool
+	 * 		int: ID of the security descriptor
+	 * 		<false>, if there is no SD for the protected element
+	 */
+	public static function getSDForPE($peID) {
+		$db =& wfGetDB( DB_SLAVE );
+		
+		$obj = $db->selectRow($db->tableName('halo_acl_security_descriptors'), 
+			                      array("sd_id"), array("pe_id" => $peID));
+		return ($obj === false) ? false : $obj->sd_id;
+	}
+	
+	
+	/***************************************************************************
+	 * 
+	 * Functions for the whitelist
+	 * 
+	 **************************************************************************/
+	
+	/**
+	 * Stores the whitelist that is given in an array of page IDs in the database.
+	 * All previous whitelist entries are deleted before the new list is inserted.
+	 *
+	 * @param array(int) $pageIDs
+	 * 		An array of page IDs of all articles that are part of the whitelist.
+	 */
+	public function saveWhitelist($pageIDs) {
+		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_pe_rights');
+		
+		// delete old whitelist entries
+		$db->delete($t, array('type' => 'whitelist'));
+		
+		$setValues = array();
+		foreach ($pageIDs as $pid) {
+			$setValues[] = array(
+					  'pe_id'     => $pid,
+					  'type'	  => 'whitelist',
+					  'right_id'  => 0);
+		}
+		$db->insert($t, $setValues);
+		
+	}
+	
+	/**
+	 * Returns the IDs of all pages that are in the whitelist.
+	 *
+	 * @return array(int)
+	 * 		Article-IDs of all pages in the whitelist
+	 * 
+	 */
+	public function getWhitelist() {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_pe_rights');
+		
+		$res = $db->select($t, 'pe_id', "type='whitelist'");
+		$pageIDs = array();
+		while ($row = $db->fetchObject($res)) {
+			$pageIDs[] = (int)$row->pe_id;
+		}
+		$db->freeResult($res);
+		
+		return $pageIDs;
+	}
+	
+	/**
+	 * Checks if the article with the ID <$pageID> is part of the whitelist.
+	 *
+	 * @param int $pageID
+	 * 		IDs of the page which is checked for membership in the whitelist
+	 * 
+	 * @return bool
+	 * 		<true>, if the article is part of the whitelist
+	 * 		<false>, otherwise
+	 */
+	public function isInWhitelist($pageID) {
+		$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_pe_rights');
+		
+		$obj = $db->selectRow($t, array('pe_id'), 
+								  array('type'  => 'whitelist',
+								        'pe_id' => $pageID));
+		return $obj !== false;
+		
+	}
+	
+	/**
+	 * Lists of users and groups are stored as comma separated string of IDs.
+	 * This function converts the string to an array of integers. Non-numeric
+	 * elements in the list are skipped.
+	 *
+	 * @param string $values
+	 * 		comma separated string of integer values
+	 * @return array(int)
+	 * 		Array of integers or <null> if the string was empty.
+	 */
+	private static function strToIntArray($values) {
+		if (!is_string($values) || strlen($values) == 0) {
+			return null;
+		}
+		$values = explode(',', $values);
+		$intValues = array();
+		foreach ($values as $v) {
+			if (is_numeric($v)) {
+				$intValues[] = (int) trim($v);
+			}
+		}
+		return (count($intValues) > 0 ? $intValues : null);
+	}
 }
 ?>

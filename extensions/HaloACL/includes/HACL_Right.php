@@ -65,12 +65,14 @@ class  HACLRight  {
 	
 	//--- Constants ---
 	//---- Operations ----
-	const READ     = 64;
-	const FORMEDIT = 32;
-	const EDIT     = 16;
-	const CREATE   = 8;
-	const MOVE     = 4;
-	const ANNOTATE = 2;
+	const ALL_ACTIONS = 255;
+	const READ     = 128;
+	const FORMEDIT = 64;
+	const WYSIWYG  = 32;
+	const ANNOTATE = 16;
+	const EDIT     = 8;
+	const CREATE   = 4;
+	const MOVE     = 2;
 	const DELETE   = 1;
 	
 	//---- Mode parameter for getUsersEx/getGroupsEx ----
@@ -96,7 +98,7 @@ class  HACLRight  {
 	 *
 	 * @param int $actions
 	 * 		Actions that are granted by this rule. This is a bit-field of
-	 *      the ORed values HACLRight::READ, HACLRight::FORMEDIT, 
+	 *      the ORed values HACLRight::READ, HACLRight::FORMEDIT, HACLRight::WYSIWYG,
 	 *      HACLRight::EDIT, HACLRight::CREATE, HACLRight::MOVE, HACLRight::ANNOTATE,
 	 *      HACLRight::DELETE. According to the hierarchy of rights, missing
 	 * 		rights are set automatically.
@@ -186,7 +188,7 @@ class  HACLRight  {
 	 * 		HACLRightException(HACLRightException::UNKNOWN_RIGHT)
 	 * 			... if there is no right with this ID in the database
 	 */
-	public function newFromID($rightID) {
+	public static function newFromID($rightID) {
 		$right = HACLStorage::getDatabase()->getRightByID($rightID);
 		if ($right == null) {
 			throw new HACLRightException(HACLRightException::UNKNOWN_RIGHT, $rightID);
@@ -250,6 +252,11 @@ class  HACLRight  {
 		list($userID, $userName) = haclfGetUserID($user);
 		// Check if the right is directly granted for the user
 		if (in_array($userID, $this->mUsers)) {
+			return true;
+		}
+		
+		// Check if this right is granted to registered users (ID = -1)
+		if ($userID > 0 && in_array(-1, $this->mUsers)) {
 			return true;
 		}
 		
@@ -344,18 +351,8 @@ class  HACLRight  {
 			$this->mUsers = $users;
 			for ($i = 0; $i < count($users); ++$i) {
 				$mu = $users[$i];
-				if (is_int($mu)) {
-					// do nothing
-				} else if (is_numeric($mu)) {
-					$this->mUsers[$i] = (int) $mu;
-				} else if (is_string($mu)) {
-					// convert a user name to a group ID
-					$uid = User::idFromName(trim($mu));
-					if (!$uid) {
-						throw new HACLException(HACLException::UNKOWN_USER, $mu);
-					}
-					$this->mUsers[$i] =  $uid;
-				}
+				list($uid, $uname) = haclfGetUserID(trim($mu));
+				$this->mUsers[$i] = $uid;
 			}
 		} else {
 			$this->mUsers = array();
@@ -473,13 +470,21 @@ class  HACLRight  {
 	 */
 	private function completeActions($actions) {
 		// Complete the hierarchy of rights
-		if ($actions & (HACLRight::CREATE | HACLRight::MOVE | HACLRight::ANNOTATE | HACLRight::DELETE)) {
-			$actions |= HACLRight::READ | HACLRight::FORMEDIT | HACLRight::EDIT;
+		if ($actions & (HACLRight::CREATE | HACLRight::MOVE | HACLRight::DELETE)) {
+			$actions |= HACLRight::READ | HACLRight::FORMEDIT | 
+			            HACLRight::ANNOTATE | HACLRight::WYSIWYG | HACLRight::EDIT;
 		}
 		if ($actions & HACLRight::EDIT) {
-			$actions |= HACLRight::READ | HACLRight::FORMEDIT;
+			$actions |= HACLRight::READ | HACLRight::FORMEDIT| 
+			            HACLRight::ANNOTATE | HACLRight::WYSIWYG;
 		}
 		if ($actions & HACLRight::FORMEDIT) {
+			$actions |= HACLRight::READ;
+		}
+		if ($actions & HACLRight::ANNOTATE) {
+			$actions |= HACLRight::READ;
+		}
+		if ($actions & HACLRight::WYSIWYG) {
 			$actions |= HACLRight::READ;
 		}
 		return $actions;

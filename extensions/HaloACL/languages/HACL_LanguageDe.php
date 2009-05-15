@@ -24,6 +24,8 @@ if (!defined('MEDIAWIKI')) die();
 
 global $haclgIP;
 include_once($haclgIP . '/languages/HACL_Language.php');
+include_once($haclgIP . '/includes/HACL_Right.php');
+include_once($haclgIP . '/includes/HACL_SecurityDescriptor.php');
 
 
 /**
@@ -40,7 +42,54 @@ class HACLLanguageDe extends HACLLanguage {
 	
 	protected $mPermissionDeniedPage = "Zugriff verweigert";
 	
+	protected $mParserFunctions = array(
+		HACLLanguage::PF_ACCESS			=> 'Zugriff', 
+		HACLLanguage::PF_MANAGE_RIGHTS		=> 'Rechte verwalten',
+		HACLLanguage::PF_MANAGE_GROUP		=> 'Gruppe verwalten',
+		HACLLanguage::PF_PREDEFINED_RIGHT	=> 'vordefiniertes Recht',
+		HACLLanguage::PF_PROPERTY_ACCESS	=> 'Attributzugriff',
+		HACLLanguage::PF_WHITELIST			=> 'Whitelist',
+		HACLLanguage::PF_MEMBER			=> 'Mitglied'
+	);
 
+	protected $mParserFunctionsParameters = array(
+		HACLLanguage::PFP_ASSIGNED_TO	=> 'zugewiesen', 
+		HACLLanguage::PFP_ACTIONS		=> 'Aktionen', 
+		HACLLanguage::PFP_DESCRIPTION	=> 'Beschreibung', 
+		HACLLanguage::PFP_RIGHTS		=> 'Rechte', 
+		HACLLanguage::PFP_PAGES		=> 'Seiten', 
+		HACLLanguage::PFP_MEMBERS		=> 'Mitglieder', 
+	);
+	
+	protected $mActionNames = array(
+		HACLRight::READ     => 'lesen',
+		HACLRight::FORMEDIT => 'formulareditieren',
+		HACLRight::WYSIWYG  => 'wysiwyg',
+		HACLRight::EDIT     => 'editieren',
+		HACLRight::CREATE   => 'erzeugen',
+		HACLRight::MOVE     => 'verschieben',
+		HACLRight::ANNOTATE => 'annotieren',
+		HACLRight::DELETE   => 'löschen',
+		HACLRight::ALL_ACTIONS => '*'
+	);
+	
+	protected $mCategories = array(
+		HACLLanguage::CAT_GROUP		=> 'Kategorie:Rechte/Gruppe',
+		HACLLanguage::CAT_RIGHT		=> 'Kategorie:Rechte/Recht',
+		HACLLanguage::CAT_SECURITY_DESCRIPTOR => 'Kategorie:Rechte/Sicherheitsbeschreibung'
+	);
+	
+	protected $mWhitelist = "Weiße Liste";
+	
+	protected $mPetPrefixes = array(
+		HACLSecurityDescriptor::PET_PAGE	  => 'Seite',
+		HACLSecurityDescriptor::PET_CATEGORY  => 'Kategorie',
+		HACLSecurityDescriptor::PET_NAMESPACE => 'Namensraum',
+		HACLSecurityDescriptor::PET_PROPERTY  => 'Attribut',
+		HACLSecurityDescriptor::PET_RIGHT	  => 'Recht'
+	);
+	
+	
 }
 
 

@@ -45,7 +45,9 @@ class HACLEvaluator {
 //	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
-	private $mXY;    		//string: comment
+	private static $mValidActions = array('read', 'formedit', 'annotate',
+	                                      'wysiwyg', 'edit', 'create', 'move',
+										  'delete');
 	
 	/**
 	 * Constructor for  HACLEvaluator
@@ -84,23 +86,83 @@ class HACLEvaluator {
 	 * 		true
 	 */
 	public static function userCan($title, $user, $action, &$result) {
-		
-		$articleID = $title->getArticleID();
-		$userID = $user->getId();
-		
-		// first check page rights
-		$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
-		                    $userID, $action);
-		if ($r) {
+		// reading the page "Permission denied" is allowed.
+		global $haclgContLang;
+		if ($title->getText() == $haclgContLang->getPermissionDeniedPage()
+			&& $action == 'read') {
 			$result = true;
 			return true;
+	    }
+	    
+		//Special handling of action "wysiwyg". This is passed as 
+		// "action=edit&mode=wysiwyg"
+		if ($action == 'edit') {
+			global $wgRequest;
+			$action = $wgRequest->getVal('mode', 'edit');
+		}
+		
+		// Reject unknown actions
+		if (!in_array($action, self::$mValidActions)) {
+			$result = false;
+			return false;
+		}
+	    
+		$articleID = (int) $title->getArticleID();
+		$userID = $user->getId();
+		
+		if ($articleID == 0) {
+			// The article does not exist yet
+			if ($action == 'create' || $action == 'edit') {
+				// Check if the user is allowed to create an SD
+				$allowed = self::checkSDCreation($title, $user);
+				if ($allowed == false) {
+					$result = false;
+					return false;
+				}
+			}
+			//TODO: Check if the article belongs to a namespace with an SD
+			$result = true;
+			return true;
+		}
+		// Check if there is a security descriptor for the article.
+		$hasSD = HACLSecurityDescriptor::getSDForPE($articleID) !== false;
+		
+		// first check page rights
+		if ($hasSD) {
+			$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
+			                    $userID, $action);
+			if ($r) {
+				$result = true;
+				return true;
+			}
 		}
 		
 		// check namespace rights
 		
 		// check category rights
 		
-		return true;
+		// check the whitelist
+		if (HACLWhitelist::isInWhitelist($articleID) && $action == 'read') {
+			// articles in the whitelist can be read
+			$result = true;
+			return true;
+		}
+		
+		if (!$hasSD) {
+			global $haclgOpenWikiAccess;
+			// Articles with no SD are not protected if $haclgOpenWikiAccess is
+			// true. Otherwise access is denied
+			$result = $haclgOpenWikiAccess;
+			return $haclgOpenWikiAccess;
+		}
+		
+//TODO: while the rights are not complete
+//		$result = true;
+//		return true;
+
+		// permission denied
+		$result = false;
+		return false;
 	}
 
 	
@@ -135,6 +197,9 @@ class HACLEvaluator {
 			case "formedit":
 				$actionID = HACLRight::FORMEDIT;
 				break;
+			case "wysiwyg":
+				$actionID = HACLRight::WYSIWYG;
+				break;
 			case "edit":
 				$actionID = HACLRight::EDIT;
 				break;
@@ -150,9 +215,11 @@ class HACLEvaluator {
 			case "delete":
 				$actionID = HACLRight::DELETE;
 				break;
+			default:
+				return false;
 		}
 		$rightIDs = HACLStorage::getDatabase()->getRights($titleID, $type, $actionID);
-		
+				
 		// Check for all rights, if they are granted for the given user
 		foreach ($rightIDs as $r) {
 			$right = HACLRight::newFromID($r);
@@ -167,4 +234,54 @@ class HACLEvaluator {
 	
 	//--- Private methods ---
 	
+	/**
+	 * This method is important if the mode of the access control is 
+	 * "closed wiki access". If the wiki access is open, articles without security
+	 * descriptor have full access. If it is closed, nobody can access the article
+	 * until a security descriptor is defined. Only the latest author of the article
+	 * can do this. This method checks, if a security descriptor can be created.
+	 *
+	 * @param Title $title
+	 * 		Title of the article that will be created
+	 * @param User $user
+	 * 		User who wants to create the article
+	 * @return bool|string
+	 * 		<true>, if the user can create the security descriptor
+	 * 		<false>, if not
+	 * 		"n/a", if this method is not applicable for the given article creation 
+	 */
+	private static function checkSDCreation($title, $user) {
+		global $haclgOpenWikiAccess;
+		if ($haclgOpenWikiAccess) {
+			// the wiki is open => not applicable
+			return "n/a";
+		}
+		if ($title->getNamespace() != HACL_NS_ACL) {
+			// The title is not in the ACL namespace => not applicable
+			return "n/a";
+		}
+		
+		list($peName, $peType) = HACLSecurityDescriptor::nameOfPE($title->getText());
+		if ($peType != HACLSecurityDescriptor::PET_PAGE &&
+		    $peType != HACLSecurityDescriptor::PET_PROPERTY) {
+		    // only applicable to pages and properties
+		    return "n/a";
+		}
+		
+		// get the latest author of the protected article
+		global $haclgEnableTitleCheck;
+		$etc = $haclgEnableTitleCheck;
+		$haclgEnableTitleCheck = false;
+		$t = Title::newFromText($peName);
+		$haclgEnableTitleCheck = $etc;
+		$article = new Article($t);
+		if (!$article->exists()) {
+			// article does not exist => no applicable
+			return "n/a";
+		}
+		$authors = $article->getLastNAuthors(1);
+		
+		return $authors[0] == $user->getName();
+		
+	}
 }

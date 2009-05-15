@@ -62,6 +62,16 @@ $haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 $haclgEnableTitleCheck = true;
 
 ###
+# true
+#    If this value is <true>, all articles that have no security descriptor are 
+#    fully accessible. Remember that security descriptor are also inherited via 
+#    categories or namespaces. 
+# false
+#    If it is <false>, no access is granted at all. Only the latest author of an 
+#    article can create a security descriptor. 
+$haclgOpenWikiAccess = true;
+
+###
 # By design several databases can be connected to HaloACL. (However, in the first
 # version there is only an implementation for MySQL.) With this variable you can
 # specify which store will actually be used.

@@ -89,59 +89,10 @@ class  HACLGroup  {
 		}
 		$this->mGroupID = 0+$groupID;
 		$this->mGroupName = $groupName;
-				
-		if (!empty($manageGroups) && is_string($manageGroups)) {
-			// Managing groups are given as comma separated string
-			// Split into an array
-			$manageGroups = explode(',', $manageGroups);
-		}
-		if (is_array($manageGroups)) {
-			$this->mManageGroups = $manageGroups;
-			for ($i = 0; $i < count($manageGroups); ++$i) {
-				$mg = $manageGroups[$i];
-				if (is_int($mg)) {
-					// do nothing
-				} else if (is_numeric($mg)) {
-					$this->mManageGroups[$i] = (int) $mg;
-				} else if (is_string($mg)) {
-					// convert a group name to a group ID
-					$gid = self::idForGroup(trim($mg));
-					if (!$gid) {
-						throw new HACLGroupException(HACLGroupException::UNKOWN_GROUP, $mg);
-					}
-					$this->mManageGroups[$i] = (int) $gid; 
-				}
-			}
-		} else {
-			$this->mManageGroups = array();
-		}
-
-		if (!empty($manageUsers) && is_string($manageUsers)) {
-			// Managing users are given as comma separated string
-			// Split into an array
-			$manageUsers = explode(',', $manageUsers);
-		}
-		if (is_array($manageUsers)) {
-			$this->mManageUsers = $manageUsers;
-			for ($i = 0; $i < count($manageUsers); ++$i) {
-				$mu = $manageUsers[$i];
-				if (is_int($mu)) {
-					// do nothing
-				} else if (is_numeric($mu)) {
-					$this->mManageUsers[$i] = (int) $mu;
-				} else if (is_string($mu)) {
-					// convert a user name to a group ID
-					$uid = User::idFromName(trim($mu));
-					if (!$uid) {
-						throw new HACLException(HACLException::UNKOWN_USER, $mu);
-					}
-					$this->mManageUsers[$i] =  (int) $uid;
-				}
-			}
-		} else {
-			$this->mManageUsers = array();
-		}
 		
+		$this->setManageGroups($manageGroups);
+		$this->setManageUsers($manageUsers);
+			
 	}
 	
 	//--- getter/setter ---
@@ -163,11 +114,19 @@ class  HACLGroup  {
 	 * 		Name of the group.
 	 * 
 	 * @return HACLGroup
-	 * 		A new group object or <null> if there is no such group in the 
-	 * 		database.
+	 * 		A new group object.
+	 * 
+	 * @throws 
+	 * 		HACLGroupException(HACLGroupException::UNKNOWN_Group)
+	 * 			...if the requested group in the not the database.
+	 *  
 	 */
-	public function newFromName($groupName) {
-		return HACLStorage::getDatabase()->getGroupByName($groupName);
+	public static function newFromName($groupName) {
+		$group = HACLStorage::getDatabase()->getGroupByName($groupName);
+		if ($group === null) {
+			throw new HACLGroupException(HACLGroupException::UNKNOWN_GROUP, $groupName);
+		}
+		return $group;
 	}
 
 	/**
@@ -178,11 +137,18 @@ class  HACLGroup  {
 	 * 		ID of the group i.e. the ID of the article that defines the group.
 	 * 
 	 * @return HACLGroup
-	 * 		A new group object or <null> if there is no such group in the 
-	 * 		database.
+	 * 		A new group object.
+	 * 
+	 * @throws 
+	 * 		HACLGroupException(HACLGroupException::INVALID_GROUP_ID)
+	 * 			...if the requested group in the not the database.
 	 */
-	public function newFromID($groupID) {
-		return HACLStorage::getDatabase()->getGroupByID($groupID);
+	public static function newFromID($groupID) {
+		$group = HACLStorage::getDatabase()->getGroupByID($groupID);
+		if ($group === null) {
+			throw new HACLGroupException(HACLGroupException::INVALID_GROUP_ID, $groupID);
+		}
+		return $group;
 	}
 	
 	/**
@@ -231,6 +197,19 @@ class  HACLGroup  {
 		return HACLStorage::getDatabase()->groupNameForID($groupID);
 	}
 
+	/**
+	 * Checks if the group with the ID $groupID exists in the database.
+	 *
+	 * @param int $groupID
+	 * 		ID of the group
+	 * 
+	 * @return bool
+	 * 		<true> if the group exists
+	 * 		<false> otherwise
+	 */
+	public static function exists($groupID) {
+		return HACLStorage::getDatabase()->groupExists($groupID);
+	}
 	
 	/**
 	 * Checks if the given user can modify this group.
@@ -259,6 +238,10 @@ class  HACLGroup  {
 		list($userID, $userName) = haclfGetUserID($user);
 		// Check if the user can modify the group
 		if (in_array($userID, $this->mManageUsers)) {
+			return true;
+		}
+		if ($userID > 0 && in_array(-1, $this->mManageUsers)) {
+			// registered users can modify the SD
 			return true;
 		}
 		
@@ -316,6 +299,83 @@ class  HACLGroup  {
 	}
 	
 	/**
+	 * Sets the users who can manage this group. The group has to be saved 
+	 * afterwards to persists the changes in the database.
+	 *
+	 * @param mixed string|array(mixed int|string|User) $manageUsers
+	 * 		If a single string is given, it contains a comma-separated list of
+	 * 		user names. 
+	 * 		If an array is given, it can contain user-objects, names of users or
+	 *      IDs of a users. If <null> or empty, the currently logged in user is 
+	 *      assumed.
+	 *      There are two special user names: 
+	 * 			'*' - anonymous user (ID:0)
+	 *			'#' - all registered users (ID: -1)
+	 * @throws 
+	 * 		HACLException(HACLException::UNKOWN_USER)
+	 * 			...if a user does not exist.
+	 */
+	public function setManageUsers($manageUsers) {
+		if (!empty($manageUsers) && is_string($manageUsers)) {
+			// Managing users are given as comma separated string
+			// Split into an array
+			$manageUsers = explode(',', $manageUsers);
+		}
+		if (is_array($manageUsers)) {
+			$this->mManageUsers = $manageUsers;
+			for ($i = 0; $i < count($manageUsers); ++$i) {
+				$mu = $manageUsers[$i];
+				if (is_string($mu)) {
+					$mu = trim($mu);
+				}
+				$uid = haclfGetUserID($mu);
+				$this->mManageUsers[$i] = $uid[0];
+							}
+		} else {
+			$this->mManageUsers = array();
+		}
+		
+	}
+
+	/**
+	 * Sets the groups who can manage this group. The group has to be saved 
+	 * afterwards to persists the changes in the database.
+	 *
+	 * @param mixed string|array(mixed int|string|User) $manageGroups
+	 * 		If a single string is given, it contains a comma-separated list of
+	 * 		group names. 
+	 * 		If an array is given, it can contain IDs (int), names (string) or 
+	 *      objects (HACLGroup) for the group
+	 * @throws 
+	 * 		HACLException(HACLException::UNKOWN_USER)
+	 * 			...if a user does not exist.
+	 */
+	public function setManageGroups($manageGroups) {
+		if (!empty($manageGroups) && is_string($manageGroups)) {
+			// Managing groups are given as comma separated string
+			// Split into an array
+			$manageGroups = explode(',', $manageGroups);
+		}
+		if (is_array($manageGroups)) {
+			$this->mManageGroups = $manageGroups;
+			for ($i = 0; $i < count($manageGroups); ++$i) {
+				$mg = $manageGroups[$i];
+				if (is_string($mg)) {
+					$mg = trim($mg);
+				}
+				$gid = self::idForGroup($mg);
+				if (!$gid) {
+					throw new HACLGroupException(HACLGroupException::UNKOWN_GROUP, $mg);
+				}
+				$this->mManageGroups[$i] = (int) $gid;
+			}
+		} else {
+			$this->mManageGroups = array();
+		}
+		
+	}
+	
+	/**
 	 * Adds the user $user to this group. The new user is immediately added
 	 * to the group's definition in the database.
 	 * 
@@ -368,6 +428,23 @@ class  HACLGroup  {
 		HACLStorage::getDatabase()->addGroupToGroup($this->mGroupID, $groupID);
 	}
 	
+	/**
+	 * Removes all members (groups and users) from this group. They are 
+	 * immediately removed from the group's definition in the database.
+	 * 
+	 * @param User/string/int $mgUser
+	 * 		User-object, name of a user or ID of a user who wants to modify this
+	 * 		group. If <null>, the currently logged in user is assumed.
+	 *  
+	 * @throws 
+	 * 		HACLGroupException(HACLGroupException::USER_CANT_MODIFY_GROUP) 
+	 * 
+	 */
+	public function removeAllMembers($mgUser=null) {
+		// Check if $mgUser can modifiy this group.
+		$this->userCanModify($mgUser, true);
+		HACLStorage::getDatabase()->removeAllMembersFromGroup($this->mGroupID);
+	}
 	
 	/**
 	 * Removes the user $user from this group. The user is immediately removed

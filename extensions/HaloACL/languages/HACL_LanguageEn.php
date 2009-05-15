@@ -24,6 +24,8 @@ if (!defined('MEDIAWIKI')) die();
 
 global $haclgIP;
 include_once($haclgIP . '/languages/HACL_Language.php');
+include_once($haclgIP . '/includes/HACL_Right.php');
+include_once($haclgIP . '/includes/HACL_SecurityDescriptor.php');
 
 
 /**
@@ -39,6 +41,54 @@ class HACLLanguageEn extends HACLLanguage {
 	);
 
 	protected $mPermissionDeniedPage = "Permission denied";
+	
+	protected $mParserFunctions = array(
+		HACLLanguage::PF_ACCESS				=> 'access', 
+		HACLLanguage::PF_MANAGE_RIGHTS		=> 'manage rights',
+		HACLLanguage::PF_MANAGE_GROUP		=> 'manage group',
+		HACLLanguage::PF_PREDEFINED_RIGHT	=> 'predefined right',
+		HACLLanguage::PF_PROPERTY_ACCESS	=> 'property access',
+		HACLLanguage::PF_WHITELIST			=> 'whitelist',
+		HACLLanguage::PF_MEMBER				=> 'member'
+	);
+	
+	protected $mParserFunctionsParameters = array(
+		HACLLanguage::PFP_ASSIGNED_TO	=> 'assigned to', 
+		HACLLanguage::PFP_ACTIONS		=> 'actions', 
+		HACLLanguage::PFP_DESCRIPTION	=> 'description', 
+		HACLLanguage::PFP_RIGHTS		=> 'rights', 
+		HACLLanguage::PFP_PAGES			=> 'pages', 
+		HACLLanguage::PFP_MEMBERS		=> 'members', 
+	);
+	
+	protected $mActionNames = array(
+		HACLRight::READ     => 'read',
+		HACLRight::FORMEDIT => 'formedit',
+		HACLRight::WYSIWYG	=> 'wysiwyg',
+		HACLRight::EDIT     => 'edit',
+		HACLRight::CREATE   => 'create',
+		HACLRight::MOVE     => 'move',
+		HACLRight::ANNOTATE => 'annotate',
+		HACLRight::DELETE   => 'delete',
+		HACLRight::ALL_ACTIONS => '*'
+	);
+	
+	protected $mCategories = array(
+		HACLLanguage::CAT_GROUP		=> 'Category:ACL/Group',
+		HACLLanguage::CAT_RIGHT		=> 'Category:ACL/Right',
+		HACLLanguage::CAT_SECURITY_DESCRIPTOR => 'Category:ACL/ACL',
+	);
+	
+	protected $mWhitelist = "Whitelist";
+	
+	protected $mPetPrefixes = array(
+		HACLSecurityDescriptor::PET_PAGE	  => 'Page',
+		HACLSecurityDescriptor::PET_CATEGORY  => 'Category',
+		HACLSecurityDescriptor::PET_NAMESPACE => 'Namespace',
+		HACLSecurityDescriptor::PET_PROPERTY  => 'Property',
+		HACLSecurityDescriptor::PET_RIGHT	  => 'Right'
+	);
+	
 	
 }
 

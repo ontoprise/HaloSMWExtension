@@ -27,6 +27,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
+
 /**
  * Switch on Halo Access Control Lists. This function must be called in 
  * LocalSettings.php after HACL_Initialize.php was included and default values
@@ -40,6 +41,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 function enableHaloACL() {
 	global $haclgIP, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
 
+	require_once("$haclgIP/includes/HACL_ParserFunctions.php");
+	
 	$wgExtensionFunctions[] = 'haclfSetupExtension';
 	$wgHooks['LanguageGetMagic'][] = 'haclfAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Messages.php'; // register messages (requires MW=>1.11)
@@ -54,6 +57,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
 	$wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
 	$wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
+	$wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
 	
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -61,6 +65,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
 	$wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
 	$wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
+	$wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';
 	
 	return true;
 }
@@ -86,6 +91,11 @@ function haclfSetupExtension() {
 	global $wgSpecialPages, $wgSpecialPageGroups;
 	$wgSpecialPages['HaloACL']      = array('HaloACLSpecial');
 	$wgSpecialPageGroups['HaloACL'] = 'hacl_group';
+	
+	$wgHooks['ArticleSaveComplete'][]  = 'HACLParserFunctions::articleSaveComplete';
+	$wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
+	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
+	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
 
 	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
@@ -236,8 +246,11 @@ function haclfInitContentLanguage($langcode) {
  * Returns the ID and name of the given user.
  *
  * @param User/string/int $user
- * 		User-object, name of a user or ID of a user. If <null> or empty, the
- *      currently logged in user is assumed.
+ * 		User-object, name of a user or ID of a user. If <null> (which is the 
+ *      default), the currently logged in user is assumed.
+ *      There are two special user names: 
+ * 			'*' - anonymous user (ID:0)
+ *			'#' - all registered users (ID: -1)
  * @return array(int,string)
  * 		(Database-)ID of the given user and his name. For the sake of 
  *      performance the name is not retrieved, if the ID of the user is
@@ -246,10 +259,10 @@ function haclfInitContentLanguage($langcode) {
  * 		HACLException(HACLException::UNKOWN_USER)
  * 			...if the user does not exist.
  */
-function haclfGetUserID($user) {
-	$userID = 0;
+function haclfGetUserID($user = null) {
+	$userID = false;
 	$userName = '';
-	if (is_null($user) || empty($user)) {
+	if ($user === null) {
 		// no user given 
 		// => the current user's ID is requested
 		global $wgUser; 
@@ -259,10 +272,20 @@ function haclfGetUserID($user) {
 		// user-id given
 		$userID = (int) $user;
 	} else if (is_string($user)) {
-		// name of user given
-		$u = User::newFromName($user);
-		$userID = $u->getId();
-		$userName = $user;
+		if ($user == '#') {
+			// Special name for all registered users
+			$userID = -1;
+		} else if ($user == '*') {
+			// Anonymous user
+			$userID = 0;
+		} else {
+			// name of user given
+			$userID = User::idFromName($user);
+			if (!$userID) {
+				$userID = false;
+			}
+			$userName = $user;
+		}
 	} else if (is_a($user, 'User')) {
 		// User-object given
 		$userID = $user->getId();
@@ -270,11 +293,33 @@ function haclfGetUserID($user) {
 	}
 	
 	if ($userID === 0) {
+		//Anonymous user
+		$userName = '*';
+	} else if ($userID === -1) {
+		// all registered users
+		$userName = '#';
+	}
+	
+	if ($userID === false) {
 		// invalid user
 		throw new HACLException(HACLException::UNKOWN_USER,'"'.$user.'"');
 	}
 	
 	return array($userID, $userName);
 	
+}
+
+/**
+ * Pages in the namespace ACL are not cacheable
+ *
+ * @param Article $article
+ * 		Check, if this article can be cached
+ * 
+ * @return bool
+ * 		<true>, for articles that are not in the namespace ACL
+ * 		<false>, otherwise
+ */
+function haclfIsFileCacheable($article) {
+	return $article->getTitle()->getNamespace() != HACL_NS_ACL;
 }
 

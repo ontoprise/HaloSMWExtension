@@ -17,10 +17,10 @@
 */
 
 /**
- * Insert description here
+ * This file contains the class HACLWhitelistException.
  * 
  * @author Thomas Schweitzer
- * Date: 02.04.2009
+ * Date: 11.05.2009
  * 
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -28,57 +28,39 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 /**
- * Base class for all exceptions of HaloACL.
+ * Exceptions for the operations on whitelists of HaloACL.
  *
  */
-class HACLException extends Exception {
+class HACLWhitelistException extends HACLException {
 
-	// An unknown user is given for a group 
+	//--- Constants ---
+	
+	// There is no article for the given article names. 
 	// Parameters:
-	// 1 - name of the user
-	const UNKOWN_USER = 1;
-	
-	// An internal error occurred
-	// Parameters:
-	// 1 - Description of the internal error
-	const INTERNAL_ERROR = 2;
-	
-	
+	// 1 - array of article names
+	const PAGE_DOES_NOT_EXIST = 1;	
+
 	/**
-	 * Constructor of the HaloACL exception.
+	 * Constructor of the whitelist exception.
 	 *
-	 * @param string $message
-	 * 		The error message
 	 * @param int $code
 	 * 		A user defined error code.
 	 */
-    public function __construct($args) {
-    	$code = 0;
-    	if (!is_array($args)) {
-    		$code = $args;
-    		$args = func_get_args();
-    	} else {
-    		// If the constructor is called from sub-classes, all parameters
-    		// are passed as array
-    		$code = $args[0];
-    	}
-    	$msg = $this->createMessage($args);
-    	
+    public function __construct($code = 0) {
+    	$args = func_get_args();
     	// initialize super class
-        parent::__construct($msg, $code);
+        parent::__construct($args);
     }
     
     protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
-    		case self::UNKOWN_USER:
-    			$msg = "The user $args[1] is unknown.";
-    			break;
-   			case self::INTERNAL_ERROR:
-    			$msg = "Internal error: $args[1]";
+    		case self::PAGE_DOES_NOT_EXIST:
+    			$msg = "The articles with following names do not exist:\n" .
+    			       implode(',', $args[1]) .
+    			       "\nThese articles can not be added to the whitelist.";
     			break;
     	}
     	return $msg;
     }
-    
 }

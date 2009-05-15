@@ -22,11 +22,41 @@
  */
 abstract class HACLLanguage {
 
+	//-- Constants --
+	
+	//---IDs of parser functions ---
+	const PF_ACCESS = 1;
+	const PF_MANAGE_RIGHTS = 2;
+	const PF_MANAGE_GROUP = 3;
+	const PF_PREDEFINED_RIGHT = 4;
+	const PF_PROPERTY_ACCESS = 5;
+	const PF_WHITELIST = 6;
+	const PF_MEMBER = 7;
+
+	//---IDs of parser function parameters ---
+	const PFP_ASSIGNED_TO	= 8;
+	const PFP_ACTIONS		= 9;
+	const PFP_DESCRIPTION	= 10;
+	const PFP_RIGHTS		= 11; 
+	const PFP_PAGES			= 12; 
+	const PFP_MEMBERS		= 13; 
+	
+	//--- IDs of categories --- 
+	const CAT_GROUP					= 14;
+	const CAT_RIGHT					= 15;
+	const CAT_SECURITY_DESCRIPTOR	= 16;
+			
+	
 	// the special message arrays ...
 	protected $mNamespaces;
 	protected $mNamespaceAliases = array();
 	protected $mPermissionDeniedPage;
-
+	protected $mParserFunctions = array();
+	protected $mParserFunctionsParameters = array();
+	protected $mActionNames = array();
+	protected $mCategories = array();
+	protected $mWhitelist = "";
+	protected $mPetPrefixes = array();
 
 	/**
 	 * Function that returns an array of namespace identifiers.
@@ -51,6 +81,104 @@ abstract class HACLLanguage {
 		return $this->mPermissionDeniedPage;
 	}
 	
+	/**
+	 * This method returns the language dependent name of a parser function.
+	 * 
+	 * @param int $parserFunctionID
+	 * 		ID of the parser function i.e. one of PF_ACCESS, 
+	 *      PF_MANAGE_RIGHTS, PF_MANAGE_GROUP, PF_PREDEFINED_RIGHT,
+	 * 		PF_PROPERTY_ACCESS, PF_WHITELIST, PF_MEMBER
+	 * 
+	 * @return string 
+	 * 		The language dependent name of the parser function.
+	 */
+	public function getParserFunction($parserFunctionID) {
+		return $this->mParserFunctions[$parserFunctionID];
+	}
+	
+	/**
+	 * This method returns the language dependent name of a parser function 
+	 * parameter.
+	 * 
+	 * @param int $parserFunctionParameterID
+	 * 		ID of the parser function parameter i.e. one of PF_ACCESS, 
+	 *      PF_MANAGE_RIGHTS, PF_MANAGE_GROUP, PF_PREDEFINED_RIGHT,
+	 * 		PF_PROPERTY_ACCESS, PF_WHITELIST, PF_MEMBER
+	 * 
+	 * @return string 
+	 * 		The language dependent name of the parser function.
+	 */
+	public function getParserFunctionParameter($parserFunctionParameterID) {
+		return $this->mParserFunctionsParameters[$parserFunctionParameterID];
+	}
+	
+	/**
+	 * This method returns the language dependent names of all actions that
+	 * are used in rights. 
+	 *
+	 * @return array(int => string)
+	 * 		A mapping from action IDs to action names. The possible IDs are
+	 * 		HACLRight::READ, HACLRight::FORMEDIT, HACLRight::WYSIWYG, 
+	 *      HACLRight::EDIT, HACLRight::CREATE, HACLRight::MOVE, 
+	 *		HACLRight::ANNOTATE and	HACLRight::DELETE.
+	 * 
+	 */
+	public function getActionNames() {
+		return $this->mActionNames;
+	}
+	
+	/**
+	 * Returns the name of the category which certain elements of an ACL must
+	 * belong to. 
+	 *
+	 * @param int $cattype
+	 * 		Type of the category: CAT_GROUP, CAT_RIGHT or CAT_SECURITY_DESCRIPTOR
+	 * @return string
+	 * 		Name of the category
+	 */
+	public function getCategory($cattype) {
+		return $this->mCategories[$cattype];
+	}
+	
+	/**
+	 * Returns the name of the article (with or without namespace) that contains
+	 * the whitelist. 
+	 *
+	 * @param bool $withNS
+	 * 		true => Name with namespace (default)
+	 * 		false => Name without namespace 
+	 * 
+	 * @return string
+	 * 		Complete name of the whitelist.
+	 */
+	public function getWhitelist($withNS = true) {
+		return (($withNS) ? $this->mNamespaces[HACL_NS_ACL].':'
+		                  : '').$this->mWhitelist;
+	}
+	
+	/**
+	 * Security descriptors protect different types of elements i.e. pages,
+	 * instances of categories and namespaces and properties. The name of a
+	 * security descriptor has a prefix that matches this type. The prefix
+	 * depends on the language. This method return the name of the prefix for given 
+	 * type. 
+	 * Example: ACL:Page/X is the security descriptor for page X. The prefix is 
+	 *          "Page". 
+	 *
+	 * @param int $peType
+	 * 		Type of the protected element which is one of:
+	 * 		HACLSecurityDesriptor::PET_PAGE
+	 * 		HACLSecurityDesriptor::PET_CATEGORY
+	 * 		HACLSecurityDesriptor::PET_NAMESPACE
+	 * 		HACLSecurityDesriptor::PET_PROPERTY
+	 * 		HACLSecurityDesriptor::PET_RIGHT
+	 * 
+	 * @return string
+	 * 		Prefix for the given type
+	 */
+	public function getPetPrefix($peType) {
+		return $this->mPetPrefixes[$peType];
+	}
 }
 
 

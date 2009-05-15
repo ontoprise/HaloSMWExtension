@@ -76,8 +76,7 @@ class  HACLSecurityDescriptor  {
 	/**
 	 * Constructor for HACLSecurityDescriptor. If your create a new security
 	 * descriptor, you have to call the method <save> to stored it in the 
-	 * database. If you create a new predefined right, its is automatically
-	 * saved, when it is added to another SD or PR.
+	 * database. 
 	 *
 	 * @param int/string $SDID
 	 * 		Article's page ID. If <null>, the class tries to find the correct ID
@@ -123,59 +122,9 @@ class  HACLSecurityDescriptor  {
 		if ($peType == self::PET_RIGHT) {
 			$this->mPEID = 0;
 		}
-				
-		if (!empty($manageGroups) && is_string($manageGroups)) {
-			// Managing groups are given as comma separated string
-			// Split into an array
-			$manageGroups = explode(',', $manageGroups);
-		}
-		if (is_array($manageGroups)) {
-			$this->mManageGroups = $manageGroups;
-			for ($i = 0; $i < count($manageGroups); ++$i) {
-				$mg = $manageGroups[$i];
-				if (is_int($mg)) {
-					// do nothing
-				} else if (is_numeric($mg)) {
-					$this->mManageGroups[$i] = (int) $mg;
-				} else if (is_string($mg)) {
-					// convert a group name to a group ID
-					$gid = HACLGroup::idForGroup(trim($mg));
-					if (!$gid) {
-						throw new HACLSDException(HACLSDException::UNKOWN_GROUP, 
-						                          $SDName, $mg);
-					}
-					$this->mManageGroups[$i] = $gid; 
-				}
-			}
-		} else {
-			$this->mManageGroups = array();
-		}
 
-		if (!empty($manageUsers) && is_string($manageUsers)) {
-			// Managing users are given as comma separated string
-			// Split into an array
-			$manageUsers = explode(',', $manageUsers);
-		}
-		if (is_array($manageUsers)) {
-			$this->mManageUsers = $manageUsers;
-			for ($i = 0; $i < count($manageUsers); ++$i) {
-				$mu = $manageUsers[$i];
-				if (is_int($mu)) {
-					// do nothing
-				} else if (is_numeric($mu)) {
-					$this->mManageUsers[$i] = (int) $mu;
-				} else if (is_string($mu)) {
-					// convert a user name to a group ID
-					$uid = User::idFromName(trim($mu));
-					if (!$uid) {
-						throw new HACLException(HACLException::UNKOWN_USER, $mu);
-					}
-					$this->mManageUsers[$i] =  $uid;
-				}
-			}
-		} else {
-			$this->mManageUsers = array();
-		}
+		$this->setManageGroups($manageGroups);
+		$this->setManageUsers($manageUsers);
 		
 	}
 	
@@ -311,6 +260,163 @@ class  HACLSecurityDescriptor  {
 	}
 	
 	/**
+	 * Checks if the SD with the ID $sdID exists in the database.
+	 *
+	 * @param int $sdID
+	 * 		ID of the SD
+	 * 
+	 * @return bool
+	 * 		<true> if the SD exists
+	 * 		<false> otherwise
+	 */
+	public static function exists($sdID) {
+		return HACLStorage::getDatabase()->sdExists($sdID);
+	}
+	
+	/**
+	 * Tries to find the ID of the security descriptor for the protected element
+	 * with the ID $peID.
+	 *
+	 * @param int $peID
+	 * 		ID of the protected element
+	 * 
+	 * @return mixed int|bool
+	 * 		int: ID of the security descriptor
+	 * 		<false>, if there is no SD for the protected element
+	 */
+	public static function getSDForPE($peID) {
+		return HACLStorage::getDatabase()->getSDForPE($peID);
+	}
+	
+	/**
+	 * Sets the users who can manage this SD. The SD has to be saved 
+	 * afterwards to persists the changes in the database.
+	 *
+	 * @param mixed string|array(mixed int|string|User) $manageUsers
+	 * 		If a single string is given, it contains a comma-separated list of
+	 * 		user names. 
+	 * 		If an array is given, it can contain user-objects, names of users or
+	 *      IDs of a users. If <null> or empty, the currently logged in user is 
+	 *      assumed.
+	 *      There are two special user names: 
+	 * 			'*' - anonymous user (ID:0)
+	 *			'#' - all registered users (ID: -1)
+	 * @throws 
+	 * 		HACLException(HACLException::UNKOWN_USER)
+	 * 			...if a user does not exist.
+	 */
+	public function setManageUsers($manageUsers) {
+		if (!empty($manageUsers) && is_string($manageUsers)) {
+			// Managing users are given as comma separated string
+			// Split into an array
+			$manageUsers = explode(',', $manageUsers);
+		}
+		if (is_array($manageUsers)) {
+			$this->mManageUsers = $manageUsers;
+			for ($i = 0; $i < count($manageUsers); ++$i) {
+				$mu = $manageUsers[$i];
+				if (is_string($mu)) {
+					$mu = trim($mu);
+				}
+				$uid = haclfGetUserID($mu);
+				$this->mManageUsers[$i] = $uid[0];
+			}
+		} else {
+			$this->mManageUsers = array();
+		}
+		
+	}
+
+	/**
+	 * Sets the groups who can manage this SD. The SD has to be saved 
+	 * afterwards to persists the changes in the database.
+	 *
+	 * @param mixed string|array(mixed int|string|User) $manageGroups
+	 * 		If a single string is given, it contains a comma-separated list of
+	 * 		group names. 
+	 * 		If an array is given, it can contain IDs (int), names (string) or 
+	 *      objects (HACLGroup) for the group
+	 * @throws 
+	 * 		HACLException(HACLException::UNKOWN_USER)
+	 * 			...if a user does not exist.
+	 */
+	public function setManageGroups($manageGroups) {
+		if (!empty($manageGroups) && is_string($manageGroups)) {
+			// Managing groups are given as comma separated string
+			// Split into an array
+			$manageGroups = explode(',', $manageGroups);
+		}
+		if (is_array($manageGroups)) {
+			$this->mManageGroups = $manageGroups;
+			for ($i = 0; $i < count($manageGroups); ++$i) {
+				$mg = $manageGroups[$i];
+				if (is_string($mg)) {
+					$mg = trim($mg);
+				}
+				$gid = HACLGroup::idForGroup($mg);
+				if (!$gid) {
+					throw new HACLGroupException(HACLGroupException::UNKOWN_GROUP, $mg);
+				}
+				$this->mManageGroups[$i] = (int) $gid;
+			}
+		} else {
+			$this->mManageGroups = array();
+		}
+		
+	}
+	
+	
+	/**
+	 * The name of the security descriptor determines which element it protects.
+	 * This method returns the name and type of the element that is protected
+	 * by the security descriptor with the name $nameOfSD.
+	 *
+	 * @param string $nameOfSD
+	 * 		Name of the security descriptor that protects an element (with or 
+	 * 		without namespace).
+	 * 
+	 * @return array(string, string)
+	 * 		Name of the protected element and its type (one of self::PET_CATEGORY
+	 *      etc). It the type is self::PET_RIGHT, the name is <null>.
+	 */
+	public static function nameOfPE($nameOfSD) {
+		global $haclgContLang;
+		$ns = $haclgContLang->getNamespaces();
+		$ns = $ns[HACL_NS_ACL].':';
+		$start = 0;
+		//Ignore the namespace
+		if (strpos($nameOfSD, $ns) === 0) {
+			$start = strlen($ns);
+		}
+		
+		// Determine the type of the protected element by the prefix
+		$types = array(self::PET_PAGE, self::PET_CATEGORY, 
+		                  self::PET_NAMESPACE, self::PET_PROPERTY,
+		                  self::PET_RIGHT);
+		foreach ($types as $type) {
+			$prefix = $haclgContLang->getPetPrefix($type).'/';
+			if (strpos($nameOfSD, $prefix, $start) === $start) {
+				// type found
+				$peName = substr($nameOfSD, $start+strlen($prefix));
+				if ($type === self::PET_CATEGORY) {
+					global $wgContLang;
+					$peName = $wgContLang->getNsText(NS_CATEGORY).':'.$peName;
+				} else if ($type === self::PET_PROPERTY && 
+				           defined('SMW_NS_PROPERTY')) {
+					global $wgContLang;
+					$peName = $wgContLang->getNsText(SMW_NS_PROPERTY).':'.$peName;
+				}
+				if ($type === self::PET_RIGHT) {
+					$peName = null;
+				}
+				return array($peName, $type);
+			}
+		}
+		// SD ist probably a right
+		return array(null, self::PET_RIGHT);
+	}
+
+	/**
 	 * Saves the given predefined rights (PR) and adds them to this security 
 	 * descriptor (SD).
 	 * 
@@ -343,6 +449,9 @@ class  HACLSecurityDescriptor  {
 	 * 		... if an SD is added to an SD or PR
 	 */
 	public function addPredefinedRights($rights, $user = null) {
+		if (empty($rights)) {
+			return;
+		}
 		
 		// Check if all rights are predefined rights
 		foreach ($rights as $r) {
@@ -357,7 +466,6 @@ class  HACLSecurityDescriptor  {
 		
 		// Update the hierarchy of SDs/PRs
 		foreach ($rights as $r) {
-			$r->save();
 			HACLStorage::getDatabase()->addRightToSD($this->getSDID(), $r->getSDID());
 		}
 
@@ -381,6 +489,9 @@ class  HACLSecurityDescriptor  {
 	 * 	HACLSDException(HACLSDException::USER_CANT_MODIFY_SD) 
 	 */
 	public function addInlineRights($rights, $user = null) {
+		if (empty($rights)) {
+			return;
+		}
 		$this->userCanModify($user, true);
 		foreach ($rights as $r) {
 			$r->setOriginID($this->mSDID);
@@ -390,6 +501,23 @@ class  HACLSecurityDescriptor  {
 		$this->materializeRightsHierarchy();
 	}
 
+	/**
+	 * All inline and predefined rights are removed from this SD. The materialized
+	 * rights are updated.
+	 *
+	 * @param User/string/int $user
+	 * 		User-object, name of a user or ID of a user who wants to delete this
+	 * 		SD. If <null> (default), the currently logged in user is assumed.
+	 * 
+	 * @throws
+	 * 	HACLSDException(HACLSDException::USER_CANT_MODIFY_SD) 
+	 *  
+	 */
+	public function removeAllRights($user = null) {
+		$this->userCanModify($user, true);
+		return HACLStorage::getDatabase()->deleteSD($this->mSDID, true);
+	}
+	
 	/**
 	 * Returns a list of IDs of all inline rights of this SD. 
 	 *
@@ -483,6 +611,10 @@ class  HACLSecurityDescriptor  {
 		if (in_array($userID, $this->mManageUsers)) {
 			return true;
 		}
+		if ($userID > 0 && in_array(-1, $this->mManageUsers)) {
+			// registered users can modify the SD
+			return true;
+		}
 		
 		// Check if the user belongs to a SD that can modify the SD
 		$db = HACLStorage::getDatabase();
@@ -531,6 +663,13 @@ class  HACLSecurityDescriptor  {
 			throw new HACLSDException(HACLSDException::NO_SD_ID, $this->mSDName);
 		}
 		
+		if (count($this->mManageGroups) == 0 && count($this->mManageUsers) == 0) {
+			// no user has the right to modify this right
+			// => add the current user as manager
+			global $wgUser;
+			$this->mManageUsers[] = $wgUser->getId();
+		}
+		
 		$this->userCanModify($user, true);
 
 		HACLStorage::getDatabase()->saveSD($this);
@@ -551,7 +690,6 @@ class  HACLSecurityDescriptor  {
 	 */
 	public function delete($user = null) {
 		$this->userCanModify($user, true);
-		//TODO: Do I have to delete all inline rights that point to this SD?
 		return HACLStorage::getDatabase()->deleteSD($this->mSDID);
 	}
 	

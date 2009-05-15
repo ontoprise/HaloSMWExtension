@@ -455,6 +455,7 @@ HTML;
 	 *
 	 */
 	private function test() {
+	
 		global $haclgIP;
 		require_once "$haclgIP/tests/testcases/TestDatabase.php";
 		$tc = new TestDatabase();
