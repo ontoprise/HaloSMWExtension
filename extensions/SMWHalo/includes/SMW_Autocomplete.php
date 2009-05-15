@@ -615,8 +615,9 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
 		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		foreach($types as $t) {
-			if ($t->isBuiltIn()) continue; // ignore builtin types, because they have no unit
+			
 			$subtypes = explode(";", $t->getXSDValue());
+			
 			foreach($subtypes as $st) {
 				// get all units registered for a given type
 				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
@@ -633,7 +634,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		// extract unit substring and ignore the number (if existing)
 		preg_match($measure, $substring, $matches);
 		$substring = strtolower($matches[5]);
-		
+				
 		// collect all units which match the substring (if non empty, otherwise all)
 		foreach($all_units as $u) {
 			$s_units = explode(",", $u->getXSDValue());
@@ -649,6 +650,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 				}					
 			}
 		}
+		
 		return array_unique($result);	// make sure all units appear only once.
 	}
 	
@@ -672,7 +674,7 @@ class AutoCompletionStorageSQL extends AutoCompletionStorage {
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 		if ($namespaces == NULL || count($namespaces) == 0) {
 			
-			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
+			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
 			
 		} else {
 		
