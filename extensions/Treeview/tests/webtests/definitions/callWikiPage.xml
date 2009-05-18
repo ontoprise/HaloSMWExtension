@@ -1,0 +1,23 @@
+<!-- 
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="callWikiPage" description="call a wiki page with a tree">
+	<attribute name="pageName"/>
+    <sequential>
+        <invoke url="${wgServer}${wgScript}/@{pageName}" description="Go to page @{pageName}"/>
+        <verifyText
+            description="small headline above the tree"
+            text="Testpage for Webtest of @{pageName}"
+        />
+        <storeRegEx 
+            description="Get id of tree"
+            text="new dTree\('tv([a-f0-9]{13})',"
+            group="1"
+            property="treeId" />
+        <verifyXPath
+            description="Check id in div element"
+            xpath="//div[@class='Treeview']/@id"
+            text="#{treeId}" />
+    </sequential>	
+</macrodef>

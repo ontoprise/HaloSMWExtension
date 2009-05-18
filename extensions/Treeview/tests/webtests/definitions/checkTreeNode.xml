@@ -1,0 +1,23 @@
+<!-- 
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="checkTreeNode" description="check content of a node">
+    <attribute name="nodeId"/>
+    <attribute name="parentId"/>
+    <attribute name="name"/>
+    <sequential>
+        <groovy
+            description="check node name and value"
+            replaceProperties="1" >
+            def document = step.context.currentResponse.documentElement
+            def nodeId = @{nodeId}
+            def parentId = @{parentId}
+            def nodeName = '@{name}'
+        </groovy>
+        <verifyText
+            description="Check node exists: Jacob Grimm"
+            text="tv#{treeId}.add(2,1,'&lt;a href=\&quot;${wgScript}/Jacob_Grimm\&quot; title=\&quot;Jacob Grimm\&quot;&gt;Jacob Grimm&lt;/a&gt;');"
+        />
+    </sequential>   
+</macrodef>
