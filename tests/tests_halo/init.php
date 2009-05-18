@@ -7,48 +7,21 @@
 
 $mw_dir = dirname(__FILE__) . '/../../';
 
-if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-	print "This script must be run from the command line\n";
-	exit();
-}
-
-
-if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
-	print "Sorry! This version of MediaWiki requires PHP 5; you are running " .
-	PHP_VERSION . ".\n\n" .
-        "If you are sure you already have PHP 5 installed, it may be " .
-        "installed\n" .
-        "in a different path from PHP 4. Check with your system administrator.\n";
-	die( -1 );
-}
-
+require_once('testFunctionsCmd.php');
 
 # Process command line arguments
 # Parse arguments
 
 echo "Parse arguments...";
+list($testDir, $xamppDir) = parseCmdParams('-t', '-x');
 
-$params = array();
-for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
-	//-b => BotID
-	if ($arg == '-t') {
-		$testDir = next($argv);
-		continue;
-	}
-	if ($arg == '-x') {
-		$xamppDir = next($argv);
-		continue;
-	}
-	$params[] = $arg;
-}
-
-if (!isset($testDir)) {
+if ($testDir == null) {
 	echo "\nTestdir missing. Use -t to set the extension's test directory.\n";
 	die();
 }
 
 if (isWindows()) {
-	if (!isset($xamppDir)) {
+	if ($xamppDir == null) {
 		echo "\nNo XAMPP dir specified. Use -x to set XAMPP dir.\n";
 		die();
 	}
@@ -168,46 +141,4 @@ function tstInsertLocalSettings() {
 
 }
 
-/**
- * Runs an external process synchronous. 
- *
- * @param string $runCommand
- */
-function runProcess($runCommand) {
-	if (isWindows()) {
-		$keepConsoleAfterTermination = false;
-		$runCommand = "\"$runCommand\"";
-		$wshShell = new COM("WScript.Shell");
-		$clOption = $keepConsoleAfterTermination ? "/K" : "/C";
-		$runCommand = "cmd $clOption ".$runCommand;
-		$oExec = $wshShell->Run($runCommand, 7, true);
-	} else {
-		exec($runCommand);
-	}
-}
-
-/**
- * Checks if the OS is Windows
- * returns true/false
- */
-function isWindows() {
-	static $thisBoxRunsWindows;
-	
-	if (! is_null($thisBoxRunsWindows)) return $thisBoxRunsWindows;
-	
-	ob_start();
-	phpinfo();
-	$info = ob_get_contents();
-	ob_end_clean();
-	//Get Systemstring
-	preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
-	//Check if it consists 'windows' as string
-	preg_match('/[Ww]indows/',$ma[1],$os);
-	if($os[0]=='' && $os[0]==null ) {
-		$thisBoxRunsWindows= false;
-	} else {
-		$thisBoxRunsWindows = true;
-	}
-	return $thisBoxRunsWindows;
-}
 ?>
