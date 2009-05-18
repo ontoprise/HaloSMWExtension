@@ -4,9 +4,9 @@
 # HOWTO for automatic testing with MediaWiki
 #
 
-This document describes how to setup unit- and webtests for a MW extension. Every extension should have
-a set of tests verifying their quality. We distinguish between unit tests and webtests. Unit tests are 
-supposed to test backend functionality while webtests are testing user-interfaces. Tests in the described 
+This document describes how to setup unit- and web tests for a MW extension. Every extension should have
+a set of tests verifying their quality. We distinguish between unit tests and web tests. Unit tests are 
+supposed to test backend functionality while web tests are testing user-interfaces. Tests in the described 
 form can be easily included in our build system, so it is highly recommended to write tests as shown here. 
 
 -------------
@@ -55,7 +55,7 @@ Create a subfolder 'tests' for your extension containing the following files and
     a. LocalSettings.php: Includes all extensions which are necessary for your tests.
          Note, that it does not contain a whole LocalSettings.php file but only additional extensions.
     b. runSetup.cfg: Contains setup scripts for the included extensions.
-    c. XXX_Tests.php: GlobalTest suite for the extension. Contains all other test suites.
+    c. XYZ_Tests.php: GlobalTest suite for the extension. Contains all other test suites.
     d. logs/result.xml: A pre-defined result file indicating a fatal error (see appendix)
     e. pages/: XML-Export containing wiki pages. Name of the files is arbitrary. The pages
                 work as a basis for the tests.
@@ -243,14 +243,12 @@ Create a subfolder 'webtests' in the 'tests' folder
     Windows:
        1. Change to {{wiki-dir}}/tests/tests_halo
        2. Enter: php init.php -t {{tests-dir}} -x {{xampp-dir}}
-       3a. Enter: webtest.bat -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
-       3b. You can also run: runWebtests.php -t "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/"
+       3. Enter: webtest.bat -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
        
     Linux:
        1. Change to {{wiki-dir}}/tests/tests_halo
        2. Enter: php init.php -t {{tests-dir}}           
-       3a. Enter: webtest.sh -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
-       3b. You can also run: runWebtests.php -t "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/"
+       3. Enter: webtest.sh -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
        
     The results are placed in the 'results' folder.
     
