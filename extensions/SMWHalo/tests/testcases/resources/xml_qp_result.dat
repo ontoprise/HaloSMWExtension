@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+        <head>
+                <variable name="_var0"/>
+        </head>
+        <results>
+                <result>
+                        <binding name="_var0">Audi TT</binding>
+                </result>
+                <result>
+                        <binding name="_var0">Category:Electric car</binding>
+                </result>
+                <result>
+                        <binding name="_var0">Category:Hybrid car</binding>
+                </result>
+                <result>
+                        <binding name="_var0">Peugeot</binding>
+                </result>
+                <result>
+                        <binding name="_var0">Category:Sports coupe</binding>
+                </result>
+        </results>
+</sparql>
