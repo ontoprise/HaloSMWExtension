@@ -70,7 +70,7 @@ class DALReadCSV implements IDAL {
 	 * 		The name of the file has to be specified by the user.
 	 *		<?xml version="1.0"?>
 	 *		<DataSource xmlns=http://www.ontoprise.de/smwplus#">
-	 *	    	<filename display="Filename:" type="file"></filename>
+	 *	    	<filename display="Filename:" type="t"></filename>
 	 *		</DataSource>
 	 * 
 	 */
@@ -78,7 +78,7 @@ class DALReadCSV implements IDAL {
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			' 	<filename display="'.wfMsg('smw_ti_filename').'" type="file"></filename>'."\n".
+			' 	<filename display="'.wfMsg('smw_ti_filename').'" type="text"></filename>'."\n".
 			'</DataSource>'."\n";
 	}
      
