@@ -103,6 +103,7 @@ function smwf_ws_processStep2($uri, $methodName){
 function smwf_ws_processStep3($uri, $methodName){
 	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
 	$rawResult = $wsClient->getOperation($methodName);
+	
 	$flatResult = WebService::flattenParam("", $rawResult[0], $wsClient, $typePath);
 	
 	return "todo:handle exceptions;".implode(";", $flatResult);

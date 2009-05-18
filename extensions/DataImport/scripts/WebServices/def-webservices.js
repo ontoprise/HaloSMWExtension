@@ -635,7 +635,7 @@ DefineWebServiceSpecial.prototype = {
 		this.numberOfUsedResultParts = 0;
 		
 		var wsResults = resultsString.split(";");
-
+		
 		if (!this.editMode) {
 			$("step3-go-img").style.display = "none";
 			$("step4-go-img").style.display = "";
