@@ -1,7 +1,7 @@
-                                                             <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
-    <sitename>Treeview</sitename>
-    <base>http://localhost.localdomain/treeview/index.php/Main_Page</base>
+    <sitename>MyWiki</sitename>
+    <base>http://ernie/smw_dev/index.php/Main_Page</base>
     <generator>MediaWiki 1.13.2</generator>
     <case>first-letter</case>
       <namespaces>
@@ -11,8 +11,8 @@
       <namespace key="1">Talk</namespace>
       <namespace key="2">User</namespace>
       <namespace key="3">User talk</namespace>
-      <namespace key="4">Treeview</namespace>
-      <namespace key="5">Treeview talk</namespace>
+      <namespace key="4">MyWiki</namespace>
+      <namespace key="5">MyWiki talk</namespace>
       <namespace key="6">Image</namespace>
       <namespace key="7">Image talk</namespace>
       <namespace key="8">MediaWiki</namespace>
@@ -46,7 +46,7 @@
     <id>1</id>
     <revision>
       <id>1</id>
-      <timestamp>2009-04-24T10:24:00Z</timestamp>
+      <timestamp>2009-05-05T12:09:21Z</timestamp>
       <contributor>
         <ip>MediaWiki default</ip>
       </contributor>
@@ -65,7 +65,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>2</id>
     <revision>
       <id>2</id>
-      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <timestamp>2009-05-14T12:10:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -80,7 +80,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>3</id>
     <revision>
       <id>3</id>
-      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <timestamp>2009-05-14T12:10:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -95,7 +95,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>4</id>
     <revision>
       <id>4</id>
-      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <timestamp>2009-05-14T12:10:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -110,7 +110,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>5</id>
     <revision>
       <id>5</id>
-      <timestamp>2009-04-24T11:15:46Z</timestamp>
+      <timestamp>2009-05-14T12:10:38Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -123,7 +123,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>6</id>
     <revision>
       <id>6</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -136,7 +136,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>7</id>
     <revision>
       <id>7</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -149,7 +149,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>8</id>
     <revision>
       <id>8</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -162,7 +162,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>9</id>
     <revision>
       <id>9</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -175,7 +175,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>10</id>
     <revision>
       <id>10</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -188,7 +188,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>11</id>
     <revision>
       <id>11</id>
-      <timestamp>2009-04-24T11:15:47Z</timestamp>
+      <timestamp>2009-05-14T12:10:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -200,7 +200,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Märchen</title>
     <id>12</id>
     <revision>
-      <id>13</id>
+      <id>23</id>
       <timestamp>2009-04-24T11:37:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -216,7 +216,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Grimm</title>
     <id>13</id>
     <revision>
-      <id>14</id>
+      <id>24</id>
       <timestamp>2009-04-24T11:38:42Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -233,7 +233,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Jacob Grimm</title>
     <id>14</id>
     <revision>
-      <id>43</id>
+      <id>25</id>
       <timestamp>2009-04-27T09:25:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -249,7 +249,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Wilhelm Grimm</title>
     <id>15</id>
     <revision>
-      <id>44</id>
+      <id>26</id>
       <timestamp>2009-04-27T09:26:06Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -265,7 +265,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Grimms Märchen</title>
     <id>16</id>
     <revision>
-      <id>61</id>
+      <id>27</id>
       <timestamp>2009-04-29T10:39:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -285,7 +285,7 @@ param2: {{#arg:param2|}}
     <title>Waldhaus</title>
     <id>17</id>
     <revision>
-      <id>18</id>
+      <id>28</id>
       <timestamp>2009-04-24T11:45:02Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -295,7 +295,7 @@ param2: {{#arg:param2|}}
 
 Ein Märchen der Gebrüder Grimm - KHM 169
 
-Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines Morgens, als er wieder an seine Arbeit wollte, sagte er zu seiner Frau: &quot;Laß mir ein Mittagsbrot von dem ältesten Mädchen hinaus in den Wald bringen, ich werde sonst nicht fertig. Und damit es sich nicht verirrt&quot;, setzte er hinzu, &quot;so will ich einen Beutel mit Hirse mitnehmen und die Körner auf den Weg streuen.&quot; 
+Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen Hütte an dem Rande eines einsamen Waldes. Eines Morgens, als er wieder an seine Arbeit wollte, sagte er zu seiner Frau: Laß mir ein Mittagsbrot von dem ältesten Mädchen hinaus in den Wald bringen, ich werde sonst nicht fertig. Und damit es sich nicht verirrt, setzte er hinzu, so will ich einen Beutel mit Hirse mitnehmen und die Körner auf den Weg streuen. 
 
 [[Category:Content]]
 [[Subsection of::Grimms Märchen]]
@@ -307,7 +307,7 @@ Ein armer Holzhauer lebte mit seiner Frau und drei Töchtern in einer kleinen H�
     <title>Blaues Licht</title>
     <id>18</id>
     <revision>
-      <id>22</id>
+      <id>29</id>
       <timestamp>2009-04-24T11:50:47Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -330,7 +330,7 @@ Es war einmal ein Soldat, der hatte dem König lange Jahre treu gedient: als abe
     <title>Der Wolf und die 7 Geißlein</title>
     <id>19</id>
     <revision>
-      <id>71</id>
+      <id>30</id>
       <timestamp>2009-05-05T10:24:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -342,20 +342,20 @@ Ein Märchen der Gebrüder Grimm - KHM 005
 
 Es war einmal eine alte Geiß, die hatte sieben junge Geißlein, und hatte sie lieb, wie eine Mutter ihre Kinder lieb hat. Eines Tages wollte sie in den Wald gehen und Futter holen, da rief sie alle sieben herbei und sprach: “Liebe Kinder, ich will hinaus in den Wald, seid auf eurer Hut vor dem Wolf, wenn er hereinkommt, so frißt er euch mit Haut und Haar. Der Bösewicht verstellt sich oft, aber an seiner rauhen Stimme und an seinen schwarzen Füßen werdet ihr ihn gleich erkennen.” Die Geißlein sagten: “Liebe Mutter, wir wollen uns schon in acht nehmen, Ihr könnt ohne Sorge fortgehen.” Da meckerte die Alte und machte sich getrost auf den Weg. 
 
-&lt;noinclude&gt;
+noinclude
 [[Category:Content]]
 [[Subsection of::Grimms Märchen]]
 [[hasTitle::Der Wolf und die 7 Geißlein]]
 [[KHM::5]]
 [[startsWith::Es war einmal]]
-&lt;/noinclude&gt;</text>
+/noinclude</text>
     </revision>
   </page>
   <page>
     <title>Die 3 Schlangenblätter</title>
     <id>20</id>
     <revision>
-      <id>21</id>
+      <id>31</id>
       <timestamp>2009-04-24T11:50:18Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -379,7 +379,7 @@ Es war einmal ein armer Mann, der konnte seinen einzigen Sohn nicht mehr ernähr
     <title>Frau Holle</title>
     <id>21</id>
     <revision>
-      <id>25</id>
+      <id>32</id>
       <timestamp>2009-04-24T11:55:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -402,7 +402,7 @@ Eine Witwe hatte zwei Töchter, davon war die eine schön und fleißig, die ande
     <title>Goldmarie</title>
     <id>22</id>
     <revision>
-      <id>26</id>
+      <id>33</id>
       <timestamp>2009-04-24T11:56:16Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -421,7 +421,7 @@ Die Goldmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
     <title>Pechmarie</title>
     <id>23</id>
     <revision>
-      <id>27</id>
+      <id>34</id>
       <timestamp>2009-04-24T11:56:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -440,7 +440,7 @@ Die Pechmarie ist eine Figur aus einem Märchen der Gebrüder Grimm.
     <title>Hänsel und Gretel</title>
     <id>24</id>
     <revision>
-      <id>28</id>
+      <id>35</id>
       <timestamp>2009-04-24T11:57:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -464,7 +464,7 @@ Vor einem großen Walde wohnte ein armer Holzhacker mit seiner Frau und seinen z
     <title>Rapunzel</title>
     <id>25</id>
     <revision>
-      <id>29</id>
+      <id>36</id>
       <timestamp>2009-04-24T11:59:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -488,7 +488,7 @@ Es war einmal ein Mann und eine Frau, die wünschten sich schon lange vergeblich
     <title>Schneewittchen</title>
     <id>26</id>
     <revision>
-      <id>30</id>
+      <id>37</id>
       <timestamp>2009-04-24T12:00:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -512,7 +512,7 @@ Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himm
     <title>Wilhelm Hauff</title>
     <id>27</id>
     <revision>
-      <id>45</id>
+      <id>38</id>
       <timestamp>2009-04-27T09:26:26Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -528,7 +528,7 @@ Es war einmal mitten im Winter, und die Schneeflocken fielen wie Federn vom Himm
     <title>Kleiner Muck</title>
     <id>28</id>
     <revision>
-      <id>32</id>
+      <id>39</id>
       <timestamp>2009-04-24T12:03:19Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -547,12 +547,18 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Tree1</title>
     <id>29</id>
     <revision>
-      <id>74</id>
-      <timestamp>2009-05-08T16:02:30Z</timestamp>
+      <id>49</id>
+      <timestamp>2009-05-15T08:43:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">== Baum ab Märchen==
+      <text xml:space="preserve">== Testpage for Webtest of Tree1 ==
+
+Options are:
+property=subsection of, 
+dynamic=1,
+checkNode=1,
+opento=Frau Holle
 
 {{#tree:
 {{#generateTree:property=Subsection of|dynamic=1|checkNode=1|opento=Frau Holle|}}
@@ -563,7 +569,7 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Category:Person</title>
     <id>30</id>
     <revision>
-      <id>42</id>
+      <id>41</id>
       <timestamp>2009-04-27T09:24:53Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -578,7 +584,7 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Help:Wikimaster</title>
     <id>31</id>
     <revision>
-      <id>53</id>
+      <id>42</id>
       <timestamp>2009-04-27T12:13:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -595,7 +601,7 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Help:Contents</title>
     <id>32</id>
     <revision>
-      <id>66</id>
+      <id>43</id>
       <timestamp>2009-04-30T15:22:07Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -614,7 +620,7 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
     <title>Help:How to configure the tree</title>
     <id>33</id>
     <revision>
-      <id>55</id>
+      <id>44</id>
       <timestamp>2009-04-27T12:14:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -623,13 +629,13 @@ Der kleine Muck wird als junger, unbedarfter Mann nach dem Tod seines Vaters von
 
 A tree on a page is displayed by the following code:
 
-&lt;pre&gt;
+pre
 {{#tree:
 {{#generateTree:property=some property|}}
 }}
-&lt;/pre&gt;
+/pre
 
-&quot;some property&quot; is the name of an existing property in the wiki that is annotated on pages. This is the only required parameter. To refine the selected set of nodes for the tree, there are some other parameters, that let you define more specific how to generate the tree.
+some property is the name of an existing property in the wiki that is annotated on pages. This is the only required parameter. To refine the selected set of nodes for the tree, there are some other parameters, that let you define more specific how to generate the tree.
 
 To avoid errors make sure that:
 
@@ -638,9 +644,9 @@ To avoid errors make sure that:
 * add one parameter at a time to see if the tree is still working
 
 The above sample could be written as an ask query like:
-&lt;pre&gt;
+pre
 {{#ask:[[some property::+]]|format=ul}}
-&lt;/pre&gt;
+/pre
 
 Check out the SMW Forum at: http://smwforum.ontoprise.com/smwforum/index.php/Semantic_Treeview for further information on the Semantic Treeview extension.
 
@@ -652,7 +658,7 @@ Check out the SMW Forum at: http://smwforum.ontoprise.com/smwforum/index.php/Sem
     <title>Help:Glossary</title>
     <id>34</id>
     <revision>
-      <id>50</id>
+      <id>45</id>
       <timestamp>2009-04-27T09:45:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -669,7 +675,7 @@ The Glossary is supposed to contain information about terms used within a Semant
     <title>Help:SMW+ 1.4.3</title>
     <id>35</id>
     <revision>
-      <id>65</id>
+      <id>46</id>
       <timestamp>2009-04-30T15:20:29Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -678,6 +684,94 @@ The Glossary is supposed to contain information about terms used within a Semant
       <text xml:space="preserve">This is a description of SMW+ 1.4.3.
 
 [[Subsection of::Help:Contents]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Tree2</title>
+    <id>36</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2009-05-15T11:37:37Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: == Testpage for Webtest of Tree2 ==  Options are: property=subsection of,  dynamic=1, opento=Die 3 Schlangenblätter  {{#tree: {{#generateTree:property=Subsection of|dynamic=1|opento=Die 3...</comment>
+      <text xml:space="preserve">== Testpage for Webtest of Tree2 ==
+
+Options are:
+property=subsection of, 
+dynamic=1,
+opento=Die 3 Schlangenblätter
+
+{{#tree:
+{{#generateTree:property=Subsection of|dynamic=1|opento=Die 3 Schlangenblätter|}}
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Tree3</title>
+    <id>37</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2009-05-15T11:58:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">== Testpage for Webtest of Tree3 ==
+
+Options are:
+property=subsection of, 
+dynamic=1,
+start=Märchen
+
+{{#tree:
+{{#generateTree:property=Subsection of|dynamic=1|start=Märchen|}}
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Tree4</title>
+    <id>38</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2009-05-15T12:42:23Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: == Testpage for Webtest of Tree4 ==  Options are: property=subsection of,  dynamic=1, start=Märchen, display=hasTitle, orderbyProperty=KHM  {{#tree: {{#generateTree:property=Subsection of...</comment>
+      <text xml:space="preserve">== Testpage for Webtest of Tree4 ==
+
+Options are:
+property=subsection of, 
+dynamic=1,
+start=Märchen,
+display=hasTitle,
+orderbyProperty=KHM
+
+{{#tree:
+{{#generateTree:property=Subsection of|dynamic=1|start=Märchen|display=hasTitle|orderbyProperty=KHM}}
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Tree5</title>
+    <id>39</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2009-05-15T14:44:26Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">== Testpage for Webtest of Tree5 ==
+
+Options are:
+property=subsection of, 
+category=Content,
+display=hasTitle,
+
+{{#tree:
+{{#generateTree:property=Subsection of|category=Content|display=hasTitle|}}
+}}</text>
     </revision>
   </page>
 </mediawiki>
