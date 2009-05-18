@@ -228,7 +228,10 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		//remove <p>-tag around ws-result
-		$wsFormattedResult = substr($wsFormattedResult, 3, strlen($wsFormattedResult) - 7);
+		if(substr($wsFormattedResult, 0, 3) == "<p>"){
+			$wsFormattedResult = trim(substr($wsFormattedResult, 3, strlen($wsFormattedResult) - 7));
+			
+		}
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);
