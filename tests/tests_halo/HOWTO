@@ -243,12 +243,14 @@ Create a subfolder 'webtests' in the 'tests' folder
     Windows:
        1. Change to {{wiki-dir}}/tests/tests_halo
        2. Enter: php init.php -t {{tests-dir}} -x {{xampp-dir}}
-       3. Enter: webtest.bat -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       3a. Enter: webtest.bat -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       3b. You can also run: runWebtests.php -t "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/"
        
     Linux:
        1. Change to {{wiki-dir}}/tests/tests_halo
        2. Enter: php init.php -t {{tests-dir}}           
-       3. Enter: webtest.sh -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       3a. Enter: webtest.sh -buildfile "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/makeWebtests.xml"
+       3b. You can also run: runWebtests.php -t "{{wiki-dir}}/extensions/SMWHalo/tests/webtests/"
        
     The results are placed in the 'results' folder.
     
