@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>1.0</version>
+		<dependencies>
+		  <dependency>
+		  SMWHalo
+		  </dependency>
+		</dependencies>
+	</global>
+</deploydescriptor>
