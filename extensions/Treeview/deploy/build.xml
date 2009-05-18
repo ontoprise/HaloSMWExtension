@@ -10,11 +10,6 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip/extensions/Treeview/tests">
-			<fileset dir="../tests/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
 		<copy todir="bin/zip/extensions/Treeview/">
 			<fileset file="../*">
 				<exclude name="**/.svn, **/CVS" />
