@@ -70,11 +70,18 @@ class SMWRestClient implements IWebServiceClient {
 			$uri .= trim(strip_tags($parameters["__rest__uri"][0]));
 			unset($parameters["__rest__uri"]);
 		}
+
+		if(array_key_exists("__rest__user_agent", $parameters)){
+			$userAgent = $parameters["__rest__user_agent"][0];
+			unset($parameters["__rest__user_agent"]);
+		} else {
+			$userAgent = "smw data import extension";
+		}
 			
 		if(strtolower($operationName) == "get"){
-			$params = array('http' => array('method' => 'GET'));
+			$params = array('http' => array('method' => 'GET', 'user_agent' => $userAgent,));
 			$first = true;
-				
+
 			foreach($parameters as $key => $values){
 				foreach($values as $value){
 					if($first){
@@ -91,20 +98,6 @@ class SMWRestClient implements IWebServiceClient {
 				unset($parameters["__post__separator"]);
 			} else {
 				$separator = "&";
-			}
-
-			if(array_key_exists("__post__content_type", $parameters)){
-				$contentType = $parameters["__post__content_type"][0];
-				unset($parameters["__post__content_type"]);
-			} else {
-				$contentType = "application/x-www-form-urlencoded";
-			}
-
-			if(array_key_exists("__post__user_agent", $parameters)){
-				$userAgent = $parameters["__post__user_agent"][0];
-				unset($parameters["__post__user_agent"]);
-			} else {
-				$userAgent = "smw data import extension";
 			}
 
 			$data = "";
