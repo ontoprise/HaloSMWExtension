@@ -33,7 +33,6 @@ function parseCmdParams() {
        $retVars[] = null;
     } 
     $paramPos = array_flip($params);
-    var_dump($params, $paramPos);
     for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         if (isset($paramPos[$arg])) {
             $retVars[$paramPos[$arg]] = next($argv);
@@ -50,14 +49,15 @@ function parseCmdParams() {
  */
 function runProcess($runCommand) {
     if (isWindows()) {
+        $outputFile= ".output00.out";
         $keepConsoleAfterTermination = false;
         $runCommand = "\"$runCommand\"";
         $wshShell = new COM("WScript.Shell");
         $clOption = $keepConsoleAfterTermination ? "/K" : "/C";
-        $runCommand = "cmd $clOption ".$runCommand." > .output.txt";
+        $runCommand = "cmd $clOption ".$runCommand." > ".$outputFile;
         $oExec = $wshShell->Run($runCommand, 7, true);
-        $output = file_get_contents('.output.txt');
-        unlink('.output.txt');
+        $output = file_get_contents($outputFile);
+        unlink($outputFile);
         return $output;
     } else {
         return exec($runCommand);

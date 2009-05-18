@@ -61,7 +61,6 @@ else {
     $webtestXML = $webtestBaseDir."/webtest.xml";
 }
 if (!file_exists($webtestExec) || !file_exists($webtestXML)) {
-    var_dump($webtestExec, $webtestXML);
     echo "The provided location of the Canoo Webtest at $webtestBaseDir seems to be invalid\n$USAGE\n";
     die();
 }
