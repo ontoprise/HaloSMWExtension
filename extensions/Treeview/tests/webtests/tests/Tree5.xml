@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+    <target name="test">
+
+        <webtest name="check page Tree5 in Wiki">
+
+            <callWikiPage pageName="Tree5" />
+
+            <not description="node Help:Contents must not exist">
+                <verifyText
+                    description="Check node: Contents"
+                    text="tv#{treeId}\.add\(\d+,\d+,'&lt;a href=\\&quot;${wgScript}/Help:Contents\\&quot; title=\\&quot;Help:Contents\\&quot;&gt;Contents&lt;/a&gt;'\);"
+                    regex="true"
+                />
+            </not>
+            <not description="not dynamic, so missing addSmwData">
+                <verifyText
+                    description="Check for addSmwData"
+                    text="tv#{treeId}.addSmwData("
+                />
+            </not>
+            <verifyText
+                description="Check node exists: Märchen"
+                text="tv#{treeId}.add(1,0,'&lt;a href=\&quot;${wgScript}/M%C3%A4rchen\&quot; title=\&quot;Märchen\&quot;&gt;Märchen&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Grimm"
+                text="tv#{treeId}.add(2,1,'&lt;a href=\&quot;${wgScript}/Grimm\&quot; title=\&quot;Grimm\&quot;&gt;Gebrüder Grimm&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Jacob Grimm"
+                text="tv#{treeId}.add(3,2,'&lt;a href=\&quot;${wgScript}/Jacob_Grimm\&quot; title=\&quot;Jacob Grimm\&quot;&gt;Jacob Grimm&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Wilhelm Grimm"
+                text="tv#{treeId}.add(4,2,'&lt;a href=\&quot;${wgScript}/Wilhelm_Grimm\&quot; title=\&quot;Wilhelm Grimm\&quot;&gt;Wilhelm Grimm&lt;/a&gt;');"
+            />
+
+            <verifyText
+                description="Check node exists: blaues Licht"
+                text="tv#{treeId}.add(6,5,'&lt;a href=\&quot;${wgScript}/Blaues_Licht\&quot; title=\&quot;Blaues Licht\&quot;&gt;Das blaue Licht&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Waldhaus"
+                text="tv#{treeId}.add(7,5,'&lt;a href=\&quot;${wgScript}/Waldhaus\&quot; title=\&quot;Waldhaus\&quot;&gt;Das Waldhaus&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Frau Holle"
+                text="tv#{treeId}.add(10,5,'&lt;a href=\&quot;${wgScript}/Frau_Holle\&quot; title=\&quot;Frau Holle\&quot;&gt;Frau Holle&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Goldmarie"
+                text="tv#{treeId}.add(11,10,'&lt;a href=\&quot;${wgScript}/Goldmarie\&quot; title=\&quot;Goldmarie\&quot;&gt;Goldmarie&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Goldmarie"
+                text="tv#{treeId}.add(12,10,'&lt;a href=\&quot;${wgScript}/Pechmarie\&quot; title=\&quot;Pechmarie\&quot;&gt;Pechmarie&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Kleiner Muck"
+                text="tv#{treeId}.add(17,16,'&lt;a href=\&quot;${wgScript}/Kleiner_Muck\&quot; title=\&quot;Kleiner Muck\&quot;&gt;Der kleine Muck&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Wikimaster"
+                text="tv#{treeId}.add(18,0,'&lt;a href=\&quot;${wgScript}/Help:Wikimaster\&quot; title=\&quot;Help:Wikimaster\&quot;&gt;The &lt;i&gt;Master&lt;/i&gt; of the &lt;b&gt;Universe&lt;/b&gt;&lt;/a&gt;');"
+            />
+            
+            <not description="Check that there is no opento command">
+                <verifyText
+                    description="Check for openToName"
+                    text="tv#{treeId}.openToName\("
+                />
+            </not>
+            <not description="Check that there are no leaf commands">
+                <verifyText
+                    description="no leafs"
+                    text="tv#{treeId}\.setLeaf\(\d+\);"
+                    regex="true"
+                />
+            </not>
+        
+        </webtest>
+
+    </target>
+</project>

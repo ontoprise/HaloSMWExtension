@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+    <target name="test">
+        <webtest name="check page Tree2 in Wiki">
+        	
+            <callWikiPage pageName="Tree2" />
+
+            <verifyText
+                description="Check for addSmwData"
+                text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, null, null, null, null, null, null);"
+            />
+        	<verifyText
+                description="Check node exists: Contents"
+                text="tv#{treeId}.add(1,0,'&lt;a href=\&quot;${wgScript}/Help:Contents\&quot; title=\&quot;Help:Contents\&quot;&gt;Contents&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Märchen"
+                text="tv#{treeId}.add(7,6,'&lt;a href=\&quot;${wgScript}/M%C3%A4rchen\&quot; title=\&quot;Märchen\&quot;&gt;Märchen&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Der Wolf und die 7 Geißlein"
+                text="tv#{treeId}.add(11,9,'&lt;a href=\&quot;${wgScript}/Der_Wolf_und_die_7_Gei%C3%9Flein\&quot; title=\&quot;Der Wolf und die 7 Geißlein\&quot;&gt;Der Wolf und die 7 Geißlein&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check node exists: Wilhelm Hauff"
+                text="tv#{treeId}.add(18,7,'&lt;a href=\&quot;${wgScript}/Wilhelm_Hauff\&quot; title=\&quot;Wilhelm Hauff\&quot;&gt;Wilhelm Hauff&lt;/a&gt;');"
+            />
+            <verifyText
+                description="Check command exists: openNode"
+                text="tv#{treeId}.openToName('Die_3_Schlangenbl%C3%A4tter');"
+            />
+            <not description="Check that there are no leaf commands">
+                <verifyText
+                    description="no leafs"
+                    text="tv#{treeId}\.setLeaf\(\d+\);"
+                    regex="true"
+                />
+            </not>
+        </webtest>
+    </target>
+</project>
