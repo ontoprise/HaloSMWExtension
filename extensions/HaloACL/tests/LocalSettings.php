@@ -8,4 +8,3 @@ enableSMWHalo('SMWHaloStore2');
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 enableHaloACL(); 
 
-include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php'); 
