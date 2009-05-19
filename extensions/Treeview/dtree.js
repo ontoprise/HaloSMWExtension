@@ -116,8 +116,10 @@ Node.prototype.getPageName = function() {
 	if (!this.name) return '';
 
 	// are we on the current page? i.e.  <strong class=\"selflink\">This page</strong>
-	if (this.name.indexOf('<strong class=') != -1)
-		return wgPageName;
+	if (this.name.indexOf('<strong class=') != -1) {
+		var name = URLEncode(wgPageName)
+		return name.replace("%3A", ":");
+	}
 	// fetch name from link i.e. href attribute in a tag
 	var name = this.name.replace(/.*href=(.*?\/)*(.*?)"( |>).*/, "$2");
 	// check if the relation exists -> so the node, but if the page itself doesn't exist
@@ -930,9 +932,8 @@ dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
 // creates the HTML string for nodes received by an Ajax call
 dTree.prototype.getHtml4Node = function(cn, url, params) {
 	var str;
-	//var link = cn.link.replace('%3A', ':');
-	var link = URLDecode(cn.link);
-    if (link == wgPageName)
+	var link = cn.link.replace('%3A', ':');
+    if (URLDecode(cn.link) == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
     else
 		str = '<a href=\"' + url + link + URLDecode(params) +'\" title=\"'
@@ -1063,8 +1064,8 @@ handleResponseRefresh = function() {
    		found = null;
    		for (var k = 0; k < dTree.aNodes.length; k++) {
    			var cName = dTree.aNodes[k].getPageName();
-   			if (dTree.aNodes[k].pid == cParent && cName == URLDecode(cn.link) &&
-   				(dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
+   			if (dTree.aNodes[k].pid == cParent && cName == cn.link.replace('%3A', ':') &&
+   			   (dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
    				found = k;
    				dTree.aNodes[k]._refresh = 0;
    			}
