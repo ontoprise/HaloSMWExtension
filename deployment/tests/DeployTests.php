@@ -1,7 +1,8 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-require_once 'testcases/TestDeployDescriptor.php';
+require_once 'testcases/TestDeployDescriptorParser.php';
+require_once 'testcases/TestDeployDescriptorProcessor.php';
 
 class DeployTests
 {
@@ -9,8 +10,8 @@ class DeployTests
     {
         $suite = new PHPUnit_Framework_TestSuite('DeployFramework');
 
-        $suite->addTestSuite("TestDeployDescriptor");
-  
+        //$suite->addTestSuite("TestDeployDescriptorParser");
+        $suite->addTestSuite("TestDeployDescriptorProcessor");
         return $suite;
     }
 }
