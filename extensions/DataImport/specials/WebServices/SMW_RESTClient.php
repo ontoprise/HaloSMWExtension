@@ -114,7 +114,6 @@ class SMWRestClient implements IWebServiceClient {
 
 			$params = array('http' => array(
     			'method' => 'POST',
-    			'content-type' => $contentType,
     			'content-length' =>strlen($data),
 				'user_agent' => $userAgent,
 				'content' => $data
