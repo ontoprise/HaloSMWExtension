@@ -24,7 +24,6 @@ mkdir %OUTPUT_DIR%\extensions\ParserFunctions
 mkdir %OUTPUT_DIR%\extensions\PermissionACL
 mkdir %OUTPUT_DIR%\extensions\SemanticForms
 mkdir %OUTPUT_DIR%\extensions\StringFunctions
-mkdir %OUTPUT_DIR%\extensions\Treeview
 mkdir %OUTPUT_DIR%\extensions\Variables
 mkdir %OUTPUT_DIR%\extensions\DebugTemplate
 mkdir %OUTPUT_DIR%\extensions\URLArguments
@@ -50,7 +49,6 @@ xcopy ..\..\ParserFunctions %OUTPUT_DIR%\extensions\ParserFunctions /S /EXCLUDE:
 xcopy ..\..\PermissionACL %OUTPUT_DIR%\extensions\PermissionACL /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\SemanticForms %OUTPUT_DIR%\extensions\SemanticForms /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\StringFunctions %OUTPUT_DIR%\extensions\StringFunctions /S /EXCLUDE:excludeForExt.dat /Y
-xcopy ..\..\Treeview %OUTPUT_DIR%\extensions\Treeview /S /EXCLUDE:excludeForExt.dat /Y
 xcopy ..\..\Variables %OUTPUT_DIR%\extensions\Variables /S /EXCLUDE:excludeForExt.dat /Y
 
 xcopy ..\..\LdapAuthentication.php %OUTPUT_DIR%\extensions /Y

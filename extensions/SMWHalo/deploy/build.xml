@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="SMWHalo">
-	<target name="build">
+<project basedir="." default="smwhalo_build" name="SMWHalo">
+	<target name="smwhalo_build">
 		<delete dir="bin/zip" />
 		<delete file="bin/smwhalo-${version}.zip" />
 		<mkdir dir="bin/zip" />
@@ -57,6 +57,95 @@
 		</copy>
 		<zip destfile="bin/smwhalo-${version}.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+	</target>
+
+	<target name="smwhalo_ext_build">
+		<delete dir="bin/zip_ext" />
+		<delete file="bin/smwhalo-ext-${version}.zip" />
+		<mkdir dir="bin/zip_ext" />
+		<copy todir="bin/zip_ext/extensions/DataAPI">
+			<fileset dir="../../DataAPI/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/DynamicPageList">
+			<fileset dir="../../DynamicPageList/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/Glossary">
+			<fileset dir="../../Glossary/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/FCKeditor">
+			<fileset dir="../../FCKeditor/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/Lockdown">
+			<fileset dir="../../Lockdown/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/ParserFunctions">
+			<fileset dir="../../ParserFunctions/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/PermissionACL">
+			<fileset dir="../../PermissionACL/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/SemanticForms">
+			<fileset dir="../../SemanticForms/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/StringFunctions">
+			<fileset dir="../../StringFunctions/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/Variables">
+			<fileset dir="../../Variables/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/DebugTemplate">
+			<fileset dir="../../DebugTemplate/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/URLArguments">
+			<fileset dir="../../URLArguments/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions/SMWHalo">
+			<fileset dir="../../../patches/extensions/SMWHalo/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/skins">
+			<fileset dir="../../../patches/skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/includes">
+			<fileset dir="../../../patches/includes/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip_ext/extensions">
+			<fileset file="../../LdapAuthentication.php/" />
+			<fileset file="../../Cite.php/" />
+			<fileset file="../../Cite.i18n.php/" />
+			<fileset file="../../Quicktime.php/" />
+		</copy>
+		<zip destfile="bin/smwhalo-ext-${version}.zip" basedir="bin/zip_ext" />
+		<delete dir="bin/zip_ext" />
 	</target>
 
 </project>
