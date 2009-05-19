@@ -1,11 +1,14 @@
 <?php
 
+// file will be required by init.php and runWebtest.php in this directory
+
+// check if original file was called from command line or Webserver 
 if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
     print "This script must be run from the command line\n$USAGE\m";
     exit();
 }
 
-
+// Check if PHP is > 5.0 otherwise abort.
 if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
     print "Sorry! This version of MediaWiki requires PHP 5; you are running " .
     PHP_VERSION . ".\n\n" .
@@ -15,6 +18,8 @@ if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
     die( -1 );
 }
 
+// below here are functions required by the scripts.
+
 /**
  * Return param content for command line switches
  * i.e. myscript.php -p1 value1 -p2 value2 would use:
@@ -22,7 +27,7 @@ if( version_compare( PHP_VERSION, '5.0.0' ) < 0 ) {
  * and $arg1 == "value1", $arg2 == "value2"
  *
  * @param string [string... ]
- * @return array
+ * @return array(string)
  */
 function parseCmdParams() {
     global $argv;
@@ -32,10 +37,10 @@ function parseCmdParams() {
        $params[]= $arg;
        $retVars[] = null;
     } 
-    $paramPos = array_flip($params);
+    $params = array_flip($params);
     for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
-        if (isset($paramPos[$arg])) {
-            $retVars[$paramPos[$arg]] = next($argv);
+        if (isset($params[$arg])) {
+            $retVars[$params[$arg]] = next($argv);
         }
     }
     return $retVars;
@@ -46,6 +51,7 @@ function parseCmdParams() {
  * Runs an external process synchronous. 
  *
  * @param string $runCommand
+ * @return string $output of executed command
  */
 function runProcess($runCommand) {
     if (isWindows()) {
@@ -66,7 +72,7 @@ function runProcess($runCommand) {
 
 /**
  * Checks if the OS is Windows
- * returns true/false
+ * @return boolean true if Windows detected, false otherwise
  */
 function isWindows() {
     static $thisBoxRunsWindows;
