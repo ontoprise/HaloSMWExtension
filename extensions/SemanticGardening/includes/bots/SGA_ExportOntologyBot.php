@@ -80,7 +80,7 @@ class ExportOntologyBot extends GardeningBot {
 		echo "\nStart export...";
 			
 		// create output directory and generate output filename
-		$smwhalodir = __FILE__."/../../../";
+		$smwhalodir = dirname(__FILE__)."/../..";
         $wikiexportDir = $smwhalodir."/wikiexport";
 		if (!file_exists($wikiexportDir)) mkdir($wikiexportDir);
 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
