@@ -17,7 +17,7 @@
 /**
 * SN_Language.js
 * 
-* A class that reads language strings from the server by an ajax call.
+* A class that provides language dependent strings for an identifier.
 * 
 * @author Thomas Schweitzer
 *
