@@ -237,7 +237,7 @@
 
 .smwf_naviitem{
 	background-color: #E6E6E6;
-	width: 100;
+	width: 100%;
 	border-bottom: 1px solid #FFF;
 	padding-left: 5px;
 }
@@ -332,7 +332,7 @@
 	color:  #000;
 	background: none;
 	font-weight: bold;
-	font-size: normal;
+	font-size: medium;
 }
 
 #smwf_pageblock h1{
