@@ -168,7 +168,9 @@ class  HACLGroup  {
 			return $group; 
 		} else if (is_string($group)) {
 			// Name of group given
+			$etc = haclfDisableTitlePatch();
 			$nt = Title::newFromText($group, HACL_NS_ACL);
+			haclfRestoreTitlePatch($etc);
 			if  (is_null($nt)) {
 				# Illegal name
 				return null;
@@ -252,6 +254,14 @@ class  HACLGroup  {
 				return true;
 			}
 		}
+		
+		// Sysops and bureaucrats can modify the SD
+		$user = User::newFromId($userID);
+		$groups = $user->getGroups();
+		if (in_array('sysop', $groups) || in_array('bureaucrat', $groups)) {
+			return true;
+		}
+		
 		if ($throwException) {
 			if (empty($userName)) {
 				// only user id is given => retrieve the name of the user

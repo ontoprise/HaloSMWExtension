@@ -172,6 +172,7 @@ class  HACLRight  {
 	 */		
 	public function setOriginID($originId)		{$this->mOriginID = $originId;}
 	
+	
 	//--- Public methods ---
 	
 	/**
@@ -194,6 +195,48 @@ class  HACLRight  {
 			throw new HACLRightException(HACLRightException::UNKNOWN_RIGHT, $rightID);
 		}
 		return $right;
+	}
+
+	/**
+	 * Returns the ID of an action for the given name of an action 
+	 *
+	 * @param string $actionName
+	 * 		The action, the user wants to perform. One of "read", "formedit", 
+	 *      "wysiwyg", "edit", "annotate", "create", "move" and "delete".
+	 * 
+	 * @return int
+	 * 		The ID of the action or 0 if the names is invalid.
+	 * 
+	 */
+	public static function getActionID($actionName) {
+		$actionID = 0;
+		switch ($actionName) {
+			case "read":
+				$actionID = HACLRight::READ;
+				break;
+			case "formedit":
+				$actionID = HACLRight::FORMEDIT;
+				break;
+			case "wysiwyg":
+				$actionID = HACLRight::WYSIWYG;
+				break;
+			case "edit":
+				$actionID = HACLRight::EDIT;
+				break;
+			case "annotate":
+				$actionID = HACLRight::ANNOTATE;
+				break;
+			case "create":
+				$actionID = HACLRight::CREATE;
+				break;
+			case "move":
+				$actionID = HACLRight::MOVE;
+				break;
+			case "delete":
+				$actionID = HACLRight::DELETE;
+				break;
+		}
+		return $actionID;		
 	}
 
 	/**

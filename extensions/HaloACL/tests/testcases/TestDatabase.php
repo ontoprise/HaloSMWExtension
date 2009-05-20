@@ -5,6 +5,9 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 
 	var $saveGlobals = array();
 	
+	private $mArticles;
+	private $mOrderOfArticleCreation;
+	
     function setUp() {
     	User::createNew("U1");
     	User::createNew("U2");
@@ -19,12 +22,19 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
     }
 
     function testRunTests() {
-    	$this->setupGroups();
-    	$this->setupRights();
-    	$this->checkRights();
-    	$this->removeRights();
-    	$this->removeGroups();
-    	$this->whitelist();
+    	try {
+	    	$this->createArticles();
+	    	$this->setupGroups();
+	    	$this->setupRights();
+	    	$this->checkRights();
+	    	$this->removeRights();
+	    	$this->removeGroups();
+	    	$this->whitelist();
+			$this->removeArticles();    	
+    	} catch (Exception $e) {
+			$this->removeArticles();    
+			throw $e;	
+    	}
     }
     
     function setupGroups() {
@@ -137,7 +147,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$this->assertTrue($exceptionCaught, "Test TD9 failed in ".basename($file));
 			
 		} catch (Exception $e) {
-			$this->assertTrue(false, "Unexcpected exception while testing ".basename($file)."::setupGroups():".$e->getMessage());
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::setupGroups():".$e->getMessage());
 		}
     	
     }
@@ -200,7 +210,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$prPR3->addPredefinedRights(array($prPR1, $prPR2));
 						
 		} catch (Exception $e) {
-			$this->assertTrue(false, "Unexcpected exception while testing ".basename($file)."::setupRights():".$e->getMessage());
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::setupRights():".$e->getMessage());
 		}
     	
     }
@@ -319,13 +329,15 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			);
 			$this->doCheckRights("TD_CR_1", $checkRights);
 		} catch (Exception $e) {
-			$this->assertTrue(false, "Unexcpected exception while testing ".basename($file)."::checkRights():".$e->getMessage());
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::checkRights():".$e->getMessage());
 		}
 			
     }
     
     function removeRights() {
     	$file = __FILE__;
+    	global $haclgOpenWikiAccess;
+    	
     	try {
     		$prPR3 = HACLSecurityDescriptor::newFromName("Right/PR3");
 			$prPR3->delete();
@@ -446,7 +458,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			
     		$prPR1 = HACLSecurityDescriptor::newFromName("Right/PR1");
 			$prPR1->delete();
-			
+						
 			$checkRights = array(
 				array('A', 'U1', 'read', true),
 				array('A', 'U1', 'formedit', false),
@@ -502,59 +514,59 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 				array('A', 'U6', 'delete', false),
 				array('A', 'U6', 'move', false),
 				
-				array('B', 'U1', 'read', false),
-				array('B', 'U1', 'formedit', false),
-				array('B', 'U1', 'annotate', false),
-				array('B', 'U1', 'wysiwyg', false),
-				array('B', 'U1', 'edit', false),
-				array('B', 'U1', 'create', false),
-				array('B', 'U1', 'delete', false),
-				array('B', 'U1', 'move', false),
+				array('B', 'U1', 'read', $haclgOpenWikiAccess),
+				array('B', 'U1', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U1', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U1', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'create', $haclgOpenWikiAccess),
+				array('B', 'U1', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U1', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U2', 'read', false),
-				array('B', 'U2', 'formedit', false),
-				array('B', 'U2', 'annotate', false),
-				array('B', 'U2', 'wysiwyg', false),
-				array('B', 'U2', 'edit', false),
-				array('B', 'U2', 'create', false),
-				array('B', 'U2', 'delete', false),
-				array('B', 'U2', 'move', false),
+				array('B', 'U2', 'read', $haclgOpenWikiAccess),
+				array('B', 'U2', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U2', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U2', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'create', $haclgOpenWikiAccess),
+				array('B', 'U2', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U2', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U3', 'read', false),
-				array('B', 'U3', 'formedit', false),
-				array('B', 'U3', 'annotate', false),
-				array('B', 'U3', 'wysiwyg', false),
-				array('B', 'U3', 'edit', false),
-				array('B', 'U3', 'create', false),
-				array('B', 'U3', 'delete', false),
-				array('B', 'U3', 'move', false),
+				array('B', 'U3', 'read', $haclgOpenWikiAccess),
+				array('B', 'U3', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U3', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U3', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'create', $haclgOpenWikiAccess),
+				array('B', 'U3', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U3', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U4', 'read', false),
-				array('B', 'U4', 'formedit', false),
-				array('B', 'U4', 'annotate', false),
-				array('B', 'U4', 'wysiwyg', false),
-				array('B', 'U4', 'edit', false),
-				array('B', 'U4', 'create', false),
-				array('B', 'U4', 'delete', false),
-				array('B', 'U4', 'move', false),
+				array('B', 'U4', 'read', $haclgOpenWikiAccess),
+				array('B', 'U4', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U4', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U4', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'create', $haclgOpenWikiAccess),
+				array('B', 'U4', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U4', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U5', 'read', false),
-				array('B', 'U5', 'formedit', false),
-				array('B', 'U5', 'annotate', false),
-				array('B', 'U5', 'wysiwyg', false),
-				array('B', 'U5', 'edit', false),
-				array('B', 'U5', 'create', false),
-				array('B', 'U5', 'delete', false),
-				array('B', 'U5', 'move', false),
+				array('B', 'U5', 'read', $haclgOpenWikiAccess),
+				array('B', 'U5', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U5', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U5', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'create', $haclgOpenWikiAccess),
+				array('B', 'U5', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U5', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U6', 'read', false),
-				array('B', 'U6', 'formedit', false),
-				array('B', 'U6', 'annotate', false),
-				array('B', 'U6', 'wysiwyg', false),
-				array('B', 'U6', 'edit', false),
-				array('B', 'U6', 'create', false),
-				array('B', 'U6', 'delete', false),
-				array('B', 'U6', 'move', false),
+				array('B', 'U6', 'read', $haclgOpenWikiAccess),
+				array('B', 'U6', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U6', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U6', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'create', $haclgOpenWikiAccess),
+				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
 			$this->doCheckRights("TD_CR_3", $checkRights);			
 			
@@ -616,59 +628,59 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 				array('A', 'U6', 'delete', false),
 				array('A', 'U6', 'move', false),
 				
-				array('B', 'U1', 'read', false),
-				array('B', 'U1', 'formedit', false),
-				array('B', 'U1', 'annotate', false),
-				array('B', 'U1', 'wysiwyg', false),
-				array('B', 'U1', 'edit', false),
-				array('B', 'U1', 'create', false),
-				array('B', 'U1', 'delete', false),
-				array('B', 'U1', 'move', false),
+				array('B', 'U1', 'read', $haclgOpenWikiAccess),
+				array('B', 'U1', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U1', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U1', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'create', $haclgOpenWikiAccess),
+				array('B', 'U1', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U1', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U2', 'read', false),
-				array('B', 'U2', 'formedit', false),
-				array('B', 'U2', 'annotate', false),
-				array('B', 'U2', 'wysiwyg', false),
-				array('B', 'U2', 'edit', false),
-				array('B', 'U2', 'create', false),
-				array('B', 'U2', 'delete', false),
-				array('B', 'U2', 'move', false),
+				array('B', 'U2', 'read', $haclgOpenWikiAccess),
+				array('B', 'U2', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U2', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U2', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'create', $haclgOpenWikiAccess),
+				array('B', 'U2', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U2', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U3', 'read', false),
-				array('B', 'U3', 'formedit', false),
-				array('B', 'U3', 'annotate', false),
-				array('B', 'U3', 'wysiwyg', false),
-				array('B', 'U3', 'edit', false),
-				array('B', 'U3', 'create', false),
-				array('B', 'U3', 'delete', false),
-				array('B', 'U3', 'move', false),
+				array('B', 'U3', 'read', $haclgOpenWikiAccess),
+				array('B', 'U3', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U3', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U3', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'create', $haclgOpenWikiAccess),
+				array('B', 'U3', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U3', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U4', 'read', false),
-				array('B', 'U4', 'formedit', false),
-				array('B', 'U4', 'annotate', false),
-				array('B', 'U4', 'wysiwyg', false),
-				array('B', 'U4', 'edit', false),
-				array('B', 'U4', 'create', false),
-				array('B', 'U4', 'delete', false),
-				array('B', 'U4', 'move', false),
+				array('B', 'U4', 'read', $haclgOpenWikiAccess),
+				array('B', 'U4', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U4', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U4', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'create', $haclgOpenWikiAccess),
+				array('B', 'U4', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U4', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U5', 'read', false),
-				array('B', 'U5', 'formedit', false),
-				array('B', 'U5', 'annotate', false),
-				array('B', 'U5', 'wysiwyg', false),
-				array('B', 'U5', 'edit', false),
-				array('B', 'U5', 'create', false),
-				array('B', 'U5', 'delete', false),
-				array('B', 'U5', 'move', false),
+				array('B', 'U5', 'read', $haclgOpenWikiAccess),
+				array('B', 'U5', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U5', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U5', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'create', $haclgOpenWikiAccess),
+				array('B', 'U5', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U5', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U6', 'read', false),
-				array('B', 'U6', 'formedit', false),
-				array('B', 'U6', 'annotate', false),
-				array('B', 'U6', 'wysiwyg', false),
-				array('B', 'U6', 'edit', false),
-				array('B', 'U6', 'create', false),
-				array('B', 'U6', 'delete', false),
-				array('B', 'U6', 'move', false),
+				array('B', 'U6', 'read', $haclgOpenWikiAccess),
+				array('B', 'U6', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U6', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U6', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'create', $haclgOpenWikiAccess),
+				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
 			$this->doCheckRights("TD_CR_4", $checkRights);
 						
@@ -731,64 +743,64 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 				array('A', 'U6', 'delete', $haclgOpenWikiAccess),
 				array('A', 'U6', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U1', 'read', false),
-				array('B', 'U1', 'formedit', false),
-				array('B', 'U1', 'annotate', false),
-				array('B', 'U1', 'wysiwyg', false),
-				array('B', 'U1', 'edit', false),
-				array('B', 'U1', 'create', false),
-				array('B', 'U1', 'delete', false),
-				array('B', 'U1', 'move', false),
+				array('B', 'U1', 'read', $haclgOpenWikiAccess),
+				array('B', 'U1', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U1', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U1', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U1', 'create', $haclgOpenWikiAccess),
+				array('B', 'U1', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U1', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U2', 'read', false),
-				array('B', 'U2', 'formedit', false),
-				array('B', 'U2', 'annotate', false),
-				array('B', 'U2', 'wysiwyg', false),
-				array('B', 'U2', 'edit', false),
-				array('B', 'U2', 'create', false),
-				array('B', 'U2', 'delete', false),
-				array('B', 'U2', 'move', false),
+				array('B', 'U2', 'read', $haclgOpenWikiAccess),
+				array('B', 'U2', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U2', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U2', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U2', 'create', $haclgOpenWikiAccess),
+				array('B', 'U2', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U2', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U3', 'read', false),
-				array('B', 'U3', 'formedit', false),
-				array('B', 'U3', 'annotate', false),
-				array('B', 'U3', 'wysiwyg', false),
-				array('B', 'U3', 'edit', false),
-				array('B', 'U3', 'create', false),
-				array('B', 'U3', 'delete', false),
-				array('B', 'U3', 'move', false),
+				array('B', 'U3', 'read', $haclgOpenWikiAccess),
+				array('B', 'U3', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U3', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U3', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U3', 'create', $haclgOpenWikiAccess),
+				array('B', 'U3', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U3', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U4', 'read', false),
-				array('B', 'U4', 'formedit', false),
-				array('B', 'U4', 'annotate', false),
-				array('B', 'U4', 'wysiwyg', false),
-				array('B', 'U4', 'edit', false),
-				array('B', 'U4', 'create', false),
-				array('B', 'U4', 'delete', false),
-				array('B', 'U4', 'move', false),
+				array('B', 'U4', 'read', $haclgOpenWikiAccess),
+				array('B', 'U4', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U4', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U4', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U4', 'create', $haclgOpenWikiAccess),
+				array('B', 'U4', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U4', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U5', 'read', false),
-				array('B', 'U5', 'formedit', false),
-				array('B', 'U5', 'annotate', false),
-				array('B', 'U5', 'wysiwyg', false),
-				array('B', 'U5', 'edit', false),
-				array('B', 'U5', 'create', false),
-				array('B', 'U5', 'delete', false),
-				array('B', 'U5', 'move', false),
+				array('B', 'U5', 'read', $haclgOpenWikiAccess),
+				array('B', 'U5', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U5', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U5', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U5', 'create', $haclgOpenWikiAccess),
+				array('B', 'U5', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U5', 'move', $haclgOpenWikiAccess),
 				
-				array('B', 'U6', 'read', false),
-				array('B', 'U6', 'formedit', false),
-				array('B', 'U6', 'annotate', false),
-				array('B', 'U6', 'wysiwyg', false),
-				array('B', 'U6', 'edit', false),
-				array('B', 'U6', 'create', false),
-				array('B', 'U6', 'delete', false),
-				array('B', 'U6', 'move', false),
+				array('B', 'U6', 'read', $haclgOpenWikiAccess),
+				array('B', 'U6', 'formedit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'annotate', $haclgOpenWikiAccess),
+				array('B', 'U6', 'wysiwyg', $haclgOpenWikiAccess),
+				array('B', 'U6', 'edit', $haclgOpenWikiAccess),
+				array('B', 'U6', 'create', $haclgOpenWikiAccess),
+				array('B', 'U6', 'delete', $haclgOpenWikiAccess),
+				array('B', 'U6', 'move', $haclgOpenWikiAccess),
 			);
 			$this->doCheckRights("TD_CR_5", $checkRights);
 			
 		} catch (Exception $e) {
-			$this->assertTrue(false, "Unexcpected exception while testing ".basename($file)."::removeRights():".$e->getMessage());
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::removeRights():".$e->getMessage());
 		}
     	
     }
@@ -833,15 +845,15 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$g1->delete();
 			
 		} catch (Exception $e) {
-			$this->assertTrue(false, "Unexcpected exception while testing ".basename($file)."::removeGroups():".$e->getMessage());
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::removeGroups():".$e->getMessage());
 		}
 	}
 	
 	function whitelist() {
-		$wl = new HACLWhitelist(array('A', 'B', 'ACL:Group/G1'));
+		$wl = new HACLWhitelist(array('Main Page'));
 		$wl->save();
 
-		$inWL = HACLWhitelist::isInWhitelist('A');
+		$inWL = HACLWhitelist::isInWhitelist('Main Page');
 		$this->assertEquals($inWL, true, "Testing the whitelist failed - TC 1\n");
 		$inWL = HACLWhitelist::isInWhitelist('Category:B');
 		$this->assertEquals($inWL, false, "Testing the whitelist failed - TC 2\n");
@@ -870,18 +882,55 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 		
 	}
     
+    private function createArticles() {
+    	global $wgUser;
+    	$wgUser = User::newFromName("U1");
+		$this->initArticleContent();
+    	
+    	$file = __FILE__;
+    	try {
+	    	foreach ($this->mOrderOfArticleCreation as $title) {
+				self::createArticle($title, $this->mArticles[$title]);
+	    	}
+    	} catch (Exception $e) {
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
+		}
+    	
+    }
+
+	private function createArticle($title, $content) {
+	
+		$title = Title::newFromText($title);
+		$article = new Article($title);
+	
+		// Set the article's content
+		$success = $article->doEdit($content, 'Created for test case');
+	}
+
+	private function initArticleContent() {
+		$this->mOrderOfArticleCreation = array(
+//			'Category:B'
+		);
+		
+		$this->mArticles = array(
+//------------------------------------------------------------------------------		
+			'Category:B' =>
+<<<ACL
+This is the category B.
+ACL
+);
+	}
+	
+	
 	private function doCheckRights($testcase, $expectedResults) {
 		foreach ($expectedResults as $er) {
 			$articleName = $er[0];
-			if ($articleName == 'B') {
-				//TODO: remove
-				continue;
-			}
 			$user = $username = $er[1];
 			$action = $er[2];
 			$res = $er[3];
-			
+			$etc = haclfDisableTitlePatch();			
 			$article = Title::newFromText($articleName);
+			haclfRestoreTitlePatch($etc);
 			$user = User::newFromName($user);
 			unset($result);
 			HACLEvaluator::userCan($article, $user, $action, $result);
@@ -907,6 +956,21 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 				                    $group->getGroupName()."->hasGroupMember($name) (Testcase: $testcase)");
 		}
 	}
+	
+	private function removeArticles() {
+		
+		$articles = array(
+//			'Category:B'
+		);
+		
+		foreach ($articles as $a) {
+		    $t = Title::newFromText($a);
+	    	$article = new Article($t);
+			$article->doDelete("Testing");
+		}
+		
+	}
+	
 	
 }
 ?>

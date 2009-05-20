@@ -251,4 +251,95 @@ PR: PR1, PR2</text>
 [[Category:B]]</text>
     </revision>
   </page>
+  <page>
+    <title>C</title>
+    <id>75</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Page C</comment>
+      <text xml:space="preserve">This is page C.
+
+[[Category:C]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Whitelist</title>
+    <id>78</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Whitelist</comment>
+      <text xml:space="preserve">This is the article Whitelist.</text>
+    </revision>
+  </page>
+  <page>
+    <title>User:U1</title>
+    <id>79</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>User:U1</comment>
+      <text xml:space="preserve">This is the article User:U1</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:D</title>
+    <id>80</id>
+    <revision>
+      <id>80</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This is category D.</comment>
+      <text xml:space="preserve">This is category D.
+      [[Category:C]]
+      </text>
+    </revision>
+  </page>
+   <page>
+    <title>Category:B</title>
+    <id>72</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This is category B.</comment>
+      <text xml:space="preserve">This is category B.</text>
+    </revision>
+  </page>
+   <page>
+    <title>Category:C</title>
+    <id>73</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This is category C.</comment>
+      <text xml:space="preserve">This is category C.
+      [[Category:B]]
+      [[Category:D]]
+      </text>
+    </revision>
+  </page>
 </mediawiki>

@@ -40,7 +40,7 @@ class HACLGroupException extends HACLException {
 	// 1 - name of the group
 	const NO_GROUP_ID = 1;	
 	
-	// A unauthorized user tries to modify the definition of a group. 
+	// An unauthorized user tries to modify the definition of a group. 
 	// Parameters:
 	// 1 - name of the group
 	// 2 - name of the user

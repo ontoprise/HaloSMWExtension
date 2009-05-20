@@ -1063,16 +1063,20 @@ class HACLStorageSQL {
 	 *
 	 * @param int $peID
 	 * 		ID of the protected element
-	 * 
+	 * @param int $peType
+	 * 		Type of the protected element
+	 *  
 	 * @return mixed int|bool
 	 * 		int: ID of the security descriptor
 	 * 		<false>, if there is no SD for the protected element
 	 */
-	public static function getSDForPE($peID) {
+	public static function getSDForPE($peID, $peType) {
 		$db =& wfGetDB( DB_SLAVE );
 		
 		$obj = $db->selectRow($db->tableName('halo_acl_security_descriptors'), 
-			                      array("sd_id"), array("pe_id" => $peID));
+			                      			 array("sd_id"), 
+			                      			 array("pe_id" => $peID, 
+			                      			 	   "type"  => $peType));
 		return ($obj === false) ? false : $obj->sd_id;
 	}
 	

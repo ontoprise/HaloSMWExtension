@@ -405,7 +405,9 @@ class HACLParserFunctions  {
 			// trim pages
 			for ($i = 0; $i < count($pages); ++$i) {
 				$pn = trim($pages[$i]);
+				$etc = haclfDisableTitlePatch();
 				$t = Title::newFromText($pn);
+				haclfRestoreTitlePatch($etc);
 				// Create page names with correct upper/lower cases
 				$pages[$i] = $t->getFullText();
 			}
@@ -692,7 +694,9 @@ class HACLParserFunctions  {
 		
 		// Check if this article is already represented in the database
 		$id = self::$mInstance->mTitle->getArticleID();
+		$etc = haclfDisableTitlePatch();
 		$wl = Title::newFromText($haclgContLang->getWhitelist());
+		haclfRestoreTitlePatch($etc);
 		$wlid = $wl->getArticleID();
 		
 		$isWhitelist = ($id == $wlid);

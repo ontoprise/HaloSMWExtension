@@ -169,13 +169,16 @@ class  HACLSecurityDescriptor  {
 			return false;
 		}
 		// return the page id
+		$etc = haclfDisableTitlePatch();
 		$nt = Title::newFromText($peName);
+		haclfRestoreTitlePatch($etc);
 		if  (is_null($nt)) {
 			# Illegal name
 			return false;
 		}
 		
-		return $nt->getArticleID();
+		$id = $nt->getArticleID();
+		return $id == 0 ? false : $id;
 		
 	}
 	
@@ -234,7 +237,9 @@ class  HACLSecurityDescriptor  {
 	 * 
 	 */
 	public static function idForSD($SDName) {
+		$etc = haclfDisableTitlePatch();
 		$nt = Title::newFromText($SDName, HACL_NS_ACL);
+		haclfRestoreTitlePatch($etc);
 		if  (is_null($nt)) {
 			# Illegal name
 			return null;
@@ -255,7 +260,9 @@ class  HACLSecurityDescriptor  {
 	 * 		that defines this SD
 	 */
 	public static function nameForID($SDID) {
+		$etc = haclfDisableTitlePatch();
 		$nt = Title::newFromID($SDID);
+		haclfRestoreTitlePatch($etc);
 		return ($nt) ? $nt->getText() : null;
 	}
 	
@@ -280,12 +287,15 @@ class  HACLSecurityDescriptor  {
 	 * @param int $peID
 	 * 		ID of the protected element
 	 * 
+	 * @param int $peType
+	 * 		Type of the protected element
+	 * 
 	 * @return mixed int|bool
 	 * 		int: ID of the security descriptor
 	 * 		<false>, if there is no SD for the protected element
 	 */
-	public static function getSDForPE($peID) {
-		return HACLStorage::getDatabase()->getSDForPE($peID);
+	public static function getSDForPE($peID, $peType) {
+		return HACLStorage::getDatabase()->getSDForPE($peID, $peType);
 	}
 	
 	/**
@@ -623,10 +633,17 @@ class  HACLSecurityDescriptor  {
 				return true;
 			}
 		}
+
+		// Sysops and bureaucrats can modify the SD
+		$user = User::newFromId($userID);
+		$groups = $user->getGroups();
+		if (in_array('sysop', $groups) || in_array('bureaucrat', $groups)) {
+			return true;
+		}
+		
 		if ($throwException) {
 			if (empty($userName)) {
 				// only user id is given => retrieve the name of the user
-				$user = User::newFromId($userID);
 				$userName = ($user) ? $user->getId() : "(User-ID: $userID)";
 			}
 			throw new HACLSDException(HACLSDException::USER_CANT_MODIFY_SD, 

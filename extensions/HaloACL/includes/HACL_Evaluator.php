@@ -45,9 +45,6 @@ class HACLEvaluator {
 //	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
-	private static $mValidActions = array('read', 'formedit', 'annotate',
-	                                      'wysiwyg', 'edit', 'create', 'move',
-										  'delete');
 	
 	/**
 	 * Constructor for  HACLEvaluator
@@ -86,14 +83,9 @@ class HACLEvaluator {
 	 * 		true
 	 */
 	public static function userCan($title, $user, $action, &$result) {
-		// reading the page "Permission denied" is allowed.
-		global $haclgContLang;
-		if ($title->getText() == $haclgContLang->getPermissionDeniedPage()
-			&& $action == 'read') {
-			$result = true;
-			return true;
-	    }
-	    
+
+		$etc = haclfDisableTitlePatch();
+		
 		//Special handling of action "wysiwyg". This is passed as 
 		// "action=edit&mode=wysiwyg"
 		if ($action == 'edit') {
@@ -101,57 +93,97 @@ class HACLEvaluator {
 			$action = $wgRequest->getVal('mode', 'edit');
 		}
 		
-		// Reject unknown actions
-		if (!in_array($action, self::$mValidActions)) {
-			$result = false;
-			return false;
+		$actionID = HACLRight::getActionID($action);
+		if ($actionID == 0) {
+			// unknown action => nothing can be said about this
+			haclfRestoreTitlePatch($etc);
+			return true;
 		}
-	    
+		
+		// reading the page "Permission denied" is allowed.
+		global $haclgContLang;
+		if ($title->getText() == $haclgContLang->getPermissionDeniedPage()) {
+			$r = $actionID == HACLRight::READ;
+			haclfRestoreTitlePatch($etc);
+			$result = $r;
+			return $r;
+	    }
+		
 		$articleID = (int) $title->getArticleID();
 		$userID = $user->getId();
 		
 		if ($articleID == 0) {
 			// The article does not exist yet
-			if ($action == 'create' || $action == 'edit') {
+			if ($actionID == HACLRight::CREATE || $actionID == HACLRight::EDIT) {
 				// Check if the user is allowed to create an SD
 				$allowed = self::checkSDCreation($title, $user);
 				if ($allowed == false) {
+					haclfRestoreTitlePatch($etc);
 					$result = false;
 					return false;
 				}
 			}
-			//TODO: Check if the article belongs to a namespace with an SD
-			$result = true;
-			return true;
+			// Check if the article belongs to a namespace with an SD
+			
+		    list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
+			haclfRestoreTitlePatch($etc);
+		    $result = $r;
+			return $r;
 		}
+		
+		// Check rights for managing ACLs
+		if (!self::checkACLManager($title, $userID, $actionID)) {
+			haclfRestoreTitlePatch($etc);
+			$result = false;
+			return false;
+		}
+		
 		// Check if there is a security descriptor for the article.
-		$hasSD = HACLSecurityDescriptor::getSDForPE($articleID) !== false;
+		$hasSD = HACLSecurityDescriptor::getSDForPE($articleID, HACLSecurityDescriptor::PET_PAGE) !== false;
 		
 		// first check page rights
 		if ($hasSD) {
 			$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
-			                    $userID, $action);
+			                    $userID, $actionID);
 			if ($r) {
+				haclfRestoreTitlePatch($etc);
 				$result = true;
 				return true;
 			}
 		}
 		
 		// check namespace rights
-		
-		// check category rights
-		
-		// check the whitelist
-		if (HACLWhitelist::isInWhitelist($articleID) && $action == 'read') {
-			// articles in the whitelist can be read
+		list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
+		$hasSD = $hasSD ? true : $sd;
+		if ($sd && $r) {
+			haclfRestoreTitlePatch($etc);
 			$result = true;
 			return true;
+		}
+	
+		// check category rights
+		list($r, $sd) = self::hasCategoryRight($title->getFullText(), $userID, $actionID);
+		$hasSD = $hasSD ? true : $sd;
+		if ($sd && $r) {
+			haclfRestoreTitlePatch($etc);
+			$result = true;
+			return true;
+		}
+		
+		// check the whitelist
+		if (HACLWhitelist::isInWhitelist($articleID)) {
+			$r = $actionID == HACLRight::READ;
+			// articles in the whitelist can be read
+			haclfRestoreTitlePatch($etc);
+			$result = $r;
+			return $r;
 		}
 		
 		if (!$hasSD) {
 			global $haclgOpenWikiAccess;
 			// Articles with no SD are not protected if $haclgOpenWikiAccess is
 			// true. Otherwise access is denied
+			haclfRestoreTitlePatch($etc);
 			$result = $haclgOpenWikiAccess;
 			return $haclgOpenWikiAccess;
 		}
@@ -161,6 +193,7 @@ class HACLEvaluator {
 //		return true;
 
 		// permission denied
+		haclfRestoreTitlePatch($etc);
 		$result = false;
 		return false;
 	}
@@ -171,7 +204,8 @@ class HACLEvaluator {
 	 * the given title. The hierarchy of categories is not considered here.
 	 *
 	 * @param int $titleID
-	 * 		ID of the protected object
+	 * 		ID of the protected object (which is the namespace index if the type
+	 * 		is PET_NAMESPACE)
 	 * @param string $peType
 	 * 		The type of the protection to check for the title. One of
 	 * 		HACLSecurityDescriptor::PET_PAGE
@@ -180,44 +214,15 @@ class HACLEvaluator {
 	 * 		HACLSecurityDescriptor::PET_PROPERTY
 	 * @param int $userID
 	 * 		ID of the user who wants to perform an action
-	 * @param string $action
-	 * 		The action, the user wants to perform. One of "read", "formedit", 
-	 *      "edit", "annotate", "create", "move" and "delete".
+	 * @param int $actionID
+	 * 		The action, the user wants to perform. One of the constant defined
+	 * 		in HACLRight: READ, FORMEDIT, WYSIWYG, EDIT, ANNOTATE, CREATE, MOVE and DELETE.
 	 * @return bool
 	 * 		<true>, if the user has the right to perform the action
 	 * 		<false>, otherwise
 	 */
-	public static function hasRight($titleID, $type, $userID, $action) {
-		$actionID = 0;
+	public static function hasRight($titleID, $type, $userID, $actionID) {
 		// retrieve all appropriate rights from the database
-		switch ($action) {
-			case "read":
-				$actionID = HACLRight::READ;
-				break;
-			case "formedit":
-				$actionID = HACLRight::FORMEDIT;
-				break;
-			case "wysiwyg":
-				$actionID = HACLRight::WYSIWYG;
-				break;
-			case "edit":
-				$actionID = HACLRight::EDIT;
-				break;
-			case "annotate":
-				$actionID = HACLRight::ANNOTATE;
-				break;
-			case "create":
-				$actionID = HACLRight::CREATE;
-				break;
-			case "move":
-				$actionID = HACLRight::MOVE;
-				break;
-			case "delete":
-				$actionID = HACLRight::DELETE;
-				break;
-			default:
-				return false;
-		}
 		$rightIDs = HACLStorage::getDatabase()->getRights($titleID, $type, $actionID);
 				
 		// Check for all rights, if they are granted for the given user
@@ -231,8 +236,84 @@ class HACLEvaluator {
 		return false;
 		
 	}
-	
+
+		
 	//--- Private methods ---
+	
+	/**
+	 * Checks, if the given user has the right to perform the given action on
+	 * the given title. The hierarchy of categories is evaluated.
+	 *
+	 * @param mixed string|array<string> $parents
+	 * 		If a string is given, this is the name of an article whose parent
+	 * 		categories are evaluated. Otherwise it is an array of parent category 
+	 * 		names
+	 * @param int $userID
+	 * 		ID of the user who wants to perform an action
+	 * @param int $actionID
+	 * 		The action, the user wants to perform. One of the constant defined
+	 * 		in HACLRight: READ, FORMEDIT, EDIT, ANNOTATE, CREATE, MOVE and DELETE.
+	 * @param array<string> $visitedParents
+	 * 		This array contains the names of all parent categories that were already
+	 * 		visited.
+	 * @return array(bool rightGranted, bool hasSD)
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to perform the action
+	 * 			<false>, otherwise
+	 * 		hasSD:
+	 * 			<true>, if there is an SD for the article
+	 * 			<false>, if not
+	 */
+	private static function hasCategoryRight($parents, $userID, $actionID, 
+	                                        $visitedParents = array()) {
+	    if (is_string($parents)) {
+	    	// The article whose parent categories shall be evaluated is given
+	    	$t = Title::newFromText($parents);
+	    	return self::hasCategoryRight(array_keys($t->getParentCategories()), 
+	    	                              $userID, $actionID);
+	    } else if (is_array($parents)) {
+	    	if (empty($parents)) {
+	    		return array(false, false);
+	    	}
+	    } else {
+	    	return array(false, false);
+	    }
+	    
+		// Check for each parent if the right is granted
+		$parentTitles = array();
+	    $hasSD = false;                   	
+	    foreach ($parents as $p) {
+	    	$parentTitles[] = $t = Title::newFromText($p);
+	    	
+			if (!$hasSD) {
+				$hasSD = (HACLSecurityDescriptor::getSDForPE($t->getArticleID(), HACLSecurityDescriptor::PET_CATEGORY) !== false);
+			}
+			$r = self::hasRight($t->getArticleID(), HACLSecurityDescriptor::PET_CATEGORY,
+			                    $userID, $actionID);
+			if ($r) {
+				return array(true, $hasSD);			                    
+			}
+		}
+		
+		// No parent category has the required right
+		// => check the next level of parents
+		$parents = array();
+		foreach ($parentTitles as $pt) {
+			$ptParents = array_keys($pt->getParentCategories());
+			foreach ($ptParents as $p) {
+				if (!in_array($p, $visitedParents)) {
+			    	$parents[] = $p;
+			    	$visitedParents[] = $p;
+			    }
+			}
+		}
+		
+		// Recursively check all parents
+		list($r, $sd) = self::hasCategoryRight($parents, $userID, $actionID, $visitedParents);
+		return array($r, $sd ? true : $hasSD);
+		
+	}
+	
 	
 	/**
 	 * This method is important if the mode of the access control is 
@@ -269,11 +350,7 @@ class HACLEvaluator {
 		}
 		
 		// get the latest author of the protected article
-		global $haclgEnableTitleCheck;
-		$etc = $haclgEnableTitleCheck;
-		$haclgEnableTitleCheck = false;
 		$t = Title::newFromText($peName);
-		$haclgEnableTitleCheck = $etc;
 		$article = new Article($t);
 		if (!$article->exists()) {
 			// article does not exist => no applicable
@@ -283,5 +360,93 @@ class HACLEvaluator {
 		
 		return $authors[0] == $user->getName();
 		
+	}
+	
+	/**
+	 * Checks if access is granted to the namespace of the given title.
+	 *
+	 * @param Title $t
+	 * 		Title whose namespace is checked
+	 * @param int $userID
+	 * 		ID of the user who want to access the namespace
+	 * @param int $actionID
+	 * 		ID of the action the user wants to perform
+	 * 
+	 * @return array(bool rightGranted, bool hasSD)
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to perform the action
+	 * 			<false>, otherwise
+	 * 		hasSD:
+	 * 			<true>, if there is an SD for the article
+	 * 			<false>, if not
+	 *  
+	 */
+	private static function checkNamespaceRight(Title $t, $userID, $actionID) {
+		$nsID = $t->getNamespace();
+		$hasSD = HACLSecurityDescriptor::getSDForPE($nsID, HACLSecurityDescriptor::PET_NAMESPACE) !== false;
+			
+		if (!$hasSD) {
+			global $haclgOpenWikiAccess;
+			// Articles with no SD are not protected if $haclgOpenWikiAccess is
+			// true. Otherwise access is denied
+			return array($haclgOpenWikiAccess, false);
+		}
+		
+		return array(self::hasRight($nsID, HACLSecurityDescriptor::PET_NAMESPACE,
+		                            $userID, $actionID), $hasSD);
+		
+	}
+	
+	/**
+	 * This method checks if a user wants to modify an articles in the namespace
+	 * ACL.
+	 *
+	 * @param Title $t
+	 * 		The title.
+	 * @param int $userID
+	 * 		ID of the user.
+	 * @param int $actionID
+	 * 		ID of the action. The actions FORMEDIT, WYSIWYG, EDIT, ANNOTATE, 
+	 *      CREATE, MOVE and DELETE are relevant for managing an ACL object.
+	 * 
+	 * @return bool
+	 * 		<true>, if the user can modify the ACL or if the title is not related
+	 * 				to ACLs
+	 * 		<false>, if the title belongs to an ACL object and the user is not a
+	 * 				manager of this object
+	 */
+	private static function checkACLManager(Title $t, $userID, $actionID) {
+		if ($t->getNamespace() != HACL_NS_ACL) {
+			return true;
+		}
+		
+		if ($userID == 0) {
+			// No access for anonymous users
+			return false;
+		}
+		if ($actionID == HACLRight::READ) {
+			// Read access for all registered users
+			return true;
+		}
+
+		// Check for groups
+		try {
+			$group = HACLGroup::newFromID($t->getArticleID());
+			return $group->userCanModify($userID);
+		} catch (HACLGroupException $e) {
+			// Check for security descriptors
+			try {
+				$sd = HACLSecurityDescriptor::newFromID($t->getArticleID());
+				return $sd->userCanModify($userID);
+			} catch (HACLSDException $e) {
+				// Check for the Whitelist
+				global $haclgContLang;
+				if ($t->getText() == $haclgContLang->getWhitelist(false)) {
+					// User must be a sysop
+					return HACLWhitelist::userCanModify($userID);
+				}
+			}
+		}
+		return true;
 	}
 }

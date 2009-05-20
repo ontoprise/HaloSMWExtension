@@ -83,12 +83,14 @@ class  HACLWhitelist  {
 		$pageIDs = HACLStorage::getDatabase()->getWhitelist();
 		$pages = array();
 		// Transform page-IDs to page names
+		$etc = haclfDisableTitlePatch();
 		foreach ($pageIDs as $pid) {
 			$t = Title::newFromID($pid);
 			if ($t) {
 				$pages[] = $t->getFullText();
 			}
 		}
+		haclfRestoreTitlePatch($etc);
 		
 		return new HACLWhitelist($pages);
 	}
@@ -107,6 +109,7 @@ class  HACLWhitelist  {
 		$nonExistent = array();
 		$ids = array();
 		// Get the IDs of all pages
+		$etc = haclfDisableTitlePatch();
 		foreach ($this->mPages as $name) {
 			$t = Title::newFromText($name);
 			$id = $t->getArticleID();
@@ -116,6 +119,7 @@ class  HACLWhitelist  {
 				$ids[] = $id;
 			}
 		}
+		haclfRestoreTitlePatch($etc);
 		HACLStorage::getDatabase()->saveWhitelist($ids);
 		if (!empty($nonExistent)) {
 			throw new HACLWhitelistException(HACLWhitelistException::PAGE_DOES_NOT_EXIST,
@@ -136,10 +140,55 @@ class  HACLWhitelist  {
 	 */
 	public static function isInWhitelist($page) {
 		if (!is_int($page)) {
+			$etc = haclfDisableTitlePatch();
 			$t = Title::newFromText($page);
+			haclfRestoreTitlePatch($etc);
 			$page = $t->getArticleID();
 		}
 		return HACLStorage::getDatabase()->isInWhitelist($page);
 	}
+	
+	/**
+	 * Checks if the given user can modify the whitelist. Only sysops and 
+	 * bureaucrats can do this.
+	 *
+	 * @param User/string/int $user
+	 * 		User-object, name of a user or ID of a user who wants to modify the 
+	 * 		whitelist. If <null>, the currently logged in user is assumed.
+	 * 
+	 * @param boolean $throwException
+	 * 		If <true>, the exception 
+	 * 		HACLWhitelistException(HACLWhitelistException::USER_CANT_MODIFY_WHITELIST)
+	 * 		is thrown, if the user can't modify the group.
+	 * 
+	 * @return boolean
+	 * 		One of these values is returned if no exception is thrown:
+	 * 		<true>, if the user can modify the Whitelist and
+	 * 		<false>, if not
+	 * 
+	 * @throws 
+	 * 		HACLException(HACLException::UNKOWN_USER)
+	 * 		If requested: HACLWhitelistException(HACLWhitelistException::USER_CANT_MODIFY_WHITELIST) 
+	 * 
+	 */
+	public function userCanModify($user, $throwException = false) {
+		if (!is_a($user, "User")) {
+			// Get the ID of the user who wants to add/modify the group
+			list($userID, $userName) = haclfGetUserID($user);
+			if ($userID == 0) {
+				// anonymous users can't modify the whitelist
+				if ($throwException) {
+					throw new HACLWhitelistException(HACLWhitelistException::USER_CANT_MODIFY_WHITELIST, 
+			                                         'anonymous');
+				} else {
+					return false;
+				}
+			}
+			$user = User::newFromId($userID);
+		}
+		$groups = $user->getGroups();
+		return (in_array('sysop', $groups) || in_array('bureaucrat', $groups));
+	}
+	
 	//--- Private methods ---
 }

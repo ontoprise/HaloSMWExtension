@@ -323,3 +323,33 @@ function haclfIsFileCacheable($article) {
 	return $article->getTitle()->getNamespace() != HACL_NS_ACL;
 }
 
+/**
+ * A patch in the Title-object checks for each creation of a title, if access
+ * to this title is granted. While the rights for a title are evaluated, this
+ * may lead to a recursion. So the patch can be switched off. After the critical
+ * operation (typically Title::new... ), the patch should be switched on again with
+ * haclfRestoreTitlePatch().
+ *
+ * @return bool
+ * 		The current state of the Title-patch. This value has to be passed to 
+ * 		haclfRestoreTitlePatch().
+ */
+function haclfDisableTitlePatch() {
+	global $haclgEnableTitleCheck;
+	$etc = $haclgEnableTitleCheck;
+	$haclgEnableTitleCheck = false;
+	return $etc;
+}
+
+/**
+ * See documentation of haclfDisableTitlePatch
+ *
+ * @param bool $etc
+ * 		The former state of the title patch.
+ */
+function haclfRestoreTitlePatch($etc) {
+	global $haclgEnableTitleCheck;
+	$haclgEnableTitleCheck = $etc;
+}
+
+

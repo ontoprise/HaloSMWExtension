@@ -39,6 +39,12 @@ class HACLWhitelistException extends HACLException {
 	// Parameters:
 	// 1 - array of article names
 	const PAGE_DOES_NOT_EXIST = 1;	
+	
+	// An unauthorized user tries to modify the definition of the whitelist. 
+	// Parameters:
+	// 1 - name of the user
+	const USER_CANT_MODIFY_WHITELIST = 2;
+	
 
 	/**
 	 * Constructor of the whitelist exception.
@@ -60,6 +66,10 @@ class HACLWhitelistException extends HACLException {
     			       implode(',', $args[1]) .
     			       "\nThese articles can not be added to the whitelist.";
     			break;
+    		case self::USER_CANT_MODIFY_WHITELIST:
+    			$msg = "The user $args[1] is not authorized to modify the Whitelist.";
+    			break;
+    			
     	}
     	return $msg;
     }
