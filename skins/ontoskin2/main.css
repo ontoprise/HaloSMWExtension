@@ -502,6 +502,18 @@ dd {
 }
 
 /**
+* Modifications for SMW-Factbox 
+*/
+
+table.smwfacttable{
+	clear: none !important;
+}
+
+div.smwfact{
+	clear: none !important;
+}
+
+/**
 * CSS for Infoboxes in the wikipages
 * just add a div to your page with class="blueround_head" above content and class="blueround" surrounding the content  
 */
