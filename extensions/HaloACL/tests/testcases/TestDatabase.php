@@ -3,10 +3,7 @@ require_once 'PHPUnit/Framework.php';
 
 class TestDatabase extends PHPUnit_Framework_TestCase {
 
-	var $saveGlobals = array();
-	
-	private $mArticles;
-	private $mOrderOfArticleCreation;
+	protected $backupGlobals = FALSE;
 	
     function setUp() {
     	User::createNew("U1");
@@ -15,26 +12,20 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
         User::createNew("U4");
         User::createNew("U5");
         User::createNew("U6");
+        
     }
 
     function tearDown() {
 
     }
 
-    function testRunTests() {
-    	try {
-	    	$this->createArticles();
-	    	$this->setupGroups();
-	    	$this->setupRights();
-	    	$this->checkRights();
-	    	$this->removeRights();
-	    	$this->removeGroups();
-	    	$this->whitelist();
-			$this->removeArticles();    	
-    	} catch (Exception $e) {
-			$this->removeArticles();    
-			throw $e;	
-    	}
+    function testACLDatabaseTest() {
+    	$this->setupGroups();
+    	$this->setupRights();
+    	$this->checkRights();
+    	$this->removeRights();
+    	$this->removeGroups();
+    	$this->whitelist();
     }
     
     function setupGroups() {
@@ -881,47 +872,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($inWL, false, "Testing the whitelist failed - TC 5\n");
 		
 	}
-    
-    private function createArticles() {
-    	global $wgUser;
-    	$wgUser = User::newFromName("U1");
-		$this->initArticleContent();
     	
-    	$file = __FILE__;
-    	try {
-	    	foreach ($this->mOrderOfArticleCreation as $title) {
-				self::createArticle($title, $this->mArticles[$title]);
-	    	}
-    	} catch (Exception $e) {
-			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
-		}
-    	
-    }
-
-	private function createArticle($title, $content) {
-	
-		$title = Title::newFromText($title);
-		$article = new Article($title);
-	
-		// Set the article's content
-		$success = $article->doEdit($content, 'Created for test case');
-	}
-
-	private function initArticleContent() {
-		$this->mOrderOfArticleCreation = array(
-//			'Category:B'
-		);
-		
-		$this->mArticles = array(
-//------------------------------------------------------------------------------		
-			'Category:B' =>
-<<<ACL
-This is the category B.
-ACL
-);
-	}
-	
-	
 	private function doCheckRights($testcase, $expectedResults) {
 		foreach ($expectedResults as $er) {
 			$articleName = $er[0];
@@ -956,21 +907,6 @@ ACL
 				                    $group->getGroupName()."->hasGroupMember($name) (Testcase: $testcase)");
 		}
 	}
-	
-	private function removeArticles() {
 		
-		$articles = array(
-//			'Category:B'
-		);
-		
-		foreach ($articles as $a) {
-		    $t = Title::newFromText($a);
-	    	$article = new Article($t);
-			$article->doDelete("Testing");
-		}
-		
-	}
-	
-	
 }
 ?>

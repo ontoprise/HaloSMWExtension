@@ -14,7 +14,8 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
         User::idFromName("U1");  
         User::idFromName("U2");  
         User::idFromName("U3");  
-                        
+    	Skin::getSkinNames();
+        
    		global $wgUser;
     	$wgUser = User::newFromName("U1");
     	
@@ -31,7 +32,12 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 		$title = Title::newFromText($title);
 		$article = new Article($title);
 		// Set the article's content
-		$success = $article->doEdit($content, 'Created for test case');
+		
+		$success = $article->doEdit($content, 'Created for test case', 
+		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+		if (!$success) {
+			echo "Creating article ".$title->getFullText()." failed\n";
+		}
 	}
     
 	private function initArticleContent() {
@@ -213,10 +219,9 @@ ACL
 
 class TestUserCanHook extends PHPUnit_Framework_TestCase {
 
-	var $saveGlobals = array();
-
 	private $mArticles;
 	private $mOrderOfArticleCreation;
+	protected $backupGlobals = FALSE;
 	
     function setUp() {
     }

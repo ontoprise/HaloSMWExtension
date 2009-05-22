@@ -342,4 +342,53 @@ PR: PR1, PR2</text>
       </text>
     </revision>
   </page>
+  
+   <page>
+    <title>Category:ACL/Group</title>
+    <id>73</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment</comment>
+      <text xml:space="preserve">This is the category for groups.
+      </text>
+    </revision>
+  </page>
+
+   <page>
+    <title>Category:ACL/Right</title>
+    <id>73</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment</comment>
+      <text xml:space="preserve">This is the category for rights.
+      </text>
+    </revision>
+  </page>
+  
+   <page>
+    <title>Category:ACL/ACL</title>
+    <id>73</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment</comment>
+      <text xml:space="preserve">This is the category for security descriptors.
+      </text>
+    </revision>
+  </page>
+  
 </mediawiki>

@@ -3,10 +3,9 @@ require_once 'PHPUnit/Framework.php';
 
 class TestParserFunctions extends PHPUnit_Framework_TestCase {
 
-	var $saveGlobals = array();
-
 	private $mArticles;
 	private $mOrderOfArticleCreation;
+	protected $backupGlobals = FALSE;
 	
     function setUp() {
     	User::createNew("U1");
@@ -21,15 +20,15 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 		User::idFromName("U4");  
         User::idFromName("U5");  
         User::idFromName("U6");  
-                        
+        
         $this->initArticleContent();
     }
 
     function tearDown() {
-         
+    	$this->removeArticles();
     }
 
-    function testRunTests() {
+    function testACLParserFunctionTest() {
     	global $wgUser;
     	$wgUser = User::newFromName("U1");
     	
@@ -37,7 +36,6 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
     	$this->checkRights();
 	   	$this->removeRights();
     	$this->removeGroups();
-    	$this->removeArticles();
     	
     }
     
@@ -579,11 +577,24 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 	public function removeArticles() {
 		
 		$articles = array(
+			'Category:ACL/Group',
+			'Category:ACL/Right',
+			'Category:ACL/ACL',
 			'anonymous',
 			'registered',
 			'ACL:Page/anonymous',
-			'ACL:Page/registered',
-			'ACL:Whitelist'
+			'ACL:Page/registered',	
+			'ACL:Whitelist',
+			'ACL:Group/G4',
+			'ACL:Group/G5',
+			'ACL:Group/G3',
+			'ACL:Group/G2',
+			'ACL:Group/G1',
+			'ACL:Right/PR2',
+			'ACL:Right/PR1',
+			'ACL:Right/PR3',
+			'ACL:Page/A',
+			'ACL:Category/B'
 		);
 		
 		foreach ($articles as $a) {
@@ -754,7 +765,11 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
 		$title = Title::newFromText($title);
 		$article = new Article($title);
 		// Set the article's content
-		$success = $article->doEdit($content, 'Created for test case');
+		$success = $article->doEdit($content, 'Created for test case', 
+		                            $article->exists() ? EDIT_UPDATE : EDIT_NEW);
+		if (!$success) {
+			echo "Creating article ".$title->getFullText()." failed\n";
+		}
 	}
     
 	private function initArticleContent() {
