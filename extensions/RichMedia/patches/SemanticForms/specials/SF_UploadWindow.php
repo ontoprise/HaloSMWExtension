@@ -1127,6 +1127,7 @@ wgAjaxLicensePreview = {$alp};
 			NS_AUDIO => array(),
 			NS_VIDEO => array()
 		);
+		sort($wgFileExtensions);
 		foreach ($wgFileExtensions as $ext) {
 			if (array_key_exists($ext, $wgNamespaceByExtension)) {
 				if (array_key_exists($wgNamespaceByExtension[$ext],$extCat)) {
@@ -1137,7 +1138,7 @@ wgAjaxLicensePreview = {$alp};
 				}
 			}
 			else {
-				$wgOut->addWikiText(wfMsgNoTrans( 'smw_rm_upload_error_ext_ns', $ext));
+				array_push($extCat[NS_IMAGE], $ext);
 			}
 		}
 		$wgOut->addHTML('<ul style="margin-top:0px;">');
@@ -1145,7 +1146,6 @@ wgAjaxLicensePreview = {$alp};
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_image', implode( $extCat[NS_IMAGE],$delim ) ));
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_audio', implode( $extCat[NS_AUDIO],$delim ) ));
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_video', implode( $extCat[NS_VIDEO],$delim ) ));
-		//implode( $wgFileExtensions, $delim ) ;
 		$wgOut->addHTML( '</ul></div>' );
 		
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
