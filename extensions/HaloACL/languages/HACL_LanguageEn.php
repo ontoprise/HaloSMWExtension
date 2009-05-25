@@ -89,6 +89,7 @@ class HACLLanguageEn extends HACLLanguage {
 		HACLSecurityDescriptor::PET_RIGHT	  => 'Right'
 	);
 	
+	protected $mSDTemplateName = "Template";
 	
 }
 

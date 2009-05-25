@@ -115,6 +115,17 @@ class HACLEvaluator {
 		if ($articleID == 0) {
 			// The article does not exist yet
 			if ($actionID == HACLRight::CREATE || $actionID == HACLRight::EDIT) {
+				
+				// Check right for creation of default SD template. Users
+				// can only create their own template. Sysops and bureaucrats
+				// can create them for everyone.
+				list ($r, $sd) = HACLDefaultSD::userCanModify($title, $user);
+				if ($sd) {
+					haclfRestoreTitlePatch($etc);
+					$result = $r;
+					return $r;
+				}
+										
 				// Check if the user is allowed to create an SD
 				$allowed = self::checkSDCreation($title, $user);
 				if ($allowed == false) {
@@ -123,8 +134,8 @@ class HACLEvaluator {
 					return false;
 				}
 			}
+
 			// Check if the article belongs to a namespace with an SD
-			
 		    list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
 			haclfRestoreTitlePatch($etc);
 		    $result = $r;
@@ -132,10 +143,12 @@ class HACLEvaluator {
 		}
 		
 		// Check rights for managing ACLs
-		if (!self::checkACLManager($title, $userID, $actionID)) {
+		list($r, $sd) = self::checkACLManager($title, $user, $actionID);
+		if ($sd) {
+			// User tries to access an ACL article
 			haclfRestoreTitlePatch($etc);
-			$result = false;
-			return false;
+			$result = $r;
+			return $r;
 		}
 		
 		// Check if there is a security descriptor for the article.
@@ -188,10 +201,6 @@ class HACLEvaluator {
 			return $haclgOpenWikiAccess;
 		}
 		
-//TODO: while the rights are not complete
-//		$result = true;
-//		return true;
-
 		// permission denied
 		haclfRestoreTitlePatch($etc);
 		$result = false;
@@ -403,50 +412,62 @@ class HACLEvaluator {
 	 *
 	 * @param Title $t
 	 * 		The title.
-	 * @param int $userID
-	 * 		ID of the user.
+	 * @param User $user
+	 * 		User-object of the user.
 	 * @param int $actionID
 	 * 		ID of the action. The actions FORMEDIT, WYSIWYG, EDIT, ANNOTATE, 
 	 *      CREATE, MOVE and DELETE are relevant for managing an ACL object.
 	 * 
-	 * @return bool
-	 * 		<true>, if the user can modify the ACL or if the title is not related
-	 * 				to ACLs
-	 * 		<false>, if the title belongs to an ACL object and the user is not a
-	 * 				manager of this object
+	 * @return array(bool rightGranted, bool hasSD)
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to perform the action
+	 * 			<false>, otherwise
+	 * 		hasSD:
+	 * 			<true>, if there is an SD for the article
+	 * 			<false>, if not
 	 */
-	private static function checkACLManager(Title $t, $userID, $actionID) {
+	private static function checkACLManager(Title $t, $user, $actionID) {
 		if ($t->getNamespace() != HACL_NS_ACL) {
-			return true;
+			return array(true, false);
 		}
 		
+		$userID = $user->getId();
 		if ($userID == 0) {
 			// No access for anonymous users
-			return false;
+			return array(false, true);
 		}
+
+		// Check if this is a default SD template
+		list($r, $sd) = HACLDefaultSD::userCanModify($t, $user);
+		if ($sd) {
+			return array($r, $sd);
+		}
+		
 		if ($actionID == HACLRight::READ) {
 			// Read access for all registered users
-			return true;
+			return array(true, true);
 		}
 
 		// Check for groups
 		try {
 			$group = HACLGroup::newFromID($t->getArticleID());
-			return $group->userCanModify($userID);
+			return array($group->userCanModify($userID), true);
 		} catch (HACLGroupException $e) {
 			// Check for security descriptors
 			try {
 				$sd = HACLSecurityDescriptor::newFromID($t->getArticleID());
-				return $sd->userCanModify($userID);
+				return array($sd->userCanModify($userID), true);
 			} catch (HACLSDException $e) {
 				// Check for the Whitelist
 				global $haclgContLang;
 				if ($t->getText() == $haclgContLang->getWhitelist(false)) {
 					// User must be a sysop
-					return HACLWhitelist::userCanModify($userID);
+					return array(HACLWhitelist::userCanModify($userID), true);
 				}
 			}
 		}
-		return true;
+		
+		// we should never end up here
+		return array(false, true);
 	}
 }

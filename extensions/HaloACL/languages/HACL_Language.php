@@ -57,6 +57,7 @@ abstract class HACLLanguage {
 	protected $mCategories = array();
 	protected $mWhitelist = "";
 	protected $mPetPrefixes = array();
+	protected $mSDTemplateName;			// Part of the name of default SDs for users
 
 	/**
 	 * Function that returns an array of namespace identifiers.
@@ -79,6 +80,16 @@ abstract class HACLLanguage {
 	 */
 	public function getPermissionDeniedPage() {
 		return $this->mPermissionDeniedPage;
+	}
+	
+	/**
+	 * Users can define a default security descriptor in an article with a
+	 * certain naming convention like "ACL:Template/<username>".
+	 * This method returns the part after the namespace e.g. "Template" in english
+	 *
+	 */
+	public function getSDTemplateName() {
+		return $this->mSDTemplateName;
 	}
 	
 	/**

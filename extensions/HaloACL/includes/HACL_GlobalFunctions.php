@@ -58,6 +58,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
 	$wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
 	$wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
+	$wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
 	
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -93,6 +94,7 @@ function haclfSetupExtension() {
 	$wgSpecialPageGroups['HaloACL'] = 'hacl_group';
 	
 	$wgHooks['ArticleSaveComplete'][]  = 'HACLParserFunctions::articleSaveComplete';
+	$wgHooks['ArticleSaveComplete'][]  = 'HACLDefaultSD::articleSaveComplete';
 	$wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
 	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
