@@ -156,6 +156,7 @@ class UploadWindowForm {
 	
 	# used by Rich Media
 	var $mRMFileStatus;
+	var $mRMDnD;
 
 	const SESSION_VERSION = 1;
 	/**#@-*/
@@ -174,7 +175,8 @@ class UploadWindowForm {
 		$this->mDelimiter         = $request->getText( 'sfDelimiter' );
 
 		//RM change: filestatus
-		$this->mRMFileStatus            = $request->getVal( 'filestatus' );
+		$this->mRMFileStatus	  = $request->getVal( 'filestatus' );
+		$this->mRMDnD			  = $request->getCheck( 'dragndrop' );
 		
 		if( !$request->wasPosted() ) {
 			# GET requests just give the main form; no data except destination
@@ -1082,9 +1084,12 @@ wgAjaxLicensePreview = {$alp};
 		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
 		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
 		$wgOut->addHTML( '</div>' );
-		$wgOut->addHTML( '<div id="smw_rm_uploadtext" style="width:100%; text-align:center;">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext', $uploadTemplateArray['RelatedArticles'] ));
-		$wgOut->addHTML( '</div>' );
+		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;"><tr><td colspan="2">' );
+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext' ));
+		$wgOut->addHTML( "</td></tr>");
+		$wgOut->addHTML( "<tr><td width=\"42%\" align=\"right\"><img class=\"help-image\" src=\"$smwgRMScriptPath/skins/this_file_pointer.png\" style=\"padding:5px;\" /></td>" );
+		$wgOut->addHTML( "<td align=\"left\"><b>" . $uploadTemplateArray['RelatedArticles'] . "</b></td></tr>" );
+		$wgOut->addHTML( '</table>' );
 		
 		# Print a list of allowed file extensions, if so configured.  We ignore
 		# MIME type here, it's incomprehensible to most people and too long.
@@ -1192,11 +1197,22 @@ wgAjaxLicensePreview = {$alp};
 				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
 				wfMsgHtml( 'upload_source_url' ) ;
 		} else {
+			if( $this->mRMDnD )
+			{
+				//TODO:
+				$filename_form =
+				"<input tabindex='1' type='text' name='wpUploadFile' id='wpUploadFile' " .
+				"value='$this->mDesiredDestName'" .
+				"size='40' hidden='hidden' />" .
+				"<input type='hidden' name='wpSourceType' value='file' />" ;
+			}
+			else {
 			$filename_form =
 				"<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' " .
 				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFile\")' ") .
 				"size='40' />" .
 				"<input type='hidden' name='wpSourceType' value='file' />" ;
+			}
 		}
 		if ( $useAjaxDestCheck ) {
 			$warningRow = "<tr><td colspan='2' id='wpDestFile-warning'>&nbsp;</td></tr>";
@@ -1218,7 +1234,6 @@ wgAjaxLicensePreview = {$alp};
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
 		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
-		$destFileHelp = wfMsg('smw_rm_dest_file_help_tooltip');
 		
 		$wgOut->addHTML( <<<EOT
 <fieldset>
@@ -1241,7 +1256,6 @@ wgAjaxLicensePreview = {$alp};
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 					value="$encDestName" $destOnkeyup />
-				<img title="$destFileHelp" class="help-image" src="$smwgRMScriptPath/skins/help.gif"></img>
 			</td>
 		</tr>
 		<!--
