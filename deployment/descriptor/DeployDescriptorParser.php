@@ -19,7 +19,7 @@ class DeployDescriptorParser {
 	var $wikidumps;
 	var $resources;
 	var $configs;
-	var $precedes;
+	var $precedings;
 
 	function __construct($fileloc) {
 			
@@ -36,26 +36,34 @@ class DeployDescriptorParser {
 	}
 
     public function getPrecedings() {
-    	return $this->precedes;
+    	return $this->precedings;
     }
     
     public function getConfigs() {
     	return $this->configs;
     }
 
-	private function createConfigElements(& $dom) {
-		$precedes = $dom->xpath('/deploydescriptor/configs/precedes');
-		$variables = $dom->xpath('/deploydescriptor/configs/variable');
+	private function createConfigElements(& $dom, $from = NULL) {
+		if ($from == NULL) {
+			$path = "/deploydescriptor/configs/new";
+		} else {
+			$path = "/deploydescriptor/configs/update[@from='$from']";
+		}
+		$precedings = $dom->xpath('/deploydescriptor/configs/precedes');
+		$variables = $dom->xpath($path.'/variable');
+		$function = $dom->xpath($path.'/function');
 
 		$this->configs = array();
 		$this->precedes = array();
-		foreach($precedes as $p) {
-			$this->precedes[] = (string) $p->attributes()->ext;
+		foreach($precedings as $p) {
+			$this->precedings[] = (string) $p->attributes()->ext;
 		}
 		foreach($variables as $p) {
-			$this->configs[] = new VariableConfigElement($p);break;
+			$this->configs[] = new VariableConfigElement($p);
 		}
-			
+	    foreach($function as $p) {
+            $this->configs[] = new FunctionCallConfigElement($p);
+        }	
 	}
 
 
@@ -85,7 +93,10 @@ class DeployDescriptorParser {
 	function getDependencies() {
 		$deps = array();
 		foreach($this->globalElement[0]->dependencies as $dep) {
-			$deps[] = trim((string) $dep->dependency);
+			$depID = trim((string) $dep->dependency);
+			$depFrom = intval((string) $dep->dependency->attributes()->from);
+			$depTo = intval((string) $dep->dependency->attributes()->to);
+			$deps[] = array($depID, $depFrom, $depTo);
 		}
 		return $deps;
 	}
