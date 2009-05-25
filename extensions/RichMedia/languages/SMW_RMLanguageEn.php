@@ -31,7 +31,7 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		
 		
 		/* Messages for the Media File Upload */
-		'smw_rm_formbuttontext' => 'attach document and media',
+		'smw_rm_formbuttontext' => 'Attach file',
 		'smw_rm_savebuttontext' => 'Upload file and save metadata',
 	
 		'smw_rm_uploadheadline' => 'Uploading files',
@@ -45,6 +45,8 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_upload_type_video' => '<li><b>Video: </b>$1',
 		'smw_rm_upload_error_ext_ns'=> 'There is no valid Namespace defined for the file extension: $1',
 		'smw_rm_uploadlegend' => 'Upload file',
+		'smw_rm_dest_file_help_tooltip' => 'Here you can enter the destination filename of your choice. This will also be the article name!',
+		'smw_rm_ignore_warning_help_tooltip' => 'ToolTip for destination filename',
 		'smw_rm_sflegend' => 'Meta information',
 //		'smw_rm_upload-permitted'            => 'permitted file types: <br>$1.',
 //		'smw_rm_upload-preferred'            => 'preferred file types: <br>$1.',
