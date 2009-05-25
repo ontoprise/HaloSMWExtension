@@ -12,9 +12,9 @@ class HaloACLTests
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
-//        $suite->addTestSuite("TestDatabase");
-//        $suite->addTestSuite("TestParserFunctions");
-//        $suite->addTestSuite("TestUserCanHookSuite");
+        $suite->addTestSuite("TestDatabase");
+        $suite->addTestSuite("TestParserFunctions");
+        $suite->addTestSuite("TestUserCanHookSuite");
         $suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
         
         return $suite;
