@@ -412,8 +412,8 @@ Edit the page to see the template text.
     <title>Template:RMListInnerTable</title>
     <id>19</id>
     <revision>
-      <id>270</id>
-      <timestamp>2009-05-20T10:06:59Z</timestamp>
+      <id>283</id>
+      <timestamp>2009-05-25T11:58:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -424,7 +424,7 @@ Edit the page to see the template text.
 | bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{RMNoNamespace|{{{2}}}}}]&lt;/span&gt;
 | bgcolor=&quot;white&quot; | [[{{{3}}}]]
 | bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
-| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&amp;nbsp;&amp;nbsp;&amp;nbsp;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&amp;nbsp;&amp;nbsp;&amp;nbsp;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
 | bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
     </revision>
   </page>
