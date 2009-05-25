@@ -101,10 +101,10 @@ var RichMediaPage = Class.create({
 	 * Adds the destination file to the link
 	 */
 	addWpDestFile: function() {
-			var myWpDestFile = $('myWpDestFile').value;
+			//var myWpDestFile = $('myWpDestFile').value;
 			var myLink = $('link_id');
-			var myHref = myLink.href;
-			myLink.href = myHref+"&wpDestFile="+myWpDestFile;
+			//var myHref = myLink.href;
+			//myLink.href = myHref+"&wpDestFile="+myWpDestFile;
 			fb.loadAnchor(myLink);
 			return true;
 	}
