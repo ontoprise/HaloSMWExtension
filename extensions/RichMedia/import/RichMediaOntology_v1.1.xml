@@ -1,0 +1,967 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Developer Wiki (trunk version)</sitename>
+    <base>http://localhost/smw_trunk/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Developer Wiki (trunk version)</namespace>
+      <namespace key="5">Developer Wiki (trunk version) talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Template:RMUpload</title>
+    <id>12</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2009-04-15T09:29:42Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'uploadTemplate' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{uploadTemplate
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid black&quot;
+! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+[[Category:Media]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMImage</title>
+    <id>13</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2009-04-15T09:29:42Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMImage' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{RMImage
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{|
+|-
+|&lt;u&gt;Meta data&lt;/u&gt;
+|-
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
+! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+|-
+|&amp;nbsp;
+|}
+[[Category:Image]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMPdf</title>
+    <id>14</id>
+    <revision>
+      <id>274</id>
+      <timestamp>2009-05-25T08:11:07Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMPdf' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{RMPdf
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{|
+|-
+|&lt;u&gt;Meta data&lt;/u&gt;
+|-
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
+! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+|-
+|&amp;nbsp;
+|}
+[[Category:Pdf]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMDocument</title>
+    <id>15</id>
+    <revision>
+      <id>275</id>
+      <timestamp>2009-05-25T08:12:10Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMDocument' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{RMDocument
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|SubSectionOf=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{|
+|-
+|&lt;u&gt;Meta data&lt;/u&gt;
+|-
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
+! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Sub section of:
+|align=&quot;left&quot; | [[IsSubSectionOf::Document:{{{SubSectionOf|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+|-
+|&amp;nbsp;
+|}
+[[Category:Document]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMAudio</title>
+    <id>16</id>
+    <revision>
+      <id>21</id>
+      <timestamp>2009-04-15T09:29:42Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMAudio' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{RMAudio
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{|
+|-
+|&lt;u&gt;Meta data&lt;/u&gt;
+|-
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
+! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+|-
+|&amp;nbsp;
+|}
+[[Category:Audio]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMVideo</title>
+    <id>17</id>
+    <revision>
+      <id>153</id>
+      <timestamp>2009-04-17T14:22:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMVideo' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{RMVideo
+|Filename=
+|CopyrightBy=
+|CreationDate=
+|Uploader=
+|UploadDate=
+|RelatedArticles=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{|
+|-
+|&lt;u&gt;Meta data&lt;/u&gt;
+|-
+{| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
+! width=&quot;20%&quot; align=&quot;left&quot; | Filename:
+|align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
+|-
+! width=&quot;20%&quot; align=&quot;left&quot; | Copyright by:
+|align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|-
+! width=&quot;20%&quot; align=&quot;left&quot; | Creation date:
+|align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
+|-
+! width=&quot;20%&quot; align=&quot;left&quot; | Uploaded by:
+|align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
+|-
+! width=&quot;20%&quot; align=&quot;left&quot; | Upload date:
+|align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
+|-
+! width=&quot;20%&quot; align=&quot;left&quot; | Related articles:
+|align=&quot;left&quot; | [[HasRelatedArticles::{{{RelatedArticles|}}}]]
+|}
+|-
+|&amp;nbsp;
+|}
+[[Category:Video]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMList</title>
+    <id>18</id>
+    <revision>
+      <id>267</id>
+      <timestamp>2009-05-20T10:03:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{| border=&quot;1&quot; style=&quot;border: 1px solid black; padding: 0px; border-collapse: collapse;&quot; 
+| align=&quot;center&quot; bgcolor=&quot;#455387&quot; style=&quot;padding-top: 5px;&quot; |&lt;font color=&quot;white&quot;&gt;&lt;b&gt;Attached documents, images and media&lt;/b&gt;&lt;/font&gt;
+{| class=&quot;wikitable sortable&quot; bgcolor=&quot;white&quot; border=&quot;0&quot;
+|- bgcolor=&quot;#52555f&quot;
+! align=&quot;center&quot; style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Category&lt;/font&gt; !! style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Filename&lt;/font&gt; !! style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Uploaded by&lt;/font&gt; !! style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Creation date&lt;/font&gt; !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Metainformation&lt;/font&gt; !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | &lt;font color=&quot;white&quot;&gt;Delete&lt;/font&gt;
+|-
+{{#ask: [[Category:Media]][[HasRelatedArticles::{{{1}}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]&lt;/q&gt;
+  | ?HasFilename
+  | ?HasUploader
+  | ?HasCreationDate
+  | format=template
+  | template=RMListInnerTable
+  | link=none
+}}
+|}
+|- 
+| 
+{| style=&quot;width:100%;&quot;
+|-
+| Manual refresh list: &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; || align=&quot;right&quot; | {{#rmf: {{{1}}} }}
+|}
+|}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMListInnerTable</title>
+    <id>19</id>
+    <revision>
+      <id>270</id>
+      <timestamp>2009-05-20T10:06:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;br/&gt;
+|-
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:Special:FilePath/{{{1}}}}} {{RMCategoryLinkIcon|{{{1}}}}}]&lt;/span&gt;
+| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{RMNoNamespace|{{{2}}}}}]&lt;/span&gt;
+| bgcolor=&quot;white&quot; | [[{{{3}}}]]
+| bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&amp;nbsp;&amp;nbsp;&amp;nbsp;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;
+| bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMCategoryLinkIcon</title>
+    <id>20</id>
+    <revision>
+      <id>29</id>
+      <timestamp>2009-04-15T09:29:43Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{#switch: 
+  {{#sub:
+    {{lc: {{{1}}} }} 
+    | 0
+    |{{#pos:{{lc: {{{1}}} }}|:}}  
+  }}
+  | image={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | pdf={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
+  | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
+  | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
+  | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
+  | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMNoNamespace</title>
+    <id>108</id>
+    <revision>
+      <id>259</id>
+      <timestamp>2009-05-20T09:32:36Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">{{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMUpload</title>
+    <id>21</id>
+    <revision>
+      <id>167</id>
+      <timestamp>2009-04-22T12:01:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMUpload' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMUpload}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}}
+{{{for template|RMUpload}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user|size=40|maxlength=40}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy|size=40|maxlength=40}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate|default=now}}}
+|-
+| style=&quot;display:none&quot;| {{{field|UploadDate|mandatory|default=now}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles|size=40|maxlength=40}}}
+|-
+| {{{field|Filename|hidden}}}
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMImage</title>
+    <id>22</id>
+    <revision>
+      <id>33</id>
+      <timestamp>2009-04-15T09:29:43Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMImage' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMImage}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMImage}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Filename:
+| {{{field|Filename|mandatory}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate|default=now}}}
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user}}}
+|-
+| align=&quot;right&quot; | Upload date:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles}}}
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMPdf</title>
+    <id>23</id>
+    <revision>
+      <id>88</id>
+      <timestamp>2009-04-15T13:20:06Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMPdf' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMPdf}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMPdf}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Filename:
+| {{{field|Filename|mandatory}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate}}}
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user}}}
+|-
+| align=&quot;right&quot; | Upload date:
+| {{{field|UploadDate}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles}}}
+|}
+{{{end template}}}
+'''Free text:'''
+
+{{{standard input|free text}}}
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMDocument</title>
+    <id>24</id>
+    <revision>
+      <id>37</id>
+      <timestamp>2009-04-15T09:29:43Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMDocument' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMDocument}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMDocument}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Filename:
+| {{{field|Filename|mandatory}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate|default=now}}}
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user}}}
+|-
+| align=&quot;right&quot; | Upload date:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; | Sub section of:
+| {{{field|SubSectionOf|autocomplete on namespace=Document}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles}}}
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMAudio</title>
+    <id>25</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2009-04-15T09:29:43Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMAudio' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMAudio}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMAudio}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Filename:
+| {{{field|Filename|mandatory}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate|default=now}}}
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user}}}
+|-
+| align=&quot;right&quot; | Upload date:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles}}}
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMVideo</title>
+    <id>26</id>
+    <revision>
+      <id>41</id>
+      <timestamp>2009-04-15T09:29:43Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMVideo' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMVideo}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMVideo}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; | Filename:
+| {{{field|Filename|mandatory}}}
+|-
+| align=&quot;right&quot; | Copyright by:
+| {{{field|CopyrightBy}}}
+|-
+| align=&quot;right&quot; | Creation date:
+| {{{field|CreationDate|default=now}}}
+|-
+| align=&quot;right&quot; | Uploaded by:
+| {{{field|Uploader|mandatory|default=current user}}}
+|-
+| align=&quot;right&quot; | Upload date:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; | Related articles:
+| {{{field|RelatedArticles}}}
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCreationDate</title>
+    <id>27</id>
+    <revision>
+      <id>43</id>
+      <timestamp>2009-04-15T09:30:03Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This is a property of type [[Has type::Date]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasFilename</title>
+    <id>28</id>
+    <revision>
+      <id>45</id>
+      <timestamp>2009-04-15T09:30:24Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[has type::Type:Page]]
+[[has domain and range::; ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasRelatedArticles</title>
+    <id>29</id>
+    <revision>
+      <id>46</id>
+      <timestamp>2009-02-09T14:25:07Z</timestamp>
+      <contributor>
+        <ip>WikiSysop</ip>
+      </contributor>
+      <minor/>
+      <comment>[[Property:HasRelation]] moved to [[Property:HasRelatedArticles]]</comment>
+      <text xml:space="preserve">This is a property of type [[Has type::Page]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploadDate</title>
+    <id>30</id>
+    <revision>
+      <id>48</id>
+      <timestamp>2009-04-15T09:33:56Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has type::Type:Date]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploader</title>
+    <id>31</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2009-04-15T09:34:16Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has domain and range::;]]
+[[Has type::Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCopyrightBy</title>
+    <id>32</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2009-03-25T11:52:42Z</timestamp>
+      <contributor>
+        <ip>WikiSysop</ip>
+      </contributor>
+      <comment>This property was created for category &lt;&gt;. Please enter meaningful content.</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+[[Has domain and range::;]]
+[[Has type::Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:IsSubSectionOf</title>
+    <id>33</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2009-04-15T09:35:11Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This property has been created but not edited. Please enter meaningful content.
+
+[[Has type::Type:Page]]
+
+[[has domain and range::Category:Document; Category:Document]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Media</title>
+    <id>34</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2009-04-15T09:35:31Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This is the Media category.
+
+[[Has default form::Form:uploadForm]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Image</title>
+    <id>35</id>
+    <revision>
+      <id>56</id>
+      <timestamp>2009-03-30T13:53:13Z</timestamp>
+      <contributor>
+        <ip>WikiSysop</ip>
+      </contributor>
+      <text xml:space="preserve">[[Category:Media]]
+[[Has default form::Form:RMImage]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pdf</title>
+    <id>37</id>
+    <revision>
+      <id>62</id>
+      <timestamp>2009-04-15T10:14:08Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[Category:Media]]
+[[Has default form::Form:RMPdf]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Document</title>
+    <id>38</id>
+    <revision>
+      <id>64</id>
+      <timestamp>2009-04-15T10:14:29Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[Category:Media]]
+[[Has default form::Form:RMDocument]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Audio</title>
+    <id>39</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2009-03-30T13:54:38Z</timestamp>
+      <contributor>
+        <ip>WikiSysop</ip>
+      </contributor>
+      <text xml:space="preserve">[[Category:Media]]
+[[Has default form::Form:RMAudio]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Video</title>
+    <id>40</id>
+    <revision>
+      <id>67</id>
+      <timestamp>2009-04-15T10:17:26Z</timestamp>
+      <contributor>
+        <username>FreddyP</username>
+        <id>7</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[Category:Media]]
+[[Has default form::Form:RMVideo]]</text>
+    </revision>
+  </page>
+</mediawiki>
