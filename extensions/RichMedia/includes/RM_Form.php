@@ -2,15 +2,14 @@
 class RMForm {
 
 	static function createRichMediaForm(&$parser) {
-		global $wgOut;
+		global $wgOut, $wgParser;
 
 		$size = "35";
 		$inputId = "myWpDestFile";
 		$inputName = "myWpDestFile";
+		
 		$html =<<<END
-		<form onsubmit="richMediaPage.addWpDestFile();return false;">
-		<table><tr><td>
-		<input id="$inputId" name="$inputName" type="text" value="" size="$size" /></td>
+<form onsubmit="fb.loadAnchor($('link_id'));return false;">
 END;
 		$delimiter = "";
 
@@ -25,13 +24,12 @@ END;
 		$queryString .= "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 		
-		$uploadLabel = wfMsg('smw_rm_uploadheadline');
-		$buttonText = wfMsg('smw_rm_formbuttontext');
-		$html .= " <td><a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a>
-		<input type=\"submit\" value=\"$buttonText\"/></td>";
-		$html .= "</tr></table></form>";
+		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
+		$buttonText = wfMsgNoTrans('smw_rm_formbuttontext');
+		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a><input type=\"submit\" value=\"$buttonText\"/></form>";
 
-		return array($html, 'noparse' => true, 'isHTML' => true);
+		//return array($html, 'noparse' => true, 'isHTML' => true);
+		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
 	}
 }
 ?>
