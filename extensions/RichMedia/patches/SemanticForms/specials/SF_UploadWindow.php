@@ -622,7 +622,7 @@ class UploadWindowForm {
 			// end Rich Media Changes
 			
 			$output = '	<script type="text/javascript">' . "\n";
-			if ( $this->mInputID ) {
+			/*if ( $this->mInputID ) {
 				if ($this->mDelimiter == null) {
 					$output .=<<<END
 					parent.document.getElementById("{$this->mInputID}").value = '$basename';
@@ -647,7 +647,7 @@ END;
 					}
 END;
 				}
-			}
+			}*/
 			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles";
 			$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
@@ -879,14 +879,55 @@ END;
 	 * @access private
 	 */
 	function uploadError( $error ) {
-		global $wgOut;
+		global $wgOut, $wgContLang, $smwgRMScriptPath, $wg;
 		
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
-		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
+		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
+		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
 		$wgOut->addHTML( '</div>' );
 		
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
-		$wgOut->addHTML( "<span class='error'>{$error}</span>\n" );
+		$wgOut->addHTML( "<span class='error'>{$error}</span><br/><br/>\n" );
+		
+		//changed:
+		$reupload = wfMsgHtml( 'reupload' );
+		$reup = wfMsgWikiHtml( 'reuploaddesc' );
+		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
+		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
+		
+		$titleObj = SpecialPage::getTitleFor( 'UploadWindow' );
+		
+		$wgOut->addHTML( "
+	<form id='uploadwarning' method='post' enctype='multipart/form-data' action=''>
+		<input type='hidden' name='wpIgnoreWarning' value='1' />
+		<input type='hidden' name='wpSessionKey' value=\"" . htmlspecialchars( $this->mSessionKey ) . "\" />
+		<input type='hidden' name='wpUploadDescription' value=\"" . htmlspecialchars( $this->mComment ) . "\" />
+		<input type='hidden' name='wpLicense' value=\"" . htmlspecialchars( $this->mLicense ) . "\" />
+		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
+		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
+		);
+
+		$wgOut->addHTML("
+	<table border='0'>
+		<tr>
+			<td align='$align1'>
+				<input tabindex='2' type='submit' name='' value=\"{$reupload}\" onClick='richMediaPage.copyToUploadWarning();'/>
+			</td>
+			<td align='$align2'>$reup</td>
+			</tr>
+		</tr>
+	</table>\n" );
+	
+		$wgOut->addHTML("</form>");
+
+		//Beginn RichMedia
+		global $smwgRMFormByNamespace, $wgRequest;
+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
+		$form_add = new SFAddData();
+		$wgOut->addHTML('<div style="display:none">');
+		$form_add_test = $form_add->execute( $rMUploadFormName );
+		$wgOut->addHTML('</div>');
 	}
 
 	/**
@@ -909,9 +950,8 @@ END;
 		
 		global $smwgRMScriptPath;
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-		#TODO:reDesign for smooth :) 
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
-		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
+		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
 		$wgOut->addHTML( '</div>' );
 		
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
@@ -1039,8 +1079,8 @@ wgAjaxLicensePreview = {$alp};
 		global $smwgRMFormByNamespace;
 		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
 		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">' );
-		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) );
+		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
+		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
 		$wgOut->addHTML( '</div>' );
 		$wgOut->addHTML( '<div id="smw_rm_uploadtext" style="width:100%; text-align:center;">' );
 		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext', $uploadTemplateArray['RelatedArticles'] ));
@@ -1099,11 +1139,9 @@ wgAjaxLicensePreview = {$alp};
 			else {
 				$wgOut->addWikiText(wfMsgNoTrans( 'smw_rm_upload_error_ext_ns', $ext));
 			}
-//			if (isset($extCat[$wgNamespaceByExtension[$ext]]))
-//				$extCat[$wgNamespaceByExtension[$ext]] .= $ext;
 		}
 		$wgOut->addHTML('<ul style="margin-top:0px;">');
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode( $extCat[NS_DOCUMENT],$delim ) ));
+		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode(array_merge($extCat[NS_DOCUMENT],$extCat[NS_PDF]),$delim ) ));
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_image', implode( $extCat[NS_IMAGE],$delim ) ));
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_audio', implode( $extCat[NS_AUDIO],$delim ) ));
 		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_video', implode( $extCat[NS_VIDEO],$delim ) ));
@@ -1167,11 +1205,20 @@ wgAjaxLicensePreview = {$alp};
 			$warningRow = '';
 			$destOnkeyup = '';
 		}
-
+		
+		$fontColor = "black";
+		$wgOut->addHTML("<div id=\"contentSub\"></div>");
+		if ( '' != $msg ) {
+			$sub = wfMsgHtml( 'uploaderror' );
+			$wgOut->addHTML( "<div border='1' style='margin:2px;padding:10px;border:1px solid red;'><font color='red'><h2>{$sub}</h2>\n" .
+			  "<span class='error'>{$msg}</span>\n</font></div>" );
+			$fontColor = "red";
+		}
 		$encComment = htmlspecialchars( $this->mComment );
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
 		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
+		$destFileHelp = wfMsg('smw_rm_dest_file_help_tooltip');
 		
 		$wgOut->addHTML( <<<EOT
 <fieldset>
@@ -1184,7 +1231,7 @@ wgAjaxLicensePreview = {$alp};
 		</tr>
 		<tr>
 	  {$this->uploadFormTextTop}
-			<td align='$align1' valign='top'><label for='wpUploadFile'>{$sourcefilename}</label></td>
+			<td align='$align1' valign='top'><label for='wpUploadFile'><font color='{$fontColor}'>{$sourcefilename}</font></label></td>
 			<td align='$align2'>
 				{$filename_form}
 			</td>
@@ -1194,6 +1241,7 @@ wgAjaxLicensePreview = {$alp};
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 					value="$encDestName" $destOnkeyup />
+				<img title="$destFileHelp" class="help-image" src="$smwgRMScriptPath/skins/help.gif"></img>
 			</td>
 		</tr>
 		<!--
@@ -1257,7 +1305,8 @@ EOT
 			<!--<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
 			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>-->
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' $warningChecked/>
-			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
+			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . 
+			"</label><img id=\"step1-help-img\" title=\"".wfMsg("smw_rm_ignore_warning_help_tooltip")."\" class=\"help-image\" src=\"".$smwgRMScriptPath."/skins/help.gif\"></img>
 		</td>
 	</tr>
 	$warningRow
@@ -1282,13 +1331,6 @@ EOT
 	</form>" );
 		
 //		
-		$wgOut->addHTML("<div id=\"contentSub\"></div>");
-		if ( '' != $msg ) {
-			$sub = wfMsgHtml( 'uploaderror' );
-			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
-			  "<span class='error'>{$msg}</span>\n" );
-		}
-		
 		
 		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
@@ -1790,23 +1832,23 @@ EOT
 		
 		$relatedArticles = $wgRequest->getText('RelatedArticles');
 				
-		$uploadSuccessHTML = '<div style="background-color:lightgrey;width:100%;padding:0px;margin:0px;text-align:center;">';
-		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadheadline' ) . '</div><br/>';
+		$uploadSuccessHTML = '<div style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">';
+		$uploadSuccessHTML .='<font color="white">' . wfMsgNoTrans( 'smw_rm_uploadheadline' ) . '</font></div><br/>';
 			
-		$uploadSuccessHTML .= '<div style="width:100%;padding:0px;text-align:center;">';
+		$uploadSuccessHTML .= '<div style="width:auto;padding:0px;text-align:center;">';
 		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_headline' ) . '</div><br/>';
 			
-		$uploadSuccessHTML .= '<div style="width:100%;padding:0px;text-align:center;">';;
+		$uploadSuccessHTML .= '<div style="width:auto;padding:0px;text-align:center;">';;
 		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_message' ) . '</div><br/>';
 			
-		$uploadSuccessHTML .= '<div align="center" style="width:100%;padding:0px;text-align:center;">' .
+		$uploadSuccessHTML .= '<div align="center" style="width:auto;padding:0px;text-align:center;">' .
 				'<fieldset style="border:1px solid lightgrey;line-height:1.5em;margin: 0px 30px;padding:5px;">' .
 				'<legend style="font-size:95%;padding:0.5em;">&nbsp;' . wfMsgNoTrans( 'smw_rm_uploadsuccess_legend' ) . '</legend>' .
 				'<span style="text-align:left;">' . wfMsgNoTrans( 'smw_rm_uploadsuccess_filename', $imageDescLink ) .
 				wfMsgNoTrans( 'smw_rm_uploadsuccess_articlename', $relatedArticles ) . '</span>' .
 				'</fieldset></div><br/>';
 			
-		$uploadSuccessHTML .= '<div style="width:100%;padding:10px;text-align:center;">';;
+		$uploadSuccessHTML .= '<div style="width:auto;padding:10px;text-align:center;">';;
 		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
 		
 		$wgOut->addHTML($uploadSuccessHTML);
