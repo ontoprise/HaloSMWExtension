@@ -77,14 +77,11 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	$title = strip_tags($title);
 	if ($title == '') return "false";
 	
-	$title = Title::newFromText($title);
-
-	$user = User::newFromName($user);
-	$result = true;
-	wfRunHooks('userCan', array($title, $user, "edit", &$result));
-	if (isset($result) && $result == false) {
+	if (!smwf_om_userCan($title, 'create')) {
 		return "false,denied,$title";
-	}
+	}	
+	
+	$title = Title::newFromText($title);
 	
 	$article = new Article($title);
 
@@ -183,15 +180,12 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 	
 	$title = strip_tags($title);
 	if ($title == '') return "false";
+
+	if (!smwf_om_userCan($title, 'edit')) {
+		return "false,denied,$title";
+	}	
 	
 	$title = Title::newFromText($title);
-
-	$user = User::newFromName($user);
-	$result = true;
-	wfRunHooks('userCan', array($title, $user, "edit", &$result));
-	if (isset($result) && $result == false) {
-		return "false,denied,$title";
-	}
 	
 	$article = new Article($title);
 
@@ -219,6 +213,10 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
  *  'false', otherwise
  */
 function smwf_om_TouchArticle($title) {
+	if (!smwf_om_userCan($title, 'edit')) {
+		return "false,denied,$title";
+	}	
+	
 	$title = Title::newFromText($title);
 
 	$article = new Article($title);
@@ -246,8 +244,11 @@ function smwf_om_TouchArticle($title) {
  *
  */
 function smwf_om_ExistsArticle($title) {
+	if (!smwf_om_userCan($title, 'read')) {
+		return "false,denied,$title";
+	}	
+	
 	global $wgContLang;
-
 
 	if (strpos($title,"Attribute:") == 0) {
 		$title = str_replace("Attribute:",
@@ -307,7 +308,10 @@ function smwf_om_ExistsArticle($title) {
 function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	global $wgContLang;
 
-
+	if (!smwf_om_userCan($title, 'read')) {
+		return "false,denied,$title";
+	}	
+	
 	if (strpos($title,"Attribute:") == 0) {
 		$title = str_replace("Attribute:",
 		                     $wgContLang->getNsText(SMW_NS_PROPERTY).":",
@@ -451,6 +455,10 @@ function smwf_om_RelationSchemaData($relationName) {
  *
  */
 function smwf_om_GetWikiText($pagename) {
+	
+	if (!smwf_om_userCan($pagename, 'read')) {
+		return "false,denied,$pagename";
+	}	
 	$titleObj = Title::newFromText($pagename);
 	$article = new Article($titleObj);
 
@@ -469,14 +477,11 @@ function smwf_om_GetWikiText($pagename) {
  * @param string $user The name of the user who wants to delete the article
  */
 function smwf_om_DeleteArticle($pagename, $user, $reason) {
-	$titleObj = Title::newFromText($pagename);
-
-	$user = User::newFromName($user);
-	$result = true;
-	wfRunHooks('userCan', array($titleObj, $user, "delete", &$result));
-	if (isset($result) && $result == false) {
-		return "denied";
+	if (!smwf_om_userCan($pagename, 'delete')) {
+		return "false,denied,$pagename";
 	}	
+	
+	$titleObj = Title::newFromText($pagename);
 	
 	$article = new Article($titleObj);
 
@@ -498,14 +503,11 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	$newpagename = strip_tags($newpagename);
 	if ($newpagename == '') return "false";
 	
-	$titleObj = Title::newFromText($pagename);
+	if (!smwf_om_userCan($pagename, 'move')) {
+		return "false,denied,$pagename";
+	}	
 	
-	$user = User::newFromName($user);
-	$result = true;
-	wfRunHooks('userCan', array($titleObj, $user, "move", &$result));
-	if (isset($result) && $result == false) {
-		return "denied";
-	}
+	$titleObj = Title::newFromText($pagename);
 	
 	$newTitleObj = Title::newFromText($newpagename);
 	$success = false;
@@ -530,6 +532,11 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
  * @param $newSuperCategory Title of new supercategory. (String) May be NULL
  */
 function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
+	
+	if (!smwf_om_userCan($draggedCategory, 'move')) {
+		return "false";
+	}	
+	
 	$newSuperCategory = strip_tags($newSuperCategory);
 	if ($newSuperCategory == '') return "false";
 	
@@ -580,8 +587,13 @@ function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCate
  * @param $newSuperProperty Title of new superproperty. (String) May be NULL
  */
 function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProperty) {
+
 	$newSuperProperty = strip_tags($newSuperProperty);
 	if ($newSuperProperty == '') return "false";
+	
+	if (!smwf_om_userCan($draggedProperty, 'move')) {
+		return "false";
+	}	
 	
 	$draggedOnRootLevel = $oldSuperProperty == 'null' || $oldSuperProperty == NULL;
 	$draggedPropertyTitle = Title::newFromText($draggedProperty, SMW_NS_PROPERTY);
@@ -628,4 +640,36 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 function smwf_om_invalidateAllPages() {
 	smwfGetSemanticStore()->invalidateAllPages();
 	return "true";
+}
+
+/**
+ * Checks if the current user can perform the given $action on the article with 
+ * the given $titleName.
+ *
+ * @param string $titleName
+ * 		Name of the article
+ * @param string $action
+ * 		Name of the action
+ * 
+ * @return bool
+ * 		<true> if the action is permitted
+ * 		<false> otherwise
+ */
+function smwf_om_userCan($titleName, $action) {
+	// Special handling if the extension HaloACL is present
+	if (defined('HACL_HALOACL_VERSION')) {
+		$etc = haclfDisableTitlePatch();
+	}
+	$title = Title::newFromText($titleName);
+	if (defined('HACL_HALOACL_VERSION')) {
+		haclfRestoreTitlePatch($etc);
+	}
+	global $wgUser;
+	$result = true;
+	wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
+	if (isset($result) && $result == false) {
+		return false;
+	} else {
+		return true;
+	}
 }
