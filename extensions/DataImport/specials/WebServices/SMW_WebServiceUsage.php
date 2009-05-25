@@ -121,6 +121,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsName = trim($parameters[1]);
 
 	$ws = WebService::newFromName($wsName);
+	
 	if(!$ws){
 		return smwfEncodeMessages(array(wfMsg('smw_wsuse_wwsd_not_existing', $wsName)));
 	}
@@ -173,9 +174,9 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 				$subst = true;
 			} else {
 				$subst = false;
-			}
+			 }
 		}
-
+		
 		$errorMessages = $ws->getErrorMessages();
 		if(count($errorMessages) > 0){
 			//todo:provide a better implementation

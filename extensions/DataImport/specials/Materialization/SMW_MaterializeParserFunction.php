@@ -59,6 +59,7 @@ function materializePF_render(&$parser) {
 		if($parameters["update"] != "final"){
 			$parameters["call"] = str_replace("{","##mcoll##", $parameters["call"]);
 			$parameters["call"] = str_replace("}","##mcolr##", $parameters["call"]);
+			$parameters["call"] = str_replace("|","##pipe##", $parameters["call"]);
 			$output = "{{#materialize:".$parameters["call"]."\n";
 			$output .= "| update = ".$parameters["update"]."\n";
 			$output .= "| materialized = \n".$parameters["materialized"]; 
@@ -75,7 +76,6 @@ function materializePF_render(&$parser) {
 		$callHash = SMWHashProcessor::generateHashValue($parameters["call"]);
 		$materialized = null;
 		$sourceHash = $db->getMaterializationHash($pageId, $callHash); 
-		//todo: richtig???
 		if($sourceHash == null){
 			$materialized = trim($parser->replaceVariables($parameters["call"])); 
 			$materializationHash = SMWHashProcessor::generateHashValue(
@@ -174,8 +174,9 @@ function materializePF_getParameters($parameters){
 	$response["call"] = $parameters[1];
 	$response["call"] = str_replace("##mcoll##", "{", $response["call"]);
 	$response["call"] = str_replace("##mcolr##","}", $response["call"]);
+	$response["call"] = str_replace("##pipe##","|", $response["call"]);
 			
-	if($update == null){
+	if(!isset($update)){
 		$response["update"] = "false";
 	} else if(!($update === "false" || $update === "true" || 
 				$update === "both" || $update === "final")){
