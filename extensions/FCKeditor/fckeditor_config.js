@@ -20,7 +20,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	[/*'FitWindow',*/'-','About','-','MW_MediaUpload']
+	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface']
 ] ;
 
 // Load the extension plugins.
@@ -37,7 +37,7 @@ FCKConfig.DefaultLanguage		= 'en' ;
 // FCKConfig.DisableObjectResizing = true ;
 
 FCKConfig.EditorAreaStyles = '\
-.FCK__MWTemplate, .FCK__MWRef, .FCK__MWSpecial, .FCK__MWReferences, .FCK__MWNowiki, .FCK__MWIncludeonly, .FCK__MWNoinclude, .FCK__MWOnlyinclude, .FCK__MWGallery \
+.FCK__SMWask, .FCK__MWTemplate, .FCK__MWRef, .FCK__MWSpecial, .FCK__MWReferences, .FCK__MWNowiki, .FCK__MWIncludeonly, .FCK__MWNoinclude, .FCK__MWOnlyinclude, .FCK__MWGallery \
 { \
 	border: 1px dotted #00F; \
 	background-position: center center; \
@@ -47,6 +47,12 @@ FCKConfig.EditorAreaStyles = '\
 .FCK__MWTemplate \
 { \
 	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/icon_template.gif); \
+	width: 20px; \
+	height: 15px; \
+} \
+.FCK__SMWask \
+{ \
+	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif); \
 	width: 20px; \
 	height: 15px; \
 } \

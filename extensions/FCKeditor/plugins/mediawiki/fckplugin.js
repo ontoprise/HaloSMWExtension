@@ -48,6 +48,11 @@ tbButton = new FCKToolbarButton( 'MW_Special', 'Special Tag', 'Insert/Edit Speci
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_special.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Special', tbButton ) ;
 
+var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface' ) ;
+tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
+FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
+
+
 // Override some dialogs.
 FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 400, 330 ) ) ;
 FCKCommands.RegisterCommand( 'MW_Ref', new FCKDialogCommand( 'MW_Ref', 'Reference Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/ref.html', 400, 250 ) ) ;
@@ -55,7 +60,7 @@ FCKCommands.RegisterCommand( 'MW_Math', new FCKDialogCommand( 'MW_Math', 'Formul
 FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', 'Special Tag Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/special.html', 400, 330 ) ) ; //YC
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
-
+FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'QueryInterface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 800, 600 ) ) ;
 
 // MediaWiki Wikitext Data Processor implementation.
 FCK.DataProcessor =
@@ -481,6 +486,10 @@ FCK.DataProcessor =
 
 								case 'fck_mw_template' :
 									stringBuilder.push( FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') ) ;
+									return;
+									
+								case 'fck_mw_askquery' :
+									stringBuilder.push( FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') ) ;
 									return ;
 								
 								case 'fck_mw_magic' :
@@ -746,6 +755,9 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_template' :
 				if ( className == null ) //YC
 					className = 'FCK__MWTemplate' ; //YC
+			case 'fck_mw_askquery' :
+				if ( className == null )
+					className = 'FCK__SMWask' ;
 			case 'fck_mw_magic' :
 				if ( className == null )
 					className = 'FCK__MWMagicWord' ;
@@ -804,6 +816,11 @@ FCK.ContextMenu.RegisterListener({
 			{
 				contextMenu.AddSeparator() ;
 				contextMenu.AddItem( 'MW_Template', 'Template Properties' ) ;
+			}
+			if ( tag.getAttribute( '_fck_mw_askquery' ) )
+			{
+				contextMenu.AddSeparator() ;
+				contextMenu.AddItem( 'SMW_QueryInterface', 'Query Source' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_magic' ) )
 			{
