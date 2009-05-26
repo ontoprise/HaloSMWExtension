@@ -381,8 +381,9 @@ class FCKeditorParser extends Parser
 				else if ($sum == 0) {
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
+					$fck_mw_template = (substr($inner, 0, 7) == '{{#ask:') ? 'fck_mw_askquery' : 'fck_mw_template';
 					$this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"'] = 'href="'.$inner.'"';
-					$this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_template">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
+					$this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="'.$fck_mw_template.'">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
 					$startingPos = $pos + 19;
 					$this->fck_mw_strtr_span_counter++;
 				}
