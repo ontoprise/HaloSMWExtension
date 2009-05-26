@@ -59,5 +59,12 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 			$this->assertContains($cf, $exp_files);
 		}
 	}
+	
+	function testUserRequirements() {
+	    $reqs = $this->ddp->getUserRequirements() ;
+	   
+	    $this->assertEquals("string", $reqs['avalue'][0]);
+	    $this->assertEquals("Required value", $reqs['avalue'][1]);
+	}
 }
 ?>

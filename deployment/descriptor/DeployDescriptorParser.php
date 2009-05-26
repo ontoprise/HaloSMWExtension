@@ -20,6 +20,7 @@ class DeployDescriptorParser {
 	var $resources;
 	var $configs;
 	var $precedings;
+	var $userReqs;
 
 	function __construct($fileloc) {
 			
@@ -35,13 +36,13 @@ class DeployDescriptorParser {
 		$this->createConfigElements($dom);
 	}
 
-    public function getPrecedings() {
-    	return $this->precedings;
-    }
-    
-    public function getConfigs() {
-    	return $this->configs;
-    }
+	public function getPrecedings() {
+		return $this->precedings;
+	}
+
+	public function getConfigs() {
+		return $this->configs;
+	}
 
 	private function createConfigElements(& $dom, $from = NULL) {
 		if ($from == NULL) {
@@ -52,21 +53,35 @@ class DeployDescriptorParser {
 		$precedings = $dom->xpath('/deploydescriptor/configs/precedes');
 		$variables = $dom->xpath($path.'/variable');
 		$function = $dom->xpath($path.'/function');
+		$require = $dom->xpath($path.'/require');
+		$php = $dom->xpath($path.'/php');
 
 		$this->configs = array();
 		$this->precedes = array();
 		foreach($precedings as $p) {
 			$this->precedings[] = (string) $p->attributes()->ext;
 		}
+		
+		$this->userReqs = array();
 		foreach($variables as $p) {
+			$this->userReqs = array_merge($this->userReqs, $this->extractUserRequirements($p));
 			$this->configs[] = new VariableConfigElement($p);
 		}
-	    foreach($function as $p) {
-            $this->configs[] = new FunctionCallConfigElement($p);
-        }	
+		foreach($function as $p) {
+			$this->userReqs = array_merge($this->userReqs, $this->extractUserRequirements($p));
+			$this->configs[] = new FunctionCallConfigElement($p);
+		}
+		foreach($require as $p) {
+			$this->configs[] = new RequireConfigElement($p);
+		}
+		foreach($php as $p) {
+			$this->configs[] = new PHPConfigElement($p);
+		}
 	}
 
-
+    function getUserRequirements() {
+    	return $this->userReqs;
+    }
 
 
 	// global properties
@@ -127,8 +142,47 @@ class DeployDescriptorParser {
 		return $loc;
 	}
 
+	private function extractUserRequirements($child) {
+		$userReqs = array();
+		$this->_extractUserRequirements($child, $userReqs);
+		return $userReqs;
+	}
+	
+	private function _extractUserRequirements($child, & $userReqs) {
 
+		$children = $child->children();
 
+		foreach($children as $ch) {
+			switch($ch->getName()) {
+				case "string": {
+					$name = (string) $ch->attributes()->name;
+					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					if ($userValueRequired == true) {
+						$userReqs[$name] = array("string", (string) $ch->attributes()->description);
+					}
+				}break;
+				case "number": {
+					$name = (string) $ch->attributes()->name;
+					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					if ($userValueRequired == true) {
+						$userReqs[$name] = array("number", (string) $ch->attributes()->description);
+					}
+				}break;
+				case "boolean": {
+					$name = (string) $ch->attributes()->name;
+					$userValueRequired = (string) $ch->attributes()->userValueRequired;
+					if ($userValueRequired == true) {
+						$userReqs[$name] = array("boolean", (string) $ch->attributes()->description);
+					}
+				}break;
+				case "array": {
+					$p = $this->_extractUserRequirements($ch, $mappings);
+
+				}
+			}
+		}
+		return $resultsStr;
+	}
 	/**
 	 * Validates the code files.
 	 *
@@ -158,8 +212,8 @@ class DeployDescriptorParser {
 		}
 
 		$dp = new DeployDescriptionProcessor($ls_loc, $this);
-		return $dp->makeChanges();
-		
+		return $dp->makeChanges($userValues);
+
 	}
 
 }

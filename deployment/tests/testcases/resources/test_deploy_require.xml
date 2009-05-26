@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>1.0</version>
+		<id>SMWHalo</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions\SMWHalo</instdir>
+		<description>Enhances your Semantic Mediawiki</description>
+		<dependencies>
+			<dependency from="100" to="140">
+				SemanticMediawiki
+			</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/SMWHalo/SMW_Initialize.php" />
+		<file loc="extensions/SMWHalo/SMW_QP_XML.php" />
+	</codefiles>
+	<wikidumps>
+		<file loc="wikidumps/ontology1.xml" />
+	</wikidumps>
+	<resources>
+		<file loc="resources/img1.png" />
+	</resources>
+	<configs>
+		<precedes ext="SemanticMediawiki" />
+
+		<new>
+			<require name="testreq" file="testcases/resources/testinclude.php"/>
+			<require remove="true" name="testreq2" file="testcases/resources/testinclude2.php"/>
+		</new>
+	</configs>
+</deploydescriptor>

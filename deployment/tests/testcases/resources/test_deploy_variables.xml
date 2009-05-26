@@ -25,24 +25,32 @@
 	<configs>
 		<precedes ext="SemanticMediawiki" />
 		<precedes ext="SemanticGardening" />
-		
+
 		<new>
 			<variable name="testvar">
-				<string name="avalue">testvalue</string>
+				<string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
 			</variable>
-			<variable name="testvar2" remove="true" external="true"/>
+			<variable name="testvar2" remove="true" external="true" />
 			<variable name="testvar3" external="true">
-			 <string>Halo is so cool</string> 
+				<string>Halo is so cool</string>
 			</variable>
 			<variable name="testvar4" external="true">
-             <number>25</number> 
-            </variable>
-            <variable name="testvar5" external="true">
-             <boolean>true</boolean> 
-            </variable>
-            <variable name="testvar6">
-             <string>Halo is cool</string> 
-            </variable>
+				<number>25</number>
+			</variable>
+			<variable name="testvar5" external="true">
+				<boolean>true</boolean>
+			</variable>
+			<variable name="testvar6">
+				<string>Halo is cool</string>
+			</variable>
+			<variable name="testvar7">
+				<string>Halo is cool</string>
+				<array>
+					<number>1</number>
+					<string>Halo</string>
+					<boolean>True</boolean>
+				</array>
+			</variable>
 		</new>
 	</configs>
 </deploydescriptor>
