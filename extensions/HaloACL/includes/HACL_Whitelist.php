@@ -109,17 +109,14 @@ class  HACLWhitelist  {
 		$nonExistent = array();
 		$ids = array();
 		// Get the IDs of all pages
-		$etc = haclfDisableTitlePatch();
 		foreach ($this->mPages as $name) {
-			$t = Title::newFromText($name);
-			$id = $t->getArticleID();
+			$id = haclfArticleID($name);
 			if ($id == 0) {
 				$nonExistent[] = $name;
 			} else {
 				$ids[] = $id;
 			}
 		}
-		haclfRestoreTitlePatch($etc);
 		HACLStorage::getDatabase()->saveWhitelist($ids);
 		if (!empty($nonExistent)) {
 			throw new HACLWhitelistException(HACLWhitelistException::PAGE_DOES_NOT_EXIST,
@@ -140,10 +137,7 @@ class  HACLWhitelist  {
 	 */
 	public static function isInWhitelist($page) {
 		if (!is_int($page)) {
-			$etc = haclfDisableTitlePatch();
-			$t = Title::newFromText($page);
-			haclfRestoreTitlePatch($etc);
-			$page = $t->getArticleID();
+			$page = haclfArticleID($page);
 		}
 		return HACLStorage::getDatabase()->isInWhitelist($page);
 	}
