@@ -616,9 +616,11 @@ class HACLParserFunctions  {
 				} catch (HACLSDException $e) {
 					// Check if it is the whitelist
 					global $haclgContLang;
-					if ($article->getTitle()->getText() == $haclgContLang->getWhitelist()) {
-						$wl = new HACLWhitelist(self::$mInstance->mWhitelist);
-						$wl->save();
+					if ($article->getTitle()->getFullText() == $haclgContLang->getWhitelist()) {
+						try {
+							$wl = new HACLWhitelist(self::$mInstance->mWhitelist);
+							$wl->save();
+						} catch (HACLWhitelistException $e) {}
 					}
 					
 				}
@@ -680,11 +682,65 @@ class HACLParserFunctions  {
 					}
 				}
 			}
-			
+		} else {
+			// If a protected article is deleted, its SD will be deleted as well
+			$sd = HACLSecurityDescriptor::getSDForPE($article->getTitle()->getArticleID(),
+					   						         HACLSecurityDescriptor::PET_PAGE);		
+			if ($sd) {
+				$t = Title::newFromID($sd);
+				$a = new Article($t);
+				$a->doDelete(""); 			
+			}
 		}
 		return true;
 	}
 	
+	/**
+	 * This method is called, when an article is moved. If the article has a 
+	 * security descriptor of type page or property, the SD is moved accordingly.
+	 *
+	 * @param unknown_type $specialPage
+	 * @param unknown_type $oldTitle
+	 * @param unknown_type $newTitle
+	 */
+	public static function articleMove(&$specialPage, &$oldTitle, &$newTitle) {
+		$newName = $newTitle->getFullText();
+		// Check if the old title has an SD
+		$sd = HACLSecurityDescriptor::getSDForPE($newTitle->getArticleID(), 
+		                                         HACLSecurityDescriptor::PET_PAGE);
+		if ($sd !== false) {
+			// move SD for page
+			$oldSD = Title::newFromID($sd);
+			$oldSD = $oldSD->getFullText();
+			$newSD = HACLSecurityDescriptor::nameOfSD($newName,
+													  HACLSecurityDescriptor::PET_PAGE);
+			
+			self::move($oldSD, $newSD);
+		}
+		
+		$sd = HACLSecurityDescriptor::getSDForPE($newTitle->getArticleID(), 
+		                                         HACLSecurityDescriptor::PET_PROPERTY);
+		if ($sd !== false) {
+			// move SD for property
+			$oldSD = Title::newFromID($sd);
+			$oldSD = $oldSD->getFullText();
+			$newSD = HACLSecurityDescriptor::nameOfSD($newName,
+													  HACLSecurityDescriptor::PET_PROPERTY);
+			self::move($oldSD, $newSD);
+		}
+		return true;
+	}
+	
+	/**
+	 * This method is called just before an article's HTML is sent to the 
+	 * client. If the article contains definitions for ACLs, their consistency
+	 * is checked and error messages are added to the article.
+	 *
+	 * @param unknown_type $out
+	 * @param unknown_type $text
+	 * @return bool true
+	 * 	
+	 */
 	public static function outputPageBeforeHTML(&$out, &$text) {
 		global $haclgContLang;
 		if (self::$mInstance->mTitle == null) {
@@ -1389,6 +1445,30 @@ class HACLParserFunctions  {
 			$text .= '*[['.$r."]]\n";
 		}
 		return $text;	
+	}
+	
+	/**
+	 * Moves the article with the name $from to the location $to. 
+	 *
+	 * @param string $from
+	 * 		Original name of the article.
+	 * @param string $to
+	 * 		New name of the article
+	 * 
+	 */
+	private static function move($from, $to) {
+		$etc = haclfDisableTitlePatch();
+		$from = Title::newFromText($from);
+		$to = Title::newFromText($to);
+		haclfRestoreTitlePatch($etc);
+		
+		$fromArticle = new Article($from);
+		$text = $fromArticle->getContent();
+		
+		$toArticle = new Article($to);
+		$toArticle->doEdit($text,"");
+		
+		$fromArticle->doDelete("");
 	}
 		
 }
